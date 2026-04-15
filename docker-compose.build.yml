@@ -1,0 +1,145 @@
+name: eventcraft-team
+
+services:
+  web:
+    image: eventcraft-web:latest
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile.web
+    container_name: eventcraft-team-web
+    restart: unless-stopped
+    depends_on: [api]
+
+  admin:
+    image: eventcraft-admin:latest
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile.admin
+    container_name: eventcraft-team-admin
+    restart: unless-stopped
+    depends_on: [api]
+
+  space:
+    image: eventcraft-space:latest
+    build:
+      context: .
+      dockerfile: apps/space/Dockerfile.space
+    container_name: eventcraft-team-space
+    restart: unless-stopped
+    depends_on: [api]
+
+  live:
+    image: eventcraft-live:latest
+    build:
+      context: .
+      dockerfile: apps/live/Dockerfile.live
+    container_name: eventcraft-team-live
+    restart: unless-stopped
+    environment:
+      API_BASE_URL: http://api:8000
+      LIVE_SERVER_SECRET_KEY: ${LIVE_SERVER_SECRET_KEY}
+      REDIS_HOST: plane-redis
+      REDIS_PORT: "6379"
+
+  api:
+    image: eventcraft-api:latest
+    build:
+      context: apps/api
+      dockerfile: Dockerfile.api
+    container_name: eventcraft-team-api
+    command: ./bin/docker-entrypoint-api.sh
+    restart: unless-stopped
+    env_file: .env
+    depends_on: [plane-db, plane-redis, plane-mq]
+
+  worker:
+    image: eventcraft-api:latest
+    container_name: eventcraft-team-worker
+    command: ./bin/docker-entrypoint-worker.sh
+    restart: unless-stopped
+    env_file: .env
+    depends_on: [api, plane-db, plane-redis, plane-mq]
+
+  beat-worker:
+    image: eventcraft-api:latest
+    container_name: eventcraft-team-beat
+    command: ./bin/docker-entrypoint-beat.sh
+    restart: unless-stopped
+    env_file: .env
+    depends_on: [api, plane-db, plane-redis]
+
+  migrator:
+    image: eventcraft-api:latest
+    container_name: eventcraft-team-migrator
+    command: ./bin/docker-entrypoint-migrator.sh
+    restart: no
+    env_file: .env
+    depends_on: [plane-db, plane-redis]
+
+  proxy:
+    image: eventcraft-proxy:latest
+    build:
+      context: apps/proxy
+      dockerfile: Dockerfile.ce
+    container_name: eventcraft-team-proxy
+    restart: unless-stopped
+    ports:
+      - "8074:80"
+    environment:
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      SITE_ADDRESS: ":80"
+      TRUSTED_PROXIES: "0.0.0.0/0"
+    depends_on: [web, api, space, admin, live]
+    volumes:
+      - proxy_config:/config
+      - proxy_data:/data
+
+  plane-db:
+    image: postgres:15.7-alpine
+    container_name: eventcraft-team-db
+    command: postgres -c 'max_connections=200'
+    restart: unless-stopped
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+  plane-redis:
+    image: valkey/valkey:7.2.11-alpine
+    container_name: eventcraft-team-redis
+    restart: unless-stopped
+    volumes:
+      - redisdata:/data
+
+  plane-mq:
+    image: rabbitmq:3.13.6-management-alpine
+    container_name: eventcraft-team-mq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  plane-minio:
+    image: minio/minio:latest
+    container_name: eventcraft-team-minio
+    command: server /export --console-address ":9090"
+    restart: unless-stopped
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+    volumes:
+      - uploads:/export
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  rabbitmq_data:
+  proxy_config:
+  proxy_data:
