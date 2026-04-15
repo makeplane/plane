@@ -48,13 +48,6 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
       width: "min-w-[200px]",
     },
     {
-      key: "project_name",
-      label: t("spreadsheet.columns.project_name"),
-      asc: "project__name",
-      desc: "-project__name",
-      width: "min-w-[200px]",
-    },
-    {
       key: "main_task_category_name",
       label: t("spreadsheet.columns.main_task_category"),
       asc: "main_task_category__name",
@@ -69,11 +62,6 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
       desc: "-sub_task_category__name",
       filterKey: "sub_task_category",
       width: "min-w-[220px]",
-    },
-    {
-      key: "work_item_count",
-      label: t("ho.work_item_count"),
-      width: "min-w-[150px]",
     },
   ];
 
@@ -129,14 +117,12 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
           {data.map((row, idx) => {
             const prev = idx > 0 ? data[idx - 1] : null;
             const isNewDeptGroup = !prev || prev.department_name !== row.department_name;
-            const isNewProjectGroup = !isNewDeptGroup && !!prev && prev.project_name !== row.project_name;
             return (
               <HoCategoryRow
                 key={`${row.project_id}-${row.main_task_category_name}-${row.sub_task_category_name}`}
                 rowIndex={idx}
                 row={row}
                 isNewDeptGroup={isNewDeptGroup}
-                isNewProjectGroup={isNewProjectGroup}
                 isScrolled={isScrolled}
               />
             );
