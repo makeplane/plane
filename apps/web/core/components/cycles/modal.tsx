@@ -19,7 +19,7 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { CycleDateCheckData, ICycle, TCycleTabOptions } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { renderFormattedPayloadDate } from "@plane/utils";
+import { getErrorMessage, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
@@ -61,7 +61,7 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await createCycle(workspaceSlug, selectedProjectId, payload)
-      .then((res) => {
+      .then(() => {
         // mutate when the current cycle creation is active
         if (payload.start_date && payload.end_date) {
           const currentDate = new Date();
@@ -77,12 +77,14 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
           title: "Success!",
           message: "Cycle created successfully.",
         });
+        handleClose();
+        return;
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.detail ?? "Error in creating cycle. Please try again.",
+          message: getErrorMessage(err, "Error in creating cycle. Please try again."),
         });
       });
   };
@@ -92,18 +94,20 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
 
     const selectedProjectId = payload.project_id ?? projectId.toString();
     await updateCycleDetails(workspaceSlug, selectedProjectId, cycleId, payload)
-      .then((res) => {
+      .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
           message: "Cycle updated successfully.",
         });
+        handleClose();
+        return;
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: err?.detail ?? "Error in updating cycle. Please try again.",
+          message: getErrorMessage(err, "Error in updating cycle. Please try again."),
         });
       });
   };
@@ -159,7 +163,6 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
           setCycleTab("all");
         });
       }
-      handleClose();
     } else
       setToast({
         type: TOAST_TYPE.ERROR,

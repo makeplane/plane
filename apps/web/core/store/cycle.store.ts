@@ -631,9 +631,7 @@ export abstract class CycleStore implements ICycleStore {
       this.fetchCycleDetails(workspaceSlug, projectId, cycleId);
       return response;
     } catch (error) {
-      console.log("Failed to patch cycle from cycle store");
-      this.fetchAllCycles(workspaceSlug, projectId);
-      this.fetchActiveCycle(workspaceSlug, projectId);
+      console.error("Failed to patch cycle from cycle store", error);
       throw error;
     }
   };

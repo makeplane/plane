@@ -167,10 +167,60 @@ export const calculateSortOrder = (
   return (prevSortOrder + nextSortOrder) / 2;
 };
 
+/**
+ * Parses Django REST / DRF serializer validation shapes like
+ * `{ "name": ["A cycle with the name … already exists."] }` or nested equivalents.
+ * Returns the first non-empty string message found in deterministic object key order.
+ */
+const extractDjangoFieldErrorMessage = (payload: unknown, skipKeys?: ReadonlySet<string>): string | undefined => {
+  if (!isRecord(payload)) return undefined;
+  for (const [key, value] of Object.entries(payload)) {
+    if (skipKeys?.has(key)) continue;
+    if (typeof value === "string" && value) return value;
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (typeof item === "string" && item) return item;
+        const nested = extractDjangoFieldErrorMessage(item);
+        if (nested) return nested;
+      }
+    } else if (isRecord(value)) {
+      const nested = extractDjangoFieldErrorMessage(value);
+      if (nested) return nested;
+    }
+  }
+  return undefined;
+};
+
+/** Keys often present on API error envelopes; skip only for a top-level field-error sweep. */
+const ERROR_ENVELOPE_KEYS = new Set(["code", "status", "error", "detail", "message"]);
+
 export const getErrorMessage = (error: unknown, fallbackMessage: string) => {
-  // TODO: Handle Django serializer validation payloads that return arrays of field error records.
-  const errorObj = error as TError | undefined;
-  return errorObj?.error ?? errorObj?.detail ?? errorObj?.message ?? fallbackMessage;
+  if (!isRecord(error)) {
+    if (error instanceof Error) return error.message;
+    return fallbackMessage;
+  }
+
+  const errorObj = error as TError & Record<string, unknown>;
+
+  const errorField = errorObj.error;
+  if (typeof errorField === "string" && errorField) return errorField;
+  const fromErrorObject = extractDjangoFieldErrorMessage(errorField);
+  if (fromErrorObject) return fromErrorObject;
+
+  const detailField = errorObj.detail;
+  if (typeof detailField === "string" && detailField) return detailField;
+  if (Array.isArray(detailField)) {
+    const firstDetail = detailField.find((item): item is string => typeof item === "string" && !!item);
+    if (firstDetail) return firstDetail;
+  }
+
+  const messageField = errorObj.message;
+  if (typeof messageField === "string" && messageField) return messageField;
+
+  const fromRoot = extractDjangoFieldErrorMessage(errorObj, ERROR_ENVELOPE_KEYS);
+  if (fromRoot) return fromRoot;
+
+  return fallbackMessage;
 };
 
 export const isObject = (value: unknown): value is Record<string, unknown> =>

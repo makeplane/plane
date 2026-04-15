@@ -166,7 +166,7 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response

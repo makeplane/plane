@@ -22,7 +22,8 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>
 export type SingleOrArray<T> = T extends null | undefined ? T : T | T[];
 
 export type TError = {
-  error?: string;
-  detail?: string;
+  /** Plain string or DRF-style `{ field: string[] }` validation payload. */
+  error?: string | Record<string, string | string[]>;
+  detail?: string | string[];
   message?: string;
 };

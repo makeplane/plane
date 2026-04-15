@@ -14,6 +14,7 @@ import pytz
 
 # Django imports
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 
 # Module imports
@@ -94,13 +95,21 @@ class Cycle(ProjectBaseModel):
         ordering = ("-created_at",)
 
     def save(self, *args, **kwargs):
+        qs = Cycle.objects.filter(project=self.project, name=self.name)
         if self._state.adding:
+            # Compute sort order for new cycles
             smallest_sort_order = Cycle.objects.filter(project=self.project).aggregate(
                 smallest=models.Min("sort_order")
             )["smallest"]
 
             if smallest_sort_order is not None:
                 self.sort_order = smallest_sort_order - 10000
+        else:
+            # On update, exclude self from the uniqueness check
+            qs = qs.exclude(pk=self.pk)
+
+        if qs.exists():
+            raise ValidationError({"name": f"A cycle with the name '{self.name}' already exists in this project."})
 
         super(Cycle, self).save(*args, **kwargs)
 

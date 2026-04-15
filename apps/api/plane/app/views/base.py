@@ -102,8 +102,12 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
                         "error_message": str(e),
                     },
                 )
+                error_detail = e.message_dict if hasattr(e, "message_dict") else e.messages
                 return Response(
-                    {"error": "Please provide valid detail"},
+                    {
+                        "error": "Please provide valid detail",
+                        "details": error_detail,
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -151,7 +155,7 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def workspace_slug(self):
@@ -219,8 +223,12 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
                         "error_message": str(e),
                     },
                 )
+                error_detail = e.message_dict if hasattr(e, "message_dict") else e.messages
                 return Response(
-                    {"error": "Please provide valid detail"},
+                    {
+                        "error": "Please provide valid detail",
+                        "details": error_detail,
+                    },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
@@ -268,7 +276,7 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
 
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def workspace_slug(self):
