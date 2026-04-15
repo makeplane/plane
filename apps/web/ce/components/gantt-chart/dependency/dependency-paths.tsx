@@ -187,7 +187,7 @@ export const TimelineDependencyPaths = observer(function TimelineDependencyPaths
         const isHovered = hoveredLine === key;
         const markerId = line.hasConflict ? ARROW_MARKER_CONFLICT : ARROW_MARKER_OK;
         return (
-          <g key={key}>
+          <g key={key} data-dependency-key={key}>
             {/* Visible path. Blue when dates are consistent with the
              * `source blocking target` direction, red when the source's end
              * date falls after the target's start. */}
