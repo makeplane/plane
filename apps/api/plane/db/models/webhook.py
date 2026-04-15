@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Python imports
+import os
 from uuid import uuid4
 from urllib.parse import urlparse
 
@@ -27,8 +28,9 @@ def validate_schema(value):
 def validate_domain(value):
     parsed_url = urlparse(value)
     domain = parsed_url.netloc
-    if domain in ["localhost", "127.0.0.1"]:
-        raise ValidationError("Local URLs are not allowed.")
+    if os.environ.get("ENABLE_WEBHOOK_SSRF_PROTECTION", "1") != "0":
+        if domain in ["localhost", "127.0.0.1"]:
+            raise ValidationError("Local URLs are not allowed.")
 
 
 class Webhook(BaseModel):
