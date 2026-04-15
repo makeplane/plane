@@ -124,6 +124,7 @@ class FeatureFlagsTypesEnum(Enum):
     AI_DEDUPE = "AI_DEDUPE"
     AI_CONVERSE = "AI_CONVERSE"
     AI_FILE_UPLOADS = "AI_FILE_UPLOADS"
+    AI_PAGES_BLOCKS = "AI_PAGES_BLOCKS"
 
     # advanced search
     ADVANCED_SEARCH = "ADVANCED_SEARCH"
@@ -239,6 +240,7 @@ class FeatureFlagType:
     ai_dedupe: bool
     ai_converse: bool
     ai_file_uploads: bool
+    ai_pages_blocks: bool
 
     # advanced search
     advanced_search: bool

@@ -153,6 +153,7 @@ class FeatureFlagQuery:
             ai_dedupe=feature_flags.get(FeatureFlagsTypesEnum.AI_DEDUPE.value, False),
             ai_converse=feature_flags.get(FeatureFlagsTypesEnum.AI_CONVERSE.value, False),
             ai_file_uploads=feature_flags.get(FeatureFlagsTypesEnum.AI_FILE_UPLOADS.value, False),
+            ai_pages_blocks=feature_flags.get(FeatureFlagsTypesEnum.AI_PAGES_BLOCKS.value, False),
             # advanced search
             advanced_search=feature_flags.get(FeatureFlagsTypesEnum.ADVANCED_SEARCH.value, False),
         )
