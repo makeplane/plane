@@ -36,16 +36,14 @@ export const HoCategoryView = observer(function HoCategoryView() {
 
   const filtered = useMemo(() => {
     // Apply department filter first (client-side — summary is always fully loaded)
-    let data = store.selectedDepartmentId
+    const data = store.selectedDepartmentId
       ? store.categorySummary.filter((r) => r.department_id === store.selectedDepartmentId)
       : store.categorySummary;
 
     if (!search) return data;
     const q = search.toLowerCase();
     return data.filter((r) =>
-      [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) =>
-        v?.toLowerCase().includes(q)
-      )
+      [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
   }, [store.categorySummary, store.selectedDepartmentId, search]);
 
@@ -61,13 +59,12 @@ export const HoCategoryView = observer(function HoCategoryView() {
   }, [filtered, sortKey, sortDir]);
 
   const totalPages = Math.max(1, Math.ceil(sortedData.length / PAGE_SIZE));
-  const pageData = useMemo(
-    () => sortedData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
-    [sortedData, page]
-  );
+  const pageData = useMemo(() => sortedData.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [sortedData, page]);
 
   // Reset to page 1 whenever the filtered/sorted result set changes
-  useEffect(() => { setPage(1); }, [sortedData.length, store.selectedDepartmentId, search]);
+  useEffect(() => {
+    setPage(1);
+  }, [sortedData.length, store.selectedDepartmentId, search]);
 
   return (
     <div className="relative flex h-full flex-col">
@@ -102,39 +99,43 @@ export const HoCategoryView = observer(function HoCategoryView() {
             <div className="flex h-32 items-center justify-center text-sm text-placeholder">
               {search ? t("ho.no_matching_rows") : t("ho.no_data")}
             </div>
-          ) : totalPages > 1 && (
-            <div className="flex items-center justify-center gap-1 py-4">
-              <button
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="rounded px-2 py-1 text-13 text-secondary disabled:opacity-40 hover:bg-surface-2"
-              >
-                ‹
-              </button>
-              {getPageNumbers(page, totalPages).map((n, i) =>
-                n === null ? (
-                  <span key={`ellipsis-${i}`} className="px-1 text-13 text-tertiary">…</span>
-                ) : (
-                  <button
-                    key={n}
-                    onClick={() => setPage(n)}
-                    className={cn(
-                      "min-w-[28px] rounded px-2 py-1 text-13",
-                      n === page ? "bg-accent-primary text-white" : "text-secondary hover:bg-surface-2"
-                    )}
-                  >
-                    {n}
-                  </button>
-                )
-              )}
-              <button
-                disabled={page === totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="rounded px-2 py-1 text-13 text-secondary disabled:opacity-40 hover:bg-surface-2"
-              >
-                ›
-              </button>
-            </div>
+          ) : (
+            totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1 py-4">
+                <button
+                  disabled={page === 1}
+                  onClick={() => setPage((p) => p - 1)}
+                  className="rounded px-2 py-1 text-13 text-secondary disabled:opacity-40 hover:bg-surface-2"
+                >
+                  ‹
+                </button>
+                {getPageNumbers(page, totalPages).map((n, i) =>
+                  n === null ? (
+                    <span key={`ellipsis-${i}`} className="px-1 text-13 text-tertiary">
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={n}
+                      onClick={() => setPage(n)}
+                      className={cn(
+                        "min-w-[28px] rounded px-2 py-1 text-13",
+                        n === page ? "bg-accent-primary text-white" : "text-secondary hover:bg-surface-2"
+                      )}
+                    >
+                      {n}
+                    </button>
+                  )
+                )}
+                <button
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => p + 1)}
+                  className="rounded px-2 py-1 text-13 text-secondary disabled:opacity-40 hover:bg-surface-2"
+                >
+                  ›
+                </button>
+              </div>
+            )
           )}
         </>
       )}
