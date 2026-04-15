@@ -2681,4 +2681,19 @@ export default {
     close_button: "ナビゲーションパネルを閉じる",
     outline_floating_button: "アウトラインを開く",
   },
+  gantt_dependency: {
+    notice_title: "依存関係",
+    creation_failed: "依存関係の保存に失敗しました。もう一度お試しください。",
+    cycle_detected:
+      "この依存関係を追加すると、現在表示中のタイムライン内で循環が発生します(表示外のアイテムを経由する循環はサーバー側で検出されます)。",
+    already_exists: "これらのワークアイテム間には既に依存関係があります。",
+    invalid_target: "自分自身には依存関係を作成できません。",
+    delete_confirm: "依存関係を削除",
+    picker: {
+      blocking: "ブロックする",
+      blocked_by: "ブロックされる",
+      relates_to: "関連する",
+      duplicate: "重複",
+    },
+  },
 } as const;
