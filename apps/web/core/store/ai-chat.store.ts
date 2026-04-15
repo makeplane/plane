@@ -3,6 +3,12 @@ import { action, makeObservable, observable, runInAction } from "mobx";
 import { AIService } from "@plane/services";
 import type { TChatMessage, TChatToolAction } from "@plane/services";
 
+const generateId = (): string =>
+  "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+
 const aiService = new AIService();
 
 export type TAiChatMessage = {
@@ -46,7 +52,7 @@ export class AiChatStore implements IAiChatStore {
 
   sendMessage = async (workspaceSlug: string, content: string) => {
     const userMessage: TAiChatMessage = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       role: "user",
       content,
     };
@@ -66,7 +72,7 @@ export class AiChatStore implements IAiChatStore {
 
       runInAction(() => {
         this.messages.push({
-          id: crypto.randomUUID(),
+          id: generateId(),
           role: "assistant",
           content: result.response,
           actions: result.actions,
@@ -75,7 +81,7 @@ export class AiChatStore implements IAiChatStore {
     } catch {
       runInAction(() => {
         this.messages.push({
-          id: crypto.randomUUID(),
+          id: generateId(),
           role: "assistant",
           content: "Произошла ошибка. Попробуй ещё раз.",
         });
