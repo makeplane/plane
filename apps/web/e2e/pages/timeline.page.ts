@@ -1,4 +1,4 @@
-import { type Locator, type Page, expect } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import { env } from "../fixtures/env";
 
 const HANDLE_OFFSET_X = 12; // block 右端から 12px 外側(6〜18px の中央)
@@ -50,9 +50,12 @@ export class TimelinePage {
     const block = this.block(issueId);
     // hover で isBlockActive=true にする(ハンドル opacity 0 → 1)
     await block.hover();
+    // CSS transition-opacity duration-75 が完了するのを待つ(ハンドルが確実に可視になる)
+    await this.page.waitForTimeout(100);
     const box = await block.boundingBox();
-    expect(box, `block ${issueId} has no bounding box`).not.toBeNull();
-    if (!box) return;
+    if (!box) {
+      throw new Error(`block ${issueId} has no bounding box (off-screen or zero-sized)`);
+    }
 
     // ハンドルは block の外側 12px
     const x = edge === "right" ? box.x + box.width + HANDLE_OFFSET_X : box.x - HANDLE_OFFSET_X;
@@ -64,8 +67,9 @@ export class TimelinePage {
   private async dropOnEdge(issueId: string, edge: "left" | "right", options: { shiftKey?: boolean }): Promise<void> {
     const block = this.block(issueId);
     const box = await block.boundingBox();
-    expect(box, `target block ${issueId} has no bounding box`).not.toBeNull();
-    if (!box) return;
+    if (!box) {
+      throw new Error(`target block ${issueId} has no bounding box (off-screen or zero-sized)`);
+    }
 
     // target の半分判定: left → rect の左 1/4、right → rect の右 1/4
     const x = edge === "left" ? box.x + box.width * 0.25 : box.x + box.width * 0.75;
@@ -88,7 +92,8 @@ export class TimelinePage {
 
   async clickPickerOption(option: "blocking" | "blocked_by" | "relates_to" | "duplicate"): Promise<void> {
     // picker option button のラベルは翻訳キー `gantt_dependency.picker.<type>` 経由
-    // (relation-type-picker.tsx 参照)。アクセシブル名 = 翻訳結果で click
+    // (relation-type-picker.tsx 参照)。アクセシブル名 = 翻訳結果で click。
+    // 注: 下の regex は英語 UI 前提。UI locale が非英語の場合は翻訳に合わせて更新が必要。
     const nameRegex: Record<string, RegExp> = {
       blocking: /blocking/i,
       blocked_by: /blocked by/i,
