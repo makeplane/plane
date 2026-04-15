@@ -62,7 +62,7 @@ export const WorkItemAdvancedFiltersRow = observer(function WorkItemAdvancedFilt
           handleUpdateLastUsedFilter(value);
         }}
       >
-        <div className="bg-layer-1 rounded-md py-2 px-3 flex gap-3">
+        <div className="flex items-start bg-layer-1 rounded-md py-2 px-3 gap-3">
           <div className="flex items-center shrink-0">
             <Tabs.List>
               <Tabs.Trigger value="rich_filters">Basic</Tabs.Trigger>
