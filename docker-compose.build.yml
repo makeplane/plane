@@ -128,7 +128,15 @@ services:
   plane-minio:
     image: minio/minio:latest
     container_name: eventcraft-team-minio
-    command: server /export --console-address ":9090"
+    entrypoint: >
+      /bin/sh -c "
+      mkdir -p /export/${AWS_S3_BUCKET_NAME:-uploads} &&
+      minio server /export --console-address ':9090' &
+      sleep 5 &&
+      mc alias set myminio http://localhost:9000{AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} &&
+      mc mb myminio/${AWS_S3_BUCKET_NAME:-uploads} -p || true &&
+      tail -f /dev/null
+      "
     restart: unless-stopped
     environment:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
