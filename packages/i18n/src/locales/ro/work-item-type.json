@@ -413,6 +413,19 @@
       "max_level_placeholder": "Trageți și plasați un tip pentru a adăuga un nou nivel ierarhic",
       "empty_level_placeholder": "Trageți și plasați un tip de element de lucru la nivelul {level}",
       "drag_tooltip": "Glisați pentru a schimba nivelul",
+      "modified_tooltip": "Mutat de la nivelul {previousLevel} la nivelul {currentLevel}",
+      "pending_changes": {
+        "save": "Salvează modificările",
+        "validating": "Se actualizează ierarhia…",
+        "success_toast": {
+          "title": "Succes!",
+          "message": "Ierarhia a fost actualizată cu succes."
+        },
+        "error_toast": {
+          "title": "Eroare!",
+          "message": "Actualizarea ierarhiei a eșuat. Încercați din nou."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Setați ca implicit",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Eroare de validare!",
+      "title": "Salvarea va rupe legăturile existente",
+      "description": "Modificarea ierarhiei va afecta {count, plural, one {# zonă} few {# zone} other {# de zone}} în spațiul de lucru. Examinați impactul de mai jos înainte de a continua.",
       "content": {
-        "intro": "Tipul de element de lucru {workItemTypeName} are:",
-        "parent_items": "{count, plural, one {element de lucru părinte} few {elemente de lucru părinte} other {elemente de lucru părinte}}",
-        "child_items": "{count, plural, one {sub-element de lucru} few {sub-elemente de lucru} other {sub-elemente de lucru}}",
-        "parent_line_suffix_when_also_children": ", și ",
-        "footer": "Această modificare va elimina relațiile părinte-copil din elementele de lucru existente de tipul {workItemTypeName}."
+        "impacted_areas": "Zone afectate",
+        "total_impacts": "{count, plural, one {# impact} few {# impacturi} other {# de impacturi}}",
+        "parent_items": "{count, plural, one {Se va elimina # legătură părinte} few {Se vor elimina # legături părinte} other {Se vor elimina # de legături părinte}}.",
+        "sub_work_items": "{count, plural, one {Se va elimina # legătură sub-element} few {Se vor elimina # legături sub-element} other {Se vor elimina # de legături sub-element}}."
       },
       "confirm_input": {
-        "label": "Introduceți „Confirmă” pentru a continua.",
-        "placeholder": "Confirmă"
+        "label": "Introduceți „confirmă” pentru a continua.",
+        "placeholder": "confirmă"
       },
       "error_toast": {
         "title": "Eroare!",
-        "message": "Nu s-a putut rupe ierarhia. Vă rugăm să încercați din nou."
+        "message": "Nu s-au putut elimina legăturile și salva. Vă rugăm să încercați din nou."
       },
+      "cancel_button": "Înapoi și corectare",
       "confirm_button": {
-        "loading": "Se aplică",
-        "default": "Aplică și deconectează"
+        "loading": "Se salvează",
+        "default": "Salvează oricum"
       }
     },
     "work_item_modal": {

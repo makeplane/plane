@@ -413,6 +413,19 @@
       "max_level_placeholder": "新しい階層レベルを追加するには、タイプをドラッグ＆ドロップしてください",
       "empty_level_placeholder": "作業アイテムタイプをレベル {level} にドラッグ＆ドロップ",
       "drag_tooltip": "ドラッグしてレベルを変更",
+      "modified_tooltip": "レベル {previousLevel} からレベル {currentLevel} に移動しました",
+      "pending_changes": {
+        "save": "変更を保存",
+        "validating": "階層を更新しています…",
+        "success_toast": {
+          "title": "成功！",
+          "message": "階層が正常に更新されました。"
+        },
+        "error_toast": {
+          "title": "エラー！",
+          "message": "階層を更新できませんでした。もう一度お試しください。"
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "デフォルトに設定",
@@ -438,13 +451,13 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "検証エラー！",
+      "title": "保存すると既存のリンクが解除されます",
+      "description": "階層を変更すると、ワークスペース全体で {count, plural, other {# 箇所}}に影響します。続行する前に下記の影響を確認してください。",
       "content": {
-        "intro": "作業アイテムタイプ「{workItemTypeName}」には次が含まれます。",
-        "parent_items": "{count, plural, other {親の作業アイテム}}",
-        "child_items": "{count, plural, other {子の作業アイテム}}",
-        "parent_line_suffix_when_also_children": "、および ",
-        "footer": "この変更により、{workItemTypeName} 作業アイテムタイプの既存の作業アイテムから親子関係が削除されます。"
+        "impacted_areas": "影響を受ける範囲",
+        "total_impacts": "{count, plural, other {# 件の影響}}",
+        "parent_items": "{count, plural, other {親リンク # 件が解除されます。}}",
+        "sub_work_items": "{count, plural, other {下位の作業アイテムのリンク # 件が解除されます。}}"
       },
       "confirm_input": {
         "label": "続けるには「確認」と入力してください。",
@@ -452,11 +465,12 @@
       },
       "error_toast": {
         "title": "エラー！",
-        "message": "階層を解除できませんでした。もう一度お試しください。"
+        "message": "リンク解除と保存に失敗しました。もう一度お試しください。"
       },
+      "cancel_button": "戻って修正する",
       "confirm_button": {
-        "loading": "適用中",
-        "default": "適用してリンク解除"
+        "loading": "保存中",
+        "default": "それでも保存する"
       }
     },
     "work_item_modal": {

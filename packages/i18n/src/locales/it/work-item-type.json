@@ -413,6 +413,19 @@
       "max_level_placeholder": "Trascina e rilascia un tipo per aggiungere un nuovo livello di gerarchia",
       "empty_level_placeholder": "Trascina e rilascia un tipo di elemento di lavoro al livello {level}",
       "drag_tooltip": "Trascina per cambiare livello",
+      "modified_tooltip": "Spostato dal livello {previousLevel} al livello {currentLevel}",
+      "pending_changes": {
+        "save": "Salva modifiche",
+        "validating": "Aggiornamento della gerarchia…",
+        "success_toast": {
+          "title": "Successo!",
+          "message": "Gerarchia aggiornata correttamente."
+        },
+        "error_toast": {
+          "title": "Errore!",
+          "message": "Impossibile aggiornare la gerarchia. Riprova."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Imposta come predefinito",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Errore di convalida!",
+      "title": "Salvare interromperà i collegamenti esistenti",
+      "description": "La modifica della gerarchia influirà su {count, plural, one {# area} other {# aree}} nel tuo workspace. Esamina l'impatto di seguito prima di procedere.",
       "content": {
-        "intro": "Il tipo di elemento di lavoro {workItemTypeName} include:",
-        "parent_items": "{count, plural, one {elemento di lavoro padre} other {elementi di lavoro padre}}",
-        "child_items": "{count, plural, one {sotto-elemento di lavoro} other {sotto-elementi di lavoro}}",
-        "parent_line_suffix_when_also_children": ", e ",
-        "footer": "Questa modifica rimuoverà le relazioni padre-figlio dagli elementi di lavoro esistenti del tipo {workItemTypeName}."
+        "impacted_areas": "Aree interessate",
+        "total_impacts": "{count, plural, one {# impatto} other {# impatti}}",
+        "parent_items": "{count, plural, one {Verrà rimosso # collegamento padre} other {Verranno rimossi # collegamenti padre}}.",
+        "sub_work_items": "{count, plural, one {Verrà rimosso # collegamento al sotto-elemento} other {Verranno rimossi # collegamenti ai sotto-elementi}}."
       },
       "confirm_input": {
-        "label": "Digita «Conferma» per continuare.",
-        "placeholder": "Conferma"
+        "label": "Digita «conferma» per continuare.",
+        "placeholder": "conferma"
       },
       "error_toast": {
         "title": "Errore!",
-        "message": "Impossibile interrompere la gerarchia. Riprovare."
+        "message": "Impossibile scollegare e salvare. Riprovare."
       },
+      "cancel_button": "Torna indietro e correggi",
       "confirm_button": {
-        "loading": "Applicazione in corso",
-        "default": "Applica e scollega"
+        "loading": "Salvataggio",
+        "default": "Salva comunque"
       }
     },
     "work_item_modal": {

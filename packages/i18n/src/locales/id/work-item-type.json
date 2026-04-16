@@ -413,6 +413,19 @@
       "max_level_placeholder": "Seret dan lepas jenis untuk menambahkan tingkat hierarki baru",
       "empty_level_placeholder": "Seret dan lepas jenis item pekerjaan ke tingkat {level}",
       "drag_tooltip": "Seret untuk mengubah tingkat",
+      "modified_tooltip": "Dipindahkan dari level {previousLevel} ke level {currentLevel}",
+      "pending_changes": {
+        "save": "Simpan perubahan",
+        "validating": "Memperbarui hierarki…",
+        "success_toast": {
+          "title": "Berhasil!",
+          "message": "Hierarki berhasil diperbarui."
+        },
+        "error_toast": {
+          "title": "Kesalahan!",
+          "message": "Gagal memperbarui hierarki. Silakan coba lagi."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Tetapkan sebagai default",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Kesalahan validasi!",
+      "title": "Menyimpan akan memutus tautan yang ada",
+      "description": "Mengubah hierarki akan memengaruhi {count, plural, other {# area}} di seluruh ruang kerja Anda. Tinjau dampaknya di bawah sebelum melanjutkan.",
       "content": {
-        "intro": "Jenis item pekerjaan {workItemTypeName} memiliki:",
-        "parent_items": "{count, plural, other {item pekerjaan induk}}",
-        "child_items": "{count, plural, other {sub-item pekerjaan}}",
-        "parent_line_suffix_when_also_children": ", dan ",
-        "footer": "Perubahan ini akan menghapus hubungan induk-anak dari item pekerjaan yang ada dengan jenis {workItemTypeName}."
+        "impacted_areas": "Area yang terdampak",
+        "total_impacts": "{count, plural, other {# dampak}}",
+        "parent_items": "{count, plural, other {# tautan induk akan dihapus}}.",
+        "sub_work_items": "{count, plural, other {# tautan sub-item pekerjaan akan dihapus}}."
       },
       "confirm_input": {
-        "label": "Ketik \"Konfirmasi\" untuk melanjutkan.",
-        "placeholder": "Konfirmasi"
+        "label": "Ketik \"konfirmasi\" untuk melanjutkan.",
+        "placeholder": "konfirmasi"
       },
       "error_toast": {
         "title": "Kesalahan!",
-        "message": "Gagal memutus hierarki. Silakan coba lagi."
+        "message": "Gagal melepaskan tautan dan menyimpan. Silakan coba lagi."
       },
+      "cancel_button": "Kembali dan perbaiki",
       "confirm_button": {
-        "loading": "Menerapkan",
-        "default": "Terapkan & lepas tautan"
+        "loading": "Menyimpan",
+        "default": "Simpan tetap"
       }
     },
     "work_item_modal": {

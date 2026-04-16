@@ -52,21 +52,15 @@ export type TWorkItemType = {
 
 export type TPublicWorkItemType = Pick<TWorkItemType, "id" | "name" | "logo_props">;
 
-export type TUpdateWorkItemTypeHierarchyPayload = {
-  level: number;
-  type_ids: string[];
-};
+export type TValidateLevelChangePayload = Record<string, number>; // key is type id, value is new level
 
-export type TValidateLevelChangePayload = {
-  level: number;
-  type_id: string;
-};
-
-export type TValidateLevelChangeResponse = {
-  child_violations: number;
-  parent_violations: number;
-  total_violations: number;
-};
+export type TValidateLevelChangeResponse = Record<
+  string,
+  {
+    child_violations: number;
+    parent_violations: number;
+  }
+>;
 
 // Work item type instance
 export interface BaseWorkItemTypeInstanceSchema extends TWorkItemTypeResponse {
@@ -128,7 +122,6 @@ export type WorkspaceWorkItemTypesStoreSchema = {
   deleteType: (payload: TDeleteWorkspaceWorkItemTypePayload) => Promise<void>;
   enableWorkItemTypes: (workspaceSlug: string) => Promise<TWorkItemTypeResponse | undefined>;
   setDefaultType: (workspaceSlug: string, typeId: string) => Promise<void>;
-  updateHierarchy: (workspaceSlug: string, payload: TUpdateWorkItemTypeHierarchyPayload) => Promise<void>;
   // permissions
   canCreate: (workspaceSlug: string) => boolean;
   canView: (workspaceSlug: string) => boolean;

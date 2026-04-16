@@ -413,6 +413,19 @@
       "max_level_placeholder": "Přetáhněte typ pro přidání nové úrovně hierarchie",
       "empty_level_placeholder": "Přetáhněte typ pracovní položky na úroveň {level}",
       "drag_tooltip": "Přetáhněte pro změnu úrovně",
+      "modified_tooltip": "Přesunuto z úrovně {previousLevel} na úroveň {currentLevel}",
+      "pending_changes": {
+        "save": "Uložit změny",
+        "validating": "Aktualizace hierarchie…",
+        "success_toast": {
+          "title": "Úspěch!",
+          "message": "Hierarchie byla úspěšně aktualizována."
+        },
+        "error_toast": {
+          "title": "Chyba!",
+          "message": "Aktualizace hierarchie se nezdařila. Zkuste to prosím znovu."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Nastavit jako výchozí",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Chyba ověření!",
+      "title": "Uložením se přeruší stávající vazby",
+      "description": "Změna hierarchie ovlivní {count, plural, one {# oblast} few {# oblasti} other {# oblastí}} ve vašem pracovním prostoru. Než budete pokračovat, níže si projděte dopady.",
       "content": {
-        "intro": "Typ pracovní položky {workItemTypeName} obsahuje:",
-        "parent_items": "{count, plural, one {nadřazenou pracovní položku} few {nadřazené pracovní položky} other {nadřazených pracovních položek}}",
-        "child_items": "{count, plural, one {podřazenou pracovní položku} few {podřazené pracovní položky} other {podřazených pracovních položek}}",
-        "parent_line_suffix_when_also_children": ", a ",
-        "footer": "Tato změna odstraní nadřazené a podřazené vztahy u stávajících pracovních položek typu {workItemTypeName}."
+        "impacted_areas": "Ovlivněné oblasti",
+        "total_impacts": "{count, plural, one {# dopad} few {# dopady} other {# dopadů}}",
+        "parent_items": "{count, plural, one {Bude odstraněna # nadřazená vazba} few {Budou odstraněny # nadřazené vazby} other {Bude odstraněno # nadřazených vazeb}}.",
+        "sub_work_items": "{count, plural, one {Bude odstraněna # vazba na podřazenou položku} few {Budou odstraněny # vazby na podřazené položky} other {Bude odstraněno # vazeb na podřazené položky}}."
       },
       "confirm_input": {
-        "label": "Pro pokračování napište „Potvrdit“.",
-        "placeholder": "Potvrdit"
+        "label": "Pro pokračování napište „potvrdit“.",
+        "placeholder": "potvrdit"
       },
       "error_toast": {
         "title": "Chyba!",
-        "message": "Nepodařilo se přerušit hierarchii. Zkuste to prosím znovu."
+        "message": "Nepodařilo se zrušit propojení a uložit. Zkuste to prosím znovu."
       },
+      "cancel_button": "Zpět a opravit",
       "confirm_button": {
-        "loading": "Používání",
-        "default": "Použít a odpojit"
+        "loading": "Ukládání",
+        "default": "Uložit přesto"
       }
     },
     "work_item_modal": {

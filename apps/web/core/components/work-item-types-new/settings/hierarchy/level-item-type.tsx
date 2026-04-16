@@ -26,7 +26,7 @@ import { cn } from "@plane/utils";
 import { IssueTypeLogo } from "@/components/work-item-types/common/issue-type-logo";
 // local imports
 import { getWorkItemHierarchyDragData } from "./drag-helpers";
-import { useWorkItemTypeHierarchyDndProcessing } from "./hierarchy-dnd-processing-context";
+import { useWorkItemTypeHierarchyLocalState } from "./hierarchy-local-state-context";
 
 type WorkItemTypeHierarchyLevelItemTypeProps = {
   level: number;
@@ -41,9 +41,11 @@ export const WorkItemTypeHierarchyLevelItemType = observer(function WorkItemType
   const pillRef = useRef<HTMLDivElement | null>(null);
   // states
   const [isDragging, setIsDragging] = useState(false);
+  // local drag context
+  const { isTypeModified } = useWorkItemTypeHierarchyLocalState();
+  const isModified = isTypeModified(workItemType.id, level);
   // translation
   const { t } = useTranslation();
-  const { isProcessing } = useWorkItemTypeHierarchyDndProcessing();
 
   useEffect(() => {
     const element = pillRef.current;
@@ -52,32 +54,40 @@ export const WorkItemTypeHierarchyLevelItemType = observer(function WorkItemType
     return combine(
       draggable({
         element,
-        canDrag: () => !isProcessing,
         getInitialData: () => getWorkItemHierarchyDragData(workItemType.id, level),
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
       })
     );
-  }, [isProcessing, level, workItemType.id]);
+  }, [level, workItemType.id]);
 
   return (
-    <Tooltip tooltipContent={t("work_item_type_hierarchy.levels.drag_tooltip")}>
-      <div
-        ref={pillRef}
-        className={cn("group", {
-          "cursor-grab active:cursor-grabbing": !isProcessing,
-          "cursor-not-allowed opacity-60 pointer-events-none": isProcessing,
-        })}
-      >
+    <Tooltip
+      tooltipContent={
+        isModified
+          ? t("work_item_type_hierarchy.levels.modified_tooltip", {
+              previousLevel: workItemType.level,
+              currentLevel: level,
+            })
+          : t("work_item_type_hierarchy.levels.drag_tooltip")
+      }
+    >
+      <div ref={pillRef} className="relative group rounded-md cursor-grab active:cursor-grabbing">
+        {isModified && (
+          <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 size-2.5 bg-layer-2 rounded-full grid place-items-center z-1">
+            <div className="size-1.5 bg-accent-primary rounded-full" />
+          </div>
+        )}
         <Pill
           size={EPillSize.MD}
           variant={EPillVariant.DEFAULT}
           radius={ERadius.SQUARE}
-          className={cn("bg-layer-2 hover:bg-layer-2-hover gap-1.5 h-8 select-none", {
+          className={cn("bg-layer-2 hover:bg-layer-2-hover gap-1.5 h-8 select-none transition-colors", {
             "bg-layer-2-hover": isDragging,
+            "border-accent-strong": isModified,
           })}
         >
-          <span className="shrink-0 w-6 grid place-items-center">
+          <span className="shrink-0 w-4 grid place-items-center">
             <GripVertical className="size-4 text-tertiary hidden group-hover:inline-block" />
             <span className="group-hover:hidden">
               <IssueTypeLogo icon_props={workItemType?.logo_props?.icon} size="xs" />

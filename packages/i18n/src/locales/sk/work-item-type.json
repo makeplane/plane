@@ -413,6 +413,19 @@
       "max_level_placeholder": "Presuňte typ a pridajte novú úroveň hierarchie",
       "empty_level_placeholder": "Presuňte typ pracovnej položky na úroveň {level}",
       "drag_tooltip": "Ťahaním zmeňte úroveň",
+      "modified_tooltip": "Presunuté z úrovne {previousLevel} na úroveň {currentLevel}",
+      "pending_changes": {
+        "save": "Uložiť zmeny",
+        "validating": "Aktualizuje sa hierarchia…",
+        "success_toast": {
+          "title": "Úspech!",
+          "message": "Hierarchia bola úspešne aktualizovaná."
+        },
+        "error_toast": {
+          "title": "Chyba!",
+          "message": "Aktualizácia hierarchie zlyhala. Skúste to prosím znova."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Nastaviť ako predvolené",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Chyba overenia!",
+      "title": "Uloženie zruší existujúce väzby",
+      "description": "Zmena hierarchie ovplyvní {count, plural, one {# oblasť} few {# oblasti} other {# oblastí}} vo vašom pracovnom priestore. Pred pokračovaním si nižšie skontrolujte dopady.",
       "content": {
-        "intro": "Typ pracovnej položky {workItemTypeName} obsahuje:",
-        "parent_items": "{count, plural, one {nadradenú pracovnú položku} few {nadradené pracovné položky} other {nadradených pracovných položiek}}",
-        "child_items": "{count, plural, one {podradenú pracovnú položku} few {podradené pracovné položky} other {podradených pracovných položiek}}",
-        "parent_line_suffix_when_also_children": ", a ",
-        "footer": "Táto zmena odstráni nadradené a podradené vzťahy u existujúcich pracovných položiek typu {workItemTypeName}."
+        "impacted_areas": "Dotknuté oblasti",
+        "total_impacts": "{count, plural, one {# dopad} few {# dopady} other {# dopadov}}",
+        "parent_items": "{count, plural, one {Bude odstránené # nadradené prepojenie} few {Budú odstránené # nadradené prepojenia} other {Bude odstránených # nadradených prepojení}}.",
+        "sub_work_items": "{count, plural, one {Bude odstránené # prepojenie na podradenú položku} few {Budú odstránené # prepojenia na podradené položky} other {Bude odstránených # prepojení na podradené položky}}."
       },
       "confirm_input": {
-        "label": "Pre pokračovanie napíšte „Potvrdiť“.",
-        "placeholder": "Potvrdiť"
+        "label": "Pre pokračovanie napíšte „potvrdiť“.",
+        "placeholder": "potvrdiť"
       },
       "error_toast": {
         "title": "Chyba!",
-        "message": "Nepodarilo sa prerušiť hierarchiu. Skúste to prosím znovu."
+        "message": "Nepodarilo sa odpojiť prepojenia a uložiť. Skúste to prosím znova."
       },
+      "cancel_button": "Späť a opraviť",
       "confirm_button": {
-        "loading": "Aplikovanie",
-        "default": "Použiť a odpojiť"
+        "loading": "Ukladanie",
+        "default": "Uložiť napriek tomu"
       }
     },
     "work_item_modal": {

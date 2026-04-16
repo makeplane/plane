@@ -413,6 +413,19 @@
       "max_level_placeholder": "Ziehen Sie einen Typ hierher, um eine neue Hierarchieebene hinzuzufügen",
       "empty_level_placeholder": "Ziehen Sie einen Arbeitselement-Typ auf Ebene {level}",
       "drag_tooltip": "Ziehen zum Ändern der Ebene",
+      "modified_tooltip": "Von Ebene {previousLevel} auf Ebene {currentLevel} verschoben",
+      "pending_changes": {
+        "save": "Änderungen speichern",
+        "validating": "Hierarchie wird aktualisiert …",
+        "success_toast": {
+          "title": "Erfolg!",
+          "message": "Hierarchie wurde erfolgreich aktualisiert."
+        },
+        "error_toast": {
+          "title": "Fehler!",
+          "message": "Hierarchie konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Als Standard festlegen",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Validierungsfehler!",
+      "title": "Speichern trennt bestehende Verknüpfungen",
+      "description": "Die Änderung der Hierarchie betrifft {count, plural, one {# Bereich} other {# Bereiche}} in Ihrem Workspace. Prüfen Sie die Auswirkungen unten, bevor Sie fortfahren.",
       "content": {
-        "intro": "Der Arbeitselement-Typ „{workItemTypeName}“ umfasst:",
-        "parent_items": "{count, plural, one {übergeordnetes Arbeitselement} other {übergeordnete Arbeitselemente}}",
-        "child_items": "{count, plural, one {Unterarbeitselement} other {Unterarbeitselemente}}",
-        "parent_line_suffix_when_also_children": ", und ",
-        "footer": "Diese Änderung entfernt übergeordnete und untergeordnete Beziehungen bei vorhandenen Arbeitselementen des Typs {workItemTypeName}."
+        "impacted_areas": "Betroffene Bereiche",
+        "total_impacts": "{count, plural, one {# Auswirkung} other {# Auswirkungen}}",
+        "parent_items": "{count, plural, one {# übergeordnete Verknüpfung wird} other {# übergeordnete Verknüpfungen werden}} entfernt.",
+        "sub_work_items": "{count, plural, one {# Unterelement-Verknüpfung wird} other {# Unterelement-Verknüpfungen werden}} entfernt."
       },
       "confirm_input": {
-        "label": "Geben Sie „Bestätigen“ ein, um fortzufahren.",
-        "placeholder": "Bestätigen"
+        "label": "Geben Sie „bestätigen“ ein, um fortzufahren.",
+        "placeholder": "bestätigen"
       },
       "error_toast": {
         "title": "Fehler!",
-        "message": "Hierarchie konnte nicht aufgebrochen werden. Bitte versuchen Sie es erneut."
+        "message": "Verknüpfungen konnten nicht aufgehoben und gespeichert werden. Bitte versuchen Sie es erneut."
       },
+      "cancel_button": "Zurückgehen und korrigieren",
       "confirm_button": {
-        "loading": "Wird angewendet",
-        "default": "Anwenden & Verknüpfung aufheben"
+        "loading": "Speichern",
+        "default": "Trotzdem speichern"
       }
     },
     "work_item_modal": {

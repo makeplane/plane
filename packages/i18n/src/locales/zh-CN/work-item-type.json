@@ -413,6 +413,19 @@
       "max_level_placeholder": "拖放类型以添加新的层级",
       "empty_level_placeholder": "将工作项类型拖放到第 {level} 层",
       "drag_tooltip": "拖动以更改层级",
+      "modified_tooltip": "已从第 {previousLevel} 层移至第 {currentLevel} 层",
+      "pending_changes": {
+        "save": "保存更改",
+        "validating": "正在更新层级…",
+        "success_toast": {
+          "title": "成功！",
+          "message": "层级已成功更新。"
+        },
+        "error_toast": {
+          "title": "错误！",
+          "message": "层级更新失败，请重试。"
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "设为默认",
@@ -438,13 +451,13 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "验证错误！",
+      "title": "保存后将断开现有链接",
+      "description": "更改层级将影响工作区中的 {count, plural, other {# 个区域}}。请先查看下方影响再继续。",
       "content": {
-        "intro": "工作项类型 {workItemTypeName} 包含：",
-        "parent_items": "{count, plural, other {个父工作项}}",
-        "child_items": "{count, plural, other {个子工作项}}",
-        "parent_line_suffix_when_also_children": "，以及 ",
-        "footer": "此变更将从 {workItemTypeName} 工作项类型的现有工作项中移除父子关系。"
+        "impacted_areas": "受影响范围",
+        "total_impacts": "{count, plural, other {# 项影响}}",
+        "parent_items": "{count, plural, other {将清除 # 个父级链接}}。",
+        "sub_work_items": "{count, plural, other {将清除 # 个子工作项链接}}。"
       },
       "confirm_input": {
         "label": "请输入「确认」以继续。",
@@ -452,11 +465,12 @@
       },
       "error_toast": {
         "title": "错误！",
-        "message": "无法中断层级结构。请重试。"
+        "message": "解除链接并保存失败，请重试。"
       },
+      "cancel_button": "返回并修复",
       "confirm_button": {
-        "loading": "正在应用",
-        "default": "应用并解除关联"
+        "loading": "正在保存",
+        "default": "仍要保存"
       }
     },
     "work_item_modal": {

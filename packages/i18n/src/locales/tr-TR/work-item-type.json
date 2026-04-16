@@ -413,6 +413,19 @@
       "max_level_placeholder": "Yeni bir hiyerarşi seviyesi eklemek için türü sürükleyip bırakın",
       "empty_level_placeholder": "{level}. seviyeye bir iş öğesi türünü sürükleyip bırakın",
       "drag_tooltip": "Seviyeyi değiştirmek için sürükleyin",
+      "modified_tooltip": "Seviye {previousLevel} konumundan seviye {currentLevel} konumuna taşındı",
+      "pending_changes": {
+        "save": "Değişiklikleri kaydet",
+        "validating": "Hiyerarşi güncelleniyor…",
+        "success_toast": {
+          "title": "Başarılı!",
+          "message": "Hiyerarşi başarıyla güncellendi."
+        },
+        "error_toast": {
+          "title": "Hata!",
+          "message": "Hiyerarşi güncellenemedi. Lütfen tekrar deneyin."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Varsayılan olarak ayarla",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Doğrulama hatası!",
+      "title": "Kaydetmek mevcut bağlantıları kopardı",
+      "description": "Hiyerarşiyi değiştirmek çalışma alanınızda {count, plural, one {# alanı} other {# alanı}} etkiler. Devam etmeden önce aşağıdaki etkiyi gözden geçirin.",
       "content": {
-        "intro": "{workItemTypeName} iş öğesi türünde şunlar var:",
-        "parent_items": "{count, plural, one {üst iş öğesi} other {üst iş öğeleri}}",
-        "child_items": "{count, plural, one {alt iş öğesi} other {alt iş öğeleri}}",
-        "parent_line_suffix_when_also_children": ", ve ",
-        "footer": "Bu değişiklik, {workItemTypeName} iş öğesi türündeki mevcut iş öğelerinden üst-alt ilişkilerini kaldıracaktır."
+        "impacted_areas": "Etkilenen alanlar",
+        "total_impacts": "{count, plural, one {# etki} other {# etki}}",
+        "parent_items": "{count, plural, one {# üst bağlantı kaldırılacak} other {# üst bağlantı kaldırılacak}}.",
+        "sub_work_items": "{count, plural, one {# alt iş öğesi bağlantısı kaldırılacak} other {# alt iş öğesi bağlantısı kaldırılacak}}."
       },
       "confirm_input": {
-        "label": "Devam etmek için «Onayla» yazın.",
-        "placeholder": "Onayla"
+        "label": "Devam etmek için «onayla» yazın.",
+        "placeholder": "onayla"
       },
       "error_toast": {
         "title": "Hata!",
-        "message": "Hiyerarşi kırılamadı. Lütfen tekrar deneyin."
+        "message": "Bağlantılar kaldırılamadı ve kaydedilemedi. Lütfen tekrar deneyin."
       },
+      "cancel_button": "Geri dön ve düzelt",
       "confirm_button": {
-        "loading": "Uygulanıyor",
-        "default": "Uygula ve bağlantıyı kaldır"
+        "loading": "Kaydediliyor",
+        "default": "Yine de kaydet"
       }
     },
     "work_item_modal": {

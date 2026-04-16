@@ -14,6 +14,7 @@ import json
 from uuid import UUID
 
 # Third party imports
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
@@ -191,12 +192,11 @@ class WorkitemHierarchyEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-
-class WorkitemHierarchyValidationEndpoint(BaseAPIView):
+class WorkitemHierarchyBulkUpdateEndpoint(BaseAPIView):
     """
-    Dry-run validation: given a type_id and a proposed new level, return the
-    count of issues that would violate hierarchy rules (parent or child side).
-    Does not apply any changes.
+    Validate and apply a proposed hierarchy_levels mapping {type_id: level, ...}.
+    If any existing parent-child relationships would violate hierarchy rules,
+    returns the violations as a 400. Otherwise applies the level updates.
     """
 
     permission_classes = [
@@ -205,86 +205,115 @@ class WorkitemHierarchyValidationEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKITEM_TYPE_HIERARCHY)
     def post(self, request, slug):
-        type_id = request.data.get("type_id")
-        level = request.data.get("level")
+        hierarchy_levels = request.data
 
         # --- input validation ---
-        if level is None or not isinstance(level, (int, float)) or level < 0:
+        if not isinstance(hierarchy_levels, dict) or not hierarchy_levels:
             return Response(
-                {"error": "A valid non-negative level is required."},
+                {
+                    "error": "hierarchy_levels must be a non-empty mapping of type_id to level.",
+                    "error_code": "INVALID_INPUT",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not type_id:
-            return Response(
-                {"error": "type_id is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            type_id = UUID(str(type_id))
-        except (ValueError, AttributeError):
-            return Response(
-                {"error": "type_id must be a valid UUID."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        proposed_changes = {}
+        for raw_tid, lvl in hierarchy_levels.items():
+            if not isinstance(lvl, (int, float)) or lvl < 0:
+                return Response(
+                    {
+                        "error": f"Invalid level for type_id {raw_tid}. Must be a non-negative number.",
+                        "error_code": "INVALID_LEVEL",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            try:
+                proposed_changes[UUID(str(raw_tid))] = lvl
+            except (ValueError, AttributeError):
+                return Response(
+                    {"error": f"{raw_tid} is not a valid UUID.", "error_code": "INVALID_UUID"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         workspace = Workspace.objects.get(slug=slug)
+        changed_type_ids = set(proposed_changes.keys())
 
-        # Ensure the type exists in this workspace
-        if not IssueType.objects.filter(
-            id=type_id,
-            workspace_id=workspace.id,
-            is_epic=False,
-        ).exists():
+        # Verify all proposed types exist in the workspace
+        found = set(
+            IssueType.objects.filter(
+                workspace_id=workspace.id,
+                id__in=changed_type_ids,
+            ).values_list("id", flat=True)
+        )
+        missing = changed_type_ids - found
+        if missing:
             return Response(
-                {"error": "Work item type not found."},
-                status=status.HTTP_404_NOT_FOUND,
+                {"type_ids": [str(m) for m in missing], "error": "NOT_FOUND", "error_code": "NOT_FOUND"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # --- count issues that would break as a CHILD (their parent's level vs new level) ---
-        # Issues of this type that have a typed parent
-        parent_violation_count = 0
-        parent_issues = Issue.objects.filter(
-            type_id=type_id,
-            parent__isnull=False,
-            parent__type_id__isnull=False,
-        ).values_list("id", "parent__type__level")
-
-        for _issue_id, parent_level in parent_issues:
-            is_valid, _ = validate_type_hierarchy(parent_level, level)
-            if not is_valid:
-                parent_violation_count += 1
-
-        # --- count issues that would break as a PARENT (new level vs their children's level) ---
-        # Child issues whose parent has this type and who themselves have a type
-        child_violation_count = 0
-        child_issues = Issue.objects.filter(
-            parent__type_id=type_id,
-            type_id__isnull=False,
-        ).values_list("id", "type__level")
-
-        for _issue_id, child_level in child_issues:
-            is_valid, _ = validate_type_hierarchy(level, child_level)
-            if not is_valid:
-                child_violation_count += 1
-
-        total = parent_violation_count + child_violation_count
-
-        return Response(
-            {
-                "total_violations": total,
-                "parent_violations": parent_violation_count,
-                "child_violations": child_violation_count,
-            },
-            status=status.HTTP_200_OK,
+        # Build proposed level map: start with current levels, overlay proposed changes
+        proposed_level_map = dict(
+            IssueType.objects.filter(
+                workspace_id=workspace.id,
+            ).values_list("id", "level")
         )
-    
+        proposed_level_map.update(proposed_changes)
+
+        # Query all affected parent-child edges in a single query:
+        # edges where at least one side has a type being changed,
+        # and both sides have a type assigned.
+        edges = (
+            Issue.objects.filter(
+                parent__isnull=False,
+                type_id__isnull=False,
+                parent__type_id__isnull=False,
+            )
+            .filter(Q(type_id__in=changed_type_ids) | Q(parent__type_id__in=changed_type_ids))
+            .values_list("id", "type_id", "parent__type_id")
+        )
+
+        # Validate each edge against the proposed levels.
+        # Track per-type violation counts so the frontend knows which types break.
+        # violations_by_type: {type_id: {"parent": count, "child": count}}
+        violations_by_type = {}
+        for _issue_id, child_type_id, parent_type_id in edges:
+            parent_level = proposed_level_map.get(parent_type_id)
+            child_level = proposed_level_map.get(child_type_id)
+
+            is_valid, _ = validate_type_hierarchy(parent_level, child_level)
+            if not is_valid:
+                # Attribute the violation to the type(s) being changed on this edge.
+                for tid in (child_type_id, parent_type_id):
+                    if tid in changed_type_ids:
+                        entry = violations_by_type.setdefault(str(tid), {"parent_violations": 0, "child_violations": 0})
+                        if tid == child_type_id:
+                            entry["parent_violations"] += 1
+                        else:
+                            entry["child_violations"] += 1
+
+        # If there are violations, return them as a 400
+        if violations_by_type:
+            return Response(
+                {"error": violations_by_type, "error_code": "HIERARCHY_VIOLATION"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # No violations — apply the level updates
+        for type_id, level in proposed_changes.items():
+            IssueType.objects.filter(
+                id=type_id,
+                workspace_id=workspace.id,
+            ).update(level=level)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class WorkitemHierarchyRelationBreakEndpoint(BaseAPIView):
     """
-    given a type_id and a proposed new level, validate the hierarchy rules and if not valid
-    break the parent-child relationships that violate the rules by setting the parent to null.
+    Given a proposed hierarchy_levels mapping {type_id: level, ...}, find all
+    parent-child relationships that would violate the rules and break them by
+    setting parent to null. Then apply the level updates.
     """
 
     permission_classes = [
@@ -293,102 +322,103 @@ class WorkitemHierarchyRelationBreakEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.WORKITEM_TYPE_HIERARCHY)
     def post(self, request, slug):
-        type_id = request.data.get("type_id")
-        level = request.data.get("level")
+        hierarchy_levels = request.data
 
         # --- input validation ---
-        if level is None or not isinstance(level, (int, float)) or level < 0:
+        if not isinstance(hierarchy_levels, dict) or not hierarchy_levels:
             return Response(
-                {"error": "A valid non-negative level is required."},
+                {
+                    "error": "hierarchy_levels must be a non-empty mapping of type_id to level.",
+                    "error_code": "INVALID_INPUT",
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if not type_id:
-            return Response(
-                {"error": "type_id is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        try:
-            type_id = UUID(str(type_id))
-        except (ValueError, AttributeError):
-            return Response(
-                {"error": "type_id must be a valid UUID."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        proposed_changes = {}
+        for raw_tid, lvl in hierarchy_levels.items():
+            if not isinstance(lvl, (int, float)) or lvl < 0:
+                return Response(
+                    {
+                        "error": f"Invalid level for type_id {raw_tid}. Must be a non-negative number.",
+                        "error_code": "INVALID_LEVEL",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            try:
+                proposed_changes[UUID(str(raw_tid))] = lvl
+            except (ValueError, AttributeError):
+                return Response(
+                    {"error": f"{raw_tid} is not a valid UUID."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         workspace = Workspace.objects.get(slug=slug)
+        changed_type_ids = set(proposed_changes.keys())
 
-        # Ensure the type exists in this workspace
-        if not IssueType.objects.filter(
-            id=type_id,
-            workspace_id=workspace.id,
-            is_epic=False,
-        ).exists():
+        # Verify all proposed types exist in the workspace
+        found = set(
+            IssueType.objects.filter(
+                workspace_id=workspace.id,
+                id__in=changed_type_ids,
+            ).values_list("id", flat=True)
+        )
+        missing = changed_type_ids - found
+        if missing:
             return Response(
-                {"error": "Work item type not found."},
-                status=status.HTTP_404_NOT_FOUND,
+                {"type_ids": [str(m) for m in missing], "error": "NOT_FOUND"},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # --- count issues that would break as a CHILD (their parent's level vs new level) ---
-        # Issues of this type that have a typed parent
-        parent_violation_issues = []
-        parent_issues = Issue.objects.filter(
-            type_id=type_id,
-            parent__isnull=False,
-            parent__type_id__isnull=False,
-        ).values_list("id", "parent__type__level", "parent_id", "project_id")
+        # Build proposed level map: current levels + proposed overrides
+        proposed_level_map = dict(
+            IssueType.objects.filter(
+                workspace_id=workspace.id,
+            ).values_list("id", "level")
+        )
+        proposed_level_map.update(proposed_changes)
 
-        for _issue_id, parent_level, _parent_id, _project_id in parent_issues:
-            is_valid, _ = validate_type_hierarchy(parent_level, level)
-            if not is_valid:
-                parent_violation_issues.append((_issue_id, _parent_id, _project_id))
-
-        # --- count issues that would break as a PARENT (new level vs their children's level) ---
-        # Child issues whose parent has this type and who themselves have a type
-        child_violation_issues = []
-        child_issues = Issue.objects.filter(
-            parent__type_id=type_id,
-            type_id__isnull=False,
-        ).values_list("id", "type__level", "parent_id", "project_id")
-
-        for _issue_id, child_level, _parent_id, _project_id in child_issues:
-            is_valid, _ = validate_type_hierarchy(level, child_level)
-            if not is_valid:
-                child_violation_issues.append((_issue_id, _parent_id, _project_id))
-
-        parent_violation_ids = [i[0] for i in parent_violation_issues]
-        child_violation_ids = [i[0] for i in child_violation_issues]
-
-        # Break parent-child relationships for violating issues by setting parent to null
-        parent_issues_updated = 0
-        child_issues_updated = 0
-        if parent_violation_ids:
-            parent_issues_updated = Issue.objects.filter(id__in=parent_violation_ids).update(parent_id=None)
-        if child_violation_ids:
-            child_issues_updated = Issue.objects.filter(id__in=child_violation_ids).update(parent_id=None)
-
-        # Record issue activity for each broken parent-child relationship
-        epoch = int(timezone.now().timestamp())
-        for _issue_id, _parent_id, _project_id in (
-            parent_violation_issues + child_violation_issues
-        ):
-            issue_activity.delay(
-                type="issue.activity.updated",
-                requested_data=json.dumps({"parent_hierarchy_break": None}),
-                actor_id=str(request.user.id),
-                issue_id=str(_issue_id),
-                project_id=str(_project_id),
-                current_instance=json.dumps({"parent_id": str(_parent_id)}),
-                epoch=epoch,
+        # Query all affected parent-child edges (need parent_id and project_id for activity logging)
+        edges = (
+            Issue.objects.filter(
+                parent__isnull=False,
+                type_id__isnull=False,
+                parent__type_id__isnull=False,
             )
+            .filter(Q(type_id__in=changed_type_ids) | Q(parent__type_id__in=changed_type_ids))
+            .values_list("id", "type_id", "parent__type_id", "parent_id", "project_id")
+        )
+
+        # Collect violating issues
+        violation_issues = []
+        for issue_id, child_type_id, parent_type_id, parent_id, project_id in edges:
+            parent_level = proposed_level_map.get(parent_type_id)
+            child_level = proposed_level_map.get(child_type_id)
+
+            is_valid, _ = validate_type_hierarchy(parent_level, child_level)
+            if not is_valid:
+                violation_issues.append((issue_id, parent_id, project_id))
+
+        # Break parent-child relationships for violating issues
+        violation_ids = [v[0] for v in violation_issues]
+        issues_updated = 0
+        if violation_ids:
+            issues_updated = Issue.objects.filter(id__in=violation_ids).update(parent_id=None)
+
+        # Record issue activity for each broken relationship
+        if violation_issues:
+            epoch = int(timezone.now().timestamp())
+            for issue_id, parent_id, project_id in violation_issues:
+                issue_activity.delay(
+                    type="issue.activity.updated",
+                    requested_data=json.dumps({"parent_hierarchy_break": None}),
+                    actor_id=str(request.user.id),
+                    issue_id=str(issue_id),
+                    project_id=str(project_id),
+                    current_instance=json.dumps({"parent_id": str(parent_id)}),
+                    epoch=epoch,
+                )
 
         return Response(
-            {
-                "total_violations": parent_issues_updated + child_issues_updated,
-                "parent_violations": parent_issues_updated,
-                "child_violations": child_issues_updated,
-            },
+            {"total_violations": issues_updated},
             status=status.HTTP_200_OK,
         )
-    

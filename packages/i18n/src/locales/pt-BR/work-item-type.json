@@ -413,6 +413,19 @@
       "max_level_placeholder": "Arraste e solte um tipo para adicionar um novo nível de hierarquia",
       "empty_level_placeholder": "Arraste e solte um tipo de item de trabalho para o nível {level}",
       "drag_tooltip": "Arraste para mudar o nível",
+      "modified_tooltip": "Movido do nível {previousLevel} para o nível {currentLevel}",
+      "pending_changes": {
+        "save": "Salvar alterações",
+        "validating": "Atualizando hierarquia…",
+        "success_toast": {
+          "title": "Sucesso!",
+          "message": "Hierarquia atualizada com sucesso."
+        },
+        "error_toast": {
+          "title": "Erro!",
+          "message": "Falha ao atualizar a hierarquia. Tente novamente."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Definir como padrão",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Erro de validação!",
+      "title": "Salvar quebrará os vínculos existentes",
+      "description": "Alterar a hierarquia afetará {count, plural, one {# área} other {# áreas}} no seu workspace. Revise o impacto abaixo antes de continuar.",
       "content": {
-        "intro": "O tipo de item de trabalho {workItemTypeName} possui:",
-        "parent_items": "{count, plural, one {item de trabalho pai} other {itens de trabalho pai}}",
-        "child_items": "{count, plural, one {subitem de trabalho} other {subitens de trabalho}}",
-        "parent_line_suffix_when_also_children": ", e ",
-        "footer": "Esta alteração removerá as relações pai-filho dos itens de trabalho existentes do tipo {workItemTypeName}."
+        "impacted_areas": "Áreas afetadas",
+        "total_impacts": "{count, plural, one {# impacto} other {# impactos}}",
+        "parent_items": "{count, plural, one {# vínculo pai será} other {# vínculos pai serão}} removidos.",
+        "sub_work_items": "{count, plural, one {# vínculo de subitem será} other {# vínculos de subitem serão}} removidos."
       },
       "confirm_input": {
-        "label": "Digite «Confirmar» para continuar.",
-        "placeholder": "Confirmar"
+        "label": "Digite «confirmar» para continuar.",
+        "placeholder": "confirmar"
       },
       "error_toast": {
         "title": "Erro!",
-        "message": "Falha ao romper a hierarquia. Por favor, tente novamente."
+        "message": "Falha ao desvincular e salvar. Tente novamente."
       },
+      "cancel_button": "Voltar e corrigir",
       "confirm_button": {
-        "loading": "Aplicando",
-        "default": "Aplicar e desvincular"
+        "loading": "Salvando",
+        "default": "Salvar mesmo assim"
       }
     },
     "work_item_modal": {

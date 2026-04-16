@@ -413,6 +413,19 @@
       "max_level_placeholder": "Arrastra y suelta un tipo para añadir un nuevo nivel de jerarquía",
       "empty_level_placeholder": "Arrastra y suelta un tipo de elemento de trabajo al nivel {level}",
       "drag_tooltip": "Arrastrar para cambiar de nivel",
+      "modified_tooltip": "Movido del nivel {previousLevel} al nivel {currentLevel}",
+      "pending_changes": {
+        "save": "Guardar cambios",
+        "validating": "Actualizando jerarquía…",
+        "success_toast": {
+          "title": "¡Éxito!",
+          "message": "La jerarquía se actualizó correctamente."
+        },
+        "error_toast": {
+          "title": "¡Error!",
+          "message": "No se pudo actualizar la jerarquía. Inténtelo de nuevo."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Establecer como predeterminado",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "¡Error de validación!",
+      "title": "Guardar romperá los enlaces existentes",
+      "description": "Cambiar la jerarquía afectará a {count, plural, one {# área} other {# áreas}} en tu espacio de trabajo. Revisa el impacto a continuación antes de continuar.",
       "content": {
-        "intro": "El tipo de elemento de trabajo {workItemTypeName} tiene:",
-        "parent_items": "{count, plural, one {elemento de trabajo padre} other {elementos de trabajo padre}}",
-        "child_items": "{count, plural, one {subelemento de trabajo} other {subelementos de trabajo}}",
-        "parent_line_suffix_when_also_children": ", y ",
-        "footer": "Este cambio eliminará las relaciones padre-hijo de los elementos de trabajo existentes del tipo {workItemTypeName}."
+        "impacted_areas": "Áreas afectadas",
+        "total_impacts": "{count, plural, one {# impacto} other {# impactos}}",
+        "parent_items": "{count, plural, one {Se eliminará # enlace principal} other {Se eliminarán # enlaces principales}}.",
+        "sub_work_items": "{count, plural, one {Se eliminará # enlace de subelemento} other {Se eliminarán # enlaces de subelementos}}."
       },
       "confirm_input": {
-        "label": "Escribe «Confirmar» para continuar.",
-        "placeholder": "Confirmar"
+        "label": "Escribe «confirmar» para continuar.",
+        "placeholder": "confirmar"
       },
       "error_toast": {
         "title": "¡Error!",
-        "message": "No se pudo romper la jerarquía. Inténtalo de nuevo."
+        "message": "No se pudieron desvincular los enlaces ni guardar. Inténtelo de nuevo."
       },
+      "cancel_button": "Volver y corregir",
       "confirm_button": {
-        "loading": "Aplicando",
-        "default": "Aplicar y desvincular"
+        "loading": "Guardando",
+        "default": "Guardar de todos modos"
       }
     },
     "work_item_modal": {

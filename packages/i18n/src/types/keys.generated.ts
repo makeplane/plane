@@ -12,7 +12,7 @@
  */
 
 // AUTO-GENERATED — DO NOT EDIT
-// Generated from 37 English namespace files (4813 keys)
+// Generated from 37 English namespace files (4821 keys)
 // Run: pnpm run generate:types
 
 export type TTranslationKeys =
@@ -3961,21 +3961,29 @@ export type TTranslationKeys =
   | "wiki_collections.toasts.renamed"
   | "wiki_collections.toasts.target_required"
   | "wiki_collections.toasts.transferred_deleted"
+  | "work_item_type_hierarchy.break_hierarchy_modal.cancel_button"
   | "work_item_type_hierarchy.break_hierarchy_modal.confirm_button.default"
   | "work_item_type_hierarchy.break_hierarchy_modal.confirm_button.loading"
   | "work_item_type_hierarchy.break_hierarchy_modal.confirm_input.label"
   | "work_item_type_hierarchy.break_hierarchy_modal.confirm_input.placeholder"
-  | "work_item_type_hierarchy.break_hierarchy_modal.content.child_items"
-  | "work_item_type_hierarchy.break_hierarchy_modal.content.footer"
-  | "work_item_type_hierarchy.break_hierarchy_modal.content.intro"
+  | "work_item_type_hierarchy.break_hierarchy_modal.content.impacted_areas"
   | "work_item_type_hierarchy.break_hierarchy_modal.content.parent_items"
-  | "work_item_type_hierarchy.break_hierarchy_modal.content.parent_line_suffix_when_also_children"
+  | "work_item_type_hierarchy.break_hierarchy_modal.content.sub_work_items"
+  | "work_item_type_hierarchy.break_hierarchy_modal.content.total_impacts"
+  | "work_item_type_hierarchy.break_hierarchy_modal.description"
   | "work_item_type_hierarchy.break_hierarchy_modal.error_toast.message"
   | "work_item_type_hierarchy.break_hierarchy_modal.error_toast.title"
   | "work_item_type_hierarchy.break_hierarchy_modal.title"
   | "work_item_type_hierarchy.levels.drag_tooltip"
   | "work_item_type_hierarchy.levels.empty_level_placeholder"
   | "work_item_type_hierarchy.levels.max_level_placeholder"
+  | "work_item_type_hierarchy.levels.modified_tooltip"
+  | "work_item_type_hierarchy.levels.pending_changes.error_toast.message"
+  | "work_item_type_hierarchy.levels.pending_changes.error_toast.title"
+  | "work_item_type_hierarchy.levels.pending_changes.save"
+  | "work_item_type_hierarchy.levels.pending_changes.success_toast.message"
+  | "work_item_type_hierarchy.levels.pending_changes.success_toast.title"
+  | "work_item_type_hierarchy.levels.pending_changes.validating"
   | "work_item_type_hierarchy.levels.quick_actions.set_as_default.label"
   | "work_item_type_hierarchy.levels.quick_actions.set_as_default.toast.error.message"
   | "work_item_type_hierarchy.levels.quick_actions.set_as_default.toast.error.title"

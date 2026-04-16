@@ -29,6 +29,6 @@ from .value import IssuePropertyValueEndpoint
 from .merge import MergeWorkItemTypesEndpoint
 from .hierarchy import (
     WorkitemHierarchyEndpoint,
-    WorkitemHierarchyValidationEndpoint,
+    WorkitemHierarchyBulkUpdateEndpoint,
     WorkitemHierarchyRelationBreakEndpoint,
 )

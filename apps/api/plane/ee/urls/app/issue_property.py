@@ -34,7 +34,7 @@ from plane.ee.views.app.issue_property import (
     MergeWorkItemTypesEndpoint,
     WorkspaceWorkItemTypeFormulaValidateEndpoint,
     WorkitemHierarchyEndpoint,
-    WorkitemHierarchyValidationEndpoint,
+    WorkitemHierarchyBulkUpdateEndpoint,
     WorkitemHierarchyRelationBreakEndpoint,
 )
 
@@ -219,9 +219,9 @@ urlpatterns = [
         name="workitem-hierarchy",
     ),
     path(
-        "workspaces/<str:slug>/work-item-types/hierarchy/validate/",
-        WorkitemHierarchyValidationEndpoint.as_view(),
-        name="workitem-hierarchy-validate",
+        "workspaces/<str:slug>/work-item-types/hierarchy/bulk-update/",
+        WorkitemHierarchyBulkUpdateEndpoint.as_view(),
+        name="workitem-hierarchy-bulk-update",
     ),
     path(
         "workspaces/<str:slug>/work-item-types/hierarchy/break/",

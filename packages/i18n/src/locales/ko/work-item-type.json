@@ -413,6 +413,19 @@
       "max_level_placeholder": "새 계층 레벨을 추가하려면 유형을 끌어다 놓으세요",
       "empty_level_placeholder": "작업 항목 유형을 레벨 {level}(으)로 끌어다 놓으세요",
       "drag_tooltip": "드래그하여 레벨 변경",
+      "modified_tooltip": "레벨 {previousLevel}에서 레벨 {currentLevel}(으)로 이동됨",
+      "pending_changes": {
+        "save": "변경 사항 저장",
+        "validating": "계층 구조 업데이트 중…",
+        "success_toast": {
+          "title": "성공!",
+          "message": "계층 구조가 성공적으로 업데이트되었습니다."
+        },
+        "error_toast": {
+          "title": "오류!",
+          "message": "계층 구조를 업데이트하지 못했습니다. 다시 시도해 주세요."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "기본값으로 설정",
@@ -438,13 +451,13 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "유효성 검사 오류!",
+      "title": "저장하면 기존 링크가 끊어집니다",
+      "description": "계층 구조를 변경하면 작업 공간에서 {count, plural, other {#개 영역}}에 영향을 줍니다. 계속하기 전에 아래 영향을 검토하세요.",
       "content": {
-        "intro": "작업 항목 유형 {workItemTypeName}에 다음이 있습니다.",
-        "parent_items": "{count, plural, other {상위 작업 항목}}",
-        "child_items": "{count, plural, other {하위 작업 항목}}",
-        "parent_line_suffix_when_also_children": ", 그리고 ",
-        "footer": "이 변경은 {workItemTypeName} 작업 항목 유형의 기존 작업 항목에서 상위·하위 관계를 제거합니다."
+        "impacted_areas": "영향을 받는 영역",
+        "total_impacts": "{count, plural, other {#개 영향}}",
+        "parent_items": "{count, plural, other {#개 상위 링크가}} 제거됩니다.",
+        "sub_work_items": "{count, plural, other {#개 하위 작업 항목 링크가}} 제거됩니다."
       },
       "confirm_input": {
         "label": "계속하려면 \"확인\"을 입력하세요.",
@@ -452,11 +465,12 @@
       },
       "error_toast": {
         "title": "오류!",
-        "message": "계층 구조를 깨뜨리지 못했습니다. 다시 시도해 주세요."
+        "message": "연결을 해제하고 저장하지 못했습니다. 다시 시도해 주세요."
       },
+      "cancel_button": "돌아가서 수정",
       "confirm_button": {
-        "loading": "적용 중",
-        "default": "적용 및 연결 해제"
+        "loading": "저장 중",
+        "default": "그래도 저장"
       }
     },
     "work_item_modal": {

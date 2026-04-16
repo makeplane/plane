@@ -25,7 +25,6 @@ import type {
   CustomPropertyType,
   TWorkItemTypeResponse,
   TReorderPropertyToGlobalTypePayload,
-  TUpdateWorkItemTypeHierarchyPayload,
   TValidateLevelChangePayload,
   TValidateLevelChangeResponse,
 } from "@plane/types";
@@ -135,22 +134,14 @@ export class WorkspaceWorkItemTypesService extends APIService {
       });
   }
 
-  async updateHierarchy(workspaceSlug: string, payload: TUpdateWorkItemTypeHierarchyPayload): Promise<void> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/work-item-types/hierarchy/`, payload)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async validateLevelChange(
+  async validateLevelChangeAndUpdateTypes(
     workspaceSlug: string,
     payload: TValidateLevelChangePayload
   ): Promise<TValidateLevelChangeResponse> {
-    return this.post(`/api/workspaces/${workspaceSlug}/work-item-types/hierarchy/validate/`, payload)
+    return this.post(`/api/workspaces/${workspaceSlug}/work-item-types/hierarchy/bulk-update/`, payload)
       .then((response) => response?.data)
       .catch((error) => {
-        throw error?.response?.data;
+        throw error;
       });
   }
 

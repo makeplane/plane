@@ -18,14 +18,10 @@ import { observer } from "mobx-react";
 import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import type { TValidateLevelChangeResponse } from "@plane/types";
 import { cn } from "@plane/utils";
-// plane web imports
-import { useWorkItemType } from "@/plane-web/hooks/store/work-item-types/use-work-item-type";
 // local imports
-import { handleWorkItemHierarchyDrop, isWorkItemHierarchyDragData } from "./drag-helpers";
-import { useWorkItemTypeHierarchyDndProcessing } from "./hierarchy-dnd-processing-context";
-import { ValidationChangeErrorModal } from "./validation-change-error-modal";
+import { isWorkItemHierarchyDragData } from "./drag-helpers";
+import { useWorkItemTypeHierarchyLocalState } from "./hierarchy-local-state-context";
 
 type WorkItemTypeHierarchyMaxLevelProps = {
   disabled?: boolean;
@@ -40,18 +36,13 @@ export const WorkItemTypeHierarchyMaxLevel = observer(function WorkItemTypeHiera
   const divRef = useRef<HTMLDivElement | null>(null);
   // states
   const [isDragOver, setIsDragOver] = useState(false);
-  const [isValidationChangeErrorModalOpen, setIsValidationChangeErrorModalOpen] = useState(false);
-  const [validationChangeErrorData, setValidationChangeErrorData] = useState<TValidateLevelChangeResponse | null>(null);
-  const [droppedWorkItemTypeId, setDroppedWorkItemTypeId] = useState<string | null>(null);
   // params
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { getWorkItemType } = useWorkItemType();
-  const { isProcessing, setProcessing } = useWorkItemTypeHierarchyDndProcessing();
+  const { applyHierarchyDrop } = useWorkItemTypeHierarchyLocalState();
   // translation
   const { t } = useTranslation();
 
-  const isDropEnabled = !disabled && !isProcessing;
+  const isDropEnabled = !disabled;
 
   useEffect(() => {
     const element = divRef.current;
@@ -66,62 +57,33 @@ export const WorkItemTypeHierarchyMaxLevel = observer(function WorkItemTypeHiera
         },
         onDragEnter: () => setIsDragOver(true),
         onDragLeave: () => setIsDragOver(false),
-        onDrop: async ({ source }) => {
+        onDrop: ({ source }) => {
           setIsDragOver(false);
           if (!workspaceSlug) return;
           const data = source.data;
           if (!isWorkItemHierarchyDragData(data)) return;
           if (data.sourceLevel === level) return;
-          const workItemType = getWorkItemType(data.workItemTypeId);
-          if (!workItemType) return;
-          await handleWorkItemHierarchyDrop({
-            onProcessingChange: setProcessing,
-            onValidationError: (validationErrorData) => {
-              setIsValidationChangeErrorModalOpen(true);
-              setValidationChangeErrorData(validationErrorData);
-              setDroppedWorkItemTypeId(data.workItemTypeId);
-            },
-            t,
+          applyHierarchyDrop({
+            workItemTypeId: data.workItemTypeId,
+            sourceLevel: data.sourceLevel,
             targetLevel: level,
-            workItemType,
-            workspaceSlug,
           });
         },
       })
     );
-  }, [isDropEnabled, level, getWorkItemType, setProcessing, workspaceSlug, t]);
+  }, [applyHierarchyDrop, isDropEnabled, level, workspaceSlug]);
 
   return (
-    <>
-      {droppedWorkItemTypeId && (
-        <ValidationChangeErrorModal
-          data={validationChangeErrorData}
-          isOpen={isValidationChangeErrorModalOpen}
-          onClose={() => {
-            setIsValidationChangeErrorModalOpen(false);
-            setTimeout(() => {
-              setValidationChangeErrorData(null);
-              setDroppedWorkItemTypeId(null);
-            }, 350);
-          }}
-          workItemTypeId={droppedWorkItemTypeId}
-          level={level}
-          workspaceSlug={workspaceSlug}
-        />
+    <div
+      ref={divRef}
+      className={cn(
+        "w-full bg-layer-2 border border-dashed border-strong-1 px-3 py-4.5 rounded-lg text-center transition-colors",
+        {
+          "border-accent-strong bg-layer-2-hover": isDragOver,
+        }
       )}
-      <div
-        ref={divRef}
-        className={cn(
-          "w-full bg-layer-2 border border-dashed border-strong-1 px-3 py-4.5 rounded-lg text-center transition-colors",
-          {
-            "border-accent-strong bg-layer-2-hover": isDragOver,
-          }
-        )}
-      >
-        <p className="text-body-xs-regular text-tertiary">
-          {t("work_item_type_hierarchy.levels.max_level_placeholder")}
-        </p>
-      </div>
-    </>
+    >
+      <p className="text-body-xs-regular text-tertiary">{t("work_item_type_hierarchy.levels.max_level_placeholder")}</p>
+    </div>
   );
 });

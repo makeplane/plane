@@ -413,6 +413,19 @@
       "max_level_placeholder": "Przeciągnij i upuść typ, aby dodać nowy poziom hierarchii",
       "empty_level_placeholder": "Przeciągnij i upuść typ elementu roboczego na poziom {level}",
       "drag_tooltip": "Przeciągnij, aby zmienić poziom",
+      "modified_tooltip": "Przeniesiono z poziomu {previousLevel} na poziom {currentLevel}",
+      "pending_changes": {
+        "save": "Zapisz zmiany",
+        "validating": "Aktualizowanie hierarchii…",
+        "success_toast": {
+          "title": "Sukces!",
+          "message": "Hierarchia została pomyślnie zaktualizowana."
+        },
+        "error_toast": {
+          "title": "Błąd!",
+          "message": "Nie udało się zaktualizować hierarchii. Spróbuj ponownie."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Ustaw jako domyślny",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Błąd walidacji!",
+      "title": "Zapisanie usunie istniejące powiązania",
+      "description": "Zmiana hierarchii wpłynie na {count, plural, one {# obszar} few {# obszary} other {# obszarów}} w przestrzeni roboczej. Przejrzyj skutki poniżej przed kontynuacją.",
       "content": {
-        "intro": "Typ elementu roboczego {workItemTypeName} obejmuje:",
-        "parent_items": "{count, plural, one {element nadrzędny} few {elementy nadrzędne} other {elementów nadrzędnych}}",
-        "child_items": "{count, plural, one {podelement} few {podelementy} other {podelementów}}",
-        "parent_line_suffix_when_also_children": ", oraz ",
-        "footer": "Ta zmiana usunie relacje nadrzędne i podrzędne z istniejących elementów roboczych typu {workItemTypeName}."
+        "impacted_areas": "Obszary objęte zmianą",
+        "total_impacts": "{count, plural, one {# skutek} few {# skutki} other {# skutków}}",
+        "parent_items": "{count, plural, one {Zostanie usunięte # powiązanie nadrzędne} few {Zostaną usunięte # powiązania nadrzędne} other {Zostanie usuniętych # powiązań nadrzędnych}}.",
+        "sub_work_items": "{count, plural, one {Zostanie usunięte # powiązanie podelementu} few {Zostaną usunięte # powiązania podelementów} other {Zostanie usuniętych # powiązań podelementów}}."
       },
       "confirm_input": {
-        "label": "Wpisz „Potwierdź”, aby kontynuować.",
-        "placeholder": "Potwierdź"
+        "label": "Wpisz „potwierdź”, aby kontynuować.",
+        "placeholder": "potwierdź"
       },
       "error_toast": {
         "title": "Błąd!",
-        "message": "Nie udało się zerwać hierarchii. Spróbuj ponownie."
+        "message": "Nie udało się odłączyć powiązań i zapisać. Spróbuj ponownie."
       },
+      "cancel_button": "Wróć i popraw",
       "confirm_button": {
-        "loading": "Stosowanie",
-        "default": "Zastosuj i odłącz"
+        "loading": "Zapisywanie",
+        "default": "Zapisz mimo to"
       }
     },
     "work_item_modal": {

@@ -19,16 +19,13 @@ import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Badge } from "@plane/propel/badge";
-import type { BaseWorkItemTypeInstanceSchema, TValidateLevelChangeResponse } from "@plane/types";
+import type { BaseWorkItemTypeInstanceSchema } from "@plane/types";
 import { cn } from "@plane/utils";
-// plane web imports
-import { useWorkItemType } from "@/plane-web/hooks/store/work-item-types/use-work-item-type";
 // local imports
-import { handleWorkItemHierarchyDrop, isWorkItemHierarchyDragData } from "./drag-helpers";
-import { useWorkItemTypeHierarchyDndProcessing } from "./hierarchy-dnd-processing-context";
+import { isWorkItemHierarchyDragData } from "./drag-helpers";
+import { useWorkItemTypeHierarchyLocalState } from "./hierarchy-local-state-context";
 import { WorkItemTypeHierarchyLevelItemType } from "./level-item-type";
 import { WorkItemTypeHierarchyLevelQuickActions } from "./level-quick-actions";
-import { ValidationChangeErrorModal } from "./validation-change-error-modal";
 
 type WorkItemTypeHierarchyLevelItemProps = {
   defaultLevel: number;
@@ -45,18 +42,12 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
   const containerRef = useRef<HTMLDivElement | null>(null);
   // states
   const [isDragOver, setIsDragOver] = useState(false);
-  const [isValidationChangeErrorModalOpen, setIsValidationChangeErrorModalOpen] = useState(false);
-  const [validationChangeErrorData, setValidationChangeErrorData] = useState<TValidateLevelChangeResponse | null>(null);
-  const [droppedWorkItemTypeId, setDroppedWorkItemTypeId] = useState<string | null>(null);
   // params
   const { workspaceSlug } = useParams();
-  // store hooks
-  const { getWorkItemType } = useWorkItemType();
-  const { isProcessing, setProcessing } = useWorkItemTypeHierarchyDndProcessing();
+  const { applyHierarchyDrop } = useWorkItemTypeHierarchyLocalState();
+  const { t } = useTranslation();
   // derived values
   const isEmptyLevel = workItemTypes.length === 0;
-  // translation
-  const { t } = useTranslation();
 
   useEffect(() => {
     const element = containerRef.current;
@@ -66,96 +57,68 @@ export const WorkItemTypeHierarchyLevelItem = observer(function WorkItemTypeHier
       dropTargetForElements({
         element,
         canDrop: ({ source }) => {
-          if (isProcessing) return false;
           const data = source.data;
           return isWorkItemHierarchyDragData(data) && data.sourceLevel !== level;
         },
         onDragEnter: () => setIsDragOver(true),
         onDragLeave: () => setIsDragOver(false),
-        onDrop: async ({ source }) => {
+        onDrop: ({ source }) => {
           setIsDragOver(false);
           if (!workspaceSlug) return;
           const data = source.data;
           if (!isWorkItemHierarchyDragData(data)) return;
           if (data.sourceLevel === level) return;
-          const workItemType = getWorkItemType(data.workItemTypeId);
-          if (!workItemType) return;
-          await handleWorkItemHierarchyDrop({
-            onProcessingChange: setProcessing,
-            onValidationError: (validationErrorData) => {
-              setIsValidationChangeErrorModalOpen(true);
-              setValidationChangeErrorData(validationErrorData);
-              setDroppedWorkItemTypeId(data.workItemTypeId);
-            },
-            t,
+          applyHierarchyDrop({
+            workItemTypeId: data.workItemTypeId,
+            sourceLevel: data.sourceLevel,
             targetLevel: level,
-            workItemType,
-            workspaceSlug,
           });
         },
       })
     );
-  }, [isProcessing, level, getWorkItemType, setProcessing, workspaceSlug, t]);
+  }, [applyHierarchyDrop, level, workspaceSlug]);
 
   return (
-    <>
-      {droppedWorkItemTypeId && (
-        <ValidationChangeErrorModal
-          data={validationChangeErrorData}
-          isOpen={isValidationChangeErrorModalOpen}
-          onClose={() => {
-            setIsValidationChangeErrorModalOpen(false);
-            setTimeout(() => {
-              setValidationChangeErrorData(null);
-              setDroppedWorkItemTypeId(null);
-            }, 350);
-          }}
-          level={level}
-          workItemTypeId={droppedWorkItemTypeId}
-          workspaceSlug={workspaceSlug}
-        />
+    <div
+      ref={containerRef}
+      className={cn(
+        "bg-layer-2 border border-subtle p-3 rounded-lg flex items-start justify-between gap-2 truncate transition-colors",
+        {
+          "border-accent-strong bg-layer-2-hover": isDragOver,
+        }
       )}
-      <div
-        ref={containerRef}
-        className={cn(
-          "bg-layer-2 border border-subtle p-3 rounded-lg flex items-start justify-between gap-2 truncate transition-colors",
-          {
-            "border-accent-strong bg-layer-2-hover": isDragOver,
-          }
+    >
+      <div className="flex gap-2">
+        <span
+          className={cn(
+            "shrink-0 size-8 bg-layer-3 rounded-md text-caption-md-medium text-secondary grid place-items-center",
+            {
+              "text-placeholder": level === 0,
+            }
+          )}
+        >
+          {level}
+        </span>
+        {isEmptyLevel ? (
+          <p className="text-body-xs-regular text-tertiary py-1.5">
+            {t("work_item_type_hierarchy.levels.empty_level_placeholder", { level })}
+          </p>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2">
+            {workItemTypes.map((workItemType) => (
+              <WorkItemTypeHierarchyLevelItemType key={workItemType.id} level={level} workItemType={workItemType} />
+            ))}
+          </div>
         )}
-      >
-        <div className="flex gap-2 truncate">
-          <span
-            className={cn(
-              "shrink-0 size-8 bg-layer-3 rounded-md text-caption-md-medium text-secondary grid place-items-center",
-              {
-                "text-placeholder": level === 0,
-              }
-            )}
-          >
-            {level}
-          </span>
-          {isEmptyLevel ? (
-            <p className="text-body-xs-regular text-tertiary py-1.5">
-              {t("work_item_type_hierarchy.levels.empty_level_placeholder", { level })}
-            </p>
-          ) : (
-            <div className="flex flex-wrap items-center gap-2">
-              {workItemTypes.map((workItemType) => (
-                <WorkItemTypeHierarchyLevelItemType key={workItemType.id} level={level} workItemType={workItemType} />
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="shrink-0 flex items-center gap-2 py-1">
-          {level === defaultLevel && (
-            <Badge size="sm" variant="neutral">
-              {t("common.default")}
-            </Badge>
-          )}
-          <WorkItemTypeHierarchyLevelQuickActions defaultLevel={defaultLevel} level={level} />
-        </div>
       </div>
-    </>
+      <div className="shrink-0 flex items-center gap-2 py-1">
+        {level === defaultLevel && (
+          <Badge size="sm" variant="neutral">
+            {t("common.default")}
+          </Badge>
+        )}
+        <WorkItemTypeHierarchyLevelQuickActions defaultLevel={defaultLevel} level={level} />
+      </div>
+    </div>
   );
 });

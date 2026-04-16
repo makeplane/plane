@@ -413,6 +413,19 @@
       "max_level_placeholder": "Drag and drop type to add a new hierarchy level",
       "empty_level_placeholder": "Drag and drop a work item type to level {level}",
       "drag_tooltip": "Drag to change level",
+      "modified_tooltip": "Moved from level {previousLevel} to level {currentLevel}",
+      "pending_changes": {
+        "save": "Save changes",
+        "validating": "Updating hierarchy…",
+        "success_toast": {
+          "title": "Success!",
+          "message": "Hierarchy updated successfully."
+        },
+        "error_toast": {
+          "title": "Error!",
+          "message": "Failed to update hierarchy. Please try again."
+        }
+      },
       "quick_actions": {
         "set_as_default": {
           "label": "Set as default",
@@ -438,25 +451,26 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Validation error!",
+      "title": "Saving this will break existing links",
+      "description": "Changing the hierarchy will affect {count, plural, one {# area} other {# areas}} across your workspace. Review the impact below before proceeding.",
       "content": {
-        "intro": "Work item type {workItemTypeName} has:",
-        "parent_items": "{count, plural, one {parent work item} other {parent work items}}",
-        "child_items": "{count, plural, one {sub-work item} other {sub-work items}}",
-        "parent_line_suffix_when_also_children": ", and ",
-        "footer": "This change will remove parent and child relationships from existing work items of {workItemTypeName} work item type."
+        "impacted_areas": "Impacted areas",
+        "total_impacts": "{count, plural, one {# impact} other {# impacts}}",
+        "parent_items": "{count, plural, one {# parent link} other {# parent links}} will be cleared.",
+        "sub_work_items": "{count, plural, one {# sub-work item link} other {# sub-work item links}} will be cleared."
       },
       "confirm_input": {
-        "label": "Type in \"Confirm\" to continue.",
-        "placeholder": "Confirm"
+        "label": "Type in \"confirm\" to continue.",
+        "placeholder": "confirm"
       },
       "error_toast": {
         "title": "Error!",
-        "message": "Failed to break hierarchy. Please try again."
+        "message": "Failed to unlink and save. Please try again."
       },
+      "cancel_button": "Go back and fix",
       "confirm_button": {
-        "loading": "Applying",
-        "default": "Apply & Unlink"
+        "loading": "Saving",
+        "default": "Save anyway"
       }
     },
     "work_item_modal": {
