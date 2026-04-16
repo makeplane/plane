@@ -39,16 +39,6 @@ function applyTheme() {
 applyTheme();
 new MutationObserver(() => applyTheme()).observe(document, { childList: true });
 
-// Vercel Skew Protection — pin this client session to the deployment that served it.
-// When Vercel sees the __vdpl cookie, it routes asset requests (lazy chunks, etc.)
-// to the same deployment, preventing 404s after a new deploy.
-// Always set (not just when absent) so a full page reload after a new deploy
-// updates the cookie to the current deployment rather than staying pinned to the old one.
-const deploymentId = process.env.VITE_VERCEL_DEPLOYMENT_ID;
-if (deploymentId) {
-  document.cookie = `__vdpl=${deploymentId};path=/;max-age=86400;samesite=lax`;
-}
-
 Sentry.init({
   dsn: process.env.VITE_SENTRY_DSN,
   environment: process.env.VITE_SENTRY_ENVIRONMENT,
