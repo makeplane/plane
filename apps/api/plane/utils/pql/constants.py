@@ -112,7 +112,7 @@ ISNULL_FALSE_OPERATORS = {"is_not_null", "is_not_empty"}
 # ---------------------------------------------------------------------------
 FUNCTIONS = {
     # Date functions
-    "now": lambda ctx: str(timezone.now()),
+    "now": lambda ctx: str(timezone.now().date()),
     "today": lambda ctx: str(timezone.now().date()),
     "startOfDay": lambda ctx: str(date.today()),
     "endOfDay": lambda ctx: str(date.today()),

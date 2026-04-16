@@ -12,7 +12,7 @@
  */
 
 // AUTO-GENERATED — DO NOT EDIT
-// Generated from 37 English namespace files (4821 keys)
+// Generated from 37 English namespace files (4823 keys)
 // Run: pnpm run generate:types
 
 export type TTranslationKeys =
@@ -424,12 +424,14 @@ export type TTranslationKeys =
   | "common.actions.archive"
   | "common.actions.clear_sorting"
   | "common.actions.copy_branch_name"
+  | "common.actions.copy_id"
   | "common.actions.copy_link"
   | "common.actions.copy_markdown"
   | "common.actions.delete"
   | "common.actions.disable"
   | "common.actions.edit"
   | "common.actions.enable"
+  | "common.actions.id_copied"
   | "common.actions.make_a_copy"
   | "common.actions.open_in_new_tab"
   | "common.actions.remove_relation"

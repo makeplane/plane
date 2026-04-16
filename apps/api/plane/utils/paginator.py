@@ -279,6 +279,11 @@ class GroupedOffsetPaginator(OffsetPaginator):
                 ),
             )
         )
+        # Apply result cap (PQL LIMIT) — cap the window boundary so we
+        # never fetch rows beyond the limit within each group.
+        if self.result_cap is not None:
+            stop = min(stop, self.result_cap + 1)
+
         # Filter the results by row number
         results = queryset.filter(row_number__gt=offset, row_number__lt=stop).order_by(
             (F(*self.key).desc(nulls_last=True) if self.desc else F(*self.key).asc(nulls_last=True)),
@@ -302,12 +307,14 @@ class GroupedOffsetPaginator(OffsetPaginator):
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
         if results:
-            max_hits = math.ceil(
+            max_group_count = (
                 queryset.values(self.group_by_field_name)
                 .annotate(count=Count("id", filter=self.count_filter, distinct=True))
                 .order_by("-count")[0]["count"]
-                / limit
             )
+            if self.result_cap is not None:
+                max_group_count = min(max_group_count, self.result_cap)
+            max_hits = math.ceil(max_group_count / limit)
         else:
             max_hits = 0
         return CursorResult(
@@ -341,7 +348,11 @@ class GroupedOffsetPaginator(OffsetPaginator):
         return {
             str(field): {
                 "results": [],
-                "total_results": total_group_dict.get(str(field), 0),
+                "total_results": (
+                    min(total_group_dict.get(str(field), 0), self.result_cap)
+                    if self.result_cap is not None
+                    else total_group_dict.get(str(field), 0)
+                ),
             }
             for field in self.group_by_fields
         }
@@ -382,7 +393,11 @@ class GroupedOffsetPaginator(OffsetPaginator):
         processed_results = {
             str(group_id): {
                 "results": issues,
-                "total_results": total_group_dict.get(str(group_id)),
+                "total_results": (
+                    min(total_group_dict.get(str(group_id), 0), self.result_cap)
+                    if self.result_cap is not None
+                    else total_group_dict.get(str(group_id), 0)
+                ),
             }
             for group_id, issues in grouped_by_field_name.items()
         }
@@ -499,6 +514,11 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
             )
         )
 
+        # Apply result cap (PQL LIMIT) — cap the window boundary so we
+        # never fetch rows beyond the limit within each group.
+        if self.result_cap is not None:
+            stop = min(stop, self.result_cap + 1)
+
         # Filter the results
         results = queryset.filter(row_number__gt=offset, row_number__lt=stop).order_by(
             (F(*self.key).desc(nulls_last=True) if self.desc else F(*self.key).asc(nulls_last=True)),
@@ -522,12 +542,14 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
         # Optionally, calculate the total count and max_hits if needed
         # This might require adjustments based on specific use cases
         if results:
-            max_hits = math.ceil(
+            max_group_count = (
                 queryset.values(self.group_by_field_name)
                 .annotate(count=Count("id", filter=self.count_filter, distinct=True))
                 .order_by("-count")[0]["count"]
-                / limit
             )
+            if self.result_cap is not None:
+                max_group_count = min(max_group_count, self.result_cap)
+            max_hits = math.ceil(max_group_count / limit)
         else:
             max_hits = 0
         return CursorResult(
@@ -594,11 +616,19 @@ class SubGroupedOffsetPaginator(OffsetPaginator):
                 "results": {
                     str(sub_group): {
                         "results": [],
-                        "total_results": total_sub_group_dict.get(str(group)).get(str(sub_group), 0),
+                        "total_results": (
+                            min(total_sub_group_dict.get(str(group)).get(str(sub_group), 0), self.result_cap)
+                            if self.result_cap is not None
+                            else total_sub_group_dict.get(str(group)).get(str(sub_group), 0)
+                        ),
                     }
                     for sub_group in total_sub_group_dict.get(str(group), [])
                 },
-                "total_results": total_group_dict.get(str(group), 0),
+                "total_results": (
+                    min(total_group_dict.get(str(group), 0), self.result_cap)
+                    if self.result_cap is not None
+                    else total_group_dict.get(str(group), 0)
+                ),
             }
             for group in self.group_by_fields
         }

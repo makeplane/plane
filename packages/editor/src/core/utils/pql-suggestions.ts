@@ -335,7 +335,12 @@ export async function computeAllSuggestions(
 
   switch (context.kind) {
     case "START":
-      return [...buildFieldSuggestions(fieldDefs), ...buildFunctionSuggestions(["PREDICATE", "RELATION", "HISTORY"])];
+      return [
+        ...buildFieldSuggestions(fieldDefs),
+        ...buildFunctionSuggestions(["PREDICATE", "RELATION", "HISTORY"]),
+        buildOrderByKeywordSuggestion(),
+        buildLimitKeywordSuggestion(),
+      ];
 
     case "AFTER_FIELD":
       return buildOperatorSuggestions(context.field ?? "", fieldMap);
