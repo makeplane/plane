@@ -13,13 +13,16 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export const useServiceWorker = () => {
+// Check for SW updates every 5 minutes so long-lived sessions
+// (users navigating via React Router links) detect new deploys
+// without waiting for the browser's default 24-hour check.
+const UPDATE_CHECK_INTERVAL = 5 * 60 * 1000;
+
+export function useServiceWorker() {
   const [waitingWorker, setWaitingWorker] = useState<ServiceWorker | null>(null);
-  // True when another tab triggered the update and the new SW is already active
   const [controllerChanged, setControllerChanged] = useState(false);
   const isUpdateAvailable = waitingWorker !== null || controllerChanged;
 
-  // Set to true only in the tab that invoked updateServiceWorker()
   const pendingReloadRef = useRef(false);
 
   useEffect(() => {
@@ -28,10 +31,7 @@ export const useServiceWorker = () => {
     let cancelled = false;
     let registration: ServiceWorkerRegistration | undefined;
     let installingWorker: ServiceWorker | undefined;
-    // Track whether the page has ever been controlled by a service worker.
-    // On first-ever visit this starts false and flips to true on the initial
-    // controllerchange (without reloading). Subsequent controllerchange events
-    // (i.e. SW updates) will then correctly trigger a reload.
+    let updateInterval: ReturnType<typeof setInterval> | undefined;
     let hasBeenControlled = !!navigator.serviceWorker.controller;
 
     const onControllerChange = () => {
@@ -39,8 +39,6 @@ export const useServiceWorker = () => {
         hasBeenControlled = true;
         return;
       }
-      // Only auto-reload the tab that initiated the update.
-      // Other tabs show the banner so the user can choose when to reload.
       if (pendingReloadRef.current) {
         window.location.reload();
       } else if (!cancelled) {
@@ -78,22 +76,31 @@ export const useServiceWorker = () => {
 
         reg.addEventListener("updatefound", onUpdateFound);
 
-        if (reg.waiting && navigator.serviceWorker.controller) {
-          setWaitingWorker(reg.waiting);
-        }
+        // Skip showing the banner for a waiting worker found on initial page load.
+        // The stale-chunk recovery in entry.client.tsx will auto-reload the page
+        // before the user can interact with the banner, causing a confusing flash.
+        // The banner will appear when updatefound fires during an active session.
 
         if (reg.installing) {
           trackInstalling(reg);
         }
 
+        // Poll for updates so long-lived SPA sessions detect new deploys.
+        // Client-side navigation via React Router doesn't trigger the browser's
+        // built-in SW update check, so without this users could stay on a stale
+        // version indefinitely.
+        updateInterval = setInterval(() => {
+          // oxlint-disable-next-line eslint-plugin-promise(no-nesting) -- standalone fire-and-forget inside setInterval, not a nested chain
+          reg.update().catch(() => {});
+        }, UPDATE_CHECK_INTERVAL);
+
         return undefined;
       })
-      .catch(() => {
-        // Service worker registration failed — ignore silently
-      });
+      .catch(() => {});
 
     return () => {
       cancelled = true;
+      if (updateInterval) clearInterval(updateInterval);
       navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
       registration?.removeEventListener("updatefound", onUpdateFound);
       installingWorker?.removeEventListener("statechange", onStateChange);
@@ -102,7 +109,6 @@ export const useServiceWorker = () => {
 
   const updateServiceWorker = useCallback(() => {
     if (controllerChanged) {
-      // New SW already active (another tab triggered it), just reload
       window.location.reload();
       return;
     }
@@ -112,4 +118,4 @@ export const useServiceWorker = () => {
   }, [waitingWorker, controllerChanged]);
 
   return { isUpdateAvailable, updateServiceWorker };
-};
+}
