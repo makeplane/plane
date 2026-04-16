@@ -15,6 +15,7 @@ import sys
 import typer
 
 from pi.celery_app import trigger_live_sync
+from pi.config import settings
 
 app = typer.Typer()
 
@@ -22,7 +23,7 @@ app = typer.Typer()
 @app.command("celery-worker")
 def run_celery_worker(
     concurrency: int = typer.Option(2, "--concurrency", "-c", help="Number of concurrent worker processes"),
-    queue: str = typer.Option("celery", "--queue", "-Q", help="Queue to consume from"),
+    queue: str = typer.Option(settings.celery.DEFAULT_QUEUE, "--queue", "-Q", help="Queue to consume from"),
     loglevel: str = typer.Option("info", "--loglevel", "-l", help="Log level (debug, info, warning, error)"),
 ):
     """Run Celery worker for background tasks."""

@@ -21,6 +21,7 @@ import type {
   TFeedback,
   TDuplicateIssuePayload,
   TDuplicateIssueResponse,
+  TDuplicateFeedbackPayload,
   PageUtilityEmbedResponse,
 } from "@plane/types";
 // services
@@ -40,6 +41,14 @@ export class PIService extends APIService {
 
   async getDuplicateIssues(data: Partial<TDuplicateIssuePayload>): Promise<TDuplicateIssueResponse> {
     return this.post(`/api/v1/dupes/issues/`, data)
+      .then((res) => res?.data)
+      .catch((err) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async postDuplicateFeedback(data: TDuplicateFeedbackPayload): Promise<{ success: boolean }> {
+    return this.post(`/api/v1/dupes/issues/feedback/`, data)
       .then((res) => res?.data)
       .catch((err) => {
         throw err?.response?.data;

@@ -35,3 +35,8 @@ export type TDeDupeIssue = {
 export type TDuplicateIssueResponse = {
   dupes: TDeDupeIssue[];
 };
+
+export type TDuplicateFeedbackPayload = {
+  issue_id: string;
+  not_duplicates_with: string[];
+};

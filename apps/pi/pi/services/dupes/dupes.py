@@ -16,6 +16,7 @@ from langchain_core.messages import SystemMessage
 
 from pi import logger
 from pi import settings
+from pi.app.api.v1.helpers.plane_sql_queries import get_issues_properties
 from pi.app.schemas.dupes import DupeSearchRequest
 from pi.app.schemas.dupes import DuplicateIdentificationResponse
 from pi.app.schemas.dupes import NotDuplicateRequest
@@ -72,7 +73,7 @@ def distill_result(resp_sem: list, resp_text: list):
             duplicates.append(
                 {
                     "id": issue_id,
-                    "typeId": h["type_id"],
+                    "type_id": h["type_id"],  # Fix casing for FE expectation
                     "project_id": h["project_id"],
                     "sequence_id": h["sequence_id"],
                     "name": h["name"],
@@ -217,6 +218,16 @@ async def get_dupes(data: DupeSearchRequest):
         initial_candidates = distill_result(resp_sem, [])
         tracking_data["vector_candidates_count"] = len(initial_candidates)
 
+        issue_ids = [c["id"] for c in initial_candidates]
+        id_to_fields = await get_issues_properties(issue_ids)
+        for cand in initial_candidates:
+            extra = id_to_fields.get(str(cand["id"]))
+            if extra:
+                cand["priority"] = extra["priority"]
+                cand["state_id"] = extra["state_id"]
+                cand["created_by"] = extra["created_by"]
+                cand["type_id"] = extra["type_id"]
+
         # Guard: exclude the queried work-item itself if issue_id is provided
         if issue_id:
             initial_candidates = [c for c in initial_candidates if str(c.get("id")) != issue_id]
@@ -304,9 +315,9 @@ async def set_not_duplicate_issues(data: NotDuplicateRequest) -> dict:
         issue_id_str = str(data.issue_id)
         not_dup_ids_str = [str(uuid) for uuid in data.not_duplicates_with]
 
-        await vector_db.update_bidirectional_not_duplicates("issues-semantic-index", issue_id_str, not_dup_ids_str)
+        await vector_db.update_bidirectional_not_duplicates(settings.vector_db.ISSUE_INDEX, issue_id_str, not_dup_ids_str)
 
-        return {"message": "Not duplicate issues updated successfully"}
+        return {"message": "Work items successfully marked as not duplicates"}
 
     except Exception as e:
         log.error(f"An unexpected error occurred while setting not duplicate issues: {e!s}")

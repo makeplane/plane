@@ -11,9 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import { usePopper } from "react-popper";
+import { useSWRConfig } from "swr";
 import { Popover } from "@headlessui/react";
 // plane imports
 import { useOutsideClickDetector } from "@plane/hooks";
@@ -32,10 +33,14 @@ import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { DE_DUPE_SELECT_GROUP } from "@/constants/de-dupe";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
+// services
+import { PIService } from "@/services/pi.service";
 // local imports
 import { DeDupeIssueButtonLabel } from "../issue-block/button-label";
 import { DeDupeIssueBlockRoot } from "./block-root";
 import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
+
+const piService = new PIService();
 
 type TDeDupeIssuePopoverRootProps = {
   workspaceSlug: string;
@@ -69,6 +74,7 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
   const { isArchiveIssueModalOpen, isDeleteIssueModalOpen, createRelation } = useIssueDetail();
   const { selectedEntityIds, clearSelection } = useMultipleSelectStore();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
+  const { mutate } = useSWRConfig();
   // popper
   const { styles, attributes } = usePopper(referenceElement, popperElement, {
     placement: "bottom-end",
@@ -86,6 +92,27 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
     setIsOpen(false);
     clearSelection();
   };
+
+  const handleDiscard = useCallback(async () => {
+    if (selectedEntityIds.length === 0) {
+      handleClose();
+      return;
+    }
+
+    try {
+      await piService.postDuplicateFeedback({
+        issue_id: rootIssueId,
+        not_duplicates_with: selectedEntityIds,
+      });
+      // Invalidate all SWR keys matching this workspace+project duplicate query
+      mutate((key: string) => typeof key === "string" && key.startsWith("DUPLICATE_ISSUE_"), undefined, {
+        revalidate: true,
+      });
+    } catch (error) {
+      console.error("Failed to submit duplicate feedback", error);
+    }
+    handleClose();
+  }, [rootIssueId, selectedEntityIds, mutate, handleClose]);
 
   const handleMarkAsDuplicate = async (workspaceSlug: string, projectId: string, issueId: string, data: string[]) => {
     if (data.length === 0) {
@@ -174,7 +201,7 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
                         variant="secondary"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleClose();
+                          handleDiscard();
                         }}
                       >
                         Discard

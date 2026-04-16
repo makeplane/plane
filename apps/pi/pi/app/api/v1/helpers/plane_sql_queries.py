@@ -445,6 +445,30 @@ async def get_cycle_name(cycle_id: str) -> Optional[str]:
         return None
 
 
+async def get_issues_properties(issue_ids: List[str]) -> Dict[str, Dict[str, str]]:
+    if not issue_ids:
+        return {}
+    query = """
+        SELECT id, priority, state_id, created_by_id, type_id
+        FROM issues
+        WHERE id = ANY($1) AND deleted_at IS NULL
+    """
+    try:
+        rows = await PlaneDBPool.fetch(query, (issue_ids,))
+        return {
+            str(r["id"]): {
+                "priority": r["priority"] or "none",
+                "state_id": str(r["state_id"]) if r["state_id"] else "",
+                "created_by": str(r["created_by_id"]) if r["created_by_id"] else "",
+                "type_id": str(r["type_id"]) if r["type_id"] else None,
+            }
+            for r in rows
+        }
+    except Exception as e:
+        log.warning(f"Failed to bulk-fetch properties for issues: {e}")
+        return {}
+
+
 async def get_state_name(state_id: str) -> Optional[str]:
     """Get state name from state ID."""
     query = """
