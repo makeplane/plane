@@ -15,7 +15,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { SUPPORTED_LANGUAGES, useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { CustomSelect } from "@plane/ui";
+import { CustomSearchSelect } from "@plane/ui";
 // components
 import { TimezoneSelect } from "@/components/common/timezone-select";
 import { StartOfWeekPreference } from "@/components/profile/start-of-week-preference";
@@ -72,8 +72,23 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
     const getLanguageLabel = (value: string) => {
       const selectedLanguage = SUPPORTED_LANGUAGES.find((l) => l.value === value);
       if (!selectedLanguage) return value;
-      return selectedLanguage.label;
+      return selectedLanguage.label !== selectedLanguage.englishLabel
+        ? `${selectedLanguage.label} (${selectedLanguage.englishLabel})`
+        : selectedLanguage.label;
     };
+
+    const languageOptions = SUPPORTED_LANGUAGES.map((item) => ({
+      value: item.value,
+      query: `${item.label} ${item.englishLabel}`,
+      content: (
+        <div className="flex items-center gap-2">
+          <span>{item.label}</span>
+          {item.label !== item.englishLabel && (
+            <span className="text-caption-xs-regular text-placeholder">{item.englishLabel}</span>
+          )}
+        </div>
+      ),
+    }));
 
     return (
       <div className="flex flex-col gap-y-1">
@@ -86,21 +101,17 @@ export const ProfileSettingsLanguageAndTimezonePreferencesList = observer(
           title={t("language")}
           description={t("language_setting")}
           control={
-            <CustomSelect
+            <CustomSearchSelect
               value={profile?.language}
               label={profile?.language ? getLanguageLabel(profile?.language) : "Select a language"}
+              options={languageOptions}
               onChange={handleLanguageChange}
               buttonClassName="border border-subtle-1"
               className="rounded-md"
+              optionsClassName="w-72"
               input
               placement="bottom-end"
-            >
-              {SUPPORTED_LANGUAGES.map((item) => (
-                <CustomSelect.Option key={item.value} value={item.value}>
-                  {item.label}
-                </CustomSelect.Option>
-              ))}
-            </CustomSelect>
+            />
           }
         />
         <StartOfWeekPreference

@@ -34,5 +34,6 @@ export type TLanguage =
 
 export interface ILanguageOption {
   label: string;
+  englishLabel: string;
   value: TLanguage;
 }

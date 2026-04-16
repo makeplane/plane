@@ -29,7 +29,13 @@ export const PowerKPreferencesLanguagesMenu = observer(function PowerKPreference
   return (
     <Command.Group>
       {SUPPORTED_LANGUAGES.map((language) => (
-        <PowerKModalCommandItem key={language.value} onSelect={() => onSelect(language.value)} label={language.label} />
+        <PowerKModalCommandItem
+          key={language.value}
+          onSelect={() => onSelect(language.value)}
+          label={
+            language.label !== language.englishLabel ? `${language.label} (${language.englishLabel})` : language.label
+          }
+        />
       ))}
     </Command.Group>
   );
