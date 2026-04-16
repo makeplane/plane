@@ -14,7 +14,7 @@ from typing import Optional
 from uuid import UUID
 
 from plane.authentication.group_sync import GroupSyncService, GroupProviderRegistry
-from plane.authentication.models import GroupSyncConfig
+from plane.authentication.models import GroupSyncConfig, GroupMapping
 
 
 logger = logging.getLogger("plane.authentication")
@@ -213,3 +213,63 @@ def _sync_for_all_workspaces(
                 },
             )
             continue
+
+
+def user_has_group_sync_mapping(
+    auth_response: dict,
+    provider_type: str,
+    is_cloud: bool = False,
+    workspace_id: Optional[UUID] = None,
+) -> bool:
+    """
+    Check if the user's IdP groups match any group sync mappings.
+
+    Used to allow sign-up for users who are part of mapped groups
+    even when general sign-up is disabled.
+
+    Args:
+        auth_response: The raw response from the identity provider
+        provider_type: The provider type ('oidc', 'saml', 'ldap')
+        is_cloud: Whether this is a cloud environment
+        workspace_id: The workspace ID (for cloud, limits check to one workspace)
+
+    Returns:
+        True if the user has groups that match at least one group mapping
+    """
+    if not auth_response:
+        return False
+
+    try:
+        provider = GroupProviderRegistry.get_provider(provider_type, is_cloud=is_cloud)
+        if not provider:
+            return False
+
+        # Get configs to check
+        if is_cloud and workspace_id:
+            configs = GroupSyncConfig.objects.filter(
+                workspace_id=workspace_id,
+                is_enabled=True,
+            )
+        else:
+            configs = GroupSyncConfig.objects.filter(is_enabled=True)
+
+        for config in configs:
+            groups = provider.extract_groups(auth_response, config.group_attribute_key)
+            if not groups:
+                continue
+
+            # Check if any of the user's groups are mapped to projects
+            if GroupMapping.objects.filter(
+                workspace_id=config.workspace_id,
+                idp_group_name__in=groups,
+            ).exists():
+                return True
+
+        return False
+
+    except Exception as e:
+        logger.debug(
+            "Error checking group sync mappings for signup bypass",
+            extra={"error": str(e)},
+        )
+        return False

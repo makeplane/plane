@@ -33,6 +33,7 @@ from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
 from plane.utils.exception_logger import log_exception
 from plane.settings.storage import S3Storage
+from plane.authentication.utils.group_sync import user_has_group_sync_mapping
 
 
 class Adapter:
@@ -108,6 +109,10 @@ class Adapter:
 
         # Check if sign up is disabled and invite is present or not
         if ENABLE_SIGNUP == "0" and not WorkspaceMemberInvite.objects.filter(email=email).exists():
+            # Allow sign-up if the user's IdP groups match group sync mappings
+            if self.__has_group_sync_mapping():
+                return True
+
             # Raise exception
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["SIGNUP_DISABLED"],
@@ -116,6 +121,27 @@ class Adapter:
             )
 
         return True
+
+    def __has_group_sync_mapping(self):
+        """Check if the user should be allowed to sign up via group sync mappings."""
+        # Only SSO providers support group sync
+        if self.provider not in ("oidc", "saml", "ldap"):
+            return False
+
+        # Get the auth response based on provider type
+        auth_response = (
+            getattr(self, "userinfo_response", None)
+            or getattr(self, "saml_attributes", None)
+            or getattr(self, "ldap_attributes", None)
+        )
+
+        if not auth_response:
+            return False
+
+        return user_has_group_sync_mapping(
+            auth_response=auth_response,
+            provider_type=self.provider,
+        )
 
     def get_avatar_download_headers(self):
         if self.token_data and self.token_data.get("access_token") and self.provider in ["oidc", "saml"]:
