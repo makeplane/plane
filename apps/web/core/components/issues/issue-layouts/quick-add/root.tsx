@@ -178,7 +178,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
         loading: isEpic ? t("epic.adding") : t("issue.adding"),
         success: {
           title: t("common.success"),
-          message: () => `${isEpic ? t("epic.create.success") : t("issue.create.success")}`,
+          message: () => undefined,
           actionItems: (data) => (
             <CreateIssueToastActionItems
               workspaceSlug={workspaceSlug.toString()}

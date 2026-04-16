@@ -257,7 +257,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("success"),
-        message: `${is_draft_issue ? t("draft_created") : t("issue_created_successfully")} `,
+        message: is_draft_issue ? `${t("draft_created")}` : undefined,
         actionItems: !is_draft_issue && response?.project_id && (
           <CreateIssueToastActionItems
             workspaceSlug={workspaceSlug.toString()}

@@ -41,7 +41,7 @@ type SetToastProps =
       actionItems?: React.ReactNode;
     };
 
-type PromiseToastCallback<ToastData> = (data: ToastData) => string;
+type PromiseToastCallback<ToastData> = (data: ToastData) => string | undefined;
 type ActionItemsPromiseToastCallback<ToastData> = (data: ToastData) => React.ReactNode;
 
 type PromiseToastData<ToastData> = {

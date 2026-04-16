@@ -47,20 +47,23 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
   // derived values
   const issue = getIssueById(issueId);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+  const hasIdentifier = !!(projectIdentifier && issue?.sequence_id);
+  const identifier = hasIdentifier ? `${projectIdentifier}-${issue.sequence_id}` : null;
 
-  const workItemLink = generateWorkItemLink({
-    workspaceSlug,
-    projectId: issue?.project_id,
-    issueId,
-    projectIdentifier,
-    sequenceId: issue?.sequence_id,
-    isEpic,
-  });
-
-  const workItemIdentifier = projectIdentifier && issue?.sequence_id ? `${projectIdentifier}-${issue.sequence_id}` : "";
+  const workItemLink = hasIdentifier
+    ? generateWorkItemLink({
+        workspaceSlug,
+        projectId: issue?.project_id,
+        issueId,
+        projectIdentifier,
+        sequenceId: issue?.sequence_id,
+        isEpic,
+      })
+    : null;
 
   const handleCopyLink = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      if (!workItemLink) return;
       try {
         await copyUrlToClipboard(workItemLink);
         setLinkCopied(true);
@@ -77,8 +80,9 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
 
   const handleCopyId = useCallback(
     async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      if (!identifier) return;
       try {
-        await copyTextToClipboard(workItemIdentifier);
+        await copyTextToClipboard(identifier);
         setIdCopied(true);
         if (idTimerRef.current) clearTimeout(idTimerRef.current);
         idTimerRef.current = setTimeout(() => setIdCopied(false), 3000);
@@ -88,33 +92,45 @@ export const CreateIssueToastActionItems = observer(function CreateIssueToastAct
       e.preventDefault();
       e.stopPropagation();
     },
-    [workItemIdentifier]
+    [identifier]
   );
 
   if (!issue) return null;
 
   return (
-    <div className="flex items-center justify-between text-11 text-secondary w-full">
-      <div className="flex items-center gap-1">
-        <a
-          href={workItemLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(getButtonStyling("ghost", "sm"), "text-accent-primary no-underline")}
-        >
-          {t("common.view")}
-        </a>
+    <div className="flex flex-col gap-1 w-full">
+      <p className="text-body-xs-regular text-tertiary">
+        {identifier ? (
+          <button onClick={handleCopyId} className="cursor-pointer hover:underline">
+            {identifier}
+          </button>
+        ) : (
+          <span>{isEpic ? "Epic" : "Work item"}</span>
+        )}
+        {" created successfully"}
+      </p>
+      <div className="flex items-center justify-between text-11 text-secondary -ml-2">
+        <div className="flex items-center gap-1">
+          {workItemLink && (
+            <>
+              <a
+                href={workItemLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cn(getButtonStyling("ghost", "sm"), "text-accent-primary no-underline")}
+              >
+                {t("common.view")}
+              </a>
 
-        <Button variant="ghost" size="sm" onClick={handleCopyLink} disabled={linkCopied}>
-          {linkCopied ? t("common.copied") : t("common.actions.copy_link")}
-        </Button>
+              <Button variant="ghost" size="sm" onClick={handleCopyLink} disabled={linkCopied}>
+                {linkCopied ? t("common.copied") : t("common.actions.copy_link")}
+              </Button>
+            </>
+          )}
+        </div>
+
+        {idCopied && <span className="cursor-default px-2 py-1 text-secondary">{t("common.actions.id_copied")}</span>}
       </div>
-
-      {workItemIdentifier && (
-        <Button variant="ghost" size="sm" onClick={handleCopyId} disabled={idCopied}>
-          {idCopied ? t("common.actions.id_copied") : workItemIdentifier}
-        </Button>
-      )}
     </div>
   );
 });

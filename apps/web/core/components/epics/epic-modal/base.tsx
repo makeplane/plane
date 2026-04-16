@@ -145,7 +145,6 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: "Epic created successfully.",
         actionItems: response?.project_id && (
           <CreateIssueToastActionItems
             workspaceSlug={workspaceSlug.toString()}
