@@ -55,6 +55,14 @@ export class NotionImportDriver implements IZipImportDriver {
 
   async buildFileTree(): Promise<TZipFileNode> {
     const toc = await this.zipManager.getTableOfContents();
+
+    // Validate that the zip doesn't just contain another zip file (nested zip wrapper).
+    // Some Notion exports wrap the actual export zip inside an outer zip.
+    const nonDirectoryEntries = toc.filter((entry) => !entry.endsWith("/"));
+    if (nonDirectoryEntries.length > 0 && nonDirectoryEntries.every((entry) => entry.toLowerCase().endsWith(".zip"))) {
+      throw new Error("Nested zip detected. Please extract the outer zip and upload the inner zip file.");
+    }
+
     // Create root node
     const root: TZipFileNode = {
       id: "root",

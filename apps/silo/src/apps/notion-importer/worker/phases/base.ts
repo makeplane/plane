@@ -84,7 +84,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
     const jobData = await getJobData(jobId);
     // When we are able to get the job data, we will mark the status as processing
     // and update the job data in the store
-    if (jobData && jobData.status !== E_JOB_STATUS.PROGRESSING) {
+    if (jobData && (jobData.status as E_JOB_STATUS) !== E_JOB_STATUS.PROGRESSING) {
       await Promise.all([
         apiClient.importJob.updateImportJob(jobId, {
           status: E_JOB_STATUS.PROGRESSING,
@@ -94,7 +94,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
         }),
       ]);
     }
-    this.store.set(key, JSON.stringify(jobData), 60 * 60 * 4); // 4 hours
+    void this.store.set(key, JSON.stringify(jobData), 60 * 60 * 4); // 4 hours
     return jobData;
   }
 
@@ -112,7 +112,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
     }
 
     const credentialsData = await getJobCredentials(job);
-    this.store.set(credentialsKey, JSON.stringify(credentialsData), 60 * 60 * 4); // 4 hours
+    void this.store.set(credentialsKey, JSON.stringify(credentialsData), 60 * 60 * 4); // 4 hours
     return credentialsData;
   }
 
@@ -186,6 +186,9 @@ export abstract class NotionMigratorBase extends TaskHandler {
       logger.error(`Error migrating job ${jobId}`, error);
       await apiClient.importJob.updateImportJob(jobId, {
         status: E_JOB_STATUS.ERROR,
+        error_metadata: {
+          error: error instanceof Error ? error.message : "An unexpected error occurred",
+        },
       });
 
       return false;
@@ -242,7 +245,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
           // Remove the leading and trailing slashes so we get a clean S3 object key
         }
         return { fileId: urlWithoutHostname, fileName: urlWithoutHostname };
-      } catch (error) {
+      } catch {
         throw new Error("Invalid fileUrl in config");
       }
     }
@@ -255,6 +258,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param fileId - The id of the file
    * @returns The zip driver
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getZipDriver(manager: ZipManager, type: EZipDriverType): Promise<IZipImportDriver> {
     return ZipDriverFactory.getDriver(type, manager);
   }
@@ -300,6 +304,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param node - The parent node whose children need to be categorized
    * @returns Object containing arrays of the three node types
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async segregateChildrenNodes(node: TZipFileNode): Promise<{
     pageNodes: TZipFileNode[];
     directoryNodes: TZipFileNode[];
@@ -333,7 +338,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
           }
           break;
         default:
-          logger.warn(`Unexpected node type: ${child.type}`, {
+          logger.warn(`Unexpected node type: ${String(child.type)}`, {
             node,
             child,
           });
@@ -438,6 +443,7 @@ export abstract class NotionMigratorBase extends TaskHandler {
    * @param root - The root node
    * @returns The number of leaf nodes
    */
+  // eslint-disable-next-line @typescript-eslint/require-await
   async countLeafNodesFromRoot(root: TZipFileNode): Promise<number> {
     const queue: TZipFileNode[] = [root];
     let count = 0;

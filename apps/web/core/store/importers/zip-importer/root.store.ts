@@ -137,9 +137,10 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
   auth = {
     currentAuth: { isAuthenticated: true, sourceTokenInvalid: false },
     deactivateAuth: async () => {},
-    apiTokenVerification: async () => ({
-      message: "Token is valid",
-    }),
+    apiTokenVerification: () =>
+      Promise.resolve({
+        message: "Token is valid",
+      }),
   };
 
   // services
@@ -249,7 +250,7 @@ export class ZipImporterStore extends ImporterBaseStore implements IZipImporterS
    * @description Resets the importer data
    */
   resetImporterData = (): void => {
-    this.dashboardView = !this.dashboardView;
+    this.dashboardView = true;
     this.stepper = E_IMPORTER_STEPS.SELECT_DESTINATION;
     this.importerData = defaultImporterData;
     this.configData = {

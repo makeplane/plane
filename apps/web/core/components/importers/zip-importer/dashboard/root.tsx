@@ -14,12 +14,14 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { Loader, RefreshCcw } from "lucide-react";
+import { Info, Loader, RefreshCcw } from "lucide-react";
 // Plane imports
 import { NewTabIcon, ProjectIcon } from "@plane/propel/icons";
 import type { TJobStatus } from "@plane/etl/core";
+import { E_JOB_STATUS } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
+import { Tooltip } from "@plane/propel/tooltip";
 import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // plane web hooks
 import { useZipImporter } from "@/plane-web/hooks/store/importers/use-zip-importer";
@@ -81,7 +83,9 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
               <Button
                 variant="secondary"
                 className="whitespace-nowrap border-none !px-1"
-                onClick={handleJobsRefresh}
+                onClick={() => {
+                  void handleJobsRefresh();
+                }}
                 disabled={loader === "re-fetch"}
               >
                 <div className="relative flex items-center gap-1.5 text-11">
@@ -124,6 +128,12 @@ export const ZipImporterDashboard = observer(function ZipImporterDashboard({
                           <td className="p-3 whitespace-nowrap text-center">
                             <div className="flex items-center gap-2">
                               <SyncJobStatus status={job?.status as TJobStatus} />
+                              {(job?.status as TJobStatus) === E_JOB_STATUS.ERROR &&
+                                (job?.error_metadata as { error?: string })?.error && (
+                                  <Tooltip tooltipContent={(job.error_metadata as { error?: string }).error}>
+                                    <Info className="h-3 w-3 flex-shrink-0 text-danger-primary cursor-help" />
+                                  </Tooltip>
+                                )}
                               {job?.config?.metadata?.rootNodeUrl && (
                                 <Link
                                   href={job?.config?.metadata?.rootNodeUrl}
