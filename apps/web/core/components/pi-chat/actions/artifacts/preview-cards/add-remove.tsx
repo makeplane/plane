@@ -54,8 +54,6 @@ export const AddRemovePreviewCard = observer(function AddRemovePreviewCard(props
                   </span>
                 )
               )}
-            {data.action === "add" ? "to " : "from "}
-            {data.artifact_type} <span className="text-primary text-body-sm-medium">{data.parameters?.name}</span>{" "}
           </div>
         </div>
       </div>

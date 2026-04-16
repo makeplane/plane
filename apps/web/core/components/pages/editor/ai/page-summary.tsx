@@ -10,7 +10,7 @@
  * DO NOT remove or modify this notice.
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
-
+import { useState } from "react";
 import { cn } from "@plane/utils";
 import { observer } from "mobx-react";
 import { usePageStore, EPageStoreType } from "@/plane-web/hooks/store";
@@ -30,6 +30,7 @@ const isStale = (pageUpdatedAt: Date | string, summaryUpdatedAt: Date | string) 
   if (currentTime - summaryTime < 60 * 1000) return false;
   return pageTime - summaryTime > 2 * 60 * 1000;
 };
+const gradientBackground = `linear-gradient(to right, var(--label-purple-bg), var(--label-indigo-bg), var(--bg-accent-subtle-hover), var(--label-emerald-bg), var(--label-yellow-bg), var(--label-orange-bg), var(--label-crimson-bg), var(--label-pink-bg))`;
 export const PageSummary = observer(function PageSummary({
   workspaceSlug,
   isGeneratingPageSummary,
@@ -44,9 +45,12 @@ export const PageSummary = observer(function PageSummary({
   setIsGeneratingPageSummary: (isGenerating: boolean) => void;
 }) {
   const { getPageAiSummary, removePageAiSummary, getPageById, fetchPageAiSummary } = usePageStore(storeType);
+  // state
+  const [isDeletingSummary, setIsDeletingSummary] = useState(false);
+  // hooks
   const summaryData = getPageAiSummary(pageId);
   const page = getPageById(pageId);
-  const gradientBackground = `linear-gradient(to right, var(--label-purple-bg), var(--label-indigo-bg), var(--bg-accent-subtle-hover), var(--label-emerald-bg), var(--label-yellow-bg), var(--label-orange-bg), var(--label-crimson-bg), var(--label-pink-bg))`;
+  // derived
   const summary = summaryData?.summary;
   const updatedAt = summaryData?.updated_at;
 
@@ -56,6 +60,17 @@ export const PageSummary = observer(function PageSummary({
     revalidateOnFocus: false,
     revalidateOnReconnect: false,
   });
+
+  const handleDelete = async () => {
+    try {
+      setIsDeletingSummary(true);
+      await removePageAiSummary(pageId);
+    } catch (error) {
+      console.error("Failed to delete page AI summary", error);
+    } finally {
+      setIsDeletingSummary(false);
+    }
+  };
 
   return (
     <div
@@ -106,11 +121,12 @@ export const PageSummary = observer(function PageSummary({
                     updatedAt={updatedAt}
                   />
                   <IconButton
+                    loading={isDeletingSummary}
                     icon={X}
                     variant="ghost"
                     size="sm"
                     color="secondary"
-                    onClick={() => removePageAiSummary(pageId)}
+                    onClick={handleDelete}
                   />
                 </>
               )}

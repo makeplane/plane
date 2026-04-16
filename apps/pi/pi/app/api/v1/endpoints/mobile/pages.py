@@ -33,6 +33,7 @@ from pi import logger
 from pi.app.api.dependencies import get_current_mobile_user
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
+from pi.app.api.v1.helpers.plane_sql_queries import check_page_access
 from pi.app.api.v1.helpers.plane_sql_queries import get_user_current_time
 from pi.app.schemas.auth import User
 from pi.app.schemas.pages import PageAIBlockConfigResponse
@@ -53,6 +54,7 @@ from pi.services.pages.utils import has_content_for_block
 from pi.services.pages.utils import validate_block_type
 from pi.services.pages.utils import validate_revision_type
 from pi.services.retrievers.pg_store.pages import create_page_ai_block
+from pi.services.retrievers.pg_store.pages import delete_page_summary_block
 from pi.services.retrievers.pg_store.pages import get_ai_block_config
 from pi.services.retrievers.pg_store.pages import get_page_ai_blocks_by_page_id
 from pi.services.retrievers.pg_store.pages import get_page_summary_block
@@ -215,6 +217,11 @@ async def generate_ai_block_revision(
     )
 
 
+# ---------------------------------------------------------------------------
+# Page Summary
+# ---------------------------------------------------------------------------
+
+
 @mobile_router.get("/{page_id}/summary/")
 async def get_page_summary(
     page_id: UUID4,
@@ -254,6 +261,30 @@ async def get_page_summary(
             "generated_at": generated_at,
         },
     )
+
+
+@mobile_router.delete("/{page_id}/summary/")
+async def delete_page_summary(
+    page_id: UUID4,
+    current_user: User = Depends(get_current_mobile_user),
+    db=Depends(get_async_session),
+):
+    """
+    Discard (soft-delete) the stored AI-generated summary for a page.
+    """
+    if not await check_page_access(str(page_id), str(current_user.id)):
+        return JSONResponse(status_code=404, content={"error": "Page not found"})
+
+    existing_summary = await get_page_summary_block(db, page_id)
+    if not existing_summary:
+        return JSONResponse(status_code=200, content={"success": True})
+
+    result = await delete_page_summary_block(db, page_id)
+    if not result["success"]:
+        error = result.get("error", "Failed to delete page summary")
+        return JSONResponse(status_code=500, content={"error": error})
+
+    return JSONResponse(status_code=200, content={"success": True})
 
 
 @mobile_router.post("/summarize/")

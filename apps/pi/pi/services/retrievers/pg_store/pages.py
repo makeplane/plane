@@ -312,11 +312,12 @@ async def upsert_page_summary_block(
         Dictionary with success status and block object or error details
     """
     try:
-        # Look up existing page_summary block for this entity
+        # Look up existing page_summary block for this entity (exclude soft-deleted)
         stmt = (
             select(PageAIBlock)
             .where(PageAIBlock.entity_id == entity_id)  # type: ignore[arg-type]
             .where(PageAIBlock.block_type == "page_summary")  # type: ignore[arg-type]
+            .where(PageAIBlock.deleted_at.is_(None))  # type: ignore[union-attr]
             .order_by(desc(PageAIBlock.updated_at))  # type: ignore[union-attr,arg-type]
             .limit(1)
         )
@@ -377,6 +378,7 @@ async def get_page_summary_block(
             select(PageAIBlock)
             .where(PageAIBlock.entity_id == page_id)  # type: ignore[arg-type]
             .where(PageAIBlock.block_type == "page_summary")  # type: ignore[arg-type]
+            .where(PageAIBlock.deleted_at.is_(None))  # type: ignore[union-attr]
             .order_by(desc(PageAIBlock.updated_at))  # type: ignore[union-attr,arg-type]
             .limit(1)
         )
@@ -385,6 +387,31 @@ async def get_page_summary_block(
     except Exception as e:
         log.error(f"Error retrieving page summary block for page {page_id}: {str(e)}")
         return None
+
+
+async def delete_page_summary_block(
+    db: AsyncSession,
+    page_id: UUID4,
+) -> Dict[str, Any]:
+    """
+    Soft-delete the page_summary AI block for a given page.
+    """
+    try:
+        block = await get_page_summary_block(db, page_id)
+
+        if not block:
+            return {"success": False, "error": "No active summary found for this page"}
+
+        block.soft_delete()
+        db.add(block)
+        await db.commit()
+
+        return {"success": True}
+
+    except Exception as e:
+        await db.rollback()
+        log.error(f"Error soft-deleting page summary block for page {page_id}: {str(e)}")
+        return {"success": False, "error": str(e)}
 
 
 async def get_page_ai_blocks_by_page_id(

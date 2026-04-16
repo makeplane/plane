@@ -20,11 +20,12 @@ from sqlalchemy import Index
 from sqlalchemy import String
 from sqlmodel import Field
 
+from pi.app.models.base import SoftDeleteModel
 from pi.app.models.base import TimeAuditModel
 from pi.app.models.base import UUIDModel
 
 
-class PageAIBlock(UUIDModel, TimeAuditModel, table=True):
+class PageAIBlock(UUIDModel, TimeAuditModel, SoftDeleteModel, table=True):
     __tablename__ = "page_ai_blocks"
 
     # Fields

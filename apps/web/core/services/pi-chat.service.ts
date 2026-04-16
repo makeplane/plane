@@ -521,4 +521,12 @@ export class PiChatService extends APIService {
       controller.abort();
     };
   }
+
+  destroyPageSummary(pageId: string): Promise<void> {
+    return this.delete(`/api/v1/pages/${pageId}/summary/`, {})
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }

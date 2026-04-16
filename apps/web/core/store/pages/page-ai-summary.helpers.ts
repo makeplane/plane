@@ -84,10 +84,15 @@ export function createPageAiSummaryActions({
     return abort;
   };
 
-  const removePageAiSummary = (pageId: string): void => {
-    runInAction(() => {
-      pageAiSummary.delete(pageId);
-    });
+  const removePageAiSummary = async (pageId: string): Promise<void> => {
+    try {
+      await piChatService.destroyPageSummary(pageId);
+      runInAction(() => {
+        pageAiSummary.delete(pageId);
+      });
+    } catch (error) {
+      console.error("Failed to remove page AI summary", error);
+    }
   };
 
   return { fetchPageAiSummary, generatePageAiSummary, removePageAiSummary };
