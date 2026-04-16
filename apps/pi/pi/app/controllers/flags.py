@@ -102,9 +102,7 @@ async def _compute_env_capabilities() -> _EnvCapabilities:
             lookup_key = "bedrock_inference_profile"
         else:
             lookup_key = provider
-        required = settings.llm_config.LLM_PROVIDER_REQUIRED_ENV.get(
-            lookup_key, settings.llm_config.LLM_PROVIDER_REQUIRED_ENV["openai"]
-        )
+        required = settings.llm_config.LLM_PROVIDER_REQUIRED_ENV.get(lookup_key, settings.llm_config.LLM_PROVIDER_REQUIRED_ENV["openai"])
         custom_llm_present = all(_has_value(getattr(settings.llm_config, f, None)) for f in required)
     llm_present = openai_present or claude_present or custom_llm_present
 

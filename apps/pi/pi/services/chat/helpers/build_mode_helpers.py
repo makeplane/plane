@@ -53,6 +53,7 @@ from pi.services.actions.registry import get_category_methods
 from pi.services.chat.helpers.action_property_mapper import map_tool_properties
 from pi.services.chat.helpers.planning_enrichment import enrich_planning_payload
 from pi.services.chat.helpers.tool_utils import TOOL_NAME_TO_CATEGORY_MAP
+from pi.services.chat.helpers.tool_utils import action_entity_display_name
 from pi.services.chat.helpers.tool_utils import build_reasoning_display_text
 from pi.services.chat.helpers.tool_utils import category_display_name
 from pi.services.chat.helpers.tool_utils import clean_tool_args_for_storage
@@ -840,6 +841,11 @@ async def plan_action_and_prepare_outputs(
         parameters["properties"] = properties
 
     action_summary["parameters"] = parameters
+    display_name = action_entity_display_name(tool_name, parameters=parameters)
+    action_summary["entity"] = {
+        "entity_name": display_name,
+        "entity_type": artifact_type,
+    }
 
     # Assign placeholder artifact id; will be updated later by artifact creation
     action_summary["artifact_id"] = str(uuid.uuid4())
@@ -921,6 +927,11 @@ async def plan_action_and_prepare_outputs(
                 )
                 # Update action_summary with complete merged data
                 action_summary["parameters"] = merged_parameters
+                merged_display_name = action_entity_display_name(tool_name, parameters=merged_parameters)
+                action_summary["entity"] = {
+                    "entity_name": merged_display_name,
+                    "entity_type": artifact_type,
+                }
                 # Also update the artifact_data with the new action_summary
                 artifact_data["planning_data"] = action_summary
                 log.debug(f"[Planning] Merge completed - parameters now have {len(merged_parameters.get('properties', {}))} properties")

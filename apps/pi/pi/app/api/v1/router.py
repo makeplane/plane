@@ -24,6 +24,7 @@ from pi.app.api.v1.endpoints import pages
 from pi.app.api.v1.endpoints import pql
 from pi.app.api.v1.endpoints import transcription
 from pi.app.api.v1.endpoints.internal import vectorize
+from pi.app.api.v1.endpoints.mobile import artifacts as mobile_artifacts
 from pi.app.api.v1.endpoints.mobile import attachments as mobile_attachments
 from pi.app.api.v1.endpoints.mobile import chat as mobile_chat
 from pi.app.api.v1.endpoints.mobile import feedback as mobile_feedback
@@ -51,4 +52,5 @@ plane_pi_router.include_router(mobile_chat.mobile_router, prefix="/mobile/chat",
 plane_pi_router.include_router(mobile_pages.mobile_router, prefix="/mobile/pages", tags=["mobile/pages"])
 plane_pi_router.include_router(mobile_transcription.mobile_router, prefix="/mobile/transcription", tags=["mobile/transcription"])
 plane_pi_router.include_router(mobile_attachments.mobile_router, prefix="/mobile/attachments", tags=["mobile/attachments"])
+plane_pi_router.include_router(mobile_artifacts.mobile_router, prefix="/mobile/artifacts", tags=["mobile/artifacts"])
 plane_pi_router.include_router(mobile_feedback.mobile_router, prefix="/mobile/feedback", tags=["mobile/feedback"])

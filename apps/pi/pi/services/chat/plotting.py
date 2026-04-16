@@ -112,18 +112,41 @@ def _build_chart_spec(
     }
 
     # Build props object — matches @plane/propel component props exactly
-    props: Dict[str, Any] = {
-        "title": title,
-        "data": data,
-    }
+    # ── Standard Output Structure ──────────────────────────────────────────────
+    # {
+    #     "root": "root",
+    #     "elements": {
+    #         "root": {
+    #         "type": "BarChart | LineChart | PieChart",
+    #         "props": {
+    #             "title":   "string (always present)",
+    #             "data":    [/* array, always present */],
+    #             "bars":    [/* populated for bar/stacked_bar, [] otherwise */],
+    #             "lines":   [/* populated for line, [] otherwise */],
+    #             "cells":   [/* populated for pie, [] otherwise */],
+    #             "dataKey": "string (populated for pie, '' otherwise)",
+    #             "xAxis":   {/* populated for bar/line/stacked_bar, {} otherwise */},
+    #             "yAxis":   {/* populated for bar/line/stacked_bar, {} otherwise */}
+    #         }
+    #         }
+    #     }
+    # }
+    # ───────────────────────────────────────────────────────────────────
 
-    # Add chart-specific configurations
+    # --- chart-type specific values (populated below) ---
+    bars: List[Dict[str, Any]] = []
+    lines: List[Dict[str, Any]] = []
+    cells: List[Dict[str, Any]] = []
+    data_key: str = ""
+    x_axis: Dict[str, Any] = {}
+    y_axis: Dict[str, Any] = {}
+
     if chart_type in ["bar", "stacked_bar"]:
-        # For bar charts, use "bars" array
+        # bars
         if series:
-            props["bars"] = series
+            bars = series
         else:
-            props["bars"] = [
+            bars = [
                 {
                     "key": y_axis_key,
                     "label": y_axis_label or "Value",
@@ -131,20 +154,20 @@ def _build_chart_spec(
                 }
             ]
 
-        props["xAxis"] = {"key": x_axis_key}
+        x_axis = {"key": x_axis_key}
         if x_axis_label:
-            props["xAxis"]["label"] = x_axis_label
+            x_axis["label"] = x_axis_label
 
-        props["yAxis"] = {"key": y_axis_key}
+        y_axis = {"key": y_axis_key}
         if y_axis_label:
-            props["yAxis"]["label"] = y_axis_label
+            y_axis["label"] = y_axis_label
 
     elif chart_type == "line":
-        # For line charts, use "lines" array
+        # lines
         if series:
-            props["lines"] = series
+            lines = series
         else:
-            props["lines"] = [
+            lines = [
                 {
                     "key": y_axis_key,
                     "label": y_axis_label or "Value",
@@ -152,18 +175,35 @@ def _build_chart_spec(
                 }
             ]
 
-        props["xAxis"] = {"key": x_axis_key}
+        x_axis = {"key": x_axis_key}
         if x_axis_label:
-            props["xAxis"]["label"] = x_axis_label
+            x_axis["label"] = x_axis_label
 
-        props["yAxis"] = {"key": y_axis_key}
+        y_axis = {"key": y_axis_key}
         if y_axis_label:
-            props["yAxis"]["label"] = y_axis_label
+            y_axis["label"] = y_axis_label
 
     elif chart_type == "pie":
-        props["dataKey"] = y_axis_key
+        data_key = y_axis_key
+
+        # 🚨 FIX: cells MUST always exist — auto-generate from data if
+        # the caller didn't supply them via `series`.
         if series:
-            props["cells"] = series
+            cells = series
+        else:
+            cells = [{"key": item.get("key", item.get("name", f"item_{i}")), "fill": _get_color(i)} for i, item in enumerate(data)]
+
+    # Assemble the final props dict with ALL fields always present
+    props: Dict[str, Any] = {
+        "title": title,
+        "data": data,
+        "bars": bars,
+        "lines": lines,
+        "cells": cells,
+        "dataKey": data_key,
+        "xAxis": x_axis,
+        "yAxis": y_axis,
+    }
 
     # Merge additional config into props
     if config:

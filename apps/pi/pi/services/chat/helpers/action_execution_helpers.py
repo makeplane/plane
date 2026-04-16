@@ -24,6 +24,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from pi import logger
 from pi.app.schemas.chat import ArtifactData
 from pi.services.chat.helpers.build_mode_helpers import TOOL_NAME_TO_CATEGORY_MAP
+from pi.services.chat.helpers.tool_utils import action_entity_display_name
 from pi.services.chat.helpers.tool_utils import classify_tool
 from pi.services.retrievers.pg_store.action_artifact import create_action_artifact_version
 from pi.services.retrievers.pg_store.action_artifact import get_action_artifacts_by_ids
@@ -556,6 +557,13 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
                 if entity_info.get("issue_identifier"):
                     essential_entity["issue_identifier"] = entity_info["issue_identifier"]
 
+                if not essential_entity.get("entity_type") and action.get("artifact_type"):
+                    essential_entity["entity_type"] = action.get("artifact_type")
+                if not essential_entity.get("entity_name"):
+                    essential_entity["entity_name"] = action_entity_display_name(
+                        tool_name,
+                        entity_info=entity_info if isinstance(entity_info, dict) else None,
+                    )
                 if essential_entity:
                     action_data["entity"] = essential_entity
 
@@ -598,20 +606,28 @@ def create_clean_actions_response(executed_actions: List[Dict[str, Any]]) -> Lis
                     else:
                         action_data["message"] = "Action completed successfully"
         else:
-            # For failed MCP actions, also include entity info (entity_name + entity_type)
-            # so the caller knows which connector/tool failed.
+            # For all failed actions, include entity info so the caller knows which entity failed.
+            failure_entity: Dict[str, Any] = {}
+            entity_info = action.get("entity_info")
+            if entity_info and isinstance(entity_info, dict):
+                for field in ["entity_url", "entity_name", "entity_type", "entity_id", "issue_identifier"]:
+                    if field in entity_info and entity_info[field]:
+                        failure_entity[field] = entity_info[field]
+            # Fallback: entity_type from artifact_type
+            if not failure_entity.get("entity_type") and action.get("artifact_type"):
+                failure_entity["entity_type"] = action["artifact_type"]
+            # Fallback: entity_name from tool name / entity_info
+            if not failure_entity.get("entity_name"):
+                failure_entity["entity_name"] = action_entity_display_name(
+                    tool_name,
+                    entity_info=entity_info if isinstance(entity_info, dict) else None,
+                )
+            # For MCP failures: combine entity_name + entity_type into a readable label
             if action.get("artifact_type") == "mcp":
-                entity_info = action.get("entity_info")
-                if entity_info and isinstance(entity_info, dict):
-                    essential_entity = {}
-                    for field in ["entity_url", "entity_name", "entity_type", "entity_id"]:
-                        if field in entity_info and entity_info[field]:
-                            essential_entity[field] = entity_info[field]
-                    # Combine entity_name + entity_type (e.g. "Supaseb create_project")
-                    if essential_entity.get("entity_name") and essential_entity.get("entity_type"):
-                        essential_entity["entity_name"] = f"{essential_entity['entity_name']} {essential_entity['entity_type']}"
-                    if essential_entity:
-                        action_data["entity"] = essential_entity
+                if failure_entity.get("entity_name") and failure_entity.get("entity_type"):
+                    failure_entity["entity_name"] = f"{failure_entity['entity_name']} {failure_entity['entity_type']}"
+            if failure_entity:
+                action_data["entity"] = failure_entity
 
             # For failed actions, send user-friendly message in error field.
             # MCP ExecutionResult stores the error in "message"; Plane tools use "result".

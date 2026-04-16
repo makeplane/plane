@@ -16,6 +16,17 @@ from typing import Dict
 from typing import Optional
 
 
+def infer_entity_display_from_planned_args(args: Optional[Dict[str, Any]]) -> Optional[str]:
+    """Label from tool args (e.g. create payload) for failed execute-action responses."""
+    if not args:
+        return None
+    for key in ("name", "display_name", "title", "summary"):
+        v = args.get(key)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return None
+
+
 async def infer_selected_entity(args: Dict[str, Any], context: Dict[str, Any], entity_type_hint: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """
     Generic best-effort entity inference for execute-action results.

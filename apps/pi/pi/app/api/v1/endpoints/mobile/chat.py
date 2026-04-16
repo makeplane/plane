@@ -21,9 +21,11 @@ from typing import Dict
 from typing import Optional
 from typing import Union
 from typing import cast
+from uuid import UUID
 
 from fastapi import APIRouter
 from fastapi import Depends
+from fastapi import Query
 from fastapi.responses import JSONResponse
 from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPAuthorizationCredentials
@@ -31,12 +33,16 @@ from pydantic import UUID4
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from pi import logger
+from pi import settings
 from pi.app.api.dependencies import check_guest_access
 from pi.app.api.dependencies import jwt_schema
 from pi.app.api.dependencies import validate_jwt_token
 from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
+from pi.app.api.v1.helpers.execution import chosen_llm
+from pi.app.schemas.chat import ActionBatchExecutionRequest
+from pi.app.schemas.chat import ChatAuthCheckResponse
 from pi.app.schemas.mobile.chat import ChatFeedbackMobile
 from pi.app.schemas.mobile.chat import ChatRequestMobile
 from pi.app.schemas.mobile.chat import ChatSearchResponseMobile
@@ -56,6 +62,8 @@ from pi.app.utils.background_tasks import schedule_chat_search_upsert
 from pi.app.utils.exceptions import SQLGenerationError
 from pi.core.db.plane_pi.lifecycle import get_async_session
 from pi.core.db.plane_pi.lifecycle import get_streaming_db_session
+from pi.services.actions.oauth_service import PlaneOAuthService
+from pi.services.chat.action_executor import BuildModeToolExecutor
 from pi.services.chat.chat import PlaneChatBot
 from pi.services.chat.helpers.tool_utils import format_clarification_as_text
 from pi.services.chat.search import ChatSearchService
@@ -73,6 +81,7 @@ from pi.services.retrievers.pg_store import update_message_feedback
 
 log = logger.getChild("v1/mobile/chat")
 mobile_router = APIRouter()
+
 
 @mobile_router.post("/stream-answer/")
 async def get_answer_stream_json(
@@ -151,6 +160,9 @@ async def get_answer_stream_json(
     async def stream_response() -> AsyncGenerator[str, None]:
         token_id = None
         try:
+            # Emit token_id immediately so the client knows the message ID
+            yield sse_event("token_id", {"token_id": str(query_id)})
+
             # Open a short-lived session for the duration of the streaming work
             async with get_streaming_db_session() as stream_db:
                 # Heartbeat mechanism that does not cancel the underlying generator
@@ -217,7 +229,7 @@ async def get_answer_stream_json(
                                     # bwc_payload = {"reasoning": f"{chunk["header"]}\n\n{chunk["content"]}\n\n"}
                                     # yield f"event: reasoning\ndata: {json.dumps(bwc_payload)}\n\n"
                                 elif "chunk_type" in chunk and chunk["chunk_type"] == "todos":
-                                        yield f"event: todos\ndata: {json.dumps({'todos': chunk['todos']})}\n\n"
+                                    yield f"event: todos\ndata: {json.dumps({'todos': chunk['todos']})}\n\n"
                                 else:
                                     log.warning(f"ChatID: {data.chat_id} - Chunk is not a json string: {chunk}")
                                     payload = {"chunk": chunk}
@@ -300,6 +312,43 @@ async def get_answer_stream_json(
     except Exception as e:
         log.error(f"Unexpected error: {e!s}")
         return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+
+
+@mobile_router.get("/start/auth-check/", response_model=ChatAuthCheckResponse)
+async def chat_auth_check(
+    workspace_id: UUID = Query(..., description="Workspace ID to check authorization for"),
+    db: AsyncSession = Depends(get_async_session),
+    token: HTTPAuthorizationCredentials = Depends(jwt_schema),
+):
+    """
+    Check user authentication and OAuth authorization status.
+    This is the first endpoint to call when initializing a chat session.
+    """
+    try:
+        auth = await validate_jwt_token(token)
+        if not auth.user:
+            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
+        user_id = auth.user.id
+    except Exception as e:
+        log.error(f"Error validating JWT: {e!s}")
+        return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
+
+    try:
+        oauth_service = PlaneOAuthService()
+
+        # Check if user has valid OAuth token for workspace
+        access_token = await oauth_service.get_valid_token(db=db, user_id=user_id, workspace_id=workspace_id)
+
+        if access_token:
+            # User is authorized
+            return ChatAuthCheckResponse(is_authorized=True, oauth_url=None)
+        else:
+            # User is not authorized - no oauth in mobile
+            return ChatAuthCheckResponse(is_authorized=False, oauth_url=None)
+
+    except Exception as e:
+        log.error(f"Error in auth check: {e!s}")
+        return JSONResponse(status_code=500, content={"detail": "Failed to check authorization"})
 
 
 @mobile_router.delete("/delete-chat/")
@@ -417,55 +466,6 @@ async def get_user_threads(
 
     # Success case
     return JSONResponse(content={"results": results})
-
-
-@mobile_router.post("/get-chat-history/")
-async def get_chat_history(
-    data: TitleRequestMobile,
-    token: HTTPAuthorizationCredentials = Depends(jwt_schema),
-    db: AsyncSession = Depends(get_async_session),
-):
-    try:
-        auth = await validate_jwt_token(token)
-        if not auth.user:
-            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
-        user_id = auth.user.id
-    except Exception as e:
-        log.error(f"Error validating JWT: {e!s}")
-        return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
-    try:
-        results = await retrieve_chat_history(
-            chat_id=data.chat_id,
-            db=db,
-            user_id=user_id,
-        )
-        error_type = results.get("error")
-        if error_type == "not_found":
-            return JSONResponse(status_code=404, content={"detail": results["detail"]})
-        elif error_type == "unauthorized":
-            return JSONResponse(status_code=403, content={"detail": results["detail"]})
-
-        return JSONResponse(
-            content={
-                "results": {
-                    "title": results["title"],
-                    "dialogue": results["dialogue"],
-                    "llm": results["llm"],
-                    "feedback": results["feedback"],
-                    "reasoning": results.get("reasoning", ""),
-                    "is_focus_enabled": results.get("is_focus_enabled", False),
-                    "is_websearch_enabled": results.get("is_websearch_enabled", False),
-                    "focus_entity_type": results.get("focus_entity_type", None),
-                    "focus_entity_id": results.get("focus_entity_id", None),
-                    "focus_project_id": results.get("focus_project_id", None),
-                    "focus_workspace_id": results.get("focus_workspace_id", None),
-                    "mode": results.get("mode", "ask"),
-                }
-            }
-        )
-    except Exception as e:
-        log.error(f"Error retrieving chat history: {e!s}")
-        return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
 
 
 @mobile_router.post("/get-chat-history-object/")
@@ -671,7 +671,51 @@ async def rename_chat(
         return JSONResponse(status_code=status_code, content={"detail": False})
 
 
-from fastapi import Query
+@mobile_router.post("/execute-action/")
+async def execute_action(
+    request: ActionBatchExecutionRequest,
+    db: AsyncSession = Depends(get_async_session),
+    token: HTTPAuthorizationCredentials = Depends(jwt_schema),
+):
+    """Execute all planned actions in a message as a batch using LLM orchestration."""
+    try:
+        auth = await validate_jwt_token(token)
+        if not auth.user:
+            return JSONResponse(status_code=401, content={"detail": "Invalid User"})
+        user_id = auth.user.id
+    except Exception as e:
+        log.error(f"Error validating JWT: {e!s}")
+        return JSONResponse(status_code=401, content={"detail": "Invalid JWT"})
+
+    try:
+        llm_model = await chosen_llm(db=db, message_id=request.message_id)
+        # Use default model if none was found in the message
+        chatbot = PlaneChatBot(llm_model or settings.llm_model.DEFAULT)
+        build_mode_tool_executor = BuildModeToolExecutor(chatbot=chatbot, db=db)
+        result = await build_mode_tool_executor.execute(request, user_id)
+
+        # Check if service returned an error
+        if result.get("error"):
+            status_code = result.get("status_code", 500)
+            detail = result.get("detail", "Unknown error")
+
+            # Build response content
+            content = {"detail": detail}
+            if "error_code" in result:
+                content["error_code"] = result["error_code"]
+            if "workspace_id" in result:
+                content["workspace_id"] = result["workspace_id"]
+            if "user_id" in result:
+                content["user_id"] = result["user_id"]
+
+            return JSONResponse(status_code=status_code, content=content)
+
+        # Return successful response
+        return JSONResponse(content=result)
+
+    except Exception as e:
+        log.error(f"Error in execute_action: {str(e)}")
+        return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
 @mobile_router.get("/search/", response_model=ChatSearchResponseMobile)

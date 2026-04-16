@@ -408,6 +408,22 @@ async def extract_execution_status_from_flow_steps(
                             "entity_type": artifact.entity,
                         }
 
+        # For failed executed actions: fall back to planning-time entity when no entity resolved yet.
+        # entity_id is never set on the artifact for failures, so the populate_entity_info path above
+        # is skipped. The planning_data["entity"] always carries at least entity_name + entity_type.
+        if is_executed and not is_successful and "entity" not in action_data:
+            if artifact_id and artifact_id in artifacts_by_id:
+                artifact = artifacts_by_id[artifact_id]
+                if artifact and artifact.data and isinstance(artifact.data, dict):
+                    planning_entity = artifact.data.get("planning_data", {}).get("entity")
+                    if planning_entity and isinstance(planning_entity, dict):
+                        fallback_entity: Dict[str, Any] = {}
+                        for field in ["entity_url", "entity_name", "entity_type", "entity_id"]:
+                            if field in planning_entity and planning_entity[field]:
+                                fallback_entity[field] = planning_entity[field]
+                        if fallback_entity:
+                            action_data["entity"] = fallback_entity
+
         # Add success/error message
         if is_executed and is_successful:
             action_data["message"] = "Action completed successfully"

@@ -229,15 +229,13 @@ class LLMConfig:
     COHERE_BASE_URL: str = field(default_factory=lambda: os.getenv("COHERE_BASE_URL", "https://api.cohere.ai/v1/embed"))
     GROQ_BASE_URL: str = field(default_factory=lambda: os.getenv("GROQ_BASE_URL", "https://api.groq.com/"))
 
-    USER_VISIBLE_MODELS_OPENAI: list[str] = field(default_factory=lambda: ["gpt-4.1", "gpt-5.4", "gpt-5.2"])
-    USER_VISIBLE_MODELS_ANTHROPIC: list[str] = field(default_factory=lambda: ["claude-sonnet-4-0", "claude-sonnet-4-5", "claude-sonnet-4-6"])
+    USER_VISIBLE_MODELS_OPENAI: list[str] = field(default_factory=lambda: ["gpt-5.4", "gpt-5.2"])
+    USER_VISIBLE_MODELS_ANTHROPIC: list[str] = field(default_factory=lambda: ["claude-sonnet-4-5", "claude-sonnet-4-6"])
     ALL_USER_VISIBLE_MODELS: list[str] = field(
         default_factory=lambda: [
-            "gpt-4.1",
             "gpt-5.1",
             "gpt-5.4",
             "gpt-5.2",
-            "claude-sonnet-4-0",
             "claude-sonnet-4-5",
             "claude-sonnet-4-6",
         ]
@@ -330,7 +328,7 @@ class LLMConfig:
             os.getenv("AWS_ROLE_ARN", "")
             or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", "")
             or os.getenv("AWS_CONTAINER_AUTHORIZATION_TOKEN_FILE", "")  # EKS Pod Identity token file
-            or os.getenv("AWS_WEB_IDENTITY_TOKEN_FILE", "")             # IRSA token file
+            or os.getenv("AWS_WEB_IDENTITY_TOKEN_FILE", "")  # IRSA token file
         )
         return has_profile and has_aws_creds
 

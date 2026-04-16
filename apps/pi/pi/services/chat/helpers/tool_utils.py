@@ -794,6 +794,35 @@ def tool_name_shown_to_user(tool_name: str) -> str:
     return name_to_return
 
 
+def action_entity_display_name(
+    tool_name: str,
+    *,
+    entity_info: Optional[Dict[str, Any]] = None,
+    parameters: Optional[Dict[str, Any]] = None,
+) -> str:
+    """
+    Label for build-mode actions when there is no resolved entity name (stream, execute-action, history).
+    Prefers entity_info / planning parameters, then TOOL_NAME_TO_CATEGORY_MAP front_facing_name via
+    tool_name_shown_to_user.
+    """
+    if entity_info and isinstance(entity_info, dict):
+        n = entity_info.get("entity_name")
+        if isinstance(n, str) and n.strip():
+            return n.strip()
+    if parameters and isinstance(parameters, dict):
+        for key in ("name", "title"):
+            v = parameters.get(key)
+            if isinstance(v, str) and v.strip():
+                return v.strip()
+        props = parameters.get("properties")
+        if isinstance(props, dict):
+            for key in ("name", "display_name", "title"):
+                v = props.get(key)
+                if isinstance(v, str) and v.strip():
+                    return v.strip()
+    return tool_name_shown_to_user(tool_name)
+
+
 def category_display_name(category: str) -> str:
     """
     Convert internal category slug to a user-friendly display name.

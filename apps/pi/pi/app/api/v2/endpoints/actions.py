@@ -34,16 +34,6 @@ from pi.services.chat.chat import PlaneChatBot
 log = logger.getChild("v2.actions")
 router = APIRouter()
 
-# Constants for batch execution errors
-BATCH_EXECUTION_ERRORS = {
-    "NO_PLANNED_ACTIONS": "No planned actions found for this message",
-    "NO_ORIGINAL_QUERY": "Original user query not found",
-    "OAUTH_REQUIRED": "No valid OAuth token found. Please complete OAuth authentication for this workspace first.",
-    "WORKSPACE_NOT_FOUND": "Workspace not found",
-    "INVALID_SESSION": "Invalid Session",
-    "INTERNAL_ERROR": "Internal server error",
-}
-
 
 @router.post("/execute")
 async def execute_batch_actions_endpoint(
@@ -163,10 +153,7 @@ async def execute_batch_actions_endpoint(
 
     except Exception as e:
         log.error(f"Error in execute_batch_actions: {str(e)}")
-        return JSONResponse(
-            status_code=500,
-            content={"detail": BATCH_EXECUTION_ERRORS["INTERNAL_ERROR"]},
-        )
+        return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 
 # async def execute_batch_actions_endpoint(

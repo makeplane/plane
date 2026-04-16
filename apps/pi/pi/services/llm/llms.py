@@ -442,10 +442,7 @@ def _is_custom_model(model_key: str) -> bool:
 def _create_custom_llm_config(*, streaming: bool = False) -> LLMConfig:
     """Build an LLMConfig for the custom self-hosted model."""
     if settings.llm_config.use_inference_profile:
-        model = (
-            settings.llm_config.BEDROCK_INFERENCE_PROFILE_ARN
-            or settings.llm_config.BEDROCK_INFERENCE_PROFILE_ID
-        )
+        model = settings.llm_config.BEDROCK_INFERENCE_PROFILE_ARN or settings.llm_config.BEDROCK_INFERENCE_PROFILE_ID
         api_key = ""
     else:
         model = settings.llm_config.CUSTOM_LLM_MODEL_KEY

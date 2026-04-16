@@ -31,6 +31,7 @@ from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_by_id
 from pi.app.api.v1.helpers.plane_sql_queries import get_state_details_for_artifact
 from pi.app.api.v1.helpers.plane_sql_queries import get_user_name
 from pi.app.api.v1.helpers.plane_sql_queries import get_workitem_details_for_artifact
+from pi.services.chat.helpers.tool_utils import action_entity_display_name
 from pi.services.retrievers.pg_store.action_artifact import batch_get_latest_artifact_versions
 from pi.services.retrievers.pg_store.action_artifact import get_latest_artifact_data_for_display
 
@@ -1207,17 +1208,23 @@ async def prepare_project_artifact_data(project_data: dict):
 async def prepare_cycle_artifact_data(cycle_data: dict):
     """Prepare cycle artifact data for enhanced UI display."""
     try:
+        original_entity_info = cycle_data.get("entity_info") if isinstance(cycle_data, dict) else None
+
         # For create operations, use the planning data
         if "planning_data" in cycle_data:
             planning_data = cycle_data["planning_data"]
             parameters = planning_data.get("parameters", {})
-            return normalize_parameters_structure(parameters, flatten_entities=False)
-
+            result = normalize_parameters_structure(parameters, flatten_entities=False)
         # For update operations, fetch existing cycle details
         elif "entity_id" in cycle_data and cycle_data["entity_id"]:
-            return await get_cycle_details_for_artifact(cycle_data["entity_id"])
+            result = await get_cycle_details_for_artifact(cycle_data["entity_id"]) or cycle_data
+        else:
+            result = cycle_data
 
-        return cycle_data
+        if original_entity_info and isinstance(result, dict):
+            result["entity_info"] = original_entity_info
+
+        return result
 
     except Exception as e:
         log.error(f"Error preparing cycle artifact data: {e}")
@@ -1227,17 +1234,23 @@ async def prepare_cycle_artifact_data(cycle_data: dict):
 async def prepare_module_artifact_data(module_data: dict):
     """Prepare module artifact data for enhanced UI display."""
     try:
+        original_entity_info = module_data.get("entity_info") if isinstance(module_data, dict) else None
+
         # For create operations, use the planning data
         if "planning_data" in module_data:
             planning_data = module_data["planning_data"]
             parameters = planning_data.get("parameters", {})
-            return normalize_parameters_structure(parameters, flatten_entities=False)
-
+            result = normalize_parameters_structure(parameters, flatten_entities=False)
         # For update operations, fetch existing module details
         elif "entity_id" in module_data and module_data["entity_id"]:
-            return await get_module_details_for_artifact(module_data["entity_id"])
+            result = await get_module_details_for_artifact(module_data["entity_id"]) or module_data
+        else:
+            result = module_data
 
-        return module_data
+        if original_entity_info and isinstance(result, dict):
+            result["entity_info"] = original_entity_info
+
+        return result
 
     except Exception as e:
         log.error(f"Error preparing module artifact data: {e}")
@@ -1615,6 +1628,11 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
         elif isinstance(artifact_data_to_use, dict) and "entity_info" in artifact_data_to_use:
             error_message = artifact_data_to_use.get("entity_info", {}).get("error")
 
+    if not entity_name and tool_name:
+        entity_name = action_entity_display_name(
+            tool_name,
+            parameters=clean_parameters if isinstance(clean_parameters, dict) else None,
+        )
     result_dict = {
         "artifact_id": str(artifact.id),
         "sequence": artifact.sequence,
@@ -1629,7 +1647,7 @@ async def prepare_artifact_response_data(db, artifact, is_latest=False) -> dict:
         "entity_id": entity_id,
         "entity_url": entity_url,
         "entity_name": entity_name,
-        "entity_type": entity_type,
+        "entity_type": entity_type or artifact.entity,
         "issue_identifier": issue_identifier,
         "entity_identifier": entity_identifier,
     }
@@ -1769,6 +1787,11 @@ async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_
                 elif isinstance(artifact_data_to_use, dict) and "entity_info" in artifact_data_to_use:
                     error_message = artifact_data_to_use.get("entity_info", {}).get("error")
 
+            if not entity_name and tool_name:
+                entity_name = action_entity_display_name(
+                    tool_name,
+                    parameters=clean_parameters if isinstance(clean_parameters, dict) else None,
+                )
             artifact_dict = {
                 "artifact_id": str(artifact.id),
                 "sequence": artifact.sequence,
@@ -1783,7 +1806,7 @@ async def batch_prepare_artifact_response_data(db, artifacts: List[Any], latest_
                 "entity_id": entity_id,
                 "entity_url": entity_url,
                 "entity_name": entity_name,
-                "entity_type": entity_type,
+                "entity_type": entity_type or artifact.entity,
                 "issue_identifier": issue_identifier,
                 "entity_identifier": entity_identifier,
             }

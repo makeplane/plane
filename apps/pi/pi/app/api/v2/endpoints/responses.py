@@ -61,16 +61,6 @@ from pi.services.retrievers.pg_store.message import upsert_message_flow_steps
 log = logger.getChild("v2.responses")
 router = APIRouter()
 
-# Constants for batch execution
-BATCH_EXECUTION_ERRORS = {
-    "NO_PLANNED_ACTIONS": "No planned actions found for this message",
-    "NO_ORIGINAL_QUERY": "Original user query not found",
-    "OAUTH_REQUIRED": "No valid OAuth token found. Please complete OAuth authentication for this workspace first.",
-    "WORKSPACE_NOT_FOUND": "Workspace not found",
-    "INVALID_SESSION": "Invalid Session",
-    "INTERNAL_ERROR": "Internal server error",
-}
-
 
 @router.post("/slack/")
 async def create_response_slack(data: ChatRequest, request: Request, db: AsyncSession = Depends(get_async_session)):

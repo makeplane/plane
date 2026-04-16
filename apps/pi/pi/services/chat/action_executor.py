@@ -30,6 +30,7 @@ from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENC
 from pi.services.chat.helpers.action_execution_helpers import format_response
 from pi.services.chat.helpers.action_execution_helpers import load_artifacts
 from pi.services.chat.helpers.action_execution_helpers import update_flow_steps
+from pi.services.chat.helpers.entity_inference import infer_entity_display_from_planned_args
 from pi.services.chat.helpers.entity_inference import infer_selected_entity
 from pi.services.chat.helpers.placeholder_orchestrator import PlaceholderOrchestrator
 from pi.services.mcp.loader import get_mcp_loader
@@ -210,7 +211,20 @@ class BuildModeToolExecutor:
         message = result.get("message") or ""
         ok = bool(result.get("ok", True))
         entity_info: Optional[Dict[str, Any]] = result.get("entity")
-        if ok and not entity_info:
+        if not ok:
+            base = dict(entity_info) if isinstance(entity_info, dict) else {}
+            if entity_type:
+                base.setdefault("entity_type", entity_type)
+            label = infer_entity_display_from_planned_args(args)
+            if label:
+                base.setdefault("entity_name", label)
+            inferred = await infer_selected_entity(args, context, entity_type_hint=entity_type)
+            if inferred:
+                for k, v in inferred.items():
+                    if v not in (None, "") and not base.get(k):
+                        base[k] = v
+            entity_info = base if base else None
+        elif ok and not entity_info:
             entity_info = await infer_selected_entity(args, context, entity_type_hint=entity_type)
         elif ok and entity_info:
             _sub_resources = {"link", "comment", "worklog"}

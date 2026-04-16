@@ -32,6 +32,7 @@ from pydantic import Field
 
 from pi import logger
 from pi.services.chat.helpers.action_execution_helpers import IMPLICIT_DEPENDENCY_RULES
+from pi.services.chat.helpers.entity_inference import infer_entity_display_from_planned_args
 from pi.services.chat.helpers.entity_inference import infer_selected_entity
 
 log = logger.getChild(__name__)
@@ -626,8 +627,22 @@ IMPORTANT:
         ok = bool(result.get("ok", True))
         entity_info = result.get("entity")
 
+        planned_entity_type = action.get("entity_type")
         if ok and not entity_info:
-            entity_info = await infer_selected_entity(args, self.context, entity_type_hint=action.get("entity_type"))
+            entity_info = await infer_selected_entity(args, self.context, entity_type_hint=planned_entity_type)
+        elif not ok:
+            base = dict(entity_info) if isinstance(entity_info, dict) else {}
+            if planned_entity_type:
+                base.setdefault("entity_type", planned_entity_type)
+            label = infer_entity_display_from_planned_args(args)
+            if label:
+                base.setdefault("entity_name", label)
+            inferred = await infer_selected_entity(args, self.context, entity_type_hint=planned_entity_type)
+            if inferred:
+                for k, v in inferred.items():
+                    if v is not None and v != "" and not base.get(k):
+                        base[k] = v
+            entity_info = base if base else None
 
         execution_result = {
             "tool_name": tool_name,
