@@ -131,7 +131,8 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
       try {
         setIsSubmitting(true);
         setHasError(false);
-        await pqlFiltersInstance.handleSubmit?.(value);
+        const shouldResetInitialValue = !!pqlFiltersInstance.viewOptions?.updateViewOptions?.isDisabled;
+        await pqlFiltersInstance.handleSubmit?.(value, shouldResetInitialValue);
       } catch (error) {
         console.error("Error submitting PQL filter:", error);
         setHasError(true);
@@ -158,7 +159,7 @@ export const FiltersRowPQLSection = observer(function FiltersRowPQLSection({
           });
         }}
         onSubmit={async (val) =>
-          await handleSubmit?.({
+          await handleSubmit({
             json: val.json,
             stripped: val.text,
           })

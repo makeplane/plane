@@ -33,7 +33,7 @@ export interface IPQLFilterInstance {
   // actions
   updateValue: (newValue: PQLFilterValue) => void;
   updateOptions: (newOptions: Pick<InitializePQLFilterInstanceParams, "viewOptions">) => void;
-  handleSubmit?: (value: PQLFilterValue) => Promise<void>;
+  handleSubmit: (value: PQLFilterValue, shouldResetInitialValue?: boolean) => Promise<void>;
   saveView: () => Promise<void>;
   updateView: () => Promise<void>;
 }
@@ -108,13 +108,13 @@ export class PQLFilterInstance implements IPQLFilterInstance {
     });
   };
 
-  handleSubmit: IPQLFilterInstance["handleSubmit"] = async (value) => {
+  handleSubmit: IPQLFilterInstance["handleSubmit"] = async (value, shouldResetInitialValue = true) => {
     const initialValueBeforeSubmit = cloneDeep(this.initialValue);
     const valueBeforeSubmit = cloneDeep(this.value);
     try {
       runInAction(() => {
         this.value = value;
-        this.initialValue = value;
+        if (shouldResetInitialValue) this.initialValue = value;
       });
       await this.onSubmit?.(value);
     } catch (error) {
