@@ -645,7 +645,13 @@ app.on("window-all-closed", () => {
   }
 });
 
-app.on("will-quit", () => {
+app.on("will-quit", (e) => {
+  // Flush cookies to disk so sessions survive PC restarts and sleep/wake cycles.
+  // Without this, Chromium may not persist refreshed session cookies before the
+  // OS terminates the process during shutdown.
+  // Prevent quit, flush, then exit without re-triggering quit events.
+  e.preventDefault();
+
   if (app.isReady()) {
     globalShortcut.unregisterAll();
   }
@@ -653,6 +659,14 @@ app.on("will-quit", () => {
     ipcBridge.destroy();
     ipcBridge = undefined;
   }
+
+  // oxlint-disable-next-line eslint-plugin-promise(catch-or-return) -- intentionally fire-and-exit; no caller to return to
+  session.defaultSession.cookies
+    .flushStore()
+    .catch(() => {})
+    .finally(() => {
+      app.exit();
+    });
 });
 
 // Handle deep links (plane:// protocol)
