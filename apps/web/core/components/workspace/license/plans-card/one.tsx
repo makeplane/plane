@@ -11,24 +11,18 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { observer } from "mobx-react";
 // plane imports
 import { NewTabIcon } from "@plane/propel/icons";
 import { getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
-// plane web components
-import { PlanCard, SelfManagedLicenseActions } from "@/components/workspace/license";
+// components
+import { PlanCard } from "@/components/workspace/license";
 
-export const OnePlanCard = observer(function OnePlanCard() {
+export const OnePlanCard = function OnePlanCard() {
   return (
     <PlanCard
       planVariant={EProductSubscriptionEnum.ONE}
-      planDescription={
-        <>
-          <div>Active cycles, Time Tracking, Public View + Pages, ~50 Members</div>
-          <SelfManagedLicenseActions />
-        </>
-      }
+      showSelfManagedLicenseActions
       control={
         <a
           href="https://prime.plane.so/"
@@ -42,4 +36,4 @@ export const OnePlanCard = observer(function OnePlanCard() {
       }
     />
   );
-});
+};

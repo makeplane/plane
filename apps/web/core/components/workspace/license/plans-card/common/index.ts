@@ -12,4 +12,5 @@
  */
 
 export * from "./plan-card";
+export * from "./plan-details";
 export * from "./self-managed-license-actions";

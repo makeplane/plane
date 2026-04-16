@@ -13,11 +13,13 @@
 
 import { observer } from "mobx-react";
 // plane imports
+import { SUBSCRIPTION_WITH_BILLING_FREQUENCY } from "@plane/constants";
 import type { EProductSubscriptionEnum, IPaymentProduct, TBillingFrequency, TUpgradeParams } from "@plane/types";
-import { PlansComparisonBase, shouldRenderPlanDetail } from "@/components/workspace/settings/billing/comparison/base";
+// components
+import { PlansComparisonBase } from "@/components/workspace/settings/billing/comparison/base";
+// constants
+import { getUpgradePlans, PLANE_PLANS } from "@/constants/plans";
 // plane web imports
-import type { TPlanePlans } from "@/constants/plans";
-import { PLANE_PLANS } from "@/constants/plans";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 // local imports
 import { PlanDetail } from "./plan-detail";
@@ -27,12 +29,10 @@ type TPlansComparisonProps = {
   isProductsAPILoading: boolean;
   trialLoader: EProductSubscriptionEnum | null;
   upgradeLoader: EProductSubscriptionEnum | null;
-  isCompareAllFeaturesSectionOpen: boolean;
   handleTrial: (trialParams: TUpgradeParams) => void;
   handleUpgrade: (upgradeParams: TUpgradeParams) => void;
-  getBillingFrequency: (subscriptionType: EProductSubscriptionEnum) => TBillingFrequency | undefined;
-  setBillingFrequency: (subscriptionType: EProductSubscriptionEnum, frequency: TBillingFrequency) => void;
-  setIsCompareAllFeaturesSectionOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  selectedFrequency: TBillingFrequency;
+  showHeadColumn: boolean;
 };
 
 export const PlansComparison = observer(function PlansComparison(props: TPlansComparisonProps) {
@@ -41,44 +41,40 @@ export const PlansComparison = observer(function PlansComparison(props: TPlansCo
     isProductsAPILoading,
     trialLoader,
     upgradeLoader,
-    isCompareAllFeaturesSectionOpen,
     handleTrial,
     handleUpgrade,
-    getBillingFrequency,
-    setBillingFrequency,
-    setIsCompareAllFeaturesSectionOpen,
+    selectedFrequency,
+    showHeadColumn,
   } = props;
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
-  // Derived values
-  const isSelfManaged = !!subscriptionDetail?.is_self_managed;
-  // plan details
+  // derived values
+  const currentPlan = subscriptionDetail?.product;
+  const upgradePlans = getUpgradePlans(currentPlan);
+  const isHorizontalView = upgradePlans.length === 1;
+
   const { planDetails } = PLANE_PLANS;
 
   return (
     <PlansComparisonBase
-      planeDetails={Object.entries(planDetails).map(([planKey, plan]) => {
-        const currentPlanKey = planKey as TPlanePlans;
-        if (!shouldRenderPlanDetail(currentPlanKey)) return null;
-        return (
-          <PlanDetail
-            key={planKey}
-            subscriptionType={plan.id}
-            planDetail={plan}
-            products={products}
-            isProductsAPILoading={isProductsAPILoading}
-            trialLoader={trialLoader}
-            upgradeLoader={upgradeLoader}
-            handleUpgrade={handleUpgrade}
-            handleTrial={handleTrial}
-            billingFrequency={getBillingFrequency(plan.id)}
-            setBillingFrequency={(frequency) => setBillingFrequency(plan.id, frequency)}
-          />
-        );
-      })}
-      isSelfManaged={isSelfManaged}
-      isCompareAllFeaturesSectionOpen={isCompareAllFeaturesSectionOpen}
-      setIsCompareAllFeaturesSectionOpen={setIsCompareAllFeaturesSectionOpen}
+      upgradePlans={upgradePlans}
+      isHorizontalView={isHorizontalView}
+      showHeadColumn={showHeadColumn}
+      planeDetails={upgradePlans.map((planId) => (
+        <PlanDetail
+          key={planId}
+          subscriptionType={planId}
+          planDetail={planDetails[planId]}
+          products={products}
+          isProductsAPILoading={isProductsAPILoading}
+          trialLoader={trialLoader}
+          upgradeLoader={upgradeLoader}
+          handleUpgrade={handleUpgrade}
+          handleTrial={handleTrial}
+          billingFrequency={SUBSCRIPTION_WITH_BILLING_FREQUENCY.includes(planId) ? selectedFrequency : undefined}
+          isHorizontalView={isHorizontalView}
+        />
+      ))}
     />
   );
 });

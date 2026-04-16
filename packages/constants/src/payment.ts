@@ -164,3 +164,8 @@ export const SUBSCRIPTION_WEBPAGE_URLS: Record<EProductSubscriptionEnum, string>
   [EProductSubscriptionEnum.BUSINESS]: "https://plane.so/business",
   [EProductSubscriptionEnum.ENTERPRISE]: "https://plane.so/business",
 };
+
+export const BILLING_FREQUENCIES: { name: string; value: TBillingFrequency }[] = [
+  { name: "Monthly", value: "month" },
+  { name: "Yearly", value: "year" },
+];
