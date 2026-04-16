@@ -47,14 +47,16 @@ export const projectTemplateFormGettersHelpers = (
   project: Partial<TProjectTemplateFormData>
 ): TProjectTemplateFormGettersHelpers => ({
   /**
-   * Get the custom property by id
+   * Get the custom property by id. Includes epic properties since the epic is
+   * stored at project.epics rather than inside project.workitem_types.
    * @param customPropertyId - The custom property id
    * @returns The custom property
    */
   getCustomPropertyById: (customPropertyId: string) => {
-    const allCustomProperties = Object.values(project.workitem_types ?? {}).flatMap(
-      (workItemType) => workItemType.properties
-    );
+    const allCustomProperties = [
+      ...Object.values(project.workitem_types ?? {}).flatMap((workItemType) => workItemType.properties),
+      ...(project.epics?.properties ?? []),
+    ];
     return allCustomProperties.find((customProperty) => customProperty.id === customPropertyId);
   },
 
@@ -113,11 +115,17 @@ export const projectTemplateFormGettersHelpers = (
   getStateById: (stateId: string | null | undefined) => project.states?.find((state) => state.id === stateId),
 
   /**
-   * Get the work item type by id
+   * Get the work item type by id. Falls back to the project's epic, which is
+   * stored under project.epics rather than inside project.workitem_types.
    * @param workItemTypeId - The work item type id
    * @returns The work item type
    */
-  getWorkItemTypeById: (workItemTypeId: string) => project.workitem_types?.[workItemTypeId],
+  getWorkItemTypeById: (workItemTypeId: string) => {
+    const workItemType = project.workitem_types?.[workItemTypeId];
+    if (workItemType) return workItemType;
+    if (project.epics?.id === workItemTypeId) return project.epics;
+    return undefined;
+  },
 
   /**
    * Get the work item types

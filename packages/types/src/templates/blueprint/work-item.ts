@@ -46,6 +46,7 @@ export type TCustomPropertyBlueprint = Pick<
   | "property_type"
   | "relation_type"
   | "logo_props"
+  | "sort_order"
   | "is_required"
   | "settings"
   | "is_active"

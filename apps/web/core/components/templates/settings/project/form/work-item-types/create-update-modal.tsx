@@ -121,7 +121,7 @@ export const ProjectTemplateWorkItemTypeModal = observer(function ProjectTemplat
                 update: (payload) => mockUpdateWorkItemType(getWorkItemTypeById, payload),
               },
               customProperty: {
-                create: mockCreateCustomProperty,
+                create: (payload) => mockCreateCustomProperty(getWorkItemTypeById, payload),
                 update: (payload) =>
                   mockUpdateCustomProperty(
                     getCustomPropertyById,

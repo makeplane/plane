@@ -315,7 +315,10 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
         )
         created_project_issue_type.save()
         logger.info(f"Project issue type created: {created_project_issue_type.id}")
-        for property in type.get("properties", []):
+        # Iterate in the user-configured order so IssueProperty.save's
+        # sort_order reassignment preserves the template's relative order.
+        sorted_properties = sorted(type.get("properties", []), key=lambda p: p.get("sort_order") or 0)
+        for property in sorted_properties:
             created_issue_property = IssueProperty(
                 project_id=project_id,
                 issue_type_id=created_issue_type.id,
@@ -323,7 +326,7 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
                 description=property.get("description", ""),
                 property_type=property["property_type"],
                 relation_type=property.get("relation_type"),
-                sort_order=random.randint(0, 65535),
+                sort_order=property.get("sort_order") or random.randint(0, 65535),
                 logo_props=property.get("logo_props", {}),
                 is_required=property.get("is_required", False),
                 settings=property.get("settings", {}),
@@ -380,7 +383,10 @@ def create_epics(epic_data, project_id, workspace_id, user_id):
     )
     created_project_issue_type.save()
     logger.info(f"Epic project issue type created: {created_project_issue_type.id}")
-    for property in epic_data.get("properties", []):
+    # Iterate in the user-configured order so IssueProperty.save's
+    # sort_order reassignment preserves the template's relative order.
+    sorted_epic_properties = sorted(epic_data.get("properties", []), key=lambda p: p.get("sort_order") or 0)
+    for property in sorted_epic_properties:
         epic_property = IssueProperty(
             project_id=project_id,
             issue_type_id=issue_type.id,
@@ -388,7 +394,7 @@ def create_epics(epic_data, project_id, workspace_id, user_id):
             description=property.get("description", ""),
             property_type=property["property_type"],
             relation_type=property.get("relation_type"),
-            sort_order=random.randint(0, 65535),
+            sort_order=property.get("sort_order") or random.randint(0, 65535),
             logo_props=property.get("logo_props", {}),
             is_required=property.get("is_required", False),
             settings=property.get("settings", {}),

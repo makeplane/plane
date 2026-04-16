@@ -137,7 +137,7 @@ const processWorkItemType = async (
 
   // Process the properties and add them to the work item type instance
   for (const property of properties) {
-    const propertyWithOptions = await mockCreateCustomProperty({
+    const propertyWithOptions = await mockCreateCustomProperty(params.getWorkItemTypeById, {
       ...params,
       data: property,
     });

@@ -158,29 +158,53 @@ const mergePropertyOptions = async ({
   return result;
 };
 
+const DEFAULT_PROPERTY_SORT_ORDER_INCREMENT = 10000;
+
+/**
+ * Compute the next sort_order for a new property on a given work item type,
+ * mirroring the server-side logic in
+ * apps/api/plane/ee/views/app/issue_property/base.py: max(existing) + 10000.
+ */
+const getNextPropertySortOrder = (
+  getWorkItemTypeById: ((workItemTypeId: string) => IIssueType | undefined) | undefined,
+  issueTypeId: string | undefined
+): number => {
+  const workItemType = issueTypeId ? getWorkItemTypeById?.(issueTypeId) : undefined;
+  const existing = workItemType?.properties ?? [];
+  const max = existing.reduce(
+    (acc, property) => (property.sort_order !== undefined && property.sort_order > acc ? property.sort_order : acc),
+    0
+  );
+  return max + DEFAULT_PROPERTY_SORT_ORDER_INCREMENT;
+};
+
 /**
  * Mock create custom property
+ * @param getWorkItemTypeById - Used to derive sort_order from the current properties on the target work item type when the caller doesn't supply one (matches the real backend's behavior).
  * @param payload
  * @param payload.workspaceSlug - The workspace slug
  * @param payload.projectId - The project id
  * @param payload.issueTypeId - The issue type id
  * @param payload.data - The custom property data
  */
-export const mockCreateCustomProperty = async ({
-  workspaceSlug,
-  projectId,
-  issueTypeId,
-  data,
-}: TCreateIssuePropertyPayload): Promise<TIssuePropertyResponse> => {
+export const mockCreateCustomProperty = async (
+  getWorkItemTypeById: ((workItemTypeId: string) => IIssueType | undefined) | undefined,
+  { workspaceSlug, projectId, issueTypeId, data }: TCreateIssuePropertyPayload
+): Promise<TIssuePropertyResponse> => {
   const customPropertyId = data.id ?? uuidv4();
   const propertyOptions = data.options ?? [];
+  // Prefer the explicit issueTypeId param: the UI's createProperty payload sets
+  // data.issue_type to the property_type enum (e.g. "TEXT"), not the parent issue
+  // type id. Falling back to data.issue_type covers extract.ts which loads
+  // properties from template JSON where data.issue_type is the real issue type id.
+  const sortOrder = data.sort_order ?? getNextPropertySortOrder(getWorkItemTypeById, issueTypeId ?? data.issue_type);
   return Promise.resolve({
     id: customPropertyId,
     name: data.name,
     display_name: data.display_name,
     description: data.description,
     logo_props: data.logo_props,
-    sort_order: data.sort_order,
+    sort_order: sortOrder,
     relation_type: data.relation_type,
     is_required: data.is_required,
     default_value: data.default_value,
@@ -351,7 +375,7 @@ export const mockCreateWorkItemTypeInstance = async ({
           update: (payload) => mockUpdateWorkItemType(getWorkItemTypeById, payload),
         },
         customProperty: {
-          create: mockCreateCustomProperty,
+          create: (payload) => mockCreateCustomProperty(getWorkItemTypeById, payload),
           update: (payload) => mockUpdateCustomProperty(getCustomPropertyById, createOptionInstance, payload),
           deleteProperty: mockDeleteCustomProperty,
         },

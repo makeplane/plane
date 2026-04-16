@@ -233,6 +233,7 @@ export const buildCustomPropertyBlueprint = (
     property_type: property.property_type,
     relation_type: property.relation_type,
     logo_props: property.logo_props,
+    sort_order: property.sort_order,
     is_required: property.is_required,
     settings: property.settings,
     is_active: property.is_active,
