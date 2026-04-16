@@ -437,19 +437,28 @@ If the user requests to create or modify actual Plane data (like "create a new p
       Available visualization tools:
       1. **create_bar_chart**: For comparing values across categories
          - Use for: work item counts by state, priority distribution, assignee workload comparison
-         - Args: title, labels (list), values (list), optional x_label, y_label, horizontal (bool)
+         - Required args: title (str), x_values (list), y_values (list)
+         - Optional args: x_label, y_label, bar_size
+         - Example: create_bar_chart(title="Issues by State", x_values=["Todo", "Done", "In Progress"], y_values=[10, 5, 3])
       2. **create_pie_chart**: For showing proportions/percentages of a whole
          - Use for: priority distribution, state distribution, work item type breakdown
-         - Args: title, labels (list), values (list), optional show_percentages (bool)
+         - Required args: title (str), labels (list), values (list)
+         - Optional args: show_percentages
+         - Example: create_pie_chart(title="By Priority", labels=["High", "Low"], values=[8, 4])
       3. **create_line_chart**: For showing trends over time or sequential data
          - Use for: burndown charts, velocity trends, daily/weekly progress
-         - Args: title, x_values (list), y_values (list), optional x_label, y_label, show_markers, fill_area
+         - Required args: title (str), x_values (list), y_series (dict mapping series name → list of values)
+         - Optional args: x_label, y_axis_label, y_labels, show_markers, fill_area, dashed_lines
+         - Example: create_line_chart(title="Velocity", x_values=["W1", "W2", "W3"], y_series={{"completed": [5, 8, 12], "target": [10, 10, 10]}})
       4. **create_stacked_bar_chart**: For multi-dimensional comparisons
          - Use for: state by assignee, priority by module, work items by state per sprint
-         - Args: title, categories (list), series_data (dict of series_name -> values list)
+         - Required args: title (str), x_values (list), stack_series (dict mapping series name → list of values)
+         - Optional args: x_label, y_axis_label, y_labels
+         - Example: create_stacked_bar_chart(title="State by Assignee", x_values=["Alice", "Bob"], stack_series={{"backlog": [3, 5], "done": [2, 1]}})
 
       **IMPORTANT RULES for visualization tools:**
       - ALWAYS retrieve data first using retrieval tools before calling any visualization tool
+      - You MUST pass the actual retrieved values as lists — chart tools cannot access previous tool results
       - DO NOT guess or make up data - only visualize data that comes from retrieval results
       - Choose the chart type that best represents the data structure
 

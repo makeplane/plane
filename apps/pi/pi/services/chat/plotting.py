@@ -253,9 +253,8 @@ def create_plotting_tools(
     @tool
     async def create_bar_chart(
         title: str,
-        data_dict: Dict[str, List],
-        x_key: str,
-        y_key: str,
+        x_values: List[Any],
+        y_values: List[Any],
         x_label: Optional[str] = None,
         y_label: Optional[str] = None,
         bar_size: Optional[int] = None,
@@ -267,10 +266,8 @@ def create_plotting_tools(
 
         Args:
             title: Chart title (e.g., "Issues by Priority")
-            data_dict: Dictionary with keys for x and y data.
-                      e.g., {"priority": ["Urgent", "High", "Medium"], "count": [12, 25, 40]}
-            x_key: Key for X-axis data (e.g., "priority", "team")
-            y_key: Key for Y-axis data (e.g., "count", "points")
+            x_values: Category labels for the X-axis (e.g., ["Urgent", "High", "Medium"])
+            y_values: Numeric values for each category (e.g., [12, 25, 40])
             x_label: Optional label for X-axis display
             y_label: Optional label for Y-axis display
             bar_size: Optional bar width
@@ -279,23 +276,18 @@ def create_plotting_tools(
             A chart code block containing JSON spec for an interactive bar chart
         """
         try:
-            if not data_dict or x_key not in data_dict or y_key not in data_dict:
-                return f"Error: data_dict must contain keys '{x_key}' and '{y_key}'"
-
-            x_values = data_dict[x_key]
-            y_values = data_dict[y_key]
+            if not x_values or not y_values:
+                return "Error: x_values and y_values are required"
 
             if len(x_values) != len(y_values):
-                return "Error: x and y data must have the same length"
+                return "Error: x_values and y_values must have the same length"
 
-            # Build data structure with semantic keys
-            data = [{x_key: x, y_key: y} for x, y in zip(x_values, y_values)]
+            data = [{"x": x, "y": y} for x, y in zip(x_values, y_values)]
 
-            # Build bars array
             bars = [
                 {
-                    "key": y_key,
-                    "label": y_label or y_key.title(),
+                    "key": "y",
+                    "label": y_label or "Value",
                     "fill": _get_color(0),
                 }
             ]
@@ -308,9 +300,9 @@ def create_plotting_tools(
                 chart_type="bar",
                 title=title,
                 data=data,
-                x_axis_key=x_key,
+                x_axis_key="x",
                 x_axis_label=x_label or "",
-                y_axis_key=y_key,
+                y_axis_key="y",
                 y_axis_label=y_label or "",
                 series=bars,
                 config=config,
@@ -397,9 +389,8 @@ def create_plotting_tools(
     @tool
     async def create_line_chart(
         title: str,
-        data_dict: Dict[str, List],
-        x_key: str,
-        y_keys: List[str],
+        x_values: List[Any],
+        y_series: Dict[str, List[Any]],
         y_labels: Optional[List[str]] = None,
         x_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
@@ -414,41 +405,34 @@ def create_plotting_tools(
 
         Args:
             title: Chart title (e.g., "Velocity Over Time")
-            data_dict: Dictionary with x-axis key and one or more y-axis keys.
-                      e.g., {"week": ["W1", "W2", "W3"], "completed": [12, 18, 14], "target": [15, 15, 15]}
-            x_key: Key for X-axis data (e.g., "week", "day")
-            y_keys: List of keys for Y-axis data lines (e.g., ["completed", "target"])
-            y_labels: Optional list of labels for each line (defaults to y_keys)
+            x_values: X-axis data points (e.g., ["W1", "W2", "W3"])
+            y_series: Dict mapping series name to its values (e.g., {"completed": [12, 18, 14], "target": [15, 15, 15]})
+            y_labels: Optional list of display labels for each series (defaults to series names)
             x_label: Optional label for X-axis
             y_axis_label: Optional label for Y-axis
             show_markers: If True, show data point markers
-            fill_area: If True, fill area under the line.
+            fill_area: If True, fill area under the line (single-line charts only)
             dashed_lines: Optional list of booleans indicating which lines should be dashed
 
         Returns:
             A chart code block containing JSON spec for an interactive line chart
         """
         try:
-            if not data_dict or x_key not in data_dict:
-                return f"Error: data_dict must contain key '{x_key}'"
+            if not x_values or not y_series:
+                return "Error: x_values and y_series are required"
+
+            y_keys = list(y_series.keys())
 
             for y_key in y_keys:
-                if y_key not in data_dict:
-                    return f"Error: data_dict must contain key '{y_key}'"
+                if len(y_series[y_key]) != len(x_values):
+                    return f"Error: '{y_key}' values must have same length as x_values"
 
-            x_values = data_dict[x_key]
-
-            # Validate all y arrays have same length as x
-            for y_key in y_keys:
-                if len(data_dict[y_key]) != len(x_values):
-                    return f"Error: '{y_key}' data must have same length as '{x_key}'"
-
-            # Build data structure with all keys
+            # Build data structure
             data = []
             for i, x_val in enumerate(x_values):
-                row = {x_key: x_val}
+                row: Dict[str, Any] = {"x": x_val}
                 for y_key in y_keys:
-                    row[y_key] = data_dict[y_key][i]
+                    row[y_key] = y_series[y_key][i]
                 data.append(row)
 
             # Build lines array
@@ -460,7 +444,6 @@ def create_plotting_tools(
                     "stroke": _get_color(idx),
                 }
 
-                # Add dashed line if specified
                 if dashed_lines and idx < len(dashed_lines) and dashed_lines[idx]:
                     line_spec["dashedLine"] = True
 
@@ -468,21 +451,18 @@ def create_plotting_tools(
 
             config = {"showTooltip": True}
             if not show_markers:
-                # showDot is a per-line spec field, not a top-level prop
                 for line in lines:
                     line["showDot"] = False
             if fill_area and len(y_keys) == 1:
-                # Only apply fill for single line
                 lines[0]["fill"] = _get_color(0)
 
-            # Use first y_key for yAxis (or a generic label)
             y_axis_key = y_keys[0] if len(y_keys) == 1 else "value"
 
             chart_spec = _build_chart_spec(
                 chart_type="line",
                 title=title,
                 data=data,
-                x_axis_key=x_key,
+                x_axis_key="x",
                 x_axis_label=x_label or "",
                 y_axis_key=y_axis_key,
                 y_axis_label=y_axis_label or "",
@@ -499,9 +479,8 @@ def create_plotting_tools(
     @tool
     async def create_stacked_bar_chart(
         title: str,
-        data_dict: Dict[str, List],
-        x_key: str,
-        y_keys: List[str],
+        x_values: List[Any],
+        stack_series: Dict[str, List[Any]],
         y_labels: Optional[List[str]] = None,
         x_label: Optional[str] = None,
         y_axis_label: Optional[str] = None,
@@ -513,11 +492,9 @@ def create_plotting_tools(
 
         Args:
             title: Chart title (e.g., "Work Items by State per Assignee")
-            data_dict: Dictionary with x-axis key and multiple y-axis keys for stacking.
-                      e.g., {"assignee": ["Alice", "Bob"], "backlog": [3, 5], "in_progress": [2, 1]}
-            x_key: Key for X-axis data (e.g., "assignee", "sprint")
-            y_keys: List of keys for stacked values (e.g., ["backlog", "in_progress", "done"])
-            y_labels: Optional list of labels for each series (defaults to y_keys)
+            x_values: Category labels for the X-axis (e.g., ["Alice", "Bob"])
+            stack_series: Dict mapping each series name to its values (e.g., {"backlog": [3, 5], "done": [2, 1]})
+            y_labels: Optional list of display labels for each series (defaults to series names)
             x_label: Optional label for X-axis
             y_axis_label: Optional label for Y-axis
 
@@ -525,26 +502,21 @@ def create_plotting_tools(
             A chart code block containing JSON spec for an interactive stacked bar chart
         """
         try:
-            if not data_dict or x_key not in data_dict:
-                return f"Error: data_dict must contain key '{x_key}'"
+            if not x_values or not stack_series:
+                return "Error: x_values and stack_series are required"
+
+            y_keys = list(stack_series.keys())
 
             for y_key in y_keys:
-                if y_key not in data_dict:
-                    return f"Error: data_dict must contain key '{y_key}'"
+                if len(stack_series[y_key]) != len(x_values):
+                    return f"Error: '{y_key}' values must have same length as x_values"
 
-            x_values = data_dict[x_key]
-
-            # Validate all y arrays have same length as x
-            for y_key in y_keys:
-                if len(data_dict[y_key]) != len(x_values):
-                    return f"Error: '{y_key}' data must have same length as '{x_key}'"
-
-            # Build data structure with all keys
+            # Build data structure
             data = []
             for i, x_val in enumerate(x_values):
-                row = {x_key: x_val}
+                row: Dict[str, Any] = {"x": x_val}
                 for y_key in y_keys:
-                    row[y_key] = data_dict[y_key][i]
+                    row[y_key] = stack_series[y_key][i]
                 data.append(row)
 
             # Build bars array with stackId
@@ -555,7 +527,7 @@ def create_plotting_tools(
                         "key": y_key,
                         "label": y_labels[idx] if y_labels and idx < len(y_labels) else y_key.title(),
                         "fill": _get_color(idx),
-                        "stackId": "a",  # All bars in the same stack
+                        "stackId": "a",
                     }
                 )
 
@@ -565,9 +537,9 @@ def create_plotting_tools(
                 chart_type="stacked_bar",
                 title=title,
                 data=data,
-                x_axis_key=x_key,
+                x_axis_key="x",
                 x_axis_label=x_label or "",
-                y_axis_key=y_keys[0],  # Use first y_key; yAxis is for labeling only
+                y_axis_key=y_keys[0],
                 y_axis_label=y_axis_label or "",
                 series=bars,
                 config=config,
