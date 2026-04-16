@@ -44,6 +44,7 @@ from plane.db.models import (
     Workspace,
     IssueSequence,
     Module,
+    ModuleIssue,
     ModuleMember,
     WorkspaceMember,
 )
@@ -232,15 +233,22 @@ def create_estimates(estimate_data, project_id, project, user_id):
     estimate_point_map = {}
     # Create Estimate Points
     for point_data in estimate_data["points"]:
-        created_estimate_point = EstimatePoint(
-            estimate_id=estimate.id,
-            key=point_data["key"],
-            value=point_data["value"],
-            created_by_id=user_id,
-            project_id=project_id,
-        )
-        created_estimate_point.save()
-        estimate_point_map[str(point_data.get("id"))] = str(created_estimate_point.id)
+        try:
+            created_estimate_point = EstimatePoint(
+                estimate_id=estimate.id,
+                key=point_data["key"],
+                value=point_data["value"],
+                created_by_id=user_id,
+                project_id=project_id,
+            )
+            created_estimate_point.save()
+            estimate_point_map[str(point_data.get("id"))] = str(created_estimate_point.id)
+        except Exception as e:
+            logger.error(
+                f"Failed to create estimate point for estimate {estimate.id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
     logger.info("Estimate points created")
     project.estimate = estimate
     project.save()
@@ -263,17 +271,24 @@ def create_labels(label_data, project_id, workspace_id, user_id):
     label_map = {}
 
     for label in label_data:
-        created_label = Label(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            name=label["name"],
-            color=label.get("color", get_random_color()),
-            sort_order=random.randint(0, 65535),
-            created_by_id=user_id,
-        )
-        created_label.save()
-        label_map[str(label.get("id"))] = str(created_label.id)
-    logger.info("Labels created")
+        try:
+            created_label = Label(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                name=label["name"],
+                color=label.get("color", get_random_color()),
+                sort_order=random.randint(0, 65535),
+                created_by_id=user_id,
+            )
+            created_label.save()
+            label_map[str(label.get("id"))] = str(created_label.id)
+        except Exception as e:
+            logger.error(
+                f"Failed to create label '{label.get('name')}' for project {project_id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
+    logger.info(f"Labels created: {len(label_map)}/{len(label_data)}")
     return label_map
 
 
@@ -294,66 +309,92 @@ def create_workitem_types(workitem_type_data, project_id, workspace_id, user_id)
 
     # Create Workitem Types
     for type in workitem_type_data:
-        # Create IssueType
-        created_issue_type = IssueType(
-            workspace_id=workspace_id,
-            name=type["name"],
-            description=type.get("description", ""),
-            is_default=type.get("is_default", False),
-            logo_props=type.get("logo_props", {}),
-            created_by_id=user_id,
-        )
-        created_issue_type.save()
-        workitem_type_map[str(type.get("id"))] = str(created_issue_type.id)
-        logger.info(f"Issue type created: {created_issue_type.id}")
-        # Create ProjectIssueType
-        created_project_issue_type = ProjectIssueType(
-            project_id=project_id,
-            issue_type_id=created_issue_type.id,
-            is_default=type.get("is_default", False),
-            created_by_id=user_id,
-        )
-        created_project_issue_type.save()
-        logger.info(f"Project issue type created: {created_project_issue_type.id}")
+        try:
+            # Create IssueType
+            created_issue_type = IssueType(
+                workspace_id=workspace_id,
+                name=type["name"],
+                description=type.get("description", ""),
+                is_default=type.get("is_default", False),
+                logo_props=type.get("logo_props", {}),
+                created_by_id=user_id,
+            )
+            created_issue_type.save()
+            workitem_type_map[str(type.get("id"))] = str(created_issue_type.id)
+            logger.info(f"Issue type created: {created_issue_type.id}")
+            # Create ProjectIssueType
+            created_project_issue_type = ProjectIssueType(
+                project_id=project_id,
+                issue_type_id=created_issue_type.id,
+                is_default=type.get("is_default", False),
+                created_by_id=user_id,
+            )
+            created_project_issue_type.save()
+            logger.info(f"Project issue type created: {created_project_issue_type.id}")
+        except Exception as e:
+            logger.error(
+                f"Failed to create workitem type '{type.get('name')}' for project {project_id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
+            continue
+
         # Iterate in the user-configured order so IssueProperty.save's
         # sort_order reassignment preserves the template's relative order.
         sorted_properties = sorted(type.get("properties", []), key=lambda p: p.get("sort_order") or 0)
         for property in sorted_properties:
-            created_issue_property = IssueProperty(
-                project_id=project_id,
-                issue_type_id=created_issue_type.id,
-                display_name=property["display_name"],
-                description=property.get("description", ""),
-                property_type=property["property_type"],
-                relation_type=property.get("relation_type"),
-                sort_order=property.get("sort_order") or random.randint(0, 65535),
-                logo_props=property.get("logo_props", {}),
-                is_required=property.get("is_required", False),
-                settings=property.get("settings", {}),
-                is_active=property.get("is_active", True),
-                is_multi=property.get("is_multi", False),
-                created_by_id=user_id,
-            )
-            created_issue_property.save()
-            workitem_property_map[str(property.get("id"))] = str(created_issue_property.id)
-            logger.info(f"Issue property created: {created_issue_property.id}")
+            try:
+                created_issue_property = IssueProperty(
+                    project_id=project_id,
+                    issue_type_id=created_issue_type.id,
+                    display_name=property["display_name"],
+                    description=property.get("description", ""),
+                    property_type=property["property_type"],
+                    relation_type=property.get("relation_type"),
+                    sort_order=property.get("sort_order") or random.randint(0, 65535),
+                    logo_props=property.get("logo_props", {}),
+                    is_required=property.get("is_required", False),
+                    settings=property.get("settings", {}),
+                    is_active=property.get("is_active", True),
+                    is_multi=property.get("is_multi", False),
+                    created_by_id=user_id,
+                )
+                created_issue_property.save()
+                workitem_property_map[str(property.get("id"))] = str(created_issue_property.id)
+                logger.info(f"Issue property created: {created_issue_property.id}")
+            except Exception as e:
+                logger.error(
+                    f"Failed to create property '{property.get('display_name')}' for type {created_issue_type.id}: {e}",
+                    exc_info=True,
+                    extra={"project_id": project_id}
+                )
+                continue
+
             # create options
             if created_issue_property.property_type == PropertyTypeEnum.OPTION:
                 for value in property.get("options", []):
-                    created_issue_property_option = IssuePropertyOption(
-                        name=value["name"],
-                        sort_order=value.get("sort_order", random.randint(0, 65535)),
-                        property=created_issue_property,
-                        is_active=value.get("is_active", True),
-                        is_default=value.get("is_default", False),
-                        logo_props=value.get("logo_props", {}),
-                        workspace_id=workspace_id,
-                        project_id=project_id,
-                        created_by_id=user_id,
-                    )
-                    created_issue_property_option.save()
-                    workitem_property_option_map[str(value.get("id"))] = str(created_issue_property_option.id)
-                    logger.info(f"Issue property option created: {created_issue_property_option.id}")
+                    try:
+                        created_issue_property_option = IssuePropertyOption(
+                            name=value["name"],
+                            sort_order=value.get("sort_order", random.randint(0, 65535)),
+                            property=created_issue_property,
+                            is_active=value.get("is_active", True),
+                            is_default=value.get("is_default", False),
+                            logo_props=value.get("logo_props", {}),
+                            workspace_id=workspace_id,
+                            project_id=project_id,
+                            created_by_id=user_id,
+                        )
+                        created_issue_property_option.save()
+                        workitem_property_option_map[str(value.get("id"))] = str(created_issue_property_option.id)
+                        logger.info(f"Issue property option created: {created_issue_property_option.id}")
+                    except Exception as e:
+                        logger.error(
+                            f"Failed to create option '{value.get('name')}' "
+                            f"for property {created_issue_property.id}: {e}",
+                            exc_info=True,
+                            extra={"project_id": project_id}
+                        )
     return workitem_type_map, workitem_property_map, workitem_property_option_map
 
 
@@ -387,42 +428,60 @@ def create_epics(epic_data, project_id, workspace_id, user_id):
     # sort_order reassignment preserves the template's relative order.
     sorted_epic_properties = sorted(epic_data.get("properties", []), key=lambda p: p.get("sort_order") or 0)
     for property in sorted_epic_properties:
-        epic_property = IssueProperty(
-            project_id=project_id,
-            issue_type_id=issue_type.id,
-            display_name=property["display_name"],
-            description=property.get("description", ""),
-            property_type=property["property_type"],
-            relation_type=property.get("relation_type"),
-            sort_order=property.get("sort_order") or random.randint(0, 65535),
-            logo_props=property.get("logo_props", {}),
-            is_required=property.get("is_required", False),
-            settings=property.get("settings", {}),
-            is_active=property.get("is_active", True),
-            is_multi=property.get("is_multi", False),
-            created_by_id=user_id,
-        )
-        epic_property.save()
-        logger.info(f"Epic property created: {epic_property.id}")
+        try:
+            epic_property = IssueProperty(
+                project_id=project_id,
+                issue_type_id=issue_type.id,
+                display_name=property["display_name"],
+                description=property.get("description", ""),
+                property_type=property["property_type"],
+                relation_type=property.get("relation_type"),
+                sort_order=property.get("sort_order") or random.randint(0, 65535),
+                logo_props=property.get("logo_props", {}),
+                is_required=property.get("is_required", False),
+                settings=property.get("settings", {}),
+                is_active=property.get("is_active", True),
+                is_multi=property.get("is_multi", False),
+                created_by_id=user_id,
+            )
+            epic_property.save()
+            logger.info(f"Epic property created: {epic_property.id}")
+        except Exception as e:
+            logger.error(
+                f"Failed to create epic property '{property.get('display_name')}' "
+                f"for project {project_id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
+            continue
+
         # create options
         if epic_property.property_type == PropertyTypeEnum.OPTION:
-            IssuePropertyOption.objects.bulk_create(
-                [
-                    IssuePropertyOption(
-                        name=value["name"],
-                        sort_order=value.get("sort_order", random.randint(0, 65535)),
-                        property=epic_property,
-                        is_active=value.get("is_active", True),
-                        is_default=value.get("is_default", False),
-                        logo_props=value.get("logo_props", {}),
-                        workspace_id=workspace_id,
-                        project_id=project_id,
-                    )
-                    for value in property.get("options", [])
-                ],
-                batch_size=BULK_CREATE_BATCH_SIZE,
-            )
-            logger.info(f"Epic property options created: {epic_property.id}")
+            try:
+                IssuePropertyOption.objects.bulk_create(
+                    [
+                        IssuePropertyOption(
+                            name=value["name"],
+                            sort_order=value.get("sort_order", random.randint(0, 65535)),
+                            property=epic_property,
+                            is_active=value.get("is_active", True),
+                            is_default=value.get("is_default", False),
+                            logo_props=value.get("logo_props", {}),
+                            workspace_id=workspace_id,
+                            project_id=project_id,
+                        )
+                        for value in property.get("options", [])
+                    ],
+                    batch_size=BULK_CREATE_BATCH_SIZE,
+                )
+                logger.info(f"Epic property options created: {epic_property.id}")
+            except Exception as e:
+                logger.error(
+                    f"Failed to create epic property options "
+                    f"for property {epic_property.id}: {e}",
+                    exc_info=True,
+                    extra={"project_id": project_id}
+                )
 
 
 def create_issue_property_values(
@@ -531,6 +590,7 @@ def create_workitems(
     workitem_property_option_map,
     estimate_point_map,
     user_id,
+    modules_map=None,
     origin=None,
 ):
     """
@@ -546,149 +606,214 @@ def create_workitems(
         workitem_property_option_map: The workitem property option map
         estimate_point_map: The estimate point map
         user_id: The ID of the user
+        modules_map: Mapping from template module id to newly-created module id
 
     """
+    modules_map = modules_map or {}
     created_workitems = []
 
     # Create workitems
     for blueprint in workitem_blueprints:
-        # Check if the state is present in the state map
-        if blueprint.state and state_map:
-            state_id = state_map.get(str(blueprint.state.get("id")))
-        else:
-            state_id = (
-                State.objects.filter(
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    default=True,
+        try:
+            # Check if the state is present in the state map
+            if blueprint.state and state_map:
+                state_id = state_map.get(str(blueprint.state.get("id")))
+            else:
+                state_id = (
+                    State.objects.filter(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        default=True,
+                    )
+                    .first()
+                    .id
                 )
-                .first()
-                .id
+
+            logger.info(f"State found: {state_id}")
+
+            # Check if the type is present in the workitem type map
+            if blueprint.type:
+                type_id = workitem_type_map.get(str(blueprint.type.get("id")))
+            else:
+                type_id = None
+            logger.info(f"Type found: {type_id}")
+            # Create the issue
+            new_issue = Issue.objects.create(
+                project_id=project_id,
+                workspace_id=workspace_id,
+                type_id=type_id,
+                state_id=state_id,
+                parent_id=None,
+                name=blueprint.name,
+                description_json=blueprint.description,
+                description_html=blueprint.description_html,
+                description_stripped=blueprint.description_stripped,
+                description_binary=blueprint.description_binary,
+                priority=blueprint.priority,
+                sort_order=random.randint(0, 65535),
+                created_by_id=user_id,
             )
+            new_issue_id = new_issue.id
 
-        logger.info(f"State found: {state_id}")
+            logger.info(f"Issue created: {new_issue_id}")
 
-        # Check if the type is present in the workitem type map
-        if blueprint.type:
-            type_id = workitem_type_map.get(str(blueprint.type.get("id")))
-        else:
-            type_id = None
-        logger.info(f"Type found: {type_id}")
-        # Create the issue
-        new_issue = Issue.objects.create(
-            project_id=project_id,
-            workspace_id=workspace_id,
-            type_id=type_id,
-            state_id=state_id,
-            parent_id=None,
-            name=blueprint.name,
-            description_json=blueprint.description,
-            description_html=blueprint.description_html,
-            description_stripped=blueprint.description_stripped,
-            description_binary=blueprint.description_binary,
-            priority=blueprint.priority,
-            sort_order=random.randint(0, 65535),
-            created_by_id=user_id,
-        )
-        new_issue_id = new_issue.id
+            # Create the issue sequence
+            IssueSequence.objects.create(
+                issue_id=new_issue_id,
+                project_id=project_id,
+                sequence=new_issue.sequence_id,
+                created_by_id=user_id,
+            )
+            logger.info(f"Issue sequence created: {new_issue.sequence_id}")
+            # Create the issue activity
+            IssueActivity.objects.create(
+                issue_id=new_issue_id,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="created the issue",
+                verb="created",
+                actor_id=user_id,
+                epoch=int(timezone.now().timestamp()),
+                created_by_id=user_id,
+            )
+            logger.info(f"Issue activity created: {new_issue_id}")
+            requested_data = json.dumps(
+                IssueDetailSerializer(new_issue).data, cls=DjangoJSONEncoder
+            )
+            slug = Workspace.objects.get(id=workspace_id).slug
 
-        logger.info(f"Issue created: {new_issue_id}")
-
-        # Create the issue sequence
-        IssueSequence.objects.create(
-            issue_id=new_issue_id,
-            project_id=project_id,
-            sequence=new_issue.sequence_id,
-            created_by_id=user_id,
-        )
-        logger.info(f"Issue sequence created: {new_issue.sequence_id}")
-        # Create the issue activity
-        IssueActivity.objects.create(
-            issue_id=new_issue_id,
-            project_id=project_id,
-            workspace_id=workspace_id,
-            comment="created the issue",
-            verb="created",
-            actor_id=user_id,
-            epoch=int(timezone.now().timestamp()),
-            created_by_id=user_id,
-        )
-        logger.info(f"Issue activity created: {new_issue_id}")
-        requested_data = json.dumps(IssueDetailSerializer(new_issue).data, cls=DjangoJSONEncoder)
-        slug = Workspace.objects.get(id=workspace_id).slug
-
-        # trigger the webhook
-        model_activity.delay(
-            model_name="issue",
-            model_id=str(new_issue_id),
-            requested_data=requested_data,
-            current_instance=None,
-            actor_id=user_id,
-            slug=slug,
-            origin=origin,
-        )
-        logger.info(f"triggered the webhook for the workitem: {new_issue_id}")
-        # updated issue description version
-        issue_description_version_task.delay(
-            updated_issue=requested_data,
-            issue_id=str(new_issue_id),
-            user_id=user_id,
-            is_creating=True,
-        )
-        logger.info(f"triggered the workitem description version for the workitem: {new_issue_id}")
+            # trigger the webhook
+            model_activity.delay(
+                model_name="issue",
+                model_id=str(new_issue_id),
+                requested_data=requested_data,
+                current_instance=None,
+                actor_id=user_id,
+                slug=slug,
+                origin=origin,
+            )
+            logger.info(f"triggered the webhook for the workitem: {new_issue_id}")
+            # updated issue description version
+            issue_description_version_task.delay(
+                updated_issue=requested_data,
+                issue_id=str(new_issue_id),
+                user_id=user_id,
+                is_creating=True,
+            )
+            logger.info(
+                f"triggered the workitem description version for the workitem: {new_issue_id}"
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create workitem '{blueprint.name}' "
+                f"for project {project_id}: {e}",
+                exc_info=True,
+            )
+            continue
 
         # Create the assignees
-        IssueAssignee.objects.bulk_create(
-            [
-                IssueAssignee(
-                    issue_id=new_issue_id,
-                    assignee_id=member_id,
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    created_by_id=user_id,
-                )
-                for member_id in ProjectMember.objects.filter(
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    member_id__in=[str(assignee.get("id")) for assignee in blueprint.assignees],
-                ).values_list("member_id", flat=True)
-            ],
-            batch_size=BULK_CREATE_BATCH_SIZE,
-            ignore_conflicts=True,
-        )
-        logger.info(f"Issue assignees created: {new_issue.id}")
+        try:
+            IssueAssignee.objects.bulk_create(
+                [
+                    IssueAssignee(
+                        issue_id=new_issue_id,
+                        assignee_id=member_id,
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=user_id,
+                    )
+                    for member_id in ProjectMember.objects.filter(
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        member_id__in=[
+                            str(assignee.get("id")) for assignee in blueprint.assignees
+                        ],
+                    ).values_list("member_id", flat=True)
+                ],
+                batch_size=BULK_CREATE_BATCH_SIZE,
+                ignore_conflicts=True,
+            )
+            logger.info(f"Issue assignees created: {new_issue_id}")
+        except Exception as e:
+            logger.error(
+                f"Failed to create assignees for workitem {new_issue_id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
 
         # Create the labels
-        IssueLabel.objects.bulk_create(
-            [
-                IssueLabel(
-                    issue_id=new_issue.id,
-                    label_id=labels_map.get(str(label.get("id"))),
-                    project_id=project_id,
-                    workspace_id=workspace_id,
-                    created_by_id=user_id,
-                )
-                for label in blueprint.labels
-                if labels_map.get(str(label.get("id")))
-            ],
-            batch_size=BULK_CREATE_BATCH_SIZE,
-            ignore_conflicts=True,
-        )
+        try:
+            IssueLabel.objects.bulk_create(
+                [
+                    IssueLabel(
+                        issue_id=new_issue_id,
+                        label_id=labels_map.get(str(label.get("id"))),
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=user_id,
+                    )
+                    for label in blueprint.labels
+                    if labels_map.get(str(label.get("id")))
+                ],
+                batch_size=BULK_CREATE_BATCH_SIZE,
+                ignore_conflicts=True,
+            )
+            logger.info(f"Issue labels created: {new_issue_id}")
+        except Exception as e:
+            logger.error(
+                f"Failed to create labels for workitem {new_issue_id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
 
-        logger.info(f"Issue labels created: {new_issue_id}")
+        # Create the module-issue links
+        try:
+            # WorkitemTemplate.modules is a JSONField with default=dict; treat
+            # anything that isn't a list as "no modules" so we don't iterate
+            # dict keys (which would crash module.get("id") with AttributeError).
+            template_modules = blueprint.modules if isinstance(blueprint.modules, list) else []
+            ModuleIssue.objects.bulk_create(
+                [
+                    ModuleIssue(
+                        issue_id=new_issue_id,
+                        module_id=modules_map.get(str(module.get("id"))),
+                        project_id=project_id,
+                        workspace_id=workspace_id,
+                        created_by_id=user_id,
+                    )
+                    for module in template_modules
+                    if modules_map.get(str(module.get("id")))
+                ],
+                batch_size=BULK_CREATE_BATCH_SIZE,
+                ignore_conflicts=True,
+            )
+            logger.info(f"Issue modules created: {new_issue_id}")
+        except Exception as e:
+            logger.error(
+                f"Failed to create module links for workitem {new_issue_id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
 
         if type_id:
             # create the issue property values
-            create_issue_property_values(
-                issue=new_issue,
-                blueprint_properties=blueprint.properties,
-                workitem_property_map=workitem_property_map,
-                workitem_property_option_map=workitem_property_option_map,
-                workspace_id=workspace_id,
-                project_id=project_id,
-                user_id=user_id,
-            )
-        logger.info(f"Issue property values created: {new_issue_id}")
+            try:
+                create_issue_property_values(
+                    issue=new_issue,
+                    blueprint_properties=blueprint.properties,
+                    workitem_property_map=workitem_property_map,
+                    workitem_property_option_map=workitem_property_option_map,
+                    workspace_id=workspace_id,
+                    project_id=project_id,
+                    user_id=user_id,
+                )
+                logger.info(f"Issue property values created: {new_issue_id}")
+            except Exception as e:
+                logger.error(
+                    f"Failed to create property values for workitem {new_issue_id}: {e}",
+                    exc_info=True,
+                    extra={"project_id": project_id}
+                )
 
         created_workitems.append(new_issue)
 
@@ -707,22 +832,33 @@ def create_modules(module_data, project_id, workspace_id, user_id):
 
     module_members = []
     get_member_ids = set()
+    module_map = {}
     for module in module_data:
-        created_module = Module.objects.create(
-            workspace_id=workspace_id,
-            project_id=project_id,
-            name=module.get("name", ""),
-            description=module.get("description", ""),
-            description_text=module.get("description_text", ""),
-            description_html=module.get("description_html", "<p></p>"),
-            start_date=module.get("start_date", None),
-            target_date=module.get("target_date", None),
-            status=module.get("status", "planned"),
-            lead_id=module.get("lead_id", None),
-            logo_props=module.get("logo_props", {}),
-            sort_order=random.randint(0, 65535),
-            created_by_id=user_id,
-        )
+        try:
+            created_module = Module.objects.create(
+                workspace_id=workspace_id,
+                project_id=project_id,
+                name=module.get("name", ""),
+                description=module.get("description", ""),
+                description_text=module.get("description_text", ""),
+                description_html=module.get("description_html", "<p></p>"),
+                start_date=module.get("start_date", None),
+                target_date=module.get("target_date", None),
+                status=module.get("status", "planned"),
+                lead_id=module.get("lead_id", None),
+                logo_props=module.get("logo_props", {}),
+                sort_order=random.randint(0, 65535),
+                created_by_id=user_id,
+            )
+            module_map[str(module.get("id"))] = str(created_module.id)
+        except Exception as e:
+            logger.error(
+                f"Failed to create module '{module.get('name')}' "
+                f"for project {project_id}: {e}",
+                exc_info=True,
+                extra={"project_id": project_id}
+            )
+            continue
 
         member_ids = module.get("member_ids", [])
         lead_id = module.get("lead_id", False)
@@ -735,7 +871,9 @@ def create_modules(module_data, project_id, workspace_id, user_id):
 
         # Check for active workspace member
         for member_id in member_ids:
-            if WorkspaceMember.objects.filter(member_id=member_id, is_active=True, workspace_id=workspace_id).exists():
+            if WorkspaceMember.objects.filter(
+                member_id=member_id, is_active=True, workspace_id=workspace_id
+            ).exists():
                 valid_member_ids.extend([member_id])
 
         get_member_ids.update(valid_member_ids)
@@ -752,7 +890,8 @@ def create_modules(module_data, project_id, workspace_id, user_id):
             for member_id in valid_member_ids
         )
 
-    ModuleMember.objects.bulk_create(module_members)
+    if module_members:
+        ModuleMember.objects.bulk_create(module_members)
 
     project_members = ProjectMember.objects.filter(
         project_id=project_id, workspace_id=workspace_id, member_id__in=get_member_ids
@@ -778,64 +917,113 @@ def create_modules(module_data, project_id, workspace_id, user_id):
     )
 
     logger.info("Modules created")
-    return
+    return module_map
 
 
 @shared_task
 def create_project_from_template(template_id, project_id, user_id, state_map, origin=None):
+    """
+    Create a project from a template and copy the workitems, labels, estimates, etc.
+    Args:
+        template_id: The ID of the template
+        project_id: The ID of the project
+        user_id: The ID of the user
+        state_map: The state map
+
+    """
     try:
-        """
-        Create a project from a template and copy the workitems, labels, estimates, etc.
-        Args:
-            template_id: The ID of the template
-            project_id: The ID of the project
-            user_id: The ID of the user
-            state_map: The state map
-
-        """
-
         # get the project template and project
         project_template = ProjectTemplate.objects.get(template_id=template_id)
-
         project = Project.objects.get(id=project_id)
-        workspace_id = project.workspace_id
+    except (ProjectTemplate.DoesNotExist, Project.DoesNotExist) as e:
+        logger.error(
+            f"Template or project not found (template={template_id}, "
+            f"project={project_id}): {e}",
+        )
+        return
 
-        # initialize the maps
-        estimate_point_map = {}
-        label_map = {}
-        workitem_type_map = {}
-        workitem_property_map = {}
-        workitem_property_option_map = {}
+    workspace_id = project.workspace_id
 
-        # create estimates
-        if project_template.estimates:
-            estimate_point_map = create_estimates(project_template.estimates, project_id, project, user_id)
+    # initialize the maps
+    estimate_point_map = {}
+    label_map = {}
+    workitem_type_map = {}
+    workitem_property_map = {}
+    workitem_property_option_map = {}
+    module_map = {}
 
-        # create labels
-        if project_template.labels:
-            label_map = create_labels(project_template.labels, project_id, workspace_id, user_id)
-
-        # create workitem types
-        if project_template.workitem_types:
-            workitem_type_map, workitem_property_map, workitem_property_option_map = create_workitem_types(
-                project_template.workitem_types, project_id, workspace_id, user_id
+    # create estimates
+    if project_template.estimates:
+        try:
+            estimate_point_map = create_estimates(
+                project_template.estimates, project_id, project, user_id
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create estimates for project {project_id}: {e}",
+                exc_info=True,
             )
 
-        # create modules
-        if project_template.module_view and project_template.modules:
-            create_modules(project_template.modules, project_id, workspace_id, user_id)
+    # create labels
+    if project_template.labels:
+        try:
+            label_map = create_labels(
+                project_template.labels, project_id, workspace_id, user_id
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create labels for project {project_id}: {e}",
+                exc_info=True,
+            )
 
-        # create epics
-        if project_template.epics:
-            create_epics(project_template.epics, project_id, workspace_id, user_id)
+    # create workitem types
+    if project_template.workitem_types:
+        try:
+            (
+                workitem_type_map,
+                workitem_property_map,
+                workitem_property_option_map,
+            ) = create_workitem_types(
+                project_template.workitem_types, project_id, workspace_id, user_id
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create workitem types for project {project_id}: {e}",
+                exc_info=True,
+            )
 
-        # get any workitem blueprint is present in the template
-        workitem_blueprints = WorkitemTemplate.objects.filter(
-            project_template=project_template,
-        )
+    # create modules
+    if project_template.module_view and project_template.modules:
+        try:
+            module_map = create_modules(
+                project_template.modules, project_id, workspace_id, user_id
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create modules for project {project_id}: {e}",
+                exc_info=True,
+            )
 
-        # Create workitems
-        if workitem_blueprints:
+    # create epics
+    if project_template.epics:
+        try:
+            create_epics(
+                project_template.epics, project_id, workspace_id, user_id
+            )
+        except Exception as e:
+            logger.error(
+                f"Failed to create epics for project {project_id}: {e}",
+                exc_info=True,
+            )
+
+    # get any workitem blueprint is present in the template
+    workitem_blueprints = WorkitemTemplate.objects.filter(
+        project_template=project_template,
+    )
+
+    # Create workitems
+    if workitem_blueprints:
+        try:
             create_workitems(
                 workitem_blueprints=workitem_blueprints,
                 project_id=project_id,
@@ -847,13 +1035,16 @@ def create_project_from_template(template_id, project_id, user_id, state_map, or
                 workitem_property_option_map=workitem_property_option_map,
                 estimate_point_map=estimate_point_map,
                 user_id=user_id,
+                modules_map=module_map,
                 origin=origin,
             )
-        logger.info(f"Project created from template: {project.id}")
-        return
-    except Exception as e:
-        log_exception(e)
-        return
+        except Exception as e:
+            logger.error(
+                f"Failed to create workitems for project {project_id}: {e}",
+                exc_info=True,
+            )
+
+    logger.info(f"Project created from template: {project.id}")
 
 
 @shared_task
@@ -886,9 +1077,9 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
 
     logger.info(f"Subworkitem templates found: {sub_workitem_templates.count()}")
 
-    try:
-        # Create the subworkitem templates
-        for sub_workitem_template in sub_workitem_templates:
+    # Create the subworkitem templates
+    for sub_workitem_template in sub_workitem_templates:
+        try:
             logger.info(f"Creating subworkitem: {sub_workitem_template.name}")
             issue = Issue.objects.create(
                 project_id=project_id,
@@ -926,7 +1117,16 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
                 created_by_id=user_id,
             )
             logger.info(f"Issue activity created: {issue.id}")
-            # Create issue assignees
+        except Exception as e:
+            logger.error(
+                f"Failed to create subworkitem '{sub_workitem_template.name}' "
+                f"for workitem {workitem_id}: {e}",
+                exc_info=True,
+            )
+            continue
+
+        # Create issue assignees
+        try:
             assignees = sub_workitem_template.assignees
             IssueAssignee.objects.bulk_create(
                 [
@@ -941,7 +1141,14 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
                 ]
             )
             logger.info(f"Issue assignees created: {issue.id}")
-            # Create issue labels
+        except Exception as e:
+            logger.error(
+                f"Failed to create assignees for subworkitem {issue.id}: {e}",
+                exc_info=True,
+            )
+
+        # Create issue labels
+        try:
             labels = sub_workitem_template.labels
             IssueLabel.objects.bulk_create(
                 [
@@ -956,13 +1163,20 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
                 ]
             )
             logger.info(f"Issue labels created: {issue.id}")
-            # Process properties
+        except Exception as e:
+            logger.error(
+                f"Failed to create labels for subworkitem {issue.id}: {e}",
+                exc_info=True,
+            )
+
+        # Process properties
+        try:
             property_values_to_create = []
             for property in sub_workitem_template.properties:
                 try:
                     property_obj = IssueProperty.objects.get(id=property.get("id"))
                 except IssueProperty.DoesNotExist:
-                    logger.info(f"Property does not exist: {property.get('id')}")
+                    logger.warning(f"Property does not exist: {property.get('id')}")
                     continue
 
                 property_values = property.get("values", [])
@@ -984,7 +1198,9 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
                                 "created_by_id": user_id,
                             }
                         )
-                        property_values_to_create.append(IssuePropertyValue(**property_value_data))
+                        property_values_to_create.append(
+                            IssuePropertyValue(**property_value_data)
+                        )
 
             if property_values_to_create:
                 IssuePropertyValue.objects.bulk_create(
@@ -993,6 +1209,5 @@ def create_subworkitems(workitem_template_id, project_id, workitem_id, user_id):
                     ignore_conflicts=True,
                 )
             logger.info(f"Issue property values created: {issue.id}")
-    except Exception as e:
-        log_exception(e)
-        return
+        except Exception as e:
+            log_exception(e)
