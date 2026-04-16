@@ -126,6 +126,7 @@ def _create_missing_future_cycles(scheduled_cycle: CycleSettings, bot_id, now):
                 name=_build_cycle_name(base_title, next_sequence),
                 start_date=start_date_utc,
                 end_date=end_date_utc,
+                version=2
             )
         )
         next_sequence += 1
@@ -268,6 +269,7 @@ def schedule_cycle(automated_cycle_id: str, project_id: str, bot_id: str):
                 name=_build_cycle_name(base_title, next_sequence),
                 start_date=start_dt,
                 end_date=end_dt,
+                version=2
             )
             cycles_to_create.append(cycle)
             next_sequence += 1
