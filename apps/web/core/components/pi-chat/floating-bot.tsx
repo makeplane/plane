@@ -11,27 +11,35 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname, useSearchParams } from "next/navigation";
-import { cn } from "@plane/utils";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useAIAssistant } from "@/plane-web/hooks/use-ai-assistant";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
-import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { PiChatDetail } from "./detail";
 import { PiChatLayout } from "./layout";
 import { isPiAllowed } from "@/helpers/pi-chat";
 import { WithAiFeatureFlagHOC } from "../feature-flags/with-ai-feature-flag-hoc";
+import { ResizableSidebar } from "../sidebar/resizable-sidebar";
+import { useLocalStorage } from "@plane/hooks";
 
 type TProps = {
   isOpen: boolean;
   sidecarChatId: string | undefined;
+  closeSidecar: () => void;
   openPiChatSidecar: (chatId?: string) => void;
 };
+const DEFAULT_SIDECAR_WIDTH = 400;
+
 export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TProps) {
-  const { isOpen, sidecarChatId, openPiChatSidecar } = props;
+  const { isOpen, sidecarChatId, openPiChatSidecar, closeSidecar } = props;
+  // state
+  const { storedValue, setValue } = useLocalStorage("piChatSidecarWidth", DEFAULT_SIDECAR_WIDTH);
+  const [sidecarWidth, setSidecarWidth] = useState<number>(
+    storedValue && storedValue > 0 ? storedValue : DEFAULT_SIDECAR_WIDTH
+  );
   // query params
   const pathName = usePathname();
   const params = useParams();
@@ -63,18 +71,25 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TPro
 
   return (
     <WithAiFeatureFlagHOC workspaceSlug={workspaceSlug?.toString() || ""} flag="AI_CHAT">
-      <div
-        className={cn(
-          "transform transition-all duration-300 ease-in-out overflow-x-hidden",
-          "rounded-lg border border-subtle-1 h-full max-w-[400px]",
-          isOpen ? "translate-x-0 w-[400px] mr-2" : "px-0 translate-x-[100%] w-0 border-none"
-        )}
-        data-prevent-outside-click
+      <ResizableSidebar
+        showPeek={false}
+        togglePeek={() => {}}
+        isCollapsed={!isOpen}
+        toggleCollapsed={closeSidecar}
+        width={sidecarWidth}
+        setWidth={setSidecarWidth}
+        onWidthChange={setValue}
+        minWidth={DEFAULT_SIDECAR_WIDTH}
+        maxWidth={800}
+        resizeFrom="left"
+        className="rounded-lg"
       >
-        <PiChatLayout isFullScreen={false} isProjectLevel isOpen={isOpen}>
-          <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel contextData={contextData} />
-        </PiChatLayout>
-      </div>
+        <div className="h-full w-full overflow-x-hidden rounded-lg border border-subtle-1" data-prevent-outside-click>
+          <PiChatLayout isFullScreen={false} isProjectLevel isOpen={isOpen}>
+            <PiChatDetail isFullScreen={false} shouldRedirect={false} isProjectLevel contextData={contextData} />
+          </PiChatLayout>
+        </div>
+      </ResizableSidebar>
     </WithAiFeatureFlagHOC>
   );
 });

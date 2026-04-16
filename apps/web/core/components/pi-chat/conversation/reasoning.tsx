@@ -49,7 +49,7 @@ export function parseBulletString(str: string): {
 export const ReasoningBlock = (props: TProps) => {
   const { reasoning, isThinking, currentTick, todos } = props;
   const [manuallyToggled, setManuallyToggled] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when reasoning content updates

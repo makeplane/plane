@@ -22,16 +22,17 @@ export const WorkspaceSidecar = observer(function WorkspaceSidecar() {
   if (!isSidecarOpen) return null;
 
   return (
-    <>
+    <div className="mr-2 h-full">
       {activeSidecar === "pi-chat" ? (
         <PiChatFloatingBot
           isOpen={activeSidecar === "pi-chat"}
           sidecarChatId={sidecarChatId}
           openPiChatSidecar={openPiChatSidecar}
+          closeSidecar={closeSidecar}
         />
       ) : (
         <AgentSidecar isOpen={activeSidecar === "agent"} closeSidecar={closeSidecar} />
       )}
-    </>
+    </div>
   );
 });

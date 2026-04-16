@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
@@ -27,15 +27,23 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane-web imports
 import { useAgent } from "@/plane-web/hooks/store";
+import { useLocalStorage } from "@plane/hooks";
 // local imports
 import { WithFeatureFlagHOC } from "../feature-flags";
 import { ConversationLoader } from "./conversation/loader";
 import { Messages } from "./conversation/messages";
 import { AgentHeader } from "./header";
 import { AgentInput } from "./input";
+import { ResizableSidebar } from "../sidebar/resizable-sidebar";
 
+const DEFAULT_SIDECAR_WIDTH = 400;
 export const AgentSidecar = observer(function AgentSidecar(props: { isOpen: boolean; closeSidecar: () => void }) {
   const { isOpen, closeSidecar } = props;
+  // state
+  const { storedValue, setValue } = useLocalStorage("agentSidecarWidth", DEFAULT_SIDECAR_WIDTH);
+  const [sidecarWidth, setSidecarWidth] = useState<number>(
+    storedValue && storedValue > 0 ? storedValue : DEFAULT_SIDECAR_WIDTH
+  );
   const { workspaceSlug, projectId, workItem } = useParams();
   // refs
   const editorRef = useRef<EditorRefApi>(null);
@@ -85,55 +93,61 @@ export const AgentSidecar = observer(function AgentSidecar(props: { isOpen: bool
     return null;
   return (
     <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.AGENT_SIDECAR} fallback={<></>}>
-      <div
-        className={cn(
-          "transform transition-all duration-300 ease-in-out overflow-x-hidden bg-surface-1",
-          "rounded-lg border border-subtle-1 h-full max-w-[400px]",
-          isOpen ? "translate-x-0 w-[400px] mr-2" : "px-0 translate-x-[100%] w-0 border-none"
-        )}
-        data-prevent-outside-click
+      <ResizableSidebar
+        showPeek={false}
+        togglePeek={() => {}}
+        isCollapsed={!isOpen}
+        toggleCollapsed={closeSidecar}
+        width={sidecarWidth}
+        setWidth={setSidecarWidth}
+        onWidthChange={setValue}
+        minWidth={DEFAULT_SIDECAR_WIDTH}
+        maxWidth={600}
+        resizeFrom="left"
+        className="rounded-lg"
       >
-        <div className="flex flex-col flex-1 h-full w-full">
-          {/* Header */}
-          <AgentHeader
-            isLoading={isLoadingRun}
-            toggleSidePanel={closeSidecar}
-            agentUser={activeRun?.agent_user}
-            agentStatus={activeRun?.status}
-          />
-          <div
-            className={cn(
-              "px-4 relative flex flex-col h-[90%] flex-1 align-middle justify-center max-w-[400px] md:m-auto w-full"
-            )}
-          >
-            <div className={cn("flex-1 flex h-full relative")}>
-              {isLoadingRun ? (
-                <div className="w-full flex h-full relative">
-                  <ConversationLoader />
-                </div>
-              ) : (
-                <Messages
-                  workspaceId={workspaceId}
+        <div
+          className="h-full w-full overflow-x-hidden bg-surface-1 rounded-lg border border-subtle-1"
+          data-prevent-outside-click
+        >
+          <div className="flex flex-col flex-1 h-full w-full">
+            {/* Header */}
+            <AgentHeader
+              isLoading={isLoadingRun}
+              toggleSidePanel={closeSidecar}
+              agentUser={activeRun?.agent_user}
+              agentStatus={activeRun?.status}
+            />
+            <div className={cn("px-4 relative flex flex-col h-[90%] flex-1 align-middle justify-center w-full")}>
+              <div className={cn("flex-1 flex h-full relative")}>
+                {isLoadingRun ? (
+                  <div className="w-full flex h-full relative">
+                    <ConversationLoader />
+                  </div>
+                ) : (
+                  <Messages
+                    workspaceId={workspaceId}
+                    workspaceSlug={workspaceSlug}
+                    projectId={projectIdToUse}
+                    activeRunStatus={activeRun?.status}
+                  />
+                )}
+              </div>
+              <div className={cn("absolute bottom-0 left-4 right-4 pb-4 bg-surface-1")}>
+                <AgentInput
+                  editorRef={editorRef}
                   workspaceSlug={workspaceSlug}
                   projectId={projectIdToUse}
-                  activeRunStatus={activeRun?.status}
+                  entityId={activeRun?.id}
+                  commentId={activeRun?.comment}
+                  activityOperations={activityOperations}
+                  callback={() => fetchRunActivities(workspaceSlug?.toString() || "", activeRun?.id)}
                 />
-              )}
-            </div>
-            <div className={cn("absolute bottom-0 left-4 right-4 pb-4 bg-surface-1")}>
-              <AgentInput
-                editorRef={editorRef}
-                workspaceSlug={workspaceSlug}
-                projectId={projectIdToUse}
-                entityId={activeRun?.id}
-                commentId={activeRun?.comment}
-                activityOperations={activityOperations}
-                callback={() => fetchRunActivities(workspaceSlug?.toString() || "", activeRun?.id)}
-              />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </ResizableSidebar>
     </WithFeatureFlagHOC>
   );
 });

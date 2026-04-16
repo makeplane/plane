@@ -82,9 +82,11 @@ export const AiMessage = observer(function AiMessage(props: TProps) {
           </Loader>
         )}
         {dialogue && (
-          <div className={cn("flex flex-col gap-4", { "mt-4": !answer })}>
+          <div className={cn("flex flex-col gap-2", { "mt-4": !answer })}>
             {/* Artifacts list */}
-            {dialogue.actions && <PiChatArtifactsListRoot artifacts={dialogue.actions} isEditable={isLatest} />}
+            {dialogue.actions && dialogue.actions.length > 0 && (
+              <PiChatArtifactsListRoot artifacts={dialogue.actions} isEditable={isLatest} />
+            )}
             {/* Action bar */}
             <ActionStatusBlock
               workspaceSlug={workspaceSlug?.toString()}

@@ -36,6 +36,7 @@ interface ResizableSidebarProps {
   extendedSidebar?: ReactElement;
   isAnyExtendedSidebarExpanded?: boolean;
   isAnySidebarDropdownOpen?: boolean;
+  resizeFrom?: "left" | "right";
 }
 
 export function ResizableSidebar({
@@ -55,6 +56,7 @@ export function ResizableSidebar({
   extendedSidebar,
   isAnyExtendedSidebarExpanded = false,
   isAnySidebarDropdownOpen = false,
+  resizeFrom = "right",
 }: ResizableSidebarProps) {
   // states
   const [isResizing, setIsResizing] = useState(false);
@@ -78,10 +80,11 @@ export function ResizableSidebar({
       if (!isResizing) return;
 
       const deltaX = e.clientX - initialMouseXRef.current;
-      const newWidth = Math.min(Math.max(initialWidthRef.current + deltaX, minWidth), maxWidth);
+      const adjustedDelta = resizeFrom === "left" ? -deltaX : deltaX;
+      const newWidth = Math.min(Math.max(initialWidthRef.current + adjustedDelta, minWidth), maxWidth);
       setWidth(newWidth);
     },
-    [isResizing, minWidth, maxWidth, setWidth]
+    [isResizing, minWidth, maxWidth, setWidth, resizeFrom]
   );
 
   const startResizing = useCallback(
@@ -187,11 +190,10 @@ export function ResizableSidebar({
       <div
         id="main-sidebar"
         className={cn(
-          "h-full z-20 bg-surface-1 border-r border-subtle",
+          "h-full z-20 bg-surface-1 border-r border-subtle rounded-lg",
           !isResizing && "transition-all duration-300 ease-in-out",
           isCollapsed ? "translate-x-[-100%] opacity-0 w-0" : "translate-x-0 opacity-100",
-          isMobile && "absolute",
-          className
+          isMobile && "absolute"
         )}
         style={{
           width: `${isCollapsed ? 0 : width}px`,
@@ -204,7 +206,8 @@ export function ResizableSidebar({
       >
         <aside
           className={cn(
-            "group/sidebar h-full w-full bg-surface-1 overflow-hidden relative flex flex-col pt-3",
+            "group/sidebar h-full w-full bg-surface-1 overflow-hidden relative flex flex-col",
+            className,
             isAnyExtendedSidebarExpanded && "rounded-none"
           )}
         >
@@ -216,7 +219,7 @@ export function ResizableSidebar({
               "transition-all duration-200 cursor-ew-resize absolute h-full w-1 z-[20]",
               !isResizing && "hover:bg-surface-2",
               isResizing && "w-1.5 bg-layer-1",
-              "top-0 right-0"
+              resizeFrom === "left" ? "top-0 left-0" : "top-0 right-0"
             )}
             // onDoubleClick toggle sidebar
             onDoubleClick={() => toggleCollapsed()}
@@ -258,7 +261,7 @@ export function ResizableSidebar({
               "transition-all duration-200 cursor-ew-resize absolute h-full w-1 z-[20]",
               !isResizing && "hover:bg-surface-2",
               isResizing && "bg-layer-1",
-              "top-0 right-0"
+              resizeFrom === "left" ? "top-0 left-0" : "top-0 right-0"
             )}
             // onDoubleClick toggle sidebar
             onDoubleClick={() => toggleCollapsed()}
