@@ -308,6 +308,13 @@ export const getOrderedWorkItems = (workItems: TIssue[], orderByKey: TIssueOrder
         orderBy(workItems, (currentIssue: TIssue) => indexOf(sortArray, currentIssue?.priority), ["asc"])
       );
     }
+
+    case "name":
+      return getIssueIds(orderBy(workItems, (item) => (item.name ?? "").toLocaleLowerCase()));
+
+    case "-name":
+      return getIssueIds(orderBy(workItems, (item) => (item.name ?? "").toLocaleLowerCase(), ["desc"]));
+
     default:
       return getIssueIds(workItems);
   }

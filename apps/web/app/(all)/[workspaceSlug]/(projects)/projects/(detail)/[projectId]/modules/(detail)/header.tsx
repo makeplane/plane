@@ -165,7 +165,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                       router.push(`/${workspaceSlug}/projects/${projectId}/modules/${value}`);
                     }}
                     title={moduleDetails?.name}
-                    icon={<ModuleIcon className="size-3.5 flex-shrink-0 text-tertiary" />}
+                    icon={<ModuleIcon className="size-3.5 shrink-0 text-tertiary" />}
                     isLast
                   />
                 }
@@ -179,7 +179,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 } in this module`}
                 position="bottom"
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
+                <span className="flex shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
                 </span>
               </Tooltip>
@@ -224,9 +224,8 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
                 }
-                displayFilters={issueFilters?.displayFilters ?? {}}
+                workItemFilters={issueFilters}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
                 ignoreGroupedFilters={["module"]}
                 cycleViewDisabled={!currentProjectDetails?.cycle_view}
@@ -272,7 +271,7 @@ export const ModuleIssuesHeader = observer(function ModuleIssuesHeader() {
               moduleId={moduleId}
               projectId={projectId.toString()}
               workspaceSlug={workspaceSlug.toString()}
-              customClassName="flex-shrink-0 flex items-center justify-center bg-layer-1/70 rounded-sm size-[26px]"
+              customClassName="shrink-0 flex items-center justify-center bg-layer-1/70 rounded-sm size-[26px]"
             />
           )}
         </Header.RightItem>

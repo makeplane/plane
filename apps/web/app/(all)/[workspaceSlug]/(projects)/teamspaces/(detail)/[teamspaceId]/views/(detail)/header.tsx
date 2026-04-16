@@ -203,7 +203,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className="flex-shrink-0 rounded-full size-1.5 bg-success-primary" />
+            <span className="shrink-0 rounded-full size-1.5 bg-success-primary" />
             {t("common.live")}
           </a>
         ) : (
@@ -230,9 +230,8 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.layoutOptions[activeLayout] : undefined
               }
-              displayFilters={issueFilters?.displayFilters ?? {}}
+              workItemFilters={issueFilters}
               handleDisplayFiltersUpdate={handleDisplayFilters}
-              displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
             />
           </FiltersDropdown>

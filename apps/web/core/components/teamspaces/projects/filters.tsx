@@ -82,9 +82,8 @@ export const TeamspaceProjectWorkItemFilters = observer(function TeamspaceProjec
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_project_work_items.layoutOptions[activeLayout] : undefined
           }
-          displayFilters={issueFilters?.displayFilters ?? {}}
+          workItemFilters={issueFilters}
           handleDisplayFiltersUpdate={handleDisplayFilters}
-          displayProperties={issueFilters?.displayProperties ?? {}}
           handleDisplayPropertiesUpdate={handleDisplayProperties}
         />
       </FiltersDropdown>

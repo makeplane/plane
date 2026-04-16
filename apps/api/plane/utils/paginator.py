@@ -727,6 +727,13 @@ class BasePaginator:
         except ValueError:
             raise ParseError(detail="Invalid cursor parameter.")
 
+        # Apply PQL ORDER BY: override paginator order_by so PQL ordering
+        # takes effect even in views that read order_by before
+        # filter_queryset() runs.
+        pql_order_by = getattr(request, "_pql_order_by", None)
+        if pql_order_by is not None:
+            paginator_kwargs["order_by"] = pql_order_by
+
         # Apply PQL LIMIT: pass a result_cap to the paginator so it caps
         # total counts and pagination metadata without extra queries.
         pql_limit = getattr(request, "_pql_limit", None)

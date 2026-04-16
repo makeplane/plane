@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -69,8 +68,7 @@ export const ArchivedIssuesHeader = observer(function ArchivedIssuesHeader() {
         <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.ARCHIVED} entityId={projectId} />
         <FiltersDropdown title={t("common.display")} placement="bottom-end">
           <DisplayFiltersSelection
-            displayFilters={issueFilters?.displayFilters || {}}
-            displayProperties={issueFilters?.displayProperties || {}}
+            workItemFilters={issueFilters}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
             layoutDisplayFiltersOptions={

@@ -220,14 +220,16 @@ export const TeamspaceViewForm = observer(function TeamspaceViewForm(props: Prop
                           layoutDisplayFiltersOptions={
                             ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.layoutOptions[displayFilters.layout]
                           }
-                          displayFilters={displayFilters ?? {}}
+                          workItemFilters={{
+                            displayFilters,
+                            displayProperties,
+                          }}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                             onDisplayFiltersChange({
                               ...displayFilters,
                               ...updatedDisplayFilter,
                             });
                           }}
-                          displayProperties={displayProperties ?? {}}
                           handleDisplayPropertiesUpdate={(
                             updatedDisplayProperties: Partial<IIssueDisplayProperties>
                           ) => {

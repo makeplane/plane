@@ -234,7 +234,7 @@ function buildSortableFieldSuggestions(fieldDefs: FieldDef[]): Suggestion[] {
 
   for (const def of fieldDefs) {
     const pqlAlias = FIELD_ALIASES[def.value] ?? def.value;
-    if (!SORTABLE_FIELDS.has(pqlAlias)) continue;
+    if (!Object.hasOwn(SORTABLE_FIELDS, pqlAlias)) continue;
 
     suggestions.push({
       kind: "field",

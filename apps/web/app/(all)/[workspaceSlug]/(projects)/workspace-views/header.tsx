@@ -141,7 +141,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
                   title={viewDetails?.name ?? t(defaultViewDetails?.i18n_label ?? "")}
                   icon={
                     <Breadcrumbs.Icon>
-                      <ViewsIcon className="size-4 flex-shrink-0 text-tertiary" />
+                      <ViewsIcon className="size-4 shrink-0 text-tertiary" />
                     </Breadcrumbs.Icon>
                   }
                   isLast
@@ -167,9 +167,8 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
             <FiltersDropdown title={t("common.display")} placement="bottom-end">
               <DisplayFiltersSelection
                 layoutDisplayFiltersOptions={currentLayoutFilters}
-                displayFilters={issueFilters?.displayFilters ?? {}}
+                workItemFilters={issueFilters}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
               />
             </FiltersDropdown>

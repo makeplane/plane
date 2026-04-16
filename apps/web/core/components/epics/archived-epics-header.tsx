@@ -11,9 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -71,8 +69,7 @@ export const ArchivedEpicsHeader = observer(function ArchivedEpicsHeader(props: 
         <WorkItemFiltersToggle enablePQL entityType={EIssuesStoreType.ARCHIVED_EPIC} entityId={projectId} />
         <FiltersDropdown title={t("common.display")} placement="bottom-end">
           <DisplayFiltersSelection
-            displayFilters={issueFilters?.displayFilters || {}}
-            displayProperties={issueFilters?.displayProperties || {}}
+            workItemFilters={issueFilters}
             handleDisplayFiltersUpdate={handleDisplayFiltersUpdate}
             handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
             layoutDisplayFiltersOptions={

@@ -71,7 +71,9 @@ export type TIssueOrderByOptions =
   | "customer_request_count"
   | "-customer_request_count"
   | "customer_count"
-  | "-customer_count";
+  | "-customer_count"
+  | "name"
+  | "-name";
 
 export type TIssueGroupingFilters = "active" | "backlog";
 

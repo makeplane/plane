@@ -72,10 +72,10 @@ export function ProjectEpicMobileHeader() {
 
   return (
     <>
-      <div className="md:hidden flex justify-evenly border-b border-subtle-1 py-2 z-[13] bg-surface-1">
+      <div className="md:hidden flex justify-evenly border-b border-subtle-1 py-2 z-13 bg-surface-1">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-13 text-secondary"
+          className="flex grow justify-center text-13 text-secondary"
           placement="bottom-start"
           customButton={
             <div className="flex flex-start text-13 text-secondary">
@@ -83,7 +83,7 @@ export function ProjectEpicMobileHeader() {
               <ChevronDownIcon className="ml-2  h-4 w-4 text-secondary my-auto" strokeWidth={2} />
             </div>
           }
-          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
+          customButtonClassName="flex grow justify-center text-secondary text-13"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -99,7 +99,7 @@ export function ProjectEpicMobileHeader() {
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow items-center justify-center border-l border-subtle-1 text-13 text-secondary">
+        <div className="flex grow items-center justify-center border-l border-subtle-1 text-13 text-secondary">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
@@ -114,9 +114,8 @@ export function ProjectEpicMobileHeader() {
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
               }
-              displayFilters={issueFilters?.displayFilters ?? {}}
+              workItemFilters={issueFilters}
               handleDisplayFiltersUpdate={handleDisplayFilters}
-              displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}
               moduleViewDisabled={!currentProjectDetails?.module_view}

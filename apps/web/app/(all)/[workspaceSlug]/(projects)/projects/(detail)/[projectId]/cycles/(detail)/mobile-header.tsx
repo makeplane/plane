@@ -106,12 +106,10 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
       <div className="flex justify-evenly py-2 border-b border-subtle md:hidden bg-surface-1">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-secondary text-13"
+          className="flex grow justify-center text-secondary text-13"
           placement="bottom-start"
-          customButton={
-            <span className="flex flex-grow justify-center text-secondary text-13">{t("common.layout")}</span>
-          }
-          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
+          customButton={<span className="flex grow justify-center text-secondary text-13">{t("common.layout")}</span>}
+          customButtonClassName="flex grow justify-center text-secondary text-13"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -127,7 +125,7 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow justify-center border-l border-subtle items-center text-secondary text-13">
+        <div className="flex grow justify-center border-l border-subtle items-center text-secondary text-13">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
@@ -142,9 +140,8 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
               }
-              displayFilters={issueFilters?.displayFilters ?? {}}
+              workItemFilters={issueFilters}
               handleDisplayFiltersUpdate={handleDisplayFilters}
-              displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
               ignoreGroupedFilters={["cycle"]}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}
@@ -152,10 +149,9 @@ export const CycleIssuesMobileHeader = observer(function CycleIssuesMobileHeader
             />
           </FiltersDropdown>
         </div>
-
         <span
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center text-secondary text-13 border-l border-subtle"
+          className="flex grow justify-center text-secondary text-13 border-l border-subtle"
         >
           {t("common.analytics")}
         </span>

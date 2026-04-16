@@ -75,12 +75,12 @@ export const ProjectWorkItemsMobileHeader = observer(function ProjectWorkItemsMo
         onClose={() => setAnalyticsModal(false)}
         projectDetails={currentProjectDetails ?? undefined}
       />
-      <div className="md:hidden flex justify-evenly border-b border-subtle py-2 z-[13] bg-surface-1">
+      <div className="md:hidden flex justify-evenly border-b border-subtle py-2 z-13 bg-surface-1">
         <MobileLayoutSelection
           layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.CALENDAR]}
           onChange={handleLayoutChange}
         />
-        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+        <div className="flex grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
@@ -95,9 +95,8 @@ export const ProjectWorkItemsMobileHeader = observer(function ProjectWorkItemsMo
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
               }
-              displayFilters={issueFilters?.displayFilters ?? {}}
+              workItemFilters={issueFilters}
               handleDisplayFiltersUpdate={handleDisplayFilters}
-              displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}
               moduleViewDisabled={!currentProjectDetails?.module_view}
@@ -107,7 +106,7 @@ export const ProjectWorkItemsMobileHeader = observer(function ProjectWorkItemsMo
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
+          className="flex grow justify-center border-l border-subtle text-13 text-secondary"
         >
           {t("common.analytics")}
         </button>

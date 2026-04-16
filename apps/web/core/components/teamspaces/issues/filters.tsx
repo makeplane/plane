@@ -81,9 +81,8 @@ export const TeamHeaderFilters = observer(function TeamHeaderFilters(props: Prop
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.team_issues.layoutOptions[activeLayout] : undefined
           }
-          displayFilters={issueFilters?.displayFilters ?? {}}
+          workItemFilters={issueFilters}
           handleDisplayFiltersUpdate={handleDisplayFilters}
-          displayProperties={issueFilters?.displayProperties ?? {}}
           handleDisplayPropertiesUpdate={handleDisplayProperties}
         />
       </FiltersDropdown>

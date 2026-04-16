@@ -354,6 +354,28 @@ function contextFromPrecedingTokens(preceding: Token[], tokenStart: number): Sug
   const prev = preceding.length >= 2 ? preceding[preceding.length - 2] : null;
   const prev2 = preceding.length >= 3 ? preceding[preceding.length - 3] : null;
 
+  // ORDER BY / LIMIT tail — must run before generic FIELD → AFTER_FIELD so that
+  // `ORDER BY title a` is sort direction / LIMIT keywords, not operators on `title`.
+  if (last.kind === TokenKind.BY && prev && prev.kind === TokenKind.ORDER) {
+    return { kind: "AFTER_ORDER_BY", tokenStart };
+  }
+
+  if (isFieldToken(last.kind) && isInOrderByClause(preceding)) {
+    return { kind: "AFTER_ORDER_FIELD", tokenStart };
+  }
+
+  if (last.kind === TokenKind.ASC || last.kind === TokenKind.DESC) {
+    return { kind: "AFTER_SORT_DIR", tokenStart };
+  }
+
+  if (last.kind === TokenKind.COMMA && isInOrderByClause(preceding)) {
+    return { kind: "AFTER_ORDER_BY", tokenStart };
+  }
+
+  if (last.kind === TokenKind.LIMIT) {
+    return { kind: "AFTER_LIMIT", tokenStart };
+  }
+
   // After a recognized FIELD → partial is an operator name
   if (isFieldToken(last.kind)) {
     return { kind: "AFTER_FIELD", field: last.value, tokenStart };
@@ -438,33 +460,6 @@ function contextFromPrecedingTokens(preceding: Token[], tokenStart: number): Sug
       }
     }
     return { kind: "AFTER_CONDITION", tokenStart };
-  }
-
-  // ── ORDER BY / LIMIT clause contexts ─────────────────────────────────────────
-
-  // After "ORDER BY" → partial is a sortable field name
-  if (last.kind === TokenKind.BY && prev && prev.kind === TokenKind.ORDER) {
-    return { kind: "AFTER_ORDER_BY", tokenStart };
-  }
-
-  // After FIELD inside ORDER BY → partial is ASC/DESC
-  if (isFieldToken(last.kind) && isInOrderByClause(preceding)) {
-    return { kind: "AFTER_ORDER_FIELD", tokenStart };
-  }
-
-  // After ASC/DESC → partial is LIMIT or comma
-  if (last.kind === TokenKind.ASC || last.kind === TokenKind.DESC) {
-    return { kind: "AFTER_SORT_DIR", tokenStart };
-  }
-
-  // After COMMA in ORDER BY → partial is a sortable field name
-  if (last.kind === TokenKind.COMMA && isInOrderByClause(preceding)) {
-    return { kind: "AFTER_ORDER_BY", tokenStart };
-  }
-
-  // After LIMIT → partial is a number (no suggestions)
-  if (last.kind === TokenKind.LIMIT) {
-    return { kind: "AFTER_LIMIT", tokenStart };
   }
 
   // After AND, OR, NOT (as group) → still starting a new condition

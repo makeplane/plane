@@ -168,7 +168,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                     title={cycleDetails?.name}
                     icon={
                       <Breadcrumbs.Icon>
-                        <CycleIcon className="size-4 flex-shrink-0 text-tertiary" />
+                        <CycleIcon className="size-4 shrink-0 text-tertiary" />
                       </Breadcrumbs.Icon>
                     }
                     isLast
@@ -185,7 +185,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 } in this cycle`}
                 position="bottom"
               >
-                <span className="flex flex-shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
+                <span className="flex shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
                   {workItemsCount}
                 </span>
               </Tooltip>
@@ -230,9 +230,8 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
                 }
-                displayFilters={issueFilters?.displayFilters ?? {}}
+                workItemFilters={issueFilters}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
                 ignoreGroupedFilters={["cycle"]}
                 cycleViewDisabled={!currentProjectDetails?.cycle_view}
@@ -275,7 +274,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               cycleId={cycleId}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
+              customClassName="shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             />
           </div>
         </Header.RightItem>

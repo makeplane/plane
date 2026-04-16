@@ -88,10 +88,10 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
       <div className="flex justify-evenly border-b border-subtle bg-surface-1 py-2">
         <CustomMenu
           maxHeight={"md"}
-          className="flex flex-grow justify-center text-13 text-secondary"
+          className="flex grow justify-center text-13 text-secondary"
           placement="bottom-start"
-          customButton={<span className="flex flex-grow justify-center text-13 text-secondary">Layout</span>}
-          customButtonClassName="flex flex-grow justify-center text-secondary text-13"
+          customButton={<span className="flex grow justify-center text-13 text-secondary">Layout</span>}
+          customButtonClassName="flex grow justify-center text-secondary text-13"
           closeOnSelect
         >
           {SUPPORTED_LAYOUTS.map((layout, index) => (
@@ -107,7 +107,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
             </CustomMenu.MenuItem>
           ))}
         </CustomMenu>
-        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+        <div className="flex grow items-center justify-center border-l border-subtle text-13 text-secondary">
           <FiltersDropdown
             title="Display"
             placement="bottom-end"
@@ -122,9 +122,8 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
               layoutDisplayFiltersOptions={
                 activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
               }
-              displayFilters={issueFilters?.displayFilters ?? {}}
+              workItemFilters={issueFilters}
               handleDisplayFiltersUpdate={handleDisplayFilters}
-              displayProperties={issueFilters?.displayProperties ?? {}}
               handleDisplayPropertiesUpdate={handleDisplayProperties}
               ignoreGroupedFilters={["module"]}
               cycleViewDisabled={!currentProjectDetails?.cycle_view}
@@ -135,7 +134,7 @@ export const ModuleIssuesMobileHeader = observer(function ModuleIssuesMobileHead
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
+          className="flex grow justify-center border-l border-subtle text-13 text-secondary"
         >
           Analytics
         </button>

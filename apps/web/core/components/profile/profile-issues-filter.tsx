@@ -83,9 +83,8 @@ export const ProfileIssuesFilter = observer(function ProfileIssuesFilter() {
           layoutDisplayFiltersOptions={
             activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues.layoutOptions[activeLayout] : undefined
           }
-          displayFilters={issueFilters?.displayFilters ?? {}}
+          workItemFilters={issueFilters}
           handleDisplayFiltersUpdate={handleDisplayFilters}
-          displayProperties={issueFilters?.displayProperties ?? {}}
           handleDisplayPropertiesUpdate={handleDisplayProperties}
         />
       </FiltersDropdown>

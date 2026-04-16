@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { TIssueOrderByOptions } from "@plane/types";
 import { TokenKind } from "../types";
 
 // ─── Field aliases: internal filter property key → PQL field name ─────────────
@@ -685,26 +686,20 @@ export const FUNCTION_DEFS: FunctionDef[] = [
 // Mirrors the Python ORDER_BY_ALIASES in apps/api/plane/utils/pql/constants.py.
 // Only these PQL field names are valid in ORDER BY clauses.
 
-export const SORTABLE_FIELDS = new Set<string>([
-  "priority",
-  "state",
-  "stateGroup",
-  "createdAt",
-  "updatedAt",
-  "startDate",
-  "dueDate",
-  "title",
-  "assignee",
-  "label",
-  "module",
-  "createdBy",
-  "sequenceId",
-  "sortOrder",
-  "completedAt",
-  "archivedAt",
-  "isDraft",
-  "type",
-]);
+export const SORTABLE_FIELDS: Record<string, TIssueOrderByOptions> = {
+  priority: "priority",
+  state: "state__name",
+  createdAt: "created_at",
+  updatedAt: "updated_at",
+  startDate: "start_date",
+  dueDate: "target_date",
+  title: "name",
+  assignee: "assignees__first_name",
+  label: "labels__name",
+  module: "issue_module__module__name",
+  sortOrder: "sort_order",
+  // type: "type__name",
+};
 
 /** Map from function name → FunctionDef */
 export const FUNCTION_MAP = new Map<string, FunctionDef>(FUNCTION_DEFS.map((f) => [f.name, f]));

@@ -195,9 +195,8 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
                 layoutDisplayFiltersOptions={
                   activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[activeLayout] : undefined
                 }
-                displayFilters={issueFilters?.displayFilters ?? {}}
+                workItemFilters={issueFilters}
                 handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
                 handleDisplayPropertiesUpdate={handleDisplayProperties}
                 cycleViewDisabled={!currentProjectDetails?.cycle_view}
                 moduleViewDisabled={!currentProjectDetails?.module_view}
@@ -219,7 +218,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
         <div className="hidden md:block">
           <ViewQuickActions
             parentRef={parentRef}
-            customClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
+            customClassName="shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
             projectId={projectId.toString()}
             view={viewDetails}
             workspaceSlug={workspaceSlug.toString()}

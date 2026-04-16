@@ -38,6 +38,7 @@ import type {
 } from "../types";
 import { isAValidFormattedDate, isDateFilterType } from "@plane/utils";
 import { isFieldToken, isFunctionToken, tokenKindToCompOp } from "./token-utils";
+import { parseOrderLimitTail } from "./order-limit-clauses";
 import { DATE_FIELD_NAMES } from "./grammar";
 
 /**
@@ -103,16 +104,10 @@ class ParserState {
       node = this.parseOrExpr();
     }
 
-    if (this.peek().kind === TokenKind.ORDER) {
-      this.parseOrderClause();
-      if (this.peek().kind === TokenKind.LIMIT) {
-        this.parseLimitClause();
-      }
-    } else if (this.peek().kind === TokenKind.LIMIT) {
-      this.parseLimitClause();
-      if (this.peek().kind === TokenKind.ORDER) {
-        this.parseOrderClause();
-      }
+    const tail = parseOrderLimitTail(this.tokens, this.pos);
+    this.pos = tail.nextPos;
+    for (const d of tail.diagnostics) {
+      this.addError(d.message, d.token);
     }
 
     if (this.peek().kind !== TokenKind.EOF) {
@@ -503,72 +498,6 @@ class ParserState {
     if (!this.dateFieldNames.has(field) || value.kind !== "string" || isAValidFormattedDate(value.value)) return null;
     this.addErrorRange(`Invalid date '${value.value}' - expected YYYY-MM-DD`, value.from, value.to);
     return errorNode(`Invalid date for '${field}'`, fieldFrom, value.to);
-  }
-
-  /**
-   * Parses `ORDER BY field [ASC|DESC] ("," field [ASC|DESC])*` — mirrors
-   * apps/api/plane/utils/pql/grammar.lark `order_clause` / `order_field`.
-   */
-  private parseOrderClause(): void {
-    this.advance(); // ORDER
-    if (this.peek().kind !== TokenKind.BY) {
-      this.addError("Expected BY after ORDER", this.peek());
-      this.syncPastOrderLimitTail();
-      return;
-    }
-    this.advance(); // BY
-
-    while (true) {
-      const fieldTok = this.peek();
-      if (
-        fieldTok.kind !== TokenKind.FIELD &&
-        fieldTok.kind !== TokenKind.IDENTIFIER &&
-        fieldTok.kind !== TokenKind.CUSTOM_PROPERTY_FIELD_NODE
-      ) {
-        this.addError("Expected a field name in ORDER BY", fieldTok);
-        this.syncPastOrderLimitTail();
-        return;
-      }
-      this.advance();
-
-      const dir = this.peek().kind;
-      if (dir === TokenKind.ASC || dir === TokenKind.DESC) {
-        this.advance();
-      }
-
-      if (this.peek().kind === TokenKind.COMMA) {
-        this.advance();
-        continue;
-      }
-      break;
-    }
-  }
-
-  /**
-   * Parses `LIMIT` followed by a positive integer (matches Lark `POSITIVE_INT`).
-   */
-  private parseLimitClause(): void {
-    this.advance(); // LIMIT
-    const numTok = this.peek();
-    if (numTok.kind !== TokenKind.INTEGER) {
-      this.addError("Expected a positive integer after LIMIT", numTok);
-      if (numTok.kind !== TokenKind.EOF) this.advance();
-      return;
-    }
-    const n = parseInt(numTok.value, 10);
-    if (!Number.isFinite(n) || n < 1) {
-      this.addError("LIMIT must be a positive integer", numTok);
-    }
-    this.advance();
-  }
-
-  /**
-   * Skip tokens until EOF or a point where query-level recovery is unlikely to help.
-   */
-  private syncPastOrderLimitTail(): void {
-    while (this.peek().kind !== TokenKind.EOF) {
-      this.advance();
-    }
   }
 
   /**

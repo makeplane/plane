@@ -31,6 +31,8 @@ export type { PQLEditorProps, PQLEditorHandle } from "@/components/editors/pql/e
 export type { FieldDef, ParseResult, ParseError, ASTNode, Token, ValueNode } from "@/extensions/pql-editor/types";
 export { TokenKind } from "@/extensions/pql-editor/types";
 export { FIELD_ALIASES } from "@/extensions/pql-editor/plugins/grammar";
+export { parsePQLOrderByAndLimit } from "@/utils/parse-pql";
+export type { ParsePQLOrderByAndLimitResult } from "@/utils/parse-pql";
 export { tokenize as tokenizePQL } from "@/extensions/pql-editor/plugins/lexer";
 export { parse as parsePQL } from "@/extensions/pql-editor/plugins/parser";
 export { PiChatEditorWithRef } from "./ee/components/editors/pi-chat-editor/editor";

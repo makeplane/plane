@@ -94,7 +94,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
     <div className="flex justify-evenly border-b border-subtle py-2 md:hidden">
       <CustomMenu
         maxHeight={"md"}
-        className="flex flex-grow justify-center text-13 text-secondary"
+        className="flex grow justify-center text-13 text-secondary"
         placement="bottom-start"
         customButton={
           <div className="flex flex-center text-13 text-secondary">
@@ -121,7 +121,7 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
           );
         })}
       </CustomMenu>
-      <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+      <div className="flex grow items-center justify-center border-l border-subtle text-13 text-secondary">
         <FiltersDropdown
           title={t("common.display")}
           placement="bottom-end"
@@ -136,9 +136,8 @@ export const ProfileIssuesMobileHeader = observer(function ProfileIssuesMobileHe
             layoutDisplayFiltersOptions={
               activeLayout ? ISSUE_DISPLAY_FILTERS_BY_PAGE.profile_issues.layoutOptions[activeLayout] : undefined
             }
-            displayFilters={issueFilters?.displayFilters ?? {}}
+            workItemFilters={issueFilters}
             handleDisplayFiltersUpdate={handleDisplayFilters}
-            displayProperties={issueFilters?.displayProperties ?? {}}
             handleDisplayPropertiesUpdate={handleDisplayProperties}
           />
         </FiltersDropdown>

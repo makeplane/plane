@@ -52,6 +52,7 @@ import {
   getSubGroupIssueKeyActions,
 } from "./base-issues-utils";
 import type { IBaseIssueFilterStore } from "./issue-filter-helper.store";
+import { parsePQLOrderByAndLimit } from "@plane/editor";
 
 export type TIssueDisplayFilterOptions = Exclude<TIssueGroupByOptions, null> | "target_date";
 
@@ -202,8 +203,9 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   "-customer_count": "customer_ids",
   customer_request_count: "customer_request_ids",
   "-customer_request_count": "customer_request_ids",
+  name: "name",
+  "-name": "name",
 };
-
 export abstract class BaseIssuesStore implements IBaseIssuesStore {
   loader: Record<string, TLoader> = {};
   groupedIssueIds: TIssues | undefined = undefined;
@@ -310,10 +312,20 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
   // current Order by value
   get orderBy() {
-    const displayFilters = this.issueFilterStore?.issueFilters?.displayFilters;
-    if (!displayFilters) return;
+    const { displayFilters, pqlFilters, lastUsedFilterType } = this.issueFilterStore?.issueFilters ?? {};
 
-    return displayFilters?.order_by;
+    let resolvedOrderBy = displayFilters?.order_by;
+
+    if (lastUsedFilterType === "pql_filters" && pqlFilters?.stripped) {
+      const { isValid, orderBy } = parsePQLOrderByAndLimit(pqlFilters?.stripped);
+      if (isValid && orderBy && orderBy.length) {
+        resolvedOrderBy = orderBy[0] as TIssueOrderByOptions;
+      }
+    }
+
+    if (!resolvedOrderBy) return;
+
+    return resolvedOrderBy;
   }
 
   // current Group by value
@@ -2074,6 +2086,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         return getIssueIds(orderBy(array, (issue) => issue.customer_request_ids?.length));
       case "-customer_request_count":
         return getIssueIds(orderBy(array, (issue) => issue.customer_request_ids?.length, ["desc"]));
+      case "name":
+        return getIssueIds(orderBy(array, (issue) => (issue.name ?? "").toLocaleLowerCase()));
+      case "-name":
+        return getIssueIds(orderBy(array, (issue) => (issue.name ?? "").toLocaleLowerCase(), ["desc"]));
       default:
         return getIssueIds(array);
     }

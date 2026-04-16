@@ -238,14 +238,16 @@ export const ProjectViewForm = observer(function ProjectViewForm(props: Props) {
                           layoutDisplayFiltersOptions={
                             ISSUE_DISPLAY_FILTERS_BY_PAGE.issues.layoutOptions[displayFilters.layout]
                           }
-                          displayFilters={displayFilters ?? {}}
+                          workItemFilters={{
+                            displayFilters,
+                            displayProperties,
+                          }}
                           handleDisplayFiltersUpdate={(updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
                             onDisplayFiltersChange({
                               ...displayFilters,
                               ...updatedDisplayFilter,
                             });
                           }}
-                          displayProperties={displayProperties ?? {}}
                           handleDisplayPropertiesUpdate={(
                             updatedDisplayProperties: Partial<IIssueDisplayProperties>
                           ) => {
