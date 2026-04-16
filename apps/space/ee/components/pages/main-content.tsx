@@ -69,7 +69,7 @@ export const PageDetailsMainContent = observer(function PageDetailsMainContent(p
 
   return (
     <Row
-      className="relative size-full flex flex-col pt-[64px] overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
+      className="relative size-full flex flex-col overflow-y-auto overflow-x-hidden vertical-scrollbar scrollbar-md duration-200"
       variant={ERowVariant.HUGGING}
     >
       <div id="page-content-container" className="flex flex-col size-full space-y-4">

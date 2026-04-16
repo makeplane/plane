@@ -86,3 +86,47 @@ export const checkURLValidity = (url: string): boolean => {
 
   return urlPattern.test(url);
 };
+
+/**
+ * @returns {string} The `mailto:` URL for reporting a Space page to Plane support.
+ * @param anchor — Space page anchor (slug)
+ * @param reason — report reason
+ * @param description — details of the issue
+ */
+export const createReportPageEmailLink = (anchor: string, reason: string, description: string): string => {
+  const SUPPORT_EMAIL = "support@plane.so";
+
+  const subject = `[Plane Space] Report page: ${reason}`;
+
+  const originUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const pageLink = new URL(`/spaces/pages/${anchor}/`, originUrl).toString();
+
+  const bodyLines = [
+    "Hello Plane Support Team,",
+    "",
+    "I would like to report a page published on Plane Space. Please find the details below.",
+    "",
+    "━━━━━━━━━━━━━━━━━━━━━━━━",
+    "  REPORT DETAILS",
+    "━━━━━━━━━━━━━━━━━━━━━━━━",
+    `  Reason    : ${reason}`,
+    `  Page Link : ${pageLink}`,
+  ];
+
+  const trimmedDescription = description?.trim();
+  if (trimmedDescription)
+    bodyLines.push("", "━━━━━━━━━━━━━━━━━━━━━━━━", "  DESCRIPTION", "━━━━━━━━━━━━━━━━━━━━━━━━", trimmedDescription);
+
+  bodyLines.push(
+    "",
+    "━━━━━━━━━━━━━━━━━━━━━━━━",
+    "",
+    "Please investigate and take appropriate action.",
+    "",
+    "Thank you."
+  );
+
+  const body = bodyLines.join("\n");
+
+  return `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+};

@@ -107,7 +107,7 @@ function PagesLayout(props: Route.ComponentProps) {
   if (error) return <PageDetailsError />;
 
   return (
-    <div className="size-full flex flex-col min-h-screen bg-surface-1">
+    <div className="size-full flex flex-col h-screen min-h-screen bg-surface-1">
       <Outlet />
     </div>
   );

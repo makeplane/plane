@@ -46,6 +46,7 @@ export * from "./empty-page-icon";
 export * from "./favorite-folder-icon";
 export * from "./filled-check";
 export * from "./filled-cross";
+export * from "./flag-icon";
 export * from "./formatting";
 export * from "./full-screen-panel-icon";
 export * from "./github-icon";
