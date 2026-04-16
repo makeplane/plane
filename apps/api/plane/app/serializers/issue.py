@@ -1491,13 +1491,9 @@ class WorkItemListSerializer(serializers.Serializer):
     """Lightweight serializer for paginated work-item lists.
 
     Designed to avoid N+1 queries by relying on:
-      - Prefetch with to_attr="prefetched_property_values" that loads all
-        property values in a single query, joining property definitions
-        and option names via select_related("property", "value_option")
-
-    The result is 2 main DB queries regardless of page size:
-      1. Issues (with annotations)
-      2. Property values for those issues (with joined property + option)
+      - Prefetch with to_attr for M2M relations (assignees, labels, modules)
+      - Prefetch with to_attr="prefetched_property_values" for custom properties
+      - Subquery annotations for counts and cycle_id
 
     Context:
       type_properties_map — {type_id: [(prop_id, prop_type), ...]}
@@ -1517,14 +1513,84 @@ class WorkItemListSerializer(serializers.Serializer):
         PropertyTypeEnum.RELATION: "value_uuid",
         PropertyTypeEnum.OPTION: "value_option",
     }
-    
-    def _str_or_none(self, value):
-        """Convert a value to its string representation, or None if falsy."""
+
+    # Core identifiers
+    id = serializers.UUIDField()
+    sequence_id = serializers.IntegerField()
+    project_id = serializers.UUIDField()
+
+    # Content
+    name = serializers.CharField()
+    priority = serializers.CharField(allow_null=True)
+    is_draft = serializers.BooleanField()
+
+    # Relationships (FK ids)
+    state_id = serializers.UUIDField(allow_null=True)
+    type_id = serializers.UUIDField(allow_null=True)
+    parent_id = serializers.UUIDField(allow_null=True)
+    estimate_point = serializers.UUIDField(source="estimate_point_id", allow_null=True)
+
+    # M2M (from prefetch with to_attr)
+    assignee_ids = serializers.SerializerMethodField()
+    label_ids = serializers.SerializerMethodField()
+    module_ids = serializers.SerializerMethodField()
+
+    # Annotated relationships
+    cycle_id = serializers.SerializerMethodField()
+
+    # Dates
+    start_date = serializers.DateField(allow_null=True)
+    target_date = serializers.DateField(allow_null=True)
+    completed_at = serializers.DateTimeField(allow_null=True)
+    archived_at = serializers.DateTimeField(allow_null=True)
+
+    # Ordering
+    sort_order = serializers.FloatField()
+
+    # Annotated counts
+    sub_issues_count = serializers.SerializerMethodField()
+    link_count = serializers.SerializerMethodField()
+    attachment_count = serializers.SerializerMethodField()
+
+    # Audit
+    created_at = serializers.DateTimeField(allow_null=True)
+    updated_at = serializers.DateTimeField(allow_null=True)
+    created_by = serializers.UUIDField(source="created_by_id", allow_null=True)
+    updated_by = serializers.UUIDField(source="updated_by_id", allow_null=True)
+
+    # Custom properties
+    property_values = serializers.SerializerMethodField()
+
+    # --- M2M method fields (read from prefetched to_attr) ---
+
+    def get_assignee_ids(self, obj):
+        return [str(a.assignee_id) for a in getattr(obj, "prefetched_issue_assignees", [])]
+
+    def get_label_ids(self, obj):
+        return [str(lbl.label_id) for lbl in getattr(obj, "prefetched_label_issues", [])]
+
+    def get_module_ids(self, obj):
+        return [str(m.module_id) for m in getattr(obj, "prefetched_issue_modules", [])]
+
+    # --- Annotated method fields (safe getattr with defaults) ---
+
+    def get_cycle_id(self, obj):
+        value = getattr(obj, "cycle_id", None)
         return str(value) if value else None
 
-    def _iso_or_none(self, value):
-        """Convert a datetime to ISO format string, or None if falsy."""
-        return value.isoformat() if value else None
+    def get_sub_issues_count(self, obj):
+        return getattr(obj, "sub_issues_count", 0)
+
+    def get_link_count(self, obj):
+        return getattr(obj, "link_count", 0)
+
+    def get_attachment_count(self, obj):
+        return getattr(obj, "attachment_count", 0)
+
+    # --- Custom properties ---
+
+    def get_property_values(self, obj):
+        return self._build_property_values(obj)
 
     def _build_property_values(self, instance):
         """Group prefetched property values by property ID.
@@ -1570,47 +1636,10 @@ class WorkItemListSerializer(serializers.Serializer):
 
         # Fill defaults for properties with no saved value
         type_properties_map = self.context.get("type_properties_map", {})
-        type_id = self._str_or_none(instance.type_id)
+        type_id = str(instance.type_id) if instance.type_id else None
         if type_id and type_id in type_properties_map:
             for prop_id, prop_type in type_properties_map[type_id]:
                 if prop_id not in values:
                     values[prop_id] = [False] if prop_type == PropertyTypeEnum.BOOLEAN else []
 
         return values
-
-    def to_representation(self, instance):
-        return {
-            # Core identifiers
-            "id": str(instance.id),
-            "sequence_id": instance.sequence_id,
-            "project_id": str(instance.project_id),
-            # Content
-            "name": instance.name,
-            "priority": instance.priority,
-            "is_draft": instance.is_draft,
-            # Relationships (FK ids)
-            "state_id": self._str_or_none(instance.state_id),
-            "type_id": self._str_or_none(instance.type_id),
-            "parent_id": self._str_or_none(instance.parent_id),
-            "estimate_point": instance.estimate_point_id,
-            # Annotated relationships (from subqueries)
-            "cycle_id": self._str_or_none(getattr(instance, "cycle_id", None)),
-            # Dates
-            "start_date": str(instance.start_date) if instance.start_date else None,
-            "target_date": str(instance.target_date) if instance.target_date else None,
-            "completed_at": self._iso_or_none(instance.completed_at),
-            "archived_at": self._iso_or_none(instance.archived_at),
-            # Ordering
-            "sort_order": instance.sort_order,
-            # Annotated counts
-            "sub_issues_count": getattr(instance, "sub_issues_count", 0),
-            "link_count": getattr(instance, "link_count", 0),
-            "attachment_count": getattr(instance, "attachment_count", 0),
-            # Audit
-            "created_at": self._iso_or_none(instance.created_at),
-            "updated_at": self._iso_or_none(instance.updated_at),
-            "created_by": self._str_or_none(instance.created_by_id),
-            "updated_by": self._str_or_none(instance.updated_by_id),
-            # Custom properties — grouped by property_id
-            "property_values": self._build_property_values(instance),
-        }

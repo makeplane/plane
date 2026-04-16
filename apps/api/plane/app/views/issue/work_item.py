@@ -33,7 +33,7 @@ from django.views.decorators.gzip import gzip_page
 # Plane imports
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views import BaseAPIView
-from plane.db.models import CycleIssue, FileAsset, Issue, IssueLink
+from plane.db.models import CycleIssue, FileAsset, Issue, IssueAssignee, IssueLabel, IssueLink, ModuleIssue
 from plane.ee.models import (
     IssueProperty,
     IssuePropertyValue,
@@ -212,6 +212,25 @@ class WorkItemListProjectEndpoint(BaseAPIView):
             user_id=str(request.user.id),
         )
 
+        # Prefetch M2M reverse relations used by the serializer
+        issue_queryset = issue_queryset.prefetch_related(
+            Prefetch(
+                "issue_assignee",
+                queryset=IssueAssignee.objects.all(),
+                to_attr="prefetched_issue_assignees",
+            ),
+            Prefetch(
+                "label_issue",
+                queryset=IssueLabel.objects.all(),
+                to_attr="prefetched_label_issues",
+            ),
+            Prefetch(
+                "issue_module",
+                queryset=ModuleIssue.objects.all(),
+                to_attr="prefetched_issue_modules",
+            ),
+        )
+
         # 4. Apply ordering
         order_by_param = request.GET.get("order_by", "-created_at")
         issue_queryset, order_by_param = order_issue_queryset(
@@ -220,7 +239,7 @@ class WorkItemListProjectEndpoint(BaseAPIView):
         )
 
         if spreadsheet_custom_property_flag:
-        # 5. Build type→properties map for default-filling in serializer
+            # 5. Build type→properties map for default-filling in serializer
             type_properties_map = self._build_type_properties_map(slug, project_id)
         else:
             type_properties_map = {}
@@ -348,10 +367,10 @@ class WorkItemListWorkspaceEndpoint(WorkItemListProjectEndpoint):
         )
 
         spreadsheet_custom_property_flag = check_workspace_feature_flag(
-                feature_key=FeatureFlag.SPREADSHEET_CUSTOM_PROPERTIES,
-                slug=slug,
-                user_id=str(request.user.id),
-            )
+            feature_key=FeatureFlag.SPREADSHEET_CUSTOM_PROPERTIES,
+            slug=slug,
+            user_id=str(request.user.id),
+        )
 
         if spreadsheet_custom_property_flag:
             issue_queryset = issue_queryset.prefetch_related(
@@ -381,6 +400,25 @@ class WorkItemListWorkspaceEndpoint(WorkItemListProjectEndpoint):
             issue_queryset,
             slug=slug,
             user_id=str(request.user.id),
+        )
+
+        # Prefetch M2M reverse relations used by the serializer
+        issue_queryset = issue_queryset.prefetch_related(
+            Prefetch(
+                "issue_assignee",
+                queryset=IssueAssignee.objects.all(),
+                to_attr="prefetched_issue_assignees",
+            ),
+            Prefetch(
+                "label_issue",
+                queryset=IssueLabel.objects.all(),
+                to_attr="prefetched_label_issues",
+            ),
+            Prefetch(
+                "issue_module",
+                queryset=ModuleIssue.objects.all(),
+                to_attr="prefetched_issue_modules",
+            ),
         )
 
         # 4. Apply ordering
