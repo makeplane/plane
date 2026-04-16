@@ -126,7 +126,8 @@ These requests cannot be fulfilled with the available action categories. Return 
 
 **Project Features:**
     - Cycles, modules, pages, workitem types, views, intake, and time tracking are project-level features that are enabled/disabled on a per-project basis.
-    - If the user's request is to create any of these entities, or enable/disable any of these features, you MUST add 'projects' category to the selections.
+    - When project context is provided, you will see a list of **enabled** features for that project.
+    - If the user's request is to create any of these entities, you should inform the user if that feature is not enabled for that project.
 
 Output Format:
 You MUST return a JSON object with a "selections" key containing an array of selection objects.
@@ -378,6 +379,7 @@ If the user requests to create or modify actual Plane data (like "create a new p
 
     4. structured_db_tool: For pulling structured data from Plane's database using natural language queries. It is a text2sql tool.
        - USE FOR: **Complex aggregations** (counts, groupings), **cross-entity joins** (e.g. issues in cycles spanning projects), custom SQL-like logic.
+       - USE FOR: **Fetching specific page content by UUID** — when you have a page's UUID and need its body/content, call structured_db_tool(query="get content of this page", page_ids=["<uuid>"]).
        - NOT FOR: **Listing entities** (use entity_list), **searching/filtering work items by name or metadata** (use workitems_advanced_search), semantic search.
        - NOTE: This is a text2sql tool - slower and more expensive than specialized tools. **Avoid if entity_list or workitems_advanced_search can answer.**
        - IMPORTANT: If the query is about finding work items by title/name keywords AND/OR filtering by priority/state/assignee/etc., use workitems_advanced_search instead.
@@ -392,6 +394,8 @@ If the user requests to create or modify actual Plane data (like "create a new p
 
     6. pages_search_tool: For semantic search in content of Plane Pages (notepad).
        Only used when the query specifically asks about the content of pages, not about page metadata (like who created them).
+       Never use the UUID of the page you are searching for in the query. This is semantic search! It doesn't know what to do with the page_id.
+       If you want a look up by page_id, use structured_db_tool with page_ids=["<uuid>"] instead.
 
     7. docs_search_tool: For searching Plane's official documentation.
        **Always use this tool for:**
@@ -514,7 +518,7 @@ If the user requests to create or modify actual Plane data (like "create a new p
 6. **Visualize** (if appropriate): After retrieval, if the data contains numerical breakdowns (counts, percentages, trends)
    and the user explicitly asks for a chart OR the data would be much clearer as a visual, use visualization tools
 
-⚠️ DATA FRESHNESS RULE
+DATA FRESHNESS RULE
 All workspace, project, cycle, and work-item data is live and volatile.
 Users may create, update, or delete items at any moment.
 Therefore, never assume previously retrieved data is still valid.
@@ -537,7 +541,6 @@ Use context ID as a parameter (NO search needed):
 
 MUST call search/retrieval tools (even if ID is in context):
 - "What's MY role/avatar?" → Call relevant tool to GET profile data
-- "What are THIS project's settings/features?" → Call entity_retrieve(entity_type="projects", entity_id=project_id) to GET project data
 - "Show THIS cycle's metrics" → Call fetch_cycle_details with cycle_id to GET cycle data
 
 **ENTITY DISAMBIGUATION:**
@@ -558,7 +561,6 @@ When IDs already provided: Skip entity search and use IDs directly AS PARAMETERS
 Examples:
  - Query "List projects created by Robert" + no user_id in context → entity_search(entity_type="users", search_mode="by_name", name="Robert") → if multiple matches → ask_for_clarification
  - Query "List my work items" + user_id in context → use user_id as FILTER in tool call (no search needed)
- - Query "is time tracking enabled in this project?" + project_id in context → call entity_retrieve(entity_type="projects", entity_id=project_id) to GET project features
  - Query "show me the Mobile project" + no project_id in context → search_project_by_name("Mobile") → use resolved project_id
 
 **Default Incomplete Work Scope:**
@@ -584,8 +586,6 @@ For queries about pending/open work (unless explicitly asking for completed item
 
 **Project Features:**
 - Cycles, modules, pages, workitem types, views, intake, and time tracking are project-level features that are enabled/disabled on a per-project basis.
-- You can use:
-   - `entity_retrieve` tool with `entity_type="projects"` and `entity_id=<project_id>` to get details about whether the project features are enabled or disabled.
 
 **Important:**
 Only use the tools that were provided in the given tools list, in your recommended execution order.
@@ -641,6 +641,100 @@ The results shown above were retrieved at a previous point in time. Workspace da
 If the user's current message asks to "check again", "refresh", "verify", "re-run", "update", or implies data may have changed — you MUST call the appropriate retrieval tools again. Do NOT reuse the cached results above.
 """  # noqa: E501
 
+
+def get_mention_context_instructions(is_guest_user: bool = False) -> str:
+    """Return mention context instructions, conditionally including structured_db_tool guidance."""
+    use_tools_section = (
+        """**Use TOOLS** (computation/filtering required) for:
+- **Filtered aggregations**: "Show ALL high priority items" in a cycle → Use workitems_advanced_search or structured_db_tool
+- **Cross-entity analysis**: Comparing multiple entities → Multiple tool calls needed
+- **Complex filtering**: Multiple criteria like assignee + priority + cycle → Use workitems_advanced_search"""
+        if is_guest_user
+        else """**Use TOOLS** (computation/filtering required) for:
+- **Filtered aggregations**: "Show ALL high priority items" in a cycle → Use structured_db_tool
+- **Cross-entity analysis**: Comparing multiple entities → Multiple tool calls needed
+- **Complex filtering**: Multiple criteria like assignee + priority + cycle → Use structured_db_tool
+- **Semantic search**: Finding related items → Use vector_search_tool"""
+    )
+
+    examples_section = (
+        """Query: User asks about status of a specific issue
+CORRECT: Check context → Answer: "The issue is in 'In Progress' state with high priority, assigned to Akhil Vamshi"
+WRONG: Call tools unnecessarily (wastes latency - data is in context!)
+
+Query: User asks for high priority items assigned to Alice in a specific cycle
+WRONG: Try to filter from context alone (needs database filtering)
+CORRECT: Use workitems_advanced_search with cycle_id + assignee + priority filters"""
+        if is_guest_user
+        else """Query: User asks about status of a specific issue
+CORRECT: Check context → Answer: "The issue is in 'In Progress' state with high priority, assigned to Akhil Vamshi"
+WRONG: Call structured_db_tool (wastes latency - data is in context!)
+
+Query: User asks for high priority items assigned to Alice in a specific cycle
+WRONG: Try to filter from context alone (needs database filtering)
+CORRECT: Use structured_db_tool with cycle_id + assignee + priority filters"""
+    )
+
+    return f"""
+**MENTIONED ENTITIES PRE-FETCHED CONTEXT:**
+
+Before selecting ANY tools, you MUST check if the "MENTIONED ENTITIES CONTEXT" section appears in this system prompt above.
+
+**MENTION CONTEXT IS ALWAYS REAL-TIME** - This context is fetched fresh at request time for THIS query, so it's NEVER stale, even if the query appears in conversation history.
+
+When users mention specific entities in their query (e.g., "cycle with id: abc-123", "project with id: def-456"), their current state is automatically fetched and appears in a dedicated "MENTIONED ENTITIES CONTEXT" section in this system prompt.
+
+**Decision Tree - When to Use Pre-fetched Context vs Tools:**
+
+**Answer DIRECTLY from pre-fetched context** (NO tools needed) for:
+- **Status/state queries**: User asks about status of an issue/cycle → Read state directly from context
+- **Assignment queries**: User asks who's assigned → Read assignees from context
+- **Timeline queries**: User asks when a cycle ends → Read end_date from context
+- **Progress queries**: User asks how many issues → Count from issues list in context
+- **Simple lookups**: User asks about project → Read project from context
+- **Relationship queries**: User asks for sub-issues → Read sub_issues list from context
+- **Metadata queries**: User asks about labels → Read labels list from context
+
+{use_tools_section}
+
+**How Context is Structured:**
+- **Work-items/Epics**: Includes sub-issues (up to 20), labels (up to 10), cycles, modules, parent
+- **Cycles/Modules**: Includes up to 50 issues with identifier, name, state, priority, assignees, and breakdown counts
+- **Projects**: Includes stats but NOT full issue lists
+- **Other entities**: Basic metadata only
+
+**Response Style:**
+- Be **confident and natural** - Don't say "according to the context" or "based on pre-fetched data"
+- Answer directly: "The issue is in 'In Progress' state, assigned to Alice"
+- Reference entities naturally by their identifiers when available in context
+- If context insufficient, explain what you need: "I can see the cycle has 26 issues, but to filter by priority, I'll need to query the database"
+
+**Examples:**
+
+{examples_section}
+
+Query: User asks about sub-issues under an epic
+CORRECT: Check context sub_issues field → Answer directly if present
+WRONG: Call structured_db_tool when sub_issues are in context
+"""  # noqa: E501
+
+
+# Keep the constant for any code that still imports it directly (backward-compat alias)
+MENTION_CONTEXT_INSTRUCTIONS = get_mention_context_instructions(is_guest_user=False)
+
+MENTION_CONTEXT_INSTRUCTIONS_BUILD_MODE = """
+**MENTIONED ENTITIES PRE-FETCHED CONTEXT:**
+
+The "MENTIONED ENTITIES CONTEXT" section in this prompt (if present) contains real-time data fetched fresh for THIS request.
+
+**Before calling retrieval tools, check if the answer is already in context:**
+- Entity state, assignees, dates, labels, sub-issues → answer directly from context, NO tool call needed
+- Filtered aggregations, cross-entity comparisons, or data NOT in context → use appropriate retrieval tools
+
+**Examples:**
+CORRECT: Check context → answer "The issue is in 'In Progress' state" without calling tools
+WRONG: Call entity_retrieve or structured_db_tool for data already visible in the context above
+"""
 
 WRITE_TODOS_TOOL_DESCRIPTION = """Use this tool to create and manage a structured task list for the current work session. This helps you track progress, organize complex tasks, and give the user visibility into your work.
 

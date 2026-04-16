@@ -924,3 +924,88 @@ def conv_history_from_app_query(query: str) -> Tuple[str, str, List[BaseMessage]
                 langchain_conv_history.append(AIMessage(content=content))
 
     return query, conversation_history, langchain_conv_history
+
+
+async def get_enabled_project_features(project_id: str) -> List[str]:
+    """Get list of enabled features for a project with proper entity names.
+
+    Args:
+        project_id: Project UUID
+
+    Returns:
+        List of enabled feature names (e.g., ["Modules", "Cycles", "Pages"])
+    """
+    from pi.app.api.v1.helpers.plane_sql_queries import get_project_enabled_features
+
+    try:
+        features = await get_project_enabled_features(project_id)
+        if not features:
+            return []
+
+        # Map column names to user-friendly entity names
+        feature_mapping = {
+            "module_view": "Modules",
+            "cycle_view": "Cycles",
+            "issue_views_view": "Issue Views",
+            "page_view": "Pages",
+            "intake_view": "Intake",
+            "is_time_tracking_enabled": "Time Tracking",
+            "is_issue_type_enabled": "Issue Types",
+            # "guest_view_all_features": "Guest View All Features",
+            "is_project_updates_enabled": "Project Updates",
+            "is_epic_enabled": "Epics",
+            "is_workflow_enabled": "Workflows",
+            "is_automated_cycle_enabled": "Automated Cycles",
+            "is_milestone_enabled": "Milestones",
+        }
+
+        enabled_features = []
+        for column_name, entity_name in feature_mapping.items():
+            # Check if feature is enabled (True value)
+            if features.get(column_name) is True:
+                enabled_features.append(entity_name)
+
+        return enabled_features
+
+    except Exception as e:
+        log.error(f"Error getting enabled project features for {project_id}: {e}")
+        return []
+
+
+async def get_enabled_workspace_features(workspace_id: str) -> List[str]:
+    """Get list of enabled features for a workspace with proper entity names.
+
+    Args:
+        workspace_id: Workspace UUID
+
+    Returns:
+        List of enabled feature names (e.g., ["Initiatives", "Teams", "Wiki"])
+    """
+    from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_enabled_features
+
+    try:
+        features = await get_workspace_enabled_features(workspace_id)
+        if not features:
+            return []
+
+        # Map column names to user-friendly entity names
+        feature_mapping = {
+            "is_project_grouping_enabled": "Project Grouping",
+            "is_initiative_enabled": "Initiatives",
+            "is_teams_enabled": "Teamspaces",
+            "is_customer_enabled": "Customers",
+            # "is_pi_enabled": "Plane Intelligence (Pi)",
+            "is_wiki_enabled": "Wiki",
+        }
+
+        enabled_features = []
+        for column_name, entity_name in feature_mapping.items():
+            # Check if feature is enabled (True value)
+            if features.get(column_name) is True:
+                enabled_features.append(entity_name)
+
+        return enabled_features
+
+    except Exception as e:
+        log.error(f"Error getting enabled workspace features for {workspace_id}: {e}")
+        return []

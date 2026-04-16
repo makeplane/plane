@@ -391,6 +391,7 @@ async def get_answer_for_silo_app(data: ChatRequest, request: Request, db: Async
 
         # Execute batch actions using the service with ALL artifacts
         service = BuildModeToolExecutor(chatbot=PlaneChatBot(plane_apps_llm), db=db)
+        # Type narrowing: workspace_id, chat_id, message_id validated as non-None in loop above
         result = await service.execute(
             ActionBatchExecutionRequest(
                 workspace_id=workspace_id,
@@ -535,6 +536,7 @@ async def get_answer_for_slack(data: ChatRequest, request: Request, db: AsyncSes
 
         # Execute batch actions using the service with ALL artifacts
         service = BuildModeToolExecutor(chatbot=PlaneChatBot(slack_ai_llm), db=db)
+        # Type narrowing: workspace_id, chat_id, message_id validated as non-None in loop above
         result = await service.execute(
             ActionBatchExecutionRequest(
                 workspace_id=workspace_id,

@@ -332,7 +332,8 @@ async def execute_preset_tool_flow(
             log.warning(f"ChatID: {chat_id} - Failed to persist preset tool execution step: {e}")
 
         # Prepare streaming of the final user-visible text via LLM combiner (applies phrasing rules)
-        results_text = StandardAgentResponse.extract_results(result)  # plain tool output
+        results_text = StandardAgentResponse.format_response_with_entity_urls(result)  # plain tool output
+
         try:
             # Include attachments if any are in shared context
             attachment_blocks = getattr(chatbot_instance, "get_current_attachment_blocks", lambda: None)()
@@ -558,6 +559,8 @@ async def construct_enhanced_prompt_and_context(
     user_meta: dict | None,
     workspace_in_context: bool = True,
     web_search_context: str | None = None,
+    mention_context: dict | None = None,
+    is_guest_user: bool = False,
 ) -> Tuple[str, str]:
     """
     Build enhanced custom prompt and context block for LLM orchestration.
@@ -567,6 +570,8 @@ async def construct_enhanced_prompt_and_context(
     """
     from pi.services.chat.helpers.tool_utils import build_clarification_context_block
     from pi.services.chat.utils import get_current_timestamp_context
+    from pi.services.chat.utils import get_enabled_project_features
+    from pi.services.chat.utils import get_enabled_workspace_features
 
     custom_prompt = ""
 
@@ -585,6 +590,14 @@ async def construct_enhanced_prompt_and_context(
         custom_prompt += """
 **CITATION INSTRUCTIONS:** Embed clickable source links inline: fact [[Source Title](URL)]. No separate Sources section.
 """
+    # Inject mention context instructions if mentions are present
+    try:
+        if mention_context and mention_context.get("formatted_context"):
+            from pi.services.chat.prompts import get_mention_context_instructions
+
+            custom_prompt += get_mention_context_instructions(is_guest_user=is_guest_user)
+    except Exception:
+        pass
 
     # Provide PROJECT/USER/TIME context to the tool planner
     context_block = ""
@@ -596,9 +609,28 @@ async def construct_enhanced_prompt_and_context(
         elif project_id:
             # Project scoping (project chat)
             context_block += f"\n\n**🔥 PROJECT CONTEXT (CRITICAL):**\nProject ID: {project_id} ⚠️ (FOR YOUR USE ONLY - DO NOT SHOW THIS UUID TO USER)\n\n**IMPORTANT SCOPING RULES:**\n- This is a PROJECT-LEVEL chat - ALL operations are scoped to THIS PROJECT ONLY\n- When the request mentions 'current cycle', 'current module', 'work items', etc. - it means ONLY within THIS PROJECT\n- Use this project_id for ALL tools that accept project_id parameter\n- DO NOT query across all projects - scope everything to THIS specific project\n- User refers to 'this project'/'the project'/'current project' = use this project_id"  # noqa: E501
+
+            # Fetch and add enabled project features
+            try:
+                enabled_features = await get_enabled_project_features(project_id)
+                if enabled_features:
+                    features_str = ", ".join(enabled_features)
+                    context_block += f"\n\n**ENABLED PROJECT FEATURES:**\n{features_str}\n\n**CRITICAL**: Only these features are enabled for this project. If the user asks about data related to a feature NOT in this list (e.g., asking about Cycles when 'Cycles' is not listed), you MUST inform them that the feature is not enabled and no data can be retrieved for it."  # noqa: E501
+            except Exception as e:
+                log.warning(f"Failed to fetch enabled project features for project_id {project_id}: {e}")
         else:
             # Workspace-level context (no specific project)
             context_block += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id} ⚠️ (FOR YOUR USE ONLY - DO NOT SHOW THIS UUID TO USER)\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use entity_list(entity_type=\"projects\") to get ALL projects in the workspace\n- Then iterate through projects to find relevant cycles/modules/work-items\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
+
+            # Fetch and add enabled workspace features
+            try:
+                if workspace_id:
+                    enabled_ws_features = await get_enabled_workspace_features(workspace_id)
+                    if enabled_ws_features:
+                        ws_features_str = ", ".join(enabled_ws_features)
+                        context_block += f"\n\n**ENABLED WORKSPACE FEATURES:**\n{ws_features_str}\n\n**NOTE**: These are workspace-level features. Individual projects have their own feature toggles for project-scoped features."  # noqa: E501
+            except Exception as e:
+                log.warning(f"Failed to fetch enabled workspace features for workspace_id {workspace_id}: {e}")
 
         # User context
         if user_id:

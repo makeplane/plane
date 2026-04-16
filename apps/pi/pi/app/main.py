@@ -166,7 +166,7 @@ def run_server():
     workers = int(settings.server.FASTAPI_APP_WORKERS)
     worker_timeout = int(settings.server.FASTAPI_APP_WORKER_TIMEOUT)
 
-    # Configure Uvicorn logging to use JSON format
+    # JSON formatter for production
     uvicorn_log_config = {
         "version": 1,
         "disable_existing_loggers": False,

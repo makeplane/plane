@@ -1351,7 +1351,7 @@ Note: This is a response for consumption by an external app. Calling provide_fin
 
 
 # Build the planning method prompt used by the executor
-def build_method_prompt(
+async def build_method_prompt(
     combined_tool_query: str,
     project_id: Optional[str],
     user_id: Optional[str],
@@ -1360,6 +1360,7 @@ def build_method_prompt(
     clarification_context: Optional[Dict[str, Any]] = None,
     user_meta: Optional[Dict[str, Any]] = None,
     source: Optional[str] = None,
+    mention_context: Optional[Dict[str, Any]] = None,
     mcp_tools: Optional[List] = None,
     websearch_enabled: bool = False,
     available_categories: Optional[List[str]] = None,
@@ -1377,6 +1378,29 @@ def build_method_prompt(
     address_user_by_name = True
 
     WORK_TREE_INSTRUCTIONS = work_tree_instructions_app_response if source == "app" else work_tree_instructions_normal_response
+
+    mention_section = ""
+    if mention_context and mention_context.get("formatted_context"):
+        mention_section = f"""**Pre-fetched context for entities mentioned in the user's query**
+
+The following entities were mentioned in the user's request (@mentions).
+Their current state has been fetched fresh from the database for this request.
+
+═══════════════════════════════════════════════════
+{mention_context["formatted_context"]}
+═══════════════════════════════════════════════════
+
+**MANDATORY CHECK BEFORE TOOL SELECTION:**
+1. Does the user's request involve entities shown above? (YES/NO)
+2. Are entity IDs (project_id, cycle_id, issue_id, etc.) needed for the request already shown above? (YES/NO)
+3. If BOTH are YES → Extract IDs DIRECTLY from context above. DO NOT call search tools.
+4. If either is NO → Proceed with tool selection.
+
+For requests like "add @PROJ-123 to @Sprint5" → Extract both IDs from context, no search needed.
+Only use search tools for entities NOT mentioned with @ or data NOT in context above.
+
+"""
+        log.info(f"BUILD MODE - MENTION CONTEXT DEBUG:\n{mention_context["formatted_context"]}")
 
     # Add citation instructions when web search is enabled
     web_search_citation_block = ""
@@ -1410,6 +1434,7 @@ Context about Plane:
 {web_search_citation_block}
 
 **IMPORTANT: You are in PLANNING mode with a TWO-PHASE APPROACH:**
+
 
 **PHASE 1 - INFORMATION GATHERING (executes immediately):**
 - Retrieval tools ({"search_*, " if not is_guest_user else ''}*_list, *_retrieve, structured_db_tool, etc.) execute immediately
@@ -1487,22 +1512,19 @@ Use retrieval tools to gather information, then plan the modifying actions based
 **PROJECT FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING PROJECT-SCOPED ENTITIES):**
 - Cycles, modules, pages, workitem types, views, intake, epics (a special workitem type), and time-tracking (worklogs) are project-level features that are enabled/disabled on a per-project basis.
 - **MANDATORY WORKFLOW**: Before creating ANY of these entities (cycles_create, create_epic, modules_create, pages_create_*, worklogs_create, intake_create, etc.), you MUST:
-    1. First get the project_id (UUID) (via {"entity_search with entity_type='projects' and search_mode='by_name' or search_mode='by_identifier'" if not is_guest_user else "user entity_list with type projects to get project_id from the result based on the project name"} (Identifier looks like 'PROJ', 'WEB' etc. It is not a UUID) if not already known)
-    2. **THEN** call `projects_retrieve` with that project_id to check if the feature is enabled.
+    - **Note**: When project context is available, the enabled features are listed in the **ENABLED PROJECT FEATURES** section below. If that section is absent (e.g. fetch failed or workspace-level chat), fall back to calling `projects_retrieve` to verify features before proceeding.
+    1. **FIRST CHECK** if the required feature is in the ENABLED PROJECT FEATURES list provided in the context (or retrieved via `projects_retrieve`)
        - **WARNING**: Do NOT stop to ask for clarification on optional entity fields (e.g., description, priority) before this check.
-       - **WARNING**: You must perform this check even if you think you need more information for the creaton.
-       - **WARNING**: You must perform this check even if you already have all required IDs (issue_id, project_id, etc.). Having IDs does NOT exempt you from checking if the feature is enabled.
-    3. **AFTER checking**: You MUST invoke the required action tools:
+    2. **AFTER checking**: You MUST invoke the required action tools:
        - If the feature IS enabled: Plan the creation action (e.g., `cycles_create`, `create_epic`, `modules_create`, `types_create`, `worklogs_create`, `intake_create`, etc.)
-       - If the feature is NOT enabled: Plan BOTH `projects_update` (to enable the feature) AND the creation action (e.g., `cycles_create`, `create_epic`, `modules_create`, `types_create`, `worklogs_create`, `intake_create`, etc.)
-    4. **CRITICAL**: After `projects_retrieve` completes, you CANNOT stop - you MUST continue invoking the modifying action tools. Do NOT return only text - you MUST invoke the action tools.
-- **CRITICAL**: This check is NON-NEGOTIABLE. Never skip the `projects_retrieve` step when creating cycles, modules, pages, types, intake items, or other project-scoped features.
+       - If the feature is NOT enabled: Plan BOTH `projects_update_features` (to enable the feature) AND the creation action (e.g., `cycles_create`, `create_epic`, `modules_create`, `types_create`, `worklogs_create`, `intake_create`, etc.)
+    3. **CRITICAL**: After the feature check completes, you CANNOT stop - you MUST continue invoking the modifying action tools. Do NOT return only text - you MUST invoke the action tools.
+- **CRITICAL**: This check is NON-NEGOTIABLE. Never skip checking the feature from the ENABLED PROJECT FEATURES section when creating cycles, modules, pages, types, intake items, or other project-scoped features.
 - **EXCEPTION (EXPLICIT WORKSPACE-LEVEL PAGES ONLY)**: If — and ONLY if — the user explicitly uses words like "wiki", "workspace page", "workspace-level page", "knowledge base", "kb", "handbook", or "runbook", call `pages_create_page` with `project_id='__workspace_scope__'` directly (no `projects_retrieve` or `workspaces_get_features` needed). If the user just says "create a page" without any of these workspace/wiki keywords, you MUST call `ask_for_clarification` to ask whether they want a workspace-level page (wiki) or a project page (and which project).
-- **CONSEQUENCE**: Skipping `projects_retrieve` and directly calling creation tools (e.g., worklogs_create, cycles_create, intake_create) WILL result in a 404 error if the feature is disabled. Always check first.
-- **MULTI-ACTION REQUESTS**: When handling requests with multiple actions, if ANY action requires a feature check, you MUST call `projects_retrieve` FIRST before planning any of the actions.
+- **CONSEQUENCE**: Skipping the feature check and directly calling creation tools (e.g., worklogs_create, cycles_create, intake_create) WILL result in a 404 error if the feature is disabled. Always check first.
+- **MULTI-ACTION REQUESTS**: When handling requests with multiple actions, if ANY action requires a feature check, you MUST FIRST CHECK THE ENABLED PROJECT FEATURES section (or call `projects_retrieve`) before planning any of the actions.
 - **EXCEPTION (NEW PROJECT IN CURRENT PLAN)**: If the target project is being CREATED in this same plan and does not yet have a real UUID:
-    - Do NOT call `projects_retrieve` during planning (the project doesn't exist yet to retrieve)
-    - Instead, you MUST enable the required feature flag during `projects_create` itself (for features that support it) OR plan a `projects_update_features` call immediately after project creation (for features like epics)
+    - Instead, you MUST enable the required feature flag during `projects_create` itself
     - **STATE RESOLUTION FOR NEW PROJECTS**: If you are planning work items inside that newly created project:
         - Do NOT call `search_state_by_name` during planning with `project_id="<id of project: ...>"`
         - The project's states do not exist yet, so project-scoped state retrieval is impossible at planning time
@@ -1526,8 +1548,8 @@ Use retrieval tools to gather information, then plan the modifying actions based
     - **Features requiring `projects_update_features` call after project creation**:
         - `epics` (boolean): Enable epics feature - MUST use `projects_update_features`, NOT available in `projects_create`
 - Available tools:
-    - `projects_retrieve` tool to get details of the project features (MUST call before creating project-scoped entities for EXISTING projects)
-    - `projects_update` tool to update the project features (MUST include in plan if feature needs to be enabled for EXISTING projects)
+    - `projects_retrieve` tool to get details of the project features (fallback when ENABLED PROJECT FEATURES section is absent)
+    - `projects_update_features` tool to enable project features (MUST include in plan if a feature needs to be enabled for EXISTING projects)
     - `projects_create` tool to create a new project with any/all of these features enabled based on the user's request
 
 **WORKSPACE FEATURES CHECK (CRITICAL - MANDATORY BEFORE CREATING WORKSPACE-SCOPED ENTITIES):**
@@ -1666,10 +1688,11 @@ Example 2: "Create workitem 'Fix login bug' and add it to existing module 'Backe
   - issues: ['<id of workitem: Fix login bug>'] ✅ CORRECT (newly created - use placeholder)
   - ❌ WRONG: module_id: '<id of module: Backend>' (this module already exists!)
 
-**PROJECT-SCOPED ENTITIES - ADDITIONAL REQUIREMENT:**
-After resolving project_id for cycles/modules/pages creation:
-- **YOU MUST**: Call `projects_retrieve(project_id=...)` to verify the feature is enabled
-- **EXCEPTION**: If the project itself is being CREATED in this plan, skip `projects_retrieve` (no UUID yet)
+**PROJECT-SCOPED ENTITIES - FEATURE CHECK REQUIRED:**
+Before planning creation of cycles/modules/pages:
+- **CHECK**: Verify the required feature is in the **ENABLED PROJECT FEATURES** section below (or call `projects_retrieve` if that section is absent)
+- **IF MISSING**: Plan `projects_update_features` to enable it, then plan the creation action
+- **EXCEPTION**: If the project itself is being CREATED in this plan, skip this check (features specified in projects_create)
 
 **ID VALIDATION FOR RETRIEVAL TOOLS (STRICT):**
 - NEVER pass placeholders like `<id of X: name>` to `*_retrieve`, `*_list`, or `*_get` tools
@@ -1762,6 +1785,16 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
 """
     if project_id:
         method_prompt += f"\n\n**🔥 PROJECT CONTEXT (CRITICAL):**\nProject ID: {project_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a PROJECT-LEVEL chat - ALL operations are scoped to THIS PROJECT ONLY\n- When the request mentions 'current cycle', 'current module', 'work items', etc. - it means ONLY within THIS PROJECT\n- Use this project_id for ALL tools that accept project_id parameter\n- DO NOT query across all projects - scope everything to THIS specific project\n- User refers to 'this project'/'the project'/'current project' = use this project_id"  # noqa: E501
+        from pi.services.chat.utils import get_enabled_project_features
+
+        # Fetch and add enabled project features (same as ask mode)
+        try:
+            enabled_features = await get_enabled_project_features(project_id)
+            if enabled_features:
+                features_str = ", ".join(enabled_features)
+                method_prompt += f"\n\n**ENABLED PROJECT FEATURES:**\n{features_str}\n\n**CRITICAL**: Only these features are currently enabled for this project. Follow the **PROJECT FEATURES CHECK** workflow in this prompt: if a required feature is NOT in this list, plan `projects_update_features` to enable it before planning the creation action."  # noqa: E501
+        except Exception as e:
+            log.warning(f"Failed to fetch enabled project features for project_id {project_id}: {e}")
     else:
         # Workspace-level context (no specific project)
         method_prompt += f"\n\n**🌐 WORKSPACE CONTEXT (CRITICAL):**\nWorkspace ID: {workspace_id}\n\n**IMPORTANT SCOPING RULES:**\n- This is a WORKSPACE-LEVEL chat - queries can span MULTIPLE PROJECTS\n- When the request mentions 'last cycle', 'this cycle', 'work items', etc. WITHOUT specifying a project - it could be in ANY project\n- Use entity_list(entity_type=\"projects\") to get ALL projects in the workspace\n- Iterate through projects ONLY for entities that are inherently project-scoped (cycles/modules/states/labels). For workspace-wide work-item queries, use a SINGLE structured_db_tool call WITHOUT project_id (it will scope via workspace_id)\n- CRITICAL: Do NOT limit to 1 project unless the user specifically names or refers to a specific project"  # noqa: E501
@@ -1770,6 +1803,12 @@ You MUST provide clear reasoning in your response content BEFORE and AFTER each 
         method_prompt += f"\n\n**CONVERSATION HISTORY & ACTION CONTEXT:**\n{enhanced_conversation_history}\n\nBased on this conversation history, you can reference previously mentioned entity IDs and use them as parameters in your tool calls. However, if the user asks for entity DATA/details, you still MUST call the appropriate retrieval tools - conversation history provides IDs for PARAMETERS, not complete entity data."  # noqa: E501
         method_prompt += HISTORY_FRESHNESS_WARNING
         address_user_by_name = False
+
+    if mention_section:
+        from pi.services.chat.prompts import MENTION_CONTEXT_INSTRUCTIONS_BUILD_MODE
+
+        method_prompt += f"\n\n{mention_section}"
+        method_prompt += MENTION_CONTEXT_INSTRUCTIONS_BUILD_MODE
 
     if user_id:
         method_prompt += f"\n\n**USER CONTEXT:**\nUser ID: {user_id}\nUse this when user refers to him/herself or 'I' or 'me' or 'my' or 'mine' or any other personal pronoun or any derivative of these words."  # noqa: E501

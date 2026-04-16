@@ -460,7 +460,7 @@ async def get_issues_properties(issue_ids: List[str]) -> Dict[str, Dict[str, str
                 "priority": r["priority"] or "none",
                 "state_id": str(r["state_id"]) if r["state_id"] else "",
                 "created_by": str(r["created_by_id"]) if r["created_by_id"] else "",
-                "type_id": str(r["type_id"]) if r["type_id"] else None,
+                "type_id": str(r["type_id"]) if r["type_id"] else "",
             }
             for r in rows
         }
@@ -2666,6 +2666,836 @@ async def get_label_details_for_artifact(label_id: str) -> Optional[Dict[str, An
         return dict(result) if result else None
     except Exception as e:
         log.error(f"Error fetching label details for {label_id}: {e}")
+        return None
+
+
+# ============================================================================
+# MENTION CONTEXT QUERIES
+# These queries fetch CORE context for entity mentions in chat.
+# Core context includes only essential fields for quick LLM understanding.
+# Future refactoring: Move each entity to separate repository file.
+# ============================================================================
+
+
+# ----------------------------------------------------------------------------
+# WORKITEMS / ISSUES / EPICS CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_workitem_mention_context(issue_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch enriched context for a work item mention.
+
+    Core fields:
+        - Basic: id, name, identifier (PROJ-123), description_preview
+        - Status: state, state_group, priority, is_draft, is_archived
+        - People: assignees (names), created_by
+        - Organization: project name, identifier, project_id
+        - Timeline: target_date
+        - Relations: parent (if sub-issue), sub_issues (if parent/epic - limit 20)
+        - Metadata: labels (limit 10), cycles, modules
+        - Type: is_epic
+
+    Returns:
+        Dict with enriched fields or None if not found
+    """
+    query = """
+    SELECT
+        i.id,
+        i.name,
+        p.identifier || '-' || i.sequence_id::text AS identifier,
+
+        -- Status
+        s.name AS state,
+        s."group" AS state_group,
+        i.priority,
+        i.is_draft,
+        i.archived_at IS NOT NULL AS is_archived,
+
+        -- People
+        array_agg(DISTINCT u.display_name) FILTER (WHERE u.id IS NOT NULL) AS assignees,
+        creator.display_name AS created_by,
+
+        -- Organization
+        p.name AS project_name,
+        p.identifier AS project_identifier,
+
+        -- Timeline
+        i.target_date,
+        i.start_date,
+
+        -- Type
+        it.is_epic,
+
+        -- Description preview
+        LEFT(i.description_stripped, 200) AS description_preview,
+
+        -- Parent (if this is a sub-issue)
+        parent_i.name AS parent_name,
+        parent_p.identifier || '-' || parent_i.sequence_id::text AS parent_identifier,
+
+        -- Sub-issues (if this is a parent/epic - limit 20)
+        (
+            SELECT json_agg(sub_data)
+            FROM (
+                SELECT json_build_object(
+                    'identifier', sub_p.identifier || '-' || sub.sequence_id::text,
+                    'name', sub.name,
+                    'state', sub_s.name,
+                    'priority', sub.priority
+                ) AS sub_data
+                FROM issues sub
+                LEFT JOIN projects sub_p ON sub.project_id = sub_p.id
+                LEFT JOIN states sub_s ON sub.state_id = sub_s.id
+                WHERE sub.parent_id = i.id
+                    AND sub.deleted_at IS NULL
+                ORDER BY sub.created_at DESC
+                LIMIT 20
+            ) sub_issues
+        ) AS sub_issues,
+
+        -- Labels (limit 10)
+        (
+            SELECT json_agg(label_data)
+            FROM (
+                SELECT json_build_object(
+                    'name', l.name,
+                    'color', l.color
+                ) AS label_data
+                FROM issue_labels il
+                LEFT JOIN labels l ON il.label_id = l.id
+                WHERE il.issue_id = i.id
+                    AND il.deleted_at IS NULL
+                    AND l.deleted_at IS NULL
+                ORDER BY l.name
+                LIMIT 10
+            ) labels
+        ) AS labels,
+
+        -- Cycles (list of cycle names)
+        array_agg(DISTINCT c.name) FILTER (WHERE c.id IS NOT NULL) AS cycles,
+
+        -- Modules (list of module names)
+        array_agg(DISTINCT m.name) FILTER (WHERE m.id IS NOT NULL) AS modules,
+
+        -- Estimate (from estimate_points table via foreign key)
+        ep.value AS estimate_point,
+
+        -- Workspace for URL construction
+        w.slug AS workspace_slug,
+        p.id AS project_id
+
+    FROM issues i
+    LEFT JOIN projects p ON i.project_id = p.id AND p.deleted_at IS NULL
+    LEFT JOIN workspaces w ON p.workspace_id = w.id AND w.deleted_at IS NULL
+    LEFT JOIN estimate_points ep ON i.estimate_point_id = ep.id AND ep.deleted_at IS NULL
+    LEFT JOIN states s ON i.state_id = s.id AND s.deleted_at IS NULL
+    LEFT JOIN issue_assignees ia ON ia.issue_id = i.id AND ia.deleted_at IS NULL
+    LEFT JOIN users u ON ia.assignee_id = u.id AND u.is_active = TRUE
+    LEFT JOIN users creator ON i.created_by_id = creator.id
+    LEFT JOIN issue_types it ON i.type_id = it.id AND it.deleted_at IS NULL
+    LEFT JOIN issues parent_i ON i.parent_id = parent_i.id AND parent_i.deleted_at IS NULL
+    LEFT JOIN projects parent_p ON parent_i.project_id = parent_p.id
+    LEFT JOIN cycle_issues ci ON ci.issue_id = i.id AND ci.deleted_at IS NULL
+    LEFT JOIN cycles c ON ci.cycle_id = c.id AND c.deleted_at IS NULL
+    LEFT JOIN module_issues mi ON mi.issue_id = i.id AND mi.deleted_at IS NULL
+    LEFT JOIN modules m ON mi.module_id = m.id AND m.deleted_at IS NULL
+    WHERE i.id = $1 AND i.deleted_at IS NULL
+    GROUP BY i.id, p.id, p.name, p.identifier, s.name, s."group", creator.display_name, it.is_epic,
+             parent_i.name, parent_p.identifier, parent_i.sequence_id, ep.value, w.slug
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (issue_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching workitem mention context for {issue_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# PAGES CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_page_mention_context(page_id: str, user_id: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """
+    Fetch core context for a page mention.
+
+    Permissions: Excludes private pages (access=1) unless owned by user.
+
+    Core fields:
+        - Basic: id, name
+        - Access: access_level, is_locked, is_archived
+        - Organization: workspace (pages are workspace-level, not project-level)
+        - People: owned_by
+
+    Note: Pages don't have project_id directly. Use project_pages junction table if needed.
+
+    Returns:
+        Dict with core fields or None if not found/no access
+    """
+    query = """
+    SELECT
+        p.id,
+        p.name,
+
+        -- Access control
+        p.access AS access_level,
+        p.is_locked,
+        p.archived_at IS NOT NULL AS is_archived,
+
+        -- Organization (pages are workspace-level)
+        w.name AS workspace_name,
+        w.slug AS workspace_slug,
+
+        -- People
+        owner.display_name AS owned_by
+
+    FROM pages p
+    LEFT JOIN workspaces w ON p.workspace_id = w.id AND w.deleted_at IS NULL
+    LEFT JOIN users owner ON p.owned_by_id = owner.id
+    WHERE p.id = $1
+        AND p.deleted_at IS NULL
+        AND (p.access != 1 OR p.owned_by_id = $2)
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (page_id, user_id))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching page mention context for {page_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# CYCLES CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_cycle_mention_context(cycle_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch enriched context for a cycle mention.
+
+    Core fields:
+        - Basic: id, name
+        - Timeline: start_date, end_date
+        - Status: status (current/upcoming/completed)
+        - Organization: project
+        - Metrics: total_issues, completed_issues (computed from cycle_issues)
+        - State breakdown: counts by state group (NO issues list - too much data)
+
+    Returns:
+        Dict with enriched fields or None if not found
+    """
+    query = """
+    SELECT
+        c.id,
+        c.name,
+
+        -- Timeline
+        c.start_date,
+        c.end_date,
+
+        -- Status
+        CASE
+            WHEN c.start_date > CURRENT_DATE THEN 'upcoming'
+            WHEN c.end_date < CURRENT_DATE THEN 'completed'
+            ELSE 'current'
+        END AS status,
+
+        -- Organization
+        p.name AS project_name,
+        p.identifier AS project_identifier,
+
+        -- Metrics (computed from cycle_issues table)
+        (SELECT COUNT(*) FROM cycle_issues ci WHERE ci.cycle_id = c.id AND ci.deleted_at IS NULL) AS total_issues,
+        (
+            SELECT COUNT(*) FROM cycle_issues ci JOIN issues i ON ci.issue_id = i.id
+            WHERE ci.cycle_id = c.id AND ci.deleted_at IS NULL
+                AND i.deleted_at IS NULL AND i.completed_at IS NOT NULL
+        ) AS completed_issues,
+
+        -- State counts (efficient - no need to list all issues)
+        (
+            SELECT COUNT(*) FROM cycle_issues ci2
+            LEFT JOIN issues i2 ON ci2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE ci2.cycle_id = c.id AND s2."group" = 'backlog'
+                AND ci2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS backlog_count,
+        (
+            SELECT COUNT(*) FROM cycle_issues ci2
+            LEFT JOIN issues i2 ON ci2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE ci2.cycle_id = c.id AND s2."group" = 'unstarted'
+                AND ci2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS todo_count,
+        (
+            SELECT COUNT(*) FROM cycle_issues ci2
+            LEFT JOIN issues i2 ON ci2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE ci2.cycle_id = c.id AND s2."group" = 'started'
+                AND ci2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS in_progress_count,
+        (
+            SELECT COUNT(*) FROM cycle_issues ci2
+            LEFT JOIN issues i2 ON ci2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE ci2.cycle_id = c.id AND s2."group" = 'completed'
+                AND ci2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS done_count,
+
+        -- Workspace for URL construction
+        w.slug AS workspace_slug,
+        p.id AS project_id
+
+    FROM cycles c
+    LEFT JOIN projects p ON c.project_id = p.id AND p.deleted_at IS NULL
+    LEFT JOIN workspaces w ON c.workspace_id = w.id AND w.deleted_at IS NULL
+    WHERE c.id = $1 AND c.deleted_at IS NULL
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (cycle_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching cycle mention context for {cycle_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# MODULES CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_module_mention_context(module_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch enriched context for a module mention.
+
+    Core fields:
+        - Basic: id, name
+        - Timeline: start_date, target_date
+        - Status: status (backlog/planned/in progress/paused/completed/cancelled)
+        - Organization: project
+        - People: lead
+        - Metrics: total_issues, completed_issues (computed from module_issues)
+        - State breakdown: counts by state group (NO issues list - too much data)
+
+    Returns:
+        Dict with enriched fields or None if not found
+    """
+    query = """
+    SELECT
+        m.id,
+        m.name,
+
+        -- Timeline
+        m.start_date,
+        m.target_date,
+
+        -- Status
+        m.status,
+
+        -- Organization
+        p.name AS project_name,
+        p.identifier AS project_identifier,
+
+        -- People
+        lead.display_name AS lead_by,
+
+        -- Metrics (computed from module_issues table)
+        (SELECT COUNT(*) FROM module_issues mi WHERE mi.module_id = m.id AND mi.deleted_at IS NULL) AS total_issues,
+        (
+            SELECT COUNT(*) FROM module_issues mi JOIN issues i ON mi.issue_id = i.id
+            WHERE mi.module_id = m.id AND mi.deleted_at IS NULL
+                AND i.deleted_at IS NULL AND i.completed_at IS NOT NULL
+        ) AS completed_issues,
+
+        -- State counts (efficient - no need to list all issues)
+        (
+            SELECT COUNT(*) FROM module_issues mi2
+            LEFT JOIN issues i2 ON mi2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE mi2.module_id = m.id AND s2."group" = 'backlog'
+                AND mi2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS backlog_count,
+        (
+            SELECT COUNT(*) FROM module_issues mi2
+            LEFT JOIN issues i2 ON mi2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE mi2.module_id = m.id AND s2."group" = 'unstarted'
+                AND mi2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS todo_count,
+        (
+            SELECT COUNT(*) FROM module_issues mi2
+            LEFT JOIN issues i2 ON mi2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE mi2.module_id = m.id AND s2."group" = 'started'
+                AND mi2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS in_progress_count,
+        (
+            SELECT COUNT(*) FROM module_issues mi2
+            LEFT JOIN issues i2 ON mi2.issue_id = i2.id
+            LEFT JOIN states s2 ON i2.state_id = s2.id
+            WHERE mi2.module_id = m.id AND s2."group" = 'completed'
+                AND mi2.deleted_at IS NULL AND i2.deleted_at IS NULL
+        ) AS done_count,
+
+        -- Workspace for URL construction
+        w.slug AS workspace_slug,
+        p.id AS project_id
+
+    FROM modules m
+    LEFT JOIN projects p ON m.project_id = p.id AND p.deleted_at IS NULL
+    LEFT JOIN workspaces w ON m.workspace_id = w.id AND w.deleted_at IS NULL
+    LEFT JOIN users lead ON m.lead_id = lead.id
+    WHERE m.id = $1 AND m.deleted_at IS NULL
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (module_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching module mention context for {module_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# PROJECTS CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_project_mention_context(project_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch comprehensive context for a project mention.
+
+    Core fields:
+        - Basic: id, name, identifier
+        - Status: is_archived
+        - People: lead, default_assignee
+        - Organization: workspace
+        - Stats: total_workitems, member_count, cycle_count, module_count, epic_count
+        - State Distribution: backlog_count, unstarted_count, started_count, completed_count, cancelled_count
+
+    Returns:
+        Dict with core fields and statistics or None if not found
+    """
+    query = """
+    SELECT
+        p.id,
+        p.name,
+        p.identifier,
+
+        -- Status
+        p.archived_at IS NOT NULL AS is_archived,
+
+        -- People
+        lead.display_name AS project_lead,
+        assignee.display_name AS default_assignee,
+
+        -- Organization
+        w.name AS workspace_name,
+        w.slug AS workspace_slug,
+
+        -- Workitem counts
+        COUNT(DISTINCT i.id) FILTER (WHERE i.deleted_at IS NULL) AS total_workitems,
+        COUNT(DISTINCT i.id) FILTER (WHERE i.deleted_at IS NULL AND s.group = 'backlog') AS backlog_count,
+        COUNT(DISTINCT i.id) FILTER (WHERE i.deleted_at IS NULL AND s.group = 'unstarted') AS unstarted_count,
+        COUNT(DISTINCT i.id) FILTER (WHERE i.deleted_at IS NULL AND s.group = 'started') AS started_count,
+        COUNT(DISTINCT i.id) FILTER (WHERE i.deleted_at IS NULL AND s.group = 'completed') AS completed_count,
+        COUNT(DISTINCT i.id) FILTER (WHERE i.deleted_at IS NULL AND s.group = 'cancelled') AS cancelled_count,
+
+        -- Entity counts
+        COUNT(DISTINCT pm.id) AS member_count,
+        COUNT(DISTINCT c.id) AS cycle_count,
+        COUNT(DISTINCT m.id) AS module_count,
+        COUNT(DISTINCT i.id) FILTER (WHERE i.deleted_at IS NULL AND it.is_epic = true) AS epic_count
+
+    FROM projects p
+    LEFT JOIN workspaces w ON p.workspace_id = w.id AND w.deleted_at IS NULL
+    LEFT JOIN users lead ON p.project_lead_id = lead.id
+    LEFT JOIN users assignee ON p.default_assignee_id = assignee.id
+    LEFT JOIN issues i ON i.project_id = p.id
+    LEFT JOIN states s ON s.id = i.state_id AND s.deleted_at IS NULL
+    LEFT JOIN project_members pm ON pm.project_id = p.id AND pm.is_active = true AND pm.deleted_at IS NULL
+    LEFT JOIN cycles c ON c.project_id = p.id AND c.deleted_at IS NULL AND c.archived_at IS NULL
+    LEFT JOIN modules m ON m.project_id = p.id AND m.deleted_at IS NULL
+    LEFT JOIN issue_types it ON it.id = i.type_id AND it.deleted_at IS NULL
+    WHERE p.id = $1 AND p.deleted_at IS NULL
+    GROUP BY p.id, p.name, p.identifier, p.archived_at, lead.display_name, assignee.display_name, w.name, w.slug
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (project_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching project mention context for {project_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# USERS CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_user_mention_context(user_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch core context for a user mention.
+
+    Core fields:
+        - Basic: id, display_name, email
+        - Status: is_active
+        - Role: role (in workspace context if available)
+
+    Returns:
+        Dict with core fields or None if not found
+    """
+    query = """
+    SELECT
+        u.id,
+        u.first_name,
+        u.last_name,
+        u.display_name,
+        u.is_active
+
+    FROM users u
+    WHERE u.id = $1
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (user_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching user mention context for {user_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# LABELS CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_label_mention_context(label_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch core context for a label mention.
+
+    Core fields:
+        - Basic: id, name, color
+        - Organization: project (if project-level) or workspace-level
+
+    Returns:
+        Dict with core fields or None if not found
+    """
+    query = """
+    SELECT
+        l.id,
+        l.name,
+        l.color,
+
+        -- Organization
+        l.project_id,
+        p.name AS project_name,
+        p.identifier AS project_identifier
+
+    FROM labels l
+    LEFT JOIN projects p ON l.project_id = p.id AND p.deleted_at IS NULL
+    WHERE l.id = $1 AND l.deleted_at IS NULL
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (label_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching label mention context for {label_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# STATES CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_state_mention_context(state_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch core context for a state mention.
+
+    Core fields:
+        - Basic: id, name, color
+        - Type: group (backlog/unstarted/started/completed/cancelled)
+        - Organization: project name, identifier, project_id
+
+    Returns:
+        Dict with core fields or None if not found
+    """
+    query = """
+    SELECT
+        s.id,
+        s.name,
+        s.color,
+        s."group" AS state_group,
+
+        -- Organization
+        p.name AS project_name,
+        p.identifier AS project_identifier,
+        p.id AS project_id
+
+    FROM states s
+    LEFT JOIN projects p ON s.project_id = p.id AND p.deleted_at IS NULL
+    WHERE s.id = $1 AND s.deleted_at IS NULL
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (state_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching state mention context for {state_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# ISSUE VIEWS CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_issue_view_mention_context(view_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch core context for an issue view mention.
+
+    Core fields:
+        - Basic: id, name, description
+        - Organization: project (optional, can be workspace-level)
+        - People: created_by, owned_by
+        - Access: access level, is_locked
+
+    Returns:
+        Dict with core fields or None if not found
+    """
+    query = """
+    SELECT
+        iv.id,
+        iv.name,
+        iv.description,
+
+        -- Access
+        iv.access,
+        iv.is_locked,
+
+        -- Organization (optional - can be project or workspace level)
+        p.name AS project_name,
+        p.identifier AS project_identifier,
+        w.slug AS workspace_slug,
+        p.id AS project_id,
+
+        -- People
+        creator.display_name AS created_by,
+        owner.display_name AS owned_by
+
+    FROM issue_views iv
+    LEFT JOIN projects p ON iv.project_id = p.id AND p.deleted_at IS NULL
+    LEFT JOIN workspaces w ON iv.workspace_id = w.id AND w.deleted_at IS NULL
+    LEFT JOIN users creator ON iv.created_by_id = creator.id
+    LEFT JOIN users owner ON iv.owned_by_id = owner.id
+    WHERE iv.id = $1 AND iv.deleted_at IS NULL
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (view_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching issue view mention context for {view_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# TEAMSPACES CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_teamspace_mention_context(teamspace_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch core context for a teamspace mention.
+
+    Core fields:
+        - Basic: id, name
+        - Organization: workspace
+        - People: created_by, member_count
+        - Projects: project names and ids linked to this teamspace
+
+    Returns:
+        Dict with core fields or None if not found
+    """
+    query = """
+    SELECT
+        t.id,
+        t.name,
+
+        -- Organization
+        w.name AS workspace_name,
+        w.slug AS workspace_slug,
+
+        -- People
+        creator.display_name AS created_by,
+        COUNT(DISTINCT tsm.member_id) FILTER (WHERE tsm.deleted_at IS NULL) AS member_count,
+
+        -- Projects linked to this teamspace
+        array_remove(
+            array_agg(DISTINCT p.id::text) FILTER (WHERE p.id IS NOT NULL),
+            NULL
+        ) AS project_ids,
+        array_remove(
+            array_agg(DISTINCT p.name) FILTER (WHERE p.name IS NOT NULL),
+            NULL
+        ) AS project_names
+
+    FROM team_spaces t
+    LEFT JOIN workspaces w ON t.workspace_id = w.id AND w.deleted_at IS NULL
+    LEFT JOIN users creator ON t.created_by_id = creator.id
+    LEFT JOIN team_space_members tsm ON tsm.team_space_id = t.id
+    LEFT JOIN team_space_projects tsp ON tsp.team_space_id = t.id AND tsp.deleted_at IS NULL
+    LEFT JOIN projects p ON p.id = tsp.project_id AND p.deleted_at IS NULL
+    WHERE t.id = $1 AND t.deleted_at IS NULL
+    GROUP BY t.id, t.name, w.name, w.slug, creator.display_name
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (teamspace_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching teamspace mention context for {teamspace_id}: {e}")
+        return None
+
+
+# ----------------------------------------------------------------------------
+# INITIATIVES CONTEXT
+# ----------------------------------------------------------------------------
+
+
+async def get_initiative_mention_context(initiative_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Fetch core context for an initiative mention.
+
+    Core fields:
+        - Basic: id, name, state
+        - Timeline: start_date, end_date (not target_date - that's the schema field name)
+        - Organization: workspace
+        - People: created_by, lead
+        - Projects: project names and ids linked to this initiative
+
+    Returns:
+        Dict with core fields or None if not found
+    """
+    query = """
+    SELECT
+        i.id,
+        i.name,
+        i.state,
+
+        -- Timeline
+        i.start_date,
+        i.end_date,
+
+        -- Organization
+        w.name AS workspace_name,
+        w.slug AS workspace_slug,
+
+        -- People
+        creator.display_name AS created_by,
+        lead.display_name AS lead_by,
+
+        -- Projects linked to this initiative
+        array_remove(
+            array_agg(DISTINCT p.id::text) FILTER (WHERE p.id IS NOT NULL),
+            NULL
+        ) AS project_ids,
+        array_remove(
+            array_agg(DISTINCT p.name) FILTER (WHERE p.name IS NOT NULL),
+            NULL
+        ) AS project_names,
+        array_remove(
+            array_agg(DISTINCT p.identifier) FILTER (WHERE p.identifier IS NOT NULL),
+            NULL
+        ) AS project_identifiers
+
+    FROM initiatives i
+    LEFT JOIN workspaces w ON i.workspace_id = w.id AND w.deleted_at IS NULL
+    LEFT JOIN users creator ON i.created_by_id = creator.id
+    LEFT JOIN users lead ON i.lead_id = lead.id
+    LEFT JOIN initiative_projects ip ON ip.initiative_id = i.id AND ip.deleted_at IS NULL
+    LEFT JOIN projects p ON p.id = ip.project_id AND p.deleted_at IS NULL
+    WHERE i.id = $1 AND i.deleted_at IS NULL
+    GROUP BY i.id, i.name, i.state, i.start_date, i.end_date, w.name, w.slug, creator.display_name, lead.display_name
+    """
+    try:
+        result = await PlaneDBPool.fetchrow(query, (initiative_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching initiative mention context for {initiative_id}: {e}")
+        return None
+
+
+async def get_project_enabled_features(project_id: str) -> Optional[Dict[str, Any]]:
+    """Get all enabled features for a project.
+
+    Returns features from both the projects table and project_features table.
+
+    Args:
+        project_id: Project UUID
+
+    Returns:
+        Dictionary with all enabled feature flags, or None if project not found
+    """
+    query = """
+    SELECT
+        -- Features from projects table
+        p.module_view,
+        p.cycle_view,
+        p.issue_views_view,
+        p.page_view,
+        p.intake_view,
+        p.is_time_tracking_enabled,
+        p.is_issue_type_enabled,
+        p.guest_view_all_features,
+
+        -- Features from project_features table
+        pf.is_project_updates_enabled,
+        pf.is_epic_enabled,
+        pf.is_workflow_enabled,
+        pf.is_automated_cycle_enabled,
+        pf.is_milestone_enabled
+
+    FROM projects p
+    LEFT JOIN project_features pf ON pf.project_id = p.id AND pf.deleted_at IS NULL
+    WHERE p.id = $1 AND p.deleted_at IS NULL
+    """
+
+    try:
+        result = await PlaneDBPool.fetchrow(query, (project_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching enabled features for project {project_id}: {e}")
+        return None
+
+
+async def get_workspace_enabled_features(workspace_id: str) -> Optional[Dict[str, Any]]:
+    """Get all enabled features for a workspace.
+
+    Returns features from the workspace_features table.
+
+    Args:
+        workspace_id: Workspace UUID
+
+    Returns:
+        Dictionary with all enabled feature flags, or None if workspace not found
+    """
+    query = """
+    SELECT
+        wf.is_project_grouping_enabled,
+        wf.is_initiative_enabled,
+        wf.is_teams_enabled,
+        wf.is_customer_enabled,
+        wf.is_pi_enabled,
+        wf.is_wiki_enabled
+
+    FROM workspace_features wf
+    WHERE wf.workspace_id = $1 AND wf.deleted_at IS NULL
+    """
+
+    try:
+        result = await PlaneDBPool.fetchrow(query, (workspace_id,))
+        return dict(result) if result else None
+    except Exception as e:
+        log.error(f"Error fetching enabled features for workspace {workspace_id}: {e}")
         return None
 
 

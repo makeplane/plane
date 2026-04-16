@@ -192,6 +192,7 @@ class PlaneChatBot(ChatKit):
         pi_sidebar_open=None,
         sidebar_open_url=None,
         source=None,
+        mention_context=None,
         mcp_connector_ids=None,
         websearch_enabled: bool = False,
     ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
@@ -204,7 +205,7 @@ class PlaneChatBot(ChatKit):
             workspace_slug,
             project_id,
             conversation_history,
-            enhanced_conversation_history,  # 🆕 Pass enhanced context
+            enhanced_conversation_history,
             user_id,
             chat_id,
             query_flow_store,
@@ -217,7 +218,8 @@ class PlaneChatBot(ChatKit):
             pi_sidebar_open,
             sidebar_open_url,
             source,
-            mcp_connector_ids,
+            mention_context=mention_context,
+            mcp_connector_ids=mcp_connector_ids,
             websearch_enabled=websearch_enabled,
         ):
             yield chunk
@@ -239,6 +241,7 @@ class PlaneChatBot(ChatKit):
         db,
         parsed_query,
         reasoning_container=None,
+        mention_context=None,
         websearch_enabled: bool = False,
         web_search_context: str | None = None,
     ) -> AsyncGenerator[Union[str, Dict[str, Any]], None]:
@@ -260,6 +263,7 @@ class PlaneChatBot(ChatKit):
             db,
             parsed_query,
             reasoning_container,
+            mention_context=mention_context,
             websearch_enabled=websearch_enabled,
             web_search_context=web_search_context,
         ):
@@ -430,8 +434,17 @@ class PlaneChatBot(ChatKit):
         query_flow_store = self._create_query_flow_store(data, workspace_in_context, is_guest)
 
         # Parse query to detect mentions/links and get clean parsed content
-        parsed = await parse_query(query, message_id=query_id, workspace_id=workspace_id, db=db)
+        # Also enrich mentions with comprehensive context for LLM
+        parsed = await parse_query(
+            query,
+            message_id=query_id,
+            workspace_id=workspace_id,
+            user_id=user_id,
+            db=db,
+            enrich_mentions=True,
+        )
         parsed_query = parsed.parsed_content
+        mention_context = parsed.mention_context  # Extract enriched context for later use
 
         # Initialize chat and get conversation history
         conversation_history_dict, error = await self._initialize_chat_context(data, chat_exists, db)
@@ -677,6 +690,7 @@ class PlaneChatBot(ChatKit):
                         pi_sidebar_open=data.pi_sidebar_open,
                         sidebar_open_url=data.sidebar_open_url,
                         source=getattr(data, "source", None),
+                        mention_context=mention_context,
                         mcp_connector_ids=mcp_connector_ids,
                         websearch_enabled=websearch_enabled,
                     )
@@ -700,6 +714,7 @@ class PlaneChatBot(ChatKit):
                         db,
                         parsed_query,
                         reasoning_container=reasoning_container,
+                        mention_context=mention_context,
                         websearch_enabled=websearch_enabled,
                         web_search_context=web_search_context,
                     )

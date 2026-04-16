@@ -124,6 +124,7 @@ async def execute_tools_for_ask_mode(
     db,
     parsed_query,
     reasoning_container=None,
+    mention_context=None,
     websearch_enabled: bool = False,
     web_search_context: str | None = None,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
@@ -134,7 +135,7 @@ async def execute_tools_for_ask_mode(
         workspace_in_context = True
         if isinstance(query_flow_store, dict):
             workspace_in_context = query_flow_store.get("workspace_in_context", True)
-            is_guest_user = query_flow_store.get("is_guest_user", False)
+            is_guest_user = bool(query_flow_store.get("is_guest_user") or query_flow_store.get("is_guest"))
 
         log.info(f"ChatID: {chat_id} - Workspace in context: {workspace_in_context}")
 
@@ -188,6 +189,8 @@ async def execute_tools_for_ask_mode(
             user_meta=user_meta,
             workspace_in_context=workspace_in_context,
             web_search_context=web_search_context,
+            mention_context=mention_context,
+            is_guest_user=is_guest_user,
         )
 
         # Bind tools to the LLM - explicitly set tool_choice to 'auto' to ensure tool use is enabled
@@ -408,7 +411,34 @@ async def execute_tools_for_ask_mode(
         else:
             messages.append(SystemMessage(content=system_prompt_to_use))
 
-        # log.info(f"ChatID: {chat_id} - Ask mode LLM input - System Prompt:\n{"=" * 80}\n{system_prompt_to_use}\n{"=" * 80}")
+        # Inject mention context as a NON-CACHED system message (dynamic per request)
+        if mention_context and mention_context.get("formatted_context"):
+            mention_section = f"""**Pre-fetched context for entities mentioned in the user's query**
+
+        The following entities were mentioned in the user's query (@mentions).
+        Their current state has been fetched fresh from the database for this request.
+
+        ═══════════════════════════════════════════════════
+        {mention_context["formatted_context"]}
+        ═══════════════════════════════════════════════════
+
+        **MANDATORY PRE-TOOL-SELECTION CHECK:**
+        Before selecting ANY tools, answer these questions:
+        1. Does the user's query ask about entities shown above? (YES/NO)
+        2. Is the requested information (state, assignee, project, etc.) present above? (YES/NO)
+        3. If BOTH are YES → Answer DIRECTLY from context above. DO NOT call tools.
+        4. If either is NO → Proceed with tool selection.
+
+        For queries like "what's the state of issue <uuid>" where state is shown above → Answer immediately without tools.
+        Only use tools for: filtering, aggregation, cross-entity analysis, or data NOT in the context above.
+        """
+
+            messages.append(SystemMessage(content=mention_section))
+
+            log.info(f"ChatID: {chat_id} - Injected mention context for " f"{mention_context.get("count", 0)} entities into system prompt")
+
+            # 🐛 DEBUG: Log actual mention context content
+            log.debug(f"ChatID: {chat_id} - MENTION CONTEXT DEBUG:\n" f"{mention_context["formatted_context"]}")
 
         # IMPORTANT: custom_prompt contains dynamic conversation history - put it in user message
         # This keeps the cached system message unchanged

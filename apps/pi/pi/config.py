@@ -828,6 +828,7 @@ class Settings:
             log_level = logging.DEBUG if debug_enabled else logging.INFO
 
         root_logger.setLevel(log_level)
+
         root_logger.addHandler(handler)
         root_logger.propagate = True
 

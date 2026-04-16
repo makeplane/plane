@@ -183,6 +183,7 @@ async def execute_tools_for_build_mode(
     pi_sidebar_open=None,
     sidebar_open_url=None,
     source=None,
+    mention_context=None,
     mcp_connector_ids=None,
     websearch_enabled: bool = False,
 ) -> AsyncIterator[Union[str, Dict[str, Any]]]:
@@ -231,6 +232,8 @@ async def execute_tools_for_build_mode(
         # Carry pre-fetched guest flag into the tool context dict so @access_control
         # decorators on tool-building functions can short-circuit the DB lookup.
         context["is_guest"] = query_flow_store.get("is_guest")
+        # Resolve is_guest_user for build_method_prompt — query_flow_store may use either key
+        is_guest_user = bool(query_flow_store.get("is_guest_user") or query_flow_store.get("is_guest"))
         # Update project_id from normalized context
         project_id = context["project_id"]
 
@@ -542,7 +545,7 @@ async def execute_tools_for_build_mode(
         _mcp_cats = [f"mcp_{slug}" for slug in (mcp_tools_by_slug or {}).keys()] if mcp_tools_by_slug else []
         _available_categories = sorted(set(_registry_cats + _mcp_cats + ["retrieval_tools"]))
 
-        method_prompt = build_method_prompt(
+        method_prompt = await build_method_prompt(
             combined_tool_query,
             project_id,
             user_id,
@@ -551,10 +554,12 @@ async def execute_tools_for_build_mode(
             clarification_context=clar_ctx,
             user_meta=user_meta,
             source=source,
+            mention_context=mention_context,
             mcp_tools=mcp_tools_list or None,
             websearch_enabled=websearch_enabled,
             available_categories=_available_categories,
             max_category_reselect_invocations=getattr(settings.chat, "MAX_CATEGORY_RESELECT_INVOCATIONS", None),
+            is_guest_user=is_guest_user,
         )
 
         # Record the tool orchestration context (enhanced conversation history) before planning
