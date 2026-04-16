@@ -528,6 +528,7 @@
     "copied": "Kopiert!",
     "link_copied": "Link kopiert!",
     "link_copied_to_clipboard": "Link in die Zwischenablage kopiert",
+    "link_copy_failed": "Link konnte nicht kopiert werden",
     "copied_to_clipboard": "Link zum Arbeitselement in die Zwischenablage kopiert",
     "branch_name_copied_to_clipboard": "Branch-Name in die Zwischenablage kopiert",
     "is_copied_to_clipboard": "Arbeitselement in die Zwischenablage kopiert",

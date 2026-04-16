@@ -530,6 +530,7 @@
     "copied": "Đã sao chép!",
     "link_copied": "Đã sao chép liên kết!",
     "link_copied_to_clipboard": "Đã sao chép liên kết vào bảng tạm",
+    "link_copy_failed": "Sao chép liên kết thất bại",
     "copied_to_clipboard": "Đã sao chép liên kết mục công việc vào bảng tạm",
     "branch_name_copied_to_clipboard": "Tên nhánh đã được sao chép vào bảng tạm",
     "is_copied_to_clipboard": "Mục công việc đã được sao chép vào bảng tạm",

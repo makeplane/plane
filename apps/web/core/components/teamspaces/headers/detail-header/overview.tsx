@@ -16,6 +16,7 @@ import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
 import { LinkIcon } from "@plane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { cn, copyUrlToClipboard } from "@plane/utils";
@@ -37,6 +38,7 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
   // router
   const { workspaceSlug } = useParams();
   // store hooks
+  const { t } = useTranslation();
   const {
     isTeamSidebarCollapsed,
     isCurrentUserMemberOfTeamspace,
@@ -48,14 +50,22 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
   const isSubmitting = getTeamspaceNameDescriptionLoaderById(teamspaceId);
   const teamLink = `${workspaceSlug}/teamspaces/${teamspaceId}`;
 
-  const handleCopyText = () =>
-    copyUrlToClipboard(teamLink).then(() => {
+  const handleCopyText = async () => {
+    try {
+      await copyUrlToClipboard(teamLink);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "Teamspace link copied to clipboard.",
+        title: t("toast.success"),
+        message: t("common.link_copied_to_clipboard"),
       });
-    });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.link_copy_failed"),
+      });
+    }
+  };
 
   const commonButtonClassName = "flex-shrink-0 flex items-center justify-center size-6 bg-layer-1 rounded";
 

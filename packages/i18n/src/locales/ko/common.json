@@ -530,6 +530,7 @@
     "copied": "복사됨!",
     "link_copied": "링크 복사됨!",
     "link_copied_to_clipboard": "링크가 클립보드에 복사되었습니다",
+    "link_copy_failed": "링크 복사에 실패했습니다",
     "copied_to_clipboard": "작업 항목 링크가 클립보드에 복사되었습니다",
     "branch_name_copied_to_clipboard": "브랜치 이름이 클립보드에 복사되었습니다",
     "is_copied_to_clipboard": "작업 항목이 클립보드에 복사되었습니다",

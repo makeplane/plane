@@ -534,6 +534,7 @@
     "copied": "Skopírované!",
     "link_copied": "Odkaz skopírovaný!",
     "link_copied_to_clipboard": "Odkaz skopírovaný do schránky",
+    "link_copy_failed": "Kopírovanie odkazu zlyhalo",
     "copied_to_clipboard": "Odkaz na pracovnú položku bol skopírovaný do schránky",
     "branch_name_copied_to_clipboard": "Názov vetvy skopírovaný do schránky",
     "is_copied_to_clipboard": "Pracovná položka skopírovaná do schránky",

@@ -531,6 +531,7 @@
     "copied": "¡Copiado!",
     "link_copied": "¡Enlace copiado!",
     "link_copied_to_clipboard": "Enlace copiado al portapapeles",
+    "link_copy_failed": "No se pudo copiar el enlace",
     "copied_to_clipboard": "Enlace del elemento de trabajo copiado al portapapeles",
     "branch_name_copied_to_clipboard": "Nombre de rama copiado al portapapeles",
     "is_copied_to_clipboard": "El elemento de trabajo está copiado al portapapeles",

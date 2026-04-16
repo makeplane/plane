@@ -54,14 +54,23 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
     toggleCreateCustomerModal({ isOpen: true, customerId });
   };
 
-  const handleCopyText = () =>
-    copyUrlToClipboard(customerLink).then(() => {
+  const handleCopyText = async () => {
+    try {
+      await copyUrlToClipboard(customerLink);
+
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("customers.toasts.copy_link.title"),
         message: t("customers.toasts.copy_link.message"),
       });
-    });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.link_copy_failed"),
+      });
+    }
+  };
 
   const handelDeleteCustomer = () => {
     setIsDeleteModalOpen(true);
@@ -80,7 +89,7 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
       action: handleCopyText,
       title: t("customers.quick_actions.copy_link"),
       icon: LinkIcon,
-      iconClassName: "-rotate-45",
+      iconClassName: "",
     },
     {
       key: "delete",

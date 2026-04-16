@@ -530,6 +530,7 @@
     "copied": "Zkopírováno!",
     "link_copied": "Odkaz zkopírován!",
     "link_copied_to_clipboard": "Odkaz zkopírován do schránky",
+    "link_copy_failed": "Kopírování odkazu se nezdařilo",
     "copied_to_clipboard": "Odkaz na pracovní položku zkopírován do schránky",
     "branch_name_copied_to_clipboard": "Název větve zkopírován do schránky",
     "is_copied_to_clipboard": "Pracovní položka zkopírována do schránky",

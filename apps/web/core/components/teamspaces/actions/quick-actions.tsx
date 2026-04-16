@@ -15,6 +15,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { EditIcon, LinkIcon, NewTabIcon, TrashIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -40,6 +41,7 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks
+  const { t } = useTranslation();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
   // derived values
   const teamLink = `${workspaceSlug}/teamspaces/${teamspaceId}`;
@@ -50,14 +52,22 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
 
   const handleOpenInNewTab: () => void = () => window.open(`/${teamLink}`, "_blank");
 
-  const handleCopyText = () =>
-    copyUrlToClipboard(teamLink).then(() => {
+  const handleCopyText = async () => {
+    try {
+      await copyUrlToClipboard(teamLink);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link copied",
-        message: "Paste it anywhere you like.",
+        title: t("toast.success"),
+        message: t("common.link_copied_to_clipboard"),
       });
-    });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.link_copy_failed"),
+      });
+    }
+  };
 
   const handleDeleteTeam = () => {
     setIsDeleteModalOpen(true);
@@ -82,7 +92,7 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
       action: handleCopyText,
       title: "Copy link to teamspace",
       icon: LinkIcon,
-      iconClassName: "-rotate-45",
+      iconClassName: "",
     },
     {
       key: "delete",

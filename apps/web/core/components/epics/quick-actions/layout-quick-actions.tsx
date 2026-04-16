@@ -11,9 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { cn, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 import { useLayoutMenuItems } from "@/components/common/quick-actions/helper";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 
 type Props = {
   workspaceSlug: string;
@@ -23,8 +25,23 @@ type Props = {
 export function EpicLayoutQuickActions(props: Props) {
   const { workspaceSlug, projectId } = props;
 
-  const handleCopyLink = () => {
-    copyUrlToClipboard(`/${workspaceSlug}/projects/${projectId}/epics`);
+  const { t } = useTranslation();
+
+  const handleCopyLink = async () => {
+    try {
+      await copyUrlToClipboard(`/${workspaceSlug}/projects/${projectId}/epics`);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: t("common.link_copied_to_clipboard"),
+      });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.link_copy_failed"),
+      });
+    }
   };
 
   const handleOpenInNewTab = () => window.open(`/${workspaceSlug}/projects/${projectId}/epics`, "_blank");
@@ -44,7 +61,7 @@ export function EpicLayoutQuickActions(props: Props) {
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"
-        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
+        className="shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
       >
         {items.map((item) => {
           if (item.shouldRender === false) return null;

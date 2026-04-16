@@ -530,6 +530,7 @@
     "copied": "已複製！",
     "link_copied": "連結已複製！",
     "link_copied_to_clipboard": "連結已複製到剪貼簿",
+    "link_copy_failed": "複製連結失敗",
     "copied_to_clipboard": "工作事項連結已複製到剪貼簿",
     "branch_name_copied_to_clipboard": "分支名稱已複製到剪貼簿",
     "is_copied_to_clipboard": "工作事項已複製到剪貼簿",

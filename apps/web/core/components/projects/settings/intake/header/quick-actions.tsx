@@ -12,10 +12,12 @@
  */
 
 import { MoreHorizontal } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { cn, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard } from "@plane/utils";
 import { IconButton } from "@plane/propel/icon-button";
 import { useIntakeHeaderMenuItems } from "@/components/common/quick-actions/helper";
+import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 
 type Props = {
   workspaceSlug: string;
@@ -25,8 +27,23 @@ type Props = {
 export function IntakeHeaderQuickActions(props: Props) {
   const { workspaceSlug, projectId } = props;
 
-  const handleCopyLink = () => {
-    copyUrlToClipboard(`/${workspaceSlug}/projects/${projectId}/intake`);
+  const { t } = useTranslation();
+
+  const handleCopyLink = async () => {
+    try {
+      await copyUrlToClipboard(`/${workspaceSlug}/projects/${projectId}/intake`);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("toast.success"),
+        message: t("common.link_copied_to_clipboard"),
+      });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.link_copy_failed"),
+      });
+    }
   };
 
   const { items, modals } = useIntakeHeaderMenuItems({ workspaceSlug, projectId, handleCopyLink });
@@ -38,7 +55,7 @@ export function IntakeHeaderQuickActions(props: Props) {
         placement="bottom-end"
         closeOnSelect
         maxHeight="lg"
-        className="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
+        className="shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded"
       >
         {items.map((item) => {
           if (item.shouldRender === false) return null;

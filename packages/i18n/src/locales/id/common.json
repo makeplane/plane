@@ -530,6 +530,7 @@
     "copied": "Disalin!",
     "link_copied": "Tautan disalin!",
     "link_copied_to_clipboard": "Tautan disalin ke clipboard",
+    "link_copy_failed": "Gagal menyalin tautan",
     "copied_to_clipboard": "Tautan item kerja disalin ke clipboard",
     "branch_name_copied_to_clipboard": "Nama cabang disalin ke clipboard",
     "is_copied_to_clipboard": "Item kerja disalin ke clipboard",

@@ -530,6 +530,7 @@
     "copied": "コピーしました！",
     "link_copied": "リンクをコピーしました！",
     "link_copied_to_clipboard": "リンクをクリップボードにコピーしました",
+    "link_copy_failed": "リンクのコピーに失敗しました",
     "copied_to_clipboard": "作業項目のリンクをクリップボードにコピーしました",
     "branch_name_copied_to_clipboard": "ブランチ名をクリップボードにコピーしました",
     "is_copied_to_clipboard": "作業項目をクリップボードにコピーしました",

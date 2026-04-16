@@ -528,6 +528,7 @@
     "copied": "Copiato!",
     "link_copied": "Link copiato!",
     "link_copied_to_clipboard": "Link copiato negli appunti",
+    "link_copy_failed": "Impossibile copiare il link",
     "copied_to_clipboard": "Link dell'elemento di lavoro copiato negli appunti",
     "branch_name_copied_to_clipboard": "Nome del branch copiato negli appunti",
     "is_copied_to_clipboard": "Elemento di lavoro copiato negli appunti",

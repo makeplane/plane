@@ -534,6 +534,7 @@
     "copied": "Copied!",
     "link_copied": "Link copied!",
     "link_copied_to_clipboard": "Link copied to clipboard",
+    "link_copy_failed": "Failed to copy link",
     "copied_to_clipboard": "Work item link copied to clipboard",
     "branch_name_copied_to_clipboard": "Branch name copied to clipboard",
     "is_copied_to_clipboard": "Work item is copied to clipboard",

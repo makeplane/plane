@@ -530,6 +530,7 @@
     "copied": "Skopiowano!",
     "link_copied": "Link skopiowano!",
     "link_copied_to_clipboard": "Link skopiowano do schowka",
+    "link_copy_failed": "Nie udało się skopiować linku",
     "copied_to_clipboard": "Link do elementu pracy skopiowano do schowka",
     "branch_name_copied_to_clipboard": "Nazwa gałęzi skopiowana do schowka",
     "is_copied_to_clipboard": "Element pracy skopiowany do schowka",

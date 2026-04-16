@@ -530,6 +530,7 @@
     "copied": "Copiat!",
     "link_copied": "Link copiat!",
     "link_copied_to_clipboard": "Link-ul a fost copiat în memoria temporară",
+    "link_copy_failed": "Nu s-a putut copia linkul",
     "copied_to_clipboard": "Link-ul activității copiat în memoria temporară",
     "branch_name_copied_to_clipboard": "Nume de ramură copiat în memoria temporară",
     "is_copied_to_clipboard": "Activitatea a fost copiată în memoria temporară",

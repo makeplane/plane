@@ -533,6 +533,7 @@
     "copied": "Скопировано!",
     "link_copied": "Ссылка скопирована!",
     "link_copied_to_clipboard": "Ссылка скопирована в буфер обмена",
+    "link_copy_failed": "Не удалось скопировать ссылку",
     "copied_to_clipboard": "Ссылка на рабочий элемент скопирована",
     "branch_name_copied_to_clipboard": "Название ветки скопировано в буфер обмена",
     "is_copied_to_clipboard": "Рабочий элемент скопирован в буфер обмена",

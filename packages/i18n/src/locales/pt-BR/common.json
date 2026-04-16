@@ -530,6 +530,7 @@
     "copied": "Copiado!",
     "link_copied": "Link copiado!",
     "link_copied_to_clipboard": "Link copiado para a área de transferência",
+    "link_copy_failed": "Falha ao copiar o link",
     "copied_to_clipboard": "Link do item de trabalho copiado para a área de transferência",
     "branch_name_copied_to_clipboard": "Nome do branch copiado para a área de transferência",
     "is_copied_to_clipboard": "O link do item de trabalho foi copiado para a área de transferência",

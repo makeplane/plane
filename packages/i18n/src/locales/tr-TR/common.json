@@ -530,6 +530,7 @@
     "copied": "Kopyalandı!",
     "link_copied": "Bağlantı kopyalandı!",
     "link_copied_to_clipboard": "Bağlantı panoya kopyalandı",
+    "link_copy_failed": "Bağlantı kopyalanamadı",
     "copied_to_clipboard": "İş öğesi bağlantısı panoya kopyalandı",
     "branch_name_copied_to_clipboard": "Dal adı panoya kopyalandı",
     "is_copied_to_clipboard": "İş öğesi panoya kopyalandı",

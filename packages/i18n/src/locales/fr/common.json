@@ -530,6 +530,7 @@
     "copied": "Copié !",
     "link_copied": "Lien copié !",
     "link_copied_to_clipboard": "Lien copié dans le presse-papiers",
+    "link_copy_failed": "Échec de la copie du lien",
     "copied_to_clipboard": "Lien de l’élément de travail copié dans le presse-papiers",
     "branch_name_copied_to_clipboard": "Nom de la branche copié dans le presse-papiers",
     "is_copied_to_clipboard": "L’élément de travail est copié dans le presse-papiers",
