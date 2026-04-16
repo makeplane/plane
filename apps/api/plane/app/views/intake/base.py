@@ -60,7 +60,6 @@ from plane.utils.global_paginator import paginate
 from plane.utils.host import base_host
 from plane.db.models.intake import SourceType
 from plane.ee.models import IntakeSetting
-from plane.ee.utils.workflow import WorkflowStateManager
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
@@ -285,18 +284,6 @@ class IntakeIssueViewSet(BaseViewSet):
                 "intake_id": str(intake.id),
             },
         )
-        # EE start
-        workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-        if workflow_state_manager.validate_issue_creation(
-            state_id=request.data.get("issue", None).get("state_id", None),
-            user_id=request.user.id,
-            type_id=request.data.get("type_id", None),
-        ):
-            return Response(
-                {"error": "You cannot create a intake issue in this state"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-        # EE end
 
         if serializer.is_valid():
             serializer.save()
@@ -434,21 +421,6 @@ class IntakeIssueViewSet(BaseViewSet):
                     Value([], output_field=ArrayField(UUIDField())),
                 ),
             ).get(pk=intake_issue.issue_id, workspace__slug=slug, project_id=project_id)
-
-            # EE start
-            # Check if state is updated then is the transition allowed
-            workflow_state_manager = WorkflowStateManager(project_id=project_id, slug=slug)
-            if issue_data.get("state_id", None) and not workflow_state_manager.validate_state_transition(
-                issue=issue,
-                new_state_id=issue_data.get("state_id", None),
-                user_id=request.user.id,
-                run_hooks=False,  # intake: issue is pending acceptance, not a live transition
-            ):
-                return Response(
-                    {"error": "State transition is not allowed"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-            # EE end
 
             # Only allow guests to edit name and description
             if project_member and project_member.role <= ROLE.GUEST.value:
