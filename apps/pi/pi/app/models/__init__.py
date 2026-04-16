@@ -22,6 +22,7 @@ from pi.app.models.llm import LlmModel
 from pi.app.models.llm import LlmModelPricing
 from pi.app.models.llm import LlmModelUsageTracking
 from pi.app.models.mcp_metadata import MCPServerMetadata
+from pi.app.models.memory import EntityMemory
 from pi.app.models.message import Message
 from pi.app.models.message import MessageFeedback
 from pi.app.models.message import MessageFlowStep
@@ -43,6 +44,7 @@ __all__ = [
     "AgentArtifact",
     "Chat",
     "DupesTracking",
+    "EntityMemory",
     "EmbeddingModel",
     "Feedback",
     "GitHubWebhook",

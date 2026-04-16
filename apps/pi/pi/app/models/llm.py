@@ -88,6 +88,7 @@ class LlmModelUsageTracking(UUIDModel, TimeAuditModel, table=True):
     workspace_id: uuid.UUID = Field(
         nullable=False,
     )
-    user_id: uuid.UUID = Field(
-        nullable=False,
+    user_id: Optional[uuid.UUID] = Field(
+        default=None,
+        nullable=True,
     )
