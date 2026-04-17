@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Prefetch, Sum, Q
+from django.db.models import Count, OuterRef, Prefetch, Subquery, Sum, Q
 from django.db.models.functions import Coalesce
 
 from rest_framework import status
@@ -285,8 +285,17 @@ class HoIssueListView(BaseAPIView):
                 "issue_cycle__cycle",
             )
             .annotate(
+                # Use correlated subquery to avoid JOIN multiplication when scope_q
+                # adds M2M joins (assignees) that create N rows per issue, which would
+                # inflate SUM(duration_minutes) by the number of assignees.
                 total_log_time=Coalesce(
-                    Sum("issue_worklogs__duration_minutes", filter=Q(issue_worklogs__deleted_at__isnull=True)),
+                    Subquery(
+                        IssueWorkLog.objects  # SoftDeletionManager already excludes deleted records
+                        .filter(issue_id=OuterRef("pk"))
+                        .values("issue_id")
+                        .annotate(total=Sum("duration_minutes"))
+                        .values("total")
+                    ),
                     0,
                 ),
                 sub_issues_count=Count("parent_issue", distinct=True),
