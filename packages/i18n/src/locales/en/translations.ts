@@ -3473,6 +3473,7 @@ export default {
     select_main: "Select main category",
     select_sub: "Select sub category",
     no_sub_categories: "No sub categories available",
+    search: "Search...",
   },
   ho: {
     all_workspaces: "All workspaces",

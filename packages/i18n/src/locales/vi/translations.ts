@@ -3470,6 +3470,7 @@ export default {
     select_main: "Chọn danh mục chính",
     select_sub: "Chọn danh mục phụ",
     no_sub_categories: "Không có danh mục phụ khả dụng",
+    search: "Tìm kiếm...",
   },
   ho: {
     all_workspaces: "Tất cả không gian làm việc", // TODO: native review

@@ -3420,6 +3420,7 @@ export default {
     select_main: "메인 카테고리 선택",
     select_sub: "메인 카테고리 선택",
     no_sub_categories: "사용 가능한 서브 카테고리가 없습니다",
+    search: "검색...",
   },
   ho: {
     all_workspaces: "모든 워크스페이스", // TODO: native review
