@@ -3456,5 +3456,9 @@ export default {
       at_risk: "위험", // TODO: native review
       on_track: "정상", // TODO: native review
     },
+    peek: {
+      no_permission_title: "작업 항목을 열 수 없음", // TODO: native review
+      no_permission_message: "이 작업 항목을 볼 권한이 없습니다.", // TODO: native review
+    },
   },
 } as const;

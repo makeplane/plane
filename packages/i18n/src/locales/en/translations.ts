@@ -3509,5 +3509,9 @@ export default {
       at_risk: "At Risk",
       on_track: "On Track",
     },
+    peek: {
+      no_permission_title: "Cannot open work item",
+      no_permission_message: "You don't have permission to view this work item.",
+    },
   },
 } as const;

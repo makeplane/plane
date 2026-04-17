@@ -3,10 +3,12 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@plane/propel/avatar";
 import { Popover } from "@plane/propel/popover";
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { THoIssue, THoWorklogBreakdownEntry } from "@/plane-web/services/ho-issue.service";
 import { HoIssueService } from "@/plane-web/services/ho-issue.service";
 import type { THoDisplayProperties } from "@/plane-web/store/ho/ho-issue.defaults";
 import { renderFormattedDate, cn } from "@plane/utils";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { getProgressStatus } from "../issues/issue-layouts/progress-tracking-utils";
 
 const hoIssueService = new HoIssueService();
@@ -42,8 +44,13 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
   isScrolled = false,
 }: Props) {
   const { t } = useTranslation();
+  const {
+    issue: { fetchIssue },
+    setPeekIssue,
+  } = useIssueDetail();
   const [isOpen, setIsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  const [isPeeking, setIsPeeking] = useState(false);
   // Per-user worklog breakdown fetched via HO endpoint (bypasses project membership restriction)
   const [userTotals, setUserTotals] = useState<THoWorklogBreakdownEntry[]>([]);
   const [fetched, setFetched] = useState(false);
@@ -69,6 +76,23 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
       } finally {
         setIsFetching(false);
       }
+    }
+  };
+
+  const handleOpenPeek = async () => {
+    if (!issue.workspace_slug || !issue.project_id || !issue.id || isPeeking) return;
+    setIsPeeking(true);
+    try {
+      await fetchIssue(issue.workspace_slug, issue.project_id, issue.id);
+      setPeekIssue({ workspaceSlug: issue.workspace_slug, projectId: issue.project_id, issueId: issue.id });
+    } catch {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("ho.peek.no_permission_title"),
+        message: t("ho.peek.no_permission_message"),
+      });
+    } finally {
+      setIsPeeking(false);
     }
   };
 
@@ -132,14 +156,14 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
       {/* Work Items — always visible */}
       {renderTd(
         "name",
-        <a
-          href={`/${issue.workspace_slug}/projects/${issue.project_id}/issues/${issue.id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-accent-primary hover:underline line-clamp-1"
+        <button
+          type="button"
+          disabled={isPeeking}
+          onClick={() => void handleOpenPeek()}
+          className="text-accent-primary hover:underline line-clamp-1 text-left w-full disabled:opacity-60"
         >
           {issue.name}
-        </a>
+        </button>
       )}
 
       {displayProperties.sub_issue_count && renderTd("sub_issue_count", issue.sub_issues_count, "text-right")}

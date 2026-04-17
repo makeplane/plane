@@ -3506,5 +3506,9 @@ export default {
       at_risk: "Có nguy cơ", // TODO: native review
       on_track: "Đúng tiến độ", // TODO: native review
     },
+    peek: {
+      no_permission_title: "Không thể mở công việc", // TODO: native review
+      no_permission_message: "Bạn không có quyền xem công việc này.", // TODO: native review
+    },
   },
 } as const;
