@@ -23,6 +23,7 @@ export interface IHoIssueStore {
     state: string[];
     assignees: string[];
     leads: string[];
+    department: string[];
     main_task_category: string[];
     sub_task_category: string[];
     cycle: string[];
@@ -72,6 +73,7 @@ export class HoIssueStore implements IHoIssueStore {
     state: [],
     assignees: [],
     leads: [],
+    department: [],
     main_task_category: [],
     sub_task_category: [],
     cycle: [],
@@ -354,6 +356,7 @@ export class HoIssueStore implements IHoIssueStore {
         state: [],
         assignees: [],
         leads: [],
+        department: [],
         main_task_category: [],
         sub_task_category: [],
         cycle: [],

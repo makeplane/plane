@@ -21,6 +21,7 @@ import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearch
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown, ToggleSwitch } from "@plane/ui";
 // components
+import { ExcelExportButton } from "@/plane-web/components/workspace/views/excel-export-button";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -192,6 +193,9 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
           >
             {t("workspace_views.add_view")}
           </Button>
+          {globalViewId && (
+            <ExcelExportButton workspaceSlug={workspaceSlug.toString()} globalViewId={globalViewId} />
+          )}
           <div className="hidden md:block">
             {viewDetails && <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={viewDetails} />}
             {isDefaultView && defaultViewDetails && (
