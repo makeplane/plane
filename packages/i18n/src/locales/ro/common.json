@@ -508,7 +508,7 @@
     "workspace_level": "La nivel de spațiu de lucru",
     "order_by": {
       "label": "Ordonează după",
-      "manual": "Manual",
+      "manual": "Manual - Rang",
       "last_created": "Ultima creată",
       "last_updated": "Ultima actualizată",
       "start_date": "Data de început",

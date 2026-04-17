@@ -508,7 +508,7 @@
     "workspace_level": "Cấp không gian làm việc",
     "order_by": {
       "label": "Sắp xếp theo",
-      "manual": "Thủ công",
+      "manual": "Thủ công - Xếp hạng",
       "last_created": "Mới tạo nhất",
       "last_updated": "Mới cập nhật nhất",
       "start_date": "Ngày bắt đầu",

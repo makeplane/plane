@@ -46,8 +46,8 @@ export const FilterOrderBy = observer(function FilterOrderBy(props: Props) {
         <div>
           {ISSUE_ORDER_BY_OPTIONS.filter((option) => orderByOptions.includes(option.key)).map((orderBy) => (
             <FilterOption
-              key={orderBy?.key}
-              isChecked={activeOrderBy === orderBy?.key ? true : false}
+              key={orderBy.key}
+              isChecked={activeOrderBy === orderBy.key}
               onClick={() => handleUpdate(orderBy.key)}
               title={t(orderBy.titleTranslationKey)}
               multiple={false}

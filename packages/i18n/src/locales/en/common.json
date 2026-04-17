@@ -512,7 +512,7 @@
     "workspace_level": "Workspace level",
     "order_by": {
       "label": "Order by",
-      "manual": "Manual",
+      "manual": "Manual - Rank",
       "last_created": "Last created",
       "last_updated": "Last updated",
       "start_date": "Start date",

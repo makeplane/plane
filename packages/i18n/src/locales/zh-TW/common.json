@@ -508,7 +508,7 @@
     "workspace_level": "工作區層級",
     "order_by": {
       "label": "排序依據",
-      "manual": "手動",
+      "manual": "手動 - 排名",
       "last_created": "最後建立",
       "last_updated": "最後更新",
       "start_date": "開始日期",
