@@ -56,7 +56,8 @@ class WorkspaceBankWideProjectsEndpoint(BaseAPIView):
     Visibility rules:
     - Instance admin: all bank-wide projects across all workspaces.
     - Department manager: all bank-wide projects in workspaces linked to
-      their managed departments and every descendant department (dept tree).
+      their managed departments and every descendant department (dept tree),
+      plus any bank-wide projects they have explicitly joined.
     - Workspace admin (non-dept-manager): bank-wide projects they are a
       project member of, plus all bank-wide projects in workspaces where
       they hold the Admin role.
@@ -93,6 +94,11 @@ class WorkspaceBankWideProjectsEndpoint(BaseAPIView):
             if d
         ]
 
+        joined_project_ids = ProjectMember.objects.filter(
+            member=user,
+            is_active=True,
+        ).values_list("project_id", flat=True)
+
         if managed_dept_ids:
             all_dept_ids = []
             for dept_id in managed_dept_ids:
@@ -104,18 +110,10 @@ class WorkspaceBankWideProjectsEndpoint(BaseAPIView):
                 deleted_at__isnull=True,
             ).values_list("linked_workspace_id", flat=True)
 
-            projects = base_qs.filter(
-                is_bank_wide=True,
-                workspace_id__in=dept_ws_ids,
-                **archived_filter,
+            projects = base_qs.filter(is_bank_wide=True, **archived_filter).filter(
+                Q(workspace_id__in=dept_ws_ids) | Q(id__in=joined_project_ids)
             )
             return Response(BankWideProjectSerializer(projects, many=True).data, status=status.HTTP_200_OK)
-
-        # Non-dept-manager: always include projects the user is a member of
-        joined_project_ids = ProjectMember.objects.filter(
-            member=user,
-            is_active=True,
-        ).values_list("project_id", flat=True)
 
         # Workspace admins additionally see all bank-wide projects in their admin workspaces
         admin_ws_ids = WorkspaceMember.objects.filter(
