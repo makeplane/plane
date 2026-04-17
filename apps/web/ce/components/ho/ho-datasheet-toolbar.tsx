@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
+import { Switch } from "@plane/propel/switch";
 import { useHoIssues } from "@/hooks/store/use-ho-issues";
 import { HoDatasheetDisplayProps } from "./ho-datasheet-display-props";
 import { HoWorkspaceSelect } from "./ho-workspace-select";
@@ -54,6 +55,11 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
 
       {/* Right: Filters + Display toggle */}
       <div className="flex items-center gap-2">
+        {/* Archive visibility toggle */}
+        <label className="flex cursor-pointer items-center gap-1.5 select-none">
+          <Switch value={store.showArchived} onChange={(v) => store.setShowArchived(v)} size="sm" />
+          <span className="text-13 text-secondary">{t("ho.show_archived")}</span>
+        </label>
         <HoWorkspaceSelect />
         <HoProjectSelect />
         <button

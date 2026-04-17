@@ -42,6 +42,7 @@ export interface IHoIssueStore {
   orderBy: string;
   fromDate: string;
   toDate: string;
+  showArchived: boolean;
   displayProperties: THoDisplayProperties;
   // Actions
   fetchIssues: (page?: number) => Promise<void>;
@@ -51,6 +52,7 @@ export interface IHoIssueStore {
   fetchFilterOptions: () => Promise<void>;
   updateOrderBy: (key: string) => void;
   setDateRange: (from: string, to: string) => void;
+  setShowArchived: (value: boolean) => void;
   updateDisplayProperties: (props: Partial<THoDisplayProperties>) => void;
   setDepartmentFilter: (departmentId: string | null) => void;
   setProjectFilter: (ids: string[]) => void;
@@ -89,6 +91,7 @@ export class HoIssueStore implements IHoIssueStore {
   orderBy = "project__workspace__name";
   fromDate: string = todayISO();
   toDate: string = todayISO();
+  showArchived = true;
   displayProperties: THoDisplayProperties = { ...HO_DEFAULT_DISPLAY_PROPERTIES };
 
   private _filterSeq = 0;
@@ -126,6 +129,7 @@ export class HoIssueStore implements IHoIssueStore {
       orderBy: observable,
       fromDate: observable,
       toDate: observable,
+      showArchived: observable,
       displayProperties: observable,
       fetchIssues: action,
       fetchNextPage: action,
@@ -134,6 +138,7 @@ export class HoIssueStore implements IHoIssueStore {
       fetchFilterOptions: action,
       updateOrderBy: action,
       setDateRange: action,
+      setShowArchived: action,
       updateDisplayProperties: action,
       setDepartmentFilter: action,
       setProjectFilter: action,
@@ -147,6 +152,7 @@ export class HoIssueStore implements IHoIssueStore {
       order_by: this.orderBy,
       from_date: this.fromDate,
       to_date: this.toDate,
+      include_archived: String(this.showArchived),
     };
     if (this.selectedDepartmentId) params.department_id = this.selectedDepartmentId;
     if (this.selectedProjectIds.length > 0) params.project_id = this.selectedProjectIds.join(",");
@@ -298,6 +304,13 @@ export class HoIssueStore implements IHoIssueStore {
   setDateRange = (from: string, to: string): void => {
     this.fromDate = from;
     this.toDate = to;
+    this.currentPage = 1;
+    void this._fetchFiltered();
+    void this.fetchFilterOptions();
+  };
+
+  setShowArchived = (value: boolean): void => {
+    this.showArchived = value;
     this.currentPage = 1;
     void this._fetchFiltered();
     void this.fetchFilterOptions();

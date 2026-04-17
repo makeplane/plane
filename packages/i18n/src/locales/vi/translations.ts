@@ -3480,6 +3480,7 @@ export default {
     display_properties: "Thuộc tính hiển thị", // TODO: native review
     from: "Từ", // TODO: native review
     to: "Đến", // TODO: native review
+    show_archived: "Hiện mục đã lưu trữ", // TODO: native review
     no_work_items: "Không tìm thấy công việc nào.", // TODO: native review
     no_matching_rows: "Không có hàng nào khớp.", // TODO: native review
     no_data: "Không có dữ liệu.", // TODO: native review
@@ -3505,6 +3506,10 @@ export default {
       due_today: "Hết hạn hôm nay", // TODO: native review
       at_risk: "Có nguy cơ", // TODO: native review
       on_track: "Đúng tiến độ", // TODO: native review
+    },
+    peek: {
+      no_permission_title: "Không thể mở công việc", // TODO: native review
+      no_permission_message: "Bạn không có quyền xem công việc này.", // TODO: native review
     },
   },
 } as const;

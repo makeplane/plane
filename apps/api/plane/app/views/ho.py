@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Prefetch, Sum, Q
+from django.db.models import Count, OuterRef, Prefetch, Subquery, Sum, Q
 from django.db.models.functions import Coalesce
 
 from rest_framework import status
@@ -261,14 +261,20 @@ class HoIssueListView(BaseAPIView):
 
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
+        include_archived = request.query_params.get("include_archived", "true").lower() == "true"
 
         scope_q = _get_user_scope_q(request.user, workspace_ids)
+        base_filters = {
+            "is_draft": False,
+            "deleted_at__isnull": True,
+        }
+        if not include_archived:
+            base_filters["archived_at__isnull"] = True
+            base_filters["project__archived_at__isnull"] = True
         qs = (
             Issue.objects.filter(
                 scope_q,
-                is_draft=False,
-                archived_at__isnull=True,
-                deleted_at__isnull=True,
+                **base_filters,
             )
             .distinct()
             .select_related(
@@ -285,8 +291,17 @@ class HoIssueListView(BaseAPIView):
                 "issue_cycle__cycle",
             )
             .annotate(
+                # Use correlated subquery to avoid JOIN multiplication when scope_q
+                # adds M2M joins (assignees) that create N rows per issue, which would
+                # inflate SUM(duration_minutes) by the number of assignees.
                 total_log_time=Coalesce(
-                    Sum("issue_worklogs__duration_minutes", filter=Q(issue_worklogs__deleted_at__isnull=True)),
+                    Subquery(
+                        IssueWorkLog.objects  # SoftDeletionManager already excludes deleted records
+                        .filter(issue_id=OuterRef("pk"))
+                        .values("issue_id")
+                        .annotate(total=Sum("duration_minutes"))
+                        .values("total")
+                    ),
                     0,
                 ),
                 sub_issues_count=Count("parent_issue", distinct=True),
@@ -461,13 +476,17 @@ class HoFilterOptionsView(BaseAPIView):
 
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
+        include_archived = request.query_params.get("include_archived", "true").lower() == "true"
 
-        base_qs = Issue.objects.filter(
-            workspace_id__in=workspace_ids,
-            is_draft=False,
-            archived_at__isnull=True,
-            deleted_at__isnull=True,
-        )
+        filter_kwargs = {
+            "workspace_id__in": workspace_ids,
+            "is_draft": False,
+            "deleted_at__isnull": True,
+        }
+        if not include_archived:
+            filter_kwargs["archived_at__isnull"] = True
+            filter_kwargs["project__archived_at__isnull"] = True
+        base_qs = Issue.objects.filter(**filter_kwargs)
         if project_ids:
             base_qs = base_qs.filter(project_id__in=project_ids)
         if from_date:

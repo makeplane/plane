@@ -3483,6 +3483,7 @@ export default {
     display_properties: "Display Properties",
     from: "From",
     to: "To",
+    show_archived: "Show archived",
     no_work_items: "No work items found.",
     no_matching_rows: "No matching rows.",
     no_data: "No data found.",
@@ -3508,6 +3509,10 @@ export default {
       due_today: "Due Today",
       at_risk: "At Risk",
       on_track: "On Track",
+    },
+    peek: {
+      no_permission_title: "Cannot open work item",
+      no_permission_message: "You don't have permission to view this work item.",
     },
   },
 } as const;

@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { Loader, Spinner } from "@plane/ui";
 import { useTranslation } from "@plane/i18n";
 import { useHoIssues } from "@/hooks/store/use-ho-issues";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { HoDatasheetToolbar } from "./ho-datasheet-toolbar";
 import { HoDatasheetTable } from "./ho-datasheet-table";
 
@@ -31,6 +32,7 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
 
   return (
     <div className="relative flex h-full flex-col">
+      <IssuePeekOverview />
       {store.isFetchingIssues && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-surface-1/50">
           <Spinner />

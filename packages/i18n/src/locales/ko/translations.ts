@@ -3430,6 +3430,7 @@ export default {
     display_properties: "표시 속성", // TODO: native review
     from: "시작", // TODO: native review
     to: "종료", // TODO: native review
+    show_archived: "보관된 항목 표시", // TODO: native review
     no_work_items: "작업 항목을 찾을 수 없습니다.", // TODO: native review
     no_matching_rows: "일치하는 행이 없습니다.", // TODO: native review
     no_data: "데이터가 없습니다.", // TODO: native review
@@ -3455,6 +3456,10 @@ export default {
       due_today: "오늘 마감", // TODO: native review
       at_risk: "위험", // TODO: native review
       on_track: "정상", // TODO: native review
+    },
+    peek: {
+      no_permission_title: "작업 항목을 열 수 없음", // TODO: native review
+      no_permission_message: "이 작업 항목을 볼 권한이 없습니다.", // TODO: native review
     },
   },
 } as const;

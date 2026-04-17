@@ -47,6 +47,7 @@ import { DateAlert } from "@/plane-web/components/issues/issue-details/sidebar/d
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
+import { TaskCategoryProperty } from "@/plane-web/components/issues/issue-details/sidebar/task-category-property";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { IssueCycleSelect } from "./cycle-select";
 import { IssueLabel } from "./label";
@@ -157,6 +158,15 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 buttonClassName="size-full px-2 py-0.5 whitespace-nowrap [&_svg]:size-3.5"
               />
             </SidebarPropertyListItem>
+
+            <TaskCategoryProperty
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              issue={issue}
+              issueOperations={issueOperations}
+              isEditable={isEditable}
+            />
 
             <SidebarPropertyListItem icon={RefreshCw} label={t("common.frequency")}>
               <FrequencyDropdown
