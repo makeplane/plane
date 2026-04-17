@@ -14,15 +14,19 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { SUBSCRIPTION_WITH_BILLING_FREQUENCY } from "@plane/constants";
-import { CheckIcon, PlaneIcon, PlaneOneIcon } from "@plane/propel/icons";
+import { CheckCircle } from "lucide-react";
+import { PlaneIcon, PlaneOneIcon } from "@plane/propel/icons";
 import { EProductSubscriptionEnum } from "@plane/types";
+// plane imports
 import { EModalWidth, ModalCore } from "@plane/ui";
 import { cn, getBaseSubscriptionName, getSubscriptionName } from "@plane/utils";
-// constants
-import { PLANE_PLANS } from "@/constants/plans";
-import { ONE_PLAN_FEATURES_MAP } from "@/constants/license";
+// plane web constants
+import {
+  BUSINESS_PLAN_FEATURES_MAP,
+  ENTERPRISE_PLAN_FEATURES_MAP,
+  ONE_PLAN_FEATURES_MAP,
+  PRO_PLAN_FEATURES_MAP,
+} from "@/constants/license";
 // plane web hooks
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
@@ -55,14 +59,16 @@ const getRecapLink = (variant: EProductSubscriptionEnum) => {
   return "https://plane.so/pricing";
 };
 
-const getPlanFeatures = (variant: EProductSubscriptionEnum) => {
-  const { planHighlights } = PLANE_PLANS;
-  const features = planHighlights[variant];
-
-  if (SUBSCRIPTION_WITH_BILLING_FREQUENCY.includes(variant)) {
-    return features;
+export const getPlanFeatures = (variant: EProductSubscriptionEnum) => {
+  if (variant === EProductSubscriptionEnum.ENTERPRISE) {
+    return ENTERPRISE_PLAN_FEATURES_MAP;
   }
-
+  if (variant === EProductSubscriptionEnum.BUSINESS) {
+    return BUSINESS_PLAN_FEATURES_MAP;
+  }
+  if (variant === EProductSubscriptionEnum.PRO) {
+    return PRO_PLAN_FEATURES_MAP;
+  }
   if (variant === EProductSubscriptionEnum.ONE) {
     return ONE_PLAN_FEATURES_MAP;
   }
@@ -106,18 +112,18 @@ export const PaidPlanSuccessModal = observer(function PaidPlanSuccessModal(props
             Everything in {getBaseSubscriptionName(variant)} +
           </div>
           <ul className="grid grid-cols-12 gap-x-4 md:gap-x-8">
-            {getPlanFeatures(variant).map((feature, index) => (
-              <li key={feature} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>
-                <div
-                  className={cn(
-                    "flex items-center",
-                    index === 0 ? "text-body-xs-medium text-accent-primary" : "text-body-xs-regular text-secondary"
-                  )}
-                >
-                  <CheckIcon className="shrink-0 h-4 w-4 mr-3" />
+            {getPlanFeatures(variant).map((feature) => (
+              <li key={feature?.label} className={cn("col-span-12 sm:col-span-6 relative rounded-md p-2 flex")}>
+                <div className="w-full text-13 font-medium leading-5 flex items-center">
+                  <CheckCircle className="flex-shrink-0 h-4 w-4 mr-3 text-tertiary" />
                   <div className="relative overflow-hidden line-clamp-1">
-                    <span className="truncate">{feature}</span>
+                    <span className="text-secondary truncate">{feature?.label}</span>
                   </div>
+                  {feature?.comingSoon && (
+                    <div className="flex-shrink-0 flex justify-center items-center bg-accent-primary text-on-color text-[7px] rounded-full px-1 h-[12px] -mt-4 ml-1 z-50 whitespace-nowrap">
+                      COMING SOON
+                    </div>
+                  )}
                 </div>
               </li>
             ))}

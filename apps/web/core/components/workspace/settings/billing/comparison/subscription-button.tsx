@@ -85,7 +85,7 @@ export const SubscriptionButton = observer(function SubscriptionButton(props: TS
     return (
       <Button
         variant="primary"
-        size="xl"
+        size="lg"
         onClick={() => handleSubscriptionUpgrade(subscriptionType)}
         className={COMMON_BUTTON_STYLE}
         disabled={!!upgradeLoader}

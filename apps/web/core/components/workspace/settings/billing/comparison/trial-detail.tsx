@@ -48,7 +48,7 @@ export const TrialDetails = observer(function TrialDetails(props: TTrialDetailsP
     return (
       <Button
         variant="ghost"
-        size="xl"
+        size="lg"
         onClick={() => handleTrial(subscriptionType)}
         className="w-full"
         disabled={!!trialLoader || !!upgradeLoader}

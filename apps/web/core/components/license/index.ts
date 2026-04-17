@@ -11,5 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./plan-card";
-export * from "./self-managed-license-actions";
+export * from "./modal";

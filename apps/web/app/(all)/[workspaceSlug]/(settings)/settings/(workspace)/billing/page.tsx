@@ -12,23 +12,20 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
+// component
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { BillingRoot } from "@/components/workspace/settings/billing";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+// plane web components
+import { BillingRoot } from "@/components/workspace/settings/billing";
 // local imports
 import { BillingWorkspaceSettingsHeader } from "./header";
 
-import type { Route } from "./+types/page";
-
-function BillingSettingsPage({ params }: Route.ComponentProps) {
-  const { workspaceSlug } = params;
+function BillingSettingsPage() {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -43,7 +40,7 @@ function BillingSettingsPage({ params }: Route.ComponentProps) {
   return (
     <SettingsContentWrapper header={<BillingWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
-      <BillingRoot workspaceSlug={workspaceSlug} />
+      <BillingRoot />
     </SettingsContentWrapper>
   );
 }

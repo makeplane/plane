@@ -11,5 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./plan-card";
-export * from "./self-managed-license-actions";
+export * from "./base-paid-plan-card";
+export * from "./free-plan";
+export * from "./talk-to-sales";
+export * from "./plan-upgrade";
