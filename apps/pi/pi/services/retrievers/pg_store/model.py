@@ -109,7 +109,11 @@ async def get_active_models(db: AsyncSession, user_id: str, workspace_slug: str)
         # Add custom self-hosted model if enabled
         if settings.llm_config.CUSTOM_LLM_ENABLED and settings.llm_config.CUSTOM_LLM_MODEL_KEY:
             provider = settings.llm_config.CUSTOM_LLM_PROVIDER.lower().strip()
-            required = settings.llm_config.LLM_PROVIDER_REQUIRED_ENV.get(provider, settings.llm_config.LLM_PROVIDER_REQUIRED_ENV["openai"])
+            if provider == "bedrock" and settings.llm_config.use_inference_profile:
+                lookup_key = "bedrock_inference_profile"
+            else:
+                lookup_key = provider
+            required = settings.llm_config.LLM_PROVIDER_REQUIRED_ENV.get(lookup_key, settings.llm_config.LLM_PROVIDER_REQUIRED_ENV["openai"])
             custom_key = settings.llm_config.CUSTOM_LLM_MODEL_KEY
             has_required_env = all(bool(str(getattr(settings.llm_config, f, "") or "").strip()) for f in required)
 
