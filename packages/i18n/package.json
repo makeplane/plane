@@ -25,7 +25,7 @@
     "sync:check": "npx tsx scripts/sync-check.ts",
     "check:sync": "npx tsx scripts/sync-check.ts --ci",
     "check:lint": "oxlint --type-aware -c ../../.oxlintrc.json .",
-    "check:types": "tsc --noEmit",
+    "check:types": "pnpm run generate:types && tsc --noEmit",
     "check:format": "oxfmt . --check",
     "fix:lint": "oxlint --type-aware --fix -c ../../.oxlintrc.json .",
     "fix:format": "oxfmt . --write",

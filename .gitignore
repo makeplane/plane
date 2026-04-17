@@ -113,6 +113,9 @@ build/
 .react-router/
 temp/
 
+# Auto-generated i18n translation key types (regenerated on build)
+packages/i18n/src/types/keys.generated.ts
+
 # Ignore any test results JSON files
 *test_results*.json
 apps/pi/tests/test_results.json
