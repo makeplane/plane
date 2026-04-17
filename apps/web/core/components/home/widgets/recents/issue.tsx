@@ -32,11 +32,11 @@ import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifi
 
 type BlockProps = {
   activity: TActivityEntityData;
-  ref: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
 export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
-  const { activity, ref, workspaceSlug } = props;
+  const { activity, parentRef, workspaceSlug } = props;
   // hooks
   const { getStateById } = useProjectState();
   const { setPeekIssue } = useIssueDetail();
@@ -144,7 +144,7 @@ export const RecentIssue = observer(function RecentIssue(props: BlockProps) {
           )}
         </div>
       }
-      parentRef={ref}
+      parentRef={parentRef}
       disableLink={false}
       className="my-auto !px-2 border-none py-3"
       itemClassName="my-auto"

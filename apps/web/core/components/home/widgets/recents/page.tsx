@@ -24,12 +24,12 @@ import { useMember } from "@/hooks/store/use-member";
 
 type BlockProps = {
   activity: TActivityEntityData;
-  ref: React.RefObject<HTMLDivElement>;
+  parentRef: React.RefObject<HTMLDivElement>;
   workspaceSlug: string;
 };
 
 export function RecentPage(props: BlockProps) {
-  const { activity, ref, workspaceSlug } = props;
+  const { activity, parentRef, workspaceSlug } = props;
   // router
   const router = useRouter();
   // store hooks
@@ -75,7 +75,7 @@ export function RecentPage(props: BlockProps) {
           <Avatar src={getFileURL(ownerDetails?.avatar_url ?? "")} name={ownerDetails?.display_name} />
         </div>
       }
-      parentRef={ref}
+      parentRef={parentRef}
       disableLink={false}
       className="my-auto !px-2 border-none py-3"
       itemClassName="my-auto bg-layer-transparent"
