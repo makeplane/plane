@@ -19,8 +19,6 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
   const containerRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  const options = store.filterOptions;
-
   const handleScroll = useCallback(() => {
     if (!containerRef.current) return;
     const scrollLeft = containerRef.current.scrollLeft;
@@ -45,7 +43,8 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
       label: t("spreadsheet.columns.department_name"),
       asc: "project__workspace__name",
       desc: "-project__workspace__name",
-      width: "min-w-[200px]",
+      filterKey: "department",
+      width: "min-w-[150px]",
     },
     {
       key: "main_task_category_name",
@@ -53,7 +52,7 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
       asc: "main_task_category__name",
       desc: "-main_task_category__name",
       filterKey: "main_task_category",
-      width: "min-w-[220px]",
+      width: "min-w-[160px]",
     },
     {
       key: "sub_task_category_name",
@@ -61,17 +60,42 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
       asc: "sub_task_category__name",
       desc: "-sub_task_category__name",
       filterKey: "sub_task_category",
-      width: "min-w-[220px]",
+      width: "min-w-[160px]",
     },
   ];
 
   const getFilterOptions = (key: string) => {
-    if (!options) return undefined;
+    const summary = store.categorySummary;
+    const { department: activeDepts, main_task_category: activeMain, sub_task_category: activeSub } = store.filters;
+
+    const applyOthers = (exclude: string) => {
+      let rows = summary;
+      if (exclude !== "department" && activeDepts.length > 0)
+        rows = rows.filter((r) => activeDepts.includes(r.department_name));
+      if (exclude !== "main_task_category" && activeMain.length > 0)
+        rows = rows.filter((r) => activeMain.includes(r.main_task_category_name));
+      if (exclude !== "sub_task_category" && activeSub.length > 0)
+        rows = rows.filter((r) => activeSub.includes(r.sub_task_category_name));
+      return rows;
+    };
+
     switch (key) {
-      case "main_task_category":
-        return options.main_task_categories?.map((c) => ({ value: c, label: c }));
-      case "sub_task_category":
-        return options.sub_task_categories?.map((c) => ({ value: c, label: c }));
+      case "department": {
+        const unique = [...new Set(applyOthers("department").map((r) => r.department_name).filter(Boolean))].sort();
+        return unique.map((v) => ({ value: v, label: v }));
+      }
+      case "main_task_category": {
+        const unique = [
+          ...new Set(applyOthers("main_task_category").map((r) => r.main_task_category_name).filter(Boolean)),
+        ].sort();
+        return unique.map((v) => ({ value: v, label: v }));
+      }
+      case "sub_task_category": {
+        const unique = [
+          ...new Set(applyOthers("sub_task_category").map((r) => r.sub_task_category_name).filter(Boolean)),
+        ].sort();
+        return unique.map((v) => ({ value: v, label: v }));
+      }
       default:
         return undefined;
     }
