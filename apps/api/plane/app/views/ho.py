@@ -261,14 +261,20 @@ class HoIssueListView(BaseAPIView):
 
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
+        include_archived = request.query_params.get("include_archived", "true").lower() == "true"
 
         scope_q = _get_user_scope_q(request.user, workspace_ids)
+        base_filters = {
+            "is_draft": False,
+            "deleted_at__isnull": True,
+        }
+        if not include_archived:
+            base_filters["archived_at__isnull"] = True
+            base_filters["project__archived_at__isnull"] = True
         qs = (
             Issue.objects.filter(
                 scope_q,
-                is_draft=False,
-                archived_at__isnull=True,
-                deleted_at__isnull=True,
+                **base_filters,
             )
             .distinct()
             .select_related(
@@ -470,13 +476,17 @@ class HoFilterOptionsView(BaseAPIView):
 
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
+        include_archived = request.query_params.get("include_archived", "true").lower() == "true"
 
-        base_qs = Issue.objects.filter(
-            workspace_id__in=workspace_ids,
-            is_draft=False,
-            archived_at__isnull=True,
-            deleted_at__isnull=True,
-        )
+        filter_kwargs = {
+            "workspace_id__in": workspace_ids,
+            "is_draft": False,
+            "deleted_at__isnull": True,
+        }
+        if not include_archived:
+            filter_kwargs["archived_at__isnull"] = True
+            filter_kwargs["project__archived_at__isnull"] = True
+        base_qs = Issue.objects.filter(**filter_kwargs)
         if project_ids:
             base_qs = base_qs.filter(project_id__in=project_ids)
         if from_date:

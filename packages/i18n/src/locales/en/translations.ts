@@ -3483,6 +3483,7 @@ export default {
     display_properties: "Display Properties",
     from: "From",
     to: "To",
+    show_archived: "Show archived",
     no_work_items: "No work items found.",
     no_matching_rows: "No matching rows.",
     no_data: "No data found.",
