@@ -38,7 +38,7 @@ EOF
 
 function checkLatestRelease(){
     echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
+    local latest_release=$(curl -s https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name":[ ]*"[^"]*"' | sed 's/"tag_name":[ ]*"//;s/"//g')
     if [ -z "$latest_release" ]; then
         echo "Failed to check for the latest release. Exiting..." >&2
         exit 1
