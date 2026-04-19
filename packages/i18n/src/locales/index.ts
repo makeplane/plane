@@ -39,6 +39,7 @@ export const locales = {
     "empty-state": () => import("./ja/empty-state"),
   },
   "zh-CN": {
+    core: () => import("./zh-CN/core"),
     translations: () => import("./zh-CN/translations"),
     accessibility: () => import("./zh-CN/accessibility"),
     editor: () => import("./zh-CN/editor"),
