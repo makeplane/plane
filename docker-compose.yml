@@ -46,7 +46,6 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
       - plane-redis
 
   worker:
@@ -62,7 +61,6 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - plane-db
       - plane-redis
 
   beat-worker:
@@ -78,7 +76,6 @@ services:
       - ./apps/api/.env
     depends_on:
       - api
-      - plane-db
       - plane-redis
 
   migrator:
@@ -93,7 +90,6 @@ services:
     env_file:
       - ./apps/api/.env
     depends_on:
-      - plane-db
       - plane-redis
 
   live:
@@ -104,21 +100,8 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
-
-  plane-db:
-    container_name: plane-db
-    image: postgres:15.7-alpine
-    restart: always
-    command: postgres -c 'max_connections=1000'
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     env_file:
-      - .env
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: /var/lib/postgresql/data
+      - ./apps/live/.env
 
   plane-redis:
     container_name: plane-redis
@@ -164,6 +147,11 @@ services:
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      CERT_EMAIL: ${CERT_EMAIL}
+      CERT_ACME_CA: ${CERT_ACME_CA}
+      CERT_ACME_DNS: ${CERT_ACME_DNS}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
     depends_on:
       - web
       - api
@@ -171,7 +159,6 @@ services:
       - admin
 
 volumes:
-  pgdata:
   redisdata:
   uploads:
   rabbitmq_data:

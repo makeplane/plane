@@ -5,6 +5,32 @@
 @import "./emoji.css";
 @plugin "@tailwindcss/typography";
 
+/* ================================================
+   TRACIONARIA — Horizon Logo Font
+   Place font files in public/fonts/horizon/
+   ================================================ */
+
+@font-face {
+  font-family: "Horizon";
+  src:
+    url("/fonts/horizon/Horizon.woff2") format("woff2"),
+    url("/fonts/horizon/Horizon.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ================================================
+   TRACIONARIA — Font Family Overrides
+   @theme block wins over the one in variables.css
+   ================================================ */
+
+@theme {
+  --font-heading: "Roboto Condensed", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-code: "Space Mono", ui-monospace, "SFMono-Regular", "Menlo", "Monaco", "Consolas", monospace;
+}
+
 /* stickies and editor colors */
 :root {
   /* text colors */

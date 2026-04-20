@@ -19,6 +19,11 @@
     "check:types": "turbo run check:types",
     "prepare": "husky"
   },
+  "dependencies": {
+    "@fontsource/dm-sans": "^5.2.8",
+    "@fontsource/roboto-condensed": "^5.2.8",
+    "@fontsource/space-mono": "^5.2.9"
+  },
   "devDependencies": {
     "husky": "9.1.7",
     "lint-staged": "16.2.7",

@@ -28,10 +28,22 @@ import { LogoSpinner } from "@/components/common/logo-spinner";
 import { CustomErrorComponent } from "./error";
 import { AppProvider } from "./provider";
 // fonts
-import "@fontsource-variable/inter";
-import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
+/* eslint-disable-next-line import/no-unassigned-import */
+import "@fontsource/roboto-condensed/400.css";
+/* eslint-disable-next-line import/no-unassigned-import */
+import "@fontsource/roboto-condensed/700.css";
+/* eslint-disable-next-line import/no-unassigned-import */
+import "@fontsource/dm-sans/400.css";
+/* eslint-disable-next-line import/no-unassigned-import */
+import "@fontsource/dm-sans/500.css";
+/* eslint-disable-next-line import/no-unassigned-import */
+import "@fontsource/dm-sans/700.css";
+/* eslint-disable-next-line import/no-unassigned-import */
+import "@fontsource/space-mono/400.css";
+/* eslint-disable-next-line import/no-unassigned-import */
+import "@fontsource/space-mono/700.css";
+/* eslint-disable-next-line import/no-unassigned-import */
 import "@fontsource/material-symbols-rounded";
-import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
@@ -45,13 +57,6 @@ export const links: LinksFunction = () => [
   { rel: "apple-touch-icon", sizes: "512x512", href: icon512 },
   { rel: "manifest", href: "/manifest.json" },
   { rel: "stylesheet", href: globalStyles },
-  {
-    rel: "preload",
-    href: interVariableWoff2,
-    as: "font",
-    type: "font/woff2",
-    crossOrigin: "anonymous",
-  },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {

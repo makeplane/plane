@@ -33,12 +33,13 @@ export const WorkspaceEditionBadge = observer(function WorkspaceEditionBadge() {
       <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
         <Button
           variant="tertiary"
-          size="lg"
+          size="sm"
           onClick={() => setIsPaidPlanPurchaseModalOpen(true)}
           aria-haspopup="dialog"
           aria-label={t("aria_labels.projects_sidebar.edition_badge")}
+          className="text-xs px-1.5 py-0.5 opacity-50 hover:opacity-100"
         >
-          Community
+          CE
         </Button>
       </Tooltip>
     </>

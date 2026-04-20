@@ -124,6 +124,16 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      '@fontsource/dm-sans':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@fontsource/roboto-condensed':
+        specifier: ^5.2.8
+        version: 5.2.8
+      '@fontsource/space-mono':
+        specifier: ^5.2.9
+        version: 5.2.9
     devDependencies:
       husky:
         specifier: 9.1.7
@@ -2091,6 +2101,9 @@ packages:
   '@fontsource-variable/inter@5.2.8':
     resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
 
+  '@fontsource/dm-sans@5.2.8':
+    resolution: {integrity: sha512-tlovG42m9ESG28WiHpLq3F5umAlm64rv0RkqTbYowRn70e9OlRr5a3yTJhrhrY+k5lftR/OFJjPzOLQzk8EfCA==}
+
   '@fontsource/ibm-plex-mono@5.2.7':
     resolution: {integrity: sha512-MKAb8qV+CaiMQn2B0dIi1OV3565NYzp3WN5b4oT6LTkk+F0jR6j0ZN+5BKJiIhffDC3rtBULsYZE65+0018z9w==}
 
@@ -2099,6 +2112,12 @@ packages:
 
   '@fontsource/material-symbols-rounded@5.2.30':
     resolution: {integrity: sha512-svIEPUzsJGdBMr0PwLH3wKndh7ZNB8IVlyKZPKvbGEX0f36gpGPzE2EZiXppb4UJgDUnyjphWzjJ28StuK6NCg==}
+
+  '@fontsource/roboto-condensed@5.2.8':
+    resolution: {integrity: sha512-M2OxXXGJQeif+LhxHjWiCEX3BHIYeZf64CcUTeh9AQFGp7DXo2UAXZiZUUOalVdOiuUtQSIi2CDHLDWFiyoECQ==}
+
+  '@fontsource/space-mono@5.2.9':
+    resolution: {integrity: sha512-b61faFOHEISQ/pD25G+cfGY9o/WW6lRv6hBQQfpWvEJ4y1V+S4gmth95EVyBE2VL3qDYHeVQ8nBzrplzdXTDDg==}
 
   '@formatjs/ecma402-abstract@2.3.4':
     resolution: {integrity: sha512-qrycXDeaORzIqNhBOx0btnhpD1c+/qFIHAN9znofuMJX6QBwtbrmlpWfD4oiUUD2vJUOIYFA/gYtg2KAMGG7sA==}
@@ -9390,11 +9409,17 @@ snapshots:
 
   '@fontsource-variable/inter@5.2.8': {}
 
+  '@fontsource/dm-sans@5.2.8': {}
+
   '@fontsource/ibm-plex-mono@5.2.7': {}
 
   '@fontsource/inter@5.2.8': {}
 
   '@fontsource/material-symbols-rounded@5.2.30': {}
+
+  '@fontsource/roboto-condensed@5.2.8': {}
+
+  '@fontsource/space-mono@5.2.9': {}
 
   '@formatjs/ecma402-abstract@2.3.4':
     dependencies:
