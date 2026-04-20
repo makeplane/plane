@@ -13,14 +13,14 @@ Generate structured release notes from a Plane release PR by parsing its commit 
 Plane community uses **semver** (`vX.Y.Z`, major.minor.patch) for releases.
 
 - PR title format: `release: vX.Y.Z`
-- Source branch: `uat`
-- Target branch: `master` or `preview`
+- Source branch: `canary`
+- Target branch: `master`
 
 ## When to Use
 
-- User links/mentions a Plane release PR (e.g. `release: v1.12.0`) and asks for release notes
+- User links/mentions a Plane release PR (e.g. `release: v1.3.0`) and asks for release notes
 - User asks to "create release notes" / "update PR description" for a release PR in `makeplane/plane`
-- The branch is named `uat` or `release/x.y.z` and the base is `master` or `preview`
+- The branch is named `canary` or `release/x.y.z` and the base is `master`
 
 ## Steps
 
@@ -142,6 +142,6 @@ EOF
 
 ## Plane-Specific Conventions
 
-- Release PRs go from `uat` → `master` (or `preview`)
+- Release PRs go from `canary` → `master`
 - PR title format: `release: vX.Y.Z` semver (major.minor.patch)
 - Commits coming from feature branches always carry a work item ID; commits without one are usually infra/chores
