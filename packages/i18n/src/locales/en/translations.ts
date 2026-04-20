@@ -2008,6 +2008,23 @@ export default {
           showing: "Showing {from}-{to} of {total}",
         },
       },
+      overdue_work_items: {
+        title: "Overdue Work Items",
+        empty: "No overdue work items.",
+        cross_workspaces: "Cross Workspaces",
+        columns: {
+          work_item: "Work Item",
+          department: "Department",
+          project: "Project",
+          state: "State",
+          progress: "Progress Tracking",
+          start_date: "Start Date",
+          due_date: "Due Date",
+        },
+        pagination: {
+          showing: "Showing {from}-{to} of {total}",
+        },
+      },
     },
     actions: {
       profile: "Profile",

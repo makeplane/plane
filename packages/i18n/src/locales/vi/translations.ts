@@ -2018,6 +2018,23 @@ export default {
           showing: "Hiển thị {from}-{to} / {total}",
         },
       },
+      overdue_work_items: {
+        title: "Công việc quá hạn",
+        empty: "Không có mục công việc quá hạn.",
+        cross_workspaces: "Xuyên Workspace",
+        columns: {
+          work_item: "Mục công việc",
+          department: "Phòng ban",
+          project: "Dự án",
+          state: "Trạng thái",
+          progress: "Theo dõi tiến độ",
+          start_date: "Ngày bắt đầu",
+          due_date: "Ngày đến hạn",
+        },
+        pagination: {
+          showing: "Hiển thị {from}-{to} / {total}",
+        },
+      },
     },
     actions: {
       profile: "Hồ sơ",
