@@ -24,12 +24,7 @@ export function ModalHeader({ pageTitle, copied, onCopyLink }: TModalHeaderProps
   return (
     <div className="flex items-center justify-between pt-3 px-4">
       <h3 className="text-lg font-medium text-primary truncate">Share {pageTitle}</h3>
-      <Button
-        variant="link"
-        prependIcon={<LinkIcon className="size-3.5 -rotate-45" />}
-        onClick={onCopyLink}
-        className="shrink-0"
-      >
+      <Button variant="link" prependIcon={<LinkIcon />} onClick={onCopyLink} className="shrink-0">
         {copied ? "Copied!" : "Copy link"}
       </Button>
     </div>

@@ -69,7 +69,7 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
       action: handleCopyLink,
       title: "Copy link",
       icon: LinkIcon,
-      iconClassName: "-rotate-45",
+      iconClassName: "",
     },
     {
       key: "delete",

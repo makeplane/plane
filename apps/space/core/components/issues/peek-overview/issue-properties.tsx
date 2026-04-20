@@ -75,7 +75,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
             />
           </h6>
           <div className="flex items-center gap-2">
-            <button type="button" onClick={handleCopyLink} className="-rotate-45">
+            <button type="button" onClick={handleCopyLink}>
               <LinkIcon className="shrink-0 size-3.5" />
             </button>
           </div>

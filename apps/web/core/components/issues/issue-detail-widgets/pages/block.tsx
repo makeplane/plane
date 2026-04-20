@@ -81,7 +81,7 @@ export const PagesCollapsibleContentBlock = observer(function PagesCollapsibleCo
       key: "copy",
       action: () => handleCopyText(),
       title: "Copy link",
-      icon: () => <LinkIcon className="size-3 -rotate-45" />,
+      icon: () => <LinkIcon className="size-3" />,
     },
     {
       key: "remove",
