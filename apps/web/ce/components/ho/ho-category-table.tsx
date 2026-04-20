@@ -81,18 +81,32 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
 
     switch (key) {
       case "department": {
-        const unique = [...new Set(applyOthers("department").map((r) => r.department_name).filter(Boolean))].sort();
+        const unique = [
+          ...new Set(
+            applyOthers("department")
+              .map((r) => r.department_name)
+              .filter(Boolean)
+          ),
+        ].sort();
         return unique.map((v) => ({ value: v, label: v }));
       }
       case "main_task_category": {
         const unique = [
-          ...new Set(applyOthers("main_task_category").map((r) => r.main_task_category_name).filter(Boolean)),
+          ...new Set(
+            applyOthers("main_task_category")
+              .map((r) => r.main_task_category_name)
+              .filter(Boolean)
+          ),
         ].sort();
         return unique.map((v) => ({ value: v, label: v }));
       }
       case "sub_task_category": {
         const unique = [
-          ...new Set(applyOthers("sub_task_category").map((r) => r.sub_task_category_name).filter(Boolean)),
+          ...new Set(
+            applyOthers("sub_task_category")
+              .map((r) => r.sub_task_category_name)
+              .filter(Boolean)
+          ),
         ].sort();
         return unique.map((v) => ({ value: v, label: v }));
       }
