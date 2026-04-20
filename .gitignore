@@ -110,3 +110,6 @@ build/
 .react-router/
 temp/
 scripts/
+
+# bv (beads viewer) local config and caches
+.bv/
