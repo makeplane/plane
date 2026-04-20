@@ -71,11 +71,11 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
     const applyOthers = (exclude: string) => {
       let rows = summary;
       if (exclude !== "department" && activeDepts.length > 0)
-        rows = rows.filter((r) => activeDepts.includes(r.department_name));
+        rows = rows.filter((r) => activeDepts.includes(r.department_name ?? ""));
       if (exclude !== "main_task_category" && activeMain.length > 0)
-        rows = rows.filter((r) => activeMain.includes(r.main_task_category_name));
+        rows = rows.filter((r) => activeMain.includes(r.main_task_category_name ?? ""));
       if (exclude !== "sub_task_category" && activeSub.length > 0)
-        rows = rows.filter((r) => activeSub.includes(r.sub_task_category_name));
+        rows = rows.filter((r) => activeSub.includes(r.sub_task_category_name ?? ""));
       return rows;
     };
 
