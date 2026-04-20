@@ -537,9 +537,6 @@ catalogs:
     fuse.js:
       specifier: 7.1.0
       version: 7.1.0
-    hast:
-      specifier: 1.0.0
-      version: 1.0.0
     hast-util-to-mdast:
       specifier: 10.1.2
       version: 10.1.2
@@ -600,9 +597,6 @@ catalogs:
     marked:
       specifier: 15.0.12
       version: 15.0.12
-    mdast:
-      specifier: 3.0.0
-      version: 3.0.0
     mermaid:
       specifier: 11.12.3
       version: 11.12.3
@@ -1263,9 +1257,6 @@ importers:
       express-ws:
         specifier: 'catalog:'
         version: 5.0.2(express@4.22.0)
-      hast:
-        specifier: 'catalog:'
-        version: 1.0.0
       hast-util-to-mdast:
         specifier: 'catalog:'
         version: 10.1.2
@@ -1278,9 +1269,6 @@ importers:
       jszip:
         specifier: 'catalog:'
         version: 3.10.1
-      mdast:
-        specifier: 'catalog:'
-        version: 3.0.0
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -3081,9 +3069,6 @@ importers:
       date-fns:
         specifier: 'catalog:'
         version: 4.1.0
-      hast:
-        specifier: 'catalog:'
-        version: 1.0.0
       hast-util-to-mdast:
         specifier: 'catalog:'
         version: 10.1.2
@@ -3093,9 +3078,6 @@ importers:
       lucide-react:
         specifier: 'catalog:'
         version: 0.566.0(react@18.3.1)
-      mdast:
-        specifier: 'catalog:'
-        version: 3.0.0
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -10680,10 +10662,6 @@ packages:
   hast-util-whitespace@3.0.0:
     resolution: {integrity: sha512-88JUN06ipLwsnv+dVn+OIYOvAuvBMy/Qoi6O7mQHxdPXpjy+Cd6xRkWwux7DKO+4sYILtLBRIKgsdpS2gQc7qw==}
 
-  hast@1.0.0:
-    resolution: {integrity: sha512-vFUqlRV5C+xqP76Wwq2SrM0kipnmpxJm7OfvVXpB35Fp+Fn4MV+ozr+JZr5qFvyR1q/U+Foim2x+3P+x9S1PLA==}
-    deprecated: Renamed to rehype
-
   hastscript@9.0.1:
     resolution: {integrity: sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==}
 
@@ -11926,10 +11904,6 @@ packages:
 
   mdast-util-to-string@4.0.0:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
-
-  mdast@3.0.0:
-    resolution: {integrity: sha512-xySmf8g4fPKMeC07jXGz971EkLbWAJ83s4US2Tj9lEdnZ142UP5grN73H1Xd3HzrdbU5o9GYYP/y8F9ZSwLE9g==}
-    deprecated: '`mdast` was renamed to `remark`'
 
   mdn-data@2.0.30:
     resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
@@ -23733,8 +23707,6 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
-  hast@1.0.0: {}
-
   hastscript@9.0.1:
     dependencies:
       '@types/hast': 3.0.4
@@ -25395,8 +25367,6 @@ snapshots:
   mdast-util-to-string@4.0.0:
     dependencies:
       '@types/mdast': 4.0.4
-
-  mdast@3.0.0: {}
 
   mdn-data@2.0.30: {}
 

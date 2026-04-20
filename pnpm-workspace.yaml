@@ -187,7 +187,6 @@ catalog:
   lottie-react: 2.4.1
   frimousse: 0.3.0
   fuse.js: 7.1.0
-  hast: 1.0.0
   hast-util-to-mdast: 10.1.2
   helmet: 7.2.0
   husky: 9.1.7
@@ -208,7 +207,6 @@ catalog:
   lucide-react: 0.566.0
   markdown-to-jsx: 7.7.17
   marked: 15.0.12
-  mdast: 3.0.0
   mermaid: 11.12.3
   mimetics: 1.0.5
   mobx: 6.15.0
