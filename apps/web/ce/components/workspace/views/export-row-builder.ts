@@ -7,7 +7,9 @@ type TFunction = (key: string, params?: Record<string, unknown>) => string;
 type Stores = {
   workspaceName: string;
   getStateById: (id: string | null | undefined) => { name: string } | undefined;
-  getProjectById: (id: string | null | undefined) => { name?: string; project_lead?: IUserLite | string | null; is_bank_wide?: boolean } | undefined | null;
+  getProjectById: (
+    id: string | null | undefined
+  ) => { name?: string; project_lead?: IUserLite | string | null; is_bank_wide?: boolean } | undefined | null;
   getModuleById: (id: string) => IModule | null;
   getCycleById: (id: string) => ICycle | null;
   getLabelById: (id: string) => IIssueLabel | null;
@@ -22,7 +24,10 @@ function formatMinutes(minutes: number | null | undefined): string {
   return `${h}h ${m}m`;
 }
 
-function resolveProjectLead(lead: IUserLite | string | null | undefined, getUserDetails: Stores["getUserDetails"]): string {
+function resolveProjectLead(
+  lead: IUserLite | string | null | undefined,
+  getUserDetails: Stores["getUserDetails"]
+): string {
   if (!lead) return "-";
   if (typeof lead === "string") {
     const user = getUserDetails(lead);

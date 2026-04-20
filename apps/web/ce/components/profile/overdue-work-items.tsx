@@ -45,7 +45,7 @@ type EnrichedIssue = TBaseIssue & {
 
 const EXCLUDED_STATE_GROUPS = new Set(["completed", "cancelled"]);
 
-export const TodayWorkItems = observer(function TodayWorkItems() {
+export const OverdueWorkItems = observer(function OverdueWorkItems() {
   const { workspaceSlug, userId } = useParams();
   const { t } = useTranslation();
   const { workspaces } = useWorkspace();
@@ -56,22 +56,16 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
 
   const todayStr = new Date().toISOString().split("T")[0];
 
-  // Compute directly — NOT useMemo. MobX observable map mutates in-place,
-  // so the reference never changes and useMemo would return a stale [].
   const allWorkspaceSlugs = Object.values(workspaces ?? {}).map((ws) => ws.slug);
   const workspaceSlugsToFetch = crossWorkspaces ? allWorkspaceSlugs : workspaceSlug ? [workspaceSlug.toString()] : [];
 
-  // Include sorted slugs + todayStr in key so SWR re-fetches on workspace load or day change
   const sortedSlugs = [...workspaceSlugsToFetch].sort().join(",");
-  const swrKey = sortedSlugs.length > 0 && userId ? `TODAY_ISSUES_${sortedSlugs}_${userId}_${todayStr}` : null;
+  const swrKey = sortedSlugs.length > 0 && userId ? `OVERDUE_ISSUES_${sortedSlugs}_${userId}_${todayStr}` : null;
 
   const { data: mergedIssues, isLoading } = useSWR(swrKey, async () => {
     if (!userId) return [];
     const uid = userId.toString();
 
-    // NOTE: start_date filter REMOVED intentionally.
-    // The `start_date;before_including;` format causes a 500 on the backend.
-    // We instead filter by start_date on the frontend below.
     const filterParams = {
       assignees: uid,
       state_group: "backlog,unstarted,started",
@@ -117,15 +111,13 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
     return results.flat();
   });
 
+  // Only show items where target_date is set and in the past
   const issueList = (mergedIssues ?? []).filter((issue) => {
-    // Exclude completed/cancelled states
     if (issue._state && EXCLUDED_STATE_GROUPS.has(issue._state.group)) return false;
-    // Exclude items whose start_date is in the future (null start_date = always included)
-    if (issue.start_date && issue.start_date > todayStr) return false;
-    return true;
+    if (!issue.target_date) return false;
+    return issue.target_date < todayStr;
   });
 
-  // Reset to page 1 whenever the filtered list changes
   useEffect(() => {
     setPage(1);
   }, [issueList.length]);
@@ -137,9 +129,9 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <h3 className="text-16 font-medium">{t("profile.stats.today_work_items.title")}</h3>
+        <h3 className="text-16 font-medium">{t("profile.stats.overdue_work_items.title")}</h3>
         <div className="flex items-center gap-2">
-          <span className="text-13 text-secondary">{t("profile.stats.today_work_items.cross_workspaces")}</span>
+          <span className="text-13 text-secondary">{t("profile.stats.overdue_work_items.cross_workspaces")}</span>
           <Switch value={crossWorkspaces} onChange={setCrossWorkspaces} size="sm" />
         </div>
       </div>
@@ -152,25 +144,25 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
                   <thead>
                     <tr className="border-b border-subtle text-secondary">
                       <th className="pb-3 pl-4 pr-4 font-medium whitespace-nowrap">
-                        {t("profile.stats.today_work_items.columns.work_item")}
+                        {t("profile.stats.overdue_work_items.columns.work_item")}
                       </th>
                       <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                        {t("profile.stats.today_work_items.columns.department")}
+                        {t("profile.stats.overdue_work_items.columns.department")}
                       </th>
                       <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                        {t("profile.stats.today_work_items.columns.project")}
+                        {t("profile.stats.overdue_work_items.columns.project")}
                       </th>
                       <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                        {t("profile.stats.today_work_items.columns.state")}
+                        {t("profile.stats.overdue_work_items.columns.state")}
                       </th>
                       <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                        {t("profile.stats.today_work_items.columns.progress")}
+                        {t("profile.stats.overdue_work_items.columns.progress")}
                       </th>
                       <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                        {t("profile.stats.today_work_items.columns.start_date")}
+                        {t("profile.stats.overdue_work_items.columns.start_date")}
                       </th>
                       <th className="pb-3 pr-4 font-medium whitespace-nowrap">
-                        {t("profile.stats.today_work_items.columns.due_date")}
+                        {t("profile.stats.overdue_work_items.columns.due_date")}
                       </th>
                     </tr>
                   </thead>
@@ -240,7 +232,7 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
               {totalPages > 1 && (
                 <div className="flex items-center justify-between px-4 pb-3 text-13 text-secondary">
                   <span>
-                    {t("profile.stats.today_work_items.pagination.showing", {
+                    {t("profile.stats.overdue_work_items.pagination.showing", {
                       from: (page - 1) * PAGE_SIZE + 1,
                       to: Math.min(page * PAGE_SIZE, issueList.length),
                       total: issueList.length,
@@ -285,7 +277,7 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
             </div>
           ) : (
             <EmptyStateCompact
-              title={t("profile.stats.today_work_items.empty")}
+              title={t("profile.stats.overdue_work_items.empty")}
               assetKey="unknown"
               assetClassName="size-20"
             />

@@ -30,16 +30,23 @@ export const HoCategoryView = observer(function HoCategoryView() {
     if (store.filters.department.length > 0)
       data = data.filter((r) => store.filters.department.includes(r.department_name));
     if (store.filters.main_task_category.length > 0)
-      data = data.filter((r) => store.filters.main_task_category.includes(r.main_task_category_name));
+      data = data.filter((r) => store.filters.main_task_category.includes(r.main_task_category_name ?? ""));
     if (store.filters.sub_task_category.length > 0)
-      data = data.filter((r) => store.filters.sub_task_category.includes(r.sub_task_category_name));
+      data = data.filter((r) => store.filters.sub_task_category.includes(r.sub_task_category_name ?? ""));
 
     if (!search) return data;
     const q = search.toLowerCase();
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
-  }, [store.categorySummary, store.selectedDepartmentId, store.filters.department, store.filters.main_task_category, store.filters.sub_task_category, search]);
+  }, [
+    store.categorySummary,
+    store.selectedDepartmentId,
+    store.filters.department,
+    store.filters.main_task_category,
+    store.filters.sub_task_category,
+    search,
+  ]);
 
   const sortedData = useMemo(() => {
     const data = [...filtered];

@@ -75,7 +75,9 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
             className={cn("h-7 rounded-sm", errors.main_task_category_id && "outline outline-1 outline-danger-strong")}
           >
             <CustomMenu
-              label={value ? (mainCategories[value]?.name ?? t("task_category.main_label")) : t("task_category.main_label")}
+              label={
+                value ? (mainCategories[value]?.name ?? t("task_category.main_label")) : t("task_category.main_label")
+              }
               noBorder
               buttonClassName="h-7 rounded-sm border-[0.5px] border-strong px-2 text-caption-sm-regular hover:bg-layer-1"
               placement="bottom-start"
@@ -83,7 +85,12 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
               onMenuClose={() => setMainQuery("")}
             >
               {/* Search input — stopPropagation prevents closeOnSelect from firing on input click */}
-              <div className="px-1 pb-1.5" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="px-1 pb-1.5"
+                onClick={(e) => e.stopPropagation()}
+                role="presentation"
+                onKeyDown={(e) => e.stopPropagation()}
+              >
                 <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-layer-2 px-2">
                   <SearchIcon className="h-3.5 w-3.5 shrink-0 text-placeholder" />
                   <input
@@ -108,7 +115,12 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
                 </CustomMenu.MenuItem>
               ))}
               {filteredMainIds.length === 0 && (
-                <div className="px-2 py-1.5 text-xs italic text-placeholder" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="px-2 py-1.5 text-xs italic text-placeholder"
+                  onClick={(e) => e.stopPropagation()}
+                  role="presentation"
+                  onKeyDown={(e) => e.stopPropagation()}
+                >
                   {t("no_matching_results")}
                 </div>
               )}
@@ -141,7 +153,12 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
                   onMenuClose={() => setSubQuery("")}
                 >
                   {/* Search input — stopPropagation prevents closeOnSelect from firing on input click */}
-                  <div className="px-1 pb-1.5" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="px-1 pb-1.5"
+                    onClick={(e) => e.stopPropagation()}
+                    role="presentation"
+                    onKeyDown={(e) => e.stopPropagation()}
+                  >
                     <div className="flex items-center gap-1.5 rounded-sm border border-subtle bg-layer-2 px-2">
                       <SearchIcon className="h-3.5 w-3.5 shrink-0 text-placeholder" />
                       <input
@@ -165,7 +182,12 @@ export const TaskCategoryFields = observer(function TaskCategoryFields(props: TT
                     </CustomMenu.MenuItem>
                   ))}
                   {filteredSubCategories.length === 0 && (
-                    <div className="px-2 py-1.5 text-xs italic text-placeholder" onClick={(e) => e.stopPropagation()}>
+                    <div
+                      className="px-2 py-1.5 text-xs italic text-placeholder"
+                      onClick={(e) => e.stopPropagation()}
+                      role="presentation"
+                      onKeyDown={(e) => e.stopPropagation()}
+                    >
                       {t("no_matching_results")}
                     </div>
                   )}

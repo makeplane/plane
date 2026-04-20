@@ -193,9 +193,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
           >
             {t("workspace_views.add_view")}
           </Button>
-          {globalViewId && (
-            <ExcelExportButton workspaceSlug={workspaceSlug.toString()} globalViewId={globalViewId} />
-          )}
+          {globalViewId && <ExcelExportButton workspaceSlug={workspaceSlug.toString()} globalViewId={globalViewId} />}
           <div className="hidden md:block">
             {viewDetails && <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={viewDetails} />}
             {isDefaultView && defaultViewDetails && (

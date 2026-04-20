@@ -1998,6 +1998,23 @@ export default {
           showing: "{from}-{to} / {total} 표시 중",
         },
       },
+      overdue_work_items: {
+        title: "기한 초과 작업 항목",
+        empty: "기한 초과 작업 항목이 없습니다.",
+        cross_workspaces: "교차 워크스페이스",
+        columns: {
+          work_item: "작업 항목",
+          department: "부서",
+          project: "프로젝트",
+          state: "상태",
+          progress: "진행 추적",
+          start_date: "시작일",
+          due_date: "마감일",
+        },
+        pagination: {
+          showing: "{from}-{to} / {total} 표시 중",
+        },
+      },
     },
     actions: {
       profile: "프로필",

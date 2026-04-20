@@ -79,7 +79,7 @@ app.conf.beat_schedule = {
     },
     "check-every-day-to-send-worklog-reminder": {
         "task": "plane.bgtasks.worklog_reminder_task.worklog_daily_reminder",
-        "schedule": crontab(hour=9, minute=0),  # UTC 09:00 = 4PM Vietnam (TEMP TEST)
+        "schedule": crontab(hour=10, minute=0),  # UTC 10:00 = 5PM Vietnam (UTC+7)
     },
 }
 
