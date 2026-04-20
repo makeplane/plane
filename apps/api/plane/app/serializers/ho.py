@@ -22,6 +22,7 @@ class HoIssueSerializer(serializers.Serializer):
     priority = serializers.CharField()
     state_name = serializers.SerializerMethodField()
     state_color = serializers.SerializerMethodField()
+    state_group = serializers.SerializerMethodField()
     start_date = serializers.DateField(allow_null=True)
     target_date = serializers.DateField(allow_null=True)
     completed_at = serializers.DateTimeField(allow_null=True)
@@ -64,6 +65,9 @@ class HoIssueSerializer(serializers.Serializer):
 
     def get_state_color(self, obj):
         return obj.state.color if obj.state_id else None
+
+    def get_state_group(self, obj):
+        return obj.state.group if obj.state_id else None
 
     def get_cycle_name(self, obj):
         cycles = [ic.cycle for ic in obj.issue_cycle.all() if ic.cycle_id]
