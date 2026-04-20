@@ -85,7 +85,7 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
           ...new Set(
             applyOthers("department")
               .map((r) => r.department_name)
-              .filter(Boolean)
+              .filter((v): v is string => !!v)
           ),
         ].sort();
         return unique.map((v) => ({ value: v, label: v }));
@@ -95,7 +95,7 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
           ...new Set(
             applyOthers("main_task_category")
               .map((r) => r.main_task_category_name)
-              .filter(Boolean)
+              .filter((v): v is string => !!v)
           ),
         ].sort();
         return unique.map((v) => ({ value: v, label: v }));
@@ -105,7 +105,7 @@ export const HoCategoryTable = observer(function HoCategoryTable({ data }: Props
           ...new Set(
             applyOthers("sub_task_category")
               .map((r) => r.sub_task_category_name)
-              .filter(Boolean)
+              .filter((v): v is string => !!v)
           ),
         ].sort();
         return unique.map((v) => ({ value: v, label: v }));
