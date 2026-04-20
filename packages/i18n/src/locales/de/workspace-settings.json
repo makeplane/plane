@@ -159,6 +159,10 @@
         "never_expires": "Läuft nie ab",
         "generate_token": "Token generieren",
         "generating": "Wird generiert",
+        "instance_disabled": {
+          "title": "Zugriffstoken sind deaktiviert",
+          "description": "Ihr Instanzadministrator hat Zugriffstoken deaktiviert. Bestehende Token sind inaktiv und können nicht verwendet werden. Sie können vorhandene Token unten weiterhin anzeigen und widerrufen."
+        },
         "delete": {
           "title": "API-Token löschen",
           "description": "Alle Anwendungen, die diesen Token verwenden, verlieren den Zugriff. Diese Aktion ist nicht umkehrbar.",

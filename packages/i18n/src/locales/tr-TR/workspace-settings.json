@@ -159,6 +159,10 @@
         "never_expires": "Süresi dolmaz",
         "generate_token": "Token oluştur",
         "generating": "Oluşturuluyor",
+        "instance_disabled": {
+          "title": "Erişim belirteçleri devre dışı",
+          "description": "Kurulumunuzun yöneticisi erişim belirteçlerini devre dışı bıraktı. Mevcut belirteçler etkin değil ve kullanılamaz. Aşağıda mevcut belirteçleri görüntüleyebilir ve iptal edebilirsiniz."
+        },
         "delete": {
           "title": "API Token'ını sil",
           "description": "Bu token'ı kullanan uygulamalar artık Plane verilerine erişemeyecek. Bu işlem geri alınamaz.",

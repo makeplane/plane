@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Image, BrainCog, Cog, Mail, CreditCard, Users, SlidersHorizontal } from "lucide-react";
+import { Image, BrainCog, Cog, Mail, CreditCard, Users, SlidersHorizontal, ShieldHalf } from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
@@ -26,7 +26,8 @@ export type TCoreSidebarMenuKey =
   | "ai"
   | "image"
   | "billing"
-  | "user-management";
+  | "user-management"
+  | "security";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -83,5 +84,11 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "User Management",
     description: "Instance user management",
     href: `/user-management/`,
+  },
+  security: {
+    Icon: ShieldHalf,
+    name: "Security",
+    description: "Instance security settings",
+    href: `/security/`,
   },
 };

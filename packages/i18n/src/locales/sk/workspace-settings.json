@@ -159,6 +159,10 @@
         "never_expires": "Nikdy neexpiruje",
         "generate_token": "Generovať token",
         "generating": "Generovanie",
+        "instance_disabled": {
+          "title": "Prístupové tokeny sú vypnuté",
+          "description": "Správca vašej inštancie vypol prístupové tokeny. Existujúce tokeny sú neaktívne a nedajú sa použiť. Existujúce tokeny môžete nižšie stále zobraziť a odvolať."
+        },
         "delete": {
           "title": "Zmazať API token",
           "description": "Aplikácie používajúce tento token stratia prístup. Akcia je nevratná.",

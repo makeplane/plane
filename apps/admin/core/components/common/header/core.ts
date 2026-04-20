@@ -23,4 +23,6 @@ export const CORE_HEADER_SEGMENT_LABELS: Record<string, string> = {
   gitea: "Gitea",
   workspace: "Workspace",
   create: "Create",
+  configurations: "Configurations",
+  security: "Security",
 };

@@ -11,4 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export type TInstanceConfigKeys = "PROJECT_IDENTIFIER_MAX_LENGTH";
+export type TInstanceConfigKeys = "PROJECT_IDENTIFIER_MAX_LENGTH" | "DISABLE_ACCESS_TOKENS";

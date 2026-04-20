@@ -94,3 +94,25 @@ def get_email_configuration():
             },
         ]
     )
+
+
+def are_access_tokens_disabled():
+    """
+    Returns True when the instance-level DISABLE_ACCESS_TOKENS flag is set
+    to "1". Used by the token auth classes and token creation endpoints to
+    globally block user-owned access tokens.
+
+    Only honoured on self-managed instances; cloud always returns False.
+    """
+    if not settings.IS_SELF_MANAGED:
+        return False
+
+    (value,) = get_configuration_value(
+        [
+            {
+                "key": "DISABLE_ACCESS_TOKENS",
+                "default": os.environ.get("DISABLE_ACCESS_TOKENS", "0"),
+            },
+        ]
+    )
+    return value == "1"

@@ -159,6 +159,10 @@
         "never_expires": "永不过期",
         "generate_token": "生成令牌",
         "generating": "生成中",
+        "instance_disabled": {
+          "title": "访问令牌已禁用",
+          "description": "您的实例管理员已禁用访问令牌。现有令牌为非活动状态，无法使用。您仍可在下方查看和撤销现有令牌。"
+        },
         "delete": {
           "title": "删除 API 令牌",
           "description": "使用此令牌的任何应用程序将无法再访问 Plane 数据。此操作无法撤消。",

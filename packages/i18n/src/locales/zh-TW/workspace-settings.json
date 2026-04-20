@@ -159,6 +159,10 @@
         "never_expires": "永不過期",
         "generate_token": "產生權杖",
         "generating": "產生中",
+        "instance_disabled": {
+          "title": "存取權杖已停用",
+          "description": "您的執行個體管理員已停用存取權杖。現有權杖為非使用中狀態，無法使用。您仍可在下方檢視並撤銷現有權杖。"
+        },
         "delete": {
           "title": "刪除 API 權杖",
           "description": "使用此權杖的任何應用程式將無法再存取 Plane 資料。此操作無法復原。",

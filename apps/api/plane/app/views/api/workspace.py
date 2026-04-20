@@ -24,6 +24,7 @@ from plane.app.views import BaseAPIView
 from plane.db.models import APIToken, Workspace
 from plane.app.serializers import APITokenSerializer, APITokenReadSerializer
 from plane.app.permissions import WorkSpaceAdminPermission
+from plane.license.utils.instance_value import are_access_tokens_disabled
 
 
 class WorkspaceAPITokenEndpoint(BaseAPIView):
@@ -34,6 +35,15 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
     ]
 
     def post(self, request: Request, slug: str) -> Response:
+        if are_access_tokens_disabled():
+            return Response(
+                {
+                    "error": "Access token creation has been disabled by the instance administrator",
+                    "code": "DISABLED_AT_INSTANCE_LEVEL",
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         label = request.data.get("label", str(uuid4().hex))
         description = request.data.get("description", "")
         expired_at = request.data.get("expired_at", None)

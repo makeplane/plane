@@ -42,6 +42,15 @@ workspace_management_config_variables = [
     },
 ]
 
+security_config_variables = [
+    {
+        "key": "DISABLE_ACCESS_TOKENS",
+        "value": os.environ.get("DISABLE_ACCESS_TOKENS", "0"),
+        "category": "SECURITY",
+        "is_encrypted": False,
+    },
+]
+
 google_config_variables = [
     {
         "key": "GOOGLE_CLIENT_ID",
@@ -272,6 +281,7 @@ project_config_variables = [
 core_config_variables = [
     *authentication_config_variables,
     *workspace_management_config_variables,
+    *security_config_variables,
     *google_config_variables,
     *github_config_variables,
     *gitlab_config_variables,

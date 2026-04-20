@@ -27,10 +27,12 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
+import { InstanceTokensDisabledBanner } from "@/components/api-token/instance-disabled-banner";
 import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 // constants
 import { WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/page";
@@ -49,6 +51,8 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
+  const { config } = useInstance();
+  const areAccessTokensDisabled = Boolean(config?.are_access_tokens_disabled);
   // derived values
   const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
@@ -81,11 +85,14 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
             title={t("workspace_settings.settings.api_tokens.heading")}
             description={t("workspace_settings.settings.api_tokens.description")}
             control={
-              <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
-                {t("workspace_settings.settings.api_tokens.add_token")}
-              </Button>
+              areAccessTokensDisabled ? null : (
+                <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
+                  {t("workspace_settings.settings.api_tokens.add_token")}
+                </Button>
+              )
             }
           />
+          {areAccessTokensDisabled && <InstanceTokensDisabledBanner />}
           {tokens.length > 0 ? (
             <div className="flex h-full w-full flex-col">
               <div className="h-full w-full overflow-y-auto">
@@ -101,14 +108,18 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
                   assetKey="token"
                   title={t("settings_empty_state.workspace_tokens.title")}
                   description={t("settings_empty_state.workspace_tokens.description")}
-                  actions={[
-                    {
-                      label: t("settings_empty_state.workspace_tokens.cta_primary"),
-                      onClick: () => {
-                        setIsCreateTokenModalOpen(true);
-                      },
-                    },
-                  ]}
+                  actions={
+                    areAccessTokensDisabled
+                      ? []
+                      : [
+                          {
+                            label: t("settings_empty_state.workspace_tokens.cta_primary"),
+                            onClick: () => {
+                              setIsCreateTokenModalOpen(true);
+                            },
+                          },
+                        ]
+                  }
                   align="start"
                   rootClassName="py-20"
                 />

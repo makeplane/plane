@@ -159,6 +159,10 @@
         "never_expires": "N’expire jamais",
         "generate_token": "Générer un jeton",
         "generating": "Génération",
+        "instance_disabled": {
+          "title": "Les jetons d’accès sont désactivés",
+          "description": "L’administrateur de votre instance a désactivé les jetons d’accès. Les jetons existants sont inactifs et ne peuvent pas être utilisés. Vous pouvez toujours afficher et révoquer les jetons existants ci-dessous."
+        },
         "delete": {
           "title": "Supprimer le jeton API",
           "description": "Toute application utilisant ce jeton n’aura plus accès aux données de Plane. Cette action ne peut pas être annulée.",

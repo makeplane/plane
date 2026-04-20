@@ -37,6 +37,7 @@ export default [
     route("image", "./(all)/(dashboard)/(with-sidebar)/image/page.tsx"),
     route("billing", "./(all)/(dashboard)/(with-sidebar)/billing/page.tsx"),
     route("user-management", "./(all)/(dashboard)/(with-sidebar)/user-management/page.tsx"),
+    route("security", "./(all)/(dashboard)/(with-sidebar)/security/page.tsx"),
   ]),
   layout("./(all)/(dashboard)/(without-sidebar)/layout.tsx", [
     route("reset-password", "./(all)/(dashboard)/(without-sidebar)/reset-password/page.tsx"),

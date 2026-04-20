@@ -159,6 +159,10 @@
         "never_expires": "Nu expiră niciodată",
         "generate_token": "Generează cheie secretă",
         "generating": "Se generează",
+        "instance_disabled": {
+          "title": "Tokenurile de acces sunt dezactivate",
+          "description": "Administratorul instanței dumneavoastră a dezactivat tokenurile de acces. Tokenurile existente sunt inactive și nu pot fi utilizate. Puteți totuși vizualiza și revoca tokenurile existente mai jos."
+        },
         "delete": {
           "title": "Șterge cheia secretă API",
           "description": "Orice aplicație care folosește această cheie secretă nu va mai avea acces la datele Plane. Această acțiune este ireversibilă.",

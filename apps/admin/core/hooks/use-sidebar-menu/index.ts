@@ -26,6 +26,7 @@ export function useSidebarMenu(): TSidebarMenuItem[] {
     coreSidebarMenuLinks["user-management"],
     coreSidebarMenuLinks.ai,
     coreSidebarMenuLinks.image,
+    coreSidebarMenuLinks.security,
   ];
 
   return sidebarMenu;

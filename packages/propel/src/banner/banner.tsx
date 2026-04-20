@@ -18,6 +18,7 @@ import {
   getBannerStyling,
   getBannerIconStyling,
   getBannerTitleStyling,
+  getBannerDescriptionStyling,
   getBannerActionStyling,
   getBannerDismissStyling,
   getBannerDismissIconStyling,
@@ -28,8 +29,10 @@ export interface BannerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   variant?: TBannerVariant;
   /** Icon to display before the title */
   icon?: React.ReactNode;
-  /** Banner title/message */
+  /** Banner title */
   title?: React.ReactNode;
+  /** Banner message */
+  description?: React.ReactNode;
   /** Action elements to display on the right side */
   action?: React.ReactNode;
   /** Whether the banner can be dismissed */
@@ -46,6 +49,7 @@ export const Banner = React.forwardRef(function Banner(
   {
     icon,
     title,
+    description,
     action,
     variant = "info",
     dismissible = false,
@@ -74,6 +78,7 @@ export const Banner = React.forwardRef(function Banner(
   const containerStyling = getBannerStyling(variant);
   const iconStyling = getBannerIconStyling(variant);
   const titleStyling = getBannerTitleStyling(variant);
+  const descriptionStyling = getBannerDescriptionStyling();
   const actionStyling = getBannerActionStyling();
   const dismissStyling = getBannerDismissStyling();
   const dismissIconStyling = getBannerDismissIconStyling();
@@ -122,7 +127,10 @@ export const Banner = React.forwardRef(function Banner(
       {/* Left side: Icon and Title */}
       <div className="flex items-center gap-3 flex-1 min-w-0">
         {renderIcon()}
-        {title && <div className={cn(titleStyling)}>{title}</div>}
+        <div className="flex-1 min-w-0">
+          {title && <div className={cn(titleStyling)}>{title}</div>}
+          {description && <div className={cn(descriptionStyling)}>{description}</div>}
+        </div>
         {children}
       </div>
 

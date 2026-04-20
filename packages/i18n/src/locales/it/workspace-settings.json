@@ -159,6 +159,10 @@
         "never_expires": "Non scade mai",
         "generate_token": "Genera token",
         "generating": "Generazione in corso",
+        "instance_disabled": {
+          "title": "I token di accesso sono disabilitati",
+          "description": "L'amministratore dell'istanza ha disabilitato i token di accesso. I token esistenti sono inattivi e non possono essere utilizzati. Puoi comunque visualizzare e revocare i token esistenti di seguito."
+        },
         "delete": {
           "title": "Elimina token API",
           "description": "Qualsiasi applicazione che utilizza questo token non avrà più accesso ai dati di Plane. Questa azione non può essere annullata.",

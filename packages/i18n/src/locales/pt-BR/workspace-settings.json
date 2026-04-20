@@ -159,6 +159,10 @@
         "never_expires": "Nunca expira",
         "generate_token": "Gerar token",
         "generating": "Gerando",
+        "instance_disabled": {
+          "title": "Os tokens de acesso estão desabilitados",
+          "description": "O administrador da sua instância desabilitou os tokens de acesso. Os tokens existentes estão inativos e não podem ser usados. Você ainda pode visualizar e revogar os tokens existentes abaixo."
+        },
         "delete": {
           "title": "Excluir token de API",
           "description": "Qualquer aplicativo que use este token não terá mais acesso aos dados do Plane. Esta ação não pode ser desfeita.",

@@ -159,6 +159,10 @@
         "never_expires": "Tidak pernah kedaluwarsa",
         "generate_token": "Hasilkan token",
         "generating": "Menghasilkan",
+        "instance_disabled": {
+          "title": "Token akses dinonaktifkan",
+          "description": "Administrator instance Anda telah menonaktifkan token akses. Token yang ada tidak aktif dan tidak dapat digunakan. Anda masih dapat melihat dan mencabut token yang ada di bawah."
+        },
         "delete": {
           "title": "Hapus token API",
           "description": "Setiap aplikasi yang menggunakan token ini tidak akan memiliki akses ke data Plane. Tindakan ini tidak dapat dibatalkan.",

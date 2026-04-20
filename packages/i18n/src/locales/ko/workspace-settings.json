@@ -159,6 +159,10 @@
         "never_expires": "만료되지 않음",
         "generate_token": "토큰 생성",
         "generating": "생성 중",
+        "instance_disabled": {
+          "title": "액세스 토큰이 비활성화되었습니다",
+          "description": "인스턴스 관리자가 액세스 토큰을 비활성화했습니다. 기존 토큰은 비활성 상태이며 사용할 수 없습니다. 아래에서 기존 토큰을 계속 확인하고 취소할 수 있습니다."
+        },
         "delete": {
           "title": "API 토큰 삭제",
           "description": "이 토큰을 사용하는 애플리케이션은 더 이상 Plane 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",

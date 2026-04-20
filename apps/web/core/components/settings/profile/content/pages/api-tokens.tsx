@@ -23,9 +23,11 @@ import { APITokenService } from "@plane/services";
 import { CreateApiTokenModal } from "@/components/api-token/modal/create-token-modal";
 import { ApiTokenListItem } from "@/components/api-token/token-list-item";
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
+import { InstanceTokensDisabledBanner } from "@/components/api-token/instance-disabled-banner";
 import { APITokenSettingsLoader } from "@/components/ui/loader/settings/api-token";
 // constants
 import { API_TOKENS_LIST } from "@/constants/fetch-keys";
+import { useInstance } from "@/hooks/store/use-instance";
 
 const apiTokenService = new APITokenService();
 
@@ -36,6 +38,8 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
   const { data: tokens } = useSWR(API_TOKENS_LIST, () => apiTokenService.list());
   // translation
   const { t } = useTranslation();
+  const { config } = useInstance();
+  const areAccessTokensDisabled = Boolean(config?.are_access_tokens_disabled);
 
   if (!tokens) {
     return <APITokenSettingsLoader title={t("account_settings.api_tokens.title")} />;
@@ -48,11 +52,14 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
         title={t("account_settings.api_tokens.title")}
         description={t("account_settings.api_tokens.description")}
         control={
-          <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
-            {t("workspace_settings.settings.api_tokens.add_token")}
-          </Button>
+          areAccessTokensDisabled ? null : (
+            <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>
+              {t("workspace_settings.settings.api_tokens.add_token")}
+            </Button>
+          )
         }
       />
+      {areAccessTokensDisabled && <InstanceTokensDisabledBanner />}
       <div className="mt-7">
         {tokens.length > 0 ? (
           <>
@@ -68,14 +75,18 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
             assetClassName="size-20"
             title={t("settings_empty_state.tokens.title")}
             description={t("settings_empty_state.tokens.description")}
-            actions={[
-              {
-                label: t("settings_empty_state.tokens.cta_primary"),
-                onClick: () => {
-                  setIsCreateTokenModalOpen(true);
-                },
-              },
-            ]}
+            actions={
+              areAccessTokensDisabled
+                ? []
+                : [
+                    {
+                      label: t("settings_empty_state.tokens.cta_primary"),
+                      onClick: () => {
+                        setIsCreateTokenModalOpen(true);
+                      },
+                    },
+                  ]
+            }
             align="start"
             rootClassName="py-20"
           />

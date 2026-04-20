@@ -61,6 +61,7 @@ export interface IInstance {
 export interface IInstanceConfig extends IInstanceConfigExtended {
   enable_signup: boolean;
   is_workspace_creation_disabled: boolean;
+  are_access_tokens_disabled: boolean;
   is_google_enabled: boolean;
   is_github_enabled: boolean;
   is_gitlab_enabled: boolean;

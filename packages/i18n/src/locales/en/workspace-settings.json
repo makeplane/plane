@@ -159,6 +159,10 @@
         "never_expires": "Never expires",
         "generate_token": "Generate token",
         "generating": "Generating",
+        "instance_disabled": {
+          "title": "Access tokens are disabled",
+          "description": "Your instance administrator has disabled access tokens. Existing tokens are inactive and cannot be used. You can still view and revoke existing tokens below."
+        },
         "delete": {
           "title": "Delete access token",
           "description": "Any application using this token will no longer have the access to Plane data. This action cannot be undone.",

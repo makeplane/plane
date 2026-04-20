@@ -159,6 +159,10 @@
         "never_expires": "Nigdy nie wygasa",
         "generate_token": "Wygeneruj token",
         "generating": "Generowanie",
+        "instance_disabled": {
+          "title": "Tokeny dostępu są wyłączone",
+          "description": "Administrator instancji wyłączył tokeny dostępu. Istniejące tokeny są nieaktywne i nie można ich używać. Nadal możesz poniżej przeglądać i cofać istniejące tokeny."
+        },
         "delete": {
           "title": "Usuń token API",
           "description": "Aplikacje używające tego tokena stracą dostęp. Ta akcja jest nieodwracalna.",

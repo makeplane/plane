@@ -19,6 +19,7 @@ from rest_framework.exceptions import AuthenticationFailed
 
 # Module imports
 from plane.db.models import APIToken
+from plane.license.utils.instance_value import are_access_tokens_disabled
 
 
 class APIKeyAuthentication(authentication.BaseAuthentication):
@@ -42,6 +43,14 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
             )
         except APIToken.DoesNotExist:
             raise AuthenticationFailed("Given API token is not valid")
+
+        if not api_token.is_service and are_access_tokens_disabled():
+            raise AuthenticationFailed(
+                {
+                    "error": "Access tokens have been disabled by the instance administrator",
+                    "code": "DISABLED_AT_INSTANCE_LEVEL",
+                }
+            )
 
         # save api token last used
         api_token.last_used = timezone.now()

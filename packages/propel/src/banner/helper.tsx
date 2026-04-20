@@ -18,7 +18,7 @@ export interface IBannerStyling {
 }
 
 export const bannerSizeStyling = {
-  container: "py-3 px-6 h-12",
+  container: "py-3 px-6 min-h-12",
   icon: "w-5 h-5",
   title: "text-13",
   action: "gap-2",
@@ -65,11 +65,14 @@ const bannerTitleColor: IBannerStyling = {
 
 // Get icon styling
 export const getBannerIconStyling = (variant: TBannerVariant): string =>
-  `flex items-center justify-center flex-shrink-0 ${bannerSizeStyling.icon} ${bannerIconColor[variant]}`;
+  `flex self-start items-center justify-center flex-shrink-0 ${bannerSizeStyling.icon} ${bannerIconColor[variant]}`;
 
 // Get title styling
 export const getBannerTitleStyling = (variant: TBannerVariant): string =>
-  `font-medium flex-1 min-w-0 ${bannerTitleColor[variant]} ${bannerSizeStyling.title}`;
+  `font-medium ${bannerTitleColor[variant]} ${bannerSizeStyling.title}`;
+
+// Get description styling
+export const getBannerDescriptionStyling = (): string => `text-tertiary ${bannerSizeStyling.title}`;
 
 // Get action container styling
 export const getBannerActionStyling = (): string => `flex items-center flex-shrink-0 ${bannerSizeStyling.action}`;

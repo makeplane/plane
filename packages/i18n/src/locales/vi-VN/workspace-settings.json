@@ -159,6 +159,10 @@
         "never_expires": "Không bao giờ hết hạn",
         "generate_token": "Tạo token",
         "generating": "Đang tạo",
+        "instance_disabled": {
+          "title": "Token truy cập đã tắt",
+          "description": "Quản trị viên bản triển khai của bạn đã tắt token truy cập. Các token hiện có không hoạt động và không thể sử dụng. Bạn vẫn có thể xem và thu hồi các token hiện có bên dưới."
+        },
         "delete": {
           "title": "Xóa token API",
           "description": "Bất kỳ ứng dụng nào sử dụng token này sẽ không thể truy cập dữ liệu Plane nữa. Hành động này không thể hoàn tác.",
