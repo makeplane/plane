@@ -17,7 +17,7 @@ jobs:
       security-events: write
 
     env:
-      CODEQL_ACTION_FILE_COVERAGE_ON_PRS: false
+      CODEQL_ACTION_FILE_COVERAGE_ON_PRS: "false"
 
     strategy:
       fail-fast: false
