@@ -49,6 +49,7 @@ export const initPromise = i18nInstance
     // Default, but ICU plugin still returns objects; useTranslation has the actual guard.
     returnObjects: false,
     react: { useSuspense: false },
+    showSupportNotice: false,
   })
   // Eagerly pre-load all namespaces for the initial language so they're cached
   // before any component renders. This prevents the re-render cascade that occurs
