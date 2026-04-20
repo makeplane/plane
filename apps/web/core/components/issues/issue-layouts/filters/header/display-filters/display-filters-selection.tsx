@@ -133,7 +133,7 @@ export const DisplayFiltersSelection = observer(function DisplayFiltersSelection
           })}
         >
           {isOrderByInPQL && (
-            <div className="absolute h-full w-[calc(100%+20px)] top-0 -left-2.5 bg-black/80 grid place-items-center text-body-xs-medium text-secondary z-10 px-2.5 text-center">
+            <div className="absolute h-full w-[calc(100%+20px)] top-0 -left-2.5 bg-layer-2/90 grid place-items-center text-body-xs-medium text-secondary z-10 px-2.5 text-center">
               Order by is overridden
               <br />
               by PQL filters
