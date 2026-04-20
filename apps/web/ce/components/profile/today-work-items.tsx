@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -16,6 +15,7 @@ import { Loader, Card } from "@plane/ui";
 // ce imports
 import { ProgressTrackingBadge } from "@/plane-web/components/issues/issue-layouts/progress-tracking-badge";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { UserService } from "@/services/user.service";
@@ -49,6 +49,7 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
   const { workspaceSlug, userId } = useParams();
   const { t } = useTranslation();
   const { workspaces } = useWorkspace();
+  const { setPeekIssue } = useIssueDetail();
 
   const [crossWorkspaces, setCrossWorkspaces] = useState(true);
   const [page, setPage] = useState(1);
@@ -177,7 +178,6 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
                     {paginatedIssues.map((issue: EnrichedIssue) => {
                       const project = issue._project;
                       const state = issue._state;
-                      const detailHref = `/${issue._workspaceSlug}/projects/${issue.project_id}/issues/${issue.id}`;
 
                       return (
                         <tr
@@ -185,15 +185,24 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
                           className="border-b border-subtle last:border-b-0 hover:bg-surface-2 transition-colors"
                         >
                           <td className="py-2.5 pl-4 pr-4">
-                            <Link
-                              href={detailHref}
-                              className="group flex items-center gap-2 hover:underline max-w-[280px] lg:max-w-[360px]"
+                            <button
+                              type="button"
+                              onClick={() =>
+                                issue.project_id &&
+                                issue.id &&
+                                setPeekIssue({
+                                  workspaceSlug: issue._workspaceSlug,
+                                  projectId: issue.project_id,
+                                  issueId: issue.id,
+                                })
+                              }
+                              className="group flex items-center gap-2 hover:underline max-w-[280px] lg:max-w-[360px] text-left"
                             >
                               <span className="flex-shrink-0 text-secondary text-12">
                                 {project?.identifier ? `${project.identifier}-${issue.sequence_id}` : issue.sequence_id}
                               </span>
                               <span className="truncate text-primary font-medium">{issue.name}</span>
-                            </Link>
+                            </button>
                           </td>
                           <td className="py-2.5 pr-4 text-secondary truncate max-w-[150px]">{issue._workspaceName}</td>
                           <td className="py-2.5 pr-4 text-secondary truncate max-w-[150px]">{project?.name ?? "—"}</td>

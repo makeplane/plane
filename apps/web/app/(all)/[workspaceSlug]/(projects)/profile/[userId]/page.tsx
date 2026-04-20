@@ -13,6 +13,7 @@ import { ContentWrapper } from "@plane/ui";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { ProfileActivity } from "@/components/profile/overview/activity";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { TodayWorkItems } from "@/plane-web/components/profile/today-work-items";
 import { ProfilePriorityDistribution } from "@/components/profile/overview/priority-distribution";
 import { ProfileStateDistribution } from "@/components/profile/overview/state-distribution";
@@ -43,6 +44,7 @@ export default function ProfileOverviewPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={t("profile.page_label")} />
+      <IssuePeekOverview />
       <ContentWrapper className="space-y-7">
         {/* <ProfileStats userProfile={userProfile} /> */}
         <TodayWorkItems />
