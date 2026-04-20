@@ -69,3 +69,11 @@ export const getSubscriptionProductStatus = (
   if (subscriptionType === EProductSubscriptionEnum.ONE) return false;
   return product?.is_active ?? false;
 };
+
+export const shouldRenderPlanDetail = (planKey: EProductSubscriptionEnum) => {
+  // Free plan is not required to be shown in the comparison
+  if (planKey === EProductSubscriptionEnum.FREE) return false;
+  // Plane one plan is not longer available
+  if (planKey === EProductSubscriptionEnum.ONE) return false;
+  return true;
+};

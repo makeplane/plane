@@ -61,7 +61,6 @@ export * from "./spreadsheet";
 export * from "./state";
 export * from "./state-extended";
 export * from "./stickies";
-export * from "./subscription";
 export * from "./swr";
 export * from "./tab-indices";
 export * from "./teamspace";

@@ -11,70 +11,59 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { observer } from "mobx-react";
-import { ArrowDown, ArrowUp } from "lucide-react";
 // plane imports
-import { Button } from "@plane/propel/button";
-import { cn } from "@plane/utils";
+import type { EProductSubscriptionEnum } from "@plane/types";
+import { cn, getBaseSubscriptionName, shouldRenderPlanDetail } from "@plane/utils";
 // constants
-import type { TPlanePlans } from "@/constants/plans";
-import { ComingSoonBadge, PLANE_PLANS, PLANS_LIST } from "@/constants/plans";
+import { PLANE_PLANS } from "@/constants/plans";
 // local imports
-import { PlanFeatureDetail } from "./feature-detail";
+import { CheckIcon } from "@plane/propel/icons";
 
-type TPlansComparisonBaseProps = {
-  planeDetails: React.ReactNode;
-  isSelfManaged: boolean;
-  isCompareAllFeaturesSectionOpen: boolean;
-  setIsCompareAllFeaturesSectionOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
+type PlansComparisonBaseProps = { planeDetails: React.ReactNode; showHeadColumn: boolean };
 
-export const shouldRenderPlanDetail = (planKey: TPlanePlans) => {
-  // Free plan is not required to be shown in the comparison
-  if (planKey === "free") return false;
-  // Plane one plan is not longer available
-  if (planKey === "one") return false;
-  return true;
-};
-
-export const PlansComparisonBase = observer(function PlansComparisonBase(props: TPlansComparisonBaseProps) {
-  const { planeDetails, isSelfManaged, isCompareAllFeaturesSectionOpen, setIsCompareAllFeaturesSectionOpen } = props;
+export const PlansComparisonBase = function PlansComparisonBase(props: PlansComparisonBaseProps) {
+  const { planeDetails, showHeadColumn } = props;
   // plan details
-  const { planDetails, planHighlights, planComparison } = PLANE_PLANS;
+  const { planDetails, planHighlights } = PLANE_PLANS;
   const numberOfPlansToRender = Object.keys(planDetails).filter((planKey) =>
-    shouldRenderPlanDetail(planKey as TPlanePlans)
+    shouldRenderPlanDetail(planKey as EProductSubscriptionEnum)
   ).length;
 
-  const getSubscriptionType = (planKey: TPlanePlans) => planDetails[planKey].id;
+  const gridColumns = showHeadColumn ? numberOfPlansToRender + 1 : numberOfPlansToRender;
 
   return (
     <div className="size-full overflow-x-auto horizontal-scrollbar scrollbar-sm">
-      <div className="max-w-full" style={{ minWidth: `${numberOfPlansToRender * 280}px` }}>
-        <div className="h-full flex flex-col gap-y-10">
+      <div className="max-w-full bg-layer-1 rounded-xl" style={{ minWidth: `${numberOfPlansToRender * 280}px` }}>
+        <div className="h-full flex flex-col">
           <div
-            className={cn("flex-shrink-0 sticky top-2 z-10 bg-layer-1 grid gap-3 text-caption-md-medium")}
+            className={cn(
+              "shrink-0 sticky z-10 bg-layer-2 grid gap-3 text-caption-md-medium rounded-xl border border-subtle"
+            )}
             style={{
-              gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))`,
+              gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))`,
             }}
           >
-            <div className="col-span-1 p-3 space-y-0.5 text-body-sm-medium" />
+            {showHeadColumn && <div className="col-span-1 p-4 text-h6-medium text-primary">Features</div>}
             {planeDetails}
           </div>
           {/* Plan Headers */}
-          <section className="flex-shrink-0">
+          <section className="shrink-0">
             {/* Plan Highlights */}
-            <div
-              className="grid gap-3 py-1 text-caption-md text-secondary even:bg-surface-2 rounded-xs"
-              style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
-            >
-              <div className="col-span-1 p-3 text-body-sm-medium">Highlights</div>
+            <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${gridColumns}, minmax(0, 1fr))` }}>
+              {showHeadColumn && <div className="col-span-1 p-4 text-h6-medium text-primary">Highlights</div>}
               {Object.entries(planHighlights).map(
                 ([planKey, highlights]) =>
-                  shouldRenderPlanDetail(planKey as TPlanePlans) && (
-                    <div key={planKey} className="col-span-1 p-3">
-                      <ul className="list-disc space-y-1 text-body-xs-regular">
+                  shouldRenderPlanDetail(planKey as EProductSubscriptionEnum) && (
+                    <div key={planKey} className="col-span-1 px-6 py-4 space-y-3">
+                      <h6 className="text-h6-medium">
+                        Everything in {getBaseSubscriptionName(planKey as EProductSubscriptionEnum)} +
+                      </h6>
+                      <ul className="list-none space-y-3 text-body-xs-regular">
                         {highlights.map((highlight, index) => (
-                          <li key={index}>{highlight}</li>
+                          <li key={index} className="flex items-start gap-3">
+                            <CheckIcon className="size-4 shrink-0" />
+                            {highlight}
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -82,67 +71,8 @@ export const PlansComparisonBase = observer(function PlansComparisonBase(props: 
               )}
             </div>
           </section>
-
-          {/* Feature Comparison */}
-          {isCompareAllFeaturesSectionOpen && (
-            <>
-              {planComparison.map((section, sectionIdx) => (
-                <section key={sectionIdx} className="flex-shrink-0">
-                  <h2 className="flex gap-2 items-start text-h5-semibold text-secondary mb-2 pl-2">
-                    {section.title} {section.comingSoon && <ComingSoonBadge />}
-                  </h2>
-                  <div className="border-t border-subtle">
-                    {section.features.map((feature, featureIdx) => (
-                      <div
-                        key={featureIdx}
-                        className="grid gap-3 text-caption-md text-secondary bg-layer-transparent even:bg-layer-1 rounded-xs"
-                        style={{ gridTemplateColumns: `repeat(${numberOfPlansToRender + 1}, minmax(0, 1fr))` }}
-                      >
-                        <div className="col-span-1 p-3 flex items-center text-body-sm-medium">
-                          <div className="w-full flex gap-2 items-start justify-between">
-                            {feature.title} {feature.comingSoon && <ComingSoonBadge />}
-                          </div>
-                        </div>
-                        {PLANS_LIST.map(
-                          (planKey) =>
-                            shouldRenderPlanDetail(planKey) && (
-                              <div
-                                key={planKey}
-                                className="col-span-1 p-3 flex items-center justify-center text-center text-body-xs-regular"
-                              >
-                                <PlanFeatureDetail
-                                  subscriptionType={getSubscriptionType(planKey)}
-                                  data={
-                                    isSelfManaged
-                                      ? (feature["self-hosted"]?.[planKey] ?? feature.cloud[planKey])
-                                      : feature.cloud[planKey]
-                                  }
-                                />
-                              </div>
-                            )
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </>
-          )}
-        </div>
-
-        {/* Toggle Button */}
-        <div className="flex items-center justify-center gap-1 my-4 pb-2">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setIsCompareAllFeaturesSectionOpen(!isCompareAllFeaturesSectionOpen);
-            }}
-            appendIcon={isCompareAllFeaturesSectionOpen ? <ArrowUp /> : <ArrowDown />}
-          >
-            {isCompareAllFeaturesSectionOpen ? "Collapse comparison" : "Compare all features"}
-          </Button>
         </div>
       </div>
     </div>
   );
-});
+};

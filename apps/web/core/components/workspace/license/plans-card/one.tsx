@@ -11,35 +11,23 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { observer } from "mobx-react";
 // plane imports
-import { NewTabIcon } from "@plane/propel/icons";
-import { getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";
 // plane web components
-import { PlanCard, SelfManagedLicenseActions } from "@/components/workspace/license";
+import { PlanCard } from "@/components/workspace/license";
+import { BillingButtons } from "@/components/workspace/settings/billing/billing-buttons";
 
-export const OnePlanCard = observer(function OnePlanCard() {
+type OnePlanCardProps = {
+  workspaceSlug: string;
+};
+
+export const OnePlanCard = function OnePlanCard(props: OnePlanCardProps) {
+  const { workspaceSlug } = props;
+
   return (
     <PlanCard
       planVariant={EProductSubscriptionEnum.ONE}
-      planDescription={
-        <>
-          <div>Active cycles, Time Tracking, Public View + Pages, ~50 Members</div>
-          <SelfManagedLicenseActions />
-        </>
-      }
-      control={
-        <a
-          href="https://prime.plane.so/"
-          className={getButtonStyling("primary", "lg")}
-          target="_blank"
-          rel="noreferrer"
-        >
-          Manage your license
-          <NewTabIcon className="shrink-0 size-3" strokeWidth={2} />
-        </a>
-      }
+      control={<BillingButtons workspaceSlug={workspaceSlug} planVariant={EProductSubscriptionEnum.ONE} />}
     />
   );
-});
+};

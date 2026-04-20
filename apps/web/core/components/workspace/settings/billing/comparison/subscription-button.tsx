@@ -55,14 +55,14 @@ export const SubscriptionButton = observer(function SubscriptionButton(props: TS
   if (!subscriptionDetail || isProductsAPILoading) {
     return (
       <Loader className="w-full h-full">
-        <Loader.Item height="30px" width="100%" />
+        <Loader.Item height="32px" width="100%" />
       </Loader>
     );
   }
 
   if (showCurrentSubscriptionButton) {
     return (
-      <Button variant="secondary" size="lg" className={COMMON_BUTTON_STYLE} disabled>
+      <Button variant="secondary" size="xl" className={COMMON_BUTTON_STYLE} disabled>
         Current plan
       </Button>
     );
@@ -85,7 +85,7 @@ export const SubscriptionButton = observer(function SubscriptionButton(props: TS
     return (
       <Button
         variant="primary"
-        size="lg"
+        size="xl"
         onClick={() => handleSubscriptionUpgrade(subscriptionType)}
         className={COMMON_BUTTON_STYLE}
         disabled={!!upgradeLoader}

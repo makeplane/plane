@@ -12,81 +12,40 @@
  */
 
 // plane imports
-import { observer } from "mobx-react";
+import { BILLING_FREQUENCIES } from "@plane/constants";
+import { ExternalLinkIcon } from "@plane/propel/icons";
+import { Tabs } from "@plane/propel/tabs";
 import type { TBillingFrequency } from "@plane/types";
-import { EProductSubscriptionEnum } from "@plane/types";
-import { Loader } from "@plane/ui";
-import type { TSubscriptionPriceDetail } from "@plane/utils";
-import { calculateYearlyDiscount, cn } from "@plane/utils";
-// plane web imports
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
-type TPlanFrequencyToggleProps = {
-  subscriptionType: EProductSubscriptionEnum;
-  isProductsAPILoading: boolean;
+type PlanFrequencyToggleProps = {
   selectedFrequency: TBillingFrequency;
-  subscriptionPriceDetails: TSubscriptionPriceDetail;
   setSelectedFrequency: (frequency: TBillingFrequency) => void;
 };
 
-export const PlanFrequencyToggle = observer(function PlanFrequencyToggle(props: TPlanFrequencyToggleProps) {
-  const { isProductsAPILoading, selectedFrequency, subscriptionPriceDetails, setSelectedFrequency } = props;
-  // store hooks
-  const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
-  // derived values
-  const currentSubscription = subscriptionDetail?.product;
-  const showPaymentButton = subscriptionDetail?.show_payment_button;
-  const { monthlyPriceDetails, yearlyPriceDetails } = subscriptionPriceDetails;
-  const yearlyDiscount =
-    monthlyPriceDetails.price && yearlyPriceDetails.price
-      ? calculateYearlyDiscount(monthlyPriceDetails.price, yearlyPriceDetails.price)
-      : 0;
-
-  if (!showPaymentButton && currentSubscription !== EProductSubscriptionEnum.ONE) return null;
-
-  if (!subscriptionDetail || isProductsAPILoading) {
-    return (
-      <Loader className="w-full h-full">
-        <Loader.Item height="32px" width="100%" />
-      </Loader>
-    );
-  }
+export const PlanFrequencyToggle = function PlanFrequencyToggle(props: PlanFrequencyToggleProps) {
+  const { selectedFrequency, setSelectedFrequency } = props;
 
   return (
-    <div className="flex w-full items-center cursor-pointer py-1">
-      <div className="flex space-x-1 rounded-md bg-layer-3 p-0.5 w-full">
-        <button
-          type="button"
-          key="month"
-          onClick={() => setSelectedFrequency("month")}
-          className={cn(
-            "w-full rounded-sm px-1 py-0.5 text-caption-sm-medium leading-5 text-center",
-            selectedFrequency === "month"
-              ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
-              : "text-tertiary hover:text-secondary"
-          )}
-        >
-          Monthly
-        </button>
-        <button
-          type="button"
-          key="year"
-          onClick={() => setSelectedFrequency("year")}
-          className={cn(
-            "w-full rounded-sm px-1 py-0.5 text-caption-sm-medium leading-5 text-center",
-            selectedFrequency === "year"
-              ? "bg-layer-2 text-primary shadow-raised-100 border border-subtle-1"
-              : "text-tertiary hover:text-secondary"
-          )}
-        >
-          Yearly
-          {yearlyDiscount > 0 && (
-            <span className="bg-accent-primary text-on-color rounded-full px-1 py-0.5 ml-1.5 text-caption-xs-regular">
-              -{yearlyDiscount}%
-            </span>
-          )}
-        </button>
-      </div>
+    <div className="flex flex-wrap sm:flex-nowrap justify-between gap-2 text-body-xs-medium w-full sm:w-auto">
+      <a
+        href="https://plane.so/pricing#features"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-1 text-secondary text-nowrap"
+      >
+        View detailed comparision
+        <ExternalLinkIcon className="size-4 shrink-0" />
+      </a>
+
+      <Tabs defaultValue={selectedFrequency} onValueChange={(value) => setSelectedFrequency(value)}>
+        <Tabs.List className="flex items-center gap-1 text-primary rounded-lg p-0.5 w-fit bg-layer-3 h-7">
+          {BILLING_FREQUENCIES.map((freq) => (
+            <Tabs.Trigger key={freq.value} value={freq.value} size="sm">
+              {freq.name}
+            </Tabs.Trigger>
+          ))}
+        </Tabs.List>
+      </Tabs>
     </div>
   );
-});
+};

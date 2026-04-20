@@ -86,11 +86,6 @@ export const BusinessTrialBanner: FC<Props> = observer(({ variant = "default" })
           </div>
           <p className="text-caption-md-regular text-tertiary">{t("home.business_trial_banner.description")}</p>
         </div>
-        {isWorkspaceAdmin && (
-          <Button variant="primary" onClick={handleStartSubscription} size="lg" className="shrink-0">
-            {t("home.business_trial_banner.start_subscription")}
-          </Button>
-        )}
       </div>
     );
   }

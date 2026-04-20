@@ -25,7 +25,10 @@ import { BillingRoot } from "@/components/workspace/settings/billing";
 // local imports
 import { BillingWorkspaceSettingsHeader } from "./header";
 
-function BillingSettingsPage() {
+import type { Route } from "./+types/page";
+
+function BillingSettingsPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
@@ -40,7 +43,7 @@ function BillingSettingsPage() {
   return (
     <SettingsContentWrapper header={<BillingWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
-      <BillingRoot />
+      <BillingRoot workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
 }
