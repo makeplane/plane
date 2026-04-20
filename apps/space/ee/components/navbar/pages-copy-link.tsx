@@ -17,6 +17,7 @@ import { IconButton } from "@plane/propel/icon-button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { copyUrlToClipboard } from "@plane/utils";
+import { SPACE_BASE_PATH } from "@plane/constants";
 
 export type PagesCopyLinkProps = { anchor: string };
 
@@ -25,7 +26,7 @@ export const PagesCopyLink = function PagesCopyLink(props: PagesCopyLinkProps) {
 
   const handleCopyLink = async () => {
     try {
-      await copyUrlToClipboard(`/spaces/pages/${anchor}/`);
+      await copyUrlToClipboard(`${SPACE_BASE_PATH}/pages/${anchor}/`);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
@@ -42,7 +43,14 @@ export const PagesCopyLink = function PagesCopyLink(props: PagesCopyLinkProps) {
 
   return (
     <Tooltip tooltipContent="Copy link">
-      <IconButton variant="secondary" size="lg" onClick={handleCopyLink} icon={CopyLinkIcon} />
+      <IconButton
+        variant="secondary"
+        size="lg"
+        onClick={() => {
+          void handleCopyLink();
+        }}
+        icon={CopyLinkIcon}
+      />
     </Tooltip>
   );
 };
