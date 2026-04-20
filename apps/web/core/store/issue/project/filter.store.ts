@@ -135,6 +135,42 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
   );
 
   fetchFilters = async (workspaceSlug: string, projectId: string) => {
+    const cacheKey = `plane_display_filters_${projectId}`;
+    // Try to load cached display filters first for instant render
+    const cachedFilters = typeof window !== "undefined" ? localStorage.getItem(cacheKey) : null;
+
+    if (cachedFilters) {
+      try {
+        const { displayFilters: cachedDisplayFilters, displayProperties: cachedDisplayProperties } =
+          JSON.parse(cachedFilters);
+        const kanbanFilters = {
+          group_by: [],
+          sub_group_by: [],
+        };
+        const currentUserId = this.rootIssueStore.currentUserId;
+        if (currentUserId) {
+          const _kanbanFilters = this.handleIssuesLocalFilters.get(
+            EIssuesStoreType.PROJECT,
+            workspaceSlug,
+            projectId,
+            currentUserId
+          );
+          kanbanFilters.group_by = _kanbanFilters?.kanban_filters?.group_by || [];
+          kanbanFilters.sub_group_by = _kanbanFilters?.kanban_filters?.sub_group_by || [];
+        }
+
+        // Populate store with cached values synchronously
+        runInAction(() => {
+          set(this.filters, [projectId, "displayFilters"], cachedDisplayFilters);
+          set(this.filters, [projectId, "displayProperties"], cachedDisplayProperties);
+          set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
+        });
+      } catch {
+        // If cache is corrupted, ignore and fetch from server
+      }
+    }
+
+    // Fetch from server and update with authoritative values
     const _filters = await this.projectService.getProjectUserProperties(workspaceSlug, projectId);
 
     const richFilters = _filters?.rich_filters;
@@ -164,6 +200,11 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
       set(this.filters, [projectId, "displayProperties"], displayProperties);
       set(this.filters, [projectId, "kanbanFilters"], kanbanFilters);
     });
+
+    // Cache display filters (not richFilters to avoid stale filter UI)
+    if (typeof window !== "undefined") {
+      localStorage.setItem(cacheKey, JSON.stringify({ displayFilters, displayProperties }));
+    }
   };
 
   /**
@@ -201,6 +242,7 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
         displayProperties: this.filters[projectId].displayProperties as IIssueDisplayProperties,
         kanbanFilters: this.filters[projectId].kanbanFilters as TIssueKanbanFilters,
       };
+      const cacheKey = `plane_display_filters_${projectId}`;
 
       switch (type) {
         case EIssueFilterType.DISPLAY_FILTERS: {
@@ -248,6 +290,14 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
             display_filters: _filters.displayFilters,
           });
 
+          // Cache updated display filters
+          if (typeof window !== "undefined") {
+            localStorage.setItem(
+              cacheKey,
+              JSON.stringify({ displayFilters: _filters.displayFilters, displayProperties: _filters.displayProperties })
+            );
+          }
+
           break;
         }
         case EIssueFilterType.DISPLAY_PROPERTIES: {
@@ -267,6 +317,15 @@ export class ProjectIssuesFilter extends IssueFilterHelperStore implements IProj
           await this.projectService.updateProjectUserProperties(workspaceSlug, projectId, {
             display_properties: _filters.displayProperties,
           });
+
+          // Cache updated display properties
+          if (typeof window !== "undefined") {
+            localStorage.setItem(
+              cacheKey,
+              JSON.stringify({ displayFilters: _filters.displayFilters, displayProperties: _filters.displayProperties })
+            );
+          }
+
           break;
         }
 

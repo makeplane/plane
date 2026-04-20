@@ -10,25 +10,15 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { GANTT_TIMELINE_TYPE } from "@plane/types";
+import { EIssuesStoreType, GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { ProjectAccessRestriction } from "@/components/auth-screens/project/project-access-restriction";
-import {
-  PROJECT_DETAILS,
-  PROJECT_ME_INFORMATION,
-  PROJECT_LABELS,
-  PROJECT_MEMBERS,
-  PROJECT_MEMBER_PREFERENCES,
-  PROJECT_STATES,
-  PROJECT_ESTIMATES,
-  PROJECT_ALL_CYCLES,
-  PROJECT_MODULES,
-  PROJECT_VIEWS,
-  PROJECT_INTAKE_STATE,
-} from "@/constants/fetch-keys";
+import { ProjectLoadingSkeleton } from "@/components/ui/loader/project-loading-skeleton";
+import { PROJECT_DETAILS, PROJECT_MODULES_SLIM } from "@/constants/fetch-keys";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useCycle } from "@/hooks/store/use-cycle";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
@@ -64,6 +54,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const { data: currentUserData } = useUser();
   const { fetchProjectLabels } = useLabel();
   const { getProjectEstimates } = useProjectEstimates();
+  const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   // derived values
   const hasPermissionToCurrentProject = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
@@ -79,62 +70,47 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Hydrate project from cache on mount for instant render
+  useEffect(() => {
+    if (projectId) {
+      // Try to load from cache first while SWR fetches from server
+      const { project } = useProject();
+      project.hydrateProjectFromCache(projectId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
+
   // fetching project details
   const { isLoading: isProjectDetailsLoading, error: projectDetailsError } = useSWR(
     PROJECT_DETAILS(workspaceSlug, projectId),
-    () => fetchProjectDetails(workspaceSlug, projectId)
-  );
-  // fetching user project member information
-  useSWR(PROJECT_ME_INFORMATION(workspaceSlug, projectId), () => fetchUserProjectInfo(workspaceSlug, projectId));
-  // fetching project member preferences
-  useSWR(
-    currentUserData?.id ? PROJECT_MEMBER_PREFERENCES(projectId, currentProjectRole) : null,
-    currentUserData?.id ? () => fetchProjectUserProperties(workspaceSlug, projectId) : null,
+    () => fetchProjectDetails(workspaceSlug, projectId),
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
-  // fetching project labels
-  useSWR(PROJECT_LABELS(projectId, currentProjectRole), () => fetchProjectLabels(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
-  // fetching project members
-  useSWR(PROJECT_MEMBERS(projectId, currentProjectRole), () => fetchProjectMembers(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
-  // fetching project states
-  useSWR(PROJECT_STATES(projectId, currentProjectRole), () => fetchProjectStates(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
-  // fetching project intake state
-  useSWR(PROJECT_INTAKE_STATE(projectId, currentProjectRole), () => fetchProjectIntakeState(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
-  // fetching project estimates
-  useSWR(PROJECT_ESTIMATES(projectId, currentProjectRole), () => getProjectEstimates(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
-  // fetching project cycles
-  useSWR(PROJECT_ALL_CYCLES(projectId, currentProjectRole), () => fetchAllCycles(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
-  // fetching project modules
-  useSWR(
-    PROJECT_MODULES(projectId, currentProjectRole),
-    async () => {
-      await Promise.all([fetchModulesSlim(workspaceSlug, projectId), fetchModules(workspaceSlug, projectId)]);
-    },
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // fetching project views
-  useSWR(PROJECT_VIEWS(projectId, currentProjectRole), () => fetchViews(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+  // Lazy-load secondary SWRs after PROJECT_DETAILS succeeds using requestIdleCallback
+  useEffect(() => {
+    const isProjectReady = !isProjectDetailsLoading && !projectDetailsError;
+    if (!isProjectReady) return;
+
+    const idleCallbackId = requestIdleCallback(() => {
+      // Trigger all secondary SWRs in background
+      fetchUserProjectInfo(workspaceSlug, projectId);
+      if (currentUserData?.id) {
+        fetchProjectUserProperties(workspaceSlug, projectId);
+        issuesFilter?.fetchFilters(workspaceSlug, projectId);
+      }
+      fetchProjectLabels(workspaceSlug, projectId);
+      fetchProjectMembers(workspaceSlug, projectId);
+      fetchProjectStates(workspaceSlug, projectId);
+      fetchProjectIntakeState(workspaceSlug, projectId);
+      getProjectEstimates(workspaceSlug, projectId);
+      fetchAllCycles(workspaceSlug, projectId);
+      fetchModules(workspaceSlug, projectId);
+      fetchViews(workspaceSlug, projectId);
+    });
+
+    return () => cancelIdleCallback(idleCallbackId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isProjectDetailsLoading, projectDetailsError, workspaceSlug, projectId, currentUserData?.id]);
 
   // handle join project
   const handleJoinProject = () => {
@@ -142,9 +118,15 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     joinProject(workspaceSlug, projectId).finally(() => setIsJoiningProject(false));
   };
 
+  // fetching project modules (slim version - lightweight, loads in critical path)
+  useSWR(PROJECT_MODULES_SLIM(projectId, currentProjectRole), () => fetchModulesSlim(workspaceSlug, projectId), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
+
   const isProjectLoading = (isParentLoading || isProjectDetailsLoading) && !projectDetailsError;
 
-  if (isProjectLoading) return null;
+  if (isProjectLoading) return <ProjectLoadingSkeleton />;
 
   if (!isProjectLoading && hasPermissionToCurrentProject === false) {
     return (

@@ -30,7 +30,7 @@ export const WorkspaceHomeView = observer(function WorkspaceHomeView() {
     workspaceSlug ? `HOME_DASHBOARD_WIDGETS_${workspaceSlug}` : null,
     workspaceSlug ? () => fetchWidgets(workspaceSlug?.toString()) : null,
     {
-      revalidateIfStale: true,
+      revalidateIfStale: false,
       revalidateOnFocus: false,
       revalidateOnReconnect: true,
     }

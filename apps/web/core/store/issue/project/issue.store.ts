@@ -82,8 +82,8 @@ export class ProjectIssues extends BaseIssuesStore implements IProjectIssues {
    * @param workspaceSlug
    * @param projectId
    */
-  fetchParentStats = async (workspaceSlug: string, projectId?: string) => {
-    projectId && this.rootIssueStore.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId);
+  fetchParentStats = async (_workspaceSlug: string, _projectId?: string) => {
+    // Project details are kept current by ProjectAuthWrapper's SWR, no need to re-fetch after mutations
   };
 
   /** */

@@ -4,14 +4,23 @@
  * See the LICENSE file for details.
  */
 
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { preload } from "swr";
 // plane types
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import type { TActivityEntityData, TProjectEntityData } from "@plane/types";
 import { calculateTimeAgo } from "@plane/utils";
 // components
 import { ListItem } from "@/components/core/list";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+// constants
+import { PROJECT_DETAILS, PROJECT_ME_INFORMATION, PROJECT_MODULES_SLIM } from "@/constants/fetch-keys";
+// hooks
+import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
+import { useUserPermissions } from "@/hooks/store/user";
 // helpers
 
 type BlockProps = {
@@ -23,10 +32,41 @@ export function RecentProject(props: BlockProps) {
   const { activity, ref, workspaceSlug } = props;
   // router
   const router = useRouter();
+  // hooks
+  const { fetchProjectDetails } = useProject();
+  const { fetchUserProjectInfo } = useUserPermissions();
+  const { fetchModulesSlim } = useModule();
+  const { allowPermissions } = useUserPermissions();
   // derived values
   const projectDetails: TProjectEntityData = activity.entity_data as TProjectEntityData;
 
   if (!projectDetails) return <></>;
+
+  const handlePrefetchProject = useCallback(() => {
+    const projectRole = allowPermissions(
+      [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+      EUserPermissionsLevel.PROJECT,
+      workspaceSlug,
+      projectDetails?.id
+    );
+
+    preload(PROJECT_DETAILS(workspaceSlug, projectDetails?.id), () =>
+      fetchProjectDetails(workspaceSlug, projectDetails?.id)
+    );
+    preload(PROJECT_ME_INFORMATION(workspaceSlug, projectDetails?.id), () =>
+      fetchUserProjectInfo(workspaceSlug, projectDetails?.id)
+    );
+    preload(PROJECT_MODULES_SLIM(projectDetails?.id, projectRole), () =>
+      fetchModulesSlim(workspaceSlug, projectDetails?.id)
+    );
+  }, [
+    projectDetails?.id,
+    workspaceSlug,
+    fetchProjectDetails,
+    fetchUserProjectInfo,
+    fetchModulesSlim,
+    allowPermissions,
+  ]);
 
   const projectLink = `/${workspaceSlug}/projects/${projectDetails?.id}/issues`;
 
@@ -80,6 +120,7 @@ export function RecentProject(props: BlockProps) {
         e.stopPropagation();
         router.push(projectLink);
       }}
+      onMouseEnter={handlePrefetchProject}
     />
   );
 }

@@ -5,8 +5,6 @@
  */
 
 import { WEBSITE_URL } from "@plane/constants";
-// assets
-import { PlaneLogo } from "@plane/propel/icons";
 
 type TPoweredBy = {
   disabled?: boolean;
@@ -21,14 +19,12 @@ export function PoweredBy(props: TPoweredBy) {
   return (
     <a
       href={WEBSITE_URL}
-      className="fixed right-5 bottom-2.5 !z-[999999] flex items-center gap-1 rounded-sm border border-subtle bg-layer-3 px-2 py-1 shadow-raised-100"
+      className="fixed right-3 bottom-2 !z-[999999] flex items-center gap-0 px-1 py-0 opacity-20 transition-opacity hover:opacity-40"
       target="_blank"
       rel="noreferrer noopener"
+      title="Powered by Plane"
     >
-      <PlaneLogo className="h-3 w-auto text-primary" />
-      <div className="text-11">
-        Powered by <span className="font-semibold">Plane Publish</span>
-      </div>
+      <div className="text-8 font-light whitespace-nowrap">powered by plane</div>
     </a>
   );
 }

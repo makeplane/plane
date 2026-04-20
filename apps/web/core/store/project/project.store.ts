@@ -15,6 +15,7 @@ import { orderProjects, shouldFilterProject } from "@plane/utils";
 import type { TProject, TPartialProject } from "@/plane-web/types/projects";
 import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
+import { projectCacheService } from "@/services/project-cache.service";
 // store
 import type { CoreRootStore } from "../root.store";
 
@@ -367,10 +368,21 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         update(this.projectMap, [projectId], (p) => ({ ...p, ...response }));
       });
+      // Cache project details for offline/fast loading
+      projectCacheService.setProject(projectId, response);
       return response;
     } catch (error) {
       console.log("Error while fetching project details", error);
       throw error;
+    }
+  };
+
+  hydrateProjectFromCache = (projectId: string) => {
+    const cached = projectCacheService.getProject(projectId);
+    if (cached) {
+      runInAction(() => {
+        update(this.projectMap, [projectId], (p) => ({ ...p, ...cached }));
+      });
     }
   };
 
@@ -607,6 +619,7 @@ export class ProjectStore implements IProjectStore {
           set(this.projectMap, [projectId, "archived_at"], response.archived_at);
           this.rootStore.favorite.removeFavoriteFromStore(projectId);
         });
+        return response;
       })
       .catch((error) => {
         console.log("Failed to archive project from project store");
@@ -623,10 +636,11 @@ export class ProjectStore implements IProjectStore {
   restoreProject = async (workspaceSlug: string, projectId: string) => {
     await this.projectArchiveService
       .restoreProject(workspaceSlug, projectId)
-      .then(() => {
+      .then((response) => {
         runInAction(() => {
           set(this.projectMap, [projectId, "archived_at"], null);
         });
+        return response;
       })
       .catch((error) => {
         console.log("Failed to restore project from project store");

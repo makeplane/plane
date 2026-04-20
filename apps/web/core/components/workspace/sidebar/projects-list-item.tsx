@@ -14,6 +14,7 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
+import { preload } from "swr";
 import { Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
@@ -31,9 +32,12 @@ import { DEFAULT_TAB_KEY, getTabUrl } from "@/components/navigation/tab-navigati
 import { useTabPreferences } from "@/components/navigation/use-tab-preferences";
 import { LeaveProjectModal } from "@/components/project/leave-project-modal";
 import { PublishProjectModal } from "@/components/project/publish-project/modal";
+// constants
+import { PROJECT_DETAILS, PROJECT_ME_INFORMATION, PROJECT_MODULES_SLIM } from "@/constants/fetch-keys";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
@@ -72,7 +76,9 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   } = props;
   // store hooks
   const { t } = useTranslation();
-  const { getPartialProjectById } = useProject();
+  const { getPartialProjectById, fetchProjectDetails } = useProject();
+  const { fetchModulesSlim } = useModule();
+  const { fetchUserProjectInfo } = useUserPermissions();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
   const { getIsProjectListOpen, toggleProjectListOpen } = useCommandPalette();
@@ -177,13 +183,13 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         element,
         canDrop: ({ source }) =>
           !disableDrop && source?.data?.id !== projectId && source?.data?.dragInstanceId === "PROJECTS",
-        getData: ({ input, element }) => {
+        getData: ({ input, element: dropElement }) => {
           const data = { id: projectId };
 
           // attach instruction for last in list
           return attachInstruction(data, {
             input,
-            element,
+            element: dropElement,
             currentLevel: 0,
             indentPerLevel: 0,
             mode: isLastChild ? "last-in-group" : "standard",
@@ -222,6 +228,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
         },
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, isLastChild, projectListType, handleOnProjectDrop]);
 
   useEffect(() => {
@@ -274,6 +281,30 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
     }
   };
 
+  const handlePrefetchProject = useCallback(() => {
+    if (projectPreferences.navigationMode !== "ACCORDION") {
+      const ws = workspaceSlug?.toString();
+      const role = allowPermissions(
+        [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+        EUserPermissionsLevel.PROJECT,
+        ws,
+        projectId
+      );
+
+      preload(PROJECT_DETAILS(ws, projectId), () => fetchProjectDetails(ws, projectId));
+      preload(PROJECT_ME_INFORMATION(ws, projectId), () => fetchUserProjectInfo(ws, projectId));
+      preload(PROJECT_MODULES_SLIM(projectId, role), () => fetchModulesSlim(ws, projectId));
+    }
+  }, [
+    projectId,
+    workspaceSlug,
+    fetchProjectDetails,
+    fetchUserProjectInfo,
+    fetchModulesSlim,
+    projectPreferences.navigationMode,
+    allowPermissions,
+  ]);
+
   const shouldHighlightProject = URLProjectId === project?.id && projectPreferences.navigationMode !== "ACCORDION";
 
   return (
@@ -298,6 +329,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
               }
             )}
             id={`${project?.id}`}
+            onMouseEnter={handlePrefetchProject}
           >
             {!disableDrag && (
               <Tooltip
