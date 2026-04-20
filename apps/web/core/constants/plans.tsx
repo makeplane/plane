@@ -88,7 +88,6 @@ export const PLANE_PLANS: PlanePlans = {
       "Dashboards",
       "Epics and Initiatives",
       "Teamspaces",
-      "1:5 guests",
     ],
     [EProductSubscriptionEnum.BUSINESS]: [
       "Project Templates",
