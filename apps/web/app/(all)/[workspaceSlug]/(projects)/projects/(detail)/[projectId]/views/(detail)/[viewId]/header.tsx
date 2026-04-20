@@ -35,6 +35,7 @@ import { DisplayFiltersSelection, FiltersDropdown, LayoutSelection } from "@/com
 import { ViewQuickActions } from "@/components/views/quick-actions";
 import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-toggle";
 // hooks
+import { usePlatformOS } from "@plane/hooks";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
@@ -60,6 +61,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
 
   const { currentProjectDetails, loader } = useProject();
   const { projectViewIds, getViewById } = useProjectView();
+  const { isMobile } = usePlatformOS();
 
   const activeLayout = issueFilters?.displayFilters?.layout;
 
@@ -106,6 +108,7 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
   );
 
   const viewDetails = viewId ? getViewById(viewId.toString()) : null;
+  const workItemsCount = viewDetails?.total_work_items;
 
   const canUserCreateIssue = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -156,6 +159,21 @@ export const ProjectViewIssuesHeader = observer(function ProjectViewIssuesHeader
                   <Breadcrumbs.Icon>
                     <SwitcherIcon logo_props={viewDetails.logo_props} LabelIcon={ViewsIcon} size={16} />
                   </Breadcrumbs.Icon>
+                }
+                suffix={
+                  workItemsCount != null && workItemsCount > 0 ? (
+                    <Tooltip
+                      isMobile={isMobile}
+                      tooltipContent={`There are ${workItemsCount} ${
+                        workItemsCount > 1 ? "work items" : "work item"
+                      } in this view`}
+                      position="bottom"
+                    >
+                      <span className="flex shrink-0 cursor-default items-center justify-center rounded-xl bg-accent-primary/20 px-2 text-center text-11 font-semibold text-accent-primary">
+                        {workItemsCount}
+                      </span>
+                    </Tooltip>
+                  ) : null
                 }
                 isLast
               />

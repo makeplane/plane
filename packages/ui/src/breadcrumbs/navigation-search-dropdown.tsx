@@ -22,6 +22,7 @@ import { Breadcrumbs } from "./breadcrumbs";
 type TBreadcrumbNavigationSearchDropdownProps = {
   icon?: React.ReactNode;
   title?: string;
+  suffix?: React.ReactNode;
   selectedItem: string;
   navigationItems: ICustomSearchSelectOption[];
   onChange?: (value: string) => void;
@@ -36,6 +37,7 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
   const {
     icon,
     title,
+    suffix,
     selectedItem,
     navigationItems,
     onChange,
@@ -91,6 +93,15 @@ export function BreadcrumbNavigationSearchDropdown(props: TBreadcrumbNavigationS
               </div>
             </button>
           </Tooltip>
+          {suffix && (
+            <span
+              onClick={(e) => e.stopPropagation()}
+              onMouseDown={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
+              {suffix}
+            </span>
+          )}
           <Breadcrumbs.Separator
             className={cn("rounded-r-sm", {
               "bg-layer-1": isDropdownOpen && !isLast,

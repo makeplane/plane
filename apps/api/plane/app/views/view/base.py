@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 import copy
+from types import SimpleNamespace
 
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -56,6 +57,7 @@ from plane.db.models import (
 from plane.ee.models import MilestoneIssue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.utils.exception_logger import log_exception
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.bgtasks.recent_visited_task import recent_visited_task
@@ -585,6 +587,10 @@ class IssueViewViewSet(BaseViewSet):
             )
 
         serializer = IssueViewSerializer(issue_view)
+        data = serializer.data
+        data["total_work_items"] = self._get_view_workitem_count(
+            request, slug, project_id, issue_view
+        )
         recent_visited_task.delay(
             slug=slug,
             project_id=project_id,
@@ -592,7 +598,70 @@ class IssueViewViewSet(BaseViewSet):
             entity_identifier=pk,
             user_id=request.user.id,
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
+
+    def _get_view_workitem_count(self, request, slug, project_id, issue_view):
+        """Count issues matching the view's saved filters.
+
+        Returns the count or None if an error occurs (so the frontend can
+        distinguish between "0 matching issues" and "count unavailable").
+        """
+        try:
+            base_qs = Issue.issue_objects.filter(
+                project_id=project_id,
+                workspace__slug=slug,
+                archived_at__isnull=True,
+                is_draft=False,
+            )
+
+            # Guest users without full feature access only see their own issues
+            if (
+                ProjectMember.objects.filter(
+                    workspace__slug=slug,
+                    project_id=project_id,
+                    member=request.user,
+                    role=5,
+                    is_active=True,
+                ).exists()
+                and not Project.objects.filter(
+                    id=project_id, guest_view_all_features=True
+                ).exists()
+                and not check_if_current_user_is_teamspace_member(
+                    request.user.id, slug, project_id
+                )
+            ):
+                base_qs = base_qs.filter(created_by=request.user)
+
+            # Mimics the DRF view interface expected by ComplexFilterBackend/PQLFilterBackend.
+            # Required attrs: filterset_class, kwargs["slug"], complex_filter_max_depth.
+            filter_ctx = SimpleNamespace(
+                filterset_class=IssueFilterSet,
+                kwargs={"slug": slug},
+                complex_filter_max_depth=5,
+            )
+
+            last_used_filter = issue_view.last_used_filter
+
+            if last_used_filter == "pql_filters":
+                pql_filters = issue_view.pql_filters or {}
+                pql_stripped = pql_filters.get("stripped", "")
+                if pql_stripped:
+                    backend = PQLFilterBackend()
+                    base_qs = backend.filter_queryset(
+                        request, base_qs, filter_ctx, pql=pql_stripped
+                    )
+            else:  # rich_filters and ai_filters both use the rich_filters field
+                rich_filters = issue_view.rich_filters or {}
+                if rich_filters:
+                    backend = ComplexFilterBackend()
+                    base_qs = backend.filter_queryset(
+                        request, base_qs, filter_ctx, filter_data=rich_filters
+                    )
+
+            return base_qs.count()
+        except Exception as e:
+            log_exception(e)
+            return None
 
     @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
     def partial_update(self, request, slug, project_id, pk):

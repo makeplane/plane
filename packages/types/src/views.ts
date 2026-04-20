@@ -49,6 +49,7 @@ export interface IProjectView {
   is_locked: boolean;
   anchor?: string;
   owned_by: string;
+  total_work_items?: number;
 }
 
 export interface IPublishedProjectView extends Omit<IProjectView, "rich_filters"> {
