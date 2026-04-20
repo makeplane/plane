@@ -200,11 +200,13 @@ def issue_export_task(
             # Default: Use objects manager to export all types of issues (workspace export)
             base_queryset = Issue.objects.all()
 
+        if project_ids:
+            base_queryset = base_queryset.filter(project_id__in=(project_ids))
+
         # Apply common filters
         workspace_issues = (
             base_queryset.filter(
                 workspace__id=workspace_id,
-                project_id__in=project_ids,
                 project__project_projectmember__member=exporter_instance.initiated_by_id,
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,

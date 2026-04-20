@@ -57,12 +57,6 @@ export const useExportColumns = () => {
       content: "Exported On",
       tdRender: (rowData: RowData) => <span>{renderFormattedDate(rowData.created_at)}</span>,
     },
-
-    {
-      key: "Exported projects",
-      content: "Exported projects",
-      tdRender: (rowData: RowData) => <div className="text-13">{rowData.project.length} project(s)</div>,
-    },
     {
       key: "Format",
       content: "Format",

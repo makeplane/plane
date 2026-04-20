@@ -56,7 +56,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
 
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
-  const { items } = useViewMenuItems({
+  const { items, modals } = useViewMenuItems({
     isOwner,
     isAdmin,
     handleDelete: () => setDeleteViewModal(true),
@@ -71,6 +71,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
     <>
       <CreateUpdateWorkspaceViewModal data={view} isOpen={updateViewModal} onClose={() => setUpdateViewModal(false)} />
       <DeleteGlobalViewModal data={view} isOpen={deleteViewModal} onClose={() => setDeleteViewModal(false)} />
+      {modals}
       <CustomMenu
         ellipsis
         placement="bottom-end"

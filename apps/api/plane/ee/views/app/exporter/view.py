@@ -16,7 +16,7 @@ from rest_framework import status
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.app.permissions import ROLE, allow_permission
-from plane.db.models import ExporterHistory, IssueView
+from plane.db.models import ExporterHistory, IssueView, Workspace
 from plane.bgtasks.export_task import issue_export_task
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -94,6 +94,7 @@ class WorkspaceViewExportEndpoint(BaseAPIView):
         ],
         level="WORKSPACE",
     )
+    @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug, view_id):
         # Get the provider
         provider = request.data.get("provider", False)
@@ -114,6 +115,7 @@ class WorkspaceViewExportEndpoint(BaseAPIView):
         # Create the exporter
         exporter = ExporterHistory.objects.create(
             workspace_id=view.workspace_id,
+            project=[],
             initiated_by=request.user,
             provider=provider,
             type="view_exports",
@@ -133,6 +135,53 @@ class WorkspaceViewExportEndpoint(BaseAPIView):
         )
 
         # Return the response
+        return Response(
+            {"message": "Once the export is ready you will be able to download it"},
+            status=status.HTTP_200_OK,
+        )
+
+
+class WorkspaceWorkItemExportEndpoint(BaseAPIView):
+    @allow_permission(
+        [
+            ROLE.ADMIN,
+            ROLE.MEMBER,
+        ],
+        level="WORKSPACE",
+    )
+    @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
+    def post(self, request, slug):
+        provider = request.data.get("provider", False)
+
+        filters = request.data.get("filters", {})
+
+        workspace = Workspace.objects.get(slug=slug)
+
+        if provider not in ["csv", "xlsx", "json"]:
+            return Response(
+                {"error": f"Provider '{provider}' not found."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        exporter = ExporterHistory.objects.create(
+            workspace_id=workspace.id,
+            project=[],
+            initiated_by=request.user,
+            provider=provider,
+            type="view_exports",
+            filters=filters,
+        )
+
+        issue_export_task.delay(
+            provider=exporter.provider,
+            workspace_id=workspace.id,
+            project_ids=[],
+            token_id=exporter.token,
+            multiple=False,
+            slug=slug,
+            export_type="issue",
+        )
+
         return Response(
             {"message": "Once the export is ready you will be able to download it"},
             status=status.HTTP_200_OK,

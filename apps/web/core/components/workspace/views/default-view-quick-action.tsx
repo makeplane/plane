@@ -11,18 +11,30 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-
-import { useTranslation } from "@plane/i18n";
+import { Download } from "lucide-react";
 // plane imports
+import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { LinkIcon, NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-// ui
 import type { TStaticViewTypes } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
-// helpers
+// components
+import type { TExportProvider } from "@/components/common/quick-actions/export-modal";
+import { ExportModal } from "@/components/common/quick-actions/export-modal";
+// hooks
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
+import { useIssues } from "@/hooks/store/use-issues";
+// plane web hooks
+import { useFlag } from "@/plane-web/hooks/store/use-flag";
+// services
+import exportService from "@/services/export.service";
+
 type Props = {
   workspaceSlug: string;
   view: {
@@ -34,17 +46,38 @@ type Props = {
 export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
 
+  const [isOpen, setIsOpen] = useState(false);
+
   const { t } = useTranslation();
+  const { allowPermissions } = useUserPermissions();
+  const {
+    issuesFilter: { getFilterParams },
+  } = useIssues(EIssuesStoreType.GLOBAL);
+  // derived values
+  const hasMemberPermissionsForExport = useMemo(
+    () => allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE),
+    [allowPermissions]
+  );
+
+  const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissionsForExport;
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.key}`;
-  const handleCopyText = () =>
-    copyUrlToClipboard(viewLink).then(() => {
+  const handleCopyText = async () => {
+    try {
+      await copyUrlToClipboard(viewLink);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
+        title: t("link_copied"),
+        message: t("view_link_copied_to_clipboard"),
       });
-    });
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("toast.error"),
+        message: t("common.link_copy_failed"),
+      });
+    }
+  };
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
   const MENU_ITEMS: TContextMenuItem[] = [
@@ -60,10 +93,58 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
       title: t("copy_link"),
       icon: LinkIcon,
     },
+    {
+      key: "export",
+      title: t("export"),
+      icon: Download,
+      action: () => setIsOpen(true),
+      shouldRender: isEnabled,
+    },
   ];
+
+  const handleExport = async (provider: TExportProvider) => {
+    try {
+      const filterParams = getFilterParams(
+        { canGroup: false, perPageCount: 100 },
+        view.key,
+        undefined,
+        undefined,
+        undefined
+      );
+      delete filterParams.filters;
+      delete filterParams.pql;
+      await exportService.exportDefaultWorkspaceViewWorkItems(workspaceSlug, provider, filterParams);
+
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Export started",
+        message: "Your export will be ready soon.",
+        actionItems: (
+          <div className="flex items-center gap-1 text-11 text-secondary">
+            <a
+              href={`/${props.workspaceSlug}/settings/exports`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
+            >
+              View Exports
+            </a>
+          </div>
+        ),
+      });
+      setIsOpen(false);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to export view. Please try again.",
+      });
+    }
+  };
 
   return (
     <>
+      <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
       <CustomMenu
         ellipsis
         placement="bottom-end"

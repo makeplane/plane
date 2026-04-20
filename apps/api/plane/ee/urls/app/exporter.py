@@ -20,6 +20,7 @@ from plane.ee.views.app.exporter import (
     WorkspaceViewExportEndpoint,
     ProjectIntakeExportEndpoint,
     ProjectEpicExportEndpoint,
+    WorkspaceWorkItemExportEndpoint,
 )
 
 urlpatterns = [
@@ -64,5 +65,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/epics/export/",
         ProjectEpicExportEndpoint.as_view(),
         name="export-epic",
+    ),
+    ## Workspace items
+    path(
+        "workspaces/<str:slug>/work-items/export/",
+        WorkspaceWorkItemExportEndpoint.as_view(),
+        name="export-workspace-work-items",
     ),
 ]

@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { ArchiveRestoreIcon, Star, StopCircle, Download, LockOpen } from "lucide-react";
 // plane imports
-import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import {
   EditIcon,
@@ -446,7 +446,10 @@ export const useQuickActionsFactory = () => {
       const { getFilter } = useWorkItemFilters();
       const richFilterEntityType = props.projectId ? EIssuesStoreType.PROJECT_VIEW : EIssuesStoreType.GLOBAL;
       const richFilters = getFilter(richFilterEntityType, props.viewId)?.richFiltersInstance?.getExternalExpression();
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissions;
+      const hasMemberPermissionsForExport = props.projectId
+        ? hasMemberPermissions
+        : allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
+      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissionsForExport;
 
       const handleExport = async (provider: TExportProvider) => {
         try {

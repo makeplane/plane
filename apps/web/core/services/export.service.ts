@@ -13,7 +13,7 @@
 
 /* oxlint-disable no-useless-catch */
 import { API_BASE_URL } from "@plane/constants";
-import type { TWorkItemFilterExpression } from "@plane/types";
+import type { TIssueParams, TWorkItemFilterExpression } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
 export type TExportProvider = "csv" | "xlsx" | "json";
@@ -84,6 +84,21 @@ export class ExportService extends APIService {
       await this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/views/${viewId}/export/`, {
         provider,
         rich_filters,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async exportDefaultWorkspaceViewWorkItems(
+    workspaceSlug: string,
+    provider: TExportProvider,
+    filters: Partial<Record<TIssueParams, string | boolean>>
+  ): Promise<void> {
+    try {
+      await this.post(`/api/workspaces/${workspaceSlug}/work-items/export/`, {
+        provider,
+        filters,
       });
     } catch (error) {
       throw error;
