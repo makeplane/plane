@@ -1,0 +1,40 @@
+# Database
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Lock files
+*.lock
+
+# Temporary
+last-touched
+*.tmp
+
+# Local history backups
+.br_history/
+
+# Sync state (local-only, per-machine)
+.sync.lock
+sync_base.jsonl
+
+# Merge artifacts (temporary files from 3-way merge)
+beads.base.jsonl
+beads.base.meta.json
+beads.left.jsonl
+beads.left.meta.json
+beads.right.jsonl
+beads.right.meta.json
+
+# Daemon runtime files
+daemon.lock
+daemon.log
+daemon.pid
+bd.sock
+sync-state.json
+
+# Worktree redirect file
+redirect
+
+# bv (beads viewer) lock file
+.bv.lock
