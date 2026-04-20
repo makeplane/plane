@@ -273,6 +273,7 @@ catalog:
   tiptap-markdown: 0.8.10
   tldjs: 2.3.2
   tsdown: 0.21.7
+  tsx: 4.20.6
   turbo: 2.8.21
   turndown: 7.2.2
   type-fest: 4.41.0

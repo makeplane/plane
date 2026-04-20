@@ -14,8 +14,7 @@ on:
       - "reopened"
       - "ready_for_review"
     paths:
-      - "packages/i18n/src/locales/**"
-      - "packages/i18n/scripts/**"
+      - "packages/i18n/**"
       - ".github/workflows/i18n-sync-check.yml"
   push:
     branches:
@@ -23,8 +22,7 @@ on:
       - "phoenix-releases"
       - "master"
     paths:
-      - "packages/i18n/src/locales/**"
-      - "packages/i18n/scripts/**"
+      - "packages/i18n/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,8 +37,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     if: github.event_name == 'push' || github.event.pull_request.draft == false
-    env:
-      TSX_VERSION: "4.19.2"
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -53,11 +49,8 @@ jobs:
         with:
           node-version: "22.18.0"
 
-      - name: Cache npm downloads for npx tsx
-        uses: actions/cache@v5
-        with:
-          path: ~/.npm
-          key: npm-tsx-${{ env.TSX_VERSION }}-${{ runner.os }}
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
 
       - name: Run sync check
-        run: npx --yes tsx@${{ env.TSX_VERSION }} packages/i18n/scripts/sync-check.ts --ci
+        run: pnpm dlx tsx packages/i18n/scripts/sync-check.ts --ci
