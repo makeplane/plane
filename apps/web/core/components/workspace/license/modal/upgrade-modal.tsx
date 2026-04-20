@@ -45,6 +45,7 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
   const isSelfHosted = subscriptionDetail?.is_self_managed;
   const isOnTrial = getIsInTrialPeriod(false);
   const currentPlan = subscriptionDetail?.product;
+  const isTrialEnded = subscriptionDetail?.is_trial_ended;
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.VXL} className="rounded-2xl">
@@ -58,6 +59,11 @@ export const PaidPlanUpgradeModal = observer(function PaidPlanUpgradeModal(props
               {isOnTrial && currentPlan && (
                 <div className="flex">
                   <Badge variant="brand">{`${getSubscriptionName(currentPlan)} trial`}</Badge>
+                </div>
+              )}
+              {isTrialEnded && (
+                <div className="flex">
+                  <Badge variant="danger">Trial ended</Badge>
                 </div>
               )}
               <h4 className="text-h4-semibold text-primary">Upgrade to a paid plan and unlock missing features.</h4>

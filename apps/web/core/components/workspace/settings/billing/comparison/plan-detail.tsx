@@ -65,8 +65,7 @@ export const PlanDetail = observer(function PlanDetail(props: TPlanDetailProps) 
   const isSelfHosted = !!subscriptionDetail?.is_self_managed;
   const canStartTrial = !!subscriptionDetail?.is_trial_allowed;
   const isInTrial = getIsInTrialPeriod(false);
-  const hasTrialEnded = !!subscriptionDetail?.is_trial_ended;
-  const shouldShowTrialDetails = !isSelfHosted && (canStartTrial || isInTrial || hasTrialEnded);
+  const shouldShowTrialDetails = !isSelfHosted && (canStartTrial || isInTrial);
 
   // pricing details
   const subscriptionProduct = getSubscriptionProduct(products, subscriptionType);
