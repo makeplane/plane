@@ -47,3 +47,17 @@ class ReleasesFeatureFlagPermission(FeatureFlagPermission):
 
     feature_flag = FeatureFlag.RELEASES
     message = "Payment required. Upgrade your plan to access Releases"
+
+
+class WorkflowFeatureFlagPermission(FeatureFlagPermission):
+    """Permission class for Workflows feature flag"""
+
+    feature_flag = FeatureFlag.WORKFLOWS
+    message = "Payment required. Upgrade your plan to access Workflows"
+
+
+class MultipleWorkflowsFeatureFlagPermission(FeatureFlagPermission):
+    """Permission class for Multiple Workflows feature flag"""
+
+    feature_flag = FeatureFlag.MULTIPLE_WORKFLOWS
+    message = "Payment required. Upgrade your plan to access Multiple Workflows"

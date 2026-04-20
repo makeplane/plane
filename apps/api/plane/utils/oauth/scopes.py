@@ -60,6 +60,8 @@ PROJECTS_MILESTONES_READ_SCOPE = "projects.milestones:read"
 PROJECTS_MILESTONES_WRITE_SCOPE = "projects.milestones:write"
 PROJECTS_ESTIMATES_READ_SCOPE = "projects.estimates:read"
 PROJECTS_ESTIMATES_WRITE_SCOPE = "projects.estimates:write"
+PROJECTS_WORKFLOWS_READ_SCOPE = "projects.workflows:read"
+PROJECTS_WORKFLOWS_WRITE_SCOPE = "projects.workflows:write"
 
 # WIKI SCOPES
 WIKI_PAGES_READ_SCOPE = "wiki.pages:read"
@@ -191,6 +193,8 @@ ALL_OAUTH_SCOPES = {
     PROJECTS_MILESTONES_WRITE_SCOPE: "Write access to project milestones",
     PROJECTS_ESTIMATES_READ_SCOPE: "Read access to project estimates",
     PROJECTS_ESTIMATES_WRITE_SCOPE: "Write access to project estimates",
+    PROJECTS_WORKFLOWS_READ_SCOPE: "Read access to project workflows",
+    PROJECTS_WORKFLOWS_WRITE_SCOPE: "Write access to project workflows",
     # Wiki scopes
     WIKI_PAGES_READ_SCOPE: "Read access to wiki pages",
     WIKI_PAGES_WRITE_SCOPE: "Write access to wiki pages",

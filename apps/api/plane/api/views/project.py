@@ -716,6 +716,7 @@ class ProjectFeatureAPIEndpoint(BaseAPIView):
             "pages": project.page_view,
             "intakes": project.intake_view,
             "work_item_types": project.is_issue_type_enabled,
+            "workflows": project_feature.is_workflow_enabled,
         }
 
     @project_docs(

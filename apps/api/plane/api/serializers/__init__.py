@@ -131,3 +131,11 @@ from .work_item_type_schema import (
     FieldSchemaSerializer,
     CustomFieldSchemaSerializer,
 )
+
+from .workflow import (
+    WorkflowSerializer,
+    WorkflowStateSerializer,
+    WorkflowTransitionSerializer,
+    WorkflowTransitionActorSerializer,
+    WorkflowTransitionActivitySerializer,
+)

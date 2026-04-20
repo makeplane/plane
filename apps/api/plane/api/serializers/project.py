@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Third party imports
+import uuid
 import random
 from rest_framework import serializers
 
@@ -28,6 +29,7 @@ from plane.db.models import (
     Issue,
     IssueType,
     ProjectIssueType,
+    Workspace,
 )
 
 from plane.utils.content_validator import (
@@ -39,6 +41,7 @@ from .base import BaseSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.ee.models import WorkitemTemplate, ProjectFeature
 from plane.payment.flags.flag import FeatureFlag
+from plane.ee.models.workflow import Workflow, WorkflowState
 
 
 class ProjectCreateSerializer(BaseSerializer):
@@ -359,6 +362,7 @@ class ProjectFeatureSerializer(serializers.Serializer):
     pages = serializers.BooleanField(required=False)
     intakes = serializers.BooleanField(required=False)
     work_item_types = serializers.BooleanField(required=False)
+    workflows = serializers.BooleanField(required=False)
 
     def validate_epics(self, value):
         if not check_workspace_feature_flag(FeatureFlag.EPICS, self.context["slug"]):
@@ -385,13 +389,18 @@ class ProjectFeatureSerializer(serializers.Serializer):
             "pages": "page_view",
             "intakes": "intake_view",
         }
+        project_id = self.context["project_id"]
+        slug = self.context["slug"]
         for field in project_feature_fields:
             if field in validated_data:
-                Project.objects.filter(id=self.context["project_id"]).update(
-                    **{old_name_map[field]: validated_data[field]}
-                )
+                Project.objects.filter(id=project_id).update(**{old_name_map[field]: validated_data[field]})
 
-        project = Project.objects.get(id=self.context["project_id"])
+        project = Project.objects.get(id=project_id)
+
+        # get or create the project feature
+        project_feature = ProjectFeature.objects.filter(project=project).first()
+        if not project_feature:
+            project_feature = ProjectFeature.objects.create(project=project)
 
         if validated_data.get("intakes"):
             Intake.objects.get_or_create(
@@ -440,11 +449,6 @@ class ProjectFeatureSerializer(serializers.Serializer):
 
         if validated_data.get("epics", None) is not None:
             if validated_data.get("epics"):
-                # get or create the project feature
-                project_feature = ProjectFeature.objects.filter(project=project).first()
-                if not project_feature:
-                    project_feature = ProjectFeature.objects.create(project=project)
-
                 # Check if the epic issue type is already created for the project or not
                 project_issue_type = ProjectIssueType.objects.filter(project=project, issue_type__is_epic=True).first()
 
@@ -459,26 +463,56 @@ class ProjectFeatureSerializer(serializers.Serializer):
                 project_feature.is_epic_enabled = True
                 project_feature.save()
             else:
-                # get or create the project feature
-                project_feature = ProjectFeature.objects.filter(project=project).first()
-                if not project_feature:
-                    project_feature = ProjectFeature.objects.create(project=project)
-
                 if project_feature.is_epic_enabled:
                     project_feature.is_epic_enabled = False
                     project_feature.save()
 
+        if validated_data.get("workflows", None) is not None:
+            if validated_data.get("workflows"):
+                # create the default workflow for the project
+                workflow = Workflow.objects.filter(project_id=project_id, workspace__slug=slug, is_default=True).first()
+                if not workflow:
+                    workspace = Workspace.objects.get(slug=slug)
+                    workflow = Workflow.objects.create(
+                        name="Default Workflow",
+                        description="Default workflow for the project",
+                        id=uuid.uuid4(),
+                        project_id=project_id,
+                        workspace_id=workspace.id,
+                        is_active=True,
+                        is_default=True,
+                    )
+                    workflow_states = State.objects.filter(
+                        project_id=project_id, workspace_id=workspace.id
+                    ).values_list("id", flat=True)
+                    WorkflowState.objects.bulk_create(
+                        [
+                            WorkflowState(
+                                workflow_id=workflow.id,
+                                state_id=state_id,
+                                project_id=project_id,
+                                workspace_id=workspace.id,
+                            )
+                            for state_id in workflow_states
+                        ]
+                    )
+                project_feature.is_workflow_enabled = True
+                project_feature.save()
+            else:
+                if not validated_data.get("workflows"):
+                    project_feature.is_workflow_enabled = False
+                    project_feature.save()
+
         # Refresh instance with updated project data
-        project = Project.objects.get(id=self.context["project_id"])
-        project_feature = ProjectFeature.objects.filter(project=project).first()
-        is_epic_enabled = project_feature.is_epic_enabled if project_feature else False
+        project = Project.objects.get(id=project_id)
 
         return {
-            "epics": is_epic_enabled,
+            "epics": project_feature.is_epic_enabled,
             "modules": project.module_view,
             "cycles": project.cycle_view,
             "views": project.issue_views_view,
             "pages": project.page_view,
             "intakes": project.intake_view,
             "work_item_types": project.is_issue_type_enabled,
+            "workflows": project_feature.is_workflow_enabled,
         }

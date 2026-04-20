@@ -188,3 +188,13 @@ from .work_item_page import (
 from .work_item_type_schema import WorkItemTypeSchemaAPIEndpoint
 
 from .work_item_type_create import WorkItemCreateAPIEndpoint
+
+from .workflow import (
+    WorkflowListCreateAPIEndpoint,
+    WorkflowDetailAPIEndpoint,
+    WorkflowStatesAPIEndpoint,
+    WorkflowStateTransitionsAPIEndpoint,
+    WorkflowStateTransferAPIEndpoint,
+    WorkflowWorkItemApproverAPIEndpoint,
+    WorkflowActivityAPIEndpoint,
+)

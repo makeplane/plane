@@ -9,11 +9,18 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .feature_flag import (
-    FeatureFlagPermission,
-    TeamspaceFeatureFlagPermission,
-    InitiativesFeatureFlagPermission,
-    ReleasesFeatureFlagPermission,
-    WorkflowFeatureFlagPermission,
-    MultipleWorkflowsFeatureFlagPermission,
+from plane.ee.serializers.app.workflow import (
+    WorkflowSerializer,
+    WorkflowStateSerializer,
+    WorkflowTransitionSerializer,
+    WorkflowTransitionActorSerializer,
+    WorkflowTransitionActivitySerializer,
 )
+
+__all__ = [
+    "WorkflowSerializer",
+    "WorkflowStateSerializer",
+    "WorkflowTransitionSerializer",
+    "WorkflowTransitionActorSerializer",
+    "WorkflowTransitionActivitySerializer",
+]
