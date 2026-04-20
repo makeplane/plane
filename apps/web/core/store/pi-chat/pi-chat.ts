@@ -422,7 +422,7 @@ export class PiChatStore implements IPiChatStore {
 
     // Auto-complete getting started checklist
     if (workspaceSlug) {
-      void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
+      void this.rootStore.preferencesRoot.workspace.updateChecklistIfNotDoneAlready(
         workspaceSlug.toString(),
         "ai_chat_tried"
       );

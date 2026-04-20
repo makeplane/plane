@@ -36,17 +36,18 @@ import { useCustomers } from "@/plane-web/hooks/store";
 import { FileService } from "@/services/file.service";
 import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { CustomerLogoInput } from "./logo-input";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
 const fileService = new FileService();
 
 type TProps = {
   customerId: string;
   workspaceSlug: string;
-  isEditable: boolean;
+  permissions: TCustomerDetailPermissions;
 };
 
 export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps) {
-  const { customerId, workspaceSlug, isEditable = false } = props;
+  const { customerId, workspaceSlug, permissions } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
   const [logo, setLogo] = useState<File | null>(null);
@@ -57,11 +58,11 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
   const { currentWorkspace } = useWorkspace();
   // refs
   const logoInputRef = useRef<HTMLInputElement>(null);
-
   // derived values
   const customer = getCustomerById(customerId.toString());
   const requestCount = customer?.customer_request_count || 0;
   const workItemCount = getCustomerWorkItemIds(customerId.toString())?.length || 0;
+  const { requests, canLinkWorkItem, canUnlinkWorkItem } = permissions;
 
   const CUSTOMER_TABS = useMemo(
     () => [
@@ -77,7 +78,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
             ) : null}
           </div>
         ),
-        content: <CustomerRequestsRoot workspaceSlug={workspaceSlug} customerId={customerId} />,
+        content: <CustomerRequestsRoot workspaceSlug={workspaceSlug} customerId={customerId} permissions={requests} />,
       },
       {
         key: "linked_work_items",
@@ -91,14 +92,20 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
             ) : null}
           </div>
         ),
-        content: <WorkItemsList customerId={customerId} workspaceSlug={workspaceSlug} />,
+        content: (
+          <WorkItemsList
+            customerId={customerId}
+            workspaceSlug={workspaceSlug}
+            permissions={{ canLinkWorkItem, canUnlinkWorkItem }}
+          />
+        ),
       },
     ],
-    [requestCount, workspaceSlug, customerId, workItemCount]
+    [t, requestCount, workspaceSlug, customerId, requests, canLinkWorkItem, canUnlinkWorkItem, workItemCount]
   );
 
   const handleOpenLogoInput = () => {
-    if (isEditable) logoInputRef.current?.click();
+    if (permissions.canEdit) logoInputRef.current?.click();
   };
 
   const onLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,7 +164,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
             onSubmit={(title: string) => handleUpdateCustomer({ name: title })}
-            disabled={!isEditable}
+            disabled={!permissions.canEdit}
             value={customer.name}
             className="p-0"
           />
@@ -182,7 +189,7 @@ export const CustomerMainRoot = observer(function CustomerMainRoot(props: TProps
       <div className="border-subtle-1 border-b-[0.5px] pb-3">
         <DescriptionInput
           containerClassName="border-none min-h-[88px]"
-          disabled={!isEditable}
+          disabled={!permissions.canEditProperty("description_html")}
           disabledExtensions={["attachments"]}
           entityId={customerId}
           fileAssetType={EFileAssetType.CUSTOMER_DESCRIPTION}

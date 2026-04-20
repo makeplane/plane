@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Halaman bertingkat memerlukan paket berbayar. Tingkatkan untuk membukanya."
+    },
+    "auth": {
+      "title": "Izin ditolak",
+      "description": "Anda tidak memiliki izin untuk mengakses halaman ini. Silakan hubungi admin workspace Anda untuk memberikan izin.",
+      "redirection_button": {
+        "text": "Buka Proyek"
+      },
+      "reload_button": {
+        "text": "Muat ulang halaman"
+      }
     }
   }
 }

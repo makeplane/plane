@@ -23,24 +23,23 @@ from django.db.models import Q
 
 # Module imports
 from .base import TeamspaceBaseEndpoint
-from plane.ee.permissions import WorkspaceUserPermission
-from plane.db.models import Workspace
+from plane.db.models import Workspace, WorkspaceMember
 from plane.ee.models import Teamspace, TeamspaceMember
 from plane.ee.serializers import TeamspaceMemberSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.ee.permissions import allow_permission, ROLE
+from plane.permissions import can, TeamspacePermissions
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 
 
 class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [WorkspaceUserPermission]
     model = TeamspaceMember
     serializer_class = TeamspaceMemberSerializer
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.BROWSE, resource_param="workspace_id")
     def get(self, request, slug, team_space_id=None, pk=None):
         # Get team space member by pk
         if pk:
@@ -62,8 +61,8 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
         serializer = TeamspaceMemberSerializer(workspace_team_space_members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.MANAGE, resource_param="team_space_id")
     def post(self, request, slug, team_space_id):
         member_ids = request.data.get("member_ids", [])
 
@@ -89,6 +88,20 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
 
         # Set of newly added members
         added_members = set(member_ids) - set(current_members)
+
+        # Only include active, non-guest workspace members.
+        # Excludes guests via role_ref FK or legacy numeric role (5 = guest).
+        eligible_member_ids = set(
+            str(mid) for mid in WorkspaceMember.objects.filter(
+                workspace=workspace,
+                member_id__in=added_members,
+                is_active=True,
+                deleted_at__isnull=True,
+            ).exclude(
+                Q(role_ref__slug="guest") | Q(role_ref__isnull=True, role=5)
+            ).values_list("member_id", flat=True)
+        )
+        added_members = added_members & eligible_member_ids
 
         # Set of dropped members
         dropped_members = set(current_members) - set(member_ids)
@@ -141,8 +154,8 @@ class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
         serializer = TeamspaceMemberSerializer(team_space_members, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission(level="WORKSPACE", allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.MANAGE, resource_param="team_space_id")
     def delete(self, request, slug, team_space_id, pk):
         # Get team space member
         team_space_member = TeamspaceMember.objects.get(workspace__slug=slug, team_space_id=team_space_id, pk=pk)

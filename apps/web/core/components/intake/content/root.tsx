@@ -14,17 +14,16 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { InboxIssueActionsHeader } from "./intake-work-item-header";
 import { InboxIssueMainContent } from "./work-item-root";
+import type { TIntakeWorkItemProperty } from "@/store/inbox/permissions/root";
 
 type TInboxContentRoot = {
   workspaceSlug: string;
@@ -51,10 +50,36 @@ export const InboxContentRoot = observer(function InboxContentRoot(props: TInbox
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // hooks
-  const { data: currentUser } = useUser();
-  const { currentTab, fetchInboxIssueById, getIssueInboxByIssueId, getIsIssueAvailable } = useProjectInbox();
+  const {
+    currentTab,
+    fetchInboxIssueById,
+    getIssueInboxByIssueId,
+    getIsIssueAvailable,
+    permissions: intakePermissions,
+  } = useProjectInbox();
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
-  const { allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const permissions = {
+    canEdit: intakePermissions.getCanEdit(workspaceSlug, projectId, inboxIssueId),
+    canEditProperty: (property: TIntakeWorkItemProperty) =>
+      intakePermissions.getCanEditProperty(workspaceSlug, projectId, inboxIssueId, property),
+    canReact: intakePermissions.getCanReact(workspaceSlug, projectId, inboxIssueId),
+    canRestoreDescriptionVersion: intakePermissions.getCanRestoreDescriptionVersion(
+      workspaceSlug,
+      projectId,
+      inboxIssueId
+    ),
+    canAddAttachments: intakePermissions.getCanAddAttachments(workspaceSlug, projectId, inboxIssueId),
+    canAddWorklog: intakePermissions.getCanAddWorklog(workspaceSlug, projectId, inboxIssueId),
+    comments: {
+      canCreate: intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).canCreate,
+      canEdit: (commentId: string) =>
+        intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).getCanEdit(commentId),
+      canDelete: (commentId: string) =>
+        intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).getCanDelete(commentId),
+      canReact: (commentId: string) =>
+        intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).getCanReact(commentId),
+    },
+  };
 
   // derived values
   const isIssueAvailable = getIsIssueAvailable(inboxIssueId?.toString() || "");
@@ -79,18 +104,7 @@ export const InboxContentRoot = observer(function InboxContentRoot(props: TInbox
     }
   );
 
-  const isEditable =
-    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId) ||
-    inboxIssue?.issue?.created_by === currentUser?.id;
-
-  const isGuest = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.GUEST;
-  const isOwner = inboxIssue?.issue?.created_by === currentUser?.id;
-  const readOnly = !isOwner && isGuest;
-
   if (!inboxIssue) return <></>;
-
-  const isIssueDisabled = [-1, 1, 2].includes(inboxIssue.status);
-
   return (
     <>
       <div className="w-full h-full overflow-hidden relative flex flex-col">
@@ -111,7 +125,7 @@ export const InboxContentRoot = observer(function InboxContentRoot(props: TInbox
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             inboxIssue={inboxIssue}
-            isEditable={isEditable && !isIssueDisabled && !readOnly}
+            permissions={permissions}
             isSubmitting={isSubmitting}
             setIsSubmitting={setIsSubmitting}
           />

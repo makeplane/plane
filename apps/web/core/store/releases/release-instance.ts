@@ -12,8 +12,7 @@
  */
 
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
-import type { Release, ReleaseChangelog, ReleaseWrite } from "@plane/types";
-import { computedFn } from "mobx-utils";
+import type { Release, ReleaseChangelog, ReleaseWrite, PermissionCheckArgs } from "@plane/types";
 
 type ReleaseInstanceHelpers = {
   update: (payload: ReleaseWrite) => Promise<Release>;
@@ -23,15 +22,14 @@ type ReleaseInstanceHelpers = {
     fetch: () => Promise<ReleaseChangelog>;
     update: (data: ReleaseChangelog["changelog"]) => Promise<ReleaseChangelog>;
   };
-  permissions: {
-    canEditWorkItemProperties: (projectId: string) => boolean;
-    canEditChangelog: boolean;
-  };
+  can: (args: PermissionCheckArgs) => boolean;
+  getWorkspaceSlugById: (workspaceId: string) => string | undefined;
+  currentUserId: string | undefined;
 };
 
 type ReleaseInstanceSchema = Release & {
   // permissions
-  canEditWorkItemProperties: (projectId: string) => boolean;
+  canEdit: boolean;
   canEditChangelog: boolean;
   // actions
   mutateProperties: (data: Partial<Release>) => void;
@@ -99,6 +97,7 @@ export class ReleaseInstance implements ReleaseInstanceSchema {
       lead: observable.ref,
       changelog: observable,
       // computed
+      canEdit: computed,
       canEditChangelog: computed,
       // actions
       mutateProperties: action,
@@ -123,12 +122,32 @@ export class ReleaseInstance implements ReleaseInstanceSchema {
     if (data.lead !== undefined) this.lead = data.lead;
   };
 
-  canEditWorkItemProperties: ReleaseInstanceSchema["canEditWorkItemProperties"] = computedFn(
-    (projectId: string): boolean => this.#helpers.permissions.canEditWorkItemProperties(projectId)
-  );
+  private get workspaceSlug(): string | undefined {
+    return this.#helpers.getWorkspaceSlugById(this.workspace_id);
+  }
+
+  private get permissionMeta() {
+    return { resourceId: this.id };
+  }
+
+  get canEdit(): ReleaseInstanceSchema["canEdit"] {
+    if (!this.workspaceSlug) return false;
+    return this.#helpers.can({
+      resource: "release",
+      action: "edit",
+      workspaceSlug: this.workspaceSlug,
+      resourceMeta: this.permissionMeta,
+    });
+  }
 
   get canEditChangelog(): ReleaseInstanceSchema["canEditChangelog"] {
-    return this.#helpers.permissions.canEditChangelog;
+    if (!this.workspaceSlug) return false;
+    return this.#helpers.can({
+      resource: "release",
+      action: "edit",
+      workspaceSlug: this.workspaceSlug,
+      resourceMeta: this.permissionMeta,
+    });
   }
 
   update: ReleaseInstanceSchema["update"] = async (payload) => this.#helpers.update(payload);

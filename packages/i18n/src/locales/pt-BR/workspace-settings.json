@@ -220,6 +220,10 @@
             "title": "Chave do atributo de grupo",
             "description": "O atributo do provedor de identidade usado para identificar e sincronizar grupos de usuários.",
             "placeholder": "Grupos"
+          },
+          "default_workspace_role": {
+            "title": "Papel padrão do workspace",
+            "description": "O papel atribuído aos usuários quando são adicionados automaticamente ao workspace via sincronização de grupo."
           }
         },
         "group_mapping": {

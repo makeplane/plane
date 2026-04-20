@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "Scheme de roluri și permisiuni",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "Roluri și permisiuni",
+        "roles_list": {
+          "workspace": {
+            "label": "Roluri Workspace"
+          },
+          "project": {
+            "label": "Roluri de proiect"
+          }
+        },
+        "compare_permissions": "Compară permisiunile",
+        "create_role": {
+          "title": "Creează rol",
+          "description": "Definește rolul stabilind numele, descrierea și permisiunile acestuia pentru utilizatorii din instanță.",
+          "button_label": "Creează rol nou",
+          "error_toast_description": "Rolul nu a putut fi creat. Încercați din nou."
+        },
+        "edit_role": {
+          "title": "Editează rol",
+          "description": "Actualizați numele, permisiunile și setările unui rol pentru a controla ceea ce pot accesa și face membrii.",
+          "error_toast_description": "Rolul nu a putut fi actualizat. Încercați din nou."
+        },
+        "role_details": {
+          "role_information_title": "Informații de bază",
+          "role_information_description": "Numele rolului și o scurtă descriere pentru a-i clarifica scopul.",
+          "role_name": "Numele rolului",
+          "role_description": "Descriere",
+          "role_details": "Detalii rol",
+          "role_details_description": "Vedeți o imagine completă a rolului și a permisiunilor atribuite.",
+          "edit_permissions": "Editează permisiunile"
+        },
+        "role_form": {
+          "name": "Numele rolului",
+          "name_placeholder": "Denumiți rolul",
+          "name_error": "Numele este obligatoriu.",
+          "description": "Descriere",
+          "description_placeholder": "Descrieți rolul",
+          "create_button": "Creează rol"
+        },
+        "role_actions": {
+          "duplicate": "Duplică"
+        },
+        "discard_changes_modal": {
+          "title": "Renunțați la modificări?",
+          "description": "Modificările dumneavoastră nu au fost salvate. Părăsirea acestei pagini va duce la pierderea lor.",
+          "cancel": "Renunță la modificări",
+          "confirm": "Continuă editarea"
+        },
+        "delete_role_modal": {
+          "title": "Ștergi rolul?",
+          "description": "Sigur doriți să ștergeți acest rol? Această acțiune nu poate fi anulată.",
+          "error_toast_message": "Ștergerea rolului a eșuat. Încercați din nou."
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "Roluri și permisiuni Workspace",
+            "project": "Roluri și permisiuni de proiect"
+          },
+          "permissions_header": "Permisiuni",
+          "view_mode": {
+            "sets": "Vizualizare set",
+            "permissions": "Șiruri de permisiuni"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "Setări Workspace",
+              "description": "Configurare de bază a spațiului de lucru: nume, logo, monedă, domeniu, ștergere și transfer de proprietate.",
+              "workspace": {
+                "view": { "label": "Vizualizează Workspace" },
+                "edit": { "label": "Editează setările Workspace" },
+                "manage": { "label": "Gestionează Workspace" },
+                "invite": { "label": "Invită membri" },
+                "delete": { "label": "Șterge Workspace" },
+                "transfer": { "label": "Transferă proprietatea" }
+              }
+            },
+            "member_management": {
+              "title": "Gestionare membri",
+              "description": "Invitarea, editarea, importul și eliminarea membrilor din Workspace.",
+              "workspace_member": {
+                "view": { "label": "Vizualizează membrii" },
+                "invite": { "label": "Invită membri" },
+                "edit": { "label": "Editează detaliile membrilor" },
+                "import": { "label": "Importă membri (CSV / SSO)" },
+                "change_role": { "label": "Modifică rolul membrilor" },
+                "remove": { "label": "Elimină membri" }
+              }
+            },
+            "project_management": {
+              "title": "Gestionare proiecte",
+              "description": "Crearea și gestionarea proiectelor din contextul Workspace.",
+              "project": {
+                "browse": { "label": "Răsfoiește proiectele" },
+                "view": { "label": "Vizualizează detaliile proiectului" },
+                "create": { "label": "Creează proiecte" },
+                "edit": { "label": "Editează setările proiectului" },
+                "react": { "label": "Reacționează la proiecte" },
+                "publish": { "label": "Publică proiecte (le face publice)" },
+                "archive": { "label": "Arhivează proiecte" },
+                "delete": { "label": "Șterge proiecte" },
+                "manage": { "label": "Gestionează accesul la proiect" }
+              }
+            },
+            "role_administration": {
+              "title": "Administrarea rolurilor",
+              "description": "Crearea și gestionarea rolurilor personalizate și a rolurilor de proiect.",
+              "custom_role": {
+                "view": { "label": "Vizualizează rolurile personalizate" },
+                "create": { "label": "Creează roluri personalizate" },
+                "edit": { "label": "Editează rolurile personalizate" },
+                "delete": { "label": "Șterge rolurile personalizate" }
+              }
+            },
+            "workspace_pages": {
+              "title": "Pagini Workspace (Wiki)",
+              "description": "Documentație și wiki-uri la nivel de Workspace.",
+              "wiki": {
+                "view": { "label": "Vizualizează Wiki" },
+                "create": { "label": "Creează pagini Wiki" },
+                "edit": { "label": "Editează pagini Wiki" },
+                "share": { "label": "Partajează pagini Wiki" },
+                "delete": { "label": "Șterge pagini Wiki" },
+                "comment": { "label": "Comentează pe paginile Wiki" }
+              }
+            },
+            "workspace_views": {
+              "title": "Vizualizări Workspace",
+              "description": "Filtre salvate și gestionarea vizualizărilor la nivel de Workspace.",
+              "workspace_workitem_view": {
+                "view": { "label": "Vizualizează vizualizările Workspace" },
+                "create": { "label": "Creează vizualizări Workspace" },
+                "edit": { "label": "Editează vizualizările Workspace" },
+                "share": { "label": "Partajează vizualizările Workspace" },
+                "publish": { "label": "Publică vizualizările Workspace" },
+                "export": { "label": "Exportă vizualizările Workspace" },
+                "delete": { "label": "Șterge vizualizările Workspace" }
+              }
+            },
+            "initiatives": {
+              "title": "Inițiative",
+              "description": "Urmărirea inițiativelor inter-proiect, inclusiv comentarii, atașamente, linkuri și actualizări.",
+              "initiative": {
+                "view": { "label": "Vizualizează inițiativele" },
+                "create": { "label": "Creează inițiative" },
+                "edit": { "label": "Editează inițiativele" },
+                "manage": { "label": "Gestionează inițiativele" },
+                "react": { "label": "Reacționează la inițiative" },
+                "delete": { "label": "Șterge inițiativele" }
+              },
+              "initiative_comment": {
+                "view": { "label": "Vizualizează comentariile la inițiative" },
+                "create": { "label": "Comentează la inițiative" },
+                "edit": { "label": "Editează comentariile la inițiative" },
+                "react": { "label": "Reacționează la comentariile la inițiative" },
+                "delete": { "label": "Șterge comentariile la inițiative" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "Vizualizează atașamentele inițiativelor" },
+                "create": { "label": "Adaugă atașamente la inițiative" },
+                "delete": { "label": "Șterge atașamentele inițiativelor" }
+              },
+              "initiative_link": {
+                "view": { "label": "Vizualizează linkurile inițiativelor" },
+                "create": { "label": "Adaugă linkuri la inițiative" },
+                "edit": { "label": "Editează linkurile inițiativelor" },
+                "delete": { "label": "Șterge linkurile inițiativelor" }
+              }
+            },
+            "teamspaces": {
+              "title": "Teamspaces",
+              "description": "Răsfoirea, crearea și gestionarea spațiilor de echipă.",
+              "teamspace": {
+                "browse": { "label": "Răsfoiește Teamspaces" },
+                "view": { "label": "Vizualizează detaliile Teamspace" },
+                "create": { "label": "Creează Teamspaces" },
+                "edit": { "label": "Editează Teamspaces" },
+                "manage": { "label": "Gestionează membrii Teamspace" },
+                "delete": { "label": "Șterge Teamspaces" }
+              }
+            },
+            "integrations": {
+              "title": "Integrări",
+              "description": "Integrări terțe, webhook-uri și tokenuri API.",
+              "integration": {
+                "view": { "label": "Vizualizează integrările" },
+                "create": { "label": "Creează integrări" },
+                "edit": { "label": "Configurează integrările" },
+                "delete": { "label": "Șterge integrările" }
+              },
+              "webhook": {
+                "view": { "label": "Vizualizează webhook-urile" },
+                "create": { "label": "Creează webhook-uri" },
+                "edit": { "label": "Editează webhook-urile" },
+                "delete": { "label": "Șterge webhook-urile" }
+              },
+              "api_token": {
+                "view": { "label": "Vizualizează tokenurile API" },
+                "create": { "label": "Creează tokenuri API" },
+                "delete": { "label": "Șterge tokenurile API" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "Analitică și rapoarte",
+              "description": "Tablouri de bord, analitică și jurnale de lucru la nivel de Workspace.",
+              "analytics": {
+                "view": { "label": "Vizualizează analitica" },
+                "export": { "label": "Exportă analitica" }
+              },
+              "dashboard": {
+                "view": { "label": "Vizualizează tablourile de bord" },
+                "create": { "label": "Creează tablouri de bord" },
+                "edit": { "label": "Editează tablourile de bord" },
+                "delete": { "label": "Șterge tablourile de bord" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "Vizualizează jurnalele de lucru" },
+                "export": { "label": "Exportă jurnalele de lucru" }
+              },
+              "ai": {
+                "use": { "label": "Utilizează funcțiile AI" }
+              }
+            },
+            "customers": {
+              "title": "Feedback clienți",
+              "description": "Gestionarea clienților și a solicitărilor clienților.",
+              "customer": {
+                "view": { "label": "Vizualizează clienții" },
+                "create": { "label": "Creează clienți" },
+                "edit": { "label": "Editează clienții" },
+                "delete": { "label": "Șterge clienții" }
+              },
+              "customer_attachment": {
+                "create": { "label": "Adaugă atașamente pentru clienți" },
+                "delete": { "label": "Șterge atașamentele clienților" }
+              }
+            },
+            "work_item_relations": {
+              "title": "Relații dintre work items",
+              "description": "Gestionarea definițiilor personalizate de tipuri de relații pentru work items.",
+              "workitem_relation": {
+                "view": { "label": "Vizualizează definițiile relațiilor" },
+                "create": { "label": "Creează definiții de relații" },
+                "edit": { "label": "Editează definițiile relațiilor" },
+                "delete": { "label": "Șterge definițiile relațiilor" }
+              }
+            },
+            "workspace_templates": {
+              "title": "Șabloane",
+              "description": "Crearea și gestionarea șabloanelor de work items, pagini și proiecte la nivel de Workspace.",
+              "workspace_workitem_template": {
+                "view": { "label": "Vizualizează șabloanele de work items" },
+                "create": { "label": "Creează șabloane de work items" },
+                "edit": { "label": "Editează șabloanele de work items" },
+                "delete": { "label": "Șterge șabloanele de work items" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "Vizualizează șabloanele de pagini" },
+                "create": { "label": "Creează șabloane de pagini" },
+                "edit": { "label": "Editează șabloanele de pagini" },
+                "delete": { "label": "Șterge șabloanele de pagini" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "Vizualizează șabloanele de proiecte" },
+                "create": { "label": "Creează șabloane de proiecte" },
+                "edit": { "label": "Editează șabloanele de proiecte" },
+                "delete": { "label": "Șterge șabloanele de proiecte" }
+              }
+            },
+            "workspace_automations": {
+              "title": "Automatizări Workspace",
+              "description": "Reguli și configurații de automatizare la nivel de Workspace.",
+              "workspace_automation": {
+                "view": { "label": "Vizualizează automatizările Workspace" },
+                "create": { "label": "Creează automatizări Workspace" },
+                "edit": { "label": "Editează automatizările Workspace" },
+                "delete": { "label": "Șterge automatizările Workspace" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "Membri proiect",
+              "description": "Invitarea, editarea și eliminarea membrilor proiectului.",
+              "project_member": {
+                "view": { "label": "Vizualizează membrii proiectului" },
+                "invite": { "label": "Invită membri" },
+                "edit": { "label": "Editează detaliile membrilor" },
+                "change_role": { "label": "Modifică rolul membrilor" },
+                "remove": { "label": "Elimină membri" }
+              }
+            },
+            "work_items": {
+              "title": "Work Items",
+              "description": "Principala suprafață pentru Work Items. Include comentarii, atașamente, linkuri, relații și proprietăți personalizate.",
+              "workitem": {
+                "view": { "label": "Vizualizează Work Items" },
+                "create": { "label": "Creează Work Items" },
+                "edit": { "label": "Editează Work Items" },
+                "bulk_edit": { "label": "Editează Work Items în masă" },
+                "export": { "label": "Exportă Work Items" },
+                "react": { "label": "Reacționează la Work Items" },
+                "delete": { "label": "Șterge Work Items" }
+              },
+              "comment": {
+                "create": { "label": "Adaugă comentarii" },
+                "edit": { "label": "Editează comentariile" },
+                "react": { "label": "Reacționează la comentarii" },
+                "delete": { "label": "Șterge comentariile" }
+              },
+              "attachment": {
+                "view": { "label": "Vizualizează atașamentele" },
+                "create": { "label": "Adaugă atașamente" },
+                "delete": { "label": "Șterge atașamentele" }
+              },
+              "workitem_link": {
+                "view": { "label": "Vizualizează linkurile work item-urilor" },
+                "create": { "label": "Adaugă linkuri la work item-uri" },
+                "edit": { "label": "Editează linkurile work item-urilor" },
+                "delete": { "label": "Șterge linkurile work item-urilor" }
+              },
+              "issue_property": {
+                "view": { "label": "Vizualizează proprietățile personalizate" },
+                "edit": { "label": "Editează proprietățile personalizate" }
+              }
+            },
+            "epics": {
+              "title": "Epics",
+              "description": "Ciclul de viață al Epic-urilor, inclusiv linkuri, proprietăți și fluxuri de actualizări.",
+              "epic": {
+                "view": { "label": "Vizualizează Epics" },
+                "create": { "label": "Creează Epics" },
+                "edit": { "label": "Editează Epics" },
+                "delete": { "label": "Șterge Epics" }
+              },
+              "epic_link": {
+                "view": { "label": "Vizualizează linkurile Epic" },
+                "create": { "label": "Adaugă linkuri Epic" },
+                "edit": { "label": "Editează linkurile Epic" },
+                "delete": { "label": "Șterge linkurile Epic" }
+              },
+              "epic_property": {
+                "view": { "label": "Vizualizează proprietățile Epic" },
+                "edit": { "label": "Editează proprietățile Epic" }
+              },
+              "epic_update": {
+                "view": { "label": "Vizualizează actualizările Epic" },
+                "create": { "label": "Postează actualizări Epic" },
+                "edit": { "label": "Editează actualizările Epic" },
+                "delete": { "label": "Șterge actualizările Epic" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "Vizualizează comentariile la actualizările Epic" },
+                "create": { "label": "Comentează la actualizările Epic" },
+                "edit": { "label": "Editează comentariile la actualizările Epic" },
+                "react": { "label": "Reacționează la comentariile la actualizările Epic" },
+                "delete": { "label": "Șterge comentariile la actualizările Epic" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "Modules și Cycles",
+              "description": "Gruparea funcționalităților și gestionarea sprint-urilor/ciclurilor.",
+              "module": {
+                "view": { "label": "Vizualizează Modules" },
+                "create": { "label": "Creează Modules" },
+                "edit": { "label": "Editează Modules" },
+                "manage": { "label": "Gestionează membrii Module" },
+                "archive": { "label": "Arhivează Modules" },
+                "export": { "label": "Exportă Modules" },
+                "delete": { "label": "Șterge Modules" }
+              },
+              "cycle": {
+                "view": { "label": "Vizualizează Cycles" },
+                "create": { "label": "Creează Cycles" },
+                "edit": { "label": "Editează Cycles" },
+                "delete": { "label": "Șterge Cycles" }
+              },
+              "cycle_update": {
+                "view": { "label": "Vizualizează actualizările Cycle" },
+                "create": { "label": "Postează actualizări Cycle" },
+                "edit": { "label": "Editează actualizările Cycle" },
+                "delete": { "label": "Șterge actualizările Cycle" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "Pages și vizualizări",
+              "description": "Pagini și vizualizări salvate la nivel de proiect.",
+              "page": {
+                "view": { "label": "Vizualizează Pages" },
+                "create": { "label": "Creează Pages" },
+                "edit": { "label": "Editează Pages" },
+                "share": { "label": "Partajează Pages" },
+                "delete": { "label": "Șterge Pages" }
+              },
+              "workitem_view": {
+                "view": { "label": "Vizualizează vizualizările de proiect" },
+                "create": { "label": "Creează vizualizări de proiect" },
+                "edit": { "label": "Editează vizualizările de proiect" },
+                "share": { "label": "Partajează vizualizările de proiect" },
+                "publish": { "label": "Publică vizualizările de proiect" },
+                "export": { "label": "Exportă vizualizările de proiect" },
+                "delete": { "label": "Șterge vizualizările de proiect" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "Fluxul de preluare și triere a Work Items.",
+              "intake": {
+                "view": { "label": "Vizualizează Intake" },
+                "create": { "label": "Creează elemente Intake" },
+                "submit": { "label": "Trimite solicitări Intake" },
+                "edit": { "label": "Editează elementele Intake" },
+                "react": { "label": "Reacționează la elementele Intake" },
+                "manage": { "label": "Gestionează elementele Intake" },
+                "configure": { "label": "Configurează Intake" },
+                "export": { "label": "Exportă Intake" },
+                "delete": { "label": "Șterge elementele Intake" }
+              }
+            },
+            "project_configuration": {
+              "title": "Configurare proiect",
+              "description": "Etichete, stări, estimări și milestones.",
+              "label": {
+                "view": { "label": "Vizualizează etichetele" },
+                "create": { "label": "Creează etichete" },
+                "edit": { "label": "Editează etichetele" },
+                "delete": { "label": "Șterge etichetele" }
+              },
+              "state": {
+                "view": { "label": "Vizualizează stările" },
+                "create": { "label": "Creează stări" },
+                "edit": { "label": "Editează stările" },
+                "delete": { "label": "Șterge stările" }
+              },
+              "estimate": {
+                "view": { "label": "Vizualizează estimările" },
+                "create": { "label": "Creează estimări" },
+                "edit": { "label": "Editează estimările" },
+                "delete": { "label": "Șterge estimările" }
+              },
+              "milestone": {
+                "view": { "label": "Vizualizează milestones" },
+                "create": { "label": "Creează milestones" },
+                "edit": { "label": "Editează milestones" },
+                "delete": { "label": "Șterge milestones" }
+              }
+            },
+            "automations": {
+              "title": "Automatizări și fluxuri de lucru",
+              "description": "Automatizări, reguli de flux de lucru și work items recurente.",
+              "project_automation": {
+                "view": { "label": "Vizualizează automatizările" },
+                "create": { "label": "Creează automatizări" },
+                "edit": { "label": "Editează automatizările" },
+                "delete": { "label": "Șterge automatizările" }
+              },
+              "workflow": {
+                "view": { "label": "Vizualizează fluxurile de lucru" },
+                "create": { "label": "Creează fluxuri de lucru" },
+                "edit": { "label": "Editează fluxurile de lucru" },
+                "delete": { "label": "Șterge fluxurile de lucru" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "Vizualizează elementele recurente" },
+                "create": { "label": "Creează elemente recurente" },
+                "edit": { "label": "Editează elementele recurente" },
+                "delete": { "label": "Șterge elementele recurente" }
+              }
+            },
+            "project_updates": {
+              "title": "Actualizări proiect",
+              "description": "Actualizări de progres și comentarii la actualizări.",
+              "project_update": {
+                "view": { "label": "Vizualizează actualizările proiectului" },
+                "create": { "label": "Postează actualizări ale proiectului" },
+                "edit": { "label": "Editează actualizările proiectului" },
+                "delete": { "label": "Șterge actualizările proiectului" }
+              },
+              "project_update_comment": {
+                "view": { "label": "Vizualizează comentariile la actualizările proiectului" },
+                "create": { "label": "Comentează la actualizările proiectului" },
+                "edit": { "label": "Editează comentariile la actualizările proiectului" },
+                "react": { "label": "Reacționează la comentariile la actualizările proiectului" },
+                "delete": { "label": "Șterge comentariile la actualizările proiectului" }
+              }
+            },
+            "project_analytics": {
+              "title": "Analitică și activitate",
+              "description": "Analitica proiectului și jurnalele de activitate.",
+              "project_activity": {
+                "view": { "label": "Vizualizează jurnalele de activitate" }
+              }
+            },
+            "project_links": {
+              "title": "Linkuri proiect",
+              "description": "Linkuri la nivel de proiect.",
+              "project_link": {
+                "view": { "label": "Vizualizează linkurile proiectului" },
+                "create": { "label": "Adaugă linkuri ale proiectului" },
+                "edit": { "label": "Editează linkurile proiectului" },
+                "delete": { "label": "Șterge linkurile proiectului" }
+              }
+            },
+            "project_templates": {
+              "title": "Șabloane",
+              "description": "Șabloane de work items și pagini la nivel de proiect.",
+              "project_workitem_template": {
+                "view": { "label": "Vizualizează șabloanele de work items" },
+                "create": { "label": "Creează șabloane de work items" },
+                "edit": { "label": "Editează șabloanele de work items" },
+                "delete": { "label": "Șterge șabloanele de work items" }
+              },
+              "project_page_template": {
+                "view": { "label": "Vizualizează șabloanele de pagini" },
+                "create": { "label": "Creează șabloane de pagini" },
+                "edit": { "label": "Editează șabloanele de pagini" },
+                "delete": { "label": "Șterge șabloanele de pagini" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "Toate",
+              "own": "Doar proprii",
+              "creator": "Doar proprii",
+              "lead": "Doar lead",
+              "disabled": "Dezactivat"
+            },
+            "select_all": "Selectează tot",
+            "high_risk_tooltip": "Acest lucru acordă acces ridicat. Acordați cu atenție.",
+            "folded_rows": {
+              "templates": {
+                "view": "Vizualizează șabloanele",
+                "create": "Creează șabloane",
+                "edit": "Editează șabloanele",
+                "delete": "Șterge șabloanele"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "Include vizualizarea detaliilor, atașamentelor și linkurilor. Acoperă, de asemenea, reacțiile și comentariile la inițiative.",
+                  "edit": "Include crearea atașamentelor și gestionarea linkurilor inițiativelor."
+                },
+                "workspace_templates": {
+                  "view": "Include vizualizarea șabloanelor de proiecte, work items și pagini.",
+                  "create": "Include crearea șabloanelor de proiecte, work items și pagini.",
+                  "edit": "Include editarea șabloanelor de proiecte, work items și pagini.",
+                  "delete": "Include ștergerea șabloanelor de proiecte, work items și pagini."
+                },
+                "epics": {
+                  "view": "Include vizualizarea linkurilor Epic și reacția la Epics.",
+                  "edit": "Include crearea, editarea și ștergerea linkurilor Epic."
+                },
+                "epic_updates": {
+                  "view": "Include vizualizarea și reacția la actualizări. Acoperă, de asemenea, vizualizarea, crearea și reacția la comentariile pentru actualizări."
+                },
+                "project_updates": {
+                  "view": "Include vizualizarea și reacția la actualizări. Acoperă, de asemenea, vizualizarea, crearea și reacția la comentariile pentru actualizări."
+                },
+                "project_templates": {
+                  "view": "Include vizualizarea șabloanelor de work items și pagini.",
+                  "create": "Include crearea șabloanelor de work items și pagini.",
+                  "edit": "Include editarea șabloanelor de work items și pagini.",
+                  "delete": "Include ștergerea șabloanelor de work items și pagini."
+                }
+              }
+            },
+            "search_placeholder": "Caută permisiuni...",
+            "no_results": "Nicio permisiune nu se potrivește",
+            "clear_search": "Șterge",
+            "preset_label": "Pornește de la un rol de sistem:",
+            "preset_none": "Niciunul (gol)",
+            "empty_permissions_note": "Selectați cel puțin o permisiune pentru a salva această schemă."
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "Roluri și scheme de proiect",
+        "sidebar_label": "Proiect"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "Roluri și scheme Workspace",
+        "sidebar_label": "Workspace"
+      },
+      "roles_and_schemes": {
+        "description": "Configurați proprietățile și grupurile de interacțiune care vor fi atașate unui tip sau mai multor tipuri de work item",
+        "tabs": {
+          "roles": "Roluri",
+          "permission_schemes": "Scheme de permisiuni"
+        },
+        "create_role": {
+          "modal_title": "Creează rol nou",
+          "button_label": "Creează rol",
+          "role_title_label": "Titlul rolului",
+          "role_title_placeholder": "Adăugați un titlu unic",
+          "description_label": "Descriere",
+          "description_placeholder": "Adăugați un titlu unic",
+          "create_button": "Creează rol",
+          "error_toast_description": "Rolul nu a putut fi creat. Încercați din nou."
+        },
+        "create_scheme": {
+          "title": "Creează schemă de permisiuni",
+          "description": "Definiți schema de permisiuni stabilind numele, descrierea și permisiunile acesteia.",
+          "button_label": "Creează schemă de permisiuni",
+          "create_button": "Creează schemă de permisiuni",
+          "error_toast_description": "Schema de permisiuni nu a putut fi creată. Încercați din nou."
+        },
+        "role_detail": {
+          "back": "Înapoi",
+          "permission_schemes_title": "Scheme de permisiuni",
+          "attach_button": "Atașează scheme de permisiuni",
+          "empty_title": "Nicio schemă de permisiuni încă",
+          "empty_description": "Creați etichete personalizate pentru a vă clasifica și gestiona eficient work item-urile.",
+          "error_toast_description": "Rolul nu a putut fi actualizat. Încercați din nou."
+        },
+        "scheme_detail": {
+          "title": "Detalii schemă de permisiuni",
+          "description": "Vedeți o imagine completă a schemei și a permisiunilor atribuite.",
+          "edit_title": "Editează schema de permisiuni",
+          "edit_description": "Actualizați numele, permisiunile și setările schemei.",
+          "edit_button": "Editează schema de permisiuni",
+          "error_toast_description": "Schema de permisiuni nu a putut fi actualizată. Încercați din nou.",
+          "scheme_information_title": "Informații schemă",
+          "scheme_information_description": "Numele schemei și o scurtă descriere pentru a-i clarifica scopul.",
+          "scheme_name": "Numele schemei",
+          "scheme_name_placeholder": "Denumiți schema",
+          "scheme_name_error": "Numele este obligatoriu.",
+          "scheme_description": "Descriere",
+          "scheme_description_placeholder": "Descrieți schema"
+        },
+        "attach_schemes": {
+          "title": "Scheme de permisiuni",
+          "search_placeholder": "Caută",
+          "permissions_count": "permisiuni",
+          "discard": "Renunță",
+          "add": "Adaugă"
+        },
+        "quick_actions": {
+          "edit_scheme": "Editează schema de permisiuni",
+          "delete_scheme": "Șterge schema de permisiuni",
+          "edit_role": "Editează detaliile rolului",
+          "enable_role": "Activează rolul",
+          "delete_role": "Șterge rolul"
+        },
+        "edit_role": {
+          "modal_title": "Editează detaliile rolului",
+          "save_button": "Salvează modificările",
+          "saving": "Se salvează...",
+          "error_toast_description": "Rolul nu a putut fi actualizat. Încercați din nou."
+        },
+        "delete_role": {
+          "confirm_title": "Ștergi „{roleName}”?",
+          "has_members_message": "Acest rol este atribuit la {count} membri. Ștergerea lui este permanentă și nu poate fi anulată.",
+          "no_members_message": "Acest rol nu are membri atribuiți. Ștergerea lui este permanentă și nu poate fi anulată.",
+          "reassign_label": "Reatribuie membrii către",
+          "reassign_placeholder": "Selectează un rol",
+          "submit_button": "Reatribuie și șterge",
+          "submit_button_no_members": "Șterge",
+          "submitting": "Se șterge...",
+          "error_toast_description": "Rolul nu a putut fi șters. Încercați din nou.",
+          "success_toast_message": "Rolul a fost șters cu succes."
+        },
+        "disable_role": {
+          "confirm_title": "Dezactivezi „{roleName}”?",
+          "has_members_message": "Acest rol este atribuit în prezent la {memberCount} membri. Trebuie să selectați un rol pentru a reatribui membrii existenți înainte de a continua.",
+          "no_members_message": "Acest rol nu are membri atribuiți. Va fi dezactivat.",
+          "reassign_label": "Reatribuie membrii către",
+          "reassign_placeholder": "Selectează un rol",
+          "submit_button": "Reatribuie și dezactivează",
+          "submit_button_no_members": "Dezactivează",
+          "submitting": "Se dezactivează...",
+          "error_toast_description": "Rolul nu a putut fi dezactivat. Încercați din nou.",
+          "success_toast_message": "Rolul a fost dezactivat cu succes."
+        },
+        "enable_role": {
+          "confirm_title": "Activezi „{roleName}”?",
+          "confirm_message": "Acest rol va deveni activ și va putea fi atribuit membrilor.",
+          "submit_button": "Activează",
+          "submitting": "Se activează...",
+          "success_toast_message": "Rolul a fost activat cu succes."
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "Ștergi schema de permisiuni?",
+          "has_roles_message": "Această schemă este utilizată în {count} roluri. Eliminarea ei va revoca permisiunile acesteia din acele roluri. Acțiunea nu poate fi anulată.",
+          "no_roles_message": "Această schemă de permisiuni nu este utilizată de niciun rol. Va fi ștearsă definitiv.",
+          "submit_button": "Confirmă",
+          "submitting": "Se șterge...",
+          "error_toast_description": "Schema de permisiuni nu a putut fi ștearsă. Încercați din nou.",
+          "in_use_error": "Eliminați această schemă din toate rolurile înainte de ștergere.",
+          "success_toast_message": "Schema de permisiuni a fost ștearsă cu succes."
+        }
+      }
+    }
+  }
+}

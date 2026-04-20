@@ -16,11 +16,18 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { TeamspaceViewWorkItemsHeader } from "./header";
+// types
+import type { Route } from "./+types/layout";
 
-export default function TeamspaceViewWorkItemsLayout() {
+export default function TeamspaceViewWorkItemsLayout(props: Route.ComponentProps) {
+  const { workspaceSlug, teamspaceId, viewId } = props.params;
   return (
     <>
-      <AppHeader header={<TeamspaceViewWorkItemsHeader />} />
+      <AppHeader
+        header={
+          <TeamspaceViewWorkItemsHeader workspaceSlug={workspaceSlug} teamspaceId={teamspaceId} viewId={viewId} />
+        }
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

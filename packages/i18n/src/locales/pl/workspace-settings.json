@@ -220,6 +220,10 @@
             "title": "Klucz atrybutu grupy",
             "description": "Atrybut dostawcy tożsamości używany do identyfikacji i synchronizacji grup użytkowników.",
             "placeholder": "Grupy"
+          },
+          "default_workspace_role": {
+            "title": "Domyślna rola w przestrzeni roboczej",
+            "description": "Rola przypisywana użytkownikom, gdy są automatycznie dodawani do przestrzeni roboczej przez synchronizację grup."
           }
         },
         "group_mapping": {

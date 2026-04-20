@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseViewSet
-from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import Workspace, ReleaseLink
 from plane.app.serializers.release import ReleaseLinkSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -23,7 +23,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 
 
 class ReleaseLinkViewSet(BaseViewSet):
-    permission_classes = [WorkspaceEntityPermission]
     model = ReleaseLink
     serializer_class = ReleaseLinkSerializer
 
@@ -38,7 +37,12 @@ class ReleaseLinkViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
+    def list(self, request, slug, release_id):
+        return super().list(request, slug, release_id)
+
+    @check_feature_flag(FeatureFlag.RELEASES)
+    @can(ReleasePermissions.CREATE, resource_param="workspace_id")
     def create(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ReleaseLinkSerializer(data=request.data)
@@ -51,7 +55,7 @@ class ReleaseLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.EDIT, resource_param="workspace_id")
     def partial_update(self, request, slug, release_id, pk):
         link = ReleaseLink.objects.get(workspace__slug=slug, release_id=release_id, pk=pk)
         serializer = ReleaseLinkSerializer(link, data=request.data, partial=True)
@@ -61,7 +65,7 @@ class ReleaseLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.DELETE, resource_param="workspace_id")
     def destroy(self, request, slug, release_id, pk):
         link = ReleaseLink.objects.get(workspace__slug=slug, release_id=release_id, pk=pk)
         link.delete()

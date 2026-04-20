@@ -15,11 +15,13 @@ import { observer } from "mobx-react";
 // plane imports
 import { EntityDetailWidgetSection } from "@plane/blocks/entity-detail";
 import { useTranslation } from "@plane/i18n";
-import type { TIssue, TIssueServiceType } from "@plane/types";
+import type { TIssueServiceType } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 import { CircularProgressIndicator } from "@plane/ui";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import { SubIssuesCollapsibleContent } from "./content";
 import { SubWorkItemTitleActions } from "./title-actions";
@@ -31,7 +33,7 @@ type Props = {
   permissions: {
     getCanView: (projectId: string, workItemId: string) => boolean;
     getCanEdit: (projectId: string, workItemId: string) => boolean;
-    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
     getCanDelete: (projectId: string, workItemId: string) => boolean;
     getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
     getCanRemove: (

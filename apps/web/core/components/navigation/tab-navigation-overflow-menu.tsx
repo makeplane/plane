@@ -11,13 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { Link } from "react-router";
 import { MoreHorizontal, Pin } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { SetAsDefaultIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
+import type { ProjectResourceKey } from "@plane/types";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // local imports
@@ -28,8 +28,8 @@ type Props = {
   overflowItems: TNavigationItem[];
   isActive: (item: TNavigationItem) => boolean;
   tabPreferences: TTabPreferences;
-  onToggleDefault: (tabKey: string) => void;
-  onShow: (tabKey: string) => void;
+  onToggleDefault: (tabKey: ProjectResourceKey) => void;
+  onShow: (tabKey: ProjectResourceKey) => void;
 };
 
 /**

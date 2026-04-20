@@ -19,7 +19,6 @@ import { useParams, usePathname } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
@@ -34,7 +33,6 @@ import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web imports
 import type { TProject } from "@/types";
@@ -51,29 +49,33 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
   // store hooks
   const { t } = useTranslation();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
   const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar } = useAppTheme();
-
-  const { loader, getPartialProjectById, joinedProjectIds: joinedProjects, updateProjectView } = useProject();
+  const {
+    loader,
+    getPartialProjectById,
+    joinedProjectIds: joinedProjects,
+    updateProjectView,
+    permissions,
+  } = useProject();
   // router params
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId: currentProjectId } = useParams();
   const pathname = usePathname();
 
-  // auth
-  const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  // Include the currently-viewed project (from route) if the user can access it
+  // but hasn't joined it — e.g. workspace admins navigating into any project.
+  const shouldIncludeCurrentProject =
+    !!currentProjectId && !joinedProjects.includes(currentProjectId) && !!getPartialProjectById(currentProjectId);
+  const visibleProjects = shouldIncludeCurrentProject ? [currentProjectId, ...joinedProjects] : joinedProjects;
 
   // Compute limited projects for main sidebar
   const displayedProjects = projectPreferences.showLimitedProjects
-    ? joinedProjects.slice(0, projectPreferences.limitedProjectsCount)
-    : joinedProjects;
+    ? visibleProjects.slice(0, projectPreferences.limitedProjectsCount)
+    : visibleProjects;
 
   // Check if there are more projects to show
   const hasMoreProjects =
-    projectPreferences.showLimitedProjects && joinedProjects.length > projectPreferences.limitedProjectsCount;
+    projectPreferences.showLimitedProjects && visibleProjects.length > projectPreferences.limitedProjectsCount;
 
   const handleCopyText = (projectId: string) => {
     copyUrlToClipboard(`${workspaceSlug}/projects/${projectId}/issues`).then(() => {
@@ -194,8 +196,8 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
                 <span className="text-13 font-semibold">{t("projects")}</span>
               </CollapsibleTrigger>
               <div className="flex items-center gap-1">
-                {isAuthorizedUser && (
-                  <Tooltip tooltipHeading="" tooltipContent={t("create_project")}>
+                {permissions.getCanCreate(workspaceSlug) && (
+                  <Tooltip tooltipContent={t("create_project")}>
                     <IconButton
                       variant="ghost"
                       size="sm"
@@ -271,7 +273,7 @@ export const SidebarProjectsList = observer(function SidebarProjectsList() {
           </Collapsible>
         </>
 
-        {isAuthorizedUser && joinedProjects?.length === 0 && (
+        {permissions.getCanCreate(workspaceSlug) && joinedProjects?.length === 0 && (
           <button
             type="button"
             className="w-full flex items-center gap-1.5 px-2 py-1.5 text-13 leading-5 font-medium text-secondary hover:bg-surface-2 rounded-md"

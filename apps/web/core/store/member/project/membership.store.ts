@@ -15,15 +15,14 @@ import { uniq, unset, set, update, sortBy } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { E_FEATURE_FLAGS, EUserPermissions } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import type {
   IProjectBulkAddFormData,
   IProjectUserPropertiesResponse,
   IUserLite,
   TProjectMembership,
 } from "@plane/types";
-import { getHighestRole } from "@plane/utils";
+import { isGuestRole } from "@plane/utils";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
@@ -38,8 +37,11 @@ import { sortProjectMembers } from "../utils";
 import type { IProjectMemberFiltersStore } from "./filters.store";
 import { ProjectMemberFiltersStore } from "./filters.store";
 
-export interface IProjectMemberDetails extends Omit<TProjectMembership, "member"> {
+export interface IProjectMemberDetails {
+  id: string;
+  role_slug: string;
   member: IUserLite;
+  created_at: string;
 }
 
 export interface IProjectMemberStore {
@@ -87,9 +89,11 @@ export interface IProjectMemberStore {
     workspaceSlug: string,
     projectId: string,
     userId: string,
-    role: EUserProjectRoles
+    data: { role_slug: string }
   ) => Promise<TProjectMembership>;
   removeMemberFromProject: (workspaceSlug: string, projectId: string, userId: string) => Promise<void>;
+  joinProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+  leaveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
 }
 
 export class ProjectMemberStore implements IProjectMemberStore {
@@ -159,7 +163,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     // Apply filters and sorting directly here to ensure MobX tracking
     const sortedMembers = sortProjectMembers(
       members,
-      this.memberRoot?.memberMap || {},
+      this.memberRoot.getUserDetails,
       (member) => member.member,
       currentFilters
     );
@@ -191,39 +195,14 @@ export class ProjectMemberStore implements IProjectMemberStore {
   );
 
   /**
-   * @description get the role from the project membership
+   * @description get the role_slug from the project membership
    * @param userId
    * @param projectId
    */
-  protected getRoleFromProjectMembership = computedFn(
-    (userId: string, projectId: string): EUserProjectRoles | undefined => {
-      const projectMembership = this.getProjectMembershipByUserId(userId, projectId);
-      if (!projectMembership) return undefined;
-      const projectMembershipRole = projectMembership.original_role ?? projectMembership.role;
-      return projectMembershipRole ? (projectMembershipRole as EUserProjectRoles) : undefined;
-    }
-  );
-
-  /**
-   * @description Returns the project membership role for a user
-   * @description This method is specifically used when adding new members to a project. For existing members,
-   * the role is fetched directly from the backend during member listing.
-   * @param { string } userId - The ID of the user
-   * @param { string } projectId - The ID of the project
-   * @returns { EUserProjectRoles | undefined } The user's role in the project, or undefined if not found
-   */
-  getUserProjectRole = computedFn((userId: string, projectId: string): EUserProjectRoles | undefined => {
-    // Get the roles from the project and teamspace membership
-    const projectRoleFromProjectMembership = this.getRoleFromProjectMembership(userId, projectId);
-    const projectRoleFromTeamspaceMembership = this.getProjectRoleFromTeamspaceMembership(userId, projectId);
-
-    // Filter out undefined roles and get the highest role
-    const roles = [projectRoleFromProjectMembership, projectRoleFromTeamspaceMembership].filter(
-      (role): role is EUserProjectRoles => role !== undefined
-    );
-
-    // Return the highest role
-    return getHighestRole(roles);
+  protected getRoleFromProjectMembership = computedFn((userId: string, projectId: string): string | undefined => {
+    const projectMembership = this.getProjectMembershipByUserId(userId, projectId);
+    if (!projectMembership) return undefined;
+    return projectMembership.role_slug;
   });
 
   /**
@@ -233,12 +212,11 @@ export class ProjectMemberStore implements IProjectMemberStore {
    */
   getProjectMemberDetails = computedFn((userId: string, projectId: string) => {
     const projectMember = this.getProjectMembershipByUserId(userId, projectId);
-    const userDetails = this.memberRoot?.memberMap?.[projectMember?.member];
+    const userDetails = this.memberRoot.getUserDetails(projectMember?.member);
     if (!projectMember || !userDetails) return null;
     const memberDetails: IProjectMemberDetails = {
       id: projectMember.id,
-      role: projectMember.role,
-      original_role: projectMember.original_role,
+      role_slug: projectMember.role_slug,
       member: {
         ...userDetails,
         joining_date: projectMember.created_at ?? undefined,
@@ -256,11 +234,11 @@ export class ProjectMemberStore implements IProjectMemberStore {
     if (!this.projectMemberMap?.[projectId]) return null;
     let members = this.getProjectMemberships(projectId);
     if (includeGuestUsers === false) {
-      members = members.filter((m) => m.role !== EUserPermissions.GUEST);
+      members = members.filter((m) => !isGuestRole(m.role_slug));
     }
     members = sortBy(members, [
       (m) => m.member !== this.userStore.data?.id,
-      (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
+      (m) => this.memberRoot.getUserDetails(m.member)?.display_name?.toLowerCase(),
     ]);
     const memberIds = members.map((m) => m.member);
     return memberIds;
@@ -273,14 +251,14 @@ export class ProjectMemberStore implements IProjectMemberStore {
    */
   getFilteredProjectMemberDetails = computedFn((userId: string, projectId: string) => {
     const projectMember = this.getProjectMembershipByUserId(userId, projectId);
-    const userDetails = this.memberRoot?.memberMap?.[projectMember?.member];
+    const userDetails = this.memberRoot.getUserDetails(projectMember?.member);
     if (!projectMember || !userDetails) return null;
 
     // Check if this member passes the current filters
     const allMembers = this.getProjectMemberships(projectId);
     const filteredMemberIds = this.filters.getFilteredMemberIds(
       allMembers,
-      this.memberRoot?.memberMap || {},
+      this.memberRoot.getUserDetails,
       (member) => member.member,
       projectId
     );
@@ -290,8 +268,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
 
     const memberDetails: IProjectMemberDetails = {
       id: projectMember.id,
-      role: projectMember.role,
-      original_role: projectMember.original_role,
+      role_slug: projectMember.role_slug,
       member: {
         ...userDetails,
         joining_date: projectMember.created_at ?? undefined,
@@ -331,11 +308,7 @@ export class ProjectMemberStore implements IProjectMemberStore {
     await this.projectMemberService.bulkAddMembersToProject(workspaceSlug, projectId, data).then((response) => {
       runInAction(() => {
         response.forEach((member) => {
-          set(this.projectMemberMap, [projectId, member.member], {
-            ...member,
-            role: this.getUserProjectRole(member.member, projectId) ?? member.role,
-            original_role: member.role,
-          });
+          set(this.projectMemberMap, [projectId, member.member], member);
         });
       });
       update(this.projectRoot.projectMap, [projectId, "members"], (memberIds) =>
@@ -349,78 +322,40 @@ export class ProjectMemberStore implements IProjectMemberStore {
     });
 
   /**
-   * @description Returns the highest role from the project and teamspace membership
-   * @param projectId
-   * @param userId
-   * @param role
-   */
-  getProjectMemberRoleForUpdate = (projectId: string, userId: string, role: EUserProjectRoles): EUserProjectRoles => {
-    const projectRoleFromTeamspaceMembership = this.getProjectRoleFromTeamspaceMembership(userId, projectId);
-
-    const availableRoles = [projectRoleFromTeamspaceMembership, role].filter(
-      (role): role is EUserProjectRoles => role !== undefined
-    );
-
-    return getHighestRole(availableRoles) ?? role;
-  };
-
-  /**
    * @description update the role of a member in a project
    * @param workspaceSlug
    * @param projectId
    * @param userId
    * @param data
    */
-  updateMemberRole = async (workspaceSlug: string, projectId: string, userId: string, role: EUserProjectRoles) => {
+  updateMemberRole = async (workspaceSlug: string, projectId: string, userId: string, data: { role_slug: string }) => {
     const memberDetails = this.getProjectMemberDetails(userId, projectId);
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
     // original data to revert back in case of error
-    const isCurrentUser = this.rootStore.user.data?.id === userId;
     const membershipBeforeUpdate = { ...this.getProjectMembershipByUserId(userId, projectId) };
-    const permissionBeforeUpdate = isCurrentUser
-      ? this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId)
-      : undefined;
-    const updatedProjectRole = this.getProjectMemberRoleForUpdate(projectId, userId, role);
     try {
       runInAction(() => {
-        set(this.projectMemberMap, [projectId, userId, "original_role"], role);
-        set(this.projectMemberMap, [projectId, userId, "role"], updatedProjectRole);
-        if (isCurrentUser) {
-          set(
-            this.rootStore.user.permission.workspaceProjectsPermissions,
-            [workspaceSlug, projectId],
-            updatedProjectRole
-          );
-        }
-        set(this.rootStore.user.permission.projectUserInfo, [workspaceSlug, projectId, "role"], updatedProjectRole);
+        set(this.projectMemberMap, [projectId, userId, "role_slug"], data.role_slug);
       });
       const response = await this.projectMemberService.updateProjectMember(
         workspaceSlug,
         projectId,
         memberDetails?.id,
         {
-          role,
+          role_slug: data.role_slug,
         }
       );
       void this.mutateProjectMembersActivity(workspaceSlug, projectId);
+      // If the current user's own project role changed, re-fetch their permission
+      // grants so the UI reflects the new capabilities without requiring a reload.
+      if (userId === this.userStore?.data?.id) {
+        void this.rootStore.permissionAccessStore.fetchCurrentUserWorkspacePermissions(workspaceSlug);
+      }
       return response;
     } catch (error) {
       // revert back to original members in case of error
       runInAction(() => {
-        set(this.projectMemberMap, [projectId, userId, "original_role"], membershipBeforeUpdate?.original_role);
-        set(this.projectMemberMap, [projectId, userId, "role"], membershipBeforeUpdate?.role);
-        if (isCurrentUser) {
-          set(
-            this.rootStore.user.permission.workspaceProjectsPermissions,
-            [workspaceSlug, projectId],
-            membershipBeforeUpdate?.original_role
-          );
-          set(
-            this.rootStore.user.permission.projectUserInfo,
-            [workspaceSlug, projectId, "role"],
-            permissionBeforeUpdate
-          );
-        }
+        set(this.projectMemberMap, [projectId, userId, "role_slug"], membershipBeforeUpdate?.role_slug);
       });
       throw error;
     }
@@ -441,35 +376,6 @@ export class ProjectMemberStore implements IProjectMemberStore {
   };
 
   /**
-   * @description Processes the removal of a member from a project
-   * This abstract method handles the cleanup of member data from the project member map
-   * @param projectId - The ID of the project to remove the member from
-   * @param userId - The ID of the user to remove from the project
-   */
-
-  /**
-   * @description Processes the removal of a member from a project
-   * This method handles the cleanup of member data from the project member map
-   * @param projectId - The ID of the project to remove the member from
-   * @param userId - The ID of the user to remove from the project
-   */
-  processMemberRemoval = (projectId: string, userId: string) => {
-    // Get the role from the teamspace membership
-    const projectRoleFromTeamspaceMembership = this.getProjectRoleFromTeamspaceMembership(userId, projectId);
-    if (projectRoleFromTeamspaceMembership) {
-      // If the user is a member of the teamspace, update user membership detail
-      update(this.projectMemberMap, [projectId, userId], (prev: TProjectMembership) => ({
-        ...prev,
-        id: null,
-        original_role: null,
-        role: projectRoleFromTeamspaceMembership,
-      }));
-    } else {
-      this.handleMemberRemoval(projectId, userId);
-    }
-  };
-
-  /**
    * @description remove a member from a project
    * @param workspaceSlug
    * @param projectId
@@ -480,9 +386,51 @@ export class ProjectMemberStore implements IProjectMemberStore {
     if (!memberDetails || !memberDetails?.id) throw new Error("Member not found");
     await this.projectMemberService.deleteProjectMember(workspaceSlug, projectId, memberDetails?.id);
     runInAction(() => {
-      this.processMemberRemoval(projectId, userId);
+      this.handleMemberRemoval(projectId, userId);
     });
     void this.mutateProjectMembersActivity(workspaceSlug, projectId);
+  };
+
+  /**
+   * @description Joins a project
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @returns { Promise<void> }
+   */
+  joinProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
+    try {
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const response = await this.projectMemberService.joinProject(workspaceSlug, [projectId]);
+      if (response) {
+        void Promise.all([
+          this.rootStore.projectRoot.project.fetchProjectDetails(workspaceSlug, projectId),
+          this.rootStore.workItemTypeBridge.fetchAll(workspaceSlug, projectId),
+        ]);
+        // Auto-complete getting started checklist
+        void this.rootStore.preferencesRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "project_joined");
+      }
+    } catch (error) {
+      console.error("Error user joining the project", error);
+      throw error;
+    }
+  };
+
+  /**
+   * @description Leaves a project
+   * @param { string } workspaceSlug
+   * @param { string } projectId
+   * @returns { Promise<void> }
+   */
+  leaveProject = async (workspaceSlug: string, projectId: string): Promise<void> => {
+    try {
+      await this.projectMemberService.leaveProject(workspaceSlug, projectId);
+      runInAction(() => {
+        unset(this.rootStore.projectRoot.project.projectMap, [projectId]);
+      });
+    } catch (error) {
+      console.error("Error user leaving the project", error);
+      throw error;
+    }
   };
 
   /**
@@ -541,28 +489,6 @@ export class ProjectMemberStore implements IProjectMemberStore {
       throw error;
     }
   };
-
-  // private helpers
-  /**
-   * @description Returns the project role from the teamspace membership
-   * @param { string } userId
-   * @param { string } projectId
-   * @returns { EUserProjectRoles | undefined }
-   */
-  private getProjectRoleFromTeamspaceMembership = computedFn(
-    (userId: string, projectId: string): EUserProjectRoles | undefined => {
-      // Find all the teamspaces linked to the project
-      const projectTeamspaceIds = this.rootStore.teamspaceRoot.teamspaces.getProjectTeamspaceIds(projectId);
-      if (!projectTeamspaceIds || projectTeamspaceIds.length === 0) return undefined;
-      // Check if the user is a member of any of the teamspaces
-      const isUserMemberOfTeamspace = projectTeamspaceIds.some((teamspaceId) =>
-        this.rootStore.teamspaceRoot.teamspaces.isUserMemberOfTeamspace(userId, teamspaceId)
-      );
-      if (!isUserMemberOfTeamspace) return undefined;
-      // Return MEMBER if the user is a member of any of the teamspaces
-      return EUserProjectRoles.MEMBER;
-    }
-  );
 
   /**
    * @description Mutate project members activity

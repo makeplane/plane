@@ -17,17 +17,21 @@ import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { CustomersListRoot } from "@/components/customers/list";
+// types
+import type { Route } from "./+types/page";
 
-function CustomersListPage() {
+function CustomersListPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   // store
-  const { currentWorkspace } = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Customers` : undefined;
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <CustomersListRoot />
+      <CustomersListRoot workspaceSlug={workspaceSlug} />
     </>
   );
 }

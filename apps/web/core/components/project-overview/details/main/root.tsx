@@ -24,11 +24,10 @@ import { ProjectOverviewProgressSectionRoot } from "./progress-section-root";
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  disabled: boolean;
 };
 
 export function ProjectOverviewMainContentRoot(props: Props) {
-  const { workspaceSlug, projectId, disabled } = props;
+  const { workspaceSlug, projectId } = props;
   // store hooks
   const { fetchAttachments } = useProjectAttachments();
   // helper hooks
@@ -58,11 +57,7 @@ export function ProjectOverviewMainContentRoot(props: Props) {
       <ProjectOverviewInfoSectionRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       <div className="flex flex-col h-full w-full px-10 py-8">
         <ProjectOverviewProgressSectionRoot workspaceSlug={workspaceSlug} projectId={projectId} />
-        <ProjectOverviewCollapsibleSectionRoot
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          disabled={disabled}
-        />
+        <ProjectOverviewCollapsibleSectionRoot workspaceSlug={workspaceSlug} projectId={projectId} />
         <ProjectOverviewModalRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       </div>
     </div>

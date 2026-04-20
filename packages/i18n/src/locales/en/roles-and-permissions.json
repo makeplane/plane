@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "Roles and Permissions schemes",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "Roles and Permissions",
+        "roles_list": {
+          "workspace": {
+            "label": "Workspace roles"
+          },
+          "project": {
+            "label": "Project roles"
+          }
+        },
+        "compare_permissions": "Compare permissions",
+        "create_role": {
+          "title": "Create role",
+          "description": "Define the role by setting its name, description, and permissions for users in the instance.",
+          "button_label": "Create new role",
+          "error_toast_description": "Role could not be created. Please try again."
+        },
+        "edit_role": {
+          "title": "Edit role",
+          "description": "Update a role's name, permissions, and settings to control what members can access and do.",
+          "error_toast_description": "Role could not be updated. Please try again."
+        },
+        "role_details": {
+          "role_information_title": "Basic information",
+          "role_information_description": "Role's name and a brief description to clarify its purpose.",
+          "role_name": "Role name",
+          "role_description": "Description",
+          "role_details": "Role details",
+          "role_details_description": "See a complete overview of the role and its assigned permissions.",
+          "edit_permissions": "Edit permissions"
+        },
+        "role_form": {
+          "name": "Role name",
+          "name_placeholder": "Name the role",
+          "name_error": "Name is required.",
+          "description": "Description",
+          "description_placeholder": "Describe the role",
+          "create_button": "Create role"
+        },
+        "role_actions": {
+          "duplicate": "Duplicate"
+        },
+        "discard_changes_modal": {
+          "title": "Discard changes?",
+          "description": "Your changes haven't been saved. Leaving this page will discard them.",
+          "cancel": "Discard changes",
+          "confirm": "Keep editing"
+        },
+        "delete_role_modal": {
+          "title": "Delete role?",
+          "description": "Are you sure you want to delete this role? This action cannot be undone.",
+          "error_toast_message": "Failed to delete role. Please try again."
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "Workspace roles and permissions",
+            "project": "Project roles and permissions"
+          },
+          "permissions_header": "Permissions",
+          "view_mode": {
+            "sets": "Set view",
+            "permissions": "Permission strings"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "Workspace Settings",
+              "description": "Core workspace configuration: name, logo, currency, domain, deletion, and ownership transfer.",
+              "workspace": {
+                "view": { "label": "View Workspace" },
+                "edit": { "label": "Edit Workspace Settings" },
+                "manage": { "label": "Manage Workspace" },
+                "invite": { "label": "Invite Members" },
+                "delete": { "label": "Delete Workspace" },
+                "transfer": { "label": "Transfer Ownership" }
+              }
+            },
+            "member_management": {
+              "title": "Member Management",
+              "description": "Inviting, editing, importing, and removing workspace members.",
+              "workspace_member": {
+                "view": { "label": "View Members" },
+                "invite": { "label": "Invite Members" },
+                "edit": { "label": "Edit Member Details" },
+                "import": { "label": "Import Members (CSV / SSO)" },
+                "change_role": { "label": "Change Member Role" },
+                "remove": { "label": "Remove Members" }
+              }
+            },
+            "project_management": {
+              "title": "Project Management",
+              "description": "Creating and managing projects from the workspace context.",
+              "project": {
+                "browse": { "label": "Browse Projects" },
+                "view": { "label": "View Project Details" },
+                "create": { "label": "Create Projects" },
+                "edit": { "label": "Edit Project Settings" },
+                "react": { "label": "React to Projects" },
+                "publish": { "label": "Publish Projects (make public)" },
+                "archive": { "label": "Archive Projects" },
+                "delete": { "label": "Delete Projects" },
+                "manage": { "label": "Manage Project Access" }
+              }
+            },
+            "role_administration": {
+              "title": "Role Administration",
+              "description": "Creating and managing custom roles.",
+              "custom_role": {
+                "view": { "label": "View Custom Roles" },
+                "create": { "label": "Create Custom Roles" },
+                "edit": { "label": "Edit Custom Roles" },
+                "delete": { "label": "Delete Custom Roles" }
+              }
+            },
+            "workspace_pages": {
+              "title": "Workspace Pages (Wiki)",
+              "description": "Workspace-level documentation and wikis.",
+              "wiki": {
+                "view": { "label": "View Wiki" },
+                "create": { "label": "Create Wiki Pages" },
+                "edit": { "label": "Edit Wiki Pages" },
+                "share": { "label": "Share Wiki Pages" },
+                "delete": { "label": "Delete Wiki Pages" },
+                "comment": { "label": "Comment on Wiki Pages" }
+              }
+            },
+            "workspace_views": {
+              "title": "Workspace Views",
+              "description": "Workspace-level saved filters and view management.",
+              "workspace_workitem_view": {
+                "view": { "label": "View Workspace Views" },
+                "create": { "label": "Create Workspace Views" },
+                "edit": { "label": "Edit Workspace Views" },
+                "share": { "label": "Share Workspace Views" },
+                "publish": { "label": "Publish Workspace Views" },
+                "export": { "label": "Export Workspace Views" },
+                "delete": { "label": "Delete Workspace Views" }
+              }
+            },
+            "initiatives": {
+              "title": "Initiatives",
+              "description": "Cross-project initiative tracking, including comments, attachments, links, and updates.",
+              "initiative": {
+                "view": { "label": "View Initiatives" },
+                "create": { "label": "Create Initiatives" },
+                "edit": { "label": "Edit Initiatives" },
+                "manage": { "label": "Manage Initiatives" },
+                "react": { "label": "React to Initiatives" },
+                "delete": { "label": "Delete Initiatives" }
+              },
+              "initiative_comment": {
+                "view": { "label": "View Initiative Comments" },
+                "create": { "label": "Comment on Initiatives" },
+                "edit": { "label": "Edit Initiative Comments" },
+                "react": { "label": "React to Initiative Comments" },
+                "delete": { "label": "Delete Initiative Comments" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "View Initiative Attachments" },
+                "create": { "label": "Add Initiative Attachments" },
+                "delete": { "label": "Delete Initiative Attachments" }
+              },
+              "initiative_link": {
+                "view": { "label": "View Initiative Links" },
+                "create": { "label": "Add Initiative Links" },
+                "edit": { "label": "Edit Initiative Links" },
+                "delete": { "label": "Delete Initiative Links" }
+              }
+            },
+            "teamspaces": {
+              "title": "Teamspaces",
+              "description": "Browsing, creating, and managing teamspaces.",
+              "teamspace": {
+                "browse": { "label": "Browse Teamspaces" },
+                "view": { "label": "View Teamspace Details" },
+                "create": { "label": "Create Teamspaces" },
+                "edit": { "label": "Edit Teamspaces" },
+                "manage": { "label": "Manage Teamspace Members" },
+                "delete": { "label": "Delete Teamspaces" }
+              }
+            },
+            "integrations": {
+              "title": "Integrations",
+              "description": "Third-party integrations, webhooks, and API tokens.",
+              "integration": {
+                "view": { "label": "View Integrations" },
+                "create": { "label": "Create Integrations" },
+                "edit": { "label": "Configure Integrations" },
+                "delete": { "label": "Delete Integrations" }
+              },
+              "webhook": {
+                "view": { "label": "View Webhooks" },
+                "create": { "label": "Create Webhooks" },
+                "edit": { "label": "Edit Webhooks" },
+                "delete": { "label": "Delete Webhooks" }
+              },
+              "api_token": {
+                "view": { "label": "View API Tokens" },
+                "create": { "label": "Create API Tokens" },
+                "delete": { "label": "Delete API Tokens" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "Analytics & Reporting",
+              "description": "Workspace-level dashboards, analytics, and work logs.",
+              "analytics": {
+                "view": { "label": "View Analytics" },
+                "export": { "label": "Export Analytics" }
+              },
+              "dashboard": {
+                "view": { "label": "View Dashboards" },
+                "create": { "label": "Create Dashboards" },
+                "edit": { "label": "Edit Dashboards" },
+                "delete": { "label": "Delete Dashboards" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "View Work Logs" },
+                "export": { "label": "Export Work Logs" }
+              },
+              "ai": {
+                "use": { "label": "Use AI Features" }
+              }
+            },
+            "customers": {
+              "title": "Customer Feedback",
+              "description": "Customer and customer request management.",
+              "customer": {
+                "view": { "label": "View Customers" },
+                "create": { "label": "Create Customers" },
+                "edit": { "label": "Edit Customers" },
+                "delete": { "label": "Delete Customers" }
+              },
+              "customer_attachment": {
+                "create": { "label": "Add Customer Attachments" },
+                "delete": { "label": "Delete Customer Attachments" }
+              }
+            },
+            "work_item_relations": {
+              "title": "Work Item Relations",
+              "description": "Managing custom relation type definitions for work items.",
+              "workitem_relation": {
+                "view": { "label": "View Relation Definitions" },
+                "create": { "label": "Create Relation Definitions" },
+                "edit": { "label": "Edit Relation Definitions" },
+                "delete": { "label": "Delete Relation Definitions" }
+              }
+            },
+            "workspace_templates": {
+              "title": "Templates",
+              "description": "Creating and managing workspace-level work item, page, and project templates.",
+              "workspace_workitem_template": {
+                "view": { "label": "View Work Item Templates" },
+                "create": { "label": "Create Work Item Templates" },
+                "edit": { "label": "Edit Work Item Templates" },
+                "delete": { "label": "Delete Work Item Templates" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "View Page Templates" },
+                "create": { "label": "Create Page Templates" },
+                "edit": { "label": "Edit Page Templates" },
+                "delete": { "label": "Delete Page Templates" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "View Project Templates" },
+                "create": { "label": "Create Project Templates" },
+                "edit": { "label": "Edit Project Templates" },
+                "delete": { "label": "Delete Project Templates" }
+              }
+            },
+            "workspace_automations": {
+              "title": "Workspace Automations",
+              "description": "Workspace-level automation rules and configurations.",
+              "workspace_automation": {
+                "view": { "label": "View Workspace Automations" },
+                "create": { "label": "Create Workspace Automations" },
+                "edit": { "label": "Edit Workspace Automations" },
+                "delete": { "label": "Delete Workspace Automations" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "Project Members",
+              "description": "Inviting, editing, and removing project members.",
+              "project_member": {
+                "view": { "label": "View Project Members" },
+                "invite": { "label": "Invite Members" },
+                "edit": { "label": "Edit Member Details" },
+                "change_role": { "label": "Change Member Role" },
+                "remove": { "label": "Remove Members" }
+              }
+            },
+            "work_items": {
+              "title": "Work Items",
+              "description": "The primary work item surface. Includes comments, attachments, links, relations, and custom properties.",
+              "workitem": {
+                "view": { "label": "View Work Items" },
+                "create": { "label": "Create Work Items" },
+                "edit": { "label": "Edit Work Items" },
+                "bulk_edit": { "label": "Bulk Edit Work Items" },
+                "export": { "label": "Export Work Items" },
+                "react": { "label": "React to Work Items" },
+                "delete": { "label": "Delete Work Items" }
+              },
+              "comment": {
+                "create": { "label": "Add Comments" },
+                "edit": { "label": "Edit Comments" },
+                "react": { "label": "React to Comments" },
+                "delete": { "label": "Delete Comments" }
+              },
+              "attachment": {
+                "view": { "label": "View Attachments" },
+                "create": { "label": "Add Attachments" },
+                "delete": { "label": "Delete Attachments" }
+              },
+              "workitem_link": {
+                "view": { "label": "View Work Item Links" },
+                "create": { "label": "Add Work Item Links" },
+                "edit": { "label": "Edit Work Item Links" },
+                "delete": { "label": "Delete Work Item Links" }
+              },
+              "issue_property": {
+                "view": { "label": "View Custom Properties" },
+                "edit": { "label": "Edit Custom Properties" }
+              }
+            },
+            "epics": {
+              "title": "Epics",
+              "description": "Epic lifecycle, including links, properties, and update threads.",
+              "epic": {
+                "view": { "label": "View Epics" },
+                "create": { "label": "Create Epics" },
+                "edit": { "label": "Edit Epics" },
+                "delete": { "label": "Delete Epics" }
+              },
+              "epic_link": {
+                "view": { "label": "View Epic Links" },
+                "create": { "label": "Add Epic Links" },
+                "edit": { "label": "Edit Epic Links" },
+                "delete": { "label": "Delete Epic Links" }
+              },
+              "epic_property": {
+                "view": { "label": "View Epic Properties" },
+                "edit": { "label": "Edit Epic Properties" }
+              },
+              "epic_update": {
+                "view": { "label": "View Epic Updates" },
+                "create": { "label": "Post Epic Updates" },
+                "edit": { "label": "Edit Epic Updates" },
+                "delete": { "label": "Delete Epic Updates" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "View Epic Update Comments" },
+                "create": { "label": "Comment on Epic Updates" },
+                "edit": { "label": "Edit Epic Update Comments" },
+                "react": { "label": "React to Epic Update Comments" },
+                "delete": { "label": "Delete Epic Update Comments" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "Modules & Cycles",
+              "description": "Feature grouping and sprint/cycle management.",
+              "module": {
+                "view": { "label": "View Modules" },
+                "create": { "label": "Create Modules" },
+                "edit": { "label": "Edit Modules" },
+                "manage": { "label": "Manage Module Members" },
+                "archive": { "label": "Archive Modules" },
+                "export": { "label": "Export Modules" },
+                "delete": { "label": "Delete Modules" }
+              },
+              "cycle": {
+                "view": { "label": "View Cycles" },
+                "create": { "label": "Create Cycles" },
+                "edit": { "label": "Edit Cycles" },
+                "delete": { "label": "Delete Cycles" }
+              },
+              "cycle_update": {
+                "view": { "label": "View Cycle Updates" },
+                "create": { "label": "Post Cycle Updates" },
+                "edit": { "label": "Edit Cycle Updates" },
+                "delete": { "label": "Delete Cycle Updates" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "Pages & Views",
+              "description": "Project-level pages and saved views.",
+              "page": {
+                "view": { "label": "View Pages" },
+                "create": { "label": "Create Pages" },
+                "edit": { "label": "Edit Pages" },
+                "share": { "label": "Share Pages" },
+                "delete": { "label": "Delete Pages" }
+              },
+              "workitem_view": {
+                "view": { "label": "View Project Views" },
+                "create": { "label": "Create Project Views" },
+                "edit": { "label": "Edit Project Views" },
+                "share": { "label": "Share Project Views" },
+                "publish": { "label": "Publish Project Views" },
+                "export": { "label": "Export Project Views" },
+                "delete": { "label": "Delete Project Views" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "Work item intake and triage workflow.",
+              "intake": {
+                "view": { "label": "View Intake" },
+                "create": { "label": "Create Intake Items" },
+                "submit": { "label": "Submit Intake Requests" },
+                "edit": { "label": "Edit Intake Items" },
+                "react": { "label": "React to Intake Items" },
+                "manage": { "label": "Manage Intake Items" },
+                "configure": { "label": "Configure Intake" },
+                "export": { "label": "Export Intake" },
+                "delete": { "label": "Delete Intake Items" }
+              }
+            },
+            "project_configuration": {
+              "title": "Project Configuration",
+              "description": "Labels, states, estimates, and milestones.",
+              "label": {
+                "view": { "label": "View Labels" },
+                "create": { "label": "Create Labels" },
+                "edit": { "label": "Edit Labels" },
+                "delete": { "label": "Delete Labels" }
+              },
+              "state": {
+                "view": { "label": "View States" },
+                "create": { "label": "Create States" },
+                "edit": { "label": "Edit States" },
+                "delete": { "label": "Delete States" }
+              },
+              "estimate": {
+                "view": { "label": "View Estimates" },
+                "create": { "label": "Create Estimates" },
+                "edit": { "label": "Edit Estimates" },
+                "delete": { "label": "Delete Estimates" }
+              },
+              "milestone": {
+                "view": { "label": "View Milestones" },
+                "create": { "label": "Create Milestones" },
+                "edit": { "label": "Edit Milestones" },
+                "delete": { "label": "Delete Milestones" }
+              }
+            },
+            "automations": {
+              "title": "Automation & Workflows",
+              "description": "Automations, workflow rules, and recurring work items.",
+              "project_automation": {
+                "view": { "label": "View Automations" },
+                "create": { "label": "Create Automations" },
+                "edit": { "label": "Edit Automations" },
+                "delete": { "label": "Delete Automations" }
+              },
+              "workflow": {
+                "view": { "label": "View Workflows" },
+                "create": { "label": "Create Workflows" },
+                "edit": { "label": "Edit Workflows" },
+                "delete": { "label": "Delete Workflows" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "View Recurring Items" },
+                "create": { "label": "Create Recurring Items" },
+                "edit": { "label": "Edit Recurring Items" },
+                "delete": { "label": "Delete Recurring Items" }
+              }
+            },
+            "project_updates": {
+              "title": "Project Updates",
+              "description": "Progress updates and comments on updates.",
+              "project_update": {
+                "view": { "label": "View Project Updates" },
+                "create": { "label": "Post Project Updates" },
+                "edit": { "label": "Edit Project Updates" },
+                "delete": { "label": "Delete Project Updates" }
+              },
+              "project_update_comment": {
+                "view": { "label": "View Project Update Comments" },
+                "create": { "label": "Comment on Project Updates" },
+                "edit": { "label": "Edit Project Update Comments" },
+                "react": { "label": "React to Project Update Comments" },
+                "delete": { "label": "Delete Project Update Comments" }
+              }
+            },
+            "project_analytics": {
+              "title": "Analytics & Activity",
+              "description": "Project analytics and activity logs.",
+              "project_activity": {
+                "view": { "label": "View Activity Logs" }
+              }
+            },
+            "project_links": {
+              "title": "Project Links",
+              "description": "Project-level links.",
+              "project_link": {
+                "view": { "label": "View Project Links" },
+                "create": { "label": "Add Project Links" },
+                "edit": { "label": "Edit Project Links" },
+                "delete": { "label": "Delete Project Links" }
+              }
+            },
+            "project_templates": {
+              "title": "Templates",
+              "description": "Project-scoped work item and page templates.",
+              "project_workitem_template": {
+                "view": { "label": "View Work Item Templates" },
+                "create": { "label": "Create Work Item Templates" },
+                "edit": { "label": "Edit Work Item Templates" },
+                "delete": { "label": "Delete Work Item Templates" }
+              },
+              "project_page_template": {
+                "view": { "label": "View Page Templates" },
+                "create": { "label": "Create Page Templates" },
+                "edit": { "label": "Edit Page Templates" },
+                "delete": { "label": "Delete Page Templates" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "All",
+              "own": "Own only",
+              "creator": "Own only",
+              "lead": "Lead only",
+              "disabled": "Disabled"
+            },
+            "select_all": "Select All",
+            "high_risk_tooltip": "This grants elevated access. Grant with care.",
+            "folded_rows": {
+              "templates": {
+                "view": "View Templates",
+                "create": "Create Templates",
+                "edit": "Edit Templates",
+                "delete": "Delete Templates"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "Includes viewing details, attachments, and links. Also covers reacting and commenting on initiatives.",
+                  "edit": "Includes creating attachments and managing initiative links."
+                },
+                "workspace_templates": {
+                  "view": "Includes viewing project, work item, and page templates.",
+                  "create": "Includes creating project, work item, and page templates.",
+                  "edit": "Includes editing project, work item, and page templates.",
+                  "delete": "Includes deleting project, work item, and page templates."
+                },
+                "epics": {
+                  "view": "Includes viewing epic links and reacting to epics.",
+                  "edit": "Includes creating, editing, and deleting epic links."
+                },
+                "epic_updates": {
+                  "view": "Includes viewing and reacting to updates. Also covers viewing, creating, and reacting to update comments."
+                },
+                "project_updates": {
+                  "view": "Includes viewing and reacting to updates. Also covers viewing, creating, and reacting to update comments."
+                },
+                "project_templates": {
+                  "view": "Includes viewing work item and page templates.",
+                  "create": "Includes creating work item and page templates.",
+                  "edit": "Includes editing work item and page templates.",
+                  "delete": "Includes deleting work item and page templates."
+                }
+              }
+            },
+            "search_placeholder": "Search permissions...",
+            "no_results": "No permissions match",
+            "clear_search": "Clear",
+            "preset_label": "Start from a system role:",
+            "preset_none": "None (blank)",
+            "empty_permissions_note": "Select at least one permission to save this scheme."
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "Project roles & schemes",
+        "sidebar_label": "Project"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "Workspace roles & schemes",
+        "sidebar_label": "Workspace"
+      },
+      "roles_and_schemes": {
+        "description": "Configure properties and interaction groups to be attached to a work item type or types",
+        "tabs": {
+          "roles": "Roles",
+          "permission_schemes": "Permission Schemes"
+        },
+        "create_role": {
+          "modal_title": "Create new role",
+          "button_label": "Create Role",
+          "role_title_label": "Role title",
+          "role_title_placeholder": "Add a unique title",
+          "description_label": "Description",
+          "description_placeholder": "Add a unique title",
+          "create_button": "Create role",
+          "error_toast_description": "Role could not be created. Please try again."
+        },
+        "create_scheme": {
+          "title": "Create permission scheme",
+          "description": "Define the permission scheme by setting its name, description, and permissions.",
+          "button_label": "Create Permission Scheme",
+          "create_button": "Create permission scheme",
+          "error_toast_description": "Permission scheme could not be created. Please try again."
+        },
+        "role_detail": {
+          "back": "Back",
+          "permission_schemes_title": "Permissions Schemes",
+          "attach_button": "Attach Permissions Schemes",
+          "empty_title": "No permission schemes yet",
+          "empty_description": "Create personalized labels to effectively categorize and manage your work items.",
+          "error_toast_description": "Role could not be updated. Please try again."
+        },
+        "scheme_detail": {
+          "title": "Permission Scheme details",
+          "description": "See a complete overview of the scheme and its assigned permissions.",
+          "edit_title": "Edit permission scheme",
+          "edit_description": "Update the scheme's name, permissions, and settings.",
+          "edit_button": "Edit Permission Scheme",
+          "error_toast_description": "Permission scheme could not be updated. Please try again.",
+          "scheme_information_title": "Scheme information",
+          "scheme_information_description": "Scheme's name and a brief description to clarify its purpose.",
+          "scheme_name": "Scheme name",
+          "scheme_name_placeholder": "Name the scheme",
+          "scheme_name_error": "Name is required.",
+          "scheme_description": "Description",
+          "scheme_description_placeholder": "Describe the scheme"
+        },
+        "attach_schemes": {
+          "title": "Permissions Schemes",
+          "search_placeholder": "Search",
+          "permissions_count": "permissions",
+          "discard": "Discard",
+          "add": "Add"
+        },
+        "quick_actions": {
+          "edit_scheme": "Edit permission scheme",
+          "delete_scheme": "Delete permission scheme",
+          "edit_role": "Edit role details",
+          "enable_role": "Enable role",
+          "delete_role": "Delete role"
+        },
+        "edit_role": {
+          "modal_title": "Edit role details",
+          "save_button": "Save changes",
+          "saving": "Saving...",
+          "error_toast_description": "Role could not be updated. Please try again."
+        },
+        "delete_role": {
+          "confirm_title": "Delete \"{roleName}\"?",
+          "has_members_message": "This role is assigned to {count} members. Deleting it is permanent and cannot be undone.",
+          "no_members_message": "This role has no members assigned. Deleting it is permanent and cannot be undone.",
+          "reassign_label": "Reassign members to",
+          "reassign_placeholder": "Select a role",
+          "submit_button": "Reassign and Delete",
+          "submit_button_no_members": "Delete",
+          "submitting": "Deleting...",
+          "error_toast_description": "Role could not be deleted. Please try again.",
+          "success_toast_message": "Role deleted successfully."
+        },
+        "disable_role": {
+          "confirm_title": "Disable \"{roleName}\"?",
+          "has_members_message": "This role is currently assigned to {memberCount} members. You must select a role to reassign existing members before proceeding.",
+          "no_members_message": "This role has no members assigned. It will be disabled.",
+          "reassign_label": "Reassign members to",
+          "reassign_placeholder": "Select a role",
+          "submit_button": "Reassign and Disable",
+          "submit_button_no_members": "Disable",
+          "submitting": "Disabling...",
+          "error_toast_description": "Role could not be disabled. Please try again.",
+          "success_toast_message": "Role disabled successfully."
+        },
+        "enable_role": {
+          "confirm_title": "Enable \"{roleName}\"?",
+          "confirm_message": "This role will become active and can be assigned to members.",
+          "submit_button": "Enable",
+          "submitting": "Enabling...",
+          "success_toast_message": "Role enabled successfully."
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "Delete Permission Scheme?",
+          "has_roles_message": "This scheme is used in {count} roles. Removing it will revoke its permissions from those roles. This can't be undone.",
+          "no_roles_message": "This permission scheme is not used by any roles. It will be permanently deleted.",
+          "submit_button": "Confirm",
+          "submitting": "Deleting...",
+          "error_toast_description": "Permission scheme could not be deleted. Please try again.",
+          "in_use_error": "Remove this scheme from all roles before deleting.",
+          "success_toast_message": "Permission scheme deleted successfully."
+        }
+      }
+    }
+  }
+}

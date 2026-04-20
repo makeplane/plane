@@ -137,7 +137,12 @@ export const DeDupeIssuePopoverRoot = observer(function DeDupeIssuePopoverRoot(p
 
   const deDupeIds = issues.map((issue) => issue.id);
 
-  if (!workspaceSlug || !projectId || !rootIssueId || !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED))
+  if (
+    !workspaceSlug ||
+    !projectId ||
+    !rootIssueId ||
+    !isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED)
+  )
     return <></>;
   return (
     <WithAiFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE">

@@ -52,7 +52,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
   } = useAutomations();
   // derived values
   const automation = getAutomationById(automationId);
-  const isAnyActionAllowed = automation?.canCurrentUserEdit || automation?.canCurrentUserDelete;
+  const isAnyActionAllowed = automation?.canEdit || automation?.canDelete;
   if (!automation || !isAnyActionAllowed) return null;
 
   const handleAutomationDeletion = async () => {
@@ -76,7 +76,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
       },
       title: t("common.actions.edit"),
       icon: EditIcon,
-      shouldRender: automation.canCurrentUserEdit,
+      shouldRender: automation.canEdit,
     },
     {
       key: "delete",
@@ -85,7 +85,7 @@ export const AutomationQuickActions = observer(function AutomationQuickActions(p
       },
       title: t("common.actions.delete"),
       icon: TrashIcon,
-      shouldRender: automation.canCurrentUserDelete,
+      shouldRender: automation.canDelete,
       disabled: automation.isDeleteDisabled,
       className: automation.isDeleteDisabled ? "text-placeholder cursor-not-allowed" : "text-danger-primary",
       tooltipContent: automation.isDeleteDisabled ? t("automations.delete.validation.enabled") : undefined,

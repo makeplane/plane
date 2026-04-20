@@ -27,7 +27,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.app.serializers import IssueListDetailSerializer
 from plane.utils.issue_filters import issue_filters
-from plane.app.permissions import ROLE, allow_permission
+from plane.permissions import can, WorkspacePermissions, WorkitemPermissions, permission_engine, PermissionContext
 from plane.utils.order_queryset import order_issue_queryset
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -54,24 +54,46 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
 
     def _get_project_permission_filters(self):
         """
-        Get common project permission filters for guest users and role-based access control.
-        Returns Q object for filtering issues based on user role and project settings.
+        Get project permission filters based on the new permission system.
+        Uses permission_engine to determine per-project access:
+        - Unconditional workitem:view → see all issues in that project
+        - Conditional workitem:view+creator → see only own issues
+        - No workitem:view → project excluded
         """
-        return Q(
-            Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=True,
+        from plane.db.models import ProjectMember
+
+        user = self.request.user
+        # Get all active project memberships for this user in the workspace
+        project_memberships = ProjectMember.objects.filter(
+            member=user,
+            is_active=True,
+            project__workspace__slug=self.kwargs.get("slug"),
+            project__archived_at__isnull=True,
+        ).values_list("project_id", flat=True)
+
+        # Check workitem:view per project
+        unconditional_projects = []
+        creator_only_projects = []
+
+        for project_id in project_memberships:
+            result = permission_engine.check(
+                user=user,
+                permission=WorkitemPermissions.VIEW,
+                context=PermissionContext.project(
+                    project_id=project_id,
+                    workspace_id=getattr(self.request, "workspace_id", None),
+                ),
+                defer_conditions=True,
             )
-            | Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=False,
-                created_by=self.request.user,
-            )
-            |
-            # For other roles (role > 5), show all issues
-            Q(project__project_projectmember__role__gt=5),
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
+            if result.allowed:
+                if result.conditions and "creator" in result.conditions:
+                    creator_only_projects.append(project_id)
+                else:
+                    unconditional_projects.append(project_id)
+
+        return Q(project_id__in=unconditional_projects) | Q(
+            project_id__in=creator_only_projects,
+            created_by=user,
         )
 
     def _validate_order_by_field(self, order_by_param):
@@ -151,7 +173,7 @@ class WorkspaceIssueDetailEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     @check_feature_flag(FeatureFlag.GLOBAL_VIEWS_TIMELINE)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         # Create a mutable copy of query params to remove sub_issue
         query_params = request.query_params.copy()
@@ -247,7 +269,7 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
         return True
 
     @check_feature_flag(FeatureFlag.GLOBAL_VIEWS_TIMELINE)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def post(self, request, slug):
         updates = request.data.get("updates", [])
 
@@ -257,13 +279,29 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
         # get all the project ids from the payload
         project_ids = [update["project_id"] for update in updates]
 
+        # Per-project permission check: verify user has workitem:edit in each project
+        workspace_id = getattr(request, "workspace_id", None)
+        for project_id in set(project_ids):
+            result = permission_engine.check(
+                user=request.user,
+                permission=WorkitemPermissions.EDIT,
+                context=PermissionContext.project(
+                    project_id=project_id,
+                    workspace_id=workspace_id,
+                ),
+            )
+            if not result:
+                from rest_framework.exceptions import PermissionDenied
+
+                raise PermissionDenied(
+                    f"You do not have permission to edit issues in project {project_id}."
+                )
+
         # Fetch all relevant issues in a single query
         issues = list(
             Issue.objects.filter(
                 id__in=issue_ids,
                 project_id__in=project_ids,
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
                 workspace__slug=slug,
             )
         )
@@ -322,7 +360,7 @@ class WorkspaceIssueBulkUpdateDateEndpoint(BaseAPIView):
 class WorkspaceIssueRetrieveEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, issue_id):
         issue = (
             Issue.issue_objects.filter(id=issue_id, workspace__slug=slug)

@@ -16,21 +16,18 @@ import { useNavigate } from "react-router";
 import { useParams, usePathname } from "next/navigation";
 import { useMemo } from "react";
 // plane imports
-import { E_FEATURE_FLAGS } from "@plane/constants";
 import { CloseIcon, PiIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
-import { ADMIN_USER_CHECKLIST, MEMBER_USER_CHECKLIST } from "@/components/get-started/widgets/constant";
+import { GET_STARTED_CHECKLIST } from "@/components/get-started/widgets/constant";
 import { TopNavPowerK } from "@/components/navigation";
 import { HelpMenuRoot } from "@/components/workspace/sidebar/help-section/root";
 import { UserMenuRoot } from "@/components/workspace/sidebar/user-menu-root";
 import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu-root";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
-import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspacePreferences } from "@/hooks/store/use-workspace-preferences";
 // plane web imports
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { useAppRailVisibility } from "@/lib/app-rail/context";
@@ -44,20 +41,28 @@ import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 import useSWR from "swr";
 import { Button } from "@plane/propel/button";
 import { useAiFlag } from "@/plane-web/hooks/store/use-ai-flag";
+import { getPermittedChecklistItems } from "../get-started/widgets/checklist/helper";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useProject } from "@/hooks/store/use-project";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 
 export const TopNavigationRoot = observer(function TopNavigationRoot() {
+  const { workspaceSlug, projectId, workItem } = useParams();
   // store hooks
   const { config } = useInstance();
   const { activeSidecar, openPiChatSidecar, closeSidecar } = useTheme();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { workspace: workspaceMemberStore } = useMember();
+  const { getGettingStartedChecklistBySlug } = useWorkspacePreferences();
+  const { can } = usePermissionAccess();
+  const { joinedProjectIds } = useProject();
   // derived values
   const isPiChatSidecarOpen = activeSidecar === "pi-chat";
   const { preferences } = useAppRailPreferences();
   const { isEnabled: isAppRailEnabled, isCollapsed: isAppRailCollapsed } = useAppRailVisibility();
+  const isAiChatFeatureEnabled = useAiFlag(workspaceSlug, "AI_CHAT");
+  const isAiChatWorkspaceFlagEnabled = useFlag(workspaceSlug, "AI_CHAT");
+  const isAiChatAvailable = isAiChatFeatureEnabled && isAiChatWorkspaceFlagEnabled;
   // router
-  const { workspaceSlug, projectId, workItem } = useParams();
   const { getUnreadNotificationsCount } = useWorkspaceNotifications();
   const navigate = useNavigate();
 
@@ -65,7 +70,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
   useSWR(
     workspaceSlug ? "WORKSPACE_UNREAD_NOTIFICATION_COUNT" : null,
-    workspaceSlug ? () => getUnreadNotificationsCount(workspaceSlug.toString()) : null
+    workspaceSlug ? () => getUnreadNotificationsCount(workspaceSlug) : null
   );
 
   const isAiChatAiFlag = useAiFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.AI_CHAT);
@@ -74,9 +79,9 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
     isAiChatAiFlag &&
     isAiChatFlag &&
     isPiAllowed(pathname, workspaceSlug, projectId, workItem) &&
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED);
 
-  const isAdvancedSearchEnabled = useFlag(workspaceSlug?.toString(), "ADVANCED_SEARCH");
+  const isAdvancedSearchEnabled = useFlag(workspaceSlug, "ADVANCED_SEARCH");
   const isOpenSearch = config?.is_opensearch_enabled;
   const showLabel = preferences.displayMode === "icon_with_label";
 
@@ -86,11 +91,15 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
   const shouldRenderGetStartedButton = useMemo(() => {
     if (!workspaceSlug) return false;
 
-    const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug.toString());
-    const checklistData = workspaceMemberStore.getGettingStartedChecklistByWorkspaceSlug(workspaceSlug.toString());
+    const checklistData = getGettingStartedChecklistBySlug(workspaceSlug);
 
     // Select checklist based on role
-    const checklist = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN ? ADMIN_USER_CHECKLIST : MEMBER_USER_CHECKLIST;
+    const checklist = getPermittedChecklistItems(GET_STARTED_CHECKLIST, {
+      workspaceSlug,
+      joinedProjectIds,
+      can,
+      flags: { aiChat: isAiChatAvailable },
+    });
 
     // Check if all items in the checklist are completed
     const allCompleted = checklist.every((item) => {
@@ -100,7 +109,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
 
     // Show button if NOT all completed
     return !allCompleted;
-  }, [workspaceSlug, getWorkspaceRoleByWorkspaceSlug, workspaceMemberStore]);
+  }, [workspaceSlug, getGettingStartedChecklistBySlug, joinedProjectIds, can, isAiChatAvailable]);
 
   return (
     <div
@@ -131,7 +140,7 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
             Get Started
           </Button>
         )}
-        <NotificationsPopoverRoot workspaceSlug={workspaceSlug?.toString()} />
+        <NotificationsPopoverRoot workspaceSlug={workspaceSlug} />
         <HelpMenuRoot />
         {shouldRenderPiChat && (
           <div data-tour="top-navigation-ai">

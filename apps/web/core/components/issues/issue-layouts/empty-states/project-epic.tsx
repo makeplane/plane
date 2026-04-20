@@ -11,49 +11,47 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserProjectRoles } from "@plane/types";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 import { useIssueTypes } from "@/plane-web/hooks/store";
 
-export const ProjectEpicsEmptyState = observer(function ProjectEpicsEmptyState() {
+type TProps = {
+  permissions: {
+    canCreateWorkItem: (projectId: string) => boolean;
+  };
+};
+
+export const ProjectEpicsEmptyState = observer(function ProjectEpicsEmptyState(props: TProps) {
+  const { permissions } = props;
   // router
-  const { projectId } = useParams();
+  const { projectId: routerProjectId } = useParams();
+  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
   // states
-  const [isCreateIssueModalOpen, setIsCreateIssueModalOpen] = useState(false);
+  const [isCreateEpicModalOpen, setIsCreateEpicModalOpen] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { getProjectEpicId } = useIssueTypes();
   // derived values
-  const projectEpicId = getProjectEpicId(projectId?.toString());
-  const hasProjectMemberLevelPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const projectEpicId = projectId ? getProjectEpicId(projectId) : undefined;
 
+  if (!projectId) return null;
   return (
     <div className="relative h-full w-full overflow-y-auto">
-      {projectId && (
-        <CreateUpdateEpicModal
-          isOpen={isCreateIssueModalOpen}
-          onClose={() => setIsCreateIssueModalOpen(false)}
-          data={{
-            project_id: projectId,
-            type_id: projectEpicId,
-          }}
-        />
-      )}
+      <CreateUpdateEpicModal
+        isOpen={isCreateEpicModalOpen}
+        onClose={() => setIsCreateEpicModalOpen(false)}
+        data={{
+          project_id: projectId,
+          type_id: projectEpicId,
+        }}
+      />
       <EmptyStateDetailed
         assetKey="epic"
         title={t("project_empty_state.epics.title")}
@@ -61,8 +59,8 @@ export const ProjectEpicsEmptyState = observer(function ProjectEpicsEmptyState()
         actions={[
           {
             label: t("project_empty_state.epics.cta_primary"),
-            onClick: () => setIsCreateIssueModalOpen(true),
-            disabled: !hasProjectMemberLevelPermissions,
+            onClick: () => setIsCreateEpicModalOpen(true),
+            disabled: projectId ? !permissions.canCreateWorkItem(projectId) : true,
           },
         ]}
       />

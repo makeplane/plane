@@ -22,6 +22,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Vnořené stránky vyžadují placený plán. Upgradujte pro jejich odemčení."
+    },
+    "auth": {
+      "title": "Přístup odepřen",
+      "description": "Nemáte oprávnění pro přístup k této stránce. Obraťte se prosím na správce svého workspace, aby vám oprávnění udělil.",
+      "redirection_button": {
+        "text": "Přejít na projekty"
+      },
+      "reload_button": {
+        "text": "Obnovit stránku"
+      }
     }
   },
   "wiki_collections": {

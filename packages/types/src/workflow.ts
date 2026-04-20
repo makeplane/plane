@@ -259,11 +259,17 @@ export type TWorkflowUpdatePayload = Partial<TWorkflowCreatePayload> & {
   is_active?: boolean;
 };
 
+export type TWorkflowInstancePermissions = {
+  canEdit: boolean;
+  canDelete: boolean;
+};
+
 export interface IWorkflow extends TWorkflow {
   activeSidebarTransitionId: string | null;
   activeSidebarStateId: string | null;
   editingTransitionIds: string[];
   changeHistory: IWorkflowChangeHistoryStore;
+  permissions: TWorkflowInstancePermissions;
   asJSON: TWorkflow;
   stateIds: string[];
   getStateById: (stateId: string) => IWorkflowState | undefined;

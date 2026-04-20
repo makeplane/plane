@@ -22,8 +22,7 @@ import { IconButton } from "@plane/propel/icon-button";
 import { ChevronRightIcon, GithubIcon, SlackIcon, PiIcon, CloseIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
-import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspacePreferences } from "@/hooks/store/use-workspace-preferences";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@plane/propel/collapsible";
 
@@ -38,14 +37,11 @@ export const SidebarTrySection = observer(() => {
   const [isOpen, setIsOpen] = useState(true);
   const { workspaceSlug } = useParams();
 
-  const { workspaceInfoBySlug } = useUserPermissions();
-  const {
-    workspace: { updateExploredFeatures },
-  } = useMember();
+  const { getPreferencesBySlug, updateExploredFeatures } = useWorkspacePreferences();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
 
   const workspaceSlugStr = workspaceSlug?.toString() ?? "";
-  const currentWorkspaceInfo = workspaceInfoBySlug(workspaceSlugStr);
+  const workspacePreferences = getPreferencesBySlug(workspaceSlugStr);
   const currentSubscription = subscriptionDetail?.product;
 
   const trySectionItems = useMemo<TTrySectionItem[]>(
@@ -73,10 +69,10 @@ export const SidebarTrySection = observer(() => {
   );
 
   const unexploredItems = useMemo(() => {
-    if (!currentWorkspaceInfo?.explored_features) return trySectionItems;
+    if (!workspacePreferences?.explored_features) return trySectionItems;
 
-    return trySectionItems.filter((item) => !currentWorkspaceInfo.explored_features?.[item.feature]);
-  }, [currentWorkspaceInfo?.explored_features, trySectionItems]);
+    return trySectionItems.filter((item) => !workspacePreferences.explored_features?.[item.feature]);
+  }, [workspacePreferences?.explored_features, trySectionItems]);
 
   const handleTryFeatureClick = useCallback(
     (feature: TExploredFeatures) => {

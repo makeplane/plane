@@ -28,6 +28,8 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+// types
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import type { TIssueOperations } from "./root";
 import { DueDatePropertyIcon, StartDatePropertyIcon } from "@plane/propel/icons";
@@ -37,12 +39,13 @@ type Props = {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  isEditable: boolean;
-  isArchived: boolean;
+  permissions: {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
 };
 
 export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, permissions } = props;
   const { t } = useTranslation();
   // store hooks
   const {
@@ -56,8 +59,6 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
   const isApprovalPendingState = issue?.state_id
     ? isApprovalPending(workspaceSlug, projectId, issue.type_id, issue.state_id)
     : false;
-
-  const disabled = isArchived || !isEditable;
   const stateDetails = getStateById(issue?.state_id);
 
   const minDate = issue?.start_date ? getDate(issue?.start_date) : null;
@@ -85,7 +86,7 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
             })
           }
           projectId={projectId}
-          disabled={disabled || isApprovalPendingState}
+          disabled={!permissions.canEditProperty("state_id") || isApprovalPendingState}
           buttonVariant="transparent-with-text"
           className="w-full px-1"
           buttonContainerClassName="w-full h-7 rounded-md hover:bg-layer-transparent-hover"
@@ -108,7 +109,7 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
               priority: val,
             })
           }
-          disabled={disabled}
+          disabled={!permissions.canEditProperty("priority")}
           buttonVariant="transparent-with-text"
           className="w-full px-1"
           buttonContainerClassName="w-full h-7 rounded-md hover:bg-layer-transparent-hover"
@@ -125,7 +126,7 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
               assignee_ids: val,
             })
           }
-          disabled={disabled}
+          disabled={!permissions.canEditProperty("assignee_ids")}
           projectId={projectId}
           placeholder={t("issue.add.assignee")}
           multiple
@@ -150,7 +151,7 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
             })
           }
           maxDate={maxDate ?? undefined}
-          disabled={disabled}
+          disabled={!permissions.canEditProperty("start_date")}
           buttonVariant="transparent-with-text"
           className="group w-full px-1"
           buttonContainerClassName="w-full h-7 rounded-md hover:bg-layer-transparent-hover"
@@ -175,7 +176,7 @@ export const DetailMetaRow = observer(function DetailMetaRow(props: Props) {
               })
             }
             minDate={minDate ?? undefined}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("target_date")}
             buttonVariant="transparent-with-text"
             className="group w-full px-1"
             buttonContainerClassName="w-full h-7 rounded-md hover:bg-layer-transparent-hover"

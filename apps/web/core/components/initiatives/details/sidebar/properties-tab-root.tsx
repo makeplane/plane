@@ -39,17 +39,21 @@ import { InitiativeLabelDropdown } from "@/components/initiatives/components/lab
 import { InitiativeStateDropdown } from "@/components/initiatives/components/states/initiative-state-dropdown";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiative } from "@/types/initiative";
+import type { TInitiativeProperty, TInitiativeDetailPermissions } from "@/store/initiatives/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canEditProperty: (property: TInitiativeProperty) => boolean;
+    labels: TInitiativeDetailPermissions["labels"];
+  };
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSidebarPropertiesRoot(props: Props) {
-  const { workspaceSlug, initiativeId, disabled, handleInitiativeStateUpdate, handleInitiativeLabelUpdate } = props;
+  const { workspaceSlug, initiativeId, permissions, handleInitiativeStateUpdate, handleInitiativeLabelUpdate } = props;
 
   const {
     initiative: { getInitiativeById, updateInitiative },
@@ -94,7 +98,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
 
   return (
     <SidebarContentWrapper title="Properties">
-      <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
+      <div className="mb-2 space-y-2.5">
         {/* States Drop down */}
         <div className="flex h-8 items-center gap-2">
           <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary">
@@ -104,7 +108,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
           <InitiativeStateDropdown
             value={initiative.state}
             onChange={(val) => handleInitiativeStateUpdate(val)}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("state")}
             buttonClassName="h-full"
           />
         </div>
@@ -154,6 +158,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             dropdownArrow
             dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
             showUserDetails
+            disabled={!permissions.canEditProperty("lead")}
           />
         </div>
         {/* Dates Drop down*/}
@@ -177,6 +182,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             optionsClassName="z-30"
             showTooltip
             maxDate={getDate(initiative.end_date)}
+            disabled={!permissions.canEditProperty("start_date")}
           />
         </div>
         <div className="flex h-8 items-center gap-2">
@@ -199,6 +205,7 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             optionsClassName="z-30"
             showTooltip
             minDate={getDate(initiative.start_date)}
+            disabled={!permissions.canEditProperty("end_date")}
           />
         </div>
         {createdByDetails && (
@@ -225,6 +232,8 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             onChange={(val: string[]) => handleInitiativeLabelUpdate(val)}
             placeholder={t("label")}
             onAddLabel={createLabel}
+            disabled={!permissions.canEditProperty("label_ids")}
+            labelPermissions={permissions.labels}
           />
         </div>
       </div>

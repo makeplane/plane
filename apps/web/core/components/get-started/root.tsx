@@ -13,9 +13,12 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// plane imports
 import { ContentWrapper } from "@plane/ui";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+// hooks
+import { useUser } from "@/hooks/store/user";
+import { useWorkspaceAccess } from "@/hooks/permissions/use-workspace-access";
+// local imports
 import {
   ComparePlaneView,
   GetStartedSection,
@@ -28,9 +31,9 @@ import {
 export const GetStartedRoot = observer(function GetStartedRoot() {
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
   const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
-
-  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const { hasWorkspaceResourcePermission } = useWorkspaceAccess();
+  // derived
+  const hasTeamSectionPermission = hasWorkspaceResourcePermission(workspaceSlug, "team_spaces");
 
   if (!currentUser) {
     return null;
@@ -43,7 +46,7 @@ export const GetStartedRoot = observer(function GetStartedRoot() {
         <div className="flex flex-col gap-12">
           <BusinessTrialBanner />
           <GetStartedSection />
-          {isWorkspaceAdmin && <TeamSection workspaceSlug={workspaceSlug} />}
+          {hasTeamSectionPermission && <TeamSection workspaceSlug={workspaceSlug} />}
           <IntegrationsView />
           <ComparePlaneView />
         </div>

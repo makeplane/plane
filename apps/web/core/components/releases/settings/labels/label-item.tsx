@@ -28,14 +28,19 @@ type Props = {
   handleLabelDelete: (label: ReleaseLabel) => void;
   onDrop: (draggingLabelId: string, droppedLabelId: string | undefined, dropAtEndOfList: boolean) => void;
   labelOperationsCallbacks: ReleaseLabelOperationsCallbacks;
+  permissions: {
+    canReorder: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const ReleaseLabelItem = observer(function ReleaseLabelItem(props: Props) {
-  const { label, isLastChild, setIsUpdating, handleLabelDelete, onDrop, labelOperationsCallbacks } = props;
+  const { label, isLastChild, setIsUpdating, handleLabelDelete, onDrop, labelOperationsCallbacks, permissions } = props;
   const [isEditForm, setEditForm] = useState(false);
 
   return (
-    <ReleaseLabelDndHOC label={label} isLastChild={isLastChild} onDrop={onDrop}>
+    <ReleaseLabelDndHOC label={label} isLastChild={isLastChild} onDrop={onDrop} canReorder={permissions.canReorder}>
       {(isDragging: boolean, dragHandleRef: React.RefObject<HTMLButtonElement>) => (
         <div
           className={`rounded-sm ${isDragging ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
@@ -44,7 +49,7 @@ export const ReleaseLabelItem = observer(function ReleaseLabelItem(props: Props)
             className={`rounded-sm text-primary ${!isDragging ? "border-[0.5px] border-subtle-1" : ""} ${isDragging ? "bg-layer-1" : "bg-surface-1"}`}
           >
             <div className="py-2 px-1">
-              {isEditForm ? (
+              {isEditForm && permissions.canEdit ? (
                 <CreateUpdateReleaseLabelInline
                   isUpdating
                   labelToUpdate={label}
@@ -64,6 +69,7 @@ export const ReleaseLabelItem = observer(function ReleaseLabelItem(props: Props)
                   }}
                   handleDelete={handleLabelDelete}
                   dragHandleRef={dragHandleRef}
+                  permissions={permissions}
                 />
               )}
             </div>

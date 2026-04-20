@@ -16,7 +16,7 @@ import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -25,7 +25,6 @@ import { cn } from "@plane/utils";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/components/issues/duplicate-modal";
 import { useIssueType } from "@/plane-web/hooks/store";
@@ -37,7 +36,17 @@ import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useModuleIssueMenuItems } from "./helper";
 
-export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions(props: IQuickActionProps) {
+type TModuleIssueQuickActionsProps = Exclude<IQuickActionProps, "readOnly" | "disabled"> & {
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canDuplicate: boolean;
+    canRemoveFromView: boolean;
+  };
+};
+
+export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions(props: TModuleIssueQuickActionsProps) {
   const {
     issue,
     handleDelete,
@@ -46,7 +55,7 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
     handleArchive,
     customActionButton,
     portalElement,
-    readOnly = false,
+    permissions,
     placements = "bottom-start",
     parentRef,
   } = props;
@@ -60,7 +69,6 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
   const { workspaceSlug, moduleId } = useParams();
   // store hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
-  const { allowPermissions } = useUserPermissions();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
   // plane web hooks
@@ -69,11 +77,7 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
-  const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
-  const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
-  const isDeletingAllowed = isEditingAllowed;
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
@@ -92,9 +96,11 @@ export const ModuleIssueQuickActions = observer(function ModuleIssueQuickActions
     workspaceSlug: workspaceSlug?.toString(),
     projectIdentifier,
     activeLayout,
-    isEditingAllowed,
-    isArchivingAllowed,
-    isDeletingAllowed,
+    canEdit: permissions.canEdit,
+    canArchive: permissions.canArchive && !!handleArchive,
+    canDelete: permissions.canDelete,
+    canDuplicate: permissions.canDuplicate,
+    canRemoveFromView: permissions.canRemoveFromView,
     isInArchivableGroup,
     issueTypeDetail,
     setIssueToEdit,

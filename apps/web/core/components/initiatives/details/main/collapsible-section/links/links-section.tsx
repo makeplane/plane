@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -24,26 +23,32 @@ import { InitiativeLinksCollapsibleContent } from "./link-components/content";
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
   isOpen: boolean;
   onToggle: () => void;
   count: number;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (linkId: string) => boolean;
+    canDelete: (linkId: string) => boolean;
+  };
 };
 
 export const LinksSection = observer(function LinksSection(props: Props) {
-  const { workspaceSlug, initiativeId, disabled, isOpen, onToggle, count } = props;
+  const { workspaceSlug, initiativeId, isOpen, onToggle, count, permissions } = props;
   const { t } = useTranslation();
 
   return (
     <CollapsibleDetailSection
       title={t("common.links")}
-      actionItemElement={!disabled && <InitiativeLinksActionButton disabled={disabled} variant="layer-1" />}
+      actionItemElement={
+        permissions.canCreate && <InitiativeLinksActionButton variant="layer-1" canAddLink={permissions.canCreate} />
+      }
       count={count}
       collapsibleContent={
         <InitiativeLinksCollapsibleContent
           workspaceSlug={workspaceSlug}
           initiativeId={initiativeId}
-          disabled={disabled}
+          permissions={permissions}
         />
       }
       isOpen={isOpen}

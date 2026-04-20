@@ -18,9 +18,9 @@ from rest_framework import status
 
 # Module imports
 from .. import BaseViewSet
+from plane.permissions import can, WorkitemPermissions
+from plane.permissions.definitions import ResourceType
 from plane.app.serializers import IssueSubscriberSerializer
-from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
-
 from plane.db.models import IssueSubscriber, ProjectMember, WorkspaceMember
 from plane.ee.models import TeamspaceMember, TeamspaceProject
 
@@ -34,16 +34,7 @@ class IssueSubscriberViewSet(BaseViewSet):
     serializer_class = IssueSubscriberSerializer
     model = IssueSubscriber
 
-    permission_classes = [ProjectEntityPermission]
-
-    def get_permissions(self):
-        if self.action in ["subscribe", "unsubscribe", "subscription_status"]:
-            self.permission_classes = [ProjectLitePermission]
-        else:
-            self.permission_classes = [ProjectEntityPermission]
-
-        return super(IssueSubscriberViewSet, self).get_permissions()
-
+    # TODO: Unused endpoint — not called by FE. URL commented out. Migrate to @can before re-enabling.
     def perform_create(self, serializer):
         serializer.save(
             project_id=self.kwargs.get("project_id"),
@@ -63,6 +54,7 @@ class IssueSubscriberViewSet(BaseViewSet):
             .distinct()
         )
 
+    # TODO: Unused endpoint — not called by FE. URL commented out. Migrate to @can before re-enabling.
     def list(self, request, slug, project_id, issue_id):
         # fetch all the subscribers for the issue
         subscribers = IssueSubscriber.objects.filter(
@@ -163,6 +155,7 @@ class IssueSubscriberViewSet(BaseViewSet):
         serializer = IssueSubscriberSerializer(subscriber)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def unsubscribe(self, request, slug, project_id, issue_id):
         issue_subscriber = IssueSubscriber.objects.get(
             project=project_id,
@@ -172,6 +165,7 @@ class IssueSubscriberViewSet(BaseViewSet):
         issue_subscriber.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def subscription_status(self, request, slug, project_id, issue_id):
         is_subscribed = IssueSubscriber.is_subscribed(issue_id, request.user.id)
         return Response({"subscribed": is_subscribed}, status=status.HTTP_200_OK)

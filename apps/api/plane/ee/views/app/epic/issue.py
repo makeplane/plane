@@ -32,7 +32,7 @@ from plane.app.serializers import IssueSerializer
 from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.timezone_converter import user_timezone_converter
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, EpicPermissions
 from collections import defaultdict
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.issue_type_hierarchy import validate_type_hierarchy
@@ -42,7 +42,7 @@ class EpicIssuesEndpoint(BaseAPIView):
     use_read_replica = True
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def get(self, request, slug, project_id, epic_id):
         epic_issues = (
             Issue.issue_objects.filter(parent_id=epic_id, workspace__slug=slug)
@@ -182,7 +182,7 @@ class EpicIssuesEndpoint(BaseAPIView):
         )
 
     # Add multiple issues under an epic
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(EpicPermissions.EDIT, resource_param="epic_id")
     def post(self, request, slug, project_id, epic_id):
         parent_issue = Issue.objects.get(pk=epic_id)
         sub_work_item_ids = request.data.get("sub_issue_ids", [])

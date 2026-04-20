@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, AnalyticsPermissions
 from plane.app.serializers import ExporterHistorySerializer
 from plane.bgtasks.export_task import issue_export_task
 from plane.db.models import ExporterHistory, Project, Workspace, WorkspaceMember
@@ -27,7 +27,7 @@ class ExportIssuesEndpoint(BaseAPIView):
     model = ExporterHistory
     serializer_class = ExporterHistorySerializer
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(AnalyticsPermissions.EXPORT, resource_param="workspace_id")
     def post(self, request, slug):
         # Get the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -77,11 +77,11 @@ class ExportIssuesEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(AnalyticsPermissions.EXPORT, resource_param="workspace_id")
     def get(self, request, slug):
         # Get the workspace role for the current user
         is_member = WorkspaceMember.objects.filter(
-            workspace__slug=slug, member=request.user, is_active=True, role=ROLE.MEMBER.value
+            workspace__slug=slug, member=request.user, is_active=True, role=15
         ).exists()
 
         exporter_history = (

@@ -57,6 +57,7 @@ export * from "./mobile";
 export * from "./module";
 export * from "./page";
 export * from "./payment";
+export * from "./permissions";
 export * from "./payment-extended";
 export * from "./page-collection";
 export * from "./pragmatic";

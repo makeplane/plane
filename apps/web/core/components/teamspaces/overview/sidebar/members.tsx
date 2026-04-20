@@ -32,13 +32,13 @@ import { useTeamspaces } from "@/plane-web/hooks/store";
 
 export type TTeamsOverviewSidebarMembersProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  canManage: boolean;
 };
 
 export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSidebarMembers(
   props: TTeamsOverviewSidebarMembersProps
 ) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, canManage } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
@@ -83,7 +83,7 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
     <div className="relative flex flex-col w-full h-full gap-y-2 ">
       <div className="flex items-center gap-1.5 text-13 font-semibold">Members</div>
       <div className="flex-1 flex flex-col py-2 px-0.5 gap-x-2 gap-y-5 overflow-y-auto">
-        <AddTeamspaceMembersButton teamspaceId={teamspace.id} variant="sidebar" isEditingAllowed={isEditingAllowed} />
+        <AddTeamspaceMembersButton teamspaceId={teamspace.id} variant="sidebar" canAddMember={canManage} />
         {members &&
           members.length > 0 &&
           members.map((member) => {
@@ -109,7 +109,7 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                     {member.first_name} {member.last_name}
                   </span>
                 </div>
-                {isEditingAllowed && !isTeamspaceLead && (
+                {canManage && !isTeamspaceLead && (
                   <div className="flex-shrink-0">
                     <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
                       <CustomMenu.MenuItem
@@ -117,7 +117,7 @@ export const TeamsOverviewSidebarMembers = observer(function TeamsOverviewSideba
                           handleMemberLeaveOrRemove(member.id);
                         }}
                         className={cn("flex items-center gap-2 text-danger-primary")}
-                        disabled={!isEditingAllowed}
+                        disabled={!canManage}
                       >
                         <TrashIcon className="h-3 w-3" />
                         <div>{currentUser?.id === member.id ? "Leave" : "Remove"}</div>

@@ -17,20 +17,18 @@ import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 import { CopyIcon, NewTabIcon } from "@plane/propel/icons";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Switch } from "@plane/propel/switch";
 import type { TInboxForm } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn, copyTextToClipboard } from "@plane/utils";
 // ce imports
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
-import { useUserPermissions } from "@/hooks/store/user";
 import type { TIntakeFeatureList } from "@/constants/project/settings/features";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { IntakeFormsRoot } from "./forms-root";
@@ -50,8 +48,9 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
   const { workspaceSlug } = useParams();
   const [modalType, setModalType] = useState("");
   const { fetchIntakeForms, toggleIntakeForms, regenerateIntakeForms, intakeForms } = useProjectInbox();
-  const { isUpdatingProject } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { isUpdatingProject, permissions } = useProject();
+  // derived values
+  const canManageIntake = workspaceSlug && projectId ? permissions.getCanManageIntake(workspaceSlug, projectId) : false;
 
   // fetching intake forms
   useSWR(
@@ -76,12 +75,6 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
   const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
   const settings = intakeForms[projectId];
-  const isAdmin = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId
-  );
 
   const copyToClipboard = (text: string) => {
     copyTextToClipboard(text).then(() =>
@@ -164,13 +157,13 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
                             }
                             position="top"
                             className=""
-                            disabled={isAdmin}
+                            disabled={canManageIntake}
                           >
                             <div>
                               <Switch
                                 value={Boolean(settings[key as keyof TInboxForm])}
                                 onChange={() => handleSubmit(key as keyof TInboxForm)}
-                                disabled={!feature.isEnabled || !isAdmin}
+                                disabled={!feature.isEnabled || !canManageIntake}
                               />
                             </div>
                           </Tooltip>
@@ -240,7 +233,7 @@ const IntakeSubFeatures = observer(function IntakeSubFeatures(props: Props) {
         <IntakeFormsRoot
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId}
-          isAdmin={isAdmin}
+          canManageIntake={canManageIntake}
           isEnabled={isFeatureAllowed.form}
           allowEdit={allowEdit}
           isFormEnabled={settings?.is_form_enabled}

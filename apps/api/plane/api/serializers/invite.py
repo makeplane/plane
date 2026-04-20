@@ -19,6 +19,7 @@ from plane.db.models import WorkspaceMemberInvite
 from .base import BaseSerializer
 from plane.app.permissions.base import ROLE
 from plane.payment.utils.member_payment_count import workspace_member_check
+from plane.permissions.system_roles import role_from_member_role
 
 
 class WorkspaceInviteSerializer(BaseSerializer):
@@ -68,9 +69,10 @@ class WorkspaceInviteSerializer(BaseSerializer):
 
         allowed, _, _ = workspace_member_check(
             slug=slug,
-            requested_invite_list=[{"email": data.get("email"), "role": data.get("role", 5)}],
-            requested_role=False,
-            current_role=False,
+            requested_invite_list=[{
+                "email": data.get("email"),
+                "role_slug": role_from_member_role(data.get("role", 5)),
+            }],
         )
 
         if not allowed:

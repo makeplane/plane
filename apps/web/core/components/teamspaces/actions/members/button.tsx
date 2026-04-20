@@ -24,17 +24,17 @@ import { AddTeamspaceMembersModal } from "./modal";
 type TAddTeamspaceMembersButtonProps = {
   teamspaceId: string;
   variant: "icon" | "sidebar";
-  isEditingAllowed: boolean;
+  canAddMember: boolean;
 };
 
 export const AddTeamspaceMembersButton = observer(function AddTeamspaceMembersButton(
   props: TAddTeamspaceMembersButtonProps
 ) {
-  const { teamspaceId, variant, isEditingAllowed } = props;
+  const { teamspaceId, variant, canAddMember } = props;
   // state
   const [isAddMembersModalOpen, setIsAddMembersModalOpen] = useState(false);
 
-  if (!isEditingAllowed) return null;
+  if (!canAddMember) return null;
 
   return (
     <>

@@ -40,19 +40,23 @@ import { IssueLabel } from "@/components/issues/issue-detail/label";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
   issue: Partial<TIssue>;
   issueOperations: TIssueOperations;
-  isEditable: boolean;
   duplicateIssueDetails: TInboxDuplicateIssueDetails | undefined;
   isIntakeAccepted: boolean;
+  permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
 };
 
 export const InboxIssueContentProperties = observer(function InboxIssueContentProperties(props: Props) {
-  const { workspaceSlug, projectId, issue, issueOperations, isEditable, duplicateIssueDetails, isIntakeAccepted } =
+  const { workspaceSlug, projectId, issue, issueOperations, duplicateIssueDetails, isIntakeAccepted, permissions } =
     props;
 
   const router = useAppRouter();
@@ -77,7 +81,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
     <div className="flex w-full flex-col divide-y-2 divide-subtle-1">
       <div className="w-full overflow-y-auto">
         <h5 className="text-body-sm-medium mb-2">Properties</h5>
-        <div className={`divide-y-2 divide-subtle-1 ${!isEditable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-subtle-1 ${!permissions.canEdit ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Intake State */}
             <div className="flex h-8 items-center gap-2">
@@ -111,7 +115,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 onChange={(val) =>
                   issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { assignee_ids: val })
                 }
-                disabled={!isEditable}
+                disabled={!permissions.canEditProperty("assignee_ids")}
                 projectId={projectId?.toString() ?? ""}
                 placeholder="Add assignees"
                 multiple
@@ -139,7 +143,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 onChange={(val) =>
                   issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { priority: val })
                 }
-                disabled={!isEditable}
+                disabled={!permissions.canEditProperty("priority")}
                 buttonVariant="border-with-text"
                 className="w-3/5 flex-grow rounded-sm px-2 hover:bg-layer-1"
                 buttonContainerClassName="w-full text-left"
@@ -148,7 +152,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             </div>
           </div>
         </div>
-        <div className={`divide-y-2 divide-subtle-1 mt-3 ${!isEditable ? "opacity-60" : ""}`}>
+        <div className={`divide-y-2 divide-subtle-1 mt-3 ${!permissions.canEdit ? "opacity-60" : ""}`}>
           <div className="flex flex-col gap-3">
             {/* Due Date */}
             <div className="flex h-8 items-center gap-2">
@@ -166,7 +170,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                   })
                 }
                 minDate={minDate ?? undefined}
-                disabled={!isEditable}
+                disabled={!permissions.canEditProperty("target_date")}
                 buttonVariant="transparent-with-text"
                 className="group w-3/5 flex-grow"
                 buttonContainerClassName="w-full text-left"
@@ -187,7 +191,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     issueId={issue?.id}
-                    disabled={!isEditable}
+                    disabled={!permissions.canEditProperty("label_ids")}
                     isInboxIssue
                     onLabelUpdate={(val: string[]) =>
                       issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { label_ids: val })

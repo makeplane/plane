@@ -21,6 +21,7 @@ import { EIssuesStoreType } from "@plane/types";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 import { cn } from "@plane/utils";
 import { SubIssuesListItem } from "./list-item";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 interface TSubIssuesListGroupProps {
   workItemIds: string[];
@@ -31,7 +32,7 @@ interface TSubIssuesListGroupProps {
   permissions: {
     getCanView: (projectId: string, workItemId: string) => boolean;
     getCanEdit: (projectId: string, workItemId: string) => boolean;
-    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
     getCanDelete: (projectId: string, workItemId: string) => boolean;
     getCanRemove: (
       parentWorkItemProjectId: string,

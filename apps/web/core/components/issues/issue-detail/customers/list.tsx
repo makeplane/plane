@@ -12,11 +12,8 @@
  */
 
 import { observer } from "mobx-react";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CustomersIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { CustomerSidebarListitem } from "./list-item";
@@ -26,37 +23,41 @@ type TProps = {
   isPeekView: boolean;
   workspaceSlug: string;
   workItemId: string;
-  disabled?: boolean;
+  canEdit: boolean;
 };
 
 export const SidebarCustomersList = observer(function SidebarCustomersList(props: TProps) {
-  const { isPeekView, workspaceSlug, workItemId, disabled = false } = props;
+  const { isPeekView, workspaceSlug, workItemId, canEdit } = props;
   // hooks
   const { t } = useTranslation();
   const {
     workItems: { getWorkItemCustomerIds },
   } = useCustomers();
-  const { allowPermissions } = useUserPermissions();
-
   // derived values
   const customerIds = getWorkItemCustomerIds(workItemId);
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+
   return (
     <SidebarPropertyListItem icon={CustomersIcon} label={t("customers.label", { count: 2 })}>
       <div className="flex  flex-col gap-0.5 px-2 truncate">
         {customerIds?.length
           ? customerIds?.map((id) => (
-              <CustomerSidebarListitem workspaceSlug={workspaceSlug} isPeekView={isPeekView} key={id} customerId={id} />
+              <CustomerSidebarListitem
+                workspaceSlug={workspaceSlug}
+                isPeekView={isPeekView}
+                key={id}
+                customerId={id}
+                canPreview={canEdit}
+              />
             ))
-          : !isAdmin && <span className="text-13 text-placeholder">{t("customers.dropdown.no_selection")}</span>}
+          : !canEdit && <span className="text-13 text-placeholder">{t("customers.dropdown.no_selection")}</span>}
       </div>
-      {isAdmin && (
+      {canEdit && (
         <CustomerSelect
           customButtonClassName="w-full h-7.5 text-left"
           workspaceSlug={workspaceSlug}
           value={customerIds || null}
           workItemId={workItemId}
-          disabled={disabled}
+          disabled={!canEdit}
         />
       )}
     </SidebarPropertyListItem>

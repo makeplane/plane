@@ -26,10 +26,6 @@
       "default_assignee_description": "Vyberte predvoleného priradeného pre projekt.",
       "project_subscribers": "Odberatelia projektu",
       "project_subscribers_description": "Vyberte členov, ktorí budú dostávať upozornenia pre tento projekt.",
-      "guest_super_permissions": {
-        "title": "Udeľovať hosťom prístup ku všetkým položkám:",
-        "sub_heading": "Hostia uvidia všetky položky v projekte."
-      },
       "invite_members": {
         "title": "Pozvať členov",
         "sub_heading": "Pozvite členov do projektu.",

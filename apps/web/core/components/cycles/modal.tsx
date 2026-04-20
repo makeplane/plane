@@ -207,6 +207,7 @@ export const CycleCreateUpdateModal = observer(function CycleCreateUpdateModal(p
         data={data}
         isMobile={isMobile}
         isBackwardDateEditEnabled={isBackwardDateEditEnabled}
+        workspaceSlug={workspaceSlug}
       />
     </ModalCore>
   );

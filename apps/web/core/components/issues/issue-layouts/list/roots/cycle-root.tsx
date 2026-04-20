@@ -11,54 +11,93 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // types
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseListRoot } from "../base-list-root";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const CycleListLayout = observer(function CycleListLayout() {
-  const { workspaceSlug, projectId, cycleId } = useParams();
+type TCycleListLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  cycleId: string;
+};
+
+export const CycleListLayout = observer(function CycleListLayout(props: TCycleListLayoutProps) {
+  const { workspaceSlug, projectId, cycleId } = props;
   // store
-  const { issues } = useIssues(EIssuesStoreType.CYCLE);
-  const { currentProjectCompletedCycleIds } = useCycle(); // mobx store
-  const { allowPermissions } = useUserPermissions();
-
+  const {
+    issues: { addIssueToCycle },
+    permissions,
+  } = useIssues(EIssuesStoreType.CYCLE);
+  const {
+    currentProjectCompletedCycleIds,
+    permissions: { getCanEditCycle },
+  } = useCycle();
+  // derived values
   const isCompletedCycle =
-    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-
-  const canEditIssueProperties = useCallback(
-    () => !isCompletedCycle && isEditingAllowed,
-    [isCompletedCycle, isEditingAllowed]
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId) : false;
+  const canEditWorkItemProperties = useCallback(
+    () => !isCompletedCycle && getCanEditCycle(workspaceSlug, projectId, cycleId),
+    [cycleId, getCanEditCycle, isCompletedCycle, projectId, workspaceSlug]
   );
 
   const addIssuesToView = useCallback(
     (issueIds: string[]) => {
-      if (!workspaceSlug || !projectId || !cycleId) throw new Error();
-      return issues.addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+      return addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
     },
-    [issues?.addIssueToCycle, workspaceSlug, projectId, cycleId]
+    [addIssueToCycle, workspaceSlug, projectId, cycleId]
   );
 
   return (
     <BaseListRoot
-      QuickActions={CycleIssueQuickActions}
+      QuickActions={(props) => (
+        <CycleIssueQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                  canRemoveFromView:
+                    !isCompletedCycle && permissions.getCanCreate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
       addIssuesToView={addIssuesToView}
-      canEditPropertiesBasedOnProject={canEditIssueProperties}
-      isCompletedCycle={isCompletedCycle}
-      viewId={cycleId?.toString()}
+      layoutPermissions={{
+        canCreateWorkItem: {
+          viaHeader: canEditWorkItemProperties(),
+          viaQuickAdd: canEditWorkItemProperties(),
+        },
+        canPerformBulkOps: canEditWorkItemProperties() && permissions.getCanPerformBulkOps(workspaceSlug, projectId),
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
+      viewId={cycleId}
     />
   );
 });

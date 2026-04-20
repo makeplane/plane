@@ -17,9 +17,9 @@ import { observer } from "mobx-react";
 import { Ellipsis } from "lucide-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
-import { EIssuesStoreType, EUserProjectRoles, EIssueServiceType } from "@plane/types";
+import { EIssuesStoreType, EIssueServiceType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
@@ -32,7 +32,6 @@ import type { MenuItemFactoryProps } from "@/components/issues/issue-layouts/qui
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 import { DuplicateWorkItemModal } from "@/components/issues/duplicate-modal";
@@ -40,13 +39,20 @@ import { DuplicateWorkItemModal } from "@/components/issues/duplicate-modal";
 import { useEpicMenuItems } from "./helper";
 import { IconButton } from "@plane/propel/icon-button";
 
-type TProjectEpicQuickActionProps = IQuickActionProps & {
+type TProjectEpicQuickActionProps = Exclude<IQuickActionProps, "readOnly" | "disabled"> & {
   toggleEditEpicModal?: (value: boolean) => void;
   toggleDeleteEpicModal?: (value: boolean) => void;
   toggleArchiveEpicModal?: (value: boolean) => void;
   toggleDuplicateEpicModal?: (value: boolean) => void;
   isPeekMode?: boolean;
   workItemId?: string;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDuplicate: boolean;
+  };
 };
 
 export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions(props: TProjectEpicQuickActionProps) {
@@ -56,7 +62,6 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
     handleUpdate,
     handleArchive,
     handleRestore,
-    readOnly = false,
     parentRef,
     toggleEditEpicModal,
     toggleDeleteEpicModal,
@@ -65,6 +70,7 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
     isPeekMode = false,
     portalElement,
     workItemId,
+    permissions,
   } = props;
   // router
   const { workspaceSlug } = useParams();
@@ -75,7 +81,6 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
@@ -83,19 +88,9 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
+  const { canEdit, canDelete, canArchive, canRestore, canDuplicate } = permissions;
   // auth
-  const isEditingAllowed =
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug?.toString(),
-      issue?.project_id ?? ""
-    ) && !readOnly;
-  const isArchivingAllowed = !issue?.archived_at && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
-  const isRestoringAllowed = !!issue?.archived_at && isEditingAllowed;
-
-  const isDeletingAllowed = isEditingAllowed;
 
   const duplicateEpicPayload = pick(
     {
@@ -148,10 +143,11 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
     workspaceSlug: workspaceSlug?.toString(),
     projectIdentifier,
     activeLayout,
-    isEditingAllowed,
-    isArchivingAllowed,
-    isRestoringAllowed,
-    isDeletingAllowed,
+    canEdit,
+    canArchive,
+    canRestore: canRestore && !!handleRestore,
+    canDelete,
+    canDuplicate,
     isInArchivableGroup,
     setIssueToEdit,
     setCreateUpdateIssueModal: customEditAction,
@@ -173,14 +169,14 @@ export const ProjectEpicQuickActions = observer(function ProjectEpicQuickActions
       if (item.key === "edit") {
         return {
           ...item,
-          shouldRender: isEditingAllowed && !isPeekMode && !issue?.archived_at && !workItemId,
+          shouldRender: canEdit && !isPeekMode && !workItemId,
         };
       }
       // Customize delete action for epic
       if (item.key === "delete") {
         return {
           ...item,
-          shouldRender: isEditingAllowed,
+          shouldRender: canDelete,
         };
       }
       // Hide copy link in peek mode

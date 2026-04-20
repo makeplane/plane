@@ -35,7 +35,8 @@ function TeamspaceOverviewPage({ params }: Route.ComponentProps) {
   const teamspaceProjectIds = getTeamspaceProjectIds(teamspaceId);
   const isProjectGroupingFeatureFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFeatureFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFeatureFlagEnabled;
   // fetch team project attributes
   useSWR(
     isProjectGroupingEnabled && teamspaceProjectIds && teamspaceProjectIds.length > 0
@@ -59,7 +60,7 @@ function TeamspaceOverviewPage({ params }: Route.ComponentProps) {
   // Empty state if teamspace is not found
   if (!teamspace) return null;
 
-  return <TeamsOverviewRoot teamspaceId={teamspaceId} />;
+  return <TeamsOverviewRoot teamspaceId={teamspaceId} workspaceSlug={workspaceSlug} />;
 }
 
 export default observer(TeamspaceOverviewPage);

@@ -18,18 +18,16 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.db.models import Issue, IssueType
-from plane.ee.models import IssueProperty, IssuePropertyOption, PropertyTypeEnum
-from plane.ee.permissions import ProjectEntityPermission
-from plane.ee.serializers import IssuePropertyOptionSerializer, IssuePropertySerializer
 from plane.ee.views.base import BaseAPIView
+from plane.ee.models import IssueProperty, IssuePropertyOption, PropertyTypeEnum
+from plane.permissions import can, EpicPropertyPermissions
+from plane.ee.serializers import IssuePropertySerializer, IssuePropertyOptionSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 
 
 class EpicPropertyEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [ProjectEntityPermission]
 
     def create_options(self, issue_property, options):
         workspace_id = issue_property.workspace_id
@@ -122,6 +120,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         return options_serializer.data
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk=None):
         # Get a single epic property
         if pk:
@@ -150,6 +149,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         try:
             # Get the epic
@@ -268,6 +268,7 @@ class EpicPropertyEndpoint(BaseAPIView):
             )
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         # Get the epic
         epic_id = (
@@ -393,6 +394,7 @@ class EpicPropertyEndpoint(BaseAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, pk):
         # Get the epic
         epic_id = (

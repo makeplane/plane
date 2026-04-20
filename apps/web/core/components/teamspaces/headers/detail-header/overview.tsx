@@ -25,16 +25,18 @@ import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-st
 // plane web imports
 import { TeamQuickActions } from "@/components/teamspaces/actions/quick-actions";
 import { useTeamspaces } from "@/plane-web/hooks/store";
+// types
+import type { TTeamspaceDetailPermissions } from "@/store/teamspace/permissions/root";
 
 type TeamOverviewHeaderActionsProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: Pick<TTeamspaceDetailPermissions, "canEdit" | "canDelete">;
 };
 
 export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderActions(
   props: TeamOverviewHeaderActionsProps
 ) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, permissions } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -90,9 +92,8 @@ export const TeamOverviewHeaderActions = observer(function TeamOverviewHeaderAct
         teamspaceId={teamspaceId?.toString()}
         workspaceSlug={workspaceSlug?.toString()}
         parentRef={null}
-        isEditingAllowed={isEditingAllowed && isTeamspaceMember}
+        permissions={{ canEdit: false, canDelete: permissions.canDelete }}
         buttonClassName={commonButtonClassName}
-        hideEdit
       />
     </div>
   );

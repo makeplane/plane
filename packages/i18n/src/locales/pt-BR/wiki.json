@@ -22,6 +22,16 @@
     },
     "nested_pages_download_banner": {
       "title": "As páginas aninhadas exigem um plano pago. Faça upgrade para desbloquear."
+    },
+    "auth": {
+      "title": "Permissão negada",
+      "description": "Você não tem permissão para acessar esta página. Entre em contato com o administrador do seu workspace para conceder a permissão.",
+      "redirection_button": {
+        "text": "Ir para projetos"
+      },
+      "reload_button": {
+        "text": "Recarregar página"
+      }
     }
   },
   "wiki_collections": {

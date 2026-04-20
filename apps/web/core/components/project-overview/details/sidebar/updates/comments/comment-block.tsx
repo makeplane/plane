@@ -12,12 +12,10 @@
  */
 
 import { useState } from "react";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Avatar } from "@plane/propel/avatar";
-import { EUserProjectRoles } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 import type { TProjectUpdatesComment } from "@/types";
 import { UpdateQuickActions } from "../quick-actions";
 import { UpdateReaction } from "../update-reaction";
@@ -29,23 +27,20 @@ type TProps = {
   workspaceSlug: string;
   projectId: string;
   operations: TActivityOperations;
+  permissions: {
+    canReact: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 export function CommentBlock(props: TProps) {
-  const { commentData, workspaceSlug, projectId, operations } = props;
+  const { commentData, workspaceSlug, projectId, operations, permissions } = props;
   const [isEditing, setIsEditing] = useState(false);
   // hooks
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
 
   const creator = commentData && getUserDetails(commentData?.created_by || "");
-
-  const isProjectAdmin = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId.toString()
-  );
 
   return (
     <div className="flex mb-4 gap-2">
@@ -60,17 +55,19 @@ export function CommentBlock(props: TProps) {
               <div className="text-11 text-tertiary">{renderFormattedDate(commentData?.updated_at)}</div>
             </div>
             {/* quick actions */}
-            {isProjectAdmin && (
-              <UpdateQuickActions
-                updateId={commentData.id}
-                operations={{
-                  remove: operations.remove,
-                  update: () => {
-                    setIsEditing(true);
-                  },
-                }}
-              />
-            )}
+            <UpdateQuickActions
+              updateId={commentData.id}
+              operations={{
+                remove: operations.remove,
+                update: () => {
+                  setIsEditing(true);
+                },
+              }}
+              permissions={{
+                canDelete: permissions.canDelete,
+                canEdit: permissions.canEdit,
+              }}
+            />
           </div>
           <div className="text-14 mb-2">{commentData?.description}</div>
           <UpdateReaction
@@ -78,6 +75,7 @@ export function CommentBlock(props: TProps) {
             projectId={projectId}
             commentId={commentData.id}
             currentUser={currentUser}
+            permissions={permissions}
           />
         </div>
       )}

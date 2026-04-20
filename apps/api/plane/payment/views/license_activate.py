@@ -28,18 +28,18 @@ from rest_framework.permissions import AllowAny
 
 # Module imports
 from .base import BaseAPIView
-from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import Workspace, WorkspaceMember, FileAsset
 from plane.payment.utils.workspace_license_request import resync_workspace_license
 from plane.settings.storage import S3Storage
+from plane.permissions import can, BillingPermissions
 
 # Logger
 logger = logging.getLogger("plane.api")
 
 
 class WorkspaceLicenseEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceOwnerPermission]
 
+    @can(BillingPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         try:
             # Check if the environment is not self-managed
@@ -62,6 +62,7 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
             if hasattr(e, "response") and e.response.status_code == 400:
                 return Response(e.response.json(), status=status.HTTP_400_BAD_REQUEST)
 
+    @can(BillingPermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         # Check if the environment is not self-managed
         if not settings.IS_SELF_MANAGED:
@@ -82,9 +83,9 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_role_slug=F("role_ref__slug"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             # Convert user_id to string
@@ -126,7 +127,6 @@ class WorkspaceLicenseEndpoint(BaseAPIView):
 
 
 class LicenseDeActivateEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceOwnerPermission]
 
     def delete_license_files(self, slug):
         # Delete all the license files
@@ -139,6 +139,7 @@ class LicenseDeActivateEndpoint(BaseAPIView):
         license_assets.delete()
         return True
 
+    @can(BillingPermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         # Check if the environment is not self-managed
         if not settings.IS_SELF_MANAGED:
@@ -194,9 +195,9 @@ class LicenseActivateUploadEndpoint(BaseAPIView):
     The response is then returned to the client.
     """
 
-    permission_classes = [WorkspaceOwnerPermission]
     parser_classes = (MultiPartParser, FormParser)
 
+    @can(BillingPermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         # Check if the environment is not self-managed
         if not settings.IS_SELF_MANAGED:
@@ -259,9 +260,9 @@ class LicenseActivateUploadEndpoint(BaseAPIView):
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),
-                user_role=F("role"),
+                user_role_slug=F("role_ref__slug"),
             )
-            .values("user_email", "user_id", "user_role")
+            .values("user_email", "user_id", "user_role_slug")
         )
 
         # Convert user_id to string
@@ -355,9 +356,9 @@ class LicenseFileFetchEndpoint(BaseAPIView):
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),
-                user_role=F("role"),
+                user_role_slug=F("role_ref__slug"),
             )
-            .values("user_email", "user_id", "user_role")
+            .values("user_email", "user_id", "user_role_slug")
         )
 
         # Convert user_id to string

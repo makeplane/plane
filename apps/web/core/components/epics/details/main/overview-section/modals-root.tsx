@@ -58,6 +58,7 @@ export const EpicOverviewWidgetModals = observer(function EpicOverviewWidgetModa
   const { fetchEpicAnalytics } = useEpicAnalytics();
   // derived values
   const isCrossProjectSubWorkItemsEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
     EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED
   );
 

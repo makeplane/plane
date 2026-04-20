@@ -28,7 +28,7 @@ from rest_framework.response import Response
 from plane.db.models import Issue, Project
 from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
 from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
-from plane.ee.permissions import ProjectEntityPermission
+from plane.permissions import can, WorkitemPermissions
 from plane.ee.utils.formula.work_item_properties import fetch_formula_values
 from plane.ee.utils.issue_property_validators import (
     SAVE_MAPPER,
@@ -43,8 +43,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag, check_workspa
 
 class IssuePropertyValueEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [ProjectEntityPermission]
 
     def query_annotator(self, query):
         return query.values("property_id").annotate(
@@ -122,6 +120,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
     # ========== FORMULA PROPERTY ==========
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id, property_id=None):
         # Get a single issue property value
         if property_id:
@@ -183,6 +182,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, issue_id):
         try:
             # Create a new issue property value
@@ -267,6 +267,7 @@ class IssuePropertyValueEndpoint(BaseAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, issue_id, property_id):
         try:
             issue = Issue.objects.get(pk=issue_id)

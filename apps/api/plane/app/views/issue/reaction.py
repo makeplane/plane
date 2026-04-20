@@ -23,7 +23,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueReactionSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkitemPermissions
 from plane.db.models import IssueReaction
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
@@ -46,7 +46,7 @@ class IssueReactionViewSet(BaseViewSet):
             .distinct()
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.REACT, resource_param="issue_id")
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -65,7 +65,7 @@ class IssueReactionViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.REACT, resource_param="issue_id")
     def destroy(self, request, slug, project_id, issue_id, reaction_code):
         issue_reaction = IssueReaction.objects.get(
             workspace__slug=slug,

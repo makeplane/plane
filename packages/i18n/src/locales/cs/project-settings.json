@@ -22,10 +22,6 @@
       "label": "Členové",
       "project_lead": "Vedoucí projektu",
       "default_assignee": "Výchozí přiřazení",
-      "guest_super_permissions": {
-        "title": "Udělit hostům přístup ke všem položkám:",
-        "sub_heading": "Hosté uvidí všechny položky v projektu."
-      },
       "invite_members": {
         "title": "Pozvat členy",
         "sub_heading": "Pozvěte členy do projektu.",

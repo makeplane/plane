@@ -109,7 +109,6 @@ class ProjectCreateSerializer(BaseSerializer):
             "issue_views_view",
             "page_view",
             "intake_view",
-            "guest_view_all_features",
             "archive_in",
             "close_in",
             "timezone",

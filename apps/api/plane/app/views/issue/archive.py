@@ -25,7 +25,6 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ProjectEntityPermission
 from plane.app.serializers import (
     IssueSerializer,
     IssueFlatSerializer,
@@ -48,7 +47,7 @@ from plane.utils.grouper import (
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkitemPermissions, get_permission_conditions
 from plane.utils.error_codes import ERROR_CODES
 from plane.utils.host import base_host
 
@@ -109,15 +108,22 @@ class IssueArchiveViewSet(BaseViewSet):
         )
 
     def get_queryset(self):
-        return (
+        qs = (
             Issue.objects.filter(Q(type__isnull=True) | Q(type__is_epic=False))
             .filter(archived_at__isnull=False)
             .filter(project_id=self.kwargs.get("project_id"))
             .filter(workspace__slug=self.kwargs.get("slug"))
         )
 
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(self.request)
+        if 'creator' in conditions:
+            qs = qs.filter(created_by=self.request.user)
+
+        return qs
+
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
@@ -234,7 +240,7 @@ class IssueArchiveViewSet(BaseViewSet):
                 on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -270,7 +276,7 @@ class IssueArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.ARCHIVE, resource_param="pk")
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.issue_objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         if issue.state.group not in ["completed", "cancelled"]:
@@ -297,7 +303,7 @@ class IssueArchiveViewSet(BaseViewSet):
 
         return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.ARCHIVE, resource_param="pk")
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,
@@ -325,9 +331,7 @@ class IssueArchiveViewSet(BaseViewSet):
 class BulkArchiveIssuesEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.ARCHIVE, resource_param="project_id")
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
 

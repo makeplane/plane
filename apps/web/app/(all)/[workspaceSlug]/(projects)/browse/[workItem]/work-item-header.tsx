@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane ui
@@ -25,6 +24,7 @@ import { IssueDetailQuickActions } from "@/components/issues/issue-detail/issue-
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useIssues } from "@/hooks/store/use-issues";
 // plane web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 
@@ -37,6 +37,7 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
   const {
     issue: { getIssueById, getIssueIdByIdentifier },
   } = useIssueDetail();
+  const { permissions } = useIssues();
   // derived values
   const issueId = getIssueIdByIdentifier(workItem?.toString());
   const issueDetails = issueId ? getIssueById(issueId.toString()) : undefined;
@@ -48,10 +49,7 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <ProjectBreadcrumbWithPreference
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
-          />
+          <ProjectBreadcrumbWithPreference workspaceSlug={workspaceSlug} projectId={projectId} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
@@ -77,9 +75,18 @@ export const WorkItemDetailsHeader = observer(function WorkItemDetailsHeader() {
       <Header.RightItem>
         {projectId && issueId && (
           <IssueDetailQuickActions
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
-            issueId={issueId?.toString()}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            permissions={{
+              canEdit: permissions.getCanEdit(workspaceSlug, projectId, issueId),
+              canSubscribe: permissions.getCanSubscribe(workspaceSlug, projectId, issueId),
+              canDelete: permissions.getCanDelete(workspaceSlug, projectId, issueId),
+              canArchive: permissions.getCanArchive(workspaceSlug, projectId, issueId),
+              canRestore: permissions.getCanRestore(workspaceSlug, projectId, issueId),
+              canDuplicate: permissions.getCanDuplicate(workspaceSlug, projectId),
+              canConvertToEpic: permissions.getCanConvertToEpic(workspaceSlug, projectId, issueId),
+            }}
           />
         )}
       </Header.RightItem>

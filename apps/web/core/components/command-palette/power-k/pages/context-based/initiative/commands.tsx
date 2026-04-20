@@ -16,16 +16,12 @@ import { useParams } from "next/navigation";
 import { UserCircle2 } from "lucide-react";
 import { LinkIcon, InitiativeStateIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TInitiativeStates } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
-// hooks
-import { useUser } from "@/hooks/store/user";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiative } from "@/types/initiative";
@@ -35,19 +31,13 @@ export const usePowerKInitiativeContextBasedActions = (): TPowerKCommandConfig[]
   const { workspaceSlug, initiativeId } = useParams();
   // store
   const {
-    permission: { allowPermissions },
-  } = useUser();
-  const {
-    initiative: { getInitiativeById, updateInitiative },
+    initiative: { getInitiativeById, updateInitiative, permissions: initiativePermissions },
   } = useInitiatives();
   // derived values
   const initiativeDetails = initiativeId ? getInitiativeById(initiativeId.toString()) : null;
   // permission
-  const isEditingAllowed = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
-  // translation
+  const canEditInitiative =
+    !!workspaceSlug && !!initiativeId && initiativePermissions.getCanEdit(workspaceSlug, initiativeId);
   const { t } = useTranslation();
 
   const handleUpdateInitiative = useCallback(
@@ -97,8 +87,8 @@ export const usePowerKInitiativeContextBasedActions = (): TPowerKCommandConfig[]
         handleUpdateInitiative({ state });
       },
       shortcut: "s",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => canEditInitiative,
+      isVisible: () => canEditInitiative,
       closeOnSelect: true,
     },
     {
@@ -115,8 +105,8 @@ export const usePowerKInitiativeContextBasedActions = (): TPowerKCommandConfig[]
         handleUpdateInitiative({ lead: memberId });
       },
       shortcut: "l",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => canEditInitiative,
+      isVisible: () => canEditInitiative,
       closeOnSelect: true,
     },
     {

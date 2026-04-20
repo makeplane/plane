@@ -16,6 +16,8 @@ import { observer } from "mobx-react";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
+// types
+import type { TTeamspaceDetailPermissions } from "@/store/teamspace/permissions/root";
 // local imports
 import { AddProjectsToTeam } from "./add-projects";
 import { TeamspaceProgressRoot } from "./progress/root";
@@ -26,11 +28,11 @@ import { TeamspaceStatisticsRoot } from "./statistics/root";
 
 type TTeamsOverviewContentProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: Pick<TTeamspaceDetailPermissions, "canEditProperty" | "canAddMember" | "canAddProject">;
 };
 
 export const TeamsOverviewContent = observer(function TeamsOverviewContent(props: TTeamsOverviewContentProps) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, permissions } = props;
   // hooks
   const { getTeamspaceById, isCurrentUserMemberOfTeamspace } = useTeamspaces();
   // derived values
@@ -44,14 +46,21 @@ export const TeamsOverviewContent = observer(function TeamsOverviewContent(props
   if (!isTeamspaceMember)
     return (
       <ContentWrapper variant={ERowVariant.REGULAR}>
-        <TeamsOverviewProperties teamspaceId={teamspaceId} isEditingAllowed={false} />
+        <TeamsOverviewProperties
+          teamspaceId={teamspaceId}
+          permissions={{
+            canEditProperty: () => false,
+            canAddMember: false,
+            canAddProject: false,
+          }}
+        />
       </ContentWrapper>
     );
 
   return (
     <ContentWrapper variant={ERowVariant.REGULAR}>
       <div className="flex flex-col gap-y-2">
-        <TeamsOverviewProperties teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />
+        <TeamsOverviewProperties teamspaceId={teamspaceId} permissions={permissions} />
         {areProjectsLinked ? (
           <div className="flex flex-col divide-y divide-subtle px-3">
             <TeamsOverviewQuickLinks />
@@ -60,7 +69,7 @@ export const TeamsOverviewContent = observer(function TeamsOverviewContent(props
             <TeamspaceStatisticsRoot teamspaceId={teamspaceId} />
           </div>
         ) : (
-          <AddProjectsToTeam isEditingAllowed={isEditingAllowed} />
+          <AddProjectsToTeam canAddProject={permissions.canAddProject} />
         )}
       </div>
     </ContentWrapper>

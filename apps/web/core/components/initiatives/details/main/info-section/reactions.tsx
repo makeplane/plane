@@ -29,11 +29,11 @@ import type { TInitiativeReaction } from "@/types/initiative";
 export type TIssueReaction = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled?: boolean;
+  canReact: boolean;
 };
 
 export const InitiativeReactions = observer(function InitiativeReactions(props: TIssueReaction) {
-  const { workspaceSlug, initiativeId, disabled = false } = props;
+  const { workspaceSlug, initiativeId, canReact } = props;
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   // hooks
@@ -121,7 +121,7 @@ export const InitiativeReactions = observer(function InitiativeReactions(props: 
   }, [groupedReactionEmojis, userReactionEmojis]);
 
   const handleReactionClick = (emoji: string) => {
-    if (disabled) return;
+    if (!canReact) return;
     // Convert emoji back to decimal string format for the API
     const emojiCodePoints = Array.from(emoji).map((char) => char.codePointAt(0));
     const reactionString = emojiCodePoints.join("-");
@@ -139,12 +139,12 @@ export const InitiativeReactions = observer(function InitiativeReactions(props: 
         isOpen={isPickerOpen}
         handleToggle={setIsPickerOpen}
         onChange={handleEmojiSelect}
-        disabled={disabled}
+        disabled={!canReact}
         label={
           <EmojiReactionGroup
             reactions={reactionsList}
             onReactionClick={handleReactionClick}
-            showAddButton={!disabled}
+            showAddButton={canReact}
             onAddReaction={() => setIsPickerOpen(true)}
           />
         }

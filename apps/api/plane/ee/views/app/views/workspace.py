@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.permissions import can, WorkspaceWorkitemViewPermissions
 from plane.app.serializers import IssueViewSerializer
 from plane.db.models import IssueView
 from plane.ee.views.base import BaseViewSet
@@ -25,8 +25,8 @@ from plane.payment.flags.flag import FeatureFlag
 class WorkspaceViewEEViewSet(BaseViewSet):
     serializer_class = IssueViewSerializer
     model = IssueView
-    permission_classes = [WorkspaceEntityPermission]
 
+    @can(WorkspaceWorkitemViewPermissions.EDIT, resource_param="pk")
     def lock(self, request, slug, pk):
         workspace_view = IssueView.objects.filter(pk=pk, workspace__slug=slug).first()
 
@@ -40,6 +40,7 @@ class WorkspaceViewEEViewSet(BaseViewSet):
         workspace_view.save(update_fields=["is_locked"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @can(WorkspaceWorkitemViewPermissions.EDIT, resource_param="pk")
     def unlock(self, request, slug, pk):
         workspace_view = IssueView.objects.filter(pk=pk, workspace__slug=slug).first()
 
@@ -55,6 +56,7 @@ class WorkspaceViewEEViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.VIEW_ACCESS_PRIVATE)
+    @can(WorkspaceWorkitemViewPermissions.EDIT, resource_param="pk")
     def access(self, request, slug, pk):
         access = request.data.get("access", 1)
 

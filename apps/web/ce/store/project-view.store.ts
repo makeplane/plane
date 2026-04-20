@@ -11,4 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "@/store/project-view.store";
+export * from "@/store/project-views/project-view.store";

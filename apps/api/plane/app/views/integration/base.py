@@ -34,10 +34,11 @@ from plane.utils.integrations.github import (
     get_github_metadata,
     delete_github_installation,
 )
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, IntegrationPermissions
 from plane.utils.integrations.slack import slack_oauth
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class IntegrationViewSet(BaseViewSet):
     serializer_class = IntegrationSerializer
     model = Integration
@@ -80,11 +81,10 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
     serializer_class = WorkspaceIntegrationSerializer
     model = WorkspaceIntegration
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     def get_queryset(self):
         return super().get_queryset().filter(workspace__slug=self.kwargs.get("slug")).select_related("integration")
 
+    @can(IntegrationPermissions.CONNECT, resource_param="workspace_id")
     def create(self, request, slug, provider):
         workspace = Workspace.objects.get(slug=slug)
         integration = Integration.objects.get(provider=provider)
@@ -151,6 +151,7 @@ class WorkspaceIntegrationViewSet(BaseViewSet):
             status=status.HTTP_201_CREATED,
         )
 
+    # TODO: Unused — URL commented out. Migrate to @can before re-enabling.
     def destroy(self, request, slug, pk):
         workspace_integration = WorkspaceIntegration.objects.get(pk=pk, workspace__slug=slug)
 

@@ -24,6 +24,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 ## EE imports
 from plane.ee.permissions.page import ProjectPagePermission
 from plane.ee.bgtasks.page_update import PageAction, nested_page_update
+from plane.permissions import PagePermissions
+from plane.permissions import HasResourcePermission
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -34,7 +36,13 @@ class ProjectPageUserViewSet(BaseViewSet):
 
     serializer_class = PageUserSerializer
     model = PageUser
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
+
+    action_permissions = {
+        "create": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "list": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "destroy": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+    }
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
     def create(self, request, slug, project_id, pk):

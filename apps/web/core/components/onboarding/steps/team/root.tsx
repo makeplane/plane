@@ -26,14 +26,12 @@ import { usePopper } from "react-popper";
 import { XCircle } from "lucide-react";
 import { Listbox } from "@headlessui/react";
 // plane imports
-import type { EUserPermissions } from "@plane/constants";
-import { ROLE, ROLE_DETAILS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlusIcon, CheckIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EOnboardingSteps } from "@plane/types";
 import { Input, Spinner } from "@plane/ui";
+import { DEFAULT_WORKSPACE_ROLES } from "@plane/constants";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
@@ -47,7 +45,7 @@ type Props = {
 
 type EmailRole = {
   email: string;
-  role: EUserPermissions;
+  role_slug: string;
   role_active: boolean;
 };
 
@@ -101,8 +99,6 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
-
-  const { t } = useTranslation();
 
   const email = watch(`emails.${index}.email`);
 
@@ -177,7 +173,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
         <div className="col-span-4 mr-8">
           <Controller
             control={control}
-            name={`emails.${index}.role`}
+            name={`emails.${index}.role_slug`}
             rules={{ required: true }}
             render={({ field: { value, onChange } }) => (
               <Listbox
@@ -187,7 +183,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                   onChange(val);
                   setValue(`emails.${index}.role_active`, true);
                 }}
-                className="w-full flex-shrink-0 text-left"
+                className="w-full shrink-0 text-left"
               >
                 <Listbox.Button
                   type="button"
@@ -199,7 +195,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                       !getValues(`emails.${index}.role_active`) ? "text-placeholder" : "text-primary"
                     } sm:text-13`}
                   >
-                    {ROLE[value]}
+                    {value ? (DEFAULT_WORKSPACE_ROLES.find((r) => r.slug === value)?.name ?? value) : "Select role"}
                   </span>
 
                   <ChevronDownIcon
@@ -216,11 +212,11 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    {Object.entries(ROLE_DETAILS).map(([key, value]) => (
+                    {DEFAULT_WORKSPACE_ROLES.map((role) => (
                       <Listbox.Option
                         as="div"
-                        key={key}
-                        value={parseInt(key)}
+                        key={role.slug}
+                        value={role.slug}
                         className={({ active, selected }) =>
                           `cursor-pointer select-none truncate rounded-sm px-1 py-1.5 ${
                             active || selected ? "bg-onboarding-background-400/40" : ""
@@ -230,8 +226,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         {({ selected }) => (
                           <div className="flex items-center text-wrap gap-2 p-1">
                             <div className="flex flex-col">
-                              <div className="text-13 font-medium">{t(value.i18n_title)}</div>
-                              <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
+                              <div className="text-13 font-medium">{role.name}</div>
                             </div>
                             {selected && <CheckIcon className="h-4 w-4 shrink-0" />}
                           </div>
@@ -304,7 +299,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
       .inviteWorkspace(workspace.slug, {
         emails: payload.emails.map((email) => ({
           email: email.email,
-          role: email.role,
+          role_slug: email.role_slug,
         })),
       })
       .then(async () => {
@@ -325,16 +320,16 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
   };
 
   const appendField = () => {
-    append({ email: "", role: 15, role_active: false });
+    append({ email: "", role_slug: "", role_active: false });
   };
 
   useEffect(() => {
     if (fields.length === 0) {
       append(
         [
-          { email: "", role: 15, role_active: false },
-          { email: "", role: 15, role_active: false },
-          { email: "", role: 15, role_active: false },
+          { email: "", role_slug: "", role_active: false },
+          { email: "", role_slug: "", role_active: false },
+          { email: "", role_slug: "", role_active: false },
         ],
         {
           focusIndex: 0,

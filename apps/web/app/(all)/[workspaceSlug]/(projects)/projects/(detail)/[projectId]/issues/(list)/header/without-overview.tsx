@@ -16,7 +16,7 @@ import { useParams } from "next/navigation";
 // icons
 import { Circle } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { NewTabIcon, WorkItemsIcon } from "@plane/propel/icons";
@@ -33,7 +33,6 @@ import { HeaderFilters } from "@/components/issues/filters";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
@@ -45,25 +44,19 @@ export const WorkItemWithoutOverviewHeader = observer(function IssuesHeader() {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const {
+    permissions,
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.PROJECT);
   // i18n
   const { t } = useTranslation();
-
   const { currentProjectDetails, loader } = useProject();
-
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
-
+  // derived values
   const SPACE_APP_URL = (SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL) + SPACE_BASE_PATH;
   const publishedURL = `${SPACE_APP_URL}/issues/${currentProjectDetails?.anchor}`;
-
   const issuesCount = getGroupIssueCount(undefined, undefined, false);
-  const canUserCreateIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const canCreateWorkItem = permissions.getCanCreate(workspaceSlug, projectId);
 
   return (
     <Header>
@@ -117,10 +110,10 @@ export const WorkItemWithoutOverviewHeader = observer(function IssuesHeader() {
             projectId={projectId}
             currentProjectDetails={currentProjectDetails}
             workspaceSlug={workspaceSlug}
-            canUserCreateIssue={canUserCreateIssue}
+            canUserCreateIssue={canCreateWorkItem}
           />
         </div>
-        {canUserCreateIssue && (
+        {canCreateWorkItem && (
           <Button
             variant="primary"
             size="lg"

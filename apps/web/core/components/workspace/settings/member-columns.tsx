@@ -14,33 +14,28 @@
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
-
-import { Collapsible } from "@plane/propel/collapsible";
 // plane imports
-import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { Collapsible } from "@plane/propel/collapsible";
 import { TrashIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspaceMember } from "@plane/types";
-// plane ui
 import { CustomSelect, PopoverMenu } from "@plane/ui";
-// helpers
-import { getFileURL } from "@plane/utils";
+import { getFileURL, getAssignableWorkspaceRoles } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane web constants
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useUser } from "@/hooks/store/user";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 
-export interface RowData {
-  member: IWorkspaceMember;
-  role: EUserPermissions;
-  is_active: boolean;
-}
+export type RowData = IWorkspaceMember;
 
 type NameProps = {
   rowData: RowData;
   workspaceSlug: string;
-  isAdmin: boolean;
+  permissions: {
+    canRemoveMember: boolean;
+  };
   currentUser: IUser | undefined;
   setRemoveMemberModal: (rowData: RowData) => void;
 };
@@ -48,10 +43,13 @@ type NameProps = {
 type AccountTypeProps = {
   rowData: RowData;
   workspaceSlug: string;
+  permissions: {
+    canChangeRole: (targetRoleSlug: string) => boolean;
+  };
 };
 
 export function NameColumn(props: NameProps) {
-  const { rowData, workspaceSlug, isAdmin, currentUser, setRemoveMemberModal } = props;
+  const { rowData, workspaceSlug, permissions, currentUser, setRemoveMemberModal } = props;
   // derived values
   const { avatar_url, display_name, email, first_name, id, last_name } = rowData.member;
   const isSuspended = rowData.is_active === false;
@@ -87,12 +85,12 @@ export function NameColumn(props: NameProps) {
             </span>
           </div>
 
-          {!isSuspended && (isAdmin || id === currentUser?.id) && (
+          {!isSuspended && (permissions.canRemoveMember || id === currentUser?.id) && (
             <PopoverMenu
               data={[""]}
               keyExtractor={(item) => item}
               popoverClassName="justify-end"
-              buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square flex-shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
+              buttonClassName="outline-none	origin-center rotate-90 size-8 aspect-square shrink-0 grid place-items-center opacity-0 group-hover:opacity-100 transition-opacity"
               render={() => (
                 <div
                   role="button"
@@ -118,25 +116,28 @@ export function NameColumn(props: NameProps) {
 }
 
 export const AccountTypeColumn = observer(function AccountTypeColumn(props: AccountTypeProps) {
-  const { rowData, workspaceSlug } = props;
+  const { rowData, workspaceSlug, permissions } = props;
   // form info
   const {
     control,
     formState: { errors },
   } = useForm();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
-
   const {
     workspace: { updateMember },
   } = useMember();
   const { data: currentUser } = useUser();
-
+  const { getWorkspaceRolesByWorkspaceSlug, getWorkspaceRoleDetailsByRoleSlug } = useRoleManagement();
+  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
   // derived values
-  const isCurrentUser = currentUser?.id === rowData.member.id;
-  const isAdminRole = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const isRoleNonEditable = isCurrentUser || !isAdminRole;
+  const isCurrentUserRow = currentUser?.id === rowData.member.id;
+  const isRoleEditable = !isCurrentUserRow && permissions.canChangeRole(rowData.role_slug);
   const isSuspended = rowData.is_active === false;
+  const memberRoleDetails = getWorkspaceRoleDetailsByRoleSlug(workspaceSlug, rowData.role_slug);
+  const assignableWorkspaceRoles = getAssignableWorkspaceRoles(
+    getWorkspaceRolesByWorkspaceSlug(workspaceSlug, "active"),
+    getCurrentUserWorkspaceRoleSlug(workspaceSlug)
+  );
 
   return (
     <>
@@ -146,23 +147,22 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
             Suspended
           </Pill>
         </div>
-      ) : isRoleNonEditable ? (
+      ) : !isRoleEditable ? (
         <div className="w-32 flex ">
-          <span>{ROLE[rowData.role]}</span>
+          <span>{memberRoleDetails?.name ?? "—"}</span>
         </div>
       ) : (
         <Controller
-          name="role"
+          name="role_slug"
           control={control}
           rules={{ required: "Role is required." }}
-          render={({ field: { value } }) => (
+          render={() => (
             <CustomSelect
-              value={value as EUserPermissions}
-              onChange={async (value: EUserPermissions) => {
-                if (!workspaceSlug) return;
+              value={rowData.role_slug}
+              onChange={async (value: string) => {
                 try {
-                  await updateMember(workspaceSlug.toString(), rowData.member.id, {
-                    role: value as unknown as EUserPermissions,
+                  await updateMember(workspaceSlug, rowData.member.id, {
+                    role_slug: value,
                   });
                 } catch (err: unknown) {
                   const error = err as { error?: string | string[] };
@@ -177,16 +177,16 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
               }}
               label={
                 <div className="flex ">
-                  <span>{ROLE[rowData.role]}</span>
+                  <span>{memberRoleDetails?.name ?? "—"}</span>
                 </div>
               }
-              buttonClassName={`!px-0 !justify-start hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
+              buttonClassName={`px-0! justify-start! hover:bg-surface-1 ${errors.role ? "border-danger-strong" : "border-none"}`}
               className="rounded-md p-0 w-32"
               input
             >
-              {Object.keys(ROLE).map((item) => (
-                <CustomSelect.Option key={item} value={item as unknown as EUserPermissions}>
-                  {ROLE[item as unknown as keyof typeof ROLE]}
+              {assignableWorkspaceRoles.map((role) => (
+                <CustomSelect.Option key={role.slug} value={role.slug}>
+                  {role.name}
                 </CustomSelect.Option>
               ))}
             </CustomSelect>

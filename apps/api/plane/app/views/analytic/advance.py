@@ -21,7 +21,8 @@ from django.utils import timezone
 from django.db.models.fields.json import KeyTextTransform
 
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import ROLE, allow_permission
+from plane.app.permissions import ROLE
+from plane.permissions import AnalyticsPermissions, can
 from plane.db.models import (
     WorkspaceMember,
     Project,
@@ -210,7 +211,7 @@ class AdvanceAnalyticsEndpoint(AdvanceAnalyticsBaseView):
             "duplicate_intake": self.get_filtered_counts(base_queryset.filter(issue_intake__status=2)),
         }
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(AnalyticsPermissions.VIEW, resource_param="workspace_id")
     def get(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="analytics")
         tab = request.GET.get("tab", "overview")
@@ -654,7 +655,7 @@ class AdvanceAnalyticsStatsEndpoint(AdvanceAnalyticsBaseView):
             duplicate_intake=Count("issue_intake__issue_id", filter=Q(issue_intake__status=2)),
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(AnalyticsPermissions.VIEW, resource_param="workspace_id")
     def get(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="chart")
         type = request.GET.get("type", "work-items")
@@ -1184,7 +1185,7 @@ class AdvanceAnalyticsChartEndpoint(AdvanceAnalyticsBaseView):
 
         return {"data": data, "schema": schema}
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(AnalyticsPermissions.VIEW, resource_param="workspace_id")
     def get(self, request: HttpRequest, slug: str) -> Response:
         self.initialize_workspace(slug, type="chart")
         type = request.GET.get("type", "projects")

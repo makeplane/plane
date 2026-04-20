@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "巢狀頁面需要付費方案。升級以解鎖。"
+    },
+    "auth": {
+      "title": "權限不足",
+      "description": "您沒有存取此頁面的權限。請聯絡您的 Workspace 管理員為您授予權限。",
+      "redirection_button": {
+        "text": "前往專案"
+      },
+      "reload_button": {
+        "text": "重新載入頁面"
+      }
     }
   }
 }

@@ -20,6 +20,7 @@ import type { TInitiativeStates } from "@plane/types";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web
 import { SidebarRoot } from "@/components/common/layout/sidebar";
+import type { TInitiativeDetailPermissions } from "@/store/initiatives/permissions/root";
 // local components
 import { InitiativeSidebarActivityRoot } from "./activity-tab-root";
 import { InitiativeSidebarCommentsRoot } from "./comment-tab-root";
@@ -28,19 +29,13 @@ import { InitiativeSidebarPropertiesRoot } from "./properties-tab-root";
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled?: boolean;
+  permissions: TInitiativeDetailPermissions;
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 };
 
 export const InitiativeSidebarRoot = observer(function InitiativeSidebarRoot(props: Props) {
-  const {
-    workspaceSlug,
-    initiativeId,
-    disabled = false,
-    handleInitiativeStateUpdate,
-    handleInitiativeLabelUpdate,
-  } = props;
+  const { workspaceSlug, initiativeId, permissions, handleInitiativeStateUpdate, handleInitiativeLabelUpdate } = props;
   // store hooks
   const { initiativesSidebarCollapsed } = useAppTheme();
 
@@ -52,7 +47,10 @@ export const InitiativeSidebarRoot = observer(function InitiativeSidebarRoot(pro
         <InitiativeSidebarPropertiesRoot
           workspaceSlug={workspaceSlug}
           initiativeId={initiativeId}
-          disabled={disabled}
+          permissions={{
+            canEditProperty: permissions.canEditProperty,
+            labels: permissions.labels,
+          }}
           handleInitiativeStateUpdate={handleInitiativeStateUpdate}
           handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
         />
@@ -62,7 +60,11 @@ export const InitiativeSidebarRoot = observer(function InitiativeSidebarRoot(pro
       key: "comments",
       icon: CommentFillIcon,
       content: (
-        <InitiativeSidebarCommentsRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+        <InitiativeSidebarCommentsRoot
+          workspaceSlug={workspaceSlug}
+          initiativeId={initiativeId}
+          comments={permissions.comments}
+        />
       ),
     },
     {

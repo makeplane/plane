@@ -18,7 +18,6 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { AlertIcon, CloseIcon, ExternalLinkIcon, ImportIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 // local imports
 import { WorkItemTypesSettingsListHeader } from "../types-list-header";
 import { WorkItemTypeListRoot } from "../list";
@@ -29,11 +28,10 @@ import { useProjectWorkItemTypes } from "@/plane-web/hooks/store/work-item-types
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
 import { useWorkspaceCustomProperties } from "@/plane-web/hooks/store/custom-properties/use-workspace-custom-properties";
 import { useCustomProperty } from "@/plane-web/hooks/store/custom-properties/use-custom-property";
-import { useFlag, useIssueTypes, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { IconButton } from "@plane/propel/icon-button";
-import { useUserPermissions } from "@/hooks/store/user";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { useProjectSettingsAccess } from "@/hooks/permissions/use-project-settings-access";
 
 type Props = {
   workspaceSlug: string;
@@ -43,6 +41,8 @@ type Props = {
 export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWorkItemTypesTypesTabContent(props: Props) {
   // props
   const { workspaceSlug, projectId } = props;
+  // router
+  const navigate = useNavigate();
   // states
   const [isImportTypesModalOpen, setIsImportTypesModalOpen] = useState(false);
   const [isBannerDismissed, setBannerDismissed] = useState(false);
@@ -54,14 +54,15 @@ export const ProjectWorkItemTypesTypesTabContent = observer(function ProjectWork
   const { getPropertiesByWorkspaceSlug } = useWorkspaceCustomProperties();
   const { getCustomPropertiesByIds } = useCustomProperty();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const navigate = useNavigate();
+  const { hasProjectSettingPermission } = useProjectSettingsAccess();
   // derived values
-  const isWorkspaceWorkItemTypesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
-  // TODO: update this to RBAC permissions
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  const isWorkspaceWorkItemTypesEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED
+  );
   const canAccessWorkspaceWorkItemTypesSettings =
-    useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false) && currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false) &&
+    hasProjectSettingPermission(workspaceSlug, projectId, "work-item-types");
   const projectWorkItemTypes = getSortedWorkItemTypesByProjectId(projectId);
   const workspaceWorkItemTypes = getWorkItemTypesByWorkspaceSlug(workspaceSlug);
   const isInitializing =

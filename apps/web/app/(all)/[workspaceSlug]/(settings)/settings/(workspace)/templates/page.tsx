@@ -13,17 +13,14 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import {
@@ -42,7 +39,6 @@ function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isAnyProjectTemplatesAvailable } = useProjectTemplates();
   const { isAnyWorkItemTemplatesAvailable } = useWorkItemTemplates();
@@ -58,13 +54,6 @@ function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   const isAnyTemplatesAvailable =
     isProjectTemplatesAvailable || isWorkItemTemplatesAvailable || isPageTemplatesAvailable;
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("common.templates")}` : undefined;
-  const hasAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-
-  if (!currentWorkspace?.id) return <></>;
-
-  if (workspaceUserInfo && !hasAdminPermission) {
-    return <NotAuthorizedView section="settings" />;
-  }
 
   return (
     <SettingsContentWrapper header={<TemplatesWorkspaceSettingsHeader />}>
@@ -74,10 +63,10 @@ function TemplatesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
         description={t("workspace_settings.settings.templates.description")}
         control={
           <>
-            {isAnyTemplatesEnabled && isAnyTemplatesAvailable && hasAdminPermission && (
+            {isAnyTemplatesEnabled && isAnyTemplatesAvailable && (
               <CreateTemplatesButton
                 workspaceSlug={workspaceSlug}
-                currentLevel={ETemplateLevel.WORKSPACE}
+                level={ETemplateLevel.WORKSPACE}
                 buttonSize="lg"
                 variant="settings"
               />

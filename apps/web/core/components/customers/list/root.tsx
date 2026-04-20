@@ -11,19 +11,15 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // constants
 import useSWR from "swr";
-import { EUserPermissionsLevel } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserWorkspaceRoles } from "@plane/types";
 import searchEmptyDarkSvg from "@/app/assets/empty-state/customers/search-empty-dark.svg?url";
 import searchEmptyLightSvg from "@/app/assets/empty-state/customers/search-empty-light.svg?url";
 import { ListLayout } from "@/components/core/list";
@@ -31,18 +27,20 @@ import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-lo
 // assets
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CustomerListItem, CustomerLoader } from "@/components/customers/list";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomersListRoot = observer(function CustomersListRoot() {
-  const { workspaceSlug } = useParams();
+type TProps = {
+  workspaceSlug: string;
+};
+
+export const CustomersListRoot = observer(function CustomersListRoot(props: TProps) {
+  const { workspaceSlug } = props;
   const { resolvedTheme } = useTheme();
   // i18n
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { toggleCreateCustomerModal } = useCommandPalette();
   const resolvedPathSearch = resolvedTheme === "light" ? searchEmptyLightSvg : searchEmptyDarkSvg;
   const {
@@ -52,26 +50,22 @@ export const CustomersListRoot = observer(function CustomersListRoot() {
     loader,
     paginationOptions,
     fetchNextCustomers,
+    permissions,
   } = useCustomers();
 
   useSWR(
     workspaceSlug ? `CUSTOMERS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchCustomers(workspaceSlug.toString()) : null,
+    workspaceSlug ? () => fetchCustomers(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // derived values
-  const hasWorkspaceAdminLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug.toString()
-  );
   const shouldLoadMore = paginationOptions.hasNextPage;
   const isPaginating = loader === "pagination";
 
   const handleLoadMore = useCallback(() => {
     if (!workspaceSlug) return;
-    fetchNextCustomers(workspaceSlug.toString()).catch((error) => {
+    fetchNextCustomers(workspaceSlug).catch((error) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("customers.toasts.list.error.title"),
@@ -114,7 +108,7 @@ export const CustomersListRoot = observer(function CustomersListRoot() {
             {
               label: t("workspace_empty_state.customers.cta_primary"),
               onClick: () => toggleCreateCustomerModal({ isOpen: true, customerId: undefined }),
-              disabled: !hasWorkspaceAdminLevelPermissions,
+              disabled: !permissions.getCanCreate(workspaceSlug),
             },
           ]}
         />
@@ -124,7 +118,15 @@ export const CustomersListRoot = observer(function CustomersListRoot() {
   return (
     <ListLayout>
       {customerIds.map((id: string) => (
-        <CustomerListItem key={id} customerId={id} workspaceSlug={workspaceSlug.toString()} />
+        <CustomerListItem
+          key={id}
+          customerId={id}
+          workspaceSlug={workspaceSlug}
+          permissions={{
+            canEdit: permissions.getCanEdit(workspaceSlug, id),
+            canDelete: permissions.getCanDelete(workspaceSlug, id),
+          }}
+        />
       ))}
       {shouldLoadMore ? (
         isPaginating ? (

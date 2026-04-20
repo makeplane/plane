@@ -64,6 +64,9 @@ def get_default_display_properties():
 
 
 class IssueView(ProjectOptionalBaseModel, FiltersMixin):
+    PRIVATE_ACCESS = 0
+    PUBLIC_ACCESS = 1
+
     name = models.CharField(max_length=255, verbose_name="View Name")
     description = models.TextField(verbose_name="View Description", blank=True)
     query = models.JSONField(verbose_name="View Query")

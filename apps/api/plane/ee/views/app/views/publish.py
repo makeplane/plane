@@ -15,13 +15,15 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import ProjectMemberPermission, WorkSpaceAdminPermission
+from plane.ee.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, WorkitemViewPermissions
 from plane.db.models import DeployBoard, Workspace, IssueView
 from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class WorkspaceViewsPublishEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -98,9 +100,8 @@ class WorkspaceViewsPublishEndpoint(BaseAPIView):
 class IssueViewsPublishEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectMemberPermission]
-
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
+    @can(WorkitemViewPermissions.PUBLISH, resource_param="pk")
     def post(self, request, slug, project_id, pk):
         # Fetch the view
         issue_view = IssueView.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
@@ -138,6 +139,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
+    @can(WorkitemViewPermissions.PUBLISH, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=pk,
@@ -161,6 +163,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
+    @can(WorkitemViewPermissions.PUBLISH, resource_param="pk")
     def get(self, request, slug, project_id, pk):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=pk,
@@ -172,6 +175,7 @@ class IssueViewsPublishEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.VIEW_PUBLISH)
+    @can(WorkitemViewPermissions.PUBLISH, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         deploy_board = DeployBoard.objects.get(
             entity_identifier=pk,

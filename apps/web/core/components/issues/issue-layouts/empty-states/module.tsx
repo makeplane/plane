@@ -15,26 +15,33 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
-import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 
-export const ModuleEmptyState = observer(function ModuleEmptyState() {
+type TProps = {
+  workspaceSlug: string;
+  permissions: {
+    canCreateWorkItem: (projectId: string) => boolean;
+    canAddWorkItemsToModule: (projectId: string, moduleId: string) => boolean;
+    canClearFilters: boolean;
+  };
+};
+
+export const ModuleEmptyState = observer(function ModuleEmptyState(props: TProps) {
+  const { workspaceSlug, permissions } = props;
   // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, moduleId: routerModuleId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
-  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
+  const { moduleId: routerModuleId, projectId: routerProjectId } = useParams();
   const moduleId = routerModuleId ? routerModuleId.toString() : undefined;
+  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
   // states
   const [moduleIssuesListModal, setModuleIssuesListModal] = useState(false);
   // plane hooks
@@ -42,13 +49,8 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
   // store hooks
   const { issues } = useIssues(EIssuesStoreType.MODULE);
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const moduleWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.MODULE, moduleId);
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   const handleAddIssuesToModule = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !moduleId) return;
@@ -92,7 +94,7 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
               {
                 label: "Clear filters",
                 onClick: moduleWorkItemFilter?.clearFilters,
-                disabled: !canPerformEmptyStateActions || !moduleWorkItemFilter,
+                disabled: !permissions.canClearFilters || !moduleWorkItemFilter,
                 variant: "secondary",
               },
             ]}
@@ -108,13 +110,13 @@ export const ModuleEmptyState = observer(function ModuleEmptyState() {
                 onClick: () => {
                   toggleCreateIssueModal(true, EIssuesStoreType.MODULE);
                 },
-                disabled: !canPerformEmptyStateActions,
+                disabled: projectId ? !permissions.canCreateWorkItem(projectId) : true,
                 variant: "primary",
               },
               {
                 label: t("project_empty_state.module_work_items.cta_secondary"),
                 onClick: () => setModuleIssuesListModal(true),
-                disabled: !canPerformEmptyStateActions,
+                disabled: projectId && moduleId ? !permissions.canAddWorkItemsToModule(projectId, moduleId) : true,
                 variant: "secondary",
               },
             ]}

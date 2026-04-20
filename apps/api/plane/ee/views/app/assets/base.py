@@ -16,7 +16,7 @@ import uuid
 from plane.db.models import FileAsset, Workspace, Project
 from plane.settings.storage import S3Storage
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import ROLE, allow_permission
+from plane.permissions import can, WorkspaceAssetPermissions
 
 # Third party imports
 from rest_framework import status
@@ -66,7 +66,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
         return {}
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         project_id = request.data.get("project_id", None)
         asset_ids = request.data.get("asset_ids", None)

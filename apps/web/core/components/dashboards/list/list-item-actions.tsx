@@ -38,15 +38,7 @@ export const DashboardListItemActions = observer(function DashboardListItemActio
   // derived values
   const { getUserDetails } = useMember();
   // derived values
-  const {
-    created_at,
-    created_by,
-    id,
-    is_favorite,
-    canCurrentUserFavoriteDashboard,
-    addToFavorites,
-    removeFromFavorites,
-  } = dashboard;
+  const { created_at, created_by, id, is_favorite, canFavorite, addToFavorites, removeFromFavorites } = dashboard;
   const creatorDetails = getUserDetails(created_by ?? "");
 
   const handleToggleFavorite = useCallback(async () => {
@@ -91,7 +83,7 @@ export const DashboardListItemActions = observer(function DashboardListItemActio
       <Minus className="size-5 text-placeholder rotate-90 -mx-3" strokeWidth={1} />
 
       {/* favorite/unfavorite */}
-      {canCurrentUserFavoriteDashboard && (
+      {canFavorite && (
         <FavoriteStar
           onClick={(e) => {
             e.preventDefault();

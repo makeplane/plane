@@ -181,8 +181,10 @@ export const ProjectLabels = observer(function ProjectLabels(props: TProjectLabe
                   customMenuItems={customMenuItems}
                   handleLabelDelete={handleLabelDelete}
                   dragHandleRef={dragHandleRef}
-                  disabled={false}
-                  draggable={false}
+                  permissions={{
+                    canDelete: true,
+                    canDragAndDrop: false,
+                  }}
                 />
               )}
             </div>

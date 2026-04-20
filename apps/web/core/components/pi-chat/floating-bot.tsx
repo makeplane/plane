@@ -52,7 +52,9 @@ export const PiChatFloatingBot = observer(function PiChatFloatingBot(props: TPro
   // derived states
   const isSidePanelOpen = searchParams.get("pi_sidebar_open");
   const chatId = searchParams.get("chat_id");
-  const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+  const isPiEnabled = workspaceSlug
+    ? isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED)
+    : false;
   const shouldRenderPiChat = isPiAllowed(pathName, workspaceSlug, projectId, workItem) && isPiEnabled;
   useEffect(() => {
     if (!isPiEnabled || (!isSidePanelOpen && !isOpen)) return;

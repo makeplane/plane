@@ -39,6 +39,7 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
   const { t } = useTranslation();
   const { deleteWorkflow } = useWorkflows();
   const navigate = useNavigate();
+  const { canEdit, canDelete } = workflow.permissions;
   const hasNoStates = workflow.stateIds.length === 0;
   const hasNoWorkItemTypes = !workflow.is_default && workflow.work_item_type_ids.length === 0;
   const isActivationDisabled = !workflow.is_active && (hasNoStates || hasNoWorkItemTypes);
@@ -52,6 +53,7 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
 
   // handlers
   const handleToggle = (isEnabled: boolean) => {
+    if (!canEdit) return;
     workflow
       .update(workspaceSlug, projectId, { is_active: isEnabled })
       .then(() => {
@@ -67,6 +69,7 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
   };
 
   const handleDelete = () => {
+    if (!canDelete) return;
     const toastPromise = deleteWorkflow(workspaceSlug, projectId, workflow.id);
     setPromiseToast(toastPromise, {
       loading: t("project_settings.workflows.delete.loading"),
@@ -113,6 +116,10 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
               handleEdit={() => setUpdateModalOpen(true)}
               handleViewChangeHistory={() => setChangeHistoryOpen(true)}
               handleDelete={handleDelete}
+              permissions={{
+                canEdit: canEdit,
+                canDelete: canDelete,
+              }}
             />
           </div>
         </div>
@@ -128,6 +135,7 @@ export const WorkFlowCard = observer(function WorkflowCard(props: Props) {
           isOpen={isUpdateModalOpen}
           onClose={() => setUpdateModalOpen(false)}
           workflow={workflow}
+          canCreate={false}
         />
       )}
 

@@ -11,10 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { ProjectResourceKey } from "@plane/types";
+
 // Tab preferences type
 export type TTabPreferences = {
-  defaultTab: string;
-  hiddenTabs: string[];
+  defaultTab: ProjectResourceKey;
+  hiddenTabs: ProjectResourceKey[];
 };
 
 // Constants
@@ -92,7 +94,11 @@ export const getTabUrl = (workspaceSlug: string, projectId: string, tabKey: stri
  * @param availableTabKeys - Optional array of available tab keys for validation
  * @returns Full URL path for the default tab (validated if availableTabKeys provided)
  */
-export const getDefaultTabUrl = (workspaceSlug: string, projectId: string, availableTabKeys?: string[]): string => {
+export const getDefaultTabUrl = (
+  workspaceSlug: string,
+  projectId: string,
+  availableTabKeys?: ProjectResourceKey[]
+): string => {
   const preferences = getTabPreferences(projectId);
   let tabKey = preferences.defaultTab;
 
@@ -110,7 +116,10 @@ export const getDefaultTabUrl = (workspaceSlug: string, projectId: string, avail
  * @param availableTabKeys - Array of available tab keys
  * @returns The default tab key if valid, otherwise DEFAULT_TAB_KEY
  */
-export const getValidatedDefaultTab = (projectId: string, availableTabKeys: string[]): string => {
+export const getValidatedDefaultTab = (
+  projectId: string,
+  availableTabKeys: ProjectResourceKey[]
+): ProjectResourceKey => {
   const preferences = getTabPreferences(projectId);
   const defaultTab = preferences.defaultTab;
 

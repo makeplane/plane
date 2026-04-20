@@ -12,11 +12,10 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
+import { ISSUE_DISPLAY_FILTERS_BY_PAGE, WORK_ITEM_FILTERS_ENTITY } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -35,12 +34,12 @@ import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/b
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useDashboards } from "@/plane-web/hooks/store";
-import { WORK_ITEM_FILTERS_ENTITY } from "@plane/constants";
 
 type Props = {
   data?: Partial<TDashboard>;
   isOpen: boolean;
   onClose: () => void;
+  workspaceSlug: string;
 };
 
 const defaultValues: Partial<TDashboard> = {
@@ -50,9 +49,7 @@ const defaultValues: Partial<TDashboard> = {
 };
 
 export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdateWorkspaceDashboardModal(props: Props) {
-  const { data, isOpen, onClose } = props;
-  // navigation
-  const { workspaceSlug } = useParams();
+  const { data, isOpen, onClose, workspaceSlug } = props;
   // app router
   const router = useAppRouter();
   // store hooks
@@ -63,7 +60,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
   const { joinedProjectIds } = useProject();
   const {
     getDashboardById,
-    workspaceDashboards: { canCurrentUserCreateDashboard, createDashboard },
+    workspaceDashboards: { getCanCreateDashboard, createDashboard },
   } = useDashboards();
   const { getProjectById } = useProject();
   // form info
@@ -77,6 +74,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
   });
   // derived value
   const isEditing = !!data?.id;
+  const canCreateDashboard = getCanCreateDashboard(workspaceSlug);
   // translation
   const { t } = useTranslation();
 
@@ -88,7 +86,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
   };
 
   const handleCreate = async (payload: Partial<TDashboard>) => {
-    if (!canCurrentUserCreateDashboard) return;
+    if (!canCreateDashboard) return;
     const res = await createDashboard(payload);
     if (res.id) {
       const { toggleViewingMode } = getDashboardById(res.id) ?? {};
@@ -129,7 +127,7 @@ export const CreateUpdateWorkspaceDashboardModal = observer(function CreateUpdat
     });
   }, [data, reset]);
 
-  if (!canCurrentUserCreateDashboard) return;
+  if (!canCreateDashboard) return;
 
   return (
     <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.TOP} width={EModalWidth.XXL}>

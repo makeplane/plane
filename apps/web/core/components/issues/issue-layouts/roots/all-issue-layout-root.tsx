@@ -43,7 +43,7 @@ const WorkspaceSpreadsheetRoot = lazy(() =>
   }))
 );
 const WorkspaceTimelineRoot = lazy(() =>
-  import("@/components/issues/issue-layouts/timeline/workspace-timeline/root").then((module) => ({
+  import("@/components/issues/issue-layouts/timeline/roots/workspace-root").then((module) => ({
     default: module.WorkspaceTimelineRoot,
   }))
 );

@@ -41,13 +41,17 @@ import { InitiativeScopeEpicTimeline } from "./timeline";
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canAddScope: boolean;
+    canRemoveEpic: boolean;
+    canEditEpic: (epicId: string) => boolean;
+  };
   handleAddEpic: () => void;
   handleAddProject: () => void;
 };
 
 export const InitiativeScopeEpicsRoot = observer(function InitiativeScopeEpicsRoot(props: Props) {
-  const { workspaceSlug, initiativeId, disabled, handleAddEpic, handleAddProject } = props;
+  const { workspaceSlug, initiativeId, permissions, handleAddEpic, handleAddProject } = props;
 
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -141,9 +145,9 @@ export const InitiativeScopeEpicsRoot = observer(function InitiativeScopeEpicsRo
               {/* Main layout */}
               <div className="relative h-full w-full overflow-hidden">
                 {activeLayout === EIssueLayoutTypes.LIST ? (
-                  <InitiativeScopeEpicList disabled={disabled} />
+                  <InitiativeScopeEpicList permissions={permissions} workspaceSlug={workspaceSlug} />
                 ) : activeLayout === EIssueLayoutTypes.KANBAN ? (
-                  <InitiativeScopeEpicBoard disabled={disabled} />
+                  <InitiativeScopeEpicBoard permissions={permissions} workspaceSlug={workspaceSlug} />
                 ) : activeLayout === EIssueLayoutTypes.GANTT ? (
                   isEpicsLoading ? (
                     <ListLayoutLoader />
@@ -154,7 +158,7 @@ export const InitiativeScopeEpicsRoot = observer(function InitiativeScopeEpicsRo
                       description={t("initiatives.scope.empty_state.description")}
                       customPrimaryButton={
                         <AddScopeButton
-                          disabled={disabled}
+                          canAdd={permissions.canAddScope}
                           workspaceSlug={workspaceSlug}
                           initiativeId={initiativeId}
                           customButton={<Button>{t("initiatives.scope.empty_state.primary_button.text")}</Button>}
@@ -166,7 +170,7 @@ export const InitiativeScopeEpicsRoot = observer(function InitiativeScopeEpicsRo
                       epicIds={epicIds}
                       workspaceSlug={workspaceSlug}
                       initiativeId={initiativeId}
-                      disabled={disabled}
+                      permissions={permissions}
                       handleAddEpic={handleAddEpic}
                       handleAddProject={handleAddProject}
                     />

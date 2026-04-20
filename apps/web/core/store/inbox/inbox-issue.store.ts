@@ -95,7 +95,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     try {
       if (!this.issue?.id) return;
 
-      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.updateStatus(this.workspaceSlug, this.projectId, this.issue.id, {
         status: status,
       });
       runInAction(() => {
@@ -142,7 +142,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     const wasPending = this.status === EInboxIssueStatus.PENDING;
     try {
       if (!this.issue) return;
-      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.updateStatus(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         duplicate_to: issueId,
       });
@@ -178,7 +178,7 @@ export class InboxIssueStore implements IInboxIssueStore {
     const previousStatus = this.status;
     try {
       if (!this.issue?.id) return;
-      const inboxIssue = await this.inboxIssueService.update(this.workspaceSlug, this.projectId, this.issue.id, {
+      const inboxIssue = await this.inboxIssueService.updateStatus(this.workspaceSlug, this.projectId, this.issue.id, {
         status: inboxStatus,
         snoozed_till: date ? new Date(date) : null,
       });

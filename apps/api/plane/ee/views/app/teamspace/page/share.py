@@ -29,6 +29,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class TeamspacePageUserEndpoint(BaseAPIView):
     use_read_replica = True
 

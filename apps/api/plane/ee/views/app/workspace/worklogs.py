@@ -23,7 +23,7 @@ from plane.ee.models import IssueWorkLog
 from plane.ee.views.base import BaseAPIView
 from plane.utils.issue_filters import issue_filters
 from plane.ee.serializers import IssueWorkLogSerializer, ExporterHistorySerializer
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, WorkspaceWorklogPermissions
 from plane.ee.bgtasks.worklogs_export_task import worklogs_export_task
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -32,9 +32,8 @@ from plane.payment.flags.flag import FeatureFlag
 class WorkspaceWorkLogsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkspaceWorklogPermissions.VIEW, resource_param="workspace_id")
     @method_decorator(gzip_page)
     def get(self, request, slug):
         filters = issue_filters(request.query_params, "GET")
@@ -62,9 +61,8 @@ class WorkspaceWorkLogsEndpoint(BaseAPIView):
 class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkspaceWorklogPermissions.EXPORT, resource_param="workspace_id")
     def post(self, request, slug):
         provider = request.data.get("provider", False)
         filters = request.data.get("filters", {False})
@@ -104,6 +102,7 @@ class WorkspaceExportWorkLogsEndpoint(BaseAPIView):
             )
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkspaceWorklogPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         exporter_history = ExporterHistory.objects.filter(workspace__slug=slug, type="issue_worklogs").select_related(
             "workspace", "initiated_by"

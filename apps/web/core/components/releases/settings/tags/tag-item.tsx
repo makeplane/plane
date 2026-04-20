@@ -26,10 +26,14 @@ type Props = {
   setIsUpdating: Dispatch<SetStateAction<boolean>>;
   handleTagDelete: (tag: ReleaseTag) => void;
   tagOperationsCallbacks: ReleaseTagOperationsCallbacks;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const ReleaseTagItem = observer(function ReleaseTagItem(props: Props) {
-  const { tag, setIsUpdating, handleTagDelete, tagOperationsCallbacks } = props;
+  const { tag, setIsUpdating, handleTagDelete, tagOperationsCallbacks, permissions } = props;
   const [isEditForm, setEditForm] = useState(false);
 
   return (
@@ -37,7 +41,7 @@ export const ReleaseTagItem = observer(function ReleaseTagItem(props: Props) {
       <div className="rounded-sm border-[0.5px] border-subtle-1 bg-surface-1">
         <div className="py-2 pl-3 flex items-center gap-2">
           <TagIcon width={15} height={15} />
-          {isEditForm ? (
+          {isEditForm && permissions.canEdit ? (
             <CreateUpdateReleaseTagInline
               isUpdating
               tagToUpdate={tag}
@@ -55,6 +59,7 @@ export const ReleaseTagItem = observer(function ReleaseTagItem(props: Props) {
                 setIsUpdating(true);
               }}
               handleDelete={handleTagDelete}
+              permissions={permissions}
             />
           )}
         </div>

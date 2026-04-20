@@ -13,10 +13,8 @@
 
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { EUserPermissions } from "@plane/constants";
 import { WorkspaceDashboardsService } from "@plane/services";
 import type { TDashboard } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { BaseDashboardsStore } from "./base-dashboards.store";
@@ -37,8 +35,8 @@ export interface IWorkspaceDashboardsStore {
   currentWorkspaceFilteredDashboardIds: string[];
   toggleCreateUpdateModal: (status?: boolean) => void;
   updateCreateUpdateModalPayload: (payload: TModalPayload) => void;
-  // permissions
-  canCurrentUserCreateDashboard: boolean;
+  getCanViewDashboard: (workspaceSlug: string) => boolean;
+  getCanCreateDashboard: (workspaceSlug: string) => boolean;
   // actions
   fetchDashboards: () => Promise<TDashboard[]>;
   fetchDashboardDetails: (dashboardId: string) => Promise<TDashboard>;
@@ -72,8 +70,6 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
       isAnyDashboardAvailable: computed,
       currentWorkspaceDashboardIds: computed,
       currentWorkspaceFilteredDashboardIds: computed,
-      currentUserWorkspaceRole: computed,
-      canCurrentUserCreateDashboard: computed,
       // actions
       toggleCreateUpdateModal: action,
       updateCreateUpdateModalPayload: action,
@@ -87,21 +83,12 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
   }
 
   private addDashboardToStore = (workspaceSlug: string, dashboardId: string, dashboard: TDashboard) => {
-    const currentUser = this.rootStore.user.data;
-    const currentUserWorkspaceRole = this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
     this.baseStore.addDashboard(dashboard, "workspace", {
       dashboard: {
         actions: {
           update: async (payload) => await this.service.update(workspaceSlug, dashboardId, payload),
         },
-        permissions: {
-          canCurrentUserEditDashboard:
-            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
-          canCurrentUserFavoriteDashboard:
-            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
-          canCurrentUserDeleteDashboard:
-            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
-        },
+        can: this.rootStore.permissionAccessStore.can,
       },
       widget: {
         actions: {
@@ -117,15 +104,8 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
             await this.service.retrieveWidgetData(workspaceSlug, dashboardId, widgetId, quickFilters),
         },
         permissions: {
-          canCurrentUserViewWidgets:
-            currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN ||
-            currentUserWorkspaceRole === EUserWorkspaceRoles.MEMBER,
-          canCurrentUserCreateWidget:
-            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
-          canCurrentUserDeleteWidget:
-            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
-          canCurrentUserEditWidget:
-            currentUser?.id === dashboard.created_by || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN,
+          canCurrentUserCreateWidget: this.getCanCreateDashboard(workspaceSlug),
+          canCurrentUserViewWidgets: this.getCanViewDashboard(workspaceSlug),
         },
       },
     });
@@ -160,20 +140,21 @@ export class WorkspaceDashboardsStore implements IWorkspaceDashboardsStore {
   }
 
   // permissions
-  get currentUserWorkspaceRole(): EUserPermissions {
-    const currentWorkspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
-    const currentWorkspaceRole = currentWorkspaceSlug
-      ? this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(currentWorkspaceSlug)
-      : EUserPermissions.GUEST;
-    return currentWorkspaceRole as EUserPermissions;
-  }
+  getCanViewDashboard: IWorkspaceDashboardsStore["getCanViewDashboard"] = (workspaceSlug) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "dashboard",
+      action: "view",
+      workspaceSlug,
+    });
+  };
 
-  get canCurrentUserCreateDashboard() {
-    return (
-      this.currentUserWorkspaceRole === EUserPermissions.ADMIN ||
-      this.currentUserWorkspaceRole === EUserPermissions.MEMBER
-    );
-  }
+  getCanCreateDashboard: IWorkspaceDashboardsStore["getCanCreateDashboard"] = (workspaceSlug) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "dashboard",
+      action: "create",
+      workspaceSlug,
+    });
+  };
 
   // dashboard crud
   fetchDashboards: IWorkspaceDashboardsStore["fetchDashboards"] = async () => {

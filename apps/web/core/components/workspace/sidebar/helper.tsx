@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { WorkspaceResourceKey } from "@plane/constants";
 import {
   AnalyticsIcon,
   DraftIcon,
@@ -31,7 +32,7 @@ import {
 } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
 
-export const getSidebarNavigationItemIcon = (key: string, className: string = "") => {
+export const getSidebarNavigationItemIcon = (key: WorkspaceResourceKey, className: string = "") => {
   switch (key) {
     case "home":
       return <HomeIcon className={cn("size-4 flex-shrink-0", className)} />;
@@ -49,7 +50,7 @@ export const getSidebarNavigationItemIcon = (key: string, className: string = ""
       return <TeamsIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "views":
       return <ViewsIcon className={cn("size-4 flex-shrink-0", className)} />;
-    case "active_cycles":
+    case "active-cycles":
       return <CycleIcon className={cn("size-4 flex-shrink-0", className)} />;
     case "analytics":
       return <AnalyticsIcon className={cn("size-4 flex-shrink-0", className)} />;

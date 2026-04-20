@@ -27,29 +27,35 @@ import { useWorkspaceMembersColumns } from "@/components/workspace/settings/useW
 
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser, useUserPermissions, useUserSettings } from "@/hooks/store/user";
+import { useUser, useUserSettings } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
-  memberDetails: (IWorkspaceMember | null)[];
+  memberDetails: IWorkspaceMember[];
   workspaceSlug: string;
+  permissions: {
+    canRemoveMember: boolean;
+    canChangeRole: (targetRoleSlug: string) => boolean;
+  };
 };
 
 export const WorkspaceMembersListItem = observer(function WorkspaceMembersListItem(props: Props) {
-  const { memberDetails, workspaceSlug } = props;
+  const { memberDetails, workspaceSlug, permissions } = props;
   // router
   const router = useAppRouter();
   // store hooks
   const { data: currentUser } = useUser();
   const {
-    workspace: { removeMemberFromWorkspace },
+    workspace: { removeMemberFromWorkspace, leaveWorkspace },
   } = useMember();
-  const { leaveWorkspace } = useUserPermissions();
   const { getWorkspaceRedirectionUrl } = useWorkspace();
   const { fetchCurrentUserSettings } = useUserSettings();
   const { t } = useTranslation();
   // derived values
-  const { columns, removeMemberModal, setRemoveMemberModal } = useWorkspaceMembersColumns({ workspaceSlug });
+  const { columns, removeMemberModal, setRemoveMemberModal } = useWorkspaceMembersColumns({
+    workspaceSlug,
+    permissions,
+  });
 
   const handleLeaveWorkspace = async () => {
     if (!workspaceSlug || !currentUser) return;
@@ -112,11 +118,9 @@ export const WorkspaceMembersListItem = observer(function WorkspaceMembersListIt
         />
       )}
       <Table<RowData>
-        columns={columns ?? []}
-        data={
-          (memberDetails?.filter((member): member is IWorkspaceMember => member !== null) ?? []) as unknown as RowData[]
-        }
-        keyExtractor={(rowData) => rowData?.member.id ?? ""}
+        columns={columns}
+        data={memberDetails}
+        keyExtractor={(rowData) => rowData.member.id}
         tHeadClassName="border-b border-subtle"
         thClassName="text-left font-medium divide-x-0 text-placeholder"
         tBodyClassName="divide-y-0"

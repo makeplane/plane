@@ -35,14 +35,14 @@ import { StateStore } from "@/store/state.store";
 // cycle
 import { CycleStore } from "@/plane-web/store/cycle/cycle.store";
 import type { ICycleStore } from "@/plane-web/store/cycle/cycle.store";
-import type { ICycleFilterStore } from "./cycle_filter.store";
-import { CycleFilterStore } from "./cycle_filter.store";
+import type { ICycleFilterStore } from "./cycles/cycle_filter.store";
+import { CycleFilterStore } from "./cycles/cycle_filter.store";
 import type { IEditorAssetStore } from "./editor/asset.store";
 import { EditorAssetStore } from "./editor/asset.store";
 import type { IProjectEstimateStore } from "./estimates/project-estimate.store";
 import { ProjectEstimateStore } from "./estimates/project-estimate.store";
-import type { IFavoriteStore } from "./favorite.store";
-import { FavoriteStore } from "./favorite.store";
+import type { IFavoriteStore } from "./favorite/root.store";
+import { FavoriteStore } from "./favorite/root.store";
 // project inbox
 import { ProjectInboxStore } from "@/plane-web/store/project-inbox.store";
 import type { IProjectInboxStore } from "@/plane-web/store/project-inbox.store";
@@ -54,10 +54,10 @@ import type { ILabelStore } from "./label.store";
 import { LabelStore } from "./label.store";
 import type { IMemberRootStore } from "./member";
 import { MemberRootStore } from "./member";
-import type { IModuleStore } from "./module.store";
-import { ModulesStore } from "./module.store";
-import type { IModuleFilterStore } from "./module_filter.store";
-import { ModuleFilterStore } from "./module_filter.store";
+import type { IModuleStore } from "./modules/module.store";
+import { ModulesStore } from "./modules/module.store";
+import type { IModuleFilterStore } from "./modules/module_filter.store";
+import { ModuleFilterStore } from "./modules/module_filter.store";
 import type { IMultipleSelectStore } from "./multiple_select.store";
 import { MultipleSelectStore } from "./multiple_select.store";
 // notifications
@@ -80,8 +80,8 @@ import { ProjectRootStore } from "./project";
 import type { IProjectDetailsStore } from "./project/project-details";
 import { ProjectDetailsStore } from "./project/project-details";
 // global view
-import type { IGlobalViewStore } from "@/plane-web/store/global-view.store";
-import { GlobalViewStore } from "@/plane-web/store/global-view.store";
+import type { IGlobalViewStore } from "@/plane-web/store/workspace-views/root";
+import { GlobalViewStore } from "@/plane-web/store/workspace-views/root";
 // project view
 import type { IProjectViewStore } from "@/plane-web/store/project-view.store";
 import { ProjectViewStore } from "@/plane-web/store/project-view.store";
@@ -218,6 +218,16 @@ import type { ISelfHostedSubscriptionStore } from "./subscription/self-hosted-su
 import { SelfHostedSubscriptionStore } from "./subscription/self-hosted-subscription.store";
 import type { IWorkspaceSubscriptionStore } from "./subscription/subscription.store";
 import { WorkspaceSubscriptionStore } from "./subscription/subscription.store";
+// roles and permissions
+import type { IPermissionAccessStore } from "./permission-access.store";
+import { PermissionAccessStore } from "./permission-access.store";
+import type { IPermissionSchemeStore } from "./permission-scheme.store";
+import { PermissionSchemeStore } from "./permission-scheme.store";
+import type { IRoleManagementStore } from "./role-management.store";
+import { RoleManagementStore } from "./role-management.store";
+import { IntegrationPermissionsStore } from "./integrations/permission";
+import type { IntegrationPermissions } from "./integrations/permission";
+// workflows
 import type { IWorkflowsStore } from "./workflow/workflows.store";
 import { WorkflowsStore } from "./workflow/workflows.store";
 // work item types
@@ -225,6 +235,9 @@ import { WorkItemTypeBridgeStore } from "./work-item-type-bridge";
 // relation definitions
 import type { IRelationDefinitionStore } from "./relation-definition.store";
 import { RelationDefinitionStore } from "./relation-definition.store";
+// preferences
+import type { PreferencesRootStoreType } from "./preferences";
+import { PreferencesRootStore } from "./preferences";
 
 enableStaticRendering(typeof window === "undefined");
 
@@ -294,6 +307,7 @@ export class CoreRootStore {
   releaseStore: IReleaseStore;
   recurringWorkItemsRoot: IRecurringWorkItemsRootStore;
   // integrations
+  integrationPermissions: IntegrationPermissions;
   connections: IConnectionStore;
   slackIntegration: ISlackStore;
   githubIntegration: IGithubStore;
@@ -314,6 +328,10 @@ export class CoreRootStore {
   // subscriptions
   workspaceSubscription: IWorkspaceSubscriptionStore;
   selfHostedSubscription: ISelfHostedSubscriptionStore;
+  // roles and permissions
+  permissionAccessStore: IPermissionAccessStore;
+  permissionSchemeStore: IPermissionSchemeStore;
+  roleManagementStore: IRoleManagementStore;
   // workflows
   workflowsStore: IWorkflowsStore;
   // work item types
@@ -322,6 +340,8 @@ export class CoreRootStore {
   customPropertiesRootStore: RootCustomPropertiesStoreSchema<CustomPropertyType>;
   // relation definitions
   relationDefinition: IRelationDefinitionStore;
+  // preferences
+  preferencesRoot: PreferencesRootStoreType;
 
   constructor() {
     this.router = new RouterStore();
@@ -329,6 +349,10 @@ export class CoreRootStore {
     this.instance = new InstanceStore();
     this.user = new UserStore(this as unknown as RootStore);
     this.theme = new ThemeStore();
+    // roles and permissions
+    this.permissionAccessStore = new PermissionAccessStore();
+    this.permissionSchemeStore = new PermissionSchemeStore();
+    this.roleManagementStore = new RoleManagementStore();
     this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this as unknown as RootStore);
     this.workspaceProjectLabels = new WorkspaceProjectLabelsStore(this as unknown as RootStore);
@@ -389,6 +413,7 @@ export class CoreRootStore {
     this.releaseStore = new ReleaseStore(this as unknown as RootStore);
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this as unknown as RootStore);
     // integrations
+    this.integrationPermissions = new IntegrationPermissionsStore(this as unknown as RootStore);
     this.connections = new ConnectionStore(this as unknown as RootStore);
     this.slackIntegration = new SlackStore(this as unknown as RootStore);
     this.githubIntegration = new GithubStore(this as unknown as RootStore);
@@ -414,18 +439,17 @@ export class CoreRootStore {
     // work item types
     this.workItemTypesRootStore = new RootWorkItemTypesStore({
       getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
-      getProjectRoleByWorkspaceSlugAndProjectId: this.user.permission.getProjectRoleByWorkspaceSlugAndProjectId.bind(
-        this.user.permission
-      ),
-      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+      can: this.permissionAccessStore.can.bind(this.permissionAccessStore),
     });
     this.customPropertiesRootStore = new RootCustomPropertiesStore<CustomPropertyType>({
       getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
-      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+      can: this.permissionAccessStore.can.bind(this.permissionAccessStore),
     });
     this.workItemTypeBridge = new WorkItemTypeBridgeStore(this as unknown as RootStore);
     // relation definitions
-    this.relationDefinition = new RelationDefinitionStore();
+    this.relationDefinition = new RelationDefinitionStore(this as unknown as RootStore);
+    // preferences
+    this.preferencesRoot = new PreferencesRootStore();
   }
 
   resetOnSignOut() {
@@ -437,6 +461,10 @@ export class CoreRootStore {
     this.commandPalette = new CommandPaletteStore();
     this.instance = new InstanceStore();
     this.user = new UserStore(this as unknown as RootStore);
+    // roles and permissions
+    this.permissionAccessStore = new PermissionAccessStore();
+    this.permissionSchemeStore = new PermissionSchemeStore();
+    this.roleManagementStore = new RoleManagementStore();
     this.workspaceRoot = new WorkspaceRootStore(this as unknown as RootStore);
     this.workspaceProjectStates = new WorkspaceProjectStatesStore(this as unknown as RootStore);
     this.workspaceProjectLabels = new WorkspaceProjectLabelsStore(this as unknown as RootStore);
@@ -497,6 +525,7 @@ export class CoreRootStore {
     this.releaseStore = new ReleaseStore(this as unknown as RootStore);
     this.recurringWorkItemsRoot = new RecurringWorkItemsRootStore(this as unknown as RootStore);
     // integrations
+    this.integrationPermissions = new IntegrationPermissionsStore(this as unknown as RootStore);
     this.connections = new ConnectionStore(this as unknown as RootStore);
     this.slackIntegration = new SlackStore(this as unknown as RootStore);
     this.githubIntegration = new GithubStore(this as unknown as RootStore);
@@ -522,17 +551,16 @@ export class CoreRootStore {
     // work item types
     this.workItemTypesRootStore = new RootWorkItemTypesStore({
       getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
-      getProjectRoleByWorkspaceSlugAndProjectId: this.user.permission.getProjectRoleByWorkspaceSlugAndProjectId.bind(
-        this.user.permission
-      ),
-      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+      can: this.permissionAccessStore.can.bind(this.permissionAccessStore),
     });
     this.customPropertiesRootStore = new RootCustomPropertiesStore<CustomPropertyType>({
       getWorkspaceSlugById: this.workspaceRoot.getWorkspaceSlugById.bind(this.workspaceRoot),
-      getWorkspaceRoleByWorkspaceSlug: this.user.permission.getWorkspaceRoleByWorkspaceSlug.bind(this.user.permission),
+      can: this.permissionAccessStore.can.bind(this.permissionAccessStore),
     });
     this.workItemTypeBridge = new WorkItemTypeBridgeStore(this as unknown as RootStore);
     // relation definitions
-    this.relationDefinition = new RelationDefinitionStore();
+    this.relationDefinition = new RelationDefinitionStore(this as unknown as RootStore);
+    // preferences
+    this.preferencesRoot = new PreferencesRootStore();
   }
 }

@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
@@ -24,26 +24,22 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CountChip } from "@/components/common/count-chip";
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
-
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
+import { useIssues } from "@/hooks/store/use-issues";
 
 export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
   // state
   const [isDraftIssueModalOpen, setIsDraftIssueModalOpen] = useState(false);
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { paginationInfo } = useWorkspaceDraftIssues();
   const { joinedProjectIds } = useProject();
+  const { permissions: workItemPermissions } = useIssues();
 
   const { t } = useTranslation();
-  // check if user is authorized to create draft work item
-  const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   return (
     <>
@@ -78,7 +74,7 @@ export const WorkspaceDraftHeader = observer(function WorkspaceDraftHeader() {
               size="lg"
               className="items-center gap-1"
               onClick={() => setIsDraftIssueModalOpen(true)}
-              disabled={!isAuthorizedUser}
+              disabled={!workItemPermissions.getCanCreate(workspaceSlug, joinedProjectIds[0])}
             >
               {t("workspace_draft_issues.draft_an_issue")}
             </Button>

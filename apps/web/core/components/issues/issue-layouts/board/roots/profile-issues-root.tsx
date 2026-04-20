@@ -12,33 +12,66 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useIssues } from "@/hooks/store/use-issues";
+// plane imports
+import { EIssuesStoreType } from "@plane/types";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const ProfileIssuesKanBanLayout = observer(function ProfileIssuesKanBanLayout() {
+type TProfileIssuesKanBanLayoutProps = {
+  workspaceSlug: string;
+  profileViewId: string;
+};
+
+export const ProfileIssuesKanBanLayout = observer(function ProfileIssuesKanBanLayout(
+  props: TProfileIssuesKanBanLayoutProps
+) {
+  const { workspaceSlug, profileViewId } = props;
   // router
-  const { workspaceSlug, profileViewId } = useParams();
-  const { allowPermissions } = useUserPermissions();
-
-  const canEditPropertiesBasedOnProject = (projectId: string) =>
-    allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug.toString(),
-      projectId
-    );
+  const { permissions } = useIssues(EIssuesStoreType.PROFILE);
 
   return (
     <BaseKanBanRoot
-      QuickActions={ProjectIssueQuickActions}
-      canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
-      viewId={profileViewId?.toString()}
+      QuickActions={(props) => (
+        <ProjectIssueQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
+      layoutPermissions={{
+        canCreateWorkItem: {
+          viaHeader: false,
+          viaQuickAdd: false,
+        },
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
+      viewId={profileViewId}
     />
   );
 });

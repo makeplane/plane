@@ -11,13 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TMemberInviteCheck } from "@plane/types";
+import { isGuestRole } from "@plane/utils";
 
 /**
  * Calculate counts of users to be invited, separated by role
+ * @param memberDetails - array of email/role_slug pairs
  */
-export const calculateInviteCounts = (memberDetails: Array<{ email: string; role: number }> | undefined) => {
+export const calculateInviteCounts = (memberDetails: Array<{ email: string; role_slug: string }> | undefined) => {
   if (!memberDetails) {
     return {
       totalUsers: 0,
@@ -30,14 +31,8 @@ export const calculateInviteCounts = (memberDetails: Array<{ email: string; role
 
   return {
     totalUsers: filledMembers.length,
-    adminAndMemberCount: filledMembers.filter((member) => {
-      const role = member.role as EUserWorkspaceRoles;
-      return role === EUserWorkspaceRoles.ADMIN || role === EUserWorkspaceRoles.MEMBER;
-    }).length,
-    guestCount: filledMembers.filter((member) => {
-      const role = member.role as EUserWorkspaceRoles;
-      return role === EUserWorkspaceRoles.GUEST;
-    }).length,
+    adminAndMemberCount: filledMembers.filter((member) => !isGuestRole(member.role_slug)).length,
+    guestCount: filledMembers.filter((member) => isGuestRole(member.role_slug)).length,
   };
 };
 

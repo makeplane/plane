@@ -11,20 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
+import type { ActionButton } from "@plane/propel/empty-state";
 import type { IBaseLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
-// components
-import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 // local imports
 import type { TWorkspaceLabelOperationsCallbacks } from "./create-update-label-inline";
@@ -32,16 +29,16 @@ import { CreateUpdateWorkspaceLabelInline } from "./create-update-label-inline";
 import { DeleteWorkspaceLabelModal } from "./delete-label-modal";
 import { WorkspaceSettingLabelGroup } from "./workspace-label-group";
 import { WorkspaceSettingLabelItem } from "./workspace-label-item";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type TWorkspaceProjectLabelsRoot = {
   workspaceSlug: string;
-  workspaceId: string;
 };
 
 export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabelsRoot(
   props: TWorkspaceProjectLabelsRoot
 ) {
-  const { workspaceSlug, workspaceId } = props;
+  const { workspaceSlug } = props;
   // refs
   const scrollToRef = useRef<HTMLDivElement>(null);
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
@@ -59,10 +56,10 @@ export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabe
     updateLabel,
     updateLabelPosition,
   } = useWorkspaceProjectLabels();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: workspacePermissions } = useWorkspace();
 
   // derived values
-  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const labelPermissions = workspacePermissions.getLabelPermissions(workspaceSlug);
 
   // fetch labels on mount
   useEffect(() => {
@@ -89,10 +86,10 @@ export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabe
     updateLabel: (labelId: string, data: Partial<IBaseLabel>) => updateLabel(workspaceSlug, labelId, data),
   };
 
-  const newLabel = () => {
+  const newLabel = useCallback(() => {
     setIsUpdating(false);
     setLabelForm(true);
-  };
+  }, []);
 
   const onDrop = (
     draggingLabelId: string,
@@ -110,6 +107,18 @@ export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabe
     updateLabel(workspaceSlug, label.id, { parent: null });
   };
 
+  const emptyStateActions: ActionButton[] = useMemo(() => {
+    if (labelPermissions.canCreate) {
+      return [
+        {
+          label: "Add label",
+          onClick: newLabel,
+        },
+      ];
+    }
+    return [];
+  }, [labelPermissions.canCreate, newLabel]);
+
   const isLoading = loader === "init";
 
   return (
@@ -125,7 +134,7 @@ export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabe
           <h6 className="text-h6-medium text-primary">Labels</h6>
           <p className="text-body-xs-regular text-tertiary">Structure and organise your projects with labels.</p>
         </div>
-        {isEditable && (
+        {labelPermissions.canCreate && (
           <Button variant="secondary" size="lg" onClick={newLabel}>
             Add label
           </Button>
@@ -168,7 +177,12 @@ export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabe
                     setIsUpdating={setIsUpdating}
                     isLastChild={index === workspaceLabelsTree.length - 1}
                     onDrop={onDrop}
-                    isEditable={isEditable}
+                    permissions={{
+                      canReorder: labelPermissions.getCanReorder(label.id),
+                      canEdit: labelPermissions.getCanEdit(label.id),
+                      canDelete: labelPermissions.getCanDelete(label.id),
+                      canCreate: labelPermissions.canCreate,
+                    }}
                     labelOperationsCallbacks={labelOperationsCallbacks}
                     onRemoveFromGroup={handleRemoveFromGroup}
                   />
@@ -183,7 +197,12 @@ export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabe
                   isChild={false}
                   isLastChild={index === workspaceLabelsTree.length - 1}
                   onDrop={onDrop}
-                  isEditable={isEditable}
+                  permissions={{
+                    canReorder: labelPermissions.getCanReorder(label.id),
+                    canEdit: labelPermissions.getCanEdit(label.id),
+                    canDelete: labelPermissions.getCanDelete(label.id),
+                    canCreate: labelPermissions.canCreate,
+                  }}
                   labelOperationsCallbacks={labelOperationsCallbacks}
                   onRemoveFromGroup={handleRemoveFromGroup}
                 />
@@ -197,12 +216,7 @@ export const WorkspaceProjectLabelsRoot = observer(function WorkspaceProjectLabe
               assetClassName="size-20"
               title="No labels yet"
               description="Create personalized labels to effectively categorize and manage your projects."
-              actions={[
-                {
-                  label: "Add label",
-                  onClick: newLabel,
-                },
-              ]}
+              actions={emptyStateActions}
               align="center"
               rootClassName="py-20 border border-subtle rounded-lg"
             />

@@ -24,7 +24,6 @@ from plane.ee.views.app.teamspace import (
     TeamspacePageUnarchiveEndpoint,
     TeamspacePagesDescriptionEndpoint,
     TeamspacePageLockEndpoint,
-    TeamspacePageFavoriteEndpoint,
     TeamspacePageVersionEndpoint,
     TeamspaceIssueEndpoint,
     TeamspaceUserPropertiesEndpoint,
@@ -140,11 +139,12 @@ urlpatterns = [
         TeamspacePageLockEndpoint.as_view(),
         name="teamspace-pages-lock",
     ),
-    path(
-        "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:pk>/favorite/",
-        TeamspacePageFavoriteEndpoint.as_view(),
-        name="teamspace-pages-favorite",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:pk>/favorite/",
+    #     TeamspacePageFavoriteEndpoint.as_view(),
+    #     name="teamspace-pages-favorite",
+    # ),
     path(
         "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/versions/",
         TeamspacePageVersionEndpoint.as_view(),
@@ -215,6 +215,7 @@ urlpatterns = [
         AddTeamspaceProjectEndpoint.as_view(),
         name="teamspace-projects",
     ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
     # path(
     #     "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/publish/",
     #     TeamspacePagePublishEndpoint.as_view(),
@@ -225,6 +226,7 @@ urlpatterns = [
     #     TeamspacePagePublishEndpoint.as_view(),
     #     name="teamspace-pages-publish",
     # ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
     # path(
     #     "workspaces/<str:slug>/teamspaces/<uuid:team_space_id>/pages/<uuid:page_id>/share/",
     #     TeamspacePageUserEndpoint.as_view(),

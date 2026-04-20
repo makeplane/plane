@@ -13,12 +13,13 @@
 
 import { useMemo } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // components
 import { Logo } from "@plane/propel/emoji-icon-picker";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// store
-import { ROLE_PERMISSIONS_TO_CREATE_PAGE } from "@/store/pages/project-page.store";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local imports
 import { MovePageModalListSection } from "../list-section";
 import type { TMovePageSelectedValue } from "../root";
@@ -29,7 +30,10 @@ type Props = {
 
 export const MovePageModalProjectsListSection = observer(function MovePageModalProjectsListSection(props: Props) {
   const { searchTerm } = props;
+  // params
+  const { workspaceSlug } = useParams();
   // store hooks
+  const { getCanCreatePage } = usePageStore(EPageStoreType.PROJECT);
   const { currentProjectDetails, getProjectById, joinedProjectIds } = useProject();
   // derived values
   const transferrableProjectIds = useMemo(
@@ -37,11 +41,10 @@ export const MovePageModalProjectsListSection = observer(function MovePageModalP
       joinedProjectIds.filter((id) => {
         const projectDetails = getProjectById(id);
         const isCurrentProject = projectDetails?.id === currentProjectDetails?.id;
-        const canCurrentUserMovePage =
-          !!projectDetails?.member_role && ROLE_PERMISSIONS_TO_CREATE_PAGE.includes(projectDetails?.member_role);
-        return !isCurrentProject && canCurrentUserMovePage;
+        const canCreatePage = !!workspaceSlug && getCanCreatePage(workspaceSlug, id);
+        return !isCurrentProject && canCreatePage;
       }),
-    [currentProjectDetails, getProjectById, joinedProjectIds]
+    [getCanCreatePage, currentProjectDetails, getProjectById, joinedProjectIds, workspaceSlug]
   );
   const filteredProjectIds = useMemo(
     () =>

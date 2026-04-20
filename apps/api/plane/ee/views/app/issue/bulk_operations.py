@@ -28,8 +28,8 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import ProjectEntityPermission
 from plane.ee.serializers import IssueSerializer
+from plane.permissions import can, WorkitemPermissions
 from plane.db.models import (
     Project,
     Issue,
@@ -54,8 +54,6 @@ from plane.ee.bgtasks.entity_issue_state_progress_task import (
 
 
 class BulkIssueOperationsEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
-
     def create_issue_property_values(
         self,
         issues: List[Issue],
@@ -128,6 +126,7 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
                 raise ValueError(ERROR_CODES["INVALID_ISSUE_DATES"])
 
     @check_feature_flag(FeatureFlag.BULK_OPS_ONE)
+    @can(WorkitemPermissions.BULK_EDIT, resource_param="project_id")
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
         if not issue_ids:
@@ -586,9 +585,8 @@ class BulkIssueOperationsEndpoint(BaseAPIView):
 
 
 class BulkArchiveIssuesEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.BULK_OPS_ONE)
+    @can(WorkitemPermissions.ARCHIVE, resource_param="project_id")
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
 
@@ -627,9 +625,8 @@ class BulkArchiveIssuesEndpoint(BaseAPIView):
 
 
 class BulkSubscribeIssuesEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.BULK_OPS_ONE)
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def post(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
         workspace = Workspace.objects.filter(slug=slug).first()

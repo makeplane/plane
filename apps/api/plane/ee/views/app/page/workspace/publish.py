@@ -16,6 +16,8 @@ from rest_framework import status
 # Module imports
 from plane.ee.permissions import WorkspacePagePermission
 from plane.ee.views.base import BaseAPIView
+from plane.permissions import WikiPermissions
+from plane.permissions import HasResourcePermission
 from plane.db.models import DeployBoard, Page
 from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -27,7 +29,14 @@ from plane.ee.utils.page_events import PageAction
 class WorkspacePagePublishEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "create": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "partial_update": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "retrieve": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "destroy": {"permission": WikiPermissions.DELETE, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def post(self, request, slug, page_id):

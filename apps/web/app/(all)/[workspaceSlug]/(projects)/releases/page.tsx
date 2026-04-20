@@ -16,8 +16,10 @@ import { useTranslation } from "@plane/i18n";
 import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { ReleasesRoot } from "@/components/releases/releases-root";
+import type { Route } from "../+types/layout";
 
-function ReleasesPage() {
+function ReleasesPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   const { currentWorkspace } = useWorkspace();
   const { t } = useTranslation();
 
@@ -28,7 +30,7 @@ function ReleasesPage() {
   return (
     <>
       <PageHead title={pageTitle} />
-      <ReleasesRoot />
+      <ReleasesRoot workspaceSlug={workspaceSlug} />
     </>
   );
 }

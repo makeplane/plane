@@ -22,12 +22,16 @@ import { WorkspaceDetails } from "@/components/workspace/settings/workspace-deta
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // local imports
 import { GeneralWorkspaceSettingsHeader } from "./header";
+import type { Route } from "./+types/page";
 
-function GeneralWorkspaceSettingsPage() {
+function GeneralWorkspaceSettingsPage({ params }: Route.ComponentProps) {
+  // router
+  const { workspaceSlug } = params;
   // store hooks
-  const { currentWorkspace } = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   const { t } = useTranslation();
   // derived values
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name
     ? t("workspace_settings.page_label", { workspace: currentWorkspace.name })
     : undefined;
@@ -35,7 +39,7 @@ function GeneralWorkspaceSettingsPage() {
   return (
     <SettingsContentWrapper header={<GeneralWorkspaceSettingsHeader />}>
       <PageHead title={pageTitle} />
-      <WorkspaceDetails />
+      <WorkspaceDetails workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
 }

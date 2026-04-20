@@ -16,9 +16,7 @@ import { action, computed, makeObservable, observable } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { RecurringWorkItemServiceBase } from "@plane/services";
-import type { IRecurringWorkItemActionCallbacks, TLoader, TRecurringWorkItem } from "@plane/types";
-// plane web imports
-import type { RootStore } from "@/plane-web/store/root.store";
+import type { IRecurringWorkItemActionCallbacks, PermissionCheckArgs, TLoader, TRecurringWorkItem } from "@plane/types";
 // local imports
 import type { IRecurringWorkItemInstance } from "./instance";
 import { RecurringWorkItemInstance } from "./instance";
@@ -37,6 +35,7 @@ export interface IRecurringWorkItemStore {
   getAllRecurringWorkItemIdsByProjectId: (workspaceSlug: string, projectId: string) => string[];
   isAnyRecurringWorkItemsAvailableForProject: (workspaceSlug: string, projectId: string) => boolean;
   // actions
+  getCanCreate: (workspaceSlug: string, projectId: string) => boolean;
   fetchRecurringWorkItems: (workspaceSlug: string, projectId: string) => Promise<void>;
   fetchRecurringWorkItemById: (workspaceSlug: string, projectId: string, recurringWorkItemId: string) => Promise<void>;
   createRecurringWorkItem: (
@@ -47,20 +46,23 @@ export interface IRecurringWorkItemStore {
   deleteRecurringWorkItem: (workspaceSlug: string, projectId: string, recurringWorkItemId: string) => Promise<void>;
 }
 
+type TRecurringWorkItemStoreArgs = {
+  getWorkspaceSlugById: (workspaceId: string) => string | undefined;
+  getWorkspaceIdBySlug: (workspaceSlug: string) => string | undefined;
+  currentUserId: string | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
+};
+
 export class RecurringWorkItemStore implements IRecurringWorkItemStore {
   // observables
   loader: IRecurringWorkItemStore["loader"] = undefined;
   fetchStatusMap: IRecurringWorkItemStore["fetchStatusMap"] = new Map();
   recurringWorkItems: IRecurringWorkItemStore["recurringWorkItems"] = new Map();
-  // root store
-  private rootStore: RootStore;
   // recurring work item service
   private recurringWorkItemService: RecurringWorkItemServiceBase;
 
   // constructor
-  constructor(rootStore: RootStore) {
-    // root store
-    this.rootStore = rootStore;
+  constructor(private args: TRecurringWorkItemStoreArgs) {
     // recurring work item service
     this.recurringWorkItemService = new RecurringWorkItemServiceBase();
 
@@ -71,6 +73,12 @@ export class RecurringWorkItemStore implements IRecurringWorkItemStore {
       recurringWorkItems: observable,
       // computed
       isRecurringWorkItemsInitializing: computed,
+      // actions
+      getCanCreate: action,
+      fetchRecurringWorkItems: action,
+      fetchRecurringWorkItemById: action,
+      createRecurringWorkItem: action,
+      deleteRecurringWorkItem: action,
     });
   }
 
@@ -108,7 +116,7 @@ export class RecurringWorkItemStore implements IRecurringWorkItemStore {
    * @returns All recurring work items
    */
   private getAllRecurringWorkItems = computedFn((workspaceSlug: string) => {
-    const workspaceId = this.rootStore.workspaceRoot.getWorkspaceBySlug(workspaceSlug)?.id;
+    const workspaceId = this.args.getWorkspaceIdBySlug(workspaceSlug);
     if (!workspaceId) return [];
     return orderBy<IRecurringWorkItemInstance>(
       Array.from(this.recurringWorkItems.values()).filter(
@@ -181,9 +189,11 @@ export class RecurringWorkItemStore implements IRecurringWorkItemStore {
 
         // Create new recurring work item instance
         const recurringWorkItemInstance = new RecurringWorkItemInstance({
-          root: this.rootStore,
           updateActionCallback,
           recurringWorkItemData: recurringWorkItem,
+          can: this.args.can,
+          getWorkspaceSlugById: this.args.getWorkspaceSlugById,
+          currentUserId: this.args.currentUserId,
         });
 
         // Add new recurring work item instance to recurring work items
@@ -193,6 +203,21 @@ export class RecurringWorkItemStore implements IRecurringWorkItemStore {
   );
 
   // actions
+  /**
+   * @description Check if the current user can create a recurring work item
+   * @param workspaceSlug - The workspace slug
+   * @param projectId - The project id
+   * @returns True if the current user can create a recurring work item, false otherwise
+   */
+  getCanCreate = action((workspaceSlug: string, projectId: string) => {
+    return this.args.can({
+      resource: "recurring_workitem",
+      action: "create",
+      projectId: projectId,
+      workspaceSlug: workspaceSlug,
+    });
+  });
+
   /**
    * @description Fetch all recurring work items
    * @param workspaceSlug - The workspace slug

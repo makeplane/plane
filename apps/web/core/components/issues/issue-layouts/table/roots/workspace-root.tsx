@@ -14,7 +14,7 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ALL_ISSUES, EIssueFilterType } from "@plane/constants";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
@@ -23,13 +23,18 @@ import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsh
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import { IssueLayoutHOC } from "../../issue-layout-HOC";
 import type { TRenderQuickActions } from "../../list/list-view-types";
 import { SpreadsheetView } from "../spreadsheet-view";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
 type Props = {
   isDefaultView: boolean;
@@ -52,15 +57,15 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
   const {
     issuesFilter: { filters, updateFilters },
     issues: { getIssueLoader, getPaginationData, groupedIssueIds },
+    permissions,
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue, fetchIssues, fetchNextIssues } = useIssuesActions(
     EIssuesStoreType.GLOBAL
   );
-  const { allowPermissions } = useUserPermissions();
   const { joinedProjectIds } = useProject();
 
   // Derived values
-  const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
+  const issueFilters = globalViewId ? filters?.[globalViewId] : undefined;
 
   useEffect(() => {
     if (filtersLoading || !globalViewId) return;
@@ -68,31 +73,17 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, globalViewId);
   }, [fetchIssues, filtersLoading, globalViewId]);
 
-  // Permission checker
-  const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
-      if (!projectId) return false;
-      return allowPermissions(
-        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        EUserPermissionsLevel.PROJECT,
-        workspaceSlug.toString(),
-        projectId
-      );
-    },
-    [allowPermissions, workspaceSlug]
-  );
-
   // Display filters handler
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !globalViewId) return;
 
       updateFilters(
-        workspaceSlug.toString(),
+        workspaceSlug,
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
         { ...updatedDisplayFilter },
-        globalViewId.toString()
+        globalViewId
       ).catch((error) => {
         console.error(error);
       });
@@ -129,11 +120,20 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
         handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         portalElement={portalElement}
-        readOnly={!canEditProperties(issue.project_id ?? undefined)}
+        permissions={
+          issue.project_id
+            ? {
+                canEdit: permissions.getCanEdit(workspaceSlug, issue.project_id, issue.id),
+                canDelete: permissions.getCanDelete(workspaceSlug, issue.project_id, issue.id),
+                canArchive: permissions.getCanArchive(workspaceSlug, issue.project_id, issue.id),
+                canDuplicate: permissions.getCanDuplicate(workspaceSlug, issue.project_id),
+              }
+            : DEFAULT_QUICK_ACTION_PERMISSIONS
+        }
         placements={placement}
       />
     ),
-    [canEditProperties, removeIssue, updateIssue, archiveIssue]
+    [permissions, workspaceSlug, removeIssue, updateIssue, archiveIssue]
   );
 
   // Loading state
@@ -158,7 +158,19 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
         issueIds={Array.isArray(issueIds) ? issueIds : []}
         quickActions={renderQuickActions}
         updateIssue={updateIssue}
-        canEditProperties={canEditProperties}
+        layoutPermissions={{
+          canQuickAddWorkItem: false,
+          canPerformBulkOps: false,
+        }}
+        getWorkItemPermissions={(workItem) =>
+          workItem.project_id
+            ? {
+                canEditProperty: (property: TWorkItemProperty) =>
+                  permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+                canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+              }
+            : DEFAULT_WORK_ITEM_PERMISSIONS
+        }
         canLoadMoreIssues={!!nextPageResults}
         loadMoreIssues={fetchNextIssues}
         isWorkspaceLevel

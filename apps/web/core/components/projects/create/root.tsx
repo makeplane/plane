@@ -19,7 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { EFileAssetType } from "@plane/types";
-import type { EUserProjectRoles, IProjectBulkAddFormData } from "@plane/types";
+import type { IProjectBulkAddFormData } from "@plane/types";
 // types
 import { getProjectFormValues } from "@/helpers/project";
 import ProjectCommonAttributes from "@/components/projects/create/common-attributes";
@@ -107,7 +107,8 @@ const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCr
   // derived values
   const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFlagEnabled;
   const isLoading = isSubmitting || isApplyingTemplate;
 
   // Reset form when data prop changes
@@ -156,10 +157,10 @@ const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCr
     if (formData.members) {
       formData.members.forEach((memberId) => {
         const memberDetails = getWorkspaceMemberDetails(memberId);
-        if (currentUser && currentUser.id !== memberId && memberDetails && memberDetails.role) {
+        if (currentUser && currentUser.id !== memberId && memberDetails) {
           membersPayload.push({
             member_id: memberId,
-            role: memberDetails.role as unknown as EUserProjectRoles,
+            role_slug: "guest",
           });
         }
       });
@@ -291,11 +292,7 @@ const CreateProjectFormBase = observer(function CreateProjectFormBase(props: TCr
   return (
     <FormProvider {...methods}>
       <div className="p-3">
-        <ProjectCreateHeader
-          handleClose={handleClose}
-          // handleFormChange={handleFormChange}
-          isClosable={showActionButtons}
-        />
+        <ProjectCreateHeader handleClose={handleClose} isClosable={showActionButtons} workspaceSlug={workspaceSlug} />
         <form onSubmit={handleSubmit(onSubmit)} className="px-3">
           <div className="mt-9 space-y-6 pb-5">
             <ProjectCommonAttributes

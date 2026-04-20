@@ -12,21 +12,18 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Activity, UsersRound } from "lucide-react";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { CommentFillIcon, InfoFillIcon } from "@plane/propel/icons";
 import { Tabs } from "@plane/propel/tabs";
-import { EUserWorkspaceRoles } from "@plane/types";
 
 // helpers
 import { cn } from "@plane/utils";
-// hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";
+// types
+import type { TTeamspaceDetailPermissions } from "@/store/teamspace/permissions/root";
 // local components
 import { TeamsOverviewSidebarActivity } from "./activity";
 import { TeamsOverviewSidebarComments } from "./comments";
@@ -34,78 +31,52 @@ import { TeamsOverviewSidebarMembers } from "./members";
 import { TeamsOverviewSidebarProperties } from "./properties/root";
 
 type TTeamsOverviewSidebarProps = {
+  permissions: TTeamspaceDetailPermissions;
   teamspaceId: string;
+  workspaceSlug: string;
 };
 
 export const TeamsOverviewSidebar = observer(function TeamsOverviewSidebar(props: TTeamsOverviewSidebarProps) {
-  const { teamspaceId } = props;
-  // router
-  const { workspaceSlug } = useParams();
+  const { teamspaceId, workspaceSlug, permissions } = props;
   // hooks
-  const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
   const { isTeamSidebarCollapsed, getTeamspaceById, fetchTeamspaceEntities } = useTeamspaces();
   const { fetchTeamActivities, fetchTeamspaceComments } = useTeamspaceUpdates();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
-  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
-  const hasAdminLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
-  const isEditingAllowed = hasAdminLevelPermissions || isTeamspaceLead;
-  const hasMemberLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
   // fetch teamspace entities
-  useSWR(
-    workspaceSlug && teamspaceId ? ["teamspaceEntities", workspaceSlug, teamspaceId] : null,
-    () => fetchTeamspaceEntities(workspaceSlug.toString(), teamspaceId),
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-    }
-  );
+  useSWR(["teamspaceEntities", workspaceSlug, teamspaceId], () => fetchTeamspaceEntities(workspaceSlug, teamspaceId), {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
   // fetching teamspace activity
-  useSWR(
-    workspaceSlug && teamspaceId ? ["teamspaceActivity", workspaceSlug, teamspaceId] : null,
-    workspaceSlug && teamspaceId ? () => fetchTeamActivities(workspaceSlug.toString(), teamspaceId) : null,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-    }
-  );
+  useSWR(["teamspaceActivity", workspaceSlug, teamspaceId], () => fetchTeamActivities(workspaceSlug, teamspaceId), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
   // fetching teamspace comments
-  useSWR(
-    workspaceSlug && teamspaceId ? ["teamspaceComments", workspaceSlug, teamspaceId] : null,
-    workspaceSlug && teamspaceId ? () => fetchTeamspaceComments(workspaceSlug.toString(), teamspaceId) : null,
-    {
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
-    }
-  );
+  useSWR(["teamspaceComments", workspaceSlug, teamspaceId], () => fetchTeamspaceComments(workspaceSlug, teamspaceId), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
 
   // if teamspace is not found, return null
-  if (!teamspaceId || !teamspace) return null;
+  if (!teamspace) return null;
 
   const TEAM_OVERVIEW_SIDEBAR_TABS = [
     {
       key: "properties",
       icon: InfoFillIcon,
-      content: <TeamsOverviewSidebarProperties teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />,
+      content: <TeamsOverviewSidebarProperties teamspaceId={teamspaceId} canManage={permissions.canManage} />,
     },
     {
       key: "members",
       icon: UsersRound,
-      content: <TeamsOverviewSidebarMembers teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />,
+      content: <TeamsOverviewSidebarMembers teamspaceId={teamspaceId} canManage={permissions.canManage} />,
     },
     {
       key: "comments",
       icon: CommentFillIcon,
-      content: <TeamsOverviewSidebarComments teamspaceId={teamspaceId} isEditingAllowed={hasMemberLevelPermissions} />,
+      content: <TeamsOverviewSidebarComments teamspaceId={teamspaceId} comments={permissions.comments} />,
     },
     {
       key: "activity",

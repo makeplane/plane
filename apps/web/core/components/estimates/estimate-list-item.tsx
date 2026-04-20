@@ -25,9 +25,8 @@ import { EstimateListItemButtons } from "./estimate-list-item-buttons";
 
 type TEstimateListItem = {
   estimateId: string;
-  isAdmin: boolean;
-  isEstimateEnabled: boolean;
   isEditable: boolean;
+  isEstimateEnabled: boolean;
   onEditClick?: (estimateId: string) => void;
   onDeleteClick?: (estimateId: string) => void;
 };
@@ -36,7 +35,7 @@ export const EstimateListItem = observer(function EstimateListItem(props: TEstim
   const { estimateId } = props;
   // store hooks
   const { estimateById } = useProjectEstimates();
-  const { estimatePointIds, estimatePointById } = useEstimate(estimateId);
+  const { estimatePointIds, estimatePointById, canCurrentUserEditEstimate } = useEstimate(estimateId);
   const currentEstimate = estimateById(estimateId);
   // derived values
   const estimatePointValues = estimatePointIds?.map((estimatePointId) => {
@@ -57,7 +56,7 @@ export const EstimateListItem = observer(function EstimateListItem(props: TEstim
           return estimatePointValue;
         })
         .join(", ")}
-      control={<EstimateListItemButtons {...props} />}
+      control={<EstimateListItemButtons canEdit={canCurrentUserEditEstimate} {...props} />}
     />
   );
 });

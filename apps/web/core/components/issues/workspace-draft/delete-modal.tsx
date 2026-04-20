@@ -12,17 +12,12 @@
  */
 
 import { useEffect, useState } from "react";
-// types
-import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// plane imports
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TWorkspaceDraftIssue } from "@plane/types";
-// ui
 import { AlertModalCore } from "@plane/ui";
-// constants
-// hooks
-import { useIssues } from "@/hooks/store/use-issues";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 
 type Props = {
   isOpen: boolean;
@@ -30,31 +25,21 @@ type Props = {
   dataId?: string | null | undefined;
   data?: TWorkspaceDraftIssue;
   onSubmit?: () => Promise<void>;
+  canDelete: boolean;
 };
 
 export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
-  const { dataId, data, isOpen, handleClose, onSubmit } = props;
+  const { dataId, data, isOpen, handleClose, onSubmit, canDelete } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
   // store hooks
-  const { getWorkItemById } = useIssues();
-  const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
-  const { data: currentUser } = useUser();
-
-  // derived values
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   useEffect(() => {
     setIsDeleting(false);
   }, [isOpen]);
 
   if (!dataId && !data) return null;
-
-  // derived values
-  const issue = data ? data : dataId ? getWorkItemById(dataId) : undefined;
-  const isIssueCreator = issue?.created_by === currentUser?.id;
-  const authorized = isIssueCreator || canPerformProjectAdminActions;
 
   const onClose = () => {
     setIsDeleting(false);
@@ -64,7 +49,7 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
   const handleIssueDelete = async () => {
     setIsDeleting(true);
 
-    if (!authorized) {
+    if (!canDelete) {
       setToast({
         title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
         type: TOAST_TYPE.ERROR,

@@ -14,7 +14,7 @@
 import { observer } from "mobx-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import type { TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
 // hooks
@@ -29,19 +29,24 @@ import { RelationsCollapsible } from "./relations";
 import { SubIssuesCollapsible } from "./sub-issues";
 import { CustomerRequestsCollapsible } from "./customer-requests";
 import { PagesCollapsible } from "./pages";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled: boolean;
   issueServiceType: TIssueServiceType;
-  hideWidgets?: TWorkItemWidgets[];
   permissions: {
+    canAddDependencies: boolean;
+    canAddRelations: boolean;
+    canAddLinks: boolean;
+    canAddAttachments: boolean;
+    canAddPages: boolean;
+    canAddCustomerRequests: boolean;
     sub_work_items: {
       getCanView: (projectId: string, workItemId: string) => boolean;
       getCanEdit: (projectId: string, workItemId: string) => boolean;
-      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
       getCanDelete: (projectId: string, workItemId: string) => boolean;
       getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
       getCanRemove: (
@@ -52,10 +57,11 @@ type Props = {
       ) => boolean;
     };
   };
+  hideWidgets?: TWorkItemWidgets[];
 };
 
 export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidgetCollapsibles(props: Props) {
-  const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets, permissions } = props;
+  const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets, permissions } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -113,7 +119,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
         <DependenciesCollapsible
           workspaceSlug={workspaceSlug}
           issueId={issueId}
-          disabled={disabled}
+          disabled={!permissions.canAddDependencies}
           issueServiceType={issueServiceType}
         />
       )}
@@ -121,7 +127,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
         <RelationsCollapsible
           workspaceSlug={workspaceSlug}
           issueId={issueId}
-          disabled={disabled}
+          disabled={!permissions.canAddRelations}
           issueServiceType={issueServiceType}
         />
       )}
@@ -130,7 +136,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
-          disabled={disabled}
+          disabled={!permissions.canAddLinks}
           issueServiceType={issueServiceType}
         />
       )}
@@ -139,19 +145,23 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
-          disabled={disabled}
+          disabled={!permissions.canAddAttachments}
           issueServiceType={issueServiceType}
         />
       )}
       {shouldRenderCustomerRequest && isCustomersFeatureEnabled && (
-        <CustomerRequestsCollapsible workItemId={issueId} workspaceSlug={workspaceSlug} disabled={disabled} />
+        <CustomerRequestsCollapsible
+          workItemId={issueId}
+          workspaceSlug={workspaceSlug}
+          disabled={!permissions.canAddCustomerRequests}
+        />
       )}
       {shouldRenderPages && (
         <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
           <PagesCollapsible
             workItemId={issueId}
             workspaceSlug={workspaceSlug}
-            disabled={disabled}
+            disabled={!permissions.canAddPages}
             projectId={issue?.project_id}
             issueServiceType={issueServiceType}
           />

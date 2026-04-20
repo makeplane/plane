@@ -42,14 +42,6 @@ export class ProjectMemberService extends APIService {
       });
   }
 
-  async projectMemberMe(workspaceSlug: string, projectId: string): Promise<TProjectMembership> {
-    return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/project-members/me/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
   async getProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<TProjectMembership> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
       .then((response) => response?.data)
@@ -73,6 +65,22 @@ export class ProjectMemberService extends APIService {
 
   async deleteProjectMember(workspaceSlug: string, projectId: string, memberId: string): Promise<void> {
     return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/${memberId}/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
+    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/join/`, { project_ids })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async leaveProject(workspaceSlug: string, projectId: string) {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

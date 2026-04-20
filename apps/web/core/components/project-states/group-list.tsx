@@ -22,7 +22,13 @@ import { GroupItem } from "@/components/project-states";
 type TGroupList = {
   groupedStates: Record<string, IState[]>;
   stateOperationsCallbacks: TStateOperationsCallbacks;
-  isEditable: boolean;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (stateId: string) => boolean;
+    canDelete: (stateId: string) => boolean;
+    canMarkAsDefault: (stateId: string) => boolean;
+    canDragAndDrop: (stateId: string) => boolean;
+  };
   shouldTrackEvents: boolean;
   groupListClassName?: string;
   groupItemClassName?: string;
@@ -33,7 +39,7 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
   const {
     groupedStates,
     stateOperationsCallbacks,
-    isEditable,
+    permissions,
     shouldTrackEvents,
     groupListClassName,
     groupItemClassName,
@@ -78,7 +84,7 @@ export const GroupList = observer(function GroupList(props: TGroupList) {
             groupedStates={groupedStates}
             groupsExpanded={groupsExpanded}
             stateOperationsCallbacks={stateOperationsCallbacks}
-            isEditable={isEditable}
+            permissions={permissions}
             shouldTrackEvents={shouldTrackEvents}
             handleGroupCollapse={handleGroupCollapse}
             handleExpand={handleExpand}

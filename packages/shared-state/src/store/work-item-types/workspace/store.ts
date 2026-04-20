@@ -17,12 +17,10 @@ import { computedFn } from "mobx-utils";
 import { WorkspaceWorkItemTypesService } from "@plane/services";
 import type {
   BaseWorkItemTypeInstanceSchema,
-  EUserWorkspaceRoles,
-  TUserPermissions,
+  PermissionCheckArgs,
   TWorkItemTypeResponse,
   WorkspaceWorkItemTypesStoreSchema,
 } from "@plane/types";
-import { EUserPermissions } from "@plane/types";
 import { setDefaultWorkItemType } from "@plane/utils";
 // local imports
 import type { BaseWorkItemTypesStoreArgs } from "../base.store";
@@ -32,13 +30,13 @@ import { WorkspaceWorkItemTypeInstance } from "./instance";
 const workspaceTypeService = new WorkspaceWorkItemTypesService();
 
 type WorkspaceWorkItemTypesStoreArgs = Omit<BaseWorkItemTypesStoreArgs, "createInstance"> & {
-  getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
   enrichProjectTypeIds: (types: TWorkItemTypeResponse[]) => void;
 };
 
 export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implements WorkspaceWorkItemTypesStoreSchema {
   // helpers
-  #getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  #can: (args: PermissionCheckArgs) => boolean;
   #enrichProjectTypeIds: (types: TWorkItemTypeResponse[]) => void;
 
   constructor(args: WorkspaceWorkItemTypesStoreArgs) {
@@ -48,7 +46,7 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
         new WorkspaceWorkItemTypeInstance({
           data: payload,
           getWorkspaceSlugById: args.getWorkspaceSlugById,
-          getWorkspaceRoleByWorkspaceSlug: args.getWorkspaceRoleByWorkspaceSlug,
+          can: args.can,
         }),
     });
 
@@ -63,7 +61,7 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
     });
 
     // helpers
-    this.#getWorkspaceRoleByWorkspaceSlug = args.getWorkspaceRoleByWorkspaceSlug;
+    this.#can = args.can;
     this.#enrichProjectTypeIds = args.enrichProjectTypeIds;
   }
 
@@ -176,13 +174,11 @@ export class WorkspaceWorkItemTypesStore extends BaseWorkItemTypesStore implemen
   };
 
   // permissions
-  #roleByWorkspaceSlug = computedFn((workspaceSlug: string) => {
-    return this.#getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-  });
-
-  canCreate = computedFn(
-    (workspaceSlug: string) => this.#roleByWorkspaceSlug(workspaceSlug) === EUserPermissions.ADMIN
+  canCreate = computedFn((workspaceSlug: string) =>
+    this.#can({ resource: "workspace_workitem_type", action: "create", workspaceSlug })
   );
 
-  canView = computedFn((workspaceSlug: string) => this.#roleByWorkspaceSlug(workspaceSlug) === EUserPermissions.ADMIN);
+  canView = computedFn((workspaceSlug: string) =>
+    this.#can({ resource: "workspace_workitem_type", action: "view", workspaceSlug })
+  );
 }

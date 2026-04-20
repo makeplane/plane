@@ -21,17 +21,14 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views import BaseAPIView
 from plane.db.models import Workspace, Page
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.permissions import WorkspacePermissions, can
 
 
 class WorkspaceSearchEndpoint(BaseAPIView):
     """Endpoint to search across multiple fields in the workspace and
     also show related workspace if found
     """
-
     use_read_replica = True
-
-    permission_classes = [WorkspaceEntityPermission]
 
     def filter_workspaces(self, query, slug):
         """Filter workspaces based on the query"""
@@ -58,6 +55,7 @@ class WorkspaceSearchEndpoint(BaseAPIView):
             .values("name", "id", "workspace__slug")
         )
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         query = request.GET.get("search", False)
         if not query:

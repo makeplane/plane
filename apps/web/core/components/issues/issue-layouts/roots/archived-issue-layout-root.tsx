@@ -74,7 +74,7 @@ export const ArchivedIssueLayoutRoot = observer(function ArchivedIssueLayoutRoot
             <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto">
               <Suspense>
-                <ArchivedIssueListLayout />
+                <ArchivedIssueListLayout workspaceSlug={workspaceSlug} />
               </Suspense>
             </div>
             {/* peek overview */}

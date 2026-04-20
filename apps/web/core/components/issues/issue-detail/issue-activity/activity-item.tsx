@@ -25,7 +25,14 @@ export type ActivityItemSharedProps = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled: boolean;
+  permissions: {
+    comments: {
+      canCreate: boolean;
+      canEdit: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
+  };
   showAccessSpecifier: boolean;
   showCopyLinkOption: boolean;
   activityOperations: TCommentsOperations;
@@ -47,7 +54,7 @@ export function ActivityItem(props: ActivityItemProps) {
     workspaceSlug,
     projectId,
     issueId,
-    disabled,
+    permissions,
     showAccessSpecifier,
     showCopyLinkOption,
     activityOperations,
@@ -61,7 +68,12 @@ export function ActivityItem(props: ActivityItemProps) {
         workspaceSlug={workspaceSlug}
         issueId={issueId}
         projectId={projectId}
-        disabled={disabled}
+        permissions={{
+          canCreate: permissions.comments.canCreate,
+          canEdit: permissions.comments.canEdit(id),
+          canDelete: permissions.comments.canDelete(id),
+          canReact: permissions.comments.canReact(id),
+        }}
         showAccessSpecifier={showAccessSpecifier}
         showCopyLinkOption={showCopyLinkOption}
         showConnector={showConnector}

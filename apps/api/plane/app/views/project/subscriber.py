@@ -18,7 +18,7 @@ from rest_framework import status
 # Module imports
 from plane.app.views.base import BaseViewSet
 from plane.app.serializers import ProjectSubscriberSerializer
-from plane.app.permissions import ProjectAdminPermission
+from plane.permissions import ProjectPermissions, can
 from plane.db.models import Workspace
 from plane.ee.models import ProjectSubscriber
 from plane.bgtasks.project_subscriber_task import add_project_subscribers_to_work_items_task
@@ -29,8 +29,6 @@ class ProjectSubscriberEndpoint(BaseViewSet):
 
     serializer_class = ProjectSubscriberSerializer
     model = ProjectSubscriber
-
-    permission_classes = [ProjectAdminPermission]
 
     def get_queryset(self):
         return (
@@ -44,6 +42,7 @@ class ProjectSubscriberEndpoint(BaseViewSet):
             .distinct()
         )
 
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def list(self, request, slug, project_id):
         subscribers = self.get_queryset()
         serializer = ProjectSubscriberSerializer(subscribers, many=True)
@@ -82,6 +81,7 @@ class ProjectSubscriberEndpoint(BaseViewSet):
                 ignore_conflicts=True,
             )
 
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def create_or_update(self, request, slug: str, project_id: str):
         subscriber_ids: list[str] = request.data.get("subscriber_ids", [])
 

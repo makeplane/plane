@@ -11,24 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { merge } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { PartialDeep, TRecurringWorkItemForm, TWorkItemBlueprintFormData } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 import type { TWorkItemSanitizationResult } from "@plane/utils";
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { DateDropdown } from "@/components/dropdowns/date";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import {
@@ -98,7 +95,7 @@ export const RecurringWorkItemFormRoot = observer(function RecurringWorkItemForm
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: projectPermissions } = useProject();
   const { getProjectDefaultStateId } = useProjectState();
   const { getProjectDefaultWorkItemTypeId } = useIssueTypes();
   const { getProjectById, joinedProjectIds } = useProject();
@@ -122,9 +119,7 @@ export const RecurringWorkItemFormRoot = observer(function RecurringWorkItemForm
   } = methods;
   // derived values
   const projectId = watch("workitem_blueprint.project_id");
-  const hasProjectAdminPermission =
-    !!projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
-  const allowLabelCreation = hasProjectAdminPermission;
+  const allowLabelCreation = projectId ? projectPermissions.getCanManageLabels(workspaceSlug, projectId) : false;
   const minDate = getDate(watch("start_at"));
   minDate?.setDate(minDate.getDate());
   const maxDate = getDate(watch("end_at"));

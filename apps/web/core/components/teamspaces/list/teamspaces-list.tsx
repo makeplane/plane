@@ -14,10 +14,8 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTheme } from "next-themes";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserWorkspaceRoles } from "@plane/types";
 // assets
 import allFiltersDark from "@/app/assets/empty-state/project/all-filters-dark.svg?url";
 import allFiltersLight from "@/app/assets/empty-state/project/all-filters-light.svg?url";
@@ -27,34 +25,29 @@ import nameFilterLight from "@/app/assets/empty-state/project/name-filter-light.
 import { ListLayout } from "@/components/core/list/list-root";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useTeamspaces, useTeamspaceFilter } from "@/plane-web/hooks/store";
+// types
+import type { TTeamspaceListPermissions } from "@/store/teamspace/permissions/root";
 // components
 import { TeamsLoader } from "./loader";
 import { TeamspaceListItem } from "./teamspace-list-item";
 
 type TTeamspacesListProps = {
-  isEditingAllowed: boolean;
+  permissions: TTeamspaceListPermissions;
 };
 
 export const TeamspacesList = observer(function TeamspacesList(props: TTeamspacesListProps) {
-  const { isEditingAllowed } = props;
+  const { permissions } = props;
   // plane hooks
   const { t } = useTranslation();
   // theme hook
   const { resolvedTheme } = useTheme();
   // store hooks
   const { toggleCreateTeamspaceModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   // plane web hooks
   const { allTeamSpaceIds, filteredTeamSpaceIds, loader } = useTeamspaces();
   const { searchQuery } = useTeamspaceFilter();
-  // derived values
-  const hasWorkspaceAdminLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE
-  );
   const resolvedAllFiltersImage = resolvedTheme === "light" ? allFiltersLight : allFiltersDark;
   const resolvedNameFilterImage = resolvedTheme === "light" ? nameFilterLight : nameFilterDark;
 
@@ -72,7 +65,7 @@ export const TeamspacesList = observer(function TeamspacesList(props: TTeamspace
             onClick: () => {
               toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });
             },
-            disabled: !hasWorkspaceAdminLevelPermissions,
+            disabled: !permissions.canCreate,
           },
         ]}
       />
@@ -100,7 +93,16 @@ export const TeamspacesList = observer(function TeamspacesList(props: TTeamspace
   return (
     <ListLayout>
       {filteredTeamSpaceIds.map((teamspaceId) => (
-        <TeamspaceListItem key={teamspaceId} teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />
+        <TeamspaceListItem
+          key={teamspaceId}
+          teamspaceId={teamspaceId}
+          permissions={{
+            canEdit: permissions.getCanEdit(teamspaceId),
+            canDelete: permissions.getCanDelete(teamspaceId),
+            canManage: permissions.getCanManage(teamspaceId),
+            canAddProject: permissions.getCanAddProject(teamspaceId),
+          }}
+        />
       ))}
     </ListLayout>
   );

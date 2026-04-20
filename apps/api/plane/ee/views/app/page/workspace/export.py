@@ -20,12 +20,18 @@ from plane.ee.views.base import BaseViewSet
 from plane.app.serializers import PageUserSerializer
 from plane.ee.permissions import WorkspacePagePermission
 from plane.ee.bgtasks.export_page_task import page_export_task
+from plane.permissions import WikiPermissions
+from plane.permissions import HasResourcePermission
 
 
 class WorkspacePageExportViewSet(BaseViewSet):
     serializer_class = PageUserSerializer
     model = PageUser
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "create": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+    }
 
     def create(self, request, slug, page_id=None):
         if page_id:

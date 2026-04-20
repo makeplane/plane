@@ -13,6 +13,7 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -36,8 +37,8 @@ import { IssueModalContext } from "@/components/issues/issue-modal/context";
 import { WorkItemConversionToastActionItem } from "@/components/common/toast-actions/work-item-conversion";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useUser } from "@/hooks/store/user/user-user";
-// plane web components
+import { useProject } from "@/hooks/store/use-project";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 // plane web hooks
 import { useIssueTypes } from "@/plane-web/hooks/store";
 // plane web services
@@ -59,8 +60,13 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane hooks
   const { t } = useTranslation();
+  // router params
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { projectsWithCreatePermissions } = useUser();
+  const { workspaceProjectIds } = useProject();
+  const {
+    permissions: { getProjectIdsWithEpicPermission },
+  } = useEpics();
   // plane web hooks
   const { isEpicEnabledForProject, getIssueTypeById, getIssueTypeProperties, getProjectEpicId, convertWorkItem } =
     useIssueTypes();
@@ -71,7 +77,11 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
   } = useIssueDetail(EIssueServiceType.EPICS);
 
   // derived values
-  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
+  const projectIdsWithEpicCreatePermission = getProjectIdsWithEpicPermission(
+    workspaceSlug,
+    workspaceProjectIds ?? [],
+    "create"
+  );
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
     // get active issue types for the project
@@ -203,7 +213,7 @@ export const EpicModalProvider = observer(function EpicModalProvider(props: TEpi
   return (
     <IssueModalContext.Provider
       value={{
-        allowedProjectIds: projectIdsWithCreatePermissions,
+        allowedProjectIds: Array.from(projectIdsWithEpicCreatePermission),
         workItemTemplateId,
         setWorkItemTemplateId,
         isApplyingTemplate,

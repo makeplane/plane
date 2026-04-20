@@ -107,7 +107,12 @@ export const WorkflowDetailMainContent = observer(function WorkflowDetailMainCon
                 <WorkflowUnmappedStatesBanner stateIds={workItemTypeCheck.state_ids} />
               ) : null}
             </div>
-            <WorkflowStatesListRoot workspaceSlug={workspaceSlug} projectId={projectId} workflow={workflow} />
+            <WorkflowStatesListRoot
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              workflow={workflow}
+              canEdit={workflow.permissions.canEdit}
+            />
           </div>
         </div>
       </ScrollArea>

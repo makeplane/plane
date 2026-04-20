@@ -13,29 +13,27 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { ReleaseIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useReleasePermissions } from "@/hooks/permissions/use-release-permissions";
 
-export const WorkspaceReleaseHeader = observer(function WorkspaceReleaseHeader() {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const WorkspaceReleaseHeader = observer(function WorkspaceReleaseHeader(props: Props) {
+  const { workspaceSlug } = props;
   const router = useAppRouter();
-  const { allowPermissions } = useUserPermissions();
+  const releasePermissions = useReleasePermissions(workspaceSlug);
   const { toggleCreateReleaseModal } = useCommandPalette();
   const { t } = useTranslation();
-
-  const canUserCreateRelease = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   return (
     <>
@@ -47,7 +45,7 @@ export const WorkspaceReleaseHeader = observer(function WorkspaceReleaseHeader()
             />
           </Breadcrumbs>
         </Header.LeftItem>
-        {canUserCreateRelease && (
+        {releasePermissions.canCreate && (
           <Header.RightItem>
             <Button
               variant="primary"

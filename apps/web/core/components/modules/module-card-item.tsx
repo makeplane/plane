@@ -19,13 +19,7 @@ import { useParams, usePathname, useSearchParams } from "next/navigation";
 import { SquareUser } from "lucide-react";
 import { InfoIcon, WorkItemsIcon } from "@plane/propel/icons";
 // plane package imports
-import {
-  MODULE_STATUS,
-  PROGRESS_STATE_GROUPS_DETAILS,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  IS_FAVORITE_MENU_OPEN,
-} from "@plane/constants";
+import { MODULE_STATUS, PROGRESS_STATE_GROUPS_DETAILS, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -40,16 +34,18 @@ import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdow
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type Props = {
   moduleId: string;
+  permissions: {
+    canEdit: boolean;
+  };
 };
 
 export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
-  const { moduleId } = props;
+  const { moduleId, permissions } = props;
   // refs
   const parentRef = useRef(null);
   // router
@@ -58,18 +54,13 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
   const { getUserDetails } = useMember();
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-  const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
+  const isDisabled = !permissions.canEdit || !!moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails?.start_date) || Boolean(moduleDetails?.target_date);
 
   const { isMobile } = usePlatformOS();
@@ -257,7 +248,7 @@ export const ModuleCardItem = observer(function ModuleCardItem(props: Props) {
         </Card>
       </Link>
       <div className="absolute right-4 bottom-[18px] flex items-center gap-1.5">
-        {isEditingAllowed && (
+        {permissions.canEdit && (
           <FavoriteStar
             onClick={(e) => {
               if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);

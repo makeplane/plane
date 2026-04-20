@@ -15,8 +15,7 @@ import { action, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import { ProjectPropertiesService, ProjectWorkItemTypesService } from "@plane/services";
-import type { ProjectWorkItemTypesStoreSchema, TImportWorkItemTypesPayload } from "@plane/types";
-import { EUserPermissions } from "@plane/types";
+import type { PermissionCheckArgs, ProjectWorkItemTypesStoreSchema, TImportWorkItemTypesPayload } from "@plane/types";
 // local imports
 import type { BaseWorkItemTypesStoreArgs } from "../base.store";
 import { BaseWorkItemTypesStore } from "../base.store";
@@ -27,15 +26,12 @@ const projectTypeService = new ProjectWorkItemTypesService();
 const projectPropertyService = new ProjectPropertiesService();
 
 type ProjectWorkItemTypesStoreArgs = Omit<BaseWorkItemTypesStoreArgs, "createInstance"> & {
-  getProjectRoleByWorkspaceSlugAndProjectId: (workspaceSlug: string, projectId: string) => EUserPermissions | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
 };
 
 export class ProjectWorkItemTypesStore extends BaseWorkItemTypesStore implements ProjectWorkItemTypesStoreSchema {
   // helpers
-  #getProjectRoleByWorkspaceSlugAndProjectId: (
-    workspaceSlug: string,
-    projectId: string
-  ) => EUserPermissions | undefined;
+  #can: (args: PermissionCheckArgs) => boolean;
 
   constructor(args: ProjectWorkItemTypesStoreArgs) {
     super({
@@ -44,7 +40,7 @@ export class ProjectWorkItemTypesStore extends BaseWorkItemTypesStore implements
           data: payload,
           getWorkspaceSlugById: this.args.getWorkspaceSlugById,
           projectId: context?.projectId ?? "",
-          getProjectRoleByWorkspaceSlugAndProjectId: args.getProjectRoleByWorkspaceSlugAndProjectId,
+          can: args.can,
         }),
       ...args,
     });
@@ -61,7 +57,7 @@ export class ProjectWorkItemTypesStore extends BaseWorkItemTypesStore implements
     });
 
     // helpers
-    this.#getProjectRoleByWorkspaceSlugAndProjectId = args.getProjectRoleByWorkspaceSlugAndProjectId;
+    this.#can = args.can;
   }
 
   getLoaderByProjectId: ProjectWorkItemTypesStoreSchema["getLoaderByProjectId"] = computedFn((projectId) =>
@@ -182,17 +178,11 @@ export class ProjectWorkItemTypesStore extends BaseWorkItemTypesStore implements
   };
 
   // permissions
-  #roleByWorkspaceSlugAndProjectId = computedFn((workspaceSlug: string, projectId: string) => {
-    return this.#getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  });
-
-  canCreate = computedFn(
-    (workspaceSlug: string, projectId: string) =>
-      this.#roleByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.ADMIN
+  canCreate = computedFn((workspaceSlug: string, projectId: string) =>
+    this.#can({ resource: "project_workitem_type", action: "create", workspaceSlug, projectId })
   );
 
-  canView = computedFn(
-    (workspaceSlug: string, projectId: string) =>
-      this.#roleByWorkspaceSlugAndProjectId(workspaceSlug, projectId) === EUserPermissions.ADMIN
+  canView = computedFn((workspaceSlug: string, projectId: string) =>
+    this.#can({ resource: "project_workitem_type", action: "view", workspaceSlug, projectId })
   );
 }

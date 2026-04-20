@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { Activity } from "lucide-react";
 // plane imports
@@ -29,16 +27,38 @@ import { EpicSidebarActivityRoot } from "./activity-tab-root";
 import { EpicSidebarCommentsRoot } from "./comment-tab-root";
 import { EpicSidebarPropertiesRoot } from "./properties-tab-root";
 import { useEpicUpdates } from "./use-updates";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type TEpicDetailsSidebarProps = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
-  disabled?: boolean;
+  permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    comments: {
+      canCreate: boolean;
+      canEdit: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
+    updates: {
+      canAdd: boolean;
+      canEdit: (updateId: string) => boolean;
+      canDelete: (updateId: string) => boolean;
+      canReact: (updateId: string) => boolean;
+      comment: {
+        canCreate: (updateId: string) => boolean;
+        canUpdate: (updateId: string, commentId: string) => boolean;
+        canDelete: (updateId: string, commentId: string) => boolean;
+        canReact: (updateId: string, commentId: string) => boolean;
+      };
+    };
+  };
 };
 
 export const EpicDetailsSidebar = observer(function EpicDetailsSidebar(props: TEpicDetailsSidebarProps) {
-  const { workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { workspaceSlug, projectId, epicId, permissions } = props;
   // store hooks
   const { epicDetailSidebarCollapsed } = useAppTheme();
   const { handleUpdateOperations } = useEpicUpdates(workspaceSlug, projectId, epicId);
@@ -52,7 +72,7 @@ export const EpicDetailsSidebar = observer(function EpicDetailsSidebar(props: TE
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           epicId={epicId}
-          disabled={disabled}
+          permissions={permissions}
         />
       ),
     },
@@ -65,7 +85,7 @@ export const EpicDetailsSidebar = observer(function EpicDetailsSidebar(props: TE
             entityId={epicId}
             entityType={EUpdateEntityType.EPIC}
             handleUpdateOperations={handleUpdateOperations}
-            allowNew={!disabled}
+            permissions={permissions.updates}
           />
         </SidebarContentWrapper>
       ),
@@ -78,7 +98,7 @@ export const EpicDetailsSidebar = observer(function EpicDetailsSidebar(props: TE
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           epicId={epicId}
-          disabled={disabled}
+          permissions={permissions.comments}
         />
       ),
     },

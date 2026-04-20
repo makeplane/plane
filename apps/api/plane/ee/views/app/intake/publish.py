@@ -21,7 +21,7 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseViewSet, BaseAPIView
-from plane.ee.permissions import ProjectMemberPermission
+from plane.permissions import can, IntakePermissions
 from plane.db.models import DeployBoard, Intake
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -31,8 +31,6 @@ from plane.ee.models import IntakeForm, IntakeEmail
 class ProjectInTakePublishViewSet(BaseViewSet):
     use_read_replica = True
 
-    permission_classes = [ProjectMemberPermission]
-
     models = Intake
 
     def get_intake_email_domain(self):
@@ -40,6 +38,7 @@ class ProjectInTakePublishViewSet(BaseViewSet):
 
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
+    @can(IntakePermissions.CONFIGURE, resource_param="project_id")
     def regenerate(self, request, slug, project_id, type=None):
         new_anchor = uuid4().hex
 
@@ -69,10 +68,9 @@ class ProjectInTakePublishViewSet(BaseViewSet):
 class IntakeFormRegenerateViewSet(BaseAPIView):
     use_read_replica = False
 
-    permission_classes = [ProjectMemberPermission]
-
     models = IntakeForm
 
+    @can(IntakePermissions.CONFIGURE, resource_param="project_id")
     def get(self, request, slug, project_id, pk):
         intake_form = self.models.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         new_anchor = uuid4().hex

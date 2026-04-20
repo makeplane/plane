@@ -24,7 +24,7 @@ from plane.db.models import Workspace, UserFavorite
 from plane.ee.models import Dashboard, DashboardProject, DashboardQuickFilter
 from plane.ee.serializers import DashboardSerializer, DashboardQuickFilterSerializer
 from plane.ee.views.base import BaseViewSet, BaseAPIView
-from plane.ee.permissions import allow_permission, ROLE
+from plane.permissions import can, DashboardPermissions
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -33,7 +33,7 @@ class DashboardViewSet(BaseViewSet):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(DashboardPermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
         dashboard = (
             Dashboard.objects.filter(workspace__slug=slug)
@@ -67,7 +67,7 @@ class DashboardViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(DashboardPermissions.CREATE, resource_param="workspace_id")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = DashboardSerializer(
@@ -80,7 +80,7 @@ class DashboardViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(DashboardPermissions.VIEW, resource_param="workspace_id")
     def retrieve(self, request, slug, pk):
         dashboard = (
             Dashboard.objects.filter(workspace__slug=slug, pk=pk)
@@ -113,7 +113,7 @@ class DashboardViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE")
+    @can(DashboardPermissions.EDIT, resource_param="workspace_id")
     def partial_update(self, request, slug, pk):
         dashboard = Dashboard.objects.get(workspace__slug=slug, pk=pk)
         serializer = DashboardSerializer(dashboard, data=request.data)
@@ -123,18 +123,19 @@ class DashboardViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE")
+    @can(DashboardPermissions.DELETE, resource_param="workspace_id")
     def destroy(self, request, slug, pk):
         dashboard = Dashboard.objects.get(workspace__slug=slug, pk=pk)
         dashboard.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class DashboardQuickFilterEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(DashboardPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, dashboard_id, pk=None):
         if pk:
             quick_filters = DashboardQuickFilter.objects.get(workspace__slug=slug, dashboard_id=dashboard_id, pk=pk)
@@ -146,7 +147,7 @@ class DashboardQuickFilterEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(DashboardPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug, dashboard_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = DashboardQuickFilterSerializer(data=request.data)
@@ -156,7 +157,7 @@ class DashboardQuickFilterEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(DashboardPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, dashboard_id, pk):
         quick_filter = DashboardQuickFilter.objects.get(workspace__slug=slug, dashboard_id=dashboard_id, pk=pk)
         serializer = DashboardQuickFilterSerializer(quick_filter, data=request.data)
@@ -166,7 +167,7 @@ class DashboardQuickFilterEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(DashboardPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, dashboard_id, pk):
         quick_filter = DashboardQuickFilter.objects.get(workspace__slug=slug, dashboard_id=dashboard_id, pk=pk)
         quick_filter.delete()

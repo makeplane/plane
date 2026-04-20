@@ -46,6 +46,8 @@ import { IssueStats } from "@/components/issues/issue-layouts/issue-stats";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+import { DEFAULT_WORK_ITEM_PERMISSIONS } from "../constants";
 
 interface IssueBlockProps {
   issueId: string;
@@ -58,7 +60,10 @@ interface IssueBlockProps {
   canDragIssuesInCurrentGrouping: boolean;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   shouldRenderByDefault?: boolean;
   isEpic?: boolean;
@@ -70,12 +75,14 @@ interface IssueDetailsBlockProps {
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  isReadOnly: boolean;
+  permissions: {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
   isEpic?: boolean;
 }
 
 const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props: IssueDetailsBlockProps) {
-  const { cardRef, issue, updateIssue, quickActions, isReadOnly, displayProperties, isEpic = false } = props;
+  const { cardRef, issue, updateIssue, quickActions, permissions, displayProperties, isEpic = false } = props;
   // refs
   const menuActionRef = useRef<HTMLDivElement | null>(null);
   // states
@@ -144,7 +151,7 @@ const KanbanIssueDetailsBlock = observer(function KanbanIssueDetailsBlock(props:
         displayProperties={displayProperties}
         activeLayout="Kanban"
         updateIssue={updateIssue}
-        isReadOnly={isReadOnly}
+        permissions={permissions}
         isEpic={isEpic}
       />
 
@@ -172,7 +179,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
     canDragIssuesInCurrentGrouping,
     updateIssue,
     quickActions,
-    canEditProperties,
+    getWorkItemPermissions,
     scrollableContainerRef,
     shouldRenderByDefault,
     isEpic = false,
@@ -192,15 +199,14 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
   const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
 
   const issue = getWorkItemById(issueId);
+  const permissions = issue ? getWorkItemPermissions(issue) : DEFAULT_WORK_ITEM_PERMISSIONS;
 
   const { setIsDragging: setIsKanbanDragging } = useKanbanView();
 
   const [isDraggingOverBlock, setIsDraggingOverBlock] = useState(false);
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
 
-  const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
-
-  const isDragAllowed = canDragIssuesInCurrentGrouping && !issue?.tempId && canEditIssueProperties;
+  const isDragAllowed = canDragIssuesInCurrentGrouping && !issue?.tempId && permissions.canDragAndDrop;
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
 
   const workItemLink = generateWorkItemLink({
@@ -271,7 +277,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
             setToast({
               type: TOAST_TYPE.WARNING,
               title: "Cannot move work item",
-              message: !canEditIssueProperties
+              message: !permissions.canDragAndDrop
                 ? "You are not allowed to move this work item"
                 : "Drag and drop is disabled for the current grouping",
             });
@@ -305,7 +311,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
               displayProperties={displayProperties}
               updateIssue={updateIssue}
               quickActions={quickActions}
-              isReadOnly={!canEditIssueProperties}
+              permissions={permissions}
               isEpic={isEpic}
             />
           </RenderIfVisible>

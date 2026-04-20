@@ -54,7 +54,7 @@ export const TemplateBasicDetails = observer(function TemplateBasicDetails<T ext
     formState: { errors },
   } = useFormContext<TPublishTemplateFormWithData>();
   // derived values
-  const workspaceSlug = templateInstance.getWorkspaceSlugForTemplateInstance;
+  const workspaceSlug = templateInstance.workspaceSlug;
   const workspaceId = templateInstance.workspace;
   const projectId = templateInstance.project;
 

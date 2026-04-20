@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "İç içe sayfalar ücretli bir plan gerektirir. Açmak için yükseltin."
+    },
+    "auth": {
+      "title": "İzin reddedildi",
+      "description": "Bu sayfaya erişim izniniz yok. Size izin vermesi için lütfen workspace yöneticinizle iletişime geçin.",
+      "redirection_button": {
+        "text": "Projelere git"
+      },
+      "reload_button": {
+        "text": "Sayfayı yeniden yükle"
+      }
     }
   }
 }

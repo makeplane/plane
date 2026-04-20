@@ -20,16 +20,21 @@ import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import { CustomersListHeader } from "@/components/customers/list";
+// types
+import type { Route } from "./+types/layout";
 
-export default function CustomersListLayout() {
+export default function CustomersListLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   // hooks
-  const { currentWorkspace } = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Customers` : undefined;
+
   return (
     <>
       <PageHead title={pageTitle} />
-      <AppHeader header={<CustomersListHeader />} />
+      <AppHeader header={<CustomersListHeader workspaceSlug={workspaceSlug} />} />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

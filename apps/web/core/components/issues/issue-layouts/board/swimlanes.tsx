@@ -38,6 +38,7 @@ import { getGroupByColumns, isWorkspaceLevel } from "@/helpers/work-item-layout"
 import { KanBan } from "./default";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { HeaderSubGroupByCard } from "./headers/sub-group-by-card";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 interface ISubGroupSwimlaneHeader {
   collapsedGroups: TIssueKanbanFilters;
@@ -118,11 +119,18 @@ interface ISubGroupSwimlane extends ISubGroupSwimlaneHeader {
   /** Group-by columns (board headers); used for the bottom footer row on the last swimlane. */
   groupByColumns: IGroupByColumn[];
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   collapsedGroups: TIssueKanbanFilters;
-  disableIssueCreation?: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
-  enableQuickIssueCreate: boolean;
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -173,11 +181,10 @@ const SubGroupSwimlaneKanbanColumnFooter = observer(function SubGroupSwimlaneKan
 const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwimlane) {
   const {
     addIssuesToView,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     collapsedGroups,
-    disableIssueCreation,
     displayProperties,
-    enableQuickIssueCreate,
     getGroupIssueCount,
     groupByColumns,
     group_by,
@@ -266,9 +273,8 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
                     collapsedGroups={collapsedGroups}
                     handleCollapsedGroups={handleCollapsedGroups}
                     showEmptyGroup={showEmptyGroup}
-                    enableQuickIssueCreate={enableQuickIssueCreate}
-                    disableIssueCreation={disableIssueCreation}
-                    canEditProperties={canEditProperties}
+                    layoutPermissions={layoutPermissions}
+                    getWorkItemPermissions={getWorkItemPermissions}
                     addIssuesToView={addIssuesToView}
                     quickAddCallback={quickAddCallback}
                     scrollableContainerRef={scrollableContainerRef}
@@ -299,11 +305,18 @@ const SubGroupSwimlane = observer(function SubGroupSwimlane(props: ISubGroupSwim
 
 export interface IKanBanSwimLanes {
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   collapsedGroups: TIssueKanbanFilters;
-  disableIssueCreation?: boolean;
   displayProperties: IIssueDisplayProperties | undefined;
-  enableQuickIssueCreate: boolean;
   getGroupIssueCount: (
     groupId: string | undefined,
     subGroupId: string | undefined,
@@ -345,9 +358,8 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     loadMoreIssues,
     showEmptyGroup,
     handleOnDrop,
-    disableIssueCreation,
-    enableQuickIssueCreate,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     addIssuesToView,
     quickAddCallback,
     scrollableContainerRef,
@@ -408,10 +420,9 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           handleOnDrop={handleOnDrop}
-          disableIssueCreation={disableIssueCreation}
-          enableQuickIssueCreate={enableQuickIssueCreate}
           addIssuesToView={addIssuesToView}
-          canEditProperties={canEditProperties}
+          layoutPermissions={layoutPermissions}
+          getWorkItemPermissions={getWorkItemPermissions}
           quickAddCallback={quickAddCallback}
           scrollableContainerRef={scrollableContainerRef}
           isEpic={isEpic}

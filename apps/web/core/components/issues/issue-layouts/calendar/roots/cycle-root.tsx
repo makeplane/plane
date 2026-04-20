@@ -13,42 +13,85 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // components
 import { CycleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseCalendarRoot } from "../base-calendar-root";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const CycleCalendarLayout = observer(function CycleCalendarLayout() {
-  const { currentProjectCompletedCycleIds } = useCycle();
-  const { workspaceSlug, projectId, cycleId } = useParams();
+type TCycleCalendarLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  cycleId: string;
+};
 
+export const CycleCalendarLayout = observer(function CycleCalendarLayout(props: TCycleCalendarLayoutProps) {
+  const { workspaceSlug, projectId, cycleId } = props;
+  const {
+    currentProjectCompletedCycleIds,
+    permissions: { getCanEditCycle },
+  } = useCycle();
   const {
     issues: { addIssueToCycle },
+    permissions,
   } = useIssues(EIssuesStoreType.CYCLE);
-
+  // derived values
   const isCompletedCycle =
-    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId.toString()) : false;
+    cycleId && currentProjectCompletedCycleIds ? currentProjectCompletedCycleIds.includes(cycleId) : false;
+  const canEditWorkItemProperties = useCallback(
+    () => !isCompletedCycle && getCanEditCycle(workspaceSlug, projectId, cycleId),
+    [cycleId, getCanEditCycle, isCompletedCycle, projectId, workspaceSlug]
+  );
 
   const addIssuesToView = useCallback(
     (issueIds: string[]) => {
-      if (!workspaceSlug || !projectId || !cycleId) throw new Error();
-      return addIssueToCycle(workspaceSlug.toString(), projectId.toString(), cycleId.toString(), issueIds);
+      return addIssueToCycle(workspaceSlug, projectId, cycleId, issueIds);
     },
     [addIssueToCycle, workspaceSlug, projectId, cycleId]
   );
 
-  if (!cycleId) return null;
-
   return (
     <BaseCalendarRoot
-      QuickActions={CycleIssueQuickActions}
+      QuickActions={(props) => (
+        <CycleIssueQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                  canRemoveFromView:
+                    !isCompletedCycle && permissions.getCanCreate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
       addIssuesToView={addIssuesToView}
-      isCompletedCycle={isCompletedCycle}
-      viewId={cycleId?.toString()}
+      layoutPermissions={{
+        canQuickAddWorkItem: canEditWorkItemProperties(),
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
+      viewId={cycleId}
     />
   );
 });

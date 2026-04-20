@@ -139,10 +139,6 @@ def map_project_properties(tool_args: Dict[str, Any]) -> Dict[str, Any]:
     if "intake_view" in tool_args and tool_args["intake_view"] is not None:
         properties["intake_view"] = bool(tool_args["intake_view"])
 
-    # Guest View All Features: {"name": true/false}
-    if "guest_view_all_features" in tool_args and tool_args["guest_view_all_features"] is not None:
-        properties["guest_view_all_features"] = bool(tool_args["guest_view_all_features"])
-
     # Archive In: {"name": 12} - number of months
     if "archive_in" in tool_args and tool_args["archive_in"] is not None:
         properties["archive_in"] = int(tool_args["archive_in"])

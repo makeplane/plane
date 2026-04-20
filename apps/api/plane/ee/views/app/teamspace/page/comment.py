@@ -17,16 +17,18 @@ from django.db.models import Prefetch, OuterRef, Func, F, Q
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 
 # Module imports
 from plane.db.models import Workspace
 from plane.ee.models import PageComment, PageCommentReaction
-from plane.ee.permissions.page import TeamspacePagePermission
+from plane.permissions import can, TeamspacePermissions, TeamspacePageCommentPermissions, ResourceType
 from plane.ee.serializers.app.page import (
     PageCommentSerializer,
     PageCommentReactionSerializer,
 )
 from plane.ee.views.base import BaseAPIView
+from plane.ee.views.app.teamspace.base import is_admin_or_teamspace_lead, validate_page_in_teamspace
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
@@ -38,10 +40,10 @@ class TeamspacePageCommentEndpoint(BaseAPIView):
     serializer_class = PageCommentSerializer
     model = PageComment
 
-    permission_classes = [TeamspacePagePermission]
-
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, page_id, comment_id=None):
+        validate_page_in_teamspace(page_id, team_space_id)
         if comment_id:
             page_comments = (
                 PageComment.objects.filter(workspace__slug=slug, page_id=page_id, pk=comment_id)
@@ -98,7 +100,13 @@ class TeamspacePageCommentEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(
+        TeamspacePageCommentPermissions.CREATE,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def post(self, request, slug, team_space_id, page_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         workspace_id = Workspace.objects.get(slug=slug).id
         serializer = PageCommentSerializer(
             data=request.data,
@@ -112,8 +120,20 @@ class TeamspacePageCommentEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(
+        TeamspacePageCommentPermissions.EDIT,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def patch(self, request, slug, team_space_id, page_id, comment_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         page_comment = PageComment.objects.get(workspace__slug=slug, page_id=page_id, pk=comment_id)
+
+        # Only the creator or an authorized manager can edit
+        if page_comment.created_by_id != request.user.id:
+            if not is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
+
         serializer = PageCommentSerializer(page_comment, data=request.data, partial=True)
         if serializer.is_valid():
             if "comment_html" in request.data and request.data["comment_html"] != page_comment.comment_html:
@@ -125,8 +145,20 @@ class TeamspacePageCommentEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(
+        TeamspacePageCommentPermissions.DELETE,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def delete(self, request, slug, team_space_id, page_id, comment_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         page_comment = PageComment.objects.get(workspace__slug=slug, page_id=page_id, pk=comment_id)
+
+        # Only the creator or an authorized manager can delete
+        if page_comment.created_by_id != request.user.id:
+            if not is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
+
         page_comment.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -135,10 +167,14 @@ class TeamspacePageCommentEndpoint(BaseAPIView):
 class TeamspacePageResolveCommentEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [TeamspacePagePermission]
-
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(
+        TeamspacePageCommentPermissions.RESOLVE,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def post(self, request, slug, team_space_id, page_id, comment_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         page_comment = PageComment.objects.get(
             workspace__slug=slug,
             page_id=page_id,
@@ -160,10 +196,14 @@ class TeamspacePageResolveCommentEndpoint(BaseAPIView):
 class TeamspacePageUnresolveCommentEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [TeamspacePagePermission]
-
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(
+        TeamspacePageCommentPermissions.RESOLVE,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def post(self, request, slug, team_space_id, page_id, comment_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         page_comment = PageComment.objects.get(
             workspace__slug=slug, page_id=page_id, pk=comment_id, parent__isnull=True
         )
@@ -182,26 +222,36 @@ class TeamspacePageUnresolveCommentEndpoint(BaseAPIView):
 class TeamspacePageRestoreCommentEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [TeamspacePagePermission]
-
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(
+        TeamspacePageCommentPermissions.DELETE,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def post(self, request, slug, team_space_id, page_id, comment_id):
-        page_comment = PageComment.all_objects.filter(
+        validate_page_in_teamspace(page_id, team_space_id)
+        page_comment = PageComment.all_objects.get(workspace__slug=slug, page_id=page_id, pk=comment_id)
+
+        # Only the creator or an authorized manager can restore
+        if page_comment.created_by_id != request.user.id:
+            if not is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
+
+        PageComment.all_objects.filter(
             Q(pk=comment_id) | Q(parent_id=comment_id),
             workspace__slug=slug,
             page_id=page_id,
-        )
-        page_comment.update(deleted_at=None)
+        ).update(deleted_at=None)
         return Response(status=status.HTTP_200_OK)
 
 
 class TeamspacePageCommentRepliesEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [TeamspacePagePermission]
-
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, page_id, comment_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         page_replies = PageComment.objects.filter(workspace__slug=slug, page_id=page_id, parent_id=comment_id)
         serializer = PageCommentSerializer(page_replies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -212,8 +262,6 @@ class TeamspacePageCommentReactionEndpoint(BaseAPIView):
 
     serializer_class = PageCommentReactionSerializer
     model = PageCommentReaction
-
-    permission_classes = [TeamspacePagePermission]
 
     def get_queryset(self):
         return (
@@ -226,7 +274,9 @@ class TeamspacePageCommentReactionEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(TeamspacePageCommentPermissions.REACT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id, page_id, comment_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         try:
             serializer = PageCommentReactionSerializer(data=request.data)
             if serializer.is_valid():
@@ -243,7 +293,9 @@ class TeamspacePageCommentReactionEndpoint(BaseAPIView):
             )
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
+    @can(TeamspacePageCommentPermissions.REACT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def delete(self, request, slug, team_space_id, page_id, comment_id, reaction_code):
+        validate_page_in_teamspace(page_id, team_space_id)
         comment_reaction = PageCommentReaction.objects.get(
             workspace__slug=slug,
             comment_id=comment_id,

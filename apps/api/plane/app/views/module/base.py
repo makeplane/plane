@@ -42,12 +42,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    ProjectLitePermission,
-    allow_permission,
-    ROLE,
-)
+from plane.permissions import can, ModulePermissions
 
 from plane.app.serializers import (
     ModuleDetailSerializer,
@@ -300,7 +295,7 @@ class ModuleViewSet(BaseViewSet):
             .order_by("-is_favorite", "-created_at")
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(ModulePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         serializer = ModuleWriteSerializer(data=request.data, context={"project": project})
@@ -342,6 +337,7 @@ class ModuleViewSet(BaseViewSet):
                     "backlog_issues",
                     "created_at",
                     "updated_at",
+                    "created_by",
                 )
             ).first()
             # Send the model activity
@@ -359,7 +355,7 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ModulePermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().filter(archived_at__isnull=True)
         if self.fields:
@@ -396,12 +392,13 @@ class ModuleViewSet(BaseViewSet):
                 "backlog_issues",
                 "created_at",
                 "updated_at",
+                "created_by",
             )
             datetime_fields = ["created_at", "updated_at"]
             modules = user_timezone_converter(modules, datetime_fields, request.user.user_timezone)
         return Response(modules, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(ModulePermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, project_id, pk):
         queryset = (
             self.get_queryset()
@@ -657,7 +654,7 @@ class ModuleViewSet(BaseViewSet):
 
         return Response(data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(ModulePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, pk):
         module_queryset = self.get_queryset().filter(pk=pk)
 
@@ -730,7 +727,7 @@ class ModuleViewSet(BaseViewSet):
             return Response(module, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], creator=True, model=Module)
+    @can(ModulePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, pk):
         module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
 
@@ -772,8 +769,6 @@ class ModuleViewSet(BaseViewSet):
 class ModuleLinkViewSet(BaseViewSet):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     model = ModuleLink
     serializer_class = ModuleLinkSerializer
 
@@ -796,12 +791,35 @@ class ModuleLinkViewSet(BaseViewSet):
             .distinct()
         )
 
+    @can(ModulePermissions.VIEW, resource_param="module_id")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @can(ModulePermissions.VIEW, resource_param="module_id")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @can(ModulePermissions.EDIT, resource_param="module_id")
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @can(ModulePermissions.EDIT, resource_param="module_id")
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
+
+    @can(ModulePermissions.EDIT, resource_param="module_id")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @can(ModulePermissions.EDIT, resource_param="module_id")
+    def destroy(self, request, *args, **kwargs):
+        return super().destroy(request, *args, **kwargs)
+
 
 class ModuleFavoriteViewSet(BaseViewSet):
     use_read_replica = True
 
     model = UserFavorite
-    permission_classes = [ProjectLitePermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -812,6 +830,7 @@ class ModuleFavoriteViewSet(BaseViewSet):
             .select_related("module")
         )
 
+    @can(ModulePermissions.VIEW, resource_param="project_id")
     def create(self, request, slug, project_id):
         _ = UserFavorite.objects.create(
             project_id=project_id,
@@ -821,6 +840,7 @@ class ModuleFavoriteViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @can(ModulePermissions.VIEW, resource_param="project_id")
     def destroy(self, request, slug, project_id, module_id):
         module_favorite = UserFavorite.objects.get(
             project_id=project_id,
@@ -834,7 +854,7 @@ class ModuleFavoriteViewSet(BaseViewSet):
 
 
 class ModuleUserPropertiesEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ModulePermissions.VIEW, resource_param="module_id")
     def patch(self, request, slug, project_id, module_id):
         module_properties = ModuleUserProperties.objects.get(
             user=request.user,
@@ -856,7 +876,7 @@ class ModuleUserPropertiesEndpoint(BaseAPIView):
         serializer = ModuleUserPropertiesSerializer(module_properties)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ModulePermissions.VIEW, resource_param="module_id")
     def get(self, request, slug, project_id, module_id):
         module_properties, _ = ModuleUserProperties.objects.get_or_create(
             user=request.user,

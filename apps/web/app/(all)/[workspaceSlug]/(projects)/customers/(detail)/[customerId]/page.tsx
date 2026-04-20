@@ -12,9 +12,12 @@
  */
 
 import { CustomerDetailRoot } from "@/components/customers";
+// types
+import type { Route } from "./+types/page";
 
-function CustomerDetailPage() {
-  return <CustomerDetailRoot />;
+function CustomerDetailPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug, customerId } = params;
+  return <CustomerDetailRoot workspaceSlug={workspaceSlug} customerId={customerId} />;
 }
 
 export default CustomerDetailPage;

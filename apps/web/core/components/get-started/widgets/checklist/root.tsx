@@ -15,16 +15,16 @@ import type { FC } from "react";
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TGettingStartedChecklistKeys } from "@plane/types";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useMember } from "@/hooks/store/use-member";
+import { useWorkspacePreferences } from "@/hooks/store/use-workspace-preferences";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useFlag } from "@/plane-web/hooks/store";
-import { ADMIN_USER_CHECKLIST, MEMBER_USER_CHECKLIST } from "../constant";
+import { GET_STARTED_CHECKLIST } from "../constant";
 import { WidgetWrapper } from "../widget-wrapper";
 import { ChecklistItem } from "./checklist-item";
+import { getPermittedChecklistItems } from "./helper";
 import { useAiFlag } from "@/plane-web/hooks/store/use-ai-flag";
 
 export const GetStartedSection: FC = observer(function GetStartedSection() {
@@ -32,14 +32,11 @@ export const GetStartedSection: FC = observer(function GetStartedSection() {
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
 
   const { toggleCreateProjectModal, toggleCreateIssueModal } = useCommandPalette();
+  const { can } = usePermissionAccess();
   const { joinedProjectIds } = useProject();
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const {
-    workspace: { getGettingStartedChecklistByWorkspaceSlug },
-  } = useMember();
+  const { getGettingStartedChecklistBySlug } = useWorkspacePreferences();
 
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-  const checklistData = getGettingStartedChecklistByWorkspaceSlug(workspaceSlug);
+  const checklistData = getGettingStartedChecklistBySlug(workspaceSlug);
 
   // Feature flag and workspace feature checks for AI chat
   const isAiChatAiFlag = useAiFlag(workspaceSlug, "AI_CHAT");
@@ -93,14 +90,13 @@ export const GetStartedSection: FC = observer(function GetStartedSection() {
   );
 
   const checklist = useMemo(() => {
-    const baseChecklist =
-      currentWorkspaceRole === EUserWorkspaceRoles.ADMIN ? ADMIN_USER_CHECKLIST : MEMBER_USER_CHECKLIST;
-
-    return baseChecklist.filter((item) => {
-      if (item.id === "ai_chat_tried" && !isAiChatAvailable) return false;
-      return true;
+    return getPermittedChecklistItems(GET_STARTED_CHECKLIST, {
+      workspaceSlug,
+      joinedProjectIds,
+      can,
+      flags: { aiChat: isAiChatAvailable },
     });
-  }, [currentWorkspaceRole, isAiChatAvailable]);
+  }, [workspaceSlug, joinedProjectIds, can, isAiChatAvailable]);
 
   return (
     <WidgetWrapper title="Get started" subtitle="Begin your setup and see your ideas come to life faster.">

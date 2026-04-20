@@ -41,7 +41,7 @@ export const DashboardsWidgetsGridRoot = observer(function DashboardsWidgetsGrid
   const { getDashboardById } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
-  const { canCurrentUserEditDashboard, isViewModeEnabled, widgetsStore } = dashboardDetails ?? {};
+  const { canEdit, isViewModeEnabled, widgetsStore } = dashboardDetails ?? {};
   const { allWidgetIds, layoutItems, updateWidgetsLayout } = widgetsStore ?? {};
 
   const handleLayoutChange = useCallback(
@@ -83,8 +83,8 @@ export const DashboardsWidgetsGridRoot = observer(function DashboardsWidgetsGrid
       margin={[32, 32]}
       containerPadding={[0, 0]}
       draggableHandle=".widget-drag-handle"
-      isDraggable={!isViewModeEnabled && canCurrentUserEditDashboard && activeBreakpoint === EWidgetGridBreakpoints.MD}
-      isResizable={!isViewModeEnabled && canCurrentUserEditDashboard && activeBreakpoint === EWidgetGridBreakpoints.MD}
+      isDraggable={!isViewModeEnabled && canEdit && activeBreakpoint === EWidgetGridBreakpoints.MD}
+      isResizable={!isViewModeEnabled && canEdit && activeBreakpoint === EWidgetGridBreakpoints.MD}
       onBreakpointChange={handleBreakpointChange}
       onLayoutChange={handleLayoutChange}
     >

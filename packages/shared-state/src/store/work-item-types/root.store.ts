@@ -14,21 +14,14 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import type {
-  BaseWorkItemTypeInstanceSchema,
-  EUserPermissions,
-  EUserWorkspaceRoles,
-  RootWorkItemTypesStoreSchema,
-  TUserPermissions,
-} from "@plane/types";
+import type { BaseWorkItemTypeInstanceSchema, PermissionCheckArgs, RootWorkItemTypesStoreSchema } from "@plane/types";
 // local imports
 import { ProjectWorkItemTypesStore } from "./project/store";
 import { WorkspaceWorkItemTypesStore } from "./workspace/store";
 
 type RootWorkItemTypesStoreArgs = {
   getWorkspaceSlugById: (id: string) => string | undefined;
-  getProjectRoleByWorkspaceSlugAndProjectId: (workspaceSlug: string, projectId: string) => EUserPermissions | undefined;
-  getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
 };
 
 export class RootWorkItemTypesStore implements RootWorkItemTypesStoreSchema {
@@ -54,14 +47,14 @@ export class RootWorkItemTypesStore implements RootWorkItemTypesStoreSchema {
       addOrMutate: this.addOrMutate.bind(this),
       remove: this.remove.bind(this),
       getWorkspaceSlugById: this.args.getWorkspaceSlugById,
-      getProjectRoleByWorkspaceSlugAndProjectId: this.args.getProjectRoleByWorkspaceSlugAndProjectId,
+      can: this.args.can,
     });
     this.workspaceWorkItemTypesStore = new WorkspaceWorkItemTypesStore({
       get: this.get.bind(this),
       addOrMutate: this.addOrMutate.bind(this),
       remove: this.remove.bind(this),
       getWorkspaceSlugById: this.args.getWorkspaceSlugById,
-      getWorkspaceRoleByWorkspaceSlug: this.args.getWorkspaceRoleByWorkspaceSlug,
+      can: this.args.can,
       enrichProjectTypeIds: this.projectWorkItemTypesStore.enrichTypeIdsFromWorkspaceTypes.bind(
         this.projectWorkItemTypesStore
       ),

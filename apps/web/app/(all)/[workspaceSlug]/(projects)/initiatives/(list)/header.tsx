@@ -14,11 +14,9 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { InitiativeIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 // ui
 import { Breadcrumbs, Header } from "@plane/ui";
 // components
@@ -26,7 +24,6 @@ import { LayoutSwitcher } from "@/components/base-layouts/layout-switcher";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // Plane-web
 import { InitiativesFiltersToggle } from "@/components/initiatives/components/rich-filters/toggle";
@@ -40,20 +37,14 @@ export const InitiativesListHeader = observer(function InitiativesListHeader() {
   const { workspaceSlug } = useParams();
   const { toggleCreateInitiativeModal } = useCommandPalette();
   const {
+    initiative: { permissions },
     initiativeFilters: { currentInitiativeDisplayFilters, updateDisplayFilters },
   } = useInitiatives();
-
+  // derived values
   const displayFilters = currentInitiativeDisplayFilters;
   const activeLayout = displayFilters.layout;
-
-  const { allowPermissions } = useUserPermissions();
-
+  // translation
   const { t } = useTranslation();
-
-  const canUserCreateInitiative = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   return (
     <>
@@ -76,7 +67,7 @@ export const InitiativesListHeader = observer(function InitiativesListHeader() {
             <InitiativesFiltersToggle />
             <HeaderFilters workspaceSlug={workspaceSlug.toString()} />
           </div>
-          {canUserCreateInitiative ? (
+          {permissions.getCanCreate(workspaceSlug) && (
             <Button
               variant="primary"
               size="lg"
@@ -84,8 +75,6 @@ export const InitiativesListHeader = observer(function InitiativesListHeader() {
             >
               <div className="hidden sm:block">{t("add")}</div> {t("initiatives.label")}
             </Button>
-          ) : (
-            <></>
           )}
         </Header.RightItem>
       </Header>

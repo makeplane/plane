@@ -16,7 +16,7 @@ import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -25,7 +25,6 @@ import { cn } from "@plane/utils";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane-web imports
 import { DuplicateWorkItemModal } from "@/components/issues/duplicate-modal";
 import { useIssueType } from "@/plane-web/hooks/store";
@@ -37,7 +36,18 @@ import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useProjectIssueMenuItems } from "./helper";
 
-export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActions(props: IQuickActionProps) {
+type TProjectIssueQuickActionsProps = Exclude<IQuickActionProps, "readOnly" | "disabled"> & {
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canDuplicate: boolean;
+  };
+};
+
+export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActions(
+  props: TProjectIssueQuickActionsProps
+) {
   const {
     issue,
     handleDelete,
@@ -45,7 +55,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
     handleArchive,
     customActionButton,
     portalElement,
-    readOnly = false,
+    permissions,
     placements = "bottom-end",
     parentRef,
   } = props;
@@ -58,7 +68,6 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
@@ -69,16 +78,7 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
-  const isEditingAllowed =
-    allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug?.toString(),
-      issue.project_id ?? undefined
-    ) && !readOnly;
-  const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
-  const isDeletingAllowed = isEditingAllowed;
 
   const duplicateIssuePayload = omit(
     {
@@ -95,9 +95,10 @@ export const ProjectIssueQuickActions = observer(function ProjectIssueQuickActio
     workspaceSlug: workspaceSlug?.toString(),
     projectIdentifier,
     activeLayout,
-    isEditingAllowed,
-    isArchivingAllowed,
-    isDeletingAllowed,
+    canEdit: permissions.canEdit,
+    canArchive: permissions.canArchive && !!handleArchive,
+    canDelete: permissions.canDelete,
+    canDuplicate: permissions.canDuplicate,
     isInArchivableGroup,
     issueTypeDetail,
     setIssueToEdit,

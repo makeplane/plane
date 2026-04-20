@@ -11,15 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // plane imports
-import { ETabIndices, EUserPermissionsLevel } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import { getDate, getTabIndex, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -30,8 +28,8 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { IssueLabelSelect } from "@/components/issues/select";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProject } from "@/hooks/store/use-project";
 
 type TIssueDefaultPropertiesProps = {
   control: Control<TIssue>;
@@ -53,13 +51,11 @@ export const EpicDefaultProperties = observer(function EpicDefaultProperties(pro
   // store hooks
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: projectPermissions } = useProject();
   // derived values
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
-
   const canCreateLabel =
-    projectId &&
-    allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug.toString(), projectId);
+    !!projectId && !!workspaceSlug && projectPermissions.getCanManageLabels(workspaceSlug, projectId);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());

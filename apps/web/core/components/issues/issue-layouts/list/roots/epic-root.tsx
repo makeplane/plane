@@ -11,37 +11,64 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // plane-web
 import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const EpicListLayout = observer(function EpicListLayout() {
-  const { workspaceSlug, projectId } = useParams();
-  const { allowPermissions } = useUserPermissions();
+type TEpicListLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
 
-  if (!workspaceSlug || !projectId) return null;
-
-  const canEditPropertiesBasedOnProject = (projectId: string) =>
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug.toString(),
-      projectId
-    );
+export const EpicListLayout = observer(function EpicListLayout(props: TEpicListLayoutProps) {
+  const { workspaceSlug, projectId } = props;
+  // store hooks
+  const { permissions } = useEpics();
 
   return (
     <BaseListRoot
-      QuickActions={ProjectEpicQuickActions}
-      canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
+      QuickActions={(props) => (
+        <ProjectEpicQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canRestore: permissions.getCanRestore(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
+      layoutPermissions={{
+        canCreateWorkItem: {
+          viaHeader: permissions.getCanCreate(workspaceSlug, projectId),
+          viaQuickAdd: permissions.getCanCreate(workspaceSlug, projectId),
+        },
+        canPerformBulkOps: false,
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
       isEpic
     />
   );

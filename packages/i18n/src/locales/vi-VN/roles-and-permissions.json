@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "Các lược đồ Vai trò và Quyền",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "Vai trò và Quyền",
+        "roles_list": {
+          "workspace": {
+            "label": "Vai trò workspace"
+          },
+          "project": {
+            "label": "Vai trò dự án"
+          }
+        },
+        "compare_permissions": "So sánh quyền",
+        "create_role": {
+          "title": "Tạo vai trò",
+          "description": "Xác định vai trò bằng cách đặt tên, mô tả và quyền cho người dùng trong phiên bản.",
+          "button_label": "Tạo vai trò mới",
+          "error_toast_description": "Không thể tạo vai trò. Vui lòng thử lại."
+        },
+        "edit_role": {
+          "title": "Chỉnh sửa vai trò",
+          "description": "Cập nhật tên, quyền và cài đặt của vai trò để kiểm soát những gì thành viên có thể truy cập và thực hiện.",
+          "error_toast_description": "Không thể cập nhật vai trò. Vui lòng thử lại."
+        },
+        "role_details": {
+          "role_information_title": "Thông tin cơ bản",
+          "role_information_description": "Tên vai trò và mô tả ngắn gọn để làm rõ mục đích của vai trò.",
+          "role_name": "Tên vai trò",
+          "role_description": "Mô tả",
+          "role_details": "Chi tiết vai trò",
+          "role_details_description": "Xem tổng quan đầy đủ về vai trò và các quyền được gán.",
+          "edit_permissions": "Chỉnh sửa quyền"
+        },
+        "role_form": {
+          "name": "Tên vai trò",
+          "name_placeholder": "Đặt tên cho vai trò",
+          "name_error": "Tên là bắt buộc.",
+          "description": "Mô tả",
+          "description_placeholder": "Mô tả vai trò",
+          "create_button": "Tạo vai trò"
+        },
+        "role_actions": {
+          "duplicate": "Nhân bản"
+        },
+        "discard_changes_modal": {
+          "title": "Hủy thay đổi?",
+          "description": "Các thay đổi của bạn chưa được lưu. Rời khỏi trang này sẽ hủy bỏ chúng.",
+          "cancel": "Hủy thay đổi",
+          "confirm": "Tiếp tục chỉnh sửa"
+        },
+        "delete_role_modal": {
+          "title": "Xóa vai trò?",
+          "description": "Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.",
+          "error_toast_message": "Không thể xóa vai trò. Vui lòng thử lại."
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "Vai trò và quyền workspace",
+            "project": "Vai trò và quyền dự án"
+          },
+          "permissions_header": "Quyền",
+          "view_mode": {
+            "sets": "Xem theo nhóm",
+            "permissions": "Chuỗi quyền"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "Cài đặt Workspace",
+              "description": "Cấu hình lõi của workspace: tên, logo, tiền tệ, tên miền, xóa và chuyển giao quyền sở hữu.",
+              "workspace": {
+                "view": { "label": "Xem Workspace" },
+                "edit": { "label": "Chỉnh sửa cài đặt Workspace" },
+                "manage": { "label": "Quản lý Workspace" },
+                "invite": { "label": "Mời thành viên" },
+                "delete": { "label": "Xóa Workspace" },
+                "transfer": { "label": "Chuyển giao quyền sở hữu" }
+              }
+            },
+            "member_management": {
+              "title": "Quản lý thành viên",
+              "description": "Mời, chỉnh sửa, nhập và xóa thành viên workspace.",
+              "workspace_member": {
+                "view": { "label": "Xem thành viên" },
+                "invite": { "label": "Mời thành viên" },
+                "edit": { "label": "Chỉnh sửa chi tiết thành viên" },
+                "import": { "label": "Nhập thành viên (CSV / SSO)" },
+                "change_role": { "label": "Thay đổi vai trò thành viên" },
+                "remove": { "label": "Xóa thành viên" }
+              }
+            },
+            "project_management": {
+              "title": "Quản lý dự án",
+              "description": "Tạo và quản lý các dự án từ bối cảnh workspace.",
+              "project": {
+                "browse": { "label": "Duyệt dự án" },
+                "view": { "label": "Xem chi tiết dự án" },
+                "create": { "label": "Tạo dự án" },
+                "edit": { "label": "Chỉnh sửa cài đặt dự án" },
+                "react": { "label": "Phản hồi cảm xúc vào dự án" },
+                "publish": { "label": "Xuất bản dự án (công khai)" },
+                "archive": { "label": "Lưu trữ dự án" },
+                "delete": { "label": "Xóa dự án" },
+                "manage": { "label": "Quản lý quyền truy cập dự án" }
+              }
+            },
+            "role_administration": {
+              "title": "Quản trị vai trò",
+              "description": "Tạo và quản lý các vai trò tùy chỉnh và vai trò dự án.",
+              "custom_role": {
+                "view": { "label": "Xem vai trò tùy chỉnh" },
+                "create": { "label": "Tạo vai trò tùy chỉnh" },
+                "edit": { "label": "Chỉnh sửa vai trò tùy chỉnh" },
+                "delete": { "label": "Xóa vai trò tùy chỉnh" }
+              }
+            },
+            "workspace_pages": {
+              "title": "Trang Workspace (Wiki)",
+              "description": "Tài liệu và wiki cấp workspace.",
+              "wiki": {
+                "view": { "label": "Xem Wiki" },
+                "create": { "label": "Tạo trang Wiki" },
+                "edit": { "label": "Chỉnh sửa trang Wiki" },
+                "share": { "label": "Chia sẻ trang Wiki" },
+                "delete": { "label": "Xóa trang Wiki" },
+                "comment": { "label": "Bình luận trên trang Wiki" }
+              }
+            },
+            "workspace_views": {
+              "title": "Chế độ xem Workspace",
+              "description": "Bộ lọc lưu sẵn và quản lý chế độ xem cấp workspace.",
+              "workspace_workitem_view": {
+                "view": { "label": "Xem chế độ xem Workspace" },
+                "create": { "label": "Tạo chế độ xem Workspace" },
+                "edit": { "label": "Chỉnh sửa chế độ xem Workspace" },
+                "share": { "label": "Chia sẻ chế độ xem Workspace" },
+                "publish": { "label": "Xuất bản chế độ xem Workspace" },
+                "export": { "label": "Xuất chế độ xem Workspace" },
+                "delete": { "label": "Xóa chế độ xem Workspace" }
+              }
+            },
+            "initiatives": {
+              "title": "Sáng kiến",
+              "description": "Theo dõi sáng kiến xuyên dự án, bao gồm bình luận, tệp đính kèm, liên kết và cập nhật.",
+              "initiative": {
+                "view": { "label": "Xem sáng kiến" },
+                "create": { "label": "Tạo sáng kiến" },
+                "edit": { "label": "Chỉnh sửa sáng kiến" },
+                "manage": { "label": "Quản lý sáng kiến" },
+                "react": { "label": "Phản hồi cảm xúc vào sáng kiến" },
+                "delete": { "label": "Xóa sáng kiến" }
+              },
+              "initiative_comment": {
+                "view": { "label": "Xem bình luận sáng kiến" },
+                "create": { "label": "Bình luận về sáng kiến" },
+                "edit": { "label": "Chỉnh sửa bình luận sáng kiến" },
+                "react": { "label": "Phản hồi cảm xúc vào bình luận sáng kiến" },
+                "delete": { "label": "Xóa bình luận sáng kiến" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "Xem tệp đính kèm sáng kiến" },
+                "create": { "label": "Thêm tệp đính kèm sáng kiến" },
+                "delete": { "label": "Xóa tệp đính kèm sáng kiến" }
+              },
+              "initiative_link": {
+                "view": { "label": "Xem liên kết sáng kiến" },
+                "create": { "label": "Thêm liên kết sáng kiến" },
+                "edit": { "label": "Chỉnh sửa liên kết sáng kiến" },
+                "delete": { "label": "Xóa liên kết sáng kiến" }
+              }
+            },
+            "teamspaces": {
+              "title": "Teamspaces",
+              "description": "Duyệt, tạo và quản lý teamspaces.",
+              "teamspace": {
+                "browse": { "label": "Duyệt Teamspaces" },
+                "view": { "label": "Xem chi tiết Teamspace" },
+                "create": { "label": "Tạo Teamspaces" },
+                "edit": { "label": "Chỉnh sửa Teamspaces" },
+                "manage": { "label": "Quản lý thành viên Teamspace" },
+                "delete": { "label": "Xóa Teamspaces" }
+              }
+            },
+            "integrations": {
+              "title": "Tích hợp",
+              "description": "Tích hợp bên thứ ba, webhook và token API.",
+              "integration": {
+                "view": { "label": "Xem tích hợp" },
+                "create": { "label": "Tạo tích hợp" },
+                "edit": { "label": "Cấu hình tích hợp" },
+                "delete": { "label": "Xóa tích hợp" }
+              },
+              "webhook": {
+                "view": { "label": "Xem Webhooks" },
+                "create": { "label": "Tạo Webhooks" },
+                "edit": { "label": "Chỉnh sửa Webhooks" },
+                "delete": { "label": "Xóa Webhooks" }
+              },
+              "api_token": {
+                "view": { "label": "Xem token API" },
+                "create": { "label": "Tạo token API" },
+                "delete": { "label": "Xóa token API" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "Phân tích & Báo cáo",
+              "description": "Bảng điều khiển, phân tích và nhật ký công việc cấp workspace.",
+              "analytics": {
+                "view": { "label": "Xem phân tích" },
+                "export": { "label": "Xuất phân tích" }
+              },
+              "dashboard": {
+                "view": { "label": "Xem bảng điều khiển" },
+                "create": { "label": "Tạo bảng điều khiển" },
+                "edit": { "label": "Chỉnh sửa bảng điều khiển" },
+                "delete": { "label": "Xóa bảng điều khiển" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "Xem nhật ký công việc" },
+                "export": { "label": "Xuất nhật ký công việc" }
+              },
+              "ai": {
+                "use": { "label": "Sử dụng tính năng AI" }
+              }
+            },
+            "customers": {
+              "title": "Phản hồi khách hàng",
+              "description": "Quản lý khách hàng và yêu cầu của khách hàng.",
+              "customer": {
+                "view": { "label": "Xem khách hàng" },
+                "create": { "label": "Tạo khách hàng" },
+                "edit": { "label": "Chỉnh sửa khách hàng" },
+                "delete": { "label": "Xóa khách hàng" }
+              },
+              "customer_attachment": {
+                "create": { "label": "Thêm tệp đính kèm khách hàng" },
+                "delete": { "label": "Xóa tệp đính kèm khách hàng" }
+              }
+            },
+            "work_item_relations": {
+              "title": "Quan hệ work item",
+              "description": "Quản lý các định nghĩa loại quan hệ tùy chỉnh cho work item.",
+              "workitem_relation": {
+                "view": { "label": "Xem định nghĩa quan hệ" },
+                "create": { "label": "Tạo định nghĩa quan hệ" },
+                "edit": { "label": "Chỉnh sửa định nghĩa quan hệ" },
+                "delete": { "label": "Xóa định nghĩa quan hệ" }
+              }
+            },
+            "workspace_templates": {
+              "title": "Mẫu",
+              "description": "Tạo và quản lý mẫu work item, Page và dự án cấp workspace.",
+              "workspace_workitem_template": {
+                "view": { "label": "Xem mẫu work item" },
+                "create": { "label": "Tạo mẫu work item" },
+                "edit": { "label": "Chỉnh sửa mẫu work item" },
+                "delete": { "label": "Xóa mẫu work item" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "Xem mẫu Page" },
+                "create": { "label": "Tạo mẫu Page" },
+                "edit": { "label": "Chỉnh sửa mẫu Page" },
+                "delete": { "label": "Xóa mẫu Page" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "Xem mẫu dự án" },
+                "create": { "label": "Tạo mẫu dự án" },
+                "edit": { "label": "Chỉnh sửa mẫu dự án" },
+                "delete": { "label": "Xóa mẫu dự án" }
+              }
+            },
+            "workspace_automations": {
+              "title": "Tự động hóa Workspace",
+              "description": "Quy tắc và cấu hình tự động hóa cấp workspace.",
+              "workspace_automation": {
+                "view": { "label": "Xem tự động hóa Workspace" },
+                "create": { "label": "Tạo tự động hóa Workspace" },
+                "edit": { "label": "Chỉnh sửa tự động hóa Workspace" },
+                "delete": { "label": "Xóa tự động hóa Workspace" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "Thành viên dự án",
+              "description": "Mời, chỉnh sửa và xóa thành viên dự án.",
+              "project_member": {
+                "view": { "label": "Xem thành viên dự án" },
+                "invite": { "label": "Mời thành viên" },
+                "edit": { "label": "Chỉnh sửa chi tiết thành viên" },
+                "change_role": { "label": "Thay đổi vai trò thành viên" },
+                "remove": { "label": "Xóa thành viên" }
+              }
+            },
+            "work_items": {
+              "title": "Mục công việc",
+              "description": "Bề mặt mục công việc chính. Bao gồm bình luận, tệp đính kèm, liên kết, quan hệ và thuộc tính tùy chỉnh.",
+              "workitem": {
+                "view": { "label": "Xem mục công việc" },
+                "create": { "label": "Tạo mục công việc" },
+                "edit": { "label": "Chỉnh sửa mục công việc" },
+                "bulk_edit": { "label": "Chỉnh sửa hàng loạt mục công việc" },
+                "export": { "label": "Xuất mục công việc" },
+                "react": { "label": "Phản hồi cảm xúc vào mục công việc" },
+                "delete": { "label": "Xóa mục công việc" }
+              },
+              "comment": {
+                "create": { "label": "Thêm bình luận" },
+                "edit": { "label": "Chỉnh sửa bình luận" },
+                "react": { "label": "Phản hồi cảm xúc vào bình luận" },
+                "delete": { "label": "Xóa bình luận" }
+              },
+              "attachment": {
+                "view": { "label": "Xem tệp đính kèm" },
+                "create": { "label": "Thêm tệp đính kèm" },
+                "delete": { "label": "Xóa tệp đính kèm" }
+              },
+              "workitem_link": {
+                "view": { "label": "Xem liên kết work item" },
+                "create": { "label": "Thêm liên kết work item" },
+                "edit": { "label": "Chỉnh sửa liên kết work item" },
+                "delete": { "label": "Xóa liên kết work item" }
+              },
+              "issue_property": {
+                "view": { "label": "Xem thuộc tính tùy chỉnh" },
+                "edit": { "label": "Chỉnh sửa thuộc tính tùy chỉnh" }
+              }
+            },
+            "epics": {
+              "title": "Epics",
+              "description": "Vòng đời Epic, bao gồm liên kết, thuộc tính và luồng cập nhật.",
+              "epic": {
+                "view": { "label": "Xem Epics" },
+                "create": { "label": "Tạo Epics" },
+                "edit": { "label": "Chỉnh sửa Epics" },
+                "delete": { "label": "Xóa Epics" }
+              },
+              "epic_link": {
+                "view": { "label": "Xem liên kết Epic" },
+                "create": { "label": "Thêm liên kết Epic" },
+                "edit": { "label": "Chỉnh sửa liên kết Epic" },
+                "delete": { "label": "Xóa liên kết Epic" }
+              },
+              "epic_property": {
+                "view": { "label": "Xem thuộc tính Epic" },
+                "edit": { "label": "Chỉnh sửa thuộc tính Epic" }
+              },
+              "epic_update": {
+                "view": { "label": "Xem cập nhật Epic" },
+                "create": { "label": "Đăng cập nhật Epic" },
+                "edit": { "label": "Chỉnh sửa cập nhật Epic" },
+                "delete": { "label": "Xóa cập nhật Epic" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "Xem bình luận cập nhật Epic" },
+                "create": { "label": "Bình luận về cập nhật Epic" },
+                "edit": { "label": "Chỉnh sửa bình luận cập nhật Epic" },
+                "react": { "label": "Phản hồi cảm xúc vào bình luận cập nhật Epic" },
+                "delete": { "label": "Xóa bình luận cập nhật Epic" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "Modules & Cycles",
+              "description": "Nhóm tính năng và quản lý sprint/Cycle.",
+              "module": {
+                "view": { "label": "Xem Modules" },
+                "create": { "label": "Tạo Modules" },
+                "edit": { "label": "Chỉnh sửa Modules" },
+                "manage": { "label": "Quản lý thành viên Module" },
+                "archive": { "label": "Lưu trữ Modules" },
+                "export": { "label": "Xuất Modules" },
+                "delete": { "label": "Xóa Modules" }
+              },
+              "cycle": {
+                "view": { "label": "Xem Cycles" },
+                "create": { "label": "Tạo Cycles" },
+                "edit": { "label": "Chỉnh sửa Cycles" },
+                "delete": { "label": "Xóa Cycles" }
+              },
+              "cycle_update": {
+                "view": { "label": "Xem cập nhật Cycle" },
+                "create": { "label": "Đăng cập nhật Cycle" },
+                "edit": { "label": "Chỉnh sửa cập nhật Cycle" },
+                "delete": { "label": "Xóa cập nhật Cycle" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "Pages & Chế độ xem",
+              "description": "Pages cấp dự án và các chế độ xem đã lưu.",
+              "page": {
+                "view": { "label": "Xem Pages" },
+                "create": { "label": "Tạo Pages" },
+                "edit": { "label": "Chỉnh sửa Pages" },
+                "share": { "label": "Chia sẻ Pages" },
+                "delete": { "label": "Xóa Pages" }
+              },
+              "workitem_view": {
+                "view": { "label": "Xem chế độ xem dự án" },
+                "create": { "label": "Tạo chế độ xem dự án" },
+                "edit": { "label": "Chỉnh sửa chế độ xem dự án" },
+                "share": { "label": "Chia sẻ chế độ xem dự án" },
+                "publish": { "label": "Xuất bản chế độ xem dự án" },
+                "export": { "label": "Xuất chế độ xem dự án" },
+                "delete": { "label": "Xóa chế độ xem dự án" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "Quy trình tiếp nhận và phân loại mục công việc.",
+              "intake": {
+                "view": { "label": "Xem Intake" },
+                "create": { "label": "Tạo mục Intake" },
+                "submit": { "label": "Gửi yêu cầu Intake" },
+                "edit": { "label": "Chỉnh sửa mục Intake" },
+                "react": { "label": "Phản hồi cảm xúc vào mục Intake" },
+                "manage": { "label": "Quản lý mục Intake" },
+                "configure": { "label": "Cấu hình Intake" },
+                "export": { "label": "Xuất Intake" },
+                "delete": { "label": "Xóa mục Intake" }
+              }
+            },
+            "project_configuration": {
+              "title": "Cấu hình dự án",
+              "description": "Nhãn, trạng thái, ước lượng và mốc quan trọng.",
+              "label": {
+                "view": { "label": "Xem nhãn" },
+                "create": { "label": "Tạo nhãn" },
+                "edit": { "label": "Chỉnh sửa nhãn" },
+                "delete": { "label": "Xóa nhãn" }
+              },
+              "state": {
+                "view": { "label": "Xem trạng thái" },
+                "create": { "label": "Tạo trạng thái" },
+                "edit": { "label": "Chỉnh sửa trạng thái" },
+                "delete": { "label": "Xóa trạng thái" }
+              },
+              "estimate": {
+                "view": { "label": "Xem ước lượng" },
+                "create": { "label": "Tạo ước lượng" },
+                "edit": { "label": "Chỉnh sửa ước lượng" },
+                "delete": { "label": "Xóa ước lượng" }
+              },
+              "milestone": {
+                "view": { "label": "Xem mốc quan trọng" },
+                "create": { "label": "Tạo mốc quan trọng" },
+                "edit": { "label": "Chỉnh sửa mốc quan trọng" },
+                "delete": { "label": "Xóa mốc quan trọng" }
+              }
+            },
+            "automations": {
+              "title": "Tự động hóa & Quy trình",
+              "description": "Tự động hóa, quy tắc quy trình và các work item định kỳ.",
+              "project_automation": {
+                "view": { "label": "Xem tự động hóa" },
+                "create": { "label": "Tạo tự động hóa" },
+                "edit": { "label": "Chỉnh sửa tự động hóa" },
+                "delete": { "label": "Xóa tự động hóa" }
+              },
+              "workflow": {
+                "view": { "label": "Xem quy trình" },
+                "create": { "label": "Tạo quy trình" },
+                "edit": { "label": "Chỉnh sửa quy trình" },
+                "delete": { "label": "Xóa quy trình" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "Xem mục định kỳ" },
+                "create": { "label": "Tạo mục định kỳ" },
+                "edit": { "label": "Chỉnh sửa mục định kỳ" },
+                "delete": { "label": "Xóa mục định kỳ" }
+              }
+            },
+            "project_updates": {
+              "title": "Cập nhật dự án",
+              "description": "Cập nhật tiến độ và bình luận trên các cập nhật.",
+              "project_update": {
+                "view": { "label": "Xem cập nhật dự án" },
+                "create": { "label": "Đăng cập nhật dự án" },
+                "edit": { "label": "Chỉnh sửa cập nhật dự án" },
+                "delete": { "label": "Xóa cập nhật dự án" }
+              },
+              "project_update_comment": {
+                "view": { "label": "Xem bình luận cập nhật dự án" },
+                "create": { "label": "Bình luận về cập nhật dự án" },
+                "edit": { "label": "Chỉnh sửa bình luận cập nhật dự án" },
+                "react": { "label": "Phản hồi cảm xúc vào bình luận cập nhật dự án" },
+                "delete": { "label": "Xóa bình luận cập nhật dự án" }
+              }
+            },
+            "project_analytics": {
+              "title": "Phân tích & Hoạt động",
+              "description": "Phân tích dự án và nhật ký hoạt động.",
+              "project_activity": {
+                "view": { "label": "Xem nhật ký hoạt động" }
+              }
+            },
+            "project_links": {
+              "title": "Liên kết dự án",
+              "description": "Liên kết cấp dự án.",
+              "project_link": {
+                "view": { "label": "Xem liên kết dự án" },
+                "create": { "label": "Thêm liên kết dự án" },
+                "edit": { "label": "Chỉnh sửa liên kết dự án" },
+                "delete": { "label": "Xóa liên kết dự án" }
+              }
+            },
+            "project_templates": {
+              "title": "Mẫu",
+              "description": "Mẫu work item và Page trong phạm vi dự án.",
+              "project_workitem_template": {
+                "view": { "label": "Xem mẫu work item" },
+                "create": { "label": "Tạo mẫu work item" },
+                "edit": { "label": "Chỉnh sửa mẫu work item" },
+                "delete": { "label": "Xóa mẫu work item" }
+              },
+              "project_page_template": {
+                "view": { "label": "Xem mẫu Page" },
+                "create": { "label": "Tạo mẫu Page" },
+                "edit": { "label": "Chỉnh sửa mẫu Page" },
+                "delete": { "label": "Xóa mẫu Page" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "Tất cả",
+              "own": "Chỉ của mình",
+              "creator": "Chỉ của mình",
+              "lead": "Chỉ trưởng nhóm",
+              "disabled": "Đã vô hiệu hóa"
+            },
+            "select_all": "Chọn tất cả",
+            "high_risk_tooltip": "Cấp quyền truy cập cao. Hãy cấp một cách thận trọng.",
+            "folded_rows": {
+              "templates": {
+                "view": "Xem mẫu",
+                "create": "Tạo mẫu",
+                "edit": "Chỉnh sửa mẫu",
+                "delete": "Xóa mẫu"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "Bao gồm xem chi tiết, tệp đính kèm và liên kết. Cũng bao gồm phản hồi cảm xúc và bình luận về sáng kiến.",
+                  "edit": "Bao gồm tạo tệp đính kèm và quản lý liên kết sáng kiến."
+                },
+                "workspace_templates": {
+                  "view": "Bao gồm xem mẫu dự án, work item và Page.",
+                  "create": "Bao gồm tạo mẫu dự án, work item và Page.",
+                  "edit": "Bao gồm chỉnh sửa mẫu dự án, work item và Page.",
+                  "delete": "Bao gồm xóa mẫu dự án, work item và Page."
+                },
+                "epics": {
+                  "view": "Bao gồm xem liên kết Epic và phản hồi cảm xúc vào Epics.",
+                  "edit": "Bao gồm tạo, chỉnh sửa và xóa liên kết Epic."
+                },
+                "epic_updates": {
+                  "view": "Bao gồm xem và phản hồi cảm xúc vào các cập nhật. Cũng bao gồm xem, tạo và phản hồi cảm xúc vào bình luận cập nhật."
+                },
+                "project_updates": {
+                  "view": "Bao gồm xem và phản hồi cảm xúc vào các cập nhật. Cũng bao gồm xem, tạo và phản hồi cảm xúc vào bình luận cập nhật."
+                },
+                "project_templates": {
+                  "view": "Bao gồm xem mẫu work item và Page.",
+                  "create": "Bao gồm tạo mẫu work item và Page.",
+                  "edit": "Bao gồm chỉnh sửa mẫu work item và Page.",
+                  "delete": "Bao gồm xóa mẫu work item và Page."
+                }
+              }
+            },
+            "search_placeholder": "Tìm kiếm quyền...",
+            "no_results": "Không có quyền nào khớp",
+            "clear_search": "Xóa",
+            "preset_label": "Bắt đầu từ vai trò hệ thống:",
+            "preset_none": "Không có (trống)",
+            "empty_permissions_note": "Chọn ít nhất một quyền để lưu lược đồ này."
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "Vai trò & lược đồ dự án",
+        "sidebar_label": "Dự án"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "Vai trò & lược đồ workspace",
+        "sidebar_label": "Workspace"
+      },
+      "roles_and_schemes": {
+        "description": "Cấu hình các thuộc tính và nhóm tương tác để gắn vào một loại hoặc nhiều loại work item",
+        "tabs": {
+          "roles": "Vai trò",
+          "permission_schemes": "Lược đồ quyền"
+        },
+        "create_role": {
+          "modal_title": "Tạo vai trò mới",
+          "button_label": "Tạo vai trò",
+          "role_title_label": "Tiêu đề vai trò",
+          "role_title_placeholder": "Thêm một tiêu đề duy nhất",
+          "description_label": "Mô tả",
+          "description_placeholder": "Thêm một tiêu đề duy nhất",
+          "create_button": "Tạo vai trò",
+          "error_toast_description": "Không thể tạo vai trò. Vui lòng thử lại."
+        },
+        "create_scheme": {
+          "title": "Tạo lược đồ quyền",
+          "description": "Xác định lược đồ quyền bằng cách đặt tên, mô tả và quyền.",
+          "button_label": "Tạo lược đồ quyền",
+          "create_button": "Tạo lược đồ quyền",
+          "error_toast_description": "Không thể tạo lược đồ quyền. Vui lòng thử lại."
+        },
+        "role_detail": {
+          "back": "Quay lại",
+          "permission_schemes_title": "Lược đồ quyền",
+          "attach_button": "Đính kèm lược đồ quyền",
+          "empty_title": "Chưa có lược đồ quyền nào",
+          "empty_description": "Tạo các nhãn cá nhân hóa để phân loại và quản lý work item của bạn hiệu quả.",
+          "error_toast_description": "Không thể cập nhật vai trò. Vui lòng thử lại."
+        },
+        "scheme_detail": {
+          "title": "Chi tiết lược đồ quyền",
+          "description": "Xem tổng quan đầy đủ về lược đồ và các quyền được gán.",
+          "edit_title": "Chỉnh sửa lược đồ quyền",
+          "edit_description": "Cập nhật tên, quyền và cài đặt của lược đồ.",
+          "edit_button": "Chỉnh sửa lược đồ quyền",
+          "error_toast_description": "Không thể cập nhật lược đồ quyền. Vui lòng thử lại.",
+          "scheme_information_title": "Thông tin lược đồ",
+          "scheme_information_description": "Tên lược đồ và mô tả ngắn gọn để làm rõ mục đích của lược đồ.",
+          "scheme_name": "Tên lược đồ",
+          "scheme_name_placeholder": "Đặt tên cho lược đồ",
+          "scheme_name_error": "Tên là bắt buộc.",
+          "scheme_description": "Mô tả",
+          "scheme_description_placeholder": "Mô tả lược đồ"
+        },
+        "attach_schemes": {
+          "title": "Lược đồ quyền",
+          "search_placeholder": "Tìm kiếm",
+          "permissions_count": "quyền",
+          "discard": "Hủy",
+          "add": "Thêm"
+        },
+        "quick_actions": {
+          "edit_scheme": "Chỉnh sửa lược đồ quyền",
+          "delete_scheme": "Xóa lược đồ quyền",
+          "edit_role": "Chỉnh sửa chi tiết vai trò",
+          "enable_role": "Kích hoạt vai trò",
+          "delete_role": "Xóa vai trò"
+        },
+        "edit_role": {
+          "modal_title": "Chỉnh sửa chi tiết vai trò",
+          "save_button": "Lưu thay đổi",
+          "saving": "Đang lưu...",
+          "error_toast_description": "Không thể cập nhật vai trò. Vui lòng thử lại."
+        },
+        "delete_role": {
+          "confirm_title": "Xóa \"{roleName}\"?",
+          "has_members_message": "Vai trò này được gán cho {count} thành viên. Việc xóa là vĩnh viễn và không thể hoàn tác.",
+          "no_members_message": "Vai trò này không có thành viên nào được gán. Việc xóa là vĩnh viễn và không thể hoàn tác.",
+          "reassign_label": "Gán lại thành viên vào",
+          "reassign_placeholder": "Chọn một vai trò",
+          "submit_button": "Gán lại và xóa",
+          "submit_button_no_members": "Xóa",
+          "submitting": "Đang xóa...",
+          "error_toast_description": "Không thể xóa vai trò. Vui lòng thử lại.",
+          "success_toast_message": "Đã xóa vai trò thành công."
+        },
+        "disable_role": {
+          "confirm_title": "Vô hiệu hóa \"{roleName}\"?",
+          "has_members_message": "Vai trò này hiện được gán cho {memberCount} thành viên. Bạn phải chọn một vai trò để gán lại các thành viên hiện có trước khi tiếp tục.",
+          "no_members_message": "Vai trò này không có thành viên nào được gán. Vai trò sẽ bị vô hiệu hóa.",
+          "reassign_label": "Gán lại thành viên vào",
+          "reassign_placeholder": "Chọn một vai trò",
+          "submit_button": "Gán lại và vô hiệu hóa",
+          "submit_button_no_members": "Vô hiệu hóa",
+          "submitting": "Đang vô hiệu hóa...",
+          "error_toast_description": "Không thể vô hiệu hóa vai trò. Vui lòng thử lại.",
+          "success_toast_message": "Đã vô hiệu hóa vai trò thành công."
+        },
+        "enable_role": {
+          "confirm_title": "Kích hoạt \"{roleName}\"?",
+          "confirm_message": "Vai trò này sẽ được kích hoạt và có thể được gán cho các thành viên.",
+          "submit_button": "Kích hoạt",
+          "submitting": "Đang kích hoạt...",
+          "success_toast_message": "Đã kích hoạt vai trò thành công."
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "Xóa lược đồ quyền?",
+          "has_roles_message": "Lược đồ này đang được sử dụng trong {count} vai trò. Việc xóa sẽ thu hồi các quyền của nó khỏi các vai trò đó. Hành động này không thể hoàn tác.",
+          "no_roles_message": "Lược đồ quyền này không được sử dụng bởi bất kỳ vai trò nào. Nó sẽ bị xóa vĩnh viễn.",
+          "submit_button": "Xác nhận",
+          "submitting": "Đang xóa...",
+          "error_toast_description": "Không thể xóa lược đồ quyền. Vui lòng thử lại.",
+          "in_use_error": "Xóa lược đồ này khỏi tất cả các vai trò trước khi xóa.",
+          "success_toast_message": "Đã xóa lược đồ quyền thành công."
+        }
+      }
+    }
+  }
+}

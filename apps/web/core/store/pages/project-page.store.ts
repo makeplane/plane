@@ -15,9 +15,8 @@ import { set } from "lodash-es";
 import { makeObservable, observable, runInAction, action, reaction, computed } from "mobx";
 import { computedFn } from "mobx-utils";
 // types
-import { EPageAccess, EUserPermissions } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import type { TMovePagePayload, TPage, TPageFilters, TPageNavigationTabs, TPagesSummary } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { filterPagesByPageType, getPageName, orderPages, shouldFilterPage } from "@plane/utils";
 // page filter storage helpers
@@ -46,13 +45,6 @@ type TLoader = "init-loader" | "mutation-loader" | undefined;
 
 type TError = { title: string; description: string };
 
-export const ROLE_PERMISSIONS_TO_CREATE_PAGE = [
-  EUserPermissions.ADMIN,
-  EUserPermissions.MEMBER,
-  EUserProjectRoles.ADMIN,
-  EUserProjectRoles.MEMBER,
-];
-
 export interface IProjectPageStore {
   // observables
   loader: TLoader;
@@ -73,7 +65,7 @@ export interface IProjectPageStore {
   filteredSharedPageIds: string[];
   // computed
   isAnyPageAvailable: boolean;
-  canCurrentUserCreatePage: boolean;
+  getCanCreatePage: (workspaceSlug: string, projectId: string) => boolean;
   // helper actions
   getCurrentProjectPageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentProjectPageIds: (projectId: string) => string[];
@@ -197,7 +189,6 @@ export class ProjectPageStore implements IProjectPageStore {
       filteredSharedPageIds: observable,
       // computed
       isAnyPageAvailable: computed,
-      canCurrentUserCreatePage: computed,
       // helper actions
       updateFilters: action,
       clearAllFilters: action,
@@ -329,14 +320,14 @@ export class ProjectPageStore implements IProjectPageStore {
   /**
    * @description returns true if the current logged in user can create a page
    */
-  get canCurrentUserCreatePage() {
-    const { workspaceSlug, projectId } = this.store.router;
-    const currentUserProjectRole = this.store.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(
-      workspaceSlug?.toString() || "",
-      projectId?.toString() || ""
-    );
-    return !!currentUserProjectRole && ROLE_PERMISSIONS_TO_CREATE_PAGE.includes(currentUserProjectRole);
-  }
+  getCanCreatePage = computedFn((workspaceSlug: string, projectId: string) =>
+    this.store.permissionAccessStore.can({
+      resource: "page",
+      action: "create",
+      projectId,
+      workspaceSlug,
+    })
+  );
 
   /**
    * @description get the current project page ids based on the pageType
@@ -846,7 +837,7 @@ export class ProjectPageStore implements IProjectPageStore {
       });
 
       // Auto-complete getting started checklist
-      void this.store.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "page_created");
+      void this.store.preferencesRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "page_created");
 
       return page;
     } catch (error) {

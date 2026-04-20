@@ -35,7 +35,9 @@ import { useMember } from "@/hooks/store/use-member";
 export type TCommentCardDisplayProps = {
   activityOperations: TCommentsOperations;
   comment: TIssueComment;
-  disabled: boolean;
+  permissions: {
+    canReact: boolean;
+  };
   entityId: string;
   projectId?: string;
   readOnlyEditorRef: React.RefObject<EditorRefApi>;
@@ -53,7 +55,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
   const {
     activityOperations,
     comment,
-    disabled,
+    permissions,
     projectId,
     readOnlyEditorRef,
     showAccessSpecifier,
@@ -113,7 +115,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
     [activityOperations, comment.id, userReactions]
   );
 
-  const shouldRenderReactions = hasReactions && !disabled;
+  const shouldRenderReactions = hasReactions && permissions.canReact;
 
   return (
     <div id={commentBlockId} className="pb-2">
@@ -145,13 +147,13 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
                 </Tooltip>
               </div>
             </div>
-            {!disabled && (
+            {permissions.canReact && (
               <div className="flex items-center gap-1 shrink-0">
                 <EmojiReactionPicker
                   isOpen={isPickerOpen}
                   handleToggle={setIsPickerOpen}
                   onChange={handleEmojiSelect}
-                  disabled={disabled}
+                  disabled={!permissions.canReact}
                   label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
                   placement="bottom-start"
                 />
@@ -191,10 +193,18 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
           {shouldRenderReactions &&
             (renderFooter ? (
               renderFooter(
-                <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+                <CommentReactions
+                  comment={comment}
+                  disabled={!permissions.canReact}
+                  activityOperations={activityOperations}
+                />
               )
             ) : (
-              <CommentReactions comment={comment} disabled={disabled} activityOperations={activityOperations} />
+              <CommentReactions
+                comment={comment}
+                disabled={!permissions.canReact}
+                activityOperations={activityOperations}
+              />
             ))}
         </>
       )}

@@ -12,42 +12,44 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
+import { ETeamspaceNavigationItem } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon, TeamsIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // plane web hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useAppRouter } from "@/hooks/use-app-router";
 import { TeamspaceProjectDetailHeaderActions } from "@/components/teamspaces/headers/detail-header/work-items";
 import { useTeamspaces } from "@/plane-web/hooks/store";
 
-export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDetailHeader() {
-  // router
-  const { workspaceSlug, teamspaceId, projectId } = useParams();
+type TeamspaceProjectDetailHeaderProps = {
+  workspaceSlug: string;
+  teamspaceId: string;
+  projectId: string;
+};
+
+export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDetailHeader(
+  props: TeamspaceProjectDetailHeaderProps
+) {
+  const { workspaceSlug, teamspaceId, projectId } = props;
   // store hooks
-  const { loader, getTeamspaceById } = useTeamspaces();
+  const { loader, getTeamspaceById, permissions } = useTeamspaces();
   const { getPartialProjectById } = useProject();
   const router = useAppRouter();
-  // hooks
-  const { allowPermissions } = useUserPermissions();
   // derived values
-  const teamspace = getTeamspaceById(teamspaceId?.toString());
+  const teamspace = getTeamspaceById(teamspaceId);
   // derived values
   const teamspaceProjectIds = teamspace?.project_ids;
   const switcherOptions = teamspaceProjectIds?.length
     ? (teamspaceProjectIds
         .map((projectId) => {
-          const project = getPartialProjectById(projectId.toString());
+          const project = getPartialProjectById(projectId);
           return {
             value: projectId,
             query: project?.name,
@@ -57,13 +59,7 @@ export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDe
         .filter((option) => option !== undefined) as ICustomSearchSelectOption[])
     : [];
 
-  const currentProjectDetails = getPartialProjectById(projectId?.toString());
-
-  const hasAdminLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
+  const currentProjectDetails = getPartialProjectById(projectId);
 
   return (
     <Header>
@@ -106,7 +102,7 @@ export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDe
             <Breadcrumbs.Item
               component={
                 <BreadcrumbNavigationSearchDropdown
-                  selectedItem={projectId?.toString()}
+                  selectedItem={projectId}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/projects/${value}`);
@@ -124,9 +120,11 @@ export const TeamspaceProjectDetailHeader = observer(function TeamspaceProjectDe
       <Header.RightItem>
         <TeamspaceProjectDetailHeaderActions
           key={ETeamspaceNavigationItem.PROJECTS}
-          teamspaceId={teamspaceId?.toString()}
-          isEditingAllowed={hasAdminLevelPermissions}
-          projectId={projectId?.toString()}
+          teamspaceId={teamspaceId}
+          permissions={{
+            canAddProject: permissions.getCanAddProject(workspaceSlug, teamspaceId),
+          }}
+          projectId={projectId}
         />
       </Header.RightItem>
     </Header>

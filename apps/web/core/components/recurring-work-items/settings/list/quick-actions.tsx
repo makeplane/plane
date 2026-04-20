@@ -56,7 +56,7 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
   const { t } = useTranslation();
   // derived values
   const recurringWorkItem = getRecurringWorkItemById(recurringWorkItemId);
-  const isAnyActionAllowed = recurringWorkItem?.canCurrentUserEdit || recurringWorkItem?.canCurrentUserDelete;
+  const isAnyActionAllowed = recurringWorkItem?.canEdit || recurringWorkItem?.canDelete;
   if (!recurringWorkItem || !isAnyActionAllowed) return null;
 
   const handleEditRecurringWorkItem = () => {
@@ -95,14 +95,14 @@ export const RecurringWorkItemQuickActions = observer(function RecurringWorkItem
       title: t("common.actions.edit"),
       icon: EditIcon,
       action: handleEditRecurringWorkItem,
-      shouldRender: recurringWorkItem.canCurrentUserEdit,
+      shouldRender: recurringWorkItem.canEdit,
     },
     {
       key: "delete",
       action: () => setIsDeleteModalOpen(true),
       title: t("common.actions.delete"),
       icon: TrashIcon,
-      shouldRender: recurringWorkItem.canCurrentUserDelete,
+      shouldRender: recurringWorkItem.canDelete,
       className: "text-danger-primary",
     },
   ];

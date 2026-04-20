@@ -12,36 +12,35 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
-import { EUserPermissionsLevel, SUBSCRIPTION_WEBPAGE_URLS } from "@plane/constants";
+import { SUBSCRIPTION_WEBPAGE_URLS } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn, getSubscriptionName } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 
 export const TrialBanner = observer(function TrialBanner() {
+  // router
+  const { workspaceSlug } = useParams();
   // hooks
   const { config } = useInstance();
-  const { allowPermissions } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
+  const { permissions: workspacePermissions } = useWorkspace();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const currentPlan = subscriptionDetail?.product;
   const subscriptionName = currentPlan && getSubscriptionName(currentPlan);
-  const canPerformWorkspaceAdminActions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canPerformWorkspaceAdminActions = workspaceSlug
+    ? workspacePermissions.getCanManageBilling(workspaceSlug)
+    : false;
 
   // if the user is not a project admin then don't show the banner
   if (!canPerformWorkspaceAdminActions) return <></>;
   // validate weather to show the banner or not for the current workspace and subscription details
-  if (!currentWorkspace || !subscriptionDetail || !subscriptionName || !config?.payment_server_base_url) return <></>;
+  if (!workspaceSlug || !subscriptionDetail || !subscriptionName || !config?.payment_server_base_url) return <></>;
   // if the trial banner is not allowed to show then don't show the banner
   if (!subscriptionDetail.show_trial_banner) return <></>;
 

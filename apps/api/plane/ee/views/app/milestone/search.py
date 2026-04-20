@@ -15,7 +15,7 @@ import re
 # Django imports
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.project import ProjectMemberPermission
+from plane.permissions import can, MilestonePermissions
 from django.db.models import Q, Count
 
 # Third party imports
@@ -30,9 +30,8 @@ from plane.db.models import Issue
 class MilestoneWorkItemsSearchEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectMemberPermission]
-
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """Return work in the project that are not linked to any active milestone.
 

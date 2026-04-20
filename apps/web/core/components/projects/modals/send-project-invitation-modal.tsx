@@ -15,7 +15,6 @@ import React, { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 // plane imports
-import { ROLE, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlusIcon, CloseIcon, ChevronDownIcon, SuspendedUserIcon } from "@plane/propel/icons";
@@ -24,10 +23,11 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Avatar } from "@plane/propel/avatar";
 import { CustomSelect, CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { cn, getFileURL } from "@plane/utils";
+import { cn, getFileURL, isGuestRole, isWithinGuestCeiling, getAssignableProjectRoles } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 
 type Props = {
   isOpen: boolean;
@@ -38,7 +38,7 @@ type Props = {
 };
 
 type member = {
-  role: EUserPermissions;
+  role_slug: string;
   member_id: string;
 };
 
@@ -49,7 +49,7 @@ type FormValues = {
 const defaultValues: FormValues = {
   members: [
     {
-      role: 5,
+      role_slug: "guest",
       member_id: "",
     },
   ],
@@ -60,30 +60,33 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
     project: { getProjectMemberDetails, bulkAddMembersToProject },
     workspace: { workspaceMemberIds, getWorkspaceMemberDetails, isUserSuspended },
   } = useMember();
+  const { getProjectRolesByWorkspaceSlug, getProjectRoleDetailsByRoleSlug } = useRoleManagement();
+  const { getCurrentUserProjectRoleSlug } = usePermissionAccess();
   // form info
   const {
     formState: { errors, isSubmitting },
     watch,
-    setValue,
     reset,
     handleSubmit,
     control,
+    setValue,
   } = useForm<FormValues>();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "members",
   });
   // derived values
-  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
+  const assignableProjectRoles = getAssignableProjectRoles(
+    getProjectRolesByWorkspaceSlug(workspaceSlug, "active"),
+    getCurrentUserProjectRoleSlug(projectId)
+  );
   const uninvitedPeople = workspaceMemberIds?.filter((userId) => {
     const projectMemberDetails = getProjectMemberDetails(userId, projectId);
-    const isInvited = projectMemberDetails?.member.id && projectMemberDetails?.original_role;
-    return !isInvited;
+    return !projectMemberDetails?.id;
   });
 
   const onSubmit = async (formData: FormValues) => {
@@ -121,7 +124,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
 
   const appendField = () => {
     append({
-      role: 5,
+      role_slug: "guest",
       member_id: "",
     });
   };
@@ -130,7 +133,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     if (fields.length === 0) {
       append([
         {
-          role: 5,
+          role_slug: "guest",
           member_id: "",
         },
       ]);
@@ -173,17 +176,23 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
     })
     .filter((option): option is NonNullable<typeof option> => !!option);
 
-  const checkCurrentOptionWorkspaceRole = (value: string) => {
-    const currentMemberWorkspaceRole = getWorkspaceMemberDetails(value)?.role;
-    if (!value || !currentMemberWorkspaceRole) return ROLE;
+  const getAllowedRolesForMember = (memberId: string) => {
+    if (!memberId) return assignableProjectRoles;
+    const wsRoleSlug = getWorkspaceMemberDetails(memberId)?.role_slug;
+    if (isGuestRole(wsRoleSlug)) {
+      return assignableProjectRoles.filter((r) => isWithinGuestCeiling(r.slug));
+    }
+    return assignableProjectRoles;
+  };
 
-    const isGuestOROwner = [EUserPermissions.ADMIN, EUserPermissions.GUEST].includes(
-      currentMemberWorkspaceRole as EUserPermissions
-    );
-
-    return Object.fromEntries(
-      Object.entries(ROLE).filter(([key]) => !isGuestOROwner || [currentMemberWorkspaceRole].includes(parseInt(key)))
-    );
+  const handleMemberChange = (index: number, memberId: string, onChange: (val: string) => void) => {
+    onChange(memberId);
+    // Reset role if it's not allowed for the selected member's workspace role
+    const currentRoleSlug = watch(`members.${index}.role_slug`);
+    const allowedRoles = getAllowedRolesForMember(memberId);
+    if (!allowedRoles.some((r) => r.slug === currentRoleSlug)) {
+      setValue(`members.${index}.role_slug`, allowedRoles[0]?.slug ?? "guest");
+    }
   };
 
   return (
@@ -199,7 +208,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
 
           <div className="mb-3 space-y-4">
             {fields.map((field, index) => (
-              <div key={field.id} className="group mb-1 flex items-start justify-between gap-x-4 text-13 w-full">
+              <div key={field.id} className="group mb-1 flex items-start justify-between gap-x-2 text-13 w-full">
                 <div className="flex flex-col gap-1 grow w-full">
                   <Controller
                     control={control}
@@ -213,7 +222,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                           customButton={
                             <button className="flex w-full items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
                               {value && value !== "" ? (
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 py-0.5">
                                   <Avatar
                                     name={selectedMember?.member.display_name}
                                     src={getFileURL(selectedMember?.member.avatar_url ?? "")}
@@ -227,15 +236,7 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                             </button>
                           }
                           onChange={(val: string) => {
-                            onChange(val);
-                            // Update the role to the workspace role when member ID changes
-                            const workspaceMemberDetails = getWorkspaceMemberDetails(val);
-                            const workspaceRole = workspaceMemberDetails?.role ?? 5;
-                            const newValue = ROLE[workspaceRole].toUpperCase();
-                            setValue(
-                              `members.${index}.role`,
-                              EUserPermissions[newValue as keyof typeof EUserPermissions]
-                            );
+                            handleMemberChange(index, val, onChange);
                           }}
                           options={options}
                           optionsClassName="w-48"
@@ -253,36 +254,35 @@ export const SendProjectInvitationModal = observer(function SendProjectInvitatio
                 <div className="flex items-center justify-between gap-2 shrink-0">
                   <div className="flex flex-col gap-1">
                     <Controller
-                      name={`members.${index}.role`}
+                      name={`members.${index}.role_slug`}
                       control={control}
                       rules={{ required: "Select Role" }}
-                      render={({ field }) => (
+                      render={({ field: { value, onChange } }) => (
                         <CustomSelect
-                          {...field}
+                          value={value}
+                          onChange={onChange}
                           customButton={
-                            <div className="flex w-24 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
-                              <span className="capitalize">{field.value ? ROLE[field.value] : "Select role"}</span>
+                            <div className="flex w-32 items-center justify-between gap-1 rounded-md border border-subtle px-3 py-2.5 text-left text-13 text-secondary shadow-sm duration-300 hover:bg-layer-1 hover:text-primary focus:outline-none">
+                              <span className="capitalize">
+                                {getProjectRoleDetailsByRoleSlug(workspaceSlug, value)?.name ?? "Select role"}
+                              </span>
                               <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
                             </div>
                           }
                           input
                         >
-                          {Object.entries(checkCurrentOptionWorkspaceRole(watch(`members.${index}.member_id`))).map(
-                            ([key, label]) => {
-                              if (parseInt(key) > (currentProjectRole ?? EUserPermissions.GUEST)) return null;
-
-                              return (
-                                <CustomSelect.Option key={key} value={key}>
-                                  {label}
-                                </CustomSelect.Option>
-                              );
-                            }
-                          )}
+                          {getAllowedRolesForMember(watch(`members.${index}.member_id`)).map((role) => (
+                            <CustomSelect.Option key={role.slug} value={role.slug}>
+                              {role.name}
+                            </CustomSelect.Option>
+                          ))}
                         </CustomSelect>
                       )}
                     />
-                    {errors.members && errors.members[index]?.role && (
-                      <span className="px-1 text-13 text-danger-primary">{errors.members[index]?.role?.message}</span>
+                    {errors.members && errors.members[index]?.role_slug && (
+                      <span className="px-1 text-13 text-danger-primary">
+                        {errors.members[index]?.role_slug?.message}
+                      </span>
                     )}
                   </div>
 

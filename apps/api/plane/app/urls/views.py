@@ -31,7 +31,6 @@ urlpatterns = [
         IssueViewViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
@@ -48,7 +47,6 @@ urlpatterns = [
         WorkspaceViewViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }

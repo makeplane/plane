@@ -34,18 +34,21 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
   epicId: string;
-  disabled?: boolean;
+  permissions: {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
   fetchInitiativeAnalytics: (workspaceSlug: string, initiativeId: string) => void;
   displayProperties?: IIssueDisplayProperties;
 };
 
 export const EpicProperties = observer(function EpicProperties(props: Props) {
-  const { workspaceSlug, initiativeId, epicId, disabled = false, displayProperties = {} } = props;
+  const { workspaceSlug, initiativeId, epicId, permissions, displayProperties = {} } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -122,7 +125,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             value={epic.state_id}
             projectId={epic.project_id}
             onChange={handleState}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("state_id")}
             buttonVariant="transparent-without-text"
             buttonClassName="hover:bg-transparent px-0"
             iconSize="size-5"
@@ -137,7 +140,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
           <PriorityDropdown
             value={epic?.priority}
             onChange={handlePriority}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("priority")}
             buttonVariant="border-without-text"
             buttonClassName="border"
             renderByDefault={isMobile}
@@ -167,7 +170,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             isClearable
             mergeDates
             buttonVariant={epic.start_date || epic.target_date ? "border-with-text" : "border-without-text"}
-            disabled={!disabled}
+            disabled={!permissions.canEditProperty("start_date")}
             showTooltip
             customTooltipHeading="Date Range"
             renderPlaceholder={false}
@@ -191,7 +194,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             icon={<StartDatePropertyIcon className="h-3 w-3 flex-shrink-0" />}
             buttonVariant={epic.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("start_date")}
             showTooltip
           />
         </div>
@@ -213,7 +216,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             buttonVariant={epic.target_date ? "border-with-text" : "border-without-text"}
             clearIconClassName="text-primary"
             optionsClassName="z-10"
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("target_date")}
             showTooltip
           />
         </div>
@@ -226,7 +229,7 @@ export const EpicProperties = observer(function EpicProperties(props: Props) {
             projectId={epic?.project_id}
             value={epic?.assignee_ids}
             onChange={handleAssignee}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("assignee_ids")}
             multiple
             buttonVariant={epic.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={epic.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}

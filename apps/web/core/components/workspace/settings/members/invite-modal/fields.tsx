@@ -15,13 +15,13 @@ import { observer } from "mobx-react";
 import type { Control, FieldArrayWithId, FormState } from "react-hook-form";
 import { Controller } from "react-hook-form";
 // plane imports
-import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import { CustomSelect, Input } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { cn, getAssignableWorkspaceRoles } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 import type { InvitationFormValues } from "@/hooks/use-workspace-invitation";
 
 type TInvitationFieldsProps = {
@@ -45,16 +45,20 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { workspaceInfoBySlug } = useUserPermissions();
+  const { getRoleDetailsByRoleSlug, getWorkspaceRolesByWorkspaceSlug } = useRoleManagement();
+  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
   // derived values
-  const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
+  const assignableWorkspaceRoles = getAssignableWorkspaceRoles(
+    getWorkspaceRolesByWorkspaceSlug(workspaceSlug, "active"),
+    getCurrentUserWorkspaceRoleSlug(workspaceSlug)
+  );
 
   return (
     <div className={cn("mb-3 space-y-4", className)}>
       {fields.map((field, index) => (
         <div
           key={field.id}
-          className="relative group mb-1 flex items-start justify-between gap-x-4 text-body-xs-regular w-full"
+          className="relative group mb-1 flex items-start justify-between gap-x-2 text-body-xs-regular w-full"
         >
           <div className="w-full">
             <Controller
@@ -93,23 +97,27 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
             <div className="flex flex-col gap-1">
               <Controller
                 control={control}
-                name={`emails.${index}.role`}
+                name={`emails.${index}.role_slug`}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
                   <CustomSelect
                     value={value}
-                    label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
+                    label={
+                      <span className="text-caption-sm-regular sm:text-body-xs-regular">
+                        {getRoleDetailsByRoleSlug({ workspaceSlug, roleSlug: value, namespace: "workspace" })?.name ??
+                          "Select role"}
+                      </span>
+                    }
                     onChange={onChange}
-                    className="flex-grow w-24"
+                    className="grow w-32"
                     input
                   >
-                    {Object.entries(ROLE).map(([key, value]) => {
-                      if (currentWorkspaceRole && currentWorkspaceRole >= parseInt(key))
-                        return (
-                          <CustomSelect.Option key={key} value={parseInt(key)}>
-                            {value}
-                          </CustomSelect.Option>
-                        );
+                    {assignableWorkspaceRoles.map((role) => {
+                      return (
+                        <CustomSelect.Option key={role.slug} value={role.slug}>
+                          {role.name}
+                        </CustomSelect.Option>
+                      );
                     })}
                   </CustomSelect>
                 )}

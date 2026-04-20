@@ -19,6 +19,7 @@ from rest_framework.request import Request
 
 # Module imports
 from plane.app.views.base import BaseAPIView
+from plane.permissions import can, WorkitemPermissions
 from plane.ee.models import WorkitemTemplate
 from plane.ee.bgtasks.template_task import create_subworkitems
 from plane.payment.flags.flag import FeatureFlag
@@ -30,6 +31,7 @@ class SubWorkitemTemplateEndpoint(BaseAPIView):
     """Subworkitem template endpoint"""
 
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(WorkitemPermissions.CREATE, resource_param="project_id")
     def post(self, request: Request, slug: str, project_id: uuid.UUID, workitem_id: uuid.UUID):
         """Get subworkitem template"""
         template_id = request.data.get("template_id", None)

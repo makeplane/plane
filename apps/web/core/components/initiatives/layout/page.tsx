@@ -17,15 +17,17 @@ import { InitiativesRoot } from "../components/initiatives-root";
 import InitiativesFiltersRow from "../components/rich-filters/row";
 import { InitiativePeekOverview } from "../peek-overview";
 
-interface IInitiativesPageRootProps {
+type Props = {
   isArchived?: boolean;
-}
-export const InitiativesPageRoot = observer(function InitiativesPageRoot(props: IInitiativesPageRootProps) {
-  const { isArchived = false } = props;
+  workspaceSlug: string;
+};
+
+export const InitiativesPageRoot = observer(function InitiativesPageRoot(props: Props) {
+  const { workspaceSlug, isArchived = false } = props;
   return (
     <div className="h-full w-full flex flex-col">
       <InitiativesFiltersRow />
-      <InitiativesRoot isArchived={isArchived} />
+      <InitiativesRoot workspaceSlug={workspaceSlug} isArchived={isArchived} />
       {!isArchived && <InitiativePeekOverview />}
     </div>
   );

@@ -18,6 +18,7 @@ from plane.db.models import PageVersion
 from ..base import BaseAPIView
 from plane.app.serializers import PageVersionSerializer, PageVersionDetailSerializer
 from plane.app.permissions import ProjectPagePermission
+from plane.permissions import can, PagePermissions
 
 
 class PageVersionEndpoint(BaseAPIView):
@@ -25,6 +26,7 @@ class PageVersionEndpoint(BaseAPIView):
 
     permission_classes = [ProjectPagePermission]
 
+    @can(PagePermissions.VIEW, resource_param="page_id")
     def get(self, request, slug, project_id, page_id, pk=None):
         # Check if pk is provided
         if pk:

@@ -33,13 +33,20 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled: boolean;
   issueServiceType: TIssueServiceType;
   hideWidgets?: TWorkItemWidgets[];
+  permissions: {
+    canAddSubWorkItems: boolean;
+    canAddDependencies: boolean;
+    canAddRelations: boolean;
+    canAddLinks: boolean;
+    canAddAttachments: boolean;
+    canAddPages: boolean;
+  };
 };
 
 export function IssueDetailWidgetActionButtons(props: Props) {
-  const { workspaceSlug, projectId, issueId, disabled, issueServiceType, hideWidgets } = props;
+  const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets, permissions } = props;
   // translation
   const { t } = useTranslation();
 
@@ -52,12 +59,12 @@ export function IssueDetailWidgetActionButtons(props: Props) {
               issueId={issueId}
               customButton={
                 <EntityDetailWidgetToolbar.TextButton
-                  icon={<ViewsIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
+                  icon={<ViewsIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
                   label={t("issue.add.sub_issue")}
-                  disabled={disabled}
+                  disabled={!permissions.canAddSubWorkItems}
                 />
               }
-              disabled={disabled}
+              disabled={!permissions.canAddSubWorkItems}
               issueServiceType={issueServiceType}
             />
           </EntityDetailWidgetToolbar.Section>
@@ -71,14 +78,14 @@ export function IssueDetailWidgetActionButtons(props: Props) {
                   <Tooltip tooltipContent={t("issue.add.dependency")}>
                     <span>
                       <EntityDetailWidgetToolbar.DropdownButton
-                        icon={<DependencyPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
-                        disabled={disabled}
+                        icon={<DependencyPropertyIcon className="h-3.5 w-3.5 shrink-0" />}
+                        disabled={!permissions.canAddDependencies}
                         ariaLabel={t("issue.add.dependency")}
                       />
                     </span>
                   </Tooltip>
                 }
-                disabled={disabled}
+                disabled={!permissions.canAddDependencies}
                 issueServiceType={issueServiceType}
               />
             )}
@@ -89,14 +96,14 @@ export function IssueDetailWidgetActionButtons(props: Props) {
                   <Tooltip tooltipContent={t("issue.add.relation")}>
                     <span>
                       <EntityDetailWidgetToolbar.DropdownButton
-                        icon={<RelationPropertyIcon className="h-3.5 w-3.5 flex-shrink-0" />}
-                        disabled={disabled}
+                        icon={<RelationPropertyIcon className="h-3.5 w-3.5 shrink-0" />}
+                        disabled={!permissions.canAddRelations}
                         ariaLabel={t("issue.add.relation")}
                       />
                     </span>
                   </Tooltip>
                 }
-                disabled={disabled}
+                disabled={!permissions.canAddRelations}
                 issueServiceType={issueServiceType}
               />
             )}
@@ -110,14 +117,14 @@ export function IssueDetailWidgetActionButtons(props: Props) {
                   <Tooltip tooltipContent={t("issue.add.link")}>
                     <span>
                       <EntityDetailWidgetToolbar.IconButton
-                        icon={<LinkIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
-                        disabled={disabled}
+                        icon={<LinkIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
+                        disabled={!permissions.canAddLinks}
                         ariaLabel={t("issue.add.link")}
                       />
                     </span>
                   </Tooltip>
                 }
-                disabled={disabled}
+                disabled={!permissions.canAddLinks}
                 issueServiceType={issueServiceType}
               />
             )}
@@ -130,14 +137,14 @@ export function IssueDetailWidgetActionButtons(props: Props) {
                   <Tooltip tooltipContent={t("common.attach")}>
                     <span>
                       <EntityDetailWidgetToolbar.IconButton
-                        icon={<Paperclip className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
-                        disabled={disabled}
+                        icon={<Paperclip className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
+                        disabled={!permissions.canAddAttachments}
                         ariaLabel={t("common.attach")}
                       />
                     </span>
                   </Tooltip>
                 }
-                disabled={disabled}
+                disabled={!permissions.canAddAttachments}
                 issueServiceType={issueServiceType}
               />
             )}
@@ -148,14 +155,14 @@ export function IssueDetailWidgetActionButtons(props: Props) {
             <EntityDetailWidgetToolbar.Section>
               <PagesActionButton
                 issueServiceType={issueServiceType}
-                disabled={disabled}
+                disabled={!permissions.canAddPages}
                 workItemId={issueId}
                 customButton={
                   <Tooltip tooltipContent={t("issue.pages.link_pages")}>
                     <span>
                       <EntityDetailWidgetToolbar.IconButton
-                        icon={<PageIcon className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={2} />}
-                        disabled={disabled}
+                        icon={<PageIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
+                        disabled={!permissions.canAddPages}
                         ariaLabel={t("issue.pages.link_pages")}
                       />
                     </span>

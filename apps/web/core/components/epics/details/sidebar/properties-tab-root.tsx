@@ -53,6 +53,8 @@ import { InitiativeMultiSelectModal } from "@/components/initiatives/common/mult
 import { WorkItemCustomPropertyValuesUpdate } from "@/components/work-item-types/values/addition-properties-update";
 import { DateAlert } from "@/components/issues/issue-detail/date-alert";
 import { WorkItemSideBarMilestoneItem } from "@/components/issues/issue-detail/milestones/root";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -67,11 +69,14 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
-  disabled: boolean;
+  permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
 };
 
 export const EpicSidebarPropertiesRoot = observer(function EpicSidebarPropertiesRoot(props: Props) {
-  const { workspaceSlug, projectId, epicId, disabled } = props;
+  const { workspaceSlug, projectId, epicId, permissions } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -117,7 +122,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
           })
         }
       />
-      <div className={`mb-2 space-y-2.5 ${disabled ? "opacity-60" : ""}`}>
+      <div className={`mb-2 space-y-2.5 ${!permissions.canEdit ? "opacity-60" : ""}`}>
         <SidebarPropertyListItem icon={StatePropertyIcon} label="State">
           <StateDropdown
             value={epicDetails?.state_id}
@@ -127,7 +132,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               })
             }
             projectId={projectId?.toString() ?? ""}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("state_id")}
             buttonVariant="transparent-with-text"
             className="group w-full grow"
             buttonContainerClassName="w-full text-left h-7.5"
@@ -145,7 +150,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
                 assignee_ids: val,
               })
             }
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("assignee_ids")}
             projectId={projectId?.toString() ?? ""}
             placeholder="Add assignees"
             multiple
@@ -167,7 +172,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
                 priority: val,
               })
             }
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("priority")}
             buttonVariant="transparent-with-text"
             className="w-full h-7.5 grow rounded-sm"
             buttonContainerClassName="size-full text-left"
@@ -191,7 +196,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               }
             )}
             onClick={() => toggleInitiativeModal(epicId)}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("initiative_ids")}
           >
             {epicDetails.initiative_ids?.length
               ? t("initiatives.placeholder", {
@@ -210,7 +215,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
               })
             }
             maxDate={maxDate ?? undefined}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("start_date")}
             buttonVariant="transparent-with-text"
             className="group w-full grow"
             buttonContainerClassName="w-full text-left h-7.5"
@@ -231,7 +236,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
                 })
               }
               minDate={minDate ?? undefined}
-              disabled={disabled}
+              disabled={!permissions.canEditProperty("target_date")}
               buttonVariant="transparent-with-text"
               className="group w-full grow"
               buttonContainerClassName="w-full text-left h-7.5"
@@ -294,7 +299,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
                 })
               }
               projectId={projectId}
-              disabled={disabled}
+              disabled={!permissions.canEditProperty("estimate_point")}
               buttonVariant="transparent-with-text"
               className="group w-full grow"
               buttonContainerClassName="w-full text-left"
@@ -312,7 +317,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             issueId={epicId}
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("label_ids")}
             issueServiceType={EIssueServiceType.EPICS}
           />
         </SidebarPropertyListItem>
@@ -322,7 +327,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             workItemId={epicId}
             workspaceSlug={workspaceSlug}
             isPeekView={false}
-            disabled={disabled}
+            canEdit={permissions.canEditProperty("customer_ids")}
           />
         )}
 
@@ -333,7 +338,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             updateWorkItemMilestone={(milestoneId) =>
               epicOperations.updateWorkItemMilestone?.(workspaceSlug, projectId, epicId, milestoneId)
             }
-            disabled={disabled}
+            disabled={!permissions.canEditProperty("milestone_id")}
           />
         )}
 
@@ -343,7 +348,7 @@ export const EpicSidebarPropertiesRoot = observer(function EpicSidebarProperties
             issueTypeId={epicDetails.type_id}
             projectId={projectId}
             workspaceSlug={workspaceSlug}
-            isDisabled={disabled}
+            isDisabled={!permissions.canEditProperty("type_id")}
             entityType={EWorkItemTypeEntity.EPIC}
             issueServiceType={EIssueServiceType.EPICS}
           />

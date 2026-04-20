@@ -34,6 +34,7 @@ import { useEpicAnalytics } from "@/plane-web/hooks/store";
 // local components
 import { SubIssuesListItemProperties } from "./properties";
 import { SubIssuesListRoot } from "./root";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
@@ -44,7 +45,7 @@ type Props = {
   permissions: {
     getCanView: (projectId: string, workItemId: string) => boolean;
     getCanEdit: (projectId: string, workItemId: string) => boolean;
-    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
     getCanDelete: (projectId: string, workItemId: string) => boolean;
     getCanRemove: (
       parentWorkItemProjectId: string,

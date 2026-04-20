@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // PLane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -24,27 +23,37 @@ export type TLinkOperationsModal = Exclude<TLinkOperations, "create">;
 type TLinkList = {
   initiativeId: string;
   linkOperations: TLinkOperationsModal;
-  disabled?: boolean;
+  permissions: {
+    canEdit: (linkId: string) => boolean;
+    canDelete: (linkId: string) => boolean;
+  };
 };
 
 export const LinkList = observer(function LinkList(props: TLinkList) {
   // props
-  const { initiativeId, linkOperations, disabled = false } = props;
+  const { initiativeId, linkOperations, permissions } = props;
   // hooks
   const {
     initiative: {
       initiativeLinks: { getInitiativeLinks },
     },
   } = useInitiatives();
-
+  // derived values
   const links = getInitiativeLinks(initiativeId);
-
   if (!links) return null;
 
   return (
     <div className="flex flex-col gap-2 py-4">
       {links.map((link) => (
-        <InitiativeLinkItem key={link.id} link={link} linkOperations={linkOperations} isNotAllowed={disabled} />
+        <InitiativeLinkItem
+          key={link.id}
+          link={link}
+          linkOperations={linkOperations}
+          permissions={{
+            canEdit: permissions.canEdit(link.id),
+            canDelete: permissions.canDelete(link.id),
+          }}
+        />
       ))}
     </div>
   );

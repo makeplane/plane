@@ -17,8 +17,10 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { STATE_GROUPS } from "@plane/constants";
 import type { IIntakeState, IState } from "@plane/types";
-// helpers
 import { sortStates } from "@plane/utils";
+// stores
+import type { StatePermissions } from "./states/permissions";
+import { StatePermissionsInstance } from "./states/permissions";
 // plane web
 import { ProjectStateService } from "@/services/project/project-state.service";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -30,6 +32,8 @@ export interface IStateStore {
   // observables
   stateMap: Record<string, IState>;
   intakeStateMap: Record<string, IIntakeState>;
+  // permissions
+  permissions: StatePermissions;
   // computed
   workspaceStates: IState[] | undefined;
   projectStates: IState[] | undefined;
@@ -69,13 +73,14 @@ export interface IStateStore {
 export class StateStore implements IStateStore {
   stateMap: Record<string, IState> = {};
   intakeStateMap: Record<string, IIntakeState> = {};
+  // permissions
+  permissions: StatePermissions;
   //loaders
   fetchedMap: Record<string, boolean> = {};
   fetchedIntakeMap: Record<string, boolean> = {};
   rootStore: RootStore;
   router;
   stateService: ProjectStateService;
-
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
@@ -100,6 +105,9 @@ export class StateStore implements IStateStore {
     this.stateService = new ProjectStateService();
     this.router = _rootStore.router;
     this.rootStore = _rootStore;
+    this.permissions = new StatePermissionsInstance({
+      can: this.rootStore.permissionAccessStore.can,
+    });
   }
 
   /**

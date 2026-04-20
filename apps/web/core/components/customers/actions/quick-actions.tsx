@@ -15,18 +15,15 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 import { DeleteCustomerModal } from "@/components/customers/actions";
 
@@ -35,20 +32,23 @@ type Props = {
   workspaceSlug: string;
   parentRef: React.RefObject<HTMLDivElement> | null;
   customClassName?: string;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const CustomerQuickActions = observer(function CustomerQuickActions(props: Props) {
-  const { customerId, workspaceSlug, parentRef, customClassName } = props;
+  const { customerId, workspaceSlug, parentRef, customClassName, permissions } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // i18n
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateCustomerModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const customerLink = `${workspaceSlug}/customers/${customerId}`;
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const { canEdit, canDelete } = permissions;
 
   const handleEditCustomer = () => {
     toggleCreateCustomerModal({ isOpen: true, customerId });
@@ -82,7 +82,7 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
       title: t("customers.quick_actions.edit"),
       icon: EditIcon,
       action: handleEditCustomer,
-      shouldRender: isAdmin,
+      shouldRender: canEdit,
     },
     {
       key: "copy-link",
@@ -97,7 +97,7 @@ export const CustomerQuickActions = observer(function CustomerQuickActions(props
       title: t("customers.quick_actions.delete"),
       icon: TrashIcon,
       className: "text-danger-primary",
-      shouldRender: isAdmin,
+      shouldRender: canDelete,
     },
   ];
 

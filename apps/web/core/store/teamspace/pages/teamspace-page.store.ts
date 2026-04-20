@@ -62,6 +62,7 @@ export interface ITeamspacePageStore {
   filteredArchivedPageIds: string[];
   // computed
   isAnyPageAvailable: boolean;
+  getCanCreatePage: (workspaceSlug: string, teamspaceId: string) => boolean;
   // helper actions
   getCurrentTeamspacePageIdsByTab: (pageType: TPageNavigationTabs) => string[] | undefined;
   getCurrentTeamspacePageIds: (teamspaceId: string) => string[];
@@ -290,6 +291,18 @@ export class TeamspacePageStore implements ITeamspacePageStore {
   }
 
   getPageAiSummary = computedFn((pageId: string) => this.pageAiSummary.get(pageId));
+
+  /**
+   * @description returns true if the current logged in user can create a teamspace page
+   */
+  getCanCreatePage = computedFn((workspaceSlug: string, teamspaceId: string) =>
+    this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "create",
+      workspaceSlug,
+      teamspaceId,
+    })
+  );
 
   /**
    * @description check if any page is available

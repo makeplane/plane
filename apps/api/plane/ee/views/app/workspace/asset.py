@@ -18,12 +18,12 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspaceAssetPermissions
 from plane.db.models import FileAsset
 
 
 class WorkspaceBulkAssetEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def post(self, request, slug, entity_id):
         asset_ids = request.data.get("asset_ids", [])
 

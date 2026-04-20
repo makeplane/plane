@@ -18,10 +18,12 @@ import type { TPowerKCreationCommandKeysExtended } from "@/components/command-pa
 import { usePowerKCreationCommandsRecordExtended } from "@/components/command-palette/power-k/commands/creation";
 // local imports
 import { usePowerKCreationCommandsRecord } from "./command";
-import type { TPowerKCreationCommandKeys } from "./command";
+import type { TPowerKCreationCommandKeys as TPowerKCreationCommandKeysBase } from "./command";
+
+export type TPowerKCreationCommandKeys = TPowerKCreationCommandKeysBase | TPowerKCreationCommandKeysExtended;
 
 export const usePowerKCreationCommands = (): TPowerKCommandConfig[] => {
-  const optionsList: Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> = usePowerKCreationCommandsRecord();
+  const optionsList: Record<TPowerKCreationCommandKeysBase, TPowerKCommandConfig> = usePowerKCreationCommandsRecord();
   const optionsListExtended: Record<TPowerKCreationCommandKeysExtended, TPowerKCommandConfig> =
     usePowerKCreationCommandsRecordExtended();
 

@@ -28,7 +28,7 @@ from plane.ee.serializers import (
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, RecurringWorkitemPermissions
 from plane.ee.views.app.template.base import TemplateBaseEndpoint
 from plane.ee.bgtasks.recurring_work_item_activity_task import (
     recurring_work_item_activity,
@@ -38,8 +38,8 @@ from plane.ee.bgtasks.recurring_work_item_activity_task import (
 class RecurringWorkItemViewSet(TemplateBaseEndpoint):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
+    @can(RecurringWorkitemPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         # get the template data
         workitem_blueprint = request.data.pop("workitem_blueprint", {})
@@ -75,8 +75,8 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
             work_item_template.delete()
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
+    @can(RecurringWorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk=None):
         if pk:
             recurring_work_item = RecurringWorkitemTask.objects.get(
@@ -94,8 +94,8 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
         serializer = RecurringWorkItemSerializer(recurring_work_items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
+    @can(RecurringWorkitemPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         recurring_work_item = RecurringWorkitemTask.objects.get(
             id=pk,
@@ -154,8 +154,8 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
+    @can(RecurringWorkitemPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         recurring_work_item = RecurringWorkitemTask.objects.get(
             id=pk,
@@ -171,8 +171,8 @@ class RecurringWorkItemViewSet(TemplateBaseEndpoint):
 class RecurringWorkItemActivitiesEndpoint(TemplateBaseEndpoint):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.RECURRING_WORKITEMS)
+    @can(RecurringWorkitemPermissions.VIEW, resource_param="pk")
     def get(self, request, slug, project_id, pk):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:

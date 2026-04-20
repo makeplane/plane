@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import WorkspaceUserPermission, allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import Workspace, ReleasePage
 from plane.app.serializers.release import ReleasePageSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -25,10 +25,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 class ReleasePageEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceUserPermission]
-
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, release_id):
         pages = (
             ReleasePage.objects.filter(release_id=release_id, workspace__slug=slug)
@@ -39,7 +37,7 @@ class ReleasePageEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
         page_ids = request.data.get("page_ids", [])
@@ -78,7 +76,7 @@ class ReleasePageEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, release_id):
         page_ids = request.data.get("page_ids", [])
 

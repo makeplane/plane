@@ -24,7 +24,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import WorkspaceUserPermission, allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import (
     Workspace,
     Release,
@@ -53,8 +53,6 @@ from plane.utils.issue_search import search_issues
 
 class ReleaseWorkItemEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [WorkspaceUserPermission]
 
     def get_queryset(self):
         return (
@@ -144,7 +142,7 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, release_id):
         issue_queryset = self.get_queryset().accessible_to(request.user.id, slug)
 
@@ -197,7 +195,7 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
             )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
         release = Release.objects.get(id=release_id, workspace=workspace)
@@ -236,7 +234,7 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, release_id):
         work_item_ids = request.data.get("work_item_ids", [])
 
@@ -256,10 +254,9 @@ class ReleaseWorkItemEndpoint(BaseAPIView):
 
 
 class ReleaseWorkItemSearchEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceUserPermission]
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, release_id):
         query = request.query_params.get("search", None)
 

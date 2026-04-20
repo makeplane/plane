@@ -19,17 +19,19 @@ import { CommentsWrapper } from "@/components/comments";
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
 // plane web imports
 import { useTeamspaceUpdates } from "@/plane-web/hooks/store/teamspaces/use-teamspace-updates";
+// types
+import type { TTeamspaceDetailPermissions } from "@/store/teamspace/permissions/root";
 import { useCommentOperations } from "./helper";
 
 type TTeamSidebarCommentsRootProps = {
   teamspaceId: string;
-  isEditingAllowed?: boolean;
+  comments: TTeamspaceDetailPermissions["comments"];
 };
 
 export const TeamsOverviewSidebarComments = observer(function TeamsOverviewSidebarComments(
   props: TTeamSidebarCommentsRootProps
 ) {
-  const { teamspaceId, isEditingAllowed = true } = props;
+  const { teamspaceId, comments } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
@@ -70,7 +72,12 @@ export const TeamsOverviewSidebarComments = observer(function TeamsOverviewSideb
           entityId={teamspaceId}
           activityOperations={activityOperations}
           comments={teamspaceComments}
-          isEditingAllowed={isEditingAllowed}
+          permissions={{
+            canCreate: comments.canCreate,
+            canEdit: (commentId) => comments.canEdit(commentId),
+            canDelete: (commentId) => comments.canDelete(commentId),
+            canReact: (commentId) => comments.canReact(commentId),
+          }}
           sortOrder={teamspaceCommentsSortOrder}
           showCopyLinkOption={false}
         />

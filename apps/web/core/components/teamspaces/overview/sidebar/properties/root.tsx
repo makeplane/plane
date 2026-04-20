@@ -17,8 +17,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { Loader as Spinner, Users } from "lucide-react";
 import { CycleIcon, WorkItemsIcon, PageIcon, ProjectIcon, ViewsIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, isGuestRole } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import type { Props } from "@/components/icons/types";
@@ -32,7 +31,7 @@ import { TeamspaceEntitiesLoader } from "./loader";
 
 type TTeamsOverviewSidebarPropertiesProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  canManage: boolean;
 };
 
 export type TPropertyListItem = {
@@ -46,7 +45,7 @@ export type TPropertyListItem = {
 export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSidebarProperties(
   props: TTeamsOverviewSidebarPropertiesProps
 ) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, canManage } = props;
   // router
   const { workspaceSlug } = useParams();
   // hooks
@@ -57,29 +56,30 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
     useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
+  const teamspaceLeadId = teamspace?.lead_id;
   const teamspaceEntities = getTeamspaceEntitiesById(teamspaceId);
   const teamspaceEntitiesLoader = getTeamspaceEntitiesLoaderById(teamspaceId);
   const linkedEntitiesCount = teamspaceEntities?.linked_entities.total;
   const teamspaceEntitiesCount = teamspaceEntities?.team_entities.total;
-
   const userIdsWithAdminOrMemberRole = useMemo(() => {
     if (!teamspace) return [];
     return workspaceMemberIds?.filter((userId) => {
       const memberDetails = getWorkspaceMemberDetails(userId);
-      return memberDetails?.role === EUserWorkspaceRoles.GUEST ? false : true;
+      if (!memberDetails?.role_slug) return false;
+      return !isGuestRole(memberDetails.role_slug);
     });
   }, [workspaceMemberIds, getWorkspaceMemberDetails, teamspace]);
 
   const handleTeamspaceLeadChange = useCallback(
     (val: string | null) => {
       if (!teamspace) return;
-      if (val && val !== teamspace.lead_id) {
-        void updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val });
+      if (val && val !== teamspaceLeadId) {
+        updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: val });
       } else {
         void updateTeamspace(workspaceSlug?.toString(), teamspaceId, { lead_id: undefined });
       }
     },
-    [teamspaceId, updateTeamspace, workspaceSlug, teamspace]
+    [teamspaceId, teamspaceLeadId, updateTeamspace, workspaceSlug, teamspace]
   );
 
   const TEAM_PROPERTIES: TPropertyListItem[] = useMemo(() => {
@@ -91,23 +91,23 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
         icon: Users,
         value: (
           <MemberDropdown
-            value={teamspace.lead_id ?? null}
+            value={teamspaceLeadId ?? null}
             memberIds={userIdsWithAdminOrMemberRole}
             onChange={handleTeamspaceLeadChange}
             multiple={false}
             buttonVariant="transparent-with-text"
             buttonContainerClassName={cn(
-              "flex-shrink-0 w-full text-left",
-              teamspace.lead_id ? "text-secondary" : "text-placeholder"
+              "shrink-0 w-full text-left",
+              teamspaceLeadId ? "text-secondary" : "text-placeholder"
             )}
             placeholder="Select team lead"
             showUserDetails
-            disabled={!isEditingAllowed}
+            disabled={!canManage}
           />
         ),
       },
     ];
-  }, [handleTeamspaceLeadChange, userIdsWithAdminOrMemberRole, isEditingAllowed, teamspace]);
+  }, [handleTeamspaceLeadChange, teamspaceLeadId, userIdsWithAdminOrMemberRole, canManage, teamspace]);
 
   const LINKED_ENTITIES: TPropertyListItem[] = useMemo(
     () => [
@@ -157,7 +157,6 @@ export const TeamsOverviewSidebarProperties = observer(function TeamsOverviewSid
   );
 
   if (!teamspace) return null;
-
   return (
     <div className="relative flex flex-col gap-y-2 divide-y divide-subtle-1">
       <div className=" flex flex-col gap-2">

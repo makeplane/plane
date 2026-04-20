@@ -17,22 +17,19 @@ from rest_framework.response import Response
 from plane.db.models import Project, Workspace, IssueType, ProjectIssueType
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import WorkspaceFeature, ProjectState, ProjectAttribute
-from plane.ee.permissions import WorkspaceEntityPermission, WorkspaceOwnerPermission
 from plane.ee.serializers import WorkspaceFeatureSerializer
+from plane.permissions import can, WorkspaceFeaturePermissions
 
 
 class WorkspaceFeaturesEndpoint(BaseAPIView):
-    def get_permissions(self):
-        if self.request.method in ("GET", "HEAD", "OPTIONS"):
-            return [WorkspaceEntityPermission()]
-        return [WorkspaceOwnerPermission()]
-
+    @can(WorkspaceFeaturePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         workspace_feature, _ = WorkspaceFeature.objects.get_or_create(workspace_id=workspace.id)
         serializer = WorkspaceFeatureSerializer(workspace_feature)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @can(WorkspaceFeaturePermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug):
         is_project_grouping_enabled = request.data.get("is_project_grouping_enabled", False)
         workspace = Workspace.objects.get(slug=slug)

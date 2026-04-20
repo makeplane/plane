@@ -24,8 +24,7 @@ from plane.ee.models import (
 )
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.ee.permissions import WorkspacePagePermission
-from plane.app.permissions import ROLE
+from plane.permissions import can, WikiPermissions
 
 
 from plane.ee.utils.page_events import PageAction, MoveActionEnum
@@ -56,10 +55,8 @@ MOVE_ACTION_MAPPER = {
 
 
 class MovePageEndpoint(BaseAPIView):
-    permission_classes = [WorkspacePagePermission]
-
     """
-    this segment checks the permission for the move operation whether they can move the 
+    this segment checks the permission for the move operation whether they can move the
     page to workspace, project, teamspace
     """
 
@@ -75,7 +72,7 @@ class MovePageEndpoint(BaseAPIView):
             workspace__slug=slug,
             project_id=project_id,
             member_id=user_id,
-            role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+            role__gte=15,
             is_active=True,
         ).exists()
 
@@ -138,6 +135,7 @@ class MovePageEndpoint(BaseAPIView):
             return False
 
     @check_feature_flag(FeatureFlag.MOVE_PAGES)
+    @can(WikiPermissions.EDIT)
     def post(self, request, slug, page_id):
         move_type = request.data.get("move_type")
         source_identifier = request.data.get("source_identifier")

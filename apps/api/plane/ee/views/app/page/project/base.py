@@ -55,7 +55,6 @@ from plane.db.models import (
     UserFavorite,
     ProjectMember,
     ProjectPage,
-    Project,
     UserRecentVisit,
     DeployBoard,
 )
@@ -68,6 +67,8 @@ from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 from plane.ee.utils.page_descendants import get_all_parent_ids
 from plane.ee.models.page import PageUser
 from plane.ee.permissions.page import ProjectPagePermission
+from plane.permissions import PagePermissions
+from plane.permissions import HasResourcePermission
 
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
@@ -81,8 +82,24 @@ class PageExtendedViewSet(BaseViewSet):
 
     serializer_class = PageSerializer
     model = Page
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
     search_fields = ["name"]
+
+    action_permissions = {
+        "list": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "create": {"permission": PagePermissions.CREATE, "resource_param": "project_id"},
+        "retrieve": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "partial_update": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "destroy": {"permission": PagePermissions.DELETE, "resource_param": "project_id"},
+        "lock": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "unlock": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "access": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "archive": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "unarchive": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "sub_pages": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "parent_pages": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "summary": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+    }
 
     def get_queryset(self):
         subquery = UserFavorite.objects.filter(
@@ -286,15 +303,14 @@ class PageExtendedViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, page_id=None):
         page = self.get_queryset().filter(pk=page_id).first()
-        project = Project.objects.get(pk=project_id)
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
         if page is None:
             return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
 
         """
-        if the role is guest and guest_view_all_features is false and owned by is not
-        the requesting user then dont show the page
+        if the role is guest and owned by is not the requesting user
+        then dont show the page
         """
 
         if (
@@ -305,7 +321,6 @@ class PageExtendedViewSet(BaseViewSet):
                 role=5,
                 is_active=True,
             ).exists()
-            and not project.guest_view_all_features
             and not page.owned_by == request.user
             and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
@@ -446,7 +461,6 @@ class PageExtendedViewSet(BaseViewSet):
 
         queryset = self.get_queryset().annotate(sub_pages_count=Subquery(sub_pages_count)).filter(filters)
 
-        project = Project.objects.get(pk=project_id)
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -455,7 +469,6 @@ class PageExtendedViewSet(BaseViewSet):
                 role=5,
                 is_active=True,
             ).exists()
-            and not project.guest_view_all_features
             and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):
             queryset = queryset.filter(owned_by=request.user)
@@ -701,17 +714,13 @@ class PageExtendedViewSet(BaseViewSet):
             .distinct()
         )
 
-        project = Project.objects.get(pk=project_id)
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=ROLE.GUEST.value,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-        ):
+        if ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member=request.user,
+            role=ROLE.GUEST.value,
+            is_active=True,
+        ).exists():
             queryset = queryset.filter(owned_by=request.user)
 
         stats = queryset.aggregate(
@@ -737,7 +746,12 @@ class PageFavoriteExtendedViewSet(BaseViewSet):
     use_read_replica = True
 
     model = UserFavorite
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
+
+    action_permissions = {
+        "create": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "destroy": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+    }
 
     def create(self, request, slug, project_id, page_id):
         _ = UserFavorite.objects.create(
@@ -763,8 +777,13 @@ class PageFavoriteExtendedViewSet(BaseViewSet):
 class PagesDescriptionExtendedViewSet(BaseViewSet):
     use_read_replica = True
 
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
     model = Page
+
+    action_permissions = {
+        "retrieve": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "partial_update": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+    }
 
     def retrieve(self, request, slug, project_id, page_id):
         page = (
@@ -847,7 +866,11 @@ class PagesDescriptionExtendedViewSet(BaseViewSet):
 class PageDuplicateExtendedEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
+
+    action_permissions = {
+        "create": {"permission": PagePermissions.CREATE, "resource_param": "project_id"},
+    }
 
     def post(self, request, slug, project_id, page_id):
         page = Page.objects.get(

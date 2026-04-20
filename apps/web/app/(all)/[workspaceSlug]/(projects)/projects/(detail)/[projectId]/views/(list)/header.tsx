@@ -20,17 +20,19 @@ import { Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ViewListHeader } from "@/components/views/view-list-header";
+import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-// plane web imports
-import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
+import { useProjectView } from "@/hooks/store/use-project-view";
 
 export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
+  // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { loader } = useProject();
+  const { permissions: projectViewPermissions } = useProjectView();
 
   return (
     <>
@@ -56,11 +58,13 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
         </Header.LeftItem>
         <Header.RightItem>
           <ViewListHeader />
-          <div>
-            <Button variant="primary" size="lg" onClick={() => toggleCreateViewModal(true)}>
-              Add view
-            </Button>
-          </div>
+          {projectViewPermissions.getCanCreateView(workspaceSlug, projectId) && (
+            <div>
+              <Button variant="primary" size="lg" onClick={() => toggleCreateViewModal(true)}>
+                Add view
+              </Button>
+            </div>
+          )}
         </Header.RightItem>
       </Header>
     </>

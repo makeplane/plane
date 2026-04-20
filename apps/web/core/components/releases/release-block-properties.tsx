@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import type { Release, ReleaseStatus, ReleaseWrite } from "@plane/types";
+import type { Release, ReleaseWrite } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { mutate } from "swr";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -29,6 +29,7 @@ type Props = {
   release: Release;
   isSidebarCollapsed: boolean | undefined;
   workspaceSlug: string;
+  canEdit: boolean;
 };
 
 const PropertyBlockWrapper = ({ children }: { children: React.ReactNode }) => (
@@ -38,7 +39,7 @@ const PropertyBlockWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(props: Props) {
-  const { release, isSidebarCollapsed, workspaceSlug } = props;
+  const { release, isSidebarCollapsed, workspaceSlug, canEdit } = props;
   const { t } = useTranslation();
   const { release: releaseStore } = useReleases();
 
@@ -66,6 +67,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
           value={release.status ?? "unreleased"}
           onChange={(val) => handleUpdate({ status: val })}
           placeholder={t("state")}
+          disabled={!canEdit}
         />
       </PropertyBlockWrapper>
 
@@ -76,6 +78,7 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
           value={getDate(release.release_date) ?? null}
           onChange={(val) => handleUpdate({ release_date: val ? renderFormattedPayloadDate(val) : null })}
           placeholder={t("target_date")}
+          disabled={!canEdit}
         />
       </PropertyBlockWrapper>
 
@@ -87,22 +90,27 @@ export const ReleaseBlockProperties = observer(function ReleaseBlockProperties(p
           buttonVariant="border-with-text"
           placeholder={t("lead")}
           showUserDetails
+          disabled={!canEdit}
         />
       </PropertyBlockWrapper>
 
       <PropertyBlockWrapper>
         <ReleaseLabelDropdown
           value={release.label_ids ?? []}
+          workspaceSlug={workspaceSlug}
           onChange={(val) => handleUpdate({ label_ids: val })}
           placeholder="Label"
+          disabled={!canEdit}
         />
       </PropertyBlockWrapper>
 
       <PropertyBlockWrapper>
         <ReleaseTagDropdown
           value={release.tag ?? null}
+          workspaceSlug={workspaceSlug}
           onChange={(val) => handleUpdate({ tag: val })}
           placeholder="Tag"
+          disabled={!canEdit}
         />
       </PropertyBlockWrapper>
     </div>

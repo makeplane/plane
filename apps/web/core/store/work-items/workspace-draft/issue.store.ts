@@ -34,6 +34,8 @@ import { getCurrentDateTimeInISO, convertToISODateString } from "@plane/utils";
 import workspaceDraftService from "@/services/issue/workspace_draft.service";
 // types
 import type { IIssueRootStore } from "../root.store";
+import { DraftWorkItemPermissionsInstance } from "./permission";
+import type { DraftWorkItemPermissions } from "./permission";
 
 export type TDraftIssuePaginationType = EDraftIssuePaginationType;
 
@@ -42,6 +44,7 @@ export interface IWorkspaceDraftIssues {
   loader: TWorkspaceDraftIssueLoader;
   paginationInfo: Omit<TWorkspaceDraftPaginationInfo<TWorkspaceDraftIssue>, "results"> | undefined;
   issueMapIds: Record<string, string[]>; // workspace_id -> issue_ids;
+  permissions: DraftWorkItemPermissions;
   // computed
   issueIds: string[];
   // computed functions
@@ -132,6 +135,7 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
   paginationInfo: Omit<TWorkspaceDraftPaginationInfo<TWorkspaceDraftIssue>, "results"> | undefined = undefined;
   private workItemsMap: Record<string, TWorkspaceDraftIssue> = {};
   issueMapIds: Record<string, string[]> = {};
+  permissions: DraftWorkItemPermissions;
 
   constructor(public issueStore: IIssueRootStore) {
     makeObservable<WorkspaceDraftIssues, "workItemsMap">(this, {
@@ -150,13 +154,30 @@ export class WorkspaceDraftIssues implements IWorkspaceDraftIssues {
       addCycleToIssue: action,
       addModulesToIssue: action,
     });
+
+    this.permissions = new DraftWorkItemPermissionsInstance({
+      can: this.issueStore.rootStore.permissionAccessStore.can,
+      getDraftConditionContext: this.getDraftConditionContext.bind(this),
+      getAdditionalDraftWorkItemPermissionMeta: this.getAdditionalDraftWorkItemPermissionMeta.bind(this),
+    });
+  }
+
+  private getDraftConditionContext = (draftWorkItemId: string): { creator: boolean } => {
+    const draftWorkItem = this.getIssueById(draftWorkItemId);
+    const currentUserId = this.issueStore.rootStore.user.data?.id;
+    return { creator: !!(draftWorkItem?.created_by && currentUserId && draftWorkItem.created_by === currentUserId) };
+  };
+
+  private getAdditionalDraftWorkItemPermissionMeta() {
+    return {
+      getCanCreateWorkItemInProject: (workspaceSlug: string, projectId: string) => {
+        return this.issueStore.permissions.getCanCreate(workspaceSlug, projectId);
+      },
+    };
   }
 
   private updateWorkspaceUserDraftIssueCount(workspaceSlug: string, increment: number) {
-    const workspaceUserInfo = this.issueStore.rootStore.user.permission.workspaceUserInfo;
-    const currentCount = workspaceUserInfo[workspaceSlug]?.draft_issue_count ?? 0;
-
-    set(workspaceUserInfo, [workspaceSlug, "draft_issue_count"], currentCount + increment);
+    this.issueStore.rootStore.preferencesRoot.workspace.mutateDraftWorkItemsCount(workspaceSlug, increment);
   }
 
   // computed

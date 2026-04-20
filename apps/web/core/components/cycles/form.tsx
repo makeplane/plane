@@ -26,7 +26,8 @@ import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 // hooks
-import { useUser } from "@/hooks/store/user/user-user";
+import { useCycle } from "@/hooks/store/use-cycle";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   status: boolean;
@@ -39,6 +40,7 @@ type Props = {
   showActionButtons?: boolean;
   handleClose?: () => void;
   handleFormSubmit?: (values: Partial<ICycle>) => Promise<void>;
+  workspaceSlug: string;
 };
 
 const defaultValues: Partial<ICycle> = {
@@ -60,14 +62,18 @@ export function CycleForm(props: Props) {
     isBackwardDateEditEnabled = false,
     showActionButtons = true,
     onChange,
+    workspaceSlug,
   } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { projectsWithCreatePermissions } = useUser();
+  const { workspaceProjectIds } = useProject();
+  const {
+    permissions: { getProjectIdsWithCyclePermission },
+  } = useCycle();
   // form data
   const {
-    formState: { errors, isDirty, isSubmitting, dirtyFields },
+    formState: { errors, isSubmitting },
     handleSubmit,
     control,
     watch,
@@ -81,6 +87,13 @@ export function CycleForm(props: Props) {
       end_date: data?.end_date || null,
     },
   });
+  // derived values
+  const projectIdsWithCreateCyclePermission = getProjectIdsWithCyclePermission(
+    workspaceSlug,
+    workspaceProjectIds ?? [],
+    "create"
+  );
+
   const handleOnChange = () => {
     if (!onChange) return;
     onChange(watch());
@@ -116,7 +129,7 @@ export function CycleForm(props: Props) {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
+                    renderCondition={(projectId) => projectIdsWithCreateCyclePermission.has(projectId)}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>

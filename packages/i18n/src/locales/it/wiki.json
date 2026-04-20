@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Le pagine annidate richiedono un piano a pagamento. Aggiorna per sbloccare."
+    },
+    "auth": {
+      "title": "Autorizzazione negata",
+      "description": "Non disponi dell'autorizzazione per accedere a questa pagina. Contatta l'amministratore del tuo spazio di lavoro per richiederla.",
+      "redirection_button": {
+        "text": "Vai ai progetti"
+      },
+      "reload_button": {
+        "text": "Ricarica la pagina"
+      }
     }
   }
 }

@@ -22,7 +22,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, CyclePermissions
 from plane.db.models import Cycle, Project
 from plane.ee.models import ProjectFeature
 from plane.payment.flags.flag import FeatureFlag
@@ -31,7 +31,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag, check_workspa
 
 class CycleStartStopEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(CyclePermissions.EDIT, resource_param="cycle_id")
     def post(self, request, slug, project_id, cycle_id):
         try:
             # get the request data

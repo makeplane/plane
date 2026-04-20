@@ -63,20 +63,14 @@ export type TChecklistItem = {
   readonly label: string;
 };
 
-export const ADMIN_USER_CHECKLIST: TChecklistItem[] = [
+export const GET_STARTED_CHECKLIST: TChecklistItem[] = [
   { id: "project_created", label: "Create a project" },
+  { id: "project_joined", label: "Join a project" },
   { id: "work_item_created", label: "Create a work item" },
   { id: "team_members_invited", label: "Invite team members" },
   { id: "page_created", label: "Try creating a page" },
   { id: "ai_chat_tried", label: "Try Plane AI chat" },
   { id: "integration_linked", label: "Link an integration" },
-];
-
-export const MEMBER_USER_CHECKLIST: TChecklistItem[] = [
-  { id: "project_joined", label: "Join a project" },
-  { id: "work_item_created", label: "Create a work item" },
-  { id: "ai_chat_tried", label: "Try Plane AI chat" },
-  { id: "page_created", label: "Try creating a page" },
   { id: "view_created", label: "Create a view" },
   { id: "sticky_created", label: "Create a sticky" },
-];
+] as const satisfies TChecklistItem[];

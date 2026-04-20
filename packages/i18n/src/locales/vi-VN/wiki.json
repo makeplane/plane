@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Trang lồng nhau yêu cầu gói trả phí. Nâng cấp để mở khóa."
+    },
+    "auth": {
+      "title": "Truy cập bị từ chối",
+      "description": "Bạn không có quyền truy cập trang này. Vui lòng liên hệ quản trị viên workspace để cấp quyền cho bạn.",
+      "redirection_button": {
+        "text": "Đi tới Dự án"
+      },
+      "reload_button": {
+        "text": "Tải lại trang"
+      }
     }
   }
 }

@@ -49,8 +49,8 @@ const ProjectCalendarLayout = lazy(() =>
   }))
 );
 const ProjectTimelineLayout = lazy(() =>
-  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
-    default: module.BaseTimelineRoot,
+  import("@/components/issues/issue-layouts/timeline/roots/project-root").then((module) => ({
+    default: module.ProjectTimelineLayout,
   }))
 );
 const ProjectSpreadsheetLayout = lazy(() =>
@@ -59,22 +59,34 @@ const ProjectSpreadsheetLayout = lazy(() =>
   }))
 );
 
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
 // Layout components map
-const PROJECT_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+const PROJECT_WORK_ITEM_LAYOUTS: Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<ActiveLayoutProps>>> = {
   [EIssueLayoutTypes.LIST]: ProjectListLayout,
   [EIssueLayoutTypes.KANBAN]: ProjectKanBanLayout,
   [EIssueLayoutTypes.CALENDAR]: ProjectCalendarLayout,
-  [EIssueLayoutTypes.GANTT]: ProjectTimelineLayout,
   [EIssueLayoutTypes.SPREADSHEET]: ProjectSpreadsheetLayout,
+  [EIssueLayoutTypes.GANTT]: ProjectTimelineLayout,
 };
 
-function ProjectWorkItemLayout({ activeLayout }: { activeLayout: EIssueLayoutTypes | undefined }) {
-  if (!activeLayout) return null;
-  const ProjectWorkItemLayoutComponent = PROJECT_WORK_ITEM_LAYOUTS[activeLayout];
+type ProjectWorkItemLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  activeLayout: EIssueLayoutTypes | undefined;
+};
+
+function ProjectWorkItemLayout(props: ProjectWorkItemLayoutProps) {
+  if (!props.activeLayout) return null;
+
+  const ProjectWorkItemLayoutComponent = PROJECT_WORK_ITEM_LAYOUTS[props.activeLayout];
   if (!ProjectWorkItemLayoutComponent) return null;
   return (
     <Suspense>
-      <ProjectWorkItemLayoutComponent />
+      <ProjectWorkItemLayoutComponent workspaceSlug={props.workspaceSlug} projectId={props.projectId} />
     </Suspense>
   );
 }
@@ -123,7 +135,7 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
                   <Spinner className="w-4 h-4" />
                 </div>
               )}
-              <ProjectWorkItemLayout activeLayout={activeLayout} />
+              <ProjectWorkItemLayout workspaceSlug={workspaceSlug} projectId={projectId} activeLayout={activeLayout} />
             </div>
             {/* peek overview */}
             <Suspense>

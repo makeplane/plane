@@ -27,10 +27,11 @@ type Props = {
 export const WorkspaceAutomationsWrapper = observer(function WorkspaceAutomationsListWrapper(props: Props) {
   const { workspaceSlug, children } = props;
   const {
-    workspaceAutomations: { canView, fetchAutomations },
+    workspaceAutomations: { getCanViewAutomation, fetchAutomations },
   } = useAutomations();
   // derived values
   const isWorkspaceAutomationsFlagAvailable = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_AUTOMATIONS);
+  const canView = getCanViewAutomation(workspaceSlug);
 
   // fetching automations list
   useSWR(

@@ -12,23 +12,23 @@
  */
 
 // ui
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { PanelRight } from "lucide-react";
-import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
+import { Button } from "@plane/propel/button";
 import { YourWorkIcon, ChevronDownIcon } from "@plane/propel/icons";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { isGuestRole } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { Button } from "@plane/propel/button";
+import { useUser } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -44,17 +44,13 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
   // store hooks
   const { toggleProfileSidebar, profileSidebarCollapsed } = useAppTheme();
   const { data: currentUser } = useUser();
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
   const { t } = useTranslation();
   // derived values
-  const isAuthorized = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
-
-  if (!workspaceUserInfo) return null;
-
-  const tabsList = isAuthorized ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
+  const canViewProfileWorkItemTabs = workspaceSlug
+    ? !isGuestRole(getCurrentUserWorkspaceRoleSlug(workspaceSlug))
+    : false;
+  const tabsList = canViewProfileWorkItemTabs ? [...PROFILE_VIEWER_TAB, ...PROFILE_ADMINS_TAB] : PROFILE_VIEWER_TAB;
 
   const userName = `${userProjectsData?.user_data?.first_name} ${userProjectsData?.user_data?.last_name}`;
 
@@ -82,15 +78,15 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
         <div className="flex gap-4 md:hidden">
           <CustomMenu
             maxHeight={"md"}
-            className="flex flex-grow justify-center text-13 text-secondary"
+            className="flex grow justify-center text-13 text-secondary"
             placement="bottom-start"
             customButton={
               <div className="flex items-center gap-2 rounded-md border border-subtle px-2 py-1.5">
-                <span className="flex flex-grow justify-center text-13 text-secondary">{type}</span>
+                <span className="flex grow justify-center text-13 text-secondary">{type}</span>
                 <ChevronDownIcon className="h-4 w-4 text-placeholder" />
               </div>
             }
-            customButtonClassName="flex flex-grow justify-center text-secondary text-13"
+            customButtonClassName="flex grow justify-center text-secondary text-13"
             closeOnSelect
           >
             <></>

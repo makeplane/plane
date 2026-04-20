@@ -14,20 +14,17 @@
 import { useMemo, useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon, ScopeIcon, OverviewIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
-import { EInitiativeNavigationItem, EUserWorkspaceRoles } from "@plane/types";
+import { EInitiativeNavigationItem } from "@plane/types";
 import { BreadcrumbNavigationDropdown, BreadcrumbNavigationSearchDropdown, Breadcrumbs, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane-web
 import { InitiativeQuickActions } from "@/components/initiatives/components/quick-actions";
@@ -36,6 +33,8 @@ import { InitiativeOverviewHeaderActions } from "./actions/overview-header-actio
 import { InitiativeScopeHeaderActions } from "./actions/scope-header-actions";
 
 type TInitiativesDetailsHeaderProps = {
+  workspaceSlug: string;
+  initiativeId: string;
   selectedNavigationKey: EInitiativeNavigationItem;
 };
 
@@ -43,26 +42,18 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
   props: TInitiativesDetailsHeaderProps
 ) {
   // params
-  const { selectedNavigationKey } = props;
+  const { workspaceSlug, initiativeId, selectedNavigationKey } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, initiativeId } = useParams();
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
   // store hooks
   const {
-    initiative: { getInitiativeById, initiativeIds },
+    initiative: { getInitiativeById, initiativeIds, permissions },
   } = useInitiatives();
-  const { allowPermissions } = useUserPermissions();
-
   const { t } = useTranslation();
   // derived values
-  const initiativesDetails = initiativeId ? getInitiativeById(initiativeId.toString()) : undefined;
-
-  const hasWorkspaceMemberLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const initiativesDetails = getInitiativeById(initiativeId);
 
   const switcherOptions = initiativeIds
     ?.map((id) => {
@@ -108,9 +99,9 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
   const INITIATIVE_HEADER_ACTIONS = useMemo(
     () => ({
       [EInitiativeNavigationItem.OVERVIEW]: <InitiativeOverviewHeaderActions />,
-      [EInitiativeNavigationItem.SCOPE]: <InitiativeScopeHeaderActions initiativeId={initiativeId?.toString()} />,
+      [EInitiativeNavigationItem.SCOPE]: <InitiativeScopeHeaderActions initiativeId={initiativeId} />,
     }),
-    [initiativeId, hasWorkspaceMemberLevelPermissions]
+    [initiativeId]
   );
 
   if (!activeDetailOption) return null;
@@ -131,7 +122,7 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
           <Breadcrumbs.Item
             component={
               <BreadcrumbNavigationSearchDropdown
-                selectedItem={initiativeId.toString()}
+                selectedItem={initiativeId}
                 navigationItems={switcherOptions}
                 onChange={(value: string) => {
                   router.push(`/${workspaceSlug}/initiatives/${value}`);
@@ -167,9 +158,13 @@ export const InitiativesDetailsHeader = observer(function InitiativesDetailsHead
           <div ref={parentRef} className="flex items-center gap-2">
             {INITIATIVE_HEADER_ACTIONS[selectedNavigationKey]}
             <InitiativeQuickActions
-              workspaceSlug={workspaceSlug.toString()}
+              workspaceSlug={workspaceSlug}
               parentRef={parentRef}
               initiative={initiativesDetails}
+              permissions={{
+                canEdit: permissions.getCanEdit(workspaceSlug, initiativeId),
+                canDelete: permissions.getCanDelete(workspaceSlug, initiativeId),
+              }}
             />
           </div>
         )}

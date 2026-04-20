@@ -31,15 +31,20 @@ import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local components
 import { QuickActions } from "./quick-actions";
+import type { TProjectProperty } from "@/store/project/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
   initiativeId: string;
+  permissions: {
+    canRemove: boolean;
+    canEditProperty: (property: TProjectProperty) => boolean;
+  };
 };
 
 export const ProjectItem = observer(function ProjectItem(props: Props) {
-  const { workspaceSlug, initiativeId, projectId } = props;
+  const { workspaceSlug, initiativeId, projectId, permissions } = props;
   // store hooks
   const { getProjectById, getProjectAnalyticsCountById, updateProject } = useProject();
   const { currentWorkspace } = useWorkspace();
@@ -48,7 +53,10 @@ export const ProjectItem = observer(function ProjectItem(props: Props) {
   // ref
   const parentRef = useRef(null);
   // derived values
-  const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
+  const isProjectGroupingEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED
+  );
   const projectDetails = getProjectById(projectId);
   const projectAnalyticsCount = getProjectAnalyticsCountById(projectId);
 
@@ -85,7 +93,12 @@ export const ProjectItem = observer(function ProjectItem(props: Props) {
       }
       quickActionElement={
         <div className="block md:hidden">
-          <QuickActions project={projectDetails} workspaceSlug={workspaceSlug.toString()} initiativeId={initiativeId} />
+          <QuickActions
+            project={projectDetails}
+            workspaceSlug={workspaceSlug.toString()}
+            initiativeId={initiativeId}
+            canRemove={permissions.canRemove}
+          />
         </div>
       }
       actionableItems={
@@ -97,6 +110,7 @@ export const ProjectItem = observer(function ProjectItem(props: Props) {
             workspaceSlug={workspaceSlug.toString()}
             currentWorkspace={currentWorkspace}
             containerClass="px-0 py-0 md:pb-4 lg:py-2"
+            canEditProperty={permissions.canEditProperty}
             displayProperties={{
               state: isProjectGroupingEnabled,
               priority: isProjectGroupingEnabled,
@@ -111,6 +125,7 @@ export const ProjectItem = observer(function ProjectItem(props: Props) {
               project={projectDetails}
               workspaceSlug={workspaceSlug.toString()}
               initiativeId={initiativeId}
+              canRemove={permissions.canRemove}
             />
           </div>
         </>

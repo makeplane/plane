@@ -15,10 +15,8 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import type { EUserPermissions } from "@plane/constants";
 import { EPageAccess } from "@plane/constants";
 import type { TPage } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { getPageName } from "@plane/utils";
 // plane web services
 import { TeamspacePageService } from "@/services/teamspace/teamspace-pages.service";
@@ -83,10 +81,11 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
         return await teamspacePageService.fetchMentions(workspaceSlug, teamspaceId, page.id, mentionType);
       },
     });
-    makeObservable(this, {
+    makeObservable<TeamspacePage, "permissionMeta">(this, {
       // computed
       parentPageIds: computed,
       subPageIds: computed,
+      permissionMeta: computed,
       canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
@@ -97,6 +96,7 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
       canCurrentUserCommentOnPage: computed,
+      canCurrentUserPublishPage: computed,
       isContentEditable: computed,
       // actions
       fetchSubPages: action,
@@ -131,12 +131,23 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
     return this.subPageIds.map((id) => this.rootStore.teamspaceRoot.teamspacePage.data[id]);
   }
 
-  private getUserWorkspaceRole = computedFn((): EUserWorkspaceRoles | EUserPermissions | undefined => {
+  private get permissionMeta():
+    | {
+        workspaceSlug: string;
+        teamspaceId: string;
+        resourceMeta: { resourceId: string };
+      }
+    | undefined {
     const { workspaceSlug } = this.rootStore.router;
-    if (!workspaceSlug || !this.team) return;
-    const userRole = this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-    return userRole;
-  });
+    if (!this.id || !workspaceSlug || !this.team) return;
+    return {
+      workspaceSlug,
+      teamspaceId: this.team,
+      resourceMeta: {
+        resourceId: this.id,
+      },
+    };
+  }
 
   /**
    * @description returns true if the current logged in user can access the page
@@ -167,10 +178,13 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       return this.canEditWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const userRole = this.getUserWorkspaceRole();
-    const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return isPagePublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -185,23 +199,33 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       return this.canEditWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const userRole = this.getUserWorkspaceRole();
-    return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+    // Fallback to RBAC
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug || !this.team) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "create",
+      workspaceSlug,
+      teamspaceId: this.team,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    // Only owner can lock/unlock pages with shared access
-    if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner;
-    }
+    if (this.isCurrentUserOwner) return true;
 
-    // Fallback to regular access control
-    const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
+    // Shared access users cannot lock pages
+    if (this.hasSharedAccess) return false;
+
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -215,8 +239,15 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
-    const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
+    if (this.isCurrentUserOwner) return true;
+
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "archive",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -228,39 +259,73 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       return this.isCurrentUserOwner;
     }
 
-    // Fallback to regular access control
-    const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
+    if (this.isCurrentUserOwner) return true;
+
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "delete",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
-    const userRole = this.getUserWorkspaceRole();
-    return !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug || !this.team) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "view",
+      workspaceSlug,
+      teamspaceId: this.team,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can move the page
    */
   get canCurrentUserMovePage() {
-    // Shared access users cannot move pages
+    // Shared access users
     if (this.hasSharedAccess) {
       return this.isCurrentUserOwner || this.canEditWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || userRole === EUserWorkspaceRoles.ADMIN;
+    if (this.isCurrentUserOwner) return true;
+
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can comment on the page/reply to the comments
    */
   get canCurrentUserCommentOnPage() {
-    const userRole = this.getUserWorkspaceRole();
-    return this.isCurrentUserOwner || (!!userRole && userRole >= EUserWorkspaceRoles.MEMBER);
+    if (this.isCurrentUserOwner) return true;
+
+    // Fallback to RBAC
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug || !this.team) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page_comment",
+      action: "create",
+      workspaceSlug,
+      teamspaceId: this.team,
+    });
+  }
+
+  /**
+   * @description publishing is not supported for teamspace pages
+   */
+  get canCurrentUserPublishPage() {
+    return false;
   }
 
   /**
@@ -286,11 +351,13 @@ export class TeamspacePage extends BasePage implements TTeamspacePage {
       return this.canEditWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const userRole = this.getUserWorkspaceRole();
-    const isPublic = this.access === EPageAccess.PUBLIC;
-
-    return isPublic && !!userRole && userRole >= EUserWorkspaceRoles.MEMBER;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "teamspace_page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   getRedirectionLink = computedFn(() => {

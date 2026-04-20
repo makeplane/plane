@@ -20,15 +20,15 @@ from rest_framework.response import Response
 from plane.app.views import BaseViewSet
 from plane.db.models import SlackProjectSync, WorkspaceIntegration, ProjectMember
 from plane.app.serializers import SlackProjectSyncSerializer
-from plane.app.permissions import ProjectBasePermission
+from plane.permissions import can, IntegrationPermissions
 from plane.utils.integrations.slack import slack_oauth
 
 
 class SlackProjectSyncViewSet(BaseViewSet):
-    permission_classes = [ProjectBasePermission]
     serializer_class = SlackProjectSyncSerializer
     model = SlackProjectSync
 
+    # TODO: Unused — list/retrieve/destroy URLs commented out. Migrate to @can before re-enabling.
     def get_queryset(self):
         return (
             super()
@@ -43,6 +43,7 @@ class SlackProjectSyncViewSet(BaseViewSet):
             )
         )
 
+    @can(IntegrationPermissions.CONNECT, resource_param="workspace_id")
     def create(self, request, slug, project_id, workspace_integration_id):
         try:
             code = request.data.get("code", False)

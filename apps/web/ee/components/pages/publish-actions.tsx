@@ -15,53 +15,36 @@ import React, { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel, SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
+import { SPACE_BASE_PATH, SPACE_BASE_URL } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { PublishPageModal } from "@/plane-web/components/pages";
 // plane web hooks
-import { usePublishPage, useWorkspaceSubscription, EPageStoreType } from "@/plane-web/hooks/store";
+import { usePublishPage, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 
 interface PagePublishActionsProps {
   page: TPageInstance;
-  storeType: EPageStoreType;
 }
 
 export const PagePublishActions = observer(function PagePublishActions(props: PagePublishActionsProps) {
-  const { page, storeType } = props;
+  const { page } = props;
   // states
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
   // params
   const { workspaceSlug, pageId } = useParams();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { fetchPagePublishSettings, getPagePublishSettings, publishPage, unpublishPage } = usePublishPage();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   const isPagePublishEnabled = useFlag(workspaceSlug?.toString(), "PAGE_PUBLISH");
 
   // derived values
-  const { anchor, isCurrentUserOwner, archived_at } = page;
+  const { anchor, archived_at, canCurrentUserPublishPage } = page;
   const isDeployed = !!anchor;
   const isArchived = !!archived_at;
   const pagePublishSettings = getPagePublishSettings(pageId.toString());
-
-  // Get appropriate permission level and roles based on store type
-  const isPublishAllowed = (() => {
-    switch (storeType) {
-      case EPageStoreType.WORKSPACE:
-        return isCurrentUserOwner || allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-      case EPageStoreType.PROJECT:
-        return isCurrentUserOwner || allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-      default:
-        return false;
-    }
-  })();
 
   const SPACE_APP_URL = SPACE_BASE_URL.trim() === "" ? window.location.origin : SPACE_BASE_URL;
   const publishLink = `${SPACE_APP_URL}${SPACE_BASE_PATH}/pages/${anchor}`;
@@ -81,7 +64,7 @@ export const PagePublishActions = observer(function PagePublishActions(props: Pa
   }
 
   // If user doesn't have permission, don't show anything
-  if (!isPublishAllowed) {
+  if (!canCurrentUserPublishPage) {
     return null;
   }
 

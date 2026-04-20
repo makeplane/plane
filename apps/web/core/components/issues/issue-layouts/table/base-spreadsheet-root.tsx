@@ -16,14 +16,15 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
+import { ALL_ISSUES, EIssueFilterType } from "@plane/constants";
+import type { EIssuesStoreType, IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
@@ -40,19 +41,24 @@ export type SpreadsheetStoreType =
 
 interface IBaseSpreadsheetRoot {
   QuickActions: FC<IQuickActionProps>;
-  canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
-  isCompletedCycle?: boolean;
+  layoutPermissions: {
+    canQuickAddWorkItem: boolean;
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   viewId?: string | undefined;
   isEpic?: boolean;
 }
 
 export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: IBaseSpreadsheetRoot) {
-  const { QuickActions, canEditPropertiesBasedOnProject, isCompletedCycle = false, viewId, isEpic = false } = props;
+  const { QuickActions, layoutPermissions, getWorkItemPermissions, viewId, isEpic = false } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const storeType = useIssueStoreType() as SpreadsheetStoreType;
-  const { allowPermissions } = useUserPermissions();
   const { issues, issuesFilter } = useIssues(storeType);
   const {
     fetchIssues,
@@ -65,27 +71,10 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
     restoreIssue,
     updateFilters,
   } = useIssuesActions(storeType);
-  // derived values
-  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
-  // user role validation
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   useEffect(() => {
     fetchIssues("init-loader", { canGroup: false, perPageCount: 100 }, viewId);
   }, [fetchIssues, storeType, viewId]);
-
-  const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
-      const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
-
-      return enableInlineEditing && isEditingAllowedBasedOnProject;
-    },
-    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
-  );
 
   const issueIds = issues.groupedIssueIds?.[ALL_ISSUES] ?? [];
   const nextPageResults = issues.getPaginationData(ALL_ISSUES, undefined)?.nextPageResults;
@@ -107,22 +96,24 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
   );
 
   const renderQuickActions: TRenderQuickActions = useCallback(
-    ({ issue, parentRef, customActionButton, placement, portalElement }) => (
-      <QuickActions
-        parentRef={parentRef}
-        customActionButton={customActionButton}
-        issue={issue}
-        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
-        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
-        handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
-        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
-        handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-        portalElement={portalElement}
-        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
-        placements={placement}
-      />
-    ),
-    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    ({ issue, parentRef, customActionButton, placement, portalElement }) => {
+      return (
+        <QuickActions
+          parentRef={parentRef}
+          customActionButton={customActionButton}
+          issue={issue}
+          handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+          handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+          handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+          handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+          handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+          portalElement={portalElement}
+          placements={placement}
+        />
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   if (!Array.isArray(issueIds)) return null;
@@ -139,10 +130,9 @@ export const BaseSpreadsheetRoot = observer(function BaseSpreadsheetRoot(props: 
         issueIds={issueIds}
         quickActions={renderQuickActions}
         updateIssue={updateIssue}
-        canEditProperties={canEditProperties}
+        layoutPermissions={layoutPermissions}
+        getWorkItemPermissions={getWorkItemPermissions}
         quickAddCallback={quickAddIssue}
-        enableQuickCreateIssue={enableQuickAdd}
-        disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
         canLoadMoreIssues={!!nextPageResults}
         loadMoreIssues={fetchNextIssues}
         isEpic={isEpic}

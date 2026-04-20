@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "Skema peran dan izin",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "Peran dan Izin",
+        "roles_list": {
+          "workspace": {
+            "label": "Peran workspace"
+          },
+          "project": {
+            "label": "Peran proyek"
+          }
+        },
+        "compare_permissions": "Bandingkan izin",
+        "create_role": {
+          "title": "Buat peran",
+          "description": "Tentukan peran dengan mengatur nama, deskripsi, dan izin untuk pengguna di instance.",
+          "button_label": "Buat peran baru",
+          "error_toast_description": "Peran tidak dapat dibuat. Silakan coba lagi."
+        },
+        "edit_role": {
+          "title": "Edit peran",
+          "description": "Perbarui nama, izin, dan pengaturan peran untuk mengontrol apa yang dapat diakses dan dilakukan anggota.",
+          "error_toast_description": "Peran tidak dapat diperbarui. Silakan coba lagi."
+        },
+        "role_details": {
+          "role_information_title": "Informasi dasar",
+          "role_information_description": "Nama peran dan deskripsi singkat untuk memperjelas tujuannya.",
+          "role_name": "Nama peran",
+          "role_description": "Deskripsi",
+          "role_details": "Detail peran",
+          "role_details_description": "Lihat gambaran lengkap tentang peran dan izin yang ditetapkan.",
+          "edit_permissions": "Edit izin"
+        },
+        "role_form": {
+          "name": "Nama peran",
+          "name_placeholder": "Beri nama peran",
+          "name_error": "Nama wajib diisi.",
+          "description": "Deskripsi",
+          "description_placeholder": "Jelaskan peran",
+          "create_button": "Buat peran"
+        },
+        "role_actions": {
+          "duplicate": "Duplikat"
+        },
+        "discard_changes_modal": {
+          "title": "Buang perubahan?",
+          "description": "Perubahan Anda belum disimpan. Meninggalkan halaman ini akan membuangnya.",
+          "cancel": "Buang perubahan",
+          "confirm": "Tetap edit"
+        },
+        "delete_role_modal": {
+          "title": "Hapus peran?",
+          "description": "Apakah Anda yakin ingin menghapus peran ini? Tindakan ini tidak dapat dibatalkan.",
+          "error_toast_message": "Gagal menghapus peran. Silakan coba lagi."
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "Peran dan izin workspace",
+            "project": "Peran dan izin proyek"
+          },
+          "permissions_header": "Izin",
+          "view_mode": {
+            "sets": "Tampilan set",
+            "permissions": "String izin"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "Pengaturan Workspace",
+              "description": "Konfigurasi inti workspace: nama, logo, mata uang, domain, penghapusan, dan transfer kepemilikan.",
+              "workspace": {
+                "view": { "label": "Lihat Workspace" },
+                "edit": { "label": "Edit Pengaturan Workspace" },
+                "manage": { "label": "Kelola Workspace" },
+                "invite": { "label": "Undang Anggota" },
+                "delete": { "label": "Hapus Workspace" },
+                "transfer": { "label": "Transfer Kepemilikan" }
+              }
+            },
+            "member_management": {
+              "title": "Manajemen Anggota",
+              "description": "Mengundang, mengedit, mengimpor, dan menghapus anggota workspace.",
+              "workspace_member": {
+                "view": { "label": "Lihat Anggota" },
+                "invite": { "label": "Undang Anggota" },
+                "edit": { "label": "Edit Detail Anggota" },
+                "import": { "label": "Impor Anggota (CSV / SSO)" },
+                "change_role": { "label": "Ubah Peran Anggota" },
+                "remove": { "label": "Hapus Anggota" }
+              }
+            },
+            "project_management": {
+              "title": "Manajemen Proyek",
+              "description": "Membuat dan mengelola proyek dari konteks workspace.",
+              "project": {
+                "browse": { "label": "Jelajahi Proyek" },
+                "view": { "label": "Lihat Detail Proyek" },
+                "create": { "label": "Buat Proyek" },
+                "edit": { "label": "Edit Pengaturan Proyek" },
+                "react": { "label": "Bereaksi pada Proyek" },
+                "publish": { "label": "Publikasikan Proyek (jadikan publik)" },
+                "archive": { "label": "Arsipkan Proyek" },
+                "delete": { "label": "Hapus Proyek" },
+                "manage": { "label": "Kelola Akses Proyek" }
+              }
+            },
+            "role_administration": {
+              "title": "Administrasi Peran",
+              "description": "Membuat dan mengelola peran kustom dan peran proyek.",
+              "custom_role": {
+                "view": { "label": "Lihat Peran Kustom" },
+                "create": { "label": "Buat Peran Kustom" },
+                "edit": { "label": "Edit Peran Kustom" },
+                "delete": { "label": "Hapus Peran Kustom" }
+              }
+            },
+            "workspace_pages": {
+              "title": "Workspace Pages (Wiki)",
+              "description": "Dokumentasi dan wiki tingkat workspace.",
+              "wiki": {
+                "view": { "label": "Lihat Wiki" },
+                "create": { "label": "Buat Wiki Pages" },
+                "edit": { "label": "Edit Wiki Pages" },
+                "share": { "label": "Bagikan Wiki Pages" },
+                "delete": { "label": "Hapus Wiki Pages" },
+                "comment": { "label": "Komentar di Wiki Pages" }
+              }
+            },
+            "workspace_views": {
+              "title": "Workspace Views",
+              "description": "Filter tersimpan dan manajemen tampilan tingkat workspace.",
+              "workspace_workitem_view": {
+                "view": { "label": "Lihat Workspace Views" },
+                "create": { "label": "Buat Workspace Views" },
+                "edit": { "label": "Edit Workspace Views" },
+                "share": { "label": "Bagikan Workspace Views" },
+                "publish": { "label": "Publikasikan Workspace Views" },
+                "export": { "label": "Ekspor Workspace Views" },
+                "delete": { "label": "Hapus Workspace Views" }
+              }
+            },
+            "initiatives": {
+              "title": "Initiatives",
+              "description": "Pelacakan inisiatif lintas proyek, termasuk komentar, lampiran, tautan, dan pembaruan.",
+              "initiative": {
+                "view": { "label": "Lihat Initiatives" },
+                "create": { "label": "Buat Initiatives" },
+                "edit": { "label": "Edit Initiatives" },
+                "manage": { "label": "Kelola Initiatives" },
+                "react": { "label": "Bereaksi pada Initiatives" },
+                "delete": { "label": "Hapus Initiatives" }
+              },
+              "initiative_comment": {
+                "view": { "label": "Lihat Komentar Initiative" },
+                "create": { "label": "Komentar di Initiatives" },
+                "edit": { "label": "Edit Komentar Initiative" },
+                "react": { "label": "Bereaksi pada Komentar Initiative" },
+                "delete": { "label": "Hapus Komentar Initiative" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "Lihat Lampiran Initiative" },
+                "create": { "label": "Tambah Lampiran Initiative" },
+                "delete": { "label": "Hapus Lampiran Initiative" }
+              },
+              "initiative_link": {
+                "view": { "label": "Lihat Tautan Initiative" },
+                "create": { "label": "Tambah Tautan Initiative" },
+                "edit": { "label": "Edit Tautan Initiative" },
+                "delete": { "label": "Hapus Tautan Initiative" }
+              }
+            },
+            "teamspaces": {
+              "title": "Teamspaces",
+              "description": "Menjelajahi, membuat, dan mengelola teamspaces.",
+              "teamspace": {
+                "browse": { "label": "Jelajahi Teamspaces" },
+                "view": { "label": "Lihat Detail Teamspace" },
+                "create": { "label": "Buat Teamspaces" },
+                "edit": { "label": "Edit Teamspaces" },
+                "manage": { "label": "Kelola Anggota Teamspace" },
+                "delete": { "label": "Hapus Teamspaces" }
+              }
+            },
+            "integrations": {
+              "title": "Integrasi",
+              "description": "Integrasi pihak ketiga, webhook, dan token API.",
+              "integration": {
+                "view": { "label": "Lihat Integrasi" },
+                "create": { "label": "Buat Integrasi" },
+                "edit": { "label": "Konfigurasi Integrasi" },
+                "delete": { "label": "Hapus Integrasi" }
+              },
+              "webhook": {
+                "view": { "label": "Lihat Webhook" },
+                "create": { "label": "Buat Webhook" },
+                "edit": { "label": "Edit Webhook" },
+                "delete": { "label": "Hapus Webhook" }
+              },
+              "api_token": {
+                "view": { "label": "Lihat Token API" },
+                "create": { "label": "Buat Token API" },
+                "delete": { "label": "Hapus Token API" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "Analitik & Pelaporan",
+              "description": "Dasbor, analitik, dan log kerja tingkat workspace.",
+              "analytics": {
+                "view": { "label": "Lihat Analitik" },
+                "export": { "label": "Ekspor Analitik" }
+              },
+              "dashboard": {
+                "view": { "label": "Lihat Dasbor" },
+                "create": { "label": "Buat Dasbor" },
+                "edit": { "label": "Edit Dasbor" },
+                "delete": { "label": "Hapus Dasbor" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "Lihat Log Kerja" },
+                "export": { "label": "Ekspor Log Kerja" }
+              },
+              "ai": {
+                "use": { "label": "Gunakan Fitur AI" }
+              }
+            },
+            "customers": {
+              "title": "Umpan Balik Pelanggan",
+              "description": "Manajemen pelanggan dan permintaan pelanggan.",
+              "customer": {
+                "view": { "label": "Lihat Pelanggan" },
+                "create": { "label": "Buat Pelanggan" },
+                "edit": { "label": "Edit Pelanggan" },
+                "delete": { "label": "Hapus Pelanggan" }
+              },
+              "customer_attachment": {
+                "create": { "label": "Tambah Lampiran Pelanggan" },
+                "delete": { "label": "Hapus Lampiran Pelanggan" }
+              }
+            },
+            "work_item_relations": {
+              "title": "Relasi Work Item",
+              "description": "Mengelola definisi tipe relasi kustom untuk work items.",
+              "workitem_relation": {
+                "view": { "label": "Lihat Definisi Relasi" },
+                "create": { "label": "Buat Definisi Relasi" },
+                "edit": { "label": "Edit Definisi Relasi" },
+                "delete": { "label": "Hapus Definisi Relasi" }
+              }
+            },
+            "workspace_templates": {
+              "title": "Templat",
+              "description": "Membuat dan mengelola templat work item, Page, dan proyek tingkat workspace.",
+              "workspace_workitem_template": {
+                "view": { "label": "Lihat Templat Work Item" },
+                "create": { "label": "Buat Templat Work Item" },
+                "edit": { "label": "Edit Templat Work Item" },
+                "delete": { "label": "Hapus Templat Work Item" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "Lihat Templat Page" },
+                "create": { "label": "Buat Templat Page" },
+                "edit": { "label": "Edit Templat Page" },
+                "delete": { "label": "Hapus Templat Page" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "Lihat Templat Proyek" },
+                "create": { "label": "Buat Templat Proyek" },
+                "edit": { "label": "Edit Templat Proyek" },
+                "delete": { "label": "Hapus Templat Proyek" }
+              }
+            },
+            "workspace_automations": {
+              "title": "Otomatisasi Workspace",
+              "description": "Aturan dan konfigurasi otomatisasi tingkat workspace.",
+              "workspace_automation": {
+                "view": { "label": "Lihat Otomatisasi Workspace" },
+                "create": { "label": "Buat Otomatisasi Workspace" },
+                "edit": { "label": "Edit Otomatisasi Workspace" },
+                "delete": { "label": "Hapus Otomatisasi Workspace" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "Anggota Proyek",
+              "description": "Mengundang, mengedit, dan menghapus anggota proyek.",
+              "project_member": {
+                "view": { "label": "Lihat Anggota Proyek" },
+                "invite": { "label": "Undang Anggota" },
+                "edit": { "label": "Edit Detail Anggota" },
+                "change_role": { "label": "Ubah Peran Anggota" },
+                "remove": { "label": "Hapus Anggota" }
+              }
+            },
+            "work_items": {
+              "title": "Item Kerja",
+              "description": "Permukaan item kerja utama. Termasuk komentar, lampiran, tautan, relasi, dan properti kustom.",
+              "workitem": {
+                "view": { "label": "Lihat Item Kerja" },
+                "create": { "label": "Buat Item Kerja" },
+                "edit": { "label": "Edit Item Kerja" },
+                "bulk_edit": { "label": "Edit Massal Item Kerja" },
+                "export": { "label": "Ekspor Item Kerja" },
+                "react": { "label": "Bereaksi pada Item Kerja" },
+                "delete": { "label": "Hapus Item Kerja" }
+              },
+              "comment": {
+                "create": { "label": "Tambah Komentar" },
+                "edit": { "label": "Edit Komentar" },
+                "react": { "label": "Bereaksi pada Komentar" },
+                "delete": { "label": "Hapus Komentar" }
+              },
+              "attachment": {
+                "view": { "label": "Lihat Lampiran" },
+                "create": { "label": "Tambah Lampiran" },
+                "delete": { "label": "Hapus Lampiran" }
+              },
+              "workitem_link": {
+                "view": { "label": "Lihat Tautan Work Item" },
+                "create": { "label": "Tambah Tautan Work Item" },
+                "edit": { "label": "Edit Tautan Work Item" },
+                "delete": { "label": "Hapus Tautan Work Item" }
+              },
+              "issue_property": {
+                "view": { "label": "Lihat Properti Kustom" },
+                "edit": { "label": "Edit Properti Kustom" }
+              }
+            },
+            "epics": {
+              "title": "Epics",
+              "description": "Siklus hidup Epic, termasuk tautan, properti, dan thread pembaruan.",
+              "epic": {
+                "view": { "label": "Lihat Epics" },
+                "create": { "label": "Buat Epics" },
+                "edit": { "label": "Edit Epics" },
+                "delete": { "label": "Hapus Epics" }
+              },
+              "epic_link": {
+                "view": { "label": "Lihat Tautan Epic" },
+                "create": { "label": "Tambah Tautan Epic" },
+                "edit": { "label": "Edit Tautan Epic" },
+                "delete": { "label": "Hapus Tautan Epic" }
+              },
+              "epic_property": {
+                "view": { "label": "Lihat Properti Epic" },
+                "edit": { "label": "Edit Properti Epic" }
+              },
+              "epic_update": {
+                "view": { "label": "Lihat Pembaruan Epic" },
+                "create": { "label": "Posting Pembaruan Epic" },
+                "edit": { "label": "Edit Pembaruan Epic" },
+                "delete": { "label": "Hapus Pembaruan Epic" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "Lihat Komentar Pembaruan Epic" },
+                "create": { "label": "Komentar di Pembaruan Epic" },
+                "edit": { "label": "Edit Komentar Pembaruan Epic" },
+                "react": { "label": "Bereaksi pada Komentar Pembaruan Epic" },
+                "delete": { "label": "Hapus Komentar Pembaruan Epic" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "Modules & Cycles",
+              "description": "Pengelompokan fitur dan manajemen sprint/Cycle.",
+              "module": {
+                "view": { "label": "Lihat Modules" },
+                "create": { "label": "Buat Modules" },
+                "edit": { "label": "Edit Modules" },
+                "manage": { "label": "Kelola Anggota Module" },
+                "archive": { "label": "Arsipkan Modules" },
+                "export": { "label": "Ekspor Modules" },
+                "delete": { "label": "Hapus Modules" }
+              },
+              "cycle": {
+                "view": { "label": "Lihat Cycles" },
+                "create": { "label": "Buat Cycles" },
+                "edit": { "label": "Edit Cycles" },
+                "delete": { "label": "Hapus Cycles" }
+              },
+              "cycle_update": {
+                "view": { "label": "Lihat Pembaruan Cycle" },
+                "create": { "label": "Posting Pembaruan Cycle" },
+                "edit": { "label": "Edit Pembaruan Cycle" },
+                "delete": { "label": "Hapus Pembaruan Cycle" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "Pages & Views",
+              "description": "Page dan tampilan tersimpan tingkat proyek.",
+              "page": {
+                "view": { "label": "Lihat Pages" },
+                "create": { "label": "Buat Pages" },
+                "edit": { "label": "Edit Pages" },
+                "share": { "label": "Bagikan Pages" },
+                "delete": { "label": "Hapus Pages" }
+              },
+              "workitem_view": {
+                "view": { "label": "Lihat Tampilan Proyek" },
+                "create": { "label": "Buat Tampilan Proyek" },
+                "edit": { "label": "Edit Tampilan Proyek" },
+                "share": { "label": "Bagikan Tampilan Proyek" },
+                "publish": { "label": "Publikasikan Tampilan Proyek" },
+                "export": { "label": "Ekspor Tampilan Proyek" },
+                "delete": { "label": "Hapus Tampilan Proyek" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "Alur kerja intake dan triase item kerja.",
+              "intake": {
+                "view": { "label": "Lihat Intake" },
+                "create": { "label": "Buat Item Intake" },
+                "submit": { "label": "Kirim Permintaan Intake" },
+                "edit": { "label": "Edit Item Intake" },
+                "react": { "label": "Bereaksi pada Item Intake" },
+                "manage": { "label": "Kelola Item Intake" },
+                "configure": { "label": "Konfigurasi Intake" },
+                "export": { "label": "Ekspor Intake" },
+                "delete": { "label": "Hapus Item Intake" }
+              }
+            },
+            "project_configuration": {
+              "title": "Konfigurasi Proyek",
+              "description": "Label, status, estimasi, dan milestone.",
+              "label": {
+                "view": { "label": "Lihat Label" },
+                "create": { "label": "Buat Label" },
+                "edit": { "label": "Edit Label" },
+                "delete": { "label": "Hapus Label" }
+              },
+              "state": {
+                "view": { "label": "Lihat Status" },
+                "create": { "label": "Buat Status" },
+                "edit": { "label": "Edit Status" },
+                "delete": { "label": "Hapus Status" }
+              },
+              "estimate": {
+                "view": { "label": "Lihat Estimasi" },
+                "create": { "label": "Buat Estimasi" },
+                "edit": { "label": "Edit Estimasi" },
+                "delete": { "label": "Hapus Estimasi" }
+              },
+              "milestone": {
+                "view": { "label": "Lihat Milestone" },
+                "create": { "label": "Buat Milestone" },
+                "edit": { "label": "Edit Milestone" },
+                "delete": { "label": "Hapus Milestone" }
+              }
+            },
+            "automations": {
+              "title": "Otomatisasi & Alur Kerja",
+              "description": "Otomatisasi, aturan alur kerja, dan work items berulang.",
+              "project_automation": {
+                "view": { "label": "Lihat Otomatisasi" },
+                "create": { "label": "Buat Otomatisasi" },
+                "edit": { "label": "Edit Otomatisasi" },
+                "delete": { "label": "Hapus Otomatisasi" }
+              },
+              "workflow": {
+                "view": { "label": "Lihat Alur Kerja" },
+                "create": { "label": "Buat Alur Kerja" },
+                "edit": { "label": "Edit Alur Kerja" },
+                "delete": { "label": "Hapus Alur Kerja" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "Lihat Item Berulang" },
+                "create": { "label": "Buat Item Berulang" },
+                "edit": { "label": "Edit Item Berulang" },
+                "delete": { "label": "Hapus Item Berulang" }
+              }
+            },
+            "project_updates": {
+              "title": "Pembaruan Proyek",
+              "description": "Pembaruan progres dan komentar pada pembaruan.",
+              "project_update": {
+                "view": { "label": "Lihat Pembaruan Proyek" },
+                "create": { "label": "Posting Pembaruan Proyek" },
+                "edit": { "label": "Edit Pembaruan Proyek" },
+                "delete": { "label": "Hapus Pembaruan Proyek" }
+              },
+              "project_update_comment": {
+                "view": { "label": "Lihat Komentar Pembaruan Proyek" },
+                "create": { "label": "Komentar di Pembaruan Proyek" },
+                "edit": { "label": "Edit Komentar Pembaruan Proyek" },
+                "react": { "label": "Bereaksi pada Komentar Pembaruan Proyek" },
+                "delete": { "label": "Hapus Komentar Pembaruan Proyek" }
+              }
+            },
+            "project_analytics": {
+              "title": "Analitik & Aktivitas",
+              "description": "Analitik proyek dan log aktivitas.",
+              "project_activity": {
+                "view": { "label": "Lihat Log Aktivitas" }
+              }
+            },
+            "project_links": {
+              "title": "Tautan Proyek",
+              "description": "Tautan tingkat proyek.",
+              "project_link": {
+                "view": { "label": "Lihat Tautan Proyek" },
+                "create": { "label": "Tambah Tautan Proyek" },
+                "edit": { "label": "Edit Tautan Proyek" },
+                "delete": { "label": "Hapus Tautan Proyek" }
+              }
+            },
+            "project_templates": {
+              "title": "Templat",
+              "description": "Templat work item dan Page dengan lingkup proyek.",
+              "project_workitem_template": {
+                "view": { "label": "Lihat Templat Work Item" },
+                "create": { "label": "Buat Templat Work Item" },
+                "edit": { "label": "Edit Templat Work Item" },
+                "delete": { "label": "Hapus Templat Work Item" }
+              },
+              "project_page_template": {
+                "view": { "label": "Lihat Templat Page" },
+                "create": { "label": "Buat Templat Page" },
+                "edit": { "label": "Edit Templat Page" },
+                "delete": { "label": "Hapus Templat Page" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "Semua",
+              "own": "Milik sendiri saja",
+              "creator": "Milik sendiri saja",
+              "lead": "Hanya pemimpin",
+              "disabled": "Dinonaktifkan"
+            },
+            "select_all": "Pilih Semua",
+            "high_risk_tooltip": "Ini memberikan akses yang ditingkatkan. Berikan dengan hati-hati.",
+            "folded_rows": {
+              "templates": {
+                "view": "Lihat Templat",
+                "create": "Buat Templat",
+                "edit": "Edit Templat",
+                "delete": "Hapus Templat"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "Termasuk melihat detail, lampiran, dan tautan. Juga mencakup bereaksi dan berkomentar pada Initiatives.",
+                  "edit": "Termasuk membuat lampiran dan mengelola tautan Initiative."
+                },
+                "workspace_templates": {
+                  "view": "Termasuk melihat templat proyek, work item, dan Page.",
+                  "create": "Termasuk membuat templat proyek, work item, dan Page.",
+                  "edit": "Termasuk mengedit templat proyek, work item, dan Page.",
+                  "delete": "Termasuk menghapus templat proyek, work item, dan Page."
+                },
+                "epics": {
+                  "view": "Termasuk melihat tautan Epic dan bereaksi pada Epics.",
+                  "edit": "Termasuk membuat, mengedit, dan menghapus tautan Epic."
+                },
+                "epic_updates": {
+                  "view": "Termasuk melihat dan bereaksi pada pembaruan. Juga mencakup melihat, membuat, dan bereaksi pada komentar pembaruan."
+                },
+                "project_updates": {
+                  "view": "Termasuk melihat dan bereaksi pada pembaruan. Juga mencakup melihat, membuat, dan bereaksi pada komentar pembaruan."
+                },
+                "project_templates": {
+                  "view": "Termasuk melihat templat work item dan Page.",
+                  "create": "Termasuk membuat templat work item dan Page.",
+                  "edit": "Termasuk mengedit templat work item dan Page.",
+                  "delete": "Termasuk menghapus templat work item dan Page."
+                }
+              }
+            },
+            "search_placeholder": "Cari izin...",
+            "no_results": "Tidak ada izin yang cocok",
+            "clear_search": "Bersihkan",
+            "preset_label": "Mulai dari peran sistem:",
+            "preset_none": "Tidak ada (kosong)",
+            "empty_permissions_note": "Pilih setidaknya satu izin untuk menyimpan skema ini."
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "Peran & skema proyek",
+        "sidebar_label": "Proyek"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "Peran & skema workspace",
+        "sidebar_label": "Workspace"
+      },
+      "roles_and_schemes": {
+        "description": "Konfigurasi properti dan grup interaksi untuk dilampirkan ke satu atau beberapa tipe work item",
+        "tabs": {
+          "roles": "Peran",
+          "permission_schemes": "Skema Izin"
+        },
+        "create_role": {
+          "modal_title": "Buat peran baru",
+          "button_label": "Buat Peran",
+          "role_title_label": "Judul peran",
+          "role_title_placeholder": "Tambahkan judul unik",
+          "description_label": "Deskripsi",
+          "description_placeholder": "Tambahkan judul unik",
+          "create_button": "Buat peran",
+          "error_toast_description": "Peran tidak dapat dibuat. Silakan coba lagi."
+        },
+        "create_scheme": {
+          "title": "Buat skema izin",
+          "description": "Tentukan skema izin dengan mengatur nama, deskripsi, dan izinnya.",
+          "button_label": "Buat Skema Izin",
+          "create_button": "Buat skema izin",
+          "error_toast_description": "Skema izin tidak dapat dibuat. Silakan coba lagi."
+        },
+        "role_detail": {
+          "back": "Kembali",
+          "permission_schemes_title": "Skema Izin",
+          "attach_button": "Lampirkan Skema Izin",
+          "empty_title": "Belum ada skema izin",
+          "empty_description": "Buat label yang dipersonalisasi untuk mengkategorikan dan mengelola work items Anda secara efektif.",
+          "error_toast_description": "Peran tidak dapat diperbarui. Silakan coba lagi."
+        },
+        "scheme_detail": {
+          "title": "Detail Skema Izin",
+          "description": "Lihat gambaran lengkap tentang skema dan izin yang ditetapkan.",
+          "edit_title": "Edit skema izin",
+          "edit_description": "Perbarui nama, izin, dan pengaturan skema.",
+          "edit_button": "Edit Skema Izin",
+          "error_toast_description": "Skema izin tidak dapat diperbarui. Silakan coba lagi.",
+          "scheme_information_title": "Informasi skema",
+          "scheme_information_description": "Nama skema dan deskripsi singkat untuk memperjelas tujuannya.",
+          "scheme_name": "Nama skema",
+          "scheme_name_placeholder": "Beri nama skema",
+          "scheme_name_error": "Nama wajib diisi.",
+          "scheme_description": "Deskripsi",
+          "scheme_description_placeholder": "Jelaskan skema"
+        },
+        "attach_schemes": {
+          "title": "Skema Izin",
+          "search_placeholder": "Cari",
+          "permissions_count": "izin",
+          "discard": "Buang",
+          "add": "Tambah"
+        },
+        "quick_actions": {
+          "edit_scheme": "Edit skema izin",
+          "delete_scheme": "Hapus skema izin",
+          "edit_role": "Edit detail peran",
+          "enable_role": "Aktifkan peran",
+          "delete_role": "Hapus peran"
+        },
+        "edit_role": {
+          "modal_title": "Edit detail peran",
+          "save_button": "Simpan perubahan",
+          "saving": "Menyimpan...",
+          "error_toast_description": "Peran tidak dapat diperbarui. Silakan coba lagi."
+        },
+        "delete_role": {
+          "confirm_title": "Hapus \"{roleName}\"?",
+          "has_members_message": "Peran ini ditetapkan pada {count} anggota. Menghapusnya bersifat permanen dan tidak dapat dibatalkan.",
+          "no_members_message": "Peran ini tidak memiliki anggota yang ditetapkan. Menghapusnya bersifat permanen dan tidak dapat dibatalkan.",
+          "reassign_label": "Tetapkan ulang anggota ke",
+          "reassign_placeholder": "Pilih peran",
+          "submit_button": "Tetapkan ulang dan Hapus",
+          "submit_button_no_members": "Hapus",
+          "submitting": "Menghapus...",
+          "error_toast_description": "Peran tidak dapat dihapus. Silakan coba lagi.",
+          "success_toast_message": "Peran berhasil dihapus."
+        },
+        "disable_role": {
+          "confirm_title": "Nonaktifkan \"{roleName}\"?",
+          "has_members_message": "Peran ini saat ini ditetapkan pada {memberCount} anggota. Anda harus memilih peran untuk menetapkan ulang anggota yang ada sebelum melanjutkan.",
+          "no_members_message": "Peran ini tidak memiliki anggota yang ditetapkan. Peran akan dinonaktifkan.",
+          "reassign_label": "Tetapkan ulang anggota ke",
+          "reassign_placeholder": "Pilih peran",
+          "submit_button": "Tetapkan ulang dan Nonaktifkan",
+          "submit_button_no_members": "Nonaktifkan",
+          "submitting": "Menonaktifkan...",
+          "error_toast_description": "Peran tidak dapat dinonaktifkan. Silakan coba lagi.",
+          "success_toast_message": "Peran berhasil dinonaktifkan."
+        },
+        "enable_role": {
+          "confirm_title": "Aktifkan \"{roleName}\"?",
+          "confirm_message": "Peran ini akan menjadi aktif dan dapat ditetapkan pada anggota.",
+          "submit_button": "Aktifkan",
+          "submitting": "Mengaktifkan...",
+          "success_toast_message": "Peran berhasil diaktifkan."
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "Hapus Skema Izin?",
+          "has_roles_message": "Skema ini digunakan di {count} peran. Menghapusnya akan mencabut izinnya dari peran-peran tersebut. Tindakan ini tidak dapat dibatalkan.",
+          "no_roles_message": "Skema izin ini tidak digunakan oleh peran mana pun. Skema akan dihapus secara permanen.",
+          "submit_button": "Konfirmasi",
+          "submitting": "Menghapus...",
+          "error_toast_description": "Skema izin tidak dapat dihapus. Silakan coba lagi.",
+          "in_use_error": "Hapus skema ini dari semua peran sebelum menghapus.",
+          "success_toast_message": "Skema izin berhasil dihapus."
+        }
+      }
+    }
+  }
+}

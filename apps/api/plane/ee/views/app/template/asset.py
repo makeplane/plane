@@ -23,6 +23,7 @@ from plane.db.models import FileAsset
 from plane.settings.storage import S3Storage
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class AssetCopyEndpoint(BaseAPIView):
     # Define the entity type mapping as a class constant
     ENTITY_TYPE_MAPPER = {

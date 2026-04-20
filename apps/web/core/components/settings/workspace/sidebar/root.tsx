@@ -20,10 +20,11 @@ import { WorkspaceSettingsSidebarItemCategories } from "./item-categories";
 
 type Props = {
   className?: string;
+  workspaceSlug: string;
 };
 
 export function WorkspaceSettingsSidebarRoot(props: Props) {
-  const { className } = props;
+  const { className, workspaceSlug } = props;
 
   return (
     <ScrollArea
@@ -35,8 +36,8 @@ export function WorkspaceSettingsSidebarRoot(props: Props) {
         className
       )}
     >
-      <WorkspaceSettingsSidebarHeader />
-      <WorkspaceSettingsSidebarItemCategories />
+      <WorkspaceSettingsSidebarHeader workspaceSlug={workspaceSlug} />
+      <WorkspaceSettingsSidebarItemCategories workspaceSlug={workspaceSlug} />
     </ScrollArea>
   );
 }

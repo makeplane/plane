@@ -86,7 +86,7 @@ export const GroupSyncingRoot = observer(function GroupSyncingRoot(props: GroupS
       />
 
       <div className={cn({ "opacity-60 pointer-events-none select-none": !isEnabled })}>
-        <ConfigureGroupSync syncConfig={syncConfig} handleChange={handleChange} />
+        <ConfigureGroupSync workspaceSlug={workspaceSlug} syncConfig={syncConfig} handleChange={handleChange} />
         <GroupMapping workspaceSlug={workspaceSlug} disabled={!isEnabled} />
       </div>
     </div>

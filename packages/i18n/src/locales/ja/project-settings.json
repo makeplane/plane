@@ -22,10 +22,6 @@
       "label": "メンバー",
       "project_lead": "プロジェクトリーダー",
       "default_assignee": "デフォルトの担当者",
-      "guest_super_permissions": {
-        "title": "ゲストユーザーにすべての作業項目の閲覧権限を付与:",
-        "sub_heading": "これにより、ゲストはプロジェクトのすべての作業項目を閲覧できるようになります。"
-      },
       "invite_members": {
         "title": "メンバーを招待",
         "sub_heading": "プロジェクトに参加するメンバーを招待します。",

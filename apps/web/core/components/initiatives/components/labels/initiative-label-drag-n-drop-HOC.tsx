@@ -22,13 +22,10 @@ import { observer } from "mobx-react";
 import { createRoot } from "react-dom/client";
 
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import type { InstructionType, TInitiativeLabel } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 
 // local imports
-import { useUserPermissions } from "@/hooks/store/user";
 import { InitiativeLabelName } from "./initiative-label-name";
 import { getInitiativeCanDrop } from "./initiative-label-utils";
 
@@ -51,10 +48,11 @@ type Props = {
   isLastChild: boolean;
   children: (isDragging: boolean, dragHandleRef: MutableRefObject<HTMLButtonElement | null>) => React.ReactNode;
   onDrop: (draggingLabelId: string, droppedLabelId: string | undefined, dropAtEndOfList: boolean) => void;
+  canReorder: boolean;
 };
 
 export const InitiativeLabelDndHOC = observer(function InitiativeLabelDndHOC(props: Props) {
-  const { label, isLastChild, children, onDrop } = props;
+  const { label, isLastChild, children, onDrop, canReorder } = props;
 
   // states
   const [isDragging, setIsDragging] = useState(false);
@@ -64,14 +62,11 @@ export const InitiativeLabelDndHOC = observer(function InitiativeLabelDndHOC(pro
   const labelRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
 
-  const { allowPermissions } = useUserPermissions();
-  const isEditable = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-
   useEffect(() => {
     const element = labelRef.current;
     const dragHandleElement = dragHandleRef.current;
 
-    if (!element || !isEditable) return;
+    if (!element || !canReorder) return;
 
     return combine(
       draggable({
@@ -144,7 +139,7 @@ export const InitiativeLabelDndHOC = observer(function InitiativeLabelDndHOC(pro
         },
       })
     );
-  }, [label, isLastChild, onDrop, isEditable]);
+  }, [label, isLastChild, onDrop, canReorder]);
 
   return (
     <div ref={labelRef}>

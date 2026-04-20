@@ -19,22 +19,22 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Cycle
-from plane.app.permissions import WorkspaceViewerPermission
 from plane.app.serializers.cycle import CycleSerializer
+from plane.permissions import WorkspacePermissions, can
 
 
 class WorkspaceCyclesEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceViewerPermission]
-
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         cycles = (
             Cycle.objects.filter(workspace__slug=slug)
             .select_related("project")
             .select_related("workspace")
             .select_related("owned_by")
-            .filter(archived_at__isnull=True)
+            .filter(archived_at__isnull=True, project__archived_at__isnull=True)
+            .accessible_to(request.user.id, slug)
             .annotate(
                 total_issues=Count(
                     "issue_cycle",

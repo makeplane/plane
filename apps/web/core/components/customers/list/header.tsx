@@ -12,36 +12,30 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CustomersIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CustomerSearch } from "@/components/customers/list";
+import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomersListHeader = observer(function CustomersListHeader() {
-  const { workspaceSlug } = useParams();
+type CustomersListHeaderProps = {
+  workspaceSlug: string;
+};
+
+export const CustomersListHeader = observer(function CustomersListHeader(props: CustomersListHeaderProps) {
+  const { workspaceSlug } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { currentWorkspace } = useWorkspace();
-  const { allowPermissions } = useUserPermissions();
   const { toggleCreateCustomerModal } = useCommandPalette();
-  // derived values
-  const workspaceId = currentWorkspace?.id || undefined;
-  const hasAdminLevelPermissions = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-
-  if (!workspaceSlug || !workspaceId) return <></>;
+  const { permissions } = useCustomers();
 
   return (
     <>
@@ -59,7 +53,7 @@ export const CustomersListHeader = observer(function CustomersListHeader() {
           </Breadcrumbs>
           <div className="flex items-center gap-2">
             <CustomerSearch />
-            {hasAdminLevelPermissions && (
+            {permissions.getCanCreate(workspaceSlug) && (
               <Button
                 variant="primary"
                 size="lg"

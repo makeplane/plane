@@ -19,15 +19,16 @@ import type { TCustomer } from "@plane/types";
 import { SidebarWrapper } from "@/components/common/layout/sidebar/sidebar-wrapper";
 import { CustomerAdditionalPropertyValuesUpdate, CustomerDefaultSidebarProperties } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
 type TProps = {
   customerId: string;
   workspaceSlug: string;
-  isDisabled: boolean;
+  permissions: TCustomerDetailPermissions;
 };
 
 export const CustomerDetailSidebar = observer(function CustomerDetailSidebar(props: TProps) {
-  const { customerId, workspaceSlug, isDisabled } = props;
+  const { customerId, workspaceSlug, permissions } = props;
 
   // hooks
   const { getCustomerById, updateCustomer, customerDetailSidebarCollapsed } = useCustomers();
@@ -61,12 +62,12 @@ export const CustomerDetailSidebar = observer(function CustomerDetailSidebar(pro
             <CustomerDefaultSidebarProperties
               customer={customer}
               updateProperty={updateProperty}
-              isDisabled={isDisabled}
+              canEditProperty={permissions.canEditProperty}
             />
             <CustomerAdditionalPropertyValuesUpdate
               customerId={customerId}
               workspaceSlug={workspaceSlug}
-              isDisabled={isDisabled}
+              canEditProperty={permissions.canEditProperty}
             />
           </div>
         </ScrollArea>

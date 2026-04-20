@@ -22,7 +22,7 @@ from rest_framework.response import Response
 from ..base import BaseAPIView
 from plane.db.models import FileAsset, Workspace
 from plane.settings.storage import S3Storage
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspaceAssetPermissions
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
 )
@@ -35,8 +35,8 @@ class SiloAssetsEndpoint(BaseAPIView):
     It creates asset entries and returns presigned URLs for direct S3 upload.
     """
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.NOTION_IMPORTER)
+    @can(WorkspaceAssetPermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         """Create a new unlimited asset upload"""
 

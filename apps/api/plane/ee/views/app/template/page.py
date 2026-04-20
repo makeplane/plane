@@ -21,7 +21,7 @@ from .base import TemplateBaseEndpoint
 from plane.db.models import Workspace
 from plane.ee.models import Template, PageTemplate
 
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspacePageTemplatePermissions, ProjectPageTemplatePermissions
 from plane.ee.serializers import (
     TemplateSerializer,
     TemplateDataSerializer,
@@ -34,8 +34,8 @@ from plane.payment.flags.flag import FeatureFlag
 class PageTemplateEndpoint(TemplateBaseEndpoint):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(WorkspacePageTemplatePermissions.VIEW)
     def get(self, request, slug, pk=None):
         if pk:
             templates = (
@@ -70,8 +70,8 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(WorkspacePageTemplatePermissions.CREATE)
     def post(self, request, slug):
         # workspace home
         workspace = Workspace.objects.get(slug=slug)
@@ -116,8 +116,8 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(WorkspacePageTemplatePermissions.EDIT)
     def patch(self, request, slug, pk):
         template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PAGE, pk=pk)
         template_data = request.data.pop("template_data", {})
@@ -155,8 +155,8 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(template)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(WorkspacePageTemplatePermissions.DELETE)
     def delete(self, request, slug, pk):
         template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PAGE, pk=pk)
         template.delete()
@@ -166,8 +166,8 @@ class PageTemplateEndpoint(TemplateBaseEndpoint):
 class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(ProjectPageTemplatePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         templates = Template.objects.filter(
             workspace__slug=slug,
@@ -183,8 +183,8 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(ProjectPageTemplatePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         # get the template data
         template_data = request.data.get("template_data", {})
@@ -230,8 +230,8 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
             template.delete()
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(ProjectPageTemplatePermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         template = Template.objects.get(
             workspace__slug=slug,
@@ -274,8 +274,8 @@ class PageProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(template)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.PAGE_TEMPLATES)
+    @can(ProjectPageTemplatePermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         template = Template.objects.get(
             workspace__slug=slug,

@@ -13,14 +13,11 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { CustomersIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Popover } from "@plane/propel/popover";
 // components
 import { getCustomerLogoSrc } from "@/components/customers/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useCustomers } from "@/plane-web/hooks/store";
 import { CustomerPreview } from "./preview";
 
@@ -28,16 +25,15 @@ type TCustomerListItem = {
   customerId: string;
   isPeekView?: boolean;
   workspaceSlug: string;
+  canPreview: boolean;
 };
 
 export const CustomerSidebarListitem = observer(function CustomerSidebarListitem(props: TCustomerListItem) {
-  const { customerId, isPeekView, workspaceSlug } = props;
+  const { customerId, isPeekView, workspaceSlug, canPreview } = props;
   // hooks
   const { getCustomerById } = useCustomers();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const customer = getCustomerById(customerId);
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const customerLogoSrc = getCustomerLogoSrc(customer);
 
   if (!customer) return null;
@@ -66,7 +62,7 @@ export const CustomerSidebarListitem = observer(function CustomerSidebarListitem
       />
 
       <Popover.Content align={"center"} side={isPeekView ? "left" : "right"} positionerClassName="z-40">
-        {isAdmin && <CustomerPreview workspaceSlug={workspaceSlug} customer={customer} />}
+        {canPreview && <CustomerPreview workspaceSlug={workspaceSlug} customer={customer} />}
       </Popover.Content>
     </Popover>
   );

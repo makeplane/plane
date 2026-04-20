@@ -20,12 +20,18 @@ from plane.ee.views.base import BaseViewSet
 from plane.app.serializers import PageUserSerializer
 from plane.ee.permissions import ProjectPagePermission
 from plane.ee.bgtasks.export_page_task import page_export_task
+from plane.permissions import PagePermissions
+from plane.permissions import HasResourcePermission
 
 
 class ProjectPageExportViewSet(BaseViewSet):
     serializer_class = PageUserSerializer
     model = PageUser
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
+
+    action_permissions = {
+        "create": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+    }
 
     def create(self, request, slug, project_id, page_id):
         page = Page.objects.get(pk=page_id, workspace__slug=slug)

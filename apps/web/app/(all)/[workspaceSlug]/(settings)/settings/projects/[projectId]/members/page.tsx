@@ -13,10 +13,8 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { ProjectMemberList } from "@/components/projects/settings/members/list";
 import { ProjectSettingsMemberDefaults } from "@/components/projects/settings/members/defaults";
@@ -27,7 +25,6 @@ import { ProjectTeamspaceList } from "@/components/projects/settings/teamspaces/
 import { getProjectSettingsPageLabelI18nKey } from "@/helpers/settings/project";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // types
 import type { Route } from "./+types/page";
 // local imports
@@ -39,28 +36,26 @@ function MembersSettingsPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { currentProjectDetails } = useProject();
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
+  const { currentProjectDetails, permissions: projectPermissions } = useProject();
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Members` : undefined;
-  const isProjectMemberOrAdmin = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const canPerformProjectMemberActions = isProjectMemberOrAdmin || isWorkspaceAdmin;
-
-  if (workspaceUserInfo && !canPerformProjectMemberActions) {
-    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
-  }
+  const permissions = {
+    canManageMembers: projectPermissions.getCanManageMembers(workspaceSlug, projectId),
+    canAccessMembersActivity: projectPermissions.getCanAccessMembersActivity(workspaceSlug, projectId),
+    canChangeRole: (targetRoleSlug: string) =>
+      projectPermissions.getCanChangeRole(workspaceSlug, projectId, targetRoleSlug),
+    canRemoveMember: projectPermissions.getCanRemoveMember(workspaceSlug, projectId),
+    canLinkTeamspace: projectPermissions.getCanLinkTeamspace(workspaceSlug, projectId),
+    canRemoveTeamspace: projectPermissions.getCanRemoveTeamspace(workspaceSlug, projectId),
+  };
 
   return (
     <SettingsContentWrapper header={<MembersProjectSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
       <SettingsHeading title={t(getProjectSettingsPageLabelI18nKey("members", "common.members"))} />
-      <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} />
-      <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} />
-      <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} />
+      <ProjectSettingsMemberDefaults projectId={projectId} workspaceSlug={workspaceSlug} permissions={permissions} />
+      <ProjectTeamspaceList projectId={projectId} workspaceSlug={workspaceSlug} permissions={permissions} />
+      <ProjectMemberList projectId={projectId} workspaceSlug={workspaceSlug} permissions={permissions} />
     </SettingsContentWrapper>
   );
 }

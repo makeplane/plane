@@ -14,3 +14,8 @@ from django.apps import AppConfig
 
 class AppApiConfig(AppConfig):
     name = "plane.app"
+
+    def ready(self):
+        from plane.permissions.inheritance import validate_permission_system_consistency
+
+        validate_permission_system_consistency()

@@ -18,7 +18,6 @@ import { Plus, Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { CheckIcon, LabelPropertyIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -26,8 +25,8 @@ import { ComboDropDown } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useDropdown } from "@/hooks/use-dropdown";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   value: string[];
@@ -68,17 +67,20 @@ export const LabelsDropdown = observer(function LabelsDropdown(props: Props) {
   const { t } = useTranslation();
   // store hooks
   const { workspaceLabels, getLabelById, createLabel } = useWorkspaceProjectLabels();
-  const { allowPermissions } = useUserPermissions();
+  const {
+    permissions: { getLabelPermissions },
+  } = useWorkspace();
   // derived values
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const labelPermissions = getLabelPermissions(workspaceSlug);
+  const canCreateLabel = labelPermissions.canCreate;
 
   const options = (workspaceLabels ?? []).map((label) => ({
     value: label.id,
     query: label.name,
     content: (
       <div className="flex items-center gap-2">
-        <LabelPropertyIcon color={label.color} className="h-2.5 w-2.5 flex-shrink-0" />
-        <span className="flex-grow truncate">{label.name}</span>
+        <LabelPropertyIcon color={label.color} className="h-2.5 w-2.5 shrink-0" />
+        <span className="grow truncate">{label.name}</span>
       </div>
     ),
   }));
@@ -149,18 +151,18 @@ export const LabelsDropdown = observer(function LabelsDropdown(props: Props) {
             {selectedLabels.length > 0 ? (
               <>
                 {selectedLabels.slice(0, 2).map((label) => (
-                  <span key={label!.id} className="flex items-center gap-1 flex-shrink-0">
-                    <LabelPropertyIcon color={label!.color} className="size-3 flex-shrink-0" />
+                  <span key={label!.id} className="flex items-center gap-1 shrink-0">
+                    <LabelPropertyIcon color={label!.color} className="size-3 shrink-0" />
                     <span className="truncate max-w-[60px]">{label!.name}</span>
                   </span>
                 ))}
                 {selectedLabels.length > 2 && (
-                  <span className="flex-shrink-0 text-tertiary">+{selectedLabels.length - 2}</span>
+                  <span className="shrink-0 text-tertiary">+{selectedLabels.length - 2}</span>
                 )}
               </>
             ) : (
               <>
-                <LabelPropertyIcon className="h-3 w-3 flex-shrink-0" />
+                <LabelPropertyIcon className="h-3 w-3 shrink-0" />
                 <span>{t("labels")}</span>
               </>
             )}
@@ -222,8 +224,8 @@ export const LabelsDropdown = observer(function LabelsDropdown(props: Props) {
                     }}
                   >
                     <>
-                      <span className="flex-grow truncate">{option.content}</span>
-                      {value.includes(option.value) && <CheckIcon className="h-3.5 w-3.5 flex-shrink-0 text-primary" />}
+                      <span className="grow truncate">{option.content}</span>
+                      {value.includes(option.value) && <CheckIcon className="h-3.5 w-3.5 shrink-0 text-primary" />}
                     </>
                   </Combobox.Option>
                 ))
@@ -232,7 +234,7 @@ export const LabelsDropdown = observer(function LabelsDropdown(props: Props) {
               )}
             </div>
             {/* Create new label */}
-            {isAdmin && (
+            {canCreateLabel && (
               <div className="mt-2 border-t border-subtle pt-2">
                 {isCreating ? (
                   <div className="flex items-center gap-1.5">
@@ -265,7 +267,7 @@ export const LabelsDropdown = observer(function LabelsDropdown(props: Props) {
                       setIsCreating(true);
                     }}
                   >
-                    <Plus className="h-3 w-3 flex-shrink-0" />
+                    <Plus className="h-3 w-3 shrink-0" />
                     <span>{t("create_new_label")}</span>
                   </button>
                 )}

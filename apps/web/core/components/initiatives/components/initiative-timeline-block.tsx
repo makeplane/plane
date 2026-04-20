@@ -148,10 +148,10 @@ export const InitiativeTimelineSidebarBlock = observer(function InitiativeTimeli
         {initiative?.logo_props?.in_use ? (
           <Logo logo={initiative?.logo_props} size={14} type="lucide" />
         ) : (
-          <InitiativeIcon className="h-3.5 w-3.5 text-tertiary flex-shrink-0" />
+          <InitiativeIcon className="h-3.5 w-3.5 text-tertiary shrink-0" />
         )}
         <Tooltip tooltipContent={initiative.name} isMobile={isMobile}>
-          <span className="flex-grow truncate text-13 font-medium">{initiative.name}</span>
+          <span className="grow truncate text-13 font-medium">{initiative.name}</span>
         </Tooltip>
       </div>
     </ControlLink>

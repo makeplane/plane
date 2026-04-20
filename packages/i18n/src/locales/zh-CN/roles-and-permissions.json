@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "角色和权限方案",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "角色和权限",
+        "roles_list": {
+          "workspace": {
+            "label": "Workspace 角色"
+          },
+          "project": {
+            "label": "项目角色"
+          }
+        },
+        "compare_permissions": "比较权限",
+        "create_role": {
+          "title": "创建角色",
+          "description": "通过设置名称、描述和实例中用户的权限来定义角色。",
+          "button_label": "创建新角色",
+          "error_toast_description": "无法创建角色。请重试。"
+        },
+        "edit_role": {
+          "title": "编辑角色",
+          "description": "更新角色的名称、权限和设置，以控制成员可访问的内容和可执行的操作。",
+          "error_toast_description": "无法更新角色。请重试。"
+        },
+        "role_details": {
+          "role_information_title": "基本信息",
+          "role_information_description": "角色的名称和简要描述，以阐明其用途。",
+          "role_name": "角色名称",
+          "role_description": "描述",
+          "role_details": "角色详情",
+          "role_details_description": "查看角色及其分配权限的完整概览。",
+          "edit_permissions": "编辑权限"
+        },
+        "role_form": {
+          "name": "角色名称",
+          "name_placeholder": "为角色命名",
+          "name_error": "名称为必填项。",
+          "description": "描述",
+          "description_placeholder": "描述该角色",
+          "create_button": "创建角色"
+        },
+        "role_actions": {
+          "duplicate": "复制"
+        },
+        "discard_changes_modal": {
+          "title": "放弃更改？",
+          "description": "您的更改尚未保存。离开此页面将放弃这些更改。",
+          "cancel": "放弃更改",
+          "confirm": "继续编辑"
+        },
+        "delete_role_modal": {
+          "title": "删除角色？",
+          "description": "您确定要删除此角色吗？此操作无法撤销。",
+          "error_toast_message": "删除角色失败。请重试。"
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "Workspace 角色和权限",
+            "project": "项目角色和权限"
+          },
+          "permissions_header": "权限",
+          "view_mode": {
+            "sets": "集合视图",
+            "permissions": "权限字符串"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "Workspace 设置",
+              "description": "核心 Workspace 配置：名称、徽标、货币、域名、删除和所有权转移。",
+              "workspace": {
+                "view": { "label": "查看 Workspace" },
+                "edit": { "label": "编辑 Workspace 设置" },
+                "manage": { "label": "管理 Workspace" },
+                "invite": { "label": "邀请成员" },
+                "delete": { "label": "删除 Workspace" },
+                "transfer": { "label": "转移所有权" }
+              }
+            },
+            "member_management": {
+              "title": "成员管理",
+              "description": "邀请、编辑、导入和移除 Workspace 成员。",
+              "workspace_member": {
+                "view": { "label": "查看成员" },
+                "invite": { "label": "邀请成员" },
+                "edit": { "label": "编辑成员详情" },
+                "import": { "label": "导入成员（CSV / SSO）" },
+                "change_role": { "label": "更改成员角色" },
+                "remove": { "label": "移除成员" }
+              }
+            },
+            "project_management": {
+              "title": "项目管理",
+              "description": "从 Workspace 上下文创建和管理项目。",
+              "project": {
+                "browse": { "label": "浏览项目" },
+                "view": { "label": "查看项目详情" },
+                "create": { "label": "创建项目" },
+                "edit": { "label": "编辑项目设置" },
+                "react": { "label": "对项目作出反应" },
+                "publish": { "label": "发布项目（设为公开）" },
+                "archive": { "label": "归档项目" },
+                "delete": { "label": "删除项目" },
+                "manage": { "label": "管理项目访问" }
+              }
+            },
+            "role_administration": {
+              "title": "角色管理",
+              "description": "创建和管理自定义角色和项目角色。",
+              "custom_role": {
+                "view": { "label": "查看自定义角色" },
+                "create": { "label": "创建自定义角色" },
+                "edit": { "label": "编辑自定义角色" },
+                "delete": { "label": "删除自定义角色" }
+              }
+            },
+            "workspace_pages": {
+              "title": "Workspace Pages（Wiki）",
+              "description": "Workspace 级别的文档和 Wiki。",
+              "wiki": {
+                "view": { "label": "查看 Wiki" },
+                "create": { "label": "创建 Wiki Pages" },
+                "edit": { "label": "编辑 Wiki Pages" },
+                "share": { "label": "共享 Wiki Pages" },
+                "delete": { "label": "删除 Wiki Pages" },
+                "comment": { "label": "评论 Wiki Pages" }
+              }
+            },
+            "workspace_views": {
+              "title": "Workspace 视图",
+              "description": "Workspace 级别的已保存筛选器和视图管理。",
+              "workspace_workitem_view": {
+                "view": { "label": "查看 Workspace 视图" },
+                "create": { "label": "创建 Workspace 视图" },
+                "edit": { "label": "编辑 Workspace 视图" },
+                "share": { "label": "共享 Workspace 视图" },
+                "publish": { "label": "发布 Workspace 视图" },
+                "export": { "label": "导出 Workspace 视图" },
+                "delete": { "label": "删除 Workspace 视图" }
+              }
+            },
+            "initiatives": {
+              "title": "Initiatives",
+              "description": "跨项目的 Initiative 跟踪，包括评论、附件、链接和更新。",
+              "initiative": {
+                "view": { "label": "查看 Initiatives" },
+                "create": { "label": "创建 Initiatives" },
+                "edit": { "label": "编辑 Initiatives" },
+                "manage": { "label": "管理 Initiatives" },
+                "react": { "label": "对 Initiatives 作出反应" },
+                "delete": { "label": "删除 Initiatives" }
+              },
+              "initiative_comment": {
+                "view": { "label": "查看 Initiative 评论" },
+                "create": { "label": "评论 Initiatives" },
+                "edit": { "label": "编辑 Initiative 评论" },
+                "react": { "label": "对 Initiative 评论作出反应" },
+                "delete": { "label": "删除 Initiative 评论" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "查看 Initiative 附件" },
+                "create": { "label": "添加 Initiative 附件" },
+                "delete": { "label": "删除 Initiative 附件" }
+              },
+              "initiative_link": {
+                "view": { "label": "查看 Initiative 链接" },
+                "create": { "label": "添加 Initiative 链接" },
+                "edit": { "label": "编辑 Initiative 链接" },
+                "delete": { "label": "删除 Initiative 链接" }
+              }
+            },
+            "teamspaces": {
+              "title": "Teamspaces",
+              "description": "浏览、创建和管理 Teamspaces。",
+              "teamspace": {
+                "browse": { "label": "浏览 Teamspaces" },
+                "view": { "label": "查看 Teamspace 详情" },
+                "create": { "label": "创建 Teamspaces" },
+                "edit": { "label": "编辑 Teamspaces" },
+                "manage": { "label": "管理 Teamspace 成员" },
+                "delete": { "label": "删除 Teamspaces" }
+              }
+            },
+            "integrations": {
+              "title": "集成",
+              "description": "第三方集成、Webhooks 和 API 令牌。",
+              "integration": {
+                "view": { "label": "查看集成" },
+                "create": { "label": "创建集成" },
+                "edit": { "label": "配置集成" },
+                "delete": { "label": "删除集成" }
+              },
+              "webhook": {
+                "view": { "label": "查看 Webhooks" },
+                "create": { "label": "创建 Webhooks" },
+                "edit": { "label": "编辑 Webhooks" },
+                "delete": { "label": "删除 Webhooks" }
+              },
+              "api_token": {
+                "view": { "label": "查看 API 令牌" },
+                "create": { "label": "创建 API 令牌" },
+                "delete": { "label": "删除 API 令牌" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "分析与报告",
+              "description": "Workspace 级别的仪表板、分析和工作日志。",
+              "analytics": {
+                "view": { "label": "查看分析" },
+                "export": { "label": "导出分析" }
+              },
+              "dashboard": {
+                "view": { "label": "查看仪表板" },
+                "create": { "label": "创建仪表板" },
+                "edit": { "label": "编辑仪表板" },
+                "delete": { "label": "删除仪表板" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "查看工作日志" },
+                "export": { "label": "导出工作日志" }
+              },
+              "ai": {
+                "use": { "label": "使用 AI 功能" }
+              }
+            },
+            "customers": {
+              "title": "客户反馈",
+              "description": "客户和客户请求管理。",
+              "customer": {
+                "view": { "label": "查看客户" },
+                "create": { "label": "创建客户" },
+                "edit": { "label": "编辑客户" },
+                "delete": { "label": "删除客户" }
+              },
+              "customer_attachment": {
+                "create": { "label": "添加客户附件" },
+                "delete": { "label": "删除客户附件" }
+              }
+            },
+            "work_item_relations": {
+              "title": "工作项关系",
+              "description": "管理工作项的自定义关系类型定义。",
+              "workitem_relation": {
+                "view": { "label": "查看关系定义" },
+                "create": { "label": "创建关系定义" },
+                "edit": { "label": "编辑关系定义" },
+                "delete": { "label": "删除关系定义" }
+              }
+            },
+            "workspace_templates": {
+              "title": "模板",
+              "description": "创建和管理 Workspace 级别的工作项、Page 和项目模板。",
+              "workspace_workitem_template": {
+                "view": { "label": "查看工作项模板" },
+                "create": { "label": "创建工作项模板" },
+                "edit": { "label": "编辑工作项模板" },
+                "delete": { "label": "删除工作项模板" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "查看 Page 模板" },
+                "create": { "label": "创建 Page 模板" },
+                "edit": { "label": "编辑 Page 模板" },
+                "delete": { "label": "删除 Page 模板" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "查看项目模板" },
+                "create": { "label": "创建项目模板" },
+                "edit": { "label": "编辑项目模板" },
+                "delete": { "label": "删除项目模板" }
+              }
+            },
+            "workspace_automations": {
+              "title": "Workspace 自动化",
+              "description": "Workspace 级别的自动化规则和配置。",
+              "workspace_automation": {
+                "view": { "label": "查看 Workspace 自动化" },
+                "create": { "label": "创建 Workspace 自动化" },
+                "edit": { "label": "编辑 Workspace 自动化" },
+                "delete": { "label": "删除 Workspace 自动化" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "项目成员",
+              "description": "邀请、编辑和移除项目成员。",
+              "project_member": {
+                "view": { "label": "查看项目成员" },
+                "invite": { "label": "邀请成员" },
+                "edit": { "label": "编辑成员详情" },
+                "change_role": { "label": "更改成员角色" },
+                "remove": { "label": "移除成员" }
+              }
+            },
+            "work_items": {
+              "title": "工作项",
+              "description": "主要的工作项界面。包括评论、附件、链接、关系和自定义属性。",
+              "workitem": {
+                "view": { "label": "查看工作项" },
+                "create": { "label": "创建工作项" },
+                "edit": { "label": "编辑工作项" },
+                "bulk_edit": { "label": "批量编辑工作项" },
+                "export": { "label": "导出工作项" },
+                "react": { "label": "对工作项作出反应" },
+                "delete": { "label": "删除工作项" }
+              },
+              "comment": {
+                "create": { "label": "添加评论" },
+                "edit": { "label": "编辑评论" },
+                "react": { "label": "对评论作出反应" },
+                "delete": { "label": "删除评论" }
+              },
+              "attachment": {
+                "view": { "label": "查看附件" },
+                "create": { "label": "添加附件" },
+                "delete": { "label": "删除附件" }
+              },
+              "workitem_link": {
+                "view": { "label": "查看工作项链接" },
+                "create": { "label": "添加工作项链接" },
+                "edit": { "label": "编辑工作项链接" },
+                "delete": { "label": "删除工作项链接" }
+              },
+              "issue_property": {
+                "view": { "label": "查看自定义属性" },
+                "edit": { "label": "编辑自定义属性" }
+              }
+            },
+            "epics": {
+              "title": "Epics",
+              "description": "Epic 生命周期，包括链接、属性和更新线程。",
+              "epic": {
+                "view": { "label": "查看 Epics" },
+                "create": { "label": "创建 Epics" },
+                "edit": { "label": "编辑 Epics" },
+                "delete": { "label": "删除 Epics" }
+              },
+              "epic_link": {
+                "view": { "label": "查看 Epic 链接" },
+                "create": { "label": "添加 Epic 链接" },
+                "edit": { "label": "编辑 Epic 链接" },
+                "delete": { "label": "删除 Epic 链接" }
+              },
+              "epic_property": {
+                "view": { "label": "查看 Epic 属性" },
+                "edit": { "label": "编辑 Epic 属性" }
+              },
+              "epic_update": {
+                "view": { "label": "查看 Epic 更新" },
+                "create": { "label": "发布 Epic 更新" },
+                "edit": { "label": "编辑 Epic 更新" },
+                "delete": { "label": "删除 Epic 更新" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "查看 Epic 更新评论" },
+                "create": { "label": "评论 Epic 更新" },
+                "edit": { "label": "编辑 Epic 更新评论" },
+                "react": { "label": "对 Epic 更新评论作出反应" },
+                "delete": { "label": "删除 Epic 更新评论" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "Modules 和 Cycles",
+              "description": "功能分组和冲刺/Cycle 管理。",
+              "module": {
+                "view": { "label": "查看 Modules" },
+                "create": { "label": "创建 Modules" },
+                "edit": { "label": "编辑 Modules" },
+                "manage": { "label": "管理 Module 成员" },
+                "archive": { "label": "归档 Modules" },
+                "export": { "label": "导出 Modules" },
+                "delete": { "label": "删除 Modules" }
+              },
+              "cycle": {
+                "view": { "label": "查看 Cycles" },
+                "create": { "label": "创建 Cycles" },
+                "edit": { "label": "编辑 Cycles" },
+                "delete": { "label": "删除 Cycles" }
+              },
+              "cycle_update": {
+                "view": { "label": "查看 Cycle 更新" },
+                "create": { "label": "发布 Cycle 更新" },
+                "edit": { "label": "编辑 Cycle 更新" },
+                "delete": { "label": "删除 Cycle 更新" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "Pages 和视图",
+              "description": "项目级别的 Pages 和已保存视图。",
+              "page": {
+                "view": { "label": "查看 Pages" },
+                "create": { "label": "创建 Pages" },
+                "edit": { "label": "编辑 Pages" },
+                "share": { "label": "共享 Pages" },
+                "delete": { "label": "删除 Pages" }
+              },
+              "workitem_view": {
+                "view": { "label": "查看项目视图" },
+                "create": { "label": "创建项目视图" },
+                "edit": { "label": "编辑项目视图" },
+                "share": { "label": "共享项目视图" },
+                "publish": { "label": "发布项目视图" },
+                "export": { "label": "导出项目视图" },
+                "delete": { "label": "删除项目视图" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "工作项接收和分类工作流。",
+              "intake": {
+                "view": { "label": "查看 Intake" },
+                "create": { "label": "创建 Intake 项" },
+                "submit": { "label": "提交 Intake 请求" },
+                "edit": { "label": "编辑 Intake 项" },
+                "react": { "label": "对 Intake 项作出反应" },
+                "manage": { "label": "管理 Intake 项" },
+                "configure": { "label": "配置 Intake" },
+                "export": { "label": "导出 Intake" },
+                "delete": { "label": "删除 Intake 项" }
+              }
+            },
+            "project_configuration": {
+              "title": "项目配置",
+              "description": "标签、状态、估算和里程碑。",
+              "label": {
+                "view": { "label": "查看标签" },
+                "create": { "label": "创建标签" },
+                "edit": { "label": "编辑标签" },
+                "delete": { "label": "删除标签" }
+              },
+              "state": {
+                "view": { "label": "查看状态" },
+                "create": { "label": "创建状态" },
+                "edit": { "label": "编辑状态" },
+                "delete": { "label": "删除状态" }
+              },
+              "estimate": {
+                "view": { "label": "查看估算" },
+                "create": { "label": "创建估算" },
+                "edit": { "label": "编辑估算" },
+                "delete": { "label": "删除估算" }
+              },
+              "milestone": {
+                "view": { "label": "查看里程碑" },
+                "create": { "label": "创建里程碑" },
+                "edit": { "label": "编辑里程碑" },
+                "delete": { "label": "删除里程碑" }
+              }
+            },
+            "automations": {
+              "title": "自动化与工作流",
+              "description": "自动化、工作流规则和周期性工作项。",
+              "project_automation": {
+                "view": { "label": "查看自动化" },
+                "create": { "label": "创建自动化" },
+                "edit": { "label": "编辑自动化" },
+                "delete": { "label": "删除自动化" }
+              },
+              "workflow": {
+                "view": { "label": "查看工作流" },
+                "create": { "label": "创建工作流" },
+                "edit": { "label": "编辑工作流" },
+                "delete": { "label": "删除工作流" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "查看周期性项" },
+                "create": { "label": "创建周期性项" },
+                "edit": { "label": "编辑周期性项" },
+                "delete": { "label": "删除周期性项" }
+              }
+            },
+            "project_updates": {
+              "title": "项目更新",
+              "description": "进度更新以及更新上的评论。",
+              "project_update": {
+                "view": { "label": "查看项目更新" },
+                "create": { "label": "发布项目更新" },
+                "edit": { "label": "编辑项目更新" },
+                "delete": { "label": "删除项目更新" }
+              },
+              "project_update_comment": {
+                "view": { "label": "查看项目更新评论" },
+                "create": { "label": "评论项目更新" },
+                "edit": { "label": "编辑项目更新评论" },
+                "react": { "label": "对项目更新评论作出反应" },
+                "delete": { "label": "删除项目更新评论" }
+              }
+            },
+            "project_analytics": {
+              "title": "分析与活动",
+              "description": "项目分析和活动日志。",
+              "project_activity": {
+                "view": { "label": "查看活动日志" }
+              }
+            },
+            "project_links": {
+              "title": "项目链接",
+              "description": "项目级别的链接。",
+              "project_link": {
+                "view": { "label": "查看项目链接" },
+                "create": { "label": "添加项目链接" },
+                "edit": { "label": "编辑项目链接" },
+                "delete": { "label": "删除项目链接" }
+              }
+            },
+            "project_templates": {
+              "title": "模板",
+              "description": "项目范围的工作项和 Page 模板。",
+              "project_workitem_template": {
+                "view": { "label": "查看工作项模板" },
+                "create": { "label": "创建工作项模板" },
+                "edit": { "label": "编辑工作项模板" },
+                "delete": { "label": "删除工作项模板" }
+              },
+              "project_page_template": {
+                "view": { "label": "查看 Page 模板" },
+                "create": { "label": "创建 Page 模板" },
+                "edit": { "label": "编辑 Page 模板" },
+                "delete": { "label": "删除 Page 模板" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "全部",
+              "own": "仅自己",
+              "creator": "仅自己",
+              "lead": "仅负责人",
+              "disabled": "已禁用"
+            },
+            "select_all": "全选",
+            "high_risk_tooltip": "此项授予较高权限。请谨慎授予。",
+            "folded_rows": {
+              "templates": {
+                "view": "查看模板",
+                "create": "创建模板",
+                "edit": "编辑模板",
+                "delete": "删除模板"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "包括查看详情、附件和链接。同时涵盖对 Initiatives 作出反应和评论。",
+                  "edit": "包括创建附件和管理 Initiative 链接。"
+                },
+                "workspace_templates": {
+                  "view": "包括查看项目、工作项和 Page 模板。",
+                  "create": "包括创建项目、工作项和 Page 模板。",
+                  "edit": "包括编辑项目、工作项和 Page 模板。",
+                  "delete": "包括删除项目、工作项和 Page 模板。"
+                },
+                "epics": {
+                  "view": "包括查看 Epic 链接以及对 Epics 作出反应。",
+                  "edit": "包括创建、编辑和删除 Epic 链接。"
+                },
+                "epic_updates": {
+                  "view": "包括查看并对更新作出反应。同时涵盖查看、创建并对更新评论作出反应。"
+                },
+                "project_updates": {
+                  "view": "包括查看并对更新作出反应。同时涵盖查看、创建并对更新评论作出反应。"
+                },
+                "project_templates": {
+                  "view": "包括查看工作项和 Page 模板。",
+                  "create": "包括创建工作项和 Page 模板。",
+                  "edit": "包括编辑工作项和 Page 模板。",
+                  "delete": "包括删除工作项和 Page 模板。"
+                }
+              }
+            },
+            "search_placeholder": "搜索权限...",
+            "no_results": "没有匹配的权限",
+            "clear_search": "清除",
+            "preset_label": "从系统角色开始：",
+            "preset_none": "无（空白）",
+            "empty_permissions_note": "至少选择一个权限以保存此方案。"
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "项目角色和方案",
+        "sidebar_label": "项目"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "Workspace 角色和方案",
+        "sidebar_label": "Workspace"
+      },
+      "roles_and_schemes": {
+        "description": "配置要附加到工作项类型的属性和交互组",
+        "tabs": {
+          "roles": "角色",
+          "permission_schemes": "权限方案"
+        },
+        "create_role": {
+          "modal_title": "创建新角色",
+          "button_label": "创建角色",
+          "role_title_label": "角色标题",
+          "role_title_placeholder": "添加唯一标题",
+          "description_label": "描述",
+          "description_placeholder": "添加唯一标题",
+          "create_button": "创建角色",
+          "error_toast_description": "无法创建角色。请重试。"
+        },
+        "create_scheme": {
+          "title": "创建权限方案",
+          "description": "通过设置名称、描述和权限来定义权限方案。",
+          "button_label": "创建权限方案",
+          "create_button": "创建权限方案",
+          "error_toast_description": "无法创建权限方案。请重试。"
+        },
+        "role_detail": {
+          "back": "返回",
+          "permission_schemes_title": "权限方案",
+          "attach_button": "附加权限方案",
+          "empty_title": "还没有权限方案",
+          "empty_description": "创建个性化标签以有效地分类和管理您的工作项。",
+          "error_toast_description": "无法更新角色。请重试。"
+        },
+        "scheme_detail": {
+          "title": "权限方案详情",
+          "description": "查看方案及其分配权限的完整概览。",
+          "edit_title": "编辑权限方案",
+          "edit_description": "更新方案的名称、权限和设置。",
+          "edit_button": "编辑权限方案",
+          "error_toast_description": "无法更新权限方案。请重试。",
+          "scheme_information_title": "方案信息",
+          "scheme_information_description": "方案的名称和简要描述，以阐明其用途。",
+          "scheme_name": "方案名称",
+          "scheme_name_placeholder": "为方案命名",
+          "scheme_name_error": "名称为必填项。",
+          "scheme_description": "描述",
+          "scheme_description_placeholder": "描述该方案"
+        },
+        "attach_schemes": {
+          "title": "权限方案",
+          "search_placeholder": "搜索",
+          "permissions_count": "项权限",
+          "discard": "放弃",
+          "add": "添加"
+        },
+        "quick_actions": {
+          "edit_scheme": "编辑权限方案",
+          "delete_scheme": "删除权限方案",
+          "edit_role": "编辑角色详情",
+          "enable_role": "启用角色",
+          "delete_role": "删除角色"
+        },
+        "edit_role": {
+          "modal_title": "编辑角色详情",
+          "save_button": "保存更改",
+          "saving": "保存中...",
+          "error_toast_description": "无法更新角色。请重试。"
+        },
+        "delete_role": {
+          "confirm_title": "删除\"{roleName}\"？",
+          "has_members_message": "此角色已分配给 {count} 位成员。删除此角色是永久性的，无法撤销。",
+          "no_members_message": "此角色未分配任何成员。删除此角色是永久性的，无法撤销。",
+          "reassign_label": "将成员重新分配至",
+          "reassign_placeholder": "选择一个角色",
+          "submit_button": "重新分配并删除",
+          "submit_button_no_members": "删除",
+          "submitting": "删除中...",
+          "error_toast_description": "无法删除角色。请重试。",
+          "success_toast_message": "角色删除成功。"
+        },
+        "disable_role": {
+          "confirm_title": "禁用\"{roleName}\"？",
+          "has_members_message": "此角色当前已分配给 {memberCount} 位成员。在继续之前，您必须选择一个角色以重新分配现有成员。",
+          "no_members_message": "此角色未分配任何成员。将被禁用。",
+          "reassign_label": "将成员重新分配至",
+          "reassign_placeholder": "选择一个角色",
+          "submit_button": "重新分配并禁用",
+          "submit_button_no_members": "禁用",
+          "submitting": "禁用中...",
+          "error_toast_description": "无法禁用角色。请重试。",
+          "success_toast_message": "角色禁用成功。"
+        },
+        "enable_role": {
+          "confirm_title": "启用\"{roleName}\"？",
+          "confirm_message": "此角色将变为活动状态，可以分配给成员。",
+          "submit_button": "启用",
+          "submitting": "启用中...",
+          "success_toast_message": "角色启用成功。"
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "删除权限方案？",
+          "has_roles_message": "此方案在 {count} 个角色中使用。移除它将从这些角色中撤销其权限。此操作无法撤销。",
+          "no_roles_message": "此权限方案未被任何角色使用。将被永久删除。",
+          "submit_button": "确认",
+          "submitting": "删除中...",
+          "error_toast_description": "无法删除权限方案。请重试。",
+          "in_use_error": "删除前请先从所有角色中移除此方案。",
+          "success_toast_message": "权限方案删除成功。"
+        }
+      }
+    }
+  }
+}

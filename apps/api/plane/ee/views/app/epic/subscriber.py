@@ -19,46 +19,15 @@ from plane.db.models import IssueSubscriber
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import EpicSubscriberSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions import ProjectEntityPermission, ProjectLitePermission
+from plane.permissions import can, EpicPermissions
 
 
 class EpicSubscriberViewSet(BaseViewSet):
     serializer_class = EpicSubscriberSerializer
     model = IssueSubscriber
 
-    permission_classes = [ProjectEntityPermission]
-
-    def get_permissions(self):
-        if self.action in ["subscribe", "unsubscribe", "subscription_status"]:
-            self.permission_classes = [ProjectLitePermission]
-        else:
-            self.permission_classes = [ProjectEntityPermission]
-
-        return super(EpicSubscriberViewSet, self).get_permissions()
-
-    def perform_create(self, serializer):
-        serializer.save(
-            project_id=self.kwargs.get("project_id"),
-            issue_id=self.kwargs.get("epic_id"),
-        )
-
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(workspace__slug=self.kwargs.get("slug"))
-            .filter(project_id=self.kwargs.get("project_id"))
-            .filter(issue_id=self.kwargs.get("epic_id"))
-            .filter(
-                project__project_projectmember__member=self.request.user,
-                project__project_projectmember__is_active=True,
-                project__archived_at__isnull=True,
-            )
-            .order_by("-created_at")
-            .distinct()
-        )
-
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def subscribe(self, request, slug, project_id, epic_id):
         if IssueSubscriber.objects.filter(
             issue_id=epic_id,
@@ -79,6 +48,7 @@ class EpicSubscriberViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def unsubscribe(self, request, slug, project_id, epic_id):
         issue_subscriber = IssueSubscriber.objects.get(
             project=project_id,
@@ -91,6 +61,7 @@ class EpicSubscriberViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def subscription_status(self, request, slug, project_id, epic_id):
         issue_subscriber = IssueSubscriber.objects.filter(
             issue_id=epic_id,

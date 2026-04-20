@@ -17,15 +17,18 @@ import { ProjectsAppPowerKProvider } from "@/components/power-k/projects-app-pro
 // plane web components
 import { ProjectAppSidebar } from "./_sidebar";
 import { ExtendedProjectSidebar } from "./extended-project-sidebar";
+// types
+import type { Route } from "./+types/layout";
 
-function WorkspaceLayout() {
+function WorkspaceLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   return (
     <>
       <ProjectsAppPowerKProvider />
       <div className="relative flex flex-col h-full w-full overflow-hidden rounded-lg border border-subtle">
         <div id="full-screen-portal" className="inset-0 absolute w-full" />
         <div className="relative flex size-full overflow-hidden">
-          <ProjectAppSidebar />
+          <ProjectAppSidebar workspaceSlug={workspaceSlug} />
           <ExtendedProjectSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             <Outlet />

@@ -220,6 +220,10 @@
             "title": "Kunci atribut grup",
             "description": "Atribut penyedia identitas yang digunakan untuk mengidentifikasi dan menyinkronkan grup pengguna.",
             "placeholder": "Grup"
+          },
+          "default_workspace_role": {
+            "title": "Peran ruang kerja default",
+            "description": "Peran yang diberikan kepada pengguna saat mereka ditambahkan secara otomatis ke ruang kerja melalui sinkronisasi grup."
           }
         },
         "group_mapping": {

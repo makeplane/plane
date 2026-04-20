@@ -21,16 +21,16 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.permissions import WorkSpaceAdminPermission
 from plane.db.models import Workspace, Webhook
 from plane.ee.views.base import BaseAPIView
+from plane.permissions import can, WebhookPermissions
 from plane.utils.ip_address import validate_url
 
 
 class InternalWebhookEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission]
 
     # create or get the workspace webhook based on the url
+    @can(WebhookPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         url = request.data.get("url", None)
@@ -92,6 +92,7 @@ class InternalWebhookEndpoint(BaseAPIView):
                 )
             raise IntegrityError
 
+    @can(WebhookPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         webhook = Webhook.objects.get(pk=pk, workspace__slug=slug)
         webhook.delete()

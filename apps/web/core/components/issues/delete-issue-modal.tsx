@@ -13,9 +13,8 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // types
-import { PROJECT_ERROR_MESSAGES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PROJECT_ERROR_MESSAGES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TDeDupeIssue, TIssue } from "@plane/types";
@@ -26,8 +25,7 @@ import { AlertModalCore } from "@plane/ui";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-// plane-web
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   isOpen: boolean;
@@ -43,34 +41,24 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
   const { dataId, data, isOpen, handleClose, isSubIssue = false, onSubmit, isEpic = false } = props;
   // states
   const [isDeleting, setIsDeleting] = useState(false);
-  // store hooks
-  const { workspaceSlug } = useParams();
-  const { getWorkItemById } = useIssues();
-  const { getProjectById } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  // plane hooks
   const { t } = useTranslation();
-
-  const { data: currentUser } = useUser();
+  // store hooks
+  const { getWorkItemById, permissions } = useIssues();
+  const { getProjectById } = useProject();
+  const { getWorkspaceById } = useWorkspace();
+  // derived values
+  const issue = data ? data : dataId ? getWorkItemById(dataId) : undefined;
+  const projectDetails = getProjectById(issue?.project_id);
+  const workspaceSlug =
+    typeof projectDetails?.workspace === "string" ? getWorkspaceById(projectDetails.workspace)?.slug : undefined;
+  const projectId = projectDetails?.id;
+  const canDelete =
+    workspaceSlug && projectId && issue?.id ? permissions.getCanDelete(workspaceSlug, projectId, issue.id) : false;
 
   useEffect(() => {
     setIsDeleting(false);
   }, [isOpen]);
-
-  if (!dataId && !data) return null;
-
-  // derived values
-  const issue = data ? data : dataId ? getWorkItemById(dataId) : undefined;
-  const projectDetails = getProjectById(issue?.project_id);
-  const isIssueCreator = issue?.created_by === currentUser?.id;
-
-  const canPerformProjectAdminActions = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug?.toString(),
-    projectDetails?.id
-  );
-
-  const authorized = isIssueCreator || canPerformProjectAdminActions;
 
   const onClose = () => {
     setIsDeleting(false);
@@ -79,8 +67,7 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
 
   const handleIssueDelete = async () => {
     setIsDeleting(true);
-
-    if (!authorized) {
+    if (!canDelete) {
       setToast({
         title: t(PROJECT_ERROR_MESSAGES.permissionError.i18n_title),
         type: TOAST_TYPE.ERROR,

@@ -12,6 +12,8 @@
  */
 
 import { observer } from "mobx-react";
+// types
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
 import { SidebarSections } from "../issue-detail/sidebar-sections";
@@ -20,12 +22,15 @@ type PeekOverviewPropertiesProps = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled: boolean;
   issueOperations: TIssueOperations;
+  permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
 };
 
 export const PeekOverviewProperties = observer(function PeekOverviewProperties(props: PeekOverviewPropertiesProps) {
-  const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, permissions } = props;
 
   return (
     <div className="flex flex-col gap-4 py-6 w-full">
@@ -34,7 +39,7 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         projectId={projectId}
         issueId={issueId}
         issueOperations={issueOperations}
-        isEditable={!disabled}
+        permissions={permissions}
         isPeekView
       />
     </div>

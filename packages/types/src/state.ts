@@ -24,6 +24,7 @@ export interface IState {
   sequence: number;
   workspace_id: string;
   order: number;
+  created_by: string | null;
 }
 
 export interface IStateLite {

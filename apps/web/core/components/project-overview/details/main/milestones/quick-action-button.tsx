@@ -25,9 +25,13 @@ type Props = {
   handleSubmit: (data: ISearchIssueResponse[]) => Promise<void>;
   selectedWorkItemIds?: string[];
   milestoneId?: string;
+  canAddWorkItems: boolean;
 };
 export function MilestoneWorkItemActionButton(props: Props) {
-  const { projectId, workspaceSlug, customButton, handleSubmit, selectedWorkItemIds, milestoneId } = props;
+  const { projectId, workspaceSlug, customButton, handleSubmit, selectedWorkItemIds, milestoneId, canAddWorkItems } =
+    props;
+
+  if (!canAddWorkItems) return null;
 
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
 

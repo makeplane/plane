@@ -14,7 +14,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { DEFAULT_CREATE_UPDATE_MODAL_CONFIG, EUserPermissions } from "@plane/constants";
+import { DEFAULT_CREATE_UPDATE_MODAL_CONFIG } from "@plane/constants";
 import { ProjectAutomationsService } from "@plane/services";
 import type {
   EAutomationNodeType,
@@ -48,8 +48,8 @@ export interface IProjectAutomationsStore {
   getProjectAutomations: (projectId: string) => IAutomationInstance[];
   isAnyAutomationAvailableForProject: (projectId: string) => boolean;
   setCreateUpdateModalConfig: (config: TCreateUpdateModalConfig) => void;
+  getCanCreateAutomation: (workspaceSlug: string, projectId: string) => boolean;
   // permissions
-  canCurrentUserCreateAutomation: boolean;
   isProjectAutomationsEnabled: boolean;
   // actions
   fetchAutomations: (workspaceSlug: string, projectId: string) => Promise<TAutomation[]>;
@@ -87,7 +87,6 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
       projectAutomationIdsMap: observable,
       createUpdateModalConfig: observable,
       // computed
-      canCurrentUserCreateAutomation: computed,
       isProjectAutomationsEnabled: computed,
       // actions
       fetchAutomations: action,
@@ -160,7 +159,6 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
     const automationInstance = this.automationsRoot.getAutomationById(automationId);
     automationInstance?.addOrUpdateNode(node, {
       actions: this._automationNodeActions(workspaceSlug, projectId, automationId),
-      permissions: this._automationNodePermissions,
     });
   };
 
@@ -191,10 +189,9 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
     // add or update automation to store
     const automationInstance = this.automationsRoot.addOrUpdateAutomation(automation, {
       actions: this._automationActions(workspaceSlug, projectId, automationId),
-      permissions: this._automationPermissions,
+      can: this.rootStore.permissionAccessStore.can,
       nodeHelpers: {
         actions: this._automationNodeActions(workspaceSlug, projectId, automationId),
-        permissions: this._automationNodePermissions,
       },
       activityHelpers: {
         actions: this._automationActivityActions(workspaceSlug, projectId, automationId),
@@ -237,38 +234,16 @@ export class ProjectAutomationsStore implements IProjectAutomationsStore {
   );
 
   // permissions
-  get _currentUserProjectRole() {
-    const currentWorkspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
-    const currentProjectId = this.rootStore.projectRoot.project.currentProjectDetails?.id;
-    const currentProjectRole =
-      currentWorkspaceSlug && currentProjectId
-        ? this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(
-            currentWorkspaceSlug,
-            currentProjectId
-          )
-        : undefined;
-    return currentProjectRole;
-  }
-
-  private get _automationPermissions() {
-    return {
-      canCurrentUserCreate: this._currentUserProjectRole === EUserPermissions.ADMIN,
-      canCurrentUserEdit: this._currentUserProjectRole === EUserPermissions.ADMIN,
-      canCurrentUserDelete: this._currentUserProjectRole === EUserPermissions.ADMIN,
-    };
-  }
-
-  private get _automationNodePermissions() {
-    return {
-      canCurrentUserCreate: this._currentUserProjectRole === EUserPermissions.ADMIN,
-      canCurrentUserEdit: this._currentUserProjectRole === EUserPermissions.ADMIN,
-      canCurrentUserDelete: this._currentUserProjectRole === EUserPermissions.ADMIN,
-    };
-  }
-
-  get canCurrentUserCreateAutomation() {
-    return this._automationPermissions.canCurrentUserCreate;
-  }
+  getCanCreateAutomation: IProjectAutomationsStore["getCanCreateAutomation"] = computedFn(
+    (workspaceSlug, projectId) => {
+      return this.rootStore.permissionAccessStore.can({
+        resource: "project_automation",
+        action: "create",
+        workspaceSlug,
+        projectId,
+      });
+    }
+  );
 
   get isProjectAutomationsEnabled() {
     return this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("PROJECT_AUTOMATIONS", false);

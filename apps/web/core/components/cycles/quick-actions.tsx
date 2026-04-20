@@ -15,7 +15,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // ui
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast, setPromiseToast } from "@plane/propel/toast";
@@ -25,12 +24,12 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 // hooks
 import { useCycleMenuItems } from "@/components/common/quick-actions/helper";
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local imports
 import { ArchiveCycleModal } from "./archived-cycles/modal";
 import { CycleDeleteModal } from "./delete-modal";
 import { CycleCreateUpdateModal } from "./modal";
+import { useFavorite } from "@/hooks/store/use-favorite";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
@@ -49,18 +48,11 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
   const [archiveCycleModal, setArchiveCycleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
-  const { getCycleById, restoreCycle, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
+  const { getCycleById, restoreCycle, addCycleToFavorites, removeCycleFromFavorites, permissions } = useCycle();
+  const { permissions: favoritePermissions } = useFavorite();
   const { t } = useTranslation();
   // derived values
   const cycleDetails = getCycleById(cycleId);
-  // auth
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
 
   const cycleLink = `${workspaceSlug}/projects/${projectId}/cycles/${cycleId}`;
   const handleCopyText = () =>
@@ -127,7 +119,6 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     workspaceSlug,
     projectId,
     cycleId,
-    isEditingAllowed,
     isFavorite: !!cycleDetails?.is_favorite,
     handleEdit: () => setUpdateModal(true),
     handleArchive: () => setArchiveCycleModal(true),
@@ -136,6 +127,13 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
     handleCopyLink: handleCopyText,
     handleOpenInNewTab,
     handleFavorite: handleFavoriteToggle,
+    permissions: {
+      canEdit: permissions.getCanEditCycle(workspaceSlug, projectId, cycleId),
+      canArchive: permissions.getCanArchiveCycle(workspaceSlug, projectId, cycleId),
+      canRestore: permissions.getCanRestoreCycle(workspaceSlug, projectId, cycleId),
+      canDelete: permissions.getCanDeleteCycle(workspaceSlug, projectId, cycleId),
+      canFavorite: favoritePermissions.getCanCreate(workspaceSlug),
+    },
   });
 
   const MENU_ITEMS: TContextMenuItem[] = Array.isArray(menuResult) ? menuResult : menuResult.items;
@@ -204,7 +202,7 @@ export const CycleQuickActions = observer(function CycleQuickActions(props: Prop
               )}
               disabled={item.disabled}
             >
-              {item.icon && <item.icon className={cn("h-3 w-3 flex-shrink-0", item.iconClassName)} />}
+              {item.icon && <item.icon className={cn("h-3 w-3 shrink-0", item.iconClassName)} />}
               <div>
                 <h5>{item.title}</h5>
                 {item.description && (

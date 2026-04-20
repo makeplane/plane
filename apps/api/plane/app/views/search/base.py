@@ -35,6 +35,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
+from plane.permissions import can, WorkspacePermissions
 from plane.db.models import (
     Workspace,
     Project,
@@ -335,6 +336,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             .values("name", "id", "workspace__slug")
         )
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         query = request.query_params.get("search", False)
         entities_param = request.query_params.get("entities")
@@ -375,6 +377,7 @@ class GlobalSearchEndpoint(BaseAPIView):
 class SearchEndpoint(BaseAPIView):
     use_read_replica = True
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         query = request.query_params.get("query", False)
         query_types = request.query_params.get("query_type", "user_mention").split(",")

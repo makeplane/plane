@@ -29,7 +29,7 @@ function PiLayout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   const { isWorkspaceFeatureEnabled, loader } = useWorkspaceFeatures();
-  const shouldUpgrade = !loader && !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+  const shouldUpgrade = !loader && !isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED);
 
   return (
     <>
@@ -39,12 +39,12 @@ function PiLayout({ params }: Route.ComponentProps) {
           <PiAppSidebar />
           <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
             {shouldUpgrade ? (
-              <EmptyPiChat />
+              <EmptyPiChat workspaceSlug={workspaceSlug} />
             ) : (
               <WithAiFeatureFlagHOC
                 workspaceSlug={workspaceSlug}
                 flag="AI_CHAT"
-                disabledFallback={<EmptyPiChat />}
+                disabledFallback={<EmptyPiChat workspaceSlug={workspaceSlug} />}
                 notConfiguredFallback={<PageNotFound />}
               >
                 <PiChatLayout shouldRenderSidebarToggle isFullScreen>

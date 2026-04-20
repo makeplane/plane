@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import Workspace, ReleaseChangelog, Description
 from plane.app.serializers.release import ReleaseChangelogSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -26,7 +26,7 @@ class ReleaseChangelogEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
         try:
@@ -44,7 +44,7 @@ class ReleaseChangelogEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
 

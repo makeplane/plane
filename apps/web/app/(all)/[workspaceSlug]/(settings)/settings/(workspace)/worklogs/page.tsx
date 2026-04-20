@@ -12,14 +12,10 @@
  */
 
 import { observer } from "mobx-react";
-import { EUserWorkspaceRoles } from "@plane/types";
-// plane imports
-// component
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
+// components
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/components/worklogs";
@@ -33,18 +29,12 @@ function WorklogsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const isFeatureEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
-
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Worklogs` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
 
   if (!currentWorkspace) return <></>;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
     <SettingsContentWrapper header={<WorklogsWorkspaceSettingsHeader />} hugging={isFeatureEnabled}>

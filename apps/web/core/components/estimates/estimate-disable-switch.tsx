@@ -22,18 +22,19 @@ import { useProject } from "@/hooks/store/use-project";
 type TEstimateDisableSwitch = {
   workspaceSlug: string;
   projectId: string;
-  isAdmin: boolean;
 };
 
 export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(props: TEstimateDisableSwitch) {
-  const { workspaceSlug, projectId, isAdmin } = props;
-  // i18n
-  const { t } = useTranslation();
-  // hooks
+  const { workspaceSlug, projectId } = props;
+  // store hooks
   const { updateProject, currentProjectDetails } = useProject();
-  const { currentActiveEstimateId } = useProjectEstimates();
-
+  const { getCanCurrentUserCreateEstimate, currentActiveEstimateId } = useProjectEstimates();
+  // derived values
   const currentProjectActiveEstimate = currentProjectDetails?.estimate || undefined;
+  // auth
+  const canDisable = getCanCurrentUserCreateEstimate(workspaceSlug, projectId);
+  // translation
+  const { t } = useTranslation();
 
   const disableEstimate = async () => {
     if (!workspaceSlug || !projectId) return;
@@ -51,7 +52,7 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
           ? t("project_settings.estimates.toasts.disabled.success.message")
           : t("project_settings.estimates.toasts.enabled.success.message"),
       });
-    } catch (err) {
+    } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("project_settings.estimates.toasts.disabled.error.title"),
@@ -60,5 +61,5 @@ export const EstimateDisableSwitch = observer(function EstimateDisableSwitch(pro
     }
   };
 
-  return <Switch value={Boolean(currentProjectActiveEstimate)} onChange={disableEstimate} disabled={!isAdmin} />;
+  return <Switch value={Boolean(currentProjectActiveEstimate)} onChange={disableEstimate} disabled={!canDisable} />;
 });

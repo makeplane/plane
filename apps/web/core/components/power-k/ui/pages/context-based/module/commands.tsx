@@ -15,34 +15,37 @@ import { useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Star, StarOff, Users } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, ModuleStatusIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IModule, TModuleStatus } from "@plane/types";
-import { EUserPermissions } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
-import { useUser } from "@/hooks/store/user";
+import { useFavorite } from "@/hooks/store/use-favorite";
 
 export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => {
   // navigation
   const { workspaceSlug, projectId, moduleId } = useParams();
   // store
   const {
-    permission: { allowPermissions },
-  } = useUser();
-  const { getModuleById, addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
+    getModuleById,
+    addModuleToFavorites,
+    removeModuleFromFavorites,
+    updateModuleDetails,
+    permissions: modulePermissions,
+  } = useModule();
+  const { permissions: favoritePermissions } = useFavorite();
   // derived values
   const moduleDetails = moduleId ? getModuleById(moduleId.toString()) : null;
   const isFavorite = !!moduleDetails?.is_favorite;
   // permission
-  const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) &&
-    !moduleDetails?.archived_at;
+  const canEditModule =
+    moduleId && workspaceSlug ? modulePermissions.getCanEditModule(workspaceSlug, projectId, moduleId) : false;
+  const canFavoriteModule =
+    workspaceSlug && favoritePermissions.getCanCreate(workspaceSlug) && moduleDetails?.archived_at === null;
   // translation
   const { t } = useTranslation();
 
@@ -120,8 +123,8 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
         handleUpdateMember(memberId);
       },
       shortcut: "m",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => Boolean(canEditModule),
+      isVisible: () => Boolean(canEditModule),
       closeOnSelect: false,
     },
     {
@@ -137,8 +140,8 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
         handleUpdateModule({ status });
       },
       shortcut: "s",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => Boolean(canEditModule),
+      isVisible: () => Boolean(canEditModule),
       closeOnSelect: true,
     },
     {
@@ -152,8 +155,8 @@ export const usePowerKModuleContextBasedActions = (): TPowerKCommandConfig[] => 
       type: "action",
       action: toggleFavorite,
       modifierShortcut: "shift+f",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => Boolean(canFavoriteModule),
+      isVisible: () => Boolean(canFavoriteModule),
       closeOnSelect: true,
     },
     {

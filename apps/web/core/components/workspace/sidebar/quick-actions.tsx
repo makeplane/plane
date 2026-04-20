@@ -15,7 +15,6 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { AddWorkItemIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
@@ -25,8 +24,8 @@ import { SidebarAddButton } from "@/components/sidebar/add-button";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import useLocalStorage from "@/hooks/use-local-storage";
+import { useIssues } from "@/hooks/store/use-issues";
 
 export const SidebarQuickActions = observer(function SidebarQuickActions() {
   const { t } = useTranslation();
@@ -42,15 +41,13 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
   const { joinedProjectIds } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: workItemPermissions } = useIssues();
   // local storage
   const { storedValue, setValue } = useLocalStorage<Record<string, Partial<TIssue>>>("draftedIssue", {});
   // derived values
-  const canCreateIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
+  const canCreateWorkItemInAnyProject = joinedProjectIds.some((projectId) =>
+    workItemPermissions.getCanCreate(workspaceSlug, projectId)
   );
-  const disabled = joinedProjectIds.length === 0 || !canCreateIssue;
   const workspaceDraftIssue = workspaceSlug ? (storedValue?.[workspaceSlug] ?? undefined) : undefined;
 
   const handleMouseEnter = () => {
@@ -93,7 +90,7 @@ export const SidebarQuickActions = observer(function SidebarQuickActions() {
             </>
           }
           onClick={() => toggleCreateIssueModal(true)}
-          disabled={disabled}
+          disabled={!canCreateWorkItemInAnyProject}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         />

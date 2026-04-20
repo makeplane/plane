@@ -38,13 +38,13 @@ from plane.db.models import (
 
 from plane.utils.analytics_plot import build_graph_plot
 from plane.utils.issue_filters import issue_filters
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import AnalyticsPermissions, WorkspacePermissions, can
 
 
 class AnalyticsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(AnalyticsPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         x_axis = request.GET.get("x_axis", False)
         y_axis = request.GET.get("y_axis", False)
@@ -200,6 +200,8 @@ class AnalyticsEndpoint(BaseAPIView):
         )
 
 
+# TODO: Unused endpoint — not called by FE. URLs commented out.
+# Migrate to @can before re-enabling.
 class AnalyticViewViewset(BaseViewSet):
     use_read_replica = True
 
@@ -217,8 +219,8 @@ class AnalyticViewViewset(BaseViewSet):
 
 class SavedAnalyticEndpoint(BaseAPIView):
     use_read_replica = True
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    
+    @can(AnalyticsPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, analytic_id):
         analytic_view = AnalyticView.objects.get(pk=analytic_id, workspace__slug=slug)
 
@@ -267,8 +269,8 @@ class SavedAnalyticEndpoint(BaseAPIView):
 
 class ExportAnalyticsEndpoint(BaseAPIView):
     use_read_replica = True
-
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    
+    @can(AnalyticsPermissions.EXPORT, resource_param="workspace_id")
     def post(self, request, slug):
         x_axis = request.data.get("x_axis", False)
         y_axis = request.data.get("y_axis", False)
@@ -316,7 +318,7 @@ class ExportAnalyticsEndpoint(BaseAPIView):
 class DefaultAnalyticsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         filters = issue_filters(request.GET, "GET")
         base_issues = Issue.issue_objects.filter(workspace__slug=slug, **filters)
@@ -458,7 +460,7 @@ class DefaultAnalyticsEndpoint(BaseAPIView):
 class ProjectStatsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         fields = request.GET.get("fields", "").split(",")
         project_ids = request.GET.get("project_ids", "")

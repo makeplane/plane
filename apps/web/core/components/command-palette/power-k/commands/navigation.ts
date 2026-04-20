@@ -13,18 +13,13 @@
 
 import { LayoutGrid, RssIcon } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { ContrastIcon, CustomersIcon, EpicIcon, InitiativeIcon, TeamsIcon } from "@plane/propel/icons";
 import type { TCustomer, TTeamspace } from "@plane/types";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // components
-import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 import { handlePowerKNavigate } from "@/components/power-k/utils/navigation";
 // hooks
-import { useUser } from "@/hooks/store/user";
-import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
-import { useFeatureFlags } from "@/plane-web/hooks/store";
-import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import { usePowerKPermissions } from "@/components/command-palette/power-k/hooks/use-power-k-permissions";
 import type { TInitiative } from "@/types/initiative";
 
 export type TPowerKNavigationCommandKeysExtended =
@@ -46,54 +41,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
   TPowerKNavigationCommandKeysExtended,
   TPowerKCommandConfig
 > => {
-  // store hooks
-  const {
-    permission: { allowPermissions },
-  } = useUser();
-  const { getFeatureFlag } = useFeatureFlags();
-  const { getProjectFeatures } = useProjectAdvanced();
-  // derived values
-  const hasWorkspaceAdminLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserWorkspaceRoles.ADMIN],
-      EUserPermissionsLevel.WORKSPACE,
-      ctx.params.workspaceSlug?.toString()
-    );
-  const hasWorkspaceMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      EUserPermissionsLevel.WORKSPACE,
-      ctx.params.workspaceSlug?.toString()
-    );
-  const hasProjectMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      ctx.params.workspaceSlug?.toString(),
-      ctx.params.projectId?.toString()
-    );
-  const baseWorkspaceConditions = (ctx: TPowerKContext) => Boolean(ctx.params.workspaceSlug?.toString());
-  const baseProjectConditions = (ctx: TPowerKContext) =>
-    Boolean(ctx.params.workspaceSlug?.toString() && ctx.params.projectId?.toString());
-  const isWorkspaceFeatureEnabled = (ctx: TPowerKContext, featureKey: string) => {
-    if (!ctx.params.workspaceSlug?.toString()) return false;
-    return isSidebarFeatureEnabled(featureKey, ctx.params.workspaceSlug?.toString());
-  };
-  const isProjectFeatureEnabled = (ctx: TPowerKContext, featureKey: "overview" | "epics") => {
-    const workspaceSlug = ctx.params.workspaceSlug?.toString();
-    const projectId = ctx.params.projectId?.toString();
-
-    if (!workspaceSlug || !projectId) return false;
-
-    if (featureKey === "overview") return !!getFeatureFlag(workspaceSlug, "PROJECT_OVERVIEW", false);
-
-    if (featureKey === "epics") {
-      const projectFeatures = getProjectFeatures(projectId);
-      return !!projectFeatures?.is_epic_enabled;
-    }
-
-    return false;
-  };
+  // hooks
+  const { canNavigateTo } = usePowerKPermissions();
 
   return {
     nav_workspace_active_cycle: {
@@ -103,14 +52,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
       i18n_title: "power_k.navigation_actions.nav_workspace_active_cycle",
       icon: ContrastIcon,
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "active-cycles"]),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "active-cycles"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "active-cycles"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_active_cycle"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_active_cycle"),
       closeOnSelect: true,
     },
     open_teamspace: {
@@ -125,14 +68,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
         const teamspaceDetails = data as TTeamspace;
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "teamspaces", teamspaceDetails.id]);
       },
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "team_spaces"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "team_spaces"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_teamspace"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_teamspace"),
       closeOnSelect: true,
     },
     nav_teamspaces_list: {
@@ -143,14 +80,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
       icon: TeamsIcon,
       keySequence: "gt",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "teamspaces"]),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "team_spaces"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "team_spaces"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_initiative"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_initiative"),
       closeOnSelect: true,
     },
     open_initiative: {
@@ -165,14 +96,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
         const initiativeDetails = data as TInitiative;
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "initiatives", initiativeDetails.id]);
       },
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "initiatives"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "initiatives"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_initiative"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_initiative"),
       closeOnSelect: true,
     },
     nav_initiatives_list: {
@@ -183,14 +108,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
       icon: InitiativeIcon,
       keySequence: "gn",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "initiatives"]),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "initiatives"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "initiatives"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_initiatives_list"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_initiatives_list"),
       closeOnSelect: true,
     },
     open_customer: {
@@ -205,14 +124,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
         const customerDetails = data as TCustomer;
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "customers", customerDetails.id]);
       },
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceAdminLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "customers"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceAdminLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "customers"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_customer"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_customer"),
       closeOnSelect: true,
     },
     nav_customers_list: {
@@ -223,14 +136,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
       icon: CustomersIcon,
       keySequence: "gu",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "customers"]),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceAdminLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "customers"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceAdminLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "customers"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_customers_list"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_customers_list"),
       closeOnSelect: true,
     },
     nav_workspace_dashboards: {
@@ -241,14 +148,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
       icon: LayoutGrid,
       keySequence: "gb",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "dashboards"]),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "workspace-dashboards"),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        hasWorkspaceMemberLevelPermissions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "workspace-dashboards"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_dashboards"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_dashboards"),
       closeOnSelect: true,
     },
     nav_project_overview: {
@@ -264,10 +165,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
           ctx.params.projectId?.toString(),
           "overview",
         ]),
-      isEnabled: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && isProjectFeatureEnabled(ctx, "overview"),
-      isVisible: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && isProjectFeatureEnabled(ctx, "overview"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_overview"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_overview"),
       closeOnSelect: true,
     },
     nav_project_epics: {
@@ -284,10 +183,8 @@ export const usePowerKNavigationCommandsRecordExtended = (): Record<
           ctx.params.projectId?.toString(),
           "epics",
         ]),
-      isEnabled: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && isProjectFeatureEnabled(ctx, "epics"),
-      isVisible: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && isProjectFeatureEnabled(ctx, "epics"),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_epics"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_epics"),
       closeOnSelect: true,
     },
   };

@@ -26,7 +26,7 @@ from plane.db.models import Workspace
 from plane.ee.views.base import BaseViewSet
 from plane.ee.models import InitiativeReaction
 from plane.payment.flags.flag import FeatureFlag
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, InitiativePermissions
 from plane.ee.serializers import InitiativeReactionSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
@@ -47,7 +47,12 @@ class InitiativeReactionViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(InitiativePermissions.REACT, resource_param="initiative_id")
     def create(self, request, slug, initiative_id):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -75,7 +80,7 @@ class InitiativeReactionViewSet(BaseViewSet):
             return Response({"error": "Reaction already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.REACT, resource_param="initiative_id")
     def destroy(self, request, slug, initiative_id, reaction_code):
         initiative_reaction = InitiativeReaction.objects.get(
             workspace__slug=slug,

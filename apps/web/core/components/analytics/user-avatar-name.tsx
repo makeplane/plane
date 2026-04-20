@@ -14,14 +14,16 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { UserRound } from "lucide-react";
+// plane imports
 import { useTranslation } from "@plane/i18n";
 import { SuspendedUserIcon } from "@plane/propel/icons";
 import { Pill, EPillVariant, EPillSize } from "@plane/propel/pill";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
 import { Tooltip } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 
 export const UserAvatarName = observer(function UserAvatarName({
   userId,
@@ -37,27 +39,21 @@ export const UserAvatarName = observer(function UserAvatarName({
     workspace: { isUserSuspended, getWorkspaceMemberDetails },
   } = useMember();
   const user = getUserDetails(userId);
+  const { getWorkspaceRoleDetailsByRoleSlug } = useRoleManagement();
+  // derived values
   const isSuspended = workspaceSlug && isUserSuspended(userId, workspaceSlug);
   const workspaceMember = getWorkspaceMemberDetails(userId);
+  const roleDetails =
+    workspaceMember && workspaceSlug
+      ? getWorkspaceRoleDetailsByRoleSlug(workspaceSlug, workspaceMember.role_slug)
+      : undefined;
 
   // Get role badge text
   const getRoleBadge = () => {
     if (isSuspended) {
       return "Suspended";
     }
-
-    if (!workspaceMember) return null;
-
-    switch (workspaceMember.role) {
-      case EUserWorkspaceRoles.ADMIN:
-        return "Admin";
-      case EUserWorkspaceRoles.MEMBER:
-        return "Member";
-      case EUserWorkspaceRoles.GUEST:
-        return "Guest";
-      default:
-        return null;
-    }
+    return roleDetails?.name;
   };
 
   const roleBadge = getRoleBadge();
@@ -66,7 +62,7 @@ export const UserAvatarName = observer(function UserAvatarName({
     <Tooltip tooltipContent={user?.display_name ?? t(`Unassigned`)}>
       <div className="flex items-center gap-2 min-w-0">
         {isSuspended ? (
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-1">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-layer-1">
             <SuspendedUserIcon className="h-4 w-4 text-placeholder" />
           </div>
         ) : user?.avatar_url && user?.avatar_url !== "" ? (
@@ -78,7 +74,7 @@ export const UserAvatarName = observer(function UserAvatarName({
             shape="circle"
           />
         ) : (
-          <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-layer-1 capitalize overflow-hidden">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-layer-1 capitalize overflow-hidden">
             {user?.display_name ? user?.display_name?.[0] : <UserRound className="text-secondary" size={12} />}
           </div>
         )}

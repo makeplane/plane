@@ -35,4 +35,5 @@ export const mockCreateOrUpdateLabel = async (
     workspace_id: workspaceSlug,
     parent: data.parent ?? null,
     sort_order: data.sort_order ?? Math.floor(Math.random() * 65535),
+    created_by: data.created_by ?? null,
   });

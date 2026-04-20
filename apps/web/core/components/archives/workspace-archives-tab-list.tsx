@@ -45,7 +45,10 @@ export const WorkspaceArchivesTabList = observer(function WorkspaceArchivesTabLi
   // hooks
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // derived values
-  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
+  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_INITIATIVES_ENABLED
+  );
 
   const isEnabled = { initiatives: isInitiativesFeatureEnabled };
 

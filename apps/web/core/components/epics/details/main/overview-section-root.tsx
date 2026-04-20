@@ -17,29 +17,34 @@ import { PlusIcon } from "@plane/propel/icons";
 import { useLocalStorage } from "@plane/hooks";
 import { Tabs } from "@plane/propel/tabs";
 import { EIssueServiceType } from "@plane/types";
-import type { TIssue } from "@plane/types";
 // components
 import { DependencyActionButton } from "@/components/issues/issue-detail-widgets/dependencies";
 import { RelationActionButton } from "@/components/issues/issue-detail-widgets/relations";
 // plane web
 import { OverviewSection } from "@/components/common/layout/main/sections/overview-root";
-// local components
 import { useCustomers } from "@/plane-web/hooks/store";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+// local components
 import { EpicCustomersRoot } from "./overview-section/customers-root";
 import { EpicDependenciesOverviewRoot } from "./overview-section/dependency-root";
 import { EpicIssuesOverviewRoot } from "./overview-section/issues-root";
 import { EpicOverviewWidgetModals } from "./overview-section/modals-root";
 import { EpicRelationsOverviewRoot } from "./overview-section/relation-root";
 import { SubWorkItemsActions } from "./overview-section/work-items-actions";
+
 type Props = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
   permissions: {
+    canAddDependencies: boolean;
+    canAddRelations: boolean;
+    canAddCustomerRequests: boolean;
     sub_work_items: {
       getCanView: (projectId: string, workItemId: string) => boolean;
       getCanEdit: (projectId: string, workItemId: string) => boolean;
-      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
       getCanDelete: (projectId: string, workItemId: string) => boolean;
       getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
       getCanRemove: (
@@ -50,16 +55,18 @@ type Props = {
       ) => boolean;
     };
   };
-  disabled?: boolean;
 };
 
 export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props) {
-  const { workspaceSlug, projectId, epicId, permissions, disabled = false } = props;
+  const { workspaceSlug, projectId, epicId, permissions } = props;
   // store hooks
   const { storedValue, setValue } = useLocalStorage(`tab-epic-detail-overview-${epicId}`, "issues");
   const { toggleCreateUpdateRequestModal, isCustomersFeatureEnabled } = useCustomers();
   // derived values
   const subWorkItemPermissions = permissions.sub_work_items;
+  const canAddDependencies = permissions.canAddDependencies;
+  const canAddRelations = permissions.canAddRelations;
+  const canAddCustomerRequests = permissions.canAddCustomerRequests;
 
   // Tabs
   const OVERVIEW_TABS = useMemo(() => {
@@ -79,12 +86,16 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
       {
         key: "dependencies",
         label: "Dependencies",
-        content: <EpicDependenciesOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
+        content: (
+          <EpicDependenciesOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={!canAddDependencies} />
+        ),
       },
       {
         key: "relations",
         label: "Relations",
-        content: <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
+        content: (
+          <EpicRelationsOverviewRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={!canAddRelations} />
+        ),
       },
     ];
 
@@ -92,11 +103,20 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
       _tabs.push({
         key: "customer-requests",
         label: "Customer requests",
-        content: <EpicCustomersRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={disabled} />,
+        content: <EpicCustomersRoot workspaceSlug={workspaceSlug} epicId={epicId} disabled={!canAddCustomerRequests} />,
       });
     }
     return _tabs;
-  }, [workspaceSlug, projectId, epicId, disabled, isCustomersFeatureEnabled, subWorkItemPermissions]);
+  }, [
+    workspaceSlug,
+    projectId,
+    epicId,
+    canAddDependencies,
+    canAddRelations,
+    canAddCustomerRequests,
+    isCustomersFeatureEnabled,
+    subWorkItemPermissions,
+  ]);
 
   // Actions
   const OVERVIEW_ACTIONS: Record<string, React.ReactNode> = useMemo(
@@ -111,18 +131,31 @@ export const EpicOverviewRoot = observer(function EpicOverviewRoot(props: Props)
         />
       ),
       dependencies: (
-        <DependencyActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
+        <DependencyActionButton
+          issueId={epicId}
+          issueServiceType={EIssueServiceType.EPICS}
+          disabled={!canAddDependencies}
+        />
       ),
       relations: (
-        <RelationActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={disabled} />
+        <RelationActionButton issueId={epicId} issueServiceType={EIssueServiceType.EPICS} disabled={!canAddRelations} />
       ),
       "customer-requests": (
-        <button onClick={() => toggleCreateUpdateRequestModal(epicId)} disabled={disabled}>
+        <button onClick={() => toggleCreateUpdateRequestModal(epicId)} disabled={!canAddCustomerRequests}>
           <PlusIcon className="h-4 w-4" />
         </button>
       ),
     }),
-    [epicId, projectId, workspaceSlug, disabled, toggleCreateUpdateRequestModal, subWorkItemPermissions]
+    [
+      epicId,
+      projectId,
+      workspaceSlug,
+      canAddDependencies,
+      canAddRelations,
+      canAddCustomerRequests,
+      toggleCreateUpdateRequestModal,
+      subWorkItemPermissions,
+    ]
   );
 
   return (

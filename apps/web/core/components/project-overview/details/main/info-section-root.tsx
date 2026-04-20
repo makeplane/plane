@@ -11,14 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // types
 import type { TProject } from "@/types";
 // local components
@@ -34,26 +29,20 @@ type Props = {
 export const ProjectOverviewInfoSectionRoot = observer(function ProjectOverviewInfoSectionRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   // store hooks
-  const { getProjectById, updateProject } = useProject();
-  const { allowPermissions } = useUserPermissions();
-  // helper hooks
-  const { toggleLinkModal } = useLinks(workspaceSlug.toString(), projectId.toString());
-
+  const { getProjectById, updateProject, permissions: projectPermissions } = useProject();
   // derived values
   const project = getProjectById(projectId);
-  if (!project) return null;
-
+  // auth
+  const canEdit = projectPermissions.getCanEdit(workspaceSlug, projectId);
+  // helper hooks
+  const { toggleLinkModal } = useLinks(workspaceSlug.toString(), projectId.toString());
   // handlers
   const handleUpdateProject = async (data: Partial<TProject>) => {
     await updateProject(workspaceSlug.toString(), projectId.toString(), data);
   };
 
-  const isProjectAdmin = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project.id.toString()
-  );
+  if (!project) return null;
+
   return (
     <>
       <HeroSection project={project} workspaceSlug={workspaceSlug.toString()} />
@@ -62,7 +51,7 @@ export const ProjectOverviewInfoSectionRoot = observer(function ProjectOverviewI
         project={project}
         handleProjectUpdate={handleUpdateProject}
         toggleLinkModalOpen={toggleLinkModal}
-        disabled={!isProjectAdmin}
+        disabled={!canEdit}
       />
     </>
   );

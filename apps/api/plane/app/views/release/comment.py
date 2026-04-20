@@ -14,11 +14,12 @@ from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseViewSet
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import Workspace, ReleaseComment, ReleaseCommentReaction
 from plane.app.serializers.release import (
     ReleaseCommentSerializer,
@@ -46,14 +47,14 @@ class ReleaseCommentViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug, release_id):
         comments = self.get_queryset()
         serializer = ReleaseCommentSerializer(comments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.CREATE, resource_param="workspace_id")
     def create(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ReleaseCommentSerializer(data=request.data)
@@ -66,14 +67,11 @@ class ReleaseCommentViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
-        creator=True,
-        model=ReleaseComment,
-        level="WORKSPACE",
-    )
+    @can(ReleasePermissions.EDIT, resource_param="workspace_id")
     def partial_update(self, request, slug, release_id, pk):
         comment = ReleaseComment.objects.get(workspace__slug=slug, release_id=release_id, pk=pk)
+        if comment.created_by_id != request.user.id:
+            raise PermissionDenied("Only the creator can edit this comment")
         serializer = ReleaseCommentSerializer(comment, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(edited_at=timezone.now())
@@ -81,14 +79,11 @@ class ReleaseCommentViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission(
-        allowed_roles=[ROLE.ADMIN],
-        creator=True,
-        model=ReleaseComment,
-        level="WORKSPACE",
-    )
+    @can(ReleasePermissions.DELETE, resource_param="workspace_id")
     def destroy(self, request, slug, release_id, pk):
         comment = ReleaseComment.objects.get(workspace__slug=slug, release_id=release_id, pk=pk)
+        if comment.created_by_id != request.user.id:
+            raise PermissionDenied("Only the creator can delete this comment")
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -110,14 +105,14 @@ class ReleaseCommentReactionViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug, release_id, comment_id):
         reactions = self.get_queryset()
         serializer = ReleaseCommentReactionSerializer(reactions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def create(self, request, slug, release_id, comment_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ReleaseCommentReactionSerializer(data=request.data)
@@ -130,7 +125,7 @@ class ReleaseCommentReactionViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def destroy(self, request, slug, release_id, comment_id, reaction_code):
         reaction = ReleaseCommentReaction.objects.get(
             workspace__slug=slug,

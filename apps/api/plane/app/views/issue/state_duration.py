@@ -15,13 +15,14 @@ from rest_framework import status
 
 # Module imports
 from .. import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
-from plane.db.models import IssueActivity, Issue, Project, ProjectMember
+from plane.app.permissions import ProjectEntityPermission, ROLE
+from plane.db.models import IssueActivity, Issue, ProjectMember
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, WorkitemPermissions
 
 
 class WorkItemStateDurationEndpoint(BaseAPIView):
@@ -29,7 +30,7 @@ class WorkItemStateDurationEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.WORK_ITEM_STATE_DURATION)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="work_item_id")
     def get(self, request, slug, project_id, work_item_id):
         # Get the work item to know its creation time and current state
         issue = (
@@ -62,12 +63,9 @@ class WorkItemStateDurationEndpoint(BaseAPIView):
                     {"error": "You are not allowed to view this work item"},
                     status=status.HTTP_403_FORBIDDEN,
                 )
-            # Guests can only view items they created unless guest_view_all_features is enabled
-            project = Project.objects.get(pk=project_id)
-            if (
-                not project.guest_view_all_features
-                and not issue.created_by_id == request.user.id
-                and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
+            # Guests can only view items they created
+            if not issue.created_by_id == request.user.id and not check_if_current_user_is_teamspace_member(
+                request.user.id, slug, project_id
             ):
                 return Response(
                     {"error": "You are not allowed to view this work item"},

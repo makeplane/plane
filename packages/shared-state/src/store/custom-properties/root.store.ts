@@ -16,10 +16,9 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import type {
   BaseCustomPropertyInstanceSchema,
-  EUserWorkspaceRoles,
   RootCustomPropertiesStoreSchema,
   CustomPropertyType,
-  TUserPermissions,
+  PermissionCheckArgs,
 } from "@plane/types";
 // local imports
 import { WorkItemCustomPropertyInstance } from "./instances/work-item-custom-property.instance";
@@ -28,7 +27,7 @@ import { WorkspaceCustomPropertiesStore } from "./workspace-properties.store";
 
 type RootCustomPropertiesStoreArgs = {
   getWorkspaceSlugById: (id: string) => string | undefined;
-  getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
 };
 
 export class RootCustomPropertiesStore<T extends CustomPropertyType> implements RootCustomPropertiesStoreSchema<T> {
@@ -58,7 +57,7 @@ export class RootCustomPropertiesStore<T extends CustomPropertyType> implements 
       get: this.get.bind(this),
       addOrMutate: this.addOrMutate.bind(this),
       remove: this.remove.bind(this),
-      getWorkspaceRoleByWorkspaceSlug: args.getWorkspaceRoleByWorkspaceSlug,
+      can: args.can,
     });
   }
 
@@ -81,7 +80,7 @@ export class RootCustomPropertiesStore<T extends CustomPropertyType> implements 
       const newInstance = new WorkItemCustomPropertyInstance<T>({
         data: property,
         getWorkspaceSlugById: this.args.getWorkspaceSlugById,
-        getWorkspaceRoleByWorkspaceSlug: this.args.getWorkspaceRoleByWorkspaceSlug,
+        can: this.args.can,
       });
       this.data.set(property.id, newInstance);
       return newInstance;

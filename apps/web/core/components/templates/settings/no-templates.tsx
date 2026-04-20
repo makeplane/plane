@@ -22,10 +22,10 @@ import { CreateTemplatesButton } from "./create-button";
 
 type TNoTemplatesEmptyStateProps = { workspaceSlug: string } & (
   | {
-      currentLevel: ETemplateLevel.WORKSPACE;
+      level: ETemplateLevel.WORKSPACE;
     }
   | {
-      currentLevel: ETemplateLevel.PROJECT;
+      level: ETemplateLevel.PROJECT;
       projectId: string;
     }
 );

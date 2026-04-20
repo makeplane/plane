@@ -16,13 +16,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserProjectRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useIssues } from "@/hooks/store/use-issues";
 // local imports
 import { BulkDeleteConfirmationModal } from "../modals/bulk-delete-modal";
 
@@ -37,11 +35,11 @@ export const BulkDeleteIssues = observer(function BulkDeleteIssues(props: Props)
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
   // store hooks
   const { projectId, workspaceSlug } = useParams();
-  const { allowPermissions } = useUserPermissions();
-
+  // store hooks
+  const { permissions } = useIssues();
   // derived values
-
-  const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canBulkDelete =
+    workspaceSlug && projectId && permissions.getCanPerformBulkOps(workspaceSlug.toString(), projectId.toString());
 
   return (
     <>
@@ -57,15 +55,15 @@ export const BulkDeleteIssues = observer(function BulkDeleteIssues(props: Props)
       )}
       <Tooltip
         tooltipHeading="Delete"
-        tooltipContent={canPerformProjectAdminActions ? "" : "You don't have permission to perform this action."}
+        tooltipContent={canBulkDelete ? "" : "You don't have permission to perform this action."}
       >
         <button
           type="button"
           className={cn("outline-none grid place-items-center", {
-            "cursor-not-allowed text-placeholder": !canPerformProjectAdminActions,
+            "cursor-not-allowed text-placeholder": !canBulkDelete,
           })}
           onClick={() =>
-            canPerformProjectAdminActions
+            canBulkDelete
               ? setIsBulkDeleteModalOpen(true)
               : setToast({
                   type: TOAST_TYPE.ERROR,

@@ -14,7 +14,6 @@
 import { isNil } from "lodash-es";
 import { observer } from "mobx-react";
 // plane-i18n
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // UI
 import { Button, getButtonStyling } from "@plane/propel/button";
@@ -25,40 +24,30 @@ import { Loader } from "@plane/ui";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
-
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useIssueSubscription } from "@/hooks/use-issue-subscription";
 import { useFlag } from "@/plane-web/hooks/store";
-// services
 
 export type TIssueSubscription = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
   serviceType?: EIssueServiceType;
+  canSubscribe: boolean;
 };
 
 export const IssueSubscription = observer(function IssueSubscription(props: TIssueSubscription) {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, canSubscribe } = props;
   const { t } = useTranslation();
   // hooks
-  const { allowPermissions } = useUserPermissions();
   const { isMobile } = usePlatformOS();
   // permissions
   const flagEnabled = useFlag(workspaceSlug, "MANAGE_WORK_ITEM_SUBSCRIBERS");
-  const hasPermission = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
   // fetching subscribers
   const { loading, isSubscribed, subscribers, subscribersCount, handleSubscription, handleSubscribers } =
     useIssueSubscription({ workspaceSlug, projectId, issueId });
-
   // derived values
-  const isEditable = flagEnabled && hasPermission;
+  const canManageSubscribers = flagEnabled && canSubscribe;
 
   const handleSubscribersChange = async (subscriberIds: string[]) => {
     try {
@@ -100,7 +89,7 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
 
   return (
     <div className="flex items-center">
-      {isEditable && (
+      {canManageSubscribers && (
         <MemberDropdown
           projectId={projectId}
           value={subscribers}
@@ -117,9 +106,9 @@ export const IssueSubscription = observer(function IssueSubscription(props: TIss
       )}
       <Button
         variant="secondary"
-        className={cn("hover:bg-layer-transparent-hover!", isEditable && "rounded-l-none")}
+        className={cn("hover:bg-layer-transparent-hover!", canManageSubscribers && "rounded-l-none")}
         onClick={handleSubscriptionButtonClick}
-        disabled={!hasPermission || loading}
+        disabled={!canSubscribe || loading}
         size="lg"
       >
         {isSubscribed ? (

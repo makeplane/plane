@@ -14,26 +14,24 @@
 import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useParams } from "react-router";
+// hooks
 import { useChatSupport } from "@/hooks/use-chat-support";
 import { usePowerK } from "@/hooks/store/use-power-k";
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
+import { useIntegrationPermissions } from "@/hooks/store/integrations/use-integration-permissions";
+// local imports
 import { WidgetWrapper } from "../widget-wrapper";
 import { IntegrationsPanel } from "./integrations-panel";
 import { UsefulLinksPanel } from "./useful-links-panel";
 import { createUsefulLinks } from "./utils";
 
 export const IntegrationsView: FC = observer(function IntegrationsView() {
-  const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
+  const { workspaceSlug } = useParams();
   const { toggleShortcutsListModal } = usePowerK();
   const { openChatSupport, isEnabled: isChatSupportEnabled } = useChatSupport();
-  const { allowPermissions } = useUserPermissions();
-
-  const isWorkspaceAdmin = useMemo(
-    () => allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE),
-    [allowPermissions]
-  );
+  const { getCanView } = useIntegrationPermissions();
+  // derived
+  const hasIntegrationsSectionPermission = workspaceSlug ? getCanView(workspaceSlug) : false;
 
   const usefulLinks = useMemo(
     () =>
@@ -48,8 +46,8 @@ export const IntegrationsView: FC = observer(function IntegrationsView() {
   return (
     <WidgetWrapper>
       <div className="flex gap-4 justify-between">
-        {isWorkspaceAdmin && <IntegrationsPanel workspaceSlug={workspaceSlug} />}
-        <UsefulLinksPanel links={usefulLinks} isWorkspaceAdmin={isWorkspaceAdmin} />
+        {hasIntegrationsSectionPermission && workspaceSlug && <IntegrationsPanel workspaceSlug={workspaceSlug} />}
+        <UsefulLinksPanel links={usefulLinks} showFullWidth={!hasIntegrationsSectionPermission} />
       </div>
     </WidgetWrapper>
   );

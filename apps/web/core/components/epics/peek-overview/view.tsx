@@ -43,10 +43,18 @@ interface IEpicView {
   isLoading?: boolean;
   isError?: boolean;
   is_archived: boolean;
-  disabled?: boolean;
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   issueOperations: TIssueOperations;
+  permissions: {
+    canEdit: boolean;
+    canSubscribe: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDuplicate: boolean;
+    canConvertToWorkItem: boolean;
+  };
 }
 
 export const EpicView = observer(function EpicView(props: IEpicView) {
@@ -57,10 +65,10 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
     isLoading,
     isError,
     is_archived,
-    disabled = false,
     embedIssue = false,
     embedRemoveCurrentNotification,
     issueOperations,
+    permissions,
   } = props;
   // states
   const [peekMode, setPeekMode] = useState<TPeekModes>("side-peek");
@@ -199,7 +207,7 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 isSubmitting={isSubmitting}
-                disabled={disabled}
+                permissions={permissions}
                 embedIssue={embedIssue}
               />
               {/* content */}
@@ -208,7 +216,6 @@ export const EpicView = observer(function EpicView(props: IEpicView) {
                 workspaceSlug={workspaceSlug.toString()}
                 projectId={projectId.toString()}
                 epicId={issueId.toString()}
-                isArchived={is_archived}
               />
             </>
           )}

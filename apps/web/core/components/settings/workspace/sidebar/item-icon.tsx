@@ -32,10 +32,10 @@ import type { ISvgIcons } from "@plane/propel/icons";
 import {
   CustomersIcon,
   GroupSyncingIcon,
-  HierarchyIcon,
   InitiativeIcon,
   PiIcon,
   ProjectStatesIcon,
+  RolesAndPermissionsIcon,
   RelationPropertyIcon,
   ReleaseIcon,
   TeamsIcon,
@@ -65,6 +65,8 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   "plane-intelligence": PiIcon,
   "access-tokens": KeyRound,
   scripts: FileCode,
+  project_roles_and_schemes: RolesAndPermissionsIcon,
+  workspace_roles_and_schemes: RolesAndPermissionsIcon,
   work_item_types: WorkItemsIcon,
   automations: Zap,
 };

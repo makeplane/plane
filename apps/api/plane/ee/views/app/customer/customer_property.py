@@ -26,13 +26,11 @@ from plane.db.models import Workspace
 from plane.ee.models import CustomerProperty, CustomerPropertyOption
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 
 
 class CustomerPropertyEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [WorkSpaceAdminPermission]
 
     def create_options(self, customer_property, options):
         workspace_id = customer_property.workspace_id
@@ -141,6 +139,7 @@ class CustomerPropertyEndpoint(BaseAPIView):
         return options_serializer.data
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         if pk:
             customer_property = CustomerProperty.objects.get(workspace__slug=slug, pk=pk)
@@ -154,6 +153,7 @@ class CustomerPropertyEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         try:
             options = request.data.pop("options", [])
@@ -201,6 +201,7 @@ class CustomerPropertyEndpoint(BaseAPIView):
             )
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, pk):
         customer_property = CustomerProperty.objects.get(workspace__slug=slug, pk=pk)
 
@@ -238,6 +239,7 @@ class CustomerPropertyEndpoint(BaseAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         # Delete an customer property
         customer_property = CustomerProperty.objects.get(workspace__slug=slug, pk=pk)

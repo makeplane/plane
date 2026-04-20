@@ -34,11 +34,12 @@ import type { IProjectIssues, IProjectIssuesFilter } from "@/store/work-items/pr
 import type { IProjectViewIssues, IProjectViewIssuesFilter } from "@/store/work-items/project-views";
 import type { IWorkspaceIssuesFilter } from "@/store/work-items/workspace";
 import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "@/store/work-items/workspace-draft";
+import type { WorkItemPermissions } from "@/store/work-items/permissions/root";
 import type { IReleaseIssues, IReleaseIssuesFilter } from "@/store/work-items/release";
-// constants
 
 type defaultIssueStore = {
   getWorkItemById: (workItemId: string) => TIssue | undefined;
+  permissions: WorkItemPermissions;
 };
 
 export type TStoreIssues = {
@@ -114,6 +115,7 @@ export const useIssues = <T extends EIssuesStoreType>(storeType?: T): TStoreIssu
 
   const defaultStore: defaultIssueStore = {
     getWorkItemById: (workItemId: string) => context.issue.issues.getIssueById(workItemId),
+    permissions: context.issue.permissions,
   };
 
   switch (storeType) {

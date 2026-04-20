@@ -23,7 +23,6 @@ import { createRoot } from "react-dom/client";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -43,9 +42,10 @@ import { PublishProjectModal } from "@/components/projects/modals/publish-modal"
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProjectAccess } from "@/hooks/permissions/use-project-access";
+import { useFavorite } from "@/hooks/store/use-favorite";
 // plane web imports
 import { useNavigationItems } from "@/components/navigation";
 // helpers
@@ -81,13 +81,18 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   } = props;
   // store hooks
   const { t } = useTranslation();
-  const { addProjectToFavorites, getProjectById, removeProjectFromFavorites } = useProject();
+  const {
+    addProjectToFavorites,
+    getProjectById,
+    removeProjectFromFavorites,
+    permissions: projectPermissions,
+  } = useProject();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
   const { getIsProjectListOpen, toggleProjectListOpen } = useCommandPalette();
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
   const { isExtendedProjectSidebarOpened, toggleExtendedProjectSidebar, toggleAnySidebarDropdown } = useAppTheme();
-
+  const { canAccessProjectResource } = useProjectAccess();
+  const { permissions: favoritePermissions } = useFavorite();
   // states
   const [isFavoriteMenuOpen, setIsFavoriteMenuOpen] = useState(false);
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
@@ -110,8 +115,6 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   const navigationItems = useNavigationItems({
     workspaceSlug: workspaceSlug.toString(),
     projectId,
-    project,
-    allowPermissions,
   });
   const availableTabKeys = navigationItems.map((item) => item.key);
 
@@ -121,24 +124,19 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   // Validate that the default tab is available
   const validatedDefaultTabKey = availableTabKeys.includes(defaultTabKey) ? defaultTabKey : DEFAULT_TAB_KEY;
   const defaultTabUrl = project ? getTabUrl(workspaceSlug.toString(), project.id, validatedDefaultTabKey) : "";
+  // permissions
+  const permissions = {
+    canVisitArchives: canAccessProjectResource(workspaceSlug.toString(), projectId, "archives"),
+    canPublish: projectPermissions.getCanPublish(workspaceSlug.toString(), projectId),
+    canFavorite: favoritePermissions.getCanCreate(workspaceSlug.toString()),
+    canManage: projectPermissions.getCanManage(workspaceSlug.toString(), projectId),
+    canLeave: !!project?.member_role,
+  };
 
   // toggle project list open
   const setIsProjectListOpen = useCallback(
     (value: boolean) => toggleProjectListOpen(projectId, value),
     [projectId, toggleProjectListOpen]
-  );
-  // auth
-  const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project?.id
-  );
-  const isAuthorized = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project?.id
   );
 
   const handleLeaveProject = () => {
@@ -399,9 +397,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                 <ProjectActionsMenu
                   workspaceSlug={workspaceSlug}
                   project={project}
-                  isAdmin={isAdmin}
                   isFavorite={project.is_favorite}
-                  isAuthorized={isAuthorized}
+                  permissions={permissions}
                   onCopyText={handleCopyText}
                   onLeaveProject={handleLeaveProject}
                   handleAddToFavorites={handleAddToFavorites}

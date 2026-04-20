@@ -12,6 +12,7 @@
  */
 
 export interface IWebhook {
+  created_by: string;
   created_at: string;
   cycle: boolean;
   id: string;

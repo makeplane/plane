@@ -16,13 +16,11 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { ProjectAccessRestriction } from "@/components/auth-screens/project/project-access-restriction";
 import {
   PROJECT_DETAILS,
-  PROJECT_ME_INFORMATION,
   PROJECT_LABELS,
   PROJECT_MEMBERS,
   PROJECT_MEMBER_PREFERENCES,
@@ -46,12 +44,14 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 import { useTimeLineChart } from "@/hooks/use-timeline-chart";
 // plane web imports
 import { useEpicMeta } from "@/hooks/store/use-epic-meta";
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 
 interface IProjectAuthWrapper {
   workspaceSlug: string;
@@ -64,9 +64,12 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   // states
   const [isJoiningProject, setIsJoiningProject] = useState(false);
   // store hooks
-  const { fetchUserProjectInfo, allowPermissions, getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const {
+    project: { joinProject },
+  } = useMember();
+  const { getCurrentUserProjectRoleSlug } = usePermissionAccess();
+  const { permissions: workspacePermissions } = useWorkspace();
   const { fetchProjectDetails } = useProject();
-  const { joinProject } = useUserPermissions();
   const { fetchAllCycles } = useCycle();
   const { fetchModulesSlim, fetchModules } = useModule();
   const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.MODULE);
@@ -87,14 +90,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   const { fetchMilestones, isMilestonesEnabled } = useMilestones();
   const { fetchEpicsMeta } = useEpicMeta();
   // derived values
-  const hasPermissionToCurrentProject = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
-  const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+  const currentProjectRoleSlug = getCurrentUserProjectRoleSlug(projectId) ?? undefined;
   const isWorkItemTypeEnabled = projectId ? isWorkItemTypeEnabledForProject(workspaceSlug, projectId) : false;
   const isEpicEnabled = projectId ? isEpicEnabledForProject(workspaceSlug, projectId) : false;
   const isMilestonesFeatureEnabled = projectId ? isMilestonesEnabled(workspaceSlug, projectId) : false;
@@ -109,75 +105,77 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
     PROJECT_DETAILS(workspaceSlug, projectId),
     () => fetchProjectDetails(workspaceSlug, projectId)
   );
-  // fetching user project member information
-  useSWR(PROJECT_ME_INFORMATION(workspaceSlug, projectId), () => fetchUserProjectInfo(workspaceSlug, projectId));
   // fetching project member preferences
   useSWR(
-    currentUserData?.id ? PROJECT_MEMBER_PREFERENCES(projectId, currentProjectRole) : null,
+    currentUserData?.id ? PROJECT_MEMBER_PREFERENCES(projectId, currentProjectRoleSlug) : null,
     currentUserData?.id ? () => fetchProjectUserProperties(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project labels
-  useSWR(PROJECT_LABELS(projectId, currentProjectRole), () => fetchProjectLabels(workspaceSlug, projectId), {
+  useSWR(PROJECT_LABELS(projectId, currentProjectRoleSlug), () => fetchProjectLabels(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project members
-  useSWR(PROJECT_MEMBERS(projectId, currentProjectRole), () => fetchProjectMembers(workspaceSlug, projectId), {
+  useSWR(PROJECT_MEMBERS(projectId, currentProjectRoleSlug), () => fetchProjectMembers(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project states
-  useSWR(PROJECT_STATES(projectId, currentProjectRole), () => fetchProjectStates(workspaceSlug, projectId), {
+  useSWR(PROJECT_STATES(projectId, currentProjectRoleSlug), () => fetchProjectStates(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project intake state
-  useSWR(PROJECT_INTAKE_STATE(projectId, currentProjectRole), () => fetchProjectIntakeState(workspaceSlug, projectId), {
-    revalidateIfStale: false,
-    revalidateOnFocus: false,
-  });
+  useSWR(
+    PROJECT_INTAKE_STATE(projectId, currentProjectRoleSlug),
+    () => fetchProjectIntakeState(workspaceSlug, projectId),
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+    }
+  );
   // fetching project estimates
-  useSWR(PROJECT_ESTIMATES(projectId, currentProjectRole), () => getProjectEstimates(workspaceSlug, projectId), {
+  useSWR(PROJECT_ESTIMATES(projectId, currentProjectRoleSlug), () => getProjectEstimates(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project cycles
-  useSWR(PROJECT_ALL_CYCLES(projectId, currentProjectRole), () => fetchAllCycles(workspaceSlug, projectId), {
+  useSWR(PROJECT_ALL_CYCLES(projectId, currentProjectRoleSlug), () => fetchAllCycles(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
   // fetching project modules
   useSWR(
-    PROJECT_MODULES(projectId, currentProjectRole),
+    PROJECT_MODULES(projectId, currentProjectRoleSlug),
     async () => {
       await Promise.all([fetchModulesSlim(workspaceSlug, projectId), fetchModules(workspaceSlug, projectId)]);
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetching project views
-  useSWR(PROJECT_VIEWS(projectId, currentProjectRole), () => fetchViews(workspaceSlug, projectId), {
+  useSWR(PROJECT_VIEWS(projectId, currentProjectRoleSlug), () => fetchViews(workspaceSlug, projectId), {
     revalidateIfStale: false,
     revalidateOnFocus: false,
   });
 
   // fetching all work item types and properties
   useSWR(
-    isWorkItemTypeEnabled ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(projectId, currentProjectRole) : null,
+    isWorkItemTypeEnabled ? WORK_ITEM_TYPES_PROPERTIES_AND_OPTIONS(projectId, currentProjectRoleSlug) : null,
     isWorkItemTypeEnabled ? () => fetchAllWorkItemTypePropertiesAndOptions(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching all epic types and properties
   useSWR(
-    isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(projectId, currentProjectRole) : null,
+    isEpicEnabled ? EPICS_PROPERTIES_AND_OPTIONS(projectId, currentProjectRoleSlug) : null,
     isEpicEnabled ? () => fetchAllEpicPropertiesAndOptions(workspaceSlug, projectId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // fetching project level milestones
   useSWR(
-    isMilestonesFeatureEnabled ? PROJECT_MILESTONES(projectId, currentProjectRole) : null,
+    isMilestonesFeatureEnabled ? PROJECT_MILESTONES(projectId, currentProjectRoleSlug) : null,
     isMilestonesFeatureEnabled ? () => fetchMilestones(workspaceSlug, projectId) : null,
     {
       revalidateIfStale: false,
@@ -188,7 +186,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
 
   // fetching project level epic meta
   useSWR(
-    isEpicEnabled ? PROJECT_EPICS_META(projectId, currentProjectRole) : null,
+    isEpicEnabled ? PROJECT_EPICS_META(projectId, currentProjectRoleSlug) : null,
     isEpicEnabled ? () => fetchEpicsMeta(workspaceSlug, projectId) : null,
     {
       revalidateIfStale: false,
@@ -208,15 +206,16 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
       });
   };
 
-  const isProjectLoading = isProjectDetailsLoading && !projectDetailsError;
+  const wrapperLoader = isProjectDetailsLoading;
+  const wrapperError = !!projectDetailsError;
 
-  if (isProjectLoading) return null;
+  if (wrapperLoader && !wrapperError) return null;
 
-  if (!isProjectLoading && hasPermissionToCurrentProject === false) {
+  if (!wrapperLoader && wrapperError) {
     return (
       <ProjectAccessRestriction
         errorStatusCode={projectDetailsError?.status}
-        isWorkspaceAdmin={isWorkspaceAdmin}
+        canJoinAnyProject={workspacePermissions.getCanJoinAnyProject(workspaceSlug)}
         handleJoinProject={handleJoinProject}
         isJoinButtonDisabled={isJoiningProject}
       />

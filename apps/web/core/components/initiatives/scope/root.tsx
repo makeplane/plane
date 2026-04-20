@@ -12,18 +12,15 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { PlusIcon } from "@plane/propel/icons";
 import type { TInitiativeScopeTab } from "@plane/types";
-import { EUserWorkspaceRoles, INITIATIVE_SCOPE_TABS } from "@plane/types";
+import { INITIATIVE_SCOPE_TABS } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
+import { useProject } from "@/hooks/store/use-project";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // local imports
 import { InitiativeScopeFiltersToggle } from "./filters-toggle";
@@ -31,33 +28,54 @@ import { InitiativeScopeSharedProvider } from "./context-shared";
 import { InitiativeScopeProjectFilterProvider } from "./projects/filters";
 import { InitiativeScopeEpicsRoot } from "./epics/root";
 import { InitiativeScopeProjectsRoot } from "./projects/root";
+import type { TProjectProperty } from "@/store/project/permissions/root";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+import { useFavorite } from "@/hooks/store/use-favorite";
 
 const TABS = [
   { id: "epics" as const, label: "Epics" },
   { id: "projects" as const, label: "Projects" },
 ] satisfies Array<{ id: TInitiativeScopeTab; label: string }>;
 
-export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
-  const { initiativeId, workspaceSlug } = useParams();
+type Props = {
+  workspaceSlug: string;
+  initiativeId: string;
+};
 
+export const InitiativeScopeRoot = observer(function InitiativeScopeRoot(props: Props) {
+  const { workspaceSlug, initiativeId } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
+  const { permissions: projectPermissions } = useProject();
   const {
     initiative: {
       scope: { getDisplayFilters, updateDisplayFilters },
       toggleEpicModal,
       toggleProjectsModal,
+      permissions,
     },
   } = useInitiatives();
-  const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
-
+  const { permissions: favoritePermissions } = useFavorite();
   // derived values
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
   const displayFilters = getDisplayFilters(initiativeId?.toString());
   const activeTab = displayFilters?.activeTab ?? "epics";
+  const scopePermissions = {
+    canAddScope: permissions.getCanAddScope(workspaceSlug, initiativeId),
+    canRemoveEpic: permissions.getCanRemoveEpic(workspaceSlug, initiativeId),
+    canRemoveProject: permissions.getCanRemoveProject(workspaceSlug, initiativeId),
+    canDragAndDropProject: false,
+    canEditProject: (projectId: string) => permissions.getCanEditProject(workspaceSlug, initiativeId, projectId),
+    canEditProjectProperty: (projectId: string, property: TProjectProperty) =>
+      projectPermissions.getCanEditProperty(workspaceSlug, projectId, property),
+    getProjectItemPermissions: (projectId: string) => ({
+      ...projectPermissions.getProjectItemPermissions(workspaceSlug, projectId),
+      canFavorite: favoritePermissions.getCanCreate(workspaceSlug),
+    }),
+    canEditEpic: (epicId: string) => permissions.getCanEditEpic(workspaceSlug, initiativeId, epicId),
+    canEditEpicProperty: (epicId: string, property: TWorkItemProperty) =>
+      permissions.getCanEditEpicProperty(workspaceSlug, initiativeId, epicId, property),
+  };
 
   // Handle tab change
   const handleTabChange = (tab: TInitiativeScopeTab) => {
@@ -105,7 +123,7 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
               ))}
             </div>
             <div className="flex-1" />
-            {isEditable && (
+            {scopePermissions.canAddScope && (
               <Button
                 variant="primary"
                 size="lg"
@@ -128,7 +146,7 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
               <InitiativeScopeEpicsRoot
                 workspaceSlug={slug}
                 initiativeId={id}
-                disabled={!isEditable}
+                permissions={scopePermissions}
                 handleAddEpic={() => void toggleEpicModal(true, { workspaceSlug: slug, initiativeId: id })}
                 handleAddProject={() => toggleProjectsModal(true)}
               />
@@ -136,7 +154,7 @@ export const InitiativeScopeRoot = observer(function InitiativeScopeRoot() {
               <InitiativeScopeProjectsRoot
                 workspaceSlug={slug}
                 initiativeId={id}
-                disabled={!isEditable}
+                permissions={scopePermissions}
                 handleAddEpic={() => void toggleEpicModal(true, { workspaceSlug: slug, initiativeId: id })}
                 handleAddProject={() => toggleProjectsModal(true)}
               />

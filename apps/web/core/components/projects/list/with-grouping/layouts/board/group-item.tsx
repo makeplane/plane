@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -26,6 +25,7 @@ import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-l
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 import type { TProject } from "@/types/projects";
 // local imports
+import type { ProjectItemPermissions, ProjectLayoutPermissions } from "@/store/project/permissions/root";
 import { GroupDragOverlay } from "./group-drag-overlay";
 import { ProjectBoardGroupItemHeader } from "./group-item-header";
 import { ProjectBoardList } from "./list";
@@ -41,10 +41,22 @@ type ProjectBoardGroupItem = {
     }
   ) => void;
   dropErrorMessage?: string;
+  getProjectItemPermissions: (projectId: string) => ProjectItemPermissions;
+  layoutPermissions: ProjectLayoutPermissions;
+  workspaceSlug: string;
 };
 
 export const ProjectBoardGroupItem = observer(function ProjectBoardGroupItem(props: ProjectBoardGroupItem) {
-  const { groupByKey, projectIds, verticalAlign, setVerticalAlign, dropErrorMessage = "" } = props;
+  const {
+    groupByKey,
+    projectIds,
+    verticalAlign,
+    setVerticalAlign,
+    dropErrorMessage = "",
+    getProjectItemPermissions,
+    layoutPermissions,
+    workspaceSlug,
+  } = props;
   const [isDraggingOverColumn, setIsDraggingOverColumn] = useState(false);
   const columnRef = useRef<HTMLDivElement | null>(null);
   const { currentWorkspace } = useWorkspace();
@@ -126,10 +138,16 @@ export const ProjectBoardGroupItem = observer(function ProjectBoardGroupItem(pro
           projectIds={projectIds}
           verticalAlign={verticalAlign[`${groupByKey}`] || false}
           setVerticalAlign={setVerticalAlign}
+          permissions={layoutPermissions}
         />
         {/* projects placeholder */}
         {!verticalAlign[groupByKey] && projectIds.length > 0 && (
-          <ProjectBoardList groupByKey={groupByKey} projectIds={projectIds} />
+          <ProjectBoardList
+            groupByKey={groupByKey}
+            projectIds={projectIds}
+            getProjectItemPermissions={getProjectItemPermissions}
+            workspaceSlug={workspaceSlug}
+          />
         )}
       </div>
     </div>

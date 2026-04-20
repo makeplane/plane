@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { makeObservable, observable } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
 import type { IUserLite } from "@plane/types";
@@ -23,11 +23,13 @@ import { WorkspaceMemberStore } from "./workspace/membership.store";
 import type { RootStore } from "@/plane-web/store/root.store";
 
 export interface IMemberRootStore {
-  // observables
-  memberMap: Record<string, IUserLite>;
+  // computed
+  userIds: string[];
+  users: IUserLite[];
   // computed actions
-  getMemberIds: () => string[];
   getUserDetails: (userId: string) => IUserLite | undefined;
+  // actions
+  addOrUpdateUser: (user: IUserLite) => void;
   // sub-stores
   workspace: IWorkspaceMemberStore;
   project: IProjectMemberStore;
@@ -35,15 +37,17 @@ export interface IMemberRootStore {
 
 export class MemberRootStore implements IMemberRootStore {
   // observables
-  memberMap: Record<string, IUserLite> = {};
+  private userMap: Map<string, IUserLite> = new Map();
   // sub-stores
   workspace: IWorkspaceMemberStore;
   project: IProjectMemberStore;
 
   constructor(_rootStore: RootStore) {
-    makeObservable(this, {
+    makeObservable<MemberRootStore, "userMap">(this, {
       // observables
-      memberMap: observable,
+      userMap: observable,
+      // actions
+      addOrUpdateUser: action,
     });
     // sub-stores
     this.workspace = new WorkspaceMemberStore(this, _rootStore);
@@ -53,11 +57,31 @@ export class MemberRootStore implements IMemberRootStore {
   /**
    * @description get all member ids
    */
-  getMemberIds = computedFn(() => Object.keys(this.memberMap));
+  get userIds() {
+    return Array.from(this.userMap.keys());
+  }
+
+  get users() {
+    return Array.from(this.userMap.values());
+  }
 
   /**
    * @description get user details from userId
    * @param userId
    */
-  getUserDetails = computedFn((userId: string): IUserLite | undefined => this.memberMap?.[userId] ?? undefined);
+  getUserDetails: IMemberRootStore["getUserDetails"] = computedFn((userId) => this.userMap.get(userId));
+
+  /**
+   * @description add or update user details
+   * @param user
+   */
+  addOrUpdateUser: IMemberRootStore["addOrUpdateUser"] = action((user) => {
+    runInAction(() => {
+      const prevUser = this.userMap.get(user.id);
+      this.userMap.set(user.id, {
+        ...(prevUser ?? {}),
+        ...user,
+      });
+    });
+  });
 }

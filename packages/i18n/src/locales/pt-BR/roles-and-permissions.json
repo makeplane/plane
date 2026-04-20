@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "Esquemas de funções e permissões",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "Funções e permissões",
+        "roles_list": {
+          "workspace": {
+            "label": "Funções do workspace"
+          },
+          "project": {
+            "label": "Funções do projeto"
+          }
+        },
+        "compare_permissions": "Comparar permissões",
+        "create_role": {
+          "title": "Criar função",
+          "description": "Defina a função configurando seu nome, descrição e permissões para os usuários da instância.",
+          "button_label": "Criar nova função",
+          "error_toast_description": "Não foi possível criar a função. Tente novamente."
+        },
+        "edit_role": {
+          "title": "Editar função",
+          "description": "Atualize o nome, as permissões e as configurações de uma função para controlar o que os membros podem acessar e fazer.",
+          "error_toast_description": "Não foi possível atualizar a função. Tente novamente."
+        },
+        "role_details": {
+          "role_information_title": "Informações básicas",
+          "role_information_description": "Nome da função e uma breve descrição para esclarecer sua finalidade.",
+          "role_name": "Nome da função",
+          "role_description": "Descrição",
+          "role_details": "Detalhes da função",
+          "role_details_description": "Veja uma visão completa da função e das permissões atribuídas a ela.",
+          "edit_permissions": "Editar permissões"
+        },
+        "role_form": {
+          "name": "Nome da função",
+          "name_placeholder": "Dê um nome à função",
+          "name_error": "O nome é obrigatório.",
+          "description": "Descrição",
+          "description_placeholder": "Descreva a função",
+          "create_button": "Criar função"
+        },
+        "role_actions": {
+          "duplicate": "Duplicar"
+        },
+        "discard_changes_modal": {
+          "title": "Descartar alterações?",
+          "description": "Suas alterações não foram salvas. Sair desta página fará com que elas sejam descartadas.",
+          "cancel": "Descartar alterações",
+          "confirm": "Continuar editando"
+        },
+        "delete_role_modal": {
+          "title": "Excluir função?",
+          "description": "Tem certeza de que deseja excluir esta função? Esta ação não pode ser desfeita.",
+          "error_toast_message": "Falha ao excluir a função. Tente novamente."
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "Funções e permissões do workspace",
+            "project": "Funções e permissões do projeto"
+          },
+          "permissions_header": "Permissões",
+          "view_mode": {
+            "sets": "Visualização de conjuntos",
+            "permissions": "Cadeias de permissões"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "Configurações do workspace",
+              "description": "Configuração principal do workspace: nome, logotipo, moeda, domínio, exclusão e transferência de propriedade.",
+              "workspace": {
+                "view": { "label": "Visualizar workspace" },
+                "edit": { "label": "Editar configurações do workspace" },
+                "manage": { "label": "Gerenciar workspace" },
+                "invite": { "label": "Convidar membros" },
+                "delete": { "label": "Excluir workspace" },
+                "transfer": { "label": "Transferir propriedade" }
+              }
+            },
+            "member_management": {
+              "title": "Gerenciamento de membros",
+              "description": "Convidar, editar, importar e remover membros do workspace.",
+              "workspace_member": {
+                "view": { "label": "Visualizar membros" },
+                "invite": { "label": "Convidar membros" },
+                "edit": { "label": "Editar detalhes do membro" },
+                "import": { "label": "Importar membros (CSV / SSO)" },
+                "change_role": { "label": "Alterar função do membro" },
+                "remove": { "label": "Remover membros" }
+              }
+            },
+            "project_management": {
+              "title": "Gerenciamento de projetos",
+              "description": "Criar e gerenciar projetos a partir do contexto do workspace.",
+              "project": {
+                "browse": { "label": "Navegar pelos projetos" },
+                "view": { "label": "Visualizar detalhes do projeto" },
+                "create": { "label": "Criar projetos" },
+                "edit": { "label": "Editar configurações do projeto" },
+                "react": { "label": "Reagir aos projetos" },
+                "publish": { "label": "Publicar projetos (tornar públicos)" },
+                "archive": { "label": "Arquivar projetos" },
+                "delete": { "label": "Excluir projetos" },
+                "manage": { "label": "Gerenciar acesso ao projeto" }
+              }
+            },
+            "role_administration": {
+              "title": "Administração de funções",
+              "description": "Criar e gerenciar funções personalizadas e de projeto.",
+              "custom_role": {
+                "view": { "label": "Visualizar funções personalizadas" },
+                "create": { "label": "Criar funções personalizadas" },
+                "edit": { "label": "Editar funções personalizadas" },
+                "delete": { "label": "Excluir funções personalizadas" }
+              }
+            },
+            "workspace_pages": {
+              "title": "Pages do workspace (Wiki)",
+              "description": "Documentação e wikis em nível de workspace.",
+              "wiki": {
+                "view": { "label": "Visualizar Wiki" },
+                "create": { "label": "Criar páginas do Wiki" },
+                "edit": { "label": "Editar páginas do Wiki" },
+                "share": { "label": "Compartilhar páginas do Wiki" },
+                "delete": { "label": "Excluir páginas do Wiki" },
+                "comment": { "label": "Comentar em páginas do Wiki" }
+              }
+            },
+            "workspace_views": {
+              "title": "Visualizações do workspace",
+              "description": "Filtros salvos e gerenciamento de visualizações em nível de workspace.",
+              "workspace_workitem_view": {
+                "view": { "label": "Visualizar visualizações do workspace" },
+                "create": { "label": "Criar visualizações do workspace" },
+                "edit": { "label": "Editar visualizações do workspace" },
+                "share": { "label": "Compartilhar visualizações do workspace" },
+                "publish": { "label": "Publicar visualizações do workspace" },
+                "export": { "label": "Exportar visualizações do workspace" },
+                "delete": { "label": "Excluir visualizações do workspace" }
+              }
+            },
+            "initiatives": {
+              "title": "Iniciativas",
+              "description": "Acompanhamento de iniciativas entre projetos, incluindo comentários, anexos, links e atualizações.",
+              "initiative": {
+                "view": { "label": "Visualizar iniciativas" },
+                "create": { "label": "Criar iniciativas" },
+                "edit": { "label": "Editar iniciativas" },
+                "manage": { "label": "Gerenciar iniciativas" },
+                "react": { "label": "Reagir às iniciativas" },
+                "delete": { "label": "Excluir iniciativas" }
+              },
+              "initiative_comment": {
+                "view": { "label": "Visualizar comentários de iniciativas" },
+                "create": { "label": "Comentar em iniciativas" },
+                "edit": { "label": "Editar comentários de iniciativas" },
+                "react": { "label": "Reagir a comentários de iniciativas" },
+                "delete": { "label": "Excluir comentários de iniciativas" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "Visualizar anexos de iniciativas" },
+                "create": { "label": "Adicionar anexos a iniciativas" },
+                "delete": { "label": "Excluir anexos de iniciativas" }
+              },
+              "initiative_link": {
+                "view": { "label": "Visualizar links de iniciativas" },
+                "create": { "label": "Adicionar links a iniciativas" },
+                "edit": { "label": "Editar links de iniciativas" },
+                "delete": { "label": "Excluir links de iniciativas" }
+              }
+            },
+            "teamspaces": {
+              "title": "Teamspaces",
+              "description": "Navegar, criar e gerenciar teamspaces.",
+              "teamspace": {
+                "browse": { "label": "Navegar pelos teamspaces" },
+                "view": { "label": "Visualizar detalhes do teamspace" },
+                "create": { "label": "Criar teamspaces" },
+                "edit": { "label": "Editar teamspaces" },
+                "manage": { "label": "Gerenciar membros do teamspace" },
+                "delete": { "label": "Excluir teamspaces" }
+              }
+            },
+            "integrations": {
+              "title": "Integrações",
+              "description": "Integrações de terceiros, webhooks e tokens de API.",
+              "integration": {
+                "view": { "label": "Visualizar integrações" },
+                "create": { "label": "Criar integrações" },
+                "edit": { "label": "Configurar integrações" },
+                "delete": { "label": "Excluir integrações" }
+              },
+              "webhook": {
+                "view": { "label": "Visualizar webhooks" },
+                "create": { "label": "Criar webhooks" },
+                "edit": { "label": "Editar webhooks" },
+                "delete": { "label": "Excluir webhooks" }
+              },
+              "api_token": {
+                "view": { "label": "Visualizar tokens de API" },
+                "create": { "label": "Criar tokens de API" },
+                "delete": { "label": "Excluir tokens de API" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "Análises e relatórios",
+              "description": "Dashboards, análises e registros de trabalho em nível de workspace.",
+              "analytics": {
+                "view": { "label": "Visualizar análises" },
+                "export": { "label": "Exportar análises" }
+              },
+              "dashboard": {
+                "view": { "label": "Visualizar dashboards" },
+                "create": { "label": "Criar dashboards" },
+                "edit": { "label": "Editar dashboards" },
+                "delete": { "label": "Excluir dashboards" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "Visualizar registros de trabalho" },
+                "export": { "label": "Exportar registros de trabalho" }
+              },
+              "ai": {
+                "use": { "label": "Usar recursos de IA" }
+              }
+            },
+            "customers": {
+              "title": "Feedback de clientes",
+              "description": "Gerenciamento de clientes e solicitações de clientes.",
+              "customer": {
+                "view": { "label": "Visualizar clientes" },
+                "create": { "label": "Criar clientes" },
+                "edit": { "label": "Editar clientes" },
+                "delete": { "label": "Excluir clientes" }
+              },
+              "customer_attachment": {
+                "create": { "label": "Adicionar anexos de clientes" },
+                "delete": { "label": "Excluir anexos de clientes" }
+              }
+            },
+            "work_item_relations": {
+              "title": "Relações de itens de trabalho",
+              "description": "Gerenciar definições de tipos de relação personalizados para itens de trabalho.",
+              "workitem_relation": {
+                "view": { "label": "Visualizar definições de relação" },
+                "create": { "label": "Criar definições de relação" },
+                "edit": { "label": "Editar definições de relação" },
+                "delete": { "label": "Excluir definições de relação" }
+              }
+            },
+            "workspace_templates": {
+              "title": "Modelos",
+              "description": "Criar e gerenciar modelos de itens de trabalho, páginas e projetos em nível de workspace.",
+              "workspace_workitem_template": {
+                "view": { "label": "Visualizar modelos de itens de trabalho" },
+                "create": { "label": "Criar modelos de itens de trabalho" },
+                "edit": { "label": "Editar modelos de itens de trabalho" },
+                "delete": { "label": "Excluir modelos de itens de trabalho" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "Visualizar modelos de Page" },
+                "create": { "label": "Criar modelos de Page" },
+                "edit": { "label": "Editar modelos de Page" },
+                "delete": { "label": "Excluir modelos de Page" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "Visualizar modelos de projeto" },
+                "create": { "label": "Criar modelos de projeto" },
+                "edit": { "label": "Editar modelos de projeto" },
+                "delete": { "label": "Excluir modelos de projeto" }
+              }
+            },
+            "workspace_automations": {
+              "title": "Automações do workspace",
+              "description": "Regras e configurações de automação em nível de workspace.",
+              "workspace_automation": {
+                "view": { "label": "Visualizar automações do workspace" },
+                "create": { "label": "Criar automações do workspace" },
+                "edit": { "label": "Editar automações do workspace" },
+                "delete": { "label": "Excluir automações do workspace" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "Membros do projeto",
+              "description": "Convidar, editar e remover membros do projeto.",
+              "project_member": {
+                "view": { "label": "Visualizar membros do projeto" },
+                "invite": { "label": "Convidar membros" },
+                "edit": { "label": "Editar detalhes do membro" },
+                "change_role": { "label": "Alterar função do membro" },
+                "remove": { "label": "Remover membros" }
+              }
+            },
+            "work_items": {
+              "title": "Itens de trabalho",
+              "description": "A superfície principal de itens de trabalho. Inclui comentários, anexos, links, relações e propriedades personalizadas.",
+              "workitem": {
+                "view": { "label": "Visualizar itens de trabalho" },
+                "create": { "label": "Criar itens de trabalho" },
+                "edit": { "label": "Editar itens de trabalho" },
+                "bulk_edit": { "label": "Editar itens de trabalho em massa" },
+                "export": { "label": "Exportar itens de trabalho" },
+                "react": { "label": "Reagir aos itens de trabalho" },
+                "delete": { "label": "Excluir itens de trabalho" }
+              },
+              "comment": {
+                "create": { "label": "Adicionar comentários" },
+                "edit": { "label": "Editar comentários" },
+                "react": { "label": "Reagir aos comentários" },
+                "delete": { "label": "Excluir comentários" }
+              },
+              "attachment": {
+                "view": { "label": "Visualizar anexos" },
+                "create": { "label": "Adicionar anexos" },
+                "delete": { "label": "Excluir anexos" }
+              },
+              "workitem_link": {
+                "view": { "label": "Visualizar links de itens de trabalho" },
+                "create": { "label": "Adicionar links de itens de trabalho" },
+                "edit": { "label": "Editar links de itens de trabalho" },
+                "delete": { "label": "Excluir links de itens de trabalho" }
+              },
+              "issue_property": {
+                "view": { "label": "Visualizar propriedades personalizadas" },
+                "edit": { "label": "Editar propriedades personalizadas" }
+              }
+            },
+            "epics": {
+              "title": "Epics",
+              "description": "Ciclo de vida de Epic, incluindo links, propriedades e threads de atualização.",
+              "epic": {
+                "view": { "label": "Visualizar Epics" },
+                "create": { "label": "Criar Epics" },
+                "edit": { "label": "Editar Epics" },
+                "delete": { "label": "Excluir Epics" }
+              },
+              "epic_link": {
+                "view": { "label": "Visualizar links de Epic" },
+                "create": { "label": "Adicionar links de Epic" },
+                "edit": { "label": "Editar links de Epic" },
+                "delete": { "label": "Excluir links de Epic" }
+              },
+              "epic_property": {
+                "view": { "label": "Visualizar propriedades de Epic" },
+                "edit": { "label": "Editar propriedades de Epic" }
+              },
+              "epic_update": {
+                "view": { "label": "Visualizar atualizações de Epic" },
+                "create": { "label": "Publicar atualizações de Epic" },
+                "edit": { "label": "Editar atualizações de Epic" },
+                "delete": { "label": "Excluir atualizações de Epic" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "Visualizar comentários de atualizações de Epic" },
+                "create": { "label": "Comentar em atualizações de Epic" },
+                "edit": { "label": "Editar comentários de atualizações de Epic" },
+                "react": { "label": "Reagir a comentários de atualizações de Epic" },
+                "delete": { "label": "Excluir comentários de atualizações de Epic" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "Modules e Cycles",
+              "description": "Agrupamento de recursos e gerenciamento de sprint/Cycle.",
+              "module": {
+                "view": { "label": "Visualizar Modules" },
+                "create": { "label": "Criar Modules" },
+                "edit": { "label": "Editar Modules" },
+                "manage": { "label": "Gerenciar membros do Module" },
+                "archive": { "label": "Arquivar Modules" },
+                "export": { "label": "Exportar Modules" },
+                "delete": { "label": "Excluir Modules" }
+              },
+              "cycle": {
+                "view": { "label": "Visualizar Cycles" },
+                "create": { "label": "Criar Cycles" },
+                "edit": { "label": "Editar Cycles" },
+                "delete": { "label": "Excluir Cycles" }
+              },
+              "cycle_update": {
+                "view": { "label": "Visualizar atualizações de Cycle" },
+                "create": { "label": "Publicar atualizações de Cycle" },
+                "edit": { "label": "Editar atualizações de Cycle" },
+                "delete": { "label": "Excluir atualizações de Cycle" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "Pages e visualizações",
+              "description": "Pages e visualizações salvas em nível de projeto.",
+              "page": {
+                "view": { "label": "Visualizar Pages" },
+                "create": { "label": "Criar Pages" },
+                "edit": { "label": "Editar Pages" },
+                "share": { "label": "Compartilhar Pages" },
+                "delete": { "label": "Excluir Pages" }
+              },
+              "workitem_view": {
+                "view": { "label": "Visualizar visualizações do projeto" },
+                "create": { "label": "Criar visualizações do projeto" },
+                "edit": { "label": "Editar visualizações do projeto" },
+                "share": { "label": "Compartilhar visualizações do projeto" },
+                "publish": { "label": "Publicar visualizações do projeto" },
+                "export": { "label": "Exportar visualizações do projeto" },
+                "delete": { "label": "Excluir visualizações do projeto" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "Fluxo de Intake e triagem de itens de trabalho.",
+              "intake": {
+                "view": { "label": "Visualizar Intake" },
+                "create": { "label": "Criar itens de Intake" },
+                "submit": { "label": "Enviar solicitações de Intake" },
+                "edit": { "label": "Editar itens de Intake" },
+                "react": { "label": "Reagir aos itens de Intake" },
+                "manage": { "label": "Gerenciar itens de Intake" },
+                "configure": { "label": "Configurar Intake" },
+                "export": { "label": "Exportar Intake" },
+                "delete": { "label": "Excluir itens de Intake" }
+              }
+            },
+            "project_configuration": {
+              "title": "Configuração do projeto",
+              "description": "Rótulos, estados, estimativas e milestones.",
+              "label": {
+                "view": { "label": "Visualizar rótulos" },
+                "create": { "label": "Criar rótulos" },
+                "edit": { "label": "Editar rótulos" },
+                "delete": { "label": "Excluir rótulos" }
+              },
+              "state": {
+                "view": { "label": "Visualizar estados" },
+                "create": { "label": "Criar estados" },
+                "edit": { "label": "Editar estados" },
+                "delete": { "label": "Excluir estados" }
+              },
+              "estimate": {
+                "view": { "label": "Visualizar estimativas" },
+                "create": { "label": "Criar estimativas" },
+                "edit": { "label": "Editar estimativas" },
+                "delete": { "label": "Excluir estimativas" }
+              },
+              "milestone": {
+                "view": { "label": "Visualizar milestones" },
+                "create": { "label": "Criar milestones" },
+                "edit": { "label": "Editar milestones" },
+                "delete": { "label": "Excluir milestones" }
+              }
+            },
+            "automations": {
+              "title": "Automações e fluxos de trabalho",
+              "description": "Automações, regras de fluxo de trabalho e itens de trabalho recorrentes.",
+              "project_automation": {
+                "view": { "label": "Visualizar automações" },
+                "create": { "label": "Criar automações" },
+                "edit": { "label": "Editar automações" },
+                "delete": { "label": "Excluir automações" }
+              },
+              "workflow": {
+                "view": { "label": "Visualizar fluxos de trabalho" },
+                "create": { "label": "Criar fluxos de trabalho" },
+                "edit": { "label": "Editar fluxos de trabalho" },
+                "delete": { "label": "Excluir fluxos de trabalho" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "Visualizar itens recorrentes" },
+                "create": { "label": "Criar itens recorrentes" },
+                "edit": { "label": "Editar itens recorrentes" },
+                "delete": { "label": "Excluir itens recorrentes" }
+              }
+            },
+            "project_updates": {
+              "title": "Atualizações do projeto",
+              "description": "Atualizações de progresso e comentários em atualizações.",
+              "project_update": {
+                "view": { "label": "Visualizar atualizações do projeto" },
+                "create": { "label": "Publicar atualizações do projeto" },
+                "edit": { "label": "Editar atualizações do projeto" },
+                "delete": { "label": "Excluir atualizações do projeto" }
+              },
+              "project_update_comment": {
+                "view": { "label": "Visualizar comentários de atualizações do projeto" },
+                "create": { "label": "Comentar em atualizações do projeto" },
+                "edit": { "label": "Editar comentários de atualizações do projeto" },
+                "react": { "label": "Reagir a comentários de atualizações do projeto" },
+                "delete": { "label": "Excluir comentários de atualizações do projeto" }
+              }
+            },
+            "project_analytics": {
+              "title": "Análises e atividade",
+              "description": "Análises e registros de atividade do projeto.",
+              "project_activity": {
+                "view": { "label": "Visualizar registros de atividade" }
+              }
+            },
+            "project_links": {
+              "title": "Links do projeto",
+              "description": "Links em nível de projeto.",
+              "project_link": {
+                "view": { "label": "Visualizar links do projeto" },
+                "create": { "label": "Adicionar links do projeto" },
+                "edit": { "label": "Editar links do projeto" },
+                "delete": { "label": "Excluir links do projeto" }
+              }
+            },
+            "project_templates": {
+              "title": "Modelos",
+              "description": "Modelos de itens de trabalho e Pages com escopo de projeto.",
+              "project_workitem_template": {
+                "view": { "label": "Visualizar modelos de itens de trabalho" },
+                "create": { "label": "Criar modelos de itens de trabalho" },
+                "edit": { "label": "Editar modelos de itens de trabalho" },
+                "delete": { "label": "Excluir modelos de itens de trabalho" }
+              },
+              "project_page_template": {
+                "view": { "label": "Visualizar modelos de Page" },
+                "create": { "label": "Criar modelos de Page" },
+                "edit": { "label": "Editar modelos de Page" },
+                "delete": { "label": "Excluir modelos de Page" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "Todos",
+              "own": "Somente próprios",
+              "creator": "Somente próprios",
+              "lead": "Somente como líder",
+              "disabled": "Desativado"
+            },
+            "select_all": "Selecionar todos",
+            "high_risk_tooltip": "Isso concede acesso elevado. Conceda com cautela.",
+            "folded_rows": {
+              "templates": {
+                "view": "Visualizar modelos",
+                "create": "Criar modelos",
+                "edit": "Editar modelos",
+                "delete": "Excluir modelos"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "Inclui visualizar detalhes, anexos e links. Também abrange reagir e comentar em iniciativas.",
+                  "edit": "Inclui criar anexos e gerenciar links de iniciativas."
+                },
+                "workspace_templates": {
+                  "view": "Inclui visualizar modelos de projeto, de itens de trabalho e de Page.",
+                  "create": "Inclui criar modelos de projeto, de itens de trabalho e de Page.",
+                  "edit": "Inclui editar modelos de projeto, de itens de trabalho e de Page.",
+                  "delete": "Inclui excluir modelos de projeto, de itens de trabalho e de Page."
+                },
+                "epics": {
+                  "view": "Inclui visualizar links de Epic e reagir a Epics.",
+                  "edit": "Inclui criar, editar e excluir links de Epic."
+                },
+                "epic_updates": {
+                  "view": "Inclui visualizar e reagir às atualizações. Também abrange visualizar, criar e reagir aos comentários de atualização."
+                },
+                "project_updates": {
+                  "view": "Inclui visualizar e reagir às atualizações. Também abrange visualizar, criar e reagir aos comentários de atualização."
+                },
+                "project_templates": {
+                  "view": "Inclui visualizar modelos de itens de trabalho e de Page.",
+                  "create": "Inclui criar modelos de itens de trabalho e de Page.",
+                  "edit": "Inclui editar modelos de itens de trabalho e de Page.",
+                  "delete": "Inclui excluir modelos de itens de trabalho e de Page."
+                }
+              }
+            },
+            "search_placeholder": "Pesquisar permissões...",
+            "no_results": "Nenhuma permissão corresponde",
+            "clear_search": "Limpar",
+            "preset_label": "Começar a partir de uma função do sistema:",
+            "preset_none": "Nenhuma (em branco)",
+            "empty_permissions_note": "Selecione pelo menos uma permissão para salvar este esquema."
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "Funções e esquemas do projeto",
+        "sidebar_label": "Projeto"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "Funções e esquemas do workspace",
+        "sidebar_label": "Workspace"
+      },
+      "roles_and_schemes": {
+        "description": "Configure propriedades e grupos de interação para anexar a um ou mais tipos de itens de trabalho",
+        "tabs": {
+          "roles": "Funções",
+          "permission_schemes": "Esquemas de permissões"
+        },
+        "create_role": {
+          "modal_title": "Criar nova função",
+          "button_label": "Criar função",
+          "role_title_label": "Título da função",
+          "role_title_placeholder": "Adicione um título único",
+          "description_label": "Descrição",
+          "description_placeholder": "Adicione um título único",
+          "create_button": "Criar função",
+          "error_toast_description": "Não foi possível criar a função. Tente novamente."
+        },
+        "create_scheme": {
+          "title": "Criar esquema de permissões",
+          "description": "Defina o esquema de permissões configurando seu nome, descrição e permissões.",
+          "button_label": "Criar esquema de permissões",
+          "create_button": "Criar esquema de permissões",
+          "error_toast_description": "Não foi possível criar o esquema de permissões. Tente novamente."
+        },
+        "role_detail": {
+          "back": "Voltar",
+          "permission_schemes_title": "Esquemas de permissões",
+          "attach_button": "Anexar esquemas de permissões",
+          "empty_title": "Ainda não há esquemas de permissões",
+          "empty_description": "Crie rótulos personalizados para categorizar e gerenciar seus itens de trabalho de forma eficaz.",
+          "error_toast_description": "Não foi possível atualizar a função. Tente novamente."
+        },
+        "scheme_detail": {
+          "title": "Detalhes do esquema de permissões",
+          "description": "Veja uma visão completa do esquema e das permissões atribuídas a ele.",
+          "edit_title": "Editar esquema de permissões",
+          "edit_description": "Atualize o nome, as permissões e as configurações do esquema.",
+          "edit_button": "Editar esquema de permissões",
+          "error_toast_description": "Não foi possível atualizar o esquema de permissões. Tente novamente.",
+          "scheme_information_title": "Informações do esquema",
+          "scheme_information_description": "Nome do esquema e uma breve descrição para esclarecer sua finalidade.",
+          "scheme_name": "Nome do esquema",
+          "scheme_name_placeholder": "Dê um nome ao esquema",
+          "scheme_name_error": "O nome é obrigatório.",
+          "scheme_description": "Descrição",
+          "scheme_description_placeholder": "Descreva o esquema"
+        },
+        "attach_schemes": {
+          "title": "Esquemas de permissões",
+          "search_placeholder": "Pesquisar",
+          "permissions_count": "permissões",
+          "discard": "Descartar",
+          "add": "Adicionar"
+        },
+        "quick_actions": {
+          "edit_scheme": "Editar esquema de permissões",
+          "delete_scheme": "Excluir esquema de permissões",
+          "edit_role": "Editar detalhes da função",
+          "enable_role": "Ativar função",
+          "delete_role": "Excluir função"
+        },
+        "edit_role": {
+          "modal_title": "Editar detalhes da função",
+          "save_button": "Salvar alterações",
+          "saving": "Salvando...",
+          "error_toast_description": "Não foi possível atualizar a função. Tente novamente."
+        },
+        "delete_role": {
+          "confirm_title": "Excluir \"{roleName}\"?",
+          "has_members_message": "Esta função está atribuída a {count} membros. A exclusão é permanente e não pode ser desfeita.",
+          "no_members_message": "Esta função não tem membros atribuídos. A exclusão é permanente e não pode ser desfeita.",
+          "reassign_label": "Reatribuir membros para",
+          "reassign_placeholder": "Selecione uma função",
+          "submit_button": "Reatribuir e excluir",
+          "submit_button_no_members": "Excluir",
+          "submitting": "Excluindo...",
+          "error_toast_description": "Não foi possível excluir a função. Tente novamente.",
+          "success_toast_message": "Função excluída com sucesso."
+        },
+        "disable_role": {
+          "confirm_title": "Desativar \"{roleName}\"?",
+          "has_members_message": "Esta função está atualmente atribuída a {memberCount} membros. Você deve selecionar uma função para reatribuir os membros existentes antes de prosseguir.",
+          "no_members_message": "Esta função não tem membros atribuídos. Ela será desativada.",
+          "reassign_label": "Reatribuir membros para",
+          "reassign_placeholder": "Selecione uma função",
+          "submit_button": "Reatribuir e desativar",
+          "submit_button_no_members": "Desativar",
+          "submitting": "Desativando...",
+          "error_toast_description": "Não foi possível desativar a função. Tente novamente.",
+          "success_toast_message": "Função desativada com sucesso."
+        },
+        "enable_role": {
+          "confirm_title": "Ativar \"{roleName}\"?",
+          "confirm_message": "Esta função se tornará ativa e poderá ser atribuída aos membros.",
+          "submit_button": "Ativar",
+          "submitting": "Ativando...",
+          "success_toast_message": "Função ativada com sucesso."
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "Excluir esquema de permissões?",
+          "has_roles_message": "Este esquema é usado em {count} funções. Removê-lo revogará suas permissões dessas funções. Esta ação não pode ser desfeita.",
+          "no_roles_message": "Este esquema de permissões não é usado por nenhuma função. Ele será excluído permanentemente.",
+          "submit_button": "Confirmar",
+          "submitting": "Excluindo...",
+          "error_toast_description": "Não foi possível excluir o esquema de permissões. Tente novamente.",
+          "in_use_error": "Remova este esquema de todas as funções antes de excluí-lo.",
+          "success_toast_message": "Esquema de permissões excluído com sucesso."
+        }
+      }
+    }
+  }
+}

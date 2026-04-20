@@ -15,7 +15,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -23,7 +22,6 @@ import { WorkspaceAPITokenService } from "@plane/services";
 // component
 import { CreateApiTokenModal } from "@/components/api-token/modal/create-token-modal";
 import { ApiTokenListItem } from "@/components/api-token/token-list-item";
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
@@ -34,7 +32,6 @@ import { WORKSPACE_API_TOKENS_LIST } from "@/constants/fetch-keys";
 // store hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/page";
 
 import { WorkspaceAccessTokensHeader } from "./header";
@@ -49,25 +46,19 @@ function ApiTokensPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   const { config } = useInstance();
-  const areAccessTokensDisabled = Boolean(config?.are_access_tokens_disabled);
   // derived values
-  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
+  const areAccessTokensDisabled = Boolean(config?.are_access_tokens_disabled);
 
-  const { data: tokens } = useSWR(
-    canPerformWorkspaceAdminActions ? WORKSPACE_API_TOKENS_LIST(workspaceSlug) : null,
-    canPerformWorkspaceAdminActions ? () => workspaceApiTokenService.list(workspaceSlug) : null
+  const { data: tokens } = useSWR(WORKSPACE_API_TOKENS_LIST(workspaceSlug), () =>
+    workspaceApiTokenService.list(workspaceSlug)
   );
 
   const pageTitle = currentWorkspace?.name
     ? `${currentWorkspace.name} - ${t("workspace_settings.settings.api_tokens.title")}`
     : undefined;
-
-  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
-    return <NotAuthorizedView section="settings" className="h-auto" />;
-  }
 
   return (
     <SettingsContentWrapper header={<WorkspaceAccessTokensHeader />}>

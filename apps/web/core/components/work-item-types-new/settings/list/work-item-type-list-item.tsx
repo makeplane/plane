@@ -57,9 +57,8 @@ export const WorkItemTypeListItem = observer(function WorkItemTypeListItem(props
   // store hooks
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const isWorkItemTypeHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY", false);
-  const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
-    EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
-  );
+  const isWorkItemHierarchyFeatureEnabled =
+    workspaceSlug && isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED);
   // derived values
   const workItemTypeDetail = workItemType.asJSON;
   const linkedProperties = getLinkedProperties(workItemType.linkedPropertyIds).map((property) => ({

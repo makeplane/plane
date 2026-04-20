@@ -16,11 +16,15 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import type { IWorkItemRelationDefinition, TWorkItemRelationDefinitionPayload, TLoader } from "@plane/types";
 import { WorkItemRelationDefinitionService } from "@plane/services";
+import type { RootStore } from "@/plane-web/store/root.store";
+import type { RelationDefinitionPermissions } from "./relation-definition.permissions";
+import { RelationDefinitionPermissionsInstance } from "./relation-definition.permissions";
 
 export interface IRelationDefinitionStore {
   // observables
   loader: TLoader;
   relationDefinitionMap: Record<string, IWorkItemRelationDefinition>;
+  permissions: RelationDefinitionPermissions;
   // computed
   sortedRelationDefinitions: IWorkItemRelationDefinition[];
   // computed fn
@@ -46,14 +50,16 @@ export class RelationDefinitionStore implements IRelationDefinitionStore {
   // observables
   loader: TLoader = undefined;
   relationDefinitionMap: Record<string, IWorkItemRelationDefinition> = {};
+  permissions: RelationDefinitionPermissions;
   // service
   private service: WorkItemRelationDefinitionService;
 
-  constructor() {
+  constructor(_rootStore: RootStore) {
     makeObservable(this, {
       // observables
       loader: observable.ref,
       relationDefinitionMap: observable,
+      permissions: observable.ref,
       // computed
       sortedRelationDefinitions: computed,
       // actions
@@ -63,6 +69,9 @@ export class RelationDefinitionStore implements IRelationDefinitionStore {
       deleteRelationDefinition: action,
     });
     this.service = new WorkItemRelationDefinitionService();
+    this.permissions = new RelationDefinitionPermissionsInstance({
+      can: _rootStore.permissionAccessStore.can,
+    });
   }
 
   // computed

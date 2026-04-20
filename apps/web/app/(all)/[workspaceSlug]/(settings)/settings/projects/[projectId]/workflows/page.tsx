@@ -27,11 +27,7 @@ import { WorkflowUpgrade } from "@/components/workflows";
 import type { Route } from "./+types/page";
 import { WorkflowsProjectSettingsHeader } from "./header";
 import { WorkflowsRoot } from "@/components/workflows/root";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
-import { EUserProjectRoles } from "@plane/types";
-import { EUserPermissionsLevel } from "@plane/constants";
 
 function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
   // router
@@ -40,20 +36,12 @@ function WorkflowsSettingsPage({ params }: Route.ComponentProps) {
   const { t } = useTranslation();
   const { currentProjectDetails } = useProject();
   const { currentWorkspace } = useWorkspace();
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-
   // derived values
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails?.name} - ${t("common.workflows")}`
     : undefined;
-  const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (!currentWorkspace) return <></>;
-
-  if (workspaceUserInfo && !hasAdminPermission) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
-
   return (
     <SettingsContentWrapper header={<WorkflowsProjectSettingsHeader />}>
       <div className="w-full h-full flex flex-col">

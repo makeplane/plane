@@ -220,6 +220,10 @@
             "title": "Chiave attributo gruppo",
             "description": "L'attributo del provider di identità usato per identificare e sincronizzare i gruppi utente.",
             "placeholder": "Gruppi"
+          },
+          "default_workspace_role": {
+            "title": "Ruolo predefinito dello spazio di lavoro",
+            "description": "Il ruolo assegnato agli utenti quando vengono aggiunti automaticamente allo spazio di lavoro tramite la sincronizzazione dei gruppi."
           }
         },
         "group_mapping": {

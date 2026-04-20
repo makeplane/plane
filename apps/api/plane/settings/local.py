@@ -55,6 +55,10 @@ LOGGING = {
             "()": "pythonjsonlogger.json.JsonFormatter",
             "fmt": "%(levelname)s %(asctime)s %(module)s %(name)s %(message)s",
         },
+        "simple": {
+            "format": "{levelname} {message}",
+            "style": "{",
+        },
     },
     "handlers": {
         "console_verbose": {

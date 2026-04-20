@@ -14,15 +14,12 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceView } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
 // helpers
 import { useViewMenuItems } from "@/components/common/quick-actions/helper";
-// hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { DeleteGlobalViewModal } from "./delete-view-modal";
 import { CreateUpdateWorkspaceViewModal } from "./modal";
@@ -30,19 +27,18 @@ import { CreateUpdateWorkspaceViewModal } from "./modal";
 type Props = {
   workspaceSlug: string;
   view: IWorkspaceView;
+  permissions: {
+    canEdit: boolean;
+    canLock: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickActions(props: Props) {
-  const { workspaceSlug, view } = props;
+  const { workspaceSlug, view, permissions } = props;
   // states
   const [updateViewModal, setUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
-  // store hooks
-  const { data } = useUser();
-  const { allowPermissions } = useUserPermissions();
-  // auth
-  const isOwner = view?.owned_by === data?.id;
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.id}`;
   const handleCopyText = async () => {
@@ -57,8 +53,7 @@ export const WorkspaceViewQuickActions = observer(function WorkspaceViewQuickAct
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
   const { items, modals } = useViewMenuItems({
-    isOwner,
-    isAdmin,
+    permissions,
     handleDelete: () => setDeleteViewModal(true),
     handleEdit: () => setUpdateViewModal(true),
     handleOpenInNewTab,

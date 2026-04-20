@@ -14,12 +14,8 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserWorkspaceRoles } from "@plane/types";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
@@ -29,15 +25,11 @@ export const InitiativeScopeEpicsEmptyState = observer(function InitiativeScopeE
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const {
-    initiative: { toggleEpicModal },
+    initiative: { permissions, toggleEpicModal },
   } = useInitiatives();
   // derived values
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const isEditable = workspaceSlug && initiativeId && permissions.getCanAddEpic(workspaceSlug, initiativeId);
 
   return (
     <div className="relative h-full w-full overflow-y-auto">

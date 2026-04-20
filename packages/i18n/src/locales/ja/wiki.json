@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "ネストされたページには有料プランが必要です。アップグレードしてご利用ください。"
+    },
+    "auth": {
+      "title": "アクセスが拒否されました",
+      "description": "このページにアクセスする権限がありません。ワークスペース管理者に権限の付与を依頼してください。",
+      "redirection_button": {
+        "text": "プロジェクトへ移動"
+      },
+      "reload_button": {
+        "text": "ページを再読み込み"
+      }
     }
   }
 }

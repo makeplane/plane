@@ -28,7 +28,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import WorkspaceUserPermission
+from plane.permissions import can, InitiativePermissions
 from plane.db.models import Workspace, Issue, Project, StateGroup
 from plane.ee.models import (
     Initiative,
@@ -41,7 +41,6 @@ from plane.ee.models import (
 from plane.ee.models.initiative import StateChoices
 from plane.ee.serializers import InitiativeSerializer, InitiativeProjectSerializer, InitiativeWriteSerializer
 from plane.payment.flags.flag import FeatureFlag
-from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 from plane.ee.utils.nested_issue_children import get_all_related_issues
@@ -53,7 +52,6 @@ from plane.utils.filters.extended.filterset import InitiativeProjectFilterSet
 class InitiativeEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceUserPermission]
     model = Initiative
     serializer_class = InitiativeSerializer
     filter_backends = (ComplexFilterBackend,)
@@ -123,7 +121,7 @@ class InitiativeEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         # Get initiative by pk
         if pk:
@@ -149,7 +147,7 @@ class InitiativeEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -181,7 +179,7 @@ class InitiativeEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, pk):
         initiative = (
             Initiative.objects.filter(pk=pk)
@@ -221,7 +219,7 @@ class InitiativeEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, pk):
         initiative = Initiative.objects.get(pk=pk)
         initiative.delete()
@@ -242,12 +240,13 @@ class InitiativeEndpoint(BaseAPIView):
 class InitiativeProjectEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceUserPermission]
     model = InitiativeProject
     serializer_class = InitiativeProjectSerializer
     filter_backends = (ComplexFilterBackend,)
     filterset_class = InitiativeProjectFilterSet
 
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get(self, request, slug, initiative_id, project_id=None):
         # Get all projects in initiative
         projects = Project.objects.filter(archived_at__isnull=True).filter(
@@ -266,6 +265,8 @@ class InitiativeProjectEndpoint(BaseAPIView):
 
         return Response(projects.values_list("id", flat=True), status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def post(self, request, slug, initiative_id, project_id=None):
         workspace = Workspace.objects.get(slug=slug)
         project_ids = request.data.get("project_ids", [])
@@ -287,6 +288,8 @@ class InitiativeProjectEndpoint(BaseAPIView):
             serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def delete(self, request, slug, initiative_id, project_id):
         initiative_project = InitiativeProject.objects.get(
             initiative_id=initiative_id, project_id=project_id, workspace__slug=slug
@@ -403,7 +406,7 @@ class InitiativeAnalyticsEndpoint(BaseAPIView):
         return updates_counts
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get(self, request, slug, initiative_id):
         initiative = (
             Initiative.objects.filter(id=initiative_id, workspace__slug=slug)
@@ -475,7 +478,7 @@ class WorkspaceInitiativeAnalytics(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, project_id=None):
         initiatives = (
             Initiative.initiative_objects.filter(workspace__slug=slug, projects__project__archived_at__isnull=True)
@@ -549,7 +552,7 @@ class InitiativeEpicAnalytics(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get(self, request, slug, initiative_id):
         initiative_epic = (
             InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id)
@@ -593,7 +596,7 @@ class InitiativeProgressEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get(self, request, slug, initiative_id):
         initiative = Initiative.objects.prefetch_related(
             "projects",
@@ -677,7 +680,7 @@ class InitiativeArchiveEndpoint(BaseAPIView):
     filterset_class = InitiativeFilterSet
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         archived_initiatives = Initiative.objects.filter(
             archived_at__isnull=False,
@@ -691,7 +694,7 @@ class InitiativeArchiveEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def post(self, request, slug, initiative_id):
         initiative = Initiative.objects.get(workspace__slug=slug, pk=initiative_id)
 
@@ -710,7 +713,7 @@ class InitiativeArchiveEndpoint(BaseAPIView):
         return Response({"archived_at": str(initiative.archived_at)}, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @can(InitiativePermissions.DELETE, resource_param="initiative_id")
     def delete(self, request, slug, initiative_id):
         initiative = Initiative.objects.get(workspace__slug=slug, pk=initiative_id)
 

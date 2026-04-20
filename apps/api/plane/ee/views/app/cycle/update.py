@@ -19,7 +19,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers import UpdatesSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, CycleUpdatePermissions
 from plane.ee.models import UpdateReaction, EntityUpdates, EntityIssueStateActivity
 from plane.db.models import Workspace
 from plane.payment.flags.flag import FeatureFlag
@@ -50,6 +50,7 @@ class CycleUpdatesViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
+    @can(CycleUpdatePermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id, cycle_id):
         cycle_updates = (
             EntityUpdates.objects.filter(
@@ -75,6 +76,16 @@ class CycleUpdatesViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
+    @can(CycleUpdatePermissions.VIEW, resource_param="pk")
+    def retrieve(self, request, slug, project_id, cycle_id, pk):
+        cycle_update = EntityUpdates.objects.get(
+            workspace__slug=slug, project_id=project_id, cycle_id=cycle_id, pk=pk
+        )
+        serializer = UpdatesSerializer(cycle_update)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
+    @can(CycleUpdatePermissions.VIEW, resource_param="project_id")
     def comments_list(self, request, slug, project_id, cycle_id, update_id):
         cycle_updates = EntityUpdates.objects.filter(
             workspace__slug=slug,
@@ -91,7 +102,7 @@ class CycleUpdatesViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(CycleUpdatePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id, cycle_id):
         workspace = Workspace.objects.get(slug=slug)
         cycle_issues = EntityIssueStateActivity.objects.filter(
@@ -133,7 +144,7 @@ class CycleUpdatesViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
+    @can(CycleUpdatePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, cycle_id, pk):
         cycle_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, cycle_id=cycle_id, pk=pk)
         serializer = UpdatesSerializer(cycle_update, data=request.data, partial=True)
@@ -143,7 +154,7 @@ class CycleUpdatesViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
+    @can(CycleUpdatePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, cycle_id, pk):
         cycle_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, cycle_id=cycle_id, pk=pk)
         cycle_update.delete()

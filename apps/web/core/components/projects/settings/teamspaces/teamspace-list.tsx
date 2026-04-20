@@ -15,29 +15,27 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Search } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
 // local imports
 import { LinkTeamspaceToProjectModal } from "./link-teamspace-modal";
 import { ProjectTeamspaceListLoader } from "./list-loader";
 import { ProjectTeamspaceListItem } from "./teamspace-list-item";
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 
 type TProjectTeamspaceList = {
   workspaceSlug: string;
   projectId: string;
+  permissions: Pick<ProjectItemPermissions, "canLinkTeamspace" | "canRemoveTeamspace">;
 };
 
 export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props: TProjectTeamspaceList) {
   // props
-  const { workspaceSlug, projectId } = props;
+  const { workspaceSlug, projectId, permissions } = props;
   // states
   const [isAddTeamspaceModalOpen, setIsAddTeamspaceModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,7 +44,6 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
   // store hooks
   const { loader, isTeamspacesFeatureEnabled, getProjectTeamspaceIds, getTeamspaceById, addTeamspacesToProject } =
     useTeamspaces();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const linkedTeamspaceIds = getProjectTeamspaceIds(projectId);
   const isLoading = loader === "init-loader" || linkedTeamspaceIds === undefined;
@@ -56,10 +53,6 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
     if (!teamspaceDetails) return false;
     return teamspaceDetails.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
-  const hasWorkspaceAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const hasProjectAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-  // User needs to be a workspace admin and a project admin to add a teamspace
-  const hasPermissionToAddTeamspace = hasWorkspaceAdminPermission && hasProjectAdminPermission;
 
   const handleLinkTeamspaceToProject = async (teamspaceIds: string[]) => {
     try {
@@ -107,7 +100,7 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {hasPermissionToAddTeamspace && (
+          {permissions.canLinkTeamspace && (
             <Button variant="primary" size="lg" onClick={() => setIsAddTeamspaceModalOpen(true)}>
               {t("teamspace_projects.settings.primary_button.text")}
             </Button>
@@ -134,7 +127,7 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
             {t("teamspace_projects.settings.secondary_button.text")}
           </a>
         </span>
-        {hasPermissionToAddTeamspace && (
+        {permissions.canLinkTeamspace && (
           <Button
             variant="secondary"
             className="text-caption-sm-medium mt-2.5"
@@ -159,6 +152,7 @@ export const ProjectTeamspaceList = observer(function ProjectTeamspaceList(props
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             teamspaceIds={filteredTeamspaceIds}
+            permissions={permissions}
           />
         ) : (
           renderEmptyState()

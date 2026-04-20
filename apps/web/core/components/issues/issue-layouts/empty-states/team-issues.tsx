@@ -14,42 +14,43 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
-export const TeamEmptyState = observer(function TeamEmptyState() {
+type TProps = {
+  permissions: {
+    canCreateWorkItem: (projectId: string) => boolean;
+    canClearFilters: boolean;
+  };
+};
+
+export const TeamEmptyState = observer(function TeamEmptyState(props: TProps) {
+  const { permissions } = props;
   // router
-  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const { teamspaceId: routerTeamspaceId } = useParams();
   const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   const { getTeamspaceProjectIds } = useTeamspaces();
   // derived values
   const teamspaceWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.TEAM, teamspaceId);
   const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
-  const hasWorkspaceMemberLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const firstProjectId = teamspaceProjectIds?.[0];
 
   const handleClearAllFilters = () => {
     if (!teamspaceWorkItemFilter || !teamspaceId) return;
     teamspaceWorkItemFilter?.clearFilters();
   };
 
-  if (!workspaceSlug || !teamspaceId) return null;
+  if (!teamspaceId) return null;
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -64,7 +65,7 @@ export const TeamEmptyState = observer(function TeamEmptyState() {
               onClick: () => {
                 handleClearAllFilters();
               },
-              disabled: !hasWorkspaceMemberLevelPermissions || !teamspaceWorkItemFilter,
+              disabled: !permissions.canClearFilters || !teamspaceWorkItemFilter,
               variant: "secondary",
             },
           ]}
@@ -80,7 +81,7 @@ export const TeamEmptyState = observer(function TeamEmptyState() {
               onClick: () => {
                 toggleCreateIssueModal(true, EIssuesStoreType.TEAM, teamspaceProjectIds);
               },
-              disabled: !hasWorkspaceMemberLevelPermissions,
+              disabled: firstProjectId ? !permissions.canCreateWorkItem(firstProjectId) : true,
               variant: "primary",
             },
           ]}

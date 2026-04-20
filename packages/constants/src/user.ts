@@ -33,13 +33,6 @@ export type TUserStatus = {
   message?: string;
 };
 
-export enum EUserPermissionsLevel {
-  WORKSPACE = "WORKSPACE",
-  PROJECT = "PROJECT",
-}
-
-export type TUserPermissionsLevel = EUserPermissionsLevel;
-
 export enum EUserPermissions {
   ADMIN = 20,
   MEMBER = 15,

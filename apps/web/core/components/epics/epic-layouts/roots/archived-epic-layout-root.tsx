@@ -72,7 +72,7 @@ export const ArchivedEpicLayoutRoot = observer(function ArchivedEpicLayoutRoot(p
             <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto">
               <Suspense>
-                <ArchivedEpicListLayout />
+                <ArchivedEpicListLayout workspaceSlug={workspaceSlug} projectId={projectId} />
               </Suspense>
             </div>
             {/* peek overview */}

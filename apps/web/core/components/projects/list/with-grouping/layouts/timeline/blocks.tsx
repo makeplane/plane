@@ -81,6 +81,7 @@ export const ProjectTimelineBlock = observer(function ProjectTimelineBlock(props
 export const ProjectTimelineSidebarBlock = observer(function ProjectTimelineSidebarBlock(props: SidebarProps) {
   const { block } = props;
   const { filters } = useProjectFilter();
+  const { permissions: projectPermissions } = useProject();
 
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -94,23 +95,23 @@ export const ProjectTimelineSidebarBlock = observer(function ProjectTimelineSide
   const children = (
     <>
       <div className="relative flex h-full w-full items-center gap-2 py-3">
-        <div className="flex-shrink-0 text-11 text-tertiary mr-3 w-[40px]">
+        <div className="shrink-0 text-11 text-tertiary mr-3 w-[40px]">
           {truncateProjectIdentifierForDisplay(projectDetails.identifier)} {projectDetails?.sequence_id}
         </div>
         <Logo logo={projectDetails.logo_props} size={16} />
         <Tooltip tooltipContent={projectDetails?.name} isMobile={isMobile}>
-          <span className="flex-grow text-13 font-medium max-w-[150px] truncate">{projectDetails?.name}</span>
+          <span className="grow text-13 font-medium max-w-[150px] truncate">{projectDetails?.name}</span>
         </Tooltip>
       </div>
       {filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
       {duration && (
-        <div className="flex-shrink-0 h-full text-13 font-medium py-3 ml-2">
+        <div className="shrink-0 h-full text-13 font-medium py-3 ml-2">
           {duration} day{duration > 1 ? "s" : ""}
         </div>
       )}
     </>
   );
-  return projectDetails.member_role ? (
+  return workspaceSlug && projectPermissions.getCanView(workspaceSlug, projectDetails?.id) ? (
     <Link
       href={`/${workspaceSlug}/projects/${projectDetails?.id}/issues`}
       className="px-page-x w-full cursor-pointer text-13 text-primary flex justify-between h-11 bg-layer-transparent hover:bg-layer-transparent-hover"
@@ -118,7 +119,7 @@ export const ProjectTimelineSidebarBlock = observer(function ProjectTimelineSide
       {children}
     </Link>
   ) : (
-    <div className="px-page-x w-full cursor-not-allowed text-13 text-primary flex justify-between h-11 bg-layer-transparent">
+    <div className="px-page-x w-full text-13 text-primary flex justify-between h-11 bg-layer-transparent">
       {children}
     </div>
   );

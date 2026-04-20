@@ -75,6 +75,7 @@ export const CycleDetail = observer(function CycleDetail(props: TCycleDetailProp
             data={updatedData}
             isMobile={isMobile}
             showActionButtons={false}
+            workspaceSlug={workspaceSlug}
           />
           <div
             className={cn("absolute top-0 right-0 w-full h-full bg-surface-1 rounded-xl opacity-50", {

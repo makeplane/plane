@@ -17,16 +17,13 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { ReleasesSettingsRoot } from "@/components/releases/settings/root";
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -38,22 +35,17 @@ import { ReleasesWorkspaceSettingsHeader } from "./header";
 function ReleasesSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { updateWorkspaceFeature, isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
 
   const { t } = useTranslation();
 
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Releases` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const isReleasesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_RELEASES_ENABLED);
+  const isReleasesEnabled = isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_RELEASES_ENABLED);
   const isFeatureFlagEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.RELEASES);
 
   if (!currentWorkspace?.id) return <></>;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   const toggleReleasesFeature = async () => {
     try {

@@ -33,16 +33,17 @@ export type TWorkItemDetailRoot = {
 
 export const WorkItemDetailRoot = observer(function WorkItemDetailRoot(props: TWorkItemDetailRoot) {
   const { workspaceSlug, projectId, workItemId, workItem } = props;
-  // refs
-  const editorRef = useRef<EditorRefApi>(null);
   // router
   const router = useAppRouter();
-
+  // refs
+  const editorRef = useRef<EditorRefApi>(null);
+  // derived values
   const isEpic = !!workItem.is_epic;
+  const isArchived = !!workItem.archived_at;
 
   return (
     <>
-      {workItem?.archived_at && (
+      {isArchived && (
         <Banner
           variant="warning"
           title={`This ${isEpic ? "epic" : "work item"} has been archived. Visit the Archives section to restore it.`}
@@ -60,20 +61,13 @@ export const WorkItemDetailRoot = observer(function WorkItemDetailRoot(props: TW
           className="border-b border-subtle"
         />
       )}
-
       {isEpic ? (
-        <EpicDetailRoot
-          editorRef={editorRef}
-          workspaceSlug={workspaceSlug}
-          projectId={projectId}
-          epicId={workItemId}
-          isArchived={!!workItem.archived_at}
-        />
+        <EpicDetailRoot editorRef={editorRef} workspaceSlug={workspaceSlug} projectId={projectId} epicId={workItemId} />
       ) : (
         <IssueDetailRoot
           workspaceSlug={workspaceSlug}
           projectId={projectId}
-          issueId={workItemId}
+          workItemId={workItemId}
           is_archived={!!workItem.archived_at}
         />
       )}

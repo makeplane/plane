@@ -29,7 +29,7 @@ export interface AuthMiddlewareConfig {
   registry: WorkspaceRegistry;
   runPromise: <A, E>(effect: Effect.Effect<A, E, never>) => Promise<A>;
   runFork: <A, E>(effect: Effect.Effect<A, E, never>) => void;
-  requireWorkspaceMembership?: boolean;
+  requireWorkspacePermissions?: boolean;
 }
 
 const getCookie = (socket: Socket): string | undefined => {
@@ -50,7 +50,7 @@ const getCookie = (socket: Socket): string | undefined => {
 
 /**
  * Creates a Socket.IO authentication middleware
- * Validates user session via cookie and optionally checks workspace membership
+ * Validates user session via cookie and optionally checks workspace permissions
  */
 export const createAuthMiddleware = (config: AuthMiddlewareConfig) => {
   const { auth, registry, runPromise, runFork } = config;
@@ -76,13 +76,15 @@ export const createAuthMiddleware = (config: AuthMiddlewareConfig) => {
       const workspaceMatch = namespacePath.match(/^\/events\/(.+)$/);
       const workspaceSlug = workspaceMatch?.[1];
 
-      // Optionally verify workspace membership
-      if (config.requireWorkspaceMembership && workspaceSlug) {
-        const membership = yield* auth
-          .getWorkspaceMembership(cookie, workspaceSlug)
-          .pipe(Effect.mapError(() => new Error("Authentication failed: Could not verify workspace membership")));
-        if (!membership) {
-          return yield* Effect.fail(new Error(`Access denied: User is not a member of workspace ${workspaceSlug}`));
+      // Optionally verify workspace permissions
+      if (config.requireWorkspacePermissions && workspaceSlug) {
+        const permissions = yield* auth
+          .getWorkspacePermissions(cookie, workspaceSlug)
+          .pipe(Effect.mapError(() => new Error("Authentication failed: Could not verify workspace permissions")));
+        if (!permissions) {
+          return yield* Effect.fail(
+            new Error(`Access denied: User does not have permissions to access workspace ${workspaceSlug}`)
+          );
         }
       }
 

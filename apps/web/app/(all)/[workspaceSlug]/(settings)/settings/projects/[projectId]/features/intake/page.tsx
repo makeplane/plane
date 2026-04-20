@@ -13,18 +13,15 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { ProjectSettingsFeatureControlItem } from "@/components/settings/project/content/feature-control-item";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { IntakeFeatureChildren } from "@/components/projects/settings/intake/feature-children";
 // local imports
@@ -34,7 +31,6 @@ import { FeaturesIntakeProjectSettingsHeader } from "./header";
 function FeaturesIntakeSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
   // translation
   const { t } = useTranslation();
@@ -42,11 +38,6 @@ function FeaturesIntakeSettingsPage({ params }: Route.ComponentProps) {
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails?.name} settings - ${t("project_settings.features.intake.short_title")}`
     : undefined;
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
-
-  if (workspaceUserInfo && !canPerformProjectAdminActions) {
-    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
-  }
 
   return (
     <SettingsContentWrapper header={<FeaturesIntakeProjectSettingsHeader />}>

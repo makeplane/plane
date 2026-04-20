@@ -17,11 +17,14 @@ import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 import type { TPowerKNavigationCommandKeysExtended } from "@/components/command-palette/power-k/commands/navigation";
 import { usePowerKNavigationCommandsRecordExtended } from "@/components/command-palette/power-k/commands/navigation";
 // local imports
-import type { TPowerKNavigationCommandKeys } from "./commands";
+import type { TPowerKNavigationCommandKeys as TPowerKNavigationCommandKeysBase } from "./commands";
 import { usePowerKNavigationCommandsRecord } from "./commands";
 
+export type TPowerKNavigationCommandKeys = TPowerKNavigationCommandKeysBase | TPowerKNavigationCommandKeysExtended;
+
 export const usePowerKNavigationCommands = (): TPowerKCommandConfig[] => {
-  const optionsList: Record<TPowerKNavigationCommandKeys, TPowerKCommandConfig> = usePowerKNavigationCommandsRecord();
+  const optionsList: Record<TPowerKNavigationCommandKeysBase, TPowerKCommandConfig> =
+    usePowerKNavigationCommandsRecord();
   const optionsListExtended: Record<TPowerKNavigationCommandKeysExtended, TPowerKCommandConfig> =
     usePowerKNavigationCommandsRecordExtended();
 

@@ -17,17 +17,16 @@ from rest_framework.response import Response
 from plane.ee.serializers import IssuePropertyActivitySerializer
 from plane.ee.models import IssuePropertyActivity
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import ProjectEntityPermission
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.permissions import can, WorkitemPermissions
 
 
 class IssuePropertyActivityEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id):
         # Get the filters
         filters = {}

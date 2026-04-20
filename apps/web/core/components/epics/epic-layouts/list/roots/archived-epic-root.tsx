@@ -14,16 +14,41 @@
 import { observer } from "mobx-react";
 // components
 import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
-// plane-web
 import { ArchivedEpicQuickActions } from "@/components/epics/quick-actions/archived-epic";
+// hooks
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
+import { DEFAULT_WORK_ITEM_PERMISSIONS } from "@/components/issues/issue-layouts/constants";
 
-export const ArchivedEpicListLayout = observer(function ArchivedEpicListLayout() {
-  const canEditPropertiesBasedOnProject = () => false;
+type TArchivedEpicListLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ArchivedEpicListLayout = observer(function ArchivedEpicListLayout(props: TArchivedEpicListLayoutProps) {
+  const { workspaceSlug, projectId } = props;
+  // store hooks
+  const { permissions } = useEpics();
 
   return (
     <BaseListRoot
-      QuickActions={ArchivedEpicQuickActions}
-      canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
+      QuickActions={(props) => (
+        <ArchivedEpicQuickActions
+          {...props}
+          permissions={{
+            canEdit: permissions.getCanEdit(workspaceSlug, projectId, props.issue.id),
+            canDelete: permissions.getCanDelete(workspaceSlug, projectId, props.issue.id),
+            canRestore: permissions.getCanRestore(workspaceSlug, projectId, props.issue.id),
+          }}
+        />
+      )}
+      layoutPermissions={{
+        canCreateWorkItem: {
+          viaHeader: false,
+          viaQuickAdd: false,
+        },
+        canPerformBulkOps: false,
+      }}
+      getWorkItemPermissions={() => DEFAULT_WORK_ITEM_PERMISSIONS}
       isEpic
     />
   );

@@ -33,7 +33,7 @@ import { TeamViewIssues, TeamViewIssuesFilter } from "@/store/work-items/team-vi
 import type { IWorkspaceIssues } from "@/store/work-items/workspace/issue.store";
 import { WorkspaceIssues } from "@/store/work-items/workspace/issue.store";
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IWorkspaceMembership } from "@/store/member/workspace/membership.store";
+import type { WorkspaceMembership } from "@/store/member/workspace/types";
 // issues data store
 import type { IArchivedIssuesFilter, IArchivedIssues } from "./archived";
 import { ArchivedIssuesFilter, ArchivedIssues } from "./archived";
@@ -59,6 +59,8 @@ import type { IWorkspaceIssuesFilter } from "./workspace";
 import { WorkspaceIssuesFilter } from "./workspace";
 import type { IWorkspaceDraftIssues, IWorkspaceDraftIssuesFilter } from "./workspace-draft";
 import { WorkspaceDraftIssues, WorkspaceDraftIssuesFilter } from "./workspace-draft";
+import type { AdditionalWorkItemPermissionMeta, WorkItemPermissions } from "./permissions/root";
+import { WorkItemPermissionsInstance } from "./permissions/root";
 import type { IReleaseIssuesFilter, IReleaseIssues } from "./release";
 import { ReleaseIssuesFilter, ReleaseIssues } from "./release";
 
@@ -77,8 +79,7 @@ export interface IIssueRootStore {
   stateDetails: IState[] | undefined;
   workspaceStateDetails: IState[] | undefined;
   labelMap: Record<string, IIssueLabel> | undefined;
-  workSpaceMemberRolesMap: Record<string, IWorkspaceMembership> | undefined;
-  memberMap: Record<string, IUserLite> | undefined;
+  workSpaceMemberRolesMap: Record<string, WorkspaceMembership> | undefined;
   projectMap: Record<string, IProject> | undefined;
   moduleMap: Record<string, IModule> | undefined;
   cycleMap: Record<string, ICycle> | undefined;
@@ -135,6 +136,8 @@ export interface IIssueRootStore {
 
   projectEpicsFilter: IProjectEpicsFilter;
   projectEpics: IProjectEpics;
+
+  permissions: WorkItemPermissions;
 }
 
 export class IssueRootStore implements IIssueRootStore {
@@ -152,7 +155,7 @@ export class IssueRootStore implements IIssueRootStore {
   stateDetails: IState[] | undefined = undefined;
   workspaceStateDetails: IState[] | undefined = undefined;
   labelMap: Record<string, IIssueLabel> | undefined = undefined;
-  workSpaceMemberRolesMap: Record<string, IWorkspaceMembership> | undefined = undefined;
+  workSpaceMemberRolesMap: Record<string, WorkspaceMembership> | undefined = undefined;
   memberMap: Record<string, IUserLite> | undefined = undefined;
   projectMap: Record<string, IProject> | undefined = undefined;
   moduleMap: Record<string, IModule> | undefined = undefined;
@@ -211,6 +214,8 @@ export class IssueRootStore implements IIssueRootStore {
   projectEpicsFilter: IProjectEpicsFilter;
   projectEpics: IProjectEpics;
 
+  permissions: WorkItemPermissions;
+
   constructor(rootStore: RootStore, serviceType: TIssueServiceType = EIssueServiceType.ISSUES) {
     makeObservable(this, {
       workspaceSlug: observable.ref,
@@ -253,7 +258,6 @@ export class IssueRootStore implements IIssueRootStore {
       if (!isEmpty(rootStore?.label?.labelMap)) this.labelMap = rootStore?.label?.labelMap;
       if (!isEmpty(rootStore?.memberRoot?.workspace?.workspaceMemberMap))
         this.workSpaceMemberRolesMap = rootStore?.memberRoot?.workspace?.memberMap || undefined;
-      if (!isEmpty(rootStore?.memberRoot?.memberMap)) this.memberMap = rootStore?.memberRoot?.memberMap || undefined;
       if (!isEmpty(rootStore?.projectRoot?.project?.projectMap))
         this.projectMap = rootStore?.projectRoot?.project?.projectMap;
       if (!isEmpty(rootStore?.module?.moduleMap)) this.moduleMap = rootStore?.module?.moduleMap;
@@ -261,6 +265,13 @@ export class IssueRootStore implements IIssueRootStore {
     });
 
     this.issues = new IssueStore();
+
+    this.permissions = new WorkItemPermissionsInstance({
+      can: rootStore.permissionAccessStore.can,
+      getWorkItemConditionContext: this.getWorkItemConditionContext.bind(this),
+      getWorkItemCommentConditionContext: this.getWorkItemCommentConditionContext.bind(this),
+      getAdditionalWorkItemPermissionMeta: this.getAdditionalWorkItemPermissionMeta.bind(this),
+    });
 
     this.issueDetail = new IssueDetail(this, EIssueServiceType.ISSUES);
     this.epicDetail = new IssueDetail(this, EIssueServiceType.EPICS);
@@ -309,5 +320,23 @@ export class IssueRootStore implements IIssueRootStore {
 
     this.projectEpicsFilter = new ProjectEpicsFilter(this);
     this.projectEpics = new ProjectEpics(this, this.projectEpicsFilter);
+  }
+
+  private getWorkItemConditionContext(issueId: string): { creator: boolean } {
+    const issue = this.issues.getIssueById(issueId);
+    const currentUserId = this.rootStore.user.data?.id;
+    return { creator: !!(issue?.created_by && currentUserId && issue.created_by === currentUserId) };
+  }
+
+  private getWorkItemCommentConditionContext(_workItemId: string, commentId: string): { creator: boolean } {
+    const comment = this.issueDetail.comment.getCommentById(commentId);
+    const currentUserId = this.rootStore.user.data?.id;
+    return { creator: !!(comment?.created_by && currentUserId && comment.created_by === currentUserId) };
+  }
+
+  private getAdditionalWorkItemPermissionMeta(workItemId: string): AdditionalWorkItemPermissionMeta {
+    const workItem = this.issues.getIssueById(workItemId);
+    if (!workItem) return { isArchived: false, isIntakeWorkItem: false };
+    return { isArchived: !!workItem.archived_at, isIntakeWorkItem: !!workItem.is_intake };
   }
 }

@@ -27,12 +27,10 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import ProjectLinkSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.project_activites_task import project_activity
-from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
+from plane.permissions import can, ProjectLinkPermissions
 
 
 class ProjectLinkViewSet(BaseViewSet):
-    permission_classes = [ProjectEntityPermission]
-
     model = ProjectLink
     serializer_class = ProjectLinkSerializer
 
@@ -53,12 +51,17 @@ class ProjectLinkViewSet(BaseViewSet):
         return queryset
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ]
-    )
+    @can(ProjectLinkPermissions.VIEW, resource_param="project_id")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @can(ProjectLinkPermissions.VIEW, resource_param="pk")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @can(ProjectLinkPermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         serializer = ProjectLinkSerializer(data=request.data)
         if serializer.is_valid():
@@ -78,12 +81,7 @@ class ProjectLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ]
-    )
+    @can(ProjectLinkPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, pk):
         project_link = ProjectLink.objects.get(
             workspace__slug=slug,
@@ -110,11 +108,7 @@ class ProjectLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-        ]
-    )
+    @can(ProjectLinkPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, pk):
         project_link = ProjectLink.objects.get(
             workspace__slug=slug,

@@ -22,8 +22,7 @@ export const ReleaseEmptyState = observer(function ReleaseEmptyState() {
   const releaseId = routerReleaseId?.toString();
   const { t } = useTranslation();
   const { release: releaseStore } = useReleases();
-
-  const canEdit = releaseStore.permissions.canEdit;
+  const release = releaseId ? releaseStore.getReleaseById(releaseId) : undefined;
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -33,7 +32,7 @@ export const ReleaseEmptyState = observer(function ReleaseEmptyState() {
           title={t("releases.empty_state.title")}
           description={t("releases.empty_state.description")}
           actions={
-            canEdit && releaseId
+            release?.canEdit && releaseId
               ? [
                   {
                     label: t("releases.empty_state.add_scope"),

@@ -50,6 +50,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
 import { useIssueTypes } from "@/plane-web/hooks/store";
+// types
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import { useReleases } from "@/hooks/store/use-releases";
 
 type Props = {
@@ -57,12 +59,15 @@ type Props = {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  isEditable: boolean;
+  permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
   isPeekView?: boolean;
 };
 
 export const SidebarSections = observer(function SidebarSections(props: Props) {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isPeekView = false } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, permissions, isPeekView = false } = props;
   const { t } = useTranslation();
   // store hooks
   const { getProjectById } = useProject();
@@ -77,10 +82,8 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
   const {
     release: { isReleasesEnabled },
   } = useReleases();
-
   const issue = getIssueById(issueId);
   if (!issue) return <></>;
-
   const createdByDetails = getUserDetails(issue.created_by);
   const projectDetails = getProjectById(issue.project_id);
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
@@ -143,7 +146,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
             </div>
           )}
         </div>
-        <div className={cn("flex flex-col gap-5", { "opacity-60": !isEditable })}>
+        <div className={cn("flex flex-col gap-5", { "opacity-60": !permissions.canEdit })}>
           {/* Details section */}
           <EntityDetailSidebarGroup label={t("common.details")}>
             <EntityDetailPropertyField icon={LabelPropertyIcon} label={t("common.labels")}>
@@ -151,7 +154,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 issueId={issueId}
-                disabled={!isEditable}
+                disabled={!permissions.canEditProperty("label_ids")}
               />
             </EntityDetailPropertyField>
 
@@ -165,7 +168,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
                     })
                   }
                   projectId={projectId}
-                  disabled={!isEditable}
+                  disabled={!permissions.canEditProperty("estimate_point")}
                   buttonVariant="transparent-with-text"
                   className="group w-full"
                   buttonContainerClassName="w-full text-left h-7.5 rounded-sm"
@@ -178,12 +181,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
               </EntityDetailPropertyField>
             )}
 
-            <IssueWorklogProperty
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              disabled={!isEditable}
-            />
+            <IssueWorklogProperty workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           </EntityDetailSidebarGroup>
 
           {hasProjectStructureProperties && (
@@ -204,7 +202,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
                       projectId={projectId}
                       issueId={issueId}
                       issueOperations={issueOperations}
-                      disabled={!isEditable}
+                      disabled={!permissions.canEditProperty("cycle_id")}
                     />
                   </EntityDetailPropertyField>
                 )}
@@ -216,7 +214,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
                       projectId={projectId}
                       issueId={issueId}
                       issueOperations={issueOperations}
-                      disabled={!isEditable}
+                      disabled={!permissions.canEditProperty("module_ids")}
                     />
                   </EntityDetailPropertyField>
                 )}
@@ -226,6 +224,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
                     workItemId={issueId}
                     workspaceSlug={workspaceSlug}
                     isPeekView={isPeekView}
+                    canEdit={permissions.canEditProperty("customer_ids")}
                   />
                 )}
 
@@ -250,7 +249,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
                         })
                       }
                       releaseIds={issue?.release_ids}
-                      disabled={!isEditable}
+                      disabled={!permissions.canEditProperty("release_ids")}
                       className="group w-full grow h-7.5"
                       buttonVariant="transparent-with-text"
                       buttonContainerClassName="w-full text-left h-7.5"
@@ -274,7 +273,7 @@ export const SidebarSections = observer(function SidebarSections(props: Props) {
                   issueTypeId={issue.type_id}
                   projectId={projectId}
                   workspaceSlug={workspaceSlug}
-                  isDisabled={!isEditable}
+                  isDisabled={!permissions.canEdit}
                 />
               </EntityDetailSidebarGroup>
             </>

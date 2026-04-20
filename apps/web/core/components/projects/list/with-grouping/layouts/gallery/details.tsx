@@ -15,27 +15,26 @@ import { ArchiveRestoreIcon, LinkIcon, MoreHorizontal, Settings } from "lucide-r
 import { observer } from "mobx-react";
 import React, { useState } from "react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { LockIcon, TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomMenu, FavoriteStar } from "@plane/ui";
 import { cn, copyUrlToClipboard, truncateProjectIdentifierForDisplay } from "@plane/utils";
+// store
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 // components
 import { CoverImage } from "@/components/common/cover-image";
-// helpers
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { TProject } from "@/types/projects";
 
 type Props = {
   project: TProject;
   workspaceSlug: string;
+  permissions: ProjectItemPermissions;
   setJoinProjectModal: (value: boolean) => void;
   setArchiveRestoreProject: (value: boolean) => void;
   setDeleteProjectModal: (value: boolean) => void;
@@ -51,6 +50,7 @@ export const Details = observer(function Details(props: Props) {
   const {
     project,
     workspaceSlug,
+    permissions,
     setArchiveRestoreProject,
     setDeleteProjectModal,
     menuVariant = "full",
@@ -58,16 +58,9 @@ export const Details = observer(function Details(props: Props) {
   } = props;
   // store hooks
   const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
-  const { allowPermissions } = useUserPermissions();
   // router
   const router = useAppRouter();
-  // auth
-  const isOwner = project.member_role === EUserProjectRoles.ADMIN;
-  const isMember = project.member_role === EUserProjectRoles.MEMBER;
-  const shouldRenderFavorite = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const { canEdit, canManage, canArchive, canRestore, canDelete, canFavorite } = permissions;
   // archive
   const isArchived = !!project.archived_at;
 
@@ -127,28 +120,28 @@ export const Details = observer(function Details(props: Props) {
       action: () => setArchiveRestoreProject(true),
       title: "Restore",
       icon: ArchiveRestoreIcon,
-      shouldRender: isArchived && isOwner,
+      shouldRender: canRestore,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
       icon: TrashIcon,
-      shouldRender: isArchived && isOwner,
+      shouldRender: canDelete && !!project.archived_at,
     },
     {
       key: "Archive",
       action: () => setArchiveRestoreProject(true),
       title: "Archive Project",
       icon: ArchiveIcon,
-      shouldRender: isOwner && !isArchived,
+      shouldRender: canArchive,
     },
     {
       key: "settings",
       action: () => router.push(`/${workspaceSlug}/projects/${project.id}/settings`),
       title: "Settings",
       icon: Settings,
-      shouldRender: !isArchived && (isOwner || isMember),
+      shouldRender: !isArchived && canEdit,
     },
   ];
 
@@ -178,7 +171,7 @@ export const Details = observer(function Details(props: Props) {
           />
         </div>
         <div className="flex gap-2 absolute top-2 right-2" data-prevent-progress>
-          {(isOwner || !isArchived) && (
+          {(!isArchived || canManage) && (
             <CustomMenu
               customButton={
                 <span
@@ -219,7 +212,7 @@ export const Details = observer(function Details(props: Props) {
             </CustomMenu>
           )}
 
-          {!!project.member_role && !isArchived && shouldRenderFavorite && (
+          {!!project.member_role && !isArchived && canFavorite && (
             <div data-prevent-progress>
               {" "}
               <FavoriteStar

@@ -21,7 +21,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProject } from "@plane/types";
 import { Input, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useMember } from "@/hooks/store/use-member";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type FormData = {
@@ -46,7 +46,9 @@ export const LeaveProjectModal = observer(function LeaveProjectModal(props: ILea
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
   // store hooks
-  const { leaveProject } = useUserPermissions();
+  const {
+    project: { leaveProject },
+  } = useMember();
 
   const {
     control,

@@ -29,17 +29,16 @@ from plane.db.models import Workspace, FileAsset
 from plane.utils.asset import validate_asset_type, get_asset_size_limit
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 
 
 class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     serializer_class = CustomerRequestAttachmentV2Serializer
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, customer_request_id, pk=None):
         if pk:
             # Get the asset
@@ -75,6 +74,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def post(self, request, slug):
         name = request.data.get("name")
         type = request.data.get("type", False)
@@ -138,6 +138,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, customer_request_id):
         attachment_ids = request.data.get("attachment_ids")
 
@@ -158,6 +159,7 @@ class CustomerRequestAttachmentV2Endpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(CustomerPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         customer_request_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug)
 

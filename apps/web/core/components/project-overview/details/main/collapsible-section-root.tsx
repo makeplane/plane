@@ -11,8 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
@@ -31,24 +29,23 @@ import { ProjectMilestoneCollapsible } from "./milestones/collapsible-root";
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  disabled?: boolean;
 };
 
 export const ProjectOverviewCollapsibleSectionRoot = observer(function ProjectOverviewCollapsibleSectionRoot(
   props: Props
 ) {
-  const { workspaceSlug, projectId, disabled = false } = props;
+  const { workspaceSlug, projectId } = props;
   // store hooks
-  const { openCollapsibleSection, toggleOpenCollapsibleSection } = useProject();
+  const { openCollapsibleSection, toggleOpenCollapsibleSection, permissions: projectPermissions } = useProject();
   const { getLinksByProjectId } = useProjectLinks();
   const { getAttachmentsByProjectId } = useProjectAttachments();
-
-  // helper hooks
-  const { isLinkModalOpen, toggleLinkModal } = useLinks(workspaceSlug.toString(), projectId.toString());
-
   // derived values
   const projectLinks = getLinksByProjectId(projectId.toString());
   const projectAttachments = getAttachmentsByProjectId(projectId.toString());
+  // auth
+  const canEdit = projectPermissions.getCanEdit(workspaceSlug, projectId);
+  // helper hooks
+  const { isLinkModalOpen, toggleLinkModal } = useLinks(workspaceSlug.toString(), projectId.toString());
 
   const linksCount = projectLinks?.length ?? 0;
   const attachmentCount = projectAttachments?.length ?? 0;
@@ -61,7 +58,7 @@ export const ProjectOverviewCollapsibleSectionRoot = observer(function ProjectOv
       {shouldRenderLinks && (
         <CollapsibleDetailSection
           title="Links"
-          actionItemElement={!disabled && <ProjectActionButton setIsModalOpen={toggleLinkModal} />}
+          actionItemElement={canEdit && <ProjectActionButton setIsModalOpen={toggleLinkModal} />}
           count={linksCount}
           collapsibleContent={
             <ProjectLinkRoot
@@ -80,7 +77,7 @@ export const ProjectOverviewCollapsibleSectionRoot = observer(function ProjectOv
         <CollapsibleDetailSection
           title="Attachments"
           actionItemElement={
-            !disabled && (
+            canEdit && (
               <div className="pb-3">
                 <ProjectAttachmentActionButton
                   workspaceSlug={workspaceSlug.toString()}

@@ -15,11 +15,10 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Sidebar } from "lucide-react";
-import { EUserPermissionsLevel } from "@plane/constants";
 // plane imports
 import { EpicIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
 import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
@@ -28,8 +27,8 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // plane-web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
@@ -46,16 +45,11 @@ export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHead
   const {
     issue: { getIssueById },
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useEpics();
   const { updateIssue, removeIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   const { epicDetailSidebarCollapsed, toggleEpicDetailSidebar } = useAppTheme();
   // derived values
   const issueDetails = epicId ? getIssueById(epicId.toString()) : undefined;
-
-  const isEditingAllowed = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   const handleDelete = async () => {
     if (issueDetails) {
@@ -119,7 +113,13 @@ export const ProjectEpicDetailsHeader = observer(function ProjectEpicDetailsHead
               issue={issueDetails}
               handleDelete={handleDelete}
               handleUpdate={handleUpdate}
-              readOnly={!isEditingAllowed}
+              permissions={{
+                canEdit: permissions.getCanEdit(workspaceSlug, projectId, epicId),
+                canDelete: permissions.getCanDelete(workspaceSlug, projectId, epicId),
+                canArchive: permissions.getCanArchive(workspaceSlug, projectId, epicId),
+                canRestore: permissions.getCanRestore(workspaceSlug, projectId, epicId),
+                canDuplicate: permissions.getCanDuplicate(workspaceSlug, projectId),
+              }}
             />
             <Sidebar
               className={cn("size-4 cursor-pointer", {

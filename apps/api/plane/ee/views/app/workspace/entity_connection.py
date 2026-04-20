@@ -20,17 +20,14 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import WorkspaceEntityConnectionSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.workspace import WorkspaceEntityPermission
+from plane.permissions import can, IntegrationPermissions
 
 
 class WorkspaceEntityConnectionView(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk):
         if not pk:
             workspace = Workspace.objects.get(slug=slug)

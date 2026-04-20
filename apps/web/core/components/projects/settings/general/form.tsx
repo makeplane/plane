@@ -38,17 +38,18 @@ import { useProject } from "@/hooks/store/use-project";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // services
 import { ProjectService } from "@/services/project";
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 
 export interface IProjectDetailsForm {
   project: IProject;
   workspaceSlug: string;
   projectId: string;
-  isAdmin: boolean;
+  permissions: Pick<ProjectItemPermissions, "canEdit" | "canEditProperty">;
 }
 const projectService = new ProjectService();
 
 export function ProjectDetailsForm(props: IProjectDetailsForm) {
-  const { project, workspaceSlug, projectId, isAdmin } = props;
+  const { project, workspaceSlug, projectId, permissions } = props;
   const { t } = useTranslation();
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -57,8 +58,6 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
   const { config } = useInstance();
   const { updateProject } = useProject();
   const { isMobile } = usePlatformOS();
-  // derived values
-  const projectIdentifierMaxLength = config?.project_identifier_max_length ?? DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH;
 
   // form info
   const {
@@ -79,6 +78,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
   // derived values
   const currentNetwork = NETWORK_CHOICES.find((n) => n.key === project?.network);
   const coverImage = watch("cover_image_url");
+  const projectIdentifierMaxLength = config?.project_identifier_max_length ?? DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH;
 
   useEffect(() => {
     if (project && projectId !== getValues("id")) {
@@ -208,7 +208,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <CoverImage src={coverImage} alt="Project cover image" className="h-44 w-full rounded-md" />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
-          <div className="flex flex-grow gap-3 truncate">
+          <div className="flex grow gap-3 truncate">
             <Controller
               control={control}
               name="logo_props"
@@ -219,7 +219,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   isOpen={isOpen}
                   handleToggle={(val: boolean) => setIsOpen(val)}
                   className="flex items-center justify-center"
-                  buttonClassName="flex h-[52px] w-[52px] flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
+                  buttonClassName="flex size-[52px] shrink-0 items-center justify-center rounded-lg bg-white/10"
                   label={<Logo logo={value} size={28} />}
                   // TODO: fix types
                   onChange={(val: any) => {
@@ -241,7 +241,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                   defaultOpen={
                     value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
                   }
-                  disabled={!isAdmin}
+                  disabled={!permissions.canEditProperty("logo_props")}
                 />
               )}
             />
@@ -256,7 +256,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
               </span>
             </div>
           </div>
-          <div className="flex flex-shrink-0 justify-center">
+          <div className="flex shrink-0 justify-center">
             <div>
               <Controller
                 control={control}
@@ -267,7 +267,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     control={control}
                     onChange={onChange}
                     value={value ?? null}
-                    disabled={!isAdmin}
+                    disabled={!permissions.canEditProperty("cover_image_url")}
                     projectId={project.id}
                   />
                 )}
@@ -298,9 +298,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 value={value}
                 onChange={onChange}
                 hasError={Boolean(errors.name)}
-                className="rounded-md !p-3 font-medium"
+                className="rounded-md p-3! font-medium"
                 placeholder={t("common.project_name")}
-                disabled={!isAdmin}
+                disabled={!permissions.canEditProperty("name")}
               />
             )}
           />
@@ -320,7 +320,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                 onChange={onChange}
                 className="min-h-[102px] text-13 font-medium"
                 hasError={Boolean(errors?.description)}
-                disabled={!isAdmin}
+                disabled={!permissions.canEditProperty("description")}
               />
             )}
           />
@@ -355,7 +355,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     hasError={Boolean(errors.identifier)}
                     placeholder={t("project_settings.general.enter_project_id")}
                     className="w-full font-medium pr-6 truncate"
-                    disabled={!isAdmin}
+                    disabled={!permissions.canEditProperty("identifier")}
                   />
                 )}
               />
@@ -395,9 +395,9 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                         )}
                       </div>
                     }
-                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
+                    buttonClassName="border-subtle! shadow-none! font-medium rounded-md"
                     input
-                    disabled={!isAdmin}
+                    disabled={!permissions.canEditProperty("network")}
                     // optionsClassName="w-full"
                   >
                     {NETWORK_CHOICES.map((network) => (
@@ -433,7 +433,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
                     }}
                     error={Boolean(errors.timezone)}
                     buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
-                    disabled={!isAdmin}
+                    disabled={!permissions.canEditProperty("timezone")}
                   />
                 </>
               )}
@@ -443,7 +443,7 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="flex items-center justify-between py-2">
           <>
-            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!isAdmin}>
+            <Button variant="primary" size="lg" type="submit" loading={isLoading} disabled={!permissions.canEdit}>
               {isLoading ? t("updating") : t("common.update_project")}
             </Button>
             <span className="text-13 italic text-placeholder">

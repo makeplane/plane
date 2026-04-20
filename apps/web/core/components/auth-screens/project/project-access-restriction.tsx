@@ -17,21 +17,21 @@ import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 
 type TProps = {
-  isWorkspaceAdmin: boolean;
+  canJoinAnyProject: boolean;
   handleJoinProject: () => void;
   isJoinButtonDisabled: boolean;
   errorStatusCode: number | undefined;
 };
 
 export const ProjectAccessRestriction = observer(function ProjectAccessRestriction(props: TProps) {
-  const { isWorkspaceAdmin, handleJoinProject, isJoinButtonDisabled, errorStatusCode } = props;
+  const { canJoinAnyProject, handleJoinProject, isJoinButtonDisabled, errorStatusCode } = props;
   // plane hooks
   const { t } = useTranslation();
 
   // Show join project screen if:
   // - User lacks project membership (409 Conflict)
   // - User lacks permission to access the private project (403 Forbidden) but is a workspace admin (can join any project)
-  if (errorStatusCode === 409 || (errorStatusCode === 403 && isWorkspaceAdmin))
+  if (errorStatusCode === 409 || (errorStatusCode === 403 && canJoinAnyProject))
     return (
       <div className="grid h-full w-full place-items-center bg-surface-1">
         <EmptyStateDetailed

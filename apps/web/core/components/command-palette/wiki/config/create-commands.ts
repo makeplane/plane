@@ -12,16 +12,11 @@
  */
 
 import { FileText, SquarePlus } from "lucide-react";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
+import { usePowerKPermissions } from "@/components/command-palette/power-k/hooks/use-power-k-permissions";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUser } from "@/hooks/store/user";
-// plane web imports
-import { getIsWorkspaceCreationDisabled } from "@/helpers/workspace";
 
 export type TPowerKCreationCommandKeys = "create_work_item" | "create_workspace";
 
@@ -30,18 +25,8 @@ export type TPowerKCreationCommandKeys = "create_work_item" | "create_workspace"
  */
 export const useWikiAppPowerKCreationCommands = (): TPowerKCommandConfig[] => {
   // store
-  const {
-    permission: { allowPermissions },
-  } = useUser();
   const { toggleCreatePageModal } = useCommandPalette();
-  // derived values
-  const hasWorkspaceMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      EUserPermissionsLevel.WORKSPACE,
-      ctx.params.workspaceSlug?.toString()
-    );
-  const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
+  const { canCreateResource } = usePowerKPermissions();
 
   return [
     {
@@ -52,8 +37,8 @@ export const useWikiAppPowerKCreationCommands = (): TPowerKCommandConfig[] => {
       icon: FileText,
       shortcut: "d",
       action: () => toggleCreatePageModal({ isOpen: true }),
-      isEnabled: hasWorkspaceMemberLevelPermissions,
-      isVisible: hasWorkspaceMemberLevelPermissions,
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_page"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_page"),
       closeOnSelect: true,
     },
     {
@@ -63,8 +48,8 @@ export const useWikiAppPowerKCreationCommands = (): TPowerKCommandConfig[] => {
       i18n_title: "power_k.creation_actions.create_workspace",
       icon: SquarePlus,
       action: (ctx) => ctx.router.push("/create-workspace"),
-      isEnabled: () => !isWorkspaceCreationDisabled,
-      isVisible: () => !isWorkspaceCreationDisabled,
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_workspace"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_workspace"),
       closeOnSelect: true,
     },
   ];

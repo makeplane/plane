@@ -26,7 +26,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, WorkitemPermissions
+from plane.permissions.definitions import ResourceType
 from plane.app.serializers import RelatedWorkItemRelationSerializer, WorkItemRelationSerializer
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import DefaultDependencyKeys, Issue, IssueRelation, RelationCategory, WorkItemRelationDefinition
@@ -164,8 +165,8 @@ class WorkItemRelationDependencyViewSet(BaseViewSet):
     relation_model = IssueRelation
     relation_definition_model = WorkItemRelationDefinition
     serializer_class = WorkItemRelationSerializer
-    permission_classes = [ProjectEntityPermission]
 
+    @can(WorkitemPermissions.VIEW, resource_param="work_item_id", scope_param_type=ResourceType.WORKITEM)
     def list(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
         work_item_relation_query_set = IssueRelation.objects.filter(
             category=RelationCategory.DEPENDENCY, workspace__slug=slug
@@ -204,6 +205,7 @@ class WorkItemRelationDependencyViewSet(BaseViewSet):
 
         return Response(response_data, status=status.HTTP_200_OK)
 
+    @can(WorkitemPermissions.EDIT, resource_param="work_item_id", scope_param_type=ResourceType.WORKITEM)
     def create_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
         user_id = request.user.id
 
@@ -291,6 +293,7 @@ class WorkItemRelationDependencyViewSet(BaseViewSet):
         ]
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+    @can(WorkitemPermissions.EDIT, resource_param="work_item_id", scope_param_type=ResourceType.WORKITEM)
     def remove_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
         user_id = request.user.id
         related_work_item_id = request.data.get("work_item_id")
@@ -345,8 +348,8 @@ class WorkItemRelationRelationViewSet(BaseViewSet):
     relation_model = IssueRelation
     relation_definition_model = WorkItemRelationDefinition
     serializer_class = RelatedWorkItemRelationSerializer
-    permission_classes = [ProjectEntityPermission]
 
+    @can(WorkitemPermissions.VIEW, resource_param="work_item_id", scope_param_type=ResourceType.WORKITEM)
     def list(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
         """Return all custom relations for the work item, grouped by relation label (outward/inward)."""
         relation_definitions = list(
@@ -392,6 +395,7 @@ class WorkItemRelationRelationViewSet(BaseViewSet):
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
+    @can(WorkitemPermissions.EDIT, resource_param="work_item_id", scope_param_type=ResourceType.WORKITEM)
     def create_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
         """Create custom relations between the work item and the given work_item_ids."""
         user_id = request.user.id
@@ -481,6 +485,7 @@ class WorkItemRelationRelationViewSet(BaseViewSet):
         ]
         return Response(response_data, status=status.HTTP_201_CREATED)
 
+    @can(WorkitemPermissions.EDIT, resource_param="work_item_id", scope_param_type=ResourceType.WORKITEM)
     def remove_relation(self, request: Request, slug: str, project_id: str, work_item_id: str) -> Response:
         """Remove the custom relation between the work item and the given related work_item_id."""
         user_id = request.user.id

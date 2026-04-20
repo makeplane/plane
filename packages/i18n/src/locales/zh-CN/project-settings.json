@@ -22,10 +22,6 @@
       "label": "成员",
       "project_lead": "项目负责人",
       "default_assignee": "默认受理人",
-      "guest_super_permissions": {
-        "title": "为访客用户授予查看所有工作项的权限：",
-        "sub_heading": "这将允许访客查看所有项目工作项。"
-      },
       "invite_members": {
         "title": "邀请成员",
         "sub_heading": "邀请成员参与您的项目。",

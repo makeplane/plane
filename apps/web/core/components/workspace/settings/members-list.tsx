@@ -26,13 +26,22 @@ import { useMember } from "@/hooks/store/use-member";
 // local imports
 import { WorkspaceInvitationsListItem } from "./invitations-list-item";
 import { WorkspaceMembersListItem } from "./members-list-item";
+import type { IWorkspaceMember } from "@plane/types";
 
-export const WorkspaceMembersList = observer(function WorkspaceMembersList(props: {
+type WorkspaceMembersListProps = {
   workspaceSlug: string;
   searchQuery: string;
-  isAdmin: boolean;
-}) {
-  const { workspaceSlug, searchQuery, isAdmin } = props;
+  permissions: {
+    canViewMembers: boolean;
+    canChangeRole: (targetRoleSlug: string) => boolean;
+    canRemoveMember: boolean;
+    canViewInvitations: boolean;
+    canRemoveInvitation: boolean;
+  };
+};
+
+export const WorkspaceMembersList = observer(function WorkspaceMembersList(props: WorkspaceMembersListProps) {
+  const { workspaceSlug, searchQuery, permissions } = props;
   const [showPendingInvites, setShowPendingInvites] = useState<boolean>(true);
   // store hooks
   const {
@@ -66,19 +75,24 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
       if (a?.is_active && !b?.is_active) return -1;
       if (!a?.is_active && b?.is_active) return 1;
       return 0;
-    });
+    })
+    .filter((member): member is IWorkspaceMember => member !== null);
 
   return (
     <>
       <div className="divide-y-[0.5px] divide-subtle overflow-scroll">
         {searchedMemberIds?.length !== 0 && (
-          <WorkspaceMembersListItem memberDetails={memberDetails ?? []} workspaceSlug={workspaceSlug} />
+          <WorkspaceMembersListItem
+            memberDetails={memberDetails ?? []}
+            workspaceSlug={workspaceSlug}
+            permissions={permissions}
+          />
         )}
         {searchedInvitationsIds?.length === 0 && searchedMemberIds?.length === 0 && (
           <h4 className="mt-16 text-center text-body-xs-regular text-placeholder">{t("no_matching_members")}</h4>
         )}
       </div>
-      {isAdmin && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
+      {permissions.canViewInvitations && searchedInvitationsIds && searchedInvitationsIds.length > 0 && (
         <Collapsible open={showPendingInvites} onOpenChange={setShowPendingInvites}>
           <CollapsibleTrigger className="w-full">
             <div className="flex w-full items-center justify-between pt-4">
@@ -94,7 +108,12 @@ export const WorkspaceMembersList = observer(function WorkspaceMembersList(props
           <CollapsibleContent>
             <div className="flex flex-col items-center gap-1.5 rounded-md bg-surface-1 py-1.5">
               {searchedInvitationsIds?.map((invitationId) => (
-                <WorkspaceInvitationsListItem key={invitationId} invitationId={invitationId} />
+                <WorkspaceInvitationsListItem
+                  key={invitationId}
+                  workspaceSlug={workspaceSlug}
+                  invitationId={invitationId}
+                  permissions={permissions}
+                />
               ))}
             </div>
           </CollapsibleContent>

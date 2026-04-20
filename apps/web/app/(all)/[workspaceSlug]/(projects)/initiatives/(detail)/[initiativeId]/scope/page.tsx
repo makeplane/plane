@@ -72,7 +72,8 @@ function InitiativeScopePage({ params }: Route.ComponentProps) {
   const pageTitle = initiativeDetails ? `Initiative - ${initiativeDetails.name} | Scope` : "Initiative | Scope";
   const isProjectGroupingFeatureFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFeatureFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFeatureFlagEnabled;
   // fetch initiative project analytics count
   useSWR(
     initiativeDetails?.project_ids && initiativeDetails?.project_ids.length > 0
@@ -114,7 +115,7 @@ function InitiativeScopePage({ params }: Route.ComponentProps) {
       ) : loader ? (
         <ListLayoutLoader />
       ) : (
-        initiativeDetails && <InitiativeScopeRoot />
+        initiativeDetails && <InitiativeScopeRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
       )}
     </>
   );

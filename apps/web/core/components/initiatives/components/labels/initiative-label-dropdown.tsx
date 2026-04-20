@@ -18,15 +18,13 @@ import { Loader } from "lucide-react";
 import { CheckIcon, PlusIcon, LabelPropertyIcon } from "@plane/propel/icons";
 
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TInitiativeLabel } from "@plane/types";
 import { cn } from "@plane/utils";
 
 // types
-import { useUserPermissions } from "@/hooks/store/user";
+import type { TInitiativeDetailPermissions } from "@/store/initiatives/permissions/root";
 
 export type TInitiativeLabelDropdownProps = {
   value: string[];
@@ -42,6 +40,7 @@ export type TInitiativeLabelDropdownProps = {
   onAddLabel?: (labelName: string) => Promise<TInitiativeLabel>;
   workspaceSlug?: string;
   size?: "xs" | "sm" | "md" | "lg";
+  labelPermissions?: TInitiativeDetailPermissions["labels"];
 };
 
 export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown(props: TInitiativeLabelDropdownProps) {
@@ -57,10 +56,10 @@ export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown
     onAddLabel,
     workspaceSlug,
     size = "sm",
+    labelPermissions,
   } = props;
   // plane hooks
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
 
   // states
   const [isOpen, setIsOpen] = useState(false);
@@ -113,7 +112,7 @@ export const InitiativeLabelDropdown = observer(function InitiativeLabelDropdown
 
   const currentSize = sizeConfig[size];
 
-  const canCreateLabel = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
+  const canCreateLabel = labelPermissions?.canCreate ?? false;
 
   const filteredOptions =
     query === ""

@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
@@ -21,7 +20,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Pin, PinOff } from "lucide-react";
 // plane imports
-import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
+import type { IWorkspaceSidebarNavigationItem, WorkspaceResourceKey } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { DragHandle, DropIndicator } from "@plane/ui";
@@ -39,8 +38,8 @@ import { getSidebarNavigationItemIcon } from "@/components/workspace/sidebar/hel
 type TExtendedSidebarItemProps = {
   item: IWorkspaceSidebarNavigationItem;
   handleOnNavigationItemDrop?: (
-    sourceId: string | undefined,
-    destinationId: string | undefined,
+    sourceId: WorkspaceResourceKey | undefined,
+    destinationId: WorkspaceResourceKey | undefined,
     shouldDropAtEnd: boolean
   ) => void;
   disableDrag?: boolean;
@@ -130,8 +129,8 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             : undefined;
           if (!currentInstruction) return;
 
-          const sourceId = source?.data?.id as string | undefined;
-          const destinationId = self?.data?.id as string | undefined;
+          const sourceId = source?.data?.id as WorkspaceResourceKey | undefined;
+          const destinationId = self?.data?.id as WorkspaceResourceKey | undefined;
 
           if (handleOnNavigationItemDrop)
             handleOnNavigationItemDrop(sourceId, destinationId, currentInstruction === "DRAG_BELOW");
@@ -204,7 +203,7 @@ export const ExtendedSidebarItem = observer(function ExtendedSidebarItem(props: 
             </div>
           </Link>
           <div className="flex items-center gap-2">
-            {item.key === "active_cycles" && (
+            {item.key === "active-cycles" && (
               <div className="flex-shrink-0">
                 <UpgradeBadge flag="WORKSPACE_ACTIVE_CYCLES" />
               </div>

@@ -10,7 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from .link import ProjectLinkViewSet
-from .update import ProjectUpdatesViewSet
+from .update import ProjectUpdatesViewSet, ProjectUpdatesReactionViewSet, ProjectUpdateCommentsReactionViewSet
 from .base import ProjectAnalyticsEndpoint, ProjectAttributesEndpoint
 from .attachment import ProjectAttachmentV2Endpoint
 from .reaction import ProjectReactionViewSet

@@ -14,13 +14,12 @@
 import { Outlet } from "react-router";
 import useSWR from "swr";
 // components
-import { EUserPermissions } from "@plane/constants";
-// wrappers
-import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-// plane web components
 import { WikiAppPowerKProvider } from "@/components/command-palette/wiki/provider";
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
+import { PermissionWrapper } from "@/components/roles-and-permissions/permission-wrapper";
+import { WikiAuthScreen } from "@/components/wiki/auth-screen";
 import { WikiUpgradeScreen } from "@/components/wiki/upgrade-screen";
+// plane web imports
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 // local components
 import type { Route } from "./+types/layout";
@@ -39,21 +38,26 @@ export default function WikiLayout({ params }: Route.ComponentProps) {
 
   return (
     <>
-      <WikiAppPowerKProvider />
-      <WithFeatureFlagHOC
+      <PermissionWrapper
+        action="view"
+        resource="wiki"
         workspaceSlug={workspaceSlug}
-        flag="WORKSPACE_PAGES"
-        fallback={<WikiUpgradeScreen workspaceSlug={workspaceSlug} />}
+        fallback={<WikiAuthScreen workspaceSlug={workspaceSlug} />}
       >
-        <WorkspaceAccessWrapper pageKey="pages" allowedPermissions={[EUserPermissions.ADMIN, EUserPermissions.MEMBER]}>
+        <WithFeatureFlagHOC
+          flag="WORKSPACE_PAGES"
+          workspaceSlug={workspaceSlug}
+          fallback={<WikiUpgradeScreen workspaceSlug={workspaceSlug} />}
+        >
+          <WikiAppPowerKProvider />
           <div className="relative flex h-full w-full overflow-hidden rounded-lg border border-subtle-1">
             <PagesAppSidebar />
             <main className="relative flex h-full w-full flex-col overflow-hidden bg-surface-1">
               <Outlet />
             </main>
           </div>
-        </WorkspaceAccessWrapper>
-      </WithFeatureFlagHOC>
+        </WithFeatureFlagHOC>
+      </PermissionWrapper>
     </>
   );
 }

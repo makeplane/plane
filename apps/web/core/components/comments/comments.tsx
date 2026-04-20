@@ -24,7 +24,6 @@ import { CommentCreate } from "./comment-create";
 type TCommentsWrapper = {
   projectId?: string;
   entityId: string;
-  isEditingAllowed?: boolean;
   activityOperations: TCommentsOperations;
   comments: TIssueComment[] | string[];
   sortOrder?: E_SORT_ORDER;
@@ -32,6 +31,12 @@ type TCommentsWrapper = {
   showAccessSpecifier?: boolean;
   showCopyLinkOption?: boolean;
   enableReplies?: boolean;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (commentId: string) => boolean;
+    canDelete: (commentId: string) => boolean;
+    canReact: (commentId: string) => boolean;
+  };
 };
 
 export const CommentsWrapper = observer(function CommentsWrapper(props: TCommentsWrapper) {
@@ -40,18 +45,20 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
     activityOperations,
     comments,
     getCommentById,
-    isEditingAllowed = true,
     projectId,
     showAccessSpecifier = false,
     showCopyLinkOption = false,
     enableReplies = false,
+    permissions,
   } = props;
   // router
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
   const workspaceSlug = routerWorkspaceSlug?.toString();
+  // derived values
+  const { canCreate, canEdit, canDelete, canReact } = permissions;
   const renderCommentCreate = useMemo(
     () =>
-      isEditingAllowed && (
+      canCreate && (
         <CommentCreate
           workspaceSlug={workspaceSlug}
           entityId={entityId}
@@ -59,7 +66,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
           projectId={projectId}
         />
       ),
-    [isEditingAllowed, workspaceSlug, entityId, activityOperations, projectId]
+    [canCreate, workspaceSlug, entityId, activityOperations, projectId]
   );
 
   return (
@@ -82,7 +89,11 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
               entityId={entityId}
               comment={comment}
               activityOperations={activityOperations}
-              disabled={!isEditingAllowed}
+              permissions={{
+                canEdit: canEdit(comment.id),
+                canDelete: canDelete(comment.id),
+                canReact: canReact(comment.id),
+              }}
               ends={index === 0 ? "top" : index === comments.length - 1 ? "bottom" : undefined}
               projectId={projectId}
               showAccessSpecifier={showAccessSpecifier}

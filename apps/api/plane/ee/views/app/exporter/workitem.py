@@ -15,7 +15,7 @@ from rest_framework import status
 
 # Module imports
 from plane.app.views import BaseAPIView
-from plane.app.permissions import ROLE, allow_permission
+from plane.permissions import can, WorkitemPermissions
 from plane.db.models import ExporterHistory, Workspace
 from plane.bgtasks.export_task import issue_export_task
 from plane.payment.flags.flag import FeatureFlag
@@ -28,8 +28,8 @@ class ProjectWorkItemExportEndpoint(BaseAPIView):
     with filters and rich filters
     """
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
+    @can(WorkitemPermissions.EXPORT, resource_param="project_id")
     def post(self, request, slug, project_id):
         # Get the provider
         provider = request.data.get("provider", False)

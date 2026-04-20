@@ -17,11 +17,10 @@ import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
@@ -32,7 +31,6 @@ import { PageHead } from "@/components/core/page-title";
 import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
@@ -60,7 +58,6 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const pageStore = usePageStore(EPageStoreType.WORKSPACE);
   const {
@@ -71,6 +68,7 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
     filteredPrivatePageIds,
     filteredSharedPageIds,
     createPage,
+    getCanCreatePage,
     getPaginationInfo,
     getPaginationLoader,
   } = pageStore;
@@ -122,11 +120,8 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
     }
   }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, filteredSharedPageIds]);
 
-  // derived values - memoized for performance
-  const hasWorkspaceMemberLevelPermissions = useMemo(
-    () => allowPermissions([EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER], EUserPermissionsLevel.WORKSPACE),
-    [allowPermissions]
-  );
+  // derived values
+  const canCreatePage = workspaceSlug ? getCanCreatePage(workspaceSlug) : false;
 
   // Function to fetch next page
   const fetchNextPage = useCallback(() => {
@@ -196,7 +191,7 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
                 ? t("common.creating")
                 : t("workspace_pages.empty_state.public.primary_button.text"),
               onClick: handleCreatePage,
-              disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+              disabled: !canCreatePage || isCreatingPage,
               variant: "primary",
             },
           ]}
@@ -214,7 +209,7 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
                 ? t("common.creating")
                 : t("workspace_pages.empty_state.private.primary_button.text"),
               onClick: handleCreatePage,
-              disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+              disabled: !canCreatePage || isCreatingPage,
               variant: "primary",
             },
           ]}
@@ -247,7 +242,7 @@ export const WikiPagesListLayoutRoot = observer(function WikiPagesListLayoutRoot
           {
             label: isCreatingPage ? t("common.creating") : t("workspace_pages.empty_state.general.primary_button.text"),
             onClick: handleCreatePage,
-            disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+            disabled: !canCreatePage || isCreatingPage,
             variant: "primary",
           },
         ]}

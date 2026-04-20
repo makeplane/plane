@@ -47,9 +47,13 @@ export const WorkspaceWorkItemTypesHierarchyTabContent = observer(function Works
   // derived values
   const isWorkItemTypesHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY");
   const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
     EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
   );
-  const isWorkspaceWorkItemTypesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
+  const isWorkspaceWorkItemTypesEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED
+  );
   const disableToggling =
     isWorkItemTypesHierarchyFlagAvailable && (!isWorkspaceWorkItemTypesEnabled || isWorkItemHierarchyFeatureEnabled);
 

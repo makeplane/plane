@@ -40,7 +40,6 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
   const {
     entityId,
     comment,
-    disabled,
     projectId,
     workspaceSlug,
     showAccessSpecifier,
@@ -48,6 +47,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
     enableReplies,
     isReply = false,
     renderQuickActions,
+    permissions,
     ...restProps
   } = props;
   // refs
@@ -111,14 +111,14 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
               </Tooltip>
             </div>
           </div>
-          {!disabled && (
+          {permissions.canReact && (
             <div className="flex items-center gap-1 shrink-0">
               {enableReplies && <IconButton variant="ghost" size="sm" icon={ReplyIcon} onClick={handleReply} />}
               <EmojiReactionPicker
                 isOpen={isPickerOpen}
                 handleToggle={setIsPickerOpen}
                 onChange={handleEmojiSelect}
-                disabled={disabled}
+                disabled={!permissions.canReact}
                 label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
                 placement="bottom-start"
               />
@@ -132,7 +132,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
             {...restProps}
             entityId={entityId}
             comment={comment}
-            disabled={disabled}
+            permissions={permissions}
             workspaceSlug={workspaceSlug}
             activityOperations={activityOperations}
             showAccessSpecifier={showAccessSpecifier}
@@ -153,6 +153,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: Pr
           repliedUserIds={comment.replied_user_ids || []}
           lastReplyAt={comment.last_reply_at || null}
           showAccessSpecifier={showAccessSpecifier}
+          permissions={permissions}
         />
       )}
     </>

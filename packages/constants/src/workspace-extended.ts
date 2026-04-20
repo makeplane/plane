@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { IWorkspaceSidebarNavigationItem } from "./workspace";
 
 export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -19,35 +18,30 @@ export const EXTENDED_WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string,
     key: "dashboards",
     labelTranslationKey: "workspace_dashboards",
     href: `/dashboards/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   "active-cycles": {
-    key: "active_cycles",
+    key: "active-cycles",
     labelTranslationKey: "cycles",
     href: `/active-cycles/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   initiatives: {
     key: "initiatives",
     labelTranslationKey: "initiatives.label",
     href: `/initiatives/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   teamspaces: {
     key: "team_spaces",
     labelTranslationKey: "teamspaces.label",
     href: `/teamspaces/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   customers: {
     key: "customers",
     labelTranslationKey: "sidebar.customers",
     href: `/customers/`,
-    access: [EUserWorkspaceRoles.ADMIN],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };
@@ -57,7 +51,6 @@ export const EXTENDED_WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, 
     key: "pi_chat",
     labelTranslationKey: "pi_chat",
     href: `/ai-chat/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };

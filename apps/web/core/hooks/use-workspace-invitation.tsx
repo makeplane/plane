@@ -14,12 +14,10 @@
 import { useEffect } from "react";
 import type { Control, FieldArrayWithId, FormState, UseFormWatch } from "react-hook-form";
 import { useFieldArray, useForm } from "react-hook-form";
-// plane imports
-import { EUserPermissions } from "@plane/constants";
 
 type EmailRole = {
   email: string;
-  role: EUserPermissions;
+  role_slug: string;
 };
 
 export type InvitationFormValues = {
@@ -30,7 +28,7 @@ const SEND_WORKSPACE_INVITATION_MODAL_DEFAULT_VALUES: InvitationFormValues = {
   emails: [
     {
       email: "",
-      role: EUserPermissions.MEMBER,
+      role_slug: "",
     },
   ],
 };
@@ -72,17 +70,18 @@ export const useWorkspaceInvitationActions = (props: TUseWorkspaceInvitationProp
   };
 
   const appendField = () => {
-    append({ email: "", role: EUserPermissions.MEMBER });
+    append({ email: "", role_slug: "" });
   };
 
   const onSubmitForm = async (data: InvitationFormValues) => {
     await onSubmit(data)?.then(() => {
       reset(SEND_WORKSPACE_INVITATION_MODAL_DEFAULT_VALUES);
+      return true;
     });
   };
 
   useEffect(() => {
-    if (fields.length === 0) append([{ email: "", role: EUserPermissions.MEMBER }]);
+    if (fields.length === 0) append([{ email: "", role_slug: "" }]);
   }, [fields, append]);
 
   return {

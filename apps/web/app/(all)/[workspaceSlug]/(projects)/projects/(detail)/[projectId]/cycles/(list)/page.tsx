@@ -15,11 +15,9 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTheme } from "next-themes";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TCycleFilters } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
@@ -37,7 +35,6 @@ import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useCycleFilter } from "@/hooks/store/use-cycle-filter";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { FeatureTour } from "@/components/tour";
@@ -48,7 +45,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
   // states
   const [createModal, setCreateModal] = useState(false);
   // store hooks
-  const { currentProjectCycleIds, loader } = useCycle();
+  const { currentProjectCycleIds, loader, permissions: cyclePermissions } = useCycle();
   const { getProjectById, currentProjectDetails } = useProject();
   // router
   const router = useAppRouter();
@@ -59,17 +56,12 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
   const { t } = useTranslation();
   // cycle filters hook
   const { clearAllFilters, currentProjectFilters, updateFilters } = useCycleFilter();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: projectPermissions } = useProject();
   // derived values
   const resolvedEmptyState = resolvedTheme === "light" ? lightEmptyState : darkEmptyState;
   const totalCycles = currentProjectCycleIds?.length ?? 0;
   const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - ${t("common.cycles", { count: 2 })}` : undefined;
-  const hasAdminLevelPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-  const hasMemberLevelPermission = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   const handleRemoveFilter = (key: keyof TCycleFilters, value: string | null) => {
     let newValues = currentProjectFilters?.[key] ?? [];
@@ -93,7 +85,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
             onClick: () => {
               router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
             },
-            disabled: !hasAdminLevelPermission,
+            disabled: !projectPermissions.getCanManageCycles(workspaceSlug, projectId),
           }}
         />
       </div>
@@ -123,7 +115,7 @@ function ProjectCyclesPage({ params }: Route.ComponentProps) {
                   label: t("project_empty_state.cycles.cta_primary"),
                   onClick: () => setCreateModal(true),
                   variant: "primary",
-                  disabled: !hasMemberLevelPermission,
+                  disabled: !cyclePermissions.getCanCreateCycle(workspaceSlug, projectId),
                 },
               ]}
             />

@@ -23,12 +23,11 @@ import { useCustomers } from "@/plane-web/hooks/store";
 type TProps = {
   workspaceSlug: string;
   workItemId: string;
-  disabled: boolean;
   isTabs?: boolean;
 };
 
 export const WorkItemRequestCollapsibleContent = observer(function WorkItemRequestCollapsibleContent(props: TProps) {
-  const { workspaceSlug, workItemId, disabled, isTabs = false } = props;
+  const { workspaceSlug, workItemId, isTabs = false } = props;
 
   const {
     workItems: { getFilteredWorkItemRequestIds, workItemRequestSearchQuery },
@@ -56,13 +55,7 @@ export const WorkItemRequestCollapsibleContent = observer(function WorkItemReque
       />
       {!requestIds?.length && workItemRequestSearchQuery !== "" && <CustomerRequestSearchEmptyState />}
       {requestIds.map((id) => (
-        <WorkItemRequestListItem
-          key={id}
-          workspaceSlug={workspaceSlug}
-          requestId={id}
-          isEditable={!disabled}
-          workItemId={workItemId}
-        />
+        <WorkItemRequestListItem key={id} workspaceSlug={workspaceSlug} requestId={id} workItemId={workItemId} />
       ))}
     </div>
   );

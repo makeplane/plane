@@ -11,15 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react";
 // plane web imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { EUserWorkspaceRoles } from "@plane/types";
-import { useUserPermissions } from "@/hooks/store/user";
 import {
   CustomerRequestEmptyState,
   CustomerRequestForm,
@@ -28,14 +24,16 @@ import {
   CustomerRequestSearchEmptyState,
 } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
 type TProps = {
   workspaceSlug: string;
   customerId: string;
+  permissions: TCustomerDetailPermissions["requests"];
 };
 
 export const CustomerRequestsRoot = observer(function CustomerRequestsRoot(props: TProps) {
-  const { workspaceSlug, customerId } = props;
+  const { workspaceSlug, customerId, permissions } = props;
 
   // i18n
   const { t } = useTranslation();
@@ -46,11 +44,9 @@ export const CustomerRequestsRoot = observer(function CustomerRequestsRoot(props
     createUpdateRequestModalId,
     toggleCreateUpdateRequestModal,
   } = useCustomers();
-  const { allowPermissions } = useUserPermissions();
 
   // derived values
   const requestIds = getFilteredCustomerRequestIds(customerId);
-  const isEditable = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const isRequestFormOpen = createUpdateRequestModalId === customerId;
 
   const handleFormClose = () => {
@@ -72,7 +68,7 @@ export const CustomerRequestsRoot = observer(function CustomerRequestsRoot(props
         <h3 className="text-18 text-h3-semibold">{t("customers.requests.label", { count: 2 })}</h3>
         <div className="flex gap-2 items-center">
           <CustomerRequestSearch />
-          {isEditable && (
+          {permissions.canCreate && (
             <Button onClick={handleFormOpen} disabled={isRequestFormOpen} className="px-2 py-1">
               {t("customers.requests.add")}
             </Button>
@@ -100,7 +96,13 @@ export const CustomerRequestsRoot = observer(function CustomerRequestsRoot(props
               requestId={id}
               customerId={customerId}
               key={id}
-              isEditable={isEditable}
+              permissions={{
+                canCreate: permissions.canCreate,
+                canEdit: permissions.getCanEdit(id),
+                canDelete: permissions.getCanDelete(id),
+                canAddAttachment: permissions.getCanAddAttachment(id),
+                canDeleteAttachment: permissions.getCanDeleteAttachment(id),
+              }}
             />
           ))}
       </div>

@@ -24,7 +24,7 @@ import { useTeamspaceViews } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/page";
 
 function TeamspaceViewsPage({ params }: Route.ComponentProps) {
-  const { teamspaceId } = params;
+  const { teamspaceId, workspaceSlug } = params;
   // store hooks
   const { getTeamspaceViewsFilters, updateFilters, clearAllFilters } = useTeamspaceViews();
   // derived values
@@ -65,7 +65,7 @@ function TeamspaceViewsPage({ params }: Route.ComponentProps) {
         </div>
       )}
       <div className="h-full w-full overflow-hidden overflow-y-auto">
-        <TeamspaceViewsList teamspaceId={teamspaceId} />
+        <TeamspaceViewsList teamspaceId={teamspaceId} workspaceSlug={workspaceSlug} />
       </div>
     </div>
   );

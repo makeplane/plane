@@ -14,7 +14,6 @@ from django.urls import path
 
 from plane.app.views import (
     AnalyticsEndpoint,
-    AnalyticViewViewset,
     SavedAnalyticEndpoint,
     ExportAnalyticsEndpoint,
     AdvanceAnalyticsEndpoint,
@@ -34,16 +33,17 @@ urlpatterns = [
         AnalyticsEndpoint.as_view(),
         name="plane-analytics",
     ),
-    path(
-        "workspaces/<str:slug>/analytic-view/",
-        AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
-        name="analytic-view",
-    ),
-    path(
-        "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
-        AnalyticViewViewset.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
-        name="analytic-view",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/analytic-view/",
+    #     AnalyticViewViewset.as_view({"get": "list", "post": "create"}),
+    #     name="analytic-view",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/analytic-view/<uuid:pk>/",
+    #     AnalyticViewViewset.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+    #     name="analytic-view",
+    # ),
     path(
         "workspaces/<str:slug>/saved-analytic-view/<uuid:analytic_id>/",
         SavedAnalyticEndpoint.as_view(),

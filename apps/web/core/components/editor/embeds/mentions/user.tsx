@@ -15,12 +15,12 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Link } from "react-router";
 // plane imports
-import { ROLE } from "@plane/constants";
 import { Popover } from "@plane/propel/popover";
 import { Avatar } from "@plane/propel/avatar";
 import { cn, getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 import { useUser } from "@/hooks/store/user";
 
 type Props = {
@@ -39,9 +39,12 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
     getUserDetails,
     project: { getProjectMemberDetails },
   } = useMember();
+  const { getProjectRoleDetailsByRoleSlug } = useRoleManagement();
   // derived values
   const userDetails = getUserDetails(id);
-  const roleDetails = projectId ? getProjectMemberDetails(id, projectId.toString())?.role : null;
+  const memberRoleSlug = projectId ? getProjectMemberDetails(id, projectId)?.role_slug : null;
+  const roleDetails =
+    memberRoleSlug && workspaceSlug ? getProjectRoleDetailsByRoleSlug(workspaceSlug, memberRoleSlug) : undefined;
   const profileLink = `/${workspaceSlug}/profile/${id}`;
 
   if (!userDetails) {
@@ -68,7 +71,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
         <Popover.Content side="bottom" align="start">
           <div className="w-60 bg-surface-1 shadow-raised-200 rounded-lg p-3 border-[0.5px] border-strong">
             <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 size-10 grid place-items-center">
+              <div className="shrink-0 size-10 grid place-items-center">
                 <Avatar
                   src={getFileURL(userDetails?.avatar_url ?? "")}
                   name={userDetails?.display_name}
@@ -81,7 +84,7 @@ export const EditorUserMention = observer(function EditorUserMention(props: Prop
                 <Link to={profileLink} className="not-prose font-medium text-primary text-13 hover:underline">
                   {userDetails?.first_name} {userDetails?.last_name}
                 </Link>
-                {roleDetails && <p className="text-secondary text-11">{ROLE[roleDetails]}</p>}
+                {roleDetails && <p className="text-secondary text-11">{roleDetails.name}</p>}
               </div>
             </div>
           </div>

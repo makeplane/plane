@@ -30,6 +30,8 @@ import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useProjectFilter } from "@/plane-web/hooks/store";
 import type { TProject } from "@/types/projects";
 import { EProjectScope } from "@/types/workspace-project-filters";
+// store
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 // local imports
 import { JoinButton } from "@/components/projects/common/join-button";
 import { Attributes } from "../attributes";
@@ -37,6 +39,8 @@ import { Details } from "./details";
 
 type Props = {
   project: TProject;
+  /** Permissions for the project */
+  permissions: ProjectItemPermissions;
   /** Pass when rendering outside project list */
   workspaceSlug: string;
   /** When true, navigation is disabled (e.g. card is non-editable); use ControlLink when true */
@@ -56,6 +60,7 @@ type Props = {
 export const ProjectCard = observer(function ProjectCard(props: Props) {
   const {
     project,
+    permissions,
     workspaceSlug,
     disabled = false,
     hideArchiveDeleteModals = false,
@@ -71,10 +76,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { currentWorkspace } = useWorkspace();
   const pathname = usePathname();
   const router = useRouter();
-  const { updateProject } = useProject();
+  const { updateProject, permissions: projectPermissions } = useProject();
   const { filters } = useProjectFilter();
   // derived values
-  const isMemberOfProject = !!project.member_role;
+  const canViewProject = projectPermissions.getCanView(workspaceSlug, project.id);
   const isArchived = pathname.includes("/archives");
 
   const handleUpdateProject = (data: Partial<TProject>) => {
@@ -82,14 +87,14 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   };
 
   const handleClick = (e: React.MouseEvent) => {
-    if (!isMemberOfProject || isArchived) {
+    if (!canViewProject || isArchived) {
       e.preventDefault();
       e.stopPropagation();
       if (!isArchived) setJoinProjectModal(true);
-    } else {
-      e.preventDefault();
-      router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
+      return;
     }
+    e.preventDefault();
+    router.push(`/${workspaceSlug}/projects/${project.id}/issues`);
   };
 
   if (!currentWorkspace) return null;
@@ -98,10 +103,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
     draggable: false,
     href: `/${workspaceSlug}/projects/${project.id}/issues`,
     onClick: handleClick,
-    "data-prevent-progress": !isMemberOfProject || isArchived,
+    "data-prevent-progress": !canViewProject || isArchived,
     className: cn("group/project-card flex flex-col justify-between w-full", {
       "bg-layer-1": isArchived,
-      "hover:cursor-pointer": !disabled && isMemberOfProject,
+      "hover:cursor-pointer": !disabled && canViewProject && !isArchived,
     }),
   };
 
@@ -110,6 +115,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       <Details
         project={project}
         workspaceSlug={workspaceSlug}
+        permissions={permissions}
         setJoinProjectModal={setJoinProjectModal}
         setArchiveRestoreProject={setArchiveRestoreProject}
         setDeleteProjectModal={setDeleteProjectModal}
@@ -121,6 +127,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         isArchived={isArchived}
         handleUpdateProject={handleUpdateProject}
         workspaceSlug={workspaceSlug}
+        canEditProperty={permissions.canEditProperty}
         currentWorkspace={currentWorkspace}
         dateClassname="block"
         displayProperties={{
@@ -171,7 +178,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         />
       )}
       {disabled ? (
-        <ControlLink {...linkProps} disabled={disabled || !isMemberOfProject}>
+        <ControlLink {...linkProps} disabled={disabled || !canViewProject}>
           {content}
         </ControlLink>
       ) : (

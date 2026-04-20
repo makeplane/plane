@@ -25,13 +25,13 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type TeamspacePagesListHeaderActionsProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: { canCreatePage: boolean };
 };
 
 export const TeamspacePagesListHeaderActions = observer(function TeamspacePagesListHeaderActions(
   props: TeamspacePagesListHeaderActionsProps
 ) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, permissions } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug: routerWorkspaceSlug } = useParams();
@@ -65,7 +65,7 @@ export const TeamspacePagesListHeaderActions = observer(function TeamspacePagesL
 
   return (
     <>
-      {isEditingAllowed && (
+      {permissions.canCreatePage && (
         <Button variant="primary" onClick={handleCreatePage} loading={isCreatingPage} size="lg">
           {isCreatingPage ? "Adding" : "Add page"}
         </Button>

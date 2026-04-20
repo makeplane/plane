@@ -97,7 +97,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
               <IssueDetailRoot
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
-                issueId={archivedIssueId}
+                workItemId={archivedIssueId}
                 is_archived
               />
             </div>

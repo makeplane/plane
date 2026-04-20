@@ -21,6 +21,7 @@ from celery import shared_task
 
 # Module imports
 from plane.db.models import Workspace, WorkspaceMember
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
 
 
 @shared_task
@@ -34,14 +35,16 @@ def workspace_license_initiate_task(workspace_id):
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),
-                user_role=F("role"),
+                user_role_slug=F("role_ref__slug"),
             )
-            .values("user_email", "user_id", "user_role")
+            .values("user_email", "user_id", "user_role_slug")
         )
 
         # Convert user_id to string
         for member in workspace_members:
             member["user_id"] = str(member["user_id"])
+            # if the user role slug is in unpaid roles, then set the user role as 5
+            member["user_role"] = 5 if member["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
         # Get workspace from workspace_id
         workspace = Workspace.objects.filter(id=workspace_id).first()

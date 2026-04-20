@@ -220,6 +220,10 @@
             "title": "Clé d'attribut de groupe",
             "description": "L'attribut du fournisseur d'identité utilisé pour identifier et synchroniser les groupes d'utilisateurs.",
             "placeholder": "Groupes"
+          },
+          "default_workspace_role": {
+            "title": "Rôle par défaut dans l'espace de travail",
+            "description": "Le rôle attribué aux utilisateurs lorsqu'ils sont ajoutés automatiquement à l'espace de travail via la synchronisation de groupe."
           }
         },
         "group_mapping": {

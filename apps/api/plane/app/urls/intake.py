@@ -13,23 +13,25 @@ from django.urls import path
 
 
 from plane.app.views import (
-    IntakeViewSet,
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # IntakeViewSet,
     IntakeIssueViewSet,
     IntakeWorkItemDescriptionVersionEndpoint,
 )
 
 
 urlpatterns = [
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/intakes/",
-        IntakeViewSet.as_view({"get": "list", "post": "create"}),
-        name="intake",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/intakes/<uuid:pk>/",
-        IntakeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
-        name="intake",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/intakes/",
+    #     IntakeViewSet.as_view({"get": "list", "post": "create"}),
+    #     name="intake",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/intakes/<uuid:pk>/",
+    #     IntakeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+    #     name="intake",
+    # ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/",
         IntakeIssueViewSet.as_view({"get": "list", "post": "create"}),
@@ -41,15 +43,21 @@ urlpatterns = [
         name="intake-issue",
     ),
     path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
-        IntakeViewSet.as_view({"get": "list", "post": "create"}),
-        name="inbox",
+        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-issues/<uuid:pk>/status/",
+        IntakeIssueViewSet.as_view({"patch": "update_status"}),
+        name="intake-issue-status",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:pk>/",
-        IntakeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
-        name="inbox",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/",
+    #     IntakeViewSet.as_view({"get": "list", "post": "create"}),
+    #     name="inbox",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/inboxes/<uuid:pk>/",
+    #     IntakeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+    #     name="inbox",
+    # ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/",
         IntakeIssueViewSet.as_view({"get": "list", "post": "create"}),
@@ -59,6 +67,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:pk>/",
         IntakeIssueViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="inbox-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/inbox-issues/<uuid:pk>/status/",
+        IntakeIssueViewSet.as_view({"patch": "update_status"}),
+        name="inbox-issue-status",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/intake-work-items/<uuid:work_item_id>/description-versions/",

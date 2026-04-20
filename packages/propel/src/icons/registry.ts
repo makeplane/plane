@@ -37,6 +37,8 @@ import {
 } from "./actions";
 // Arrow icons
 import {
+  AccordionCloseIcon,
+  AccordionOpenIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -46,7 +48,6 @@ import {
   ImportIcon,
   ArrowLeftIcon,
   ArrowRightIcon,
-  AccordionCloseIcon,
   BackspaceIcon,
 } from "./arrows";
 // Default icon
@@ -328,6 +329,8 @@ export const ICON_REGISTRY = {
   "action.sort-by-down": SortByDownIcon,
 
   // Arrow icons
+  "arrow.accordion-close": AccordionCloseIcon,
+  "arrow.accordion-open": AccordionOpenIcon,
   "arrow.chevron-down": ChevronDownIcon,
   "arrow.chevron-left": ChevronLeftIcon,
   "arrow.chevron-right": ChevronRightIcon,
@@ -346,7 +349,6 @@ export const ICON_REGISTRY = {
   "arrow.reply": ReplyIcon,
   "arrow.external-link": ExternalLinkIcon,
   "arrow.import": ImportIcon,
-  "arrow.accordion-close": AccordionCloseIcon,
   // Other products icons
   "other-products.jira": JiraIcon,
   "other-products.clickup": ClickupIcon,

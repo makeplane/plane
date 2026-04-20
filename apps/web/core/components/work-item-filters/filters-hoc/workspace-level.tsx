@@ -15,7 +15,7 @@ import { useCallback, useMemo, useState } from "react";
 import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { DEFAULT_GLOBAL_VIEWS_LIST, EUserPermissionsLevel } from "@plane/constants";
+import { DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type {
   IWorkspaceView,
@@ -24,7 +24,7 @@ import type {
   TWorkItemFiltersUpdateViewOptions,
   WorkItemFilerViewCallbackArguments,
 } from "@plane/types";
-import { EUserProjectRoles, EViewAccess } from "@plane/types";
+import { EViewAccess } from "@plane/types";
 // helpers
 import { removeNillKeys } from "@/helpers/common";
 // components
@@ -35,7 +35,6 @@ import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useReleases } from "@/hooks/store/use-releases";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { WorkItemFiltersHOC } from "./base";
 import type { TEnableSaveViewProps, TEnableUpdateViewProps, TSharedWorkItemFiltersHOCProps } from "./shared";
@@ -53,9 +52,11 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [createViewPayload, setCreateViewPayload] = useState<Partial<IWorkspaceView> | undefined>(undefined);
   // hooks
-  const { getViewDetailsById, updateGlobalView } = useGlobalView();
-  const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const {
+    getViewDetailsById,
+    updateGlobalView,
+    permissions: { getCanCreate, getCanEdit },
+  } = useGlobalView();
   const { joinedProjectIds } = useProject();
   const {
     workspace: { getWorkspaceMemberIds },
@@ -67,27 +68,18 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   const allReleaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
   // derived values
   const isReleasesFeatureEnabled = isReleasesEnabled(workspaceSlug);
-  const hasWorkspaceAdminLevelPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
-  const hasWorkspaceMemberLevelPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
   const viewDetails = entityId ? getViewDetailsById(entityId) : null;
   const isDefaultView = typeof entityId === "string" && DEFAULT_GLOBAL_VIEWS_LIST.some((view) => view.key === entityId);
   const isViewLocked = viewDetails ? viewDetails?.is_locked : false;
-  const isCurrentUserOwner = viewDetails ? viewDetails.owned_by === currentUser?.id : false;
-  const canCreateView = enableSaveView && !props.saveViewOptions?.isDisabled && hasWorkspaceMemberLevelPermissions;
+  const canCreateViewPermission = getCanCreate(workspaceSlug);
+  const canEditViewPermission = viewDetails ? getCanEdit(viewDetails.id) : false;
+  const canCreateView = enableSaveView && !props.saveViewOptions?.isDisabled && canCreateViewPermission;
   const canUpdateView =
     enableUpdateView &&
     !isDefaultView &&
     !props.updateViewOptions?.isDisabled &&
     !isViewLocked &&
-    (hasWorkspaceAdminLevelPermissions || isCurrentUserOwner);
+    canEditViewPermission;
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
   const hasAdditionalChanges =

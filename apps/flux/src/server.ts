@@ -134,7 +134,7 @@ export class FluxServer extends Effect.Service<FluxServer>()("FluxServer", {
         runFork: (effect) => {
           runFork(effect);
         },
-        requireWorkspaceMembership: true,
+        requireWorkspacePermissions: true,
       });
 
       // Setup namespace handlers

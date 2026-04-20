@@ -65,7 +65,7 @@ export const CustomerRequestsCollapsible = observer(function CustomerRequestsCol
         ) : undefined
       }
     >
-      <WorkItemRequestCollapsibleContent workItemId={workItemId} workspaceSlug={workspaceSlug} disabled={disabled} />
+      <WorkItemRequestCollapsibleContent workItemId={workItemId} workspaceSlug={workspaceSlug} />
     </EntityDetailWidgetSection>
   );
 });

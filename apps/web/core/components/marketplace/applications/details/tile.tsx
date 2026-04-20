@@ -15,18 +15,18 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowRight, Crown } from "lucide-react";
 import { InfoIcon } from "@plane/propel/icons";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { convertAppSlugToIntegrationKey } from "@plane/etl/core";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TUserApplication } from "@plane/types";
-import { EProductSubscriptionEnum, EUserWorkspaceRoles } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { Tooltip } from "@plane/ui";
-import { useUserPermissions } from "@/hooks/store/user";
 import { IMPORTERS_LIST } from "@/components/importers/list";
 import { ApplicationTileMenuOptions } from "@/components/marketplace";
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useIntegrationPermissions } from "@/hooks/store/integrations/use-integration-permissions";
 import { OAuthService } from "@/services/marketplace/oauth.service";
 import { AppTileLogo } from "./tile-logo";
 
@@ -52,10 +52,10 @@ function getAppTileConfig(params: {
   isFreePlan: boolean;
   isNotSupported: boolean;
   isSelfManaged: boolean;
-  isAdmin: boolean;
+  canManageIntegration: boolean;
   tooltipMessage: string;
 }): TAppTileConfig {
-  const { app, isFreePlan, isNotSupported, isAdmin, tooltipMessage } = params;
+  const { app, isFreePlan, isNotSupported, canManageIntegration, tooltipMessage } = params;
   const isPaidOrOwned = !isFreePlan || !!app.is_owned;
 
   // badges & menu are hidden on free plans for non-owned apps
@@ -63,9 +63,8 @@ function getAppTileConfig(params: {
   const showInternalBadge = !!app.is_owned;
   const showOptionsMenu =
     isPaidOrOwned &&
-    isAdmin &&
-    ((app.is_default && app.is_owned && isAdmin) ||
-      (!app.is_default && (app.is_owned || (isAdmin && app.is_installed))));
+    ((app.is_default && app.is_owned && canManageIntegration) ||
+      (!app.is_default && (app.is_owned || (canManageIntegration && app.is_installed))));
 
   // primary CTA — exactly one action per tile, ordered by priority
   let primaryCTA: TAppTileAction = null;
@@ -96,13 +95,13 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
   const { t } = useTranslation();
   const router = useRouter();
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail, togglePaidPlanModal } = useWorkspaceSubscription();
-  const { allowPermissions } = useUserPermissions();
+  const { getCanManage } = useIntegrationPermissions();
 
   const isAppDefault = app.is_default || false;
   const isNotSupported = app.is_not_supported || false;
   const isSelfManaged = subscriptionDetail?.is_self_managed || false;
   const isFreePlan = subscriptionDetail?.product === EProductSubscriptionEnum.FREE;
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canManageIntegration = workspaceSlug ? getCanManage(workspaceSlug, app.id) : false;
   const importersSlug = IMPORTERS_LIST.map((importer) => importer.key);
   const isFeatureFlagEnabled = useFlag(
     workspaceSlug?.toString() || "",
@@ -113,7 +112,14 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
     ? t("integrations.not_configured_message_admin", { name: app.name })
     : t("integrations.not_configured_message_support", { name: app.name });
 
-  const config = getAppTileConfig({ app, isFreePlan, isNotSupported, isSelfManaged, isAdmin, tooltipMessage });
+  const config = getAppTileConfig({
+    app,
+    isFreePlan,
+    isNotSupported,
+    isSelfManaged,
+    canManageIntegration,
+    tooltipMessage,
+  });
 
   const handleConfigure = () => {
     if (isAppDefault) {
@@ -238,7 +244,7 @@ export const AppTile = observer(function AppTile(props: AppTileProps) {
         </div>
         <div className="text-body-xs-regular text-secondary flex-1 line-clamp-2">{t(app.short_description)}</div>
       </div>
-      {isAdmin && <div className="flex items-center gap-x-1 flex-wrap">{renderAction()}</div>}
+      {canManageIntegration && <div className="flex items-center gap-x-1 flex-wrap">{renderAction()}</div>}
     </div>
   );
 });

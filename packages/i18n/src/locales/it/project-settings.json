@@ -22,10 +22,6 @@
       "label": "Membri",
       "project_lead": "Responsabile del progetto",
       "default_assignee": "Assegnatario predefinito",
-      "guest_super_permissions": {
-        "title": "Concedi accesso in sola lettura a tutti gli elementi di lavoro per gli utenti ospiti:",
-        "sub_heading": "Questo permetterà agli ospiti di visualizzare tutti gli elementi di lavoro del progetto."
-      },
       "invite_members": {
         "title": "Invita membri",
         "sub_heading": "Invita membri a lavorare sul tuo progetto.",

@@ -24,7 +24,7 @@ import { useTeamspaces } from "@/plane-web/hooks/store";
 import type { Route } from "./+types/layout";
 
 export default function TeamspaceWorkItemsLayout({ params }: Route.ComponentProps) {
-  const { teamspaceId } = params;
+  const { teamspaceId, workspaceSlug } = params;
   // store hooks
   const { getTeamspaceById } = useTeamspaces();
   // derived values
@@ -34,7 +34,15 @@ export default function TeamspaceWorkItemsLayout({ params }: Route.ComponentProp
   return (
     <>
       <PageHead title={pageTitle} />
-      <AppHeader header={<TeamspaceDetailHeader selectedNavigationKey={ETeamspaceNavigationItem.ISSUES} />} />
+      <AppHeader
+        header={
+          <TeamspaceDetailHeader
+            selectedNavigationKey={ETeamspaceNavigationItem.ISSUES}
+            teamspaceId={teamspaceId}
+            workspaceSlug={workspaceSlug}
+          />
+        }
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

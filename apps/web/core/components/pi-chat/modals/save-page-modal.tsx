@@ -15,19 +15,19 @@ import type { FormEvent } from "react";
 import { useState } from "react";
 // types
 import { observer } from "mobx-react";
-import { ETabIndices, EUserPermissionsLevel } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ProjectIcon, WikiIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 // ui
-import { EUserProjectRoles } from "@plane/types";
 import { EModalPosition, EModalWidth, Input, ModalCore } from "@plane/ui";
 import { cn, copyUrlToClipboard, getTabIndex } from "@plane/utils";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// plane web hooks
+import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   workspaceSlug: string;
@@ -73,17 +73,10 @@ export const SavePageModal: React.FC<Props> = observer((props) => {
   // hooks
   const { isMobile } = usePlatformOS();
   const { workspaceProjectIds, getProjectById } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { getCanCreatePage } = usePageStore(EPageStoreType.PROJECT);
 
   const options = workspaceProjectIds
-    ?.filter((projectId) =>
-      allowPermissions(
-        [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
-        EUserPermissionsLevel.PROJECT,
-        workspaceSlug,
-        projectId
-      )
-    )
+    ?.filter((projectId) => getCanCreatePage(workspaceSlug, projectId))
     .map((projectId: string) => {
       const projectDetails = getProjectById(projectId);
 

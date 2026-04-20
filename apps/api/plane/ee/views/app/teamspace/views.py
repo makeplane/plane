@@ -16,6 +16,7 @@ import json
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 
 # Django imports
 from django.db import transaction
@@ -27,10 +28,10 @@ from django.core.serializers.json import DjangoJSONEncoder
 from plane.db.models import IssueView, Workspace, UserFavorite
 from plane.ee.models import TeamspaceView
 from .base import TeamspaceBaseEndpoint
-from plane.ee.permissions import TeamspacePermission
 from plane.ee.serializers import TeamspaceViewSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, TeamspacePermissions, TeamspaceWorkitemViewPermissions, ResourceType
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 
 
@@ -38,12 +39,13 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
     model = TeamspaceView
-    permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, pk=None):
-        # Check if the view is part of the team
         if pk:
+            if not TeamspaceView.objects.filter(view_id=pk, team_space_id=team_space_id).exists():
+                raise PermissionDenied("View does not belong to the team space.")
             subquery = UserFavorite.objects.filter(
                 user=self.request.user,
                 entity_identifier=OuterRef("pk"),
@@ -92,6 +94,11 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(
+        TeamspaceWorkitemViewPermissions.CREATE,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def post(self, request, slug, team_space_id):
         serializer = TeamspaceViewSerializer(data=request.data)
         workspace = Workspace.objects.get(slug=slug)
@@ -143,13 +150,11 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspaceWorkitemViewPermissions.EDIT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def patch(self, request, slug, team_space_id, pk):
         # Check if the view is part of the team
         if not TeamspaceView.objects.filter(view_id=pk, team_space_id=team_space_id).exists():
-            return Response(
-                {"error": "View does not belong to the team"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            raise PermissionDenied("View does not belong to the team space.")
 
         with transaction.atomic():
             issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
@@ -166,12 +171,23 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(
+        TeamspaceWorkitemViewPermissions.DELETE,
+        resource_param="team_space_id",
+        scope_param_type=ResourceType.TEAMSPACE,
+    )
     def delete(self, request, slug, team_space_id, pk):
         # Check if the views if of the team or project
         team_space_view = TeamspaceView.objects.filter(view_id=pk, team_space_id=team_space_id).first()
         if team_space_view:
             issue_view = IssueView.objects.filter(pk=pk, workspace__slug=slug)
             issue_view_details = issue_view.get()
+
+            # Only the owner or an authorized manager can delete
+            if issue_view_details.owned_by_id != request.user.id:
+                if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                    raise PermissionDenied("Only the creator or an authorized manager can perform this action")
+
             issue_view.delete()
             team_space_view.delete()
 
@@ -190,7 +206,4 @@ class TeamspaceViewEndpoint(TeamspaceBaseEndpoint):
             )
 
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {"error": "View does not belong to the team"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
+        raise PermissionDenied("View does not belong to the team space.")

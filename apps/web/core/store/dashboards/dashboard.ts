@@ -15,7 +15,13 @@ import { isEqual, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane types
-import type { TDashboard, TDashboardLevel, TLogoProps, TWorkItemFilterExpression } from "@plane/types";
+import type {
+  PermissionCheckArgs,
+  TDashboard,
+  TDashboardLevel,
+  TLogoProps,
+  TWorkItemFilterExpression,
+} from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IDashboardWidgetsStore, TDashboardWidgetHelpers } from "./dashboard-widgets.store";
@@ -28,9 +34,9 @@ export interface IDashboardInstance extends TDashboard {
   dashboardLevel: TDashboardLevel;
   quickFilters: TWorkItemFilterExpression | undefined;
   // permissions
-  canCurrentUserEditDashboard: boolean;
-  canCurrentUserFavoriteDashboard: boolean;
-  canCurrentUserDeleteDashboard: boolean;
+  canEdit: boolean;
+  canFavorite: boolean;
+  canDelete: boolean;
   // helpers
   asJSON: TDashboard;
   getRedirectionLink: () => string;
@@ -50,16 +56,18 @@ type TDashboardHelpers = {
   actions: {
     update: (payload: Partial<TDashboard>) => Promise<TDashboard>;
   };
-  permissions: {
-    canCurrentUserEditDashboard: boolean;
-    canCurrentUserFavoriteDashboard: boolean;
-    canCurrentUserDeleteDashboard: boolean;
-  };
+  can: (args: PermissionCheckArgs) => boolean;
 };
 
 export type TDashboardCombinedHelpers = {
   dashboard: TDashboardHelpers;
-  widget: TDashboardWidgetHelpers;
+  widget: {
+    actions: TDashboardWidgetHelpers["actions"];
+    permissions: Omit<
+      TDashboardWidgetHelpers["permissions"],
+      "canCurrentUserDeleteWidget" | "canCurrentUserEditWidget"
+    >;
+  };
 };
 
 export class DashboardInstance implements IDashboardInstance {
@@ -113,7 +121,18 @@ export class DashboardInstance implements IDashboardInstance {
     // initialize root store
     this.rootStore = store;
     // initialize sub-store
-    this.widgetsStore = new DashboardWidgetsStore(store, combinedHelpers.widget, this);
+    this.widgetsStore = new DashboardWidgetsStore(
+      store,
+      {
+        ...combinedHelpers.widget,
+        permissions: {
+          ...combinedHelpers.widget.permissions,
+          canCurrentUserDeleteWidget: this.canDelete,
+          canCurrentUserEditWidget: this.canEdit,
+        },
+      },
+      this
+    );
 
     makeObservable(this, {
       // observables
@@ -133,9 +152,9 @@ export class DashboardInstance implements IDashboardInstance {
       updated_by: observable.ref,
       workspace: observable.ref,
       // computed
-      canCurrentUserEditDashboard: computed,
-      canCurrentUserFavoriteDashboard: computed,
-      canCurrentUserDeleteDashboard: computed,
+      canEdit: computed,
+      canFavorite: computed,
+      canDelete: computed,
       asJSON: computed,
       isViewModeEnabled: computed,
       // actions
@@ -148,6 +167,18 @@ export class DashboardInstance implements IDashboardInstance {
     });
   }
 
+  private get workspaceSlug(): string | undefined {
+    if (!this.workspace) return undefined;
+    return this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
+  }
+
+  private get dashboardPermissionMeta() {
+    if (!this.id) return undefined;
+    return {
+      resourceId: this.id,
+    };
+  }
+
   updateQuickFilters: IDashboardInstance["updateQuickFilters"] = (filters) => {
     runInAction(() => {
       this.quickFilters = filters;
@@ -156,16 +187,30 @@ export class DashboardInstance implements IDashboardInstance {
   };
 
   // permissions
-  get canCurrentUserEditDashboard() {
-    return this.helpers.permissions.canCurrentUserEditDashboard;
+  get canEdit() {
+    const meta = this.dashboardPermissionMeta;
+    if (!this.workspaceSlug || !meta) return false;
+    return this.helpers.can({
+      resource: "dashboard",
+      action: "edit",
+      workspaceSlug: this.workspaceSlug,
+      resourceMeta: meta,
+    });
   }
 
-  get canCurrentUserFavoriteDashboard() {
-    return this.helpers.permissions.canCurrentUserFavoriteDashboard;
+  get canFavorite() {
+    return this.canEdit;
   }
 
-  get canCurrentUserDeleteDashboard() {
-    return this.helpers.permissions.canCurrentUserDeleteDashboard;
+  get canDelete() {
+    const meta = this.dashboardPermissionMeta;
+    if (!this.workspaceSlug || !meta) return false;
+    return this.helpers.can({
+      resource: "dashboard",
+      action: "delete",
+      workspaceSlug: this.workspaceSlug,
+      resourceMeta: meta,
+    });
   }
 
   // helpers
@@ -187,7 +232,7 @@ export class DashboardInstance implements IDashboardInstance {
   }
 
   get isViewModeEnabled() {
-    return !this.canCurrentUserEditDashboard || this.viewModeToggle;
+    return !this.canEdit || this.viewModeToggle;
   }
 
   getRedirectionLink: IDashboardInstance["getRedirectionLink"] = computedFn(() => {
@@ -205,8 +250,7 @@ export class DashboardInstance implements IDashboardInstance {
   };
 
   updateDashboard: IDashboardInstance["updateDashboard"] = async (data) => {
-    const workspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
-    if (!workspaceSlug || !this.id) throw new Error("Required fields not found");
+    if (!this.workspaceSlug || !this.id) throw new Error("Required fields not found");
     const originalPage = { ...this.asJSON };
     const sourceChanged =
       ("filters" in data && !isEqual(data.filters, originalPage.filters)) ||
@@ -241,8 +285,7 @@ export class DashboardInstance implements IDashboardInstance {
   };
 
   addToFavorites: IDashboardInstance["addToFavorites"] = async () => {
-    const { workspaceSlug } = this.rootStore.router;
-    if (!workspaceSlug || !this.id) return undefined;
+    if (!this.workspaceSlug || !this.id) return undefined;
 
     const isDashboardFavorite = this.is_favorite;
 
@@ -251,7 +294,7 @@ export class DashboardInstance implements IDashboardInstance {
     });
 
     await this.rootStore.favorite
-      .addFavorite(workspaceSlug.toString(), {
+      .addFavorite(this.workspaceSlug, {
         entity_type: this.dashboardLevel === "workspace" ? "workspace_dashboard" : "dashboard",
         entity_identifier: this.id,
         entity_data: { name: this.name || "" },
@@ -265,15 +308,14 @@ export class DashboardInstance implements IDashboardInstance {
   };
 
   removeFromFavorites: IDashboardInstance["removeFromFavorites"] = async () => {
-    const { workspaceSlug } = this.rootStore.router;
-    if (!workspaceSlug || !this.id) return undefined;
+    if (!this.workspaceSlug || !this.id) return undefined;
     const isDashboardFavorite = this.is_favorite;
 
     runInAction(() => {
       this.is_favorite = false;
     });
 
-    await this.rootStore.favorite.removeFavoriteEntity(workspaceSlug, this.id).catch((error) => {
+    await this.rootStore.favorite.removeFavoriteEntity(this.workspaceSlug, this.id).catch((error) => {
       runInAction(() => {
         this.is_favorite = isDashboardFavorite;
       });

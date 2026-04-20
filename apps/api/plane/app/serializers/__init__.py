@@ -28,7 +28,7 @@ from .workspace import (
     WorkspaceLiteSerializer,
     WorkspaceThemeSerializer,
     WorkspaceMemberAdminSerializer,
-    WorkspaceMemberMeSerializer,
+    WorkspacePreferencesSerializer,
     WorkspaceUserPropertiesSerializer,
     WorkspaceUserLinkSerializer,
     WorkspaceRecentVisitSerializer,
@@ -40,6 +40,7 @@ from .workspace import (
 from .project import (
     ProjectSerializer,
     ProjectListSerializer,
+    ProjectLightSerializer,
     ProjectDetailSerializer,
     ProjectMemberSerializer,
     ProjectMemberInviteSerializer,
@@ -133,6 +134,7 @@ from .estimate import (
 from .intake import (
     IntakeSerializer,
     IntakeIssueSerializer,
+    IntakeIssueUpdateSerializer,
     IssueStateIntakeSerializer,
     IntakeIssueLiteSerializer,
     IntakeIssueDetailSerializer,
@@ -204,7 +206,7 @@ __all__ = [
     "WorkspaceLiteSerializer",
     "WorkspaceThemeSerializer",
     "WorkspaceMemberAdminSerializer",
-    "WorkspaceMemberMeSerializer",
+    "WorkspacePreferencesSerializer",
     "WorkspaceUserPropertiesSerializer",
     "WorkspaceUserLinkSerializer",
     "WorkspaceRecentVisitSerializer",
@@ -214,6 +216,7 @@ __all__ = [
     # Project serializers
     "ProjectSerializer",
     "ProjectListSerializer",
+    "ProjectLightSerializer",
     "ProjectDetailSerializer",
     "ProjectMemberSerializer",
     "ProjectMemberInviteSerializer",
@@ -300,6 +303,7 @@ __all__ = [
     # Intake serializers
     "IntakeSerializer",
     "IntakeIssueSerializer",
+    "IntakeIssueUpdateSerializer",
     "IssueStateIntakeSerializer",
     "IntakeIssueLiteSerializer",
     "IntakeIssueDetailSerializer",

@@ -27,39 +27,7 @@ import { LabelItemBlock } from "./label-block/label-item-block";
 import { LabelDndHOC } from "./label-drag-n-drop-HOC";
 import { ProjectSettingLabelItem } from "./project-setting-label-item";
 
-type Props = {
-  label: IIssueLabel;
-  labelChildren: IIssueLabel[];
-  handleLabelDelete: (label: IIssueLabel) => void;
-  isUpdating: boolean;
-  setIsUpdating: Dispatch<SetStateAction<boolean>>;
-  isLastChild: boolean;
-  onDrop: (
-    draggingLabelId: string,
-    droppedParentId: string | null,
-    droppedLabelId: string | undefined,
-    dropAtEndOfList: boolean
-  ) => void;
-  labelOperationsCallbacks: TLabelOperationsCallbacks;
-  isEditable?: boolean;
-};
-
-const LabelGroupCollapsible = observer(function LabelGroupCollapsible({
-  label,
-  labelChildren,
-  isEditLabelForm,
-  setEditLabelForm,
-  setIsUpdating,
-  isUpdating,
-  isDragging,
-  customMenuItems,
-  handleLabelDelete,
-  dragHandleRef,
-  onDrop,
-  isEditable,
-  labelOperationsCallbacks,
-  isDroppingInLabel,
-}: {
+type LabelGroupCollapsibleProps = {
   label: IIssueLabel;
   labelChildren: IIssueLabel[];
   isEditLabelForm: boolean;
@@ -76,10 +44,33 @@ const LabelGroupCollapsible = observer(function LabelGroupCollapsible({
     droppedLabelId: string | undefined,
     dropAtEndOfList: boolean
   ) => void;
-  isEditable: boolean;
   labelOperationsCallbacks: TLabelOperationsCallbacks;
   isDroppingInLabel: boolean;
-}) {
+  permissions: {
+    canDragAndDrop: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+  };
+};
+
+const LabelGroupCollapsible = observer(function LabelGroupCollapsible(props: LabelGroupCollapsibleProps) {
+  const {
+    label,
+    labelChildren,
+    isEditLabelForm,
+    setEditLabelForm,
+    setIsUpdating,
+    isUpdating,
+    isDragging,
+    customMenuItems,
+    handleLabelDelete,
+    dragHandleRef,
+    onDrop,
+    labelOperationsCallbacks,
+    isDroppingInLabel,
+    permissions,
+  } = props;
+  // states
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -113,6 +104,7 @@ const LabelGroupCollapsible = observer(function LabelGroupCollapsible({
               handleLabelDelete={handleLabelDelete}
               isLabelGroup
               dragHandleRef={dragHandleRef}
+              permissions={permissions}
             />
           )}
 
@@ -144,7 +136,7 @@ const LabelGroupCollapsible = observer(function LabelGroupCollapsible({
                       isChild
                       isLastChild={index === labelChildren.length - 1}
                       onDrop={onDrop}
-                      isEditable={isEditable}
+                      permissions={permissions}
                       labelOperationsCallbacks={labelOperationsCallbacks}
                     />
                   </div>
@@ -158,7 +150,30 @@ const LabelGroupCollapsible = observer(function LabelGroupCollapsible({
   );
 });
 
-export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGroup(props: Props) {
+type ProjectSettingLabelGroupProps = {
+  label: IIssueLabel;
+  labelChildren: IIssueLabel[];
+  handleLabelDelete: (label: IIssueLabel) => void;
+  isUpdating: boolean;
+  setIsUpdating: Dispatch<SetStateAction<boolean>>;
+  isLastChild: boolean;
+  onDrop: (
+    draggingLabelId: string,
+    droppedParentId: string | null,
+    droppedLabelId: string | undefined,
+    dropAtEndOfList: boolean
+  ) => void;
+  labelOperationsCallbacks: TLabelOperationsCallbacks;
+  permissions: {
+    canDragAndDrop: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+  };
+};
+
+export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGroup(
+  props: ProjectSettingLabelGroupProps
+) {
   const {
     label,
     labelChildren,
@@ -167,8 +182,8 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
     setIsUpdating,
     isLastChild,
     onDrop,
-    isEditable = false,
     labelOperationsCallbacks,
+    permissions,
   } = props;
 
   // states
@@ -181,7 +196,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
         setEditLabelForm(true);
         setIsUpdating(true);
       },
-      isVisible: true,
+      isVisible: permissions.canEdit,
       text: "Edit label",
       key: "edit_label",
     },
@@ -190,14 +205,21 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
       onClick: () => {
         handleLabelDelete(label);
       },
-      isVisible: true,
+      isVisible: permissions.canDelete,
       text: "Delete label",
       key: "delete_label",
     },
   ];
 
   return (
-    <LabelDndHOC label={label} isGroup isChild={false} isLastChild={isLastChild} onDrop={onDrop}>
+    <LabelDndHOC
+      label={label}
+      isGroup
+      isChild={false}
+      isLastChild={isLastChild}
+      canDragAndDrop={permissions.canDragAndDrop}
+      onDrop={onDrop}
+    >
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
           className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
@@ -214,7 +236,7 @@ export const ProjectSettingLabelGroup = observer(function ProjectSettingLabelGro
             handleLabelDelete={handleLabelDelete}
             dragHandleRef={dragHandleRef}
             onDrop={onDrop}
-            isEditable={isEditable}
+            permissions={permissions}
             labelOperationsCallbacks={labelOperationsCallbacks}
             isDroppingInLabel={isDroppingInLabel}
           />

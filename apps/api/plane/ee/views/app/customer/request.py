@@ -31,7 +31,7 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.models import CustomerRequest, Customer, CustomerRequestIssue
 from plane.db.models import Workspace, Issue, FileAsset
 from plane.ee.serializers import CustomerRequestSerializer
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 from plane.utils.issue_filters import issue_filters
 from plane.bgtasks.issue_activities_task import issue_activity
 
@@ -39,9 +39,8 @@ from plane.bgtasks.issue_activities_task import issue_activity
 class CustomerRequestEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, customer_id, pk=None):
         customer_requests = (
             CustomerRequest.objects.filter(customer_id=customer_id, workspace__slug=slug)
@@ -93,6 +92,7 @@ class CustomerRequestEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug, customer_id):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -132,6 +132,7 @@ class CustomerRequestEndpoint(BaseAPIView):
         return Response({"error": "Customer doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, pk, customer_id=None):
         customer_request = CustomerRequest.objects.get(pk=pk, workspace__slug=slug)
 
@@ -144,6 +145,7 @@ class CustomerRequestEndpoint(BaseAPIView):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk, customer_id=None):
         customer_request = CustomerRequest.objects.get(pk=pk, workspace__slug=slug)
 
@@ -182,6 +184,7 @@ class CustomerIssuesEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, customer_id):
         customer_request_id = request.query_params.get("customer_request_id")
         search = request.query_params.get("search")
@@ -236,6 +239,7 @@ class CustomerIssuesEndpoint(BaseAPIView):
         return Response(issues, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def post(self, request, slug, customer_id):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -317,6 +321,7 @@ class CustomerIssuesEndpoint(BaseAPIView):
         return Response(issues, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def delete(self, request, slug, customer_id, work_item_id):
         customer_request_id = request.query_params.get("customer_request_id", None)
 

@@ -40,7 +40,7 @@ export const useEditorFlagging = (props: TEditorFlaggingHookProps): TEditorFlagg
   const isWorkItemEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
   const isEditorAIOpsEnabled =
     useFlag(workspaceSlug, "EDITOR_AI_OPS") &&
-    store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+    store.workspaceFeatures.isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED);
   const isEditorAiBlocksEnabled = useAiFlag(workspaceSlug, "AI_PAGES_BLOCKS");
   const isCollaborationCursorEnabled = useFlag(workspaceSlug, "COLLABORATION_CURSOR");
   const { isNestedPagesEnabled, isCommentsEnabled } = usePageStore(storeType || EPageStoreType.WORKSPACE);

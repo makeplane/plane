@@ -12,9 +12,8 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams } from "react-router";
 // ui
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CycleIcon } from "@plane/propel/icons";
@@ -24,8 +23,8 @@ import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { CyclesViewHeader } from "@/components/cycles/cycles-view-header";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useCycle } from "@/hooks/store/use-cycle";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
@@ -34,26 +33,22 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
-
   // store hooks
   const { toggleCreateCycleModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useCycle();
   const { currentProjectDetails, loader } = useProject();
+  // auth
+  const canUserCreateCycle = !!workspaceSlug && !!projectId && permissions.getCanCreateCycle(workspaceSlug, projectId);
+  // translation
   const { t } = useTranslation();
 
-  const canUserCreateCycle = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  if (!workspaceSlug || !projectId) return null;
 
   return (
     <Header>
       <Header.LeftItem>
         <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-          <ProjectBreadcrumbWithPreference
-            workspaceSlug={workspaceSlug?.toString()}
-            projectId={projectId?.toString()}
-          />
+          <ProjectBreadcrumbWithPreference workspaceSlug={workspaceSlug} projectId={projectId} />
           <Breadcrumbs.Item
             component={
               <BreadcrumbLink
@@ -67,7 +62,7 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
           />
         </Breadcrumbs>
       </Header.LeftItem>
-      {canUserCreateCycle && currentProjectDetails ? (
+      {canUserCreateCycle && currentProjectDetails && (
         <Header.RightItem>
           <CyclesViewHeader projectId={currentProjectDetails.id} />
           <Button
@@ -82,8 +77,6 @@ export const CyclesListHeader = observer(function CyclesListHeader() {
             <div className="hidden sm:block">{t("project_cycles.add_cycle")}</div>
           </Button>
         </Header.RightItem>
-      ) : (
-        <></>
       )}
     </Header>
   );

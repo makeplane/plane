@@ -25,7 +25,8 @@ from rest_framework.response import Response
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, Issue, Project, ProjectIssueType, Workspace
 from plane.ee.models import WorkitemTemplate, WorkspaceFeature, IssueProperty, IssueTypeProperty, IssuePropertyValue
-from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
+from plane.permissions import can, WorkspacePermissions, IssuePropertyPermissions
+from plane.ee.permissions import WorkspaceEntityPermission
 from plane.ee.serializers import IssueTypeSerializer, IssuePropertySerializer, WorkspaceWorkItemTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -418,9 +419,8 @@ class WorkspaceDefaultWorkItemTypeEndpoint(BaseAPIView):
 class WorkspaceIssueTypeEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceEntityPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         # Get all issue types for the workspace
         issue_types = (
@@ -451,9 +451,8 @@ class WorkspaceIssueTypeEndpoint(BaseAPIView):
 class IssueTypeEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk=None):
         # Get a single issue type
         if pk:
@@ -484,6 +483,7 @@ class IssueTypeEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         issue_types = IssueType.objects.filter(
             workspace__slug=slug,
@@ -541,6 +541,7 @@ class IssueTypeEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         # Update an issue type
         issue_type = IssueType.objects.get(
@@ -608,6 +609,7 @@ class IssueTypeEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, pk):
         # Delete an issue type
         work_item_type = IssueType.objects.get(
@@ -641,9 +643,9 @@ class IssueTypeEndpoint(BaseAPIView):
 
 
 class MarkDefaultIssueTypeEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, pk):
         IssueType.objects.filter(
             workspace__slug=slug,
@@ -665,9 +667,8 @@ class MarkDefaultIssueTypeEndpoint(BaseAPIView):
 class DefaultIssueTypeEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id):
         # Get the project
         project = Project.objects.get(pk=project_id)

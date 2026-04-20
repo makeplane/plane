@@ -14,16 +14,15 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TIssue, IWorkItemPeekOverview } from "@plane/types";
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // components
 import type { TIssueOperations } from "@/components/issues/issue-detail";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 // plane web constants
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 import { EpicView } from "./view";
@@ -33,7 +32,7 @@ export const EpicPeekOverview = observer(function EpicPeekOverview(props: IWorkI
   const { embedIssue = false, embedRemoveCurrentNotification } = props;
   const { t } = useTranslation();
   // store hook
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useEpics();
 
   const {
     issues: { restoreIssue },
@@ -126,15 +125,6 @@ export const EpicPeekOverview = observer(function EpicPeekOverview(props: IWorkI
   }, [peekIssue, issueOperations]);
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
-
-  // Check if issue is editable, based on user role
-  const isEditable = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    peekIssue?.workspaceSlug,
-    peekIssue?.projectId
-  );
-
   return (
     <EpicView
       workspaceSlug={peekIssue.workspaceSlug}
@@ -143,7 +133,19 @@ export const EpicPeekOverview = observer(function EpicPeekOverview(props: IWorkI
       isLoading={getIsFetchingIssueDetails(peekIssue.issueId)}
       isError={error}
       is_archived={!!peekIssue.isArchived}
-      disabled={!isEditable}
+      permissions={{
+        canEdit: permissions.getCanEdit(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+        canSubscribe: permissions.getCanSubscribe(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+        canDelete: permissions.getCanDelete(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+        canArchive: permissions.getCanArchive(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+        canRestore: permissions.getCanRestore(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+        canDuplicate: permissions.getCanDuplicate(peekIssue.workspaceSlug, peekIssue.projectId),
+        canConvertToWorkItem: permissions.getCanConvertToWorkItem(
+          peekIssue.workspaceSlug,
+          peekIssue.projectId,
+          peekIssue.issueId
+        ),
+      }}
       embedIssue={embedIssue}
       embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}

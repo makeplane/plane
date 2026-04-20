@@ -22,9 +22,10 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import Issue, IssueRelation, ProjectMember, RelationCategory
+from plane.db.models import Issue, IssueRelation, RelationCategory
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.issue_search import search_issues
+from plane.permissions import can, WorkitemPermissions, get_permission_conditions
 
 # Local imports
 from .base import BaseAPIView
@@ -163,6 +164,7 @@ class IssueSearchEndpoint(BaseAPIView):
 
         return issues.exclude(pk=issue_id)
 
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request: Request, slug: str, project_id: UUID):
         query = request.query_params.get("search", False)
         workspace_search = request.query_params.get("workspace_search", "false")
@@ -262,9 +264,8 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if convert == "true" and issue_id:
             issues = self.filter_issues_and_epics_by_excluding_given_issue_id(query, issue_id, issues_and_epics)
-        if ProjectMember.objects.filter(
-            project_id=project_id, member=self.request.user, is_active=True, role=5
-        ).exists():
+        conditions = get_permission_conditions(self.request)
+        if "creator" in conditions:
             issues = issues.filter(created_by=self.request.user)
 
         issues = issues.exclude(id=issue_id)

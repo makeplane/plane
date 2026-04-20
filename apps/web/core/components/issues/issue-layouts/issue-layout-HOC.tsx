@@ -12,6 +12,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // plane imports
 import { EIssueLayoutTypes } from "@plane/types";
 // hooks
@@ -28,18 +29,22 @@ interface Props {
 
 export const IssueLayoutHOC = observer(function IssueLayoutHOC(props: Props) {
   const { layout } = props;
-
+  // router
+  const { workspaceSlug } = useParams();
+  // router
   const storeType = useIssueStoreType();
   const { issues } = useIssues(storeType);
 
   const issueCount = issues.getGroupIssueCount(undefined, undefined, false);
+
+  if (!workspaceSlug) return null;
 
   if (issues?.getIssueLoader() === "init-loader" || issueCount === undefined) {
     return <WorkItemLayoutActiveLoader layout={layout} />;
   }
 
   if (issues.getGroupIssueCount(undefined, undefined, false) === 0 && layout !== EIssueLayoutTypes.CALENDAR) {
-    return <IssueLayoutEmptyState storeType={storeType} />;
+    return <IssueLayoutEmptyState workspaceSlug={workspaceSlug} storeType={storeType} />;
   }
 
   return <>{props.children}</>;

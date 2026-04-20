@@ -13,17 +13,14 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { ProjectSettingsFeatureControlItem } from "@/components/settings/project/content/feature-control-item";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { AutoScheduleCycles, ParallelCycles } from "@/components/cycles/settings";
 // plane web imports
@@ -33,7 +30,6 @@ import { FeaturesCyclesProjectSettingsHeader } from "./header";
 function FeaturesCyclesSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // permissions
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
   // translation
   const { t } = useTranslation();
@@ -41,11 +37,6 @@ function FeaturesCyclesSettingsPage({ params }: Route.ComponentProps) {
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails?.name} settings - ${t("project_settings.features.cycles.short_title")}`
     : undefined;
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
-
-  if (workspaceUserInfo && !canPerformProjectAdminActions) {
-    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
-  }
 
   return (
     <SettingsContentWrapper header={<FeaturesCyclesProjectSettingsHeader />}>

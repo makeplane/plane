@@ -12,31 +12,34 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useTeamspaces } from "@/plane-web/hooks/store";
 // plane web components
 import { TeamspacesList } from "@/components/teamspaces/list/teamspaces-list";
+// types
+import type { TTeamspaceListPermissions } from "@/store/teamspace/permissions/root";
 
-const TeamspaceListItemRoot = observer(function TeamspaceListItemRoot() {
-  // router
-  const { workspaceSlug } = useParams();
+type TeamspaceListItemRootProps = {
+  workspaceSlug: string;
+};
+
+const TeamspaceListItemRoot = observer(function TeamspaceListItemRoot(props: TeamspaceListItemRootProps) {
+  const { workspaceSlug } = props;
   // plane web hooks
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useTeamspaces();
   // derived values
-  const isEditingAllowed = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
+  const listPermissions: TTeamspaceListPermissions = {
+    canCreate: permissions.getCanCreate(workspaceSlug),
+    getCanEdit: (teamspaceId) => permissions.getCanEdit(workspaceSlug, teamspaceId),
+    getCanDelete: (teamspaceId) => permissions.getCanDelete(workspaceSlug, teamspaceId),
+    getCanManage: (teamspaceId) => permissions.getCanManage(workspaceSlug, teamspaceId),
+    getCanAddProject: (teamspaceId) => permissions.getCanAddProject(workspaceSlug, teamspaceId),
+  };
 
   return (
     <div className="flex h-full w-full flex-col">
       {/* TODO: Add applied filters */}
-      <TeamspacesList isEditingAllowed={isEditingAllowed} />
+      <TeamspacesList permissions={listPermissions} />
     </div>
   );
 });

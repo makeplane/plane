@@ -36,11 +36,12 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   workflow?: IWorkflow;
+  canCreate?: boolean;
 };
 
 export const CreateUpdateWorkflowModal = observer(function CreateUpdateWorkflowModal(props: Props) {
   // props
-  const { isOpen, onClose, workspaceSlug, projectId, workflow } = props;
+  const { isOpen, onClose, workspaceSlug, projectId, workflow, canCreate = false } = props;
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,6 +59,9 @@ export const CreateUpdateWorkflowModal = observer(function CreateUpdateWorkflowM
       ...workflow?.asJSON,
     },
   });
+
+  // derived values
+  const canSubmit = workflow ? workflow.permissions.canEdit : canCreate;
 
   // handlers
   const handleClose = () => {
@@ -112,6 +116,7 @@ export const CreateUpdateWorkflowModal = observer(function CreateUpdateWorkflowM
   };
 
   const onSubmit = async (payload: TWorkflowCreatePayload) => {
+    if (!canSubmit) return;
     setIsSubmitting(true);
     if (workflow) {
       await handleUpdate(payload);
@@ -184,7 +189,7 @@ export const CreateUpdateWorkflowModal = observer(function CreateUpdateWorkflowM
             <Button variant={"ghost"} onClick={handleClose}>
               {t("common.cancel")}
             </Button>
-            <Button disabled={isSubmitting} onClick={handleSubmit(onSubmit)}>
+            <Button disabled={isSubmitting || !canSubmit} onClick={handleSubmit(onSubmit)}>
               {workflow ? t("save") : t("common.create")}
             </Button>
           </div>

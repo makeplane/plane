@@ -15,6 +15,8 @@ import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssue, IIssueDisplayProperties } from "@plane/types";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { KanbanIssueBlock } from "./block";
@@ -27,7 +29,10 @@ interface IssueBlocksListProps {
   displayProperties: IIssueDisplayProperties | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   canDropOverIssue: boolean;
   canDragIssuesInCurrentGrouping: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
@@ -45,7 +50,7 @@ export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(pro
     canDragIssuesInCurrentGrouping,
     updateIssue,
     quickActions,
-    canEditProperties,
+    getWorkItemPermissions,
     scrollableContainerRef,
     isEpic = false,
   } = props;
@@ -75,7 +80,7 @@ export const KanbanIssueBlocksList = observer(function KanbanIssueBlocksList(pro
                 draggableId={draggableId}
                 canDropOverIssue={canDropOverIssue}
                 canDragIssuesInCurrentGrouping={canDragIssuesInCurrentGrouping}
-                canEditProperties={canEditProperties}
+                getWorkItemPermissions={getWorkItemPermissions}
                 scrollableContainerRef={scrollableContainerRef}
                 isEpic={isEpic}
               />

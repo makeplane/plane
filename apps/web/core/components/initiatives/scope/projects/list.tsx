@@ -15,18 +15,24 @@ import { observer } from "mobx-react";
 // components
 import { InitiativeScopeProjectsEmptyState } from "@/components/issues/issue-layouts/empty-states/initiative-scope-project";
 import { ListLayoutLoader } from "@/components/ui/loader/layouts/list-layout-loader";
+// types
+import type { TProjectProperty } from "@/store/project/permissions/root";
+// local imports
 import { ProjectList } from "../../details/main/collapsible-section/projects/project-list";
 
 type Props = {
   projectIds: string[];
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canRemoveProject: boolean;
+    canEditProjectProperty: (projectId: string, property: TProjectProperty) => boolean;
+  };
   isDataLoading?: boolean;
 };
 
 export const InitiativeScopeProjectList = observer(function InitiativeScopeProjectList(props: Props) {
-  const { projectIds, workspaceSlug, initiativeId, disabled, isDataLoading } = props;
+  const { projectIds, workspaceSlug, initiativeId, permissions, isDataLoading } = props;
 
   if (isDataLoading) return <ListLayoutLoader />;
 
@@ -38,7 +44,10 @@ export const InitiativeScopeProjectList = observer(function InitiativeScopeProje
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}
         projectIds={projectIds}
-        disabled={disabled}
+        permissions={{
+          canRemove: permissions.canRemoveProject,
+          canEditProperty: permissions.canEditProjectProperty,
+        }}
       />
     </div>
   );

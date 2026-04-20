@@ -56,7 +56,7 @@ function ProjectViewIssuesPage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={pageTitle} />
-      <ProjectViewLayoutRoot />
+      <ProjectViewLayoutRoot workspaceSlug={workspaceSlug} projectId={projectId} viewId={viewId} />
     </>
   );
 }

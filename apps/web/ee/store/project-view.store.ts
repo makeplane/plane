@@ -16,8 +16,8 @@ import { action, makeObservable, runInAction } from "mobx";
 import type { IProjectView, TPublishViewDetails, TPublishViewSettings } from "@plane/types";
 import { EViewAccess } from "@plane/types";
 import { ViewService } from "@/services/project/view.service";
-import type { IProjectViewStore as ICoreProjectViewStore } from "@/store/project-view.store";
-import { ProjectViewStore as CoreProjectViewStore } from "@/store/project-view.store";
+import type { IProjectViewStore as ICoreProjectViewStore } from "@/store/project-views/project-view.store";
+import { ProjectViewStore as CoreProjectViewStore } from "@/store/project-views/project-view.store";
 import type { RootStore } from "./root.store";
 
 export interface IProjectViewStore extends ICoreProjectViewStore {

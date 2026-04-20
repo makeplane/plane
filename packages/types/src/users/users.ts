@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TUserPermissions } from "../enums";
 import type { IIssueActivity, TIssuePriorities } from "../issues";
 import type { TStateGroups } from "../state";
 import type { TLoginMediums } from "../instance";
@@ -40,7 +39,9 @@ export interface IUserLite {
   is_bot: boolean;
   last_name: string;
   joining_date?: string;
+  last_login_medium?: TLoginMediums;
 }
+
 export interface IUser extends IUserLite {
   // only for uploading the cover image
   cover_image_asset?: string | null;
@@ -202,10 +203,6 @@ export interface IUserProfileProjectSegregation {
   };
 }
 
-export interface IUserProjectsRole {
-  [projectId: string]: TUserPermissions;
-}
-
 export interface IUserEmailNotificationSettings {
   property_change: boolean;
   state_change: boolean;
@@ -226,33 +223,3 @@ export type TPublicMember = {
   project: string;
   workspace: string;
 };
-
-// export interface ICurrentUser {
-//   id: readonly string;
-//   avatar: string;
-//   first_name: string;
-//   last_name: string;
-//   username: string;
-//   email: string;
-//   mobile_number: string;
-//   is_email_verified: boolean;
-//   is_tour_completed: boolean;
-//   onboarding_step: TOnboardingSteps;
-//   is_onboarded: boolean;
-//   role: string;
-// }
-
-// export interface ICustomTheme {
-//   background: string;
-//   text: string;
-//   primary: string;
-//   sidebarBackground: string;
-//   sidebarText: string;
-//   darkPalette: boolean;
-//   palette: string;
-//   theme: string;
-// }
-
-// export interface ICurrentUserSettings {
-//   theme: ICustomTheme;
-// }

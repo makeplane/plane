@@ -220,6 +220,10 @@
             "title": "组属性键",
             "description": "用于识别和同步用户组的身份提供者属性。",
             "placeholder": "组"
+          },
+          "default_workspace_role": {
+            "title": "默认工作区角色",
+            "description": "通过群组同步自动添加到工作区的用户所分配的角色。"
           }
         },
         "group_mapping": {

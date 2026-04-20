@@ -69,9 +69,9 @@ class EnterpriseLicenseActivateEndpoint(BaseAPIView):
                 .annotate(
                     user_email=F("email"),
                     user_id=F("id"),
-                    user_role=Value(20),
+                    user_role_slug=Value("admin"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             # Convert user_id to string
@@ -199,9 +199,9 @@ class InstanceLicenseSyncEndpoint(BaseAPIView):
                 .annotate(
                     user_email=F("email"),
                     user_id=F("id"),
-                    user_role=Value(20),  # Default role for enterprise users
+                    user_role_slug=Value("admin"),  # Default role for enterprise users
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             # Convert user_id to string
@@ -492,9 +492,9 @@ class EnterpriseLicenseActivateUploadEndpoint(BaseAPIView):
                 .annotate(
                     user_email=F("email"),
                     user_id=F("id"),
-                    user_role=Value(20),
+                    user_role_slug=Value("admin"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             # Convert user_id to string

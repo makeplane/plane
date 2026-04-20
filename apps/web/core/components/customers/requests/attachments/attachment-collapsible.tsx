@@ -14,6 +14,9 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@plane/propel/collapsible";
 import { observer } from "mobx-react";
 import { useState } from "react";
+// store
+import type { TCustomerRequestPermissions } from "@/store/customers/permissions/root";
+// local imports
 import { RequestAttachmentCollapsibleTitle } from "./collapsible-title";
 import { RequestAttachmentsCollapsibleContent } from "./content";
 
@@ -21,11 +24,11 @@ type TProps = {
   workspaceSlug: string;
   requestId: string;
   customerId: string;
-  isEditable?: boolean;
+  permissions: TCustomerRequestPermissions;
 };
 
 export const RequestAttachmentsCollapsible = observer(function RequestAttachmentsCollapsible(props: TProps) {
-  const { workspaceSlug, requestId, customerId, isEditable } = props;
+  const { workspaceSlug, requestId, customerId, permissions } = props;
   // states
   const [isOpen, setOpen] = useState<boolean>(false);
 
@@ -37,7 +40,7 @@ export const RequestAttachmentsCollapsible = observer(function RequestAttachment
           requestId={requestId}
           customerId={customerId}
           isOpen={isOpen}
-          disabled={!isEditable}
+          disabled={!permissions.canAddAttachment}
         />
       </CollapsibleTrigger>
       <CollapsibleContent>
@@ -45,7 +48,10 @@ export const RequestAttachmentsCollapsible = observer(function RequestAttachment
           workspaceSlug={workspaceSlug}
           requestId={requestId}
           customerId={customerId}
-          disabled={!isEditable}
+          permissions={{
+            canAddAttachment: permissions.canAddAttachment,
+            canDeleteAttachment: permissions.canDeleteAttachment,
+          }}
         />
       </CollapsibleContent>
     </Collapsible>

@@ -21,14 +21,17 @@ import { ModulesLinksListItem } from "@/components/modules";
 import { useModule } from "@/hooks/store/use-module";
 
 type Props = {
-  disabled?: boolean;
   handleDeleteLink: (linkId: string) => void;
   handleEditLink: (link: ILinkDetails) => void;
   moduleId: string;
+  permissions: {
+    canEdit: (linkId: string) => boolean;
+    canDelete: (linkId: string) => boolean;
+  };
 };
 
 export const ModuleLinksList = observer(function ModuleLinksList(props: Props) {
-  const { moduleId, handleDeleteLink, handleEditLink, disabled } = props;
+  const { moduleId, handleDeleteLink, handleEditLink, permissions } = props;
   // store hooks
   const { getModuleById } = useModule();
   // derived values
@@ -47,7 +50,7 @@ export const ModuleLinksList = observer(function ModuleLinksList(props: Props) {
           key={link.id}
           handleDeleteLink={() => memoizedDeleteLink(link.id)}
           handleEditLink={() => memoizedEditLink(link)}
-          isEditingAllowed={!disabled}
+          permissions={permissions}
           link={link}
         />
       ))}

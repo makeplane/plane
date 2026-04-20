@@ -25,10 +25,11 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   toggleCreateUpdateModal: () => void;
+  canCreate: boolean;
 };
 
 export const ProjectMilestoneRoot = observer(function ProjectMilestoneRoot(props: Props) {
-  const { workspaceSlug, projectId, toggleCreateUpdateModal } = props;
+  const { workspaceSlug, projectId, toggleCreateUpdateModal, canCreate } = props;
   // store hooks
   const { getProjectMilestoneIds, milestoneLoader } = useMilestones();
   // derived values
@@ -54,7 +55,7 @@ export const ProjectMilestoneRoot = observer(function ProjectMilestoneRoot(props
           heading="No milestones yet"
           subHeading="Start adding milestones to manage and track the progress."
           icon={<MilestoneIcon className="size-4" />}
-          actionElement={<AddMilestoneButton toggleModal={toggleCreateUpdateModal} />}
+          actionElement={<AddMilestoneButton toggleModal={toggleCreateUpdateModal} canCreate={canCreate} />}
         />
       </SectionWrapper>
     );

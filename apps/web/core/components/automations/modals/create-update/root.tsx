@@ -13,7 +13,6 @@
 
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { useParams } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -33,6 +32,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   projectId?: string;
+  workspaceSlug: string;
 };
 
 const defaultValues: Partial<TAutomation> = {
@@ -43,18 +43,22 @@ const defaultValues: Partial<TAutomation> = {
 };
 
 export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomationModal(props: Props) {
-  const { data, isOpen, onClose, projectId } = props;
+  const { data, isOpen, onClose, projectId, workspaceSlug } = props;
   // app router
   const router = useAppRouter();
-  const { workspaceSlug } = useParams();
   // store hooks
   const {
     getAutomationById,
-    projectAutomations: { canCurrentUserCreateAutomation, createAutomation: createProjectAutomation },
-    workspaceAutomations: { canCreate: canCreateWorkspaceAutomation, createAutomation: createWorkspaceAutomation },
+    projectAutomations: { getCanCreateAutomation, createAutomation: createProjectAutomation },
+    workspaceAutomations: {
+      getCanCreateAutomation: getCanCreateWorkspaceAutomation,
+      createAutomation: createWorkspaceAutomation,
+    },
   } = useAutomations();
   // derived values
-  const canCreate = projectId ? canCurrentUserCreateAutomation : canCreateWorkspaceAutomation;
+  const canCreate = projectId
+    ? getCanCreateAutomation(workspaceSlug, projectId)
+    : getCanCreateWorkspaceAutomation(workspaceSlug);
   // form info
   const {
     control,
@@ -74,7 +78,7 @@ export const CreateUpdateAutomationModal = observer(function CreateUpdateAutomat
   };
 
   const handleCreate = async (payload: Partial<TAutomation>) => {
-    if (!canCreate || !workspaceSlug) return;
+    if (!canCreate) return;
     try {
       const res = projectId
         ? await createProjectAutomation(workspaceSlug, projectId, payload)

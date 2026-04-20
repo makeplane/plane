@@ -27,6 +27,8 @@ import { EIssueServiceType } from "@plane/types";
 import { Spinner, ControlLink, Row } from "@plane/ui";
 import { DEFAULT_PROJECT_IDENTIFIER_MAX_LENGTH } from "@plane/constants";
 import { cn, generateWorkItemLink } from "@plane/utils";
+// constants
+import { DEFAULT_WORK_ITEM_PERMISSIONS } from "@/components/issues/issue-layouts/constants";
 // components
 import { MultipleSelectEntityAction } from "@/components/core/multiple-select";
 import { IssueProperties } from "@/components/issues/issue-layouts/properties";
@@ -45,6 +47,8 @@ import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-
 import { calculateIdentifierWidth } from "@/helpers/work-item-layout";
 import type { TRenderQuickActions } from "./list-view-types";
 
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+
 interface IssueBlockProps {
   issueId: string;
   getWorkItemById: (issueId: string) => TIssue | undefined;
@@ -52,7 +56,10 @@ interface IssueBlockProps {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   nestingLevel: number;
   spacingLeft?: number;
   isExpanded: boolean;
@@ -72,7 +79,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     updateIssue,
     quickActions,
     displayProperties,
-    canEditProperties,
+    getWorkItemPermissions,
     nestingLevel,
     spacingLeft = 14,
     isExpanded,
@@ -116,8 +123,8 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   // derived values
   const issue = getWorkItemById(issueId);
   const subIssuesCount = issue?.sub_issues_count ?? 0;
-  const canEditIssueProperties = canEditProperties(issue?.project_id ?? undefined);
-  const isDraggingAllowed = canDrag && canEditIssueProperties;
+  const permissions = issue ? getWorkItemPermissions(issue) : DEFAULT_WORK_ITEM_PERMISSIONS;
+  const isDraggingAllowed = canDrag && permissions.canDragAndDrop;
 
   const { isMobile } = usePlatformOS();
 
@@ -147,7 +154,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issue.id);
   const isIssueActive = selectionHelpers.getIsEntityActive(issue.id);
   const isSubIssue = nestingLevel !== 0;
-  const canSelectIssues = canEditIssueProperties && !selectionHelpers.isSelectionDisabled;
+  const canSelectIssues = permissions.canEditProperty("state_id") && !selectionHelpers.isSelectionDisabled;
 
   const marginLeft = `${spacingLeft}px`;
 
@@ -211,7 +218,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
             setToast({
               type: TOAST_TYPE.WARNING,
               title: `Cannot move ${isEpic ? "epic" : "work item"}`,
-              message: !canEditIssueProperties
+              message: !permissions.canEditProperty("state_id")
                 ? `You are not allowed to move this ${isEpic ? "epic" : "work item"}`
                 : "Drag and drop is disabled for the current grouping",
             });
@@ -325,7 +332,7 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
               <IssueProperties
                 className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
                 issue={issue}
-                isReadOnly={!canEditIssueProperties}
+                permissions={permissions}
                 updateIssue={updateIssue}
                 displayProperties={displayProperties}
                 activeLayout="List"

@@ -126,7 +126,13 @@ export const ProjectStates = observer(function ProjectStates(props: TProjectStat
           groupedStates={groupedProjectStates}
           stateOperationsCallbacks={stateOperationsCallbacks}
           shouldTrackEvents={false}
-          isEditable
+          permissions={{
+            canCreate: true,
+            canEdit: () => true,
+            canDelete: () => true,
+            canMarkAsDefault: () => true,
+            canDragAndDrop: () => true,
+          }}
           groupListClassName="space-y-4"
           groupItemClassName="bg-surface-1 border-subtle rounded-lg"
           stateItemClassName="border-subtle"

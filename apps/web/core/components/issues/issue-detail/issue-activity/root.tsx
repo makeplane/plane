@@ -20,7 +20,6 @@ import {
   E_SORT_ORDER,
   defaultActivityFilters,
   EActivityFilterType,
-  EUserPermissions,
   ACTIVITY_FILTER_TYPE_OPTIONS,
 } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -31,8 +30,7 @@ import { CommentCreate } from "@/components/comments/comment-create";
 import { IssueActivityWorklogCreateButton } from "@/components/issues/worklog/activity/worklog-create-button";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+// plane web components
 import { useWorkspaceWorklogs } from "@/plane-web/hooks/store";
 // local imports
 import { ActivityFilter } from "./activity-filter";
@@ -44,8 +42,16 @@ type IssueActivityProps = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled?: boolean;
   isIntakeIssue?: boolean;
+  permissions: {
+    canAddWorklog: boolean;
+    comments: {
+      canCreate: boolean;
+      canEdit: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
+  };
 };
 
 export type ActivityOperations = {
@@ -66,7 +72,7 @@ const DEFAULT_ACTIVITY_TAB = "all";
 const FILTER_VISIBLE_TABS = new Set([DEFAULT_ACTIVITY_TAB, "activity", "comment"]);
 
 export const IssueActivity = observer(function IssueActivity(props: IssueActivityProps) {
-  const { workspaceSlug, projectId, issueId, disabled = false, isIntakeIssue = false } = props;
+  const { workspaceSlug, projectId, issueId, isIntakeIssue = false, permissions } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
@@ -74,19 +80,8 @@ export const IssueActivity = observer(function IssueActivity(props: IssueActivit
   // store hooks
   const { getProjectById } = useProject();
   const { isWorklogsEnabledByProjectId } = useWorkspaceWorklogs();
-  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
-  const { data: currentUser } = useUser();
-  const {
-    issue: { getIssueById },
-  } = useIssueDetail();
   // derived values
-  const issue = getIssueById(issueId);
   const isWorklogsEnabled = (projectId && isWorklogsEnabledByProjectId(projectId)) || false;
-  const currentUserProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
-  const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
-  const isAdmin = currentUserProjectRole === EUserPermissions.ADMIN;
-  const isAssigned = issue?.assignee_ids && currentUser?.id ? issue.assignee_ids.includes(currentUser.id) : false;
-  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
 
   // Build activity tabs
   const activityTabs: IssueActivityTab[] = useMemo(() => {
@@ -209,12 +204,12 @@ export const IssueActivity = observer(function IssueActivity(props: IssueActivit
         onTabChange={handleTabChange}
         actionsElement={
           <>
-            {isWorklogButtonEnabled && (
+            {permissions.canAddWorklog && (
               <IssueActivityWorklogCreateButton
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 issueId={issueId}
-                disabled={disabled}
+                disabled={!permissions.canAddWorklog}
               />
             )}
             {showFilter && (
@@ -230,7 +225,7 @@ export const IssueActivity = observer(function IssueActivity(props: IssueActivit
         <div className="flex flex-col gap-5 py-6">
           <div className="min-h-[200px]">
             <div className="space-y-3">
-              {!disabled &&
+              {permissions.comments.canCreate &&
                 sortOrder === E_SORT_ORDER.DESC &&
                 (activeTabKey === "all" || activeTabKey === "comment") &&
                 renderCommentCreationBox}
@@ -242,12 +237,12 @@ export const IssueActivity = observer(function IssueActivity(props: IssueActivit
                 selectedFilters={selectedFilters || defaultActivityFilters}
                 activityOperations={activityOperations}
                 showAccessSpecifier={!!project.anchor}
-                disabled={disabled}
+                permissions={permissions}
                 sortOrder={sortOrder || E_SORT_ORDER.ASC}
                 renderMode={activeRenderMode}
                 activeTabKey={activeTabKey || DEFAULT_ACTIVITY_TAB}
               />
-              {!disabled &&
+              {permissions.comments.canCreate &&
                 sortOrder === E_SORT_ORDER.ASC &&
                 (activeTabKey === "all" || activeTabKey === "comment") &&
                 renderCommentCreationBox}

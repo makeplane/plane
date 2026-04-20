@@ -14,6 +14,7 @@ import copy
 
 # Django imports
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 # Module imports
@@ -29,36 +30,33 @@ from plane.db.models import (
     IssueLink,
     IssueRelation,
     IssueType,
-    Project,
-    ProjectMember,
-    RelationCategory,
     State,
+    RelationCategory,
     WorkItemRelationDefinition,
 )
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, permission_engine, WorkitemPermissions, PermissionContext
 
 
 class IssueDuplicateEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.COPY_WORK_ITEM)
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def post(self, request, slug, issue_id):
         project_id = request.data.get("project_id")
 
-        project_exists = Project.objects.filter(id=project_id, workspace__slug=slug).exists()
-
-        if not project_exists:
-            return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
-
-        project_member_exists = ProjectMember.objects.filter(
-            project_id=project_id,
-            member_id=request.user.id,
-            is_active=True,
-        ).exists()
-
-        if not project_member_exists:
-            return Response(
-                {"error": "You don't have permission to duplicate issues in this project"},
-                status=status.HTTP_403_FORBIDDEN,
+        # Check workitem:create on destination project
+        has_create = permission_engine.check(
+            user=request.user,
+            permission=WorkitemPermissions.CREATE,
+            context=PermissionContext.project(
+                project_id=str(project_id),
+                workspace_id=request.workspace_id,
+            ),
+        )
+        if not has_create:
+            raise PermissionDenied(
+                "You don't have permission to create work items in this project."
             )
 
         original_issue = Issue.objects.get(pk=issue_id)

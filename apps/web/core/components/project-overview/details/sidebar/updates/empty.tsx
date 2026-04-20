@@ -14,11 +14,12 @@
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 
 type TProps = {
+  canCreate: boolean;
   handleNewUpdate: () => void;
 };
 
 export function EmptyUpdates(props: TProps) {
-  const { handleNewUpdate } = props;
+  const { canCreate, handleNewUpdate } = props;
 
   return (
     <EmptyStateCompact
@@ -30,6 +31,7 @@ export function EmptyUpdates(props: TProps) {
           label: "Add an Update",
           onClick: () => handleNewUpdate(),
           variant: "primary",
+          disabled: !canCreate,
         },
       ]}
       rootClassName="p-10"

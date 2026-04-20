@@ -31,11 +31,12 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   workflow: IWorkflow;
+  canEdit: boolean;
 };
 
 export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(props: Props) {
   // props
-  const { workspaceSlug, projectId, workflow } = props;
+  const { workspaceSlug, projectId, workflow, canEdit } = props;
   // states
   const [isSelectStatesModalOpen, setSelectStatesModal] = useState(false);
   const [deleteTargetStateId, setDeleteTargetStateId] = useState<string | null>(null);
@@ -47,6 +48,7 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
 
   // handlers
   const handleAddStates = async (stateIds: string[]) => {
+    if (!canEdit) return;
     await workflow
       .addStates(workspaceSlug, projectId, {
         state_ids: stateIds,
@@ -91,7 +93,7 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
           <div className="flex items-center gap-1.5">
             <p className="text-body-md-medium">{t("project_settings.workflows.detail.define")}</p>
           </div>
-          {!isDefaultWorkflow && (
+          {canEdit && !isDefaultWorkflow && (
             <Button variant="secondary" onClick={() => setSelectStatesModal(true)}>
               {t("project_settings.workflows.detail.add_states")}
             </Button>
@@ -115,6 +117,7 @@ export const WorkflowStatesListRoot = observer(function WorkflowStatesListRoot(p
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 workflow={workflow}
+                canEdit={canEdit}
                 onRequestDelete={setDeleteTargetStateId}
               />
             ))}

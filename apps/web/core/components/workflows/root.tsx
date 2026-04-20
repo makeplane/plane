@@ -28,13 +28,19 @@ export const WorkflowsRoot = observer(function WorkflowsRoot(props: Props) {
 
   // hooks
   const { t } = useTranslation();
-  const { isWorkflowsEnabled, toggleWorkflows } = useWorkflows();
+  const {
+    isWorkflowsEnabled,
+    toggleWorkflows,
+    permissions: { getCanCreate },
+  } = useWorkflows();
 
   // derived values
   const isEnabled = isWorkflowsEnabled(workspaceSlug, projectId);
+  const canCreateWorkflow = getCanCreate(workspaceSlug, projectId);
 
   // handlers
   function handleToggleWorkflow() {
+    if (!canCreateWorkflow) return;
     const featureTogglePromise = toggleWorkflows(workspaceSlug, projectId, !isEnabled);
 
     setPromiseToast(featureTogglePromise, {
@@ -54,7 +60,7 @@ export const WorkflowsRoot = observer(function WorkflowsRoot(props: Props) {
 
   return (
     <div className="flex flex-col gap-12">
-      <ToggleWorkflow isEnabled={isEnabled} onToggle={handleToggleWorkflow} />
+      <ToggleWorkflow isEnabled={isEnabled} onToggle={handleToggleWorkflow} disabled={!canCreateWorkflow} />
       {isEnabled ? <WorkflowsListRoot projectId={projectId} workspaceSlug={workspaceSlug} /> : null}
     </div>
   );

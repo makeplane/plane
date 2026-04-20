@@ -13,17 +13,14 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 // component
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles } from "@plane/types";
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 // store hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { CreateTemplatesButton, TemplatesUpgrade, ProjectTemplatesSettingsRoot } from "@/components/templates/settings";
@@ -38,7 +35,6 @@ function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { getProjectById } = useProject();
   const { isAnyWorkItemTemplatesAvailableForProject } = useWorkItemTemplates();
   const { isAnyPageTemplatesAvailableForProject } = usePageTemplates();
@@ -54,17 +50,6 @@ function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails.name} - ${t("common.templates")}`
     : undefined;
-  const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-  const hasMemberLevelPermission = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-
-  if (!currentProjectDetails?.id) return <></>;
-
-  if (workspaceUserInfo && !hasMemberLevelPermission) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
 
   return (
     <SettingsContentWrapper header={<TemplatesProjectSettingsHeader />}>
@@ -74,12 +59,11 @@ function TemplatesProjectSettingsPage({ params }: Route.ComponentProps) {
         description={t("project_settings.templates.description")}
         control={
           isAnyTemplatesEnabled &&
-          isAnyTemplatesAvailableForProject &&
-          hasAdminPermission && (
+          isAnyTemplatesAvailableForProject && (
             <CreateTemplatesButton
               workspaceSlug={workspaceSlug}
               projectId={projectId}
-              currentLevel={ETemplateLevel.PROJECT}
+              level={ETemplateLevel.PROJECT}
               buttonSize="base"
               variant="settings"
             />

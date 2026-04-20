@@ -36,18 +36,19 @@ import {
 } from "@/components/customers";
 import { CustomerRequestQuickActions } from "@/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
+import type { TCustomerRequestPermissions } from "@/store/customers/permissions/root";
 
 type TProps = {
   requestId: string;
   customerId: string;
   workspaceSlug: string;
-  isEditable?: boolean;
+  permissions: TCustomerRequestPermissions;
 };
 
 const customerService = new CustomerService();
 
 export const CustomerRequestListItem = observer(function CustomerRequestListItem(props: TProps) {
-  const { requestId, workspaceSlug, customerId, isEditable = false } = props;
+  const { requestId, workspaceSlug, customerId, permissions } = props;
   // states
   const [isEditing, setEditing] = useState<boolean>(false);
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
@@ -157,6 +158,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
             parentRef={parentRef}
             handleEdit={handleEdit}
             workspaceSlug={workspaceSlug}
+            permissions={permissions}
           />
         </div>
         {request.description_html ? (
@@ -178,7 +180,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
           <div className="py-1" />
         )}
         <div className="mt-2" />
-        {isEditable && (
+        {permissions.canEdit && (
           <div className="flex gap-2">
             <Button
               variant="secondary"
@@ -217,7 +219,7 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
                 workItemIds={request.work_item_ids}
                 customerId={customerId}
                 requestId={requestId}
-                isEditable={isEditable}
+                isEditable={permissions.canEdit}
               />
             </div>
           )}
@@ -226,10 +228,10 @@ export const CustomerRequestListItem = observer(function CustomerRequestListItem
               workspaceSlug={workspaceSlug}
               customerId={customerId}
               requestId={requestId}
-              isEditable={isEditable}
+              permissions={permissions}
             />
           </div>
-          {request.link && requestWorkItemsCount === 0 && isEditable && (
+          {request.link && requestWorkItemsCount === 0 && permissions.canEdit && (
             <div className="pt-2 mt-2 border-t-[0.5px] border-subtle-1 w-full">
               <div
                 className="flex gap-2 items-center text-13 cursor-pointer text-secondary font-medium"

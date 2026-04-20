@@ -29,7 +29,7 @@ export const WorkflowConfigSidebarRoot = observer(function WorkflowConfigSidebar
   const transition = state && transitionId ? state.getTransitionById(transitionId) : undefined;
   const helper = state?.sidebarHelper;
 
-  if (!stateId || !state || !helper || !transition) return <></>;
+  if (!workflow.permissions.canEdit || !stateId || !state || !helper || !transition) return <></>;
 
   const isConditionsTab = helper.selectedTab === "conditions";
 

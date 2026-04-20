@@ -35,6 +35,8 @@ import type { RootStore } from "@/plane-web/store/root.store";
 import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/types/workspace-feature";
 import { RequestAttachmentStore } from "./attachment.store";
 import { WorkItemCustomersStore } from "./work-item-customers.store";
+import { CustomerPermissionsInstance } from "./permissions/root";
+import type { CustomerPermissions } from "./permissions/root";
 
 export interface ICustomersStore {
   // observables
@@ -97,6 +99,8 @@ export interface ICustomersStore {
   // stores
   attachment: RequestAttachmentStore;
   workItems: WorkItemCustomersStore;
+  // permissions
+  permissions: CustomerPermissions;
 }
 
 export class CustomerStore implements ICustomersStore {
@@ -128,6 +132,7 @@ export class CustomerStore implements ICustomersStore {
   rootStore: RootStore;
   attachment: RequestAttachmentStore;
   workItems: WorkItemCustomersStore;
+  permissions: CustomerPermissions;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -181,6 +186,11 @@ export class CustomerStore implements ICustomersStore {
     this.attachment = new RequestAttachmentStore(this);
     this.workItems = new WorkItemCustomersStore(this, this.rootStore);
 
+    // permissions
+    this.permissions = new CustomerPermissionsInstance({
+      can: this.rootStore.permissionAccessStore.can,
+    });
+
     // service
     this.customerService = new CustomerService();
     this.customerRequestService = new CustomerRequestsService();
@@ -192,10 +202,12 @@ export class CustomerStore implements ICustomersStore {
   get isCustomersFeatureEnabled() {
     const { loader, isWorkspaceFeatureEnabled } = this.rootStore.workspaceFeatures;
     const { getFeatureFlagForCurrentWorkspace } = this.rootStore.featureFlags;
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
     // handle workspace feature init loader
     if (loader === EWorkspaceFeatureLoader.INIT_LOADER) return undefined;
     return (
-      isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CUSTOMERS_ENABLED) &&
+      !!workspaceSlug &&
+      isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_CUSTOMERS_ENABLED) &&
       getFeatureFlagForCurrentWorkspace(E_FEATURE_FLAGS.CUSTOMERS, false)
     );
   }

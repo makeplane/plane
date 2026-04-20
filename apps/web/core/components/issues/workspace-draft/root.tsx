@@ -15,16 +15,14 @@ import { Fragment } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel, EDraftIssuePaginationType } from "@plane/constants";
+import { EDraftIssuePaginationType } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { cn } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // components
@@ -41,15 +39,24 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
   // plane hooks
   const { t } = useTranslation();
   // hooks
-  const { loader, paginationInfo, fetchIssues, issueIds } = useWorkspaceDraftIssues();
+  const {
+    loader,
+    paginationInfo,
+    fetchIssues,
+    issueIds,
+    permissions: draftWorkItemPermissions,
+  } = useWorkspaceDraftIssues();
   const { workspaceProjectIds } = useProject();
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   // derived values
-  const hasMemberLevelPermission = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const permissions = {
+    canCreate: draftWorkItemPermissions.getCanCreate(workspaceSlug),
+    canEdit: (draftWorkItemId: string) => draftWorkItemPermissions.getCanEdit(workspaceSlug, draftWorkItemId),
+    canDelete: (draftWorkItemId: string) => draftWorkItemPermissions.getCanDelete(workspaceSlug, draftWorkItemId),
+    canMoveToProject: (projectId: string, draftWorkItemId: string) =>
+      draftWorkItemPermissions.getCanMoveToProject(workspaceSlug, projectId, draftWorkItemId),
+    canDuplicate: draftWorkItemPermissions.getCanDuplicate(workspaceSlug),
+  };
 
   //swr hook for fetching issue properties
   useWorkspaceIssueProperties(workspaceSlug);
@@ -84,20 +91,30 @@ export const WorkspaceDraftIssuesRoot = observer(function WorkspaceDraftIssuesRo
             onClick: () => {
               toggleCreateProjectModal(true);
             },
-            disabled: !hasMemberLevelPermission,
+            disabled: !permissions.canCreate,
             variant: "primary",
           },
         ]}
       />
     );
 
-  if (issueIds.length <= 0) return <WorkspaceDraftEmptyState />;
+  if (issueIds.length <= 0) return <WorkspaceDraftEmptyState canCreate={permissions.canCreate} />;
 
   return (
     <div className="relative">
       <div className="relative">
         {issueIds.map((issueId: string) => (
-          <DraftIssueBlock key={issueId} workspaceSlug={workspaceSlug} issueId={issueId} />
+          <DraftIssueBlock
+            key={issueId}
+            workspaceSlug={workspaceSlug}
+            issueId={issueId}
+            permissions={{
+              canEdit: permissions.canEdit(issueId),
+              canDelete: permissions.canDelete(issueId),
+              canMoveToProject: (projectId: string) => permissions.canMoveToProject(projectId, issueId),
+              canDuplicate: permissions.canDuplicate,
+            }}
+          />
         ))}
       </div>
 

@@ -24,11 +24,14 @@ from rest_framework.response import Response
 from .base import TeamspaceBaseEndpoint
 from plane.db.models import Workspace
 from plane.ee.models import TeamspaceMember, TeamspaceProject
-from plane.ee.permissions import allow_permission, ROLE
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, ProjectPermissions
 
 
 class AddTeamspaceProjectEndpoint(TeamspaceBaseEndpoint):
-    @allow_permission([ROLE.ADMIN])
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def post(self, request: Request, slug: str, project_id: uuid.UUID) -> Response:
         teamspace_ids = request.data.get("teamspace_ids", [])
         if not teamspace_ids:

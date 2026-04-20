@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import type { FieldValues } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
@@ -21,22 +20,22 @@ import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TCustomer } from "@plane/types";
 import { Input } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
 import { ContractStatusDropDown, StageDropDown } from "@/components/customers/dropdowns";
+import type { TCustomerProperty } from "@/store/customers/permissions/root";
 
 type TProps = {
   updateProperty: (data: Partial<TCustomer>) => void;
   customer: TCustomer;
-  isDisabled?: boolean;
+  canEditProperty: (property: TCustomerProperty) => boolean;
 };
 
 export function CustomerDefaultSidebarProperties(props: TProps) {
-  const { updateProperty, customer, isDisabled = false } = props;
+  const { updateProperty, customer, canEditProperty } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
@@ -66,7 +65,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             }}
             type="email"
             placeholder={t("customers.properties.default.email.placeholder")}
-            disabled={isDisabled}
+            disabled={!canEditProperty("name")}
           />
         </div>
       </div>
@@ -86,7 +85,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             }}
             type="link"
             placeholder={t("customers.properties.default.website_url.placeholder_short")}
-            disabled={isDisabled}
+            disabled={!canEditProperty("website_url")}
           />
         </div>
       </div>
@@ -108,7 +107,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
             }}
             placeholder={t("customers.properties.default.size.placeholder")}
             type="number"
-            disabled={isDisabled}
+            disabled={!canEditProperty("custom_properties")}
           />
         </div>
       </div>
@@ -123,7 +122,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
               updateProperty({ domain: value.toString() });
             }}
             placeholder={t("customers.properties.default.domain.placeholder_short")}
-            disabled={isDisabled}
+            disabled={!canEditProperty("custom_properties")}
           />
         </div>
       </div>
@@ -139,7 +138,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
           className="flex-grow w-3/5"
           buttonClassName="group border-none flex-grow w-full px-3 py-2"
           chevronClassName="hidden group-hover:inline"
-          disabled={isDisabled}
+          disabled={!canEditProperty("contract_status")}
         />
       </div>
       <div className="flex h-8 gap-2 items-center">
@@ -154,7 +153,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
           className="flex-grow w-3/5"
           buttonClassName="group border-none flex-grow w-full px-3 py-2"
           chevronClassName="hidden group-hover:inline"
-          disabled={isDisabled}
+          disabled={!canEditProperty("stage")}
         />
       </div>
       <div className="flex h-8 gap-2 items-center">
@@ -174,7 +173,7 @@ export function CustomerDefaultSidebarProperties(props: TProps) {
           }}
           placeholder={t("customers.properties.default.revenue.placeholder_short")}
           type="number"
-          disabled={isDisabled}
+          disabled={!canEditProperty("revenue")}
         />
       </div>
       {createdByDetails && (

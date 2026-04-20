@@ -18,14 +18,14 @@ from plane.app.serializers import WorkspaceRecentVisitSerializer
 
 # Modules imports
 from ..base import BaseViewSet
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspacePermissions
 
 
 class UserRecentVisitViewSet(BaseViewSet):
     model = UserRecentVisit
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
         entity_name = request.query_params.get("entity_name")
 

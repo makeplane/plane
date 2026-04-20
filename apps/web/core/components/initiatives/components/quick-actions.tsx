@@ -15,17 +15,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { ArchiveRestoreIcon, MoreHorizontal } from "lucide-react";
 // plane imports
-import { ARCHIVABLE_INITIATIVE_STATES, EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_INITIATIVE_STATES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { NewTabIcon, LinkIcon, EditIcon, TrashIcon, ArchiveIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
-// hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // Plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // types
@@ -39,26 +36,27 @@ type Props = {
   parentRef: React.RefObject<HTMLElement>;
   initiative: TInitiative;
   workspaceSlug: string;
-  disabled?: boolean;
   customClassName?: string;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const InitiativeQuickActions = observer(function InitiativeQuickActions(props: Props) {
-  const { parentRef, initiative, workspaceSlug, disabled = false, customClassName } = props;
+  const { parentRef, initiative, workspaceSlug, customClassName, permissions } = props;
   // states
   const [updateModal, setUpdateModal] = useState(false);
   const [archiveModal, setArchiveModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  // auth
+  const { canEdit, canDelete } = permissions;
   // store hooks
-  const { data } = useUser();
-  const { allowPermissions } = useUserPermissions();
   const {
     initiative: { restoreInitiative },
   } = useInitiatives();
   // derived values
   const isArchived = !!initiative?.archived_at;
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const isOwnerOrAdmin = data?.id === initiative?.created_by || isAdmin;
   const isArchivable = ARCHIVABLE_INITIATIVE_STATES.includes(initiative.state);
 
   const { t } = useTranslation();
@@ -110,7 +108,7 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
       title: t("edit"),
       icon: EditIcon,
       action: handleEditInitiative,
-      shouldRender: !disabled && !isArchived,
+      shouldRender: canEdit && !isArchived,
     },
     {
       key: "open-new-tab",
@@ -135,21 +133,23 @@ export const InitiativeQuickActions = observer(function InitiativeQuickActions(p
       className: "items-start",
       iconClassName: "mt-1 shrink-0",
       disabled: !isArchivable,
-      shouldRender: !disabled && isOwnerOrAdmin && !isArchived,
+      shouldRender: canEdit && !isArchived,
+      // shouldRender: canArchive && !isArchived, <permissionEngine> add archive permission check
     },
     {
       key: "restore",
       action: handleRestoreInitiative,
       title: t("restore"),
       icon: ArchiveRestoreIcon,
-      shouldRender: !disabled && isOwnerOrAdmin && isArchived,
+      // shouldRender: canRestore && isArchived, <permissionEngine> add restore permission check
+      shouldRender: canEdit && isArchived,
     },
     {
       key: "delete",
       action: handleDeleteInitiative,
       title: t("delete"),
       icon: TrashIcon,
-      shouldRender: !disabled && isOwnerOrAdmin,
+      shouldRender: canDelete,
     },
   ];
 

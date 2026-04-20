@@ -17,11 +17,14 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { PageHead } from "@/components/core/page-title";
 import { WorkspaceDashboardsListHeader } from "./header";
+// types
+import type { Route } from "./+types/layout";
 
-export default function WorkspaceDashboardsListLayout() {
+export default function WorkspaceDashboardsListLayout(props: Route.ComponentProps) {
+  const { workspaceSlug } = props.params;
   return (
     <>
-      <AppHeader header={<WorkspaceDashboardsListHeader />} />
+      <AppHeader header={<WorkspaceDashboardsListHeader workspaceSlug={workspaceSlug} />} />
       <ContentWrapper>
         <PageHead title="Dashboards" />
         <Outlet />

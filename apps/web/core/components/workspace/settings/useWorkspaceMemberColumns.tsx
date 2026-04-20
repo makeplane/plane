@@ -13,9 +13,8 @@
 
 import { useState } from "react";
 // plane imports
-import { EProductSubscriptionTier, EUserPermissionsLevel, LOGIN_MEDIUM_LABELS } from "@plane/constants";
+import { EProductSubscriptionTier, LOGIN_MEDIUM_LABELS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { AccountTypeColumn, NameColumn } from "@/components/workspace/settings/member-columns";
@@ -25,23 +24,25 @@ import { MemberHeaderColumn } from "@/components/projects/common/column-header";
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useUser } from "@/hooks/store/user/user-user";
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // store
 import type { IMemberFilters } from "@/store/member/utils";
 
 type TUseWorkspaceMembersColumnsProps = {
   workspaceSlug: string;
+  permissions: {
+    canChangeRole: (targetRoleSlug: string) => boolean;
+    canRemoveMember: boolean;
+  };
 };
 
 export const useWorkspaceMembersColumns = (props: TUseWorkspaceMembersColumnsProps) => {
-  const { workspaceSlug } = props;
+  const { workspaceSlug, permissions } = props;
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
   const {
     workspace: {
       filtersStore: { filters, updateFilters },
@@ -49,7 +50,6 @@ export const useWorkspaceMembersColumns = (props: TUseWorkspaceMembersColumnsPro
   } = useMember();
   const { currentWorkspaceSubscribedPlanDetail } = useWorkspaceSubscription();
   // derived values
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const showBillingStatusColumn =
     currentWorkspaceSubscribedPlanDetail &&
     EProductSubscriptionTier[currentWorkspaceSubscribedPlanDetail.product] >= EProductSubscriptionTier.PRO;
@@ -77,7 +77,7 @@ export const useWorkspaceMembersColumns = (props: TUseWorkspaceMembersColumnsPro
         <NameColumn
           rowData={rowData}
           workspaceSlug={workspaceSlug}
-          isAdmin={isAdmin}
+          permissions={permissions}
           currentUser={currentUser}
           setRemoveMemberModal={setRemoveMemberModal}
         />
@@ -121,7 +121,9 @@ export const useWorkspaceMembersColumns = (props: TUseWorkspaceMembersColumnsPro
           handleDisplayFilterUpdate={handleDisplayFilterUpdate}
         />
       ),
-      tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug} />,
+      tdRender: (rowData: RowData) => (
+        <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug} permissions={permissions} />
+      ),
     },
     ...(showBillingStatusColumn
       ? [

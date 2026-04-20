@@ -21,7 +21,7 @@ import { isCommentEmpty } from "@plane/utils";
 // components
 import { STICKY_COLORS_LIST } from "@/components/editor/sticky-editor/color-palette";
 // hooks
-import { useMember } from "@/hooks/store/use-member";
+import { useWorkspacePreferences } from "@/hooks/store/use-workspace-preferences";
 import { useSticky } from "@/hooks/use-stickies";
 
 export type TOperations = {
@@ -50,9 +50,7 @@ export const useStickyOperations = (props: TProps) => {
   // store hooks
   const { stickies, getWorkspaceStickyIds, createSticky, updateSticky, deleteSticky, updateStickyPosition } =
     useSticky();
-  const {
-    workspace: { updateChecklistIfNotDoneAlready },
-  } = useMember();
+  const { updateChecklistIfNotDoneAlready } = useWorkspacePreferences();
   const { t } = useTranslation();
 
   const isValid = (data: Partial<TSticky>) => {

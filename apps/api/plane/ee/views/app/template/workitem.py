@@ -21,7 +21,7 @@ from .base import TemplateBaseEndpoint
 from plane.db.models import Workspace
 from plane.ee.models import Template, WorkitemTemplate
 
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspaceWorkitemTemplatePermissions, ProjectWorkitemTemplatePermissions
 from plane.ee.serializers import (
     TemplateSerializer,
     TemplateDataSerializer,
@@ -35,11 +35,10 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
     """
     Workitem Template Endpoint
     """
-
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(WorkspaceWorkitemTemplatePermissions.VIEW)
     def get(self, request, slug, pk=None):
         if pk:
             templates = (
@@ -78,8 +77,8 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(WorkspaceWorkitemTemplatePermissions.CREATE)
     def post(self, request, slug):
         # workspace home
         workspace = Workspace.objects.get(slug=slug)
@@ -155,8 +154,8 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
         template.delete()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(WorkspaceWorkitemTemplatePermissions.EDIT)
     def patch(self, request, slug, pk):
         template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.WORKITEM, pk=pk)
         template_data = request.data.pop("template_data", {})
@@ -228,8 +227,8 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(template)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(WorkspaceWorkitemTemplatePermissions.DELETE)
     def delete(self, request, slug, pk):
         template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.WORKITEM, pk=pk)
         template.delete()
@@ -239,8 +238,8 @@ class WorkitemTemplateEndpoint(TemplateBaseEndpoint):
 class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(ProjectWorkitemTemplatePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk=None):
         if pk:
             templates = (
@@ -288,8 +287,8 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(ProjectWorkitemTemplatePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         # get the template data
         template_data = request.data.pop("template_data", {})
@@ -361,8 +360,8 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
             template.delete()
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(ProjectWorkitemTemplatePermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         template = Template.objects.get(
             workspace__slug=slug,
@@ -438,8 +437,8 @@ class WorkitemProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(template)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.WORKITEM_TEMPLATES)
+    @can(ProjectWorkitemTemplatePermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         template = Template.objects.get(
             workspace__slug=slug,

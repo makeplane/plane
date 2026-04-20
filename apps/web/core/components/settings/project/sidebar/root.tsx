@@ -18,11 +18,12 @@ import { ProjectSettingsSidebarHeader } from "./header";
 import { ProjectSettingsSidebarItemCategories } from "./item-categories";
 
 type Props = {
+  workspaceSlug: string;
   projectId: string;
 };
 
 export function ProjectSettingsSidebarRoot(props: Props) {
-  const { projectId } = props;
+  const { workspaceSlug, projectId } = props;
 
   return (
     <ScrollArea
@@ -32,8 +33,8 @@ export function ProjectSettingsSidebarRoot(props: Props) {
       rootClassName="shrink-0 animate-fade-in h-full w-[250px] bg-surface-1 border-r border-r-subtle overflow-y-scroll"
       viewportClassName="pb-5"
     >
-      <ProjectSettingsSidebarHeader projectId={projectId} />
-      <ProjectSettingsSidebarItemCategories projectId={projectId} />
+      <ProjectSettingsSidebarHeader workspaceSlug={workspaceSlug} projectId={projectId} />
+      <ProjectSettingsSidebarItemCategories workspaceSlug={workspaceSlug} projectId={projectId} />
     </ScrollArea>
   );
 }

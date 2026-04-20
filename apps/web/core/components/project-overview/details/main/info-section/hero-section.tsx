@@ -15,21 +15,18 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject, IWorkspace } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { ImagePickerPopover } from "@/components/core/image-picker-popover";
 // hooks
 import { DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
+// types
 import type { TProject } from "@/types";
-import { Tooltip } from "@plane/propel/tooltip";
 
 type THeroSection = {
   project: TProject;
@@ -38,9 +35,12 @@ type THeroSection = {
 
 export const HeroSection = observer(function HeroSection(props: THeroSection) {
   const { project, workspaceSlug } = props;
+  // states
   const [isOpen, setIsOpen] = useState(false);
-  const { allowPermissions } = useUserPermissions();
-  const { updateProject } = useProject();
+  // store hooks
+  const { updateProject, permissions: projectPermissions } = useProject();
+  // auth
+  const canEdit = projectPermissions.getCanEdit(workspaceSlug, project.id);
   // form info
   const { handleSubmit, control, getValues } = useForm<IProject>({
     defaultValues: {
@@ -48,14 +48,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
       workspace: (project.workspace as IWorkspace).id,
     },
   });
-
-  // derived values
-  const isAdmin = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project.id.toString()
-  );
 
   const handleUpdateChange = async (payload: Partial<IProject>) => {
     if (!workspaceSlug || !project) return;
@@ -94,9 +86,9 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
 
   return (
     <div>
-      <div className="relative h-[118px] w-full ">
+      <div className="relative h-[118px] w-full">
         <CoverImage src={project.cover_image_url} alt={project.name} className="absolute left-0 top-0 h-full w-full" />
-        {isAdmin && (
+        {canEdit && (
           <div className="absolute right-4 top-4">
             <ImagePickerPopover
               label="Change cover"
@@ -106,7 +98,6 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
                 handleCoverChange({ cover_image_url: data });
               }}
               value={project.cover_image_url ?? DEFAULT_COVER_IMAGE_URL}
-              disabled={!isAdmin}
               projectId={project.id}
             />
           </div>
@@ -115,7 +106,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
       <div className="relative px-10 pt-page-y mt-2">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="absolute -top-[27px] h-10 w-10 flex-shrink-0 grid place-items-center rounded-sm bg-layer-1"
+          className="absolute -top-[27px] h-10 w-10 shrink-0 grid place-items-center rounded-sm bg-layer-1"
         >
           <Controller
             control={control}
@@ -127,7 +118,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
                 isOpen={isOpen}
                 handleToggle={(val: boolean) => setIsOpen(val)}
                 className="flex items-center justify-center"
-                buttonClassName="flex flex-shrink-0 items-center justify-center rounded-lg bg-white/10"
+                buttonClassName="flex shrink-0 items-center justify-center rounded-lg bg-white/10"
                 label={<Logo logo={value} size={28} />}
                 onChange={(val) => {
                   let logoValue = {};
@@ -149,7 +140,7 @@ export const HeroSection = observer(function HeroSection(props: THeroSection) {
                 defaultOpen={
                   value.in_use && value.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON
                 }
-                disabled={!isAdmin}
+                disabled={!canEdit}
               />
             )}
           />

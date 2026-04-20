@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
@@ -25,37 +25,43 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlock } from "./issue-block";
 // types
 
+import type { TIssue } from "@plane/types";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+
 type Props = {
   issueId: string;
   quickActions: TRenderQuickActions;
-  isDragDisabled: boolean;
   isEpic?: boolean;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
 };
 
 export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(props: Props) {
-  const { issueId, quickActions, isDragDisabled, isEpic = false, canEditProperties } = props;
-
+  const { issueId, quickActions, isEpic = false, getWorkItemPermissions } = props;
+  // refs
   const issueRef = useRef<HTMLAnchorElement | null>(null);
+  // states
   const [isDragging, setIsDragging] = useState(false);
-
+  // store hooks
   const {
     issue: { getIssueById },
   } = useIssueDetail();
-
+  // derived values
   const issue = getIssueById(issueId);
-
-  const canDrag = !isDragDisabled && canEditProperties(issue?.project_id ?? undefined);
+  const permissions = issue ? getWorkItemPermissions(issue) : undefined;
+  const canDragAndDrop = permissions?.canDragAndDrop ?? false;
 
   useEffect(() => {
+    if (!issue) return;
     const element = issueRef.current;
-
     if (!element) return;
 
     return combine(
       draggable({
         element,
-        canDrag: () => canDrag,
+        canDrag: () => canDragAndDrop,
         getInitialData: () => ({ id: issue?.id, date: issue?.target_date }),
         onDragStart: () => {
           setIsDragging(true);
@@ -65,7 +71,7 @@ export const CalendarIssueBlockRoot = observer(function CalendarIssueBlockRoot(p
         },
       })
     );
-  }, [issue, canDrag]);
+  }, [issue, canDragAndDrop]);
 
   useOutsideClickDetector(issueRef, () => {
     issueRef?.current?.classList?.remove(HIGHLIGHT_CLASS);

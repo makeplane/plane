@@ -12,47 +12,55 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { PageHead } from "@/components/core/page-title";
+import { GeneralProjectSettingsControlSection } from "@/components/projects/settings/general/control-section";
 import { ProjectDetailsForm } from "@/components/projects/settings/general/form";
 import { ProjectDetailsFormLoader } from "@/components/projects/settings/general/form-loader";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import type { Route } from "./+types/page";
 import { GeneralProjectSettingsHeader } from "./header";
-import { GeneralProjectSettingsControlSection } from "@/components/projects/settings/general/control-section";
+import type { TProjectProperty } from "@/store/project/permissions/root";
 
 function ProjectSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId } = params;
   // store hooks
-  const { currentProjectDetails } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { currentProjectDetails, permissions } = useProject();
   // derived values
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
-
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - General Settings` : undefined;
+  // auth
+  const projectPermissions = {
+    canEdit: permissions.getCanEdit(workspaceSlug, projectId),
+    canEditProperty: (property: TProjectProperty) => permissions.getCanEditProperty(workspaceSlug, projectId, property),
+    canArchive: permissions.getCanArchive(workspaceSlug, projectId),
+    canDelete: permissions.getCanDelete(workspaceSlug, projectId),
+  };
 
   return (
     <SettingsContentWrapper header={<GeneralProjectSettingsHeader />}>
       <PageHead title={pageTitle} />
-      <div className={`w-full ${isAdmin ? "" : "opacity-60"}`}>
-        {currentProjectDetails ? (
-          <ProjectDetailsForm
-            project={currentProjectDetails}
-            workspaceSlug={workspaceSlug}
-            projectId={projectId}
-            isAdmin={isAdmin}
-          />
-        ) : (
-          <ProjectDetailsFormLoader />
-        )}
-        {isAdmin && <GeneralProjectSettingsControlSection projectId={projectId} />}
+      <div className="w-full">
+        <div className={projectPermissions.canEdit ? "" : "opacity-60"}>
+          {currentProjectDetails ? (
+            <ProjectDetailsForm
+              project={currentProjectDetails}
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              permissions={projectPermissions}
+            />
+          ) : (
+            <ProjectDetailsFormLoader />
+          )}
+        </div>
+        <GeneralProjectSettingsControlSection
+          projectId={projectId}
+          workspaceSlug={workspaceSlug}
+          permissions={projectPermissions}
+        />
       </div>
     </SettingsContentWrapper>
   );

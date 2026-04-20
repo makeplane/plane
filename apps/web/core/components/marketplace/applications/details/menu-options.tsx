@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC, ReactNode } from "react";
+import type { ReactNode } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
@@ -20,16 +20,15 @@ import { TrashIcon } from "@plane/propel/icons";
 
 // plane imports
 
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import type { TUserApplication } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { PopoverMenu } from "@plane/ui";
+
+// hooks
+import { useIntegrationPermissions } from "@/hooks/store/integrations/use-integration-permissions";
 
 // local imports
 
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { ApplicationPublishModal, ApplicationTileMenuItem } from "@/components/marketplace";
 
 import { RegenerateClientSecretModal } from "../form/regenerate-client-secret-modal";
@@ -56,15 +55,16 @@ export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuO
 ) {
   // hooks
   const { app } = props;
-  const { t } = useTranslation();
   const [isPublishModalOpen, setIsPublishModalOpen] = React.useState(false);
   const [isRevokeAccessModalOpen, setIsRevokeAccessModalOpen] = React.useState(false);
   const [isCredentialsModalOpen, setIsCredentialsModalOpen] = React.useState(false);
   const [isDeleteApplicationModalOpen, setIsDeleteApplicationModalOpen] = React.useState(false);
   const router = useRouter();
   const { currentWorkspace } = useWorkspace();
-  const { allowPermissions } = useUserPermissions();
+  const { getCanManage } = useIntegrationPermissions();
   const { slug: workspaceSlug } = currentWorkspace || {};
+  // derived
+  const canUninstallApp = workspaceSlug ? getCanManage(workspaceSlug, app.id) : false;
 
   const togglePublishModal = (flag: boolean) => {
     setIsPublishModalOpen(flag);
@@ -131,7 +131,7 @@ export const ApplicationTileMenuOptions = observer(function ApplicationTileMenuO
       key: "uninstall",
       type: "menu-item",
       label: "Uninstall",
-      isActive: app.is_installed && allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE),
+      isActive: app.is_installed && canUninstallApp,
       prependIcon: <TrashIcon className="flex-shrink-0 h-3 w-3" />,
       onClick: () => {
         toggleRevokeAccessModal(true);

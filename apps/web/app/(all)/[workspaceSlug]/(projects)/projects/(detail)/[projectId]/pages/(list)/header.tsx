@@ -41,7 +41,8 @@ export const PagesListHeader = observer(function PagesListHeader() {
   const pageType = searchParams.get("type");
   // store hooks
   const { currentProjectDetails, loader } = useProject();
-  const { canCurrentUserCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
+  const { getCanCreatePage, createPage } = usePageStore(EPageStoreType.PROJECT);
+  const canCurrentUserCreatePage = workspaceSlug && projectId ? getCanCreatePage(workspaceSlug, projectId) : false;
   // handle page create
   const handleCreatePage = async () => {
     setIsCreatingPage(true);

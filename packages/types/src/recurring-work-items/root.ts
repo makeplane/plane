@@ -36,6 +36,9 @@ export type TRecurringWorkItem = {
   // timestamp
   created_at: string;
   updated_at: string;
+  // user
+  created_by: string | undefined;
+  updated_by: string | undefined;
 };
 
 export type TRecurringWorkItemForm = Pick<

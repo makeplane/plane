@@ -17,14 +17,14 @@ from uuid import UUID
 from django.db import transaction
 
 # Module imports
-from plane.db.models.project import ROLE
-from plane.db.models.workspace import ROLE as WORKSPACE_ROLE, Workspace
+from plane.db.models.workspace import Workspace
 from plane.authentication.models import GroupMapping, GroupSyncConfig
 from plane.db.models import (
     Project,
     ProjectMember,
     ProjectMemberSource,
     WorkspaceMember,
+    Role,
 )
 from plane.payment.bgtasks.member_sync_task import member_sync_task
 
@@ -84,7 +84,9 @@ class GroupSyncService:
 
         try:
             # Get sync config for workspace
-            config = GroupSyncConfig.objects.filter(
+            config = GroupSyncConfig.objects.select_related(
+                "default_workspace_role"
+            ).filter(
                 workspace_id=workspace_id,
                 is_enabled=True,
             ).first()
@@ -99,7 +101,7 @@ class GroupSyncService:
             # Get all group mappings for this workspace
             mappings = GroupMapping.objects.filter(
                 workspace_id=workspace_id,
-            ).select_related("project")
+            ).select_related("project", "role")
 
             # Build mapping lookup: group_name -> list of (project_id, role)
             group_to_projects = self._build_group_mapping_lookup(mappings)
@@ -153,9 +155,18 @@ class GroupSyncService:
 
             # Perform sync
             with transaction.atomic():
+                # Resolve the default workspace role, falling back to "member" if deleted
+                default_ws_role = config.default_workspace_role
+                if not default_ws_role:
+                    from plane.permissions.system_roles import get_workspace_roles_for_workspace
+                    ws_roles = get_workspace_roles_for_workspace(workspace_id)
+                    default_ws_role = ws_roles["member"]
+
                 # Check if user is a workspace member, add them if not
                 if not self._is_workspace_member(user_id, workspace_id):
-                    added_to_workspace = self._add_to_workspace(user_id, workspace_id)
+                    added_to_workspace = self._add_to_workspace(
+                        user_id, workspace_id, default_ws_role
+                    )
                     if added_to_workspace:
                         result.added_to_workspace = True
                         logger.info(
@@ -169,13 +180,12 @@ class GroupSyncService:
                 # Get user's current group-synced memberships
                 current_synced = self._get_current_synced_memberships(user_id, workspace_id)
 
-                # Add to new projects
+                # Add to new projects or update role for existing synced members
                 for project_id, role in target_memberships.items():
-                    if project_id not in current_synced:
-                        added = self._add_to_project(user_id, project_id, role)
-                        if added:
-                            result.projects_added.append(project_id)
-                    else:
+                    changed = self._add_to_project(user_id, project_id, role)
+                    if changed and project_id not in current_synced:
+                        result.projects_added.append(project_id)
+                    elif not changed:
                         result.projects_unchanged.append(project_id)
 
                 # Remove from projects if auto_remove is enabled
@@ -220,13 +230,37 @@ class GroupSyncService:
             is_active=True,
         ).exists()
 
+    def _grant_workspace_permission(
+        self,
+        user_id: UUID,
+        workspace_id: UUID,
+        role: "Role",
+    ) -> None:
+        """Explicitly grant the user a ResourcePermission tuple for the workspace."""
+        from plane.permissions.engine import PermissionEngine
+        from plane.permissions.grants import Grant
+
+        engine = PermissionEngine(use_cache=False)
+        engine.grant(
+            granter=None,
+            grant=Grant(
+                subject_type="user",
+                subject_id=user_id,
+                relation=role.slug,
+                resource_type="workspace",
+                resource_id=workspace_id,
+                workspace_id=workspace_id,
+            ),
+        )
+
     def _add_to_workspace(
         self,
         user_id: UUID,
         workspace_id: UUID,
+        default_workspace_role: "Role" = None,
     ) -> bool:
         """
-        Add user to workspace with Member role via group sync.
+        Add user to workspace via group sync with the configured default role.
 
         Returns True if user was added, False if they were already a member.
         """
@@ -244,7 +278,11 @@ class GroupSyncService:
             # Reactivate the membership
             existing.is_active = True
             existing.deleted_at = None
-            existing.save(update_fields=["is_active", "deleted_at", "updated_at"])
+            existing.role_ref = default_workspace_role
+            existing.save()
+            self._grant_workspace_permission(
+                user_id, workspace_id, default_workspace_role
+            )
             logger.info(
                 "Reactivated workspace membership via group sync",
                 extra={
@@ -255,11 +293,13 @@ class GroupSyncService:
             member_sync_task.delay(workspace.slug)
             return True
 
-        # Add user as workspace member with Member role
         WorkspaceMember.objects.create(
             member_id=user_id,
             workspace_id=workspace_id,
-            role=WORKSPACE_ROLE.MEMBER.value,
+            role_ref=default_workspace_role,
+        )
+        self._grant_workspace_permission(
+            user_id, workspace_id, default_workspace_role
         )
 
         # Sync the membership
@@ -270,34 +310,34 @@ class GroupSyncService:
     def _build_group_mapping_lookup(
         self,
         mappings,
-    ) -> dict[str, list[tuple[UUID, int]]]:
+    ) -> dict[str, list[tuple[UUID, "Role"]]]:
         """
-        Build a lookup from group name to list of (project_id, role).
+        Build a lookup from group name to list of (project_id, Role).
 
         A single group can map to multiple projects.
         """
-        lookup: dict[str, list[tuple[UUID, int]]] = {}
+        lookup: dict[str, list[tuple[UUID, "Role"]]] = {}
         for mapping in mappings:
             if mapping.idp_group_name not in lookup:
                 lookup[mapping.idp_group_name] = []
-            lookup[mapping.idp_group_name].append((mapping.project_id, mapping.default_role))
+            lookup[mapping.idp_group_name].append((mapping.project_id, mapping.role))
         return lookup
 
     def _calculate_target_memberships(
         self,
         user_groups: list[str],
-        group_to_projects: dict[str, list[tuple[UUID, int]]],
-    ) -> dict[UUID, int]:
+        group_to_projects: dict[str, list[tuple[UUID, "Role"]]],
+    ) -> dict[UUID, "Role"]:
         """
         Calculate target project memberships based on user's groups.
 
         If user belongs to multiple groups that map to the same project,
-        they get the highest role among all mappings.
+        they get the highest role (by level) among all mappings.
 
         Returns:
-            Dict of project_id -> highest_role
+            Dict of project_id -> highest Role
         """
-        target: dict[UUID, int] = {}
+        target: dict[UUID, "Role"] = {}
 
         for group_name in user_groups:
             if group_name not in group_to_projects:
@@ -307,8 +347,9 @@ class GroupSyncService:
                 if project_id not in target:
                     target[project_id] = role
                 else:
-                    # Take the higher role (higher number = more permissions)
-                    target[project_id] = max(target[project_id], role)
+                    # Take the higher role (higher level = more permissions)
+                    if role.level > target[project_id].level:
+                        target[project_id] = role
 
         return target
 
@@ -327,57 +368,117 @@ class GroupSyncService:
             ).values_list("project_id", flat=True)
         )
 
+    def _grant_project_permission(
+        self,
+        user_id: UUID,
+        project_id: UUID,
+        workspace_id: UUID,
+        role: "Role",
+    ) -> None:
+        """Explicitly grant the user a ResourcePermission tuple for the project.
+
+        This covers system roles (admin, contributor, …) AND custom roles
+        whose slug is resolved at check-time by the permission engine.
+        """
+        from plane.permissions.engine import PermissionEngine
+        from plane.permissions.grants import Grant
+
+        engine = PermissionEngine(use_cache=False)
+        engine.grant(
+            granter=None,
+            grant=Grant(
+                subject_type="user",
+                subject_id=user_id,
+                relation=role.slug,
+                resource_type="project",
+                resource_id=project_id,
+                workspace_id=workspace_id,
+            ),
+        )
+
     def _add_to_project(
         self,
         user_id: UUID,
         project_id: UUID,
-        role: int,
+        role: "Role",
     ) -> bool:
         """
-        Add user to project via group sync.
+        Add user to project via group sync, or update role for existing synced members.
 
-        Returns True if user was added, False if they were already a member.
+        Returns True if user was added or updated, False if unchanged.
         """
         # Check if user is already a member (via any source)
-        existing = ProjectMember.objects.filter(
+        existing = ProjectMember.objects.select_related("role_ref").filter(
             member_id=user_id,
             project_id=project_id,
         ).first()
 
         if existing:
             if not existing.is_active:
+                # Reactivate: clear deleted_at so _is_permission_active() returns True
                 existing.is_active = True
+                existing.role_ref = role
                 existing.source = ProjectMemberSource.GROUP_SYNC
-                existing.save(update_fields=["is_active", "source"])
+                existing.save()
+                # Explicitly grant permission (works for system and custom roles)
+                self._grant_project_permission(
+                    user_id, project_id, existing.workspace_id, role
+                )
                 logger.debug(
-                    "User activated in project",
+                    "User activated in project via group sync",
                     extra={
                         "user_id": str(user_id),
                         "project_id": str(project_id),
+                        "role": role.slug,
                     },
                 )
                 return True
-            else:
-                # User already in project - don't modify their membership
-                logger.debug(
-                    "User already in project, skipping",
+
+            # Update role if this is a group-synced member and role changed
+            if (
+                existing.source == ProjectMemberSource.GROUP_SYNC
+                and existing.role_ref_id != role.id
+            ):
+                existing.role_ref = role
+                existing.save()
+                self._grant_project_permission(
+                    user_id, project_id, existing.workspace_id, role
+                )
+                logger.info(
+                    "Updated role for group-synced project member",
                     extra={
                         "user_id": str(user_id),
                         "project_id": str(project_id),
+                        "role": role.slug,
                     },
                 )
-                return False
+                return True
+
+            # User already in project (manual or same role) — don't modify
+            return False
 
         # Get project to access workspace_id
         project = Project.objects.get(id=project_id)
 
-        # Add user to project
+        # Enforce workspace guest ceiling on the role from group mapping
+        from plane.permissions.system_roles import enforce_project_role_ceiling_for_role
+
+        ws_member = WorkspaceMember.objects.filter(
+            member_id=user_id, workspace_id=project.workspace_id, is_active=True
+        ).select_related("role_ref").first()
+        if ws_member:
+            role = enforce_project_role_ceiling_for_role(ws_member, role)
+
         ProjectMember.objects.create(
             member_id=user_id,
             project_id=project_id,
             workspace_id=project.workspace_id,
-            role=role,
+            role_ref=role,
             source=ProjectMemberSource.GROUP_SYNC,
+        )
+        # Explicit grant for the new member
+        self._grant_project_permission(
+            user_id, project_id, project.workspace_id, role
         )
 
         logger.info(
@@ -385,10 +486,29 @@ class GroupSyncService:
             extra={
                 "user_id": str(user_id),
                 "project_id": str(project_id),
-                "role": role,
+                "role": role.slug,
             },
         )
         return True
+
+    def _revoke_project_permission(
+        self,
+        user_id: UUID,
+        project_id: UUID,
+        workspace_id: UUID,
+    ) -> None:
+        """Explicitly revoke the user's ResourcePermission tuple for the project."""
+        from plane.permissions.engine import PermissionEngine
+
+        engine = PermissionEngine(use_cache=False)
+        engine.revoke(
+            revoker=None,
+            subject_type="user",
+            subject_id=user_id,
+            resource_type="project",
+            resource_id=project_id,
+            workspace_id=workspace_id,
+        )
 
     def _remove_from_project(
         self,
@@ -404,7 +524,7 @@ class GroupSyncService:
         - Only remove if source is GROUP_SYNC
         - Never remove the last admin from a project
         """
-        membership = ProjectMember.objects.filter(
+        membership = ProjectMember.objects.select_related("role_ref").filter(
             member_id=user_id,
             project_id=project_id,
             source=ProjectMemberSource.GROUP_SYNC,
@@ -415,10 +535,13 @@ class GroupSyncService:
             return False
 
         # Check if this is the last admin
-        if membership.role == ROLE.ADMIN:  # Admin role
-            admin_count = ProjectMember.objects.filter(
+        from plane.permissions.system_roles import get_project_role_slug
+
+        if get_project_role_slug(membership) == "admin":
+            admin_count = ProjectMember.objects.select_related("role_ref").filter(
                 project_id=project_id,
-                role=ROLE.ADMIN,
+                role_ref__slug="admin",
+                role_ref__namespace="project",
                 is_active=True,
             ).count()
 
@@ -433,7 +556,12 @@ class GroupSyncService:
                 return False
 
         # Soft delete the membership
-        membership.delete()
+        membership.is_active = False
+        membership.save()
+        # Explicitly revoke the permission
+        self._revoke_project_permission(
+            user_id, project_id, membership.workspace_id
+        )
 
         logger.info(
             "Removed user from project via group sync",
@@ -460,13 +588,14 @@ class GroupSyncService:
             workspace_id=workspace_id,
             source=ProjectMemberSource.GROUP_SYNC,
             is_active=True,
-        ).select_related("project")
+        ).select_related("project", "role_ref")
 
         return [
             {
                 "project_id": str(m.project_id),
                 "project_name": m.project.name,
-                "role": m.role,
+                "role": str(m.role_ref_id),
+                "role_slug": m.role_ref.slug if m.role_ref else None,
             }
             for m in memberships
         ]

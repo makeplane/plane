@@ -42,32 +42,28 @@ interface ILabelItemBlock {
   handleLabelDelete: (label: IIssueLabel) => void;
   isLabelGroup?: boolean;
   dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
-  disabled?: boolean;
-  draggable?: boolean;
+  permissions: {
+    canDragAndDrop: boolean;
+    canDelete: boolean;
+  };
 }
 
 export function LabelItemBlock(props: ILabelItemBlock) {
-  const {
-    label,
-    isDragging,
-    customMenuItems,
-    handleLabelDelete,
-    isLabelGroup,
-    dragHandleRef,
-    disabled = false,
-    draggable = true,
-  } = props;
+  const { label, isDragging, customMenuItems, handleLabelDelete, isLabelGroup, dragHandleRef, permissions } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(true);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  // derived values
+  const isAnyMenuVisible = customMenuItems.some(({ isVisible }) => isVisible);
+  const isAnyActionAvailable = isAnyMenuVisible || permissions.canDelete;
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
     <div className="group flex items-center">
       <div className="flex items-center">
-        {!disabled && draggable && (
+        {permissions.canDragAndDrop && (
           <DragHandle
             className={cn("opacity-0 group-hover:opacity-100", {
               "opacity-100": isDragging,
@@ -77,8 +73,7 @@ export function LabelItemBlock(props: ILabelItemBlock) {
         )}
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>
-
-      {!disabled && (
+      {isAnyActionAvailable && (
         <div
           ref={actionSectionRef}
           className={`absolute right-2.5 flex items-center gap-2 px-4 ${
@@ -87,20 +82,22 @@ export function LabelItemBlock(props: ILabelItemBlock) {
               : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
           } ${isLabelGroup && "-top-0.5"}`}
         >
-          <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
-            {customMenuItems.map(
-              ({ isVisible, onClick, CustomIcon, text, key }) =>
-                isVisible && (
-                  <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
-                    <span className="flex items-center justify-start gap-2">
-                      <CustomIcon className="size-4" />
-                      <span>{text}</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                )
-            )}
-          </CustomMenu>
-          {!isLabelGroup && (
+          {isAnyMenuVisible && (
+            <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
+              {customMenuItems.map(
+                ({ isVisible, onClick, CustomIcon, text, key }) =>
+                  isVisible && (
+                    <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
+                      <span className="flex items-center justify-start gap-2">
+                        <CustomIcon className="size-4" />
+                        <span>{text}</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  )
+              )}
+            </CustomMenu>
+          )}
+          {!isLabelGroup && permissions.canDelete && (
             <div className="py-0.5">
               <button
                 className="flex size-5 items-center justify-center rounded-sm hover:bg-layer-1"

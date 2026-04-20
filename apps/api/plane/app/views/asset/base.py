@@ -20,6 +20,7 @@ from ..base import BaseAPIView, BaseViewSet
 from plane.db.models import FileAsset, Workspace
 from plane.app.serializers import FileAssetSerializer
 from plane.authentication.session import BaseSessionAuthentication
+from plane.permissions import can, WorkspaceAssetPermissions, permission_engine, PermissionContext
 
 
 class FileAssetEndpoint(BaseAPIView):
@@ -34,6 +35,16 @@ class FileAssetEndpoint(BaseAPIView):
     authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
     def get(self, request, workspace_id, asset_key):
+        # Inline permission check: no slug in URL so @can can't resolve workspace_id
+        if not permission_engine.check(
+            user=request.user,
+            permission=WorkspaceAssetPermissions.VIEW,
+            context=PermissionContext.workspace(str(workspace_id)),
+        ):
+            return Response(
+                {"error": "You do not have permission to view this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset_key = str(workspace_id) + "/" + asset_key
         files = FileAsset.objects.filter(asset=asset_key)
         if files.exists():
@@ -45,6 +56,7 @@ class FileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_200_OK,
             )
 
+    @can(WorkspaceAssetPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         serializer = FileAssetSerializer(data=request.data)
         if serializer.is_valid():
@@ -55,6 +67,16 @@ class FileAssetEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, workspace_id, asset_key):
+        # Inline permission check: no slug in URL so @can can't resolve workspace_id
+        if not permission_engine.check(
+            user=request.user,
+            permission=WorkspaceAssetPermissions.DELETE,
+            context=PermissionContext.workspace(str(workspace_id)),
+        ):
+            return Response(
+                {"error": "You do not have permission to delete this asset."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         asset_key = str(workspace_id) + "/" + asset_key
         file_asset = FileAsset.objects.get(asset=asset_key)
         file_asset.is_deleted = True

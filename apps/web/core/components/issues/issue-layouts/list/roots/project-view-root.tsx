@@ -11,18 +11,68 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+// hooks
+import { useIssues } from "@/hooks/store/use-issues";
+// plane imports
+import { EIssuesStoreType } from "@plane/types";
 // store
-// constants
-// types
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+// local imports
 import { ProjectIssueQuickActions } from "../../quick-action-dropdowns";
 // components
 import { BaseListRoot } from "../base-list-root";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const ProjectViewListLayout = observer(function ProjectViewListLayout() {
-  const { viewId } = useParams();
+type TProjectViewListLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  viewId: string;
+};
 
-  return <BaseListRoot QuickActions={ProjectIssueQuickActions} viewId={viewId.toString()} />;
+export const ProjectViewListLayout = observer(function ProjectViewListLayout(props: TProjectViewListLayoutProps) {
+  const { workspaceSlug, projectId, viewId } = props;
+  // hooks
+  const { permissions } = useIssues(EIssuesStoreType.PROJECT_VIEW);
+
+  return (
+    <BaseListRoot
+      QuickActions={(props) => (
+        <ProjectIssueQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
+      layoutPermissions={{
+        canCreateWorkItem: {
+          viaHeader: permissions.getCanCreate(workspaceSlug, projectId),
+          viaQuickAdd: permissions.getCanCreate(workspaceSlug, projectId),
+        },
+        canPerformBulkOps: permissions.getCanPerformBulkOps(workspaceSlug, projectId),
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
+      viewId={viewId}
+    />
+  );
 });

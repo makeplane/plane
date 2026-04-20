@@ -14,15 +14,12 @@
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { ConnectionsProfileSettingsView } from "@/components/profile/connections-settings-view";
 // local imports
@@ -33,20 +30,14 @@ function ConnectionsSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   // translation
   const { t } = useTranslation();
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Connections` : undefined;
-  const isAuthorized =
-    !!currentWorkspaceRole &&
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER].includes(currentWorkspaceRole as EUserWorkspaceRoles);
 
   if (!currentWorkspace?.id) return null;
-
-  if (!isAuthorized) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
     <SettingsContentWrapper header={<ConnectionsWorkspaceSettingsHeader />}>

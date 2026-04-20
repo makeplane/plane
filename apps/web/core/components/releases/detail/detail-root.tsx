@@ -36,7 +36,6 @@ export const ReleaseDetailRoot = observer(function ReleaseDetailRoot(props: Rele
   const { initiativesSidebarCollapsed } = useAppTheme();
 
   const release = releaseStore.getReleaseById(releaseId);
-  const isEditable = releaseStore.permissions.canEdit;
 
   const handleDescriptionUpdate = useCallback(
     async (descriptionHtml: string, descriptionJson?: JSONContent) => {
@@ -59,11 +58,11 @@ export const ReleaseDetailRoot = observer(function ReleaseDetailRoot(props: Rele
       <SectionWrapper className="first:pt-0 border-0">
         <h1 className="text-h1-semibold text-primary">{release.name}</h1>
       </SectionWrapper>
-      <ReleaseOverviewProperties release={release} workspaceSlug={workspaceSlug} disabled={!isEditable} />
+      <ReleaseOverviewProperties release={release} workspaceSlug={workspaceSlug} disabled={!release.canEdit} />
       <ReleaseOverviewDescription
         release={release}
         workspaceSlug={workspaceSlug}
-        disabled={!isEditable}
+        disabled={!release.canEdit}
         onUpdate={handleDescriptionUpdate}
       />
       <ReleaseOverviewProgress release={release} />

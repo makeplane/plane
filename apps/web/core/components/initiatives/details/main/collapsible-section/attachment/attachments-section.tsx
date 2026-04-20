@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -24,33 +23,37 @@ import { InitiativeAttachmentRoot } from "./root";
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
   isOpen: boolean;
   onToggle: () => void;
   count: number;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (attachmentId: string) => boolean;
+    canDelete: (attachmentId: string) => boolean;
+  };
 };
 
 export const AttachmentsSection = observer(function AttachmentsSection(props: Props) {
-  const { workspaceSlug, initiativeId, disabled, isOpen, onToggle, count } = props;
+  const { workspaceSlug, initiativeId, isOpen, onToggle, count, permissions } = props;
   const { t } = useTranslation();
 
   return (
     <CollapsibleDetailSection
       title={t("common.attachments")}
       actionItemElement={
-        !disabled && (
+        permissions.canCreate && (
           <div className="pb-3">
             <InitiativeAttachmentActionButton
               workspaceSlug={workspaceSlug}
               initiativeId={initiativeId}
-              disabled={disabled}
+              canAddAttachment={permissions.canCreate}
             />
           </div>
         )
       }
       count={count}
       collapsibleContent={
-        <InitiativeAttachmentRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+        <InitiativeAttachmentRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} permissions={permissions} />
       }
       isOpen={isOpen}
       onToggle={onToggle}

@@ -97,6 +97,7 @@ export interface IWorkspacePageStore {
   paginationLoader: Record<TPageNavigationTabs, TPaginationLoader>;
   // computed
   isAnyPageAvailable: boolean;
+  getCanCreatePage: (workspaceSlug: string) => boolean;
   currentWorkspacePageIds: string[] | undefined;
   // helper actions
   getPageAiSummary: (pageId: string) => { summary: string | undefined; updated_at: string } | undefined;
@@ -341,6 +342,17 @@ export class WorkspacePageStore implements IWorkspacePageStore {
   }
 
   getPageAiSummary = computedFn((pageId: string) => this.pageAiSummary.get(pageId));
+
+  /**
+   * @description returns true if the current logged in user can create a wiki page
+   */
+  getCanCreatePage = computedFn((workspaceSlug: string) =>
+    this.store.permissionAccessStore.can({
+      resource: "wiki",
+      action: "create",
+      workspaceSlug,
+    })
+  );
 
   /**
    * @description check if any page is available

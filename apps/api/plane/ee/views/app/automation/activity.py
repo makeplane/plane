@@ -27,7 +27,7 @@ from plane.ee.serializers import (
     AutomationActivityReadSerializer,
 )
 from plane.ee.models import AutomationActivity, AutomationRun
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ProjectAutomationPermissions, WorkspaceAutomationPermissions
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
@@ -37,7 +37,7 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectAutomationPermissions.VIEW, resource_param="automation_id")
     def get(
         self,
         request: Request,
@@ -107,7 +107,7 @@ class AutomationActivityEndpoint(AutomationBaseEndpoint):
 
 class WorkspaceAutomationActivityEndpoint(AutomationBaseEndpoint):
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.VIEW, resource_param="automation_id")
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
     def get(
         self,

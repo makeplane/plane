@@ -15,7 +15,6 @@ import { useCallback, useMemo, useState } from "react";
 import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { enrichRichFiltersWithEntityContext } from "@plane/shared-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type {
@@ -25,7 +24,7 @@ import type {
   TWorkItemFiltersUpdateViewOptions,
   WorkItemFilerViewCallbackArguments,
 } from "@plane/types";
-import { EIssuesStoreType, EUserProjectRoles, EViewAccess } from "@plane/types";
+import { EIssuesStoreType, EViewAccess } from "@plane/types";
 // helpers
 import { removeNillKeys } from "@/helpers/common";
 // components
@@ -41,7 +40,6 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useReleases } from "@/hooks/store/use-releases";
 import { useWorkflows } from "@/hooks/store/use-workflows";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useIssueTypes } from "@/plane-web/hooks/store/issue-types/use-issue-types";
 import { useMilestones } from "@/plane-web/hooks/store/use-milestone";
@@ -73,9 +71,11 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
   const [createViewPayload, setCreateViewPayload] = useState<Partial<IProjectView> | null>(null);
   // hooks
   const { getProjectById } = useProject();
-  const { getViewById, updateView } = useProjectView();
-  const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
+  const {
+    getViewById,
+    updateView,
+    permissions: { getCanCreateView, getCanEditView },
+  } = useProjectView();
   const { getProjectCycleIds } = useCycle();
   const { getProjectLabelIds } = useLabel();
   const {
@@ -115,31 +115,18 @@ export const ProjectLevelWorkItemFiltersHOC = observer(function ProjectLevelWork
     [getProjectActiveWorkflows, isWorkflowsFeatureEnabled, projectId]
   );
   const isMilestonesFeatureEnabled = isMilestonesEnabled(workspaceSlug, projectId);
-  const hasProjectMemberLevelPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
-  const hasWorkspaceAdminLevelPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
   const projectDetails = getProjectById(projectId);
   const viewDetails = entityId ? getViewById(entityId) : null;
-  const isViewLocked = !!viewDetails?.is_locked;
-  const isCurrentUserOwner = viewDetails?.owned_by === currentUser?.id;
+  const isViewLocked = viewDetails ? viewDetails?.is_locked : false;
+  const canCreateViewPermission = getCanCreateView(workspaceSlug, projectId);
+  const canEditViewPermission = viewDetails ? getCanEditView(viewDetails.id) : false;
   const canCreateView =
     projectDetails?.issue_views_view === true &&
     enableSaveView &&
     !props.saveViewOptions?.isDisabled &&
-    hasProjectMemberLevelPermissions;
+    canCreateViewPermission;
   const canUpdateView =
-    enableUpdateView &&
-    !props.updateViewOptions?.isDisabled &&
-    !isViewLocked &&
-    (hasWorkspaceAdminLevelPermissions || isCurrentUserOwner);
+    enableUpdateView && !props.updateViewOptions?.isDisabled && !isViewLocked && canEditViewPermission;
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
   const hasAdditionalChanges =

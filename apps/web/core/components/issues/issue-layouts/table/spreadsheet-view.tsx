@@ -18,6 +18,8 @@ import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/cons
 // types
 import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssueLayoutTypes } from "@plane/types";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 // hooks
@@ -44,11 +46,16 @@ type Props = {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   openIssuesListModal?: (() => void) | null;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canQuickAddWorkItem: boolean;
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   canLoadMoreIssues: boolean;
   loadMoreIssues: () => void;
-  enableQuickCreateIssue?: boolean;
-  disableIssueCreation?: boolean;
   isWorkspaceLevel?: boolean;
   isEpic?: boolean;
 };
@@ -65,9 +72,8 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
     quickActions,
     updateIssue,
     quickAddCallback,
-    canEditProperties,
-    enableQuickCreateIssue,
-    disableIssueCreation,
+    layoutPermissions,
+    getWorkItemPermissions,
     canLoadMoreIssues,
     loadMoreIssues,
     isWorkspaceLevel = false,
@@ -135,7 +141,8 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 portalElement={portalRef}
                 quickActions={quickActions}
                 updateIssue={updateIssue}
-                canEditProperties={canEditProperties}
+                layoutPermissions={layoutPermissions}
+                getWorkItemPermissions={getWorkItemPermissions}
                 containerRef={containerRef}
                 canLoadMoreIssues={canLoadMoreIssues}
                 loadMoreIssues={loadMoreIssues}
@@ -146,7 +153,7 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
             </div>
             <div className="border-t border-subtle">
               <div className="z-5 sticky bottom-0 left-0">
-                {enableQuickCreateIssue && !disableIssueCreation && (
+                {layoutPermissions.canQuickAddWorkItem && (
                   <QuickAddIssueRoot
                     layout={EIssueLayoutTypes.SPREADSHEET}
                     QuickAddButton={SpreadsheetAddIssueButton}

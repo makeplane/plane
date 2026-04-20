@@ -16,8 +16,7 @@ import { observer } from "mobx-react";
 import { Ellipsis } from "lucide-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 // components
 import { cn } from "@plane/utils";
@@ -28,14 +27,18 @@ import type { IQuickActionProps } from "@/components/issues/issue-layouts/list/l
 import type { MenuItemFactoryProps } from "@/components/issues/issue-layouts/quick-action-dropdowns/helper";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // helper
 import { useArchivedEpicMenuItems } from "./helper";
 import { IconButton } from "@plane/propel/icon-button";
 
-type TArchivedEpicQuickActionProps = IQuickActionProps & {
+type TArchivedEpicQuickActionProps = Exclude<IQuickActionProps, "readOnly" | "disabled"> & {
   toggleDeleteEpicModal?: (value: boolean) => void;
   isPeekMode?: boolean;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canRestore: boolean;
+  };
 };
 
 export const ArchivedEpicQuickActions = observer(function ArchivedEpicQuickActions(
@@ -45,40 +48,23 @@ export const ArchivedEpicQuickActions = observer(function ArchivedEpicQuickActio
     issue,
     handleDelete,
     handleRestore,
-    readOnly = false,
     parentRef,
     toggleDeleteEpicModal,
     isPeekMode = false,
     portalElement,
+    permissions,
   } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { getProjectIdentifierById } = useProject();
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED_EPIC);
   // derived values
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
-  // auth
-  const isEditingAllowed =
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug?.toString(),
-      issue?.project_id ?? ""
-    ) && !readOnly;
-  const isDeletingAllowed = isEditingAllowed;
-  const isRestoringAllowed =
-    handleRestore &&
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug?.toString(),
-      issue?.project_id ?? ""
-    );
+  const { canEdit, canDelete, canRestore } = permissions;
 
   const customDeleteAction = async () => {
     setDeleteIssueModal(true);
@@ -91,9 +77,9 @@ export const ArchivedEpicQuickActions = observer(function ArchivedEpicQuickActio
     workspaceSlug: workspaceSlug?.toString(),
     projectIdentifier,
     activeLayout,
-    isEditingAllowed,
-    isDeletingAllowed,
-    isRestoringAllowed: !!isRestoringAllowed,
+    canEdit,
+    canDelete,
+    canRestore: !!canRestore,
     setIssueToEdit: () => {},
     setCreateUpdateIssueModal: () => {},
     setDeleteIssueModal: customDeleteAction,

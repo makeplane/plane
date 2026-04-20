@@ -16,6 +16,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, TIssue } from "@plane/types";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // components
 import { SpreadsheetIssueRowLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
 // hooks
@@ -40,7 +42,13 @@ type Props = {
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   containerRef: MutableRefObject<HTMLTableElement | null>;
   canLoadMoreIssues: boolean;
@@ -63,7 +71,8 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
     portalElement,
     quickActions,
     updateIssue,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     canLoadMoreIssues,
     containerRef,
     loadMoreIssues,
@@ -150,8 +159,8 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
         displayProperties={displayProperties}
         displayFilters={displayFilters}
         handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+        layoutPermissions={layoutPermissions}
         handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
-        canEditProperties={canEditProperties}
         isEstimateEnabled={isEstimateEnabled}
         spreadsheetColumnsList={spreadsheetColumnsList}
         selectionHelpers={selectionHelpers}
@@ -164,7 +173,8 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
             issueId={id}
             displayProperties={displayProperties}
             quickActions={quickActions}
-            canEditProperties={canEditProperties}
+            layoutPermissions={layoutPermissions}
+            getWorkItemPermissions={getWorkItemPermissions}
             nestingLevel={0}
             isEstimateEnabled={isEstimateEnabled}
             updateIssue={updateIssue}

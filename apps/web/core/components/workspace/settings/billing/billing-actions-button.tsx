@@ -13,20 +13,20 @@
 
 import { observer } from "mobx-react";
 import { Button } from "@plane/propel/button";
-import { ChevronDownIcon } from "@plane/propel/icons";
 // plane imports
+import { ChevronDownIcon } from "@plane/propel/icons";
 import { CustomMenu } from "@plane/ui";
-// plane web imports
-import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { EProductSubscriptionEnum } from "@plane/types";
+// hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useParams } from "next/navigation";
 
-type TBillingActionsButtonProps = {
-  canPerformWorkspaceAdminActions: boolean;
-};
-
-export const BillingActionsButton = observer(function BillingActionsButton(props: TBillingActionsButtonProps) {
-  const { canPerformWorkspaceAdminActions } = props;
+export const BillingActionsButton = observer(function BillingActionsButton() {
+  // router
+  const { workspaceSlug } = useParams();
   // store hooks
+  const { permissions: workspacePermissions } = useWorkspace();
   const {
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     isSeatManagementEnabled,
@@ -34,9 +34,10 @@ export const BillingActionsButton = observer(function BillingActionsButton(props
     toggleRemoveUnusedSeatsConfirmationModal,
   } = useWorkspaceSubscription();
   // derived values
+  const canManageSeats = workspaceSlug ? workspacePermissions.getCanManageBilling(workspaceSlug) : false;
   const isOnEnterprisePlan = subscriptionDetail?.product === EProductSubscriptionEnum.ENTERPRISE;
 
-  if (!isSeatManagementEnabled || !canPerformWorkspaceAdminActions || isOnEnterprisePlan) return null;
+  if (!isSeatManagementEnabled || !canManageSeats || isOnEnterprisePlan) return null;
   return (
     <CustomMenu
       customButton={

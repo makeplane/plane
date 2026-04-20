@@ -33,6 +33,7 @@ export * from "./label";
 export * from "./state";
 export * from "./issue";
 export * from "./page";
+export * from "./roles-and-permissions";
 export * from "./page-collection";
 export * from "./feature-flag";
 export * from "./templates";

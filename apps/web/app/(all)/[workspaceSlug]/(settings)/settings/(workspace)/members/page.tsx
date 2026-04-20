@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // types
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
@@ -22,7 +22,6 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkspaceBulkInviteFormData } from "@plane/types";
 import { cn, getErrorMessage } from "@plane/utils";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/projects/dropdowns/filters/member-list";
@@ -35,7 +34,6 @@ import { SendWorkspaceInvitationModal } from "@/components/workspace/settings/me
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useFlag } from "@/plane-web/hooks/store";
 // types
 import type { Route } from "./+types/page";
@@ -50,21 +48,18 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const {
     workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
   } = useMember();
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, permissions: workspacePermissions } = useWorkspace();
 
   const isMembersImportEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_MEMBERS_IMPORT, false);
   const { t } = useTranslation();
-
   // derived values
-  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const canPerformWorkspaceMemberActions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canImportMembers = workspacePermissions.getCanImportMembers(workspaceSlug);
+  const canInviteMembers = workspacePermissions.getCanInviteMembers(workspaceSlug);
+  const canViewMembers = workspacePermissions.getCanViewMembers(workspaceSlug);
+  const canManageBilling = workspacePermissions.getCanManageBilling(workspaceSlug);
 
   const handleWorkspaceInvite = async (data: IWorkspaceBulkInviteFormData) => {
     try {
@@ -103,25 +98,19 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Members` : undefined;
   const appliedRoleFilters = filtersStore.filters?.roles || [];
 
-  // if user is not authorized to view this page
-  if (workspaceUserInfo && !canPerformWorkspaceMemberActions) {
-    return <NotAuthorizedView section="settings" className="h-auto" />;
-  }
-
   return (
     <SettingsContentWrapper header={<MembersWorkspaceSettingsHeader />} hugging>
       <PageHead title={pageTitle} />
-      <SendWorkspaceInvitationModal
-        isOpen={inviteModal}
-        onClose={() => setInviteModal(false)}
-        onSubmit={handleWorkspaceInvite}
-      />
+      {canInviteMembers && (
+        <SendWorkspaceInvitationModal
+          isOpen={inviteModal}
+          onClose={() => setInviteModal(false)}
+          onSubmit={handleWorkspaceInvite}
+          canAddSeats={canManageBilling}
+        />
+      )}
       <MembersImportModal isOpen={importModal} onClose={() => setImportModal(false)} workspaceSlug={workspaceSlug} />
-      <section
-        className={cn("size-full", {
-          "opacity-60": !canPerformWorkspaceMemberActions,
-        })}
-      >
+      <section className={cn("size-full", { "opacity-60": !canViewMembers })}>
         <div className="flex justify-between gap-4 pb-3.5 items-center">
           <h4 className="flex items-center gap-2.5 text-h3-medium">
             {t("workspace_settings.settings.members.title")}
@@ -145,9 +134,10 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
               appliedFilters={appliedRoleFilters}
               handleUpdate={handleRoleFilterUpdate}
               memberType="workspace"
+              workspaceSlug={workspaceSlug}
             />
             <MembersActivityButton workspaceSlug={workspaceSlug} />
-            {canPerformWorkspaceAdminActions && (
+            {canImportMembers && canInviteMembers && (
               <>
                 {isMembersImportEnabled && (
                   <Button variant="secondary" size="lg" onClick={() => setImportModal(true)}>
@@ -159,13 +149,20 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
                 </Button>
               </>
             )}
-            <BillingActionsButton canPerformWorkspaceAdminActions={canPerformWorkspaceAdminActions} />
+            <BillingActionsButton />
           </div>
         </div>
         <WorkspaceMembersList
           workspaceSlug={workspaceSlug}
           searchQuery={searchQuery}
-          isAdmin={canPerformWorkspaceAdminActions}
+          permissions={{
+            canViewMembers: workspacePermissions.getCanViewMembers(workspaceSlug),
+            canChangeRole: (targetRoleSlug: string) =>
+              workspacePermissions.getCanChangeRole(workspaceSlug, targetRoleSlug),
+            canRemoveMember: workspacePermissions.getCanRemoveMember(workspaceSlug),
+            canViewInvitations: workspacePermissions.getCanViewInvitations(workspaceSlug),
+            canRemoveInvitation: workspacePermissions.getCanRemoveInvitation(workspaceSlug),
+          }}
         />
       </section>
     </SettingsContentWrapper>

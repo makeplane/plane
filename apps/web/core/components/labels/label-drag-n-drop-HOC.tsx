@@ -21,12 +21,10 @@ import { attachInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree
 import { observer } from "mobx-react";
 import { createRoot } from "react-dom/client";
 // types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { IIssueLabel, InstructionType } from "@plane/types";
 // ui
 import { DropIndicator } from "@plane/ui";
 // components
-import { useUserPermissions } from "@/hooks/store/user";
 import { LabelName } from "./label-block/label-name";
 import type { TargetData } from "./label-utils";
 import { getCanDrop, getInstructionFromPayload } from "./label-utils";
@@ -51,6 +49,7 @@ type Props = {
   isGroup: boolean;
   isChild: boolean;
   isLastChild: boolean;
+  canDragAndDrop: boolean;
   children: (
     isDragging: boolean,
     isDroppingInLabel: boolean,
@@ -65,7 +64,7 @@ type Props = {
 };
 
 export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
-  const { label, isGroup, isChild, isLastChild, children, onDrop } = props;
+  const { label, isGroup, isChild, isLastChild, canDragAndDrop, children, onDrop } = props;
 
   const [isDragging, setIsDragging] = useState(false);
   const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
@@ -73,14 +72,11 @@ export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
   const labelRef = useRef<HTMLDivElement | null>(null);
   const dragHandleRef = useRef<HTMLButtonElement | null>(null);
 
-  const { allowPermissions } = useUserPermissions();
-  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
-
   useEffect(() => {
     const element = labelRef.current;
     const dragHandleElement = dragHandleRef.current;
 
-    if (!element || !isEditable) return;
+    if (!element || !canDragAndDrop) return;
 
     return combine(
       draggable({
@@ -167,7 +163,7 @@ export const LabelDndHOC = observer(function LabelDndHOC(props: Props) {
         },
       })
     );
-  }, [label, isChild, isGroup, isLastChild, onDrop]);
+  }, [label, isChild, isGroup, isLastChild, onDrop, canDragAndDrop]);
 
   const isMakeChild = instruction == "make-child";
 

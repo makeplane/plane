@@ -13,9 +13,7 @@
 
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -24,8 +22,6 @@ import type { TInitiativeLabel } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
@@ -35,8 +31,13 @@ import { CreateUpdateInitiativeLabelInline } from "./create-update-initiative-la
 import { DeleteInitiativeLabelModal } from "./delete-initiative-label-modal";
 import { InitiativeLabelItem } from "./initiative-label-item";
 
-export const InitiativeLabelList = observer(function InitiativeLabelList() {
-  const { workspaceSlug } = useParams();
+type Props = {
+  workspaceSlug: string;
+};
+
+export const InitiativeLabelList = observer(function InitiativeLabelList(props: Props) {
+  const { workspaceSlug } = props;
+  // refs
   const scrollToRef = useRef<HTMLDivElement>(null);
   // plane hooks
   const { t } = useTranslation();
@@ -46,15 +47,22 @@ export const InitiativeLabelList = observer(function InitiativeLabelList() {
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<TInitiativeLabel | null>(null);
   // store hooks
   const {
-    initiative: { createInitiativeLabel, updateInitiativeLabel, updateInitiativeLabelPosition, getInitiativesLabels },
+    initiative: {
+      createInitiativeLabel,
+      updateInitiativeLabel,
+      updateInitiativeLabelPosition,
+      getInitiativesLabels,
+      permissions,
+    },
   } = useInitiatives();
-  const { allowPermissions } = useUserPermissions();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const initiativeLabels = getInitiativesLabels(workspaceSlug?.toString());
-
   // derived values
-  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
+  const labelPerms = permissions.getLabelPermissions(workspaceSlug);
+  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_INITIATIVES_ENABLED
+  );
 
   const handleError = (error: unknown) => {
     const errorObj = error as { name?: string[] };
@@ -116,7 +124,7 @@ export const InitiativeLabelList = observer(function InitiativeLabelList() {
       <SettingsHeading
         title={t("initiatives.initiative_settings.labels.heading")}
         description={t("initiatives.initiative_settings.labels.description")}
-        control={isEditable && <Button onClick={newLabel}>{t("common.add_label")}</Button>}
+        control={labelPerms.canCreate && <Button onClick={newLabel}>{t("common.add_label")}</Button>}
         className="border-b-0"
         variant="h6"
       />
@@ -178,6 +186,11 @@ export const InitiativeLabelList = observer(function InitiativeLabelList() {
                   isLastChild={index === sortedLabels.length - 1}
                   onDrop={onDrop}
                   labelOperationsCallbacks={labelOperationsCallbacks}
+                  permissions={{
+                    canEdit: labelPerms.getCanEdit(label.id),
+                    canDelete: labelPerms.getCanDelete(label.id),
+                    canReorder: labelPerms.getCanReorder(label.id),
+                  }}
                 />
               ))
           )

@@ -32,6 +32,15 @@ class GroupSyncConfig(BaseModel):
     sync_offline = models.BooleanField(default=False)
     # Generic attribute key - works for OIDC claim, SAML attribute, LDAP attribute
     group_attribute_key = models.CharField(max_length=255, default="groups")
+    # Default workspace role assigned to users added via group sync.
+    default_workspace_role = models.ForeignKey(
+        "db.Role",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="workspace_group_sync_configs",
+        help_text="Workspace-scoped Role to assign when a user is auto-added to the workspace via group sync.",
+    )
 
     class Meta:
         db_table = "group_sync_configs"
@@ -51,19 +60,9 @@ class GroupSyncConfig(BaseModel):
 
 class GroupMapping(BaseModel):
     """
-    Maps an IdP group name to a project with a default role.
+    Maps an IdP group name to a project with a role.
     Provider-agnostic - the idp_group_name is just a string that works for any provider.
     """
-
-    ROLE_ADMIN = 20
-    ROLE_MEMBER = 15
-    ROLE_GUEST = 5
-
-    ROLE_CHOICES = (
-        (ROLE_ADMIN, "Admin"),
-        (ROLE_MEMBER, "Member"),
-        (ROLE_GUEST, "Guest"),
-    )
 
     workspace = models.ForeignKey(
         "db.Workspace",
@@ -76,10 +75,14 @@ class GroupMapping(BaseModel):
         on_delete=models.CASCADE,
         related_name="group_mappings",
     )
-    default_role = models.PositiveSmallIntegerField(
-        choices=ROLE_CHOICES,
-        default=ROLE_MEMBER,
+    role = models.ForeignKey(
+        "db.Role",
+        on_delete=models.PROTECT,
+        related_name="group_mappings",
+        help_text="Project-scoped Role to assign when syncing members via this mapping.",
     )
+    # Deprecated: kept for backward migration only. Use role (FK) instead.
+    default_role = models.PositiveSmallIntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "group_mappings"
@@ -94,4 +97,4 @@ class GroupMapping(BaseModel):
         ]
 
     def __str__(self):
-        return f"{self.idp_group_name} -> {self.project.name} ({self.get_default_role_display()})"
+        return f"{self.idp_group_name} -> {self.project.name} ({self.role.slug})"

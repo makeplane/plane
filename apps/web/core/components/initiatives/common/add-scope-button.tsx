@@ -22,14 +22,14 @@ import { CustomMenu } from "@plane/ui";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
+  canAdd: boolean;
   customButton?: React.ReactNode;
-  disabled?: boolean;
   workspaceSlug?: string;
   initiativeId?: string;
 };
 
 export const AddScopeButton = observer(function AddScopeButton(props: Props) {
-  const { customButton, disabled, workspaceSlug, initiativeId } = props;
+  const { canAdd, customButton, workspaceSlug, initiativeId } = props;
   // store hooks
   const {
     initiative: { toggleProjectsModal, toggleEpicModal },
@@ -63,7 +63,7 @@ export const AddScopeButton = observer(function AddScopeButton(props: Props) {
 
   return (
     <>
-      <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={disabled} closeOnSelect>
+      <CustomMenu customButton={customButtonElement} placement="bottom-start" disabled={!canAdd} closeOnSelect>
         {optionItems.map((item, index) => (
           <CustomMenu.MenuItem
             key={index}

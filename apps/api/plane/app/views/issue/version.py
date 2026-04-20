@@ -17,21 +17,15 @@ from rest_framework.response import Response
 from plane.db.models import (
     IssueVersion,
     IssueDescriptionVersion,
-    Project,
-    ProjectMember,
-    Issue,
 )
 from ..base import BaseAPIView
 from plane.app.serializers import (
     IssueVersionDetailSerializer,
     IssueDescriptionVersionDetailSerializer,
 )
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkitemPermissions
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
-from plane.ee.utils.check_user_teamspace_member import (
-    check_if_current_user_is_teamspace_member,
-)
 
 
 class IssueVersionEndpoint(BaseAPIView):
@@ -45,7 +39,7 @@ class IssueVersionEndpoint(BaseAPIView):
 
         return paginated_data
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id, pk=None):
         if pk:
             issue_version = IssueVersion.objects.get(
@@ -97,28 +91,8 @@ class WorkItemDescriptionVersionEndpoint(BaseAPIView):
 
         return paginated_data
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="work_item_id")
     def get(self, request, slug, project_id, work_item_id, pk=None):
-        project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=work_item_id)
-
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=ROLE.GUEST.value,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if pk:
             issue_description_version = IssueDescriptionVersion.objects.get(
                 workspace__slug=slug,

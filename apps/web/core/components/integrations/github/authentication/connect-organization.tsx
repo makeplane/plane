@@ -22,7 +22,7 @@ import { EModalWidth, ModalCore, Loader } from "@plane/ui";
 import { useGithubIntegration } from "@/plane-web/hooks/store/integrations";
 import { GithubEnterpriseServerAppForm } from "./server-app-form";
 import { useParams } from "next/navigation";
-import { useMember } from "@/hooks/store/use-member";
+import { useWorkspacePreferences } from "@/hooks/store/use-workspace-preferences";
 
 interface IConnectOrganizationProps {
   isEnterprise: boolean;
@@ -40,9 +40,7 @@ export const ConnectOrganization = observer(function ConnectOrganization({ isEnt
       disconnectWorkspaceConnection,
     },
   } = useGithubIntegration(isEnterprise);
-  const {
-    workspace: { updateChecklistIfNotDoneAlready },
-  } = useMember();
+  const { updateChecklistIfNotDoneAlready } = useWorkspacePreferences();
 
   const { workspaceSlug } = useParams();
 

@@ -30,12 +30,13 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 
 type Props = {
-  type: "assigned" | "subscribed" | "created";
+  workspaceSlug: string;
+  userId: string;
+  profileViewId: "assigned" | "subscribed" | "created";
 };
 
 export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Props) {
-  const { type } = props;
-  const { workspaceSlug, userId } = useParams();
+  const { workspaceSlug, userId, profileViewId } = props;
   // store hooks
   const {
     issues: { setViewId },
@@ -45,8 +46,8 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
   const activeLayout = issueFilters?.displayFilters?.layout || undefined;
 
   useEffect(() => {
-    if (setViewId) setViewId(type);
-  }, [type, setViewId]);
+    if (setViewId) setViewId(profileViewId);
+  }, [profileViewId, setViewId]);
 
   useSWR(
     workspaceSlug && userId ? `CURRENT_WORKSPACE_PROFILE_ISSUES_${workspaceSlug}_${userId}` : null,
@@ -76,9 +77,9 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
               <WorkItemFiltersRowWrapper filter={profileWorkItemsFilter} />
               <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (
-                  <ProfileIssuesListLayout />
+                  <ProfileIssuesListLayout workspaceSlug={workspaceSlug} profileViewId={profileViewId} />
                 ) : activeLayout === "kanban" ? (
-                  <ProfileIssuesKanBanLayout />
+                  <ProfileIssuesKanBanLayout workspaceSlug={workspaceSlug} profileViewId={profileViewId} />
                 ) : null}
               </div>
             </div>

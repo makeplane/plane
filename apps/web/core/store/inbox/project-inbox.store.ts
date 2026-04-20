@@ -14,6 +14,7 @@
 import { uniq, update, isEmpty, omit, set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
+import { isIntakeInActionableStatus, isIntakeInDisabledStatus } from "@plane/constants";
 import type { EPastDurationFilters } from "@plane/constants";
 // types
 import type {
@@ -33,6 +34,8 @@ import { InboxIssueService } from "@/services/inbox";
 // root store
 import { InboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import type { CoreRootStore } from "../root.store";
+import { IntakeWorkItemPermissionsInstance } from "./permissions/root";
+import type { IntakeWorkItemPermissions } from "./permissions/root";
 
 type TLoader =
   | "init-loading"
@@ -52,6 +55,7 @@ export interface IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined;
   inboxIssues: Record<string, IInboxIssueStore>; // issue_id -> IInboxIssueStore
   inboxIssueIds: string[];
+  permissions: IntakeWorkItemPermissions;
   // computed
   inboxFilters: Partial<TInboxIssueFilter>; // computed project inbox filters
   inboxSorting: Partial<TInboxIssueSorting>; // computed project inbox sorting
@@ -102,6 +106,7 @@ export abstract class ProjectInboxStore implements IProjectInboxStore {
   inboxIssuePaginationInfo: TInboxIssuePaginationInfo | undefined = undefined;
   inboxIssues: Record<string, IInboxIssueStore> = {};
   inboxIssueIds: string[] = [];
+  permissions: IntakeWorkItemPermissions;
   // services
   inboxIssueService;
 
@@ -131,7 +136,34 @@ export abstract class ProjectInboxStore implements IProjectInboxStore {
       deleteInboxIssue: action,
     });
     this.inboxIssueService = new InboxIssueService();
+    this.permissions = new IntakeWorkItemPermissionsInstance({
+      can: this.store.permissionAccessStore.can,
+      getIntakeConditionContext: this.getIntakeConditionContext.bind(this),
+      getWorkItemCommentConditionContext: this.getWorkItemCommentConditionContext.bind(this),
+      getAdditionalWorkItemPermissionMeta: this.getAdditionalWorkItemPermissionMeta.bind(this),
+    });
   }
+
+  private getIntakeConditionContext(intakeWorkItemId: string): { creator: boolean } {
+    const intakeWorkItem = this.getIssueInboxByIssueId(intakeWorkItemId);
+    const currentUserId = this.store.user.data?.id;
+    return { creator: !!(intakeWorkItem?.created_by && currentUserId && intakeWorkItem.created_by === currentUserId) };
+  }
+
+  private getWorkItemCommentConditionContext(_workItemId: string, commentId: string): { creator: boolean } {
+    const comment = this.store.issue.issueDetail.comment.getCommentById(commentId);
+    const currentUserId = this.store.user.data?.id;
+    return { creator: !!(comment?.created_by && currentUserId && comment.created_by === currentUserId) };
+  }
+
+  private getAdditionalWorkItemPermissionMeta = (intakeWorkItemId: string) => {
+    const intakeWorkItem = this.getIssueInboxByIssueId(intakeWorkItemId);
+    if (!intakeWorkItem) return { isInDisabledStatus: false, isInActionableStatus: false };
+    return {
+      isInDisabledStatus: isIntakeInDisabledStatus(intakeWorkItem.status),
+      isInActionableStatus: isIntakeInActionableStatus(intakeWorkItem.status),
+    };
+  };
 
   // computed
   /**

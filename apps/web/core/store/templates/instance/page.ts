@@ -11,37 +11,65 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { action, makeObservable } from "mobx";
 // plane imports
-import { EUserPermissions } from "@plane/constants";
-import type { TPageTemplate } from "@plane/types";
+import type { PermissionActionForResource, TPageTemplate } from "@plane/types";
 // local imports
-import type { IBaseTemplateInstance, TBaseTemplateInstanceProps } from "./base";
+import type { IBaseTemplateInstance, TBaseTemplateInstanceArgs } from "./base";
 import { BaseTemplateInstance } from "./base";
 
-export type TPageTemplateInstanceProps = TBaseTemplateInstanceProps<TPageTemplate>;
+export type TPageTemplateInstanceArgs = TBaseTemplateInstanceArgs<TPageTemplate>;
 
-// export interface IPageTemplateInstance extends IBaseTemplate<TPageTemplate> { }
 export type IPageTemplateInstance = IBaseTemplateInstance<TPageTemplate>;
 
 export class PageTemplateInstance extends BaseTemplateInstance<TPageTemplate> implements IPageTemplateInstance {
-  constructor(protected store: TPageTemplateInstanceProps) {
-    super(store);
+  constructor(protected args: TPageTemplateInstanceArgs) {
+    super(args);
+
+    makeObservable<PageTemplateInstance, "canPerformAction">(this, {
+      canPerformAction: action,
+    });
   }
+
+  // actions
+  private canPerformAction = action(
+    (action: PermissionActionForResource<"workspace_page_template" | "project_page_template">) => {
+      const workspaceSlug = this.workspaceSlug;
+      if (!workspaceSlug) return false;
+
+      if (this.project) {
+        return this.args.can({
+          resource: "project_page_template",
+          action,
+          projectId: this.project,
+          workspaceSlug,
+          resourceMeta: this.permissionMeta,
+        });
+      }
+
+      return this.args.can({
+        resource: "workspace_page_template",
+        action,
+        workspaceSlug,
+        resourceMeta: this.permissionMeta,
+      });
+    }
+  );
 
   // computed
-  get canCurrentUserEditTemplate() {
-    return this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN;
+  get canEdit() {
+    return this.canPerformAction("edit");
   }
 
-  get canCurrentUserDeleteTemplate() {
-    return this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN;
+  get canDelete() {
+    return this.canPerformAction("delete");
   }
 
-  get canCurrentUserPublishTemplate() {
+  get canPublish() {
     return false;
   }
 
-  get canCurrentUserUnpublishTemplate() {
-    return this.canCurrentUserPublishTemplate && this.is_published;
+  get canUnpublish() {
+    return this.canPublish && this.is_published;
   }
 }

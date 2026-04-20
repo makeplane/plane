@@ -23,20 +23,20 @@ from rest_framework import status
 # Module imports
 from .base import TeamspaceBaseEndpoint
 from plane.ee.models import TeamspaceActivity
-from plane.ee.permissions import TeamspacePermission
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import TeamspaceActivitySerializer
+from plane.permissions import can, TeamspacePermissions
 
 
 class TeamspaceActivityEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
     model = TeamspaceActivity
-    permission_classes = [TeamspacePermission]
 
     @method_decorator(gzip_page)
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:

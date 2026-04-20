@@ -17,7 +17,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ROLE, allow_permission
+from plane.permissions import can, WorkitemRelationPermissions
 from plane.app.serializers import WorkItemRelationDefinitionInputSerializer, WorkItemRelationDefinitionSerializer
 from plane.db.models import DEFAULT_IMPLEMENTS_DEFINITION, WorkItemRelationDefinition, Workspace
 from plane.payment.flags.flag import FeatureFlag
@@ -83,16 +83,16 @@ class WorkItemRelationDefinitionViewSet(BaseViewSet):
         # returning the queryset
         return q
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkitemRelationPermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
         return super().list(request, slug)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkitemRelationPermissions.VIEW, resource_param="workspace_id")
     def retrieve(self, request, slug, pk):
         return super().retrieve(request, slug, pk)
 
     @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkitemRelationPermissions.CREATE, resource_param="workspace_id")
     def create(self, request, slug):
         # validating the workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -117,7 +117,7 @@ class WorkItemRelationDefinitionViewSet(BaseViewSet):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkitemRelationPermissions.EDIT, resource_param="workspace_id")
     def partial_update(self, request, slug, pk):
         # validating the relation definition
         relation_definition = WorkItemRelationDefinition.objects.get(workspace__slug=slug, pk=pk)
@@ -140,7 +140,7 @@ class WorkItemRelationDefinitionViewSet(BaseViewSet):
         return Response(response_data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOM_RELATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkitemRelationPermissions.DELETE, resource_param="workspace_id")
     def destroy(self, request, slug, pk):
         # validating the relation definition
         relation_definition = WorkItemRelationDefinition.objects.get(workspace__slug=slug, pk=pk)

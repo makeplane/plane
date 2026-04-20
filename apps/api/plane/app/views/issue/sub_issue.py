@@ -29,7 +29,7 @@ from rest_framework.request import Request
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, WorkitemPermissions
 from plane.db.models import Issue, IssueLink, FileAsset, CycleIssue, IssueType
 from plane.ee.models import WorkspaceFeature
 from plane.bgtasks.issue_activities_task import issue_activity
@@ -47,9 +47,8 @@ from plane.utils.issue_search import search_issues
 class SubIssuesEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @method_decorator(gzip_page)
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id):
         sub_issues = (
             Issue.issue_objects.filter(parent_id=issue_id, workspace__slug=slug)
@@ -188,6 +187,7 @@ class SubIssuesEndpoint(BaseAPIView):
         )
 
     # Assign multiple sub issues
+    @can(WorkitemPermissions.EDIT, resource_param="issue_id")
     def post(self, request, slug, project_id, issue_id):
         parent_issue = Issue.issue_objects.select_related("type").get(pk=issue_id)
         sub_issue_ids = request.data.get("sub_issue_ids", [])

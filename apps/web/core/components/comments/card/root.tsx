@@ -31,7 +31,11 @@ type TCommentCard = {
   showAccessSpecifier: boolean;
   showCopyLinkOption: boolean;
   enableReplies: boolean;
-  disabled?: boolean;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canReact: boolean;
+  };
   projectId?: string;
 };
 
@@ -45,7 +49,7 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
     showAccessSpecifier,
     showCopyLinkOption,
     enableReplies = false,
-    disabled = false,
+    permissions,
     projectId,
   } = props;
   // states
@@ -63,7 +67,7 @@ export const CommentCard = observer(function CommentCard(props: TCommentCard) {
         activityOperations={activityOperations}
         entityId={entityId}
         comment={comment}
-        disabled={disabled}
+        permissions={permissions}
         projectId={projectId}
         readOnlyEditorRef={readOnlyEditorRef}
         showAccessSpecifier={showAccessSpecifier}

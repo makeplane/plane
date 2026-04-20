@@ -30,11 +30,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # local imports
-from plane.app.permissions import (
-    WorkSpaceAdminPermission,
-    WorkspaceOwnerPermission,
-    ROLE,
-)
+from plane.app.permissions import ROLE
+from plane.permissions import can, IntegrationPermissions
 from plane.authentication.models import (
     Application,
     ApplicationOwner,
@@ -60,8 +57,7 @@ from plane.payment.flags.flag_decorator import get_all_workspace_feature_flags
 class OAuthApplicationEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
+    @can(IntegrationPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         client_secret = generate_client_secret()
@@ -97,6 +93,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
             )
         return Response(serialised_application.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(IntegrationPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, app_slug):
         # Define allowed fields for update
         ALLOWED_FIELDS = {
@@ -146,6 +143,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(IntegrationPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, app_slug=None):
         try:
             if not app_slug:
@@ -246,6 +244,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
         except Application.DoesNotExist:
             return Response({"error": "Application not found"}, status=status.HTTP_404_NOT_FOUND)
 
+    @can(IntegrationPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, app_slug):
         application = Application.objects.filter(slug=app_slug, application_owners__workspace__slug=slug).first()
         if application:
@@ -256,8 +255,7 @@ class OAuthApplicationEndpoint(BaseAPIView):
 class OAuthApplicationRegenerateSecretEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
+    @can(IntegrationPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, pk):
         application = Application.objects.filter(id=pk, application_owners__workspace__slug=slug).first()
         if not application:
@@ -280,8 +278,7 @@ class OAuthApplicationRegenerateSecretEndpoint(BaseAPIView):
 class OAuthApplicationCheckSlugEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
+    @can(IntegrationPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         app_slug = request.data.get("app_slug")
         if not app_slug:
@@ -294,8 +291,7 @@ class OAuthApplicationCheckSlugEndpoint(BaseAPIView):
 class OAuthApplicationInstallEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
+    @can(IntegrationPermissions.CONNECT, resource_param="workspace_id")
     def post(self, request, slug, pk):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -350,8 +346,7 @@ class OAuthApplicationInstallEndpoint(BaseAPIView):
 class OAuthApplicationPublishEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
+    @can(IntegrationPermissions.EDIT, resource_param="workspace_id")
     def post(self, request, slug, pk):
         application = Application.objects.filter(id=pk, application_owners__workspace__slug=slug).first()
         if not application:
@@ -402,8 +397,7 @@ class OAuthApplicationCategoryEndpoint(BaseAPIView):
 class OAuthAppInstallationDetailEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceOwnerPermission]
-
+    @can(IntegrationPermissions.MANAGE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         workspace = Workspace.objects.get(slug=slug)
         workspace_app_installation = WorkspaceAppInstallation.objects.filter(id=pk, workspace=workspace).first()
@@ -422,10 +416,9 @@ class OAuthAppInstallationDetailEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [WorkSpaceAdminPermission]
 
     def get(self, request, slug, app_slug):
         application = (
@@ -458,8 +451,7 @@ class OAuthPublishedApplicationBySlugEndpoint(BaseAPIView):
 class OAuthUserAppInstallationDetailEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
+    @can(IntegrationPermissions.CONNECT, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         workspace_app_installation = WorkspaceAppInstallation.objects.filter(id=pk, workspace__slug=slug).first()
         if not workspace_app_installation:

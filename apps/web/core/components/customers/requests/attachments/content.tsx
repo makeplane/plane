@@ -11,27 +11,26 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
 import { RequestAttachmentsList } from "@/components/customers";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   requestId: string;
   customerId: string;
-  disabled: boolean;
+  permissions: Pick<TCustomerDetailPermissions, "canAddAttachment" | "canDeleteAttachment">;
 };
 
 export const RequestAttachmentsCollapsibleContent = observer(function RequestAttachmentsCollapsibleContent(
   props: Props
 ) {
-  const { workspaceSlug, requestId, disabled, customerId } = props;
+  const { workspaceSlug, requestId, permissions, customerId } = props;
   return (
     <RequestAttachmentsList
       workspaceSlug={workspaceSlug}
       requestId={requestId}
-      disabled={disabled}
+      permissions={permissions}
       customerId={customerId}
       isCollapsible
     />

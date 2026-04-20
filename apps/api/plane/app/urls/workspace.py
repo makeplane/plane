@@ -18,11 +18,10 @@ from plane.app.views import (
     WorkspaceJoinEndpoint,
     WorkSpaceMemberViewSet,
     WorkspaceInvitationsViewset,
-    WorkspaceMemberUserEndpoint,
+    WorkspacePreferencesEndpoint,
     WorkspaceMemberUserViewsEndpoint,
     WorkSpaceAvailabilityCheckEndpoint,
     UserLastProjectWithWorkspaceEndpoint,
-    WorkspaceThemeViewSet,
     WorkspaceUserProfileStatsEndpoint,
     WorkspaceUserActivityEndpoint,
     WorkspaceUserProfileEndpoint,
@@ -55,15 +54,16 @@ urlpatterns = [
     ),
     path(
         "workspaces/",
-        WorkSpaceViewSet.as_view({"get": "list", "post": "create"}),
+        # TODO: "get": "list" removed — unused by FE (uses UserWorkSpacesEndpoint). Migrate to @can before re-enabling.
+        WorkSpaceViewSet.as_view({"post": "create"}),
         name="workspace",
     ),
     path(
         "workspaces/<str:slug>/",
+        # TODO: "put": "update" removed — unused by FE (uses PATCH only). Migrate to @can before re-enabling.
         WorkSpaceViewSet.as_view(
             {
                 "get": "retrieve",
-                "put": "update",
                 "patch": "partial_update",
                 "delete": "destroy",
             }
@@ -104,7 +104,8 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/members/<uuid:pk>/",
-        WorkSpaceMemberViewSet.as_view({"patch": "partial_update", "delete": "destroy", "get": "retrieve"}),
+        # TODO: retrieve action removed — not called by FE. Migrate to @can before re-enabling.
+        WorkSpaceMemberViewSet.as_view({"patch": "partial_update", "delete": "destroy"}),
         name="workspace-member",
     ),
     path(
@@ -118,25 +119,26 @@ urlpatterns = [
         name="workspace-project-details",
     ),
     path(
-        "workspaces/<str:slug>/workspace-members/me/",
-        WorkspaceMemberUserEndpoint.as_view(),
-        name="workspace-member-details",
+        "workspaces/<str:slug>/preferences/",
+        WorkspacePreferencesEndpoint.as_view(),
+        name="workspace-preferences",
     ),
     path(
         "workspaces/<str:slug>/workspace-views/",
         WorkspaceMemberUserViewsEndpoint.as_view(),
         name="workspace-member-views-details",
     ),
-    path(
-        "workspaces/<str:slug>/workspace-themes/",
-        WorkspaceThemeViewSet.as_view({"get": "list", "post": "create"}),
-        name="workspace-themes",
-    ),
-    path(
-        "workspaces/<str:slug>/workspace-themes/<uuid:pk>/",
-        WorkspaceThemeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
-        name="workspace-themes",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/workspace-themes/",
+    #     WorkspaceThemeViewSet.as_view({"get": "list", "post": "create"}),
+    #     name="workspace-themes",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/workspace-themes/<uuid:pk>/",
+    #     WorkspaceThemeViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+    #     name="workspace-themes",
+    # ),
     path(
         "workspaces/<str:slug>/user-stats/<uuid:user_id>/",
         WorkspaceUserProfileStatsEndpoint.as_view(),

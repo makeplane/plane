@@ -21,13 +21,15 @@ type Props = {
   epicIds: string[];
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canEditEpic: (epicId: string) => boolean;
+  };
   handleAddEpic: () => void;
   handleAddProject: () => void;
 };
 
 export function InitiativeScopeEpicTimeline(props: Props) {
-  const { epicIds, workspaceSlug, initiativeId, disabled, handleAddEpic, handleAddProject } = props;
+  const { epicIds, workspaceSlug, initiativeId, permissions, handleAddEpic, handleAddProject } = props;
 
   return (
     <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.ISSUE}>
@@ -39,7 +41,9 @@ export function InitiativeScopeEpicTimeline(props: Props) {
         handleAddEpic={handleAddEpic}
         handleAddProject={handleAddProject}
         initiativeId={initiativeId}
-        disabled={disabled}
+        permissions={{
+          canEditViaTimeline: (blockId: string) => permissions.canEditEpic(blockId),
+        }}
       />
     </TimeLineTypeContext.Provider>
   );

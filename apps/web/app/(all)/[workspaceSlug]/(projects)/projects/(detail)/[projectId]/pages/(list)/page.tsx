@@ -15,10 +15,8 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TPageNavigationTabs } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 // assets
 import darkPagesAsset from "@/app/assets/empty-state/disabled-feature/pages-dark.webp?url";
 import lightPagesAsset from "@/app/assets/empty-state/disabled-feature/pages-light.webp?url";
@@ -28,7 +26,6 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { ProjectPagesListView } from "@/components/pages/pages-list-view";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { FeatureTour } from "@/components/tour";
@@ -52,12 +49,10 @@ function ProjectPagesPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { getProjectById, currentProjectDetails } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { getProjectById, currentProjectDetails, permissions: projectPermissions } = useProject();
   // derived values
   const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Pages` : undefined;
-  const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = resolvedTheme === "light" ? lightPagesAsset : darkPagesAsset;
   const pageType = getPageType(type);
 
@@ -74,7 +69,7 @@ function ProjectPagesPage({ params }: Route.ComponentProps) {
             onClick: () => {
               router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
             },
-            disabled: !canPerformEmptyStateActions,
+            disabled: !projectPermissions.getCanManagePages(workspaceSlug, projectId),
           }}
         />
       </div>

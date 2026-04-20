@@ -33,6 +33,8 @@ from plane.payment.utils.workspace_license_request import (
     resync_workspace_license,
 )
 from plane.payment.rate_limit import WorkspaceRateThrottle
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
+from plane.permissions import can, WorkspacePermissions
 
 
 class ProductEndpoint(BaseAPIView):
@@ -42,6 +44,7 @@ class ProductEndpoint(BaseAPIView):
     Get the product details for the workspace based on the number of paid users and free users
     """
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
@@ -51,9 +54,14 @@ class ProductEndpoint(BaseAPIView):
                         workspace__slug=slug,
                         is_active=True,
                         member__is_bot=False,
-                        role__gt=10,
-                    ).count()
-                    + WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
+                    )
+                    .exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS))
+                    .count()
+                    + WorkspaceMemberInvite.objects.filter(
+                        workspace__slug=slug,
+                    )
+                    .exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS))
+                    .count()
                 )
 
                 # Get all the viewers and guests in the workspace
@@ -61,7 +69,7 @@ class ProductEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     is_active=True,
                     member__is_bot=False,
-                    role__lte=10,
+                    role_ref__slug__in=list(UNPAID_ROLE_SLUGS),
                 ).count()
 
                 # If paid users are currently the pay workspace count
@@ -106,7 +114,7 @@ class WorkspaceProductEndpoint(BaseAPIView):
     """
     Get the product details for the workspace
     """
-
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         try:
             if settings.PAYMENT_SERVER_BASE_URL:
@@ -156,9 +164,9 @@ class WorkspaceLicenseRefreshEndpoint(BaseAPIView):
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_role_slug=F("role_ref__slug"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             for member in workspace_members:

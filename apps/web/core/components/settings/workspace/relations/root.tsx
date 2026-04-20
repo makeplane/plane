@@ -13,8 +13,6 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IWorkItemRelationDefinition } from "@plane/types";
@@ -23,7 +21,6 @@ import { Loader } from "@plane/ui";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useRelationDefinition } from "@/hooks/store/use-relation-definition";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { CreateUpdateRelationInline } from "./create-update-relation-inline";
 import { DeleteRelationDefinitionModal } from "./delete-relation-modal";
@@ -40,15 +37,11 @@ export const RelationDefinitionRoot = observer(function RelationDefinitionRoot(p
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingDefinition, setDeletingDefinition] = useState<IWorkItemRelationDefinition | null>(null);
   // store hooks
-  const { loader, sortedRelationDefinitions, fetchRelationDefinitions } = useRelationDefinition();
-  const { allowPermissions } = useUserPermissions();
+  const { loader, sortedRelationDefinitions, fetchRelationDefinitions, permissions } = useRelationDefinition();
   const { t } = useTranslation();
 
   // derived values
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canCreate = permissions.getCanCreate(workspaceSlug);
   const isLoading = loader === "init-loader" || loader === undefined;
 
   // fetch on mount
@@ -75,7 +68,7 @@ export const RelationDefinitionRoot = observer(function RelationDefinitionRoot(p
         title={t("workspace_settings.settings.relations.heading")}
         description={t("workspace_settings.settings.relations.description")}
         control={
-          isEditable ? (
+          canCreate ? (
             <Button variant="secondary" size="lg" onClick={handleNewRelation}>
               Add relation
             </Button>
@@ -98,7 +91,10 @@ export const RelationDefinitionRoot = observer(function RelationDefinitionRoot(p
                     key={definition.id}
                     workspaceSlug={workspaceSlug}
                     definition={definition}
-                    isEditable={isEditable}
+                    permissions={{
+                      canEdit: permissions.getCanEdit(workspaceSlug, definition.id),
+                      canDelete: permissions.getCanDelete(workspaceSlug, definition.id),
+                    }}
                     isEditing={editingId === definition.id}
                     onEdit={() => {
                       setShowCreateForm(false);
@@ -122,7 +118,7 @@ export const RelationDefinitionRoot = observer(function RelationDefinitionRoot(p
                 <p className="mt-1 text-body-xs-regular text-tertiary">
                   Create custom relation types to link work items.
                 </p>
-                {isEditable && (
+                {canCreate && (
                   <Button variant="secondary" size="sm" className="mt-4" onClick={handleNewRelation}>
                     Add relation
                   </Button>

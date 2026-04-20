@@ -50,6 +50,7 @@ class WorkSpaceSerializer(DynamicBaseSerializer):
     total_members = serializers.IntegerField(read_only=True)
     logo_url = serializers.CharField(read_only=True)
     role = serializers.IntegerField(read_only=True)
+    role_slug = serializers.CharField(read_only=True)
 
     def validate_name(self, value):
         # Check if the name contains a URL
@@ -89,6 +90,7 @@ class WorkspaceUserMeSerializer(DynamicBaseSerializer):
     logo_url = serializers.CharField(read_only=True)
     current_plan = serializers.CharField(read_only=True)
     role = serializers.IntegerField(read_only=True)
+    role_slug = serializers.CharField(read_only=True)
     is_on_trial = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -114,21 +116,41 @@ class WorkspaceLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
-class WorkSpaceMemberSerializer(DynamicBaseSerializer):
+class WorkspaceRoleSlugMixin:
+    """Adds read-only role_slug field to workspace member serializers."""
+
+    role_slug = serializers.SerializerMethodField()
+
+    def get_role_slug(self, obj):
+        if obj.role_ref_id:
+            return obj.role_ref.slug
+        from plane.permissions.system_roles import role_from_member_role
+
+        return role_from_member_role(obj.role)
+
+
+class WorkSpaceMemberSerializer(WorkspaceRoleSlugMixin, DynamicBaseSerializer):
     member = UserLiteSerializer(read_only=True)
+    role_slug = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkspaceMember
-        fields = "__all__"
+        fields = ("id", "member", "role_slug", "is_active", "created_at")
 
 
-class WorkspaceMemberMeSerializer(BaseSerializer):
+class WorkspacePreferencesSerializer(BaseSerializer):
     draft_issue_count = serializers.IntegerField(read_only=True)
     active_cycles_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WorkspaceMember
-        fields = "__all__"
+        fields = (
+            "draft_issue_count",
+            "active_cycles_count",
+            "explored_features",
+            "tips",
+            "getting_started_checklist",
+        )
 
 
 class WorkspaceMemberUserOnboardingSerializer(BaseSerializer):
@@ -138,17 +160,19 @@ class WorkspaceMemberUserOnboardingSerializer(BaseSerializer):
         read_only_fields = ["workspace", "member"]
 
 
-class WorkspaceMemberAdminSerializer(DynamicBaseSerializer):
+class WorkspaceMemberAdminSerializer(WorkspaceRoleSlugMixin, DynamicBaseSerializer):
     member = UserAdminLiteSerializer(read_only=True)
+    role_slug = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkspaceMember
-        fields = "__all__"
+        fields = ("id", "member", "role_slug", "is_active", "created_at")
 
 
-class WorkSpaceMemberInviteSerializer(BaseSerializer):
+class WorkSpaceMemberInviteSerializer(WorkspaceRoleSlugMixin, BaseSerializer):
     workspace = WorkspaceLiteSerializer(read_only=True)
     invite_link = serializers.SerializerMethodField()
+    role_slug = serializers.SerializerMethodField()
 
     def get_invite_link(self, obj):
         return f"/workspace-invitations/?invitation_id={obj.id}&slug={obj.workspace.slug}&token={obj.token}"
@@ -161,6 +185,7 @@ class WorkSpaceMemberInviteSerializer(BaseSerializer):
             "email",
             "token",
             "workspace",
+            "role",
             "message",
             "responded_at",
             "created_at",

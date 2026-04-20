@@ -112,6 +112,17 @@ from .sticky import Sticky
 
 from .description import Description, DescriptionVersion
 
+from .permission import (
+    Role,
+    RoleActivity,
+    PermissionScheme,
+    PermissionSchemeActivity,
+    RolePermissionScheme,
+    ResourcePermission,
+    PermissionAuditLog,
+    SubjectType,
+)
+
 from .release import (
     Release,
     ReleaseTag,

@@ -99,10 +99,12 @@ function DataCard(props: TDataCardProps) {
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled?: boolean;
+  canAddScope: boolean;
 };
+
 export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
-  const { workspaceSlug, initiativeId, disabled } = props;
+  const { workspaceSlug, initiativeId, canAddScope } = props;
+  // store hooks
   const {
     initiative: {
       getInitiativeAnalyticsById,
@@ -114,18 +116,16 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
       toggleEpicModal,
     },
   } = useInitiatives();
-
-  const { t } = useTranslation();
-
   // derived values
   const initiativeAnalytics = getInitiativeAnalyticsById(initiativeId);
   const initiative = getInitiativeById(initiativeId);
 
   const epicsCount = getInitiativeEpicsDetailById(initiativeId)?.length ?? initiative?.epic_ids?.length ?? 0;
   const projectsCount = initiative?.project_ids?.length ?? 0;
-
   const shouldShowProjectsCard = projectsCount > 0;
   const shouldShowEpicsCard = epicsCount > 0;
+  // translation
+  const { t } = useTranslation();
 
   if (!initiative) return null;
 
@@ -138,12 +138,12 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
         <div className="flex gap-2 items-center">
           <Link
             href={`/${workspaceSlug}/initiatives/${initiativeId}/scope`}
-            className=" font-medium text-sm text-secondary"
+            className="font-medium text-14 text-secondary"
           >
             {t("initiatives.scope.view_scope")}
           </Link>
           <AddScopeButton
-            disabled={disabled}
+            canAdd={canAddScope}
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
             customButton={
@@ -161,7 +161,7 @@ export const ScopeBreakdown = observer(function ScopeBreakdown(props: Props) {
           subHeading={t("initiatives.scope.empty_state.description")}
           icon={<ScopeIcon className="size-4" />}
           actionElement={
-            <AddScopeButton disabled={disabled} workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
+            <AddScopeButton canAdd={canAddScope} workspaceSlug={workspaceSlug} initiativeId={initiativeId} />
           }
         />
       ) : (

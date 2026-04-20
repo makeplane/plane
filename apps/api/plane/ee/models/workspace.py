@@ -109,6 +109,12 @@ class WorkspaceLicense(ChangeTrackerMixin, BaseModel):
 
                 update_api_tokens.delay(self.plan, str(self.workspace_id))
 
+                from plane.ee.bgtasks import resync_workspace_admin_permissions
+
+                resync_workspace_admin_permissions.delay(
+                    str(self.workspace_id), self.plan
+                )
+
 
 class WorkspaceActivity(ProjectOptionalBaseModel):
     verb = models.CharField(max_length=255, verbose_name="Action", default="created")

@@ -13,9 +13,8 @@
 
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { useParams } from "react-router";
 // plane imports
-import { EUserPermissionsLevel, GROUPED_WORKSPACE_SETTINGS, WORKSPACE_SETTINGS_CATEGORIES } from "@plane/constants";
+import { GROUPED_WORKSPACE_SETTINGS, WORKSPACE_SETTINGS_CATEGORIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
@@ -24,16 +23,22 @@ import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 // helpers
 import { shouldRenderSettingLink } from "@/helpers/settings/workspace";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceSettingsAccess } from "@/hooks/permissions/use-workspace-settings-access";
 // local imports
 import { WORKSPACE_SETTINGS_ICONS } from "./item-icon";
 
-export const WorkspaceSettingsSidebarItemCategories = observer(function WorkspaceSettingsSidebarItemCategories() {
-  // params
-  const { workspaceSlug } = useParams();
+type Props = {
+  workspaceSlug: string;
+};
+
+export const WorkspaceSettingsSidebarItemCategories = observer(function WorkspaceSettingsSidebarItemCategories(
+  props: Props
+) {
+  const { workspaceSlug } = props;
+  // router
   const pathname = usePathname();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { canAccessWorkspaceSetting } = useWorkspaceSettingsAccess();
   // translation
   const { t } = useTranslation();
 
@@ -43,9 +48,7 @@ export const WorkspaceSettingsSidebarItemCategories = observer(function Workspac
         const categoryItems = GROUPED_WORKSPACE_SETTINGS[category];
         const accessibleItems = categoryItems.filter(
           (item) =>
-            allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, workspaceSlug) &&
-            workspaceSlug &&
-            shouldRenderSettingLink(workspaceSlug, item.key)
+            canAccessWorkspaceSetting(workspaceSlug, item.key) && shouldRenderSettingLink(workspaceSlug, item.key)
         );
 
         if (accessibleItems.length === 0) return null;

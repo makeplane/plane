@@ -15,23 +15,24 @@ import { observer } from "mobx-react";
 import { Pen } from "lucide-react";
 
 type TEstimateListItem = {
+  canEdit: boolean;
   estimateId: string;
-  isAdmin: boolean;
-  isEstimateEnabled: boolean;
   isEditable: boolean;
+  isEstimateEnabled: boolean;
   onEditClick?: (estimateId: string) => void;
-  onDeleteClick?: (estimateId: string) => void;
 };
 
 export const EstimateListItemButtons = observer(function EstimateListItemButtons(props: TEstimateListItem) {
-  const { estimateId, isAdmin, isEditable, onEditClick } = props;
+  const { canEdit, estimateId, isEditable, onEditClick } = props;
 
-  if (!isAdmin || !isEditable) return <></>;
+  if (!isEditable || !canEdit) return null;
+
   return (
     <div className="relative flex items-center gap-1">
       <button
-        className="relative flex-shrink-0 w-6 h-6 flex justify-center items-center rounded-sm cursor-pointer transition-colors overflow-hidden hover:bg-layer-1"
-        onClick={() => onEditClick && onEditClick(estimateId)}
+        type="button"
+        className="relative shrink-0 w-6 h-6 flex justify-center items-center rounded-sm cursor-pointer transition-colors overflow-hidden hover:bg-layer-1"
+        onClick={() => onEditClick?.(estimateId)}
       >
         <Pen size={12} />
       </button>

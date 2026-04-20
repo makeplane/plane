@@ -16,11 +16,14 @@ import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { CustomerDetailHeader } from "@/components/customers";
+// types
+import type { Route } from "./+types/layout";
 
-export default function CustomerDetailLayout() {
+export default function CustomerDetailLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug, customerId } = params;
   return (
     <>
-      <AppHeader header={<CustomerDetailHeader />} />
+      <AppHeader header={<CustomerDetailHeader workspaceSlug={workspaceSlug} customerId={customerId} />} />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

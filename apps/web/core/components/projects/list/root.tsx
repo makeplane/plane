@@ -44,7 +44,8 @@ export const ProjectsListRoot = observer(function ProjectsListRoot(props: TProje
     : undefined;
   const isProjectGroupingFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFlagEnabled;
 
   // fetching workspace projects
   useSWR(

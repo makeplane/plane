@@ -26,7 +26,7 @@ from rest_framework import status
 from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import ProjectAttachmentSerializer
 from plane.db.models import FileAsset, Workspace
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ProjectAssetPermissions
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -42,7 +42,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
     model = FileAsset
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         name = request.data.get("name")
         type = request.data.get("type", False)
@@ -102,7 +102,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
+    @can(ProjectAssetPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         attachment.is_deleted = True
@@ -123,7 +123,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk=None):
         if pk:
             # Get the asset
@@ -156,7 +156,7 @@ class ProjectAttachmentV2Endpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         attachments = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         serializer = ProjectAttachmentSerializer(attachments)

@@ -40,9 +40,9 @@ import useReloadConfirmations from "@/hooks/use-reload-confirmation";
 import { DeDupeIssuePopoverRoot } from "@/components/de-dupe/duplicate-popover/root";
 import { IntakeAdditionalInformation } from "@/components/intake/content/additional-information";
 import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-duplicate-issues";
+import type { TIntakeWorkItemProperty } from "@/store/inbox/permissions/root";
 // services
 import { IntakeWorkItemVersionService } from "@/services/inbox";
-
 // local imports
 import { InboxIssueContentProperties } from "./properties";
 // services init
@@ -52,13 +52,26 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   inboxIssue: IInboxIssueStore;
-  isEditable: boolean;
   isSubmitting: TNameDescriptionLoader;
   setIsSubmitting: Dispatch<SetStateAction<TNameDescriptionLoader>>;
+  permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TIntakeWorkItemProperty) => boolean;
+    canReact: boolean;
+    canRestoreDescriptionVersion: boolean;
+    canAddAttachments: boolean;
+    canAddWorklog: boolean;
+    comments: {
+      canCreate: boolean;
+      canEdit: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
+  };
 };
 
 export const InboxIssueMainContent = observer(function InboxIssueMainContent(props: Props) {
-  const { workspaceSlug, projectId, inboxIssue, isEditable, isSubmitting, setIsSubmitting } = props;
+  const { workspaceSlug, projectId, inboxIssue, isSubmitting, setIsSubmitting, permissions } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
@@ -167,7 +180,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           isSubmitting={isSubmitting}
           setIsSubmitting={(value) => setIsSubmitting(value)}
           issueOperations={issueOperations}
-          disabled={!isEditable}
+          disabled={!permissions.canEditProperty("name")}
           value={issue.name}
           containerClassName="-ml-3"
         />
@@ -177,7 +190,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
         ) : (
           <DescriptionInput
             containerClassName="-ml-3 border-none"
-            disabled={!isEditable}
+            disabled={!permissions.canEditProperty("description_html")}
             editorRef={editorRef}
             entityId={issue.id}
             fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
@@ -205,10 +218,11 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
                 issueId={issue.id}
                 currentUser={currentUser}
                 className="mt-0 shrink-0"
+                disabled={!permissions.canReact}
               />
             </div>
           )}
-          {isEditable && (
+          {permissions.canRestoreDescriptionVersion && (
             <DescriptionVersionsRoot
               className="shrink-0"
               entityInformation={{
@@ -218,7 +232,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
                     ? "Intake Form user"
                     : (getUserDetails(issue.created_by ?? "")?.display_name ?? ""),
                 id: issue.id,
-                isRestoreDisabled: !isEditable,
+                isRestoreDisabled: !permissions.canRestoreDescriptionVersion,
               }}
               fetchHandlers={{
                 listDescriptionVersions: (issueId) =>
@@ -239,7 +253,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issue.id}
-          disabled={!isEditable}
+          disabled={!permissions.canAddAttachments}
         />
       </div>
 
@@ -249,7 +263,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
           projectId={projectId}
           issue={issue}
           issueOperations={issueOperations}
-          isEditable={isEditable}
+          permissions={permissions}
           duplicateIssueDetails={inboxIssue?.duplicate_issue_detail}
           isIntakeAccepted={isIntakeAccepted}
         />
@@ -259,7 +273,13 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
       {inboxIssue.issue && <IntakeAdditionalInformation workItemDetails={inboxIssue.issue} />}
 
       <div className="pt-4">
-        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issue.id} isIntakeIssue />
+        <IssueActivity
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issue.id}
+          isIntakeIssue
+          permissions={permissions}
+        />
       </div>
     </>
   );

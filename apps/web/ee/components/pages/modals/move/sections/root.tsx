@@ -34,16 +34,17 @@ type Props = {
   canPageBeMovedToTeamspace: boolean;
   canPageBeMovedToWiki: boolean;
   searchTerm: string;
+  workspaceSlug: string;
 };
 
 export const MovePageModalSections = observer(function MovePageModalSections(props: Props) {
-  const { canPageBeMovedToTeamspace, canPageBeMovedToWiki, searchTerm } = props;
+  const { canPageBeMovedToTeamspace, canPageBeMovedToWiki, searchTerm, workspaceSlug } = props;
   // navigation
   const { teamspaceId, projectId } = useParams();
   // store hooks
   const collectionStore = useCollection();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
+  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
   const canPageBeMovedToWikiCollections = canPageBeMovedToWiki && canPageBeMovedToTeamspace;
   const customCollections = useMemo(
     () =>

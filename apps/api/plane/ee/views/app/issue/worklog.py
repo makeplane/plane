@@ -19,20 +19,19 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.permissions import ProjectEntityPermission
 from plane.ee.models import IssueWorkLog
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import IssueWorkLogSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, WorkitemPermissions
 
 
 class IssueWorkLogsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueWorkLogSerializer(data=request.data)
         if serializer.is_valid():
@@ -43,6 +42,7 @@ class IssueWorkLogsEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id):
         worklogs = IssueWorkLog.objects.filter(
             issue_id=issue_id,
@@ -53,6 +53,7 @@ class IssueWorkLogsEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, issue_id, pk):
         worklog = IssueWorkLog.objects.get(pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug)
         serializer = IssueWorkLogSerializer(worklog, data=request.data, partial=True)
@@ -65,6 +66,7 @@ class IssueWorkLogsEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, issue_id, pk):
         worklog = IssueWorkLog.objects.get(pk=pk, issue_id=issue_id, project_id=project_id, workspace__slug=slug)
         worklog.delete()
@@ -78,6 +80,7 @@ class IssueTotalWorkLogEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id):
         total_worklog = IssueWorkLog.objects.filter(
             issue_id=issue_id,

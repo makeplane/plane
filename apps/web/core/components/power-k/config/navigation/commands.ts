@@ -13,16 +13,14 @@
 
 import { BarChart2, Briefcase, FileText, Home, Inbox, Layers, PenSquare, Settings } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { ArchiveIcon, UserActivityIcon, LayersIcon, ContrastIcon, DiceIcon, Intake } from "@plane/propel/icons";
 import type { ICycle, IModule, IPartialProject, IProjectView, IWorkspace } from "@plane/types";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // components
-import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 import { handlePowerKNavigate } from "@/components/power-k/utils/navigation";
 // hooks
-import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
+import { usePowerKPermissions } from "@/components/command-palette/power-k/hooks/use-power-k-permissions";
 
 export type TPowerKNavigationCommandKeys =
   | "open_workspace"
@@ -59,29 +57,8 @@ export type TPowerKNavigationCommandKeys =
  */
 export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCommandKeys, TPowerKCommandConfig> => {
   // store hooks
-  const {
-    data: currentUser,
-    permission: { allowPermissions },
-  } = useUser();
-  const { getPartialProjectById } = useProject();
-  // derived values
-  const hasWorkspaceMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      EUserPermissionsLevel.WORKSPACE,
-      ctx.params.workspaceSlug?.toString()
-    );
-  const hasProjectMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      ctx.params.workspaceSlug?.toString(),
-      ctx.params.projectId?.toString()
-    );
-  const baseWorkspaceConditions = (ctx: TPowerKContext) => Boolean(ctx.params.workspaceSlug?.toString());
-  const baseProjectConditions = (ctx: TPowerKContext) =>
-    Boolean(ctx.params.workspaceSlug?.toString() && ctx.params.projectId?.toString());
-  const getContextProject = (ctx: TPowerKContext) => getPartialProjectById(ctx.params.projectId?.toString());
+  const { data: currentUser } = useUser();
+  const { canNavigateTo } = usePowerKPermissions();
 
   return {
     open_workspace: {
@@ -96,8 +73,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         const workspaceDetails = data as IWorkspace;
         handlePowerKNavigate(ctx, [workspaceDetails.slug]);
       },
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_workspace"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_workspace"),
       closeOnSelect: true,
     },
     nav_home: {
@@ -108,8 +85,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: Home,
       keySequence: "gh",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString()]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_home"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_home"),
       closeOnSelect: true,
     },
     nav_inbox: {
@@ -120,8 +97,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: Inbox,
       keySequence: "gx",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "notifications"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_inbox"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_inbox"),
       closeOnSelect: true,
     },
     nav_your_work: {
@@ -132,8 +109,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: UserActivityIcon,
       keySequence: "gy",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "profile", currentUser?.id]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_your_work"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_your_work"),
       closeOnSelect: true,
     },
     nav_account_settings: {
@@ -143,8 +120,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       i18n_title: "power_k.navigation_actions.nav_account_settings",
       icon: Settings,
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "settings", "account"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_account_settings"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_account_settings"),
       closeOnSelect: true,
     },
     open_project: {
@@ -159,8 +136,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         const projectDetails = data as IPartialProject;
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "projects", projectDetails.id, "issues"]);
       },
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project"),
       closeOnSelect: true,
     },
     nav_projects_list: {
@@ -171,8 +148,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: Briefcase,
       keySequence: "gp",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "projects"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_projects_list"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_projects_list"),
       closeOnSelect: true,
     },
     nav_all_workspace_work_items: {
@@ -183,8 +160,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: Layers,
       action: (ctx) =>
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "all-issues"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_all_workspace_work_items"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_all_workspace_work_items"),
       closeOnSelect: true,
     },
     nav_assigned_workspace_work_items: {
@@ -194,8 +171,10 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       i18n_title: "power_k.navigation_actions.nav_assigned_workspace_work_items",
       icon: Layers,
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "assigned"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) =>
+        canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_assigned_workspace_work_items"),
+      isVisible: (ctx) =>
+        canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_assigned_workspace_work_items"),
       closeOnSelect: true,
     },
     nav_created_workspace_work_items: {
@@ -205,8 +184,10 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       i18n_title: "power_k.navigation_actions.nav_created_workspace_work_items",
       icon: Layers,
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "created"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) =>
+        canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_created_workspace_work_items"),
+      isVisible: (ctx) =>
+        canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_created_workspace_work_items"),
       closeOnSelect: true,
     },
     nav_subscribed_workspace_work_items: {
@@ -217,8 +198,10 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: Layers,
       action: (ctx) =>
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "workspace-views", "subscribed"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx),
+      isEnabled: (ctx) =>
+        canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_subscribed_workspace_work_items"),
+      isVisible: (ctx) =>
+        canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_subscribed_workspace_work_items"),
       closeOnSelect: true,
     },
     nav_workspace_analytics: {
@@ -229,8 +212,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: BarChart2,
       keySequence: "ga",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "analytics", "overview"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_analytics"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_analytics"),
       closeOnSelect: true,
     },
     nav_workspace_drafts: {
@@ -241,8 +224,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: PenSquare,
       keySequence: "gj",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "drafts"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_drafts"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_drafts"),
       closeOnSelect: true,
     },
     nav_workspace_archives: {
@@ -253,10 +236,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: ArchiveIcon,
       keySequence: "gr",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "projects", "archives"]),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx) && hasWorkspaceMemberLevelPermissions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_archives"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_archives"),
       closeOnSelect: true,
     },
     open_workspace_setting: {
@@ -271,8 +252,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
         const settingsHref = data as string;
         handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), settingsHref]);
       },
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_workspace_setting"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_workspace_setting"),
       closeOnSelect: true,
     },
     nav_workspace_settings: {
@@ -283,8 +264,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
       icon: Settings,
       keySequence: "gs",
       action: (ctx) => handlePowerKNavigate(ctx, [ctx.params.workspaceSlug?.toString(), "settings"]),
-      isEnabled: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
-      isVisible: (ctx) => baseWorkspaceConditions(ctx) && !baseProjectConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_settings"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_workspace_settings"),
       closeOnSelect: true,
     },
     nav_project_work_items: {
@@ -301,8 +282,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           ctx.params.projectId?.toString(),
           "issues",
         ]),
-      isEnabled: (ctx) => baseProjectConditions(ctx),
-      isVisible: (ctx) => baseProjectConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_work_items"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_work_items"),
       closeOnSelect: true,
     },
     open_project_cycle: {
@@ -323,10 +304,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           cycleDetails.id,
         ]);
       },
-      isEnabled: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
-      isVisible: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_cycle"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_cycle"),
       closeOnSelect: true,
     },
     nav_project_cycles: {
@@ -343,10 +322,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           ctx.params.projectId?.toString(),
           "cycles",
         ]),
-      isEnabled: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
-      isVisible: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.cycle_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_cycles"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_cycles"),
       closeOnSelect: true,
     },
     open_project_module: {
@@ -367,10 +344,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           moduleDetails.id,
         ]);
       },
-      isEnabled: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
-      isVisible: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_module"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_module"),
       closeOnSelect: true,
     },
     nav_project_modules: {
@@ -387,10 +362,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           ctx.params.projectId?.toString(),
           "modules",
         ]),
-      isEnabled: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
-      isVisible: (ctx) =>
-        baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx) && !!getContextProject(ctx)?.module_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_modules"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_modules"),
       closeOnSelect: true,
     },
     open_project_view: {
@@ -411,8 +384,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           viewDetails.id,
         ]);
       },
-      isEnabled: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
-      isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_view"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_view"),
       closeOnSelect: true,
     },
     nav_project_views: {
@@ -429,8 +402,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           ctx.params.projectId?.toString(),
           "views",
         ]),
-      isEnabled: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
-      isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.issue_views_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_views"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_views"),
       closeOnSelect: true,
     },
     nav_project_pages: {
@@ -447,8 +420,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           ctx.params.projectId?.toString(),
           "pages",
         ]),
-      isEnabled: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.page_view,
-      isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.page_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_pages"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_pages"),
       closeOnSelect: true,
     },
     nav_project_intake: {
@@ -465,8 +438,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           ctx.params.projectId?.toString(),
           "intake",
         ]),
-      isEnabled: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.inbox_view,
-      isVisible: (ctx) => baseProjectConditions(ctx) && !!getContextProject(ctx)?.inbox_view,
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_intake"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_intake"),
       closeOnSelect: true,
     },
     nav_project_archives: {
@@ -484,8 +457,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           "archives",
           "issues",
         ]),
-      isEnabled: (ctx) => baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx),
-      isVisible: (ctx) => baseProjectConditions(ctx) && hasProjectMemberLevelPermissions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_archives"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_archives"),
       closeOnSelect: true,
     },
     open_project_setting: {
@@ -506,8 +479,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           settingsHref,
         ]);
       },
-      isEnabled: (ctx) => baseProjectConditions(ctx),
-      isVisible: (ctx) => baseProjectConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_setting"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "open_project_setting"),
       closeOnSelect: true,
     },
     nav_project_settings: {
@@ -524,8 +497,8 @@ export const usePowerKNavigationCommandsRecord = (): Record<TPowerKNavigationCom
           "projects",
           ctx.params.projectId?.toString(),
         ]),
-      isEnabled: (ctx) => baseProjectConditions(ctx),
-      isVisible: (ctx) => baseProjectConditions(ctx),
+      isEnabled: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_settings"),
+      isVisible: (ctx) => canNavigateTo(ctx.params.workspaceSlug, ctx.params.projectId, "nav_project_settings"),
       closeOnSelect: true,
     },
   };

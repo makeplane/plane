@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import type { Release, ReleaseStatus, ReleaseWrite } from "@plane/types";
+import type { Release, ReleaseWrite } from "@plane/types";
 import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { mutate } from "swr";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -95,6 +95,7 @@ export const ReleaseOverviewProperties = observer(function ReleaseOverviewProper
         </PropertyBlockWithLabel>
         <PropertyBlockWithLabel label={t("releases.release_tag") ?? "Release tag"}>
           <ReleaseTagDropdown
+            workspaceSlug={workspaceSlug}
             value={release.tag ?? null}
             onChange={(val) => handleUpdate({ tag: val })}
             placeholder="Tag"
@@ -104,6 +105,7 @@ export const ReleaseOverviewProperties = observer(function ReleaseOverviewProper
       </div>
       <PropertyBlockWithLabel label={t("releases.labels") ?? "Labels"}>
         <ReleaseLabelDropdown
+          workspaceSlug={workspaceSlug}
           value={release.label_ids ?? []}
           onChange={(val) => handleUpdate({ label_ids: val })}
           placeholder="Label"

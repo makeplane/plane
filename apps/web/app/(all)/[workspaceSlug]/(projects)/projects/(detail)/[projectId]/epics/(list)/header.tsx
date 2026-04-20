@@ -13,12 +13,10 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { EpicIcon } from "@plane/propel/icons";
-import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import { Breadcrumbs, Tooltip, Header } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -27,16 +25,21 @@ import { HeaderFilters } from "@/components/issues/filters";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 import { CreateUpdateEpicModal } from "@/components/epics/epic-modal";
 import { EpicLayoutQuickActions } from "@/components/epics/quick-actions/layout-quick-actions";
 import { useIssueTypes } from "@/plane-web/hooks/store";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 
-export const EpicsHeader = observer(function EpicsHeader() {
-  const { workspaceSlug, projectId } = useParams();
+type TEpicsHeader = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const EpicsHeader = observer(function EpicsHeader(props: TEpicsHeader) {
+  const { workspaceSlug, projectId } = props;
   // states
   const [isCreateIssueModalOpen, setIsCreateIssueModalOpen] = useState(false);
   // store hooks
@@ -45,15 +48,12 @@ export const EpicsHeader = observer(function EpicsHeader() {
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.EPIC);
   const { currentProjectDetails } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useEpics();
   const { isMobile } = usePlatformOS();
   // derived values
   const issuesCount = getGroupIssueCount(undefined, undefined, false) || 0;
-  const canUserCreateIssue = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
   const projectEpicId = getProjectEpicId(projectId?.toString());
+  const canCreateWorkItem = permissions.getCanCreate(workspaceSlug, projectId);
 
   return (
     <>
@@ -101,10 +101,10 @@ export const EpicsHeader = observer(function EpicsHeader() {
               projectId={projectId?.toString()}
               currentProjectDetails={currentProjectDetails}
               workspaceSlug={workspaceSlug?.toString()}
-              canUserCreateIssue={canUserCreateIssue}
+              canUserCreateIssue={canCreateWorkItem}
             />
           </div>
-          {canUserCreateIssue && (
+          {canCreateWorkItem && (
             <Button
               size="lg"
               onClick={() => {

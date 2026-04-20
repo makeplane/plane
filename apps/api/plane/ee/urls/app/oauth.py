@@ -20,7 +20,6 @@ from plane.ee.views.app.oauth import (
     OAuthApplicationClientIdEndpoint,
     OAuthApplicationCategoryEndpoint,
     OAuthAppInstallationDetailEndpoint,
-    OAuthPublishedApplicationBySlugEndpoint,
     OAuthUserAppInstallationDetailEndpoint,
     OAuthWorkspacesCheckAppInstallationAllowedEndpoint,
     OAuthApplicationSupportedWorkspacesEndpoint,
@@ -77,11 +76,12 @@ urlpatterns = [
         OAuthApplicationCategoryEndpoint.as_view(),
         name="application-categories",
     ),
-    path(
-        "workspaces/<str:slug>/published-applications/<str:app_slug>/",
-        OAuthPublishedApplicationBySlugEndpoint.as_view(),
-        name="published-application-by-slug",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/published-applications/<str:app_slug>/",
+    #     OAuthPublishedApplicationBySlugEndpoint.as_view(),
+    #     name="published-application-by-slug",
+    # ),
     path(
         "workspaces-check-app-installation-allowed/<uuid:application_id>/",
         OAuthWorkspacesCheckAppInstallationAllowedEndpoint.as_view(),

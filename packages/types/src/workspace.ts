@@ -13,12 +13,9 @@
 
 import type { IActiveCycle } from "./active-cycle";
 import type { TPaginationInfo } from "./common";
-import type { TUserPermissions } from "./enums";
 import type { EProductSubscriptionEnum } from "./payment";
 import type { TProjectMembership } from "./project";
 import type { IUser, IUserLite } from "./users";
-import type { TLoginMediums } from "./instance";
-import type { IWorkspaceViewProps } from "./view-props";
 // extended imports
 import type { TWorkspaceExtendedResultEntities } from "./workspace-extended";
 
@@ -60,7 +57,7 @@ export interface IWorkspaceMemberInvitation {
   id: string;
   message: string;
   responded_at: Date;
-  role: TUserPermissions;
+  role_slug: string;
   token: string;
   invite_link: string;
   workspace: {
@@ -72,7 +69,7 @@ export interface IWorkspaceMemberInvitation {
 }
 
 export interface IWorkspaceBulkInviteFormData {
-  emails: { email: string; role: TUserPermissions }[];
+  emails: { email: string; role_slug: string }[];
 }
 
 export type Properties = {
@@ -109,36 +106,18 @@ export type TGettingStartedChecklistKeys =
 export interface IWorkspaceMember {
   id: string;
   member: IUserLite;
-  role: TUserPermissions | EUserWorkspaceRoles;
+  role_slug: string;
   created_at?: string;
-  avatar_url?: string;
-  email?: string;
-  first_name?: string;
-  last_name?: string;
-  joining_date?: string;
-  display_name?: string;
-  last_login_medium?: TLoginMediums;
   is_active?: boolean;
 }
 
-export interface IWorkspaceMemberMe {
-  company_role: string | null;
-  created_at: Date;
-  created_by: string;
-  default_props: IWorkspaceViewProps;
-  id: string;
-  member: string;
-  role: TUserPermissions | EUserWorkspaceRoles;
-  updated_at: Date;
-  updated_by: string;
-  view_props: IWorkspaceViewProps;
-  workspace: string;
+export type WorkspacePreferences = {
   draft_issue_count: number;
   active_cycles_count: number;
   explored_features: Record<TExploredFeatures, boolean | null>;
   tips: Record<TTips, boolean | null>;
   getting_started_checklist?: Record<TGettingStartedChecklistKeys, boolean | null>;
-}
+};
 
 export interface ILastActiveWorkspaceDetails {
   workspace_details: IWorkspace;

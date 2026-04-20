@@ -149,7 +149,6 @@ class ProjectTemplateDataSerializer(BaseSerializer):
             "intake_view",
             "is_time_tracking_enabled",
             "is_issue_type_enabled",
-            "guest_view_all_features",
             "is_project_updates_enabled",
             "is_epic_enabled",
             "is_workflow_enabled",

@@ -12,6 +12,8 @@
  */
 
 import { observer } from "mobx-react";
+// types
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import type { TIssueOperations } from "./root";
 import { SidebarSections } from "./sidebar-sections";
@@ -21,11 +23,14 @@ type Props = {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  isEditable: boolean;
+  permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
 };
 
 export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: Props) {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, permissions } = props;
 
   return (
     <div className="px-6 py-6 overflow-hidden overflow-y-auto h-full">
@@ -34,7 +39,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
         projectId={projectId}
         issueId={issueId}
         issueOperations={issueOperations}
-        isEditable={isEditable}
+        permissions={permissions}
       />
     </div>
   );

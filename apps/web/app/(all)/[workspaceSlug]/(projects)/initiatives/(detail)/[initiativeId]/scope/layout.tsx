@@ -17,11 +17,22 @@ import { EInitiativeNavigationItem } from "@plane/types";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { InitiativesDetailsHeader } from "@/components/initiatives/header/root";
+// types
+import type { Route } from "./+types/layout";
 
-function InitiativeScopeLayout() {
+function InitiativeScopeLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug, initiativeId } = params;
   return (
     <>
-      <AppHeader header={<InitiativesDetailsHeader selectedNavigationKey={EInitiativeNavigationItem.SCOPE} />} />
+      <AppHeader
+        header={
+          <InitiativesDetailsHeader
+            selectedNavigationKey={EInitiativeNavigationItem.SCOPE}
+            workspaceSlug={workspaceSlug}
+            initiativeId={initiativeId}
+          />
+        }
+      />
       <ContentWrapper className="overflow-hidden">
         <Outlet />
       </ContentWrapper>

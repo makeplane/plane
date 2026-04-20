@@ -43,6 +43,7 @@ export * from "./project-views";
 export * from "./project";
 export * from "./recurring-work-items";
 export * from "./rich-filters";
+export * from "./permissions";
 export * from "./router";
 export * from "./string";
 export * from "./subscription";

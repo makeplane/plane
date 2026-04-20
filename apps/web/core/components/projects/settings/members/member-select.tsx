@@ -15,17 +15,16 @@ import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Ban } from "lucide-react";
-import { EUserProjectRoles } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
 // plane ui
 import { CustomSearchSelect } from "@plane/ui";
 // helpers
-import { getFileURL } from "@plane/utils";
+import { getFileURL, isGuestRole } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 
 type Props = {
-  value: any;
+  value: string;
   onChange: (val: string) => void;
   isDisabled?: boolean;
 };
@@ -41,10 +40,10 @@ export const MemberSelect = observer(function MemberSelect(props: Props) {
 
   const options = (projectMemberIds ?? [])
     ?.map((userId) => {
-      const memberDetails = projectId ? getProjectMemberDetails(userId, projectId.toString()) : null;
+      const memberDetails = projectId ? getProjectMemberDetails(userId, projectId) : null;
 
       if (!memberDetails?.member) return;
-      const isGuest = memberDetails.role === EUserProjectRoles.GUEST;
+      const isGuest = isGuestRole(memberDetails.role_slug);
       if (isGuest) return;
 
       return {

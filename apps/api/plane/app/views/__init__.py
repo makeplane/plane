@@ -22,12 +22,11 @@ from .project.invite import (
     UserProjectInvitationsViewset,
     ProjectInvitationsViewset,
     ProjectJoinEndpoint,
+    UserProjectJoinEndpoint,
 )
 
 from .project.member import (
     ProjectMemberViewSet,
-    ProjectMemberUserEndpoint,
-    UserProjectRolesEndpoint,
     ProjectMemberPreferenceEndpoint,
 )
 
@@ -70,7 +69,7 @@ from .workspace.user_preference import WorkspaceUserPreferenceViewSet
 
 from .workspace.member import (
     WorkSpaceMemberViewSet,
-    WorkspaceMemberUserEndpoint,
+    WorkspacePreferencesEndpoint,
     WorkspaceProjectMemberEndpoint,
     WorkspaceMemberUserViewsEndpoint,
     WorkspaceMemberUserOnboardingEndpoint,

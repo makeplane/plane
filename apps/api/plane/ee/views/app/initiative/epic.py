@@ -39,7 +39,7 @@ from plane.ee.serializers.app.initiative import (
 from plane.ee.models.initiative import InitiativeEpic
 from plane.db.models import Workspace, Issue, FileAsset, IssueLink
 from plane.ee.models import EntityUpdates, MilestoneIssue
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, InitiativePermissions, ResourceType
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
@@ -140,7 +140,7 @@ class InitiativeEpicViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def create(self, request, slug, initiative_id):
         # Get the epic_ids from the request
         epic_ids = request.data.get("epic_ids", [])
@@ -254,7 +254,7 @@ class InitiativeEpicViewSet(BaseViewSet):
 
         return Response(epics, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def list(self, request, slug, initiative_id):
         initiative_epics = InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id).values_list(
             "epic_id", flat=True
@@ -378,7 +378,7 @@ class InitiativeEpicViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def destroy(self, request, slug, initiative_id, epic_id):
         initiative_epics = (
             InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id)
@@ -416,7 +416,7 @@ class InitiativeEpicIssueViewSet(BaseViewSet):
     serializer_class = IssueListDetailSerializer
     model = Issue
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def list(self, request, slug, initiative_id):
         initiative_epics = InitiativeEpic.objects.filter(workspace__slug=slug, initiative_id=initiative_id).values_list(
             "epic_id", flat=True

@@ -28,10 +28,12 @@ export const WorkspaceCustomAutomationsRoot = observer(function WorkspaceCustomA
   const { workspaceSlug } = props;
   // store hooks
   const {
-    workspaceAutomations: { isAnyAutomationAvailableForWorkspace, canCreate, setCreateUpdateModalConfig },
+    workspaceAutomations: { isAnyAutomationAvailableForWorkspace, getCanCreateAutomation, setCreateUpdateModalConfig },
   } = useAutomations();
   // translation
   const { t } = useTranslation();
+  // derived values
+  const canCreate = getCanCreateAutomation(workspaceSlug);
 
   return (
     <>

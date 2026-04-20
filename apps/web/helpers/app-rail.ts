@@ -15,7 +15,6 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 // store
 import { store } from "@/lib/store-context";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
-import { useAiFlag } from "@/plane-web/hooks/store/use-ai-flag";
 
 const SidebarFeatureKeyToFeatureFlagMap: Record<string, E_FEATURE_FLAGS | undefined> = {
   home: undefined,
@@ -33,10 +32,18 @@ export const isAppRailFeatureEnabled = (workspaceSlug: string, featureKey: strin
   switch (featureKey) {
     case "pi-chat":
       return (
-        isFeatureFlagEnabled && store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)
+        isFeatureFlagEnabled &&
+        store.workspaceFeatures.isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED)
       );
     case "wiki":
-      return store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WIKI_ENABLED);
+      return (
+        store.workspaceFeatures.isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_WIKI_ENABLED) &&
+        !!store.permissionAccessStore.can({
+          action: "view",
+          resource: "wiki",
+          workspaceSlug,
+        })
+      );
     default:
       return isFeatureFlagEnabled;
   }

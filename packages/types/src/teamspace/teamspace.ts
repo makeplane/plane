@@ -14,6 +14,7 @@
 import type { TWorkspaceBaseActivity, TBaseActivityVerbs } from "../activity";
 import type { TLogoProps } from "../common";
 import type { TIssue } from "../issues/issue";
+import type { CurrentUserPermissionState } from "../permissions/models";
 import type { TStateGroups } from "../state";
 import type { IUserLite } from "../users";
 
@@ -35,6 +36,7 @@ export type TTeamspace = {
   // user
   created_by: string;
   updated_by: string;
+  _permissions: CurrentUserPermissionState;
 };
 
 export type TTeamspaceMember = {

@@ -12,37 +12,33 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import { ListLayout } from "@/components/core/list";
 import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProjectView } from "@/hooks/store/use-project-view";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { ProjectViewListItem } from "./view-list-item";
 
-export const ProjectViewsList = observer(function ProjectViewsList() {
-  const { projectId } = useParams();
+type ProjectViewsListProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ProjectViewsList = observer(function ProjectViewsList(props: ProjectViewsListProps) {
+  const { workspaceSlug, projectId } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
-  const { getProjectViews, getFilteredProjectViews, loader } = useProjectView();
-  const { allowPermissions } = useUserPermissions();
+  const { getProjectViews, getFilteredProjectViews, loader, permissions: projectViewPermissions } = useProjectView();
   // derived values
   const projectViews = getProjectViews(projectId?.toString());
   const filteredProjectViews = getFilteredProjectViews(projectId?.toString());
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
-    EUserPermissionsLevel.PROJECT
-  );
 
   if (loader || !projectViews || !filteredProjectViews) return <ViewListLoader />;
 
@@ -62,7 +58,9 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
         <div className="flex h-full w-full flex-col">
           <ListLayout>
             {filteredProjectViews.length > 0 ? (
-              filteredProjectViews.map((view) => <ProjectViewListItem key={view.id} view={view} />)
+              filteredProjectViews.map((view) => (
+                <ProjectViewListItem key={view.id} view={view} workspaceSlug={workspaceSlug} projectId={projectId} />
+              ))
             ) : (
               <p className="mt-10 text-center text-13 text-tertiary">No results found</p>
             )}
@@ -77,7 +75,7 @@ export const ProjectViewsList = observer(function ProjectViewsList() {
             {
               label: t("project_empty_state.views.cta_primary"),
               onClick: () => toggleCreateViewModal(true),
-              disabled: !canPerformEmptyStateActions,
+              disabled: !projectViewPermissions.getCanCreateView(workspaceSlug, projectId),
               variant: "primary",
             },
           ]}

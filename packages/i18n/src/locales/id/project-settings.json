@@ -22,10 +22,6 @@
       "label": "Anggota",
       "project_lead": "Pemimpin proyek",
       "default_assignee": "Penugas default",
-      "guest_super_permissions": {
-        "title": "Beri akses tampilan untuk semua item kerja untuk pengguna tamu:",
-        "sub_heading": "Ini akan memungkinkan tamu untuk memiliki akses tampilan ke semua item kerja proyek."
-      },
       "invite_members": {
         "title": "Undang anggota",
         "sub_heading": "Undang anggota untuk bekerja di proyek Anda.",

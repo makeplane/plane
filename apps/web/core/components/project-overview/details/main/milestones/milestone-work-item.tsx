@@ -36,11 +36,12 @@ type TProps = {
   workItemId: string;
   projectId: string;
   milestoneId: string;
+  canRemoveWorkItems: boolean;
 };
 
 export const MilestoneWorkItem = observer(function MilestoneWorkItem(props: TProps) {
   // props
-  const { workspaceSlug, workItemId, projectId, milestoneId } = props;
+  const { workspaceSlug, workItemId, projectId, milestoneId, canRemoveWorkItems } = props;
 
   // hooks
   const project = useProject();
@@ -138,12 +139,14 @@ export const MilestoneWorkItem = observer(function MilestoneWorkItem(props: TPro
               </div>
             </CustomMenu.MenuItem>
 
-            <CustomMenu.MenuItem onClick={handleRemoveRelation}>
-              <div className="flex items-center gap-2 text-danger-primary">
-                <CircleMinus className="size-3.5" strokeWidth={2} />
-                <span>{isEpic ? "Remove epic" : "Remove work item"}</span>
-              </div>
-            </CustomMenu.MenuItem>
+            {canRemoveWorkItems && (
+              <CustomMenu.MenuItem onClick={handleRemoveRelation}>
+                <div className="flex items-center gap-2 text-danger-primary">
+                  <CircleMinus className="size-3.5" strokeWidth={2} />
+                  <span>{isEpic ? "Remove epic" : "Remove work item"}</span>
+                </div>
+              </CustomMenu.MenuItem>
+            )}
           </CustomMenu>
         </div>
       </div>

@@ -29,11 +29,11 @@ import { useIssueTypes } from "@/plane-web/hooks/store";
 
 type TIssueTypeSwitcherProps = {
   issueId: string;
-  disabled: boolean;
+  canSwitchWorkItemType: boolean;
 };
 
 export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIssueTypeSwitcherProps) {
-  const { issueId, disabled } = props;
+  const { issueId, canSwitchWorkItemType } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -52,7 +52,7 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
   const isWorkItemTypeEnabled = isWorkItemTypeEnabledForProject(workspaceSlug?.toString(), issue.project_id);
 
   const handleEditIssue = () => {
-    if (disabled) return;
+    if (!canSwitchWorkItemType) return;
     setIssueToEdit(toJS(issue));
     setIsCreateUpdateIssueModalOpen(true);
     toggleCreateIssueModal(true);
@@ -91,12 +91,12 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
           type="button"
           className={cn(
             "flex opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center gap-1 text-11 font-medium text-tertiary hover:text-secondary",
-            disabled ? "cursor-not-allowed" : "cursor-pointer",
+            !canSwitchWorkItemType ? "cursor-not-allowed" : "cursor-pointer",
             {
-              "text-placeholder hover:text-placeholder": disabled,
+              "text-placeholder hover:text-placeholder": !canSwitchWorkItemType,
             }
           )}
-          disabled={disabled}
+          disabled={!canSwitchWorkItemType}
           onClick={handleEditIssue}
         >
           <ArrowRightLeft className="w-3 h-3 flex-shrink-0" />

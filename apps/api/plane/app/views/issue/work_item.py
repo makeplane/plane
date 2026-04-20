@@ -31,9 +31,14 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.gzip import gzip_page
 
 # Plane imports
-from plane.app.permissions import ROLE, allow_permission
 from plane.app.views import BaseAPIView
 from plane.db.models import CycleIssue, FileAsset, Issue, IssueAssignee, IssueLabel, IssueLink, ModuleIssue
+from plane.permissions import (
+    can,
+    get_permission_conditions,
+    WorkitemPermissions,
+    WorkspacePermissions,
+)
 from plane.ee.models import (
     IssueProperty,
     IssuePropertyValue,
@@ -165,7 +170,7 @@ class WorkItemListProjectEndpoint(BaseAPIView):
     # ── GET handler ──────────────────────────────────────────────────────
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
         # 1. Base queryset with eager-loaded property values
         #    - Prefetch with to_attr: loads all property values in a single
@@ -175,6 +180,11 @@ class WorkItemListProjectEndpoint(BaseAPIView):
             project_id=project_id,
             workspace__slug=slug,
         )
+
+        # Data-level filter: deferred conditional grants (e.g., guest sees only own items)
+        conditions = get_permission_conditions(request)
+        if "creator" in conditions:
+            issue_queryset = issue_queryset.filter(created_by=request.user)
 
         spreadsheet_custom_property_flag = check_workspace_feature_flag(
             feature_key=FeatureFlag.SPREADSHEET_CUSTOM_PROPERTIES,
@@ -356,7 +366,7 @@ class WorkItemListWorkspaceEndpoint(WorkItemListProjectEndpoint):
     # ── GET handler ──────────────────────────────────────────────────────
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         # 1. Base queryset with eager-loaded property values
         #    - Prefetch with to_attr: loads all property values in a single

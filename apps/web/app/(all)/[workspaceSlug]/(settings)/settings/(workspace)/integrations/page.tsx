@@ -14,11 +14,9 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsHeading } from "@/components/settings/heading";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
@@ -26,7 +24,6 @@ import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 import { APPLICATIONS_LIST } from "@/constants/fetch-keys";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { AppListRoot } from "@/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
@@ -46,7 +43,6 @@ function WorkspaceIntegrationsPage({ params }: Route.ComponentProps) {
   // i18n
   const { t } = useTranslation();
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { fetchApplications, getApplicationsForWorkspace } = useApplications();
   const searchParams = useSearchParams();
@@ -54,10 +50,6 @@ function WorkspaceIntegrationsPage({ params }: Route.ComponentProps) {
   const isMcpConnectorEnabled = useAiFlag(workspaceSlug, "AI_MCP_CONNECTORS", false);
 
   // derived values
-  const canPerformWorkspaceMemberActions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Integrations` : undefined;
   const applications = getApplicationsForWorkspace(workspaceSlug);
   const activeTabParam = searchParams.get("tab");
@@ -82,20 +74,16 @@ function WorkspaceIntegrationsPage({ params }: Route.ComponentProps) {
 
   const areIntegrationsLoading =
     !data || isLoading || !applications || !supportedIntegrations || supportedIntegrationsLoading;
-  const isUnauthorized = workspaceUserInfo && !canPerformWorkspaceMemberActions;
 
   if (areIntegrationsLoading) {
     return <EmailSettingsLoader />;
-  }
-
-  if (isUnauthorized) {
-    return <NotAuthorizedView section="settings" className="h-auto" />;
   }
 
   const handleTabChange = (tab: "apps" | "connectors") => {
     setActiveTab(tab);
     router.push(`/${workspaceSlug}/settings/integrations?tab=${tab}`);
   };
+
   return (
     <>
       <PageHead title={pageTitle} />

@@ -28,10 +28,16 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.bgtasks.page_update import nested_page_update
 from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import ProjectPagePermission
+from plane.permissions import PagePermissions
+from plane.permissions import HasResourcePermission
 
 
 class ProjectPageRestoreEndpoint(BaseAPIView):
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
+
+    action_permissions = {
+        "create": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+    }
 
     def post(self, request, slug, project_id, page_id, pk):
         page_version = PageVersion.objects.get(pk=pk, page_id=page_id)

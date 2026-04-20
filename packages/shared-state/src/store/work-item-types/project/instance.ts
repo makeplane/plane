@@ -16,7 +16,7 @@ import { action, computed, makeObservable } from "mobx";
 import { ProjectWorkItemTypesService } from "@plane/services";
 import type {
   BaseWorkItemTypeInstanceSchema,
-  EUserPermissions as EUserPermissionsType,
+  PermissionCheckArgs,
   ProjectWorkItemTypeInstanceSchema,
 } from "@plane/types";
 // local imports
@@ -27,10 +27,7 @@ const projectTypeService = new ProjectWorkItemTypesService();
 
 export type ProjectWorkItemTypeInstanceArgs = BaseWorkItemTypeInstanceArgs & {
   projectId: string;
-  getProjectRoleByWorkspaceSlugAndProjectId: (
-    workspaceSlug: string,
-    projectId: string
-  ) => EUserPermissionsType | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
 };
 
 export class ProjectWorkItemTypeInstance extends BaseWorkItemTypeInstance implements ProjectWorkItemTypeInstanceSchema {

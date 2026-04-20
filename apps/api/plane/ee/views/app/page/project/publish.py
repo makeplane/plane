@@ -18,6 +18,8 @@ from plane.ee.permissions import (
     ProjectPagePermission,
 )
 from plane.ee.views.base import BaseAPIView
+from plane.permissions import PagePermissions
+from plane.permissions import HasResourcePermission
 from plane.db.models import DeployBoard, Workspace, Page
 from plane.app.serializers import DeployBoardSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -29,7 +31,14 @@ from plane.ee.utils.page_events import PageAction
 class ProjectPagePublishEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
+
+    action_permissions = {
+        "create": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "partial_update": {"permission": PagePermissions.EDIT, "resource_param": "project_id"},
+        "retrieve": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+        "destroy": {"permission": PagePermissions.DELETE, "resource_param": "project_id"},
+    }
 
     @check_feature_flag(FeatureFlag.PAGE_PUBLISH)
     def post(self, request, slug, project_id, page_id):

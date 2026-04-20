@@ -18,12 +18,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
-import { EUserPermissionsLevel, EPageAccess } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { calculateTotalFilters, cn } from "@plane/utils";
 import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
 import allFiltersLight from "@/app/assets/empty-state/wiki/all-filters-light.svg?url";
@@ -31,7 +30,6 @@ import nameFilterDark from "@/app/assets/empty-state/wiki/name-filter-dark.svg?u
 import nameFilterLight from "@/app/assets/empty-state/wiki/name-filter-light.svg?url";
 import { PageHead } from "@/components/core/page-title";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useDebounce from "@/hooks/use-debounce";
@@ -205,7 +203,6 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
   const [isRootDropping, setIsRootDropping] = useState(false);
   const { resolvedTheme } = useTheme();
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const router = useAppRouter();
   const rootDropRef = useRef<HTMLDivElement | null>(null);
@@ -220,6 +217,7 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
     filteredPrivatePageIds,
     filteredSharedPageIds,
     createPage,
+    getCanCreatePage,
     getPageById,
     getPaginationInfo,
     getPaginationLoader,
@@ -263,10 +261,7 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
     }
   }, [filteredArchivedPageIds, filteredPrivatePageIds, filteredPublicPageIds, filteredSharedPageIds, pageType]);
 
-  const hasWorkspaceMemberLevelPermissions = useMemo(
-    () => allowPermissions([EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER], EUserPermissionsLevel.WORKSPACE),
-    [allowPermissions]
-  );
+  const canCreatePage = workspaceSlug ? getCanCreatePage(workspaceSlug) : false;
 
   const fetchNextPage = useCallback(() => {
     if (!workspaceSlug || !hasNextPage || isFetchingNextPage) {
@@ -432,7 +427,7 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
         void movePageInternally(droppedPageId, updatePayload);
       },
       canDrop: ({ source }) => {
-        if (!hasWorkspaceMemberLevelPermissions || pageType === "archived" || pageType === "shared") {
+        if (pageType === "archived" || pageType === "shared") {
           return false;
         }
 
@@ -449,14 +444,7 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
         );
       },
     });
-  }, [
-    getPageById,
-    hasWorkspaceMemberLevelPermissions,
-    isNestedPagesEnabled,
-    movePageInternally,
-    pageType,
-    workspaceSlug,
-  ]);
+  }, [getPageById, isNestedPagesEnabled, movePageInternally, pageType, workspaceSlug]);
 
   const handleCreatePage = async () => {
     setIsCreatingPage(true);
@@ -533,7 +521,7 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
                 onClick: () => {
                   void handleCreatePage();
                 },
-                disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+                disabled: !canCreatePage || isCreatingPage,
                 variant: "primary",
               },
             ]}
@@ -558,7 +546,7 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
                 onClick: () => {
                   void handleCreatePage();
                 },
-                disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+                disabled: !canCreatePage || isCreatingPage,
                 variant: "primary",
               },
             ]}
@@ -595,7 +583,7 @@ export const PageTypePagesListLayoutRoot = observer(function PageTypePagesListLa
               onClick: () => {
                 void handleCreatePage();
               },
-              disabled: !hasWorkspaceMemberLevelPermissions || isCreatingPage,
+              disabled: !canCreatePage || isCreatingPage,
               variant: "primary",
             },
           ]}

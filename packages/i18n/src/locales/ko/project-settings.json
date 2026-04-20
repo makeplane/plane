@@ -22,10 +22,6 @@
       "label": "멤버",
       "project_lead": "프로젝트 리드",
       "default_assignee": "기본 담당자",
-      "guest_super_permissions": {
-        "title": "게스트 사용자에게 모든 작업 항목에 대한 보기 권한 부여:",
-        "sub_heading": "이렇게 하면 게스트가 모든 프로젝트 작업 항목에 대한 보기 권한을 갖게 됩니다."
-      },
       "invite_members": {
         "title": "멤버 초대",
         "sub_heading": "프로젝트에서 작업할 멤버를 초대하세요.",

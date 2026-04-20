@@ -29,6 +29,7 @@ from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
+from .permission import urlpatterns as permission_urls
 from .release import urlpatterns as release_urls
 
 # Integrations URLS
@@ -75,5 +76,6 @@ urlpatterns = [
     *page_urls,
     *agents_app_urls,
     *runnerctl_app_urls,
+    *permission_urls,
     *oauth_bridge_urls,
 ]

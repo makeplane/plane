@@ -12,49 +12,59 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { ContentWrapper, ERowVariant } from "@plane/ui";
-// hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
+// types
+import type { TTeamspaceDetailPermissions } from "@/store/teamspace/permissions/root";
 // local imports
 import { TeamsOverviewContent } from "./content";
 import { TeamsOverviewSidebar } from "./sidebar/root";
 
 type TTeamsOverviewRootProps = {
   teamspaceId: string;
+  workspaceSlug: string;
 };
 
 export const TeamsOverviewRoot = observer(function TeamsOverviewRoot(props: TTeamsOverviewRootProps) {
-  const { teamspaceId } = props;
-  // router
-  const { workspaceSlug } = useParams();
+  const { teamspaceId, workspaceSlug } = props;
   // hooks
-  const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
-  const { isCurrentUserMemberOfTeamspace, getTeamspaceById } = useTeamspaces();
+  const { isCurrentUserMemberOfTeamspace, permissions } = useTeamspaces();
   // derived values
-  const teamspace = getTeamspaceById(teamspaceId);
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
-  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
-  const hasAdminLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
+  const commentPerms = permissions.getCommentPermissions(workspaceSlug, teamspaceId);
+  const overviewPermissions: TTeamspaceDetailPermissions = {
+    canEdit: permissions.getCanEdit(workspaceSlug, teamspaceId),
+    canDelete: permissions.getCanDelete(workspaceSlug, teamspaceId),
+    canManage: permissions.getCanManage(workspaceSlug, teamspaceId),
+    canEditProperty: (property) => permissions.getCanEditProperty(workspaceSlug, teamspaceId, property),
+    canAddMember: permissions.getCanAddMember(workspaceSlug, teamspaceId),
+    canRemoveMember: permissions.getCanRemoveMember(workspaceSlug, teamspaceId),
+    canAddProject: permissions.getCanAddProject(workspaceSlug, teamspaceId),
+    canRemoveProject: permissions.getCanRemoveProject(workspaceSlug, teamspaceId),
+    canCreateWorkItem: permissions.getCanCreateWorkItem(workspaceSlug, teamspaceId),
+    canCreateView: permissions.getViewPermissions(workspaceSlug, teamspaceId).canCreate,
+    canCreatePage: permissions.getCanCreatePage(workspaceSlug),
+    comments: {
+      canCreate: commentPerms.canCreate,
+      canEdit: (id) => commentPerms.getCanEdit(id),
+      canDelete: (id) => commentPerms.getCanDelete(id),
+      canReact: (id) => commentPerms.getCanReact(id),
+    },
+  };
 
   return (
     <ContentWrapper variant={ERowVariant.HUGGING}>
       <div className="flex w-full h-full">
-        <TeamsOverviewContent
-          teamspaceId={teamspaceId}
-          isEditingAllowed={(hasAdminLevelPermissions || isTeamspaceLead) && isTeamspaceMember}
-        />
-        {isTeamspaceMember && <TeamsOverviewSidebar teamspaceId={teamspaceId} />}
+        <TeamsOverviewContent teamspaceId={teamspaceId} permissions={overviewPermissions} />
+        {isTeamspaceMember && (
+          <TeamsOverviewSidebar
+            teamspaceId={teamspaceId}
+            workspaceSlug={workspaceSlug}
+            permissions={overviewPermissions}
+          />
+        )}
       </div>
     </ContentWrapper>
   );

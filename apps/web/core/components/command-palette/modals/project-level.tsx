@@ -102,6 +102,7 @@ export const ProjectLevelModals = observer(function ProjectLevelModals(props: TP
         storeType={EPageStoreType.PROJECT}
       />
       <CreateUpdateAutomationModal
+        workspaceSlug={workspaceSlug}
         isOpen={createUpdateModalConfig.isOpen}
         data={createUpdateModalConfig.payload ?? undefined}
         onClose={() => setCreateUpdateModalConfig({ isOpen: false, payload: null })}

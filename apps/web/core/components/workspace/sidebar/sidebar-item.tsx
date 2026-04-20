@@ -17,18 +17,17 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 // plane imports
 import type { IWorkspaceSidebarNavigationItem } from "@plane/constants";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { joinUrlPath } from "@plane/utils";
 // components
 import { SidebarNavItem } from "@/components/sidebar/sidebar-navigation";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // plane web imports
 import { getSidebarNavigationItemIcon } from "@/components/workspace/sidebar/helper";
-import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
+import { useWorkspaceAccess } from "@/hooks/permissions/use-workspace-access";
 
 type Props = {
   item: IWorkspaceSidebarNavigationItem;
@@ -40,7 +39,7 @@ export const SidebarItem = observer(function SidebarItem({ item, additionalRende
   const { t } = useTranslation();
   const pathname = usePathname();
   const { workspaceSlug } = useParams();
-  const { allowPermissions } = useUserPermissions();
+  const { canAccessWorkspaceResource } = useWorkspaceAccess();
   const { isWorkspaceItemPinned } = useWorkspaceNavigationPreferences();
   const { data } = useUser();
 
@@ -62,8 +61,6 @@ export const SidebarItem = observer(function SidebarItem({ item, additionalRende
   ];
   const slug = workspaceSlug?.toString() || "";
 
-  if (!allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug)) return null;
-
   const isPinned = isWorkspaceItemPinned(item.key);
   if (!isPinned && !staticItems.includes(item.key)) return null;
 
@@ -71,7 +68,7 @@ export const SidebarItem = observer(function SidebarItem({ item, additionalRende
     item.key === "your_work" && data?.id ? joinUrlPath(slug, item.href, data?.id) : joinUrlPath(slug, item.href);
   const icon = getSidebarNavigationItemIcon(item.key);
 
-  if (!isSidebarFeatureEnabled(item.key, slug)) return null;
+  if (!canAccessWorkspaceResource(slug, item.key)) return null;
   return (
     <Link href={itemHref} onClick={handleLinkClick}>
       <SidebarNavItem isActive={item.highlight(pathname, itemHref)}>

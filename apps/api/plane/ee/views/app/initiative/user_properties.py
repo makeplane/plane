@@ -16,13 +16,15 @@ from rest_framework import status
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import Workspace
 from plane.ee.models import InitiativeUserProperty
-from plane.ee.permissions import WorkspaceEntityPermission
+from plane.permissions import can, InitiativePermissions
 from plane.ee.serializers.app.initiative import InitiativeUserPropertySerializer
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag import FeatureFlag
 
 
 class InitiativeUserPropertiesEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
-
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         initiative_user_properties, _ = InitiativeUserProperty.objects.get_or_create(
@@ -31,6 +33,8 @@ class InitiativeUserPropertiesEndpoint(BaseAPIView):
         serializer = InitiativeUserPropertySerializer(initiative_user_properties)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id")
     def patch(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         initiative_user_properties = InitiativeUserProperty.objects.get(user=request.user, workspace=workspace)

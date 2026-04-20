@@ -241,30 +241,6 @@ export class UserService extends APIService {
       });
   }
 
-  async leaveWorkspace(workspaceSlug: string) {
-    return this.post(`/api/workspaces/${workspaceSlug}/members/leave/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async joinProject(workspaceSlug: string, project_ids: string[]): Promise<any> {
-    return this.post(`/api/users/me/workspaces/${workspaceSlug}/projects/join/`, { project_ids })
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async leaveProject(workspaceSlug: string, projectId: string) {
-    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/members/leave/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
   async checkEmail(token: string, email: string): Promise<IEmailCheckResponse> {
     return this.post(
       "/auth/email-check/",

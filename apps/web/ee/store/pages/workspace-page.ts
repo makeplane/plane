@@ -17,7 +17,6 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { EPageAccess } from "@plane/constants";
 import type { TPage } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 // services
 import { WorkspacePageService } from "@/services/page/workspace-page.service";
 // plane web store
@@ -84,11 +83,12 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       },
     });
 
-    makeObservable(this, {
+    makeObservable<WorkspacePage, "permissionMeta">(this, {
       // computed
       parentPageIds: computed,
       subPageIds: computed,
       subPages: computed,
+      permissionMeta: computed,
       canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
@@ -99,6 +99,7 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
       canCurrentUserCommentOnPage: computed,
+      canCurrentUserPublishPage: computed,
       isContentEditable: computed,
     });
   }
@@ -129,6 +130,21 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     return this.subPageIds.map((id) => this.rootStore.workspacePages.data[id]);
   }
 
+  private get permissionMeta():
+    | {
+        workspaceSlug: string;
+        resourceMeta: { resourceId: string };
+      }
+    | undefined {
+    if (!this.id || !this.workspaceSlug) return;
+    return {
+      workspaceSlug: this.workspaceSlug,
+      resourceMeta: {
+        resourceId: this.id,
+      },
+    };
+  }
+
   /**
    * @description returns true if the current logged in user can access the page
    */
@@ -157,14 +173,14 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       return this.canEditWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
     return (
-      !!currentUserWorkspaceRole &&
-      currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER &&
-      this.canCurrentUserAccessPage
+      this.rootStore.permissionAccessStore.can({
+        resource: "wiki",
+        action: "edit",
+        ...this.permissionMeta,
+      }) && this.canCurrentUserAccessPage
     );
   }
 
@@ -179,29 +195,32 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       return this.canEditWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-    return (
-      this.isCurrentUserOwner || (!!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER)
-    );
+    // Fallback to RBAC
+    if (!this.workspaceSlug) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "create",
+      workspaceSlug: this.workspaceSlug,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    const workspaceSlug = this.workspace && this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-    const isAdmin = currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    if (this.isCurrentUserOwner) return true;
 
     if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner || this.canEditWithSharedAccess || isAdmin;
+      return this.canEditWithSharedAccess;
     }
 
-    return this.isCurrentUserOwner || isAdmin;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -219,12 +238,13 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
 
     if (this.hasSharedAccess) return false;
 
-    // Fallback to regular access control
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-
-    return currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "delete",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -237,12 +257,13 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     // Shared access users cannot delete pages
     if (this.hasSharedAccess) return false;
 
-    // Fallback to regular access control
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-
-    return currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "delete",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -252,16 +273,18 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     // Owner can always comment
     if (this.isCurrentUserOwner) return true;
 
-    // Shared access users can comment if they have at least view access
+    // Shared access users can comment if they have at least comment access
     if (this.hasSharedAccess) {
       return this.canCommentWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "comment",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -276,29 +299,47 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       return this.canViewWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-
-    return !!currentUserWorkspaceRole && currentUserWorkspaceRole >= EUserWorkspaceRoles.MEMBER;
+    // Fallback to RBAC
+    if (!this.workspaceSlug) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "view",
+      workspaceSlug: this.workspaceSlug,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can move the page
    */
   get canCurrentUserMovePage() {
-    // Shared access users cannot move pages
+    // Shared access users
     if (this.hasSharedAccess) {
       return this.isCurrentUserOwner || this.canEditWithSharedAccess;
     }
 
-    // Fallback to regular access control
-    const { workspaceSlug } = this.rootStore.router;
-    const currentUserWorkspaceRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+    // Owner can always move
+    if (this.isCurrentUserOwner) return true;
 
-    return this.isCurrentUserOwner || currentUserWorkspaceRole === EUserWorkspaceRoles.ADMIN;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "edit",
+      ...this.permissionMeta,
+    });
+  }
+
+  /**
+   * @description returns true if the current logged in user can publish the page
+   */
+  get canCurrentUserPublishPage() {
+    if (this.isCurrentUserOwner) return true;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "share",
+      ...this.permissionMeta,
+    });
   }
 
   /**
@@ -316,8 +357,6 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
     // Can't edit if archived or locked
     if (isArchived || isLocked) return false;
 
-    const isPublic = this.access === EPageAccess.PUBLIC;
-
     // Owner can always edit (if not archived/locked)
     if (this.isCurrentUserOwner) return true;
 
@@ -326,10 +365,13 @@ export class WorkspacePage extends BasePage implements TWorkspacePage {
       return this.canEditWithSharedAccess;
     }
 
-    const currentUserRole =
-      workspaceSlug && this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-
-    return isPublic && !!currentUserRole && currentUserRole >= EUserWorkspaceRoles.MEMBER;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   getRedirectionLink = computedFn(() => {

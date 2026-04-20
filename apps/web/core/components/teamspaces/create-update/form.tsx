@@ -20,10 +20,9 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, Logo } from "@plane/propel/emoji-icon-picker";
 import type { TTeamspace } from "@plane/types";
-import { EFileAssetType, EUserWorkspaceRoles } from "@plane/types";
+import { EFileAssetType } from "@plane/types";
 import { Input } from "@plane/ui";
-
-import { cn, getDescriptionPlaceholderI18n, isEditorEmpty } from "@plane/utils";
+import { cn, getDescriptionPlaceholderI18n, isGuestRole } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { RichTextEditor } from "@/components/editor/rich-text";
@@ -68,8 +67,8 @@ export const CreateOrUpdateTeamForm = observer(function CreateOrUpdateTeamForm(p
     () =>
       workspaceMemberIds?.filter((userId) => {
         const memberDetails = getWorkspaceMemberDetails(userId);
-        if (!memberDetails?.role) return false;
-        return (memberDetails.role as unknown as EUserWorkspaceRoles) === EUserWorkspaceRoles.GUEST ? false : true; // TODO: remove this after migration to EUserWorkspaceRoles
+        if (!memberDetails?.role_slug) return false;
+        return isGuestRole(memberDetails.role_slug) ? false : true;
       }),
     [workspaceMemberIds, getWorkspaceMemberDetails]
   );

@@ -23,7 +23,10 @@ import { CreateUpdateRelationInline } from "./create-update-relation-inline";
 type Props = {
   workspaceSlug: string;
   definition: IWorkItemRelationDefinition;
-  isEditable: boolean;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
   isEditing: boolean;
   onEdit: () => void;
   onDelete: () => void;
@@ -31,7 +34,7 @@ type Props = {
 };
 
 export const RelationDefinitionItem = observer(function RelationDefinitionItem(props: Props) {
-  const { workspaceSlug, definition, isEditable, isEditing, onEdit, onDelete, onCancelEdit } = props;
+  const { workspaceSlug, definition, permissions, isEditing, onEdit, onDelete, onCancelEdit } = props;
 
   if (isEditing) {
     return (
@@ -52,34 +55,38 @@ export const RelationDefinitionItem = observer(function RelationDefinitionItem(p
           <Badge variant="neutral" size="sm">
             Default
           </Badge>
-        ) : isEditable ? (
+        ) : permissions.canEdit || permissions.canDelete ? (
           <>
-            <button
-              type="button"
-              className="flex items-center justify-center size-5 rounded-sm hover:bg-surface-3 text-tertiary"
-              onClick={onEdit}
-            >
-              <Pencil className="size-3.5" />
-            </button>
-            <CustomMenu
-              customButton={
-                <button
-                  type="button"
-                  className="flex items-center justify-center size-5 rounded-sm hover:bg-surface-3 text-tertiary"
-                >
-                  <EllipsisVertical className="size-3.5" />
-                </button>
-              }
-              placement="bottom-end"
-              closeOnSelect
-            >
-              <CustomMenu.MenuItem onClick={onDelete} className="text-danger-primary">
-                <div className="flex items-center gap-2">
-                  <Trash2 className="size-3.5" />
-                  Delete
-                </div>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            {permissions.canEdit && (
+              <button
+                type="button"
+                className="flex items-center justify-center size-5 rounded-sm hover:bg-surface-3 text-tertiary"
+                onClick={onEdit}
+              >
+                <Pencil className="size-3.5" />
+              </button>
+            )}
+            {permissions.canDelete && (
+              <CustomMenu
+                customButton={
+                  <button
+                    type="button"
+                    className="flex items-center justify-center size-5 rounded-sm hover:bg-surface-3 text-tertiary"
+                  >
+                    <EllipsisVertical className="size-3.5" />
+                  </button>
+                }
+                placement="bottom-end"
+                closeOnSelect
+              >
+                <CustomMenu.MenuItem onClick={onDelete} className="text-danger-primary">
+                  <div className="flex items-center gap-2">
+                    <Trash2 className="size-3.5" />
+                    Delete
+                  </div>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
           </>
         ) : null}
       </div>

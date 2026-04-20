@@ -29,7 +29,7 @@ type TDeDupeButtonRoot = {
 export const DeDupeButtonRoot = observer(function DeDupeButtonRoot(props: TDeDupeButtonRoot) {
   const { workspaceSlug, isDuplicateModalOpen, label, handleOnClick } = props;
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  if (!isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
+  if (!isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED)) return <></>;
   return (
     <WithAiFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="AI_DEDUPE">
       <button

@@ -220,6 +220,10 @@
             "title": "Clave del atributo de grupo",
             "description": "El atributo del proveedor de identidad usado para identificar y sincronizar grupos de usuarios.",
             "placeholder": "Grupos"
+          },
+          "default_workspace_role": {
+            "title": "Rol predeterminado del espacio de trabajo",
+            "description": "El rol asignado a los usuarios cuando se añaden automáticamente al espacio de trabajo mediante la sincronización de grupos."
           }
         },
         "group_mapping": {

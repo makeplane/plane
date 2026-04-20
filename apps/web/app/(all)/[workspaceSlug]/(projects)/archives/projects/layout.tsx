@@ -18,13 +18,13 @@ import { ContentWrapper } from "@/components/core/content-wrapper";
 import { WorkspaceArchivesHeader } from "@/components/archives/workspace-archives-header";
 // layout
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-
+// types
 import type { Route } from "./+types/layout";
 
 export default function ArchivedProjectsLayout({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   return (
-    <WorkspaceAccessWrapper pageKey="archives">
+    <WorkspaceAccessWrapper pageKey="archives" workspaceSlug={workspaceSlug}>
       <AppHeader header={<WorkspaceArchivesHeader activeTab="projects" workspaceSlug={workspaceSlug} />} />
       <ContentWrapper>
         <Outlet />

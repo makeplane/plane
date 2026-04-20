@@ -14,27 +14,29 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
 
-export const ProjectArchivedEpicsEmptyState = observer(function ProjectArchivedEpicsEmptyState() {
+type ProjectArchivedEpicsEmptyStateProps = {
+  permissions: {
+    canClearFilters: boolean;
+  };
+};
+
+export const ProjectArchivedEpicsEmptyState = observer(function ProjectArchivedEpicsEmptyState(
+  props: ProjectArchivedEpicsEmptyStateProps
+) {
+  const { permissions } = props;
+  // router
   const { projectId: routerProjectId } = useParams();
   const projectId = routerProjectId ? routerProjectId.toString() : undefined;
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const archivedWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.ARCHIVED_EPIC, projectId);
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -47,7 +49,7 @@ export const ProjectArchivedEpicsEmptyState = observer(function ProjectArchivedE
             {
               label: "Clear filters",
               onClick: archivedWorkItemFilter?.clearFilters,
-              disabled: !canPerformEmptyStateActions || !archivedWorkItemFilter,
+              disabled: !permissions.canClearFilters || !archivedWorkItemFilter,
               variant: "secondary",
             },
           ]}

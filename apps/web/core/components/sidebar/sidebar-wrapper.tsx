@@ -11,10 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router";
 import { observer } from "mobx-react";
 // plane helpers
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { PreferencesIcon } from "@plane/propel/icons";
 import { ScrollArea } from "@plane/propel/scrollarea";
@@ -22,7 +22,6 @@ import { ScrollArea } from "@plane/propel/scrollarea";
 import { CustomizeNavigationDialog } from "@/components/navigation/customize-navigation-dialog";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import useSize from "@/hooks/use-window-size";
 // plane web components
 import { WorkspaceEditionBadge } from "@/components/workspace/edition-badge";
@@ -30,6 +29,7 @@ import { AppSidebarToggleButton } from "./sidebar-toggle-button";
 import { IconButton } from "@plane/propel/icon-button";
 import { SidebarTipSection } from "../workspace/sidebar/sidebar-tip-section";
 import { SidebarTrySection } from "../workspace/sidebar/sidebar-try-section";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type TSidebarWrapperProps = {
   title: string;
@@ -39,20 +39,18 @@ type TSidebarWrapperProps = {
 
 export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWrapperProps) {
   const { title, children, quickActions } = props;
+  // router
+  const { workspaceSlug } = useParams();
+  // refs
+  const ref = useRef<HTMLDivElement>(null);
   // state
   const [isCustomizeNavDialogOpen, setIsCustomizeNavDialogOpen] = useState(false);
   // store hooks
   const { toggleSidebar, sidebarCollapsed } = useAppTheme();
   const windowSize = useSize();
-  const { allowPermissions } = useUserPermissions();
-
-  // refs
-  const ref = useRef<HTMLDivElement>(null);
-
-  const isWorkspaceAdmin = useMemo(
-    () => allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE),
-    [allowPermissions]
-  );
+  const { permissions: workspacePermissions } = useWorkspace();
+  // derived
+  const canManageWorkspace = workspaceSlug ? workspacePermissions.getCanManage(workspaceSlug) : false;
 
   useOutsideClickDetector(ref, () => {
     if (sidebarCollapsed === false && window.innerWidth < 768) {
@@ -100,7 +98,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           viewportClassName="flex h-full w-full flex-col gap-4 overflow-x-hidden overflow-y-auto px-3 pb-3 pt-4"
         >
           {children}
-          {isWorkspaceAdmin && (
+          {canManageWorkspace && (
             <div className="flex flex-col gap-2">
               <SidebarTrySection />
               <SidebarTipSection />

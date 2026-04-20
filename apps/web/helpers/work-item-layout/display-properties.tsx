@@ -55,6 +55,7 @@ import {
 } from "@/components/issues/issue-layouts/table/columns";
 // lib
 import { store } from "@/lib/store-context";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 export const shouldRenderWorkItemPropertyColumn = (key: string): boolean => {
   const isEstimateEnabled = store.projectRoot.project.currentProjectDetails?.estimate !== null;
@@ -188,22 +189,78 @@ export function SpreadSheetPropertyIcon(props: ISvgIcons & { iconKey: TSpreadshe
   return <Icon {...props} />;
 }
 
-export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpreadsheetColumn } = {
-  assignee: SpreadsheetAssigneeColumn,
-  created_on: SpreadsheetCreatedOnColumn,
-  due_date: SpreadsheetDueDateColumn,
-  estimate: SpreadsheetEstimateColumn,
-  labels: SpreadsheetLabelColumn,
-  modules: SpreadsheetModuleColumn,
-  cycle: SpreadsheetCycleColumn,
-  link: SpreadsheetLinkColumn,
-  priority: SpreadsheetPriorityColumn,
-  start_date: SpreadsheetStartDateColumn,
-  state: SpreadsheetStateColumn,
-  sub_issue_count: SpreadsheetSubIssueColumn,
-  updated_on: SpreadsheetUpdatedOnColumn,
-  attachment_count: SpreadsheetAttachmentColumn,
-  customer_count: SpreadsheetCustomerColumn,
-  customer_request_count: SpreadSheetCustomerRequestColumn,
-  releases: SpreadsheetReleaseColumn,
+type SpreadsheetColumnDetails = {
+  workItemProperty: TWorkItemProperty;
+  component: TSpreadsheetColumn;
+};
+
+export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: SpreadsheetColumnDetails } = {
+  assignee: {
+    workItemProperty: "assignee_ids",
+    component: SpreadsheetAssigneeColumn,
+  },
+  created_on: {
+    workItemProperty: "created_at",
+    component: SpreadsheetCreatedOnColumn,
+  },
+  due_date: {
+    workItemProperty: "target_date",
+    component: SpreadsheetDueDateColumn,
+  },
+  estimate: {
+    workItemProperty: "estimate_point",
+    component: SpreadsheetEstimateColumn,
+  },
+  labels: {
+    workItemProperty: "label_ids",
+    component: SpreadsheetLabelColumn,
+  },
+  modules: {
+    workItemProperty: "module_ids",
+    component: SpreadsheetModuleColumn,
+  },
+  cycle: {
+    workItemProperty: "cycle_id",
+    component: SpreadsheetCycleColumn,
+  },
+  link: {
+    workItemProperty: "link_count",
+    component: SpreadsheetLinkColumn,
+  },
+  priority: {
+    workItemProperty: "priority",
+    component: SpreadsheetPriorityColumn,
+  },
+  start_date: {
+    workItemProperty: "start_date",
+    component: SpreadsheetStartDateColumn,
+  },
+  state: {
+    workItemProperty: "state_id",
+    component: SpreadsheetStateColumn,
+  },
+  sub_issue_count: {
+    workItemProperty: "sub_issues_count",
+    component: SpreadsheetSubIssueColumn,
+  },
+  updated_on: {
+    workItemProperty: "updated_at",
+    component: SpreadsheetUpdatedOnColumn,
+  },
+  attachment_count: {
+    workItemProperty: "attachment_count",
+    component: SpreadsheetAttachmentColumn,
+  },
+  customer_count: {
+    workItemProperty: "customer_ids",
+    component: SpreadsheetCustomerColumn,
+  },
+  customer_request_count: {
+    workItemProperty: "customer_request_ids",
+    component: SpreadSheetCustomerRequestColumn,
+  },
+  releases: {
+    workItemProperty: "release_ids",
+    component: SpreadsheetReleaseColumn,
+  },
 };

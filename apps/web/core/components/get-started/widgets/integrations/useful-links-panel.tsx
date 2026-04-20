@@ -19,15 +19,15 @@ import type { TUsefulLink } from "./utils";
 
 type UsefulLinksPanelProps = {
   readonly links: TUsefulLink[];
-  readonly isWorkspaceAdmin: boolean;
+  readonly showFullWidth: boolean;
 };
 
-export const UsefulLinksPanel: FC<UsefulLinksPanelProps> = memo(function UsefulLinksPanel({ links, isWorkspaceAdmin }) {
+export const UsefulLinksPanel: FC<UsefulLinksPanelProps> = memo(function UsefulLinksPanel({ links, showFullWidth }) {
   return (
     <nav
       className={cn(
         "flex flex-col items-start gap-4 rounded-xl bg-layer-2 border border-subtle p-2 w-full max-w-52 shadow-raised-100",
-        !isWorkspaceAdmin && "max-w-full"
+        showFullWidth && "max-w-full"
       )}
       aria-label="Useful links"
     >

@@ -73,6 +73,7 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
   const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId, issueServiceType);
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const isCrossProjectSubWorkItemsEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
     EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED
   );
   const issue = getIssueById(issueId);

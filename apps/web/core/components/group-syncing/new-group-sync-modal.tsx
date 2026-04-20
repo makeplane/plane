@@ -14,13 +14,13 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { EUserPermissions, ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CustomSelect, Input, ModalCore } from "@plane/ui";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import type { GroupMap } from "@plane/types";
 import { useProject } from "@/hooks/store/use-project";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { cn } from "@plane/utils";
@@ -28,7 +28,7 @@ import { cn } from "@plane/utils";
 export type TNewGroupSyncFormFieldOptions = {
   idp_group_name: string;
   project: string;
-  default_role: EUserPermissions;
+  role: string;
 };
 
 export type TNewGroupSyncModalProps = {
@@ -43,11 +43,14 @@ export type TNewGroupSyncModalProps = {
 const defaultValues: TNewGroupSyncFormFieldOptions = {
   idp_group_name: "",
   project: "",
-  default_role: EUserPermissions.MEMBER,
+  role: "",
 };
 
 export const NewGroupSyncModal = observer(function NewGroupSyncModal(props: TNewGroupSyncModalProps) {
-  const { isModalOpen, handleOnClose, workspaceSlug: _workspaceSlug, preloadedData, onCreate, onUpdate } = props;
+  const { isModalOpen, handleOnClose, workspaceSlug, preloadedData, onCreate, onUpdate } = props;
+  const { getProjectRolesByWorkspaceSlug } = useRoleManagement();
+  const projectRoles = getProjectRolesByWorkspaceSlug(workspaceSlug, "active");
+
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -60,7 +63,7 @@ export const NewGroupSyncModal = observer(function NewGroupSyncModal(props: TNew
           ...defaultValues,
           idp_group_name: preloadedData?.idp_group_name ?? "",
           project: preloadedData?.project ?? "",
-          default_role: preloadedData?.default_role ?? EUserPermissions.MEMBER,
+          role: preloadedData?.role ?? "",
         }
       : defaultValues,
   });
@@ -82,6 +85,12 @@ export const NewGroupSyncModal = observer(function NewGroupSyncModal(props: TNew
   }, [preloadedData, reset, isModalOpen]);
 
   const { getProjectById } = useProject();
+
+  const getRoleName = (roleId: string) => {
+    const role = projectRoles.find((r) => r.id === roleId);
+    return role?.name ?? "";
+  };
+
   return (
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
       <form
@@ -174,33 +183,33 @@ export const NewGroupSyncModal = observer(function NewGroupSyncModal(props: TNew
           </div>
 
           <div>
-            <label htmlFor="default_role" className="mb-2 text-secondary text-14 font-medium">
+            <label htmlFor="role" className="mb-2 text-secondary text-14 font-medium">
               {t("workspace_settings.settings.group_syncing.modal.default_role.text")}
             </label>
             <Controller
               control={control}
-              name="default_role"
+              name="role"
               rules={{
                 required: t("workspace_settings.settings.group_syncing.modal.default_role.required"),
               }}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}
-                  label={<span className="text-13">{ROLE[value]}</span>}
+                  label={<span className="text-13">{getRoleName(value) || "Select a Role"}</span>}
                   onChange={onChange}
                   className="flex-grow w-full"
                   buttonClassName="border-[0.5px] border-subtle-1"
                   input
                 >
-                  {Object.entries(ROLE).map(([key, value]) => (
-                    <CustomSelect.Option key={key} value={parseInt(key)}>
-                      {value}
+                  {projectRoles.map((role) => (
+                    <CustomSelect.Option key={role.id} value={role.id}>
+                      {role.name}
                     </CustomSelect.Option>
                   ))}
                 </CustomSelect>
               )}
             />
-            {errors.default_role && <span className="text-11 text-danger-primary">{errors.default_role?.message}</span>}
+            {errors.role && <span className="text-11 text-danger-primary">{errors.role?.message}</span>}
           </div>
         </div>
         <div className="px-5 py-4 flex items-center justify-end gap-2 border-t-[0.5px] border-subtle">

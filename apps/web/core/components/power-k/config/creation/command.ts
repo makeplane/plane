@@ -13,17 +13,12 @@
 
 import { FileText, FolderPlus, Layers, SquarePlus } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { ContrastIcon, DiceIcon, LayersIcon } from "@plane/propel/icons";
 // components
-import { EUserProjectRoles } from "@plane/types";
-import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useProject } from "@/hooks/store/use-project";
-import { useUser } from "@/hooks/store/user";
-// plane web imports
-import { getIsWorkspaceCreationDisabled } from "@/helpers/workspace";
+import { usePowerKPermissions } from "@/components/command-palette/power-k/hooks/use-power-k-permissions";
 
 export type TPowerKCreationCommandKeys =
   | "create_work_item"
@@ -40,11 +35,6 @@ export type TPowerKCreationCommandKeys =
 export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommandKeys, TPowerKCommandConfig> => {
   // store
   const {
-    canPerformAnyCreateAction,
-    permission: { allowPermissions },
-  } = useUser();
-  const { workspaceProjectIds, getPartialProjectById } = useProject();
-  const {
     toggleCreateIssueModal,
     toggleCreateProjectModal,
     toggleCreateCycleModal,
@@ -52,23 +42,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
     toggleCreateViewModal,
     toggleCreatePageModal,
   } = useCommandPalette();
-  // derived values
-  const canCreateWorkItem = canPerformAnyCreateAction && workspaceProjectIds && workspaceProjectIds.length > 0;
-  const canCreateProject = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
-  const hasProjectMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      ctx.params.workspaceSlug?.toString(),
-      ctx.params.projectId?.toString()
-    );
-  const isWorkspaceCreationDisabled = getIsWorkspaceCreationDisabled();
-
-  const getProjectDetails = (ctx: TPowerKContext) =>
-    ctx.params.projectId ? getPartialProjectById(ctx.params.projectId.toString()) : undefined;
+  const { canCreateResource } = usePowerKPermissions();
 
   return {
     create_work_item: {
@@ -79,8 +53,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: LayersIcon,
       keySequence: "ni",
       action: () => toggleCreateIssueModal(true),
-      isEnabled: () => Boolean(canCreateWorkItem),
-      isVisible: () => Boolean(canCreateWorkItem),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_work_item"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_work_item"),
       closeOnSelect: true,
     },
     create_page: {
@@ -91,9 +65,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: FileText,
       keySequence: "nd",
       action: () => toggleCreatePageModal({ isOpen: true }),
-      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.page_view && hasProjectMemberLevelPermissions(ctx)),
-      isVisible: (ctx) =>
-        Boolean(ctx.params.projectId && getProjectDetails(ctx)?.page_view && hasProjectMemberLevelPermissions(ctx)),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_page"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_page"),
       closeOnSelect: true,
     },
     create_view: {
@@ -104,11 +77,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: Layers,
       keySequence: "nv",
       action: () => toggleCreateViewModal(true),
-      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.issue_views_view && hasProjectMemberLevelPermissions(ctx)),
-      isVisible: (ctx) =>
-        Boolean(
-          ctx.params.projectId && getProjectDetails(ctx)?.issue_views_view && hasProjectMemberLevelPermissions(ctx)
-        ),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_view"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_view"),
       closeOnSelect: true,
     },
     create_cycle: {
@@ -119,9 +89,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: ContrastIcon,
       keySequence: "nc",
       action: () => toggleCreateCycleModal(true),
-      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
-      isVisible: (ctx) =>
-        Boolean(ctx.params.projectId && getProjectDetails(ctx)?.cycle_view && hasProjectMemberLevelPermissions(ctx)),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_cycle"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_cycle"),
       closeOnSelect: true,
     },
     create_module: {
@@ -132,9 +101,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: DiceIcon,
       keySequence: "nm",
       action: () => toggleCreateModuleModal(true),
-      isEnabled: (ctx) => Boolean(getProjectDetails(ctx)?.module_view && hasProjectMemberLevelPermissions(ctx)),
-      isVisible: (ctx) =>
-        Boolean(ctx.params.projectId && getProjectDetails(ctx)?.module_view && hasProjectMemberLevelPermissions(ctx)),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_module"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_module"),
       closeOnSelect: true,
     },
     create_project: {
@@ -145,8 +113,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       icon: FolderPlus,
       keySequence: "np",
       action: () => toggleCreateProjectModal(true),
-      isEnabled: () => Boolean(canCreateProject),
-      isVisible: () => Boolean(canCreateProject),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_project"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_project"),
       closeOnSelect: true,
     },
     create_workspace: {
@@ -156,8 +124,8 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       i18n_title: "power_k.creation_actions.create_workspace",
       icon: SquarePlus,
       action: (ctx) => ctx.router.push("/create-workspace"),
-      isEnabled: () => Boolean(!isWorkspaceCreationDisabled),
-      isVisible: () => Boolean(!isWorkspaceCreationDisabled),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_workspace"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_workspace"),
       closeOnSelect: true,
     },
   };

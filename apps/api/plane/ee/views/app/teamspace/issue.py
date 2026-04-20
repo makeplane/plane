@@ -32,7 +32,9 @@ from plane.db.models import (
 from plane.ee.models import TeamspaceProject, TeamspaceUserProperty, TeamspaceMember
 from plane.ee.serializers import TeamspaceUserPropertySerializer
 from .base import TeamspaceBaseEndpoint
-from plane.ee.permissions import TeamspacePermission
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, TeamspacePermissions
 from plane.utils.grouper import (
     issue_group_values,
     issue_on_results,
@@ -46,10 +48,9 @@ from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
 
 
-class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
+class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):    
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
     filter_backends = (
         ComplexFilterBackend,
         PQLFilterBackend,
@@ -87,6 +88,8 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
             .prefetch_related("assignees", "labels", "issue_module__module", "issue_cycle__cycle")
         )
 
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         query_params = request.query_params.copy()
         sub_issue = query_params.get("sub_issue", None)
@@ -222,8 +225,9 @@ class TeamspaceIssueEndpoint(TeamspaceBaseEndpoint):
 
 class TeamspaceUserPropertiesEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = False
-    permission_classes = [TeamspacePermission]
 
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def patch(self, request, slug, team_space_id):
         workspace = Workspace.objects.get(slug=slug)
         team_space_properties, _ = TeamspaceUserProperty.objects.get_or_create(
@@ -247,6 +251,8 @@ class TeamspaceUserPropertiesEndpoint(TeamspaceBaseEndpoint):
         serializer = TeamspaceUserPropertySerializer(team_space_properties)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         workspace = Workspace.objects.get(slug=slug)
         team_space_properties, _ = TeamspaceUserProperty.objects.get_or_create(

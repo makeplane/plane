@@ -70,12 +70,12 @@ function ModuleIssuesPage({ params }: Route.ComponentProps) {
       ) : (
         <div className="flex h-full w-full">
           <div className="h-full w-full overflow-hidden">
-            <ModuleLayoutRoot />
+            <ModuleLayoutRoot workspaceSlug={workspaceSlug} projectId={projectId} moduleId={moduleId} />
           </div>
           {!isSidebarCollapsed && (
             <div
               className={cn(
-                "flex h-full w-[24rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-6 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-13 shadow-raised-200"
+                "flex h-full w-[24rem] shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-6 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-13 shadow-raised-200"
               )}
             >
               <ModuleAnalyticsSidebar moduleId={moduleId} handleClose={toggleSidebar} />

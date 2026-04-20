@@ -38,7 +38,7 @@ from plane.ee.models import (
     WorkflowTransitionApprover,
 )
 from plane.ee.serializers import WorkflowSerializer
-from plane.ee.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkflowPermissions, WorkspacePermissions
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
 from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
@@ -103,7 +103,7 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         filter_condition = Q(workspace__slug=slug)
 
@@ -268,7 +268,7 @@ class WorkflowEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         serializer = WorkflowSerializer(data=request.data)
         if serializer.is_valid():
@@ -294,7 +294,7 @@ class WorkflowEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk=None):
         if pk:
             workflow = self.get_queryset(slug, project_id).filter(id=pk).first()
@@ -314,7 +314,7 @@ class WorkflowEndpoint(BaseAPIView):
         return Response(data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         workflow = self.get_queryset(slug, project_id).filter(id=pk).first()
         current_instance = json.dumps(WorkflowSerializer(workflow).data, cls=DjangoJSONEncoder)
@@ -409,7 +409,7 @@ class WorkflowEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, pk):
         workflow = Workflow.objects.get(project_id=project_id, workspace__slug=slug, id=pk)
         if workflow.is_default:
@@ -438,7 +438,7 @@ class WorkflowWorkItemTypeWorkItemsCheckEndpoint(BaseAPIView):
     """
 
     @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    @can(WorkflowPermissions.CREATE, resource_param="project_id")
     def get(self, request, slug, project_id, workflow_id):
         state_ids = list(get_state_ids_outside_workflow(workflow_id, project_id, slug))
         return Response({"state_ids": state_ids}, status=status.HTTP_200_OK)
@@ -448,7 +448,7 @@ class DefaultWorkflowEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         # check if the default workflow already exists
         workflow = Workflow.objects.filter(project_id=project_id, workspace__slug=slug, is_default=True).first()

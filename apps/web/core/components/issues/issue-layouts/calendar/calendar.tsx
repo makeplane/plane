@@ -19,11 +19,12 @@ import { observer } from "mobx-react";
 import { MONTHS_LIST } from "@plane/constants";
 import type { TSupportedFilterTypeForUpdate } from "@plane/constants";
 import type { TGroupedIssues, TIssue, TPaginationData, ICalendarWeek, TSupportedFilterForUpdate } from "@plane/types";
-import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes } from "@plane/types";
 import { Spinner } from "@plane/ui";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import { renderFormattedPayloadDate, cn } from "@plane/utils";
 // hooks
-import { useIssues } from "@/hooks/store/use-issues";
 import useSize from "@/hooks/use-window-size";
 // store
 import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
@@ -64,13 +65,18 @@ type Props = {
     destinationDate: string | undefined
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  readOnly?: boolean;
   updateFilters?: (
     projectId: string,
     filterType: TSupportedFilterTypeForUpdate,
     filters: TSupportedFilterForUpdate
   ) => Promise<void>;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canQuickAddWorkItem: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   isLoading: boolean;
   isEpic?: boolean;
 };
@@ -91,9 +97,9 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
     getPaginationData,
     getGroupIssueCount,
     updateFilters,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     isLoading,
-    readOnly = false,
     isEpic = false,
   } = props;
   // states
@@ -101,13 +107,7 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
   //refs
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
   // store hooks
-  const {
-    issues: { viewFlags },
-  } = useIssues(EIssuesStoreType.PROJECT);
-
   const [windowWidth] = useSize();
-
-  const { enableIssueCreation, enableQuickAdd } = viewFlags || {};
 
   const calendarPayload = issueCalendarView.calendarPayload;
 
@@ -171,13 +171,11 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                         loadMoreIssues={loadMoreIssues}
                         getPaginationData={getPaginationData}
                         getGroupIssueCount={getGroupIssueCount}
-                        enableQuickIssueCreate={enableQuickAdd}
-                        disableIssueCreation={!enableIssueCreation}
                         quickActions={quickActions}
                         quickAddCallback={quickAddCallback}
                         addIssuesToView={addIssuesToView}
-                        readOnly={readOnly}
-                        canEditProperties={canEditProperties}
+                        canQuickAddWorkItem={layoutPermissions.canQuickAddWorkItem}
+                        getWorkItemPermissions={getWorkItemPermissions}
                         isEpic={isEpic}
                       />
                     ))}
@@ -195,13 +193,11 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                   loadMoreIssues={loadMoreIssues}
                   getPaginationData={getPaginationData}
                   getGroupIssueCount={getGroupIssueCount}
-                  enableQuickIssueCreate={enableQuickAdd}
-                  disableIssueCreation={!enableIssueCreation}
                   quickActions={quickActions}
                   quickAddCallback={quickAddCallback}
                   addIssuesToView={addIssuesToView}
-                  readOnly={readOnly}
-                  canEditProperties={canEditProperties}
+                  canQuickAddWorkItem={layoutPermissions.canQuickAddWorkItem}
+                  getWorkItemPermissions={getWorkItemPermissions}
                   isEpic={isEpic}
                 />
               )}
@@ -221,14 +217,16 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
                 getPaginationData={getPaginationData}
                 getGroupIssueCount={getGroupIssueCount}
                 quickActions={quickActions}
-                enableQuickIssueCreate={enableQuickAdd}
-                disableIssueCreation={!enableIssueCreation}
                 quickAddCallback={quickAddCallback}
                 addIssuesToView={addIssuesToView}
-                readOnly={readOnly}
-                canEditProperties={canEditProperties}
-                isDragDisabled
-                isMobileView
+                canQuickAddWorkItem={layoutPermissions.canQuickAddWorkItem}
+                getWorkItemPermissions={(workItem) => {
+                  const permissions = getWorkItemPermissions(workItem);
+                  return {
+                    canEditProperty: permissions.canEditProperty,
+                    canDragAndDrop: false,
+                  };
+                }}
                 isEpic={isEpic}
               />
             </div>
@@ -249,14 +247,16 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             loadMoreIssues={loadMoreIssues}
             getPaginationData={getPaginationData}
             getGroupIssueCount={getGroupIssueCount}
-            enableQuickIssueCreate={enableQuickAdd}
-            disableIssueCreation={!enableIssueCreation}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
-            readOnly={readOnly}
-            canEditProperties={canEditProperties}
-            isDragDisabled
-            isMobileView
+            canQuickAddWorkItem={layoutPermissions.canQuickAddWorkItem}
+            getWorkItemPermissions={(workItem) => {
+              const permissions = getWorkItemPermissions(workItem);
+              return {
+                canEditProperty: permissions.canEditProperty,
+                canDragAndDrop: false,
+              };
+            }}
             isEpic={isEpic}
           />
         </div>

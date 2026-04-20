@@ -28,7 +28,7 @@ function isValidProfileViewId(viewId: string): viewId is keyof typeof ProfilePag
 }
 
 function ProfileIssuesTypePage({ params }: Route.ComponentProps) {
-  const { profileViewId } = params;
+  const { workspaceSlug, userId, profileViewId } = params;
 
   if (!isValidProfileViewId(profileViewId)) return null;
 
@@ -37,7 +37,7 @@ function ProfileIssuesTypePage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={header} />
-      <ProfileIssuesPage type={profileViewId} />
+      <ProfileIssuesPage workspaceSlug={workspaceSlug} userId={userId} profileViewId={profileViewId} />
     </>
   );
 }

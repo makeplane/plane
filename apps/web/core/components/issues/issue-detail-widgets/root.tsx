@@ -12,25 +12,31 @@
  */
 
 // plane imports
-import type { TIssue, TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // local imports
 import { IssueDetailWidgetActionButtons } from "./action-buttons";
 import { IssueDetailWidgetCollapsibles } from "./issue-detail-widget-collapsibles";
 import { IssueDetailWidgetModals } from "./issue-detail-widget-modals";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
-  disabled: boolean;
   renderWidgetModals?: boolean;
   issueServiceType: TIssueServiceType;
   hideWidgets?: TWorkItemWidgets[];
   permissions: {
+    canAddDependencies: boolean;
+    canAddRelations: boolean;
+    canAddLinks: boolean;
+    canAddAttachments: boolean;
+    canAddPages: boolean;
+    canAddCustomerRequests: boolean;
     sub_work_items: {
       getCanView: (projectId: string, workItemId: string) => boolean;
       getCanEdit: (projectId: string, workItemId: string) => boolean;
-      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
       getCanDelete: (projectId: string, workItemId: string) => boolean;
       getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
       getCanRemove: (
@@ -48,7 +54,6 @@ export function IssueDetailWidgets(props: Props) {
     workspaceSlug,
     projectId,
     issueId,
-    disabled,
     renderWidgetModals = true,
     issueServiceType,
     hideWidgets,
@@ -62,7 +67,10 @@ export function IssueDetailWidgets(props: Props) {
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
-          disabled={disabled}
+          permissions={{
+            ...permissions,
+            canAddSubWorkItems: permissions.sub_work_items.getCanAdd(projectId, issueId),
+          }}
           issueServiceType={issueServiceType}
           hideWidgets={hideWidgets}
         />
@@ -70,10 +78,9 @@ export function IssueDetailWidgets(props: Props) {
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={issueId}
-          disabled={disabled}
+          permissions={permissions}
           issueServiceType={issueServiceType}
           hideWidgets={hideWidgets}
-          permissions={permissions}
         />
       </div>
       {renderWidgetModals && (

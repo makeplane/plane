@@ -17,15 +17,12 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
 import { ChevronLeftIcon } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TUserApplication } from "@plane/types";
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { APPLICATION_CATEGORIES_LIST } from "@/constants/fetch-keys";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateApplication } from "@/components/marketplace";
 import { useApplications } from "@/plane-web/hooks/store";
@@ -34,12 +31,10 @@ import type { Route } from "./+types/page";
 
 function ApplicationCreatePage({ params }: Route.ComponentProps) {
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { createApplication, fetchApplicationCategories } = useApplications();
   const { workspaceSlug } = params;
   // derived values
-  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Build your own app` : undefined;
 
   useSWR(APPLICATION_CATEGORIES_LIST(), async () => fetchApplicationCategories());
@@ -63,10 +58,6 @@ function ApplicationCreatePage({ params }: Route.ComponentProps) {
       });
     }
   };
-
-  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
-    return <NotAuthorizedView section="settings" className="h-auto" />;
-  }
 
   return (
     <>

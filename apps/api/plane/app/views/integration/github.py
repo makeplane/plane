@@ -34,6 +34,7 @@ from plane.utils.integrations.github import get_github_repos
 from plane.app.permissions import ProjectBasePermission, ProjectEntityPermission
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class GithubRepositoriesEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -55,6 +56,7 @@ class GithubRepositoriesEndpoint(BaseAPIView):
         return Response(repositories, status=status.HTTP_200_OK)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class GithubRepositorySyncViewSet(BaseViewSet):
     use_read_replica = True
 
@@ -135,6 +137,7 @@ class GithubRepositorySyncViewSet(BaseViewSet):
         )
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class GithubIssueSyncViewSet(BaseViewSet):
     use_read_replica = True
 
@@ -150,6 +153,8 @@ class GithubIssueSyncViewSet(BaseViewSet):
         )
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+# SECURITY: No permission_classes — only inherited IsAuthenticated. URL disabled.
 class BulkCreateGithubIssueSyncEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -180,6 +185,7 @@ class BulkCreateGithubIssueSyncEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class GithubCommentSyncViewSet(BaseViewSet):
     use_read_replica = True
 

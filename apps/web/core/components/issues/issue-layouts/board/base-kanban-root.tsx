@@ -18,8 +18,8 @@ import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import type { EIssuesStoreType } from "@plane/types";
+import { EIssueFilterType } from "@plane/constants";
+import type { EIssuesStoreType, TIssue } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 import { cn } from "@plane/utils";
 //hooks
@@ -28,7 +28,6 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkflows } from "@/hooks/store/use-workflows";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
@@ -39,10 +38,10 @@ import { DeleteIssueModal } from "../../delete-issue-modal";
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import type { IQuickActionProps, TRenderQuickActions } from "../list/list-view-types";
 //components
-import { getSourceFromDropPayload } from "@/helpers/work-item-layout";
-import { computeStateIdAllowlist } from "@/helpers/work-item-layout";
+import { computeStateIdAllowlist, getSourceFromDropPayload } from "@/helpers/work-item-layout";
 import { KanBan } from "./default";
 import { KanBanSwimLanes } from "./swimlanes";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 export type KanbanStoreType =
   | EIssuesStoreType.PROJECT
@@ -59,26 +58,26 @@ export type KanbanStoreType =
 export interface IBaseKanBanLayout {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
-  isCompletedCycle?: boolean;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   viewId?: string | undefined;
   isEpic?: boolean;
 }
 
 export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBanLayout) {
-  const {
-    QuickActions,
-    addIssuesToView,
-    canEditPropertiesBasedOnProject,
-    isCompletedCycle = false,
-    viewId,
-    isEpic = false,
-  } = props;
+  const { QuickActions, addIssuesToView, layoutPermissions, getWorkItemPermissions, viewId, isEpic = false } = props;
   // router
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const storeType = useIssueStoreType() as KanbanStoreType;
-  const { allowPermissions } = useUserPermissions();
   const { getWorkItemById, issuesFilter, issues } = useIssues(storeType);
   const {
     issue: { getIssueById },
@@ -152,30 +151,13 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
     ]
   );
 
-  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
-
   const scrollableContainerRef = useRef<HTMLDivElement | null>(null);
 
   // states
   const [draggedIssueId, setDraggedIssueId] = useState<string | undefined>(undefined);
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
 
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by, sub_group_by);
-
-  const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
-      const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
-
-      return enableInlineEditing && isEditingAllowedBasedOnProject;
-    },
-    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
-  );
 
   // Enable Auto Scroll for Main Kanban
   useEffect(() => {
@@ -230,11 +212,10 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
         handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
         handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
         handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
       />
     ),
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const handleDeleteIssue = async () => {
@@ -318,11 +299,10 @@ export const BaseKanBanRoot = observer(function BaseKanBanRoot(props: IBaseKanBa
                 quickActions={renderQuickActions}
                 handleCollapsedGroups={handleCollapsedGroups}
                 collapsedGroups={collapsedGroups}
-                enableQuickIssueCreate={enableQuickAdd}
                 showEmptyGroup={userDisplayFilters?.show_empty_groups ?? true}
                 quickAddCallback={quickAddIssue}
-                disableIssueCreation={!enableIssueCreation || !isEditingAllowed || isCompletedCycle}
-                canEditProperties={canEditProperties}
+                layoutPermissions={layoutPermissions}
+                getWorkItemPermissions={getWorkItemPermissions}
                 addIssuesToView={addIssuesToView}
                 scrollableContainerRef={scrollableContainerRef}
                 handleOnDrop={handleOnDrop}

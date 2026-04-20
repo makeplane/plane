@@ -25,7 +25,7 @@ from plane.db.models import IssueReaction
 from plane.ee.views.base import BaseViewSet
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import EpicReactionSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, EpicPermissions
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 
@@ -49,8 +49,8 @@ class EpicReactionViewSet(BaseViewSet):
             .accessible_to(self.request.user.id, self.kwargs["slug"])
         )
 
+    @can(EpicPermissions.REACT, resource_param="epic_id")
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, epic_id):
         serializer = EpicReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -69,7 +69,7 @@ class EpicReactionViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicPermissions.REACT, resource_param="epic_id")
     @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, epic_id, reaction_code):
         epic_reaction = IssueReaction.objects.get(
@@ -83,7 +83,7 @@ class EpicReactionViewSet(BaseViewSet):
             type="issue_reaction.activity.deleted",
             requested_data=None,
             actor_id=str(self.request.user.id),
-            issue_id=str(self.kwargs.get("issue_id", None)),
+            issue_id=str(self.kwargs.get("epic_id", None)),
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps({"reaction": str(reaction_code), "identifier": str(epic_reaction.id)}),
             epoch=int(timezone.now().timestamp()),

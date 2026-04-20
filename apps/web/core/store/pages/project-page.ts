@@ -15,7 +15,7 @@ import { set } from "lodash-es";
 import { action, computed, makeObservable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // constants
-import { EPageAccess, EUserPermissions } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import type { TPage } from "@plane/types";
 // plane web store
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -81,11 +81,12 @@ export class ProjectPage extends BasePage implements TProjectPage {
         return await projectPageService.fetchMentions(workspaceSlug, projectId, page.id, mentionType);
       },
     });
-    makeObservable(this, {
+    makeObservable<ProjectPage, "permissionMeta">(this, {
       // computed
       parentPageIds: computed,
       subPageIds: computed,
       subPages: computed,
+      permissionMeta: computed,
       canCurrentUserAccessPage: computed,
       canCurrentUserEditPage: computed,
       canCurrentUserDuplicatePage: computed,
@@ -95,6 +96,7 @@ export class ProjectPage extends BasePage implements TProjectPage {
       canCurrentUserDeletePage: computed,
       canCurrentUserFavoritePage: computed,
       canCurrentUserMovePage: computed,
+      canCurrentUserPublishPage: computed,
       isContentEditable: computed,
       // actions
       fetchSubPages: action,
@@ -127,187 +129,170 @@ export class ProjectPage extends BasePage implements TProjectPage {
     return this.subPageIds.map((id) => this.rootStore.projectPages.data[id]);
   }
 
-  private getHighestRoleAcrossProjects = computedFn((): EUserPermissions | undefined => {
-    const { workspaceSlug } = this.rootStore.router;
-    if (!workspaceSlug || !this.project_ids?.length) return;
-    let highestRole: EUserPermissions | undefined = undefined;
-    this.project_ids.map((projectId) => {
-      const currentUserProjectRole = this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(
-        workspaceSlug?.toString() || "",
-        projectId?.toString() || ""
-      );
-      if (currentUserProjectRole) {
-        if (!highestRole) highestRole = currentUserProjectRole;
-        else if (currentUserProjectRole > highestRole) highestRole = currentUserProjectRole;
+  private get permissionMeta():
+    | {
+        workspaceSlug: string;
+        projectId: string;
+        resourceMeta: { resourceId: string };
       }
-    });
-    return highestRole;
-  });
+    | undefined {
+    if (!this.id || !this.project_ids?.length || !this.workspaceSlug) return;
+    return {
+      projectId: this.project_ids[0],
+      workspaceSlug: this.workspaceSlug,
+      resourceMeta: {
+        resourceId: this.id,
+      },
+    };
+  }
 
   /**
    * @description returns true if the current logged in user can access the page
    */
   get canCurrentUserAccessPage() {
-    // Owner can always access
-    if (this.isCurrentUserOwner) return true;
-
-    // Shared access takes precedence over role-based access
-    if (this.hasSharedAccess) {
-      return this.canViewWithSharedAccess;
-    }
-
-    // Fallback to regular access control
-    const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return isPagePublic;
+    if (!this.id || !this.project_ids?.length || !this.workspaceSlug) return false;
+    return (
+      this.access === EPageAccess.PUBLIC ||
+      this.rootStore.permissionAccessStore.can({
+        resource: "page",
+        action: "view",
+        projectId: this.project_ids[0],
+        workspaceSlug: this.workspaceSlug,
+      })
+    );
   }
 
   /**
    * @description returns true if the current logged in user can edit the page
    */
   get canCurrentUserEditPage() {
-    // Owner can always edit
-    if (this.isCurrentUserOwner) return true;
-
-    // Shared access takes precedence over role-based access
-    if (this.hasSharedAccess) {
-      return this.canEditWithSharedAccess;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    const isPagePublic = this.access === EPageAccess.PUBLIC;
-    return isPagePublic && !!highestRole && highestRole >= EUserPermissions.MEMBER;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can create a duplicate the page
    */
   get canCurrentUserDuplicatePage() {
-    // Owner can always duplicate
-    if (this.isCurrentUserOwner) return true;
-
-    // Shared access users can only duplicate if they have edit access
-    if (this.hasSharedAccess) {
-      return this.canEditWithSharedAccess;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return !!highestRole && highestRole >= EUserPermissions.MEMBER;
+    if (!this.project_ids?.length || !this.workspaceSlug) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "create",
+      projectId: this.project_ids[0],
+      workspaceSlug: this.workspaceSlug,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can lock the page
    */
   get canCurrentUserLockPage() {
-    // Only owner can lock/unlock pages with shared access
-    if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can change the access of the page
    */
   get canCurrentUserChangeAccess() {
-    // Only owner can change access with shared access
-    if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner;
-    }
-
-    return this.isCurrentUserOwner;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can archive the page
    */
   get canCurrentUserArchivePage() {
-    // Shared access users cannot archive pages
-    if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can delete the page
    */
   get canCurrentUserDeletePage() {
-    // Shared access users cannot delete pages
-    if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "delete",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can comment on the page/reply to the comments
    */
   get canCurrentUserCommentOnPage() {
-    // Owner can always comment
-    if (this.isCurrentUserOwner) return true;
-
-    // Shared access users can comment if they have at least view access
-    if (this.hasSharedAccess) {
-      return this.canCommentWithSharedAccess;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return !!highestRole && highestRole >= EUserPermissions.MEMBER;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can favorite the page
    */
   get canCurrentUserFavoritePage() {
-    // Owner can always favorite
-    if (this.isCurrentUserOwner) return true;
-
-    // Shared access users can favorite if they have at least view access
-    if (this.hasSharedAccess) {
-      return this.canViewWithSharedAccess;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return !!highestRole && highestRole >= EUserPermissions.MEMBER;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the current logged in user can move the page
    */
   get canCurrentUserMovePage() {
-    // Shared access users cannot move pages
-    if (this.hasSharedAccess) {
-      return this.isCurrentUserOwner || this.canEditWithSharedAccess;
-    }
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
+  }
 
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    return this.isCurrentUserOwner || highestRole === EUserPermissions.ADMIN;
+  /**
+   * @description returns true if the current logged in user can publish the page
+   */
+  get canCurrentUserPublishPage() {
+    if (this.isCurrentUserOwner) return true;
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "share",
+      ...this.permissionMeta,
+    });
   }
 
   /**
    * @description returns true if the page can be edited
    */
   get isContentEditable() {
-    const { workspaceSlug } = this.rootStore.router;
-    if (!workspaceSlug) return false;
-    const isNestedPagesEnabled = this.rootStore.projectPages.isNestedPagesEnabled(workspaceSlug);
+    if (!this.workspaceSlug) return false;
+    const isNestedPagesEnabled = this.rootStore.projectPages.isNestedPagesEnabled(this.workspaceSlug);
     if (!isNestedPagesEnabled && !!this.parent_id) return false;
 
-    const isArchived = this.archived_at;
+    const isArchived = !!this.archived_at;
     const isLocked = this.is_locked;
 
     // Can't edit if archived or locked
@@ -316,16 +301,13 @@ export class ProjectPage extends BasePage implements TProjectPage {
     // Owner can always edit (if not archived/locked)
     if (this.isCurrentUserOwner) return true;
 
-    // Shared access takes precedence
-    if (this.hasSharedAccess) {
-      return this.canEditWithSharedAccess;
-    }
-
-    // Fallback to regular access control
-    const highestRole = this.getHighestRoleAcrossProjects();
-    const isPublic = this.access === EPageAccess.PUBLIC;
-
-    return isPublic && !!highestRole && highestRole >= EUserPermissions.MEMBER;
+    // Fallback to RBAC
+    if (!this.permissionMeta) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "page",
+      action: "edit",
+      ...this.permissionMeta,
+    });
   }
 
   getRedirectionLink = computedFn(() => {

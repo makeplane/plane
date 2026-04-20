@@ -17,18 +17,16 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { usePreventOutsideClick } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { PartialDeep, TWorkItemTemplateForm, TWorkItemTemplateFormData, TIssuePropertyValues } from "@plane/types";
-import { EUserWorkspaceRoles, EUserProjectRoles } from "@plane/types";
 import type { TWorkItemSanitizationResult } from "@plane/utils";
 import { cn } from "@plane/utils";
 // plane web imports
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { COMMON_BUTTON_CLASS_NAME } from "@/components/templates/settings/common";
 import { TemplateDetails } from "@/components/templates/settings/common/form/template-details";
@@ -107,10 +105,9 @@ export const WorkItemTemplateFormRoot = observer(function WorkItemTemplateFormRo
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { getProjectDefaultStateId } = useProjectState();
   const { getProjectDefaultWorkItemTypeId } = useIssueTypes();
-  const { getProjectById, joinedProjectIds } = useProject();
+  const { getProjectById, joinedProjectIds, permissions: projectPermissions } = useProject();
   // form state
   const defaultValueForReset = useMemo(
     () =>
@@ -130,10 +127,10 @@ export const WorkItemTemplateFormRoot = observer(function WorkItemTemplateFormRo
   } = methods;
   // derived values
   const projectId = watch("work_item.project_id");
-  const hasWorkspaceAdminPermission = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const hasProjectAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const allowLabelCreation =
-    currentLevel === ETemplateLevel.WORKSPACE ? hasWorkspaceAdminPermission : hasProjectAdminPermission;
+    currentLevel === ETemplateLevel.PROJECT && projectId
+      ? projectPermissions.getCanManageLabels(workspaceSlug, projectId)
+      : true;
 
   const onSubmit = async (data: TWorkItemTemplateForm) => {
     await handleFormSubmit({ data });

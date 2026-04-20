@@ -30,7 +30,7 @@ export interface IWorkspaceFeatureStore {
   workspaceFeatures: Record<string, TWorkspaceFeatures>; // workspaceSlug -> TWorkspaceFeatures
   // computed methods
   featuresByWorkspaceSlug: (workspaceSlug: string) => TWorkspaceFeatures | undefined;
-  isWorkspaceFeatureEnabled: (feature: EWorkspaceFeatures) => boolean;
+  isWorkspaceFeatureEnabled: (workspaceSlug: string, feature: EWorkspaceFeatures) => boolean;
   // actions
   fetchWorkspaceFeatures: (workspaceSlug: string) => Promise<TWorkspaceFeatures | undefined>;
   updateWorkspaceFeature: (
@@ -70,18 +70,17 @@ export class WorkspaceFeatureStore implements IWorkspaceFeatureStore {
    * @description get workspace feature by workspace slug
    * @returns { TWorkspaceFeatures | undefined }
    */
-  isWorkspaceFeatureEnabled = computedFn((feature: EWorkspaceFeatures) => {
-    // TODO: remove this once backend feature flag is added
-    if (feature === EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED) return true;
+  isWorkspaceFeatureEnabled: IWorkspaceFeatureStore["isWorkspaceFeatureEnabled"] = computedFn(
+    (workspaceSlug, feature) => {
+      // TODO: remove this once backend feature flag is added
+      if (feature === EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED) return true;
 
-    const { workspaceSlug } = this.store.router;
-    if (!workspaceSlug) return false;
+      const workspaceFeatures = this.featuresByWorkspaceSlug(workspaceSlug);
+      if (!workspaceFeatures) return false;
 
-    const workspaceFeatures = this.featuresByWorkspaceSlug(workspaceSlug);
-    if (!workspaceFeatures) return false;
-
-    return workspaceFeatures?.[feature] ?? false;
-  });
+      return workspaceFeatures?.[feature] ?? false;
+    }
+  );
 
   // actions
   /**

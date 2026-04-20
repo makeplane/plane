@@ -19,15 +19,14 @@ from rest_framework.response import Response
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Module, ModuleLink
-from plane.app.permissions import WorkspaceViewerPermission
 from plane.app.serializers.module import ModuleSerializer
+from plane.permissions import WorkspacePermissions, can
 
 
 class WorkspaceModulesEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceViewerPermission]
-
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         modules = (
             Module.objects.filter(workspace__slug=slug)
@@ -35,7 +34,8 @@ class WorkspaceModulesEndpoint(BaseAPIView):
             .select_related("workspace")
             .select_related("lead")
             .prefetch_related("members")
-            .filter(archived_at__isnull=True)
+            .filter(archived_at__isnull=True, project__archived_at__isnull=True)
+            .accessible_to(request.user.id, slug)
             .prefetch_related(
                 Prefetch(
                     "link_module",

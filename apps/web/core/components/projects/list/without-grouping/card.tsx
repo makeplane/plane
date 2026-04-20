@@ -17,7 +17,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
@@ -34,6 +34,8 @@ import {
   renderFormattedDate,
   truncateProjectIdentifierForDisplay,
 } from "@plane/utils";
+// types
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 // components
 import { CoverImage } from "@/components/common/cover-image";
 import { DeleteProjectModal } from "@/components/projects/modals/delete-project-modal";
@@ -42,7 +44,6 @@ import { ArchiveRestoreProjectModal } from "@/components/projects/modals/archive
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-labels";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
@@ -51,10 +52,11 @@ import type { TProject } from "@/types/projects";
 
 type Props = {
   project: TProject;
+  permissions: ProjectItemPermissions;
 };
 
 export const ProjectCard = observer(function ProjectCard(props: Props) {
-  const { project } = props;
+  const { project, permissions } = props;
   // states
   const [deleteProjectModalOpen, setDeleteProjectModal] = useState(false);
   const [joinProjectModalOpen, setJoinProjectModal] = useState(false);
@@ -66,8 +68,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { workspaceSlug } = useParams();
   // store hooks
   const { getUserDetails } = useMember();
-  const { addProjectToFavorites, removeProjectFromFavorites } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { addProjectToFavorites, removeProjectFromFavorites, permissions: projectPermissions } = useProject();
   const { getLabelById } = useWorkspaceProjectLabels();
   const isLabelsEnabled = useFlag(workspaceSlug?.toString(), "WORKSPACE_PROJECT_LABELS");
   // hooks
@@ -75,14 +76,10 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
   // derived values
   const projectLabelIds = project.label_ids;
   const projectMembersIds = project.members;
-  const shouldRenderFavorite = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const { canEdit, canRestore, canDelete, canFavorite } = permissions;
   // auth
   const isMemberOfProject = !!project.member_role;
-  const hasAdminRole = project.member_role === EUserPermissions.ADMIN;
-  const hasMemberRole = project.member_role === EUserPermissions.MEMBER;
+  const canViewProject = workspaceSlug ? projectPermissions.getCanView(workspaceSlug.toString(), project.id) : false;
   // archive
   const isArchived = !!project.archived_at;
   // local storage
@@ -146,7 +143,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       action: () => router.push(`/${workspaceSlug}/settings/projects/${project.id}`),
       title: "Settings",
       icon: Settings,
-      shouldRender: !isArchived && (hasAdminRole || hasMemberRole),
+      shouldRender: !isArchived && canEdit,
     },
     {
       key: "join",
@@ -160,7 +157,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       action: handleOpenInNewTab,
       title: "Open in new tab",
       icon: NewTabIcon,
-      shouldRender: !isMemberOfProject && !isArchived,
+      shouldRender: !isArchived,
     },
     {
       key: "copy-link",
@@ -174,14 +171,14 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
       action: () => setRestoreProject(true),
       title: "Restore",
       icon: ArchiveRestoreIcon,
-      shouldRender: isArchived && hasAdminRole,
+      shouldRender: canRestore,
     },
     {
       key: "delete",
       action: () => setDeleteProjectModal(true),
       title: "Delete",
       icon: TrashIcon,
-      shouldRender: isArchived && hasAdminRole,
+      shouldRender: canDelete && !!project.archived_at,
     },
   ];
 
@@ -216,13 +213,13 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         ref={projectCardRef}
         href={`/${workspaceSlug}/projects/${project.id}/issues`}
         onClick={(e) => {
-          if (!isMemberOfProject || isArchived) {
+          if (!canViewProject || isArchived) {
             e.preventDefault();
             e.stopPropagation();
             if (!isArchived) setJoinProjectModal(true);
           }
         }}
-        data-prevent-progress={!isMemberOfProject || isArchived}
+        data-prevent-progress={!canViewProject || isArchived}
         className={cn(
           "flex flex-col justify-between group/project-card border border-subtle bg-layer-2 hover:shadow-raised-200 hover:border-strong w-full rounded-lg overflow-hidden duration-300 transition-all"
         )}
@@ -238,8 +235,8 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
           />
 
           <div className="absolute bottom-4 z-[1] flex h-10 w-full items-center justify-between gap-3 px-4">
-            <div className="flex flex-grow items-center gap-2.5 truncate">
-              <div className="h-9 w-9 flex-shrink-0 grid place-items-center rounded-sm bg-white/10">
+            <div className="flex grow items-center gap-2.5 truncate">
+              <div className="h-9 w-9 shrink-0 grid place-items-center rounded-sm bg-white/10">
                 <Logo logo={project.logo_props} size={18} />
               </div>
 
@@ -255,7 +252,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
             </div>
 
             {!isArchived && (
-              <div data-prevent-progress className="flex h-full flex-shrink-0 items-center gap-2">
+              <div data-prevent-progress className="flex h-full shrink-0 items-center gap-2">
                 <button
                   className="flex h-6 w-6 items-center justify-center rounded-sm bg-white/10"
                   onClick={(e) => {
@@ -266,7 +263,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 >
                   <LinkIcon className="h-3 w-3 text-on-color" />
                 </button>
-                {shouldRenderFavorite && (
+                {canFavorite && (
                   <FavoriteStar
                     buttonClassName="h-6 w-6 bg-white/10 rounded-sm"
                     iconClassName={cn("h-3 w-3", {
@@ -332,7 +329,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                         key={labelId}
                         className="flex items-center gap-1 rounded-sm border border-subtle-1 px-1.5 py-0.5 text-11 text-secondary"
                       >
-                        <LabelPropertyIcon color={label.color} className="h-2 w-2 flex-shrink-0" />
+                        <LabelPropertyIcon color={label.color} className="h-2 w-2 shrink-0" />
                         <span className="truncate max-w-[80px]">{label.name}</span>
                       </div>
                     );
@@ -342,37 +339,41 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               {isArchived && <div className="text-11 text-placeholder font-medium">Archived</div>}
             </div>
             {isArchived ? (
-              hasAdminRole && (
+              (canRestore || canDelete) && (
                 <div className="flex items-center justify-center gap-2">
-                  <div
-                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setRestoreProject(true);
-                    }}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <ArchiveRestoreIcon className="h-3.5 w-3.5" />
-                      Restore
+                  {canRestore && (
+                    <div
+                      className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setRestoreProject(true);
+                      }}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <ArchiveRestoreIcon className="h-3.5 w-3.5" />
+                        Restore
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setDeleteProjectModal(true);
-                    }}
-                  >
-                    <TrashIcon className="h-3.5 w-3.5" />
-                  </div>
+                  )}
+                  {canDelete && (
+                    <div
+                      className="flex items-center justify-center text-11 text-placeholder font-medium hover:text-secondary"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setDeleteProjectModal(true);
+                      }}
+                    >
+                      <TrashIcon className="h-3.5 w-3.5" />
+                    </div>
+                  )}
                 </div>
               )
             ) : (
               <>
                 {isMemberOfProject &&
-                  (hasAdminRole || hasMemberRole ? (
+                  (canEdit ? (
                     <Link
                       className="flex items-center justify-center rounded-sm p-1 text-placeholder hover:bg-layer-1 hover:text-secondary"
                       onClick={(e) => {

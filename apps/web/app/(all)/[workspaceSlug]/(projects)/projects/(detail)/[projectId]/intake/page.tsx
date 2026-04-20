@@ -15,9 +15,8 @@ import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles, EInboxIssueCurrentTab } from "@plane/types";
+import { EInboxIssueCurrentTab } from "@plane/types";
 // assets
 import darkIntakeAsset from "@/app/assets/empty-state/disabled-feature/intake-dark.webp?url";
 import lightIntakeAsset from "@/app/assets/empty-state/disabled-feature/intake-light.webp?url";
@@ -27,7 +26,6 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 import { InboxIssueRoot } from "@/components/intake";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { FeatureTour } from "@/components/tour";
@@ -46,10 +44,8 @@ function ProjectInboxPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // hooks
-  const { currentProjectDetails } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { currentProjectDetails, permissions: projectPermissions } = useProject();
   // derived values
-  const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = resolvedTheme === "light" ? lightIntakeAsset : darkIntakeAsset;
 
   // No access to inbox
@@ -65,7 +61,7 @@ function ProjectInboxPage({ params }: Route.ComponentProps) {
             onClick: () => {
               router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
             },
-            disabled: !canPerformEmptyStateActions,
+            disabled: !projectPermissions.getCanManageIntake(workspaceSlug, projectId),
           }}
         />
       </div>

@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
@@ -34,11 +33,16 @@ type TEpicSidebarCommentsRootProps = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
-  disabled?: boolean;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (commentId: string) => boolean;
+    canDelete: (commentId: string) => boolean;
+    canReact: (commentId: string) => boolean;
+  };
 };
 
 export const EpicSidebarCommentsRoot = observer(function EpicSidebarCommentsRoot(props: TEpicSidebarCommentsRootProps) {
-  const { workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { workspaceSlug, projectId, epicId, permissions } = props;
   // i18n
   const { t } = useTranslation();
   // states
@@ -92,7 +96,7 @@ export const EpicSidebarCommentsRoot = observer(function EpicSidebarCommentsRoot
           .filter((activityComment) => activityComment.activity_type === "COMMENT")
           .map((comment) => comment.id)}
         sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-        isEditingAllowed={!disabled}
+        permissions={permissions}
         getCommentById={getCommentById}
         projectId={projectId}
         showCopyLinkOption={false}

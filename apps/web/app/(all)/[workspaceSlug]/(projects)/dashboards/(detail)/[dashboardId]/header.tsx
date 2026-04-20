@@ -53,7 +53,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
   } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId?.toString() ?? "");
-  const { canCurrentUserEditDashboard, isViewModeEnabled, toggleViewingMode, widgetsStore } = dashboardDetails ?? {};
+  const { canEdit, isViewModeEnabled, toggleViewingMode, widgetsStore } = dashboardDetails ?? {};
   const { canCurrentUserCreateWidget, getNewWidgetPayload, createWidget, toggleEditWidget } = widgetsStore ?? {};
   // translation
   const { t } = useTranslation();
@@ -150,7 +150,7 @@ export const WorkspaceDashboardDetailsHeader = observer(function WorkspaceDashbo
             size="lg"
             onClick={() => toggleViewingMode?.()}
             prependIcon={isViewModeEnabled ? <EditIcon className="size-3.5" /> : <Eye className="size-3.5" />}
-            disabled={!canCurrentUserEditDashboard}
+            disabled={!canEdit}
           >
             {t(isViewModeEnabled ? "common.edit" : "common.view")}
           </Button>

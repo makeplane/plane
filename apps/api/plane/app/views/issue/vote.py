@@ -16,12 +16,12 @@ from rest_framework import status
 # Module imports
 from plane.app.views.base import BaseAPIView
 from plane.app.serializers.vote import IssueVoteSerializer
-from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import IssueVote
+from plane.permissions import can, WorkitemPermissions
 
 
 class IssueVoteEndpoint(BaseAPIView):
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    @can(WorkitemPermissions.REACT, resource_param="work_item_id")
     def get(self, request, slug, project_id, work_item_id):
         votes = IssueVote.objects.filter(
             project_id=project_id,
@@ -32,7 +32,7 @@ class IssueVoteEndpoint(BaseAPIView):
         serializer = IssueVoteSerializer(votes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    @can(WorkitemPermissions.REACT, resource_param="work_item_id")
     def post(self, request, slug, project_id, work_item_id):
         serializer = IssueVoteSerializer(
             data=request.data, context={"issue_id": work_item_id, "project_id": project_id, "user": request.user}
@@ -43,7 +43,7 @@ class IssueVoteEndpoint(BaseAPIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    @can(WorkitemPermissions.REACT, resource_param="work_item_id")
     def delete(self, request, slug, project_id, work_item_id):
         issue_vote = IssueVote.objects.filter(
             issue_id=work_item_id,

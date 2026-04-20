@@ -20,8 +20,8 @@ import { PagePublishActions } from "./publish-actions";
 export const PageDetailsHeaderExtraActions = observer(function PageDetailsHeaderExtraActions(
   props: TPageHeaderExtraActionsProps
 ) {
-  const { page, storeType } = props;
+  const { page } = props;
 
   if (!page.canCurrentUserEditPage) return null;
-  return <PagePublishActions page={page} storeType={storeType} />;
+  return <PagePublishActions page={page} />;
 });

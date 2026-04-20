@@ -43,7 +43,7 @@ export const DashboardQuickActions = observer(function DashboardQuickActions(pro
   } = useDashboards();
   // derived values
   const dashboardDetails = getDashboardById(dashboardId);
-  const { canCurrentUserDeleteDashboard, canCurrentUserEditDashboard, getRedirectionLink } = dashboardDetails ?? {};
+  const { canDelete, canEdit, getRedirectionLink } = dashboardDetails ?? {};
   // translation
   const { t } = useTranslation();
   // menu items
@@ -58,7 +58,7 @@ export const DashboardQuickActions = observer(function DashboardQuickActions(pro
         },
         title: t("common.actions.edit"),
         icon: EditIcon,
-        shouldRender: !!canCurrentUserEditDashboard && showEdit,
+        shouldRender: !!canEdit && showEdit,
       },
       {
         key: "open-in-new-tab",
@@ -86,12 +86,12 @@ export const DashboardQuickActions = observer(function DashboardQuickActions(pro
         action: () => setIsDeleteModalOpen(true),
         title: t("common.actions.delete"),
         icon: TrashIcon,
-        shouldRender: !!canCurrentUserDeleteDashboard,
+        shouldRender: !!canDelete,
       },
     ];
   }, [
-    canCurrentUserDeleteDashboard,
-    canCurrentUserEditDashboard,
+    canDelete,
+    canEdit,
     getRedirectionLink,
     dashboardDetails?.asJSON,
     dashboardId,

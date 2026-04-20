@@ -74,6 +74,7 @@ export interface IBaseLabel {
   workspace_id: string;
   parent: string | null;
   sort_order: number;
+  created_by: string | null;
 }
 
 export interface IBaseLabelTree extends IBaseLabel {

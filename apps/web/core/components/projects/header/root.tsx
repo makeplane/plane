@@ -14,6 +14,7 @@
 import { observer } from "mobx-react";
 // hooks
 import { useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useProject } from "@/hooks/store/use-project";
 // types
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // local imports
@@ -28,15 +29,27 @@ type TProjectsListHeaderProps = {
 export const ProjectsListHeader = observer(function ProjectsListHeader(props: TProjectsListHeaderProps) {
   const { workspaceSlug, isArchived = false } = props;
   // hooks
+  const { permissions } = useProject();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // derived values
+  const canCreateProject = permissions.getCanCreate(workspaceSlug);
+  const layoutPermissions = {
+    canCreateProject,
+  };
   const isProjectGroupingFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFlagEnabled;
 
   if (isProjectGroupingEnabled) {
-    return <ProjectsListWithGroupingHeader workspaceSlug={workspaceSlug} isArchived={isArchived} />;
+    return (
+      <ProjectsListWithGroupingHeader
+        workspaceSlug={workspaceSlug}
+        isArchived={isArchived}
+        permissions={layoutPermissions}
+      />
+    );
   }
 
-  return <ProjectsListWithoutGroupingHeader workspaceSlug={workspaceSlug} isArchived={isArchived} />;
+  return <ProjectsListWithoutGroupingHeader isArchived={isArchived} permissions={layoutPermissions} />;
 });

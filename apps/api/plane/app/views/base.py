@@ -24,7 +24,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 # Third part imports
 from rest_framework import status
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -157,9 +157,28 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
             response = self.handle_exception(exc)
             return response
 
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        conditions = getattr(request, '_permission_conditions', ())
+        consumed = getattr(request, '_conditions_consumed', True)
+        if conditions and not consumed and response.status_code < 400:
+            logger.critical(
+                "[PERM] SECURITY: Deferred conditions %s were NOT consumed "
+                "by %s. Call get_permission_conditions(request) in your view.",
+                conditions, self.__class__.__name__,
+            )
+            raise PermissionDenied(
+                f"Deferred permission conditions {conditions} were not consumed."
+            )
+        return response
+
     @property
     def workspace_slug(self):
         return self.kwargs.get("slug", None)
+
+    @property
+    def workspace_id(self):
+        return self.request.workspace_id
 
     @property
     def project_id(self):
@@ -278,9 +297,28 @@ class BaseAPIView(TimezoneMixin, ReadReplicaControlMixin, APIView, BasePaginator
             response = self.handle_exception(exc)
             return response
 
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        conditions = getattr(request, '_permission_conditions', ())
+        consumed = getattr(request, '_conditions_consumed', True)
+        if conditions and not consumed and response.status_code < 400:
+            logger.critical(
+                "[PERM] SECURITY: Deferred conditions %s were NOT consumed "
+                "by %s. Call get_permission_conditions(request) in your view.",
+                conditions, self.__class__.__name__,
+            )
+            raise PermissionDenied(
+                f"Deferred permission conditions {conditions} were not consumed."
+            )
+        return response
+
     @property
     def workspace_slug(self):
         return self.kwargs.get("slug", None)
+
+    @property
+    def workspace_id(self):
+        return self.request.workspace_id
 
     @property
     def project_id(self):

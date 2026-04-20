@@ -16,16 +16,13 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
-import { EUserWorkspaceRoles } from "@plane/types";
 // component
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { InitiativeLabelList } from "@/components/initiatives/components/labels/initiative-label-list";
@@ -40,20 +37,16 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
+  const { getWorkspaceBySlug } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
   const { t } = useTranslation();
-
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Initiatives` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
-
-  if (!currentWorkspace?.id) return <></>;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
+  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_INITIATIVES_ENABLED
+  );
 
   const toggleInitiativesFeature = async () => {
     try {
@@ -100,7 +93,7 @@ function InitiativesSettingsPage({ params }: Route.ComponentProps) {
             />
           </div>
           <div className="mt-12">
-            <InitiativeLabelList />
+            <InitiativeLabelList workspaceSlug={workspaceSlug} />
           </div>
         </WithFeatureFlagHOC>
       </div>

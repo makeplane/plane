@@ -11,10 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { PanelRight } from "lucide-react";
 import { CustomersIcon } from "@plane/propel/icons";
@@ -26,27 +24,32 @@ import { cn } from "@plane/utils";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 // hooks
-import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { CustomerQuickActions } from "@/components/customers/actions";
 import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { useCustomers } from "@/plane-web/hooks/store";
 
-export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
-  const { workspaceSlug, customerId } = useParams();
+type TProps = {
+  workspaceSlug: string;
+  customerId: string;
+};
+
+export const CustomerDetailHeader = observer(function CustomerDetailHeader(props: TProps) {
+  const { workspaceSlug, customerId } = props;
+  // router
   const router = useAppRouter();
-  // hooks
-  const { currentWorkspace } = useWorkspace();
-  const { getCustomerById, customerIds } = useCustomers();
-  const { toggleCustomerDetailSidebar, customerDetailSidebarCollapsed } = useCustomers();
-  // derived values
-  const workspaceId = currentWorkspace?.id || undefined;
-
+  // refs
   const parentRef = useRef<HTMLDivElement>(null);
-
-  const customer = getCustomerById(customerId.toString());
-  if (!workspaceSlug || !workspaceId) return <></>;
+  // hooks
+  const { getCustomerById, customerIds, permissions, toggleCustomerDetailSidebar, customerDetailSidebarCollapsed } =
+    useCustomers();
+  // derived values
+  const customer = getCustomerById(customerId);
+  const customerPermissions = {
+    canEdit: permissions.getCanEdit(workspaceSlug, customerId),
+    canDelete: permissions.getCanDelete(workspaceSlug, customerId),
+  };
 
   const switcherOptions = customerIds
     .map((id) => {
@@ -81,7 +84,7 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbNavigationSearchDropdown
-                    selectedItem={customerId.toString()}
+                    selectedItem={customerId}
                     navigationItems={switcherOptions}
                     onChange={(value: string) => {
                       router.push(`/${workspaceSlug}/customers/${value}`);
@@ -113,10 +116,11 @@ export const CustomerDetailHeader = observer(function CustomerDetailHeader() {
                 })}
               />
               <CustomerQuickActions
-                customerId={customerId.toString()}
-                workspaceSlug={workspaceSlug.toString()}
+                customerId={customerId}
+                workspaceSlug={workspaceSlug}
                 parentRef={parentRef}
                 customClassName="p-1 rounded-sm outline-none hover:bg-layer-1 bg-layer-1/70"
+                permissions={customerPermissions}
               />
             </div>
           )}

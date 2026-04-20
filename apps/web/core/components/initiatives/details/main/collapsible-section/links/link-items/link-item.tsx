@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { CopyIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 import { useTranslation } from "@plane/i18n";
@@ -32,12 +31,15 @@ import type { TLinkOperationsModal } from "./link-list";
 type TInitiativeLinkItem = {
   link: TInitiativeLink;
   linkOperations: TLinkOperationsModal;
-  isNotAllowed: boolean;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TInitiativeLinkItem) {
   // props
-  const { link, linkOperations, isNotAllowed } = props;
+  const { link, linkOperations, permissions } = props;
   // hooks
   const {
     initiative: {
@@ -62,27 +64,27 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
     <>
       <div
         key={link.id}
-        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 flex-shrink-0 px-3 bg-layer-1 hover:bg-layer-1-hover border-[0.5px] border-subtle rounded-md text-13"
+        className="group col-span-12 lg:col-span-6 xl:col-span-4 2xl:col-span-3 3xl:col-span-2 flex items-center justify-between gap-3 h-10 shrink-0 px-3 bg-layer-1 hover:bg-layer-1-hover border-[0.5px] border-subtle rounded-md text-13"
       >
-        <div className="flex items-center gap-2.5 truncate flex-grow">
+        <div className="flex items-center gap-2.5 truncate grow">
           {faviconUrl ? (
-            <img src={faviconUrl} alt="favicon" className="size-3 flex-shrink-0" />
+            <img src={faviconUrl} alt="favicon" className="size-3 shrink-0" />
           ) : (
-            <LinkIcon className="size-3 flex-shrink-0 text-placeholder group-hover:text-secondary" />
+            <LinkIcon className="size-3 shrink-0 text-placeholder group-hover:text-secondary" />
           )}
           <Tooltip tooltipContent={link.url} isMobile={isMobile}>
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="truncate text-13 cursor-pointer flex-grow flex items-center gap-3"
+              className="truncate text-13 cursor-pointer grow flex items-center gap-3"
             >
               {link.title && link.title !== "" ? link.title : link.url}
               {linkTitle && linkTitle !== "" && <span className="text-placeholder text-11">{linkTitle}</span>}
             </a>
           </Tooltip>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
           <p className="p-1 text-11 align-bottom leading-5 text-placeholder group-hover-text-secondary">
             {calculateTimeAgoShort(link?.created_at)}
           </p>
@@ -104,26 +106,30 @@ export const InitiativeLinkItem = observer(function InitiativeLinkItem(props: TI
             buttonClassName="text-placeholder group-hover:text-secondary"
             placement="top-end"
             closeOnSelect
-            disabled={isNotAllowed}
+            disabled={!permissions.canEdit && !permissions.canDelete}
           >
-            <CustomMenu.MenuItem
-              className="flex items-center gap-2"
-              onClick={() => {
-                toggleInitiativeLinkModal(true);
-              }}
-            >
-              <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
-              {t("edit")}
-            </CustomMenu.MenuItem>
-            <CustomMenu.MenuItem
-              className="flex items-center gap-2"
-              onClick={() => {
-                linkOperations.remove(link.id);
-              }}
-            >
-              <TrashIcon className="h-3 w-3" />
-              {t("delete")}
-            </CustomMenu.MenuItem>
+            {permissions.canEdit && (
+              <CustomMenu.MenuItem
+                className="flex items-center gap-2"
+                onClick={() => {
+                  toggleInitiativeLinkModal(true);
+                }}
+              >
+                <EditIcon className="h-3 w-3 stroke-[1.5] text-secondary" />
+                {t("edit")}
+              </CustomMenu.MenuItem>
+            )}
+            {permissions.canDelete && (
+              <CustomMenu.MenuItem
+                className="flex items-center gap-2"
+                onClick={() => {
+                  linkOperations.remove(link.id);
+                }}
+              >
+                <TrashIcon className="h-3 w-3" />
+                {t("delete")}
+              </CustomMenu.MenuItem>
+            )}
           </CustomMenu>
         </div>
       </div>

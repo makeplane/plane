@@ -22,11 +22,12 @@ import { Loader } from "@plane/ui";
 // plane web hooks
 import { useCustomerProperties } from "@/plane-web/hooks/store";
 import { CustomerAdditionalPropertyValues } from "./root";
+import type { TCustomerProperty } from "@/store/customers/permissions/root";
 
 type TCustomerAdditionalPropertyValuesUpdateProps = {
   customerId: string;
   workspaceSlug: string;
-  isDisabled: boolean;
+  canEditProperty: (property: TCustomerProperty) => boolean;
 };
 
 const customerPropertyValuesService = new CustomerPropertyValueService();
@@ -34,7 +35,7 @@ const customerPropertyValuesService = new CustomerPropertyValueService();
 export const CustomerAdditionalPropertyValuesUpdate = observer(function CustomerAdditionalPropertyValuesUpdate(
   props: TCustomerAdditionalPropertyValuesUpdateProps
 ) {
-  const { workspaceSlug, isDisabled, customerId } = props;
+  const { workspaceSlug, canEditProperty, customerId } = props;
   // states
   const [issuePropertyValues, setIssuePropertyValues] = React.useState<TIssuePropertyValues>({});
   // store hooks
@@ -99,7 +100,7 @@ export const CustomerAdditionalPropertyValuesUpdate = observer(function Customer
       variant="update"
       isPropertyValuesLoading={isLoading}
       handlePropertyValueChange={handlePropertyValueChange}
-      isDisabled={isDisabled}
+      isDisabled={!canEditProperty("custom_properties")}
     />
   );
 });

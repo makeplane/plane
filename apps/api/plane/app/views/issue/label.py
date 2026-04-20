@@ -25,7 +25,7 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import LabelSerializer
-from plane.app.permissions import allow_permission, ProjectBasePermission, ROLE
+from plane.permissions import can, LabelPermissions
 from plane.db.models import Project, Label
 from plane.utils.cache import invalidate_cache
 from plane.ee.bgtasks.project_activites_task import project_activity
@@ -34,7 +34,6 @@ from plane.ee.bgtasks.project_activites_task import project_activity
 class LabelViewSet(BaseViewSet):
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [ProjectBasePermission]
 
     def get_queryset(self):
         return self.filter_queryset(
@@ -50,8 +49,16 @@ class LabelViewSet(BaseViewSet):
             .order_by("sort_order")
         )
 
+    @can(LabelPermissions.VIEW, resource_param="project_id")
+    def list(self, request, slug, project_id):
+        return super().list(request, slug, project_id)
+
+    @can(LabelPermissions.VIEW, resource_param="pk")
+    def retrieve(self, request, slug, project_id, pk=None):
+        return super().retrieve(request, slug, project_id, pk=pk)
+
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False, multiple=True)
-    @allow_permission([ROLE.ADMIN])
+    @can(LabelPermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         try:
             serializer = LabelSerializer(data=request.data, context={"project_id": project_id})
@@ -76,7 +83,7 @@ class LabelViewSet(BaseViewSet):
             )
 
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
-    @allow_permission([ROLE.ADMIN])
+    @can(LabelPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, *args, **kwargs):
         # Check if the label name is unique within the project
         if (
@@ -103,7 +110,7 @@ class LabelViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @invalidate_cache(path="/api/workspaces/:slug/labels/", url_params=True, user=False)
-    @allow_permission([ROLE.ADMIN])
+    @can(LabelPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, pk):
         label = Label.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
         project_activity.delay(
@@ -122,7 +129,7 @@ class LabelViewSet(BaseViewSet):
 
 
 class BulkCreateIssueLabelsEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN])
+    @can(LabelPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         label_data = request.data.get("label_data", [])
 

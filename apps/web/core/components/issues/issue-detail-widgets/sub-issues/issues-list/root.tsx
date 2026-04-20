@@ -23,7 +23,7 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 import { SectionEmptyState } from "@/components/empty-state/section-empty-state-root";
 import { getGroupByColumns, isWorkspaceLevel } from "@/helpers/work-item-layout";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import { SubIssuesListGroup } from "./list-group";
 type Props = {
   workspaceSlug: string;
@@ -34,7 +34,7 @@ type Props = {
   permissions: {
     getCanView: (projectId: string, workItemId: string) => boolean;
     getCanEdit: (projectId: string, workItemId: string) => boolean;
-    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
     getCanDelete: (projectId: string, workItemId: string) => boolean;
     getCanRemove: (
       parentWorkItemProjectId: string,

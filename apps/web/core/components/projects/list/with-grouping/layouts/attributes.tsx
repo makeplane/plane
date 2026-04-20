@@ -14,20 +14,17 @@
 import type { SyntheticEvent } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { MembersPropertyIcon, PriorityIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IWorkspace } from "@plane/types";
 import { Avatar } from "@plane/propel/avatar";
-import { EUserProjectRoles } from "@plane/types";
 import { cn, getDate, getFileURL, renderFormattedPayloadDate } from "@plane/utils";
+import type { TProjectProperty } from "@/store/project/permissions/root";
 // components
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import type { TProject } from "@/types/projects";
@@ -48,6 +45,7 @@ type Props = {
   dateClassname?: string;
   containerClass?: string;
   displayProperties: { [key: string]: boolean };
+  canEditProperty: (property: TProjectProperty) => boolean;
 };
 
 export const Attributes = observer(function Attributes(props: Props) {
@@ -61,21 +59,14 @@ export const Attributes = observer(function Attributes(props: Props) {
     dateClassname,
     containerClass = "",
     displayProperties,
+    canEditProperty,
   } = props;
   const isLabelsEnabled = useFlag(workspaceSlug, "WORKSPACE_PROJECT_LABELS");
   // store hooks
   const { getUserDetails } = useMember();
-  const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const lead = getUserDetails(project.project_lead as string);
   const projectMembersIds = project.members;
-  const isEditingAllowed = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    project.id
-  );
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -90,7 +81,7 @@ export const Attributes = observer(function Attributes(props: Props) {
             onChange={(val) => handleUpdateProject({ state_id: val })}
             workspaceSlug={workspaceSlug.toString()}
             workspaceId={currentWorkspace.id}
-            disabled={!isEditingAllowed || isArchived}
+            disabled={isArchived || !canEditProperty("state_id")}
             optionsClassName="z-[11]"
             buttonClassName={cn(
               "z-1 h-5 px-2 py-0 text-left rounded-sm group-[.selected-project-row]:bg-accent-primary/5 group-[.selected-project-row]:hover:bg-accent-primary/10"
@@ -111,14 +102,14 @@ export const Attributes = observer(function Attributes(props: Props) {
               showTooltip
               buttonContainerClassName="w-full"
               className="h-5 my-auto"
-              disabled={!isEditingAllowed || isArchived}
+              disabled={isArchived || !canEditProperty("priority")}
               button={
                 <PriorityIcon
                   priority={project.priority}
                   size={12}
                   withContainer
                   className={cn({
-                    "cursor-not-allowed": !isEditingAllowed,
+                    "cursor-not-allowed": !canEditProperty("priority"),
                   })}
                 />
               }
@@ -138,7 +129,7 @@ export const Attributes = observer(function Attributes(props: Props) {
             buttonClassName="z-1 px-2 py-0 h-5"
             className="h-5 my-auto"
             projectId={project.id}
-            disabled={!isEditingAllowed || isArchived}
+            disabled={isArchived || !canEditProperty("project_lead")}
             showTooltip
             optionsClassName={"z-[11]"}
             button={
@@ -147,7 +138,7 @@ export const Attributes = observer(function Attributes(props: Props) {
                   <div
                     className={cn(
                       "h-full text-11 px-2 flex items-center gap-2 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded",
-                      { "cursor-not-allowed": !isEditingAllowed }
+                      { "cursor-not-allowed": !canEditProperty("project_lead") }
                     )}
                   >
                     <Avatar
@@ -165,7 +156,7 @@ export const Attributes = observer(function Attributes(props: Props) {
                   <div
                     className={cn(
                       "h-full text-11 px-2 flex items-center gap-2 text-secondary border-[0.5px] border-subtle-1 hover:bg-layer-1 rounded",
-                      { "cursor-not-allowed": !isEditingAllowed }
+                      { "cursor-not-allowed": !canEditProperty("project_lead") }
                     )}
                   >
                     <MembersPropertyIcon className="h-3 w-3 flex-shrink-0" />
@@ -196,7 +187,7 @@ export const Attributes = observer(function Attributes(props: Props) {
             <LabelsDropdown
               value={project.label_ids ?? []}
               onChange={(labelIds) => handleUpdateProject({ label_ids: labelIds })}
-              disabled={!isEditingAllowed || isArchived}
+              disabled={!canEditProperty("label_ids") || isArchived}
               workspaceSlug={workspaceSlug}
               className="h-5 my-auto"
             />
@@ -224,7 +215,7 @@ export const Attributes = observer(function Attributes(props: Props) {
             buttonVariant={project.start_date ? "border-with-text" : "border-without-text"}
             buttonContainerClassName={`h-5 w-full flex cursor-pointer items-center gap-1.5 text-tertiary rounded-sm text-11`}
             showTooltip
-            disabled={!isEditingAllowed || isArchived}
+            disabled={isArchived || !canEditProperty("start_date") || !canEditProperty("target_date")}
             renderPlaceholder={false}
           />
         </div>

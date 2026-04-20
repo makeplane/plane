@@ -19,12 +19,12 @@ from django.utils import timezone
 # Third party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 
 # Module imports
 from .base import TeamspaceBaseEndpoint
 from plane.db.models import Workspace
 from plane.ee.models import TeamspaceComment, TeamspaceCommentReaction
-from plane.ee.permissions import TeamspacePermission
 from plane.ee.serializers import (
     TeamspaceCommentSerializer,
     TeamspaceCommentReactionSerializer,
@@ -32,15 +32,16 @@ from plane.ee.serializers import (
 from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, TeamspacePermissions, TeamspaceCommentPermissions, ResourceType
 
 
 class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
     model = TeamspaceComment
-    permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, pk=None):
         if pk:
             comment = TeamspaceComment.objects.get(workspace__slug=slug, team_space_id=team_space_id, id=pk)
@@ -58,6 +59,7 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspaceCommentPermissions.CREATE, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id):
         # Get workspace
         workspace = Workspace.objects.get(slug=slug)
@@ -79,8 +81,15 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspaceCommentPermissions.EDIT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def patch(self, request, slug, team_space_id, pk):
         comment = TeamspaceComment.objects.get(workspace__slug=slug, team_space_id=team_space_id, id=pk)
+
+        # Only the creator or an authorized manager can edit
+        if comment.actor_id != request.user.id:
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
+
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(TeamspaceCommentSerializer(comment).data, cls=DjangoJSONEncoder)
 
@@ -104,8 +113,15 @@ class TeamspaceCommentEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspaceCommentPermissions.DELETE, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def delete(self, request, slug, team_space_id, pk):
         comment = TeamspaceComment.objects.get(workspace__slug=slug, team_space_id=team_space_id, id=pk)
+
+        # Only the creator or an authorized manager can delete
+        if comment.actor_id != request.user.id:
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
+
         current_instance = json.dumps(TeamspaceCommentSerializer(comment).data, cls=DjangoJSONEncoder)
         comment.delete()
         team_space_activity.delay(
@@ -138,6 +154,7 @@ class TeamspaceCommentReactionEndpoint(TeamspaceBaseEndpoint):
         )
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspaceCommentPermissions.REACT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id, comment_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = TeamspaceCommentReactionSerializer(data=request.data)
@@ -161,6 +178,7 @@ class TeamspaceCommentReactionEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspaceCommentPermissions.REACT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def delete(self, request, slug, team_space_id, comment_id, reaction_code):
         team_space_comment_reaction = TeamspaceCommentReaction.objects.get(
             workspace__slug=slug,

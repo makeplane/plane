@@ -12,30 +12,21 @@
  */
 
 import { TrashIcon } from "@plane/propel/icons";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
 // components
-import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
+import { usePowerKPermissions } from "@/components/command-palette/power-k/hooks/use-power-k-permissions";
 
-export const usePowerKActionsCommands = (): TPowerKCommandConfig[] => {
+export type TPowerKActionsCommandKeys = "bulk_delete_work_items";
+
+export const usePowerKActionsCommands = (): Record<TPowerKActionsCommandKeys, TPowerKCommandConfig> => {
   // store hooks
   const { toggleBulkDeleteIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
-  // derived values
-  const hasProjectMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      ctx.params.workspaceSlug?.toString(),
-      ctx.params.projectId?.toString()
-    );
+  const { canPerformAction } = usePowerKPermissions();
 
-  return [
-    {
+  return {
+    bulk_delete_work_items: {
       id: "bulk_delete_work_items",
       i18n_title: "power_k.actions_commands.bulk_delete_work_items",
       icon: TrashIcon,
@@ -44,12 +35,18 @@ export const usePowerKActionsCommands = (): TPowerKCommandConfig[] => {
       action: () => toggleBulkDeleteIssueModal(true),
       keySequence: "backspace",
       isEnabled: (ctx) =>
-        Boolean(ctx.params.workspaceSlug?.toString() || ctx.params.projectId?.toString()) &&
-        hasProjectMemberLevelPermissions(ctx),
+        canPerformAction(
+          ctx.params.workspaceSlug?.toString(),
+          ctx.params.projectId?.toString(),
+          "bulk_delete_work_items"
+        ),
       isVisible: (ctx) =>
-        Boolean(ctx.params.workspaceSlug?.toString() || ctx.params.projectId?.toString()) &&
-        hasProjectMemberLevelPermissions(ctx),
+        canPerformAction(
+          ctx.params.workspaceSlug?.toString(),
+          ctx.params.projectId?.toString(),
+          "bulk_delete_work_items"
+        ),
       closeOnSelect: true,
     },
-  ];
+  };
 };

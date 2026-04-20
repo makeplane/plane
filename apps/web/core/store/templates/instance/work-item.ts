@@ -11,40 +11,68 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { action, makeObservable } from "mobx";
 // plane imports
-import { EUserPermissions } from "@plane/constants";
-import type { TWorkItemTemplate } from "@plane/types";
+import type { PermissionActionForResource, TWorkItemTemplate } from "@plane/types";
 // local imports
-import type { IBaseTemplateInstance, TBaseTemplateInstanceProps } from "./base";
+import type { IBaseTemplateInstance, TBaseTemplateInstanceArgs } from "./base";
 import { BaseTemplateInstance } from "./base";
 
-export type TWorkItemTemplateInstanceProps = TBaseTemplateInstanceProps<TWorkItemTemplate>;
+export type TWorkItemTemplateInstanceArgs = TBaseTemplateInstanceArgs<TWorkItemTemplate>;
 
-// export interface IWorkItemTemplateInstance extends IBaseTemplate<TWorkItemTemplate> { }
 export type IWorkItemTemplateInstance = IBaseTemplateInstance<TWorkItemTemplate>;
 
 export class WorkItemTemplateInstance
   extends BaseTemplateInstance<TWorkItemTemplate>
   implements IWorkItemTemplateInstance
 {
-  constructor(protected store: TWorkItemTemplateInstanceProps) {
-    super(store);
+  constructor(protected args: TWorkItemTemplateInstanceArgs) {
+    super(args);
+
+    makeObservable<WorkItemTemplateInstance, "canPerformAction">(this, {
+      canPerformAction: action,
+    });
   }
+
+  // actions
+  private canPerformAction = action(
+    (action: PermissionActionForResource<"workspace_workitem_template" | "project_workitem_template">) => {
+      const workspaceSlug = this.workspaceSlug;
+      if (!workspaceSlug) return false;
+
+      if (this.project) {
+        return this.args.can({
+          resource: "project_workitem_template",
+          action,
+          projectId: this.project,
+          workspaceSlug,
+          resourceMeta: this.permissionMeta,
+        });
+      }
+
+      return this.args.can({
+        resource: "workspace_workitem_template",
+        action,
+        workspaceSlug,
+        resourceMeta: this.permissionMeta,
+      });
+    }
+  );
 
   // computed
-  get canCurrentUserEditTemplate() {
-    return this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN;
+  get canEdit() {
+    return this.canPerformAction("edit");
   }
 
-  get canCurrentUserDeleteTemplate() {
-    return this.getUserRoleForTemplateInstance === EUserPermissions.ADMIN;
+  get canDelete() {
+    return this.canPerformAction("delete");
   }
 
-  get canCurrentUserPublishTemplate() {
+  get canPublish() {
     return false;
   }
 
-  get canCurrentUserUnpublishTemplate() {
-    return this.canCurrentUserPublishTemplate && this.is_published;
+  get canUnpublish() {
+    return this.canPublish && this.is_published;
   }
 }

@@ -45,9 +45,10 @@ function TeamspaceProjectsPage({ params }: Route.ComponentProps) {
   const teamspace = getTeamspaceById(teamspaceId);
   const teamspaceProjectIds = getTeamspaceProjectIds(teamspaceId);
   const pageTitle = teamspace?.name ? `${teamspace?.name} - Projects` : undefined;
-  const isProjectGroupingFlagEnabled = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+  const isProjectGroupingFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFlagEnabled;
   const resolvedPath = resolvedTheme === "light" ? teamsLight : teamsDark;
   // fetching workspace projects
   useSWR(`WORKSPACE_PROJECTS_${workspaceSlug}`, () => fetchProjects(workspaceSlug), {

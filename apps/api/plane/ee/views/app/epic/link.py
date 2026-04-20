@@ -23,7 +23,7 @@ from rest_framework import status
 # Module imports
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers import EpicLinkSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, EpicLinkPermissions, ResourceType
 from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -31,8 +31,6 @@ from plane.payment.flags.flag import FeatureFlag
 
 
 class EpicLinkViewSet(BaseViewSet):
-    permission_classes = [ProjectEntityPermission]
-
     model = IssueLink
     serializer_class = EpicLinkSerializer
 
@@ -52,6 +50,17 @@ class EpicLinkViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicLinkPermissions.VIEW, resource_param="epic_id", scope_param_type=ResourceType.EPIC)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicLinkPermissions.VIEW, resource_param="pk")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicLinkPermissions.CREATE, resource_param="epic_id", scope_param_type=ResourceType.EPIC)
     def create(self, request, slug, project_id, epic_id):
         serializer = EpicLinkSerializer(data=request.data)
         if serializer.is_valid():
@@ -72,6 +81,7 @@ class EpicLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicLinkPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, epic_id, pk):
         epic_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
@@ -95,6 +105,7 @@ class EpicLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicLinkPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, epic_id, pk):
         epic_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk)
         current_instance = json.dumps(EpicLinkSerializer(epic_link).data, cls=DjangoJSONEncoder)

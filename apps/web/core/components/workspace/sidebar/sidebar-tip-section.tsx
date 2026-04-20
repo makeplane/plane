@@ -18,8 +18,7 @@ import { observer } from "mobx-react";
 import type { TTips } from "@plane/types";
 import { IconButton } from "@plane/propel/icon-button";
 import { CloseIcon } from "@plane/propel/icons";
-import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspacePreferences } from "@/hooks/store/use-workspace-preferences";
 
 type TTipItem = {
   id: TTips;
@@ -43,20 +42,17 @@ const TIPS_CONFIG: TTipItem[] = [
 export const SidebarTipSection = observer(() => {
   const { workspaceSlug } = useParams();
   const { resolvedTheme } = useTheme();
-  const { workspaceInfoBySlug } = useUserPermissions();
-  const {
-    workspace: { updateTips },
-  } = useMember();
+  const { getPreferencesBySlug, updateTips } = useWorkspacePreferences();
 
   const workspaceSlugStr = workspaceSlug?.toString() ?? "";
-  const currentWorkspaceInfo = workspaceInfoBySlug(workspaceSlugStr);
+  const workspacePreferences = getPreferencesBySlug(workspaceSlugStr);
 
   // Find the first tip that hasn't been dismissed
   const activeTip = useMemo(() => {
-    if (!currentWorkspaceInfo?.tips) return TIPS_CONFIG[0];
+    if (!workspacePreferences?.tips) return TIPS_CONFIG[0];
 
-    return TIPS_CONFIG.find((tip) => currentWorkspaceInfo.tips[tip.id] !== true) ?? null;
-  }, [currentWorkspaceInfo?.tips]);
+    return TIPS_CONFIG.find((tip) => workspacePreferences.tips[tip.id] !== true) ?? null;
+  }, [workspacePreferences?.tips]);
 
   const backgroundImage = useMemo(
     () => (activeTip ? (resolvedTheme === "dark" ? activeTip.imageDark : activeTip.imageLight) : ""),

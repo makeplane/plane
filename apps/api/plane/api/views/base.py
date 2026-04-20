@@ -31,7 +31,7 @@ from oauth2_provider.contrib.rest_framework import (
     IsAuthenticatedOrTokenHasScope,
 )
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import APIException, PermissionDenied
 from rest_framework.generics import GenericAPIView
 
 # Module imports
@@ -171,6 +171,19 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
         response = super().finalize_response(request, response, *args, **kwargs)
+
+        # Enforce deferred permission conditions were consumed
+        conditions = getattr(request, '_permission_conditions', ())
+        consumed = getattr(request, '_conditions_consumed', True)
+        if conditions and not consumed and response.status_code < 400:
+            logger.critical(
+                "[PERM] SECURITY: Deferred conditions %s were NOT consumed "
+                "by %s. Call get_permission_conditions(request) in your view.",
+                conditions, self.__class__.__name__,
+            )
+            raise PermissionDenied(
+                f"Deferred permission conditions {conditions} were not consumed."
+            )
 
         # Add custom headers if they exist in the request META
         ratelimit_remaining = request.META.get("X-RateLimit-Remaining")

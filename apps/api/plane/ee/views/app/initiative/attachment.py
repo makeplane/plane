@@ -27,7 +27,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.settings.storage import S3Storage
 from plane.payment.flags.flag import FeatureFlag
 from plane.db.models import FileAsset, Workspace
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, InitiativeAttachmentPermissions, get_permission_conditions, ResourceType
 from plane.ee.serializers import InitiativeAttachmentSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
@@ -42,7 +42,11 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
     model = FileAsset
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(
+        InitiativeAttachmentPermissions.CREATE,
+        resource_param="initiative_id",
+        scope_param_type=ResourceType.INITIATIVE,
+    )
     def post(
         self,
         request,
@@ -117,9 +121,19 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset, level="WORKSPACE")
+    @can(
+        InitiativeAttachmentPermissions.DELETE,
+        resource_param="initiative_id",
+        scope_param_type=ResourceType.INITIATIVE,
+        defer_conditions=True,
+    )
     def delete(self, request, slug, initiative_id, pk):
         initiative_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, entity_identifier=initiative_id)
+        # Check deferred creator condition (Member has delete+creator grant)
+        conditions = get_permission_conditions(request)
+        if 'creator' in conditions and initiative_attachment.created_by_id != request.user.id:
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("You don't have permission to delete this attachment")
         initiative_attachment.is_deleted = True
         initiative_attachment.deleted_at = timezone.now()
         initiative_attachment.save()
@@ -139,14 +153,7 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @can(InitiativeAttachmentPermissions.VIEW, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def get(self, request, slug, initiative_id, pk=None):
         if pk:
             # Get the asset
@@ -182,14 +189,7 @@ class InitiativeAttachmentEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @can(InitiativeAttachmentPermissions.EDIT, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def patch(self, request, slug, initiative_id, pk):
         initiative_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, entity_identifier=initiative_id)
         serializer = InitiativeAttachmentSerializer(initiative_attachment)

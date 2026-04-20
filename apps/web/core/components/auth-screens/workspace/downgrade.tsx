@@ -15,14 +15,11 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // hooks
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { PlaneLockup } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
@@ -35,17 +32,14 @@ export const WorkspaceDowngradePage = observer(function WorkspaceDowngradePage()
   // state
   const [isDowngradeModalOpen, toggleDowngradeModal] = useState(false);
   // hooks
-  const { allowPermissions } = useUserPermissions();
-  const { getWorkspaceBySlug } = useWorkspace();
+  const { getWorkspaceBySlug, permissions: workspacePermissions } = useWorkspace();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const workspaceSlug = routerWorkspaceSlug?.toString();
   const workspace = getWorkspaceBySlug(workspaceSlug);
-  const isWorkspaceAdmin = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
+  const canManageSeats = workspacePermissions.getCanManageBilling(workspaceSlug);
+  const canRemoveMembers = workspacePermissions.getCanRemoveMember(workspaceSlug);
+  const canPerformAnyRequiredActions = canManageSeats || canRemoveMembers;
 
   const handleRemoveMembers = () => {
     toggleDowngradeModal(false);
@@ -78,14 +72,18 @@ export const WorkspaceDowngradePage = observer(function WorkspaceDowngradePage()
                 {`Your payment for ${workspace?.name} couldn't be processed. Update your payment method to keep all your Business features.`}
               </p>
             </div>
-            {isWorkspaceAdmin && (
+            {canPerformAnyRequiredActions && (
               <div className="flex flex-col items-center justify-center gap-4 max-w-64">
-                <Button size="lg" className="w-full" onClick={() => togglePaidPlanModal(true)}>
-                  Select your plan
-                </Button>
-                <Button size="lg" className="w-full" variant="ghost" onClick={() => toggleDowngradeModal(true)}>
-                  Downgrade to free plan with 12 users
-                </Button>
+                {canManageSeats && (
+                  <Button size="lg" className="w-full" onClick={() => togglePaidPlanModal(true)}>
+                    Select your plan
+                  </Button>
+                )}
+                {canRemoveMembers && (
+                  <Button size="lg" className="w-full" variant="ghost" onClick={() => toggleDowngradeModal(true)}>
+                    Downgrade to free plan with 12 users
+                  </Button>
+                )}
               </div>
             )}
           </div>

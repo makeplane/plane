@@ -24,12 +24,22 @@ type TProps = {
     update: () => void;
     remove: (updateId: string) => Promise<void>;
   };
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 export function UpdateQuickActions(props: TProps) {
-  const { operations, updateId } = props;
+  const { operations, updateId, permissions } = props;
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const actionSectionRef = useRef(null);
+  // derived values
+  const isAnyActionAllowed = Object.values(permissions).some((permission) => permission);
+
+  console.log(permissions);
+
+  if (!isAnyActionAllowed) return null;
   return (
     <>
       <ProjectUpdateDeleteModal
@@ -54,19 +64,23 @@ export function UpdateQuickActions(props: TProps) {
         customButtonClassName="grid place-items-center"
         placement="bottom-start"
       >
-        <CustomMenu.MenuItem onClick={() => operations.update()}>
-          <button className="flex items-center justify-start gap-2">
-            <EditIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-            <span>Edit</span>
-          </button>
-        </CustomMenu.MenuItem>
+        {permissions.canEdit && (
+          <CustomMenu.MenuItem onClick={() => operations.update()}>
+            <button className="flex items-center justify-start gap-2">
+              <EditIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+              <span>Edit</span>
+            </button>
+          </CustomMenu.MenuItem>
+        )}
 
-        <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
-          <button className="flex items-center justify-start gap-2">
-            <TrashIcon className="h-3.5 w-3.5 stroke-[1.5]" />
-            <span>Delete</span>
-          </button>
-        </CustomMenu.MenuItem>
+        {permissions.canDelete && (
+          <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
+            <button className="flex items-center justify-start gap-2">
+              <TrashIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+              <span>Delete</span>
+            </button>
+          </CustomMenu.MenuItem>
+        )}
       </CustomMenu>
     </>
   );

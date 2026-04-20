@@ -23,14 +23,14 @@ import { TeamspaceProjectWorkItemFilters } from "@/components/teamspaces/project
 
 type TeamspaceProjectDetailHeaderActionsProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: { canAddProject: boolean };
   projectId: string;
 };
 
 export const TeamspaceProjectDetailHeaderActions = observer(function TeamspaceProjectDetailHeaderActions(
   props: TeamspaceProjectDetailHeaderActionsProps
 ) {
-  const { teamspaceId, isEditingAllowed, projectId } = props;
+  const { teamspaceId, permissions, projectId } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -47,7 +47,7 @@ export const TeamspaceProjectDetailHeaderActions = observer(function TeamspacePr
           projectId={projectId}
         />
       </div>
-      {isEditingAllowed ? (
+      {permissions.canAddProject ? (
         <Button
           onClick={() => {
             toggleCreateIssueModal(true, EIssuesStoreType.TEAM_PROJECT_WORK_ITEMS, [projectId]);

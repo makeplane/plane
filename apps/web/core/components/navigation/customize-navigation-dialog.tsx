@@ -11,18 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { GripVertical, X } from "lucide-react";
 // plane imports
-import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
+import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS } from "@plane/constants";
+import type { WorkspaceResourceKey } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore, Sortable } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import {
   usePersonalNavigationPreferences,
   useProjectNavigationPreferences,
@@ -30,9 +29,9 @@ import {
 } from "@/hooks/use-navigation-preferences";
 // helpers
 import { getSidebarNavigationItemIcon } from "@/components/workspace/sidebar/helper";
-import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 // types
 import type { TPersonalNavigationItemKey } from "@/types/navigation-preferences";
+import { useWorkspaceAccess } from "@/hooks/permissions/use-workspace-access";
 
 type TCustomizeNavigationDialogProps = {
   isOpen: boolean;
@@ -40,7 +39,7 @@ type TCustomizeNavigationDialogProps = {
 };
 
 type TWorkspaceNavigationItem = {
-  key: string;
+  key: WorkspaceResourceKey;
   labelTranslationKey: string;
   isPinned: boolean;
   sortOrder: number;
@@ -62,7 +61,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
   const { workspaceSlug } = useParams();
 
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { isWorkspaceFeatureEnabled, canAccessWorkspaceResource } = useWorkspaceAccess();
   const {
     preferences: personalPreferences,
     togglePersonalItem,
@@ -85,22 +84,14 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
   // Filter personal items by feature flags
   const filteredPersonalItems = useMemo(
-    () => PERSONAL_ITEMS.filter((item) => isSidebarFeatureEnabled(item.key, workspaceSlug?.toString() || "")),
-    [workspaceSlug]
+    () => PERSONAL_ITEMS.filter((item) => (workspaceSlug ? isWorkspaceFeatureEnabled(workspaceSlug, item.key) : false)),
+    [isWorkspaceFeatureEnabled, workspaceSlug]
   );
 
   // Filter workspace items by permissions and feature flags, then get pinned/unpinned items
   const workspaceItems = useMemo(() => {
     const items = WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
-      // Permission check
-      const hasPermission = allowPermissions(
-        item.access,
-        EUserPermissionsLevel.WORKSPACE,
-        workspaceSlug?.toString() || ""
-      );
-      // Feature flag check
-      const isFeatureEnabled = isSidebarFeatureEnabled(item.key, workspaceSlug?.toString() || "");
-      return hasPermission && isFeatureEnabled;
+      return workspaceSlug && canAccessWorkspaceResource(workspaceSlug, item.key);
     }).map((item) => {
       // Get pinned status and sort order from localStorage
       const preference = workspacePreferences.items[item.key];
@@ -116,7 +107,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
     });
 
     return items.sort((a, b) => a.sortOrder - b.sortOrder);
-  }, [workspaceSlug, allowPermissions, workspacePreferences]);
+  }, [canAccessWorkspaceResource, workspaceSlug, workspacePreferences.items]);
 
   // Handle checkbox toggle
   const handleWorkspaceItemToggle = useCallback(

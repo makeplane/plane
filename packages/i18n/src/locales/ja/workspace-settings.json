@@ -220,6 +220,10 @@
             "title": "グループ属性キー",
             "description": "ユーザーグループの識別と同期に使用するIDプロバイダーの属性。",
             "placeholder": "グループ"
+          },
+          "default_workspace_role": {
+            "title": "デフォルトのワークスペースロール",
+            "description": "グループ同期によりワークスペースに自動追加されたユーザーに割り当てられるロール。"
           }
         },
         "group_mapping": {

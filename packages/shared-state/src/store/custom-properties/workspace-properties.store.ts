@@ -18,18 +18,16 @@ import { WorkspacePropertiesService, WorkspacePropertyOptionsService } from "@pl
 import type {
   CustomProperty,
   CustomPropertyType,
-  EUserWorkspaceRoles,
+  PermissionCheckArgs,
   TLoader,
-  TUserPermissions,
   WorkspaceCustomPropertiesStoreSchema,
 } from "@plane/types";
-import { EUserPermissions } from "@plane/types";
 // local imports
 import type { BaseCustomPropertiesStoreArgs } from "./base.store";
 import { BaseCustomPropertiesStore } from "./base.store";
 
 type WorkspaceCustomPropertiesStoreConstructorArgs<T extends CustomPropertyType> = BaseCustomPropertiesStoreArgs<T> & {
-  getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
 };
 
 export class WorkspaceCustomPropertiesStore<T extends CustomPropertyType>
@@ -40,7 +38,7 @@ export class WorkspaceCustomPropertiesStore<T extends CustomPropertyType>
   #workspacePropertiesService: WorkspacePropertiesService<T>;
   #workspacePropertyOptionsService: WorkspacePropertyOptionsService;
   // helpers
-  #getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  #can: (args: PermissionCheckArgs) => boolean;
   // observables
   loaderMap: Map<string, TLoader> = new Map();
   workspacePropertyIds: Map<string, string[]> = new Map();
@@ -51,7 +49,7 @@ export class WorkspaceCustomPropertiesStore<T extends CustomPropertyType>
     this.#workspacePropertiesService = new WorkspacePropertiesService<T>();
     this.#workspacePropertyOptionsService = new WorkspacePropertyOptionsService();
     // helpers
-    this.#getWorkspaceRoleByWorkspaceSlug = args.getWorkspaceRoleByWorkspaceSlug;
+    this.#can = args.can;
 
     makeObservable(this, {
       // observables
@@ -138,11 +136,12 @@ export class WorkspaceCustomPropertiesStore<T extends CustomPropertyType>
   };
 
   // permissions
-  #roleByWorkspaceSlug = computedFn((workspaceSlug: string) => this.#getWorkspaceRoleByWorkspaceSlug(workspaceSlug));
 
-  canCreate = computedFn(
-    (workspaceSlug: string) => this.#roleByWorkspaceSlug(workspaceSlug) === EUserPermissions.ADMIN
+  canCreate = computedFn((workspaceSlug: string) =>
+    this.#can({ resource: "workspace_custom_property", action: "create", workspaceSlug })
   );
 
-  canView = computedFn((workspaceSlug: string) => this.#roleByWorkspaceSlug(workspaceSlug) === EUserPermissions.ADMIN);
+  canView = computedFn((workspaceSlug: string) =>
+    this.#can({ resource: "workspace_custom_property", action: "view", workspaceSlug })
+  );
 }

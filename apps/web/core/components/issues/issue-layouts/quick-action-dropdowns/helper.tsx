@@ -63,10 +63,12 @@ export interface MenuItemFactoryProps {
   workspaceSlug?: string;
   projectIdentifier?: string;
   activeLayout?: string;
-  isEditingAllowed: boolean;
-  isArchivingAllowed?: boolean;
-  isDeletingAllowed: boolean;
-  isRestoringAllowed?: boolean;
+  canEdit: boolean;
+  canArchive?: boolean;
+  canDelete: boolean;
+  canRestore?: boolean;
+  canDuplicate?: boolean;
+  canRemoveFromView?: boolean;
   isInArchivableGroup?: boolean;
   issueTypeDetail?: { is_active?: boolean };
   // Action handlers
@@ -150,11 +152,12 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
 
   const {
     issue,
-    activeLayout = "",
-    isEditingAllowed,
-    isArchivingAllowed = false,
-    isDeletingAllowed,
-    isRestoringAllowed = false,
+    canEdit,
+    canArchive = false,
+    canDelete,
+    canRestore = false,
+    canDuplicate = false,
+    canRemoveFromView = false,
     isInArchivableGroup = false,
     issueTypeDetail,
     setIssueToEdit,
@@ -175,7 +178,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
       }),
-    shouldRender: isEditingAllowed,
+    shouldRender: canEdit,
   });
 
   const createCopyMenuItem = (workspaceSlug?: string): TContextMenuItem => {
@@ -187,7 +190,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
       action: () => {
         setCreateUpdateIssueModal(true);
       },
-      shouldRender: isEditingAllowed && (issueTypeDetail?.is_active ?? true),
+      shouldRender: canDuplicate && (issueTypeDetail?.is_active ?? true),
     };
 
     if (setDuplicateWorkItemModal && isDuplicateEnabled) {
@@ -234,7 +237,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     title: "Remove from cycle",
     icon: XCircle,
     action: () => handleOptionalAction(handleRemoveFromView, "Remove from cycle"),
-    shouldRender: isEditingAllowed,
+    shouldRender: canRemoveFromView,
   });
 
   const createRemoveFromModuleMenuItem = (): TContextMenuItem => ({
@@ -242,7 +245,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     title: "Remove from module",
     icon: XCircle,
     action: () => handleOptionalAction(handleRemoveFromView, "Remove from module"),
-    shouldRender: isEditingAllowed,
+    shouldRender: canRemoveFromView,
   });
 
   const createArchiveMenuItem = (): TContextMenuItem => ({
@@ -254,7 +257,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     iconClassName: "mt-1",
     action: () => handleOptionalAction(setArchiveIssueModal, "Archive", true),
     disabled: !isInArchivableGroup,
-    shouldRender: isArchivingAllowed,
+    shouldRender: canArchive,
   });
 
   const createRestoreMenuItem = (): TContextMenuItem => ({
@@ -262,7 +265,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     title: "Restore",
     icon: ArchiveRestoreIcon,
     action: actionHandlers.handleIssueRestore,
-    shouldRender: isRestoringAllowed,
+    shouldRender: canRestore,
   });
 
   const createDeleteMenuItem = (): TContextMenuItem => ({
@@ -272,7 +275,7 @@ export const useMenuItemFactory = (props: MenuItemFactoryProps) => {
     action: () => {
       setDeleteIssueModal(true);
     },
-    shouldRender: isDeletingAllowed,
+    shouldRender: canDelete,
   });
 
   return {

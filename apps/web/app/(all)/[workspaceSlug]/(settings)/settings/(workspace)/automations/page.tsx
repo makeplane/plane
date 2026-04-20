@@ -22,7 +22,6 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 // local imports
@@ -35,15 +34,15 @@ function WorkspaceAutomationSettingsPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { workspaceUserInfo } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const {
-    workspaceAutomations: { canView },
+    workspaceAutomations: { getCanViewAutomation },
   } = useAutomations();
   // derived values
+  const canView = getCanViewAutomation(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Automations` : undefined;
 
-  if (workspaceUserInfo && !canView) {
+  if (!canView) {
     return <NotAuthorizedView section="settings" />;
   }
 

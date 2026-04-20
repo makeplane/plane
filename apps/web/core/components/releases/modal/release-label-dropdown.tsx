@@ -13,23 +13,21 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 import { Loader } from "lucide-react";
 import { CheckIcon, PlusIcon, LabelPropertyIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
 import type { TButtonSize } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Combobox } from "@plane/propel/combobox";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { ReleaseLabel } from "@plane/types";
 import { cn } from "@plane/utils";
-import { useUserPermissions } from "@/hooks/store/user";
 import releaseService from "@/services/release.service";
+import { useReleasePermissions } from "@/hooks/permissions/use-release-permissions";
 
 type Props = {
+  workspaceSlug: string;
   value: string[];
   onChange?: (value: string[]) => void;
   disabled?: boolean;
@@ -41,6 +39,7 @@ type Props = {
 
 export const ReleaseLabelDropdown = observer(function ReleaseLabelDropdown(props: Props) {
   const {
+    workspaceSlug,
     value,
     onChange,
     disabled = false,
@@ -50,9 +49,8 @@ export const ReleaseLabelDropdown = observer(function ReleaseLabelDropdown(props
     size = "base",
   } = props;
 
-  const { workspaceSlug } = useParams();
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
+  const releaseLabelPermissions = useReleasePermissions(workspaceSlug).getLabelPermissions();
 
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -71,12 +69,6 @@ export const ReleaseLabelDropdown = observer(function ReleaseLabelDropdown(props
     xl: { icon: "h-5 w-5", dropdown: "w-64 text-13", optionPadding: "px-2 py-2.5" },
   };
   const currentSize = sizeConfig[size];
-
-  const canCreateLabel = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
 
   const labelOptions = useMemo(
     () =>
@@ -178,7 +170,13 @@ export const ReleaseLabelDropdown = observer(function ReleaseLabelDropdown(props
           searchQuery={query}
           onSearchQueryChange={setQuery}
           onSearchQueryKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (filteredOptions.length === 0 && e.key === "Enter" && query.length && !submitting) {
+            if (
+              filteredOptions.length === 0 &&
+              e.key === "Enter" &&
+              query.length &&
+              !submitting &&
+              releaseLabelPermissions.canCreate
+            ) {
               handleCreateLabel(e);
             }
           }}
@@ -203,7 +201,7 @@ export const ReleaseLabelDropdown = observer(function ReleaseLabelDropdown(props
                   {value.includes(option.value) && <CheckIcon className={cn(currentSize.icon, "shrink-0")} />}
                 </Combobox.Option>
               ))
-            ) : canCreateLabel && query ? (
+            ) : releaseLabelPermissions.canCreate && query ? (
               <button
                 onClick={handleCreateLabel}
                 className={`text-left text-secondary flex items-center gap-2 px-1 py-1.5 rounded hover:bg-layer-1-hover w-full whitespace-nowrap overflow-auto ${

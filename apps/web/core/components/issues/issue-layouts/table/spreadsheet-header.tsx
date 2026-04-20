@@ -31,8 +31,10 @@ interface Props {
   displayProperties: IIssueDisplayProperties;
   displayFilters: IIssueDisplayFilterOptions;
   handleDisplayFilterUpdate: (data: Partial<IIssueDisplayFilterOptions>) => void;
+  layoutPermissions: {
+    canPerformBulkOps: boolean;
+  };
   handleDisplayPropertiesUpdate?: (property: Partial<IIssueDisplayProperties>) => void;
-  canEditProperties: (projectId: string | undefined) => boolean;
   isEstimateEnabled: boolean;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
@@ -46,8 +48,8 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
     displayProperties,
     displayFilters,
     handleDisplayFilterUpdate,
+    layoutPermissions,
     handleDisplayPropertiesUpdate,
-    canEditProperties,
     isEstimateEnabled,
     spreadsheetColumnsList,
     selectionHelpers,
@@ -55,10 +57,7 @@ export const SpreadsheetHeader = observer(function SpreadsheetHeader(props: Prop
   } = props;
   // derived values
   const isGroupSelectionEmpty = selectionHelpers.isGroupSelected(SPREADSHEET_SELECT_GROUP) === "empty";
-  // For single-project context, use projectIds[0] for permission check
-  const singleProjectId = projectIds.length === 1 ? projectIds[0] : undefined;
-  // auth
-  const canSelectIssues = canEditProperties(singleProjectId) && !selectionHelpers.isSelectionDisabled;
+  const canSelectIssues = layoutPermissions.canPerformBulkOps && !selectionHelpers.isSelectionDisabled;
 
   return (
     <thead className="sticky top-0 left-0 z-[12] border-b-[0.5px] border-subtle">

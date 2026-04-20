@@ -13,56 +13,55 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { ROLE, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, TrashIcon, ChevronDownIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
 import { CustomSelect, CustomMenu } from "@plane/ui";
-import { cn, copyTextToClipboard } from "@plane/utils";
+import { cn, copyTextToClipboard, getAssignableWorkspaceRoles } from "@plane/utils";
 // components
 import { ConfirmWorkspaceMemberRemove } from "@/components/workspace/confirm-workspace-member-remove";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 
 type Props = {
+  workspaceSlug: string;
   invitationId: string;
+  permissions: {
+    canChangeRole: (targetRoleSlug: string) => boolean;
+    canRemoveInvitation: boolean;
+  };
 };
 
 export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitationsListItem(props: Props) {
-  const { invitationId } = props;
-  // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, invitationId, permissions } = props;
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions, workspaceInfoBySlug } = useUserPermissions();
   const {
     workspace: { updateMemberInvitation, deleteMemberInvitation, getWorkspaceInvitationDetails },
   } = useMember();
+  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
+  const { getWorkspaceRoleDetailsByRoleSlug, getWorkspaceRolesByWorkspaceSlug } = useRoleManagement();
   // derived values
   const invitationDetails = getWorkspaceInvitationDetails(invitationId);
-  const currentWorkspaceMemberInfo = workspaceInfoBySlug(workspaceSlug.toString());
-  const currentWorkspaceRole = currentWorkspaceMemberInfo?.role;
-  // is the current logged in user admin
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  // role change access-
-  // 1. user cannot change their own role
-  // 2. only admin or member can change role
-  // 3. user cannot change role of higher role
-  const hasRoleChangeAccess = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
+  const invitationRoleDetails = invitationDetails
+    ? getWorkspaceRoleDetailsByRoleSlug(workspaceSlug, invitationDetails.role_slug)
+    : undefined;
+  const isRoleEditable = invitationDetails ? permissions.canChangeRole(invitationDetails.role_slug) : false;
+  const assignableWorkspaceRoles = getAssignableWorkspaceRoles(
+    getWorkspaceRolesByWorkspaceSlug(workspaceSlug, "active"),
+    getCurrentUserWorkspaceRoleSlug(workspaceSlug)
   );
 
   const handleRemoveInvitation = async () => {
     try {
-      if (!workspaceSlug || !invitationDetails) return;
+      if (!invitationDetails) return;
 
       await deleteMemberInvitation(workspaceSlug.toString(), invitationDetails.id);
       setToast({
@@ -80,7 +79,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
     }
   };
 
-  if (!invitationDetails || !currentWorkspaceMemberInfo) return null;
+  if (!invitationDetails) return null;
 
   const handleCopyText = async () => {
     try {
@@ -111,7 +110,7 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
       },
       title: t("common.remove"),
       icon: TrashIcon,
-      shouldRender: isAdmin,
+      shouldRender: permissions.canRemoveInvitation,
       className: "text-danger-primary",
       iconClassName: "text-danger-primary",
     },
@@ -146,24 +145,22 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
               <div className="item-center flex gap-1 rounded-sm px-2 py-0.5">
                 <span
                   className={`flex items-center rounded-sm text-caption-sm-medium ${
-                    hasRoleChangeAccess ? "" : "text-placeholder"
+                    isRoleEditable ? "" : "text-placeholder"
                   }`}
                 >
-                  {ROLE[invitationDetails.role]}
+                  {invitationRoleDetails?.name ?? "—"}
                 </span>
-                {hasRoleChangeAccess && (
+                {isRoleEditable && (
                   <span className="grid place-items-center">
                     <ChevronDownIcon className="h-3 w-3" />
                   </span>
                 )}
               </div>
             }
-            value={invitationDetails.role}
-            onChange={(value: EUserPermissions) => {
-              if (!workspaceSlug || !value) return;
-
-              updateMemberInvitation(workspaceSlug.toString(), invitationDetails.id, {
-                role: value,
+            value={invitationDetails.role_slug}
+            onChange={(value: string) => {
+              updateMemberInvitation(workspaceSlug, invitationDetails.id, {
+                role_slug: value,
               }).catch((err: unknown) => {
                 const error = err as { error?: string };
                 setToast({
@@ -173,61 +170,52 @@ export const WorkspaceInvitationsListItem = observer(function WorkspaceInvitatio
                 });
               });
             }}
-            disabled={!hasRoleChangeAccess}
+            disabled={!isRoleEditable}
             placement="bottom-end"
           >
-            {Object.keys(ROLE).map((key) => {
-              if (
-                currentWorkspaceRole &&
-                Number(currentWorkspaceRole) !== 20 &&
-                Number(currentWorkspaceRole) < parseInt(key)
-              )
-                return null;
-
+            {assignableWorkspaceRoles.map((role) => {
               return (
-                <CustomSelect.Option key={key} value={parseInt(key, 10)}>
-                  <>{ROLE[parseInt(key) as keyof typeof ROLE]}</>
+                <CustomSelect.Option key={role.slug} value={role.slug}>
+                  {role.name}
                 </CustomSelect.Option>
               );
             })}
           </CustomSelect>
-          {isAdmin && (
-            <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
-              {MENU_ITEMS.map((item) => {
-                if (item.shouldRender === false) return null;
-                return (
-                  <CustomMenu.MenuItem
-                    key={item.key}
-                    onClick={() => {
-                      item.action();
-                    }}
-                    className={cn(
-                      "flex items-center gap-2",
-                      {
-                        "text-placeholder": item.disabled,
-                      },
-                      item.className
+          <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
+            {MENU_ITEMS.map((item) => {
+              if (item.shouldRender === false) return null;
+              return (
+                <CustomMenu.MenuItem
+                  key={item.key}
+                  onClick={() => {
+                    item.action();
+                  }}
+                  className={cn(
+                    "flex items-center gap-2",
+                    {
+                      "text-placeholder": item.disabled,
+                    },
+                    item.className
+                  )}
+                  disabled={item.disabled}
+                >
+                  {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
+                  <div>
+                    <h5>{item.title}</h5>
+                    {item.description && (
+                      <p
+                        className={cn("text-tertiary whitespace-pre-line", {
+                          "text-placeholder": item.disabled,
+                        })}
+                      >
+                        {item.description}
+                      </p>
                     )}
-                    disabled={item.disabled}
-                  >
-                    {item.icon && <item.icon className={cn("h-3 w-3", item.iconClassName)} />}
-                    <div>
-                      <h5>{item.title}</h5>
-                      {item.description && (
-                        <p
-                          className={cn("text-tertiary whitespace-pre-line", {
-                            "text-placeholder": item.disabled,
-                          })}
-                        >
-                          {item.description}
-                        </p>
-                      )}
-                    </div>
-                  </CustomMenu.MenuItem>
-                );
-              })}
-            </CustomMenu>
-          )}
+                  </div>
+                </CustomMenu.MenuItem>
+              );
+            })}
+          </CustomMenu>
         </div>
       </div>
     </>

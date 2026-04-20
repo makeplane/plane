@@ -37,12 +37,17 @@ import { getWorkItemBlockId, isWorkItemNew } from "@/helpers/work-item-layout";
 import { IssueBlock } from "./block";
 import type { TRenderQuickActions } from "./list-view-types";
 
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+
 type Props = {
   issueId: string;
   getWorkItemById: (issueId: string) => TIssue | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   displayProperties: IIssueDisplayProperties | undefined;
   nestingLevel: number;
   spacingLeft?: number;
@@ -64,7 +69,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
     groupId,
     updateIssue,
     quickActions,
-    canEditProperties,
+    getWorkItemPermissions,
     displayProperties,
     nestingLevel,
     spacingLeft = 14,
@@ -157,7 +162,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
           groupId={groupId}
           updateIssue={updateIssue}
           quickActions={quickActions}
-          canEditProperties={canEditProperties}
+          getWorkItemPermissions={getWorkItemPermissions}
           displayProperties={displayProperties}
           isExpanded={isExpanded}
           setExpanded={setExpanded}
@@ -180,7 +185,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
             getWorkItemById={getWorkItemById}
             updateIssue={updateIssue}
             quickActions={quickActions}
-            canEditProperties={canEditProperties}
+            getWorkItemPermissions={getWorkItemPermissions}
             displayProperties={displayProperties}
             nestingLevel={nestingLevel + 1}
             spacingLeft={spacingLeft + 12}

@@ -31,12 +31,13 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   parentIssueId: string;
   issueId: string;
-  canEditProperty: (property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+  canEditProperty: (property: TWorkItemProperty) => boolean;
   updateSubIssue: (
     workspaceSlug: string,
     projectId: string,

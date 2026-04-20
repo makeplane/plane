@@ -17,14 +17,14 @@ from rest_framework.response import Response
 from plane.app.serializers import StateSerializer
 from plane.app.views.base import BaseAPIView
 from plane.db.models import State
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.permissions import WorkspacePermissions, can
 from collections import defaultdict
 
 
 class WorkspaceStatesEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
     use_read_replica = True
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         states = State.objects.filter(
             workspace__slug=slug,

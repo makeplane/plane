@@ -30,9 +30,9 @@ from plane.ee.serializers import (
     InitiativeActivitySerializer,
     InitiativeCommentSerializer,
 )
-from plane.app.permissions import (
-    allow_permission,
-    ROLE,
+from plane.permissions import (
+    can,
+    InitiativePermissions,
 )
 from plane.ee.models import (
     InitiativeActivity,
@@ -50,14 +50,7 @@ class InitiativeActivityEndpoint(BaseAPIView):
 
     @method_decorator(gzip_page)
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-            ROLE.GUEST,
-        ],
-        level="WORKSPACE",
-    )
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get(self, request, slug, initiative_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:

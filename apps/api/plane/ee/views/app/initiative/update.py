@@ -23,7 +23,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, InitiativeUpdatePermissions, InitiativeUpdateCommentPermissions, ResourceType
 from plane.ee.models import (
     EntityUpdates,
     InitiativeProject,
@@ -37,7 +37,7 @@ class InitiativeUpdateViewSet(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativeUpdatePermissions.VIEW, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def get(self, request, slug, initiative_id):
         update_status = request.query_params.get("search", None)
 
@@ -112,7 +112,7 @@ class InitiativeUpdateCommentsViewSet(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativeUpdatePermissions.VIEW, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def get(self, request, slug, initiative_id, update_id):
         update_reactions_qs = UpdateReaction.objects.select_related("actor")
 
@@ -125,7 +125,11 @@ class InitiativeUpdateCommentsViewSet(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(
+        InitiativeUpdateCommentPermissions.CREATE,
+        resource_param="initiative_id",
+        scope_param_type=ResourceType.INITIATIVE,
+    )
     def post(self, request, slug, initiative_id, update_id):
         workspace = Workspace.objects.get(slug=slug)
         parent_update = EntityUpdates.objects.select_related("project", "epic").get(pk=update_id, workspace__slug=slug)
@@ -153,7 +157,7 @@ class InitiativeUpdatesReactionViewSet(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativeUpdatePermissions.REACT, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def post(self, request, slug, initiative_id, update_id):
         update = EntityUpdates.objects.select_related("project", "epic").get(id=update_id, workspace__slug=slug)
 
@@ -170,7 +174,7 @@ class InitiativeUpdatesReactionViewSet(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativeUpdatePermissions.REACT, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def delete(self, request, slug, initiative_id, update_id, reaction_code):
         UpdateReaction.objects.get(
             workspace__slug=slug,

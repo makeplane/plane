@@ -89,6 +89,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "plane.middleware.workspace.WorkspaceResolverMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "crum.CurrentRequestUserMiddleware",
     "django.middleware.gzip.GZipMiddleware",
@@ -260,6 +261,7 @@ if REDIS_SSL:
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
                 "CONNECTION_POOL_KWARGS": {"ssl_cert_reqs": False},
+                "IGNORE_EXCEPTIONS": True,
             },
         }
     }
@@ -268,7 +270,10 @@ else:
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": REDIS_URL,
-            "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+                "IGNORE_EXCEPTIONS": True,
+            },
         }
     }
 
@@ -425,6 +430,8 @@ CELERY_IMPORTS = (
     "plane.bgtasks.silo_credentials_update_task",
     "plane.bgtasks.project_subscriber_task",
     "plane.bgtasks.link_crawler_task",
+    # permission tasks
+    "plane.bgtasks.init_permissions_task",
     # ee tasks
     "plane.ee.bgtasks.entity_issue_state_progress_task",
     "plane.ee.bgtasks.app_bot_task",

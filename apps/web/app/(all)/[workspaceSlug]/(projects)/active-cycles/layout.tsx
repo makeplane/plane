@@ -18,10 +18,12 @@ import { ContentWrapper } from "@/components/core/content-wrapper";
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 // local imports
 import { WorkspaceActiveCycleHeader } from "./header";
+// types
+import type { Route } from "./+types/layout";
 
-export default function WorkspaceActiveCycleLayout() {
+export default function WorkspaceActiveCycleLayout({ params }: Route.ComponentProps) {
   return (
-    <WorkspaceAccessWrapper pageKey="active_cycles">
+    <WorkspaceAccessWrapper pageKey="active-cycles" workspaceSlug={params.workspaceSlug}>
       <AppHeader header={<WorkspaceActiveCycleHeader />} />
       <ContentWrapper>
         <Outlet />

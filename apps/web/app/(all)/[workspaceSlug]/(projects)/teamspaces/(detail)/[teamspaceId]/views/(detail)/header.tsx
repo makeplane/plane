@@ -13,16 +13,15 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { LockIcon, TeamsIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
-import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 // types
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
-import { EIssuesStoreType, EUserWorkspaceRoles, EViewAccess, EIssueLayoutTypes } from "@plane/types";
+import { EIssuesStoreType, EViewAccess, EIssueLayoutTypes } from "@plane/types";
 // ui
 import { Breadcrumbs, Tooltip, Header, Loader, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
 // components
@@ -34,18 +33,22 @@ import { WorkItemFiltersToggle } from "@/components/work-item-filters/filters-to
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces";
 
-export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkItemsHeader() {
+type TeamspaceViewWorkItemsHeaderProps = {
+  workspaceSlug: string;
+  teamspaceId: string;
+  viewId: string;
+};
+
+export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkItemsHeader(
+  props: TeamspaceViewWorkItemsHeaderProps
+) {
+  const { workspaceSlug, teamspaceId, viewId } = props;
   // router
-  const { workspaceSlug: routerWorkspaceSlug, teamspaceId: routerTeamspaceId, viewId: routerViewId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
-  const teamspaceId = routerTeamspaceId ? routerTeamspaceId.toString() : undefined;
-  const viewId = routerViewId ? routerViewId.toString() : undefined;
   const router = useAppRouter();
   // plane hooks
   const { t } = useTranslation();
@@ -54,20 +57,18 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
     issuesFilter: { issueFilters, updateFilters },
   } = useIssues(EIssuesStoreType.TEAM_VIEW);
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
-  const { loader, getTeamspaceById, getTeamspaceProjectIds } = useTeamspaces();
+  const { loader, getTeamspaceById, getTeamspaceProjectIds, permissions } = useTeamspaces();
   const { getViewById, getTeamspaceViewIds } = useTeamspaceViews();
   // derived values
-  const teamspace = teamspaceId ? getTeamspaceById(teamspaceId) : undefined;
-  const view = teamspace && viewId ? getViewById(teamspace.id, viewId.toString()) : null;
+  const teamspace = getTeamspaceById(teamspaceId);
+  const view = getViewById(teamspaceId, viewId);
   const activeLayout = issueFilters?.displayFilters?.layout;
   const publishLink = getPublishViewLink(view?.anchor);
-  const teamspaceProjectIds = teamspaceId ? getTeamspaceProjectIds(teamspaceId) : [];
-  const teamspaceViewIds = teamspaceId ? getTeamspaceViewIds(teamspaceId) : [];
+  const teamspaceProjectIds = getTeamspaceProjectIds(teamspaceId);
+  const teamspaceViewIds = getTeamspaceViewIds(teamspaceId);
 
   const switcherOptions = teamspaceViewIds
     ?.map((id) => {
-      if (!teamspaceId) return;
       const _view = id === viewId ? view : getViewById(teamspaceId, id);
       if (!_view) return;
       return {
@@ -77,55 +78,28 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
       };
     })
     .filter((option) => option !== undefined) as ICustomSearchSelectOption[];
-  // permissions
-  const canUserCreateIssue = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !teamspaceId || !viewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        teamspaceId.toString(),
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        viewId.toString()
-      );
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, viewId);
     },
     [workspaceSlug, teamspaceId, viewId, updateFilters]
   );
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !teamspaceId || !viewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        teamspaceId.toString(),
-        EIssueFilterType.DISPLAY_FILTERS,
-        updatedDisplayFilter,
-        viewId.toString()
-      );
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, viewId);
     },
     [workspaceSlug, teamspaceId, viewId, updateFilters]
   );
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !teamspaceId || !viewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        teamspaceId.toString(),
-        EIssueFilterType.DISPLAY_PROPERTIES,
-        property,
-        viewId.toString()
-      );
+      updateFilters(workspaceSlug, teamspaceId, EIssueFilterType.DISPLAY_PROPERTIES, property, viewId);
     },
     [workspaceSlug, teamspaceId, viewId, updateFilters]
   );
 
-  if (!workspaceSlug) return;
   return (
     <Header>
       <Header.LeftItem>
@@ -168,7 +142,7 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
             <Breadcrumbs.Item
               component={
                 <BreadcrumbNavigationSearchDropdown
-                  selectedItem={viewId?.toString() ?? ""}
+                  selectedItem={viewId}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/teamspaces/${teamspaceId}/views/${value}`);
@@ -236,15 +210,13 @@ export const TeamspaceViewWorkItemsHeader = observer(function TeamspaceViewWorkI
             />
           </FiltersDropdown>
         )}
-        {canUserCreateIssue ? (
+        {permissions.getCanCreateWorkItem(workspaceSlug, teamspaceId) && (
           <Button
             onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.TEAM_VIEW, teamspaceProjectIds)}
             size="lg"
           >
             <div className="hidden sm:block">Add</div> work item
           </Button>
-        ) : (
-          <></>
         )}
       </Header.RightItem>
     </Header>

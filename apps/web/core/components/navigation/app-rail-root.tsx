@@ -15,16 +15,14 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import { SettingsIcon } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { ContextMenu } from "@plane/propel/context-menu";
 import { CheckIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
-import { cn } from "@plane/utils";
+import { cn, isGuestRole } from "@plane/utils";
 // components
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
-import { useUserPermissions } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 // lib
 import { useAppRailVisibility } from "@/lib/app-rail/context";
 // local imports
@@ -35,7 +33,7 @@ export const AppRailRoot = observer(() => {
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
   // preferences
   const { preferences, updateDisplayMode } = useAppRailPreferences();
   const { isCollapsed, toggleAppRail } = useAppRailVisibility();
@@ -44,15 +42,13 @@ export const AppRailRoot = observer(() => {
   const showLabel = preferences.displayMode === "icon_with_label";
   const railWidth = showLabel ? "3.75rem" : "3rem";
   // auth
-  const isAllowedToNavigateToSettings = allowPermissions(
-    [EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
+  const isAllowedToNavigateToSettings = workspaceSlug
+    ? !isGuestRole(getCurrentUserWorkspaceRoleSlug(workspaceSlug))
+    : false;
 
   return (
     <div
-      className="h-full flex-shrink-0 bg-canvas transition-all ease-in-out duration-300 z-[26]"
+      className="h-full shrink-0 bg-canvas transition-all ease-in-out duration-300 z-[26]"
       style={{
         width: railWidth,
         display: "block",
@@ -68,17 +64,19 @@ export const AppRailRoot = observer(() => {
               })}
             >
               <AppSidebarItemsRoot showLabel={showLabel} />
-              <div className="border-t border-strong mx-2" />
               {isAllowedToNavigateToSettings && (
-                <AppSidebarItem
-                  item={{
-                    label: "Settings",
-                    icon: <SettingsIcon className="size-5" />,
-                    href: `/${workspaceSlug}/settings`,
-                    isActive: isWorkspaceSettingsPath,
-                    showLabel,
-                  }}
-                />
+                <>
+                  <div className="border-t border-strong mx-2" />
+                  <AppSidebarItem
+                    item={{
+                      label: "Settings",
+                      icon: <SettingsIcon className="size-5" />,
+                      href: `/${workspaceSlug}/settings`,
+                      isActive: isWorkspaceSettingsPath,
+                      showLabel,
+                    }}
+                  />
+                </>
               )}
             </div>
           </div>

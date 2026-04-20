@@ -13,17 +13,14 @@
 
 import { LayoutGrid } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { CustomersIcon, InitiativeIcon, TeamsIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import type { TPowerKCommandConfig, TPowerKContext } from "@/components/power-k/core/types";
+import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUser } from "@/hooks/store/user";
 // plane web imports
-import { isSidebarFeatureEnabled } from "@/helpers/sidebar";
 import { useDashboards } from "@/plane-web/hooks/store";
+import { usePowerKPermissions } from "@/components/command-palette/power-k/hooks/use-power-k-permissions";
 
 export type TPowerKCreationCommandKeysExtended =
   | "create_teamspace"
@@ -39,31 +36,11 @@ export const usePowerKCreationCommandsRecordExtended = (): Record<
   TPowerKCommandConfig
 > => {
   // store hooks
-  const {
-    permission: { allowPermissions },
-  } = useUser();
+  const { canCreateResource } = usePowerKPermissions();
   const { toggleCreateTeamspaceModal, toggleCreateInitiativeModal, toggleCreateCustomerModal } = useCommandPalette();
   const {
-    workspaceDashboards: { canCurrentUserCreateDashboard, toggleCreateUpdateModal: toggleWorkspaceDashboardModal },
+    workspaceDashboards: { toggleCreateUpdateModal: toggleWorkspaceDashboardModal },
   } = useDashboards();
-  // derived values
-  const hasWorkspaceAdminLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserWorkspaceRoles.ADMIN],
-      EUserPermissionsLevel.WORKSPACE,
-      ctx.params.workspaceSlug?.toString()
-    );
-  const hasWorkspaceMemberLevelPermissions = (ctx: TPowerKContext) =>
-    allowPermissions(
-      [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-      EUserPermissionsLevel.WORKSPACE,
-      ctx.params.workspaceSlug?.toString()
-    );
-  const baseWorkspaceConditions = (ctx: TPowerKContext) => Boolean(ctx.params.workspaceSlug?.toString());
-  const isWorkspaceFeatureEnabled = (ctx: TPowerKContext, featureKey: string) => {
-    if (!ctx.params.workspaceSlug?.toString()) return false;
-    return isSidebarFeatureEnabled(featureKey, ctx.params.workspaceSlug?.toString());
-  };
 
   return {
     create_teamspace: {
@@ -74,14 +51,8 @@ export const usePowerKCreationCommandsRecordExtended = (): Record<
       icon: TeamsIcon,
       keySequence: "nt",
       action: () => toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined }),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "team_spaces") &&
-        hasWorkspaceAdminLevelPermissions(ctx),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "team_spaces") &&
-        hasWorkspaceAdminLevelPermissions(ctx),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_teamspace"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_teamspace"),
       closeOnSelect: true,
     },
     create_initiative: {
@@ -92,14 +63,8 @@ export const usePowerKCreationCommandsRecordExtended = (): Record<
       icon: InitiativeIcon,
       keySequence: "nn",
       action: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "initiatives") &&
-        hasWorkspaceMemberLevelPermissions(ctx),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "initiatives") &&
-        hasWorkspaceMemberLevelPermissions(ctx),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_initiative"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_initiative"),
       closeOnSelect: true,
     },
     create_workspace_dashboard: {
@@ -111,13 +76,9 @@ export const usePowerKCreationCommandsRecordExtended = (): Record<
       keySequence: "nb",
       action: () => toggleWorkspaceDashboardModal(true),
       isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "workspace-dashboards") &&
-        canCurrentUserCreateDashboard,
+        canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_workspace_dashboard"),
       isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "workspace-dashboards") &&
-        canCurrentUserCreateDashboard,
+        canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_workspace_dashboard"),
       closeOnSelect: true,
     },
     create_customer: {
@@ -128,14 +89,8 @@ export const usePowerKCreationCommandsRecordExtended = (): Record<
       icon: CustomersIcon,
       keySequence: "nu",
       action: () => toggleCreateCustomerModal({ isOpen: true, customerId: undefined }),
-      isEnabled: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "customers") &&
-        hasWorkspaceAdminLevelPermissions(ctx),
-      isVisible: (ctx) =>
-        baseWorkspaceConditions(ctx) &&
-        isWorkspaceFeatureEnabled(ctx, "customers") &&
-        hasWorkspaceAdminLevelPermissions(ctx),
+      isEnabled: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_customer"),
+      isVisible: (ctx) => canCreateResource(ctx.params.workspaceSlug, ctx.params.projectId, "create_customer"),
       closeOnSelect: true,
     },
   };

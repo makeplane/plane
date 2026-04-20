@@ -12,18 +12,22 @@
  */
 
 import { useMemo } from "react";
+// plane imports
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
+import type { ProjectResourceKey } from "@plane/types";
+// hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
+// local imports
 import { DEFAULT_TAB_KEY } from "./tab-navigation-utils";
 import type { TTabPreferences } from "./tab-navigation-utils";
 
 export type TTabPreferencesHook = {
   tabPreferences: TTabPreferences;
   isLoading: boolean;
-  handleToggleDefaultTab: (tabKey: string) => void;
-  handleHideTab: (tabKey: string) => void;
-  handleShowTab: (tabKey: string) => void;
+  handleToggleDefaultTab: (tabKey: ProjectResourceKey) => void;
+  handleHideTab: (tabKey: ProjectResourceKey) => void;
+  handleShowTab: (tabKey: ProjectResourceKey) => void;
 };
 
 /**
@@ -38,11 +42,8 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   const {
     project: { getProjectUserProperties, updateProjectUserProperties },
   } = useMember();
-  // const { projectUserInfo } = useUserPermissions();
   const { data } = useUser();
 
-  // Get member ID from projectUserInfo
-  // const projectMemberInfo = projectUserInfo[workspaceSlug]?.[projectId];
   const memberId = data?.id || null;
 
   // Get preferences from store
@@ -79,7 +80,7 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
    * Toggle default tab setting
    * If tab is already default, resets to work_items; otherwise sets as default
    */
-  const handleToggleDefaultTab = (tabKey: string) => {
+  const handleToggleDefaultTab = (tabKey: ProjectResourceKey) => {
     const newDefaultTab = tabKey === tabPreferences.defaultTab ? DEFAULT_TAB_KEY : tabKey;
     const newPreferences = { ...tabPreferences, defaultTab: newDefaultTab };
     updatePreferences(newPreferences)
@@ -103,7 +104,7 @@ export const useTabPreferences = (workspaceSlug: string, projectId: string): TTa
   /**
    * Hide a tab (moves to overflow menu with "Show" option)
    */
-  const handleHideTab = (tabKey: string) => {
+  const handleHideTab = (tabKey: ProjectResourceKey) => {
     const newPreferences = {
       ...tabPreferences,
       hiddenTabs: [...tabPreferences.hiddenTabs, tabKey],

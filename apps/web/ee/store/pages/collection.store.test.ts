@@ -167,10 +167,9 @@ const createRootStore = (pages: Record<string, ReturnType<typeof createWorkspace
       data: {
         id: "user-1",
       },
-      permission: {
-        allowPermissions: vi.fn(() => true),
-        getWorkspaceRoleByWorkspaceSlug: vi.fn(() => 20),
-      },
+    },
+    permissionAccessStore: {
+      can: vi.fn(() => true),
     },
     workspacePages: {
       data: pages,

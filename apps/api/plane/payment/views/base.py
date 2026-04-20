@@ -115,6 +115,10 @@ class BaseAPIView(TimezoneMixin, APIView):
         return self.kwargs.get("slug", None)
 
     @property
+    def workspace_id(self):
+        return self.request.workspace_id
+
+    @property
     def project_id(self):
         return self.kwargs.get("project_id", None)
 

@@ -32,6 +32,8 @@ import type { IHomeStore } from "./home";
 import { HomeStore } from "./home";
 import type { IWebhookStore } from "./webhook.store";
 import { WebhookStore } from "./webhook.store";
+import type { WorkspacePermissions } from "./permissions/root";
+import { WorkspacePermissionsInstance } from "./permissions/root";
 
 export interface IWorkspaceRootStore {
   loader: boolean;
@@ -75,6 +77,7 @@ export interface IWorkspaceRootStore {
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
   home: IHomeStore;
+  permissions: WorkspacePermissions;
 }
 
 export class WorkspaceRootStore implements IWorkspaceRootStore {
@@ -92,6 +95,7 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
   // sub-stores
   webhook: IWebhookStore;
   apiToken: IApiTokenStore;
+  permissions: WorkspacePermissions;
 
   constructor(_rootStore: CoreRootStore) {
     makeObservable(this, {
@@ -128,6 +132,10 @@ export class WorkspaceRootStore implements IWorkspaceRootStore {
     // sub-stores
     this.webhook = new WebhookStore(_rootStore);
     this.apiToken = new ApiTokenStore(_rootStore);
+    this.permissions = new WorkspacePermissionsInstance({
+      can: _rootStore.permissionAccessStore.can,
+      getCurrentUserRoleSlug: _rootStore.permissionAccessStore.getCurrentUserWorkspaceRoleSlug,
+    });
   }
 
   /**

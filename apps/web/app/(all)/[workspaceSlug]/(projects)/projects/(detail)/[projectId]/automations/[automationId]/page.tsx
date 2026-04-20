@@ -12,14 +12,12 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
+import { useProjectSettingsAccess } from "@/hooks/permissions/use-project-settings-access";
 // plane web components
 import { AutomationDetailsMainContentRoot } from "@/components/automations/details/main-content/root";
 import { AutomationDetailsSidebarRoot } from "@/components/automations/details/sidebar/root";
@@ -30,19 +28,19 @@ import type { Route } from "./+types/page";
 
 function AutomationDetailsPage({ params }: Route.ComponentProps) {
   // params
-  const { automationId } = params;
+  const { workspaceSlug, projectId, automationId } = params;
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails } = useProject();
+  const { canAccessProjectSetting } = useProjectSettingsAccess();
   const {
     projectAutomations: { getFetchStatusById },
   } = useAutomations();
   // derived values
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Automations` : undefined;
-  const hasProjectAdminPermissions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const hasAccessToAutomationDetails = canAccessProjectSetting(workspaceSlug, projectId, "automations");
   const isLoaded = getFetchStatusById(automationId);
 
-  if (workspaceUserInfo && !hasProjectAdminPermissions) {
+  if (!hasAccessToAutomationDetails) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
 

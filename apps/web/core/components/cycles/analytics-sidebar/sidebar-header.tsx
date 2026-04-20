@@ -17,7 +17,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ArrowRight, ChevronRightIcon } from "lucide-react";
 // Plane Imports
-import { CYCLE_STATUS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { CYCLE_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ICycle } from "@plane/types";
@@ -26,7 +26,6 @@ import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useTimeZoneConverter } from "@/hooks/use-timezone-converter";
 // services
 import { CycleService } from "@/services/cycle.service";
@@ -49,8 +48,7 @@ const cycleService = new CycleService();
 export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Props) {
   const { workspaceSlug, projectId, cycleDetails, handleClose, isArchived = false } = props;
   // hooks
-  const { allowPermissions } = useUserPermissions();
-  const { updateCycleDetails } = useCycle();
+  const { updateCycleDetails, permissions: cyclePermissions } = useCycle();
   const { t } = useTranslation();
   const { renderFormattedDateInUserTimezone, getProjectUTCOffset } = useTimeZoneConverter(projectId);
   const searchParams = useSearchParams();
@@ -68,6 +66,12 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
   const isCompleted = cycleStatus === "completed";
 
   const currentCycle = CYCLE_STATUS.find((status) => status.value === cycleStatus);
+
+  const canEditCycle =
+    !!workspaceSlug &&
+    !!projectId &&
+    !!cycleDetails.id &&
+    cyclePermissions.getCanEditCycle(workspaceSlug, projectId, cycleDetails.id);
 
   const submitChanges = async (data: Partial<ICycle>) => {
     if (!workspaceSlug || !projectId || !cycleDetails.id) return;
@@ -122,11 +126,6 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
     }
     return isDateValid;
   };
-
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   return (
     <>
@@ -197,7 +196,7 @@ export const CycleSidebarHeader = observer(function CycleSidebarHeader(props: Pr
                     mergeDates
                     showTooltip={!!cycleDetails.start_date && !!cycleDetails.end_date} // show tooltip only if both start and end date are present
                     required={cycleDetails.status !== "draft"}
-                    disabled={!isEditingAllowed || isArchived || isCompleted}
+                    disabled={!canEditCycle || isArchived || isCompleted}
                   />
                 )}
               />

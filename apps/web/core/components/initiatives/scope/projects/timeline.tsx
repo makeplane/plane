@@ -23,14 +23,17 @@ type Props = {
   projectIds: string[];
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canEditProject: (projectId: string) => boolean;
+  };
   isDataLoading?: boolean;
   handleAddEpic: () => void;
   handleAddProject: () => void;
 };
 
 export function InitiativeScopeProjectTimeline(props: Props) {
-  const { projectIds, workspaceSlug, initiativeId, disabled, isDataLoading, handleAddEpic, handleAddProject } = props;
+  const { projectIds, workspaceSlug, initiativeId, permissions, isDataLoading, handleAddEpic, handleAddProject } =
+    props;
 
   if (isDataLoading) return <ListLayoutLoader />;
 
@@ -46,7 +49,9 @@ export function InitiativeScopeProjectTimeline(props: Props) {
         handleAddEpic={handleAddEpic}
         handleAddProject={handleAddProject}
         initiativeId={initiativeId}
-        disabled={disabled}
+        permissions={{
+          canEditViaTimeline: (blockId: string) => permissions.canEditProject(blockId),
+        }}
       />
     </TimeLineTypeContext.Provider>
   );

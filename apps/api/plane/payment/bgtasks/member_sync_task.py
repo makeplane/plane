@@ -24,7 +24,7 @@ from plane.ee.models.workspace import WorkspaceLicense
 from plane.db.models import WorkspaceMember, Workspace
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import resync_workspace_license
-
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
 
 @shared_task
 def enterprise_member_sync_task():
@@ -41,14 +41,15 @@ def enterprise_member_sync_task():
             .annotate(
                 user_email=F("email"),
                 user_id=F("id"),
-                user_role=Value(20),  # Default role for enterprise users
+                user_role_slug=Value("admin"),  # Default role for enterprise users
             )
-            .values("user_email", "user_id", "user_role")
+            .values("user_email", "user_id", "user_role_slug")
         )
 
         # Convert user_id to string
         for user in users:
             user["user_id"] = str(user["user_id"])
+            user["user_role"] = 5 if user["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
         # Send request to payment server to sync enterprise license
         response = requests.post(
@@ -101,14 +102,15 @@ def member_sync_task(slug):
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_role_slug=F("role_ref__slug"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
-            # Convert user_id to string
+            # Convert user_id to string and set user_role
             for member in workspace_members:
                 member["user_id"] = str(member["user_id"])
+                member["user_role"] = 5 if member["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
             # Send request to payment server to sync workspace members
             _ = requests.patch(

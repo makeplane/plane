@@ -15,10 +15,8 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TModuleFilters } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
 // assets
 import darkModulesAsset from "@/app/assets/empty-state/disabled-feature/modules-dark.webp?url";
@@ -30,12 +28,12 @@ import { ModuleAppliedFiltersList, ModulesListView } from "@/components/modules"
 // hooks
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // components
 import { FeatureTour } from "@/components/tour";
 // types
 import type { Route } from "./+types/page";
+import { useModule } from "@/hooks/store/use-module";
 
 function ProjectModulesPage({ params }: Route.ComponentProps) {
   // router
@@ -46,7 +44,8 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
   // plane hooks
   const { t } = useTranslation();
   // store
-  const { getProjectById, currentProjectDetails } = useProject();
+  const { getProjectById, currentProjectDetails, permissions: projectPermissions } = useProject();
+  const { permissions: modulePermissions } = useModule();
   const {
     currentProjectFilters = {},
     currentProjectDisplayFilters,
@@ -54,11 +53,9 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
     updateFilters,
     updateDisplayFilters,
   } = useModuleFilter();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Modules` : undefined;
-  const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const resolvedPath = resolvedTheme === "light" ? lightModulesAsset : darkModulesAsset;
 
   const handleRemoveFilter = useCallback(
@@ -86,7 +83,7 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
             onClick: () => {
               router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
             },
-            disabled: !canPerformEmptyStateActions,
+            disabled: !projectPermissions.getCanManageModules(workspaceSlug, projectId),
           }}
         />
       </div>
@@ -107,7 +104,14 @@ function ProjectModulesPage({ params }: Route.ComponentProps) {
             alwaysAllowEditing
           />
         )}
-        <ModulesListView />
+        <ModulesListView
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          permissions={{
+            canCreate: modulePermissions.getCanCreateModule(workspaceSlug, projectId),
+            canEdit: (moduleId: string) => modulePermissions.getCanEditModule(workspaceSlug, projectId, moduleId),
+          }}
+        />
       </div>
     </>
   );

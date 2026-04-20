@@ -12,32 +12,32 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import { TeamsIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Breadcrumbs } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useTeamspaces } from "@/plane-web/hooks/store";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // helpers
 // plane web components
 import { TeamspacesListSearch } from "@/components/teamspaces/headers/list-header/search-teamspaces";
 
-export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader() {
-  const { workspaceSlug } = useParams();
+type TeamspaceListItemHeaderProps = {
+  workspaceSlug: string;
+};
+
+export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader(props: TeamspaceListItemHeaderProps) {
+  const { workspaceSlug } = props;
   // hooks
   const { currentWorkspace } = useWorkspace();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useTeamspaces();
   // derived values
   const workspaceId = currentWorkspace?.id || undefined;
-  const hasAdminLevelPermissions = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   if (!workspaceSlug || !workspaceId) return <></>;
 
@@ -62,7 +62,7 @@ export const TeamspaceListItemHeader = observer(function TeamspaceListItemHeader
             <TeamListFiltersDropdown />
           </div> */}
           {/* create teamspace button */}
-          {hasAdminLevelPermissions && (
+          {permissions.getCanCreate(workspaceSlug) && (
             <Button
               onClick={() => {
                 toggleCreateTeamspaceModal({ isOpen: true, teamspaceId: undefined });

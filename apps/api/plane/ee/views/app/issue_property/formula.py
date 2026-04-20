@@ -19,8 +19,9 @@ from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 # Module imports
+from plane.ee.permissions import WorkspaceEntityPermission
 from plane.db.models import IssueType, Project, Workspace
-from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
+from plane.permissions import can, IssuePropertyPermissions
 from plane.ee.utils.formula import (
     execute_formula,
     fetch_work_item_custom_properties,
@@ -160,9 +161,8 @@ class WorkspaceWorkItemTypeFormulaValidateEndpoint(BaseAPIView):
 
 
 class IssuePropertyFormulaValidateEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.WORKITEM_TYPE_FORMULA_FIELD)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, issue_type_id):
         try:
             # validating workspace

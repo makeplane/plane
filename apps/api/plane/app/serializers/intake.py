@@ -17,7 +17,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer
-from .issue import IssueIntakeSerializer, LabelLiteSerializer, IssueDetailSerializer
+from .issue import IssueIntakeSerializer, LabelLiteSerializer, IssueDetailSerializer, IssueCreateSerializer
 from .project import ProjectLiteSerializer
 from .state import StateLiteSerializer
 from .user import UserLiteSerializer
@@ -200,6 +200,12 @@ class IntakeIssueSerializer(BaseSerializer):
         if isinstance(issue_payload, dict):
             issue_payload["additional_information"] = serialize_issue_property_values(getattr(instance, "issue", None))
         return data
+
+
+class IntakeIssueUpdateSerializer(IssueCreateSerializer):
+    """Issue serializer for intake edits — blocks state_id changes."""
+
+    state_id = serializers.PrimaryKeyRelatedField(source="state", read_only=True)
 
 
 class IntakeIssueDetailSerializer(BaseSerializer):

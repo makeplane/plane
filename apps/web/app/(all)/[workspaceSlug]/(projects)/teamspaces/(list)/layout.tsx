@@ -17,11 +17,14 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // plane web components
 import { TeamspaceListItemHeader } from "@/components/teamspaces/headers/list-header";
+// types
+import type { Route } from "./+types/layout";
 
-export default function TeamspaceListItemLayout() {
+export default function TeamspaceListItemLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   return (
     <>
-      <AppHeader header={<TeamspaceListItemHeader />} />
+      <AppHeader header={<TeamspaceListItemHeader workspaceSlug={workspaceSlug} />} />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

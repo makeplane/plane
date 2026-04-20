@@ -23,6 +23,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { CreateUpdateIssueModal } from "../../issue-modal/root";
 import { useSubIssueOperations } from "./helper";
 import { SubIssuesListRoot } from "./issues-list/root";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
@@ -31,7 +32,7 @@ type Props = {
   permissions: {
     getCanView: (projectId: string, workItemId: string) => boolean;
     getCanEdit: (projectId: string, workItemId: string) => boolean;
-    getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+    getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
     getCanDelete: (projectId: string, workItemId: string) => boolean;
     getCanRemove: (
       parentWorkItemProjectId: string,

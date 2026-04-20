@@ -29,7 +29,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 # Module imports
 from .. import BaseViewSet, BaseAPIView
 from plane.app.serializers import StateSerializer
-from plane.app.permissions import ROLE, allow_permission
+from plane.permissions import can, StatePermissions
 from plane.db.models import State, Issue
 from plane.ee.models import WorkflowState
 from plane.utils.cache import invalidate_cache
@@ -75,7 +75,7 @@ class StateViewSet(BaseViewSet):
         )
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
-    @allow_permission([ROLE.ADMIN])
+    @can(StatePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         try:
             serializer = StateSerializer(data=request.data)
@@ -103,7 +103,7 @@ class StateViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(StatePermissions.EDIT, resource_param="project_id")
     def partial_update(self, request, slug, project_id, pk):
         try:
             state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
@@ -119,7 +119,7 @@ class StateViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(StatePermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         states = StateSerializer(self.get_queryset(), many=True).data
 
@@ -147,7 +147,7 @@ class StateViewSet(BaseViewSet):
         return Response(states, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
-    @allow_permission([ROLE.ADMIN])
+    @can(StatePermissions.EDIT, resource_param="project_id")
     def mark_as_default(self, request, slug, project_id, pk):
         # Select all the states which are marked as default
         _ = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).update(default=False)
@@ -159,7 +159,7 @@ class StateViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
-    @allow_permission([ROLE.ADMIN])
+    @can(StatePermissions.DELETE, resource_param="project_id")
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug)
 
@@ -196,7 +196,7 @@ class StateViewSet(BaseViewSet):
 class IntakeStateEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(StatePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         state = State.triage_objects.filter(workspace__slug=slug, project_id=project_id).first()
         if not state:

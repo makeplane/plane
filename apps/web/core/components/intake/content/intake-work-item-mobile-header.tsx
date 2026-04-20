@@ -40,11 +40,13 @@ type Props = {
   inboxIssue: IInboxIssueStore | undefined;
   isSubmitting: TNameDescriptionLoader;
   handleInboxIssueNavigation: (direction: "next" | "prev") => void;
-  canMarkAsAccepted: boolean;
-  canMarkAsDeclined: boolean;
   isAcceptedOrDeclined: boolean | undefined;
-  canMarkAsDuplicate: boolean;
-  canDelete: boolean;
+  permissions: {
+    canMarkAsAccepted: boolean;
+    canMarkAsDeclined: boolean;
+    canMarkAsDuplicate: boolean;
+    canDelete: boolean;
+  };
   setAcceptIssueModal: (value: boolean) => void;
   setDeclineIssueModal: (value: boolean) => void;
   setDeleteIssueModal: (value: boolean) => void;
@@ -55,7 +57,6 @@ type Props = {
   setIsMobileSidebar: (value: boolean) => void;
   isNotificationEmbed: boolean;
   embedRemoveCurrentNotification?: () => void;
-  isProjectAdmin: boolean;
   handleActionWithPermission: (isAdmin: boolean, action: () => void, errorMessage: string) => void;
 };
 
@@ -64,10 +65,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     inboxIssue,
     isSubmitting,
     handleInboxIssueNavigation,
-    canMarkAsAccepted,
-    canMarkAsDeclined,
-    canDelete,
-    canMarkAsDuplicate,
+    permissions,
     isAcceptedOrDeclined,
     workspaceSlug,
     setAcceptIssueModal,
@@ -80,7 +78,6 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
     setIsMobileSidebar,
     isNotificationEmbed,
     embedRemoveCurrentNotification,
-    isProjectAdmin,
     handleActionWithPermission,
   } = props;
   const router = useAppRouter();
@@ -151,7 +148,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {isAcceptedOrDeclined && (
+            {permissions.canMarkAsAccepted && (
               <CustomMenu.MenuItem onClick={() => router.push(workItemLink)}>
                 <div className="flex items-center gap-2">
                   <NewTabIcon width={14} height={14} strokeWidth={2} />
@@ -159,11 +156,11 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canMarkAsAccepted && !isAcceptedOrDeclined && (
+            {permissions.canMarkAsAccepted && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem
                 onClick={() =>
                   handleActionWithPermission(
-                    isProjectAdmin,
+                    permissions.canMarkAsAccepted,
                     handleIssueSnoozeAction,
                     "Only project admins can snooze/Un-snooze work items"
                   )
@@ -175,11 +172,11 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canMarkAsDuplicate && !isAcceptedOrDeclined && (
+            {permissions.canMarkAsDuplicate && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem
                 onClick={() =>
                   handleActionWithPermission(
-                    isProjectAdmin,
+                    permissions.canMarkAsDuplicate,
                     () => setSelectDuplicateIssue(true),
                     "Only project admins can mark work items as duplicate"
                   )
@@ -191,11 +188,11 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canMarkAsAccepted && (
+            {permissions.canMarkAsAccepted && (
               <CustomMenu.MenuItem
                 onClick={() =>
                   handleActionWithPermission(
-                    isProjectAdmin,
+                    permissions.canMarkAsAccepted,
                     () => setAcceptIssueModal(true),
                     "Only project admins can accept work items"
                   )
@@ -207,11 +204,11 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canMarkAsDeclined && (
+            {permissions.canMarkAsDeclined && (
               <CustomMenu.MenuItem
                 onClick={() =>
                   handleActionWithPermission(
-                    isProjectAdmin,
+                    permissions.canMarkAsDeclined,
                     () => setDeclineIssueModal(true),
                     "Only project admins can deny work items"
                   )
@@ -223,7 +220,7 @@ export const InboxIssueActionsMobileHeader = observer(function InboxIssueActions
                 </div>
               </CustomMenu.MenuItem>
             )}
-            {canDelete && !isAcceptedOrDeclined && (
+            {permissions.canDelete && !isAcceptedOrDeclined && (
               <CustomMenu.MenuItem onClick={() => setDeleteIssueModal(true)}>
                 <div className="flex items-center gap-2 text-danger-primary">
                   <TrashIcon height={14} width={14} strokeWidth={2} />

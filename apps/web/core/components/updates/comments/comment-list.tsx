@@ -29,8 +29,14 @@ type TProps = {
   entityId: string;
   entityType: EUpdateEntityType;
   handleUpdateOperations: TUpdateOperations;
-  disabled?: boolean;
+  permissions: {
+    canCreate: boolean;
+    canUpdate: (commentId: string) => boolean;
+    canDelete: (commentId: string) => boolean;
+    canReact: (commentId: string) => boolean;
+  };
 };
+
 export type TActivityOperations = {
   create: (e: React.FormEvent) => Promise<TUpdateComment | undefined>;
   update: (commentId: string, data: Partial<TUpdateComment | undefined>) => Promise<void>;
@@ -38,15 +44,7 @@ export type TActivityOperations = {
 };
 
 export const CommentList = observer(function CommentList(props: TProps) {
-  const {
-    isCollapsed,
-    updateId,
-    workspaceSlug,
-    entityId,
-    entityType,
-    handleUpdateOperations,
-    disabled = false,
-  } = props;
+  const { isCollapsed, updateId, workspaceSlug, entityId, entityType, handleUpdateOperations, permissions } = props;
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -111,13 +109,17 @@ export const CommentList = observer(function CommentList(props: TProps) {
                     entityId={entityId}
                     operations={handleUpdateOperations}
                     entityType={entityType}
-                    disabled={disabled}
+                    permissions={{
+                      canEdit: permissions.canUpdate(item),
+                      canDelete: permissions.canDelete(item),
+                      canReact: permissions.canReact(item),
+                    }}
                   />
                 )
               );
             })}
         </div>
-        {!disabled && (
+        {permissions.canCreate && (
           <form
             onSubmit={handleCreateComment}
             className="flex items-center gap-1 px-2 mb-4 w-full rounded-md shadow border border-subtle"

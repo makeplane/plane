@@ -45,11 +45,18 @@ import type { TRenderQuickActions } from "../list/list-view-types";
 import { isWorkItemNew } from "@/helpers/work-item-layout";
 import { IssueColumn } from "./issue-column";
 
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+
 interface Props {
   displayProperties: IIssueDisplayProperties;
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
@@ -72,7 +79,8 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
     portalElement,
     updateIssue,
     quickActions,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     isScrolled,
     containerRef,
     spreadsheetColumnsList,
@@ -118,7 +126,8 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
           issueId={issueId}
           displayProperties={displayProperties}
           quickActions={quickActions}
-          canEditProperties={canEditProperties}
+          layoutPermissions={layoutPermissions}
+          getWorkItemPermissions={getWorkItemPermissions}
           nestingLevel={nestingLevel}
           spacingLeft={spacingLeft}
           isEstimateEnabled={isEstimateEnabled}
@@ -141,7 +150,8 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             issueId={subIssueId}
             displayProperties={displayProperties}
             quickActions={quickActions}
-            canEditProperties={canEditProperties}
+            layoutPermissions={layoutPermissions}
+            getWorkItemPermissions={getWorkItemPermissions}
             nestingLevel={nestingLevel + 1}
             spacingLeft={spacingLeft + 12}
             isEstimateEnabled={isEstimateEnabled}
@@ -162,7 +172,12 @@ interface IssueRowDetailsProps {
   displayProperties: IIssueDisplayProperties;
   isEstimateEnabled: boolean;
   quickActions: TRenderQuickActions;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   portalElement: React.MutableRefObject<HTMLDivElement | null>;
   nestingLevel: number;
@@ -185,7 +200,8 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     portalElement,
     updateIssue,
     quickActions,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     isScrolled,
     isExpanded,
     setExpanded,
@@ -245,13 +261,11 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
       });
     }
   };
-
-  const disableUserActions = !canEditProperties(issueDetail.project_id ?? undefined);
   const subIssuesCount = issueDetail?.sub_issues_count ?? 0;
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueDetail.id);
   const projectIdentifier = getProjectIdentifierById(issueDetail.project_id);
-
-  const canSelectIssues = !disableUserActions && !selectionHelpers.isSelectionDisabled;
+  const workItemPermissions = getWorkItemPermissions(issueDetail);
+  const canSelectIssues = layoutPermissions.canPerformBulkOps && !selectionHelpers.isSelectionDisabled;
 
   const workItemLink = generateWorkItemLink({
     workspaceSlug: workspaceSlug?.toString(),
@@ -387,10 +401,10 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
           workspaceSlug={workspaceSlug?.toString() ?? ""}
           displayProperties={displayProperties}
           issueDetail={issueDetail}
-          disableUserActions={disableUserActions}
           property={property}
           updateIssue={updateIssue}
           isEstimateEnabled={isEstimateEnabled}
+          canEditProperty={workItemPermissions.canEditProperty}
         />
       ))}
 

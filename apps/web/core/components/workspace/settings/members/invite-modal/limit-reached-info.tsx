@@ -23,19 +23,20 @@ import { EProductSubscriptionEnum } from "@plane/types";
 
 type TInvitationLimitReactInfoProps = {
   handleAddMoreSeats: () => void;
+  canAddSeats: boolean;
 };
 
 export const InvitationLimitReactInfo = observer(function InvitationLimitReactInfo(
   props: TInvitationLimitReactInfoProps
 ) {
-  const { handleAddMoreSeats } = props;
+  const { handleAddMoreSeats, canAddSeats } = props;
   // store hooks
   const { currentWorkspaceSubscribedPlanDetail: subscriptionDetail } = useWorkspaceSubscription();
   // derived values
   const isOfflineSubscription = subscriptionDetail?.is_offline_payment;
   const isOnEnterprisePlan = subscriptionDetail?.product === EProductSubscriptionEnum.ENTERPRISE;
 
-  if (isOnEnterprisePlan) {
+  if (isOnEnterprisePlan || !canAddSeats) {
     return (
       <div className="flex items-center p-3 rounded-lg bg-warning-subtle text-secondary border border-warning-subtle">
         <AlertTriangleIcon className="size-4 shrink-0 text-warning-primary mr-1.5" />

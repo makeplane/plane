@@ -311,7 +311,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     @intake_docs(
         operation_id="update_intake_work_item",
         summary="Update intake work item",
-        description="Modify an existing intake work item's properties or status for triage processing. Supports status changes like accept, reject, or mark as duplicate.",  # noqa: E501
+        description="Modify an existing intake work item's non-triage properties. Use the dedicated status endpoint for status, duplicate_to, and snoozed_till updates.",  # noqa: E501
         parameters=[
             WORKSPACE_SLUG_PARAMETER,
             PROJECT_ID_PARAMETER,
@@ -333,9 +333,16 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
     def patch(self, request, slug, project_id, issue_id):
         """Update intake work item
 
-        Modify an existing intake work item's properties or status for triage processing.
-        Supports status changes like accept, reject, or mark as duplicate.
+        Modify an existing intake work item's non-triage properties.
+        Use the dedicated status endpoint for status, duplicate_to, and snoozed_till updates.
         """
+        forbidden_triage_fields = {"status", "duplicate_to", "snoozed_till"}
+        if any(field in request.data for field in forbidden_triage_fields):
+            return Response(
+                {"error": "Use the intake status endpoint to update status, duplicate_to, or snoozed_till"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 
         project = Project.objects.get(workspace__slug=slug, pk=project_id)

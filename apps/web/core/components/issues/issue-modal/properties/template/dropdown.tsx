@@ -15,21 +15,19 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 import { ChevronRightIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WorkItemTemplateDropdown } from "@/components/templates/dropdowns";
-import { useFlag } from "@/plane-web/hooks/store";
+import { useFlag, useWorkItemTemplates } from "@/plane-web/hooks/store";
 
 type TWorkItemTemplateDropdownSize = "xs" | "sm";
 
 type TWorkItemTemplateSelect = {
-  projectId: string | null;
+  projectId: string;
   typeId: string | null;
   disabled?: boolean;
   size?: TWorkItemTemplateDropdownSize;
@@ -55,19 +53,16 @@ export const WorkItemTemplateSelect = observer(function WorkItemTemplateSelect(p
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { getCanCreate: getCanCreateWorkItemTemplate } = useWorkItemTemplates();
   // issue modal context
   const { workItemTemplateId, isApplyingTemplate, setWorkItemTemplateId } = useIssueModal();
   // derived values
   const isTemplatesEnabled = useFlag(workspaceSlug?.toString(), "WORKITEM_TEMPLATES");
-  const hasWorkspaceAdminPermission = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
-  const hasProjectAdminPermission = projectId
-    ? allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug?.toString(), projectId)
-    : false;
+  const canCreateWorkItemTemplate = getCanCreateWorkItemTemplate({
+    workspaceSlug,
+    projectId,
+    level: ETemplateLevel.PROJECT,
+  });
 
   return (
     <>
@@ -94,8 +89,8 @@ export const WorkItemTemplateSelect = observer(function WorkItemTemplateSelect(p
                   handleFormChange?.();
                 }}
                 handleRedirection={handleModalClose}
-                showCreateNewTemplate={hasWorkspaceAdminPermission || hasProjectAdminPermission}
-                level={hasWorkspaceAdminPermission ? ETemplateLevel.WORKSPACE : ETemplateLevel.PROJECT}
+                showCreateNewTemplate={canCreateWorkItemTemplate}
+                level={ETemplateLevel.PROJECT}
               />
             )}
           </div>

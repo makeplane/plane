@@ -25,6 +25,7 @@ from plane.db.models import WorkspaceMember
 from plane.ee.models import WorkspaceLicense
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import resync_workspace_license
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
 
 
 @shared_task
@@ -54,14 +55,15 @@ def workspace_billing_task(batch_size=5000, batch_countdown=300, offset=0):
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_role_slug=F("role_ref__slug"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             # Convert user_id to string
             for member in workspace_members:
                 member["user_id"] = str(member["user_id"])
+                member["user_role"] = 5 if member["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
             # Send request to payment server to sync workspace members
             response = requests.patch(

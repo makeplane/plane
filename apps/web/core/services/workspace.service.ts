@@ -18,12 +18,10 @@ import type {
   ILastActiveWorkspaceDetails,
   IProductUpdateResponse,
   ISearchIssueResponse,
-  IUserProjectsRole,
   IWorkspace,
   IWorkspaceBulkInviteFormData,
   IWorkspaceMember,
   IWorkspaceMemberInvitation,
-  IWorkspaceMemberMe,
   IWorkspaceSearchResults,
   IWorkspaceSidebarNavigation,
   IWorkspaceSidebarNavigationItem,
@@ -41,9 +39,6 @@ import type {
   TWidgetEntityData,
   TWorkspaceEpicsSearchParams,
   TWorkspaceMemberImportSummary,
-  TExploredFeatures,
-  TTips,
-  TGettingStartedChecklistKeys,
   TWorkspaceWithProductDetails,
 } from "@plane/types";
 // services
@@ -136,23 +131,8 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async workspaceMemberMe(workspaceSlug: string): Promise<IWorkspaceMemberMe> {
-    return this.get(`/api/workspaces/${workspaceSlug}/workspace-members/me/`)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response;
-      });
-  }
-
-  async updateMemberOnboarding(
-    workspaceSlug: string,
-    data: {
-      explored_features?: Partial<Record<TExploredFeatures, boolean>>;
-      tips?: Partial<Record<TTips, boolean>>;
-      getting_started_checklist?: Partial<Record<TGettingStartedChecklistKeys, boolean>>;
-    }
-  ): Promise<IWorkspaceMemberMe> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/workspace-member/me/onboarding/`, data)
+  async leaveWorkspace(workspaceSlug: string): Promise<void> {
+    return this.post(`/api/workspaces/${workspaceSlug}/members/leave/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -322,14 +302,6 @@ export class WorkspaceService extends APIService {
 
   async getViewWorkItems(workspaceSlug: string, params: any, config = {}): Promise<TIssuesResponse> {
     return this.get(`/api/workspaces/${workspaceSlug}/work-items/`, { params }, config)
-      .then((response) => response?.data)
-      .catch((error) => {
-        throw error?.response?.data;
-      });
-  }
-
-  async getWorkspaceUserProjectsRole(workspaceSlug: string): Promise<IUserProjectsRole> {
-    return this.get(`/api/users/me/workspaces/${workspaceSlug}/project-roles/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

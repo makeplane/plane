@@ -19,18 +19,14 @@ import type {
 import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import Masonry from "react-masonry-component";
-
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateCompact, EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { StickiesEmptyState } from "@/components/home/widgets/empty-states/stickies";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 import { useSticky } from "@/hooks/use-stickies";
 // local imports
 import { useStickyOperations } from "../sticky/use-operations";
@@ -51,13 +47,11 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
   const pathname = usePathname();
-  // theme hook
-  const { resolvedTheme } = useTheme();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { getWorkspaceStickyIds, toggleShowNewSticky, searchQuery, loader } = useSticky();
-  const { allowPermissions } = useUserPermissions();
+  const { can } = usePermissionAccess();
   // sticky operations
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
   // derived values
@@ -65,10 +59,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   const itemWidth = `${100 / columnCount}%`;
   const totalRows = Math.ceil(workspaceStickyIds.length / columnCount);
   const isStickiesPage = pathname?.includes("stickies");
-  const hasGuestLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canCreateSticky = can({ resource: "workspace", action: "view", workspaceSlug });
   const masonryRef = useRef<any>(null);
 
   const handleLayout = () => {
@@ -135,7 +126,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
                       toggleShowNewSticky(true);
                       stickyOperations.create();
                     },
-                    disabled: !hasGuestLevelPermissions,
+                    disabled: !canCreateSticky,
                   },
                   {
                     label: t("workspace_empty_state.stickies.cta_secondary"),

@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { SquareUser } from "lucide-react";
 // Plane imports
-import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
+import { MODULE_STATUS, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
@@ -31,7 +31,6 @@ import { ModuleStatusDropdown } from "@/components/modules/module-status-dropdow
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
-import { useUserPermissions } from "@/hooks/store/user";
 import { ButtonAvatars } from "../dropdowns/member/avatar";
 
 type Props = {
@@ -45,8 +44,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
   // router
   const { workspaceSlug, projectId } = useParams();
   //   store hooks
-  const { allowPermissions } = useUserPermissions();
-  const { addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails } = useModule();
+  const { addModuleToFavorites, removeModuleFromFavorites, updateModuleDetails, permissions } = useModule();
   const { getUserDetails } = useMember();
 
   const { t } = useTranslation();
@@ -54,13 +52,9 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
   // local storage
   const { setValue: toggleFavoriteMenu, storedValue } = useLocalStorage<boolean>(IS_FAVORITE_MENU_OPEN, false);
   // derived values
-
   const moduleStatus = MODULE_STATUS.find((status) => status.value === moduleDetails.status);
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-  const isDisabled = !isEditingAllowed || !!moduleDetails?.archived_at;
+  const canEditProperties =
+    permissions.getCanEditModule(workspaceSlug, projectId, moduleId) && !moduleDetails?.archived_at;
   const renderIcon = Boolean(moduleDetails.start_date) || Boolean(moduleDetails.target_date);
 
   // handlers
@@ -138,7 +132,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
   return (
     <>
       <DateRangeDropdown
-        buttonContainerClassName={`h-6 w-full flex ${isDisabled ? "cursor-not-allowed" : "cursor-pointer"} items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11`}
+        buttonContainerClassName="h-6 w-full flex items-center gap-1.5 text-tertiary border-[0.5px] border-strong rounded-sm text-11"
         buttonVariant="transparent-with-text"
         className="h-7"
         value={{
@@ -156,13 +150,13 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           from: t("start_date"),
           to: t("end_date"),
         }}
-        disabled={isDisabled}
+        disabled={!canEditProperties}
         hideIcon={{ from: renderIcon ?? true, to: renderIcon }}
       />
 
       {moduleStatus && (
         <ModuleStatusDropdown
-          isDisabled={isDisabled}
+          isDisabled={!canEditProperties}
           moduleDetails={moduleDetails}
           handleModuleDetailsChange={handleModuleDetailsChange}
         />
@@ -177,8 +171,7 @@ export const ModuleListItemAction = observer(function ModuleListItemAction(props
           <SquareUser className="h-4 w-4 text-tertiary" />
         </Tooltip>
       )}
-
-      {isEditingAllowed && !moduleDetails.archived_at && (
+      {!moduleDetails.archived_at && (
         <FavoriteStar
           onClick={(e) => {
             if (moduleDetails.is_favorite) handleRemoveFromFavorites(e);

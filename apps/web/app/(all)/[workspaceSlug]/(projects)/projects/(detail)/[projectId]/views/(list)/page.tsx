@@ -15,10 +15,8 @@ import { useCallback } from "react";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { EViewAccess, TViewFilterProps } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 import { Header, EHeaderVariant } from "@plane/ui";
 import { calculateTotalFilters } from "@plane/utils";
 // assets
@@ -32,7 +30,6 @@ import { ProjectViewsList } from "@/components/views/views-list";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectView } from "@/hooks/store/use-project-view";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import type { Route } from "./+types/page";
 
@@ -46,12 +43,11 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
   const { t } = useTranslation();
   // store
   const { getProjectById, currentProjectDetails } = useProject();
-  const { filters, updateFilters, clearAllFilters } = useProjectView();
-  const { allowPermissions } = useUserPermissions();
+  const { filters, updateFilters, clearAllFilters, permissions } = useProjectView();
   // derived values
   const project = getProjectById(projectId);
   const pageTitle = project?.name ? `${project?.name} - Views` : undefined;
-  const canPerformEmptyStateActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canEnableProjectViews = permissions.getCanConfigureViews(workspaceSlug, projectId);
   const resolvedPath = resolvedTheme === "light" ? lightViewsAsset : darkViewsAsset;
 
   const handleRemoveFilter = useCallback(
@@ -86,7 +82,7 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
             onClick: () => {
               router.push(`/${workspaceSlug}/settings/projects/${projectId}/features`);
             },
-            disabled: !canPerformEmptyStateActions,
+            disabled: !canEnableProjectViews,
           }}
         />
       </div>
@@ -105,7 +101,7 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
           />
         </Header>
       )}
-      <ProjectViewsList />
+      <ProjectViewsList workspaceSlug={workspaceSlug} projectId={projectId} />
     </>
   );
 }

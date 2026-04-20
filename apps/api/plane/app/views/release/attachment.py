@@ -18,11 +18,12 @@ from django.utils import timezone
 
 # Third party imports
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import FileAsset, Workspace, ReleaseAttachment
 from plane.app.serializers.release import ReleaseAttachmentSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -37,7 +38,7 @@ class ReleaseAttachmentEndpoint(BaseAPIView):
     model = FileAsset
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, release_id):
         attachments = ReleaseAttachment.objects.filter(release_id=release_id, workspace__slug=slug).select_related(
             "attachment"
@@ -62,7 +63,7 @@ class ReleaseAttachmentEndpoint(BaseAPIView):
         return Response(results, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug, release_id):
         name = request.data.get("name")
         type = request.data.get("type", False)
@@ -122,9 +123,11 @@ class ReleaseAttachmentEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN], creator=True, model=ReleaseAttachment, level="WORKSPACE")
+    @can(ReleasePermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, release_id, pk):
         release_attachment = ReleaseAttachment.objects.get(pk=pk, release_id=release_id, workspace__slug=slug)
+        if release_attachment.created_by_id != request.user.id:
+            raise PermissionDenied("Only the creator can delete this attachment")
         asset = release_attachment.attachment
         asset.is_deleted = True
         asset.deleted_at = timezone.now()

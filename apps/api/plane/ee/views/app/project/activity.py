@@ -22,11 +22,7 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    allow_permission,
-    ROLE,
-)
+from plane.permissions import ProjectActivityPermissions, ProjectMemberActivityPermissions, can
 from plane.ee.models import ProjectActivity, ProjectMemberActivity
 from plane.payment.flags.flag_decorator import (
     check_feature_flag,
@@ -38,12 +34,11 @@ from plane.ee.serializers import ProjectActivitySerializer, ProjectMemberActivit
 class ProjectActivityEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
     filterset_fields = {"created_at": ["gt", "gte", "lt", "lte"]}
 
-    @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @method_decorator(gzip_page)
+    @can(ProjectActivityPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         project_activities = ProjectActivity.objects.filter(project_id=project_id).filter(
             ~Q(field__in=["comment", "vote", "reaction", "draft"]),
@@ -67,8 +62,8 @@ class ProjectMemberActivityEndpoint(BaseAPIView):
 
     filterset_fields = {"created_at": ["gt", "gte", "lt", "lte"]}
 
-    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.PROJECT_MEMBER_ACTIVITY)
+    @can(ProjectMemberActivityPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         project_member_activities = ProjectMemberActivity.objects.filter(project_id=project_id, workspace__slug=slug)
 

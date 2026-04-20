@@ -24,7 +24,7 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
+from plane.permissions import can, EpicPermissions
 from plane.db.models import IssueActivity, IssueComment, CommentReaction
 from plane.payment.flags.flag_decorator import (
     check_workspace_feature_flag,
@@ -37,10 +37,8 @@ from plane.ee.serializers import EpicCommentSerializer, EpicActivitySerializer
 class EpicActivityEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id, epic_id):
         filters = {}

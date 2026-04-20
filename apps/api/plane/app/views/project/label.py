@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import WorkspacePermissions, can
 from plane.db.models import Workspace
 from plane.ee.models import ProjectLabel
 from plane.app.serializers import ProjectLabelSerializer
@@ -25,10 +25,9 @@ class ProjectLabelsEndpoint(BaseAPIView):
     """
     Endpoint for listing and creating project labels at the workspace level.
     """
-
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         """List all project labels in the workspace."""
         workspace = Workspace.objects.get(slug=slug)
@@ -36,7 +35,7 @@ class ProjectLabelsEndpoint(BaseAPIView):
         serializer = ProjectLabelSerializer(project_labels, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         """Create a new project label."""
         workspace = Workspace.objects.get(slug=slug)
@@ -53,17 +52,16 @@ class ProjectLabelDetailEndpoint(BaseAPIView):
     """
     Endpoint for retrieving, updating, and deleting a single project label.
     """
-
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, project_label_id):
         """Retrieve a single project label."""
         project_label = ProjectLabel.objects.get(id=project_label_id, workspace__slug=slug)
         serializer = ProjectLabelSerializer(project_label)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def patch(self, request, slug, project_label_id):
         """Update an existing project label."""
         workspace = Workspace.objects.get(slug=slug)
@@ -82,7 +80,7 @@ class ProjectLabelDetailEndpoint(BaseAPIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def delete(self, request, slug, project_label_id):
         """Delete a project label."""
         project_label = ProjectLabel.objects.get(id=project_label_id, workspace__slug=slug)

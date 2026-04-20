@@ -101,9 +101,14 @@ export class WorkspaceProjectStatesStore implements IWorkspaceProjectStatesStore
    * @returns { boolean }
    */
   get isSettingsEnabled(): boolean {
+    const workspaceSlug = this.store.router.workspaceSlug;
     return (
       (this.isFeatureFlagged &&
-        this.store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED)) ??
+        !!workspaceSlug &&
+        this.store.workspaceFeatures.isWorkspaceFeatureEnabled(
+          workspaceSlug,
+          EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED
+        )) ??
       false
     );
   }

@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "嵌套页面需要付费计划。升级以解锁。"
+    },
+    "auth": {
+      "title": "权限不足",
+      "description": "您没有访问此页面的权限。请联系您的 Workspace 管理员为您授予权限。",
+      "redirection_button": {
+        "text": "前往项目"
+      },
+      "reload_button": {
+        "text": "重新加载页面"
+      }
     }
   }
 }

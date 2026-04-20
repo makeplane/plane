@@ -27,7 +27,8 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { ModuleStatusSelect } from "@/components/modules";
 // hooks
-import { useUser } from "@/hooks/store/user/user-user";
+import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
 
 type Props = {
   handleFormSubmit?: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
@@ -39,6 +40,7 @@ type Props = {
   isMobile?: boolean;
   showActionButtons?: boolean;
   onChange?: (values: Partial<IModule>) => void;
+  workspaceSlug: string;
 };
 
 const defaultValues: Partial<IModule> = {
@@ -60,9 +62,13 @@ export function ModuleForm(props: Props) {
     isMobile = false,
     showActionButtons = true,
     onChange,
+    workspaceSlug,
   } = props;
   // store hooks
-  const { projectsWithCreatePermissions } = useUser();
+  const { workspaceProjectIds } = useProject();
+  const {
+    permissions: { getProjectIdsWithModulePermission },
+  } = useModule();
   // form info
   const {
     formState: { errors, isSubmitting, dirtyFields },
@@ -80,6 +86,12 @@ export function ModuleForm(props: Props) {
       member_ids: data?.member_ids || [],
     },
   });
+  // derived values
+  const projectIdsWithCreateModulePermission = getProjectIdsWithModulePermission(
+    workspaceSlug,
+    workspaceProjectIds ?? [],
+    "create"
+  );
 
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_MODULE, isMobile);
 
@@ -124,7 +136,7 @@ export function ModuleForm(props: Props) {
                     }}
                     multiple={false}
                     buttonVariant="border-with-text"
-                    renderCondition={(projectId) => !!projectsWithCreatePermissions?.[projectId]}
+                    renderCondition={(projectId) => projectIdsWithCreateModulePermission.has(projectId)}
                     tabIndex={getIndex("cover_image")}
                   />
                 </div>

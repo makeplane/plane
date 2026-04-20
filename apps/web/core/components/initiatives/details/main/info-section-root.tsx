@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -32,25 +31,30 @@ type Props = {
   editorRef?: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   initiativeId: string;
-  disabled?: boolean;
+  permissions: {
+    canEdit: boolean;
+    canReact: boolean;
+    canAddLink: boolean;
+    canAddAttachment: boolean;
+    canAddProject: boolean;
+    canAddEpic: boolean;
+  };
 };
 
 export const InitiativeInfoSection = observer(function InitiativeInfoSection(props: Props) {
-  const { editorRef, workspaceSlug, initiativeId, disabled = false } = props;
+  const { editorRef, workspaceSlug, initiativeId, permissions } = props;
   const [isOpen, setIsOpen] = useState(false);
   // store hooks
   const {
     initiative: { getInitiativeById, updateInitiative, getInitiativeAnalyticsById },
   } = useInitiatives();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug, initiativeId);
-
   // derived values
   const initiative = initiativeId ? getInitiativeById(initiativeId) : undefined;
   const initiativeAnalytics = initiativeId ? getInitiativeAnalyticsById(initiativeId) : undefined;
-
-  if (!initiative) return <></>;
-
   const logoValue = initiative?.logo_props;
+
+  if (!initiative) return null;
 
   return (
     <InfoSection
@@ -63,12 +67,21 @@ export const InitiativeInfoSection = observer(function InitiativeInfoSection(pro
       onDescriptionSubmit={async (value) => updateInitiative(workspaceSlug, initiativeId, { description_html: value })}
       indicatorElement={<InitiativeInfoIndicatorItem initiativeId={initiativeId} />}
       actionElement={
-        <InitiativeInfoActionItems workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+        <InitiativeInfoActionItems
+          workspaceSlug={workspaceSlug}
+          initiativeId={initiativeId}
+          permissions={{
+            canReact: permissions.canReact,
+            canAddLink: permissions.canAddLink,
+            canAddAttachment: permissions.canAddAttachment,
+            canAddProject: permissions.canAddProject,
+            canAddEpic: permissions.canAddEpic,
+          }}
+        />
       }
       fileAssetType={EFileAssetType.INITIATIVE_DESCRIPTION}
-      disabled={disabled}
       iconElement={
-        <div className="flex-shrink-0 size-11 bg-layer-3 hover:bg-layer-3-hover rounded-md flex items-center justify-center text-tertiary">
+        <div className="shrink-0 size-11 bg-layer-3 hover:bg-layer-3-hover rounded-md flex items-center justify-center text-tertiary">
           <EmojiPicker
             iconType="lucide"
             isOpen={isOpen}
@@ -118,6 +131,10 @@ export const InitiativeInfoSection = observer(function InitiativeInfoSection(pro
           analytics={initiativeAnalytics}
         />
       }
+      permissions={{
+        canEditDescription: permissions.canEdit,
+        canEditTitle: permissions.canEdit,
+      }}
     />
   );
 });

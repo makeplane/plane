@@ -50,7 +50,7 @@ export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockPr
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-  const { getProjectById, updateProject } = useProject();
+  const { getProjectById, updateProject, permissions } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { filters } = useProjectFilter();
   const { isMobile } = usePlatformOS();
@@ -86,14 +86,14 @@ export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockPr
       }}
     >
       <div className="flex w-full truncate">
-        <div className="flex flex-grow items-center gap-0.5 truncate pb-0 md:pt-2 lg:py-2">
+        <div className="flex grow items-center gap-0.5 truncate pb-0 md:pt-2 lg:py-2">
           <div className="flex items-center gap-1">
-            <div className="h-6 w-6 flex-shrink-0 grid place-items-center rounded-sm bg-layer-1 mr-2">
+            <div className="h-6 w-6 shrink-0 grid place-items-center rounded-sm bg-layer-1 mr-2">
               <Logo logo={projectDetails.logo_props} size={14} />
             </div>
           </div>
 
-          {!!projectDetails.member_role && projectLink ? (
+          {permissions.getCanView(workspaceSlug.toString(), projectId) && projectLink ? (
             <Link
               id={`project-${projectDetails.id}`}
               href={projectLink}
@@ -109,10 +109,7 @@ export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockPr
               </Tooltip>
             </Link>
           ) : (
-            <div
-              id={`project-${projectDetails.id}`}
-              className={cn("w-full truncate cursor-not-allowed text-13 text-primary", {})}
-            >
+            <div id={`project-${projectDetails.id}`} className={cn("w-full truncate text-13 text-primary", {})}>
               <Tooltip tooltipContent={projectDetails.name} isMobile={isMobile} position="top-start">
                 <p className="truncate">{projectDetails.name}</p>
               </Tooltip>
@@ -128,7 +125,7 @@ export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockPr
           <QuickActions project={projectDetails} workspaceSlug={workspaceSlug.toString()} />
         </div>
       </div>
-      <div className="flex flex-shrink-0 items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <>
           <Attributes
             project={projectDetails}
@@ -139,6 +136,9 @@ export const ProjectBlock = observer(function ProjectBlock(props: ProjectBlockPr
             cta={filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
             containerClass="px-0 py-0 md:pb-4 lg:py-2"
             displayProperties={{ state: true, priority: true, lead: true, members: true, labels: true, date: true }}
+            canEditProperty={(property) =>
+              permissions.getCanEditProperty(workspaceSlug.toString(), projectDetails.id, property)
+            }
           />
           <div
             className={cn("hidden", {

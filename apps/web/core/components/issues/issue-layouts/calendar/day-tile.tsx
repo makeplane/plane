@@ -23,6 +23,8 @@ import type { TGroupedIssues, TIssue, TPaginationData, ICalendarDate } from "@pl
 import { cn, renderFormattedPayloadDate } from "@plane/utils";
 // helpers
 import { highlightOnDrop } from "@/helpers/common";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // components
 // store
 import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
@@ -46,8 +48,6 @@ type Props = {
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
-  enableQuickIssueCreate?: boolean;
-  disableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   quickActions: TRenderQuickActions;
   handleDragAndDrop: (
@@ -57,10 +57,13 @@ type Props = {
     destinationDate: string | undefined
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  canQuickAddWorkItem: boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   isEpic?: boolean;
 };
 
@@ -74,15 +77,13 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
     getPaginationData,
     getGroupIssueCount,
     quickActions,
-    enableQuickIssueCreate,
-    disableIssueCreation,
+    canQuickAddWorkItem,
     quickAddCallback,
     addIssuesToView,
-    readOnly = false,
     selectedDate,
     handleDragAndDrop,
     setSelectedDate,
-    canEditProperties,
+    getWorkItemPermissions,
     isEpic = false,
   } = props;
 
@@ -194,13 +195,10 @@ export const CalendarDayTile = observer(function CalendarDayTile(props: Props) {
               loadMoreIssues={loadMoreIssues}
               getPaginationData={getPaginationData}
               getGroupIssueCount={getGroupIssueCount}
-              isDragDisabled={readOnly}
               addIssuesToView={addIssuesToView}
-              disableIssueCreation={disableIssueCreation}
-              enableQuickIssueCreate={enableQuickIssueCreate}
+              canQuickAddWorkItem={canQuickAddWorkItem}
               quickAddCallback={quickAddCallback}
-              readOnly={readOnly}
-              canEditProperties={canEditProperties}
+              getWorkItemPermissions={getWorkItemPermissions}
               isEpic={isEpic}
             />
           </div>

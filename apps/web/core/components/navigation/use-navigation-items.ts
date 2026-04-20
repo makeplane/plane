@@ -13,7 +13,6 @@
 
 import { useMemo, useCallback } from "react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import {
   CycleIcon,
   IntakeIcon,
@@ -24,35 +23,16 @@ import {
   EpicIcon,
   OverviewIcon,
 } from "@plane/propel/icons";
-import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
-import { useFlag } from "@/plane-web/hooks/store";
-import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
+import { useProjectAccess } from "@/hooks/permissions/use-project-access";
 
 type UseNavigationItemsProps = {
   workspaceSlug: string;
   projectId: string;
-  project?: IPartialProject;
-  allowPermissions: (
-    access: EUserPermissions[] | EUserProjectRoles[],
-    level: EUserPermissionsLevel,
-    workspaceSlug: string,
-    projectId: string
-  ) => boolean;
 };
 
-export const useNavigationItems = ({
-  workspaceSlug,
-  projectId,
-  project,
-  allowPermissions,
-}: UseNavigationItemsProps): TNavigationItem[] => {
-  const isProjectOverviewEnabled = useFlag(workspaceSlug, "PROJECT_OVERVIEW");
-  const { getProjectFeatures } = useProjectAdvanced();
-
-  const projectFeatures = getProjectFeatures(projectId);
-
-  const isEpicsEnabled = projectFeatures?.is_epic_enabled;
+export const useNavigationItems = ({ workspaceSlug, projectId }: UseNavigationItemsProps): TNavigationItem[] => {
+  const { canAccessProjectResource } = useProjectAccess();
 
   // Base navigation items
   const baseNavigation = useCallback(
@@ -63,8 +43,6 @@ export const useNavigationItems = ({
         name: "Work items",
         href: `/${workspaceSlug}/projects/${projectId}/issues`,
         icon: WorkItemsIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: true,
         sortOrder: 1,
       },
       {
@@ -73,8 +51,6 @@ export const useNavigationItems = ({
         name: "Cycles",
         href: `/${workspaceSlug}/projects/${projectId}/cycles`,
         icon: CycleIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: !!project?.cycle_view,
         sortOrder: 2,
       },
       {
@@ -83,8 +59,6 @@ export const useNavigationItems = ({
         name: "Modules",
         href: `/${workspaceSlug}/projects/${projectId}/modules`,
         icon: ModuleIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: !!project?.module_view,
         sortOrder: 3,
       },
       {
@@ -93,8 +67,6 @@ export const useNavigationItems = ({
         name: "Views",
         href: `/${workspaceSlug}/projects/${projectId}/views`,
         icon: ViewsIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: !!project?.issue_views_view,
         sortOrder: 4,
       },
       {
@@ -103,8 +75,6 @@ export const useNavigationItems = ({
         name: "Pages",
         href: `/${workspaceSlug}/projects/${projectId}/pages`,
         icon: PageIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: !!project?.page_view,
         sortOrder: 5,
       },
       {
@@ -113,12 +83,10 @@ export const useNavigationItems = ({
         name: "Intake",
         href: `/${workspaceSlug}/projects/${projectId}/intake`,
         icon: IntakeIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
-        shouldRender: !!project?.inbox_view,
         sortOrder: 6,
       },
     ],
-    [project]
+    []
   );
 
   // Additional navigation items (Overview, Epics)
@@ -129,8 +97,6 @@ export const useNavigationItems = ({
         key: "overview",
         href: `/${workspaceSlug}/projects/${projectId}/overview/`,
         icon: OverviewIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: !!isProjectOverviewEnabled,
         sortOrder: -2,
         i18n_key: "common.overview",
       },
@@ -139,13 +105,11 @@ export const useNavigationItems = ({
         key: "epics",
         href: `/${workspaceSlug}/projects/${projectId}/epics`,
         icon: EpicIcon,
-        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        shouldRender: !!isEpicsEnabled,
         sortOrder: -1,
         i18n_key: "sidebar.epics",
       },
     ],
-    [isProjectOverviewEnabled, isEpicsEnabled]
+    []
   );
 
   // Combine, filter, and sort navigation items
@@ -155,14 +119,12 @@ export const useNavigationItems = ({
 
     // Filter by permissions and shouldRender
     const filteredItems = navItems.filter((item) => {
-      if (!item.shouldRender) return false;
-      const hasAccess = allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, project?.id ?? "");
-      return hasAccess;
+      return canAccessProjectResource(workspaceSlug, projectId, item.key);
     });
 
     // Sort by sortOrder
     return filteredItems.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-  }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems, allowPermissions, project?.id]);
+  }, [workspaceSlug, projectId, baseNavigation, additionalNavigationItems, canAccessProjectResource]);
 
   return navigationItems;
 };

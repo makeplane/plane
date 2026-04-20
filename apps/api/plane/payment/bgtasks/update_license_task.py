@@ -22,6 +22,7 @@ from celery import shared_task
 from plane.utils.exception_logger import log_exception
 from plane.ee.models.workspace import WorkspaceLicense
 from plane.db.models import Workspace, WorkspaceMember
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
 
 
 def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
@@ -35,14 +36,16 @@ def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
             .annotate(
                 user_email=F("member__email"),
                 user_id=F("member__id"),
-                user_role=F("role"),
+                user_role_slug=F("role_ref__slug"),
             )
-            .values("user_email", "user_id", "user_role")
+            .values("user_email", "user_id", "user_role_slug")
         )
 
         # Convert user_id to string
         for member in workspace_members:
             member["user_id"] = str(member["user_id"])
+            # if the user role slug is in unpaid roles, then set the user role as 5
+            member["user_role"] = 5 if member["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
         response = requests.post(
             f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/workspace-products/{str(workspace_id)}/",
@@ -101,6 +104,15 @@ def update_licenses():
             continue
 
         updated_workspace_licenses.append(save_workspace_license(workspace_license, response))
+
+    # Detect plan changes for permission re-sync (bulk_update bypasses save hooks)
+    for wl in updated_workspace_licenses:
+        if wl.has_changed("plan"):
+            from plane.ee.bgtasks import resync_workspace_admin_permissions
+
+            resync_workspace_admin_permissions.delay(
+                str(wl.workspace_id), wl.plan
+            )
 
     try:
         WorkspaceLicense.objects.bulk_update(

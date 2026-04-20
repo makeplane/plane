@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane web imports
 import { ETemplateLevel } from "@plane/constants";
@@ -41,13 +40,7 @@ export const ProjectTemplatesSettingsRoot = observer(function ProjectTemplatesSe
   const isAnyTemplatesAvailable = isWorkItemTemplatesAvailable || isPageTemplatesAvailable;
 
   if (!isInitializingTemplates && !isAnyTemplatesAvailable) {
-    return (
-      <NoTemplatesEmptyState
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        currentLevel={ETemplateLevel.PROJECT}
-      />
-    );
+    return <NoTemplatesEmptyState workspaceSlug={workspaceSlug} projectId={projectId} level={ETemplateLevel.PROJECT} />;
   }
 
   return <ProjectSettingsTemplatesListRoot workspaceSlug={workspaceSlug} projectId={projectId} />;

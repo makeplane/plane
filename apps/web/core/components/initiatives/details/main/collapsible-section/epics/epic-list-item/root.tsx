@@ -35,16 +35,20 @@ import { IdentifierText } from "@/components/issues/issue-detail/identifier-text
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { EpicProperties } from "./properties";
 import { EpicQuickActions } from "./quick-action";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   epicId: string;
   initiativeId: string;
-  disabled?: boolean;
+  permissions: {
+    canRemove: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
 };
 
 export const EpicListItem = observer(function EpicListItem(props: Props) {
-  const { workspaceSlug, epicId, initiativeId, disabled = false } = props;
+  const { workspaceSlug, epicId, initiativeId, permissions } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -132,7 +136,7 @@ export const EpicListItem = observer(function EpicListItem(props: Props) {
             workspaceSlug={workspaceSlug}
             epicId={epicId}
             initiativeId={initiativeId}
-            disabled={disabled}
+            canRemove={permissions.canRemove}
           />
         </div>
       }
@@ -142,7 +146,7 @@ export const EpicListItem = observer(function EpicListItem(props: Props) {
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
             epicId={epicId}
-            disabled={disabled}
+            permissions={permissions}
             fetchInitiativeAnalytics={fetchInitiativeAnalytics}
             displayProperties={displayProperties}
           />
@@ -151,7 +155,7 @@ export const EpicListItem = observer(function EpicListItem(props: Props) {
               workspaceSlug={workspaceSlug}
               epicId={epicId}
               initiativeId={initiativeId}
-              disabled={disabled}
+              canRemove={permissions.canRemove}
             />
           </div>
         </>

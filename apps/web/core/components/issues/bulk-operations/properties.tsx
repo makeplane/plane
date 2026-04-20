@@ -90,7 +90,8 @@ export const IssueBulkOperationsProperties = observer(function IssueBulkOperatio
   const isAdvancedBulkOpsEnabled = useFlag(workspaceSlug, "BULK_OPS_PRO");
   const isWorkItemTypeEnabled =
     !!workspaceSlug && !!projectId && isWorkItemTypeEnabledForProject(workspaceSlug, projectId);
-  const isWorkItemHierarchyEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED);
+  const isWorkItemHierarchyEnabled =
+    !!workspaceSlug && isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED);
   const shouldShowWorkItemTypeSelect = isWorkItemTypeEnabled && !isWorkItemHierarchyEnabled;
   // Get issue types with mandatory properties
   const issueTypeIdsWithMandatoryProperties = useMemo(() => {

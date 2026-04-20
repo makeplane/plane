@@ -15,7 +15,6 @@ import { useCallback, useMemo, useState } from "react";
 import { isEqual, cloneDeep } from "lodash-es";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type {
   TTeamspaceView,
@@ -24,7 +23,7 @@ import type {
   TWorkItemFiltersUpdateViewOptions,
   WorkItemFilerViewCallbackArguments,
 } from "@plane/types";
-import { EUserProjectRoles, EViewAccess } from "@plane/types";
+import { EViewAccess } from "@plane/types";
 // helpers
 import { removeNillKeys } from "@/helpers/common";
 import { WorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/base";
@@ -35,7 +34,6 @@ import type {
 } from "@/components/work-item-filters/filters-hoc/shared";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CreateUpdateTeamspaceViewModal } from "@/components/teamspaces/views/modals/create-update/modal";
 import { useTeamspaceViews } from "@/plane-web/hooks/store/teamspaces/use-teamspace-views";
@@ -57,35 +55,31 @@ export const TeamspaceLevelWorkItemFiltersHOC = observer(function TeamspaceLevel
   const [isCreateViewModalOpen, setIsCreateViewModalOpen] = useState(false);
   const [createViewPayload, setCreateViewPayload] = useState<Partial<TTeamspaceView> | undefined>(undefined);
   // hooks
-  const { data: currentUser } = useUser();
-  const { allowPermissions } = useUserPermissions();
-  const { isCurrentUserMemberOfTeamspace, getTeamspaceMemberIds, getTeamspaceProjectIds } = useTeamspaces();
+  const {
+    isCurrentUserMemberOfTeamspace,
+    getTeamspaceMemberIds,
+    getTeamspaceProjectIds,
+    permissions: { getViewPermissions },
+  } = useTeamspaces();
   const { getViewById, updateView } = useTeamspaceViews();
   const { getProjectLabelIds } = useLabel();
   // derived values
-  const hasWorkspaceAdminLevelPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
-  const hasWorkspaceMemberLevelPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
   const viewDetails = entityId ? getViewById(teamspaceId, entityId) : null;
   const isViewLocked = viewDetails ? viewDetails?.is_locked : false;
-  const isCurrentUserOwner = viewDetails ? viewDetails.owned_by === currentUser?.id : false;
+  const teamspaceViewPermissions = getViewPermissions(workspaceSlug, teamspaceId);
+  const canCreateViewPermission = teamspaceViewPermissions.canCreate;
+  const canEditViewPermission = viewDetails ? teamspaceViewPermissions.getCanEdit(viewDetails.id) : false;
   const canCreateView =
     enableSaveView &&
     !props.saveViewOptions?.isDisabled &&
-    hasWorkspaceMemberLevelPermissions &&
+    canCreateViewPermission &&
     isCurrentUserMemberOfTeamspace(teamspaceId);
   const canUpdateView =
     enableUpdateView &&
     !props.updateViewOptions?.isDisabled &&
     !isViewLocked &&
-    (hasWorkspaceAdminLevelPermissions || isCurrentUserOwner);
+    isCurrentUserMemberOfTeamspace(teamspaceId) &&
+    canEditViewPermission;
   const createViewLabel = useMemo(() => props.saveViewOptions?.label, [props.saveViewOptions?.label]);
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
   const hasAdditionalChanges =

@@ -37,11 +37,13 @@ export const WorkflowsListRoot = observer(function WorkflowsListRoot(props: Prop
     isMultipleWorkflowModeEnabled,
     fetchProjectWorkflows,
     loader,
+    permissions: { getCanCreate },
     filters: { searchQuery, isFiltersChanged, reset: resetFilters, isSortChanged },
   } = useWorkflows();
 
   // derived values
   const projectWorkflows = getFilteredProjectWorkflows(projectId);
+  const canCreateWorkflow = getCanCreate(workspaceSlug, projectId);
   const isMultipleModeEnabled = isMultipleWorkflowModeEnabled(workspaceSlug, projectId);
 
   useEffect(() => {
@@ -108,7 +110,7 @@ export const WorkflowsListRoot = observer(function WorkflowsListRoot(props: Prop
               title={t("settings_empty_state.workflows.title")}
               description={t("settings_empty_state.workflows.description")}
               actions={
-                isMultipleModeEnabled
+                canCreateWorkflow && isMultipleModeEnabled
                   ? [
                       {
                         label: t("settings_empty_state.workflows.cta_primary"),
@@ -129,6 +131,7 @@ export const WorkflowsListRoot = observer(function WorkflowsListRoot(props: Prop
         projectId={projectId}
         isOpen={createWorkflowModal}
         onClose={() => setCreateWorkflowModal(false)}
+        canCreate={canCreateWorkflow}
       />
     </>
   );

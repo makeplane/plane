@@ -22,10 +22,6 @@
       "label": "Thành viên",
       "project_lead": "Người phụ trách dự án",
       "default_assignee": "Người nhận mặc định",
-      "guest_super_permissions": {
-        "title": "Cấp quyền cho người dùng khách xem tất cả mục công việc:",
-        "sub_heading": "Điều này sẽ cho phép khách xem tất cả mục công việc của dự án."
-      },
       "invite_members": {
         "title": "Mời thành viên",
         "sub_heading": "Mời thành viên tham gia dự án của bạn.",

@@ -13,24 +13,31 @@
 
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-
 import { PlusIcon } from "@plane/propel/icons";
 // plane package imports
 import { E_SORT_ORDER } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // components
 import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activity";
+// hooks
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectUpdates } from "@/plane-web/hooks/store/projects/use-project-updates";
+// types
 import type { TProjectUpdate } from "@/types";
+// local imports
 import { UpdateBlock } from "./block";
 import { EmptyUpdates } from "./empty";
 import { UpdatesLoader } from "./loader";
 import { NewUpdate } from "./new-update";
 import { useUpdates } from "./use-updates";
 
-export const ProjectUpdates = observer(function ProjectUpdates() {
-  const { workspaceSlug, projectId } = useParams();
+type ProjectUpdatesProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ProjectUpdates = observer(function ProjectUpdates(props: ProjectUpdatesProps) {
+  const { workspaceSlug, projectId } = props;
   // state
   const [showInput, setShowInput] = useState(false);
   const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
@@ -38,6 +45,7 @@ export const ProjectUpdates = observer(function ProjectUpdates() {
     E_SORT_ORDER.ASC
   );
   // hooks
+  const { permissions: projectPermissions } = useProject();
   const { getUpdatesByProjectId, loader } = useProjectUpdates();
   const { handleUpdateOperations } = useUpdates(workspaceSlug.toString(), projectId.toString());
 
@@ -48,6 +56,27 @@ export const ProjectUpdates = observer(function ProjectUpdates() {
 
   // derived
   const projectUpdates = getUpdatesByProjectId(projectId.toString()) ?? [];
+  const projectUpdatePermissions = projectPermissions.getUpdatePermissions(
+    workspaceSlug.toString(),
+    projectId.toString()
+  );
+
+  const getUpdateBlockPermissions = (updateId: string) => {
+    const commentPermissions = projectUpdatePermissions.getCommentPermissions(updateId);
+    return {
+      updates: {
+        canReact: projectUpdatePermissions.getCanReact(updateId),
+        canEdit: projectUpdatePermissions.getCanEdit(updateId),
+        canDelete: projectUpdatePermissions.getCanDelete(updateId),
+      },
+      comments: {
+        canCreate: commentPermissions.canCreate,
+        canUpdate: (commentId: string) => commentPermissions.getCanEdit(commentId),
+        canDelete: (commentId: string) => commentPermissions.getCanDelete(commentId),
+        canReact: (commentId: string) => commentPermissions.getCanReact(commentId),
+      },
+    };
+  };
 
   const handleNewUpdate = async (data: Partial<TProjectUpdate>) => {
     try {
@@ -71,7 +100,9 @@ export const ProjectUpdates = observer(function ProjectUpdates() {
       {showInput && <NewUpdate handleClose={() => setShowInput(false)} handleCreate={handleNewUpdate} />}
 
       {/* No Updates */}
-      {!showInput && projectUpdates.length === 0 && <EmptyUpdates handleNewUpdate={() => setShowInput(true)} />}
+      {!showInput && projectUpdates.length === 0 && (
+        <EmptyUpdates canCreate={projectUpdatePermissions.canCreate} handleNewUpdate={() => setShowInput(true)} />
+      )}
 
       {/* Add update */}
       {!showInput && projectUpdates.length !== 0 && (
@@ -79,6 +110,7 @@ export const ProjectUpdates = observer(function ProjectUpdates() {
           <button
             className="flex text-accent-primary text-13 font-medium rounded-sm w-fit py-1 px-2"
             onClick={() => setShowInput(true)}
+            disabled={!projectUpdatePermissions.canCreate}
           >
             <PlusIcon width={15} height={15} className="my-auto mr-1" />
             <div>Add update</div>
@@ -97,6 +129,7 @@ export const ProjectUpdates = observer(function ProjectUpdates() {
               workspaceSlug={workspaceSlug.toString()}
               projectId={projectId.toString()}
               handleUpdateOperations={handleUpdateOperations}
+              permissions={getUpdateBlockPermissions(updateId)}
             />
           ))}
         </div>

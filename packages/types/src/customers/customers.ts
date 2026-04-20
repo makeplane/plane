@@ -71,6 +71,7 @@ export type TCustomerRequest = {
   work_item_ids: string[];
   customer_id: string | undefined;
   created_at: string;
+  created_by: string | undefined;
 };
 
 export type TCustomerRequestCreateResponse = TCustomerRequest & {

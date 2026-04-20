@@ -31,6 +31,10 @@ type Props = {
   onToggle: (isEnabled: boolean) => void;
   handleDelete: () => void;
   isDefault: boolean;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
   hasMissingStates: boolean;
 };
 
@@ -45,6 +49,7 @@ export const WorkflowActions = observer(function WorkflowActions(props: Props) {
     onToggle,
     handleDelete,
     isDefault,
+    permissions,
     hasMissingStates,
   } = props;
   // hooks
@@ -57,7 +62,7 @@ export const WorkflowActions = observer(function WorkflowActions(props: Props) {
       title: "Edit",
       icon: EditIcon,
       action: handleEdit,
-      shouldRender: !isDefault,
+      shouldRender: permissions.canEdit && !isDefault,
     },
     {
       key: "view-history",
@@ -71,9 +76,10 @@ export const WorkflowActions = observer(function WorkflowActions(props: Props) {
       icon: TrashIcon,
       className: "text-danger-primary",
       action: handleDelete,
-      shouldRender: !isDefault,
+      shouldRender: !isDefault && permissions.canDelete,
     },
   ];
+
   return (
     <div
       className="flex items-center gap-3 cursor-default"
@@ -92,7 +98,7 @@ export const WorkflowActions = observer(function WorkflowActions(props: Props) {
       )}
       <Tooltip tooltipContent={activationTooltipContent} disabled={!isActivationDisabled} isMobile={isMobile}>
         <span className="inline-flex">
-          <Switch value={isEnabled} onChange={onToggle} disabled={isActivationDisabled} />
+          <Switch value={isEnabled} onChange={onToggle} disabled={isActivationDisabled || !permissions.canEdit} />
         </span>
       </Tooltip>
       <Menu ellipsis closeOnSelect>

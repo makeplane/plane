@@ -15,7 +15,7 @@ import json
 # Django imports
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.project import ProjectMemberPermission
+from plane.permissions import can, MilestonePermissions
 from django.db.models import Prefetch, Q, Count
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -43,7 +43,6 @@ class MilestoneViewSet(BaseViewSet):
 
     serializer_class = MilestoneSerializer
     model = Milestone
-    permission_classes = [ProjectMemberPermission]
 
     webhook_event = "milestone"
 
@@ -99,12 +98,14 @@ class MilestoneViewSet(BaseViewSet):
 
     @method_decorator(gzip_page)
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         queryset = self.get_queryset().order_by("target_date", "-created_at")
         serializer = MilestoneSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = self.get_serializer(
@@ -127,6 +128,7 @@ class MilestoneViewSet(BaseViewSet):
         return Response(MilestoneSerializer(milestone).data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, pk):
         milestone = self.get_object()
         serializer = self.get_serializer(
@@ -146,6 +148,7 @@ class MilestoneViewSet(BaseViewSet):
         return Response(MilestoneSerializer(milestone).data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, pk):
         milestone = self.get_object()
 
@@ -178,6 +181,7 @@ class MilestoneViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """Return issues in the project that are not linked to any active milestone.
 

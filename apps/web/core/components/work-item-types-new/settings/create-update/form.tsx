@@ -50,9 +50,8 @@ export const CreateOrUpdateWorkItemTypeForm = observer(function CreateOrUpdateWo
   // store hooks
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const isWorkItemTypeHierarchyFlagAvailable = useFlag(workspaceSlug, "WORKITEM_TYPE_HIERARCHY", false);
-  const isWorkItemHierarchyFeatureEnabled = isWorkspaceFeatureEnabled(
-    EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED
-  );
+  const isWorkItemHierarchyFeatureEnabled =
+    workspaceSlug && isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_WORK_ITEM_HIERARCHY_ENABLED);
   // plane hooks
   const { t } = useTranslation();
 

@@ -21,11 +21,11 @@ import { IconButton } from "@plane/propel/icon-button";
 interface ConvertWorkItemIconProps {
   handleOnClick: () => void;
   conversionType: EWorkItemConversionType;
-  disabled?: boolean;
+  canConvert: boolean;
 }
 
 export function ConvertWorkItemIcon(props: ConvertWorkItemIconProps) {
-  const { handleOnClick, conversionType, disabled = false } = props;
+  const { handleOnClick, conversionType, canConvert } = props;
   // derived values
   const IconComponent =
     conversionType === EWorkItemConversionType.WORK_ITEM ? ConvertToWorkitemIcon : ConvertToEpicIcon;
@@ -37,7 +37,7 @@ export function ConvertWorkItemIcon(props: ConvertWorkItemIconProps) {
       <IconButton
         variant="secondary"
         onClick={handleOnClick}
-        disabled={disabled}
+        disabled={!canConvert}
         size="lg"
         icon={IconComponent}
         aria-label={tooltipContent}

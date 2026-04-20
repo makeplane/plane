@@ -25,8 +25,6 @@ type Props = {
   project: {
     id: string;
   };
-  isAdmin: boolean;
-  isAuthorized: boolean;
   onCopyText: () => void;
   onLeaveProject: () => void;
   onPublishModal: () => void;
@@ -34,13 +32,18 @@ type Props = {
   handleAddToFavorites: () => void;
   handleRemoveFromFavorites: () => void;
   className?: string;
+  permissions: {
+    canVisitArchives: boolean;
+    canPublish: boolean;
+    canFavorite: boolean;
+    canManage: boolean;
+    canLeave: boolean;
+  };
 };
 
 export function ProjectActionsMenu({
   workspaceSlug,
   project,
-  isAdmin,
-  isAuthorized,
   onCopyText,
   onLeaveProject,
   onPublishModal,
@@ -48,6 +51,7 @@ export function ProjectActionsMenu({
   handleAddToFavorites,
   handleRemoveFromFavorites,
   className,
+  permissions,
 }: Props) {
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -77,7 +81,7 @@ export function ProjectActionsMenu({
       closeOnSelect
       onMenuClose={() => setIsMenuActive(false)}
     >
-      {isAuthorized && (
+      {permissions.canFavorite && (
         <CustomMenu.MenuItem onClick={isFavorite ? handleRemoveFromFavorites : handleAddToFavorites}>
           <span className="flex items-center justify-start gap-2">
             <Star
@@ -90,7 +94,7 @@ export function ProjectActionsMenu({
         </CustomMenu.MenuItem>
       )}
       {/* Publish project settings */}
-      {isAdmin && (
+      {permissions.canPublish && (
         <CustomMenu.MenuItem onClick={onPublishModal}>
           <div className="relative flex flex-shrink-0 items-center justify-start gap-2">
             <div className="flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm text-secondary transition-all duration-300 hover:bg-layer-1">
@@ -106,7 +110,7 @@ export function ProjectActionsMenu({
           <span>{t("copy_link")}</span>
         </span>
       </CustomMenu.MenuItem>
-      {isAuthorized && (
+      {permissions.canVisitArchives && (
         <CustomMenu.MenuItem
           onClick={() => {
             navigate(`/${workspaceSlug}/projects/${project?.id}/archives/issues/`);
@@ -118,18 +122,20 @@ export function ProjectActionsMenu({
           </div>
         </CustomMenu.MenuItem>
       )}
-      <CustomMenu.MenuItem
-        onClick={() => {
-          navigate(`/${workspaceSlug}/settings/projects/${project?.id}`);
-        }}
-      >
-        <div className="flex items-center justify-start gap-2 cursor-pointer">
-          <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
-          <span>{t("settings")}</span>
-        </div>
-      </CustomMenu.MenuItem>
+      {permissions.canManage && (
+        <CustomMenu.MenuItem
+          onClick={() => {
+            navigate(`/${workspaceSlug}/settings/projects/${project?.id}`);
+          }}
+        >
+          <div className="flex items-center justify-start gap-2 cursor-pointer">
+            <Settings className="h-3.5 w-3.5 stroke-[1.5]" />
+            <span>{t("settings")}</span>
+          </div>
+        </CustomMenu.MenuItem>
+      )}
       {/* Leave project */}
-      {!isAuthorized && (
+      {permissions.canLeave && (
         <CustomMenu.MenuItem onClick={onLeaveProject}>
           <div className="flex items-center justify-start gap-2">
             <LogOut className="h-3.5 w-3.5 stroke-[1.5]" />

@@ -18,6 +18,7 @@ import re
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
+from plane.permissions.serializers import PermissionSerializerMixin
 from django.db.models import Max
 from plane.app.serializers.workspace import WorkspaceLiteSerializer
 from plane.license.utils.instance_value import get_project_identifier_max_length
@@ -220,7 +221,7 @@ class ProjectLiteSerializer(BaseSerializer):
         read_only_fields = fields
 
 
-class ProjectListSerializer(DynamicBaseSerializer):
+class ProjectListSerializer(PermissionSerializerMixin, DynamicBaseSerializer):
     is_favorite = serializers.BooleanField(read_only=True)
     sort_order = serializers.FloatField(read_only=True)
     member_role = serializers.SerializerMethodField()
@@ -284,6 +285,7 @@ class ProjectListSerializer(DynamicBaseSerializer):
     class Meta:
         model = Project
         fields = "__all__"
+        permission_resource_type = "project"
 
 
 class ProjectDetailSerializer(BaseSerializer):
@@ -300,10 +302,24 @@ class ProjectDetailSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class ProjectMemberSerializer(BaseSerializer):
+class ProjectRoleSlugMixin:
+    """Adds read-only role_slug field to project member serializers."""
+
+    role_slug = serializers.SerializerMethodField()
+
+    def get_role_slug(self, obj):
+        if obj.role_ref_id:
+            return obj.role_ref.slug
+        from plane.permissions.system_roles import project_role_from_member_role
+
+        return project_role_from_member_role(obj.role)
+
+
+class ProjectMemberSerializer(ProjectRoleSlugMixin, BaseSerializer):
     class Meta:
         model = ProjectMember
         fields = "__all__"
+        read_only_fields = ["role"]
 
 
 class ProjectMemberPreferenceSerializer(BaseSerializer):
@@ -318,7 +334,7 @@ class ProjectMemberPreferenceSerializer(BaseSerializer):
         return preferences
 
 
-class ProjectMemberAdminSerializer(BaseSerializer):
+class ProjectMemberAdminSerializer(ProjectRoleSlugMixin, BaseSerializer):
     workspace = WorkspaceLiteSerializer(read_only=True)
     project = ProjectLiteSerializer(read_only=True)
     member = UserAdminLiteSerializer(read_only=True)
@@ -326,24 +342,26 @@ class ProjectMemberAdminSerializer(BaseSerializer):
     class Meta:
         model = ProjectMember
         fields = "__all__"
+        read_only_fields = ["role"]
 
 
-class ProjectMemberRoleSerializer(DynamicBaseSerializer):
-    original_role = serializers.IntegerField(source="role", read_only=True)
+class ProjectMemberRoleSerializer(ProjectRoleSlugMixin, DynamicBaseSerializer):
+    role_slug = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectMember
-        fields = ("id", "role", "member", "project", "original_role", "created_at")
-        read_only_fields = ["original_role", "created_at"]
+        fields = ("id", "role", "role_slug", "member", "created_at")
+        read_only_fields = ["role", "created_at"]
 
 
-class ProjectMemberInviteSerializer(BaseSerializer):
+class ProjectMemberInviteSerializer(ProjectRoleSlugMixin, BaseSerializer):
     project = ProjectLiteSerializer(read_only=True)
     workspace = WorkspaceLiteSerializer(read_only=True)
 
     class Meta:
         model = ProjectMemberInvite
         fields = "__all__"
+        read_only_fields = ["role"]
 
 
 class ProjectIdentifierSerializer(BaseSerializer):
@@ -407,6 +425,47 @@ class ProjectLabelSerializer(BaseSerializer):
             raise serializers.ValidationError(detail="PROJECT_LABEL_NAME_ALREADY_EXISTS")
 
         return name
+
+
+class ProjectLightSerializer(PermissionSerializerMixin, BaseSerializer):
+    """Lightweight project serializer for the sidebar/navigation list endpoint.
+
+    Returns a minimal payload with project metadata and the current user's
+    role.  Annotated fields (``member_role``, ``intake_count``,
+    ``sort_order``, ``inbox_view``) must be supplied on the queryset via
+    ``.annotate()``.  Includes ``_permissions`` via ``PermissionSerializerMixin``.
+    """
+
+    member_role = serializers.IntegerField(read_only=True, allow_null=True)
+    intake_count = serializers.IntegerField(read_only=True)
+    sort_order = serializers.FloatField(read_only=True, allow_null=True)
+    inbox_view = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Project
+        fields = [
+            "id",
+            "name",
+            "identifier",
+            "sort_order",
+            "logo_props",
+            "member_role",
+            "intake_count",
+            "archived_at",
+            "workspace",
+            "cycle_view",
+            "issue_views_view",
+            "module_view",
+            "page_view",
+            "inbox_view",
+            "project_lead",
+            "network",
+            "created_at",
+            "updated_at",
+            "created_by",
+            "updated_by",
+        ]
+        permission_resource_type = "project"
 
 
 class ProjectSubscriberSerializer(BaseSerializer):

@@ -16,17 +16,14 @@ import { usePathname } from "next/navigation";
 import { Outlet } from "react-router";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
-import { getWorkspaceActivePath, pathnameToAccessKey } from "@/components/settings/helper";
+import { getWorkspaceActivePath, workspaceSettingsPathnameToAccessKey } from "@/components/settings/helper";
 import { SettingsMobileNav } from "@/components/settings/mobile/nav";
-// plane imports
-import { WORKSPACE_SETTINGS_ACCESS } from "@plane/constants";
-import type { EUserWorkspaceRoles } from "@plane/types";
 // plane web components
 import { WorkspaceRightSidebar } from "@/components/workspace/right-sidebar";
 // components
 import { WorkspaceSettingsSidebarRoot } from "@/components/settings/workspace/sidebar";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceSettingsAccess } from "@/hooks/permissions/use-workspace-settings-access";
 // local imports
 import type { Route } from "./+types/layout";
 
@@ -34,31 +31,26 @@ const WorkspaceSettingLayout = observer(function WorkspaceSettingLayout({ params
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { workspaceUserInfo, getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
+  const { canAccessWorkspaceSettingByRoute } = useWorkspaceSettingsAccess();
   // next hooks
   const pathname = usePathname();
   // derived values
-  const { accessKey } = pathnameToAccessKey(pathname);
-  const userWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
-
-  let isAuthorized: boolean | string = false;
-  if (pathname && workspaceSlug && userWorkspaceRole) {
-    isAuthorized = WORKSPACE_SETTINGS_ACCESS[accessKey]?.includes(userWorkspaceRole as EUserWorkspaceRoles);
-  }
+  const { accessKey } = workspaceSettingsPathnameToAccessKey(pathname);
+  const isAuthorized = canAccessWorkspaceSettingByRoute(workspaceSlug, accessKey);
 
   return (
     <>
       <SettingsMobileNav
-        hamburgerContent={WorkspaceSettingsSidebarRoot}
+        hamburgerContent={(props) => <WorkspaceSettingsSidebarRoot {...props} workspaceSlug={workspaceSlug} />}
         activePath={getWorkspaceActivePath(pathname) || ""}
       />
       <div className="inset-y-0 flex flex-row w-full h-full">
-        {workspaceUserInfo && !isAuthorized ? (
+        {!isAuthorized ? (
           <NotAuthorizedView section="settings" className="h-auto" />
         ) : (
           <div className="relative flex size-full">
             <div className="h-full hidden md:block">
-              <WorkspaceSettingsSidebarRoot />
+              <WorkspaceSettingsSidebarRoot workspaceSlug={workspaceSlug} />
             </div>
             <Outlet />
             <WorkspaceRightSidebar workspaceSlug={workspaceSlug} />

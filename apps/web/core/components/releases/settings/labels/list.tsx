@@ -15,18 +15,15 @@ import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ReleaseLabel, ReleaseLabelWrite } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // services
 import releaseService from "@/services/release.service";
 // local
@@ -34,6 +31,7 @@ import { DeleteReleaseLabelModal } from "./delete-modal";
 import type { ReleaseLabelOperationsCallbacks } from "./inline-form";
 import { CreateUpdateReleaseLabelInline } from "./inline-form";
 import { ReleaseLabelItem } from "./label-item";
+import { useReleasePermissions } from "@/hooks/permissions/use-release-permissions";
 
 type Props = {
   workspaceSlug: string;
@@ -41,14 +39,13 @@ type Props = {
 
 export const ReleasesLabelList = observer(function ReleasesLabelList({ workspaceSlug }: Props) {
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
   const scrollToRef = useRef<HTMLDivElement>(null);
 
   const [showForm, setShowForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteLabel, setSelectDeleteLabel] = useState<ReleaseLabel | null>(null);
 
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const releaseLabelPermissions = useReleasePermissions(workspaceSlug).getLabelPermissions();
 
   const {
     data: labels,
@@ -150,7 +147,7 @@ export const ReleasesLabelList = observer(function ReleasesLabelList({ workspace
         title={t("releases.settings.labels.title")}
         description={t("releases.settings.labels.description")}
         control={
-          isAdmin && (
+          releaseLabelPermissions.canCreate && (
             <Button onClick={newLabel} variant="secondary">
               {t("releases.settings.labels.add")}
             </Button>
@@ -186,7 +183,9 @@ export const ReleasesLabelList = observer(function ReleasesLabelList({ workspace
             assetClassName="size-20"
             title={t("releases.settings.labels.empty_state")}
             description=""
-            actions={isAdmin ? [{ label: t("releases.settings.labels.add"), onClick: newLabel }] : []}
+            actions={
+              releaseLabelPermissions.canCreate ? [{ label: t("releases.settings.labels.add"), onClick: newLabel }] : []
+            }
             align="start"
             rootClassName="py-20"
           />
@@ -201,6 +200,11 @@ export const ReleasesLabelList = observer(function ReleasesLabelList({ workspace
               handleLabelDelete={(l) => setSelectDeleteLabel(l)}
               onDrop={onDrop}
               labelOperationsCallbacks={labelOperationsCallbacks}
+              permissions={{
+                canReorder: releaseLabelPermissions.getCanReorder(label.id),
+                canEdit: releaseLabelPermissions.getCanEdit(label.id),
+                canDelete: releaseLabelPermissions.getCanDelete(label.id),
+              }}
             />
           ))
         )}

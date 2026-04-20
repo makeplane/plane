@@ -86,7 +86,9 @@ class ProjectFeatureQuery:
             issue_views_view=project_details.issue_views_view,
             page_view=project_details.page_view,
             intake_view=project_details.intake_view,
-            guest_view_all_features=project_details.guest_view_all_features,
+            # Deprecated: superseded by the project-level commenter role.
+            # Always returned as False so older mobile clients keep working.
+            guest_view_all_features=False,
             # Project features
             is_project_updates_enabled=project_feature.is_project_updates_enabled,
             is_epic_enabled=project_feature.is_epic_enabled,

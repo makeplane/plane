@@ -14,16 +14,15 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Switch } from "@plane/propel/switch";
-import { EProductSubscriptionEnum, EUserProjectRoles } from "@plane/types";
+import { EProductSubscriptionEnum } from "@plane/types";
 import { cn, getSubscriptionName } from "@plane/utils";
 // ce imports
 import type { TProperties } from "@/constants/project/settings/features";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store/use-workspace-subscription";
 
@@ -45,19 +44,13 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
   const { projectId, showDefault = true, featureList, isTooltip = false, className = "" } = props;
   const { t } = useTranslation();
   const { workspaceSlug } = useParams();
-  const { allowPermissions } = useUserPermissions();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
+  const { permissions } = useProject();
+  const canManageIntake = workspaceSlug && projectId ? permissions.getCanManageIntake(workspaceSlug, projectId) : false;
 
   if (!workspaceSlug || !projectId) return null;
 
-  // Derived Values
-  const isAdmin = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug.toString(),
-    projectId
-  );
-
+  // derived values
   const intakeT = (path: string) => t(`project_settings.features.intake.${path}`);
 
   return (
@@ -74,7 +67,7 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                   <div className="flex gap-2 w-full">
                     <div
                       className={cn("flex justify-center rounded-sm mt-1", {
-                        "opacity-50": !isAdmin && featureKey !== "in_app",
+                        "opacity-50": !canManageIntake && featureKey !== "in_app",
                       })}
                     >
                       {feature.icon}
@@ -85,7 +78,7 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                           <div className="flex gap-2">
                             <div
                               className={cn("text-13 font-medium leading-5 align-top", {
-                                "opacity-50": !isAdmin && featureKey !== "in_app",
+                                "opacity-50": !canManageIntake && featureKey !== "in_app",
                               })}
                             >
                               {intakeT(`${featureKey}.title`)}
@@ -98,7 +91,7 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                           </div>
                           <p
                             className={cn("text-13 text-tertiary text-wrap mt-1", {
-                              "opacity-50": !isAdmin && featureKey !== "in_app",
+                              "opacity-50": !canManageIntake && featureKey !== "in_app",
                             })}
                           >
                             {intakeT(`${featureKey}.description`)}
@@ -110,19 +103,19 @@ const IntakeSubFeaturesUpgrade = observer(function IntakeSubFeaturesUpgrade(prop
                               tooltipContent={t("upgrade_request")}
                               position="top"
                               className=""
-                              disabled={isAdmin}
+                              disabled={canManageIntake}
                             >
                               <div
                                 onClick={() => {
-                                  if (!isAdmin) return;
+                                  if (!canManageIntake) return;
                                   togglePaidPlanModal(true);
                                 }}
                               >
                                 <Switch
                                   value={false}
                                   onChange={() => {}}
-                                  className={isAdmin ? "opacity-30" : ""}
-                                  disabled={!isAdmin}
+                                  className={canManageIntake ? "opacity-30" : ""}
+                                  disabled={!canManageIntake}
                                 />
                               </div>
                             </Tooltip>

@@ -67,6 +67,8 @@ from plane.payment.flags.flag_decorator import (
 )
 from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import WorkspacePagePermission
+from plane.permissions import WikiPermissions
+from plane.permissions import HasResourcePermission
 from plane.app.serializers import PageBinaryUpdateSerializer
 from plane.app.permissions import ROLE
 
@@ -78,8 +80,24 @@ class WorkspacePageViewSet(BaseViewSet):
 
     serializer_class = WorkspacePageSerializer
     model = Page
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
     search_fields = ["name"]
+
+    action_permissions = {
+        "list": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "create": {"permission": WikiPermissions.CREATE, "resource_param": "workspace_id"},
+        "retrieve": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "partial_update": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "destroy": {"permission": WikiPermissions.DELETE, "resource_param": "workspace_id"},
+        "lock": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "unlock": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "access": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "archive": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "unarchive": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "sub_pages": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "parent_pages": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "summary": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+    }
 
     def get_queryset(self):
         subquery = UserFavorite.objects.filter(
@@ -596,7 +614,11 @@ class WorkspacePageViewSet(BaseViewSet):
 class WorkspacePageDuplicateEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "create": {"permission": WikiPermissions.CREATE, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, page_id):
@@ -619,7 +641,12 @@ class WorkspacePageDuplicateEndpoint(BaseAPIView):
 class WorkspacePagesDescriptionViewSet(BaseViewSet):
     use_read_replica = True
 
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "retrieve": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "partial_update": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def retrieve(self, request, slug, page_id):
@@ -710,7 +737,11 @@ class WorkspacePagesDescriptionViewSet(BaseViewSet):
 class WorkspacePageVersionEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "retrieve": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def get(self, request, slug, page_id, pk=None):
@@ -732,7 +763,12 @@ class WorkspacePageFavoriteEndpoint(BaseAPIView):
     use_read_replica = True
 
     model = UserFavorite
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "create": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "destroy": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, page_id):
@@ -761,7 +797,11 @@ class WorkspacePageFavoriteEndpoint(BaseAPIView):
 class WorkspacePageRestoreEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "create": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.WORKSPACE_PAGES)
     def post(self, request, slug, page_id, pk):

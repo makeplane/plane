@@ -26,15 +26,15 @@ function Layout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   const { isWorkspaceFeatureEnabled, loader } = useWorkspaceFeatures();
-  const shouldUpgrade = !loader && !isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+  const shouldUpgrade = !loader && !isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED);
 
   return shouldUpgrade ? (
-    <EmptyPiChat />
+    <EmptyPiChat workspaceSlug={workspaceSlug} />
   ) : (
     <WithAiFeatureFlagHOC
       workspaceSlug={workspaceSlug}
       flag="AI_CHAT"
-      disabledFallback={<EmptyPiChat />}
+      disabledFallback={<EmptyPiChat workspaceSlug={workspaceSlug} />}
       notConfiguredFallback={<PageNotFound />}
     >
       <PiChatLayout isFullScreen isProjectLevel shouldRenderSidebarToggle>

@@ -249,12 +249,6 @@ PROJECT_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 description="Enable/disable intake view (optional)",
             ),
             ToolParameter(
-                name="guest_view_all_features",
-                type="Optional[bool]",
-                required=False,
-                description="Allow guests to view all features (optional)",
-            ),
-            ToolParameter(
                 name="archive_in",
                 type="Optional[int]",
                 required=False,
@@ -382,12 +376,6 @@ PROJECT_TOOL_DEFINITIONS: Dict[str, ToolMetadata] = {
                 type="Optional[bool]",
                 required=False,
                 description="Enable/disable issue type, also called workitem types (optional)",
-            ),
-            ToolParameter(
-                name="guest_view_all_features",
-                type="Optional[bool]",
-                required=False,
-                description="Allow guests to view all features (optional)",
             ),
             ToolParameter(
                 name="archive_in",

@@ -18,8 +18,8 @@ import type { IProject } from "@plane/types";
 // ui
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useMember } from "@/hooks/store/use-member";
 
 // type
 type TJoinProjectModalProps = {
@@ -34,7 +34,9 @@ export function JoinProjectModal(props: TJoinProjectModalProps) {
   // states
   const [isJoiningLoading, setIsJoiningLoading] = useState(false);
   // store hooks
-  const { joinProject } = useUserPermissions();
+  const {
+    project: { joinProject },
+  } = useMember();
   // router
   const router = useAppRouter();
 

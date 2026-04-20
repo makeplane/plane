@@ -19,9 +19,10 @@ import { cn } from "@plane/utils";
 type Props = {
   toggleModal: () => void;
   variant?: "default" | "compact";
+  canCreate: boolean;
 };
 export function AddMilestoneButton(props: Props) {
-  const { toggleModal, variant = "default" } = props;
+  const { toggleModal, variant = "default", canCreate } = props;
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGElement, MouseEvent>) => {
     e.preventDefault();
@@ -29,6 +30,7 @@ export function AddMilestoneButton(props: Props) {
     toggleModal();
   };
 
+  if (!canCreate) return null;
   return (
     <>
       {variant === "default" ? (

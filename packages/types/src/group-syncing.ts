@@ -18,15 +18,24 @@ export type GroupSyncConfig = {
   auto_remove: boolean;
   group_attribute_key: string;
   sync_offline: boolean;
+  default_workspace_role: string;
+  default_workspace_role_detail: GroupMapRoleDetail;
   created_at: string;
   updated_at: string;
+};
+
+export type GroupMapRoleDetail = {
+  id: string;
+  slug: string;
+  name: string;
 };
 
 export type GroupMap = {
   id: string;
   idp_group_name: string;
   project: string;
-  default_role: number;
+  role: string;
+  role_detail: GroupMapRoleDetail | null;
   created_at: string;
   updated_at: string;
 };

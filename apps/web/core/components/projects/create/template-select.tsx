@@ -12,54 +12,39 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
 import { ProjectTemplateDropdown } from "@/components/templates/dropdowns";
 import { useProjectCreation } from "@/plane-web/hooks/context/use-project-creation";
 import { useFlag } from "@/plane-web/hooks/store";
 
 type TProjectTemplateSelect = {
-  disabled?: boolean;
   onClick?: () => void;
+  workspaceSlug: string;
 };
 
 export const ProjectTemplateSelect = observer(function ProjectTemplateSelect(props: TProjectTemplateSelect) {
-  const { disabled = false } = props;
-  // router
-  const { workspaceSlug } = useParams();
-  // plane hooks
-  const { t } = useTranslation();
+  const { workspaceSlug } = props;
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: projectPermissions } = useProject();
   // project creation context
   const { projectTemplateId, isApplyingTemplate, setProjectTemplateId } = useProjectCreation();
   // derived values
-  const isTemplatesEnabled = useFlag(workspaceSlug?.toString(), "PROJECT_TEMPLATES");
-  const hasWorkspaceAdminPermission = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
+  const isTemplatesEnabled = useFlag(workspaceSlug, "PROJECT_TEMPLATES");
 
   return (
     <>
       {isTemplatesEnabled && (
         <div>
           <ProjectTemplateDropdown
-            workspaceSlug={workspaceSlug?.toString()}
+            workspaceSlug={workspaceSlug}
             templateId={projectTemplateId}
-            disabled={disabled}
+            canCreateTemplate={projectPermissions.getCanCreateTemplate(workspaceSlug)}
             customLabelContent={isApplyingTemplate && <Spinner className="size-4 animate-spin" />}
             handleTemplateChange={(templateId) => {
               setProjectTemplateId(templateId);
             }}
-            showCreateNewTemplate={hasWorkspaceAdminPermission}
           />
         </div>
       )}

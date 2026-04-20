@@ -31,11 +31,11 @@ type Props = {
   workspaceSlug: string;
   epicId: string;
   initiativeId: string;
-  disabled?: boolean;
+  canRemove: boolean;
 };
 
 export const EpicQuickActions = observer(function EpicQuickActions(props: Props) {
-  const { workspaceSlug, initiativeId, epicId, disabled } = props;
+  const { workspaceSlug, initiativeId, epicId, canRemove } = props;
   //  store hooks
   const {
     initiative: {
@@ -96,7 +96,7 @@ export const EpicQuickActions = observer(function EpicQuickActions(props: Props)
         }),
       title: t("common.remove"),
       icon: TrashIcon,
-      shouldRender: !disabled,
+      shouldRender: canRemove,
     },
   ];
 

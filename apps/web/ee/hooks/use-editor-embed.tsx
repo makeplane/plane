@@ -43,7 +43,6 @@ export type TEmbedHookProps = {
 export const useEditorEmbeds = (props: TEmbedHookProps) => {
   const { fetchEmbedSuggestions, projectId, workspaceSlug, page, getRedirectionLink, storeType } = props;
   const { projectId: projectIdFromParams } = useParams();
-
   // store hooks
   const isIssueEmbedEnabled = useFlag(workspaceSlug, "PAGE_ISSUE_EMBEDS");
   const { getPageById, createPage, movePageInternally } = usePageStore(storeType);

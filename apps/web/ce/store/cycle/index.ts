@@ -11,4 +11,4 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export type { ICycleStore } from "@/store/cycle.store";
+export type { ICycleStore } from "@/store/cycles/cycle.store";

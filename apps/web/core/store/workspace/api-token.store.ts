@@ -31,6 +31,10 @@ export interface IApiTokenStore {
   // crud actions
   createApiToken: (data: Partial<IApiToken>) => Promise<IApiToken>;
   deleteApiToken: (tokenId: string) => Promise<void>;
+  // permissions
+  getCanAccessAPITokens: (workspaceSlug: string) => boolean;
+  getCanCreateAPIToken: (workspaceSlug: string) => boolean;
+  getCanDeleteAPIToken: (workspaceSlug: string, apiTokenId: string) => boolean;
 }
 
 export class ApiTokenStore implements IApiTokenStore {
@@ -120,4 +124,35 @@ export class ApiTokenStore implements IApiTokenStore {
         this.apiTokens = updatedApiTokens;
       });
     });
+
+  // permissions
+  getCanAccessAPITokens: IApiTokenStore["getCanAccessAPITokens"] = (workspaceSlug) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "workspace",
+      action: "manage",
+      workspaceSlug,
+      resourceMeta: {
+        resourceId: workspaceSlug,
+      },
+    });
+  };
+
+  getCanCreateAPIToken: IApiTokenStore["getCanCreateAPIToken"] = (workspaceSlug) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "api_token",
+      action: "create",
+      workspaceSlug,
+    });
+  };
+
+  getCanDeleteAPIToken: IApiTokenStore["getCanDeleteAPIToken"] = (workspaceSlug, apiTokenId) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "api_token",
+      action: "delete",
+      workspaceSlug,
+      resourceMeta: {
+        resourceId: apiTokenId,
+      },
+    });
+  };
 }

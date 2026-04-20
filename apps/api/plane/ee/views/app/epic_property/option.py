@@ -17,7 +17,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.permissions import ProjectEntityPermission
+from plane.permissions import can, EpicPropertyPermissions
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import IssuePropertyOption, IssueProperty
 from plane.ee.serializers import IssuePropertyOptionSerializer
@@ -28,9 +28,8 @@ from plane.payment.flags.flag import FeatureFlag
 class EpicPropertyOptionEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, epic_property_id=None, pk=None):
         # Get a single epic property option
         if pk:
@@ -73,6 +72,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
         return Response(response_map, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, epic_property_id):
         # Create a new epic property option
         # Only allow when property type is option
@@ -123,6 +123,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, epic_property_id, pk):
         # Update an epic property option
         epic_property_option = IssuePropertyOption.objects.get(
@@ -158,6 +159,7 @@ class EpicPropertyOptionEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPropertyPermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, epic_property_id, pk):
         # Delete an epic property option
         epic_property_option = IssuePropertyOption.objects.get(

@@ -54,6 +54,7 @@ export type TBasePage = TPage & {
   // computed
   asJSON: TPage | undefined;
   isCurrentUserOwner: boolean;
+  workspaceSlug: string | undefined;
   // helpers
   oldName: string;
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
@@ -91,6 +92,7 @@ export type TBasePagePermissions = {
   canCurrentUserDeletePage: boolean;
   canCurrentUserFavoritePage: boolean;
   canCurrentUserMovePage: boolean;
+  canCurrentUserPublishPage: boolean;
   isContentEditable: boolean;
 };
 
@@ -232,6 +234,7 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
       // computed
       asJSON: computed,
       isCurrentUserOwner: computed,
+      workspaceSlug: computed,
       // actions
       update: action,
       updateTitle: action,
@@ -384,6 +387,11 @@ export class BasePage extends ExtendedBasePage implements TBasePage {
     const currentUserId = this.store.user.data?.id;
     if (!currentUserId) return false;
     return this.owned_by === currentUserId;
+  }
+
+  get workspaceSlug() {
+    const workspaceDetails = this.store.workspaceRoot.getWorkspaceById(this.workspace ?? "");
+    return workspaceDetails?.slug;
   }
 
   /**

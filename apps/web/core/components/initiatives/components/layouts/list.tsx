@@ -14,28 +14,28 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissionsLevel, INITIATIVE_STATES } from "@plane/constants";
+import { INITIATIVE_STATES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { IBaseLayoutsBaseGroup, TInitiativeStates } from "@plane/types";
 // components
 import { BaseListLayout } from "@/components/base-layouts/list/layout";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
-// plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // types
 import type { TInitiative } from "@/types";
-
+import type { TInitiativeItemPermissions } from "@/store/initiatives/permissions/root";
 import { getGroupList, getInitiativeUpdatePayload } from "../../utils";
 import { InitiativeBlock } from "../initiative-block";
 
-export const InitiativesListLayout = observer(function InitiativesListLayout() {
+type Props = {
+  getInitiativePermissions: (initiative: TInitiative) => TInitiativeItemPermissions;
+};
+
+export const InitiativesListLayout = observer(function InitiativesListLayout(props: Props) {
+  const { getInitiativePermissions } = props;
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
   const { getUserDetails } = useMember();
   const { workspaceSlug } = useParams();
 
@@ -91,22 +91,27 @@ export const InitiativesListLayout = observer(function InitiativesListLayout() {
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGroupedFilteredInitiativeIds, groupBy, getUserDetails, workspaceSlug]);
 
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
-
   // Only allow dragging for specific groupBy types
   const isDraggableGroupBy = groupBy === "lead" || groupBy === "state" || groupBy === "label_ids";
   const canDragFunction = useCallback(
-    (item: TInitiative) => isEditable && isDraggableGroupBy && !item?.archived_at,
-    [isEditable, isDraggableGroupBy]
+    (item: TInitiative) => isDraggableGroupBy && !item?.archived_at && getInitiativePermissions(item).canDragAndDrop,
+    [isDraggableGroupBy, getInitiativePermissions]
   );
 
   // Render each initiative item
   const renderItem = useCallback(
-    (initiativeItem: TInitiative) => <InitiativeBlock key={initiativeItem.id} initiativeId={initiativeItem.id} />,
-    []
+    (initiativeItem: TInitiative) => {
+      const itemPerms = getInitiativePermissions(initiativeItem);
+      return (
+        <InitiativeBlock
+          key={initiativeItem.id}
+          initiativeId={initiativeItem.id}
+          canEditProperty={itemPerms.canEditProperty}
+          quickActionPermissions={itemPerms.quickActions}
+        />
+      );
+    },
+    [getInitiativePermissions]
   );
 
   // Handle drag and drop
@@ -146,7 +151,6 @@ export const InitiativesListLayout = observer(function InitiativesListLayout() {
       groupedItemIds={currentGroupedFilteredInitiativeIds}
       groups={groups}
       renderItem={renderItem}
-      enableDragDrop={isEditable}
       canDrag={canDragFunction}
       onDrop={handleDrop}
       showEmptyGroups

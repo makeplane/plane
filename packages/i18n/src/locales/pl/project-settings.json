@@ -22,10 +22,6 @@
       "label": "Członkowie",
       "project_lead": "Lider projektu",
       "default_assignee": "Domyślnie przypisany",
-      "guest_super_permissions": {
-        "title": "Nadaj gościom dostęp do wszystkich elementów:",
-        "sub_heading": "Goście zobaczą wszystkie elementy w projekcie."
-      },
       "invite_members": {
         "title": "Zaproś członków",
         "sub_heading": "Zaproś członków do projektu.",

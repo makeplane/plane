@@ -32,14 +32,17 @@ function InitiativesLayout({ params }: Route.ComponentProps) {
   const { currentWorkspace } = useWorkspace();
   // plane web stores
   const { isWorkspaceFeatureEnabled, loader } = useWorkspaceFeatures();
-  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
+  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_INITIATIVES_ENABLED
+  );
 
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Initiatives` : undefined;
   const shouldUpgrade = currentWorkspace && !isInitiativesFeatureEnabled && !loader;
 
   return (
-    <WorkspaceAccessWrapper pageKey="initiatives">
+    <WorkspaceAccessWrapper pageKey="initiatives" workspaceSlug={workspaceSlug}>
       {shouldUpgrade ? (
         <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
           <InitiativesUpgrade workspaceSlug={workspaceSlug} redirect />

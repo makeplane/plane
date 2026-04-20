@@ -16,7 +16,8 @@ import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
-import type { TIssue, TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import { EIssueServiceType } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
@@ -43,15 +44,38 @@ interface IIssueView {
   isLoading?: boolean;
   isError?: boolean;
   is_archived: boolean;
-  disabled?: boolean;
   embedIssue?: boolean;
   embedRemoveCurrentNotification?: () => void;
   issueOperations: TIssueOperations;
   permissions: {
+    canEdit: boolean;
+    canSubscribe: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDuplicate: boolean;
+    canConvertToEpic: boolean;
+    canSwitchWorkItemType: boolean;
+    canRestoreDescriptionVersion: boolean;
+    canReact: boolean;
+    canAddDependencies: boolean;
+    canAddRelations: boolean;
+    canAddLinks: boolean;
+    canAddAttachments: boolean;
+    canAddPages: boolean;
+    canAddCustomerRequests: boolean;
+    canAddWorklog: boolean;
+    comments: {
+      canCreate: boolean;
+      canEdit: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
     sub_work_items: {
       getCanView: (projectId: string, workItemId: string) => boolean;
       getCanEdit: (projectId: string, workItemId: string) => boolean;
-      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
       getCanDelete: (projectId: string, workItemId: string) => boolean;
       getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
       getCanRemove: (
@@ -72,7 +96,6 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
     isLoading,
     isError,
     is_archived,
-    disabled = false,
     embedIssue = false,
     embedRemoveCurrentNotification,
     issueOperations,
@@ -207,7 +230,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 isSubmitting={isSubmitting}
-                disabled={disabled}
+                permissions={permissions}
                 embedIssue={embedIssue}
               />
               {/* content */}
@@ -220,8 +243,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       projectId={projectId}
                       issueId={issueId}
                       issueOperations={issueOperations}
-                      disabled={disabled}
-                      isArchived={is_archived}
+                      permissions={permissions}
                       isSubmitting={isSubmitting}
                       setIsSubmitting={(value) => setIsSubmitting(value)}
                     />
@@ -230,9 +252,8 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       workspaceSlug={workspaceSlug}
                       projectId={projectId}
                       issueId={issueId}
-                      disabled={disabled || is_archived}
-                      issueServiceType={EIssueServiceType.ISSUES}
                       permissions={permissions}
+                      issueServiceType={EIssueServiceType.ISSUES}
                     />
 
                     <PeekOverviewProperties
@@ -240,14 +261,14 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                       projectId={projectId}
                       issueId={issueId}
                       issueOperations={issueOperations}
-                      disabled={disabled || is_archived}
+                      permissions={permissions}
                     />
 
                     <IssueActivity
                       workspaceSlug={workspaceSlug}
                       projectId={projectId}
                       issueId={issueId}
-                      disabled={is_archived}
+                      permissions={permissions}
                     />
                   </div>
                 ) : (
@@ -260,8 +281,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                           projectId={projectId}
                           issueId={issueId}
                           issueOperations={issueOperations}
-                          disabled={disabled}
-                          isArchived={is_archived}
+                          permissions={permissions}
                           isSubmitting={isSubmitting}
                           setIsSubmitting={(value) => setIsSubmitting(value)}
                         />
@@ -271,9 +291,8 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                             workspaceSlug={workspaceSlug}
                             projectId={projectId}
                             issueId={issueId}
-                            disabled={disabled}
-                            issueServiceType={EIssueServiceType.ISSUES}
                             permissions={permissions}
+                            issueServiceType={EIssueServiceType.ISSUES}
                           />
                         </div>
 
@@ -281,7 +300,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                           workspaceSlug={workspaceSlug}
                           projectId={projectId}
                           issueId={issueId}
-                          disabled={is_archived}
+                          permissions={permissions}
                         />
                       </div>
                     </div>
@@ -295,7 +314,7 @@ export const IssueView = observer(function IssueView(props: IIssueView) {
                         projectId={projectId}
                         issueId={issueId}
                         issueOperations={issueOperations}
-                        disabled={disabled || is_archived}
+                        permissions={permissions}
                       />
                     </div>
                   </div>

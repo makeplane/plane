@@ -28,6 +28,8 @@ from plane.app.serializers import PageUserSerializer
 from plane.ee.permissions.page import WorkspacePagePermission
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.page_update import PageAction, nested_page_update
+from plane.permissions import WikiPermissions
+from plane.permissions import HasResourcePermission
 from plane.bgtasks.extended.share_page_notification import share_page_notification
 
 
@@ -36,7 +38,13 @@ class WorkspacePageUserViewSet(BaseViewSet):
 
     serializer_class = PageUserSerializer
     model = PageUser
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "create": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "list": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "destroy": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.SHARED_PAGES)
     def create(self, request, slug, page_id):

@@ -12,7 +12,6 @@ export interface IQuickActionProps {
   handleMoveToIssues?: () => Promise<void>;
   customActionButton?: React.ReactElement;
   portalElement?: HTMLDivElement | null;
-  readOnly?: boolean;
   placements?: TPlacement;
 }
 

@@ -220,6 +220,10 @@
             "title": "Khóa thuộc tính nhóm",
             "description": "Thuộc tính nhà cung cấp danh tính dùng để xác định và đồng bộ nhóm người dùng.",
             "placeholder": "Nhóm"
+          },
+          "default_workspace_role": {
+            "title": "Vai trò mặc định trong không gian làm việc",
+            "description": "Vai trò được gán cho người dùng khi họ được tự động thêm vào không gian làm việc thông qua đồng bộ nhóm."
           }
         },
         "group_mapping": {

@@ -15,31 +15,30 @@ import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { CircleMinus } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { TeamsIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TTeamspace } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Avatar, AvatarGroup } from "@plane/propel/avatar";
 import { AlertModalCore, CustomMenu, Table } from "@plane/ui";
 import { getFileURL } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store";
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 
 type Props = {
   workspaceSlug: string;
   projectId: string;
   teamspaceIds: string[];
+  permissions: Pick<ProjectItemPermissions, "canRemoveTeamspace">;
 };
 
 export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListItem(props: Props) {
-  const { workspaceSlug, projectId, teamspaceIds } = props;
+  const { workspaceSlug, projectId, teamspaceIds, permissions } = props;
   // states
   const [selectedTeamspaceIdToRemove, setSelectedTeamspaceIdToRemove] = useState<string | null>(null);
   const [isRemovingTeamspace, setIsRemovingTeamspace] = useState(false);
@@ -50,14 +49,7 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
   const { getProjectById } = useProject();
   const { getTeamspaceById, getTeamspaceMemberIds, isCurrentUserMemberOfTeamspace, removeTeamspaceFromProject } =
     useTeamspaces();
-  const { allowPermissions } = useUserPermissions();
   // derived values
-  const hasWorkspaceAdminPermission = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug,
-    projectId
-  );
   const projectDetails = getProjectById(projectId);
   const teamspaceDetails = teamspaceIds.map((teamspaceId) => getTeamspaceById(teamspaceId));
   const teamspaceToRemoveDetails = useMemo(
@@ -78,7 +70,7 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
               <TeamsIcon className="size-4 text-tertiary" />
             )}
             <div>{rowData.name}</div>
-            {hasWorkspaceAdminPermission && isCurrentUserMemberOfTeamspace(rowData.id) && (
+            {permissions.canRemoveTeamspace && isCurrentUserMemberOfTeamspace(rowData.id) && (
               <CustomMenu
                 ellipsis
                 buttonClassName="p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -121,7 +113,7 @@ export const ProjectTeamspaceListItem = observer(function ProjectTeamspaceListIt
       },
     ],
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [getTeamspaceMemberIds, getUserDetails, hasWorkspaceAdminPermission, isCurrentUserMemberOfTeamspace]
+    [getTeamspaceMemberIds, getUserDetails, permissions.canRemoveTeamspace, isCurrentUserMemberOfTeamspace]
   );
 
   const handleRemove = async (teamspaceId: string | null) => {

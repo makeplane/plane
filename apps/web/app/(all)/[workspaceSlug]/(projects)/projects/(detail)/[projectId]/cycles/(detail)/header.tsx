@@ -13,16 +13,11 @@
 
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams } from "react-router";
 // icons
 import { ChartNoAxesColumn, PanelRight, SlidersHorizontal } from "lucide-react";
 // plane imports
-import {
-  EIssueFilterType,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-} from "@plane/constants";
+import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { usePlatformOS } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
@@ -50,7 +45,6 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import useLocalStorage from "@/hooks/use-local-storage";
 // plane web imports
@@ -71,13 +65,21 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
     issuesFilter: { issueFilters, updateFilters },
     issues: { getGroupIssueCount },
   } = useIssues(EIssuesStoreType.CYCLE);
-  const { currentProjectCycleIds, getCycleById } = useCycle();
+  const { currentProjectCycleIds, getCycleById, permissions } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
   const { currentProjectDetails, loader } = useProject();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
-
+  // derived values
   const activeLayout = issueFilters?.displayFilters?.layout;
+  const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
+  const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
+  // auth
+  const canAddWorkItemToCycle =
+    !!workspaceSlug &&
+    !!projectId &&
+    !!cycleId &&
+    permissions.getCanAddWorkItemsToCycle(workspaceSlug, projectId, cycleId) &&
+    !isCompletedCycle;
 
   const { setValue, storedValue } = useLocalStorage("cycle_sidebar_collapsed", false);
 
@@ -88,7 +90,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
@@ -96,7 +98,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
@@ -104,18 +106,10 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
-      if (!workspaceSlug || !projectId) return;
+      if (!workspaceSlug || !projectId || !cycleId) return;
       updateFilters(workspaceSlug, projectId, EIssueFilterType.DISPLAY_PROPERTIES, property, cycleId);
     },
     [workspaceSlug, projectId, cycleId, updateFilters]
-  );
-
-  // derived values
-  const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : undefined;
-  const isCompletedCycle = cycleDetails?.status?.toLocaleLowerCase() === "completed";
-  const canUserCreateIssue = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
   );
 
   const switcherOptions = currentProjectCycleIds
@@ -132,6 +126,8 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
 
   const workItemsCount = getGroupIssueCount(undefined, undefined, false);
 
+  if (!workspaceSlug || !projectId || !cycleId) return null;
+
   return (
     <>
       <WorkItemsModal
@@ -144,10 +140,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
         <Header.LeftItem>
           <div className="flex items-center gap-2">
             <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-              <ProjectBreadcrumbWithPreference
-                workspaceSlug={workspaceSlug?.toString()}
-                projectId={projectId?.toString()}
-              />
+              <ProjectBreadcrumbWithPreference workspaceSlug={workspaceSlug} projectId={projectId} />
               <Breadcrumbs.Item
                 component={
                   <BreadcrumbLink
@@ -239,26 +232,16 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               />
             </FiltersDropdown>
 
-            {canUserCreateIssue && (
-              <>
-                <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
-                  <span className="hidden @4xl:flex">Analytics</span>
-                  <span className="@4xl:hidden">
-                    <ChartNoAxesColumn className="size-3.5" />
-                  </span>
-                </Button>
-                {!isCompletedCycle && (
-                  <Button
-                    variant="primary"
-                    size="lg"
-                    onClick={() => {
-                      toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
-                    }}
-                  >
-                    {t("issue.add.label")}
-                  </Button>
-                )}
-              </>
+            <Button onClick={() => setAnalyticsModal(true)} variant="secondary" size="lg">
+              <span className="hidden @4xl:flex">Analytics</span>
+              <span className="@4xl:hidden">
+                <ChartNoAxesColumn className="size-3.5" />
+              </span>
+            </Button>
+            {canAddWorkItemToCycle && (
+              <Button variant="primary" size="lg" onClick={() => toggleCreateIssueModal(true, EIssuesStoreType.CYCLE)}>
+                {t("issue.add.label")}
+              </Button>
             )}
             <IconButton
               variant="tertiary"

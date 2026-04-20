@@ -13,7 +13,7 @@
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import WorkflowTransitionActivity
 from plane.ee.serializers import WorkflowTransitionActivitySerializer
-from plane.ee.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkflowPermissions
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -25,7 +25,7 @@ class WorkflowActivityEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkflowPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, workflow_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:

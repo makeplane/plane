@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { AlertCircle } from "lucide-react";
 // ui
 import { Button } from "@plane/propel/button";
@@ -19,12 +18,11 @@ import { TransferIcon } from "@plane/propel/icons";
 
 type Props = {
   handleClick: () => void;
-  canTransferIssues?: boolean;
-  disabled?: boolean;
+  canTransferWorkItems: boolean;
 };
 
 export function TransferIssues(props: Props) {
-  const { handleClick, canTransferIssues = false, disabled = false } = props;
+  const { handleClick, canTransferWorkItems } = props;
   return (
     <div className="-mt-2 mb-4 flex items-center justify-between px-4 pt-6">
       <div className="flex items-center gap-2 text-13 text-secondary">
@@ -32,9 +30,9 @@ export function TransferIssues(props: Props) {
         <span>Completed cycles are not editable.</span>
       </div>
 
-      {canTransferIssues && (
-        <div>
-          <Button variant="primary" size="lg" prependIcon={<TransferIcon />} onClick={handleClick} disabled={disabled}>
+      {canTransferWorkItems && (
+        <div className="shrink-0">
+          <Button variant="primary" size="lg" prependIcon={<TransferIcon />} onClick={handleClick}>
             Transfer work items
           </Button>
         </div>

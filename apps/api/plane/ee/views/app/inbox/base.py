@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from plane.app.serializers import NotificationSerializer
 from plane.db.models import Notification
 from plane.utils.paginator import BasePaginator
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspacePermissions
 from plane.app.views.base import BaseViewSet
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -42,7 +42,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         )
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def partial_update(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -70,7 +70,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def mark_read(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -89,7 +89,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.INBOX_STACKING)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def mark_unread(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -107,7 +107,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         notification.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def archive(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:
@@ -125,7 +125,7 @@ class InboxViewSet(BaseViewSet, BasePaginator):
         notification.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def unarchive(self, request, slug):
         notification_ids = request.data.get("notification_ids")
         if notification_ids:

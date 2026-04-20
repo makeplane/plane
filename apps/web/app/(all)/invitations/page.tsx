@@ -18,7 +18,6 @@ import Link from "next/link";
 import useSWR, { mutate } from "swr";
 import { CheckCircle2 } from "lucide-react";
 // plane imports
-import { ROLE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
@@ -158,7 +157,7 @@ function UserInvitationsPage() {
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="text-13 font-medium">{truncateText(invitation.workspace.name, 30)}</div>
-                        <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
+                        <p className="text-11 text-secondary capitalize">{invitation.role_slug}</p>
                       </div>
                       <span className={`flex-shrink-0 ${isSelected ? "text-accent-primary" : "text-secondary"}`}>
                         <CheckCircle2 className="h-5 w-5" />

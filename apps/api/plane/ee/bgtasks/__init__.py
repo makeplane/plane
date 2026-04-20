@@ -18,6 +18,7 @@ from .batched_search_update_task import (
 )
 from .search_index_update_task import run_search_index_command
 from .workspace_license_api_token_task import update_api_tokens
+from .workspace_plan_permission_task import resync_workspace_admin_permissions
 
 from .recurring_work_item_scheduler import schedule_batch, schedule_on_create_or_enable
 from .recurring_work_item_task import create_work_item_from_template

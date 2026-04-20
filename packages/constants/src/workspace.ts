@@ -203,11 +203,28 @@ export const DEFAULT_GLOBAL_VIEWS_LIST: {
   },
 ];
 
+export type WorkspaceResourceKey =
+  | "home"
+  | "inbox"
+  | "your_work"
+  | "stickies"
+  | "drafts"
+  | "pi_chat"
+  | "projects"
+  | "dashboards"
+  | "views"
+  | "active-cycles"
+  | "analytics"
+  | "archives"
+  | "initiatives"
+  | "team_spaces"
+  | "customers"
+  | "releases";
+
 export interface IWorkspaceSidebarNavigationItem {
-  key: string;
+  key: WorkspaceResourceKey;
   labelTranslationKey: string;
   href: string;
-  access: EUserWorkspaceRoles[];
   highlight: (pathname: string, url: string) => boolean;
 }
 
@@ -216,28 +233,24 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     key: "views",
     labelTranslationKey: "views",
     href: `/workspace-views/all-issues/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   analytics: {
     key: "analytics",
     labelTranslationKey: "analytics",
     href: `/analytics/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   archives: {
     key: "archives",
     labelTranslationKey: "archives",
     href: `/archives/projects/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   releases: {
     key: "releases",
     labelTranslationKey: "sidebar.releases",
     href: `/releases/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
 };
@@ -259,42 +272,36 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     key: "home",
     labelTranslationKey: "home.title",
     href: `/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname === url,
   },
   inbox: {
     key: "inbox",
     labelTranslationKey: "notification.label",
     href: `/notifications/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   "your-work": {
     key: "your_work",
     labelTranslationKey: "your_work",
     href: `/profile/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   stickies: {
     key: "stickies",
     labelTranslationKey: "sidebar.stickies",
     href: `/stickies/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   drafts: {
     key: "drafts",
     labelTranslationKey: "drafts",
     href: `/drafts/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
   projects: {
     key: "projects",
     labelTranslationKey: "projects",
     href: `/projects/`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname === url,
   },
 };
@@ -320,6 +327,12 @@ export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
     ...EXTENDED_WORKSPACE_RESULT_ENTITIES,
   },
 };
+
+export const DEFAULT_WORKSPACE_ROLES: { slug: string; name: string }[] = [
+  { slug: "admin", name: "Admin" },
+  { slug: "member", name: "Member" },
+  { slug: "guest", name: "Guest" },
+];
 
 export const USE_CASES = [
   "Plan and track product roadmaps",

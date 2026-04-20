@@ -14,7 +14,6 @@
 import { lazy, Suspense } from "react";
 import type { ComponentType, LazyExoticComponent } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane imports
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
@@ -48,9 +47,9 @@ const ModuleCalendarLayout = lazy(() =>
     default: module.ModuleCalendarLayout,
   }))
 );
-const BaseTimelineRoot = lazy(() =>
-  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
-    default: module.BaseTimelineRoot,
+const ModuleTimelineLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/roots/module-root").then((module) => ({
+    default: module.ModuleTimelineLayout,
   }))
 );
 const ModuleSpreadsheetLayout = lazy(() =>
@@ -59,60 +58,67 @@ const ModuleSpreadsheetLayout = lazy(() =>
   }))
 );
 
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+};
+
 // Layout components map
-const MODULE_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<any>>>> = {
+const MODULE_WORK_ITEM_LAYOUTS: Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<ActiveLayoutProps>>> = {
   [EIssueLayoutTypes.LIST]: ModuleListLayout,
   [EIssueLayoutTypes.KANBAN]: ModuleKanBanLayout,
   [EIssueLayoutTypes.CALENDAR]: ModuleCalendarLayout,
   [EIssueLayoutTypes.SPREADSHEET]: ModuleSpreadsheetLayout,
+  [EIssueLayoutTypes.GANTT]: ModuleTimelineLayout,
 };
 
-function ModuleIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; moduleId: string }) {
-  if (!props.activeLayout) return null;
+type TModuleIssueLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+  activeLayout: EIssueLayoutTypes | undefined;
+};
 
-  // Handle GANTT layout separately since it needs props
-  if (props.activeLayout === EIssueLayoutTypes.GANTT) {
-    return (
-      <Suspense>
-        <BaseTimelineRoot viewId={props.moduleId} />
-      </Suspense>
-    );
-  }
+function ModuleIssueLayout(props: TModuleIssueLayoutProps) {
+  if (!props.activeLayout) return null;
 
   const ModuleIssueLayoutComponent = MODULE_WORK_ITEM_LAYOUTS[props.activeLayout];
   if (!ModuleIssueLayoutComponent) return null;
   return (
     <Suspense>
-      <ModuleIssueLayoutComponent />
+      <ModuleIssueLayoutComponent
+        workspaceSlug={props.workspaceSlug}
+        projectId={props.projectId}
+        moduleId={props.moduleId}
+      />
     </Suspense>
   );
 }
 
-export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
-  // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, moduleId: routerModuleId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
-  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
-  const moduleId = routerModuleId ? routerModuleId.toString() : undefined;
+type TModuleLayoutRootProps = {
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+};
+
+export const ModuleLayoutRoot = observer(function ModuleLayoutRoot(props: TModuleLayoutRootProps) {
+  const { workspaceSlug, projectId, moduleId } = props;
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.MODULE);
   // derived values
-  const workItemFilters = moduleId ? issuesFilter?.getIssueFilters(moduleId) : undefined;
+  const workItemFilters = issuesFilter?.getIssueFilters(moduleId);
   const activeLayout = workItemFilters?.displayFilters?.layout || undefined;
 
   useSWR(
-    workspaceSlug && projectId && moduleId
-      ? `MODULE_ISSUES_${workspaceSlug.toString()}_${projectId.toString()}_${moduleId.toString()}`
-      : null,
+    `MODULE_ISSUES_${workspaceSlug}_${projectId}_${moduleId}`,
     async () => {
-      if (workspaceSlug && projectId && moduleId) {
-        await issuesFilter?.fetchFilters(workspaceSlug.toString(), projectId.toString(), moduleId.toString());
-      }
+      await issuesFilter?.fetchFilters(workspaceSlug, projectId, moduleId);
     },
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
-  if (!workspaceSlug || !projectId || !moduleId || !workItemFilters) return <></>;
+  if (!workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.MODULE}>
       <ProjectLevelWorkItemFiltersHOC
@@ -129,7 +135,12 @@ export const ModuleLayoutRoot = observer(function ModuleLayoutRoot() {
           <div className="relative flex h-full w-full flex-col overflow-hidden">
             <WorkItemFiltersRowWrapper filter={filter} />
             <Row variant={ERowVariant.HUGGING} className="h-full w-full overflow-auto">
-              <ModuleIssueLayout activeLayout={activeLayout} moduleId={moduleId} />
+              <ModuleIssueLayout
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                moduleId={moduleId}
+                activeLayout={activeLayout}
+              />
             </Row>
             {/* peek overview */}
             <Suspense>

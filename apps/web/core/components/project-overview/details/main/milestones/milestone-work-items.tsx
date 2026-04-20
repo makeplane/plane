@@ -21,10 +21,11 @@ type TProps = {
   milestoneId: string;
   workspaceSlug: string;
   projectId: string;
+  canRemoveWorkItems: boolean;
 };
 
 export const MilestoneWorkItemsList = observer(function MilestoneWorkItemsList(props: TProps) {
-  const { milestoneId, workspaceSlug, projectId } = props;
+  const { milestoneId, workspaceSlug, projectId, canRemoveWorkItems } = props;
   const { fetchMilestoneWorkItems, getMilestoneById } = useMilestones();
 
   const { isLoading } = useSWR(
@@ -62,6 +63,7 @@ export const MilestoneWorkItemsList = observer(function MilestoneWorkItemsList(p
           workItemId={workItemId}
           projectId={projectId}
           milestoneId={milestoneId}
+          canRemoveWorkItems={canRemoveWorkItems}
         />
       ))}
     </>

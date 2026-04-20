@@ -46,7 +46,10 @@ export const InitiativesUpgrade = observer(function InitiativesUpgrade(props: Pr
 
   // derived values
   const isInitiativesFeatureFlagEnabled = useFlag(workspaceSlug, "INITIATIVES");
-  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED);
+  const isInitiativesFeatureEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_INITIATIVES_ENABLED
+  );
   const isPlaneOneInstance =
     subscriptionDetail?.is_self_managed && subscriptionDetail?.product === EProductSubscriptionEnum.ONE;
 

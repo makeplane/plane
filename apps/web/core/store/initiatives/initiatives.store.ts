@@ -18,7 +18,8 @@ import { computedFn } from "mobx-utils";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { TEpicStats, TInitiativeLabel, TLoader } from "@plane/types";
-
+// utils
+import { getGroupedInitiativeIds, sortInitiativesWithOrderBy } from "@/components/initiatives/utils";
 // plane-web imports
 import { InitiativeLabelsService } from "@/services/initiative-labels.service";
 import { InitiativeService } from "@/services/initiative.service";
@@ -43,7 +44,10 @@ import { InitiativeCommentActivityStore } from "./initiatives-comment-activity.s
 import type { IInitiativeFilterStore } from "./initiatives-filter.store";
 import type { IUpdateStore } from "@/store/work-items/epic/updates/base.store";
 import { UpdateStore } from "@/store/work-items/epic/updates/base.store";
-import { getGroupedInitiativeIds, sortInitiativesWithOrderBy } from "@/components/initiatives/utils";
+import { InitiativePermissionsInstance } from "./permissions/root";
+import type { InitiativePermissions } from "./permissions/root";
+
+export const ALL_INITIATIVES = "All Initiatives";
 
 type InitiativeCollapsible = "links" | "attachments" | "projects" | "epics";
 
@@ -152,6 +156,8 @@ export interface IInitiativeStore {
 
   // store
   scope: InitiativeScopeStore;
+  // permissions
+  permissions: InitiativePermissions;
 }
 
 export class InitiativeStore implements IInitiativeStore {
@@ -184,6 +190,7 @@ export class InitiativeStore implements IInitiativeStore {
   initiativeFilterStore: IInitiativeFilterStore;
   updatesStore: IUpdateStore;
   scope: InitiativeScopeStore;
+  permissions: InitiativePermissions;
 
   constructor(_rootStore: RootStore, initiativeFilterStore: IInitiativeFilterStore) {
     makeObservable(this, {
@@ -244,6 +251,13 @@ export class InitiativeStore implements IInitiativeStore {
     this.initiativeService = new InitiativeService();
     this.initiativeLabelsService = new InitiativeLabelsService();
     this.scope = new InitiativeScopeStore(this.rootStore, this.initiativeService);
+
+    // permissions
+    this.permissions = new InitiativePermissionsInstance({
+      can: this.rootStore.permissionAccessStore.can,
+      getAttachmentConditionContext: this.getAttachmentConditionContextById.bind(this),
+      getCommentConditionContext: this.getCommentConditionContextById.bind(this),
+    });
   }
 
   get isAnyModalOpen() {
@@ -279,8 +293,10 @@ export class InitiativeStore implements IInitiativeStore {
     const workspaceSlug = this.rootStore.router.workspaceSlug;
     if (!workspaceSlug) return false;
     return (
-      this.rootStore.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_INITIATIVES_ENABLED) &&
-      this.rootStore.featureFlags.flags?.[workspaceSlug]?.[E_FEATURE_FLAGS.INITIATIVES]
+      this.rootStore.workspaceFeatures.isWorkspaceFeatureEnabled(
+        workspaceSlug,
+        EWorkspaceFeatures.IS_INITIATIVES_ENABLED
+      ) && this.rootStore.featureFlags.flags?.[workspaceSlug]?.[E_FEATURE_FLAGS.INITIATIVES]
     );
   }
 
@@ -867,4 +883,23 @@ export class InitiativeStore implements IInitiativeStore {
     // Update only the dragged label with the new sort order
     return this.updateInitiativeLabel(workspaceSlug, draggingLabelId, { sort_order: sortOrder });
   };
+
+  // permissions
+
+  private getCommentConditionContextById(initiativeId: string, commentId: string): { creator: boolean } {
+    const activities = this.initiativeCommentActivities.getActivityAndCommentByIssueId(initiativeId);
+    const comment = activities?.find(
+      (a) => a.activity_type === "COMMENT" && a.detail && "id" in a.detail && a.detail.id === commentId
+    );
+    if (!comment || !("detail" in comment) || !("created_by" in comment.detail)) return { creator: false };
+    const commentDetail = comment.detail;
+    const currentUserId = this.rootStore.user.data?.id;
+    return { creator: !!(commentDetail?.created_by && currentUserId && commentDetail.created_by === currentUserId) };
+  }
+
+  private getAttachmentConditionContextById(_initiativeId: string, attachmentId: string): { creator: boolean } {
+    const attachment = this.initiativeAttachments.getAttachmentById(attachmentId);
+    const currentUserId = this.rootStore.user.data?.id;
+    return { creator: !!(attachment?.created_by && currentUserId && attachment.created_by === currentUserId) };
+  }
 }

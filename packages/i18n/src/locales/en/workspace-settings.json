@@ -220,6 +220,10 @@
             "title": "Group attribute key",
             "description": "The identity provider attribute used to identify and sync user groups.",
             "placeholder": "Groups"
+          },
+          "default_workspace_role": {
+            "title": "Default workspace role",
+            "description": "The role assigned to users when they are auto-added to the workspace via group sync."
           }
         },
         "group_mapping": {

@@ -257,6 +257,7 @@ class ModuleSerializer(DynamicBaseSerializer):
             "created_at",
             "updated_at",
             "archived_at",
+            "created_by",
         ]
         read_only_fields = fields
 

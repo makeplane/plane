@@ -58,10 +58,18 @@ export const INTAKE_DISABLED_STATUSES = [
   EInboxIssueStatus.DUPLICATE, // 2
 ] as const;
 
+export const isIntakeInDisabledStatus = (status: number): boolean => {
+  return INTAKE_DISABLED_STATUSES.includes(status);
+};
+
 export const INTAKE_ACTIONABLE_STATUSES = [
   EInboxIssueStatus.PENDING, // 0
   EInboxIssueStatus.SNOOZED, // -2
 ] as const;
+
+export const isIntakeInActionableStatus = (status: number): boolean => {
+  return INTAKE_ACTIONABLE_STATUSES.includes(status);
+};
 
 export const INBOX_ISSUE_ORDER_BY_OPTIONS = [
   {

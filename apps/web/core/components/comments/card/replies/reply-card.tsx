@@ -30,10 +30,13 @@ type Props = {
   activityOperations: TCommentsOperations;
   showAccessSpecifier: boolean;
   projectId?: string;
+  permissions: {
+    canReact: boolean;
+  };
 };
 
 export const ReplyCard = observer(function ReplyCard(props: Props) {
-  const { workspaceSlug, entityId, getReply, activityOperations, showAccessSpecifier, projectId } = props;
+  const { workspaceSlug, entityId, getReply, activityOperations, showAccessSpecifier, projectId, permissions } = props;
   // states
   const [isEditing, setIsEditing] = useState(false);
   // refs
@@ -64,7 +67,7 @@ export const ReplyCard = observer(function ReplyCard(props: Props) {
       activityOperations={replyActivityOperations}
       entityId={entityId}
       comment={reply}
-      disabled={false}
+      permissions={permissions}
       projectId={projectId}
       readOnlyEditorRef={readOnlyEditorRef}
       showAccessSpecifier={showAccessSpecifier}

@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "Schémy rolí a oprávnení",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "Roly a oprávnenia",
+        "roles_list": {
+          "workspace": {
+            "label": "Roly workspace"
+          },
+          "project": {
+            "label": "Roly projektu"
+          }
+        },
+        "compare_permissions": "Porovnať oprávnenia",
+        "create_role": {
+          "title": "Vytvoriť rolu",
+          "description": "Definujte rolu nastavením jej názvu, popisu a oprávnení pre používateľov v inštancii.",
+          "button_label": "Vytvoriť novú rolu",
+          "error_toast_description": "Rolu sa nepodarilo vytvoriť. Skúste to prosím znova."
+        },
+        "edit_role": {
+          "title": "Upraviť rolu",
+          "description": "Aktualizujte názov, oprávnenia a nastavenia roly, aby ste určili, k čomu majú členovia prístup a čo môžu robiť.",
+          "error_toast_description": "Rolu sa nepodarilo aktualizovať. Skúste to prosím znova."
+        },
+        "role_details": {
+          "role_information_title": "Základné informácie",
+          "role_information_description": "Názov roly a stručný popis na objasnenie jej účelu.",
+          "role_name": "Názov roly",
+          "role_description": "Popis",
+          "role_details": "Podrobnosti roly",
+          "role_details_description": "Pozrite si kompletný prehľad roly a jej priradených oprávnení.",
+          "edit_permissions": "Upraviť oprávnenia"
+        },
+        "role_form": {
+          "name": "Názov roly",
+          "name_placeholder": "Pomenujte rolu",
+          "name_error": "Názov je povinný.",
+          "description": "Popis",
+          "description_placeholder": "Opíšte rolu",
+          "create_button": "Vytvoriť rolu"
+        },
+        "role_actions": {
+          "duplicate": "Duplikovať"
+        },
+        "discard_changes_modal": {
+          "title": "Zahodiť zmeny?",
+          "description": "Vaše zmeny neboli uložené. Opustením tejto stránky sa zahodia.",
+          "cancel": "Zahodiť zmeny",
+          "confirm": "Pokračovať v úprave"
+        },
+        "delete_role_modal": {
+          "title": "Odstrániť rolu?",
+          "description": "Naozaj chcete odstrániť túto rolu? Túto akciu nie je možné vrátiť späť.",
+          "error_toast_message": "Rolu sa nepodarilo odstrániť. Skúste to prosím znova."
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "Roly a oprávnenia workspace",
+            "project": "Roly a oprávnenia projektu"
+          },
+          "permissions_header": "Oprávnenia",
+          "view_mode": {
+            "sets": "Zobrazenie sád",
+            "permissions": "Reťazce oprávnení"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "Nastavenia workspace",
+              "description": "Základná konfigurácia workspace: názov, logo, mena, doména, odstránenie a prevod vlastníctva.",
+              "workspace": {
+                "view": { "label": "Zobraziť workspace" },
+                "edit": { "label": "Upraviť nastavenia workspace" },
+                "manage": { "label": "Spravovať workspace" },
+                "invite": { "label": "Pozvať členov" },
+                "delete": { "label": "Odstrániť workspace" },
+                "transfer": { "label": "Previesť vlastníctvo" }
+              }
+            },
+            "member_management": {
+              "title": "Správa členov",
+              "description": "Pozývanie, úprava, import a odstraňovanie členov workspace.",
+              "workspace_member": {
+                "view": { "label": "Zobraziť členov" },
+                "invite": { "label": "Pozvať členov" },
+                "edit": { "label": "Upraviť údaje člena" },
+                "import": { "label": "Importovať členov (CSV / SSO)" },
+                "change_role": { "label": "Zmeniť rolu člena" },
+                "remove": { "label": "Odstrániť členov" }
+              }
+            },
+            "project_management": {
+              "title": "Správa projektov",
+              "description": "Vytváranie a správa projektov z kontextu workspace.",
+              "project": {
+                "browse": { "label": "Prehliadať projekty" },
+                "view": { "label": "Zobraziť podrobnosti projektu" },
+                "create": { "label": "Vytvárať projekty" },
+                "edit": { "label": "Upraviť nastavenia projektu" },
+                "react": { "label": "Reagovať na projekty" },
+                "publish": { "label": "Publikovať projekty (zverejniť)" },
+                "archive": { "label": "Archivovať projekty" },
+                "delete": { "label": "Odstrániť projekty" },
+                "manage": { "label": "Spravovať prístup k projektu" }
+              }
+            },
+            "role_administration": {
+              "title": "Administrácia rolí",
+              "description": "Vytváranie a správa vlastných a projektových rolí.",
+              "custom_role": {
+                "view": { "label": "Zobraziť vlastné roly" },
+                "create": { "label": "Vytvárať vlastné roly" },
+                "edit": { "label": "Upraviť vlastné roly" },
+                "delete": { "label": "Odstrániť vlastné roly" }
+              }
+            },
+            "workspace_pages": {
+              "title": "Workspace Pages (Wiki)",
+              "description": "Dokumentácia a wiki na úrovni workspace.",
+              "wiki": {
+                "view": { "label": "Zobraziť Wiki" },
+                "create": { "label": "Vytvárať Wiki Pages" },
+                "edit": { "label": "Upraviť Wiki Pages" },
+                "share": { "label": "Zdieľať Wiki Pages" },
+                "delete": { "label": "Odstrániť Wiki Pages" },
+                "comment": { "label": "Komentovať Wiki Pages" }
+              }
+            },
+            "workspace_views": {
+              "title": "Zobrazenia workspace",
+              "description": "Uložené filtre a správa zobrazení na úrovni workspace.",
+              "workspace_workitem_view": {
+                "view": { "label": "Zobraziť zobrazenia workspace" },
+                "create": { "label": "Vytvárať zobrazenia workspace" },
+                "edit": { "label": "Upraviť zobrazenia workspace" },
+                "share": { "label": "Zdieľať zobrazenia workspace" },
+                "publish": { "label": "Publikovať zobrazenia workspace" },
+                "export": { "label": "Exportovať zobrazenia workspace" },
+                "delete": { "label": "Odstrániť zobrazenia workspace" }
+              }
+            },
+            "initiatives": {
+              "title": "Iniciatívy",
+              "description": "Sledovanie medziprojektových iniciatív vrátane komentárov, príloh, odkazov a aktualizácií.",
+              "initiative": {
+                "view": { "label": "Zobraziť iniciatívy" },
+                "create": { "label": "Vytvárať iniciatívy" },
+                "edit": { "label": "Upraviť iniciatívy" },
+                "manage": { "label": "Spravovať iniciatívy" },
+                "react": { "label": "Reagovať na iniciatívy" },
+                "delete": { "label": "Odstrániť iniciatívy" }
+              },
+              "initiative_comment": {
+                "view": { "label": "Zobraziť komentáre iniciatív" },
+                "create": { "label": "Komentovať iniciatívy" },
+                "edit": { "label": "Upraviť komentáre iniciatív" },
+                "react": { "label": "Reagovať na komentáre iniciatív" },
+                "delete": { "label": "Odstrániť komentáre iniciatív" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "Zobraziť prílohy iniciatív" },
+                "create": { "label": "Pridávať prílohy iniciatív" },
+                "delete": { "label": "Odstraňovať prílohy iniciatív" }
+              },
+              "initiative_link": {
+                "view": { "label": "Zobraziť odkazy iniciatív" },
+                "create": { "label": "Pridávať odkazy iniciatív" },
+                "edit": { "label": "Upraviť odkazy iniciatív" },
+                "delete": { "label": "Odstraňovať odkazy iniciatív" }
+              }
+            },
+            "teamspaces": {
+              "title": "Teamspaces",
+              "description": "Prehliadanie, vytváranie a správa teamspaces.",
+              "teamspace": {
+                "browse": { "label": "Prehliadať teamspaces" },
+                "view": { "label": "Zobraziť podrobnosti teamspace" },
+                "create": { "label": "Vytvárať teamspaces" },
+                "edit": { "label": "Upraviť teamspaces" },
+                "manage": { "label": "Spravovať členov teamspace" },
+                "delete": { "label": "Odstrániť teamspaces" }
+              }
+            },
+            "integrations": {
+              "title": "Integrácie",
+              "description": "Integrácie tretích strán, webhooky a API tokeny.",
+              "integration": {
+                "view": { "label": "Zobraziť integrácie" },
+                "create": { "label": "Vytvárať integrácie" },
+                "edit": { "label": "Konfigurovať integrácie" },
+                "delete": { "label": "Odstrániť integrácie" }
+              },
+              "webhook": {
+                "view": { "label": "Zobraziť webhooky" },
+                "create": { "label": "Vytvárať webhooky" },
+                "edit": { "label": "Upraviť webhooky" },
+                "delete": { "label": "Odstrániť webhooky" }
+              },
+              "api_token": {
+                "view": { "label": "Zobraziť API tokeny" },
+                "create": { "label": "Vytvárať API tokeny" },
+                "delete": { "label": "Odstrániť API tokeny" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "Analytika a reporty",
+              "description": "Dashboardy, analytika a pracovné záznamy na úrovni workspace.",
+              "analytics": {
+                "view": { "label": "Zobraziť analytiku" },
+                "export": { "label": "Exportovať analytiku" }
+              },
+              "dashboard": {
+                "view": { "label": "Zobraziť dashboardy" },
+                "create": { "label": "Vytvárať dashboardy" },
+                "edit": { "label": "Upraviť dashboardy" },
+                "delete": { "label": "Odstrániť dashboardy" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "Zobraziť pracovné záznamy" },
+                "export": { "label": "Exportovať pracovné záznamy" }
+              },
+              "ai": {
+                "use": { "label": "Používať funkcie AI" }
+              }
+            },
+            "customers": {
+              "title": "Spätná väzba zákazníkov",
+              "description": "Správa zákazníkov a požiadaviek zákazníkov.",
+              "customer": {
+                "view": { "label": "Zobraziť zákazníkov" },
+                "create": { "label": "Vytvárať zákazníkov" },
+                "edit": { "label": "Upraviť zákazníkov" },
+                "delete": { "label": "Odstrániť zákazníkov" }
+              },
+              "customer_attachment": {
+                "create": { "label": "Pridávať prílohy zákazníkov" },
+                "delete": { "label": "Odstraňovať prílohy zákazníkov" }
+              }
+            },
+            "work_item_relations": {
+              "title": "Vzťahy pracovných položiek",
+              "description": "Správa definícií vlastných typov vzťahov pre pracovné položky.",
+              "workitem_relation": {
+                "view": { "label": "Zobraziť definície vzťahov" },
+                "create": { "label": "Vytvárať definície vzťahov" },
+                "edit": { "label": "Upraviť definície vzťahov" },
+                "delete": { "label": "Odstrániť definície vzťahov" }
+              }
+            },
+            "workspace_templates": {
+              "title": "Šablóny",
+              "description": "Vytváranie a správa šablón pracovných položiek, Pages a projektov na úrovni workspace.",
+              "workspace_workitem_template": {
+                "view": { "label": "Zobraziť šablóny pracovných položiek" },
+                "create": { "label": "Vytvárať šablóny pracovných položiek" },
+                "edit": { "label": "Upraviť šablóny pracovných položiek" },
+                "delete": { "label": "Odstrániť šablóny pracovných položiek" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "Zobraziť šablóny Pages" },
+                "create": { "label": "Vytvárať šablóny Pages" },
+                "edit": { "label": "Upraviť šablóny Pages" },
+                "delete": { "label": "Odstrániť šablóny Pages" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "Zobraziť šablóny projektov" },
+                "create": { "label": "Vytvárať šablóny projektov" },
+                "edit": { "label": "Upraviť šablóny projektov" },
+                "delete": { "label": "Odstrániť šablóny projektov" }
+              }
+            },
+            "workspace_automations": {
+              "title": "Automatizácie workspace",
+              "description": "Pravidlá a konfigurácie automatizácií na úrovni workspace.",
+              "workspace_automation": {
+                "view": { "label": "Zobraziť automatizácie workspace" },
+                "create": { "label": "Vytvárať automatizácie workspace" },
+                "edit": { "label": "Upraviť automatizácie workspace" },
+                "delete": { "label": "Odstrániť automatizácie workspace" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "Členovia projektu",
+              "description": "Pozývanie, úprava a odstraňovanie členov projektu.",
+              "project_member": {
+                "view": { "label": "Zobraziť členov projektu" },
+                "invite": { "label": "Pozvať členov" },
+                "edit": { "label": "Upraviť údaje člena" },
+                "change_role": { "label": "Zmeniť rolu člena" },
+                "remove": { "label": "Odstrániť členov" }
+              }
+            },
+            "work_items": {
+              "title": "Pracovné položky",
+              "description": "Primárna plocha pre pracovné položky. Zahŕňa komentáre, prílohy, odkazy, vzťahy a vlastné vlastnosti.",
+              "workitem": {
+                "view": { "label": "Zobraziť pracovné položky" },
+                "create": { "label": "Vytvárať pracovné položky" },
+                "edit": { "label": "Upraviť pracovné položky" },
+                "bulk_edit": { "label": "Hromadne upraviť pracovné položky" },
+                "export": { "label": "Exportovať pracovné položky" },
+                "react": { "label": "Reagovať na pracovné položky" },
+                "delete": { "label": "Odstrániť pracovné položky" }
+              },
+              "comment": {
+                "create": { "label": "Pridávať komentáre" },
+                "edit": { "label": "Upraviť komentáre" },
+                "react": { "label": "Reagovať na komentáre" },
+                "delete": { "label": "Odstrániť komentáre" }
+              },
+              "attachment": {
+                "view": { "label": "Zobraziť prílohy" },
+                "create": { "label": "Pridávať prílohy" },
+                "delete": { "label": "Odstraňovať prílohy" }
+              },
+              "workitem_link": {
+                "view": { "label": "Zobraziť odkazy pracovných položiek" },
+                "create": { "label": "Pridávať odkazy pracovných položiek" },
+                "edit": { "label": "Upraviť odkazy pracovných položiek" },
+                "delete": { "label": "Odstraňovať odkazy pracovných položiek" }
+              },
+              "issue_property": {
+                "view": { "label": "Zobraziť vlastné vlastnosti" },
+                "edit": { "label": "Upraviť vlastné vlastnosti" }
+              }
+            },
+            "epics": {
+              "title": "Epics",
+              "description": "Životný cyklus Epic vrátane odkazov, vlastností a vlákien aktualizácií.",
+              "epic": {
+                "view": { "label": "Zobraziť Epics" },
+                "create": { "label": "Vytvárať Epics" },
+                "edit": { "label": "Upraviť Epics" },
+                "delete": { "label": "Odstrániť Epics" }
+              },
+              "epic_link": {
+                "view": { "label": "Zobraziť odkazy Epic" },
+                "create": { "label": "Pridávať odkazy Epic" },
+                "edit": { "label": "Upraviť odkazy Epic" },
+                "delete": { "label": "Odstraňovať odkazy Epic" }
+              },
+              "epic_property": {
+                "view": { "label": "Zobraziť vlastnosti Epic" },
+                "edit": { "label": "Upraviť vlastnosti Epic" }
+              },
+              "epic_update": {
+                "view": { "label": "Zobraziť aktualizácie Epic" },
+                "create": { "label": "Pridávať aktualizácie Epic" },
+                "edit": { "label": "Upraviť aktualizácie Epic" },
+                "delete": { "label": "Odstrániť aktualizácie Epic" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "Zobraziť komentáre k aktualizáciám Epic" },
+                "create": { "label": "Komentovať aktualizácie Epic" },
+                "edit": { "label": "Upraviť komentáre k aktualizáciám Epic" },
+                "react": { "label": "Reagovať na komentáre k aktualizáciám Epic" },
+                "delete": { "label": "Odstrániť komentáre k aktualizáciám Epic" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "Modules a Cycles",
+              "description": "Zoskupovanie funkcií a správa sprintov/Cycles.",
+              "module": {
+                "view": { "label": "Zobraziť Modules" },
+                "create": { "label": "Vytvárať Modules" },
+                "edit": { "label": "Upraviť Modules" },
+                "manage": { "label": "Spravovať členov Module" },
+                "archive": { "label": "Archivovať Modules" },
+                "export": { "label": "Exportovať Modules" },
+                "delete": { "label": "Odstrániť Modules" }
+              },
+              "cycle": {
+                "view": { "label": "Zobraziť Cycles" },
+                "create": { "label": "Vytvárať Cycles" },
+                "edit": { "label": "Upraviť Cycles" },
+                "delete": { "label": "Odstrániť Cycles" }
+              },
+              "cycle_update": {
+                "view": { "label": "Zobraziť aktualizácie Cycle" },
+                "create": { "label": "Pridávať aktualizácie Cycle" },
+                "edit": { "label": "Upraviť aktualizácie Cycle" },
+                "delete": { "label": "Odstrániť aktualizácie Cycle" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "Pages a zobrazenia",
+              "description": "Pages a uložené zobrazenia na úrovni projektu.",
+              "page": {
+                "view": { "label": "Zobraziť Pages" },
+                "create": { "label": "Vytvárať Pages" },
+                "edit": { "label": "Upraviť Pages" },
+                "share": { "label": "Zdieľať Pages" },
+                "delete": { "label": "Odstrániť Pages" }
+              },
+              "workitem_view": {
+                "view": { "label": "Zobraziť projektové zobrazenia" },
+                "create": { "label": "Vytvárať projektové zobrazenia" },
+                "edit": { "label": "Upraviť projektové zobrazenia" },
+                "share": { "label": "Zdieľať projektové zobrazenia" },
+                "publish": { "label": "Publikovať projektové zobrazenia" },
+                "export": { "label": "Exportovať projektové zobrazenia" },
+                "delete": { "label": "Odstrániť projektové zobrazenia" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "Pracovný postup prijímania a triedenia pracovných položiek.",
+              "intake": {
+                "view": { "label": "Zobraziť Intake" },
+                "create": { "label": "Vytvárať položky Intake" },
+                "submit": { "label": "Odosielať požiadavky Intake" },
+                "edit": { "label": "Upraviť položky Intake" },
+                "react": { "label": "Reagovať na položky Intake" },
+                "manage": { "label": "Spravovať položky Intake" },
+                "configure": { "label": "Konfigurovať Intake" },
+                "export": { "label": "Exportovať Intake" },
+                "delete": { "label": "Odstrániť položky Intake" }
+              }
+            },
+            "project_configuration": {
+              "title": "Konfigurácia projektu",
+              "description": "Štítky, stavy, odhady a míľniky.",
+              "label": {
+                "view": { "label": "Zobraziť štítky" },
+                "create": { "label": "Vytvárať štítky" },
+                "edit": { "label": "Upraviť štítky" },
+                "delete": { "label": "Odstrániť štítky" }
+              },
+              "state": {
+                "view": { "label": "Zobraziť stavy" },
+                "create": { "label": "Vytvárať stavy" },
+                "edit": { "label": "Upraviť stavy" },
+                "delete": { "label": "Odstrániť stavy" }
+              },
+              "estimate": {
+                "view": { "label": "Zobraziť odhady" },
+                "create": { "label": "Vytvárať odhady" },
+                "edit": { "label": "Upraviť odhady" },
+                "delete": { "label": "Odstrániť odhady" }
+              },
+              "milestone": {
+                "view": { "label": "Zobraziť míľniky" },
+                "create": { "label": "Vytvárať míľniky" },
+                "edit": { "label": "Upraviť míľniky" },
+                "delete": { "label": "Odstrániť míľniky" }
+              }
+            },
+            "automations": {
+              "title": "Automatizácie a pracovné postupy",
+              "description": "Automatizácie, pravidlá pracovných postupov a opakujúce sa pracovné položky.",
+              "project_automation": {
+                "view": { "label": "Zobraziť automatizácie" },
+                "create": { "label": "Vytvárať automatizácie" },
+                "edit": { "label": "Upraviť automatizácie" },
+                "delete": { "label": "Odstrániť automatizácie" }
+              },
+              "workflow": {
+                "view": { "label": "Zobraziť pracovné postupy" },
+                "create": { "label": "Vytvárať pracovné postupy" },
+                "edit": { "label": "Upraviť pracovné postupy" },
+                "delete": { "label": "Odstrániť pracovné postupy" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "Zobraziť opakujúce sa položky" },
+                "create": { "label": "Vytvárať opakujúce sa položky" },
+                "edit": { "label": "Upraviť opakujúce sa položky" },
+                "delete": { "label": "Odstrániť opakujúce sa položky" }
+              }
+            },
+            "project_updates": {
+              "title": "Aktualizácie projektu",
+              "description": "Aktualizácie postupu a komentáre k aktualizáciám.",
+              "project_update": {
+                "view": { "label": "Zobraziť aktualizácie projektu" },
+                "create": { "label": "Pridávať aktualizácie projektu" },
+                "edit": { "label": "Upraviť aktualizácie projektu" },
+                "delete": { "label": "Odstrániť aktualizácie projektu" }
+              },
+              "project_update_comment": {
+                "view": { "label": "Zobraziť komentáre k aktualizáciám projektu" },
+                "create": { "label": "Komentovať aktualizácie projektu" },
+                "edit": { "label": "Upraviť komentáre k aktualizáciám projektu" },
+                "react": { "label": "Reagovať na komentáre k aktualizáciám projektu" },
+                "delete": { "label": "Odstrániť komentáre k aktualizáciám projektu" }
+              }
+            },
+            "project_analytics": {
+              "title": "Analytika a aktivita",
+              "description": "Analytika projektu a záznamy aktivít.",
+              "project_activity": {
+                "view": { "label": "Zobraziť záznamy aktivít" }
+              }
+            },
+            "project_links": {
+              "title": "Odkazy projektu",
+              "description": "Odkazy na úrovni projektu.",
+              "project_link": {
+                "view": { "label": "Zobraziť odkazy projektu" },
+                "create": { "label": "Pridávať odkazy projektu" },
+                "edit": { "label": "Upraviť odkazy projektu" },
+                "delete": { "label": "Odstrániť odkazy projektu" }
+              }
+            },
+            "project_templates": {
+              "title": "Šablóny",
+              "description": "Šablóny pracovných položiek a Pages v rámci projektu.",
+              "project_workitem_template": {
+                "view": { "label": "Zobraziť šablóny pracovných položiek" },
+                "create": { "label": "Vytvárať šablóny pracovných položiek" },
+                "edit": { "label": "Upraviť šablóny pracovných položiek" },
+                "delete": { "label": "Odstrániť šablóny pracovných položiek" }
+              },
+              "project_page_template": {
+                "view": { "label": "Zobraziť šablóny Pages" },
+                "create": { "label": "Vytvárať šablóny Pages" },
+                "edit": { "label": "Upraviť šablóny Pages" },
+                "delete": { "label": "Odstrániť šablóny Pages" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "Všetky",
+              "own": "Len vlastné",
+              "creator": "Len vlastné",
+              "lead": "Len ako vedúci",
+              "disabled": "Zakázané"
+            },
+            "select_all": "Vybrať všetko",
+            "high_risk_tooltip": "Toto udeľuje zvýšený prístup. Udeľujte opatrne.",
+            "folded_rows": {
+              "templates": {
+                "view": "Zobraziť šablóny",
+                "create": "Vytvárať šablóny",
+                "edit": "Upraviť šablóny",
+                "delete": "Odstrániť šablóny"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "Zahŕňa zobrazenie podrobností, príloh a odkazov. Pokrýva tiež reakcie a komentovanie iniciatív.",
+                  "edit": "Zahŕňa vytváranie príloh a správu odkazov iniciatív."
+                },
+                "workspace_templates": {
+                  "view": "Zahŕňa zobrazenie šablón projektov, pracovných položiek a Pages.",
+                  "create": "Zahŕňa vytváranie šablón projektov, pracovných položiek a Pages.",
+                  "edit": "Zahŕňa úpravu šablón projektov, pracovných položiek a Pages.",
+                  "delete": "Zahŕňa odstraňovanie šablón projektov, pracovných položiek a Pages."
+                },
+                "epics": {
+                  "view": "Zahŕňa zobrazenie odkazov Epic a reakcie na Epics.",
+                  "edit": "Zahŕňa vytváranie, úpravu a odstraňovanie odkazov Epic."
+                },
+                "epic_updates": {
+                  "view": "Zahŕňa zobrazenie a reakcie na aktualizácie. Pokrýva tiež zobrazenie, vytváranie a reakcie na komentáre k aktualizáciám."
+                },
+                "project_updates": {
+                  "view": "Zahŕňa zobrazenie a reakcie na aktualizácie. Pokrýva tiež zobrazenie, vytváranie a reakcie na komentáre k aktualizáciám."
+                },
+                "project_templates": {
+                  "view": "Zahŕňa zobrazenie šablón pracovných položiek a Pages.",
+                  "create": "Zahŕňa vytváranie šablón pracovných položiek a Pages.",
+                  "edit": "Zahŕňa úpravu šablón pracovných položiek a Pages.",
+                  "delete": "Zahŕňa odstraňovanie šablón pracovných položiek a Pages."
+                }
+              }
+            },
+            "search_placeholder": "Hľadať oprávnenia...",
+            "no_results": "Žiadne oprávnenia nezodpovedajú",
+            "clear_search": "Vymazať",
+            "preset_label": "Začať zo systémovej roly:",
+            "preset_none": "Žiadne (prázdne)",
+            "empty_permissions_note": "Vyberte aspoň jedno oprávnenie na uloženie tejto schémy."
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "Roly a schémy projektu",
+        "sidebar_label": "Projekt"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "Roly a schémy workspace",
+        "sidebar_label": "Workspace"
+      },
+      "roles_and_schemes": {
+        "description": "Nakonfigurujte vlastnosti a skupiny interakcií, ktoré sa pripoja k typu alebo typom pracovných položiek",
+        "tabs": {
+          "roles": "Roly",
+          "permission_schemes": "Schémy oprávnení"
+        },
+        "create_role": {
+          "modal_title": "Vytvoriť novú rolu",
+          "button_label": "Vytvoriť rolu",
+          "role_title_label": "Názov roly",
+          "role_title_placeholder": "Pridajte jedinečný názov",
+          "description_label": "Popis",
+          "description_placeholder": "Pridajte jedinečný názov",
+          "create_button": "Vytvoriť rolu",
+          "error_toast_description": "Rolu sa nepodarilo vytvoriť. Skúste to prosím znova."
+        },
+        "create_scheme": {
+          "title": "Vytvoriť schému oprávnení",
+          "description": "Definujte schému oprávnení nastavením jej názvu, popisu a oprávnení.",
+          "button_label": "Vytvoriť schému oprávnení",
+          "create_button": "Vytvoriť schému oprávnení",
+          "error_toast_description": "Schému oprávnení sa nepodarilo vytvoriť. Skúste to prosím znova."
+        },
+        "role_detail": {
+          "back": "Späť",
+          "permission_schemes_title": "Schémy oprávnení",
+          "attach_button": "Pripojiť schémy oprávnení",
+          "empty_title": "Zatiaľ žiadne schémy oprávnení",
+          "empty_description": "Vytvorte si prispôsobené štítky na efektívne kategorizovanie a správu pracovných položiek.",
+          "error_toast_description": "Rolu sa nepodarilo aktualizovať. Skúste to prosím znova."
+        },
+        "scheme_detail": {
+          "title": "Podrobnosti schémy oprávnení",
+          "description": "Pozrite si kompletný prehľad schémy a jej priradených oprávnení.",
+          "edit_title": "Upraviť schému oprávnení",
+          "edit_description": "Aktualizujte názov, oprávnenia a nastavenia schémy.",
+          "edit_button": "Upraviť schému oprávnení",
+          "error_toast_description": "Schému oprávnení sa nepodarilo aktualizovať. Skúste to prosím znova.",
+          "scheme_information_title": "Informácie o schéme",
+          "scheme_information_description": "Názov schémy a stručný popis na objasnenie jej účelu.",
+          "scheme_name": "Názov schémy",
+          "scheme_name_placeholder": "Pomenujte schému",
+          "scheme_name_error": "Názov je povinný.",
+          "scheme_description": "Popis",
+          "scheme_description_placeholder": "Opíšte schému"
+        },
+        "attach_schemes": {
+          "title": "Schémy oprávnení",
+          "search_placeholder": "Hľadať",
+          "permissions_count": "oprávnení",
+          "discard": "Zahodiť",
+          "add": "Pridať"
+        },
+        "quick_actions": {
+          "edit_scheme": "Upraviť schému oprávnení",
+          "delete_scheme": "Odstrániť schému oprávnení",
+          "edit_role": "Upraviť podrobnosti roly",
+          "enable_role": "Povoliť rolu",
+          "delete_role": "Odstrániť rolu"
+        },
+        "edit_role": {
+          "modal_title": "Upraviť podrobnosti roly",
+          "save_button": "Uložiť zmeny",
+          "saving": "Ukladanie...",
+          "error_toast_description": "Rolu sa nepodarilo aktualizovať. Skúste to prosím znova."
+        },
+        "delete_role": {
+          "confirm_title": "Odstrániť „{roleName}”?",
+          "has_members_message": "Táto rola je priradená {count} členom. Jej odstránenie je trvalé a nedá sa vrátiť späť.",
+          "no_members_message": "Táto rola nemá priradených žiadnych členov. Jej odstránenie je trvalé a nedá sa vrátiť späť.",
+          "reassign_label": "Preradiť členov do",
+          "reassign_placeholder": "Vyberte rolu",
+          "submit_button": "Preradiť a odstrániť",
+          "submit_button_no_members": "Odstrániť",
+          "submitting": "Odstraňovanie...",
+          "error_toast_description": "Rolu sa nepodarilo odstrániť. Skúste to prosím znova.",
+          "success_toast_message": "Rola bola úspešne odstránená."
+        },
+        "disable_role": {
+          "confirm_title": "Zakázať „{roleName}”?",
+          "has_members_message": "Táto rola je momentálne priradená {memberCount} členom. Pred pokračovaním musíte vybrať rolu na preradenie existujúcich členov.",
+          "no_members_message": "Táto rola nemá priradených žiadnych členov. Bude zakázaná.",
+          "reassign_label": "Preradiť členov do",
+          "reassign_placeholder": "Vyberte rolu",
+          "submit_button": "Preradiť a zakázať",
+          "submit_button_no_members": "Zakázať",
+          "submitting": "Zakazovanie...",
+          "error_toast_description": "Rolu sa nepodarilo zakázať. Skúste to prosím znova.",
+          "success_toast_message": "Rola bola úspešne zakázaná."
+        },
+        "enable_role": {
+          "confirm_title": "Povoliť „{roleName}”?",
+          "confirm_message": "Táto rola sa stane aktívnou a bude možné ju priradiť členom.",
+          "submit_button": "Povoliť",
+          "submitting": "Povoľovanie...",
+          "success_toast_message": "Rola bola úspešne povolená."
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "Odstrániť schému oprávnení?",
+          "has_roles_message": "Táto schéma sa používa v {count} rolách. Jej odstránenie odoberie týmto rolám jej oprávnenia. Túto akciu nie je možné vrátiť späť.",
+          "no_roles_message": "Túto schému oprávnení nepoužíva žiadna rola. Bude natrvalo odstránená.",
+          "submit_button": "Potvrdiť",
+          "submitting": "Odstraňovanie...",
+          "error_toast_description": "Schému oprávnení sa nepodarilo odstrániť. Skúste to prosím znova.",
+          "in_use_error": "Pred odstránením schému odstráňte zo všetkých rolí.",
+          "success_toast_message": "Schéma oprávnení bola úspešne odstránená."
+        }
+      }
+    }
+  }
+}

@@ -15,42 +15,34 @@ import { useEffect, useRef } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles } from "@plane/types";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useProjectFilter } from "@/plane-web/hooks/store";
 // plane web components
 import { ProjectCard } from "@/components/projects/list/with-grouping/layouts/gallery/card";
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 
 type ProjectBoardListItem = {
   groupByKey: string;
   projectId: string;
+  permissions: ProjectItemPermissions;
+  workspaceSlug: string;
 };
 
 export const ProjectBoardListItem = observer(function ProjectBoardListItem(props: ProjectBoardListItem) {
-  const { projectId } = props;
-  // router
-  const { workspaceSlug } = useParams();
+  const { projectId, permissions, workspaceSlug } = props;
   // hooks
   const { getProjectById } = useProject();
-  const { allowPermissions } = useUserPermissions();
   const { filters } = useProjectFilter();
   // derived values
   const selectedGroupKey = filters?.display_filters?.group_by;
   const project = getProjectById(projectId);
   const cardRef = useRef<HTMLDivElement | null>(null);
-  const isDragAllowed = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId
-  );
+  const canDragAndDrop = permissions.canDragAndDrop;
+
   useEffect(() => {
     const element = cardRef.current;
 
@@ -61,11 +53,11 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
       draggable({
         element,
         dragHandle: element,
-        canDrag: () => isDragAllowed && selectedGroupKey !== "labels",
+        canDrag: () => canDragAndDrop && selectedGroupKey !== "labels",
         getInitialData: () => ({ id: project.id, type: "PROJECT" }),
       })
     );
-  }, [project, isDragAllowed, selectedGroupKey]);
+  }, [project, canDragAndDrop, selectedGroupKey]);
 
   if (!project) return <></>;
 
@@ -81,7 +73,7 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
             type: TOAST_TYPE.WARNING,
             message: "Cannot move projects when grouped by labels",
           });
-        } else if (!isDragAllowed) {
+        } else if (!canDragAndDrop) {
           setToast({
             title: "Warning!",
             type: TOAST_TYPE.ERROR,
@@ -90,7 +82,7 @@ export const ProjectBoardListItem = observer(function ProjectBoardListItem(props
         }
       }}
     >
-      <ProjectCard project={project} workspaceSlug={workspaceSlug} />
+      <ProjectCard project={project} permissions={permissions} workspaceSlug={workspaceSlug} />
     </div>
   );
 });

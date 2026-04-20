@@ -13,28 +13,23 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserWorkspaceRoles } from "@plane/types";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import { useParams } from "react-router";
 
 export const InitiativeScopeProjectsEmptyState = observer(function InitiativeScopeProjectsEmptyState() {
+  // routers
+  const { initiativeId, workspaceSlug } = useParams();
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const {
-    initiative: { toggleProjectsModal },
+    initiative: { permissions, toggleProjectsModal },
   } = useInitiatives();
   // derived values
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canAddProject = workspaceSlug && initiativeId && permissions.getCanAddProject(workspaceSlug, initiativeId);
 
   return (
     <div className="relative h-full w-full overflow-y-auto">
@@ -46,7 +41,7 @@ export const InitiativeScopeProjectsEmptyState = observer(function InitiativeSco
           {
             label: t("add_project"),
             onClick: () => toggleProjectsModal(true),
-            disabled: !isEditable,
+            disabled: !canAddProject,
           },
         ]}
       />

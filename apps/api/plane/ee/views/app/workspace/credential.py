@@ -23,17 +23,14 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import WorkspaceCredentialSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.workspace import WorkspaceEntityPermission
+from plane.permissions import can, IntegrationPermissions
 
 
 class WorkspaceCredentialView(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         if not credential:
@@ -47,11 +44,8 @@ class WorkspaceCredentialView(BaseAPIView):
 class VerifyWorkspaceCredentialView(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         # Extract `source` from query params
         source = request.query_params.get("source", "").lower()
@@ -88,6 +82,7 @@ class VerifyWorkspaceCredentialView(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.CONNECT, resource_param="workspace_id")
     def post(self, request, slug, pk):
         credential = WorkspaceCredential.objects.filter(pk=pk).first()
         token = request.data.get("token", None)

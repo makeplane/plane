@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Paginile imbricate necesită un plan plătit. Actualizează pentru a debloca."
+    },
+    "auth": {
+      "title": "Acces refuzat",
+      "description": "Nu aveți permisiunea de a accesa această pagină. Contactați administratorul Workspace pentru a vă acorda permisiunea.",
+      "redirection_button": {
+        "text": "Mergi la proiecte"
+      },
+      "reload_button": {
+        "text": "Reîncarcă pagina"
+      }
     }
   }
 }

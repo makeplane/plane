@@ -27,11 +27,11 @@ import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
 
 type TTeamPropertiesProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  canAddProject: boolean;
 };
 
 export const TeamProperties = observer(function TeamProperties(props: TTeamPropertiesProps) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, canAddProject } = props;
   // hooks
   const { getUserDetails } = useMember();
   // plane web hooks
@@ -69,7 +69,7 @@ export const TeamProperties = observer(function TeamProperties(props: TTeamPrope
           })}
         </AvatarGroup>
       </div>
-      <UpdateTeamspaceProjectsButton teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />
+      <UpdateTeamspaceProjectsButton teamspaceId={teamspaceId} canAddProject={canAddProject} />
     </div>
   );
 });

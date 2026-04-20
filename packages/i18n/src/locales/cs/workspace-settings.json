@@ -220,6 +220,10 @@
             "title": "Klíč atributu skupiny",
             "description": "Atribut poskytovatele identity používaný k identifikaci a synchronizaci uživatelských skupin.",
             "placeholder": "Skupiny"
+          },
+          "default_workspace_role": {
+            "title": "Výchozí role v pracovním prostoru",
+            "description": "Role přiřazená uživatelům, když jsou automaticky přidáni do pracovního prostoru prostřednictvím synchronizace skupin."
           }
         },
         "group_mapping": {

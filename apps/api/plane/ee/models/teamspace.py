@@ -15,7 +15,9 @@ from django.conf import settings
 
 # Module imports
 from plane.db.models import BaseModel
-from plane.db.mixins import FiltersMixin
+from plane.db.mixins import ChangeTrackerMixin, FiltersMixin
+from plane.db.signals import post_bulk_create, post_bulk_update
+from plane.permissions.sync import PermissionSyncMixin
 
 
 def get_default_filters():
@@ -86,7 +88,21 @@ class Teamspace(BaseModel):
         return self.name
 
 
-class TeamspaceMember(BaseModel):
+class TeamspaceMember(PermissionSyncMixin, ChangeTrackerMixin, BaseModel):
+    """
+    Teamspace membership with automatic sync to ResourcePermission.
+
+    Changes to deleted_at trigger sync to keep permissions up-to-date.
+    """
+
+    TRACKED_FIELDS = ["deleted_at"]
+
+    # Permission sync configuration
+    PERMISSION_SUBJECT_TYPE = "user"
+    PERMISSION_SUBJECT_ID_FIELD = "member_id"
+    PERMISSION_RESOURCE_TYPE = "teamspace"
+    PERMISSION_RESOURCE_ID_FIELD = "team_space_id"
+
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_members")
     member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="team_spaces")
     team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="members")
@@ -109,7 +125,21 @@ class TeamspaceMember(BaseModel):
         return f"{self.member.display_name} - {self.team_space}"
 
 
-class TeamspaceProject(BaseModel):
+class TeamspaceProject(PermissionSyncMixin, ChangeTrackerMixin, BaseModel):
+    """
+    Teamspace-Project link with automatic sync to ResourcePermission.
+
+    Changes to deleted_at trigger sync to keep permissions up-to-date.
+    """
+
+    TRACKED_FIELDS = ["deleted_at"]
+
+    # Permission sync configuration
+    PERMISSION_SUBJECT_TYPE = "teamspace"
+    PERMISSION_SUBJECT_ID_FIELD = "team_space_id"
+    PERMISSION_RESOURCE_TYPE = "project"
+    PERMISSION_RESOURCE_ID_FIELD = "project_id"
+
     workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="team_space_projects")
     team_space = models.ForeignKey(Teamspace, on_delete=models.CASCADE, related_name="projects")
     project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="team_spaces")
@@ -130,6 +160,61 @@ class TeamspaceProject(BaseModel):
 
     def __str__(self):
         return f"{self.project.name} - {self.team_space.name}"
+
+    def _get_permission_relation(self):
+        """Return 'contributor' as the relation for teamspace→project links.
+
+        Teamspace members get contributor-level access on linked projects.
+        The engine reads this role from the link tuple and checks project-namespace
+        permissions for contributor.
+        """
+        return "contributor"
+
+
+def _sync_teamspace_permissions(sender, **kwargs):
+    """Sync ResourcePermission on bulk operations for TeamspaceMember and TeamspaceProject."""
+    objs = kwargs.get("objs")
+    if not objs:
+        return
+    objs = list(objs) if hasattr(objs, "__iter__") else [objs]
+
+    from plane.permissions.engine import PermissionEngine
+    from plane.permissions.grants import Grant
+    engine = PermissionEngine(use_cache=False)
+    grants = []
+    revoke_keys = []
+
+    for obj in objs:
+        subject_id = obj._get_permission_subject_id()
+        resource_id = obj._get_permission_resource_id()
+        if not subject_id or not resource_id:
+            continue
+        if obj._is_permission_active():
+            grants.append(Grant(
+                subject_type=obj.PERMISSION_SUBJECT_TYPE,
+                subject_id=subject_id,
+                relation=obj._get_permission_relation(),
+                resource_type=obj.PERMISSION_RESOURCE_TYPE,
+                resource_id=resource_id,
+                workspace_id=obj._get_permission_workspace_id(),
+            ))
+        else:
+            revoke_keys.append((obj.PERMISSION_SUBJECT_TYPE, subject_id,
+                                obj.PERMISSION_RESOURCE_TYPE, resource_id,
+                                obj._get_permission_workspace_id()))
+
+    actor_id = getattr(objs[0], 'updated_by_id', None) or getattr(objs[0], 'created_by_id', None)
+    if grants:
+        engine.bulk_grant(granter=actor_id, grants=grants)
+    for key in revoke_keys:
+        engine.revoke(revoker=actor_id, subject_type=key[0], subject_id=key[1],
+                      resource_type=key[2], resource_id=key[3], workspace_id=key[4])
+
+
+post_bulk_create.connect(_sync_teamspace_permissions, sender=TeamspaceMember)
+post_bulk_update.connect(_sync_teamspace_permissions, sender=TeamspaceMember)
+post_bulk_create.connect(_sync_teamspace_permissions, sender=TeamspaceProject)
+post_bulk_update.connect(_sync_teamspace_permissions, sender=TeamspaceProject)
 
 
 class TeamspaceLabel(BaseModel):

@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
@@ -31,11 +30,15 @@ import { useAttachmentOperations } from "./use-attachments";
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled?: boolean;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (attachmentId: string) => boolean;
+    canDelete: (attachmentId: string) => boolean;
+  };
 };
 
 export const InitiativeAttachmentRoot = observer(function InitiativeAttachmentRoot(props: Props) {
-  const { workspaceSlug, initiativeId, disabled } = props;
+  const { workspaceSlug, initiativeId, permissions } = props;
   // states
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -99,7 +102,7 @@ export const InitiativeAttachmentRoot = observer(function InitiativeAttachmentRo
     onDrop,
     maxSize: maxFileSize,
     multiple: false,
-    disabled: isLoading || disabled,
+    disabled: isLoading || !permissions.canCreate,
   });
 
   const toggleDeleteAttachmentModal = (attachmentId: string | null) => {
@@ -124,7 +127,7 @@ export const InitiativeAttachmentRoot = observer(function InitiativeAttachmentRo
           )}
           <div
             {...getRootProps()}
-            className={`relative flex flex-col ${isDragActive && initiativeAttachments.length < 3 ? "min-h-[200px]" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+            className={`relative flex flex-col ${isDragActive && initiativeAttachments.length < 3 ? "min-h-[200px]" : ""} ${permissions.canCreate ? "cursor-pointer" : "cursor-not-allowed"}`}
           >
             <input {...getInputProps()} />
             {isDragActive && (
@@ -141,7 +144,7 @@ export const InitiativeAttachmentRoot = observer(function InitiativeAttachmentRo
               <InitiativeAttachmentsListItem
                 key={attachmentId}
                 attachmentId={attachmentId}
-                disabled={disabled}
+                canDelete={permissions.canDelete(attachmentId)}
                 toggleDeleteAttachmentModal={toggleDeleteAttachmentModal}
               />
             ))}

@@ -42,32 +42,28 @@ type WorkspaceLabelItemBlockProps = {
   handleLabelDelete: (label: IBaseLabel) => void;
   isLabelGroup?: boolean;
   dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
-  disabled?: boolean;
-  draggable?: boolean;
+  permissions: {
+    canDragAndDrop: boolean;
+    canDelete: boolean;
+  };
 };
 
 function WorkspaceLabelItemBlock(props: WorkspaceLabelItemBlockProps) {
-  const {
-    label,
-    isDragging,
-    customMenuItems,
-    handleLabelDelete,
-    isLabelGroup,
-    dragHandleRef,
-    disabled = false,
-    draggable = true,
-  } = props;
+  const { label, isDragging, customMenuItems, handleLabelDelete, isLabelGroup, dragHandleRef, permissions } = props;
   // states
   const [isMenuActive, setIsMenuActive] = useState(true);
   // refs
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  // derived values
+  const isAnyMenuVisible = customMenuItems.some(({ isVisible }) => isVisible);
+  const isAnyActionAvailable = isAnyMenuVisible || permissions.canDelete;
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
     <div className="group flex items-center">
       <div className="flex items-center">
-        {!disabled && draggable && (
+        {permissions.canDragAndDrop && (
           <DragHandle
             className={cn("opacity-0 group-hover:opacity-100", {
               "opacity-100": isDragging,
@@ -78,7 +74,7 @@ function WorkspaceLabelItemBlock(props: WorkspaceLabelItemBlockProps) {
         <LabelName color={label.color} name={label.name} isGroup={isLabelGroup ?? false} />
       </div>
 
-      {!disabled && (
+      {isAnyActionAvailable && (
         <div
           ref={actionSectionRef}
           className={`absolute right-2.5 flex items-center gap-2 ${
@@ -87,20 +83,22 @@ function WorkspaceLabelItemBlock(props: WorkspaceLabelItemBlockProps) {
               : "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100"
           } ${isLabelGroup && "-top-0.5"}`}
         >
-          <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
-            {customMenuItems.map(
-              ({ isVisible, onClick, CustomIcon, text, key }) =>
-                isVisible && (
-                  <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
-                    <span className="flex items-center justify-start gap-2">
-                      <CustomIcon className="size-4" />
-                      <span>{text}</span>
-                    </span>
-                  </CustomMenu.MenuItem>
-                )
-            )}
-          </CustomMenu>
-          {!isLabelGroup && (
+          {isAnyMenuVisible && (
+            <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
+              {customMenuItems.map(
+                ({ isVisible, onClick, CustomIcon, text, key }) =>
+                  isVisible && (
+                    <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
+                      <span className="flex items-center justify-start gap-2">
+                        <CustomIcon className="size-4" />
+                        <span>{text}</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  )
+              )}
+            </CustomMenu>
+          )}
+          {!isLabelGroup && permissions.canDelete && (
             <div className="py-0.5">
               <button
                 className="flex size-5 items-center justify-center rounded-sm hover:bg-layer-1"
@@ -132,7 +130,12 @@ type WorkspaceSettingLabelItemProps = {
     dropAtEndOfList: boolean
   ) => void;
   labelOperationsCallbacks: TWorkspaceLabelOperationsCallbacks;
-  isEditable?: boolean;
+  permissions: {
+    canReorder: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+    canCreate: boolean;
+  };
   onRemoveFromGroup?: (label: IBaseLabel) => void;
 };
 
@@ -146,7 +149,7 @@ export function WorkspaceSettingLabelItem(props: WorkspaceSettingLabelItemProps)
     isParentDragging = false,
     onDrop,
     labelOperationsCallbacks,
-    isEditable = false,
+    permissions,
     onRemoveFromGroup,
   } = props;
   // states
@@ -156,7 +159,7 @@ export function WorkspaceSettingLabelItem(props: WorkspaceSettingLabelItemProps)
     {
       CustomIcon: CloseIcon,
       onClick: (label) => onRemoveFromGroup?.(label),
-      isVisible: !!label.parent && !!onRemoveFromGroup,
+      isVisible: !!label.parent && !!onRemoveFromGroup && permissions.canEdit,
       text: "Remove from group",
       key: "remove_from_group",
     },
@@ -166,14 +169,21 @@ export function WorkspaceSettingLabelItem(props: WorkspaceSettingLabelItemProps)
         setEditLabelForm(true);
         setIsUpdating(true);
       },
-      isVisible: true,
+      isVisible: permissions.canEdit,
       text: "Edit label",
       key: "edit_label",
     },
   ];
 
   return (
-    <WorkspaceLabelDndHOC label={label} isGroup={false} isChild={isChild} isLastChild={isLastChild} onDrop={onDrop}>
+    <WorkspaceLabelDndHOC
+      label={label}
+      isGroup={false}
+      isChild={isChild}
+      isLastChild={isLastChild}
+      onDrop={onDrop}
+      canReorder={permissions.canReorder}
+    >
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
           className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
@@ -205,7 +215,10 @@ export function WorkspaceSettingLabelItem(props: WorkspaceSettingLabelItemProps)
                 customMenuItems={customMenuItems}
                 handleLabelDelete={handleLabelDelete}
                 dragHandleRef={dragHandleRef}
-                disabled={!isEditable}
+                permissions={{
+                  canDragAndDrop: permissions.canReorder,
+                  canDelete: permissions.canDelete,
+                }}
               />
             )}
           </div>

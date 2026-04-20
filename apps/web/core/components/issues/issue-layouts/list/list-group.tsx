@@ -54,6 +54,7 @@ import {
 import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import type { TRenderQuickActions } from "./list-view-types";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 interface Props {
   groupIssueIds: string[] | undefined;
@@ -65,14 +66,21 @@ interface Props {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
-  enableIssueQuickAdd: boolean;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   containerRef: MutableRefObject<HTMLDivElement | null>;
   quickAddCallback?: ((projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>) | undefined;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
-  disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  isCompletedCycle?: boolean;
   showEmptyGroup?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
@@ -92,14 +100,12 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     updateIssue,
     quickActions,
     displayProperties,
-    enableIssueQuickAdd,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     containerRef,
     quickAddCallback,
     handleOnDrop,
-    disableIssueCreation,
     addIssuesToView,
-    isCompletedCycle,
     showEmptyGroup,
     loadMoreIssues,
     selectionHelpers,
@@ -285,9 +291,9 @@ export const ListGroup = observer(function ListGroup(props: Props) {
           title={group.name}
           count={groupIssueCount}
           issuePayload={group.payload}
-          canEditProperties={canEditProperties}
+          canPerformBulkOps={layoutPermissions.canPerformBulkOps}
           disableIssueCreation={
-            disableIssueCreation || isGroupByCreatedBy || isCompletedCycle || isWorkflowIssueCreationDisabled
+            !layoutPermissions.canCreateWorkItem.viaHeader || isGroupByCreatedBy || isWorkflowIssueCreationDisabled
           }
           addIssuesToView={addIssuesToView}
           selectionHelpers={selectionHelpers}
@@ -315,7 +321,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
               updateIssue={updateIssue}
               quickActions={quickActions}
               displayProperties={displayProperties}
-              canEditProperties={canEditProperties}
+              getWorkItemPermissions={getWorkItemPermissions}
               containerRef={containerRef}
               isDragAllowed={isDragAllowed}
               canDropOverIssue={!canOverlayBeVisible}
@@ -335,8 +341,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
                 <ListLoaderItemRow ref={setIntersectionElement} />
               </>
             ))}
-
-          {enableIssueQuickAdd && !disableIssueCreation && !isGroupByCreatedBy && !isCompletedCycle && (
+          {layoutPermissions.canCreateWorkItem.viaQuickAdd && !isGroupByCreatedBy && (
             <div className="sticky bottom-0 z-[1] w-full flex-shrink-0">
               <QuickAddIssueRoot
                 layout={EIssueLayoutTypes.LIST}

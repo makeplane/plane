@@ -29,7 +29,7 @@ from ..base import BaseAPIView
 from plane.db.models import FileAsset, Workspace, Project, User
 from plane.ee.models import Customer
 from plane.settings.storage import S3Storage
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ProjectAssetPermissions, WorkspaceAssetPermissions
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.throttles.asset import AssetRateThrottle
@@ -383,6 +383,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         else:
             return
 
+    @can(WorkspaceAssetPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
@@ -443,6 +444,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @can(WorkspaceAssetPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
@@ -464,6 +466,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.save(update_fields=["is_uploaded", "attributes"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @can(WorkspaceAssetPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, asset_id):
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
         asset.is_deleted = True
@@ -473,6 +476,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
@@ -503,7 +507,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
 class WorkspaceReuploadAssetEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def post(self, request, slug, asset_id):
         file_type = request.data.get("type", "image/jpeg")
         file_size = request.data.get("size")
@@ -614,7 +618,7 @@ class AssetRestoreEndpoint(BaseAPIView):
 
     authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def post(self, request, slug, asset_id):
         asset = FileAsset.all_objects.get(id=asset_id, workspace__slug=slug)
         asset.is_deleted = False
@@ -662,7 +666,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             return {"entity_identifier": entity_id}
         return {}
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
@@ -724,7 +728,7 @@ class ProjectAssetEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
@@ -740,7 +744,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         asset.save(update_fields=["is_uploaded", "attributes"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         # Get the asset
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
@@ -751,7 +755,7 @@ class ProjectAssetEndpoint(BaseAPIView):
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.VIEW, resource_param="pk")
     def get(self, request, slug, project_id, pk):
         # get the asset id
         asset = FileAsset.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
@@ -782,7 +786,7 @@ class ProjectAssetEndpoint(BaseAPIView):
 class ProjectReuploadAssetEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, asset_id):
         file_type = request.data.get("type", "image/jpeg")
         file_size = request.data.get("size")
@@ -846,7 +850,7 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
         project.cover_image_asset_id = asset.id
         project.save()
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, entity_id):
         asset_ids = request.data.get("asset_ids", [])
 
@@ -903,10 +907,9 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
 
 class AssetCheckEndpoint(BaseAPIView):
     """Endpoint to check if an asset exists."""
-
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, asset_id):
         asset = FileAsset.all_objects.filter(id=asset_id, workspace__slug=slug, deleted_at__isnull=True).exists()
         return Response({"exists": asset}, status=status.HTTP_200_OK)
@@ -968,7 +971,7 @@ class DuplicateAssetEndpoint(BaseAPIView):
             return {"entity_identifier": entity_id}
         return {}
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def post(self, request, slug, asset_id):
         project_id = request.data.get("project_id", None)
         entity_id = request.data.get("entity_id", None)
@@ -1017,10 +1020,9 @@ class DuplicateAssetEndpoint(BaseAPIView):
 
 class WorkspaceAssetDownloadEndpoint(BaseAPIView):
     """Endpoint to generate a download link for an asset with content-disposition=attachment."""
-
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, asset_id):
         try:
             asset = FileAsset.objects.get(
@@ -1046,10 +1048,9 @@ class WorkspaceAssetDownloadEndpoint(BaseAPIView):
 
 class ProjectAssetDownloadEndpoint(BaseAPIView):
     """Endpoint to generate a download link for an asset with content-disposition=attachment."""
-
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    @can(ProjectAssetPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, asset_id):
         try:
             asset = FileAsset.objects.get(
@@ -1079,10 +1080,9 @@ class WorkspaceFileAssetServerEndpoint(BaseAPIView):
     This endpoint is used to upload cover images/logos
     etc for workspace, projects and users.
     """
-
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)
@@ -1112,7 +1112,7 @@ class ProjectAssetServerEndpoint(BaseAPIView):
 
     authentication_classes = [JWTAuthentication, BaseSessionAuthentication]
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectAssetPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(workspace__slug=slug, project_id=project_id, pk=asset_id)

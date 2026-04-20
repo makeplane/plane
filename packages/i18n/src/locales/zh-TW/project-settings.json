@@ -22,10 +22,6 @@
       "label": "成員",
       "project_lead": "專案負責人",
       "default_assignee": "預設指派對象",
-      "guest_super_permissions": {
-        "title": "授予訪客使用者檢視所有工作事項的權限：",
-        "sub_heading": "這將允許訪客檢視所有專案工作事項。"
-      },
       "invite_members": {
         "title": "邀請成員",
         "sub_heading": "邀請成員參與您的專案。",

@@ -14,13 +14,13 @@
 import { useState } from "react";
 import { InfoIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { useUserPermissions } from "@/hooks/store/user";
 import { revalidateProjectData } from "@/helpers/swr";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TDialogue } from "@/types";
 import { EExecutionStatus } from "@/types";
 import { ConfirmBlock } from "./confirm-block";
 import { SummaryBlock } from "./summary";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 
 type TProps = {
   isLatest: boolean | undefined;
@@ -41,7 +41,7 @@ function ActionStatusBlock(props: TProps) {
   // states
   const [isExecutingAction, setIsExecutingAction] = useState(false);
   // store
-  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
+  const { getCurrentUserProjectRoleSlug } = usePermissionAccess();
   const { getChatFocus, executeAction } = usePiChat();
   const chatFocus = getChatFocus(activeChatId);
   //derived
@@ -57,13 +57,10 @@ function ActionStatusBlock(props: TProps) {
       const actionableEntities = await executeAction(workspaceId, activeChatId, query_id);
       if (actionableEntities && actionableEntities.length > 0 && workspaceSlug) {
         const projectId = chatFocus?.entityType === "project_id" ? chatFocus?.entityIdentifier : undefined;
-        const currentProjectRole = projectId
-          ? getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId)
-          : undefined;
-        revalidateProjectData(workspaceSlug, actionableEntities, projectId, currentProjectRole);
+        const currentProjectRoleSlug = projectId ? getCurrentUserProjectRoleSlug(projectId) : undefined;
+        revalidateProjectData(workspaceSlug, actionableEntities, projectId, currentProjectRoleSlug ?? undefined);
       }
     } catch (e: any) {
-      console.error(e);
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Action failed!",

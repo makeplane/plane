@@ -313,7 +313,6 @@ async def load_artifacts(
                 "is_issue_type_enabled",
                 "is_time_tracking_enabled",
                 "issue_views_view",
-                "guest_view_all_features",
                 # Project update_features params (must be preserved from plan)
                 "epics",
                 "modules",

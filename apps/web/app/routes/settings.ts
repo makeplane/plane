@@ -54,6 +54,45 @@ export const settingsRoutes: RouteConfigEntry[] = [
         ":workspaceSlug/settings/access-tokens",
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/access-tokens/page.tsx"
       ),
+      // Workspace Roles & Schemes
+      layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/workspace-roles-and-schemes/layout.tsx", [
+        route(
+          ":workspaceSlug/settings/workspace-roles-and-schemes",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/workspace-roles-and-schemes/page.tsx"
+        ),
+        route(
+          ":workspaceSlug/settings/workspace-roles-and-schemes/roles/:slug",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/workspace-roles-and-schemes/roles/[slug]/page.tsx"
+        ),
+        route(
+          ":workspaceSlug/settings/workspace-roles-and-schemes/schemes/create",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/workspace-roles-and-schemes/schemes/create/page.tsx"
+        ),
+        route(
+          ":workspaceSlug/settings/workspace-roles-and-schemes/schemes/:slug",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/workspace-roles-and-schemes/schemes/[slug]/page.tsx"
+        ),
+      ]),
+
+      // Project Roles & Schemes
+      layout("./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-roles-and-schemes/layout.tsx", [
+        route(
+          ":workspaceSlug/settings/project-roles-and-schemes",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-roles-and-schemes/page.tsx"
+        ),
+        route(
+          ":workspaceSlug/settings/project-roles-and-schemes/roles/:slug",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-roles-and-schemes/roles/[slug]/page.tsx"
+        ),
+        route(
+          ":workspaceSlug/settings/project-roles-and-schemes/schemes/create",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-roles-and-schemes/schemes/create/page.tsx"
+        ),
+        route(
+          ":workspaceSlug/settings/project-roles-and-schemes/schemes/:slug",
+          "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/project-roles-and-schemes/schemes/[slug]/page.tsx"
+        ),
+      ]),
 
       // Group Syncing
       route(

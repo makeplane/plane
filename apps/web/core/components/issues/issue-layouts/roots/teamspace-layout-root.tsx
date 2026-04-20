@@ -56,29 +56,44 @@ const ProjectSpreadsheetLayout = lazy(() =>
   }))
 );
 
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  projectId: string | undefined;
+};
+
 // Layout components map
-const TEAMSPACE_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+const TEAMSPACE_WORK_ITEM_LAYOUTS: Partial<
+  Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<ActiveLayoutProps>>>
+> = {
   [EIssueLayoutTypes.LIST]: ListLayout,
   [EIssueLayoutTypes.KANBAN]: KanBanLayout,
   [EIssueLayoutTypes.CALENDAR]: CalendarLayout,
   [EIssueLayoutTypes.SPREADSHEET]: ProjectSpreadsheetLayout,
 };
 
-function TeamspaceWorkItemLayout({ activeLayout }: { activeLayout: EIssueLayoutTypes | undefined }) {
+type TTeamspaceWorkItemLayoutProps = {
+  workspaceSlug: string;
+  activeLayout: EIssueLayoutTypes | undefined;
+};
+
+function TeamspaceWorkItemLayout(props: TTeamspaceWorkItemLayoutProps) {
+  const { workspaceSlug, activeLayout } = props;
   if (!activeLayout) return null;
   const TeamspaceWorkItemLayoutComponent = TEAMSPACE_WORK_ITEM_LAYOUTS[activeLayout];
   if (!TeamspaceWorkItemLayoutComponent) return null;
   return (
     <Suspense>
-      <TeamspaceWorkItemLayoutComponent />
+      <TeamspaceWorkItemLayoutComponent workspaceSlug={workspaceSlug} projectId={undefined} />
     </Suspense>
   );
 }
 
 const TeamspaceWorkItemLayoutContent = observer(function TeamspaceWorkItemLayoutContent({
+  workspaceSlug,
   issueLoader,
   teamspaceId,
 }: {
+  workspaceSlug: string;
   issueLoader: string | undefined;
   teamspaceId: string;
 }) {
@@ -95,7 +110,7 @@ const TeamspaceWorkItemLayoutContent = observer(function TeamspaceWorkItemLayout
           <Spinner className="w-4 h-4" />
         </div>
       )}
-      <TeamspaceWorkItemLayout activeLayout={activeLayout} />
+      <TeamspaceWorkItemLayout workspaceSlug={workspaceSlug} activeLayout={activeLayout} />
     </div>
   );
 });
@@ -139,7 +154,11 @@ export const TeamspaceLayoutRoot = observer(function TeamspaceLayoutRoot() {
         {({ filter: teamspaceWorkItemsFilter }) => (
           <div className="relative flex h-full w-full flex-col overflow-hidden">
             <WorkItemFiltersRowWrapper filter={teamspaceWorkItemsFilter} />
-            <TeamspaceWorkItemLayoutContent issueLoader={issueLoader} teamspaceId={teamspaceId} />
+            <TeamspaceWorkItemLayoutContent
+              workspaceSlug={workspaceSlug}
+              issueLoader={issueLoader}
+              teamspaceId={teamspaceId}
+            />
             {/* peek overview */}
             <Suspense>
               <WorkItemPeekOverview />

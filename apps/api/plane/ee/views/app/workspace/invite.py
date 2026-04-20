@@ -17,14 +17,12 @@ from rest_framework.response import Response
 from plane.ee.models.workspace import WorkspaceLicense
 from plane.db.models import User, WorkspaceMemberInvite
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, WorkspaceMemberPermissions
 from plane.payment.utils.member_payment_count import workspace_member_check
 
 
 class WorkspaceInviteCheckEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [WorkSpaceAdminPermission]
 
     def enterprise_plan_invite_check(self, slug: str):
         # Total purchased seats
@@ -47,15 +45,13 @@ class WorkspaceInviteCheckEndpoint(BaseAPIView):
         else:
             return False
 
+    @can(WorkspaceMemberPermissions.INVITE, resource_param="workspace_id")
     def get(self, request, slug):
         # Check if someone could be invited to the workspace
 
         # Get the current invite list
         invite_allowed, allowed_members, allowed_guests = workspace_member_check(
             slug=slug,
-            requested_invite_list=[],
-            requested_role=False,
-            current_role=False,
         )
 
         # Check if the workspace is on the enterprise plan

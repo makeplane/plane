@@ -22,16 +22,17 @@ from rest_framework.response import Response
 
 # Module imports
 from .base import BaseAPIView
-from plane.app.permissions.workspace import WorkspaceOwnerPermission
 from plane.db.models import WorkspaceMember, Workspace, WorkspaceMemberInvite
 from plane.utils.exception_logger import log_exception
 from plane.payment.utils.workspace_license_request import resync_workspace_license
 from plane.payment.utils.member_payment_count import count_member_payments
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
+from plane.permissions import can, BillingPermissions
 
 
 class PaymentLinkEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceOwnerPermission]
 
+    @can(BillingPermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -40,16 +41,23 @@ class PaymentLinkEndpoint(BaseAPIView):
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_role_slug=F("role_ref__slug"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             # Check the active paid users in the workspace - for self hosted plans
-            invited_member_count = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
+            invited_member_count = (
+                WorkspaceMemberInvite.objects.filter(
+                    workspace__slug=slug,
+                )
+                .exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS))
+                .count()
+            )
 
             for member in workspace_members:
                 member["user_id"] = str(member["user_id"])
+                member["user_role"] = 5 if member["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
             # Calculate the workspace member count
             workspace_member_count = count_member_payments(members_list=list(workspace_members))
@@ -134,8 +142,8 @@ class PaymentLinkEndpoint(BaseAPIView):
 
 
 class WorkspaceFreeTrialEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceOwnerPermission]
 
+    @can(BillingPermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         try:
             # Get the product_id and price_id
@@ -158,17 +166,25 @@ class WorkspaceFreeTrialEndpoint(BaseAPIView):
                 .annotate(
                     user_email=F("member__email"),
                     user_id=F("member__id"),
-                    user_role=F("role"),
+                    user_role_slug=F("role_ref__slug"),
                 )
-                .values("user_email", "user_id", "user_role")
+                .values("user_email", "user_id", "user_role_slug")
             )
 
             # Check the active paid users in the workspace
-            invited_member_count = WorkspaceMemberInvite.objects.filter(workspace__slug=slug, role__gt=10).count()
+            invited_member_count = (
+                WorkspaceMemberInvite.objects.filter(
+                    workspace__slug=slug,
+                )
+                .exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS))
+                .count()
+            )
 
             # Convert the user_id to string
             for member in workspace_members:
                 member["user_id"] = str(member["user_id"])
+                # if the user role slug is guest, then set the user role as 5
+                member["user_role"] = 5 if member["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
             # Calculate the workspace member count
             workspace_member_count = count_member_payments(members_list=list(workspace_members))

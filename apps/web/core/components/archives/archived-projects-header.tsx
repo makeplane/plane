@@ -37,7 +37,8 @@ export const ArchivedProjectsHeader = observer(function ArchivedProjectsHeader(p
   const workspaceId = currentWorkspace?.id || undefined;
   const isProjectGroupingFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFlagEnabled;
 
   if (!workspaceSlug || !workspaceId) return null;
 

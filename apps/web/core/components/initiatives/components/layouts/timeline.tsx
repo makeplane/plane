@@ -15,29 +15,36 @@ import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { INITIATIVE_STATES, EUserPermissionsLevel } from "@plane/constants";
+import { INITIATIVE_STATES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { IBaseLayoutsBaseGroup, TGanttBlockUpdateData, TGanttDateUpdate, TInitiativeStates } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
 import { BaseTimelineLayout } from "@/components/base-layouts/timeline/layout";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane-web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiative } from "@/types/initiative";
 // local
 import { getGroupList } from "../../utils";
 import { InitiativeTimelineBlock, InitiativeTimelineSidebarBlock } from "../initiative-timeline-block";
+import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 
-export const InitiativeTimelineLayout = observer(function InitiativeTimelineLayout() {
+type Props = {
+  permissions: {
+    canEditViaTimeline: (blockId: string, meta: Record<string, any> | undefined) => boolean;
+  };
+};
+
+export const InitiativeTimelineLayout = observer(function InitiativeTimelineLayout(props: Props) {
+  const { permissions } = props;
+  // store hooks
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
-  const { getUserDetails, workspace } = useMember();
+  // params
   const { workspaceSlug } = useParams();
-
+  // store hooks
+  const { getUserDetails, workspace } = useMember();
   const {
     initiative: {
       filteredInitiativesMap,
@@ -48,10 +55,10 @@ export const InitiativeTimelineLayout = observer(function InitiativeTimelineLayo
     },
     initiativeFilters,
   } = useInitiatives();
-
+  const { getBlockById } = useTimeLineChartStore();
+  // derived values
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const groupBy = displayFilters?.group_by;
-
   // Generate groups
   const groups: IBaseLayoutsBaseGroup[] = useMemo(() => {
     if (!currentGroupedFilteredInitiativeIds) return [];
@@ -96,10 +103,11 @@ export const InitiativeTimelineLayout = observer(function InitiativeTimelineLayo
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGroupedFilteredInitiativeIds, groupBy, getUserDetails, workspaceSlug]);
 
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const isDependencyEnabled = (blockId: string): boolean => {
+    const data = getBlockById(blockId);
+    if (!data) return false;
+    return permissions.canEditViaTimeline(blockId, data.meta);
+  };
 
   // Render initiative gantt block
   const renderBlock = useCallback(
@@ -179,10 +187,10 @@ export const InitiativeTimelineLayout = observer(function InitiativeTimelineLayo
       renderSidebar={renderSidebar}
       onBlockUpdate={handleBlockUpdate}
       onDateUpdate={handleDateUpdate}
-      enableBlockLeftResize={isEditable}
-      enableBlockRightResize={isEditable}
-      enableBlockMove={isEditable}
-      enableAddBlock={isEditable}
+      enableBlockLeftResize={isDependencyEnabled}
+      enableBlockRightResize={isDependencyEnabled}
+      enableBlockMove={isDependencyEnabled}
+      enableAddBlock={isDependencyEnabled}
       enableReorder={false} // Initiatives don't have sort_order field
       showAllBlocks
       showToday

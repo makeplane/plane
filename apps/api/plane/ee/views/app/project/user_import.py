@@ -16,9 +16,9 @@ import logging
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import allow_permission, ROLE
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Workspace, Project, FileAsset
+from plane.permissions import can, ProjectMemberPermissions
 from plane.utils.porters import DataImporter, CSVFormatter, ProjectMemberImportSerializer
 from plane.ee.views.app.workspace.user_import import fetch_file_from_storage
 from plane.payment.flags.flag import FeatureFlag
@@ -31,7 +31,7 @@ class ProjectMembersImportEndpoint(BaseAPIView):
     """Import workspace members into a project from CSV."""
 
     @check_feature_flag(FeatureFlag.PROJECT_MEMBERS_IMPORT)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(ProjectMemberPermissions.INVITE, resource_param="project_id")
     def post(self, request, slug, project_id):
         asset_id = request.data.get("asset_id")
         if not asset_id:
@@ -93,5 +93,3 @@ class ProjectMembersImportEndpoint(BaseAPIView):
                 "skipped_details": skipped,
             }
         )
-
-

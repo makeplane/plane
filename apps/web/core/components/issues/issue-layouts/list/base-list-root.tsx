@@ -16,20 +16,21 @@ import { useCallback, useEffect, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane constants
-import { EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueFilterType } from "@plane/constants";
 // types
-import type { GroupByColumnTypes, TGroupedIssues, TIssueKanbanFilters } from "@plane/types";
+import type { GroupByColumnTypes, TGroupedIssues, TIssue, TIssueKanbanFilters } from "@plane/types";
 import { EIssueLayoutTypes, EIssuesStoreType } from "@plane/types";
 // constants
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkflows } from "@/hooks/store/use-workflows";
-import { useUserPermissions } from "@/hooks/store/user";
 // hooks
 import { useGroupIssuesDragNDrop } from "@/hooks/use-group-dragndrop";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // components
 import { IssueLayoutHOC } from "../issue-layout-HOC";
 import { computeStateIdAllowlist } from "@/helpers/work-item-layout";
@@ -54,20 +55,22 @@ type ListStoreType =
 interface IBaseListRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   viewId?: string | undefined;
-  isCompletedCycle?: boolean;
   isEpic?: boolean;
 }
 export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot) {
-  const {
-    QuickActions,
-    viewId,
-    addIssuesToView,
-    canEditPropertiesBasedOnProject,
-    isCompletedCycle = false,
-    isEpic = false,
-  } = props;
+  const { QuickActions, viewId, addIssuesToView, getWorkItemPermissions, layoutPermissions, isEpic = false } = props;
   // router
   const storeType = useIssueStoreType() as ListStoreType;
   //stores
@@ -83,7 +86,6 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
     restoreIssue,
   } = useIssuesActions(storeType);
   // mobx store
-  const { allowPermissions } = useUserPermissions();
   const { getWorkItemById } = useIssues();
 
   const displayFilters = issuesFilter?.issueFilters?.displayFilters;
@@ -130,40 +132,25 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
   }, [storeType, fetchIssues, group_by, viewId]);
 
   const groupedIssueIds = issues?.groupedIssueIds as TGroupedIssues | undefined;
-  // auth
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-  const { enableInlineEditing, enableQuickAdd, enableIssueCreation } = issues?.viewFlags || {};
-
-  const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
-      const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
-
-      return !!enableInlineEditing && isEditingAllowedBasedOnProject;
-    },
-    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
-  );
 
   const handleOnDrop = useGroupIssuesDragNDrop(storeType, orderBy, group_by);
 
   const renderQuickActions: TRenderQuickActions = useCallback(
-    ({ issue, parentRef }) => (
-      <QuickActions
-        parentRef={parentRef}
-        issue={issue}
-        handleDelete={async () => removeIssue(issue.project_id, issue.id)}
-        handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
-        handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
-        handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
-        handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-        readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
-      />
-    ),
+    ({ issue, parentRef }) => {
+      return (
+        <QuickActions
+          parentRef={parentRef}
+          issue={issue}
+          handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+          handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+          handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
+          handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+          handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+        />
+      );
+    },
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-    [isCompletedCycle, canEditProperties, removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
+    [removeIssue, updateIssue, removeIssueFromView, archiveIssue, restoreIssue]
   );
 
   const loadMoreIssues = useCallback(
@@ -207,11 +194,9 @@ export const BaseListRoot = observer(function BaseListRoot(props: IBaseListRoot)
           loadMoreIssues={loadMoreIssues}
           showEmptyGroup={showEmptyGroup}
           quickAddCallback={quickAddIssue}
-          enableIssueQuickAdd={!!enableQuickAdd}
-          canEditProperties={canEditProperties}
-          disableIssueCreation={!enableIssueCreation || !isEditingAllowed}
+          layoutPermissions={layoutPermissions}
+          getWorkItemPermissions={getWorkItemPermissions}
           addIssuesToView={addIssuesToView}
-          isCompletedCycle={isCompletedCycle}
           handleOnDrop={handleOnDrop}
           handleCollapsedGroups={handleCollapsedGroups}
           collapsedGroups={collapsedGroups}

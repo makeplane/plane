@@ -41,7 +41,7 @@ from plane.ee.models import (
     NodeTypeChoices,
     AutomationProjectAssociation,
 )
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ProjectAutomationPermissions, WorkspaceAutomationPermissions
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.utils.exception_logger import log_exception
@@ -86,7 +86,7 @@ class AutomationEndpoint(BaseAPIView):
         return data
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectAutomationPermissions.VIEW, resource_param="project_id")
     def get(self, request: Request, slug: str, project_id: uuid.UUID, pk=None):
         if pk:
             automation = (
@@ -126,7 +126,7 @@ class AutomationEndpoint(BaseAPIView):
         return Response(automation_data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN])
+    @can(ProjectAutomationPermissions.CREATE, resource_param="project_id")
     def post(self, request: Request, slug: str, project_id: uuid.UUID):
         data = request.data.copy()
         data["project_ids"] = [project_id]
@@ -182,7 +182,7 @@ class AutomationEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN])
+    @can(ProjectAutomationPermissions.EDIT, resource_param="pk")
     def patch(self, request: Request, slug: str, project_id: uuid.UUID, pk: uuid.UUID):
         automation = (
             Automation.objects.filter(
@@ -236,7 +236,7 @@ class AutomationEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN])
+    @can(ProjectAutomationPermissions.DELETE, resource_param="pk")
     def delete(self, request: Request, slug: str, project_id: uuid.UUID, pk: uuid.UUID):
         automation = Automation.objects.get(
             id=pk,
@@ -298,7 +298,7 @@ class WorkspaceAutomationsEndpoint(BaseAPIView):
         return data
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.VIEW, resource_param="workspace_id")
     def get(self, request: Request, slug: str, pk=None):
         if pk:
             automation = (
@@ -335,7 +335,7 @@ class WorkspaceAutomationsEndpoint(BaseAPIView):
         return Response(automation_data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.CREATE, resource_param="workspace_id")
     def post(self, request: Request, slug: str):
         workspace = Workspace.objects.get(slug=slug)
         serializer = AutomationWriteSerializer(data=request.data)
@@ -389,7 +389,7 @@ class WorkspaceAutomationsEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.EDIT, resource_param="pk")
     def patch(self, request: Request, slug: str, pk: uuid.UUID):
         automation = (
             Automation.objects.filter(
@@ -439,7 +439,7 @@ class WorkspaceAutomationsEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.DELETE, resource_param="pk")
     def delete(self, request: Request, slug: str, pk: uuid.UUID):
         automation = Automation.objects.get(
             id=pk,
@@ -472,7 +472,7 @@ class AutomationStatusEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN])
+    @can(ProjectAutomationPermissions.EDIT, resource_param="pk")
     def post(self, request, slug, project_id, pk: uuid.UUID):
         automation = Automation.objects.get(
             pk=pk, workspace__slug=slug, automation_projects__project_id=project_id, is_global=False
@@ -510,7 +510,7 @@ class WorkspaceAutomationStatusEndpoint(BaseAPIView):
     """
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.EDIT, resource_param="pk")
     def post(self, request, slug, pk: uuid.UUID):
         automation = Automation.objects.get(pk=pk, workspace__slug=slug)
 

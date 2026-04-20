@@ -14,6 +14,7 @@
 import { Link } from "react-router";
 import { PinOff } from "lucide-react";
 // plane imports
+import type { ProjectResourceKey } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 import { ContextMenu } from "@plane/propel/context-menu";
 import { SetAsDefaultIcon } from "@plane/propel/icons";
@@ -26,8 +27,8 @@ export type TTabNavigationVisibleItemProps = {
   item: TNavigationItem;
   isActive: boolean;
   tabPreferences: TTabPreferences;
-  onToggleDefault: (tabKey: string) => void;
-  onHide: (tabKey: string) => void;
+  onToggleDefault: (tabKey: ProjectResourceKey) => void;
+  onHide: (tabKey: ProjectResourceKey) => void;
   itemRef?: (el: HTMLDivElement | null) => void;
 };
 

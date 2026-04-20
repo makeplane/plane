@@ -41,7 +41,6 @@ class ProjectProperties(BaseModel):
     issue_views_view: Optional[bool] = None
     page_view: Optional[bool] = None
     intake_view: Optional[bool] = None
-    guest_view_all_features: Optional[bool] = None
     archive_in: Optional[int] = None
     close_in: Optional[int] = None
     timezone: Optional[str] = None

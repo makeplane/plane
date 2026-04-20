@@ -11,13 +11,62 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 // components
 import { BaseSpreadsheetRoot } from "@/components/issues/issue-layouts/table/base-spreadsheet-root";
-// plane web imports
 import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
+// hooks
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const EpicSpreadsheetLayout = observer(function EpicSpreadsheetLayout() {
-  return <BaseSpreadsheetRoot QuickActions={ProjectEpicQuickActions} isEpic />;
+type TEpicSpreadsheetLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const EpicSpreadsheetLayout = observer(function EpicSpreadsheetLayout(props: TEpicSpreadsheetLayoutProps) {
+  const { workspaceSlug, projectId } = props;
+  // store hooks
+  const { permissions } = useEpics();
+
+  return (
+    <BaseSpreadsheetRoot
+      QuickActions={(props) => (
+        <ProjectEpicQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canRestore: permissions.getCanRestore(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
+      layoutPermissions={{
+        canQuickAddWorkItem: permissions.getCanCreate(workspaceSlug, projectId),
+        canPerformBulkOps: false,
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
+      isEpic
+    />
+  );
 });

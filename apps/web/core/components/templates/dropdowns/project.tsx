@@ -36,13 +36,12 @@ export type TProjectTemplateDropdownSize = "xs" | "sm";
 type TProjectTemplateDropdownProps = {
   workspaceSlug: string;
   templateId: string | null;
-  disabled?: boolean;
   size?: TProjectTemplateDropdownSize;
   placeholder?: string;
   optionTooltip?: TProjectTemplateOptionTooltip;
   buttonClassName?: string;
   customLabelContent?: React.ReactNode;
-  showCreateNewTemplate?: boolean;
+  canCreateTemplate: boolean;
   handleTemplateChange: (value: string) => void;
   handleRedirection?: () => void;
 };
@@ -51,13 +50,12 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
   const {
     workspaceSlug,
     templateId,
-    disabled = false,
     size = "sm",
     placeholder,
     optionTooltip,
     buttonClassName,
     customLabelContent,
-    showCreateNewTemplate = false,
+    canCreateTemplate = false,
     handleTemplateChange,
     handleRedirection,
   } = props;
@@ -103,7 +101,7 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
   );
 
   const redirectToCreateTemplatePage = () => {
-    if (!showCreateNewTemplate) return;
+    if (!canCreateTemplate) return;
 
     const createTemplateSettingsPath = getCreateUpdateTemplateSettingsPath({
       type: ETemplateType.PROJECT,
@@ -157,10 +155,9 @@ export const ProjectTemplateDropdown = observer(function ProjectTemplateDropdown
       className="w-full h-full flex"
       optionsClassName="w-44 space-y-1.5"
       customButtonClassName={cn("rounded-sm text-body-xs-regular", buttonClassName)}
-      disabled={disabled}
       noResultsMessage={t("templates.dropdown.no_results.project")}
       footerOption={
-        showCreateNewTemplate ? (
+        canCreateTemplate ? (
           <Button
             variant="ghost"
             className="flex w-full justify-start items-center gap-1 px-1 py-1.5 rounded-sm text-caption-sm-medium text-secondary hover:bg-layer-transparent-hover"

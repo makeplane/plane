@@ -43,12 +43,13 @@ type TSendWorkspaceInvitationModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: IWorkspaceBulkInviteFormData) => Promise<void> | undefined;
+  canAddSeats: boolean;
 };
 
 export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvitationModal(
   props: TSendWorkspaceInvitationModalProps
 ) {
-  const { isOpen, onClose, onSubmit } = props;
+  const { isOpen, onClose, onSubmit, canAddSeats } = props;
   // states
   const [currentStep, setCurrentStep] = useState<TModalStep>("INVITE_MEMBERS");
   // store hooks
@@ -127,7 +128,10 @@ export const SendWorkspaceInvitationModal = observer(function SendWorkspaceInvit
             remove={remove}
           />
           {isInvitationLimitReached && (
-            <InvitationLimitReactInfo handleAddMoreSeats={() => setCurrentStep("ADD_SEATS")} />
+            <InvitationLimitReactInfo
+              handleAddMoreSeats={() => setCurrentStep("ADD_SEATS")}
+              canAddSeats={canAddSeats}
+            />
           )}
         </InvitationForm>
       ) : (

@@ -28,11 +28,22 @@ type TRepliesList = {
   activityOperations: TCommentsOperations;
   showAccessSpecifier: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
+  permissions: {
+    canReact: boolean;
+  };
 };
 
 export const RepliesList = observer(function RepliesList(props: TRepliesList) {
-  const { workspaceSlug, projectId, entityId, commentId, activityOperations, showAccessSpecifier, setIsExpanded } =
-    props;
+  const {
+    workspaceSlug,
+    projectId,
+    entityId,
+    commentId,
+    activityOperations,
+    showAccessSpecifier,
+    setIsExpanded,
+    permissions,
+  } = props;
   // store hooks
   const { comment } = useIssueDetail();
   const repliesStore = comment.replies;
@@ -55,6 +66,7 @@ export const RepliesList = observer(function RepliesList(props: TRepliesList) {
           activityOperations={activityOperations}
           showAccessSpecifier={showAccessSpecifier}
           projectId={projectId}
+          permissions={permissions}
         />
       ))}
       <div className="relative ml-2 pl-4 pt-1">

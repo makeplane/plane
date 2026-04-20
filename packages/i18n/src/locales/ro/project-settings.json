@@ -22,10 +22,6 @@
       "label": "Membri",
       "project_lead": "Lider de proiect",
       "default_assignee": "Persoană atribuită implicit",
-      "guest_super_permissions": {
-        "title": "Acordă acces la perspectivă pentru toți utilizatorii de tip Invitat:",
-        "sub_heading": "Aceasta va permite utilizatorilor din categoria Invitați să vadă toate activitățile din proiect."
-      },
       "invite_members": {
         "title": "Invită membri",
         "sub_heading": "Invită membri să lucreze la proiectul tău.",

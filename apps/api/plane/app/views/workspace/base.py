@@ -35,9 +35,8 @@ from rest_framework.response import Response
 
 from plane.app.permissions import (
     WorkSpaceAdminPermission,
-    WorkSpaceBasePermission,
-    WorkspaceEntityPermission,
 )
+from plane.permissions import can, WorkspacePermissions, WorkspaceUserActivityPermissions
 
 # Module imports
 from plane.app.serializers import (
@@ -55,7 +54,6 @@ from plane.db.models import (
     Profile,
 )
 from plane.ee.models import WorkspaceLicense
-from plane.app.permissions import ROLE, allow_permission
 from plane.utils.constants import RESTRICTED_WORKSPACE_SLUGS
 from plane.license.utils.instance_value import get_configuration_value
 from plane.bgtasks.workspace_seed_task import workspace_seed
@@ -70,7 +68,6 @@ from plane.payment.utils.workspace_license_request import resync_workspace_licen
 class WorkSpaceViewSet(BaseViewSet):
     model = Workspace
     serializer_class = WorkSpaceSerializer
-    permission_classes = [WorkSpaceBasePermission]
 
     search_fields = ["name"]
     filterset_fields = ["owner"]
@@ -85,6 +82,14 @@ class WorkSpaceViewSet(BaseViewSet):
             .values("count")
         )
 
+        role = WorkspaceMember.objects.filter(
+            workspace=OuterRef("id"), member=self.request.user, is_active=True
+        ).values("role")
+
+        role_slug = WorkspaceMember.objects.filter(
+            workspace=OuterRef("id"), member=self.request.user, is_active=True
+        ).values("role_ref__slug")
+
         return (
             self.filter_queryset(super().get_queryset().select_related("owner"))
             .order_by("name")
@@ -92,7 +97,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 workspace_member__member=self.request.user,
                 workspace_member__is_active=True,
             )
-            .annotate(total_members=member_count)
+            .annotate(total_members=member_count, role=Subquery(role), role_slug=Subquery(role_slug))
         )
 
     def create(self, request):
@@ -137,11 +142,17 @@ class WorkSpaceViewSet(BaseViewSet):
 
             if serializer.is_valid(raise_exception=True):
                 serializer.save(owner=request.user)
+                # Look up the owner role created by Workspace._create_system_roles()
+                from plane.permissions.system_roles import get_workspace_roles_for_workspace
+
+                ws_roles = get_workspace_roles_for_workspace(serializer.data["id"])
+                owner_role = ws_roles.get("owner")
                 # Create Workspace member
                 _ = WorkspaceMember.objects.create(
                     workspace_id=serializer.data["id"],
                     member=request.user,
                     role=20,
+                    role_ref=owner_role,
                     company_role=request.data.get("company_role", ""),
                 )
 
@@ -150,6 +161,7 @@ class WorkSpaceViewSet(BaseViewSet):
                 data = serializer.data
                 data["total_members"] = total_members
                 data["role"] = 20
+                data["role_slug"] = "owner"
 
                 # Resync workspace license if self-hosted to reflect the new workspace in the payment server
                 if settings.IS_SELF_MANAGED:
@@ -187,11 +199,17 @@ class WorkSpaceViewSet(BaseViewSet):
                     status=status.HTTP_409_CONFLICT,
                 )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    # TODO: Unused endpoint — not called by FE (uses UserWorkSpacesEndpoint).
+    # Migrate to @can before re-enabling.
+    # @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    # def list(self, request, *args, **kwargs):
+    #     return super().list(request, *args, **kwargs)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @can(WorkspacePermissions.EDIT, resource_param="workspace_id")
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
 
@@ -202,6 +220,7 @@ class WorkSpaceViewSet(BaseViewSet):
         Profile.objects.filter(last_workspace_id=id).update(last_workspace_id=None)
         return
 
+    @can(WorkspacePermissions.DELETE, resource_param="workspace_id")
     def destroy(self, request, *args, **kwargs):
         # Get the workspace
         workspace = self.get_object()
@@ -274,6 +293,10 @@ class UserWorkSpacesEndpoint(BaseAPIView):
             "role"
         )
 
+        role_slug = WorkspaceMember.objects.filter(
+            workspace=OuterRef("id"), member=request.user, is_active=True
+        ).values("role_ref__slug")
+
         workspaces = (
             Workspace.objects.prefetch_related(
                 Prefetch(
@@ -281,7 +304,7 @@ class UserWorkSpacesEndpoint(BaseAPIView):
                     queryset=WorkspaceMember.objects.filter(member=request.user, is_active=True),
                 )
             )
-            .annotate(role=role, total_members=member_count)
+            .annotate(role=role, role_slug=Subquery(role_slug), total_members=member_count)
             .filter(workspace_member__member=request.user, workspace_member__is_active=True)
             .annotate(
                 current_plan=Subquery(WorkspaceLicense.objects.filter(workspace_id=OuterRef("id")).values("plan")[:1]),
@@ -325,6 +348,7 @@ class WeekInMonth(Func):
 
 
 class UserWorkspaceDashboardEndpoint(BaseAPIView):
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         issue_activities = (
             IssueActivity.objects.filter(
@@ -413,6 +437,8 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
         )
 
 
+# TODO: Unused endpoint — not called by FE. URLs commented out.
+# Migrate to @can before re-enabling.
 class WorkspaceThemeViewSet(BaseViewSet):
     permission_classes = [WorkSpaceAdminPermission]
     model = WorkspaceTheme
@@ -431,8 +457,6 @@ class WorkspaceThemeViewSet(BaseViewSet):
 
 
 class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
-
     def generate_csv_from_rows(self, rows):
         """Generate CSV buffer from rows."""
         csv_buffer = io.StringIO()
@@ -442,6 +466,7 @@ class ExportWorkspaceUserActivityEndpoint(BaseAPIView):
         csv_buffer.seek(0)
         return csv_buffer
 
+    @can(WorkspaceUserActivityPermissions.EXPORT, resource_param="workspace_id")
     def post(self, request, slug, user_id):
         if not request.data.get("date"):
             return Response({"error": "Date is required"}, status=status.HTTP_400_BAD_REQUEST)

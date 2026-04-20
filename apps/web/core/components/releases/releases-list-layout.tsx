@@ -23,7 +23,12 @@ import { ReleaseLayoutHOC } from "./release-layout-HOC";
 
 type ReleaseListItem = Release & IBaseLayoutsListItem;
 
-export const ReleasesListLayout = observer(function ReleasesListLayout() {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const ReleasesListLayout = observer(function ReleasesListLayout(props: Props) {
+  const { workspaceSlug } = props;
   const { release: releaseStore } = useReleases();
 
   const releasesMap: Record<string, ReleaseListItem> = {};
@@ -45,7 +50,10 @@ export const ReleasesListLayout = observer(function ReleasesListLayout() {
     }));
   }, []);
 
-  const renderItem = useCallback((release: ReleaseListItem) => <ReleaseBlock key={release.id} release={release} />, []);
+  const renderItem = useCallback(
+    (release: ReleaseListItem) => <ReleaseBlock key={release.id} release={release} workspaceSlug={workspaceSlug} />,
+    [workspaceSlug]
+  );
 
   return (
     <ReleaseLayoutHOC>

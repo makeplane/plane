@@ -23,6 +23,7 @@ import { ProjectDropdown } from "@/components/dropdowns/project/dropdown";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 // types
 import type { TInitiative } from "@/types/initiative";
+import type { TInitiativeProperty } from "@/store/initiatives/permissions/root";
 // local components
 import { InitiativeEpicsField } from "./initiative-epics-field";
 import { InitiativeDateRangeDropdown } from "./initiative-date-range-dropdown";
@@ -34,17 +35,17 @@ type Props = {
   initiative: TInitiative;
   isSidebarCollapsed: boolean | undefined;
   workspaceSlug: string;
+  canEditProperty: (property: TInitiativeProperty) => boolean;
 };
 
 export const InitiativesBlockProperties = observer(function InitiativesBlockProperties(props: Props) {
-  const { initiative, isSidebarCollapsed, workspaceSlug } = props;
+  const { initiative, isSidebarCollapsed, workspaceSlug, canEditProperty } = props;
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const {
     initiative: { updateInitiative, getInitiativesLabels, createInitiativeLabel, fetchInitiativeAnalytics },
   } = useInitiatives();
-
   // derived values
   const initiativeLabels = getInitiativesLabels(workspaceSlug);
   const disabled = !!initiative?.archived_at;
@@ -104,7 +105,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
 
   return (
     <div
-      className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:flex-grow md:flex-shrink-0" : "lg:flex-grow lg:flex-shrink-0"} items-center gap-2 whitespace-nowrap`}
+      className={`relative flex flex-wrap ${isSidebarCollapsed ? "md:grow md:shrink-0" : "lg:grow lg:shrink-0"} items-center gap-2 whitespace-nowrap`}
       // Prevent click events from bubbling to parent initiative block.
       // This is necessary to avoid triggering parent click handlers (e.g., for closing or selecting the block)
       onClick={(e) => e.stopPropagation()}
@@ -123,7 +124,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
           multiple
           buttonVariant="border-with-text"
           showTooltip
-          disabled={disabled}
+          disabled={!canEditProperty("project_ids")}
         />
       </PropertyBlockWrapper>
       {/* epics */}
@@ -145,7 +146,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
           placeholder="Lead"
           showUserDetails
           optionsClassName="z-10"
-          disabled={disabled}
+          disabled={!canEditProperty("lead")}
         />
       </PropertyBlockWrapper>
       {/* state */}
@@ -156,7 +157,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
             placeholder="State"
             size="xs"
             onChange={(state) => updateInitiative?.(workspaceSlug, initiative.id, { state })}
-            disabled={disabled}
+            disabled={!canEditProperty("state")}
           />
         </PropertyBlockWrapper>
       )}
@@ -169,7 +170,7 @@ export const InitiativesBlockProperties = observer(function InitiativesBlockProp
           onAddLabel={createLabel}
           placeholder=""
           size="xs"
-          disabled={disabled}
+          disabled={!canEditProperty("label_ids")}
         />
       </PropertyBlockWrapper>
     </div>

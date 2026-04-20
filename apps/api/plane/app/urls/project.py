@@ -14,17 +14,13 @@ from django.urls import path
 from plane.app.views import (
     ProjectViewSet,
     DeployBoardViewSet,
-    ProjectInvitationsViewset,
     ProjectMemberViewSet,
-    ProjectMemberUserEndpoint,
     ProjectJoinEndpoint,
     ProjectUserViewsEndpoint,
     ProjectIdentifierEndpoint,
     ProjectFavoritesViewSet,
-    UserProjectInvitationsViewset,
-    UserProjectRolesEndpoint,
+    UserProjectJoinEndpoint,
     ProjectArchiveUnarchiveEndpoint,
-    ProjectMemberPreferenceEndpoint,
     ProjectLabelsEndpoint,
     ProjectLabelDetailEndpoint,
     ProjectSubscriberEndpoint,
@@ -59,25 +55,21 @@ project_patterns = [
         ProjectIdentifierEndpoint.as_view(),
         name="project-identifiers",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/",
-        ProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="project-member-invite",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/<uuid:pk>/",
-        ProjectInvitationsViewset.as_view({"get": "retrieve", "delete": "destroy"}),
-        name="project-member-invite",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/",
+    #     ProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
+    #     name="project-member-invite",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/invitations/<uuid:pk>/",
+    #     ProjectInvitationsViewset.as_view({"get": "retrieve", "delete": "destroy"}),
+    #     name="project-member-invite",
+    # ),
     path(
         "users/me/workspaces/<str:slug>/projects/join/",
-        UserProjectInvitationsViewset.as_view({"get": "list", "post": "create"}),
-        name="user-project-invitations",
-    ),
-    path(
-        "users/me/workspaces/<str:slug>/project-roles/",
-        UserProjectRolesEndpoint.as_view(),
-        name="user-project-roles",
+        UserProjectJoinEndpoint.as_view(),
+        name="user-project-join",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/join/<uuid:pk>/",
@@ -99,20 +91,16 @@ project_patterns = [
         ProjectMemberViewSet.as_view({"post": "leave"}),
         name="project-member",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
-        ProjectMemberPreferenceEndpoint.as_view(),
-        name="project-member-preference",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
+    #     ProjectMemberPreferenceEndpoint.as_view(),
+    #     name="project-member-preference",
+    # ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/project-views/",
         ProjectUserViewsEndpoint.as_view(),
         name="project-view",
-    ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/project-members/me/",
-        ProjectMemberUserEndpoint.as_view(),
-        name="project-member-view",
     ),
     path(
         "workspaces/<str:slug>/user-favorite-projects/",
@@ -139,11 +127,12 @@ project_patterns = [
         ProjectArchiveUnarchiveEndpoint.as_view(),
         name="project-archive-unarchive",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
-        ProjectMemberPreferenceEndpoint.as_view(),
-        name="project-member-preference",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/preferences/member/<uuid:member_id>/",
+    #     ProjectMemberPreferenceEndpoint.as_view(),
+    #     name="project-member-preference",
+    # ),
 ]
 
 project_label_patterns = [

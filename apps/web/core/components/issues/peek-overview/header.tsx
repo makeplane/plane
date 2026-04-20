@@ -71,7 +71,6 @@ export type PeekOverviewHeaderProps = {
   projectId: string;
   issueId: string;
   isArchived: boolean;
-  disabled: boolean;
   embedIssue: boolean;
   toggleVotingMembersModal: (value: boolean) => void;
   toggleDeleteIssueModal: (value: boolean) => void;
@@ -80,6 +79,15 @@ export type PeekOverviewHeaderProps = {
   toggleEditIssueModal: (value: boolean) => void;
   handleRestoreIssue: () => Promise<void>;
   isSubmitting: TNameDescriptionLoader;
+  permissions: {
+    canEdit: boolean;
+    canSubscribe: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDuplicate: boolean;
+    canConvertToEpic: boolean;
+  };
 };
 
 export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader(props: PeekOverviewHeaderProps) {
@@ -90,7 +98,6 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     projectId,
     issueId,
     isArchived,
-    disabled,
     embedIssue = false,
     removeRoutePeekId,
     toggleVotingMembersModal,
@@ -100,6 +107,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     toggleEditIssueModal,
     handleRestoreIssue,
     isSubmitting,
+    permissions,
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -225,13 +233,18 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
             />
           )}
           {currentUser && !isArchived && (
-            <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+            <IssueSubscription
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              canSubscribe={permissions.canSubscribe}
+            />
           )}
           <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
             <ConvertWorkItemAction
               workItemId={issueId}
               conversionType={EWorkItemConversionType.EPIC}
-              disabled={disabled || isArchived}
+              canConvert={permissions.canConvertToEpic}
             />
           </WithFeatureFlagHOC>
           {currentUser && issueDetails?.sequence_id && projectIdentifier && (
@@ -255,11 +268,11 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
               handleDelete={handleDeleteIssue}
               handleArchive={handleArchiveIssue}
               handleRestore={handleRestoreIssue}
-              readOnly={disabled}
               toggleDeleteIssueModal={toggleDeleteIssueModal}
               toggleArchiveIssueModal={toggleArchiveIssueModal}
               toggleDuplicateIssueModal={toggleDuplicateIssueModal}
               toggleEditIssueModal={toggleEditIssueModal}
+              permissions={permissions}
               isPeekMode
             />
           )}

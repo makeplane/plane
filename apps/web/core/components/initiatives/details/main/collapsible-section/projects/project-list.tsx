@@ -14,21 +14,34 @@
 import { observer } from "mobx-react";
 // local components
 import { ProjectItem } from "./project-list-item";
+import type { TProjectProperty } from "@/store/project/permissions/root";
 
 type ProjectListProps = {
   workspaceSlug: string;
   projectIds: string[];
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canRemove: boolean;
+    canEditProperty: (projectId: string, property: TProjectProperty) => boolean;
+  };
 };
 
 export const ProjectList = observer(function ProjectList(props: ProjectListProps) {
-  const { workspaceSlug, projectIds, initiativeId } = props;
+  const { workspaceSlug, projectIds, initiativeId, permissions } = props;
 
   return (
     <>
       {projectIds.map((projectId) => (
-        <ProjectItem key={projectId} workspaceSlug={workspaceSlug} projectId={projectId} initiativeId={initiativeId} />
+        <ProjectItem
+          key={projectId}
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          initiativeId={initiativeId}
+          permissions={{
+            canRemove: permissions.canRemove,
+            canEditProperty: (property: TProjectProperty) => permissions.canEditProperty(projectId, property),
+          }}
+        />
       ))}
     </>
   );

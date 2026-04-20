@@ -200,7 +200,7 @@ export class SlackStore extends IntegrationBaseStore implements ISlackStore {
 
     // Auto-complete getting started checklist
     if (workspaceSlug) {
-      void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
+      void this.rootStore.preferencesRoot.workspace.updateChecklistIfNotDoneAlready(
         workspaceSlug.toString(),
         "integration_linked"
       );

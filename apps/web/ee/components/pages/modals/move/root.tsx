@@ -16,15 +16,13 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EPageAccess, EUserWorkspaceRoles } from "@plane/types";
+import { EPageAccess } from "@plane/types";
 import type { TMovePageActions, TMovePageEntity } from "@plane/types";
 import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // ce imports
 import type { TMovePageModalProps } from "@/ce/components/pages";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { EPageStoreType, useCollection, useFlag, usePageStore, useWorkspaceFeatures } from "@/plane-web/hooks/store";
@@ -52,20 +50,17 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
   const { t } = useTranslation();
   // store hooks
   const { movePage } = usePageStore(EPageStoreType.PROJECT);
-  const { getOrFetchPageInstance, getPageById, removePageInstance } = usePageStore(EPageStoreType.WORKSPACE);
+  const { getOrFetchPageInstance, getPageById, removePageInstance, getCanCreatePage } = usePageStore(
+    EPageStoreType.WORKSPACE
+  );
   const collectionStore = useCollection();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const { access, id, is_shared, archived_at } = page;
   const canPageBeMovedToTeamspace = access === EPageAccess.PUBLIC && !is_shared && !archived_at;
   const isWikiEnabled = useFlag(workspaceSlug?.toString() ?? "", "WORKSPACE_PAGES");
-  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
-  const canCreateWikiPage = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
+  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
+  const canCreateWikiPage = workspaceSlug ? getCanCreatePage(workspaceSlug) : false;
   const canPageBeMovedToWiki =
     !!workspaceSlug &&
     !!(projectId || teamspaceId) &&
@@ -219,6 +214,7 @@ export const MovePageModal = observer(function MovePageModal(props: TMovePageMod
           canPageBeMovedToTeamspace={canPageBeMovedToTeamspace}
           canPageBeMovedToWiki={canPageBeMovedToWiki}
           searchTerm={searchTerm}
+          workspaceSlug={workspaceSlug}
         />
       </Combobox>
       <MovePageModalFooter

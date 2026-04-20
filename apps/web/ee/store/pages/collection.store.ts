@@ -14,7 +14,6 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EPageAccess } from "@plane/types";
 import type {
   TCollection,
@@ -156,6 +155,8 @@ export interface ICollectionStore {
   addPageToCollection: (workspaceSlug: string, pageId: string, targetCollectionId: string) => Promise<void>;
   removePageFromCollection: (workspaceSlug: string, pageId: string, sourceCollectionId: string) => Promise<void>;
   removeExplicitPageCollectionsFromStore: (pageIds: Iterable<string>) => void;
+  getCanCreateCollection: (workspaceSlug: string) => boolean;
+  getCanEditCollection: (workspaceSlug: string, collectionId: string) => boolean;
   canCurrentUserAddPageToCollection: (pageId: string) => boolean;
   canCurrentUserReorderPageInCollection: (pageId: string, collectionId: string) => boolean;
   canCurrentUserRemovePageFromCollection: (collectionId: string, pageId: string) => boolean;
@@ -365,17 +366,6 @@ export class CollectionStore implements ICollectionStore {
         this.branchRequestVersions.delete(key);
       }
     });
-  };
-
-  private isCurrentUserWorkspaceAdmin = () => {
-    const { workspaceSlug } = this.store.router;
-    if (!workspaceSlug) return false;
-
-    return this.store.user.permission.allowPermissions(
-      [EUserPermissions.ADMIN],
-      EUserPermissionsLevel.WORKSPACE,
-      workspaceSlug
-    );
   };
 
   private isPageEligibleForCollection = (
@@ -1719,37 +1709,61 @@ export class CollectionStore implements ICollectionStore {
     });
   };
 
-  private canCurrentUserManageCollectionPage = (
-    pageId: string,
-    options: { requirePublic?: boolean; disallowSharedForNonOwner?: boolean } = {}
-  ) => {
+  getCanCreateCollection: ICollectionStore["getCanCreateCollection"] = computedFn((workspaceSlug) =>
+    this.store.permissionAccessStore.can({
+      resource: "wiki_collection",
+      action: "create",
+      workspaceSlug,
+    })
+  );
+
+  getCanEditCollection: ICollectionStore["getCanEditCollection"] = computedFn((workspaceSlug, collectionId) =>
+    this.store.permissionAccessStore.can({
+      resource: "wiki_collection",
+      action: "edit",
+      workspaceSlug,
+      resourceMeta: { resourceId: collectionId },
+    })
+  );
+
+  canCurrentUserAddPageToCollection = computedFn((pageId: string) => {
+    const page = this.store.workspacePages.getPageById(pageId);
+    if (!page?.id) return false;
+    if (!page.canCurrentUserEditPage || !page.isContentEditable || !!page.archived_at) return false;
+    if (page.access !== EPageAccess.PUBLIC) return false;
+    // Shared pages can only be added by their owner
+    if (page.is_shared && !page.isCurrentUserOwner) return false;
+
+    if (page.isCurrentUserOwner) return true;
+    // Resolve the page's current collection to check edit permission on it
+    if (!page.workspaceSlug) return false;
+    const effectiveCollectionId = this.getEffectiveCollectionId(page.id);
+    if (effectiveCollectionId) {
+      return this.getCanEditCollection(page.workspaceSlug, effectiveCollectionId);
+    }
+    // No collection context — fall back to create permission (adding to a new collection)
+    return this.getCanCreateCollection(page.workspaceSlug);
+  });
+
+  canCurrentUserReorderPageInCollection = computedFn((pageId: string, collectionId: string) => {
     const page = this.store.workspacePages.getPageById(pageId);
     if (!page?.id) return false;
     if (!page.canCurrentUserEditPage || !page.isContentEditable || !!page.archived_at) return false;
 
-    const isWorkspaceAdmin = this.isCurrentUserWorkspaceAdmin();
-    const isOwner = page.isCurrentUserOwner;
+    return (
+      page.isCurrentUserOwner || (!!page.workspaceSlug && this.getCanEditCollection(page.workspaceSlug, collectionId))
+    );
+  });
 
-    if (options.requirePublic && page.access !== EPageAccess.PUBLIC) return false;
-    if (options.disallowSharedForNonOwner && !isWorkspaceAdmin && page.is_shared && !isOwner) return false;
+  canCurrentUserRemovePageFromCollection = computedFn((collectionId: string, pageId: string) => {
+    const page = this.store.workspacePages.getPageById(pageId);
+    if (!page?.id) return false;
+    if (!page.canCurrentUserEditPage || !page.isContentEditable || !!page.archived_at) return false;
 
-    return isWorkspaceAdmin || isOwner;
-  };
-
-  canCurrentUserAddPageToCollection = computedFn((pageId: string) =>
-    this.canCurrentUserManageCollectionPage(pageId, {
-      requirePublic: true,
-      disallowSharedForNonOwner: true,
-    })
-  );
-
-  canCurrentUserReorderPageInCollection = computedFn((pageId: string, _collectionId: string) =>
-    this.canCurrentUserManageCollectionPage(pageId)
-  );
-
-  canCurrentUserRemovePageFromCollection = computedFn((_collectionId: string, pageId: string) =>
-    this.canCurrentUserManageCollectionPage(pageId)
-  );
+    return (
+      page.isCurrentUserOwner || (!!page.workspaceSlug && this.getCanEditCollection(page.workspaceSlug, collectionId))
+    );
+  });
 
   private computeDestinationSortOrderComputed = computedFn(
     (collectionId: string, targetPageId: string, position: "before" | "after", pageId: string | undefined) => {

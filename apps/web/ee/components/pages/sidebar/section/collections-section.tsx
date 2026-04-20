@@ -16,14 +16,12 @@ import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
 import { Loader } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/propel/collapsible";
 import { ChevronRightIcon, PlusIcon } from "@plane/propel/icons";
 import { IconButton } from "@plane/propel/icon-button";
 import { CreateCollectionModal } from "@/components/collections";
 import { COLLECTION_SWR_OPTIONS, collectionListKey } from "../../collection/swr";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { DEFAULT_WIKI_COLLECTION, DefaultWikiCollectionIcon } from "@/plane-web/components/pages/collections";
 import { EPageStoreType, useCollection, usePageStore } from "@/plane-web/hooks/store";
@@ -77,27 +75,30 @@ const DefaultCollectionItem = observer(function DefaultCollectionItem({
 
 const CollectionsSectionContent = observer(function CollectionsSectionContent() {
   const { workspaceSlug, pageId: currentPageIdParam } = useParams();
+  // router
   const pathname = usePathname();
+  // states
   const [isCreateCollectionModalOpen, setIsCreateCollectionModalOpen] = useState(false);
   const [addExistingPageCollectionId, setAddExistingPageCollectionId] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(true);
   const prefetchedBranchPageIdRef = useRef<string | null>(null);
-  const wsSlug = workspaceSlug?.toString() ?? "";
-  const isCollectionRoute = pathname?.includes("/wiki/collections/");
-  const collectionStore = useCollection();
+  // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const collectionStore = useCollection();
   const { fetchParentPages } = usePageStore(EPageStoreType.WORKSPACE);
-  const { allowPermissions } = useUserPermissions();
-  const canCreateCollections = wsSlug
-    ? allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE, wsSlug)
-    : false;
+  // derived values
+  const isCollectionRoute = pathname?.includes("/wiki/collections/");
+  const wsSlug = workspaceSlug?.toString() ?? "";
+  const canCreateCollections = wsSlug ? collectionStore.getCanCreateCollection(wsSlug) : false;
+  const currentPageId = !isCollectionRoute && currentPageIdParam ? currentPageIdParam.toString() : undefined;
 
   const { isLoading: isLoadingCollections } = useSWR(
     wsSlug ? collectionListKey(wsSlug) : null,
     wsSlug ? () => collectionStore.fetchCollections(wsSlug) : null,
     COLLECTION_SWR_OPTIONS
   );
-  const currentPageId = !isCollectionRoute && currentPageIdParam ? currentPageIdParam.toString() : undefined;
+
   const { data: parentPagesList } = useSWR(
     wsSlug && currentPageId ? ["collection-parent-pages", wsSlug, currentPageId] : null,
     wsSlug && currentPageId ? () => fetchParentPages(currentPageId) : null,

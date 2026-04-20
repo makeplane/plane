@@ -26,6 +26,7 @@ import { ISSUE_DETAILS } from "@/constants/fetch-keys";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { useIssues } from "@/hooks/store/use-issues";
 // plane web
 import { ProjectBreadcrumb } from "@/components/breadcrumbs/project/root";
 // services
@@ -46,6 +47,7 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
     issue: { getIssueIdByIdentifier },
   } = useIssueDetail();
   const { getProjectByIdentifier, getPartialProjectById, loader } = useProject();
+  const { permissions } = useIssues();
   // derived values
   const archivedIssueId = archivedIssueIdFromRouter
     ? archivedIssueIdFromRouter?.toString()
@@ -114,6 +116,15 @@ export const ProjectArchivedIssueDetailsHeader = observer(function ProjectArchiv
           workspaceSlug={workspaceSlug.toString()}
           projectId={projectId.toString()}
           issueId={archivedIssueId.toString()}
+          permissions={{
+            canEdit: permissions.getCanEdit(workspaceSlug, projectId, archivedIssueId),
+            canSubscribe: permissions.getCanSubscribe(workspaceSlug, projectId, archivedIssueId),
+            canDelete: permissions.getCanDelete(workspaceSlug, projectId, archivedIssueId),
+            canArchive: permissions.getCanArchive(workspaceSlug, projectId, archivedIssueId),
+            canRestore: permissions.getCanRestore(workspaceSlug, projectId, archivedIssueId),
+            canDuplicate: permissions.getCanDuplicate(workspaceSlug, projectId),
+            canConvertToEpic: permissions.getCanConvertToEpic(workspaceSlug, projectId, archivedIssueId),
+          }}
         />
       </Header.RightItem>
     </Header>

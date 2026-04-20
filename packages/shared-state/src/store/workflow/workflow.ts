@@ -17,6 +17,7 @@ import type {
   TWorkflowStateDependencies,
   TWorkflowStateType,
   TWorkflowUpdatePayload,
+  TWorkflowInstancePermissions,
   IWorkflow,
   TAddStatesToWorkflowPayload,
   IWorkflowService,
@@ -47,11 +48,16 @@ export class Workflow implements IWorkflow {
   activeSidebarStateId: string | null = null;
   editingTransitionIds: string[] = [];
   changeHistory: IWorkflowChangeHistoryStore;
+  permissionAccessor: () => TWorkflowInstancePermissions;
 
   statesMap: Map<string, IWorkflowState> = new Map();
   workflowService: IWorkflowService;
 
-  constructor(data: TWorkflow, _workflowService: IWorkflowService) {
+  constructor(
+    data: TWorkflow,
+    _workflowService: IWorkflowService,
+    permissionAccessor: () => TWorkflowInstancePermissions = () => ({ canEdit: false, canDelete: false })
+  ) {
     makeObservable(this, {
       id: observable.ref,
       workspace_id: observable.ref,
@@ -70,6 +76,8 @@ export class Workflow implements IWorkflow {
       activeSidebarStateId: observable.ref,
       editingTransitionIds: observable,
       changeHistory: observable.ref,
+      permissionAccessor: observable.ref,
+      permissions: computed,
       asJSON: computed,
       stateIds: computed,
       isSidebarOpen: computed,
@@ -98,6 +106,7 @@ export class Workflow implements IWorkflow {
     this.created_by = data.created_by;
     this.created_at = data.created_at;
     this.workflowService = _workflowService;
+    this.permissionAccessor = permissionAccessor;
     this.changeHistory = new WorkflowChangeHistoryStore({
       workflowId: data.id,
       projectId: data.project_id,
@@ -131,6 +140,10 @@ export class Workflow implements IWorkflow {
       created_by: this.created_by,
       created_at: this.created_at,
     };
+  }
+
+  get permissions(): TWorkflowInstancePermissions {
+    return this.permissionAccessor();
   }
 
   get stateIds(): string[] {

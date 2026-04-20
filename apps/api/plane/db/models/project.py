@@ -28,7 +28,9 @@ from django.dispatch import receiver
 from plane.bgtasks.deletion_task import soft_delete_pages_on_project_deletion
 
 # Module imports
-from plane.db.mixins import AuditModel, SoftDeletionManager, SoftDeletionQuerySet, FiltersMixin
+from plane.db.mixins import AuditModel, SoftDeletionManager, SoftDeletionQuerySet, ChangeTrackerMixin, FiltersMixin
+from plane.db.signals import post_bulk_create, post_bulk_update
+from plane.permissions.sync import PermissionSyncMixin
 
 from .base import BaseModel
 from .workspace import WorkspaceManager
@@ -130,7 +132,7 @@ class ProjectBaseManager(SoftDeletionManager):
         return self.get_queryset().accessible_to(user_id, slug)
 
 
-class Project(BaseModel):
+class Project(ChangeTrackerMixin, BaseModel):
     NETWORK_CHOICES = ((0, "Secret"), (2, "Public"))
     name = models.CharField(max_length=255, verbose_name="Project Name")
     description = models.TextField(verbose_name="Project Description", blank=True)
@@ -251,6 +253,7 @@ class Project(BaseModel):
         # Add app bots to the newly created project
         if is_adding:
             self.add_app_bots_to_project()
+
         return project
 
     def delete(self, using=None, *args, **kwargs):
@@ -353,6 +356,13 @@ class ProjectMemberInvite(ProjectBaseModel):
     message = models.TextField(null=True)
     responded_at = models.DateTimeField(null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
+    role_ref = models.ForeignKey(
+        "db.Role",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="project_member_invites",
+    )
 
     class Meta:
         verbose_name = "Project Member Invite"
@@ -370,7 +380,25 @@ class ProjectMemberSource(models.TextChoices):
     TEAMSPACE = "teamspace", "Teamspace"
 
 
-class ProjectMember(ProjectBaseModel):
+class ProjectMember(PermissionSyncMixin, ChangeTrackerMixin, ProjectBaseModel):
+    """
+    Project membership with automatic sync to ResourcePermission.
+
+    Changes to role, is_active, or deleted_at trigger sync to keep permissions up-to-date.
+
+    MRO: ProjectMember → PermissionSyncMixin → ChangeTrackerMixin → ProjectBaseModel → BaseModel
+    The save() override here calls super().save() which delegates to PermissionSyncMixin.save()
+    for permission sync. Do not reorder the mixin classes.
+    """
+
+    TRACKED_FIELDS = ["role", "role_ref_id", "is_active", "deleted_at"]
+
+    # Permission sync configuration
+    PERMISSION_SUBJECT_TYPE = "user"
+    PERMISSION_SUBJECT_ID_FIELD = "member_id"
+    PERMISSION_RESOURCE_TYPE = "project"
+    PERMISSION_RESOURCE_ID_FIELD = "project_id"
+
     member = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -380,6 +408,13 @@ class ProjectMember(ProjectBaseModel):
     )
     comment = models.TextField(blank=True, null=True)
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=5)
+    role_ref = models.ForeignKey(
+        "db.Role",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="project_members",
+    )
     view_props = models.JSONField(default=get_default_props)
     default_props = models.JSONField(default=get_default_props)
     preferences = models.JSONField(default=get_default_preferences)
@@ -393,7 +428,23 @@ class ProjectMember(ProjectBaseModel):
     )
 
     def save(self, *args, **kwargs):
-        if self._state.adding and self.member:
+        is_new = self._state.adding
+
+        # Sync role_ref ↔ role (numeric)
+        if self.role_ref_id and (self._state.adding or self.has_changed("role_ref_id")):
+            # FK set → derive backward-compatible numeric role (20, 15, or 5)
+            from plane.permissions.system_roles import member_role_from_role_ref
+
+            self.role = member_role_from_role_ref(self.role_ref)
+        elif self.role_ref_id and self.has_changed("role"):
+            # Numeric role changed while FK is set → re-derive FK
+            self._sync_role_ref_from_numeric()
+        elif not self.role_ref_id and self.role:
+            # Numeric set without FK (external APIs, old code paths) → derive FK
+            self._sync_role_ref_from_numeric()
+
+        # ProjectUserProperty creation (existing logic - keep this)
+        if is_new and self.member:
             # Get the minimum sort_order for this member in the workspace
             min_sort_order_result = ProjectUserProperty.objects.filter(
                 workspace_id=self.project.workspace_id, user=self.member
@@ -411,7 +462,43 @@ class ProjectMember(ProjectBaseModel):
                     sort_order=(min_sort_order - 10000 if min_sort_order is not None else 65535),
                 )
 
-        super(ProjectMember, self).save(*args, **kwargs)
+        # Let mixin handle the rest (calls super().save() and syncs permission)
+        super().save(*args, **kwargs)
+
+    def _sync_role_ref_from_numeric(self):
+        """Look up the system Role matching the numeric role and set role_ref."""
+        from plane.permissions.system_roles import project_role_from_member_role
+        from plane.db.models.permission import Role
+
+        slug = project_role_from_member_role(self.role)
+        role_obj = Role.objects.filter(
+            workspace_id=self.project.workspace_id,
+            namespace="project",
+            slug=slug,
+            is_system=True,
+            deleted_at__isnull=True,
+        ).first()
+        if role_obj:
+            self.role_ref = role_obj
+
+    def _get_permission_workspace_id(self):
+        """Get workspace_id via project relation."""
+        return self.project.workspace_id
+
+    def _get_permission_relation(self):
+        """Map member role to project permission relation.
+
+        Uses role_ref.slug when available, falls back to numeric mapping.
+        """
+        if self.role_ref_id:
+            return self.role_ref.slug
+        from plane.permissions.system_roles import project_role_from_member_role
+
+        return project_role_from_member_role(int(self.role))
+
+    def _is_permission_active(self):
+        """Active when is_active=True and not soft-deleted."""
+        return self.is_active and self.deleted_at is None
 
     class Meta:
         unique_together = ["project", "member", "deleted_at"]
@@ -441,6 +528,92 @@ class ProjectMember(ProjectBaseModel):
     def __str__(self):
         """Return members of the project"""
         return f"{self.member.email} <{self.project.name}>"
+
+
+def _sync_project_member_permissions(sender, **kwargs):
+    """Sync ResourcePermission on bulk operations for ProjectMember."""
+    objs = kwargs.get("objs")
+    if not objs:
+        return
+
+    # Skip sync if no permission-relevant fields changed
+    updated_fields = kwargs.get("updated_fields")
+    PERMISSION_RELEVANT_FIELDS = {"role", "role_ref_id", "is_active", "deleted_at"}
+    if updated_fields is not None and not updated_fields.intersection(PERMISSION_RELEVANT_FIELDS):
+        return
+
+    objs = list(objs) if hasattr(objs, "__iter__") else [objs]
+
+    from plane.permissions.engine import PermissionEngine
+    from plane.permissions.grants import Grant
+
+    engine = PermissionEngine(use_cache=False)
+    grants = []
+    revoke_keys = []
+
+    for obj in objs:
+        subject_id = obj._get_permission_subject_id()
+        resource_id = obj._get_permission_resource_id()
+        if not subject_id or not resource_id:
+            continue
+        if obj._is_permission_active():
+            grants.append(
+                Grant(
+                    subject_type=obj.PERMISSION_SUBJECT_TYPE,
+                    subject_id=subject_id,
+                    relation=obj._get_permission_relation(),
+                    resource_type=obj.PERMISSION_RESOURCE_TYPE,
+                    resource_id=resource_id,
+                    workspace_id=obj._get_permission_workspace_id(),
+                )
+            )
+        else:
+            revoke_keys.append(
+                (
+                    obj.PERMISSION_SUBJECT_TYPE,
+                    subject_id,
+                    obj.PERMISSION_RESOURCE_TYPE,
+                    resource_id,
+                    obj._get_permission_workspace_id(),
+                )
+            )
+
+    actor_id = getattr(objs[0], "updated_by_id", None) or getattr(objs[0], "created_by_id", None)
+    if grants:
+        engine.bulk_grant(granter=actor_id, grants=grants)
+    for key in revoke_keys:
+        engine.revoke(
+            revoker=actor_id,
+            subject_type=key[0],
+            subject_id=key[1],
+            resource_type=key[2],
+            resource_id=key[3],
+            workspace_id=key[4],
+        )
+
+    # Safety net: backfill role_ref for bulk_create paths that only set numeric role.
+    # Only runs on post_bulk_create (updated_fields is None), not post_bulk_update.
+    if updated_fields is None:
+        needs_ref = [o for o in objs if not o.role_ref_id and o.role]
+        if needs_ref:
+            from plane.permissions.system_roles import get_project_roles_for_workspace, project_role_from_member_role
+
+            ws_ids = {getattr(o, "workspace_id", None) or o.project.workspace_id for o in needs_ref}
+            caches = {ws_id: get_project_roles_for_workspace(ws_id) for ws_id in ws_ids}
+            to_update = []
+            for o in needs_ref:
+                ws_id = getattr(o, "workspace_id", None) or o.project.workspace_id
+                slug = project_role_from_member_role(o.role)
+                role_obj = caches[ws_id].get(slug)
+                if role_obj:
+                    o.role_ref_id = role_obj.id
+                    to_update.append(o)
+            if to_update:
+                ProjectMember.objects.bulk_update(to_update, ["role_ref_id"], batch_size=100)
+
+
+post_bulk_create.connect(_sync_project_member_permissions, sender=ProjectMember)
+post_bulk_update.connect(_sync_project_member_permissions, sender=ProjectMember)
 
 
 # TODO: Remove workspace relation later

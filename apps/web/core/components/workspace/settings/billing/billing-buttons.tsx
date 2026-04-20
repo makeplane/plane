@@ -83,7 +83,7 @@ const CloudBillingButtons = function CloudBillingButtons(props: VariantProps) {
       >
         <ManageSubscriptionLabel isLoading={isLoading} />
       </Button>
-      <BillingActionsButton canPerformWorkspaceAdminActions />
+      <BillingActionsButton />
     </>
   );
 };
@@ -98,7 +98,7 @@ const SelfManagedBillingButtons = function SelfManagedBillingButtons(props: Self
   return (
     <>
       <SelfManagedSyncButton />
-      {showSubscriptionManagement && <BillingActionsButton canPerformWorkspaceAdminActions />}
+      {showSubscriptionManagement && <BillingActionsButton />}
       {planVariant === EProductSubscriptionEnum.ONE && <ManageLicenseButton />}
       <CustomMenu
         customButton={<Button variant="secondary" size="lg" appendIcon={<Ellipsis />} />}

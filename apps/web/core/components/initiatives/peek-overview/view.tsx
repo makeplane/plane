@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
@@ -24,6 +23,7 @@ import useKeypress from "@/hooks/use-keypress";
 import usePeekOverviewOutsideClickDetector from "@/hooks/use-peek-overview-outside-click";
 // plane web hooks
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import type { TInitiativeDetailPermissions } from "@/store/initiatives/permissions/root";
 // local imports
 import { InitiativeMainContentRoot } from "../details/main/root";
 import { InitiativeSidebarRoot } from "../details/sidebar/root";
@@ -37,7 +37,7 @@ interface IInitiativeView {
   initiativeId: string;
   isLoading?: boolean;
   isError?: boolean;
-  disabled?: boolean;
+  permissions: TInitiativeDetailPermissions;
   handleInitiativeStateUpdate: (stateId: TInitiativeStates) => void;
   handleInitiativeLabelUpdate: (labelIds: string[]) => void;
 }
@@ -48,7 +48,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
     initiativeId,
     isLoading,
     isError,
-    disabled = false,
+    permissions,
     handleInitiativeStateUpdate,
     handleInitiativeLabelUpdate,
   } = props;
@@ -106,7 +106,7 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
   const portalContainer = document.getElementById("full-screen-portal") as HTMLElement;
 
   const content = (
-    <div className="w-full !text-14">
+    <div className="w-full text-14!">
       {initiativeId && (
         <div
           ref={initiativePeekOverviewRef}
@@ -132,7 +132,6 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
                 removeRoutePeekId={removeRoutePeekId}
                 workspaceSlug={workspaceSlug}
                 initiativeId={initiativeId}
-                disabled={disabled}
               />
               {/* content - reuse the exact same detail layout */}
               <div className="relative flex h-full w-full overflow-hidden">
@@ -141,13 +140,13 @@ export const InitiativeView = observer(function InitiativeView(props: IInitiativ
                     editorRef={editorRef}
                     workspaceSlug={workspaceSlug}
                     initiativeId={initiativeId}
-                    disabled={disabled}
+                    permissions={permissions}
                   />
                 </div>
                 <InitiativeSidebarRoot
                   workspaceSlug={workspaceSlug}
                   initiativeId={initiativeId}
-                  disabled={disabled}
+                  permissions={permissions}
                   handleInitiativeStateUpdate={handleInitiativeStateUpdate}
                   handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
                 />

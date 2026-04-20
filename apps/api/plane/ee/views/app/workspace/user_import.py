@@ -17,7 +17,7 @@ import logging
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspaceMemberPermissions
 from plane.app.views.base import BaseAPIView
 from plane.settings.storage import S3Storage
 from plane.db.models import Workspace, FileAsset
@@ -47,7 +47,7 @@ def fetch_file_from_storage(file_key: str) -> Optional[str]:
 class WorkspaceMembersImportEndpoint(BaseAPIView):
     """Import users from CSV synchronously."""
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceMemberPermissions.IMPORT, resource_param="workspace_id")
     def post(self, request, slug):
         asset_id = request.data.get("asset_id")
         if not asset_id:

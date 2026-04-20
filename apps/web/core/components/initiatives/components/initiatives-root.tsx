@@ -11,15 +11,13 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { isEmpty, size } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserWorkspaceRoles } from "@plane/types";
 // assets
 import projectDark from "@/app/assets/empty-state/search/project-dark.webp?url";
 import projectLight from "@/app/assets/empty-state/search/project-light.webp?url";
@@ -27,57 +25,84 @@ import projectLight from "@/app/assets/empty-state/search/project-light.webp?url
 import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-root";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { DEFAULT_INITIATIVE_LAYOUT } from "@/constants/initiative";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import type { TInitiativeItemPermissions, TInitiativeProperty } from "@/store/initiatives/permissions/root";
+import type { TInitiative } from "@/types";
 // local imports
 import InitiativeLayoutLoader from "./initiative-layout-loader";
 import { InitiativeTimelineLayout } from "./layouts/timeline";
 import { InitiativeKanbanLayout } from "./layouts/kanban";
 import { InitiativesListLayout } from "./layouts/list";
 
-interface IInitiativesRootProps {
+type Props = {
+  workspaceSlug: string;
   isArchived?: boolean;
-}
-export const InitiativesRoot = observer(function InitiativesRoot(props: IInitiativesRootProps) {
-  const { isArchived = false } = props;
+};
+
+export const InitiativesRoot = observer(function InitiativesRoot(props: Props) {
+  const { workspaceSlug, isArchived = false } = props;
   // plane hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
   // store hooks
-  const { initiative, initiativeFilters } = useInitiatives();
+  const {
+    initiative: {
+      permissions: { getCanEditProperty, getCanDragAndDrop, getCanEdit, getCanDelete, getCanCreate },
+      currentGroupedFilteredInitiativeIds,
+      archivedInitiativeIds,
+      initiativeIds,
+      initiativesLoader,
+      fetchingFilteredInitiatives,
+    },
+    initiativeFilters,
+  } = useInitiatives();
   const { toggleCreateInitiativeModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   // derived values
-  const groupedInitiativeIds = initiative.currentGroupedFilteredInitiativeIds;
+  const groupedInitiativeIds = currentGroupedFilteredInitiativeIds;
   const displayFilters = initiativeFilters.currentInitiativeDisplayFilters;
   const activeLayout = displayFilters.layout;
 
-  const searchedResolvedPath = resolvedTheme === "light" ? projectLight : projectDark;
-  const hasWorkspaceMemberLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
+  // Per-item: called once per initiative when rendering in list/kanban
+  const getInitiativePermissions = useCallback(
+    (initiativeItem: TInitiative): TInitiativeItemPermissions => ({
+      canEditProperty: (property: TInitiativeProperty) =>
+        getCanEditProperty(workspaceSlug, initiativeItem.id, property),
+      canDragAndDrop: getCanDragAndDrop(workspaceSlug, initiativeItem.id),
+      quickActions: {
+        canEdit: getCanEdit(workspaceSlug, initiativeItem.id),
+        canDelete: getCanDelete(workspaceSlug, initiativeItem.id),
+      },
+    }),
+    [workspaceSlug, getCanEditProperty, getCanDragAndDrop, getCanEdit, getCanDelete]
   );
+
+  const searchedResolvedPath = resolvedTheme === "light" ? projectLight : projectDark;
 
   const INITIATIVE_ACTIVE_LAYOUTS = useMemo(
     () => ({
-      list: <InitiativesListLayout />,
-      kanban: <InitiativeKanbanLayout />,
-      gantt: <InitiativeTimelineLayout />,
+      list: <InitiativesListLayout getInitiativePermissions={getInitiativePermissions} />,
+      kanban: <InitiativeKanbanLayout getInitiativePermissions={getInitiativePermissions} />,
+      gantt: (
+        <InitiativeTimelineLayout
+          permissions={{
+            canEditViaTimeline: (blockId) => getCanEdit(workspaceSlug, blockId),
+          }}
+        />
+      ),
     }),
-    []
+    [getInitiativePermissions, getCanEdit, workspaceSlug]
   );
 
-  if (initiative.initiativesLoader || initiative.fetchingFilteredInitiatives)
-    return <InitiativeLayoutLoader layout={activeLayout} />;
+  if (initiativesLoader || fetchingFilteredInitiatives) return <InitiativeLayoutLoader layout={activeLayout} />;
 
   const emptyGroupedInitiativeIds = Object.values(groupedInitiativeIds || {}).every(
     (arr) => Array.isArray(arr) && arr.length === 0
   );
   const isEmptyInitiatives = isEmpty(groupedInitiativeIds) || emptyGroupedInitiativeIds;
 
-  if (emptyGroupedInitiativeIds && size(isArchived ? initiative.archivedInitiativeIds : initiative.initiativeIds) > 0) {
+  if (emptyGroupedInitiativeIds && size(isArchived ? archivedInitiativeIds : initiativeIds) > 0) {
     return (
       <div className="flex items-center justify-center h-full w-full">
         <SimpleEmptyState
@@ -113,7 +138,7 @@ export const InitiativesRoot = observer(function InitiativesRoot(props: IInitiat
                 {
                   label: t("workspace_empty_state.initiatives.cta_primary"),
                   onClick: () => toggleCreateInitiativeModal({ isOpen: true, initiativeId: undefined }),
-                  disabled: !hasWorkspaceMemberLevelPermissions,
+                  disabled: !getCanCreate(workspaceSlug),
                 },
               ]
         }

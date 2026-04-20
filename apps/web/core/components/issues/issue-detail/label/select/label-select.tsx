@@ -17,18 +17,17 @@ import { usePopper } from "react-popper";
 import { Loader } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports
-import { EUserPermissionsLevel, getRandomLabelColor } from "@plane/constants";
+import { getRandomLabelColor } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CheckIcon, SearchIcon, PlusIcon } from "@plane/propel/icons";
 import type { IIssueLabel } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 // helpers
 import { getTabIndex } from "@plane/utils";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { useProject } from "@/hooks/store/use-project";
 //constants
 export interface IIssueLabelSelect {
   workspaceSlug: string;
@@ -44,19 +43,18 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: IIssue
   const { t } = useTranslation();
   // store hooks
   const { isMobile } = usePlatformOS();
+  const { permissions: projectPermissions } = useProject();
   const { fetchProjectLabels, getProjectLabels } = useLabel();
-  const { allowPermissions } = useUserPermissions();
   // states
   const [referenceElement, setReferenceElement] = useState<HTMLButtonElement | null>(null);
   const [popperElement, setPopperElement] = useState<HTMLDivElement | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [query, setQuery] = useState("");
   const [submitting, setSubmitting] = useState<boolean>(false);
-
-  const canCreateLabel =
-    projectId && allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
-
+  // derived values
   const projectLabels = getProjectLabels(projectId);
+  const canCreateLabel =
+    !!projectId && !!workspaceSlug && projectPermissions.getCanManageLabels(workspaceSlug, projectId);
 
   const { baseTabIndex } = getTabIndex(undefined, isMobile);
 

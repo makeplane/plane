@@ -19,8 +19,10 @@ import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
 import { CustomerUpgrade } from "@/components/customers";
 import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useCustomers } from "@/plane-web/hooks/store";
+// types
+import type { Route } from "./+types/layout";
 
-function CustomersLayout() {
+function CustomersLayout({ params }: Route.ComponentProps) {
   // hooks
   const { loader, isCustomersFeatureEnabled } = useCustomers();
   // derived values
@@ -28,7 +30,7 @@ function CustomersLayout() {
     isCustomersFeatureEnabled !== undefined && isCustomersFeatureEnabled === false && loader !== "init-loader";
 
   return (
-    <WorkspaceAccessWrapper pageKey="customers">
+    <WorkspaceAccessWrapper pageKey="customers" workspaceSlug={params.workspaceSlug}>
       {shouldUpgrade ? (
         <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
           <CustomerUpgrade />

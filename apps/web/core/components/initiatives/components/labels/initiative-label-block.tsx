@@ -40,29 +40,24 @@ interface IInitiativeLabelBlock {
   customMenuItems: IInitiativeCustomMenuItem[];
   handleLabelDelete: (label: TInitiativeLabel) => void;
   dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
-  disabled?: boolean;
-  draggable?: boolean;
+  permissions: {
+    canReorder: boolean;
+  };
 }
 
 export function InitiativeLabelBlock(props: IInitiativeLabelBlock) {
-  const {
-    label,
-    isDragging,
-    customMenuItems,
-    handleLabelDelete,
-    dragHandleRef,
-    disabled = false,
-    draggable = true,
-  } = props;
+  const { label, isDragging, customMenuItems, handleLabelDelete, dragHandleRef, permissions } = props;
   const [isMenuActive, setIsMenuActive] = useState(true);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  // derived values
+  const canPerformAnyAction = customMenuItems.some(({ isVisible }) => isVisible);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
     <div className="group flex items-center  relative">
       <div className="flex items-center">
-        {!disabled && draggable && (
+        {permissions.canReorder && (
           <DragHandle
             className={cn("opacity-0 group-hover:opacity-100", {
               "opacity-100": isDragging,
@@ -73,7 +68,7 @@ export function InitiativeLabelBlock(props: IInitiativeLabelBlock) {
         <InitiativeLabelName color={label.color} name={label.name} />
       </div>
 
-      {!disabled && (
+      {canPerformAnyAction && (
         <div
           ref={actionSectionRef}
           className={`absolute right-2.5 flex items-center gap-2  ${

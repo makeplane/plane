@@ -28,9 +28,9 @@ from plane.ee.models import (
     TeamspaceView,
     TeamspaceMember,
 )
-from plane.ee.permissions import TeamspacePermission, WorkspaceUserPermission
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, TeamspacePermissions
 from plane.utils.issue_filters import issue_filters
 from .base import TeamspaceBaseEndpoint
 from plane.utils.filters import ComplexFilterBackend
@@ -41,9 +41,8 @@ from plane.utils.filters import IssueFilterSet
 class TeamspaceEntitiesEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [WorkspaceUserPermission, TeamspacePermission]
-
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         # Get team entities count
         team_page_count = TeamspacePage.objects.filter(
@@ -140,6 +139,7 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
         return sorted([v for v in date_range.values()], key=lambda x: x[key])
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)
 
@@ -200,6 +200,8 @@ class TeamspaceProgressChartEndpoint(TeamspaceBaseEndpoint):
 class TeamspaceProgressSummaryEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         project_ids = TeamspaceProject.objects.filter(
             team_space_id=team_space_id, project__archived_at__isnull=True, workspace__slug=slug
@@ -351,6 +353,7 @@ class TeamspaceRelationEndpoint(TeamspaceBaseEndpoint):
         return blocked_by_issues
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         # Get all the project ids
         project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)
@@ -457,6 +460,7 @@ class TeamspaceStatisticsEndpoint(TeamspaceBaseEndpoint):
         return Response(issue_map, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         # Get all the project ids
         project_ids = TeamspaceProject.objects.filter(team_space_id=team_space_id).values_list("project_id", flat=True)

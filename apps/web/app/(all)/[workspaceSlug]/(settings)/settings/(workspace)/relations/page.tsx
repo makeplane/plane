@@ -12,17 +12,14 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { RelationDefinitionRoot } from "@/components/settings/workspace/relations";
+import { useRelationDefinition } from "@/hooks/store/use-relation-definition";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import type { Route } from "./+types/page";
 import { RelationsWorkspaceSettingsHeader } from "./header";
@@ -31,16 +28,12 @@ function RelationsSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
-  const { t } = useTranslation();
+  const { permissions: relationDefinitionPermissions } = useRelationDefinition();
 
   // derived values
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Relations` : undefined;
-  const canAccess = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canAccess = relationDefinitionPermissions.getCanView(workspaceSlug);
 
   if (!currentWorkspace?.id) return <></>;
 

@@ -42,6 +42,7 @@ export const mockCreateOrUpdateState = async (params: TMockCreateOrUpdateStatePa
     description: data.description ?? "",
     group: data.group ?? defaultStateGroup.key,
     order: data.order ?? 0,
+    created_by: data.created_by ?? null,
     project_id: projectId,
     workspace_id: workspaceSlug,
     sequence: data.sequence ?? Math.floor(Math.random() * 65535),

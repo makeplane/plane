@@ -23,17 +23,18 @@ from plane.ee.serializers import (
     AutomationRunReadSerializer,
 )
 from plane.ee.models import AutomationRun
-from plane.app.permissions import allow_permission, ROLE
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, ProjectAutomationPermissions, WorkspaceAutomationPermissions
 
 
+# TODO: Unused endpoint — not exported or wired to URL config. Migrate to @can before re-enabling.
 class AutomationRunEndpoint(AutomationBaseEndpoint):
 
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectAutomationPermissions.VIEW, resource_param="automation_id")
     def get(
         self,
         request: Request,
@@ -63,7 +64,7 @@ class AutomationRunEndpoint(AutomationBaseEndpoint):
 
 class WorkspaceAutomationRunEndpoint(AutomationBaseEndpoint):
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.VIEW, resource_param="automation_id")
     def get(
         self,
         request: Request,

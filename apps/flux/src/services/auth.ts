@@ -28,10 +28,11 @@ export const Workspace = Schema.Struct({
 });
 export type Workspace = typeof Workspace.Type;
 
-export const WorkspaceMembership = Schema.Struct({
-  role: Schema.Number,
+export const WorkspacePermissions = Schema.Struct({
+  relation: Schema.NullOr(Schema.String),
+  permission_grants: Schema.Array(Schema.String),
 });
-export type WorkspaceMembership = typeof WorkspaceMembership.Type;
+export type WorkspacePermissions = typeof WorkspacePermissions.Type;
 
 export class AuthServiceError extends Schema.TaggedError<AuthServiceError>()("AuthServiceError", {
   message: Schema.String,
@@ -71,13 +72,13 @@ export class AuthService extends Effect.Service<AuthService>()("AuthService", {
       );
     });
 
-    const getWorkspaceMembership = Effect.fn("AuthService.getWorkspaceMembership")(function* (
+    const getWorkspacePermissions = Effect.fn("AuthService.getWorkspacePermissions")(function* (
       cookie: string,
       workspaceSlug: string
     ) {
-      const url = new URL(`/api/workspaces/${workspaceSlug}/workspace-members/me/`, apiBaseUrl).toString();
+      const url = new URL(`/api/workspaces/${workspaceSlug}/permissions/`, apiBaseUrl).toString();
       return yield* client.get(url, { headers: Headers.fromInput({ Cookie: cookie }) }).pipe(
-        Effect.flatMap(HttpClientResponse.schemaBodyJson(WorkspaceMembership)),
+        Effect.flatMap(HttpClientResponse.schemaBodyJson(WorkspacePermissions)),
         Effect.catchIf(
           (e): e is HttpClientError.ResponseError =>
             e instanceof HttpClientError.ResponseError &&
@@ -88,14 +89,14 @@ export class AuthService extends Effect.Service<AuthService>()("AuthService", {
         Effect.mapError(
           (cause) =>
             new AuthServiceError({
-              message: "Failed to fetch workspace membership",
+              message: "Failed to fetch workspace permissions",
               cause,
             })
         )
       );
     });
 
-    return { currentUser, getWorkspace, getWorkspaceMembership };
+    return { currentUser, getWorkspace, getWorkspacePermissions };
   }),
   dependencies: [AppConfig.Default, FetchHttpClient.layer],
 }) {}

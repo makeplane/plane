@@ -62,7 +62,8 @@ function InitiativeDetailsPage({ params }: Route.ComponentProps) {
   const pageTitle = initiativeDetails ? `Initiative - ${initiativeDetails.name}` : "Initiative";
   const isProjectGroupingFeatureFlagEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFeatureFlagEnabled;
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) &&
+    isProjectGroupingFeatureFlagEnabled;
 
   // fetch initiative project analytics count
   useSWR(

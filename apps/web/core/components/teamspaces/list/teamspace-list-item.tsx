@@ -20,10 +20,11 @@ import { TeamsIcon } from "@plane/propel/icons";
 // components
 import { ListItem } from "@/components/core/list/list-item";
 // hooks
-import { useUser } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
 import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces";
+// types
+import type { TTeamspaceItemPermissions } from "@/store/teamspace/permissions/root";
 // local imports
 import { JoinTeamspaceButton } from "../actions/join-teamspace";
 import { TeamProperties } from "../actions/properties";
@@ -31,25 +32,22 @@ import { TeamQuickActions } from "../actions/quick-actions";
 
 type TeamspaceListItemProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: TTeamspaceItemPermissions;
 };
 
 export const TeamspaceListItem = observer(function TeamspaceListItem(props: TeamspaceListItemProps) {
-  const { teamspaceId, isEditingAllowed: isEditingAllowedProp } = props;
+  const { teamspaceId, permissions } = props;
   // router
   const { workspaceSlug } = useParams();
   // refs
   const parentRef = useRef(null);
   // hooks
   const { isMobile } = usePlatformOS();
-  const { data: currentUser } = useUser();
   // plane web hooks
   const { getTeamspaceById, isCurrentUserMemberOfTeamspace } = useTeamspaces();
   // derived values
   const teamspace = getTeamspaceById(teamspaceId);
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
-  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
-  const isEditingAllowed = isEditingAllowedProp || isTeamspaceLead;
 
   if (!teamspace) return null;
   return (
@@ -69,12 +67,12 @@ export const TeamspaceListItem = observer(function TeamspaceListItem(props: Team
         <>
           {isTeamspaceMember ? (
             <>
-              <TeamProperties teamspaceId={teamspaceId} isEditingAllowed={isEditingAllowed} />
+              <TeamProperties teamspaceId={teamspaceId} canAddProject={permissions.canAddProject} />
               <TeamQuickActions
                 parentRef={parentRef}
                 teamspaceId={teamspaceId}
                 workspaceSlug={workspaceSlug.toString()}
-                isEditingAllowed={isEditingAllowed && isTeamspaceMember}
+                permissions={{ canEdit: permissions.canEdit, canDelete: permissions.canDelete }}
               />
             </>
           ) : (

@@ -12,7 +12,7 @@
 # Module imports
 from ..base import BaseAPIView
 from plane.db.models.workspace import WorkspaceHomePreference
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkspacePermissions
 from plane.db.models import Workspace
 from plane.app.serializers.workspace import WorkspaceHomePreferenceSerializer
 
@@ -29,7 +29,7 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
     def get_serializer_class(self):
         return WorkspaceHomePreferenceSerializer
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -73,7 +73,7 @@ class WorkspaceHomePreferenceViewSet(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def patch(self, request, slug, key):
         preference = WorkspaceHomePreference.objects.filter(key=key, workspace__slug=slug, user=request.user).first()
 

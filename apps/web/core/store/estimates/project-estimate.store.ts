@@ -58,6 +58,8 @@ export interface IProjectEstimateStore {
     data: IEstimateFormData
   ) => Promise<IEstimateType | undefined>;
   deleteEstimate: (workspaceSlug: string, projectId: string, estimateId: string) => Promise<void>;
+  // permissions
+  getCanCurrentUserCreateEstimate: (workspaceSlug: string, projectId: string) => boolean;
 }
 
 export class ProjectEstimateStore implements IProjectEstimateStore {
@@ -322,5 +324,18 @@ export class ProjectEstimateStore implements IProjectEstimateStore {
       };
       throw error;
     }
+  };
+
+  // permissions
+  getCanCurrentUserCreateEstimate: IProjectEstimateStore["getCanCurrentUserCreateEstimate"] = (
+    workspaceSlug,
+    projectId
+  ) => {
+    return this.store.permissionAccessStore.can({
+      resource: "estimate",
+      action: "create",
+      projectId,
+      workspaceSlug,
+    });
   };
 }

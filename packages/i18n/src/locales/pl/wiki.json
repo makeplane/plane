@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Zagnieżdżone strony wymagają planu płatnego. Uaktualnij, aby odblokować."
+    },
+    "auth": {
+      "title": "Brak dostępu",
+      "description": "Nie masz uprawnień, aby uzyskać dostęp do tej strony. Skontaktuj się z administratorem obszaru Workspace, aby przyznano Ci odpowiednie uprawnienia.",
+      "redirection_button": {
+        "text": "Przejdź do projektów"
+      },
+      "reload_button": {
+        "text": "Odśwież stronę"
+      }
     }
   }
 }

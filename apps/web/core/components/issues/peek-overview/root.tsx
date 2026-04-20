@@ -16,7 +16,6 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // Plane imports
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IWorkItemPeekOverview, TIssue } from "@plane/types";
@@ -24,10 +23,10 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
@@ -42,8 +41,6 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   const { t } = useTranslation();
   // router
   const pathname = usePathname();
-  // store hook
-  const { allowPermissions } = useUserPermissions();
 
   const {
     issues: { restoreIssue },
@@ -58,7 +55,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   const isStateDurationEnabled = useFlag(peekIssue?.workspaceSlug, "WORK_ITEM_STATE_DURATION");
   const issueStoreType = useIssueStoreType();
   const storeType = issueStoreFromProps ?? issueStoreType;
-  const { issues } = useIssues(storeType);
+  const { issues, permissions } = useIssues(storeType);
 
   useWorkItemProperties(
     peekIssue?.projectId,
@@ -259,44 +256,76 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
 
-  // Check if issue is editable, based on user role
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    peekIssue?.workspaceSlug,
-    peekIssue?.projectId
+  const commentsPermissions = permissions.getCommentPermissions(
+    peekIssue.workspaceSlug,
+    peekIssue.projectId,
+    peekIssue.issueId
   );
-  const hasPermissionForSubWorkItems = (workspaceSlug: string, projectId: string) => {
-    return (
-      !peekIssue?.isArchived &&
-      allowPermissions(
-        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        EUserPermissionsLevel.PROJECT,
-        workspaceSlug,
-        projectId
-      )
-    );
-  };
-  const permissions = {
+  const allPermissions = {
+    canEdit: permissions.getCanEdit(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canSubscribe: permissions.getCanSubscribe(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canEditProperty: (property: TWorkItemProperty) =>
+      permissions.getCanEditProperty(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId, property),
+    canDelete: permissions.getCanDelete(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canArchive: permissions.getCanArchive(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canRestore: permissions.getCanRestore(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canDuplicate: permissions.getCanDuplicate(peekIssue.workspaceSlug, peekIssue.projectId),
+    canConvertToEpic: permissions.getCanConvertToEpic(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canSwitchWorkItemType: permissions.getCanSwitchWorkItemType(
+      peekIssue.workspaceSlug,
+      peekIssue.projectId,
+      peekIssue.issueId
+    ),
+    canRestoreDescriptionVersion: permissions.getCanRestoreDescriptionVersion(
+      peekIssue.workspaceSlug,
+      peekIssue.projectId,
+      peekIssue.issueId
+    ),
+    canReact: permissions.getCanReact(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canAddDependencies: permissions.getCanAddDependencies(
+      peekIssue.workspaceSlug,
+      peekIssue.projectId,
+      peekIssue.issueId
+    ),
+    canAddRelations: permissions.getCanAddRelations(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canAddLinks: permissions.getCanAddLinks(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canAddAttachments: permissions.getCanAddAttachments(
+      peekIssue.workspaceSlug,
+      peekIssue.projectId,
+      peekIssue.issueId
+    ),
+    canAddPages: permissions.getCanAddPages(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    canAddCustomerRequests: permissions.getCanAddCustomerRequests(
+      peekIssue.workspaceSlug,
+      peekIssue.projectId,
+      peekIssue.issueId
+    ),
+    canAddWorklog: permissions.getCanAddWorklog(peekIssue.workspaceSlug, peekIssue.projectId, peekIssue.issueId),
+    comments: {
+      canCreate: commentsPermissions.canCreate,
+      canEdit: (commentId: string) => commentsPermissions.getCanEdit(commentId),
+      canDelete: (commentId: string) => commentsPermissions.getCanDelete(commentId),
+      canReact: (commentId: string) => commentsPermissions.getCanReact(commentId),
+    },
     sub_work_items: {
       getCanView: (projectId: string, _workItemId: string) =>
-        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
-      getCanEdit: (projectId: string, _workItemId: string) =>
-        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
-      getCanEditProperty: (projectId: string, _workItemId: string, _property: keyof TIssue) =>
-        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
-      getCanDelete: (projectId: string, _workItemId: string) =>
-        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
-      getCanAdd: (parentWorkItemProjectId: string, _parentWorkItemId: string) =>
-        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, parentWorkItemProjectId),
+        permissions.getCanView(peekIssue?.workspaceSlug, projectId),
+      getCanEdit: (projectId: string, workItemId: string) =>
+        permissions.getCanEdit(peekIssue?.workspaceSlug, projectId, workItemId),
+      getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) =>
+        permissions.getCanEditProperty(peekIssue?.workspaceSlug, projectId, workItemId, property),
+      getCanDelete: (projectId: string, workItemId: string) =>
+        permissions.getCanDelete(peekIssue?.workspaceSlug, projectId, workItemId),
+      getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) =>
+        permissions.getCanAddSubWorkItems(peekIssue?.workspaceSlug, parentWorkItemProjectId, parentWorkItemId),
       getCanRemove: (
         parentWorkItemProjectId: string,
-        _parentWorkItemId: string,
+        parentWorkItemId: string,
         projectId: string,
-        _workItemId: string
+        workItemId: string
       ) =>
-        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, parentWorkItemProjectId) &&
-        hasPermissionForSubWorkItems(peekIssue?.workspaceSlug, projectId),
+        permissions.getCanEdit(peekIssue?.workspaceSlug, parentWorkItemProjectId, parentWorkItemId) &&
+        permissions.getCanEdit(peekIssue?.workspaceSlug, projectId, workItemId),
     },
   };
 
@@ -308,11 +337,10 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       isLoading={isLoading}
       isError={error}
       is_archived={!!peekIssue.isArchived}
-      disabled={!isEditable}
+      permissions={allPermissions}
       embedIssue={embedIssue}
       embedRemoveCurrentNotification={embedRemoveCurrentNotification}
       issueOperations={issueOperations}
-      permissions={permissions}
     />
   );
 });

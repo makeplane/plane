@@ -23,6 +23,7 @@ from rest_framework import serializers
 from plane.app.serializers import UserSerializer
 from plane.db.models import User, WorkspaceMember, WorkspaceMemberInvite, ProjectMember
 from plane.ee.models import WorkspaceLicense
+from plane.permissions.system_roles import PAID_ROLE_LEVEL_THRESHOLD, UNPAID_ROLE_SLUGS
 
 
 class UserImportListSerializer(serializers.ListSerializer):
@@ -66,8 +67,8 @@ class UserImportListSerializer(serializers.ListSerializer):
         )
 
         # Count new members by role (excluding already workspace members)
-        new_admin_members = 0  # role > 10
-        new_guest_viewers = 0  # role <= 10
+        new_admin_members = 0  # role > PAID_ROLE_LEVEL_THRESHOLD
+        new_guest_viewers = 0  # role <= PAID_ROLE_LEVEL_THRESHOLD
 
         for record in records:
             email = record.get("email", "").lower().strip()
@@ -78,7 +79,7 @@ class UserImportListSerializer(serializers.ListSerializer):
             role = record.get("role", 15)
             role = int(role) if isinstance(role, str) else role
 
-            if role > 10:
+            if role > PAID_ROLE_LEVEL_THRESHOLD:
                 new_admin_members += 1
             else:
                 new_guest_viewers += 1
@@ -92,24 +93,22 @@ class UserImportListSerializer(serializers.ListSerializer):
             workspace_id=workspace_id,
             is_active=True,
             member__is_bot=False,
-            role__gt=10,
-        ).count()
+        ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
         current_guest_count = WorkspaceMember.objects.filter(
             workspace_id=workspace_id,
             is_active=True,
             member__is_bot=False,
-            role__lte=10,
+            role_ref__slug__in=list(UNPAID_ROLE_SLUGS),
         ).count()
 
         invited_admin_count = WorkspaceMemberInvite.objects.filter(
             workspace_id=workspace_id,
-            role__gt=10,
-        ).count()
+        ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
         invited_guest_count = WorkspaceMemberInvite.objects.filter(
             workspace_id=workspace_id,
-            role__lte=10,
+            role_ref__slug__in=list(UNPAID_ROLE_SLUGS),
         ).count()
 
         # Validate based on plan

@@ -13,17 +13,14 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TInitiativeStates } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { LayoutRoot } from "@/components/common/layout";
 import { EpicPeekOverview } from "@/components/epics/peek-overview";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import type { TInitiativeDetailPermissions } from "@/store/initiatives/permissions/root";
 // local imports
 import { InitiativeEmptyState } from "./empty-state";
 import { InitiativeMainContentRoot } from "./main/root";
@@ -38,18 +35,58 @@ export const InitiativeDetailRoot = observer(function InitiativeDetailRoot(props
   const { workspaceSlug, initiativeId } = props;
   // store hooks
   const {
-    initiative: { getInitiativeById, updateInitiative, fetchInitiativeAnalytics },
+    initiative: { getInitiativeById, updateInitiative, fetchInitiativeAnalytics, permissions },
   } = useInitiatives();
-  const { allowPermissions } = useUserPermissions();
 
   const { t } = useTranslation();
 
   // derived values
   const initiative = getInitiativeById(initiativeId);
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+
+  // Get instances locally — never pass these as props
+  const labelPerms = permissions.getLabelPermissions(workspaceSlug);
+  const commentPerms = permissions.getCommentPermissions(workspaceSlug, initiativeId);
+
+  const allPermissions: TInitiativeDetailPermissions = {
+    // ── Initiative-level ─────────────────────────────────────────────
+    canEdit: permissions.getCanEdit(workspaceSlug, initiativeId),
+    canDelete: permissions.getCanDelete(workspaceSlug, initiativeId),
+    canReact: permissions.getCanReact(workspaceSlug, initiativeId),
+    canEditProperty: (property) => permissions.getCanEditProperty(workspaceSlug, initiativeId, property),
+
+    // ── Links ────────────────────────────────────────────────────────
+    canAddLink: permissions.getCanAddLink(workspaceSlug, initiativeId),
+    canEditLink: permissions.getCanEditLink(workspaceSlug, initiativeId),
+    canDeleteLink: permissions.getCanDeleteLink(workspaceSlug, initiativeId),
+
+    // ── Attachments ──────────────────────────────────────────────────
+    canAddAttachment: permissions.getCanAddAttachment(workspaceSlug, initiativeId),
+    canDeleteAttachment: (attachmentId) =>
+      permissions.getCanDeleteAttachment(workspaceSlug, initiativeId, attachmentId),
+
+    // ── Scope ────────────────────────────────────────────────────────
+    canAddScope: permissions.getCanAddScope(workspaceSlug, initiativeId),
+    canAddProject: permissions.getCanAddProject(workspaceSlug, initiativeId),
+    canRemoveProject: permissions.getCanRemoveProject(workspaceSlug, initiativeId),
+    canAddEpic: permissions.getCanAddEpic(workspaceSlug, initiativeId),
+    canRemoveEpic: permissions.getCanRemoveEpic(workspaceSlug, initiativeId),
+
+    // ── Labels (plain object, NOT the instance) ───────────────────────
+    labels: {
+      canCreate: labelPerms.canCreate,
+      canEdit: (labelId: string) => labelPerms.getCanEdit(labelId),
+      canDelete: (labelId: string) => labelPerms.getCanDelete(labelId),
+      canReorder: (labelId: string) => labelPerms.getCanReorder(labelId),
+    },
+
+    // ── Comments (plain object, NOT the instance) ─────────────────────
+    comments: {
+      canCreate: commentPerms.canCreate,
+      canEdit: (commentId: string) => commentPerms.getCanEdit(commentId),
+      canDelete: (commentId: string) => commentPerms.getCanDelete(commentId),
+      canReact: (commentId: string) => commentPerms.getCanReact(commentId),
+    },
+  };
 
   // handlers
   const handleInitiativeLabelUpdate = (labelIds: string[]) => {
@@ -87,11 +124,15 @@ export const InitiativeDetailRoot = observer(function InitiativeDetailRoot(props
       renderEmptyState={!initiative}
       emptyStateComponent={<InitiativeEmptyState workspaceSlug={workspaceSlug} />}
     >
-      <InitiativeMainContentRoot workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={!isEditable} />
+      <InitiativeMainContentRoot
+        workspaceSlug={workspaceSlug}
+        initiativeId={initiativeId}
+        permissions={allPermissions}
+      />
       <InitiativeSidebarRoot
         workspaceSlug={workspaceSlug}
         initiativeId={initiativeId}
-        disabled={!isEditable}
+        permissions={allPermissions}
         handleInitiativeStateUpdate={handleInitiativeStateUpdate}
         handleInitiativeLabelUpdate={handleInitiativeLabelUpdate}
       />

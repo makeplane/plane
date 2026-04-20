@@ -32,10 +32,20 @@ from django.db import transaction
 
 # Third party imports
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import (
+    can,
+    WorkspacePermissions,
+    WorkitemPermissions,
+    WorkitemViewPermissions,
+    WorkspaceWorkitemViewPermissions,
+    PermissionMixin,
+    PermissionContext,
+    permission_engine,
+)
 from plane.app.serializers import IssueViewSerializer
 from plane.db.models import (
     Issue,
@@ -43,9 +53,6 @@ from plane.db.models import (
     IssueLink,
     IssueView,
     Workspace,
-    WorkspaceMember,
-    ProjectMember,
-    Project,
     CycleIssue,
     UserRecentVisit,
     IssueAssignee,
@@ -63,9 +70,6 @@ from plane.utils.order_queryset import order_issue_queryset
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from .. import BaseViewSet
 from plane.db.models import UserFavorite
-from plane.ee.utils.check_user_teamspace_member import (
-    check_if_current_user_is_teamspace_member,
-)
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
@@ -73,7 +77,7 @@ from plane.utils.grouper import issue_on_results, issue_group_values
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 
 
-class WorkspaceViewViewSet(BaseViewSet):
+class WorkspaceViewViewSet(PermissionMixin, BaseViewSet):
     use_read_replica = True
 
     serializer_class = IssueViewSerializer
@@ -89,25 +93,33 @@ class WorkspaceViewViewSet(BaseViewSet):
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
             .filter(project__isnull=True)
-            .filter(Q(owned_by=self.request.user) | Q(access=1))
+            .filter(Q(owned_by=self.request.user) | Q(access=IssueView.PUBLIC_ACCESS))
             .exclude(team_spaces__isnull=False)
             .order_by(self.request.GET.get("order_by", "-created_at"))
             .distinct()
         )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceWorkitemViewPermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
         queryset = self.get_queryset()
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
-        if WorkspaceMember.objects.filter(workspace__slug=slug, member=request.user, role=5, is_active=True).exists():
+        # Guest filter: users without create permission only see their own views
+        if not self.has_permission(
+            WorkspaceWorkitemViewPermissions.CREATE,
+            PermissionContext.workspace(request.workspace_id),
+        ):
             queryset = queryset.filter(owned_by=request.user)
         views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
         return Response(views, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
+    @can(WorkspaceWorkitemViewPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk):
         with transaction.atomic():
             workspace_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug)
+
+            # Only the creator can edit a private view
+            if workspace_view.access == IssueView.PRIVATE_ACCESS and workspace_view.created_by_id != request.user.id:
+                raise PermissionDenied("Only the creator can edit this view")
 
             if workspace_view.is_locked:
                 return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
@@ -119,6 +131,7 @@ class WorkspaceViewViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(WorkspaceWorkitemViewPermissions.VIEW, resource_param="workspace_id")
     def retrieve(self, request, slug, pk):
         issue_view = self.get_queryset().filter(pk=pk).first()
         serializer = IssueViewSerializer(issue_view)
@@ -131,31 +144,25 @@ class WorkspaceViewViewSet(BaseViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE", creator=True, model=IssueView)
+    @can(WorkspaceWorkitemViewPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
         workspace_view = IssueView.objects.get(pk=pk, workspace__slug=slug)
 
-        workspace_member = WorkspaceMember.objects.filter(
-            workspace__slug=slug, member=request.user, role=20, is_active=True
-        )
-        if workspace_member.exists() or workspace_view.owned_by == request.user:
-            workspace_view.delete()
-            # Delete the user favorite view
-            UserFavorite.objects.filter(
-                workspace__slug=slug,
-                entity_identifier=pk,
-                project__isnull=True,
-                entity_type="view",
-            ).delete()
-        else:
-            return Response(
-                {"error": "Only admin or owner can delete the view"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Only the creator can delete a private view
+        if workspace_view.access == IssueView.PRIVATE_ACCESS and workspace_view.created_by_id != request.user.id:
+            raise PermissionDenied("Only the creator can delete this view")
+
+        workspace_view.delete()
+        UserFavorite.objects.filter(
+            workspace__slug=slug,
+            entity_identifier=pk,
+            project__isnull=True,
+            entity_type="view",
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkspaceViewIssuesViewSet(BaseViewSet):
+class WorkspaceViewIssuesViewSet(PermissionMixin, BaseViewSet):
     use_read_replica = True
 
     filter_backends = (
@@ -164,26 +171,46 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
     )
     filterset_class = IssueFilterSet
 
+    def _get_accessible_projects(self) -> dict:
+        """
+        Get accessible projects where user can view issues.
+        Cached per request to avoid duplicate queries.
+
+        Note: We query project tuples but check issue:view permission,
+        because we're listing issues, not projects.
+        """
+        if not hasattr(self, "_project_relations"):
+            self._project_relations = self.get_accessible_resources(
+                resource_type="project",
+                permission=WorkitemPermissions.VIEW,
+                include_relations=True,
+            )
+        return self._project_relations
+
     def _get_project_permission_filters(self):
         """
-        Get common project permission filters for guest users and role-based access control.
-        Returns Q object for filtering issues based on user role and project settings.
+        Get permission filters based on user's relation per project.
+        Uses ResourcePermission tuples as source of truth.
         """
+        project_relations = self._get_accessible_projects()
+
+        # Separate projects by relation (guest vs non-guest)
+        guest_project_ids = [pid for pid, rel in project_relations.items() if rel == "guest"]
+        non_guest_project_ids = [pid for pid, rel in project_relations.items() if rel != "guest"]
+
+        # Handle empty lists - return a Q that matches nothing if no projects accessible
+        if not guest_project_ids and not non_guest_project_ids:
+            return Q(pk__in=[])  # Matches nothing
+
         return Q(
+            # Non-guest projects: show all issues
+            Q(project_id__in=non_guest_project_ids)
+            |
+            # Guest projects: only user's own issues
             Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=True,
-            )
-            | Q(
-                project__project_projectmember__role=5,
-                project__guest_view_all_features=False,
+                project_id__in=guest_project_ids,
                 created_by=self.request.user,
             )
-            |
-            # For other roles (role > 5), show all issues
-            Q(project__project_projectmember__role__gt=5),
-            project__project_projectmember__member=self.request.user,
-            project__project_projectmember__is_active=True,
         )
 
     def _validate_order_by_field(self, order_by_param):
@@ -237,7 +264,8 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
 
     def apply_annotations(self, issues):
         issues = (
-            issues.annotate(
+            issues.select_related("state")  # For serializer's state.group access
+            .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]
                 )
@@ -364,12 +392,16 @@ class WorkspaceViewIssuesViewSet(BaseViewSet):
         return issues
 
     def get_queryset(self):
-        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug")).accessible_to(
-            self.request.user.id, self.kwargs.get("slug")
+        # Use permission engine to get accessible projects (replaces accessible_to)
+        accessible_project_ids = list(self._get_accessible_projects().keys())
+
+        return Issue.issue_objects.filter(
+            workspace__slug=self.kwargs.get("slug"),
+            project_id__in=accessible_project_ids,
         )
 
     @method_decorator(gzip_page)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
         issue_queryset = self.get_queryset()
 
@@ -521,7 +553,7 @@ class IssueViewViewSet(BaseViewSet):
             .filter(
                 project__archived_at__isnull=True,
             )
-            .filter(Q(owned_by=self.request.user) | Q(access=1))
+            .filter(Q(owned_by=self.request.user) | Q(access=IssueView.PUBLIC_ACCESS))
             .select_related("project")
             .select_related("workspace")
             .annotate(is_favorite=Exists(subquery))
@@ -540,57 +572,23 @@ class IssueViewViewSet(BaseViewSet):
 
         return queryset
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemViewPermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         queryset = self.get_queryset()
-        project = Project.objects.get(id=project_id)
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            queryset = queryset.filter(owned_by=request.user)
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         views = IssueViewSerializer(queryset, many=True, fields=fields if fields else None).data
         return Response(views, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemViewPermissions.CREATE, resource_param="project_id")
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    @can(WorkitemViewPermissions.VIEW, resource_param="project_id")
     def retrieve(self, request, slug, project_id, pk):
         issue_view = self.get_queryset().filter(pk=pk, project_id=project_id).first()
-        project = Project.objects.get(id=project_id)
-        """
-        if the role is guest and guest_view_all_features is false and owned by is not
-        the requesting user then dont show the view
-        """
-
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not issue_view.owned_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         serializer = IssueViewSerializer(issue_view)
         data = serializer.data
-        data["total_work_items"] = self._get_view_workitem_count(
-            request, slug, project_id, issue_view
-        )
+        data["total_work_items"] = self._get_view_workitem_count(request, slug, project_id, issue_view)
         recent_visited_task.delay(
             slug=slug,
             project_id=project_id,
@@ -614,22 +612,20 @@ class IssueViewViewSet(BaseViewSet):
                 is_draft=False,
             )
 
-            # Guest users without full feature access only see their own issues
-            if (
-                ProjectMember.objects.filter(
-                    workspace__slug=slug,
-                    project_id=project_id,
-                    member=request.user,
-                    role=5,
-                    is_active=True,
-                ).exists()
-                and not Project.objects.filter(
-                    id=project_id, guest_view_all_features=True
-                ).exists()
-                and not check_if_current_user_is_teamspace_member(
-                    request.user.id, slug, project_id
-                )
-            ):
+            # Role-agnostic access check: if the user's workitem:view is conditional on
+            # being the creator (system guest role or any custom role with creator-only
+            # grants), restrict to their own issues. Unconditional access (admin/
+            # contributor/commenter, custom roles, teamspace link-relation traversal)
+            # sees all issues.
+            access = permission_engine.check(
+                user=request.user,
+                permission=WorkitemPermissions.VIEW,
+                context=PermissionContext.project(project_id, workspace_id=request.workspace_id),
+                defer_conditions=True,
+            )
+            if not access.allowed:
+                return 0
+            if "creator" in access.conditions:
                 base_qs = base_qs.filter(created_by=request.user)
 
             # Mimics the DRF view interface expected by ComplexFilterBackend/PQLFilterBackend.
@@ -647,26 +643,26 @@ class IssueViewViewSet(BaseViewSet):
                 pql_stripped = pql_filters.get("stripped", "")
                 if pql_stripped:
                     backend = PQLFilterBackend()
-                    base_qs = backend.filter_queryset(
-                        request, base_qs, filter_ctx, pql=pql_stripped
-                    )
+                    base_qs = backend.filter_queryset(request, base_qs, filter_ctx, pql=pql_stripped)
             else:  # rich_filters and ai_filters both use the rich_filters field
                 rich_filters = issue_view.rich_filters or {}
                 if rich_filters:
                     backend = ComplexFilterBackend()
-                    base_qs = backend.filter_queryset(
-                        request, base_qs, filter_ctx, filter_data=rich_filters
-                    )
+                    base_qs = backend.filter_queryset(request, base_qs, filter_ctx, filter_data=rich_filters)
 
             return base_qs.count()
         except Exception as e:
             log_exception(e)
             return None
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
+    @can(WorkitemViewPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, pk):
         with transaction.atomic():
             issue_view = IssueView.objects.select_for_update().get(pk=pk, workspace__slug=slug, project_id=project_id)
+
+            # Only the creator can edit a private view
+            if issue_view.access == IssueView.PRIVATE_ACCESS and issue_view.created_by_id != request.user.id:
+                raise PermissionDenied("Only the creator can edit this view")
 
             if issue_view.is_locked:
                 return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
@@ -678,46 +674,36 @@ class IssueViewViewSet(BaseViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueView)
+    @can(WorkitemViewPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, pk):
         project_view = IssueView.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=20,
-                is_active=True,
-            ).exists()
-            or project_view.owned_by_id == request.user.id
-        ):
-            project_view.delete()
-            # Delete the user favorite view
-            UserFavorite.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-                entity_identifier=pk,
-                entity_type="view",
-            ).delete()
-            # Delete the page from recent visit
-            UserRecentVisit.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-                entity_identifier=pk,
-                entity_name="view",
-            ).delete(soft=False)
-            # Delete the view from the deploy board
-            DeployBoard.objects.filter(
-                entity_name="view",
-                entity_identifier=pk,
-                project_id=project_id,
-                workspace__slug=slug,
-            ).delete()
-        else:
-            return Response(
-                {"error": "Only admin or owner can delete the view"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
+        # Only the creator can delete a private view
+        if project_view.access == IssueView.PRIVATE_ACCESS and project_view.created_by_id != request.user.id:
+            raise PermissionDenied("Only the creator can delete this view")
+
+        project_view.delete()
+        # Delete the user favorite view
+        UserFavorite.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_type="view",
+        ).delete()
+        # Delete the page from recent visit
+        UserRecentVisit.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            entity_identifier=pk,
+            entity_name="view",
+        ).delete(soft=False)
+        # Delete the view from the deploy board
+        DeployBoard.objects.filter(
+            entity_name="view",
+            entity_identifier=pk,
+            project_id=project_id,
+            workspace__slug=slug,
+        ).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -735,7 +721,11 @@ class IssueViewFavoriteViewSet(BaseViewSet):
             .select_related("view")
         )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemViewPermissions.VIEW, resource_param="project_id")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @can(WorkitemViewPermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         _ = UserFavorite.objects.create(
             user=request.user,
@@ -745,7 +735,7 @@ class IssueViewFavoriteViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemViewPermissions.CREATE, resource_param="project_id")
     def destroy(self, request, slug, project_id, view_id):
         view_favorite = UserFavorite.objects.get(
             project=project_id,

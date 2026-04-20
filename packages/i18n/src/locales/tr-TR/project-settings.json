@@ -22,10 +22,6 @@
       "label": "Üyeler",
       "project_lead": "Proje lideri",
       "default_assignee": "Varsayılan atanan",
-      "guest_super_permissions": {
-        "title": "Misafir kullanıcılara tüm iş öğelerini görüntüleme izni ver:",
-        "sub_heading": "Bu, misafirlerin tüm proje iş öğelerini görüntülemesine izin verecektir."
-      },
       "invite_members": {
         "title": "Üyeleri davet et",
         "sub_heading": "Projenizde çalışmaları için üyeleri davet edin.",

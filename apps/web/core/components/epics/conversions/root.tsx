@@ -12,16 +12,13 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { AlertModalCore, EModalPosition, EModalWidth } from "@plane/ui";
 // components
 import { CreateUpdateIssueModal } from "@/components/issues/issue-modal/root";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { useIssueTypes } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -31,13 +28,11 @@ import { ConvertWorkItemIcon } from "./icon";
 type Props = {
   workItemId: string;
   conversionType: EWorkItemConversionType;
-  disabled?: boolean;
+  canConvert: boolean;
 };
 
 export const ConvertWorkItemAction = observer(function ConvertWorkItemAction(props: Props) {
-  const { workItemId, conversionType, disabled = false } = props;
-  // navigation
-  const { workspaceSlug } = useParams();
+  const { workItemId, conversionType, canConvert } = props;
   // hooks
   const {
     issue: { getIssueById: getEpicById },
@@ -55,7 +50,6 @@ export const ConvertWorkItemAction = observer(function ConvertWorkItemAction(pro
   } = useIssueDetail();
   const { getProjectFeatures } = useProjectAdvanced();
   const { getProjectDefaultIssueType, getProjectEpicId } = useIssueTypes();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const issue =
     conversionType === EWorkItemConversionType.WORK_ITEM ? getEpicById(workItemId) : getIssueById(workItemId);
@@ -82,22 +76,10 @@ export const ConvertWorkItemAction = observer(function ConvertWorkItemAction(pro
     else toggleConversionWarningModal(workItemId);
   };
 
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug?.toString(),
-    projectId?.toString()
-  );
-
   if (!isEpicsEnabled) return null;
-
   return (
     <>
-      <ConvertWorkItemIcon
-        conversionType={conversionType}
-        handleOnClick={handleOnClick}
-        disabled={!isEditable || disabled}
-      />
+      <ConvertWorkItemIcon conversionType={conversionType} handleOnClick={handleOnClick} canConvert={canConvert} />
 
       {isConversionWarningModalOpen === workItemId && conversionType === EWorkItemConversionType.EPIC && (
         <AlertModalCore

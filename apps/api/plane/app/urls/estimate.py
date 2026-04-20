@@ -13,18 +13,19 @@ from django.urls import path
 
 
 from plane.app.views import (
-    ProjectEstimatePointEndpoint,
+    # ProjectEstimatePointEndpoint,  # TODO: Unused — not called by FE
     BulkEstimatePointEndpoint,
     EstimatePointEndpoint,
 )
 
 
 urlpatterns = [
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/project-estimates/",
-        ProjectEstimatePointEndpoint.as_view(),
-        name="project-estimate-points",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/project-estimates/",
+    #     ProjectEstimatePointEndpoint.as_view(),
+    #     name="project-estimate-points",
+    # ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/estimates/",
         BulkEstimatePointEndpoint.as_view({"get": "list", "post": "create"}),

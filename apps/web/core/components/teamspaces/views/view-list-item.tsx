@@ -23,6 +23,8 @@ import type { TTeamspaceView } from "@plane/types";
 import { ListItem } from "@/components/core/list";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// types
+import type { TTeamspaceViewItemPermissions } from "@/store/teamspace/permissions/root";
 // local imports
 import { TeamspaceViewQuickActions } from "./quick-actions";
 import { TeamspaceViewListItemAction } from "./view-list-item-action";
@@ -30,10 +32,11 @@ import { TeamspaceViewListItemAction } from "./view-list-item-action";
 type Props = {
   teamspaceId: string;
   view: TTeamspaceView;
+  viewPermissions: TTeamspaceViewItemPermissions;
 };
 
 export const TeamspaceViewListItem = observer(function TeamspaceViewListItem(props: Props) {
-  const { teamspaceId, view } = props;
+  const { teamspaceId, view, viewPermissions } = props;
   // refs
   const parentRef = useRef(null);
   // router
@@ -56,7 +59,14 @@ export const TeamspaceViewListItem = observer(function TeamspaceViewListItem(pro
       }
       title={view.name}
       itemLink={detailPageLink}
-      actionableItems={<TeamspaceViewListItemAction parentRef={parentRef} teamspaceId={teamspaceId} view={view} />}
+      actionableItems={
+        <TeamspaceViewListItemAction
+          parentRef={parentRef}
+          teamspaceId={teamspaceId}
+          view={view}
+          permissions={viewPermissions}
+        />
+      }
       quickActionElement={
         <div className="block md:hidden">
           <TeamspaceViewQuickActions
@@ -64,6 +74,7 @@ export const TeamspaceViewListItem = observer(function TeamspaceViewListItem(pro
             teamspaceId={teamspaceId}
             view={view}
             workspaceSlug={workspaceSlug.toString()}
+            permissions={viewPermissions}
           />
         </div>
       }

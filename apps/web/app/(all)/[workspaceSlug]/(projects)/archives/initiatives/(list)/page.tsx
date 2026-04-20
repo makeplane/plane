@@ -34,7 +34,7 @@ const ArchivedInitiativesPage = observer(function ArchivedInitiativesPage({ para
       <PageHead title={pageTitle} />
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <ArchivedInitiativesHeader workspaceSlug={workspaceSlug} />
-        <InitiativesPageRoot isArchived />
+        <InitiativesPageRoot workspaceSlug={workspaceSlug} isArchived />
       </div>
     </>
   );

@@ -11,31 +11,75 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
 import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import { ModuleIssueQuickActions } from "../../quick-action-dropdowns";
 import { BaseKanBanRoot } from "../base-kanban-root";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const ModuleKanBanLayout = observer(function ModuleKanBanLayout() {
-  const { workspaceSlug, projectId, moduleId } = useParams();
+type TModuleKanBanLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+};
+
+export const ModuleKanBanLayout = observer(function ModuleKanBanLayout(props: TModuleKanBanLayoutProps) {
+  const { workspaceSlug, projectId, moduleId } = props;
 
   // store
-  const { issues } = useIssues(EIssuesStoreType.MODULE);
+  const {
+    issues: { addIssuesToModule },
+    permissions,
+  } = useIssues(EIssuesStoreType.MODULE);
 
   return (
     <BaseKanBanRoot
-      QuickActions={ModuleIssueQuickActions}
+      QuickActions={(props) => (
+        <ModuleIssueQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                  canRemoveFromView: permissions.getCanCreate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
+      layoutPermissions={{
+        canCreateWorkItem: {
+          viaHeader: permissions.getCanCreate(workspaceSlug, projectId),
+          viaQuickAdd: permissions.getCanCreate(workspaceSlug, projectId),
+        },
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, projectId, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, projectId, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
       addIssuesToView={(issueIds: string[]) => {
         if (!workspaceSlug || !projectId || !moduleId) throw new Error();
-        return issues.addIssuesToModule(workspaceSlug.toString(), projectId.toString(), moduleId.toString(), issueIds);
+        return addIssuesToModule(workspaceSlug, projectId, moduleId, issueIds);
       }}
-      viewId={moduleId?.toString()}
+      viewId={moduleId}
     />
   );
 });

@@ -31,7 +31,12 @@ type TStateItem = {
   state: IState;
   stateOperationsCallbacks: TStateOperationsCallbacks;
   shouldTrackEvents: boolean;
-  disabled?: boolean;
+  permissions: {
+    canEdit: (stateId: string) => boolean;
+    canDelete: (stateId: string) => boolean;
+    canMarkAsDefault: (stateId: string) => boolean;
+    canDragAndDrop: (stateId: string) => boolean;
+  };
   stateItemClassName?: string;
 };
 
@@ -43,7 +48,7 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
     state,
     stateOperationsCallbacks,
     shouldTrackEvents,
-    disabled = false,
+    permissions,
     stateItemClassName,
   } = props;
   // ref
@@ -54,6 +59,7 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
   const [isDraggedOver, setIsDraggedOver] = useState(false);
   const [closestEdge, setClosestEdge] = useState<string | null>(null);
   // derived values
+  const { canEdit, canDelete, canMarkAsDefault, canDragAndDrop } = permissions;
   const isDraggable = totalStates === 1 ? false : true;
   const commonStateItemListProps = {
     stateCount: totalStates,
@@ -84,7 +90,7 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
           getInitialData: () => initialData,
           onDragStart: () => setIsDragging(true),
           onDrop: () => setIsDragging(false),
-          canDrag: () => isDraggable && !disabled,
+          canDrag: () => isDraggable && canDragAndDrop(state.id),
         }),
         dropTargetForElements({
           element: elementRef,
@@ -122,7 +128,7 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
         })
       );
     }
-  }, [draggableElementRef, state, groupKey, isDraggable, groupedStates, handleStateSequence, disabled]);
+  }, [draggableElementRef, state, groupKey, isDraggable, groupedStates, handleStateSequence, canDragAndDrop]);
   // DND ends
 
   if (updateStateModal)
@@ -148,19 +154,17 @@ export const StateItem = observer(function StateItem(props: TStateItem) {
           stateItemClassName
         )}
       >
-        {disabled ? (
-          <StateItemTitle {...commonStateItemListProps} disabled />
-        ) : (
-          <StateItemTitle
-            {...commonStateItemListProps}
-            disabled={false}
-            stateOperationsCallbacks={{
-              markStateAsDefault: stateOperationsCallbacks.markStateAsDefault,
-              deleteState: stateOperationsCallbacks.deleteState,
-            }}
-            shouldTrackEvents={shouldTrackEvents}
-          />
-        )}
+        <StateItemTitle
+          {...commonStateItemListProps}
+          canEdit={canEdit(state.id)}
+          canDragAndDrop={canDragAndDrop(state.id)}
+          {...(canDelete(state.id)
+            ? { canDelete: true, deleteStateCallback: stateOperationsCallbacks.deleteState }
+            : { canDelete: false })}
+          {...(canMarkAsDefault(state.id)
+            ? { canMarkAsDefault: true, markStateAsDefaultCallback: stateOperationsCallbacks.markStateAsDefault }
+            : { canMarkAsDefault: false })}
+        />
       </div>
       {/* draggable drop bottom indicator */}
       <DropIndicator isVisible={isDraggedOver && closestEdge === "bottom"} />

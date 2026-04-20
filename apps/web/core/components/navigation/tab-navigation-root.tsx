@@ -14,15 +14,13 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
-import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";
 import { setPromiseToast } from "@plane/propel/toast";
-import type { EUserProjectRoles } from "@plane/types";
+import type { ProjectResourceKey } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useNavigationItems } from "@/components/navigation";
 import { LeaveProjectModal } from "@/components/projects/modals/leave-project-modal";
@@ -37,17 +35,17 @@ import { useActiveTab } from "./use-active-tab";
 import { useProjectActions } from "./use-project-actions";
 import { useResponsiveTabLayout } from "./use-responsive-tab-layout";
 import { useTabPreferences } from "./use-tab-preferences";
+import { useProjectAccess } from "@/hooks/permissions/use-project-access";
+import { useFavorite } from "@/hooks/store/use-favorite";
 
 // Local type definition for navigation items with app-specific fields
 export type TNavigationItem = {
   name: string;
   href: string;
   icon: React.ElementType;
-  access: EUserPermissions[] | EUserProjectRoles[];
-  shouldRender: boolean;
   sortOrder: number;
   i18n_key: string;
-  key: string;
+  key: ProjectResourceKey;
 };
 
 type TTabNavigationRootProps = {
@@ -66,8 +64,14 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   const [isFavoriteMenuOpen, setIsFavoriteMenuOpen] = useState(false);
 
   // Store hooks
-  const { getProjectById, addProjectToFavorites, removeProjectFromFavorites } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const {
+    getProjectById,
+    addProjectToFavorites,
+    removeProjectFromFavorites,
+    permissions: projectPermissions,
+  } = useProject();
+  const { canAccessProjectResource, isProjectFeatureEnabled } = useProjectAccess();
+  const { permissions: favoritePermissions } = useFavorite();
   const {
     issue: { getIssueIdByIdentifier, getIssueById },
   } = useIssueDetail();
@@ -84,6 +88,13 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     : undefined;
   const workItem = workItemId ? getIssueById(workItemId) : undefined;
   const project = getProjectById(projectId);
+  const permissions = {
+    canVisitArchives: canAccessProjectResource(workspaceSlug, projectId, "archives"),
+    canPublish: projectPermissions.getCanPublish(workspaceSlug, projectId),
+    canFavorite: favoritePermissions.getCanCreate(workspaceSlug),
+    canManage: projectPermissions.getCanManage(workspaceSlug, projectId),
+    canLeave: !!project?.member_role,
+  };
 
   const toggleFavoriteMenu = useCallback((value: boolean) => {
     setIsFavoriteMenuOpen(value);
@@ -93,8 +104,6 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
   const navigationItems = useNavigationItems({
     workspaceSlug,
     projectId,
-    project,
-    allowPermissions,
   });
 
   // Active tab hook
@@ -122,7 +131,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
 
   // Filter and sort navigation items
   const allNavigationItems = navigationItems
-    .filter((item) => item.shouldRender)
+    .filter((item) => isProjectFeatureEnabled(workspaceSlug, projectId, item.key))
     .sort((a, b) => a.sortOrder - b.sortOrder);
 
   // Split items into two categories:
@@ -158,21 +167,6 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
 
   if (allNavigationItems.length === 0) return null;
   if (!project) return null;
-
-  // Permission checks
-  const isAdmin = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project?.id
-  );
-
-  const isAuthorized = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    project?.id
-  );
 
   const handleAddToFavorites = () => {
     if (!workspaceSlug) return;
@@ -229,9 +223,8 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
             <ProjectActionsMenu
               workspaceSlug={workspaceSlug}
               project={project}
-              isAdmin={isAdmin}
               isFavorite={project?.is_favorite || false}
-              isAuthorized={isAuthorized}
+              permissions={permissions}
               onCopyText={handleCopyText}
               onLeaveProject={handleLeaveProject}
               handleAddToFavorites={handleAddToFavorites}

@@ -15,7 +15,7 @@ import { lazy, Suspense, useState } from "react";
 import type { ComponentType, LazyExoticComponent } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams } from "react-router";
 import useSWR from "swr";
 // plane constants
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
@@ -51,9 +51,9 @@ const CycleCalendarLayout = lazy(() =>
     default: module.CycleCalendarLayout,
   }))
 );
-const BaseTimelineRoot = lazy(() =>
-  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
-    default: module.BaseTimelineRoot,
+const CycleTimelineLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/roots/cycle-root").then((module) => ({
+    default: module.CycleTimelineLayout,
   }))
 );
 const CycleSpreadsheetLayout = lazy(() =>
@@ -62,47 +62,49 @@ const CycleSpreadsheetLayout = lazy(() =>
   }))
 );
 
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  cycleId: string;
+};
+
 // Layout components map
-const CYCLE_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+const CYCLE_WORK_ITEM_LAYOUTS: Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<ActiveLayoutProps>>> = {
   [EIssueLayoutTypes.LIST]: CycleListLayout,
   [EIssueLayoutTypes.KANBAN]: CycleKanBanLayout,
   [EIssueLayoutTypes.CALENDAR]: CycleCalendarLayout,
   [EIssueLayoutTypes.SPREADSHEET]: CycleSpreadsheetLayout,
+  [EIssueLayoutTypes.GANTT]: CycleTimelineLayout,
 };
 
-function CycleIssueLayout(props: {
-  activeLayout: EIssueLayoutTypes | undefined;
+type CycleWorkItemLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
   cycleId: string;
-  isCompletedCycle: boolean;
-}) {
-  if (!props.activeLayout) return null;
+  activeLayout: EIssueLayoutTypes | undefined;
+};
 
-  // Handle GANTT layout separately since it needs props
-  if (props.activeLayout === EIssueLayoutTypes.GANTT) {
-    return (
-      <Suspense>
-        <BaseTimelineRoot viewId={props.cycleId} isCompletedCycle={props.isCompletedCycle} />
-      </Suspense>
-    );
-  }
+function CycleIssueLayout(props: CycleWorkItemLayoutProps) {
+  if (!props.activeLayout) return null;
 
   const CycleIssueLayoutComponent = CYCLE_WORK_ITEM_LAYOUTS[props.activeLayout];
   if (!CycleIssueLayoutComponent) return null;
   return (
     <Suspense>
-      <CycleIssueLayoutComponent />
+      <CycleIssueLayoutComponent
+        workspaceSlug={props.workspaceSlug}
+        projectId={props.projectId}
+        cycleId={props.cycleId}
+      />
     </Suspense>
   );
 }
 
 export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, cycleId: routerCycleId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
-  const projectId = routerProjectId ? routerProjectId.toString() : undefined;
-  const cycleId = routerCycleId ? routerCycleId.toString() : undefined;
+  const { workspaceSlug, projectId, cycleId } = useParams();
   // store hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-  const { getCycleById } = useCycle();
+  const { getCycleById, permissions } = useCycle();
   // state
   const [transferIssuesModal, setTransferIssuesModal] = useState(false);
   // derived values
@@ -121,14 +123,19 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
 
   const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const cycleStatus = cycleDetails?.status?.toLocaleLowerCase() ?? "draft";
-  const isCompletedCycle = cycleStatus === "completed";
   const isProgressSnapshotEmpty = isEmpty(cycleDetails?.progress_snapshot);
   const transferableIssuesCount = cycleDetails
     ? (cycleDetails.total_issues ?? 0) - (cycleDetails.completed_issues ?? 0) - (cycleDetails.cancelled_issues ?? 0)
     : 0;
-  const canTransferIssues = isProgressSnapshotEmpty && transferableIssuesCount > 0;
 
-  if (!workspaceSlug || !projectId || !cycleId || !workItemFilters) return <></>;
+  if (!workspaceSlug || !projectId || !cycleId || !workItemFilters) return null;
+
+  // auth
+  const canTransferWorkItems =
+    isProgressSnapshotEmpty &&
+    transferableIssuesCount > 0 &&
+    permissions.getCanTransferWorkItemsFromCycle(workspaceSlug, projectId, cycleId);
+
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.CYCLE}>
       <ProjectLevelWorkItemFiltersHOC
@@ -152,13 +159,17 @@ export const CycleLayoutRoot = observer(function CycleLayoutRoot() {
               {cycleStatus === "completed" && (
                 <TransferIssues
                   handleClick={() => setTransferIssuesModal(true)}
-                  canTransferIssues={canTransferIssues}
-                  disabled={!isEmpty(cycleDetails?.progress_snapshot)}
+                  canTransferWorkItems={canTransferWorkItems}
                 />
               )}
               <WorkItemFiltersRowWrapper filter={filter} />
               <div className="h-full w-full overflow-auto">
-                <CycleIssueLayout activeLayout={activeLayout} cycleId={cycleId} isCompletedCycle={isCompletedCycle} />
+                <CycleIssueLayout
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  cycleId={cycleId}
+                  activeLayout={activeLayout}
+                />
               </div>
               {/* peek overview */}
               <Suspense>

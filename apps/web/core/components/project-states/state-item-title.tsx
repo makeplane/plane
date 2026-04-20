@@ -27,22 +27,43 @@ type TBaseStateItemTitleProps = {
   state: IState;
   shouldShowDescription?: boolean;
   setUpdateStateModal: (value: SetStateAction<boolean>) => void;
+  canEdit: boolean;
+  canDragAndDrop: boolean;
 };
 
-type TEnabledStateItemTitleProps = TBaseStateItemTitleProps & {
-  disabled: false;
-  stateOperationsCallbacks: Pick<TStateOperationsCallbacks, "markStateAsDefault" | "deleteState">;
-  shouldTrackEvents: boolean;
-};
+type TMarkAsDefaultStateItemTitleProps =
+  | {
+      canMarkAsDefault: true;
+      markStateAsDefaultCallback: TStateOperationsCallbacks["markStateAsDefault"];
+    }
+  | {
+      canMarkAsDefault: false;
+    };
 
-type TDisabledStateItemTitleProps = TBaseStateItemTitleProps & {
-  disabled: true;
-};
+type TDeleteStateItemTitleProps =
+  | {
+      canDelete: true;
+      deleteStateCallback: TStateOperationsCallbacks["deleteState"];
+    }
+  | {
+      canDelete: false;
+    };
 
-export type TStateItemTitleProps = TEnabledStateItemTitleProps | TDisabledStateItemTitleProps;
+export type TStateItemTitleProps = TBaseStateItemTitleProps &
+  TMarkAsDefaultStateItemTitleProps &
+  TDeleteStateItemTitleProps;
 
 export const StateItemTitle = observer(function StateItemTitle(props: TStateItemTitleProps) {
-  const { stateCount, setUpdateStateModal, disabled, state, shouldShowDescription = true } = props;
+  const {
+    canDelete,
+    canEdit,
+    canMarkAsDefault,
+    canDragAndDrop,
+    setUpdateStateModal,
+    shouldShowDescription = true,
+    state,
+    stateCount,
+  } = props;
   // store hooks
   const { getStatePercentageInGroup } = useProjectState();
   // derived values
@@ -53,7 +74,7 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
     <div className="flex items-center gap-2 w-full justify-between">
       <div className="flex items-center gap-1 px-1">
         {/* draggable indicator */}
-        {!disabled && stateCount != 1 && (
+        {canDragAndDrop && stateCount != 1 && (
           <div className="flex-shrink-0 w-3 h-3 rounded-xs absolute -left-1.5 hidden group-hover:flex justify-center items-center transition-colors bg-surface-2 cursor-pointer text-secondary hover:text-primary">
             <GripVertical className="w-3 h-3" />
           </div>
@@ -68,33 +89,32 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
           {shouldShowDescription && <p className="text-11 text-secondary">{state.description}</p>}
         </div>
       </div>
-      {!disabled && (
-        <div className="hidden group-hover:flex items-center gap-2">
-          {/* state mark as default option */}
+      <div className="hidden group-hover:flex items-center gap-2">
+        {/* state mark as default option */}
+        {canMarkAsDefault && (
           <div className="flex-shrink-0 text-11 transition-all">
             <StateMarksAsDefault
               stateId={state.id}
               isDefault={state.default ? true : false}
-              markStateAsDefaultCallback={props.stateOperationsCallbacks.markStateAsDefault}
+              markStateAsDefaultCallback={props.markStateAsDefaultCallback}
             />
           </div>
-          {/* state edit options */}
-          <div className="flex items-center gap-1 transition-all">
+        )}
+        {/* state edit options */}
+        <div className="flex items-center gap-1 transition-all">
+          {canEdit && (
             <button
               className="flex-shrink-0 w-5 h-5 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-secondary hover:text-primary"
               onClick={() => setUpdateStateModal(true)}
             >
               <EditIcon className="w-3 h-3" />
             </button>
-            <StateDelete
-              totalStates={stateCount}
-              state={state}
-              deleteStateCallback={props.stateOperationsCallbacks.deleteState}
-              shouldTrackEvents={props.shouldTrackEvents}
-            />
-          </div>
+          )}
+          {canDelete && (
+            <StateDelete totalStates={stateCount} state={state} deleteStateCallback={props.deleteStateCallback} />
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 });

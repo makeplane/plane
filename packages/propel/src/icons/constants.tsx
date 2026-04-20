@@ -38,6 +38,8 @@ export const ActionsIconsMap = [
 ];
 
 export const ArrowsIconsMap = [
+  { icon: <Icon name="arrow.accordion-close" />, title: "AccordionCloseIcon" },
+  { icon: <Icon name="arrow.accordion-open" />, title: "AccordionOpenIcon" },
   { icon: <Icon name="arrow.chevron-down" />, title: "ChevronDownIcon" },
   { icon: <Icon name="arrow.chevron-left" />, title: "ChevronLeftIcon" },
   { icon: <Icon name="arrow.chevron-right" />, title: "ChevronRightIcon" },

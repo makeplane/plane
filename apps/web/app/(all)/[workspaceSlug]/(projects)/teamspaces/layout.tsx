@@ -18,32 +18,23 @@ import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web components
 import WorkspaceAccessWrapper from "@/layouts/access/workspace-wrapper";
-import { TeamspaceUpgrade } from "@/components/teamspaces/upgrade";
-// plane web hooks
-import { useTeamspaces } from "@/plane-web/hooks/store";
+// types
+import type { Route } from "./+types/layout";
 
-function TeamspacesLayout() {
+function TeamspacesLayout({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
   // store
-  const { currentWorkspace } = useWorkspace();
-  // plane web stores
-  const { loader, isTeamspacesFeatureEnabled } = useTeamspaces();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Teamspaces` : undefined;
-  const shouldUpgrade =
-    isTeamspacesFeatureEnabled !== undefined && isTeamspacesFeatureEnabled === false && loader !== "init-loader";
 
   return (
-    <WorkspaceAccessWrapper pageKey="team_spaces">
-      {shouldUpgrade ? (
-        <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center">
-          <TeamspaceUpgrade />
-        </div>
-      ) : (
-        <>
-          <PageHead title={pageTitle} />
-          <Outlet />
-        </>
-      )}
+    <WorkspaceAccessWrapper pageKey="team_spaces" workspaceSlug={workspaceSlug}>
+      <>
+        <PageHead title={pageTitle} />
+        <Outlet />
+      </>
     </WorkspaceAccessWrapper>
   );
 }

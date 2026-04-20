@@ -17,7 +17,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
 import { SquareUser } from "lucide-react";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
-import { MODULE_STATUS, EUserPermissions, EUserPermissionsLevel, EEstimateSystem } from "@plane/constants";
+import { MODULE_STATUS, EEstimateSystem } from "@plane/constants";
 // plane types
 import { useTranslation } from "@plane/i18n";
 import {
@@ -43,7 +43,6 @@ import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList }
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web constants
 const defaultValues: Partial<IModule> = {
   lead_id: "",
@@ -53,23 +52,29 @@ const defaultValues: Partial<IModule> = {
   status: "backlog",
 };
 
-const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible({
-  moduleDetails,
-  isEditingAllowed,
-  isArchived,
-  moduleId,
-  handleEditLink,
-  handleDeleteLink,
-  setModuleLinkModal,
-}: {
+type LinksCollapsibleProps = {
   moduleDetails: IModule;
-  isEditingAllowed: boolean;
   isArchived: boolean;
   moduleId: string;
   handleEditLink: (link: ILinkDetails) => void;
   handleDeleteLink: (linkId: string) => void;
   setModuleLinkModal: (value: boolean) => void;
-}) {
+  permissions: {
+    canCreate: boolean;
+    canEdit: (linkId: string) => boolean;
+    canDelete: (linkId: string) => boolean;
+  };
+};
+
+const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible({
+  moduleDetails,
+  isArchived,
+  moduleId,
+  handleEditLink,
+  handleDeleteLink,
+  setModuleLinkModal,
+  permissions,
+}: LinksCollapsibleProps) {
   const [isOpen, setIsOpen] = useState(!!moduleDetails?.link_module?.length);
   const { t } = useTranslation();
 
@@ -85,9 +90,9 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible({
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="my-2 flex flex-col min-h-72 w-full overflow-y-auto">
-          {isEditingAllowed && moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
+          {moduleDetails.link_module && moduleDetails.link_module.length > 0 ? (
             <>
-              {!isArchived && (
+              {permissions.canCreate && !isArchived && (
                 <div className="flex w-full items-center justify-end">
                   <button
                     className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
@@ -98,15 +103,12 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible({
                   </button>
                 </div>
               )}
-
-              {moduleId && (
-                <ModuleLinksList
-                  moduleId={moduleId}
-                  handleEditLink={handleEditLink}
-                  handleDeleteLink={handleDeleteLink}
-                  disabled={!isEditingAllowed || isArchived}
-                />
-              )}
+              <ModuleLinksList
+                moduleId={moduleId}
+                handleEditLink={handleEditLink}
+                handleDeleteLink={handleDeleteLink}
+                permissions={permissions}
+              />
             </>
           ) : (
             <div className="flex items-center justify-between gap-2">
@@ -114,8 +116,9 @@ const ModuleLinksCollapsible = observer(function ModuleLinksCollapsible({
                 <InfoIcon className="h-3.5 w-3.5 stroke-[1.5] text-tertiary" />
                 <span className="p-0.5 text-11 text-tertiary">{t("common.no_links_added_yet")}</span>
               </div>
-              {isEditingAllowed && !isArchived && (
+              {permissions.canCreate && !isArchived && (
                 <button
+                  type="button"
                   className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
                   onClick={() => setModuleLinkModal(true)}
                 >
@@ -148,18 +151,20 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule");
   // store hooks
-  const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
-
-  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink } = useModule();
+  const { getModuleById, updateModuleDetails, createModuleLink, updateModuleLink, deleteModuleLink, permissions } =
+    useModule();
   const { areEstimateEnabledByProjectId, currentActiveEstimateId, estimateById } = useProjectEstimates();
-
   // derived values
   const moduleDetails = getModuleById(moduleId);
   const areEstimateEnabled = projectId && areEstimateEnabledByProjectId(projectId.toString());
   const estimateType = areEstimateEnabled && currentActiveEstimateId && estimateById(currentActiveEstimateId);
   const isEstimatePointValid = estimateType && estimateType?.type == EEstimateSystem.POINTS ? true : false;
-
+  // auth
+  const canEditProperties =
+    permissions.getCanEditModule(workspaceSlug, projectId, moduleId) && !moduleDetails?.archived_at;
+  // translation
+  const { t } = useTranslation();
+  // form info
   const { reset, control } = useForm({
     defaultValues,
   });
@@ -254,11 +259,6 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       ? "0 work items"
       : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-
   return (
     <div className="relative">
       <CreateUpdateModuleLinkModal
@@ -296,7 +296,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                   customButton={
                     <span
                       className={`flex h-6 w-20 items-center justify-center rounded-xs text-center text-11 ${
-                        isEditingAllowed && !isArchived ? "cursor-pointer" : "cursor-not-allowed"
+                        canEditProperties ? "cursor-pointer" : "cursor-not-allowed"
                       }`}
                       style={{
                         color: moduleStatus ? moduleStatus.color : "#a3a3a2",
@@ -310,7 +310,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                   onChange={(value: any) => {
                     submitChanges({ status: value });
                   }}
-                  disabled={!isEditingAllowed || isArchived}
+                  disabled={!canEditProperties}
                 >
                   {MODULE_STATUS.map((status) => (
                     <CustomSelect.Option key={status.value} value={status.value}>
@@ -324,12 +324,12 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
               )}
             />
           </div>
-          <h4 className="w-full break-words text-18 font-semibold text-primary">{moduleDetails.name}</h4>
+          <h4 className="w-full wrap-break-word text-18 font-semibold text-primary">{moduleDetails.name}</h4>
         </div>
 
         {moduleDetails.description && (
           <TextArea
-            className="outline-none ring-none w-full max-h-max bg-transparent !p-0 !m-0 !border-0 resize-none text-13 leading-5 text-secondary"
+            className="outline-none ring-none w-full max-h-max bg-transparent p-0! m-0! border-0! resize-none text-13 leading-5 text-secondary"
             value={moduleDetails.description}
             disabled
           />
@@ -369,7 +369,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                             from: t("start_date"),
                             to: t("end_date"),
                           }}
-                          disabled={!isEditingAllowed || isArchived}
+                          disabled={!canEditProperties}
                         />
                       );
                     }}
@@ -397,7 +397,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     multiple={false}
                     buttonVariant="background-with-text"
                     placeholder={t("lead")}
-                    disabled={!isEditingAllowed || isArchived}
+                    disabled={!canEditProperties}
                     icon={SquareUser}
                   />
                 </div>
@@ -423,7 +423,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     projectId={projectId?.toString() ?? ""}
                     buttonVariant={value && value?.length > 0 ? "transparent-without-text" : "background-with-text"}
                     buttonClassName={value && value.length > 0 ? "hover:bg-transparent px-0" : ""}
-                    disabled={!isEditingAllowed || isArchived}
+                    disabled={!canEditProperties}
                   />
                 </div>
               )}
@@ -465,12 +465,16 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
 
         <ModuleLinksCollapsible
           moduleDetails={moduleDetails}
-          isEditingAllowed={isEditingAllowed}
           isArchived={!!isArchived}
           moduleId={moduleId}
           handleEditLink={handleEditLink}
           handleDeleteLink={handleDeleteLink}
           setModuleLinkModal={setModuleLinkModal}
+          permissions={{
+            canCreate: canEditProperties,
+            canEdit: () => canEditProperties,
+            canDelete: () => canEditProperties,
+          }}
         />
         <div className="pb-5"></div>
       </>

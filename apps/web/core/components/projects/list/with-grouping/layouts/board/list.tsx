@@ -12,21 +12,35 @@
  */
 
 import { observer } from "mobx-react";
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 // components
 import { ProjectBoardListItem } from "@/components/projects/list/with-grouping/layouts/board/list-item";
 
-type ProjectBoardList = { groupByKey: string; projectIds: string[] };
+type ProjectBoardList = {
+  groupByKey: string;
+  projectIds: string[];
+  getProjectItemPermissions: (projectId: string) => ProjectItemPermissions;
+  workspaceSlug: string;
+};
 
 export const ProjectBoardList = observer(function ProjectBoardList(props: ProjectBoardList) {
-  const { groupByKey, projectIds } = props;
+  const { groupByKey, projectIds, getProjectItemPermissions, workspaceSlug } = props;
 
   return (
     <div className="max-h-full overflow-hidden overflow-y-auto flex flex-col gap-y-2 mt-2">
-      {projectIds.map((projectId) => (
-        <div key={`${groupByKey}-${projectId}`}>
-          <ProjectBoardListItem groupByKey={groupByKey} projectId={projectId} />
-        </div>
-      ))}
+      {projectIds.map((projectId) => {
+        const permissions = getProjectItemPermissions(projectId);
+        return (
+          <div key={`${groupByKey}-${projectId}`}>
+            <ProjectBoardListItem
+              groupByKey={groupByKey}
+              projectId={projectId}
+              permissions={permissions}
+              workspaceSlug={workspaceSlug}
+            />
+          </div>
+        );
+      })}
     </div>
   );
 });

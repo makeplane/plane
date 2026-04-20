@@ -24,6 +24,8 @@ import { IssueLabelService, IssueService } from "@/services/issue";
 import { ProjectService, ProjectStateService, ProjectArchiveService } from "@/services/project";
 // store
 import type { CoreRootStore } from "../root.store";
+import { ProjectPermissionsInstance } from "./permissions/root";
+import type { AdditionalProjectPermissionMeta, ProjectPermissions } from "./permissions/root";
 
 type ProjectOverviewCollapsible = "links" | "attachments" | "milestones";
 
@@ -53,14 +55,11 @@ export interface IProjectStore {
   // collapsible
   openCollapsibleSection: ProjectOverviewCollapsible[];
   lastCollapsibleAction: ProjectOverviewCollapsible | null;
-
   setOpenCollapsibleSection: (section: ProjectOverviewCollapsible[]) => void;
   setLastCollapsibleAction: (section: ProjectOverviewCollapsible) => void;
   toggleOpenCollapsibleSection: (section: ProjectOverviewCollapsible) => void;
-
   // helper actions
   processProjectAfterCreation: (workspaceSlug: string, data: TProject) => void;
-
   // fetch actions
   fetchPartialProjects: (workspaceSlug: string) => Promise<TPartialProject[]>;
   fetchProjects: (workspaceSlug: string) => Promise<TProject[]>;
@@ -81,6 +80,8 @@ export interface IProjectStore {
   // archive actions
   archiveProject: (workspaceSlug: string, projectId: string) => Promise<void>;
   restoreProject: (workspaceSlug: string, projectId: string) => Promise<void>;
+  // permissions
+  permissions: ProjectPermissions;
 }
 
 export class ProjectStore implements IProjectStore {
@@ -92,6 +93,9 @@ export class ProjectStore implements IProjectStore {
   projectAnalyticsCountMap: Record<string, TProjectAnalyticsCount> = {};
   openCollapsibleSection: ProjectOverviewCollapsible[] = ["milestones"];
   lastCollapsibleAction: ProjectOverviewCollapsible | null = null;
+
+  // permissions
+  permissions: ProjectPermissions;
 
   // root store
   rootStore: CoreRootStore;
@@ -150,6 +154,14 @@ export class ProjectStore implements IProjectStore {
     this.issueService = new IssueService();
     this.issueLabelService = new IssueLabelService();
     this.stateService = new ProjectStateService();
+    // permissions
+    this.permissions = new ProjectPermissionsInstance({
+      can: this.rootStore.permissionAccessStore.can,
+      getCurrentUserRoleSlug: this.rootStore.permissionAccessStore.getCurrentUserProjectRoleSlug,
+      getProjectAdditionalMeta: this.getProjectAdditionalMetaById.bind(this),
+      getUpdateConditionContext: this.getUpdateConditionContext.bind(this),
+      getUpdateCommentConditionContext: this.getUpdateCommentConditionContext.bind(this),
+    });
   }
 
   /**
@@ -303,9 +315,6 @@ export class ProjectStore implements IProjectStore {
   processProjectAfterCreation = (workspaceSlug: string, data: TProject) => {
     runInAction(() => {
       set(this.projectMap, [data.id], data);
-      // updating the user project role in workspaceProjectsPermissions
-      set(this.rootStore.user.permission.workspaceProjectsPermissions, [workspaceSlug, data.id], data.member_role);
-
       // Get the default work item type from workspace and add it to the project type ids
       const defaultWorkItemTypeId =
         this.rootStore.workItemTypesRootStore.workspaceWorkItemTypesStore.getDefaultWorkItemTypeId(workspaceSlug);
@@ -333,6 +342,7 @@ export class ProjectStore implements IProjectStore {
     try {
       this.loader = "init-loader";
       const projectsResponse = await this.projectService.getProjectsLite(workspaceSlug);
+      this.rootStore.permissionAccessStore.hydrateProjectPermissionsFromEntities(projectsResponse);
       runInAction(() => {
         projectsResponse.forEach((project) => {
           update(this.projectMap, [project.id], (p) => ({ ...p, ...project }));
@@ -362,6 +372,7 @@ export class ProjectStore implements IProjectStore {
         this.loader = "init-loader";
       }
       const projectsResponse = await this.projectService.getProjects(workspaceSlug);
+      this.rootStore.permissionAccessStore.hydrateProjectPermissionsFromEntities(projectsResponse);
       runInAction(() => {
         projectsResponse.forEach((project) => {
           update(this.projectMap, [project.id], (p) => ({ ...p, ...project }));
@@ -386,6 +397,7 @@ export class ProjectStore implements IProjectStore {
   fetchProjectDetails = async (workspaceSlug: string, projectId: string) => {
     try {
       const response = await this.projectService.getProject(workspaceSlug, projectId);
+      this.rootStore.permissionAccessStore.hydrateProjectPermissionsFromEntities([response]);
       runInAction(() => {
         update(this.projectMap, [projectId], (p) => ({ ...p, ...response }));
       });
@@ -559,7 +571,7 @@ export class ProjectStore implements IProjectStore {
       const response = await this.projectService.createProject(workspaceSlug, data);
       this.processProjectAfterCreation(workspaceSlug, response);
       // Auto-complete getting started checklist
-      void this.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "project_created");
+      void this.rootStore.preferencesRoot.workspace.updateChecklistIfNotDoneAlready(workspaceSlug, "project_created");
       return response;
     } catch (error) {
       console.log("Failed to create project from project store");
@@ -609,7 +621,6 @@ export class ProjectStore implements IProjectStore {
       runInAction(() => {
         delete this.projectMap[projectId];
         if (this.rootStore.favorite.entityMap[projectId]) this.rootStore.favorite.removeFavoriteFromStore(projectId);
-        delete this.rootStore.user.permission.workspaceProjectsPermissions[workspaceSlug][projectId];
       });
     } catch (error) {
       console.log("Failed to delete project from project store");
@@ -657,4 +668,34 @@ export class ProjectStore implements IProjectStore {
         throw error;
       });
   };
+
+  // permissions
+
+  private getProjectAdditionalMetaById = computedFn((projectId: string): AdditionalProjectPermissionMeta => {
+    const project = this.getProjectById(projectId);
+    if (!project) return { isArchived: false };
+    return {
+      isArchived: !!project.archived_at,
+    };
+  });
+
+  private getUpdateConditionContext = computedFn((_projectId: string, updateId: string): { creator: boolean } => {
+    const projectUpdate = this.rootStore.projectDetails.updatesStore.getUpdateById(updateId);
+    if (!projectUpdate) return { creator: false };
+    const currentUserId = this.rootStore.user.data?.id;
+    return {
+      creator: projectUpdate.created_by === currentUserId,
+    };
+  });
+
+  private getUpdateCommentConditionContext = computedFn(
+    (_projectId: string, _updateId: string, commentId: string): { creator: boolean } => {
+      const projectUpdateComment = this.rootStore.projectDetails.updatesStore.comments.getCommentById(commentId);
+      if (!projectUpdateComment) return { creator: false };
+      const currentUserId = this.rootStore.user.data?.id;
+      return {
+        creator: projectUpdateComment.created_by === currentUserId,
+      };
+    }
+  );
 }

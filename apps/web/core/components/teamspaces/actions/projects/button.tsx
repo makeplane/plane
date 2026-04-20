@@ -32,8 +32,8 @@ import { LinkProjectModal } from "./link-modal";
 type UpdateTeamspaceProjectsButtonProps = {
   variant?: "default" | "empty-state";
   teamspaceId: string;
-  isEditingAllowed: boolean;
-  renderButton?: (args: { open: () => void; isEditingAllowed: boolean; areProjectsPresent: boolean }) => ReactNode;
+  canAddProject: boolean;
+  renderButton?: (args: { open: () => void; canAddProject: boolean; areProjectsPresent: boolean }) => ReactNode;
 };
 
 const TOOLTIP_CONTENT = "You don't have permission to add project.";
@@ -41,7 +41,7 @@ const TOOLTIP_CONTENT = "You don't have permission to add project.";
 export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspaceProjectsButton(
   props: UpdateTeamspaceProjectsButtonProps
 ) {
-  const { variant = "default", teamspaceId, isEditingAllowed, renderButton } = props;
+  const { variant = "default", teamspaceId, canAddProject, renderButton } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -76,7 +76,7 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
   if (!teamspace) return null;
 
   const open = () => {
-    if (!isEditingAllowed) return;
+    if (!canAddProject) return;
     setIsModalOpen(true);
   };
 
@@ -92,29 +92,29 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
       />
 
       {renderButton ? (
-        <>{renderButton({ open, isEditingAllowed, areProjectsPresent: Boolean(areProjectsPresent) })}</>
+        <>{renderButton({ open, canAddProject, areProjectsPresent: Boolean(areProjectsPresent) })}</>
       ) : (
         <>
           {variant === "default" && (
-            <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="left">
+            <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={canAddProject} position="left">
               <Button
                 variant="secondary"
                 size="base"
                 prependIcon={<BriefcaseIcon />}
                 onClick={open}
-                disabled={!isEditingAllowed}
+                disabled={!canAddProject}
                 className={cn(
                   "group/projects transition-[width] ease-linear duration-700",
-                  !isEditingAllowed && "cursor-not-allowed"
+                  !canAddProject && "cursor-not-allowed"
                 )}
               >
                 {!areProjectsPresent && "Link a project"}
                 {areProjectsPresent && (
                   <>
-                    <span className={cn(isEditingAllowed && "group-hover/projects:hidden")}>
+                    <span className={cn(canAddProject && "group-hover/projects:hidden")}>
                       {teamspace.project_ids?.length}
                     </span>
-                    <span className={cn("hidden", isEditingAllowed && "group-hover/projects:inline")}>
+                    <span className={cn("hidden", canAddProject && "group-hover/projects:inline")}>
                       Update projects
                     </span>
                   </>
@@ -123,13 +123,13 @@ export const UpdateTeamspaceProjectsButton = observer(function UpdateTeamspacePr
             </Tooltip>
           )}
           {variant === "empty-state" && (
-            <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={isEditingAllowed} position="right">
+            <Tooltip tooltipContent={TOOLTIP_CONTENT} disabled={canAddProject} position="right">
               <div>
                 <Button
                   variant="primary"
                   className="flex-shrink-0 mt-2 text-caption-sm-medium"
                   onClick={open}
-                  disabled={!isEditingAllowed}
+                  disabled={!canAddProject}
                 >
                   Link a project
                 </Button>

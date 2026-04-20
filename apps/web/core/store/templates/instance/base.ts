@@ -14,22 +14,22 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import type { EUserPermissions, TUserPermissions } from "@plane/constants";
 import type {
-  EUserProjectRoles,
-  EUserWorkspaceRoles,
   IBaseTemplateActionCallbacks,
   TBaseTemplate,
   TBaseTemplateWithData,
+  PermissionCheckArgs,
   TPublishTemplateForm,
 } from "@plane/types";
-// plane web store
-import type { RootStore } from "@/plane-web/store/root.store";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
 
-export type TBaseTemplateInstanceProps<T extends TBaseTemplateWithData> = {
-  root: RootStore;
+export type TBaseTemplateInstanceArgs<T extends TBaseTemplateWithData> = {
   updateActionCallback: IBaseTemplateActionCallbacks<T>["update"];
   baseTemplateData: T;
+  can: (args: PermissionCheckArgs) => boolean;
+  getWorkspaceSlugById: (workspaceId: string) => string | undefined;
+  currentUserId: string | undefined;
+  getFeatureFlagByWorkspaceSlug: (workspaceSlug: string, flag: E_FEATURE_FLAGS) => boolean;
 };
 
 export interface IBaseTemplateInstance<T extends TBaseTemplateWithData> extends TBaseTemplate<
@@ -39,12 +39,11 @@ export interface IBaseTemplateInstance<T extends TBaseTemplateWithData> extends 
   // computed
   asJSON: T;
   asPublishableJSON: TPublishTemplateForm<T["template_type"], T["template_data"]>;
-  getWorkspaceSlugForTemplateInstance: string | undefined;
-  getUserRoleForTemplateInstance: TUserPermissions | EUserWorkspaceRoles | EUserProjectRoles | undefined;
-  canCurrentUserEditTemplate: boolean;
-  canCurrentUserDeleteTemplate: boolean;
-  canCurrentUserPublishTemplate: boolean;
-  canCurrentUserUnpublishTemplate: boolean;
+  workspaceSlug: string | undefined;
+  canEdit: boolean;
+  canDelete: boolean;
+  canPublish: boolean;
+  canUnpublish: boolean;
   // helper actions
   mutateInstance: (templateData: Partial<T>) => void;
   // actions
@@ -75,15 +74,13 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
   project: T["project"];
   created_at: T["created_at"];
   updated_at: T["updated_at"];
-
-  // root store
-  protected rootStore: TBaseTemplateInstanceProps<T>["root"];
-
+  created_by: T["created_by"];
+  updated_by: T["updated_by"];
   // service
-  protected updateActionCallback: TBaseTemplateInstanceProps<T>["updateActionCallback"];
+  protected updateActionCallback: TBaseTemplateInstanceArgs<T>["updateActionCallback"];
 
-  constructor(protected store: TBaseTemplateInstanceProps<T>) {
-    const { root, updateActionCallback, baseTemplateData } = store;
+  constructor(protected args: TBaseTemplateInstanceArgs<T>) {
+    const { updateActionCallback, baseTemplateData } = args;
 
     // properties
     this.id = baseTemplateData.id;
@@ -108,9 +105,8 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
     this.project = baseTemplateData.project;
     this.created_at = baseTemplateData.created_at;
     this.updated_at = baseTemplateData.updated_at;
-
-    // root store
-    this.rootStore = root;
+    this.created_by = baseTemplateData.created_by;
+    this.updated_by = baseTemplateData.updated_by;
 
     // service
     this.updateActionCallback = updateActionCallback;
@@ -139,11 +135,14 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       project: observable.ref,
       created_at: observable.ref,
       updated_at: observable.ref,
+      created_by: observable.ref,
+      updated_by: observable.ref,
       // computed
       asJSON: computed,
-      getUserRoleForTemplateInstance: computed,
-      canCurrentUserEditTemplate: computed,
-      canCurrentUserDeleteTemplate: computed,
+      canEdit: computed,
+      canDelete: computed,
+      canPublish: computed,
+      canUnpublish: computed,
       // actions
       mutateInstance: action,
       update: action,
@@ -178,6 +177,8 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
       project: this.project,
       created_at: this.created_at,
       updated_at: this.updated_at,
+      created_by: this.created_by,
+      updated_by: this.updated_by,
     };
     // always make sure that all the fields are present in the base object
     // return the base object as the type T
@@ -210,29 +211,22 @@ export abstract class BaseTemplateInstance<T extends TBaseTemplateWithData> impl
   /**
    * @description Returns the workspace slug for the template instance
    */
-  get getWorkspaceSlugForTemplateInstance() {
-    return this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
+  get workspaceSlug() {
+    return this.args.getWorkspaceSlugById(this.workspace);
   }
 
   /**
-   * @description Returns the user role for the template instance
+   * @description Returns the permission meta for the template instance
    */
-  get getUserRoleForTemplateInstance() {
-    const workspaceSlug = this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
-    if (!workspaceSlug) return undefined;
-
-    if (this.project) {
-      return this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, this.project);
-    }
-
-    return this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  protected get permissionMeta() {
+    return { resourceId: this.id };
   }
 
   // abstract computed
-  abstract get canCurrentUserEditTemplate(): boolean;
-  abstract get canCurrentUserDeleteTemplate(): boolean;
-  abstract get canCurrentUserPublishTemplate(): boolean;
-  abstract get canCurrentUserUnpublishTemplate(): boolean;
+  abstract get canEdit(): boolean;
+  abstract get canDelete(): boolean;
+  abstract get canPublish(): boolean;
+  abstract get canUnpublish(): boolean;
 
   // helper actions
   /**

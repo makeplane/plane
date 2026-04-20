@@ -11,15 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { EUserPermissionsLevel } from "@plane/constants";
 import type { IIssueLabel } from "@plane/types";
-import { EUserPermissions } from "@plane/types";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
 // local imports
 import type { TWorkItemLabelSelectBaseProps } from "./base";
 import { WorkItemLabelSelectBase } from "./base";
@@ -33,14 +30,12 @@ export const IssueLabelSelect = observer(function IssueLabelSelect(props: TWorkI
   // router
   const { workspaceSlug } = useParams();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: projectPermissions } = useProject();
   const { getProjectLabelIds, getLabelById, fetchProjectLabels, createLabel } = useLabel();
   // derived values
   const projectLabelIds = getProjectLabelIds(projectId);
-
   const canCreateLabel =
-    projectId &&
-    allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug?.toString(), projectId);
+    workspaceSlug && projectId ? projectPermissions.getCanManageLabels(workspaceSlug, projectId) : true;
 
   const onDropdownOpen = () => {
     if (projectLabelIds === undefined && workspaceSlug && projectId)

@@ -22,7 +22,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.db.models import IssueType, ProjectIssueType
-from plane.ee.permissions import WorkspaceEntityPermission
+from plane.permissions import can, WorkspacePermissions, EpicPermissions
 from plane.ee.serializers import EpicTypeSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -31,9 +31,8 @@ from plane.payment.flags.flag import FeatureFlag
 class WorkspaceEpicTypeEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceEntityPermission]
-
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         # Get all epics for the workspace
         epics = (
@@ -63,9 +62,8 @@ class WorkspaceEpicTypeEndpoint(BaseAPIView):
 class ProjectEpicTypeEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceEntityPermission]
-
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         # Get all epics for the project
         epics = (

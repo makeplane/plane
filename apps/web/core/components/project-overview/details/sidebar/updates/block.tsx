@@ -15,13 +15,12 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MessageCircle } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { AtRiskIcon, OffTrackIcon, OnTrackIcon } from "@plane/propel/icons";
-import { EUpdateStatus, EUserProjectRoles } from "@plane/types";
+import { EUpdateStatus } from "@plane/types";
 import { cn, renderFormattedDate } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 // plane web components
 import Progress from "@/components/updates/progress";
 import { UpdateStatusIcons } from "@/components/updates/status-icons";
@@ -58,32 +57,34 @@ type TProps = {
     update: (updateId: string, data: Partial<TProjectUpdate>) => void;
     remove: (updateId: string) => Promise<void>;
   };
+  permissions: {
+    updates: {
+      canReact: boolean;
+      canEdit: boolean;
+      canDelete: boolean;
+    };
+    comments: {
+      canCreate: boolean;
+      canUpdate: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
+  };
 };
 export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
-  const { updateId, workspaceSlug, projectId, handleUpdateOperations } = props;
+  const { updateId, workspaceSlug, projectId, handleUpdateOperations, permissions } = props;
   // state
   const [isEditing, setIsEditing] = useState(false);
   const [showComment, setShowComment] = useState(false);
-  const [showProperties, setShowProperties] = useState(false);
 
   // hooks
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
   const { getUpdateById } = useProjectUpdates();
-  const { allowPermissions } = useUserPermissions();
 
   const updateData = getUpdateById(updateId);
 
   if (!updateData) return null;
-
-  const icon = conf[updateData?.status].icon;
-
-  const isProjectAdmin = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug.toString(),
-    projectId.toString()
-  );
 
   return isEditing ? (
     <NewUpdate
@@ -116,17 +117,19 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
               </div>
             </div>
             {/* quick actions */}
-            {isProjectAdmin && (
-              <UpdateQuickActions
-                updateId={updateData.id}
-                operations={{
-                  remove: handleUpdateOperations.remove,
-                  update: () => {
-                    setIsEditing(true);
-                  },
-                }}
-              />
-            )}
+            <UpdateQuickActions
+              updateId={updateData.id}
+              permissions={{
+                canDelete: permissions.updates.canDelete,
+                canEdit: permissions.updates.canEdit,
+              }}
+              operations={{
+                remove: handleUpdateOperations.remove,
+                update: () => {
+                  setIsEditing(true);
+                },
+              }}
+            />
           </div>
 
           {/* Update */}
@@ -143,10 +146,12 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
                 projectId={projectId}
                 commentId={updateData.id}
                 currentUser={currentUser}
+                permissions={permissions.updates}
               />
               <button
                 className="text-tertiary bg-layer-1 rounded-sm h-7 flex px-2 gap-2 text-11 font-medium items-center"
                 onClick={() => setShowComment(!showComment)}
+                disabled={!permissions.comments.canCreate}
               >
                 <MessageCircle className="h-3.5 w-3.5 m-auto" />
                 {updateData.comments_count > 0 && (
@@ -157,12 +162,13 @@ export const UpdateBlock = observer(function UpdateBlock(props: TProps) {
               </button>
             </div>
           </div>
-          <Properties isCollapsed={!showProperties} />
+          <Properties isCollapsed />
           <CommentList
             isCollapsed={!showComment}
             updateId={updateData.id}
             workspaceSlug={workspaceSlug}
             projectId={projectId}
+            permissions={permissions.comments}
           />
         </div>
       </div>

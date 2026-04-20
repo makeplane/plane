@@ -11,10 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-// local imports
-import type { EUserProjectRoles } from ".";
-import type { EUserWorkspaceRoles } from "./workspace";
-
 export type TProfileSettingsTabs = "general" | "preferences" | "notifications" | "security" | "api-tokens";
 
 export type TWorkspaceSettingsTabs =
@@ -38,6 +34,8 @@ export type TWorkspaceSettingsTabs =
   | "connections"
   | "scripts"
   | "access-tokens"
+  | "project_roles_and_schemes"
+  | "workspace_roles_and_schemes"
   | "work_item_types"
   | "relations"
   | "automations";
@@ -46,7 +44,6 @@ export type TWorkspaceSettingsItem = {
   key: TWorkspaceSettingsTabs;
   i18n_label: string;
   href: string;
-  access: EUserWorkspaceRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   beta?: boolean;
 };
@@ -76,6 +73,5 @@ export type TProjectSettingsItem = {
   key: TProjectSettingsTabs;
   i18n_label: string;
   href: string;
-  access: EUserProjectRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
 };

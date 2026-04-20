@@ -28,17 +28,12 @@ from plane.ee.serializers import (
     InitiativeLinkSerializer,
 )
 from plane.payment.flags.flag import FeatureFlag
-from plane.ee.permissions import WorkspaceEntityPermission
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, InitiativeLinkPermissions, ResourceType
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.initiative_activity_task import initiative_activity
 
 
 class InitiativeLinkViewSet(BaseViewSet):
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     model = InitiativeLink
     serializer_class = InitiativeLinkSerializer
 
@@ -53,13 +48,12 @@ class InitiativeLinkViewSet(BaseViewSet):
         )
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ],
-        level="WORKSPACE",
-    )
+    @can(InitiativeLinkPermissions.VIEW, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @check_feature_flag(FeatureFlag.INITIATIVES)
+    @can(InitiativeLinkPermissions.CREATE, resource_param="initiative_id", scope_param_type=ResourceType.INITIATIVE)
     def create(self, request, slug, initiative_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = InitiativeLinkSerializer(data=request.data)
@@ -84,13 +78,7 @@ class InitiativeLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ],
-        level="WORKSPACE",
-    )
+    @can(InitiativeLinkPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, initiative_id, pk):
         initiative_link = InitiativeLink.objects.get(
             workspace__slug=slug,
@@ -120,13 +108,7 @@ class InitiativeLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ],
-        level="WORKSPACE",
-    )
+    @can(InitiativeLinkPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, initiative_id, pk):
         initiative_link = InitiativeLink.objects.get(
             workspace__slug=slug,

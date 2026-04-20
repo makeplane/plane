@@ -14,15 +14,11 @@
 import { observer } from "mobx-react";
 // plane imports
 import { EpicIcon, OverviewIcon } from "@plane/propel/icons";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
 import { ProjectNavigation } from "@/components/workspace/sidebar/project-navigation";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-// plane web imports
-import { useFlag } from "@/plane-web/hooks/store";
-import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 // local imports
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 
@@ -35,12 +31,8 @@ export const ProjectNavigationRoot = observer(function ProjectNavigationRoot(pro
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getPartialProjectById } = useProject();
-  const isProjectOverviewEnabled = useFlag(workspaceSlug, "PROJECT_OVERVIEW");
-  const { getProjectFeatures } = useProjectAdvanced();
   // derived values
   const project = getPartialProjectById(projectId);
-  const projectFeatures = getProjectFeatures(projectId);
-  const isEpicsEnabled = projectFeatures?.is_epic_enabled;
 
   if (!project) return null;
 
@@ -51,8 +43,6 @@ export const ProjectNavigationRoot = observer(function ProjectNavigationRoot(pro
       key: "overview",
       href: `/${workspaceSlug}/projects/${projectId}/overview/`,
       icon: OverviewIcon,
-      access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      shouldRender: !!isProjectOverviewEnabled,
       sortOrder: -2,
       i18n_key: "common.overview",
     },
@@ -61,8 +51,6 @@ export const ProjectNavigationRoot = observer(function ProjectNavigationRoot(pro
       key: "epics",
       href: `/${workspaceSlug}/projects/${projectId}/epics`,
       icon: EpicIcon,
-      access: [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      shouldRender: !!isEpicsEnabled,
       sortOrder: -1,
       i18n_key: "sidebar.epics",
     },

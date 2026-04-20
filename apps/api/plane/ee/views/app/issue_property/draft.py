@@ -24,7 +24,7 @@ from rest_framework.response import Response
 from plane.ee.models import IssueProperty, DraftIssuePropertyValue, PropertyTypeEnum
 from plane.db.models import Project, DraftIssue
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import ProjectEntityPermission
+from plane.permissions import can, WorkitemPermissions
 from plane.ee.utils.issue_property_validators import (
     property_validators,
     SAVE_MAPPER,
@@ -37,8 +37,6 @@ from plane.payment.flags.flag import FeatureFlag
 
 class DraftIssuePropertyValueEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [ProjectEntityPermission]
 
     def query_annotator(self, query):
         return query.values("property_id").annotate(
@@ -87,6 +85,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, draft_issue_id, issue_property_id=None):
         # Get a single issue property value
         if issue_property_id:
@@ -121,6 +120,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, draft_issue_id):
         try:
             # Create a new issue property value
@@ -187,6 +187,7 @@ class DraftIssuePropertyValueEndpoint(BaseAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, draft_issue_id, property_id):
         try:
             # Get the issue property

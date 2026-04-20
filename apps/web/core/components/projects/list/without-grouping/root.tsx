@@ -14,11 +14,13 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import type { TProjectAppliedDisplayFilterKeys, TProjectFilters } from "@plane/types";
+import type { TProjectAppliedDisplayFilterKeys, TProjectFilters, IProject } from "@plane/types";
 import { calculateTotalFilters } from "@plane/utils";
+import type { ProjectLayoutPermissions, ProjectItemPermissions } from "@/store/project/permissions/root";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectFilter } from "@/hooks/store/use-project-filter";
+import { useFavorite } from "@/hooks/store/use-favorite";
 // local imports
 import { ProjectAppliedFiltersList } from "./applied-filters";
 import { ProjectCardList } from "./card-list";
@@ -33,7 +35,7 @@ export const ProjectsListWithoutGrouping = observer(function ProjectsListWithout
 ) {
   const { workspaceSlug, isArchived } = props;
   // store
-  const { totalProjectIds, filteredProjectIds } = useProject();
+  const { totalProjectIds, filteredProjectIds, permissions } = useProject();
   const {
     currentWorkspaceFilters,
     currentWorkspaceAppliedDisplayFilters,
@@ -42,7 +44,7 @@ export const ProjectsListWithoutGrouping = observer(function ProjectsListWithout
     updateFilters,
     updateDisplayFilters,
   } = useProjectFilter();
-
+  const { permissions: favoritePermissions } = useFavorite();
   const allowedDisplayFilters =
     currentWorkspaceAppliedDisplayFilters?.filter((filter) => filter !== "archived_projects") ?? [];
 
@@ -75,6 +77,33 @@ export const ProjectsListWithoutGrouping = observer(function ProjectsListWithout
     updateDisplayFilters(workspaceSlug, { archived_projects: isArchived });
   }, [isArchived, updateDisplayFilters, workspaceSlug]);
 
+  const layoutPermissions: ProjectLayoutPermissions = {
+    canCreateProject: permissions.getCanCreate(workspaceSlug),
+  };
+
+  const getProjectItemPermissions = useCallback(
+    (project: IProject): ProjectItemPermissions => ({
+      canEdit: permissions.getCanEdit(workspaceSlug, project.id),
+      canManage: permissions.getCanManage(workspaceSlug, project.id),
+      canArchive: !project.archived_at && permissions.getCanArchive(workspaceSlug, project.id),
+      canRestore: !!project.archived_at && permissions.getCanRestore(workspaceSlug, project.id),
+      canDelete: permissions.getCanDelete(workspaceSlug, project.id),
+      canFavorite: favoritePermissions.getCanCreate(workspaceSlug),
+      canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, project.id),
+      canEditProperty: (property) => permissions.getCanEditProperty(workspaceSlug, project.id, property),
+      canManageMembers: permissions.getCanManageMembers(workspaceSlug, project.id),
+      canAccessMembersActivity: permissions.getCanAccessMembersActivity(workspaceSlug, project.id),
+      canChangeRole: (targetRoleSlug: string) =>
+        permissions.getCanChangeRole(workspaceSlug, project.id, targetRoleSlug),
+      canRemoveMember: permissions.getCanRemoveMember(workspaceSlug, project.id),
+      canLinkTeamspace: permissions.getCanLinkTeamspace(workspaceSlug, project.id),
+      canRemoveTeamspace: permissions.getCanRemoveTeamspace(workspaceSlug, project.id),
+      canEditIntake: permissions.getCanEditIntake(workspaceSlug, project.id),
+      canManageIntake: permissions.getCanManageIntake(workspaceSlug, project.id),
+    }),
+    [favoritePermissions, permissions, workspaceSlug]
+  );
+
   return (
     <div className="flex h-full w-full flex-col">
       {(calculateTotalFilters(currentWorkspaceFilters ?? {}) !== 0 || allowedDisplayFilters.length > 0) && (
@@ -89,7 +118,7 @@ export const ProjectsListWithoutGrouping = observer(function ProjectsListWithout
           alwaysAllowEditing
         />
       )}
-      <ProjectCardList />
+      <ProjectCardList layoutPermissions={layoutPermissions} getProjectItemPermissions={getProjectItemPermissions} />
     </div>
   );
 });

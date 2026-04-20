@@ -45,6 +45,11 @@ export interface IWebhookStore {
     webhookId: string
   ) => Promise<{ webHook: IWebhook; secretKey: string | null }>;
   clearSecretKey: () => void;
+  // permissions
+  getCanAccessWebhooks: (workspaceSlug: string) => boolean;
+  getCanCreateWebhook: (workspaceSlug: string) => boolean;
+  getCanEditWebhook: (workspaceSlug: string, webhookId: string) => boolean;
+  getCanDeleteWebhook: (workspaceSlug: string, webhookId: string) => boolean;
 }
 
 export class WebhookStore implements IWebhookStore {
@@ -205,5 +210,47 @@ export class WebhookStore implements IWebhookStore {
    */
   clearSecretKey = () => {
     this.webhookSecretKey = null;
+  };
+
+  // permissions
+  getCanAccessWebhooks: IWebhookStore["getCanAccessWebhooks"] = (workspaceSlug) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "workspace",
+      action: "manage",
+      workspaceSlug,
+      resourceMeta: {
+        resourceId: workspaceSlug,
+      },
+    });
+  };
+
+  getCanCreateWebhook: IWebhookStore["getCanCreateWebhook"] = (workspaceSlug) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "webhook",
+      action: "create",
+      workspaceSlug,
+    });
+  };
+
+  getCanEditWebhook: IWebhookStore["getCanEditWebhook"] = (workspaceSlug, webhookId) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "webhook",
+      action: "edit",
+      workspaceSlug,
+      resourceMeta: {
+        resourceId: webhookId,
+      },
+    });
+  };
+
+  getCanDeleteWebhook: IWebhookStore["getCanDeleteWebhook"] = (workspaceSlug, webhookId) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "webhook",
+      action: "delete",
+      workspaceSlug,
+      resourceMeta: {
+        resourceId: webhookId,
+      },
+    });
   };
 }

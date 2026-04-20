@@ -31,7 +31,9 @@ export const HomePageHeader = observer(function HomePageHeader() {
   const { activeChatId, isWorkspaceAuthorized, initPiChat } = usePiChat();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   // derived values
-  const isPiEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+  const isPiEnabled = workspaceSlug
+    ? isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED)
+    : false;
 
   useEffect(() => {
     if (!isPiEnabled) return;

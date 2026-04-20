@@ -23,15 +23,14 @@ from rest_framework import status
 # Module imports
 from .. import BaseViewSet
 from plane.app.serializers import IssueLinkSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, WorkitemLinkPermissions
+from plane.permissions.definitions import ResourceType
 from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 
 
 class IssueLinkViewSet(BaseViewSet):
-    permission_classes = [ProjectEntityPermission]
-
     model = IssueLink
     serializer_class = IssueLinkSerializer
 
@@ -48,6 +47,15 @@ class IssueLinkViewSet(BaseViewSet):
             .distinct()
         )
 
+    @can(WorkitemLinkPermissions.VIEW, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
+    def list(self, request, slug, project_id, issue_id):
+        return super().list(request, slug, project_id, issue_id)
+
+    @can(WorkitemLinkPermissions.VIEW, resource_param="pk")
+    def retrieve(self, request, slug, project_id, issue_id, pk):
+        return super().retrieve(request, slug, project_id, issue_id, pk)
+
+    @can(WorkitemLinkPermissions.CREATE, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def create(self, request, slug, project_id, issue_id):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
@@ -70,6 +78,7 @@ class IssueLinkViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(WorkitemLinkPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
@@ -96,6 +105,7 @@ class IssueLinkViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(WorkitemLinkPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, issue_id, pk):
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)

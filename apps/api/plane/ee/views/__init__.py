@@ -20,7 +20,7 @@ from plane.ee.views.app.project import (
     ProjectReactionViewSet,
     ProjectActivityEndpoint,
 )
-from plane.ee.views.app.update import UpdatesReactionViewSet
+from plane.ee.views.app.update import CycleUpdatesReactionViewSet
 
 from plane.ee.views.app.ai import RephraseGrammarEndpoint
 from plane.ee.views.app.cycle import WorkspaceActiveCycleEndpoint

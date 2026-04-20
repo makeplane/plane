@@ -26,6 +26,7 @@ import type {
   TAutomationNodeEdge,
   TAutomationNodeHandlerName,
   TAutomationTriggerNode,
+  PermissionCheckArgs,
   TCreateActionPayload,
   TCreateConditionPayload,
   TCreateTriggerPayload,
@@ -68,8 +69,8 @@ export interface IAutomationInstance extends TAutomation {
   // sidebar
   sidebarHelper: IAutomationDetailSidebarHelper;
   // permissions
-  canCurrentUserEdit: boolean;
-  canCurrentUserDelete: boolean;
+  canEdit: boolean;
+  canDelete: boolean;
   isDeleteDisabled: boolean;
   // helpers
   asJSON: TAutomation;
@@ -120,10 +121,7 @@ export type TAutomationHelpers = {
     createEdge: (sourceNodeId: string, targetNodeId: string) => Promise<TAutomationNodeEdge>;
     deleteEdge: (edgeId: string) => Promise<void>;
   };
-  permissions: {
-    canCurrentUserEdit: boolean;
-    canCurrentUserDelete: boolean;
-  };
+  can: (args: PermissionCheckArgs) => boolean;
   nodeHelpers: TAutomationBaseNodeHelpers<EAutomationNodeType, TAutomationNodeHandlerName, TAutomationNodeConfig>;
   activityHelpers: {
     actions: {
@@ -226,8 +224,8 @@ export class AutomationInstance implements IAutomationInstance {
       sidebarHelper: observable,
       // computed
       workspaceSlug: computed,
-      canCurrentUserEdit: computed,
-      canCurrentUserDelete: computed,
+      canEdit: computed,
+      canDelete: computed,
       isDeleteDisabled: computed,
       asJSON: computed,
       settingsLink: computed,
@@ -257,13 +255,48 @@ export class AutomationInstance implements IAutomationInstance {
     return workspaceSlug;
   }
 
-  // permissions
-  get canCurrentUserEdit() {
-    return this.#helpers.permissions.canCurrentUserEdit;
+  // private helper to get the automation meta
+  private getAutomationMeta() {
+    return {
+      resourceId: this.id,
+    };
   }
 
-  get canCurrentUserDelete() {
-    return this.#helpers.permissions.canCurrentUserDelete;
+  // permissions
+  get canEdit() {
+    if (this.is_global) {
+      return this.#helpers.can({
+        resource: "workspace_automation",
+        action: "edit",
+        workspaceSlug: this.workspaceSlug,
+        resourceMeta: this.getAutomationMeta(),
+      });
+    }
+    return this.#helpers.can({
+      resource: "project_automation",
+      action: "edit",
+      workspaceSlug: this.workspaceSlug,
+      projectId: this.project_ids[0],
+      resourceMeta: this.getAutomationMeta(),
+    });
+  }
+
+  get canDelete() {
+    if (this.is_global) {
+      return this.#helpers.can({
+        resource: "workspace_automation",
+        action: "delete",
+        workspaceSlug: this.workspaceSlug,
+        resourceMeta: this.getAutomationMeta(),
+      });
+    }
+    return this.#helpers.can({
+      resource: "project_automation",
+      action: "delete",
+      workspaceSlug: this.workspaceSlug,
+      projectId: this.project_ids[0],
+      resourceMeta: this.getAutomationMeta(),
+    });
   }
 
   get isDeleteDisabled() {

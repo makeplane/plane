@@ -41,8 +41,9 @@ export const useDebouncedDuplicateIssues = (
 
   // Check if the feature flag is enabled
   const isFeatureEnabled =
+    workspaceSlug &&
     useAiFlag(workspaceSlug, "AI_DEDUPE") &&
-    store.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED);
+    store.workspaceFeatures.isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED);
 
   // Debounce the name and description
   const debouncedName = useDebounce(formData?.name, 3000);

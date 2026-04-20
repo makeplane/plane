@@ -16,23 +16,25 @@ import { observer } from "mobx-react";
 
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PROJECT_AUTOMATION_MONTHS } from "@plane/constants";
 import { CustomSelect } from "@plane/ui";
-
-import { useUserPermissions } from "@/hooks/store/user";
-
-import { AutomationMonthModal } from "./automation-month-modal";
+// hooks
+import { useProjectSettingsAccess } from "@/hooks/permissions/use-project-settings-access";
+// types
 import type { DefaultAutomationContentProps } from "./types";
+// local imports
+import { AutomationMonthModal } from "./automation-month-modal";
 
 function ArchiveAutomation(props: DefaultAutomationContentProps) {
   const { workspaceSlug, projectId, value, handleChange } = props;
-
-  const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
-
+  // states
   const [modal, setModal] = useState(false);
-
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { canAccessProjectSetting } = useProjectSettingsAccess();
+  // derived values
+  const canAccessAutomationSettings = canAccessProjectSetting(workspaceSlug, projectId, "automations");
 
   return (
     <div>
@@ -49,7 +51,7 @@ function ArchiveAutomation(props: DefaultAutomationContentProps) {
         label={`${value} ${value === 1 ? "month" : "months"}`}
         onChange={(val: number) => handleChange?.({ archive_in: val })}
         input
-        disabled={!isAdmin}
+        disabled={!canAccessAutomationSettings}
       >
         <>
           {PROJECT_AUTOMATION_MONTHS.map((month) => (

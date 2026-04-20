@@ -52,7 +52,7 @@ export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(pro
   const workspaceSlug = routerWorkspaceSlug?.toString();
   // hooks
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
-  const { getProjectById, updateProject } = useProject();
+  const { getProjectById, updateProject, permissions } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { filters } = useProjectFilter();
   const { isMobile } = usePlatformOS();
@@ -135,6 +135,9 @@ export const TeamspaceProjectBlock = observer(function TeamspaceProjectBlock(pro
             cta={filters?.scope === EProjectScope.ALL_PROJECTS && <JoinButton project={projectDetails} />}
             containerClass="px-0 py-0 md:pb-4 lg:py-2"
             displayProperties={{ state: true, priority: true, lead: true, members: true, date: true }}
+            canEditProperty={(property) =>
+              permissions.getCanEditProperty(workspaceSlug.toString(), projectDetails.id, property)
+            }
           />
           <div
             className={cn("hidden", {

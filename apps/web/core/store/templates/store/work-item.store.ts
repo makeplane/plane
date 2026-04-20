@@ -26,7 +26,7 @@ import { buildWorkItemTypeBlueprint, isValidId } from "@plane/utils";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IBaseTemplateStore } from "./base.store";
 import { BaseTemplateStore } from "./base.store";
-import type { IBaseTemplateInstance, TWorkItemTemplateInstanceProps } from "../instance";
+import type { IBaseTemplateInstance, TWorkItemTemplateInstanceArgs } from "../instance";
 import { WorkItemTemplateInstance } from "../instance";
 
 type TBaseWorkItemTemplateProps = {
@@ -71,6 +71,7 @@ export interface IWorkItemTemplateStore extends IBaseTemplateStore<TWorkItemTemp
   // helper actions
   updateWorkItemTemplatesWithDefaultType: (workspaceSlug: string, projectId: string) => void;
   // actions
+  getCanCreate: (props: TBaseWorkItemTemplateProps) => boolean;
   fetchAllTemplates: (props: TFetchWorkItemTemplatesProps) => Promise<void>;
   fetchTemplateById: (props: TFetchWorkItemTemplateByIdProps) => Promise<void>;
   createWorkItemTemplate: (props: TCreateWorkItemTemplateProps) => Promise<TWorkItemTemplate | undefined>;
@@ -81,12 +82,13 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
   constructor(protected rootStore: RootStore) {
     super({
       root: rootStore,
-      createTemplateInstance: (templateInstanceProps: TWorkItemTemplateInstanceProps) =>
+      createTemplateInstance: (templateInstanceProps: TWorkItemTemplateInstanceArgs) =>
         new WorkItemTemplateInstance(templateInstanceProps),
     });
 
     makeObservable(this, {
       // observables
+      getCanCreate: action,
       fetchAllTemplates: action,
       fetchTemplateById: action,
       createWorkItemTemplate: action,
@@ -247,6 +249,30 @@ export class WorkItemTemplateStore extends BaseTemplateStore<TWorkItemTemplate> 
   });
 
   // actions
+  /**
+   * @description Check if the current user can create a work item template
+   * @param props - The props
+   * @param props.workspaceSlug - The workspace slug
+   * @param props.level - The level of the template
+   * @param props.projectId - The project id, required if the level is project
+   * @returns True if the current user can create a work item template, false otherwise
+   */
+  getCanCreate = computedFn((props: TBaseWorkItemTemplateProps) => {
+    if (props.level === ETemplateLevel.PROJECT) {
+      return this.rootStore.permissionAccessStore.can({
+        resource: "project_workitem_template",
+        action: "create",
+        workspaceSlug: props.workspaceSlug,
+        projectId: props.projectId,
+      });
+    }
+    return this.rootStore.permissionAccessStore.can({
+      resource: "workspace_workitem_template",
+      action: "create",
+      workspaceSlug: props.workspaceSlug,
+    });
+  });
+
   /**
    * @description Fetch all templates
    * @param props - The props

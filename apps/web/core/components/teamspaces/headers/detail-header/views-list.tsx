@@ -22,13 +22,13 @@ import { TeamspaceViewListHeader } from "@/components/teamspaces/views/filters/l
 
 type TeamspaceViewsListHeaderActionsProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: { canCreateView: boolean };
 };
 
 export const TeamspaceViewsListHeaderActions = observer(function TeamspaceViewsListHeaderActions(
   props: TeamspaceViewsListHeaderActionsProps
 ) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, permissions } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -39,7 +39,7 @@ export const TeamspaceViewsListHeaderActions = observer(function TeamspaceViewsL
   return (
     <>
       <TeamspaceViewListHeader teamspaceId={teamspaceId} />
-      {isEditingAllowed && (
+      {permissions.canCreateView && (
         <Button
           variant="primary"
           onClick={() => {

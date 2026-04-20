@@ -48,7 +48,7 @@ from plane.utils.grouper import (
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, EpicPermissions
 from plane.utils.error_codes import ERROR_CODES
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -109,8 +109,8 @@ class EpicArchiveViewSet(BaseViewSet):
         )
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         show_sub_issues = request.GET.get("show_sub_issues", "true")
@@ -233,8 +233,8 @@ class EpicArchiveViewSet(BaseViewSet):
                 on_results=lambda issues: issue_on_results(group_by=group_by, issues=issues, sub_group_by=sub_group_by),
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, project_id, pk=None):
         issue = (
             self.get_queryset()
@@ -274,8 +274,8 @@ class EpicArchiveViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.ARCHIVE, resource_param="pk")
     def archive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk, type__is_epic=True)
 
@@ -303,8 +303,8 @@ class EpicArchiveViewSet(BaseViewSet):
 
         return Response({"archived_at": str(issue.archived_at)}, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.ARCHIVE, resource_param="pk")
     def unarchive(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             workspace__slug=slug,

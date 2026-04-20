@@ -32,11 +32,14 @@ type TEpicInfoActionItemsProps = {
   workspaceSlug: string;
   projectId: string;
   epicId: string;
-  disabled: boolean;
+  permissions: {
+    canReact: boolean;
+    canRestoreDescriptionVersion: boolean;
+  };
 };
 
 export const EpicInfoActionItems = observer(function EpicInfoActionItems(props: TEpicInfoActionItemsProps) {
-  const { editorRef, workspaceSlug, projectId, epicId, disabled } = props;
+  const { editorRef, workspaceSlug, projectId, epicId, permissions } = props;
   // store hooks
   const { data: currentUser } = useUser();
   const { getUserDetails } = useMember();
@@ -57,19 +60,19 @@ export const EpicInfoActionItems = observer(function EpicInfoActionItems(props: 
             projectId={projectId}
             issueId={epicId}
             currentUser={currentUser}
-            disabled={disabled}
+            disabled={!permissions.canReact}
             className="mt-0 shrink-0"
           />
         </div>
       )}
-      {!disabled && (
+      {permissions.canRestoreDescriptionVersion && (
         <DescriptionVersionsRoot
           className="shrink-0"
           entityInformation={{
             createdAt: epic.created_at ? new Date(epic.created_at) : new Date(),
             createdByDisplayName: getUserDetails(epic.created_by)?.display_name ?? "",
             id: epicId,
-            isRestoreDisabled: disabled,
+            isRestoreDisabled: !permissions.canRestoreDescriptionVersion,
           }}
           fetchHandlers={{
             listDescriptionVersions: (epicId) =>

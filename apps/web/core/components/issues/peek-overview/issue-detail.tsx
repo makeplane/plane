@@ -45,6 +45,7 @@ import type { TIssueOperations } from "../issue-detail";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // services init
 const workItemVersionService = new WorkItemVersionService();
 
@@ -54,24 +55,19 @@ type Props = {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  disabled: boolean;
-  isArchived: boolean;
   isSubmitting: TNameDescriptionLoader;
   setIsSubmitting: (value: TNameDescriptionLoader) => void;
+  permissions: {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canSwitchWorkItemType: boolean;
+    canReact: boolean;
+    canRestoreDescriptionVersion: boolean;
+  };
 };
 
 export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetails(props: Props) {
-  const {
-    editorRef,
-    workspaceSlug,
-    projectId,
-    issueId,
-    issueOperations,
-    disabled,
-    isArchived,
-    isSubmitting,
-    setIsSubmitting,
-  } = props;
+  const { editorRef, workspaceSlug, projectId, issueId, issueOperations, permissions, isSubmitting, setIsSubmitting } =
+    props;
   // hooks
   const { t } = useTranslation();
   // store hooks
@@ -159,15 +155,15 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
             <button
               type="button"
               className="flex items-center gap-1.5 text-body-xs-medium text-secondary hover:text-primary cursor-pointer"
-              onClick={() => !isArchived && !disabled && toggleParentIssueModal(issueId)}
-              disabled={disabled || isArchived}
+              onClick={() => permissions.canEditProperty("parent_id") && toggleParentIssueModal(issueId)}
+              disabled={!permissions.canEditProperty("parent_id")}
             >
               <ParentPropertyIcon className="size-3.5" />
               {t("issue.add.parent")}
             </button>
           )}
           <span className="text-tertiary">/</span>
-          <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
+          <IssueTypeSwitcher issueId={issueId} canSwitchWorkItemType={permissions.canSwitchWorkItemType} />
         </div>
         {duplicateIssues?.length > 0 && (
           <DeDupeIssuePopoverRoot
@@ -186,7 +182,7 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         isSubmitting={isSubmitting}
         setIsSubmitting={(value) => setIsSubmitting(value)}
         issueOperations={issueOperations}
-        disabled={disabled || isArchived}
+        disabled={!permissions.canEditProperty("name")}
         value={issue.name}
         containerClassName="-ml-3"
       />
@@ -196,8 +192,7 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         projectId={issue.project_id}
         issueId={issueId}
         issueOperations={issueOperations}
-        isEditable={!disabled}
-        isArchived={isArchived}
+        permissions={permissions}
       />
 
       <ContentOverflow
@@ -213,7 +208,7 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
           <DescriptionInput
             issueSequenceId={issue.sequence_id}
             containerClassName="-ml-3 border-none"
-            disabled={disabled || isArchived}
+            disabled={!permissions.canEditProperty("description_html")}
             editorRef={editorRef}
             entityId={issue.id}
             fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
@@ -241,20 +236,20 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
               projectId={issue.project_id}
               issueId={issueId}
               currentUser={currentUser}
-              disabled={isArchived}
+              disabled={!permissions.canReact}
               className="mt-0 shrink-0"
             />
           ) : undefined
         }
         rightElement={
-          !disabled ? (
+          permissions.canRestoreDescriptionVersion ? (
             <DescriptionVersionsRoot
               className="shrink-0"
               entityInformation={{
                 createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                 createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
                 id: issueId,
-                isRestoreDisabled: disabled || isArchived,
+                isRestoreDisabled: !permissions.canRestoreDescriptionVersion,
               }}
               fetchHandlers={{
                 listDescriptionVersions: (issueId) =>

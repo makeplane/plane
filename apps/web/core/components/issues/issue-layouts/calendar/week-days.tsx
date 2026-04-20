@@ -17,6 +17,8 @@ import type { TGroupedIssues, TIssue, TPaginationData, ICalendarDate, ICalendarW
 import { cn, getOrderedDays, renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useUserProfile } from "@/hooks/store/user";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // types
 import type { ICycleIssuesFilter } from "@/store/work-items/cycle";
 import type { IModuleIssuesFilter } from "@/store/work-items/module";
@@ -40,8 +42,6 @@ type Props = {
   loadMoreIssues: (dateString: string) => void;
   getPaginationData: (groupId: string | undefined) => TPaginationData | undefined;
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
-  enableQuickIssueCreate?: boolean;
-  disableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   handleDragAndDrop: (
     issueId: string | undefined,
@@ -50,10 +50,13 @@ type Props = {
     destinationDate: string | undefined
   ) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  readOnly?: boolean;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  canQuickAddWorkItem: boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   isEpic?: boolean;
 };
 
@@ -68,14 +71,12 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
     getPaginationData,
     getGroupIssueCount,
     quickActions,
-    enableQuickIssueCreate,
-    disableIssueCreation,
     quickAddCallback,
     addIssuesToView,
-    readOnly = false,
     selectedDate,
     setSelectedDate,
-    canEditProperties,
+    canQuickAddWorkItem,
+    getWorkItemPermissions,
     isEpic = false,
   } = props;
   // hooks
@@ -119,13 +120,11 @@ export const CalendarWeekDays = observer(function CalendarWeekDays(props: Props)
             getPaginationData={getPaginationData}
             getGroupIssueCount={getGroupIssueCount}
             quickActions={quickActions}
-            enableQuickIssueCreate={enableQuickIssueCreate}
-            disableIssueCreation={disableIssueCreation}
             quickAddCallback={quickAddCallback}
             addIssuesToView={addIssuesToView}
-            readOnly={readOnly}
             handleDragAndDrop={handleDragAndDrop}
-            canEditProperties={canEditProperties}
+            canQuickAddWorkItem={canQuickAddWorkItem}
+            getWorkItemPermissions={getWorkItemPermissions}
             isEpic={isEpic}
           />
         );

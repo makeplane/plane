@@ -16,16 +16,7 @@ import { action, computed, makeObservable, observable, runInAction } from "mobx"
 import { computedFn } from "mobx-utils";
 // types
 import { E_FEATURE_FLAGS } from "@plane/constants";
-import type { EUserPermissions } from "@plane/constants";
-import type {
-  IWorkspaceBulkInviteFormData,
-  IWorkspaceMember,
-  IWorkspaceMemberInvitation,
-  IWorkspaceMemberMe,
-  TExploredFeatures,
-  TGettingStartedChecklistKeys,
-  TTips,
-} from "@plane/types";
+import type { IWorkspaceBulkInviteFormData, IWorkspaceMember, IWorkspaceMemberInvitation } from "@plane/types";
 // plane-web constants
 // services
 import { WorkspaceService } from "@/services/workspace.service";
@@ -38,23 +29,19 @@ import type { IWorkspaceMemberFiltersStore } from "./filters.store";
 import { WorkspaceMemberFiltersStore } from "./filters.store";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
-export interface IWorkspaceMembership {
-  id: string;
-  member: string;
-  role: EUserPermissions;
-  is_active?: boolean;
-}
+// types
+import type { WorkspaceMembership } from "./types";
 
 export interface IWorkspaceMemberStore {
   // observables
-  workspaceMemberMap: Record<string, Record<string, IWorkspaceMembership>>;
+  workspaceMemberMap: Record<string, Record<string, WorkspaceMembership>>;
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]>;
   // filters store
   filtersStore: IWorkspaceMemberFiltersStore;
   // computed
   workspaceMemberIds: string[] | null;
   workspaceMemberInvitationIds: string[] | null;
-  memberMap: Record<string, IWorkspaceMembership> | null;
+  memberMap: Record<string, WorkspaceMembership> | null;
   // computed actions
   getWorkspaceMemberIds: (workspaceSlug: string) => string[];
   getFilteredWorkspaceMemberIds: (workspaceSlug: string) => string[];
@@ -66,7 +53,7 @@ export interface IWorkspaceMemberStore {
   fetchWorkspaceMembers: (workspaceSlug: string) => Promise<IWorkspaceMember[]>;
   fetchWorkspaceMemberInvitations: (workspaceSlug: string) => Promise<IWorkspaceMemberInvitation[]>;
   // crud actions
-  updateMember: (workspaceSlug: string, userId: string, data: { role: EUserPermissions }) => Promise<void>;
+  updateMember: (workspaceSlug: string, userId: string, data: { role_slug: string }) => Promise<void>;
   removeMemberFromWorkspace: (workspaceSlug: string, userId: string) => Promise<void>;
   // invite actions
   inviteMembersToWorkspace: (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => Promise<void>;
@@ -77,21 +64,8 @@ export interface IWorkspaceMemberStore {
   ) => Promise<void>;
   deleteMemberInvitation: (workspaceSlug: string, invitationId: string) => Promise<void>;
   isUserSuspended: (userId: string, workspaceSlug: string) => boolean;
-  // onboarding helpers
-  getGettingStartedChecklistByWorkspaceSlug: (
-    workspaceSlug: string
-  ) => Partial<Record<TGettingStartedChecklistKeys, boolean>> | undefined;
-  // onboarding actions
-  updateExploredFeatures: (
-    workspaceSlug: string,
-    exploredFeatures: Partial<Record<TExploredFeatures, boolean>>
-  ) => Promise<IWorkspaceMemberMe>;
-  updateTips: (workspaceSlug: string, tips: Partial<Record<TTips, boolean>>) => Promise<IWorkspaceMemberMe>;
-  updateChecklist: (
-    workspaceSlug: string,
-    checklist: Partial<Record<TGettingStartedChecklistKeys, boolean>>
-  ) => Promise<IWorkspaceMemberMe>;
-  updateChecklistIfNotDoneAlready: (workspaceSlug: string, key: TGettingStartedChecklistKeys) => Promise<void>;
+  // leave workspace
+  leaveWorkspace: (workspaceSlug: string) => Promise<void>;
   // mutation helpers
   mutateWorkspaceMembersActivity: (workspaceSlug: string) => Promise<void>;
 }
@@ -99,7 +73,7 @@ export interface IWorkspaceMemberStore {
 export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   // observables
   workspaceMemberMap: {
-    [workspaceSlug: string]: Record<string, IWorkspaceMembership>;
+    [workspaceSlug: string]: Record<string, WorkspaceMembership>;
   } = {}; // { workspaceSlug: { userId: userDetails } }
   workspaceMemberInvitations: Record<string, IWorkspaceMemberInvitation[]> = {}; // { workspaceSlug: [invitations] }
   // filters store
@@ -129,9 +103,7 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
       fetchWorkspaceMemberInvitations: action,
       updateMemberInvitation: action,
       deleteMemberInvitation: action,
-      updateExploredFeatures: action,
-      updateTips: action,
-      updateChecklist: action,
+      leaveWorkspace: action,
     });
     // initialize filters store
     this.filtersStore = new WorkspaceMemberFiltersStore();
@@ -170,10 +142,10 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     members = sortBy(members, [
       (m) => m.member !== this.userStore?.data?.id,
-      (m) => this.memberRoot?.memberMap?.[m.member]?.display_name?.toLowerCase(),
+      (m) => this.memberRoot?.getUserDetails(m.member)?.display_name?.toLowerCase(),
     ]);
     //filter out bots
-    const memberIds = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot).map((m) => m.member);
+    const memberIds = members.filter((m) => !this.memberRoot?.getUserDetails(m.member)?.is_bot).map((m) => m.member);
     return memberIds;
   });
 
@@ -184,12 +156,12 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   getFilteredWorkspaceMemberIds = computedFn((workspaceSlug: string) => {
     let members = Object.values(this.workspaceMemberMap?.[workspaceSlug] ?? {});
     //filter out bots and inactive members
-    members = members.filter((m) => !this.memberRoot?.memberMap?.[m.member]?.is_bot);
+    members = members.filter((m) => !this.memberRoot?.getUserDetails(m.member)?.is_bot);
 
     // Use filters store to get filtered member ids
     const memberIds = this.filtersStore.getFilteredMemberIds(
       members,
-      this.memberRoot?.memberMap || {},
+      this.memberRoot.getUserDetails,
       (member) => member.member
     );
 
@@ -242,12 +214,13 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     const workspaceSlug = this.routerStore.workspaceSlug;
     if (!workspaceSlug) return null;
     const workspaceMember = this.workspaceMemberMap?.[workspaceSlug]?.[userId];
-    if (!workspaceMember) return null;
+    const userDetails = this.memberRoot.getUserDetails(workspaceMember?.member);
+    if (!workspaceMember || !userDetails) return null;
 
     const memberDetails: IWorkspaceMember = {
       id: workspaceMember.id,
-      role: workspaceMember.role,
-      member: this.memberRoot?.memberMap?.[workspaceMember.member],
+      role_slug: workspaceMember.role_slug,
+      member: userDetails,
       is_active: workspaceMember.is_active,
     };
     return memberDetails;
@@ -276,11 +249,11 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
     await this.workspaceService.fetchWorkspaceMembers(workspaceSlug).then((response) => {
       runInAction(() => {
         response.forEach((member) => {
-          set(this.memberRoot?.memberMap, member.member.id, { ...member.member, joining_date: member.created_at });
+          this.memberRoot.addOrUpdateUser({ ...member.member, joining_date: member.created_at });
           set(this.workspaceMemberMap, [workspaceSlug, member.member.id], {
             id: member.id,
             member: member.member.id,
-            role: member.role,
+            role_slug: member.role_slug,
             is_active: member.is_active,
           });
         });
@@ -294,17 +267,22 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    * @param userId
    * @param data
    */
-  updateMember = async (workspaceSlug: string, userId: string, data: { role: EUserPermissions }) => {
+  updateMember = async (workspaceSlug: string, userId: string, data: { role_slug: string }) => {
     const memberDetails = this.getWorkspaceMemberDetails(userId);
     if (!memberDetails) throw new Error("Member not found");
     // original data to revert back in case of error
     const originalProjectMemberData = { ...this.workspaceMemberMap?.[workspaceSlug]?.[userId] };
     try {
       runInAction(() => {
-        set(this.workspaceMemberMap, [workspaceSlug, userId, "role"], data.role);
+        set(this.workspaceMemberMap, [workspaceSlug, userId, "role_slug"], data.role_slug);
       });
       await this.workspaceService.updateWorkspaceMember(workspaceSlug, memberDetails.id, data);
       void this.mutateWorkspaceMembersActivity(workspaceSlug);
+      // If the current user's own role changed, re-fetch their permission grants
+      // so the UI reflects the new capabilities without requiring a reload.
+      if (userId === this.userStore?.data?.id) {
+        void this.rootStore.permissionAccessStore.fetchCurrentUserWorkspacePermissions(workspaceSlug);
+      }
     } catch (error) {
       // revert back to original members in case of error
       runInAction(() => {
@@ -348,8 +326,6 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   inviteMembersToWorkspace = async (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => {
     await this.workspaceService.inviteWorkspace(workspaceSlug, data);
     await this.fetchWorkspaceMemberInvitations(workspaceSlug);
-    // Auto-complete getting started checklist
-    void this.updateChecklistIfNotDoneAlready(workspaceSlug, "team_members_invited");
     void this.mutateWorkspaceMembersActivity(workspaceSlug);
   };
 
@@ -406,140 +382,15 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
   });
 
   /**
-   * @description Returns the getting started checklist for a workspace
-   * @param { string } workspaceSlug
-   * @returns { Partial<Record<TGettingStartedChecklistKeys, boolean>> | undefined }
+   * @description leave the current workspace
+   * @param workspaceSlug
    */
-  getGettingStartedChecklistByWorkspaceSlug = computedFn(
-    (workspaceSlug: string): Partial<Record<TGettingStartedChecklistKeys, boolean>> | undefined => {
-      const checklist = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.getting_started_checklist;
-      if (!checklist) return undefined;
-
-      // Filter out null values to match return type
-      const filtered: Partial<Record<TGettingStartedChecklistKeys, boolean>> = {};
-
-      (Object.keys(checklist) as TGettingStartedChecklistKeys[]).forEach((key) => {
-        const value = checklist[key];
-        if (value !== null) {
-          filtered[key] = value;
-        }
-      });
-      return filtered;
-    }
-  );
-
-  /**
-   * @description Generic helper to update member onboarding fields
-   * @private
-   * @param { string } workspaceSlug
-   * @param { "explored_features" | "tips" | "getting_started_checklist" } fieldKey - The key of the field in IWorkspaceMemberMe
-   * @param { Partial<Record<string, boolean>> } updates - The updates to apply
-   * @param { string } errorMessage - Custom error message for this field
-   * @returns { Promise<IWorkspaceMemberMe> }
-   */
-  private updateMemberOnboardingField = async (
-    workspaceSlug: string,
-    fieldKey: "explored_features" | "tips" | "getting_started_checklist",
-    updates: Partial<Record<string, boolean>>,
-    errorMessage: string
-  ): Promise<IWorkspaceMemberMe> => {
+  leaveWorkspace = async (workspaceSlug: string): Promise<void> => {
     try {
-      const existingData = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.[fieldKey];
-      const filteredExisting: Record<string, boolean> = {};
-
-      if (existingData && typeof existingData === "object") {
-        Object.entries(existingData).forEach(([key, value]) => {
-          if (value !== null && typeof value === "boolean") {
-            filteredExisting[key] = value;
-          }
-        });
-      }
-
-      const response = await this.workspaceService.updateMemberOnboarding(workspaceSlug, {
-        [fieldKey]: {
-          ...filteredExisting,
-          ...updates,
-        },
-      });
-
-      if (response) {
-        runInAction(() => {
-          const currentFieldData = this.rootStore.user.permission.workspaceUserInfo[workspaceSlug]?.[fieldKey];
-          const mergedData: Record<string, boolean> = {};
-
-          if (currentFieldData && typeof currentFieldData === "object") {
-            Object.entries(currentFieldData).forEach(([key, value]) => {
-              if (value !== null && typeof value === "boolean") {
-                mergedData[key] = value;
-              }
-            });
-          }
-
-          set(this.rootStore.user.permission.workspaceUserInfo, [workspaceSlug], {
-            ...this.rootStore.user.permission.workspaceUserInfo[workspaceSlug],
-            [fieldKey]: {
-              ...mergedData,
-              ...updates,
-            },
-          });
-        });
-      }
-
-      return response;
+      await this.workspaceService.leaveWorkspace(workspaceSlug);
     } catch (error) {
-      console.error(errorMessage, error);
+      console.error("Error user leaving the workspace", error);
       throw error;
-    }
-  };
-
-  /**
-   * @description Updates the explored features for the current user in a workspace
-   * @param { string } workspaceSlug
-   * @param { Partial<Record<TExploredFeatures, boolean>> } exploredFeatures
-   * @returns { Promise<IWorkspaceMemberMe> }
-   */
-  updateExploredFeatures = async (
-    workspaceSlug: string,
-    exploredFeatures: Partial<Record<TExploredFeatures, boolean>>
-  ): Promise<IWorkspaceMemberMe> =>
-    this.updateMemberOnboardingField(
-      workspaceSlug,
-      "explored_features",
-      exploredFeatures,
-      "Error updating explored features"
-    );
-
-  /**
-   * @description Updates the tips for the current user in a workspace
-   * @param { string } workspaceSlug
-   * @param { Partial<Record<TTips, boolean>> } tips
-   * @returns { Promise<IWorkspaceMemberMe> }
-   */
-  updateTips = async (workspaceSlug: string, tips: Partial<Record<TTips, boolean>>): Promise<IWorkspaceMemberMe> =>
-    this.updateMemberOnboardingField(workspaceSlug, "tips", tips, "Error updating tips");
-
-  /**
-   * @description Updates the getting started checklist for the current user in a workspace
-   * @param { string } workspaceSlug
-   * @param { Partial<Record<TGettingStartedChecklistKeys, boolean>> } checklist
-   * @returns { Promise<IWorkspaceMemberMe> }
-   */
-  updateChecklist = async (
-    workspaceSlug: string,
-    checklist: Partial<Record<TGettingStartedChecklistKeys, boolean>>
-  ): Promise<IWorkspaceMemberMe> =>
-    this.updateMemberOnboardingField(workspaceSlug, "getting_started_checklist", checklist, "Error updating checklist");
-
-  /**
-   * @description Updates a checklist item only if it hasn't been completed already
-   * @param { string } workspaceSlug
-   * @param { TGettingStartedChecklistKeys } key
-   * @returns { Promise<void> }
-   */
-  updateChecklistIfNotDoneAlready = async (workspaceSlug: string, key: TGettingStartedChecklistKeys): Promise<void> => {
-    const checklistData = this.getGettingStartedChecklistByWorkspaceSlug(workspaceSlug);
-    if (!checklistData?.[key]) {
-      await this.updateChecklist(workspaceSlug, { [key]: true });
     }
   };
 

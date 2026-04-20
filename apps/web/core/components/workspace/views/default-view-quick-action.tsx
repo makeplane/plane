@@ -11,11 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { observer } from "mobx-react";
 import { Download } from "lucide-react";
 // plane imports
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, NewTabIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -28,9 +28,8 @@ import { copyUrlToClipboard, cn } from "@plane/utils";
 import type { TExportProvider } from "@/components/common/quick-actions/export-modal";
 import { ExportModal } from "@/components/common/quick-actions/export-modal";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useIssues } from "@/hooks/store/use-issues";
-// plane web hooks
+import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
 // services
 import exportService from "@/services/export.service";
@@ -45,21 +44,17 @@ type Props = {
 
 export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspaceViewQuickActions(props: Props) {
   const { workspaceSlug, view } = props;
-
+  // states
   const [isOpen, setIsOpen] = useState(false);
-
+  // plane hooks
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useGlobalView();
   const {
     issuesFilter: { getFilterParams },
   } = useIssues(EIssuesStoreType.GLOBAL);
   // derived values
-  const hasMemberPermissionsForExport = useMemo(
-    () => allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE),
-    [allowPermissions]
-  );
-
-  const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && hasMemberPermissionsForExport;
+  const isEnabled =
+    useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && permissions.getCanExport(view.key);
 
   const viewLink = `${workspaceSlug}/workspace-views/${view.key}`;
   const handleCopyText = async () => {
@@ -149,7 +144,7 @@ export const DefaultWorkspaceViewQuickActions = observer(function DefaultWorkspa
         ellipsis
         placement="bottom-end"
         closeOnSelect
-        buttonClassName="flex-shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
+        buttonClassName="shrink-0 flex items-center justify-center size-[26px] bg-layer-1/70 rounded-sm"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;

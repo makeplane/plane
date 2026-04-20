@@ -17,7 +17,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.permissions import ProjectEntityPermission, WorkspaceEntityPermission
+from plane.permissions import can, IssuePropertyPermissions
+from plane.ee.permissions import WorkspaceEntityPermission
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import IssuePropertyOption, IssueProperty
 from plane.ee.serializers import IssuePropertyOptionSerializer
@@ -163,9 +164,8 @@ class WorkspaceWorkItemPropertyOptionEndpoint(BaseAPIView):
 class IssuePropertyOptionEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_property_id=None, pk=None):
         # Get a single issue property option
         if pk:
@@ -208,6 +208,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         return Response(response_map, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, issue_property_id):
         # Create a new issue property option
         # Only allow when property type is option
@@ -258,6 +259,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, issue_property_id, pk):
         # Update an issue property option
         issue_property_option = IssuePropertyOption.objects.get(
@@ -293,6 +295,7 @@ class IssuePropertyOptionEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, issue_property_id, pk):
         # Delete an issue property option
         issue_property_option = IssuePropertyOption.objects.get(

@@ -34,11 +34,11 @@ const projectHrefToLabelMap = PROJECT_SETTINGS_FLAT_MAP.reduce(
   {} as Record<string, string>
 );
 
-export const pathnameToAccessKey = (pathname: string) => {
+export const workspaceSettingsPathnameToAccessKey = (pathname: string) => {
   const pathArray = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
   const workspaceSlug = pathArray[0];
   const accessKey = pathArray.slice(1, 3).join("/");
-  return { workspaceSlug, accessKey: `/${accessKey}` || "" };
+  return { workspaceSlug, accessKey: accessKey ? `/${accessKey}` : "" };
 };
 
 export const getWorkspaceActivePath = (pathname: string) => {
@@ -47,6 +47,12 @@ export const getWorkspaceActivePath = (pathname: string) => {
   if (settingsIndex === -1) return null;
   const subPath = "/" + parts.slice(settingsIndex, settingsIndex + 2).join("/");
   return workspaceHrefToLabelMap[subPath];
+};
+
+export const projectSettingsPathnameToAccessKey = (pathname: string) => {
+  const pathArray = pathname.replace(/^\/|\/$/g, "").split("/"); // Regex removes leading and trailing slashes
+  const accessKey = pathArray.slice(4).join("/");
+  return accessKey ? `/${accessKey}` : "";
 };
 
 export const getProjectActivePath = (pathname: string) => {

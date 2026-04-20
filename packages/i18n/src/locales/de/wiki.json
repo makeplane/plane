@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Verschachtelte Seiten erfordern einen kostenpflichtigen Plan. Führen Sie ein Upgrade durch, um sie freizuschalten."
+    },
+    "auth": {
+      "title": "Zugriff verweigert",
+      "description": "Sie haben keine Berechtigung, auf diese Seite zuzugreifen. Bitte wenden Sie sich an Ihren Workspace-Administrator, um die Berechtigung zu erhalten.",
+      "redirection_button": {
+        "text": "Zu Projekten"
+      },
+      "reload_button": {
+        "text": "Seite neu laden"
+      }
     }
   }
 }

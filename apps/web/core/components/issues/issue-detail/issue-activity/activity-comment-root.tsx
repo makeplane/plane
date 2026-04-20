@@ -34,8 +34,15 @@ type IssueActivityCommentRootProps = {
   selectedFilters: TActivityFilters[];
   activityOperations: TCommentsOperations;
   showAccessSpecifier?: boolean;
-  disabled?: boolean;
   sortOrder: E_SORT_ORDER;
+  permissions: {
+    comments: {
+      canCreate: boolean;
+      canEdit: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
+  };
   renderMode?: "default" | "transition";
   activeTabKey?: string;
 };
@@ -51,7 +58,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
     activityOperations,
     showAccessSpecifier,
     projectId,
-    disabled,
+    permissions,
     sortOrder,
     renderMode = "default",
     activeTabKey = "all",
@@ -109,7 +116,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
     workspaceSlug,
     projectId,
     issueId,
-    disabled: !!disabled,
+    permissions: permissions,
     showAccessSpecifier: !!showAccessSpecifier,
     showCopyLinkOption: !isIntakeIssue,
     activityOperations,

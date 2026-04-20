@@ -26,10 +26,19 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission
+from plane.app.permissions import ROLE
+from plane.permissions import (
+    can,
+    PermissionMixin,
+    ProjectPermissions,
+    WorkspacePermissions,
+    permission_engine,
+    PermissionContext,
+)
 from plane.app.serializers import (
     DeployBoardSerializer,
     ProjectListSerializer,
+    ProjectLightSerializer,
     ProjectSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
@@ -46,7 +55,6 @@ from plane.db.models import (
     UserFavorite,
     DEFAULT_STATES,
     Workspace,
-    WorkspaceMember,
     APIToken,
     ProjectUserProperty,
     IssueType,
@@ -73,30 +81,11 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.project_activites_task import project_activity
 
 
-class ProjectViewSet(BaseViewSet):
+class ProjectViewSet(PermissionMixin, BaseViewSet):
     serializer_class = ProjectListSerializer
     model = Project
     webhook_event = "project"
     use_read_replica = True
-
-    def get_teamspace_project_ids(self, request, slug):
-        # Check if user is part of any teamspace and that teamspace has projects
-        teamspace_project_ids = set()
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES,
-            user_id=request.user.id,
-            slug=slug,
-        ):
-            # Get all teamspace IDs where the user is a member
-            teamspace_ids = TeamspaceMember.objects.filter(member=request.user, workspace__slug=slug).values_list(
-                "team_space_id", flat=True
-            )
-
-            # Get all project IDs that belong to those teamspaces
-            teamspace_project_ids = TeamspaceProject.objects.filter(team_space_id__in=teamspace_ids).values_list(
-                "project_id", flat=True
-            )
-        return teamspace_project_ids
 
     def update_project_role(self, project: Dict[str, Any], teamspace_project_ids: List[uuid.UUID]) -> Dict[str, Any]:
         """
@@ -214,50 +203,34 @@ class ProjectViewSet(BaseViewSet):
             )
         )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ProjectPermissions.BROWSE, resource_param="workspace_id")
     def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         base_queryset = self.get_queryset().order_by("sort_order", "name")
 
-        # Get the projects in which the user is part of
-        if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.GUEST.value,
-        ).exists():
-            # For GUEST role: direct memberships + teamspace memberships
-            direct_projects = base_queryset.filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
-            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
+        # Determine access tier via workspace-level permission checks
+        has_full_access = permission_engine.check(
+            user=request.user,
+            permission=ProjectPermissions.VIEW,
+            context=PermissionContext.workspace(self.workspace_id),
+        )
 
-            projects = direct_projects.union(teamspace_projects)
-
-        # Get the projects in which the user is part of or the public projects
-        elif WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.MEMBER.value,
-        ).exists():
-            # For MEMBER role: direct memberships + public projects + teamspace memberships
-            direct_projects = base_queryset.filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-
-            public_projects = base_queryset.filter(network=2)
-
-            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
-            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
-
-            projects = direct_projects.union(public_projects, teamspace_projects)
-        else:
-            # For other roles, show all projects
+        if has_full_access:
+            # Admin/owner: see all projects
             projects = base_queryset
+        else:
+            accessible = self.get_accessible_resources("project", permission=ProjectPermissions.VIEW)
+            can_browse = permission_engine.check(
+                user=request.user,
+                permission=ProjectPermissions.BROWSE,
+                context=PermissionContext.workspace(self.workspace_id),
+            )
+            if can_browse:
+                # Member: own + public + teamspace projects
+                projects = base_queryset.filter(Q(pk__in=accessible) | Q(network=ProjectNetwork.PUBLIC.value))
+            else:
+                # Guest: own + teamspace only
+                projects = base_queryset.filter(pk__in=accessible)
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
             return self.paginate(
@@ -279,7 +252,7 @@ class ProjectViewSet(BaseViewSet):
         payload = self.update_project_member_role(projects)
         return Response(payload, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
         sort_order = ProjectUserProperty.objects.filter(
             user=self.request.user,
@@ -310,94 +283,51 @@ class ProjectViewSet(BaseViewSet):
             .annotate(sort_order=Subquery(sort_order))
         )
 
-        if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.GUEST.value,
-        ).exists():
-            # For role 5 (MEMBER): direct memberships + teamspace memberships
-            direct_projects = base_queryset.filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-
-            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
-            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
-
-            projects = direct_projects.union(teamspace_projects)
-
-        elif WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.MEMBER.value,
-        ).exists():
-            # For role 15 (GUEST): direct memberships + public projects + teamspace memberships
-            direct_projects = base_queryset.filter(
-                project_projectmember__member=self.request.user,
-                project_projectmember__is_active=True,
-            )
-
-            public_projects = base_queryset.filter(network=2)
-
-            teamspace_project_ids = self.get_teamspace_project_ids(request, slug)
-            teamspace_projects = base_queryset.filter(pk__in=teamspace_project_ids)
-
-            projects = direct_projects.union(public_projects, teamspace_projects)
-        else:
-            # For other roles, show all projects
-            projects = base_queryset
-
-        projects = projects.values(
-            "id",
-            "name",
-            "identifier",
-            "sort_order",
-            "logo_props",
-            "member_role",
-            "intake_count",
-            "archived_at",
-            "workspace",
-            "cycle_view",
-            "issue_views_view",
-            "module_view",
-            "page_view",
-            "inbox_view",
-            "guest_view_all_features",
-            "project_lead",
-            "network",
-            "created_at",
-            "updated_at",
-            "created_by",
-            "updated_by",
+        # Determine access tier via workspace-level permission checks
+        has_full_access = permission_engine.check(
+            user=request.user,
+            permission=ProjectPermissions.VIEW,
+            context=PermissionContext.workspace(self.workspace_id),
         )
 
-        payload = self.update_project_member_role(list(projects))
+        if has_full_access:
+            # Admin/owner: see all projects
+            projects = base_queryset
+        else:
+            accessible = self.get_accessible_resources("project", permission=ProjectPermissions.VIEW)
+            can_browse = permission_engine.check(
+                user=request.user,
+                permission=ProjectPermissions.BROWSE,
+                context=PermissionContext.workspace(self.workspace_id),
+            )
+            if can_browse:
+                # Member: own + public + teamspace projects
+                projects = base_queryset.filter(Q(pk__in=accessible) | Q(network=ProjectNetwork.PUBLIC.value))
+            else:
+                # Guest: own + teamspace only
+                projects = base_queryset.filter(pk__in=accessible)
+
+        serializer = ProjectLightSerializer(
+            projects,
+            many=True,
+            context={"request": request, "slug": slug},
+        )
+
+        payload = self.update_project_member_role(serializer.data)
         return Response(payload, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def retrieve(self, request, slug, pk):
         project = self.get_queryset().filter(archived_at__isnull=True).filter(pk=pk).first()
 
         if project is None:
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
-        # Check if the user is either part of the project or the teamspace
-        # Get all the member ids of the project
-        member_ids = [str(project_member.member_id) for project_member in project.members_list]
-
-        project_teamspaces_ids = TeamspaceProject.objects.filter(workspace__slug=slug, project_id=pk).values_list(
-            "team_space_id"
-        )
-        is_teamspace_member = TeamspaceMember.objects.filter(
-            member_id=request.user.id, team_space_id__in=project_teamspaces_ids
-        ).exists()
-
-        is_project_member = str(request.user.id) in member_ids
-
-        # Return error message based on the project network
-        if not (is_project_member or is_teamspace_member):
+        # Check project-level access via permission engine
+        if not self.has_permission(
+            ProjectPermissions.VIEW,
+            PermissionContext.project(project_id=pk, workspace_id=request.workspace_id),
+        ):
             if project.network == ProjectNetwork.SECRET.value:
                 return Response(
                     {"error": "You do not have permission"},
@@ -421,7 +351,7 @@ class ProjectViewSet(BaseViewSet):
         payload = self.update_project_member_role(serializer.data)
         return Response(payload, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ProjectPermissions.CREATE, resource_param="workspace_id")
     def create(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -551,29 +481,9 @@ class ProjectViewSet(BaseViewSet):
         except Workspace.DoesNotExist:
             return Response({"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+    @can(ProjectPermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk=None):
-        is_workspace_admin = WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.ADMIN.value,
-        ).exists()
-
-        is_project_admin = ProjectMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            project_id=pk,
-            role=ROLE.ADMIN.value,
-            is_active=True,
-        ).exists()
         try:
-            # Return error for if the user is neither workspace admin nor project admin
-            if not is_project_admin and not is_workspace_admin:
-                return Response(
-                    {"error": "You don't have the required permissions."},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
             workspace = Workspace.objects.get(slug=slug)
 
             project = self.get_queryset().get(pk=pk)
@@ -724,53 +634,34 @@ class ProjectViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ProjectPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
-        if (
-            WorkspaceMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                is_active=True,
-                role=ROLE.ADMIN.value,
-            ).exists()
-            or ProjectMember.objects.filter(
-                member=request.user,
-                workspace__slug=slug,
-                project_id=pk,
-                role=ROLE.ADMIN.value,
-                is_active=True,
-            ).exists()
-        ):
-            project = Project.objects.get(pk=pk, workspace__slug=slug)
-            project.delete()
-            webhook_activity.delay(
-                event="project",
-                verb="deleted",
-                field=None,
-                old_value=None,
-                new_value=None,
-                actor_id=request.user.id,
-                slug=slug,
-                current_site=base_host(request=request, is_app=True),
-                event_id=project.id,
-                old_identifier=None,
-                new_identifier=None,
-            )
-            # Delete the project members
-            DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
+        project = Project.objects.get(pk=pk, workspace__slug=slug)
+        project.delete()
+        webhook_activity.delay(
+            event="project",
+            verb="deleted",
+            field=None,
+            old_value=None,
+            new_value=None,
+            actor_id=request.user.id,
+            slug=slug,
+            current_site=base_host(request=request, is_app=True),
+            event_id=project.id,
+            old_identifier=None,
+            new_identifier=None,
+        )
+        # Delete the deploy boards
+        DeployBoard.objects.filter(project_id=pk, workspace__slug=slug).delete()
 
-            # Delete the user favorite
-            UserFavorite.objects.filter(project_id=pk, workspace__slug=slug).delete()
+        # Delete the user favorite
+        UserFavorite.objects.filter(project_id=pk, workspace__slug=slug).delete()
 
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            return Response(
-                {"error": "You don't have the required permissions."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectPermissions.ARCHIVE, resource_param="project_id")
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
@@ -790,7 +681,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
         UserFavorite.objects.filter(project_id=project_id, workspace__slug=slug).delete()
         return Response({"archived_at": str(project.archived_at)}, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectPermissions.ARCHIVE, resource_param="project_id")
     def delete(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
         current_instance = json.dumps(ProjectSerializer(project).data, cls=DjangoJSONEncoder)
@@ -811,7 +702,7 @@ class ProjectArchiveUnarchiveEndpoint(BaseAPIView):
 
 
 class ProjectIdentifierEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ProjectPermissions.CREATE, resource_param="workspace_id")
     def get(self, request, slug):
         name = request.GET.get("name", "").strip().upper()
 
@@ -822,7 +713,7 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
         return Response({"exists": len(exists), "identifiers": exists}, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ProjectPermissions.CREATE, resource_param="workspace_id")
     def delete(self, request, slug):
         name = request.data.get("name", "").strip().upper()
 
@@ -841,13 +732,11 @@ class ProjectIdentifierEndpoint(BaseAPIView):
 
 
 class ProjectUserViewsEndpoint(BaseAPIView):
+    @can(ProjectPermissions.VIEW, resource_param="project_id")
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id, workspace__slug=slug)
 
         project_member = ProjectMember.objects.filter(member=request.user, project=project, is_active=True).first()
-
-        if project_member is None:
-            return Response({"error": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
 
         view_props = project_member.view_props
         default_props = project_member.default_props
@@ -880,6 +769,11 @@ class ProjectFavoritesViewSet(BaseViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def create(self, request, slug):
         _ = UserFavorite.objects.create(
             user=request.user,
@@ -889,6 +783,7 @@ class ProjectFavoritesViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def destroy(self, request, slug, project_id):
         project_favorite = UserFavorite.objects.get(
             entity_identifier=project_id,
@@ -902,10 +797,10 @@ class ProjectFavoritesViewSet(BaseViewSet):
 
 
 class DeployBoardViewSet(BaseViewSet):
-    permission_classes = [ProjectMemberPermission]
     serializer_class = DeployBoardSerializer
     model = DeployBoard
 
+    @can(ProjectPermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         project_deploy_board = DeployBoard.objects.filter(
             entity_name="project", entity_identifier=project_id, workspace__slug=slug
@@ -914,6 +809,7 @@ class DeployBoardViewSet(BaseViewSet):
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @can(ProjectPermissions.PUBLISH, resource_param="project_id")
     def create(self, request, slug, project_id):
         comments = request.data.get("is_comments_enabled", False)
         reactions = request.data.get("is_reactions_enabled", False)
@@ -952,6 +848,15 @@ class DeployBoardViewSet(BaseViewSet):
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @can(ProjectPermissions.VIEW, resource_param="project_id")
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @can(ProjectPermissions.PUBLISH, resource_param="project_id")
+    def partial_update(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+
+    @can(ProjectPermissions.PUBLISH, resource_param="project_id")
     def destroy(self, request, slug, project_id, pk):
         project_deploy_board = DeployBoard.objects.get(
             entity_name="project",

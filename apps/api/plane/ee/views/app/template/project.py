@@ -27,7 +27,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ROLE, allow_permission
+from plane.permissions import can, WorkspaceProjectTemplatePermissions
 from plane.db.models import FileAsset, Workspace
 from plane.ee.models import ProjectTemplate, Template, WorkitemTemplate
 from plane.ee.serializers import (
@@ -47,8 +47,8 @@ from .base import TemplateBaseEndpoint
 class ProjectTemplateEndpoint(TemplateBaseEndpoint):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
+    @can(WorkspaceProjectTemplatePermissions.VIEW)
     def get(self, request, slug, pk=None):
         if pk:
             templates = (
@@ -83,8 +83,8 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(templates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
+    @can(WorkspaceProjectTemplatePermissions.CREATE)
     def post(self, request, slug):
         # workspace home
         workspace = Workspace.objects.get(slug=slug)
@@ -167,8 +167,8 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         template.delete()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
+    @can(WorkspaceProjectTemplatePermissions.EDIT)
     def patch(self, request, slug, pk):
         template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PROJECT, pk=pk)
         template_data = request.data.pop("template_data", {})
@@ -244,8 +244,8 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
         serializer = TemplateDataSerializer(template)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
+    @can(WorkspaceProjectTemplatePermissions.DELETE)
     def delete(self, request, slug, pk):
         template = Template.objects.get(workspace__slug=slug, template_type=Template.TemplateType.PROJECT, pk=pk)
         template.delete()
@@ -255,8 +255,8 @@ class ProjectTemplateEndpoint(TemplateBaseEndpoint):
 class CopyProjectTemplateEndpoint(TemplateBaseEndpoint):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
+    @can(WorkspaceProjectTemplatePermissions.CREATE)
     def post(self, request: HttpRequest, slug: str) -> Response:
         template_id: str = request.data.get("template_id")
 

@@ -26,12 +26,11 @@ import {
   Users,
 } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon, TrashIcon, ContrastIcon, DiceIcon, DoubleCircleIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { ICycle, IIssueLabel, IModule, TIssue, TIssuePriorities } from "@plane/types";
-import { EIssueServiceType, EUserPermissions } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 import { copyTextToClipboard } from "@plane/utils";
 // components
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
@@ -41,19 +40,24 @@ import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useIssueSubscription } from "@/hooks/use-issue-subscription";
+
+const DEFAULT_PERMISSIONS = {
+  canEdit: false,
+  canSubscribe: false,
+  canDelete: false,
+};
 
 export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] => {
   // params
   const { workspaceSlug, workItem: entityIdentifier } = useParams();
   // store
-  const {
-    data: currentUser,
-    permission: { allowPermissions },
-  } = useUser();
+  const { data: currentUser } = useUser();
   const { toggleDeleteIssueModal } = useCommandPalette();
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
+  const { permissions: workItemPermissions } = useIssues();
   const {
     issue: { getIssueById, getIssueIdByIdentifier, addCycleToIssue, removeIssueFromCycle, changeModulesInIssue },
     updateIssue,
@@ -82,13 +86,14 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
   const updateEntity = isEpic ? updateEpic : updateIssue;
 
   // permission
-  const isEditingAllowed =
-    allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug?.toString(),
-      entityDetails?.project_id ?? undefined
-    ) && !entityDetails?.archived_at;
+  const permissions =
+    workspaceSlug && entityDetails?.project_id && entityDetails?.id
+      ? {
+          canEdit: workItemPermissions.getCanEdit(workspaceSlug, entityDetails.project_id, entityDetails.id),
+          canSubscribe: workItemPermissions.getCanSubscribe(workspaceSlug, entityDetails.project_id, entityDetails.id),
+          canDelete: workItemPermissions.getCanDelete(workspaceSlug, entityDetails.project_id, entityDetails.id),
+        }
+      : DEFAULT_PERMISSIONS;
 
   const handleUpdateEntity = useCallback(
     async (formData: Partial<TIssue>) => {
@@ -198,8 +203,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         });
       },
       shortcut: "s",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => permissions.canEdit,
+      isVisible: () => permissions.canEdit,
       closeOnSelect: true,
     },
     {
@@ -218,8 +223,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         });
       },
       shortcut: "p",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => permissions.canEdit,
+      isVisible: () => permissions.canEdit,
       closeOnSelect: true,
     },
     {
@@ -235,8 +240,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         handleUpdateAssignee(assigneeId);
       },
       shortcut: "a",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => permissions.canEdit,
+      isVisible: () => permissions.canEdit,
       closeOnSelect: false,
     },
     {
@@ -253,8 +258,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         handleUpdateAssignee(currentUser.id);
       },
       shortcut: "i",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => permissions.canEdit,
+      isVisible: () => permissions.canEdit,
       closeOnSelect: true,
     },
     {
@@ -273,8 +278,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         });
       },
       modifierShortcut: "shift+e",
-      isEnabled: () => isEstimateEnabled && isEditingAllowed,
-      isVisible: () => isEstimateEnabled && isEditingAllowed,
+      isEnabled: () => isEstimateEnabled && permissions.canEdit,
+      isVisible: () => isEstimateEnabled && permissions.canEdit,
       closeOnSelect: true,
     },
     {
@@ -313,8 +318,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         }
       },
       modifierShortcut: "shift+c",
-      isEnabled: () => Boolean(projectDetails?.cycle_view && isEditingAllowed),
-      isVisible: () => Boolean(projectDetails?.cycle_view && isEditingAllowed),
+      isEnabled: () => Boolean(projectDetails?.cycle_view && permissions.canEdit),
+      isVisible: () => Boolean(projectDetails?.cycle_view && permissions.canEdit),
       closeOnSelect: true,
     },
     {
@@ -345,8 +350,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         }
       },
       modifierShortcut: "shift+m",
-      isEnabled: () => Boolean(projectDetails?.module_view && isEditingAllowed),
-      isVisible: () => Boolean(projectDetails?.module_view && isEditingAllowed),
+      isEnabled: () => Boolean(projectDetails?.module_view && permissions.canEdit),
+      isVisible: () => Boolean(projectDetails?.module_view && permissions.canEdit),
       closeOnSelect: false,
     },
     {
@@ -368,8 +373,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
         });
       },
       shortcut: "l",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => permissions.canEdit,
+      isVisible: () => permissions.canEdit,
       closeOnSelect: false,
     },
     {
@@ -383,8 +388,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       type: "action",
       action: handleSubscription,
       modifierShortcut: "shift+s",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => permissions.canSubscribe,
+      isVisible: () => permissions.canSubscribe,
       closeOnSelect: true,
     },
     {
@@ -396,8 +401,8 @@ export const usePowerKWorkItemContextBasedCommands = (): TPowerKCommandConfig[] 
       type: "action",
       action: handleDeleteWorkItem,
       modifierShortcut: "cmd+backspace",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => permissions.canDelete,
+      isVisible: () => permissions.canDelete,
       closeOnSelect: true,
     },
     {

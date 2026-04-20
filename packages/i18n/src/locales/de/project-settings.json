@@ -22,10 +22,6 @@
       "label": "Mitglieder",
       "project_lead": "Projektleitung",
       "default_assignee": "Standardzuweisung",
-      "guest_super_permissions": {
-        "title": "Gastbenutzern Zugriff auf alle Elemente gewähren:",
-        "sub_heading": "Gäste sehen alle Elemente im Projekt."
-      },
       "invite_members": {
         "title": "Mitglieder einladen",
         "sub_heading": "Laden Sie Mitglieder in das Projekt ein.",

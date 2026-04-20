@@ -22,12 +22,19 @@ import { LinksSection } from "./collapsible-section/links/links-section";
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canAddLink: boolean;
+    canEditLink: boolean;
+    canDeleteLink: boolean;
+    canAddAttachment: boolean;
+    canDeleteAttachment: (attachmentId: string) => boolean;
+    canRemoveProject: boolean;
+    canRemoveEpic: boolean;
+  };
 };
 
 export const InitiativeCollapsibleSection = observer(function InitiativeCollapsibleSection(props: Props) {
-  const { workspaceSlug, initiativeId, disabled } = props;
-
+  const { workspaceSlug, initiativeId, permissions } = props;
   // store hooks
   const {
     initiative: {
@@ -37,7 +44,6 @@ export const InitiativeCollapsibleSection = observer(function InitiativeCollapsi
       toggleOpenCollapsibleSection,
     },
   } = useInitiatives();
-
   // derived values
   const initiativesLinks = getInitiativeLinks(initiativeId);
   const attachmentUploads = getAttachmentsByInitiativeId(initiativeId);
@@ -61,10 +67,14 @@ export const InitiativeCollapsibleSection = observer(function InitiativeCollapsi
             <LinksSection
               workspaceSlug={workspaceSlug}
               initiativeId={initiativeId}
-              disabled={disabled}
               isOpen={openCollapsibleSection.includes("links")}
               onToggle={() => toggleOpenCollapsibleSection("links")}
               count={linksCount}
+              permissions={{
+                canCreate: permissions.canAddLink,
+                canEdit: () => permissions.canEditLink,
+                canDelete: () => permissions.canDeleteLink,
+              }}
             />
           )
         );
@@ -74,7 +84,11 @@ export const InitiativeCollapsibleSection = observer(function InitiativeCollapsi
             <AttachmentsSection
               workspaceSlug={workspaceSlug}
               initiativeId={initiativeId}
-              disabled={disabled}
+              permissions={{
+                canCreate: permissions.canAddAttachment,
+                canEdit: () => false, // no edit UI for attachments
+                canDelete: (attachmentId) => permissions.canDeleteAttachment(attachmentId),
+              }}
               isOpen={openCollapsibleSection.includes("attachments")}
               onToggle={() => toggleOpenCollapsibleSection("attachments")}
               count={attachmentCount}

@@ -22,10 +22,6 @@
       "label": "Membros",
       "project_lead": "Líder do projeto",
       "default_assignee": "Responsável padrão",
-      "guest_super_permissions": {
-        "title": "Conceder acesso de visualização a todos os itens de trabalho para usuários convidados:",
-        "sub_heading": "Isso permitirá que os convidados tenham acesso de visualização a todos os itens de trabalho do projeto."
-      },
       "invite_members": {
         "title": "Convidar membros",
         "sub_heading": "Convide membros para trabalhar em seu projeto.",

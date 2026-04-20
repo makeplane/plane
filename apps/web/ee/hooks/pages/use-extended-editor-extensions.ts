@@ -16,7 +16,7 @@ import { useMemo } from "react";
 import type { IEditorPropsExtended, TCommentConfig } from "@plane/editor";
 import { convertBinaryDataToBase64String } from "@plane/editor";
 // hooks
-import { EIssuesStoreType, EUserPermissions } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 import type {
   TPartialProject,
   TSearchEntityRequestPayload,
@@ -30,7 +30,6 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserProfile } from "@/hooks/store/use-user-profile";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUser } from "@/hooks/store/user";
 // plane web components
 import { AIBlockWidget } from "@/plane-web/components/pages/editor/ai/ai-block-widget";
 // plane web hooks
@@ -70,15 +69,12 @@ export const useExtendedEditorProps = (
   const { workspaceSlug, page, storeType, fetchEntity, getRedirectionLink, extensionHandlers, projectId } = params;
   // store hooks
   const {
-    canPerformAnyCreateAction,
-    permission: { getProjectRoleByWorkspaceSlugAndProjectId },
-  } = useUser();
-  const {
     data: { is_smooth_cursor_enabled },
   } = useUserProfile();
-  const { joinedProjectIds, getPartialProjectById } = useProject();
+  const { workspaceProjectIds, getPartialProjectById } = useProject();
   const {
     issues: { createIssue },
+    permissions: workItemPermissions,
   } = useIssues(EIssuesStoreType.PROJECT);
   const { getWorkspaceBySlug } = useWorkspace();
 
@@ -91,17 +87,18 @@ export const useExtendedEditorProps = (
     storeType,
     projectId,
   });
-  const workspace = useMemo(() => getWorkspaceBySlug(workspaceSlug), [workspaceSlug]);
+  const workspace = getWorkspaceBySlug(workspaceSlug);
 
   const selectionConversionProps: TExtendedEditorExtensionsConfig["selectionConversion"] = useMemo(() => {
-    const canCreateWorkItem = projectId ? canPerformAnyCreateAction : true;
-    const projectsList = joinedProjectIds
-      ?.map((projectId) => getPartialProjectById(projectId))
-      .filter((p): p is TPartialProject => {
-        if (!p) return false;
-        const projectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, p.id);
-        return !!projectRole && projectRole >= EUserPermissions.MEMBER;
-      });
+    const canCreateWorkItem = projectId ? workItemPermissions.getCanCreate(workspaceSlug, projectId) : true;
+    const projectIdsWithCreateWorkItemPermission = workItemPermissions.getProjectIdsWithWorkItemPermission(
+      workspaceSlug,
+      workspaceProjectIds ?? [],
+      "create"
+    );
+    const projectsList = Array.from(projectIdsWithCreateWorkItemPermission)
+      .map((projectId) => getPartialProjectById(projectId))
+      .filter((p): p is TPartialProject => p !== undefined);
 
     return {
       createWorkItemCallback: async (payload, projectIdFromSelection?: string) => {
@@ -116,15 +113,7 @@ export const useExtendedEditorProps = (
       isConversionEnabled: canCreateWorkItem,
       projectSelectionEnabled: projectId ? undefined : { projectsList },
     };
-  }, [
-    canPerformAnyCreateAction,
-    createIssue,
-    getPartialProjectById,
-    getProjectRoleByWorkspaceSlugAndProjectId,
-    joinedProjectIds,
-    projectId,
-    workspaceSlug,
-  ]);
+  }, [workItemPermissions, createIssue, getPartialProjectById, workspaceProjectIds, projectId, workspaceSlug]);
 
   const aiBlockHandlersProps: IEditorPropsExtended["aiBlockHandlers"] = useMemo(() => {
     const payload = {

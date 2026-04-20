@@ -17,9 +17,8 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles } from "@plane/types";
+
 // assets
 import projectsDark from "@/app/assets/empty-state/onboarding/projects-dark.webp?url";
 import projectsLight from "@/app/assets/empty-state/onboarding/projects-light.webp?url";
@@ -31,8 +30,8 @@ import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-stat
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
+import type { ProjectLayoutPermissions } from "@/store/project/permissions/root";
 // types
 import { EProjectLayouts } from "@/types/workspace-project-filters";
 
@@ -78,10 +77,11 @@ function ActiveLoader(props: { layout: EProjectLayouts }) {
 interface Props {
   children: string | React.ReactNode | React.ReactNode[];
   layout: EProjectLayouts;
+  workspaceSlug: string;
 }
 
 export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props) {
-  const { layout } = props;
+  const { layout, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
@@ -93,15 +93,14 @@ export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props)
   const { toggleCreateProjectModal } = useCommandPalette();
   // derived values
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.GALLERY);
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useProject();
   // derived values
   const resolvedPath = resolvedTheme === "light" ? projectsLight : projectsDark;
   const resolvedFiltersImage = resolvedTheme === "light" ? allFiltersLightSvg : allFiltersDarkSvg;
 
-  const hasProjectMemberPermissions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const layoutPermissions: ProjectLayoutPermissions = {
+    canCreateProject: permissions.getCanCreate(workspaceSlug),
+  };
 
   if (loading || isEmpty(projectStates) || fetchStatus !== "complete") {
     return <ActiveLoader layout={layout} />;
@@ -120,7 +119,7 @@ export const ProjectLayoutHOC = observer(function ProjectLayoutHOC(props: Props)
             onClick={() => {
               toggleCreateProjectModal(true);
             }}
-            disabled={!hasProjectMemberPermissions}
+            disabled={!layoutPermissions.canCreateProject}
           />
         }
       />

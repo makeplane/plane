@@ -12,16 +12,22 @@
  */
 
 import { lazy, Suspense } from "react";
-import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
-import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
-import { useReleases } from "@/hooks/store/use-releases";
-import { useTranslation } from "@plane/i18n";
+import { observer } from "mobx-react";
+import { useParams } from "react-router";
+import type { FC } from "react";
+// plane imports
 import { Button } from "@plane/propel/button";
+import { useTranslation } from "@plane/i18n";
 import { PlusIcon } from "@plane/propel/icons";
 import { EIssuesStoreType } from "@plane/types";
-import { observer } from "mobx-react";
-import type { FC } from "react";
-import { useParams } from "react-router";
+import type { TIssue } from "@plane/types";
+// components
+import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
+// hooks
+import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
+import { useReleases } from "@/hooks/store/use-releases";
+import { useIssues } from "@/hooks/store/use-issues";
+// local imports
 import { ReleaseScopeQuickActions } from "./release-scope-quick-actions";
 
 const WorkItemPeekOverview = lazy(() =>
@@ -31,21 +37,24 @@ const WorkItemPeekOverview = lazy(() =>
 /** Uses BaseListRoot with RELEASE store for list; layout structure mirrors issue list roots. */
 
 const ReleaseScopeListRoot: FC = observer(function ReleaseScopeListRoot() {
-  const { releaseId } = useParams<{ workspaceSlug: string; releaseId: string }>();
-  const { release: releaseStore } = useReleases();
+  // router
+  const { releaseId, workspaceSlug } = useParams();
+  // plane hooks
   const { t } = useTranslation();
-  const isEditable = releaseStore.permissions.canEdit;
-  const openAddWorkItems = () => releaseId && releaseStore.openAddWorkItemsModal(releaseId);
-
+  // store hooks
+  const { release: releaseStore } = useReleases();
+  const { permissions } = useIssues();
+  // derived values
   const release = releaseId ? releaseStore.getReleaseById(releaseId) : undefined;
-  const canEditPropertiesBasedOnProject = (projectId: string) => release?.canEditWorkItemProperties(projectId) ?? false;
+
+  const openAddWorkItems = () => releaseId && releaseStore.openAddWorkItemsModal(releaseId);
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
       <div className="flex flex-col h-full">
         <div className="flex justify-between items-center px-6 py-3 border-b border-subtle">
           <div className="text-16 font-medium text-primary">{t("releases.scope")}</div>
-          {isEditable && (
+          {release?.canEdit && (
             <Button variant="secondary" size="lg" onClick={openAddWorkItems}>
               <PlusIcon className="size-4" />
               {t("releases.scope_page.add_work_items") ?? "Add work items"}
@@ -56,7 +65,22 @@ const ReleaseScopeListRoot: FC = observer(function ReleaseScopeListRoot() {
           <BaseListRoot
             QuickActions={ReleaseScopeQuickActions}
             viewId={releaseId}
-            canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
+            layoutPermissions={{
+              canCreateWorkItem: {
+                viaHeader: false,
+                viaQuickAdd: false,
+              },
+              canPerformBulkOps: false,
+            }}
+            getWorkItemPermissions={(workItem: TIssue) => {
+              return {
+                canEditProperty: (property) =>
+                  workspaceSlug && workItem.project_id && release?.canEdit
+                    ? permissions.getCanEditProperty(workspaceSlug, workItem.project_id, workItem.id, property)
+                    : false,
+                canDragAndDrop: false,
+              };
+            }}
           />
         </div>
       </div>

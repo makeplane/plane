@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { useParams, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { SIDEBAR_WIDTH } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 // components
@@ -26,7 +25,11 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { ExtendedAppSidebar } from "./extended-sidebar";
 import { AppSidebar } from "./sidebar";
 
-export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
+type ProjectAppSidebarProps = {
+  workspaceSlug: string;
+};
+
+export const ProjectAppSidebar = observer(function ProjectAppSidebar({ workspaceSlug }: ProjectAppSidebarProps) {
   // store hooks
   const {
     sidebarCollapsed,
@@ -40,7 +43,6 @@ export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   // states
   const [sidebarWidth, setSidebarWidth] = useState<number>(storedValue ?? SIDEBAR_WIDTH);
   // routes
-  const { workspaceSlug } = useParams();
   const pathname = usePathname();
   // derived values
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
@@ -74,7 +76,7 @@ export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
         isAnyExtendedSidebarExpanded={isAnyExtendedSidebarOpen}
         isAnySidebarDropdownOpen={isAnySidebarDropdownOpen}
       >
-        <AppSidebar />
+        <AppSidebar workspaceSlug={workspaceSlug} />
       </ResizableSidebar>
     </>
   );

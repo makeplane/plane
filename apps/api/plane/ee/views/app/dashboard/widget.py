@@ -25,7 +25,7 @@ from plane.ee.models import (
     DashboardWidget,
     Widget,
 )
-from plane.ee.permissions import ROLE, allow_permission
+from plane.permissions import can, DashboardPermissions
 from plane.ee.serializers import WidgetSerializer
 from plane.ee.utils.chart_validations import validate_chart_config
 from plane.ee.utils.widget_graph_plot import build_widget_chart
@@ -53,7 +53,7 @@ class WidgetEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
+    @can(DashboardPermissions.EDIT, resource_param="workspace_id")
     def post(self, request, slug, dashboard_id):
         workspace = Workspace.objects.filter(slug=slug).first()
         serializer = WidgetSerializer(
@@ -68,7 +68,7 @@ class WidgetEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
+    @can(DashboardPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, dashboard_id, pk):
         widget = Widget.objects.filter(id=pk, workspace__slug=slug).first()
         if not widget:
@@ -95,14 +95,14 @@ class WidgetEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(DashboardPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, dashboard_id):
         widgets = self.get_queryset()
         serializer = WidgetSerializer(widgets, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
+    @can(DashboardPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, dashboard_id, pk):
         dashboard_widget = DashboardWidget.objects.filter(
             dashboard_id=dashboard_id, widget_id=pk, workspace__slug=slug
@@ -119,7 +119,7 @@ class WidgetListEndpoint(BaseAPIView):
     filterset_class = IssueFilterSet
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(DashboardPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, dashboard_id, widget_id):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -219,7 +219,7 @@ class BulkWidgetEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.DASHBOARDS)
-    @allow_permission([ROLE.ADMIN], creator=True, model=Dashboard, level="WORKSPACE", lookup_kwarg="dashboard_id")
+    @can(DashboardPermissions.EDIT, resource_param="workspace_id")
     def post(self, request, slug, dashboard_id):
         widgets_data = request.data.get("widgets", [])
 

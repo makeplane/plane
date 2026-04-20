@@ -14,28 +14,27 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import { CustomerService } from "@plane/services";
 import type { ISearchIssueResponse, TProjectIssuesSearchParams } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // plane web components
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { CustomerWorkItem, WorkItemEmptyState } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
 type TProps = {
   workspaceSlug: string;
   customerId: string;
+  permissions: Pick<TCustomerDetailPermissions, "canLinkWorkItem" | "canUnlinkWorkItem">;
 };
 
 const customerService = new CustomerService();
 
 export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
-  const { workspaceSlug, customerId } = props;
+  const { workspaceSlug, customerId, permissions } = props;
   // states
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
   // i18n
@@ -45,11 +44,9 @@ export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
     getCustomerWorkItemIds,
     workItems: { addWorkItemsToCustomer },
   } = useCustomers();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const workItemIds = getCustomerWorkItemIds(customerId);
   const workItemsCount = workItemIds?.length || 0;
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   const workItemSearchCallBack = (params: TProjectIssuesSearchParams) =>
     customerService.workItemsSearch(workspaceSlug, customerId, params);
@@ -85,7 +82,9 @@ export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
       <div className="flex w-full items-center justify-between mb-4">
         <h3 className="text-18 font-medium">{t("common.work_items")}</h3>
         <div className="flex gap-2 items-center">
-          {isAdmin && <Button onClick={() => setWorkItemsModal(true)}>{t("customers.linked_work_items.link")}</Button>}
+          {permissions.canLinkWorkItem && (
+            <Button onClick={() => setWorkItemsModal(true)}>{t("customers.linked_work_items.link")}</Button>
+          )}
         </div>
       </div>
       {workItemsCount === 0 ? (
@@ -97,7 +96,7 @@ export const WorkItemsList = observer(function WorkItemsList(props: TProps) {
             workspaceSlug={workspaceSlug}
             workItemId={id}
             customerId={customerId}
-            isEditable={isAdmin}
+            isEditable={permissions.canUnlinkWorkItem}
           />
         ))
       )}

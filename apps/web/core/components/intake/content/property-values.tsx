@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
 import { InfoIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
@@ -26,7 +25,7 @@ function PropertyDetail({ property }: { property: Partial<TIssueProperty<EIssueP
   const propertyTypeDetails = getIssuePropertyTypeDetails(property.property_type, property.relation_type);
   return (
     <>
-      <div className="flex-shrink-0 flex">
+      <div className="shrink-0 flex">
         {propertyTypeDetails?.iconKey && (
           <PropertyTypeIcon iconKey={propertyTypeDetails.iconKey} className="size-3.5 text-tertiary" />
         )}
@@ -37,7 +36,7 @@ function PropertyDetail({ property }: { property: Partial<TIssueProperty<EIssueP
           {property.is_required && <span className="text-danger-primary">*</span>}
           {property.description && (
             <Tooltip tooltipContent={property.description} position="right">
-              <InfoIcon className="flex-shrink-0 w-3 h-3 mx-0.5 cursor-pointer" />
+              <InfoIcon className="shrink-0 w-3 h-3 mx-0.5 cursor-pointer" />
             </Tooltip>
           )}
         </span>
@@ -59,7 +58,7 @@ export const IntakePropertyValues = observer(function IntakePropertyValues(props
         const isUrlType = propertyTypeKey === "URL";
         return (
           <div key={propertyId} className="flex gap-2">
-            <div className="flex w-2/5 flex-shrink-0 gap-1.5 text-13 text-tertiary items-start">
+            <div className="flex w-2/5 shrink-0 gap-1.5 text-13 text-tertiary items-start">
               <PropertyDetail property={property} />
             </div>
             <div className="w-3/5 space-y-1 text-13 text-placeholder">

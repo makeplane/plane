@@ -14,23 +14,26 @@
 import { observer } from "mobx-react";
 import { Crown } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { MembersPropertyIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // assets
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
-export const SharedPagesFallback = observer(function SharedPagesFallback() {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const SharedPagesFallback = observer(function SharedPagesFallback(props: Props) {
+  const { workspaceSlug } = props;
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
+  const { permissions: workspacePermissions } = useWorkspace();
 
   // derived values
-  const canUpgrade = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const canUpgrade = workspacePermissions.getCanManageBilling(workspaceSlug);
 
   return (
     <div className="h-full bg-surface-1">

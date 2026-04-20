@@ -28,11 +28,11 @@ type Props = {
   workspaceSlug: string;
   initiativeId: string;
   customButton?: React.ReactNode;
-  disabled?: boolean;
+  canAddAttachment: boolean;
 };
 
 export const InitiativeAttachmentActionButton = observer(function InitiativeAttachmentActionButton(props: Props) {
-  const { workspaceSlug, initiativeId, customButton, disabled = false } = props;
+  const { workspaceSlug, initiativeId, customButton, canAddAttachment } = props;
   // state
   const [isLoading, setIsLoading] = useState(false);
   // store hooks
@@ -88,7 +88,7 @@ export const InitiativeAttachmentActionButton = observer(function InitiativeAtta
     onDrop,
     maxSize: maxFileSize,
     multiple: false,
-    disabled: isLoading || disabled,
+    disabled: isLoading || !canAddAttachment,
   });
 
   return (
@@ -98,7 +98,7 @@ export const InitiativeAttachmentActionButton = observer(function InitiativeAtta
         e.stopPropagation();
       }}
     >
-      <button {...getRootProps()} type="button" disabled={disabled}>
+      <button {...getRootProps()} type="button" disabled={!canAddAttachment}>
         <input {...getInputProps()} />
         {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
       </button>

@@ -11,6 +11,9 @@
 
 from .asset import urlpatterns as asset_patterns
 from .customer import urlpatterns as customer_patterns
+
+# Permission system
+from plane.permissions.urls import urlpatterns as permission_patterns
 from .cycle import urlpatterns as cycle_patterns
 from .epic import urlpatterns as epic_patterns
 from .estimate import urlpatterns as estimate_patterns
@@ -75,4 +78,6 @@ urlpatterns = [
     *silo_urls,
     # agents urls
     *agents_api_urls,
+    # Permission system
+    *permission_patterns,
 ]

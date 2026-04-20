@@ -36,11 +36,12 @@ urlpatterns = [
         IntakeResponsibilityEndpoint.as_view(),
         name="project-intake-responsibilities",
     ),
-    path(
-        "workspaces/<str:slug>/projects/<uuid:project_id>/intake-responsibilities/<uuid:user_id>/",
-        IntakeResponsibilityEndpoint.as_view(),
-        name="project-intake-responsibilities",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/projects/<uuid:project_id>/intake-responsibilities/<uuid:user_id>/",
+    #     IntakeResponsibilityEndpoint.as_view(),
+    #     name="project-intake-responsibilities",
+    # ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/intake-forms/",
         IntakeFormWorkitemTypeEndpoint.as_view(),

@@ -22,13 +22,13 @@ import { UpdateTeamspaceProjectsButton } from "@/components/teamspaces/actions/p
 
 type TeamspaceProjectListHeaderActionsProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: { canAddProject: boolean };
 };
 
 export const TeamspaceProjectListHeaderActions = observer(function TeamspaceProjectListHeaderActions(
   props: TeamspaceProjectListHeaderActionsProps
 ) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, permissions } = props;
   // router
   const { workspaceSlug } = useParams();
 
@@ -36,10 +36,10 @@ export const TeamspaceProjectListHeaderActions = observer(function TeamspaceProj
 
   return (
     <>
-      {isEditingAllowed ? (
+      {permissions.canAddProject ? (
         <UpdateTeamspaceProjectsButton
           teamspaceId={teamspaceId}
-          isEditingAllowed={isEditingAllowed}
+          canAddProject={permissions.canAddProject}
           renderButton={({ open }) => (
             <Button onClick={open} size="lg">
               <div className="hidden sm:block">Update</div> projects

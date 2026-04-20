@@ -14,7 +14,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import type { ComponentType, LazyExoticComponent } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane constants
 import { ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
@@ -49,9 +48,9 @@ const ProjectViewCalendarLayout = lazy(() =>
     default: module.ProjectViewCalendarLayout,
   }))
 );
-const BaseTimelineRoot = lazy(() =>
-  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
-    default: module.BaseTimelineRoot,
+const ProjectViewTimelineLayout = lazy(() =>
+  import("@/components/issues/issue-layouts/timeline/roots/project-view-root").then((module) => ({
+    default: module.ProjectViewTimelineLayout,
   }))
 );
 const ProjectViewSpreadsheetLayout = lazy(() =>
@@ -60,47 +59,61 @@ const ProjectViewSpreadsheetLayout = lazy(() =>
   }))
 );
 
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  viewId: string;
+};
+
 // Layout components map
-const PROJECT_VIEW_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<any>>>> = {
+const PROJECT_VIEW_WORK_ITEM_LAYOUTS: Record<
+  EIssueLayoutTypes,
+  LazyExoticComponent<ComponentType<ActiveLayoutProps>>
+> = {
   [EIssueLayoutTypes.LIST]: ProjectViewListLayout,
   [EIssueLayoutTypes.KANBAN]: ProjectViewKanBanLayout,
   [EIssueLayoutTypes.CALENDAR]: ProjectViewCalendarLayout,
   [EIssueLayoutTypes.SPREADSHEET]: ProjectViewSpreadsheetLayout,
+  [EIssueLayoutTypes.GANTT]: ProjectViewTimelineLayout,
 };
 
-function ProjectViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined; viewId: string }) {
-  if (!props.activeLayout) return null;
+type TProjectViewIssueLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+  viewId: string;
+  activeLayout: EIssueLayoutTypes | undefined;
+};
 
-  // Handle GANTT layout separately since it needs props
-  if (props.activeLayout === EIssueLayoutTypes.GANTT) {
-    return (
-      <Suspense>
-        <BaseTimelineRoot viewId={props.viewId} />
-      </Suspense>
-    );
-  }
+function ProjectViewIssueLayout(props: TProjectViewIssueLayoutProps) {
+  if (!props.activeLayout) return null;
 
   const ProjectViewIssueLayoutComponent = PROJECT_VIEW_WORK_ITEM_LAYOUTS[props.activeLayout];
   if (!ProjectViewIssueLayoutComponent) return null;
   return (
     <Suspense>
-      <ProjectViewIssueLayoutComponent />
+      <ProjectViewIssueLayoutComponent
+        workspaceSlug={props.workspaceSlug}
+        projectId={props.projectId}
+        viewId={props.viewId}
+      />
     </Suspense>
   );
 }
 
-export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
-  // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, viewId: routerViewId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug?.toString() : undefined;
-  const projectId = routerProjectId ? routerProjectId?.toString() : undefined;
-  const viewId = routerViewId ? routerViewId?.toString() : undefined;
+type TProjectViewLayoutRootProps = {
+  workspaceSlug: string;
+  projectId: string;
+  viewId: string;
+};
+
+export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot(props: TProjectViewLayoutRootProps) {
+  const { workspaceSlug, projectId, viewId } = props;
   // hooks
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { getViewById } = useProjectView();
   // derived values
-  const projectView = viewId ? getViewById(viewId) : undefined;
-  const workItemFilters = viewId ? issuesFilter?.getIssueFilters(viewId) : undefined;
+  const projectView = getViewById(viewId);
+  const workItemFilters = issuesFilter?.getIssueFilters(viewId);
   const activeLayout = workItemFilters?.displayFilters?.layout;
   const initialWorkItemFilters: IIssueFilters | undefined = projectView
     ? {
@@ -113,25 +126,18 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
       }
     : undefined;
 
-  useSWR(
-    workspaceSlug && projectId && viewId ? `PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}` : null,
-    async () => {
-      if (workspaceSlug && projectId && viewId) {
-        await issuesFilter?.fetchFilters(workspaceSlug, projectId, viewId);
-      }
-    }
-  );
+  useSWR(`PROJECT_VIEW_ISSUES_${workspaceSlug}_${projectId}_${viewId}`, async () => {
+    await issuesFilter?.fetchFilters(workspaceSlug, projectId, viewId);
+  });
 
   useEffect(
     () => () => {
-      if (workspaceSlug && viewId) {
-        issuesFilter?.resetFilters(workspaceSlug, viewId);
-      }
+      issuesFilter?.resetFilters(workspaceSlug, viewId);
     },
     [issuesFilter, workspaceSlug, viewId]
   );
 
-  if (!workspaceSlug || !projectId || !viewId || !workItemFilters) return <></>;
+  if (!workItemFilters) return <></>;
   return (
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
       <ProjectLevelWorkItemFiltersHOC
@@ -152,7 +158,12 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
           <div className="relative flex h-full w-full flex-col overflow-hidden">
             <WorkItemFiltersRowWrapper filter={filter} />
             <div className="relative h-full w-full overflow-auto">
-              <ProjectViewIssueLayout activeLayout={activeLayout} viewId={viewId.toString()} />
+              <ProjectViewIssueLayout
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                viewId={viewId}
+                activeLayout={activeLayout}
+              />
             </div>
             {/* peek overview */}
             <Suspense>

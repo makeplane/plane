@@ -21,6 +21,8 @@ import { buildTree } from "@plane/utils";
 // services
 import { IssueLabelService } from "@/services/issue";
 // store
+import type { LabelPermissions } from "./labels/permissions";
+import { LabelPermissionsInstance } from "./labels/permissions";
 import type { CoreRootStore } from "./root.store";
 
 export interface ILabelStore {
@@ -28,6 +30,8 @@ export interface ILabelStore {
   fetchedMap: Record<string, boolean>;
   //Observable
   labelMap: Record<string, IIssueLabel>;
+  // permissions
+  permissions: LabelPermissions;
   // computed
   projectLabels: IIssueLabel[] | undefined;
   projectLabelsTree: IIssueLabelTree[] | undefined;
@@ -67,6 +71,8 @@ export class LabelStore implements ILabelStore {
   labelMap: Record<string, IIssueLabel> = {};
   //loaders
   fetchedMap: Record<string, boolean> = {};
+  // permissions
+  permissions: LabelPermissions;
   // services
   issueLabelService;
 
@@ -87,6 +93,10 @@ export class LabelStore implements ILabelStore {
 
     // root store
     this.rootStore = _rootStore;
+    // permissions
+    this.permissions = new LabelPermissionsInstance({
+      can: this.rootStore.permissionAccessStore.can,
+    });
     // services
     this.issueLabelService = new IssueLabelService();
   }

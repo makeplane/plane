@@ -17,16 +17,13 @@ import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
-import { EUserWorkspaceRoles } from "@plane/types";
 // component
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { CustomerUpgrade, CustomerSettingsRoot } from "@/components/customers";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
@@ -39,23 +36,18 @@ import { CustomersWorkspaceSettingsHeader } from "./header";
 function CustomerSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
-  // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
-  const { updateWorkspaceFeature } = useWorkspaceFeatures();
-
+  // plane hooks
   const { t } = useTranslation();
-
+  // store hooks
+  const { getWorkspaceBySlug } = useWorkspace();
+  const { updateWorkspaceFeature } = useWorkspaceFeatures();
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Customers` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
   const { isCustomersFeatureEnabled } = useCustomers();
   const isFeatureFlagEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.CUSTOMERS);
 
   if (!currentWorkspace?.id) return <></>;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   const toggleCustomersFeature = async () => {
     try {

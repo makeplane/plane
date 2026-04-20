@@ -15,8 +15,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TContextMenuItem } from "@plane/ui";
@@ -27,7 +25,6 @@ import { useModuleMenuItems } from "@/components/common/quick-actions/helper";
 import { ArchiveModuleModal, CreateUpdateModuleModal, DeleteModuleModal } from "@/components/modules";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 
 type Props = {
@@ -47,20 +44,9 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
   const [archiveModuleModal, setArchiveModuleModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
-
-  const { getModuleById, restoreModule } = useModule();
-
-  const { t } = useTranslation();
+  const { getModuleById, restoreModule, permissions } = useModule();
   // derived values
   const moduleDetails = getModuleById(moduleId);
-  // auth
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
 
   const moduleLink = `${workspaceSlug}/projects/${projectId}/modules/${moduleId}`;
   const handleCopyText = () =>
@@ -97,13 +83,18 @@ export const ModuleQuickActions = observer(function ModuleQuickActions(props: Pr
     workspaceSlug,
     projectId,
     moduleId,
-    isEditingAllowed,
     handleEdit: () => setEditModal(true),
     handleArchive: () => setArchiveModuleModal(true),
     handleRestore: handleRestoreModule,
     handleDelete: () => setDeleteModal(true),
     handleCopyLink: handleCopyText,
     handleOpenInNewTab,
+    permissions: {
+      canEdit: permissions.getCanEditModule(workspaceSlug, projectId, moduleId),
+      canArchive: permissions.getCanArchiveModule(workspaceSlug, projectId, moduleId),
+      canRestore: permissions.getCanRestoreModule(workspaceSlug, projectId, moduleId),
+      canDelete: permissions.getCanDeleteModule(workspaceSlug, projectId, moduleId),
+    },
   });
 
   // Handle both CE (array) and EE (object) return types

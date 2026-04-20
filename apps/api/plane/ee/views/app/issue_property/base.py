@@ -26,6 +26,7 @@ from plane.ee.serializers import (
     WorkspaceWorkItemTypeSerializer,
 )
 from plane.ee.views.base import BaseAPIView
+from plane.permissions import can, IssuePropertyPermissions
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 from plane.ee.permissions import WorkspaceEntityPermission
@@ -334,8 +335,6 @@ class ProjectWorkItemTypeEndpoint(BaseAPIView):
 class IssuePropertyEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
-
     def create_options(self, issue_property, options):
         workspace_id = issue_property.workspace_id
         issue_property_id = issue_property.id
@@ -455,6 +454,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         return options_serializer.data
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_type_id=None, pk=None):
         try:
             # Get a single issue property
@@ -497,6 +497,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             )
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, issue_type_id):
         try:
             # Get the options
@@ -593,6 +594,7 @@ class IssuePropertyEndpoint(BaseAPIView):
             )
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, issue_type_id, pk):
         # Update an issue properties
         issue_property = IssueProperty.objects.get(
@@ -684,6 +686,7 @@ class IssuePropertyEndpoint(BaseAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
+    @can(IssuePropertyPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, issue_type_id, pk):
         # Delete an issue properties
         issue_property = IssueProperty.objects.get(

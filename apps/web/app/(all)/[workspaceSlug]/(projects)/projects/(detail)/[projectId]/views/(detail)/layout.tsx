@@ -16,11 +16,16 @@ import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { ProjectViewIssuesHeader } from "./[viewId]/header";
+// types
+import type { Route } from "./+types/layout";
 
-export default function ProjectViewIssuesLayout() {
+export default function ProjectViewIssuesLayout(props: Route.ComponentProps) {
+  const { workspaceSlug, projectId, viewId } = props.params;
   return (
     <>
-      <AppHeader header={<ProjectViewIssuesHeader />} />
+      <AppHeader
+        header={<ProjectViewIssuesHeader workspaceSlug={workspaceSlug} projectId={projectId} viewId={viewId} />}
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

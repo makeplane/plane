@@ -19,14 +19,14 @@ from plane.ee.models import IssuePropertyActivity
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, EpicPermissions
 
 
 class EpicPropertyActivityEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, epic_id):
         # Get the filters
         filters = {}

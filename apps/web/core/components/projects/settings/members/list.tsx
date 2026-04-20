@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { SearchIcon } from "@plane/propel/icons";
@@ -25,19 +25,23 @@ import { SendProjectInvitationModal } from "@/components/projects/modals/send-pr
 import { ProjectMembersImportModal } from "@/components/projects/settings/members/members-import-modal";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useProjectMembersActivity } from "@/plane-web/hooks/store/projects/use-project-members-activity";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 // local imports
 import { ProjectMemberListItem } from "./list-item";
 
 type TProjectMemberListProps = {
   projectId: string;
   workspaceSlug: string;
+  permissions: Pick<
+    ProjectItemPermissions,
+    "canManageMembers" | "canAccessMembersActivity" | "canChangeRole" | "canRemoveMember"
+  >;
 };
 
 export const ProjectMemberList = observer(function ProjectMemberList(props: TProjectMemberListProps) {
-  const { projectId, workspaceSlug } = props;
+  const { projectId, workspaceSlug, permissions } = props;
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [importModal, setImportModal] = useState(false);
@@ -48,14 +52,13 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
   const {
     project: { projectMemberIds, getFilteredProjectMemberDetails, filters },
   } = useMember();
-  const { allowPermissions } = useUserPermissions();
   const { toggleProjectMembersActivitySidebar } = useProjectMembersActivity();
   // derived values
 
   const searchedProjectMembers = (projectMemberIds ?? []).filter((userId) => {
     const memberDetails = projectId ? getFilteredProjectMemberDetails(userId, projectId.toString()) : null;
 
-    if (!memberDetails?.member || !memberDetails.original_role) return false;
+    if (!memberDetails?.member || !memberDetails.role_slug) return false;
 
     const fullName = `${memberDetails?.member.first_name} ${memberDetails?.member.last_name}`.toLowerCase();
     const displayName = memberDetails?.member.display_name.toLowerCase();
@@ -66,8 +69,6 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
   const memberDetails = searchedProjectMembers?.map((memberId) =>
     projectId ? getFilteredProjectMemberDetails(memberId, projectId.toString()) : null
   );
-
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const isProjectMembersActivityEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_MEMBER_ACTIVITY);
   const isMembersImportEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_MEMBERS_IMPORT, false);
 
@@ -120,18 +121,19 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
             appliedFilters={appliedRoleFilters}
             handleUpdate={handleRoleFilterUpdate}
             memberType="project"
+            workspaceSlug={workspaceSlug}
           />
-          {isAdmin && isProjectMembersActivityEnabled && (
+          {permissions.canAccessMembersActivity && isProjectMembersActivityEnabled && (
             <Button variant="secondary" size="lg" onClick={() => toggleProjectMembersActivitySidebar(projectId, true)}>
               {t("activity")}
             </Button>
           )}
-          {isAdmin && isMembersImportEnabled && (
+          {permissions.canManageMembers && isMembersImportEnabled && (
             <Button variant="secondary" size="lg" onClick={() => setImportModal(true)}>
               {t("common.import")}
             </Button>
           )}
-          {isAdmin && (
+          {permissions.canManageMembers && (
             <Button
               variant="primary"
               size="lg"
@@ -153,6 +155,7 @@ export const ProjectMemberList = observer(function ProjectMemberList(props: TPro
               memberDetails={memberDetails ?? []}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
+              permissions={permissions}
             />
           )}
           {searchedProjectMembers.length === 0 && (

@@ -29,10 +29,11 @@ export const WorkspaceAutomationsDetailsWrapper = observer(function WorkspaceAut
   const { automationId, workspaceSlug, children } = props;
   // store hooks
   const {
-    workspaceAutomations: { canView, fetchAutomationDetails },
+    workspaceAutomations: { getCanViewAutomation, fetchAutomationDetails },
   } = useAutomations();
   // derived values
   const isWorkspaceAutomationsEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.WORKSPACE_AUTOMATIONS);
+  const canView = getCanViewAutomation(workspaceSlug);
 
   // fetching automations details
   useSWR(

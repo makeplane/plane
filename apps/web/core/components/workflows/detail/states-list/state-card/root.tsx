@@ -27,11 +27,12 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   workflow: IWorkflow;
+  canEdit: boolean;
   onRequestDelete: (stateId: string) => void;
 };
 
 export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(props: Props) {
-  const { stateId, workspaceSlug, projectId, workflow, onRequestDelete } = props;
+  const { stateId, workspaceSlug, projectId, workflow, canEdit, onRequestDelete } = props;
 
   // hooks
   const { getStateById } = useProjectState();
@@ -41,6 +42,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
   if (!workflowState || !state) return null;
 
   const handleToggleActive = () => {
+    if (!canEdit) return;
     workflowState
       .update(workspaceSlug, projectId, workflow.id, { allow_issue_creation: !workflowState.allow_issue_creation })
       .catch(() => {
@@ -53,6 +55,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
   };
 
   const handleDelete = () => {
+    if (!canEdit) return;
     onRequestDelete(stateId);
   };
 
@@ -67,6 +70,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
   };
 
   const handleAddFlow = () => {
+    if (!canEdit) return;
     const draftId = workflowState.addDraftTransition();
     workflow.openSidebar(workflowState.id, draftId, "flow_type");
   };
@@ -79,7 +83,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
     <Collapsible className="rounded-lg border border-subtle">
       <CollapsibleTrigger className="w-full group justify-between p-3">
         <div className="flex items-center gap-2 w-full rounded-lg">
-          <AccordionCloseIcon className="size-4 transition-all ease-out group-data-[panel-open]:rotate-90" />
+          <AccordionCloseIcon className="size-4 transition-all ease-out group-data-panel-open:rotate-90" />
           <div className="flex items-center gap-2">
             <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.LG} percentage={state.order} />
             <p className="text-body-sm-medium">{state.name}</p>
@@ -90,12 +94,17 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
           handleToggle={handleToggleActive}
           handleSetDefault={handleSetDefault}
           workflowState={workflowState}
+          permissions={{
+            canAllowCreation: canEdit,
+            canDelete: canEdit,
+          }}
           isDefaultWorkflow={workflow.is_default}
         />
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="bg-layer-1 p-3 flex flex-col items-start gap-2">
           {allTransitionIds.length === 0 ? (
+            canEdit &&
             canAddFlow && (
               <Button variant="ghost" size="sm" onClick={handleAddFlow}>
                 <PlusIcon />
@@ -121,7 +130,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
                   />
                 );
               })}
-              {canAddFlow && (
+              {canEdit && canAddFlow && (
                 <Button variant="ghost" size="sm" onClick={handleAddFlow}>
                   <PlusIcon />
                   <span>Add flow</span>

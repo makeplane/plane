@@ -11,18 +11,14 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // components
-import { EUserPermissionsLevel } from "@plane/constants";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 import { ProjectStateLoader, GroupList } from "@/components/project-states";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
 
 type TProjectState = {
   workspaceSlug: string;
@@ -40,15 +36,8 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
     updateState,
     deleteState,
     markStateAsDefault,
+    permissions,
   } = useProjectState();
-  const { allowPermissions } = useUserPermissions();
-  // derived values
-  const isEditable = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
 
   // Fetching all project states
   useSWR(
@@ -78,7 +67,13 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
     <GroupList
       groupedStates={groupedProjectStates}
       stateOperationsCallbacks={stateOperationsCallbacks}
-      isEditable={isEditable}
+      permissions={{
+        canCreate: permissions.getCanCreate(workspaceSlug, projectId),
+        canEdit: (stateId: string) => permissions.getCanEdit(workspaceSlug, projectId, stateId),
+        canDelete: (stateId: string) => permissions.getCanDelete(workspaceSlug, projectId, stateId),
+        canMarkAsDefault: (stateId: string) => permissions.getCanMarkAsDefault(workspaceSlug, projectId, stateId),
+        canDragAndDrop: (stateId: string) => permissions.getCanDragAndDrop(workspaceSlug, projectId, stateId),
+      }}
       shouldTrackEvents
     />
   );

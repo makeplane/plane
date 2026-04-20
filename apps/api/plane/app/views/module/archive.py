@@ -35,7 +35,7 @@ from django.db import models
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, ModulePermissions
 from plane.app.serializers import ModuleDetailSerializer
 from plane.db.models import Issue, Module, ModuleLink, UserFavorite, Project
 from plane.utils.analytics_plot import burndown_plot
@@ -48,8 +48,6 @@ from .. import BaseAPIView
 
 class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [ProjectEntityPermission]
 
     def get_queryset(self):
         favorite_subquery = UserFavorite.objects.filter(
@@ -264,6 +262,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             .order_by("-is_favorite", "-created_at")
         )
 
+    @can(ModulePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk=None):
         if pk is None:
             queryset = self.get_queryset()
@@ -550,6 +549,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
 
             return Response(data, status=status.HTTP_200_OK)
 
+    @can(ModulePermissions.ARCHIVE, resource_param="module_id")
     def post(self, request, slug, project_id, module_id):
         module = Module.objects.get(pk=module_id, project_id=project_id, workspace__slug=slug)
         if module.status not in ["completed", "cancelled"]:
@@ -567,6 +567,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         ).delete()
         return Response({"archived_at": str(module.archived_at)}, status=status.HTTP_200_OK)
 
+    @can(ModulePermissions.ARCHIVE, resource_param="module_id")
     def delete(self, request, slug, project_id, module_id):
         module = Module.objects.get(pk=module_id, project_id=project_id, workspace__slug=slug)
         module.archived_at = None

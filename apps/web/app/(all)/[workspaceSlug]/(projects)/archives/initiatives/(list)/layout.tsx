@@ -27,7 +27,7 @@ const ArchivedInitiativesLayout = observer(function ArchivedInitiativesLayout({ 
   const { workspaceSlug } = params;
 
   return (
-    <WorkspaceAccessWrapper pageKey="archives">
+    <WorkspaceAccessWrapper pageKey="archives" workspaceSlug={workspaceSlug}>
       <InitiativesFilterProvider isArchived>
         <AppHeader header={<WorkspaceArchivesHeader activeTab="initiatives" workspaceSlug={workspaceSlug} />} />
         <ContentWrapper>

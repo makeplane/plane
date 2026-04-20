@@ -12,17 +12,13 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 // component
 import { useTranslation } from "@plane/i18n";
-import { EUserProjectRoles } from "@plane/types";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // store hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { CreateRecurringWorkItemsButton } from "@/components/recurring-work-items/settings/create-button";
@@ -40,7 +36,6 @@ function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps)
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { getProjectById } = useProject();
   const { isAnyRecurringWorkItemsAvailableForProject } = useRecurringWorkItems();
   // derived values
@@ -50,7 +45,6 @@ function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps)
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails.name} - ${t("common.recurring_work_items")}`
     : undefined;
-  const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <SettingsContentWrapper header={<RecurringWorkItemsProjectSettingsHeader />}>
@@ -60,8 +54,7 @@ function RecurringWorkItemsProjectSettingsPage({ params }: Route.ComponentProps)
         description={t("recurring_work_items.settings.description")}
         control={
           isRecurringWorkItemsEnabled &&
-          isRecurringWorkItemsAvailableForProject &&
-          hasAdminPermission && (
+          isRecurringWorkItemsAvailableForProject && (
             <CreateRecurringWorkItemsButton workspaceSlug={workspaceSlug} projectId={projectId} buttonSize="base" />
           )
         }

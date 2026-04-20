@@ -26,11 +26,15 @@ type Props = {
   handleSetDefault: () => void;
   workflowState: IWorkflowState;
   isDefaultWorkflow: boolean;
+  permissions: {
+    canAllowCreation: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const WorkflowStateCardActions = observer(function WorkflowStateCardActions(props: Props) {
   //props
-  const { handleDelete, handleToggle, handleSetDefault, workflowState, isDefaultWorkflow } = props;
+  const { handleDelete, handleToggle, handleSetDefault, workflowState, isDefaultWorkflow, permissions } = props;
 
   // derived values
   const MENU_ITEMS: TContextMenuItem[] = [
@@ -47,7 +51,7 @@ export const WorkflowStateCardActions = observer(function WorkflowStateCardActio
       icon: TrashIcon,
       action: handleDelete,
       className: "text-danger-primary",
-      shouldRender: !isDefaultWorkflow,
+      shouldRender: permissions.canDelete && !isDefaultWorkflow,
     },
   ];
   const filteredMenuItems = MENU_ITEMS.filter((item) => item.shouldRender !== false);
@@ -69,7 +73,7 @@ export const WorkflowStateCardActions = observer(function WorkflowStateCardActio
         <span className="text-caption-md-regular">Allow new work items</span>
         <Switch
           value={workflowState.allow_issue_creation}
-          disabled={workflowState.is_default}
+          disabled={workflowState.is_default || !permissions.canAllowCreation}
           onChange={() => {
             handleToggle();
           }}

@@ -13,7 +13,6 @@
 
 import { computed, makeObservable } from "mobx";
 import { computedFn } from "mobx-utils";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import type { TCollection } from "@plane/types";
 import { CollectionService } from "@plane/services";
 import type { RootStore } from "@/plane-web/store/root.store";
@@ -23,7 +22,6 @@ import { BaseCollection } from "@/store/collections/base-collection";
 const collectionService = new CollectionService();
 
 export type TWorkspaceCollection = TCollectionInstance & {
-  isWorkspaceAdmin: boolean;
   canCurrentUserEditCollection: boolean;
   canCurrentUserDeleteCollection: boolean;
   canCurrentUserChangeAccess: boolean;
@@ -42,34 +40,40 @@ export class WorkspaceCollection extends BaseCollection implements TWorkspaceCol
     });
 
     makeObservable(this, {
-      isWorkspaceAdmin: computed,
       canCurrentUserEditCollection: computed,
       canCurrentUserDeleteCollection: computed,
       canCurrentUserChangeAccess: computed,
     });
   }
 
-  get isWorkspaceAdmin() {
-    const { workspaceSlug } = this.rootStore.router;
-    if (!workspaceSlug) return false;
-
-    return this.rootStore.user.permission.allowPermissions(
-      [EUserPermissions.ADMIN],
-      EUserPermissionsLevel.WORKSPACE,
-      workspaceSlug
-    );
-  }
-
   get canCurrentUserEditCollection() {
-    return this.isCurrentUserOwner || this.isWorkspaceAdmin;
+    if (this.isCurrentUserOwner) return true;
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug || !this.id) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki_collection",
+      action: "edit",
+      workspaceSlug,
+      resourceMeta: { resourceId: this.id },
+    });
   }
 
   get canCurrentUserDeleteCollection() {
-    return !this.is_default && (this.isCurrentUserOwner || this.isWorkspaceAdmin);
+    if (this.is_default) return false;
+    if (this.isCurrentUserOwner) return true;
+    const { workspaceSlug } = this.rootStore.router;
+    if (!workspaceSlug || !this.id) return false;
+    return this.rootStore.permissionAccessStore.can({
+      resource: "wiki_collection",
+      action: "delete",
+      workspaceSlug,
+      resourceMeta: { resourceId: this.id },
+    });
   }
 
   get canCurrentUserChangeAccess() {
-    return !this.is_default && (this.isCurrentUserOwner || this.isWorkspaceAdmin);
+    if (this.is_default) return false;
+    return this.canCurrentUserEditCollection;
   }
 
   getRedirectionLink = computedFn(() => {

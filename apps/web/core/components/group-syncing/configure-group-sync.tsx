@@ -18,22 +18,27 @@ import { debounce } from "lodash-es";
 import type { GroupSyncConfig } from "@plane/types";
 import { useTranslation } from "@plane/i18n";
 import { Switch } from "@plane/propel/switch";
-import { Input } from "@plane/ui";
+import { CustomSelect, Input } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
+// hooks
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 // local imports
 import { GROUP_SYNC_CONFIG } from "./helper";
 
 type ConfigureGroupSyncProps = {
+  workspaceSlug: string;
   syncConfig: GroupSyncConfig | undefined;
   handleChange: (payload: Partial<GroupSyncConfig>) => Promise<void>;
 };
 
 export const ConfigureGroupSync = observer(function ConfigureGroupSync(props: ConfigureGroupSyncProps) {
   // props
-  const { syncConfig, handleChange } = props;
+  const { workspaceSlug, syncConfig, handleChange } = props;
   // hooks
   const { t } = useTranslation();
+  const { getWorkspaceRolesByWorkspaceSlug } = useRoleManagement();
+  const workspaceRoles = getWorkspaceRolesByWorkspaceSlug(workspaceSlug, "active");
 
   const [groupAttributeKeyInput, setGroupAttributeKeyInput] = useState(syncConfig?.group_attribute_key ?? "");
 
@@ -60,6 +65,8 @@ export const ConfigureGroupSync = observer(function ConfigureGroupSync(props: Co
     },
     [debouncedUpdateGroupAttributeKey]
   );
+
+  const selectedWorkspaceRoleName = syncConfig?.default_workspace_role_detail?.name ?? "";
 
   return (
     <div className="mt-12">
@@ -100,6 +107,34 @@ export const ConfigureGroupSync = observer(function ConfigureGroupSync(props: Co
             </div>
           );
         })}
+
+        {/* Default workspace role */}
+        <div className="w-full px-4 py-3 flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4 md:gap-8">
+          <div className="flex flex-col gap-1.5">
+            <h4 className="text-body-sm-medium text-primary">
+              {t("workspace_settings.settings.group_syncing.config.default_workspace_role.title")}
+            </h4>
+            <p className="text-caption-md-regular text-tertiary">
+              {t("workspace_settings.settings.group_syncing.config.default_workspace_role.description")}
+            </p>
+          </div>
+          <div className="shrink-0">
+            <CustomSelect
+              value={syncConfig?.default_workspace_role ?? ""}
+              label={<span className="text-13">{selectedWorkspaceRoleName}</span>}
+              onChange={(value: string) => void handleChange({ default_workspace_role: value })}
+              buttonClassName="border-[0.5px] border-subtle-1"
+              disabled={disabled}
+              input
+            >
+              {workspaceRoles.map((role) => (
+                <CustomSelect.Option key={role.id} value={role.id}>
+                  {role.name}
+                </CustomSelect.Option>
+              ))}
+            </CustomSelect>
+          </div>
+        </div>
       </div>
     </div>
   );

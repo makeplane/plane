@@ -14,7 +14,6 @@
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // i18n
-import { useTranslation } from "@plane/i18n";
 import type {
   GroupByColumnTypes,
   IGroupByColumn,
@@ -37,13 +36,12 @@ import { useKanbanView } from "@/hooks/store/use-kanban-view";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // types
 // parent components
-import { useWorkFlowFDragNDrop } from "@/components/workflows";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import type { GroupDropLocation } from "@/helpers/work-item-layout";
 import { getGroupByColumns, isWorkspaceLevel, getApproximateCardHeight } from "@/helpers/work-item-layout";
 // components
-import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 export interface IKanBan {
   getWorkItemById: (issueId: string) => TIssue | undefined;
@@ -68,11 +66,18 @@ export interface IKanBan {
   collapsedGroups: TIssueKanbanFilters;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
-  enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
-  disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   showEmptyGroup?: boolean;
@@ -96,12 +101,11 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     quickActions,
     collapsedGroups,
     handleCollapsedGroups,
-    enableQuickIssueCreate,
     quickAddCallback,
     loadMoreIssues,
-    disableIssueCreation,
     addIssuesToView,
-    canEditProperties,
+    layoutPermissions,
+    getWorkItemPermissions,
     scrollableContainerRef,
     handleOnDrop,
     showEmptyGroup = true,
@@ -112,15 +116,11 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     isEpic = false,
     isLastSubGroup = false,
   } = props;
-  // i18n
-  const { t } = useTranslation();
   // store hooks
   const storeType = useIssueStoreType();
   const issueKanBanView = useKanbanView();
   // derived values
   const isDragDisabled = !issueKanBanView?.getCanUserDragDrop(group_by, sub_group_by);
-
-  const { getIsWorkflowWorkItemCreationDisabled } = useWorkFlowFDragNDrop(group_by, sub_group_by);
 
   const list = getGroupByColumns({
     groupBy: group_by as GroupByColumnTypes,
@@ -218,10 +218,9 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
                     updateIssue={updateIssue}
                     quickActions={quickActions}
-                    enableQuickIssueCreate={enableQuickIssueCreate}
+                    canQuickAddWorkItem={layoutPermissions.canCreateWorkItem.viaQuickAdd && !isGroupByCreatedBy}
                     quickAddCallback={quickAddCallback}
-                    disableIssueCreation={disableIssueCreation}
-                    canEditProperties={canEditProperties}
+                    getWorkItemPermissions={getWorkItemPermissions}
                     scrollableContainerRef={scrollableContainerRef}
                     loadMoreIssues={loadMoreIssues}
                     handleOnDrop={handleOnDrop}
@@ -237,6 +236,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                       addIssuesToView,
                       isGroupByCreatedBy,
                     }}
+                    layoutPermissions={layoutPermissions}
                   />
                 </RenderIfVisible>
               ) : (
@@ -254,10 +254,9 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                   dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
                   updateIssue={updateIssue}
                   quickActions={quickActions}
-                  enableQuickIssueCreate={enableQuickIssueCreate}
+                  canQuickAddWorkItem={layoutPermissions.canCreateWorkItem.viaQuickAdd && !isGroupByCreatedBy}
                   quickAddCallback={quickAddCallback}
-                  disableIssueCreation={disableIssueCreation}
-                  canEditProperties={canEditProperties}
+                  getWorkItemPermissions={getWorkItemPermissions}
                   scrollableContainerRef={scrollableContainerRef}
                   loadMoreIssues={loadMoreIssues}
                   handleOnDrop={handleOnDrop}
@@ -273,6 +272,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     addIssuesToView,
                     isGroupByCreatedBy,
                   }}
+                  layoutPermissions={layoutPermissions}
                 />
               )}
             </div>

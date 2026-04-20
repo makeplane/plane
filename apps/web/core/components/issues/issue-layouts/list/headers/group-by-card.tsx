@@ -43,7 +43,7 @@ interface IHeaderGroupByCard {
   title: string;
   count: number;
   issuePayload: Partial<TIssue>;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  canPerformBulkOps: boolean;
   disableIssueCreation?: boolean;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
   selectionHelpers: TSelectionHelper;
@@ -59,7 +59,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     title,
     count,
     issuePayload,
-    canEditProperties,
+    canPerformBulkOps,
     disableIssueCreation,
     addIssuesToView,
     selectionHelpers,
@@ -100,7 +100,7 @@ export const HeaderGroupByCard = observer(function HeaderGroupByCard(props: IHea
     isTypeActive,
   });
   // auth
-  const canSelectIssues = canEditProperties(projectId?.toString()) && !selectionHelpers.isSelectionDisabled;
+  const canSelectIssues = canPerformBulkOps && !selectionHelpers.isSelectionDisabled;
 
   const handleAddIssuesToView = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId) return;

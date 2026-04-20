@@ -34,7 +34,7 @@ from plane.ee.models import (
     WorkflowStateType,
 )
 from plane.ee.serializers import WorkflowTransitionActorSerializer
-from plane.ee.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkflowPermissions
 from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
@@ -46,7 +46,7 @@ from plane.bgtasks.webhook_task import model_activity
 
 class WorkflowTransitionMemberEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id, transition_id):
         requested_approver_ids = request.data.get("approver_ids", [])
         workflow_transition = WorkflowTransition.objects.filter(
@@ -123,7 +123,7 @@ class WorkflowTransitionMemberEndpoint(BaseAPIView):
 
 class WorkflowWorkItemApproverEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, work_item_id):
         action_type = request.data.get("type", None)
         if action_type not in ["approve", "reject"]:

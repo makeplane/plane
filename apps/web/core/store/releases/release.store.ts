@@ -11,11 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { action, computed, makeObservable, observable, runInAction } from "mobx";
+import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { Release, ReleaseWrite } from "@plane/types";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 import releaseService from "@/services/release.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
@@ -27,11 +26,8 @@ export interface IReleaseStore {
   workspaceSlugReleasesMap: Map<string, string[]>;
   releasesLoader: boolean;
   addWorkItemsModalReleaseId: string | null;
-  // computed
-  permissions: {
-    canEdit: boolean;
-  };
   // computed fns
+  getCanCreate: (workspaceSlug: string) => boolean;
   getReleaseIdsByWorkspaceSlug: (workspaceSlug: string) => string[];
   getReleaseById: (releaseId: string) => ReleaseInstance | undefined;
   isReleasesEnabled: (workspaceSlug: string) => boolean;
@@ -63,7 +59,6 @@ export class ReleaseStore implements IReleaseStore {
       workspaceSlugReleasesMap: observable,
       releasesLoader: observable.ref,
       addWorkItemsModalReleaseId: observable.ref,
-      permissions: computed,
       fetchReleases: action,
       fetchReleaseDetails: action,
       updateRelease: action,
@@ -79,16 +74,17 @@ export class ReleaseStore implements IReleaseStore {
     (workspaceSlug: string): string[] => this.workspaceSlugReleasesMap.get(workspaceSlug) ?? []
   );
 
-  get permissions() {
-    const permissionStore = this.rootStore.user.permission;
+  getCanCreate = computedFn((workspaceSlug: string): boolean =>
+    this.rootStore.permissionAccessStore.can({
+      resource: "release",
+      action: "create",
+      workspaceSlug,
+    })
+  );
 
-    return {
-      canEdit: permissionStore.allowPermissions(
-        [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-        EUserPermissionsLevel.WORKSPACE
-      ),
-    };
-  }
+  private getWorkspaceSlugById = computedFn(
+    (workspaceId: string): string | undefined => this.rootStore.workspaceRoot.getWorkspaceById(workspaceId)?.slug
+  );
 
   openAddWorkItemsModal = (releaseId: string): void => {
     this.addWorkItemsModalReleaseId = releaseId;
@@ -109,6 +105,7 @@ export class ReleaseStore implements IReleaseStore {
       false
     );
     const workspaceFeatures = this.rootStore.workspaceFeatures.isWorkspaceFeatureEnabled(
+      workspaceSlug,
       EWorkspaceFeatures.IS_RELEASES_ENABLED
     );
     return isFeatureFlagEnabled && workspaceFeatures;
@@ -136,20 +133,9 @@ export class ReleaseStore implements IReleaseStore {
           return res;
         },
       },
-      permissions: {
-        canEditWorkItemProperties: (projectId: string) =>
-          this.rootStore.user.permission.allowPermissions(
-            [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-            EUserPermissionsLevel.PROJECT,
-            workspaceSlug,
-            projectId
-          ),
-        canEditChangelog: this.rootStore.user.permission.allowPermissions(
-          [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-          EUserPermissionsLevel.WORKSPACE,
-          workspaceSlug
-        ),
-      },
+      can: this.rootStore.permissionAccessStore.can,
+      getWorkspaceSlugById: this.getWorkspaceSlugById,
+      currentUserId: this.rootStore.user.data?.id,
     });
     this.releasesMap.set(release.id, instance);
     return instance;

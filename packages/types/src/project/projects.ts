@@ -13,6 +13,7 @@
 
 import type { TLogoProps } from "../common";
 import type { TUserPermissions } from "../enums";
+import type { CurrentUserPermissionState } from "../permissions/models";
 import type { TStateGroups } from "../state";
 import type { IUser, IUserLite } from "../users";
 import type { IWorkspace } from "../workspace";
@@ -38,7 +39,6 @@ export interface IPartialProject {
   module_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
-  guest_view_all_features?: boolean;
   project_lead?: IUserLite | string | null;
   network?: number;
   // Timestamps
@@ -49,6 +49,7 @@ export interface IPartialProject {
   updated_by?: string;
   intake_count?: number;
   is_time_tracking_enabled?: boolean;
+  _permissions: CurrentUserPermissionState;
 }
 
 export interface IProject extends IPartialProject {
@@ -103,28 +104,20 @@ export interface IProjectMemberLite {
 }
 
 export type TProjectMembership = {
+  id: string;
   member: string;
-  role: TUserPermissions | EUserProjectRoles;
-} & (
-  | {
-      id: string;
-      original_role: EUserProjectRoles;
-      created_at: string;
-    }
-  | {
-      id: null;
-      original_role: null;
-      created_at: null;
-    }
-);
+  role_slug: string;
+  created_at: string;
+  role?: EUserProjectRoles; // Legacy: numeric role retained for backward compatibility.
+};
 
 export interface IProjectBulkAddFormData {
-  members: { role: TUserPermissions | EUserProjectRoles; member_id: string }[];
+  members: { role_slug: string; member_id: string }[];
 }
 
 export type IProjectMemberNavigationPreferences = {
-  default_tab: string;
-  hide_in_more_menu: string[];
+  default_tab: ProjectResourceKey;
+  hide_in_more_menu: ProjectResourceKey[];
 };
 
 export type IProjectMemberPreferencesUpdate = {
@@ -198,3 +191,14 @@ export interface IProjectSubscriber {
   workspace: string;
   subscriber: string;
 }
+
+export type ProjectResourceKey =
+  | "overview"
+  | "work_items"
+  | "epics"
+  | "cycles"
+  | "modules"
+  | "views"
+  | "pages"
+  | "intake"
+  | "archives";

@@ -18,11 +18,11 @@ import { BriefcaseIcon } from "lucide-react";
 import { UpdateTeamspaceProjectsButton } from "@/components/teamspaces/actions/projects/button";
 
 type TAddProjectsToTeamProps = {
-  isEditingAllowed: boolean;
+  canAddProject: boolean;
 };
 
 export const AddProjectsToTeam = observer(function AddProjectsToTeam(props: TAddProjectsToTeamProps) {
-  const { isEditingAllowed } = props;
+  const { canAddProject } = props;
   // router
   const { teamspaceId } = useParams();
 
@@ -45,7 +45,7 @@ export const AddProjectsToTeam = observer(function AddProjectsToTeam(props: TAdd
         <UpdateTeamspaceProjectsButton
           variant="empty-state"
           teamspaceId={teamspaceId?.toString()}
-          isEditingAllowed={isEditingAllowed}
+          canAddProject={canAddProject}
         />
       </div>
     </div>

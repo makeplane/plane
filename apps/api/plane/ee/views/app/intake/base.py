@@ -36,7 +36,8 @@ from plane.db.models import (
     Project,
     ProjectMember,
 )
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import ROLE  # ROLE.ADMIN.value used in create_intake_user_bot
+from plane.permissions import can, IntakePermissions
 from plane.ee.serializers.app.intake import IntakeSettingSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
@@ -124,9 +125,9 @@ class IntakeSettingEndpoint(BaseAPIView):
             # Log the error here if needed
             raise e
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
+    @can(IntakePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 
@@ -182,9 +183,9 @@ class IntakeSettingEndpoint(BaseAPIView):
 
         return Response(data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN], level="PROJECT")
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
+    @can(IntakePermissions.CONFIGURE, resource_param="project_id")
     def patch(self, request, slug, project_id):
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 

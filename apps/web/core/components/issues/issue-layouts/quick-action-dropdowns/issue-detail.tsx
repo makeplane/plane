@@ -14,10 +14,10 @@
 import { useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 // plane imports
-import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ARCHIVABLE_STATE_GROUPS } from "@plane/constants";
 import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 import { ContextMenu, CustomMenu } from "@plane/ui";
@@ -26,7 +26,6 @@ import { cn } from "@plane/utils";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane-web components
 import { DuplicateWorkItemModal } from "@/components/issues/duplicate-modal";
 // helper
@@ -38,12 +37,19 @@ import type { MenuItemFactoryProps } from "./helper";
 import { useWorkItemDetailMenuItems } from "./helper";
 import { IconButton } from "@plane/propel/icon-button";
 
-type TWorkItemDetailQuickActionProps = IQuickActionProps & {
+type TWorkItemDetailQuickActionProps = Exclude<IQuickActionProps, "readOnly" | "disabled"> & {
   toggleEditIssueModal?: (value: boolean) => void;
   toggleDeleteIssueModal?: (value: boolean) => void;
   toggleDuplicateIssueModal?: (value: boolean) => void;
   toggleArchiveIssueModal?: (value: boolean) => void;
   isPeekMode?: boolean;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDuplicate: boolean;
+  };
 };
 
 export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickActions(
@@ -56,7 +62,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     handleArchive,
     handleRestore,
     portalElement,
-    readOnly = false,
     placements = "bottom-end",
     parentRef,
     toggleEditIssueModal,
@@ -64,10 +69,10 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     toggleDuplicateIssueModal,
     toggleArchiveIssueModal,
     isPeekMode = false,
+    permissions,
   } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -75,7 +80,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
@@ -83,20 +87,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
   const stateDetails = getStateById(issue.state_id);
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
-  // auth
-  const isEditingAllowed =
-    allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug?.toString(),
-      issue.project_id ?? undefined
-    ) && !readOnly;
-
-  const isArchivingAllowed = !issue.archived_at && isEditingAllowed;
+  const { canEdit, canDelete, canArchive, canRestore, canDuplicate } = permissions;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
-  const isRestoringAllowed = !!issue.archived_at && isEditingAllowed;
-
-  const isDeletingAllowed = isEditingAllowed;
 
   const duplicateIssuePayload = omit(
     {
@@ -139,10 +131,11 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     workspaceSlug: workspaceSlug?.toString(),
     projectIdentifier,
     activeLayout,
-    isEditingAllowed,
-    isArchivingAllowed,
-    isRestoringAllowed,
-    isDeletingAllowed,
+    canEdit,
+    canArchive,
+    canRestore,
+    canDelete,
+    canDuplicate,
     isInArchivableGroup,
     setIssueToEdit,
     setCreateUpdateIssueModal: customEditAction,
@@ -165,7 +158,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
       if (item.key === "edit") {
         return {
           ...item,
-          shouldRender: isEditingAllowed && !isPeekMode,
+          shouldRender: canEdit && !isPeekMode,
         };
       }
       // Customize delete action for work item

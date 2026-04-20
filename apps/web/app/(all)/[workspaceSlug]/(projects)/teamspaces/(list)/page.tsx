@@ -14,9 +14,12 @@
 import { observer } from "mobx-react";
 // plane web components
 import TeamspacesListRoot from "@/components/teamspaces/list/root";
+// types
+import type { Route } from "./+types/page";
 
-function TeamspacesListPage() {
-  return <TeamspacesListRoot />;
+function TeamspacesListPage({ params }: Route.ComponentProps) {
+  const { workspaceSlug } = params;
+  return <TeamspacesListRoot workspaceSlug={workspaceSlug} />;
 }
 
 export default observer(TeamspacesListPage);

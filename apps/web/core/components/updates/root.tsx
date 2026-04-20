@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -34,15 +33,26 @@ import { NewUpdate } from "./new-update";
 type TProps = {
   entityType: EUpdateEntityType;
   entityId: string;
-  allowNew?: boolean;
   handleUpdateOperations: TUpdateOperations;
   customTitle?: (updateData: TUpdate) => React.ReactNode;
+  permissions: {
+    canAdd: boolean;
+    canEdit: (updateId: string) => boolean;
+    canDelete: (updateId: string) => boolean;
+    canReact: (updateId: string) => boolean;
+    comment: {
+      canCreate: (updateId: string) => boolean;
+      canUpdate: (updateId: string, commentId: string) => boolean;
+      canDelete: (updateId: string, commentId: string) => boolean;
+      canReact: (updateId: string, commentId: string) => boolean;
+    };
+  };
 };
 
 export const UpdatesWrapper = observer(function UpdatesWrapper({
   entityType,
   entityId,
-  allowNew = true,
+  permissions,
   handleUpdateOperations,
   customTitle,
 }: TProps) {
@@ -98,15 +108,17 @@ export const UpdatesWrapper = observer(function UpdatesWrapper({
   ) : (
     <>
       {/* New Update */}
-      {showInput && allowNew && <NewUpdate handleClose={() => setShowInput(false)} handleCreate={handleNewUpdate} />}
+      {showInput && permissions.canAdd && (
+        <NewUpdate handleClose={() => setShowInput(false)} handleCreate={handleNewUpdate} />
+      )}
 
       {/* No Updates */}
       {!showInput && updates.length === 0 && (
-        <EmptyUpdates handleNewUpdate={() => setShowInput(true)} allowNew={allowNew} />
+        <EmptyUpdates handleNewUpdate={() => setShowInput(true)} allowNew={permissions.canAdd} />
       )}
 
       {/* Add update */}
-      {!showInput && updates.length !== 0 && allowNew && (
+      {!showInput && updates.length !== 0 && permissions.canAdd && (
         <div className="flex justify-between h-7 items-center">
           <button
             className="flex text-accent-primary text-13 font-medium rounded w-fit py-1 px-2"
@@ -131,7 +143,17 @@ export const UpdatesWrapper = observer(function UpdatesWrapper({
               handleUpdateOperations={handleUpdateOperations}
               entityType={entityType}
               customTitle={customTitle}
-              disabled={!allowNew}
+              permissions={{
+                canEdit: permissions.canEdit(updateId),
+                canDelete: permissions.canDelete(updateId),
+                canReact: permissions.canReact(updateId),
+                comment: {
+                  canCreate: permissions.comment.canCreate(updateId),
+                  canUpdate: (commentId: string) => permissions.comment.canUpdate(updateId, commentId),
+                  canDelete: (commentId: string) => permissions.comment.canDelete(updateId, commentId),
+                  canReact: (commentId: string) => permissions.comment.canReact(updateId, commentId),
+                },
+              }}
             />
           ))}
         </div>

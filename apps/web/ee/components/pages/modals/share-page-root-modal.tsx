@@ -17,9 +17,8 @@ import useSWR from "swr";
 import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // constants
 import type { EPageSharedUserAccess } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
-import { getPageName } from "@plane/utils";
+import { getPageName, isGuestRole } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useUser } from "@/hooks/store/user";
@@ -180,7 +179,8 @@ export const SharePageRoolModal = observer(function SharePageRoolModal({
       if (option.value === page?.owned_by) return false;
 
       const memberDetails = getWorkspaceMemberDetails(option.value);
-      if (memberDetails?.role === EUserWorkspaceRoles.GUEST) return false;
+      if (!memberDetails) return false;
+      if (isGuestRole(memberDetails.role_slug)) return false;
 
       return true;
     });

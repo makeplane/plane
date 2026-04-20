@@ -24,6 +24,8 @@ import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+// types
+import type { TTeamspaceItemPermissions } from "@/store/teamspace/permissions/root";
 // plane web constants
 import { DeleteTeamspaceModal } from "@/components/teamspaces/actions/delete-modal";
 
@@ -31,13 +33,12 @@ type Props = {
   teamspaceId: string;
   workspaceSlug: string;
   parentRef: React.RefObject<HTMLDivElement> | null;
-  isEditingAllowed: boolean;
-  hideEdit?: boolean;
+  permissions: Pick<TTeamspaceItemPermissions, "canEdit" | "canDelete">;
   buttonClassName?: string;
 };
 
 export const TeamQuickActions = observer(function TeamQuickActions(props: Props) {
-  const { teamspaceId, workspaceSlug, parentRef, isEditingAllowed, hideEdit, buttonClassName } = props;
+  const { teamspaceId, workspaceSlug, parentRef, permissions, buttonClassName } = props;
   // states
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   // store hooks
@@ -79,7 +80,7 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
       title: "Edit",
       icon: EditIcon,
       action: handleEditTeam,
-      shouldRender: !hideEdit && isEditingAllowed,
+      shouldRender: permissions.canEdit,
     },
     {
       key: "open-new-tab",
@@ -99,7 +100,7 @@ export const TeamQuickActions = observer(function TeamQuickActions(props: Props)
       action: handleDeleteTeam,
       title: "Delete",
       icon: TrashIcon,
-      shouldRender: isEditingAllowed,
+      shouldRender: permissions.canDelete,
       className: "text-danger-primary",
     },
   ];

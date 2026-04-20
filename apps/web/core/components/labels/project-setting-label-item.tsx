@@ -40,7 +40,11 @@ type Props = {
     dropAtEndOfList: boolean
   ) => void;
   labelOperationsCallbacks: TLabelOperationsCallbacks;
-  isEditable?: boolean;
+  permissions: {
+    canDragAndDrop: boolean;
+    canDelete: boolean;
+    canEdit: boolean;
+  };
 };
 
 export function ProjectSettingLabelItem(props: Props) {
@@ -53,7 +57,7 @@ export function ProjectSettingLabelItem(props: Props) {
     isParentDragging = false,
     onDrop,
     labelOperationsCallbacks,
-    isEditable = false,
+    permissions,
   } = props;
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
@@ -91,7 +95,14 @@ export function ProjectSettingLabelItem(props: Props) {
   ];
 
   return (
-    <LabelDndHOC label={label} isGroup={false} isChild={isChild} isLastChild={isLastChild} onDrop={onDrop}>
+    <LabelDndHOC
+      label={label}
+      isGroup={false}
+      isChild={isChild}
+      isLastChild={isLastChild}
+      canDragAndDrop={permissions.canDragAndDrop}
+      onDrop={onDrop}
+    >
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
           className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
@@ -120,7 +131,7 @@ export function ProjectSettingLabelItem(props: Props) {
                 customMenuItems={customMenuItems}
                 handleLabelDelete={handleLabelDelete}
                 dragHandleRef={dragHandleRef}
-                disabled={!isEditable}
+                permissions={permissions}
               />
             )}
           </div>

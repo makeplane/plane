@@ -16,11 +16,9 @@ import { action, computed, makeObservable } from "mobx";
 import { WorkspaceWorkItemTypesService } from "@plane/services";
 import type {
   BaseWorkItemTypeInstanceSchema,
-  EUserWorkspaceRoles,
-  TUserPermissions,
+  PermissionCheckArgs,
   WorkspaceWorkItemTypeInstanceSchema,
 } from "@plane/types";
-import { EUserPermissions } from "@plane/types";
 // local imports
 import type { BaseWorkItemTypeInstanceArgs } from "../instances/base-instance";
 import { BaseWorkItemTypeInstance } from "../instances/base-instance";
@@ -28,7 +26,7 @@ import { BaseWorkItemTypeInstance } from "../instances/base-instance";
 const workspaceTypeService = new WorkspaceWorkItemTypesService();
 
 export type WorkspaceWorkItemTypeInstanceArgs = BaseWorkItemTypeInstanceArgs & {
-  getWorkspaceRoleByWorkspaceSlug: (workspaceSlug: string) => TUserPermissions | EUserWorkspaceRoles | undefined;
+  can: (args: PermissionCheckArgs) => boolean;
 };
 
 export class WorkspaceWorkItemTypeInstance
@@ -61,11 +59,24 @@ export class WorkspaceWorkItemTypeInstance
   // permissions
   get canEdit(): boolean {
     const ws = this.workspaceSlug;
-    return ws ? this.instanceArgs.getWorkspaceRoleByWorkspaceSlug(ws) === EUserPermissions.ADMIN : false;
+    if (!ws) return false;
+    return this.instanceArgs.can({
+      resource: "workspace_workitem_type",
+      action: "edit",
+      workspaceSlug: ws,
+      resourceMeta: { resourceId: this.id },
+    });
   }
 
   get canDelete(): boolean {
-    return this.canEdit;
+    const ws = this.workspaceSlug;
+    if (!ws) return false;
+    return this.instanceArgs.can({
+      resource: "workspace_workitem_type",
+      action: "delete",
+      workspaceSlug: ws,
+      resourceMeta: { resourceId: this.id },
+    });
   }
 
   get canEnableDisable(): boolean {

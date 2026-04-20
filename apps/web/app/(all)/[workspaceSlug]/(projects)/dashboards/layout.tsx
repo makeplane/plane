@@ -32,7 +32,7 @@ export default function WorkspaceDashboardsLayout({ params }: Route.ComponentPro
   useSWR(`WORKSPACE_DASHBOARDS_LIST_${workspaceSlug}`, () => fetchDashboards());
 
   return (
-    <WorkspaceAccessWrapper pageKey="dashboards">
+    <WorkspaceAccessWrapper pageKey="dashboards" workspaceSlug={params.workspaceSlug}>
       <WithFeatureFlagHOC
         fallback={<DashboardsFeatureFlagFallback />}
         flag="DASHBOARDS"

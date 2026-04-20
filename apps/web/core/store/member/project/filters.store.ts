@@ -25,7 +25,7 @@ export interface IProjectMemberFiltersStore {
   // computed actions
   getFilteredMemberIds: (
     members: TProjectMembership[],
-    memberDetailsMap: Record<string, IUserLite>,
+    getUserDetails: (userId: string) => IUserLite | undefined,
     getMemberKey: (member: TProjectMembership) => string,
     projectId: string
   ) => string[];
@@ -50,34 +50,29 @@ export class ProjectMemberFiltersStore implements IProjectMemberFiltersStore {
   /**
    * @description get filtered and sorted member ids
    * @param members - array of project membership objects
-   * @param memberDetailsMap - map of member details by user id
+   * @param getUserDetails - function to get user details by user id
    * @param getMemberKey - function to get member key from membership object
    * @param projectId - project id to get filters for
    */
-  getFilteredMemberIds = computedFn(
-    (
-      members: TProjectMembership[],
-      memberDetailsMap: Record<string, IUserLite>,
-      getMemberKey: (member: TProjectMembership) => string,
-      projectId: string
-    ): string[] => {
+  getFilteredMemberIds: IProjectMemberFiltersStore["getFilteredMemberIds"] = computedFn(
+    (members, getUserDetails, getMemberKey, projectId): string[] => {
       if (!members || members.length === 0) return [];
 
       // Apply filters and sorting
-      const sortedMembers = sortProjectMembers(members, memberDetailsMap, getMemberKey, this.filtersMap[projectId]);
+      const sortedMembers = sortProjectMembers(members, getUserDetails, getMemberKey, this.filtersMap[projectId]);
 
       return sortedMembers.map(getMemberKey);
     }
   );
 
-  getFilters = (projectId: string) => this.filtersMap[projectId];
+  getFilters: IProjectMemberFiltersStore["getFilters"] = (projectId) => this.filtersMap[projectId];
 
   /**
    * @description update filters
    * @param projectId - project id
    * @param filters - partial filters to update
    */
-  updateFilters = (projectId: string, filters: Partial<IMemberFilters>) => {
+  updateFilters: IProjectMemberFiltersStore["updateFilters"] = (projectId, filters) => {
     const current = this.filtersMap[projectId] ?? {};
     this.filtersMap[projectId] = { ...current, ...filters };
   };

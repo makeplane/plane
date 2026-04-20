@@ -13,6 +13,7 @@
 
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { mutate } from "swr";
 // plane imports
 import { DEFAULT_WORK_ITEM_FORM_VALUES } from "@plane/constants";
@@ -44,12 +45,13 @@ import type {
 import { IssueModalContext } from "@/components/issues/issue-modal/context";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
+import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkflows } from "@/hooks/store/use-workflows";
-import { useUser } from "@/hooks/store/user/user-user";
 // plane web imports
 import { useIssueTypes, useWorkItemTemplates } from "@/plane-web/hooks/store";
 import { IssueService } from "@/services/issue/issue.service";
@@ -78,8 +80,13 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   const [issuePropertyValueErrors, setIssuePropertyValueErrors] = useState<TIssuePropertyValueErrors>({});
   // plane hooks
   const { t } = useTranslation();
+  // router params
+  const { workspaceSlug } = useParams();
   // store hooks
-  const { projectsWithCreatePermissions } = useUser();
+  const { workspaceProjectIds } = useProject();
+  const {
+    permissions: { getProjectIdsWithWorkItemPermission },
+  } = useIssues();
   const { getProjectDefaultStateId, getProjectStateIds, fetchProjectStates } = useProjectState();
   const { getCreationAllowedStateIds, getFirstCreationAllowedStateForType } = useWorkflows();
   const { getProjectLabelIds, fetchProjectLabels } = useLabel();
@@ -103,9 +110,12 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
       issuePropertiesActivity: { fetchPropertyActivities },
     },
   } = useIssueDetail();
-
   // derived values
-  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
+  const projectIdsWithCreateWorkItemPermissions = getProjectIdsWithWorkItemPermission(
+    workspaceSlug,
+    workspaceProjectIds ?? [],
+    "create"
+  );
 
   // helpers
   const getIssueTypeIdOnProjectChange = (projectId: string) => {
@@ -482,7 +492,7 @@ export const IssueModalProvider = observer(function IssueModalProvider(props: TI
   return (
     <IssueModalContext.Provider
       value={{
-        allowedProjectIds: allowedProjectIds ?? projectIdsWithCreatePermissions,
+        allowedProjectIds: allowedProjectIds ?? Array.from(projectIdsWithCreateWorkItemPermissions),
         workItemTemplateId,
         setWorkItemTemplateId,
         isApplyingTemplate,

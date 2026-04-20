@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Les pages imbriquées nécessitent un forfait payant. Mettez à niveau pour débloquer."
+    },
+    "auth": {
+      "title": "Accès refusé",
+      "description": "Vous n'avez pas l'autorisation d'accéder à cette page. Veuillez contacter l'administrateur de votre espace de travail pour qu'il vous accorde l'autorisation.",
+      "redirection_button": {
+        "text": "Aller aux projets"
+      },
+      "reload_button": {
+        "text": "Recharger la page"
+      }
     }
   }
 }

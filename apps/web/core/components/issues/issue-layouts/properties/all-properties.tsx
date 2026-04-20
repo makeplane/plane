@@ -56,6 +56,8 @@ import { useProjectState } from "@/hooks/store/use-project-state";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
@@ -67,14 +69,16 @@ export interface IIssueProperties {
   issue: TIssue;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
-  isReadOnly: boolean;
+  permissions: {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+  };
   className: string;
   activeLayout: string;
   isEpic?: boolean;
 }
 
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
-  const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
+  const { issue, updateIssue, displayProperties, permissions, className, isEpic = false } = props;
   // router
   const router = useAppRouter();
   const { workspaceSlug, projectId: projectIdParam } = useParams();
@@ -231,7 +235,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             onChange={handleState}
             projectId={issue.project_id}
             typeId={issue.type_id}
-            disabled={isReadOnly}
+            disabled={!permissions.canEditProperty("state_id")}
             buttonVariant="border-with-text"
             renderByDefault={isMobile}
             showTooltip
@@ -245,7 +249,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           <PriorityDropdown
             value={issue?.priority}
             onChange={handlePriority}
-            disabled={isReadOnly}
+            disabled={!permissions.canEditProperty("priority")}
             buttonVariant="border-without-text"
             renderByDefault={isMobile}
             showTooltip
@@ -278,7 +282,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group) ? "text-danger-primary" : ""
             }
             clearIconClassName="text-primary!"
-            disabled={isReadOnly}
+            disabled={!permissions.canEditProperty("start_date")}
             renderByDefault={isMobile}
             showTooltip
             renderPlaceholder={false}
@@ -302,7 +306,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             icon={<StartDatePropertyIcon className="size-3 shrink-0" />}
             buttonVariant={issue.start_date ? "border-with-text" : "border-without-text"}
             optionsClassName="z-10"
-            disabled={isReadOnly}
+            disabled={!permissions.canEditProperty("start_date")}
             renderByDefault={isMobile}
             showTooltip
             labelClassName="text-caption-sm-regular"
@@ -329,7 +333,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             }
             clearIconClassName="text-primary!"
             optionsClassName="z-10"
-            disabled={isReadOnly}
+            disabled={!permissions.canEditProperty("target_date")}
             renderByDefault={isMobile}
             showTooltip
             labelClassName="text-caption-sm-regular"
@@ -344,7 +348,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             projectId={issue?.project_id}
             value={issue?.assignee_ids}
             onChange={handleAssignee}
-            disabled={isReadOnly}
+            disabled={!permissions.canEditProperty("assignee_ids")}
             multiple
             buttonVariant={issue.assignee_ids?.length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={issue.assignee_ids?.length > 0 ? "hover:bg-transparent px-0" : ""}
@@ -369,7 +373,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                     projectId={issue?.project_id}
                     value={issue?.module_ids ?? []}
                     onChange={handleModule}
-                    disabled={isReadOnly}
+                    disabled={!permissions.canEditProperty("module_ids")}
                     renderByDefault={isMobile}
                     multiple
                     buttonVariant="border-with-text"
@@ -389,7 +393,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
                     projectId={issue?.project_id}
                     value={issue?.cycle_id}
                     onChange={handleCycle}
-                    disabled={isReadOnly}
+                    disabled={!permissions.canEditProperty("cycle_id")}
                     buttonVariant="border-with-text"
                     renderByDefault={isMobile}
                     showTooltip
@@ -409,7 +413,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
               value={issue.estimate_point ?? undefined}
               onChange={handleEstimate}
               projectId={issue.project_id}
-              disabled={isReadOnly}
+              disabled={!permissions.canEditProperty("estimate_point")}
               buttonVariant="border-with-text"
               renderByDefault={isMobile}
               showTooltip
@@ -555,7 +559,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           value={issue?.label_ids || []}
           defaultOptions={defaultLabelOptions}
           onChange={handleLabel}
-          disabled={isReadOnly}
+          disabled={!permissions.canEditProperty("label_ids")}
           renderByDefault={isMobile}
           hideDropdownArrow
           maxRender={3}
@@ -569,7 +573,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
             issueId={issue.id}
             onChange={handleReleaseUpdate}
             releaseIds={issue?.release_ids}
-            disabled={isReadOnly}
+            disabled={!permissions.canEditProperty("release_ids")}
             buttonClassName="text-11"
             buttonVariant="border-with-text"
           />

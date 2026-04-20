@@ -16,7 +16,7 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader as Spinner } from "lucide-react";
 // plane imports
-import { ETeamspaceNavigationItem, EUserPermissionsLevel } from "@plane/constants";
+import { ETeamspaceNavigationItem } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import {
   CycleIcon,
@@ -28,7 +28,6 @@ import {
   OverviewIcon,
 } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import {
   Breadcrumbs,
@@ -40,7 +39,6 @@ import {
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
@@ -53,35 +51,19 @@ import { TeamspaceViewsListHeaderActions } from "./views-list";
 
 type TTeamspaceDetailHeaderProps = {
   selectedNavigationKey: ETeamspaceNavigationItem;
+  teamspaceId: string;
+  workspaceSlug: string;
 };
 
 export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(props: TTeamspaceDetailHeaderProps) {
-  const { selectedNavigationKey } = props;
+  const { selectedNavigationKey, teamspaceId, workspaceSlug } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, teamspaceId } = useParams();
   // hooks
-  const { data: currentUser } = useUser();
-  const { loader, isCurrentUserMemberOfTeamspace, getTeamspaceById, allTeamSpaceIds } = useTeamspaces();
-  // hooks
-  const { allowPermissions } = useUserPermissions();
+  const { loader, isCurrentUserMemberOfTeamspace, getTeamspaceById, allTeamSpaceIds, permissions } = useTeamspaces();
   // derived values
-  const teamspace = getTeamspaceById(teamspaceId?.toString());
-  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId?.toString());
-  const isTeamspaceLead = currentUser?.id === teamspace?.lead_id;
-
-  const hasAdminLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
-  const hasMemberLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
-
-  const isEditingAllowed = hasAdminLevelPermissions || isTeamspaceLead;
+  const teamspace = getTeamspaceById(teamspaceId);
+  const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
 
   const TEAMSPACE_SEARCH_OPTIONS: ICustomSearchSelectOption[] = useMemo(
     () =>
@@ -154,16 +136,19 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
           ETeamspaceNavigationItem.OVERVIEW,
           <TeamOverviewHeaderActions
             key={ETeamspaceNavigationItem.OVERVIEW}
-            teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={isEditingAllowed}
+            teamspaceId={teamspaceId}
+            permissions={{
+              canEdit: permissions.getCanEdit(workspaceSlug, teamspaceId),
+              canDelete: permissions.getCanDelete(workspaceSlug, teamspaceId),
+            }}
           />,
         ],
         [
           ETeamspaceNavigationItem.ISSUES,
           <TeamspaceWorkItemListHeaderActions
             key={ETeamspaceNavigationItem.ISSUES}
-            teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={hasMemberLevelPermissions}
+            teamspaceId={teamspaceId}
+            permissions={{ canCreateWorkItem: permissions.getCanCreateWorkItem(workspaceSlug, teamspaceId) }}
           />,
         ],
         [ETeamspaceNavigationItem.CYCLES, undefined],
@@ -171,28 +156,28 @@ export const TeamspaceDetailHeader = observer(function TeamspaceDetailHeader(pro
           ETeamspaceNavigationItem.VIEWS,
           <TeamspaceViewsListHeaderActions
             key={ETeamspaceNavigationItem.VIEWS}
-            teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={hasMemberLevelPermissions}
+            teamspaceId={teamspaceId}
+            permissions={{ canCreateView: permissions.getViewPermissions(workspaceSlug, teamspaceId).canCreate }}
           />,
         ],
         [
           ETeamspaceNavigationItem.PAGES,
           <TeamspacePagesListHeaderActions
             key={ETeamspaceNavigationItem.PAGES}
-            teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={hasMemberLevelPermissions}
+            teamspaceId={teamspaceId}
+            permissions={{ canCreatePage: permissions.getCanCreatePage(workspaceSlug) }}
           />,
         ],
         [
           ETeamspaceNavigationItem.PROJECTS,
           <TeamspaceProjectListHeaderActions
             key={ETeamspaceNavigationItem.PROJECTS}
-            teamspaceId={teamspaceId?.toString()}
-            isEditingAllowed={isEditingAllowed}
+            teamspaceId={teamspaceId}
+            permissions={{ canAddProject: permissions.getCanAddProject(workspaceSlug, teamspaceId) }}
           />,
         ],
       ]),
-    [hasAdminLevelPermissions, hasMemberLevelPermissions, teamspaceId]
+    [teamspaceId, permissions, workspaceSlug]
   );
 
   const currentHeaderAction = useMemo(

@@ -34,13 +34,12 @@ import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 // plane web components
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
-// plane web hooks
-import { useBulkOperationStatus } from "@/plane-web/hooks/use-bulk-operation-status";
 // utils
 import type { GroupDropLocation } from "@/helpers/work-item-layout";
 import { getGroupByColumns, isWorkspaceLevel, isSubGrouped } from "@/helpers/work-item-layout";
 import { ListGroup } from "./list-group";
 import type { TRenderQuickActions } from "./list-view-types";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 export interface IList {
   groupedIssueIds: TGroupedIssues;
@@ -52,14 +51,21 @@ export interface IList {
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
-  enableIssueQuickAdd: boolean;
   showEmptyGroup?: boolean;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+    canPerformBulkOps: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
-  disableIssueCreation?: boolean;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
   addIssuesToView?: (issueIds: string[]) => Promise<TIssue>;
-  isCompletedCycle?: boolean;
   loadMoreIssues: (groupId?: string) => void;
   handleCollapsedGroups: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
@@ -77,14 +83,12 @@ export const List = observer(function List(props: IList) {
     updateIssue,
     quickActions,
     displayProperties,
-    enableIssueQuickAdd,
+    layoutPermissions,
     showEmptyGroup,
-    canEditProperties,
+    getWorkItemPermissions,
     quickAddCallback,
-    disableIssueCreation,
     handleOnDrop,
     addIssuesToView,
-    isCompletedCycle = false,
     loadMoreIssues,
     handleCollapsedGroups,
     collapsedGroups,
@@ -92,8 +96,6 @@ export const List = observer(function List(props: IList) {
   } = props;
 
   const storeType = useIssueStoreType();
-  // plane web hooks
-  const isBulkOperationsEnabled = useBulkOperationStatus();
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -146,7 +148,7 @@ export const List = observer(function List(props: IList) {
         <MultipleSelectGroup
           containerRef={containerRef}
           entities={entities}
-          disabled={!isBulkOperationsEnabled || isEpic}
+          disabled={!layoutPermissions.canPerformBulkOps}
         >
           {(helpers) => (
             <>
@@ -167,13 +169,11 @@ export const List = observer(function List(props: IList) {
                     getGroupIndex={getGroupIndex}
                     handleOnDrop={handleOnDrop}
                     displayProperties={displayProperties}
-                    enableIssueQuickAdd={enableIssueQuickAdd}
                     showEmptyGroup={showEmptyGroup}
-                    canEditProperties={canEditProperties}
+                    layoutPermissions={layoutPermissions}
+                    getWorkItemPermissions={getWorkItemPermissions}
                     quickAddCallback={quickAddCallback}
-                    disableIssueCreation={disableIssueCreation}
                     addIssuesToView={addIssuesToView}
-                    isCompletedCycle={isCompletedCycle}
                     loadMoreIssues={loadMoreIssues}
                     containerRef={containerRef}
                     selectionHelpers={helpers}

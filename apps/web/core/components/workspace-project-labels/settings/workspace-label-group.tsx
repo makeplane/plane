@@ -47,7 +47,12 @@ type WorkspaceLabelGroupCollapsibleProps = {
     droppedLabelId: string | undefined,
     dropAtEndOfList: boolean
   ) => void;
-  isEditable: boolean;
+  permissions: {
+    canReorder: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+    canCreate: boolean;
+  };
   labelOperationsCallbacks: TWorkspaceLabelOperationsCallbacks;
   isDroppingInLabel: boolean;
   onRemoveFromGroup?: (label: IBaseLabel) => void;
@@ -58,18 +63,21 @@ function WorkspaceLabelGroupItemBlock(props: {
   isDragging: boolean;
   customMenuItems: ICustomMenuItem[];
   dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
-  disabled?: boolean;
+  permissions: {
+    canReorder: boolean;
+  };
 }) {
-  const { label, isDragging, customMenuItems, dragHandleRef, disabled = false } = props;
+  const { label, isDragging, customMenuItems, dragHandleRef, permissions } = props;
   const [isMenuActive, setIsMenuActive] = useState(true);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
+  const isAnyMenuVisible = customMenuItems.some(({ isVisible }) => isVisible);
 
   useOutsideClickDetector(actionSectionRef, () => setIsMenuActive(false));
 
   return (
     <div className="group flex items-center">
       <div className="flex items-center">
-        {!disabled && (
+        {permissions.canReorder && (
           <DragHandle
             className={cn("opacity-0 group-hover:opacity-100", {
               "opacity-100": isDragging,
@@ -80,7 +88,7 @@ function WorkspaceLabelGroupItemBlock(props: {
         <LabelName color={label.color} name={label.name} isGroup />
       </div>
 
-      {!disabled && (
+      {isAnyMenuVisible && (
         <div
           ref={actionSectionRef}
           className={`absolute right-2.5 flex items-center gap-2 -top-0.5 ${
@@ -121,7 +129,7 @@ const WorkspaceLabelGroupCollapsible = observer(function WorkspaceLabelGroupColl
     handleLabelDelete,
     dragHandleRef,
     onDrop,
-    isEditable,
+    permissions,
     labelOperationsCallbacks,
     isDroppingInLabel,
     onRemoveFromGroup,
@@ -158,7 +166,9 @@ const WorkspaceLabelGroupCollapsible = observer(function WorkspaceLabelGroupColl
               isDragging={isDragging}
               customMenuItems={customMenuItems}
               dragHandleRef={dragHandleRef}
-              disabled={!isEditable}
+              permissions={{
+                canReorder: permissions.canReorder,
+              }}
             />
           )}
 
@@ -190,7 +200,7 @@ const WorkspaceLabelGroupCollapsible = observer(function WorkspaceLabelGroupColl
                       isChild
                       isLastChild={index === labelChildren.length - 1}
                       onDrop={onDrop}
-                      isEditable={isEditable}
+                      permissions={permissions}
                       labelOperationsCallbacks={labelOperationsCallbacks}
                       onRemoveFromGroup={onRemoveFromGroup}
                     />
@@ -219,7 +229,12 @@ type WorkspaceSettingLabelGroupProps = {
     dropAtEndOfList: boolean
   ) => void;
   labelOperationsCallbacks: TWorkspaceLabelOperationsCallbacks;
-  isEditable?: boolean;
+  permissions: {
+    canReorder: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+    canCreate: boolean;
+  };
   onRemoveFromGroup?: (label: IBaseLabel) => void;
 };
 
@@ -234,7 +249,7 @@ export const WorkspaceSettingLabelGroup = observer(function WorkspaceSettingLabe
     setIsUpdating,
     isLastChild,
     onDrop,
-    isEditable = false,
+    permissions,
     labelOperationsCallbacks,
     onRemoveFromGroup,
   } = props;
@@ -249,7 +264,7 @@ export const WorkspaceSettingLabelGroup = observer(function WorkspaceSettingLabe
         setEditLabelForm(true);
         setIsUpdating(true);
       },
-      isVisible: true,
+      isVisible: permissions.canEdit,
       text: "Edit label",
       key: "edit_label",
     },
@@ -258,14 +273,21 @@ export const WorkspaceSettingLabelGroup = observer(function WorkspaceSettingLabe
       onClick: () => {
         handleLabelDelete(label);
       },
-      isVisible: true,
+      isVisible: permissions.canDelete,
       text: "Delete label",
       key: "delete_label",
     },
   ];
 
   return (
-    <WorkspaceLabelDndHOC label={label} isGroup isChild={false} isLastChild={isLastChild} onDrop={onDrop}>
+    <WorkspaceLabelDndHOC
+      label={label}
+      isGroup
+      isChild={false}
+      isLastChild={isLastChild}
+      onDrop={onDrop}
+      canReorder={permissions.canReorder}
+    >
       {(isDragging, isDroppingInLabel, dragHandleRef) => (
         <div
           className={`rounded-sm ${isDroppingInLabel ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
@@ -282,7 +304,7 @@ export const WorkspaceSettingLabelGroup = observer(function WorkspaceSettingLabe
             handleLabelDelete={handleLabelDelete}
             dragHandleRef={dragHandleRef}
             onDrop={onDrop}
-            isEditable={isEditable}
+            permissions={permissions}
             labelOperationsCallbacks={labelOperationsCallbacks}
             isDroppingInLabel={isDroppingInLabel}
             onRemoveFromGroup={onRemoveFromGroup}

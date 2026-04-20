@@ -14,7 +14,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWebhook } from "@plane/types";
 // ui
@@ -26,7 +25,6 @@ import { DeleteWebhookModal, WebhookDeleteSection, WebhookForm } from "@/compone
 // hooks
 import { useWebhook } from "@/hooks/store/use-webhook";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import type { Route } from "./+types/page";
 import { WebhookDetailsWorkspaceSettingsHeader } from "./header";
@@ -39,20 +37,15 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
   // mobx store
   const { currentWebhook, fetchWebhookById, updateWebhook } = useWebhook();
   const { currentWorkspace } = useWorkspace();
-  const { allowPermissions } = useUserPermissions();
+  // derived values
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
 
   // TODO: fix this error
   // useEffect(() => {
   //   if (isCreated !== "true") clearSecretKey();
   // }, [clearSecretKey, isCreated]);
-  // derived values
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Webhook` : undefined;
 
-  useSWR(
-    isAdmin ? `WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}` : null,
-    isAdmin ? () => fetchWebhookById(workspaceSlug, webhookId) : null
-  );
+  useSWR(`WEBHOOK_DETAILS_${workspaceSlug}_${webhookId}`, () => fetchWebhookById(workspaceSlug, webhookId));
 
   const handleUpdateWebhook = async (formData: IWebhook) => {
     if (!formData || !formData.id) return;
@@ -83,16 +76,6 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       });
     }
   };
-
-  if (!isAdmin)
-    return (
-      <>
-        <PageHead title={pageTitle} />
-        <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-13 text-tertiary">You are not authorized to access this page.</p>
-        </div>
-      </>
-    );
 
   if (!currentWebhook)
     return (

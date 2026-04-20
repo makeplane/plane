@@ -35,7 +35,7 @@ from plane.ee.models import (
     WorkflowTransitionHook,
     WorkflowWorkItemType,
 )
-from plane.ee.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkflowPermissions
 from plane.ee.serializers import WorkflowStateSerializer, WorkflowTransitionSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
@@ -50,7 +50,7 @@ from rest_framework.response import Response
 
 class WorkflowStatesEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="PROJECT")
+    @can(WorkflowPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id):
         state_ids = request.data.get("state_ids", [])
         if not state_ids:
@@ -102,7 +102,7 @@ class WorkflowStatesEndpoint(BaseAPIView):
         return Response(status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, workflow_id, state_id):
         workflow_state = WorkflowState.objects.filter(
             project_id=project_id, workflow_id=workflow_id, state_id=state_id
@@ -169,7 +169,7 @@ class WorkflowStatesEndpoint(BaseAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, workflow_id, state_id):
         workflow_state = (
             WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, state_id=state_id)
@@ -230,7 +230,7 @@ class WorkflowStatesEndpoint(BaseAPIView):
 
 class WorkflowDefaultStateEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id, state_id):
         workflow_state = WorkflowState.objects.filter(
             project_id=project_id, workflow_id=workflow_id, state_id=state_id
@@ -326,7 +326,7 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id):
         state_id = request.data.pop("state_id")
         member_ids = request.data.pop("member_ids", [])
@@ -430,7 +430,7 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, workflow_id, transition_id):
         transition_state_id = request.data.get("transition_state_id")
         rejection_state_id = request.data.get("rejection_state_id")
@@ -540,7 +540,7 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, workflow_id, transition_id):
         workflow_transition = WorkflowTransition.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=transition_id
@@ -566,7 +566,7 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
 
 class WorkflowStateTransferEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.WORKFLOWS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id, state_id):
         new_state_id = request.data.get("new_state_id")
         if not new_state_id:

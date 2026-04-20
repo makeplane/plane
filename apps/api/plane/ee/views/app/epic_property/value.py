@@ -28,7 +28,7 @@ from rest_framework.response import Response
 from plane.db.models import Issue, Project
 from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
 from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
-from plane.ee.permissions import ProjectEntityPermission
+from plane.permissions import can, EpicPermissions
 from plane.ee.utils.formula.work_item_properties import fetch_formula_values
 from plane.ee.utils.issue_property_validators import (
     SAVE_MAPPER,
@@ -43,8 +43,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag, check_workspa
 
 class EpicPropertyValueEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [ProjectEntityPermission]
 
     def query_annotator(self, query):
         return query.values("property_id").annotate(
@@ -124,6 +122,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
     # ========== FORMULA PROPERTY ==========
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, epic_id, epic_property_id=None):
         # Get a single epic property value
         if epic_property_id:
@@ -184,6 +183,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, epic_id):
         try:
             # Create a new epic property value
@@ -269,6 +269,7 @@ class EpicPropertyValueEndpoint(BaseAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, epic_id, property_id):
         try:
             issue = Issue.objects.get(pk=epic_id)

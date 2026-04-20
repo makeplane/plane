@@ -18,12 +18,18 @@ from plane.db.models import PageVersion
 from plane.ee.views.base import BaseAPIView
 from plane.app.serializers import PageVersionSerializer, PageVersionDetailSerializer
 from plane.ee.permissions.page import ProjectPagePermission
+from plane.permissions import PagePermissions
+from plane.permissions import HasResourcePermission
 
 
 class PageVersionExtendedEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectPagePermission]
+    permission_classes = [HasResourcePermission, ProjectPagePermission]
+
+    action_permissions = {
+        "retrieve": {"permission": PagePermissions.VIEW, "resource_param": "project_id"},
+    }
 
     def get(self, request, slug, project_id, page_id, pk=None):
         # Check if pk is provided

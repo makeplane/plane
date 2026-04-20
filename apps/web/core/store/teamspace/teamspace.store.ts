@@ -24,6 +24,10 @@ import { TeamspaceService } from "@/services/teamspace/teamspace.service";
 import { EWorkspaceFeatureLoader, EWorkspaceFeatures } from "@/types/workspace-feature";
 // root store
 import type { RootStore } from "@/plane-web/store/root.store";
+// plane imports
+// local imports
+import type { TeamspacePermissions } from "./permissions/root";
+import { TeamspacePermissionsInstance } from "./permissions/root";
 
 export interface ITeamspaceStore {
   loader: TLoader;
@@ -33,6 +37,8 @@ export interface ITeamspaceStore {
   teamspaceMembersMap: Record<string, Record<string, TTeamspaceMember>>; // teamspaceId: memberId: teamspaceMember
   teamspaceEntitiesMap: Record<string, TTeamspaceEntities>; // teamspaceId: teamspaceEntities
   isTeamSidebarCollapsed: boolean;
+  // permissions
+  permissions: TeamspacePermissions;
   // computed
   currentTeamspaceProjectIds: string[] | undefined;
   currentTeamspaceMemberIds: string[] | undefined;
@@ -90,6 +96,8 @@ export class TeamspaceStore implements ITeamspaceStore {
   teamspaceMembersMap: Record<string, Record<string, TTeamspaceMember>> = {};
   teamspaceEntitiesMap: Record<string, TTeamspaceEntities> = {};
   isTeamSidebarCollapsed: boolean = false;
+  // permissions
+  permissions: TeamspacePermissions;
   // service
   teamService: TeamspaceService;
 
@@ -130,6 +138,34 @@ export class TeamspaceStore implements ITeamspaceStore {
     });
     // service
     this.teamService = new TeamspaceService();
+    // permissions
+    this.permissions = new TeamspacePermissionsInstance({
+      can: rootStore.permissionAccessStore.can,
+      getTeamspaceConditionContext: this.getTeamspaceConditionContext.bind(this),
+      getCommentConditionContext: this.getCommentConditionContext.bind(this),
+      getViewConditionContext: this.getViewConditionContext.bind(this),
+    });
+  }
+
+  private getTeamspaceConditionContext(teamspaceId: string): { lead: boolean } {
+    const teamspace = this.getTeamspaceById(teamspaceId);
+    const currentUserId = this.rootStore.user.data?.id;
+    return {
+      lead: !!(teamspace && currentUserId && teamspace.lead_id === currentUserId),
+    };
+  }
+
+  private getCommentConditionContext(teamspaceId: string, commentId: string): { creator: boolean } {
+    const comments = this.rootStore.teamspaceRoot.teamspaceUpdates.getTeamspaceComments(teamspaceId);
+    const comment = comments?.find((c) => c.id === commentId);
+    const currentUserId = this.rootStore.user.data?.id;
+    return { creator: !!(comment && currentUserId && comment.actor === currentUserId) };
+  }
+
+  private getViewConditionContext(teamspaceId: string, viewId: string): { creator: boolean } {
+    const view = this.rootStore.teamspaceRoot.teamspaceView.getViewById(teamspaceId, viewId);
+    const currentUserId = this.rootStore.user.data?.id;
+    return { creator: !!(view?.created_by && currentUserId && view.created_by === currentUserId) };
   }
 
   // computed
@@ -207,10 +243,12 @@ export class TeamspaceStore implements ITeamspaceStore {
   get isTeamspacesFeatureEnabled() {
     const { loader, isWorkspaceFeatureEnabled } = this.rootStore.workspaceFeatures;
     const { getFeatureFlagForCurrentWorkspace } = this.rootStore.featureFlags;
+    const workspaceSlug = this.rootStore.router.workspaceSlug;
     // handle workspace feature init loader
     if (loader === EWorkspaceFeatureLoader.INIT_LOADER) return undefined;
     return (
-      isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED) &&
+      !!workspaceSlug &&
+      isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_TEAMSPACES_ENABLED) &&
       getFeatureFlagForCurrentWorkspace("TEAMSPACES", false)
     );
   }
@@ -357,6 +395,7 @@ export class TeamspaceStore implements ITeamspaceStore {
         this.teamService.getAllTeamspaces(workspaceSlug),
         this.teamService.getAllTeamspaceMembers(workspaceSlug),
       ]);
+      this.rootStore.permissionAccessStore.hydrateTeamspacePermissionsFromEntities(teamspaces);
       runInAction(() => {
         // set team members map
         teamspaceMembers.forEach((member) => {
@@ -398,6 +437,7 @@ export class TeamspaceStore implements ITeamspaceStore {
         this.teamService.getTeamspace(workspaceSlug, teamspaceId),
         this.teamService.getTeamspaceMembers(workspaceSlug, teamspaceId),
       ]);
+      this.rootStore.permissionAccessStore.hydrateTeamspacePermissionsFromEntities([teamspace]);
       runInAction(() => {
         // set team members map
         teamspaceMembers.forEach((member) => {

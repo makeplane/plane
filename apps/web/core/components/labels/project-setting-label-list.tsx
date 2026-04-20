@@ -13,9 +13,7 @@
 
 import { useState, useRef } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -30,13 +28,18 @@ import {
 } from "@/components/labels";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { SettingsHeading } from "../settings/heading";
 
-export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelList() {
-  // router
-  const { workspaceSlug, projectId } = useParams();
+type ProjectSettingsLabelListProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
+export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelList(
+  props: ProjectSettingsLabelListProps
+) {
+  const { workspaceSlug, projectId } = props;
   // refs
   const scrollToRef = useRef<HTMLDivElement>(null);
   // states
@@ -46,10 +49,9 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { projectLabels, updateLabelPosition, projectLabelsTree, createLabel, updateLabel } = useLabel();
-  const { allowPermissions } = useUserPermissions();
+  const { projectLabels, updateLabelPosition, projectLabelsTree, createLabel, updateLabel, permissions } = useLabel();
   // derived values
-  const isEditable = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canCreateLabel = permissions.getCanCreate(workspaceSlug, projectId);
   const labelOperationsCallbacks: TLabelOperationsCallbacks = {
     createLabel: (data: Partial<IIssueLabel>) => createLabel(workspaceSlug?.toString(), projectId?.toString(), data),
     updateLabel: (labelId: string, data: Partial<IIssueLabel>) =>
@@ -91,7 +93,7 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
         title={t("project_settings.labels.heading")}
         description={t("project_settings.labels.description")}
         control={
-          isEditable && (
+          canCreateLabel && (
             <Button variant="primary" size="lg" onClick={newLabel}>
               {t("common.add_label")}
             </Button>
@@ -145,7 +147,11 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
                     setIsUpdating={setIsUpdating}
                     isLastChild={index === projectLabelsTree.length - 1}
                     onDrop={onDrop}
-                    isEditable={isEditable}
+                    permissions={{
+                      canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, projectId, label.id),
+                      canEdit: permissions.getCanEdit(workspaceSlug, projectId, label.id),
+                      canDelete: permissions.getCanDelete(workspaceSlug, projectId, label.id),
+                    }}
                     labelOperationsCallbacks={labelOperationsCallbacks}
                   />
                 );
@@ -159,7 +165,11 @@ export const ProjectSettingsLabelList = observer(function ProjectSettingsLabelLi
                   isChild={false}
                   isLastChild={index === projectLabelsTree.length - 1}
                   onDrop={onDrop}
-                  isEditable={isEditable}
+                  permissions={{
+                    canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, projectId, label.id),
+                    canEdit: permissions.getCanEdit(workspaceSlug, projectId, label.id),
+                    canDelete: permissions.getCanDelete(workspaceSlug, projectId, label.id),
+                  }}
                   labelOperationsCallbacks={labelOperationsCallbacks}
                 />
               );

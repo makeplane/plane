@@ -89,7 +89,6 @@ export const buildProjectTemplateBlueprint = (
     is_project_updates_enabled: project.is_project_updates_enabled,
     is_epic_enabled: project.is_epic_enabled,
     is_workflow_enabled: project.is_workflow_enabled,
-    guest_view_all_features: false,
     // timezone
     timezone: undefined,
     // automation

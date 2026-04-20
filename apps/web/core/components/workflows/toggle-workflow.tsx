@@ -17,11 +17,12 @@ import { observer } from "mobx-react";
 
 type Props = {
   isEnabled: boolean;
+  disabled?: boolean;
   onToggle: (isEnabled: boolean) => void;
 };
 
 export const ToggleWorkflow = observer(function ToggleWorkflow(props: Props) {
-  const { isEnabled, onToggle } = props;
+  const { isEnabled, disabled = false, onToggle } = props;
   // hooks
   const { t } = useTranslation();
 
@@ -31,7 +32,7 @@ export const ToggleWorkflow = observer(function ToggleWorkflow(props: Props) {
         <p className="text-body-md-medium">{t("project_settings.workflows.toggle.title")}</p>
         <p className="text-caption-md-regular text-tertiary">{t("project_settings.workflows.toggle.description")}</p>
       </div>
-      <Switch value={isEnabled} onChange={onToggle} />
+      <Switch value={isEnabled} onChange={onToggle} disabled={disabled} />
     </div>
   );
 });

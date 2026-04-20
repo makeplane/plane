@@ -11,21 +11,19 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { TPartialProject } from "@/types";
-import { ROLE_DETAILS } from "@plane/constants";
-// plane propel imports
-import { useTranslation } from "@plane/i18n";
+// plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronDownIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
+import type { PermissionRole, TPartialProject } from "@plane/types";
 
 type TProjectSettingsSwitcherButtonProps = {
   project: TPartialProject;
-  currentProjectRole: keyof typeof ROLE_DETAILS | undefined;
+  roleDetails: PermissionRole | undefined;
 };
 
-export function ProjectSettingsSwitcherButton({ project, currentProjectRole }: TProjectSettingsSwitcherButtonProps) {
-  const { t } = useTranslation();
+export function ProjectSettingsSwitcherButton(props: TProjectSettingsSwitcherButtonProps) {
+  const { project, roleDetails } = props;
 
   return (
     <Tooltip tooltipContent={project.name} position="bottom">
@@ -36,9 +34,7 @@ export function ProjectSettingsSwitcherButton({ project, currentProjectRole }: T
         <div className="flex items-center justify-between w-full pr-2 truncate">
           <div className="flex flex-col items-start gap-1 text-left truncate">
             <p className="text-body-sm-medium truncate w-full">{project.name}</p>
-            <p className="text-caption-md-regular text-tertiary">
-              {currentProjectRole ? t(ROLE_DETAILS[currentProjectRole].i18n_title) : ""}
-            </p>
+            {roleDetails ? <p className="text-caption-md-regular text-tertiary">{roleDetails.name}</p> : null}
           </div>
           <ChevronDownIcon className="size-4 shrink-0 text-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>

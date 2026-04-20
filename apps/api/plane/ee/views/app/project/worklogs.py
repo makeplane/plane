@@ -18,7 +18,7 @@ from plane.db.models import ExporterHistory, Workspace
 from plane.ee.models import IssueWorkLog
 from plane.ee.views.base import BaseAPIView
 from plane.utils.issue_filters import issue_filters
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import ProjectPermissions, can
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.serializers import IssueWorkLogSerializer, ExporterHistorySerializer
@@ -28,8 +28,8 @@ from plane.ee.bgtasks.worklogs_export_task import worklogs_export_task
 class ProjectWorkLogsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def get(self, request, slug, project_id):
         query_params = request.query_params.copy()
         if "project" in query_params:
@@ -57,8 +57,8 @@ class ProjectWorkLogsEndpoint(BaseAPIView):
 class ProjectExportWorkLogsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def get(self, request, slug, project_id):
         exporter_history = ExporterHistory.objects.filter(
             workspace__slug=slug, type="issue_worklogs", project__contains=[project_id]
@@ -71,8 +71,8 @@ class ProjectExportWorkLogsEndpoint(BaseAPIView):
             on_results=lambda exporter_history: ExporterHistorySerializer(exporter_history, many=True).data,
         )
 
-    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def post(self, request, slug, project_id):
         query_params = request.query_params.copy()
         if "project" in query_params:

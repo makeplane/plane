@@ -25,6 +25,7 @@ from plane.db.models import Workspace
 from plane.utils.permissions.workspace import WorkspaceOwnerPermission
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.permissions.system_roles import get_workspace_roles_for_workspace
 
 
 logger = logging.getLogger("plane.authentication")
@@ -43,11 +44,17 @@ class GroupSyncConfigEndpoint(BaseAPIView):
     @check_feature_flag(FeatureFlag.IDP_GROUP_SYNC)
     def get(self, request, slug):
         """Get the group sync configuration for a workspace."""
-        config = GroupSyncConfig.objects.filter(workspace__slug=slug).first()
+        config = GroupSyncConfig.objects.filter(
+            workspace__slug=slug
+        ).select_related("default_workspace_role").first()
         # create it with default values
         if not config:
             workspace = Workspace.objects.get(slug=slug)
-            config = GroupSyncConfig.objects.create(workspace=workspace)
+            ws_roles = get_workspace_roles_for_workspace(workspace.id)
+            config = GroupSyncConfig.objects.create(
+                workspace=workspace,
+                default_workspace_role=ws_roles["member"],
+            )
         serializer = GroupSyncConfigSerializer(config)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -77,7 +84,7 @@ class GroupMappingEndpoint(BaseAPIView):
         """List all group mappings for a workspace."""
         mappings = (
             GroupMapping.objects.filter(workspace__slug=slug)
-            .select_related("project")
+            .select_related("project", "role")
             .order_by("idp_group_name", "project__name")
         )
 

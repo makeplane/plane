@@ -13,7 +13,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useAppRouter } from "@/hooks/use-app-router";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE, DEFAULT_GLOBAL_VIEWS_LIST } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -33,24 +33,29 @@ import { WorkspaceViewQuickActions } from "@/components/workspace/views/quick-ac
 // hooks
 import { useGlobalView } from "@/hooks/store/use-global-view";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { AdditionalHeaderItems, GlobalViewLayoutSelection } from "@/components/views/helper";
 
-export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
-  // states
-  const [createViewModal, setCreateViewModal] = useState(false);
+type WorkspaceWorkItemsHeaderProps = {
+  workspaceSlug: string;
+  globalViewId: string | undefined;
+};
+
+export const WorkspaceWorkItemsHeader = observer(function WorkspaceWorkItemsHeader(
+  props: WorkspaceWorkItemsHeaderProps
+) {
+  const { workspaceSlug, globalViewId } = props;
   // router
   const router = useAppRouter();
-  const { workspaceSlug, globalViewId: routerGlobalViewId } = useParams();
-  const globalViewId = routerGlobalViewId ? routerGlobalViewId.toString() : undefined;
+  // states
+  const [createViewModal, setCreateViewModal] = useState(false);
   // store hooks
   const {
     issuesFilter: { filters, updateFilters },
   } = useIssues(EIssuesStoreType.GLOBAL);
-  const { getViewDetailsById, currentWorkspaceViews } = useGlobalView();
+  const { getViewDetailsById, currentWorkspaceViews, permissions } = useGlobalView();
   const { t } = useTranslation();
 
-  const issueFilters = globalViewId ? filters[globalViewId.toString()] : undefined;
+  const issueFilters = globalViewId ? filters[globalViewId] : undefined;
 
   const activeLayout = issueFilters?.displayFilters?.layout;
   const viewDetails = globalViewId ? getViewDetailsById(globalViewId) : undefined;
@@ -58,13 +63,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        updatedDisplayFilter,
-        globalViewId
-      );
+      updateFilters(workspaceSlug, undefined, EIssueFilterType.DISPLAY_FILTERS, updatedDisplayFilter, globalViewId);
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
@@ -72,7 +71,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
+      updateFilters(workspaceSlug, undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
@@ -80,13 +79,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
-        workspaceSlug.toString(),
-        undefined,
-        EIssueFilterType.DISPLAY_FILTERS,
-        { layout: layout },
-        globalViewId
-      );
+      updateFilters(workspaceSlug, undefined, EIssueFilterType.DISPLAY_FILTERS, { layout: layout }, globalViewId);
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
@@ -133,7 +126,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbNavigationSearchDropdown
-                  selectedItem={globalViewId?.toString() || ""}
+                  selectedItem={globalViewId || ""}
                   navigationItems={switcherOptions}
                   onChange={(value: string) => {
                     router.push(`/${workspaceSlug}/workspace-views/${value}`);
@@ -157,7 +150,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
             <GlobalViewLayoutSelection
               onChange={handleLayoutChange}
               selectedLayout={activeLayout ?? EIssueLayoutTypes.SPREADSHEET}
-              workspaceSlug={workspaceSlug.toString()}
+              workspaceSlug={workspaceSlug}
             />
           )}
           {globalViewId && (
@@ -176,13 +169,25 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
 
           <AdditionalHeaderItems isLocked={!!isLocked} />
 
-          <Button variant="primary" size="lg" onClick={() => setCreateViewModal(true)}>
-            {t("workspace_views.add_view")}
-          </Button>
+          {permissions.getCanCreate(workspaceSlug) && (
+            <Button variant="primary" size="lg" onClick={() => setCreateViewModal(true)}>
+              {t("workspace_views.add_view")}
+            </Button>
+          )}
           <div className="hidden md:block">
-            {viewDetails && <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={viewDetails} />}
+            {viewDetails && (
+              <WorkspaceViewQuickActions
+                workspaceSlug={workspaceSlug}
+                view={viewDetails}
+                permissions={{
+                  canEdit: permissions.getCanEdit(viewDetails.id),
+                  canLock: permissions.getCanEdit(viewDetails.id),
+                  canDelete: permissions.getCanDelete(viewDetails.id),
+                }}
+              />
+            )}
             {isDefaultView && defaultViewDetails && (
-              <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={defaultViewDetails} />
+              <DefaultWorkspaceViewQuickActions workspaceSlug={workspaceSlug} view={defaultViewDetails} />
             )}
           </div>
         </Header.RightItem>

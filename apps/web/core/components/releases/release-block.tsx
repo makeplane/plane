@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useParams, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { mutate } from "swr";
 import { CircularProgressIndicator } from "@plane/propel/progress/circular-progress-indicator";
 import { TrashIcon } from "@plane/propel/icons";
@@ -29,14 +29,15 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useReleases } from "@/hooks/store/use-releases";
 import { DeleteReleaseModal } from "./delete-release-modal";
 import { ReleaseBlockProperties } from "./release-block-properties";
+import { useReleasePermissions } from "@/hooks/permissions/use-release-permissions";
 
 type Props = {
   release: Release;
+  workspaceSlug: string;
 };
 
 export const ReleaseBlock = observer(function ReleaseBlock(props: Props) {
-  const { release } = props;
-  const { workspaceSlug } = useParams();
+  const { release, workspaceSlug } = props;
   const navigate = useNavigate();
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -44,7 +45,7 @@ export const ReleaseBlock = observer(function ReleaseBlock(props: Props) {
   const { isMobile } = usePlatformOS();
   const { t } = useTranslation();
   const { release: releaseStore } = useReleases();
-  const slug = workspaceSlug?.toString() ?? "";
+  const releasePermissions = useReleasePermissions(workspaceSlug);
 
   const totalWorkItems = release.work_item_ids?.length ?? 0;
   const completedCount = release.completed_work_item_count ?? 0;
@@ -56,9 +57,9 @@ export const ReleaseBlock = observer(function ReleaseBlock(props: Props) {
 
   const handleDeleteConfirm = async () => {
     try {
-      await releaseStore.deleteRelease(slug, release.id);
+      await releaseStore.deleteRelease(workspaceSlug, release.id);
       await mutate(
-        WORKSPACE_RELEASES(slug),
+        WORKSPACE_RELEASES(workspaceSlug),
         (current: Release[] | undefined) => (current ?? []).filter((r) => r.id !== release.id),
         { revalidate: false }
       );
@@ -103,16 +104,19 @@ export const ReleaseBlock = observer(function ReleaseBlock(props: Props) {
             <ReleaseBlockProperties
               release={release}
               isSidebarCollapsed={isSidebarCollapsed}
-              workspaceSlug={workspaceSlug?.toString() ?? ""}
+              workspaceSlug={workspaceSlug}
+              canEdit={releasePermissions.getCanEdit(release.id)}
             />
-            <CustomMenu ellipsis>
-              <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
-                <span className="flex items-center gap-2">
-                  <TrashIcon className="size-3.5" />
-                  <span>{t("releases.actions.delete")}</span>
-                </span>
-              </CustomMenu.MenuItem>
-            </CustomMenu>
+            {releasePermissions.getCanDelete(release.id) && (
+              <CustomMenu ellipsis>
+                <CustomMenu.MenuItem onClick={() => setIsDeleteModalOpen(true)}>
+                  <span className="flex items-center gap-2">
+                    <TrashIcon className="size-3.5" />
+                    <span>{t("releases.actions.delete")}</span>
+                  </span>
+                </CustomMenu.MenuItem>
+              </CustomMenu>
+            )}
           </div>
         </div>
       </button>

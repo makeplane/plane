@@ -14,19 +14,15 @@
 import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { UpgradeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
-import { EUserProjectRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -38,27 +34,12 @@ function UpdatesSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId } = params;
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { getProjectFeatures, toggleProjectFeatures } = useProjectAdvanced();
   const { t } = useTranslation();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   // derived values
   const currentProjectDetails = getProjectFeatures(projectId);
-  const canPerformProjectAdminActions = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
   const isProjectUpdatesAvailableInPlan = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_UPDATES);
-
-  if (!canPerformProjectAdminActions) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
-
-  if (!canPerformProjectAdminActions)
-    return (
-      <>
-        <div className="mt-10 flex h-full w-full justify-center p-4">
-          <p className="text-13 text-tertiary">You are not authorized to access this page.</p>
-        </div>
-      </>
-    );
 
   const toggleUpdatesFeature = async () => {
     if (!currentProjectDetails) return;

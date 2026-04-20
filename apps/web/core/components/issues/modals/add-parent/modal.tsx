@@ -61,7 +61,9 @@ export function ParentWorkItemsListModal(props: Props) {
   const { t } = useTranslation();
   // store hooks
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const isCrossProjectEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED);
+  const isCrossProjectEnabled =
+    !!workspaceSlug &&
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_CROSS_PROJECT_SUB_WORK_ITEMS_ENABLED);
   // fetch callback
   const fetchWorkItems = useCallback(async () => {
     if (!workspaceSlug) return;

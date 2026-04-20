@@ -20,12 +20,12 @@ import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
   customButton?: React.ReactNode;
-  disabled?: boolean;
+  canAddLink: boolean;
   variant?: "layer-1" | "default";
 };
 
 export const InitiativeLinksActionButton = observer(function InitiativeLinksActionButton(props: Props) {
-  const { customButton, disabled = false, variant } = props;
+  const { customButton, canAddLink, variant } = props;
   // store hooks
   const {
     initiative: {
@@ -48,7 +48,7 @@ export const InitiativeLinksActionButton = observer(function InitiativeLinksActi
   };
 
   return (
-    <button type="button" onClick={handleOnClick} disabled={disabled} className={getVariantClassName()}>
+    <button type="button" onClick={handleOnClick} disabled={!canAddLink} className={getVariantClassName()}>
       {customButton ? customButton : <PlusIcon className="h-4 w-4" />}
     </button>
   );

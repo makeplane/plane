@@ -9,15 +9,16 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-# Module imports
-from plane.ee.views.base import BaseAPIView
-from plane.db.models import Issue, IssueType
-
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 from django.utils import timezone
 
+# Module imports
+from plane.ee.views.base import BaseAPIView
+from plane.db.models import Issue, IssueType
+from plane.permissions import permission_engine, WorkitemPermissions, EpicPermissions, PermissionContext
 from plane.bgtasks.issue_activities_task import issue_activity
 
 
@@ -25,7 +26,38 @@ class IssueConvertEndpoint(BaseAPIView):
     def post(self, request, slug, project_id: str, entity_id: str):
         conversion_type = request.data.get("conversion_type")
 
-        issue = Issue.objects.get(id=entity_id)
+        issue = Issue.objects.get(id=entity_id, project_id=project_id)
+
+        # Check workitem:edit permission
+        has_edit = permission_engine.check(
+            user=request.user,
+            permission=WorkitemPermissions.EDIT,
+            context=PermissionContext.resource(
+                scope_id=str(entity_id),
+                workspace_id=request.workspace_id,
+                project_id=str(project_id),
+            ),
+        )
+        if not has_edit:
+            raise PermissionDenied(
+                "You do not have permission to convert this work item."
+            )
+
+        # If the issue is currently an epic, also check epic:edit
+        if issue.type and issue.type.is_epic:
+            has_epic_edit = permission_engine.check(
+                user=request.user,
+                permission=EpicPermissions.EDIT,
+                context=PermissionContext.resource(
+                    scope_id=str(entity_id),
+                    workspace_id=request.workspace_id,
+                    project_id=str(project_id),
+                ),
+            )
+            if not has_epic_edit:
+                raise PermissionDenied(
+                    "You do not have permission to convert this epic."
+                )
 
         if issue.archived_at is not None:
             return Response(

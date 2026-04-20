@@ -13,7 +13,7 @@ from django.urls import path
 
 from plane.ee.views.app import (
     DashboardViewSet,
-    DashboardQuickFilterEndpoint,
+    # DashboardQuickFilterEndpoint,  # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
     WidgetEndpoint,
     WidgetListEndpoint,
     BulkWidgetEndpoint,
@@ -31,16 +31,17 @@ urlpatterns = [
         DashboardViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-dashboard",
     ),
-    path(
-        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/quick-filters/",
-        DashboardQuickFilterEndpoint.as_view(),
-        name="workspace-dashboard-filters",
-    ),
-    path(
-        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/quick-filters/<uuid:pk>/",
-        DashboardQuickFilterEndpoint.as_view(),
-        name="workspace-dashboard-filters",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/quick-filters/",
+    #     DashboardQuickFilterEndpoint.as_view(),
+    #     name="workspace-dashboard-filters",
+    # ),
+    # path(
+    #     "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/quick-filters/<uuid:pk>/",
+    #     DashboardQuickFilterEndpoint.as_view(),
+    #     name="workspace-dashboard-filters",
+    # ),
     path(
         "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/",
         WidgetEndpoint.as_view(),

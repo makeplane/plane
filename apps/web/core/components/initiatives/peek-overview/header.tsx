@@ -56,7 +56,6 @@ export type InitiativePeekOverviewHeaderProps = {
   removeRoutePeekId: () => void;
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
 };
 
 export const InitiativePeekOverviewHeader = observer(function InitiativePeekOverviewHeader(

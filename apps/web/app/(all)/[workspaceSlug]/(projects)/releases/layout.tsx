@@ -39,8 +39,12 @@ function ReleasesLayout({ params }: Route.ComponentProps) {
   }
 
   return (
-    <WorkspaceAccessWrapper pageKey="releases">
-      <AppHeader header={isDetailPage ? <ReleaseDetailBreadcrumbHeader /> : <WorkspaceReleaseHeader />} />
+    <WorkspaceAccessWrapper workspaceSlug={workspaceSlug} pageKey="releases">
+      <AppHeader
+        header={
+          isDetailPage ? <ReleaseDetailBreadcrumbHeader /> : <WorkspaceReleaseHeader workspaceSlug={workspaceSlug} />
+        }
+      />
       <Outlet />
     </WorkspaceAccessWrapper>
   );

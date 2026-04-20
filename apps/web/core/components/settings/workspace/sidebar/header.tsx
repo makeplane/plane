@@ -11,35 +11,38 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { observer } from "mobx-react";
 // plane imports
-import { ROLE_DETAILS } from "@plane/constants";
-import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 // components
 import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // plane web imports
 import { SubscriptionPill } from "@/components/common/subscription/subscription-pill";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 
-export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSettingsSidebarHeader() {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSettingsSidebarHeader(props: Props) {
+  const { workspaceSlug } = props;
   // router
-  const router = useAppRouter();
+  const navigate = useNavigate();
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
+  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
+  const { getWorkspaceRoleDetailsByRoleSlug } = useRoleManagement();
+  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
-  const currentWorkspaceRole = currentWorkspace?.slug
-    ? getWorkspaceRoleByWorkspaceSlug(currentWorkspace.slug)
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
+  const currentWorkspaceRoleSlug = getCurrentUserWorkspaceRoleSlug(workspaceSlug);
+  const roleDetail = currentWorkspaceRoleSlug
+    ? getWorkspaceRoleDetailsByRoleSlug(workspaceSlug, currentWorkspaceRoleSlug)
     : undefined;
-  // translation
-  const { t } = useTranslation();
-
-  if (!currentWorkspaceRole) return null;
 
   return (
     <div className="sticky top-0 shrink-0 bg-surface-1 pb-1.5">
@@ -48,7 +51,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
           variant="ghost"
           size="base"
           icon={ArrowLeft}
-          onClick={() => router.push(`/${currentWorkspace?.slug}/`)}
+          onClick={() => navigate(`/${currentWorkspace?.slug}/`)}
         />
         <p>Workspace settings</p>
       </div>
@@ -61,7 +64,7 @@ export const WorkspaceSettingsSidebarHeader = observer(function WorkspaceSetting
           />
           <div className="truncate">
             <p className="text-body-sm-medium truncate">{currentWorkspace?.name}</p>
-            <p className="text-caption-md-regular truncate">{t(ROLE_DETAILS[currentWorkspaceRole].i18n_title)}</p>
+            <p className="text-caption-md-regular truncate">{roleDetail?.name}</p>
           </div>
         </div>
         <div className="shrink-0">

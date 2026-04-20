@@ -13,27 +13,27 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EIssuesStoreType, EUserWorkspaceRoles } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 
-export const GlobalViewEmptyState = observer(function GlobalViewEmptyState() {
+type TProps = {
+  permissions: {
+    canCreateProject: boolean;
+    canCreateWorkItem: (projectId: string) => boolean;
+  };
+};
+
+export const GlobalViewEmptyState = observer(function GlobalViewEmptyState(props: TProps) {
+  const { permissions } = props;
   // plane imports
   const { t } = useTranslation();
   // store hooks
-  const { workspaceProjectIds } = useProject();
+  const { workspaceProjectIds, joinedProjectIds } = useProject();
   const { toggleCreateIssueModal, toggleCreateProjectModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
-  // derived values
-  const hasMemberLevelPermission = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   if (workspaceProjectIds?.length === 0) {
     return (
@@ -48,7 +48,7 @@ export const GlobalViewEmptyState = observer(function GlobalViewEmptyState() {
             onClick: () => {
               toggleCreateProjectModal(true);
             },
-            disabled: !hasMemberLevelPermission,
+            disabled: !permissions.canCreateProject,
             variant: "primary",
           },
         ]}
@@ -68,7 +68,7 @@ export const GlobalViewEmptyState = observer(function GlobalViewEmptyState() {
           onClick: () => {
             toggleCreateIssueModal(true, EIssuesStoreType.PROJECT);
           },
-          disabled: !hasMemberLevelPermission,
+          disabled: joinedProjectIds?.length !== 0 ? !permissions.canCreateWorkItem(joinedProjectIds[0]) : true,
           variant: "primary",
         },
       ]}

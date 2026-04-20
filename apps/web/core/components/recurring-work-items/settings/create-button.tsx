@@ -14,15 +14,13 @@
 import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { ButtonProps } from "@plane/propel/button";
-import { EUserProjectRoles } from "@plane/types";
 import { getCreateUpdateRecurringWorkItemSettingsPath } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useRecurringWorkItems } from "@/plane-web/hooks/store/recurring-work-items/use-recurring-work-items";
 
 type TCreateRecurringWorkItemsButtonProps = {
   workspaceSlug: string;
@@ -40,33 +38,28 @@ export const CreateRecurringWorkItemsButton = observer(function CreateRecurringW
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { getCanCreate } = useRecurringWorkItems();
   // derived values
   const createPath = getCreateUpdateRecurringWorkItemSettingsPath({
     workspaceSlug,
     projectId,
   });
-  const hasAdminPermission = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
+  const canCreate = getCanCreate(workspaceSlug, projectId);
 
   const getButtonLabel = useCallback(() => {
-    if (!hasAdminPermission) return t("recurring_work_items.settings.create_button.no_permission");
+    if (!canCreate) return t("recurring_work_items.settings.create_button.no_permission");
 
     return t(buttonI18nLabel || "recurring_work_items.settings.create_button.label");
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasAdminPermission, buttonI18nLabel]);
+  }, [canCreate, buttonI18nLabel]);
 
-  if (!hasAdminPermission) return null;
+  if (!canCreate) return null;
   return (
     <Button
       variant="primary"
       size={buttonSize}
       className="flex items-center justify-center gap-1.5"
-      disabled={!hasAdminPermission}
+      disabled={!canCreate}
       onClick={() => {
         router.push(createPath);
       }}

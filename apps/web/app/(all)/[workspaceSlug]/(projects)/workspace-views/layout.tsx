@@ -14,12 +14,14 @@
 import { Outlet } from "react-router";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
-import { GlobalIssuesHeader } from "./header";
+import { WorkspaceWorkItemsHeader } from "./header";
+import type { Route } from "./+types/layout";
 
-export default function GlobalIssuesLayout() {
+export default function WorkspaceWorkItemsLayout(props: Route.ComponentProps) {
+  const { workspaceSlug, globalViewId } = props.params;
   return (
     <>
-      <AppHeader header={<GlobalIssuesHeader />} />
+      <AppHeader header={<WorkspaceWorkItemsHeader workspaceSlug={workspaceSlug} globalViewId={globalViewId} />} />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

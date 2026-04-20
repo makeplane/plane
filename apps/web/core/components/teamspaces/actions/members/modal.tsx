@@ -19,12 +19,11 @@ import { useParams } from "next/navigation";
 import { PlusIcon, ChevronDownIcon, CloseIcon, SuspendedUserIcon } from "@plane/propel/icons";
 import { EPillSize, EPillVariant, Pill } from "@plane/propel/pill";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { Avatar } from "@plane/propel/avatar";
 import { CustomSearchSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 // helpers
-import { cn, getFileURL } from "@plane/utils";
+import { cn, getFileURL, isGuestRole } from "@plane/utils";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web imports
@@ -55,7 +54,7 @@ export const AddTeamspaceMembersModal = observer(function AddTeamspaceMembersMod
     () =>
       workspaceMemberIds?.filter((userId) => {
         const memberDetails = getWorkspaceMemberDetails(userId);
-        if (memberDetails?.role === EUserWorkspaceRoles.GUEST) return false;
+        if (isGuestRole(memberDetails?.role_slug)) return false;
         const isInvited = teamspaceMemberIds?.find((u) => u === userId) || memberIdsToInvite?.find((u) => u === userId);
         return !isInvited;
       }),

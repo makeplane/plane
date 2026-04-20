@@ -18,7 +18,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.models import CustomerRequestIssue, CustomerRequest
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 from plane.db.models import FileAsset
 
 # Django imports
@@ -29,9 +29,8 @@ from django.db.models.functions import Cast
 class IssueCustomerEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, work_item_id):
         customer_ids = (
             CustomerRequestIssue.objects.filter(issue_id=work_item_id, workspace__slug=slug)
@@ -45,9 +44,8 @@ class IssueCustomerEndpoint(BaseAPIView):
 class IssueCustomerRequestEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, work_item_id):
         search = request.query_params.get("search", False)
 

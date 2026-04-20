@@ -13,30 +13,26 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { PROJECT_AUTOMATION_MONTHS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { PROJECT_AUTOMATION_MONTHS } from "@plane/constants";
 import { CustomSelect } from "@plane/ui";
-
-import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
-
+// types
 import type { DefaultAutomationContentProps } from "./types";
+// local imports
 import { AutomationMonthModal } from "./automation-month-modal";
+import { useProjectSettingsAccess } from "@/hooks/permissions/use-project-settings-access";
 
 function CloseAutomation(props: DefaultAutomationContentProps) {
   const { workspaceSlug, projectId, value, handleChange } = props;
-
-  const { getProjectById } = useProject();
-  const currentProjectDetails = getProjectById(projectId);
-
-  const { allowPermissions } = useUserPermissions();
-  const { t } = useTranslation();
-
+  // states
   const [modal, setModal] = useState(false);
-
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+  // plane hooks
+  const { t } = useTranslation();
+  // store hooks
+  const { canAccessProjectSetting } = useProjectSettingsAccess();
+  // derived values
+  const canAccessAutomationSettings = canAccessProjectSetting(workspaceSlug, projectId, "automations");
 
   return (
     <div>
@@ -52,7 +48,7 @@ function CloseAutomation(props: DefaultAutomationContentProps) {
         label={`${value} ${value === 1 ? "month" : "months"}`}
         onChange={(val: number) => handleChange?.({ close_in: val })}
         input
-        disabled={!isAdmin}
+        disabled={!canAccessAutomationSettings}
       >
         <>
           {PROJECT_AUTOMATION_MONTHS.map((month) => (

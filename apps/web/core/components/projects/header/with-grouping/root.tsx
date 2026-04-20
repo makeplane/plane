@@ -25,25 +25,28 @@ import { ProjectCreateButton } from "./create-project-button";
 import { ProjectDisplayFiltersDropdown } from "./display-filters-dropdown";
 import { ProjectLayoutSelection } from "./layout-selection";
 import { ProjectSearch } from "./search-projects";
+import type { ProjectLayoutPermissions } from "@/store/project/permissions/root";
 
 type TProjectsListWithGroupingHeaderProps = {
   workspaceSlug: string;
   isArchived: boolean;
+  permissions: ProjectLayoutPermissions;
 };
 
 export const ProjectsListWithGroupingHeader = observer(function ProjectsListWithGroupingHeader(
   props: TProjectsListWithGroupingHeaderProps
 ) {
-  const { workspaceSlug, isArchived } = props;
+  const { workspaceSlug, isArchived, permissions } = props;
   // hooks
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
-  const workspaceId = currentWorkspace?.id || undefined;
+  const workspaceId = currentWorkspace?.id;
 
-  if (!workspaceId) return <></>;
+  if (!workspaceId) return null;
+
   return (
-    <div className="flex-shrink-0 relative z-10 flex h-header w-full">
+    <div className="shrink-0 relative z-10 flex h-header w-full">
       {/* flex-row items-center justify-between gap-x-2 gap-y-4 */}
       <div className="w-full h-full relative flex justify-between items-center gap-x-2 gap-y-4">
         <div className="flex items-center gap-4">
@@ -77,7 +80,7 @@ export const ProjectsListWithGroupingHeader = observer(function ProjectsListWith
             <ProjectDisplayFiltersDropdown workspaceSlug={workspaceSlug.toString()} isArchived={isArchived} />
           </div>
           {/* create project button */}
-          {!isArchived && <ProjectCreateButton />}
+          {!isArchived && <ProjectCreateButton canCreateProject={permissions.canCreateProject} />}
         </div>
       </div>
     </div>

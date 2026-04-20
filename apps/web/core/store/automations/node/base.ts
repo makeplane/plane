@@ -26,9 +26,6 @@ export interface IAutomationBaseNode<
   H extends TAutomationNodeHandlerName,
   C extends TAutomationNodeConfig,
 > extends TAutomationNode<T, H, C> {
-  // permissions
-  canCurrentUserEdit: boolean;
-  canCurrentUserDelete: boolean;
   // helpers
   asJSON: TAutomationNode<T, H, C>;
   // helper actions
@@ -44,10 +41,6 @@ export type TAutomationBaseNodeHelpers<
 > = {
   actions: {
     update: (nodeId: string, payload: Partial<TAutomationNode<T, H, C>>) => Promise<TAutomationNode<T, H, C>>;
-  };
-  permissions: {
-    canCurrentUserEdit: boolean;
-    canCurrentUserDelete: boolean;
   };
 };
 
@@ -104,23 +97,12 @@ export abstract class AutomationBaseNode<
       updated_by: observable.ref,
       workspace: observable.ref,
       // helpers
-      canCurrentUserEdit: computed,
-      canCurrentUserDelete: computed,
       asJSON: computed,
       // helper actions
       mutate: action,
       // actions
       update: action,
     });
-  }
-
-  // permissions
-  get canCurrentUserEdit() {
-    return this.helpers.permissions.canCurrentUserEdit;
-  }
-
-  get canCurrentUserDelete() {
-    return this.helpers.permissions.canCurrentUserDelete;
   }
 
   // helpers

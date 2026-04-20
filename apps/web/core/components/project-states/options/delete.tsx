@@ -28,7 +28,6 @@ type TStateDelete = {
   totalStates: number;
   state: IState;
   deleteStateCallback: TStateOperationsCallbacks["deleteState"];
-  shouldTrackEvents?: boolean;
 };
 
 export const StateDelete = observer(function StateDelete(props: TStateDelete) {

@@ -18,14 +18,15 @@ import { AlertTriangle } from "lucide-react";
 import { ISSUE_DISPLAY_PROPERTIES } from "@plane/constants";
 // types
 import type { IIssueDisplayProperties } from "@plane/types";
-import { EIssueServiceType, EUserProjectRoles } from "@plane/types";
+import { EIssueServiceType } from "@plane/types";
 // ui
 import { Loader } from "@plane/ui";
 // components
 import { IssueProperties } from "@/components/issues/issue-layouts/properties/all-properties";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 // plane web components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 
@@ -39,8 +40,6 @@ export const IssueEmbedCard = observer(function IssueEmbedCard(props: Props) {
   const { issueId, projectId, workspaceSlug } = props;
   // states
   const [error, setError] = useState<any | null>(null);
-  // store hooks
-  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
   const {
     setPeekIssue,
     issue: { fetchIssue, getIssueById, updateIssue },
@@ -49,15 +48,14 @@ export const IssueEmbedCard = observer(function IssueEmbedCard(props: Props) {
     setPeekIssue: setPeekEpic,
     issue: { fetchIssue: fetchEpic, getIssueById: getEpicById, updateIssue: updateEpic },
   } = useIssueDetail(EIssueServiceType.EPICS);
+  const { permissions: workItemPermissions } = useIssues();
+  const { permissions: epicPermissions } = useEpics();
   // derived values
-  const projectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const issueDetails = getIssueById(issueId) ?? getEpicById(issueId);
   const isEpic = !!issueDetails?.is_epic;
   // callbacks
   const updateHandler = isEpic ? updateEpic : updateIssue;
   const setPeekHandler = isEpic ? setPeekEpic : setPeekIssue;
-  // auth
-  const isReadOnly = !!projectRole && projectRole < EUserProjectRoles.MEMBER;
   // issue display properties
   const displayProperties: IIssueDisplayProperties = useMemo(() => {
     const properties: IIssueDisplayProperties = {};
@@ -131,7 +129,12 @@ export const IssueEmbedCard = observer(function IssueEmbedCard(props: Props) {
             if (!projectId) return;
             updateHandler(workspaceSlug, projectId, issueId, data);
           }}
-          isReadOnly={isReadOnly}
+          permissions={{
+            canEditProperty: (property) =>
+              isEpic
+                ? epicPermissions.getCanEditProperty(workspaceSlug, projectId, issueId, property)
+                : workItemPermissions.getCanEditProperty(workspaceSlug, projectId, issueId, property),
+          }}
         />
       )}
     </div>

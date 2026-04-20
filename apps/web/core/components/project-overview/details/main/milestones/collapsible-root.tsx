@@ -33,11 +33,11 @@ export const ProjectMilestoneCollapsible = observer(function ProjectMilestoneCol
   const [isCreateUpdateMilestoneModalOpen, setIsCreateUpdateMilestoneModalOpen] = useState(false);
   // store hooks
   const { openCollapsibleSection, toggleOpenCollapsibleSection } = useProject();
-  const { isMilestonesEnabled } = useMilestones();
-  const { getProjectMilestoneIds } = useMilestones();
+  const { isMilestonesEnabled, permissions, getProjectMilestoneIds } = useMilestones();
   // derived values
   const projectMilestoneIds = getProjectMilestoneIds(projectId);
   const milestoneCount = projectMilestoneIds?.length ?? 0;
+  const canCreate = permissions.getCanCreate(workspaceSlug, projectId);
 
   const toggleCreateUpdateModal = () => {
     setIsCreateUpdateMilestoneModalOpen((prev) => !prev);
@@ -56,7 +56,9 @@ export const ProjectMilestoneCollapsible = observer(function ProjectMilestoneCol
       />
       <CollapsibleDetailSection
         title="Milestones"
-        actionItemElement={<AddMilestoneButton toggleModal={toggleCreateUpdateModal} variant="compact" />}
+        actionItemElement={
+          <AddMilestoneButton toggleModal={toggleCreateUpdateModal} variant="compact" canCreate={canCreate} />
+        }
         count={milestoneCount}
         collapsibleContent={
           <div className="mt-3">
@@ -64,6 +66,7 @@ export const ProjectMilestoneCollapsible = observer(function ProjectMilestoneCol
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               toggleCreateUpdateModal={toggleCreateUpdateModal}
+              canCreate={canCreate}
             />
           </div>
         }

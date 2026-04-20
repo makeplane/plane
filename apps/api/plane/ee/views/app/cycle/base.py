@@ -18,7 +18,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, CyclePermissions
 from plane.ee.models import EntityProgress
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -33,7 +33,7 @@ class CycleIssueStateAnalyticsEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.CYCLE_PROGRESS_CHARTS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(CyclePermissions.VIEW, resource_param="cycle_id")
     def get(self, request, slug, project_id, cycle_id):
         workspace = Workspace.objects.get(slug=slug)
 

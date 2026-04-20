@@ -15,27 +15,26 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import { Crown } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // assets
 import PiDark from "@/app/assets/empty-state/pi/chat-dark.webp?url";
 import PiLight from "@/app/assets/empty-state/pi/chat-light.webp?url";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { BetaBadge } from "@/components/common/beta";
 import { PiIcon } from "@plane/propel/icons";
 
-export const EmptyPiChat = observer(function EmptyPiChat() {
+type Props = {
+  workspaceSlug: string;
+};
+
+export const EmptyPiChat = observer(function EmptyPiChat({ workspaceSlug }: Props) {
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
   const { resolvedTheme } = useTheme();
-
-  // derived values
-  const canCreateProject = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const { permissions: projectPermissions } = useProject();
 
   return (
     <div className={cn("h-full bg-surface-2 px-page-x pt-4 ")}>
@@ -58,11 +57,11 @@ export const EmptyPiChat = observer(function EmptyPiChat() {
             className="w-full max-h-[400px]"
             alt="Project empty state"
           />
-          {canCreateProject && (
-            <div className="flex justify-center gap-4 self-start md:!-my-[20px]">
+          {projectPermissions.getCanCreate(workspaceSlug) && (
+            <div className="flex justify-center gap-4 self-start md:-my-5!">
               <Button
                 size="xl"
-                className="py-1 bg-primary h-[40px] hover:bg-primary focus:bg-primary"
+                className="py-1 bg-primary h-10 hover:bg-primary focus:bg-primary"
                 onClick={() => togglePaidPlanModal(true)}
               >
                 <Crown className="w-3.5 h-3.5" />

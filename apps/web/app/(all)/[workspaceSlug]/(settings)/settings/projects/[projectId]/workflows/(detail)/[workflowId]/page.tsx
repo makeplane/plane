@@ -11,10 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/page";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useProject } from "@/hooks/store/use-project";
 import { WorkflowDetailMainContent } from "@/components/workflows/detail/main-content";
 import { PageHead } from "@/components/core/page-title";
@@ -32,14 +30,18 @@ function WorkflowsDetailPage({ params }: Route.ComponentProps) {
   // params
   const { workspaceSlug, projectId, workflowId } = params;
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails: projectDetails } = useProject();
-  const { getWorkflowById, isWorkflowsEnabled, loader } = useWorkflows();
+  const {
+    getWorkflowById,
+    isWorkflowsEnabled,
+    loader,
+    permissions: { getCanView },
+  } = useWorkflows();
   const navigate = useNavigate();
   // derived values
   const workflow = getWorkflowById(workflowId);
   const pageTitle = projectDetails?.name ? `${projectDetails?.name} - Workflows` : undefined;
-  const hasProjectAdminPermissions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
+  const canViewWorkflow = getCanView(workspaceSlug, projectId);
   const isProjectWorkflowEnabled = isWorkflowsEnabled(workspaceSlug, projectId);
 
   // redirect to list page if not enabled
@@ -49,7 +51,7 @@ function WorkflowsDetailPage({ params }: Route.ComponentProps) {
     }
   }, [isProjectWorkflowEnabled, navigate, projectDetails, projectId, workspaceSlug]);
 
-  if (workspaceUserInfo && !hasProjectAdminPermissions) {
+  if (!canViewWorkflow) {
     return <NotAuthorizedView section="settings" isProjectView />;
   }
   // To avoid render during useEffect redirecting to list page.

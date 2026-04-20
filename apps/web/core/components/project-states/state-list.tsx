@@ -22,8 +22,13 @@ type TStateList = {
   states: IState[];
   stateOperationsCallbacks: TStateOperationsCallbacks;
   shouldTrackEvents: boolean;
-  disabled?: boolean;
   stateItemClassName?: string;
+  permissions: {
+    canEdit: (stateId: string) => boolean;
+    canDelete: (stateId: string) => boolean;
+    canMarkAsDefault: (stateId: string) => boolean;
+    canDragAndDrop: (stateId: string) => boolean;
+  };
 };
 
 export const StateList = observer(function StateList(props: TStateList) {
@@ -33,7 +38,7 @@ export const StateList = observer(function StateList(props: TStateList) {
     states,
     stateOperationsCallbacks,
     shouldTrackEvents,
-    disabled = false,
+    permissions,
     stateItemClassName,
   } = props;
 
@@ -46,7 +51,7 @@ export const StateList = observer(function StateList(props: TStateList) {
           groupedStates={groupedStates}
           totalStates={states.length || 0}
           state={state}
-          disabled={disabled}
+          permissions={permissions}
           stateOperationsCallbacks={stateOperationsCallbacks}
           shouldTrackEvents={shouldTrackEvents}
           stateItemClassName={stateItemClassName}

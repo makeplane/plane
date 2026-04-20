@@ -18,8 +18,8 @@ from plane.db.models import Cycle, UserFavorite, Label, User
 
 # ee imports
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import WorkspaceUserPermission
 from plane.ee.serializers import WorkspaceActiveCycleSerializer
+from plane.permissions import can, WorkspacePermissions
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
@@ -27,9 +27,8 @@ from plane.payment.flags.flag import FeatureFlag
 class WorkspaceActiveCycleEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceUserPermission]
-
     @check_feature_flag(FeatureFlag.WORKSPACE_ACTIVE_CYCLES)
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         favorite_subquery = UserFavorite.objects.filter(
             user=self.request.user,

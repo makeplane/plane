@@ -15,32 +15,29 @@ import { useRef } from "react";
 import { observer } from "mobx-react";
 import { ArchiveIcon, Sidebar } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { EpicIcon } from "@plane/propel/icons";
 import type { TIssue } from "@plane/types";
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { Breadcrumbs, Header } from "@plane/ui";
-import { formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
-import { cn } from "@plane/utils";
+import { cn, formatProjectWorkItemIdentifierForDisplay } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
-// helpers
-import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
-import { IssueVotes } from "@/components/issues/issue-detail/issue-votes";
-// hooks
-import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useProject } from "@/hooks/store/use-project";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
-import { useIssuesActions } from "@/hooks/use-issues-actions";
-import { useIssues } from "@/hooks/store/use-issues";
-// plane-web components
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 import { ConvertWorkItemAction } from "@/components/epics/conversions";
 import { ProjectEpicQuickActions } from "@/components/epics/quick-actions/epic-quick-action";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
+import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
 import { WorkItemApproveRejectActions } from "@/components/issues/issue-detail/approve-reject-actions";
+// hooks
+import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useProject } from "@/hooks/store/use-project";
+import { useAppRouter } from "@/hooks/use-app-router";
+import { useIssuesActions } from "@/hooks/use-issues-actions";
+import { useIssues } from "@/hooks/store/use-issues";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
+import { IssueVotes } from "@/components/issues/issue-detail/issue-votes";
+import { useUser } from "@/hooks/store/user/user-user";
 
 type TEpicItemDetailsHeaderProps = {
   workspaceSlug: string;
@@ -61,7 +58,7 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
   const {
     issue: { getIssueById, getIssueIdByIdentifier, archiveIssue },
   } = useIssueDetail(EIssueServiceType.EPICS);
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useEpics();
   const { updateIssue, removeIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   const { epicDetailSidebarCollapsed, toggleEpicDetailSidebar } = useAppTheme();
   // derived values
@@ -69,13 +66,6 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
   const issueDetails = epicId ? getIssueById(epicId.toString()) : undefined;
   const projectId = issueDetails ? issueDetails?.project_id : undefined;
   const projectDetails = projectId ? getProjectById(projectId?.toString()) : undefined;
-
-  const isEditingAllowed = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId?.toString()
-  );
 
   const handleDelete = async () => {
     if (issueDetails) {
@@ -172,15 +162,16 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
             projectId={projectId?.toString()}
             issueId={epicId}
             serviceType={EIssueServiceType.EPICS}
+            canSubscribe={permissions.getCanSubscribe(workspaceSlug, projectId, epicId)}
           />
         )}
-        {issueDetails && (
+        {issueDetails && projectId && epicId && (
           <div ref={parentRef} className="flex items-center gap-2">
             <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
               <ConvertWorkItemAction
                 workItemId={issueDetails?.id}
                 conversionType={EWorkItemConversionType.WORK_ITEM}
-                disabled={!isEditingAllowed || !!issueDetails?.archived_at}
+                canConvert={permissions.getCanConvertToWorkItem(workspaceSlug, projectId, epicId)}
               />
             </WithFeatureFlagHOC>
             <ProjectEpicQuickActions
@@ -190,7 +181,13 @@ export const EpicItemDetailsHeader = observer(function EpicItemDetailsHeader(pro
               handleArchive={handleArchiveIssue}
               handleRestore={handleRestoreIssue}
               handleUpdate={handleUpdate}
-              readOnly={!isEditingAllowed}
+              permissions={{
+                canArchive: permissions.getCanArchive(workspaceSlug, projectId, epicId),
+                canDelete: permissions.getCanDelete(workspaceSlug, projectId, epicId),
+                canDuplicate: permissions.getCanDuplicate(workspaceSlug, projectId),
+                canEdit: permissions.getCanEdit(workspaceSlug, projectId, epicId),
+                canRestore: permissions.getCanRestore(workspaceSlug, projectId, epicId),
+              }}
               workItemId={workItem}
             />
             <Sidebar

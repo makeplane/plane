@@ -15,46 +15,38 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { NewTabIcon, LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TTeamspaceView } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
-// hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { CreateUpdateTeamspaceViewModal } from "@/components/teamspaces/views/modals/create-update";
 import { DeleteTeamspaceViewModal } from "@/components/teamspaces/views/modals/delete";
 import { PublishTeamspaceViewModal } from "@/components/teamspaces/views/modals/publish";
 import { useViewPublish } from "@/components/views/publish";
+// types
+import type { TTeamspaceViewItemPermissions } from "@/store/teamspace/permissions/root";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
   teamspaceId: string;
   view: TTeamspaceView;
   workspaceSlug: string;
+  permissions: TTeamspaceViewItemPermissions;
 };
 
 export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickActions(props: Props) {
-  const { parentRef, teamspaceId, view, workspaceSlug } = props;
+  const { parentRef, teamspaceId, view, workspaceSlug, permissions } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
-  // store hooks
-  const { data } = useUser();
-  const { allowPermissions } = useUserPermissions();
   // derived values
-  const isOwner = view?.owned_by === data?.id;
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, workspaceSlug);
-  const canPublishView = isAdmin;
   const viewDetailLink = `/${workspaceSlug}/teamspaces/${view.team}/views/${view.id}`;
-  const isPublishAllowed = false && (isAdmin || isOwner); // TODO: Publish operation is not supported for teamspace views right now
 
   const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
     !!view.anchor,
-    isPublishAllowed
+    permissions.canPublish
   );
 
   const handleCopyText = () =>
@@ -74,7 +66,7 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
       action: () => setCreateUpdateViewModal(true),
       title: "Edit",
       icon: EditIcon,
-      shouldRender: isOwner,
+      shouldRender: permissions.canEdit,
     },
     {
       key: "open-new-tab",
@@ -93,7 +85,7 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
       action: () => setDeleteViewModal(true),
       title: "Delete",
       icon: TrashIcon,
-      shouldRender: isOwner || isAdmin,
+      shouldRender: permissions.canDelete,
     },
   ];
 
@@ -131,7 +123,7 @@ export const TeamspaceViewQuickActions = observer(function TeamspaceViewQuickAct
       <CustomMenu ellipsis placement="bottom-end" closeOnSelect>
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;
-          if (item.key === "publish" && !canPublishView) return null;
+          if (item.key === "publish" && !permissions.canPublish) return null;
           return (
             <CustomMenu.MenuItem
               key={item.key}

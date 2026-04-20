@@ -28,10 +28,11 @@ type Props = {
   workspaceSlug: string;
   project: TProject;
   initiativeId: string;
+  canRemove: boolean;
 };
 
 export const QuickActions = observer(function QuickActions(props: Props) {
-  const { workspaceSlug, initiativeId, project } = props;
+  const { workspaceSlug, initiativeId, project, canRemove } = props;
   // store hooks
   const {
     initiative: { updateInitiative, getInitiativeById },
@@ -73,6 +74,7 @@ export const QuickActions = observer(function QuickActions(props: Props) {
         }),
       title: t("common.remove"),
       icon: TrashIcon,
+      shouldRender: canRemove,
     },
   ];
 
@@ -88,7 +90,7 @@ export const QuickActions = observer(function QuickActions(props: Props) {
         customButtonClassName="grid place-items-center"
         placement="top-start"
       >
-        {MENU_ITEMS.map((item) => (
+        {MENU_ITEMS.filter((item) => item.shouldRender !== false).map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
             onClick={() => {

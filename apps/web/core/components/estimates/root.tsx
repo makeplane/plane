@@ -34,11 +34,10 @@ import { EstimateLoaderScreen } from "./loader-screen";
 type TEstimateRoot = {
   workspaceSlug: string;
   projectId: string;
-  isAdmin: boolean;
 };
 
 export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot) {
-  const { workspaceSlug, projectId, isAdmin } = props;
+  const { workspaceSlug, projectId } = props;
   // hooks
   const { currentProjectDetails } = useProject();
   const { loader, currentActiveEstimateId, archivedEstimateIds, getProjectEstimates } = useProjectEstimates();
@@ -74,16 +73,13 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
               <SettingsBoxedControlItem
                 title={t("project_settings.estimates.title")}
                 description={t("project_settings.estimates.enable_description")}
-                control={
-                  <EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} isAdmin={isAdmin} />
-                }
+                control={<EstimateDisableSwitch workspaceSlug={workspaceSlug} projectId={projectId} />}
               />
               {/* active estimates section */}
               <div className="mt-12 flex flex-col gap-y-4">
                 <SettingsHeading title="Estimates list" variant="h6" />
                 <EstimateList
                   estimateIds={[currentActiveEstimateId]}
-                  isAdmin={isAdmin}
                   isEstimateEnabled={Boolean(currentProjectDetails?.estimate)}
                   isEditable
                   onEditClick={(estimateId: string) => setEstimateToUpdate(estimateId)}
@@ -128,7 +124,7 @@ export const EstimateRoot = observer(function EstimateRoot(props: TEstimateRoot)
                 }
                 variant="h6"
               />
-              <EstimateList estimateIds={archivedEstimateIds} isAdmin={isAdmin} />
+              <EstimateList estimateIds={archivedEstimateIds} />
             </div>
           )}
         </div>

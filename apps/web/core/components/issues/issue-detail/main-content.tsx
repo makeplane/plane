@@ -18,7 +18,7 @@ import { ContentOverflow, EntityDetailContentFooter } from "@plane/blocks/entity
 import type { EditorRefApi } from "@plane/editor";
 import { useTranslation } from "@plane/i18n";
 import { ParentPropertyIcon } from "@plane/propel/icons";
-import type { TIssue, TNameDescriptionLoader } from "@plane/types";
+import type { TNameDescriptionLoader } from "@plane/types";
 import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { getTextContent } from "@plane/utils";
 // components
@@ -49,6 +49,7 @@ import { IssueActivity } from "./issue-activity";
 import { IssueParentDetail } from "./parent";
 import { IssueReaction } from "./reactions";
 import type { TIssueOperations } from "./root";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // services init
 const workItemVersionService = new WorkItemVersionService();
 
@@ -57,13 +58,29 @@ type Props = {
   projectId: string;
   issueId: string;
   issueOperations: TIssueOperations;
-  isEditable: boolean;
-  isArchived: boolean;
   permissions: {
+    canEdit: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canSwitchWorkItemType: boolean;
+    canRestoreDescriptionVersion: boolean;
+    canReact: boolean;
+    canAddDependencies: boolean;
+    canAddRelations: boolean;
+    canAddLinks: boolean;
+    canAddAttachments: boolean;
+    canAddPages: boolean;
+    canAddCustomerRequests: boolean;
+    canAddWorklog: boolean;
+    comments: {
+      canCreate: boolean;
+      canEdit: (commentId: string) => boolean;
+      canDelete: (commentId: string) => boolean;
+      canReact: (commentId: string) => boolean;
+    };
     sub_work_items: {
       getCanView: (projectId: string, workItemId: string) => boolean;
       getCanEdit: (projectId: string, workItemId: string) => boolean;
-      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
       getCanDelete: (projectId: string, workItemId: string) => boolean;
       getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
       getCanRemove: (
@@ -77,7 +94,7 @@ type Props = {
 };
 
 export const IssueMainContent = observer(function IssueMainContent(props: Props) {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, permissions } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, permissions } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // states
@@ -162,15 +179,15 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
                 <button
                   type="button"
                   className="flex items-center gap-1.5 text-body-xs-medium text-secondary hover:text-primary cursor-pointer"
-                  onClick={() => !isArchived && isEditable && toggleParentIssueModal(issueId)}
-                  disabled={isArchived || !isEditable}
+                  onClick={() => permissions.canEditProperty("parent_id") && toggleParentIssueModal(issueId)}
+                  disabled={!permissions.canEditProperty("parent_id")}
                 >
                   <ParentPropertyIcon className="size-3.5" />
                   {t("issue.add.parent")}
                 </button>
               )}
               <span className="text-tertiary">/</span>
-              <IssueTypeSwitcher issueId={issueId} disabled={isArchived || !isEditable} />
+              <IssueTypeSwitcher issueId={issueId} canSwitchWorkItemType={permissions.canSwitchWorkItemType} />
             </div>
             <div className="flex items-center gap-3">
               <NameDescriptionUpdateStatus isSubmitting={isSubmitting} />
@@ -194,7 +211,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
             isSubmitting={isSubmitting}
             setIsSubmitting={(value) => setIsSubmitting(value)}
             issueOperations={issueOperations}
-            disabled={isArchived || !isEditable}
+            disabled={!permissions.canEditProperty("name")}
             value={issue.name}
             containerClassName="-ml-3"
           />
@@ -205,8 +222,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           projectId={projectId}
           issueId={issueId}
           issueOperations={issueOperations}
-          isEditable={isEditable}
-          isArchived={isArchived}
+          permissions={permissions}
         />
 
         <ContentOverflow
@@ -222,7 +238,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
             <DescriptionInput
               issueSequenceId={issue.sequence_id}
               containerClassName="-ml-6 border-none p-0! pl-6!"
-              disabled={isArchived || !isEditable}
+              disabled={!permissions.canEditProperty("description_html")}
               editorRef={editorRef}
               entityId={issue.id}
               fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
@@ -250,20 +266,20 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
                 projectId={projectId}
                 issueId={issueId}
                 currentUser={currentUser}
-                disabled={isArchived}
+                disabled={!permissions.canReact}
                 className="mt-0 shrink-0"
               />
             ) : undefined
           }
           rightElement={
-            isEditable ? (
+            permissions.canRestoreDescriptionVersion ? (
               <DescriptionVersionsRoot
                 className="shrink-0"
                 entityInformation={{
                   createdAt: issue.created_at ? new Date(issue.created_at) : new Date(),
                   createdByDisplayName: getUserDetails(issue.created_by ?? "")?.display_name ?? "",
                   id: issueId,
-                  isRestoreDisabled: !isEditable || isArchived,
+                  isRestoreDisabled: !permissions.canRestoreDescriptionVersion,
                 }}
                 fetchHandlers={{
                   listDescriptionVersions: (issueId) =>
@@ -284,10 +300,9 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         issueId={issueId}
-        disabled={!isEditable || isArchived}
+        permissions={permissions}
         renderWidgetModals={!isPeekModeActive}
         issueServiceType={EIssueServiceType.ISSUES}
-        permissions={permissions}
       />
 
       {windowSize[0] < 768 && (
@@ -296,11 +311,11 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
           projectId={projectId}
           issueId={issueId}
           issueOperations={issueOperations}
-          disabled={!isEditable || isArchived}
+          permissions={permissions}
         />
       )}
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
+      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} permissions={permissions} />
     </>
   );
 });

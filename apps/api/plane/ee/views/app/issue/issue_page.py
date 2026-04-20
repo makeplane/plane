@@ -23,9 +23,9 @@ from django.db.models import Q
 from plane.ee.models import WorkItemPage
 from plane.db.models import Page, Workspace
 from plane.ee.serializers import WorkItemPageSerializer
-from plane.app.permissions import ProjectLitePermission
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, WorkitemPermissions, PagePermissions
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.app.views.base import BaseAPIView
 from plane.utils.host import base_host
@@ -34,12 +34,11 @@ from plane.utils.host import base_host
 class IssuePageViewSet(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectLitePermission]
-
     def filter_work_item_pages(self, slug, project_id, issue_id):
         return WorkItemPage.objects.filter(workspace__slug=slug, project_id=project_id, issue_id=issue_id)
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, issue_id):
         workspace = Workspace.objects.get(slug=slug)
         pages_ids = request.data.get("pages_ids", [])
@@ -101,12 +100,14 @@ class IssuePageViewSet(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id, page_id=None):
         work_item_pages = self.filter_work_item_pages(slug, project_id, issue_id)
         serializer = WorkItemPageSerializer(work_item_pages, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.LINK_PAGES)
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, issue_id, page_id):
         work_item_page = self.filter_work_item_pages(slug, project_id, issue_id).get(page_id=page_id)
 
@@ -131,9 +132,8 @@ class IssuePageViewSet(BaseAPIView):
 class PageSearchViewSet(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectLitePermission]
-
     @check_feature_flag(FeatureFlag.LINK_PAGES)
+    @can(PagePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         is_global = request.query_params.get("is_global", False)
         search = request.query_params.get("search", "")

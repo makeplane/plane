@@ -33,13 +33,16 @@ type TInfoSectionProps = {
   onTitleSubmit: (value: string) => Promise<void>;
   onDescriptionSubmit: (value: string, isMigrationUpdate?: boolean) => Promise<void>;
   indicatorElement?: React.ReactNode;
-  disabled?: boolean;
   fileAssetType: EFileAssetType;
   actionElement?: React.ReactNode;
   identifierElement?: React.ReactNode;
   iconElement?: React.ReactNode;
   titleElement?: React.ReactNode;
   issueSequenceId?: number;
+  permissions: {
+    canEditDescription: boolean;
+    canEditTitle: boolean;
+  };
 };
 
 export function InfoSection(props: TInfoSectionProps) {
@@ -53,13 +56,13 @@ export function InfoSection(props: TInfoSectionProps) {
     onTitleSubmit,
     onDescriptionSubmit,
     indicatorElement,
-    disabled = false,
     fileAssetType,
     actionElement,
     identifierElement,
     iconElement,
     titleElement,
     issueSequenceId,
+    permissions,
   } = props;
 
   const [isSubmitting, setIsSubmitting] = useState<"submitting" | "submitted" | "saved">("saved");
@@ -68,7 +71,7 @@ export function InfoSection(props: TInfoSectionProps) {
   useEffect(() => {
     if (isSubmitting === "submitted") {
       setShowAlert(false);
-      setTimeout(async () => setIsSubmitting("saved"), 2000);
+      setTimeout(() => setIsSubmitting("saved"), 2000);
     } else if (isSubmitting === "submitting") setShowAlert(true);
   }, [isSubmitting, setShowAlert, setIsSubmitting]);
 
@@ -89,7 +92,7 @@ export function InfoSection(props: TInfoSectionProps) {
                 isSubmitting={isSubmitting}
                 setIsSubmitting={(value) => setIsSubmitting(value)}
                 onSubmit={onTitleSubmit}
-                disabled={disabled}
+                disabled={!permissions.canEditTitle}
                 value={titleValue}
                 containerClassName="-ml-3"
               />
@@ -100,7 +103,7 @@ export function InfoSection(props: TInfoSectionProps) {
         <DescriptionInput
           issueSequenceId={issueSequenceId}
           containerClassName="-ml-3 border-none min-h-[88px] text-14 text-secondary placeholder:text-placeholder"
-          disabled={disabled}
+          disabled={!permissions.canEditDescription}
           editorRef={editorRef}
           entityId={itemId}
           fileAssetType={fileAssetType}

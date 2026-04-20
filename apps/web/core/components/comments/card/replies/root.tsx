@@ -37,6 +37,9 @@ type Props = {
   repliedUserIds: string[];
   lastReplyAt: string | null;
   showAccessSpecifier: boolean;
+  permissions: {
+    canReact: boolean;
+  };
 };
 
 export type CommentRepliesRootHandle = {
@@ -56,6 +59,7 @@ export const CommentRepliesRoot = observer(
       repliedUserIds,
       lastReplyAt,
       showAccessSpecifier,
+      permissions,
     } = props;
     // states
     const [isExpanded, setIsExpanded] = useState(false);
@@ -130,6 +134,7 @@ export const CommentRepliesRoot = observer(
                   activityOperations={activityOperations}
                   showAccessSpecifier={showAccessSpecifier}
                   setIsExpanded={setIsExpanded}
+                  permissions={permissions}
                 />
               </div>
             </div>

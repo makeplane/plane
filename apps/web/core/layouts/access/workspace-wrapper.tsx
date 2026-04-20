@@ -11,29 +11,25 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useParams } from "next/navigation";
-import type { EUserPermissions } from "@plane/constants";
-import { EUserPermissionsLevel } from "@plane/constants";
+// plane imports
+import type { WorkspaceResourceKey } from "@plane/constants";
+// components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
-import { useUserPermissions } from "@/hooks/store/user";
+// hooks
+import { useWorkspaceAccess } from "@/hooks/permissions/use-workspace-access";
+
 interface IWorkspaceAuthWrapper {
   children: React.ReactNode;
-  pageKey: string;
-  allowedPermissions?: EUserPermissions[];
+  pageKey: WorkspaceResourceKey;
+  workspaceSlug: string;
 }
 
-function WorkspaceAccessWrapper({ children, ...props }: IWorkspaceAuthWrapper) {
-  const { pageKey, allowedPermissions } = props;
-  // router
-  const { workspaceSlug } = useParams();
-  // store
-  const { hasPageAccess, allowPermissions } = useUserPermissions();
-  // derived values
-  const isAuthorized = allowedPermissions
-    ? allowPermissions(allowedPermissions, EUserPermissionsLevel.WORKSPACE, workspaceSlug?.toString())
-    : hasPageAccess(workspaceSlug?.toString() ?? "", pageKey);
-  // render
-  if (!isAuthorized) return <NotAuthorizedView />;
+function WorkspaceAccessWrapper({ children, pageKey, workspaceSlug }: IWorkspaceAuthWrapper) {
+  // hooks
+  const { canAccessWorkspaceResource } = useWorkspaceAccess();
+
+  if (!canAccessWorkspaceResource(workspaceSlug, pageKey)) return <NotAuthorizedView />;
+
   return <>{children}</>;
 }
 

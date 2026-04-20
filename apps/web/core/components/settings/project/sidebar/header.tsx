@@ -21,31 +21,33 @@ import { ProjectIcon } from "@plane/propel/icons";
 import type { ICustomSearchSelectOption } from "@plane/types";
 import { CustomSearchSelect } from "@plane/ui";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useProject } from "@/hooks/store/use-project";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 // components
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { ProjectSettingsSwitcherButton } from "./project-switcher-button";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 
 type Props = {
   projectId: string;
+  workspaceSlug: string;
 };
 
 export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSidebarHeader(props: Props) {
-  const { projectId } = props;
+  const { projectId, workspaceSlug } = props;
   // router
   const router = useAppRouter();
   const pathname = usePathname();
   // store hooks
-  const { getProjectRoleByWorkspaceSlugAndProjectId } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
+  const { getCurrentUserProjectRoleSlug } = usePermissionAccess();
+  const { getProjectRoleDetailsByRoleSlug } = useRoleManagement();
   const { getPartialProjectById, joinedProjectIds } = useProject();
   // derived values
   const projectDetails = getPartialProjectById(projectId);
-  const currentProjectRole = currentWorkspace?.slug
-    ? getProjectRoleByWorkspaceSlugAndProjectId(currentWorkspace.slug, projectId)
+  const currentProjectRoleSlug = getCurrentUserProjectRoleSlug(projectId);
+  const roleDetails = currentProjectRoleSlug
+    ? getProjectRoleDetailsByRoleSlug(workspaceSlug, currentProjectRoleSlug)
     : undefined;
   // translation
 
@@ -85,15 +87,13 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
   const handleProjectChange = useCallback(
     (value: string) => {
       if (value !== projectId) {
-        const currentSection = extractSettingsSection(pathname, currentWorkspace?.slug || "", projectId);
-        const targetUrl = `/${currentWorkspace?.slug}/settings/projects/${value}/${currentSection}${currentSection ? "/" : ""}`;
+        const currentSection = extractSettingsSection(pathname, workspaceSlug, projectId);
+        const targetUrl = `/${workspaceSlug}/settings/projects/${value}/${currentSection}${currentSection ? "/" : ""}`;
         router.push(targetUrl);
       }
     },
-    [projectId, pathname, currentWorkspace?.slug, router]
+    [projectId, pathname, workspaceSlug, router]
   );
-
-  if (!currentProjectRole) return null;
 
   return (
     <div className="sticky top-0 shrink-0 bg-surface-1 pb-1.5">
@@ -102,7 +102,7 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
           variant="ghost"
           size="base"
           icon={ArrowLeft}
-          onClick={() => router.push(`/${currentWorkspace?.slug}/projects/${projectId}/issues/`)}
+          onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/issues/`)}
         />
         <p>Project settings</p>
       </div>
@@ -112,9 +112,7 @@ export const ProjectSettingsSidebarHeader = observer(function ProjectSettingsSid
           value={projectDetails?.id}
           onChange={handleProjectChange}
           customButton={
-            projectDetails ? (
-              <ProjectSettingsSwitcherButton project={projectDetails} currentProjectRole={currentProjectRole} />
-            ) : null
+            projectDetails ? <ProjectSettingsSwitcherButton project={projectDetails} roleDetails={roleDetails} /> : null
           }
           customButtonClassName="group flex items-center gap-2 py-0.5 rounded hover:bg-surface-2 transition-colors cursor-pointer"
           optionsClassName="max-w-52"

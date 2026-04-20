@@ -16,41 +16,35 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Earth } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { LockIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TTeamspaceView } from "@plane/types";
-import { EUserWorkspaceRoles, EViewAccess } from "@plane/types";
+import { EViewAccess } from "@plane/types";
 import { FavoriteStar } from "@plane/ui";
 // components
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { TeamspaceViewQuickActions } from "@/components/teamspaces/views/quick-actions";
 import { useTeamspaceViews } from "@/plane-web/hooks/store";
+// types
+import type { TTeamspaceViewItemPermissions } from "@/store/teamspace/permissions/root";
 
 type Props = {
   parentRef: React.RefObject<HTMLElement>;
   teamspaceId: string;
   view: TTeamspaceView;
+  permissions: TTeamspaceViewItemPermissions;
 };
 
 export const TeamspaceViewListItemAction = observer(function TeamspaceViewListItemAction(props: Props) {
-  const { parentRef, teamspaceId, view } = props;
+  const { parentRef, teamspaceId, view, permissions } = props;
   // router
   const { workspaceSlug } = useParams();
   // store
-  const { allowPermissions } = useUserPermissions();
   const { addViewToFavorites, removeViewFromFavorites } = useTeamspaceViews();
   const { getUserDetails } = useMember();
-  // derived values
-  const isEditingAllowed = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
   const access = view.access;
   const isFavoriteOperationAllowed = false; // TODO: Favorite operation is not supported for teamspace views right now
 
@@ -78,7 +72,7 @@ export const TeamspaceViewListItemAction = observer(function TeamspaceViewListIt
       {/* created by */}
       {<ButtonAvatars showTooltip={false} userIds={ownedByDetails?.id ?? []} />}
 
-      {isEditingAllowed && isFavoriteOperationAllowed && (
+      {permissions.canEdit && isFavoriteOperationAllowed && (
         <FavoriteStar
           onClick={(e) => {
             e.preventDefault();
@@ -96,6 +90,7 @@ export const TeamspaceViewListItemAction = observer(function TeamspaceViewListIt
             teamspaceId={teamspaceId}
             view={view}
             workspaceSlug={workspaceSlug.toString()}
+            permissions={permissions}
           />
         </div>
       )}

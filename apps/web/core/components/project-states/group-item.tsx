@@ -29,7 +29,13 @@ type TGroupItem = {
   groupedStates: Record<string, IState[]>;
   states: IState[];
   stateOperationsCallbacks: TStateOperationsCallbacks;
-  isEditable: boolean;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (stateId: string) => boolean;
+    canDelete: (stateId: string) => boolean;
+    canMarkAsDefault: (stateId: string) => boolean;
+    canDragAndDrop: (stateId: string) => boolean;
+  };
   shouldTrackEvents: boolean;
   groupItemClassName?: string;
   stateItemClassName?: string;
@@ -43,7 +49,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
     groupedStates,
     states,
     groupsExpanded,
-    isEditable,
+    permissions,
     stateOperationsCallbacks,
     shouldTrackEvents,
     groupItemClassName,
@@ -91,7 +97,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
           type="button"
           className={cn(
             "flex-shrink-0 w-6 h-6 rounded-sm flex justify-center items-center overflow-hidden transition-colors hover:bg-layer-1 cursor-pointer text-accent-primary/80 hover:text-accent-primary",
-            (!isEditable || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
+            (!permissions.canCreate || createState) && "cursor-not-allowed text-placeholder hover:text-placeholder"
           )}
           onClick={() => {
             if (!createState) {
@@ -99,7 +105,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
               setCreateState(true);
             }
           }}
-          disabled={!isEditable || createState}
+          disabled={!permissions.canCreate || createState}
         >
           <PlusIcon className="w-4 h-4" />
         </button>
@@ -108,7 +114,7 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
       {shouldShowEmptyState && (
         <div className="flex flex-col justify-center items-center h-full py-4 text-13 text-tertiary">
           <div>{t("project_settings.states.empty_state.title", { groupKey })}</div>
-          {isEditable && <div>{t("project_settings.states.empty_state.description")}</div>}
+          {permissions.canCreate && <div>{t("project_settings.states.empty_state.description")}</div>}
         </div>
       )}
 
@@ -118,15 +124,14 @@ export const GroupItem = observer(function GroupItem(props: TGroupItem) {
             groupKey={groupKey}
             groupedStates={groupedStates}
             states={states}
-            disabled={!isEditable}
+            permissions={permissions}
             stateOperationsCallbacks={stateOperationsCallbacks}
             shouldTrackEvents={shouldTrackEvents}
             stateItemClassName={stateItemClassName}
           />
         </div>
       )}
-
-      {isEditable && createState && (
+      {permissions.canCreate && createState && (
         <div className="">
           <StateCreate
             groupKey={groupKey}

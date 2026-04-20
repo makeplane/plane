@@ -399,7 +399,7 @@ INTAKE_ISSUE_CREATE_EXAMPLE = OpenApiExample(
 INTAKE_ISSUE_UPDATE_EXAMPLE = OpenApiExample(
     "IntakeIssueUpdateSerializer",
     value={
-        "status": 1,
+        "source": "form",
         "issue": {
             "name": "Updated Issue",
             "description": "Updated issue description",

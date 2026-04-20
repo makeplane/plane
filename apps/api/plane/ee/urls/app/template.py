@@ -19,7 +19,6 @@ from plane.ee.views.app.template import (
     ProjectTemplateEndpoint,
     PageTemplateEndpoint,
     PageProjectTemplateEndpoint,
-    AssetCopyEndpoint,
     TemplateCategoryEndpoint,
     CopyProjectTemplateEndpoint,
 )
@@ -81,11 +80,12 @@ urlpatterns = [
         PageProjectTemplateEndpoint.as_view(),
         name="page_project_templates",
     ),
-    path(
-        "workspaces/<str:slug>/assets/copy/",
-        AssetCopyEndpoint.as_view(),
-        name="asset_copy",
-    ),
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
+    # path(
+    #     "workspaces/<str:slug>/assets/copy/",
+    #     AssetCopyEndpoint.as_view(),
+    #     name="asset_copy",
+    # ),
     path(
         "template-categories/",
         TemplateCategoryEndpoint.as_view(),

@@ -12,8 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { E_FEATURE_FLAGS, EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import type { E_INTEGRATION_KEYS, TUserApplication } from "@plane/types";
 //assets
 import BitbucketLogo from "@/app/assets/services/bitbucket.svg?url";
@@ -27,7 +26,7 @@ import { AppList } from "@/components/marketplace";
 import type { TFeatureFlags } from "@/types/feature-flag";
 import { Link } from "react-router";
 import { getButtonStyling } from "@plane/propel/button";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useIntegrationPermissions } from "@/hooks/store/integrations/use-integration-permissions";
 
 // list all the applications
 // have tabs to filter by category
@@ -152,9 +151,9 @@ export const getInternalApps = (supportedIntegrations: E_INTEGRATION_KEYS[]): TU
 
 export const AppListRoot = observer(function AppListRoot(props: AppListProps) {
   const { supportedIntegrations, workspaceSlug } = props;
-  const { allowPermissions } = useUserPermissions();
-  const isWorkspaceAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const internalApps = getInternalApps(supportedIntegrations);
+  const { getCanCreate } = useIntegrationPermissions();
+  const canCreateIntegration = workspaceSlug ? getCanCreate(workspaceSlug) : false;
   // filter apps which has same slug as internal apps
   const apps = props.apps.filter((app) => !internalApps.some((internalApp) => internalApp.slug === app.slug));
   // update app is_owned to true if it's installed
@@ -193,7 +192,7 @@ export const AppListRoot = observer(function AppListRoot(props: AppListProps) {
             These integrations allow Plane to access external resources securely.
           </div>
         </div>
-        {isWorkspaceAdmin && (
+        {canCreateIntegration && (
           <Link to={`/${workspaceSlug}/settings/integrations/create`} className={getButtonStyling("primary", "lg")}>
             Build your own
           </Link>

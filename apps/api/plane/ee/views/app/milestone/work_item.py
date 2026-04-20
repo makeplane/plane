@@ -15,7 +15,7 @@ import json
 # Django imports
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.project import ProjectMemberPermission
+from plane.permissions import can, MilestonePermissions
 from plane.db.models import Workspace
 from django.utils import timezone
 
@@ -40,9 +40,8 @@ from plane.bgtasks.issue_activities_task import issue_activity
 class MilestoneWorkItemsEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectMemberPermission]
-
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.VIEW, resource_param="milestone_id")
     def get(self, request, slug, project_id, milestone_id):
         # Return updated work items list using serializer
         workitem_ids = MilestoneIssue.objects.filter(milestone_id=milestone_id, deleted_at__isnull=True).values_list(
@@ -59,6 +58,7 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.EDIT, resource_param="milestone_id")
     def post(self, request, slug, project_id, milestone_id):
         """Update work items in a milestone"""
         # Validate milestone exists and belongs to project
@@ -129,9 +129,8 @@ class MilestoneWorkItemsEndpoint(BaseAPIView):
 class WorkItemMilestoneEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectMemberPermission]
-
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, work_item_id):
         milestone_id = request.data.get("milestone_id")
 
@@ -221,6 +220,7 @@ class WorkItemMilestoneEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.MILESTONES)
+    @can(MilestonePermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, work_item_id):
         workspace = Workspace.objects.filter(
             slug=slug,

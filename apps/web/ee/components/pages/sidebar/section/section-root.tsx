@@ -18,13 +18,12 @@ import { Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Collapsible } from "@plane/propel/collapsible";
 // plane imports
-import { EPageAccess, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPage, TPageNavigationTabs } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { EPageStoreType, useCollection, usePageStore } from "@/plane-web/hooks/store";
 import { getLoadedSubtreePageIds } from "@/plane-web/store/pages/page-tree";
@@ -44,18 +43,19 @@ const WikiSidebarListSectionRootContent = observer(function WikiSidebarListSecti
   // navigation
   const router = useAppRouter();
   const { workspaceSlug } = useParams();
-  const { allowPermissions } = useUserPermissions();
   const { t } = useTranslation();
   // store hooks
-  const { createPage, getPageById, movePageInternally, publicPageIds, privatePageIds, archivedPageIds, sharedPageIds } =
-    usePageStore(EPageStoreType.WORKSPACE);
-  const canCreatePage = workspaceSlug
-    ? allowPermissions(
-        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        EUserPermissionsLevel.WORKSPACE,
-        workspaceSlug.toString()
-      )
-    : false;
+  const {
+    createPage,
+    getPageById,
+    movePageInternally,
+    publicPageIds,
+    privatePageIds,
+    archivedPageIds,
+    sharedPageIds,
+    getCanCreatePage,
+  } = usePageStore(EPageStoreType.WORKSPACE);
+  const canCreatePage = workspaceSlug ? getCanCreatePage(workspaceSlug.toString()) : false;
 
   // feature flag check for shared pages
   const isSharedPagesEnabled = useFlag(workspaceSlug?.toString(), "SHARED_PAGES", false);

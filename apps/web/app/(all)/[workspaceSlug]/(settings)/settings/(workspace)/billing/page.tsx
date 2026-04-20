@@ -13,13 +13,10 @@
 
 import { observer } from "mobx-react";
 // component
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web components
 import { BillingRoot } from "@/components/workspace/settings/billing";
 // local imports
@@ -30,15 +27,9 @@ import type { Route } from "./+types/page";
 function BillingSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug } = params;
   // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const canPerformWorkspaceAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Billing & Plans` : undefined;
-
-  if (workspaceUserInfo && !canPerformWorkspaceAdminActions) {
-    return <NotAuthorizedView section="settings" className="h-auto" />;
-  }
 
   return (
     <SettingsContentWrapper header={<BillingWorkspaceSettingsHeader />} hugging>

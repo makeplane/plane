@@ -15,12 +15,11 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { Gem } from "lucide-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EPillSize, ERadius, Pill } from "@plane/propel/pill";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useWorkspace } from "@/hooks/store/use-workspace";
 
 type Props = {
   variant?: "default" | "compact";
@@ -30,7 +29,6 @@ export const BusinessTrialBanner: FC<Props> = observer(({ variant = "default" })
   const { workspaceSlug } = useParams<{ workspaceSlug: string }>();
   const router = useRouter();
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
   const {
     currentWorkspaceSubscribedPlanDetail: subscriptionDetail,
     togglePaidPlanModal,
@@ -38,7 +36,10 @@ export const BusinessTrialBanner: FC<Props> = observer(({ variant = "default" })
   } = useWorkspaceSubscription();
   const isOnTrialPeriod = getIsInTrialPeriod(false);
 
-  const isWorkspaceAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const {
+    permissions: { getCanManageBilling },
+  } = useWorkspace();
+  const canManageBilling = getCanManageBilling(workspaceSlug);
 
   // Check if subscription detail is available and workspace is in an active trial period
   if (!subscriptionDetail || !isOnTrialPeriod) {
@@ -105,7 +106,7 @@ export const BusinessTrialBanner: FC<Props> = observer(({ variant = "default" })
         </div>
       </div>
 
-      {isWorkspaceAdmin && (
+      {canManageBilling && (
         <div className="flex shrink-0 gap-2.5">
           <Button variant="primary" onClick={handleStartSubscription} size="lg">
             {t("home.business_trial_banner.start_subscription")}

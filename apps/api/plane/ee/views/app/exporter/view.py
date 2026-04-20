@@ -15,7 +15,7 @@ from rest_framework import status
 
 # Module imports
 from plane.ee.views.base import BaseAPIView
-from plane.app.permissions import ROLE, allow_permission
+from plane.permissions import can, WorkitemViewPermissions, WorkspaceWorkitemViewPermissions
 from plane.db.models import ExporterHistory, IssueView, Workspace
 from plane.bgtasks.export_task import issue_export_task
 from plane.payment.flags.flag import FeatureFlag
@@ -28,13 +28,8 @@ class ProjectViewExportEndpoint(BaseAPIView):
     with filters and rich filters
     """
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ]
-    )
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
+    @can(WorkitemViewPermissions.EXPORT, resource_param="project_id")
     def post(self, request, slug, project_id, view_id):
         # Get the provider
         provider = request.data.get("provider", False)
@@ -87,13 +82,7 @@ class WorkspaceViewExportEndpoint(BaseAPIView):
     with filters and rich filters
     """
 
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ],
-        level="WORKSPACE",
-    )
+    @can(WorkspaceWorkitemViewPermissions.EXPORT, resource_param="workspace_id")
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug, view_id):
         # Get the provider
@@ -142,13 +131,7 @@ class WorkspaceViewExportEndpoint(BaseAPIView):
 
 
 class WorkspaceWorkItemExportEndpoint(BaseAPIView):
-    @allow_permission(
-        [
-            ROLE.ADMIN,
-            ROLE.MEMBER,
-        ],
-        level="WORKSPACE",
-    )
+    @can(WorkspaceWorkitemViewPermissions.EXPORT, resource_param="workspace_id")
     @check_feature_flag(FeatureFlag.ADVANCED_EXPORTS)
     def post(self, request, slug):
         provider = request.data.get("provider", False)

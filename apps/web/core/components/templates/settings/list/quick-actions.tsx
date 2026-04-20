@@ -57,7 +57,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
   const { t } = useTranslation();
   // derived values
   const template = getTemplateById(templateId);
-  const isAnyActionAllowed = template?.canCurrentUserEditTemplate || template?.canCurrentUserDeleteTemplate;
+  const isAnyActionAllowed = template?.canEdit || template?.canDelete || template?.canPublish || template?.canUnpublish;
   if (!template || !isAnyActionAllowed) return null;
 
   const handleEditTemplate = () => {
@@ -151,7 +151,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       title: t("common.actions.edit"),
       icon: EditIcon,
       action: handleEditTemplate,
-      shouldRender: template.canCurrentUserEditTemplate,
+      shouldRender: template.canEdit,
     },
     {
       key: "publish",
@@ -160,7 +160,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       }),
       icon: Earth,
       action: handlePublishTemplate,
-      shouldRender: template.canCurrentUserPublishTemplate,
+      shouldRender: template.canPublish,
     },
     {
       key: "unpublish",
@@ -169,7 +169,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       action: () => {
         setIsUnpublishModalOpen(true);
       },
-      shouldRender: template.canCurrentUserUnpublishTemplate,
+      shouldRender: template.canUnpublish,
       className: "text-danger-primary",
     },
     {
@@ -179,7 +179,7 @@ export const TemplateQuickActions = observer(function TemplateQuickActions<T ext
       },
       title: t("common.actions.delete"),
       icon: TrashIcon,
-      shouldRender: template.canCurrentUserDeleteTemplate,
+      shouldRender: template.canDelete,
       className: "text-danger-primary",
     },
   ];

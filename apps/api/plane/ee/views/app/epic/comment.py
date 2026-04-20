@@ -24,14 +24,11 @@ from rest_framework import status
 # Module imports
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers import EpicCommentSerializer
-from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import IssueComment, ProjectMember, Project, Issue
+from plane.permissions import can, CommentPermissions, ResourceType
+from plane.db.models import IssueComment, ProjectMember
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.ee.utils.check_user_teamspace_member import (
-    check_if_current_user_is_teamspace_member,
-)
 
 
 class EpicCommentViewSet(BaseViewSet):
@@ -69,27 +66,9 @@ class EpicCommentViewSet(BaseViewSet):
 
         return queryset
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(CommentPermissions.CREATE, resource_param="epic_id", scope_param_type=ResourceType.EPIC)
     @check_feature_flag(FeatureFlag.EPICS)
     def create(self, request, slug, project_id, epic_id):
-        project = Project.objects.get(pk=project_id)
-        epic = Issue.objects.get(pk=epic_id)
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not epic.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            return Response(
-                {"error": "You are not allowed to comment on the epic"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
         serializer = EpicCommentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=epic_id, actor=request.user)
@@ -107,7 +86,7 @@ class EpicCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
+    @can(CommentPermissions.EDIT, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
     def partial_update(self, request, slug, project_id, epic_id, pk):
         epic_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk)
@@ -134,7 +113,7 @@ class EpicCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=IssueComment)
+    @can(CommentPermissions.DELETE, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, epic_id, pk):
         epic_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk)

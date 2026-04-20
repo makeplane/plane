@@ -28,12 +28,14 @@ export type TCustomAutomationsRootProps = {
 
 export const CustomAutomationsRoot = observer(function CustomAutomationsRoot(props: TCustomAutomationsRootProps) {
   const { projectId, workspaceSlug } = props;
+  // plane hooks
+  const { t } = useTranslation();
   // store hooks
   const {
-    projectAutomations: { isAnyAutomationAvailableForProject, canCurrentUserCreateAutomation },
+    projectAutomations: { isAnyAutomationAvailableForProject, getCanCreateAutomation },
   } = useAutomations();
-  // translation
-  const { t } = useTranslation();
+  // derived values
+  const canCreateAutomation = getCanCreateAutomation(workspaceSlug, projectId);
 
   return (
     <WithFeatureFlagHOC flag="PROJECT_AUTOMATIONS" fallback={<></>} workspaceSlug={workspaceSlug}>
@@ -41,7 +43,7 @@ export const CustomAutomationsRoot = observer(function CustomAutomationsRoot(pro
         <div className="flex flex-col items-start gap-1">
           <h4 className="text-14 font-medium">{t("automations.settings.title")}</h4>
         </div>
-        {isAnyAutomationAvailableForProject(projectId) && canCurrentUserCreateAutomation && <CreateAutomationButton />}
+        {isAnyAutomationAvailableForProject(projectId) && canCreateAutomation && <CreateAutomationButton />}
       </div>
       <AutomationsListRoot projectId={projectId} />
     </WithFeatureFlagHOC>

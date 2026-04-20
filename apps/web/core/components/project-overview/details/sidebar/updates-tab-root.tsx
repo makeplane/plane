@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { Loader } from "@plane/ui";
@@ -52,10 +51,10 @@ export const ProjectOverviewSidebarUpdatesRoot = observer(function ProjectOvervi
           <Loader.Item height="125px" width="100%" />
         </Loader>
       ) : !isProjectUpdatesEnabled ? (
-        <UpgradeUpdates workspaceSlug={workspaceSlug.toString()} projectId={project.id} />
+        <UpgradeUpdates workspaceSlug={workspaceSlug} projectId={project.id} />
       ) : (
         <div className="flex flex-col gap-3 h-full w-full px-6 pb-6 overflow-y-auto">
-          <ProjectUpdates />
+          <ProjectUpdates workspaceSlug={workspaceSlug} projectId={projectId} />
         </div>
       )}
     </>

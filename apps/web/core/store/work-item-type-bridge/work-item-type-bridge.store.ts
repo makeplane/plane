@@ -66,7 +66,10 @@ export class WorkItemTypeBridgeStore implements IIssueTypesStore {
   private isNewSystemActive(workspaceSlug: string): boolean {
     return (
       this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false) &&
-      this.rootStore.workspaceFeatures.isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED)
+      this.rootStore.workspaceFeatures.isWorkspaceFeatureEnabled(
+        workspaceSlug,
+        EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED
+      )
     );
   }
 

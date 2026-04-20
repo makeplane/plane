@@ -40,10 +40,19 @@ type Props = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
+  permissions: {
+    canEdit: boolean;
+    canSubscribe: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDuplicate: boolean;
+    canConvertToEpic: boolean;
+  };
 };
 
 export const IssueDetailQuickActions = observer(function IssueDetailQuickActions(props: Props) {
-  const { workspaceSlug, projectId, issueId } = props;
+  const { workspaceSlug, projectId, issueId, permissions } = props;
   const { t } = useTranslation();
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -152,13 +161,18 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
             />
           )}
           {currentUser && !issue?.archived_at && (
-            <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
+            <IssueSubscription
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              issueId={issueId}
+              canSubscribe={permissions.canSubscribe}
+            />
           )}
           <WithFeatureFlagHOC workspaceSlug={workspaceSlug?.toString()} flag="WORK_ITEM_CONVERSION" fallback={<></>}>
             <ConvertWorkItemAction
               workItemId={issue?.id}
               conversionType={EWorkItemConversionType.EPIC}
-              disabled={!!issue?.archived_at}
+              canConvert={permissions.canConvertToEpic}
             />
           </WithFeatureFlagHOC>
           <div className="flex flex-wrap items-center gap-2 text-tertiary">
@@ -182,6 +196,7 @@ export const IssueDetailQuickActions = observer(function IssueDetailQuickActions
               handleDelete={handleDeleteIssue}
               handleArchive={handleArchiveIssue}
               handleRestore={handleRestore}
+              permissions={permissions}
             />
           </div>
         </div>

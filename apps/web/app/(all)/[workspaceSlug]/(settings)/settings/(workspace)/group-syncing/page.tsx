@@ -15,16 +15,13 @@ import { redirect } from "react-router";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { GroupSyncingRoot } from "@/components/group-syncing/root";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // store
 import { store } from "@/lib/store-context";
 // local imports
@@ -57,18 +54,12 @@ const GroupSyncingSettingsPage = observer(function GroupSyncingSettingsPage({ pa
   // router
   const { workspaceSlug } = params;
   // hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
-  const { currentWorkspace } = useWorkspace();
-
+  const { getWorkspaceBySlug } = useWorkspace();
+  // plane hooks
   const { t } = useTranslation();
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
+  const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Group syncing` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-
-  if (!currentWorkspace?.id) return <></>;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   return (
     <SettingsContentWrapper header={<GroupSyncingWorkspaceSettingsHeader />} hugging>

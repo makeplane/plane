@@ -39,9 +39,14 @@ type Props = {
   handleEdit: (label: ReleaseLabel) => void;
   handleDelete: (label: ReleaseLabel) => void;
   dragHandleRef: MutableRefObject<HTMLButtonElement | null>;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canReorder: boolean;
+  };
 };
 
-export function ReleaseLabelBlock({ label, isDragging, handleEdit, handleDelete, dragHandleRef }: Props) {
+export function ReleaseLabelBlock({ label, isDragging, handleEdit, handleDelete, dragHandleRef, permissions }: Props) {
   const [isMenuActive, setIsMenuActive] = useState(false);
   const actionSectionRef = useRef<HTMLDivElement | null>(null);
   const { t } = useTranslation();
@@ -52,59 +57,67 @@ export function ReleaseLabelBlock({ label, isDragging, handleEdit, handleDelete,
     {
       CustomIcon: EditIcon,
       onClick: handleEdit,
-      isVisible: true,
+      isVisible: permissions.canEdit,
       text: t("releases.settings.labels.actions.edit"),
       key: "edit_label",
     },
     {
       CustomIcon: TrashIcon,
       onClick: handleDelete,
-      isVisible: true,
+      isVisible: permissions.canDelete,
       text: t("releases.settings.labels.actions.delete"),
       key: "delete_label",
     },
   ];
 
+  const isAnyPermissionAvailable = permissions.canDelete || permissions.canEdit || permissions.canReorder;
+
   return (
     <div className="group flex items-center relative">
       <div className="flex items-center">
-        <DragHandle
-          className={cn("opacity-0 group-hover:opacity-100", { "opacity-100": isDragging })}
-          ref={dragHandleRef}
-          aria-label={t("releases.settings.labels.drag_to_reorder")}
-        />
+        {permissions.canReorder && (
+          <DragHandle
+            className={cn("opacity-0 group-hover:opacity-100", { "opacity-100": isDragging })}
+            ref={dragHandleRef}
+            aria-label={t("releases.settings.labels.drag_to_reorder")}
+          />
+        )}
         <ReleaseLabelName color={label.color} name={label.name} />
       </div>
 
-      <div
-        ref={actionSectionRef}
-        className={cn("absolute right-2.5 flex items-center gap-2", {
-          "opacity-100": isMenuActive,
-          "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100": !isMenuActive,
-        })}
-      >
-        <div className="py-0.5">
-          <button
-            className="flex size-5 items-center justify-center rounded-sm hover:bg-layer-1"
-            onClick={() => handleEdit(label)}
-          >
-            <EditIcon className="size-3.5 flex-shrink-0 text-tertiary" />
-          </button>
-        </div>
-        <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
-          {menuItems.map(
-            ({ isVisible, onClick, CustomIcon, text, key }) =>
-              isVisible && (
-                <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
-                  <span className="flex items-center justify-start gap-2">
-                    <CustomIcon className="size-4" />
-                    <span>{text}</span>
-                  </span>
-                </CustomMenu.MenuItem>
-              )
+      {isAnyPermissionAvailable && (
+        <div
+          ref={actionSectionRef}
+          className={cn("absolute right-2.5 flex items-center gap-2", {
+            "opacity-100": isMenuActive,
+            "opacity-0 group-hover:pointer-events-auto group-hover:opacity-100": !isMenuActive,
+          })}
+        >
+          {permissions.canEdit && (
+            <div className="py-0.5">
+              <button
+                className="flex size-5 items-center justify-center rounded-sm hover:bg-layer-1"
+                onClick={() => handleEdit(label)}
+              >
+                <EditIcon className="size-3.5 flex-shrink-0 text-tertiary" />
+              </button>
+            </div>
           )}
-        </CustomMenu>
-      </div>
+          <CustomMenu ellipsis menuButtonOnClick={() => setIsMenuActive(!isMenuActive)} useCaptureForOutsideClick>
+            {menuItems.map(
+              ({ isVisible, onClick, CustomIcon, text, key }) =>
+                isVisible && (
+                  <CustomMenu.MenuItem key={key} onClick={() => onClick(label)}>
+                    <span className="flex items-center justify-start gap-2">
+                      <CustomIcon className="size-4" />
+                      <span>{text}</span>
+                    </span>
+                  </CustomMenu.MenuItem>
+                )
+            )}
+          </CustomMenu>
+        </div>
+      )}
     </div>
   );
 }

@@ -12,12 +12,10 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 // components
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
-import { EUserProjectRoles } from "@plane/types";
 import { ContentWrapper, Row, ERowVariant } from "@plane/ui";
 // components
 import { ListLayout } from "@/components/core/list";
@@ -29,11 +27,19 @@ import { TimelineLayoutLoader } from "@/components/ui/loader/layouts/timeline-la
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useModule } from "@/hooks/store/use-module";
 import { useModuleFilter } from "@/hooks/store/use-module-filter";
-import { useUserPermissions } from "@/hooks/store/user";
 
-export const ModulesListView = observer(function ModulesListView() {
+export type TModulesListViewProps = {
+  workspaceSlug: string;
+  projectId: string;
+  permissions: {
+    canCreate: boolean;
+    canEdit: (moduleId: string) => boolean;
+  };
+};
+
+export const ModulesListView = observer(function ModulesListView(props: TModulesListViewProps) {
+  const { workspaceSlug, projectId, permissions } = props;
   // router
-  const { workspaceSlug, projectId } = useParams();
   const searchParams = useSearchParams();
   const peekModule = searchParams.get("peekModule");
   // plane hooks
@@ -42,14 +48,9 @@ export const ModulesListView = observer(function ModulesListView() {
   const { toggleCreateModuleModal } = useCommandPalette();
   const { getProjectModuleIds, getFilteredModuleIds, loader } = useModule();
   const { currentProjectDisplayFilters: displayFilters } = useModuleFilter();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const projectModuleIds = projectId ? getProjectModuleIds(projectId.toString()) : undefined;
   const filteredModuleIds = projectId ? getFilteredModuleIds(projectId.toString()) : undefined;
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   if (loader || !projectModuleIds || !filteredModuleIds)
     return (
@@ -70,7 +71,7 @@ export const ModulesListView = observer(function ModulesListView() {
           {
             label: t("project_empty_state.modules.cta_primary"),
             onClick: () => toggleCreateModuleModal(true),
-            disabled: !canPerformEmptyStateActions,
+            disabled: !permissions.canCreate,
             variant: "primary",
           },
         ]}
@@ -105,7 +106,13 @@ export const ModulesListView = observer(function ModulesListView() {
             } auto-rows-max transition-all vertical-scrollbar scrollbar-lg`}
           >
             {filteredModuleIds.map((moduleId) => (
-              <ModuleCardItem key={moduleId} moduleId={moduleId} />
+              <ModuleCardItem
+                key={moduleId}
+                moduleId={moduleId}
+                permissions={{
+                  canEdit: permissions.canEdit(moduleId),
+                }}
+              />
             ))}
           </Row>
         )}

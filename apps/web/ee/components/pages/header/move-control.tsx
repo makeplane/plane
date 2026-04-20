@@ -16,14 +16,11 @@ import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { FolderOutput } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Tooltip } from "@plane/propel/tooltip";
 import { IconButton } from "@plane/propel/icon-button";
-import { EUserWorkspaceRoles } from "@plane/types";
 // core imports
 import type { TPageMoveControlProps } from "@/ce/components/pages/header/move-control";
-import { useUserPermissions } from "@/hooks/store/user";
-import { useCollection, useFlag, useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { EPageStoreType, useCollection, useFlag, usePageStore, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 // plane web hooks
 import { usePageFlag } from "@/plane-web/hooks/use-page-flag";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
@@ -44,14 +41,10 @@ export const PageMoveControl = observer(function PageMoveControl(props: TPageMov
   });
   const collectionStore = useCollection();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
-  const { allowPermissions } = useUserPermissions();
+  const { getCanCreatePage } = usePageStore(EPageStoreType.WORKSPACE);
   const isWikiEnabled = useFlag(workspaceSlug?.toString() ?? "", "WORKSPACE_PAGES");
-  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
-  const canCreateWikiPage = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug?.toString()
-  );
+  const isTeamspacesEnabled = isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
+  const canCreateWikiPage = workspaceSlug ? getCanCreatePage(workspaceSlug) : false;
   const canPageBeMovedToWiki =
     !!workspaceSlug &&
     !!(projectId || teamspaceId) &&

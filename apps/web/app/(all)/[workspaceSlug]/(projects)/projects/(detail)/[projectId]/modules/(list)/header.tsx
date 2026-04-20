@@ -12,9 +12,8 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams } from "react-router";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
@@ -26,10 +25,10 @@ import { ModuleViewHeader } from "@/components/modules";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
+import { useModule } from "@/hooks/store/use-module";
 
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
@@ -37,27 +36,22 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
   const { workspaceSlug, projectId } = useParams();
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
-
+  const { permissions } = useModule();
   const { loader } = useProject();
-
+  // translation
   const { t } = useTranslation();
-
   // auth
-  const canUserCreateModule = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const canUserCreateModule =
+    !!workspaceSlug && !!projectId && permissions.getCanCreateModule(workspaceSlug, projectId);
+
+  if (!workspaceSlug || !projectId) return null;
 
   return (
     <Header>
       <Header.LeftItem>
         <div>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <ProjectBreadcrumbWithPreference
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
-            />
+            <ProjectBreadcrumbWithPreference workspaceSlug={workspaceSlug} projectId={projectId} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink

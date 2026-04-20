@@ -28,7 +28,7 @@ from plane.api.serializers import (
     ProjectWorklogSummarySerializer,
 )
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkitemPermissions
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 
 # OpenAPI imports
@@ -68,7 +68,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.EDIT, resource_param="issue_id")
     def post(self, request, slug, project_id, issue_id):
         """Create worklog entry
 
@@ -102,7 +102,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.EDIT, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id):
         """List issue worklogs
 
@@ -141,7 +141,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.EDIT, resource_param="issue_id")
     def patch(self, request, slug, project_id, issue_id, pk):
         """Update worklog entry
 
@@ -174,7 +174,7 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.EDIT, resource_param="issue_id")
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete worklog entry
 
@@ -220,7 +220,7 @@ class ProjectWorklogAPIEndpoint(BaseAPIView):
         },
     )
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def get(self, request, slug, project_id):
         """Get project worklog summary
 

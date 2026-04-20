@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 from plane.ee.models.issue import Issue
 from plane.ee.models.customer import CustomerRequestIssue, CustomerRequest
 
@@ -31,9 +31,8 @@ from plane.ee.models.customer import CustomerRequestIssue, CustomerRequest
 class CustomerIssueSearchEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, customer_id):
         query = request.query_params.get("search", None)
         customer_request_id = request.query_params.get("customer_request_id", None)

@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { SquareStackIcon } from "lucide-react";
@@ -40,11 +39,17 @@ import { WorkspaceDraftIssueQuickActions } from "./quick-action";
 type Props = {
   workspaceSlug: string;
   issueId: string;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canMoveToProject: (projectId: string) => boolean;
+    canDuplicate: boolean;
+  };
 };
 
 export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
   // props
-  const { workspaceSlug, issueId } = props;
+  const { workspaceSlug, issueId, permissions } = props;
   // states
   const [moveToIssue, setMoveToIssue] = useState(false);
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
@@ -79,6 +84,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
       },
+      disabled: !permissions.canEdit,
     },
     {
       key: "make-a-copy",
@@ -87,6 +93,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
       action: () => {
         setCreateUpdateIssueModal(true);
       },
+      disabled: !permissions.canDuplicate,
     },
     {
       key: "move-to-issues",
@@ -97,6 +104,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         setIssueToEdit(issue);
         setCreateUpdateIssueModal(true);
       },
+      disabled: issue.project_id ? !permissions.canMoveToProject(issue.project_id) : true,
     },
     {
       key: "delete",
@@ -105,6 +113,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
       action: () => {
         setDeleteIssueModal(true);
       },
+      disabled: !permissions.canDelete,
     },
   ];
 
@@ -115,6 +124,7 @@ export const DraftIssueBlock = observer(function DraftIssueBlock(props: Props) {
         isOpen={deleteIssueModal}
         handleClose={() => setDeleteIssueModal(false)}
         onSubmit={async () => deleteIssue(workspaceSlug, issueId)}
+        canDelete={permissions.canDelete}
       />
       <CreateUpdateIssueModal
         isOpen={createUpdateIssueModal}

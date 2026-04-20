@@ -16,28 +16,16 @@ import Link from "next/link";
 import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
 import { getRecurringWorkItemSettingsPath } from "@plane/utils";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import type { Route } from "./+types/layout";
 import { RecurringWorkItemsProjectSettingsHeader } from "../header";
 
 function RecurringWorkItemsDetailsLayout({ params }: Route.ComponentProps) {
   // router params
   const { workspaceSlug, projectId } = params;
-  // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-  // derived values
-  const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-
-  if (workspaceUserInfo && !hasAdminPermission) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
 
   return (
     <SettingsContentWrapper header={<RecurringWorkItemsProjectSettingsHeader />}>

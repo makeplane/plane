@@ -15,17 +15,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";
 import { Switch } from "@plane/propel/switch";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // components
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { WorkspaceProjectStatesUpgrade, WorkspaceProjectStatesRoot } from "@/components/workspace-project-states";
@@ -56,18 +53,17 @@ function ProjectsSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [activeTab, setActiveTab] = useState<TProjectTab>("states");
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
   const isProjectGroupingEnabled = useFlag(workspaceSlug, "PROJECT_GROUPING");
   const isLabelsFeatureEnabled = useFlag(workspaceSlug, "WORKSPACE_PROJECT_LABELS");
   const { t } = useTranslation();
-
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Projects` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const isProjectGroupingWorkspaceEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
+  const isProjectGroupingWorkspaceEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED
+  );
 
   const toggleProjectGroupingFeature = async () => {
     const willEnableProjectGrouping = !isProjectGroupingWorkspaceEnabled;
@@ -81,9 +77,7 @@ function ProjectsSettingsPage({ params }: Route.ComponentProps) {
     }
   };
 
-  if (!currentWorkspace?.id) return <></>;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
+  if (!currentWorkspace?.id) return null;
 
   // Render project states content
   const renderProjectStatesContent = () => (
@@ -177,7 +171,7 @@ function ProjectsSettingsPage({ params }: Route.ComponentProps) {
 
           {activeTab === "labels" && (
             <div className="pt-6">
-              <WorkspaceProjectLabelsRoot workspaceSlug={workspaceSlug} workspaceId={currentWorkspace.id} />
+              <WorkspaceProjectLabelsRoot workspaceSlug={workspaceSlug} />
             </div>
           )}
         </div>

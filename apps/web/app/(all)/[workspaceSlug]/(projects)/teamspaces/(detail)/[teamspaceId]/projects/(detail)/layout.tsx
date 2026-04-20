@@ -17,10 +17,21 @@ import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { TeamspaceProjectDetailHeader } from "./header";
 
-export default function TeamspaceProjectDetailLayout() {
+type TeamspaceProjectDetailLayoutProps = {
+  workspaceSlug: string;
+  teamspaceId: string;
+  projectId: string;
+};
+
+export default function TeamspaceProjectDetailLayout(props: TeamspaceProjectDetailLayoutProps) {
+  const { workspaceSlug, teamspaceId, projectId } = props;
   return (
     <>
-      <AppHeader header={<TeamspaceProjectDetailHeader />} />
+      <AppHeader
+        header={
+          <TeamspaceProjectDetailHeader workspaceSlug={workspaceSlug} teamspaceId={teamspaceId} projectId={projectId} />
+        }
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

@@ -57,7 +57,11 @@ from plane.ee.utils.workspace_feature import (
     check_workspace_feature,
 )
 from plane.ee.bgtasks.project_activites_task import project_activity
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import (
+    can,
+    WorkspaceProjectTemplatePermissions,
+)
+from plane.app.permissions import ROLE
 from plane.utils.url import is_valid_url
 from plane.utils.uuid import is_valid_uuid
 from plane.settings.storage import S3Storage
@@ -201,8 +205,8 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
             return project
         return project
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
     @check_feature_flag(FeatureFlag.PROJECT_TEMPLATES)
+    @can(WorkspaceProjectTemplatePermissions.USE)
     def post(self, request, slug):
         try:
             # get template id
@@ -308,7 +312,6 @@ class ProjectTemplateUseEndpoint(BaseAPIView):
                 project.page_view = project_template.page_view
                 project.intake_view = project_template.intake_view
                 project.is_time_tracking_enabled = project_template.is_time_tracking_enabled
-                project.guest_view_all_features = project_template.guest_view_all_features
 
                 project = self.handle_project_asset(project=project, project_template=project_template, request=request)
                 project.save()

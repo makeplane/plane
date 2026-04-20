@@ -15,7 +15,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller, useWatch } from "react-hook-form";
-import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ParentPropertyIcon } from "@plane/propel/icons";
 // types
@@ -37,7 +37,6 @@ import { IssueLabelSelect } from "@/components/issues/select";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
@@ -75,17 +74,14 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   // store hooks
   const { t } = useTranslation();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
-  const { getProjectById } = useProject();
+  const { getProjectById, permissions: projectPermissions } = useProject();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const projectDetails = getProjectById(projectId);
+  const canCreateLabel = projectId && projectPermissions.getCanManageLabels(workspaceSlug, projectId);
   const typeId = useWatch({ control, name: "type_id" });
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
-
-  const canCreateLabel =
-    projectId && allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
 
   const minDate = getDate(startDate);
   minDate?.setDate(minDate.getDate());

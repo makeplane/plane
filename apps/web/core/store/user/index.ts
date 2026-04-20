@@ -14,16 +14,14 @@
 import { set } from "lodash-es";
 import { action, makeObservable, observable, runInAction, computed } from "mobx";
 // plane imports
-import { EUserPermissions, API_BASE_URL } from "@plane/constants";
-import type { IUser, TUserPermissions } from "@plane/types";
+import { API_BASE_URL } from "@plane/constants";
+import type { IUser } from "@plane/types";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
 // services
 import { AuthService } from "@/services/auth.service";
 import { UserService } from "@/services/user.service";
 // stores
-import type { IUserPermissionStore } from "@/store/user/permissions.store";
-import { UserPermissionStore } from "@/store/user/permissions.store";
 import type { IAccountStore } from "@/store/user/account.store";
 import type { IUserProfileStore } from "@/store/user/profile.store";
 import { ProfileStore } from "@/store/user/profile.store";
@@ -46,7 +44,6 @@ export interface IUserStore {
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore>;
-  permission: IUserPermissionStore;
   // computed
   preferredWorkspaceSlug: string | undefined;
   // actions
@@ -59,9 +56,6 @@ export interface IUserStore {
   ) => Promise<IUser | undefined>;
   reset: () => void;
   signOut: () => Promise<void>;
-  // computed
-  canPerformAnyCreateAction: boolean;
-  projectsWithCreatePermissions: { [projectId: string]: number } | null;
 }
 
 export class UserStore implements IUserStore {
@@ -74,7 +68,6 @@ export class UserStore implements IUserStore {
   userProfile: IUserProfileStore;
   userSettings: IUserSettingsStore;
   accounts: Record<string, IAccountStore> = {};
-  permission: IUserPermissionStore;
   // service
   userService: UserService;
   authService: AuthService;
@@ -83,7 +76,6 @@ export class UserStore implements IUserStore {
     // stores
     this.userProfile = new ProfileStore(store);
     this.userSettings = new UserSettingsStore();
-    this.permission = new UserPermissionStore(store);
     // service
     this.userService = new UserService();
     this.authService = new AuthService();
@@ -98,7 +90,6 @@ export class UserStore implements IUserStore {
       userProfile: observable,
       userSettings: observable,
       accounts: observable,
-      permission: observable,
       // computed
       preferredWorkspaceSlug: computed,
       // actions
@@ -108,9 +99,6 @@ export class UserStore implements IUserStore {
       changePassword: action,
       reset: action,
       signOut: action,
-      // computed
-      canPerformAnyCreateAction: computed,
-      projectsWithCreatePermissions: computed,
     });
   }
 
@@ -238,7 +226,6 @@ export class UserStore implements IUserStore {
       this.data = undefined;
       this.userProfile = new ProfileStore(this.store);
       this.userSettings = new UserSettingsStore();
-      this.permission = new UserPermissionStore(this.store);
     });
   };
 
@@ -250,44 +237,4 @@ export class UserStore implements IUserStore {
     await this.authService.signOut(API_BASE_URL);
     this.store.resetOnSignOut();
   };
-
-  // helper actions
-  /**
-   * @description fetches the projects with write permissions
-   * @returns {{[projectId: string]: number} || null}
-   */
-  fetchProjectsWithCreatePermissions = (): { [key: string]: TUserPermissions } => {
-    const { workspaceSlug } = this.store.router;
-
-    const allWorkspaceProjectRoles = this.permission.getProjectRolesByWorkspaceSlug(workspaceSlug || "");
-
-    const userPermissions =
-      (allWorkspaceProjectRoles &&
-        Object.keys(allWorkspaceProjectRoles)
-          .filter((key) => allWorkspaceProjectRoles[key] >= EUserPermissions.MEMBER)
-          .reduce(
-            (res: { [projectId: string]: number }, key: string) => ((res[key] = allWorkspaceProjectRoles[key]), res),
-            {}
-          )) ||
-      null;
-
-    return userPermissions;
-  };
-
-  /**
-   * @description returns projects where user has permissions
-   * @returns {{[projectId: string]: number} || null}
-   */
-  get projectsWithCreatePermissions() {
-    return this.fetchProjectsWithCreatePermissions();
-  }
-
-  /**
-   * @description returns true if user has permissions to write in any project
-   * @returns {boolean}
-   */
-  get canPerformAnyCreateAction() {
-    const filteredProjects = this.fetchProjectsWithCreatePermissions();
-    return filteredProjects ? Object.keys(filteredProjects).length > 0 : false;
-  }
 }

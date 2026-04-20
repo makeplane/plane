@@ -31,7 +31,7 @@ from plane.payment.utils.workspace_license_request import (
     is_on_trial,
 )
 from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
-from plane.db.models.workspace import ROLE
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
 
 
 class SubscriptionEndpoint(BaseAPIView):
@@ -154,18 +154,18 @@ class PurchaseSubscriptionSeatEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     is_active=True,
                     member__is_bot=False,
-                    role=ROLE.GUEST.value,
+                    role_ref__slug__in=list(UNPAID_ROLE_SLUGS),
                 ).count(),
             )
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug, is_active=True, member__is_bot=False, role__gte=ROLE.MEMBER.value
-            ).count()
+                workspace__slug=slug, is_active=True, member__is_bot=False,
+            ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug, role__gte=ROLE.MEMBER.value
-            ).count()
+                workspace__slug=slug,
+            ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
             # Check if the quantity is less than the active paid users in the workspace
             if quantity < (workspace_member_count + invited_member_count):
@@ -260,12 +260,12 @@ class RemoveUnusedSeatsEndpoint(BaseAPIView):
 
             # Check the active paid users in the workspace
             workspace_member_count = WorkspaceMember.objects.filter(
-                workspace__slug=slug, is_active=True, member__is_bot=False, role__gte=ROLE.MEMBER.value
-            ).count()
+                workspace__slug=slug, is_active=True, member__is_bot=False,
+            ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
             invited_member_count = WorkspaceMemberInvite.objects.filter(
-                workspace__slug=slug, role__gte=ROLE.MEMBER.value
-            ).count()
+                workspace__slug=slug,
+            ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
             # Fetch the workspace subcription
             workspace_license = WorkspaceLicense.objects.filter(workspace=workspace).first()

@@ -14,7 +14,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // components
@@ -22,19 +21,29 @@ import { PageHead } from "@/components/core/page-title";
 import { DownloadActivityButton } from "@/components/profile/activity/download-button";
 import { WorkspaceActivityListPage } from "@/components/profile/activity/workspace-activity-list";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+// types
+import type { Route } from "./+types/page";
 
 const PER_PAGE = 100;
 
-function ProfileActivityPage() {
+function ProfileActivityPage({ params }: Route.ComponentProps) {
+  // router
+  const { workspaceSlug } = params;
   // states
   const [pageCount, setPageCount] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [resultsCount, setResultsCount] = useState(0);
-  // router
-  const { allowPermissions } = useUserPermissions();
-  //hooks
+  // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const { can } = usePermissionAccess();
+  // derived values
+  const canDownloadActivity = can({
+    resource: "workspace_user_activity",
+    action: "export",
+    workspaceSlug,
+  });
 
   const updateTotalPages = (count: number) => setTotalPages(count);
 
@@ -53,11 +62,6 @@ function ProfileActivityPage() {
         updateTotalPages={updateTotalPages}
       />
     );
-
-  const canDownloadActivity = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   return (
     <>

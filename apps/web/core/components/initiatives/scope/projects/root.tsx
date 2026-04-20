@@ -15,25 +15,32 @@ import { observer } from "mobx-react";
 import { useEffect } from "react";
 // plane imports
 import { EIssueLayoutTypes } from "@plane/types";
-// components
-import { InitiativeScopeProjectFiltersRow } from "./filters";
+// hooks
+import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+// types
+import type { ProjectItemPermissions, TProjectProperty } from "@/store/project/permissions/root";
 // local imports
+import { InitiativeScopeProjectFiltersRow } from "./filters";
 import { InitiativeScopeProjectBoard } from "./board/root";
 import { InitiativeScopeProjectList } from "./list";
 import { InitiativeScopeProjectTimeline } from "./timeline";
-// plane web imports
-import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canRemoveProject: boolean;
+    canDragAndDropProject: boolean;
+    getProjectItemPermissions: (projectId: string) => ProjectItemPermissions;
+    canEditProject: (projectId: string) => boolean;
+    canEditProjectProperty: (projectId: string, property: TProjectProperty) => boolean;
+  };
   handleAddEpic: () => void;
   handleAddProject: () => void;
 };
 
 export const InitiativeScopeProjectsRoot = observer(function InitiativeScopeProjectsRoot(props: Props) {
-  const { workspaceSlug, initiativeId, disabled, handleAddEpic, handleAddProject } = props;
+  const { workspaceSlug, initiativeId, permissions, handleAddEpic, handleAddProject } = props;
 
   // store hooks
   const {
@@ -73,7 +80,7 @@ export const InitiativeScopeProjectsRoot = observer(function InitiativeScopeProj
             projectIds={projectIds}
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
-            disabled={disabled}
+            permissions={permissions}
             isDataLoading={isDataLoading}
           />
         ) : activeLayout === EIssueLayoutTypes.KANBAN ? (
@@ -81,7 +88,7 @@ export const InitiativeScopeProjectsRoot = observer(function InitiativeScopeProj
             projectIds={projectIds}
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
-            disabled={disabled}
+            permissions={permissions}
             isDataLoading={isDataLoading}
             groupBy={projectGroupBy}
           />
@@ -90,7 +97,7 @@ export const InitiativeScopeProjectsRoot = observer(function InitiativeScopeProj
             projectIds={projectIds}
             workspaceSlug={workspaceSlug}
             initiativeId={initiativeId}
-            disabled={disabled}
+            permissions={permissions}
             isDataLoading={isDataLoading}
             handleAddEpic={handleAddEpic}
             handleAddProject={handleAddProject}

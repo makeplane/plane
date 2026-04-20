@@ -27,7 +27,7 @@ from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import EpicAttachmentSerializer
 from plane.db.models import FileAsset, Workspace
 from plane.bgtasks.issue_activities_task import issue_activity
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, AttachmentPermissions, ResourceType
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -41,7 +41,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
     serializer_class = EpicAttachmentSerializer
     model = FileAsset
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(AttachmentPermissions.CREATE, resource_param="project_id", scope_param_type=ResourceType.PROJECT)
     @check_feature_flag(FeatureFlag.EPICS)
     def post(self, request, slug, project_id, epic_id):
         name = request.data.get("name")
@@ -99,7 +99,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
-    @allow_permission([ROLE.ADMIN], creator=True, model=FileAsset)
+    @can(AttachmentPermissions.DELETE, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
     def delete(self, request, slug, project_id, epic_id, pk):
         epic_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
@@ -121,7 +121,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(AttachmentPermissions.VIEW, resource_param="project_id", scope_param_type=ResourceType.PROJECT)
     @check_feature_flag(FeatureFlag.EPICS)
     def get(self, request, slug, project_id, epic_id, pk=None):
         if pk:
@@ -155,7 +155,7 @@ class EpicAttachmentEndpoint(BaseAPIView):
         serializer = EpicAttachmentSerializer(epic_attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(AttachmentPermissions.EDIT, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
     def patch(self, request, slug, project_id, epic_id, pk):
         epic_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)

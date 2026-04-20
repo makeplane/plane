@@ -18,9 +18,8 @@ import useSWR from "swr";
 import { RefreshCcw } from "lucide-react";
 import { IntakeIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel, E_FEATURE_FLAGS } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { EUserProjectRoles } from "@plane/types";
 import { Breadcrumbs, Header, Popover, Loader } from "@plane/ui";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
@@ -28,7 +27,6 @@ import { InboxIssueCreateModalRoot } from "@/components/intake/modals/create-mod
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { ProjectBreadcrumbWithPreference } from "@/components/breadcrumbs/project/with-preference";
 import { useFlag } from "@/plane-web/hooks/store";
@@ -42,7 +40,6 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
   // states
   const [createIssueModal, setCreateIssueModal] = useState(false);
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const { intakeForms, fetchIntakeForms } = useProjectInbox();
   const isEmailEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_EMAIL);
   const isFormEnabled = useFlag(workspaceSlug?.toString(), E_FEATURE_FLAGS.INTAKE_FORM);
@@ -53,8 +50,7 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
     loader: currentProjectDetailsLoader,
     isUpdatingProject,
   } = useProject();
-  const { loader } = useProjectInbox();
-
+  const { loader, permissions } = useProjectInbox();
   // derived values
   const [projectIdentifier] = workItem ? workItem?.toString()?.split("-") : [];
   const projectId = projectIdFromRouter
@@ -74,11 +70,6 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
       ? () => fetchIntakeForms(workspaceSlug.toString(), projectId.toString())
       : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  // derived value
-  const isAuthorized = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
-    EUserPermissionsLevel.PROJECT
   );
   // ref
   const popoverButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -158,7 +149,10 @@ export const ProjectInboxHeader = observer(function ProjectInboxHeader() {
         >
           <IntakeTooltip projectId={projectId.toString()} />
         </Popover>
-        {currentProjectDetails?.inbox_view && workspaceSlug && projectId && isAuthorized ? (
+        {currentProjectDetails?.inbox_view &&
+        workspaceSlug &&
+        projectId &&
+        permissions.getCanCreate(workspaceSlug, projectId) ? (
           <div className="flex items-center gap-2">
             <InboxIssueCreateModalRoot
               workspaceSlug={workspaceSlug.toString()}

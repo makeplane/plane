@@ -12,17 +12,10 @@
  */
 
 import { useState } from "react";
-import { intersection } from "lodash-es";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { InfoIcon } from "@plane/propel/icons";
-import {
-  DEFAULT_PQL_FILTER_VALUE,
-  EUserPermissions,
-  EUserPermissionsLevel,
-  EXPORTERS_LIST,
-  ISSUE_DISPLAY_FILTERS_BY_PAGE,
-} from "@plane/constants";
+import { DEFAULT_PQL_FILTER_VALUE, EXPORTERS_LIST, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -35,8 +28,10 @@ import { truncateProjectIdentifierForDisplay } from "@plane/utils";
 import { WorkspaceLevelWorkItemFiltersHOC } from "@/components/work-item-filters/filters-hoc/workspace-level";
 import { WorkItemFiltersRow } from "@/components/work-item-filters/filters-row/basic";
 // hooks
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 // services
 import { ProjectExportService } from "@/services/project/project-export.service";
 // local imports
@@ -75,8 +70,11 @@ export const ExportForm = observer(function ExportForm(props: Props) {
   const [exportLoading, setExportLoading] = useState(false);
 
   // store hooks
-  const { allowPermissions } = useUserPermissions();
-  const { data: user, canPerformAnyCreateAction, projectsWithCreatePermissions } = useUser();
+  const { can } = usePermissionAccess();
+  const { data: user } = useUser();
+  const {
+    permissions: { getProjectIdsWithWorkItemPermission },
+  } = useIssues();
   const { workspaceProjectIds, getProjectById } = useProject();
   const { t } = useTranslation();
   // form
@@ -90,12 +88,13 @@ export const ExportForm = observer(function ExportForm(props: Props) {
   });
 
   // derived values
-  const hasProjects = workspaceProjectIds && workspaceProjectIds.length > 0;
-  const isMember = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.WORKSPACE);
-  const wsProjectIdsWithCreatePermissions = projectsWithCreatePermissions
-    ? intersection(workspaceProjectIds, Object.keys(projectsWithCreatePermissions))
-    : [];
-  const options = wsProjectIdsWithCreatePermissions?.map((projectId) => {
+  const canExportAnalytics = can({ resource: "analytics", action: "export", workspaceSlug });
+  const projectIdsWithExportWorkItemPermission = getProjectIdsWithWorkItemPermission(
+    workspaceSlug,
+    workspaceProjectIds ?? [],
+    "export"
+  );
+  const options = Array.from(projectIdsWithExportWorkItemPermission).map((projectId) => {
     const projectDetails = getProjectById(projectId);
 
     return {
@@ -169,7 +168,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
             <Controller
               control={control}
               name="project"
-              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+              disabled={!canExportAnalytics && projectIdsWithExportWorkItemPermission.size === 0}
               render={({ field: { value, onChange } }) => (
                 <CustomSearchSelect
                   value={value ?? []}
@@ -203,7 +202,7 @@ export const ExportForm = observer(function ExportForm(props: Props) {
             <Controller
               control={control}
               name="provider"
-              disabled={!isMember && (!hasProjects || !canPerformAnyCreateAction)}
+              disabled={!canExportAnalytics && projectIdsWithExportWorkItemPermission.size === 0}
               render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   value={value}

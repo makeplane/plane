@@ -14,9 +14,8 @@
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 // plane web imports
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 import { useFlag } from "@/plane-web/hooks/store";
 import { useAutomations } from "@/plane-web/hooks/store/automations/use-automations";
 
@@ -30,18 +29,16 @@ type Props = {
 export const AutomationsDetailsWrapper = observer(function AutomationsDetailsWrapper(props: Props) {
   const { automationId, projectId, workspaceSlug, children } = props;
   // store hooks
-  const { allowPermissions } = useUserPermissions();
   const {
     projectAutomations: { fetchAutomationDetails },
   } = useAutomations();
   // derived values
   const isProjectAutomationsEnabled = useFlag(workspaceSlug, E_FEATURE_FLAGS.PROJECT_AUTOMATIONS);
-  const hasProjectAdminPermissions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   // fetching automations details
   useSWR(
-    workspaceSlug && projectId && automationId && isProjectAutomationsEnabled && hasProjectAdminPermissions
-      ? ["automations", workspaceSlug, projectId, automationId, isProjectAutomationsEnabled, hasProjectAdminPermissions]
+    workspaceSlug && projectId && automationId && isProjectAutomationsEnabled
+      ? ["automations", workspaceSlug, projectId, automationId, isProjectAutomationsEnabled]
       : null,
     () => fetchAutomationDetails(workspaceSlug, projectId, automationId)
   );

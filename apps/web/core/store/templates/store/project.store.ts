@@ -21,7 +21,7 @@ import type { IBaseTemplateActionCallbacks, TProjectTemplate, ITemplateService }
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IBaseTemplateStore } from "./base.store";
 import { BaseTemplateStore } from "./base.store";
-import type { TProjectTemplateInstanceProps } from "../instance/project";
+import type { TProjectTemplateInstanceArgs } from "../instance/project";
 import { ProjectTemplateInstance } from "../instance/project";
 
 type TBaseProjectTemplateProps = {
@@ -42,6 +42,7 @@ export interface IProjectTemplateStore extends IBaseTemplateStore<TProjectTempla
   // computed function
   isAnyProjectTemplatesAvailable: (workspaceSlug: string) => boolean;
   // actions
+  getCanCreate: (props: TBaseProjectTemplateProps) => boolean;
   fetchAllTemplates: (props: TFetchProjectTemplatesProps) => Promise<void>;
   fetchTemplateById: (props: TFetchProjectTemplateByIdProps) => Promise<void>;
   createProjectTemplate: (props: TCreateProjectTemplateProps) => Promise<TProjectTemplate | undefined>;
@@ -52,12 +53,13 @@ export class ProjectTemplateStore extends BaseTemplateStore<TProjectTemplate> im
   constructor(protected rootStore: RootStore) {
     super({
       root: rootStore,
-      createTemplateInstance: (templateInstanceProps: TProjectTemplateInstanceProps) =>
+      createTemplateInstance: (templateInstanceProps: TProjectTemplateInstanceArgs) =>
         new ProjectTemplateInstance(templateInstanceProps),
     });
 
     makeObservable(this, {
       // observables
+      getCanCreate: action,
       fetchAllTemplates: action,
       fetchTemplateById: action,
       createProjectTemplate: action,
@@ -87,6 +89,20 @@ export class ProjectTemplateStore extends BaseTemplateStore<TProjectTemplate> im
   );
 
   // actions
+  /**
+   * @description Check if the current user can create a project template
+   * @param props - The props
+   * @param props.workspaceSlug - The workspace slug
+   * @returns True if the current user can create a project template, false otherwise
+   */
+  getCanCreate = computedFn((props: TBaseProjectTemplateProps) => {
+    return this.rootStore.permissionAccessStore.can({
+      resource: "workspace_project_template",
+      action: "create",
+      workspaceSlug: props.workspaceSlug,
+    });
+  });
+
   /**
    * @description Fetch all templates
    * @param props - The props

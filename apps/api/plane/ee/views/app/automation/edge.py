@@ -29,7 +29,7 @@ from plane.ee.serializers import (
     AutomationEdgeReadSerializer,
 )
 from plane.ee.models import AutomationEdge
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ProjectAutomationPermissions, WorkspaceAutomationPermissions
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.automation_activity_task import automation_activity
@@ -40,7 +40,7 @@ class AutomationEdgeEndpoint(AutomationBaseEndpoint):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectAutomationPermissions.VIEW, resource_param="automation_id")
     def get(
         self,
         request: Request,
@@ -67,7 +67,7 @@ class AutomationEdgeEndpoint(AutomationBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN])
+    @can(ProjectAutomationPermissions.EDIT, resource_param="automation_id")
     def post(
         self,
         request: Request,
@@ -100,7 +100,7 @@ class AutomationEdgeEndpoint(AutomationBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN])
+    @can(ProjectAutomationPermissions.EDIT, resource_param="automation_id")
     def patch(
         self,
         request: Request,
@@ -133,7 +133,7 @@ class AutomationEdgeEndpoint(AutomationBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN])
+    @can(ProjectAutomationPermissions.EDIT, resource_param="automation_id")
     def delete(
         self,
         request: Request,
@@ -163,7 +163,7 @@ class AutomationEdgeEndpoint(AutomationBaseEndpoint):
 
 class WorkspaceAutomationEdgeEndpoint(AutomationBaseEndpoint):
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.VIEW, resource_param="automation_id")
     def get(
         self,
         request: Request,
@@ -187,7 +187,7 @@ class WorkspaceAutomationEdgeEndpoint(AutomationBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.EDIT, resource_param="automation_id")
     def post(
         self,
         request: Request,
@@ -219,7 +219,7 @@ class WorkspaceAutomationEdgeEndpoint(AutomationBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.EDIT, resource_param="automation_id")
     def patch(
         self,
         request: Request,
@@ -250,7 +250,7 @@ class WorkspaceAutomationEdgeEndpoint(AutomationBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.WORKSPACE_AUTOMATIONS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceAutomationPermissions.EDIT, resource_param="automation_id")
     def delete(
         self,
         request: Request,

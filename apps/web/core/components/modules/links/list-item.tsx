@@ -29,12 +29,15 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 type Props = {
   handleDeleteLink: () => void;
   handleEditLink: () => void;
-  isEditingAllowed: boolean;
   link: ILinkDetails;
+  permissions: {
+    canEdit: (linkId: string) => boolean;
+    canDelete: (linkId: string) => boolean;
+  };
 };
 
 export const ModulesLinksListItem = observer(function ModulesLinksListItem(props: Props) {
-  const { handleDeleteLink, handleEditLink, isEditingAllowed, link } = props;
+  const { handleDeleteLink, handleEditLink, link, permissions } = props;
   // store hooks
   const { getUserDetails } = useMember();
   // derived values
@@ -77,7 +80,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
         </div>
 
         <div className="z-1 flex shrink-0 items-center">
-          {isEditingAllowed && (
+          {permissions.canEdit(link.id) && (
             <button
               type="button"
               className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"
@@ -97,7 +100,7 @@ export const ModulesLinksListItem = observer(function ModulesLinksListItem(props
           >
             <CopyIcon className="size-3 stroke-[1.5]" />
           </button>
-          {isEditingAllowed && (
+          {permissions.canDelete(link.id) && (
             <button
               type="button"
               className="grid place-items-center p-1 hover:bg-layer-transparent-hover text-secondary rounded-sm"

@@ -16,6 +16,8 @@ import type { MutableRefObject } from "react";
 import type { TIssue, IIssueDisplayProperties, TGroupedIssues } from "@plane/types";
 // hooks
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // types
 import { IssueBlockRoot } from "./block-root";
 import type { TRenderQuickActions } from "./list-view-types";
@@ -24,7 +26,10 @@ interface Props {
   issueIds: TGroupedIssues | any;
   getWorkItemById: (issueId: string) => TIssue | undefined;
   groupId: string;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
   displayProperties: IIssueDisplayProperties | undefined;
@@ -43,7 +48,7 @@ export function IssueBlocksList(props: Props) {
     updateIssue,
     quickActions,
     displayProperties,
-    canEditProperties,
+    getWorkItemPermissions,
     containerRef,
     selectionHelpers,
     isDragAllowed,
@@ -62,7 +67,7 @@ export function IssueBlocksList(props: Props) {
             getWorkItemById={getWorkItemById}
             updateIssue={updateIssue}
             quickActions={quickActions}
-            canEditProperties={canEditProperties}
+            getWorkItemPermissions={getWorkItemPermissions}
             displayProperties={displayProperties}
             nestingLevel={0}
             spacingLeft={0}

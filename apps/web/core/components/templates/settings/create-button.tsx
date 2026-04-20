@@ -14,20 +14,19 @@
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { E_FEATURE_FLAGS, ETemplateLevel, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS, ETemplateLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { ButtonProps } from "@plane/propel/button";
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
-import { ETemplateType, EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
+import { ETemplateType } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
 import type { TCreateTemplateSettingsPathProps } from "@plane/utils";
 import { getCreateUpdateTemplateSettingsPath, getTemplateI18nLabel } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { useFlag } from "@/plane-web/hooks/store";
+import { useFlag, usePageTemplates, useWorkItemTemplates, useProjectTemplates } from "@/plane-web/hooks/store";
 
 type TCreateTemplatesButtonProps = {
   workspaceSlug: string;
@@ -37,10 +36,10 @@ type TCreateTemplatesButtonProps = {
 } & (
   | {
       projectId: string;
-      currentLevel: ETemplateLevel.PROJECT;
+      level: ETemplateLevel.PROJECT;
     }
   | {
-      currentLevel: ETemplateLevel.WORKSPACE;
+      level: ETemplateLevel.WORKSPACE;
     }
 );
 
@@ -49,6 +48,7 @@ type TCreateTemplateOption = {
   onClick: () => void;
   availableForLevels: ETemplateLevel[];
   featureFlagKey: E_FEATURE_FLAGS;
+  disabled?: boolean;
 };
 
 const CreateTemplateMenuItem = observer(function CreateTemplateMenuItem({
@@ -77,12 +77,14 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { getCanCreate: getCanCreateProjectTemplate } = useProjectTemplates();
+  const { getCanCreate: getCanCreateWorkItemTemplate } = useWorkItemTemplates();
+  const { getCanCreate: getCanCreatePageTemplate } = usePageTemplates();
   // derived values
-  const hasAdminPermission =
-    props.currentLevel === ETemplateLevel.PROJECT
-      ? allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, props.workspaceSlug, props.projectId)
-      : allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE, props.workspaceSlug);
+  const canCreateProjectTemplate = getCanCreateProjectTemplate(props);
+  const canCreateWorkItemTemplate = getCanCreateWorkItemTemplate(props);
+  const canCreatePageTemplate = getCanCreatePageTemplate(props);
+  const canCreateAnyTemplate = canCreateProjectTemplate || canCreateWorkItemTemplate || canCreatePageTemplate;
 
   const CREATE_TEMPLATE_OPTIONS: TCreateTemplateOption[] = useMemo(() => {
     const getCreateTemplateSettingsPathProps = (type: ETemplateType) => {
@@ -104,6 +106,7 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
         },
         availableForLevels: [ETemplateLevel.WORKSPACE],
         featureFlagKey: E_FEATURE_FLAGS.PROJECT_TEMPLATES,
+        disabled: !canCreateProjectTemplate,
       },
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.WORK_ITEM),
@@ -112,6 +115,7 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
         },
         availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
         featureFlagKey: E_FEATURE_FLAGS.WORKITEM_TEMPLATES,
+        disabled: !canCreateWorkItemTemplate,
       },
       {
         i18n_label: getTemplateI18nLabel(ETemplateType.PAGE),
@@ -120,21 +124,22 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
         },
         availableForLevels: [ETemplateLevel.WORKSPACE, ETemplateLevel.PROJECT],
         featureFlagKey: E_FEATURE_FLAGS.PAGE_TEMPLATES,
+        disabled: !canCreatePageTemplate,
       },
     ];
-  }, [router, props]);
+  }, [canCreateProjectTemplate, canCreateWorkItemTemplate, canCreatePageTemplate, props, router]);
 
   const getButtonLabel = useCallback(() => {
-    if (!hasAdminPermission)
-      return props.currentLevel === ETemplateLevel.PROJECT
+    if (!canCreateAnyTemplate)
+      return props.level === ETemplateLevel.PROJECT
         ? t("templates.settings.create_template.no_permission.project")
         : t("templates.settings.create_template.no_permission.workspace");
 
     return t(props.buttonI18nLabel || "templates.settings.create_template.label");
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasAdminPermission, props.buttonI18nLabel, props.currentLevel]);
+  }, [canCreateAnyTemplate, props.buttonI18nLabel, props.level]);
 
-  if (!hasAdminPermission) return null;
+  if (!canCreateAnyTemplate) return null;
   return (
     <CustomMenu
       customButton={
@@ -142,14 +147,14 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
           variant="primary"
           size={props.buttonSize}
           className="flex items-center justify-center gap-1.5"
-          disabled={!hasAdminPermission}
+          disabled={!canCreateAnyTemplate}
         >
           {getButtonLabel()}
-          {hasAdminPermission && <ChevronDownIcon className="size-3.5" />}
+          {canCreateAnyTemplate && <ChevronDownIcon className="size-3.5" />}
         </Button>
       }
       placement="bottom-end"
-      disabled={!hasAdminPermission}
+      disabled={!canCreateAnyTemplate}
       closeOnSelect
     >
       {CREATE_TEMPLATE_OPTIONS.map((option) => (
@@ -157,7 +162,7 @@ export const CreateTemplatesButton = observer(function CreateTemplatesButton(pro
           key={option.i18n_label}
           option={option}
           workspaceSlug={props.workspaceSlug}
-          currentLevel={props.currentLevel}
+          currentLevel={props.level}
         />
       ))}
     </CustomMenu>

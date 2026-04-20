@@ -37,6 +37,7 @@ export const NAMESPACES = [
   "project",
   "project-settings",
   "release",
+  "roles-and-permissions",
   "settings",
   "stickies",
   "teamspace",

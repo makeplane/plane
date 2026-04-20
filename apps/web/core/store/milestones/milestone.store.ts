@@ -21,6 +21,8 @@ import milestoneService from "@/services/milestone.service";
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IWorkItemMilestoneStore } from "./work-items.store";
 import { WorkItemMilestoneStore } from "./work-items.store";
+import type { MilestonePermissions } from "./permissions";
+import { MilestonePermissionsInstance } from "./permissions";
 
 export interface IMilestoneStore {
   // observables
@@ -31,6 +33,9 @@ export interface IMilestoneStore {
   getProjectMilestoneIds: (projectId: string) => string[] | undefined;
   getMilestoneById: (projectId: string, milestoneId: string) => MilestoneInstance | undefined;
   isMilestonesEnabled: (workspaceSlug: string, projectId: string) => boolean;
+
+  // permissions
+  permissions: MilestonePermissions;
 
   // milestone actions
   fetchMilestones: (workspaceSlug: string, projectId: string) => Promise<void>;
@@ -81,6 +86,9 @@ export class MilestoneStore implements IMilestoneStore {
   // work items
   workItems: IWorkItemMilestoneStore;
 
+  // permissions
+  permissions: MilestonePermissions;
+
   constructor(private store: RootStore) {
     makeObservable(this, {
       // observables
@@ -99,6 +107,9 @@ export class MilestoneStore implements IMilestoneStore {
 
     this.rootStore = store;
     this.workItems = new WorkItemMilestoneStore(this, this.rootStore);
+    this.permissions = new MilestonePermissionsInstance({
+      can: store.permissionAccessStore.can,
+    });
   }
 
   // computed

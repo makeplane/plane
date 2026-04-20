@@ -16,17 +16,14 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Tooltip } from "@plane/ui";
 // component
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
 import { TeamspaceUpgrade } from "@/components/teamspaces/upgrade";
@@ -40,20 +37,12 @@ function TeamspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, updateWorkspaceFeature } = useWorkspaceFeatures();
   const { t } = useTranslation();
-
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Teamspaces` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const isTeamspacesFeatureEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
-
-  if (!currentWorkspace?.id) return <></>;
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
+  const isTeamspacesFeatureEnabled = isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_TEAMSPACES_ENABLED);
 
   const toggleTeamsFeature = async () => {
     try {

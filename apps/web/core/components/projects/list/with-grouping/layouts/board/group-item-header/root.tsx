@@ -11,11 +11,12 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Maximize2, Minimize2 } from "lucide-react";
+// plane imports
+import { IconButton } from "@plane/propel/icon-button";
 import { PlusIcon } from "@plane/propel/icons";
 // components
 import { CreateProjectModal } from "@/components/projects/modals/create-project-modal";
@@ -27,6 +28,7 @@ import { useWorkspaceProjectLabels } from "@/hooks/store/use-workspace-project-l
 import { useProjectFilter, useWorkspaceProjectStates } from "@/plane-web/hooks/store";
 // local imports
 import { groupDetails } from "../utils";
+import type { ProjectLayoutPermissions } from "@/store/project/permissions/root";
 
 type TProjectBoardGroupItemHeader = {
   groupByKey: string;
@@ -37,21 +39,23 @@ type TProjectBoardGroupItemHeader = {
       [key: string]: boolean;
     }
   ) => void;
+  permissions: ProjectLayoutPermissions;
 };
 
 export const ProjectBoardGroupItemHeader = observer(function ProjectBoardGroupItemHeader(
   props: TProjectBoardGroupItemHeader
 ) {
-  const { groupByKey, projectIds, verticalAlign, setVerticalAlign } = props;
-  //states
+  const { groupByKey, projectIds, verticalAlign, setVerticalAlign, permissions } = props;
+  // states
   const [open, setOpen] = useState(false);
-  // hooks
+  // params
+  const { workspaceSlug } = useParams();
+  // store hooks
   const { filters } = useProjectFilter();
   const { getProjectStateById, getProjectStatedByStateGroupKey } = useWorkspaceProjectStates();
   const {
     workspace: { getWorkspaceMemberDetails },
   } = useMember();
-  const { workspaceSlug } = useParams();
   const { currentWorkspace } = useWorkspace();
   const { getLabelById } = useWorkspaceProjectLabels();
 
@@ -98,24 +102,20 @@ export const ProjectBoardGroupItemHeader = observer(function ProjectBoardGroupIt
             {details?.title}
           </div>
           <div
-            className={`flex-shrink-0 text-13 font-medium text-tertiary ${verticalAlign ? `text-center pr-0.5` : `pl-2`}`}
+            className={`shrink-0 text-13 font-medium text-tertiary ${verticalAlign ? `text-center pr-0.5` : `pl-2`}`}
           >
             {projectIds?.length || 0}
           </div>
         </div>
-
-        <div
-          className="flex h-[20px] w-[20px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm transition-all hover:bg-layer-1"
+        <IconButton
+          variant="ghost"
+          size="sm"
           onClick={() => setVerticalAlign((state) => ({ ...state, [groupByKey]: !verticalAlign }))}
-        >
-          {verticalAlign ? <Maximize2 width={12} strokeWidth={2} /> : <Minimize2 width={12} strokeWidth={2} />}
-        </div>
-        <div
-          onClick={() => setOpen(true)}
-          className="cursor-pointer flex-shrink-0 w-5 h-5 rounded-sm hover:bg-layer-1 flex justify-center items-center overflow-hidden bg-layer-1"
-        >
-          <PlusIcon width={14} height={14} />
-        </div>
+          icon={verticalAlign ? Maximize2 : Minimize2}
+        />
+        {permissions.canCreateProject && (
+          <IconButton variant="ghost" size="sm" onClick={() => setOpen(true)} icon={PlusIcon} />
+        )}
       </div>
     </>
   );

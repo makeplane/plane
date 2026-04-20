@@ -27,6 +27,12 @@ type TProps = {
   updateId: string;
   workspaceSlug: string;
   projectId: string;
+  permissions: {
+    canCreate: boolean;
+    canUpdate: (commentId: string) => boolean;
+    canDelete: (commentId: string) => boolean;
+    canReact: (commentId: string) => boolean;
+  };
 };
 export type TActivityOperations = {
   create: (e: React.FormEvent) => Promise<TProjectUpdatesComment | undefined>;
@@ -35,7 +41,7 @@ export type TActivityOperations = {
 };
 
 export const CommentList = observer(function CommentList(props: TProps) {
-  const { isCollapsed, updateId, workspaceSlug, projectId } = props;
+  const { isCollapsed, updateId, workspaceSlug, projectId, permissions } = props;
   const [newComment, setNewComment] = useState("");
 
   const {
@@ -122,6 +128,11 @@ export const CommentList = observer(function CommentList(props: TProps) {
                     workspaceSlug={workspaceSlug}
                     projectId={projectId}
                     operations={updateCommentOperations}
+                    permissions={{
+                      canEdit: permissions.canUpdate(item),
+                      canDelete: permissions.canDelete(item),
+                      canReact: permissions.canReact(item),
+                    }}
                   />
                 )
               );
@@ -141,7 +152,7 @@ export const CommentList = observer(function CommentList(props: TProps) {
           />
           <button
             type="submit"
-            disabled={newComment.trim() === ""}
+            disabled={newComment.trim() === "" || !permissions.canCreate}
             className={`flex items-center justify-center size-6 text-13 rounded-full flex-shrink-0 ${
               newComment.trim() === ""
                 ? "bg-layer-1 text-tertiary cursor-not-allowed"

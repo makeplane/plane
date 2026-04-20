@@ -13,18 +13,16 @@
 
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
-// plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // plane web imports
 import { EpicsEmptyState } from "@/components/epics/settings/empty-state";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
 import type { Route } from "./+types/layout";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 
 function EpicsLayout({ params }: Route.ComponentProps) {
   // router
@@ -32,7 +30,7 @@ function EpicsLayout({ params }: Route.ComponentProps) {
   // store hooks
   const { getProjectById } = useProject();
   const { getProjectFeatures } = useProjectAdvanced();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useEpics();
   // derived values
   const project = getProjectById(projectId);
   const projectFeatures = getProjectFeatures(projectId);
@@ -47,10 +45,7 @@ function EpicsLayout({ params }: Route.ComponentProps) {
       </div>
     );
 
-  const isAuthorized = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const isAuthorized = permissions.getCanCreate(workspaceSlug, projectId);
 
   if (!isAuthorized) {
     return (

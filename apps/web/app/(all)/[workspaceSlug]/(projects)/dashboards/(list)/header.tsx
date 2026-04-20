@@ -23,11 +23,20 @@ import { DashboardsListSearch } from "@/components/dashboards/list/search";
 // plane web hooks
 import { useDashboards } from "@/plane-web/hooks/store";
 
-export const WorkspaceDashboardsListHeader = observer(function WorkspaceDashboardsListHeader() {
+type TWorkspaceDashboardsListHeaderProps = {
+  workspaceSlug: string;
+};
+
+export const WorkspaceDashboardsListHeader = observer(function WorkspaceDashboardsListHeader(
+  props: TWorkspaceDashboardsListHeaderProps
+) {
+  const { workspaceSlug } = props;
   // store hooks
   const {
-    workspaceDashboards: { canCurrentUserCreateDashboard, toggleCreateUpdateModal, searchQuery, updateSearchQuery },
+    workspaceDashboards: { getCanCreateDashboard, toggleCreateUpdateModal, searchQuery, updateSearchQuery },
   } = useDashboards();
+  // derived values
+  const canCreateDashboard = getCanCreateDashboard(workspaceSlug);
 
   return (
     <Header>
@@ -44,7 +53,7 @@ export const WorkspaceDashboardsListHeader = observer(function WorkspaceDashboar
       </Header.LeftItem>
       <Header.RightItem>
         <DashboardsListSearch value={searchQuery} onChange={updateSearchQuery} />
-        {canCurrentUserCreateDashboard && (
+        {canCreateDashboard && (
           <Button variant="primary" size="lg" onClick={() => toggleCreateUpdateModal(true)}>
             Add dashboard
           </Button>

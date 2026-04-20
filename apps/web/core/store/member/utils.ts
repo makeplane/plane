@@ -12,8 +12,9 @@
  */
 
 // Types and utilities for member filtering
-import type { EUserPermissions, TMemberOrderByOptions } from "@plane/constants";
+import type { TMemberOrderByOptions } from "@plane/constants";
 import type { IUserLite, TProjectMembership } from "@plane/types";
+import type { WorkspaceMembership } from "./workspace/types";
 
 export interface IMemberFilters {
   order_by?: TMemberOrderByOptions;
@@ -73,20 +74,17 @@ export const filterProjectMembersByRole = (
 ): TProjectMembership[] => {
   if (roleFilters.length === 0) return members;
 
-  return members.filter((member) => {
-    const memberRole = String(member.role ?? member.original_role ?? "");
-    return roleFilters.includes(memberRole);
-  });
+  return members.filter((member) => roleFilters.includes(member.role_slug));
 };
 
-export const filterWorkspaceMembersByRole = <T extends { role: string | EUserPermissions; is_active?: boolean }>(
-  members: T[],
+export const filterWorkspaceMembersByRole = (
+  members: WorkspaceMembership[],
   roleFilters: string[]
-): T[] => {
+): WorkspaceMembership[] => {
   if (roleFilters.length === 0) return members;
 
   return members.filter((member) => {
-    const memberRole = String(member.role ?? "");
+    const memberRole = String(member.role_slug);
     const isSuspended = member.is_active === false;
 
     // Check if suspended is in the role filters
@@ -107,7 +105,7 @@ export const filterWorkspaceMembersByRole = <T extends { role: string | EUserPer
 // Unified sorting function
 export const sortMembers = <T>(
   members: T[],
-  memberDetailsMap: Record<string, IUserLite>,
+  getUserDetails: (userId: string) => IUserLite | undefined,
   getMemberKey: (member: T) => string,
   getMemberRole: (member: T) => string,
   orderBy?: TMemberOrderByOptions
@@ -119,16 +117,16 @@ export const sortMembers = <T>(
   return [...members].sort((a, b) => {
     const aKey = getMemberKey(a);
     const bKey = getMemberKey(b);
-    const aMemberDetails = memberDetailsMap[aKey];
-    const bMemberDetails = memberDetailsMap[bKey];
+    const aUserDetails = getUserDetails(aKey);
+    const bUserDetails = getUserDetails(bKey);
 
-    if (!aMemberDetails || !bMemberDetails) return 0;
+    if (!aUserDetails || !bUserDetails) return 0;
 
     const aRole = getMemberRole(a);
     const bRole = getMemberRole(b);
 
-    const aValue = getMemberSortKey(aMemberDetails, field, aRole);
-    const bValue = getMemberSortKey(bMemberDetails, field, bRole);
+    const aValue = getMemberSortKey(aUserDetails, field, aRole);
+    const bValue = getMemberSortKey(bUserDetails, field, bRole);
 
     let comparison = 0;
 
@@ -156,7 +154,7 @@ export const sortMembers = <T>(
 // Specific implementations using the unified functions
 export const sortProjectMembers = (
   members: TProjectMembership[],
-  memberDetailsMap: Record<string, IUserLite>,
+  getUserDetails: (userId: string) => IUserLite | undefined,
   getMemberKey: (member: TProjectMembership) => string,
   filters?: IMemberFilters
 ): TProjectMembership[] => {
@@ -168,21 +166,15 @@ export const sortProjectMembers = (
   if (!filters?.order_by) return filteredMembers;
 
   // Apply sorting
-  return sortMembers(
-    filteredMembers,
-    memberDetailsMap,
-    getMemberKey,
-    (member) => String(member.role ?? member.original_role ?? ""),
-    filters.order_by
-  );
+  return sortMembers(filteredMembers, getUserDetails, getMemberKey, (member) => member.role_slug, filters.order_by);
 };
 
-export const sortWorkspaceMembers = <T extends { role: string | EUserPermissions; is_active?: boolean }>(
-  members: T[],
-  memberDetailsMap: Record<string, IUserLite>,
-  getMemberKey: (member: T) => string,
+export const sortWorkspaceMembers = (
+  members: WorkspaceMembership[],
+  getUserDetails: (userId: string) => IUserLite | undefined,
+  getMemberKey: (member: WorkspaceMembership) => string,
   filters?: IMemberFilters
-): T[] => {
+): WorkspaceMembership[] => {
   const filteredMembers =
     filters?.roles && filters.roles.length > 0 ? filterWorkspaceMembersByRole(members, filters.roles) : members;
 
@@ -192,9 +184,9 @@ export const sortWorkspaceMembers = <T extends { role: string | EUserPermissions
   // Apply sorting
   return sortMembers(
     filteredMembers,
-    memberDetailsMap,
+    getUserDetails,
     getMemberKey,
-    (member) => String(member.role ?? ""),
+    (member) => String(member.role_slug),
     filters.order_by
   );
 };

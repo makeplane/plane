@@ -23,7 +23,7 @@ from rest_framework.response import Response
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 from plane.ee.models import (
     CustomerPropertyValue,
     PropertyTypeEnum,
@@ -41,8 +41,6 @@ from plane.ee.utils.customer_property_validators import (
 
 class CustomerPropertyValueEndpoint(BaseAPIView):
     use_read_replica = True
-
-    permission_classes = [WorkSpaceAdminPermission]
 
     def query_annotator(self, query):
         return query.values("property_id").annotate(
@@ -91,6 +89,7 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, customer_id):
         # Get all customer property values
         customer_property_values = CustomerPropertyValue.objects.filter(
@@ -111,6 +110,7 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
         return Response(response, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def post(self, request, slug, customer_id):
         try:
             customer_property_values = request.data.get("customer_property_values", {})
@@ -162,6 +162,7 @@ class CustomerPropertyValueEndpoint(BaseAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, customer_id, property_id):
         try:
             customer_property = CustomerProperty.objects.get(workspace__slug=slug, pk=property_id)

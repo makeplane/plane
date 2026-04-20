@@ -31,16 +31,18 @@ import { JoinTeamspaceButton } from "@/components/teamspaces/actions/join-teamsp
 import { AddTeamspaceMembersButton } from "@/components/teamspaces/actions/members/button";
 import { UpdateTeamspaceProjectsButton } from "@/components/teamspaces/actions/projects/button";
 import { useTeamspaces } from "@/plane-web/hooks/store";
+// types
+import type { TTeamspaceDetailPermissions } from "@/store/teamspace/permissions/root";
 // local imports
 import { TeamNameInput } from "./name-input";
 
 type TTeamsOverviewPropertiesProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: Pick<TTeamspaceDetailPermissions, "canEditProperty" | "canAddMember" | "canAddProject">;
 };
 
 export const TeamsOverviewProperties = observer(function TeamsOverviewProperties(props: TTeamsOverviewPropertiesProps) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, permissions } = props;
   // router
   const { workspaceSlug } = useParams();
   // states
@@ -50,7 +52,7 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
   const { isCurrentUserMemberOfTeamspace, getTeamspaceById, updateTeamspace, updateTeamspaceNameDescriptionLoader } =
     useTeamspaces();
   // derived values
-  const teamspace = getTeamspaceById(teamspaceId?.toString());
+  const teamspace = getTeamspaceById(teamspaceId);
   const isTeamspaceMember = isCurrentUserMemberOfTeamspace(teamspaceId);
   const areProjectsLinked = teamspace?.project_ids && teamspace.project_ids.length > 0;
   const teamLead = teamspace?.lead_id ? getUserDetails(teamspace.lead_id) : undefined;
@@ -93,13 +95,13 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
           });
           setIsEmojiPickerOpen(false);
         }}
-        disabled={!isEditingAllowed}
+        disabled={!permissions.canEditProperty("logo_props")}
       />
       <TeamNameInput
         value={teamspace.name}
         workspaceSlug={workspaceSlug.toString()}
         teamspaceId={teamspaceId}
-        disabled={!isEditingAllowed}
+        disabled={!permissions.canEditProperty("name")}
       />
       <DescriptionInput
         key={teamspaceId}
@@ -112,7 +114,7 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
           });
         }}
         entityId={teamspaceId}
-        disabled={!isEditingAllowed}
+        disabled={!permissions.canEditProperty("description_html")}
         containerClassName="-ml-3 border-none"
         fileAssetType={EFileAssetType.TEAM_SPACE_DESCRIPTION}
         setIsSubmitting={(value) => updateTeamspaceNameDescriptionLoader(teamspaceId, value)}
@@ -142,17 +144,13 @@ export const TeamsOverviewProperties = observer(function TeamsOverviewProperties
               })}
             </AvatarGroup>
           </div>
-          <AddTeamspaceMembersButton
-            teamspaceId={teamspaceId?.toString()}
-            variant="icon"
-            isEditingAllowed={isEditingAllowed}
-          />
+          <AddTeamspaceMembersButton teamspaceId={teamspaceId} variant="icon" canAddMember={permissions.canAddMember} />
         </div>
         <div className="flex items-center gap-x-2">
           {isTeamspaceMember && areProjectsLinked && (
-            <UpdateTeamspaceProjectsButton teamspaceId={teamspaceId?.toString()} isEditingAllowed={isEditingAllowed} />
+            <UpdateTeamspaceProjectsButton teamspaceId={teamspaceId} canAddProject={permissions.canAddProject} />
           )}
-          {!isTeamspaceMember && <JoinTeamspaceButton teamspaceId={teamspaceId?.toString()} />}
+          {!isTeamspaceMember && <JoinTeamspaceButton teamspaceId={teamspaceId} />}
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 // plane imports
-import { DEFAULT_CREATE_UPDATE_MODAL_CONFIG, EUserPermissions } from "@plane/constants";
+import { DEFAULT_CREATE_UPDATE_MODAL_CONFIG } from "@plane/constants";
 import { WorkspaceAutomationsService } from "@plane/services";
 import type {
   EAutomationNodeType,
@@ -49,8 +49,8 @@ export interface IWorkspaceAutomationsStore {
   isAnyAutomationAvailableForWorkspace: (workspaceSlug: string) => boolean;
   setCreateUpdateModalConfig: (config: TCreateUpdateModalConfig) => void;
   // permissions
-  canCreate: boolean;
-  canView: boolean;
+  getCanCreateAutomation: (workspaceSlug: string) => boolean;
+  getCanViewAutomation: (workspaceSlug: string) => boolean;
   isWorkspaceAutomationsEnabled: boolean;
   // actions
   fetchAutomations: (workspaceSlug: string) => Promise<TAutomation[]>;
@@ -80,8 +80,6 @@ export class WorkspaceAutomationsStore implements IWorkspaceAutomationsStore {
       workspaceAutomationIdsMap: observable,
       createUpdateModalConfig: observable,
       // computed
-      canCreate: computed,
-      canView: computed,
       isWorkspaceAutomationsEnabled: computed,
       // actions
       fetchAutomations: action,
@@ -150,7 +148,6 @@ export class WorkspaceAutomationsStore implements IWorkspaceAutomationsStore {
     const automationInstance = this.automationsRoot.getAutomationById(automationId);
     automationInstance?.addOrUpdateNode(node, {
       actions: this._automationNodeActions(workspaceSlug, automationId),
-      permissions: this._automationNodePermissions,
     });
   };
 
@@ -179,10 +176,9 @@ export class WorkspaceAutomationsStore implements IWorkspaceAutomationsStore {
     // add or update automation to store
     const automationInstance = this.automationsRoot.addOrUpdateAutomation(automation, {
       actions: this._automationActions(workspaceSlug, automationId),
-      permissions: this._automationPermissions,
+      can: this.rootStore.permissionAccessStore.can,
       nodeHelpers: {
         actions: this._automationNodeActions(workspaceSlug, automationId),
-        permissions: this._automationNodePermissions,
       },
       activityHelpers: {
         actions: this._automationActivityActions(workspaceSlug, automationId),
@@ -227,37 +223,21 @@ export class WorkspaceAutomationsStore implements IWorkspaceAutomationsStore {
   );
 
   // permissions
-  private get _currentUserWorkspaceRole() {
-    const currentWorkspaceSlug = this.rootStore.workspaceRoot.currentWorkspace?.slug;
-    return currentWorkspaceSlug
-      ? this.rootStore.user.permission.getWorkspaceRoleByWorkspaceSlug(currentWorkspaceSlug)
-      : undefined;
-  }
+  getCanCreateAutomation: IWorkspaceAutomationsStore["getCanCreateAutomation"] = computedFn((workspaceSlug: string) =>
+    this.rootStore.permissionAccessStore.can({
+      resource: "workspace_automation",
+      action: "create",
+      workspaceSlug,
+    })
+  );
 
-  private get _automationPermissions() {
-    return {
-      canCurrentUserCreate: this._currentUserWorkspaceRole === EUserPermissions.ADMIN,
-      canCurrentUserEdit: this._currentUserWorkspaceRole === EUserPermissions.ADMIN,
-      canCurrentUserDelete: this._currentUserWorkspaceRole === EUserPermissions.ADMIN,
-      canCurrentUserView: this._currentUserWorkspaceRole === EUserPermissions.ADMIN,
-    };
-  }
-
-  private get _automationNodePermissions() {
-    return {
-      canCurrentUserCreate: this._currentUserWorkspaceRole === EUserPermissions.ADMIN,
-      canCurrentUserEdit: this._currentUserWorkspaceRole === EUserPermissions.ADMIN,
-      canCurrentUserDelete: this._currentUserWorkspaceRole === EUserPermissions.ADMIN,
-    };
-  }
-
-  get canCreate() {
-    return this._automationPermissions.canCurrentUserCreate;
-  }
-
-  get canView() {
-    return this._automationPermissions.canCurrentUserView;
-  }
+  getCanViewAutomation: IWorkspaceAutomationsStore["getCanViewAutomation"] = computedFn((workspaceSlug: string) =>
+    this.rootStore.permissionAccessStore.can({
+      resource: "workspace_automation",
+      action: "view",
+      workspaceSlug,
+    })
+  );
 
   get isWorkspaceAutomationsEnabled() {
     return this.rootStore.featureFlags.getFeatureFlagForCurrentWorkspace("WORKSPACE_AUTOMATIONS", false);

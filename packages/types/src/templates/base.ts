@@ -65,6 +65,9 @@ export type TBaseTemplate<T extends ETemplateType, D extends Record<string, unkn
   // timestamp
   created_at: string;
   updated_at: string;
+  // user
+  created_by: string | undefined;
+  updated_by: string | undefined;
 };
 
 export type TBaseTemplateWithData = TBaseTemplate<ETemplateType, Record<string, unknown>>;

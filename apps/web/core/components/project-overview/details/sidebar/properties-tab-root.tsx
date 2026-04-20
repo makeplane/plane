@@ -11,11 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import Link from "next/link";
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
@@ -29,7 +27,6 @@ import {
   StatePropertyIcon,
   UserCirclePropertyIcon,
 } from "@plane/propel/icons";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -39,7 +36,6 @@ import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web
 import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { InitiativeMultiSelectModal } from "@/components/initiatives/common/multi-select-modal";
@@ -59,13 +55,12 @@ type Props = {
   projectId: string;
 };
 
-export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOverviewSidebarPropertiesRoot(
-  props: Props
-) {
-  const { workspaceSlug, projectId } = props;
+export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOverviewSidebarPropertiesRoot({
+  projectId,
+  workspaceSlug,
+}: Props) {
   // store hooks
-  const { getProjectById, updateProject } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { getProjectById, updateProject, permissions: projectPermissions } = useProject();
   const { currentWorkspace } = useWorkspace();
   const { getUserDetails } = useMember();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
@@ -74,10 +69,13 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
   } = useInitiatives();
   const { t } = useTranslation();
   // derived values
-  const project = getProjectById(projectId.toString());
-  const isLabelsEnabled = useFlag(workspaceSlug.toString(), "WORKSPACE_PROJECT_LABELS");
-
+  const project = getProjectById(projectId);
   const isProjectGroupingFlag = useFlag(workspaceSlug.toString(), "PROJECT_GROUPING");
+  const isProjectGroupingEnabled =
+    isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlag;
+  // auth
+  const canEdit = projectPermissions.getCanEdit(workspaceSlug, projectId);
+  const isLabelsEnabled = useFlag(workspaceSlug, "WORKSPACE_PROJECT_LABELS");
 
   if (!project || !currentWorkspace) return null;
 
@@ -86,19 +84,9 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
   const lead = getUserDetails(project.project_lead as string);
   const projectMembersIds = project.members;
 
-  const isProjectGroupingEnabled =
-    isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED) && isProjectGroupingFlag;
-
-  const isEditingAllowed = allowPermissions(
-    [EUserProjectRoles.ADMIN],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
-
   // handlers
   const handleUpdateProject = async (data: Partial<TProject>) => {
-    await updateProject(workspaceSlug.toString(), projectId.toString(), data);
+    await updateProject(workspaceSlug, projectId, data);
   };
 
   return (
@@ -111,19 +99,19 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
       />
       {isProjectGroupingEnabled ? (
         <SidebarContentWrapper title="Properties">
-          <div className={`mb-2 space-y-2.5 ${!isEditingAllowed ? "opacity-60" : ""}`}>
+          <div className={`mb-2 space-y-2.5 ${!canEdit ? "opacity-60" : ""}`}>
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary my-auto">
-                <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
+              <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary my-auto">
+                <StatePropertyIcon className="h-4 w-4 shrink-0" />
                 <span>State</span>
               </div>
               <StateDropdown
                 value={project.state_id || ""}
                 onChange={(val) => handleUpdateProject({ state_id: val })}
-                workspaceSlug={workspaceSlug.toString()}
+                workspaceSlug={workspaceSlug}
                 workspaceId={currentWorkspace.id}
-                disabled={!isEditingAllowed || isArchived}
-                optionsClassName="z-[11]"
+                disabled={!canEdit || isArchived}
+                optionsClassName="z-11"
                 className="w-full"
                 labelIconSize="16"
                 buttonClassName={cn(
@@ -132,8 +120,8 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
               />
             </div>
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary my-auto">
-                <PriorityPropertyIcon className="h-4 w-4 flex-shrink-0" />
+              <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary my-auto">
+                <PriorityPropertyIcon className="h-4 w-4 shrink-0" />
                 <span>Priority</span>
               </div>
               <PriorityDropdown
@@ -146,19 +134,19 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                 showTooltip
                 buttonContainerClassName="w-full"
                 className="h-7 my-auto"
-                disabled={!isEditingAllowed || isArchived}
+                disabled={!canEdit || isArchived}
               />
             </div>
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-                <UserCirclePropertyIcon className="h-4 w-4 flex-shrink-0" />
+              <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary">
+                <UserCirclePropertyIcon className="h-4 w-4 shrink-0" />
                 <span>Lead</span>
               </div>
               {lead ? (
                 <div className="w-full h-full flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-13 justify-between cursor-not-allowed">
                   <ButtonAvatars showTooltip userIds={lead.id} />
-                  <span className="flex-grow truncate text-13 text-secondary leading-5">
+                  <span className="grow truncate text-13 text-secondary leading-5">
                     {lead ? lead.display_name : null}
                   </span>
                 </div>
@@ -173,17 +161,17 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                   buttonClassName="z-1 px-2 py-0 h-5"
                   className="h-5 my-auto"
                   projectId={project.id}
-                  disabled={!isEditingAllowed || isArchived}
+                  disabled={!canEdit || isArchived}
                   showTooltip
-                  optionsClassName={"z-[11]"}
+                  optionsClassName="z-11"
                   button={<div className="px-2 text-tertiary text-13">None</div>}
                 />
               )}
             </div>
 
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-                <MembersPropertyIcon className="h-4 w-4 flex-shrink-0" />
+              <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary">
+                <MembersPropertyIcon className="h-4 w-4 shrink-0" />
                 <span>Members</span>
               </div>
               <MembersDropdown
@@ -201,23 +189,23 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
             </div>
             {isLabelsEnabled && (
               <div className="flex h-8 items-center gap-2">
-                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-                  <LabelPropertyIcon className="h-4 w-4 flex-shrink-0" />
+                <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary">
+                  <LabelPropertyIcon className="h-4 w-4 shrink-0" />
                   <span>Labels</span>
                 </div>
                 <LabelsDropdown
                   value={project.label_ids ?? []}
                   onChange={(labelIds) => handleUpdateProject({ label_ids: labelIds })}
-                  disabled={!isEditingAllowed || isArchived}
-                  workspaceSlug={workspaceSlug.toString()}
+                  disabled={!canEdit || isArchived}
+                  workspaceSlug={workspaceSlug}
                   className="h-7 my-auto w-full"
                 />
               </div>
             )}
             {isInitiativesFeatureEnabled && (
               <div className="flex h-8 items-center gap-2">
-                <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-                  <InitiativeIcon className="h-4 w-4 flex-shrink-0" />
+                <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary">
+                  <InitiativeIcon className="h-4 w-4 shrink-0" />
                   <span>Initiatives</span>
                 </div>
                 <Button
@@ -229,7 +217,7 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                     }
                   )}
                   onClick={() => toggleInitiativeModal(projectId)}
-                  disabled={!isEditingAllowed || isArchived}
+                  disabled={!canEdit || isArchived}
                 >
                   {project.initiative_ids?.length
                     ? t("initiatives.placeholder", { count: project.initiative_ids?.length })
@@ -238,8 +226,8 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
               </div>
             )}
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-                <StartDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
+              <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary">
+                <StartDatePropertyIcon className="h-4 w-4 shrink-0" />
                 <span>Start date</span>
               </div>
               <DateDropdown
@@ -250,9 +238,9 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                     start_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
-                disabled={!isEditingAllowed || isArchived}
+                disabled={!canEdit || isArchived}
                 buttonVariant="transparent-with-text"
-                className="group w-3/5 flex-grow"
+                className="group w-3/5 grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={`text-13 ${project?.start_date ? "" : "text-placeholder"}`}
                 hideIcon
@@ -261,8 +249,8 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
               />
             </div>
             <div className="flex h-8 items-center gap-2">
-              <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
-                <DueDatePropertyIcon className="h-4 w-4 flex-shrink-0" />
+              <div className="flex w-2/5 shrink-0 items-center gap-1 text-13 text-tertiary">
+                <DueDatePropertyIcon className="h-4 w-4 shrink-0" />
                 <span>Due date</span>
               </div>
               <DateDropdown
@@ -273,15 +261,15 @@ export const ProjectOverviewSidebarPropertiesRoot = observer(function ProjectOve
                     target_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
-                disabled={!isEditingAllowed || isArchived}
+                disabled={!canEdit || isArchived}
                 buttonVariant="transparent-with-text"
-                className="group w-3/5 flex-grow"
+                className="group w-3/5 grow"
                 buttonContainerClassName="w-full text-left"
                 buttonClassName={cn("text-13 text-secondary", {
                   "text-placeholder": !project.target_date,
                 })}
                 hideIcon
-                clearIconClassName="h-3 w-3 hidden group-hover:inline !text-primary"
+                clearIconClassName="h-3 w-3 hidden group-hover:inline text-primary!"
                 minDate={getDate(project.start_date) ?? undefined}
               />
             </div>

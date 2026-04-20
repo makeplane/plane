@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "역할 및 권한 스킴",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "역할 및 권한",
+        "roles_list": {
+          "workspace": {
+            "label": "워크스페이스 역할"
+          },
+          "project": {
+            "label": "프로젝트 역할"
+          }
+        },
+        "compare_permissions": "권한 비교",
+        "create_role": {
+          "title": "역할 생성",
+          "description": "이름, 설명, 인스턴스 사용자에 대한 권한을 설정하여 역할을 정의합니다.",
+          "button_label": "새 역할 생성",
+          "error_toast_description": "역할을 생성할 수 없습니다. 다시 시도해 주세요."
+        },
+        "edit_role": {
+          "title": "역할 편집",
+          "description": "역할의 이름, 권한, 설정을 업데이트하여 멤버가 접근하고 수행할 수 있는 작업을 제어합니다.",
+          "error_toast_description": "역할을 업데이트할 수 없습니다. 다시 시도해 주세요."
+        },
+        "role_details": {
+          "role_information_title": "기본 정보",
+          "role_information_description": "역할의 이름과 목적을 명확히 하는 간단한 설명입니다.",
+          "role_name": "역할 이름",
+          "role_description": "설명",
+          "role_details": "역할 세부 정보",
+          "role_details_description": "역할과 할당된 권한의 전체 개요를 확인합니다.",
+          "edit_permissions": "권한 편집"
+        },
+        "role_form": {
+          "name": "역할 이름",
+          "name_placeholder": "역할 이름을 입력하세요",
+          "name_error": "이름은 필수입니다.",
+          "description": "설명",
+          "description_placeholder": "역할을 설명하세요",
+          "create_button": "역할 생성"
+        },
+        "role_actions": {
+          "duplicate": "복제"
+        },
+        "discard_changes_modal": {
+          "title": "변경 사항을 취소하시겠습니까?",
+          "description": "변경 사항이 저장되지 않았습니다. 이 페이지를 나가면 변경 사항이 취소됩니다.",
+          "cancel": "변경 사항 취소",
+          "confirm": "계속 편집"
+        },
+        "delete_role_modal": {
+          "title": "역할을 삭제하시겠습니까?",
+          "description": "이 역할을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+          "error_toast_message": "역할을 삭제하지 못했습니다. 다시 시도해 주세요."
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "워크스페이스 역할 및 권한",
+            "project": "프로젝트 역할 및 권한"
+          },
+          "permissions_header": "권한",
+          "view_mode": {
+            "sets": "세트 보기",
+            "permissions": "권한 문자열"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "워크스페이스 설정",
+              "description": "워크스페이스 핵심 구성: 이름, 로고, 통화, 도메인, 삭제, 소유권 이전.",
+              "workspace": {
+                "view": { "label": "워크스페이스 보기" },
+                "edit": { "label": "워크스페이스 설정 편집" },
+                "manage": { "label": "워크스페이스 관리" },
+                "invite": { "label": "멤버 초대" },
+                "delete": { "label": "워크스페이스 삭제" },
+                "transfer": { "label": "소유권 이전" }
+              }
+            },
+            "member_management": {
+              "title": "멤버 관리",
+              "description": "워크스페이스 멤버의 초대, 편집, 가져오기, 제거.",
+              "workspace_member": {
+                "view": { "label": "멤버 보기" },
+                "invite": { "label": "멤버 초대" },
+                "edit": { "label": "멤버 세부 정보 편집" },
+                "import": { "label": "멤버 가져오기 (CSV / SSO)" },
+                "change_role": { "label": "멤버 역할 변경" },
+                "remove": { "label": "멤버 제거" }
+              }
+            },
+            "project_management": {
+              "title": "프로젝트 관리",
+              "description": "워크스페이스 컨텍스트에서 프로젝트 생성 및 관리.",
+              "project": {
+                "browse": { "label": "프로젝트 탐색" },
+                "view": { "label": "프로젝트 세부 정보 보기" },
+                "create": { "label": "프로젝트 생성" },
+                "edit": { "label": "프로젝트 설정 편집" },
+                "react": { "label": "프로젝트에 반응" },
+                "publish": { "label": "프로젝트 게시 (공개로 전환)" },
+                "archive": { "label": "프로젝트 보관" },
+                "delete": { "label": "프로젝트 삭제" },
+                "manage": { "label": "프로젝트 접근 관리" }
+              }
+            },
+            "role_administration": {
+              "title": "역할 관리",
+              "description": "사용자 정의 역할 및 프로젝트 역할의 생성과 관리.",
+              "custom_role": {
+                "view": { "label": "사용자 정의 역할 보기" },
+                "create": { "label": "사용자 정의 역할 생성" },
+                "edit": { "label": "사용자 정의 역할 편집" },
+                "delete": { "label": "사용자 정의 역할 삭제" }
+              }
+            },
+            "workspace_pages": {
+              "title": "워크스페이스 페이지 (Wiki)",
+              "description": "워크스페이스 수준의 문서와 Wiki.",
+              "wiki": {
+                "view": { "label": "Wiki 보기" },
+                "create": { "label": "Wiki 페이지 생성" },
+                "edit": { "label": "Wiki 페이지 편집" },
+                "share": { "label": "Wiki 페이지 공유" },
+                "delete": { "label": "Wiki 페이지 삭제" },
+                "comment": { "label": "Wiki 페이지에 댓글 작성" }
+              }
+            },
+            "workspace_views": {
+              "title": "워크스페이스 보기",
+              "description": "워크스페이스 수준의 저장된 필터 및 보기 관리.",
+              "workspace_workitem_view": {
+                "view": { "label": "워크스페이스 보기 보기" },
+                "create": { "label": "워크스페이스 보기 생성" },
+                "edit": { "label": "워크스페이스 보기 편집" },
+                "share": { "label": "워크스페이스 보기 공유" },
+                "publish": { "label": "워크스페이스 보기 게시" },
+                "export": { "label": "워크스페이스 보기 내보내기" },
+                "delete": { "label": "워크스페이스 보기 삭제" }
+              }
+            },
+            "initiatives": {
+              "title": "이니셔티브",
+              "description": "댓글, 첨부 파일, 링크, 업데이트를 포함한 프로젝트 간 이니셔티브 추적.",
+              "initiative": {
+                "view": { "label": "이니셔티브 보기" },
+                "create": { "label": "이니셔티브 생성" },
+                "edit": { "label": "이니셔티브 편집" },
+                "manage": { "label": "이니셔티브 관리" },
+                "react": { "label": "이니셔티브에 반응" },
+                "delete": { "label": "이니셔티브 삭제" }
+              },
+              "initiative_comment": {
+                "view": { "label": "이니셔티브 댓글 보기" },
+                "create": { "label": "이니셔티브에 댓글 작성" },
+                "edit": { "label": "이니셔티브 댓글 편집" },
+                "react": { "label": "이니셔티브 댓글에 반응" },
+                "delete": { "label": "이니셔티브 댓글 삭제" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "이니셔티브 첨부 파일 보기" },
+                "create": { "label": "이니셔티브 첨부 파일 추가" },
+                "delete": { "label": "이니셔티브 첨부 파일 삭제" }
+              },
+              "initiative_link": {
+                "view": { "label": "이니셔티브 링크 보기" },
+                "create": { "label": "이니셔티브 링크 추가" },
+                "edit": { "label": "이니셔티브 링크 편집" },
+                "delete": { "label": "이니셔티브 링크 삭제" }
+              }
+            },
+            "teamspaces": {
+              "title": "팀스페이스",
+              "description": "팀스페이스 탐색, 생성 및 관리.",
+              "teamspace": {
+                "browse": { "label": "팀스페이스 탐색" },
+                "view": { "label": "팀스페이스 세부 정보 보기" },
+                "create": { "label": "팀스페이스 생성" },
+                "edit": { "label": "팀스페이스 편집" },
+                "manage": { "label": "팀스페이스 멤버 관리" },
+                "delete": { "label": "팀스페이스 삭제" }
+              }
+            },
+            "integrations": {
+              "title": "통합",
+              "description": "타사 통합, 웹훅, API 토큰.",
+              "integration": {
+                "view": { "label": "통합 보기" },
+                "create": { "label": "통합 생성" },
+                "edit": { "label": "통합 구성" },
+                "delete": { "label": "통합 삭제" }
+              },
+              "webhook": {
+                "view": { "label": "웹훅 보기" },
+                "create": { "label": "웹훅 생성" },
+                "edit": { "label": "웹훅 편집" },
+                "delete": { "label": "웹훅 삭제" }
+              },
+              "api_token": {
+                "view": { "label": "API 토큰 보기" },
+                "create": { "label": "API 토큰 생성" },
+                "delete": { "label": "API 토큰 삭제" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "분석 및 보고",
+              "description": "워크스페이스 수준의 대시보드, 분석, 작업 로그.",
+              "analytics": {
+                "view": { "label": "분석 보기" },
+                "export": { "label": "분석 내보내기" }
+              },
+              "dashboard": {
+                "view": { "label": "대시보드 보기" },
+                "create": { "label": "대시보드 생성" },
+                "edit": { "label": "대시보드 편집" },
+                "delete": { "label": "대시보드 삭제" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "작업 로그 보기" },
+                "export": { "label": "작업 로그 내보내기" }
+              },
+              "ai": {
+                "use": { "label": "AI 기능 사용" }
+              }
+            },
+            "customers": {
+              "title": "고객 피드백",
+              "description": "고객 및 고객 요청 관리.",
+              "customer": {
+                "view": { "label": "고객 보기" },
+                "create": { "label": "고객 생성" },
+                "edit": { "label": "고객 편집" },
+                "delete": { "label": "고객 삭제" }
+              },
+              "customer_attachment": {
+                "create": { "label": "고객 첨부 파일 추가" },
+                "delete": { "label": "고객 첨부 파일 삭제" }
+              }
+            },
+            "work_item_relations": {
+              "title": "작업 항목 관계",
+              "description": "작업 항목의 사용자 정의 관계 유형 정의 관리.",
+              "workitem_relation": {
+                "view": { "label": "관계 정의 보기" },
+                "create": { "label": "관계 정의 생성" },
+                "edit": { "label": "관계 정의 편집" },
+                "delete": { "label": "관계 정의 삭제" }
+              }
+            },
+            "workspace_templates": {
+              "title": "템플릿",
+              "description": "워크스페이스 수준의 작업 항목, 페이지, 프로젝트 템플릿 생성 및 관리.",
+              "workspace_workitem_template": {
+                "view": { "label": "작업 항목 템플릿 보기" },
+                "create": { "label": "작업 항목 템플릿 생성" },
+                "edit": { "label": "작업 항목 템플릿 편집" },
+                "delete": { "label": "작업 항목 템플릿 삭제" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "페이지 템플릿 보기" },
+                "create": { "label": "페이지 템플릿 생성" },
+                "edit": { "label": "페이지 템플릿 편집" },
+                "delete": { "label": "페이지 템플릿 삭제" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "프로젝트 템플릿 보기" },
+                "create": { "label": "프로젝트 템플릿 생성" },
+                "edit": { "label": "프로젝트 템플릿 편집" },
+                "delete": { "label": "프로젝트 템플릿 삭제" }
+              }
+            },
+            "workspace_automations": {
+              "title": "워크스페이스 자동화",
+              "description": "워크스페이스 수준의 자동화 규칙 및 구성.",
+              "workspace_automation": {
+                "view": { "label": "워크스페이스 자동화 보기" },
+                "create": { "label": "워크스페이스 자동화 생성" },
+                "edit": { "label": "워크스페이스 자동화 편집" },
+                "delete": { "label": "워크스페이스 자동화 삭제" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "프로젝트 멤버",
+              "description": "프로젝트 멤버의 초대, 편집, 제거.",
+              "project_member": {
+                "view": { "label": "프로젝트 멤버 보기" },
+                "invite": { "label": "멤버 초대" },
+                "edit": { "label": "멤버 세부 정보 편집" },
+                "change_role": { "label": "멤버 역할 변경" },
+                "remove": { "label": "멤버 제거" }
+              }
+            },
+            "work_items": {
+              "title": "작업 항목",
+              "description": "기본 작업 항목 영역. 댓글, 첨부 파일, 링크, 관계, 사용자 정의 속성을 포함합니다.",
+              "workitem": {
+                "view": { "label": "작업 항목 보기" },
+                "create": { "label": "작업 항목 생성" },
+                "edit": { "label": "작업 항목 편집" },
+                "bulk_edit": { "label": "작업 항목 일괄 편집" },
+                "export": { "label": "작업 항목 내보내기" },
+                "react": { "label": "작업 항목에 반응" },
+                "delete": { "label": "작업 항목 삭제" }
+              },
+              "comment": {
+                "create": { "label": "댓글 추가" },
+                "edit": { "label": "댓글 편집" },
+                "react": { "label": "댓글에 반응" },
+                "delete": { "label": "댓글 삭제" }
+              },
+              "attachment": {
+                "view": { "label": "첨부 파일 보기" },
+                "create": { "label": "첨부 파일 추가" },
+                "delete": { "label": "첨부 파일 삭제" }
+              },
+              "workitem_link": {
+                "view": { "label": "작업 항목 링크 보기" },
+                "create": { "label": "작업 항목 링크 추가" },
+                "edit": { "label": "작업 항목 링크 편집" },
+                "delete": { "label": "작업 항목 링크 삭제" }
+              },
+              "issue_property": {
+                "view": { "label": "사용자 정의 속성 보기" },
+                "edit": { "label": "사용자 정의 속성 편집" }
+              }
+            },
+            "epics": {
+              "title": "에픽",
+              "description": "링크, 속성, 업데이트 스레드를 포함한 에픽 라이프사이클.",
+              "epic": {
+                "view": { "label": "에픽 보기" },
+                "create": { "label": "에픽 생성" },
+                "edit": { "label": "에픽 편집" },
+                "delete": { "label": "에픽 삭제" }
+              },
+              "epic_link": {
+                "view": { "label": "에픽 링크 보기" },
+                "create": { "label": "에픽 링크 추가" },
+                "edit": { "label": "에픽 링크 편집" },
+                "delete": { "label": "에픽 링크 삭제" }
+              },
+              "epic_property": {
+                "view": { "label": "에픽 속성 보기" },
+                "edit": { "label": "에픽 속성 편집" }
+              },
+              "epic_update": {
+                "view": { "label": "에픽 업데이트 보기" },
+                "create": { "label": "에픽 업데이트 게시" },
+                "edit": { "label": "에픽 업데이트 편집" },
+                "delete": { "label": "에픽 업데이트 삭제" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "에픽 업데이트 댓글 보기" },
+                "create": { "label": "에픽 업데이트에 댓글 작성" },
+                "edit": { "label": "에픽 업데이트 댓글 편집" },
+                "react": { "label": "에픽 업데이트 댓글에 반응" },
+                "delete": { "label": "에픽 업데이트 댓글 삭제" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "모듈 및 사이클",
+              "description": "기능 그룹화 및 스프린트/사이클 관리.",
+              "module": {
+                "view": { "label": "모듈 보기" },
+                "create": { "label": "모듈 생성" },
+                "edit": { "label": "모듈 편집" },
+                "manage": { "label": "모듈 멤버 관리" },
+                "archive": { "label": "모듈 보관" },
+                "export": { "label": "모듈 내보내기" },
+                "delete": { "label": "모듈 삭제" }
+              },
+              "cycle": {
+                "view": { "label": "사이클 보기" },
+                "create": { "label": "사이클 생성" },
+                "edit": { "label": "사이클 편집" },
+                "delete": { "label": "사이클 삭제" }
+              },
+              "cycle_update": {
+                "view": { "label": "사이클 업데이트 보기" },
+                "create": { "label": "사이클 업데이트 게시" },
+                "edit": { "label": "사이클 업데이트 편집" },
+                "delete": { "label": "사이클 업데이트 삭제" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "페이지 및 보기",
+              "description": "프로젝트 수준의 페이지와 저장된 보기.",
+              "page": {
+                "view": { "label": "페이지 보기" },
+                "create": { "label": "페이지 생성" },
+                "edit": { "label": "페이지 편집" },
+                "share": { "label": "페이지 공유" },
+                "delete": { "label": "페이지 삭제" }
+              },
+              "workitem_view": {
+                "view": { "label": "프로젝트 보기 보기" },
+                "create": { "label": "프로젝트 보기 생성" },
+                "edit": { "label": "프로젝트 보기 편집" },
+                "share": { "label": "프로젝트 보기 공유" },
+                "publish": { "label": "프로젝트 보기 게시" },
+                "export": { "label": "프로젝트 보기 내보내기" },
+                "delete": { "label": "프로젝트 보기 삭제" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "작업 항목 Intake 및 트리아지 워크플로우.",
+              "intake": {
+                "view": { "label": "Intake 보기" },
+                "create": { "label": "Intake 항목 생성" },
+                "submit": { "label": "Intake 요청 제출" },
+                "edit": { "label": "Intake 항목 편집" },
+                "react": { "label": "Intake 항목에 반응" },
+                "manage": { "label": "Intake 항목 관리" },
+                "configure": { "label": "Intake 구성" },
+                "export": { "label": "Intake 내보내기" },
+                "delete": { "label": "Intake 항목 삭제" }
+              }
+            },
+            "project_configuration": {
+              "title": "프로젝트 구성",
+              "description": "레이블, 상태, 견적, 마일스톤.",
+              "label": {
+                "view": { "label": "레이블 보기" },
+                "create": { "label": "레이블 생성" },
+                "edit": { "label": "레이블 편집" },
+                "delete": { "label": "레이블 삭제" }
+              },
+              "state": {
+                "view": { "label": "상태 보기" },
+                "create": { "label": "상태 생성" },
+                "edit": { "label": "상태 편집" },
+                "delete": { "label": "상태 삭제" }
+              },
+              "estimate": {
+                "view": { "label": "견적 보기" },
+                "create": { "label": "견적 생성" },
+                "edit": { "label": "견적 편집" },
+                "delete": { "label": "견적 삭제" }
+              },
+              "milestone": {
+                "view": { "label": "마일스톤 보기" },
+                "create": { "label": "마일스톤 생성" },
+                "edit": { "label": "마일스톤 편집" },
+                "delete": { "label": "마일스톤 삭제" }
+              }
+            },
+            "automations": {
+              "title": "자동화 및 워크플로우",
+              "description": "자동화, 워크플로우 규칙, 반복 작업 항목.",
+              "project_automation": {
+                "view": { "label": "자동화 보기" },
+                "create": { "label": "자동화 생성" },
+                "edit": { "label": "자동화 편집" },
+                "delete": { "label": "자동화 삭제" }
+              },
+              "workflow": {
+                "view": { "label": "워크플로우 보기" },
+                "create": { "label": "워크플로우 생성" },
+                "edit": { "label": "워크플로우 편집" },
+                "delete": { "label": "워크플로우 삭제" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "반복 항목 보기" },
+                "create": { "label": "반복 항목 생성" },
+                "edit": { "label": "반복 항목 편집" },
+                "delete": { "label": "반복 항목 삭제" }
+              }
+            },
+            "project_updates": {
+              "title": "프로젝트 업데이트",
+              "description": "진행 업데이트 및 업데이트에 대한 댓글.",
+              "project_update": {
+                "view": { "label": "프로젝트 업데이트 보기" },
+                "create": { "label": "프로젝트 업데이트 게시" },
+                "edit": { "label": "프로젝트 업데이트 편집" },
+                "delete": { "label": "프로젝트 업데이트 삭제" }
+              },
+              "project_update_comment": {
+                "view": { "label": "프로젝트 업데이트 댓글 보기" },
+                "create": { "label": "프로젝트 업데이트에 댓글 작성" },
+                "edit": { "label": "프로젝트 업데이트 댓글 편집" },
+                "react": { "label": "프로젝트 업데이트 댓글에 반응" },
+                "delete": { "label": "프로젝트 업데이트 댓글 삭제" }
+              }
+            },
+            "project_analytics": {
+              "title": "분석 및 활동",
+              "description": "프로젝트 분석 및 활동 로그.",
+              "project_activity": {
+                "view": { "label": "활동 로그 보기" }
+              }
+            },
+            "project_links": {
+              "title": "프로젝트 링크",
+              "description": "프로젝트 수준의 링크.",
+              "project_link": {
+                "view": { "label": "프로젝트 링크 보기" },
+                "create": { "label": "프로젝트 링크 추가" },
+                "edit": { "label": "프로젝트 링크 편집" },
+                "delete": { "label": "프로젝트 링크 삭제" }
+              }
+            },
+            "project_templates": {
+              "title": "템플릿",
+              "description": "프로젝트 범위의 작업 항목 및 페이지 템플릿.",
+              "project_workitem_template": {
+                "view": { "label": "작업 항목 템플릿 보기" },
+                "create": { "label": "작업 항목 템플릿 생성" },
+                "edit": { "label": "작업 항목 템플릿 편집" },
+                "delete": { "label": "작업 항목 템플릿 삭제" }
+              },
+              "project_page_template": {
+                "view": { "label": "페이지 템플릿 보기" },
+                "create": { "label": "페이지 템플릿 생성" },
+                "edit": { "label": "페이지 템플릿 편집" },
+                "delete": { "label": "페이지 템플릿 삭제" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "전체",
+              "own": "본인만",
+              "creator": "본인만",
+              "lead": "리드만",
+              "disabled": "비활성화됨"
+            },
+            "select_all": "모두 선택",
+            "high_risk_tooltip": "이 권한은 상승된 접근 권한을 부여합니다. 신중하게 부여하세요.",
+            "folded_rows": {
+              "templates": {
+                "view": "템플릿 보기",
+                "create": "템플릿 생성",
+                "edit": "템플릿 편집",
+                "delete": "템플릿 삭제"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "세부 정보, 첨부 파일, 링크 보기를 포함합니다. 또한 이니셔티브에 반응하고 댓글을 다는 것도 포함합니다.",
+                  "edit": "첨부 파일 생성 및 이니셔티브 링크 관리를 포함합니다."
+                },
+                "workspace_templates": {
+                  "view": "프로젝트, 작업 항목, 페이지 템플릿 보기를 포함합니다.",
+                  "create": "프로젝트, 작업 항목, 페이지 템플릿 생성을 포함합니다.",
+                  "edit": "프로젝트, 작업 항목, 페이지 템플릿 편집을 포함합니다.",
+                  "delete": "프로젝트, 작업 항목, 페이지 템플릿 삭제를 포함합니다."
+                },
+                "epics": {
+                  "view": "에픽 링크 보기 및 에픽에 반응하기를 포함합니다.",
+                  "edit": "에픽 링크의 생성, 편집, 삭제를 포함합니다."
+                },
+                "epic_updates": {
+                  "view": "업데이트 보기 및 반응하기를 포함합니다. 또한 업데이트 댓글 보기, 생성, 반응하기도 포함합니다."
+                },
+                "project_updates": {
+                  "view": "업데이트 보기 및 반응하기를 포함합니다. 또한 업데이트 댓글 보기, 생성, 반응하기도 포함합니다."
+                },
+                "project_templates": {
+                  "view": "작업 항목 및 페이지 템플릿 보기를 포함합니다.",
+                  "create": "작업 항목 및 페이지 템플릿 생성을 포함합니다.",
+                  "edit": "작업 항목 및 페이지 템플릿 편집을 포함합니다.",
+                  "delete": "작업 항목 및 페이지 템플릿 삭제를 포함합니다."
+                }
+              }
+            },
+            "search_placeholder": "권한 검색...",
+            "no_results": "일치하는 권한이 없습니다",
+            "clear_search": "지우기",
+            "preset_label": "시스템 역할에서 시작:",
+            "preset_none": "없음 (비어 있음)",
+            "empty_permissions_note": "이 스킴을 저장하려면 최소 하나의 권한을 선택하세요."
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "프로젝트 역할 및 스킴",
+        "sidebar_label": "프로젝트"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "워크스페이스 역할 및 스킴",
+        "sidebar_label": "워크스페이스"
+      },
+      "roles_and_schemes": {
+        "description": "작업 항목 유형에 연결할 속성 및 상호 작용 그룹을 구성합니다",
+        "tabs": {
+          "roles": "역할",
+          "permission_schemes": "권한 스킴"
+        },
+        "create_role": {
+          "modal_title": "새 역할 생성",
+          "button_label": "역할 생성",
+          "role_title_label": "역할 제목",
+          "role_title_placeholder": "고유한 제목을 추가하세요",
+          "description_label": "설명",
+          "description_placeholder": "고유한 제목을 추가하세요",
+          "create_button": "역할 생성",
+          "error_toast_description": "역할을 생성할 수 없습니다. 다시 시도해 주세요."
+        },
+        "create_scheme": {
+          "title": "권한 스킴 생성",
+          "description": "이름, 설명, 권한을 설정하여 권한 스킴을 정의합니다.",
+          "button_label": "권한 스킴 생성",
+          "create_button": "권한 스킴 생성",
+          "error_toast_description": "권한 스킴을 생성할 수 없습니다. 다시 시도해 주세요."
+        },
+        "role_detail": {
+          "back": "뒤로",
+          "permission_schemes_title": "권한 스킴",
+          "attach_button": "권한 스킴 연결",
+          "empty_title": "권한 스킴이 아직 없습니다",
+          "empty_description": "맞춤 레이블을 생성하여 작업 항목을 효과적으로 분류하고 관리하세요.",
+          "error_toast_description": "역할을 업데이트할 수 없습니다. 다시 시도해 주세요."
+        },
+        "scheme_detail": {
+          "title": "권한 스킴 세부 정보",
+          "description": "스킴과 할당된 권한의 전체 개요를 확인합니다.",
+          "edit_title": "권한 스킴 편집",
+          "edit_description": "스킴의 이름, 권한, 설정을 업데이트합니다.",
+          "edit_button": "권한 스킴 편집",
+          "error_toast_description": "권한 스킴을 업데이트할 수 없습니다. 다시 시도해 주세요.",
+          "scheme_information_title": "스킴 정보",
+          "scheme_information_description": "스킴의 이름과 목적을 명확히 하는 간단한 설명입니다.",
+          "scheme_name": "스킴 이름",
+          "scheme_name_placeholder": "스킴 이름을 입력하세요",
+          "scheme_name_error": "이름은 필수입니다.",
+          "scheme_description": "설명",
+          "scheme_description_placeholder": "스킴을 설명하세요"
+        },
+        "attach_schemes": {
+          "title": "권한 스킴",
+          "search_placeholder": "검색",
+          "permissions_count": "권한",
+          "discard": "취소",
+          "add": "추가"
+        },
+        "quick_actions": {
+          "edit_scheme": "권한 스킴 편집",
+          "delete_scheme": "권한 스킴 삭제",
+          "edit_role": "역할 세부 정보 편집",
+          "enable_role": "역할 활성화",
+          "delete_role": "역할 삭제"
+        },
+        "edit_role": {
+          "modal_title": "역할 세부 정보 편집",
+          "save_button": "변경 사항 저장",
+          "saving": "저장 중...",
+          "error_toast_description": "역할을 업데이트할 수 없습니다. 다시 시도해 주세요."
+        },
+        "delete_role": {
+          "confirm_title": "\"{roleName}\"을(를) 삭제하시겠습니까?",
+          "has_members_message": "이 역할은 {count}명의 멤버에게 할당되어 있습니다. 삭제하면 영구적으로 제거되며 되돌릴 수 없습니다.",
+          "no_members_message": "이 역할에는 할당된 멤버가 없습니다. 삭제하면 영구적으로 제거되며 되돌릴 수 없습니다.",
+          "reassign_label": "멤버 재할당 대상",
+          "reassign_placeholder": "역할 선택",
+          "submit_button": "재할당 및 삭제",
+          "submit_button_no_members": "삭제",
+          "submitting": "삭제 중...",
+          "error_toast_description": "역할을 삭제할 수 없습니다. 다시 시도해 주세요.",
+          "success_toast_message": "역할이 삭제되었습니다."
+        },
+        "disable_role": {
+          "confirm_title": "\"{roleName}\"을(를) 비활성화하시겠습니까?",
+          "has_members_message": "이 역할은 현재 {memberCount}명의 멤버에게 할당되어 있습니다. 진행하기 전에 기존 멤버를 재할당할 역할을 선택해야 합니다.",
+          "no_members_message": "이 역할에는 할당된 멤버가 없습니다. 비활성화됩니다.",
+          "reassign_label": "멤버 재할당 대상",
+          "reassign_placeholder": "역할 선택",
+          "submit_button": "재할당 및 비활성화",
+          "submit_button_no_members": "비활성화",
+          "submitting": "비활성화 중...",
+          "error_toast_description": "역할을 비활성화할 수 없습니다. 다시 시도해 주세요.",
+          "success_toast_message": "역할이 비활성화되었습니다."
+        },
+        "enable_role": {
+          "confirm_title": "\"{roleName}\"을(를) 활성화하시겠습니까?",
+          "confirm_message": "이 역할이 활성화되어 멤버에게 할당할 수 있습니다.",
+          "submit_button": "활성화",
+          "submitting": "활성화 중...",
+          "success_toast_message": "역할이 활성화되었습니다."
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "권한 스킴을 삭제하시겠습니까?",
+          "has_roles_message": "이 스킴은 {count}개의 역할에서 사용 중입니다. 제거하면 해당 역할에서 권한이 취소됩니다. 이 작업은 되돌릴 수 없습니다.",
+          "no_roles_message": "이 권한 스킴은 어떤 역할에서도 사용되고 있지 않습니다. 영구적으로 삭제됩니다.",
+          "submit_button": "확인",
+          "submitting": "삭제 중...",
+          "error_toast_description": "권한 스킴을 삭제할 수 없습니다. 다시 시도해 주세요.",
+          "in_use_error": "삭제하기 전에 모든 역할에서 이 스킴을 제거하세요.",
+          "success_toast_message": "권한 스킴이 삭제되었습니다."
+        }
+      }
+    }
+  }
+}

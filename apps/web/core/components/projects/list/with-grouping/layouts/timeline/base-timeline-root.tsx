@@ -11,18 +11,16 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import type { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
-import { EUserProjectRoles, GANTT_TIMELINE_TYPE } from "@plane/types";
+import { GANTT_TIMELINE_TYPE } from "@plane/types";
 // components
 import { TimelineChartRoot } from "@/components/timeline";
 import { TimeLineTypeContext } from "@/components/timeline/contexts";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useProjectFilter } from "@/plane-web/hooks/store/workspace-project-states/use-project-filters";
 import type { TProject } from "@/types/projects";
@@ -32,20 +30,28 @@ import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { ProjectTimelineBlock } from "./blocks";
 import { ProjectTimelineSidebar } from "./sidebar";
 
-export const BaseTimelineRoot = observer(function BaseTimelineRoot() {
+type BaseTimelineRootProps = {
+  workspaceSlug: string;
+};
+
+export const BaseTimelineRoot = observer(function BaseTimelineRoot(props: BaseTimelineRootProps) {
+  const { workspaceSlug } = props;
   // store hooks
   const { getFilteredProjectsByLayout } = useProjectFilter();
-  const { workspaceSlug } = useParams();
-  const { allowPermissions } = useUserPermissions();
-  const { updateProject } = useProject();
+  const { updateProject, permissions } = useProject();
 
   const filteredProjectIds = getFilteredProjectsByLayout(EProjectLayouts.TIMELINE);
+
+  const getCanEditViaTimeline = useCallback(
+    (blockId: string) => permissions.getCanEdit(workspaceSlug, blockId),
+    [permissions, workspaceSlug]
+  );
 
   const updateProjectBlockStructure = async (project: TProject, data: IBlockUpdateData) => {
     if (!workspaceSlug) return;
     const payload = { ...data };
     if (updateProject) {
-      await updateProject(workspaceSlug.toString(), project.id, payload as Partial<TProject>);
+      await updateProject(workspaceSlug, project.id, payload as Partial<TProject>);
     }
   };
 
@@ -60,15 +66,12 @@ export const BaseTimelineRoot = observer(function BaseTimelineRoot() {
     if (blockUpdate.target_date) payload.target_date = blockUpdate.target_date;
 
     if (updateProject) {
-      await updateProject(workspaceSlug.toString(), blockUpdate.id, payload);
+      await updateProject(workspaceSlug, blockUpdate.id, payload);
     }
   };
 
-  const isAllowed = (projectId: string) =>
-    allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug.toString(), projectId);
-
   return (
-    <ProjectLayoutHOC layout={EProjectLayouts.TIMELINE}>
+    <ProjectLayoutHOC layout={EProjectLayouts.TIMELINE} workspaceSlug={workspaceSlug}>
       <TimeLineTypeContext.Provider value={GANTT_TIMELINE_TYPE.PROJECT}>
         <div className="h-full w-full">
           <TimelineChartRoot
@@ -79,10 +82,10 @@ export const BaseTimelineRoot = observer(function BaseTimelineRoot() {
             blockUpdateHandler={updateProjectBlockStructure}
             blockToRender={(data: TProject) => <ProjectTimelineBlock projectId={data.id} />}
             sidebarToRender={(props) => <ProjectTimelineSidebar {...props} showAllBlocks />}
-            enableBlockLeftResize={isAllowed}
-            enableBlockRightResize={isAllowed}
-            enableBlockMove={isAllowed}
-            enableAddBlock={isAllowed}
+            enableBlockLeftResize={getCanEditViaTimeline}
+            enableBlockRightResize={getCanEditViaTimeline}
+            enableBlockMove={getCanEditViaTimeline}
+            enableAddBlock={getCanEditViaTimeline}
             enableSelection={false}
             showToday={false}
             updateBlockDates={updateBlockDates}

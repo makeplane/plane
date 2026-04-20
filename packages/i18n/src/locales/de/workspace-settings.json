@@ -220,6 +220,10 @@
             "title": "Gruppenattributschlüssel",
             "description": "Das IdP-Attribut zur Identifikation und Synchronisation von Benutzergruppen.",
             "placeholder": "Gruppen"
+          },
+          "default_workspace_role": {
+            "title": "Standard-Workspace-Rolle",
+            "description": "Die Rolle, die Benutzern zugewiesen wird, wenn sie über Gruppensynchronisierung automatisch zum Workspace hinzugefügt werden."
           }
         },
         "group_mapping": {

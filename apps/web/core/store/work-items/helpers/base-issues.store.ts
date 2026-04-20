@@ -585,7 +585,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     shouldUpdateList && (await this.fetchParentStats(workspaceSlug, projectId));
 
     // Auto-complete getting started checklist
-    void this.rootIssueStore.rootStore.memberRoot.workspace.updateChecklistIfNotDoneAlready(
+    void this.rootIssueStore.rootStore.preferencesRoot.workspace.updateChecklistIfNotDoneAlready(
       workspaceSlug,
       "work_item_created"
     );
@@ -1844,10 +1844,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         break;
       }
       case "assignee_ids": {
-        const memberMap = this.rootIssueStore?.memberMap;
-        if (!memberMap) break;
         for (const dataId of dataIdsArray) {
-          const member = memberMap[dataId];
+          const member = this.rootIssueStore?.rootStore.memberRoot.getUserDetails(dataId);
           if (member && member.first_name) dataValues.push(member.first_name.toLocaleLowerCase());
         }
         break;

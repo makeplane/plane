@@ -220,6 +220,10 @@
             "title": "Cheie atribut grup",
             "description": "Atributul furnizorului de identitate folosit pentru identificarea și sincronizarea grupurilor de utilizatori.",
             "placeholder": "Grupuri"
+          },
+          "default_workspace_role": {
+            "title": "Rol implicit în spațiul de lucru",
+            "description": "Rolul atribuit utilizatorilor când sunt adăugați automat în spațiul de lucru prin sincronizarea grupurilor."
           }
         },
         "group_mapping": {

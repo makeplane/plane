@@ -107,7 +107,10 @@ export class GroupSyncStore implements IGroupSyncStore {
         set(this.groupSyncConfig, workspaceSlug, { ...initialData, ...payload });
       });
 
-      await this.groupSyncService.updateGroupSyncConfigByWorkspaceSlug(workspaceSlug, payload);
+      const response = await this.groupSyncService.updateGroupSyncConfigByWorkspaceSlug(workspaceSlug, payload);
+      runInAction(() => {
+        set(this.groupSyncConfig, workspaceSlug, response);
+      });
     } catch (error) {
       console.error("group syncing --> updateGroupSyncConfigByWorkspaceSlug", error);
       void this.fetchGroupSyncConfigByWorkspaceSlug(workspaceSlug);

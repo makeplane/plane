@@ -57,20 +57,34 @@ const TeamspaceViewTableLayout = lazy(() =>
   }))
 );
 
-const TEAMSPACE_WORK_ITEM_VIEW_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  viewId: string;
+};
+
+const TEAMSPACE_WORK_ITEM_VIEW_LAYOUTS: Partial<
+  Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<ActiveLayoutProps>>>
+> = {
   [EIssueLayoutTypes.LIST]: TeamspaceViewListLayout,
   [EIssueLayoutTypes.KANBAN]: TeamspaceViewBoardLayout,
   [EIssueLayoutTypes.CALENDAR]: TeamspaceViewCalendarLayout,
   [EIssueLayoutTypes.SPREADSHEET]: TeamspaceViewTableLayout,
 };
 
-function TeamspaceViewIssueLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {
+type TeamspaceViewIssueLayoutProps = {
+  workspaceSlug: string;
+  viewId: string;
+  activeLayout: EIssueLayoutTypes | undefined;
+};
+
+function TeamspaceViewIssueLayout(props: TeamspaceViewIssueLayoutProps) {
+  const { workspaceSlug, viewId, activeLayout } = props;
   if (!props.activeLayout) return <></>;
   const TeamspaceViewIssueLayoutComponent = TEAMSPACE_WORK_ITEM_VIEW_LAYOUTS[props.activeLayout];
   if (!TeamspaceViewIssueLayoutComponent) return <></>;
   return (
     <Suspense>
-      <TeamspaceViewIssueLayoutComponent />
+      <TeamspaceViewIssueLayoutComponent workspaceSlug={workspaceSlug} viewId={viewId} />
     </Suspense>
   );
 }
@@ -148,7 +162,7 @@ export const TeamspaceViewLayoutRoot = observer(function TeamspaceViewLayoutRoot
                   <Spinner className="w-4 h-4" />
                 </div>
               )}
-              <TeamspaceViewIssueLayout activeLayout={activeLayout} />
+              <TeamspaceViewIssueLayout workspaceSlug={workspaceSlug} viewId={viewId} activeLayout={activeLayout} />
             </div>
             {/* peek overview */}
             <Suspense>

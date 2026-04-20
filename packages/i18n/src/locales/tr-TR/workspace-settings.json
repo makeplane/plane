@@ -220,6 +220,10 @@
             "title": "Grup öznitelik anahtarı",
             "description": "Kullanıcı gruplarını tanımlamak ve senkronize etmek için kullanılan kimlik sağlayıcı özniteliği.",
             "placeholder": "Gruplar"
+          },
+          "default_workspace_role": {
+            "title": "Varsayılan çalışma alanı rolü",
+            "description": "Grup senkronizasyonu ile çalışma alanına otomatik olarak eklenen kullanıcılara atanan rol."
           }
         },
         "group_mapping": {

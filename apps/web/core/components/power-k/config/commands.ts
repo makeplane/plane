@@ -35,7 +35,7 @@ export const useProjectsAppPowerKCommands = (): TPowerKCommandConfig[] => {
   return [
     ...navigationCommands,
     ...creationCommands,
-    ...actionsCommands,
+    ...Object.values(actionsCommands),
     ...contextualCommands,
     ...accountCommands,
     ...miscellaneousCommands,

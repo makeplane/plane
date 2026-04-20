@@ -217,7 +217,6 @@ class ProjectDataCopier:
             "intake_view": self.source_project.intake_view,
             "is_time_tracking_enabled": self.source_project.is_time_tracking_enabled,
             "is_issue_type_enabled": self.source_project.is_issue_type_enabled,
-            "guest_view_all_features": self.source_project.guest_view_all_features,
             "cover_image": self.source_project.cover_image,
             "archive_in": self.source_project.archive_in,
             "close_in": self.source_project.close_in,

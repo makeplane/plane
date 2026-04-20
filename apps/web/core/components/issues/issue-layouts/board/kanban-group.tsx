@@ -49,6 +49,7 @@ import { useHasScrollbar } from "@/hooks/use-has-scrollbar";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 // Plane-web
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import { useWorkFlowFDragNDrop } from "@/components/workflows";
 //
 import { GroupDragOverlay } from "../group-drag-overlay";
@@ -81,11 +82,13 @@ interface IKanbanGroup {
   dropErrorMessage: string | undefined;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   quickActions: TRenderQuickActions;
-  enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
-  disableIssueCreation?: boolean;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  canQuickAddWorkItem: boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   groupByVisibilityToggle?: boolean;
   scrollableContainerRef?: MutableRefObject<HTMLDivElement | null>;
   handleOnDrop: (source: GroupDropLocation, destination: GroupDropLocation) => Promise<void>;
@@ -93,6 +96,12 @@ interface IKanbanGroup {
   isEpic?: boolean;
   isLastGroup?: boolean;
   header?: IKanbanGroupHeader;
+  layoutPermissions: {
+    canCreateWorkItem: {
+      viaHeader: boolean;
+      viaQuickAdd: boolean;
+    };
+  };
 }
 
 export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
@@ -109,16 +118,16 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
     dropErrorMessage,
     updateIssue,
     quickActions,
-    canEditProperties,
+    canQuickAddWorkItem,
+    getWorkItemPermissions,
     loadMoreIssues,
-    enableQuickIssueCreate,
-    disableIssueCreation,
     quickAddCallback,
     scrollableContainerRef,
     handleOnDrop,
     isEpic = false,
     isLastGroup = false,
     header,
+    layoutPermissions,
   } = props;
   // i18n
   const { t } = useTranslation();
@@ -346,7 +355,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
             count={header.count ?? 0}
             issuePayload={header.issuePayload ?? {}}
             disableIssueCreation={
-              disableIssueCreation ||
+              !layoutPermissions.canCreateWorkItem.viaHeader ||
               header.isGroupByCreatedBy ||
               getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id)
             }
@@ -383,7 +392,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
             displayProperties={displayProperties}
             updateIssue={updateIssue}
             quickActions={quickActions}
-            canEditProperties={canEditProperties}
+            getWorkItemPermissions={getWorkItemPermissions}
             scrollableContainerRef={scrollableContainerRef}
             canDropOverIssue={!canOverlayBeVisible}
             canDragIssuesInCurrentGrouping={canDragIssuesInCurrentGrouping}
@@ -402,21 +411,19 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
               </div>
             ))}
 
-          {enableQuickIssueCreate &&
-            !disableIssueCreation &&
-            !getIsWorkflowWorkItemCreationDisabled(groupId, sub_group_id) && (
-              <div className="w-full pt-1 bg-layer-1 sticky bottom-0">
-                <QuickAddIssueRoot
-                  layout={EIssueLayoutTypes.KANBAN}
-                  QuickAddButton={KanbanQuickAddIssueButton}
-                  prePopulatedData={{
-                    ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
-                  }}
-                  quickAddCallback={quickAddCallback}
-                  isEpic={isEpic}
-                />
-              </div>
-            )}
+          {canQuickAddWorkItem && (
+            <div className="w-full pt-1 bg-layer-1 sticky bottom-0">
+              <QuickAddIssueRoot
+                layout={EIssueLayoutTypes.KANBAN}
+                QuickAddButton={KanbanQuickAddIssueButton}
+                prePopulatedData={{
+                  ...(group_by && prePopulateQuickAddData(group_by, sub_group_by, groupId, sub_group_id)),
+                }}
+                quickAddCallback={quickAddCallback}
+                isEpic={isEpic}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

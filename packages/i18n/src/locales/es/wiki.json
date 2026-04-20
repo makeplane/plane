@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Las páginas anidadas requieren un plan de pago. Mejora para desbloquearlas."
+    },
+    "auth": {
+      "title": "Permiso denegado",
+      "description": "No tiene permiso para acceder a esta página. Póngase en contacto con el administrador de su espacio de trabajo para que se lo conceda.",
+      "redirection_button": {
+        "text": "Ir a proyectos"
+      },
+      "reload_button": {
+        "text": "Recargar la página"
+      }
     }
   }
 }

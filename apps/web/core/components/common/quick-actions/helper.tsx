@@ -18,9 +18,8 @@ import type { TContextMenuItem } from "@plane/ui";
 import { useQuickActionsFactory } from "@/components/common/quick-actions/factory";
 
 // Types
-interface UseCycleMenuItemsProps {
+type UseCycleMenuItemsProps = {
   cycleDetails: ICycle | undefined;
-  isEditingAllowed: boolean;
   isFavorite: boolean;
   workspaceSlug: string;
   projectId: string;
@@ -32,41 +31,22 @@ interface UseCycleMenuItemsProps {
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
   handleFavorite: () => void;
-}
+  permissions: {
+    canEdit: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDelete: boolean;
+    canFavorite: boolean;
+  };
+};
 
-interface UseModuleMenuItemsProps {
-  moduleDetails: IModule | undefined;
-  isEditingAllowed: boolean;
-  workspaceSlug: string;
-  projectId: string;
-  moduleId: string;
-  handleEdit: () => void;
-  handleArchive: () => void;
-  handleRestore: () => void;
-  handleDelete: () => void;
-  handleCopyLink: () => void;
-  handleOpenInNewTab: () => void;
-}
-
-interface UseViewMenuItemsProps {
-  isOwner: boolean;
-  isAdmin: boolean;
-  workspaceSlug: string;
-  projectId?: string;
-  view: IProjectView | IWorkspaceView;
-  handleEdit: () => void;
-  handleDelete: () => void;
-  handleCopyLink: () => void;
-  handleOpenInNewTab: () => void;
-}
-
-interface UseLayoutMenuItemsProps {
+type UseLayoutMenuItemsProps = {
   workspaceSlug: string;
   projectId: string;
   storeType: "PROJECT" | "EPIC";
   handleCopyLink: () => void;
   handleOpenInNewTab: () => void;
-}
+};
 
 type MenuResult = {
   items: TContextMenuItem[];
@@ -75,7 +55,7 @@ type MenuResult = {
 
 export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => {
   const factory = useQuickActionsFactory();
-  const { cycleDetails, isEditingAllowed, isFavorite, workspaceSlug, projectId, cycleId, ...handlers } = props;
+  const { cycleDetails, isFavorite, permissions, workspaceSlug, projectId, cycleId, ...handlers } = props;
 
   const isArchived = !!cycleDetails?.archived_at;
   const isCompleted = cycleDetails?.status?.toLowerCase() === "completed";
@@ -94,6 +74,7 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
     cycleName: cycleDetails?.name,
     isCurrentCycle,
     transferrableIssuesCount,
+    canEndCycle: permissions.canEdit,
   });
 
   const exportFeature = factory.useCycleExportFeature?.({
@@ -105,22 +86,22 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
 
   // Assemble final menu items - order defined here
   const items = [
-    factory.createEditMenuItem(handlers.handleEdit, isEditingAllowed && !isCompleted && !isArchived),
+    factory.createEditMenuItem(handlers.handleEdit, permissions.canEdit && !isCompleted && !isArchived),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
     factory.createFavoriteMenuItem(handlers.handleFavorite, {
       isFavorite,
-      shouldRender: isEditingAllowed && !isArchived,
+      shouldRender: permissions.canFavorite && !isArchived,
     }),
     ...(endCycleFeature?.items ?? []),
     ...(exportFeature?.items ?? []),
     factory.createArchiveMenuItem(handlers.handleArchive, {
-      shouldRender: isEditingAllowed && !isArchived,
+      shouldRender: permissions.canArchive && !isArchived,
       disabled: !isCompleted,
       description: isCompleted ? undefined : "Only completed cycles can be archived",
     }),
-    factory.createRestoreMenuItem(handlers.handleRestore, isEditingAllowed && isArchived),
-    factory.createDeleteMenuItem(handlers.handleDelete, isEditingAllowed && !isCompleted && !isArchived),
+    factory.createRestoreMenuItem(handlers.handleRestore, permissions.canRestore && isArchived),
+    factory.createDeleteMenuItem(handlers.handleDelete, permissions.canDelete && !isCompleted && !isArchived),
   ].filter((item) => item.shouldRender !== false);
 
   // Assemble final modals
@@ -134,9 +115,28 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
   return { items, modals };
 };
 
+type UseModuleMenuItemsProps = {
+  moduleDetails: IModule | undefined;
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+  handleEdit: () => void;
+  handleArchive: () => void;
+  handleRestore: () => void;
+  handleDelete: () => void;
+  handleCopyLink: () => void;
+  handleOpenInNewTab: () => void;
+  permissions: {
+    canEdit: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDelete: boolean;
+  };
+};
+
 export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult => {
   const factory = useQuickActionsFactory();
-  const { moduleDetails, isEditingAllowed, workspaceSlug, projectId, moduleId, ...handlers } = props;
+  const { moduleDetails, permissions, workspaceSlug, projectId, moduleId, ...handlers } = props;
 
   const isArchived = !!moduleDetails?.archived_at;
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
@@ -151,17 +151,17 @@ export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult =
 
   // Assemble final menu items - order defined here
   const items = [
-    factory.createEditMenuItem(handlers.handleEdit, isEditingAllowed && !isArchived),
+    factory.createEditMenuItem(handlers.handleEdit, permissions.canEdit && !isArchived),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
     ...(exportFeature?.items ?? []),
     factory.createArchiveMenuItem(handlers.handleArchive, {
-      shouldRender: isEditingAllowed && !isArchived,
+      shouldRender: permissions.canArchive && !isArchived,
       disabled: !isInArchivableGroup,
       description: isInArchivableGroup ? undefined : "Only completed or cancelled modules can be archived",
     }),
-    factory.createRestoreMenuItem(handlers.handleRestore, isEditingAllowed && isArchived),
-    factory.createDeleteMenuItem(handlers.handleDelete, isEditingAllowed),
+    factory.createRestoreMenuItem(handlers.handleRestore, permissions.canRestore && isArchived),
+    factory.createDeleteMenuItem(handlers.handleDelete, permissions.canDelete),
   ].filter((item) => item.shouldRender !== false);
 
   // Assemble final modals
@@ -170,9 +170,24 @@ export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult =
   return { items, modals };
 };
 
+type UseViewMenuItemsProps = {
+  workspaceSlug: string;
+  projectId?: string;
+  view: IProjectView | IWorkspaceView;
+  handleEdit: () => void;
+  handleDelete: () => void;
+  handleCopyLink: () => void;
+  handleOpenInNewTab: () => void;
+  permissions: {
+    canEdit: boolean;
+    canLock: boolean;
+    canDelete: boolean;
+  };
+};
+
 export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
   const factory = useQuickActionsFactory();
-  const { workspaceSlug, isOwner, isAdmin, projectId, view, ...handlers } = props;
+  const { workspaceSlug, projectId, view, permissions, ...handlers } = props;
 
   if (!view) return { items: [], modals: null };
 
@@ -181,7 +196,7 @@ export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
     projectId,
     viewId: view.id,
     isLocked: view.is_locked,
-    isOwner,
+    canLock: permissions.canLock,
   });
 
   const exportFeature = factory.useViewExportFeature?.({
@@ -192,12 +207,12 @@ export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
 
   // Assemble final menu items - order defined here
   const items = [
-    factory.createEditMenuItem(handlers.handleEdit, isOwner),
+    factory.createEditMenuItem(handlers.handleEdit, permissions.canEdit),
     ...(lockFeature?.items ?? []),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
     ...(exportFeature?.items ?? []),
-    factory.createDeleteMenuItem(handlers.handleDelete, isOwner || isAdmin),
+    factory.createDeleteMenuItem(handlers.handleDelete, permissions.canDelete),
   ].filter((item) => item.shouldRender !== false);
 
   // Assemble final modals
@@ -252,7 +267,7 @@ export const useIntakeHeaderMenuItems = (props: {
   return { items, modals };
 };
 
-interface UseCommentMenuItemsProps {
+type UseCommentMenuItemsProps = {
   comment: {
     id: string;
     actor: string;
@@ -265,7 +280,7 @@ interface UseCommentMenuItemsProps {
   handleCopyLink: () => void;
   handleToggleAccess: () => void;
   handleDelete: () => void;
-}
+};
 
 export const useCommentMenuItems = (props: UseCommentMenuItemsProps): TContextMenuItem[] => {
   const factory = useQuickActionsFactory();

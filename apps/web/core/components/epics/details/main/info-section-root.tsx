@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -26,17 +25,22 @@ import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifi
 import { useEpicOperations } from "../helper";
 import { EpicInfoActionItems } from "./info-section/action-items";
 import { EpicInfoIndicatorItem } from "./info-section/indicator-item";
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 
 type Props = {
   editorRef: React.RefObject<EditorRefApi>;
   workspaceSlug: string;
   projectId: string;
   epicId: string;
-  disabled?: boolean;
+  permissions: {
+    canReact: boolean;
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canRestoreDescriptionVersion: boolean;
+  };
 };
 
 export const EpicInfoSection = observer(function EpicInfoSection(props: Props) {
-  const { editorRef, workspaceSlug, projectId, epicId, disabled = false } = props;
+  const { editorRef, workspaceSlug, projectId, epicId, permissions } = props;
   // store hooks
   const {
     issue: { getIssueById },
@@ -74,15 +78,18 @@ export const EpicInfoSection = observer(function EpicInfoSection(props: Props) {
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           epicId={epicId}
-          disabled={disabled}
+          permissions={permissions}
         />
       }
       fileAssetType={EFileAssetType.ISSUE_DESCRIPTION}
       identifierElement={
         <IssueIdentifier issueId={epicId} projectId={projectId} size="md" enableClickToCopyIdentifier />
       }
-      disabled={disabled}
       issueSequenceId={issue.sequence_id}
+      permissions={{
+        canEditDescription: permissions.canEditProperty("description_html"),
+        canEditTitle: permissions.canEditProperty("name"),
+      }}
     />
   );
 });

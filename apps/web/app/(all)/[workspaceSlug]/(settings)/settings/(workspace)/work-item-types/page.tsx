@@ -15,16 +15,13 @@ import { observer } from "mobx-react";
 import { Navigate } from "react-router";
 // plane imports
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 // component
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { WorkspaceWorkItemTypesSettingsRoot } from "@/components/work-item-types-new/settings/workspace/root";
 // store hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
 import type { Route } from "./+types/page";
 import { WorkItemTypesWorkspaceSettingsHeader } from "./header";
@@ -40,7 +37,6 @@ function WorkItemTypesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   // store hooks
-  const { getWorkspaceRoleByWorkspaceSlug } = useUserPermissions();
   const { currentWorkspace } = useWorkspace();
   const { isWorkspaceFeatureEnabled, fetchWorkspaceFeatures, loader: workspaceFeaturesLoader } = useWorkspaceFeatures();
   const { enableWorkItemTypes } = useWorkspaceWorkItemTypes();
@@ -70,18 +66,17 @@ function WorkItemTypesWorkspaceSettingsPage({ params }: Route.ComponentProps) {
     }
   };
   // derived values
-  const currentWorkspaceRole = getWorkspaceRoleByWorkspaceSlug(workspaceSlug);
   const isWorkItemTypesFlagAvailable = useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - ${t("work_item_types.label")}` : undefined;
-  const isAdmin = currentWorkspaceRole === EUserWorkspaceRoles.ADMIN;
-  const isWorkItemTypesEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED);
+  const isWorkItemTypesEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_WORK_ITEM_TYPES_ENABLED
+  );
 
   if (!isWorkItemTypesFlagAvailable) {
     //TODO: replace with upgrade screen once ready
     return <Navigate to={`/${workspaceSlug}`} />;
   }
-
-  if (!isAdmin) return <NotAuthorizedView section="settings" className="h-auto" />;
 
   if (workspaceFeaturesLoader === EWorkspaceFeatureLoader.INIT_LOADER) return <></>;
 

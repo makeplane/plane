@@ -12,24 +12,25 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "react-router";
 // components
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 
-export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
+type TProps = {
+  permissions: {
+    canCreateWorkItem: (projectId: string) => boolean;
+  };
+};
+
+export const ProjectViewEmptyState = observer(function ProjectViewEmptyState(props: TProps) {
+  const { permissions } = props;
+  // router
+  const { projectId } = useParams();
   // store hooks
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
-
-  // auth
-  const isCreatingIssueAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   return (
     // TODO: Add translation
@@ -43,7 +44,7 @@ export const ProjectViewEmptyState = observer(function ProjectViewEmptyState() {
           onClick: () => {
             toggleCreateIssueModal(true, EIssuesStoreType.PROJECT_VIEW);
           },
-          disabled: !isCreatingIssueAllowed,
+          disabled: projectId ? !permissions.canCreateWorkItem(projectId) : true,
           variant: "primary",
         },
       ]}

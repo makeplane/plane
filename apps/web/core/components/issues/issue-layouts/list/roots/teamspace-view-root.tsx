@@ -11,39 +11,65 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
 // components
 import { BaseListRoot } from "@/components/issues/issue-layouts/list/base-list-root";
 import { ProjectIssueQuickActions } from "@/components/issues/issue-layouts/quick-action-dropdowns";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useIssues } from "@/hooks/store/use-issues";
+import { EIssuesStoreType } from "@plane/types";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
+// constants
+import {
+  DEFAULT_WORK_ITEM_PERMISSIONS,
+  DEFAULT_QUICK_ACTION_PERMISSIONS,
+} from "@/components/issues/issue-layouts/constants";
 
-export const TeamspaceViewListLayout = observer(function TeamspaceViewListLayout() {
-  // router
-  const { workspaceSlug, viewId } = useParams();
-  // hooks
-  const { allowPermissions } = useUserPermissions();
+type TTeamspaceViewListLayoutProps = {
+  workspaceSlug: string;
+  viewId: string;
+};
 
-  if (!workspaceSlug || !viewId) return null;
-
-  const canEditPropertiesBasedOnProject = (projectId: string) =>
-    allowPermissions(
-      [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug.toString(),
-      projectId
-    );
+export const TeamspaceViewListLayout = observer(function TeamspaceViewListLayout(props: TTeamspaceViewListLayoutProps) {
+  const { workspaceSlug, viewId } = props;
+  // store hooks
+  const { permissions } = useIssues(EIssuesStoreType.TEAM_VIEW);
 
   return (
     <BaseListRoot
-      QuickActions={ProjectIssueQuickActions}
-      viewId={viewId.toString()}
-      canEditPropertiesBasedOnProject={canEditPropertiesBasedOnProject}
+      QuickActions={(props) => (
+        <ProjectIssueQuickActions
+          {...props}
+          permissions={
+            props.issue.project_id
+              ? {
+                  canEdit: permissions.getCanEdit(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDelete: permissions.getCanDelete(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canArchive: permissions.getCanArchive(workspaceSlug, props.issue.project_id, props.issue.id),
+                  canDuplicate: permissions.getCanDuplicate(workspaceSlug, props.issue.project_id),
+                }
+              : DEFAULT_QUICK_ACTION_PERMISSIONS
+          }
+        />
+      )}
+      layoutPermissions={{
+        canCreateWorkItem: {
+          viaHeader: false,
+          viaQuickAdd: false,
+        },
+        canPerformBulkOps: false,
+      }}
+      getWorkItemPermissions={(workItem) =>
+        workItem.project_id
+          ? {
+              canEditProperty: (property: TWorkItemProperty) =>
+                permissions.getCanEditProperty(workspaceSlug, workItem.project_id!, workItem.id, property),
+              canDragAndDrop: permissions.getCanDragAndDrop(workspaceSlug, workItem.project_id, workItem.id),
+            }
+          : DEFAULT_WORK_ITEM_PERMISSIONS
+      }
+      viewId={viewId}
     />
   );
 });

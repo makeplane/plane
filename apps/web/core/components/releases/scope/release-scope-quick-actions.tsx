@@ -21,15 +21,7 @@ import { XCircle } from "lucide-react";
 import type { IQuickActionProps } from "@/components/issues/issue-layouts/list/list-view-types";
 
 export const ReleaseScopeQuickActions = observer(function ReleaseScopeQuickActions(props: IQuickActionProps) {
-  const {
-    issue,
-    handleDelete,
-    customActionButton,
-    portalElement,
-    readOnly = false,
-    placements = "bottom-end",
-    parentRef,
-  } = props;
+  const { handleDelete, customActionButton, portalElement, placements = "bottom-end", parentRef } = props;
   const [isRemoving, setIsRemoving] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const { t } = useTranslation();
@@ -54,7 +46,8 @@ export const ReleaseScopeQuickActions = observer(function ReleaseScopeQuickActio
       title: removeFromReleaseLabel,
       icon: XCircle,
       action: () => setConfirmModalOpen(true),
-      disabled: readOnly,
+      // disabled: readOnly, <permissionEngine> release permissions to be added here
+      disabled: false,
     },
   ];
 

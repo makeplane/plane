@@ -13,7 +13,6 @@
 
 import { observer } from "mobx-react";
 // i18n
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Button } from "@plane/propel/button";
@@ -23,31 +22,24 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
+import type { ProjectLayoutPermissions } from "@/store/project/permissions/root";
 // local imports
 import HeaderFilters from "./filters";
 import { ProjectSearch } from "./search-projects";
 
 type TProjectsListWithoutGroupingHeaderProps = {
-  workspaceSlug: string;
   isArchived: boolean;
+  permissions: ProjectLayoutPermissions;
 };
 
 export const ProjectsListWithoutGroupingHeader = observer(function ProjectsListWithoutGroupingHeader(
   props: TProjectsListWithoutGroupingHeaderProps
 ) {
-  const { workspaceSlug, isArchived } = props;
+  const { isArchived, permissions } = props;
   // i18n
   const { t } = useTranslation();
   // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
-  // auth
-  const isAuthorizedUser = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE,
-    workspaceSlug
-  );
 
   return (
     <Header>
@@ -69,7 +61,7 @@ export const ProjectsListWithoutGroupingHeader = observer(function ProjectsListW
         <div className="hidden md:flex">
           <HeaderFilters />
         </div>
-        {isAuthorizedUser && !isArchived ? (
+        {permissions.canCreateProject && !isArchived ? (
           <Button
             variant="primary"
             size="lg"

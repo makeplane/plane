@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -30,21 +29,15 @@ export type TUpdateReaction = {
   entityId: string;
   commentId: string;
   currentUser: IUser | undefined;
-  disabled?: boolean;
   handleUpdateOperations: TUpdateOperations;
   entityType: EUpdateEntityType;
+  permissions: {
+    canReact: boolean;
+  };
 };
 
 export const UpdateReaction = observer(function UpdateReaction(props: TUpdateReaction) {
-  const {
-    workspaceSlug,
-    entityId,
-    commentId,
-    currentUser,
-    disabled = false,
-    handleUpdateOperations,
-    entityType,
-  } = props;
+  const { workspaceSlug, entityId, commentId, currentUser, permissions, handleUpdateOperations, entityType } = props;
 
   // state
   const [isPickerOpen, setIsPickerOpen] = useState(false);
@@ -125,7 +118,7 @@ export const UpdateReaction = observer(function UpdateReaction(props: TUpdateRea
   }, [reactionIds, userReactions]);
 
   const handleReactionClick = (emoji: string) => {
-    if (disabled) return;
+    if (!permissions.canReact) return;
     // Convert emoji back to decimal string format for the API
     const emojiCodePoints = Array.from(emoji).map((char) => char.codePointAt(0));
     const reactionString = emojiCodePoints.join("-");
@@ -143,12 +136,12 @@ export const UpdateReaction = observer(function UpdateReaction(props: TUpdateRea
         isOpen={isPickerOpen}
         handleToggle={setIsPickerOpen}
         onChange={handleEmojiSelect}
-        disabled={disabled}
+        disabled={!permissions.canReact}
         label={
           <EmojiReactionGroup
             reactions={reactions}
             onReactionClick={handleReactionClick}
-            showAddButton={!disabled}
+            showAddButton={permissions.canReact}
             onAddReaction={() => setIsPickerOpen(true)}
           />
         }

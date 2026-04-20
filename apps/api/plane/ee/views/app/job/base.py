@@ -19,15 +19,14 @@ from plane.ee.models import ImportJob, ImportReport
 from plane.ee.serializers import ImportJobSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.project import ProjectBasePermission
+from plane.permissions import can, IntegrationPermissions
 
 
 class ImportJobView(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectBasePermission]
-
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.MANAGE, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         if not pk:
             import_jobs = ImportJob.objects.filter(**request.query_params).order_by("-created_at")
@@ -38,6 +37,7 @@ class ImportJobView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug, pk):
         report = ImportReport.objects.create()
 
@@ -48,6 +48,7 @@ class ImportJobView(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.MANAGE, resource_param="workspace_id")
     def patch(self, request, slug, pk):
         import_job = ImportJob.objects.filter(pk=pk).first()
 
@@ -59,6 +60,7 @@ class ImportJobView(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.MANAGE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         import_job = ImportJob.objects.filter(pk=pk).first()
         import_job.delete()

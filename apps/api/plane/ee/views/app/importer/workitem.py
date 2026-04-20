@@ -16,7 +16,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, WorkitemPermissions
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Workspace, Project, FileAsset
 from plane.ee.models import ImportJob, ImportReport
@@ -30,7 +30,7 @@ class ProjectWorkItemImportEndpoint(BaseAPIView):
     Triggers a background job to process the CSV file.
     """
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkitemPermissions.IMPORT, resource_param="project_id")
     def post(self, request, slug, project_id):
         """
         Start a work item import from CSV.

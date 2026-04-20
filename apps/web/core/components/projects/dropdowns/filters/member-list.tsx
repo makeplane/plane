@@ -16,49 +16,39 @@ import { observer } from "mobx-react";
 // plane imports
 import { Button } from "@plane/propel/button";
 import { ChevronDownIcon } from "@plane/propel/icons";
-import { EUserProjectRoles, EUserWorkspaceRoles } from "@plane/types";
 // plane ui
 import { CustomMenu } from "@plane/ui";
 // components
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
-
-interface IRoleOption {
-  value: string;
-  label: string;
-}
+// hooks
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 
 type Props = {
   appliedFilters: string[] | null;
   handleUpdate: (role: string) => void;
   memberType: "project" | "workspace";
+  workspaceSlug: string;
 };
-
-const PROJECT_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserProjectRoles.ADMIN), label: "Admin" },
-  { value: String(EUserProjectRoles.MEMBER), label: "Member" },
-  { value: String(EUserProjectRoles.GUEST), label: "Guest" },
-];
-
-const WORKSPACE_ROLE_OPTIONS: IRoleOption[] = [
-  { value: String(EUserWorkspaceRoles.ADMIN), label: "Admin" },
-  { value: String(EUserWorkspaceRoles.MEMBER), label: "Member" },
-  { value: String(EUserWorkspaceRoles.GUEST), label: "Guest" },
-  { value: "suspended", label: "Suspended" },
-];
 
 // Role filter group component
 const RoleFilterGroup = observer(function RoleFilterGroup({
   appliedFilters,
   handleUpdate,
   memberType,
+  workspaceSlug,
 }: {
   appliedFilters: string[] | null;
   handleUpdate: (role: string) => void;
   memberType: "project" | "workspace";
+  workspaceSlug: string;
 }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const appliedFiltersCount = appliedFilters?.length ?? 0;
-  const roleOptions = memberType === "project" ? PROJECT_ROLE_OPTIONS : WORKSPACE_ROLE_OPTIONS;
+  const { getProjectRolesByWorkspaceSlug, getWorkspaceRolesByWorkspaceSlug } = useRoleManagement();
+  const roles =
+    memberType === "project"
+      ? getProjectRolesByWorkspaceSlug(workspaceSlug, "active")
+      : getWorkspaceRolesByWorkspaceSlug(workspaceSlug, "active");
 
   return (
     <div className="space-y-2">
@@ -70,17 +60,25 @@ const RoleFilterGroup = observer(function RoleFilterGroup({
 
       {isExpanded && (
         <div className="space-y-1">
-          {roleOptions.map((role) => {
-            const isSelected = appliedFilters?.includes(role.value) ?? false;
+          {roles.map((role) => {
+            const isSelected = appliedFilters?.includes(role.slug) ?? false;
             return (
               <FilterOption
-                key={`role-${role.value}`}
+                key={`role-${role.slug}`}
                 isChecked={isSelected}
-                title={role.label}
-                onClick={() => handleUpdate(role.value)}
+                title={role.name}
+                onClick={() => handleUpdate(role.slug)}
               />
             );
           })}
+          {memberType === "workspace" && (
+            <FilterOption
+              key="role-suspended"
+              isChecked={appliedFilters?.includes("suspended") ?? false}
+              title="Suspended"
+              onClick={() => handleUpdate("suspended")}
+            />
+          )}
         </div>
       )}
     </div>
@@ -88,19 +86,24 @@ const RoleFilterGroup = observer(function RoleFilterGroup({
 });
 
 export const MemberListFilters = observer(function MemberListFilters(props: Props) {
-  const { appliedFilters, handleUpdate, memberType } = props;
+  const { appliedFilters, handleUpdate, memberType, workspaceSlug } = props;
 
   return (
     <div className="space-y-4">
       {/* Role Filter Group */}
-      <RoleFilterGroup appliedFilters={appliedFilters} handleUpdate={handleUpdate} memberType={memberType} />
+      <RoleFilterGroup
+        appliedFilters={appliedFilters}
+        handleUpdate={handleUpdate}
+        memberType={memberType}
+        workspaceSlug={workspaceSlug}
+      />
     </div>
   );
 });
 
 // Dropdown component for member list filters
 export const MemberListFiltersDropdown = observer(function MemberListFiltersDropdown(props: Props) {
-  const { appliedFilters, handleUpdate, memberType } = props;
+  const { appliedFilters, handleUpdate, memberType, workspaceSlug } = props;
 
   const appliedFiltersCount = appliedFilters?.length ?? 0;
 
@@ -119,7 +122,12 @@ export const MemberListFiltersDropdown = observer(function MemberListFiltersDrop
       }
       placement="bottom-start"
     >
-      <MemberListFilters appliedFilters={appliedFilters} handleUpdate={handleUpdate} memberType={memberType} />
+      <MemberListFilters
+        appliedFilters={appliedFilters}
+        handleUpdate={handleUpdate}
+        memberType={memberType}
+        workspaceSlug={workspaceSlug}
+      />
     </CustomMenu>
   );
 });

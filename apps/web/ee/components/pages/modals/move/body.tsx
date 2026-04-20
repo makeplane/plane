@@ -22,10 +22,11 @@ type Props = {
   canPageBeMovedToTeamspace: boolean;
   canPageBeMovedToWiki: boolean;
   searchTerm: string;
+  workspaceSlug: string;
 };
 
 export function MovePageModalBody(props: Props) {
-  const { canPageBeMovedToTeamspace, canPageBeMovedToWiki, searchTerm } = props;
+  const { canPageBeMovedToTeamspace, canPageBeMovedToWiki, searchTerm, workspaceSlug } = props;
   // translation
   const { t } = useTranslation();
 
@@ -43,6 +44,7 @@ export function MovePageModalBody(props: Props) {
         canPageBeMovedToTeamspace={canPageBeMovedToTeamspace}
         canPageBeMovedToWiki={canPageBeMovedToWiki}
         searchTerm={searchTerm}
+        workspaceSlug={workspaceSlug}
       />
     </Combobox.Options>
   );

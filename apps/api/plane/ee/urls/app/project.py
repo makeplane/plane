@@ -20,6 +20,8 @@ from plane.ee.views.app.project import (
     ProjectAnalyticsEndpoint,
     ProjectAttributesEndpoint,
     ProjectUpdatesViewSet,
+    ProjectUpdatesReactionViewSet,
+    ProjectUpdateCommentsReactionViewSet,
     ProjectAttachmentV2Endpoint,
     ProjectReactionViewSet,
     ProjectActivityEndpoint,
@@ -55,6 +57,28 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/comments/",
         ProjectUpdatesViewSet.as_view({"get": "comments_list", "post": "comments_create"}),
         name="project-updates-comments",
+    ),
+    # Project Update Reactions
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:update_id>/reactions/",
+        ProjectUpdatesReactionViewSet.as_view(),
+        name="project-update-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:update_id>/reactions/<str:reaction_code>/",
+        ProjectUpdatesReactionViewSet.as_view(),
+        name="project-update-reactions",
+    ),
+    # Project Update Comment Reactions
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/comments/<uuid:comment_id>/reactions/",
+        ProjectUpdateCommentsReactionViewSet.as_view(),
+        name="project-update-comment-reactions",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/updates/<uuid:pk>/comments/<uuid:comment_id>/reactions/<str:reaction_code>/",
+        ProjectUpdateCommentsReactionViewSet.as_view(),
+        name="project-update-comment-reactions",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/analytics/",

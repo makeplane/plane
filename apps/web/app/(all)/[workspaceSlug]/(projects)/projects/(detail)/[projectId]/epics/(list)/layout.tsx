@@ -18,11 +18,17 @@ import { ContentWrapper } from "@/components/core/content-wrapper";
 // local components
 import { EpicsHeader } from "./header";
 import { ProjectEpicMobileHeader } from "./mobile-header";
+// types
+import type { Route } from "./+types/layout";
 
-export default function ProjectEpicsLayout() {
+export default function ProjectEpicsLayout(props: Route.ComponentProps) {
+  const { workspaceSlug, projectId } = props.params;
   return (
     <>
-      <AppHeader header={<EpicsHeader />} mobileHeader={<ProjectEpicMobileHeader />} />
+      <AppHeader
+        header={<EpicsHeader workspaceSlug={workspaceSlug} projectId={projectId} />}
+        mobileHeader={<ProjectEpicMobileHeader />}
+      />
       <ContentWrapper>
         <Outlet />
       </ContentWrapper>

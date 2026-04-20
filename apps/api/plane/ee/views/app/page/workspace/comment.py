@@ -32,6 +32,8 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
 from plane.authentication.secret import SecretKeyAuthentication
+from plane.permissions import WikiPermissions
+from plane.permissions import HasResourcePermission
 
 
 class WorkspacePageCommentViewSet(BaseViewSet):
@@ -40,7 +42,18 @@ class WorkspacePageCommentViewSet(BaseViewSet):
     serializer_class = PageCommentSerializer
     model = PageComment
 
-    permission_classes = [WorkspacePagePermission]
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "list": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "create": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "partial_update": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "destroy": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "resolve": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "un_resolve": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "restore": {"permission": WikiPermissions.EDIT, "resource_param": "workspace_id"},
+        "replies": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+    }
 
     @check_feature_flag(FeatureFlag.PAGE_COMMENTS)
     def list(self, request, slug, page_id, comment_id=None):
@@ -191,6 +204,13 @@ class WorkspacePageCommentReactionViewSet(BaseViewSet):
 
     serializer_class = PageCommentReactionSerializer
     model = PageCommentReaction
+
+    permission_classes = [HasResourcePermission, WorkspacePagePermission]
+
+    action_permissions = {
+        "create": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+        "destroy": {"permission": WikiPermissions.VIEW, "resource_param": "workspace_id"},
+    }
 
     def get_queryset(self):
         return (

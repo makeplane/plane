@@ -290,6 +290,7 @@ export function CreateUpdateMilestoneModal(props: Props) {
                 handleSubmit={handleWorkItemsSubmit}
                 selectedWorkItemIds={selectedWorkItemIds}
                 milestoneId={milestoneId}
+                canAddWorkItems={true}
               />
               <div className="space-y-1 flex gap-2">
                 <Controller

@@ -16,44 +16,45 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ISearchIssueResponse } from "@plane/types";
-import { EIssuesStoreType, EUserProjectRoles } from "@plane/types";
+import { EIssuesStoreType } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkItemFilterInstance } from "@/hooks/store/work-item-filters/use-work-item-filter-instance";
+import { useIssues } from "@/hooks/store/use-issues";
 
-export const CycleEmptyState = observer(function CycleEmptyState() {
+type TProps = {
+  workspaceSlug: string;
+  permissions: {
+    canCreateWorkItem: (projectId: string) => boolean;
+    canAddWorkItemsToCycle: (projectId: string, cycleId: string) => boolean;
+    canClearFilters: boolean;
+  };
+};
+
+export const CycleEmptyState = observer(function CycleEmptyState(props: TProps) {
+  const { workspaceSlug, permissions } = props;
   // router
-  const { workspaceSlug: routerWorkspaceSlug, projectId: routerProjectId, cycleId: routerCycleId } = useParams();
-  const workspaceSlug = routerWorkspaceSlug ? routerWorkspaceSlug.toString() : undefined;
+  const { cycleId, projectId: routerProjectId } = useParams();
   const projectId = routerProjectId ? routerProjectId.toString() : undefined;
-  const cycleId = routerCycleId ? routerCycleId.toString() : undefined;
   // states
   const [cycleIssuesListModal, setCycleIssuesListModal] = useState(false);
   // plane hooks
   const { t } = useTranslation();
   // store hooks
-  const { getCycleById } = useCycle();
   const { issues } = useIssues(EIssuesStoreType.CYCLE);
+  const { getCycleById } = useCycle();
   const { toggleCreateIssueModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
   // derived values
   const cycleWorkItemFilter = useWorkItemFilterInstance(EIssuesStoreType.CYCLE, cycleId);
   const cycleDetails = cycleId ? getCycleById(cycleId) : undefined;
   const isCompletedCycleSnapshotAvailable = !isEmpty(cycleDetails?.progress_snapshot ?? {});
   const isCompletedAndEmpty = isCompletedCycleSnapshotAvailable || cycleDetails?.status?.toLowerCase() === "completed";
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   const handleAddIssuesToCycle = async (data: ISearchIssueResponse[]) => {
     if (!workspaceSlug || !projectId || !cycleId) return;
@@ -105,7 +106,7 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
               {
                 label: "Clear filters",
                 onClick: cycleWorkItemFilter?.clearFilters,
-                disabled: !canPerformEmptyStateActions || !cycleWorkItemFilter,
+                disabled: !permissions.canClearFilters || !cycleWorkItemFilter,
                 variant: "secondary",
               },
             ]}
@@ -121,13 +122,13 @@ export const CycleEmptyState = observer(function CycleEmptyState() {
                 onClick: () => {
                   toggleCreateIssueModal(true, EIssuesStoreType.CYCLE);
                 },
-                disabled: !canPerformEmptyStateActions,
+                disabled: projectId ? !permissions.canCreateWorkItem(projectId) : true,
                 variant: "primary",
               },
               {
                 label: t("project_empty_state.cycle_work_items.cta_secondary"),
                 onClick: () => setCycleIssuesListModal(true),
-                disabled: !canPerformEmptyStateActions,
+                disabled: projectId && cycleId ? !permissions.canAddWorkItemsToCycle(projectId, cycleId) : true,
                 variant: "secondary",
               },
             ]}

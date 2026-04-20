@@ -22,6 +22,7 @@ from django.db.models import F
 # Module imports
 from plane.db.models import Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.ee.models import WorkspaceLicense
+from plane.permissions.system_roles import UNPAID_ROLE_SLUGS
 
 
 def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
@@ -31,13 +32,15 @@ def fetch_workspace_license(workspace_id, workspace_slug, free_seats=12):
     # Get all active workspace members
     workspace_members = (
         WorkspaceMember.objects.filter(workspace_id=workspace_id, is_active=True, member__is_bot=False)
-        .annotate(user_email=F("member__email"), user_id=F("member__id"), user_role=F("role"))
-        .values("user_email", "user_id", "user_role")
+        .annotate(user_email=F("member__email"), user_id=F("member__id"), user_role_slug=F("role_ref__slug"))
+        .values("user_email", "user_id", "user_role_slug")
     )
 
     # Convert user_id to string
     for member in workspace_members:
         member["user_id"] = str(member["user_id"])
+        # if the user role slug is in unpaid roles, then set the user role as 5
+        member["user_role"] = 5 if member["user_role_slug"] in UNPAID_ROLE_SLUGS else 20
 
     response = requests.post(
         f"{settings.PAYMENT_SERVER_BASE_URL}/api/products/workspace-products/{str(workspace_id)}/",
@@ -151,13 +154,12 @@ def count_billable_members(workspace_license):
         workspace=workspace_license.workspace,
         is_active=True,
         member__is_bot=False,
-        role__gt=10,
-    ).count()
+    ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
     # Check the active paid users in the workspace
     invited_member_count = WorkspaceMemberInvite.objects.filter(
-        workspace=workspace_license.workspace, role__gt=10
-    ).count()
+        workspace=workspace_license.workspace,
+    ).exclude(role_ref__slug__in=list(UNPAID_ROLE_SLUGS)).count()
 
     return workspace_member_count + invited_member_count
 

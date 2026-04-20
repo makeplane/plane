@@ -24,6 +24,7 @@ from plane.ee.utils.page_events import PageAction
 from plane.ee.permissions.page import TeamspacePagePermission
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class TeamspacePagePublishEndpoint(BaseAPIView):
     use_read_replica = True
 

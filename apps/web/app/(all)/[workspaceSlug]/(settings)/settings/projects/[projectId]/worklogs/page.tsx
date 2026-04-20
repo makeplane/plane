@@ -12,11 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
@@ -24,32 +20,23 @@ import { WorkspaceWorklogRoot, WorkspaceWorklogsUpgrade } from "@/components/wor
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useFlag } from "@/plane-web/hooks/store";
-
+// local imports
 import { WorklogsProjectSettingsHeader } from "./header";
 import type { Route } from "./+types/page";
 
 const WorklogsSettingsPage = observer(function WorklogsSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug, projectId } = params;
-
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const { currentProjectDetails } = useProject();
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - Worklogs` : undefined;
   const isFeatureEnabled = useFlag(workspaceSlug, "ISSUE_WORKLOG");
-  const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
 
-  if (!currentWorkspace) return <></>;
-
-  if (workspaceUserInfo && !hasAdminPermission) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
+  if (!currentWorkspace) return null;
 
   return (
     <SettingsContentWrapper header={<WorklogsProjectSettingsHeader />} hugging={isFeatureEnabled}>

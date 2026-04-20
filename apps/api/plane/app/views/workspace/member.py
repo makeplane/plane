@@ -22,13 +22,20 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.app.permissions import WorkspaceEntityPermission, allow_permission, ROLE
+from plane.permissions import WorkspacePermissions, WorkspaceMemberPermissions, can
+from plane.permissions.system_roles import (
+    get_workspace_role_slug,
+    get_workspace_roles_for_workspace,
+    can_manage_role,
+    can_assign_role,
+    member_role_from_role_ref,
+)
 
 # Module imports
 from plane.app.serializers import (
     ProjectMemberRoleSerializer,
     WorkspaceMemberAdminSerializer,
-    WorkspaceMemberMeSerializer,
+    WorkspacePreferencesSerializer,
     WorkSpaceMemberSerializer,
     WorkspaceMemberUserOnboardingSerializer,
 )
@@ -60,24 +67,28 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("member", "member__avatar_asset")
+            .select_related("member", "member__avatar_asset", "role_ref")
         )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspaceMemberPermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(member=request.user, workspace__slug=slug, is_active=True)
+        workspace_member = WorkspaceMember.objects.select_related("role_ref").get(
+            member=request.user, workspace__slug=slug, is_active=True
+        )
 
         # Get all active workspace members
         workspace_members = self.get_queryset()
-        if workspace_member.role > 5:
-            serializer = WorkspaceMemberAdminSerializer(workspace_members, fields=("id", "member", "role"), many=True)
+        if workspace_member.role_ref and workspace_member.role_ref.slug != "guest":
+            serializer = WorkspaceMemberAdminSerializer(workspace_members, many=True)
         else:
-            serializer = WorkSpaceMemberSerializer(workspace_members, fields=("id", "member", "role"), many=True)
+            serializer = WorkSpaceMemberSerializer(workspace_members, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    # TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
     def retrieve(self, request, slug, pk):
-        workspace_member = WorkspaceMember.objects.get(member=request.user, workspace__slug=slug, is_active=True)
+        workspace_member = WorkspaceMember.objects.select_related("role_ref").get(
+            member=request.user, workspace__slug=slug, is_active=True
+        )
 
         try:
             # Get the specific workspace member by pk
@@ -88,15 +99,15 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if workspace_member.role > ROLE.GUEST.value:
-            serializer = WorkspaceMemberAdminSerializer(member, fields=("id", "member", "role"))
+        if workspace_member.role_ref and workspace_member.role_ref.slug != "guest":
+            serializer = WorkspaceMemberAdminSerializer(member)
         else:
-            serializer = WorkSpaceMemberSerializer(member, fields=("id", "member", "role"))
+            serializer = WorkSpaceMemberSerializer(member)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceMemberPermissions.CHANGE_ROLE, resource_param="pk")
     def partial_update(self, request, slug, pk):
-        workspace_member = WorkspaceMember.objects.get(
+        workspace_member = WorkspaceMember.objects.select_related("role_ref").get(
             pk=pk, workspace__slug=slug, member__is_bot=False, is_active=True
         )
         if request.user.id == workspace_member.member_id:
@@ -105,18 +116,49 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if "role" in request.data and int(request.data.get("role")) == 5:
-            # If a user is moved to a guest role he can't have any other role in projects
-            ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
-            # When a user is moved to a guest role, they must be removed from all teamspaces
-            TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
+        # Tier protection — resolve actor role
+        actor_member = WorkspaceMember.objects.select_related("role_ref").get(
+            workspace__slug=slug, member=request.user, is_active=True
+        )
+        actor_slug = get_workspace_role_slug(actor_member)
+        target_slug = get_workspace_role_slug(workspace_member)
 
-        if "role" in request.data:
+        # Can the actor manage the target's CURRENT role?
+        allowed, error = can_manage_role(actor_slug, target_slug)
+        if not allowed:
+            return Response({"error": error}, status=status.HTTP_403_FORBIDDEN)
+
+        # Capture current state before mutation for accurate audit trail
+        current_instance = json.dumps(WorkSpaceMemberSerializer(workspace_member).data, cls=DjangoJSONEncoder)
+
+        # Resolve role_slug to role level if provided
+        target_role = None
+        target_ws_role = None
+        if "role_slug" in request.data:
+            ws_role_cache = get_workspace_roles_for_workspace(workspace_member.workspace_id)
+            target_ws_role = ws_role_cache.get(request.data["role_slug"])
+            if not target_ws_role:
+                return Response(
+                    {"error": f"Invalid role_slug: {request.data['role_slug']}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            target_role = member_role_from_role_ref(target_ws_role)
+            # Can the actor assign the NEW role?
+            allowed, error = can_assign_role(actor_slug, target_ws_role.slug)
+            if not allowed:
+                return Response({"error": error}, status=status.HTTP_403_FORBIDDEN)
+        elif "role" in request.data:
+            return Response(
+                {"error": "Use role_slug instead of role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if target_role is not None:
+            # Seat limit check FIRST (before any side effects)
             allowed, _, _ = workspace_member_check(
                 slug=slug,
-                requested_role=request.data.get("role"),
-                current_role=workspace_member.role,
-                requested_invite_list=[],
+                requested_role_slug=target_ws_role.slug if target_ws_role else None,
+                current_role_slug=workspace_member.role_ref.slug if workspace_member.role_ref else None,
             )
             if not allowed:
                 return Response(
@@ -124,9 +166,16 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
+            # Guest demotion side effects (only after seat check passes)
+            if target_ws_role and target_ws_role.slug == "guest":
+                ProjectMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).update(role=5)
+                TeamspaceMember.objects.filter(workspace__slug=slug, member_id=workspace_member.member_id).delete()
 
-        current_instance = json.dumps(WorkSpaceMemberSerializer(workspace_member).data, cls=DjangoJSONEncoder)
+            # Set role and role_ref
+            workspace_member.role = target_role
+            workspace_member.role_ref = target_ws_role
+
+        serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
@@ -146,29 +195,29 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    @can(WorkspaceMemberPermissions.REMOVE, resource_param="pk")
     def destroy(self, request, slug, pk):
         # Check the user role who is deleting the user
-        workspace_member = WorkspaceMember.objects.get(
+        workspace_member = WorkspaceMember.objects.select_related("role_ref").get(
             workspace__slug=slug, pk=pk, member__is_bot=False, is_active=True
         )
 
-        # check requesting user role
-        requesting_workspace_member = WorkspaceMember.objects.get(
-            workspace__slug=slug, member=request.user, is_active=True
-        )
-
-        if str(workspace_member.id) == str(requesting_workspace_member.id):
+        if request.user.id == workspace_member.member_id:
             return Response(
                 {"error": "You cannot remove yourself from the workspace. Please use leave workspace"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if requesting_workspace_member.role < workspace_member.role:
-            return Response(
-                {"error": "You cannot remove a user having role higher than you"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        # Tier protection — can actor remove this member?
+        actor_member = WorkspaceMember.objects.select_related("role_ref").get(
+            workspace__slug=slug, member=request.user, is_active=True
+        )
+        actor_slug = get_workspace_role_slug(actor_member)
+        target_slug = get_workspace_role_slug(workspace_member)
+
+        allowed, error = can_manage_role(actor_slug, target_slug)
+        if not allowed:
+            return Response({"error": error}, status=status.HTTP_403_FORBIDDEN)
 
         if (
             Project.objects.annotate(
@@ -229,14 +278,20 @@ class WorkSpaceMemberViewSet(BaseViewSet):
     )
     @invalidate_cache(path="/api/users/me/settings/")
     @invalidate_cache(path="api/users/me/workspaces/", user=False, multiple=True)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def leave(self, request, slug):
-        workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
+        workspace_member = WorkspaceMember.objects.select_related("role_ref").get(
+            workspace__slug=slug, member=request.user, is_active=True
+        )
 
-        # Check if the leaving user is the only admin of the workspace
+        # Check if the leaving user is the only admin/owner of the workspace
         if (
-            workspace_member.role == 20
-            and not WorkspaceMember.objects.filter(workspace__slug=slug, role=20, is_active=True).count() > 1
+            workspace_member.role_ref
+            and workspace_member.role_ref.slug in ("admin", "owner")
+            and not WorkspaceMember.objects.filter(
+                workspace__slug=slug, role_ref__slug__in=["admin", "owner"], is_active=True
+            ).count()
+            > 1
         ):
             return Response(
                 {
@@ -252,7 +307,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                     "project_projectmember",
                     filter=Q(
                         project_projectmember__member_id=request.user.id,
-                        project_projectmember__role=20,
+                        project_projectmember__role_ref__slug="admin",
                     ),
                 ),
             )
@@ -298,6 +353,7 @@ class WorkSpaceMemberViewSet(BaseViewSet):
 
 
 class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def post(self, request, slug):
         workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
         workspace_member.view_props = request.data.get("view_props", {})
@@ -306,10 +362,10 @@ class WorkspaceMemberUserViewsEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkspaceMemberUserEndpoint(BaseAPIView):
+class WorkspacePreferencesEndpoint(BaseAPIView):
     use_read_replica = True
 
-    def get(self, request, slug):
+    def _get_annotated_member(self, request, slug):
         draft_issue_count = (
             DraftIssue.objects.filter(
                 created_by=OuterRef("member"),
@@ -323,8 +379,8 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
         )
         active_cycles_count = (
             Cycle.objects.filter(
+                ~Q(project__project_projectmember__role_ref__slug="guest"),
                 workspace__slug=OuterRef("workspace__slug"),
-                project__project_projectmember__role__gt=5,
                 project__project_projectmember__member=OuterRef("member"),
                 project__project_projectmember__is_active=True,
                 start_date__lte=timezone.now(),
@@ -335,17 +391,37 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
             .values("count")
         )
 
-        workspace_member = (
+        return (
             WorkspaceMember.objects.filter(member=request.user, workspace__slug=slug, is_active=True)
+            .select_related("role_ref")
             .annotate(draft_issue_count=Coalesce(Subquery(draft_issue_count, output_field=IntegerField()), 0))
             .annotate(active_cycles_count=Coalesce(Subquery(active_cycles_count, output_field=IntegerField()), 0))
             .first()
         )
+
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
+    def get(self, request, slug):
+        workspace_member = self._get_annotated_member(request, slug)
         if workspace_member:
-            serializer = WorkspaceMemberMeSerializer(workspace_member)
+            serializer = WorkspacePreferencesSerializer(workspace_member)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({"error": "You are not a member of this workspace"}, status=status.HTTP_403_FORBIDDEN)
+
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
+    def patch(self, request, slug):
+        workspace_member = self._get_annotated_member(request, slug)
+        if not workspace_member:
+            return Response(
+                {"error": "You are not a member of this workspace"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = WorkspacePreferencesSerializer(workspace_member, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # For WorkspaceMember fields:
@@ -353,6 +429,7 @@ class WorkspaceMemberUserEndpoint(BaseAPIView):
 # - tips
 # - explored_features
 class WorkspaceMemberUserOnboardingEndpoint(BaseAPIView):
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def patch(self, request, slug):
         try:
             workspace_member = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
@@ -380,8 +457,7 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
     serializer_class = ProjectMemberRoleSerializer
     model = ProjectMember
 
-    permission_classes = [WorkspaceEntityPermission]
-
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         # Fetch all project IDs where the user is involved
         project_ids = (
@@ -393,7 +469,7 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         # Get all the project members in which the user is involved
         project_members = ProjectMember.objects.filter(
             workspace__slug=slug, project_id__in=project_ids, is_active=True
-        ).select_related("project", "member", "workspace")
+        ).select_related("project", "member", "workspace", "role_ref")
         project_members = ProjectMemberRoleSerializer(project_members, many=True).data
 
         project_members_dict = dict()

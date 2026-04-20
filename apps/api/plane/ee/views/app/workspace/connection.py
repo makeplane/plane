@@ -20,17 +20,14 @@ from plane.ee.models.workspace import WorkspaceConnection, WorkspaceCredential
 from plane.ee.serializers import WorkspaceConnectionSerializer
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions.workspace import WorkspaceEntityPermission
+from plane.permissions import can, IntegrationPermissions
 
 
 class WorkspaceConnectionView(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         if not pk:
             connections = WorkspaceConnection.objects.filter(**request.query_params).order_by("-created_at")
@@ -41,6 +38,7 @@ class WorkspaceConnectionView(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         connection = WorkspaceConnection.objects.filter(id=pk).first()
         connection.delete()
@@ -50,11 +48,8 @@ class WorkspaceConnectionView(BaseAPIView):
 class WorkspaceUserConnectionView(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     @check_feature_flag(FeatureFlag.SILO)
+    @can(IntegrationPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, user_id):
         workspace = Workspace.objects.filter(slug=slug).first()
 

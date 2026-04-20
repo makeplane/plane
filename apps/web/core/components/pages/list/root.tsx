@@ -18,11 +18,10 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane imports
-import { EPageAccess, EUserPermissionsLevel } from "@plane/constants";
+import { EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
-import { EUserProjectRoles } from "@plane/types";
 import type { TPage, TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 // components
 import allFiltersDark from "@/app/assets/empty-state/wiki/all-filters-dark.svg?url";
@@ -33,7 +32,6 @@ import { PageListBlockRoot } from "@/components/pages/list/block-root";
 import { PageLoader } from "@/components/pages/loaders/page-loader";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 import useDebounce from "@/hooks/use-debounce";
 // assets
 // plane web hooks
@@ -62,7 +60,6 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
   const { t } = useTranslation();
   // store hooks
   const { currentProjectDetails } = useProject();
-  const { allowPermissions } = useUserPermissions();
   const {
     filters,
     fetchPagesByType,
@@ -70,6 +67,7 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
     filteredArchivedPageIds,
     filteredPrivatePageIds,
     createPage,
+    getCanCreatePage,
     movePageInternally,
     getPageById,
     isNestedPagesEnabled,
@@ -114,11 +112,8 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
     }
   }, [pageType, filteredPublicPageIds, filteredPrivatePageIds, filteredArchivedPageIds, data, debouncedSearchQuery]);
 
-  // derived values - memoized for performance
-  const hasProjectMemberLevelPermissions = useMemo(
-    () => allowPermissions([EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER], EUserPermissionsLevel.PROJECT),
-    [allowPermissions]
-  );
+  // derived values
+  const canCreatePage = getCanCreatePage(workspaceSlug, projectId);
 
   // handle page create
   const handleCreatePage = async (pageAccess?: EPageAccess) => {
@@ -142,11 +137,6 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
       })
       .finally(() => setIsCreatingPage(false));
   };
-
-  const canPerformEmptyStateActions = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
 
   // Root level drop target
   useEffect(() => {
@@ -188,7 +178,7 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
       },
       canDrop: ({ source }) => {
         // Don't allow drops if user doesn't have permissions or in archived section
-        if (!hasProjectMemberLevelPermissions || pageType === "archived") {
+        if (pageType === "archived") {
           return false;
         }
 
@@ -206,14 +196,7 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
         );
       },
     });
-  }, [
-    hasProjectMemberLevelPermissions,
-    pageType,
-    getPageById,
-    isNestedPagesEnabled,
-    workspaceSlug,
-    movePageInternally,
-  ]);
+  }, [pageType, getPageById, isNestedPagesEnabled, workspaceSlug, movePageInternally]);
 
   if (isLoading) return <PageLoader />;
 
@@ -231,7 +214,7 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
               onClick: () => {
                 handleCreatePage();
               },
-              disabled: !canPerformEmptyStateActions || isCreatingPage,
+              disabled: !canCreatePage || isCreatingPage,
               variant: "primary",
             },
           ]}
@@ -249,7 +232,7 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
               onClick: () => {
                 handleCreatePage();
               },
-              disabled: !canPerformEmptyStateActions || isCreatingPage,
+              disabled: !canCreatePage || isCreatingPage,
               variant: "primary",
             },
           ]}
@@ -275,7 +258,7 @@ export const ProjectPagesListRoot = observer(function ProjectPagesListRoot(props
             onClick: () => {
               handleCreatePage();
             },
-            disabled: !hasProjectMemberLevelPermissions || isCreatingPage,
+            disabled: !canCreatePage || isCreatingPage,
             variant: "primary",
           },
         ]}

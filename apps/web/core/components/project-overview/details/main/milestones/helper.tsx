@@ -109,10 +109,14 @@ type MilestoneQuickActionButtonProps = {
   milestoneId: string;
   workspaceSlug: string;
   projectId: string;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProps) {
-  const { milestoneId, workspaceSlug, projectId } = props;
+  const { milestoneId, workspaceSlug, projectId, permissions } = props;
 
   const [isCreateUpdateMilestoneModalOpen, setIsCreateUpdateMilestoneModalOpen] = useState(false);
   const { deleteMilestone } = useMilestones();
@@ -142,6 +146,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
       },
       title: t("common.actions.edit"),
       icon: EditIcon,
+      shouldRender: permissions.canEdit,
     },
     {
       key: "delete",
@@ -151,6 +156,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
       title: t("common.actions.delete"),
       icon: TrashIcon,
       iconClassName: "text-danger-primary",
+      shouldRender: permissions.canDelete,
     },
   ];
 
@@ -164,7 +170,7 @@ export function MilestoneQuickActionButton(props: MilestoneQuickActionButtonProp
         milestoneId={milestoneId}
       />
       <CustomMenu placement="bottom-end" ellipsis closeOnSelect>
-        {MENU_ITEMS.map((item) => (
+        {MENU_ITEMS.filter((item) => item.shouldRender).map((item) => (
           <CustomMenu.MenuItem
             key={item.key}
             onClick={(e) => {

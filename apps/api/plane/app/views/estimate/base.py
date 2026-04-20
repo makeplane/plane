@@ -25,7 +25,7 @@ from rest_framework import status
 
 # Module imports
 from ..base import BaseViewSet, BaseAPIView
-from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
+from plane.permissions import can, EstimatePermissions
 from plane.db.models import Project, Estimate, EstimatePoint, Issue, Cycle
 from plane.app.serializers import (
     EstimateSerializer,
@@ -44,10 +44,11 @@ def generate_random_name(length=10):
     return "".join(random.choice(letters) for i in range(length))
 
 
+# TODO: Unused endpoint — not called by FE. URL commented out in urls/estimate.py.
+# When re-enabling, migrate to @can permission system before use.
 class ProjectEstimatePointEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id):
         project = Project.objects.get(workspace__slug=slug, pk=project_id)
         if project.estimate_id is not None:
@@ -64,10 +65,10 @@ class ProjectEstimatePointEndpoint(BaseAPIView):
 class BulkEstimatePointEndpoint(BaseViewSet):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
     model = Estimate
     serializer_class = EstimateSerializer
 
+    @can(EstimatePermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         estimates = (
             Estimate.objects.filter(workspace__slug=slug, project_id=project_id)
@@ -78,6 +79,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
+    @can(EstimatePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         estimate = request.data.get("estimate")
         estimate_name = estimate.get("name", generate_random_name())
@@ -117,12 +119,14 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         serializer = EstimateReadSerializer(estimate)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @can(EstimatePermissions.VIEW, resource_param="project_id")
     def retrieve(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
         serializer = EstimateReadSerializer(estimate)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
+    @can(EstimatePermissions.EDIT, resource_param="project_id")
     def partial_update(self, request, slug, project_id, estimate_id):
         if not len(request.data.get("estimate_points", [])):
             return Response(
@@ -161,6 +165,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         return Response(estimate_serializer.data, status=status.HTTP_200_OK)
 
     @invalidate_cache(path="/api/workspaces/:slug/estimates/", url_params=True, user=False)
+    @can(EstimatePermissions.DELETE, resource_param="project_id")
     def destroy(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
         estimate.delete()
@@ -170,7 +175,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
 class EstimatePointEndpoint(BaseViewSet):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(EstimatePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id, estimate_id):
         #  TODO: add a key validation if the same key already exists
         if not request.data.get("key") or not request.data.get("value"):
@@ -186,7 +191,7 @@ class EstimatePointEndpoint(BaseViewSet):
         serializer = EstimatePointSerializer(estimate_point).data
         return Response(serializer, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(EstimatePermissions.EDIT, resource_param="project_id")
     def partial_update(self, request, slug, project_id, estimate_id, estimate_point_id):
         #  TODO: add a key validation if the same key already exists
         estimate_point = EstimatePoint.objects.get(
@@ -237,7 +242,7 @@ class EstimatePointEndpoint(BaseViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(EstimatePermissions.DELETE, resource_param="project_id")
     def destroy(self, request, slug, project_id, estimate_id, estimate_point_id):
         new_estimate_id = request.data.get("new_estimate_id", None)
         estimate_points = EstimatePoint.objects.filter(

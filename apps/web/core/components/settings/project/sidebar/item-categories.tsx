@@ -13,30 +13,29 @@
 
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
-import { useParams } from "react-router";
 // plane imports
-import { EUserPermissionsLevel, GROUPED_PROJECT_SETTINGS, PROJECT_SETTINGS_CATEGORIES } from "@plane/constants";
+import { GROUPED_PROJECT_SETTINGS, PROJECT_SETTINGS_CATEGORIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { SettingsSidebarItem } from "@/components/settings/sidebar/item";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProjectSettingsAccess } from "@/hooks/permissions/use-project-settings-access";
 // local imports
 import { PROJECT_SETTINGS_ICONS } from "./item-icon";
 
 type Props = {
+  workspaceSlug: string;
   projectId: string;
 };
 
 export const ProjectSettingsSidebarItemCategories = observer(function ProjectSettingsSidebarItemCategories(
   props: Props
 ) {
-  const { projectId } = props;
-  // params
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId } = props;
+  // router
   const pathname = usePathname();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { canAccessProjectSetting } = useProjectSettingsAccess();
   // translation
   const { t } = useTranslation();
 
@@ -45,7 +44,7 @@ export const ProjectSettingsSidebarItemCategories = observer(function ProjectSet
       {PROJECT_SETTINGS_CATEGORIES.map((category) => {
         const categoryItems = GROUPED_PROJECT_SETTINGS[category];
         const accessibleItems = categoryItems.filter((item) =>
-          allowPermissions(item.access, EUserPermissionsLevel.PROJECT, workspaceSlug, projectId)
+          canAccessProjectSetting(workspaceSlug, projectId, item.key)
         );
 
         if (accessibleItems.length === 0) return null;

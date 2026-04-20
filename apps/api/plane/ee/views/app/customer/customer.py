@@ -23,7 +23,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.ee.models import Customer, CustomerRequest, CustomerRequestIssue
 from plane.db.models import Workspace
 from plane.ee.serializers import CustomerSerializer
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 from plane.utils.global_paginator import paginate
 from plane.bgtasks.issue_activities_task import issue_activity
 
@@ -41,9 +41,8 @@ from plane.ee.utils.workspace_feature import (
 class CustomerEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         cursor = request.GET.get("cursor", None)
 
@@ -76,6 +75,7 @@ class CustomerEndpoint(BaseAPIView):
         return Response(paginated_data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_CUSTOMER_ENABLED):
             workspace = Workspace.objects.get(slug=slug)
@@ -102,6 +102,7 @@ class CustomerEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, pk):
         customer = Customer.objects.get(pk=pk, workspace__slug=slug)
 
@@ -114,6 +115,7 @@ class CustomerEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         customer = Customer.objects.get(pk=pk, workspace__slug=slug)
 

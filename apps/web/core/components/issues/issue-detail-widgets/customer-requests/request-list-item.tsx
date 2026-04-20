@@ -32,12 +32,11 @@ import { WorkItemRequestForm } from "./form";
 type TProps = {
   requestId: string;
   workspaceSlug: string;
-  isEditable?: boolean;
   workItemId: string;
 };
 
 export const WorkItemRequestListItem = observer(function WorkItemRequestListItem(props: TProps) {
-  const { requestId, workspaceSlug, isEditable = false, workItemId } = props;
+  const { requestId, workspaceSlug, workItemId } = props;
   // states
   const [link, setLink] = useState<string | undefined>();
   // refs
@@ -52,6 +51,7 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
     toggleRequestSourceModal,
     toggleCreateUpdateRequestModal,
     createUpdateRequestModalId,
+    permissions: customerPermissions,
   } = useCustomers();
   const { getWorkspaceBySlug } = useWorkspace();
   // derived values
@@ -60,6 +60,14 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
   const customer = getCustomerById(customerId);
   const workspaceDetails = getWorkspaceBySlug(workspaceSlug);
   const customerLogoSrc = getCustomerLogoSrc(customer);
+  const requestPermissions = customerPermissions.getRequestPermissions(workspaceSlug, customerId);
+  const allRequestPermissions = {
+    canCreate: requestPermissions.canCreate,
+    canEdit: requestPermissions.getCanEdit(requestId),
+    canDelete: requestPermissions.getCanDelete(requestId),
+    canAddAttachment: requestPermissions.getCanAddAttachment(requestId),
+    canDeleteAttachment: requestPermissions.getCanDeleteAttachment(requestId),
+  };
 
   const handleUpdateSource = (link: string) => {
     updateCustomerRequest(workspaceSlug, customerId, requestId, { link })
@@ -131,6 +139,7 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
             handleEdit={handleEdit}
             workspaceSlug={workspaceSlug}
             workItemId={workItemId}
+            permissions={allRequestPermissions}
           />
         </div>
         <div className="flex justify-between" ref={parentRef}>
@@ -152,7 +161,7 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
         ) : (
           <div className="py-1" />
         )}
-        {isEditable && (
+        {allRequestPermissions.canEdit && (
           <div className="flex gap-2">
             <Button
               variant="secondary"
@@ -177,7 +186,7 @@ export const WorkItemRequestListItem = observer(function WorkItemRequestListItem
             workspaceSlug={workspaceSlug}
             customerId={customerId}
             requestId={requestId}
-            isEditable={isEditable}
+            permissions={allRequestPermissions}
           />
         </div>
       </div>

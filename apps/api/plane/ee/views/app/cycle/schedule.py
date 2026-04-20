@@ -22,7 +22,8 @@ from plane.db.models import BotTypeEnum, User, Workspace, WorkspaceMember, Proje
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers import AutomatedCycleSerializer
 from plane.ee.bgtasks.cycle_automation_task import backfill_automated_cycles
-from plane.app.permissions import allow_permission, ROLE
+from plane.app.permissions import ROLE
+from plane.permissions import can, CyclePermissions
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
 
@@ -41,8 +42,8 @@ class AutomatedCycleViewSet(BaseViewSet):
             .filter(project_id=self.kwargs.get("project_id"))
         )
 
-    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.AUTO_SCHEDULE_CYCLES)
+    @can(CyclePermissions.MANAGE, resource_param="project_id")
     def list(self, request, slug, project_id):
         automated_cycle = self.get_queryset().first()
         if automated_cycle is None:
@@ -50,8 +51,8 @@ class AutomatedCycleViewSet(BaseViewSet):
         serializer = AutomatedCycleSerializer(automated_cycle)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.AUTO_SCHEDULE_CYCLES)
+    @can(CyclePermissions.MANAGE, resource_param="project_id")
     def create(self, request, slug, project_id):
         # check if the automation already exists
         if CycleSettings.objects.filter(project_id=project_id, workspace__slug=slug).exists():
@@ -106,8 +107,8 @@ class AutomatedCycleViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN])
     @check_feature_flag(FeatureFlag.AUTO_SCHEDULE_CYCLES)
+    @can(CyclePermissions.MANAGE, resource_param="project_id")
     def partial_update(self, request, slug, project_id):
         automated_cycle = CycleSettings.objects.filter(project_id=project_id, workspace__slug=slug).first()
         if not automated_cycle:

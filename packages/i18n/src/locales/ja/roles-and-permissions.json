@@ -1,0 +1,699 @@
+{
+  "roles_and_permissions_schemes": "ロールと権限スキーム",
+  "workspace_settings": {
+    "settings": {
+      "roles_and_permissions": {
+        "title": "ロールと権限",
+        "roles_list": {
+          "workspace": {
+            "label": "ワークスペースロール"
+          },
+          "project": {
+            "label": "プロジェクトロール"
+          }
+        },
+        "compare_permissions": "権限を比較",
+        "create_role": {
+          "title": "ロールを作成",
+          "description": "名前、説明、このインスタンスのユーザーに対する権限を設定してロールを定義します。",
+          "button_label": "新しいロールを作成",
+          "error_toast_description": "ロールを作成できませんでした。もう一度お試しください。"
+        },
+        "edit_role": {
+          "title": "ロールを編集",
+          "description": "ロールの名前、権限、設定を更新し、メンバーがアクセス・操作できる範囲を制御します。",
+          "error_toast_description": "ロールを更新できませんでした。もう一度お試しください。"
+        },
+        "role_details": {
+          "role_information_title": "基本情報",
+          "role_information_description": "ロールの名前と、目的を明確にする簡単な説明です。",
+          "role_name": "ロール名",
+          "role_description": "説明",
+          "role_details": "ロールの詳細",
+          "role_details_description": "ロールと割り当てられた権限の全体を確認できます。",
+          "edit_permissions": "権限を編集"
+        },
+        "role_form": {
+          "name": "ロール名",
+          "name_placeholder": "ロール名を入力",
+          "name_error": "名前は必須です。",
+          "description": "説明",
+          "description_placeholder": "ロールの説明を入力",
+          "create_button": "ロールを作成"
+        },
+        "role_actions": {
+          "duplicate": "複製"
+        },
+        "discard_changes_modal": {
+          "title": "変更を破棄しますか？",
+          "description": "変更が保存されていません。このページを離れると変更は破棄されます。",
+          "cancel": "変更を破棄",
+          "confirm": "編集を続ける"
+        },
+        "delete_role_modal": {
+          "title": "ロールを削除しますか？",
+          "description": "このロールを削除してもよろしいですか？この操作は元に戻せません。",
+          "error_toast_message": "ロールを削除できませんでした。もう一度お試しください。"
+        },
+        "comparison_modal": {
+          "title": {
+            "workspace": "ワークスペースのロールと権限",
+            "project": "プロジェクトのロールと権限"
+          },
+          "permissions_header": "権限",
+          "view_mode": {
+            "sets": "セット表示",
+            "permissions": "権限文字列"
+          }
+        },
+        "psets": {
+          "workspace": {
+            "workspace_settings": {
+              "title": "ワークスペース設定",
+              "description": "コアなワークスペース設定：名前、ロゴ、通貨、ドメイン、削除、所有権の移譲。",
+              "workspace": {
+                "view": { "label": "ワークスペースを表示" },
+                "edit": { "label": "ワークスペース設定を編集" },
+                "manage": { "label": "ワークスペースを管理" },
+                "invite": { "label": "メンバーを招待" },
+                "delete": { "label": "ワークスペースを削除" },
+                "transfer": { "label": "所有権を移譲" }
+              }
+            },
+            "member_management": {
+              "title": "メンバー管理",
+              "description": "ワークスペースメンバーの招待、編集、インポート、削除。",
+              "workspace_member": {
+                "view": { "label": "メンバーを表示" },
+                "invite": { "label": "メンバーを招待" },
+                "edit": { "label": "メンバー情報を編集" },
+                "import": { "label": "メンバーをインポート（CSV / SSO）" },
+                "change_role": { "label": "メンバーのロールを変更" },
+                "remove": { "label": "メンバーを削除" }
+              }
+            },
+            "project_management": {
+              "title": "プロジェクト管理",
+              "description": "ワークスペースのコンテキストからのプロジェクトの作成と管理。",
+              "project": {
+                "browse": { "label": "プロジェクトを閲覧" },
+                "view": { "label": "プロジェクトの詳細を表示" },
+                "create": { "label": "プロジェクトを作成" },
+                "edit": { "label": "プロジェクト設定を編集" },
+                "react": { "label": "プロジェクトにリアクション" },
+                "publish": { "label": "プロジェクトを公開（一般公開にする）" },
+                "archive": { "label": "プロジェクトをアーカイブ" },
+                "delete": { "label": "プロジェクトを削除" },
+                "manage": { "label": "プロジェクトアクセスを管理" }
+              }
+            },
+            "role_administration": {
+              "title": "ロール管理",
+              "description": "カスタムロールとプロジェクトロールの作成と管理。",
+              "custom_role": {
+                "view": { "label": "カスタムロールを表示" },
+                "create": { "label": "カスタムロールを作成" },
+                "edit": { "label": "カスタムロールを編集" },
+                "delete": { "label": "カスタムロールを削除" }
+              }
+            },
+            "workspace_pages": {
+              "title": "ワークスペースページ（Wiki）",
+              "description": "ワークスペースレベルのドキュメントとWiki。",
+              "wiki": {
+                "view": { "label": "Wikiを表示" },
+                "create": { "label": "Wikiページを作成" },
+                "edit": { "label": "Wikiページを編集" },
+                "share": { "label": "Wikiページを共有" },
+                "delete": { "label": "Wikiページを削除" },
+                "comment": { "label": "Wikiページにコメント" }
+              }
+            },
+            "workspace_views": {
+              "title": "ワークスペースビュー",
+              "description": "ワークスペースレベルの保存済みフィルターとビューの管理。",
+              "workspace_workitem_view": {
+                "view": { "label": "ワークスペースビューを表示" },
+                "create": { "label": "ワークスペースビューを作成" },
+                "edit": { "label": "ワークスペースビューを編集" },
+                "share": { "label": "ワークスペースビューを共有" },
+                "publish": { "label": "ワークスペースビューを公開" },
+                "export": { "label": "ワークスペースビューをエクスポート" },
+                "delete": { "label": "ワークスペースビューを削除" }
+              }
+            },
+            "initiatives": {
+              "title": "イニシアチブ",
+              "description": "プロジェクト横断のイニシアチブ追跡（コメント、添付ファイル、リンク、アップデートを含む）。",
+              "initiative": {
+                "view": { "label": "イニシアチブを表示" },
+                "create": { "label": "イニシアチブを作成" },
+                "edit": { "label": "イニシアチブを編集" },
+                "manage": { "label": "イニシアチブを管理" },
+                "react": { "label": "イニシアチブにリアクション" },
+                "delete": { "label": "イニシアチブを削除" }
+              },
+              "initiative_comment": {
+                "view": { "label": "イニシアチブのコメントを表示" },
+                "create": { "label": "イニシアチブにコメント" },
+                "edit": { "label": "イニシアチブのコメントを編集" },
+                "react": { "label": "イニシアチブのコメントにリアクション" },
+                "delete": { "label": "イニシアチブのコメントを削除" }
+              },
+              "initiative_attachment": {
+                "view": { "label": "イニシアチブの添付ファイルを表示" },
+                "create": { "label": "イニシアチブに添付ファイルを追加" },
+                "delete": { "label": "イニシアチブの添付ファイルを削除" }
+              },
+              "initiative_link": {
+                "view": { "label": "イニシアチブのリンクを表示" },
+                "create": { "label": "イニシアチブにリンクを追加" },
+                "edit": { "label": "イニシアチブのリンクを編集" },
+                "delete": { "label": "イニシアチブのリンクを削除" }
+              }
+            },
+            "teamspaces": {
+              "title": "チームスペース",
+              "description": "チームスペースの閲覧、作成、管理。",
+              "teamspace": {
+                "browse": { "label": "チームスペースを閲覧" },
+                "view": { "label": "チームスペースの詳細を表示" },
+                "create": { "label": "チームスペースを作成" },
+                "edit": { "label": "チームスペースを編集" },
+                "manage": { "label": "チームスペースのメンバーを管理" },
+                "delete": { "label": "チームスペースを削除" }
+              }
+            },
+            "integrations": {
+              "title": "インテグレーション",
+              "description": "サードパーティインテグレーション、Webhook、APIトークン。",
+              "integration": {
+                "view": { "label": "インテグレーションを表示" },
+                "create": { "label": "インテグレーションを作成" },
+                "edit": { "label": "インテグレーションを構成" },
+                "delete": { "label": "インテグレーションを削除" }
+              },
+              "webhook": {
+                "view": { "label": "Webhookを表示" },
+                "create": { "label": "Webhookを作成" },
+                "edit": { "label": "Webhookを編集" },
+                "delete": { "label": "Webhookを削除" }
+              },
+              "api_token": {
+                "view": { "label": "APIトークンを表示" },
+                "create": { "label": "APIトークンを作成" },
+                "delete": { "label": "APIトークンを削除" }
+              }
+            },
+            "analytics_and_dashboards": {
+              "title": "アナリティクスとレポート",
+              "description": "ワークスペースレベルのダッシュボード、アナリティクス、作業ログ。",
+              "analytics": {
+                "view": { "label": "アナリティクスを表示" },
+                "export": { "label": "アナリティクスをエクスポート" }
+              },
+              "dashboard": {
+                "view": { "label": "ダッシュボードを表示" },
+                "create": { "label": "ダッシュボードを作成" },
+                "edit": { "label": "ダッシュボードを編集" },
+                "delete": { "label": "ダッシュボードを削除" }
+              },
+              "workspace_worklog": {
+                "view": { "label": "作業ログを表示" },
+                "export": { "label": "作業ログをエクスポート" }
+              },
+              "ai": {
+                "use": { "label": "AI機能を使用" }
+              }
+            },
+            "customers": {
+              "title": "カスタマーフィードバック",
+              "description": "カスタマーおよびカスタマーリクエストの管理。",
+              "customer": {
+                "view": { "label": "カスタマーを表示" },
+                "create": { "label": "カスタマーを作成" },
+                "edit": { "label": "カスタマーを編集" },
+                "delete": { "label": "カスタマーを削除" }
+              },
+              "customer_attachment": {
+                "create": { "label": "カスタマーに添付ファイルを追加" },
+                "delete": { "label": "カスタマーの添付ファイルを削除" }
+              }
+            },
+            "work_item_relations": {
+              "title": "ワークアイテムのリレーション",
+              "description": "ワークアイテムのカスタムリレーションタイプ定義の管理。",
+              "workitem_relation": {
+                "view": { "label": "リレーション定義を表示" },
+                "create": { "label": "リレーション定義を作成" },
+                "edit": { "label": "リレーション定義を編集" },
+                "delete": { "label": "リレーション定義を削除" }
+              }
+            },
+            "workspace_templates": {
+              "title": "テンプレート",
+              "description": "ワークスペースレベルのワークアイテム、ページ、プロジェクトのテンプレートの作成と管理。",
+              "workspace_workitem_template": {
+                "view": { "label": "ワークアイテムテンプレートを表示" },
+                "create": { "label": "ワークアイテムテンプレートを作成" },
+                "edit": { "label": "ワークアイテムテンプレートを編集" },
+                "delete": { "label": "ワークアイテムテンプレートを削除" }
+              },
+              "workspace_page_template": {
+                "view": { "label": "ページテンプレートを表示" },
+                "create": { "label": "ページテンプレートを作成" },
+                "edit": { "label": "ページテンプレートを編集" },
+                "delete": { "label": "ページテンプレートを削除" }
+              },
+              "workspace_project_template": {
+                "view": { "label": "プロジェクトテンプレートを表示" },
+                "create": { "label": "プロジェクトテンプレートを作成" },
+                "edit": { "label": "プロジェクトテンプレートを編集" },
+                "delete": { "label": "プロジェクトテンプレートを削除" }
+              }
+            },
+            "workspace_automations": {
+              "title": "ワークスペースオートメーション",
+              "description": "ワークスペースレベルのオートメーションルールと設定。",
+              "workspace_automation": {
+                "view": { "label": "ワークスペースオートメーションを表示" },
+                "create": { "label": "ワークスペースオートメーションを作成" },
+                "edit": { "label": "ワークスペースオートメーションを編集" },
+                "delete": { "label": "ワークスペースオートメーションを削除" }
+              }
+            }
+          },
+          "project": {
+            "project_membership": {
+              "title": "プロジェクトメンバー",
+              "description": "プロジェクトメンバーの招待、編集、削除。",
+              "project_member": {
+                "view": { "label": "プロジェクトメンバーを表示" },
+                "invite": { "label": "メンバーを招待" },
+                "edit": { "label": "メンバー情報を編集" },
+                "change_role": { "label": "メンバーのロールを変更" },
+                "remove": { "label": "メンバーを削除" }
+              }
+            },
+            "work_items": {
+              "title": "ワークアイテム",
+              "description": "主要なワークアイテムのサーフェスです。コメント、添付ファイル、リンク、リレーション、カスタムプロパティーを含みます。",
+              "workitem": {
+                "view": { "label": "ワークアイテムを表示" },
+                "create": { "label": "ワークアイテムを作成" },
+                "edit": { "label": "ワークアイテムを編集" },
+                "bulk_edit": { "label": "ワークアイテムを一括編集" },
+                "export": { "label": "ワークアイテムをエクスポート" },
+                "react": { "label": "ワークアイテムにリアクション" },
+                "delete": { "label": "ワークアイテムを削除" }
+              },
+              "comment": {
+                "create": { "label": "コメントを追加" },
+                "edit": { "label": "コメントを編集" },
+                "react": { "label": "コメントにリアクション" },
+                "delete": { "label": "コメントを削除" }
+              },
+              "attachment": {
+                "view": { "label": "添付ファイルを表示" },
+                "create": { "label": "添付ファイルを追加" },
+                "delete": { "label": "添付ファイルを削除" }
+              },
+              "workitem_link": {
+                "view": { "label": "ワークアイテムのリンクを表示" },
+                "create": { "label": "ワークアイテムにリンクを追加" },
+                "edit": { "label": "ワークアイテムのリンクを編集" },
+                "delete": { "label": "ワークアイテムのリンクを削除" }
+              },
+              "issue_property": {
+                "view": { "label": "カスタムプロパティーを表示" },
+                "edit": { "label": "カスタムプロパティーを編集" }
+              }
+            },
+            "epics": {
+              "title": "エピック",
+              "description": "エピックのライフサイクル。リンク、プロパティー、アップデートスレッドを含みます。",
+              "epic": {
+                "view": { "label": "エピックを表示" },
+                "create": { "label": "エピックを作成" },
+                "edit": { "label": "エピックを編集" },
+                "delete": { "label": "エピックを削除" }
+              },
+              "epic_link": {
+                "view": { "label": "エピックのリンクを表示" },
+                "create": { "label": "エピックにリンクを追加" },
+                "edit": { "label": "エピックのリンクを編集" },
+                "delete": { "label": "エピックのリンクを削除" }
+              },
+              "epic_property": {
+                "view": { "label": "エピックのプロパティーを表示" },
+                "edit": { "label": "エピックのプロパティーを編集" }
+              },
+              "epic_update": {
+                "view": { "label": "エピックのアップデートを表示" },
+                "create": { "label": "エピックのアップデートを投稿" },
+                "edit": { "label": "エピックのアップデートを編集" },
+                "delete": { "label": "エピックのアップデートを削除" }
+              },
+              "epic_update_comment": {
+                "view": { "label": "エピックのアップデートコメントを表示" },
+                "create": { "label": "エピックのアップデートにコメント" },
+                "edit": { "label": "エピックのアップデートコメントを編集" },
+                "react": { "label": "エピックのアップデートコメントにリアクション" },
+                "delete": { "label": "エピックのアップデートコメントを削除" }
+              }
+            },
+            "modules_and_cycles": {
+              "title": "モジュールとサイクル",
+              "description": "機能のグループ化とスプリント/サイクル管理。",
+              "module": {
+                "view": { "label": "モジュールを表示" },
+                "create": { "label": "モジュールを作成" },
+                "edit": { "label": "モジュールを編集" },
+                "manage": { "label": "モジュールのメンバーを管理" },
+                "archive": { "label": "モジュールをアーカイブ" },
+                "export": { "label": "モジュールをエクスポート" },
+                "delete": { "label": "モジュールを削除" }
+              },
+              "cycle": {
+                "view": { "label": "サイクルを表示" },
+                "create": { "label": "サイクルを作成" },
+                "edit": { "label": "サイクルを編集" },
+                "delete": { "label": "サイクルを削除" }
+              },
+              "cycle_update": {
+                "view": { "label": "サイクルのアップデートを表示" },
+                "create": { "label": "サイクルのアップデートを投稿" },
+                "edit": { "label": "サイクルのアップデートを編集" },
+                "delete": { "label": "サイクルのアップデートを削除" }
+              }
+            },
+            "project_pages_and_views": {
+              "title": "ページとビュー",
+              "description": "プロジェクトレベルのページと保存済みビュー。",
+              "page": {
+                "view": { "label": "ページを表示" },
+                "create": { "label": "ページを作成" },
+                "edit": { "label": "ページを編集" },
+                "share": { "label": "ページを共有" },
+                "delete": { "label": "ページを削除" }
+              },
+              "workitem_view": {
+                "view": { "label": "プロジェクトビューを表示" },
+                "create": { "label": "プロジェクトビューを作成" },
+                "edit": { "label": "プロジェクトビューを編集" },
+                "share": { "label": "プロジェクトビューを共有" },
+                "publish": { "label": "プロジェクトビューを公開" },
+                "export": { "label": "プロジェクトビューをエクスポート" },
+                "delete": { "label": "プロジェクトビューを削除" }
+              }
+            },
+            "intake": {
+              "title": "Intake",
+              "description": "ワークアイテムの受付とトリアージのワークフローです。",
+              "intake": {
+                "view": { "label": "Intakeを表示" },
+                "create": { "label": "Intakeアイテムを作成" },
+                "submit": { "label": "Intakeリクエストを送信" },
+                "edit": { "label": "Intakeアイテムを編集" },
+                "react": { "label": "Intakeアイテムにリアクション" },
+                "manage": { "label": "Intakeアイテムを管理" },
+                "configure": { "label": "Intakeを構成" },
+                "export": { "label": "Intakeをエクスポート" },
+                "delete": { "label": "Intakeアイテムを削除" }
+              }
+            },
+            "project_configuration": {
+              "title": "プロジェクト設定",
+              "description": "ラベル、状態、見積もり、マイルストーン。",
+              "label": {
+                "view": { "label": "ラベルを表示" },
+                "create": { "label": "ラベルを作成" },
+                "edit": { "label": "ラベルを編集" },
+                "delete": { "label": "ラベルを削除" }
+              },
+              "state": {
+                "view": { "label": "状態を表示" },
+                "create": { "label": "状態を作成" },
+                "edit": { "label": "状態を編集" },
+                "delete": { "label": "状態を削除" }
+              },
+              "estimate": {
+                "view": { "label": "見積もりを表示" },
+                "create": { "label": "見積もりを作成" },
+                "edit": { "label": "見積もりを編集" },
+                "delete": { "label": "見積もりを削除" }
+              },
+              "milestone": {
+                "view": { "label": "マイルストーンを表示" },
+                "create": { "label": "マイルストーンを作成" },
+                "edit": { "label": "マイルストーンを編集" },
+                "delete": { "label": "マイルストーンを削除" }
+              }
+            },
+            "automations": {
+              "title": "オートメーションとワークフロー",
+              "description": "オートメーション、ワークフロールール、定期ワークアイテム。",
+              "project_automation": {
+                "view": { "label": "オートメーションを表示" },
+                "create": { "label": "オートメーションを作成" },
+                "edit": { "label": "オートメーションを編集" },
+                "delete": { "label": "オートメーションを削除" }
+              },
+              "workflow": {
+                "view": { "label": "ワークフローを表示" },
+                "create": { "label": "ワークフローを作成" },
+                "edit": { "label": "ワークフローを編集" },
+                "delete": { "label": "ワークフローを削除" }
+              },
+              "recurring_workitem": {
+                "view": { "label": "定期アイテムを表示" },
+                "create": { "label": "定期アイテムを作成" },
+                "edit": { "label": "定期アイテムを編集" },
+                "delete": { "label": "定期アイテムを削除" }
+              }
+            },
+            "project_updates": {
+              "title": "プロジェクトアップデート",
+              "description": "進捗アップデートとアップデートへのコメント。",
+              "project_update": {
+                "view": { "label": "プロジェクトアップデートを表示" },
+                "create": { "label": "プロジェクトアップデートを投稿" },
+                "edit": { "label": "プロジェクトアップデートを編集" },
+                "delete": { "label": "プロジェクトアップデートを削除" }
+              },
+              "project_update_comment": {
+                "view": { "label": "プロジェクトアップデートコメントを表示" },
+                "create": { "label": "プロジェクトアップデートにコメント" },
+                "edit": { "label": "プロジェクトアップデートコメントを編集" },
+                "react": { "label": "プロジェクトアップデートコメントにリアクション" },
+                "delete": { "label": "プロジェクトアップデートコメントを削除" }
+              }
+            },
+            "project_analytics": {
+              "title": "アナリティクスとアクティビティ",
+              "description": "プロジェクトのアナリティクスとアクティビティログ。",
+              "project_activity": {
+                "view": { "label": "アクティビティログを表示" }
+              }
+            },
+            "project_links": {
+              "title": "プロジェクトリンク",
+              "description": "プロジェクトレベルのリンク。",
+              "project_link": {
+                "view": { "label": "プロジェクトリンクを表示" },
+                "create": { "label": "プロジェクトリンクを追加" },
+                "edit": { "label": "プロジェクトリンクを編集" },
+                "delete": { "label": "プロジェクトリンクを削除" }
+              }
+            },
+            "project_templates": {
+              "title": "テンプレート",
+              "description": "プロジェクトスコープのワークアイテムおよびページテンプレート。",
+              "project_workitem_template": {
+                "view": { "label": "ワークアイテムテンプレートを表示" },
+                "create": { "label": "ワークアイテムテンプレートを作成" },
+                "edit": { "label": "ワークアイテムテンプレートを編集" },
+                "delete": { "label": "ワークアイテムテンプレートを削除" }
+              },
+              "project_page_template": {
+                "view": { "label": "ページテンプレートを表示" },
+                "create": { "label": "ページテンプレートを作成" },
+                "edit": { "label": "ページテンプレートを編集" },
+                "delete": { "label": "ページテンプレートを削除" }
+              }
+            }
+          },
+          "ui": {
+            "scope_selector": {
+              "all": "すべて",
+              "own": "自分のみ",
+              "creator": "自分のみ",
+              "lead": "リードのみ",
+              "disabled": "無効"
+            },
+            "select_all": "すべて選択",
+            "high_risk_tooltip": "これは高い権限を付与します。慎重に付与してください。",
+            "folded_rows": {
+              "templates": {
+                "view": "テンプレートを表示",
+                "create": "テンプレートを作成",
+                "edit": "テンプレートを編集",
+                "delete": "テンプレートを削除"
+              },
+              "tooltips": {
+                "initiative": {
+                  "view": "詳細、添付ファイル、リンクの表示を含みます。イニシアチブへのリアクションおよびコメントも含まれます。",
+                  "edit": "添付ファイルの作成およびイニシアチブのリンク管理を含みます。"
+                },
+                "workspace_templates": {
+                  "view": "プロジェクト、ワークアイテム、ページテンプレートの表示を含みます。",
+                  "create": "プロジェクト、ワークアイテム、ページテンプレートの作成を含みます。",
+                  "edit": "プロジェクト、ワークアイテム、ページテンプレートの編集を含みます。",
+                  "delete": "プロジェクト、ワークアイテム、ページテンプレートの削除を含みます。"
+                },
+                "epics": {
+                  "view": "エピックのリンクの表示とエピックへのリアクションを含みます。",
+                  "edit": "エピックのリンクの作成、編集、削除を含みます。"
+                },
+                "epic_updates": {
+                  "view": "アップデートの表示とリアクションを含みます。アップデートコメントの表示、作成、リアクションも含まれます。"
+                },
+                "project_updates": {
+                  "view": "アップデートの表示とリアクションを含みます。アップデートコメントの表示、作成、リアクションも含まれます。"
+                },
+                "project_templates": {
+                  "view": "ワークアイテムおよびページテンプレートの表示を含みます。",
+                  "create": "ワークアイテムおよびページテンプレートの作成を含みます。",
+                  "edit": "ワークアイテムおよびページテンプレートの編集を含みます。",
+                  "delete": "ワークアイテムおよびページテンプレートの削除を含みます。"
+                }
+              }
+            },
+            "search_placeholder": "権限を検索...",
+            "no_results": "一致する権限がありません",
+            "clear_search": "クリア",
+            "preset_label": "システムロールから開始：",
+            "preset_none": "なし（空白）",
+            "empty_permissions_note": "このスキームを保存するには、少なくとも1つの権限を選択してください。"
+          }
+        }
+      },
+      "project_roles_and_schemes": {
+        "title": "プロジェクトロールとスキーム",
+        "sidebar_label": "プロジェクト"
+      },
+      "workspace_roles_and_schemes": {
+        "title": "ワークスペースロールとスキーム",
+        "sidebar_label": "ワークスペース"
+      },
+      "roles_and_schemes": {
+        "description": "ワークアイテムタイプに関連付けるプロパティーとインタラクショングループを設定します",
+        "tabs": {
+          "roles": "ロール",
+          "permission_schemes": "権限スキーム"
+        },
+        "create_role": {
+          "modal_title": "新しいロールを作成",
+          "button_label": "ロールを作成",
+          "role_title_label": "ロールのタイトル",
+          "role_title_placeholder": "ユニークなタイトルを追加",
+          "description_label": "説明",
+          "description_placeholder": "ユニークなタイトルを追加",
+          "create_button": "ロールを作成",
+          "error_toast_description": "ロールを作成できませんでした。もう一度お試しください。"
+        },
+        "create_scheme": {
+          "title": "権限スキームを作成",
+          "description": "名前、説明、権限を設定して権限スキームを定義します。",
+          "button_label": "権限スキームを作成",
+          "create_button": "権限スキームを作成",
+          "error_toast_description": "権限スキームを作成できませんでした。もう一度お試しください。"
+        },
+        "role_detail": {
+          "back": "戻る",
+          "permission_schemes_title": "権限スキーム",
+          "attach_button": "権限スキームを紐付け",
+          "empty_title": "権限スキームがまだありません",
+          "empty_description": "カスタマイズしたラベルを作成し、ワークアイテムを効果的に分類・管理しましょう。",
+          "error_toast_description": "ロールを更新できませんでした。もう一度お試しください。"
+        },
+        "scheme_detail": {
+          "title": "権限スキームの詳細",
+          "description": "スキームと割り当てられた権限の全体を確認できます。",
+          "edit_title": "権限スキームを編集",
+          "edit_description": "スキームの名前、権限、設定を更新します。",
+          "edit_button": "権限スキームを編集",
+          "error_toast_description": "権限スキームを更新できませんでした。もう一度お試しください。",
+          "scheme_information_title": "スキーム情報",
+          "scheme_information_description": "スキームの名前と、目的を明確にする簡単な説明です。",
+          "scheme_name": "スキーム名",
+          "scheme_name_placeholder": "スキーム名を入力",
+          "scheme_name_error": "名前は必須です。",
+          "scheme_description": "説明",
+          "scheme_description_placeholder": "スキームの説明を入力"
+        },
+        "attach_schemes": {
+          "title": "権限スキーム",
+          "search_placeholder": "検索",
+          "permissions_count": "権限",
+          "discard": "破棄",
+          "add": "追加"
+        },
+        "quick_actions": {
+          "edit_scheme": "権限スキームを編集",
+          "delete_scheme": "権限スキームを削除",
+          "edit_role": "ロール詳細を編集",
+          "enable_role": "ロールを有効化",
+          "delete_role": "ロールを削除"
+        },
+        "edit_role": {
+          "modal_title": "ロール詳細を編集",
+          "save_button": "変更を保存",
+          "saving": "保存中...",
+          "error_toast_description": "ロールを更新できませんでした。もう一度お試しください。"
+        },
+        "delete_role": {
+          "confirm_title": "「{roleName}」を削除しますか？",
+          "has_members_message": "このロールは {count} 人のメンバーに割り当てられています。削除すると元に戻せません。",
+          "no_members_message": "このロールにはメンバーが割り当てられていません。削除すると元に戻せません。",
+          "reassign_label": "メンバーの再割り当て先",
+          "reassign_placeholder": "ロールを選択",
+          "submit_button": "再割り当てして削除",
+          "submit_button_no_members": "削除",
+          "submitting": "削除中...",
+          "error_toast_description": "ロールを削除できませんでした。もう一度お試しください。",
+          "success_toast_message": "ロールを削除しました。"
+        },
+        "disable_role": {
+          "confirm_title": "「{roleName}」を無効化しますか？",
+          "has_members_message": "このロールは現在 {memberCount} 人のメンバーに割り当てられています。続行するには、既存のメンバーを再割り当てするロールを選択する必要があります。",
+          "no_members_message": "このロールにはメンバーが割り当てられていません。無効化されます。",
+          "reassign_label": "メンバーの再割り当て先",
+          "reassign_placeholder": "ロールを選択",
+          "submit_button": "再割り当てして無効化",
+          "submit_button_no_members": "無効化",
+          "submitting": "無効化中...",
+          "error_toast_description": "ロールを無効化できませんでした。もう一度お試しください。",
+          "success_toast_message": "ロールを無効化しました。"
+        },
+        "enable_role": {
+          "confirm_title": "「{roleName}」を有効化しますか？",
+          "confirm_message": "このロールが有効になり、メンバーに割り当てられるようになります。",
+          "submit_button": "有効化",
+          "submitting": "有効化中...",
+          "success_toast_message": "ロールを有効化しました。"
+        },
+        "delete_scheme_modal": {
+          "confirm_title": "権限スキームを削除しますか？",
+          "has_roles_message": "このスキームは {count} 個のロールで使用されています。削除すると、それらのロールから権限が取り消されます。この操作は元に戻せません。",
+          "no_roles_message": "この権限スキームはどのロールでも使用されていません。完全に削除されます。",
+          "submit_button": "確認",
+          "submitting": "削除中...",
+          "error_toast_description": "権限スキームを削除できませんでした。もう一度お試しください。",
+          "in_use_error": "削除する前に、すべてのロールからこのスキームを削除してください。",
+          "success_toast_message": "権限スキームを削除しました。"
+        }
+      }
+    }
+  }
+}

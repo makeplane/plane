@@ -220,6 +220,10 @@
             "title": "群組屬性鍵",
             "description": "用於識別與同步使用者群組的身份提供者屬性。",
             "placeholder": "群組"
+          },
+          "default_workspace_role": {
+            "title": "預設工作區角色",
+            "description": "透過群組同步自動加入工作區的使用者所指派的角色。"
           }
         },
         "group_mapping": {

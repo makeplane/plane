@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import ReleaseActivity
 from plane.app.serializers.release import ReleaseActivitySerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -26,7 +26,7 @@ class ReleaseActivityEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, release_id):
         filters = {}
         if request.GET.get("created_at__gt") is not None:

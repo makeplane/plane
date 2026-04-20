@@ -13,32 +13,22 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import { EUserWorkspaceRoles } from "@plane/types";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 
-export const ProjectCreateButton = observer(function ProjectCreateButton() {
-  // hooks
+type Props = {
+  canCreateProject: boolean;
+};
+
+export const ProjectCreateButton = observer(function ProjectCreateButton(props: Props) {
+  const { canCreateProject } = props;
+  // store hooks
   const { toggleCreateProjectModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
 
-  const isAuthorizedUser = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
-
-  if (!isAuthorizedUser) return <></>;
+  if (!canCreateProject) return null;
   return (
-    <Button
-      onClick={() => {
-        toggleCreateProjectModal(true);
-      }}
-      className="items-center gap-1"
-      size={"lg"}
-    >
+    <Button onClick={() => toggleCreateProjectModal(true)} className="items-center gap-1" size="lg">
       <span className="hidden sm:inline-block">Add</span> Project
     </Button>
   );

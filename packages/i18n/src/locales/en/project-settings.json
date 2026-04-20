@@ -26,10 +26,6 @@
       "default_assignee_description": "Select the default assignee for the project.",
       "project_subscribers": "Project subscribers",
       "project_subscribers_description": "Select members who will receive notifications for this project.",
-      "guest_super_permissions": {
-        "title": "Grant view access to all work items for guest users:",
-        "sub_heading": "This will allow guests to have view access to all the project work items."
-      },
       "invite_members": {
         "title": "Invite members",
         "sub_heading": "Invite members to work on your project.",

@@ -25,59 +25,66 @@ import { InitiativeReactions } from "./reactions";
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled: boolean;
+  permissions: {
+    canReact: boolean;
+    canAddLink: boolean;
+    canAddAttachment: boolean;
+    canAddProject: boolean;
+    canAddEpic: boolean;
+  };
 };
 
 export const InitiativeInfoActionItems = observer(function InitiativeInfoActionItems(props: Props) {
-  const { workspaceSlug, initiativeId, disabled } = props;
-  const { t } = useTranslation();
+  const { workspaceSlug, initiativeId, permissions } = props;
   // store hooks
   const {
     initiative: { toggleProjectsModal, toggleEpicModal },
   } = useInitiatives();
+  // translation
+  const { t } = useTranslation();
 
   return (
     <div className="flex gap-4 flex-col">
-      <InitiativeReactions workspaceSlug={workspaceSlug} initiativeId={initiativeId} disabled={disabled} />
+      <InitiativeReactions workspaceSlug={workspaceSlug} initiativeId={initiativeId} canReact={permissions.canReact} />
       <div className="flex items-center gap-2">
         <InitiativeLinksActionButton
           customButton={
             <div className="flex items-center gap-1 p-2 text-secondary hover:text-primary border border-subtle rounded">
-              <LinkIcon className="size-3 flex-shrink-0 text-tertiary" strokeWidth={2} />
+              <LinkIcon className="size-3 shrink-0 text-tertiary" strokeWidth={2} />
               <span className="text-13 font-medium">{t("add_link")}</span>
             </div>
           }
-          disabled={disabled}
+          canAddLink={permissions.canAddLink}
         />
         <InitiativeAttachmentActionButton
           workspaceSlug={workspaceSlug.toString()}
           initiativeId={initiativeId}
           customButton={
             <div className="flex items-center gap-1 p-2 text-secondary hover:text-primary border border-subtle rounded">
-              <Paperclip className="size-3 flex-shrink-0 text-tertiary" strokeWidth={2} />
+              <Paperclip className="size-3 shrink-0 text-tertiary" strokeWidth={2} />
               <span className="text-13 font-medium">{t("common.attach")}</span>
             </div>
           }
-          disabled={disabled}
+          canAddAttachment={permissions.canAddAttachment}
         />
         <InitiativeActionButton
           customButton={
             <div className="flex items-center gap-1 p-2 text-secondary hover:text-primary border border-subtle rounded">
-              <ProjectIcon className="size-3 flex-shrink-0 text-tertiary" />
+              <ProjectIcon className="size-3 shrink-0 text-tertiary" />
               <span className="text-13 font-medium">{t("add_project")}</span>
             </div>
           }
-          disabled={disabled}
+          disabled={!permissions.canAddProject}
           onClick={() => toggleProjectsModal(true)}
         />
         <InitiativeActionButton
           customButton={
             <div className="flex items-center gap-1 p-2 text-secondary hover:text-primary border border-subtle rounded">
-              <EpicIcon className="size-3 flex-shrink-0 text-tertiary" />
+              <EpicIcon className="size-3 shrink-0 text-tertiary" />
               <span className="text-13 font-medium">{t("epic.add.label")}</span>
             </div>
           }
-          disabled={disabled}
+          disabled={!permissions.canAddEpic}
           onClick={() => void toggleEpicModal(true, { workspaceSlug, initiativeId })}
         />
       </div>

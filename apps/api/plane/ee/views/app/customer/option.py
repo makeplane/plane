@@ -19,15 +19,14 @@ from plane.ee.models import CustomerPropertyOption
 from plane.ee.serializers import CustomerPropertyOptionSerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 
 
 class CustomerPropertyOptionEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkSpaceAdminPermission]
-
     @check_feature_flag(FeatureFlag.CUSTOMERS)
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, customer_property_id=None, pk=None):
         if pk:
             customer_property_option = CustomerPropertyOption.objects.get(workspace__slug=slug, pk=pk)

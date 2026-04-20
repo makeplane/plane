@@ -11,38 +11,47 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import useSWR from "swr";
 // plane web components
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 import { LayoutRoot } from "@/components/common/layout";
 import { CustomerDetailSidebar, CustomerEmptyState, CustomerMainRoot } from "@/components/customers";
 import { useCustomers } from "@/plane-web/hooks/store";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
-export const CustomerDetailRoot = observer(function CustomerDetailRoot() {
-  const { workspaceSlug, customerId } = useParams();
+type TProps = {
+  workspaceSlug: string;
+  customerId: string;
+};
+
+export const CustomerDetailRoot = observer(function CustomerDetailRoot(props: TProps) {
+  const { workspaceSlug, customerId } = props;
 
   // hooks
   const { currentWorkspace } = useWorkspace();
-  const { fetchCustomerDetails } = useCustomers();
-  const { allowPermissions } = useUserPermissions();
+  const { fetchCustomerDetails, permissions: customerPermissions } = useCustomers();
 
   const { data: customer, isLoading } = useSWR(
     workspaceSlug && customerId ? `CUSTOMER_DETAIL_${workspaceSlug}_${customerId}` : null,
-    workspaceSlug && customerId ? () => fetchCustomerDetails(workspaceSlug.toString(), customerId.toString()) : null,
+    workspaceSlug && customerId ? () => fetchCustomerDetails(workspaceSlug, customerId) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
   // derived values
-  const isEditable = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const allPermissions: TCustomerDetailPermissions = {
+    canEdit: customerPermissions.getCanEdit(workspaceSlug, customerId),
+    canDelete: customerPermissions.getCanDelete(workspaceSlug, customerId),
+    canEditProperty: (property) => customerPermissions.getCanEditProperty(workspaceSlug, customerId, property),
+    canLinkWorkItem: customerPermissions.getCanLinkWorkItem(workspaceSlug, customerId),
+    canUnlinkWorkItem: customerPermissions.getCanUnlinkWorkItem(workspaceSlug, customerId),
+    canAddAttachment: customerPermissions.getCanAddAttachment(workspaceSlug),
+    canDeleteAttachment: customerPermissions.getCanDeleteAttachment(workspaceSlug, customerId),
+    requests: customerPermissions.getRequestPermissions(workspaceSlug, customerId),
+  };
+
   const pageTitle =
     currentWorkspace?.name && customer?.name ? `${currentWorkspace.name} - ${customer.name}` : undefined;
 
@@ -66,18 +75,10 @@ export const CustomerDetailRoot = observer(function CustomerDetailRoot() {
       <PageHead title={pageTitle} />
       <LayoutRoot
         renderEmptyState={!customer}
-        emptyStateComponent={<CustomerEmptyState workspaceSlug={workspaceSlug.toString()} />}
+        emptyStateComponent={<CustomerEmptyState workspaceSlug={workspaceSlug} />}
       >
-        <CustomerMainRoot
-          customerId={customerId.toString()}
-          workspaceSlug={workspaceSlug.toString()}
-          isEditable={isEditable}
-        />
-        <CustomerDetailSidebar
-          customerId={customerId.toString()}
-          workspaceSlug={workspaceSlug.toString()}
-          isDisabled={!isEditable}
-        />
+        <CustomerMainRoot customerId={customerId} workspaceSlug={workspaceSlug} permissions={allPermissions} />
+        <CustomerDetailSidebar customerId={customerId} workspaceSlug={workspaceSlug} permissions={allPermissions} />
       </LayoutRoot>
     </>
   );

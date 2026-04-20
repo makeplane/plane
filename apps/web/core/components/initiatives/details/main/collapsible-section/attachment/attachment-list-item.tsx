@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { TrashIcon } from "@plane/propel/icons";
 // plane imports
@@ -28,13 +27,12 @@ import { useInitiativeAttachments } from "@/plane-web/hooks/store";
 
 type Props = {
   attachmentId: string;
-  disabled?: boolean;
   toggleDeleteAttachmentModal: (attachmentId: string | null) => void;
+  canDelete: boolean;
 };
 
 export const InitiativeAttachmentsListItem = observer(function InitiativeAttachmentsListItem(props: Props) {
-  // props
-  const { attachmentId, disabled, toggleDeleteAttachmentModal } = props;
+  const { attachmentId, toggleDeleteAttachmentModal, canDelete } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const { getAttachmentById } = useInitiativeAttachments();
@@ -66,7 +64,7 @@ export const InitiativeAttachmentsListItem = observer(function InitiativeAttachm
               <p className="text-secondary font-medium truncate">{`${fileName}.${fileExtension}`}</p>
             </Tooltip>
             <span className="flex size-1.5 bg-layer-1-hover rounded-full" />
-            <span className="flex-shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
+            <span className="shrink-0 text-placeholder">{convertBytesToSize(attachment.attributes.size)}</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -85,7 +83,7 @@ export const InitiativeAttachmentsListItem = observer(function InitiativeAttachm
               </>
             )}
 
-            <CustomMenu ellipsis closeOnSelect placement="top-end" disabled={disabled}>
+            <CustomMenu ellipsis closeOnSelect placement="top-end" disabled={!canDelete}>
               <CustomMenu.MenuItem
                 onClick={() => {
                   toggleDeleteAttachmentModal(attachmentId);

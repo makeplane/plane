@@ -14,8 +14,6 @@
 import type { IState } from "@plane/types";
 import { E_SILO_ERROR_CODES } from "../types/error";
 
-const entries = Object.entries(E_SILO_ERROR_CODES);
-
 export const SILO_ERROR_CODES = (
   Object.entries(E_SILO_ERROR_CODES) as Array<[keyof typeof E_SILO_ERROR_CODES, string]>
 ).map((key) => ({
@@ -34,4 +32,5 @@ export const EMPTY_PLANE_STATE: IState = {
   sequence: 0,
   workspace_id: "",
   order: 0,
+  created_by: null,
 };

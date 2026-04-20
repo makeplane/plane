@@ -15,7 +15,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.views.base import BaseAPIView
-from plane.app.permissions import WorkspaceUserPermission, allow_permission, ROLE
+from plane.permissions import can, ReleasePermissions
 from plane.db.models import Workspace, ReleaseTag
 from plane.app.serializers.release import ReleaseTagSerializer
 from plane.payment.flags.flag import FeatureFlag
@@ -25,10 +25,8 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 class ReleaseTagEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [WorkspaceUserPermission]
-
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         if pk:
             tag = ReleaseTag.objects.get(pk=pk, workspace__slug=slug)
@@ -39,7 +37,7 @@ class ReleaseTagEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ReleaseTagSerializer(data=request.data, context={"workspace_id": workspace.id})
@@ -49,7 +47,7 @@ class ReleaseTagEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.EDIT, resource_param="workspace_id")
     def patch(self, request, slug, pk):
         tag = ReleaseTag.objects.get(pk=pk, workspace__slug=slug)
         serializer = ReleaseTagSerializer(
@@ -61,7 +59,7 @@ class ReleaseTagEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.RELEASES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(ReleasePermissions.DELETE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         tag = ReleaseTag.objects.get(pk=pk, workspace__slug=slug)
         tag.delete()

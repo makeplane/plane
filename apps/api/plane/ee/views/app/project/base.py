@@ -26,7 +26,7 @@ from rest_framework.response import Response
 from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import ProjectFeatureSerializer
 from plane.ee.serializers.app.project import ProjectAttributeSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ProjectPermissions, ProjectAnalyticsPermissions, WorkspacePermissions
 from plane.ee.models import ProjectFeature, ProjectAttribute, EntityUpdates
 from plane.db.models import Issue, Project
 from plane.payment.flags.flag import FeatureFlag
@@ -38,7 +38,7 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(ProjectAnalyticsPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         # Annotate the counts for different states in one query
         issues = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug).aggregate(
@@ -55,7 +55,7 @@ class ProjectAnalyticsEndpoint(BaseAPIView):
 class WorkspaceProjectFeatureEndpoint(BaseAPIView):
     use_read_replica = False
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         # Get all projects in the workspace
         projects = Project.objects.filter(workspace__slug=slug)
@@ -86,7 +86,7 @@ class WorkspaceProjectFeatureEndpoint(BaseAPIView):
 class ProjectFeatureEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN])
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def patch(self, request, slug, project_id):
         project_feature = ProjectFeature.objects.filter(project_id=project_id, workspace__slug=slug).first()
 
@@ -118,7 +118,7 @@ class ProjectAttributesEndpoint(BaseAPIView):
     model = ProjectAttribute
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         project_ids = request.GET.get("project_ids", "").split(",")
 

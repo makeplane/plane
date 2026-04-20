@@ -23,7 +23,7 @@ from rest_framework import status
 # Module imports
 from plane.ee.views.base import BaseViewSet
 from plane.ee.serializers import ProjectReactionSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, ProjectPermissions
 from plane.ee.models import ProjectReaction
 from plane.ee.bgtasks.project_activites_task import project_activity
 
@@ -48,7 +48,11 @@ class ProjectReactionViewSet(BaseViewSet):
 
         return queryset
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectPermissions.VIEW, resource_param="project_id")
+    def list(self, request, slug, project_id):
+        return super().list(request, slug, project_id)
+
+    @can(ProjectPermissions.REACT, resource_param="project_id")
     def create(self, request, slug, project_id):
         serializer = ProjectReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -66,7 +70,7 @@ class ProjectReactionViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectPermissions.REACT, resource_param="project_id")
     def destroy(self, request, slug, project_id, reaction_code):
         reaction = ProjectReaction.objects.get(
             workspace__slug=slug,

@@ -19,10 +19,11 @@ import { Table } from "@plane/ui";
 import { ConfirmProjectMemberRemove } from "@/components/projects/modals/confirm-project-member-remove";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // store
 import type { IProjectMemberDetails } from "@/store/member/project/membership.store";
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 // local imports
 import { useProjectMemberColumns } from "./useProjectMemberColumns";
 
@@ -30,14 +31,17 @@ type Props = {
   memberDetails: (IProjectMemberDetails | null)[];
   projectId: string;
   workspaceSlug: string;
+  permissions: Pick<ProjectItemPermissions, "canManageMembers" | "canChangeRole" | "canRemoveMember">;
 };
 
 export const ProjectMemberListItem = observer(function ProjectMemberListItem(props: Props) {
-  const { memberDetails, projectId, workspaceSlug } = props;
+  const { memberDetails, projectId, workspaceSlug, permissions } = props;
   // router
   const router = useAppRouter();
   // store hooks
-  const { leaveProject } = useUserPermissions();
+  const {
+    project: { leaveProject },
+  } = useMember();
   const { data: currentUser } = useUser();
   const {
     project: { removeMemberFromProject },
@@ -46,6 +50,7 @@ export const ProjectMemberListItem = observer(function ProjectMemberListItem(pro
   const { columns, removeMemberModal, setRemoveMemberModal } = useProjectMemberColumns({
     projectId,
     workspaceSlug,
+    permissions,
   });
 
   const handleRemove = async (memberId: string) => {

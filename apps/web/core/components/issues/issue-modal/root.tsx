@@ -21,6 +21,7 @@ import { parseQueryParamsToFormData } from "@plane/utils";
 import { IssueModalProvider } from "@/components/issues/issue-modal/context/provider";
 // plane web imports
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
+import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useUser } from "@/hooks/store/user";
 import { useMember } from "@/hooks/store/use-member";
@@ -53,24 +54,31 @@ export interface IssuesModalProps {
 
 export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal({ data, ...rest }: IssuesModalProps) {
   // router params
-  const { cycleId, moduleId } = useParams();
+  const { workspaceSlug, cycleId, moduleId } = useParams();
   // store hooks
   const { workItemModalDataFromQueryParams } = useCommandPalette();
-  const { getPartialProjectById } = useProject();
-  const { data: currentUser, projectsWithCreatePermissions } = useUser();
-  const { memberMap } = useMember();
+  const { workspaceProjectIds, getPartialProjectById } = useProject();
+  const { data: currentUser } = useUser();
+  const {
+    permissions: { getProjectIdsWithWorkItemPermission },
+  } = useIssues();
+  const { users } = useMember();
   // derived values
+  const projectIdsWithCreateWorkItemPermission = getProjectIdsWithWorkItemPermission(
+    workspaceSlug,
+    workspaceProjectIds ?? [],
+    "create"
+  );
   const dataFromQueryParams: Partial<TIssue> = useMemo(() => {
     const params = workItemModalDataFromQueryParams?.params;
     if (!currentUser || !params || Object.keys(params).length === 0) return {};
-    const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
-    const projectsList = (rest.allowedProjectIds ?? projectIdsWithCreatePermissions).map((id) => ({
+    const projectsList = (rest.allowedProjectIds ?? Array.from(projectIdsWithCreateWorkItemPermission)).map((id) => ({
       id,
       identifier: getPartialProjectById(id)?.identifier ?? "",
     }));
-    const usersList = Object.values(memberMap).map((member) => ({
-      id: member.id,
-      display_name: member.display_name,
+    const usersList = users.map((user) => ({
+      id: user.id,
+      display_name: user.display_name ?? "",
     }));
 
     try {
@@ -88,8 +96,8 @@ export const CreateUpdateIssueModal = observer(function CreateUpdateIssueModal({
   }, [
     currentUser,
     getPartialProjectById,
-    memberMap,
-    projectsWithCreatePermissions,
+    users,
+    projectIdsWithCreateWorkItemPermission,
     rest.allowedProjectIds,
     workItemModalDataFromQueryParams,
   ]);

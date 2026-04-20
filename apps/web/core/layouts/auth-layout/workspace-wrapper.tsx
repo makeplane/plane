@@ -15,19 +15,22 @@ import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useLocation } from "react-router";
 import useSWR from "swr";
-import type { SWRResponse } from "swr";
 // plane imports
-import { ETemplateLevel, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ETemplateLevel } from "@plane/constants";
 // components
-import { WorkspaceNotAuthorizedPage } from "@/components/auth-screens/workspace/not-authorized";
+import { WorkspaceAccessRestriction } from "@/components/auth-screens/workspace/workspace-access-restriction";
 import { WorkspaceDowngradePage } from "@/components/auth-screens/workspace/downgrade";
-import { WorkspaceNotFoundPage } from "@/components/auth-screens/workspace/not-found";
 // constants
 import {
   WORKSPACE_MEMBERS,
   WORKSPACE_PARTIAL_PROJECTS,
-  WORKSPACE_MEMBER_ME_INFORMATION,
-  WORKSPACE_PROJECTS_ROLES_INFORMATION,
+  WORKSPACE_TEAMSPACES,
+  WORKSPACE_FEATURES,
+  WORKSPACE_PROJECT_FEATURES,
+  WORKSPACE_PREFERENCES,
+  WORKSPACE_CURRENT_USER_PERMISSIONS,
+  WORKSPACE_ROLES,
+  WORKSPACE_PERMISSION_SCHEMES,
   WORKSPACE_FAVORITE,
   WORKSPACE_STATES,
   WORKSPACE_SIDEBAR_PREFERENCES,
@@ -43,7 +46,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspacePreferences } from "@/hooks/store/use-workspace-preferences";
 // plane web imports
 import { useFeatureFlags } from "@/plane-web/hooks/store/use-feature-flags";
 import { useWorkspaceFeatures } from "@/plane-web/hooks/store/use-workspace-features";
@@ -62,11 +65,14 @@ import { useCustomers } from "@/plane-web/hooks/store/customers/use-customers";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useFlag } from "@/plane-web/hooks/store/use-flag";
-import { EWorkspaceFeatures } from "@/types/workspace-feature";
-import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
 import { useWorkflows } from "@/hooks/store/use-workflows";
 import { useRelationDefinition } from "@/hooks/store/use-relation-definition";
 import { useRunners } from "@/plane-web/hooks/store";
+// types
+import { EWorkspaceFeatures } from "@/types/workspace-feature";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
+import { usePermissionScheme } from "@/hooks/store/use-permission-scheme";
 import { useAiFeatureFlags } from "@/plane-web/hooks/store/use-ai-feature-flags";
 import { useConnectors } from "@/plane-web/hooks/store/marketplace/use-connectors";
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
@@ -85,15 +91,14 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { pathname } = useLocation();
   // store hooks
   const { fetchPartialProjects } = useProject();
-  const { fetchFavorite } = useFavorite();
+  const { fetchFavorite, permissions: favoritePermissions } = useFavorite();
   const {
     workspace: { fetchWorkspaceMembers },
   } = useMember();
   const { workspaces, fetchSidebarNavigationPreferences, fetchProjectNavigationPreferences } = useWorkspace();
-  const { loader, workspaceInfoBySlug, fetchUserWorkspaceInfo, fetchUserProjectPermissions, allowPermissions } =
-    useUserPermissions();
+  const { fetchPreferences } = useWorkspacePreferences();
   const { fetchWorkspaceStates } = useProjectState();
-  const { flags, fetchFeatureFlags, fetchIntegrations } = useFeatureFlags();
+  const { fetchFeatureFlags, fetchIntegrations } = useFeatureFlags();
   const { fetchAiFeatureFlags } = useAiFeatureFlags();
   const { fetchWorkspaceFeatures, isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
   const { fetchProjectFeatures } = useProjectAdvanced();
@@ -118,24 +123,26 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { fetchConnectors } = useConnectors();
   const { fetchRelationDefinitions } = useRelationDefinition();
   const { fetchScripts, checkRunnerHealth } = useRunners();
+  const { fetchCurrentUserWorkspacePermissions } = usePermissionAccess();
+  const { fetchAllWorkspaceRoles } = useRoleManagement();
+  const { fetchAllWorkspaceSchemes } = usePermissionScheme();
   const {
     release: { fetchReleases, isReleasesEnabled },
   } = useReleases();
   // derived values
-  const canPerformWorkspaceMemberActions = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const canViewFavorites = favoritePermissions.getCanView(workspaceSlug);
   const allWorkspaces = workspaces ? Object.values(workspaces) : undefined;
   const currentWorkspace =
     (allWorkspaces && allWorkspaces.find((workspace) => workspace?.slug === workspaceSlug)) || undefined;
-  const currentWorkspaceInfo = workspaceInfoBySlug(workspaceSlug);
   const isFreeMemberCountExceeded = subscriptionDetail?.is_free_member_count_exceeded;
   const isWorkspaceSettingsRoute = pathname.includes(`/${workspaceSlug}/settings`);
   const isIssueTypesEnabled = useFlag(workspaceSlug, "ISSUE_TYPES", false);
   const isWorkspaceWorkItemTypesEnabled = useFlag(workspaceSlug, "WORKSPACE_WORK_ITEM_TYPES", false);
   const isEpicsEnabled = useFlag(workspaceSlug, "EPICS", false);
-  const isProjectStateEnabled = isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED);
+  const isProjectStateEnabled = isWorkspaceFeatureEnabled(
+    workspaceSlug,
+    EWorkspaceFeatures.IS_PROJECT_GROUPING_ENABLED
+  );
   const isProjectTemplatesEnabled = useFlag(workspaceSlug, "PROJECT_TEMPLATES");
   const isWorkItemTemplatesEnabled = useFlag(workspaceSlug, "WORKITEM_TEMPLATES");
   const isPageTemplatesEnabled = useFlag(workspaceSlug, "PAGE_TEMPLATES");
@@ -148,13 +155,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
 
   // fetching user workspace information
   useSWR(
-    currentWorkspace ? WORKSPACE_MEMBER_ME_INFORMATION(workspaceSlug) : null,
-    currentWorkspace ? () => fetchUserWorkspaceInfo(workspaceSlug) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
-  useSWR(
-    currentWorkspace ? WORKSPACE_PROJECTS_ROLES_INFORMATION(workspaceSlug) : null,
-    currentWorkspace ? () => fetchUserProjectPermissions(workspaceSlug) : null,
+    currentWorkspace ? WORKSPACE_PREFERENCES(workspaceSlug) : null,
+    currentWorkspace ? () => fetchPreferences(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 
@@ -172,8 +174,8 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   );
   // fetch workspace favorite
   useSWR(
-    currentWorkspace && canPerformWorkspaceMemberActions ? WORKSPACE_FAVORITE(workspaceSlug) : null,
-    currentWorkspace && canPerformWorkspaceMemberActions ? () => fetchFavorite(workspaceSlug) : null,
+    currentWorkspace && canViewFavorites ? WORKSPACE_FAVORITE(workspaceSlug) : null,
+    currentWorkspace && canViewFavorites ? () => fetchFavorite(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace states
@@ -207,23 +209,15 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   );
 
   // fetching feature flags
-  const featureFlagsResponse: SWRResponse<TFeatureFlagsResponse, Error> = useSWR(
-    WORKSPACE_FLAGS(workspaceSlug),
-    () => fetchFeatureFlags(workspaceSlug),
-    {
-      revalidateOnFocus: false,
-      errorRetryCount: 1,
-    }
-  );
+  useSWR(WORKSPACE_FLAGS(workspaceSlug), () => fetchFeatureFlags(workspaceSlug), {
+    revalidateOnFocus: false,
+    errorRetryCount: 1,
+  });
 
-  const aiFeatureFlagsResponse: SWRResponse<TFeatureFlagsResponse, Error> = useSWR(
-    AI_FLAGS(workspaceSlug),
-    () => fetchAiFeatureFlags(workspaceSlug),
-    {
-      revalidateOnFocus: false,
-      errorRetryCount: 1,
-    }
-  );
+  useSWR(AI_FLAGS(workspaceSlug), () => fetchAiFeatureFlags(workspaceSlug), {
+    revalidateOnFocus: false,
+    errorRetryCount: 1,
+  });
 
   // fetching integrations
   useSWR(`WORKSPACE_INTEGRATIONS_${workspaceSlug}`, () => fetchIntegrations(workspaceSlug), {
@@ -238,15 +232,17 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   });
   // fetching workspace features
   useSWR(
-    currentWorkspace ? `WORKSPACE_FEATURES_${workspaceSlug}` : null,
+    currentWorkspace ? WORKSPACE_FEATURES(workspaceSlug) : null,
     currentWorkspace ? () => fetchWorkspaceFeatures(workspaceSlug) : null,
     { revalidateOnFocus: false }
   );
 
   // fetching project features
-  useSWR(`PROJECT_FEATURES_${workspaceSlug}`, () => fetchProjectFeatures(workspaceSlug), {
-    revalidateOnFocus: false,
-  });
+  useSWR(
+    currentWorkspace ? WORKSPACE_PROJECT_FEATURES(workspaceSlug) : null,
+    currentWorkspace ? () => fetchProjectFeatures(workspaceSlug) : null,
+    { revalidateOnFocus: false }
+  );
 
   // fetch project states
   useSWR(
@@ -292,7 +288,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
 
   // fetching teamspaces
   useSWR(
-    isTeamspacesFeatureEnabled ? `WORKSPACE_TEAMSPACES_${workspaceSlug}_${isTeamspacesFeatureEnabled}` : null,
+    isTeamspacesFeatureEnabled ? WORKSPACE_TEAMSPACES(workspaceSlug) : null,
     isTeamspacesFeatureEnabled ? () => fetchTeamspaces(workspaceSlug) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
@@ -404,24 +400,45 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     }
   );
 
-  const flagsLoader = featureFlagsResponse.isLoading || aiFeatureFlagsResponse.isLoading;
-  const flagsError = featureFlagsResponse.error || aiFeatureFlagsResponse.error;
-  const areFlagsPrimed = flags[workspaceSlug] !== undefined;
-  const shouldBlockOnWorkspacePermissions = loader && currentWorkspaceInfo === undefined;
+  // TODO: This can be moved to setting if we are not really using it at this level.
+  useSWR(
+    workspaceSlug ? WORKSPACE_ROLES(workspaceSlug) : null,
+    workspaceSlug ? () => fetchAllWorkspaceRoles(workspaceSlug) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      errorRetryCount: 0,
+    }
+  );
 
-  // don't render anything if flags are loading or there is an error or workspace permissions are not loaded
-  if ((flagsLoader && !flagsError && !areFlagsPrimed) || shouldBlockOnWorkspacePermissions) {
-    return;
-  }
+  useSWR(
+    workspaceSlug ? WORKSPACE_PERMISSION_SCHEMES(workspaceSlug) : null,
+    workspaceSlug ? () => fetchAllWorkspaceSchemes(workspaceSlug) : null,
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      errorRetryCount: 0,
+    }
+  );
 
-  // if workspaces are there and we are trying to access the workspace that we are not part of then show the existing workspaces
-  if (currentWorkspace === undefined && !currentWorkspaceInfo) {
-    return <WorkspaceNotFoundPage allWorkspaces={allWorkspaces} />;
-  }
+  const { isLoading: isWorkspacePermissionsLoading, error: workspacePermissionsError } = useSWR(
+    workspaceSlug ? WORKSPACE_CURRENT_USER_PERMISSIONS(workspaceSlug) : null,
+    workspaceSlug ? () => fetchCurrentUserWorkspacePermissions(workspaceSlug) : null,
+    {
+      revalidateIfStale: false,
+      errorRetryCount: 0,
+    }
+  );
 
-  // while user does not have access to view that workspace
-  if (currentWorkspaceInfo === undefined) {
-    return <WorkspaceNotAuthorizedPage />;
+  const wrapperLoader = isWorkspacePermissionsLoading;
+  const wrapperError = !!workspacePermissionsError;
+
+  if (wrapperLoader && !wrapperError) return null;
+
+  if (!wrapperLoader && wrapperError) {
+    return (
+      <WorkspaceAccessRestriction errorStatusCode={workspacePermissionsError?.status} allWorkspaces={allWorkspaces} />
+    );
   }
 
   // if workspace has exceeded the free member count

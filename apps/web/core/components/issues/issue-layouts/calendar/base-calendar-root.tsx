@@ -16,16 +16,17 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueGroupByToServerOptions, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EIssueGroupByToServerOptions } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { TGroupedIssues } from "@plane/types";
+import type { TGroupedIssues, TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
 // hooks
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // types
 import type { IQuickActionProps } from "../list/list-view-types";
 import { CalendarChart } from "./calendar";
@@ -44,21 +45,19 @@ export type CalendarStoreType =
 interface IBaseCalendarRoot {
   QuickActions: FC<IQuickActionProps>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  isCompletedCycle?: boolean;
   viewId?: string | undefined;
   isEpic?: boolean;
-  canEditPropertiesBasedOnProject?: (projectId: string) => boolean;
+  layoutPermissions: {
+    canQuickAddWorkItem: boolean;
+  };
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
 }
 
 export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseCalendarRoot) {
-  const {
-    QuickActions,
-    addIssuesToView,
-    isCompletedCycle = false,
-    viewId,
-    isEpic = false,
-    canEditPropertiesBasedOnProject,
-  } = props;
+  const { QuickActions, addIssuesToView, viewId, isEpic = false, layoutPermissions, getWorkItemPermissions } = props;
 
   // router
   const { workspaceSlug } = useParams();
@@ -66,7 +65,6 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
   // hooks
   const fallbackStoreType = useIssueStoreType() as CalendarStoreType;
   const storeType = isEpic ? EIssuesStoreType.EPIC : fallbackStoreType;
-  const { allowPermissions } = useUserPermissions();
   const { issues, issuesFilter, getWorkItemById } = useIssues(storeType);
   const {
     fetchIssues,
@@ -81,13 +79,6 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
   } = useIssuesActions(storeType);
 
   const issueCalendarView = useCalendarView();
-
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
-
-  const { enableInlineEditing } = issues?.viewFlags || {};
 
   const displayFilters = issuesFilter.issueFilters?.displayFilters;
 
@@ -153,16 +144,6 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
     [issues?.getGroupIssueCount]
   );
 
-  const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
-      const isEditingAllowedBasedOnProject =
-        canEditPropertiesBasedOnProject && projectId ? canEditPropertiesBasedOnProject(projectId) : isEditingAllowed;
-
-      return enableInlineEditing && isEditingAllowedBasedOnProject;
-    },
-    [canEditPropertiesBasedOnProject, enableInlineEditing, isEditingAllowed]
-  );
-
   return (
     <>
       <div className="h-full w-full overflow-hidden bg-surface-1 pt-4">
@@ -183,7 +164,6 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
               handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
               handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
               handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-              readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
               placements={placement}
             />
           )}
@@ -192,10 +172,10 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
           getGroupIssueCount={getGroupIssueCount}
           addIssuesToView={addIssuesToView}
           quickAddCallback={quickAddIssue}
-          readOnly={isCompletedCycle}
           updateFilters={updateFilters}
           handleDragAndDrop={handleDragAndDrop}
-          canEditProperties={canEditProperties}
+          layoutPermissions={layoutPermissions}
+          getWorkItemPermissions={getWorkItemPermissions}
           isEpic={isEpic}
           isLoading={issues.getIssueLoader() === "init-loader"}
         />

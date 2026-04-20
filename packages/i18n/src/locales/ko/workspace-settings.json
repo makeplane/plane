@@ -220,6 +220,10 @@
             "title": "그룹 속성 키",
             "description": "사용자 그룹을 식별하고 동기화하는 데 사용되는 ID 공급자 속성.",
             "placeholder": "그룹"
+          },
+          "default_workspace_role": {
+            "title": "기본 워크스페이스 역할",
+            "description": "그룹 동기화를 통해 워크스페이스에 자동으로 추가된 사용자에게 할당되는 역할."
           }
         },
         "group_mapping": {

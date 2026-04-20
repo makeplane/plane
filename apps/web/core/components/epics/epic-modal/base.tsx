@@ -25,7 +25,8 @@ import type { IssuesModalProps } from "@/components/issues/issue-modal/root";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useUser } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
+import { useEpics } from "@/plane-web/hooks/store/epics/use-epics";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 // services
 import { FileService } from "@/services/file.service";
@@ -54,14 +55,21 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
   const [uploadedAssetIds, setUploadedAssetIds] = useState<string[]>([]);
   // store hooks
   const { workspaceSlug, projectId: routerProjectId } = useParams();
-  const { projectsWithCreatePermissions } = useUser();
+  const { workspaceProjectIds } = useProject();
+  const {
+    permissions: { getProjectIdsWithEpicPermission },
+  } = useEpics();
   const { fetchIssue } = useIssueDetail(EIssueServiceType.EPICS);
   const { handleCreateUpdatePropertyValues, handleConvert } = useIssueModal();
   // current store details
   const { createIssue, updateIssue } = useIssuesActions(EIssuesStoreType.EPIC);
   // derived values
   const projectId = data?.project_id ?? routerProjectId?.toString();
-  const projectIdsWithCreatePermissions = Object.keys(projectsWithCreatePermissions ?? {});
+  const projectIdsWithCreateEpicPermission = getProjectIdsWithEpicPermission(
+    workspaceSlug,
+    workspaceProjectIds ?? [],
+    "create"
+  );
 
   const fetchIssueDetail = async (issueId: string | undefined) => {
     setDescription(undefined);
@@ -96,8 +104,8 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
-    if (projectIdsWithCreatePermissions && projectIdsWithCreatePermissions.length > 0 && !activeProjectId)
-      setActiveProjectId(projectId?.toString() ?? projectIdsWithCreatePermissions?.[0]);
+    if (projectIdsWithCreateEpicPermission.size > 0 && !activeProjectId)
+      setActiveProjectId(projectId?.toString() ?? Array.from(projectIdsWithCreateEpicPermission)[0]);
 
     // clearing up the description state when we leave the component
     return () => setDescription(undefined);
@@ -231,7 +239,7 @@ export const CreateUpdateEpicModalBase = observer(function CreateUpdateEpicModal
   const handleUpdateUploadedAssetIds = (assetId: string) => setUploadedAssetIds((prev) => [...prev, assetId]);
 
   // don't open the modal if there are no projects
-  if (!projectIdsWithCreatePermissions || projectIdsWithCreatePermissions.length === 0 || !activeProjectId) return null;
+  if (projectIdsWithCreateEpicPermission.size === 0 || !activeProjectId) return null;
 
   const commonIssueModalProps: EpicFormProps = {
     issueTitleRef: issueTitleRef,

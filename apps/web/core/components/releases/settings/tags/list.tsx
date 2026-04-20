@@ -15,18 +15,14 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { ReleaseTag, ReleaseTagWrite } from "@plane/types";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 // components
 import { SettingsHeading } from "@/components/settings/heading";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // services
 import releaseService from "@/services/release.service";
 // local
@@ -34,6 +30,7 @@ import { DeleteReleaseTagModal } from "./delete-modal";
 import type { ReleaseTagOperationsCallbacks } from "./inline-form";
 import { CreateUpdateReleaseTagInline } from "./inline-form";
 import { ReleaseTagItem } from "./tag-item";
+import { useReleasePermissions } from "@/hooks/permissions/use-release-permissions";
 
 type Props = {
   workspaceSlug: string;
@@ -41,13 +38,12 @@ type Props = {
 
 export const ReleasesTagList = observer(function ReleasesTagList({ workspaceSlug }: Props) {
   const { t } = useTranslation();
-  const { allowPermissions } = useUserPermissions();
 
   const [showForm, setShowForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [selectDeleteTag, setSelectDeleteTag] = useState<ReleaseTag | null>(null);
 
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const releaseTagPermissions = useReleasePermissions(workspaceSlug).getTagPermissions();
 
   const {
     data: tags,
@@ -118,7 +114,7 @@ export const ReleasesTagList = observer(function ReleasesTagList({ workspaceSlug
         title={t("releases.settings.tags.title")}
         description={t("releases.settings.tags.description")}
         control={
-          isAdmin && (
+          releaseTagPermissions.canCreate && (
             <Button onClick={newTag} variant="secondary">
               {t("releases.settings.tags.add")}
             </Button>
@@ -154,7 +150,9 @@ export const ReleasesTagList = observer(function ReleasesTagList({ workspaceSlug
             assetClassName="size-20"
             title={t("releases.settings.tags.empty_state")}
             description=""
-            actions={isAdmin ? [{ label: t("releases.settings.tags.add"), onClick: newTag }] : []}
+            actions={
+              releaseTagPermissions.canCreate ? [{ label: t("releases.settings.tags.add"), onClick: newTag }] : []
+            }
             align="start"
             rootClassName="py-20"
           />
@@ -167,6 +165,10 @@ export const ReleasesTagList = observer(function ReleasesTagList({ workspaceSlug
               setIsUpdating={setIsUpdating}
               handleTagDelete={(t) => setSelectDeleteTag(t)}
               tagOperationsCallbacks={tagOperationsCallbacks}
+              permissions={{
+                canEdit: releaseTagPermissions.getCanEdit(tag.id),
+                canDelete: releaseTagPermissions.getCanDelete(tag.id),
+              }}
             />
           ))
         )}

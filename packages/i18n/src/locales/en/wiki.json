@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Nested pages require a paid plan. Upgrade to unlock."
+    },
+    "auth": {
+      "title": "Permission denied",
+      "description": "You do not have permission to access this page. Please contact your workspace admin to grant you the permission.",
+      "redirection_button": {
+        "text": "Go to Projects"
+      },
+      "reload_button": {
+        "text": "Reload page"
+      }
     }
   }
 }

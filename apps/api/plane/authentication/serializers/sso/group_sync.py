@@ -17,6 +17,8 @@ from plane.authentication.models import GroupSyncConfig, GroupMapping
 class GroupSyncConfigSerializer(serializers.ModelSerializer):
     """Serializer for GroupSyncConfig model."""
 
+    default_workspace_role_detail = serializers.SerializerMethodField()
+
     class Meta:
         model = GroupSyncConfig
         fields = [
@@ -26,19 +28,42 @@ class GroupSyncConfigSerializer(serializers.ModelSerializer):
             "auto_remove",
             "group_attribute_key",
             "sync_offline",
+            "default_workspace_role",
+            "default_workspace_role_detail",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
             "id",
             "workspace",
+            "default_workspace_role_detail",
             "created_at",
             "updated_at",
         ]
 
+    def get_default_workspace_role_detail(self, obj):
+        if obj.default_workspace_role:
+            return {
+                "id": str(obj.default_workspace_role.id),
+                "slug": obj.default_workspace_role.slug,
+                "name": obj.default_workspace_role.name,
+            }
+        return None
+
+    def validate_default_workspace_role(self, value):
+        """Ensure role belongs to the workspace and is workspace-scoped."""
+        instance = self.instance
+        if instance and value.workspace_id != instance.workspace_id:
+            raise serializers.ValidationError("Role does not belong to this workspace.")
+        if value.namespace != "workspace":
+            raise serializers.ValidationError("Role must be a workspace-scoped role.")
+        return value
+
 
 class GroupMappingSerializer(serializers.ModelSerializer):
-    """Serializer for GroupMapping model with project details."""
+    """Serializer for GroupMapping model with project and role details."""
+
+    role_detail = serializers.SerializerMethodField()
 
     class Meta:
         model = GroupMapping
@@ -46,16 +71,27 @@ class GroupMappingSerializer(serializers.ModelSerializer):
             "id",
             "idp_group_name",
             "project",
-            "default_role",
+            "role",
+            "role_detail",
             "created_at",
             "updated_at",
         ]
         read_only_fields = [
             "id",
             "workspace",
+            "role_detail",
             "created_at",
             "updated_at",
         ]
+
+    def get_role_detail(self, obj):
+        if obj.role:
+            return {
+                "id": str(obj.role.id),
+                "slug": obj.role.slug,
+                "name": obj.role.name,
+            }
+        return None
 
     def validate_project(self, value):
         """Ensure project belongs to the workspace."""
@@ -64,11 +100,15 @@ class GroupMappingSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Project does not belong to this workspace.")
         return value
 
-    def validate_default_role(self, value):
-        """Ensure role is valid."""
-        valid_roles = [GroupMapping.ROLE_ADMIN, GroupMapping.ROLE_MEMBER, GroupMapping.ROLE_GUEST]
-        if value not in valid_roles:
-            raise serializers.ValidationError(f"Invalid role. Must be one of: {valid_roles}")
+    def validate_role(self, value):
+        """Ensure role exists, belongs to the workspace, and is project-scoped."""
+        workspace = self.context.get("workspace")
+        if not workspace:
+            return value
+        if value.workspace_id != workspace.id:
+            raise serializers.ValidationError("Role does not belong to this workspace.")
+        if value.namespace != "project":
+            raise serializers.ValidationError("Role must be a project-scoped role.")
         return value
 
     def validate(self, attrs):
@@ -108,7 +148,7 @@ class GroupMappingCreateSerializer(serializers.ModelSerializer):
         fields = [
             "idp_group_name",
             "project",
-            "default_role",
+            "role",
         ]
 
     def validate_project(self, value):
@@ -118,11 +158,15 @@ class GroupMappingCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Project does not belong to this workspace.")
         return value
 
-    def validate_default_role(self, value):
-        """Ensure role is valid."""
-        valid_roles = [GroupMapping.ROLE_ADMIN, GroupMapping.ROLE_MEMBER, GroupMapping.ROLE_GUEST]
-        if value not in valid_roles:
-            raise serializers.ValidationError(f"Invalid role. Must be one of: {valid_roles}")
+    def validate_role(self, value):
+        """Ensure role exists, belongs to the workspace, and is project-scoped."""
+        workspace = self.context.get("workspace")
+        if not workspace:
+            return value
+        if value.workspace_id != workspace.id:
+            raise serializers.ValidationError("Role does not belong to this workspace.")
+        if value.namespace != "project":
+            raise serializers.ValidationError("Role must be a project-scoped role.")
         return value
 
     def validate(self, attrs):

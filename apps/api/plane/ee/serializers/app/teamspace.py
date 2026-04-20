@@ -14,6 +14,7 @@ from rest_framework import serializers
 
 # Module imports
 from plane.ee.serializers import BaseSerializer
+from plane.permissions.serializers import PermissionSerializerMixin
 from plane.db.models import User, PageVersion, IssueView, Page, Label
 from plane.ee.models import (
     Teamspace,
@@ -26,7 +27,7 @@ from plane.ee.models import (
 from plane.utils.issue_filters import issue_filters
 
 
-class TeamspaceSerializer(BaseSerializer):
+class TeamspaceSerializer(PermissionSerializerMixin, BaseSerializer):
     lead_id = serializers.PrimaryKeyRelatedField(
         source="lead", queryset=User.objects.all(), required=False, allow_null=True
     )
@@ -49,6 +50,7 @@ class TeamspaceSerializer(BaseSerializer):
             "updated_by",
         ]
         read_only_fields = ["workspace"]
+        permission_resource_type = "teamspace"
 
 
 class TeamspaceMemberSerializer(BaseSerializer):

@@ -22,6 +22,7 @@ from rest_framework.response import Response
 from plane.app.views.base import BaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, WorkspacePermissions
 from plane.ee.serializers.app.search_serializers import (
     IssueSearchSerializer,
     ProjectSearchSerializer,
@@ -360,6 +361,7 @@ class EnhancedGlobalSearchEndpoint(BaseAPIView):
         return helper
 
     @check_feature_flag(FeatureFlag.ADVANCED_SEARCH)
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         if not getattr(settings, "OPENSEARCH_ENABLED", False):
             return Response(

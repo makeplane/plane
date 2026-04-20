@@ -16,20 +16,16 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import type { ISvgIcons } from "@plane/propel/icons";
 import { HomeIcon } from "@plane/propel/icons";
-import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
 
 const SIDEBAR_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
-  access: EUserWorkspaceRoles[];
   highlight: (pathname: string, baseUrl: string) => boolean;
   Icon: LucideIcon | React.FC<ISvgIcons>;
 }[] = [
@@ -37,7 +33,6 @@ const SIDEBAR_MENU_ITEMS: {
     key: "home",
     label: "Home",
     href: `/wiki`,
-    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}`,
     Icon: HomeIcon,
   },
@@ -47,14 +42,10 @@ export const PagesAppSidebarMenu = observer(function PagesAppSidebarMenu() {
   // params
   const { workspaceSlug } = useParams();
   const pathname = usePathname();
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
 
   return (
     <div className="w-full space-y-1">
       {SIDEBAR_MENU_ITEMS.map((link) => {
-        if (!allowPermissions(link.access, EUserPermissionsLevel.WORKSPACE)) return null;
-
         return (
           <Link key={link.key} href={`/${workspaceSlug}${link.href}`} className="block">
             <div

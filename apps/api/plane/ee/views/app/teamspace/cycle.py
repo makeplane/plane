@@ -35,15 +35,14 @@ from rest_framework.response import Response
 from plane.ee.models import TeamspaceProject
 from plane.db.models import Cycle, UserFavorite, User, Label
 from .base import TeamspaceBaseEndpoint
-from plane.ee.permissions import TeamspacePermission
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.permissions import can, TeamspacePermissions
 
 
 class TeamspaceCycleEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
     model = Cycle
 
     def get_queryset(self):
@@ -169,6 +168,7 @@ class TeamspaceCycleEndpoint(TeamspaceBaseEndpoint):
         )
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         project_ids = TeamspaceProject.objects.filter(workspace__slug=slug, team_space_id=team_space_id).values_list(
             "project_id", flat=True

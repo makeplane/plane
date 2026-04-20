@@ -22,10 +22,6 @@
       "label": "Membres",
       "project_lead": "Chef de projet",
       "default_assignee": "Acteur par défaut",
-      "guest_super_permissions": {
-        "title": "Accorder l’accès en lecture à tous les éléments de travail pour les utilisateurs invités :",
-        "sub_heading": "Cela permettra aux invités d’avoir un accès en lecture à tous les éléments de travail du projet."
-      },
       "invite_members": {
         "title": "Inviter des membres",
         "sub_heading": "Invitez des membres à travailler sur votre projet.",

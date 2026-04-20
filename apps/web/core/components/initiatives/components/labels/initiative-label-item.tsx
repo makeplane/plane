@@ -34,11 +34,24 @@ type Props = {
   isLastChild: boolean;
   onDrop: (draggingLabelId: string, droppedLabelId: string | undefined, dropAtEndOfList: boolean) => void;
   labelOperationsCallbacks: TInitiativeLabelOperationsCallbacks;
+  permissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+    canReorder: boolean;
+  };
 };
 
 export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: Props) {
-  const { label, handleLabelDelete, setIsUpdating, isParentDragging, isLastChild, onDrop, labelOperationsCallbacks } =
-    props;
+  const {
+    label,
+    handleLabelDelete,
+    setIsUpdating,
+    isParentDragging,
+    isLastChild,
+    onDrop,
+    labelOperationsCallbacks,
+    permissions,
+  } = props;
 
   // states
   const [isEditLabelForm, setEditLabelForm] = useState(false);
@@ -50,7 +63,7 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
         setEditLabelForm(true);
         setIsUpdating(true);
       },
-      isVisible: true,
+      isVisible: permissions.canEdit,
       text: "Edit label",
       key: "edit_label",
     },
@@ -59,14 +72,14 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
       onClick: () => {
         handleLabelDelete(label);
       },
-      isVisible: true,
+      isVisible: permissions.canDelete,
       text: "Delete label",
       key: "delete_label",
     },
   ];
 
   return (
-    <InitiativeLabelDndHOC label={label} isLastChild={isLastChild} onDrop={onDrop}>
+    <InitiativeLabelDndHOC label={label} isLastChild={isLastChild} onDrop={onDrop} canReorder={permissions.canReorder}>
       {(isDragging: boolean, dragHandleRef: React.RefObject<HTMLButtonElement>) => (
         <div
           className={`rounded-sm ${isDragging ? "border-[2px] border-accent-strong" : "border-[1.5px] border-transparent"}`}
@@ -96,6 +109,7 @@ export const InitiativeLabelItem = observer(function InitiativeLabelItem(props: 
                   customMenuItems={customMenuItems}
                   handleLabelDelete={handleLabelDelete}
                   dragHandleRef={dragHandleRef}
+                  permissions={permissions}
                 />
               )}
             </div>

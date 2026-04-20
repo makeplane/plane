@@ -11,6 +11,8 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+export * from "./accordion-close";
+export * from "./accordion-open";
 export * from "./arrow-left";
 export * from "./arrow-right";
 export * from "./backspace-icon";

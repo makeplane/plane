@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
@@ -30,17 +29,18 @@ import { RequestAttachmentsListItem } from "./attachment-item";
 import { RequestAttachmentDeleteModal } from "./delete-modal";
 import { useAttachmentOperations } from "./helper";
 import { RequestAttachmentsUploadItem } from "./upload-item";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
 type TIssueAttachmentItemList = {
   workspaceSlug: string;
   customerId: string;
   requestId: string;
-  disabled?: boolean;
+  permissions?: Pick<TCustomerDetailPermissions, "canAddAttachment" | "canDeleteAttachment">;
   isCollapsible?: boolean;
 };
 
 export const RequestAttachmentsList = observer(function RequestAttachmentsList(props: TIssueAttachmentItemList) {
-  const { workspaceSlug, requestId, customerId, disabled, isCollapsible } = props;
+  const { workspaceSlug, requestId, customerId, permissions, isCollapsible } = props;
   const { t } = useTranslation();
   // states
   const [isUploading, setIsUploading] = useState(false);
@@ -101,7 +101,7 @@ export const RequestAttachmentsList = observer(function RequestAttachmentsList(p
     onDrop,
     maxSize: maxFileSize,
     multiple: false,
-    disabled: isUploading || disabled,
+    disabled: isUploading || !permissions?.canAddAttachment,
   });
 
   return (
@@ -121,7 +121,7 @@ export const RequestAttachmentsList = observer(function RequestAttachmentsList(p
           )}
           <div
             {...getRootProps()}
-            className={`relative flex flex-col ${isDragActive && requestAttachments.length < 3 ? "min-h-[200px]" : ""} ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}
+            className={`relative flex flex-col ${isDragActive && requestAttachments.length < 3 ? "min-h-[200px]" : ""} ${!permissions?.canAddAttachment ? "cursor-not-allowed" : "cursor-pointer"}`}
           >
             <input {...getInputProps()} />
             {isDragActive && (
@@ -136,7 +136,11 @@ export const RequestAttachmentsList = observer(function RequestAttachmentsList(p
             )}
             <div className={cn("w-full", !isCollapsible && "space-y-2 ")}>
               {requestAttachments?.map((attachmentId) => (
-                <RequestAttachmentsListItem key={attachmentId} attachmentId={attachmentId} disabled={disabled} />
+                <RequestAttachmentsListItem
+                  key={attachmentId}
+                  attachmentId={attachmentId}
+                  disabled={!permissions?.canDeleteAttachment}
+                />
               ))}
             </div>
           </div>

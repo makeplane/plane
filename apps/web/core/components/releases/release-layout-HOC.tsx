@@ -61,7 +61,7 @@ export const ReleaseLayoutHOC = observer(function ReleaseLayoutHOC(props: Props)
           {
             label: t("Create Release"),
             onClick: () => toggleCreateReleaseModal({ isOpen: true, releaseId: undefined }),
-            disabled: !releaseStore.permissions.canEdit,
+            disabled: !currentWorkspaceSlug || !releaseStore.getCanCreate(currentWorkspaceSlug),
           },
         ]}
       />

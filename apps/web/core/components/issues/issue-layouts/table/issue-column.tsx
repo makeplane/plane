@@ -19,20 +19,22 @@ import { isCustomPropertyKey } from "@plane/utils";
 // components
 import { SPREADSHEET_COLUMNS, shouldRenderWorkItemPropertyColumn } from "@/helpers/work-item-layout";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import { SpreadsheetCustomPropertyColumn } from "./columns/custom-property-column";
 
 type WorkItemColumnProps = {
   workspaceSlug: string;
   displayProperties: IIssueDisplayProperties;
   issueDetail: TIssue;
-  disableUserActions: boolean;
   property: keyof IIssueDisplayProperties;
   updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
   isEstimateEnabled: boolean;
+  canEditProperty: (property: TWorkItemProperty) => boolean;
 };
 
 export const IssueColumn = observer(function IssueColumn(props: WorkItemColumnProps) {
-  const { workspaceSlug, displayProperties, issueDetail, disableUserActions, property, updateIssue } = props;
+  const { workspaceSlug, displayProperties, issueDetail, canEditProperty, property, updateIssue } = props;
   const tableCellRef = useRef<HTMLTableCellElement | null>(null);
 
   // Handle custom property columns
@@ -51,16 +53,15 @@ export const IssueColumn = observer(function IssueColumn(props: WorkItemColumnPr
             workspaceSlug={workspaceSlug}
             workItem={issueDetail}
             propertyId={propertyId}
-            disabled={disableUserActions}
+            disabled={!canEditProperty("property_values")}
           />
         </td>
       </WithDisplayPropertiesHOC>
     );
   }
 
-  // Handle built-in property columns
-  const Column = SPREADSHEET_COLUMNS[property];
-  if (!Column) return null;
+  const columnDetails = SPREADSHEET_COLUMNS[property];
+  if (!columnDetails) return null;
 
   const shouldRenderProperty = shouldRenderWorkItemPropertyColumn(property);
 
@@ -68,6 +69,7 @@ export const IssueColumn = observer(function IssueColumn(props: WorkItemColumnPr
     if (updateIssue) await updateIssue(issue.project_id, issue.id, data);
   };
 
+  const Column = columnDetails.component;
   return (
     <WithDisplayPropertiesHOC
       displayProperties={displayProperties}
@@ -82,7 +84,7 @@ export const IssueColumn = observer(function IssueColumn(props: WorkItemColumnPr
         <Column
           issue={issueDetail}
           onChange={handleUpdateIssue}
-          disabled={disableUserActions}
+          disabled={!canEditProperty(columnDetails.workItemProperty)}
           onClose={() => tableCellRef?.current?.focus()}
         />
       </td>

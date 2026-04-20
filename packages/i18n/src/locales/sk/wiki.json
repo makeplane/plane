@@ -116,6 +116,16 @@
     },
     "nested_pages_download_banner": {
       "title": "Vnorené stránky vyžadujú platený plán. Upgradujte a odomknite ich."
+    },
+    "auth": {
+      "title": "Prístup zamietnutý",
+      "description": "Nemáte oprávnenie na prístup k tejto stránke. Kontaktujte prosím správcu workspace, aby vám udelil oprávnenie.",
+      "redirection_button": {
+        "text": "Prejsť na projekty"
+      },
+      "reload_button": {
+        "text": "Obnoviť stránku"
+      }
     }
   }
 }

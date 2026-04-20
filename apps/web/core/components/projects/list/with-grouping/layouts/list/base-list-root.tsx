@@ -19,12 +19,16 @@ import { EProjectLayouts } from "@/types/workspace-project-filters";
 import { ProjectLayoutHOC } from "../project-layout-HOC";
 import { List } from "./default";
 
-export const BaseListRoot = observer(function BaseListRoot() {
+type BaseListRootProps = {
+  workspaceSlug: string;
+};
+
+export const BaseListRoot = observer(function BaseListRoot(props: BaseListRootProps) {
+  const { workspaceSlug } = props;
   // store hooks
   const { getFilteredProjectsByLayout } = useProjectFilter();
-
+  // derived values
   const groupByProjectIds = getFilteredProjectsByLayout(EProjectLayouts.BOARD);
-  // auth
   const displayProperties = useMemo(
     () => ({
       key: true,
@@ -35,8 +39,9 @@ export const BaseListRoot = observer(function BaseListRoot() {
     }),
     []
   );
+
   return (
-    <ProjectLayoutHOC layout={EProjectLayouts.TABLE}>
+    <ProjectLayoutHOC layout={EProjectLayouts.TABLE} workspaceSlug={workspaceSlug}>
       <div className={`relative size-full bg-surface-1`}>
         <List
           displayProperties={displayProperties}

@@ -29,7 +29,7 @@ import { TypeFormsRoot } from "./type-forms/root";
 type Props = {
   workspaceSlug: string;
   projectId: string;
-  isAdmin: boolean;
+  canManageIntake: boolean;
   isEnabled: boolean;
   allowEdit?: boolean;
   isFormEnabled?: boolean;
@@ -42,7 +42,7 @@ export function IntakeFormsRoot(props: Props) {
   const {
     workspaceSlug,
     projectId,
-    isAdmin,
+    canManageIntake,
     isEnabled,
     allowEdit = true,
     isFormEnabled,
@@ -114,13 +114,13 @@ export function IntakeFormsRoot(props: Props) {
                     tooltipContent={isFormEnabled ? intakeT("toggle_tooltip_off") : intakeT("toggle_tooltip_on")}
                     position="top"
                     className=""
-                    disabled={isAdmin}
+                    disabled={canManageIntake}
                   >
                     <div>
                       <Switch
                         value={Boolean(isFormEnabled)}
                         onChange={() => handleSubmit()}
-                        disabled={!isEnabled || !isAdmin}
+                        disabled={!isEnabled || !canManageIntake}
                       />
                     </div>
                   </Tooltip>
@@ -176,7 +176,7 @@ export function IntakeFormsRoot(props: Props) {
                         <LayersIcon className="size-3" />{" "}
                         <span className="text-11 font-medium text-secondary">{intakeT("form.create_forms")}</span>
                       </div>
-                      {isAdmin ? (
+                      {canManageIntake ? (
                         <Button
                           variant="ghost"
                           className="px-0 flex items-center gap-1"

@@ -55,21 +55,34 @@ const ProjectSpreadsheetLayout = lazy(() =>
   }))
 );
 
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  projectId: string | undefined;
+};
+
 // Layout components map
-const TEAMSPACE_PROJECT_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+const TEAMSPACE_PROJECT_WORK_ITEM_LAYOUTS: Partial<
+  Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<ActiveLayoutProps>>>
+> = {
   [EIssueLayoutTypes.LIST]: ListLayout,
   [EIssueLayoutTypes.KANBAN]: KanBanLayout,
   [EIssueLayoutTypes.CALENDAR]: CalendarLayout,
   [EIssueLayoutTypes.SPREADSHEET]: ProjectSpreadsheetLayout,
 };
 
-function TeamspaceProjectWorkItemLayout({ activeLayout }: { activeLayout: EIssueLayoutTypes | undefined }) {
+type TeamspaceProjectWorkItemLayoutProps = {
+  workspaceSlug: string;
+  activeLayout: EIssueLayoutTypes | undefined;
+};
+
+function TeamspaceProjectWorkItemLayout(props: TeamspaceProjectWorkItemLayoutProps) {
+  const { workspaceSlug, activeLayout } = props;
   if (!activeLayout) return null;
   const TeamspaceProjectWorkItemLayoutComponent = TEAMSPACE_PROJECT_WORK_ITEM_LAYOUTS[activeLayout];
   if (!TeamspaceProjectWorkItemLayoutComponent) return null;
   return (
     <Suspense>
-      <TeamspaceProjectWorkItemLayoutComponent />
+      <TeamspaceProjectWorkItemLayoutComponent workspaceSlug={workspaceSlug} projectId={undefined} />
     </Suspense>
   );
 }
@@ -127,7 +140,7 @@ export const TeamspaceProjectWorkLayoutRoot = observer(function TeamspaceProject
                   <Spinner className="w-4 h-4" />
                 </div>
               )}
-              <TeamspaceProjectWorkItemLayout activeLayout={activeLayout} />
+              <TeamspaceProjectWorkItemLayout workspaceSlug={workspaceSlug} activeLayout={activeLayout} />
             </div>
             {/* peek overview */}
             <Suspense>

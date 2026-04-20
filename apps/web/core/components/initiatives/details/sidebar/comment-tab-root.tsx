@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane package imports
 import { E_SORT_ORDER, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
@@ -26,16 +25,17 @@ import { ActivitySortRoot } from "@/components/issues/issue-detail/issue-activit
 import { SidebarContentWrapper } from "@/components/common/layout/sidebar/content-wrapper";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import type { TInitiativeActivityComment } from "@/types/initiative";
+import type { TInitiativeDetailPermissions } from "@/store/initiatives/permissions/root";
 import { useCommentOperations } from "./helper";
 
 type Props = {
   workspaceSlug: string;
   initiativeId: string;
-  disabled?: boolean;
+  comments: TInitiativeDetailPermissions["comments"];
 };
 
 export const InitiativeSidebarCommentsRoot = observer(function InitiativeSidebarCommentsRoot(props: Props) {
-  const { workspaceSlug, initiativeId, disabled = false } = props;
+  const { workspaceSlug, initiativeId, comments } = props;
   // states
   const { storedValue: sortOrder, setValue: setSortOrder } = useLocalStorage<E_SORT_ORDER>(
     "initiative_comments_sort_order",
@@ -87,7 +87,12 @@ export const InitiativeSidebarCommentsRoot = observer(function InitiativeSidebar
           .filter((activityComment) => activityComment.activity_type === "COMMENT")
           .map((activityComment) => (activityComment as TInitiativeActivityComment).detail as TIssueComment)}
         sortOrder={sortOrder ?? E_SORT_ORDER.ASC}
-        isEditingAllowed={!disabled}
+        permissions={{
+          canCreate: comments.canCreate,
+          canEdit: (commentId) => comments.canEdit(commentId),
+          canDelete: (commentId) => comments.canDelete(commentId),
+          canReact: (commentId) => comments.canReact(commentId),
+        }}
         showCopyLinkOption={false}
       />
     </SidebarContentWrapper>

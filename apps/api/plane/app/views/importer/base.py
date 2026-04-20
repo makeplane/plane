@@ -52,6 +52,7 @@ from plane.utils.html_processor import strip_tags
 from plane.app.permissions import WorkSpaceAdminPermission
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class ServiceIssueImportSummaryEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -116,6 +117,7 @@ class ServiceIssueImportSummaryEndpoint(BaseAPIView):
         return Response({"error": "Service not supported yet"}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class ImportServiceEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -243,6 +245,7 @@ class ImportServiceEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class UpdateServiceImportStatusEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -253,6 +256,7 @@ class UpdateServiceImportStatusEndpoint(BaseAPIView):
         return Response(status.HTTP_200_OK)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class BulkImportIssuesEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -417,6 +421,7 @@ class BulkImportIssuesEndpoint(BaseAPIView):
         )
 
 
+# TODO: Unused endpoint — not routed in URLs. Migrate to @can before re-enabling.
 class BulkImportModulesEndpoint(BaseAPIView):
     use_read_replica = True
 

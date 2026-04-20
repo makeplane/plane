@@ -14,7 +14,7 @@
 import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { ALL_ISSUES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TIssue, IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
@@ -26,7 +26,6 @@ import { IssueLayoutHOC } from "@/components/issues/issue-layouts/issue-layout-H
 import { TimelineLayoutLoader } from "@/components/ui/loader/layouts/timeline-layout-loader";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useTimeLineChart, useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
@@ -34,10 +33,13 @@ import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-propert
 type Props = {
   workspaceSlug: string;
   globalViewId: string;
+  permissions: {
+    canEditViaTimeline: (blockId: string, meta: Record<string, any> | undefined) => boolean;
+  };
 };
 
 export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(props: Props) {
-  const { workspaceSlug, globalViewId } = props;
+  const { workspaceSlug, globalViewId, permissions } = props;
 
   // Hooks
   const { t } = useTranslation();
@@ -51,7 +53,6 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, fetchNextIssues, fetchIssues } = useIssuesActions(EIssuesStoreType.GLOBAL);
   const { initGantt } = useTimeLineChart(GANTT_TIMELINE_TYPE.ISSUE);
-  const { allowPermissions } = useUserPermissions();
   const { getBlockById } = useTimeLineChartStore();
 
   // Derived values
@@ -102,17 +103,12 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
   );
 
   // Permission handler
-  const checkBlockPermissions = (blockId: string) => {
-    const block = getBlockById(blockId);
-    const projectId = block?.meta?.project_id;
-
-    return allowPermissions(
-      [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-      EUserPermissionsLevel.PROJECT,
-      workspaceSlug,
-      projectId
-    );
+  const isDependencyEnabled = (blockId: string): boolean => {
+    const data = getBlockById(blockId);
+    if (!data) return false;
+    return permissions.canEditViaTimeline(blockId, data.meta);
   };
+
   // Loading state
   if (!globalViewId || !groupedIssueIds || getIssueLoader() === "init-loader") {
     return <TimelineLayoutLoader />;
@@ -133,15 +129,15 @@ export const WorkspaceTimelineChart = observer(function WorkspaceGanttChart(prop
           blockUpdateHandler={updateIssueBlockStructure}
           blockToRender={(data: TIssue) => <WorkItemTimelineBlock issueId={data.id} />}
           sidebarToRender={(props) => <IssueTimelineSidebar {...props} showAllBlocks />}
-          enableBlockLeftResize={checkBlockPermissions}
-          enableBlockRightResize={checkBlockPermissions}
-          enableAddBlock={checkBlockPermissions}
+          enableBlockLeftResize={isDependencyEnabled}
+          enableBlockRightResize={isDependencyEnabled}
+          enableAddBlock={isDependencyEnabled}
           loadMoreBlocks={fetchNextIssues}
           canLoadMoreBlocks={!!nextPageResults}
           updateBlockDates={updateBlockDates}
-          enableDependency={checkBlockPermissions}
+          enableDependency={isDependencyEnabled}
           showAllBlocks
-          enableBlockMove={checkBlockPermissions}
+          enableBlockMove={isDependencyEnabled}
         />
       </div>
     </IssueLayoutHOC>

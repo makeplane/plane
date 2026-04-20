@@ -9,4 +9,4 @@
 # DO NOT remove or modify this notice.
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
-from .reaction import UpdatesReactionViewSet
+from .reaction import CycleUpdatesReactionViewSet

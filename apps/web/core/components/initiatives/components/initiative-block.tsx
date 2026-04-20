@@ -15,20 +15,18 @@ import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // Plane
-import { EUserPermissionsLevel } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
 // components
 import { UpdateStatusPills } from "@/components/initiatives/common/update-status";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import type { TInitiativeProperty } from "@/store/initiatives/permissions/root";
 // local components
 import { useInitiativeUpdates } from "../details/sidebar/use-updates";
 import { InitiativesBlockProperties } from "./initiatives-block-properties";
@@ -36,10 +34,15 @@ import { InitiativeQuickActions } from "./quick-actions";
 
 type Props = {
   initiativeId: string;
+  canEditProperty: (property: TInitiativeProperty) => boolean;
+  quickActionPermissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
-  const { initiativeId } = props;
+  const { initiativeId, canEditProperty, quickActionPermissions } = props;
   // ref
   const parentRef = useRef<HTMLButtonElement>(null);
   const { workspaceSlug } = useParams();
@@ -50,16 +53,10 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
 
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug.toString(), initiativeId);
 
   const initiative = getInitiativeById(initiativeId);
   const initiativeStats = getInitiativeStatsById(initiativeId);
-
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   const handleInitiativeClick = useCallback(
     (e: React.MouseEvent) => {
@@ -119,6 +116,7 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
             initiative={initiative}
             isSidebarCollapsed={isSidebarCollapsed}
             workspaceSlug={workspaceSlug.toString()}
+            canEditProperty={canEditProperty}
           />
           <div
             className={cn("hidden", {
@@ -130,7 +128,7 @@ export const InitiativeBlock = observer(function InitiativeBlock(props: Props) {
               parentRef={parentRef}
               initiative={initiative}
               workspaceSlug={workspaceSlug.toString()}
-              disabled={!isEditable}
+              permissions={quickActionPermissions}
             />
           </div>
         </div>

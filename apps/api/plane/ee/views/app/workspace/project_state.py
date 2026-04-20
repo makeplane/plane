@@ -23,7 +23,7 @@ from plane.db.models import Workspace
 from plane.ee.models import ProjectState, ProjectAttribute
 from plane.ee.views.base import BaseAPIView
 from plane.ee.serializers import ProjectStateSerializer
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.permissions import can, WorkspaceProjectStatePermissions
 
 # EE imports
 from plane.ee.utils.workspace_feature import (
@@ -35,11 +35,8 @@ from plane.ee.utils.workspace_feature import (
 class WorkspaceProjectStatesEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
+    @can(WorkspaceProjectStatePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED):
             project_states = ProjectState.objects.filter(workspace__slug=slug).order_by("sequence")
@@ -51,6 +48,7 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
+    @can(WorkspaceProjectStatePermissions.CREATE, resource_param="workspace_id")
     def post(self, request, slug):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED):
             try:
@@ -72,6 +70,7 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
+    @can(WorkspaceProjectStatePermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, pk):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED):
             project_states = ProjectState.objects.filter(workspace__slug=slug, pk=pk).first()
@@ -86,6 +85,7 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
+    @can(WorkspaceProjectStatePermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, pk):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED):
             project_state = ProjectState.objects.filter(workspace__slug=slug, pk=pk).first()
@@ -116,11 +116,8 @@ class WorkspaceProjectStatesEndpoint(BaseAPIView):
 class WorkspaceProjectStatesDefaultEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkspaceEntityPermission,
-    ]
-
     @check_feature_flag(FeatureFlag.PROJECT_GROUPING)
+    @can(WorkspaceProjectStatePermissions.EDIT, resource_param="pk")
     def post(self, request, slug, pk):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_PROJECT_GROUPING_ENABLED):
             # Select all the states which are marked as default

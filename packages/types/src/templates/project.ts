@@ -73,7 +73,6 @@ export type TProjectTemplateData = Pick<
   | "module_view"
   | "issue_views_view"
   | "page_view"
-  | "guest_view_all_features"
   // timezone
   | "timezone"
   // automation

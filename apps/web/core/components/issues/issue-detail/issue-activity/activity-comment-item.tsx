@@ -38,7 +38,12 @@ export type ActivityCommentItemProps = {
   workspaceSlug: string;
   issueId: string;
   projectId: string;
-  disabled: boolean;
+  permissions: {
+    canCreate: boolean;
+    canEdit: boolean;
+    canDelete: boolean;
+    canReact: boolean;
+  };
   showAccessSpecifier: boolean;
   showCopyLinkOption: boolean;
   showConnector: boolean;
@@ -51,7 +56,7 @@ export const ActivityCommentItem = observer(function ActivityCommentItem(props: 
     workspaceSlug,
     issueId,
     projectId,
-    disabled,
+    permissions,
     showAccessSpecifier,
     showCopyLinkOption,
     showConnector,
@@ -110,26 +115,28 @@ export const ActivityCommentItem = observer(function ActivityCommentItem(props: 
         highlightRef={highlightRef}
         highlighted={isHighlighted}
         headerActionsElement={
-          !disabled ? (
-            <div className="flex items-center gap-1 shrink-0">
-              {projectId && <IconButton variant="ghost" size="sm" icon={ReplyIcon} onClick={handleReply} />}
+          <div className="flex items-center gap-1 shrink-0">
+            {projectId && permissions.canCreate && (
+              <IconButton variant="ghost" size="sm" icon={ReplyIcon} onClick={handleReply} />
+            )}
+            {permissions.canReact && (
               <EmojiReactionPicker
                 isOpen={isPickerOpen}
                 handleToggle={setIsPickerOpen}
                 onChange={handleEmojiSelect}
-                disabled={disabled}
+                disabled={!permissions.canReact}
                 label={<EmojiReactionButton onAddReaction={() => setIsPickerOpen(true)} />}
                 placement="bottom-start"
               />
-              <CommentQuickActions
-                activityOperations={activityOperations}
-                comment={comment}
-                setEditMode={() => setIsEditing(true)}
-                showAccessSpecifier={showAccessSpecifier}
-                showCopyLinkOption={showCopyLinkOption}
-              />
-            </div>
-          ) : undefined
+            )}
+            <CommentQuickActions
+              activityOperations={activityOperations}
+              comment={comment}
+              setEditMode={() => setIsEditing(true)}
+              showAccessSpecifier={showAccessSpecifier}
+              showCopyLinkOption={showCopyLinkOption}
+            />
+          </div>
         }
         body={
           <BaseCommentCardDisplay
@@ -138,7 +145,7 @@ export const ActivityCommentItem = observer(function ActivityCommentItem(props: 
             workspaceSlug={workspaceSlug}
             workspaceId={workspaceId}
             entityId={issueId}
-            disabled={disabled}
+            permissions={permissions}
             activityOperations={activityOperations}
             showAccessSpecifier={showAccessSpecifier}
             readOnlyEditorRef={editorRef}
@@ -160,6 +167,7 @@ export const ActivityCommentItem = observer(function ActivityCommentItem(props: 
               repliedUserIds={comment.replied_user_ids || []}
               lastReplyAt={comment.last_reply_at || null}
               showAccessSpecifier={showAccessSpecifier}
+              permissions={permissions}
             />
           ) : undefined
         }

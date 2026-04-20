@@ -12,7 +12,7 @@
 # Module imports
 from plane.ee.views.base import BaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, InitiativePermissions
 from plane.payment.flags.flag import FeatureFlag
 from plane.db.models import Workspace
 from plane.ee.models import InitiativeLabel
@@ -28,7 +28,7 @@ class InitiativeLabelsEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
 
@@ -38,7 +38,7 @@ class InitiativeLabelsEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
 
@@ -52,7 +52,7 @@ class InitiativeLabelsEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.MANAGE, resource_param="workspace_id")
     def patch(self, request, slug, initiative_label_id):
         workspace = Workspace.objects.get(slug=self.kwargs.get("slug"))
 
@@ -72,7 +72,7 @@ class InitiativeLabelsEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.INITIATIVES)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(InitiativePermissions.MANAGE, resource_param="workspace_id")
     def delete(self, request, slug, initiative_label_id):
         initiative_label = InitiativeLabel.objects.get(id=initiative_label_id, workspace__slug=slug)
 

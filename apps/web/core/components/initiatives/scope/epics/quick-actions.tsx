@@ -28,10 +28,14 @@ import { useProject } from "@/hooks/store/use-project";
 // plane web imports
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 
-export const InitiativeScopeEpicQuickActions = observer(function InitiativeScopeEpicQuickActions(
-  props: IQuickActionProps
-) {
-  const { issue, parentRef, readOnly = false } = props;
+type Props = IQuickActionProps & {
+  permissions: {
+    canRemoveEpic: boolean;
+  };
+};
+
+export const InitiativeScopeEpicQuickActions = observer(function InitiativeScopeEpicQuickActions(props: Props) {
+  const { issue, parentRef, permissions } = props;
   // router
   const { initiativeId, workspaceSlug } = useParams();
   // plane hooks
@@ -85,7 +89,7 @@ export const InitiativeScopeEpicQuickActions = observer(function InitiativeScope
         ),
       title: t("common.remove"),
       icon: TrashIcon,
-      shouldRender: !!initiativeId && !readOnly,
+      shouldRender: !!initiativeId && permissions.canRemoveEpic,
     },
   ];
 

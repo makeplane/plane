@@ -19,8 +19,11 @@ import {
   RUNNER_HEALTH,
   USER_INFORMATION,
   WORKSPACE_FLAGS,
-  WORKSPACE_MEMBER_ME_INFORMATION,
-  WORKSPACE_PROJECTS_ROLES_INFORMATION,
+  WORKSPACE_FEATURES,
+  WORKSPACE_PROJECT_FEATURES,
+  WORKSPACE_PARTIAL_PROJECTS,
+  WORKSPACE_TEAMSPACES,
+  WORKSPACE_CURRENT_USER_PERMISSIONS,
 } from "@/constants/fetch-keys";
 // lib
 import { store } from "@/lib/store-context";
@@ -79,25 +82,21 @@ export const bootstrapWorkspace = async (workspaceSlug: string) =>
 
     const featureFlagsKey = WORKSPACE_FLAGS(workspaceSlug);
     const aiFlagsKey = AI_FLAGS(workspaceSlug);
-    const workspaceMemberKey = WORKSPACE_MEMBER_ME_INFORMATION(workspaceSlug);
-    const workspaceRolesKey = WORKSPACE_PROJECTS_ROLES_INFORMATION(workspaceSlug);
-
+    const workspaceFeaturesKey = WORKSPACE_FEATURES(workspaceSlug);
+    const workspaceProjectFeaturesKey = WORKSPACE_PROJECT_FEATURES(workspaceSlug);
+    const workspacePermissionKey = WORKSPACE_CURRENT_USER_PERMISSIONS(workspaceSlug);
+    const partialProjectsKey = WORKSPACE_PARTIAL_PROJECTS(workspaceSlug);
+    const workspaceTeamspacesKey = WORKSPACE_TEAMSPACES(workspaceSlug);
     await Promise.allSettled([
-      preloadAndPrimeSWR(workspaceMemberKey, () => store.user.permission.fetchUserWorkspaceInfo(workspaceSlug)).catch(
-        async () => {
-          await primeSWRCache(workspaceMemberKey, store.user.permission.workspaceInfoBySlug(workspaceSlug) ?? null);
-        }
+      preloadAndPrimeSWR(workspacePermissionKey, () =>
+        store.permissionAccessStore.fetchCurrentUserWorkspacePermissions(workspaceSlug)
       ),
-      preloadAndPrimeSWR(workspaceRolesKey, () =>
-        store.user.permission.fetchUserProjectPermissions(workspaceSlug)
-      ).catch(async () => {
-        await primeSWRCache(
-          workspaceRolesKey,
-          store.user.permission.getProjectRolesByWorkspaceSlug(workspaceSlug) ?? null
-        );
-      }),
+      preloadAndPrimeSWR(partialProjectsKey, () => store.projectRoot.project.fetchPartialProjects(workspaceSlug)),
+      preloadAndPrimeSWR(workspaceTeamspacesKey, () => store.teamspaceRoot.teamspaces.fetchTeamspaces(workspaceSlug)),
       preloadAndPrimeSWR(featureFlagsKey, () => store.featureFlags.fetchFeatureFlags(workspaceSlug)),
-      preloadAndPrimeSWR(aiFlagsKey, () => store.aiFeatureFlags.fetchAiFeatureFlags(workspaceSlug)),
+      preloadAndPrimeSWR(aiFlagsKey, () => store.featureFlags.fetchAiFeatureFlags(workspaceSlug)),
+      preloadAndPrimeSWR(workspaceFeaturesKey, () => store.workspaceFeatures.fetchWorkspaceFeatures(workspaceSlug)),
+      preloadAndPrimeSWR(workspaceProjectFeaturesKey, () => store.projectDetails.fetchProjectFeatures(workspaceSlug)),
     ]);
   });
 

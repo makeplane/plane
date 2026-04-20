@@ -13,21 +13,19 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { E_FEATURE_FLAGS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { UpgradeIcon } from "@plane/propel/icons";
 import { setPromiseToast } from "@plane/propel/toast";
 import { Switch } from "@plane/propel/switch";
 // components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useFlag, useWorkspaceSubscription } from "@/plane-web/hooks/store";
 import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-projects";
@@ -38,7 +36,6 @@ import { FeaturesMilestonesProjectSettingsHeader } from "./header";
 function FeaturesMilestonesSettingsPage({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // permissions
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const { currentProjectDetails } = useProject();
   const { isProjectFeatureEnabled, toggleProjectFeatures } = useProjectAdvanced();
   const { togglePaidPlanModal } = useWorkspaceSubscription();
@@ -48,7 +45,6 @@ function FeaturesMilestonesSettingsPage({ params }: Route.ComponentProps) {
   const pageTitle = currentProjectDetails?.name
     ? `${currentProjectDetails?.name} settings - ${t("project_settings.features.milestones.short_title")}`
     : undefined;
-  const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
   const isMilestonesAvailableInPlan = useFlag(workspaceSlug, E_FEATURE_FLAGS.MILESTONES);
   const isMilestonesEnabled = !!isProjectFeatureEnabled(projectId, "is_milestone_enabled");
 
@@ -72,10 +68,6 @@ function FeaturesMilestonesSettingsPage({ params }: Route.ComponentProps) {
       },
     });
   };
-
-  if (workspaceUserInfo && !canPerformProjectAdminActions) {
-    return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;
-  }
 
   return (
     <SettingsContentWrapper header={<FeaturesMilestonesProjectSettingsHeader />}>

@@ -25,13 +25,13 @@ import { useTeamspaces } from "@/plane-web/hooks/store/teamspaces/use-teamspaces
 
 type TeamspaceWorkItemListHeaderActionsProps = {
   teamspaceId: string;
-  isEditingAllowed: boolean;
+  permissions: { canCreateWorkItem: boolean };
 };
 
 export const TeamspaceWorkItemListHeaderActions = observer(function TeamspaceWorkItemListHeaderActions(
   props: TeamspaceWorkItemListHeaderActionsProps
 ) {
-  const { teamspaceId, isEditingAllowed } = props;
+  const { teamspaceId, permissions } = props;
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -47,7 +47,7 @@ export const TeamspaceWorkItemListHeaderActions = observer(function TeamspaceWor
       <div className="hidden gap-2 items-center md:flex">
         <TeamHeaderFilters teamspaceId={teamspaceId} workspaceSlug={workspaceSlug.toString()} />
       </div>
-      {isEditingAllowed ? (
+      {permissions.canCreateWorkItem ? (
         <Button
           onClick={() => {
             toggleCreateIssueModal(true, EIssuesStoreType.TEAM, teamspaceProjectIds);

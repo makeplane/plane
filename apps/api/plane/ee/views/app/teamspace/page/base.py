@@ -42,17 +42,17 @@ from django.utils import timezone
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 
 # Module imports
-from plane.ee.views.app.teamspace.base import TeamspaceBaseEndpoint
-from plane.ee.permissions import TeamspacePermission
+from plane.ee.views.app.teamspace.base import TeamspaceBaseEndpoint, validate_page_in_teamspace
+from plane.permissions import can, TeamspacePermissions, TeamspacePagePermissions, ResourceType
 from plane.db.models import (
     Workspace,
     Page,
     UserFavorite,
     DeployBoard,
     PageVersion,
-    ProjectMember,
 )
 
 from plane.ee.models import TeamspacePage, PageUser
@@ -78,8 +78,6 @@ logger = logging.getLogger(__name__)
 
 class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
-
-    permission_classes = [TeamspacePermission]
 
     def get_queryset(self):
         subquery = UserFavorite.objects.filter(
@@ -153,8 +151,10 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         return largest_sort_order + 10000 if largest_sort_order else 65535
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, pk=None):
         if pk:
+            validate_page_in_teamspace(pk, team_space_id)
             page = self.get_queryset().get(workspace__slug=slug, pk=pk)
             serializer = TeamspacePageDetailSerializer(page)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -197,6 +197,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.CREATE, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id):
         workspace = Workspace.objects.get(slug=slug)
         serializer = TeamspacePageSerializer(
@@ -259,6 +260,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.EDIT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def patch(self, request, slug, team_space_id, pk):
         team_space_page = TeamspacePage.objects.filter(page_id=pk, team_space_id=team_space_id).first()
         if team_space_page is None:
@@ -326,6 +328,7 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.DELETE, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def delete(self, request, slug, team_space_id, pk):
         team_space_page = TeamspacePage.objects.filter(page_id=pk, team_space_id=team_space_id).first()
         if team_space_page is None:
@@ -347,14 +350,10 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if (
-            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
-            and request.user.id != page.owned_by_id
-        ):
-            return Response(
-                {"error": "Only admin or owner can delete the page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        # Only the owner or an authorized manager can delete
+        if page.owned_by_id != request.user.id:
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
 
         # remove parent from all the children
         _ = Page.objects.filter(parent_id=pk, workspace__slug=slug).update(parent=None)
@@ -389,8 +388,8 @@ class TeamspacePageEndpoint(TeamspaceBaseEndpoint):
 class TeamspacePageSummaryEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id):
         user_pages = PageUser.objects.filter(
             workspace__slug=slug,
@@ -430,9 +429,10 @@ class TeamspacePageSummaryEndpoint(TeamspaceBaseEndpoint):
 class TeamspaceSubPageEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, page_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         pages = (
             Page.all_objects.filter(workspace__slug=slug, parent_id=page_id)
             .annotate(
@@ -456,9 +456,10 @@ class TeamspaceSubPageEndpoint(TeamspaceBaseEndpoint):
 class TeamspaceParentPageEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
+    @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, page_id):
+        validate_page_in_teamspace(page_id, team_space_id)
         page_ids = get_all_parent_ids(page_id)
 
         pages = Page.objects.filter(workspace__slug=slug, id__in=page_ids).annotate(
@@ -487,10 +488,10 @@ class TeamspaceParentPageEndpoint(TeamspaceBaseEndpoint):
 class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.CREATE, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id, pk):
+        validate_page_in_teamspace(pk, team_space_id)
         workspace = Workspace.objects.get(slug=slug)
         page = Page.objects.filter(pk=pk, workspace__slug=slug).first()
 
@@ -544,9 +545,8 @@ class TeamspacePageDuplicateEndpoint(TeamspaceBaseEndpoint):
 class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.ARCHIVE, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
         if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
@@ -555,16 +555,12 @@ class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if (
-            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
-            and request.user.id != page.owned_by_id
-        ):
-            return Response(
-                {"error": "Only admin or owner can archive the page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+
+        # Only the owner or an authorized manager can archive
+        if page.owned_by_id != request.user.id:
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
 
         # Archive the page
         UserFavorite.objects.filter(workspace__slug=slug, entity_identifier=pk, entity_type="page").delete()
@@ -587,9 +583,8 @@ class TeamspacePageArchiveEndpoint(TeamspaceBaseEndpoint):
 class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.ARCHIVE, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id, pk):
         # Check the page is part of the team space
         if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug).exists():
@@ -598,16 +593,12 @@ class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if (
-            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
-            and request.user.id != page.owned_by_id
-        ):
-            return Response(
-                {"error": "Only admin or owner can unarchive the page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+
+        # Only the owner or an authorized manager can unarchive
+        if page.owned_by_id != request.user.id:
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
 
         # Unarchive the page
         page.archived_at = None
@@ -626,9 +617,8 @@ class TeamspacePageUnarchiveEndpoint(TeamspaceBaseEndpoint):
 class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.EDIT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def post(self, request, slug, team_space_id, pk):
         action = request.data.get("action", "current-page")
         # Check the page is part of the team space
@@ -638,16 +628,12 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if (
-            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
-            and request.user.id != page.owned_by_id
-        ):
-            return Response(
-                {"error": "Only admin or owner can lock the page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+
+        # Only the owner or an authorized manager can lock
+        if page.owned_by_id != request.user.id:
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
 
         # Lock the page
         page.is_locked = True
@@ -664,6 +650,7 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.EDIT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def delete(self, request, slug, team_space_id, pk):
         action = request.data.get("action", "current-page")
         # Check the page is part of the team space
@@ -673,16 +660,12 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check if the user has access to the workspace
         page = Page.objects.get(pk=pk, workspace__slug=slug)
-        if (
-            ProjectMember.objects.filter(member=request.user, is_active=True, role__lte=15).exists()
-            and request.user.id != page.owned_by_id
-        ):
-            return Response(
-                {"error": "Only admin or owner can unlock the page"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+
+        # Only the owner or an authorized manager can unlock
+        if page.owned_by_id != request.user.id:
+            if not self.is_admin_or_teamspace_lead(request, slug, team_space_id):
+                raise PermissionDenied("Only the creator or an authorized manager can perform this action")
 
         # Unlock the page
         page.is_locked = False
@@ -702,9 +685,8 @@ class TeamspacePageLockEndpoint(TeamspaceBaseEndpoint):
 class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.VIEW, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def get(self, request, slug, team_space_id, pk):
         # Check the page belongs to the team space
         if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug, team_space_id=team_space_id).exists():
@@ -727,6 +709,7 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
         return response
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePagePermissions.EDIT, resource_param="team_space_id", scope_param_type=ResourceType.TEAMSPACE)
     def patch(self, request, slug, team_space_id, pk):
         # Get the team space page
         if not TeamspacePage.objects.filter(page_id=pk, workspace__slug=slug, team_space_id=team_space_id).exists():
@@ -791,9 +774,8 @@ class TeamspacePagesDescriptionEndpoint(TeamspaceBaseEndpoint):
 class TeamspacePageVersionEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    permission_classes = [TeamspacePermission]
-
     @check_feature_flag(FeatureFlag.TEAMSPACES)
+    @can(TeamspacePermissions.VIEW, resource_param="team_space_id")
     def get(self, request, slug, team_space_id, page_id, pk=None):
         # Get the team space page
         if not TeamspacePage.objects.filter(
@@ -817,11 +799,11 @@ class TeamspacePageVersionEndpoint(TeamspaceBaseEndpoint):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class TeamspacePageFavoriteEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
     model = UserFavorite
-    permission_classes = [TeamspacePermission]
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)
     def post(self, request, slug, pk):

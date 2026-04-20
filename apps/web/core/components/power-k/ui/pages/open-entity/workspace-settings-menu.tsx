@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 // plane types
-import { EUserPermissionsLevel, WORKSPACE_SETTINGS } from "@plane/constants";
+import { WORKSPACE_SETTINGS } from "@plane/constants";
 // components
 import { useTranslation } from "@plane/i18n";
 import type { TPowerKContext } from "@/components/power-k/core/types";
@@ -22,7 +22,7 @@ import { WORKSPACE_SETTINGS_ICONS } from "@/components/settings/workspace/sideba
 // helpers
 import { shouldRenderSettingLink } from "@/helpers/settings/workspace";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useWorkspaceSettingsAccess } from "@/hooks/permissions/use-workspace-settings-access";
 
 type Props = {
   context: TPowerKContext;
@@ -33,14 +33,14 @@ export const PowerKOpenWorkspaceSettingsMenu = observer(function PowerKOpenWorks
   const { context, handleSelect } = props;
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
   // derived values
+  const workspaceSlug = context.params.workspaceSlug;
+  const { canAccessWorkspaceSetting } = useWorkspaceSettingsAccess();
   const settingsList = Object.values(WORKSPACE_SETTINGS).filter(
     (setting) =>
-      context.params.workspaceSlug &&
-      shouldRenderSettingLink(context.params.workspaceSlug?.toString(), setting.key) &&
-      allowPermissions(setting.access, EUserPermissionsLevel.WORKSPACE, context.params.workspaceSlug?.toString())
+      workspaceSlug &&
+      shouldRenderSettingLink(workspaceSlug, setting.key) &&
+      canAccessWorkspaceSetting(workspaceSlug, setting.key)
   );
   const settingsListWithIcons = settingsList.map((setting) => ({
     ...setting,

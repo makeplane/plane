@@ -15,7 +15,6 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 import { MoreHorizontal } from "lucide-react";
 // types
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IProjectView } from "@plane/types";
@@ -23,11 +22,11 @@ import type { IProjectView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { copyUrlToClipboard, cn } from "@plane/utils";
-// helpers
+// components
 import { useViewMenuItems } from "@/components/common/quick-actions/helper";
-// hooks
-import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { PublishViewModal, useViewPublish } from "@/components/views/publish";
+// hooks
+import { useProjectView } from "@/hooks/store/use-project-view";
 // local imports
 import { DeleteProjectViewModal } from "./delete-view-modal";
 import { CreateUpdateProjectViewModal } from "./modal";
@@ -46,15 +45,11 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
   // store hooks
-  const { data } = useUser();
-  const { allowPermissions } = useUserPermissions();
-  // auth
-  const isOwner = view?.owned_by === data?.id;
-  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT, workspaceSlug, projectId);
+  const { permissions } = useProjectView();
 
   const { isPublishModalOpen, setPublishModalOpen, publishContextMenu } = useViewPublish(
     !!view.anchor,
-    isAdmin || isOwner
+    permissions.getCanPublishView(view.id)
   );
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
@@ -69,8 +64,6 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
   const menuResult = useViewMenuItems({
-    isOwner,
-    isAdmin,
     workspaceSlug,
     projectId,
     view,
@@ -78,6 +71,11 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
     handleDelete: () => setDeleteViewModal(true),
     handleCopyLink: handleCopyText,
     handleOpenInNewTab,
+    permissions: {
+      canEdit: permissions.getCanEditView(view.id),
+      canLock: permissions.getCanEditView(view.id),
+      canDelete: permissions.getCanDeleteView(view.id),
+    },
   });
 
   // Handle both CE (array) and EE (object) return types
@@ -113,6 +111,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
         placement="bottom-end"
         closeOnSelect
         buttonClassName={customClassName}
+        maxHeight="lg"
       >
         {MENU_ITEMS.map((item) => {
           if (item.shouldRender === false) return null;

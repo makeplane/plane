@@ -164,6 +164,7 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
             updateWorkspaceDashboardModalPayload(null);
           }, 300);
         }}
+        workspaceSlug={workspaceSlug}
       />
       <CreateUpdateCustomerModal
         isOpen={createUpdateCustomerModal.isOpen}
@@ -180,6 +181,7 @@ export const WorkspaceLevelModals = observer(function WorkspaceLevelModals(props
         isOpen={workspaceAutomationModalConfig.isOpen}
         data={workspaceAutomationModalConfig.payload ?? undefined}
         onClose={() => setWorkspaceAutomationModalConfig({ isOpen: false, payload: null })}
+        workspaceSlug={workspaceSlug}
       />
     </Suspense>
   );

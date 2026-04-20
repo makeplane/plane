@@ -60,6 +60,7 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
   const { getUserDetails } = useMember();
   // derived values
   const stateType = workflowState.type;
+  const canEditWorkflow = workflow.permissions.canEdit;
   const isInteractive = mode !== "view";
   const activeTab = useMemo(
     () =>
@@ -70,9 +71,10 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
   // Opens the sidebar for the selected configuration tab of this transition.
   const handleOpenSidebar = useCallback(
     (tab: "flow_type" | "states" | "members" | "conditions") => {
+      if (!canEditWorkflow) return;
       workflow.openSidebar(state.id, transition.id, tab);
     },
-    [workflow, state.id, transition.id]
+    [canEditWorkflow, workflow, state.id, transition.id]
   );
 
   const showMoveTo = !!stateType;
@@ -97,6 +99,7 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
   // Persists transition changes (create draft -> save, or update existing transition).
   const handleSave = useCallback(async () => {
     if (!transition || !workflowState) return;
+    if (!canEditWorkflow) return;
     setIsSubmitting(true);
     if (transition.isDraft) {
       try {
@@ -134,28 +137,31 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
       });
     }
     setIsSubmitting(false);
-  }, [projectId, transition, workflow, workflowState, workspaceSlug]);
+  }, [canEditWorkflow, projectId, transition, workflow, workflowState, workspaceSlug]);
 
   // Reverts local edits for an existing transition and exits edit mode.
   const handleDiscard = useCallback(() => {
     if (!transition) return;
+    if (!canEditWorkflow) return;
     transition.revertToSnapshot();
     workflow.stopEditing(transition.id);
     workflow.closeSidebar();
-  }, [transition, workflow]);
+  }, [canEditWorkflow, transition, workflow]);
 
   // Cancels creation mode by removing the draft transition.
   const handleCancel = useCallback(() => {
     if (!workflowState) return;
+    if (!canEditWorkflow) return;
     workflowState.removeDraftTransition(transition.id);
     if (workflow.activeSidebarTransitionId === transition.id) {
       workflow.closeSidebar();
     }
-  }, [transition.id, workflow, workflowState]);
+  }, [canEditWorkflow, transition.id, workflow, workflowState]);
 
   // Deletes the transition (draft/local delete or persisted/API delete).
   const handleDelete = useCallback(() => {
     if (!transition || !workflowState) return;
+    if (!canEditWorkflow) return;
     if (transition.isDraft) {
       handleCancel();
       return;
@@ -169,13 +175,14 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
     if (workflow.activeSidebarTransitionId === transition.id) {
       workflow.closeSidebar();
     }
-  }, [handleCancel, projectId, transition, workflow, workflowState, workspaceSlug]);
+  }, [canEditWorkflow, handleCancel, projectId, transition, workflow, workflowState, workspaceSlug]);
 
   // Switches the current transition card into edit mode.
   const handleEdit = useCallback(() => {
+    if (!canEditWorkflow) return;
     workflow.startEditing(transition.id);
     workflow.openSidebar(state.id, transition.id, "flow_type");
-  }, [state.id, transition.id, workflow]);
+  }, [canEditWorkflow, state.id, transition.id, workflow]);
 
   if (!state || !workflowState || !transition) return null;
 
@@ -312,7 +319,7 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
             handleOpenSidebar={handleOpenSidebar}
           />
         )}
-        {mode === "view" && (
+        {mode === "view" && canEditWorkflow && (
           <div className="ml-auto absolute right-0 top-0">
             <Menu ellipsis>
               <Menu.MenuItem className="flex items-center gap-2" onClick={handleEdit}>

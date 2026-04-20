@@ -35,7 +35,16 @@ import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useAllIssueMenuItems } from "./helper";
 
-export const AllIssueQuickActions = observer(function AllIssueQuickActions(props: IQuickActionProps) {
+type TAllIssueQuickActionsProps = Exclude<IQuickActionProps, "readOnly" | "disabled"> & {
+  permissions: {
+    canEdit: boolean;
+    canArchive: boolean;
+    canDelete: boolean;
+    canDuplicate: boolean;
+  };
+};
+
+export const AllIssueQuickActions = observer(function AllIssueQuickActions(props: TAllIssueQuickActionsProps) {
   const {
     issue,
     handleDelete,
@@ -43,9 +52,9 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
     handleArchive,
     customActionButton,
     portalElement,
-    readOnly = false,
     placements = "bottom-start",
     parentRef,
+    permissions,
   } = props;
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
@@ -61,10 +70,8 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
   const issueTypeDetail = useIssueType(issue.type_id);
   // derived values
   const stateDetails = getStateById(issue.state_id);
-  const isEditingAllowed = !readOnly;
   const projectIdentifier = getProjectIdentifierById(issue?.project_id);
   // auth
-  const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
 
   const duplicateIssuePayload = omit(
@@ -82,9 +89,10 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
     workspaceSlug: workspaceSlug?.toString(),
     projectIdentifier,
     activeLayout: "Global issues",
-    isEditingAllowed,
-    isArchivingAllowed,
-    isDeletingAllowed: isEditingAllowed,
+    canEdit: permissions.canEdit,
+    canArchive: permissions.canArchive && !!handleArchive,
+    canDelete: permissions.canDelete,
+    canDuplicate: permissions.canDuplicate,
     isInArchivableGroup,
     issueTypeDetail,
     setIssueToEdit,

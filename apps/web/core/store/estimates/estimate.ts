@@ -34,6 +34,12 @@ type TErrorCodes = {
   message?: string;
 };
 
+export type EstimatePermissionMeta = {
+  workspaceSlug: string;
+  projectId: string;
+  estimateId: string;
+};
+
 export interface IEstimate extends Omit<IEstimateType, "points"> {
   // observables
   error: TErrorCodes | undefined;
@@ -65,6 +71,9 @@ export interface IEstimate extends Omit<IEstimateType, "points"> {
     estimatePointId: string,
     newEstimatePointId: string | undefined
   ) => Promise<IEstimatePointType[] | undefined>;
+  // permissions
+  canCurrentUserEditEstimate: boolean;
+  canCurrentUserDeleteEstimate: boolean;
 }
 
 export class Estimate implements IEstimate {
@@ -112,6 +121,9 @@ export class Estimate implements IEstimate {
       updateEstimateSortOrder: action,
       updateEstimateSwitch: action,
       deleteEstimatePoint: action,
+      // permissions
+      canCurrentUserEditEstimate: computed,
+      canCurrentUserDeleteEstimate: computed,
     });
     this.id = this.data.id;
     this.name = this.data.name;
@@ -302,4 +314,46 @@ export class Estimate implements IEstimate {
 
     return deleteEstimatePoint;
   };
+
+  // permissions
+  private get estimatePermissionMeta(): EstimatePermissionMeta | undefined {
+    if (!this.workspace || !this.project || !this.id) return undefined;
+    const workspaceSlug = this.store.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
+    if (!workspaceSlug) return undefined;
+    return {
+      workspaceSlug,
+      projectId: this.project,
+      estimateId: this.id,
+    };
+  }
+
+  get canCurrentUserEditEstimate() {
+    const permissionMeta = this.estimatePermissionMeta;
+    if (!permissionMeta) return false;
+
+    return this.store.permissionAccessStore.can({
+      resource: "estimate",
+      action: "edit",
+      projectId: permissionMeta.projectId,
+      workspaceSlug: permissionMeta.workspaceSlug,
+      resourceMeta: {
+        resourceId: permissionMeta.estimateId,
+      },
+    });
+  }
+
+  get canCurrentUserDeleteEstimate() {
+    const permissionMeta = this.estimatePermissionMeta;
+    if (!permissionMeta) return false;
+
+    return this.store.permissionAccessStore.can({
+      resource: "estimate",
+      action: "delete",
+      projectId: permissionMeta.projectId,
+      workspaceSlug: permissionMeta.workspaceSlug,
+      resourceMeta: {
+        resourceId: permissionMeta.estimateId,
+      },
+    });
+  }
 }

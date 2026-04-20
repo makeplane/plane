@@ -41,13 +41,20 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
   // state
   const [isLinkedWorkItemsOpen, setIsLinkedWorkItemsOpen] = useState(false);
   // store hooks
-  const { updateMilestone, addWorkItemsToMilestone, getMilestoneById } = useMilestones();
+  const { updateMilestone, addWorkItemsToMilestone, getMilestoneById, permissions } = useMilestones();
 
   const milestone = getMilestoneById(projectId, milestoneId);
 
   if (!milestone) return null;
 
+  // Assemble per-milestone permissions
+  const canEdit = permissions.getCanEdit(workspaceSlug, projectId, milestoneId);
+  const canDelete = permissions.getCanDelete(workspaceSlug, projectId, milestoneId);
+  const canAddWorkItems = permissions.getCanAddWorkItems(workspaceSlug, projectId, milestoneId);
+  const canRemoveWorkItems = permissions.getCanRemoveWorkItems(workspaceSlug, projectId, milestoneId);
+
   const handleUpdateDate = async (date: Date) => {
+    if (!canEdit) return;
     await updateMilestone(workspaceSlug, projectId, milestoneId, {
       target_date: date ? renderFormattedPayloadDate(date) : null,
     }).catch((error) => {
@@ -90,8 +97,14 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
               }
             }}
             buttonVariant="border-with-text"
+            disabled={!canEdit}
           />
-          <MilestoneQuickActionButton workspaceSlug={workspaceSlug} milestoneId={milestoneId} projectId={projectId} />
+          <MilestoneQuickActionButton
+            workspaceSlug={workspaceSlug}
+            milestoneId={milestoneId}
+            projectId={projectId}
+            permissions={{ canEdit, canDelete }}
+          />
         </div>
       </div>
       {milestone.description?.description_html ? (
@@ -135,35 +148,46 @@ export const MilestoneCard = observer(function MilestoneCard(props: Props) {
                   </Pill>
                 }
                 actionItemElement={
-                  <MilestoneWorkItemActionButton
-                    projectId={projectId}
-                    workspaceSlug={workspaceSlug}
-                    customButton={<PlusIcon className="size-4 text-secondary" />}
-                    handleSubmit={handleAddWorkItems}
-                  />
+                  canAddWorkItems ? (
+                    <MilestoneWorkItemActionButton
+                      projectId={projectId}
+                      workspaceSlug={workspaceSlug}
+                      customButton={<PlusIcon className="size-4 text-secondary" />}
+                      handleSubmit={handleAddWorkItems}
+                      canAddWorkItems={canAddWorkItems}
+                    />
+                  ) : null
                 }
                 titleClassName="text-body-xs-regular"
                 className="border-none h-min px-0"
               />
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <MilestoneWorkItemsList milestoneId={milestoneId} workspaceSlug={workspaceSlug} projectId={projectId} />
+              <MilestoneWorkItemsList
+                milestoneId={milestoneId}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                canRemoveWorkItems={canRemoveWorkItems}
+              />
             </CollapsibleContent>
           </Collapsible>
         ) : (
-          <div className="pt-2">
-            <MilestoneWorkItemActionButton
-              projectId={projectId}
-              workspaceSlug={workspaceSlug}
-              customButton={
-                <Button variant="secondary" className="text-secondary text-caption-sm-medium">
-                  <LayersIcon className="size-3" />
-                  Link work items
-                </Button>
-              }
-              handleSubmit={handleAddWorkItems}
-            />
-          </div>
+          canAddWorkItems && (
+            <div className="pt-2">
+              <MilestoneWorkItemActionButton
+                projectId={projectId}
+                workspaceSlug={workspaceSlug}
+                customButton={
+                  <Button variant="secondary" className="text-secondary text-caption-sm-medium">
+                    <LayersIcon className="size-3" />
+                    Link work items
+                  </Button>
+                }
+                handleSubmit={handleAddWorkItems}
+                canAddWorkItems={canAddWorkItems}
+              />
+            </div>
+          )
         )}
       </div>
     </Card>

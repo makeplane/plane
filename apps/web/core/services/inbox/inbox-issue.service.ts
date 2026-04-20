@@ -55,13 +55,16 @@ export class InboxIssueService extends APIService {
       });
   }
 
-  async update(
+  async updateStatus(
     workspaceSlug: string,
     projectId: string,
     inboxIssueId: string,
     data: Partial<TInboxIssue>
   ): Promise<TInboxIssue> {
-    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/`, data)
+    return this.patch(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/inbox-issues/${inboxIssueId}/status/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -17,14 +17,12 @@ import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { AtSign } from "lucide-react";
-import { EUserPermissionsLevel } from "@plane/constants";
 // plane imports
 import { Combobox } from "@plane/propel/combobox";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Tooltip } from "@plane/propel/tooltip";
 import { Switch } from "@plane/propel/switch";
 import type { IProject, IWorkspace } from "@plane/types";
-import { EUserProjectRoles } from "@plane/types";
 import { Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
@@ -32,7 +30,6 @@ import { WorkspaceLogo } from "@/components/workspace/logo";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import type { TFocus } from "@/types";
 
@@ -49,8 +46,7 @@ export const FocusFilter = observer(function FocusFilter(props: TProps) {
   const { workspaceSlug } = useParams();
   // store hooks
   const { getWorkspaceBySlug } = useWorkspace();
-  const { workspaceProjectIds, getProjectById } = useProject();
-  const { allowPermissions } = useUserPermissions();
+  const { joinedProjectIds, getProjectById } = useProject();
   // derived values
   const workspace = getWorkspaceBySlug(workspaceSlug?.toString() || "");
   const selectedFocus = focus.entityType === "workspace_id" ? workspace : getProjectById(focus.entityIdentifier);
@@ -149,33 +145,24 @@ export const FocusFilter = observer(function FocusFilter(props: TProps) {
                 <span className="truncate">{workspace?.name}</span>
               </div>
             </Combobox.Option>
-
-            {workspaceProjectIds && workspaceProjectIds.length > 0 && (
+            {joinedProjectIds && joinedProjectIds.length > 0 && (
               <span className="text-tertiary font-medium text-13 px-2">Projects</span>
             )}
-            {workspaceProjectIds &&
-              workspaceProjectIds.map((id) => {
+            {joinedProjectIds &&
+              joinedProjectIds.map((id: string) => {
                 const project = getProjectById(id);
-                if (
-                  allowPermissions(
-                    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER, EUserProjectRoles.GUEST],
-                    EUserPermissionsLevel.PROJECT,
-                    workspaceSlug.toString(),
-                    project?.id
-                  )
-                )
-                  return (
-                    <Combobox.Option
-                      key={id}
-                      value={`project_id%${id}`}
-                      className="text-13 text-secondary font-medium data-[highlighted]:bg-layer-transparent-hover"
-                    >
-                      <div className="flex flex-start gap-2 max-w-full">
-                        <div className="size-4 my-auto">{project && <Logo logo={project?.logo_props} />}</div>
-                        <span className="truncate">{project?.name}</span>
-                      </div>
-                    </Combobox.Option>
-                  );
+                return (
+                  <Combobox.Option
+                    key={id}
+                    value={`project_id%${id}`}
+                    className="text-13 text-secondary font-medium data-[highlighted]:bg-layer-transparent-hover"
+                  >
+                    <div className="flex flex-start gap-2 max-w-full">
+                      <div className="size-4 my-auto">{project && <Logo logo={project?.logo_props} />}</div>
+                      <span className="truncate">{project?.name}</span>
+                    </div>
+                  </Combobox.Option>
+                );
               })}
           </div>
           <div className="pt-2 flex justify-between gap-2 px-2">

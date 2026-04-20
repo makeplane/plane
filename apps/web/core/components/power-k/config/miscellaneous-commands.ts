@@ -112,16 +112,16 @@ export const usePowerKMiscellaneousCommands = (): TPowerKCommandConfig[] => {
       action: () => (activeSidecar === "pi-chat" ? closeSidecar() : openPiChatSidecar()),
       isEnabled: (ctx) =>
         !!ctx.params.workspaceSlug &&
-        isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
+        isWorkspaceFeatureEnabled(ctx.params.workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED) &&
         isPiAllowed(
           pathname,
-          ctx.params.workspaceSlug.toString(),
+          ctx.params.workspaceSlug,
           ctx.params.projectId?.toString(),
           ctx.params.workItem?.toString()
         ),
       isVisible: (ctx) =>
         !!ctx.params.workspaceSlug &&
-        isWorkspaceFeatureEnabled(EWorkspaceFeatures.IS_PI_ENABLED) &&
+        isWorkspaceFeatureEnabled(ctx.params.workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED) &&
         isPiAllowed(
           pathname,
           ctx.params.workspaceSlug.toString(),

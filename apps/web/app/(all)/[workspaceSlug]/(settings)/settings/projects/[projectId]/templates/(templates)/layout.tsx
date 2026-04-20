@@ -16,28 +16,16 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Outlet } from "react-router";
 import { ChevronLeftIcon } from "lucide-react";
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserProjectRoles } from "@plane/types";
-// components
-import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 // hooks
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
-import { useUserPermissions } from "@/hooks/store/user";
 // local imports
-import type { Route } from "./+types/layout";
 import { TemplatesProjectSettingsHeader } from "../header";
+// types
+import type { Route } from "./+types/layout";
 
 function ProjectLevelTemplatesLayout({ params }: Route.ComponentProps) {
   // router params
   const { workspaceSlug, projectId } = params;
-  // store hooks
-  const { workspaceUserInfo, allowPermissions } = useUserPermissions();
-  // derived values
-  const hasAdminPermission = allowPermissions([EUserProjectRoles.ADMIN], EUserPermissionsLevel.PROJECT);
-
-  if (workspaceUserInfo && !hasAdminPermission) {
-    return <NotAuthorizedView section="settings" isProjectView />;
-  }
 
   return (
     <SettingsContentWrapper header={<TemplatesProjectSettingsHeader />}>

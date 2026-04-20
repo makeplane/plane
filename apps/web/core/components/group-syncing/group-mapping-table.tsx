@@ -15,7 +15,6 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { Table } from "@plane/ui";
 import { useTranslation } from "@plane/i18n";
-import { ROLE } from "@plane/constants";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { useProject } from "@/hooks/store/use-project";
 import type { GroupMap } from "@plane/types";
@@ -71,11 +70,7 @@ export const GroupMappingTableRoot = observer(function GroupMappingTableRoot({
       {
         key: "project_role",
         content: t("workspace_settings.settings.group_syncing.modal.default_role.text"),
-        tdRender: (rowData: GroupMap) => {
-          const roleKey = Number(rowData?.default_role);
-          const label = Number.isNaN(roleKey) ? rowData?.default_role : ROLE[roleKey as keyof typeof ROLE];
-          return <div className="truncate w-full">{label ?? rowData?.default_role}</div>;
-        },
+        tdRender: (rowData: GroupMap) => <div className="truncate w-full">{rowData.role_detail?.name ?? "—"}</div>,
       },
     ],
     [t, getProjectById, disabled, onUpdate, onDelete]

@@ -14,15 +14,14 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
-import { INTAKE_DISABLED_STATUSES } from "@plane/constants";
 import type { TNameDescriptionLoader } from "@plane/types";
 // components
 import { ContentWrapper } from "@plane/ui";
 // hooks
-import { useIntakePermissions } from "@/hooks/use-intake-permissions";
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 // local imports
 import { InboxIssueMainContent } from "./work-item-root";
+import type { TIntakeWorkItemProperty } from "@/store/inbox/permissions/root";
 
 type TIntakeDetailContentRoot = {
   workspaceSlug: string;
@@ -35,9 +34,31 @@ export const IntakeDetailContentRoot = observer(function IntakeDetailContentRoot
   // states
   const [isSubmitting, setIsSubmitting] = useState<TNameDescriptionLoader>("saved");
   // hooks
-  const { fetchInboxIssueById, getIssueInboxByIssueId } = useProjectInbox();
+  const { fetchInboxIssueById, getIssueInboxByIssueId, permissions: intakePermissions } = useProjectInbox();
+  // derived values
   const inboxIssue = getIssueInboxByIssueId(inboxIssueId);
-  const { isEditable, readOnly } = useIntakePermissions(workspaceSlug, projectId, inboxIssue);
+  const permissions = {
+    canEdit: intakePermissions.getCanEdit(workspaceSlug, projectId, inboxIssueId),
+    canEditProperty: (property: TIntakeWorkItemProperty) =>
+      intakePermissions.getCanEditProperty(workspaceSlug, projectId, inboxIssueId, property),
+    canReact: intakePermissions.getCanReact(workspaceSlug, projectId, inboxIssueId),
+    canRestoreDescriptionVersion: intakePermissions.getCanRestoreDescriptionVersion(
+      workspaceSlug,
+      projectId,
+      inboxIssueId
+    ),
+    canAddAttachments: intakePermissions.getCanAddAttachments(workspaceSlug, projectId, inboxIssueId),
+    canAddWorklog: intakePermissions.getCanAddWorklog(workspaceSlug, projectId, inboxIssueId),
+    comments: {
+      canCreate: intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).canCreate,
+      canEdit: (commentId: string) =>
+        intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).getCanEdit(commentId),
+      canDelete: (commentId: string) =>
+        intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).getCanDelete(commentId),
+      canReact: (commentId: string) =>
+        intakePermissions.getCommentPermissions(workspaceSlug, projectId, inboxIssueId).getCanReact(commentId),
+    },
+  };
 
   useSWR(
     workspaceSlug && projectId && inboxIssueId
@@ -54,10 +75,6 @@ export const IntakeDetailContentRoot = observer(function IntakeDetailContentRoot
 
   if (!inboxIssue) return null;
 
-  const isIssueDisabled =
-    typeof inboxIssue.status === "number" &&
-    (INTAKE_DISABLED_STATUSES as readonly number[]).includes(inboxIssue.status);
-
   return (
     <div className="w-full h-full overflow-hidden relative flex flex-col">
       <ContentWrapper className="divide-y-2 divide-subtle-1">
@@ -65,7 +82,7 @@ export const IntakeDetailContentRoot = observer(function IntakeDetailContentRoot
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           inboxIssue={inboxIssue}
-          isEditable={isEditable && !isIssueDisabled && !readOnly}
+          permissions={permissions}
           isSubmitting={isSubmitting}
           setIsSubmitting={setIsSubmitting}
         />

@@ -26,18 +26,17 @@ from rest_framework import status
 # Module imports
 from .. import BaseAPIView
 from plane.app.serializers import IssueActivitySerializer, IssueCommentSerializer
-from plane.app.permissions import ProjectEntityPermission, allow_permission, ROLE
+from plane.permissions import can, WorkitemPermissions
 from plane.db.models import IssueActivity, IssueComment, CommentReaction, IntakeIssue
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
 
 class IssueActivityEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission]
     use_read_replica = True
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id):
         filters = {}
         if request.GET.get("created_at__gt", None) is not None:

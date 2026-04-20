@@ -12,46 +12,48 @@
  */
 
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
-
 import { PlusIcon, ChevronRightIcon } from "@plane/propel/icons";
 import { Transition } from "@headlessui/react";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
 import { IconButton } from "@plane/propel/icon-button";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserWorkspaceRoles } from "@plane/types";
 // helpers
 import { cn } from "@plane/utils";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web hooks
 import { useTeamspaces } from "@/plane-web/hooks/store";
 import { TeamspaceSidebarListItem } from "./list-item";
+import { useWorkspaceAccess } from "@/hooks/permissions/use-workspace-access";
 
-export const SidebarTeamsList = observer(function SidebarTeamsList() {
-  // router params
-  const { workspaceSlug } = useParams();
+type SidebarTeamspacesListProps = {
+  workspaceSlug: string;
+};
+
+export const SidebarTeamsList = observer(function SidebarTeamsList(props: SidebarTeamspacesListProps) {
+  const { workspaceSlug } = props;
   // pathname
   // plane hooks
   const { t } = useTranslation();
   // store hooks
   const { toggleSidebar } = useAppTheme();
-  const { allowPermissions } = useUserPermissions();
   const { toggleCreateTeamspaceModal } = useCommandPalette();
-  const { hasPageAccess } = useUserPermissions();
-  const { joinedTeamSpaceIds, isTeamspacesFeatureEnabled } = useTeamspaces();
+  const { canAccessWorkspaceResource } = useWorkspaceAccess();
+  const {
+    joinedTeamSpaceIds,
+    isTeamspacesFeatureEnabled,
+    permissions: { getCanCreate },
+  } = useTeamspaces();
   // local storage
   const { setValue: toggleTeamMenu, storedValue } = useLocalStorage<boolean>("is_teams_list_open", true);
   // derived values
   const isTeamspaceListItemOpen = !!storedValue;
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
-  const isAuthorized = hasPageAccess(workspaceSlug?.toString() ?? "", "team_spaces");
+  const canCreateTeamspacePermission = getCanCreate(workspaceSlug);
+  const canAccessTeamspaces = canAccessWorkspaceResource(workspaceSlug, "team_spaces");
 
   const handleLinkClick = () => {
     if (window.innerWidth < 768) {
@@ -60,10 +62,7 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
   };
 
   // Return if teamspaces are not enabled or available
-  if (!isTeamspacesFeatureEnabled || joinedTeamSpaceIds.length === 0) return null;
-
-  if (!isAuthorized) return null;
-
+  if (!isTeamspacesFeatureEnabled || joinedTeamSpaceIds.length === 0 || !canAccessTeamspaces) return null;
   return (
     <>
       <Collapsible
@@ -85,7 +84,7 @@ export const SidebarTeamsList = observer(function SidebarTeamsList() {
             <span className="text-13 font-semibold">{t("teamspaces.label")}</span>
           </CollapsibleTrigger>
           <div className="flex items-center gap-1">
-            {isAdmin && (
+            {canCreateTeamspacePermission && (
               <Tooltip tooltipHeading="Create teamspace" tooltipContent="">
                 <IconButton
                   variant="ghost"

@@ -25,7 +25,7 @@ import type { IBaseTemplateActionCallbacks, ITemplateService, TPageTemplate } fr
 import type { RootStore } from "@/plane-web/store/root.store";
 import type { IBaseTemplateInstance, IBaseTemplateStore } from "@/store/templates";
 import { BaseTemplateStore } from "./base.store";
-import type { TPageTemplateInstanceProps } from "../instance/page";
+import type { TPageTemplateInstanceArgs } from "../instance/page";
 import { PageTemplateInstance } from "../instance/page";
 
 type TBasePageTemplateProps = {
@@ -57,6 +57,7 @@ export interface IPageTemplateStore extends IBaseTemplateStore<TPageTemplate> {
   isAnyPageTemplatesAvailable: (workspaceSlug: string) => boolean;
   isAnyPageTemplatesAvailableForProject: (workspaceSlug: string, projectId: string) => boolean;
   // actions
+  getCanCreate: (props: TBasePageTemplateProps) => boolean;
   fetchAllTemplates: (props: TFetchPageTemplatesProps) => Promise<void>;
   fetchTemplateById: (props: TFetchPageTemplateByIdProps) => Promise<void>;
   createPageTemplate: (props: TCreatePageTemplateProps) => Promise<TPageTemplate | undefined>;
@@ -67,12 +68,13 @@ export class PageTemplateStore extends BaseTemplateStore<TPageTemplate> implemen
   constructor(protected rootStore: RootStore) {
     super({
       root: rootStore,
-      createTemplateInstance: (templateInstanceProps: TPageTemplateInstanceProps) =>
+      createTemplateInstance: (templateInstanceProps: TPageTemplateInstanceArgs) =>
         new PageTemplateInstance(templateInstanceProps),
     });
 
     makeObservable(this, {
       // observables
+      getCanCreate: action,
       fetchAllTemplates: action,
       fetchTemplateById: action,
       createPageTemplate: action,
@@ -146,6 +148,30 @@ export class PageTemplateStore extends BaseTemplateStore<TPageTemplate> implemen
   );
 
   // actions
+  /**
+   * @description Check if the current user can create a page template
+   * @param props - The props
+   * @param props.workspaceSlug - The workspace slug
+   * @param props.level - The level of the template
+   * @param props.projectId - The project id, required if the level is project
+   * @returns True if the current user can create a page template, false otherwise
+   */
+  getCanCreate = computedFn((props: TBasePageTemplateProps) => {
+    if (props.level === ETemplateLevel.PROJECT) {
+      return this.rootStore.permissionAccessStore.can({
+        resource: "project_page_template",
+        action: "create",
+        workspaceSlug: props.workspaceSlug,
+        projectId: props.projectId,
+      });
+    }
+    return this.rootStore.permissionAccessStore.can({
+      resource: "workspace_page_template",
+      action: "create",
+      workspaceSlug: props.workspaceSlug,
+    });
+  });
+
   /**
    * @description Fetch all templates
    * @param props - The props

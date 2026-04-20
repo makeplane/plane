@@ -113,7 +113,7 @@ export const WorkspaceProjectsRoot = observer(function WorkspaceProjectsRoot(pro
           alwaysAllowEditing
         />
       )}
-      <ProjectLayoutRoot />
+      <ProjectLayoutRoot workspaceSlug={workspaceSlug} />
     </div>
   );
 });

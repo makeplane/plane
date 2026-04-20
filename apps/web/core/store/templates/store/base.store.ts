@@ -18,11 +18,12 @@ import { computedFn } from "mobx-utils";
 import type { IBaseTemplateActionCallbacks, TBaseTemplateWithData, TLoader } from "@plane/types";
 // plane web imports
 import type { RootStore } from "@/plane-web/store/root.store";
-import type { IBaseTemplateInstance, TBaseTemplateInstanceProps } from "../instance";
+import type { IBaseTemplateInstance, TBaseTemplateInstanceArgs } from "../instance";
+import type { E_FEATURE_FLAGS } from "@plane/constants";
 
 export type TBaseTemplateStoreProps<T extends TBaseTemplateWithData> = {
   root: RootStore;
-  createTemplateInstance: (templateInstanceProps: TBaseTemplateInstanceProps<T>) => IBaseTemplateInstance<T>;
+  createTemplateInstance: (templateInstanceProps: TBaseTemplateInstanceArgs<T>) => IBaseTemplateInstance<T>;
 };
 
 export interface IBaseTemplateStore<T extends TBaseTemplateWithData> {
@@ -153,9 +154,12 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
 
         // Create new template instance
         const templateInstance = this.createTemplateInstance({
-          root: this.rootStore,
           baseTemplateData: template,
           updateActionCallback,
+          can: this.rootStore.permissionAccessStore.can,
+          getWorkspaceSlugById: this.getWorkspaceSlugById,
+          currentUserId: this.rootStore.user.data?.id,
+          getFeatureFlagByWorkspaceSlug: this.getFeatureFlagByWorkspaceSlug,
         });
 
         // Add new template instance to templates
@@ -163,6 +167,14 @@ export abstract class BaseTemplateStore<T extends TBaseTemplateWithData> impleme
         set(this.fetchStatusMap, template.id, true);
       }
     }
+  );
+  // helper actions
+  private getWorkspaceSlugById = computedFn(
+    (workspaceId: string) => this.rootStore.workspaceRoot.getWorkspaceById(workspaceId)?.slug
+  );
+
+  private getFeatureFlagByWorkspaceSlug = computedFn((workspaceSlug: string, flag: E_FEATURE_FLAGS) =>
+    this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, flag, false)
   );
 
   // actions

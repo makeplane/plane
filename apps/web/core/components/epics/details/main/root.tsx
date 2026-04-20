@@ -15,13 +15,14 @@ import { observer } from "mobx-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import { EIssueServiceType } from "@plane/types";
-import type { TIssue } from "@plane/types";
 // components
 import { IssueDetailWidgets } from "@/components/issues/issue-detail-widgets/root";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 // plane web components
 import { MainWrapper } from "@/components/common/layout/main/main-wrapper";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 // local imports
 import { EpicInfoSection } from "./info-section-root";
 import { EpicOverviewRoot } from "./overview-section-root";
@@ -33,10 +34,19 @@ type Props = {
   projectId: string;
   epicId: string;
   permissions: {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canReact: boolean;
+    canRestoreDescriptionVersion: boolean;
+    canAddDependencies: boolean;
+    canAddRelations: boolean;
+    canAddLinks: boolean;
+    canAddAttachments: boolean;
+    canAddPages: boolean;
+    canAddCustomerRequests: boolean;
     sub_work_items: {
       getCanView: (projectId: string, workItemId: string) => boolean;
       getCanEdit: (projectId: string, workItemId: string) => boolean;
-      getCanEditProperty: (projectId: string, workItemId: string, property: keyof TIssue) => boolean; // TODO: <permissionEngine> update property type to TWorkItemProperty
+      getCanEditProperty: (projectId: string, workItemId: string, property: TWorkItemProperty) => boolean;
       getCanDelete: (projectId: string, workItemId: string) => boolean;
       getCanAdd: (parentWorkItemProjectId: string, parentWorkItemId: string) => boolean;
       getCanRemove: (
@@ -47,11 +57,10 @@ type Props = {
       ) => boolean;
     };
   };
-  disabled?: boolean;
 };
 
 export const EpicMainContentRoot = observer(function EpicMainContentRoot(props: Props) {
-  const { editorRef, workspaceSlug, projectId, epicId, permissions, disabled = false } = props;
+  const { editorRef, workspaceSlug, projectId, epicId, permissions } = props;
   // store hooks
   const { epicDetailSidebarCollapsed } = useAppTheme();
 
@@ -62,7 +71,7 @@ export const EpicMainContentRoot = observer(function EpicMainContentRoot(props: 
         workspaceSlug={workspaceSlug}
         projectId={projectId}
         epicId={epicId}
-        disabled={disabled}
+        permissions={permissions}
       />
       <EpicProgressSection epicId={epicId} />
       <div className="py-2">
@@ -70,19 +79,12 @@ export const EpicMainContentRoot = observer(function EpicMainContentRoot(props: 
           workspaceSlug={workspaceSlug}
           projectId={projectId}
           issueId={epicId}
-          disabled={disabled}
+          permissions={permissions}
           issueServiceType={EIssueServiceType.EPICS}
           hideWidgets={["sub-work-items", "dependencies", "relations"]}
-          permissions={permissions}
         />
       </div>
-      <EpicOverviewRoot
-        workspaceSlug={workspaceSlug}
-        projectId={projectId}
-        epicId={epicId}
-        permissions={permissions}
-        disabled={disabled}
-      />
+      <EpicOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} permissions={permissions} />
     </MainWrapper>
   );
 });

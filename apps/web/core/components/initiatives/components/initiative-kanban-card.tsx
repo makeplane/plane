@@ -14,21 +14,18 @@
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-// Plane
-import { EUserPermissionsLevel } from "@plane/constants";
+// plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { InitiativeIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
-import { EUserWorkspaceRoles } from "@plane/types";
 import { cn } from "@plane/utils";
-// components
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web
 import { UpdateStatusPills } from "@/components/initiatives/common/update-status";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
+import type { TInitiativeProperty } from "@/store/initiatives/permissions/root";
 // local components
 import { useInitiativeUpdates } from "../details/sidebar/use-updates";
 import { InitiativesBlockProperties } from "./initiatives-block-properties";
@@ -36,10 +33,15 @@ import { InitiativeQuickActions } from "./quick-actions";
 
 type Props = {
   initiativeId: string;
+  canEditProperty: (property: TInitiativeProperty) => boolean;
+  quickActionPermissions: {
+    canEdit: boolean;
+    canDelete: boolean;
+  };
 };
 
 export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props: Props) {
-  const { initiativeId } = props;
+  const { initiativeId, canEditProperty, quickActionPermissions } = props;
   const parentRef = useRef<HTMLDivElement>(null);
   const { workspaceSlug } = useParams();
 
@@ -49,16 +51,10 @@ export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props
 
   const { sidebarCollapsed: isSidebarCollapsed } = useAppTheme();
   const { isMobile } = usePlatformOS();
-  const { allowPermissions } = useUserPermissions();
   const { handleUpdateOperations } = useInitiativeUpdates(workspaceSlug.toString(), initiativeId);
 
   const initiative = getInitiativeById(initiativeId);
   const initiativeStats = getInitiativeStatsById(initiativeId);
-
-  const isEditable = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
 
   const handleInitiativeClick = useCallback(
     (e: React.MouseEvent) => {
@@ -87,7 +83,7 @@ export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2 flex-1 min-w-0">
-          <span className="flex items-center flex-shrink-0 bg-layer-1 rounded-md p-2">
+          <span className="flex items-center shrink-0 bg-layer-1 rounded-md p-2">
             {initiative?.logo_props?.in_use ? (
               <Logo logo={initiative?.logo_props} size={16} type="lucide" />
             ) : (
@@ -100,12 +96,12 @@ export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props
             </Tooltip>
           </div>
         </div>
-        <div className="flex-shrink-0 bg-layer-1 rounded-md">
+        <div className="shrink-0 bg-layer-1 rounded-md">
           <InitiativeQuickActions
             parentRef={parentRef}
             initiative={initiative}
             workspaceSlug={workspaceSlug.toString()}
-            disabled={!isEditable}
+            permissions={quickActionPermissions}
           />
         </div>
       </div>
@@ -126,6 +122,7 @@ export const InitiativeKanbanCard = observer(function InitiativeKanbanCard(props
         initiative={initiative}
         isSidebarCollapsed={isSidebarCollapsed}
         workspaceSlug={workspaceSlug.toString()}
+        canEditProperty={canEditProperty}
       />
     </div>
   );

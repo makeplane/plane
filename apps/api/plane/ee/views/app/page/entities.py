@@ -11,32 +11,52 @@
 
 from django.db.models import OuterRef, Subquery
 
-from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions.page import ProjectPagePermission, TeamspacePagePermission, WorkspacePagePermission
-from plane.db.models import PageLog, Issue, ProjectPage, Page, User
-from plane.ee.models import TeamspacePage
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
 
+from plane.ee.views.base import BaseAPIView
+from plane.db.models import PageLog, Issue, ProjectPage, Page, User
+from plane.ee.models import TeamspacePage
+from plane.permissions import (
+    permission_engine,
+    PagePermissions,
+    TeamspacePagePermissions,
+    WikiPermissions,
+    PermissionContext,
+)
 
 class PageEmbedEndpoint(BaseAPIView):
     use_read_replica = True
 
-    def get_permissions(self):
-        """
-        Dynamically return permission classes based on whether project_id or team_space_id is provided.
-        """
-        if self.request.query_params.get("project_id") is not None:
-            # Add project_id to kwargs so ProjectPagePermission can access it
-            self.kwargs["project_id"] = self.request.query_params.get("project_id")
-            return [ProjectPagePermission()]
-        elif self.request.query_params.get("team_space_id") is not None:
-            # Add team_space_id to kwargs so TeamspacePagePermission can access it
-            self.kwargs["team_space_id"] = self.request.query_params.get("team_space_id")
-            return [TeamspacePagePermission()]
-        return [WorkspacePagePermission()]
-
     def get(self, request, slug, page_id, **_kwargs):
+        # Inline permission check — dynamic routing based on query params
+        workspace_id = request.workspace_id
+        project_id = request.query_params.get("project_id")
+        team_space_id = request.query_params.get("team_space_id")
+
+        if project_id:
+            result = permission_engine.check(
+                user=request.user,
+                permission=PagePermissions.VIEW,
+                context=PermissionContext.project(project_id=project_id, workspace_id=workspace_id),
+            )
+        elif team_space_id:
+            result = permission_engine.check(
+                user=request.user,
+                permission=TeamspacePagePermissions.VIEW,
+                context=PermissionContext.teamspace(teamspace_id=team_space_id, workspace_id=workspace_id),
+            )
+        else:
+            result = permission_engine.check(
+                user=request.user,
+                permission=WikiPermissions.VIEW,
+                context=PermissionContext.workspace(workspace_id),
+            )
+
+        if not result:
+            raise PermissionDenied("You do not have permission to access this page.")
+
         embed_type = request.query_params.get("embed_type", "issue")
 
         # check if page_id is a project_id or team_space_id
@@ -106,21 +126,34 @@ class PageEmbedEndpoint(BaseAPIView):
 class PageMentionEndpoint(BaseAPIView):
     use_read_replica = True
 
-    def get_permissions(self):
-        """
-        Dynamically return permission classes based on whether project_id or team_space_id is provided.
-        """
-        if self.request.query_params.get("project_id") is not None:
-            # Add project_id to kwargs so ProjectPagePermission can access it
-            self.kwargs["project_id"] = self.request.query_params.get("project_id")
-            return [ProjectPagePermission()]
-        elif self.request.query_params.get("team_space_id") is not None:
-            # Add team_space_id to kwargs so TeamspacePagePermission can access it
-            self.kwargs["team_space_id"] = self.request.query_params.get("team_space_id")
-            return [TeamspacePagePermission()]
-        return [WorkspacePagePermission()]
-
     def get(self, request, slug, page_id, **_kwargs):
+        # Inline permission check — dynamic routing based on query params
+        workspace_id = request.workspace_id
+        project_id = request.query_params.get("project_id")
+        team_space_id = request.query_params.get("team_space_id")
+
+        if project_id:
+            result = permission_engine.check(
+                user=request.user,
+                permission=PagePermissions.VIEW,
+                context=PermissionContext.project(project_id=project_id, workspace_id=workspace_id),
+            )
+        elif team_space_id:
+            result = permission_engine.check(
+                user=request.user,
+                permission=TeamspacePagePermissions.VIEW,
+                context=PermissionContext.teamspace(teamspace_id=team_space_id, workspace_id=workspace_id),
+            )
+        else:
+            result = permission_engine.check(
+                user=request.user,
+                permission=WikiPermissions.VIEW,
+                context=PermissionContext.workspace(workspace_id),
+            )
+
+        if not result:
+            raise PermissionDenied("You do not have permission to access this page.")
+
         mention_type = request.query_params.get("mention_type", "issue_mention")
 
         # check if page_id is a project_id or team_space_id
@@ -192,22 +225,36 @@ class PageFetchMetadataEndpoint(BaseAPIView):
     Returns work item embeds, work item mentions, user mentions, and page embeds in a single response.
     This endpoint is used by the live server for PDF export to avoid multiple parallel API calls.
     """
-
     use_read_replica = True
 
-    def get_permissions(self):
-        """
-        Dynamically return permission classes based on whether project_id or team_space_id is provided.
-        """
-        if self.request.query_params.get("project_id") is not None:
-            self.kwargs["project_id"] = self.request.query_params.get("project_id")
-            return [ProjectPagePermission()]
-        elif self.request.query_params.get("team_space_id") is not None:
-            self.kwargs["team_space_id"] = self.request.query_params.get("team_space_id")
-            return [TeamspacePagePermission()]
-        return [WorkspacePagePermission()]
-
     def get(self, request, slug, page_id, **_kwargs):
+        # Inline permission check — dynamic routing based on query params
+        workspace_id = request.workspace_id
+        project_id = request.query_params.get("project_id")
+        team_space_id = request.query_params.get("team_space_id")
+
+        if project_id:
+            result = permission_engine.check(
+                user=request.user,
+                permission=PagePermissions.VIEW,
+                context=PermissionContext.project(project_id=project_id, workspace_id=workspace_id),
+            )
+        elif team_space_id:
+            result = permission_engine.check(
+                user=request.user,
+                permission=TeamspacePagePermissions.VIEW,
+                context=PermissionContext.teamspace(teamspace_id=team_space_id, workspace_id=workspace_id),
+            )
+        else:
+            result = permission_engine.check(
+                user=request.user,
+                permission=WikiPermissions.VIEW,
+                context=PermissionContext.workspace(workspace_id),
+            )
+
+        if not result:
+            raise PermissionDenied("You do not have permission to access this page.")
+
         page = Page.objects.filter(id=page_id, workspace__slug=slug).first()
         if not page:
             return Response(

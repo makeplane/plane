@@ -28,6 +28,8 @@ import type {
   IWorkflowState,
 } from "@plane/types";
 import { computedFn } from "mobx-utils";
+import type { WorkflowPermissions } from "./permissions";
+import { WorkflowPermissionsInstance } from "./permissions";
 
 export type TWorkflowStateInfo = {
   type: TWorkflowStateType;
@@ -57,6 +59,7 @@ export interface IWorkflowsStore {
   loader: TLoader;
   workflowsMap: Map<string, IWorkflow>;
   filters: IWorkflowFilterStore;
+  permissions: WorkflowPermissions;
   // computed
   isMultipleWorkflowModeEnabled: (workspaceSlug: string, projectId: string) => boolean;
   isWorkflowsEnabled: (workspaceSlug: string, projectId: string) => boolean;
@@ -128,6 +131,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   filters: IWorkflowFilterStore = new WorkflowFilterStore();
   // services
   workflowService: WorkflowsService;
+  permissions: WorkflowPermissions;
   // root store
   rootStore: RootStore;
   private disposers: Array<() => void> = [];
@@ -148,6 +152,9 @@ export class WorkflowsStore implements IWorkflowsStore {
 
     // services
     this.workflowService = new WorkflowsService();
+    this.permissions = new WorkflowPermissionsInstance({
+      can: _rootStore.permissionAccessStore.can,
+    });
     // root store
     this.rootStore = _rootStore;
 
@@ -173,6 +180,11 @@ export class WorkflowsStore implements IWorkflowsStore {
 
     this.disposers.push(syncProjectStatesReaction);
   }
+
+  private createWorkflowInstance = (workspaceSlug: string, data: TWorkflow): Workflow =>
+    new Workflow(data, this.workflowService, () =>
+      this.permissions.getWorkflowPermissions(workspaceSlug, data.project_id, data.id)
+    );
 
   private buildScopedStateMap = (
     projectId: string,
@@ -725,7 +737,7 @@ export class WorkflowsStore implements IWorkflowsStore {
 
       runInAction(() => {
         response.results.forEach((workflow: TWorkflow) => {
-          this.workflowsMap.set(workflow.id, new Workflow(workflow, this.workflowService));
+          this.workflowsMap.set(workflow.id, this.createWorkflowInstance(workspaceSlug, workflow));
         });
       });
     } catch (error) {
@@ -769,7 +781,7 @@ export class WorkflowsStore implements IWorkflowsStore {
       runInAction(() => {
         this.workflowsMap.set(
           response.id,
-          new Workflow({ ...response, states: response.states ?? [] }, this.workflowService)
+          this.createWorkflowInstance(workspaceSlug, { ...response, states: response.states ?? [] })
         );
       });
     } catch (error) {
@@ -814,7 +826,7 @@ export class WorkflowsStore implements IWorkflowsStore {
       runInAction(() => {
         this.workflowsMap.set(
           response.id,
-          new Workflow({ ...response, states: response.states ?? [] }, this.workflowService)
+          this.createWorkflowInstance(workspaceSlug, { ...response, states: response.states ?? [] })
         );
       });
     } catch (error) {

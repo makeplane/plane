@@ -11,8 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 // plane imports
@@ -26,14 +25,16 @@ import { ListItem } from "@/components/core/list";
 import { CustomerQuickActions } from "@/components/customers/actions";
 import { getCustomerLogoSrc } from "@/components/customers/utils";
 import { useCustomers } from "@/plane-web/hooks/store";
+import type { TCustomerDetailPermissions } from "@/store/customers/permissions/root";
 
 type TCustomerListItemProps = {
   customerId: string;
   workspaceSlug: string;
+  permissions: Pick<TCustomerDetailPermissions, "canEdit" | "canDelete">;
 };
 
 export const CustomerListItem = observer(function CustomerListItem(props: TCustomerListItemProps) {
-  const { customerId, workspaceSlug } = props;
+  const { customerId, workspaceSlug, permissions } = props;
   // refs
   const parentRef = useRef(null);
   // i18n
@@ -91,7 +92,12 @@ export const CustomerListItem = observer(function CustomerListItem(props: TCusto
             <CustomerRequestIcon className="size-3" />
             <p className="text-11 text-primary">{`${requestCount} ${t("customers.requests.label", { count: requestCount }).toLowerCase()}`}</p>
           </button>
-          <CustomerQuickActions customerId={customerId} workspaceSlug={workspaceSlug} parentRef={parentRef} />
+          <CustomerQuickActions
+            customerId={customerId}
+            workspaceSlug={workspaceSlug}
+            parentRef={parentRef}
+            permissions={permissions}
+          />
         </>
       }
       itemLink={`/${workspaceSlug}/customers/${customer.id}`}

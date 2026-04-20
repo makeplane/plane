@@ -14,36 +14,27 @@
 import { set } from "lodash-es";
 import { action, computed, makeObservable, observable, runInAction } from "mobx";
 // plane imports
-import { EUserPermissions } from "@plane/constants";
 import type {
-  EUserProjectRoles,
-  EUserWorkspaceRoles,
-  TUserPermissions,
   IRecurringWorkItemActionCallbacks,
   TRecurringWorkItem,
+  PermissionCheckArgs,
+  PermissionActionForResource,
 } from "@plane/types";
-// plane web imports
-import type { RootStore } from "@/plane-web/store/root.store";
 
-export type TRecurringWorkItemInstanceProps = {
-  root: RootStore;
+export type TRecurringWorkItemInstanceArgs = {
   updateActionCallback: IRecurringWorkItemActionCallbacks["update"];
   recurringWorkItemData: TRecurringWorkItem;
+  can: (args: PermissionCheckArgs) => boolean;
+  getWorkspaceSlugById: (workspaceId: string) => string | undefined;
+  currentUserId: string | undefined;
 };
 
 export interface IRecurringWorkItemInstance extends TRecurringWorkItem {
   // computed
   asJSON: TRecurringWorkItem;
-  getWorkspaceSlugForRecurringWorkItemInstance: string | undefined;
-  getUserRoleForRecurringWorkItemInstance:
-    | TUserPermissions
-    | EUserPermissions
-    | EUserWorkspaceRoles
-    | EUserProjectRoles
-    | undefined;
-  canCurrentUserEdit: boolean;
-  canCurrentUserToggleEnabled: boolean;
-  canCurrentUserDelete: boolean;
+  canEdit: boolean;
+  canConfigure: boolean;
+  canDelete: boolean;
   // helper actions
   mutateInstance: (recurringWorkItemData: Partial<TRecurringWorkItem>) => void;
   // actions
@@ -63,15 +54,14 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
   project: TRecurringWorkItem["project"];
   created_at: TRecurringWorkItem["created_at"];
   updated_at: TRecurringWorkItem["updated_at"];
-
-  // root store
-  protected rootStore: TRecurringWorkItemInstanceProps["root"];
+  created_by: TRecurringWorkItem["created_by"];
+  updated_by: TRecurringWorkItem["updated_by"];
 
   // service
-  protected updateActionCallback: TRecurringWorkItemInstanceProps["updateActionCallback"];
+  protected updateActionCallback: TRecurringWorkItemInstanceArgs["updateActionCallback"];
 
-  constructor(protected store: TRecurringWorkItemInstanceProps) {
-    const { root, updateActionCallback, recurringWorkItemData } = store;
+  constructor(protected args: TRecurringWorkItemInstanceArgs) {
+    const { updateActionCallback, recurringWorkItemData } = args;
 
     // properties
     this.id = recurringWorkItemData.id;
@@ -85,9 +75,8 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
     this.project = recurringWorkItemData.project;
     this.created_at = recurringWorkItemData.created_at;
     this.updated_at = recurringWorkItemData.updated_at;
-
-    // root store
-    this.rootStore = root;
+    this.created_by = recurringWorkItemData.created_by;
+    this.updated_by = recurringWorkItemData.updated_by;
 
     // service
     this.updateActionCallback = updateActionCallback;
@@ -105,11 +94,13 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
       project: observable,
       created_at: observable,
       updated_at: observable,
+      created_by: observable,
+      updated_by: observable,
       // computed
       asJSON: computed,
-      getUserRoleForRecurringWorkItemInstance: computed,
-      canCurrentUserEdit: computed,
-      canCurrentUserDelete: computed,
+      canEdit: computed,
+      canConfigure: computed,
+      canDelete: computed,
       // actions
       mutateInstance: action,
       update: action,
@@ -133,44 +124,53 @@ export class RecurringWorkItemInstance implements IRecurringWorkItemInstance {
       project: this.project,
       created_at: this.created_at,
       updated_at: this.updated_at,
+      created_by: this.created_by,
+      updated_by: this.updated_by,
     };
   }
 
   /**
    * @description Returns the workspace slug for the template instance
    */
-  get getWorkspaceSlugForRecurringWorkItemInstance() {
-    return this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
+  private get workspaceSlug() {
+    return this.args.getWorkspaceSlugById(this.workspace);
   }
 
-  /**
-   * @description Returns the user role for the recurring work item instance
-   */
-  get getUserRoleForRecurringWorkItemInstance() {
-    const workspaceSlug = this.rootStore.workspaceRoot.getWorkspaceById(this.workspace)?.slug;
-    if (!workspaceSlug || !this.project) return undefined;
-    return this.rootStore.user.permission.getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, this.project);
+  private get permissionMeta() {
+    return { resourceId: this.id };
   }
+
+  private canPerformAction = action((action: PermissionActionForResource<"recurring_workitem">) => {
+    if (!this.workspaceSlug) return false;
+
+    return this.args.can({
+      resource: "recurring_workitem",
+      action,
+      projectId: this.project,
+      workspaceSlug: this.workspaceSlug,
+      resourceMeta: this.permissionMeta,
+    });
+  });
 
   /**
    * @description Returns true if the current user can edit the recurring work item
    */
-  get canCurrentUserEdit(): boolean {
-    return this.getUserRoleForRecurringWorkItemInstance === EUserPermissions.ADMIN;
+  get canEdit(): boolean {
+    return this.canPerformAction("edit");
   }
 
   /**
    * @description Returns true if the current user can toggle the recurring work item enabled status
    */
-  get canCurrentUserToggleEnabled(): boolean {
-    return this.getUserRoleForRecurringWorkItemInstance === EUserPermissions.ADMIN;
+  get canConfigure(): boolean {
+    return this.canPerformAction("edit");
   }
 
   /**
    * @description Returns true if the current user can delete the recurring work item
    */
-  get canCurrentUserDelete(): boolean {
-    return this.getUserRoleForRecurringWorkItemInstance === EUserPermissions.ADMIN;
+  get canDelete(): boolean {
+    return this.canPerformAction("delete");
   }
 
   // helper actions

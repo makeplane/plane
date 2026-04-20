@@ -20,12 +20,12 @@ from rest_framework import status
 # Module import
 from .base import BaseAPIView
 from plane.db.models import APIToken, Workspace
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.permissions import can, ApiTokenPermissions
 
 
 class ServiceApiTokenEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
 
+    @can(ApiTokenPermissions.CREATE, resource_param="workspace_id")
     def post(self, request: Request, slug: str) -> Response:
         workspace = Workspace.objects.get(slug=slug)
 

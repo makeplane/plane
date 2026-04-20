@@ -20,7 +20,7 @@ from rest_framework import status
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, EpicUpdatePermissions, EpicUpdateCommentPermissions, ResourceType
 from plane.ee.serializers import UpdatesSerializer, UpdateReactionSerializer
 from plane.db.models import Workspace, Issue
 from plane.ee.views.base import BaseAPIView
@@ -33,6 +33,8 @@ from plane.utils.host import base_host
 class EpicsUpdateViewSet(BaseAPIView):
     use_read_replica = True
 
+    model = EntityUpdates
+
     def get_queryset(self):
         return EntityUpdates.objects.filter(
             workspace__slug=self.kwargs.get("slug"),
@@ -40,8 +42,8 @@ class EpicsUpdateViewSet(BaseAPIView):
             epic_id=self.kwargs.get("epic_id"),
         )
 
+    @can(EpicUpdatePermissions.CREATE, resource_param="project_id")
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, epic_id):
         workspace = Workspace.objects.get(slug=slug)
         issue_ids = get_all_related_issues(epic_id)
@@ -83,8 +85,8 @@ class EpicsUpdateViewSet(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(EpicUpdatePermissions.VIEW, resource_param="project_id")
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, epic_id):
         epic_updates = (
             self.get_queryset()
@@ -108,8 +110,8 @@ class EpicsUpdateViewSet(BaseAPIView):
         serializer = UpdatesSerializer(epic_updates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @can(EpicUpdatePermissions.EDIT, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def patch(self, request, slug, project_id, epic_id, pk):
         epic_update = self.get_queryset().get(pk=pk)
 
@@ -120,8 +122,8 @@ class EpicsUpdateViewSet(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(EpicUpdatePermissions.DELETE, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
     def delete(self, request, slug, project_id, epic_id, pk):
         epic_update = self.get_queryset().get(pk=pk)
 
@@ -140,8 +142,8 @@ class EpicsUpdateCommentsViewSet(BaseAPIView):
             entity_type=EntityTypeEnum.EPIC,
         )
 
+    @can(EpicUpdatePermissions.VIEW, resource_param="project_id")
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, epic_id, pk):
         epic_updates = (
             self.get_queryset()
@@ -158,8 +160,12 @@ class EpicsUpdateCommentsViewSet(BaseAPIView):
         serializer = UpdatesSerializer(epic_updates, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @can(
+        EpicUpdateCommentPermissions.CREATE,
+        resource_param="pk",
+        scope_param_type=ResourceType.EPIC_UPDATE,
+    )
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id, epic_id, pk):
         workspace = Workspace.objects.get(slug=slug)
         parent_update = self.get_queryset().get(pk=pk, entity_type=EntityTypeEnum.EPIC)
@@ -181,7 +187,7 @@ class EpicsUpdateCommentsViewSet(BaseAPIView):
 class EpicsUpdatesReactionViewSet(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicUpdatePermissions.REACT, resource_param="project_id")
     def post(self, request, slug, project_id, epic_id, update_id):
         serializer = UpdateReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -189,7 +195,7 @@ class EpicsUpdatesReactionViewSet(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicUpdatePermissions.REACT, resource_param="project_id")
     def delete(self, reqeust, slug, project_id, epic_id, update_id, reaction_code):
         update_reaction = UpdateReaction.objects.get(
             workspace__slug=slug,

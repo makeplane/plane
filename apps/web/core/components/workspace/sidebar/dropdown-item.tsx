@@ -13,17 +13,19 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { Settings, UserPlus } from "lucide-react";
 import { Menu } from "@headlessui/react";
 // plane imports
-import { EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CheckIcon } from "@plane/propel/icons";
 import type { IWorkspace } from "@plane/types";
-import { cn, getFileURL, getUserRole } from "@plane/utils";
+import { cn, getFileURL } from "@plane/utils";
 // plane web imports
 import { SubscriptionPill } from "@/components/common/subscription/subscription-pill";
+// store hooks
+import { useWorkspace } from "@/hooks/store/use-workspace";
+import { usePermissionAccess } from "@/hooks/store/use-permission-access";
+import { useRoleManagement } from "@/hooks/store/use-role-management";
 
 type TProps = {
   workspace: IWorkspace;
@@ -32,12 +34,21 @@ type TProps = {
   handleWorkspaceNavigation: (workspace: IWorkspace) => void;
   handleClose: () => void;
 };
+
 const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps) {
   const { workspace, activeWorkspace, handleItemClick, handleWorkspaceNavigation, handleClose } = props;
-  // router
-  const { workspaceSlug } = useParams();
-  // hooks
+  // plane hooks
   const { t } = useTranslation();
+  // store hooks
+  const { permissions } = useWorkspace();
+  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
+  const { getWorkspaceRoleDetailsByRoleSlug } = useRoleManagement();
+  // derived values
+  const isActiveWorkspace = activeWorkspace?.slug === workspace.slug;
+  const workspaceRoleSlug = getCurrentUserWorkspaceRoleSlug(workspace.slug);
+  const workspaceRoleDetails = workspaceRoleSlug
+    ? getWorkspaceRoleDetailsByRoleSlug(workspace.slug, workspaceRoleSlug)
+    : undefined;
 
   return (
     <Link
@@ -53,14 +64,14 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
       <Menu.Item
         as="div"
         className={cn("px-4 py-2", {
-          "bg-layer-transparent-active": workspace.id === activeWorkspace?.id,
-          "hover:bg-layer-transparent-hover": workspace.id !== activeWorkspace?.id,
+          "bg-layer-transparent-active": isActiveWorkspace,
+          "hover:bg-layer-transparent-hover": !isActiveWorkspace,
         })}
       >
         <div className="flex items-center justify-between gap-1 rounded-sm p-1 text-13 text-primary ">
           <div className="flex items-center justify-start gap-2.5 w-[80%] relative">
             <span
-              className={`relative flex h-8 w-8 flex-shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle ${
+              className={`relative flex h-8 w-8 shrink-0 items-center  justify-center p-2 text-14 uppercase font-medium border-subtle ${
                 !workspace?.logo_url && "rounded-md bg-[#026292] text-on-color"
               }`}
             >
@@ -76,29 +87,33 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
             </span>
             <div className="w-[inherit]">
               <div
-                className={`truncate text-left text-ellipsis text-13 font-medium ${workspaceSlug === workspace.slug ? "" : "text-secondary"}`}
+                className={`truncate text-left text-ellipsis text-13 font-medium ${isActiveWorkspace ? "" : "text-secondary"}`}
               >
                 {workspace.name}
               </div>
               <div className="text-13 text-tertiary flex gap-2 capitalize w-fit">
-                <span>{getUserRole(workspace.role)?.toLowerCase() || "guest"}</span>
-                <div className="w-1 h-1 bg-layer-1/50 rounded-full m-auto" />
+                {workspaceRoleDetails && (
+                  <>
+                    <span>{workspaceRoleDetails.name}</span>{" "}
+                    <div className="w-1 h-1 bg-layer-1/50 rounded-full m-auto" />
+                  </>
+                )}
                 <span className="capitalize">{t("member", { count: workspace.total_members || 0 })}</span>
               </div>
             </div>
           </div>
-          {workspace.id === activeWorkspace?.id ? (
-            <span className="flex-shrink-0 p-1">
+          {isActiveWorkspace ? (
+            <span className="shrink-0 p-1">
               <CheckIcon className="h-5 w-5 text-primary" />
             </span>
           ) : (
             <SubscriptionPill workspace={workspace} />
           )}
         </div>
-        {workspace.id === activeWorkspace?.id && (
+        {isActiveWorkspace && (
           <>
             <div className="mt-2 mb-1 flex gap-2">
-              {[EUserPermissions.ADMIN, EUserPermissions.MEMBER].includes(workspace?.role) && (
+              {permissions.getCanManage(workspace.slug) && (
                 <Link
                   href={`/${workspace.slug}/settings`}
                   onClick={(e) => {
@@ -107,11 +122,11 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                   }}
                   className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
                 >
-                  <Settings className="h-4 w-4 my-auto flex-shrink-0" />
+                  <Settings className="h-4 w-4 my-auto shrink-0" />
                   <span className="text-13 font-medium my-auto whitespace-nowrap">{t("settings")}</span>
                 </Link>
               )}
-              {[EUserPermissions.ADMIN].includes(workspace?.role) && (
+              {permissions.getCanInviteMembers(workspace.slug) && (
                 <Link
                   href={`/${workspace.slug}/settings/members`}
                   onClick={(e) => {
@@ -120,7 +135,7 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
                   }}
                   className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
                 >
-                  <UserPlus className="h-4 w-4 my-auto flex-shrink-0" />
+                  <UserPlus className="h-4 w-4 my-auto shrink-0" />
                   <span className="text-13 font-medium my-auto whitespace-nowrap">
                     {t("project_settings.members.invite_members.title")}
                   </span>

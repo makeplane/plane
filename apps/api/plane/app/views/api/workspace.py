@@ -23,17 +23,14 @@ from rest_framework import status
 from plane.app.views import BaseAPIView
 from plane.db.models import APIToken, Workspace
 from plane.app.serializers import APITokenSerializer, APITokenReadSerializer
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, ApiTokenPermissions
 from plane.license.utils.instance_value import are_access_tokens_disabled
 
 
 class WorkspaceAPITokenEndpoint(BaseAPIView):
     use_read_replica = True
 
-    permission_classes = [
-        WorkSpaceAdminPermission,
-    ]
-
+    @can(ApiTokenPermissions.CREATE, resource_param="workspace_id")
     def post(self, request: Request, slug: str) -> Response:
         if are_access_tokens_disabled():
             return Response(
@@ -66,6 +63,7 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    @can(ApiTokenPermissions.VIEW, resource_param="workspace_id")
     def get(self, request: Request, slug: str, pk: Optional[str] = None) -> Response:
         if pk is None:
             api_tokens = APIToken.objects.filter(workspace__slug=slug, is_service=False, user=request.user)
@@ -81,6 +79,7 @@ class WorkspaceAPITokenEndpoint(BaseAPIView):
             serializer = APITokenReadSerializer(api_tokens)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @can(ApiTokenPermissions.DELETE, resource_param="workspace_id")
     def delete(self, request: Request, slug: str, pk: str) -> Response:
         try:
             api_token = APIToken.objects.get(workspace__slug=slug, pk=pk, is_service=False, user=request.user)

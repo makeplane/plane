@@ -14,6 +14,7 @@
 import { Outlet } from "react-router";
 import useSWR from "swr";
 import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
+// types
 import type { Route } from "./+types/layout";
 
 export default function TeamspaceDetailLayout({ params }: Route.ComponentProps) {

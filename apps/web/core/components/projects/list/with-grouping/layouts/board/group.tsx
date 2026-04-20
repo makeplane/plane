@@ -11,11 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { cn } from "@plane/utils";
+import type { ProjectItemPermissions, ProjectLayoutPermissions } from "@/store/project/permissions/root";
 // plane web imports
 import type { TProjectsBoardLayoutStructure } from "@/types/workspace-project-filters";
 // local imports
@@ -23,10 +23,13 @@ import { ProjectBoardGroupItem } from "./group-item";
 
 type ProjectBoardGroup = {
   groupByProjectIds: TProjectsBoardLayoutStructure;
+  getProjectItemPermissions: (projectId: string) => ProjectItemPermissions;
+  layoutPermissions: ProjectLayoutPermissions;
+  workspaceSlug: string;
 };
 
 export const ProjectBoardGroup = observer(function ProjectBoardGroup(props: ProjectBoardGroup) {
-  const { groupByProjectIds } = props;
+  const { groupByProjectIds, getProjectItemPermissions, layoutPermissions, workspaceSlug } = props;
   const [verticalAlign, setVerticalAlign] = useState<{ [key: string]: boolean }>({});
 
   return (
@@ -43,6 +46,9 @@ export const ProjectBoardGroup = observer(function ProjectBoardGroup(props: Proj
             projectIds={projectIds}
             verticalAlign={verticalAlign}
             setVerticalAlign={setVerticalAlign}
+            getProjectItemPermissions={getProjectItemPermissions}
+            layoutPermissions={layoutPermissions}
+            workspaceSlug={workspaceSlug}
           />
         </div>
       ))}

@@ -41,8 +41,6 @@ from django.views.decorators.gzip import gzip_page
 from rest_framework import status
 from rest_framework.response import Response
 
-# Module imports
-from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -59,18 +57,17 @@ from plane.db.models import (
     FileAsset,
     IntakeIssue,
     Issue,
+    IssueActivity,
     IssueAssignee,
     IssueLabel,
     IssueLink,
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
-    ProjectUserProperty,
     ModuleIssue,
     Project,
-    ProjectMember,
+    ProjectUserProperty,
     UserRecentVisit,
-    IssueActivity,
     ReleaseWorkItem,
 )
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
@@ -78,16 +75,23 @@ from plane.ee.bgtasks.entity_issue_state_progress_task import (
 )
 from plane.ee.models import (
     CustomerRequestIssue,
-    TeamspaceMember,
-    TeamspaceProject,
     MilestoneIssue,
-)
-from plane.ee.utils.check_user_teamspace_member import (
-    check_if_current_user_is_teamspace_member,
 )
 from plane.ee.utils.workflow import WorkflowStateManager
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+
+# Module imports
+from plane.permissions import (
+    EpicPermissions,
+    WorkitemPermissions,
+    PermissionContext,
+    ProjectPermissions,
+    WorkspacePermissions,
+    can,
+    get_permission_conditions,
+    permission_engine,
+)
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.pql import PQLFilterBackend
 from plane.utils.global_paginator import paginate
@@ -112,7 +116,7 @@ class IssueListEndpoint(BaseAPIView):
     )
     filterset_class = IssueFilterSet
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
         issue_ids = request.GET.get("issues", False)
 
@@ -123,6 +127,11 @@ class IssueListEndpoint(BaseAPIView):
 
         # Base queryset with basic filters
         queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
+
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(request)
+        if "creator" in conditions:
+            queryset = queryset.filter(created_by=request.user)
 
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)
@@ -305,6 +314,11 @@ class IssueViewSet(BaseViewSet):
             workspace__slug=self.kwargs.get("slug"),
         ).distinct()
 
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(self.request)
+        if "creator" in conditions:
+            issues = issues.filter(created_by=self.request.user)
+
         return issues
 
     def apply_annotations(self, issues):
@@ -403,13 +417,13 @@ class IssueViewSet(BaseViewSet):
         return issues
 
     @method_decorator(gzip_page)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def list(self, request, slug, project_id):
         extra_filters = {}
         if request.GET.get("updated_at__gt", None) is not None:
             extra_filters = {"updated_at__gt": request.GET.get("updated_at__gt")}
 
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        Project.objects.get(pk=project_id, workspace__slug=slug)
         query_params = request.query_params.copy()
         sub_issue = query_params.get("sub_issue", None)
         query_params.pop("sub_issue", None)
@@ -458,20 +472,6 @@ class IssueViewSet(BaseViewSet):
             entity_identifier=project_id,
             user_id=request.user.id,
         )
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            issue_queryset = issue_queryset.filter(created_by=request.user)
-            filtered_issue_queryset = filtered_issue_queryset.filter(created_by=request.user)
-
         if group_by:
             if sub_group_by:
                 if group_by == sub_group_by:
@@ -567,7 +567,7 @@ class IssueViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
@@ -669,9 +669,9 @@ class IssueViewSet(BaseViewSet):
             return Response(issue, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
+    @can(WorkitemPermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, project_id, pk=None):
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
+        Project.objects.get(pk=project_id, workspace__slug=slug)
 
         issue = (
             Issue.objects.filter(
@@ -832,28 +832,6 @@ class IssueViewSet(BaseViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        """
-        if the role is guest and guest_view_all_features is false and owned by is not
-        the requesting user then dont show the issue
-        """
-
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         recent_visited_task.delay(
             slug=slug,
             entity_name="issue",
@@ -869,7 +847,7 @@ class IssueViewSet(BaseViewSet):
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
+    @can(WorkitemPermissions.EDIT, resource_param="pk")
     @transaction.atomic
     def partial_update(self, request, slug, project_id, pk=None):
         queryset = self.get_queryset()
@@ -998,7 +976,7 @@ class IssueViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
+    @can(WorkitemPermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(
             Q(type__is_epic=False) | Q(type__isnull=True),
@@ -1040,7 +1018,7 @@ class IssueViewSet(BaseViewSet):
 
 
 class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectPermissions.VIEW, resource_param="project_id")
     def patch(self, request, slug, project_id):
         try:
             issue_property = ProjectUserProperty.objects.get(user=request.user, project_id=project_id)
@@ -1052,7 +1030,7 @@ class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         project_user_property, _ = ProjectUserProperty.objects.get_or_create(user=request.user, project_id=project_id)
         serializer = ProjectUserPropertySerializer(project_user_property)
@@ -1060,7 +1038,7 @@ class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
 
 
 class BulkDeleteIssuesEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN])
+    @can(WorkitemPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id):
         issue_ids = request.data.get("issue_ids", [])
 
@@ -1103,7 +1081,7 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
 
 class DeletedIssuesListViewSet(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
         filters = {}
         if request.GET.get("updated_at__gt", None) is not None:
@@ -1112,8 +1090,14 @@ class DeletedIssuesListViewSet(BaseAPIView):
             Issue.all_objects.filter(workspace__slug=slug, project_id=project_id)
             .filter(Q(archived_at__isnull=False) | Q(deleted_at__isnull=False))
             .filter(**filters)
-            .values_list("id", flat=True)
         )
+
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(request)
+        if "creator" in conditions:
+            deleted_issues = deleted_issues.filter(created_by=request.user)
+
+        deleted_issues = deleted_issues.values_list("id", flat=True)
 
         return Response(deleted_issues, status=status.HTTP_200_OK)
 
@@ -1126,6 +1110,11 @@ class IssuePaginatedViewSet(BaseViewSet):
         project_id = self.kwargs.get("project_id")
 
         issue_queryset = Issue.issue_objects.filter(workspace__slug=workspace_slug, project_id=project_id)
+
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(self.request)
+        if "creator" in conditions:
+            issue_queryset = issue_queryset.filter(created_by=self.request.user)
 
         queryset = (
             issue_queryset.select_related("state")
@@ -1217,7 +1206,7 @@ class IssuePaginatedViewSet(BaseViewSet):
 
         return paginated_data
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def list(self, request, slug, project_id):
         cursor = request.GET.get("cursor", None)
         is_description_required = request.GET.get("description", "false")
@@ -1263,25 +1252,13 @@ class IssuePaginatedViewSet(BaseViewSet):
         # querying issues
         base_queryset = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
 
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(request)
+        if "creator" in conditions:
+            base_queryset = base_queryset.filter(created_by=request.user)
+
         base_queryset = base_queryset.order_by("updated_at")
         queryset = self.get_queryset().order_by("updated_at")
-
-        # validation for guest user
-        project = Project.objects.get(pk=project_id, workspace__slug=slug)
-        project_member = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        )
-        if (
-            project_member.exists()
-            and not project.guest_view_all_features
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            base_queryset = base_queryset.filter(created_by=request.user)
-            queryset = queryset.filter(created_by=request.user)
 
         # filtering issues by greater then updated_at given by the user
         if updated_at:
@@ -1455,7 +1432,7 @@ class IssueDetailEndpoint(BaseAPIView):
         else:
             return "-created_at"
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
         # Create a mutable copy of query params to remove sub_issue (EE specific logic)
         query_params = request.query_params.copy()
@@ -1465,55 +1442,19 @@ class IssueDetailEndpoint(BaseAPIView):
 
         filters = issue_filters(query_params, "GET")
 
-        # check for the project member role, if the role is 5 then check for the guest_view_all_features  # noqa: E501
-        #  if it is true then show all the issues else show only the issues created by the user  # noqa: E501
-        permission_subquery = (
-            Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, id=OuterRef("id"))
-            .filter(
-                Q(
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    project__project_projectmember__role__gt=ROLE.GUEST.value,
-                )
-                | Q(
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    project__project_projectmember__role=ROLE.GUEST.value,
-                    project__guest_view_all_features=True,
-                )
-                | Q(
-                    project__project_projectmember__member=self.request.user,
-                    project__project_projectmember__is_active=True,
-                    project__project_projectmember__role=ROLE.GUEST.value,
-                    project__guest_view_all_features=False,
-                    created_by=self.request.user,
-                )
-            )
-            .values("id")
-        )
         # Main issue query
-        issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
-            Exists(permission_subquery)
-        )
+        issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
+
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(request)
+        if "creator" in conditions:
+            issue = issue.filter(created_by=request.user)
 
         ## EE specific logic to show sub issues
         if sub_issue is not None and sub_issue == "false":
             # If sub_issue is false, show the issues which are attached to epic as well.
             issue = issue.filter(Q(parent__isnull=True) | Q(parent__type__is_epic=True))
         # EE logic ends here
-
-        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-        ):
-            issue = issue.filter(created_by=request.user)
 
         # Add additional prefetch based on expand parameter
         if self.expand:
@@ -1586,7 +1527,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
             return False
         return True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id):
         updates = request.data.get("updates", [])
 
@@ -1594,7 +1535,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         epoch = int(timezone.now().timestamp())
 
         # Fetch all relevant issues in a single query
-        issues = list(Issue.objects.filter(id__in=issue_ids))
+        issues = list(Issue.objects.filter(workspace__slug=slug, project_id=project_id, id__in=issue_ids))
         issues_dict = {str(issue.id): issue for issue in issues}
         issues_to_update = []
 
@@ -1647,8 +1588,8 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
 
 
 class IssueMetaEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
-    def get(self, request, slug, project_id, issue_id=None):
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
+    def get(self, request, slug, project_id, issue_id):
         issue = Issue.issue_objects.only("sequence_id", "project__identifier").get(
             id=issue_id, project_id=project_id, workspace__slug=slug
         )
@@ -1680,7 +1621,7 @@ class IssueListMetaEndpoint(BaseAPIView):
                     q |= Q(sequence_id=int(match.group(1)))
         return q
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
         query = request.GET.get("search", False)
 
@@ -1694,6 +1635,11 @@ class IssueListMetaEndpoint(BaseAPIView):
         # If issue_ids are provided, filter the queryset to include only those issues
         if issue_ids:
             issue_queryset = issue_queryset.filter(id__in=issue_ids)
+
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(request)
+        if "creator" in conditions:
+            issue_queryset = issue_queryset.filter(created_by=request.user)
 
         # Paginate the queryset and return only the id, sequence_id,
         # name and project identifier for the issues in the paginated result
@@ -1713,6 +1659,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
             raise ValueError("Invalid integer string")
         return int(s)
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, project_identifier, issue_identifier):
         # Check if the issue identifier is a valid integer
         try:
@@ -1903,52 +1850,34 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        has_issue_access = ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project.id,
-            member=request.user,
-            is_active=True,
-        ).exists()
-
-        # Check if the user is a member of the team space
-        if check_workspace_feature_flag(
-            feature_key=FeatureFlag.TEAMSPACES,
-            slug=slug,
-            user_id=request.user.id,
-        ):
-            teamspace_ids = TeamspaceProject.objects.filter(workspace__slug=slug, project_id=project.id).values_list(
-                "team_space_id", flat=True
-            )
-
-            if TeamspaceMember.objects.filter(member=request.user, team_space_id__in=teamspace_ids).exists():
-                has_issue_access = True
-
-        # Check if the user has access to the issue if not return 403
-        if not has_issue_access:
+        # Check issue view permission
+        has_issue_view = permission_engine.check(
+            user=request.user,
+            permission=WorkitemPermissions.VIEW,
+            context=PermissionContext.resource(
+                scope_id=str(issue.id),
+                workspace_id=request.workspace_id,
+                project_id=str(project.id),
+            ),
+        )
+        if not has_issue_view:
             return Response(
                 {"error": "You are not allowed to view this issue"},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        """
-        if the role is guest and guest_view_all_features is false and owned by is not
-        the requesting user then dont show the issue
-        """
-
-        if ProjectMember.objects.filter(
-            workspace__slug=slug,
-            project_id=project.id,
-            member=request.user,
-            role=5,
-            is_active=True,
-        ).exists():
-            # If the user is guest and trying to access and epic do not show the epic
-            if issue.is_epic:
-                return Response(
-                    {"error": "You are not allowed to view this issue"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-            elif not project.guest_view_all_features and not issue.created_by_id == request.user.id:
+        # Check epic view permission (epics require additional permission)
+        if issue.is_epic:
+            has_epic_view = permission_engine.check(
+                user=request.user,
+                permission=EpicPermissions.VIEW,
+                context=PermissionContext.resource(
+                    scope_id=str(issue.id),
+                    workspace_id=request.workspace_id,
+                    project_id=str(project.id),
+                ),
+            )
+            if not has_epic_view:
                 return Response(
                     {"error": "You are not allowed to view this issue"},
                     status=status.HTTP_403_FORBIDDEN,

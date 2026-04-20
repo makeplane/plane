@@ -14,6 +14,11 @@
 import { observer } from "mobx-react";
 import { ReleasesListLayout } from "./releases-list-layout";
 
-export const ReleasesRoot = observer(function ReleasesRoot() {
-  return <ReleasesListLayout />;
+type Props = {
+  workspaceSlug: string;
+};
+
+export const ReleasesRoot = observer(function ReleasesRoot(props: Props) {
+  const { workspaceSlug } = props;
+  return <ReleasesListLayout workspaceSlug={workspaceSlug} />;
 });

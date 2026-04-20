@@ -13,14 +13,14 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissionsLevel, PROJECT_SETTINGS } from "@plane/constants";
+import { PROJECT_SETTINGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import type { TPowerKContext } from "@/components/power-k/core/types";
 import { PowerKSettingsMenu } from "@/components/power-k/menus/settings";
 import { PROJECT_SETTINGS_ICONS } from "@/components/settings/project/sidebar/item-icon";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useProjectSettingsAccess } from "@/hooks/permissions/use-project-settings-access";
 
 type Props = {
   context: TPowerKContext;
@@ -31,20 +31,13 @@ export const PowerKOpenProjectSettingsMenu = observer(function PowerKOpenProject
   const { context, handleSelect } = props;
   // plane hooks
   const { t } = useTranslation();
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
   // derived values
-  const settingsList = Object.values(PROJECT_SETTINGS).filter(
-    (setting) =>
-      context.params.workspaceSlug &&
-      context.params.projectId &&
-      allowPermissions(
-        setting.access,
-        EUserPermissionsLevel.PROJECT,
-        context.params.workspaceSlug?.toString(),
-        context.params.projectId?.toString()
-      )
-  );
+  const { canAccessProjectSetting } = useProjectSettingsAccess();
+  const settingsList = Object.values(PROJECT_SETTINGS).filter((setting) => {
+    const workspaceSlug = context.params.workspaceSlug;
+    const projectId = context.params.projectId;
+    return workspaceSlug && projectId && canAccessProjectSetting(workspaceSlug, projectId, setting.key);
+  });
   const settingsListWithIcons = settingsList.map((setting) => ({
     ...setting,
     label: t(setting.i18n_label),

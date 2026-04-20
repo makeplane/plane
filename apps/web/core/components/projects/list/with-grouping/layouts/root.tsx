@@ -30,14 +30,24 @@ const BaseProjectRoot = lazy(() =>
 );
 const BaseListRoot = lazy(() => import("./list/base-list-root").then((module) => ({ default: module.BaseListRoot })));
 
-const PROJECT_LAYOUT_MAP: Record<EProjectLayouts, LazyExoticComponent<ComponentType>> = {
+type ActiveProjectLayoutProps = {
+  workspaceSlug: string;
+};
+
+const PROJECT_LAYOUT_MAP: Record<EProjectLayouts, LazyExoticComponent<ComponentType<ActiveProjectLayoutProps>>> = {
   [EProjectLayouts.BOARD]: ProjectBoardLayout,
   [EProjectLayouts.TIMELINE]: BaseTimelineRoot,
   [EProjectLayouts.GALLERY]: BaseProjectRoot,
   [EProjectLayouts.TABLE]: BaseListRoot,
 };
 
-export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
+type ProjectLayoutRootProps = {
+  workspaceSlug: string;
+};
+
+export const ProjectLayoutRoot = observer(function ProjectLayoutRoot(props: ProjectLayoutRootProps) {
+  const { workspaceSlug } = props;
+  // store hooks
   const { filters } = useProjectFilter();
   // derived values
   const currentLayout = filters?.layout;
@@ -46,7 +56,7 @@ export const ProjectLayoutRoot = observer(function ProjectLayoutRoot() {
   if (!ProjectLayoutComponent) return <></>;
   return (
     <Suspense>
-      <ProjectLayoutComponent />
+      <ProjectLayoutComponent workspaceSlug={workspaceSlug} />
     </Suspense>
   );
 });

@@ -22,6 +22,7 @@ from rest_framework.response import Response
 # Module import
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.serializers import ProjectLiteSerializer, WorkspaceLiteSerializer
+from plane.permissions import AIPermissions, can
 from plane.db.models import Project, Workspace
 from plane.license.utils.instance_value import get_configuration_value
 from plane.utils.exception_logger import log_exception
@@ -151,6 +152,7 @@ def get_llm_response(task, prompt, api_key: str, model: str, provider: str) -> T
             return None, f"Error occurred while generating response from {provider}"
 
 
+# TODO: Unused endpoint — not called by FE. Migrate to @can before re-enabling.
 class GPTIntegrationEndpoint(BaseAPIView):
     use_read_replica = True
 
@@ -192,7 +194,7 @@ class GPTIntegrationEndpoint(BaseAPIView):
 class WorkspaceGPTIntegrationEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(AIPermissions.USE, resource_param="workspace_id")
     def post(self, request, slug):
         api_key, model, provider = get_llm_config()
 

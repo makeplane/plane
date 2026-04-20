@@ -15,7 +15,6 @@ import { useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Star, StarOff } from "lucide-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
@@ -24,23 +23,20 @@ import { copyTextToClipboard } from "@plane/utils";
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useCycle } from "@/hooks/store/use-cycle";
-import { useUser } from "@/hooks/store/user";
+import { useFavorite } from "@/hooks/store/use-favorite";
 
 export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
   // navigation
   const { workspaceSlug, cycleId } = useParams();
   // store
-  const {
-    permission: { allowPermissions },
-  } = useUser();
   const { getCycleById, addCycleToFavorites, removeCycleFromFavorites } = useCycle();
+  const { permissions: favoritePermissions } = useFavorite();
   // derived values
   const cycleDetails = cycleId ? getCycleById(cycleId.toString()) : null;
   const isFavorite = !!cycleDetails?.is_favorite;
   // permission
-  const isEditingAllowed =
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) &&
-    !cycleDetails?.archived_at;
+  const canFavoriteCycle =
+    workspaceSlug && favoritePermissions.getCanCreate(workspaceSlug) && cycleDetails?.archived_at === null;
   // translation
   const { t } = useTranslation();
 
@@ -87,8 +83,8 @@ export const usePowerKCycleContextBasedActions = (): TPowerKCommandConfig[] => {
       type: "action",
       action: toggleFavorite,
       modifierShortcut: "shift+f",
-      isEnabled: () => isEditingAllowed,
-      isVisible: () => isEditingAllowed,
+      isEnabled: () => Boolean(canFavoriteCycle),
+      isVisible: () => Boolean(canFavoriteCycle),
       closeOnSelect: true,
     },
     {

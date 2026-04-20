@@ -21,7 +21,7 @@ from rest_framework.response import Response
 # Module imports
 from plane.license.utils.instance_value import get_configuration_value
 from plane.ee.views.base import BaseAPIView
-from plane.ee.permissions import WorkspaceEntityPermission
+from plane.permissions import AIPermissions, can
 
 
 class Task(Enum):
@@ -35,8 +35,6 @@ class Task(Enum):
 
 
 class RephraseGrammarEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission]
-
     # Function to get system prompt based on task
     def get_system_prompt(self, task, casual_score=5, formal_score=5):
         format_instructions = """
@@ -287,6 +285,7 @@ class RephraseGrammarEndpoint(BaseAPIView):
         else:
             return False, {"error": "Invalid task. Please provide a correct task name."}
 
+    @can(AIPermissions.USE, resource_param="workspace_id")
     def post(self, request, slug):
         # Get the task
         task = request.data.get("task", "grammar_check")

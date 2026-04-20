@@ -18,6 +18,8 @@ import type { TIssue, TPaginationData } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // helpers
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
+// store
+import type { TWorkItemProperty } from "@/store/work-items/permissions/root";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlockRoot } from "./issue-block-root";
 import { CalendarQuickAddIssueActions } from "./quick-add-issue-actions";
@@ -30,14 +32,13 @@ type Props = {
   getGroupIssueCount: (groupId: string | undefined) => number | undefined;
   issueIdList: string[];
   quickActions: TRenderQuickActions;
-  isDragDisabled?: boolean;
-  enableQuickIssueCreate?: boolean;
-  disableIssueCreation?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
   addIssuesToView?: (issueIds: string[]) => Promise<any>;
-  readOnly?: boolean;
-  isMobileView?: boolean;
-  canEditProperties: (projectId: string | undefined) => boolean;
+  canQuickAddWorkItem: boolean;
+  getWorkItemPermissions: (workItem: TIssue) => {
+    canEditProperty: (property: TWorkItemProperty) => boolean;
+    canDragAndDrop: boolean;
+  };
   isEpic?: boolean;
 };
 
@@ -47,14 +48,10 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
     issueIdList,
     quickActions,
     loadMoreIssues,
-    isDragDisabled = false,
-    enableQuickIssueCreate,
-    disableIssueCreation,
     quickAddCallback,
     addIssuesToView,
-    readOnly,
-    isMobileView = false,
-    canEditProperties,
+    canQuickAddWorkItem,
+    getWorkItemPermissions,
     isEpic = false,
   } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
@@ -82,8 +79,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
           <CalendarIssueBlockRoot
             issueId={issueId}
             quickActions={quickActions}
-            isDragDisabled={isDragDisabled || isMobileView}
-            canEditProperties={canEditProperties}
+            getWorkItemPermissions={getWorkItemPermissions}
             isEpic={isEpic}
           />
         </div>
@@ -95,7 +91,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
         </div>
       )}
 
-      {enableQuickIssueCreate && !disableIssueCreation && !readOnly && (
+      {canQuickAddWorkItem && (
         <div className="border-b border-subtle px-1 py-1 md:border-none md:px-2">
           <CalendarQuickAddIssueActions
             prePopulatedData={{

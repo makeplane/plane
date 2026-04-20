@@ -30,9 +30,10 @@ function AutomationDetailsPage({ params }: Route.ComponentProps) {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   const {
-    workspaceAutomations: { canView, getFetchStatusById },
+    workspaceAutomations: { getCanViewAutomation, getFetchStatusById },
   } = useAutomations();
   // derived values
+  const canView = getCanViewAutomation(params.workspaceSlug);
   const pageTitle = currentWorkspace?.name ? `${currentWorkspace?.name} - Automations` : undefined;
   const isLoaded = getFetchStatusById(automationId);
 

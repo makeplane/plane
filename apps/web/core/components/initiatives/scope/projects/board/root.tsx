@@ -40,6 +40,8 @@ import type { TProject } from "@/types/projects";
 import { Avatar } from "@plane/propel/avatar";
 // components
 import { ProjectCard } from "@/components/projects/list/with-grouping/layouts/gallery/card";
+// store hooks
+import type { ProjectItemPermissions } from "@/store/project/permissions/root";
 // local imports
 import { getProjectUpdatePayload, groupProjectsByProperty } from "./utils";
 import type { IGroupDetailsHelpers } from "./utils";
@@ -48,13 +50,17 @@ type Props = {
   projectIds?: string[];
   workspaceSlug: string;
   initiativeId: string;
-  disabled?: boolean;
+  permissions: {
+    getProjectItemPermissions: (projectId: string) => ProjectItemPermissions;
+    canDragAndDropProject: boolean;
+    canRemoveProject: boolean;
+  };
   isDataLoading?: boolean;
   groupBy: TInitiativeScopeProjectGroupBy;
 };
 
 export const InitiativeScopeProjectBoard = observer(function InitiativeScopeProjectBoard(props: Props) {
-  const { projectIds = [], workspaceSlug, initiativeId, disabled = false, isDataLoading = false, groupBy } = props;
+  const { projectIds = [], workspaceSlug, initiativeId, permissions, isDataLoading = false, groupBy } = props;
 
   // router
   const router = useAppRouter();
@@ -135,7 +141,7 @@ export const InitiativeScopeProjectBoard = observer(function InitiativeScopeProj
     sourceGroupId: string,
     destinationGroupId: string
   ) => {
-    if (sourceGroupId === destinationGroupId || disabled) return;
+    if (sourceGroupId === destinationGroupId || !permissions.canDragAndDropProject) return;
 
     let payload = getProjectUpdatePayload(groupBy, destinationGroupId);
 
@@ -153,7 +159,7 @@ export const InitiativeScopeProjectBoard = observer(function InitiativeScopeProj
     await updateProject(slug, sourceId, payload);
   };
 
-  const canDrag = () => !disabled && groupBy !== undefined && groupBy !== "state_groups";
+  const canDrag = () => permissions.canDragAndDropProject && groupBy !== undefined && groupBy !== "state_groups";
 
   if (isDataLoading) {
     return <KanbanLayoutLoader />;
@@ -204,13 +210,13 @@ export const InitiativeScopeProjectBoard = observer(function InitiativeScopeProj
                 message: `You have removed the project ${item.name} from this initiative.`,
               });
             }),
-          shouldRender: !disabled,
+          shouldRender: permissions.canRemoveProject,
         };
         return (
           <ProjectCard
             project={item}
             workspaceSlug={slug}
-            disabled={disabled}
+            permissions={permissions.getProjectItemPermissions(item.id)}
             hideArchiveDeleteModals
             detailsMenuVariant="scope"
             showJoinButton={false}
@@ -219,7 +225,7 @@ export const InitiativeScopeProjectBoard = observer(function InitiativeScopeProj
           />
         );
       }}
-      enableDragDrop={!disabled && groupBy !== undefined && groupBy !== "state_groups"}
+      enableDragDrop={permissions.canDragAndDropProject && groupBy !== undefined && groupBy !== "state_groups"}
       onDrop={handleDrop}
       canDrag={canDrag}
       showEmptyGroups

@@ -14,9 +14,7 @@
 import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { EUserWorkspaceRoles } from "@plane/types";
 // assets
 import searchViewsDark from "@/app/assets/empty-state/search/views-dark.webp?url";
 import searchViewsLight from "@/app/assets/empty-state/search/views-light.webp?url";
@@ -29,34 +27,31 @@ import { SimpleEmptyState } from "@/components/empty-state/simple-empty-state-ro
 import { ViewListLoader } from "@/components/ui/loader/view-list-loader";
 // hooks
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
-import { useTeamspaceViews } from "@/plane-web/hooks/store";
+import { useTeamspaces, useTeamspaceViews } from "@/plane-web/hooks/store";
 // local imports
 import { TeamspaceViewListItem } from "./view-list-item";
 
 type Props = {
   teamspaceId: string;
+  workspaceSlug: string;
 };
 
 export const TeamspaceViewsList = observer(function TeamspaceViewsList(props: Props) {
-  const { teamspaceId } = props;
+  const { teamspaceId, workspaceSlug } = props;
   // plane hooks
   const { t } = useTranslation();
   // theme hook
   const { resolvedTheme } = useTheme();
   // store hooks
   const { toggleCreateTeamspaceViewModal } = useCommandPalette();
-  const { allowPermissions } = useUserPermissions();
+  const { permissions } = useTeamspaces();
   const { getTeamspaceViewsLoader, getTeamspaceViews, getFilteredTeamspaceViews } = useTeamspaceViews();
   // derived values
   const teamspaceViewsLoader = getTeamspaceViewsLoader(teamspaceId);
   const teamspaceViews = getTeamspaceViews(teamspaceId);
   const filteredTeamspaceViews = getFilteredTeamspaceViews(teamspaceId);
-  const hasWorkspaceMemberLevelPermissions = allowPermissions(
-    [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
-    EUserPermissionsLevel.WORKSPACE
-  );
+  const viewPerms = permissions.getViewPermissions(workspaceSlug, teamspaceId);
   const generalViewResolvedPath = resolvedTheme === "light" ? teamsViewsLight : teamsViewsDark;
   const filteredViewResolvedPath = resolvedTheme === "light" ? searchViewsLight : searchViewsDark;
 
@@ -81,7 +76,16 @@ export const TeamspaceViewsList = observer(function TeamspaceViewsList(props: Pr
           <ListLayout>
             {filteredTeamspaceViews.length > 0 ? (
               filteredTeamspaceViews.map((view) => (
-                <TeamspaceViewListItem key={view.id} teamspaceId={teamspaceId} view={view} />
+                <TeamspaceViewListItem
+                  key={view.id}
+                  teamspaceId={teamspaceId}
+                  view={view}
+                  viewPermissions={{
+                    canEdit: viewPerms.getCanEdit(view.id),
+                    canDelete: viewPerms.getCanDelete(view.id),
+                    canPublish: viewPerms.getCanPublish(view.id),
+                  }}
+                />
               ))
             ) : (
               <p className="mt-10 text-center text-body-xs-regular text-tertiary">No results found</p>
@@ -96,7 +100,7 @@ export const TeamspaceViewsList = observer(function TeamspaceViewsList(props: Pr
           primaryButton={{
             text: t("teamspace_views.empty_state.team_view.primary_button.text"),
             onClick: () => toggleCreateTeamspaceViewModal({ isOpen: true, teamspaceId }),
-            disabled: !hasWorkspaceMemberLevelPermissions,
+            disabled: !viewPerms.canCreate,
           }}
         />
       )}

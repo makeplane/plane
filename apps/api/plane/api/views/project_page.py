@@ -21,7 +21,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.api.views.base import BaseAPIView
-from plane.db.models import Page, DeployBoard, Project, ProjectMember, Workspace
+from plane.db.models import Page, DeployBoard, ProjectMember, Workspace
 from plane.ee.models import PageUser
 from plane.api.serializers import PageDetailAPISerializer, PageCreateAPISerializer, PageListAPISerializer
 from plane.ee.permissions import ProjectPagePermission
@@ -93,11 +93,10 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
     )
     def get(self, request, slug, project_id, pk):
         """
-        if the role is guest and guest_view_all_features is false and owned by is not
-        the requesting user then dont show the page
+        if the role is guest and owned by is not the requesting user
+        then dont show the page
         """
 
-        project = Project.objects.get(id=project_id, workspace__slug=slug)
         page = self.get_queryset().get(id=pk)
 
         if (
@@ -108,7 +107,6 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
                 role=ROLE.GUEST.value,
                 is_active=True,
             ).exists()
-            and not project.guest_view_all_features
             and not page.owned_by == request.user
             and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
         ):

@@ -13,7 +13,6 @@
 
 import { useState } from "react";
 // plane imports
-import { ROLE } from "@plane/constants";
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Checkbox, Spinner } from "@plane/ui";
@@ -57,7 +56,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
   const submitInvitations = async () => {
     const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
 
-    if (invitationsRespond.length <= 0 && !invitation?.role) return;
+    if (invitationsRespond.length <= 0 && !invitation?.role_slug) return;
 
     setIsJoiningWorkspaces(true);
 
@@ -96,7 +95,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-13 font-medium">{truncateText(invitedWorkspace?.name, 30)}</div>
-                  <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
+                  <p className="text-11 text-secondary capitalize">{invitation.role_slug}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />

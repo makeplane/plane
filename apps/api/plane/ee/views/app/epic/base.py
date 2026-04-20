@@ -41,7 +41,7 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import allow_permission, ROLE
+from plane.permissions import can, EpicPermissions, ProjectPermissions, WorkspacePermissions
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.ee.models import (
     EpicUserProperties,
@@ -86,9 +86,6 @@ from plane.ee.utils.workflow import WorkflowStateManager
 from plane.utils.global_paginator import paginate
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
-from plane.ee.utils.check_user_teamspace_member import (
-    check_if_current_user_is_teamspace_member,
-)
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.pql import PQLFilterBackend
 from plane.utils.filters import IssueFilterSet
@@ -201,7 +198,7 @@ class EpicViewSet(BaseViewSet):
             .filter(workspace__slug=self.kwargs.get("slug"))
         ).distinct()
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(EpicPermissions.CREATE, resource_param="project_id")
     @check_feature_flag(FeatureFlag.EPICS)
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
@@ -269,7 +266,7 @@ class EpicViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     @check_feature_flag(FeatureFlag.EPICS)
     def list(self, request, slug, project_id):
         search = request.GET.get("search", None)
@@ -399,7 +396,7 @@ class EpicViewSet(BaseViewSet):
                 ),
             )
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], creator=True, model=Issue)
+    @can(EpicPermissions.VIEW, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
     def retrieve(self, request, slug, project_id, pk=None):
         epic = (
@@ -452,7 +449,7 @@ class EpicViewSet(BaseViewSet):
         serializer = EpicDetailSerializer(epic, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
+    @can(EpicPermissions.EDIT, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
     @transaction.atomic
     def partial_update(self, request, slug, project_id, pk=None):
@@ -520,7 +517,7 @@ class EpicViewSet(BaseViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
+    @can(EpicPermissions.DELETE, resource_param="pk")
     @check_feature_flag(FeatureFlag.EPICS)
     def destroy(self, request, slug, project_id, pk=None):
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk, type__is_epic=True)
@@ -540,7 +537,7 @@ class EpicViewSet(BaseViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @allow_permission([ROLE.ADMIN])
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     @check_feature_flag(FeatureFlag.EPICS)
     def epic_status(self, request, slug, project_id):
         workspace = Workspace.objects.get(slug=slug)
@@ -603,8 +600,8 @@ class EpicViewSet(BaseViewSet):
 class EpicMetaListEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         epics = (
             Issue.objects.filter(project_id=project_id, workspace__slug=slug)
@@ -615,8 +612,8 @@ class EpicMetaListEndpoint(BaseAPIView):
 
 
 class EpicUserDisplayPropertyEndpoint(BaseAPIView):
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def patch(self, request, slug, project_id):
         epic_property = EpicUserProperties.objects.get(user=request.user, project_id=project_id)
 
@@ -630,8 +627,8 @@ class EpicUserDisplayPropertyEndpoint(BaseAPIView):
         serializer = EpicUserPropertySerializer(epic_property)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     @check_feature_flag(FeatureFlag.EPICS)
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         issue_property, _ = EpicUserProperties.objects.get_or_create(user=request.user, project_id=project_id)
         serializer = EpicUserPropertySerializer(issue_property)
@@ -642,7 +639,7 @@ class EpicAnalyticsEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def get(self, request, slug, project_id, epic_id):
         issue_ids = get_all_related_issues(epic_id)
 
@@ -744,7 +741,7 @@ class EpicDetailEndpoint(BaseAPIView):
         )
 
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         filters = issue_filters(request.query_params, "GET")
         epics = Issue.objects.filter(workspace__slug=slug, project_id=project_id).filter(
@@ -779,7 +776,7 @@ class WorkspaceEpicEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
         order_by_param = request.GET.get("order_by", "-created_at")
         search = request.GET.get("search", None)
@@ -840,7 +837,7 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
     use_read_replica = True
 
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         epics = (
             Issue.objects.filter(workspace__slug=slug, project_id=project_id)
@@ -877,7 +874,7 @@ class EpicListAnalyticsEndpoint(BaseAPIView):
 class EpicMetaEndpoint(BaseAPIView):
     use_read_replica = True
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def get(self, request, slug, project_id, epic_id):
         epic = Issue.objects.only("sequence_id", "project__identifier").get(
             id=epic_id, project_id=project_id, workspace__slug=slug, type__is_epic=True
@@ -971,6 +968,7 @@ class EpicDetailIdentifierEndpoint(BaseAPIView):
             )
         ).distinct()
 
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, project_identifier, epic_identifier):
         # Check if the issue identifier is a valid integer
         try:
@@ -1026,28 +1024,8 @@ class EpicDescriptionVersionEndpoint(BaseAPIView):
         return paginated_data
 
     @check_feature_flag(FeatureFlag.EPICS)
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def get(self, request, slug, project_id, epic_id, pk=None):
-        project = Project.objects.get(pk=project_id)
-        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=epic_id)
-
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=ROLE.GUEST.value,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not issue.created_by == request.user
-            and not check_if_current_user_is_teamspace_member(request.user.id, slug, project_id)
-        ):
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if pk:
             issue_description_version = IssueDescriptionVersion.objects.get(
                 workspace__slug=slug, project_id=project_id, issue_id=epic_id, pk=pk

@@ -17,10 +17,10 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.ee.views.base import BaseViewSet
-from plane.ee.serializers import UpdatesSerializer
-from plane.app.permissions import allow_permission, ROLE
+from plane.ee.views.base import BaseViewSet, BaseAPIView
+from plane.ee.serializers import UpdatesSerializer, UpdateReactionSerializer
 from plane.ee.models import UpdateReaction, EntityUpdates
+from plane.permissions import can, ProjectUpdatePermissions, ProjectUpdateCommentPermissions, ResourceType
 from plane.db.models import Workspace, Issue
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -51,7 +51,12 @@ class ProjectUpdatesViewSet(BaseViewSet):
         return queryset
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectUpdatePermissions.VIEW, resource_param="pk")
+    def retrieve(self, request, slug, project_id, pk=None):
+        return super().retrieve(request, slug, project_id, pk)
+
+    @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @can(ProjectUpdatePermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id):
         project_updates = (
             EntityUpdates.objects.filter(
@@ -77,7 +82,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @can(ProjectUpdateCommentPermissions.VIEW, resource_param="pk", scope_param_type=ResourceType.PROJECT_UPDATE)
     def comments_list(self, request, slug, project_id, pk):
         project_updates = (
             EntityUpdates.objects.filter(
@@ -99,7 +104,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectUpdatePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id):
         workspace = Workspace.objects.get(slug=slug)
         project_issues = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id)
@@ -129,7 +134,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    @can(ProjectUpdateCommentPermissions.CREATE, resource_param="pk", scope_param_type=ResourceType.PROJECT_UPDATE)
     def comments_create(self, request, slug, project_id, pk):
         workspace = Workspace.objects.get(slug=slug)
         parent_update = EntityUpdates.objects.get(pk=pk, entity_type="PROJECT")
@@ -147,7 +152,7 @@ class ProjectUpdatesViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
+    @can(ProjectUpdatePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, project_id, pk):
         project_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         serializer = UpdatesSerializer(project_update, data=request.data, partial=True)
@@ -157,8 +162,56 @@ class ProjectUpdatesViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
-    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, model=EntityUpdates)
+    @can(ProjectUpdatePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, project_id, pk):
         project_update = EntityUpdates.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project_update.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectUpdatesReactionViewSet(BaseAPIView):
+    @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @can(ProjectUpdatePermissions.REACT, resource_param="project_id")
+    def post(self, request, slug, project_id, update_id):
+        serializer = UpdateReactionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(project_id=project_id, actor_id=request.user.id, update_id=update_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @can(ProjectUpdatePermissions.REACT, resource_param="project_id")
+    def delete(self, request, slug, project_id, update_id, reaction_code):
+        update_reaction = UpdateReaction.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            update_id=update_id,
+            reaction=reaction_code,
+            actor=request.user,
+        )
+        update_reaction.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ProjectUpdateCommentsReactionViewSet(BaseAPIView):
+    @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @can(ProjectUpdateCommentPermissions.REACT, resource_param="pk", scope_param_type=ResourceType.PROJECT_UPDATE)
+    def post(self, request, slug, project_id, pk, comment_id):
+        serializer = UpdateReactionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(project_id=project_id, actor_id=request.user.id, update_id=comment_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @check_feature_flag(FeatureFlag.PROJECT_OVERVIEW)
+    @can(ProjectUpdateCommentPermissions.REACT, resource_param="pk", scope_param_type=ResourceType.PROJECT_UPDATE)
+    def delete(self, request, slug, project_id, pk, comment_id, reaction_code):
+        update_reaction = UpdateReaction.objects.get(
+            workspace__slug=slug,
+            project_id=project_id,
+            update_id=comment_id,
+            reaction=reaction_code,
+            actor=request.user,
+        )
+        update_reaction.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

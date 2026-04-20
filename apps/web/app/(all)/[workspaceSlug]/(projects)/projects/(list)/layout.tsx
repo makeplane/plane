@@ -23,11 +23,12 @@ import { ProjectsListMobileHeader } from "@/components/projects/header/mobile-ro
 import type { Route } from "./+types/layout";
 
 export default function ProjectListLayout(props: Route.ComponentProps) {
+  const { workspaceSlug } = props.params;
   return (
-    <WorkspaceAccessWrapper pageKey="archives">
+    <WorkspaceAccessWrapper pageKey="projects" workspaceSlug={workspaceSlug}>
       <AppHeader
-        header={<ProjectsListHeader workspaceSlug={props.params.workspaceSlug} />}
-        mobileHeader={<ProjectsListMobileHeader workspaceSlug={props.params.workspaceSlug} />}
+        header={<ProjectsListHeader workspaceSlug={workspaceSlug} />}
+        mobileHeader={<ProjectsListMobileHeader workspaceSlug={workspaceSlug} />}
       />
       <ContentWrapper>
         <Outlet />

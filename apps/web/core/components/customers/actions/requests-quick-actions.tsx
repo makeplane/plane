@@ -14,17 +14,15 @@
 import { observer } from "mobx-react";
 import { LinkIcon, EditIcon, TrashIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { EUserWorkspaceRoles } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { ContextMenu, CustomMenu } from "@plane/ui";
 import { cn, copyUrlToClipboard } from "@plane/utils";
 // plane web constants
-import { useUserPermissions } from "@/hooks/store/user";
 import { DeleteCustomerRequestsModal } from "@/components/customers/actions";
 import { useCustomers } from "@/plane-web/hooks/store";
+import type { TCustomerRequestPermissions } from "@/store/customers/permissions/root";
 
 type Props = {
   customerId: string;
@@ -33,17 +31,17 @@ type Props = {
   handleEdit: () => void;
   workspaceSlug: string;
   workItemId?: string;
+  permissions: TCustomerRequestPermissions;
 };
 
 export const CustomerRequestQuickActions = observer(function CustomerRequestQuickActions(props: Props) {
-  const { customerId, handleEdit, parentRef, requestId, workspaceSlug, workItemId } = props;
+  const { customerId, handleEdit, parentRef, requestId, workspaceSlug, workItemId, permissions } = props;
   // i18n
   const { t } = useTranslation();
   // hooks
-  const { allowPermissions } = useUserPermissions();
   const { requestDeleteModalId, toggleDeleteRequestModal } = useCustomers();
   // derived values
-  const isAdmin = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
+  const { canEdit, canDelete } = permissions;
 
   const customerRequestLink = `${workspaceSlug}/customers/${customerId}?requestId=${requestId}`;
 
@@ -62,7 +60,7 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
       title: "Edit",
       icon: EditIcon,
       action: handleEdit,
-      shouldRender: isAdmin,
+      shouldRender: canEdit,
     },
     {
       key: "copy-link",
@@ -77,7 +75,7 @@ export const CustomerRequestQuickActions = observer(function CustomerRequestQuic
       title: "Delete",
       icon: TrashIcon,
       className: "text-danger-primary",
-      shouldRender: isAdmin,
+      shouldRender: canDelete,
     },
   ];
 

@@ -17,12 +17,11 @@ import Link from "next/link";
 import { MoveDiagonal, MoveRight, Sidebar } from "lucide-react";
 import { CopyLinkIcon, CenterPanelIcon, FullScreenPanelIcon, SidePanelIcon } from "@plane/propel/icons";
 // plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
 import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssue } from "@plane/types";
-import { EIssueServiceType, EIssuesStoreType, EUserProjectRoles, EWorkItemConversionType } from "@plane/types";
+import { EIssueServiceType, EIssuesStoreType, EWorkItemConversionType } from "@plane/types";
 import { CustomSelect } from "@plane/ui";
 import { cn, copyUrlToClipboard, generateWorkItemLink } from "@plane/utils";
 import { IssueSubscription } from "@/components/issues/issue-detail/subscription";
@@ -32,7 +31,7 @@ import { NameDescriptionUpdateStatus } from "@/components/issues/issue-update-st
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useUser } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { WithFeatureFlagHOC } from "@/components/feature-flags";
@@ -68,7 +67,6 @@ export type PeekOverviewHeaderProps = {
   projectId: string;
   issueId: string;
   isArchived: boolean;
-  disabled: boolean;
   embedIssue: boolean;
   toggleEditEpicModal: (value: boolean) => void;
   toggleVotingMembersEpicModal: (value: boolean) => void;
@@ -77,6 +75,15 @@ export type PeekOverviewHeaderProps = {
   toggleDuplicateEpicModal: (value: boolean) => void;
   handleRestoreIssue: () => Promise<void>;
   isSubmitting: "submitting" | "submitted" | "saved";
+  permissions: {
+    canEdit: boolean;
+    canSubscribe: boolean;
+    canDelete: boolean;
+    canArchive: boolean;
+    canRestore: boolean;
+    canDuplicate: boolean;
+    canConvertToWorkItem: boolean;
+  };
 };
 
 export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(props: PeekOverviewHeaderProps) {
@@ -96,6 +103,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
     removeRoutePeekId,
     handleRestoreIssue,
     isSubmitting,
+    permissions,
   } = props;
   // ref
   const parentRef = useRef<HTMLDivElement>(null);
@@ -105,9 +113,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
     issue: { getIssueById, archiveIssue },
     setPeekIssue,
   } = useIssueDetail(EIssueServiceType.EPICS);
-
   const { updateIssue, removeIssue } = useIssuesActions(EIssuesStoreType.EPIC);
-  const { allowPermissions } = useUserPermissions();
   const { epicDetailSidebarCollapsed, toggleEpicDetailSidebar } = useAppTheme();
   const { getProjectIdentifierById } = useProject();
 
@@ -168,13 +174,6 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
       await updateIssue(issue.project_id, issue.id, data);
     }
   };
-
-  const isEditingAllowed = allowPermissions(
-    [EUserProjectRoles.ADMIN, EUserProjectRoles.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
 
   return (
     <div className={`relative flex items-center justify-between p-4 border-b border-subtle-1 `}>
@@ -247,6 +246,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
             workspaceSlug={workspaceSlug}
             projectId={projectId}
             issueId={issueId}
+            canSubscribe={permissions.canSubscribe}
           />
         )}
         <div className="flex items-center gap-4">
@@ -254,7 +254,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
             <ConvertWorkItemAction
               workItemId={issueId}
               conversionType={EWorkItemConversionType.WORK_ITEM}
-              disabled={!isEditingAllowed || isArchived}
+              canConvert={permissions.canConvertToWorkItem}
             />
           </WithFeatureFlagHOC>
           <Tooltip tooltipContent="Copy link" isMobile={isMobile}>
@@ -269,7 +269,7 @@ export const EpicPeekOverviewHeader = observer(function EpicPeekOverviewHeader(p
                 handleArchive={handleArchiveIssue}
                 handleRestore={handleRestoreIssue}
                 handleUpdate={handleUpdate}
-                readOnly={!isEditingAllowed}
+                permissions={permissions}
                 toggleEditEpicModal={toggleEditEpicModal}
                 toggleDeleteEpicModal={toggleDeleteEpicModal}
                 toggleArchiveEpicModal={toggleArchiveEpicModal}

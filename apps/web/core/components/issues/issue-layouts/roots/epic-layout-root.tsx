@@ -56,36 +56,39 @@ const EpicSpreadsheetLayout = lazy(() =>
   }))
 );
 const EpicTimelineLayout = lazy(() =>
-  import("@/components/issues/issue-layouts/timeline/base-timeline-root").then((module) => ({
-    default: module.BaseTimelineRoot,
+  import("@/components/issues/issue-layouts/timeline/roots/epic-root").then((module) => ({
+    default: module.EpicTimelineLayout,
   }))
 );
 
+type ActiveLayoutProps = {
+  workspaceSlug: string;
+  projectId: string;
+};
+
 // Layout components map
-const EPIC_WORK_ITEM_LAYOUTS: Partial<Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType>>> = {
+const EPIC_WORK_ITEM_LAYOUTS: Record<EIssueLayoutTypes, LazyExoticComponent<ComponentType<ActiveLayoutProps>>> = {
   [EIssueLayoutTypes.LIST]: EpicListLayout,
   [EIssueLayoutTypes.KANBAN]: EpicKanBanLayout,
   [EIssueLayoutTypes.CALENDAR]: EpicCalendarLayout,
   [EIssueLayoutTypes.SPREADSHEET]: EpicSpreadsheetLayout,
+  [EIssueLayoutTypes.GANTT]: EpicTimelineLayout,
 };
 
-function ProjectEpicsLayout(props: { activeLayout: EIssueLayoutTypes | undefined }) {
-  if (!props.activeLayout) return null;
+type TProjectEpicsLayoutProps = {
+  activeLayout: EIssueLayoutTypes | undefined;
+  workspaceSlug: string;
+  projectId: string;
+};
 
-  // Handle GANTT layout separately since it needs props
-  if (props.activeLayout === EIssueLayoutTypes.GANTT) {
-    return (
-      <Suspense>
-        <EpicTimelineLayout isEpic />
-      </Suspense>
-    );
-  }
+function ProjectEpicsLayout(props: TProjectEpicsLayoutProps) {
+  if (!props.activeLayout) return null;
 
   const ProjectEpicsLayoutComponent = EPIC_WORK_ITEM_LAYOUTS[props.activeLayout];
   if (!ProjectEpicsLayoutComponent) return null;
   return (
     <Suspense>
-      <ProjectEpicsLayoutComponent />
+      <ProjectEpicsLayoutComponent workspaceSlug={props.workspaceSlug} projectId={props.projectId} />
     </Suspense>
   );
 }
@@ -145,7 +148,7 @@ export const ProjectEpicsLayoutRoot = observer(function ProjectEpicsLayoutRoot()
                   <Spinner className="w-4 h-4" />
                 </div>
               )}
-              <ProjectEpicsLayout activeLayout={activeLayout} />
+              <ProjectEpicsLayout activeLayout={activeLayout} workspaceSlug={workspaceSlug} projectId={projectId} />
             </div>
             {/* peek overview */}
             <Suspense>

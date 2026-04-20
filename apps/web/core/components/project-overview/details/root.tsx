@@ -11,13 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
-// plane imports
-import { EUserPermissionsLevel } from "@plane/constants";
-import { EUserWorkspaceRoles } from "@plane/types";
-// hooks
-import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { LayoutRoot } from "@/components/common/layout";
 // local imports
@@ -31,15 +25,10 @@ type Props = {
 
 export const ProjectOverviewRoot = observer(function ProjectOverviewRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
-  // store hooks
-  const { allowPermissions } = useUserPermissions();
-
-  // derived values
-  const isEditable = allowPermissions([EUserWorkspaceRoles.ADMIN], EUserPermissionsLevel.WORKSPACE);
 
   return (
     <LayoutRoot key={projectId}>
-      <ProjectOverviewMainContentRoot workspaceSlug={workspaceSlug} projectId={projectId} disabled={!isEditable} />
+      <ProjectOverviewMainContentRoot workspaceSlug={workspaceSlug} projectId={projectId} />
       <ProjectOverviewSidebarRoot workspaceSlug={workspaceSlug} projectId={projectId} />
     </LayoutRoot>
   );

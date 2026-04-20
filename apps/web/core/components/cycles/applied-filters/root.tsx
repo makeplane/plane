@@ -12,15 +12,15 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { CloseIcon } from "@plane/propel/icons";
 import type { TCycleFilters } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { replaceUnderscoreIfSnakeCase } from "@plane/utils";
 // hooks
-import { useUserPermissions } from "@/hooks/store/user";
+import { useCycle } from "@/hooks/store/use-cycle";
 // local imports
 import { AppliedDateFilters } from "./date";
 import { AppliedStatusFilters } from "./status";
@@ -36,8 +36,10 @@ const DATE_FILTERS = ["start_date", "end_date"];
 
 export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList(props: Props) {
   const { appliedFilters, handleClearAllFilters, handleRemoveFilter, alwaysAllowEditing } = props;
+  // router
+  const { workspaceSlug, projectId } = useParams();
   // store hooks
-  const { allowPermissions } = useUserPermissions();
+  const { permissions: cyclePermissions } = useCycle();
   const { t } = useTranslation();
 
   if (!appliedFilters) return null;
@@ -46,7 +48,7 @@ export const CycleAppliedFiltersList = observer(function CycleAppliedFiltersList
 
   const isEditingAllowed =
     alwaysAllowEditing ||
-    allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+    (!!workspaceSlug && !!projectId && cyclePermissions.getCanEditCycleFilters(workspaceSlug, projectId));
 
   return (
     <div className="flex flex-wrap items-stretch gap-2 bg-surface-1">
