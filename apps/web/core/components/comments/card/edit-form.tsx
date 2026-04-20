@@ -14,6 +14,7 @@ import type { TCommentsOperations, TIssueComment } from "@plane/types";
 import { cn, isCommentEmpty } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
+import { isComposingKeyboardEvent } from "@/helpers/keyboard";
 
 type Props = {
   activityOperations: TCommentsOperations;
@@ -77,6 +78,8 @@ export const CommentCardEditForm = observer(function CommentCardEditForm(props: 
     <form className="flex flex-col gap-2">
       <div
         onKeyDown={(e) => {
+          if (isComposingKeyboardEvent(e.nativeEvent)) return;
+
           if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey && !isEmpty) handleSubmit(onEnter)(e);
         }}
       >
