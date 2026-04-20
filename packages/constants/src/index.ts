@@ -47,6 +47,7 @@ export * from "./module";
 export * from "./notification";
 export * from "./page";
 export * from "./payment";
+export * from "./pdf";
 export * from "./payment-extended";
 export * from "./pql";
 export * from "./profile";

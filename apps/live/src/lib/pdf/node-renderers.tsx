@@ -16,6 +16,7 @@ import type { Style } from "@react-pdf/types";
 import type { ReactElement, ReactNode } from "react";
 import { CORE_EXTENSIONS, EDrawioMode } from "@plane/editor";
 import { BACKGROUND_COLORS, EDITOR_BACKGROUND_COLORS, resolveColorForPdf, TEXT_COLORS } from "./colors";
+import { getFontStyle } from "./fonts";
 import type { PDFHighlightedCodeBlock, PDFHighlightedCodeToken } from "./code-highlighter";
 import {
   CheckIcon,
@@ -75,11 +76,6 @@ const getCalloutIcon = (node: TipTapNode, color: string, metadata?: PDFExportMet
 export const createKeyGenerator = (): KeyGenerator => {
   let counter = 0;
   return () => `node-${counter++}`;
-};
-
-export const getFontStyle = (text: string | undefined): Record<string, string> => {
-  if (!text) return {};
-  return { fontFamily: "Noto Sans CJK" };
 };
 
 const PDF_BREAK_OPPORTUNITY = "\u200B";

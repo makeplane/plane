@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { Context, Effect, Layer } from "effect";
+import { Context, Duration, Effect, Layer } from "effect";
 import sharp from "sharp";
 import * as Y from "yjs";
 import { getAllDocumentFormatsFromDocumentEditorBinaryData } from "@plane/editor/lib";
@@ -27,7 +27,13 @@ import {
   ExportTimeoutError,
 } from "@/schema/export";
 import { withTimeoutAndRetry, recoverWithDefault, tryAsync, abortableFetch } from "./effect-utils";
-import type { PageContent, MetadataResult, ExportInputBase, ExportPipelineResult } from "./types";
+import type {
+  PageContent,
+  MetadataResult,
+  ExportInputBase,
+  ExportPipelineResult,
+  ExportProgressReporter,
+} from "./types";
 
 export class LiveDocumentProvider extends Context.Tag("LiveDocumentProvider")<
   LiveDocumentProvider,
@@ -37,12 +43,19 @@ export class LiveDocumentProvider extends Context.Tag("LiveDocumentProvider")<
 export const makeLiveDocumentLayer = (agentManager: ServerAgentManager) =>
   Layer.succeed(LiveDocumentProvider, agentManager);
 
-const IMAGE_CONCURRENCY = 4;
-const URL_RESOLUTION_CONCURRENCY = 6;
-const IMAGE_TIMEOUT_MS = 8000;
-const METADATA_TIMEOUT_MS = 5000;
-const CONTENT_FETCH_TIMEOUT_MS = 7000;
-const IMAGE_MAX_DIMENSION = 1200;
+const readIntEnv = (name: string, fallback: number): number => {
+  const raw = process.env[name];
+  if (!raw) return fallback;
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const IMAGE_CONCURRENCY = readIntEnv("PDF_EXPORT_IMAGE_CONCURRENCY", 4);
+const URL_RESOLUTION_CONCURRENCY = readIntEnv("PDF_EXPORT_URL_RESOLUTION_CONCURRENCY", 6);
+const IMAGE_TIMEOUT_MS = readIntEnv("PDF_EXPORT_IMAGE_TIMEOUT_MS", 8000);
+const METADATA_TIMEOUT_MS = readIntEnv("PDF_EXPORT_METADATA_TIMEOUT_MS", 10000);
+const CONTENT_FETCH_TIMEOUT_MS = readIntEnv("PDF_EXPORT_CONTENT_FETCH_TIMEOUT_MS", 15000);
+const IMAGE_MAX_DIMENSION = readIntEnv("PDF_EXPORT_IMAGE_MAX_DIMENSION", 1200);
 
 type TipTapNode = {
   type: string;
@@ -250,7 +263,8 @@ const processImages = (
   pageService: ReturnType<typeof getPageService>,
   workspaceSlug: string,
   projectId: string | undefined,
-  imageIds: string[]
+  imageIds: string[],
+  onImageProcessed?: (completed: number, total: number) => void
 ): Effect.Effect<Record<string, string>> =>
   Effect.gen(function* () {
     if (imageIds.length === 0) return {};
@@ -263,6 +277,8 @@ const processImages = (
 
     const entries = resolvedPairs.filter((p): p is readonly [string, string] => p !== null);
     if (entries.length === 0) return {};
+    const total = entries.length;
+    let completed = 0;
 
     const processSingleImage = ([assetId, url]: readonly [string, string]) =>
       Effect.gen(function* () {
@@ -327,7 +343,13 @@ const processImages = (
             error,
           })
         ),
-        Effect.catchAll(() => Effect.succeed(null as readonly [string, string] | null))
+        Effect.catchAll(() => Effect.succeed(null as readonly [string, string] | null)),
+        Effect.tap(() =>
+          Effect.sync(() => {
+            completed += 1;
+            onImageProcessed?.(completed, total);
+          })
+        )
       );
 
     const pairs = yield* Effect.forEach(entries, processSingleImage, {
@@ -338,11 +360,22 @@ const processImages = (
     return Object.fromEntries(filtered);
   });
 
+const timedStage = <A, E, R>(stage: string, effect: Effect.Effect<A, E, R>): Effect.Effect<A, E, R> =>
+  Effect.gen(function* () {
+    const [duration, value] = yield* Effect.timed(effect);
+    yield* Effect.logInfo("EXPORT: stage complete", {
+      stage,
+      ms: Math.round(Duration.toMillis(duration)),
+    });
+    return value;
+  });
+
 const runPipeline = (
-  input: ExportInputBase
+  input: ExportInputBase,
+  reportProgress?: ExportProgressReporter
 ): Effect.Effect<ExportPipelineResult, ExportContentFetchError | ExportTimeoutError, LiveDocumentProvider> =>
   Effect.gen(function* () {
-    const { pageId, workspaceSlug, projectId, teamspaceId, noAssets } = input;
+    const { pageId, workspaceSlug, projectId, teamspaceId, noAssets, requestId } = input;
 
     const documentType = getDocumentType(input);
     const pageService = getPageService(documentType, {
@@ -355,25 +388,70 @@ const runPipeline = (
       parentId: null,
     });
 
-    const content = yield* fetchPageContent(pageService, pageId, workspaceSlug);
+    const content = yield* timedStage("fetchContent", fetchPageContent(pageService, pageId, workspaceSlug));
     const { imageIds, attachmentIds } = extractAssetIds(content.contentJSON as TipTapNode);
 
-    let metadata: MetadataResult = yield* fetchMetadata(pageService, workspaceSlug, pageId, projectId, teamspaceId);
+    const willProcessImages = !noAssets && imageIds.length > 0;
+    const willResolveAttachments = !noAssets && attachmentIds.length > 0;
 
+    if (willProcessImages) {
+      reportProgress?.({
+        stage: "processing-images",
+        progress: 20,
+        message: `Processing ${imageIds.length} image${imageIds.length === 1 ? "" : "s"}...`,
+      });
+    } else if (willResolveAttachments) {
+      reportProgress?.({
+        stage: "resolving-attachments",
+        progress: 25,
+        message: "Resolving attachments...",
+      });
+    } else {
+      reportProgress?.({
+        stage: "fetching-metadata",
+        progress: 30,
+        message: "Fetching metadata...",
+      });
+    }
+
+    // Metadata, images, and attachment-URL resolution are independent — run them in parallel
+    // instead of sequentially. On pages with images this typically halves the pre-render stage.
+    const metadataEffect = timedStage(
+      "fetchMetadata",
+      fetchMetadata(pageService, workspaceSlug, pageId, projectId, teamspaceId)
+    );
+    // Image processing reports per-image so the client sees progress on
+    // long-running asset-heavy exports instead of being stuck at one stage.
+    const reportImageProgress = reportProgress
+      ? (completed: number, total: number) => {
+          // Map 0..total → 20..45 so this stage occupies the chunk before render.
+          const span = 25;
+          const progress = 20 + Math.round((completed / total) * span);
+          reportProgress({
+            stage: "processing-images",
+            progress,
+            message: `Processing images (${completed}/${total})`,
+          });
+        }
+      : undefined;
+    const imagesEffect = !willProcessImages
+      ? Effect.succeed({} as Record<string, string>)
+      : timedStage(
+          "processImages",
+          processImages(pageService, workspaceSlug, projectId, imageIds, reportImageProgress)
+        );
+    const attachmentsEffect = !willResolveAttachments
+      ? Effect.succeed({} as Record<string, string>)
+      : timedStage("resolveAttachments", resolveAttachmentUrls(pageService, workspaceSlug, projectId, attachmentIds));
+
+    const [metadataResult, resolvedImages, resolvedAttachments] = yield* Effect.all(
+      [metadataEffect, imagesEffect, attachmentsEffect],
+      { concurrency: "unbounded" }
+    );
+
+    let metadata: MetadataResult = metadataResult;
     if (!noAssets) {
-      let resolvedUrls: Record<string, string> = {};
-
-      if (imageIds.length > 0) {
-        const resolvedImages = yield* processImages(pageService, workspaceSlug, projectId, imageIds);
-        resolvedUrls = { ...resolvedUrls, ...resolvedImages };
-      }
-
-      if (attachmentIds.length > 0) {
-        const resolvedAttachments = yield* resolveAttachmentUrls(pageService, workspaceSlug, projectId, attachmentIds);
-        resolvedUrls = { ...resolvedUrls, ...resolvedAttachments };
-      }
-
-      metadata = { ...metadata, resolvedImageUrls: resolvedUrls };
+      metadata = { ...metadata, resolvedImageUrls: { ...resolvedImages, ...resolvedAttachments } };
     }
 
     const baseURL = process.env.WEB_BASE_URL || process.env.APP_BASE_URL || "";
@@ -381,6 +459,13 @@ const runPipeline = (
     metadata = { ...metadata, baseUrl: resolvedBaseURL, workspaceSlug };
 
     const documentTitle = input.title || content.titleHTML || "Untitled";
+
+    yield* Effect.logInfo("EXPORT: pipeline summary", {
+      requestId,
+      pageId,
+      imageCount: imageIds.length,
+      attachmentCount: attachmentIds.length,
+    });
 
     return {
       contentJSON: content.contentJSON,

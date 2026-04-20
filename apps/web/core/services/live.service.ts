@@ -29,7 +29,14 @@ export type TVersionDiffParams = {
   teamspaceId?: string;
 };
 
-export type TExportStage = "fetching-content" | "rendering-pdf" | "rendering-docx" | "complete";
+export type TExportStage =
+  | "fetching-content"
+  | "processing-images"
+  | "resolving-attachments"
+  | "fetching-metadata"
+  | "rendering-pdf"
+  | "rendering-docx"
+  | "complete";
 
 export type TExportProgress = {
   stage: TExportStage;
@@ -98,6 +105,7 @@ export class LiveService extends APIService {
       pageOrientation?: "portrait" | "landscape";
       fileName?: string;
       noAssets?: boolean;
+      containsCjk?: boolean;
       format?: "pdf" | "docx";
     },
     callbacks: TExportCallbacks

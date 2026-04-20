@@ -29,6 +29,7 @@ export type ExportInputBase = {
   readonly subject?: string;
   readonly fileName?: string;
   readonly noAssets?: boolean;
+  readonly containsCjk?: boolean;
   readonly cookie: string;
   readonly requestId: string;
 };
@@ -66,3 +67,11 @@ export type ExportPipelineResult = {
   readonly documentTitle: string;
   readonly input: ExportInput;
 };
+
+export type ExportProgressUpdate = {
+  readonly stage: string;
+  readonly progress: number;
+  readonly message: string;
+};
+
+export type ExportProgressReporter = (update: ExportProgressUpdate) => void;

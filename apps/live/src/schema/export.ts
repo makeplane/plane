@@ -23,6 +23,12 @@ const ExportBaseFields = {
   subject: Schema.optional(Schema.String),
   fileName: Schema.optional(Schema.String),
   noAssets: Schema.optional(Schema.Boolean),
+  /**
+   * Client-provided hint that the document contains characters requiring the
+   * CJK font set (Noto Sans CJK, ~32MB). When omitted, the server falls back
+   * to scanning the document text itself.
+   */
+  containsCjk: Schema.optional(Schema.Boolean),
 };
 
 export const PdfExportRequestBody = Schema.Struct({

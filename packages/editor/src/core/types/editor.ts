@@ -12,6 +12,8 @@
  */
 
 import type { Content, Editor, Extensions, JSONContent, RawCommands } from "@tiptap/core";
+
+export type { JSONContent };
 import type { Node as ProseMirrorNode, Fragment, MarkType, NodeType } from "@tiptap/pm/model";
 import type { Selection } from "@tiptap/pm/state";
 import type { EditorProps, EditorView } from "@tiptap/pm/view";
@@ -147,6 +149,7 @@ export type CoreEditorRefApi = {
   };
   getDocumentInfo: () => TDocumentInfo;
   getHeadings: () => IMarking[];
+  getJSON: () => JSONContent | null;
   getMarkDown: () => string;
   copyMarkdownToClipboard: () => void;
   getSelectedText: () => string | null;

@@ -13,13 +13,14 @@
 
 import { StyleSheet } from "@react-pdf/renderer";
 import { BACKGROUND_COLORS, BORDER_COLORS, BRAND_COLORS, LINK_COLORS, MENTION_COLORS, TEXT_COLORS } from "./colors";
+import { INTER_FONT_FAMILY } from "./fonts";
 
 export const pdfStyles = StyleSheet.create({
   page: {
     paddingTop: 72,
     paddingHorizontal: 72,
     paddingBottom: 68,
-    fontFamily: "Noto Sans CJK",
+    fontFamily: INTER_FONT_FAMILY,
     fontSize: 8,
     lineHeight: 1.45,
     color: TEXT_COLORS.primary,
@@ -505,15 +506,6 @@ export const pdfStyles = StyleSheet.create({
     position: "absolute",
     left: 27,
     bottom: 28,
-    fontSize: 7.5,
-    color: TEXT_COLORS.tertiary,
-  },
-  footerPageNumber: {
-    position: "absolute",
-    right: 27,
-    bottom: 28,
-    width: 18,
-    textAlign: "right",
     fontSize: 7.5,
     color: TEXT_COLORS.tertiary,
   },

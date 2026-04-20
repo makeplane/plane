@@ -30,10 +30,38 @@ import {
   ExportTimeoutError,
 } from "@/schema/export";
 import { ExportPipelineService, makeLiveDocumentLayer } from "@/services/export";
-import type { ExportInput, PdfExportInput, ExportPipelineResult } from "@/services/export";
+import type { ExportInput, PdfExportInput, ExportPipelineResult, ExportProgressReporter } from "@/services/export";
+import { env } from "@/env";
 
-const RENDER_TIMEOUT_MS = 15000;
-const KEEPALIVE_INTERVAL_MS = 15_000;
+const RENDER_TIMEOUT_MS = env.PDF_EXPORT_RENDER_TIMEOUT_MS;
+const KEEPALIVE_INTERVAL_MS = env.PDF_EXPORT_KEEPALIVE_INTERVAL_MS;
+
+// @react-pdf/renderer renders the whole document in one opaque call (no per-page
+// hook), so during long renders we emit a heartbeat so the client knows we're
+// still alive. The percentage creeps from `from` toward `to` asymptotically.
+const startRenderHeartbeat = (
+  format: "pdf" | "docx",
+  reportProgress: ExportProgressReporter,
+  fromPct: number,
+  toPct: number
+): (() => void) => {
+  const startedAt = Date.now();
+  const intervalMs = 2_000;
+  const label = format.toUpperCase();
+  const interval = setInterval(() => {
+    const elapsedSec = Math.round((Date.now() - startedAt) / 1000);
+    // Approach `toPct` but never reach it — each tick covers ~30% of the gap.
+    const span = toPct - fromPct;
+    const ticks = (Date.now() - startedAt) / intervalMs;
+    const progress = Math.min(toPct - 1, Math.round(fromPct + span * (1 - Math.pow(0.7, ticks))));
+    reportProgress({
+      stage: `rendering-${format}`,
+      progress,
+      message: `Rendering ${label}... (${elapsedSec}s)`,
+    });
+  }, intervalMs);
+  return () => clearInterval(interval);
+};
 
 const CONTENT_TYPES = {
   pdf: "application/pdf",
@@ -86,6 +114,7 @@ export class ExportController {
           pageOrientation: "pageOrientation" in body ? body.pageOrientation : undefined,
           fileName: body.fileName,
           noAssets: body.noAssets,
+          containsCjk: body.containsCjk,
           format: "pdf" as const,
           cookie,
           requestId,
@@ -102,6 +131,7 @@ export class ExportController {
         subject: body.subject,
         fileName: body.fileName,
         noAssets: body.noAssets,
+        containsCjk: body.containsCjk,
         format: "docx" as const,
         cookie,
         requestId,
@@ -111,25 +141,42 @@ export class ExportController {
 
   private renderPdf(
     pipelineResult: ExportPipelineResult,
-    input: PdfExportInput
+    input: PdfExportInput,
+    reportProgress: ExportProgressReporter
   ): Effect.Effect<Buffer, ExportGenerationError | ExportTimeoutError> {
+    const startedAt = Date.now();
     return Effect.tryPromise({
-      try: () =>
-        renderPlaneDocToPdfBuffer(pipelineResult.contentJSON, {
-          title: pipelineResult.documentTitle,
-          author: input.author,
-          subject: input.subject,
-          pageSize: input.pageSize,
-          pageOrientation: input.pageOrientation,
-          metadata: pipelineResult.metadata as PDFExportMetadata,
-          noAssets: input.noAssets,
-        }),
-      catch: (cause) =>
-        new ExportGenerationError({
-          message: "Failed to generate PDF",
+      try: async () => {
+        const stopHeartbeat = startRenderHeartbeat("pdf", reportProgress, 60, 95);
+        try {
+          return await renderPlaneDocToPdfBuffer(pipelineResult.contentJSON, {
+            title: pipelineResult.documentTitle,
+            author: input.author,
+            subject: input.subject,
+            pageSize: input.pageSize,
+            pageOrientation: input.pageOrientation,
+            metadata: pipelineResult.metadata as PDFExportMetadata,
+            noAssets: input.noAssets,
+            containsCjk: input.containsCjk,
+          });
+        } finally {
+          stopHeartbeat();
+        }
+      },
+      catch: (cause) => {
+        // Preserve the real cause in logs — wrapping in ExportGenerationError
+        // makes the underlying library error (e.g. unregistered font) invisible.
+        logger.error("EXPORT: PDF render threw", {
+          requestId: input.requestId,
+          pageId: input.pageId,
+          error: cause instanceof Error ? { name: cause.name, message: cause.message, stack: cause.stack } : cause,
+        });
+        return new ExportGenerationError({
+          message: cause instanceof Error ? `Failed to generate PDF: ${cause.message}` : "Failed to generate PDF",
           format: "pdf",
           cause,
-        }),
+        });
+      },
     }).pipe(
       Effect.timeoutFail({
         duration: Duration.millis(RENDER_TIMEOUT_MS),
@@ -138,22 +185,39 @@ export class ExportController {
             message: `PDF rendering timed out after ${RENDER_TIMEOUT_MS}ms`,
             operation: "renderPdf",
           }),
-      })
+      }),
+      Effect.tap((buffer) =>
+        Effect.sync(() =>
+          logger.info("EXPORT: renderPdf complete", {
+            requestId: input.requestId,
+            pageId: input.pageId,
+            renderPdfMs: Date.now() - startedAt,
+            bytes: buffer.length,
+          })
+        )
+      )
     );
   }
 
   private renderDocx(
-    pipelineResult: ExportPipelineResult
+    pipelineResult: ExportPipelineResult,
+    reportProgress: ExportProgressReporter
   ): Effect.Effect<Buffer, ExportGenerationError | ExportTimeoutError> {
     return Effect.tryPromise({
-      try: () =>
-        renderPlaneDocToDocxBuffer(pipelineResult.contentJSON, {
-          title: pipelineResult.documentTitle,
-          author: pipelineResult.input.author,
-          subject: pipelineResult.input.subject,
-          metadata: pipelineResult.metadata as DocxExportMetadata,
-          noAssets: pipelineResult.input.noAssets,
-        }),
+      try: async () => {
+        const stopHeartbeat = startRenderHeartbeat("docx", reportProgress, 60, 95);
+        try {
+          return await renderPlaneDocToDocxBuffer(pipelineResult.contentJSON, {
+            title: pipelineResult.documentTitle,
+            author: pipelineResult.input.author,
+            subject: pipelineResult.input.subject,
+            metadata: pipelineResult.metadata as DocxExportMetadata,
+            noAssets: pipelineResult.input.noAssets,
+          });
+        } finally {
+          stopHeartbeat();
+        }
+      },
       catch: (cause) =>
         new ExportGenerationError({
           message: "Failed to generate DOCX",
@@ -230,20 +294,24 @@ export class ExportController {
 
     const format = input.format;
 
+    const reportProgress: ExportProgressReporter = (update) => sendEvent("progress", update);
+
     const effect = Effect.gen(this, function* () {
-      sendEvent("progress", { stage: "fetching-content", progress: 0, message: "Fetching page content..." });
+      sendEvent("progress", { stage: "fetching-content", progress: 5, message: "Fetching page content..." });
 
       const service = yield* ExportPipelineService;
-      const pipelineResult = yield* service.runPipeline(input);
+      const pipelineResult = yield* service.runPipeline(input, reportProgress);
 
       sendEvent("progress", {
         stage: `rendering-${format}`,
-        progress: 50,
+        progress: 60,
         message: `Rendering ${format.toUpperCase()}...`,
       });
 
       const buffer =
-        format === "pdf" ? yield* this.renderPdf(pipelineResult, input) : yield* this.renderDocx(pipelineResult);
+        format === "pdf"
+          ? yield* this.renderPdf(pipelineResult, input, reportProgress)
+          : yield* this.renderDocx(pipelineResult, reportProgress);
 
       const baseFileName = input.fileName || pipelineResult.documentTitle || "export";
       const extension = FILE_EXTENSIONS[format];

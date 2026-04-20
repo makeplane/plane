@@ -52,6 +52,11 @@ export type PDFExportOptions = {
   metadata?: PDFExportMetadata;
   /** When true, images and other assets are excluded from the PDF */
   noAssets?: boolean;
+  /**
+   * Client hint: document contains CJK characters and needs Noto Sans CJK loaded.
+   * If undefined, the renderer scans the document text as fallback.
+   */
+  containsCjk?: boolean;
 };
 
 export type PDFExportMetadata = ExportMetadata & {

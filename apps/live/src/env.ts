@@ -48,6 +48,16 @@ const envSchema = z.object({
   AWS_CONTAINER_CREDENTIALS_FULL_URI: z.string().optional(),
   // Iframely configuration
   IFRAMELY_URL: z.string().optional(),
+  // PDF export tuning — bump on CPU-throttled pods
+  PDF_EXPORT_RENDER_TIMEOUT_MS: z.string().default("60000").transform(Number),
+  PDF_EXPORT_KEEPALIVE_INTERVAL_MS: z.string().default("15000").transform(Number),
+  // Web origin used to build absolute links in rendered exports
+  WEB_BASE_URL: z.string().optional(),
+  APP_BASE_URL: z.string().optional(),
+  // Sentry
+  SENTRY_DSN: z.string().optional(),
+  SENTRY_ENVIRONMENT: z.string().default("development"),
+  SENTRY_TRACES_SAMPLE_RATE: z.string().default("0.5").transform(Number),
 });
 
 const validateEnv = () => {

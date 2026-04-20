@@ -94,6 +94,7 @@ export const getEditorRefHelpers = (args: TArgs): EditorRefApi => {
       words: editor?.storage.characterCount?.words?.() ?? 0,
     }),
     getHeadings: () => (editor ? editor.storage.headingsList?.headings : []),
+    getJSON: () => editor?.getJSON() ?? null,
     getMarkDown: () => {
       if (!editor) return "";
       const editorHTML = editor.getHTML();

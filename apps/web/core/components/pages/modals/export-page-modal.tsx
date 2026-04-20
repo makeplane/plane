@@ -15,8 +15,10 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { LoaderCircle } from "lucide-react";
+// plane imports
+import { CJK_CHAR_REGEX } from "@plane/constants";
 // plane editor
-import type { EditorRefApi } from "@plane/editor";
+import type { EditorRefApi, JSONContent } from "@plane/editor";
 // plane ui
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -117,6 +119,43 @@ const defaultValues: TFormValues = {
   content_variety: "everything",
 };
 
+// Detect whether the current page needs the Noto Sans CJK font set on the server.
+// Checks the title first, then walks the editor JSON tree with early return on
+// the first matching text node — avoids serializing to markdown/HTML which is
+// expensive on long docs.
+const jsonContainsCjk = (node: JSONContent | null | undefined): boolean => {
+  if (!node) return false;
+  if (typeof node.text === "string" && CJK_CHAR_REGEX.test(node.text)) return true;
+  if (node.content) {
+    for (const child of node.content) {
+      if (jsonContainsCjk(child)) return true;
+    }
+  }
+  return false;
+};
+
+const detectContainsCjk = (editorRef: EditorRefApi | null, title: string): boolean | undefined => {
+  if (title && CJK_CHAR_REGEX.test(title)) return true;
+  const json = editorRef?.getJSON?.();
+  // Editor not ready — return undefined so the server falls back to its own
+  // scan rather than trusting a false negative.
+  if (!json) return undefined;
+  return jsonContainsCjk(json);
+};
+
+// Yield to the browser so pending paints/input can happen before we run a
+// blocking sync task. Prefers scheduler.yield() where supported (Chromium-only
+// today) for better continuation priority; falls back to a macrotask elsewhere.
+// A microtask (queueMicrotask / Promise.resolve) would NOT yield to paint.
+const yieldToBrowser = async (): Promise<void> => {
+  const sched = (globalThis as typeof globalThis & { scheduler?: { yield?: () => Promise<void> } }).scheduler;
+  if (typeof sched?.yield === "function") {
+    await sched.yield();
+    return;
+  }
+  await new Promise<void>((resolve) => setTimeout(resolve, 0));
+};
+
 export function ExportPageModal(props: Props) {
   const { editorRef, isOpen, onClose, pageTitle, pageId, teamspaceId } = props;
   // states
@@ -125,6 +164,10 @@ export function ExportPageModal(props: Props) {
   const [errorMessage, setErrorMessage] = useState<string>("");
   // refs
   const abortRef = useRef<(() => void) | null>(null);
+  // Incremented on every new export and on cancel. Anything that suspends on a
+  // yield/await must re-check this against its captured id before continuing,
+  // so a cancel during the yield gap doesn't let a stale run start work.
+  const exportRunIdRef = useRef(0);
   // params
   const { workspaceSlug, projectId } = useParams();
   // feature flags
@@ -167,6 +210,7 @@ export function ExportPageModal(props: Props) {
 
   // handle cancel during export
   const handleCancel = useCallback(() => {
+    exportRunIdRef.current += 1;
     setExportState("cancelling");
     abortRef.current?.();
     abortRef.current = null;
@@ -194,11 +238,9 @@ export function ExportPageModal(props: Props) {
   // handle export via live server (PDF or DOCX)
   const handleExportViaLiveServer = (
     exportFileName: string,
-    extraParams?: { pageSize?: TPageFormats; format?: "pdf" | "docx" }
+    extraParams?: { pageSize?: TPageFormats; format?: "pdf" | "docx"; containsCjk?: boolean }
   ) => {
     if (!workspaceSlug) throw new Error("Workspace slug is required");
-
-    setExportState("exporting");
 
     try {
       const abort = liveService.exportWithProgress(
@@ -213,7 +255,6 @@ export function ExportPageModal(props: Props) {
           ...extraParams,
         },
         {
-          onProgress: () => {},
           onComplete: (blob) => {
             initiateDownload(blob, exportFileName);
             setExportState("complete");
@@ -250,7 +291,6 @@ export function ExportPageModal(props: Props) {
 
   // handle export as markdown
   const handleExportAsMarkdown = () => {
-    setExportState("exporting");
     try {
       const markdownContent = editorRef?.getMarkDown() ?? "";
       const parsedMarkdownContent = replaceCustomComponentsFromMarkdownContent({
@@ -278,16 +318,30 @@ export function ExportPageModal(props: Props) {
     }
   };
 
-  // handle export
-  const handleExport = () => {
+  const handleExport = async () => {
+    const runId = ++exportRunIdRef.current;
+    setErrorMessage("");
+    setExportState("exporting");
+
     if (selectedExportFormat === "pdf") {
+      // Detection walks editor JSON with early return — sub-10ms on realistic
+      // docs — and the server call is async, so no yield is needed here.
       const pdfFileName = `${fileName}-${selectedPageFormat.toString().toLowerCase()}.pdf`;
-      handleExportViaLiveServer(pdfFileName, { pageSize: selectedPageFormat });
-    } else if (selectedExportFormat === "docx") {
-      handleExportViaLiveServer(`${fileName}.docx`, { format: "docx" });
-    } else if (selectedExportFormat === "markdown") {
-      handleExportAsMarkdown();
+      const containsCjk = detectContainsCjk(editorRef, pageTitle);
+      handleExportViaLiveServer(pdfFileName, { pageSize: selectedPageFormat, containsCjk });
+      return;
     }
+
+    if (selectedExportFormat === "docx") {
+      handleExportViaLiveServer(`${fileName}.docx`, { format: "docx" });
+      return;
+    }
+
+    // Markdown export runs a full HTML→markdown serialization synchronously.
+    // Yield once so the browser paints the loading state before we block.
+    await yieldToBrowser();
+    if (runId !== exportRunIdRef.current) return;
+    handleExportAsMarkdown();
   };
 
   const handleRetry = () => {
@@ -302,8 +356,8 @@ export function ExportPageModal(props: Props) {
           <h3 className="text-18 font-medium text-secondary">Export page</h3>
 
           {exportState === "error" && (
-            <div className="rounded-md bg-red-500/10 border border-red-500/20 p-3">
-              <p className="text-13 text-red-500">{errorMessage}</p>
+            <div className="rounded-md bg-danger-subtle border border-danger-strong/20 p-3">
+              <p className="text-13 text-danger-primary">{errorMessage}</p>
             </div>
           )}
 
@@ -398,7 +452,12 @@ export function ExportPageModal(props: Props) {
               Try again
             </Button>
           ) : (
-            <Button variant="primary" size="lg" disabled={isExporting || isCancelling} onClick={handleExport}>
+            <Button
+              variant="primary"
+              size="lg"
+              disabled={isExporting || isCancelling}
+              onClick={() => void handleExport()}
+            >
               {isExporting && <LoaderCircle className="size-3.5 animate-spin" />}
               {isExporting ? "Exporting..." : "Export"}
             </Button>

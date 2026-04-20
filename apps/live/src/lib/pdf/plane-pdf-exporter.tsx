@@ -15,9 +15,12 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { Document, Font, Page, pdf, Text, View } from "@react-pdf/renderer";
 import type { Style } from "@react-pdf/types";
+import { CJK_CHAR_REGEX } from "@plane/constants";
+import { logger } from "@plane/logger";
 import { annotateCodeBlocksForPdf } from "./code-highlighter";
 import { hasLocalEmojiAssetSupport, resolveEmojiAssetSource } from "./emoji-assets";
-import { createKeyGenerator, getFontStyle, renderNode } from "./node-renderers";
+import { CJK_FONT_FAMILY, INTER_FONT_FAMILY, getFontStyle } from "./fonts";
+import { createKeyGenerator, renderNode } from "./node-renderers";
 import { pdfStyles } from "./styles";
 import type { PDFExportOptions, TipTapDocument } from "./types";
 
@@ -54,38 +57,56 @@ const getFontsDir = (): string => {
 
 const fontsDir = getFontsDir();
 
+// Register Inter eagerly — it's the default font set on every page style, so it
+// must be available before any render. Registering at module load is cheap.
 Font.register({
-  family: "Noto Sans CJK",
+  family: INTER_FONT_FAMILY,
   fonts: [
-    {
-      src: path.join(fontsDir, "NotoSansCJKsc-Regular.otf"),
-      fontWeight: 400,
-    },
-    {
-      src: path.join(fontsDir, "NotoSansCJKsc-Regular.otf"),
-      fontWeight: 400,
-      fontStyle: "italic",
-    },
-    {
-      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
-      fontWeight: 600,
-    },
-    {
-      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
-      fontWeight: 600,
-      fontStyle: "italic",
-    },
-    {
-      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
-      fontWeight: 700,
-    },
-    {
-      src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"),
-      fontWeight: 700,
-      fontStyle: "italic",
-    },
+    { src: path.join(fontsDir, "inter-latin-400-normal.woff"), fontWeight: 400 },
+    { src: path.join(fontsDir, "inter-latin-400-italic.woff"), fontWeight: 400, fontStyle: "italic" },
+    { src: path.join(fontsDir, "inter-latin-600-normal.woff"), fontWeight: 600 },
+    { src: path.join(fontsDir, "inter-latin-600-italic.woff"), fontWeight: 600, fontStyle: "italic" },
+    { src: path.join(fontsDir, "inter-latin-700-normal.woff"), fontWeight: 700 },
+    { src: path.join(fontsDir, "inter-latin-700-italic.woff"), fontWeight: 700, fontStyle: "italic" },
   ],
 });
+
+// Lazy CJK font registration. Noto Sans CJK (~32MB) is very CPU-heavy to subset
+// during `pdf.toBlob()` and dominates render time on CPU-throttled pods.
+// Only register when the document actually contains CJK characters. Note:
+// Font.register() only records the path — fontkit.open() parses the 32MB OTF
+// lazily on first render and memoizes, so subsequent CJK renders are cheap.
+let cjkFontsRegistered = false;
+const ensureCjkFontsRegistered = (): void => {
+  if (cjkFontsRegistered) return;
+  cjkFontsRegistered = true;
+  logger.info(`PDF: registering ${CJK_FONT_FAMILY} font family (~32MB, parsed on first CJK render)`);
+  Font.register({
+    family: CJK_FONT_FAMILY,
+    fonts: [
+      { src: path.join(fontsDir, "NotoSansCJKsc-Regular.otf"), fontWeight: 400 },
+      { src: path.join(fontsDir, "NotoSansCJKsc-Regular.otf"), fontWeight: 400, fontStyle: "italic" },
+      { src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"), fontWeight: 600 },
+      { src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"), fontWeight: 600, fontStyle: "italic" },
+      { src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"), fontWeight: 700 },
+      { src: path.join(fontsDir, "NotoSansCJKsc-Bold.otf"), fontWeight: 700, fontStyle: "italic" },
+    ],
+  });
+};
+
+const documentContainsCjk = (doc: TipTapDocument, title?: string): boolean => {
+  if (title && CJK_CHAR_REGEX.test(title)) return true;
+  const walk = (node: { text?: unknown; content?: unknown }): boolean => {
+    if (typeof node.text === "string" && CJK_CHAR_REGEX.test(node.text)) return true;
+    if (Array.isArray(node.content)) {
+      for (const child of node.content) {
+        if (child && typeof child === "object" && walk(child as { text?: unknown; content?: unknown })) return true;
+      }
+    }
+    return false;
+  };
+  return walk(doc as unknown as { text?: unknown; content?: unknown });
+};
 
 if (hasLocalEmojiAssetSupport) {
   // Keep inline emojis airgapped-safe by resolving them from bundled local assets.
@@ -150,10 +171,27 @@ export const createPdfDocument = (doc: TipTapDocument, options: PDFExportOptions
             {normalizedTitle}
           </Text>
         ) : null}
-        <Text fixed style={pdfStyles.footerPageNumber} render={({ pageNumber }) => `${pageNumber}`} />
+        {/* Page-number footer intentionally omitted. `<Text fixed render={...} />`
+            triggers a @react-pdf/renderer 4.3.2 pagination bug on long documents
+            (~11+ pages): yoga's box.height for the dynamic text balloons to
+            ~2.76e19 and accumulates across per-page relayouts until pdfkit's
+            PDFObject.number guard (`|n| < 1e21`) trips with
+            `unsupported number: -1.5519118618817368e+21`. Wrapping the Text in a
+            <View fixed> just moves the throw. Dropping page numbers is the
+            simplest working fix until upstream ships a pagination-stable API. */}
       </Page>
     </Document>
   );
+};
+
+const resolveCjkDecision = (
+  preparedDoc: TipTapDocument,
+  options: PDFExportOptions
+): { needsCjk: boolean; source: "client-hint" | "server-scan" } => {
+  if (typeof options.containsCjk === "boolean") {
+    return { needsCjk: options.containsCjk, source: "client-hint" };
+  }
+  return { needsCjk: documentContainsCjk(preparedDoc, options.title), source: "server-scan" };
 };
 
 export const renderPlaneDocToPdfBuffer = async (
@@ -161,6 +199,9 @@ export const renderPlaneDocToPdfBuffer = async (
   options: PDFExportOptions = {}
 ): Promise<Buffer> => {
   const preparedDoc = await annotateCodeBlocksForPdf(doc);
+  const { needsCjk, source } = resolveCjkDecision(preparedDoc, options);
+  logger.info("PDF: CJK decision", { needsCjk, source, alreadyRegistered: cjkFontsRegistered });
+  if (needsCjk) ensureCjkFontsRegistered();
   const pdfDocument = createPdfDocument(preparedDoc, options);
   const pdfInstance = pdf(pdfDocument);
   const blob = await pdfInstance.toBlob();
@@ -170,6 +211,9 @@ export const renderPlaneDocToPdfBuffer = async (
 
 export const renderPlaneDocToPdfBlob = async (doc: TipTapDocument, options: PDFExportOptions = {}): Promise<Blob> => {
   const preparedDoc = await annotateCodeBlocksForPdf(doc);
+  const { needsCjk, source } = resolveCjkDecision(preparedDoc, options);
+  logger.info("PDF: CJK decision", { needsCjk, source, alreadyRegistered: cjkFontsRegistered });
+  if (needsCjk) ensureCjkFontsRegistered();
   const pdfDocument = createPdfDocument(preparedDoc, options);
   const pdfInstance = pdf(pdfDocument);
   return await pdfInstance.toBlob();
