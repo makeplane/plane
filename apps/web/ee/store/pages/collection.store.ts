@@ -18,61 +18,56 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { EPageAccess } from "@plane/types";
 import type {
   TCollection,
+  TCollectionAddablePage,
+  TCollectionBranchPageSummary,
+  TCollectionBranchRow,
   TCollectionCreatePayload,
   TPage,
   TPageCollection,
-  TPageCollectionMembership,
   TPageFilterProps,
 } from "@plane/types";
 import { CollectionService, PageCollectionService } from "@plane/services";
-import { getPageName, shouldFilterPage } from "@plane/utils";
 import type { RootStore } from "@/plane-web/store/root.store";
 import { getLoadedSubtreePageIds } from "@/plane-web/store/pages/page-tree";
-import type { TPageInternalUpdateSnapshot } from "./workspace-page.store";
+import {
+  createCollectionBranchQueryState,
+  getCollectionBranchQueryKey,
+  getExpandedRowIds,
+  hasCollectionBranchFilters,
+  isExpandedRow,
+  normalizeCollectionBranchQueryOptions,
+  replaceExpandedRowIds,
+  setExpandedRowIds,
+  toggleExpandedRowIds,
+} from "./collection.helpers";
+import {
+  buildCollectionMovePageUpdatePayload,
+  createCollectionMoveMutation,
+  getCollectionMoveCreatePayload,
+  getCollectionMoveRollbackPayload,
+  getCollectionMoveSyncParams,
+  getCollectionMoveUpdatePayload,
+  getCreatedPageCollectionOrThrow,
+  getOptimisticCollectionMoveId,
+  getPreviousExplicitPageCollections,
+  toCollectionMoveError,
+} from "./collection-move.helpers";
+import type { TCollectionBranchQueryOptions, TCollectionBranchQueryState } from "./collection.helpers";
+import type {
+  TCollectionDropExecutionOptions,
+  TCollectionDropPlan,
+  TCollectionDropPlanParams,
+  TCollectionDropSnapshot,
+} from "./collection-move.helpers";
+import { WorkspacePage } from "./workspace-page";
 import type { TWorkspaceCollection } from "./workspace-collection";
 import { WorkspaceCollection } from "./workspace-collection";
 
 type TLoader = "init-loader" | "mutation-loader" | undefined;
 type TError = { title: string; description: string };
 
-type TCollectionDropCollectionMutation =
-  | {
-      kind: "create";
-      collectionId: string;
-      pageId: string;
-      sortOrder: number;
-    }
-  | {
-      kind: "update";
-      collectionId: string;
-      pageCollectionId: string;
-      pageId: string;
-      sortOrder: number;
-      nextCollectionId?: string;
-    };
-
-type TCollectionDropPlan = {
-  pageId: string;
-  sourceCollectionId: string | undefined;
-  targetCollectionId: string;
-  targetParentId: string | null;
-  pageUpdatePayload: Partial<TPage>;
-  previousExplicitPageCollections: TPageCollection[];
-  optimisticPageCollection: TPageCollection;
-  collectionMutation: TCollectionDropCollectionMutation;
-};
-
-type TCollectionDropSnapshot = {
-  pageSnapshot?: TPageInternalUpdateSnapshot;
-  previousExplicitPageCollections: TPageCollection[];
-  optimisticPageCollectionId: string;
-};
-
 const PAGE_COLLECTION_SORT_ORDER_INCREMENT = 10000;
-const COLLECTION_FETCH_BATCH_SIZE = 5;
-const PAGE_DETAILS_FETCH_BATCH_SIZE = 10;
-const toError = (reason: unknown, fallbackMessage: string) =>
-  reason instanceof Error ? reason : new Error(typeof reason === "string" ? reason : fallbackMessage);
+const OPTIMISTIC_PAGE_COLLECTION_ID_PREFIX = "optimistic-page-collection-";
 
 export interface ICollectionStore {
   loader: TLoader;
@@ -93,7 +88,6 @@ export interface ICollectionStore {
   getPageCollectionByPageId: (pageId: string) => TPageCollection | undefined;
   hasHydratedCollectionMemberships: (workspaceSlug: string) => boolean;
   ensureCollectionMembershipsHydrated: (workspaceSlug: string) => Promise<void>;
-  ensureCollectionPageDetailsLoaded: (collectionId: string, mode?: "roots" | "all") => Promise<void>;
   isCollectionPagesLoaded: (collectionId: string) => boolean;
   fetchCollections: (workspaceSlug: string) => Promise<TCollection[]>;
   fetchCollectionDetails: (workspaceSlug: string, collectionId: string) => Promise<TCollection>;
@@ -102,14 +96,58 @@ export interface ICollectionStore {
   moveCollectionPages: (workspaceSlug: string, collectionId: string, newCollectionId: string) => Promise<void>;
   updateCollectionsInStore: (collections: TCollection[]) => void;
   removeCollectionInstance: (collectionId: string) => void;
+  searchAddablePages: (
+    workspaceSlug: string,
+    collectionId: string,
+    params?: { search?: string }
+  ) => Promise<TCollectionAddablePage[]>;
   fetchCollectionPages: (
     workspaceSlug: string,
     collectionId: string,
     options?: {
       force?: boolean;
+      searchQuery?: string;
+      filters?: TPageFilterProps;
+      cursor?: string;
     }
   ) => Promise<TPageCollection[]>;
+  fetchCollectionBranch: (
+    workspaceSlug: string,
+    collectionId: string,
+    options?: {
+      parentId?: string | null;
+      force?: boolean;
+      searchQuery?: string;
+      filters?: TPageFilterProps;
+      cursor?: string;
+      perPage?: number;
+    }
+  ) => Promise<string[]>;
+  fetchCollectionBranchChildren: (
+    workspaceSlug: string,
+    collectionId: string,
+    parentId: string,
+    options?: {
+      force?: boolean;
+      searchQuery?: string;
+      filters?: TPageFilterProps;
+      perPage?: number;
+    }
+  ) => Promise<string[]>;
+  getCollectionBranchState: (
+    collectionId: string,
+    options?: {
+      parentId?: string | null;
+      searchQuery?: string;
+      filters?: TPageFilterProps;
+    }
+  ) => TCollectionBranchQueryState | undefined;
   resolveCollectionIdForPage: (
+    workspaceSlug: string,
+    pageId: string,
+    ancestorPageIds?: string[]
+  ) => Promise<string | undefined>;
+  refreshCollectionBranchForPage: (
     workspaceSlug: string,
     pageId: string,
     ancestorPageIds?: string[]
@@ -121,6 +159,7 @@ export interface ICollectionStore {
   canCurrentUserAddPageToCollection: (pageId: string) => boolean;
   canCurrentUserReorderPageInCollection: (pageId: string, collectionId: string) => boolean;
   canCurrentUserRemovePageFromCollection: (collectionId: string, pageId: string) => boolean;
+  getExplicitCollectionIdForPage: (pageId: string) => string | undefined;
   getEffectiveCollectionId: (pageId: string) => string | undefined;
   computeDestinationSortOrder: (
     collectionId: string,
@@ -150,12 +189,12 @@ export interface ICollectionStore {
     sourceCollectionId?: string | null;
     targetCollectionId: string;
     targetParentId: string | null;
+    targetSortOrder?: number;
     reorderTargetPageId?: string;
     reorderPosition?: "before" | "after";
     access?: EPageAccess;
     clearSharedAccess?: boolean;
   }) => Promise<void>;
-  getAddablePageIdsForCollection: (collectionId: string) => string[];
   getCollectionViewPageIds: (collectionId: string) => Set<string>;
   getCollectionRootPageIds: (
     collectionId: string,
@@ -164,7 +203,14 @@ export interface ICollectionStore {
       filters?: TPageFilterProps;
     }
   ) => string[];
-  getCollectionChildPageIds: (pageId: string, collectionId: string) => string[];
+  getCollectionChildPageIds: (
+    pageId: string,
+    collectionId: string,
+    options?: {
+      searchQuery?: string;
+      filters?: TPageFilterProps;
+    }
+  ) => string[];
   getCollectionAutoExpandedAncestorIds: (collectionId: string, currentPageId?: string) => string[];
   toggleCollectionExpanded: (collectionId: string) => void;
   setCollectionExpanded: (collectionId: string) => void;
@@ -197,10 +243,11 @@ export class CollectionStore implements ICollectionStore {
   expandedCollectionIds: Set<string> = new Set();
   collectionService: CollectionService;
   pageCollectionService: PageCollectionService;
-  private fetchCollectionPagesRequests: Map<string, Promise<TPageCollection[]>> = new Map();
+  branchQueries: Map<string, TCollectionBranchQueryState> = new Map();
+  private fetchCollectionPagesRequests: Map<string, Promise<string[]>> = new Map();
+  private branchRequestVersions: Map<string, number> = new Map();
   private fetchCollectionsRequest: Promise<TCollection[]> | undefined = undefined;
   private hydrateCollectionMembershipsRequest: Promise<void> | undefined = undefined;
-  private collectionMembershipEpoch = 0;
 
   constructor(private store: RootStore) {
     makeObservable(this, {
@@ -217,18 +264,20 @@ export class CollectionStore implements ICollectionStore {
       collectionExpandedRowIdsMap: observable,
       collectionSidebarExpandedRowIdsMap: observable,
       expandedCollectionIds: observable,
-      collectionViewPageIdsIndex: computed,
+      branchQueries: observable,
       workspaceCollections: computed,
       fetchCollections: action,
       ensureCollectionMembershipsHydrated: action,
-      ensureCollectionPageDetailsLoaded: action,
       fetchCollectionDetails: action,
       createCollection: action,
       deleteCollection: action,
       moveCollectionPages: action,
       updateCollectionsInStore: action,
       removeCollectionInstance: action,
+      searchAddablePages: action,
       fetchCollectionPages: action,
+      fetchCollectionBranch: action,
+      fetchCollectionBranchChildren: action,
       resolveCollectionIdForPage: action,
       addPagesToCollection: action,
       addPageToCollection: action,
@@ -254,6 +303,70 @@ export class CollectionStore implements ICollectionStore {
   private resolveCollectionId = (collectionId: string) =>
     collectionId === "general" ? this.defaultCollectionId : collectionId;
 
+  private getActualCollectionId = (collectionId: string) => this.resolveCollectionId(collectionId) ?? collectionId;
+
+  private setLoaderState = (loader: TLoader, error: TError | undefined = undefined) => {
+    runInAction(() => {
+      this.loader = loader;
+      this.error = error;
+    });
+  };
+
+  private clearLoader = () => {
+    runInAction(() => {
+      this.loader = undefined;
+    });
+  };
+
+  private withMutationLoader = async <T>(operation: () => Promise<T>): Promise<T> => {
+    this.setLoaderState("mutation-loader");
+
+    try {
+      return await operation();
+    } finally {
+      this.clearLoader();
+    }
+  };
+
+  private getBranchQueryStateInternal = (collectionId: string, options: TCollectionBranchQueryOptions = {}) => {
+    const normalizedOptions = normalizeCollectionBranchQueryOptions(collectionId, options, this.resolveCollectionId);
+    return this.branchQueries.get(getCollectionBranchQueryKey(normalizedOptions));
+  };
+
+  private ensureBranchQueryState = (collectionId: string, options: TCollectionBranchQueryOptions = {}) => {
+    const normalizedOptions = normalizeCollectionBranchQueryOptions(collectionId, options, this.resolveCollectionId);
+    const key = getCollectionBranchQueryKey(normalizedOptions);
+    const existingState = this.branchQueries.get(key);
+    if (existingState) return existingState;
+
+    const nextState = createCollectionBranchQueryState(normalizedOptions);
+
+    this.branchQueries.set(key, nextState);
+    return nextState;
+  };
+
+  private replaceBranchQueryState = (
+    collectionId: string,
+    options: TCollectionBranchQueryOptions,
+    updater: (state: TCollectionBranchQueryState) => TCollectionBranchQueryState
+  ) => {
+    const normalizedOptions = normalizeCollectionBranchQueryOptions(collectionId, options, this.resolveCollectionId);
+    const nextState = updater({ ...this.ensureBranchQueryState(normalizedOptions.collectionId, normalizedOptions) });
+    this.branchQueries.set(getCollectionBranchQueryKey(normalizedOptions), nextState);
+    return nextState;
+  };
+
+  private clearCollectionBranchQueries = (collectionId: string) => {
+    const actualCollectionId = this.getActualCollectionId(collectionId);
+    [...this.branchQueries.keys()].forEach((key) => {
+      if (key.startsWith(`${actualCollectionId}::`)) {
+        this.branchQueries.delete(key);
+        this.fetchCollectionPagesRequests.delete(key);
+        this.branchRequestVersions.delete(key);
+      }
+    });
+  };
+
   private isCurrentUserWorkspaceAdmin = () => {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug) return false;
@@ -270,28 +383,14 @@ export class CollectionStore implements ICollectionStore {
   ): page is NonNullable<ReturnType<CollectionStore["store"]["workspacePages"]["getPageById"]>> =>
     !!page?.id && page.access === EPageAccess.PUBLIC && !page.archived_at && !page.deleted_at && !page.is_shared;
 
-  private getNearestExplicitPageCollection = (pageId: string): TPageCollection | undefined => {
-    let currentPage = this.store.workspacePages.getPageById(pageId);
-
-    while (currentPage?.id) {
-      const explicitPageCollection = this.getPageCollectionByPageId(currentPage.id);
-      if (explicitPageCollection) return explicitPageCollection;
-
-      if (!currentPage.parent_id) return undefined;
-      currentPage = this.store.workspacePages.getPageById(currentPage.parent_id);
+  private getPageParentId = (pageId: string): string | null | undefined => {
+    if (this.pageParentIdByPageId.has(pageId)) {
+      return this.pageParentIdByPageId.get(pageId) ?? null;
     }
 
-    return undefined;
-  };
-
-  private getPageParentId = (pageId: string): string | null | undefined => {
     const page = this.store.workspacePages.getPageById(pageId);
     if (page?.id) {
       return page.parent_id ?? null;
-    }
-
-    if (this.pageParentIdByPageId.has(pageId)) {
-      return this.pageParentIdByPageId.get(pageId) ?? null;
     }
 
     return undefined;
@@ -301,65 +400,315 @@ export class CollectionStore implements ICollectionStore {
     const page = this.store.workspacePages.getPageById(pageId);
     if (!this.isPageEligibleForCollection(page)) return undefined;
 
-    const explicitPageCollection = this.getNearestExplicitPageCollection(pageId);
-    if (explicitPageCollection?.collection) return explicitPageCollection.collection;
-
-    const { workspaceSlug } = this.store.router;
-    if (!workspaceSlug || !this.defaultCollectionId) return undefined;
-    if (!this.hasHydratedCollectionMemberships(workspaceSlug)) {
-      return undefined;
-    }
+    const explicitCollectionId = this.getPageCollectionByPageId(pageId)?.collection ?? page.collection_id;
+    if (explicitCollectionId) return explicitCollectionId;
 
     return this.defaultCollectionId;
   });
 
-  private getExplicitCollectionIdForPage = (pageId: string): string | undefined =>
-    this.getNearestExplicitPageCollection(pageId)?.collection;
+  getExplicitCollectionIdForPage = computedFn(
+    (pageId: string): string | undefined =>
+      this.getPageCollectionByPageId(pageId)?.collection ??
+      this.store.workspacePages.getPageById(pageId)?.collection_id ??
+      undefined
+  );
 
-  get collectionViewPageIdsIndex() {
-    const { currentWorkspace } = this.store.workspaceRoot;
-    const index = new Map<string, Set<string>>();
+  private getLoadedBranchCollectionId = (pageId: string, ancestorPageIds: string[] = []) => {
+    const branchPageIds = [pageId, ...ancestorPageIds];
 
-    if (!currentWorkspace) {
-      return index;
+    for (const branchPageId of branchPageIds) {
+      const explicitCollectionId = this.getExplicitCollectionIdForPage(branchPageId);
+      if (explicitCollectionId) {
+        return explicitCollectionId;
+      }
     }
 
-    Object.values(this.store.workspacePages.data).forEach((page) => {
-      if (!page?.id || page.workspace !== currentWorkspace.id) {
+    return undefined;
+  };
+
+  private isUnfilteredBranchQueryState = (state: TCollectionBranchQueryState) =>
+    state.searchQuery.length === 0 && !hasCollectionBranchFilters(state.filters);
+
+  private getUnfilteredBranchPageIds = (collectionId: string, parentId: string | null): string[] => {
+    const actualCollectionId = this.resolveCollectionId(collectionId);
+    if (!actualCollectionId) return [];
+
+    const pageIds = new Set<string>(this.getLoadedCollectionViewPageIds(actualCollectionId));
+    [...(this.pageCollectionIdsByCollection.get(actualCollectionId) ?? new Set())]
+      .map((pageCollectionId) => this.pageCollectionsData[pageCollectionId]?.page)
+      .filter((pageId): pageId is string => !!pageId)
+      .forEach((pageId) => pageIds.add(pageId));
+
+    return [...pageIds]
+      .map((pageId) => this.store.workspacePages.getPageById(pageId))
+      .filter(
+        (page): page is NonNullable<typeof page> =>
+          !!page?.id &&
+          this.isPageEligibleForCollection(page) &&
+          (this.getPageParentId(page.id) ?? null) === parentId &&
+          this.getEffectiveCollectionId(page.id) === actualCollectionId
+      )
+      .sort(
+        (leftPage, rightPage) =>
+          this.getCollectionOrderValue(leftPage.id as string) - this.getCollectionOrderValue(rightPage.id as string)
+      )
+      .map((page) => page.id as string);
+  };
+
+  private syncLoadedUnfilteredBranchState = (collectionId: string, parentId: string | null) => {
+    const actualCollectionId = this.resolveCollectionId(collectionId);
+    if (!actualCollectionId) return;
+
+    const nextPageIds = this.getUnfilteredBranchPageIds(actualCollectionId, parentId);
+    [...this.branchQueries.entries()].forEach(([key, state]) => {
+      if (
+        state.collectionId !== actualCollectionId ||
+        state.parentId !== parentId ||
+        !state.isLoaded ||
+        !this.isUnfilteredBranchQueryState(state)
+      ) {
         return;
       }
 
-      if (!this.isPageEligibleForCollection(page)) {
-        return;
+      this.branchQueries.set(key, {
+        ...state,
+        pageIds: nextPageIds,
+      });
+    });
+  };
+
+  private syncLoadedUnfilteredBranchesForMove = (params: {
+    pageId: string;
+    sourceCollectionId?: string;
+    sourceParentId: string | null;
+    targetCollectionId: string;
+    targetParentId: string | null;
+  }) => {
+    void params.pageId;
+
+    if (params.sourceCollectionId) {
+      this.syncLoadedUnfilteredBranchState(params.sourceCollectionId, params.sourceParentId);
+    }
+
+    if (params.sourceCollectionId === params.targetCollectionId && params.sourceParentId === params.targetParentId) {
+      return;
+    }
+
+    this.syncLoadedUnfilteredBranchState(params.targetCollectionId, params.targetParentId);
+  };
+
+  private resetHydrationRequestIfIdle = () => {
+    if (this.fetchCollectionPagesRequests.size === 0) {
+      this.hydrateCollectionMembershipsRequest = undefined;
+      this.isHydratingMemberships = false;
+    }
+  };
+
+  private invalidateBranchQueries = (branchKeys: Iterable<string>) => {
+    const uniqueBranchKeys = [...new Set(branchKeys)];
+    if (uniqueBranchKeys.length === 0) return;
+
+    uniqueBranchKeys.forEach((branchKey) => {
+      const existingState = this.branchQueries.get(branchKey);
+      if (existingState) {
+        this.branchQueries.set(branchKey, {
+          ...existingState,
+          isStale: true,
+        });
       }
 
-      const effectiveCollectionId = this.getEffectiveCollectionId(page.id);
-      if (!effectiveCollectionId) {
-        return;
-      }
-
-      const collectionPageIds = index.get(effectiveCollectionId) ?? new Set<string>();
-      collectionPageIds.add(page.id);
-      index.set(effectiveCollectionId, collectionPageIds);
+      this.fetchCollectionPagesRequests.delete(branchKey);
+      this.branchRequestVersions.set(branchKey, (this.branchRequestVersions.get(branchKey) ?? 0) + 1);
     });
 
-    return index;
-  }
+    this.resetHydrationRequestIfIdle();
+  };
 
-  private getDerivedCollectionViewPageIds = (collectionId: string): Set<string> => {
+  private invalidateLoadedBranchQueries = (matcher: (state: TCollectionBranchQueryState) => boolean) => {
+    this.invalidateBranchQueries(
+      [...this.branchQueries.entries()].filter(([, state]) => state.isLoaded && matcher(state)).map(([key]) => key)
+    );
+  };
+
+  private invalidateLoadedBranchQueriesForParent = (
+    collectionId: string,
+    parentId: string | null,
+    options: { includeUnfiltered?: boolean } = {}
+  ) => {
+    const actualCollectionId = this.resolveCollectionId(collectionId);
+    if (!actualCollectionId) return;
+
+    const shouldIncludeUnfiltered = options.includeUnfiltered ?? true;
+
+    this.invalidateLoadedBranchQueries(
+      (state) =>
+        state.collectionId === actualCollectionId &&
+        state.parentId === parentId &&
+        (shouldIncludeUnfiltered || !this.isUnfilteredBranchQueryState(state))
+    );
+  };
+
+  private invalidateLoadedBranchQueriesForMove = (
+    params: {
+      sourceCollectionId?: string;
+      sourceParentId: string | null;
+      targetCollectionId: string;
+      targetParentId: string | null;
+    },
+    options: { includeUnfiltered?: boolean } = {}
+  ) => {
+    if (params.sourceCollectionId) {
+      this.invalidateLoadedBranchQueriesForParent(params.sourceCollectionId, params.sourceParentId, options);
+    }
+
+    if (params.sourceCollectionId === params.targetCollectionId && params.sourceParentId === params.targetParentId) {
+      return;
+    }
+
+    this.invalidateLoadedBranchQueriesForParent(params.targetCollectionId, params.targetParentId, options);
+  };
+
+  private markLoadedUnfilteredBranchStateFresh = (collectionId: string, parentId: string | null) => {
+    const actualCollectionId = this.resolveCollectionId(collectionId);
+    if (!actualCollectionId) return;
+
+    [...this.branchQueries.entries()].forEach(([key, state]) => {
+      if (
+        state.collectionId !== actualCollectionId ||
+        state.parentId !== parentId ||
+        !state.isLoaded ||
+        !this.isUnfilteredBranchQueryState(state)
+      ) {
+        return;
+      }
+
+      this.branchQueries.set(key, {
+        ...state,
+        isLoading: false,
+        isStale: false,
+      });
+    });
+  };
+
+  private markLoadedUnfilteredBranchesFreshForMove = (params: {
+    sourceCollectionId?: string;
+    sourceParentId: string | null;
+    targetCollectionId: string;
+    targetParentId: string | null;
+  }) => {
+    if (params.sourceCollectionId) {
+      this.markLoadedUnfilteredBranchStateFresh(params.sourceCollectionId, params.sourceParentId);
+    }
+
+    if (params.sourceCollectionId === params.targetCollectionId && params.sourceParentId === params.targetParentId) {
+      return;
+    }
+
+    this.markLoadedUnfilteredBranchStateFresh(params.targetCollectionId, params.targetParentId);
+  };
+
+  private syncLoadedSubtreeBranchQueriesForMove = (params: {
+    pageId: string;
+    sourceCollectionId?: string;
+    targetCollectionId: string;
+  }) => {
+    const actualSourceCollectionId = params.sourceCollectionId
+      ? this.resolveCollectionId(params.sourceCollectionId)
+      : undefined;
+    const actualTargetCollectionId = this.resolveCollectionId(params.targetCollectionId);
+
+    if (
+      !actualSourceCollectionId ||
+      !actualTargetCollectionId ||
+      actualSourceCollectionId === actualTargetCollectionId
+    ) {
+      return;
+    }
+
+    const subtreePageIds = new Set(getLoadedSubtreePageIds(params.pageId, this.store.workspacePages.getPageById));
+    const branchKeysToInvalidate: string[] = [];
+
+    [...this.branchQueries.values()]
+      .filter(
+        (state) =>
+          state.collectionId === actualSourceCollectionId &&
+          !!state.parentId &&
+          subtreePageIds.has(state.parentId) &&
+          state.isLoaded
+      )
+      .forEach((state) => {
+        const normalizedOptions = normalizeCollectionBranchQueryOptions(
+          actualTargetCollectionId,
+          {
+            parentId: state.parentId,
+            searchQuery: state.searchQuery,
+            filters: state.filters,
+          },
+          this.resolveCollectionId
+        );
+        const branchKey = getCollectionBranchQueryKey(normalizedOptions);
+
+        branchKeysToInvalidate.push(branchKey);
+        this.branchQueries.set(branchKey, {
+          ...state,
+          collectionId: normalizedOptions.collectionId,
+          parentId: normalizedOptions.parentId,
+          searchQuery: normalizedOptions.searchQuery,
+          filters: normalizedOptions.filters,
+          isLoading: false,
+          isLoaded: true,
+          isStale: true,
+        });
+      });
+
+    this.invalidateBranchQueries(branchKeysToInvalidate);
+  };
+
+  private markCollectionChildBranchForRefresh = (collectionId: string, pageId: string) => {
+    const page = this.store.workspacePages.getPageById(pageId);
+    if (!page?.id || (page.sub_pages_count ?? 0) === 0) return;
+
+    const normalizedOptions = normalizeCollectionBranchQueryOptions(
+      collectionId,
+      { parentId: pageId },
+      this.resolveCollectionId
+    );
+    const branchKey = getCollectionBranchQueryKey(normalizedOptions);
+    const existingState = this.branchQueries.get(branchKey) ?? createCollectionBranchQueryState(normalizedOptions);
+
+    this.branchQueries.set(branchKey, {
+      ...existingState,
+      collectionId: normalizedOptions.collectionId,
+      parentId: normalizedOptions.parentId,
+      searchQuery: normalizedOptions.searchQuery,
+      filters: normalizedOptions.filters,
+      isLoading: false,
+      isLoaded: true,
+      isStale: true,
+    });
+    this.invalidateBranchQueries([branchKey]);
+  };
+
+  private getLoadedCollectionViewPageIds = (collectionId: string): Set<string> => {
     const actualCollectionId = this.resolveCollectionId(collectionId);
     if (!actualCollectionId) return new Set();
 
-    const explicitPageIds = [...(this.pageCollectionIdsByCollection.get(actualCollectionId) ?? new Set())]
-      .map((pageCollectionId) => this.pageCollectionsData[pageCollectionId]?.page)
-      .filter((pageId): pageId is string => !!pageId);
-    const derivedPageIds = this.collectionViewPageIdsIndex.get(actualCollectionId) ?? new Set<string>();
-
-    return new Set([...explicitPageIds, ...derivedPageIds]);
+    return [...this.branchQueries.values()]
+      .filter(
+        (state) =>
+          state.collectionId === actualCollectionId &&
+          state.isLoaded &&
+          state.searchQuery.length === 0 &&
+          !hasCollectionBranchFilters(state.filters)
+      )
+      .reduce((pageIds, state) => {
+        state.pageIds.forEach((pageId) => pageIds.add(pageId));
+        return pageIds;
+      }, new Set<string>());
   };
 
   private clearPageCollectionsForCollection = (collectionId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
+    const actualCollectionId = this.getActualCollectionId(collectionId);
     const pageCollectionIds = [...(this.pageCollectionIdsByCollection.get(actualCollectionId) ?? new Set())];
 
     pageCollectionIds.forEach((pageCollectionId) => {
@@ -392,6 +741,53 @@ export class CollectionStore implements ICollectionStore {
     }
   };
 
+  private upsertCollectionBranchPage = (page: TCollectionBranchPageSummary) => {
+    if (!page?.id) return;
+
+    const pageInstance = this.store.workspacePages.getPageById(page.id);
+    if (pageInstance) {
+      pageInstance.mutateProperties(page as TPage);
+      return;
+    }
+
+    set(this.store.workspacePages.data, [page.id], new WorkspacePage(this.store, page as TPage));
+  };
+
+  private upsertCollectionBranchRow = (row: TCollectionBranchRow) => {
+    if (!row.page?.id) return;
+
+    const parentId = row.parent_id ?? row.page.parent_id ?? null;
+
+    this.upsertCollectionBranchPage(row.page);
+
+    const currentPageCollection = this.getPageCollectionByPageId(row.page.id);
+    if (!row.page_collection_id) {
+      if (currentPageCollection && !this.isOptimisticPageCollectionId(currentPageCollection.id)) {
+        this.removePageCollection(currentPageCollection.id);
+      }
+      this.pageParentIdByPageId.set(row.page.id, parentId);
+      return;
+    }
+
+    this.upsertPageCollection(
+      {
+        id: row.page_collection_id,
+        page: row.page.id,
+        collection: row.collection_id,
+        sort_order: row.sort_order ?? row.page.sort_order ?? undefined,
+        workspace: row.page.workspace,
+        created_at: row.page.created_at,
+        updated_at: row.page.updated_at,
+        created_by: row.page.created_by,
+        updated_by: row.page.updated_by,
+      },
+      parentId
+    );
+  };
+
+  private getBranchPageIds = (rows: TCollectionBranchRow[]) =>
+    rows.map((row) => row.page.id).filter((pageId): pageId is string => !!pageId);
+
   private removePageCollection = (pageCollectionId: string) => {
     const pageCollection = this.pageCollectionsData[pageCollectionId];
     if (!pageCollection) return;
@@ -410,32 +806,10 @@ export class CollectionStore implements ICollectionStore {
     delete this.pageCollectionsData[pageCollectionId];
   };
 
-  private ensureCollectionPagesLoaded = async (pageIds: Iterable<string>) => {
-    const missingPageIds = [...pageIds].filter((pageId) => !this.store.workspacePages.getPageById(pageId));
-    if (missingPageIds.length === 0) {
-      return;
-    }
+  private isOptimisticPageCollectionId = (pageCollectionId: string) =>
+    pageCollectionId.startsWith(OPTIMISTIC_PAGE_COLLECTION_ID_PREFIX);
 
-    for (let index = 0; index < missingPageIds.length; index += PAGE_DETAILS_FETCH_BATCH_SIZE) {
-      const pageIdsBatch = missingPageIds.slice(index, index + PAGE_DETAILS_FETCH_BATCH_SIZE);
-      await Promise.all(
-        pageIdsBatch.map((pageId) =>
-          this.store.workspacePages.getOrFetchPageInstance({
-            pageId,
-            trackVisit: false,
-            shouldFetchParentPages: false,
-            shouldFetchSubPages: false,
-          })
-        )
-      );
-    }
-  };
-
-  private ensureCollectionRootsLoaded = async (collectionId: string) => {
-    await this.ensureCollectionPagesLoaded(this.getCollectionRootPageIds(collectionId));
-  };
-
-  private buildSyntheticPageCollection = (
+  private buildOptimisticPageCollection = (
     pageId: string,
     collectionId: string,
     overrides: Partial<TPageCollection> = {}
@@ -443,10 +817,10 @@ export class CollectionStore implements ICollectionStore {
     const page = this.store.workspacePages.getPageById(pageId);
     if (!page?.id) return undefined;
 
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
+    const actualCollectionId = this.getActualCollectionId(collectionId);
 
     return {
-      id: `synthetic-page-collection-${actualCollectionId}-${pageId}`,
+      id: `${OPTIMISTIC_PAGE_COLLECTION_ID_PREFIX}${actualCollectionId}-${pageId}`,
       collection: actualCollectionId,
       page: pageId,
       workspace: page.workspace ?? this.store.workspaceRoot.currentWorkspace?.id ?? "",
@@ -489,12 +863,97 @@ export class CollectionStore implements ICollectionStore {
     if (resolvedCollectionIds.length === 0) return;
 
     void (async () => {
-      for (let index = 0; index < resolvedCollectionIds.length; index += COLLECTION_FETCH_BATCH_SIZE) {
-        const collectionIdsBatch = resolvedCollectionIds.slice(index, index + COLLECTION_FETCH_BATCH_SIZE);
-        await Promise.allSettled(
-          collectionIdsBatch.map((collectionId) =>
-            this.fetchCollectionPages(workspaceSlug, collectionId, { force: true })
-          )
+      const staleLoadedBranchQueries = [...this.branchQueries.values()].filter(
+        (state) =>
+          resolvedCollectionIds.includes(state.collectionId) &&
+          state.isLoaded &&
+          state.isStale &&
+          !(state.parentId === null && this.isUnfilteredBranchQueryState(state))
+      );
+
+      for (const state of staleLoadedBranchQueries) {
+        if (state.parentId) {
+          await this.fetchCollectionBranchChildren(workspaceSlug, state.collectionId, state.parentId, {
+            force: true,
+            searchQuery: state.searchQuery,
+            filters: state.filters,
+            perPage: 100,
+          });
+        } else {
+          await this.fetchCollectionPages(workspaceSlug, state.collectionId, {
+            force: true,
+            searchQuery: state.searchQuery,
+            filters: state.filters,
+          });
+        }
+      }
+    })();
+  };
+
+  private refreshUnfilteredRootBranch = async (
+    workspaceSlug: string,
+    collectionId: string,
+    previouslyLoadedPageCount: number
+  ) => {
+    await this.fetchCollectionPages(workspaceSlug, collectionId, { force: true });
+
+    let rootBranchState = this.getCollectionBranchState(collectionId, { parentId: null });
+    while (
+      rootBranchState?.hasNextPage &&
+      rootBranchState.nextCursor &&
+      rootBranchState.pageIds.length < previouslyLoadedPageCount
+    ) {
+      await this.fetchCollectionPages(workspaceSlug, collectionId, {
+        cursor: rootBranchState.nextCursor,
+      });
+      rootBranchState = this.getCollectionBranchState(collectionId, { parentId: null });
+    }
+  };
+
+  private refreshLoadedCollectionBranchesAfterMove = (
+    workspaceSlug: string,
+    params: {
+      sourceCollectionId?: string;
+      sourceParentId: string | null;
+      targetCollectionId: string;
+      targetParentId: string | null;
+    }
+  ) => {
+    const candidateBranches = [
+      params.sourceCollectionId
+        ? { collectionId: params.sourceCollectionId, parentId: params.sourceParentId }
+        : undefined,
+      { collectionId: params.targetCollectionId, parentId: params.targetParentId },
+    ].filter((branch): branch is { collectionId: string; parentId: string | null } => !!branch);
+
+    const loadedBranches = [
+      ...new Map(
+        candidateBranches
+          .filter(({ collectionId, parentId }) => this.getCollectionBranchState(collectionId, { parentId })?.isLoaded)
+          .map((branch) => [
+            `${this.resolveCollectionId(branch.collectionId) ?? branch.collectionId}:${branch.parentId ?? "__root__"}`,
+            branch,
+          ])
+      ).values(),
+    ];
+
+    if (loadedBranches.length === 0) return;
+
+    void (async () => {
+      for (const branch of loadedBranches) {
+        if (branch.parentId) {
+          await this.fetchCollectionBranchChildren(workspaceSlug, branch.collectionId, branch.parentId, {
+            force: true,
+            perPage: 100,
+          });
+          continue;
+        }
+
+        const rootBranchState = this.getCollectionBranchState(branch.collectionId, { parentId: null });
+        await this.refreshUnfilteredRootBranch(
+          workspaceSlug,
+          branch.collectionId,
+          rootBranchState?.pageIds.length ?? 0
         );
       }
     })();
@@ -503,43 +962,6 @@ export class CollectionStore implements ICollectionStore {
   private getCollectionOrderValue = (pageId: string) => {
     const explicitPageCollection = this.getPageCollectionByPageId(pageId);
     return explicitPageCollection?.sort_order ?? this.store.workspacePages.getPageById(pageId)?.sort_order ?? 65535;
-  };
-
-  private hasActivePageFilters = (filters?: TPageFilterProps) =>
-    !!filters &&
-    Object.values(filters).some((value) => {
-      if (Array.isArray(value)) {
-        return value.length > 0;
-      }
-
-      return Boolean(value);
-    });
-
-  private doesScopedTreeMatchFilters = (
-    pageId: string,
-    collectionId: string,
-    searchQuery: string,
-    filters?: TPageFilterProps
-  ): boolean => {
-    const page = this.store.workspacePages.getPageById(pageId);
-    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
-    const hasActiveFilters = this.hasActivePageFilters(filters);
-
-    if (!page?.id) {
-      return normalizedSearchQuery.length === 0 && !hasActiveFilters;
-    }
-
-    if (page.deleted_at || page.archived_at || page.access !== EPageAccess.PUBLIC) return false;
-
-    const matchesSelf =
-      getPageName(page.name).toLowerCase().includes(normalizedSearchQuery) &&
-      shouldFilterPage(page.asJSON as TPage, filters);
-
-    if (matchesSelf) return true;
-
-    return this.getCollectionChildPageIds(pageId, collectionId).some((childPageId) =>
-      this.doesScopedTreeMatchFilters(childPageId, collectionId, searchQuery, filters)
-    );
   };
 
   private getSiblingPageIdsInCollection = (collectionId: string, parentId: string | null | undefined) =>
@@ -573,24 +995,47 @@ export class CollectionStore implements ICollectionStore {
       : PAGE_COLLECTION_SORT_ORDER_INCREMENT;
   };
 
-  private getCollectionMembershipEpoch = () => this.collectionMembershipEpoch;
+  private shouldPreserveCurrentSortOrderForUnloadedTargetBranch = (
+    collectionId: string,
+    targetParentId: string | null,
+    pageId: string
+  ) => {
+    if (!targetParentId) return false;
+
+    const targetBranchState = this.getCollectionBranchState(collectionId, { parentId: targetParentId });
+    if (targetBranchState?.isLoaded) {
+      return false;
+    }
+
+    const targetParentPage = this.store.workspacePages.getPageById(targetParentId);
+    if ((targetParentPage?.sub_pages_count ?? 0) <= 0) {
+      return false;
+    }
+
+    return (
+      this.getSiblingPageIdsInCollection(collectionId, targetParentId).filter(
+        (siblingPageId) => siblingPageId !== pageId
+      ).length === 0
+    );
+  };
 
   private bumpCollectionMembershipEpoch = (affectedCollectionIds?: string[]) => {
-    this.collectionMembershipEpoch += 1;
-
     if (affectedCollectionIds && affectedCollectionIds.length > 0) {
-      for (const collectionId of affectedCollectionIds) {
+      const branchKeys = affectedCollectionIds.flatMap((collectionId) => {
         const resolvedId = this.resolveCollectionId(collectionId) ?? collectionId;
-        this.fetchCollectionPagesRequests.delete(resolvedId);
-      }
-    } else {
-      this.fetchCollectionPagesRequests.clear();
+        const prefix = `${resolvedId}::`;
+
+        return [
+          ...[...this.branchQueries.keys()].filter((key) => key.startsWith(prefix)),
+          ...[...this.fetchCollectionPagesRequests.keys()].filter((key) => key.startsWith(prefix)),
+        ];
+      });
+
+      this.invalidateBranchQueries(branchKeys);
+      return;
     }
 
-    if (this.fetchCollectionPagesRequests.size === 0) {
-      this.hydrateCollectionMembershipsRequest = undefined;
-      this.isHydratingMemberships = false;
-    }
+    this.invalidateBranchQueries([...this.branchQueries.keys(), ...this.fetchCollectionPagesRequests.keys()]);
   };
 
   private hydrateCollectionMemberships = async (workspaceSlug: string) => {
@@ -608,31 +1053,10 @@ export class CollectionStore implements ICollectionStore {
     });
 
     const request = (async () => {
-      const collections = this.workspaceCollections ?? (await this.fetchCollections(workspaceSlug));
-      const requestEpoch = this.getCollectionMembershipEpoch();
-      const defaultCollectionId = collections.find((collection) => collection.is_default)?.id;
-      if (!defaultCollectionId) {
-        return;
-      }
-
-      await Promise.all([
-        ...collections.map((collection) => this.fetchCollectionPages(workspaceSlug, collection.id)),
-        this.store.workspacePages.fetchAllPages(),
-      ]);
-
+      await this.fetchCollections(workspaceSlug);
       runInAction(() => {
-        if (this.getCollectionMembershipEpoch() !== requestEpoch) {
-          return;
-        }
-
         this.hydratedMembershipsWorkspaceSlug = workspaceSlug;
       });
-
-      // If the epoch changed mid-hydration (e.g. a page move happened during load),
-      // the runInAction above was a no-op. Re-queue so the store doesn't stay stuck.
-      if (!this.hasHydratedCollectionMemberships(workspaceSlug)) {
-        void this.hydrateCollectionMemberships(workspaceSlug);
-      }
     })();
     this.hydrateCollectionMembershipsRequest = request;
 
@@ -666,7 +1090,8 @@ export class CollectionStore implements ICollectionStore {
 
   isCollectionPagesLoaded = computedFn((collectionId: string) => {
     const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
-    return this.pageCollectionIdsByCollection.has(actualCollectionId);
+    const branchState = this.getBranchQueryStateInternal(actualCollectionId, { parentId: null });
+    return !!branchState?.isLoaded;
   });
 
   getCollectionById = computedFn((collectionId: string) => this.data[collectionId]);
@@ -680,18 +1105,6 @@ export class CollectionStore implements ICollectionStore {
 
   ensureCollectionMembershipsHydrated = async (workspaceSlug: string) => {
     await this.hydrateCollectionMemberships(workspaceSlug);
-  };
-
-  ensureCollectionPageDetailsLoaded = async (collectionId: string, mode: "roots" | "all" = "roots") => {
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return;
-
-    if (mode === "all") {
-      await this.ensureCollectionPagesLoaded(this.getCollectionViewPageIds(actualCollectionId));
-      return;
-    }
-
-    await this.ensureCollectionRootsLoaded(actualCollectionId);
   };
 
   fetchCollections = async (workspaceSlug: string) => {
@@ -711,9 +1124,8 @@ export class CollectionStore implements ICollectionStore {
         if (this.hydratedMembershipsWorkspaceSlug !== workspaceSlug) {
           this.hydratedMembershipsWorkspaceSlug = undefined;
         }
-        this.loader = existingCollections.length > 0 ? "mutation-loader" : "init-loader";
-        this.error = undefined;
       });
+      this.setLoaderState(existingCollections.length > 0 ? "mutation-loader" : "init-loader");
 
       const request = this.collectionService.list(workspaceSlug);
       this.fetchCollectionsRequest = request;
@@ -728,12 +1140,9 @@ export class CollectionStore implements ICollectionStore {
 
       return collections;
     } catch (error) {
-      runInAction(() => {
-        this.loader = undefined;
-        this.error = {
-          title: "Failed",
-          description: "Failed to fetch the collections, Please try again later.",
-        };
+      this.setLoaderState(undefined, {
+        title: "Failed",
+        description: "Failed to fetch the collections, Please try again later.",
       });
       throw error;
     } finally {
@@ -745,16 +1154,13 @@ export class CollectionStore implements ICollectionStore {
 
   fetchCollectionDetails = async (workspaceSlug: string, collectionId: string) => {
     try {
-      const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
+      const actualCollectionId = this.getActualCollectionId(collectionId);
       const cachedCollection = this.getCollectionById(actualCollectionId)?.asJSON;
       if (cachedCollection) {
         return cachedCollection;
       }
 
-      runInAction(() => {
-        this.loader = "init-loader";
-        this.error = undefined;
-      });
+      this.setLoaderState("init-loader");
 
       const collection = await this.collectionService.retrieve(workspaceSlug, actualCollectionId);
       this.updateCollectionsInStore([collection]);
@@ -766,49 +1172,25 @@ export class CollectionStore implements ICollectionStore {
 
       return collection;
     } catch (error) {
-      runInAction(() => {
-        this.loader = undefined;
-        this.error = {
-          title: "Failed",
-          description: "Failed to fetch the collection, Please try again later.",
-        };
+      this.setLoaderState(undefined, {
+        title: "Failed",
+        description: "Failed to fetch the collection, Please try again later.",
       });
       throw error;
     }
   };
 
-  createCollection = async (workspaceSlug: string, data: TCollectionCreatePayload) => {
-    runInAction(() => {
-      this.loader = "mutation-loader";
-      this.error = undefined;
-    });
-
-    try {
+  createCollection = async (workspaceSlug: string, data: TCollectionCreatePayload) =>
+    this.withMutationLoader(async () => {
       const collection = await this.collectionService.create(workspaceSlug, data);
       this.updateCollectionsInStore([collection]);
 
-      runInAction(() => {
-        this.loader = undefined;
-      });
-
       return collection;
-    } catch (error) {
-      runInAction(() => {
-        this.loader = undefined;
-      });
-      throw error;
-    }
-  };
-
-  deleteCollection = async (workspaceSlug: string, collectionId: string) => {
-    runInAction(() => {
-      this.loader = "mutation-loader";
-      this.error = undefined;
     });
 
-    try {
-      // Capture page IDs before removing the collection instance
-      const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
+  deleteCollection = async (workspaceSlug: string, collectionId: string) =>
+    this.withMutationLoader(async () => {
+      const actualCollectionId = this.getActualCollectionId(collectionId);
       const pageCollectionIds = [...(this.pageCollectionIdsByCollection.get(actualCollectionId) ?? new Set())];
       const pageIds = pageCollectionIds
         .map((pcId) => this.pageCollectionsData[pcId]?.page)
@@ -819,38 +1201,28 @@ export class CollectionStore implements ICollectionStore {
 
       runInAction(() => {
         pageIds.forEach((pageId) => this.store.workspacePages.removePageInstance(pageId));
-        this.loader = undefined;
       });
-    } catch (error) {
-      runInAction(() => {
-        this.loader = undefined;
-      });
-      throw error;
-    }
-  };
-
-  moveCollectionPages = async (workspaceSlug: string, collectionId: string, newCollectionId: string) => {
-    runInAction(() => {
-      this.loader = "mutation-loader";
-      this.error = undefined;
     });
 
-    try {
+  moveCollectionPages = async (workspaceSlug: string, collectionId: string, newCollectionId: string) =>
+    this.withMutationLoader(async () => {
+      const actualCollectionId = this.getActualCollectionId(collectionId);
+      const actualNewCollectionId = this.getActualCollectionId(newCollectionId);
+
       await this.collectionService.movePages(workspaceSlug, collectionId, newCollectionId);
+
+      runInAction(() => {
+        Object.values(this.store.workspacePages.data).forEach((page) => {
+          if (page?.collection_id === actualCollectionId) {
+            page.mutateProperties({ collection_id: actualNewCollectionId });
+          }
+        });
+      });
+
       this.removeCollectionInstance(collectionId);
       // Re-fetch target collection pages so moved pages appear in the correct collection
       await this.fetchCollectionPages(workspaceSlug, newCollectionId, { force: true });
-
-      runInAction(() => {
-        this.loader = undefined;
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.loader = undefined;
-      });
-      throw error;
-    }
-  };
+    });
 
   updateCollectionsInStore = (collections: TCollection[]) => {
     runInAction(() => {
@@ -872,11 +1244,12 @@ export class CollectionStore implements ICollectionStore {
   };
 
   removeCollectionInstance = (collectionId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
+    const actualCollectionId = this.getActualCollectionId(collectionId);
 
     runInAction(() => {
       delete this.data[actualCollectionId];
       this.clearPageCollectionsForCollection(actualCollectionId);
+      this.clearCollectionBranchQueries(actualCollectionId);
       this.collectionExpandedRowIdsMap.delete(actualCollectionId);
       this.collectionSidebarExpandedRowIdsMap.delete(actualCollectionId);
       this.expandedCollectionIds.delete(actualCollectionId);
@@ -887,74 +1260,234 @@ export class CollectionStore implements ICollectionStore {
     });
   };
 
+  getCollectionBranchState: ICollectionStore["getCollectionBranchState"] = (collectionId, options = {}) =>
+    this.getBranchQueryStateInternal(collectionId, options);
+
+  searchAddablePages: ICollectionStore["searchAddablePages"] = (workspaceSlug, collectionId, params = {}) =>
+    this.pageCollectionService.searchAddablePages(workspaceSlug, this.getActualCollectionId(collectionId), params);
+
+  fetchCollectionBranch: ICollectionStore["fetchCollectionBranch"] = async (
+    workspaceSlug,
+    collectionId,
+    options = {}
+  ) => {
+    const actualCollectionId = this.resolveCollectionId(collectionId);
+    if (!actualCollectionId) return [];
+
+    const branchOptions: TCollectionBranchQueryOptions = {
+      parentId: options.parentId ?? null,
+      searchQuery: options.searchQuery,
+      filters: options.filters,
+    };
+    const normalizedBranchOptions = normalizeCollectionBranchQueryOptions(
+      actualCollectionId,
+      branchOptions,
+      this.resolveCollectionId
+    );
+    const branchKey = getCollectionBranchQueryKey(normalizedBranchOptions);
+    const currentState = this.getBranchQueryStateInternal(actualCollectionId, branchOptions);
+
+    if (!options.force && currentState?.isLoaded && !currentState.isStale && !options.cursor) {
+      return currentState.pageIds;
+    }
+
+    const inFlightRequest = this.fetchCollectionPagesRequests.get(branchKey);
+    if (inFlightRequest) return inFlightRequest;
+
+    const requestVersion = (this.branchRequestVersions.get(branchKey) ?? 0) + 1;
+    this.branchRequestVersions.set(branchKey, requestVersion);
+    const isLatestBranchRequest = () => this.branchRequestVersions.get(branchKey) === requestVersion;
+
+    runInAction(() => {
+      this.replaceBranchQueryState(actualCollectionId, branchOptions, (state) => ({
+        ...state,
+        isLoading: true,
+      }));
+    });
+
+    const request = (async () => {
+      const response = await this.pageCollectionService.list(workspaceSlug, actualCollectionId, {
+        parent_id: options.parentId ?? null,
+        search: options.searchQuery,
+        filters: options.filters,
+        cursor: options.cursor,
+        per_page: options.perPage,
+      });
+      const nextPageIds = this.getBranchPageIds(response.results);
+
+      runInAction(() => {
+        if (!isLatestBranchRequest()) {
+          return;
+        }
+
+        response.results.forEach((row) => this.upsertCollectionBranchRow(row));
+
+        const isUnfilteredBranch = normalizedBranchOptions.searchQuery.length === 0 && !normalizedBranchOptions.filters;
+        const parentPage = options.parentId ? this.store.workspacePages.getPageById(options.parentId) : undefined;
+        const localBranchPageIds = isUnfilteredBranch
+          ? this.getUnfilteredBranchPageIds(actualCollectionId, options.parentId ?? null)
+          : [];
+        const shouldPreserveLocalBranchPageIds =
+          !options.cursor &&
+          isUnfilteredBranch &&
+          !response.next_page_results &&
+          !!currentState?.isLoaded &&
+          localBranchPageIds.length > nextPageIds.length;
+        const shouldKeepBranchStale =
+          !options.cursor &&
+          isUnfilteredBranch &&
+          ((!!options.parentId && nextPageIds.length === 0 && (parentPage?.sub_pages_count ?? 0) > 0) ||
+            shouldPreserveLocalBranchPageIds);
+
+        this.replaceBranchQueryState(actualCollectionId, branchOptions, (state) => ({
+          ...state,
+          pageIds: options.cursor
+            ? [...new Set([...state.pageIds, ...nextPageIds])]
+            : shouldPreserveLocalBranchPageIds
+              ? localBranchPageIds
+              : nextPageIds,
+          nextCursor: response.next_page_results ? response.next_cursor : null,
+          hasNextPage: !!response.next_page_results,
+          isLoading: false,
+          isLoaded: true,
+          isStale: shouldKeepBranchStale,
+        }));
+      });
+
+      return (
+        this.getBranchQueryStateInternal(actualCollectionId, branchOptions)?.pageIds ?? currentState?.pageIds ?? []
+      );
+    })().catch((error: unknown) => {
+      runInAction(() => {
+        if (!isLatestBranchRequest()) {
+          return;
+        }
+
+        this.replaceBranchQueryState(actualCollectionId, branchOptions, (state) => ({
+          ...state,
+          isLoading: false,
+        }));
+      });
+
+      throw error;
+    });
+
+    this.fetchCollectionPagesRequests.set(branchKey, request);
+
+    try {
+      return await request;
+    } finally {
+      if (this.fetchCollectionPagesRequests.get(branchKey) === request) {
+        this.fetchCollectionPagesRequests.delete(branchKey);
+      }
+    }
+  };
+
+  fetchCollectionBranchChildren: ICollectionStore["fetchCollectionBranchChildren"] = async (
+    workspaceSlug,
+    collectionId,
+    parentId,
+    options = {}
+  ) => {
+    const actualCollectionId = this.resolveCollectionId(collectionId);
+    if (!actualCollectionId) return [];
+
+    const branchOptions: TCollectionBranchQueryOptions = {
+      parentId,
+      searchQuery: options.searchQuery,
+      filters: options.filters,
+    };
+    let pageIds = await this.fetchCollectionBranch(workspaceSlug, actualCollectionId, {
+      parentId,
+      force: options.force,
+      searchQuery: options.searchQuery,
+      filters: options.filters,
+      perPage: options.perPage ?? 100,
+    });
+    let branchState = this.getBranchQueryStateInternal(actualCollectionId, branchOptions);
+
+    while (branchState?.hasNextPage && branchState.nextCursor) {
+      pageIds = await this.fetchCollectionBranch(workspaceSlug, actualCollectionId, {
+        parentId,
+        searchQuery: options.searchQuery,
+        filters: options.filters,
+        cursor: branchState.nextCursor,
+        perPage: options.perPage ?? 100,
+      });
+      branchState = this.getBranchQueryStateInternal(actualCollectionId, branchOptions);
+    }
+
+    return pageIds;
+  };
+
   fetchCollectionPages = async (
     workspaceSlug: string,
     collectionId: string,
     options?: {
       force?: boolean;
+      searchQuery?: string;
+      filters?: TPageFilterProps;
+      cursor?: string;
     }
   ) => {
     const actualCollectionId = this.resolveCollectionId(collectionId);
     if (!actualCollectionId) return [];
 
-    if (!options?.force && this.isCollectionPagesLoaded(actualCollectionId)) {
-      const pageCollectionIds = this.pageCollectionIdsByCollection.get(actualCollectionId) ?? new Set<string>();
-      return [...pageCollectionIds]
-        .map((pageCollectionId) => this.pageCollectionsData[pageCollectionId])
-        .filter((pageCollection): pageCollection is TPageCollection => !!pageCollection);
+    const pageIds = await this.fetchCollectionBranch(workspaceSlug, actualCollectionId, {
+      parentId: null,
+      force: options?.force,
+      searchQuery: options?.searchQuery,
+      filters: options?.filters,
+      cursor: options?.cursor,
+      perPage: 50,
+    });
+
+    return pageIds
+      .map((pageId) => this.getPageCollectionByPageId(pageId))
+      .filter((pageCollection): pageCollection is TPageCollection => !!pageCollection);
+  };
+
+  refreshCollectionBranchForPage: ICollectionStore["refreshCollectionBranchForPage"] = async (
+    workspaceSlug,
+    pageId,
+    ancestorPageIds = []
+  ) => {
+    const collectionId = this.getLoadedBranchCollectionId(pageId, ancestorPageIds);
+    const parentId = this.getPageParentId(pageId) ?? null;
+
+    if (!collectionId) {
+      this.invalidateLoadedBranchQueries((state) => state.parentId === parentId);
+      return undefined;
     }
 
-    const inFlightRequest = this.fetchCollectionPagesRequests.get(actualCollectionId);
-    if (inFlightRequest) return inFlightRequest;
-
-    const requestEpoch = this.getCollectionMembershipEpoch();
-
-    const request = (async () => {
-      const pageCollections = await this.pageCollectionService.list(workspaceSlug, actualCollectionId);
-
-      runInAction(() => {
-        if (this.getCollectionMembershipEpoch() !== requestEpoch) {
-          return;
-        }
-
-        this.clearPageCollectionsForCollection(actualCollectionId);
-        pageCollections.forEach((pageCollection: TPageCollectionMembership) => {
-          const { parent_id, ...pageCollectionRecord } = pageCollection;
-          this.upsertPageCollection(pageCollectionRecord, parent_id);
-        });
+    if (parentId) {
+      await this.fetchCollectionBranchChildren(workspaceSlug, collectionId, parentId, {
+        force: true,
       });
-
-      await this.ensureCollectionRootsLoaded(actualCollectionId);
-
-      const pageCollectionIds = this.pageCollectionIdsByCollection.get(actualCollectionId) ?? new Set<string>();
-      return [...pageCollectionIds]
-        .map((pageCollectionId) => this.pageCollectionsData[pageCollectionId])
-        .filter((pageCollection): pageCollection is TPageCollection => !!pageCollection);
-    })();
-
-    this.fetchCollectionPagesRequests.set(actualCollectionId, request);
-
-    try {
-      return await request;
-    } finally {
-      if (this.fetchCollectionPagesRequests.get(actualCollectionId) === request) {
-        this.fetchCollectionPagesRequests.delete(actualCollectionId);
-      }
+      return collectionId;
     }
+
+    await this.fetchCollectionPages(workspaceSlug, collectionId, {
+      force: true,
+    });
+    return collectionId;
   };
 
   resolveCollectionIdForPage = async (workspaceSlug: string, pageId: string, ancestorPageIds: string[] = []) => {
-    const explicitCollectionId = this.getExplicitCollectionIdForPage(pageId);
-    if (explicitCollectionId) {
-      return explicitCollectionId;
+    const branchPageIds = [pageId, ...ancestorPageIds];
+    const loadedBranchCollectionId = this.getLoadedBranchCollectionId(pageId, ancestorPageIds);
+    if (loadedBranchCollectionId) {
+      return loadedBranchCollectionId;
     }
 
     const collections = this.workspaceCollections ?? (await this.fetchCollections(workspaceSlug));
-    const branchPageIds = [pageId, ...ancestorPageIds];
     const customCollectionIds = collections
       .filter((collection) => !collection.is_default)
       .map((collection) => collection.id);
 
+    // On page reloads the current page payload can arrive without collection metadata.
+    // Probe custom collection roots one collection at a time until the current branch
+    // gains an explicit membership instead of eagerly treating it as General.
     for (const collectionId of customCollectionIds) {
       if (!this.isCollectionPagesLoaded(collectionId)) {
         await this.fetchCollectionPages(workspaceSlug, collectionId);
@@ -962,6 +1495,24 @@ export class CollectionStore implements ICollectionStore {
 
       if (branchPageIds.some((branchPageId) => this.getExplicitCollectionIdForPage(branchPageId) === collectionId)) {
         return collectionId;
+      }
+
+      // The initial load only fetches the first page of root items. If the
+      // target page was not found yet and more root pages exist, keep
+      // paginating until we either locate it or exhaust all pages.
+      let branchState = this.getBranchQueryStateInternal(collectionId, { parentId: null });
+      while (branchState?.hasNextPage && branchState.nextCursor) {
+        await this.fetchCollectionBranch(workspaceSlug, collectionId, {
+          parentId: null,
+          cursor: branchState.nextCursor,
+          perPage: 50,
+        });
+
+        if (branchPageIds.some((branchPageId) => this.getExplicitCollectionIdForPage(branchPageId) === collectionId)) {
+          return collectionId;
+        }
+
+        branchState = this.getBranchQueryStateInternal(collectionId, { parentId: null });
       }
     }
 
@@ -971,6 +1522,18 @@ export class CollectionStore implements ICollectionStore {
 
     if (!this.isCollectionPagesLoaded(this.defaultCollectionId)) {
       await this.fetchCollectionPages(workspaceSlug, this.defaultCollectionId);
+    }
+
+    // Same pagination for the default collection — exhaust all root pages
+    // before falling back to the effective collection lookup.
+    let defaultBranchState = this.getBranchQueryStateInternal(this.defaultCollectionId, { parentId: null });
+    while (defaultBranchState?.hasNextPage && defaultBranchState.nextCursor) {
+      await this.fetchCollectionBranch(workspaceSlug, this.defaultCollectionId, {
+        parentId: null,
+        cursor: defaultBranchState.nextCursor,
+        perPage: 50,
+      });
+      defaultBranchState = this.getBranchQueryStateInternal(this.defaultCollectionId, { parentId: null });
     }
 
     return this.getEffectiveCollectionId(pageId);
@@ -985,6 +1548,20 @@ export class CollectionStore implements ICollectionStore {
     const uniquePageIds = [...new Set(pageIds.filter(Boolean))];
     if (!actualTargetCollectionId || uniquePageIds.length === 0) return;
 
+    const missingPageIds = uniquePageIds.filter((pageId) => !this.store.workspacePages.getPageById(pageId));
+    if (missingPageIds.length > 0) {
+      await Promise.all(
+        missingPageIds.map((pageId) =>
+          this.store.workspacePages.getOrFetchPageInstance({
+            pageId,
+            trackVisit: false,
+            shouldFetchParentPages: false,
+            shouldFetchSubPages: false,
+          })
+        )
+      );
+    }
+
     const movablePageIds = uniquePageIds.filter((pageId) => {
       const sourceCollectionId = this.resolveMutationSourceCollectionId(pageId);
       return !!sourceCollectionId && sourceCollectionId !== actualTargetCollectionId;
@@ -998,10 +1575,30 @@ export class CollectionStore implements ICollectionStore {
           .filter((id): id is string => !!id)
       ),
     ];
-    this.bumpCollectionMembershipEpoch([actualTargetCollectionId, ...sourceCollectionIds]);
-
+    const movablePageIdSet = new Set(movablePageIds);
     const previousExplicitPageCollections = new Map<string, TPageCollection>();
+    const previousParentIdByPageCollectionId = new Map<string, string | null | undefined>();
     const optimisticPageCollections: TPageCollection[] = [];
+    const targetParentIdByPageId = new Map<string, string | null>();
+    const branchMoves = movablePageIds.map((pageId) => {
+      const sourceParentId = this.getPageParentId(pageId) ?? null;
+      const parentId = sourceParentId ?? null;
+      const targetParentId =
+        parentId &&
+        (movablePageIdSet.has(parentId) || this.getEffectiveCollectionId(parentId) === actualTargetCollectionId)
+          ? parentId
+          : null;
+
+      targetParentIdByPageId.set(pageId, targetParentId);
+
+      return {
+        pageId,
+        sourceCollectionId: this.resolveMutationSourceCollectionId(pageId),
+        sourceParentId,
+        targetCollectionId: actualTargetCollectionId,
+        targetParentId,
+      };
+    });
     let nextSortOrder = this.computeAppendSortOrder(actualTargetCollectionId, null);
 
     movablePageIds.forEach((pageId) => {
@@ -1009,11 +1606,12 @@ export class CollectionStore implements ICollectionStore {
         const pageCollection = this.getPageCollectionByPageId(subtreePageId);
         if (pageCollection?.id) {
           previousExplicitPageCollections.set(pageCollection.id, { ...pageCollection });
+          previousParentIdByPageCollectionId.set(pageCollection.id, this.getPageParentId(subtreePageId));
         }
       });
 
-      const optimisticPageCollection = this.buildSyntheticPageCollection(pageId, actualTargetCollectionId, {
-        id: `optimistic-page-collection-${actualTargetCollectionId}-${pageId}`,
+      const optimisticPageCollection = this.buildOptimisticPageCollection(pageId, actualTargetCollectionId, {
+        id: `${OPTIMISTIC_PAGE_COLLECTION_ID_PREFIX}${actualTargetCollectionId}-${pageId}`,
         sort_order: nextSortOrder,
         updated_at: new Date(),
       });
@@ -1029,15 +1627,22 @@ export class CollectionStore implements ICollectionStore {
     }
 
     runInAction(() => {
+      branchMoves.forEach((branchMove) => {
+        this.invalidateLoadedBranchQueriesForMove(branchMove);
+      });
+
       previousExplicitPageCollections.forEach((pageCollection) => {
         this.removePageCollection(pageCollection.id);
       });
 
       optimisticPageCollections.forEach((pageCollection) => {
-        this.upsertPageCollection(pageCollection);
+        this.upsertPageCollection(pageCollection, targetParentIdByPageId.get(pageCollection.page));
       });
 
       this.setCollectionExpanded(actualTargetCollectionId);
+      branchMoves.forEach((branchMove) => {
+        this.syncLoadedUnfilteredBranchesForMove(branchMove);
+      });
     });
 
     try {
@@ -1053,24 +1658,31 @@ export class CollectionStore implements ICollectionStore {
           this.removePageCollection(pageCollection.id);
         });
         targetPageCollections.forEach((pageCollection) => {
-          this.upsertPageCollection(pageCollection);
+          this.upsertPageCollection(pageCollection, targetParentIdByPageId.get(pageCollection.page));
+        });
+        branchMoves.forEach((branchMove) => {
+          this.syncLoadedUnfilteredBranchesForMove(branchMove);
         });
       });
+      this.syncCollectionsInBackground(workspaceSlug, [actualTargetCollectionId, ...sourceCollectionIds]);
     } catch (error) {
       runInAction(() => {
         optimisticPageCollections.forEach((pageCollection) => {
           this.removePageCollection(pageCollection.id);
         });
         previousExplicitPageCollections.forEach((pageCollection) => {
-          this.upsertPageCollection(pageCollection);
+          this.upsertPageCollection(pageCollection, previousParentIdByPageCollectionId.get(pageCollection.id));
+        });
+        branchMoves.forEach((branchMove) => {
+          this.syncLoadedUnfilteredBranchesForMove(branchMove);
         });
       });
-      this.syncCollectionsInBackground(workspaceSlug, [actualTargetCollectionId, this.defaultCollectionId]);
+      this.syncCollectionsInBackground(workspaceSlug, [actualTargetCollectionId, ...sourceCollectionIds]);
       throw error;
     }
   };
 
-  removePageFromCollection = async (workspaceSlug: string, pageId: string, sourceCollectionId: string) => {
+  removePageFromCollection = async (_workspaceSlug: string, pageId: string, sourceCollectionId: string) => {
     if (!this.defaultCollectionId) {
       throw new Error("Default collection not found.");
     }
@@ -1107,37 +1719,37 @@ export class CollectionStore implements ICollectionStore {
     });
   };
 
-  canCurrentUserAddPageToCollection = computedFn((pageId: string) => {
-    const page = this.store.workspacePages.getPageById(pageId);
-    if (!page?.id) return false;
-    if (
-      !page.canCurrentUserEditPage ||
-      !page.isContentEditable ||
-      !!page.archived_at ||
-      page.access !== EPageAccess.PUBLIC
-    )
-      return false;
-    // Shared pages can only be added by their owner
-    if (page.is_shared && !page.isCurrentUserOwner) return false;
-
-    return this.isCurrentUserWorkspaceAdmin() || page.isCurrentUserOwner;
-  });
-
-  canCurrentUserReorderPageInCollection = computedFn((pageId: string, _collectionId: string) => {
+  private canCurrentUserManageCollectionPage = (
+    pageId: string,
+    options: { requirePublic?: boolean; disallowSharedForNonOwner?: boolean } = {}
+  ) => {
     const page = this.store.workspacePages.getPageById(pageId);
     if (!page?.id) return false;
     if (!page.canCurrentUserEditPage || !page.isContentEditable || !!page.archived_at) return false;
 
-    return this.isCurrentUserWorkspaceAdmin() || page.isCurrentUserOwner;
-  });
+    const isWorkspaceAdmin = this.isCurrentUserWorkspaceAdmin();
+    const isOwner = page.isCurrentUserOwner;
 
-  canCurrentUserRemovePageFromCollection = computedFn((_collectionId: string, pageId: string) => {
-    const page = this.store.workspacePages.getPageById(pageId);
-    if (!page?.id) return false;
-    if (!page.canCurrentUserEditPage || !page.isContentEditable || !!page.archived_at) return false;
+    if (options.requirePublic && page.access !== EPageAccess.PUBLIC) return false;
+    if (options.disallowSharedForNonOwner && !isWorkspaceAdmin && page.is_shared && !isOwner) return false;
 
-    return this.isCurrentUserWorkspaceAdmin() || page.isCurrentUserOwner;
-  });
+    return isWorkspaceAdmin || isOwner;
+  };
+
+  canCurrentUserAddPageToCollection = computedFn((pageId: string) =>
+    this.canCurrentUserManageCollectionPage(pageId, {
+      requirePublic: true,
+      disallowSharedForNonOwner: true,
+    })
+  );
+
+  canCurrentUserReorderPageInCollection = computedFn((pageId: string, _collectionId: string) =>
+    this.canCurrentUserManageCollectionPage(pageId)
+  );
+
+  canCurrentUserRemovePageFromCollection = computedFn((_collectionId: string, pageId: string) =>
+    this.canCurrentUserManageCollectionPage(pageId)
+  );
 
   private computeDestinationSortOrderComputed = computedFn(
     (collectionId: string, targetPageId: string, position: "before" | "after", pageId: string | undefined) => {
@@ -1175,16 +1787,7 @@ export class CollectionStore implements ICollectionStore {
     pageId
   ) => this.computeDestinationSortOrderComputed(collectionId, targetPageId, position, pageId);
 
-  private buildCollectionDropPlan = (params: {
-    pageId: string;
-    sourceCollectionId?: string | null;
-    targetCollectionId: string;
-    targetParentId: string | null;
-    reorderTargetPageId?: string;
-    reorderPosition?: "before" | "after";
-    access?: EPageAccess;
-    clearSharedAccess?: boolean;
-  }): TCollectionDropPlan | undefined => {
+  private buildCollectionDropPlan = (params: TCollectionDropPlanParams): TCollectionDropPlan | undefined => {
     const page = this.store.workspacePages.getPageById(params.pageId);
     if (!page?.id) return undefined;
 
@@ -1196,71 +1799,74 @@ export class CollectionStore implements ICollectionStore {
       throw new Error("Unable to resolve collection membership.");
     }
 
-    const pageUpdatePayload: Partial<TPage> = {};
-    if ((page.parent_id ?? null) !== params.targetParentId) {
-      pageUpdatePayload.parent_id = params.targetParentId;
-    }
-
-    if (params.access !== undefined && page.access !== params.access) {
-      pageUpdatePayload.access = params.access;
-    }
-
-    if (params.clearSharedAccess && page.is_shared) {
-      pageUpdatePayload.is_shared = false;
-    }
+    const shouldPreserveCurrentSortOrder =
+      params.targetSortOrder === undefined &&
+      !params.reorderTargetPageId &&
+      this.shouldPreserveCurrentSortOrderForUnloadedTargetBranch(
+        targetCollectionId,
+        params.targetParentId,
+        params.pageId
+      );
 
     const targetSortOrder =
-      params.reorderTargetPageId && params.reorderPosition
-        ? (this.computeDestinationSortOrder(
-            targetCollectionId,
-            params.reorderTargetPageId,
-            params.reorderPosition,
-            params.pageId
-          ) ?? this.computeAppendSortOrder(targetCollectionId, params.targetParentId, params.pageId))
-        : this.computeAppendSortOrder(targetCollectionId, params.targetParentId, params.pageId);
+      params.targetSortOrder ??
+      (shouldPreserveCurrentSortOrder
+        ? this.getCollectionOrderValue(params.pageId)
+        : params.reorderTargetPageId && params.reorderPosition
+          ? (this.computeDestinationSortOrder(
+              targetCollectionId,
+              params.reorderTargetPageId,
+              params.reorderPosition,
+              params.pageId
+            ) ?? this.computeAppendSortOrder(targetCollectionId, params.targetParentId, params.pageId))
+          : this.computeAppendSortOrder(targetCollectionId, params.targetParentId, params.pageId));
 
     const currentPageCollection = this.getPageCollectionByPageId(params.pageId);
-    const previousExplicitPageCollections =
-      sourceCollectionId !== targetCollectionId
-        ? getLoadedSubtreePageIds(params.pageId, this.store.workspacePages.getPageById)
-            .map((subtreePageId) => this.getPageCollectionByPageId(subtreePageId))
-            .filter((pageCollection): pageCollection is TPageCollection => !!pageCollection)
-            .map((pageCollection) => ({ ...pageCollection }))
-        : currentPageCollection
-          ? [{ ...currentPageCollection }]
-          : [];
-
-    const collectionMutation: TCollectionDropCollectionMutation = currentPageCollection
-      ? {
-          kind: "update",
-          collectionId: currentPageCollection.collection,
-          pageCollectionId: currentPageCollection.id,
-          pageId: params.pageId,
-          sortOrder: targetSortOrder,
-          nextCollectionId: currentPageCollection.collection !== targetCollectionId ? targetCollectionId : undefined,
-        }
-      : {
-          kind: "create",
-          collectionId: targetCollectionId,
-          pageId: params.pageId,
-          sortOrder: targetSortOrder,
-        };
-
-    const optimisticPageCollection = this.buildSyntheticPageCollection(params.pageId, targetCollectionId, {
-      id:
-        collectionMutation.kind === "update"
-          ? collectionMutation.pageCollectionId
-          : `optimistic-page-collection-${targetCollectionId}-${params.pageId}`,
-      sort_order: targetSortOrder,
-      updated_at: new Date(),
+    const previousExplicitPageCollections = getPreviousExplicitPageCollections({
+      pageId: params.pageId,
+      sourceCollectionId,
+      targetCollectionId,
+      currentPageCollection,
+      getPageCollectionByPageId: this.getPageCollectionByPageId,
+      getSubtreePageIds: (pageId) => getLoadedSubtreePageIds(pageId, this.store.workspacePages.getPageById),
     });
-    if (!optimisticPageCollection) {
+
+    const collectionMutation = createCollectionMoveMutation({
+      currentPageCollection,
+      pageId: params.pageId,
+      sourceCollectionId,
+      targetCollectionId,
+      targetSortOrder,
+    });
+
+    const pageUpdatePayload = buildCollectionMovePageUpdatePayload(page, {
+      targetParentId: params.targetParentId,
+      access: params.access,
+      clearSharedAccess: params.clearSharedAccess,
+      targetSortOrder,
+      updateSortOrder: collectionMutation.kind === "none",
+    });
+
+    const optimisticPageCollection =
+      collectionMutation.kind === "none"
+        ? undefined
+        : this.buildOptimisticPageCollection(params.pageId, targetCollectionId, {
+            id: getOptimisticCollectionMoveId(collectionMutation, targetCollectionId, params.pageId),
+            sort_order: targetSortOrder,
+            updated_at: new Date(),
+          });
+    if (collectionMutation.kind !== "none" && !optimisticPageCollection) {
       throw new Error("Unable to resolve collection membership.");
+    }
+
+    if (collectionMutation.kind === "none" && Object.keys(pageUpdatePayload).length === 0) {
+      return undefined;
     }
 
     return {
       pageId: params.pageId,
       sourceCollectionId,
+      sourceParentId: page.parent_id ?? null,
       targetCollectionId,
       targetParentId: params.targetParentId,
       pageUpdatePayload,
@@ -1270,38 +1876,70 @@ export class CollectionStore implements ICollectionStore {
     };
   };
 
-  private applyCollectionDropPlanLocally = (plan: TCollectionDropPlan): TCollectionDropSnapshot => {
+  private applyCollectionDropPlanLocally = (
+    plan: TCollectionDropPlan,
+    options: { preserveLoadedUnfilteredBranches?: boolean } = {}
+  ): TCollectionDropSnapshot => {
     const sourceRowExpanded =
       plan.sourceCollectionId && this.isCollectionRowExpanded(plan.sourceCollectionId, plan.pageId);
     const sourceSidebarRowExpanded =
       plan.sourceCollectionId && this.isCollectionSidebarRowExpanded(plan.sourceCollectionId, plan.pageId);
+    const hasLoadedSourceChildBranch = !!(
+      plan.sourceCollectionId &&
+      this.getCollectionBranchState(plan.sourceCollectionId, { parentId: plan.pageId })?.isLoaded
+    );
 
     const pageSnapshot =
       Object.keys(plan.pageUpdatePayload).length > 0
         ? this.store.workspacePages.applyPageInternalUpdateLocally(plan.pageId, plan.pageUpdatePayload)
         : undefined;
 
-    this.bumpCollectionMembershipEpoch(
-      [plan.sourceCollectionId, plan.targetCollectionId].filter((id): id is string => !!id)
+    this.invalidateLoadedBranchQueriesForMove(
+      getCollectionMoveSyncParams({
+        pageId: plan.pageId,
+        sourceCollectionId: plan.sourceCollectionId,
+        sourceParentId: plan.sourceParentId,
+        targetCollectionId: plan.targetCollectionId,
+        targetParentId: plan.targetParentId,
+      }),
+      {
+        includeUnfiltered: !options.preserveLoadedUnfilteredBranches,
+      }
     );
 
     plan.previousExplicitPageCollections.forEach((pageCollection) => {
       this.removePageCollection(pageCollection.id);
     });
-    this.upsertPageCollection(plan.optimisticPageCollection);
+    if (plan.optimisticPageCollection) {
+      this.upsertPageCollection(plan.optimisticPageCollection);
+    }
     this.setCollectionExpanded(plan.targetCollectionId);
+    this.syncLoadedUnfilteredBranchesForMove(
+      getCollectionMoveSyncParams({
+        pageId: plan.pageId,
+        sourceCollectionId: plan.sourceCollectionId,
+        sourceParentId: plan.sourceParentId,
+        targetCollectionId: plan.targetCollectionId,
+        targetParentId: plan.targetParentId,
+      })
+    );
 
-    if (sourceRowExpanded) {
+    if (sourceRowExpanded && hasLoadedSourceChildBranch) {
       this.setCollectionRowExpanded(plan.targetCollectionId, plan.pageId);
     }
-    if (sourceSidebarRowExpanded) {
+    if (sourceSidebarRowExpanded && hasLoadedSourceChildBranch) {
       this.setCollectionSidebarRowExpanded(plan.targetCollectionId, plan.pageId);
     }
 
     return {
+      pageId: plan.pageId,
       pageSnapshot,
       previousExplicitPageCollections: plan.previousExplicitPageCollections,
-      optimisticPageCollectionId: plan.optimisticPageCollection.id,
+      optimisticPageCollectionId: plan.optimisticPageCollection?.id,
+      sourceCollectionId: plan.sourceCollectionId,
+      sourceParentId: plan.sourceParentId,
+      targetCollectionId: plan.targetCollectionId,
+      targetParentId: plan.targetParentId,
     };
   };
 
@@ -1310,51 +1948,177 @@ export class CollectionStore implements ICollectionStore {
       this.store.workspacePages.rollbackPageInternalUpdateLocally(snapshot.pageSnapshot);
     }
 
-    this.removePageCollection(snapshot.optimisticPageCollectionId);
+    if (snapshot.optimisticPageCollectionId) {
+      this.removePageCollection(snapshot.optimisticPageCollectionId);
+    }
     snapshot.previousExplicitPageCollections.forEach((pageCollection) => {
       this.upsertPageCollection(pageCollection);
     });
+    this.syncLoadedUnfilteredBranchesForMove(
+      getCollectionMoveSyncParams({
+        pageId: snapshot.pageId,
+        sourceCollectionId: snapshot.sourceCollectionId,
+        sourceParentId: snapshot.sourceParentId,
+        targetCollectionId: snapshot.targetCollectionId,
+        targetParentId: snapshot.targetParentId,
+      })
+    );
   };
 
   private persistCollectionDropPlan = async (
     workspaceSlug: string,
     plan: TCollectionDropPlan
-  ): Promise<TPageCollection> => {
+  ): Promise<TPageCollection | undefined> => {
+    if (plan.collectionMutation.kind === "none") {
+      return undefined;
+    }
+
     if (plan.collectionMutation.kind === "update") {
       return await this.pageCollectionService.update(
         workspaceSlug,
         plan.collectionMutation.collectionId,
         plan.collectionMutation.pageCollectionId,
-        {
-          sort_order: plan.collectionMutation.sortOrder,
-          ...(plan.collectionMutation.nextCollectionId && {
-            collection: plan.collectionMutation.nextCollectionId,
-          }),
-        }
+        getCollectionMoveUpdatePayload(plan.collectionMutation)
       );
     }
 
     const createdPageCollections = await this.pageCollectionService.create(
       workspaceSlug,
       plan.collectionMutation.collectionId,
-      {
-        page_ids: [plan.collectionMutation.pageId],
-        sort_orders: { [plan.collectionMutation.pageId]: plan.collectionMutation.sortOrder },
-      }
+      getCollectionMoveCreatePayload(plan.collectionMutation)
     );
-    const createdPageCollection = createdPageCollections.find(
-      (pageCollection) => pageCollection.page === plan.collectionMutation.pageId
+    return getCreatedPageCollectionOrThrow(
+      createdPageCollections,
+      plan.collectionMutation.pageId,
+      "Moved page was not returned by the collection update."
     );
-    if (!createdPageCollection) {
-      throw new Error("Moved page was not returned by the collection update.");
-    }
-
-    return createdPageCollection;
   };
 
-  private commitCollectionDropPlanLocally = (plan: TCollectionDropPlan, pageCollection: TPageCollection) => {
-    this.removePageCollection(plan.optimisticPageCollection.id);
-    this.upsertPageCollection(pageCollection);
+  private commitCollectionDropPlanLocally = (plan: TCollectionDropPlan, pageCollection?: TPageCollection) => {
+    if (plan.optimisticPageCollection) {
+      this.removePageCollection(plan.optimisticPageCollection.id);
+    }
+    if (pageCollection) {
+      this.upsertPageCollection(pageCollection);
+    }
+    this.syncLoadedUnfilteredBranchesForMove(
+      getCollectionMoveSyncParams({
+        pageId: plan.pageId,
+        sourceCollectionId: plan.sourceCollectionId,
+        sourceParentId: plan.sourceParentId,
+        targetCollectionId: plan.targetCollectionId,
+        targetParentId: plan.targetParentId,
+      })
+    );
+    if (plan.sourceCollectionId !== plan.targetCollectionId) {
+      this.syncLoadedSubtreeBranchQueriesForMove({
+        pageId: plan.pageId,
+        sourceCollectionId: plan.sourceCollectionId,
+        targetCollectionId: plan.targetCollectionId,
+      });
+      this.markCollectionChildBranchForRefresh(plan.targetCollectionId, plan.pageId);
+    }
+  };
+
+  private executeCollectionDropPlan = async (
+    workspaceSlug: string,
+    plan: TCollectionDropPlan,
+    options: TCollectionDropExecutionOptions = {}
+  ): Promise<TPageCollection | undefined> => {
+    const shouldPreserveLoadedUnfilteredBranches =
+      !!plan.sourceCollectionId &&
+      plan.sourceCollectionId === plan.targetCollectionId &&
+      this.getCollectionViewPageIds(plan.sourceCollectionId).has(plan.pageId);
+
+    let snapshot!: TCollectionDropSnapshot;
+    runInAction(() => {
+      snapshot = this.applyCollectionDropPlanLocally(plan, {
+        preserveLoadedUnfilteredBranches: shouldPreserveLoadedUnfilteredBranches,
+      });
+    });
+    let didPersistCollectionUpdate = false;
+
+    try {
+      const persistedPageCollection = await this.persistCollectionDropPlan(workspaceSlug, plan);
+      didPersistCollectionUpdate = plan.collectionMutation.kind !== "none";
+
+      if (options.persistPageUpdate) {
+        await options.persistPageUpdate();
+      }
+
+      runInAction(() => {
+        this.commitCollectionDropPlanLocally(plan, persistedPageCollection);
+        if (shouldPreserveLoadedUnfilteredBranches) {
+          this.markLoadedUnfilteredBranchesFreshForMove({
+            sourceCollectionId: plan.sourceCollectionId,
+            sourceParentId: plan.sourceParentId,
+            targetCollectionId: plan.targetCollectionId,
+            targetParentId: plan.targetParentId,
+          });
+        }
+      });
+
+      if (!shouldPreserveLoadedUnfilteredBranches) {
+        this.refreshLoadedCollectionBranchesAfterMove(workspaceSlug, {
+          sourceCollectionId: plan.sourceCollectionId,
+          sourceParentId: plan.sourceParentId,
+          targetCollectionId: plan.targetCollectionId,
+          targetParentId: plan.targetParentId,
+        });
+        this.syncCollectionsInBackground(workspaceSlug, [plan.sourceCollectionId, plan.targetCollectionId]);
+      }
+
+      return persistedPageCollection;
+    } catch (error) {
+      if (didPersistCollectionUpdate && options.rollbackPersistedCollectionUpdate) {
+        try {
+          await options.rollbackPersistedCollectionUpdate();
+        } catch {
+          // Best-effort rollback only. Background sync will rehydrate if needed.
+        }
+      }
+
+      runInAction(() => {
+        this.rollbackCollectionDropPlanLocally(snapshot);
+      });
+      this.syncCollectionsInBackground(workspaceSlug, [plan.sourceCollectionId, plan.targetCollectionId]);
+
+      if (options.errorMessage) {
+        throw toCollectionMoveError(error, options.errorMessage);
+      }
+
+      throw error;
+    }
+  };
+
+  private executeCollectionMove = async (
+    workspaceSlug: string,
+    params: TCollectionDropPlanParams,
+    options: Pick<TCollectionDropExecutionOptions, "errorMessage"> = {}
+  ) => {
+    const plan = this.buildCollectionDropPlan(params);
+    if (!plan) return;
+
+    const shouldPersistPageUpdate = Object.keys(plan.pageUpdatePayload).length > 0;
+    let rollbackPersistedCollectionUpdate: (() => Promise<void>) | undefined;
+
+    if (plan.collectionMutation.kind === "update" && plan.collectionMutation.nextCollectionId) {
+      const { nextCollectionId, pageCollectionId } = plan.collectionMutation;
+      const rollbackPayload = getCollectionMoveRollbackPayload(plan.collectionMutation);
+      rollbackPersistedCollectionUpdate = async () => {
+        await this.pageCollectionService.update(workspaceSlug, nextCollectionId, pageCollectionId, rollbackPayload);
+      };
+    }
+
+    await this.executeCollectionDropPlan(workspaceSlug, plan, {
+      persistPageUpdate: shouldPersistPageUpdate
+        ? async () => {
+            await this.store.workspacePages.persistPageInternalUpdate(params.pageId, plan.pageUpdatePayload);
+          }
+        : undefined,
+      rollbackPersistedCollectionUpdate,
+      errorMessage: options.errorMessage,
+    });
   };
 
   movePageWithinCollection = async (
@@ -1367,69 +2131,18 @@ export class CollectionStore implements ICollectionStore {
     const actualCollectionId = this.resolveCollectionId(collectionId);
     if (!actualCollectionId) return;
 
-    const effectiveCollectionId = this.getEffectiveCollectionId(pageId);
-    if (effectiveCollectionId !== actualCollectionId) return;
+    if (this.getEffectiveCollectionId(pageId) !== actualCollectionId) return;
 
     const sortOrder = this.computeDestinationSortOrder(actualCollectionId, targetPageId, position, pageId);
     if (sortOrder === undefined) return;
 
-    const currentPageCollection = this.getPageCollectionByPageId(pageId);
-    const previousExplicitPageCollection = currentPageCollection ? { ...currentPageCollection } : undefined;
-    const optimisticPageCollection = this.buildSyntheticPageCollection(pageId, actualCollectionId, {
-      id: currentPageCollection?.id ?? `optimistic-page-collection-${pageId}`,
-      sort_order: sortOrder,
-      updated_at: new Date(),
+    await this.executeCollectionMove(workspaceSlug, {
+      pageId,
+      sourceCollectionId: actualCollectionId,
+      targetCollectionId: actualCollectionId,
+      targetParentId: this.getPageParentId(pageId) ?? null,
+      targetSortOrder: sortOrder,
     });
-
-    if (!optimisticPageCollection) return;
-
-    this.bumpCollectionMembershipEpoch([actualCollectionId]);
-
-    runInAction(() => {
-      if (currentPageCollection?.id) {
-        this.removePageCollection(currentPageCollection.id);
-      }
-      this.upsertPageCollection(optimisticPageCollection);
-    });
-
-    try {
-      if (currentPageCollection?.id) {
-        const updatedPageCollection = await this.pageCollectionService.update(
-          workspaceSlug,
-          actualCollectionId,
-          currentPageCollection.id,
-          { sort_order: sortOrder }
-        );
-
-        runInAction(() => {
-          this.removePageCollection(optimisticPageCollection.id);
-          this.upsertPageCollection(updatedPageCollection);
-        });
-      } else {
-        const targetPageCollections = await this.pageCollectionService.create(workspaceSlug, actualCollectionId, {
-          page_ids: [pageId],
-          sort_orders: { [pageId]: sortOrder },
-        });
-        const createdPageCollection = targetPageCollections.find((pageCollection) => pageCollection.page === pageId);
-        if (!createdPageCollection) {
-          throw new Error("Reordered page was not returned by the collection update.");
-        }
-
-        runInAction(() => {
-          this.removePageCollection(optimisticPageCollection.id);
-          this.upsertPageCollection(createdPageCollection);
-        });
-      }
-    } catch (error) {
-      runInAction(() => {
-        this.removePageCollection(optimisticPageCollection.id);
-        if (previousExplicitPageCollection) {
-          this.upsertPageCollection(previousExplicitPageCollection);
-        }
-      });
-      this.syncCollectionsInBackground(workspaceSlug, [actualCollectionId]);
-      throw error;
-    }
   };
 
   movePageAcrossCollections = async (
@@ -1454,69 +2167,16 @@ export class CollectionStore implements ICollectionStore {
       return;
     }
 
-    const targetSortOrder =
-      options.targetSortOrder ??
-      this.computeAppendSortOrder(actualTargetCollectionId, options.targetParentId ?? null, pageId);
+    const sourceParentId = this.getPageParentId(pageId) ?? null;
+    const targetParentId = options.targetParentId ?? sourceParentId;
 
-    const optimisticPageCollection = this.buildSyntheticPageCollection(pageId, actualTargetCollectionId, {
-      id: `optimistic-page-collection-${pageId}`,
-      sort_order: targetSortOrder,
-      updated_at: new Date(),
+    await this.executeCollectionMove(workspaceSlug, {
+      pageId,
+      sourceCollectionId: resolvedSourceCollectionId,
+      targetCollectionId: actualTargetCollectionId,
+      targetParentId,
+      targetSortOrder: options.targetSortOrder,
     });
-
-    if (!optimisticPageCollection) {
-      throw new Error("Unable to resolve collection membership.");
-    }
-
-    const wasExpandedInSource = this.isCollectionRowExpanded(resolvedSourceCollectionId, pageId);
-    const wasSidebarExpandedInSource = this.isCollectionSidebarRowExpanded(resolvedSourceCollectionId, pageId);
-    const previousExplicitPageCollections = getLoadedSubtreePageIds(pageId, this.store.workspacePages.getPageById)
-      .map((subtreePageId) => this.getPageCollectionByPageId(subtreePageId))
-      .filter((pageCollection): pageCollection is TPageCollection => !!pageCollection)
-      .map((pageCollection) => ({ ...pageCollection }));
-
-    this.bumpCollectionMembershipEpoch([resolvedSourceCollectionId, actualTargetCollectionId]);
-
-    runInAction(() => {
-      previousExplicitPageCollections.forEach((pageCollection) => {
-        this.removePageCollection(pageCollection.id);
-      });
-      this.upsertPageCollection(optimisticPageCollection);
-      this.setCollectionExpanded(actualTargetCollectionId);
-
-      if (wasExpandedInSource) {
-        this.setCollectionRowExpanded(actualTargetCollectionId, pageId);
-      }
-      if (wasSidebarExpandedInSource) {
-        this.setCollectionSidebarRowExpanded(actualTargetCollectionId, pageId);
-      }
-    });
-
-    try {
-      const targetPageCollections = await this.pageCollectionService.create(workspaceSlug, actualTargetCollectionId, {
-        page_ids: [pageId],
-        sort_orders: { [pageId]: targetSortOrder },
-      });
-      if (!targetPageCollections.some((pageCollection) => pageCollection.page === pageId)) {
-        throw new Error("Moved page was not returned by the collection update.");
-      }
-
-      runInAction(() => {
-        this.removePageCollection(optimisticPageCollection.id);
-        targetPageCollections.forEach((pageCollection) => {
-          this.upsertPageCollection(pageCollection);
-        });
-      });
-    } catch (error) {
-      runInAction(() => {
-        this.removePageCollection(optimisticPageCollection.id);
-        previousExplicitPageCollections.forEach((pageCollection) => {
-          this.upsertPageCollection(pageCollection);
-        });
-      });
-      this.syncCollectionsInBackground(workspaceSlug, [resolvedSourceCollectionId, actualTargetCollectionId]);
-      throw error;
-    }
   };
 
   movePageWithCollectionContext: ICollectionStore["movePageWithCollectionContext"] = async ({
@@ -1524,6 +2184,7 @@ export class CollectionStore implements ICollectionStore {
     sourceCollectionId,
     targetCollectionId,
     targetParentId,
+    targetSortOrder,
     reorderTargetPageId,
     reorderPosition,
     access,
@@ -1532,123 +2193,40 @@ export class CollectionStore implements ICollectionStore {
     const { workspaceSlug } = this.store.router;
     if (!workspaceSlug) return;
 
-    const plan = this.buildCollectionDropPlan({
-      pageId,
-      sourceCollectionId,
-      targetCollectionId,
-      targetParentId,
-      reorderTargetPageId,
-      reorderPosition,
-      access,
-      clearSharedAccess,
-    });
-    if (!plan) return;
-
-    const snapshot = this.applyCollectionDropPlanLocally(plan);
-    const shouldPersistPageUpdate = Object.keys(plan.pageUpdatePayload).length > 0;
-    let didPersistCollectionUpdate = false;
-
-    try {
-      // Persist the collection change first so that recompute_page_collection (triggered
-      // by the parent_id PATCH below) finds the page already in the correct collection
-      // and skips the override, avoiding a race condition.
-      const persistedPageCollection = await this.persistCollectionDropPlan(workspaceSlug, plan);
-      didPersistCollectionUpdate = true;
-
-      if (shouldPersistPageUpdate) {
-        await this.store.workspacePages.persistPageInternalUpdate(pageId, plan.pageUpdatePayload);
-      }
-
-      runInAction(() => {
-        this.commitCollectionDropPlanLocally(plan, persistedPageCollection);
-      });
-    } catch (error) {
-      // If the collection was already updated but the page update failed, best-effort
-      // rollback the collection change so the UI and DB stay in sync.
-      if (
-        didPersistCollectionUpdate &&
-        plan.collectionMutation.kind === "update" &&
-        plan.collectionMutation.nextCollectionId
-      ) {
-        try {
-          await this.pageCollectionService.update(
-            workspaceSlug,
-            plan.collectionMutation.nextCollectionId,
-            plan.collectionMutation.pageCollectionId,
-            { collection: plan.collectionMutation.collectionId }
-          );
-        } catch {
-          // Best-effort rollback only. Background sync will rehydrate if needed.
-        }
-      }
-
-      runInAction(() => {
-        this.rollbackCollectionDropPlanLocally(snapshot);
-      });
-      this.syncCollectionsInBackground(workspaceSlug, [plan.sourceCollectionId, plan.targetCollectionId]);
-
-      throw toError(error, "Collection move failed.");
-    }
+    await this.executeCollectionMove(
+      workspaceSlug,
+      {
+        pageId,
+        sourceCollectionId,
+        targetCollectionId,
+        targetParentId,
+        targetSortOrder,
+        reorderTargetPageId,
+        reorderPosition,
+        access,
+        clearSharedAccess,
+      },
+      { errorMessage: "Collection move failed." }
+    );
   };
 
-  getAddablePageIdsForCollection = computedFn((collectionId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return [];
-
-    return Object.values(this.store.workspacePages.data)
-      .filter((page): page is typeof page & { id: string } => !!page?.id)
-      .filter((page) => this.isPageEligibleForCollection(page))
-      .filter((page) => this.getEffectiveCollectionId(page.id) !== actualCollectionId)
-      .filter((page) => this.canCurrentUserAddPageToCollection(page.id))
-      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-      .map((page) => page.id);
-  });
-
   getCollectionViewPageIds = computedFn((collectionId: string): Set<string> => {
-    return this.getDerivedCollectionViewPageIds(collectionId);
+    return this.getLoadedCollectionViewPageIds(collectionId);
   });
-
-  private getCollectionRootPageIdsComputed = computedFn(
-    (collectionId: string, searchQuery: string, filters: TPageFilterProps | undefined): string[] => {
-      const actualCollectionId = this.resolveCollectionId(collectionId);
-      if (!actualCollectionId) return [];
-
-      const collectionPageIds = this.getCollectionViewPageIds(actualCollectionId);
-
-      return [...collectionPageIds]
-        .filter((pageId) => {
-          const parentId = this.getPageParentId(pageId);
-          return !parentId || !collectionPageIds.has(parentId);
-        })
-        .sort(
-          (leftPageId, rightPageId) =>
-            this.getCollectionOrderValue(leftPageId) - this.getCollectionOrderValue(rightPageId)
-        )
-        .filter((pageId) => this.doesScopedTreeMatchFilters(pageId, actualCollectionId, searchQuery, filters));
-    }
-  );
 
   getCollectionRootPageIds: ICollectionStore["getCollectionRootPageIds"] = (collectionId, options = {}) =>
-    this.getCollectionRootPageIdsComputed(collectionId, options.searchQuery ?? "", options.filters);
+    this.getBranchQueryStateInternal(collectionId, {
+      parentId: null,
+      searchQuery: options.searchQuery,
+      filters: options.filters,
+    })?.pageIds ?? [];
 
-  getCollectionChildPageIds = computedFn((pageId: string, collectionId: string): string[] => {
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return [];
-
-    const collectionPageIds = this.getCollectionViewPageIds(actualCollectionId);
-
-    return [...collectionPageIds]
-      .filter((candidatePageId) => this.getPageParentId(candidatePageId) === pageId)
-      .filter((candidatePageId) => {
-        const page = this.store.workspacePages.getPageById(candidatePageId);
-        if (!page?.id) return true;
-        return !page.deleted_at && !page.archived_at && page.access === EPageAccess.PUBLIC;
-      })
-      .sort(
-        (leftPageId, rightPageId) =>
-          this.getCollectionOrderValue(leftPageId) - this.getCollectionOrderValue(rightPageId)
-      );
-  });
+  getCollectionChildPageIds: ICollectionStore["getCollectionChildPageIds"] = (pageId, collectionId, options = {}) =>
+    this.getBranchQueryStateInternal(collectionId, {
+      parentId: pageId,
+      searchQuery: options.searchQuery,
+      filters: options.filters,
+    })?.pageIds ?? [];
 
   private getCollectionAutoExpandedAncestorIdsComputed = computedFn(
     (collectionId: string, currentPageId: string | undefined): string[] => {
@@ -1695,7 +2273,7 @@ export class CollectionStore implements ICollectionStore {
   ) => this.getCollectionAutoExpandedAncestorIdsComputed(collectionId, currentPageId);
 
   toggleCollectionExpanded = (collectionId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
+    const actualCollectionId = this.getActualCollectionId(collectionId);
     if (this.expandedCollectionIds.has(actualCollectionId)) {
       this.expandedCollectionIds.delete(actualCollectionId);
     } else {
@@ -1704,7 +2282,7 @@ export class CollectionStore implements ICollectionStore {
   };
 
   setCollectionExpanded = (collectionId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
+    const actualCollectionId = this.getActualCollectionId(collectionId);
     if (!actualCollectionId || this.expandedCollectionIds.has(actualCollectionId)) return;
 
     this.expandedCollectionIds.add(actualCollectionId);
@@ -1717,85 +2295,39 @@ export class CollectionStore implements ICollectionStore {
     return this.expandedCollectionIds.has(actualCollectionId);
   });
 
-  toggleCollectionExpandedRow = (collectionId: string, pageId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
-    const currentExpandedRowIds = this.collectionExpandedRowIdsMap.get(actualCollectionId) ?? new Set<string>();
-    const nextExpandedRowIds = new Set(currentExpandedRowIds);
+  toggleCollectionExpandedRow = (collectionId: string, pageId: string) =>
+    toggleExpandedRowIds(this.collectionExpandedRowIdsMap, collectionId, pageId, this.getActualCollectionId);
 
-    if (nextExpandedRowIds.has(pageId)) {
-      nextExpandedRowIds.delete(pageId);
-    } else {
-      nextExpandedRowIds.add(pageId);
-    }
+  setCollectionRowExpanded = (collectionId: string, pageId: string) =>
+    setExpandedRowIds(this.collectionExpandedRowIdsMap, collectionId, pageId, this.getActualCollectionId);
 
-    this.collectionExpandedRowIdsMap.set(actualCollectionId, nextExpandedRowIds);
-  };
+  replaceCollectionExpandedRowIds = (collectionId: string, pageIds: string[]) =>
+    replaceExpandedRowIds(this.collectionExpandedRowIdsMap, collectionId, pageIds, this.getActualCollectionId);
 
-  setCollectionRowExpanded = (collectionId: string, pageId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
-    const currentExpandedRowIds = this.collectionExpandedRowIdsMap.get(actualCollectionId) ?? new Set<string>();
-    if (currentExpandedRowIds.has(pageId)) return;
+  getCollectionExpandedRowIds = computedFn(
+    (collectionId: string): Set<string> =>
+      getExpandedRowIds(this.collectionExpandedRowIdsMap, collectionId, this.resolveCollectionId)
+  );
 
-    this.collectionExpandedRowIdsMap.set(actualCollectionId, new Set([...currentExpandedRowIds, pageId]));
-  };
+  isCollectionRowExpanded = computedFn((collectionId: string, pageId: string): boolean =>
+    isExpandedRow(this.collectionExpandedRowIdsMap, collectionId, pageId, this.resolveCollectionId)
+  );
 
-  replaceCollectionExpandedRowIds = (collectionId: string, pageIds: string[]) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
-    this.collectionExpandedRowIdsMap.set(actualCollectionId, new Set(pageIds));
-  };
+  toggleCollectionSidebarExpandedRow = (collectionId: string, pageId: string) =>
+    toggleExpandedRowIds(this.collectionSidebarExpandedRowIdsMap, collectionId, pageId, this.getActualCollectionId);
 
-  getCollectionExpandedRowIds = computedFn((collectionId: string): Set<string> => {
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return new Set();
+  setCollectionSidebarRowExpanded = (collectionId: string, pageId: string) =>
+    setExpandedRowIds(this.collectionSidebarExpandedRowIdsMap, collectionId, pageId, this.getActualCollectionId);
 
-    return this.collectionExpandedRowIdsMap.get(actualCollectionId) ?? new Set();
-  });
+  replaceCollectionSidebarExpandedRowIds = (collectionId: string, pageIds: string[]) =>
+    replaceExpandedRowIds(this.collectionSidebarExpandedRowIdsMap, collectionId, pageIds, this.getActualCollectionId);
 
-  isCollectionRowExpanded = computedFn((collectionId: string, pageId: string): boolean => {
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return false;
+  getCollectionSidebarExpandedRowIds = computedFn(
+    (collectionId: string): Set<string> =>
+      getExpandedRowIds(this.collectionSidebarExpandedRowIdsMap, collectionId, this.resolveCollectionId)
+  );
 
-    return this.collectionExpandedRowIdsMap.get(actualCollectionId)?.has(pageId) ?? false;
-  });
-
-  toggleCollectionSidebarExpandedRow = (collectionId: string, pageId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
-    const currentExpandedRowIds = this.collectionSidebarExpandedRowIdsMap.get(actualCollectionId) ?? new Set<string>();
-    const nextExpandedRowIds = new Set(currentExpandedRowIds);
-
-    if (nextExpandedRowIds.has(pageId)) {
-      nextExpandedRowIds.delete(pageId);
-    } else {
-      nextExpandedRowIds.add(pageId);
-    }
-
-    this.collectionSidebarExpandedRowIdsMap.set(actualCollectionId, nextExpandedRowIds);
-  };
-
-  setCollectionSidebarRowExpanded = (collectionId: string, pageId: string) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
-    const currentExpandedRowIds = this.collectionSidebarExpandedRowIdsMap.get(actualCollectionId) ?? new Set<string>();
-    if (currentExpandedRowIds.has(pageId)) return;
-
-    this.collectionSidebarExpandedRowIdsMap.set(actualCollectionId, new Set([...currentExpandedRowIds, pageId]));
-  };
-
-  replaceCollectionSidebarExpandedRowIds = (collectionId: string, pageIds: string[]) => {
-    const actualCollectionId = this.resolveCollectionId(collectionId) ?? collectionId;
-    this.collectionSidebarExpandedRowIdsMap.set(actualCollectionId, new Set(pageIds));
-  };
-
-  getCollectionSidebarExpandedRowIds = computedFn((collectionId: string): Set<string> => {
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return new Set();
-
-    return this.collectionSidebarExpandedRowIdsMap.get(actualCollectionId) ?? new Set();
-  });
-
-  isCollectionSidebarRowExpanded = computedFn((collectionId: string, pageId: string): boolean => {
-    const actualCollectionId = this.resolveCollectionId(collectionId);
-    if (!actualCollectionId) return false;
-
-    return this.collectionSidebarExpandedRowIdsMap.get(actualCollectionId)?.has(pageId) ?? false;
-  });
+  isCollectionSidebarRowExpanded = computedFn((collectionId: string, pageId: string): boolean =>
+    isExpandedRow(this.collectionSidebarExpandedRowIdsMap, collectionId, pageId, this.resolveCollectionId)
+  );
 }

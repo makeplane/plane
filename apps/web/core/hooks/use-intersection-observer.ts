@@ -12,43 +12,52 @@
  */
 
 import type { RefObject } from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+
+type TIntersectionObserverRoot = RefObject<HTMLElement | null> | HTMLElement | null | undefined;
+
+const resolveIntersectionObserverRoot = (containerRef: TIntersectionObserverRoot) =>
+  containerRef && "current" in containerRef ? containerRef.current : containerRef;
 
 export type UseIntersectionObserverProps = {
-  containerRef: RefObject<HTMLDivElement | null> | undefined;
+  containerRef: TIntersectionObserverRoot;
   elementRef: HTMLElement | null;
   callback: () => void;
   rootMargin?: string;
 };
 
 export const useIntersectionObserver = (
-  containerRef: RefObject<HTMLDivElement | null>,
+  containerRef: TIntersectionObserverRoot,
   elementRef: HTMLElement | null,
   callback: (() => void) | undefined,
   rootMargin?: string
 ) => {
+  const callbackRef = useRef(callback);
+  const root = resolveIntersectionObserverRoot(containerRef);
+
   useEffect(() => {
-    if (elementRef) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[entries.length - 1].isIntersecting) {
-            callback && callback();
-          }
-        },
-        {
-          root: containerRef?.current,
-          rootMargin,
+    callbackRef.current = callback;
+  }, [callback]);
+
+  useEffect(() => {
+    if (!elementRef) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[entries.length - 1]?.isIntersecting) {
+          callbackRef.current?.();
         }
-      );
-      observer.observe(elementRef);
-      return () => {
-        if (elementRef) {
-          observer.unobserve(elementRef);
-        }
-      };
-    }
-    // When i am passing callback as a dependency, it is causing infinite loop,
-    // Please make sure you fix this eslint lint disable error with caution
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [rootMargin, callback, elementRef, containerRef.current]);
+      },
+      {
+        root,
+        rootMargin,
+      }
+    );
+
+    observer.observe(elementRef);
+
+    return () => {
+      observer.unobserve(elementRef);
+    };
+  }, [elementRef, root, rootMargin]);
 };

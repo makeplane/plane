@@ -10,6 +10,7 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 from .base import (
+    CollectionAddablePageSearchEndpoint,
     CollectionEndpoint,
     CollectionMemberEndpoint,
     PageCollectionEndpoint,

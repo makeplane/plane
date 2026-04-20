@@ -35,6 +35,14 @@
     "header": {
       "add_page": "添加页面"
     },
+    "sidebar": {
+      "title": "集合",
+      "loading_collections": "正在加载集合...",
+      "expand_collection": "展开集合",
+      "collapse_collection": "折叠集合",
+      "loading_pages": "正在加载页面...",
+      "empty_collection": "此集合中没有页面"
+    },
     "menu": {
       "create_new_page": "创建新页面",
       "add_existing_page": "添加现有页面",

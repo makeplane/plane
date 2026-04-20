@@ -52,6 +52,7 @@ export type TCustomEmojiPicker = {
   theme?: "light" | "dark";
   side?: TSide;
   align?: TAlign;
+  showEmojiTab?: boolean;
 };
 
 export type TIconsListProps = {

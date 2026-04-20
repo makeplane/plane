@@ -13,11 +13,13 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { FilePlus, FolderPlus } from "lucide-react";
+import { FilePlus, FolderPlus, Loader } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { PlusIcon } from "@plane/propel/icons";
+import { ChevronDownIcon, PlusIcon } from "@plane/propel/icons";
+import { getIconButtonStyling } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { cn } from "@plane/propel/utils";
 import type { TPage } from "@plane/types";
 import { EPageAccess } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -55,6 +57,12 @@ export const CollectionAddPageMenu = observer(function CollectionAddPageMenu(pro
       if (targetCollectionId) {
         await collectionStore.addPageToCollection(workspaceSlug, page.id, targetCollectionId);
         collectionStore.setCollectionExpanded(targetCollectionId);
+
+        if (collectionStore.isCollectionPagesLoaded(targetCollectionId)) {
+          void collectionStore.fetchCollectionPages(workspaceSlug, targetCollectionId, {
+            force: true,
+          });
+        }
       }
 
       router.push(`/${workspaceSlug}/wiki/${page.id}`);
@@ -72,27 +80,8 @@ export const CollectionAddPageMenu = observer(function CollectionAddPageMenu(pro
     }
   };
 
-  return (
-    <CustomMenu
-      customButton={
-        buttonType === "header" ? (
-          <Button variant="primary" size="base" disabled={isCreatingPage} loading={isCreatingPage}>
-            {t("wiki_collections.header.add_page")}
-          </Button>
-        ) : (
-          <button
-            type="button"
-            className="grid size-4 place-items-center rounded-md text-tertiary transition-all hover:bg-layer-transparent-hover hover:text-primary disabled:opacity-50"
-            aria-label={t("wiki_collections.header.add_page")}
-            disabled={isCreatingPage}
-          >
-            <PlusIcon className="size-3" />
-          </button>
-        )
-      }
-      placement="bottom-end"
-      closeOnSelect
-    >
+  const menuItems = (
+    <>
       <CustomMenu.MenuItem onClick={() => void handleCreatePage()} disabled={isCreatingPage}>
         <div className="flex items-center gap-2">
           <FilePlus className="size-3.5" />
@@ -107,6 +96,45 @@ export const CollectionAddPageMenu = observer(function CollectionAddPageMenu(pro
           </div>
         </CustomMenu.MenuItem>
       )}
+    </>
+  );
+
+  if (buttonType === "header") {
+    return (
+      <div className="flex h-7 w-[106px] items-center gap-px">
+        <Button
+          variant="primary"
+          size="base"
+          className="!h-7 !w-[77px] !rounded-[6px_2px_2px_6px] !px-0 !text-[13px] !font-normal !leading-none"
+          disabled={isCreatingPage}
+          onClick={() => void handleCreatePage()}
+        >
+          {isCreatingPage ? t("common.adding") : t("wiki_collections.header.add_page")}
+        </Button>
+        <CustomMenu
+          customButton={<ChevronDownIcon className="size-3.5" />}
+          customButtonClassName={cn(getIconButtonStyling("primary", "base"), "!size-7 !rounded-[2px_6px_6px_2px]")}
+          placement="bottom-end"
+          disabled={isCreatingPage}
+          ariaLabel={t("wiki_collections.header.add_page")}
+          closeOnSelect
+        >
+          {menuItems}
+        </CustomMenu>
+      </div>
+    );
+  }
+
+  return (
+    <CustomMenu
+      customButton={isCreatingPage ? <Loader className="size-3.5 animate-spin" /> : <PlusIcon className="size-3.5" />}
+      customButtonClassName={getIconButtonStyling("ghost", "sm")}
+      placement="bottom-end"
+      disabled={isCreatingPage}
+      ariaLabel={t("wiki_collections.header.add_page")}
+      closeOnSelect
+    >
+      {menuItems}
     </CustomMenu>
   );
 });

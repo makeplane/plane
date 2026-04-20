@@ -11,28 +11,25 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { ArchiveIcon, Loader } from "lucide-react";
-// plane imports
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ChevronRightIcon, EmptyPageIcon, PageIcon, RestrictedPageIcon } from "@plane/propel/icons";
 import { setToast, TOAST_TYPE } from "@plane/propel/toast";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { EPageAccess } from "@plane/types";
 import { cn, getPageName } from "@plane/utils";
-// components
-// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web imports
 import { EPageStoreType, useCollection, usePage, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
   handleToggleExpanded: () => void;
   onSubPagesLoaded?: () => void | Promise<void>;
+  expandPage: () => void;
   isDragging: boolean;
   isExpanded: boolean;
   paddingLeft: number;
@@ -41,315 +38,271 @@ type Props = {
   canShowAddButton?: boolean;
   sectionType?: TPageNavigationTabs;
   collectionId?: string;
-  setExpandedPageIds?: React.Dispatch<React.SetStateAction<string[]>>;
-  setIsDropping: React.Dispatch<React.SetStateAction<boolean>>;
-  setLocalIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+  onDropTargetChange: (isDropping: boolean) => void;
+};
+
+const getSectionTargetAccess = (sectionType?: TPageNavigationTabs): EPageAccess | undefined => {
+  if (sectionType === "public") return EPageAccess.PUBLIC;
+  if (sectionType === "private") return EPageAccess.PRIVATE;
+  return undefined;
+};
+
+const clearExpandTimer = (timerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>) => {
+  if (timerRef.current) {
+    clearTimeout(timerRef.current);
+    timerRef.current = null;
+  }
 };
 
 const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListItemComponent(props: Props) {
   const {
     handleToggleExpanded,
     onSubPagesLoaded,
+    expandPage,
     isExpanded,
     paddingLeft,
     pageId,
     isHovered,
     canShowAddButton,
-    setExpandedPageIds,
     sectionType,
     collectionId,
-    setIsDropping,
-    setLocalIsExpanded,
+    onDropTargetChange,
   } = props;
-  // states
+
   const [isFetchingSubPages, setIsFetchingSubPages] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  // refs
+
   const listItemContentRef = useRef<HTMLDivElement>(null);
   const expandTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // navigation
   const { workspaceSlug, pageId: currentPageIdParam } = useParams();
-  // router
+  const currentWorkspaceSlug = workspaceSlug?.toString();
   const router = useAppRouter();
-  // derived values
   const page = usePage({
     pageId,
     storeType: EPageStoreType.WORKSPACE,
   });
   const collectionStore = useCollection();
   const { isNestedPagesEnabled, getPageById, movePageInternally } = usePageStore(EPageStoreType.WORKSPACE);
-  const {
-    fetchSubPages,
-    is_description_empty,
-    description_html,
-    getRedirectionLink,
-    sub_pages_count,
-    archived_at,
-    canCurrentUserAccessPage,
-    logo_props,
-    name,
-  } = page ?? {};
 
-  const isDescriptionEmpty = useMemo(
-    () => is_description_empty || description_html === "<p></p>",
-    [is_description_empty, description_html]
-  );
-
-  const isPageActive = useMemo(() => currentPageIdParam?.toString() === page?.id, [currentPageIdParam, page?.id]);
-
-  const pageLink = useMemo(() => getRedirectionLink?.() ?? "", [getRedirectionLink]);
-
-  const shouldShowSubPagesButton = useMemo(
-    () => sub_pages_count !== undefined && sub_pages_count > 0,
-    [sub_pages_count]
-  );
+  const isDescriptionEmpty = page?.is_description_empty || page?.description_html === "<p></p>";
+  const isPageActive = currentPageIdParam?.toString() === page?.id;
+  const pageLink = page?.getRedirectionLink?.() ?? "";
+  const shouldShowSubPagesButton = (page?.sub_pages_count ?? 0) > 0;
   const loadedSubPagesCount = page?.subPageIds?.length ?? 0;
-  const hasLoadedAllSubPages = shouldShowSubPagesButton && loadedSubPagesCount >= (sub_pages_count ?? 0);
+  const hasLoadedAllSubPages = shouldShowSubPagesButton && loadedSubPagesCount >= (page?.sub_pages_count ?? 0);
+  const collectionBranchState = collectionId
+    ? collectionStore.getCollectionBranchState(collectionId, { parentId: pageId })
+    : undefined;
+  const shouldRefetchCollectionBranch =
+    !!collectionId && (!collectionBranchState?.isLoaded || collectionBranchState.isStale);
+  const showAddButton = !!isHovered && !!canShowAddButton;
 
-  const showAddButton = isHovered && canShowAddButton;
+  const baseName = getPageName(page?.name);
+  const isRestrictedPage = !page?.canCurrentUserAccessPage;
+  const pageContent = {
+    displayName: isRestrictedPage ? "Restricted Access" : baseName,
+    hasAccess: !isRestrictedPage,
+    logo: (() => {
+      if (isRestrictedPage) {
+        return <RestrictedPageIcon className="size-3.5" />;
+      }
+      if (page?.logo_props?.in_use) {
+        return <Logo logo={page.logo_props} size={14} type="lucide" />;
+      }
+      if (!isDescriptionEmpty) {
+        return <PageIcon className="size-3.5" />;
+      }
+      return <EmptyPageIcon className="size-3.5" />;
+    })(),
+  };
 
-  // Centralized page content and state based on conditions
-  const pageContent = useMemo(() => {
-    const baseName = getPageName(name);
-    const isRestricted = !canCurrentUserAccessPage;
-    const isArchived = !!archived_at;
+  const handleMouseEnter = useCallback(() => {
+    setIsHovering(true);
+  }, []);
 
-    const displayName = (() => {
-      if (isRestricted) return "Restricted Access";
-      return baseName;
-    })();
-
-    return {
-      tooltipText: baseName,
-      logo: (() => {
-        if (isRestricted) {
-          return <RestrictedPageIcon className="size-3.5" />;
-        }
-        if (logo_props?.in_use) {
-          return <Logo logo={logo_props} size={14} type="lucide" />;
-        }
-        if (!isDescriptionEmpty) {
-          return <PageIcon className="size-3.5" />;
-        }
-        return <EmptyPageIcon className="size-3.5" />;
-      })(),
-      status: {
-        isRestricted,
-        isArchived,
-        hasAccess: !isRestricted,
-      },
-      displayName,
-    };
-  }, [canCurrentUserAccessPage, archived_at, logo_props, isDescriptionEmpty, name]);
-
-  // Memoize event handlers to prevent recreation
-  const handleMouseEnter = useCallback(() => setIsHovering(true), []);
-  const handleMouseLeave = useCallback(() => setIsHovering(false), []);
+  const handleMouseLeave = useCallback(() => {
+    setIsHovering(false);
+  }, []);
 
   const handleSubPagesToggle = useCallback(
-    async (e: React.MouseEvent | React.KeyboardEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
+    async (event: React.MouseEvent | React.KeyboardEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
       handleToggleExpanded();
 
-      // Only fetch if expanding
-      if (!isExpanded && !hasLoadedAllSubPages) {
-        setIsFetchingSubPages(true);
-        try {
-          await fetchSubPages?.();
-          await onSubPagesLoaded?.();
-        } catch {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Failed to fetch sub-pages. Please try again.",
-          });
-        } finally {
-          setIsFetchingSubPages(false);
-        }
-      }
-    },
-    [fetchSubPages, handleToggleExpanded, hasLoadedAllSubPages, isExpanded, onSubPagesLoaded]
-  );
-
-  const handleNavigate = useCallback(
-    (e: React.MouseEvent | React.KeyboardEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
-
-      if (!pageContent?.status.hasAccess) {
+      const shouldFetchSubPages = collectionId ? shouldRefetchCollectionBranch : !hasLoadedAllSubPages;
+      if (isExpanded || !shouldFetchSubPages) {
         return;
       }
 
-      if ("metaKey" in e && (e.metaKey || e.ctrlKey)) {
+      setIsFetchingSubPages(true);
+      try {
+        if (collectionId && currentWorkspaceSlug) {
+          await collectionStore.fetchCollectionBranchChildren(currentWorkspaceSlug, collectionId, pageId, {
+            force: collectionBranchState?.isStale,
+          });
+        } else {
+          await page?.fetchSubPages?.();
+        }
+        await onSubPagesLoaded?.();
+      } catch {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to fetch sub-pages. Please try again.",
+        });
+      } finally {
+        setIsFetchingSubPages(false);
+      }
+    },
+    [
+      collectionBranchState?.isStale,
+      collectionId,
+      collectionStore,
+      currentWorkspaceSlug,
+      handleToggleExpanded,
+      hasLoadedAllSubPages,
+      isExpanded,
+      onSubPagesLoaded,
+      page,
+      pageId,
+      shouldRefetchCollectionBranch,
+    ]
+  );
+
+  const handleNavigate = useCallback(
+    (event: React.MouseEvent | React.KeyboardEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
+
+      if (!pageContent.hasAccess) return;
+
+      if ("metaKey" in event && (event.metaKey || event.ctrlKey)) {
         window.open(pageLink, "_blank", "noopener,noreferrer");
         return;
       }
 
-      // Regular click navigation
       if (!isPageActive) {
         router.push(pageLink);
-      } else {
-        void handleSubPagesToggle(e);
+        return;
       }
+
+      void handleSubPagesToggle(event);
     },
-    [isPageActive, pageContent?.status.hasAccess, router, pageLink, handleSubPagesToggle]
+    [handleSubPagesToggle, isPageActive, pageContent.hasAccess, pageLink, router]
   );
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      // Handle Enter and Space keys for accessibility
-      if (e.key === "Enter" || e.key === " ") {
-        handleNavigate(e);
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter" || event.key === " ") {
+        handleNavigate(event);
       }
     },
     [handleNavigate]
   );
 
-  const contentStyle = useMemo(() => ({ paddingLeft: `${paddingLeft + 4}px` }), [paddingLeft]);
-
-  const chevronClassName = useMemo(
-    () =>
-      cn("size-3.5 transform transition-transform duration-300 ease-in-out", {
-        "rotate-90": isExpanded,
-      }),
-    [isExpanded]
-  );
-
-  // drop as a sub-page
   useEffect(() => {
     const element = listItemContentRef.current;
-    if (!element || !page || !page.id) return;
+    if (!element || !page?.id) return;
 
-    const cleanup = combine(
+    const currentPageId = page.id;
+
+    return combine(
       dropTargetForElements({
         element,
         onDragEnter: () => {
-          setIsDropping(true);
-          // Clear any existing timer
-          if (expandTimerRef.current) {
-            clearTimeout(expandTimerRef.current);
-          }
-          // Set new timer to expand after 1 second
+          onDropTargetChange(true);
+          clearExpandTimer(expandTimerRef);
           expandTimerRef.current = setTimeout(() => {
-            if (setExpandedPageIds) {
-              setExpandedPageIds((prev) => (prev.includes(pageId) ? prev : [...prev, pageId]));
-            } else {
-              setLocalIsExpanded(true);
-            }
+            expandPage();
           }, 1000);
         },
         onDragLeave: () => {
-          setIsDropping(false);
-          // Clear the expand timer when drag leaves
-          if (expandTimerRef.current) {
-            clearTimeout(expandTimerRef.current);
-            expandTimerRef.current = null;
-          }
+          onDropTargetChange(false);
+          clearExpandTimer(expandTimerRef);
         },
         onDrop: ({ location, self, source }) => {
-          // toggle drop state to off
-          setIsDropping(false);
-          // Clear the expand timer on drop
-          if (expandTimerRef.current) {
-            clearTimeout(expandTimerRef.current);
-            expandTimerRef.current = null;
-          }
+          onDropTargetChange(false);
+          clearExpandTimer(expandTimerRef);
 
           if (location.current.dropTargets[0]?.element !== self.element) return;
-          if (!page.id) return;
-          // get data of the dropped page(source)
-          const { id: droppedPageId, collectionId: sourceCollectionId } = source.data as TPageDragPayload;
-          const droppedPageDetails = getPageById(droppedPageId);
+
+          const sourceData = source.data as TPageDragPayload;
+          if (!sourceData.id) return;
+
+          const droppedPageDetails = getPageById(sourceData.id);
           if (!droppedPageDetails) return;
-          // prepare update payload with the new parent_id
-          const updatePayload: { parent_id?: string; access?: EPageAccess } = {
-            parent_id: page.id,
+
+          const targetAccess = getSectionTargetAccess(sectionType);
+          const updatePayload: { parent_id: string; access?: EPageAccess } = {
+            parent_id: currentPageId,
           };
-          // get the access of the parent page based on the section type
-          let targetAccess: EPageAccess | undefined;
-          if (sectionType === "public") {
-            targetAccess = EPageAccess.PUBLIC;
-          } else if (sectionType === "private") {
-            targetAccess = EPageAccess.PRIVATE;
-          }
-          // check if access needs to be updated (section has changed)
+
           if (targetAccess !== undefined && droppedPageDetails.access !== targetAccess) {
             updatePayload.access = targetAccess;
           }
-          // Keep collection membership in sync when nesting across collections.
+
           if (collectionId) {
             void collectionStore.movePageWithCollectionContext({
-              pageId: droppedPageId,
-              sourceCollectionId,
+              pageId: sourceData.id,
+              sourceCollectionId: sourceData.collectionId,
               targetCollectionId: collectionId,
-              targetParentId: page.id,
+              targetParentId: currentPageId,
               access: updatePayload.access,
             });
             return;
           }
 
-          // make the API call to update the page
-          void movePageInternally(droppedPageId, updatePayload);
+          void movePageInternally(sourceData.id, updatePayload);
         },
         canDrop: ({ source }) => {
-          // check if the page is editable
           if (
             !page.canCurrentUserEditPage ||
             !page.isContentEditable ||
-            !isNestedPagesEnabled(workspaceSlug.toString()) ||
+            !currentWorkspaceSlug ||
+            !isNestedPagesEnabled(currentWorkspaceSlug) ||
             page.archived_at
           ) {
             return false;
           }
-          // get the data of the page being dropped(source)
-          const { id: droppedPageId, parentId: droppedPageParentId } = source.data as TPageDragPayload;
+
+          const sourceData = source.data as TPageDragPayload;
+          const droppedPageId = sourceData.id;
           if (!droppedPageId) return false;
-          // get the source page instance
+
           const sourcePage = getPageById(droppedPageId);
           if (!sourcePage) return false;
-          // check if the page being dragged is the same page or the immediate parent or any level child
-          const isSamePage = droppedPageId === page.id;
-          const isImmediateParent = droppedPageParentId === page.id;
-          const isAnyLevelChild = page.parentPageIds?.includes(droppedPageId);
 
+          const isSamePage = droppedPageId === page.id;
+          const isImmediateParent = sourceData.parentId === page.id;
+          const isAnyLevelChild = page.parentPageIds?.includes(droppedPageId);
           if (isSamePage || isImmediateParent || isAnyLevelChild) return false;
 
-          // Block private pages from being dropped into a collection
           if (collectionId && sourcePage.access !== EPageAccess.PUBLIC) return false;
-
-          // Allow dropping shared pages onto any accessible page
-          if (sourcePage.is_shared) {
-            return true;
-          }
 
           return true;
         },
       })
     );
-
-    return () => {
-      cleanup();
-      // Clear any pending timer on unmount
-      if (expandTimerRef.current) {
-        clearTimeout(expandTimerRef.current);
-        expandTimerRef.current = null;
-      }
-    };
   }, [
+    collectionId,
+    collectionStore,
+    currentWorkspaceSlug,
+    expandPage,
     getPageById,
-    page,
-    pageId,
-    setExpandedPageIds,
-    setIsDropping,
-    setLocalIsExpanded,
     isNestedPagesEnabled,
     movePageInternally,
-    collectionStore,
-    workspaceSlug,
+    onDropTargetChange,
+    page,
     sectionType,
-    collectionId,
   ]);
+
+  useEffect(
+    () => () => {
+      clearExpandTimer(expandTimerRef);
+    },
+    []
+  );
 
   if (!page) return null;
 
@@ -358,20 +311,21 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
       role="button"
       tabIndex={0}
       className={cn(
-        "group w-full flex items-center justify-between gap-1 py-1.5 rounded-md text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
+        "group flex h-8 w-full items-center justify-between gap-1.5 rounded-md text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
         {
-          "bg-accent-primary/10 hover:bg-accent-primary/10 text-accent-primary font-medium": isPageActive,
-          "cursor-pointer": pageContent?.status.hasAccess && !isPageActive,
-          "cursor-default": !pageContent?.status.hasAccess || isPageActive,
+          "bg-layer-transparent-active text-primary hover:bg-layer-transparent-active focus:bg-layer-transparent-active":
+            isPageActive,
+          "cursor-pointer": pageContent.hasAccess && !isPageActive,
+          "cursor-default": !pageContent.hasAccess || isPageActive,
         }
       )}
       onClick={handleNavigate}
       onKeyDown={handleKeyDown}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      aria-label={pageContent?.displayName}
+      aria-label={pageContent.displayName}
       aria-expanded={shouldShowSubPagesButton ? isExpanded : undefined}
-      aria-disabled={pageContent?.status.hasAccess ?? true}
+      aria-disabled={!pageContent.hasAccess}
       aria-current={isPageActive ? "page" : undefined}
     >
       <div
@@ -380,30 +334,35 @@ const WikiPageSidebarListItemComponent = observer(function WikiPageSidebarListIt
           "max-w-[calc(100%-28px)] pr-3": showAddButton,
           "w-full pr-1": !showAddButton,
         })}
-        style={contentStyle}
+        style={{ paddingLeft: `${paddingLeft + 4}px` }}
       >
-        <div className="size-4 flex-shrink-0 grid place-items-center">
+        <div className="grid size-4 flex-shrink-0 place-items-center">
           {isFetchingSubPages || (shouldShowSubPagesButton && isHovering) ? (
             <button
               type="button"
               onClick={(event) => void handleSubPagesToggle(event)}
-              className="rounded-sm hover:bg-layer-transparent-hover grid place-items-center"
+              className="grid place-items-center rounded-sm hover:bg-layer-transparent-hover"
               data-prevent-progress
             >
               {isFetchingSubPages ? (
                 <Loader className="size-3.5 animate-spin" />
               ) : (
-                <ChevronRightIcon className={chevronClassName} strokeWidth={2.5} />
+                <ChevronRightIcon
+                  className={cn("size-3.5 transform transition-transform duration-300 ease-in-out", {
+                    "rotate-90": isExpanded,
+                  })}
+                  strokeWidth={2.5}
+                />
               )}
             </button>
           ) : (
-            <span className="grid place-items-center">{pageContent?.logo}</span>
+            <span className="grid place-items-center">{pageContent.logo}</span>
           )}
         </div>
-        <p className="truncate text-13 flex-grow min-w-0">{pageContent?.displayName}</p>
+        <p className="min-w-0 flex-grow truncate text-13">{pageContent.displayName}</p>
       </div>
-      {archived_at && (
-        <div className="flex-shrink-0 size-4 grid place-items-center">
+      {page.archived_at && (
+        <div className="grid size-4 flex-shrink-0 place-items-center">
           <ArchiveIcon className="size-3.5 text-tertiary" />
         </div>
       )}

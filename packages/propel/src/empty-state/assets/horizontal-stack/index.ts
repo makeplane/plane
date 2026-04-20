@@ -21,6 +21,7 @@ export * from "./label";
 export * from "./link";
 export * from "./members";
 export * from "./note";
+export * from "./page";
 export * from "./priority";
 export * from "./project";
 export * from "./search";

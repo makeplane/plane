@@ -14,6 +14,7 @@ from django.urls import path
 
 # Module imports
 from plane.ee.views.app.collection import (
+    CollectionAddablePageSearchEndpoint,
     CollectionEndpoint,
     CollectionMemberEndpoint,
     PageCollectionEndpoint,
@@ -53,6 +54,11 @@ urlpatterns = [
         "workspaces/<str:slug>/collections/<uuid:collection_id>/pages/",
         PageCollectionEndpoint.as_view(),
         name="collection-pages",
+    ),
+    path(
+        "workspaces/<str:slug>/collections/<uuid:collection_id>/pages-search/",
+        CollectionAddablePageSearchEndpoint.as_view(),
+        name="collection-pages-search",
     ),
     path(
         "workspaces/<str:slug>/collections/<uuid:collection_id>/pages/<uuid:pk>/",

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useMemo, useCallback, useState, useEffect } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { Tabs } from "@base-ui/react";
 import { Popover } from "../popover";
 import { cn } from "../utils/classname";
@@ -39,17 +39,11 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
     iconType = "lucide",
     side = "bottom",
     align = "start",
+    showEmojiTab = true,
   } = props;
 
-  // shared search state between emoji and icon tabs
   const [searchQuery, setSearchQuery] = useState("");
 
-  // clear search when picker closes
-  useEffect(() => {
-    if (!isOpen) setSearchQuery("");
-  }, [isOpen]);
-
-  // side and align calculations
   const { finalSide, finalAlign } = useMemo(() => {
     if (placement) {
       const converted = convertPlacementToSideAndAlign(placement);
@@ -58,44 +52,54 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
     return { finalSide: side, finalAlign: align };
   }, [placement, side, align]);
 
+  const handleOpenChange = useCallback(
+    (value: boolean) => {
+      if (!value) setSearchQuery("");
+      handleToggle(value);
+    },
+    [handleToggle]
+  );
+
   const handleEmojiChange = useCallback(
     (value: string) => {
       onChange({
         type: EmojiIconPickerTypes.EMOJI,
         value: emojiToString(value),
       });
-      if (closeOnSelect) handleToggle(false);
+      if (closeOnSelect) handleOpenChange(false);
     },
-    [onChange, closeOnSelect, handleToggle]
+    [onChange, closeOnSelect, handleOpenChange]
   );
 
   const handleIconChange = useCallback(
     (value: { name: string; color: string }) => {
       onChange({
         type: EmojiIconPickerTypes.ICON,
-        value: value,
+        value,
       });
-      if (closeOnSelect) handleToggle(false);
+      if (closeOnSelect) handleOpenChange(false);
     },
-    [onChange, closeOnSelect, handleToggle]
+    [onChange, closeOnSelect, handleOpenChange]
   );
 
   const tabs = useMemo(
     () =>
       [
-        {
-          key: "emoji",
-          label: "Emoji",
-          content: (
-            <EmojiRoot
-              onChange={handleEmojiChange}
-              searchPlaceholder={searchPlaceholder}
-              searchDisabled={searchDisabled}
-              searchQuery={searchQuery}
-              onSearchQueryChange={setSearchQuery}
-            />
-          ),
-        },
+        showEmojiTab
+          ? {
+              key: "emoji",
+              label: "Emoji",
+              content: (
+                <EmojiRoot
+                  onChange={handleEmojiChange}
+                  searchPlaceholder={searchPlaceholder}
+                  searchDisabled={searchDisabled}
+                  searchQuery={searchQuery}
+                  onSearchQueryChange={setSearchQuery}
+                />
+              ),
+            }
+          : null,
         {
           key: "icon",
           label: "Icon",
@@ -110,16 +114,21 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
             />
           ),
         },
-      ].map((tab) => ({
-        key: tab.key,
-        label: tab.label,
-        content: tab.content,
-      })),
-    [defaultIconColor, searchDisabled, searchPlaceholder, iconType, searchQuery, handleEmojiChange, handleIconChange]
+      ].filter((tab): tab is NonNullable<typeof tab> => !!tab),
+    [
+      defaultIconColor,
+      searchDisabled,
+      searchPlaceholder,
+      iconType,
+      searchQuery,
+      handleEmojiChange,
+      handleIconChange,
+      showEmojiTab,
+    ]
   );
 
   return (
-    <Popover open={isOpen} onOpenChange={handleToggle}>
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <Popover.Trigger className={cn("outline-none", buttonClassName)} disabled={disabled}>
         {label}
       </Popover.Trigger>
@@ -138,28 +147,30 @@ export function EmojiPicker(props: TCustomEmojiPicker) {
             return;
           }
           if (e.key === "Escape") {
-            handleToggle(false);
+            handleOpenChange(false);
             return;
           }
           e.stopPropagation();
         }}
       >
-        <Tabs.Root defaultValue={defaultOpen}>
-          <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">
-            {tabs.map((tab) => (
-              <Tabs.Tab
-                key={tab.key}
-                value={tab.key}
-                className={cn(
-                  "py-1 text-13 rounded-sm border border-subtle bg-layer-1",
-                  "data-[active]:bg-surface-1 data-[active]:text-primary data-[active]:hover:text-primary",
-                  "hover:text-tertiary hover:bg-layer-1/60 text-placeholder"
-                )}
-              >
-                {tab.label}
-              </Tabs.Tab>
-            ))}
-          </Tabs.List>
+        <Tabs.Root defaultValue={showEmojiTab ? defaultOpen : EmojiIconPickerTypes.ICON}>
+          {tabs.length > 1 && (
+            <Tabs.List className="grid grid-cols-2 gap-1 px-3.5 pt-3">
+              {tabs.map((tab) => (
+                <Tabs.Tab
+                  key={tab.key}
+                  value={tab.key}
+                  className={cn(
+                    "py-1 text-13 rounded-sm border border-subtle bg-layer-1",
+                    "data-[active]:bg-surface-1 data-[active]:text-primary data-[active]:hover:text-primary",
+                    "hover:text-tertiary hover:bg-layer-1/60 text-placeholder"
+                  )}
+                >
+                  {tab.label}
+                </Tabs.Tab>
+              ))}
+            </Tabs.List>
+          )}
           {tabs.map((tab) => (
             <Tabs.Panel key={tab.key} value={tab.key} className="h-80 overflow-hidden overflow-y-auto">
               {tab.content}

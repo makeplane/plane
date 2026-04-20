@@ -60,6 +60,14 @@
     "header": {
       "add_page": "Přidat stránku"
     },
+    "sidebar": {
+      "title": "Kolekce",
+      "loading_collections": "Načítají se kolekce...",
+      "expand_collection": "Rozbalit kolekci",
+      "collapse_collection": "Sbalit kolekci",
+      "loading_pages": "Načítají se stránky...",
+      "empty_collection": "V této kolekci nejsou žádné stránky"
+    },
     "menu": {
       "create_new_page": "Vytvořit novou stránku",
       "add_existing_page": "Přidat existující stránku",

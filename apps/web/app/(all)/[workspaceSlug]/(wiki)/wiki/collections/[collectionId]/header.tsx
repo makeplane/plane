@@ -15,11 +15,12 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, usePathname } from "next/navigation";
 import useSWR from "swr";
-import { Book } from "lucide-react";
+import { Book, Ellipsis } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { PageIcon } from "@plane/propel/icons";
 import { Button } from "@plane/propel/button";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { EPageAccess } from "@plane/types";
 import type { TLogoProps, TPage } from "@plane/types";
@@ -27,9 +28,12 @@ import { Breadcrumbs, Header } from "@plane/ui";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { PageSearchInput } from "@/components/pages/list/search-input";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { CollectionContextMenu } from "@/plane-web/components/pages/sidebar/collection";
 import { AddExistingPageModal, CollectionAddPageMenu } from "@/plane-web/components/pages/sidebar/section";
 import { EPageStoreType, useCollection, usePageStore } from "@/plane-web/hooks/store";
 import {
+  DEFAULT_WIKI_COLLECTION,
+  DefaultWikiCollectionIcon,
   getPredefinedWikiCollection,
   isPredefinedWikiCollection,
   PREDEFINED_WIKI_COLLECTION_TRANSLATION_KEYS,
@@ -47,7 +51,7 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
   const { createPage, filters, updateFilters, clearAllFilters } = usePageStore(EPageStoreType.WORKSPACE);
   const resolvedCollectionId = resolveWikiCollectionId(pathname, collectionId?.toString());
   const predefinedCollection = getPredefinedWikiCollection(resolvedCollectionId);
-  const isGeneralCollection = resolvedCollectionId === "general";
+  const isGeneralCollection = resolvedCollectionId === DEFAULT_WIKI_COLLECTION.slug;
   const isPredefinedNonGeneral = isPredefinedWikiCollection(resolvedCollectionId) && !isGeneralCollection;
   const actualCollectionId = isGeneralCollection ? collectionStore.defaultCollectionId : resolvedCollectionId;
 
@@ -58,10 +62,12 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
 
   const handleCreatePage = async () => {
     if (!workspaceSlug || isCreatingPage) return;
+
     setIsCreatingPage(true);
     const payload: Partial<TPage> = {
       access: predefinedCollection?.pageStoreType === "private" ? EPageAccess.PRIVATE : EPageAccess.PUBLIC,
     };
+
     try {
       const res = await createPage(payload);
       router.push(`/${workspaceSlug.toString()}/wiki/${res?.id}`);
@@ -81,7 +87,11 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
   const { isLoading: isLoadingCollections } = useSWR(
     workspaceSlug ? ["workspace-collections", workspaceSlug.toString()] : null,
     workspaceSlug ? () => collectionStore.fetchCollections(workspaceSlug.toString()) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false, revalidateOnReconnect: false }
+    {
+      revalidateIfStale: false,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
   );
 
   useEffect(() => {
@@ -107,13 +117,11 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
       ? collectionStore.getCollectionById(actualCollectionId)?.asJSON
       : undefined;
   const collectionLogoProps = collection?.logo_props as TLogoProps | undefined;
-  const collectionName = predefinedCollection
-    ? t(
-        PREDEFINED_WIKI_COLLECTION_TRANSLATION_KEYS[
-          resolvedCollectionId as keyof typeof PREDEFINED_WIKI_COLLECTION_TRANSLATION_KEYS
-        ]
-      )
-    : collection?.name || t("wiki_collections.fallback_name");
+  const collectionName = isGeneralCollection
+    ? DEFAULT_WIKI_COLLECTION.displayName
+    : resolvedCollectionId && isPredefinedWikiCollection(resolvedCollectionId)
+      ? t(PREDEFINED_WIKI_COLLECTION_TRANSLATION_KEYS[resolvedCollectionId])
+      : collection?.name || t("wiki_collections.fallback_name");
 
   return (
     <>
@@ -123,7 +131,7 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  href={`/${workspaceSlug}/wiki/collections/general`}
+                  href={`/${workspaceSlug?.toString() ?? ""}/wiki/collections/${DEFAULT_WIKI_COLLECTION.slug}`}
                   label={t("common.pages")}
                   icon={<PageIcon className="size-4 text-tertiary" />}
                 />
@@ -136,6 +144,8 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
                   icon={
                     collectionLogoProps?.in_use ? (
                       <Logo logo={collectionLogoProps} size={14} type="lucide" />
+                    ) : isGeneralCollection ? (
+                      <DefaultWikiCollectionIcon className="size-3.5 text-tertiary" />
                     ) : (
                       <Book className="size-3.5 text-tertiary" />
                     )
@@ -163,9 +173,22 @@ export const CollectionPageTypeHeader = observer(function CollectionPageTypeHead
               buttonType="header"
             />
           )}
+          {collection && workspaceSlug && (
+            <CollectionContextMenu
+              collection={collection}
+              workspaceSlug={workspaceSlug.toString()}
+              customButton={
+                <IconButton
+                  variant="secondary"
+                  size="lg"
+                  icon={Ellipsis}
+                  aria-label={t("wiki_collections.menu.collection_options")}
+                />
+              }
+            />
+          )}
         </Header.RightItem>
       </Header>
-
       {actualCollectionId && workspaceSlug && (
         <AddExistingPageModal
           isOpen={isAddExistingPageModalOpen}

@@ -11,6 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./section-header";
-export * from "./section-content";
-export * from "./sidebar-section";
+export { WorkspaceIcon as DefaultWikiCollectionIcon } from "@plane/propel/icons";
+
+export const DEFAULT_WIKI_COLLECTION = {
+  slug: "general",
+  displayName: "General",
+} as const;

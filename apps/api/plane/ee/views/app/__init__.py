@@ -84,6 +84,7 @@ from plane.ee.views.app.milestone import (
 from plane.ee.views.app.importer import ProjectWorkItemImportEndpoint
 
 from plane.ee.views.app.collection import (
+    CollectionAddablePageSearchEndpoint,
     CollectionEndpoint,
     CollectionMemberEndpoint,
     PageCollectionEndpoint,

@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Sayfa ekle"
     },
+    "sidebar": {
+      "title": "Koleksiyonlar",
+      "loading_collections": "Koleksiyonlar yükleniyor...",
+      "expand_collection": "Koleksiyonu genişlet",
+      "collapse_collection": "Koleksiyonu daralt",
+      "loading_pages": "Sayfalar yükleniyor...",
+      "empty_collection": "Bu koleksiyonda sayfa yok"
+    },
     "menu": {
       "create_new_page": "Yeni sayfa oluştur",
       "add_existing_page": "Var olan sayfa ekle",

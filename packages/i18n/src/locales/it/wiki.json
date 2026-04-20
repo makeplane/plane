@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Aggiungi pagina"
     },
+    "sidebar": {
+      "title": "Raccolte",
+      "loading_collections": "Caricamento raccolte...",
+      "expand_collection": "Espandi raccolta",
+      "collapse_collection": "Comprimi raccolta",
+      "loading_pages": "Caricamento pagine...",
+      "empty_collection": "Nessuna pagina in questa raccolta"
+    },
     "menu": {
       "create_new_page": "Crea nuova pagina",
       "add_existing_page": "Aggiungi pagina esistente",

@@ -25,7 +25,7 @@ import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 
-export const SIDEBAR_MENU_ITEMS: {
+const SIDEBAR_MENU_ITEMS: {
   key: string;
   label: string;
   href: string;
@@ -59,9 +59,9 @@ export const PagesAppSidebarMenu = observer(function PagesAppSidebarMenu() {
           <Link key={link.key} href={`/${workspaceSlug}${link.href}`} className="block">
             <div
               className={cn(
-                "group w-full flex items-center gap-1.5 rounded-md px-2 py-1.5 outline-none text-secondary hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
+                "group flex h-8 w-full items-center gap-1.5 rounded-md px-2 text-secondary outline-none hover:bg-layer-transparent-hover focus:bg-layer-transparent-active",
                 {
-                  "text-accent-primary bg-accent-primary/10 hover:bg-accent-primary/10 focus:bg-accent-primary/10":
+                  "bg-layer-transparent-active text-primary hover:bg-layer-transparent-active focus:bg-layer-transparent-active":
                     link.highlight(pathname, `/${workspaceSlug}${link.href}/`),
                 }
               )}

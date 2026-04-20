@@ -23,6 +23,7 @@ from .extended.converters import (
 from .extended.filterset import (
     InitiativeFilterSet,
 )
+from .page_collection import CollectionPageFilterSet
 
 # Public API exports
 __all__ = [
@@ -31,4 +32,5 @@ __all__ = [
     "BaseFilterSet",
     "IssueFilterSet",
     "InitiativeFilterSet",
+    "CollectionPageFilterSet",
 ]

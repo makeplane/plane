@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Добавить страницу"
     },
+    "sidebar": {
+      "title": "Коллекции",
+      "loading_collections": "Загрузка коллекций...",
+      "expand_collection": "Развернуть коллекцию",
+      "collapse_collection": "Свернуть коллекцию",
+      "loading_pages": "Загрузка страниц...",
+      "empty_collection": "В этой коллекции нет страниц"
+    },
     "menu": {
       "create_new_page": "Создать новую страницу",
       "add_existing_page": "Добавить существующую страницу",

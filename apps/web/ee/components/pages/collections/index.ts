@@ -13,9 +13,13 @@
 
 import type { TPageNavigationTabs } from "@plane/types";
 
+import { DEFAULT_WIKI_COLLECTION } from "./default";
+
+export * from "./default";
+
 export const PREDEFINED_WIKI_COLLECTIONS = {
-  general: {
-    displayName: "General",
+  [DEFAULT_WIKI_COLLECTION.slug]: {
+    displayName: DEFAULT_WIKI_COLLECTION.displayName,
     pageStoreType: "public",
   },
   private: {
@@ -33,7 +37,7 @@ export const PREDEFINED_WIKI_COLLECTIONS = {
 } as const satisfies Record<string, { displayName: string; pageStoreType: TPageNavigationTabs }>;
 
 export const PREDEFINED_WIKI_COLLECTION_TRANSLATION_KEYS = {
-  general: "wiki_collections.predefined.general",
+  [DEFAULT_WIKI_COLLECTION.slug]: "wiki_collections.predefined.general",
   private: "wiki_collections.predefined.private",
   shared: "wiki_collections.predefined.shared",
   archived: "wiki_collections.predefined.archived",

@@ -300,6 +300,7 @@ export class WorkspacePageStore implements IWorkspacePageStore {
           parent_id: page.parent_id,
           is_shared: page.is_shared,
         })),
+        collectionPageIds: Array.from(this.store.collection.pageCollectionIdByPageId.keys()),
         currentWorkspace: this.store.workspaceRoot.currentWorkspace?.id,
       }),
       // Effect: update the arrays

@@ -68,7 +68,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
   return (
     <>
       <CustomizeNavigationDialog isOpen={isCustomizeNavDialogOpen} onClose={() => setIsCustomizeNavDialogOpen(false)} />
-      <div ref={ref} className="relative animate-fade-in flex flex-col h-full w-full pt-3">
+      <div ref={ref} className="relative animate-fade-in flex h-full w-full flex-col pt-4">
         <div className="flex flex-col gap-3 px-3">
           {/* Workspace switcher and settings */}
 
@@ -97,7 +97,7 @@ export const SidebarWrapper = observer(function SidebarWrapper(props: TSidebarWr
           scrollType="hover"
           size="sm"
           rootClassName="size-full overflow-x-hidden overflow-y-auto"
-          viewportClassName="flex flex-col gap-3 overflow-x-hidden h-full w-full overflow-y-auto px-3 pt-3 pb-0.5"
+          viewportClassName="flex h-full w-full flex-col gap-4 overflow-x-hidden overflow-y-auto px-3 pb-3 pt-4"
         >
           {children}
           {isWorkspaceAdmin && (

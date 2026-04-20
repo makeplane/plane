@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Dodaj stronę"
     },
+    "sidebar": {
+      "title": "Kolekcje",
+      "loading_collections": "Ładowanie kolekcji...",
+      "expand_collection": "Rozwiń kolekcję",
+      "collapse_collection": "Zwiń kolekcję",
+      "loading_pages": "Ładowanie stron...",
+      "empty_collection": "W tej kolekcji nie ma stron"
+    },
     "menu": {
       "create_new_page": "Utwórz nową stronę",
       "add_existing_page": "Dodaj istniejącą stronę",

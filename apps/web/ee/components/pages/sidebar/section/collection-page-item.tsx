@@ -142,9 +142,9 @@ export const CollectionPageItem = observer(function CollectionPageItem({
     <div>
       <div
         className={cn(
-          "flex items-center rounded-md py-1.5 pr-2 text-13 text-secondary transition-colors hover:bg-layer-transparent-hover",
+          "flex h-8 items-center rounded-md pr-2 text-13 text-secondary transition-colors hover:bg-layer-transparent-hover",
           {
-            "bg-accent-primary/10 font-medium text-accent-primary hover:bg-accent-primary/10": isPageActive,
+            "bg-layer-transparent-active text-primary hover:bg-layer-transparent-active": isPageActive,
           }
         )}
         style={{ paddingLeft: `${28 + depth * 16}px` }}
@@ -191,7 +191,7 @@ export const CollectionPageItem = observer(function CollectionPageItem({
           })}
           aria-disabled={!canCurrentUserAccessPage}
         >
-          <span className="flex-1 truncate text-left">{displayName}</span>
+          <span className="flex-1 truncate text-left leading-5">{displayName}</span>
         </button>
       </div>
 

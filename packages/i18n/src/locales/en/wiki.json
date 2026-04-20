@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Add page"
     },
+    "sidebar": {
+      "title": "Collections",
+      "loading_collections": "Loading collections...",
+      "expand_collection": "Expand collection",
+      "collapse_collection": "Collapse collection",
+      "loading_pages": "Loading pages...",
+      "empty_collection": "No pages in this collection"
+    },
     "menu": {
       "create_new_page": "Create new page",
       "add_existing_page": "Add existing page",

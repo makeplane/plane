@@ -11,6 +11,9 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import type { TPaginationInfo } from "../common";
+import type { TPage, TPageFilterProps, TSubPageDetails } from "../page";
+
 export type TPageCollection = {
   id: string;
   collection: string;
@@ -23,18 +26,55 @@ export type TPageCollection = {
   updated_by?: string;
 };
 
-// Lightweight response from the list endpoint (GET /collections/{id}/pages/)
-export type TPageCollectionListItem = {
-  id: string;
-  page_id: string;
+type TPageCollectionMetadata = Pick<
+  TPageCollection,
+  "workspace" | "created_at" | "updated_at" | "created_by" | "updated_by"
+>;
+
+export type TPageCollectionBranchParams = {
+  parent_id?: string | null;
+  search?: string;
+  filters?: TPageFilterProps;
+  cursor?: string;
+  per_page?: number;
+};
+
+type TCollectionBranchPageSummaryMetadata = Pick<
+  TPage,
+  | "workspace"
+  | "sub_pages_count"
+  | "is_shared"
+  | "shared_access"
+  | "owned_by"
+  | "deleted_at"
+  | "is_description_empty"
+  | "updated_at"
+  | "updated_by"
+  | "moved_to_page"
+  | "moved_to_project"
+  | "sort_order"
+  | "created_at"
+  | "created_by"
+  | "is_favorite"
+>;
+
+export type TCollectionBranchPageSummary = TSubPageDetails &
+  TCollectionBranchPageSummaryMetadata &
+  Required<Pick<TPage, "collection_id">>;
+
+export type TCollectionBranchRow = TPageCollectionMetadata & {
+  page_collection_id?: string | null;
   collection_id: string;
+  page: TCollectionBranchPageSummary;
   sort_order?: number | null;
   parent_id?: string | null;
 };
 
-export type TPageCollectionMembership = TPageCollection & {
-  parent_id?: string | null;
+export type TPageCollectionBranchResponse = TPaginationInfo & {
+  results: TCollectionBranchRow[];
 };
+
+export type TCollectionAddablePage = Pick<TPage, "id" | "name" | "logo_props">;
 
 export type TPageCollectionCreatePayload = {
   page_ids: string[];

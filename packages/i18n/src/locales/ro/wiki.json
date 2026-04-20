@@ -33,7 +33,15 @@
       "submit": "Șterge colecția"
     },
     "header": {
-      "add_page": "Adaugă pagină"
+      "add_page": "Adaugă o pagină"
+    },
+    "sidebar": {
+      "title": "Colecții",
+      "loading_collections": "Se încarcă colecțiile...",
+      "expand_collection": "Extinde colecția",
+      "collapse_collection": "Restrânge colecția",
+      "loading_pages": "Se încarcă paginile...",
+      "empty_collection": "Nu există pagini în această colecție"
     },
     "menu": {
       "create_new_page": "Creează o pagină nouă",

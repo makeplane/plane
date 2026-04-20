@@ -18,23 +18,20 @@ import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { Transition } from "@headlessui/react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import { Loader } from "lucide-react";
-import { Transition } from "@headlessui/react";
-// plane imports
-import { PlusIcon, PageIcon } from "@plane/propel/icons";
 import { Logo } from "@plane/propel/emoji-icon-picker";
+import { PageIcon, PlusIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { EPageAccess } from "@plane/types";
 import type { TPageDragPayload, TPageNavigationTabs } from "@plane/types";
 import { DropIndicator } from "@plane/ui";
 import { cn, getPageName } from "@plane/utils";
-// hooks
 import { useAppRouter } from "@/hooks/use-app-router";
-// plane web hooks
 import { EPageStoreType, useCollection, usePage, usePageStore } from "@/plane-web/hooks/store";
-// local imports
 import { WikiPageSidebarListItem } from "./list-item";
 
 type Props = {
@@ -49,6 +46,22 @@ type Props = {
   isLastChild: boolean;
 };
 
+const scrollSidebarItemIntoView = (element: HTMLDivElement) => {
+  const container = element.closest(".vertical-scrollbar");
+  if (!(container instanceof HTMLElement)) return;
+
+  const elementRect = element.getBoundingClientRect();
+  const containerRect = container.getBoundingClientRect();
+  const isInView = elementRect.top >= containerRect.top + 40 && elementRect.bottom <= containerRect.bottom - 40;
+
+  if (!isInView) {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }
+};
+
 export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarListItemRoot(props: Props) {
   const {
     paddingLeft,
@@ -61,7 +74,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
     handleReorderPages,
     isLastChild,
   } = props;
-  // states
+
   const [localIsExpanded, setLocalIsExpanded] = useState(false);
   const [subPagesLoaded, setSubPagesLoaded] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -69,72 +82,53 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
   const [dropIndicatorEdge, setDropIndicatorEdge] = useState<Edge | null>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isCreatingPage, setIsCreatingPage] = useState(false);
-  // refs
+
   const listItemRef = useRef<HTMLDivElement>(null);
-  const itemContentRef = useRef<HTMLDivElement>(null);
-  // navigation
   const router = useAppRouter();
   const { workspaceSlug, pageId: currentPageIdParam } = useParams();
-  // store hooks
+  const currentWorkspaceSlug = workspaceSlug?.toString();
+  const currentPageId = currentPageIdParam?.toString();
+
   const collectionStore = useCollection();
   const { getPageById, createPage, isNestedPagesEnabled } = usePageStore(EPageStoreType.WORKSPACE);
   const page = usePage({
     pageId,
     storeType: EPageStoreType.WORKSPACE,
   });
-  // derived values
-  const { sub_pages_count, subPageIds } = page ?? {};
-  const resolvedSubPageIds = getChildPageIds ? getChildPageIds(pageId) : subPageIds;
+
+  const resolvedSubPageIds = getChildPageIds ? getChildPageIds(pageId) : page?.subPageIds;
+  const expectedSubPagesCount = page?.sub_pages_count ?? 0;
   const loadedSubPageIdsCount = resolvedSubPageIds?.length ?? 0;
-  const expectedSubPagesCount = sub_pages_count ?? 0;
   const hasLoadedAllSubPages = expectedSubPagesCount > 0 && loadedSubPageIdsCount >= expectedSubPagesCount;
-  const currentPage = currentPageIdParam ? getPageById(currentPageIdParam.toString()) : undefined;
-  // check if this is the active page
-  const isActivePage = currentPageIdParam && currentPageIdParam.toString() === pageId;
-  // auto-scroll to active page when sidebar renders
-  useEffect(() => {
-    if (isActivePage && listItemRef.current) {
-      // Wait a short delay to ensure sidebar is fully rendered
-      const timer = setTimeout(() => {
-        // Check if element is in view already
-        const element = listItemRef.current;
-        if (!element) return;
-
-        const elementRect = element.getBoundingClientRect();
-
-        // Get the container bounds (sidebar scroll container)
-        const container = element.closest(".vertical-scrollbar");
-        if (!container) return;
-
-        const containerRect = container.getBoundingClientRect();
-
-        // Only scroll if the element is outside the visible area with some padding
-        const isInView =
-          elementRect.top >= containerRect.top + 40 && // Element is below the top edge (with padding)
-          elementRect.bottom <= containerRect.bottom - 40; // Element is above the bottom edge (with padding)
-
-        if (!isInView) {
-          element.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-      }, 500); // Increased delay to ensure content has time to render
-
-      return () => clearTimeout(timer);
-    }
-  }, [isActivePage]);
-
-  // Simplified state management - use props if available, otherwise local state
+  const collectionBranchState = collectionId
+    ? collectionStore.getCollectionBranchState(collectionId, { parentId: pageId })
+    : undefined;
+  const shouldRefetchCollectionBranch =
+    !!collectionId && (!collectionBranchState?.isLoaded || collectionBranchState.isStale);
+  const currentPage = currentPageId ? getPageById(currentPageId) : undefined;
+  const isActivePage = currentPageId === pageId;
+  const isActiveBranch = !!(isActivePage || currentPage?.parentPageIds?.includes(pageId));
   const isExpanded = setExpandedPageIds ? expandedPageIds.includes(pageId) : localIsExpanded;
-
-  const shouldShowSubPages = !isDragging && isExpanded && sub_pages_count !== undefined && sub_pages_count > 0;
+  const shouldShowSubPages = !isDragging && isExpanded && expectedSubPagesCount > 0;
   const canShowAddButton = !!(
     page?.canCurrentUserEditPage &&
     page?.isContentEditable &&
-    workspaceSlug &&
-    isNestedPagesEnabled(workspaceSlug.toString())
+    currentWorkspaceSlug &&
+    isNestedPagesEnabled(currentWorkspaceSlug)
   );
+
+  useEffect(() => {
+    const element = listItemRef.current;
+    if (!isActivePage || !element) return;
+
+    const timer = setTimeout(() => {
+      if (listItemRef.current) {
+        scrollSidebarItemIntoView(listItemRef.current);
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [isActivePage]);
 
   const handleItemMouseEnter = useCallback(() => {
     setIsHovered(true);
@@ -147,9 +141,62 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
   const handleSubPagesLoaded = useCallback(() => {
     setSubPagesLoaded(true);
   }, []);
+
+  const getChildrenPageIds = useCallback(
+    (parentId: string): string[] => {
+      const children: string[] = [];
+
+      const collectChildren = (id: string) => {
+        const currentPage = getPageById(id);
+        if (!currentPage) return;
+
+        const subPageIds = getChildPageIds ? getChildPageIds(id) : (currentPage.subPageIds ?? []);
+        subPageIds.forEach((childId) => {
+          children.push(childId);
+          collectChildren(childId);
+        });
+      };
+
+      collectChildren(parentId);
+      return children;
+    },
+    [getChildPageIds, getPageById]
+  );
+
+  const handleToggleExpanded = useCallback(() => {
+    if (setExpandedPageIds) {
+      setExpandedPageIds((previousPageIds) => {
+        const nextExpandedPageIds = new Set(previousPageIds);
+
+        if (nextExpandedPageIds.has(pageId)) {
+          getChildrenPageIds(pageId).forEach((childPageId) => nextExpandedPageIds.delete(childPageId));
+          nextExpandedPageIds.delete(pageId);
+        } else {
+          nextExpandedPageIds.add(pageId);
+        }
+
+        return [...nextExpandedPageIds];
+      });
+      return;
+    }
+
+    setLocalIsExpanded((previous) => !previous);
+  }, [getChildrenPageIds, pageId, setExpandedPageIds]);
+
+  const expandPage = useCallback(() => {
+    if (setExpandedPageIds) {
+      setExpandedPageIds((previousPageIds) =>
+        previousPageIds.includes(pageId) ? previousPageIds : [...previousPageIds, pageId]
+      );
+      return;
+    }
+
+    setLocalIsExpanded(true);
+  }, [pageId, setExpandedPageIds]);
+
   const handlePromotePageToRootAndReorder = useCallback(
     async (droppedPageId: string, position: "before" | "after") => {
-      if (!collectionId || !workspaceSlug) return;
+      if (!collectionId || !currentWorkspaceSlug) return;
 
       await collectionStore.movePageWithCollectionContext({
         pageId: droppedPageId,
@@ -160,8 +207,9 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         reorderPosition: position,
       });
     },
-    [collectionId, collectionStore, pageId, workspaceSlug]
+    [collectionId, collectionStore, currentWorkspaceSlug, pageId]
   );
+
   const handleMoveAcrossCollectionsAndReorder = useCallback(
     async (payload: TPageDragPayload, position: "before" | "after") => {
       if (!collectionId || !page?.id) return;
@@ -177,22 +225,42 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
     },
     [collectionId, collectionStore, page]
   );
+
   const updateDropIndicatorEdge = useCallback(
     ({
       self,
       location,
+      source,
     }: {
       self: { element: Element; data: Record<string, unknown> };
       location: { current: { dropTargets: Array<{ element?: Element }> } };
+      source: { data: Record<string, unknown> };
     }) => {
+      const sourceData = source.data as TPageDragPayload;
+      if (sourceData.id === pageId) {
+        setDropIndicatorEdge(null);
+        return;
+      }
       const isPrimaryDropTarget = location.current.dropTargets[0]?.element === self.element;
       setDropIndicatorEdge(isPrimaryDropTarget ? extractClosestEdge(self.data) : null);
     },
-    []
+    [pageId]
   );
 
   useEffect(() => {
-    const isActiveBranch = isActivePage || currentPage?.parentPageIds?.includes(pageId);
+    if (collectionId) {
+      if (collectionBranchState?.isLoaded && !collectionBranchState.isStale) {
+        if (!subPagesLoaded) {
+          setSubPagesLoaded(true);
+        }
+        return;
+      }
+
+      if (isActiveBranch && subPagesLoaded && shouldRefetchCollectionBranch) {
+        setSubPagesLoaded(false);
+      }
+      return;
+    }
 
     if (hasLoadedAllSubPages) {
       if (!subPagesLoaded) {
@@ -201,38 +269,46 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
       return;
     }
 
-    if (collectionId && isActiveBranch && expectedSubPagesCount > loadedSubPageIdsCount && subPagesLoaded) {
+    if (isActiveBranch && expectedSubPagesCount > loadedSubPageIdsCount && subPagesLoaded) {
       setSubPagesLoaded(false);
     }
   }, [
+    collectionBranchState?.isLoaded,
+    collectionBranchState?.isStale,
     collectionId,
-    currentPage?.parentPageIds,
     expectedSubPagesCount,
     hasLoadedAllSubPages,
-    isActivePage,
+    isActiveBranch,
     loadedSubPageIdsCount,
-    pageId,
+    shouldRefetchCollectionBranch,
     subPagesLoaded,
   ]);
 
   useEffect(() => {
-    const isActiveBranch = isActivePage || currentPage?.parentPageIds?.includes(pageId);
-
     if (collectionId && !isActiveBranch) return;
-    if (!isExpanded || !page || !page.id || expectedSubPagesCount <= 0 || subPagesLoaded || hasLoadedAllSubPages) {
-      return;
-    }
+    if (!isExpanded || !page?.id || expectedSubPagesCount <= 0) return;
+
+    const shouldLoadChildren = collectionId ? shouldRefetchCollectionBranch : !subPagesLoaded && !hasLoadedAllSubPages;
+    if (!shouldLoadChildren) return;
 
     let isCancelled = false;
+    const currentPageId = page.id;
 
     void (async () => {
       try {
-        await page.fetchSubPages();
-        if (isCancelled) return;
+        if (collectionId && currentWorkspaceSlug) {
+          await collectionStore.fetchCollectionBranchChildren(currentWorkspaceSlug, collectionId, currentPageId, {
+            force: collectionBranchState?.isStale,
+          });
+        } else {
+          await page.fetchSubPages();
+        }
 
-        setSubPagesLoaded(true);
+        if (!isCancelled) {
+          setSubPagesLoaded(true);
+        }
       } catch {
-        // Manual expand path already surfaces a toast; silent retries here keep auto-reveal resilient.
+        // Manual expand already surfaces an error; silent retries keep auto-reveal resilient.
       }
     })();
 
@@ -240,92 +316,45 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
       isCancelled = true;
     };
   }, [
+    collectionBranchState?.isStale,
     collectionId,
-    currentPage?.parentPageIds,
-    isActivePage,
-    isExpanded,
-    pageId,
-    page,
-    subPagesLoaded,
+    collectionStore,
+    currentWorkspaceSlug,
     expectedSubPagesCount,
     hasLoadedAllSubPages,
+    isActiveBranch,
+    isExpanded,
+    page,
+    shouldRefetchCollectionBranch,
+    subPagesLoaded,
   ]);
 
-  // Simplified toggle function - single responsibility
-  const handleToggleExpanded = () => {
-    if (setExpandedPageIds) {
-      // Using parent component's state management
-      setExpandedPageIds((prev) => {
-        // Use sets for efficient operations
-        const currentSet = new Set(prev);
-
-        if (currentSet.has(pageId)) {
-          // If page is already expanded, collapse it and all its children
-          const childrenToCollapse = getChildrenPageIds(pageId);
-          childrenToCollapse.forEach((id) => currentSet.delete(id));
-          currentSet.delete(pageId);
-        } else {
-          // Just add this page ID
-          currentSet.add(pageId);
-        }
-
-        return Array.from(currentSet);
-      });
-    } else {
-      // Using local state
-      setLocalIsExpanded((prev) => !prev);
-    }
-  };
-
-  // Helper function to get all children page IDs (including nested)
-  const getChildrenPageIds = useCallback(
-    (parentId: string): string[] => {
-      const children: string[] = [];
-
-      const collectChildren = (id: string) => {
-        const page = getPageById(id);
-        if (!page) return;
-
-        const subpageIds = getChildPageIds ? getChildPageIds(id) : page.subPageIds || [];
-
-        subpageIds.forEach((childId) => {
-          children.push(childId);
-          collectChildren(childId);
-        });
-      };
-
-      collectChildren(parentId);
-      return children;
-    },
-    [getChildPageIds, getPageById]
-  );
-
   const handleCreatePage = useCallback(
-    async (e: React.MouseEvent) => {
-      e.stopPropagation();
-      e.preventDefault();
+    async (event: React.MouseEvent) => {
+      event.stopPropagation();
+      event.preventDefault();
 
-      if (!page) return;
+      if (!page?.id) return;
 
       setIsCreatingPage(true);
 
       try {
-        const payload = {
+        const parentPageId = page.id;
+        const newPage = await createPage({
           name: "",
-          parent_id: page.id,
+          parent_id: parentPageId,
           access: page.access,
-        };
+        });
 
-        const newPage = await createPage(payload);
+        if (newPage?.id && collectionId && currentWorkspaceSlug && collectionBranchState?.isLoaded) {
+          void collectionStore.fetchCollectionBranchChildren(currentWorkspaceSlug, collectionId, parentPageId, {
+            force: true,
+          });
+        }
 
-        // Redirect to the newly created page
-        if (newPage?.id) {
-          // Get the new page instance which has the getRedirectionLink method
-          const newPageInstance = getPageById(newPage.id);
-          if (newPageInstance?.getRedirectionLink) {
-            const pageUrl = newPageInstance.getRedirectionLink();
-            router.push(pageUrl);
-          }
+        const pageUrl = newPage?.id ? getPageById(newPage.id)?.getRedirectionLink?.() : undefined;
+        if (pageUrl) {
+          router.push(pageUrl);
         }
       } catch (error) {
         console.error("Failed to create page:", error);
@@ -333,16 +362,25 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         setIsCreatingPage(false);
       }
     },
-    [getPageById, router, createPage, page]
+    [
+      collectionBranchState?.isLoaded,
+      collectionId,
+      collectionStore,
+      createPage,
+      currentWorkspaceSlug,
+      getPageById,
+      page,
+      router,
+    ]
   );
 
-  // drag and drop with reordering
   useEffect(() => {
     const element = listItemRef.current;
-    if (!element || !page || !page.id) return;
+    if (!element || !page?.id) return;
 
+    const currentPageId = page.id;
     const initialData: TPageDragPayload = {
-      id: page.id,
+      id: currentPageId,
       parentId: page.parent_id ?? null,
       collectionId: collectionId ?? null,
     };
@@ -358,8 +396,8 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
             render: ({ container }) => {
               const root = createRoot(container);
               root.render(
-                <div className="w-[225px] flex items-center gap-1 py-1.5 truncate rounded-md text-secondary bg-layer-1 opacity-40">
-                  <div className="size-4 flex-shrink-0 grid place-items-center">
+                <div className="w-[225px] flex items-center gap-1 py-1.5 truncate rounded-md bg-layer-1 text-secondary opacity-40">
+                  <div className="grid size-4 flex-shrink-0 place-items-center">
                     <span className="grid place-items-center">
                       {page.logo_props?.in_use ? (
                         <Logo logo={page.logo_props} size={14} type="lucide" />
@@ -368,7 +406,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
                       )}
                     </span>
                   </div>
-                  <p className="truncate text-13 flex-grow min-w-0">{getPageName(page.name)}</p>
+                  <p className="min-w-0 flex-grow truncate text-13">{getPageName(page.name)}</p>
                 </div>
               );
               return () => root.unmount();
@@ -384,26 +422,27 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         },
         canDrag: () =>
           collectionId
-            ? collectionStore.canCurrentUserReorderPageInCollection(page.id as string, collectionId)
+            ? collectionStore.canCurrentUserReorderPageInCollection(currentPageId, collectionId)
             : page.canCurrentUserEditPage &&
               page.isContentEditable &&
-              isNestedPagesEnabled(workspaceSlug.toString()) &&
+              !!currentWorkspaceSlug &&
+              isNestedPagesEnabled(currentWorkspaceSlug) &&
               !page.archived_at &&
               (!page.is_shared || page.isCurrentUserOwner),
       }),
       dropTargetForElements({
         element,
-        getData: ({ input, element }) =>
+        getData: ({ input, element: dropElement }) =>
           attachClosestEdge(initialData, {
-            element,
+            element: dropElement,
             input,
             allowedEdges: ["top", "bottom"],
           }),
-        onDragEnter: ({ self, location }) => {
-          updateDropIndicatorEdge({ self, location });
+        onDragEnter: ({ self, location, source }) => {
+          updateDropIndicatorEdge({ self, location, source });
         },
-        onDrag: ({ self, location }) => {
-          updateDropIndicatorEdge({ self, location });
+        onDrag: ({ self, location, source }) => {
+          updateDropIndicatorEdge({ self, location, source });
         },
         onDragLeave: () => {
           setDropIndicatorEdge(null);
@@ -414,80 +453,67 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
           if (location.current.dropTargets[0]?.element !== self.element) return;
 
           const sourceData = source.data as TPageDragPayload;
-          const { id: droppedPageId } = sourceData;
+          if (sourceData.id === pageId) return;
 
           const closestEdge = extractClosestEdge(self.data);
-          if (closestEdge) {
-            const position = closestEdge === "top" ? "before" : "after";
+          if (!closestEdge) return;
 
-            if (collectionId && sourceData.collectionId !== collectionId) {
-              void handleMoveAcrossCollectionsAndReorder(sourceData, position);
-              return;
-            }
+          const position = closestEdge === "top" ? "before" : "after";
 
-            if (
-              collectionId &&
-              sourceData.collectionId === collectionId &&
-              sourceData.parentId !== (page.parent_id ?? null) &&
-              (page.parent_id ?? null) === null &&
-              sourceData.parentId
-            ) {
-              void handlePromotePageToRootAndReorder(droppedPageId, position);
-              return;
-            }
-
-            handleReorderPages?.(droppedPageId, pageId, position);
+          if (collectionId && sourceData.collectionId !== collectionId) {
+            void handleMoveAcrossCollectionsAndReorder(sourceData, position);
+            return;
           }
+
+          if (
+            collectionId &&
+            sourceData.collectionId === collectionId &&
+            sourceData.parentId !== (page.parent_id ?? null) &&
+            (page.parent_id ?? null) === null &&
+            sourceData.parentId
+          ) {
+            void handlePromotePageToRootAndReorder(sourceData.id, position);
+            return;
+          }
+
+          handleReorderPages?.(sourceData.id, pageId, position);
         },
         canDrop: ({ source }) => {
-          if (isDropping || !isNestedPagesEnabled(workspaceSlug.toString())) {
+          if (isDropping || !currentWorkspaceSlug || !isNestedPagesEnabled(currentWorkspaceSlug)) {
             return false;
           }
 
-          // Cannot drop into shared section
           if (sectionType === "shared" || sectionType === "archived") return false;
 
           const sourceData = source.data as TPageDragPayload;
-          const { id: droppedPageId } = sourceData;
+          const droppedPageId = sourceData.id;
           if (!droppedPageId) return false;
-          if (droppedPageId === page.id) return false;
+
           if (collectionId && sourceData.collectionId !== collectionId) {
             return collectionStore.canCurrentUserAddPageToCollection(droppedPageId);
           }
 
-          // Get the source page to check additional properties
           const sourcePage = getPageById(droppedPageId);
           if (!sourcePage) return false;
-
-          // Block private pages from being dropped into a collection
           if (collectionId && sourcePage.access !== EPageAccess.PUBLIC) return false;
-
-          // Allow dropping shared pages onto any accessible page (they will inherit the target's access)
-          if (sourcePage.is_shared) {
-            return true;
-          }
 
           return true;
         },
       })
     );
   }, [
-    expandedPageIds,
     collectionId,
     collectionStore,
+    currentWorkspaceSlug,
     getPageById,
-    isDragging,
-    isDropping,
-    localIsExpanded,
-    page,
-    pageId,
-    setExpandedPageIds,
-    isNestedPagesEnabled,
-    workspaceSlug,
-    sectionType,
-    handleReorderPages,
     handleMoveAcrossCollectionsAndReorder,
     handlePromotePageToRootAndReorder,
+    handleReorderPages,
+    isDropping,
+    isNestedPagesEnabled,
+    page,
+    pageId,
+    sectionType,
     updateDropIndicatorEdge,
   ]);
 
@@ -501,7 +527,6 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         "is-dragging": isDropping,
       })}
     >
-      {/* Drop Indicator */}
       <DropIndicator
         classNames={cn({
           "is-reordering": dropIndicatorEdge === "top",
@@ -509,7 +534,6 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         isVisible={dropIndicatorEdge === "top" && !isDropping}
       />
       <div
-        ref={itemContentRef}
         className={cn("relative", {
           "opacity-30": isDragging,
         })}
@@ -519,6 +543,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
         <WikiPageSidebarListItem
           handleToggleExpanded={handleToggleExpanded}
           onSubPagesLoaded={handleSubPagesLoaded}
+          expandPage={expandPage}
           isDragging={isDragging}
           isExpanded={isExpanded}
           paddingLeft={paddingLeft}
@@ -527,20 +552,19 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
           canShowAddButton={canShowAddButton}
           sectionType={sectionType}
           collectionId={collectionId}
-          setIsDropping={setIsDropping}
-          setLocalIsExpanded={setLocalIsExpanded}
-          setExpandedPageIds={setExpandedPageIds}
+          onDropTargetChange={setIsDropping}
         />
         {isHovered && canShowAddButton && (
-          <button
-            type="button"
-            className="absolute right-2 top-1/2 -translate-y-1/2 size-5 flex items-center justify-center rounded-md hover:bg-layer-transparent-hover text-tertiary hover:text-primary transition-all duration-200 ease-in-out z-10"
+          <IconButton
+            variant="ghost"
+            size="sm"
+            icon={isCreatingPage ? Loader : PlusIcon}
+            iconClassName={isCreatingPage ? "animate-spin" : undefined}
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 transition-all duration-200 ease-in-out"
             onClick={(event) => void handleCreatePage(event)}
             data-prevent-progress
             disabled={isCreatingPage}
-          >
-            {isCreatingPage ? <Loader className="size-3 animate-spin" /> : <PlusIcon className="size-3" />}
-          </button>
+          />
         )}
       </div>
       {shouldShowSubPages && (
@@ -553,7 +577,7 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div>
+          <div className="mt-0.5 space-y-0.5">
             {resolvedSubPageIds?.map((subPageId, index) => (
               <WikiPageSidebarListItemRoot
                 key={subPageId}
@@ -568,7 +592,6 @@ export const WikiPageSidebarListItemRoot = observer(function WikiPageSidebarList
                 isLastChild={index === resolvedSubPageIds.length - 1}
               />
             ))}
-            {/* Drop Indicator */}
             {isLastChild && (
               <DropIndicator
                 classNames={cn({

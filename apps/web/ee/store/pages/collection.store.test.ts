@@ -13,12 +13,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ECollectionAccess, EPageAccess } from "@plane/types";
-import type { TCollection, TPageCollection } from "@plane/types";
+import type { TCollection, TCollectionBranchRow, TPageCollectionBranchResponse } from "@plane/types";
 import { CollectionService, PageCollectionService } from "@plane/services";
 import type { RootStore } from "@/plane-web/store/root.store";
 import { CollectionStore } from "./collection.store";
-
-type PageCollectionListArgs = Parameters<PageCollectionService["list"]>;
 
 const createCollection = (overrides: Partial<TCollection> = {}): TCollection => ({
   id: "collection-1",
@@ -37,24 +35,85 @@ const createCollection = (overrides: Partial<TCollection> = {}): TCollection => 
   ...overrides,
 });
 
-const createPageCollection = (overrides: Partial<TPageCollection> = {}): TPageCollection => ({
-  id: "page-collection-1",
-  collection: "general-collection",
-  page: "page-1",
-  workspace: "workspace-1",
+const createBranchRow = (overrides: Partial<TCollectionBranchRow> = {}): TCollectionBranchRow => ({
+  page_collection_id: "page-collection-1",
+  collection_id: "general-collection",
+  parent_id: null,
   sort_order: 10000,
-  created_at: new Date("2026-01-01T00:00:00.000Z"),
-  updated_at: new Date("2026-01-01T00:00:00.000Z"),
-  created_by: "user-1",
-  updated_by: "user-1",
+  page: {
+    id: "page-1",
+    name: "Page",
+    access: EPageAccess.PUBLIC,
+    logo_props: { in_use: "icon" },
+    is_locked: false,
+    archived_at: undefined,
+    parent_id: null,
+    workspace: "workspace-1",
+    sub_pages_count: 0,
+    is_shared: false,
+    shared_access: null,
+    owned_by: "user-1",
+    deleted_at: undefined,
+    is_description_empty: true,
+    updated_at: new Date("2026-01-01T00:00:00.000Z"),
+    updated_by: "user-1",
+    moved_to_page: null,
+    moved_to_project: null,
+    sort_order: 10000,
+    created_at: new Date("2026-01-01T00:00:00.000Z"),
+    created_by: "user-1",
+    is_favorite: false,
+    collection_id: "general-collection",
+  },
   ...overrides,
 });
 
-const createWorkspacePage = (overrides: Record<string, unknown> = {}) =>
-  ({
+const createBranchResponse = (
+  overrides: Partial<TPageCollectionBranchResponse> = {}
+): TPageCollectionBranchResponse => ({
+  count: 1,
+  extra_stats: null,
+  next_cursor: "",
+  next_page_results: false,
+  prev_cursor: "",
+  prev_page_results: false,
+  total_pages: 1,
+  total_results: 1,
+  results: [createBranchRow()],
+  ...overrides,
+});
+
+type TMockWorkspacePage = {
+  id: string;
+  name: string;
+  isCurrentUserOwner: boolean;
+  canCurrentUserEditPage: boolean;
+  isContentEditable: boolean;
+  parent_id: string | null;
+  sort_order: number;
+  sub_pages_count: number;
+  archived_at: string | null;
+  deleted_at: string | null;
+  logo_props: Record<string, unknown>;
+  access: number;
+  workspace: string;
+  is_shared: boolean;
+  created_by: string;
+  updated_by: string;
+  subPageIds: string[];
+  collection_id?: string;
+  asJSON: Record<string, unknown>;
+  mutateProperties: ReturnType<typeof vi.fn<(payload: Record<string, unknown>) => void>>;
+  [key: string]: unknown;
+};
+
+const createWorkspacePage = (overrides: Partial<TMockWorkspacePage> = {}): TMockWorkspacePage => {
+  const page: TMockWorkspacePage = {
     id: "page-1",
     name: "Page",
     isCurrentUserOwner: true,
+    canCurrentUserEditPage: true,
+    isContentEditable: true,
     parent_id: null,
     sort_order: 1000,
     sub_pages_count: 0,
@@ -64,6 +123,9 @@ const createWorkspacePage = (overrides: Record<string, unknown> = {}) =>
     access: 0,
     workspace: "workspace-1",
     is_shared: false,
+    created_by: "user-1",
+    updated_by: "user-1",
+    subPageIds: [],
     asJSON: {
       id: "page-1",
       name: "Page",
@@ -77,8 +139,15 @@ const createWorkspacePage = (overrides: Record<string, unknown> = {}) =>
       workspace: "workspace-1",
       is_shared: false,
     },
+    mutateProperties: vi.fn<(payload: Record<string, unknown>) => void>((payload) => {
+      Object.assign(page, payload);
+      page.asJSON = { ...page.asJSON, ...payload };
+    }),
     ...overrides,
-  }) as any;
+  };
+
+  return page;
+};
 
 const createRootStore = (pages: Record<string, ReturnType<typeof createWorkspacePage>> = {}) =>
   ({
@@ -89,6 +158,10 @@ const createRootStore = (pages: Record<string, ReturnType<typeof createWorkspace
       currentWorkspace: {
         id: "workspace-1",
       },
+      getWorkspaceById: vi.fn(() => ({
+        id: "workspace-1",
+        slug: "plane",
+      })),
     },
     user: {
       data: {
@@ -102,8 +175,36 @@ const createRootStore = (pages: Record<string, ReturnType<typeof createWorkspace
     workspacePages: {
       data: pages,
       getPageById: vi.fn((pageId: string) => pages[pageId]),
-      getOrFetchPageInstance: vi.fn(async ({ pageId }: { pageId: string }) => pages[pageId]),
+      getOrFetchPageInstance: vi.fn(({ pageId }: { pageId: string }) => Promise.resolve(pages[pageId])),
       fetchAllPages: vi.fn().mockResolvedValue(undefined),
+      removePageInstance: vi.fn(),
+      applyPageInternalUpdateLocally: vi.fn((pageId: string, updatePayload: Record<string, unknown>) => {
+        const page = pages[pageId];
+        const previousValues = Object.fromEntries(
+          Object.keys(updatePayload).map((key) => [key, page?.[key as keyof typeof page]])
+        );
+        const previousUpdatedAt = page?.updated_at;
+        const previousParentId = page?.parent_id ?? null;
+
+        page?.mutateProperties(updatePayload);
+
+        return {
+          pageId,
+          previousValues,
+          previousUpdatedAt,
+          previousParentId,
+          nextParentId: page?.parent_id ?? null,
+        };
+      }),
+      rollbackPageInternalUpdateLocally: vi.fn(
+        (snapshot: { pageId: string; previousValues: Record<string, unknown> }) => {
+          pages[snapshot.pageId]?.mutateProperties(snapshot.previousValues);
+        }
+      ),
+      persistPageInternalUpdate: vi.fn((pageId: string, updatePayload: Record<string, unknown>) => {
+        pages[pageId]?.mutateProperties(updatePayload);
+        return Promise.resolve();
+      }),
     },
   }) as unknown as RootStore;
 
@@ -112,976 +213,515 @@ describe("CollectionStore", () => {
     vi.restoreAllMocks();
   });
 
-  it("populates collections, sorts them, and resolves the default collection", async () => {
-    const rootStore = createRootStore();
-    const store = new CollectionStore(rootStore);
-    const customCollection = createCollection({ id: "collection-a", sort_order: 20000 });
-    const defaultCollection = createCollection({ id: "general-collection", is_default: true, sort_order: 10000 });
-
-    vi.spyOn(CollectionService.prototype, "list").mockResolvedValue([customCollection, defaultCollection]);
-
-    await store.fetchCollections("plane");
-
-    expect(store.workspaceCollections?.map((collection) => collection.id)).toEqual([
-      "general-collection",
-      "collection-a",
-    ]);
-    expect(store.defaultCollectionId).toBe("general-collection");
-    expect(store.getCollectionById("collection-a")?.name).toBe("Collection");
-    expect(store.loader).toBeUndefined();
-  });
-
-  it("hydrates collection pages without prefetching parent or sub-pages", async () => {
-    const pages = {} as Record<string, ReturnType<typeof createWorkspacePage>>;
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
-    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue([
-      createPageCollection({ id: "page-collection-1", collection: "general-collection", page: "page-1" }),
-    ]);
-
-    await store.fetchCollectionPages("plane", "general");
-
-    expect(rootStore.workspacePages.getOrFetchPageInstance).toHaveBeenCalledWith({
-      pageId: "page-1",
-      trackVisit: false,
-      shouldFetchParentPages: false,
-      shouldFetchSubPages: false,
-    });
-  });
-
-  it("hydrates only collection roots on initial fetch when descendants are already in the membership payload", async () => {
+  it("passes search, filters, and cursors through the collection pages API", async () => {
     const rootStore = createRootStore();
     const store = new CollectionStore(rootStore);
 
-    store.updateCollectionsInStore([createCollection({ id: "custom-collection" })]);
-    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue([
-      {
-        ...createPageCollection({ id: "pc-root", collection: "custom-collection", page: "page-1" }),
-        parent_id: null,
-      },
-      {
-        ...createPageCollection({ id: "pc-child", collection: "custom-collection", page: "page-2" }),
-        parent_id: "page-1",
-      },
-    ]);
-
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    expect(rootStore.workspacePages.getOrFetchPageInstance).toHaveBeenCalledTimes(1);
-    expect(rootStore.workspacePages.getOrFetchPageInstance).toHaveBeenCalledWith({
-      pageId: "page-1",
-      trackVisit: false,
-      shouldFetchParentPages: false,
-      shouldFetchSubPages: false,
-    });
-    expect(store.getCollectionRootPageIds("custom-collection")).toEqual(["page-1"]);
-  });
-
-  it("does not synthesize implicit workspace memberships before hydration completes", () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
     store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
 
-    expect(store.hasHydratedCollectionMemberships("plane")).toBe(false);
-    expect(store.getPageCollectionByPageId("page-1")).toBeUndefined();
-    expect([...store.getCollectionViewPageIds("general")]).toEqual([]);
-  });
+    const listSpy = vi
+      .spyOn(PageCollectionService.prototype, "list")
+      .mockResolvedValueOnce(
+        createBranchResponse({
+          total_pages: 2,
+          total_results: 2,
+          next_cursor: "50:1:0",
+          next_page_results: true,
+          results: [
+            createBranchRow({
+              page_collection_id: "pc-1",
+              page: { ...createBranchRow().page, id: "page-1", name: "Alpha Root" },
+            }),
+          ],
+        })
+      )
+      .mockResolvedValueOnce(
+        createBranchResponse({
+          total_pages: 2,
+          total_results: 2,
+          next_cursor: "50:2:0",
+          results: [
+            createBranchRow({
+              page_collection_id: "pc-2",
+              page: { ...createBranchRow().page, id: "page-2", name: "Alpha Next" },
+              sort_order: 20000,
+            }),
+          ],
+        })
+      );
 
-  it("fetches collection memberships and derives membership-aware roots", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null, asJSON: { id: "page-1", parent_id: null } }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        asJSON: { id: "page-2", parent_id: "page-1" },
-      }),
-      "page-3": createWorkspacePage({
-        id: "page-3",
-        parent_id: "missing-parent",
-        asJSON: { id: "page-3", parent_id: "missing-parent" },
-      }),
-      "page-4": createWorkspacePage({ id: "page-4", parent_id: null, asJSON: { id: "page-4", parent_id: null } }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId !== "general-collection") return [];
-        return [
-          createPageCollection({ id: "pc-1", collection: "general-collection", page: "page-1" }),
-          createPageCollection({ id: "pc-2", collection: "general-collection", page: "page-2" }),
-          createPageCollection({ id: "pc-3", collection: "general-collection", page: "page-3" }),
-        ];
-      }
-    );
-
-    await store.ensureCollectionMembershipsHydrated("plane");
-
-    expect([...store.getCollectionViewPageIds("general")].sort()).toEqual(["page-1", "page-2", "page-3", "page-4"]);
-    expect([...store.getCollectionRootPageIds("general")].sort()).toEqual(["page-1", "page-3", "page-4"]);
-    expect(store.pageCollectionIdByPageId.get("page-2")).toBe("pc-2");
-  });
-
-  it("includes fetched nested descendants in workspace collection hierarchy even when only parent is linked", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: ["page-2"],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        access: EPageAccess.PUBLIC,
-        is_shared: false,
-        sub_pages_count: 0,
-        subPageIds: [],
-        asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 0 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId !== "general-collection") return [];
-        return [createPageCollection({ id: "pc-1", collection: "general-collection", page: "page-1" })];
-      }
-    );
-
-    await store.ensureCollectionMembershipsHydrated("plane");
-
-    expect([...store.getCollectionViewPageIds("general")].sort()).toEqual(["page-1", "page-2"]);
-    expect([...store.getCollectionRootPageIds("general")]).toEqual(["page-1"]);
-  });
-
-  it("derives custom collection trees with nested descendants of linked pages", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: ["page-2"],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        sub_pages_count: 1,
-        subPageIds: ["page-3"],
-        asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 1 },
-      }),
-      "page-3": createWorkspacePage({
-        id: "page-3",
-        parent_id: "page-2",
-        sub_pages_count: 0,
-        subPageIds: [],
-        asJSON: { id: "page-3", parent_id: "page-2", sub_pages_count: 0 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "custom-collection" })]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId !== "custom-collection") return [];
-        return [createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1" })];
-      }
-    );
-
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    expect([...store.getCollectionViewPageIds("custom-collection")].sort()).toEqual(["page-1", "page-2", "page-3"]);
-    expect([...store.getCollectionRootPageIds("custom-collection")]).toEqual(["page-1"]);
-  });
-
-  it("includes nested descendants in custom collections even when they have implicit default memberships", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: ["page-2"],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        sub_pages_count: 1,
-        subPageIds: ["page-3"],
-        asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 1 },
-      }),
-      "page-3": createWorkspacePage({
-        id: "page-3",
-        parent_id: "page-2",
-        sub_pages_count: 0,
-        subPageIds: [],
-        asJSON: { id: "page-3", parent_id: "page-2", sub_pages_count: 0 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId === "general-collection") return [];
-        if (collectionId !== "custom-collection") return [];
-        return [createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1" })];
-      }
-    );
-
-    await store.ensureCollectionMembershipsHydrated("plane");
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    expect([...store.getCollectionViewPageIds("custom-collection")].sort()).toEqual(["page-1", "page-2", "page-3"]);
-    expect([...store.getCollectionRootPageIds("custom-collection")]).toEqual(["page-1"]);
-  });
-
-  it("does not keep descendants in the default collection when an ancestor belongs to a custom collection", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: ["page-2"],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        sub_pages_count: 0,
-        subPageIds: [],
-        asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 0 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId === "custom-collection") {
-          return [createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1" })];
-        }
-
-        return [];
-      }
-    );
-
-    await store.fetchCollectionPages("plane", "general");
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    expect([...store.getCollectionViewPageIds("custom-collection")].sort()).toEqual(["page-1", "page-2"]);
-    expect([...store.getCollectionViewPageIds("general")]).toEqual([]);
-  });
-
-  it("refreshes loaded collection trees immediately after nested hierarchy changes", async () => {
-    const pages: Record<string, ReturnType<typeof createWorkspacePage>> = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: [],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "custom-collection" })]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId !== "custom-collection") return [];
-        return [createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1" })];
-      }
-    );
-
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    pages["page-2"] = createWorkspacePage({
-      id: "page-2",
-      parent_id: "page-1",
-      sub_pages_count: 0,
-      subPageIds: [],
-      asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 0 },
-    });
-    pages["page-1"] = {
-      ...pages["page-1"],
-      subPageIds: ["page-2"],
-      asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-    };
-
-    expect([...store.getCollectionViewPageIds("custom-collection")].sort()).toEqual(["page-1", "page-2"]);
-  });
-
-  it("optimistically moves an implicitly-general page to a custom collection", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "general-collection": [],
-      "custom-collection": [],
-    };
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
-        membershipsByCollection[collectionId] ?? []
-    );
-    await store.fetchCollectionPages("plane", "general");
-
-    const destroySpy = vi.spyOn(PageCollectionService.prototype, "destroy").mockResolvedValue(undefined);
-    const createSpy = vi.spyOn(PageCollectionService.prototype, "create").mockImplementation(async () => {
-      const pageCollection = createPageCollection({ id: "pc-target", collection: "custom-collection", page: "page-1" });
-      membershipsByCollection["custom-collection"] = [pageCollection];
-      return [pageCollection];
+    await store.fetchCollectionPages("plane", "general", {
+      searchQuery: "Alpha",
+      filters: { favorites: true },
     });
 
-    await store.addPageToCollection("plane", "page-1", "custom-collection");
-
-    expect(destroySpy).not.toHaveBeenCalled();
-    expect(createSpy).toHaveBeenCalledWith("plane", "custom-collection", {
-      page_ids: ["page-1"],
-    });
-    expect(store.getPageCollectionByPageId("page-1")?.collection).toBe("custom-collection");
-    expect([...store.getCollectionViewPageIds("general")]).toEqual([]);
-    expect([...store.getCollectionViewPageIds("custom-collection")]).toEqual(["page-1"]);
-  });
-
-  it("optimistically removes a page from a custom collection back to general", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "general-collection": [],
-      "custom-collection": [createPageCollection({ id: "pc-source", collection: "custom-collection", page: "page-1" })],
-    };
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
-        membershipsByCollection[collectionId] ?? []
-    );
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    vi.spyOn(PageCollectionService.prototype, "destroy").mockImplementation(async () => {
-      membershipsByCollection["custom-collection"] = [];
-    });
-    vi.spyOn(PageCollectionService.prototype, "create").mockImplementation(async () => {
-      const pageCollection = createPageCollection({
-        id: "pc-target",
-        collection: "general-collection",
-        page: "page-1",
-      });
-      membershipsByCollection["general-collection"] = [pageCollection];
-      return [pageCollection];
+    await store.fetchCollectionPages("plane", "general", {
+      searchQuery: "Alpha",
+      filters: { favorites: true },
+      cursor: "50:1:0",
     });
 
-    await store.removePageFromCollection("plane", "page-1", "custom-collection");
-
-    expect(store.getPageCollectionByPageId("page-1")?.collection).toBe("general-collection");
-    expect([...store.getCollectionViewPageIds("custom-collection")]).toEqual([]);
-    expect([...store.getCollectionViewPageIds("general")]).toEqual(["page-1"]);
-  });
-
-  it("removes loaded descendants from the source collection immediately when moving a parent across collections", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: ["page-2"],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        sub_pages_count: 0,
-        subPageIds: [],
-        asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 0 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "source-collection" }),
-      createCollection({ id: "target-collection" }),
-    ]);
-
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "source-collection": [
-        createPageCollection({ id: "pc-source-parent", collection: "source-collection", page: "page-1" }),
-        createPageCollection({ id: "pc-source-child", collection: "source-collection", page: "page-2" }),
-      ],
-      "target-collection": [],
-    };
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
-        membershipsByCollection[collectionId] ?? []
-    );
-
-    await store.fetchCollectionPages("plane", "source-collection");
-    await store.fetchCollectionPages("plane", "target-collection");
-
-    vi.spyOn(PageCollectionService.prototype, "create").mockImplementation(async () => {
-      const nextMemberships = [
-        createPageCollection({ id: "pc-target-parent", collection: "target-collection", page: "page-1" }),
-        createPageCollection({ id: "pc-target-child", collection: "target-collection", page: "page-2" }),
-      ];
-      membershipsByCollection["source-collection"] = [];
-      membershipsByCollection["target-collection"] = nextMemberships;
-      return nextMemberships;
+    expect(listSpy).toHaveBeenNthCalledWith(1, "plane", "general-collection", {
+      parent_id: null,
+      search: "Alpha",
+      filters: { favorites: true },
+      cursor: undefined,
+      per_page: 50,
     });
-
-    await store.movePageAcrossCollections("plane", "page-1", "source-collection", "target-collection");
-
-    expect([...store.getCollectionViewPageIds("source-collection")]).toEqual([]);
-    expect([...store.getCollectionViewPageIds("target-collection")].sort()).toEqual(["page-1", "page-2"]);
-    expect([...store.getCollectionRootPageIds("target-collection")]).toEqual(["page-1"]);
+    expect(listSpy).toHaveBeenNthCalledWith(2, "plane", "general-collection", {
+      parent_id: null,
+      search: "Alpha",
+      filters: { favorites: true },
+      cursor: "50:1:0",
+      per_page: 50,
+    });
+    expect(
+      store.getCollectionBranchState("general", {
+        parentId: null,
+        searchQuery: "Alpha",
+        filters: { favorites: true },
+      })
+    ).toMatchObject({
+      pageIds: ["page-1", "page-2"],
+      nextCursor: null,
+      hasNextPage: false,
+    });
   });
 
-  it("shows a newly created public page in the default collection once memberships are hydrated", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
-    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue([]);
-
-    await store.fetchCollectionPages("plane", "general");
-
-    expect(store.getPageCollectionByPageId("page-1")).toBeUndefined();
-    expect([...store.getCollectionViewPageIds("general")]).toEqual(["page-1"]);
-    expect([...store.getCollectionRootPageIds("general")]).toEqual(["page-1"]);
-  });
-
-  it("shows a newly added public page in an already-hydrated default collection without reload", async () => {
+  it("loads missing pages before adding them to a collection", async () => {
     const pages: Record<string, ReturnType<typeof createWorkspacePage>> = {};
     const rootStore = createRootStore(pages);
     const store = new CollectionStore(rootStore);
 
-    store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
-    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue([]);
-
-    await store.ensureCollectionMembershipsHydrated("plane");
-
-    pages["page-1"] = createWorkspacePage({ id: "page-1", parent_id: null });
-
-    expect(store.hasHydratedCollectionMemberships("plane")).toBe(true);
-    expect(store.getPageCollectionByPageId("page-1")).toBeUndefined();
-    expect([...store.getCollectionViewPageIds("general")]).toEqual(["page-1"]);
-    expect([...store.getCollectionRootPageIds("general")]).toEqual(["page-1"]);
-  });
-
-  it("hydrates the default collection without prefetching all workspace pages", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
     store.updateCollectionsInStore([
       createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
+      createCollection({ id: "collection-2" }),
     ]);
 
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "general-collection": [],
-      "custom-collection": [],
-    };
-    const listSpy = vi
-      .spyOn(PageCollectionService.prototype, "list")
-      .mockImplementation(
-        async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-          return membershipsByCollection[collectionId] ?? [];
-        }
-      );
-
-    await store.ensureCollectionMembershipsHydrated("plane");
-
-    expect(rootStore.workspacePages.fetchAllPages).not.toHaveBeenCalled();
-    expect(store.hasHydratedCollectionMemberships("plane")).toBe(true);
-    expect(listSpy).toHaveBeenCalledTimes(1);
-    expect(listSpy).toHaveBeenCalledWith("plane", "general-collection");
-  });
-
-  it("returns cached collection memberships on repeat fetches", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "custom-collection" })]);
-
-    const listSpy = vi
-      .spyOn(PageCollectionService.prototype, "list")
-      .mockResolvedValue([createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1" })]);
-
-    await store.fetchCollectionPages("plane", "custom-collection");
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    expect(listSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it("moves multiple pages to a collection in one request", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-      "page-2": createWorkspacePage({ id: "page-2", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "general-collection": [],
-      "custom-collection": [],
-    };
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
-        membershipsByCollection[collectionId] ?? []
-    );
-
-    const createSpy = vi.spyOn(PageCollectionService.prototype, "create").mockImplementation(async () => {
-      const nextMemberships = [
-        createPageCollection({ id: "pc-target-1", collection: "custom-collection", page: "page-1", sort_order: 10000 }),
-        createPageCollection({ id: "pc-target-2", collection: "custom-collection", page: "page-2", sort_order: 20000 }),
-      ];
-      membershipsByCollection["custom-collection"] = nextMemberships;
-      return nextMemberships;
-    });
-
-    await store.addPagesToCollection("plane", ["page-1", "page-2"], "custom-collection");
-
-    expect(createSpy).toHaveBeenCalledWith("plane", "custom-collection", {
-      page_ids: ["page-1", "page-2"],
-    });
-    expect([...store.getCollectionViewPageIds("custom-collection")]).toEqual(["page-1", "page-2"]);
-    expect([...store.getCollectionViewPageIds("general")]).toEqual([]);
-  });
-
-  it("keeps collection list and sidebar expansion state independent", () => {
-    const rootStore = createRootStore();
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
-    store.toggleCollectionExpandedRow("general", "page-1");
-
-    expect(store.isCollectionRowExpanded("general", "page-1")).toBe(true);
-    expect(store.isCollectionSidebarRowExpanded("general", "page-1")).toBe(false);
-
-    store.toggleCollectionSidebarExpandedRow("general", "page-1");
-
-    expect(store.isCollectionRowExpanded("general", "page-1")).toBe(true);
-    expect(store.isCollectionSidebarRowExpanded("general", "page-1")).toBe(true);
-
-    store.toggleCollectionExpandedRow("general", "page-1");
-
-    expect(store.isCollectionRowExpanded("general", "page-1")).toBe(false);
-    expect(store.isCollectionSidebarRowExpanded("general", "page-1")).toBe(true);
-  });
-
-  it("supports expanding multiple pages in workspace collection without dropping prior expansion state", () => {
-    const rootStore = createRootStore();
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "general-collection", is_default: true })]);
-    store.toggleCollectionExpandedRow("general", "page-1");
-    const firstExpandedRef = store.getCollectionExpandedRowIds("general");
-
-    store.toggleCollectionExpandedRow("general", "page-2");
-    const secondExpandedRef = store.getCollectionExpandedRowIds("general");
-
-    expect(firstExpandedRef).not.toBe(secondExpandedRef);
-    expect([...secondExpandedRef].sort()).toEqual(["page-1", "page-2"]);
-  });
-
-  it("keeps route-driven ancestor reveal logic out of the collection store", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: ["page-2"],
-        parentPageIds: [],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        sub_pages_count: 1,
-        subPageIds: ["page-3"],
-        parentPageIds: ["page-1"],
-        asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 1 },
-      }),
-      "page-3": createWorkspacePage({
-        id: "page-3",
-        parent_id: "page-2",
-        sub_pages_count: 0,
-        subPageIds: [],
-        parentPageIds: ["page-2", "page-1"],
-        asJSON: { id: "page-3", parent_id: "page-2", sub_pages_count: 0 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId === "custom-collection") {
-          return [createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1" })];
-        }
-
-        return [];
-      }
-    );
-
-    await store.ensureCollectionMembershipsHydrated("plane");
-
-    expect(store.isCollectionExpanded("custom-collection")).toBe(false);
-    expect([...store.getCollectionSidebarExpandedRowIds("custom-collection")]).toEqual([]);
-    expect([...store.getCollectionExpandedRowIds("custom-collection")]).toEqual([]);
-  });
-
-  it("drops explicit memberships from the store when a page leaves workspace collections", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({
-        id: "page-1",
-        parent_id: null,
-        sub_pages_count: 1,
-        subPageIds: ["page-2"],
-        asJSON: { id: "page-1", parent_id: null, sub_pages_count: 1 },
-      }),
-      "page-2": createWorkspacePage({
-        id: "page-2",
-        parent_id: "page-1",
-        sub_pages_count: 0,
-        subPageIds: [],
-        asJSON: { id: "page-2", parent_id: "page-1", sub_pages_count: 0 },
-      }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) => {
-        if (collectionId === "custom-collection") {
-          return [createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1" })];
-        }
-
-        return [];
-      }
-    );
-
-    await store.fetchCollectionPages("plane", "general");
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    store.removeExplicitPageCollectionsFromStore(["page-1"]);
-
-    expect(store.getPageCollectionByPageId("page-1")).toBeUndefined();
-    expect([...store.getCollectionViewPageIds("custom-collection")]).toEqual([]);
-    expect([...store.getCollectionViewPageIds("general")].sort()).toEqual(["page-1", "page-2"]);
-  });
-
-  it("restores source and target state when the optimistic move fails", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-      "page-2": createWorkspacePage({ id: "page-2", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([
-      createCollection({ id: "general-collection", is_default: true }),
-      createCollection({ id: "custom-collection" }),
-    ]);
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "general-collection": [
-        createPageCollection({ id: "pc-source", collection: "general-collection", page: "page-1" }),
-      ],
-      "custom-collection": [createPageCollection({ id: "pc-target", collection: "custom-collection", page: "page-2" })],
-    };
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
-        membershipsByCollection[collectionId] ?? []
-    );
-    await store.fetchCollectionPages("plane", "general-collection");
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    vi.spyOn(PageCollectionService.prototype, "destroy").mockImplementation(async () => {
-      membershipsByCollection["general-collection"] = [];
-    });
-    vi.spyOn(PageCollectionService.prototype, "create")
-      .mockRejectedValueOnce(new Error("boom"))
-      .mockImplementationOnce(async () => {
-        const restored = createPageCollection({
-          id: "pc-source-restored",
-          collection: "general-collection",
-          page: "page-1",
-        });
-        membershipsByCollection["general-collection"] = [restored];
-        return [restored];
+    const getOrFetchPageInstanceMock = vi.fn(({ pageId }: { pageId: string }) => {
+      const page = createWorkspacePage({
+        id: pageId,
+        collection_id: "general-collection",
       });
 
-    await expect(store.addPageToCollection("plane", "page-1", "custom-collection")).rejects.toThrow("boom");
-
-    expect(store.getPageCollectionByPageId("page-1")?.collection).toBe("general-collection");
-    expect([...store.getCollectionViewPageIds("general-collection")]).toEqual(["page-1"]);
-    expect([...store.getCollectionViewPageIds("custom-collection")]).toEqual(["page-2"]);
-  });
-
-  it("inserts created collections into the store", async () => {
-    const rootStore = createRootStore();
-    const store = new CollectionStore(rootStore);
-    const collection = createCollection({ id: "collection-created", name: "Created" });
-
-    vi.spyOn(CollectionService.prototype, "create").mockResolvedValue(collection);
-
-    const response = await store.createCollection("plane", {
-      name: "Created",
-      access: ECollectionAccess.PUBLIC,
-      logo_props: {},
+      pages[pageId] = page;
+      return Promise.resolve(page);
     });
+    rootStore.workspacePages.getOrFetchPageInstance =
+      getOrFetchPageInstanceMock as unknown as typeof rootStore.workspacePages.getOrFetchPageInstance;
 
-    expect(response.id).toBe("collection-created");
-    expect(store.getCollectionById("collection-created")?.name).toBe("Created");
+    const createSpy = vi.spyOn(PageCollectionService.prototype, "create").mockResolvedValue([
+      {
+        id: "pc-1",
+        collection: "collection-2",
+        page: "page-1",
+        workspace: "workspace-1",
+        sort_order: 10000,
+        created_at: new Date("2026-01-01T00:00:00.000Z"),
+        updated_at: new Date("2026-01-01T00:00:00.000Z"),
+        created_by: "user-1",
+        updated_by: "user-1",
+      },
+    ]);
+
+    await store.addPagesToCollection("plane", ["page-1"], "collection-2");
+
+    expect(getOrFetchPageInstanceMock).toHaveBeenCalledWith({
+      pageId: "page-1",
+      trackVisit: false,
+      shouldFetchParentPages: false,
+      shouldFetchSubPages: false,
+    });
+    expect(createSpy).toHaveBeenCalledWith("plane", "collection-2", {
+      page_ids: ["page-1"],
+      sort_orders: { "page-1": 10000 },
+    });
   });
 
-  it("rolls back optimistic collection updates on failure", async () => {
-    const rootStore = createRootStore();
-    const store = new CollectionStore(rootStore);
-    const collection = createCollection({ name: "Original" });
-
-    store.updateCollectionsInStore([collection]);
-    vi.spyOn(CollectionService.prototype, "update").mockRejectedValue(new Error("boom"));
-
-    const collectionInstance = store.getCollectionById(collection.id);
-    await expect(collectionInstance?.updateCollection({ name: "Updated" })).rejects.toThrow("boom");
-    expect(collectionInstance?.name).toBe("Original");
-  });
-
-  it("removes deleted collections from the store", async () => {
+  it("shows added pages at collection root when their workspace parent is outside the target collection", async () => {
     const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-    const collection = createCollection();
-    const defaultCollection = createCollection({ id: "general-collection", is_default: true });
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "general-collection": [],
-      [collection.id]: [createPageCollection({ id: "pc-source", collection: collection.id, page: "page-1" })],
-    };
-
-    store.updateCollectionsInStore([defaultCollection, collection]);
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
-        membershipsByCollection[collectionId] ?? []
-    );
-    await store.fetchCollectionPages("plane", collection.id);
-    await store.fetchCollectionPages("plane", "general");
-    vi.spyOn(CollectionService.prototype, "destroy").mockResolvedValue();
-
-    await store.deleteCollection("plane", collection.id);
-
-    expect(store.getCollectionById(collection.id)).toBeUndefined();
-    expect(store.getPageCollectionByPageId("page-1")).toBeUndefined();
-    expect([...store.getCollectionViewPageIds("general")]).toEqual(["page-1"]);
-  });
-
-  it("moves collection pages after filtered root lookups without hitting computedFn arity errors", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null }),
-      "page-2": createWorkspacePage({ id: "page-2", parent_id: "page-1" }),
+      "parent-1": createWorkspacePage({
+        id: "parent-1",
+        collection_id: "general-collection",
+        asJSON: {
+          id: "parent-1",
+          name: "Parent",
+          parent_id: null,
+          sort_order: 1000,
+          sub_pages_count: 1,
+          archived_at: null,
+          deleted_at: null,
+          logo_props: {},
+          access: 0,
+          workspace: "workspace-1",
+          is_shared: false,
+          collection_id: "general-collection",
+        },
+      }),
+      "page-1": createWorkspacePage({
+        id: "page-1",
+        parent_id: "parent-1",
+        collection_id: "general-collection",
+        asJSON: {
+          id: "page-1",
+          name: "Nested page",
+          parent_id: "parent-1",
+          sort_order: 1000,
+          sub_pages_count: 0,
+          archived_at: null,
+          deleted_at: null,
+          logo_props: {},
+          access: 0,
+          workspace: "workspace-1",
+          is_shared: false,
+          collection_id: "general-collection",
+        },
+      }),
     };
     const rootStore = createRootStore(pages);
     const store = new CollectionStore(rootStore);
 
     store.updateCollectionsInStore([
-      createCollection({ id: "source-collection" }),
-      createCollection({ id: "target-collection" }),
+      createCollection({ id: "general-collection", is_default: true }),
+      createCollection({ id: "collection-2" }),
     ]);
 
-    const membershipsByCollection: Record<string, TPageCollection[]> = {
-      "source-collection": [
-        createPageCollection({ id: "pc-source-parent", collection: "source-collection", page: "page-1" }),
-        createPageCollection({ id: "pc-source-child", collection: "source-collection", page: "page-2" }),
-      ],
-      "target-collection": [],
-    };
-
-    vi.spyOn(PageCollectionService.prototype, "list").mockImplementation(
-      async (_workspaceSlug: PageCollectionListArgs[0], collectionId: PageCollectionListArgs[1]) =>
-        membershipsByCollection[collectionId] ?? []
+    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue(
+      createBranchResponse({
+        count: 0,
+        total_pages: 0,
+        total_results: 0,
+        next_cursor: "",
+        next_page_results: false,
+        results: [],
+      })
     );
+    vi.spyOn(PageCollectionService.prototype, "create").mockResolvedValue([
+      {
+        id: "pc-1",
+        collection: "collection-2",
+        page: "page-1",
+        workspace: "workspace-1",
+        sort_order: 10000,
+        created_at: new Date("2026-01-01T00:00:00.000Z"),
+        updated_at: new Date("2026-01-01T00:00:00.000Z"),
+        created_by: "user-1",
+        updated_by: "user-1",
+      },
+    ]);
 
-    await store.fetchCollectionPages("plane", "source-collection");
-    await store.fetchCollectionPages("plane", "target-collection");
+    await store.fetchCollectionPages("plane", "collection-2");
+    await store.addPagesToCollection("plane", ["page-1"], "collection-2");
 
-    expect(store.getCollectionRootPageIds("target-collection", {})).toEqual([]);
+    expect(store.getCollectionRootPageIds("collection-2")).toEqual(["page-1"]);
+    expect(store.getCollectionChildPageIds("parent-1", "collection-2")).toEqual([]);
+    expect(store.pageParentIdByPageId.get("page-1")).toBeNull();
+  });
 
-    vi.spyOn(CollectionService.prototype, "movePages").mockImplementation(async () => {
-      membershipsByCollection["source-collection"] = [];
-      membershipsByCollection["target-collection"] = [
-        createPageCollection({ id: "pc-target-parent", collection: "target-collection", page: "page-1" }),
-        createPageCollection({ id: "pc-target-child", collection: "target-collection", page: "page-2" }),
-      ];
+  it("updates loaded page collection ids before deleting the source collection after a transfer", async () => {
+    const page = createWorkspacePage({
+      collection_id: "collection-1",
+      access: EPageAccess.PUBLIC,
     });
-
-    await expect(store.moveCollectionPages("plane", "source-collection", "target-collection")).resolves.toBeUndefined();
-
-    expect(store.getCollectionById("source-collection")).toBeUndefined();
-    expect([...store.getCollectionViewPageIds("target-collection")].sort()).toEqual(["page-1", "page-2"]);
-    expect(store.getCollectionRootPageIds("target-collection", {})).toEqual(["page-1"]);
-  });
-
-  it("limits addable pages to owned pages for members and all eligible pages for workspace admins", () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", isCurrentUserOwner: true, access: EPageAccess.PUBLIC }),
-      "page-2": createWorkspacePage({ id: "page-2", isCurrentUserOwner: false, access: EPageAccess.PUBLIC }),
-      "page-3": createWorkspacePage({ id: "page-3", isCurrentUserOwner: true, access: EPageAccess.PRIVATE }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "custom-collection" })]);
-
-    rootStore.user.permission.allowPermissions = vi.fn(() => false);
-    expect(store.getAddablePageIdsForCollection("custom-collection")).toEqual(["page-1"]);
-
-    rootStore.user.permission.allowPermissions = vi.fn(() => true);
-    expect(store.getAddablePageIdsForCollection("custom-collection")).toEqual(["page-1", "page-2"]);
-  });
-
-  it("allows remove-from-collection for workspace admin and page owner only", () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", isCurrentUserOwner: false }),
-      "page-2": createWorkspacePage({ id: "page-2", isCurrentUserOwner: true }),
-    };
-    const rootStore = createRootStore(pages);
+    const rootStore = createRootStore({ "page-1": page });
     const store = new CollectionStore(rootStore);
 
     store.updateCollectionsInStore([
-      createCollection({ id: "owner-collection", owned_by_id: "user-1" }),
-      createCollection({ id: "other-collection", owned_by_id: "user-2" }),
+      createCollection({ id: "collection-1" }),
+      createCollection({ id: "collection-2" }),
     ]);
 
-    rootStore.user.permission.allowPermissions = vi.fn(() => false);
-    expect(store.canCurrentUserRemovePageFromCollection("other-collection", "page-2")).toBe(true);
-    expect(store.canCurrentUserRemovePageFromCollection("other-collection", "page-1")).toBe(false);
-    expect(store.canCurrentUserRemovePageFromCollection("owner-collection", "page-1")).toBe(false);
+    vi.spyOn(CollectionService.prototype, "movePages").mockResolvedValue(undefined);
+    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue(
+      createBranchResponse({
+        count: 0,
+        total_pages: 0,
+        total_results: 0,
+        next_cursor: "",
+        next_page_results: false,
+        results: [],
+      })
+    );
 
-    rootStore.user.permission.allowPermissions = vi.fn(() => true);
-    expect(store.canCurrentUserRemovePageFromCollection("other-collection", "page-1")).toBe(true);
+    await store.moveCollectionPages("plane", "collection-1", "collection-2");
+
+    expect(page.mutateProperties).toHaveBeenCalledWith({ collection_id: "collection-2" });
+    expect(store.getCollectionById("collection-1")).toBeUndefined();
+    expect(store.getEffectiveCollectionId("page-1")).toBe("collection-2");
   });
 
-  it("computes destination sort order for before, middle, and after positions", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null, sort_order: 10000 }),
-      "page-2": createWorkspacePage({ id: "page-2", parent_id: null, sort_order: 20000 }),
-      "page-3": createWorkspacePage({ id: "page-3", parent_id: null, sort_order: 30000 }),
-    };
-    const rootStore = createRootStore(pages);
+  it("keeps loaded child branch pages visible when a forced refresh comes back short", async () => {
+    const parentPage = createWorkspacePage({
+      id: "parent-page",
+      name: "Parent page",
+      collection_id: "collection-2",
+      sub_pages_count: 1,
+      asJSON: {
+        id: "parent-page",
+        name: "Parent page",
+        parent_id: null,
+        sort_order: 1000,
+        sub_pages_count: 1,
+        archived_at: null,
+        deleted_at: null,
+        logo_props: {},
+        access: 0,
+        workspace: "workspace-1",
+        is_shared: false,
+        collection_id: "collection-2",
+      },
+    });
+    const childPage = createWorkspacePage({
+      id: "page-1",
+      parent_id: "parent-page",
+      collection_id: "collection-2",
+      asJSON: {
+        id: "page-1",
+        name: "Page",
+        parent_id: "parent-page",
+        sort_order: 1000,
+        sub_pages_count: 0,
+        archived_at: null,
+        deleted_at: null,
+        logo_props: {},
+        access: 0,
+        workspace: "workspace-1",
+        is_shared: false,
+        collection_id: "collection-2",
+      },
+    });
+    const rootStore = createRootStore({
+      "parent-page": parentPage,
+      "page-1": childPage,
+    });
     const store = new CollectionStore(rootStore);
 
-    store.updateCollectionsInStore([createCollection({ id: "custom-collection" })]);
-    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue([
-      createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1", sort_order: 10000 }),
-      createPageCollection({ id: "pc-2", collection: "custom-collection", page: "page-2", sort_order: 20000 }),
-      createPageCollection({ id: "pc-3", collection: "custom-collection", page: "page-3", sort_order: 30000 }),
+    store.updateCollectionsInStore([
+      createCollection({ id: "general-collection", is_default: true }),
+      createCollection({ id: "collection-2" }),
     ]);
 
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    expect(store.computeDestinationSortOrder("custom-collection", "page-1", "before", "page-3")).toBe(0);
-    expect(store.computeDestinationSortOrder("custom-collection", "page-2", "before", "page-3")).toBe(15000);
-    expect(store.computeDestinationSortOrder("custom-collection", "page-3", "after", "page-1")).toBe(40000);
-  });
-
-  it("reorders a page within a collection using page collection sort order", async () => {
-    const pages = {
-      "page-1": createWorkspacePage({ id: "page-1", parent_id: null, sort_order: 10000 }),
-      "page-2": createWorkspacePage({ id: "page-2", parent_id: null, sort_order: 20000 }),
-      "page-3": createWorkspacePage({ id: "page-3", parent_id: null, sort_order: 30000 }),
-    };
-    const rootStore = createRootStore(pages);
-    const store = new CollectionStore(rootStore);
-
-    store.updateCollectionsInStore([createCollection({ id: "custom-collection" })]);
-    vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValue([
-      createPageCollection({ id: "pc-1", collection: "custom-collection", page: "page-1", sort_order: 10000 }),
-      createPageCollection({ id: "pc-2", collection: "custom-collection", page: "page-2", sort_order: 20000 }),
-      createPageCollection({ id: "pc-3", collection: "custom-collection", page: "page-3", sort_order: 30000 }),
-    ]);
-    await store.fetchCollectionPages("plane", "custom-collection");
-
-    const updateSpy = vi
-      .spyOn(PageCollectionService.prototype, "update")
-      .mockImplementation(async (_workspaceSlug, collectionId, pageCollectionId, payload) =>
-        createPageCollection({
-          id: pageCollectionId,
-          collection: collectionId,
-          page: "page-3",
-          sort_order: payload.sort_order,
+    vi.spyOn(PageCollectionService.prototype, "list")
+      .mockResolvedValueOnce(
+        createBranchResponse({
+          results: [
+            createBranchRow({
+              page_collection_id: "pc-1",
+              collection_id: "collection-2",
+              parent_id: "parent-page",
+              page: {
+                ...createBranchRow().page,
+                id: "page-1",
+                parent_id: "parent-page",
+                collection_id: "collection-2",
+              },
+            }),
+          ],
+        })
+      )
+      .mockResolvedValueOnce(
+        createBranchResponse({
+          count: 0,
+          total_pages: 0,
+          total_results: 0,
+          next_cursor: "",
+          next_page_results: false,
+          results: [],
         })
       );
 
-    await store.movePageWithinCollection("plane", "page-3", "custom-collection", "page-1", "before");
+    await store.fetchCollectionBranchChildren("plane", "collection-2", "parent-page");
+    const refreshedPageIds = await store.fetchCollectionBranch("plane", "collection-2", {
+      parentId: "parent-page",
+      force: true,
+    });
 
-    expect(updateSpy).toHaveBeenCalledWith("plane", "custom-collection", "pc-3", { sort_order: 0 });
-    expect(store.getPageCollectionByPageId("page-3")?.sort_order).toBe(0);
+    expect(refreshedPageIds).toEqual(["page-1"]);
+    expect(store.getCollectionChildPageIds("parent-page", "collection-2")).toEqual(["page-1"]);
+    expect(store.getCollectionBranchState("collection-2", { parentId: "parent-page" })).toMatchObject({
+      pageIds: ["page-1"],
+      isStale: true,
+    });
+  });
+
+  it("refreshes a page branch from already-loaded collection membership", async () => {
+    const rootPage = createWorkspacePage({
+      id: "page-1",
+      collection_id: "collection-2",
+      asJSON: {
+        id: "page-1",
+        name: "Page",
+        parent_id: null,
+        sort_order: 1000,
+        sub_pages_count: 0,
+        archived_at: null,
+        deleted_at: null,
+        logo_props: {},
+        access: 0,
+        workspace: "workspace-1",
+        is_shared: false,
+        collection_id: "collection-2",
+      },
+    });
+    const rootStore = createRootStore({ "page-1": rootPage });
+    const store = new CollectionStore(rootStore);
+
+    store.updateCollectionsInStore([
+      createCollection({ id: "general-collection", is_default: true }),
+      createCollection({ id: "collection-2" }),
+    ]);
+
+    const listSpy = vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValueOnce(
+      createBranchResponse({
+        results: [
+          createBranchRow({
+            page_collection_id: "pc-1",
+            collection_id: "collection-2",
+            page: {
+              ...createBranchRow().page,
+              id: "page-1",
+              parent_id: null,
+              collection_id: "collection-2",
+            },
+          }),
+        ],
+      })
+    );
+
+    const collectionId = await store.refreshCollectionBranchForPage("plane", "page-1");
+
+    expect(collectionId).toBe("collection-2");
+    expect(listSpy).toHaveBeenCalledTimes(1);
+    expect(listSpy).toHaveBeenCalledWith("plane", "collection-2", {
+      parent_id: null,
+      search: undefined,
+      filters: undefined,
+      cursor: undefined,
+      per_page: 50,
+    });
+    expect(store.getCollectionRootPageIds("collection-2")).toEqual(["page-1"]);
+  });
+
+  it("marks loaded branches stale when page membership is unknown locally", async () => {
+    const deepLinkedPage = createWorkspacePage({
+      id: "deep-linked-page",
+      collection_id: undefined,
+      asJSON: {
+        id: "deep-linked-page",
+        name: "Deep linked page",
+        parent_id: null,
+        sort_order: 1000,
+        sub_pages_count: 0,
+        archived_at: null,
+        deleted_at: null,
+        logo_props: {},
+        access: 0,
+        workspace: "workspace-1",
+        is_shared: false,
+      },
+    });
+    const rootStore = createRootStore({ "deep-linked-page": deepLinkedPage });
+    const store = new CollectionStore(rootStore);
+
+    store.updateCollectionsInStore([
+      createCollection({ id: "general-collection", is_default: true }),
+      createCollection({ id: "collection-2" }),
+    ]);
+
+    const listSpy = vi.spyOn(PageCollectionService.prototype, "list").mockResolvedValueOnce(
+      createBranchResponse({
+        results: [
+          createBranchRow({
+            page_collection_id: "pc-1",
+            collection_id: "collection-2",
+            page: {
+              ...createBranchRow().page,
+              id: "page-1",
+              parent_id: null,
+              collection_id: "collection-2",
+            },
+          }),
+        ],
+      })
+    );
+
+    await store.fetchCollectionPages("plane", "collection-2");
+    const collectionId = await store.refreshCollectionBranchForPage("plane", "deep-linked-page");
+
+    expect(collectionId).toBeUndefined();
+    expect(listSpy).toHaveBeenCalledTimes(1);
+    expect(store.getCollectionBranchState("collection-2", { parentId: null })).toMatchObject({
+      pageIds: ["page-1"],
+      isStale: true,
+    });
+  });
+
+  it("keeps loaded root branch pages visible when a forced refresh comes back short", async () => {
+    const rootPage = createWorkspacePage({
+      id: "page-1",
+      collection_id: "collection-2",
+      asJSON: {
+        id: "page-1",
+        name: "Page",
+        parent_id: null,
+        sort_order: 1000,
+        sub_pages_count: 0,
+        archived_at: null,
+        deleted_at: null,
+        logo_props: {},
+        access: 0,
+        workspace: "workspace-1",
+        is_shared: false,
+        collection_id: "collection-2",
+      },
+    });
+    const rootStore = createRootStore({ "page-1": rootPage });
+    const store = new CollectionStore(rootStore);
+
+    store.updateCollectionsInStore([
+      createCollection({ id: "general-collection", is_default: true }),
+      createCollection({ id: "collection-2" }),
+    ]);
+
+    vi.spyOn(PageCollectionService.prototype, "list")
+      .mockResolvedValueOnce(
+        createBranchResponse({
+          results: [
+            createBranchRow({
+              page_collection_id: "pc-1",
+              collection_id: "collection-2",
+              page: {
+                ...createBranchRow().page,
+                id: "page-1",
+                parent_id: null,
+                collection_id: "collection-2",
+              },
+            }),
+          ],
+        })
+      )
+      .mockResolvedValueOnce(
+        createBranchResponse({
+          count: 0,
+          total_pages: 0,
+          total_results: 0,
+          next_cursor: "",
+          next_page_results: false,
+          results: [],
+        })
+      );
+
+    await store.fetchCollectionPages("plane", "collection-2");
+    const refreshedPageIds = await store.fetchCollectionBranch("plane", "collection-2", {
+      parentId: null,
+      force: true,
+    });
+
+    expect(refreshedPageIds).toEqual(["page-1"]);
+    expect(store.getCollectionRootPageIds("collection-2")).toEqual(["page-1"]);
+    expect(store.getCollectionBranchState("collection-2", { parentId: null })).toMatchObject({
+      pageIds: ["page-1"],
+      isStale: true,
+    });
   });
 });

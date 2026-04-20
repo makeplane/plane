@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Tambah halaman"
     },
+    "sidebar": {
+      "title": "Koleksi",
+      "loading_collections": "Memuat koleksi...",
+      "expand_collection": "Perluas koleksi",
+      "collapse_collection": "Ciutkan koleksi",
+      "loading_pages": "Memuat halaman...",
+      "empty_collection": "Tidak ada halaman dalam koleksi ini"
+    },
     "menu": {
       "create_new_page": "Buat halaman baru",
       "add_existing_page": "Tambah halaman yang sudah ada",

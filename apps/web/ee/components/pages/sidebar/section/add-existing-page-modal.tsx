@@ -11,18 +11,21 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { Combobox } from "@headlessui/react";
-import { FileText } from "lucide-react";
+import useSWR from "swr";
+import { FileText, Loader2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { CloseIcon, SearchIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import type { TCollectionAddablePage } from "@plane/types";
 import { Checkbox, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { EPageStoreType, useCollection, usePageStore } from "@/plane-web/hooks/store";
+import useDebounce from "@/hooks/use-debounce";
+import { useCollection } from "@/plane-web/hooks/store";
 
 type TAddExistingPageModalProps = {
   isOpen: boolean;
@@ -32,40 +35,26 @@ type TAddExistingPageModalProps = {
   onSuccess?: () => void;
 };
 
+const ADDABLE_PAGES_SWR_OPTIONS = {
+  revalidateIfStale: false,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+} as const;
+
 export const AddExistingPageModal = observer(function AddExistingPageModal(props: TAddExistingPageModalProps) {
   const { isOpen, onClose, collectionId, workspaceSlug, onSuccess } = props;
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedPageIds, setSelectedPageIds] = useState<string[]>([]);
+  const [selectedPages, setSelectedPages] = useState<TCollectionAddablePage[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const collectionStore = useCollection();
-  const workspacePageStore = usePageStore(EPageStoreType.WORKSPACE);
   const { t } = useTranslation();
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   useEffect(() => {
-    if (!isOpen || !workspaceSlug) return;
-
-    void (async () => {
-      if (!collectionStore.defaultCollectionId) {
-        await collectionStore.fetchCollections(workspaceSlug);
-      }
-
-      if (Object.keys(workspacePageStore.data).length === 0) {
-        await workspacePageStore.fetchAllPages();
-      }
-
-      await collectionStore.fetchCollectionPages(workspaceSlug, collectionId);
-
-      if (collectionStore.defaultCollectionId) {
-        await collectionStore.fetchCollectionPages(workspaceSlug, collectionStore.defaultCollectionId);
-      }
-    })();
-  }, [collectionId, collectionStore, isOpen, workspacePageStore, workspaceSlug]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    setSearchTerm("");
-    setSelectedPageIds([]);
+    if (!isOpen) {
+      setSearchTerm("");
+      setSelectedPages([]);
+    }
   }, [isOpen]);
 
   const handleClose = () => {
@@ -73,39 +62,37 @@ export const AddExistingPageModal = observer(function AddExistingPageModal(props
     onClose();
   };
 
-  const candidatePages = useMemo(() => {
-    const addablePageIds = new Set(collectionStore.getAddablePageIdsForCollection(collectionId));
-    const existingCollectionPageIds = collectionStore.getCollectionViewPageIds(collectionId);
-
-    return Object.values(workspacePageStore.data)
-      .filter(
-        (page): page is NonNullable<typeof page> =>
-          !!page?.id && addablePageIds.has(page.id) && !existingCollectionPageIds.has(page.id) && !page.parent_id
-      )
-      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
-  }, [collectionId, collectionStore, workspacePageStore.data]);
-
-  const filteredPages = useMemo(() => {
-    const normalizedSearch = searchTerm.trim().toLowerCase();
-    if (!normalizedSearch) return candidatePages;
-
-    return candidatePages.filter((page) =>
-      (page.name || t("wiki_collections.list.untitled")).toLowerCase().includes(normalizedSearch)
-    );
-  }, [candidatePages, searchTerm, t]);
+  const normalizedSearchTerm = debouncedSearchTerm.trim();
+  const addablePagesKey = isOpen
+    ? ["collection-addable-pages", workspaceSlug, collectionId, normalizedSearchTerm]
+    : null;
+  const { data: searchResults = [], isLoading: isSearching } = useSWR(
+    addablePagesKey,
+    addablePagesKey
+      ? () =>
+          collectionStore.searchAddablePages(workspaceSlug, collectionId, {
+            search: normalizedSearchTerm || undefined,
+          })
+      : null,
+    ADDABLE_PAGES_SWR_OPTIONS
+  );
 
   const handleSubmit = async () => {
-    if (!workspaceSlug || selectedPageIds.length === 0 || isSubmitting) return;
+    if (!workspaceSlug || selectedPages.length === 0 || isSubmitting) return;
 
     setIsSubmitting(true);
 
     try {
-      await collectionStore.addPagesToCollection(workspaceSlug, selectedPageIds, collectionId);
+      await collectionStore.addPagesToCollection(
+        workspaceSlug,
+        selectedPages.map((page) => page.id).filter((pageId): pageId is string => !!pageId),
+        collectionId
+      );
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("common.success"),
-        message: t("wiki_collections.add_existing_page_modal.success_message", { count: selectedPageIds.length }),
+        message: t("wiki_collections.add_existing_page_modal.success_message", { count: selectedPages.length }),
       });
       onSuccess?.();
       onClose();
@@ -120,13 +107,10 @@ export const AddExistingPageModal = observer(function AddExistingPageModal(props
     }
   };
 
-  const handleSelectedPageChange = (pageIds: string[]) => {
-    setSelectedPageIds(pageIds);
-  };
-
   return (
     <ModalCore isOpen={isOpen} width={EModalWidth.LG} position={EModalPosition.TOP} handleClose={handleClose}>
-      <Combobox as="div" multiple value={selectedPageIds} onChange={handleSelectedPageChange}>
+      {/* @ts-expect-error Headless UI v1 types do not support multiple + by with object values */}
+      <Combobox as="div" multiple value={selectedPages} onChange={setSelectedPages} by="id">
         <div className="flex items-center gap-2 border-b border-subtle px-4">
           <SearchIcon className="size-4 flex-shrink-0 text-placeholder" aria-hidden="true" />
           <Combobox.Input
@@ -138,20 +122,17 @@ export const AddExistingPageModal = observer(function AddExistingPageModal(props
           />
         </div>
 
-        {selectedPageIds.length > 0 && (
+        {selectedPages.length > 0 && (
           <div className="flex flex-wrap gap-2 px-4 pt-2">
-            {selectedPageIds.map((pageId) => {
-              const page = workspacePageStore.getPageById(pageId);
-              if (!page?.id) return null;
-
+            {selectedPages.map((page) => {
               return (
                 <button
                   key={page.id}
                   type="button"
                   onClick={() =>
-                    setSelectedPageIds((currentIds) => currentIds.filter((currentId) => currentId !== page.id))
+                    setSelectedPages((currentPages) => currentPages.filter((currentPage) => currentPage.id !== page.id))
                   }
-                  className="group flex items-center gap-1.5 rounded-sm border border-transparent bg-surface-2 px-2 py-1 transition-all hover:border-subtle"
+                  className="group flex items-center gap-1.5 rounded-sm border border-transparent bg-layer-2 px-2 py-1 transition-all hover:border-subtle"
                 >
                   {page.logo_props?.in_use ? (
                     <Logo logo={page.logo_props} size={14} type="lucide" />
@@ -172,7 +153,11 @@ export const AddExistingPageModal = observer(function AddExistingPageModal(props
           static
           className="vertical-scrollbar max-h-80 overflow-y-auto scroll-py-2 px-2 pb-2 pt-2 scrollbar-md"
         >
-          {filteredPages.length === 0 ? (
+          {isSearching ? (
+            <div className="flex items-center justify-center px-3 py-12 text-13 text-tertiary">
+              <Loader2 className="size-4 animate-spin" />
+            </div>
+          ) : searchResults.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-3 py-12 text-center text-13 text-tertiary">
               {searchTerm
                 ? t("wiki_collections.add_existing_page_modal.no_pages_found")
@@ -180,13 +165,13 @@ export const AddExistingPageModal = observer(function AddExistingPageModal(props
             </div>
           ) : (
             <ul className="text-primary">
-              {filteredPages.map((page) => {
-                const isSelected = selectedPageIds.includes(page.id as string);
+              {searchResults.map((page) => {
+                const isSelected = selectedPages.some((selectedPage) => selectedPage.id === page.id);
 
                 return (
                   <Combobox.Option
                     key={page.id}
-                    value={page.id}
+                    value={page}
                     className={({ active }) =>
                       cn(
                         "flex w-full cursor-pointer select-none items-center justify-between gap-2 truncate rounded-md p-2 text-secondary transition-colors",
@@ -225,7 +210,7 @@ export const AddExistingPageModal = observer(function AddExistingPageModal(props
           size="lg"
           onClick={() => void handleSubmit()}
           loading={isSubmitting}
-          disabled={selectedPageIds.length === 0}
+          disabled={selectedPages.length === 0}
         >
           {t("wiki_collections.add_existing_page_modal.submit")}
         </Button>

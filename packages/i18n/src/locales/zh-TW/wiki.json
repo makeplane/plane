@@ -35,6 +35,14 @@
     "header": {
       "add_page": "新增頁面"
     },
+    "sidebar": {
+      "title": "集合",
+      "loading_collections": "正在載入集合...",
+      "expand_collection": "展開集合",
+      "collapse_collection": "收合集合",
+      "loading_pages": "正在載入頁面...",
+      "empty_collection": "此集合中沒有頁面"
+    },
     "menu": {
       "create_new_page": "建立新頁面",
       "add_existing_page": "新增現有頁面",

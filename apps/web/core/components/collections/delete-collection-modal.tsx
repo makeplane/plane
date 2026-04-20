@@ -14,13 +14,15 @@
 import { useState } from "react";
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { AlertTriangle, Book, Building2, TriangleAlert } from "lucide-react";
+import { AlertTriangle, BookOpen, TriangleAlert } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
-import { Logo } from "@plane/propel/emoji-icon-picker";
 import { Button } from "@plane/propel/button";
+import { Logo } from "@plane/propel/emoji-icon-picker";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TCollection, TLogoProps } from "@plane/types";
 import { CustomSelect, EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
+import { cn } from "@plane/utils";
+import { DEFAULT_WIKI_COLLECTION, DefaultWikiCollectionIcon } from "@/plane-web/components/pages/collections";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useCollection } from "@/plane-web/hooks/store";
 
@@ -34,31 +36,32 @@ type Props = {
   collectionName: string;
 };
 
-function CollectionIcon({ collection }: { collection: TCollection }) {
-  if (collection.is_default) {
-    return (
-      <span className="grid size-5 shrink-0 place-items-center rounded bg-[#E4F6E9]">
-        <Building2 className="size-3.5 text-[#00A63E]" />
-      </span>
-    );
-  }
-  const logoProps = collection.logo_props as TLogoProps | undefined;
-  return (
-    <span className="grid size-5 shrink-0 place-items-center rounded-md bg-surface-2">
-      {logoProps?.in_use ? (
-        <Logo logo={logoProps} size={12} type="lucide" />
-      ) : (
-        <Book className="size-3 text-tertiary" />
-      )}
-    </span>
-  );
-}
-
 function CollectionLabel({ collection }: { collection: TCollection }) {
+  const logoProps = collection.logo_props as TLogoProps | undefined;
+  const iconColor =
+    logoProps?.in_use === "icon" ? (logoProps.icon?.background_color ?? logoProps.icon?.color) : undefined;
+
   return (
     <span className="flex items-center gap-2">
-      <CollectionIcon collection={collection} />
-      <span>{collection.name}</span>
+      {collection.is_default ? (
+        <span className="grid size-5 shrink-0 place-items-center rounded-[7px] bg-label-grey-bg">
+          <DefaultWikiCollectionIcon className="size-3 text-label-grey-icon" />
+        </span>
+      ) : (
+        <span
+          className={cn("grid size-5 shrink-0 place-items-center rounded-[7px]", {
+            "bg-layer-2": !iconColor,
+          })}
+          style={{ backgroundColor: iconColor ? `${iconColor}20` : undefined }}
+        >
+          {logoProps?.in_use ? (
+            <Logo logo={logoProps} size={12} type="lucide" />
+          ) : (
+            <BookOpen className="size-3 text-tertiary" />
+          )}
+        </span>
+      )}
+      <span>{collection.is_default ? DEFAULT_WIKI_COLLECTION.displayName : collection.name}</span>
     </span>
   );
 }
@@ -132,12 +135,18 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
   const selectedCollection = availableCollections.find((c) => c.id === targetCollectionId);
 
   return (
-    <ModalCore isOpen={isOpen} handleClose={handleClose} position={EModalPosition.CENTER} width={EModalWidth.XXL}>
-      <div className="flex flex-col gap-6 p-6">
+    <ModalCore
+      isOpen={isOpen}
+      handleClose={handleClose}
+      position={EModalPosition.CENTER}
+      width={EModalWidth.XXL}
+      className="rounded-xl border border-subtle sm:max-w-[650px]"
+    >
+      <div className="flex flex-col gap-6 p-4">
         {/* Header */}
-        <div className="flex w-full items-center gap-6">
-          <span className="grid place-items-center rounded-full bg-danger-subtle p-4">
-            <AlertTriangle className="h-6 w-6 text-danger-primary" aria-hidden="true" />
+        <div className="flex w-full items-center gap-4">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-danger-subtle">
+            <AlertTriangle className="size-5 text-danger-primary" aria-hidden="true" />
           </span>
           <div>
             <h3 className="text-18 font-medium">{t("wiki_collections.delete_modal.title")}</h3>
@@ -151,7 +160,7 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
         <div className="flex flex-col gap-3">
           {/* Option 1: Transfer pages */}
           <div
-            className="flex cursor-pointer items-start gap-3 rounded-lg border border-subtle px-4 py-3"
+            className="flex cursor-pointer items-start gap-3 rounded-xl border border-subtle px-3 pt-3 pb-4"
             onClick={() => setDeleteMode("transfer")}
             role="button"
             tabIndex={0}
@@ -166,12 +175,17 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
               checked={deleteMode === "transfer"}
               onChange={() => setDeleteMode("transfer")}
             />
-            <div className="flex flex-col gap-1 flex-1">
+            <div className="flex flex-1 flex-col gap-1">
               <p className="text-14 font-medium text-primary">{t("wiki_collections.delete_modal.transfer_title")}</p>
               <p className="text-13 text-secondary">{t("wiki_collections.delete_modal.transfer_description")}</p>
 
               {deleteMode === "transfer" && (
-                <div className="mt-2 flex flex-col gap-3" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="mt-3 flex flex-col gap-3"
+                  role="presentation"
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                >
                   {/* Warning note */}
                   <div className="flex items-start gap-2 rounded-md bg-warning-subtle px-3 py-2 text-13 text-warning-secondary">
                     <TriangleAlert className="mt-0.5 size-4 shrink-0" />
@@ -197,7 +211,7 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
                       }
                       onChange={(val: string) => setTargetCollectionId(val)}
                       className="w-full"
-                      buttonClassName="w-full border border-subtle rounded-md px-3 py-2 text-14 justify-between"
+                      buttonClassName="w-full justify-between rounded-md border border-subtle px-3 py-2 text-14"
                       input
                       disabled={isDeleting}
                     >
@@ -215,7 +229,7 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
 
           {/* Option 2: Delete with pages */}
           <div
-            className="flex cursor-pointer items-start gap-3 rounded-lg border border-subtle px-4 py-3"
+            className="flex cursor-pointer items-start gap-2 rounded-lg border border-subtle px-3 py-2"
             onClick={() => setDeleteMode("delete-with-pages")}
             role="button"
             tabIndex={0}
@@ -230,7 +244,7 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
               checked={deleteMode === "delete-with-pages"}
               onChange={() => setDeleteMode("delete-with-pages")}
             />
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-1 flex-col gap-1">
               <p className="text-14 font-medium text-primary">
                 {t("wiki_collections.delete_modal.delete_with_pages_title")}
               </p>
@@ -241,8 +255,10 @@ export const DeleteCollectionModal: FC<Props> = observer(function DeleteCollecti
           </div>
         </div>
 
+        <div className="border-t-[0.5px] border-subtle" />
+
         {/* Footer */}
-        <div className="flex items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-3">
           <Button variant="secondary" size="lg" onClick={handleClose} disabled={isDeleting}>
             {t("common.cancel")}
           </Button>

@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Thêm trang"
     },
+    "sidebar": {
+      "title": "Bộ sưu tập",
+      "loading_collections": "Đang tải bộ sưu tập...",
+      "expand_collection": "Mở rộng bộ sưu tập",
+      "collapse_collection": "Thu gọn bộ sưu tập",
+      "loading_pages": "Đang tải trang...",
+      "empty_collection": "Không có trang nào trong bộ sưu tập này"
+    },
     "menu": {
       "create_new_page": "Tạo trang mới",
       "add_existing_page": "Thêm trang hiện có",

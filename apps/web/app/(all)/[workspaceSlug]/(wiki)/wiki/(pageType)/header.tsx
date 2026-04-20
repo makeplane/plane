@@ -32,6 +32,7 @@ import { PageSearchInput } from "@/components/pages/list/search-input";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 // plane web hooks
+import { DEFAULT_WIKI_COLLECTION } from "@/plane-web/components/pages/collections";
 import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -98,7 +99,7 @@ export const PageTypeHeader = observer(function PageTypeHeader(props: Props) {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label={`${pageType === "public" ? "General" : capitalizeFirstLetter(pageType)} pages`}
+                  label={`${pageType === "public" ? DEFAULT_WIKI_COLLECTION.displayName : capitalizeFirstLetter(pageType)} pages`}
                 />
               }
             />

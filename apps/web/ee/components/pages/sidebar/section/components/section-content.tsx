@@ -15,7 +15,6 @@ import { memo, useCallback, useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { Loader } from "lucide-react";
-import { CollapsibleContent } from "@plane/propel/collapsible";
 // plane imports
 import { EPageAccess, PAGE_SORT_ORDER_INCREMENT } from "@plane/constants";
 import type { TPage } from "@plane/types";
@@ -26,6 +25,7 @@ import { EPageStoreType, usePageStore } from "@/plane-web/hooks/store/use-page-s
 // local imports
 import { WikiPageSidebarListItemRoot } from "../../list-item-root";
 import type { SectionContentProps } from "../types";
+import { SidebarSectionContent } from "./sidebar-section";
 
 /**
  * Component for rendering section content with virtualization
@@ -49,7 +49,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
 
   // Placeholder for items not currently visible
   const renderPlaceholder = () => (
-    <div className="flex items-center px-2 text-secondary" style={{ height: "30px" }}>
+    <div className="flex items-center px-2 text-secondary" style={{ height: "32px" }}>
       <Loader className="size-3 mr-2 animate-spin opacity-30" />
       <div className="h-2 bg-layer-1 rounded w-3/4 opacity-20" />
     </div>
@@ -158,9 +158,9 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
   );
 
   return (
-    <CollapsibleContent className="ml-1 mt-1 pb-1 transition-none">
+    <SidebarSectionContent>
       {pageIds.length > 0 ? (
-        <div>
+        <div className="space-y-0.5">
           {pageIds.map((pageId, index) => {
             // If this is the active page or an ancestor, always render it
             // without virtualization to ensure it's available for scrolling
@@ -183,7 +183,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
                 key={pageId}
                 verticalOffset={200}
                 horizontalOffset={0}
-                defaultHeight="30px"
+                defaultHeight="32px"
                 placeholderChildren={renderPlaceholder()}
                 shouldRecordHeights={false}
                 defaultValue={false}
@@ -222,7 +222,7 @@ const VirtualizedSectionContentComponent = observer(function VirtualizedSectionC
           No {sectionType === "public" ? "workspace" : sectionType} pages
         </p>
       )}
-    </CollapsibleContent>
+    </SidebarSectionContent>
   );
 });
 

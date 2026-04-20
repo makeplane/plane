@@ -48,6 +48,7 @@ import {
   CustomPropertiesHorizontalStackIllustration,
   ScriptHorizontalStackIllustration,
   SearchHorizontalStackIllustration,
+  PageHorizontalStackIllustration,
 } from "./horizontal-stack";
 import { InboxIllustration, SearchIllustration } from "./illustration";
 import {
@@ -86,6 +87,7 @@ export const HORIZONTAL_STACK_ASSETS: Record<HorizontalStackAssetType, React.Com
   link: LinkHorizontalStackIllustration,
   members: MembersHorizontalStackIllustration,
   note: NoteHorizontalStackIllustration,
+  page: PageHorizontalStackIllustration,
   priority: PriorityHorizontalStackIllustration,
   project: ProjectHorizontalStackIllustration,
   "search-compact": SearchHorizontalStackIllustration,

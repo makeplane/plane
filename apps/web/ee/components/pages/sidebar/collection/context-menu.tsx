@@ -12,11 +12,12 @@
  */
 
 import { useState } from "react";
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { observer } from "mobx-react";
-import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { LinkIcon } from "@plane/propel/icons";
+import { IconButton } from "@plane/propel/icon-button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TCollection, TLogoProps } from "@plane/types";
 import { CustomMenu } from "@plane/ui";
@@ -26,9 +27,14 @@ import { useCollection } from "@/plane-web/hooks/store";
 type Props = {
   collection: TCollection;
   workspaceSlug: string;
+  customButton?: ReactNode;
 };
 
-export const CollectionContextMenu = observer(function CollectionContextMenu({ collection, workspaceSlug }: Props) {
+export const CollectionContextMenu = observer(function CollectionContextMenu({
+  collection,
+  workspaceSlug,
+  customButton,
+}: Props) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const collectionStore = useCollection();
@@ -67,13 +73,14 @@ export const CollectionContextMenu = observer(function CollectionContextMenu({ c
 
       <CustomMenu
         customButton={
-          <button
-            type="button"
-            className="grid size-4 place-items-center rounded-md text-tertiary transition-all hover:bg-layer-transparent-hover hover:text-primary"
-            aria-label={t("wiki_collections.menu.collection_options")}
-          >
-            <MoreHorizontal className="size-3" />
-          </button>
+          customButton ?? (
+            <IconButton
+              variant="ghost"
+              size="sm"
+              icon={MoreHorizontal}
+              aria-label={t("wiki_collections.menu.collection_options")}
+            />
+          )
         }
         placement="bottom-end"
         closeOnSelect
@@ -86,8 +93,8 @@ export const CollectionContextMenu = observer(function CollectionContextMenu({ c
         {collectionInstance?.canCurrentUserEditCollection && (
           <CustomMenu.MenuItem onClick={() => setIsEditModalOpen(true)}>
             <div className="flex items-center gap-2 font-body-sm font-regular">
-              <Edit className="size-3" />
-              {t("wiki_collections.menu.edit_collection")}
+              <Pencil className="size-3" />
+              {t("common.actions.edit")}
             </div>
           </CustomMenu.MenuItem>
         )}

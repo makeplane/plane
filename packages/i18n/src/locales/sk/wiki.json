@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Pridať stránku"
     },
+    "sidebar": {
+      "title": "Kolekcie",
+      "loading_collections": "Načítavajú sa kolekcie...",
+      "expand_collection": "Rozbaliť kolekciu",
+      "collapse_collection": "Zbaliť kolekciu",
+      "loading_pages": "Načítavajú sa stránky...",
+      "empty_collection": "V tejto kolekcii nie sú žiadne stránky"
+    },
     "menu": {
       "create_new_page": "Vytvoriť novú stránku",
       "add_existing_page": "Pridať existujúcu stránku",

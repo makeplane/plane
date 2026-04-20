@@ -119,13 +119,10 @@ export const CollectionPageRow = ({
       }),
       dropTargetForElements({
         element,
-        getData: ({ input, element: currentElement }) => {
-          const rawPosition = resolveDropPosition(input, currentElement);
-          return {
-            ...initialData,
-            dropPosition: rowData.page.parent_id ? "inside" : rawPosition,
-          };
-        },
+        getData: ({ input, element: currentElement }) => ({
+          ...initialData,
+          dropPosition: resolveDropPosition(input, currentElement),
+        }),
         onDrag: ({ self }) => {
           const nextDropPosition = (self.data as { dropPosition?: "before" | "after" | "inside" }).dropPosition ?? null;
           setDropPosition(nextDropPosition);
@@ -305,10 +302,10 @@ const CollectionPageActionsCell = ({
         customButton={
           <button
             type="button"
-            className="grid size-6 place-items-center rounded-md border border-subtle transition-colors hover:bg-layer-1-hover"
+            className="grid size-6 place-items-center rounded-md text-secondary transition-colors hover:bg-layer-1-hover hover:text-primary"
             aria-label={t("wiki_collections.list.page_actions")}
           >
-            <Ellipsis className="size-3.5 text-secondary" />
+            <Ellipsis className="size-3.5" />
           </button>
         }
         placement="bottom-end"

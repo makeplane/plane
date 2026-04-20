@@ -35,6 +35,14 @@
     "header": {
       "add_page": "페이지 추가"
     },
+    "sidebar": {
+      "title": "컬렉션",
+      "loading_collections": "컬렉션 불러오는 중...",
+      "expand_collection": "컬렉션 펼치기",
+      "collapse_collection": "컬렉션 접기",
+      "loading_pages": "페이지 불러오는 중...",
+      "empty_collection": "이 컬렉션에 페이지가 없습니다"
+    },
     "menu": {
       "create_new_page": "새 페이지 만들기",
       "add_existing_page": "기존 페이지 추가",

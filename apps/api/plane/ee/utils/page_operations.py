@@ -43,6 +43,7 @@ Usage Examples:
 """
 
 from typing import Dict, List, Optional
+from django.db import transaction
 from django.db.models import Max
 from django.utils import timezone
 
@@ -57,6 +58,7 @@ from plane.db.models import (
 )
 from plane.ee.models import (
     Collection,
+    CollectionMember,
     TeamspacePage,
     WorkItemPage,
     PageUser,
@@ -70,6 +72,10 @@ from plane.ee.models import (
 # ====================
 # Page Operations
 # ====================
+
+
+PAGE_COLLECTION_SORT_ORDER_INCREMENT = 10000
+PAGE_COLLECTION_EMPTY_SORT_ORDER_BASELINE = 65535
 
 
 def unlink_pages_from_teamspace(page_ids: List[str], workspace_id: str) -> None:
@@ -157,7 +163,9 @@ def add_pages_to_collection(page_ids: List[str], collection_id: str, workspace_i
     largest_sort_order = (
         PageCollection.objects.filter(collection_id=collection_id).aggregate(largest=Max("sort_order"))["largest"]
     )
-    next_sort_order = ((largest_sort_order if largest_sort_order is not None else 0) + 10000)
+    next_sort_order = (
+        (largest_sort_order if largest_sort_order is not None else 0) + PAGE_COLLECTION_SORT_ORDER_INCREMENT
+    )
 
     PageCollection.objects.bulk_create(
         [
@@ -168,13 +176,167 @@ def add_pages_to_collection(page_ids: List[str], collection_id: str, workspace_i
                 sort_order=(
                     page_sort_orders[current_page_id]
                     if current_page_id in page_sort_orders and page_sort_orders[current_page_id] is not None
-                    else next_sort_order + index * 10000
+                    else next_sort_order + index * PAGE_COLLECTION_SORT_ORDER_INCREMENT
                 ),
             )
             for index, current_page_id in enumerate(page_ids)
         ],
         ignore_conflicts=True,
     )
+
+
+def schedule_collection_move_updates(page_ids: List[str], collection_id: str, slug: str, user_id: str) -> None:
+    """Schedule descendant collection recomputation after moving one or more root pages."""
+    from plane.ee.bgtasks.page_update import nested_page_update
+    from plane.ee.utils.page_events import MoveActionEnum, PageAction
+
+    for page_id in page_ids:
+        nested_page_update.delay(
+            page_id=page_id,
+            action=PageAction.MOVED,
+            slug=slug,
+            user_id=str(user_id),
+            extra={
+                "old_page_parent_id": None,
+                "move_type": MoveActionEnum.COLLECTION_TO_COLLECTION.value,
+                "new_entity_identifier": str(collection_id),
+            },
+        )
+
+
+def assign_pages_to_collection(
+    page_ids: List[str],
+    collection_id: str,
+    workspace_id: str,
+    slug: str,
+    user_id: str,
+    sort_orders: Optional[Dict[str, float]] = None,
+) -> None:
+    """Replace root page memberships and cascade descendants via nested page updates."""
+    page_ids = list(page_ids)
+    if not page_ids:
+        return
+
+    sort_orders = sort_orders or {}
+
+    with transaction.atomic():
+        PageCollection.objects.filter(page_id__in=page_ids, workspace_id=workspace_id).delete()
+
+        largest_sort_order = (
+            PageCollection.objects.filter(collection_id=collection_id, workspace_id=workspace_id).aggregate(
+                largest=Max("sort_order")
+            )["largest"]
+            or PAGE_COLLECTION_EMPTY_SORT_ORDER_BASELINE
+        )
+
+        PageCollection.objects.bulk_create(
+            [
+                PageCollection(
+                    page_id=page_id,
+                    collection_id=collection_id,
+                    workspace_id=workspace_id,
+                    sort_order=sort_orders.get(
+                        str(page_id),
+                        largest_sort_order + index * PAGE_COLLECTION_SORT_ORDER_INCREMENT,
+                    ),
+                    created_by_id=user_id,
+                    updated_by_id=user_id,
+                )
+                for index, page_id in enumerate(page_ids, start=1)
+            ],
+            ignore_conflicts=True,
+        )
+
+        transaction.on_commit(
+            lambda: schedule_collection_move_updates(
+                page_ids=page_ids,
+                collection_id=collection_id,
+                slug=slug,
+                user_id=user_id,
+            )
+        )
+
+
+def move_collection_pages(slug: str, collection_id: str, new_collection_id: str, user_id: str) -> None:
+    """Move all explicit page memberships from one collection to another."""
+    updated_at = timezone.now()
+
+    with transaction.atomic():
+        pages_to_move = list(
+            PageCollection.objects.filter(collection_id=collection_id, workspace__slug=slug)
+            .select_related("page")
+            .order_by("sort_order")
+        )
+
+        if pages_to_move:
+            max_sort_order = (
+                PageCollection.objects.filter(collection_id=new_collection_id, workspace__slug=slug).aggregate(
+                    value=Max("sort_order")
+                )["value"]
+                or 0
+            )
+            for index, page_collection in enumerate(pages_to_move, start=1):
+                page_collection.collection_id = new_collection_id
+                if page_collection.page.parent_id is None:
+                    page_collection.sort_order = max_sort_order + index * PAGE_COLLECTION_SORT_ORDER_INCREMENT
+                page_collection.updated_by_id = user_id
+                page_collection.updated_at = updated_at
+
+            PageCollection.objects.bulk_update(
+                pages_to_move,
+                ["collection", "sort_order", "updated_by", "updated_at"],
+            )
+
+        CollectionMember.objects.filter(collection_id=collection_id, workspace__slug=slug).update(
+            collection_id=new_collection_id,
+            updated_by_id=user_id,
+            updated_at=updated_at,
+        )
+        Collection.objects.filter(workspace__slug=slug, pk=collection_id).delete()
+
+
+def update_page_collection_membership(
+    page_collection: PageCollection,
+    slug: str,
+    user_id: str,
+    next_collection: Optional[Collection] = None,
+    sort_order: Optional[float] = None,
+    update_sort_order: bool = False,
+):
+    """Update a page's explicit collection membership and schedule descendant updates when needed."""
+    collection_changed = next_collection is not None and page_collection.collection_id != next_collection.id
+    sort_order_changed = update_sort_order and page_collection.sort_order != sort_order
+
+    if not collection_changed and not sort_order_changed:
+        return page_collection, False
+
+    update_fields = []
+    if collection_changed:
+        page_collection.collection = next_collection
+        update_fields.append("collection")
+
+    if sort_order_changed:
+        page_collection.sort_order = sort_order
+        update_fields.append("sort_order")
+
+    page_collection.updated_by_id = user_id
+    page_collection.updated_at = timezone.now()
+    update_fields.extend(["updated_by", "updated_at"])
+
+    with transaction.atomic():
+        page_collection.save(update_fields=update_fields)
+
+        if collection_changed and next_collection is not None:
+            transaction.on_commit(
+                lambda: schedule_collection_move_updates(
+                    page_ids=[str(page_collection.page_id)],
+                    collection_id=str(next_collection.id),
+                    slug=slug,
+                    user_id=user_id,
+                )
+            )
+
+    return page_collection, True
 
 
 # ====================

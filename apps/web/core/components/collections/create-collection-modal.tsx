@@ -11,21 +11,20 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
-import { Book } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EmojiPicker, EmojiIconPickerTypes, Logo } from "@plane/propel/emoji-icon-picker";
-import type { TChangeHandlerProps } from "@plane/propel/emoji-icon-picker";
 import { Input } from "@plane/propel/input";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TCollectionCreatePayload, TLogoProps } from "@plane/types";
 import { ECollectionAccess } from "@plane/types";
-import { EModalPosition, EModalWidth, ModalCore } from "@plane/ui";
-import { cn } from "@plane/utils";
+import { EModalPosition, EModalWidth, ModalCore, getRandomIconName } from "@plane/ui";
+import { cn, getRandomBackgroundColor } from "@plane/utils";
 import { useCollection } from "@/plane-web/hooks/store";
 
 type Props = {
@@ -34,10 +33,21 @@ type Props = {
   workspaceSlug: string;
 };
 
-const defaultValues: TCollectionCreatePayload = {
-  name: "",
-  access: ECollectionAccess.PUBLIC,
-  logo_props: {},
+const getDefaultValues = (): TCollectionCreatePayload => {
+  const color = getRandomBackgroundColor();
+
+  return {
+    name: "",
+    access: ECollectionAccess.PUBLIC,
+    logo_props: {
+      in_use: "icon",
+      icon: {
+        name: getRandomIconName(),
+        color,
+        background_color: color,
+      },
+    },
+  };
 };
 
 export const CreateCollectionModal: FC<Props> = observer(function CreateCollectionModal({
@@ -57,23 +67,22 @@ export const CreateCollectionModal: FC<Props> = observer(function CreateCollecti
     setValue,
     formState: { errors, isValid },
   } = useForm<TCollectionCreatePayload>({
-    defaultValues,
+    defaultValues: getDefaultValues(),
     mode: "onChange",
   });
 
-  const logoValue = watch("logo_props");
+  const logoValue = watch("logo_props") as TLogoProps | undefined;
   const iconColor =
-    logoValue?.in_use === "icon" &&
-    logoValue.icon &&
-    typeof logoValue.icon === "object" &&
-    "color" in logoValue.icon &&
-    typeof logoValue.icon.color === "string"
-      ? logoValue.icon.color
-      : undefined;
-  const backgroundColor = iconColor ? `${iconColor}20` : undefined;
+    logoValue?.in_use === "icon" ? (logoValue.icon?.background_color ?? logoValue.icon?.color) : undefined;
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    reset(getDefaultValues());
+  }, [isOpen, reset]);
 
   const handleClose = () => {
-    reset(defaultValues);
+    reset(getDefaultValues());
     onClose();
   };
 
@@ -120,33 +129,47 @@ export const CreateCollectionModal: FC<Props> = observer(function CreateCollecti
               label={
                 <span
                   className={cn(
-                    "grid h-9 w-9 place-items-center rounded-md transition-colors",
-                    !iconColor && "bg-surface-2 hover:bg-surface-2-hover"
+                    "grid size-9 place-items-center rounded-[10px] transition-colors",
+                    !iconColor && "bg-layer-2 hover:bg-layer-2-hover"
                   )}
-                  style={{ backgroundColor }}
+                  style={{ backgroundColor: iconColor ? `${iconColor}20` : undefined }}
                 >
                   {logoValue?.in_use ? (
-                    <Logo logo={logoValue as TLogoProps} size={18} type="lucide" />
+                    <Logo logo={logoValue} size={18} type="lucide" />
                   ) : (
-                    <Book className="h-4 w-4 text-tertiary" />
+                    <BookOpen className="size-[18px] text-tertiary" />
                   )}
                 </span>
               }
-              onChange={(value: TChangeHandlerProps) => {
-                const logoValueData =
-                  value.type === "emoji" ? { value: value.value } : value.type === "icon" ? value.value : {};
-
-                setValue("logo_props", {
-                  in_use: value.type,
-                  [value.type]: logoValueData,
-                } as TCollectionCreatePayload["logo_props"]);
+              onChange={(value) => {
+                setValue(
+                  "logo_props",
+                  value.type === "emoji"
+                    ? {
+                        in_use: value.type,
+                        emoji: { value: value.value },
+                      }
+                    : {
+                        in_use: value.type,
+                        icon: {
+                          name: value.value.name,
+                          color: value.value.color,
+                          background_color: value.value.color,
+                        },
+                      },
+                  {
+                    shouldDirty: true,
+                    shouldValidate: true,
+                  }
+                );
                 setIsEmojiPickerOpen(false);
               }}
               defaultIconColor={iconColor}
-              defaultOpen={logoValue?.in_use === "emoji" ? EmojiIconPickerTypes.EMOJI : EmojiIconPickerTypes.ICON}
+              defaultOpen={EmojiIconPickerTypes.ICON}
+              showEmojiTab={false}
             />
 
-            <div className="flex-1 space-y-1 mb-2.5">
+            <div className="mb-2.5 flex-1 space-y-1">
               <Controller
                 control={control}
                 name="name"

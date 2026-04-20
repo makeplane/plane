@@ -35,6 +35,14 @@
     "header": {
       "add_page": "Seite hinzufügen"
     },
+    "sidebar": {
+      "title": "Sammlungen",
+      "loading_collections": "Sammlungen werden geladen...",
+      "expand_collection": "Sammlung ausklappen",
+      "collapse_collection": "Sammlung einklappen",
+      "loading_pages": "Seiten werden geladen...",
+      "empty_collection": "Keine Seiten in dieser Sammlung"
+    },
     "menu": {
       "create_new_page": "Neue Seite erstellen",
       "add_existing_page": "Vorhandene Seite hinzufügen",

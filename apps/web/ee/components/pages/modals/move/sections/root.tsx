@@ -15,8 +15,7 @@ import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { Book, Building2 } from "lucide-react";
-import { useTranslation } from "@plane/i18n";
+import { Book } from "lucide-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { WikiIcon } from "@plane/propel/icons";
 import type { TLogoProps } from "@plane/types";
@@ -29,7 +28,7 @@ import { MovePageModalListSection } from "../list-section";
 import type { TMovePageSelectedValue } from "../root";
 import { MovePageModalProjectsListSection } from "./projects-list";
 import { MovePageModalTeamspacesListSection } from "./teamspaces-list";
-import { PREDEFINED_WIKI_COLLECTION_TRANSLATION_KEYS } from "../../../collections";
+import { DEFAULT_WIKI_COLLECTION, DefaultWikiCollectionIcon } from "../../../collections";
 
 type Props = {
   canPageBeMovedToTeamspace: boolean;
@@ -41,7 +40,6 @@ export const MovePageModalSections = observer(function MovePageModalSections(pro
   const { canPageBeMovedToTeamspace, canPageBeMovedToWiki, searchTerm } = props;
   // navigation
   const { teamspaceId, projectId } = useParams();
-  const { t } = useTranslation();
   // store hooks
   const collectionStore = useCollection();
   const { isWorkspaceFeatureEnabled } = useWorkspaceFeatures();
@@ -61,7 +59,12 @@ export const MovePageModalSections = observer(function MovePageModalSections(pro
         .map((collection) => collection.id),
     [customCollections, searchTerm]
   );
-  const shouldShowGeneralCollection = "general".includes(searchTerm.toLowerCase());
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const shouldShowGeneralCollection =
+    normalizedSearchTerm.length === 0 ||
+    [DEFAULT_WIKI_COLLECTION.slug, DEFAULT_WIKI_COLLECTION.displayName].some((value) =>
+      value.toLowerCase().includes(normalizedSearchTerm)
+    );
   // section components
   const projectsListSection = <MovePageModalProjectsListSection searchTerm={searchTerm} />;
   const teamspacesListSection =
@@ -93,8 +96,8 @@ export const MovePageModalSections = observer(function MovePageModalSections(pro
           getItemDetails={(itemValue) => {
             if (itemValue === "workspace") {
               return {
-                logo: <Building2 className="size-4" />,
-                name: t(PREDEFINED_WIKI_COLLECTION_TRANSLATION_KEYS.general),
+                logo: <DefaultWikiCollectionIcon className="size-4 text-label-grey-icon" />,
+                name: DEFAULT_WIKI_COLLECTION.displayName,
                 value: "workspace" satisfies TMovePageSelectedValue,
               };
             }

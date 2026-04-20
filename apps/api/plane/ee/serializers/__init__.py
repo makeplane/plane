@@ -174,6 +174,7 @@ from .app.collection import (
     CollectionSerializer,
     CollectionMemberSerializer,
     PageCollectionSerializer,
+    CollectionPageLiteSerializer,
 )
 
 # mobile app endpoints serializers

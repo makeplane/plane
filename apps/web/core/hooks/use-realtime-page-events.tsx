@@ -17,14 +17,14 @@ import { useParams } from "next/navigation";
 import type { EventToPayloadMap } from "@plane/editor";
 import { setToast, TOAST_TYPE, dismissToast } from "@plane/propel/toast";
 // types
+import { EPageAccess } from "@plane/types";
 import type { IUserLite, TCollaborator } from "@plane/types";
 // components
 import type { TEditorBodyHandlers } from "@/components/pages/editor/editor-body";
 // hooks
 import { useUser } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
-import type { EPageStoreType } from "@/plane-web/hooks/store";
-import { usePageStore } from "@/plane-web/hooks/store";
+import { EPageStoreType, useCollection, usePageStore } from "@/plane-web/hooks/store";
 // store
 import type { TPageInstance } from "@/store/pages/base-page";
 import { getMovedPageRedirectLink } from "./page-move-routing";
@@ -61,6 +61,7 @@ export const useRealtimePageEvents = ({
   const { workspaceSlug } = useParams();
   // store hooks
   const { removePage, getPageById, getOrFetchPageInstance, removePageInstance } = usePageStore(storeType);
+  const collectionStore = useCollection();
   const { data: currentUser } = useUser();
   // derived values
   const { editorRef } = page.editor;
@@ -78,6 +79,28 @@ export const useRealtimePageEvents = ({
     },
     [getUserDetails]
   );
+
+  const refreshCollectionStoreForCurrentPage = useCallback(async () => {
+    const currentWorkspaceSlug = workspaceSlug?.toString();
+    if (!currentWorkspaceSlug || storeType !== EPageStoreType.WORKSPACE || !page.id) return;
+    if (page.project_ids?.length || page.team) return;
+    if (page.access !== EPageAccess.PUBLIC || page.archived_at || page.deleted_at || page.is_shared) return;
+
+    await collectionStore.refreshCollectionBranchForPage(currentWorkspaceSlug, page.id, page.parentPageIds);
+  }, [
+    collectionStore,
+    page.access,
+    page.archived_at,
+    page.deleted_at,
+    page.id,
+    page.is_shared,
+    page.parent_id,
+    page.parentPageIds,
+    page.project_ids,
+    page.team,
+    storeType,
+    workspaceSlug,
+  ]);
 
   const ACTION_HANDLERS = useMemo(
     () => ({
@@ -326,6 +349,8 @@ export const useRealtimePageEvents = ({
         await getOrFetchPageInstance({ pageId: duplicatedPage, trackVisit: false });
 
         if (page.id === pageIds[0] && data.user_id === currentUser?.id) {
+          await refreshCollectionStoreForCurrentPage();
+
           setToast({
             type: TOAST_TYPE.SUCCESS,
             title: `Page duplicated successfully.`,
@@ -335,7 +360,7 @@ export const useRealtimePageEvents = ({
                   href={handlers.getRedirectionLink(duplicatedPage)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
+                  className="rounded px-2 py-1 font-medium text-accent-primary hover:bg-layer-1-hover"
                 >
                   View duplicated page
                 </a>
@@ -380,6 +405,7 @@ export const useRealtimePageEvents = ({
       handlers,
       editorRef,
       getOrFetchPageInstance,
+      refreshCollectionStoreForCurrentPage,
       removePageInstance,
       workspaceSlug,
     ]
