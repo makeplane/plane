@@ -163,7 +163,7 @@ export const BaseTimelineRoot = observer(function BaseTimelineRoot(props: BaseTi
             enableBlockLeftResize={isAllowed}
             enableBlockRightResize={isAllowed}
             enableBlockMove={isAllowed}
-            enableReorder={appliedDisplayFilters?.order_by === "sort_order" && isAllowed}
+            enableReorder={appliedDisplayFilters?.order_by?.includes("sort_order") && isAllowed}
             enableAddBlock={isAllowed}
             enableSelection={isBulkOperationsEnabled && isAllowed}
             quickAdd={quickAdd}

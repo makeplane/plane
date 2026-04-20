@@ -177,6 +177,7 @@ const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
   priority: "priority",
   "-priority": "priority",
   sort_order: "sort_order",
+  "-sort_order": "sort_order",
   state__name: "state_id",
   "-state__name": "state_id",
   assignees__first_name: "assignee_ids",
@@ -1901,6 +1902,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     switch (key) {
       case "sort_order":
         return getIssueIds(orderBy(array, "sort_order"));
+      case "-sort_order":
+        return getIssueIds(orderBy(array, "sort_order", ["desc"]));
       case "state__name":
         return getIssueIds(
           orderBy(array, (issue) =>

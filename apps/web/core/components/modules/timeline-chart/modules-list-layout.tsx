@@ -74,7 +74,7 @@ export const ModulesListTimelineChartView = observer(function ModulesListTimelin
         enableBlockLeftResize={isAllowed}
         enableBlockRightResize={isAllowed}
         enableBlockMove={isAllowed}
-        enableReorder={isAllowed && displayFilters?.order_by === "sort_order"}
+        enableReorder={isAllowed && displayFilters?.order_by?.includes("sort_order")}
         enableAddBlock={isAllowed}
         updateBlockDates={updateBlockDates}
         showAllBlocks

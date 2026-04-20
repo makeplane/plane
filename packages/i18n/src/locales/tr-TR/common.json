@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Sırala",
       "manual": "Manuel - Sıra",
-      "last_created": "Son oluşturulan",
-      "last_updated": "Son güncellenen",
+      "created_at": "Oluşturulma tarihi",
+      "updated_at": "Güncellenme tarihi",
       "start_date": "Başlangıç tarihi",
       "due_date": "Son tarih",
       "asc": "Artan",

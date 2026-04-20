@@ -507,8 +507,8 @@
     "order_by": {
       "label": "Sortieren nach",
       "manual": "Manuell - Rang",
-      "last_created": "Zuletzt erstellt",
-      "last_updated": "Zuletzt aktualisiert",
+      "created_at": "Erstellt am",
+      "updated_at": "Aktualisiert am",
       "start_date": "Startdatum",
       "due_date": "Fälligkeitsdatum",
       "asc": "Aufsteigend",

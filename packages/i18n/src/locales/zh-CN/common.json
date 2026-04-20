@@ -510,8 +510,8 @@
     "order_by": {
       "label": "排序方式",
       "manual": "手动 - 排名",
-      "last_created": "最近创建",
-      "last_updated": "最近更新",
+      "created_at": "创建时间",
+      "updated_at": "更新时间",
       "start_date": "开始日期",
       "due_date": "截止日期",
       "asc": "升序",

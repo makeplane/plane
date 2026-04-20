@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Sortuj według",
       "manual": "Ręcznie - Ranking",
-      "last_created": "Ostatnio utworzone",
-      "last_updated": "Ostatnio zaktualizowane",
+      "created_at": "Utworzono dnia",
+      "updated_at": "Zaktualizowano dnia",
       "start_date": "Data rozpoczęcia",
       "due_date": "Termin",
       "asc": "Rosnąco",

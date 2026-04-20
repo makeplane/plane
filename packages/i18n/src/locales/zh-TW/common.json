@@ -509,8 +509,8 @@
     "order_by": {
       "label": "排序依據",
       "manual": "手動 - 排名",
-      "last_created": "最後建立",
-      "last_updated": "最後更新",
+      "created_at": "建立於",
+      "updated_at": "更新於",
       "start_date": "開始日期",
       "due_date": "截止日期",
       "asc": "遞增",

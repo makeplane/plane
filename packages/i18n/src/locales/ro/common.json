@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Ordonează după",
       "manual": "Manual - Rang",
-      "last_created": "Ultima creată",
-      "last_updated": "Ultima actualizată",
+      "created_at": "Creată la",
+      "updated_at": "Actualizată la",
       "start_date": "Data de început",
       "due_date": "Data limită",
       "asc": "Crescător",

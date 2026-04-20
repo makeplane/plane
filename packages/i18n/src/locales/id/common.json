@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Urutkan berdasarkan",
       "manual": "Manual - Peringkat",
-      "last_created": "Terakhir dibuat",
-      "last_updated": "Terakhir diperbarui",
+      "created_at": "Dibuat pada",
+      "updated_at": "Diperbarui pada",
       "start_date": "Tanggal mulai",
       "due_date": "Tanggal jatuh tempo",
       "asc": "Menaik",

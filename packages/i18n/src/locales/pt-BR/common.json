@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Ordenar por",
       "manual": "Manual - Classificação",
-      "last_created": "Último criado",
-      "last_updated": "Último atualizado",
+      "created_at": "Criado em",
+      "updated_at": "Atualizado em",
       "start_date": "Data de início",
       "due_date": "Data de vencimento",
       "asc": "Ascendente",

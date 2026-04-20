@@ -510,8 +510,8 @@
     "order_by": {
       "label": "Ordenar por",
       "manual": "Manual - Clasificación",
-      "last_created": "Último creado",
-      "last_updated": "Última actualización",
+      "created_at": "Creado el",
+      "updated_at": "Actualizado el",
       "start_date": "Fecha de inicio",
       "due_date": "Fecha de vencimiento",
       "asc": "Ascendente",

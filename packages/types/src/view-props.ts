@@ -38,42 +38,27 @@ export type TIssueGroupByOptions =
   | "release"
   | null;
 
-export type TIssueOrderByOptions =
-  | "-created_at"
+export type WorkItemOrderByKeys =
   | "created_at"
   | "updated_at"
-  | "-updated_at"
   | "priority"
-  | "-priority"
   | "sort_order"
   | "state__name"
-  | "-state__name"
   | "assignees__first_name"
-  | "-assignees__first_name"
   | "labels__name"
-  | "-labels__name"
   | "issue_module__module__name"
-  | "-issue_module__module__name"
   | "issue_cycle__cycle__name"
-  | "-issue_cycle__cycle__name"
   | "target_date"
-  | "-target_date"
   | "estimate_point__key"
-  | "-estimate_point__key"
   | "start_date"
-  | "-start_date"
   | "link_count"
-  | "-link_count"
   | "attachment_count"
-  | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count"
   | "customer_request_count"
-  | "-customer_request_count"
   | "customer_count"
-  | "-customer_count"
-  | "name"
-  | "-name";
+  | "name";
+
+export type TIssueOrderByOptions = WorkItemOrderByKeys | `-${WorkItemOrderByKeys}`;
 
 export type TIssueGroupingFilters = "active" | "backlog";
 

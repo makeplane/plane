@@ -248,7 +248,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
           handleOnDrop(source, destination);
 
-          highlightOnDrop(getWorkItemBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
+          highlightOnDrop(getWorkItemBlockId(source.id, destination?.groupId), !orderBy?.includes("sort_order"));
 
           if (!isExpanded) {
             handleCollapsedGroups(group.id);
@@ -259,7 +259,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   }, [group, orderBy, getGroupIndex, setDragColumnOrientation, setIsDraggingOverColumn, isWorkflowDropDisabled]);
 
   const isDragAllowed = group_by ? DRAG_ALLOWED_GROUPS.includes(group_by) : true;
-  const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || !!group.isDropDisabled;
+  const canOverlayBeVisible = isWorkflowDropDisabled || !orderBy?.includes("sort_order") || !!group.isDropDisabled;
   const isDropDisabled = isWorkflowDropDisabled || !!group.isDropDisabled;
 
   const isGroupByCreatedBy = group_by === "created_by";

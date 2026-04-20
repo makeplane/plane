@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Řadit podle",
       "manual": "Ručně - Pořadí",
-      "last_created": "Naposledy vytvořené",
-      "last_updated": "Naposledy aktualizované",
+      "created_at": "Vytvořeno dne",
+      "updated_at": "Aktualizováno dne",
       "start_date": "Datum začátku",
       "due_date": "Termín",
       "asc": "Vzestupně",

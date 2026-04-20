@@ -509,8 +509,8 @@
     "order_by": {
       "label": "정렬 기준",
       "manual": "수동 - 순위",
-      "last_created": "마지막 생성",
-      "last_updated": "마지막 업데이트",
+      "created_at": "생성일",
+      "updated_at": "업데이트일",
       "start_date": "시작 날짜",
       "due_date": "마감일",
       "asc": "오름차순",

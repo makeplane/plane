@@ -509,8 +509,8 @@
     "order_by": {
       "label": "並び順",
       "manual": "手動 - ランク",
-      "last_created": "最終作成日",
-      "last_updated": "最終更新日",
+      "created_at": "作成日",
+      "updated_at": "更新日",
       "start_date": "開始日",
       "due_date": "期限日",
       "asc": "昇順",

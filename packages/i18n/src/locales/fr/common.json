@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Trier par",
       "manual": "Manuel - Classement",
-      "last_created": "Dernier créé",
-      "last_updated": "Dernière mise à jour",
+      "created_at": "Créé le",
+      "updated_at": "Mis à jour le",
       "start_date": "Date de début",
       "due_date": "Date d’échéance",
       "asc": "Croissant",

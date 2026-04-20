@@ -204,7 +204,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
 
           highlightOnDrop(
             getWorkItemBlockId(source.id, destination?.groupId, destination?.subGroupId),
-            orderBy !== "sort_order"
+            !orderBy?.includes("sort_order")
           );
         },
       }),
@@ -314,8 +314,7 @@ export const KanbanGroup = observer(function KanbanGroup(props: IKanbanGroup) {
   );
 
   const shouldLoadMore = nextPageResults === undefined ? issueIds?.length < groupIssueCount : !!nextPageResults;
-  const canOverlayBeVisible = isWorkflowDropDisabled || orderBy !== "sort_order" || isDropDisabled;
-  const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
+  const canOverlayBeVisible = isWorkflowDropDisabled || !orderBy?.includes("sort_order") || isDropDisabled;
   const canDragIssuesInCurrentGrouping =
     !!group_by &&
     DRAG_ALLOWED_GROUPS.includes(group_by) &&

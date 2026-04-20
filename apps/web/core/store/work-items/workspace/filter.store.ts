@@ -197,7 +197,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
     }
 
     // override existing order by if ordered by manual sort_order
-    if (displayFilters.order_by === "sort_order") {
+    if (displayFilters.order_by?.includes("sort_order")) {
       displayFilters.order_by = "-created_at";
     }
 

@@ -513,8 +513,8 @@
     "order_by": {
       "label": "Order by",
       "manual": "Manual - Rank",
-      "last_created": "Last created",
-      "last_updated": "Last updated",
+      "created_at": "Created at",
+      "updated_at": "Updated at",
       "start_date": "Start date",
       "due_date": "Due date",
       "asc": "Ascending",

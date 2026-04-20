@@ -120,7 +120,7 @@ export const useGroupIssuesDragNDrop = (
     )
       return;
 
-    await handleGroupDragDrop(
+    await handleGroupDragDrop({
       source,
       destination,
       getIssueById,
@@ -128,8 +128,9 @@ export const useGroupIssuesDragNDrop = (
       updateIssueOnDrop,
       groupBy,
       subGroupBy,
-      orderBy !== "sort_order"
-    ).catch((err) => {
+      shouldAddIssueAtTop: !orderBy?.includes("sort_order"),
+      isDescendingManualOrder: orderBy === "-sort_order",
+    }).catch((err) => {
       setToast({
         title: "Error!",
         type: TOAST_TYPE.ERROR,

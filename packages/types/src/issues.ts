@@ -23,7 +23,7 @@ import type {
   TIssueExtraOptions,
   TIssueGroupByOptions,
   TIssueGroupingFilters,
-  TIssueOrderByOptions,
+  WorkItemOrderByKeys,
 } from "./view-props";
 import type { IWorkspaceLite } from "./workspace";
 
@@ -170,7 +170,7 @@ export interface ILayoutDisplayFiltersOptions {
   display_filters: {
     group_by?: TIssueGroupByOptions[];
     sub_group_by?: TIssueGroupByOptions[];
-    order_by?: TIssueOrderByOptions[];
+    order_by?: WorkItemOrderByKeys[];
     type?: TIssueGroupingFilters[];
   };
   extra_options: {

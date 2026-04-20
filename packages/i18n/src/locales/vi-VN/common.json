@@ -509,8 +509,8 @@
     "order_by": {
       "label": "Sắp xếp theo",
       "manual": "Thủ công - Xếp hạng",
-      "last_created": "Mới tạo nhất",
-      "last_updated": "Mới cập nhật nhất",
+      "created_at": "Thời gian tạo",
+      "updated_at": "Thời gian cập nhật",
       "start_date": "Ngày bắt đầu",
       "due_date": "Ngày hết hạn",
       "asc": "Tăng dần",

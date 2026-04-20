@@ -104,7 +104,9 @@ const handleSortOrder = (
   destinationIssueId: string | undefined,
   getIssueById: (issueId: string) => TIssue | undefined,
   shouldAddIssueAtTop = false,
-  canAddIssueBelow = false
+  canAddIssueBelow = false,
+  /** When order is `-sort_order`, the issue list is descending by `sort_order`; edge placement must invert. */
+  isDescendingManualOrder = false
 ) => {
   const sortOrderDefaultValue = 65535;
   let currentIssueState = {};
@@ -128,18 +130,21 @@ const handleSortOrder = (
       const destinationIssue = getIssueById(destinationIssueId);
       if (!destinationIssue) return currentIssueState;
 
+      // Ascending manual order: first row = smallest sort_order → go below that. Descending: first row = largest → go above that.
+      const sortOrderDelta = isDescendingManualOrder ? sortOrderDefaultValue : -sortOrderDefaultValue;
       currentIssueState = {
         ...currentIssueState,
-        sort_order: destinationIssue.sort_order - sortOrderDefaultValue,
+        sort_order: destinationIssue.sort_order + sortOrderDelta,
       };
     } else if (destinationIndex === destinationIssues.length) {
       const destinationIssueId = destinationIssues[destinationIssues.length - 1];
       const destinationIssue = getIssueById(destinationIssueId);
       if (!destinationIssue) return currentIssueState;
 
+      const sortOrderDelta = isDescendingManualOrder ? -sortOrderDefaultValue : sortOrderDefaultValue;
       currentIssueState = {
         ...currentIssueState,
-        sort_order: destinationIssue.sort_order + sortOrderDefaultValue,
+        sort_order: destinationIssue.sort_order + sortOrderDelta,
       };
     } else {
       const destinationTopIssueId = destinationIssues[destinationIndex - 1];
@@ -174,16 +179,31 @@ const getGroupId = (groupId: string) => {
   return [groupId];
 };
 
-export const handleGroupDragDrop = async (
-  source: GroupDropLocation,
-  destination: GroupDropLocation,
-  getIssueById: (issueId: string) => TIssue | undefined,
-  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined,
-  updateIssueOnDrop: (projectId: string, issueId: string, data: Partial<TIssue>, issueUpdates: IssueUpdates) => void,
-  groupBy: TIssueGroupByOptions | undefined,
-  subGroupBy: TIssueGroupByOptions | undefined,
-  shouldAddIssueAtTop = false
-) => {
+export type HandleGroupDragDropParams = {
+  source: GroupDropLocation;
+  destination: GroupDropLocation;
+  getIssueById: (issueId: string) => TIssue | undefined;
+  getIssueIds: (groupId?: string, subGroupId?: string) => string[] | undefined;
+  updateIssueOnDrop: (projectId: string, issueId: string, data: Partial<TIssue>, issueUpdates: IssueUpdates) => void;
+  groupBy: TIssueGroupByOptions | undefined;
+  subGroupBy: TIssueGroupByOptions | undefined;
+  shouldAddIssueAtTop?: boolean;
+  isDescendingManualOrder?: boolean;
+};
+
+export const handleGroupDragDrop = async (params: HandleGroupDragDropParams) => {
+  const {
+    source,
+    destination,
+    getIssueById,
+    getIssueIds,
+    updateIssueOnDrop,
+    groupBy,
+    subGroupBy,
+    shouldAddIssueAtTop = false,
+    isDescendingManualOrder = false,
+  } = params;
+
   if (!source.id || (subGroupBy && (!source.subGroupId || !destination.subGroupId))) return;
 
   let updatedIssue: Partial<TIssue> = {};
@@ -207,7 +227,8 @@ export const handleGroupDragDrop = async (
       destination.id,
       getIssueById,
       shouldAddIssueAtTop,
-      !!destination.canAddIssueBelow
+      !!destination.canAddIssueBelow,
+      isDescendingManualOrder
     ),
   };
 

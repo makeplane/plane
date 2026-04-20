@@ -513,8 +513,8 @@
     "order_by": {
       "label": "Triediť podľa",
       "manual": "Manuálne - Poradie",
-      "last_created": "Naposledy vytvorené",
-      "last_updated": "Naposledy aktualizované",
+      "created_at": "Vytvorené dňa",
+      "updated_at": "Aktualizované dňa",
       "start_date": "Dátum začiatku",
       "due_date": "Termín",
       "asc": "Vzostupne",

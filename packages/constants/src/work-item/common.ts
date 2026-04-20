@@ -18,6 +18,7 @@ import type {
   IIssueFilterOptions,
   TIssue,
   EIssuesStoreType,
+  WorkItemOrderByKeys,
 } from "@plane/types";
 
 export const ALL_ISSUES = "All Issues";
@@ -151,15 +152,15 @@ export const ISSUE_GROUP_BY_OPTIONS: {
 ];
 
 export const ISSUE_ORDER_BY_OPTIONS: {
-  key: TIssueOrderByOptions;
+  key: WorkItemOrderByKeys;
   titleTranslationKey: string;
 }[] = [
   { key: "sort_order", titleTranslationKey: "common.order_by.manual" },
-  { key: "-created_at", titleTranslationKey: "common.order_by.last_created" },
-  { key: "-updated_at", titleTranslationKey: "common.order_by.last_updated" },
+  { key: "created_at", titleTranslationKey: "common.order_by.created_at" },
+  { key: "updated_at", titleTranslationKey: "common.order_by.updated_at" },
   { key: "start_date", titleTranslationKey: "common.order_by.start_date" },
   { key: "target_date", titleTranslationKey: "common.order_by.due_date" },
-  { key: "-priority", titleTranslationKey: "common.priority" },
+  { key: "priority", titleTranslationKey: "common.priority" },
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [

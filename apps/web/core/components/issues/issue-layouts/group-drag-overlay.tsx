@@ -51,7 +51,7 @@ export function GroupDragOverlay(props: Props) {
 
   const shouldOverlayBeVisible = isDraggingOverColumn && canOverlayBeVisible;
   const readableOrderBy = t(
-    ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderByObj.key === orderBy)?.titleTranslationKey || ""
+    ISSUE_ORDER_BY_OPTIONS.find((orderByObj) => orderBy && orderByObj.key.includes(orderBy))?.titleTranslationKey || ""
   );
 
   return (
