@@ -146,8 +146,8 @@ export const DependencyPathModal = observer(function DependencyPathModal(props: 
       );
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Relation Removed",
-        message: "The timeline relation was successfully removed",
+        title: "Dependency Removed",
+        message: "The timeline dependency was successfully removed",
       });
 
       handleClose();
@@ -155,7 +155,7 @@ export const DependencyPathModal = observer(function DependencyPathModal(props: 
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Error while removing relation.",
+        message: "Error while removing dependency.",
       });
     } finally {
       setIsRemoving(false);
@@ -175,7 +175,7 @@ export const DependencyPathModal = observer(function DependencyPathModal(props: 
         <>
           <div className="relative flex flex-col py-2">
             <div className="h-6 text-16 flex px-2 mt-2 items-end font-medium">
-              <span>Timeline Relation</span>
+              <span>Timeline Dependency</span>
             </div>
             <IssueBlock
               blockId={relation.originBlock}
@@ -198,7 +198,7 @@ export const DependencyPathModal = observer(function DependencyPathModal(props: 
               {isRemoving ? (
                 <Spinner />
               ) : (
-                <Tooltip tooltipContent="Remove relation">
+                <Tooltip tooltipContent="Remove dependency">
                   <Trash2Icon className="h-5 w-5 cursor-pointer text-placeholder" onClick={handleRemoveRelation} />
                 </Tooltip>
               )}
