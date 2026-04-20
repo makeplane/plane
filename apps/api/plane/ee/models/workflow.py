@@ -88,6 +88,7 @@ class WorkflowWorkItemType(ProjectBaseModel):
 class WorkflowState(ProjectBaseModel):
     state = models.ForeignKey("db.State", on_delete=models.CASCADE, related_name="workflows")
     allow_issue_creation = models.BooleanField(default=True)
+    is_default=models.BooleanField(default=False)
     type = models.CharField(max_length=255, default=WorkflowStateType.TRANSITION)
     workflow = models.ForeignKey(
         "Workflow", on_delete=models.CASCADE, related_name="workflow_states", null=True, blank=True

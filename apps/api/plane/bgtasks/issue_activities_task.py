@@ -324,7 +324,12 @@ def _track_workflow_state_change(
     field,
 ):
     requested_data = json.loads(requested_data) if requested_data is not None else {}
+    current_instance = json.loads(current_instance) if current_instance is not None else {}
+
+    old_state_id = current_instance.get("state_id")
     new_state_id = requested_data.get("state_id")
+
+    old_state = State.objects.filter(pk=old_state_id, project_id=project_id).first()
     new_state = State.objects.filter(pk=new_state_id, project_id=project_id).first()
 
     issue_activities.append(
@@ -332,10 +337,12 @@ def _track_workflow_state_change(
             issue_id=issue_id,
             actor_id=actor_id,
             verb="updated",
+            old_value=old_state.name if old_state else None,
             new_value=new_state.name if new_state else None,
             field=field,
             project_id=project_id,
             workspace_id=workspace_id,
+            old_identifier=old_state.id if old_state else None,
             new_identifier=new_state.id if new_state else None,
             epoch=epoch,
         )

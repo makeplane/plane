@@ -19,3 +19,4 @@ export * from "./updates-icon";
 export * from "./shift-icon";
 export * from "./check-circle-filled-icon";
 export * from "./close-circle-filled-icon";
+export * from "./tick-circle-icon";

@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import { Badge } from "@plane/propel/badge";
-import { ApproverIcon, TrashIcon, WorkflowIcon } from "@plane/propel/icons";
+import { ApproverIcon, TickCircleIcon, TrashIcon, WorkflowIcon } from "@plane/propel/icons";
 import { Menu } from "@plane/propel/menu";
 import { Switch } from "@plane/propel/switch";
 import { cn } from "@plane/propel/utils";
@@ -23,16 +23,24 @@ import type { TContextMenuItem } from "@plane/ui";
 type Props = {
   handleDelete: () => void;
   handleToggle: () => void;
+  handleSetDefault: () => void;
   workflowState: IWorkflowState;
   isDefaultWorkflow: boolean;
 };
 
 export const WorkflowStateCardActions = observer(function WorkflowStateCardActions(props: Props) {
   //props
-  const { handleDelete, handleToggle, workflowState, isDefaultWorkflow } = props;
+  const { handleDelete, handleToggle, handleSetDefault, workflowState, isDefaultWorkflow } = props;
 
   // derived values
   const MENU_ITEMS: TContextMenuItem[] = [
+    {
+      key: "set-default",
+      title: "Set as default",
+      icon: TickCircleIcon,
+      action: handleSetDefault,
+      disabled: Boolean(workflowState.is_default),
+    },
     {
       key: "delete",
       title: "Delete",
@@ -45,16 +53,23 @@ export const WorkflowStateCardActions = observer(function WorkflowStateCardActio
   const filteredMenuItems = MENU_ITEMS.filter((item) => item.shouldRender !== false);
 
   return (
-    <div onClick={(e) => e.stopPropagation()} className="flex items-center gap-2 shrink-0 cursor-default">
+    <div
+      role="presentation"
+      onClick={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
+      className="flex items-center gap-2 shrink-0 cursor-default"
+    >
       {workflowState.transitionIds.length > 0 && (
         <Badge variant="success" prependIcon={workflowState.type === "approval" ? <ApproverIcon /> : <WorkflowIcon />}>
           {workflowState.transitionIds.length}
         </Badge>
       )}
+      {workflowState.is_default && <Badge variant="brand">Default</Badge>}
       <div className="flex items-center gap-2">
         <span className="text-caption-md-regular">Allow new work items</span>
         <Switch
           value={workflowState.allow_issue_creation}
+          disabled={workflowState.is_default}
           onChange={() => {
             handleToggle();
           }}
@@ -65,8 +80,9 @@ export const WorkflowStateCardActions = observer(function WorkflowStateCardActio
           {filteredMenuItems.map((item) => (
             <Menu.MenuItem
               key={item.key}
-              className={cn("flex items-center gap-2", item.className)}
+              className={cn("flex items-center gap-2", item.className, item.disabled && "cursor-not-allowed")}
               onClick={item.action}
+              disabled={item.disabled}
             >
               <div className="flex items-center gap-2">
                 {item.icon && <item.icon className="h-3 w-3" />}

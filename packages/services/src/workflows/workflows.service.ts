@@ -128,6 +128,19 @@ export class WorkflowsService extends APIService implements IWorkflowService {
   }
 
   /**
+   * @description Mark a workflow state as the default state for that workflow.
+   */
+  async markDefaultState(workspaceSlug: string, projectId: string, workflowId: string, stateId: string): Promise<void> {
+    return this.post(
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/workflows/${workflowId}/states/${stateId}/mark-default/`
+    )
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
    * @description Delete a state in a workflow
    */
   async deleteState(workspaceSlug: string, projectId: string, workflowId: string, stateId: string): Promise<void> {

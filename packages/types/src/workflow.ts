@@ -42,6 +42,7 @@ export type TWorkflowChangeHistoryFields =
   | "workflow_type"
   | "workflow_name"
   | "workflow_state"
+  | "workflow_default_state"
   | "workflow_description"
   | "workflow_is_active"
   | "workflow_work_item_type"
@@ -165,6 +166,7 @@ export type TWorkflowStateType = "transition" | "approval";
 export type TWorkflowState = {
   id: string;
   allow_issue_creation: boolean;
+  is_default?: boolean;
   transitions?: TWorkflowStateTransition[];
   type: TWorkflowStateType;
 };
@@ -184,6 +186,7 @@ export type TWorkflowStateDependencies = {
 
 export type TUpdateWorkflowStatePayload = {
   allow_issue_creation?: boolean;
+  is_default?: boolean;
   type?: TWorkflowStateType;
 };
 export interface IWorkflowState extends TWorkflowState {
@@ -196,6 +199,7 @@ export interface IWorkflowState extends TWorkflowState {
   addDraftTransition: () => string;
   removeDraftTransition: (draftId: string) => void;
   clearAllDraftTransitions: () => void;
+  setAsDefault: (workspaceSlug: string, projectId: string, workflow: IWorkflow) => Promise<void>;
   addTransition: (
     workspaceSlug: string,
     projectId: string,
@@ -312,6 +316,7 @@ export interface IWorkflowService {
     stateId: string,
     data: TUpdateWorkflowStatePayload
   ) => Promise<void>;
+  markDefaultState: (workspaceSlug: string, projectId: string, workflowId: string, stateId: string) => Promise<void>;
   deleteState: (workspaceSlug: string, projectId: string, workflowId: string, stateId: string) => Promise<void>;
   addStateTransition: (
     workspaceSlug: string,

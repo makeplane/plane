@@ -16,6 +16,7 @@ import type {
   IWorkflowSidebarHelper,
   IWorkflowState,
   IWorkflowTransition,
+  IWorkflow,
   TUpdateWorkflowStatePayload,
   TWorkflowState,
   TWorkflowStateTransition,
@@ -31,6 +32,7 @@ import { WorkflowTransition } from "./transition";
 export class WorkflowState implements IWorkflowState {
   id: string;
   allow_issue_creation: boolean;
+  is_default: boolean;
   transitions: TWorkflowStateTransition[];
   type: TWorkflowStateType;
 
@@ -43,6 +45,7 @@ export class WorkflowState implements IWorkflowState {
     makeObservable(this, {
       id: observable,
       allow_issue_creation: observable,
+      is_default: observable,
       transitions: observable,
       type: observable,
       transitionsMap: observable,
@@ -57,12 +60,14 @@ export class WorkflowState implements IWorkflowState {
       deleteTransition: action,
       clearTransitions: action,
       update: action,
+      setAsDefault: action,
     });
 
     this.id = data.id;
     this.transitions = data.transitions ?? [];
     this.type = data.type ?? "transition";
     this.allow_issue_creation = data.allow_issue_creation ?? true;
+    this.is_default = data.is_default ?? false;
     this.workflowService = _workflowService;
     this.sidebarHelper = new WorkflowSidebarHelper();
 
@@ -112,6 +117,7 @@ export class WorkflowState implements IWorkflowState {
     return {
       id: this.id,
       allow_issue_creation: this.allow_issue_creation,
+      is_default: this.is_default,
       transitions,
       type: this.type,
     };
@@ -224,6 +230,52 @@ export class WorkflowState implements IWorkflowState {
     } catch (error) {
       console.error("Error updating workflow state", error);
       runInAction(() => this.mutate(beforeUpdate));
+      throw error;
+    }
+  };
+
+  /**
+   * Marks this state as the workflow's default creation state.
+   * Optimistically clears default from other states in the same workflow.
+   */
+  setAsDefault = async (workspaceSlug: string, projectId: string, workflow: IWorkflow): Promise<void> => {
+    if (this.is_default) return;
+
+    const snapshot: Record<string, { is_default: boolean; allow_issue_creation: boolean }> = {};
+    workflow.stateIds.forEach((id) => {
+      const state = workflow.getStateById(id);
+      if (!state) return;
+      snapshot[id] = {
+        is_default: state.is_default ?? false,
+        allow_issue_creation: state.allow_issue_creation ?? true,
+      };
+    });
+
+    try {
+      runInAction(() => {
+        workflow.stateIds.forEach((id) => {
+          const state = workflow.getStateById(id);
+          if (!state) return;
+          if (state.id === this.id) {
+            state.is_default = true;
+            state.allow_issue_creation = true;
+          } else if (state.is_default) {
+            state.is_default = false;
+          }
+        });
+      });
+
+      await this.workflowService.markDefaultState(workspaceSlug, projectId, workflow.id, this.id);
+    } catch (error) {
+      console.error("Error setting workflow default state", error);
+      runInAction(() => {
+        workflow.stateIds.forEach((id) => {
+          const state = workflow.getStateById(id);
+          if (!state) return;
+          state.is_default = snapshot[id]?.is_default ?? false;
+          state.allow_issue_creation = snapshot[id]?.allow_issue_creation ?? true;
+        });
+      });
       throw error;
     }
   };

@@ -23,6 +23,7 @@ from plane.ee.views.app.workflow import (
     WorkflowWorkItemApproverEndpoint,
     WorkflowStateTransferEndpoint,
     WorkflowWorkItemTypeWorkItemsCheckEndpoint,
+    WorkflowDefaultStateEndpoint,
 )
 
 
@@ -61,6 +62,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/<uuid:state_id>/",
         WorkflowStatesEndpoint.as_view(),
         name="project-workflow-states",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/<uuid:state_id>/mark-default/",
+        WorkflowDefaultStateEndpoint.as_view(),
+        name="project-workflow-state-mark-default",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/<uuid:state_id>/transfer/",

@@ -57,6 +57,9 @@ class WorkflowActivityEnum:
     # transfer
     WORKFLOW_STATE_TRANSFERRED = "workflow_state_transferred"
 
+    # default state
+    WORKFLOW_DEFAULT_STATE = "workflow_default_state"
+
 
 def create_workflow_activity(
     requested_data,
@@ -694,6 +697,45 @@ def delete_workflow_state_activity(
     )
 
 
+def mark_default_workflow_state_activity(
+    requested_data,
+    current_instance,
+    workflow_id,
+    workflow_state_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    workflow_activities,
+    epoch,
+):
+    requested_data = json.loads(requested_data) if requested_data is not None else {}
+    current_instance = json.loads(current_instance) if current_instance is not None else {}
+
+    old_state_id = current_instance.get("state_id")
+    new_state_id = requested_data.get("state_id")
+
+    old_state = State.objects.filter(pk=old_state_id).values("name", "id").first() if old_state_id else None
+    new_state = State.objects.filter(pk=new_state_id).values("name", "id").first() if new_state_id else None
+
+    workflow_activities.append(
+        WorkflowTransitionActivity(
+            workflow_id=workflow_id,
+            workflow_state_id=workflow_state_id,
+            project_id=project_id,
+            actor_id=actor_id,
+            verb="updated",
+            old_value=old_state["name"] if old_state else None,
+            new_value=new_state["name"] if new_state else None,
+            field=WorkflowActivityEnum.WORKFLOW_DEFAULT_STATE,
+            workspace_id=workspace_id,
+            comment="updated the default state to",
+            old_identifier=old_state["id"] if old_state else None,
+            new_identifier=new_state["id"] if new_state else None,
+            epoch=epoch,
+        )
+    )
+
+
 def create_workflow_state_transferred_activity(
     requested_data,
     current_instance,
@@ -766,6 +808,7 @@ def workflow_activity(
             "workflow_reset.activity.updated": reset_workflow,
             "workflow_transition_enable.activity.updated": enable_workflow_transition,
             "workflow_state.activity.transferred": create_workflow_state_transferred_activity,
+            "workflow_state.activity.marked_default": mark_default_workflow_state_activity,
         }
 
         func = ACTIVITY_MAPPER.get(type)

@@ -56,6 +56,16 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
     onRequestDelete(stateId);
   };
 
+  const handleSetDefault = () => {
+    workflowState.setAsDefault(workspaceSlug, projectId, workflow).catch(() => {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error",
+        message: "Failed to update workflow default state",
+      });
+    });
+  };
+
   const handleAddFlow = () => {
     const draftId = workflowState.addDraftTransition();
     workflow.openSidebar(workflowState.id, draftId, "flow_type");
@@ -78,6 +88,7 @@ export const WorkflowStateCardRoot = observer(function WorkflowStateCardRoot(pro
         <WorkflowStateCardActions
           handleDelete={handleDelete}
           handleToggle={handleToggleActive}
+          handleSetDefault={handleSetDefault}
           workflowState={workflowState}
           isDefaultWorkflow={workflow.is_default}
         />

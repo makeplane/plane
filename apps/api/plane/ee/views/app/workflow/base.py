@@ -124,7 +124,7 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
 
         workflow_states_qs = list(
             WorkflowState.objects.filter(filter_condition).values(
-                "id", "state_id", "allow_issue_creation", "workflow_id", "type"
+                "id", "state_id", "allow_issue_creation", "workflow_id", "type", "is_default"
             )
         )
 
@@ -196,6 +196,7 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
                 for state in workflow_states_map.get(workflow_id, []):
                     id = str(state["state_id"])
                     state_allow_issue_creation = state["allow_issue_creation"]
+                    state_is_default = state["is_default"]
                     transitions = []
                     # check the type of transition is approval or transition
                     transition_type = state["type"]
@@ -218,6 +219,7 @@ class WorkspaceWorkflowEndpoint(BaseAPIView):
                         {
                             "id": id,
                             "allow_issue_creation": state_allow_issue_creation,
+                            "is_default": state_is_default,
                             "transitions": transitions,
                             "type": transition_type,
                         }
@@ -485,6 +487,7 @@ class DefaultWorkflowEndpoint(BaseAPIView):
             {
                 "id": str(ws.state_id),
                 "allow_issue_creation": ws.allow_issue_creation,
+                "is_default": ws.is_default,
                 "type": ws.type,
             }
             for ws in workflow.workflow_states.all()

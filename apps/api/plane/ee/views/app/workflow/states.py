@@ -228,6 +228,49 @@ class WorkflowStatesEndpoint(BaseAPIView):
         return Response(status=status.HTTP_200_OK)
 
 
+class WorkflowDefaultStateEndpoint(BaseAPIView):
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="PROJECT")
+    def post(self, request, slug, project_id, workflow_id, state_id):
+        workflow_state = WorkflowState.objects.filter(
+            project_id=project_id, workflow_id=workflow_id, state_id=state_id
+        ).first()
+        if not workflow_state:
+            return Response({"error": "Workflow state not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Capture the current default state for activity logging
+        current_default = (
+            WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, is_default=True)
+            .values("state_id")
+            .first()
+        )
+
+        # Unset any existing default in this workflow, then mark the new one
+        WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, is_default=True).update(
+            is_default=False
+        )
+        workflow_state.is_default = True
+        workflow_state.allow_issue_creation = True
+        workflow_state.save(update_fields=["is_default", "allow_issue_creation", "updated_at"])
+
+        workflow_activity.delay(
+            workflow_id=str(workflow_id),
+            type="workflow_state.activity.marked_default",
+            requested_data=json.dumps({"state_id": str(state_id)}, cls=DjangoJSONEncoder),
+            actor_id=str(request.user.id),
+            workflow_state_id=str(workflow_state.id),
+            project_id=str(project_id),
+            current_instance=json.dumps(
+                {"state_id": str(current_default["state_id"]) if current_default else None},
+                cls=DjangoJSONEncoder,
+            ),
+            slug=slug,
+            epoch=int(timezone.now().timestamp()),
+        )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class WorkflowStateTransitionsEndpoint(BaseAPIView):
     def _send_transition_activity(
         self,
@@ -550,6 +593,15 @@ class WorkflowStateTransferEndpoint(BaseAPIView):
             return Response(
                 {"error": "new_state_id must be different from the current state"},
                 status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # if changing the default state then make the new state as default and remove the default from the old state
+        if old_workflow_state.is_default:
+            WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, is_default=True).update(
+                is_default=False
+            )
+            WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, state_id=new_state_id).update(
+                is_default=True, allow_issue_creation=True
             )
 
         # Validate the target state belongs to the same project

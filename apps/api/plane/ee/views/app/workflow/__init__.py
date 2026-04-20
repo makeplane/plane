@@ -16,6 +16,11 @@ from .base import (
     DefaultWorkflowEndpoint,
     WorkflowWorkItemTypeWorkItemsCheckEndpoint,
 )
-from .states import WorkflowStatesEndpoint, WorkflowStateTransitionsEndpoint, WorkflowStateTransferEndpoint
+from .states import (
+    WorkflowStatesEndpoint,
+    WorkflowStateTransitionsEndpoint,
+    WorkflowStateTransferEndpoint,
+    WorkflowDefaultStateEndpoint,
+)
 from .approver import WorkflowWorkItemApproverEndpoint
 from .activity import WorkflowActivityEndpoint

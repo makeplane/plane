@@ -70,9 +70,16 @@ class WorkflowStateManager:
         """Get the workflow for the given issue based on its type, falling back to the default workflow."""
         # Build the filter for the work item type
         if type_id:
-            workflow_work_item_type = WorkflowWorkItemType.objects.filter(
-                workspace__slug=self.slug, project_id=self.project_id, work_item_type_id=type_id
-            ).first()
+            workflow_work_item_type = (
+                WorkflowWorkItemType.objects.filter(
+                    workspace__slug=self.slug,
+                    project_id=self.project_id,
+                    work_item_type_id=type_id,
+                    workflow__is_active=True,
+                )
+                .select_related("workflow")
+                .first()
+            )
             if workflow_work_item_type:
                 return Workflow.objects.filter(
                     id=workflow_work_item_type.workflow_id,

@@ -62,7 +62,7 @@ import {
   TimelineLayoutIcon,
 } from "./layouts";
 // Misc icons
-import { InfoIcon, AlertIcon, HistoryIcon, ShiftIcon } from "./misc";
+import { InfoIcon, AlertIcon, HistoryIcon, ShiftIcon, TickCircleIcon } from "./misc";
 // Project icons
 import {
   CycleIcon,
@@ -340,6 +340,9 @@ export const ICON_REGISTRY = {
   "misc.info": InfoIcon,
   "misc.alert": AlertIcon,
   "misc.history": HistoryIcon,
+  "misc.tick-circle": TickCircleIcon,
+  // Backward-compatible alias
+  "misc.tick-circle-solid": TickCircleIcon,
   "arrow.reply": ReplyIcon,
   "arrow.external-link": ExternalLinkIcon,
   "arrow.import": ImportIcon,

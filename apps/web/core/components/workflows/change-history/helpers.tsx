@@ -12,7 +12,7 @@
  */
 
 import type { FC, ReactNode } from "react";
-import { ApproverIcon, LayersIcon, WorkflowIcon } from "@plane/propel/icons";
+import { ApproverIcon, LayersIcon, TickCircleIcon, WorkflowIcon } from "@plane/propel/icons";
 import type { TWorkflowChangeHistory, TWorkflowChangeHistoryKeys } from "@plane/types";
 import { store } from "@/lib/store-context";
 
@@ -136,6 +136,20 @@ export const WORKFLOW_CHANGE_HISTORY_HELPER_MAP: Partial<TWorkflowChangeHistoryD
             : activity.new_value}
         </span>{" "}
         due to state removal.
+      </>
+    ),
+  }),
+  workflow_default_state_updated: (activity: TWorkflowChangeHistory) => ({
+    icon: TickCircleIcon,
+    message: (
+      <>
+        marked{" "}
+        <span className={commonTextClassName}>
+          {activity.new_identifier
+            ? (store.state.getStateById(activity.new_identifier)?.name ?? activity.new_value)
+            : activity.new_value}
+        </span>{" "}
+        as default.
       </>
     ),
   }),

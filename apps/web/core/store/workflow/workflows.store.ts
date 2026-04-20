@@ -68,6 +68,7 @@ export interface IWorkflowsStore {
   getProjectActiveWorkflows: (projectId: string) => IWorkflow[];
   getOccupiedWorkItemTypeIds: (projectId: string, workflowId?: string) => string[];
   getUnassignedWorkItemTypeIds: (projectId: string, workflowId?: string) => string[];
+  getDefaultStateForWorkflow: (workflowId: string) => IWorkflowState | undefined;
   // workflow resolution
   getApplicableWorkflowForType: (projectId: string, typeId: string) => IWorkflow | null;
   isStateCreationAllowedForType: (projectId: string, typeId: string, stateId: string) => boolean;
@@ -303,6 +304,15 @@ export class WorkflowsStore implements IWorkflowsStore {
   });
 
   /**
+   * Returns the workflow's default state (if configured).
+   */
+  getDefaultStateForWorkflow = computedFn((workflowId: string): IWorkflowState | undefined => {
+    const workflow = this.getWorkflowById(workflowId);
+    if (!workflow) return undefined;
+    return workflow.stateIds.map((stateId) => workflow.getStateById(stateId)).find((state) => state?.is_default);
+  });
+
+  /**
    * Returns a list of work item type ids that are used in the project workflows.
    */
   getOccupiedWorkItemTypeIds = computedFn((projectId: string, workflowId?: string): string[] => {
@@ -383,6 +393,15 @@ export class WorkflowsStore implements IWorkflowsStore {
   });
 
   getFirstCreationAllowedStateForType = computedFn((projectId: string, typeId: string): string | undefined => {
+    // Prioritize workflow default state (if present)
+    const workflow = this.getApplicableWorkflowForType(projectId, typeId);
+    if (workflow) {
+      const workflowDefaultStateId = workflow.stateIds.find((stateId) => workflow.getStateById(stateId)?.is_default);
+      if (workflowDefaultStateId && this.isStateCreationAllowedForType(projectId, typeId, workflowDefaultStateId)) {
+        return workflowDefaultStateId;
+      }
+    }
+
     // Prioritize the project default state
     const defaultStateId = this.rootStore.state.getProjectDefaultStateId(projectId);
     if (defaultStateId && this.isStateCreationAllowedForType(projectId, typeId, defaultStateId)) {

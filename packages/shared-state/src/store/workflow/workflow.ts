@@ -331,6 +331,16 @@ export class Workflow implements IWorkflow {
         new_state_id: newStateId,
       });
       this.removeStates([stateId]);
+
+      // The destination state becomes the new default if the current state is default and must allow creation.
+      runInAction(() => {
+        const currentState = this.getStateById(stateId);
+        const isCurrentStateDefault = currentState && currentState.is_default;
+        const destinationState = this.getStateById(newStateId);
+        if (destinationState && isCurrentStateDefault) {
+          destinationState.mutate({ allow_issue_creation: true, is_default: true });
+        }
+      });
     } catch (error) {
       console.error("Error migrating and deleting state from workflow", error);
       throw error;
