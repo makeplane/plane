@@ -30,9 +30,11 @@ export function WorkItemLayoutAdditionalProperties({ displayProperties, issue }:
 
   return (
     <>
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="progress_tracking">
-        <ProgressTrackingBadge targetDate={issue.target_date} />
-      </WithDisplayPropertiesHOC>
+      {stateDetails?.group !== "completed" && stateDetails?.group !== "cancelled" && (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="progress_tracking">
+          <ProgressTrackingBadge targetDate={issue.target_date} />
+        </WithDisplayPropertiesHOC>
+      )}
       {stateDetails?.group === "completed" && (
         <Tooltip tooltipHeading={t("common.completed_at")} tooltipContent={formattedDate}>
           <div className="flex h-5 flex-shrink-0 items-center gap-1 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
