@@ -617,3 +617,79 @@ ESTIMATE_ID_PARAMETER = OpenApiParameter(
     type=OpenApiTypes.UUID,
     location=OpenApiParameter.PATH,
 )
+
+WORKFLOW_ID_PARAMETER = OpenApiParameter(
+    name="workflow_id",
+    description="Workflow ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example workflow ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical workflow UUID",
+        )
+    ],
+)
+
+WORKFLOW_DETAIL_ID_PARAMETER = OpenApiParameter(
+    name="pk",
+    description="Workflow ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example workflow ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical workflow UUID",
+        )
+    ],
+)
+
+WORKFLOW_STATE_ID_PARAMETER = OpenApiParameter(
+    name="state_id",
+    description="Workflow state (project state) ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example state ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical state UUID",
+        )
+    ],
+)
+
+WORKFLOW_TRANSITION_ID_PARAMETER = OpenApiParameter(
+    name="transition_id",
+    description="Workflow transition ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example transition ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical transition UUID",
+        )
+    ],
+)
+
+WORK_ITEM_ID_PARAMETER = OpenApiParameter(
+    name="work_item_id",
+    description="Work item (issue) ID",
+    required=True,
+    type=OpenApiTypes.UUID,
+    location=OpenApiParameter.PATH,
+    examples=[
+        OpenApiExample(
+            name="Example work item ID",
+            value="550e8400-e29b-41d4-a716-446655440000",
+            description="A typical work item UUID",
+        )
+    ],
+)
+

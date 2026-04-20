@@ -23,6 +23,11 @@ from .parameters import (
     TYPE_ID_PARAMETER,
     PROPERTY_ID_PARAMETER,
     TEAMSPACE_ID_PARAMETER,
+    WORKFLOW_ID_PARAMETER,
+    WORKFLOW_DETAIL_ID_PARAMETER,
+    WORKFLOW_STATE_ID_PARAMETER,
+    WORKFLOW_TRANSITION_ID_PARAMETER,
+    WORK_ITEM_ID_PARAMETER,
 )
 from .responses import UNAUTHORIZED_RESPONSE, FORBIDDEN_RESPONSE, NOT_FOUND_RESPONSE
 
@@ -604,4 +609,130 @@ def workspace_work_item_property_option_docs(**kwargs):
         },
     }
 
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_docs(**kwargs):
+    """Decorator for workflow list/create endpoints."""
+    defaults = {
+        "tags": ["Workflows"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_detail_docs(**kwargs):
+    """Decorator for workflow detail endpoints (require workflow pk in path)."""
+    defaults = {
+        "tags": ["Workflows"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER, WORKFLOW_DETAIL_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_state_docs(**kwargs):
+    """Decorator for workflow state endpoints."""
+    defaults = {
+        "tags": ["Workflow States"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER, WORKFLOW_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_state_detail_docs(**kwargs):
+    """Decorator for workflow state detail endpoints (require state_id in path)."""
+    defaults = {
+        "tags": ["Workflow States"],
+        "parameters": [
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            WORKFLOW_ID_PARAMETER,
+            WORKFLOW_STATE_ID_PARAMETER,
+        ],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_transition_docs(**kwargs):
+    """Decorator for workflow transition list/create endpoints."""
+    defaults = {
+        "tags": ["Workflow Transitions"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER, WORKFLOW_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_transition_detail_docs(**kwargs):
+    """Decorator for workflow transition detail endpoints (require transition_id in path)."""
+    defaults = {
+        "tags": ["Workflow Transitions"],
+        "parameters": [
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            WORKFLOW_ID_PARAMETER,
+            WORKFLOW_TRANSITION_ID_PARAMETER,
+        ],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_approval_docs(**kwargs):
+    """Decorator for work-item approval/rejection endpoints."""
+    defaults = {
+        "tags": ["Workflow Approvals"],
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER, WORK_ITEM_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workflow_activity_docs(**kwargs):
+    """Decorator for workflow activity list endpoints."""
+    defaults = {
+        "tags": ["Workflow Activities"],
+        "parameters": [
+            WORKSPACE_SLUG_PARAMETER,
+            PROJECT_ID_PARAMETER,
+            WORKFLOW_ID_PARAMETER,
+        ],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
     return extend_schema(**_merge_schema_options(defaults, kwargs))

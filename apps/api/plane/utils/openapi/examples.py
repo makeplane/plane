@@ -1085,6 +1085,179 @@ SAMPLE_ESTIMATE_POINT = {
     "created_at": "2024-01-01T10:30:00Z",
 }
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Workflow Examples
+# ──────────────────────────────────────────────────────────────────────────────
+
+_SAMPLE_UUID = "550e8400-e29b-41d4-a716-446655440000"
+_SAMPLE_UUID_1 = "550e8400-e29b-41d4-a716-446655440001"
+_SAMPLE_UUID_2 = "550e8400-e29b-41d4-a716-446655440002"
+_SAMPLE_UUID_3 = "550e8400-e29b-41d4-a716-446655440003"
+
+SAMPLE_WORKFLOW = {
+    "id": _SAMPLE_UUID,
+    "name": "Default Workflow",
+    "description": "Standard issue progression workflow",
+    "is_active": True,
+    "is_default": True,
+    "project_id": _SAMPLE_UUID_1,
+    "workspace_id": _SAMPLE_UUID_2,
+    "work_item_type_ids": [_SAMPLE_UUID_3],
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+}
+
+SAMPLE_WORKFLOW_STATE = {
+    "id": _SAMPLE_UUID,
+    "state_id": _SAMPLE_UUID_1,
+    "workflow_id": _SAMPLE_UUID_2,
+    "type": "transition",
+    "allow_issue_creation": True,
+    "is_default": False,
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+}
+
+_SAMPLE_HOOK = {
+    "id": _SAMPLE_UUID_3,
+    "hook_type": "validation",
+    "handler_name": "run_script",
+    "config": {"script_id": _SAMPLE_UUID_1, "execution_variables": {}},
+    "execution_order": 0,
+    "is_enabled": True,
+}
+
+SAMPLE_WORKFLOW_TRANSITION = {
+    "id": _SAMPLE_UUID,
+    "workflow_state_id": _SAMPLE_UUID_1,
+    "transition_state_id": _SAMPLE_UUID_2,
+    "rejection_state_id": None,
+    "required_approvals": 1,
+    "member_ids": [_SAMPLE_UUID_3],
+    "pre_hooks": [_SAMPLE_HOOK],
+    "post_hooks": [],
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z",
+}
+
+SAMPLE_WORKFLOW_ACTIVITY = {
+    "id": _SAMPLE_UUID,
+    "actor_id": _SAMPLE_UUID_1,
+    "state_id": _SAMPLE_UUID_2,
+    "type": "workflow_transition.activity.created",
+    "old_value": None,
+    "new_value": _SAMPLE_UUID_2,
+    "epoch": 1705316200,
+    "created_at": "2024-01-15T10:30:00Z",
+}
+
+# Response examples
+WORKFLOW_EXAMPLE = OpenApiExample(
+    name="Workflow",
+    value=SAMPLE_WORKFLOW,
+    description="A workflow object",
+)
+
+WORKFLOW_STATE_EXAMPLE = OpenApiExample(
+    name="WorkflowState",
+    value=SAMPLE_WORKFLOW_STATE,
+    description="A workflow state object",
+)
+
+WORKFLOW_TRANSITION_EXAMPLE = OpenApiExample(
+    name="WorkflowTransition",
+    value=SAMPLE_WORKFLOW_TRANSITION,
+    description="A workflow transition object",
+)
+
+WORKFLOW_ACTIVITY_EXAMPLE = OpenApiExample(
+    name="WorkflowActivity",
+    value=SAMPLE_WORKFLOW_ACTIVITY,
+    description="A workflow activity object",
+)
+
+WORKFLOW_APPROVAL_RESPONSE_EXAMPLE = OpenApiExample(
+    name="WorkflowApprovalResponse",
+    value={"state_id": _SAMPLE_UUID_2},
+    description="The new state UUID after approval or rejection",
+)
+
+# Request examples
+WORKFLOW_CREATE_EXAMPLE = OpenApiExample(
+    name="WorkflowCreate",
+    value={"name": "Feature Workflow", "description": "Tracks feature development", "is_active": True},
+    description="Request body for creating a workflow",
+)
+
+WORKFLOW_UPDATE_EXAMPLE = OpenApiExample(
+    name="WorkflowUpdate",
+    value={"name": "Feature Workflow v2", "is_active": False},
+    description="Request body for partially updating a workflow",
+)
+
+WORKFLOW_ADD_STATES_EXAMPLE = OpenApiExample(
+    name="WorkflowAddStates",
+    value={"state_ids": [_SAMPLE_UUID_1, _SAMPLE_UUID_2]},
+    description="List of project state UUIDs to add to the workflow",
+)
+
+WORKFLOW_STATE_UPDATE_EXAMPLE = OpenApiExample(
+    name="WorkflowStateUpdate",
+    value={"type": "transition", "allow_issue_creation": False},
+    description="Request body for updating a workflow state",
+)
+
+WORKFLOW_TRANSFER_STATE_EXAMPLE = OpenApiExample(
+    name="WorkflowTransferState",
+    value={"new_state_id": _SAMPLE_UUID_2},
+    description="UUID of the state to move work items into before removal",
+)
+
+WORKFLOW_TRANSITION_CREATE_EXAMPLE = OpenApiExample(
+    name="WorkflowTransitionCreate",
+    value={
+        "state_id": _SAMPLE_UUID_1,
+        "transition_state_id": _SAMPLE_UUID_2,
+        "rejection_state_id": None,
+        "required_approvals": 1,
+        "member_ids": [_SAMPLE_UUID_3],
+        "pre_rules": [
+            {
+                "rule_type": "validation",
+                "handler_name": "run_script",
+                "config": {"script_id": _SAMPLE_UUID_3, "execution_variables": {}},
+            }
+        ],
+        "post_rules": [],
+    },
+    description="Request body for creating a workflow transition",
+)
+
+WORKFLOW_TRANSITION_UPDATE_EXAMPLE = OpenApiExample(
+    name="WorkflowTransitionUpdate",
+    value={
+        "transition_state_id": _SAMPLE_UUID_2,
+        "rejection_state_id": _SAMPLE_UUID_1,
+        "required_approvals": 2,
+        "member_ids": [_SAMPLE_UUID_3],
+        "post_rules": [
+            {
+                "rule_type": "action",
+                "handler_name": "run_script",
+                "config": {"script_id": _SAMPLE_UUID_3, "execution_variables": {"notify": True}},
+            }
+        ],
+    },
+    description="Request body for partially updating a workflow transition",
+)
+
+WORKFLOW_APPROVAL_REQUEST_EXAMPLE = OpenApiExample(
+    name="WorkflowApprovalRequest",
+    value={"type": "approve"},
+    description="Use 'approve' or 'reject'",
+)
+
+
 # Mapping of schema types to sample data
 SCHEMA_EXAMPLES = {
     "Issue": SAMPLE_ISSUE,

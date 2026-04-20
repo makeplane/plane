@@ -23,10 +23,36 @@ from django.core.serializers.json import DjangoJSONEncoder
 
 from rest_framework import status
 from rest_framework.response import Response
+from drf_spectacular.utils import OpenApiRequest, OpenApiResponse, inline_serializer
+from rest_framework import serializers as drf_serializers
 
 from plane.api.views.base import BaseAPIView
 from plane.app.permissions import ProjectEntityPermission
 from plane.api.permissions import WorkflowFeatureFlagPermission, MultipleWorkflowsFeatureFlagPermission
+from plane.utils.openapi import (
+    workflow_docs,
+    workflow_detail_docs,
+    workflow_state_docs,
+    workflow_state_detail_docs,
+    workflow_transition_docs,
+    workflow_transition_detail_docs,
+    workflow_approval_docs,
+    workflow_activity_docs,
+    DELETED_RESPONSE,
+    WORKFLOW_EXAMPLE,
+    WORKFLOW_STATE_EXAMPLE,
+    WORKFLOW_TRANSITION_EXAMPLE,
+    WORKFLOW_ACTIVITY_EXAMPLE,
+    WORKFLOW_APPROVAL_RESPONSE_EXAMPLE,
+    WORKFLOW_CREATE_EXAMPLE,
+    WORKFLOW_UPDATE_EXAMPLE,
+    WORKFLOW_ADD_STATES_EXAMPLE,
+    WORKFLOW_STATE_UPDATE_EXAMPLE,
+    WORKFLOW_TRANSFER_STATE_EXAMPLE,
+    WORKFLOW_TRANSITION_CREATE_EXAMPLE,
+    WORKFLOW_TRANSITION_UPDATE_EXAMPLE,
+    WORKFLOW_APPROVAL_REQUEST_EXAMPLE,
+)
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
@@ -44,10 +70,10 @@ from plane.ee.models import (
 )
 
 from plane.api.serializers.workflow import (
-    WorkflowSerializer,
-    WorkflowStateSerializer,
-    WorkflowTransitionSerializer,
-    WorkflowTransitionActivitySerializer,
+    WorkflowAPISerializer,
+    WorkflowStateAPISerializer,
+    WorkflowTransitionAPISerializer,
+    WorkflowTransitionActivityAPISerializer,
 )
 from plane.ee.models import WorkflowTransitionActivity
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
@@ -85,11 +111,36 @@ class WorkflowListCreateAPIEndpoint(BaseAPIView):
             )
         )
 
+    @workflow_docs(
+        operation_id="list_workflows",
+        summary="List workflows",
+        description="List all workflows for a project.",
+        responses={
+            200: OpenApiResponse(
+                description="List of workflows",
+                response=WorkflowAPISerializer(many=True),
+                examples=[WORKFLOW_EXAMPLE],
+            ),
+        },
+    )
     def get(self, request, slug, project_id):
         workflows = self._get_queryset(slug, project_id)
-        data = WorkflowSerializer(workflows, many=True).data
+        data = WorkflowAPISerializer(workflows, many=True).data
         return Response(data, status=status.HTTP_200_OK)
 
+    @workflow_docs(
+        operation_id="create_workflow",
+        summary="Create a workflow",
+        description="Create a new workflow for a project. Requires the Multiple Workflows feature flag.",
+        request=OpenApiRequest(request=WorkflowAPISerializer, examples=[WORKFLOW_CREATE_EXAMPLE]),
+        responses={
+            201: OpenApiResponse(
+                description="Workflow created",
+                response=WorkflowAPISerializer,
+                examples=[WORKFLOW_EXAMPLE],
+            ),
+        },
+    )
     def post(self, request, slug, project_id):
         if not check_workspace_feature_flag(
             feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
@@ -108,7 +159,7 @@ class WorkflowListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = WorkflowSerializer(data=request.data)
+        serializer = WorkflowAPISerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id)
             workflow_activity.delay(
@@ -123,7 +174,7 @@ class WorkflowListCreateAPIEndpoint(BaseAPIView):
                 epoch=int(timezone.now().timestamp()),
             )
             workflow = self._get_queryset(slug, project_id).filter(id=serializer.data["id"]).first()
-            data = WorkflowSerializer(workflow).data
+            data = WorkflowAPISerializer(workflow).data
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -151,13 +202,38 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
             )
         )
 
+    @workflow_detail_docs(
+        operation_id="retrieve_workflow",
+        summary="Retrieve a workflow",
+        description="Retrieve details of a specific workflow.",
+        responses={
+            200: OpenApiResponse(
+                description="Workflow",
+                response=WorkflowAPISerializer,
+                examples=[WORKFLOW_EXAMPLE],
+            ),
+        },
+    )
     def get(self, request, slug, project_id, pk):
         workflow = self._get_queryset(slug, project_id).filter(id=pk).first()
         if not workflow:
             return Response({"error": "Workflow not found"}, status=status.HTTP_404_NOT_FOUND)
-        data = WorkflowSerializer(workflow).data
+        data = WorkflowAPISerializer(workflow).data
         return Response(data, status=status.HTTP_200_OK)
 
+    @workflow_detail_docs(
+        operation_id="update_workflow",
+        summary="Update a workflow",
+        description="Partially update a workflow's name, description, active status, or work item type associations.",
+        request=OpenApiRequest(request=WorkflowAPISerializer, examples=[WORKFLOW_UPDATE_EXAMPLE]),
+        responses={
+            200: OpenApiResponse(
+                description="Updated workflow",
+                response=WorkflowAPISerializer,
+                examples=[WORKFLOW_EXAMPLE],
+            ),
+        },
+    )
     def patch(self, request, slug, project_id, pk):
         workflow = self._get_queryset(slug, project_id).filter(id=pk).first()
         if not workflow:
@@ -173,7 +249,7 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        current_instance = json.dumps(WorkflowSerializer(workflow).data, cls=DjangoJSONEncoder)
+        current_instance = json.dumps(WorkflowAPISerializer(workflow).data, cls=DjangoJSONEncoder)
         patch_data = dict(request.data)
 
         if patch_data.get("is_active", False) is True:
@@ -222,7 +298,7 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
                 if incoming_ids - existing_ids:
                     patch_data["is_active"] = False
 
-        serializer = WorkflowSerializer(workflow, data=patch_data, partial=True)
+        serializer = WorkflowAPISerializer(workflow, data=patch_data, partial=True)
         if serializer.is_valid():
             serializer.save()
             workflow_activity.delay(
@@ -237,10 +313,16 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
                 epoch=int(timezone.now().timestamp()),
             )
             updated_workflow = self._get_queryset(slug, project_id).filter(id=pk).first()
-            data = WorkflowSerializer(updated_workflow).data
+            data = WorkflowAPISerializer(updated_workflow).data
             return Response(data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @workflow_detail_docs(
+        operation_id="delete_workflow",
+        summary="Delete a workflow",
+        description="Delete a workflow. The default workflow cannot be deleted.",
+        responses={204: DELETED_RESPONSE},
+    )
     def delete(self, request, slug, project_id, pk):
         if not check_workspace_feature_flag(
             feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
@@ -280,6 +362,19 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
         "DELETE": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
     }
 
+    @workflow_state_docs(
+        operation_id="add_workflow_states",
+        summary="Add states to a workflow",
+        description="Add one or more project states to a workflow.",
+        request=OpenApiRequest(
+            request=inline_serializer(
+                name="WorkflowAddStatesRequest",
+                fields={"state_ids": drf_serializers.ListField(child=drf_serializers.UUIDField())},
+            ),
+            examples=[WORKFLOW_ADD_STATES_EXAMPLE],
+        ),
+        responses={201: OpenApiResponse(description="States added successfully")},
+    )
     def post(self, request, slug, project_id, workflow_id):
         state_ids = request.data.get("state_ids", [])
         if not state_ids:
@@ -326,6 +421,19 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
         )
         return Response(status=status.HTTP_201_CREATED)
 
+    @workflow_state_detail_docs(
+        operation_id="update_workflow_state",
+        summary="Update a workflow state",
+        description="Update the type or allow_issue_creation flag of a state within a workflow.",
+        request=OpenApiRequest(request=WorkflowStateAPISerializer, examples=[WORKFLOW_STATE_UPDATE_EXAMPLE]),
+        responses={
+            200: OpenApiResponse(
+                description="Updated workflow state",
+                response=WorkflowStateAPISerializer,
+                examples=[WORKFLOW_STATE_EXAMPLE],
+            ),
+        },
+    )
     def patch(self, request, slug, project_id, workflow_id, state_id):
         workflow_state = WorkflowState.objects.filter(
             project_id=project_id, workflow_id=workflow_id, state_id=state_id
@@ -365,9 +473,9 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
                 slug=slug,
                 epoch=int(timezone.now().timestamp()),
             )
-            return Response(WorkflowStateSerializer(workflow_state).data, status=status.HTTP_200_OK)
+            return Response(WorkflowStateAPISerializer(workflow_state).data, status=status.HTTP_200_OK)
 
-        serializer = WorkflowStateSerializer(workflow_state, data=request.data, partial=True)
+        serializer = WorkflowStateAPISerializer(workflow_state, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             workflow_activity.delay(
@@ -384,6 +492,12 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @workflow_state_detail_docs(
+        operation_id="remove_workflow_state",
+        summary="Remove a state from a workflow",
+        description="Remove a state from a workflow. This also deletes all transitions associated with the state.",
+        responses={204: DELETED_RESPONSE},
+    )
     def delete(self, request, slug, project_id, workflow_id, state_id):
         workflow_state = (
             WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, state_id=state_id)
@@ -511,6 +625,22 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
             epoch=int(timezone.now().timestamp()),
         )
 
+    @workflow_transition_docs(
+        operation_id="create_workflow_transition",
+        summary="Create a workflow transition",
+        description="Create a transition between two workflow states. Approval states are limited to one transition.",
+        request=OpenApiRequest(
+            request=WorkflowTransitionAPISerializer,
+            examples=[WORKFLOW_TRANSITION_CREATE_EXAMPLE],
+        ),
+        responses={
+            201: OpenApiResponse(
+                description="Workflow transition created",
+                response=WorkflowTransitionAPISerializer,
+                examples=[WORKFLOW_TRANSITION_EXAMPLE],
+            ),
+        },
+    )
     def post(self, request, slug, project_id, workflow_id):
         state_id = request.data.pop("state_id")
         member_ids = request.data.pop("member_ids", [])
@@ -554,7 +684,7 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
         if error:
             return error
 
-        serializer = WorkflowTransitionSerializer(data=request.data)
+        serializer = WorkflowTransitionAPISerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save(project_id=project_id, workflow_state_id=workflow_state.id)
@@ -600,8 +730,24 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
             epoch=int(timezone.now().timestamp()),
         )
         transition = self._get_annotated_transition(serializer.data["id"])
-        return Response(WorkflowTransitionSerializer(transition).data, status=status.HTTP_201_CREATED)
+        return Response(WorkflowTransitionAPISerializer(transition).data, status=status.HTTP_201_CREATED)
 
+    @workflow_transition_detail_docs(
+        operation_id="update_workflow_transition",
+        summary="Update a workflow transition",
+        description="Update a workflow transition's target state, rejection state, or approver members.",
+        request=OpenApiRequest(
+            request=WorkflowTransitionAPISerializer,
+            examples=[WORKFLOW_TRANSITION_UPDATE_EXAMPLE],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="Updated workflow transition",
+                response=WorkflowTransitionAPISerializer,
+                examples=[WORKFLOW_TRANSITION_EXAMPLE],
+            ),
+        },
+    )
     def patch(self, request, slug, project_id, workflow_id, transition_id):
         transition_state_id = request.data.get("transition_state_id")
         rejection_state_id = request.data.get("rejection_state_id")
@@ -631,7 +777,7 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
             cls=DjangoJSONEncoder,
         )
 
-        serializer = WorkflowTransitionSerializer(workflow_transition, data=request.data, partial=True)
+        serializer = WorkflowTransitionAPISerializer(workflow_transition, data=request.data, partial=True)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
@@ -704,8 +850,14 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
         )
 
         transition = self._get_annotated_transition(transition_id)
-        return Response(WorkflowTransitionSerializer(transition).data, status=status.HTTP_200_OK)
+        return Response(WorkflowTransitionAPISerializer(transition).data, status=status.HTTP_200_OK)
 
+    @workflow_transition_detail_docs(
+        operation_id="delete_workflow_transition",
+        summary="Delete a workflow transition",
+        description="Delete a workflow transition.",
+        responses={204: DELETED_RESPONSE},
+    )
     def delete(self, request, slug, project_id, workflow_id, transition_id):
         workflow_transition = WorkflowTransition.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=transition_id
@@ -736,6 +888,19 @@ class WorkflowStateTransferAPIEndpoint(BaseAPIView):
         "POST": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
     }
 
+    @workflow_state_detail_docs(
+        operation_id="transfer_workflow_state",
+        summary="Transfer and remove a workflow state",
+        description="Move all work items from a state to another state and remove the source state from the workflow.",
+        request=OpenApiRequest(
+            request=inline_serializer(
+                name="WorkflowTransferStateRequest",
+                fields={"new_state_id": drf_serializers.UUIDField()},
+            ),
+            examples=[WORKFLOW_TRANSFER_STATE_EXAMPLE],
+        ),
+        responses={200: OpenApiResponse(description="State transferred and removed successfully")},
+    )
     def post(self, request, slug, project_id, workflow_id, state_id):
         new_state_id = request.data.get("new_state_id")
         if not new_state_id:
@@ -829,6 +994,28 @@ class WorkflowWorkItemApproverAPIEndpoint(BaseAPIView):
         "POST": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
     }
 
+    @workflow_approval_docs(
+        operation_id="approve_or_reject_work_item",
+        summary="Approve or reject a work item",
+        description="Approve or reject a work item that is currently in an approval workflow state.",
+        request=OpenApiRequest(
+            request=inline_serializer(
+                name="WorkflowApprovalRequest",
+                fields={"type": drf_serializers.ChoiceField(choices=["approve", "reject"])},
+            ),
+            examples=[WORKFLOW_APPROVAL_REQUEST_EXAMPLE],
+        ),
+        responses={
+            200: OpenApiResponse(
+                description="New state after approval or rejection",
+                response=inline_serializer(
+                    name="WorkflowApprovalResponse",
+                    fields={"state_id": drf_serializers.UUIDField()},
+                ),
+                examples=[WORKFLOW_APPROVAL_RESPONSE_EXAMPLE],
+            ),
+        },
+    )
     def post(self, request, slug, project_id, work_item_id):
         action_type = request.data.get("type", None)
         if action_type not in ["approve", "reject"]:
@@ -956,6 +1143,18 @@ class WorkflowActivityAPIEndpoint(BaseAPIView):
         "GET": [[READ_SCOPE], [PROJECTS_WORKFLOWS_READ_SCOPE]],
     }
 
+    @workflow_activity_docs(
+        operation_id="list_workflow_activities",
+        summary="List workflow activities",
+        description="List all transition activities for a workflow, optionally filtered by creation timestamp.",
+        responses={
+            200: OpenApiResponse(
+                description="List of workflow activities",
+                response=WorkflowTransitionActivityAPISerializer(many=True),
+                examples=[WORKFLOW_ACTIVITY_EXAMPLE],
+            ),
+        },
+    )
     def get(self, request, slug, project_id, workflow_id):
         filters = {}
         if request.GET.get("created_at__gt"):
@@ -969,4 +1168,4 @@ class WorkflowActivityAPIEndpoint(BaseAPIView):
             .select_related("actor", "workspace", "project")
             .order_by("created_at")
         )
-        return Response(WorkflowTransitionActivitySerializer(activities, many=True).data, status=status.HTTP_200_OK)
+        return Response(WorkflowTransitionActivityAPISerializer(activities, many=True).data, status=status.HTTP_200_OK)

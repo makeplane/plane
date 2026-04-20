@@ -133,9 +133,8 @@ from .work_item_type_schema import (
 )
 
 from .workflow import (
-    WorkflowSerializer,
-    WorkflowStateSerializer,
-    WorkflowTransitionSerializer,
-    WorkflowTransitionActorSerializer,
-    WorkflowTransitionActivitySerializer,
+    WorkflowAPISerializer,
+    WorkflowStateAPISerializer,
+    WorkflowTransitionAPISerializer,
+    WorkflowTransitionActivityAPISerializer,
 )
