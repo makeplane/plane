@@ -172,37 +172,6 @@ export const getAssociatedComments = async (
   return processedComments.filter(Boolean) as ExIssueComment[];
 };
 
-export const getAssociatedIssueActivities = (
-  jobId: string,
-  issueActivities: Partial<ExIssueActivity>[],
-  users: PlaneUser[],
-  issueId: string
-): Partial<ExIssueActivity>[] => {
-  const issueActivitiesToProcess = issueActivities.filter((activity) => activity.issue === issueId);
-
-  const processedIssueActivities = issueActivitiesToProcess
-    .map((activity: Partial<ExIssueActivity>) => {
-      try {
-        const actor = users.find((user) => user.email === activity.actor);
-        const createdBy = users.find((user) => user.email === activity.created_by);
-
-        const finalActivity = {
-          ...activity,
-          actor: actor?.id || null,
-          created_by: createdBy?.id || null,
-        };
-
-        return finalActivity;
-      } catch (error) {
-        logger.error(`[${jobId.slice(0, 7)}] Error processing activity for issue ${issueId}:`, error);
-        return null;
-      }
-    })
-    .filter(Boolean) as Partial<ExIssueActivity>[];
-
-  return processedIssueActivities;
-};
-
 export const getAssociatedCommentsV2 = async (
   jobId: string,
   credentials: TWorkspaceCredential,
@@ -453,11 +422,9 @@ export const generateIssuePayloadV2 = async (payload: {
         associations.subscribers.get(processedIssue.external_id) || []
       );
 
-      const associatedIssueActivities = getAssociatedIssueActivities(
-        jobId,
-        issueActivities,
-        planeUsers,
-        processedIssue.external_id || ""
+      const associatedIssueActivities = processActivities(
+        userMap,
+        issueActivities.filter((activity) => activity.issue === processedIssue.external_id)
       );
 
       // Build BulkIssuePayload
@@ -519,6 +486,32 @@ const processWorklogs = (userMap: Map<string, string>, worklogs: Partial<TWorklo
 
 const processSubscribers = (userMap: Map<string, string>, subscribers: string[]): string[] =>
   subscribers.map((subscriber) => userMap.get(subscriber)).filter((subscriber) => subscriber !== undefined);
+
+/**
+ * Resolves user references on activities against the USERS mapping.
+ *
+ * `actor` is emitted by extractors as `email || displayName` (string identifier).
+ * Assignee changelog activities additionally carry raw Jira account keys in
+ * `old_identifier` / `new_identifier` (Jira Server `user.name`, Jira Cloud `accountId`) —
+ * the USERS mapping contains those keys alongside email/displayName, all pointing to the
+ * same Plane user id, so a single lookup resolves every form.
+ */
+const processActivities = (
+  userMap: Map<string, string>,
+  activities: Partial<ExIssueActivity>[]
+): Partial<ExIssueActivity>[] =>
+  activities.map((activity) => {
+    const resolved: Partial<ExIssueActivity> = {
+      ...activity,
+      actor: activity.actor ? (userMap.get(activity.actor) ?? null) : null,
+      created_by: activity.created_by ? userMap.get(activity.created_by) : undefined,
+    };
+    if (activity.field === "assignees") {
+      resolved.old_identifier = activity.old_identifier ? (userMap.get(activity.old_identifier) ?? null) : null;
+      resolved.new_identifier = activity.new_identifier ? (userMap.get(activity.new_identifier) ?? null) : null;
+    }
+    return resolved;
+  });
 
 const processAttachments = async (
   jobId: string,

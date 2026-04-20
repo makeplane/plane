@@ -23,6 +23,7 @@ import type { ClientOptions } from "@/types";
 import { AssetApiService } from "./asset/asset.service";
 import { PageAPIService } from "./page/page.service";
 import { WorkItemPropertyAPIService } from "./work-item-property/work-item-property.service";
+import { MemberAPIService } from "./member/member.service";
 import { ReleaseAPIService } from "./release/release.service";
 import { ImportExecutionLogAPIService } from "./job";
 import { WorkItemTypeAPIService } from "./work-item-type";
@@ -41,6 +42,7 @@ export class APIClient {
   workItemType: WorkItemTypeAPIService;
   workItemProperty: WorkItemPropertyAPIService;
   release: ReleaseAPIService;
+  member: MemberAPIService;
 
   constructor(options: ClientOptions) {
     this.options = options;
@@ -55,6 +57,7 @@ export class APIClient {
     this.workItemType = new WorkItemTypeAPIService(options);
     this.workItemProperty = new WorkItemPropertyAPIService(options);
     this.release = new ReleaseAPIService(options);
+    this.member = new MemberAPIService(options);
   }
 }
 

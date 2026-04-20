@@ -15,7 +15,7 @@ import type { Changelog } from "jira.js/out/version2/models/index.js";
 import type { IJiraIssue, TTransformationMaps } from "@plane/etl/jira-server";
 import type { ExIssueActivity } from "@plane/sdk";
 import type { E_IMPORTER_KEYS } from "@plane/etl/core";
-import { getFormattedDate, transformActivityItem } from "@plane/etl/jira-server";
+import { transformActivityItem } from "@plane/etl/jira-server";
 
 /**
  * Responsibility: Extract and transform issue activities (changelog) from Jira issues.

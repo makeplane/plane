@@ -79,11 +79,8 @@ export const transformActivityItem = (
       ];
     }
     case "assignees": {
-      // handle identifiers
-      const oldAssigneeExternalId = `${projectId}_${resourceId}_${oldIdentifier}`;
-      const newAssigneeExternalId = `${projectId}_${resourceId}_${newIdentifier}`;
-      const oldAssigneePlaneId = oldIdentifier ? transformationMaps.userMap.get(oldAssigneeExternalId) : null;
-      const newAssigneePlaneId = newIdentifier ? transformationMaps.userMap.get(newAssigneeExternalId) : null;
+      // Emit raw Jira account keys as identifiers; resolution to Plane user IDs happens
+      // downstream in the silo migrator (processActivities) against the USERS mapping.
       const activities: Partial<TActivityItemResult>[] = [];
       // since jira has single assignee field and sends removal and addition in same activity,
       // we need to handle 2 events separately for Plane issue activities
@@ -93,7 +90,7 @@ export const transformActivityItem = (
           verb: "updated",
           old_value: oldValue,
           new_value: "",
-          old_identifier: oldAssigneePlaneId,
+          old_identifier: oldIdentifier,
           comment: "removed assignee",
         });
       }
@@ -103,7 +100,7 @@ export const transformActivityItem = (
           verb: "updated",
           old_value: "",
           new_value: newValue,
-          new_identifier: newAssigneePlaneId,
+          new_identifier: newIdentifier,
           comment: "added assignee",
         });
       }

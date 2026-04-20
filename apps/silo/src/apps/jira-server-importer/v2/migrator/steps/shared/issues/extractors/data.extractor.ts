@@ -41,6 +41,8 @@ import { JiraSprintExtractor } from "./sprint.extractor";
 import { JiraWorklogExtractor } from "./worklog.extractor";
 import { JiraSubscribersExtractor } from "./subscribers.extractor";
 import { JiraIssueActivityExtractor } from "./issue-activity.extractor";
+import { JiraAssociatedUsersExtractor } from "./associated-users.extractor";
+import type { TExtractedUser } from "./associated-users.extractor";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
 
 export type TExtractionProps = {
@@ -69,6 +71,7 @@ export type TUnifiedExtractionResult = {
   relations: TIssueRelationsData[];
   issueActivities: Partial<ExIssueActivity>[];
   crossProjectRelations: TCrossProjectRelation[];
+  extractedUsers: TExtractedUser[];
 };
 
 /**
@@ -166,7 +169,16 @@ export class JiraIssueDataExtractor {
     // 5. Per-Issue Extraction: Issue Activities
     const issueActivities = issues.flatMap((issue) => issueActivityExtractor.extract(issue));
 
-    // 6. Metrics Collection
+    // 6. Aggregate Associated Users
+    const associatedUsersExtractor = this.getAssociatedUsersExtractor(additionalData.rawFields);
+    const extractedUsers = associatedUsersExtractor.extract({
+      issues,
+      comments,
+      worklogs,
+      subscribers,
+    });
+
+    // 7. Metrics Collection
     this.collectMetrics({
       job,
       issues,
@@ -181,6 +193,7 @@ export class JiraIssueDataExtractor {
       worklogs,
       issueActivities,
       crossProjectRelationsCount: allCrossProjectRelations.length,
+      extractedUsersCount: extractedUsers.length,
     });
 
     return {
@@ -191,6 +204,7 @@ export class JiraIssueDataExtractor {
       relations,
       issueActivities,
       crossProjectRelations: allCrossProjectRelations,
+      extractedUsers,
     };
   }
 
@@ -248,13 +262,16 @@ export class JiraIssueDataExtractor {
     return new JiraSubscribersExtractor();
   }
 
+  protected getAssociatedUsersExtractor(rawFields: JiraIssueField[]): JiraAssociatedUsersExtractor {
+    return new JiraAssociatedUsersExtractor(rawFields);
+  }
+
   private async getIssueActivityTransformationMaps(
     job: TImportJob<JiraConfig>,
     storage: IStorageService
   ): Promise<TTransformationMaps> {
     const { projectId, resourceId } = extractJobData(job);
-    const [userMap, issueTypeMap, cycleMap, moduleMap] = await Promise.all([
-      storage.retrieveMapping(job.id, EJiraStep.USERS),
+    const [issueTypeMap, cycleMap, moduleMap] = await Promise.all([
       storage.retrieveMapping(job.id, EJiraStep.ISSUE_TYPES),
       storage.retrieveMapping(job.id, EJiraStep.CYCLES),
       storage.retrieveMapping(job.id, EJiraStep.MODULES),
@@ -276,7 +293,6 @@ export class JiraIssueDataExtractor {
 
     return {
       stateMap: stateMap,
-      userMap: userMap,
       cycleMap: cycleMap,
       moduleMap: moduleMap,
       issueTypeMap: issueTypeMap,
@@ -299,6 +315,7 @@ export class JiraIssueDataExtractor {
     worklogs: Map<string, Partial<TWorklog>[]>;
     issueActivities: Partial<ExIssueActivity>[];
     crossProjectRelationsCount: number;
+    extractedUsersCount: number;
   }) {
     const { job, issues, comments, propertyValues, relations, issueActivities } = props;
 
@@ -366,6 +383,7 @@ export class JiraIssueDataExtractor {
         totalModuleAssociations: props.totalModuleAssociations,
         totalWorklogs: props.totalWorklogs,
         issueActivities: props.issueActivities.length,
+        associatedUsers: props.extractedUsersCount,
       },
     });
 
@@ -375,6 +393,7 @@ export class JiraIssueDataExtractor {
       issueActivities: issueActivities.length,
       relations: relations.length,
       crossProjectRelations: props.crossProjectRelationsCount,
+      associatedUsers: props.extractedUsersCount,
     });
   }
 }

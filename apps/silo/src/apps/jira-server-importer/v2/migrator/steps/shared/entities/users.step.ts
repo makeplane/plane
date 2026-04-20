@@ -15,7 +15,7 @@ import type { ImportedJiraUser, JiraConfig, JiraV2Service, PaginatedResult } fro
 import { pullUsersV2, transformUser } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
 import type { Client as PlaneClient, PlaneUser } from "@plane/sdk";
-import type { TImportJob, TWorkspaceCredential } from "@plane/types";
+import type { TImportJob } from "@plane/types";
 import { withCache } from "@/apps/jira-server-importer/v2/helpers/cache";
 import { createPaginationContext } from "@/apps/jira-server-importer/v2/helpers/ctx";
 import type {
@@ -26,11 +26,13 @@ import type {
   TStepExecutionInput,
 } from "@/apps/jira-server-importer/v2/types";
 import { EJiraStep } from "@/apps/jira-server-importer/v2/types";
-import { createUsers } from "@/etl/migrator/users.migrator";
 import { protect } from "@/lib";
 import { extractErrorMetadata } from "@/helpers/errors";
 import { executionLog } from "@/lib/execution-log/service/execution-log.service";
 import { EExecutionLogLevel, EExecutionLogEntityType } from "@/lib/execution-log/types";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import { getAPIClientInternal } from "@/services/client";
+import type { TProjectMemberBulkCreatePayload } from "@/services/member";
 
 /**
  * Handles the import of users from Jira Server to Plane.
@@ -47,13 +49,13 @@ export class JiraUsersStep implements IStep {
 
   private readonly PAGE_SIZE = 100;
 
+  constructor(private readonly source: E_IMPORTER_KEYS.JIRA_SERVER | E_IMPORTER_KEYS.JIRA) {}
+
   /**
    * Check if user import should be skipped based on job configuration
    */
-  private shouldPullUsers(input: TStepExecutionInput): boolean {
-    const { jobContext } = input;
-    const job = jobContext.job as TImportJob<JiraConfig>;
-    return !job.config.skipUserImport;
+  private shouldPullUsers(): boolean {
+    return this.source === E_IMPORTER_KEYS.JIRA;
   }
 
   /**
@@ -85,7 +87,7 @@ export class JiraUsersStep implements IStep {
         totalProcessed,
       });
 
-      const shouldPullUsers = this.shouldPullUsers(input);
+      const shouldPullUsers = this.shouldPullUsers();
 
       // Pull users from Jira Server (paginated)
       const pulledUsers = shouldPullUsers
@@ -203,7 +205,7 @@ export class JiraUsersStep implements IStep {
     transformedUsers: Partial<PlaneUser>[],
     storage: IStorageService
   ): Promise<number> {
-    const { planeClient, job, credentials } = jobContext;
+    const { planeClient, job } = jobContext;
 
     const existingUsers = await this.fetchExistingUsers(planeClient, job, transformedUsers);
 
@@ -224,14 +226,7 @@ export class JiraUsersStep implements IStep {
       toCreate: usersToCreate.length,
     });
 
-    const createdUsers = await this.dispatchUserCreation(
-      job.id,
-      usersToCreate,
-      planeClient,
-      credentials,
-      job.workspace_slug,
-      job.project_id
-    );
+    const createdUsers = await this.dispatchUserCreation(job.id, usersToCreate, job.workspace_slug, job.project_id);
 
     await this.dispatchStoreMappings(job.id, existingUsers, createdUsers, storage);
 
@@ -315,8 +310,6 @@ export class JiraUsersStep implements IStep {
   private async dispatchUserCreation(
     jobId: string,
     usersToCreate: Partial<PlaneUser>[],
-    planeClient: PlaneClient,
-    credentials: TWorkspaceCredential,
     workspaceSlug: string,
     projectId: string
   ): Promise<PlaneUser[]> {
@@ -324,8 +317,21 @@ export class JiraUsersStep implements IStep {
       return [];
     }
 
-    // Summary is collected inside the createUsers function
-    return await createUsers(jobId, usersToCreate as PlaneUser[], planeClient, credentials, workspaceSlug, projectId);
+    const apiClient = getAPIClientInternal();
+    const bulkResponse = await apiClient.member.bulkCreateProjectMembers(
+      workspaceSlug,
+      projectId,
+      usersToCreate as TProjectMemberBulkCreatePayload[]
+    );
+
+    logger.info(`[${jobId}] [${this.name}] Bulk create response`, {
+      jobId,
+      usersToCreate: usersToCreate.length,
+      created: bulkResponse.created.length,
+      errored: bulkResponse.errored.length,
+    });
+
+    return bulkResponse.created as PlaneUser[];
   }
 
   /**

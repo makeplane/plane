@@ -34,3 +34,4 @@ from .app import (
 from .work_item_property import IssuePropertyBulkOperationAPIView, WorkspaceIssuePropertyBulkOperationAPIView
 from .work_item_type import WorkspaceIssueTypeBulkOperationAPIView, WorkspaceWorkItemTypeImportAPIView
 from .releases import ReleaseBulkOperationAPIView
+from .member import ProjectMemberBulkAPIView

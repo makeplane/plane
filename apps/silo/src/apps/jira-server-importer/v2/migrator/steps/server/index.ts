@@ -23,12 +23,12 @@ import {
   JiraModulesStep,
   JiraRelationsStep,
   JiraToggleIssuePropertiesStep,
-  JiraUsersStep,
   PlaneProjectConfigurationStep,
   WaitForCeleryStep,
   JiraStatesStep,
   PlaneProjectCreateStep,
   WorkspaceFeaturesStep,
+  JiraUsersStep,
 } from "../shared";
 import { JiraResolutionsStep } from "../shared/entities/resolutions.step";
 import { JiraReleasesStep } from "../shared/entities/releases.step";
@@ -39,7 +39,7 @@ const JIRA_SERVER_STEPS = [
   new PlaneProjectCreateStep(),
   new PlaneProjectConfigurationStep(),
   // Entity steps
-  new JiraUsersStep(),
+  new JiraUsersStep(E_IMPORTER_KEYS.JIRA_SERVER),
   new JiraReleasesStep(E_IMPORTER_KEYS.JIRA_SERVER),
   new JiraStatesStep(),
   new JiraResolutionsStep(),

@@ -44,7 +44,7 @@ const JIRA_CLOUD_STEPS = [
   new PlaneProjectCreateStep(),
   new PlaneProjectConfigurationStep(),
   // Entity steps
-  new JiraCloudUserStep(),
+  new JiraCloudUserStep(E_IMPORTER_KEYS.JIRA),
   new JiraReleasesStep(E_IMPORTER_KEYS.JIRA),
   new JiraCloudStatesStep(),
   new JiraResolutionsStep(),

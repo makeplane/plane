@@ -12,7 +12,8 @@
  */
 
 import { v4 as uuidv4 } from "uuid";
-import type { E_IMPORTER_KEYS, TIssuePropertyValuesPayload } from "@plane/etl/core";
+import { E_IMPORTER_KEYS } from "@plane/etl/core";
+import type { TIssuePropertyValuesPayload } from "@plane/etl/core";
 import type { IJiraIssue, JiraConfig, JiraIssueField } from "@plane/etl/jira-server";
 import { buildExtenalId, pullIssuesV2, transformIssueV2 } from "@plane/etl/jira-server";
 import { logger } from "@plane/logger";
@@ -46,6 +47,7 @@ import { integrationConnectionHelper } from "@/helpers/integration-connection-he
 import { DB } from "@/db/client";
 import { JiraIssueDataExtractor } from "./extractors/data.extractor";
 import { getKnownFieldIds } from "@/apps/jira-server-importer/v2/helpers/known-fields";
+import { syncAssociatedUsers } from "./users/on-demand-users.sync";
 
 /**
  * Jira Server Issues Step
@@ -165,6 +167,15 @@ export class JiraIssuesStep implements IStep {
       // Merge resolved cross-project relations into the main relations array.
       // Must merge by external_id to avoid deduplication overwrites in storage.
       const allRelations = this.mergeRelationsByExternalId([...relations, ...crossProjectResolvedRelations]);
+
+      // Plugin: sync on-demand users (creates missing Plane users + appends USERS mappings)
+      if (this.source === E_IMPORTER_KEYS.JIRA_SERVER) {
+        await syncAssociatedUsers({
+          jobContext,
+          storage,
+          extractedUsers: extractedData.extractedUsers,
+        });
+      }
 
       // Load entity mappings from storage
       const mappings = await this.loadMappings(

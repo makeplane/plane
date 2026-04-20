@@ -21,10 +21,9 @@ import type { JiraConfig } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { TImportJob } from "@plane/types";
-import { Loader } from "@plane/ui";
 // plane web components
-import { StepperNavigation, AddSeatsAlertBanner, SkipUserImport } from "@/components/importers/ui";
-import { useJiraServerImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { StepperNavigation } from "@/components/importers/ui";
+import { useJiraServerImporter } from "@/plane-web/hooks/store";
 // plane web types
 import { E_IMPORTER_STEPS } from "@/types/importers/jira-server";
 import ImporterTable from "../../../ui/table";
@@ -48,19 +47,15 @@ export const SummaryRoot = observer(function SummaryRoot() {
       jiraStateIdsByProjectId,
       jiraPriorityIdsByProjectId,
       jiraIssueCount: jiraStoreIssueCount,
-      additionalUsersData,
       fetchJiraLabels,
       fetchJiraIssueCount,
-      fetchAdditionalUsers,
     },
     // setDashboardView,
   } = useJiraServerImporter();
   const { t } = useTranslation();
-  const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
 
   // states
   const [createConfigLoader, setCreateConfigLoader] = useState<boolean>(false);
-  const [userSkipToggle, setuserSkipToggle] = useState<boolean>(false);
   // derived values
   const workspaceSlug = workspace?.slug || undefined;
   const workspaceId = workspace?.id || undefined;
@@ -73,11 +68,6 @@ export const SummaryRoot = observer(function SummaryRoot() {
   const jiraStates = (jiraProjectId && jiraStateIdsByProjectId(jiraProjectId)) || [];
   const jiraPriorities = (jiraProjectId && jiraPriorityIdsByProjectId(jiraProjectId)) || [];
   const jiraIssueCount = (jiraProjectId && jiraStoreIssueCount[jiraProjectId]) || 0;
-
-  const handleUserSkipToggle = (flag: boolean) => {
-    setuserSkipToggle(flag);
-    handleSyncJobConfig("skipUserImport", flag);
-  };
 
   const handleOnClickNext = async () => {
     setCreateConfigLoader(true);
@@ -141,19 +131,6 @@ export const SummaryRoot = observer(function SummaryRoot() {
     { errorRetryCount: 0 }
   );
 
-  const { isLoading: isJiraAdditionalUsersDataLoading } = useSWR(
-    workspaceId && userId && workspaceSlug
-      ? `IMPORTER_JIRA_ADDITIONAL_USERS_${workspaceId}_${userId}_${workspaceSlug}`
-      : null,
-    workspaceId && userId && workspaceSlug
-      ? async () => fetchAdditionalUsers(workspaceId, userId, workspaceSlug)
-      : null,
-    { errorRetryCount: 0 }
-  );
-
-  const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
-  const isNextBtnDisabled = Boolean(extraSeatRequired > 0 && !userSkipToggle);
-
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
@@ -193,27 +170,11 @@ export const SummaryRoot = observer(function SummaryRoot() {
             : []),
         ]}
       />
-      {isJiraAdditionalUsersDataLoading ? (
-        <Loader.Item height="35px" width="100%" />
-      ) : extraSeatRequired && !userSkipToggle ? (
-        <AddSeatsAlertBanner
-          additionalUserCount={additionalUsersData?.additionalUserCount}
-          extraSeatRequired={extraSeatRequired}
-        />
-      ) : (
-        <></>
-      )}
       <div className="flex flex-col gap-4">
-        <SkipUserImport
-          importSourceName="Jira"
-          userSkipToggle={userSkipToggle}
-          handleUserSkipToggle={handleUserSkipToggle}
-        />
-
         {/* stepper button */}
         <div className="flex-shrink-0 relative flex items-center gap-2">
           <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
-            <Button variant="primary" onClick={handleOnClickNext} disabled={createConfigLoader || isNextBtnDisabled}>
+            <Button variant="primary" onClick={handleOnClickNext} disabled={createConfigLoader}>
               {createConfigLoader ? t("common.configuring") : t("common.confirm")}
             </Button>
           </StepperNavigation>

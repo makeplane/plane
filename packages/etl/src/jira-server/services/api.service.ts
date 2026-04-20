@@ -109,7 +109,7 @@ export class JiraV2Service {
     return (await this.jiraClient.userSearch.findUsers({
       username: ".",
       // @ts-expect-error - Ignoring ts error for includeActive
-      includeActive: true,
+      includeInactive: true, // Also include inactive users
       startAt: startAt ?? 0,
       maxResults: maxResults ?? 1000,
     })) as JiraApiUser[];

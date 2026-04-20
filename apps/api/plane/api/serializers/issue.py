@@ -118,7 +118,6 @@ class IssueSerializer(BaseSerializer):
             existing_project_member_ids = list(
                 ProjectMember.objects.filter(
                     project_id=self.context.get("project_id"),
-                    is_active=True,
                     role__gte=15,
                 ).values_list("member_id", flat=True)
             )

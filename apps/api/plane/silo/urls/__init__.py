@@ -19,6 +19,7 @@ from .importer import urlpatterns as importer_urls
 from .importer_report import urlpatterns as importer_report_urls
 from .import_execution_log import urlpatterns as import_execution_log_urls
 from .page import urlpatterns as page_urls
+from .member import urlpatterns as member_urls
 from .releases import urlpatterns as releases_urls
 from .work_item_property import urlpatterns as work_item_property_urls
 from .app import urlpatterns as app_urls
@@ -33,6 +34,7 @@ urlpatterns = [
     *importer_report_urls,
     *import_execution_log_urls,
     *page_urls,
+    *member_urls,
     *releases_urls,
     *work_item_property_urls,
     *app_urls,

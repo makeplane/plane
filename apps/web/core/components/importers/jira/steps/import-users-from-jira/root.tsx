@@ -11,21 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useEffect, useState } from "react";
 import { isEqual } from "lodash-es";
 import { observer } from "mobx-react";
-import useSWR from "swr";
 // plane packages imports
-import { pullUsers } from "@plane/etl/jira";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { Loader } from "@plane/ui";
 // plane web components
 import { ImportUsersFromJiraUploader } from "@/components/importers/jira";
-import { AddSeatsAlertBanner, SkipUserImport, StepperNavigation } from "@/components/importers/ui";
+import { StepperNavigation } from "@/components/importers/ui";
 // plane web hooks
-import { useJiraImporter, useWorkspaceSubscription } from "@/plane-web/hooks/store";
+import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
 import type { TImporterDataPayload } from "@/types/importers/jira";
 import { E_IMPORTER_STEPS } from "@/types/importers/jira";
@@ -37,17 +33,13 @@ const currentStepKey = E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA;
 export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
   // hooks
   const {
-    user,
-    workspace,
     auth: { currentAuth },
     importerData,
     handleImporterData,
     handleSyncJobConfig,
     currentStep,
     handleStepper,
-    data: { additionalUsersData, fetchAdditionalUsers },
   } = useJiraImporter();
-  const { currentWorkspaceSubscriptionAvailableSeats } = useWorkspaceSubscription();
 
   const { t } = useTranslation();
 
@@ -61,21 +53,14 @@ export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const isOAuthEnabled = currentAuth?.isOAuthEnabled;
   const isResourceFiledRequired = isOAuthEnabled ? !!jiraResourceId : true;
-  const workspaceSlug = workspace?.slug || undefined;
-  const workspaceId = workspace?.id || undefined;
-  const userId = user?.id || undefined;
 
   // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
 
-    if (key === "userSkipToggle" && typeof value === "boolean") {
-      handleSyncJobConfig("users", "");
-      handleSyncJobConfig("skipUserImport", value);
-    }
-    if (key === "userData" && !formData.userSkipToggle && typeof value === "string") {
+    if (key === "userData" && typeof value === "string") {
       handleSyncJobConfig("users", value);
-      handleSyncJobConfig("skipUserImport", formData.userSkipToggle);
+      handleSyncJobConfig("skipUserImport", false);
     }
   };
 
@@ -94,44 +79,14 @@ export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
-  const { isLoading: isJiraAdditionalUsersDataLoading } = useSWR(
-    workspaceId && userId && workspaceSlug && formData.userData
-      ? `IMPORTER_JIRA_ADDITIONAL_USERS_${workspaceId}_${userId}_${workspaceSlug}`
-      : null,
-    workspaceId && userId && workspaceSlug && formData.userData
-      ? async () => fetchAdditionalUsers(workspaceId, userId, workspaceSlug, pullUsers(formData.userData || ""))
-      : null,
-    { errorRetryCount: 0 }
-  );
-
-  const extraSeatRequired = additionalUsersData?.additionalUserCount - currentWorkspaceSubscriptionAvailableSeats;
-  const isNextButtonDisabled =
-    Boolean(extraSeatRequired > 0 && !formData.userSkipToggle) ||
-    Boolean(!formData.userSkipToggle && !formData.userData);
+  const isNextButtonDisabled = !formData.userData;
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
       {/* content */}
       <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-4">
-        {/* skipping users checkbox and alert */}
-        {isJiraAdditionalUsersDataLoading ? (
-          <Loader.Item height="35px" width="100%" />
-        ) : extraSeatRequired && formData.userData && !formData.userSkipToggle ? (
-          <AddSeatsAlertBanner
-            additionalUserCount={additionalUsersData?.additionalUserCount}
-            extraSeatRequired={extraSeatRequired}
-          />
-        ) : (
-          <></>
-        )}
-        <SkipUserImport
-          importSourceName="Jira"
-          userSkipToggle={formData.userSkipToggle}
-          handleUserSkipToggle={(value) => handleFormData("userSkipToggle", value)}
-        />
-
         {/* uploading the users from jira */}
-        {!formData.userSkipToggle && isResourceFiledRequired && (
+        {isResourceFiledRequired && (
           <div className="space-y-4">
             <div className="text-13">
               {t("importers.upload_csv_file")}
