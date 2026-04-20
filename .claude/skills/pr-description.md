@@ -10,7 +10,7 @@ Generate a pull request description based on the project's PR template at `.gith
 
 ## Steps
 
-1. **Determine the base branch**: Use `preview` as the default base branch unless the user specifies otherwise.
+1. **Determine the base branch**: Prefer the PR's actual `baseRefName` (via `gh pr view <PR> --json baseRefName`) when a PR exists. Otherwise default by intent — feature PRs target `preview`, release PRs target `master`. If still ambiguous, ask the user.
 
 2. **Analyze changes**: Run the following to understand what changed:
    - `git log <base>...HEAD --oneline` to see all commits on this branch
@@ -29,14 +29,14 @@ Generate a pull request description based on the project's PR template at `.gith
    Check the appropriate box(es) based on the changes:
    - Bug fix (non-breaking change which fixes an issue)
    - Feature (non-breaking change which adds functionality)
-   - Improvement (change that would cause existing functionality to not work as expected)
+   - Improvement (non-breaking change that improves existing functionality)
    - Code refactoring
    - Performance improvements
    - Documentation update
 
    ### Screenshots and Media
 
-   Leave this section for the user to fill in, with a note: `<!-- Add screenshots here -->`
+   Leave this section for the user to fill in, preserving the existing placeholder comment from `.github/pull_request_template.md` verbatim rather than introducing different text.
 
    ### Test Scenarios
 

@@ -62,7 +62,7 @@ Always preserve these IDs in the release notes — they let readers click throug
 
 For larger features where the commit headline is terse, fetch the work item:
 
-```
+```text
 mcp__plane__retrieve_work_item_by_identifier(project_identifier="WEB", issue_identifier=6874)
 ```
 
