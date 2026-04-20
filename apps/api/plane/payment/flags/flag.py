@@ -155,6 +155,7 @@ class FeatureFlag(Enum):
     WORK_ITEM_STATE_DURATION = "WORK_ITEM_STATE_DURATION"
 
 
+
 class AdminFeatureFlag(Enum):
     # OIDC SAML Auth
     OIDC_SAML_AUTH = "OIDC_SAML_AUTH"

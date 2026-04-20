@@ -153,7 +153,7 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_WORK_ITEM_TYPES_ENABLED):
             return Response(
                 {
-                    "error": "Cannot create project-level work item properties when workspace work item types are enabled." # noqa E501
+                    "error": "Cannot create project-level work item properties."
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )

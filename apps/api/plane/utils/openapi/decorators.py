@@ -528,6 +528,7 @@ def work_item_page_docs(**kwargs):
     return extend_schema(**_merge_schema_options(defaults, kwargs))
 
 
+
 def estimate_docs(**kwargs):
     """Decorator for estimate-related endpoints"""
     defaults = {
@@ -539,7 +540,9 @@ def estimate_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))
+
 
 
 def estimate_point_docs(**kwargs):
@@ -553,4 +556,52 @@ def estimate_point_docs(**kwargs):
             404: NOT_FOUND_RESPONSE,
         },
     }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workspace_work_item_type_docs(**kwargs):
+    """Decorator for workspace-level work item type endpoints"""
+    defaults = {
+        "tags": ["Workspace Work Item Types"],
+        "summary": "Endpoints for workspace work item type create/update/delete and fetch details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+def workspace_work_item_property_docs(**kwargs):
+    """Decorator for workspace-level work item property endpoints"""
+    defaults = {
+        "tags": ["Workspace Work Item Properties"],
+        "summary": "Endpoints for workspace work item property create/update/delete and fetch details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
+    return extend_schema(**_merge_schema_options(defaults, kwargs))
+
+
+def workspace_work_item_property_option_docs(**kwargs):
+    """Decorator for workspace-level work item property option endpoints"""
+    defaults = {
+        "tags": ["Workspace Work Item Properties"],
+        "summary": "Endpoints for workspace work item property option create/update/delete and fetch details",
+        "parameters": [WORKSPACE_SLUG_PARAMETER, PROPERTY_ID_PARAMETER],
+        "responses": {
+            401: UNAUTHORIZED_RESPONSE,
+            403: FORBIDDEN_RESPONSE,
+            404: NOT_FOUND_RESPONSE,
+        },
+    }
+
     return extend_schema(**_merge_schema_options(defaults, kwargs))

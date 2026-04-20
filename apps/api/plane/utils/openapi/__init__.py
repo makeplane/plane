@@ -206,6 +206,9 @@ from .decorators import (
     state_docs,
     issue_worklog_docs,
     work_item_page_docs,
+    workspace_work_item_type_docs,
+    workspace_work_item_property_docs,
+    workspace_work_item_property_option_docs,
     estimate_docs,
     estimate_point_docs,
 )
@@ -386,6 +389,9 @@ __all__ = [
     "state_docs",
     "issue_worklog_docs",
     "work_item_page_docs",
+    "workspace_work_item_type_docs",
+    "workspace_work_item_property_docs",
+    "workspace_work_item_property_option_docs",
     "estimate_docs",
     "estimate_point_docs",
     # Hooks

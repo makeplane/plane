@@ -22,6 +22,7 @@ from plane.db.models import Workspace, IssueType, Project, ProjectIssueType
 from plane.silo.views.base import BaseServiceAPIView
 from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 
+
 def validate_list_input(data):
     """Validate that input is a list"""
     if not isinstance(data, list):
@@ -31,29 +32,19 @@ def validate_list_input(data):
         )
     return None
 
+
 class WorkspaceIssueTypeBulkOperationAPIView(BaseServiceAPIView):
     """Bulk create/update endpoint for workspace work item types"""
 
     model = IssueType
     serializer_class = IssueTypeAPISerializer
 
-    logo_icons = [
-        "Activity", "AlertCircle", "Archive", "Bell", "Calendar", "Camera", "Check",
-        "Clock", "Code", "Database", "Download", "Edit", "File", "Folder", "Globe",
-        "Heart", "Home", "Mail", "Search", "User",
-    ]
-
-    logo_backgrounds = [
-        "#EF5974", "#FF7474", "#FC964D", "#1FA191", "#6DBCF5",
-        "#748AFF", "#4C49F8", "#5D407A", "#999AA0",
-    ]
-
     def generate_logo_prop(self):
         return {
             "in_use": "icon",
             "icon": {
-                "name": self.logo_icons[random.randint(0, len(self.logo_icons) - 1)],
-                "background_color": self.logo_backgrounds[random.randint(0, len(self.logo_backgrounds) - 1)],
+                "name": random.choice(IssueType.LOGO_ICONS),
+                "background_color": random.choice(IssueType.LOGO_BACKGROUNDS),
             },
         }
 
@@ -98,7 +89,7 @@ class WorkspaceIssueTypeBulkOperationAPIView(BaseServiceAPIView):
             )
             for item in existing_items:
                 existing_issue_types[(item.external_source, item.external_id)] = item
-        
+
         for item_data in request.data:
             try:
                 external_id = item_data.get("external_id")
@@ -119,7 +110,7 @@ class WorkspaceIssueTypeBulkOperationAPIView(BaseServiceAPIView):
                         workspace=workspace,
                         logo_props=self.generate_logo_prop(),
                     )
-                    
+
                     # Update tracking
                     created.append(serializer.data)
 
@@ -179,9 +170,9 @@ class WorkspaceWorkItemTypeImportAPIView(BaseServiceAPIView):
             id__in=work_item_type_ids,
             workspace=workspace,
         )
-        
+
         valid_type_ids = {wt.id for wt in work_item_types}
-        
+
         # Identify existing associations to return as 'updated'
         existing_associations = ProjectIssueType.objects.filter(
             project=project,
@@ -200,6 +191,7 @@ class WorkspaceWorkItemTypeImportAPIView(BaseServiceAPIView):
 
             try:
                 import uuid
+
                 type_id_uuid = uuid.UUID(type_id)
             except Exception:
                 errored.append({"payload": type_id, "error": "Invalid UUID format"})
@@ -235,4 +227,3 @@ class WorkspaceWorkItemTypeImportAPIView(BaseServiceAPIView):
             },
             status=status.HTTP_200_OK,
         )
-                

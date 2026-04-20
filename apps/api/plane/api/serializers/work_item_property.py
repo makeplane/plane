@@ -14,7 +14,6 @@ from django.db import models, transaction
 
 # Module imports
 from rest_framework import serializers
-from plane.db.models import ProjectIssueType
 from plane.ee.serializers import BaseSerializer
 from plane.ee.models import (
     IssueProperty,
@@ -62,7 +61,6 @@ class IssuePropertyAPISerializer(BaseSerializer):
             "name",
             "logo_props",
             "sort_order",
-            "issue_type",
             "deleted_at",
             "created_at",
             "updated_at",
@@ -104,19 +102,6 @@ class IssuePropertyAPISerializer(BaseSerializer):
 
         return value
 
-    def validate(self, data):
-        """Validate the serializer data"""
-
-        # validate if the issue type is in the project sent in the request
-        issue_type = self.context.get("issue_type")
-        project = self.context.get("project")
-
-        if issue_type and project:
-            project_issue_type = ProjectIssueType.objects.filter(issue_type=issue_type, project=project).first()
-            if not project_issue_type:
-                raise serializers.ValidationError("Issue type is not in the project")
-
-        return data
 
     @transaction.atomic
     def create(self, validated_data):

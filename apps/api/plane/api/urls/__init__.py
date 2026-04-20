@@ -31,6 +31,8 @@ from .user import urlpatterns as user_patterns
 from .work_item import urlpatterns as work_item_patterns
 from .work_item_property import urlpatterns as work_item_property_patterns
 from .work_item_type import urlpatterns as work_item_type_patterns
+from .workspace_work_item_type import urlpatterns as workspace_work_item_type_patterns
+from .workspace_work_item_property import urlpatterns as workspace_work_item_property_patterns
 from .worklog import urlpatterns as worklog_patterns
 from .workspace import urlpatterns as workspace_patterns
 
@@ -63,6 +65,8 @@ urlpatterns = [
     *work_item_patterns,
     *work_item_property_patterns,
     *work_item_type_patterns,
+    *workspace_work_item_type_patterns,
+    *workspace_work_item_property_patterns,
     *worklog_patterns,
     *workspace_patterns,
     # silo urls

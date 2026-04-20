@@ -107,6 +107,12 @@ WORKSPACES_MEMBERS_READ_SCOPE = "workspaces.members:read"
 WORKSPACES_MEMBERS_WRITE_SCOPE = "workspaces.members:write"
 WORKSPACES_FEATURES_READ_SCOPE = "workspaces.features:read"
 WORKSPACES_FEATURES_WRITE_SCOPE = "workspaces.features:write"
+WORKSPACES_WORK_ITEM_TYPES_READ_SCOPE = "workspaces.work_item_types:read"
+WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE = "workspaces.work_item_types:write"
+WORKSPACES_WORK_ITEM_PROPERTIES_READ_SCOPE = "workspaces.work_item_properties:read"
+WORKSPACES_WORK_ITEM_PROPERTIES_WRITE_SCOPE = "workspaces.work_item_properties:write"
+WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE = "workspaces.work_item_property_options:read"
+WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE = "workspaces.work_item_property_options:write"
 
 # STICKIES SCOPES
 STICKIES_READ_SCOPE = "stickies:read"
@@ -226,6 +232,12 @@ ALL_OAUTH_SCOPES = {
     WORKSPACES_MEMBERS_WRITE_SCOPE: "Write access to workspace members",
     WORKSPACES_FEATURES_READ_SCOPE: "Read access to workspace features",
     WORKSPACES_FEATURES_WRITE_SCOPE: "Write access to workspace features",
+    WORKSPACES_WORK_ITEM_TYPES_READ_SCOPE: "Read access to workspace work item types",
+    WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE: "Write access to workspace work item types",
+    WORKSPACES_WORK_ITEM_PROPERTIES_READ_SCOPE: "Read access to workspace work item properties",
+    WORKSPACES_WORK_ITEM_PROPERTIES_WRITE_SCOPE: "Write access to workspace work item properties",
+    WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE: "Read access to workspace work item property options",
+    WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE: "Write access to workspace work item property options",
     # Stickies scopes
     STICKIES_READ_SCOPE: "Read access to stickies",
     STICKIES_WRITE_SCOPE: "Write access to stickies",

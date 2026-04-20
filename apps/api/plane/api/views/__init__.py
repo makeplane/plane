@@ -71,6 +71,24 @@ from .issue import (
 
 from .issue_type import IssueTypeListCreateAPIEndpoint, IssueTypeDetailAPIEndpoint
 
+from .workspace_work_item_type import (
+    WorkspaceWorkItemTypeListCreateAPIEndpoint,
+    WorkspaceWorkItemTypeDetailAPIEndpoint,
+    WorkspaceWorkItemTypeImportAPIEndpoint,
+    WorkspaceWorkItemTypePropertyListCreateAPIEndpoint,
+    WorkspaceWorkItemTypePropertyDetailAPIEndpoint,
+)
+
+from .workspace_work_item_properties import (
+    WorkspaceWorkItemPropertyListCreateAPIEndpoint,
+    WorkspaceWorkItemPropertyDetailAPIEndpoint,
+)
+
+from .workspace_work_item_property_option import (
+    WorkspaceWorkItemPropertyOptionListCreateAPIEndpoint,
+    WorkspaceWorkItemPropertyOptionDetailAPIEndpoint,
+)
+
 from .member import (
     ProjectMemberListCreateAPIEndpoint,
     ProjectMemberDetailAPIEndpoint,

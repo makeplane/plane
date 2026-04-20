@@ -31,9 +31,9 @@ from plane.api.serializers import IssueTypeAPISerializer, ProjectIssueTypeAPISer
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.helpers import get_boolean_value
+from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 from plane.utils.openapi.decorators import issue_type_docs
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
-from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -58,41 +58,6 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_TYPES_WRITE_SCOPE]],
     }
 
-    logo_icons = [
-        "Activity",
-        "AlertCircle",
-        "Archive",
-        "Bell",
-        "Calendar",
-        "Camera",
-        "Check",
-        "Clock",
-        "Code",
-        "Database",
-        "Download",
-        "Edit",
-        "File",
-        "Folder",
-        "Globe",
-        "Heart",
-        "Home",
-        "Mail",
-        "Search",
-        "User",
-    ]
-
-    logo_backgrounds = [
-        "#EF5974",
-        "#FF7474",
-        "#FC964D",
-        "#1FA191",
-        "#6DBCF5",
-        "#748AFF",
-        "#4C49F8",
-        "#5D407A",
-        "#999AA0",
-    ]
-
     model = IssueType
     serializer_class = IssueTypeAPISerializer
     permission_classes = [ProjectEntityPermission]
@@ -114,8 +79,8 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
         return {
             "in_use": "icon",
             "icon": {
-                "name": self.logo_icons[random.randint(0, len(self.logo_icons) - 1)],
-                "background_color": self.logo_backgrounds[random.randint(0, len(self.logo_backgrounds) - 1)],
+                "name": random.choice(IssueType.LOGO_ICONS),
+                "background_color": random.choice(IssueType.LOGO_BACKGROUNDS),
             },
         }
 
@@ -172,11 +137,13 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
     )
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id):
+
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_WORK_ITEM_TYPES_ENABLED):
             return Response(
                 {"error": "Cannot create project-level work item types when workspace work item types are enabled."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
         with transaction.atomic():
             workspace = Workspace.objects.get(slug=slug)
             project = Project.objects.get(pk=project_id, workspace=workspace)
@@ -225,41 +192,6 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
 
     use_read_replica = True
 
-    logo_icons = [
-        "Activity",
-        "AlertCircle",
-        "Archive",
-        "Bell",
-        "Calendar",
-        "Camera",
-        "Check",
-        "Clock",
-        "Code",
-        "Database",
-        "Download",
-        "Edit",
-        "File",
-        "Folder",
-        "Globe",
-        "Heart",
-        "Home",
-        "Mail",
-        "Search",
-        "User",
-    ]
-
-    logo_backgrounds = [
-        "#EF5974",
-        "#FF7474",
-        "#FC964D",
-        "#1FA191",
-        "#6DBCF5",
-        "#748AFF",
-        "#4C49F8",
-        "#5D407A",
-        "#999AA0",
-    ]
-
     model = IssueType
     serializer_class = IssueTypeAPISerializer
     permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
@@ -288,8 +220,8 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
         return {
             "in_use": "icon",
             "icon": {
-                "name": self.logo_icons[random.randint(0, len(self.logo_icons) - 1)],
-                "background_color": self.logo_backgrounds[random.randint(0, len(self.logo_backgrounds) - 1)],
+                "name": random.choice(IssueType.LOGO_ICONS),
+                "background_color": random.choice(IssueType.LOGO_BACKGROUNDS),
             },
         }
 
