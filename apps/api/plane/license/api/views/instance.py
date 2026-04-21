@@ -63,6 +63,7 @@ class InstanceEndpoint(BaseAPIView):
             POSTHOG_HOST,
             UNSPLASH_ACCESS_KEY,
             LLM_API_KEY,
+            IS_KEYCLOAK_ENABLED,
         ) = get_configuration_value(
             [
                 {
@@ -122,6 +123,10 @@ class InstanceEndpoint(BaseAPIView):
                     "key": "LLM_API_KEY",
                     "default": os.environ.get("LLM_API_KEY", ""),
                 },
+                {
+                    "key": "IS_KEYCLOAK_ENABLED",
+                    "default": os.environ.get("IS_KEYCLOAK_ENABLED", "0"),
+                },
             ]
         )
 
@@ -151,6 +156,7 @@ class InstanceEndpoint(BaseAPIView):
 
         # Open AI settings
         data["has_llm_configured"] = bool(LLM_API_KEY)
+        data["is_keycloak_enabled"] = IS_KEYCLOAK_ENABLED == "1"
 
         # File size settings
         data["file_size_limit"] = float(os.environ.get("FILE_SIZE_LIMIT", 5242880))

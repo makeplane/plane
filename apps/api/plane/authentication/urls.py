@@ -44,6 +44,10 @@ from .views import (
     GiteaOauthInitiateEndpoint,
     GiteaCallbackSpaceEndpoint,
     GiteaOauthInitiateSpaceEndpoint,
+    KeycloakCallbackEndpoint,
+    KeycloakOauthInitiateEndpoint,
+    KeycloakCallbackSpaceEndpoint,
+    KeycloakOauthInitiateSpaceEndpoint,
 )
 
 urlpatterns = [
@@ -149,5 +153,18 @@ urlpatterns = [
         "spaces/gitea/callback/",
         GiteaCallbackSpaceEndpoint.as_view(),
         name="space-gitea-callback",
+    ),
+    ## Keycloak Oauth
+    path("keycloak/", KeycloakOauthInitiateEndpoint.as_view(), name="keycloak-initiate"),
+    path("keycloak/callback/", KeycloakCallbackEndpoint.as_view(), name="keycloak-callback"),
+    path(
+        "spaces/keycloak/",
+        KeycloakOauthInitiateSpaceEndpoint.as_view(),
+        name="space-keycloak-initiate",
+    ),
+    path(
+        "spaces/keycloak/callback/",
+        KeycloakCallbackSpaceEndpoint.as_view(),
+        name="space-keycloak-callback",
     ),
 ]
