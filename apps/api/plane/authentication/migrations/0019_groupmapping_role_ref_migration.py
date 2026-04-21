@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
             name="role",
             field=models.ForeignKey(
                 help_text="Project-scoped Role to assign when syncing members via this mapping.",
-                on_delete=django.db.models.deletion.CASCADE,
+                on_delete=django.db.models.deletion.PROTECT,
                 related_name="group_mappings",
                 to="db.role",
             ),
