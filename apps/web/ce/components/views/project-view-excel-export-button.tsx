@@ -6,7 +6,6 @@ import { ALL_ISSUES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { EIssuesStoreType } from "@plane/types";
-// hooks
 import { useIssues } from "@/hooks/store/use-issues";
 import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
@@ -15,20 +14,23 @@ import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// utils
-import { buildExportRow } from "./export-row-builder";
+import { buildExportRow } from "@/plane-web/components/workspace/views/export-row-builder";
 
 const WARN_THRESHOLD = 500;
 const MAX_FETCH_ITERATIONS = 50;
 
-type Props = { workspaceSlug: string; globalViewId: string };
+type Props = { workspaceSlug: string; projectId: string; viewId: string };
 
-export const ExcelExportButton = observer(function ExcelExportButton({ workspaceSlug, globalViewId }: Props) {
+export const ProjectViewExcelExportButton = observer(function ProjectViewExcelExportButton({
+  workspaceSlug,
+  projectId,
+  viewId,
+}: Props) {
   const { t } = useTranslation();
   const [showWarning, setShowWarning] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
-  const { issues, issueMap } = useIssues(EIssuesStoreType.GLOBAL);
+  const { issues, issueMap } = useIssues(EIssuesStoreType.PROJECT_VIEW);
   const { getStateById } = useProjectState();
   const { getProjectById } = useProject();
   const { getModuleById } = useModule();
@@ -66,14 +68,15 @@ export const ExcelExportButton = observer(function ExcelExportButton({ workspace
       while (iterations < MAX_FETCH_ITERATIONS) {
         const pagination = issues.getPaginationData(undefined, undefined);
         if (!pagination?.nextPageResults) break;
-        await issues.fetchNextIssues(workspaceSlug, globalViewId);
+        await issues.fetchNextIssues(workspaceSlug, projectId, viewId);
         iterations++;
       }
       const rows = buildRows();
       const ws = XLSX.utils.json_to_sheet(rows);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Issues");
-      const filename = `${workspaceSlug}-${globalViewId}-issues-${new Date().toISOString().slice(0, 16).replace("T", "-").replace(":", "")}.xlsx`;
+      const projectName = (getProjectById(projectId)?.name ?? projectId).replace(/\s+/g, "_");
+      const filename = `${workspaceSlug}-${projectName}-${new Date().toISOString().slice(0, 16).replace("T", "-").replace(":", "")}.xlsx`;
       XLSX.writeFile(wb, filename);
     } finally {
       setIsExporting(false);

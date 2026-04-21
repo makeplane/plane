@@ -1806,6 +1806,15 @@ export default {
           authentication: "인증",
           joining_date: "가입 날짜",
         },
+        export: {
+          col_name: "이름",
+          col_email: "이메일",
+          col_role: "역할",
+          col_joining_date: "가입 날짜",
+          col_status: "상태",
+          status_active: "활성",
+          status_inactive: "비활성",
+        },
         modal: {
           title: "사람들을 초대하여 협업하세요",
           description: "작업 공간에서 협업할 사람들을 초대하세요.",
