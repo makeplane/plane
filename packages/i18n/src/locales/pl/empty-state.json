@@ -191,6 +191,10 @@
       "description": "Używaj inicjatyw do grupowania i monitorowania powiązanych projektów i epików. Przeglądaj postępy, priorytety i wyniki — wszystko z jednego ekranu.",
       "cta_primary": "Utwórz inicjatywę"
     },
+    "archived_initiatives": {
+      "title": "Brak zarchiwizowanych inicjatyw",
+      "description": "Możesz archiwizować inicjatywy, które zostały ukończone lub zamknięte. Znajdziesz je tutaj po zarchiwizowaniu."
+    },
     "customers": {
       "title": "Zarządzaj pracą według tego, co jest ważne dla Twoich klientów",
       "description": "Przenieś prośby klientów do elementów roboczych, przypisz priorytet według próśb i przenieś stany elementów roboczych do rekordów klientów. Wkrótce zintegrujesz się z narzędziem CRM lub wsparciem, aby jeszcze lepiej zarządzać pracą według atrybutów klientów.",

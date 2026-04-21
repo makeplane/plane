@@ -191,6 +191,10 @@
       "description": "Gunakan inisiatif untuk mengelompokkan dan memantau proyek dan epik terkait. Lihat kemajuan, prioritas, dan hasil—semua dari satu layar.",
       "cta_primary": "Buat Inisiatif"
     },
+    "archived_initiatives": {
+      "title": "Belum ada inisiatif yang diarsipkan",
+      "description": "Anda dapat mengarsipkan inisiatif yang sudah selesai atau ditutup. Temukan di sini setelah diarsipkan."
+    },
     "customers": {
       "title": "Kelola pekerjaan berdasarkan apa yang penting bagi pelanggan Anda",
       "description": "Bawa permintaan pelanggan ke item kerja, tetapkan prioritas berdasarkan permintaan, dan gulung status item kerja ke dalam catatan pelanggan. Segera, Anda akan berintegrasi dengan alat CRM atau Dukungan Anda untuk manajemen pekerjaan yang lebih baik berdasarkan atribut pelanggan.",

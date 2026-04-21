@@ -191,6 +191,10 @@
       "description": "Použite iniciatívy na zoskupenie a sledovanie súvisiacich projektov a epikov. Zobrazujte pokrok, priority a výsledky—všetko z jedinej obrazovky.",
       "cta_primary": "Vytvoriť iniciatívu"
     },
+    "archived_initiatives": {
+      "title": "Zatiaľ žiadne archivované iniciatívy",
+      "description": "Môžete archivovať iniciatívy, ktoré sú dokončené alebo uzavreté. Nájdete ich tu po archivácii."
+    },
     "customers": {
       "title": "Spravujte prácu podľa toho, čo je dôležité pre vašich zákazníkov",
       "description": "Prepojte požiadavky zákazníkov s pracovnými položkami, priraďte prioritu podľa požiadaviek a zhrňte stavy pracovných položiek do záznamov zákazníkov. Čoskoro sa budete môcť integrovať s vaším CRM alebo nástrojom podpory pre ešte lepšiu správu práce podľa atribútov zákazníkov.",

@@ -191,6 +191,10 @@
       "description": "Usa iniciativas para agrupar y monitorear proyectos y épicas relacionados. Ve el progreso, prioridades y resultados — todo desde una sola pantalla.",
       "cta_primary": "Crear una Iniciativa"
     },
+    "archived_initiatives": {
+      "title": "Aún no hay iniciativas archivadas",
+      "description": "Puedes archivar iniciativas que estén completadas o cerradas. Las encontrarás aquí una vez archivadas."
+    },
     "customers": {
       "title": "Gestiona el trabajo según lo que es importante para tus clientes",
       "description": "Vincula las solicitudes de los clientes a los elementos de trabajo, asigna prioridad según las solicitudes y agrupa los estados de los elementos de trabajo en los registros de los clientes. Pronto, podrás integrarte con tu herramienta de CRM o Soporte para una gestión del trabajo aún mejor según los atributos de los clientes.",

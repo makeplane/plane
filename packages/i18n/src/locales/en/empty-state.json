@@ -191,6 +191,10 @@
       "description": "Use initiatives to group and monitor related projects and epics. View progress, priorities, and outcomes—all from a single screen.",
       "cta_primary": "Create an Initiative"
     },
+    "archived_initiatives": {
+      "title": "No archived initiatives yet",
+      "description": "You can archive initiatives that are completed or closed. Find them here once archived."
+    },
     "customers": {
       "title": "Manage work by what's important to your customers",
       "description": "Bring customer requests to work items, assign priority by requests, and roll up work items' states into customer records. Soon, you will integrate with your CRM or Support tool for even better work management by customer attributes.",

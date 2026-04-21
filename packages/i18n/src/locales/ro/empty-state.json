@@ -191,6 +191,10 @@
       "description": "Utilizați inițiative pentru a grupa și monitoriza proiecte și epopei conexe. Vizualizați progresul, prioritățile și rezultatele — toate dintr-un singur ecran.",
       "cta_primary": "Creați o Inițiativă"
     },
+    "archived_initiatives": {
+      "title": "Nicio inițiativă arhivată încă",
+      "description": "Puteți arhiva inițiative finalizate sau închise. Le găsiți aici după arhivare."
+    },
     "customers": {
       "title": "Gestionați munca în funcție de ceea ce este important pentru clienții dvs.",
       "description": "Aduceți solicitările clienților la elemente de lucru, alocați prioritate în funcție de solicitări și consolidați stările elementelor de lucru în înregistrările clienților. În curând, veți integra cu instrumentul dvs. CRM sau Suport pentru o gestionare și mai bună a muncii în funcție de atributele clienților.",

@@ -191,6 +191,10 @@
       "description": "Sử dụng sáng kiến để nhóm và giám sát các dự án và câu chuyện sử thi liên quan. Xem tiến độ, ưu tiên và kết quả—tất cả từ một màn hình duy nhất.",
       "cta_primary": "Tạo Sáng kiến"
     },
+    "archived_initiatives": {
+      "title": "Chưa có sáng kiến đã lưu trữ",
+      "description": "Bạn có thể lưu trữ các sáng kiến đã hoàn thành hoặc đã đóng. Tìm chúng tại đây sau khi đã lưu trữ."
+    },
     "customers": {
       "title": "Quản lý công việc theo những gì quan trọng với khách hàng của bạn",
       "description": "Đưa yêu cầu của khách hàng vào các mục công việc, gán mức độ ưu tiên theo yêu cầu và tổng hợp trạng thái của các mục công việc vào hồ sơ khách hàng. Sớm, bạn sẽ tích hợp với công cụ CRM hoặc Hỗ trợ của mình để quản lý công việc tốt hơn theo thuộc tính khách hàng.",

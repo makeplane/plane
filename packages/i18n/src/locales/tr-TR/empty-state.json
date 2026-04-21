@@ -191,6 +191,10 @@
       "description": "İlgili projeleri ve destanları gruplamak ve izlemek için girişimleri kullanın. İlerlemeyi, öncelikleri ve sonuçları görün—hepsi tek bir ekrandan.",
       "cta_primary": "Girişim Oluştur"
     },
+    "archived_initiatives": {
+      "title": "Henüz arşivlenmiş girişim yok",
+      "description": "Tamamlanmış veya kapatılmış girişimleri arşivleyebilirsiniz. Arşivlendikten sonra burada bulunur."
+    },
     "customers": {
       "title": "Müşterileriniz için önemli olan şeye göre çalışmayı yönetin",
       "description": "Müşteri isteklerini iş öğelerine getirin, isteklere göre öncelik atayın ve iş öğelerinin durumlarını müşteri kayıtlarına yuvarlayın. Yakında, müşteri özniteliklerine göre daha da iyi iş yönetimi için CRM veya Destek aracınızla entegre olacaksınız.",

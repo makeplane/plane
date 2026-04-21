@@ -191,6 +191,10 @@
       "description": "Použijte iniciativy ke seskupení a sledování souvisejících projektů a epiků. Zobrazujte pokrok, priority a výsledky—vše z jediné obrazovky.",
       "cta_primary": "Vytvořit iniciativu"
     },
+    "archived_initiatives": {
+      "title": "Zatím žádné archivované iniciativy",
+      "description": "Můžete archivovat iniciativy, které jsou dokončené nebo uzavřené. Po archivaci je najdete zde."
+    },
     "customers": {
       "title": "Spravujte práci podle toho, co je důležité pro vaše zákazníky",
       "description": "Propojte požadavky zákazníků s pracovními položkami, přiřaďte prioritu podle požadavků a shrňte stavy pracovních položek do záznamů zákazníků. Brzy se budete moci integrovat s vaším CRM nebo nástrojem podpory pro ještě lepší správu práce podle atributů zákazníků.",

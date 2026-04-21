@@ -191,6 +191,10 @@
       "description": "Utilisez les initiatives pour regrouper et surveiller les projets et épiques connexes. Visualisez les progrès, les priorités et les résultats—tous à partir d'un seul écran.",
       "cta_primary": "Créer une Initiative"
     },
+    "archived_initiatives": {
+      "title": "Aucune initiative archivée pour le moment",
+      "description": "Vous pouvez archiver les initiatives terminées ou fermées. Retrouvez-les ici une fois archivées."
+    },
     "customers": {
       "title": "Gérez le travail en fonction de ce qui est important pour vos clients",
       "description": "Apportez les demandes des clients aux éléments de travail, attribuez une priorité par demandes, et regroupez les états des éléments de travail dans les enregistrements clients. Bientôt, vous intégrerez votre CRM ou outil de Support pour une meilleure gestion du travail selon les attributs clients.",
