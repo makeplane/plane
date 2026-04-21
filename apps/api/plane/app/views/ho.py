@@ -326,6 +326,10 @@ class HoIssueListView(BaseAPIView):
         if assignees:
             qs = qs.filter(assignees__id__in=assignees.split(",")).distinct()
 
+        leads = request.query_params.get("leads")
+        if leads:
+            qs = qs.filter(project__project_lead_id__in=leads.split(","))
+
         main_task_category = request.query_params.get("main_task_category")
         if main_task_category:
             qs = qs.filter(main_task_category__name__in=main_task_category.split(","))
@@ -487,6 +491,8 @@ class HoFilterOptionsView(BaseAPIView):
             filter_kwargs["archived_at__isnull"] = True
             filter_kwargs["project__archived_at__isnull"] = True
         base_qs = Issue.objects.filter(**filter_kwargs)
+        scope_q = _get_user_scope_q(request.user, workspace_ids)
+        base_qs = base_qs.filter(scope_q)
         if project_ids:
             base_qs = base_qs.filter(project_id__in=project_ids)
         if from_date:
