@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Se poate încărca doar un fișier o dată.",
     "file_size_limit": "Fișierul trebuie să aibă {size}MB sau mai puțin.",
     "drag_and_drop": "Trage și plasează oriunde pentru a încărca",
-    "delete": "Șterge atașamentul"
+    "delete": "Șterge atașamentul",
+    "preview": {
+      "aria_label": "Previzualizare atașament",
+      "download": "Descarcă",
+      "close": "Închide previzualizarea",
+      "previous": "Atașamentul anterior",
+      "next": "Atașamentul următor"
+    }
   },
   "label": {
     "select": "Selectează eticheta",

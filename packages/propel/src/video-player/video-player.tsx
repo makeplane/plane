@@ -203,7 +203,7 @@ export const VideoPlayer = forwardRef(function VideoPlayer(props: Props, ref: Re
   return (
     <div
       ref={containerRef}
-      className={cn("relative group bg-surface-1 rounded-md overflow-hidden", className)}
+      className={cn("relative group rounded-md overflow-hidden", className)}
       onMouseMove={resetControlsTimeout}
       onMouseLeave={() => isPlaying && setShowControls(false)}
       onClick={() => {

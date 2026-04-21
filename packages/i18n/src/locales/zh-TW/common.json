@@ -759,7 +759,14 @@
     "only_one_file_allowed": "一次只能上傳一個檔案。",
     "file_size_limit": "檔案大小必須小於或等於 {size}MB。",
     "drag_and_drop": "拖曳到任何位置以上傳",
-    "delete": "刪除附件"
+    "delete": "刪除附件",
+    "preview": {
+      "aria_label": "附件預覽",
+      "download": "下載",
+      "close": "關閉預覽",
+      "previous": "上一個附件",
+      "next": "下一個附件"
+    }
   },
   "label": {
     "select": "選擇標籤",

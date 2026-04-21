@@ -40,6 +40,38 @@ export const getAssetIdFromUrl = (src: string): string => {
   return assetUrl;
 };
 
+type TWorkspaceAssetSrcArgs = {
+  assetId: string;
+  projectId?: string;
+  workspaceSlug: string;
+};
+
+/**
+ * @description generate an inline asset URL for workspace-scoped or project-scoped assets
+ * @param {TWorkspaceAssetSrcArgs} args
+ * @returns {string} the inline asset path
+ */
+export const getWorkspaceAssetInlineSrc = (args: TWorkspaceAssetSrcArgs): string => {
+  const { assetId, projectId, workspaceSlug } = args;
+  if (projectId) {
+    return `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/?disposition=inline`;
+  }
+  return `/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/?disposition=inline`;
+};
+
+/**
+ * @description generate a download asset URL for workspace-scoped or project-scoped assets
+ * @param {TWorkspaceAssetSrcArgs} args
+ * @returns {string} the download asset path
+ */
+export const getWorkspaceAssetDownloadSrc = (args: TWorkspaceAssetSrcArgs): string => {
+  const { assetId, projectId, workspaceSlug } = args;
+  if (projectId) {
+    return `/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/download/${assetId}/`;
+  }
+  return `/api/assets/v2/workspaces/${workspaceSlug}/download/${assetId}/`;
+};
+
 /**
  * @description encode image via URL to base64
  * @param {string} url

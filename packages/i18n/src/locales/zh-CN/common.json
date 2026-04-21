@@ -760,7 +760,14 @@
     "only_one_file_allowed": "一次只能上传一个文件。",
     "file_size_limit": "文件大小必须小于或等于 {size}MB。",
     "drag_and_drop": "拖放到任意位置以上传",
-    "delete": "删除附件"
+    "delete": "删除附件",
+    "preview": {
+      "aria_label": "附件预览",
+      "download": "下载",
+      "close": "关闭预览",
+      "previous": "上一个附件",
+      "next": "下一个附件"
+    }
   },
   "label": {
     "select": "选择标签",

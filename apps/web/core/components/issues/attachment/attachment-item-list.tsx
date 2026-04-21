@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { useCallback, useState } from "react";
 import { observer } from "mobx-react";
 import type { FileRejection } from "react-dropzone";
@@ -30,8 +29,10 @@ import type { TAttachmentHelpers } from "../issue-detail-widgets/attachments/hel
 // components
 import { IssueAttachmentsListItem } from "./attachment-list-item";
 import { IssueAttachmentsUploadItem } from "./attachment-list-upload-item";
-// types
+import { IssueAttachmentPreviewDialog } from "./attachment-preview-dialog";
 import { IssueAttachmentDeleteModal } from "./delete-attachment-modal";
+// hooks
+import { useIssueAttachmentPreview } from "./use-issue-attachment-preview";
 
 type TIssueAttachmentItemList = {
   workspaceSlug: string;
@@ -56,7 +57,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
   const [isUploading, setIsUploading] = useState(false);
   // store hooks
   const {
-    attachment: { getAttachmentsByIssueId },
+    attachment: { getAttachmentsByIssueId, getAttachmentById },
     attachmentDeleteModalId,
     toggleDeleteAttachmentModal,
     fetchActivities,
@@ -66,12 +67,26 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
   const { uploadStatus } = attachmentSnapshot;
   // file size
   const { maxFileSize } = useFileSize();
+  // attachment preview
+  const {
+    isPreviewOpen,
+    selectedItem,
+    openAttachmentPreview,
+    closeAttachmentPreview,
+    goToNext,
+    goToPrevious,
+    hasNext,
+    hasPrevious,
+  } = useIssueAttachmentPreview({
+    attachmentIds: getAttachmentsByIssueId(issueId),
+    getAttachmentById,
+  });
   // derived values
   const issueAttachments = getAttachmentsByIssueId(issueId);
 
   // handlers
   const handleFetchPropertyActivities = useCallback(() => {
-    fetchActivities(workspaceSlug, projectId, issueId);
+    void fetchActivities(workspaceSlug, projectId, issueId);
   }, [fetchActivities, workspaceSlug, projectId, issueId]);
 
   const onDrop = useCallback(
@@ -83,7 +98,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
         if (!currentFile || !workspaceSlug) return;
 
         setIsUploading(true);
-        createAttachment(currentFile)
+        void createAttachment(currentFile)
           .catch(() => {
             setToast({
               type: TOAST_TYPE.ERROR,
@@ -108,7 +123,7 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
       });
       return;
     },
-    [createAttachment, maxFileSize, workspaceSlug, handleFetchPropertyActivities]
+    [createAttachment, maxFileSize, workspaceSlug, handleFetchPropertyActivities, t]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -155,9 +170,19 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
                 attachmentId={attachmentId}
                 disabled={disabled}
                 issueServiceType={issueServiceType}
+                onPreview={openAttachmentPreview}
               />
             ))}
           </div>
+          <IssueAttachmentPreviewDialog
+            isOpen={isPreviewOpen}
+            onClose={closeAttachmentPreview}
+            item={selectedItem}
+            onNext={goToNext}
+            onPrevious={goToPrevious}
+            hasNext={hasNext}
+            hasPrevious={hasPrevious}
+          />
         </>
       )}
     </>

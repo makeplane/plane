@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Hanya satu file yang dapat diunggah pada satu waktu.",
     "file_size_limit": "File harus berukuran {size}MB atau lebih kecil.",
     "drag_and_drop": "Seret dan jatuhkan di mana saja untuk mengunggah",
-    "delete": "Hapus lampiran"
+    "delete": "Hapus lampiran",
+    "preview": {
+      "aria_label": "Pratinjau lampiran",
+      "download": "Unduh",
+      "close": "Tutup pratinjau",
+      "previous": "Lampiran sebelumnya",
+      "next": "Lampiran berikutnya"
+    }
   },
   "label": {
     "select": "Pilih label",

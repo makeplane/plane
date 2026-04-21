@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Je možné nahrát pouze jeden soubor najednou.",
     "file_size_limit": "Soubor musí být menší než {size}MB.",
     "drag_and_drop": "Přetáhněte soubor kamkoli pro nahrání",
-    "delete": "Smazat přílohu"
+    "delete": "Smazat přílohu",
+    "preview": {
+      "aria_label": "Náhled přílohy",
+      "download": "Stáhnout",
+      "close": "Zavřít náhled",
+      "previous": "Předchozí příloha",
+      "next": "Další příloha"
+    }
   },
   "label": {
     "select": "Vybrat štítek",

@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Un seul fichier peut être téléchargé à la fois.",
     "file_size_limit": "Le fichier doit faire {size}MB ou moins.",
     "drag_and_drop": "Glissez-déposez n’importe où pour uploader",
-    "delete": "Supprimer la pièce jointe"
+    "delete": "Supprimer la pièce jointe",
+    "preview": {
+      "aria_label": "Aperçu de la pièce jointe",
+      "download": "Télécharger",
+      "close": "Fermer l'aperçu",
+      "previous": "Pièce jointe précédente",
+      "next": "Pièce jointe suivante"
+    }
   },
   "label": {
     "select": "Sélectionner une étiquette",

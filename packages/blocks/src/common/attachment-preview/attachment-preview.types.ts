@@ -11,6 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./attachment-preview";
-export { LabelChip } from "./label-chip";
-export type { LabelChipProps } from "./label-chip";
+export type TAttachmentPreviewKind = "image" | "video" | "audio" | "pdf" | "text" | "unsupported";
+
+export type TAttachmentPreviewItem = {
+  id: string;
+  name: string;
+  extension: string;
+  size: number;
+  kind: TAttachmentPreviewKind;
+  previewSrc?: string;
+  downloadSrc: string;
+  openInNewTabSrc?: string;
+  uploadedByLabel?: string;
+  uploadedAtLabel?: string;
+};

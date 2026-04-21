@@ -759,7 +759,14 @@
     "only_one_file_allowed": "È possibile caricare un solo file alla volta.",
     "file_size_limit": "Il file deve essere di {size}MB o meno.",
     "drag_and_drop": "Trascina e rilascia ovunque per caricare",
-    "delete": "Elimina allegato"
+    "delete": "Elimina allegato",
+    "preview": {
+      "aria_label": "Anteprima allegato",
+      "download": "Scarica",
+      "close": "Chiudi anteprima",
+      "previous": "Allegato precedente",
+      "next": "Allegato successivo"
+    }
   },
   "label": {
     "select": "Seleziona etichetta",

@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 
 import { useTranslation } from "@plane/i18n";
@@ -36,12 +35,13 @@ type TIssueAttachmentsListItem = {
   attachmentId: string;
   disabled?: boolean;
   issueServiceType?: TIssueServiceType;
+  onPreview?: (attachmentId: string) => void;
 };
 
 export const IssueAttachmentsListItem = observer(function IssueAttachmentsListItem(props: TIssueAttachmentsListItem) {
   const { t } = useTranslation();
   // props
-  const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES } = props;
+  const { attachmentId, disabled, issueServiceType = EIssueServiceType.ISSUES, onPreview } = props;
   // store hooks
   const { getUserDetails } = useMember();
   const {
@@ -65,7 +65,11 @@ export const IssueAttachmentsListItem = observer(function IssueAttachmentsListIt
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          window.open(fileURL, "_blank");
+          if (onPreview) {
+            onPreview(attachmentId);
+          } else {
+            window.open(fileURL, "_blank");
+          }
         }}
       >
         <div className="group flex items-center justify-between gap-3 h-11 hover:bg-surface-2 pl-3 pr-2">

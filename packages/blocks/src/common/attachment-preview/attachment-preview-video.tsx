@@ -11,6 +11,17 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-export * from "./attachment-preview";
-export { LabelChip } from "./label-chip";
-export type { LabelChipProps } from "./label-chip";
+// plane imports
+import { VideoPlayer } from "@plane/propel/video-player";
+
+export type AttachmentPreviewVideoProps = {
+  src: string;
+};
+
+export function AttachmentPreviewVideo({ src }: AttachmentPreviewVideoProps) {
+  return (
+    <div className="flex h-full w-full items-center justify-center" data-testid="preview-video">
+      <VideoPlayer src={src} className="h-full max-h-full w-full max-w-full" />
+    </div>
+  );
+}

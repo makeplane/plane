@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Es kann jeweils nur eine Datei hochgeladen werden.",
     "file_size_limit": "Die Datei muss kleiner als {size} MB sein.",
     "drag_and_drop": "Datei hierher ziehen, um sie hochzuladen",
-    "delete": "Anhang löschen"
+    "delete": "Anhang löschen",
+    "preview": {
+      "aria_label": "Anhangsvorschau",
+      "download": "Herunterladen",
+      "close": "Vorschau schließen",
+      "previous": "Vorheriger Anhang",
+      "next": "Nächster Anhang"
+    }
   },
   "label": {
     "select": "Label auswählen",

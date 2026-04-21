@@ -760,7 +760,14 @@
     "only_one_file_allowed": "Only one file can be uploaded at a time.",
     "file_size_limit": "File must be of {size}MB or less in size.",
     "drag_and_drop": "Drag and drop anywhere to upload",
-    "delete": "Delete attachment"
+    "delete": "Delete attachment",
+    "preview": {
+      "aria_label": "Attachment preview",
+      "download": "Download",
+      "close": "Close preview",
+      "previous": "Previous attachment",
+      "next": "Next attachment"
+    }
   },
   "label": {
     "select": "Add labels",

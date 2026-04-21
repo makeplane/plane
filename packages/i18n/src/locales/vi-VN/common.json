@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Chỉ có thể tải lên một tệp mỗi lần.",
     "file_size_limit": "Kích thước tệp phải nhỏ hơn hoặc bằng {size}MB.",
     "drag_and_drop": "Kéo và thả vào bất kỳ đâu để tải lên",
-    "delete": "Xóa tệp đính kèm"
+    "delete": "Xóa tệp đính kèm",
+    "preview": {
+      "aria_label": "Xem trước tệp đính kèm",
+      "download": "Tải xuống",
+      "close": "Đóng xem trước",
+      "previous": "Tệp đính kèm trước",
+      "next": "Tệp đính kèm tiếp theo"
+    }
   },
   "label": {
     "select": "Chọn nhãn",

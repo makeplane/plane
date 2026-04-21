@@ -191,10 +191,14 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
+            # Determine disposition based on query param (defaults to attachment)
+            disposition_param = request.query_params.get("disposition", "attachment").lower()
+            disposition = "inline" if disposition_param == "inline" else "attachment"
+
             storage = S3Storage(request=request)
             presigned_url = storage.generate_presigned_url(
                 object_name=asset.asset.name,
-                disposition="attachment",
+                disposition=disposition,
                 filename=asset.attributes.get("name"),
             )
             return HttpResponseRedirect(presigned_url)

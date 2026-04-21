@@ -759,7 +759,14 @@
     "only_one_file_allowed": "一度にアップロードできるファイルは1つだけです。",
     "file_size_limit": "ファイルサイズは{size}MB以下である必要があります。",
     "drag_and_drop": "どこにでもドラッグ＆ドロップでアップロード",
-    "delete": "添付ファイルを削除"
+    "delete": "添付ファイルを削除",
+    "preview": {
+      "aria_label": "添付ファイルのプレビュー",
+      "download": "ダウンロード",
+      "close": "プレビューを閉じる",
+      "previous": "前の添付ファイル",
+      "next": "次の添付ファイル"
+    }
   },
   "label": {
     "select": "ラベルを選択",

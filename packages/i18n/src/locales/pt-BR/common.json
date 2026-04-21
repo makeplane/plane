@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Apenas um arquivo pode ser enviado por vez.",
     "file_size_limit": "O arquivo deve ter {size}MB ou menos.",
     "drag_and_drop": "Arraste e solte em qualquer lugar para enviar",
-    "delete": "Excluir anexo"
+    "delete": "Excluir anexo",
+    "preview": {
+      "aria_label": "Pré-visualização do anexo",
+      "download": "Baixar",
+      "close": "Fechar pré-visualização",
+      "previous": "Anexo anterior",
+      "next": "Próximo anexo"
+    }
   },
   "label": {
     "select": "Selecionar etiqueta",

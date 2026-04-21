@@ -759,7 +759,14 @@
     "only_one_file_allowed": "한 번에 하나의 파일만 업로드할 수 있습니다.",
     "file_size_limit": "파일 크기는 {size}MB 이하이어야 합니다.",
     "drag_and_drop": "업로드하려면 아무 곳에나 드래그 앤 드롭하세요",
-    "delete": "첨부 파일 삭제"
+    "delete": "첨부 파일 삭제",
+    "preview": {
+      "aria_label": "첨부파일 미리보기",
+      "download": "다운로드",
+      "close": "미리보기 닫기",
+      "previous": "이전 첨부파일",
+      "next": "다음 첨부파일"
+    }
   },
   "label": {
     "select": "레이블 선택",

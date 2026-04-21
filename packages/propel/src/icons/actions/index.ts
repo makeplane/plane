@@ -22,6 +22,7 @@ export * from "./convert-to-workitem-icon";
 export * from "./filter-icon";
 export * from "./filter-applied-icon";
 export * from "./copy-icon";
+export * from "./download-icon";
 export * from "./edit-icon";
 export * from "./globe-icon";
 export * from "./link-icon";

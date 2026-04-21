@@ -40,7 +40,13 @@ export const IssueAttachmentRoot = observer(function IssueAttachmentRoot(props: 
           disabled={disabled}
           attachmentOperations={attachmentHelpers.operations}
         />
-        <IssueAttachmentsList issueId={issueId} disabled={disabled} attachmentHelpers={attachmentHelpers} />
+        <IssueAttachmentsList
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          issueId={issueId}
+          disabled={disabled}
+          attachmentHelpers={attachmentHelpers}
+        />
       </div>
     </div>
   );

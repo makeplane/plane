@@ -759,7 +759,14 @@
     "only_one_file_allowed": "Możesz przesłać tylko jeden plik naraz.",
     "file_size_limit": "Plik musi być mniejszy niż {size}MB.",
     "drag_and_drop": "Przeciągnij plik w dowolne miejsce, aby przesłać",
-    "delete": "Usuń załącznik"
+    "delete": "Usuń załącznik",
+    "preview": {
+      "aria_label": "Podgląd załącznika",
+      "download": "Pobierz",
+      "close": "Zamknij podgląd",
+      "previous": "Poprzedni załącznik",
+      "next": "Następny załącznik"
+    }
   },
   "label": {
     "select": "Wybierz etykietę",

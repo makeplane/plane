@@ -12,7 +12,7 @@
  */
 
 // local imports
-import { getFileURL } from "../file";
+import { getFileURL, getWorkspaceAssetInlineSrc, getWorkspaceAssetDownloadSrc } from "../file";
 
 type TEditorSrcArgs = {
   assetId: string;
@@ -24,37 +24,24 @@ type TEditorSrcArgs = {
  * @description generate the file source using assetId for inline viewing
  * @param {TEditorSrcArgs} args
  */
-export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined => {
-  const { assetId, projectId, workspaceSlug } = args;
-  let url: string | undefined = "";
-  if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/${assetId}/?disposition=inline`);
-  } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/${assetId}/?disposition=inline`);
-  }
-  return url;
-};
+export const getEditorAssetSrc = (args: TEditorSrcArgs): string | undefined =>
+  getFileURL(getWorkspaceAssetInlineSrc(args));
 
 /**
  * @description generate the file source using assetId for downloading
  * @param {TEditorSrcArgs} args
  */
-export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefined => {
-  const { assetId, projectId, workspaceSlug } = args;
-  let url: string | undefined = "";
-  if (projectId) {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/projects/${projectId}/download/${assetId}/`);
-  } else {
-    url = getFileURL(`/api/assets/v2/workspaces/${workspaceSlug}/download/${assetId}/`);
-  }
-  return url;
-};
+export const getEditorAssetDownloadSrc = (args: TEditorSrcArgs): string | undefined =>
+  getFileURL(getWorkspaceAssetDownloadSrc(args));
 
 export const getTextContent = (jsx: React.ReactNode | null | undefined): string => {
   if (!jsx) return "";
 
+  const html = typeof jsx === "string" ? jsx : typeof jsx === "number" ? String(jsx) : "";
+  if (!html) return "";
+
   const div = document.createElement("div");
-  div.innerHTML = jsx.toString();
+  div.innerHTML = html;
   return div.textContent?.trim() ?? "";
 };
 
