@@ -150,7 +150,7 @@ catalog:
   acorn-walk: 8.3.5
   adm-zip: 0.5.16
   amqplib: 0.10.5
-  asana: 3.1.9
+  asana: 3.1.11
   ast-types: 0.14.2
   axios: 1.15.0
   bluebird: 3.7.2
