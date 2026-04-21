@@ -14,6 +14,7 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import type { ITimesheetRow } from "@plane/types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { formatMinutes, getWeekDates } from "../utils/time-format";
 
 interface TimesheetTableProps {
@@ -40,6 +41,7 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({
   showWorkspaceColumn,
 }) => {
   const { t } = useTranslation();
+  const { setPeekIssue } = useIssueDetail();
   const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart]);
 
   const columns = useMemo(
@@ -59,15 +61,19 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({
             }),
           ]
         : []),
-      // Issue column — clickable link to issue detail
+      // Issue column — opens peek sidebar on click
       columnHelper.accessor("issue_identifier", {
         header: () => <span className="text-12 font-medium text-tertiary uppercase tracking-wide">Issue</span>,
         cell: (info) => {
           const row = info.row.original;
           const ws = (row as ITimesheetRow & { workspace_slug?: string }).workspace_slug ?? workspaceSlug;
-          const issueUrl = `/${ws}/projects/${row.project_id}/issues/${row.issue_id}`;
           return (
-            <a href={issueUrl} className="flex items-center gap-2 min-w-[180px] group">
+            <button
+              className="flex items-center gap-2 min-w-[180px] group text-left"
+              onClick={() =>
+                setPeekIssue({ workspaceSlug: ws, projectId: row.project_id, issueId: row.issue_id, nestingLevel: 0 })
+              }
+            >
               <span className="text-12 font-mono text-tertiary">{row.issue_identifier}</span>
               <span
                 className="text-13 text-primary truncate max-w-[200px] group-hover:text-accent-primary transition-colors"
@@ -75,7 +81,7 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({
               >
                 {row.issue_name}
               </span>
-            </a>
+            </button>
           );
         },
       }),
@@ -111,7 +117,7 @@ export const TimesheetTable: FC<TimesheetTableProps> = ({
         ),
       }),
     ],
-    [weekDates, showWorkspaceColumn, workspaceSlug, t]
+    [weekDates, showWorkspaceColumn, workspaceSlug, setPeekIssue, t]
   );
 
   // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns non-memoizable functions, this is expected

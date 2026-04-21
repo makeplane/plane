@@ -16,6 +16,7 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from "
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import type { IAnalyticsTimesheetRow } from "@plane/types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { LogtimeBreakdownPopover } from "./logtime-breakdown-popover";
 import { formatMinutes, getWeekDates } from "../utils/time-format";
 
@@ -40,19 +41,22 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
   workspaceSlug,
 }) => {
   const { t } = useTranslation();
+  const { setPeekIssue } = useIssueDetail();
   const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart]);
 
   const columns = useMemo(
     () => [
-      // Issue column — clickable link
+      // Issue column — opens peek sidebar on click
       columnHelper.accessor("issue_identifier", {
         header: () => <span className="text-12 font-medium text-tertiary uppercase tracking-wide">Issue</span>,
         cell: (info) => {
           const row = info.row.original;
           return (
-            <a
-              href={`/${workspaceSlug}/projects/${row.project_id}/issues/${row.issue_id}`}
-              className="flex items-center gap-2 min-w-[180px] group"
+            <button
+              className="flex items-center gap-2 min-w-[180px] group text-left"
+              onClick={() =>
+                setPeekIssue({ workspaceSlug, projectId: row.project_id, issueId: row.issue_id, nestingLevel: 0 })
+              }
             >
               <span className="text-12 font-mono text-tertiary">{row.issue_identifier}</span>
               <span
@@ -61,7 +65,7 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
               >
                 {row.issue_name}
               </span>
-            </a>
+            </button>
           );
         },
       }),
@@ -94,7 +98,7 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
         ),
       }),
     ],
-    [weekDates, workspaceSlug, t]
+    [weekDates, workspaceSlug, setPeekIssue, t]
   );
 
   // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns non-memoizable functions, this is expected

@@ -92,7 +92,7 @@ export const TimeTrackingReportPage: FC<TTimeTrackingReportPageProps> = ({ works
       {!isLoading && !error && summary && !isEmpty && (
         <>
           <TimeTrackingSummaryCards summary={summary} />
-          <TimeTrackingIssueTable byIssue={summary.by_issue} />
+          <TimeTrackingIssueTable byIssue={summary.by_issue} workspaceSlug={workspaceSlug} projectId={projectId} />
         </>
       )}
     </div>

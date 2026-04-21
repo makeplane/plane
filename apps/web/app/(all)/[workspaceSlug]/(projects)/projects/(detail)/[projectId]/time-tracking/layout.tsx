@@ -14,6 +14,7 @@ import { cn } from "@plane/utils";
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
 import { DetailedEmptyState } from "@/components/empty-state/detailed-empty-state-root";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -108,6 +109,7 @@ export default function TimeTrackingLayout() {
           <Outlet />
         </ContentWrapper>
       </div>
+      <IssuePeekOverview />
     </div>
   );
 }
