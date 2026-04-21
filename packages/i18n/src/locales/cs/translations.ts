@@ -489,7 +489,7 @@ export default {
   morning: "ráno",
   afternoon: "odpoledne",
   evening: "večer",
-  night: "night",
+  night: "noc",
   show_all: "Zobrazit vše",
   show_less: "Zobrazit méně",
   no_data_yet: "Zatím žádná data",

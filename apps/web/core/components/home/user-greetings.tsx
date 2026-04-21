@@ -34,7 +34,7 @@ export function UserGreetingsView(props: IUserGreetingsView) {
 
   const hour = new Intl.DateTimeFormat("en-US", {
     timeZone: userTimezone,
-    hour12: false,
+    hourCycle: "h23",
     hour: "numeric",
   }).format(currentTime);
 
@@ -51,7 +51,7 @@ export function UserGreetingsView(props: IUserGreetingsView) {
 
   const timeString = new Intl.DateTimeFormat("en-US", {
     timeZone: userTimezone,
-    hour12: false,
+    hourCycle: "h23",
     hour: "2-digit",
     minute: "2-digit",
   }).format(currentTime);

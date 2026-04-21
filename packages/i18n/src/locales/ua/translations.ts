@@ -497,7 +497,7 @@ export default {
   morning: "ранку",
   afternoon: "дня",
   evening: "вечора",
-  night: "night",
+  night: "ночі",
   show_all: "Показати все",
   show_less: "Показати менше",
   no_data_yet: "Поки що немає даних",

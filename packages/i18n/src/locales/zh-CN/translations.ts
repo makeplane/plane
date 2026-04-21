@@ -477,7 +477,7 @@ export default {
   morning: "早上",
   afternoon: "下午",
   evening: "晚上",
-  night: "night",
+  night: "晚安",
   show_all: "显示全部",
   show_less: "显示更少",
   no_data_yet: "暂无数据",

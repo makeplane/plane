@@ -495,7 +495,7 @@ export default {
   morning: "dimineața",
   afternoon: "după-amiaza",
   evening: "seara",
-  night: "night",
+  night: "noapte",
   show_all: "Arată tot",
   show_less: "Arată mai puțin",
   no_data_yet: "Nicio dată încă",

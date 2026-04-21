@@ -482,7 +482,7 @@ export default {
   morning: "아침",
   afternoon: "오후",
   evening: "저녁",
-  night: "night",
+  night: "밤",
   show_all: "모두 보기",
   show_less: "간략히 보기",
   no_data_yet: "아직 데이터 없음",

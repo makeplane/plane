@@ -502,7 +502,7 @@ export default {
   morning: "Morgen",
   afternoon: "Nachmittag",
   evening: "Abend",
-  night: "night",
+  night: "Nacht",
   show_all: "Alle anzeigen",
   show_less: "Weniger anzeigen",
   no_data_yet: "Noch keine Daten",

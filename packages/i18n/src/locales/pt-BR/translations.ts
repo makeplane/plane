@@ -498,7 +498,7 @@ export default {
   morning: "manhã",
   afternoon: "tarde",
   evening: "noite",
-  night: "night",
+  night: "noite",
   show_all: "Mostrar tudo",
   show_less: "Mostrar menos",
   no_data_yet: "Nenhum dado ainda",

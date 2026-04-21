@@ -495,7 +495,7 @@ export default {
   morning: "Buổi sáng",
   afternoon: "Buổi chiều",
   evening: "Buổi tối",
-  night: "night",
+  night: "Buổi đêm",
   show_all: "Hiển thị tất cả",
   show_less: "Hiển thị ít hơn",
   no_data_yet: "Chưa có dữ liệu",

@@ -498,7 +498,7 @@ export default {
   morning: "matin",
   afternoon: "après-midi",
   evening: "soir",
-  night: "night",
+  night: "nuit",
   show_all: "Tout afficher",
   show_less: "Afficher moins",
   no_data_yet: "Pas encore de données",
