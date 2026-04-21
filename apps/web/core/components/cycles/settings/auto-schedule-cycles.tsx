@@ -38,10 +38,10 @@ import { useProjectAdvanced } from "@/plane-web/hooks/store/projects/use-project
 
 const defaultValues: Partial<TCycleConfig> = {
   title: "",
-  cycle_duration: 0,
+  cycle_duration: 1,
   cooldown_period: 0,
   start_date: null,
-  number_of_cycles: 0,
+  number_of_cycles: 1,
   is_auto_rollover_enabled: false,
 };
 
@@ -107,7 +107,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
   const handleSetFormData = (data: Partial<TCycleConfig>) => {
     reset({
       ...data,
-      cycle_duration: data.cycle_duration ? data.cycle_duration / 7 : 0,
+      cycle_duration: data.cycle_duration ? data.cycle_duration / 7 : 1,
     });
   };
 
@@ -254,7 +254,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
               </div>
             </Loader>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form className="space-y-5">
               {/* Cycle Title */}
               <div className="flex justify-between items-center">
                 <div className="w-2/3">
@@ -312,6 +312,14 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
                         control={control}
                         rules={{
                           required: t("project_settings.cycles.auto_schedule.form.cycle_duration.validation.required"),
+                          min: {
+                            value: 1,
+                            message: t("project_settings.cycles.auto_schedule.form.cycle_duration.validation.min"),
+                          },
+                          max: {
+                            value: 30,
+                            message: t("project_settings.cycles.auto_schedule.form.cycle_duration.validation.max"),
+                          },
                         }}
                         render={({ field }) => (
                           <Input
@@ -358,6 +366,14 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
                       <Controller
                         name="cooldown_period"
                         control={control}
+                        rules={{
+                          min: {
+                            value: 0,
+                            message: t(
+                              "project_settings.cycles.auto_schedule.form.cooldown_period.validation.negative"
+                            ),
+                          },
+                        }}
                         render={({ field }) => (
                           <Input
                             {...field}
@@ -373,6 +389,9 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
                         {t("project_settings.cycles.auto_schedule.form.cooldown_period.unit")}
                       </span>
                     </div>
+                    {errors.cooldown_period && (
+                      <span className="text-11 text-danger-primary">{errors.cooldown_period.message}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -499,7 +518,7 @@ export const AutoScheduleCycles = observer(function AutoScheduleCycles(props: Pr
                   <Button type="button" variant="secondary" onClick={handleReset}>
                     {t("common.discard")}
                   </Button>
-                  <Button type="submit" variant="primary" disabled={isSubmitting}>
+                  <Button onClick={handleSubmit(onSubmit)} variant="primary" disabled={isSubmitting}>
                     {t("save")}
                   </Button>
                 </div>
