@@ -22,15 +22,13 @@ import { ReleaseInstance } from "./release-instance";
 
 export interface IReleaseStore {
   // observables
-  releasesMap: Map<string, ReleaseInstance>;
-  workspaceSlugReleasesMap: Map<string, string[]>;
-  releasesLoader: boolean;
   addWorkItemsModalReleaseId: string | null;
   // computed fns
   getCanCreate: (workspaceSlug: string) => boolean;
   getReleaseIdsByWorkspaceSlug: (workspaceSlug: string) => string[];
   getReleaseById: (releaseId: string) => ReleaseInstance | undefined;
   isReleasesEnabled: (workspaceSlug: string) => boolean;
+  areReleasesAvailableByWorkspaceSlug: (workspaceSlug: string) => boolean;
   // actions
   fetchReleases: (workspaceSlug: string) => Promise<Release[]>;
   fetchReleaseDetails: (workspaceSlug: string, releaseId: string) => Promise<Release>;
@@ -44,9 +42,7 @@ export interface IReleaseStore {
 
 export class ReleaseStore implements IReleaseStore {
   // observables
-  releasesMap: Map<string, ReleaseInstance> = new Map();
-  workspaceSlugReleasesMap: Map<string, string[]> = new Map();
-  releasesLoader = false;
+  private releasesMap: Map<string, ReleaseInstance> = new Map();
   addWorkItemsModalReleaseId: string | null = null;
   // root store
   private rootStore: RootStore;
@@ -54,10 +50,8 @@ export class ReleaseStore implements IReleaseStore {
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
 
-    makeObservable(this, {
+    makeObservable<ReleaseStore, "releasesMap" | "addWorkItemsModalReleaseId">(this, {
       releasesMap: observable,
-      workspaceSlugReleasesMap: observable,
-      releasesLoader: observable.ref,
       addWorkItemsModalReleaseId: observable.ref,
       fetchReleases: action,
       fetchReleaseDetails: action,
@@ -70,8 +64,14 @@ export class ReleaseStore implements IReleaseStore {
     });
   }
 
-  getReleaseIdsByWorkspaceSlug = computedFn(
-    (workspaceSlug: string): string[] => this.workspaceSlugReleasesMap.get(workspaceSlug) ?? []
+  getReleaseIdsByWorkspaceSlug = computedFn((workspaceSlug: string): string[] =>
+    Array.from(this.releasesMap.values())
+      .filter((release) => {
+        const releaseWorkspaceSlug = this.getWorkspaceSlugById(release.workspace);
+        if (!releaseWorkspaceSlug) return false;
+        return releaseWorkspaceSlug === workspaceSlug;
+      })
+      .map((release) => release.id)
   );
 
   getCanCreate = computedFn((workspaceSlug: string): boolean =>
@@ -80,6 +80,10 @@ export class ReleaseStore implements IReleaseStore {
       action: "create",
       workspaceSlug,
     })
+  );
+
+  areReleasesAvailableByWorkspaceSlug = computedFn(
+    (workspaceSlug: string): boolean => this.getReleaseIdsByWorkspaceSlug(workspaceSlug).length > 0
   );
 
   private getWorkspaceSlugById = computedFn(
@@ -143,14 +147,9 @@ export class ReleaseStore implements IReleaseStore {
 
   fetchReleases = async (workspaceSlug: string): Promise<Release[]> => {
     try {
-      runInAction(() => {
-        this.releasesLoader = true;
-      });
-
       const response = await releaseService.list(workspaceSlug);
 
       runInAction(() => {
-        const ids: string[] = [];
         for (const release of response) {
           if (!release.id) continue;
           const existing = this.releasesMap.get(release.id);
@@ -159,17 +158,12 @@ export class ReleaseStore implements IReleaseStore {
           } else {
             this.addReleaseToMap(workspaceSlug, release);
           }
-          ids.push(release.id);
         }
-        this.workspaceSlugReleasesMap.set(workspaceSlug, ids);
-        this.releasesLoader = false;
       });
 
       return response;
     } catch (error) {
-      runInAction(() => {
-        this.releasesLoader = false;
-      });
+      console.error("Failed to fetch releases:", error);
       throw error;
     }
   };
@@ -183,10 +177,6 @@ export class ReleaseStore implements IReleaseStore {
         existing.mutateProperties(response);
       } else {
         this.addReleaseToMap(workspaceSlug, response);
-        const currentIds = this.workspaceSlugReleasesMap.get(workspaceSlug) ?? [];
-        if (!currentIds.includes(releaseId)) {
-          this.workspaceSlugReleasesMap.set(workspaceSlug, [...currentIds, releaseId]);
-        }
       }
     });
 
@@ -218,20 +208,11 @@ export class ReleaseStore implements IReleaseStore {
     try {
       runInAction(() => {
         this.releasesMap.delete(releaseId);
-        const currentIds = this.workspaceSlugReleasesMap.get(workspaceSlug) ?? [];
-        this.workspaceSlugReleasesMap.set(
-          workspaceSlug,
-          currentIds.filter((id) => id !== releaseId)
-        );
       });
       await releaseService.destroy(workspaceSlug, releaseId);
     } catch (error) {
       runInAction(() => {
         this.releasesMap.set(releaseId, previous);
-        const currentIds = this.workspaceSlugReleasesMap.get(workspaceSlug) ?? [];
-        if (!currentIds.includes(releaseId)) {
-          this.workspaceSlugReleasesMap.set(workspaceSlug, [...currentIds, releaseId]);
-        }
       });
       throw error;
     }

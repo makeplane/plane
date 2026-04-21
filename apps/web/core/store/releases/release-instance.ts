@@ -48,7 +48,7 @@ export class ReleaseInstance implements ReleaseInstanceSchema {
   name: ReleaseInstanceSchema["name"];
   description: ReleaseInstanceSchema["description"];
   release_date: ReleaseInstanceSchema["release_date"];
-  workspace_id: ReleaseInstanceSchema["workspace_id"];
+  workspace: ReleaseInstanceSchema["workspace"];
   created_by: ReleaseInstanceSchema["created_by"];
   updated_by: ReleaseInstanceSchema["updated_by"];
   created_at: ReleaseInstanceSchema["created_at"];
@@ -70,7 +70,7 @@ export class ReleaseInstance implements ReleaseInstanceSchema {
     this.name = release.name;
     this.description = release.description;
     this.release_date = release.release_date;
-    this.workspace_id = release.workspace_id;
+    this.workspace = release.workspace;
     this.created_by = release.created_by;
     this.updated_by = release.updated_by;
     this.created_at = release.created_at;
@@ -123,7 +123,7 @@ export class ReleaseInstance implements ReleaseInstanceSchema {
   };
 
   private get workspaceSlug(): string | undefined {
-    return this.#helpers.getWorkspaceSlugById(this.workspace_id);
+    return this.#helpers.getWorkspaceSlugById(this.workspace);
   }
 
   private get permissionMeta() {

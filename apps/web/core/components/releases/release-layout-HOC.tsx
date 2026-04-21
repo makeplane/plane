@@ -14,7 +14,6 @@
 import { lazy, Suspense } from "react";
 import useSWR from "swr";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import { WORKSPACE_RELEASES } from "@/constants/fetch-keys";
@@ -27,21 +26,22 @@ const ListLayoutLoader = lazy(() =>
   }))
 );
 
-interface Props {
-  children: string | React.ReactNode | React.ReactNode[];
-}
+type Props = {
+  children: React.ReactNode;
+  workspaceSlug: string;
+};
 
 export const ReleaseLayoutHOC = observer(function ReleaseLayoutHOC(props: Props) {
-  const { workspaceSlug } = useParams();
+  const { children, workspaceSlug } = props;
   const { t } = useTranslation();
-  const { release: releaseStore } = useReleases();
+  const {
+    release: { areReleasesAvailableByWorkspaceSlug, fetchReleases, getCanCreate },
+  } = useReleases();
   const { toggleCreateReleaseModal } = useCommandPalette();
-  const currentWorkspaceSlug = workspaceSlug?.toString();
+  // derived states
+  const areReleasesAvailable = areReleasesAvailableByWorkspaceSlug(workspaceSlug);
 
-  const { isLoading } = useSWR(
-    currentWorkspaceSlug ? WORKSPACE_RELEASES(currentWorkspaceSlug) : null,
-    currentWorkspaceSlug ? () => releaseStore.fetchReleases(currentWorkspaceSlug) : null
-  );
+  const { isLoading } = useSWR(WORKSPACE_RELEASES(workspaceSlug), () => fetchReleases(workspaceSlug));
 
   if (isLoading) {
     return (
@@ -51,7 +51,7 @@ export const ReleaseLayoutHOC = observer(function ReleaseLayoutHOC(props: Props)
     );
   }
 
-  if (releaseStore.releasesMap.size === 0) {
+  if (!areReleasesAvailable) {
     return (
       <EmptyStateDetailed
         assetKey="project"
@@ -61,12 +61,12 @@ export const ReleaseLayoutHOC = observer(function ReleaseLayoutHOC(props: Props)
           {
             label: t("Create Release"),
             onClick: () => toggleCreateReleaseModal({ isOpen: true, releaseId: undefined }),
-            disabled: !currentWorkspaceSlug || !releaseStore.getCanCreate(currentWorkspaceSlug),
+            disabled: !getCanCreate(workspaceSlug),
           },
         ]}
       />
     );
   }
 
-  return <>{props.children}</>;
+  return <>{children}</>;
 });

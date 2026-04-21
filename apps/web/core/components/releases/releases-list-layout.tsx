@@ -12,16 +12,15 @@
  */
 
 import { useCallback, useMemo } from "react";
+import { toJS } from "mobx";
 import { observer } from "mobx-react";
-import type { Release, IBaseLayoutsBaseGroup, IBaseLayoutsListItem } from "@plane/types";
-import { RELEASE_STATES } from "@plane/constants";
+import type { Release, IBaseLayoutsBaseGroup } from "@plane/types";
+import { DEFAULT_RELEASE_STATUS, RELEASE_STATES } from "@plane/constants";
 import { ReleaseStateIcon } from "@plane/propel/icons";
 import { BaseListLayout } from "@/components/base-layouts/list/layout";
 import { useReleases } from "@/hooks/store/use-releases";
 import { ReleaseBlock } from "./release-block";
 import { ReleaseLayoutHOC } from "./release-layout-HOC";
-
-type ReleaseListItem = Release & IBaseLayoutsListItem;
 
 type Props = {
   workspaceSlug: string;
@@ -29,18 +28,23 @@ type Props = {
 
 export const ReleasesListLayout = observer(function ReleasesListLayout(props: Props) {
   const { workspaceSlug } = props;
-  const { release: releaseStore } = useReleases();
-
-  const releasesMap: Record<string, ReleaseListItem> = {};
-  const groupedReleaseIds: Record<string, string[]> = { unreleased: [], released: [], cancelled: [] };
-
-  releaseStore.releasesMap.forEach((release) => {
-    releasesMap[release.id] = release as unknown as ReleaseListItem;
-    const status = release.status ?? "unreleased";
-    if (groupedReleaseIds[status]) {
-      groupedReleaseIds[status].push(release.id);
+  const {
+    release: { getReleaseIdsByWorkspaceSlug, getReleaseById },
+  } = useReleases();
+  // derived states
+  const releaseIds = getReleaseIdsByWorkspaceSlug(workspaceSlug);
+  const { releasesMap, groupedReleaseIds } = useMemo(() => {
+    const map: Record<string, Release> = {};
+    const grouped: Record<string, string[]> = Object.fromEntries(Object.keys(RELEASE_STATES).map((key) => [key, []]));
+    for (const releaseId of releaseIds) {
+      const release = toJS(getReleaseById(releaseId));
+      if (!release) continue;
+      map[releaseId] = release;
+      const status = release.status ?? DEFAULT_RELEASE_STATUS;
+      grouped[status]?.push(releaseId);
     }
-  });
+    return { releasesMap: map, groupedReleaseIds: grouped };
+  }, [releaseIds, getReleaseById]);
 
   const groups: IBaseLayoutsBaseGroup[] = useMemo(() => {
     return Object.values(RELEASE_STATES).map((state) => ({
@@ -51,13 +55,13 @@ export const ReleasesListLayout = observer(function ReleasesListLayout(props: Pr
   }, []);
 
   const renderItem = useCallback(
-    (release: ReleaseListItem) => <ReleaseBlock key={release.id} release={release} workspaceSlug={workspaceSlug} />,
+    (release: Release) => <ReleaseBlock key={release.id} release={release} workspaceSlug={workspaceSlug} />,
     [workspaceSlug]
   );
 
   return (
-    <ReleaseLayoutHOC>
-      <BaseListLayout<ReleaseListItem>
+    <ReleaseLayoutHOC workspaceSlug={workspaceSlug}>
+      <BaseListLayout<Release>
         items={releasesMap}
         groupedItemIds={groupedReleaseIds}
         groups={groups}

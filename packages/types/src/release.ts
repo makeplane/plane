@@ -22,7 +22,7 @@ export type Release = {
   name: string;
   description?: Partial<TDocumentPayload> | null;
   release_date: string | null;
-  workspace_id: string;
+  workspace: string;
   created_by: string | null;
   updated_by: string | null;
   created_at: string;
