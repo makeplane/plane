@@ -79,7 +79,6 @@ from plane.ee.models import WorkflowTransitionActivity
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
 from plane.ee.utils.state_order_helper import get_top_state
 from plane.ee.views.app.workflow.base import (
-    # get_missing_states_map,
     _base_issues_outside_workflow,
 )
 from plane.ee.utils.workflow import WorkflowStateManager
@@ -353,14 +352,34 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
 
 
 class WorkflowStatesAPIEndpoint(BaseAPIView):
-    """Add, update, and remove states from a workflow."""
+    """List, add, update, and remove states from a workflow."""
 
     permission_classes = [ProjectEntityPermission, WorkflowFeatureFlagPermission, TokenHasScopeIfOAuth]
+    use_read_replica = True
     required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORKFLOWS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
         "DELETE": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
     }
+
+    @workflow_state_docs(
+        operation_id="list_workflow_states",
+        summary="List workflow states",
+        description="List all states belonging to a workflow.",
+        responses={
+            200: OpenApiResponse(
+                description="List of workflow states",
+                response=WorkflowStateAPISerializer(many=True),
+                examples=[WORKFLOW_STATE_EXAMPLE],
+            ),
+        },
+    )
+    def get(self, request, slug, project_id, workflow_id):
+        workflow_states = WorkflowState.objects.filter(
+            project_id=project_id, workflow_id=workflow_id, workspace__slug=slug
+        )
+        return Response(WorkflowStateAPISerializer(workflow_states, many=True).data, status=status.HTTP_200_OK)
 
     @workflow_state_docs(
         operation_id="add_workflow_states",
@@ -559,9 +578,7 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
 
     def _validate_transition_state_ids(self, slug, project_id, transition_state_id, rejection_state_id):
         """Return a 400 Response if either state ID does not belong to this project/workspace, else None."""
-        valid_ids = set(
-            State.objects.filter(project_id=project_id, workspace__slug=slug).values_list("id", flat=True)
-        )
+        valid_ids = set(State.objects.filter(project_id=project_id, workspace__slug=slug).values_list("id", flat=True))
         if transition_state_id and uuid.UUID(str(transition_state_id)) not in valid_ids:
             return Response(
                 {"error": "transition_state_id does not belong to this project."},
@@ -663,10 +680,13 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if workflow_state.type == WorkflowStateType.APPROVAL and WorkflowTransition.objects.filter(
-            workflow_state_id=workflow_state.id,
-            project_id=project_id,
-        ).exists():
+        if (
+            workflow_state.type == WorkflowStateType.APPROVAL
+            and WorkflowTransition.objects.filter(
+                workflow_state_id=workflow_state.id,
+                project_id=project_id,
+            ).exists()
+        ):
             return Response(
                 {"error": "An approval state can only have one transition."},
                 status=status.HTTP_400_BAD_REQUEST,

@@ -34,7 +34,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/workflows/<uuid:workflow_id>/states/",
-        WorkflowStatesAPIEndpoint.as_view(http_method_names=["post"]),
+        WorkflowStatesAPIEndpoint.as_view(http_method_names=["get", "post"]),
         name="project-workflow-states",
     ),
     path(
