@@ -33,16 +33,16 @@ export class RootStore extends CoreRootStore {
 
   constructor() {
     super();
-    this.workspacePages = new WorkspacePageStore(this);
     this.collection = new CollectionStore(this);
+    this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.timelineStore = new TimeLineStore(this);
   }
 
   resetOnSignOut() {
     super.resetOnSignOut();
-    this.workspacePages = new WorkspacePageStore(this);
     this.collection = new CollectionStore(this);
+    this.workspacePages = new WorkspacePageStore(this);
     this.publishPage = new PublishPageStore(this);
     this.timelineStore = new TimeLineStore(this);
   }
