@@ -5,6 +5,7 @@
  */
 
 // plane types
+import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";
 // plane ui
@@ -22,15 +23,16 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   // store hooks
   const { t } = useTranslation();
 
-  const userTimezone = (() => {
+  const userTimezone = useMemo(() => {
     if (!user?.user_timezone) return undefined;
     try {
-      Intl.DateTimeFormat(undefined, { timeZone: user.user_timezone });
+      new Intl.DateTimeFormat(undefined, { timeZone: user.user_timezone });
       return user.user_timezone;
-    } catch {
+    } catch (e) {
+      console.warn(`[UserGreetingsView] Invalid user_timezone "${user.user_timezone}", falling back to browser timezone.`, e);
       return undefined;
     }
-  })();
+  }, [user?.user_timezone]);
 
   const hour = new Intl.DateTimeFormat("en-US", {
     timeZone: userTimezone,
