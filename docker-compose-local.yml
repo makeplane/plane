@@ -22,6 +22,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    ports:
+      - "5672:5672"
 
   plane-minio:
     image: minio/minio
@@ -45,8 +47,8 @@ services:
       MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
       MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
     ports:
-      - "9000:9000"
-      - "9090:9090"
+      - "9002:9000"
+      - "9092:9090"
 
   plane-db:
     image: postgres:15.7-alpine
@@ -139,6 +141,18 @@ services:
     depends_on:
       - plane-db
       - plane-redis
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2
+    command: start-dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    ports:
+      - "8080:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
 
 volumes:
   redisdata:
