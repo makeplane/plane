@@ -90,7 +90,7 @@ export interface IPiChatStore {
     is_websearch_enabled: boolean,
     toggledConnectors: string[]
   ) => void;
-  getInstance: (workspaceId: string) => Promise<TInstanceResponse>;
+  getInstance: (workspaceSlug: string) => Promise<TInstanceResponse | void>;
   fetchUserThreads: (workspaceId: string | undefined, isProjectChat: boolean) => Promise<void>;
   searchCallback: (workspace: string, query: string, focus: TFocus) => Promise<TSearchResults>;
   sendFeedback: (
@@ -160,8 +160,8 @@ export class PiChatStore implements IPiChatStore {
   isLoadingThreads: boolean = false;
   models: TAiModels[] = [];
   activeModel: string | undefined = undefined;
-  isAuthorized = true;
-  isWorkspaceAuthorized = true;
+  isAuthorized = false;
+  isWorkspaceAuthorized = false;
   chatMap: Record<string, TChatHistory> = {};
   piThreads: string[] = [];
   projectThreads: string[] = [];
@@ -478,10 +478,15 @@ export class PiChatStore implements IPiChatStore {
     return payload;
   };
 
-  getInstance = async (workspaceId: string): Promise<TInstanceResponse> => {
-    const response = await this.piChatService.getInstance(workspaceId);
-    this.isWorkspaceAuthorized = response.is_authorized;
-    return response;
+  getInstance = async (workspaceSlug: string): Promise<TInstanceResponse | void> => {
+    try {
+      const response = await this.piChatService.getInstance(workspaceSlug);
+      this.isWorkspaceAuthorized = response.is_authorized;
+      return response;
+    } catch (e) {
+      console.error("Failed to get instance information:", e);
+      this.isWorkspaceAuthorized = false;
+    }
   };
 
   fetchPrompts = async (
@@ -781,6 +786,7 @@ export class PiChatStore implements IPiChatStore {
       });
       const response = await this.piChatService.retrieveChat(chatId, workspaceId);
       runInAction(() => {
+        this.isAuthorized = true;
         update(this.chatMap, chatId, (chat) => ({
           ...response.results,
           dialogue: response.results.dialogue.map((d) => d.query_id),

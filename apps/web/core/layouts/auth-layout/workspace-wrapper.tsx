@@ -39,6 +39,7 @@ import {
   AI_FLAGS,
   WORKSPACE_RELEASES,
   RUNNER_HEALTH,
+  PI_STARTER,
 } from "@/constants/fetch-keys";
 // hooks
 import { useFavorite } from "@/hooks/store/use-favorite";
@@ -361,7 +362,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   );
 
   // fetching pi auth instance
-  useSWR(workspaceId ? `PI_STARTER_${workspaceId}` : null, workspaceId ? () => getInstance(workspaceId) : null, {
+  useSWR(workspaceSlug ? PI_STARTER(workspaceSlug) : null, workspaceSlug ? () => getInstance(workspaceSlug) : null, {
     revalidateOnFocus: false,
     revalidateIfStale: false,
     errorRetryCount: 0,

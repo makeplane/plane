@@ -19,6 +19,7 @@ import { cn } from "@plane/utils";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import type { TTemplate } from "@/types";
+import { PI_STARTER } from "@/constants/fetch-keys";
 
 type TProps = {
   isFullScreen: boolean;
@@ -37,8 +38,8 @@ export const ContextualTemplates = observer(function ContextualTemplates(props: 
   const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString())?.id;
   // SWR
   const { data: instance, isLoading } = useSWR(
-    workspaceId ? `PI_STARTER_${workspaceId}` : null,
-    workspaceId ? () => getInstance(workspaceId) : null,
+    workspaceSlug ? PI_STARTER(workspaceSlug) : null,
+    workspaceSlug ? () => getInstance(workspaceSlug) : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,

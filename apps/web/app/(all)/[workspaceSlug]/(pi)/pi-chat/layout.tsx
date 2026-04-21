@@ -24,6 +24,13 @@ import type { Route } from "./+types/layout";
 import { PiAppSidebar } from "./sidebar";
 import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
 import PageNotFound from "@/app/not-found";
+import { bootstrapAi } from "@/lib/bootstrap/client-bootstrap";
+
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  await bootstrapAi(params.workspaceSlug);
+  return null;
+}
+clientLoader.hydrate = true as const;
 
 function PiLayout({ params }: Route.ComponentProps) {
   // router

@@ -21,7 +21,13 @@ import { EWorkspaceFeatures } from "@/types/workspace-feature";
 import type { Route } from "./+types/layout";
 import { WithAiFeatureFlagHOC } from "@/components/feature-flags/with-ai-feature-flag-hoc";
 import PageNotFound from "@/app/not-found";
+import { bootstrapAi } from "@/lib/bootstrap/client-bootstrap";
 
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+  await bootstrapAi(params.workspaceSlug);
+  return null;
+}
+clientLoader.hydrate = true as const;
 function Layout({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;

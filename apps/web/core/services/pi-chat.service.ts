@@ -133,10 +133,10 @@ export class PiChatService extends APIService {
   }
 
   // fetch instance
-  async getInstance(workspaceId: string): Promise<TInstanceResponse> {
+  async getInstance(workspaceSlug: string): Promise<TInstanceResponse> {
     return this.get(`/api/v1/chat/start/auth-check/`, {
       params: {
-        workspace_id: workspaceId,
+        workspace_slug: workspaceSlug,
       },
     })
       .then((response) => response?.data)

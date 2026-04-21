@@ -119,6 +119,7 @@ export const WORKSPACE_PROJECT_NAVIGATION_PREFERENCES = (workspaceSlug: string) 
   `WORKSPACE_PROJECT_NAVIGATION_PREFERENCES_${workspaceSlug.toUpperCase()}`;
 
 export const RUNNER_HEALTH = (workspaceSlug: string) => `RUNNER_HEALTH_${workspaceSlug.toUpperCase()}`;
+export const PI_STARTER = (workspaceSlug: string) => `PI_STARTER_${workspaceSlug.toUpperCase()}`;
 
 export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_REPOSITORY_${projectId.toUpperCase()}`;
 

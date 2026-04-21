@@ -24,6 +24,7 @@ import {
   WORKSPACE_PARTIAL_PROJECTS,
   WORKSPACE_TEAMSPACES,
   WORKSPACE_CURRENT_USER_PERMISSIONS,
+  PI_STARTER,
 } from "@/constants/fetch-keys";
 // lib
 import { store } from "@/lib/store-context";
@@ -94,7 +95,7 @@ export const bootstrapWorkspace = async (workspaceSlug: string) =>
       preloadAndPrimeSWR(partialProjectsKey, () => store.projectRoot.project.fetchPartialProjects(workspaceSlug)),
       preloadAndPrimeSWR(workspaceTeamspacesKey, () => store.teamspaceRoot.teamspaces.fetchTeamspaces(workspaceSlug)),
       preloadAndPrimeSWR(featureFlagsKey, () => store.featureFlags.fetchFeatureFlags(workspaceSlug)),
-      preloadAndPrimeSWR(aiFlagsKey, () => store.featureFlags.fetchAiFeatureFlags(workspaceSlug)),
+      preloadAndPrimeSWR(aiFlagsKey, () => store.aiFeatureFlags.fetchAiFeatureFlags(workspaceSlug)),
       preloadAndPrimeSWR(workspaceFeaturesKey, () => store.workspaceFeatures.fetchWorkspaceFeatures(workspaceSlug)),
       preloadAndPrimeSWR(workspaceProjectFeaturesKey, () => store.projectDetails.fetchProjectFeatures(workspaceSlug)),
     ]);
@@ -103,4 +104,9 @@ export const bootstrapWorkspace = async (workspaceSlug: string) =>
 export const bootstrapRunner = async (workspaceSlug: string) =>
   runOnce(`bootstrap:runner:${workspaceSlug}`, async () => {
     await preloadAndPrimeSWR(RUNNER_HEALTH(workspaceSlug), () => store.runners.checkRunnerHealth(workspaceSlug));
+  });
+
+export const bootstrapAi = async (workspaceSlug: string) =>
+  runOnce(`bootstrap:ai:${workspaceSlug}`, async () => {
+    await preloadAndPrimeSWR(PI_STARTER(workspaceSlug), () => store.piChat.getInstance(workspaceSlug));
   });

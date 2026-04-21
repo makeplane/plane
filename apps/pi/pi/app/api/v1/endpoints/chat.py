@@ -43,6 +43,7 @@ from pi.app.api.v1.endpoints._sse import normalize_error_chunk
 from pi.app.api.v1.endpoints._sse import sse_done
 from pi.app.api.v1.endpoints._sse import sse_event
 from pi.app.api.v1.helpers.execution import chosen_llm
+from pi.app.api.v1.helpers.plane_sql_queries import get_workspace_id_from_slug
 from pi.app.api.v1.helpers.plane_sql_queries import resolve_workspace_id_from_project_id
 from pi.app.models.enums import FlowStepType
 from pi.app.models.enums import UserTypeChoices
@@ -165,7 +166,7 @@ async def chat_start(
 
 @router.get("/start/auth-check/", response_model=ChatAuthCheckResponse)
 async def chat_auth_check(
-    workspace_id: UUID = Query(..., description="Workspace ID to check authorization for"),
+    workspace_slug: str = Query(..., description="Workspace slug to check authorization for"),
     db: AsyncSession = Depends(get_async_session),
     current_user=Depends(get_current_user),
 ):
@@ -182,6 +183,9 @@ async def chat_auth_check(
 
     try:
         user_id = current_user.id
+        workspace_id = await get_workspace_id_from_slug(workspace_slug)
+        if not workspace_id:
+            return JSONResponse(status_code=404, content={"detail": "Workspace not found"})
         guest_check = await check_guest_access(str(user_id), str(workspace_id))
         if guest_check:
             return guest_check

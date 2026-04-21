@@ -18,9 +18,9 @@ import { getButtonStyling } from "@plane/propel/button";
 import { cn, resolveGeneralTheme } from "@plane/utils";
 import darkState from "@/app/assets/auth/pi-chat-dark.webp?url";
 import lightState from "@/app/assets/auth/pi-chat-light.webp?url";
-import { useWorkspace } from "@/hooks/store/use-workspace";
 import { usePiChat } from "@/plane-web/hooks/store/use-pi-chat";
 import { useTheme as useAppTheme } from "@/plane-web/hooks/store";
+import { PI_STARTER } from "@/constants/fetch-keys";
 
 export function UnauthorizedView(props: { className?: string; imgClassName?: string }) {
   const { className, imgClassName } = props;
@@ -31,15 +31,13 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
   const { getInstance } = usePiChat();
   const { resolvedTheme } = useTheme();
   const { activeSidecar } = useAppTheme();
-  const { getWorkspaceBySlug } = useWorkspace();
   // derived values
   const isPiChatSidecarOpen = activeSidecar === "pi-chat";
-  const workspaceId = getWorkspaceBySlug(workspaceSlug?.toString() || "")?.id;
   const isInFullScreen = pathname.includes("/ai-chat");
   // SWR
   const { data: instance } = useSWR(
-    workspaceId ? `PI_STARTER_${workspaceId}` : null,
-    workspaceId ? () => getInstance(workspaceId) : null,
+    workspaceSlug ? PI_STARTER(workspaceSlug) : null,
+    workspaceSlug ? () => getInstance(workspaceSlug) : null,
     {
       revalidateOnFocus: false,
       revalidateIfStale: false,
@@ -63,20 +61,22 @@ export function UnauthorizedView(props: { className?: string; imgClassName?: str
         <div className="flex flex-col gap-4 max-w-[400px]">
           <div className="flex flex-col gap-2">
             <div className={cn("text-h4-medium text-primary", { "text-h5-medium": !isInFullScreen })}>
-              Plane AI can now take actions for you.
+              {instance ? "Plane AI can now take actions for you." : "Plane AI failed to startup"}
             </div>
             <div className={cn("text-body-md-regular text-secondary", { "text-body-xs-regular": !isInFullScreen })}>
-              Use Build mode to create work items, cycles and more. Activate now to start Plane AI actions.
+              {instance
+                ? "Use Build mode to create work items, cycles and more. Activate now to start Plane AI actions."
+                : "Please contact your admin to check the status of Plane AI and try again."}
             </div>
           </div>
-          {instance && !instance?.is_authorized && (
+          {instance && !instance?.is_authorized ? (
             <a
               href={`${instance.oauth_url}?sidebar_open_url=${pathname}${isPiChatSidecarOpen ? "?pi_sidebar_open=true" : ""}`}
               className={cn(getButtonStyling("primary", "base"), "w-fit p-2")}
             >
               Activate Build mode
             </a>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

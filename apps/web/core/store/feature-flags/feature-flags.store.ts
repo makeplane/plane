@@ -21,20 +21,17 @@ import type { E_INTEGRATION_KEYS } from "@plane/types";
 import type { TFeatureFlagsResponse } from "@/services/feature-flag.service";
 import { FeatureFlagService } from "@/services/feature-flag.service";
 import { SiloAppService } from "@/services/integrations/silo.service";
-import { PIService } from "@/services/pi.service";
 // store
 import type { CoreRootStore } from "@/store/root.store";
 
 const featureFlagService = new FeatureFlagService();
 const siloAppService = new SiloAppService();
-const piService = new PIService();
 type TFeatureFlagsMaps = Record<E_FEATURE_FLAGS, boolean>; // feature flag -> boolean
 
 export interface IFeatureFlagsStore {
   flags: Record<string, TFeatureFlagsMaps>; // workspaceSlug -> feature flag map
   integrations: Map<string, E_INTEGRATION_KEYS[]>; // workspaceSlug -> enabled integrations array
   fetchFeatureFlags: (workspaceSlug: string) => Promise<TFeatureFlagsResponse>;
-  fetchAiFeatureFlags: (workspaceSlug: string) => Promise<TFeatureFlagsResponse>;
   fetchIntegrations: (workspaceSlug: string) => Promise<E_INTEGRATION_KEYS[]>;
   getFeatureFlag: (workspaceSlug: string, flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) => boolean;
   getFeatureFlagForCurrentWorkspace: (flag: keyof typeof E_FEATURE_FLAGS, defaultValue: boolean) => boolean;
@@ -53,7 +50,6 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
       integrations: observable,
       fetchFeatureFlags: action,
       fetchIntegrations: action,
-      fetchAiFeatureFlags: action,
     });
 
     this.rootStore = _rootStore;
@@ -72,23 +68,6 @@ export class FeatureFlagsStore implements IFeatureFlagsStore {
       return response;
     } catch (error) {
       console.error("Error fetching feature flags", error);
-      throw error;
-    }
-  };
-
-  fetchAiFeatureFlags = async (workspaceSlug: string) => {
-    try {
-      const response = await piService.getPiFeatureFlag(workspaceSlug);
-      runInAction(() => {
-        if (response.values) {
-          Object.keys(response.values).forEach((key) => {
-            set(this.flags, [workspaceSlug, key], response.values[key as E_FEATURE_FLAGS]);
-          });
-        }
-      });
-      return response;
-    } catch (error) {
-      console.error("Error fetching AI feature flags", error);
       throw error;
     }
   };
