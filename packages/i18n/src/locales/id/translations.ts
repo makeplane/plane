@@ -494,6 +494,7 @@ export default {
   morning: "pagi",
   afternoon: "siang",
   evening: "malam",
+  night: "night",
   show_all: "Tampilkan semua",
   show_less: "Tampilkan lebih sedikit",
   no_data_yet: "Belum ada data",

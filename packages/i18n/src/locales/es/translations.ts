@@ -502,6 +502,7 @@ export default {
   morning: "días",
   afternoon: "tardes",
   evening: "noches",
+  night: "night",
   show_all: "Mostrar todo",
   show_less: "Mostrar menos",
   no_data_yet: "Aún no hay datos",

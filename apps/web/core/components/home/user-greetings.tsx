@@ -22,28 +22,42 @@ export function UserGreetingsView(props: IUserGreetingsView) {
   // store hooks
   const { t } = useTranslation();
 
+  const userTimezone = (() => {
+    if (!user?.user_timezone) return undefined;
+    try {
+      Intl.DateTimeFormat(undefined, { timeZone: user.user_timezone });
+      return user.user_timezone;
+    } catch {
+      return undefined;
+    }
+  })();
+
   const hour = new Intl.DateTimeFormat("en-US", {
+    timeZone: userTimezone,
     hour12: false,
     hour: "numeric",
   }).format(currentTime);
 
   const date = new Intl.DateTimeFormat("en-US", {
+    timeZone: userTimezone,
     month: "short",
     day: "numeric",
   }).format(currentTime);
 
   const weekDay = new Intl.DateTimeFormat("en-US", {
+    timeZone: userTimezone,
     weekday: "long",
   }).format(currentTime);
 
   const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: user?.user_timezone,
-    hour12: false, // Use 24-hour format
+    timeZone: userTimezone,
+    hour12: false,
     hour: "2-digit",
     minute: "2-digit",
   }).format(currentTime);
 
-  const greeting = parseInt(hour, 10) < 12 ? "morning" : parseInt(hour, 10) < 18 ? "afternoon" : "evening";
+  const hourNum = parseInt(hour, 10);
+  const greeting = hourNum < 5 ? "night" : hourNum < 12 ? "morning" : hourNum < 18 ? "afternoon" : "evening";
 
   return (
     <div className="my-6 flex flex-col items-center">
@@ -51,7 +65,7 @@ export function UserGreetingsView(props: IUserGreetingsView) {
         {t("good")} {t(greeting)}, {user?.first_name} {user?.last_name}
       </h2>
       <h5 className="flex items-center gap-2 font-medium text-placeholder">
-        <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙️"}</div>
+        <div>{greeting === "morning" ? "🌤️" : greeting === "afternoon" ? "🌥️" : "🌙"}</div>
         <div>
           {weekDay}, {date} {timeString}
         </div>

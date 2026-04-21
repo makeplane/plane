@@ -322,6 +322,7 @@ export default {
   morning: "morning",
   afternoon: "afternoon",
   evening: "evening",
+  night: "night",
   show_all: "Show all",
   show_less: "Show less",
   no_data_yet: "No Data yet",

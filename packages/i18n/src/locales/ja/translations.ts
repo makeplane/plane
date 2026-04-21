@@ -488,6 +488,7 @@ export default {
   morning: "ございます",
   afternoon: "こんにちは",
   evening: "こんばんは",
+  night: "night",
   show_all: "すべて表示",
   show_less: "表示を減らす",
   no_data_yet: "まだデータがありません",

@@ -490,6 +490,7 @@ export default {
   morning: "sabah",
   afternoon: "öğleden sonra",
   evening: "akşam",
+  night: "night",
   show_all: "Tümünü göster",
   show_less: "Daha az göster",
   no_data_yet: "Henüz veri yok",
