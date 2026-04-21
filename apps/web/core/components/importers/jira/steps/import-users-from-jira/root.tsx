@@ -19,7 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 // plane web components
 import { ImportUsersFromJiraUploader } from "@/components/importers/jira";
-import { StepperNavigation } from "@/components/importers/ui";
+import { SkipUserImport, StepperNavigation } from "@/components/importers/ui";
 // plane web hooks
 import { useJiraImporter } from "@/plane-web/hooks/store";
 // plane web types
@@ -31,7 +31,6 @@ type TFormData = TImporterDataPayload[E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA];
 const currentStepKey = E_IMPORTER_STEPS.IMPORT_USERS_FROM_JIRA;
 
 export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
-  // hooks
   const {
     auth: { currentAuth },
     importerData,
@@ -43,31 +42,36 @@ export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
 
   const { t } = useTranslation();
 
-  // states
   const [formData, setFormData] = useState<TFormData>({
     userSkipToggle: false,
     userData: undefined,
   });
 
-  // derived values
   const jiraResourceId = importerData[E_IMPORTER_STEPS.CONFIGURE_JIRA]?.resourceId;
   const isOAuthEnabled = currentAuth?.isOAuthEnabled;
   const isResourceFiledRequired = isOAuthEnabled ? !!jiraResourceId : true;
 
-  // handlers
   const handleFormData = <T extends keyof TFormData>(key: T, value: TFormData[T]) => {
     setFormData((prevData) => ({ ...prevData, [key]: value }));
 
-    if (key === "userData" && typeof value === "string") {
-      handleSyncJobConfig("users", value);
-      handleSyncJobConfig("skipUserImport", false);
+    if (key === "userData") {
+      if (typeof value === "string") {
+        handleSyncJobConfig("users", value);
+        handleSyncJobConfig("skipUserImport", false);
+      } else {
+        handleSyncJobConfig("users", "");
+      }
     }
   };
 
+  const handleUserSkipToggle = (flag: boolean) => {
+    setFormData((prev) => ({ ...prev, userSkipToggle: flag, userData: flag ? undefined : prev.userData }));
+    handleSyncJobConfig("skipUserImport", flag);
+    if (flag) handleSyncJobConfig("users", "");
+  };
+
   const handleOnClickNext = () => {
-    // update the data in the context
     handleImporterData(currentStepKey, formData);
-    // moving to the next state
     handleStepper("next");
   };
 
@@ -79,13 +83,11 @@ export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [importerData]);
 
-  const isNextButtonDisabled = !formData.userData;
+  const isNextButtonDisabled = !formData.userSkipToggle && !formData.userData;
 
   return (
     <div className="relative w-full h-full overflow-hidden overflow-y-auto flex flex-col justify-between gap-4">
-      {/* content */}
-      <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-4">
-        {/* uploading the users from jira */}
+      <div className="w-full min-h-44 max-h-full overflow-y-auto space-y-6">
         {isResourceFiledRequired && (
           <div className="space-y-4">
             <div className="text-13">
@@ -99,14 +101,20 @@ export const ImportUsersFromJira = observer(function ImportUsersFromJira() {
                 {t("common.from", { name: "Jira" })}
               </a>
             </div>
-            <ImportUsersFromJiraUploader
-              handleValue={(value: string | undefined) => handleFormData("userData", value)}
+            {!formData.userSkipToggle && (
+              <ImportUsersFromJiraUploader
+                handleValue={(value: string | undefined) => handleFormData("userData", value)}
+              />
+            )}
+            <SkipUserImport
+              importSourceName="Jira"
+              userSkipToggle={formData.userSkipToggle}
+              handleUserSkipToggle={handleUserSkipToggle}
             />
           </div>
         )}
       </div>
 
-      {/* stepper button */}
       <div className="shrink-0 relative flex items-center gap-2">
         <StepperNavigation currentStep={currentStep} handleStep={handleStepper}>
           <Button variant="primary" onClick={handleOnClickNext} disabled={isNextButtonDisabled}>

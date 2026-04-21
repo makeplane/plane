@@ -329,8 +329,8 @@ export class JiraService {
         : createdAfter
           ? `project = "${projectKey}" AND (created >= "${createdAfter}" OR updated >= "${createdAfter}")`
           : `project = "${projectKey}"`,
-      expand: "renderedFields",
-      fields: ["*all"],
+      expand: "renderedFields,changelog",
+      fields: ["*all", "sprints", "closedSprints"],
       nextPageToken: nextPageToken,
     });
   }

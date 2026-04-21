@@ -30,7 +30,7 @@ export interface IPermissionAccessStore {
   getCurrentUserWorkspaceRoleSlug: (workspaceSlug: string) => CurrentUserPermissionState["relation"] | undefined;
   getCurrentUserProjectRoleSlug: (projectId: string) => CurrentUserPermissionState["relation"] | undefined;
   getCurrentUserTeamspaceRoleSlug: (teamspaceId: string) => CurrentUserPermissionState["relation"] | undefined;
-  fetchCurrentUserWorkspacePermissions: (workspaceSlug: string) => Promise<void>;
+  fetchCurrentUserWorkspacePermissions: (workspaceSlug: string) => Promise<CurrentUserPermissionState>;
   hydrateProjectPermissionsFromEntities: (entities: TPermissionHydrationEntity[]) => void;
   hydrateTeamspacePermissionsFromEntities: (entities: TPermissionHydrationEntity[]) => void;
 }
@@ -176,6 +176,7 @@ export class PermissionAccessStore implements IPermissionAccessStore {
       runInAction(() => {
         this.workspacePermissionsMap.set(workspaceSlug, permissions);
       });
+      return permissions;
     } catch (error) {
       console.error("Failed to fetch workspace permissions:", error);
       throw error;

@@ -1152,7 +1152,11 @@ def process_issue_comments(slug, user_id, issue, comments, report_id=None, job_i
 def process_issue_cycles(slug, issue, cycle_ids, report_id=None, job_id=None):
     try:
         logs_to_create = []
-        # Create new cycle associations without deleting existing ones
+        CycleIssue.objects.filter(
+            issue=issue,
+            workspace_id=issue.workspace_id,
+            project_id=issue.project_id,
+        ).delete()
         for cycle_id in cycle_ids:
             cycle_issue, created = CycleIssue.objects.get_or_create(
                 issue=issue,
