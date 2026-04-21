@@ -477,6 +477,12 @@ export default {
   afternoon: "下午",
   evening: "晚上",
   night: "晚安",
+  greetings: {
+    morning: "早安，{first_name} {last_name}",
+    afternoon: "午安，{first_name} {last_name}",
+    evening: "晚上好，{first_name} {last_name}",
+    night: "晚安，{first_name} {last_name}",
+  },
   show_all: "顯示全部",
   show_less: "顯示較少",
   no_data_yet: "尚無資料",

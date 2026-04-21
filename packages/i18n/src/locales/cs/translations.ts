@@ -490,6 +490,12 @@ export default {
   afternoon: "odpoledne",
   evening: "večer",
   night: "noc",
+  greetings: {
+    morning: "Dobré ráno, {first_name} {last_name}",
+    afternoon: "Dobré odpoledne, {first_name} {last_name}",
+    evening: "Dobrý večer, {first_name} {last_name}",
+    night: "Dobrou noc, {first_name} {last_name}",
+  },
   show_all: "Zobrazit vše",
   show_less: "Zobrazit méně",
   no_data_yet: "Zatím žádná data",

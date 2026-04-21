@@ -503,6 +503,12 @@ export default {
   afternoon: "Nachmittag",
   evening: "Abend",
   night: "Nacht",
+  greetings: {
+    morning: "Guten Morgen, {first_name} {last_name}",
+    afternoon: "Guten Nachmittag, {first_name} {last_name}",
+    evening: "Guten Abend, {first_name} {last_name}",
+    night: "Gute Nacht, {first_name} {last_name}",
+  },
   show_all: "Alle anzeigen",
   show_less: "Weniger anzeigen",
   no_data_yet: "Noch keine Daten",

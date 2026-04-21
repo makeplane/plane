@@ -496,6 +496,12 @@ export default {
   afternoon: "după-amiaza",
   evening: "seara",
   night: "noapte",
+  greetings: {
+    morning: "Bună dimineața, {first_name} {last_name}",
+    afternoon: "Bună ziua, {first_name} {last_name}",
+    evening: "Bună seara, {first_name} {last_name}",
+    night: "Noapte bună, {first_name} {last_name}",
+  },
   show_all: "Arată tot",
   show_less: "Arată mai puțin",
   no_data_yet: "Nicio dată încă",

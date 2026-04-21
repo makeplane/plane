@@ -496,6 +496,12 @@ export default {
   afternoon: "Buổi chiều",
   evening: "Buổi tối",
   night: "Buổi đêm",
+  greetings: {
+    morning: "Chào buổi sáng, {first_name} {last_name}",
+    afternoon: "Chào buổi chiều, {first_name} {last_name}",
+    evening: "Chào buổi tối, {first_name} {last_name}",
+    night: "Chúc ngủ ngon, {first_name} {last_name}",
+  },
   show_all: "Hiển thị tất cả",
   show_less: "Hiển thị ít hơn",
   no_data_yet: "Chưa có dữ liệu",

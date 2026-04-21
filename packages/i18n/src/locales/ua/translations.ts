@@ -498,6 +498,12 @@ export default {
   afternoon: "дня",
   evening: "вечора",
   night: "ночі",
+  greetings: {
+    morning: "Добрий ранок, {first_name} {last_name}",
+    afternoon: "Добрий день, {first_name} {last_name}",
+    evening: "Добрий вечір, {first_name} {last_name}",
+    night: "Доброї ночі, {first_name} {last_name}",
+  },
   show_all: "Показати все",
   show_less: "Показати менше",
   no_data_yet: "Поки що немає даних",
