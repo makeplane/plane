@@ -270,7 +270,7 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
 
 
 class WorkspaceUserPropertiesEndpoint(BaseAPIView):
-    use_read_replica = True
+    use_read_replica = False
 
     @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def patch(self, request, slug):
