@@ -39,7 +39,6 @@ class RoleEndpoint(BaseAPIView):
     - DELETE /workspaces/<slug>/roles/<pk>/ - Delete a custom role
     """
 
-    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         """
@@ -52,27 +51,33 @@ class RoleEndpoint(BaseAPIView):
         if pk:
             # Retrieve specific role
             try:
-                role = Role.objects.annotate(
-                    workspace_member_count=Count(
-                        "workspace_members",
-                        filter=Q(workspace_members__is_active=True, workspace_members__deleted_at__isnull=True),
-                    ),
-                    project_member_count=Count(
-                        "project_members",
-                        filter=Q(project_members__is_active=True, project_members__deleted_at__isnull=True),
-                    ),
-                ).prefetch_related(
-                    Prefetch(
-                        "role_permission_schemes",
-                        queryset=RolePermissionScheme.objects.filter(
-                            deleted_at__isnull=True,
-                            permission_scheme__deleted_at__isnull=True,
-                        ).select_related("permission_scheme").order_by("sort_order"),
+                role = (
+                    Role.objects.annotate(
+                        workspace_member_count=Count(
+                            "workspace_members",
+                            filter=Q(workspace_members__is_active=True, workspace_members__deleted_at__isnull=True),
+                        ),
+                        project_member_count=Count(
+                            "project_members",
+                            filter=Q(project_members__is_active=True, project_members__deleted_at__isnull=True),
+                        ),
                     )
-                ).get(
-                    id=pk,
-                    workspace__slug=slug,
-                    deleted_at__isnull=True,
+                    .prefetch_related(
+                        Prefetch(
+                            "role_permission_schemes",
+                            queryset=RolePermissionScheme.objects.filter(
+                                deleted_at__isnull=True,
+                                permission_scheme__deleted_at__isnull=True,
+                            )
+                            .select_related("permission_scheme")
+                            .order_by("sort_order"),
+                        )
+                    )
+                    .get(
+                        id=pk,
+                        workspace__slug=slug,
+                        deleted_at__isnull=True,
+                    )
                 )
             except Role.DoesNotExist:
                 return Response(
@@ -85,27 +90,34 @@ class RoleEndpoint(BaseAPIView):
         # List all roles
         namespace = request.query_params.get("namespace")
 
-        roles = Role.objects.filter(
-            workspace__slug=slug,
-            deleted_at__isnull=True,
-        ).annotate(
-            workspace_member_count=Count(
-                "workspace_members",
-                filter=Q(workspace_members__is_active=True, workspace_members__deleted_at__isnull=True),
-            ),
-            project_member_count=Count(
-                "project_members",
-                filter=Q(project_members__is_active=True, project_members__deleted_at__isnull=True),
-            ),
-        ).prefetch_related(
-            Prefetch(
-                "role_permission_schemes",
-                queryset=RolePermissionScheme.objects.filter(
-                    deleted_at__isnull=True,
-                    permission_scheme__deleted_at__isnull=True,
-                ).select_related("permission_scheme").order_by("sort_order"),
+        roles = (
+            Role.objects.filter(
+                workspace__slug=slug,
+                deleted_at__isnull=True,
             )
-        ).order_by("namespace", "sort_order", "name")
+            .annotate(
+                workspace_member_count=Count(
+                    "workspace_members",
+                    filter=Q(workspace_members__is_active=True, workspace_members__deleted_at__isnull=True),
+                ),
+                project_member_count=Count(
+                    "project_members",
+                    filter=Q(project_members__is_active=True, project_members__deleted_at__isnull=True),
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "role_permission_schemes",
+                    queryset=RolePermissionScheme.objects.filter(
+                        deleted_at__isnull=True,
+                        permission_scheme__deleted_at__isnull=True,
+                    )
+                    .select_related("permission_scheme")
+                    .order_by("sort_order"),
+                )
+            )
+            .order_by("namespace", "sort_order", "name")
+        )
 
         if namespace:
             roles = roles.filter(namespace=namespace)
@@ -338,9 +350,7 @@ class RoleEndpoint(BaseAPIView):
                 )
 
             # Soft-delete M2M links to permission schemes, then the role
-            RolePermissionScheme.objects.filter(
-                role=role, deleted_at__isnull=True
-            ).delete()
+            RolePermissionScheme.objects.filter(role=role, deleted_at__isnull=True).delete()
             role.delete()
 
         # Soft delete
