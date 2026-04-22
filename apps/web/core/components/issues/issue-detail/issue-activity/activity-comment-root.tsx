@@ -83,7 +83,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
   const activityAndComments = getActivityAndCommentsByIssueId(issueId, sortOrder);
 
   if (!activityAndComments) return <IssueActivityLoader />;
-  if (activityAndComments.length <= 0) {
+  if (activityAndComments.length <= 0 && activeTabKey !== "comment") {
     return (
       <div className="py-6">
         <EmptyStateCompact assetKey="unknown" title={emptyStateTitle} />
@@ -104,7 +104,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
         })
       : filteredActivities;
 
-  if (displayActivities.length <= 0) {
+  if (displayActivities.length <= 0 && activeTabKey !== "comment") {
     return (
       <div className="py-6">
         <EmptyStateCompact assetKey="unknown" title={emptyStateTitle} />
