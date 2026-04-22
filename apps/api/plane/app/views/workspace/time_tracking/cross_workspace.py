@@ -250,16 +250,19 @@ class CrossWorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
         if not member_id or not date_str:
             return Response({"error": "member_id and date are required."}, status=400)
 
-        user_workspace_ids = list(
+        # Scope to the TARGET member's workspaces, not the viewing admin's.
+        # Using request.user here would silently exclude logs from workspaces
+        # the admin doesn't belong to but the target member does.
+        target_workspace_ids = list(
             WorkspaceMember.objects.filter(
-                member=request.user,
+                member_id=member_id,
                 is_active=True,
             ).values_list("workspace_id", flat=True)
         )
 
         worklogs = (
             IssueWorkLog.objects.filter(
-                workspace_id__in=user_workspace_ids,
+                workspace_id__in=target_workspace_ids,
                 logged_by_id=member_id,
                 logged_at=date_str,
             )
