@@ -48,6 +48,7 @@ class PlaneDBPool:
         """Initialize a new connection pool with given min/max connections."""
         if cls._pool is None:
             try:
+                log.info("Initializing async connection pool to the follower PostgreSQL database.")
                 cls._pool = await create_pool(
                     dsn=settings.follower_connection_url(),
                     min_size=min_size,
@@ -141,6 +142,7 @@ class PlaneDBSync:
     def fetchrow(cls, query: str, params: SQLParams = None) -> Optional[Dict[str, Any]]:
         """Execute a query and return the first row (synchronous)."""
         try:
+            log.info("Establishing synchronous connection to the follower PostgreSQL database.")
             conn = psycopg2.connect(settings.follower_connection_url())
             try:
                 with conn.cursor() as cur:
@@ -161,6 +163,7 @@ class PlaneDBSync:
     def fetch(cls, query: str, params: SQLParams = None) -> List[Dict[str, Any]]:
         """Execute a query and return all results (synchronous)."""
         try:
+            log.info("Establishing synchronous connection to the follower PostgreSQL database.")
             conn = psycopg2.connect(settings.follower_connection_url())
             try:
                 with conn.cursor() as cur:
