@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Rollen- und Berechtigungsschemata",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Berechtigungen",
+        "sidebar_label": "Berechtigungen",
+        "description": "Sehen Sie die Berechtigungen ein, die Ihren Rollen auf Workspace- und Projektebene zugeordnet sind. Es werden nur die Ihnen zugewiesenen Rollen angezeigt.",
+        "tabs": {
+          "workspace": "Workspace-Rollen",
+          "project": "Projektrollen"
+        },
+        "project_picker_label": "Ihre Rolle und Berechtigungen in",
+        "elevation_banner": "Als Workspace-{role} sind Ihre Berechtigungen in diesem Projekt über Ihre zugewiesene Rolle hinaus erhöht.",
+        "permissions_column": "Berechtigungen",
+        "no_joined_projects_title": "Sie sind noch an keinem Projekt beteiligt.",
+        "no_joined_projects_description": "Ihre Projektberechtigungen werden hier angezeigt, sobald Sie einem Projekt hinzugefügt werden."
+      },
       "roles_and_permissions": {
         "title": "Rollen und Berechtigungen",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Rolle löschen?",
           "description": "Möchten Sie diese Rolle wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
           "error_toast_message": "Rolle konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Workspace-Rollen und -Berechtigungen",
-            "project": "Projektrollen und -Berechtigungen"
-          },
-          "permissions_header": "Berechtigungen",
-          "view_mode": {
-            "sets": "Set-Ansicht",
-            "permissions": "Berechtigungs-Strings"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Projektrollen und -schemata",
-        "sidebar_label": "Projekt"
+        "sidebar_label": "Projektrollen und -schemata",
+        "description": "Konfigurieren Sie Rollen und Berechtigungsschemata, um Zugriff und Berechtigungen in Ihren Projekten zu verwalten."
       },
       "workspace_roles_and_schemes": {
         "title": "Workspace-Rollen und -schemata",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Workspace-Rollen und -schemata",
+        "description": "Konfigurieren Sie Rollen und Berechtigungsschemata, um Zugriff und Berechtigungen in Ihrem Workspace zu verwalten."
       },
       "roles_and_schemes": {
-        "description": "Eigenschaften und Interaktionsgruppen konfigurieren, die an einen oder mehrere Arbeitselementtypen angehängt werden sollen",
         "tabs": {
           "roles": "Rollen",
           "permission_schemes": "Berechtigungsschemata"
@@ -598,7 +602,7 @@
           "role_title_label": "Rollentitel",
           "role_title_placeholder": "Eindeutigen Titel hinzufügen",
           "description_label": "Beschreibung",
-          "description_placeholder": "Eindeutigen Titel hinzufügen",
+          "description_placeholder": "Rolle beschreiben",
           "create_button": "Rolle erstellen",
           "error_toast_description": "Rolle konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
         },

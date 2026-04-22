@@ -35,17 +35,19 @@ import {
   InitiativeIcon,
   PiIcon,
   ProjectStatesIcon,
-  RolesAndPermissionsIcon,
   RelationPropertyIcon,
   ReleaseIcon,
   TeamsIcon,
   WorkItemsIcon,
+  WorkspaceIcon,
+  ProjectIcon,
 } from "@plane/propel/icons";
 import type { TWorkspaceSettingsTabs } from "@plane/types";
 
 export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon | React.FC<ISvgIcons>> = {
   general: Building,
   members: Users,
+  permissions: KeyRound,
   export: ArrowUpToLine,
   "billing-and-plans": CreditCard,
   webhooks: Webhook,
@@ -65,8 +67,8 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, LucideIcon
   "plane-intelligence": PiIcon,
   "access-tokens": KeyRound,
   scripts: FileCode,
-  project_roles_and_schemes: RolesAndPermissionsIcon,
-  workspace_roles_and_schemes: RolesAndPermissionsIcon,
+  project_roles_and_schemes: ProjectIcon,
+  workspace_roles_and_schemes: WorkspaceIcon,
   work_item_types: WorkItemsIcon,
   automations: Zap,
 };

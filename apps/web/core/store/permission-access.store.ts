@@ -14,7 +14,12 @@
 import { action, makeObservable, observable, runInAction } from "mobx";
 import { computedFn } from "mobx-utils";
 import { RolesAndPermissionsService } from "@plane/services";
-import type { CurrentUserPermissionState, PermissionCheckArgs, PermissionConditionContext } from "@plane/types";
+import type {
+  CurrentUserPermissionState,
+  PermissionCheckArgs,
+  PermissionConditionContext,
+  PermissionGrantString,
+} from "@plane/types";
 import { buildPermissionString, matchesPermissionGrant } from "@plane/utils";
 
 /**
@@ -30,6 +35,8 @@ export interface IPermissionAccessStore {
   getCurrentUserWorkspaceRoleSlug: (workspaceSlug: string) => CurrentUserPermissionState["relation"] | undefined;
   getCurrentUserProjectRoleSlug: (projectId: string) => CurrentUserPermissionState["relation"] | undefined;
   getCurrentUserTeamspaceRoleSlug: (teamspaceId: string) => CurrentUserPermissionState["relation"] | undefined;
+  getCurrentUserWorkspacePermissionGrants: (workspaceSlug: string) => PermissionGrantString[] | undefined;
+  getCurrentUserProjectPermissionGrants: (projectId: string) => PermissionGrantString[] | undefined;
   fetchCurrentUserWorkspacePermissions: (workspaceSlug: string) => Promise<CurrentUserPermissionState>;
   hydrateProjectPermissionsFromEntities: (entities: TPermissionHydrationEntity[]) => void;
   hydrateTeamspacePermissionsFromEntities: (entities: TPermissionHydrationEntity[]) => void;
@@ -166,6 +173,13 @@ export class PermissionAccessStore implements IPermissionAccessStore {
 
   getCurrentUserTeamspaceRoleSlug: IPermissionAccessStore["getCurrentUserTeamspaceRoleSlug"] = computedFn(
     (teamspaceId) => this.teamspacePermissionsMap.get(teamspaceId)?.relation
+  );
+
+  getCurrentUserWorkspacePermissionGrants: IPermissionAccessStore["getCurrentUserWorkspacePermissionGrants"] =
+    computedFn((workspaceSlug) => this.workspacePermissionsMap.get(workspaceSlug)?.permission_grants);
+
+  getCurrentUserProjectPermissionGrants: IPermissionAccessStore["getCurrentUserProjectPermissionGrants"] = computedFn(
+    (projectId) => this.projectPermissionsMap.get(projectId)?.permission_grants
   );
 
   fetchCurrentUserWorkspacePermissions: IPermissionAccessStore["fetchCurrentUserWorkspacePermissions"] = async (

@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Roller ve İzinler şemaları",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "İzinler",
+        "sidebar_label": "İzinler",
+        "description": "Workspace ve proje düzeyindeki rollerinize bağlı izinleri görüntüleyin. Yalnızca size atanan roller gösterilir.",
+        "tabs": {
+          "workspace": "Workspace rolleri",
+          "project": "Proje rolleri"
+        },
+        "project_picker_label": "Şu projedeki rolünüz ve izinleriniz",
+        "elevation_banner": "Workspace {role} olarak, bu projedeki izinleriniz atanan rolünüzün ötesinde yükseltilmiştir.",
+        "permissions_column": "İzinler",
+        "no_joined_projects_title": "Henüz hiçbir projeye dahil değilsiniz.",
+        "no_joined_projects_description": "Bir projeye eklendiğinizde proje izinleriniz burada görünecek."
+      },
       "roles_and_permissions": {
         "title": "Roller ve İzinler",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Rol silinsin mi?",
           "description": "Bu rolü silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
           "error_toast_message": "Rol silinemedi. Lütfen tekrar deneyin."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Workspace rolleri ve izinleri",
-            "project": "Proje rolleri ve izinleri"
-          },
-          "permissions_header": "İzinler",
-          "view_mode": {
-            "sets": "Küme görünümü",
-            "permissions": "İzin dizeleri"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Proje rolleri ve şemaları",
-        "sidebar_label": "Proje"
+        "sidebar_label": "Proje rolleri ve şemaları",
+        "description": "Projelerinizde erişimi ve izinleri yönetmek için rolleri ve izin şemalarını yapılandırın."
       },
       "workspace_roles_and_schemes": {
         "title": "Workspace rolleri ve şemaları",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Workspace rolleri ve şemaları",
+        "description": "Workspace'inizde erişimi ve izinleri yönetmek için rolleri ve izin şemalarını yapılandırın."
       },
       "roles_and_schemes": {
-        "description": "Bir work item türüne veya türlerine eklenecek özellikleri ve etkileşim gruplarını yapılandırın",
         "tabs": {
           "roles": "Roller",
           "permission_schemes": "İzin Şemaları"
@@ -598,7 +602,7 @@
           "role_title_label": "Rol başlığı",
           "role_title_placeholder": "Benzersiz bir başlık ekleyin",
           "description_label": "Açıklama",
-          "description_placeholder": "Benzersiz bir başlık ekleyin",
+          "description_placeholder": "Rolü açıklayın",
           "create_button": "Rol oluştur",
           "error_toast_description": "Rol oluşturulamadı. Lütfen tekrar deneyin."
         },

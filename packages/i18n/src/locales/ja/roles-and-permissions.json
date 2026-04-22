@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "ロールと権限スキーム",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "権限",
+        "sidebar_label": "権限",
+        "description": "ワークスペースおよびプロジェクトレベルでのロールに関連付けられた権限を表示します。割り当てられたロールのみが表示されます。",
+        "tabs": {
+          "workspace": "ワークスペースロール",
+          "project": "プロジェクトロール"
+        },
+        "project_picker_label": "以下のプロジェクトにおけるあなたのロールと権限",
+        "elevation_banner": "ワークスペースの{role}として、このプロジェクトでの権限は割り当てられたロールを超えて昇格されています。",
+        "permissions_column": "権限",
+        "no_joined_projects_title": "まだどのプロジェクトにも参加していません。",
+        "no_joined_projects_description": "プロジェクトに追加されると、プロジェクトの権限がここに表示されます。"
+      },
       "roles_and_permissions": {
         "title": "ロールと権限",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "ロールを削除しますか？",
           "description": "このロールを削除してもよろしいですか？この操作は元に戻せません。",
           "error_toast_message": "ロールを削除できませんでした。もう一度お試しください。"
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "ワークスペースのロールと権限",
-            "project": "プロジェクトのロールと権限"
-          },
-          "permissions_header": "権限",
-          "view_mode": {
-            "sets": "セット表示",
-            "permissions": "権限文字列"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "プロジェクトロールとスキーム",
-        "sidebar_label": "プロジェクト"
+        "sidebar_label": "プロジェクトロールとスキーム",
+        "description": "ロールと権限スキームを構成して、プロジェクト全体のアクセスと権限を管理します。"
       },
       "workspace_roles_and_schemes": {
         "title": "ワークスペースロールとスキーム",
-        "sidebar_label": "ワークスペース"
+        "sidebar_label": "ワークスペースロールとスキーム",
+        "description": "ロールと権限スキームを構成して、ワークスペース全体のアクセスと権限を管理します。"
       },
       "roles_and_schemes": {
-        "description": "ワークアイテムタイプに関連付けるプロパティーとインタラクショングループを設定します",
         "tabs": {
           "roles": "ロール",
           "permission_schemes": "権限スキーム"
@@ -598,7 +602,7 @@
           "role_title_label": "ロールのタイトル",
           "role_title_placeholder": "ユニークなタイトルを追加",
           "description_label": "説明",
-          "description_placeholder": "ユニークなタイトルを追加",
+          "description_placeholder": "ロールの説明を入力",
           "create_button": "ロールを作成",
           "error_toast_description": "ロールを作成できませんでした。もう一度お試しください。"
         },

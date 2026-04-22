@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Scheme de roluri și permisiuni",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Permisiuni",
+        "sidebar_label": "Permisiuni",
+        "description": "Vizualizați permisiunile asociate rolurilor dvs. la nivelurile de workspace și proiect. Sunt afișate doar rolurile atribuite dvs.",
+        "tabs": {
+          "workspace": "Roluri Workspace",
+          "project": "Roluri de proiect"
+        },
+        "project_picker_label": "Rolul și permisiunile dvs. în",
+        "elevation_banner": "Ca {role} Workspace, permisiunile dvs. în acest proiect sunt ridicate dincolo de rolul atribuit.",
+        "permissions_column": "Permisiuni",
+        "no_joined_projects_title": "Nu faceți încă parte din niciun proiect.",
+        "no_joined_projects_description": "Permisiunile dvs. de proiect vor apărea aici odată ce veți fi adăugat într-un proiect."
+      },
       "roles_and_permissions": {
         "title": "Roluri și permisiuni",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Ștergi rolul?",
           "description": "Sigur doriți să ștergeți acest rol? Această acțiune nu poate fi anulată.",
           "error_toast_message": "Ștergerea rolului a eșuat. Încercați din nou."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Roluri și permisiuni Workspace",
-            "project": "Roluri și permisiuni de proiect"
-          },
-          "permissions_header": "Permisiuni",
-          "view_mode": {
-            "sets": "Vizualizare set",
-            "permissions": "Șiruri de permisiuni"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Roluri și scheme de proiect",
-        "sidebar_label": "Proiect"
+        "sidebar_label": "Roluri și scheme de proiect",
+        "description": "Configurați rolurile și schemele de permisiuni pentru a gestiona accesul și permisiunile în proiectele dvs."
       },
       "workspace_roles_and_schemes": {
         "title": "Roluri și scheme Workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Roluri și scheme Workspace",
+        "description": "Configurați rolurile și schemele de permisiuni pentru a gestiona accesul și permisiunile în workspace-ul dvs."
       },
       "roles_and_schemes": {
-        "description": "Configurați proprietățile și grupurile de interacțiune care vor fi atașate unui tip sau mai multor tipuri de work item",
         "tabs": {
           "roles": "Roluri",
           "permission_schemes": "Scheme de permisiuni"
@@ -598,7 +602,7 @@
           "role_title_label": "Titlul rolului",
           "role_title_placeholder": "Adăugați un titlu unic",
           "description_label": "Descriere",
-          "description_placeholder": "Adăugați un titlu unic",
+          "description_placeholder": "Descrieți rolul",
           "create_button": "Creează rol",
           "error_toast_description": "Rolul nu a putut fi creat. Încercați din nou."
         },

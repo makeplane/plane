@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Schémas de rôles et d'autorisations",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Autorisations",
+        "sidebar_label": "Autorisations",
+        "description": "Consultez les autorisations associées à vos rôles au niveau de l'espace de travail et du projet. Seuls les rôles qui vous sont attribués sont affichés.",
+        "tabs": {
+          "workspace": "Rôles de l'espace de travail",
+          "project": "Rôles du projet"
+        },
+        "project_picker_label": "Votre rôle et vos autorisations dans",
+        "elevation_banner": "En tant que {role} de l'espace de travail, vos autorisations dans ce projet sont élevées au-delà de votre rôle attribué.",
+        "permissions_column": "Autorisations",
+        "no_joined_projects_title": "Vous ne faites encore partie d'aucun projet.",
+        "no_joined_projects_description": "Vos autorisations de projet apparaîtront ici dès que vous serez ajouté à un projet."
+      },
       "roles_and_permissions": {
         "title": "Rôles et autorisations",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Supprimer le rôle ?",
           "description": "Êtes-vous sûr de vouloir supprimer ce rôle ? Cette action est irréversible.",
           "error_toast_message": "Échec de la suppression du rôle. Veuillez réessayer."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Rôles et autorisations de l'espace de travail",
-            "project": "Rôles et autorisations du projet"
-          },
-          "permissions_header": "Autorisations",
-          "view_mode": {
-            "sets": "Vue par ensembles",
-            "permissions": "Chaînes d'autorisations"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Rôles et schémas de projet",
-        "sidebar_label": "Projet"
+        "sidebar_label": "Rôles et schémas de projet",
+        "description": "Configurez les rôles et les schémas d'autorisations pour gérer l'accès et les autorisations dans vos projets."
       },
       "workspace_roles_and_schemes": {
         "title": "Rôles et schémas de l'espace de travail",
-        "sidebar_label": "Espace de travail"
+        "sidebar_label": "Rôles et schémas de l'espace de travail",
+        "description": "Configurez les rôles et les schémas d'autorisations pour gérer l'accès et les autorisations dans votre espace de travail."
       },
       "roles_and_schemes": {
-        "description": "Configurez les propriétés et les groupes d'interaction à associer à un ou plusieurs types d'éléments de travail",
         "tabs": {
           "roles": "Rôles",
           "permission_schemes": "Schémas d'autorisations"
@@ -598,7 +602,7 @@
           "role_title_label": "Titre du rôle",
           "role_title_placeholder": "Ajoutez un titre unique",
           "description_label": "Description",
-          "description_placeholder": "Ajoutez un titre unique",
+          "description_placeholder": "Décrivez le rôle",
           "create_button": "Créer le rôle",
           "error_toast_description": "Le rôle n'a pas pu être créé. Veuillez réessayer."
         },

@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "角色和权限方案",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "权限",
+        "sidebar_label": "权限",
+        "description": "查看与您在 workspace 和项目级别上的角色相关联的权限。仅显示分配给您的角色。",
+        "tabs": {
+          "workspace": "Workspace 角色",
+          "project": "项目角色"
+        },
+        "project_picker_label": "您在以下项目中的角色和权限",
+        "elevation_banner": "作为 Workspace {role}，您在此项目中的权限已超出所分配角色的范围而被提升。",
+        "permissions_column": "权限",
+        "no_joined_projects_title": "您还未加入任何项目。",
+        "no_joined_projects_description": "当您被添加到项目后，您的项目权限将显示在这里。"
+      },
       "roles_and_permissions": {
         "title": "角色和权限",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "删除角色？",
           "description": "您确定要删除此角色吗？此操作无法撤销。",
           "error_toast_message": "删除角色失败。请重试。"
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Workspace 角色和权限",
-            "project": "项目角色和权限"
-          },
-          "permissions_header": "权限",
-          "view_mode": {
-            "sets": "集合视图",
-            "permissions": "权限字符串"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "项目角色和方案",
-        "sidebar_label": "项目"
+        "sidebar_label": "项目角色和方案",
+        "description": "配置角色和权限方案以管理项目的访问和权限。"
       },
       "workspace_roles_and_schemes": {
         "title": "Workspace 角色和方案",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Workspace 角色和方案",
+        "description": "配置角色和权限方案以管理 workspace 的访问和权限。"
       },
       "roles_and_schemes": {
-        "description": "配置要附加到工作项类型的属性和交互组",
         "tabs": {
           "roles": "角色",
           "permission_schemes": "权限方案"
@@ -598,7 +602,7 @@
           "role_title_label": "角色标题",
           "role_title_placeholder": "添加唯一标题",
           "description_label": "描述",
-          "description_placeholder": "添加唯一标题",
+          "description_placeholder": "描述该角色",
           "create_button": "创建角色",
           "error_toast_description": "无法创建角色。请重试。"
         },

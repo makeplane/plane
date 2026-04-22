@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Esquemas de funções e permissões",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Permissões",
+        "sidebar_label": "Permissões",
+        "description": "Veja as permissões associadas às suas funções nos níveis de workspace e projeto. Apenas as funções atribuídas a você são exibidas.",
+        "tabs": {
+          "workspace": "Funções do workspace",
+          "project": "Funções do projeto"
+        },
+        "project_picker_label": "Sua função e permissões em",
+        "elevation_banner": "Como {role} do Workspace, suas permissões neste projeto são elevadas além da função atribuída.",
+        "permissions_column": "Permissões",
+        "no_joined_projects_title": "Você ainda não faz parte de nenhum projeto.",
+        "no_joined_projects_description": "Suas permissões de projeto aparecerão aqui assim que você for adicionado a um projeto."
+      },
       "roles_and_permissions": {
         "title": "Funções e permissões",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Excluir função?",
           "description": "Tem certeza de que deseja excluir esta função? Esta ação não pode ser desfeita.",
           "error_toast_message": "Falha ao excluir a função. Tente novamente."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Funções e permissões do workspace",
-            "project": "Funções e permissões do projeto"
-          },
-          "permissions_header": "Permissões",
-          "view_mode": {
-            "sets": "Visualização de conjuntos",
-            "permissions": "Cadeias de permissões"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Funções e esquemas do projeto",
-        "sidebar_label": "Projeto"
+        "sidebar_label": "Funções e esquemas do projeto",
+        "description": "Configure funções e esquemas de permissão para gerenciar o acesso e as permissões em seus projetos."
       },
       "workspace_roles_and_schemes": {
         "title": "Funções e esquemas do workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Funções e esquemas do workspace",
+        "description": "Configure funções e esquemas de permissão para gerenciar o acesso e as permissões em seu workspace."
       },
       "roles_and_schemes": {
-        "description": "Configure propriedades e grupos de interação para anexar a um ou mais tipos de itens de trabalho",
         "tabs": {
           "roles": "Funções",
           "permission_schemes": "Esquemas de permissões"
@@ -598,7 +602,7 @@
           "role_title_label": "Título da função",
           "role_title_placeholder": "Adicione um título único",
           "description_label": "Descrição",
-          "description_placeholder": "Adicione um título único",
+          "description_placeholder": "Descreva a função",
           "create_button": "Criar função",
           "error_toast_description": "Não foi possível criar a função. Tente novamente."
         },

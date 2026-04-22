@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Roles and Permissions schemes",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Permissions",
+        "sidebar_label": "Permissions",
+        "description": "View the permissions associated with your roles across workspace and project levels. Only the roles assigned to you are shown.",
+        "tabs": {
+          "workspace": "Workspace roles",
+          "project": "Project roles"
+        },
+        "project_picker_label": "Your role and permissions in",
+        "elevation_banner": "As a Workspace {role}, your permissions in this project are elevated beyond your assigned role.",
+        "permissions_column": "Permissions",
+        "no_joined_projects_title": "You're not part of any project yet.",
+        "no_joined_projects_description": "Your project permissions will appear here once you're added to a project."
+      },
       "roles_and_permissions": {
         "title": "Roles and Permissions",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Delete role?",
           "description": "Are you sure you want to delete this role? This action cannot be undone.",
           "error_toast_message": "Failed to delete role. Please try again."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Workspace roles and permissions",
-            "project": "Project roles and permissions"
-          },
-          "permissions_header": "Permissions",
-          "view_mode": {
-            "sets": "Set view",
-            "permissions": "Permission strings"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Project roles & schemes",
-        "sidebar_label": "Project"
+        "sidebar_label": "Project roles & schemes",
+        "description": "Configure roles and permission schemes to manage access and permissions across your projects."
       },
       "workspace_roles_and_schemes": {
         "title": "Workspace roles & schemes",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Workspace roles & schemes",
+        "description": "Configure roles and permission schemes to manage access and permissions across your workspace."
       },
       "roles_and_schemes": {
-        "description": "Configure properties and interaction groups to be attached to a work item type or types",
         "tabs": {
           "roles": "Roles",
           "permission_schemes": "Permission Schemes"
@@ -598,7 +602,7 @@
           "role_title_label": "Role title",
           "role_title_placeholder": "Add a unique title",
           "description_label": "Description",
-          "description_placeholder": "Add a unique title",
+          "description_placeholder": "Describe the role",
           "create_button": "Create role",
           "error_toast_description": "Role could not be created. Please try again."
         },

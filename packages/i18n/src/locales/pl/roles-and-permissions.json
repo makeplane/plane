@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Schematy ról i uprawnień",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Uprawnienia",
+        "sidebar_label": "Uprawnienia",
+        "description": "Zobacz uprawnienia powiązane z Twoimi rolami na poziomie workspace i projektu. Wyświetlane są tylko role przypisane do Ciebie.",
+        "tabs": {
+          "workspace": "Role Workspace",
+          "project": "Role projektu"
+        },
+        "project_picker_label": "Twoja rola i uprawnienia w",
+        "elevation_banner": "Jako {role} Workspace, Twoje uprawnienia w tym projekcie są podwyższone ponad przypisaną Ci rolę.",
+        "permissions_column": "Uprawnienia",
+        "no_joined_projects_title": "Nie należysz jeszcze do żadnego projektu.",
+        "no_joined_projects_description": "Twoje uprawnienia projektu pojawią się tutaj, gdy zostaniesz dodany do projektu."
+      },
       "roles_and_permissions": {
         "title": "Role i uprawnienia",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Usunąć rolę?",
           "description": "Czy na pewno chcesz usunąć tę rolę? Tej operacji nie można cofnąć.",
           "error_toast_message": "Nie udało się usunąć roli. Spróbuj ponownie."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Role i uprawnienia obszaru Workspace",
-            "project": "Role i uprawnienia projektu"
-          },
-          "permissions_header": "Uprawnienia",
-          "view_mode": {
-            "sets": "Widok zestawów",
-            "permissions": "Ciągi uprawnień"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Role i schematy projektu",
-        "sidebar_label": "Projekt"
+        "sidebar_label": "Role i schematy projektu",
+        "description": "Skonfiguruj role i schematy uprawnień, aby zarządzać dostępem i uprawnieniami w swoich projektach."
       },
       "workspace_roles_and_schemes": {
         "title": "Role i schematy Workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Role i schematy Workspace",
+        "description": "Skonfiguruj role i schematy uprawnień, aby zarządzać dostępem i uprawnieniami w swoim Workspace."
       },
       "roles_and_schemes": {
-        "description": "Skonfiguruj właściwości i grupy interakcji do dołączenia do typu lub typów elementów roboczych",
         "tabs": {
           "roles": "Role",
           "permission_schemes": "Schematy uprawnień"
@@ -598,7 +602,7 @@
           "role_title_label": "Tytuł roli",
           "role_title_placeholder": "Dodaj unikalny tytuł",
           "description_label": "Opis",
-          "description_placeholder": "Dodaj unikalny tytuł",
+          "description_placeholder": "Opisz rolę",
           "create_button": "Utwórz rolę",
           "error_toast_description": "Nie udało się utworzyć roli. Spróbuj ponownie."
         },

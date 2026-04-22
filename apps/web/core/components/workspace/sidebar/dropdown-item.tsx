@@ -113,19 +113,17 @@ const SidebarDropdownItem = observer(function SidebarDropdownItem(props: TProps)
         {isActiveWorkspace && (
           <>
             <div className="mt-2 mb-1 flex gap-2">
-              {permissions.getCanManage(workspace.slug) && (
-                <Link
-                  href={`/${workspace.slug}/settings`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClose();
-                  }}
-                  className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
-                >
-                  <Settings className="h-4 w-4 my-auto shrink-0" />
-                  <span className="text-13 font-medium my-auto whitespace-nowrap">{t("settings")}</span>
-                </Link>
-              )}
+              <Link
+                href={`/${workspace.slug}/settings`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClose();
+                }}
+                className="flex border border-strong rounded-md py-1.5 px-2.5 gap-1.5 hover:text-secondary text-secondary hover:border-strong bg-layer-2 hover:shadow-raised-100 transition-colors"
+              >
+                <Settings className="h-4 w-4 my-auto shrink-0" />
+                <span className="text-13 font-medium my-auto whitespace-nowrap">{t("settings")}</span>
+              </Link>
               {permissions.getCanInviteMembers(workspace.slug) && (
                 <Link
                   href={`/${workspace.slug}/settings/members`}

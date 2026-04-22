@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Schémy rolí a oprávnení",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Oprávnenia",
+        "sidebar_label": "Oprávnenia",
+        "description": "Zobrazte oprávnenia priradené vašim rolám na úrovni workspace a projektu. Zobrazujú sa iba roly, ktoré sú vám priradené.",
+        "tabs": {
+          "workspace": "Roly workspace",
+          "project": "Roly projektu"
+        },
+        "project_picker_label": "Vaša rola a oprávnenia v",
+        "elevation_banner": "Ako {role} workspace sú vaše oprávnenia v tomto projekte rozšírené nad rámec priradenej roly.",
+        "permissions_column": "Oprávnenia",
+        "no_joined_projects_title": "Zatiaľ nie ste súčasťou žiadneho projektu.",
+        "no_joined_projects_description": "Vaše oprávnenia k projektu sa tu zobrazia, akonáhle budete pridaní do projektu."
+      },
       "roles_and_permissions": {
         "title": "Roly a oprávnenia",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Odstrániť rolu?",
           "description": "Naozaj chcete odstrániť túto rolu? Túto akciu nie je možné vrátiť späť.",
           "error_toast_message": "Rolu sa nepodarilo odstrániť. Skúste to prosím znova."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Roly a oprávnenia workspace",
-            "project": "Roly a oprávnenia projektu"
-          },
-          "permissions_header": "Oprávnenia",
-          "view_mode": {
-            "sets": "Zobrazenie sád",
-            "permissions": "Reťazce oprávnení"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Roly a schémy projektu",
-        "sidebar_label": "Projekt"
+        "sidebar_label": "Roly a schémy projektu",
+        "description": "Nakonfigurujte roly a schémy oprávnení na správu prístupu a oprávnení naprieč vašimi projektmi."
       },
       "workspace_roles_and_schemes": {
         "title": "Roly a schémy workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Roly a schémy workspace",
+        "description": "Nakonfigurujte roly a schémy oprávnení na správu prístupu a oprávnení naprieč vaším workspace."
       },
       "roles_and_schemes": {
-        "description": "Nakonfigurujte vlastnosti a skupiny interakcií, ktoré sa pripoja k typu alebo typom pracovných položiek",
         "tabs": {
           "roles": "Roly",
           "permission_schemes": "Schémy oprávnení"
@@ -598,7 +602,7 @@
           "role_title_label": "Názov roly",
           "role_title_placeholder": "Pridajte jedinečný názov",
           "description_label": "Popis",
-          "description_placeholder": "Pridajte jedinečný názov",
+          "description_placeholder": "Opíšte rolu",
           "create_button": "Vytvoriť rolu",
           "error_toast_description": "Rolu sa nepodarilo vytvoriť. Skúste to prosím znova."
         },

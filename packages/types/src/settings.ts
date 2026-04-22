@@ -16,6 +16,7 @@ export type TProfileSettingsTabs = "general" | "preferences" | "notifications" |
 export type TWorkspaceSettingsTabs =
   | "general"
   | "members"
+  | "permissions"
   | "billing-and-plans"
   | "export"
   | "webhooks"

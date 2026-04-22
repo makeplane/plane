@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Các lược đồ Vai trò và Quyền",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Quyền",
+        "sidebar_label": "Quyền",
+        "description": "Xem các quyền liên kết với vai trò của bạn ở cấp độ workspace và dự án. Chỉ hiển thị các vai trò được gán cho bạn.",
+        "tabs": {
+          "workspace": "Vai trò workspace",
+          "project": "Vai trò dự án"
+        },
+        "project_picker_label": "Vai trò và quyền của bạn trong",
+        "elevation_banner": "Với tư cách là {role} Workspace, quyền của bạn trong dự án này được nâng lên vượt quá vai trò được gán.",
+        "permissions_column": "Quyền",
+        "no_joined_projects_title": "Bạn chưa thuộc về bất kỳ dự án nào.",
+        "no_joined_projects_description": "Quyền dự án của bạn sẽ hiển thị tại đây sau khi bạn được thêm vào một dự án."
+      },
       "roles_and_permissions": {
         "title": "Vai trò và Quyền",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Xóa vai trò?",
           "description": "Bạn có chắc chắn muốn xóa vai trò này? Hành động này không thể hoàn tác.",
           "error_toast_message": "Không thể xóa vai trò. Vui lòng thử lại."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Vai trò và quyền workspace",
-            "project": "Vai trò và quyền dự án"
-          },
-          "permissions_header": "Quyền",
-          "view_mode": {
-            "sets": "Xem theo nhóm",
-            "permissions": "Chuỗi quyền"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Vai trò & lược đồ dự án",
-        "sidebar_label": "Dự án"
+        "sidebar_label": "Vai trò & lược đồ dự án",
+        "description": "Định cấu hình vai trò và lược đồ quyền để quản lý quyền truy cập và quyền trong các dự án của bạn."
       },
       "workspace_roles_and_schemes": {
         "title": "Vai trò & lược đồ workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Vai trò & lược đồ workspace",
+        "description": "Định cấu hình vai trò và lược đồ quyền để quản lý quyền truy cập và quyền trong workspace của bạn."
       },
       "roles_and_schemes": {
-        "description": "Cấu hình các thuộc tính và nhóm tương tác để gắn vào một loại hoặc nhiều loại work item",
         "tabs": {
           "roles": "Vai trò",
           "permission_schemes": "Lược đồ quyền"
@@ -598,7 +602,7 @@
           "role_title_label": "Tiêu đề vai trò",
           "role_title_placeholder": "Thêm một tiêu đề duy nhất",
           "description_label": "Mô tả",
-          "description_placeholder": "Thêm một tiêu đề duy nhất",
+          "description_placeholder": "Mô tả vai trò",
           "create_button": "Tạo vai trò",
           "error_toast_description": "Không thể tạo vai trò. Vui lòng thử lại."
         },

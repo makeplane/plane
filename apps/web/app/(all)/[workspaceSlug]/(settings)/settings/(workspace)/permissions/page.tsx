@@ -16,16 +16,17 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 // components
 import { PageHead } from "@/components/core/page-title";
-import { RolesAndSchemesListPageRoot } from "@/components/roles-and-schemes/list/root";
+import { UserPermissionsView } from "@/components/roles-and-permissions/user-permissions/root";
 import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// local imports
+// types
 import type { Route } from "./+types/page";
-import { ProjectRolesAndSchemesHeader } from "./header";
+// local imports
+import { PermissionsSettingsHeader } from "./header";
 
-function ProjectRolesAndSchemesPage({ params }: Route.ComponentProps) {
+function WorkspacePermissionsSettingsPage({ params }: Route.ComponentProps) {
   // router
   const { workspaceSlug } = params;
   // store hooks
@@ -35,19 +36,19 @@ function ProjectRolesAndSchemesPage({ params }: Route.ComponentProps) {
   // derived values
   const currentWorkspace = getWorkspaceBySlug(workspaceSlug);
   const pageTitle = currentWorkspace?.name
-    ? `${currentWorkspace.name} - ${t("workspace_settings.settings.project_roles_and_schemes.title")}`
+    ? `${currentWorkspace.name} - ${t("workspace_settings.settings.permissions.title")}`
     : undefined;
 
   return (
-    <SettingsContentWrapper header={<ProjectRolesAndSchemesHeader />}>
+    <SettingsContentWrapper header={<PermissionsSettingsHeader />}>
       <PageHead title={pageTitle} />
       <SettingsHeading
-        title={t("workspace_settings.settings.project_roles_and_schemes.title")}
-        description={t("workspace_settings.settings.project_roles_and_schemes.description")}
+        title={t("workspace_settings.settings.permissions.title")}
+        description={t("workspace_settings.settings.permissions.description")}
       />
-      <RolesAndSchemesListPageRoot workspaceSlug={workspaceSlug} namespace="project" />
+      <UserPermissionsView workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
 }
 
-export default observer(ProjectRolesAndSchemesPage);
+export default observer(WorkspacePermissionsSettingsPage);

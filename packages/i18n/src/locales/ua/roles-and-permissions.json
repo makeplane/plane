@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Схеми ролей і дозволів",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Дозволи",
+        "sidebar_label": "Дозволи",
+        "description": "Переглядайте дозволи, пов'язані з вашими ролями на рівнях Workspace та проєкту. Відображаються лише призначені вам ролі.",
+        "tabs": {
+          "workspace": "Ролі Workspace",
+          "project": "Ролі проєкту"
+        },
+        "project_picker_label": "Ваша роль і дозволи в",
+        "elevation_banner": "Як {role} Workspace, ваші дозволи в цьому проєкті підвищено понад призначену вам роль.",
+        "permissions_column": "Дозволи",
+        "no_joined_projects_title": "Ви ще не входите до жодного проєкту.",
+        "no_joined_projects_description": "Ваші дозволи проєкту з'являться тут, щойно вас додадуть до проєкту."
+      },
       "roles_and_permissions": {
         "title": "Ролі та дозволи",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Видалити роль?",
           "description": "Ви впевнені, що хочете видалити цю роль? Цю дію не можна скасувати.",
           "error_toast_message": "Не вдалося видалити роль. Спробуйте ще раз."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Ролі та дозволи Workspace",
-            "project": "Ролі та дозволи проєкту"
-          },
-          "permissions_header": "Дозволи",
-          "view_mode": {
-            "sets": "Вигляд наборів",
-            "permissions": "Рядки дозволів"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Ролі та схеми проєкту",
-        "sidebar_label": "Проєкт"
+        "sidebar_label": "Ролі та схеми проєкту",
+        "description": "Налаштуйте ролі та схеми дозволів для керування доступом і дозволами у ваших проєктах."
       },
       "workspace_roles_and_schemes": {
         "title": "Ролі та схеми Workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Ролі та схеми Workspace",
+        "description": "Налаштуйте ролі та схеми дозволів для керування доступом і дозволами у вашому Workspace."
       },
       "roles_and_schemes": {
-        "description": "Налаштуйте властивості та групи взаємодії, які буде прикріплено до типу або типів робочих елементів",
         "tabs": {
           "roles": "Ролі",
           "permission_schemes": "Схеми дозволів"
@@ -598,7 +602,7 @@
           "role_title_label": "Назва ролі",
           "role_title_placeholder": "Додайте унікальну назву",
           "description_label": "Опис",
-          "description_placeholder": "Додайте унікальну назву",
+          "description_placeholder": "Опишіть роль",
           "create_button": "Створити роль",
           "error_toast_description": "Не вдалося створити роль. Спробуйте ще раз."
         },

@@ -34,7 +34,7 @@ export function SettingsSidebarItem(props: Props) {
   const { appendContent, as, isActive, label } = props;
   // common class
   const className = cn(
-    "flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg text-body-sm-medium text-secondary text-left transition-colors",
+    "flex items-center justify-between gap-2 py-1.5 px-2 rounded-lg text-body-xs-medium text-secondary text-left transition-colors",
     {
       "bg-layer-transparent-selected text-primary": isActive,
       "hover:bg-layer-transparent-hover": !isActive,

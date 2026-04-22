@@ -43,7 +43,7 @@ function WorkspaceRolesAndSchemesPage({ params }: Route.ComponentProps) {
       <PageHead title={pageTitle} />
       <SettingsHeading
         title={t("workspace_settings.settings.workspace_roles_and_schemes.title")}
-        description={t("workspace_settings.settings.roles_and_schemes.description")}
+        description={t("workspace_settings.settings.workspace_roles_and_schemes.description")}
       />
       <RolesAndSchemesListPageRoot workspaceSlug={workspaceSlug} namespace="workspace" />
     </SettingsContentWrapper>

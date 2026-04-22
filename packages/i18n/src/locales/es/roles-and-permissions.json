@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Esquemas de roles y permisos",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Permisos",
+        "sidebar_label": "Permisos",
+        "description": "Vea los permisos asociados con sus roles a nivel de espacio de trabajo y proyecto. Solo se muestran los roles asignados a usted.",
+        "tabs": {
+          "workspace": "Roles del espacio de trabajo",
+          "project": "Roles del proyecto"
+        },
+        "project_picker_label": "Su rol y permisos en",
+        "elevation_banner": "Como {role} del espacio de trabajo, sus permisos en este proyecto están elevados más allá de su rol asignado.",
+        "permissions_column": "Permisos",
+        "no_joined_projects_title": "Aún no formas parte de ningún proyecto.",
+        "no_joined_projects_description": "Tus permisos del proyecto aparecerán aquí una vez que te añadan a un proyecto."
+      },
       "roles_and_permissions": {
         "title": "Roles y permisos",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "¿Eliminar rol?",
           "description": "¿Está seguro de que desea eliminar este rol? Esta acción no se puede deshacer.",
           "error_toast_message": "No se pudo eliminar el rol. Inténtelo de nuevo."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Roles y permisos del espacio de trabajo",
-            "project": "Roles y permisos del proyecto"
-          },
-          "permissions_header": "Permisos",
-          "view_mode": {
-            "sets": "Vista por conjuntos",
-            "permissions": "Cadenas de permisos"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Roles y esquemas de proyecto",
-        "sidebar_label": "Proyecto"
+        "sidebar_label": "Roles y esquemas de proyecto",
+        "description": "Configure roles y esquemas de permisos para gestionar el acceso y los permisos en sus proyectos."
       },
       "workspace_roles_and_schemes": {
         "title": "Roles y esquemas del espacio de trabajo",
-        "sidebar_label": "Espacio de trabajo"
+        "sidebar_label": "Roles y esquemas del espacio de trabajo",
+        "description": "Configure roles y esquemas de permisos para gestionar el acceso y los permisos en su espacio de trabajo."
       },
       "roles_and_schemes": {
-        "description": "Configure propiedades y grupos de interacción para adjuntarlos a uno o varios tipos de work item",
         "tabs": {
           "roles": "Roles",
           "permission_schemes": "Esquemas de permisos"
@@ -598,7 +602,7 @@
           "role_title_label": "Título del rol",
           "role_title_placeholder": "Añada un título único",
           "description_label": "Descripción",
-          "description_placeholder": "Añada un título único",
+          "description_placeholder": "Describa el rol",
           "create_button": "Crear rol",
           "error_toast_description": "No se pudo crear el rol. Inténtelo de nuevo."
         },

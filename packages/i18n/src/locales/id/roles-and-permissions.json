@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Skema peran dan izin",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Izin",
+        "sidebar_label": "Izin",
+        "description": "Lihat izin yang terkait dengan peran Anda di tingkat workspace dan proyek. Hanya peran yang ditugaskan kepada Anda yang ditampilkan.",
+        "tabs": {
+          "workspace": "Peran workspace",
+          "project": "Peran proyek"
+        },
+        "project_picker_label": "Peran dan izin Anda di",
+        "elevation_banner": "Sebagai {role} Workspace, izin Anda di proyek ini ditingkatkan melampaui peran yang ditugaskan.",
+        "permissions_column": "Izin",
+        "no_joined_projects_title": "Anda belum menjadi bagian dari proyek mana pun.",
+        "no_joined_projects_description": "Izin proyek Anda akan muncul di sini setelah Anda ditambahkan ke sebuah proyek."
+      },
       "roles_and_permissions": {
         "title": "Peran dan Izin",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Hapus peran?",
           "description": "Apakah Anda yakin ingin menghapus peran ini? Tindakan ini tidak dapat dibatalkan.",
           "error_toast_message": "Gagal menghapus peran. Silakan coba lagi."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Peran dan izin workspace",
-            "project": "Peran dan izin proyek"
-          },
-          "permissions_header": "Izin",
-          "view_mode": {
-            "sets": "Tampilan set",
-            "permissions": "String izin"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Peran & skema proyek",
-        "sidebar_label": "Proyek"
+        "sidebar_label": "Peran & skema proyek",
+        "description": "Konfigurasikan peran dan skema izin untuk mengelola akses dan izin di seluruh proyek Anda."
       },
       "workspace_roles_and_schemes": {
         "title": "Peran & skema workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Peran & skema workspace",
+        "description": "Konfigurasikan peran dan skema izin untuk mengelola akses dan izin di seluruh workspace Anda."
       },
       "roles_and_schemes": {
-        "description": "Konfigurasi properti dan grup interaksi untuk dilampirkan ke satu atau beberapa tipe work item",
         "tabs": {
           "roles": "Peran",
           "permission_schemes": "Skema Izin"
@@ -598,7 +602,7 @@
           "role_title_label": "Judul peran",
           "role_title_placeholder": "Tambahkan judul unik",
           "description_label": "Deskripsi",
-          "description_placeholder": "Tambahkan judul unik",
+          "description_placeholder": "Jelaskan peran",
           "create_button": "Buat peran",
           "error_toast_description": "Peran tidak dapat dibuat. Silakan coba lagi."
         },

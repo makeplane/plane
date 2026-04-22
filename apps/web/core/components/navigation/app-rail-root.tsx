@@ -17,12 +17,11 @@ import { SettingsIcon } from "lucide-react";
 // plane imports
 import { ContextMenu } from "@plane/propel/context-menu";
 import { CheckIcon } from "@plane/propel/icons";
-import { cn, isGuestRole } from "@plane/utils";
+import { cn } from "@plane/utils";
 // components
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 // hooks
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
-import { usePermissionAccess } from "@/hooks/store/use-permission-access";
 // lib
 import { useAppRailVisibility } from "@/lib/app-rail/context";
 // local imports
@@ -32,8 +31,6 @@ export const AppRailRoot = observer(() => {
   // router
   const { workspaceSlug, projectId } = useParams();
   const pathname = usePathname();
-  // store hooks
-  const { getCurrentUserWorkspaceRoleSlug } = usePermissionAccess();
   // preferences
   const { preferences, updateDisplayMode } = useAppRailPreferences();
   const { isCollapsed, toggleAppRail } = useAppRailVisibility();
@@ -41,10 +38,6 @@ export const AppRailRoot = observer(() => {
   const isWorkspaceSettingsPath = pathname.includes(`/${workspaceSlug}/settings`) && !projectId;
   const showLabel = preferences.displayMode === "icon_with_label";
   const railWidth = showLabel ? "3.75rem" : "3rem";
-  // auth
-  const isAllowedToNavigateToSettings = workspaceSlug
-    ? !isGuestRole(getCurrentUserWorkspaceRoleSlug(workspaceSlug))
-    : false;
 
   return (
     <div
@@ -64,20 +57,16 @@ export const AppRailRoot = observer(() => {
               })}
             >
               <AppSidebarItemsRoot showLabel={showLabel} />
-              {isAllowedToNavigateToSettings && (
-                <>
-                  <div className="border-t border-strong mx-2" />
-                  <AppSidebarItem
-                    item={{
-                      label: "Settings",
-                      icon: <SettingsIcon className="size-5" />,
-                      href: `/${workspaceSlug}/settings`,
-                      isActive: isWorkspaceSettingsPath,
-                      showLabel,
-                    }}
-                  />
-                </>
-              )}
+              <div className="border-t border-strong mx-2" />
+              <AppSidebarItem
+                item={{
+                  label: "Settings",
+                  icon: <SettingsIcon className="size-5" />,
+                  href: `/${workspaceSlug}/settings`,
+                  isActive: isWorkspaceSettingsPath,
+                  showLabel,
+                }}
+              />
             </div>
           </div>
         </ContextMenu.Trigger>

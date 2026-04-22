@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "역할 및 권한 스킴",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "권한",
+        "sidebar_label": "권한",
+        "description": "워크스페이스 및 프로젝트 수준의 역할과 연결된 권한을 확인하세요. 본인에게 할당된 역할만 표시됩니다.",
+        "tabs": {
+          "workspace": "워크스페이스 역할",
+          "project": "프로젝트 역할"
+        },
+        "project_picker_label": "다음에서 귀하의 역할 및 권한",
+        "elevation_banner": "워크스페이스 {role}(으)로서 이 프로젝트에서의 권한이 할당된 역할 이상으로 상승되었습니다.",
+        "permissions_column": "권한",
+        "no_joined_projects_title": "아직 어떤 프로젝트에도 속해 있지 않습니다.",
+        "no_joined_projects_description": "프로젝트에 추가되면 프로젝트 권한이 여기에 표시됩니다."
+      },
       "roles_and_permissions": {
         "title": "역할 및 권한",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "역할을 삭제하시겠습니까?",
           "description": "이 역할을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
           "error_toast_message": "역할을 삭제하지 못했습니다. 다시 시도해 주세요."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "워크스페이스 역할 및 권한",
-            "project": "프로젝트 역할 및 권한"
-          },
-          "permissions_header": "권한",
-          "view_mode": {
-            "sets": "세트 보기",
-            "permissions": "권한 문자열"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "프로젝트 역할 및 스킴",
-        "sidebar_label": "프로젝트"
+        "sidebar_label": "프로젝트 역할 및 스킴",
+        "description": "역할 및 권한 스킴을 구성하여 프로젝트 전반의 접근 권한과 권한을 관리합니다."
       },
       "workspace_roles_and_schemes": {
         "title": "워크스페이스 역할 및 스킴",
-        "sidebar_label": "워크스페이스"
+        "sidebar_label": "워크스페이스 역할 및 스킴",
+        "description": "역할 및 권한 스킴을 구성하여 워크스페이스 전반의 접근 권한과 권한을 관리합니다."
       },
       "roles_and_schemes": {
-        "description": "작업 항목 유형에 연결할 속성 및 상호 작용 그룹을 구성합니다",
         "tabs": {
           "roles": "역할",
           "permission_schemes": "권한 스킴"
@@ -598,7 +602,7 @@
           "role_title_label": "역할 제목",
           "role_title_placeholder": "고유한 제목을 추가하세요",
           "description_label": "설명",
-          "description_placeholder": "고유한 제목을 추가하세요",
+          "description_placeholder": "역할을 설명하세요",
           "create_button": "역할 생성",
           "error_toast_description": "역할을 생성할 수 없습니다. 다시 시도해 주세요."
         },

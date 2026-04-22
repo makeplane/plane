@@ -35,6 +35,10 @@ export const settingsRoutes: RouteConfigEntry[] = [
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/members/page.tsx"
       ),
       route(
+        ":workspaceSlug/settings/permissions",
+        "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/permissions/page.tsx"
+      ),
+      route(
         ":workspaceSlug/settings/billing",
         "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/billing/page.tsx"
       ),

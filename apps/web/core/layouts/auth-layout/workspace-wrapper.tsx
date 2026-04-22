@@ -118,7 +118,6 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const { fetchAllCustomerPropertiesAndOptions } = useCustomerProperties();
   const { isCustomersFeatureEnabled, fetchCustomers } = useCustomers();
   const { initiative } = useInitiatives();
-  const { getWorkspaceBySlug } = useWorkspace();
   const { getInstance } = usePiChat();
   const { fetchAllWorkflows } = useWorkflows();
   const { fetchConnectors } = useConnectors();
@@ -151,7 +150,6 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   const isTemplatePublishEnabled = getIsTemplatePublishEnabled(workspaceSlug);
   const isWorkflowsFeatureEnabled = useFlag(workspaceSlug, "WORKFLOWS");
   const isCustomRelationsEnabled = useFlag(workspaceSlug, "CUSTOM_RELATIONS", false);
-  const workspaceId = getWorkspaceBySlug(workspaceSlug)?.id;
   const isMcpConnectorEnabled = useAiFlag(workspaceSlug, "AI_MCP_CONNECTORS", false);
 
   // fetching user workspace information
@@ -369,18 +367,17 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   });
 
   // fetching runner health
-  useSWR(
-    workspaceSlug ? RUNNER_HEALTH(workspaceSlug) : null,
-    workspaceSlug ? () => checkRunnerHealth(workspaceSlug) : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
+  useSWR(RUNNER_HEALTH(workspaceSlug), () => checkRunnerHealth(workspaceSlug), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
 
   // fetching runners scripts
-  useSWR(
-    workspaceSlug ? `RUNNERS_SCRIPTS_${workspaceSlug}` : null,
-    workspaceSlug ? () => fetchScripts(workspaceSlug ?? "") : null,
-    { revalidateIfStale: false, revalidateOnFocus: false }
-  );
+  useSWR(`RUNNERS_SCRIPTS_${workspaceSlug}`, () => fetchScripts(workspaceSlug ?? ""), {
+    revalidateIfStale: false,
+    revalidateOnFocus: false,
+  });
+
   // fetching releases
   useSWR(
     workspaceSlug && isReleasesEnabled(workspaceSlug) ? WORKSPACE_RELEASES(workspaceSlug) : null,
@@ -401,33 +398,21 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
     }
   );
 
-  // TODO: This can be moved to setting if we are not really using it at this level.
-  useSWR(
-    workspaceSlug ? WORKSPACE_ROLES(workspaceSlug) : null,
-    workspaceSlug ? () => fetchAllWorkspaceRoles(workspaceSlug) : null,
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      errorRetryCount: 0,
-    }
-  );
+  useSWR(WORKSPACE_ROLES(workspaceSlug), () => fetchAllWorkspaceRoles(workspaceSlug), {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
 
-  useSWR(
-    workspaceSlug ? WORKSPACE_PERMISSION_SCHEMES(workspaceSlug) : null,
-    workspaceSlug ? () => fetchAllWorkspaceSchemes(workspaceSlug) : null,
-    {
-      revalidateOnFocus: false,
-      revalidateIfStale: false,
-      errorRetryCount: 0,
-    }
-  );
+  useSWR(WORKSPACE_PERMISSION_SCHEMES(workspaceSlug), () => fetchAllWorkspaceSchemes(workspaceSlug), {
+    revalidateOnFocus: false,
+    revalidateIfStale: false,
+  });
 
   const { isLoading: isWorkspacePermissionsLoading, error: workspacePermissionsError } = useSWR(
-    workspaceSlug ? WORKSPACE_CURRENT_USER_PERMISSIONS(workspaceSlug) : null,
-    workspaceSlug ? () => fetchCurrentUserWorkspacePermissions(workspaceSlug) : null,
+    WORKSPACE_CURRENT_USER_PERMISSIONS(workspaceSlug),
+    () => fetchCurrentUserWorkspacePermissions(workspaceSlug),
     {
       revalidateIfStale: false,
-      errorRetryCount: 0,
     }
   );
 

@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "Схемы ролей и прав доступа",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "Права доступа",
+        "sidebar_label": "Права доступа",
+        "description": "Просмотрите права доступа, связанные с вашими ролями на уровне workspace и проекта. Отображаются только назначенные вам роли.",
+        "tabs": {
+          "workspace": "Роли Workspace",
+          "project": "Роли проекта"
+        },
+        "project_picker_label": "Ваша роль и права доступа в",
+        "elevation_banner": "Как {role} Workspace, ваши права доступа в этом проекте повышены сверх назначенной вам роли.",
+        "permissions_column": "Права доступа",
+        "no_joined_projects_title": "Вы пока не участвуете ни в одном проекте.",
+        "no_joined_projects_description": "Ваши права доступа к проекту появятся здесь, как только вас добавят в проект."
+      },
       "roles_and_permissions": {
         "title": "Роли и права доступа",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "Удалить роль?",
           "description": "Вы уверены, что хотите удалить эту роль? Это действие нельзя отменить.",
           "error_toast_message": "Не удалось удалить роль. Повторите попытку."
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Роли и права доступа Workspace",
-            "project": "Роли и права доступа проекта"
-          },
-          "permissions_header": "Права доступа",
-          "view_mode": {
-            "sets": "Вид по наборам",
-            "permissions": "Строки прав доступа"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "Роли и схемы проекта",
-        "sidebar_label": "Проект"
+        "sidebar_label": "Роли и схемы проекта",
+        "description": "Настройте роли и схемы прав доступа для управления доступом и правами в ваших проектах."
       },
       "workspace_roles_and_schemes": {
         "title": "Роли и схемы Workspace",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Роли и схемы Workspace",
+        "description": "Настройте роли и схемы прав доступа для управления доступом и правами в вашем Workspace."
       },
       "roles_and_schemes": {
-        "description": "Настройте свойства и группы взаимодействия, которые будут привязаны к типу или типам рабочих элементов",
         "tabs": {
           "roles": "Роли",
           "permission_schemes": "Схемы прав доступа"
@@ -598,7 +602,7 @@
           "role_title_label": "Название роли",
           "role_title_placeholder": "Укажите уникальное название",
           "description_label": "Описание",
-          "description_placeholder": "Укажите уникальное название",
+          "description_placeholder": "Опишите роль",
           "create_button": "Создать роль",
           "error_toast_description": "Не удалось создать роль. Повторите попытку."
         },

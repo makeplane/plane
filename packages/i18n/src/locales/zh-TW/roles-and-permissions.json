@@ -2,6 +2,20 @@
   "roles_and_permissions_schemes": "角色與權限方案",
   "workspace_settings": {
     "settings": {
+      "permissions": {
+        "title": "權限",
+        "sidebar_label": "權限",
+        "description": "檢視與您在 workspace 和專案層級上的角色相關聯的權限。僅顯示指派給您的角色。",
+        "tabs": {
+          "workspace": "Workspace 角色",
+          "project": "專案角色"
+        },
+        "project_picker_label": "您在以下專案中的角色與權限",
+        "elevation_banner": "作為 Workspace {role}，您在此專案中的權限已超出所指派角色的範圍而被提升。",
+        "permissions_column": "權限",
+        "no_joined_projects_title": "您尚未加入任何專案。",
+        "no_joined_projects_description": "當您被加入專案後，您的專案權限將顯示於此。"
+      },
       "roles_and_permissions": {
         "title": "角色與權限",
         "roles_list": {
@@ -54,17 +68,6 @@
           "title": "刪除角色？",
           "description": "您確定要刪除此角色嗎？此操作無法還原。",
           "error_toast_message": "無法刪除角色。請再試一次。"
-        },
-        "comparison_modal": {
-          "title": {
-            "workspace": "Workspace 角色與權限",
-            "project": "專案角色與權限"
-          },
-          "permissions_header": "權限",
-          "view_mode": {
-            "sets": "集合檢視",
-            "permissions": "權限字串"
-          }
         },
         "psets": {
           "workspace": {
@@ -580,14 +583,15 @@
       },
       "project_roles_and_schemes": {
         "title": "專案角色與方案",
-        "sidebar_label": "專案"
+        "sidebar_label": "專案角色與方案",
+        "description": "設定角色和權限方案以管理專案的存取和權限。"
       },
       "workspace_roles_and_schemes": {
         "title": "Workspace 角色與方案",
-        "sidebar_label": "Workspace"
+        "sidebar_label": "Workspace 角色與方案",
+        "description": "設定角色和權限方案以管理 workspace 的存取和權限。"
       },
       "roles_and_schemes": {
-        "description": "設定要附加到一個或多個工作項目類型的屬性和互動群組",
         "tabs": {
           "roles": "角色",
           "permission_schemes": "權限方案"
@@ -598,7 +602,7 @@
           "role_title_label": "角色標題",
           "role_title_placeholder": "新增唯一標題",
           "description_label": "描述",
-          "description_placeholder": "新增唯一標題",
+          "description_placeholder": "描述角色",
           "create_button": "建立角色",
           "error_toast_description": "無法建立角色。請再試一次。"
         },
