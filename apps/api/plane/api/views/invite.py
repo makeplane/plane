@@ -26,6 +26,8 @@ from plane.db.models import WorkspaceMemberInvite, Workspace
 from plane.api.serializers import WorkspaceInviteSerializer
 from plane.utils.permissions import WorkspaceOwnerPermission
 from plane.utils.openapi.parameters import WORKSPACE_SLUG_PARAMETER
+from plane.utils.host import base_host
+from plane.bgtasks.workspace_invitation_task import workspace_invitation
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):
@@ -100,6 +102,19 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         serializer = WorkspaceInviteSerializer(data=request.data, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
         serializer.save(workspace=workspace, created_by=request.user)
+
+        try:
+            workspace_member_invite = WorkspaceMemberInvite.objects.get(id=serializer.data["id"])
+        except WorkspaceMemberInvite.DoesNotExist:
+            return Response({"error": "workspace invite not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        workspace_invitation.delay(
+            workspace_member_invite.email,
+            workspace.id,
+            workspace_member_invite.token,
+            base_host(request=request, is_app=True),
+            request.user.email,
+        )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @extend_schema(
