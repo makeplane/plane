@@ -13,7 +13,7 @@ from rest_framework import status
 
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import IssueWorkLog, Issue
+from plane.db.models import IssueWorkLog, Issue, IssueAssignee
 
 
 def _parse_week_start(request):
@@ -50,14 +50,16 @@ class TimesheetGridEndpoint(BaseAPIView):
 
         week_end = week_start + timedelta(days=6)
 
-        # Fetch issues assigned to the current user in this project
-        # Uses issue_objects to exclude triage/archived/draft
+        # Use through-table subquery to correctly filter soft-deleted issue_assignee rows
+        # (direct M2M filter bypasses SoftDeletionManager, causing duplicates)
+        assigned_issue_ids = IssueAssignee.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            assignee=request.user,
+        ).values_list("issue_id", flat=True)
+
         assigned_issues = (
-            Issue.issue_objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                assignees=request.user,
-            )
+            Issue.issue_objects.filter(id__in=assigned_issue_ids)
             .select_related("project")
             .only("id", "name", "sequence_id", "project__identifier")
             .order_by("sequence_id")

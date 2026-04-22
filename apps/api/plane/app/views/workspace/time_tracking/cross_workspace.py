@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Issue, IssueWorkLog, ProjectMember, WorkspaceMember
+from plane.db.models import Issue, IssueAssignee, IssueWorkLog, ProjectMember, WorkspaceMember
 
 
 def _get_week_start(raw_date_str):
@@ -56,12 +56,15 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
             WorkspaceMember.objects.filter(**workspace_filter).values_list("workspace_id", flat=True)
         )
 
-        # All issues assigned to this user across their workspaces
+        # Use through-table subquery to correctly filter soft-deleted issue_assignee rows
+        # (direct M2M filter bypasses SoftDeletionManager, causing duplicates)
+        assigned_issue_ids = IssueAssignee.objects.filter(
+            workspace_id__in=user_workspace_ids,
+            assignee=request.user,
+        ).values_list("issue_id", flat=True)
+
         assigned_issues = list(
-            Issue.issue_objects.filter(
-                workspace_id__in=user_workspace_ids,
-                assignees=request.user,
-            )
+            Issue.issue_objects.filter(id__in=assigned_issue_ids)
             .select_related("project", "workspace")
             .values(
                 "id",
