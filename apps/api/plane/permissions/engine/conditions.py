@@ -13,7 +13,14 @@
 Condition Evaluation
 
 Evaluates conditional grants (e.g., "creator", "lead") against resource data.
-Each condition checks that a field matches the user AND the user has active membership.
+Each condition checks that a field matches the user AND the user has active
+membership on the resource.
+
+Field resolution order for each condition:
+  1. Model-declared `PermissionMeta.condition_fields` — per-model override.
+  2. Hardcoded default (`created_by_id` for creator, `lead_id` for lead) —
+     preserves backward compatibility for models that haven't declared
+     PermissionMeta yet.
 """
 
 import logging
@@ -24,6 +31,33 @@ from ..context import ResourceID
 from ..resource_models import get_model_for_resource
 
 logger = logging.getLogger(__name__)
+
+
+# Hardcoded fallbacks when a model has no PermissionMeta.condition_fields
+# entry. Django accepts both "created_by" and "created_by_id" for FK
+# filtering; the _id suffix matches the legacy behavior.
+_DEFAULT_CONDITION_FIELDS = {
+    "creator": "created_by_id",
+    "lead": "lead_id",
+}
+
+
+def _resolve_field(model, condition: str) -> Optional[str]:
+    """Read the Django field path for `condition` from model.PermissionMeta.
+
+    Falls back to the hardcoded default when the model has no PermissionMeta
+    or no entry for the condition. Returns None only when neither source
+    yields a field (unknown condition on a model without PermissionMeta).
+    """
+    if model is not None:
+        try:
+            from plane.permissions.exceptions import PermissionConfigurationError
+            from plane.permissions.meta import resolve_condition_field
+
+            return resolve_condition_field(model, condition)
+        except PermissionConfigurationError:
+            pass
+    return _DEFAULT_CONDITION_FIELDS.get(condition)
 
 
 class ConditionEvaluator:
@@ -41,19 +75,15 @@ class ConditionEvaluator:
         hierarchy_chain: Optional[list] = None,
         direct_tuples: Optional[dict] = None,
     ) -> bool:
-        """
-        Evaluate a condition against a specific resource.
-
-        Args:
-            condition: The condition name (e.g., "creator", "lead")
-            roles: RoleLookup instance for membership checks
-        """
-        handler = getattr(self, f"_eval_condition_{condition}", None)
-        if handler is None:
+        """Evaluate a condition against a specific resource."""
+        model = resource_model or get_model_for_resource(resource_type)
+        field = _resolve_field(model, condition)
+        if field is None:
             logger.warning("[PERM] Unknown condition: %s", condition)
             return False
-        return handler(
-            user_id, resource_type, resource_id, workspace_id, roles, resource_model,
+        return self._check_field_condition(
+            field, user_id, resource_type, resource_id, workspace_id, roles,
+            resource_model=model,
             hierarchy_chain=hierarchy_chain, direct_tuples=direct_tuples,
         )
 
@@ -94,23 +124,3 @@ class ConditionEvaluator:
         if not membership:
             logger.debug("[PERM] condition membership check failed for %s", resource_type)
         return membership
-
-    def _eval_condition_creator(
-        self, user_id, resource_type, resource_id, workspace_id, roles, resource_model=None,
-        hierarchy_chain=None, direct_tuples=None,
-    ):
-        """Check if user created the resource (created_by_id == user_id)."""
-        return self._check_field_condition(
-            "created_by_id", user_id, resource_type, resource_id, workspace_id, roles, resource_model,
-            hierarchy_chain=hierarchy_chain, direct_tuples=direct_tuples,
-        )
-
-    def _eval_condition_lead(
-        self, user_id, resource_type, resource_id, workspace_id, roles, resource_model=None,
-        hierarchy_chain=None, direct_tuples=None,
-    ):
-        """Check if user is the lead of the resource (lead_id == user_id)."""
-        return self._check_field_condition(
-            "lead_id", user_id, resource_type, resource_id, workspace_id, roles, resource_model,
-            hierarchy_chain=hierarchy_chain, direct_tuples=direct_tuples,
-        )

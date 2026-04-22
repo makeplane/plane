@@ -819,75 +819,93 @@ permission_engine.revoke(
 )
 ```
 
-### 7. Filtering Querysets by Accessible Resources
+### 7. Authorized Listings — `.authorized_for(request, permission)`
 
-For list views that need to filter results based on user permissions, use `PermissionMixin`:
+For listing endpoints (any view returning a collection of rows scoped by the caller's access), use the **authorized listing pattern**. Three parts on every such view:
 
 ```python
-from plane.permissions import can, WorkspacePermissions, WorkitemPermissions, PermissionMixin
+from plane.permissions import AuthorizedListingView, can, WorkspacePermissions, WorkitemPermissions
 
-class WorkspaceViewIssuesViewSet(PermissionMixin, BaseViewSet):
-    """List all issues across projects the user can access."""
-
-    @property
-    def workspace_id(self):
-        """Required for PermissionMixin methods."""
-        return self.request.workspace_id
-
-    def get_queryset(self):
-        # Get projects where user can VIEW ISSUES (not just view projects)
-        # We query project tuples but check issue:view permission
-        accessible_project_ids = self.get_accessible_resources(
-            resource_type="project",
-            permission=WorkitemPermissions.VIEW,  # Check issue:view, not project:view
-        )
-
-        return Issue.objects.filter(
-            workspace_id=self.request.workspace_id,
-            project_id__in=accessible_project_ids,
+class WorkItemListWorkspaceEndpoint(AuthorizedListingView, BaseAPIView):
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
+    def get(self, request, slug):
+        # Canonical variable order: authorize FIRST, snapshot total_count_queryset
+        # SECOND, annotate / prefetch / order LAST — so total_count and
+        # total_results reflect only rows the caller can see.
+        queryset = Issue.issue_objects.filter(workspace__slug=slug)
+        queryset = queryset.authorized_for(request, WorkitemPermissions.VIEW)
+        total_count_queryset = queryset  # snapshot AFTER authorize
+        queryset = self._annotate(queryset)
+        return self.paginate(
+            request=request,
+            queryset=queryset,
+            total_count_queryset=total_count_queryset,
+            ...
         )
 ```
 
-**Important**: The `permission` parameter specifies which permission to check, and can differ from `resource_type`. When listing issues, check `issue:view` even though querying project tuples. This follows the design principle: _"Always check the specific resource permission, not the parent resource."_
+Three cooperating pieces:
 
-**With relations (for role-specific filtering):**
+1. **`@can(ScopePermission, ...)` scope-membership gate.** Decides 403 vs 200. Use the scope permission (`WorkspacePermissions.VIEW`, `ProjectPermissions.VIEW`), not the item permission — item permissions like `workitem:view` may not exist at workspace scope for non-admin roles.
+
+2. **`.authorized_for(request, ItemPermission)` row filter.** Lives on every `SoftDeletionQuerySet` via `AuthorizationQuerySetMixin`. Resolves the scope via the model's `PermissionMeta.scope_map` (falls back to `_PARENT_DECLARATIONS` hierarchy when missing), calls `permission_engine.get_accessible_resources_with_conditions(...)`, and builds a per-resource `Q` that:
+   - Fast-paths workspace owner/admin via workspace-scope wildcard check (no tuple walk).
+   - Merges grants across direct memberships + teamspace link relations: **deny wins > unconditional upgrades conditional > multiple conditionals union**.
+   - For conditional grants (e.g., project guest with `workitem:view+creator`), narrows the filter to the mapped field (`created_by=request.user`).
+
+3. **`AuthorizedListingView` mixin** enforces via `finalize_response` that `.authorized_for()` (or the explicit `.authorization_not_required(request)` bypass) was called. Omitting the call returns a structured 500 with `code="listing_authorization_misconfigured"` — the response is swapped before super finalizes so it survives `BaseAPIView.dispatch`'s outer exception wrapper with renderer + headers intact.
+
+**Model-side declaration** (only needed when the model participates in listing authorization):
 
 ```python
-# Get accessible projects WITH their relations (e.g., for guest filtering)
-project_relations = self.get_accessible_resources(
-    resource_type="project",
-    permission=WorkitemPermissions.VIEW,  # Check issue:view permission
-    include_relations=True,  # Returns dict instead of list
-)
-# Returns: {project_id: "admin", project_id: "member", project_id: "guest", ...}
-
-# Separate by role for different filtering logic
-guest_project_ids = [pid for pid, rel in project_relations.items() if rel == "guest"]
-non_guest_project_ids = [pid for pid, rel in project_relations.items() if rel != "guest"]
-
-# Apply role-specific filters (e.g., guests only see their own issues)
-queryset = Issue.objects.filter(
-    Q(project_id__in=non_guest_project_ids)
-    | Q(project_id__in=guest_project_ids, project__guest_view_all_features=True)
-    | Q(project_id__in=guest_project_ids, project__guest_view_all_features=False,
-        created_by=request.user)
-)
+class Issue(ChangeTrackerMixin, ProjectBaseModel):
+    class PermissionMeta:
+        scope_map = {
+            WorkitemPermissions: ScopeSpec(resource_type="project", fk="project_id"),
+        }
+        condition_fields = {
+            Condition.CREATOR: "created_by",
+        }
 ```
 
-**PermissionMixin methods:**
+Multi-scope models (e.g., `IssueView` has project-scoped and workspace-scoped flavors) declare multiple entries:
+
+```python
+class IssueView(ProjectOptionalBaseModel, FiltersMixin):
+    class PermissionMeta:
+        scope_map = {
+            WorkitemViewPermissions:          ScopeSpec("project",   "project_id"),
+            WorkspaceWorkitemViewPermissions: ScopeSpec("workspace", "workspace_id"),
+        }
+        condition_fields = {
+            Condition.CREATOR: "created_by",
+        }
+```
+
+The `condition_fields` map is also the single source of truth read by the engine's per-resource `ConditionEvaluator` — one declaration serves both the queryset filter path and the single-resource check path.
+
+**Bypass** for the rare genuinely-public listing:
+
+```python
+queryset = Project.objects.filter(workspace__slug=slug, network=ProjectNetwork.PUBLIC)
+queryset = queryset.authorization_not_required(request)  # explicit, greppable
+```
+
+**Engine primitive** powering the verb:
+
+| Method                                                                                                            | Returns                           | Purpose                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `permission_engine.get_accessible_resources_with_conditions(user, permission, scope_type, ws_id)`                 | `list[AccessibleResource]`        | Scope tuples the user can access; each carries `(resource_id, relation, conditions)`. Handles direct + link paths. |
+| `permission_engine.get_accessible_resources(user, resource_type, ws_id, permission=..., include_relations=False)` | `list[UUID]` or `dict[UUID, str]` | Legacy — unconditional grants only. Prefer the `_with_conditions` variant for listing endpoints.                   |
+
+**`PermissionMixin` methods** (still useful for single-resource checks inside handlers):
 
 | Method                                                     | Returns                            | Purpose                                     |
 | ---------------------------------------------------------- | ---------------------------------- | ------------------------------------------- |
 | `check_can(permission, resource_id)`                       | `bool` (raises `PermissionDenied`) | Check single resource permission            |
 | `has_permission(permission, resource_id)`                  | `bool`                             | Check single resource permission (no raise) |
 | `get_user_permissions(resource_type, resource_id)`         | `dict[str, bool]`                  | Get all permissions for a resource          |
-| `get_accessible_resources(resource_type, permission, ...)` | `list[UUID]` or `dict[UUID, str]`  | Get all accessible resource IDs             |
-
-**What `get_accessible_resources()` handles:**
-
-1. **Direct tuples**: `user → project#{relation}` (ProjectMember records)
-2. **Link relations**: `user → teamspace#member` + `teamspace → project#teamspace` (Teamspace access)
-3. **Permission validation**: Only returns resources where the user's role grants the specified permission
+| `get_accessible_resources(resource_type, permission, ...)` | `list[UUID]` or `dict[UUID, str]`  | Legacy accessible-resource query            |
 
 ### 8. Permission Sync (Membership → ResourcePermission)
 

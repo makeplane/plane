@@ -617,6 +617,13 @@ class PermissionEngine:
     def get_accessible_resources(self, user, resource_type, workspace_id, permission=None, include_relations=False):
         return self._queries.get_accessible_resources(user, resource_type, workspace_id, permission, include_relations)
 
+    def get_accessible_resources_with_conditions(
+        self, user, permission, scope_resource_type, workspace_id,
+    ):
+        return self._queries.get_accessible_resources_with_conditions(
+            user, permission, scope_resource_type, workspace_id,
+        )
+
     def get_role_permission_list(self, relation, resource_type, workspace_id=None):
         return self._queries.get_role_permission_list(relation, resource_type, workspace_id)
 

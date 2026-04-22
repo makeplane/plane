@@ -151,17 +151,35 @@ Ceiling: `enforce_project_role_ceiling()` — workspace guests capped at comment
 
 ### Design Principle
 
-**Always check the specific resource permission, not the parent resource.**
+**For single-resource endpoints, check the specific resource permission at the decorator.**
 
 ```python
-# CORRECT: workitem:view for listing issues
-@can(WorkitemPermissions.VIEW, resource_param='project_id')
+# CORRECT: workitem:view for reading a specific issue
+@can(WorkitemPermissions.VIEW, resource_param='pk')
+def retrieve(self, request, pk): ...
 
-# WRONG: project:view for listing issues
-@can(ProjectPermissions.VIEW, resource_param='project_id')
+# WRONG: project:view for a specific-issue endpoint
+@can(ProjectPermissions.VIEW, resource_param='pk')
+def retrieve(self, request, pk): ...
 ```
 
-This enables future roles with parent access but not child access (e.g., project metadata without issue access).
+**For listing endpoints, the specific permission is checked at the queryset layer via `.authorized_for()`; the decorator is the scope-membership gate.**
+
+```python
+# CORRECT: scope-membership gate + .authorized_for() for row filtering
+class WorkItemListWorkspaceEndpoint(AuthorizedListingView, BaseAPIView):
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
+    def get(self, request, slug):
+        queryset = Issue.issue_objects.filter(workspace__slug=slug)
+        queryset = queryset.authorized_for(request, WorkitemPermissions.VIEW)
+        return self.paginate(queryset)
+```
+
+Rationale: `workitem:view` does not exist at workspace scope for non-admin roles — project contributors hold it on project tuples via their project role. Checking `WorkitemPermissions.VIEW` at workspace scope would reject every non-admin. The scope-membership gate (`WorkspacePermissions.VIEW` or `ProjectPermissions.VIEW`) confirms the caller participates in the scope; `.authorized_for()` then filters rows using accessible-resource traversal — the only mechanism that correctly handles conditional grants (creator, lead) across multiple scope resources.
+
+`AuthorizedListingView` enforces at `finalize_response` time that `.authorized_for(request, ...)` or `.authorization_not_required(request)` was called. Missing the call produces a structured 500 with `code="listing_authorization_misconfigured"`, not a silent over-return.
+
+See `designs/permissions/design-authorized-listing-pattern.md` for the full design.
 
 ### @can Decorator
 

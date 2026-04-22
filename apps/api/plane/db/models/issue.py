@@ -26,6 +26,9 @@ from django.utils import timezone
 from plane.db.mixins import ChangeTrackerMixin, IssueActivityMixin, update_issue_last_activity_at
 from plane.db.models.project import ProjectManager
 from plane.db.signals import post_bulk_create, post_bulk_update
+from plane.permissions import WorkitemPermissions
+from plane.permissions.definitions import Condition
+from plane.permissions.meta import ScopeSpec
 from plane.utils.exception_logger import log_exception
 
 # Third party imports
@@ -207,6 +210,24 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
 
     issue_objects = IssueManager()
     issue_and_epics_objects = IssueAndEpicsManager()
+
+    class PermissionMeta:
+        """Listing-authorization meta for Issue.
+
+        Consumed by plane.permissions.meta.resolve_scope_spec via the
+        .authorized_for() queryset verb. Declares which scope tuples the
+        engine should query for `workitem:view` (project tuples) and which
+        field on Issue joins to that scope (`project_id`). The creator
+        condition maps to `created_by` — the same field the engine's per-
+        resource ConditionEvaluator reads, so there's one source of truth.
+        """
+
+        scope_map = {
+            WorkitemPermissions: ScopeSpec(resource_type="project", fk="project_id"),
+        }
+        condition_fields = {
+            Condition.CREATOR: "created_by",
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -18,6 +18,7 @@ from django.utils import timezone
 
 # Module imports
 from plane.bgtasks.deletion_task import soft_delete_related_objects
+from plane.permissions.queryset import AuthorizationQuerySetMixin
 
 # Relative imports
 from .signals import post_bulk_create, post_bulk_update
@@ -106,7 +107,7 @@ class BulkOperationHooks:
         return objs
 
 
-class SoftDeletionQuerySet(BulkOperationHooks, models.QuerySet):
+class SoftDeletionQuerySet(AuthorizationQuerySetMixin, BulkOperationHooks, models.QuerySet):
     def delete(self, soft=True):
         if soft:
             return self.update(deleted_at=timezone.now())

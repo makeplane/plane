@@ -114,6 +114,13 @@ from .inheritance import (
     PROJECT_RESOURCE_TYPES,
 )
 from .engine import permission_engine, PermissionEngine
+from .engine.accessible_resource import AccessibleResource
+from .exceptions import (
+    ListingAuthorizationConfigurationError,
+    PermissionConfigurationError,
+)
+from .meta import ScopeSpec, resolve_condition_field, resolve_scope_spec
+from .view_mixin import AuthorizedListingView
 from .grants import Grant
 from .context import AccessResult, PermissionContext, PermissionScopeType
 from .sync import PermissionSyncMixin
@@ -159,7 +166,17 @@ __all__ = [
     # Engine
     "permission_engine",
     "PermissionEngine",
+    "AccessibleResource",
     "AccessResult",
+    # Exceptions
+    "ListingAuthorizationConfigurationError",
+    "PermissionConfigurationError",
+    # Meta
+    "ScopeSpec",
+    "resolve_condition_field",
+    "resolve_scope_spec",
+    # View mixins
+    "AuthorizedListingView",
     "PermissionContext",
     "PermissionScopeType",
     # Grants

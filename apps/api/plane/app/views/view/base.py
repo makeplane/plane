@@ -37,6 +37,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.permissions import (
+    AuthorizedListingView,
     can,
     WorkspacePermissions,
     WorkitemPermissions,
@@ -162,7 +163,7 @@ class WorkspaceViewViewSet(PermissionMixin, BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkspaceViewIssuesViewSet(PermissionMixin, BaseViewSet):
+class WorkspaceViewIssuesViewSet(AuthorizedListingView, PermissionMixin, BaseViewSet):
     use_read_replica = True
 
     filter_backends = (
@@ -170,48 +171,6 @@ class WorkspaceViewIssuesViewSet(PermissionMixin, BaseViewSet):
         PQLFilterBackend,
     )
     filterset_class = IssueFilterSet
-
-    def _get_accessible_projects(self) -> dict:
-        """
-        Get accessible projects where user can view issues.
-        Cached per request to avoid duplicate queries.
-
-        Note: We query project tuples but check issue:view permission,
-        because we're listing issues, not projects.
-        """
-        if not hasattr(self, "_project_relations"):
-            self._project_relations = self.get_accessible_resources(
-                resource_type="project",
-                permission=WorkitemPermissions.VIEW,
-                include_relations=True,
-            )
-        return self._project_relations
-
-    def _get_project_permission_filters(self):
-        """
-        Get permission filters based on user's relation per project.
-        Uses ResourcePermission tuples as source of truth.
-        """
-        project_relations = self._get_accessible_projects()
-
-        # Separate projects by relation (guest vs non-guest)
-        guest_project_ids = [pid for pid, rel in project_relations.items() if rel == "guest"]
-        non_guest_project_ids = [pid for pid, rel in project_relations.items() if rel != "guest"]
-
-        # Handle empty lists - return a Q that matches nothing if no projects accessible
-        if not guest_project_ids and not non_guest_project_ids:
-            return Q(pk__in=[])  # Matches nothing
-
-        return Q(
-            # Non-guest projects: show all issues
-            Q(project_id__in=non_guest_project_ids)
-            |
-            # Guest projects: only user's own issues
-            Q(
-                project_id__in=guest_project_ids,
-                created_by=self.request.user,
-            )
-        )
 
     def _validate_order_by_field(self, order_by_param):
         """
@@ -392,18 +351,16 @@ class WorkspaceViewIssuesViewSet(PermissionMixin, BaseViewSet):
         return issues
 
     def get_queryset(self):
-        # Use permission engine to get accessible projects (replaces accessible_to)
-        accessible_project_ids = list(self._get_accessible_projects().keys())
-
-        return Issue.issue_objects.filter(
-            workspace__slug=self.kwargs.get("slug"),
-            project_id__in=accessible_project_ids,
-        )
+        # Base queryset — authorization is applied in list() via .authorized_for().
+        return Issue.issue_objects.filter(workspace__slug=self.kwargs.get("slug"))
 
     @method_decorator(gzip_page)
     @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def list(self, request, slug):
-        issue_queryset = self.get_queryset()
+        # Canonical variable order: authorize FIRST (before filters,
+        # annotations, and the total_count_queryset snapshot) so the exposed
+        # total_count / total_results reflects only rows the caller can see.
+        issue_queryset = self.get_queryset().authorized_for(request, WorkitemPermissions.VIEW)
 
         query_params = request.query_params.copy()
         sub_issue = query_params.get("sub_issue", None)
@@ -424,12 +381,7 @@ class WorkspaceViewIssuesViewSet(PermissionMixin, BaseViewSet):
         if sub_issue and sub_issue == "false":
             issue_queryset = issue_queryset.filter(Q(parent__isnull=True) | (Q(parent__type__is_epic=True)))
 
-        # Get common project permission filters
-        permission_filters = self._get_project_permission_filters()
-        # Apply project permission filters to the issue queryset
-        issue_queryset = issue_queryset.filter(permission_filters)
-
-        # Base query for the counts
+        # Base query for the counts — inherits the authorization filter.
         total_issue_count_queryset = copy.deepcopy(issue_queryset)
         total_issue_count_queryset = total_issue_count_queryset.only("id")
 

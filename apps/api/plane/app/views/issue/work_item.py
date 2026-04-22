@@ -34,6 +34,7 @@ from django.views.decorators.gzip import gzip_page
 from plane.app.views import BaseAPIView
 from plane.db.models import CycleIssue, FileAsset, Issue, IssueAssignee, IssueLabel, IssueLink, ModuleIssue
 from plane.permissions import (
+    AuthorizedListingView,
     can,
     get_permission_conditions,
     WorkitemPermissions,
@@ -270,18 +271,17 @@ class WorkItemListProjectEndpoint(BaseAPIView):
         )
 
 
-class WorkItemListWorkspaceEndpoint(WorkItemListProjectEndpoint):
-    """Paginated work-item list with inline custom property values.
+class WorkItemListWorkspaceEndpoint(AuthorizedListingView, WorkItemListProjectEndpoint):
+    """Paginated work-item list across a workspace.
 
-    Returns up to 100 issues per page. Each issue includes all base
-    fields plus a `property_values` dict keyed by property ID.
+    Uses the canonical authorized-listing pattern:
+      - @can(WorkspacePermissions.VIEW, ...) gates on workspace membership
+      - .authorized_for(request, WorkitemPermissions.VIEW) narrows rows to
+        projects the caller can view workitems in, with guest-relation
+        projects further narrowed to issues the caller created
 
-    Query strategy (optimized to ~3 DB queries per request):
-      1. Issues — filtered, annotated, ordered, paginated
-      2. Property values — prefetched with joined property definitions
-         and option names via Prefetch + select_related
-      3. Property definitions — lightweight values_list query to build
-         the type→properties map for default-filling
+    AuthorizedListingView's finalize_response check enforces that
+    .authorized_for() was called; omitting it returns a structured 500.
     """
 
     filter_backends = (
@@ -368,13 +368,15 @@ class WorkItemListWorkspaceEndpoint(WorkItemListProjectEndpoint):
     @method_decorator(gzip_page)
     @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug):
-        # 1. Base queryset with eager-loaded property values
-        #    - Prefetch with to_attr: loads all property values in a single
-        #      query, joining property definitions and option names via
-        #      select_related("property", "value_option")
-        issue_queryset = Issue.issue_objects.filter(
-            workspace__slug=slug,
-        )
+        # Canonical variable order for authorized listings:
+        #   1. Build base queryset.
+        #   2. Apply .authorized_for() FIRST — before any filters, annotations,
+        #      or prefetches. This ensures the snapshot for total_count_queryset
+        #      (below) inherits the authorization filter and the exposed
+        #      total_count / total_results reflects only rows the caller can see.
+        #   3. THEN apply user-supplied filters, annotate, prefetch, order.
+        issue_queryset = Issue.issue_objects.filter(workspace__slug=slug)
+        issue_queryset = issue_queryset.authorized_for(request, WorkitemPermissions.VIEW)
 
         spreadsheet_custom_property_flag = check_workspace_feature_flag(
             feature_key=FeatureFlag.SPREADSHEET_CUSTOM_PROPERTIES,

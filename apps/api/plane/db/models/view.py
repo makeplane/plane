@@ -15,6 +15,12 @@ from django.db import models
 
 # Module import
 from .project import ProjectOptionalBaseModel
+from plane.permissions import (
+    WorkitemViewPermissions,
+    WorkspaceWorkitemViewPermissions,
+)
+from plane.permissions.definitions import Condition
+from plane.permissions.meta import ScopeSpec
 from plane.utils.issue_filters import issue_filters
 from plane.db.mixins import FiltersMixin
 
@@ -84,6 +90,28 @@ class IssueView(ProjectOptionalBaseModel, FiltersMixin):
         verbose_name_plural = "Issue Views"
         db_table = "issue_views"
         ordering = ("-created_at",)
+
+    class PermissionMeta:
+        """Listing-authorization meta for IssueView — multi-scope.
+
+        IssueView represents both project views (project_id set) and
+        workspace views (project_id null). Each flavor is gated by a
+        different permission class, so the scope_map carries both entries:
+
+          - WorkitemViewPermissions          → listed at project scope via project_id
+          - WorkspaceWorkitemViewPermissions → listed at workspace scope via workspace_id
+
+        .authorized_for() picks the right entry based on which permission
+        the caller passes.
+        """
+
+        scope_map = {
+            WorkitemViewPermissions: ScopeSpec(resource_type="project", fk="project_id"),
+            WorkspaceWorkitemViewPermissions: ScopeSpec(resource_type="workspace", fk="workspace_id"),
+        }
+        condition_fields = {
+            Condition.CREATOR: "created_by",
+        }
 
     def save(self, *args, **kwargs):
         query_params = self.filters

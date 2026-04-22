@@ -69,11 +69,11 @@ All actions check `workspace:view`. Stickies are user-scoped — queryset filter
 
 ### Workspace Issues — `WorkspaceViewIssuesViewSet`
 
-| Action                | Permission Checked | W-Owner | W-Admin             | W-Member            | W-Guest             |
-| --------------------- | ------------------ | ------- | ------------------- | ------------------- | ------------------- |
-| List workspace issues | `workspace:view`   | ✅ `*`  | ✅ `workspace:view` | ✅ `workspace:view` | ✅ `workspace:view` |
+| Action                | Permission Checked                 | W-Owner | W-Admin             | W-Member                         | W-Guest                      |
+| --------------------- | ---------------------------------- | ------- | ------------------- | -------------------------------- | ---------------------------- |
+| List workspace issues | `workspace:view` + `workitem:view` | ✅ `*`  | ✅ `workspace:view` | ✅ `workitem:view` per project ⁵ | ✅ `workitem:view+creator` ⁵ |
 
-> **Note:** Data-level filtering uses `permission_engine.get_accessible_resources()` to scope issues to projects the user has access to.
+> ⁵ Outer decorator is `@can(WorkspacePermissions.VIEW, resource_param="workspace_id")` (scope-membership gate; outsiders get 403). Row filter is `.authorized_for(request, WorkitemPermissions.VIEW)` on the queryset, which calls `permission_engine.get_accessible_resources_with_conditions("project", ...)` and merges grants per-resource across direct + teamspace-link paths (deny wins > unconditional upgrades conditional > conditionals union). Project members see rows in projects they can view; project guests see only their own issues (via `workitem:view+creator`). Workspace admin/owner fast-path via the workspace-scope wildcard grant skips the per-project tuple walk.
 
 ### Workspace Views — `WorkspaceViewViewSet`
 
@@ -487,50 +487,50 @@ Workspace-scoped resource: `RELEASE`. New resource type with actions VIEW, CREAT
 
 #### `WorkItemListProjectEndpoint`
 
-| Action                         | Permission Checked | P-Admin         | P-Contributor      | P-Commenter        | P-Guest    | W-Owner | W-Admin         |
-| ------------------------------ | ------------------ | --------------- | ------------------ | ------------------ | ---------- | ------- | --------------- |
+| Action                          | Permission Checked | P-Admin         | P-Contributor      | P-Commenter        | P-Guest    | W-Owner | W-Admin         |
+| ------------------------------- | ------------------ | --------------- | ------------------ | ------------------ | ---------- | ------- | --------------- |
 | List work items (w/ properties) | `workitem:view`    | ✅ `workitem:*` | ✅ `workitem:view` | ✅ `workitem:view` | +Creator ² | ✅ `*`  | ✅ `workitem:*` |
 
 > ² `defer_conditions=True` — guest sees only own issues via `created_by` queryset filter.
 
 #### `WorkItemListWorkspaceEndpoint`
 
-| Action                          | Permission Checked | P-Admin | P-Contributor | P-Commenter | P-Guest | W-Owner | W-Admin |
-| ------------------------------- | ------------------ | ------- | ------------- | ----------- | ------- | ------- | ------- |
-| List work items (workspace-scope) | `workspace:view`   | —       | —             | —           | —       | ✅ `*`  | ✅ `workspace:view` |
+| Action                            | Permission Checked                   | P-Admin            | P-Contributor      | P-Commenter        | P-Guest    | W-Owner | W-Admin             |
+| --------------------------------- | ------------------------------------ | ------------------ | ------------------ | ------------------ | ---------- | ------- | ------------------- |
+| List work items (workspace-scope) | `workspace:view` + `workitem:view` ³ | ✅ `workitem:view` | ✅ `workitem:view` | ✅ `workitem:view` | +Creator ³ | ✅ `*`  | ✅ `workspace:view` |
 
-> Gate on workspace membership (matches `IssueDetailIdentifierEndpoint`). Queryset is already filtered to the workspace; the decorator just verifies the user can see the workspace.
+> ³ Outer decorator is `@can(WorkspacePermissions.VIEW, resource_param="workspace_id")` — scope-membership gate; outsiders get 403. Row filter is `.authorized_for(request, WorkitemPermissions.VIEW)` on the queryset (via `AuthorizationQuerySetMixin`, mixed into every `SoftDeletionQuerySet`). The helper (a) fast-paths workspace owner/admin via `permission_engine.check(WorkitemPermissions.VIEW, PermissionContext.workspace(...))` — they hold `workitem:*` at workspace scope — and (b) for non-admins calls `permission_engine.get_accessible_resources_with_conditions("project", ...)` which preserves conditional grants (`workitem:view+creator` for project guests) so the helper narrows guest-relation projects to `created_by=request.user`. `AuthorizedListingView` mixin on the view enforces the `.authorized_for()` call at `finalize_response`; omitting it returns a structured 500. Canonical variable order in the view: authorize FIRST, snapshot `total_count_queryset` SECOND, annotate/prefetch/order LAST — so `total_count` / `total_results` reflect only rows the caller can see.
 
 #### `IssueVoteEndpoint`
 
-| Action       | Permission Checked | P-Admin         | P-Contributor      | P-Commenter        | P-Guest            | W-Owner | W-Admin         |
-| ------------ | ------------------ | --------------- | ------------------ | ------------------ | ------------------ | ------- | --------------- |
-| List votes   | `workitem:react`   | ✅ `workitem:*` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `*`  | ✅ `workitem:*` |
-| Cast vote    | `workitem:react`   | ✅ `workitem:*` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `*`  | ✅ `workitem:*` |
-| Remove vote  | `workitem:react`   | ✅ `workitem:*` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `*`  | ✅ `workitem:*` |
+| Action      | Permission Checked | P-Admin         | P-Contributor       | P-Commenter         | P-Guest             | W-Owner | W-Admin         |
+| ----------- | ------------------ | --------------- | ------------------- | ------------------- | ------------------- | ------- | --------------- |
+| List votes  | `workitem:react`   | ✅ `workitem:*` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `*`  | ✅ `workitem:*` |
+| Cast vote   | `workitem:react`   | ✅ `workitem:*` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `*`  | ✅ `workitem:*` |
+| Remove vote | `workitem:react`   | ✅ `workitem:*` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `workitem:react` | ✅ `*`  | ✅ `workitem:*` |
 
 #### `WorkItemStateDurationEndpoint`
 
-| Action                         | Permission Checked | P-Admin         | P-Contributor      | P-Commenter        | P-Guest    | W-Owner | W-Admin         |
-| ------------------------------ | ------------------ | --------------- | ------------------ | ------------------ | ---------- | ------- | --------------- |
-| View state transition duration | `workitem:view`    | ✅ `workitem:*` | ✅ `workitem:view` | ✅ `workitem:view` | +Creator   | ✅ `*`  | ✅ `workitem:*` |
+| Action                         | Permission Checked | P-Admin         | P-Contributor      | P-Commenter        | P-Guest  | W-Owner | W-Admin         |
+| ------------------------------ | ------------------ | --------------- | ------------------ | ------------------ | -------- | ------- | --------------- |
+| View state transition duration | `workitem:view`    | ✅ `workitem:*` | ✅ `workitem:view` | ✅ `workitem:view` | +Creator | ✅ `*`  | ✅ `workitem:*` |
 
 > Inline guards additionally deny guests access to epics and non-owned items (preserved from legacy).
 
 #### `WorkItemWorklogEndpoint` (External API — `api/views/worklog.py`)
 
-| Action            | Permission Checked | P-Admin         | P-Contributor      | P-Commenter | P-Guest | W-Owner | W-Admin         |
-| ----------------- | ------------------ | --------------- | ------------------ | ----------- | ------- | ------- | --------------- |
-| Create worklog    | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
-| List worklogs     | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
-| Update worklog    | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
-| Delete worklog    | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
+| Action         | Permission Checked | P-Admin         | P-Contributor      | P-Commenter | P-Guest | W-Owner | W-Admin         |
+| -------------- | ------------------ | --------------- | ------------------ | ----------- | ------- | ------- | --------------- |
+| Create worklog | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
+| List worklogs  | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
+| Update worklog | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
+| Delete worklog | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
 
 #### `ProjectWorklogAPIEndpoint` (External API — `api/views/worklog.py`)
 
-| Action                     | Permission Checked | P-Admin         | P-Contributor      | P-Commenter | P-Guest | W-Owner | W-Admin         |
-| -------------------------- | ------------------ | --------------- | ------------------ | ----------- | ------- | ------- | --------------- |
-| Project worklog summary    | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
+| Action                  | Permission Checked | P-Admin         | P-Contributor      | P-Commenter | P-Guest | W-Owner | W-Admin         |
+| ----------------------- | ------------------ | --------------- | ------------------ | ----------- | ------- | ------- | --------------- |
+| Project worklog summary | `workitem:edit`    | ✅ `workitem:*` | ✅ `workitem:edit` | ❌          | ❌      | ✅ `*`  | ✅ `workitem:*` |
 
 #### `IssueDetailEndpoint`
 
@@ -2635,9 +2635,9 @@ Added 2026-02-22.
 
 Also gated by `@check_feature_flag(FeatureFlag.PROJECT_MEMBERS_IMPORT)`.
 
-| Action         | Permission Checked       | P-Admin               | P-Contributor | P-Commenter | P-Guest |
-| -------------- | ------------------------ | --------------------- | ------------- | ----------- | ------- |
-| Import members | `project_member:invite`  | ✅ `project_member:*` | ❌            | ❌          | ❌      |
+| Action         | Permission Checked      | P-Admin               | P-Contributor | P-Commenter | P-Guest |
+| -------------- | ----------------------- | --------------------- | ------------- | ----------- | ------- |
+| Import members | `project_member:invite` | ✅ `project_member:*` | ❌            | ❌          | ❌      |
 
 > W-Owner/W-Admin always have access via workspace-level `project_member:*` wildcard (omitted from project table).
 
