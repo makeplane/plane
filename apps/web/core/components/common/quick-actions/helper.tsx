@@ -183,11 +183,12 @@ type UseViewMenuItemsProps = {
     canLock: boolean;
     canDelete: boolean;
   };
+  isDetailPage?: boolean;
 };
 
 export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
   const factory = useQuickActionsFactory();
-  const { workspaceSlug, projectId, view, permissions, ...handlers } = props;
+  const { workspaceSlug, projectId, view, permissions, isDetailPage, ...handlers } = props;
 
   if (!view) return { items: [], modals: null };
 
@@ -208,7 +209,7 @@ export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
   // Assemble final menu items - order defined here
   const items = [
     factory.createEditMenuItem(handlers.handleEdit, permissions.canEdit),
-    ...(lockFeature?.items ?? []),
+    ...(!isDetailPage ? (lockFeature?.items ?? []) : []),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
     ...(exportFeature?.items ?? []),

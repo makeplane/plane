@@ -617,7 +617,7 @@ class IssueViewViewSet(BaseViewSet):
                 raise PermissionDenied("Only the creator can edit this view")
 
             if issue_view.is_locked:
-                return Response({"error": "view is locked"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"error": "View is locked"}, status=status.HTTP_400_BAD_REQUEST)
 
             serializer = IssueViewSerializer(issue_view, data=request.data, partial=True)
 

@@ -37,10 +37,11 @@ type Props = {
   view: IProjectView;
   workspaceSlug: string;
   customClassName?: string;
+  isDetailPage?: boolean;
 };
 
 export const ViewQuickActions = observer(function ViewQuickActions(props: Props) {
-  const { parentRef, projectId, view, workspaceSlug, customClassName } = props;
+  const { parentRef, projectId, view, workspaceSlug, customClassName, isDetailPage = false } = props;
   // states
   const [createUpdateViewModal, setCreateUpdateViewModal] = useState(false);
   const [deleteViewModal, setDeleteViewModal] = useState(false);
@@ -53,14 +54,25 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
   );
 
   const viewLink = `${workspaceSlug}/projects/${projectId}/views/${view.id}`;
-  const handleCopyText = () =>
-    copyUrlToClipboard(viewLink).then(() => {
-      setToast({
-        type: TOAST_TYPE.SUCCESS,
-        title: "Link Copied!",
-        message: "View link copied to clipboard.",
+  const handleCopyText = () => {
+    void copyUrlToClipboard(viewLink)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Link Copied!",
+          message: "View link copied to clipboard.",
+        });
+        return;
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: "Failed to copy view link. Please try again.",
+        });
+        return;
       });
-    });
+  };
   const handleOpenInNewTab = () => window.open(`/${viewLink}`, "_blank");
 
   const menuResult = useViewMenuItems({
@@ -71,6 +83,7 @@ export const ViewQuickActions = observer(function ViewQuickActions(props: Props)
     handleDelete: () => setDeleteViewModal(true),
     handleCopyLink: handleCopyText,
     handleOpenInNewTab,
+    isDetailPage,
     permissions: {
       canEdit: permissions.getCanEditView(view.id),
       canLock: permissions.getCanEditView(view.id),
