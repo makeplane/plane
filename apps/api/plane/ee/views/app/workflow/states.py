@@ -111,7 +111,7 @@ class WorkflowStatesEndpoint(BaseAPIView):
         state_type = request.data.get("type")
         if state_type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
             slug=slug,
-            feature_key=FeatureFlag.APPROVALS,
+            feature_key=FeatureFlag.WORKFLOW_APPROVALS,
             user_id=str(request.user.id),
         ):
             return Response(
@@ -354,7 +354,7 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         # Approval transitions require the approvals entitlement, independent of multi-workflow mode.
         if workflow_state.type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
             slug=slug,
-            feature_key=FeatureFlag.APPROVALS,
+            feature_key=FeatureFlag.WORKFLOW_APPROVALS,
             user_id=str(request.user.id),
         ):
             return Response(
@@ -458,7 +458,7 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
         workflow_state_type = workflow_transition.workflow_state.type
         if workflow_state_type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
             slug=slug,
-            feature_key=FeatureFlag.APPROVALS,
+            feature_key=FeatureFlag.WORKFLOW_APPROVALS,
             user_id=str(request.user.id),
         ):
             return Response(

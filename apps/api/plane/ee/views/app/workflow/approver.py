@@ -57,7 +57,7 @@ class WorkflowTransitionMemberEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if workflow_transition.workflow_state.type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
-            feature_key=FeatureFlag.APPROVALS,
+            feature_key=FeatureFlag.WORKFLOW_APPROVALS,
             slug=slug,
             user_id=str(request.user.id),
         ):
@@ -129,7 +129,7 @@ class WorkflowTransitionMemberEndpoint(BaseAPIView):
 
 
 class WorkflowWorkItemApproverEndpoint(BaseAPIView):
-    @check_feature_flag(FeatureFlag.APPROVALS)
+    @check_feature_flag(FeatureFlag.WORKFLOW_APPROVALS)
     @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, work_item_id):
         action_type = request.data.get("type", None)

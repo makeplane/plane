@@ -260,7 +260,7 @@ class WorkflowStateManager:
         else:
             if not check_workspace_feature_flag(
                 slug=self.slug,
-                feature_key=FeatureFlag.APPROVALS,
+                feature_key=FeatureFlag.WORKFLOW_APPROVALS,
                 user_id=user_id,
             ):
                 return True

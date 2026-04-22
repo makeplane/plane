@@ -237,7 +237,11 @@ export class WorkflowsStore implements IWorkflowsStore {
   });
 
   isApprovalsEnabled = computedFn((workspaceSlug: string, projectId: string): boolean => {
-    const isApprovalsFeatureEnabled = this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "APPROVALS", false);
+    const isApprovalsFeatureEnabled = this.rootStore.featureFlags.getFeatureFlag(
+      workspaceSlug,
+      "WORKFLOW_APPROVALS",
+      false
+    );
     return this.isWorkflowsEnabled(workspaceSlug, projectId) && isApprovalsFeatureEnabled;
   });
 

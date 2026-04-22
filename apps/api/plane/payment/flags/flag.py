@@ -130,7 +130,7 @@ class FeatureFlag(Enum):
     # Multiple workflows
     MULTIPLE_WORKFLOWS = "MULTIPLE_WORKFLOWS"
     # Approvals
-    APPROVALS = "APPROVALS"
+    WORKFLOW_APPROVALS = "WORKFLOW_APPROVALS"
     # Releases
     RELEASES = "RELEASES"
     # Formula properties
@@ -157,7 +157,6 @@ class FeatureFlag(Enum):
     WORK_ITEM_STATE_DURATION = "WORK_ITEM_STATE_DURATION"
     # Granular access control (custom roles + permission schemes)
     GAC = "GAC"
-
 
 
 class AdminFeatureFlag(Enum):
