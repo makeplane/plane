@@ -82,16 +82,22 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
       <div className="py-1">
         {asc && (
           <CustomMenu.MenuItem onClick={() => store.updateOrderBy(asc)}>
-            <span className="flex items-center gap-2">
-              <ArrowUpNarrowWide className="h-3 w-3" /> {t("ho.ascending")}
-            </span>
+            <div className="flex items-center justify-between gap-2 w-full">
+              <span className="flex items-center gap-2">
+                <ArrowUpNarrowWide className="h-3 w-3" /> {t("ho.ascending")}
+              </span>
+              {store.orderBy === asc && <Check className="h-3.5 w-3.5 text-accent-primary" />}
+            </div>
           </CustomMenu.MenuItem>
         )}
         {desc && (
           <CustomMenu.MenuItem onClick={() => store.updateOrderBy(desc)}>
-            <span className="flex items-center gap-2">
-              <ArrowDownWideNarrow className="h-3 w-3" /> {t("ho.descending")}
-            </span>
+            <div className="flex items-center justify-between gap-2 w-full">
+              <span className="flex items-center gap-2">
+                <ArrowDownWideNarrow className="h-3 w-3" /> {t("ho.descending")}
+              </span>
+              {store.orderBy === desc && <Check className="h-3.5 w-3.5 text-accent-primary" />}
+            </div>
           </CustomMenu.MenuItem>
         )}
         {(asc || desc) && <div className="my-1 border-t border-subtle" />}
