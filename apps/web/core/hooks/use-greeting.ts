@@ -27,29 +27,31 @@ export const useGreeting = (user: IUser) => {
     }
   }, [user?.user_timezone]);
 
-  const hour = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    hourCycle: "h23",
-    hour: "numeric",
-  }).format(currentTime);
+  const hourFormatter = useMemo(
+    () => new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, hourCycle: "h23", hour: "numeric" }),
+    [userTimezone]
+  );
 
-  const date = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    month: "short",
-    day: "numeric",
-  }).format(currentTime);
+  const dateFormatter = useMemo(
+    () => new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, month: "short", day: "numeric" }),
+    [userTimezone]
+  );
 
-  const weekDay = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    weekday: "long",
-  }).format(currentTime);
+  const weekDayFormatter = useMemo(
+    () => new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, weekday: "long" }),
+    [userTimezone]
+  );
 
-  const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    hourCycle: "h23",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(currentTime);
+  const timeStringFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, hourCycle: "h23", hour: "2-digit", minute: "2-digit" }),
+    [userTimezone]
+  );
+
+  const hour = hourFormatter.format(currentTime);
+  const date = dateFormatter.format(currentTime);
+  const weekDay = weekDayFormatter.format(currentTime);
+  const timeString = timeStringFormatter.format(currentTime);
 
   const hourNum = parseInt(hour, 10);
   // 5–11: morning, 12–16: afternoon, 17–4: evening
