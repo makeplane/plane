@@ -34,20 +34,25 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
       if (dp.department_name !== false) row[t("spreadsheet.columns.department_name")] = issue.department_name ?? "-";
       if (dp.project_name !== false) row[t("spreadsheet.columns.project_name")] = issue.project_name ?? "-";
       row[t("ho.work_items")] = issue.name ?? "-";
-      if (dp.main_task_category !== false) row[t("spreadsheet.columns.main_task_category")] = issue.main_task_category_name ?? "-";
-      if (dp.sub_task_category !== false) row[t("spreadsheet.columns.sub_task_category")] = issue.sub_task_category_name ?? "-";
+      if (dp.main_task_category !== false)
+        row[t("spreadsheet.columns.main_task_category")] = issue.main_task_category_name ?? "-";
+      if (dp.sub_task_category !== false)
+        row[t("spreadsheet.columns.sub_task_category")] = issue.sub_task_category_name ?? "-";
       if (dp.sub_issue_count !== false) row["Sub Items"] = issue.sub_issues_count ?? 0;
       if (dp.project_lead !== false) row[t("spreadsheet.columns.project_lead")] = issue.project_lead ?? "-";
       if (dp.assignee !== false) row["Assignee"] = issue.assignees?.map((a) => a.display_name).join(", ") || "-";
-      if (dp.bank_wide_project !== false) row[t("spreadsheet.columns.bank_wide_project")] = issue.is_bank_wide_project ? "Y" : "N";
+      if (dp.bank_wide_project !== false)
+        row[t("spreadsheet.columns.bank_wide_project")] = issue.is_bank_wide_project ? "Y" : "N";
       if (dp.priority !== false) row["Priority"] = issue.priority ?? "-";
       if (dp.state !== false) row["Status"] = issue.state_name ?? "-";
-      if (dp.progress_tracking !== false) row[t("spreadsheet.columns.progress_tracking")] = getProgressStatus(issue.target_date)?.label ?? "-";
+      if (dp.progress_tracking !== false)
+        row[t("spreadsheet.columns.progress_tracking")] = getProgressStatus(issue.target_date)?.label ?? "-";
       if (dp.modules !== false) row[t("sidebar.modules")] = issue.module_names?.join(", ") || "-";
       if (dp.cycle !== false) row[t("sidebar.cycles")] = issue.cycle_name ?? "-";
       if (dp.start_date !== false) row["Start Date"] = issue.start_date ?? "-";
       if (dp.due_date !== false) row["Due Date"] = issue.target_date ?? "-";
-      if (dp.completed_date !== false) row[t("spreadsheet.columns.completed_date")] = issue.completed_at?.slice(0, 10) ?? "-";
+      if (dp.completed_date !== false)
+        row[t("spreadsheet.columns.completed_date")] = issue.completed_at?.slice(0, 10) ?? "-";
       if (dp.total_log_time !== false) row[t("spreadsheet.columns.total_log_time")] = issue.total_log_time ?? 0;
       if (dp.reference_link !== false) row[t("spreadsheet.columns.reference_link")] = issue.reference_link_count ?? 0;
       return row;

@@ -225,14 +225,12 @@ class HoIssueListView(BaseAPIView):
         if not workspace_ids:
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Optional department filter: narrow to workspace linked to that department
-        department_id = request.query_params.get("department_id")
-        if department_id:
-            ws = Workspace.objects.filter(linked_department_id=department_id, id__in=workspace_ids).first()
-            if ws:
-                workspace_ids = [ws.id]
-            else:
-                return Response({"detail": "Department not found."}, status=status.HTTP_404_NOT_FOUND)
+        # Optional workspace filter — narrow to a single workspace by ID
+        workspace_id = request.query_params.get("workspace_id")
+        if workspace_id:
+            if workspace_id not in [str(wid) for wid in workspace_ids]:
+                return Response({"detail": "Workspace not found or inaccessible."}, status=status.HTTP_404_NOT_FOUND)
+            workspace_ids = [workspace_id]
 
         # Optional project filter — validate UUIDs and enforce workspace boundary
         project_ids_param = request.query_params.get("project_id")
@@ -469,12 +467,10 @@ class HoFilterOptionsView(BaseAPIView):
         if not workspace_ids:
             return Response({}, status=status.HTTP_200_OK)
 
-        # Optional department/project filters to narrow down options
-        department_id = request.query_params.get("department_id")
-        if department_id:
-            ws = Workspace.objects.filter(linked_department_id=department_id, id__in=workspace_ids).first()
-            if ws:
-                workspace_ids = [ws.id]
+        # Optional workspace/project filters to narrow down options
+        workspace_id = request.query_params.get("workspace_id")
+        if workspace_id and workspace_id in [str(wid) for wid in workspace_ids]:
+            workspace_ids = [workspace_id]
 
         project_ids_param = request.query_params.get("project_id")
         project_ids = []
@@ -655,19 +651,35 @@ class HoIssueWorklogBreakdownView(BaseAPIView):
 
 
 class HoAccessibleWorkspacesView(BaseAPIView):
-    """GET /api/ho/workspaces/ - list workspaces accessible to user with their projects."""
+    """GET /api/ho/workspaces/ - list workspaces the user is a member of with their projects."""
 
     def get(self, request):
-        workspace_ids = get_accessible_workspace_ids(request.user)
-        if not workspace_ids:
+        # Use direct membership only — no org chart/department check
+        member_ws_ids = list(
+            WorkspaceMember.objects.filter(
+                member=request.user,
+                deleted_at__isnull=True,
+            ).values_list("workspace_id", flat=True)
+        )
+        if not member_ws_ids:
             return Response([], status=status.HTTP_200_OK)
 
         workspaces = (
-            Workspace.objects.filter(id__in=workspace_ids, linked_department__isnull=False)
-            .select_related("logo_asset", "linked_department")
+            Workspace.objects.filter(id__in=member_ws_ids)
+            .select_related("logo_asset")
             .prefetch_related("workspace_project")
             .order_by("name")
         )
+
+        # Reverse OneToOne `linked_department` raises RelatedObjectDoesNotExist when missing
+        # (caught by BaseAPIView as 404). Fetch departments separately and map by workspace_id.
+        dept_by_ws_id = {
+            d.linked_workspace_id: d
+            for d in Department.objects.filter(
+                linked_workspace_id__in=member_ws_ids,
+                deleted_at__isnull=True,
+            )
+        }
 
         # Cross-reference ProjectMember to return only projects the requesting user belongs to.
         # Prevents leaking private/secret project names (e.g. "Executive Compensation Q4") to
@@ -676,7 +688,7 @@ class HoAccessibleWorkspacesView(BaseAPIView):
             ProjectMember.objects.filter(
                 member=request.user,
                 is_active=True,
-                project__workspace_id__in=workspace_ids,
+                project__workspace_id__in=member_ws_ids,
             ).values_list("project_id", flat=True)
         )
 
@@ -692,14 +704,15 @@ class HoAccessibleWorkspacesView(BaseAPIView):
                 .order_by("name")
             )
 
+            dept = dept_by_ws_id.get(ws.id)
             result.append(
                 {
                     "id": str(ws.id),
                     "name": ws.name,
                     "slug": ws.slug,
-                    "logo_url": ws.logo_url,  # Use @property, not raw ws.logo (resolves logo_asset for modern uploads)
-                    "department_id": str(ws.linked_department.id),
-                    "department_name": ws.linked_department.name,
+                    "logo_url": ws.logo_url,
+                    "department_id": str(dept.id) if dept else None,
+                    "department_name": dept.name if dept else None,
                     "projects": [
                         {"id": str(p["id"]), "name": p["name"], "identifier": p["identifier"]} for p in projects
                     ],
