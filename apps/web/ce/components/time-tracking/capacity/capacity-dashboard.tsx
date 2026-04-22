@@ -165,7 +165,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
         )} */}
 
         {/* Filters Bar */}
-        <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-30 backdrop-blur-md">
+        <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md">
           <div className="flex items-center gap-4">
             {/* Member filter — shown only when in project mode and not cross-workspace */}
             {projectId && !isCrossWorkspace ? (

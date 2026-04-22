@@ -23,6 +23,7 @@ export type THoIssue = {
   priority: string;
   state_name: string | null;
   state_color: string | null;
+  state_group: string | null;
   start_date: string | null;
   target_date: string | null;
   completed_at: string | null;

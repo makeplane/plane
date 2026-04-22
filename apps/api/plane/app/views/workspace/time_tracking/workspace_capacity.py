@@ -248,8 +248,15 @@ class WorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
 
         tasks_qs = (
             IssueWorkLog.objects.filter(**worklog_filter)
-            .select_related("issue", "issue__project")
-            .values("issue_id", "issue__name", "issue__sequence_id", "issue__project__identifier")
+            .select_related("issue", "issue__project", "issue__workspace")
+            .values(
+                "issue_id",
+                "issue__name",
+                "issue__sequence_id",
+                "issue__project__identifier",
+                "issue__project_id",
+                "issue__workspace__slug",
+            )
             .annotate(total_minutes=Sum("duration_minutes"))
             .order_by("-total_minutes")
         )
@@ -260,6 +267,8 @@ class WorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
                 "issue_name": row["issue__name"],
                 "issue_identifier": f"{row['issue__project__identifier']}-{row['issue__sequence_id']}",
                 "total_minutes": row["total_minutes"] or 0,
+                "project_id": str(row["issue__project_id"]),
+                "workspace_slug": row["issue__workspace__slug"],
             }
             for row in tasks_qs
         ]

@@ -15,6 +15,7 @@ from plane.db.models import (
     Department,
     DepartmentTaskCategory,
     Issue,
+    IssueAssignee,
     IssueWorkLog,
     Project,
     ProjectMember,
@@ -286,7 +287,12 @@ class HoIssueListView(BaseAPIView):
                 "sub_task_category",
             )
             .prefetch_related(
-                "assignees",
+                Prefetch(
+                    "assignees",
+                    queryset=get_user_model().objects.filter(
+                        issue_assignee__deleted_at__isnull=True
+                    ).distinct(),
+                ),
                 "issue_module__module",
                 "issue_cycle__cycle",
             )
@@ -325,6 +331,10 @@ class HoIssueListView(BaseAPIView):
         assignees = request.query_params.get("assignees")
         if assignees:
             qs = qs.filter(assignees__id__in=assignees.split(",")).distinct()
+
+        leads = request.query_params.get("leads")
+        if leads:
+            qs = qs.filter(project__project_lead_id__in=leads.split(","))
 
         main_task_category = request.query_params.get("main_task_category")
         if main_task_category:
@@ -487,6 +497,8 @@ class HoFilterOptionsView(BaseAPIView):
             filter_kwargs["archived_at__isnull"] = True
             filter_kwargs["project__archived_at__isnull"] = True
         base_qs = Issue.objects.filter(**filter_kwargs)
+        scope_q = _get_user_scope_q(request.user, workspace_ids)
+        base_qs = base_qs.filter(scope_q)
         if project_ids:
             base_qs = base_qs.filter(project_id__in=project_ids)
         if from_date:
@@ -541,11 +553,14 @@ class HoFilterOptionsView(BaseAPIView):
             .order_by("issue_module__module__name")
         )
 
-        # Assignees: get User IDs from issue_assignees, then resolve display names
+        # Assignees: query IssueAssignee directly to exclude soft-deleted rows
         User = get_user_model()
         assignee_user_ids = (
-            Issue.objects.filter(id__in=issue_ids)
-            .values_list("issue_assignee__assignee_id", flat=True)
+            IssueAssignee.objects.filter(
+                issue_id__in=issue_ids,
+                deleted_at__isnull=True,
+            )
+            .values_list("assignee_id", flat=True)
             .distinct()
         )
         assignees = (

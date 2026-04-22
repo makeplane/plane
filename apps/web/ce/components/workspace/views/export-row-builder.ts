@@ -38,7 +38,8 @@ function resolveProjectLead(
 
 export function buildExportRow(issue: TIssue, t: TFunction, stores: Stores): Record<string, string | number> {
   const project = issue.project_id ? stores.getProjectById(issue.project_id) : null;
-  const progressStatus = getProgressStatus(issue.target_date ?? null);
+  const isTerminalState = issue.state__group === "completed" || issue.state__group === "cancelled";
+  const progressStatus = isTerminalState ? null : getProgressStatus(issue.target_date ?? null);
 
   return {
     [t("workspace_views.export.col_id")]: `#${issue.sequence_id}`,

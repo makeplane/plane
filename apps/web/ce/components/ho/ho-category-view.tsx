@@ -8,14 +8,17 @@ import type { THoCategorySummary } from "@/plane-web/services/ho-issue.service";
 import { HoCategoryTable } from "./ho-category-table";
 import { HoWorkspaceSelect } from "./ho-workspace-select";
 
-type SortKey = keyof THoCategorySummary;
+// Maps backend order_by field names to THoCategorySummary keys
+const ORDER_BY_FIELD_MAP: Record<string, keyof THoCategorySummary> = {
+  project__workspace__name: "department_name",
+  main_task_category__name: "main_task_category_name",
+  sub_task_category__name: "sub_task_category_name",
+};
 
 export const HoCategoryView = observer(function HoCategoryView() {
   const { t } = useTranslation();
   const store = useHoIssues();
   const [search, setSearch] = useState("");
-  const [sortKey] = useState<SortKey | null>("department_name");
-  const [sortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     void store.fetchCategorySummary();
@@ -50,14 +53,20 @@ export const HoCategoryView = observer(function HoCategoryView() {
 
   const sortedData = useMemo(() => {
     const data = [...filtered];
-    if (!sortKey) return data;
+    const orderBy = store.orderBy;
+    if (!orderBy) return data;
+
+    const isDesc = orderBy.startsWith("-");
+    const field = isDesc ? orderBy.slice(1) : orderBy;
+    const key = ORDER_BY_FIELD_MAP[field];
+    if (!key) return data;
 
     return data.sort((a, b) => {
-      const av = a[sortKey] ?? "";
-      const bv = b[sortKey] ?? "";
-      return sortDir === "asc" ? String(av).localeCompare(String(bv)) : String(bv).localeCompare(String(av));
+      const av = String(a[key] ?? "");
+      const bv = String(b[key] ?? "");
+      return isDesc ? bv.localeCompare(av) : av.localeCompare(bv);
     });
-  }, [filtered, sortKey, sortDir]);
+  }, [filtered, store.orderBy]);
 
   return (
     <div className="relative flex h-full flex-col">

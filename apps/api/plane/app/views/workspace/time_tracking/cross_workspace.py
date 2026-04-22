@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Issue, IssueWorkLog, ProjectMember, WorkspaceMember
+from plane.db.models import Issue, IssueAssignee, IssueWorkLog, ProjectMember, WorkspaceMember
 
 
 def _get_week_start(raw_date_str):
@@ -56,12 +56,15 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
             WorkspaceMember.objects.filter(**workspace_filter).values_list("workspace_id", flat=True)
         )
 
-        # All issues assigned to this user across their workspaces
+        # Use through-table subquery to correctly filter soft-deleted issue_assignee rows
+        # (direct M2M filter bypasses SoftDeletionManager, causing duplicates)
+        assigned_issue_ids = IssueAssignee.objects.filter(
+            workspace_id__in=user_workspace_ids,
+            assignee=request.user,
+        ).values_list("issue_id", flat=True)
+
         assigned_issues = list(
-            Issue.issue_objects.filter(
-                workspace_id__in=user_workspace_ids,
-                assignees=request.user,
-            )
+            Issue.issue_objects.filter(id__in=assigned_issue_ids)
             .select_related("project", "workspace")
             .values(
                 "id",
@@ -247,16 +250,19 @@ class CrossWorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
         if not member_id or not date_str:
             return Response({"error": "member_id and date are required."}, status=400)
 
-        user_workspace_ids = list(
+        # Scope to the TARGET member's workspaces, not the viewing admin's.
+        # Using request.user here would silently exclude logs from workspaces
+        # the admin doesn't belong to but the target member does.
+        target_workspace_ids = list(
             WorkspaceMember.objects.filter(
-                member=request.user,
+                member_id=member_id,
                 is_active=True,
             ).values_list("workspace_id", flat=True)
         )
 
         worklogs = (
             IssueWorkLog.objects.filter(
-                workspace_id__in=user_workspace_ids,
+                workspace_id__in=target_workspace_ids,
                 logged_by_id=member_id,
                 logged_at=date_str,
             )
@@ -266,6 +272,8 @@ class CrossWorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
                 "issue__name",
                 "issue__sequence_id",
                 "issue__project__identifier",
+                "issue__project_id",
+                "issue__workspace__slug",
             )
             .annotate(total=Sum("duration_minutes"))
         )
@@ -276,6 +284,8 @@ class CrossWorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
                 "issue_name": wl["issue__name"],
                 "issue_identifier": f"{wl['issue__project__identifier']}-{wl['issue__sequence_id']}",
                 "total_minutes": wl["total"],
+                "project_id": str(wl["issue__project_id"]),
+                "workspace_slug": wl["issue__workspace__slug"],
             }
             for wl in worklogs
         ]

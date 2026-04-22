@@ -14,6 +14,7 @@ import { cn } from "@plane/utils";
 // components
 import { AppHeader } from "@/components/core/app-header";
 import { ContentWrapper } from "@/components/core/content-wrapper";
+import { IssuePeekOverview } from "@/components/issues/peek-overview";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user/user-permissions";
 // local
@@ -87,6 +88,7 @@ export default function WorkspaceTimeTrackingLayout() {
           <Outlet />
         </ContentWrapper>
       </div>
+      <IssuePeekOverview />
     </div>
   );
 }

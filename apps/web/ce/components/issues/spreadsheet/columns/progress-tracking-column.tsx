@@ -11,7 +11,8 @@ type Props = {
 };
 
 export const SpreadsheetProgressTrackingColumn = observer(function SpreadsheetProgressTrackingColumn({ issue }: Props) {
-  const progressStatus = getProgressStatus(issue.target_date);
+  const isTerminalState = issue.state__group === "completed" || issue.state__group === "cancelled";
+  const progressStatus = isTerminalState ? null : getProgressStatus(issue.target_date);
   const label = progressStatus?.label ?? "—";
   const className = progressStatus?.className ?? "text-secondary";
 

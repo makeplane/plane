@@ -60,7 +60,8 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
     : isNewProjectGroup
       ? "border-t border-subtle"
       : "";
-  const progress = getProgressStatus(issue.target_date);
+  const isTerminalState = issue.state_group === "completed" || issue.state_group === "cancelled";
+  const progress = isTerminalState ? null : getProgressStatus(issue.target_date);
 
   const frozenBg = rowIndex % 2 === 0 ? "bg-surface-1" : "bg-surface-2";
 
@@ -193,7 +194,7 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
       {displayProperties.progress_tracking &&
         renderTd(
           "progress_tracking",
-          <span className={cn("truncate font-medium", progress?.className ?? "text-secondary")}>
+          <span className="truncate font-medium" style={progress ? { color: progress.color } : undefined}>
             {progress?.label ?? "—"}
           </span>
         )}

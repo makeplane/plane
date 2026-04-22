@@ -9,12 +9,17 @@
 import type { FC } from "react";
 import { formatMinutesToDisplay } from "@plane/constants";
 import type { IWorkLogSummary } from "@plane/types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 type TTimeTrackingIssueTableProps = {
   byIssue: IWorkLogSummary["by_issue"];
+  workspaceSlug: string;
+  projectId: string;
 };
 
-export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIssue }) => {
+export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIssue, workspaceSlug, projectId }) => {
+  const { setPeekIssue } = useIssueDetail();
+
   if (byIssue.length === 0) return null;
 
   return (
@@ -34,8 +39,17 @@ export const TimeTrackingIssueTable: FC<TTimeTrackingIssueTableProps> = ({ byIss
               key={issue.issue_id}
               className="border-b border-subtle last:border-0 hover:bg-layer-1-hover transition-colors"
             >
-              <td className="px-4 py-3 text-primary font-medium">
-                {issue.issue_name || <span className="italic text-tertiary">(Deleted issue)</span>}
+              <td className="px-4 py-3">
+                {issue.issue_name ? (
+                  <button
+                    className="text-primary font-medium text-left hover:text-accent-primary transition-colors"
+                    onClick={() => setPeekIssue({ workspaceSlug, projectId, issueId: issue.issue_id, nestingLevel: 0 })}
+                  >
+                    {issue.issue_name}
+                  </button>
+                ) : (
+                  <span className="italic text-tertiary">(Deleted issue)</span>
+                )}
               </td>
               <td className="px-4 py-3 text-right text-primary font-medium">
                 {formatMinutesToDisplay(issue.total_minutes)}

@@ -12,6 +12,7 @@ import type { FC } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Popover } from "@plane/propel/popover";
 import type { ICapacityDayTask } from "@plane/types";
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useWorklog } from "@/hooks/store/use-worklog";
 import { formatMinutes } from "../utils/time-format";
 
@@ -44,6 +45,7 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
 }) => {
   const { t } = useTranslation();
   const worklogStore = useWorklog();
+  const { setPeekIssue } = useIssueDetail();
   const [tasks, setTasks] = useState<ICapacityDayTask[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -85,16 +87,26 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
         ) : tasks && tasks.length > 0 ? (
           <div className="flex flex-col gap-0.5">
             {tasks.map((task) => (
-              <div
+              <button
                 key={task.issue_id}
-                className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2"
+                className="w-full flex items-center justify-between gap-2 px-2 py-1.5 rounded-md hover:bg-surface-2 text-left cursor-pointer"
+                onClick={() =>
+                  setPeekIssue({
+                    workspaceSlug: task.workspace_slug,
+                    projectId: task.project_id,
+                    issueId: task.issue_id,
+                    nestingLevel: 0,
+                  })
+                }
               >
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="text-11 font-mono text-tertiary shrink-0">{task.issue_identifier}</span>
-                  <span className="text-12 text-primary truncate">{task.issue_name}</span>
+                  <span className="text-12 text-primary truncate group-hover:text-accent-primary transition-colors">
+                    {task.issue_name}
+                  </span>
                 </div>
                 <span className="text-12 font-medium text-secondary shrink-0">{formatMinutes(task.total_minutes)}</span>
-              </div>
+              </button>
             ))}
           </div>
         ) : (
