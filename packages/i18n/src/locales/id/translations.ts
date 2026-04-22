@@ -494,7 +494,6 @@ export default {
   morning: "pagi",
   afternoon: "siang",
   evening: "malam",
-  night: "dini hari",
   greetings: {
     morning: "Selamat pagi, {first_name} {last_name}",
     afternoon: "Selamat siang, {first_name} {last_name}",

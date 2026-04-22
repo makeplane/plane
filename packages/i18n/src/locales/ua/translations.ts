@@ -497,7 +497,6 @@ export default {
   morning: "ранку",
   afternoon: "дня",
   evening: "вечора",
-  night: "ночі",
   greetings: {
     morning: "Добрий ранок, {first_name} {last_name}",
     afternoon: "Добрий день, {first_name} {last_name}",

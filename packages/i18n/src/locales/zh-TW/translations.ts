@@ -476,7 +476,6 @@ export default {
   morning: "早上",
   afternoon: "下午",
   evening: "晚上",
-  night: "晚安",
   greetings: {
     morning: "早安，{first_name} {last_name}",
     afternoon: "午安，{first_name} {last_name}",

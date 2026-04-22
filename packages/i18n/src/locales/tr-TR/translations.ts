@@ -490,7 +490,6 @@ export default {
   morning: "sabah",
   afternoon: "öğleden sonra",
   evening: "akşam",
-  night: "gece",
   greetings: {
     morning: "Günaydın, {first_name} {last_name}",
     afternoon: "İyi günler, {first_name} {last_name}",

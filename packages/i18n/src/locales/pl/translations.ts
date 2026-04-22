@@ -488,7 +488,6 @@ export default {
   morning: "rano",
   afternoon: "po południu",
   evening: "wieczorem",
-  night: "noc",
   greetings: {
     morning: "Dzień dobry, {first_name} {last_name}",
     afternoon: "Dzień dobry, {first_name} {last_name}",

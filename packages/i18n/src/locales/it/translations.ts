@@ -495,7 +495,6 @@ export default {
   morning: "Mattina",
   afternoon: "Pomeriggio",
   evening: "Sera",
-  night: "notte",
   greetings: {
     morning: "Buongiorno, {first_name} {last_name}",
     afternoon: "Buon pomeriggio, {first_name} {last_name}",

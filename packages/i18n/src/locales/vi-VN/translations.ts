@@ -495,7 +495,6 @@ export default {
   morning: "Buổi sáng",
   afternoon: "Buổi chiều",
   evening: "Buổi tối",
-  night: "Buổi đêm",
   greetings: {
     morning: "Chào buổi sáng, {first_name} {last_name}",
     afternoon: "Chào buổi chiều, {first_name} {last_name}",

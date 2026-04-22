@@ -495,7 +495,6 @@ export default {
   morning: "dimineața",
   afternoon: "după-amiaza",
   evening: "seara",
-  night: "noapte",
   greetings: {
     morning: "Bună dimineața, {first_name} {last_name}",
     afternoon: "Bună ziua, {first_name} {last_name}",

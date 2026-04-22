@@ -482,7 +482,6 @@ export default {
   morning: "아침",
   afternoon: "오후",
   evening: "저녁",
-  night: "밤",
   greetings: {
     morning: "좋은 아침, {first_name} {last_name}",
     afternoon: "좋은 오후, {first_name} {last_name}",

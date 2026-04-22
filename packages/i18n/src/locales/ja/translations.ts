@@ -488,7 +488,6 @@ export default {
   morning: "ございます",
   afternoon: "こんにちは",
   evening: "こんばんは",
-  night: "夜",
   greetings: {
     morning: "おはようございます、{first_name} {last_name}",
     afternoon: "こんにちは、{first_name} {last_name}",
