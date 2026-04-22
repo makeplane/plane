@@ -494,12 +494,15 @@ class WorkspacePageViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # only the owner or admin can delete the page
-        if page.owned_by_id != request.user.id and not WorkspaceMember.objects.filter(
-            workspace__slug=slug,
-            member=request.user,
-            is_active=True,
-            role=ROLE.ADMIN.value,
-        ).exists():
+        if (
+            page.owned_by_id != request.user.id
+            and not WorkspaceMember.objects.filter(
+                workspace__slug=slug,
+                member=request.user,
+                is_active=True,
+                role=ROLE.ADMIN.value,
+            ).exists()
+        ):
             return Response(
                 {"error": "Only admin or owner can delete the page"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -752,8 +755,16 @@ class WorkspacePageVersionEndpoint(BaseAPIView):
             # Serialize the page version
             serializer = WorkspacePageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        # Return all page versions
-        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id)
+        # Return all page versions.
+        # Defer heavy columns: the list serializer only emits metadata, and a page
+        # with thousands of versions can otherwise hydrate GBs of description blobs.
+        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id).defer(
+            "description_binary",
+            "description_html",
+            "description_json",
+            "description_stripped",
+            "sub_pages_data",
+        )
         # Serialize the page versions
         serializer = WorkspacePageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

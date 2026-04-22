@@ -39,7 +39,11 @@ from plane.utils.exception_logger import log_exception
 
 
 logger = logging.getLogger("plane.worker")
-BATCH_SIZE = 500
+# Page/issue version buffers hold rows with description_binary/html/json and
+# sub_pages_data, which can be hundreds of KB each. 500 rows * ~180KB ≈ 90MB
+# per in-flight buffer per worker — under fan-out this was a contributor to
+# worker OOMs. 100 keeps the buffer ~18MB.
+BATCH_SIZE = 100
 
 
 def get_mongo_collection(collection_name: str) -> Optional[Collection]:

@@ -379,7 +379,6 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
                 PageCollection.objects.filter(page_id__in=descendants_ids, workspace_id=workspace_id).delete()
                 add_pages_to_collection(descendants_ids, new_entity_identifier, workspace_id)
 
-
         elif action == PageAction.MOVED_INTERNALLY:
             new_parent_id = extra["new_parent_id"]
             old_parent_id = extra["old_parent_id"]
@@ -451,8 +450,10 @@ def nested_page_update(page_id, action, slug, project_id=None, user_id=None, ext
         elif action == PageAction.DELETED:
             # delete all the descendants
             Page.objects.filter(id__in=descendants_ids, workspace__slug=slug).delete()
-            # delete the page version history
-            PageVersion.objects.filter(page_id__in=descendants_ids, workspace__slug=slug).delete()
+            # delete the page version history — .only("id") prevents Django's
+            # deletion pipeline from hydrating heavy description columns, which
+            # otherwise OOMs workers when a page has many versions.
+            PageVersion.objects.filter(page_id__in=descendants_ids, workspace__slug=slug).only("id").delete()
             # shared pages
             PageUser.objects.filter(page_id__in=descendants_ids, workspace__slug=slug).delete()
             DeployBoard.objects.filter(

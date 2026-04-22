@@ -462,17 +462,21 @@ class TeamspaceParentPageEndpoint(TeamspaceBaseEndpoint):
         validate_page_in_teamspace(page_id, team_space_id)
         page_ids = get_all_parent_ids(page_id)
 
-        pages = Page.objects.filter(workspace__slug=slug, id__in=page_ids).annotate(
-            sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
-            .filter(archived_at__isnull=True)
-            .order_by()
-            .annotate(count=Func(F("id"), function="Count"))
-            .values("count")
-        ).annotate(
-            team=TeamspacePage.objects.filter(
-                page_id=OuterRef("pk"),
-                team_space_id=self.kwargs.get("team_space_id"),
-            ).values("team_space_id")
+        pages = (
+            Page.objects.filter(workspace__slug=slug, id__in=page_ids)
+            .annotate(
+                sub_pages_count=Page.objects.filter(parent=OuterRef("id"))
+                .filter(archived_at__isnull=True)
+                .order_by()
+                .annotate(count=Func(F("id"), function="Count"))
+                .values("count")
+            )
+            .annotate(
+                team=TeamspacePage.objects.filter(
+                    page_id=OuterRef("pk"),
+                    team_space_id=self.kwargs.get("team_space_id"),
+                ).values("team_space_id")
+            )
         )
 
         # Convert queryset to a dictionary keyed by id
@@ -792,8 +796,16 @@ class TeamspacePageVersionEndpoint(TeamspaceBaseEndpoint):
             # Serialize the page version
             serializer = TeamspacePageVersionDetailSerializer(page_version)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        # Return all page versions
-        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id)
+        # Return all page versions.
+        # Defer heavy columns: the list serializer only emits metadata, and a page
+        # with thousands of versions can otherwise hydrate GBs of description blobs.
+        page_versions = PageVersion.objects.filter(workspace__slug=slug, page_id=page_id).defer(
+            "description_binary",
+            "description_html",
+            "description_json",
+            "description_stripped",
+            "sub_pages_data",
+        )
         # Serialize the page versions
         serializer = TeamspacePageVersionSerializer(page_versions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
