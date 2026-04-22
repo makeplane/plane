@@ -493,7 +493,6 @@ export default {
     morning: "Dzień dobry, {first_name} {last_name}",
     afternoon: "Dzień dobry, {first_name} {last_name}",
     evening: "Dobry wieczór, {first_name} {last_name}",
-    night: "Dobranoc, {first_name} {last_name}",
   },
   show_all: "Pokaż wszystko",
   show_less: "Pokaż mniej",

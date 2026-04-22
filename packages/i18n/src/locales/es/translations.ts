@@ -507,7 +507,6 @@ export default {
     morning: "Buenos días, {first_name} {last_name}",
     afternoon: "Buenas tardes, {first_name} {last_name}",
     evening: "Buenas noches, {first_name} {last_name}",
-    night: "Buenas noches, {first_name} {last_name}",
   },
   show_all: "Mostrar todo",
   show_less: "Mostrar menos",

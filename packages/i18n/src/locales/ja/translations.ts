@@ -493,7 +493,6 @@ export default {
     morning: "おはようございます、{first_name} {last_name}",
     afternoon: "こんにちは、{first_name} {last_name}",
     evening: "こんばんは、{first_name} {last_name}",
-    night: "おやすみなさい、{first_name} {last_name}",
   },
   show_all: "すべて表示",
   show_less: "表示を減らす",

@@ -499,7 +499,6 @@ export default {
     morning: "Selamat pagi, {first_name} {last_name}",
     afternoon: "Selamat siang, {first_name} {last_name}",
     evening: "Selamat malam, {first_name} {last_name}",
-    night: "Selamat malam, {first_name} {last_name}",
   },
   show_all: "Tampilkan semua",
   show_less: "Tampilkan lebih sedikit",

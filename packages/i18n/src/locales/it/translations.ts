@@ -500,7 +500,6 @@ export default {
     morning: "Buongiorno, {first_name} {last_name}",
     afternoon: "Buon pomeriggio, {first_name} {last_name}",
     evening: "Buonasera, {first_name} {last_name}",
-    night: "Buonanotte, {first_name} {last_name}",
   },
   show_all: "Mostra tutto",
   show_less: "Mostra meno",

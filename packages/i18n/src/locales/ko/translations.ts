@@ -487,7 +487,6 @@ export default {
     morning: "좋은 아침, {first_name} {last_name}",
     afternoon: "좋은 오후, {first_name} {last_name}",
     evening: "좋은 저녁, {first_name} {last_name}",
-    night: "좋은 밤, {first_name} {last_name}",
   },
   show_all: "모두 보기",
   show_less: "간략히 보기",

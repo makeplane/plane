@@ -5,12 +5,10 @@
  */
 
 // plane types
-import { useMemo } from "react";
 import { useTranslation } from "@plane/i18n";
 import type { IUser } from "@plane/types";
-// plane ui
 // hooks
-import { useCurrentTime } from "@/hooks/use-current-time";
+import { useGreeting } from "@/hooks/use-greeting";
 
 export interface IUserGreetingsView {
   user: IUser;
@@ -18,48 +16,8 @@ export interface IUserGreetingsView {
 
 export function UserGreetingsView(props: IUserGreetingsView) {
   const { user } = props;
-  // current time hook
-  const { currentTime } = useCurrentTime();
-  // store hooks
+  const { greeting, timeString, weekDay, date } = useGreeting(user);
   const { t } = useTranslation();
-
-  const userTimezone = useMemo(() => {
-    if (!user?.user_timezone) return undefined;
-    try {
-      new Intl.DateTimeFormat(undefined, { timeZone: user.user_timezone });
-      return user.user_timezone;
-    } catch (e) {
-      console.warn(`[UserGreetingsView] Invalid user_timezone "${user.user_timezone}", falling back to browser timezone.`, e);
-      return undefined;
-    }
-  }, [user?.user_timezone]);
-
-  const hour = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    hourCycle: "h23",
-    hour: "numeric",
-  }).format(currentTime);
-
-  const date = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    month: "short",
-    day: "numeric",
-  }).format(currentTime);
-
-  const weekDay = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    weekday: "long",
-  }).format(currentTime);
-
-  const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: userTimezone,
-    hourCycle: "h23",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(currentTime);
-
-  const hourNum = parseInt(hour, 10);
-  const greeting = hourNum < 5 ? "night" : hourNum < 12 ? "morning" : hourNum < 18 ? "afternoon" : "evening";
 
   return (
     <div className="my-6 flex flex-col items-center">

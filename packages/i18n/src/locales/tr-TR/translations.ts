@@ -495,7 +495,6 @@ export default {
     morning: "Günaydın, {first_name} {last_name}",
     afternoon: "İyi günler, {first_name} {last_name}",
     evening: "İyi akşamlar, {first_name} {last_name}",
-    night: "İyi geceler, {first_name} {last_name}",
   },
   show_all: "Tümünü göster",
   show_less: "Daha az göster",

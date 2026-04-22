@@ -503,7 +503,6 @@ export default {
     morning: "Bom dia, {first_name} {last_name}",
     afternoon: "Boa tarde, {first_name} {last_name}",
     evening: "Boa noite, {first_name} {last_name}",
-    night: "Boa noite, {first_name} {last_name}",
   },
   show_all: "Mostrar tudo",
   show_less: "Mostrar menos",

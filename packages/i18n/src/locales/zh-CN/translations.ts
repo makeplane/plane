@@ -482,7 +482,6 @@ export default {
     morning: "早上好，{first_name} {last_name}",
     afternoon: "下午好，{first_name} {last_name}",
     evening: "晚上好，{first_name} {last_name}",
-    night: "晚安，{first_name} {last_name}",
   },
   show_all: "显示全部",
   show_less: "显示更少",
