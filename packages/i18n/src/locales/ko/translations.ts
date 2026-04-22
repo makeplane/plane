@@ -1997,6 +1997,8 @@ export default {
         columns: {
           work_item: "작업 항목",
           department: "부서",
+          main_category: "주요 카테고리",
+          sub_category: "하위 카테고리",
           project: "프로젝트",
           state: "상태",
           progress: "진행 추적",
@@ -2014,6 +2016,8 @@ export default {
         columns: {
           work_item: "작업 항목",
           department: "부서",
+          main_category: "주요 카테고리",
+          sub_category: "하위 카테고리",
           project: "프로젝트",
           state: "상태",
           progress: "진행 추적",
