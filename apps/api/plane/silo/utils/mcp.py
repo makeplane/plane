@@ -111,7 +111,7 @@ def refresh_token_if_expired(credentials, decrypted_config, mcp_url, app_label):
         credentials.auth_config = encrypt_auth_config(decrypted_config)
         credentials.save(update_fields=["auth_config"])
         logger.info("Refreshed OAuth token for MCP app %s", app_label)
-    except ValueError as e:
-        logger.warning("OAuth token refresh failed for MCP app %s: %s", app_label, e)
+    except ValueError:
+        logger.warning("OAuth token refresh failed for MCP app %s", app_label, exc_info=True)
 
     return decrypted_config

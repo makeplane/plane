@@ -74,8 +74,8 @@ async def _probe_mcp_async(url, headers):
         err_msg = _mcp_error_from_exc(exc)
         if err_msg:
             return False, {"error": err_msg}
-        logger.warning("Streamable HTTP probe failed for %s: %s: %s", url, type(exc).__name__, exc)
-        return False, {"error": f"Connection failed: {type(exc).__name__}"}
+        logger.warning("Streamable HTTP probe failed for %s", url, exc_info=True)
+        return False, {"error": "Connection failed."}
 
 
 def test_mcp_connection(url, headers=None):
@@ -84,9 +84,9 @@ def test_mcp_connection(url, headers=None):
     """
     try:
         return async_to_sync(_probe_mcp_async)(url, headers)
-    except Exception as e:
-        logger.exception("Unexpected error testing MCP connection to %s", url)
-        return False, {"error": f"Unexpected error during connection test: {e}"}
+    except Exception:
+        logger.warning("Unexpected error testing MCP connection to %s", url, exc_info=True)
+        return False, {"error": "Unexpected error during connection test."}
 
 
 # ---------------------------------------------------------------------------
@@ -228,6 +228,7 @@ def discover_oauth_metadata(mcp_url):
                 prm_data = prm_resp.json()
                 break
         except Exception:
+            logger.debug("PRM fetch failed for %s", prm_url, exc_info=True)
             continue
 
     if not prm_data:
@@ -253,6 +254,7 @@ def discover_oauth_metadata(mcp_url):
                 as_data = as_resp.json()
                 break
         except Exception:
+            logger.debug("AS metadata fetch failed for %s", as_url, exc_info=True)
             continue
 
     if not as_data:
@@ -568,7 +570,7 @@ def decrypt_auth_config(auth_config):
             try:
                 config[key] = _decrypt_value(config[key])
             except Exception:
-                logger.warning("Failed to decrypt auth_config key '%s'; value may be unencrypted", key)
+                logger.warning("Failed to decrypt auth_config key '%s'; value may be unencrypted", key, exc_info=True)
 
     return config
 

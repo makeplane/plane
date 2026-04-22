@@ -279,7 +279,7 @@ class MCPApplicationConnectAPIView(BaseAPIView):
         if not success:
             return Response(
                 {"error": data.get("error", "Could not connect to MCP server.")},
-                status=status.HTTP_502_BAD_GATEWAY,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         save_credentials_and_activate(mcp_app, workspace_id, user_id, auth_config={})
@@ -310,7 +310,7 @@ class MCPApplicationConnectAPIView(BaseAPIView):
         if not success:
             return Response(
                 {"error": data.get("error", "Could not connect to MCP server.")},
-                status=status.HTTP_502_BAD_GATEWAY,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         save_credentials_and_activate(mcp_app, workspace_id, user_id, credentials.auth_config)
@@ -335,10 +335,11 @@ class MCPApplicationOAuthConnectAPIView(BaseAPIView):
 
         try:
             metadata = discover_oauth_metadata(mcp_app.url)
-        except ValueError as e:
+        except ValueError:
+            logger.warning("OAuth metadata discovery failed for MCP app %s", pk, exc_info=True)
             return Response(
-                {"error": "OAuth discovery failed.", "detail": str(e)},
-                status=status.HTTP_502_BAD_GATEWAY,
+                {"error": "OAuth discovery failed."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         callback_url = f"{settings.API_URL}/silo/mcp-applications/oauth/callback/"
@@ -346,7 +347,7 @@ class MCPApplicationOAuthConnectAPIView(BaseAPIView):
         if not metadata.get("registration_endpoint"):
             return Response(
                 {"error": "Server does not support dynamic client registration."},
-                status=status.HTTP_502_BAD_GATEWAY,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
@@ -355,10 +356,11 @@ class MCPApplicationOAuthConnectAPIView(BaseAPIView):
                 redirect_uri=callback_url,
                 client_name="Plane",
             )
-        except ValueError as e:
+        except ValueError:
+            logger.warning("OAuth DCR failed for MCP app %s", pk, exc_info=True)
             return Response(
-                {"error": "Dynamic client registration failed.", "detail": str(e)},
-                status=status.HTTP_502_BAD_GATEWAY,
+                {"error": "Dynamic client registration failed."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         dcr_client_id = dcr_result["client_id"]
@@ -471,8 +473,8 @@ class MCPApplicationOAuthCallbackAPIView(BaseAPIView):
                     "token_endpoint_auth_method", "client_secret_post"
                 ),
             )
-        except ValueError as e:
-            logger.error("OAuth token exchange failed for MCP app %s: %s", mcp_app_id, e)
+        except ValueError:
+            logger.error("OAuth token exchange failed for MCP app %s", mcp_app_id, exc_info=True)
             return HttpResponseRedirect(
                 f"{connectors_url}&status=error&reason=token_exchange_failed"
             )
