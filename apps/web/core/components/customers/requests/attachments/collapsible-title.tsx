@@ -11,7 +11,6 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import type { FC } from "react";
 import React from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
@@ -44,15 +43,14 @@ export const RequestAttachmentCollapsibleTitle = observer(function RequestAttach
 
   return (
     <>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         <DropdownIcon
-          className={cn("size-2 text-secondary hover:text-secondary duration-300", {
+          className={cn("size-4 text-secondary hover:text-secondary duration-300", {
             "-rotate-90": !isOpen,
           })}
         />
-        <div className="text-12 text-tertiary font-medium">
-          {t("common.attachments")} <span className="text-placeholder text-12">{requestAttachmentsCount}</span>
-        </div>
+        <div className="text-caption-md-medium">{t("common.attachments")} </div>
+        <span className="text-body-xs-regular text-tertiary">{requestAttachmentsCount}</span>
       </div>
       {!disabled && (
         <AddAttachmentButton

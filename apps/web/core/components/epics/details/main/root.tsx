@@ -81,7 +81,7 @@ export const EpicMainContentRoot = observer(function EpicMainContentRoot(props: 
           issueId={epicId}
           permissions={permissions}
           issueServiceType={EIssueServiceType.EPICS}
-          hideWidgets={["sub-work-items", "dependencies", "relations"]}
+          hideWidgets={["sub-work-items", "dependencies", "relations", "customer_requests"]}
         />
       </div>
       <EpicOverviewRoot workspaceSlug={workspaceSlug} projectId={projectId} epicId={epicId} permissions={permissions} />

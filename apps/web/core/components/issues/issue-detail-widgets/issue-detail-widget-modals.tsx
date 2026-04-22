@@ -22,10 +22,11 @@ import type {
 } from "@plane/types";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
+import { WorkItemRequestForm } from "@/components/issues/issue-detail-widgets/customer-requests/form";
 import { DEPENDENCY_RELATION_KEYS } from "@/components/relations";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
-import { useWorkspaceFeatures } from "@/plane-web/hooks/store";
+import { useCustomers, useWorkspaceFeatures } from "@/plane-web/hooks/store";
 import { EWorkspaceFeatures } from "@/types/workspace-feature";
 // helpers
 import { useLinkOperations } from "./links/helper";
@@ -67,7 +68,7 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     togglePagesModal,
     isPagesModalOpen,
   } = useIssueDetail(issueServiceType);
-
+  const { isCustomersFeatureEnabled, createUpdateRequestModalId, toggleCreateUpdateRequestModal } = useCustomers();
   // helper hooks
   const subIssueOperations = useSubIssueOperations(issueServiceType);
   const handleLinkOperations = useLinkOperations(workspaceSlug, projectId, issueId, issueServiceType);
@@ -155,6 +156,11 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
     toggleRelationModal(null, null);
   };
 
+  const handleRequestFormClose = () => {
+    toggleCreateUpdateRequestModal(null);
+    setLastWidgetAction("customer_requests");
+  };
+
   // helpers
   const createUpdateModalData: Partial<TIssue> = {
     parent_id: issueCrudOperationState?.create?.parentIssueId,
@@ -238,6 +244,15 @@ export const IssueDetailWidgetModals = observer(function IssueDetailWidgetModals
         }}
         selectedPages={[]}
       />
+
+      {!hideWidgets?.includes("customer_requests") && isCustomersFeatureEnabled && (
+        <WorkItemRequestForm
+          isOpen={createUpdateRequestModalId === issueId}
+          handleClose={handleRequestFormClose}
+          workspaceSlug={workspaceSlug}
+          workItemId={issueId}
+        />
+      )}
     </>
   );
 });

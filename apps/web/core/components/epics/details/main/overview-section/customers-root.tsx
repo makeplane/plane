@@ -15,10 +15,11 @@ import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
 import { Loader } from "@plane/ui";
-// plane web
+// components
 import { CustomerRequestEmptyState } from "@/components/customers";
 import { WorkItemRequestCollapsibleContent } from "@/components/issues/issue-detail-widgets/customer-requests/content";
-// hooks
+import { WorkItemRequestForm } from "@/components/issues/issue-detail-widgets/customer-requests/form";
+// plane web imports
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type TProps = {
@@ -32,12 +33,17 @@ export const EpicCustomersRoot = observer(function EpicCustomersRoot(props: TPro
   // store hooks
   const {
     isCustomersFeatureEnabled,
+    createUpdateRequestModalId,
     toggleCreateUpdateRequestModal,
     workItems: { fetchWorkItemRequests, getFilteredWorkItemRequestIds },
   } = useCustomers();
 
   const handleFormOpen = () => {
     toggleCreateUpdateRequestModal(epicId);
+  };
+
+  const handleFormClose = () => {
+    toggleCreateUpdateRequestModal(null);
   };
 
   // derived values
@@ -52,6 +58,12 @@ export const EpicCustomersRoot = observer(function EpicCustomersRoot(props: TPro
   if (!isCustomersFeatureEnabled) return null;
   return (
     <>
+      <WorkItemRequestForm
+        isOpen={createUpdateRequestModalId === epicId}
+        handleClose={handleFormClose}
+        workspaceSlug={workspaceSlug}
+        workItemId={epicId}
+      />
       {isLoading ? (
         <>
           <Loader>
@@ -61,7 +73,7 @@ export const EpicCustomersRoot = observer(function EpicCustomersRoot(props: TPro
       ) : (
         requestIds.length === 0 && <CustomerRequestEmptyState addRequest={handleFormOpen} disabled={disabled} />
       )}
-      <WorkItemRequestCollapsibleContent workItemId={epicId} workspaceSlug={workspaceSlug} isTabs />
+      <WorkItemRequestCollapsibleContent workItemId={epicId} workspaceSlug={workspaceSlug} />
     </>
   );
 });

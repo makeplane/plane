@@ -160,8 +160,11 @@ export const WorkItemRequestForm = observer(function WorkItemRequestForm(props: 
   };
 
   useEffect(() => {
-    if (data?.link) setLink(data.link);
-  }, [data]);
+    if (isOpen) {
+      reset({ ...defaultValues, ...data });
+      if (data?.link) setLink(data?.link);
+    }
+  }, [data, isOpen, reset]);
 
   useKeypress("Escape", () => {
     if (isOpen) handleClose();

@@ -30,7 +30,7 @@ export function EntityDetailWidgetSection(props: EntityDetailWidgetSectionProps)
   const contentId = useId();
 
   return (
-    <div className="flex flex-col gap-3 w-full py-4 first:pt-0 border-b border-subtle last:border-0">
+    <div className="flex flex-col gap-4 w-full py-4 first:pt-0 border-b border-subtle last:border-0">
       <button type="button" className="w-full" onClick={onToggle} aria-expanded={isOpen} aria-controls={contentId}>
         <div className="flex items-center justify-between gap-3 flex-1">
           <div className="flex items-center gap-1.5">

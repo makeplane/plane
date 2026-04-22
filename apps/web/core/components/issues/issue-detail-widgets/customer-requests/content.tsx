@@ -16,28 +16,21 @@ import { observer } from "mobx-react";
 import { CustomerRequestSearchEmptyState } from "@/components/customers";
 // components
 import { WorkItemRequestListItem } from "@/components/issues/issue-detail-widgets/customer-requests/request-list-item";
-import { WorkItemRequestForm } from "@/components/issues/issue-detail-widgets/customer-requests/form";
 // hooks
 import { useCustomers } from "@/plane-web/hooks/store";
 
 type TProps = {
   workspaceSlug: string;
   workItemId: string;
-  isTabs?: boolean;
 };
 
 export const WorkItemRequestCollapsibleContent = observer(function WorkItemRequestCollapsibleContent(props: TProps) {
-  const { workspaceSlug, workItemId, isTabs = false } = props;
+  const { workspaceSlug, workItemId } = props;
 
   const {
     workItems: { getFilteredWorkItemRequestIds, workItemRequestSearchQuery },
-    createUpdateRequestModalId,
     toggleCreateUpdateRequestModal,
   } = useCustomers();
-
-  const handleFormClose = () => {
-    toggleCreateUpdateRequestModal(null);
-  };
 
   const requestIds = getFilteredWorkItemRequestIds(workItemId);
 
@@ -46,13 +39,7 @@ export const WorkItemRequestCollapsibleContent = observer(function WorkItemReque
   }, []);
 
   return (
-    <div className={`py-2 space-y-3 ${isTabs ? "" : "pl-9"}`}>
-      <WorkItemRequestForm
-        isOpen={createUpdateRequestModalId === workItemId}
-        handleClose={handleFormClose}
-        workspaceSlug={workspaceSlug}
-        workItemId={workItemId}
-      />
+    <div className="space-y-4">
       {!requestIds?.length && workItemRequestSearchQuery !== "" && <CustomerRequestSearchEmptyState />}
       {requestIds.map((id) => (
         <WorkItemRequestListItem key={id} workspaceSlug={workspaceSlug} requestId={id} workItemId={workItemId} />

@@ -11,16 +11,26 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { observer } from "mobx-react";
 import { Paperclip } from "lucide-react";
 // plane imports
 import { EntityDetailWidgetToolbar } from "@plane/blocks/entity-detail";
 import { E_FEATURE_FLAGS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ViewsIcon, RelationPropertyIcon, PageIcon, DependencyPropertyIcon } from "@plane/propel/icons";
+import {
+  LinkIcon,
+  ViewsIcon,
+  RelationPropertyIcon,
+  PageIcon,
+  DependencyPropertyIcon,
+  CustomerRequestIcon,
+} from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // components
 import { WithFeatureFlagHOC } from "@/components/feature-flags/with-feature-flag-hoc";
+// plane web imports
+import { useCustomers } from "@/plane-web/hooks/store";
 // local imports
 import { IssueAttachmentActionButton } from "./attachments";
 import { DependencyActionButton } from "./dependencies";
@@ -29,7 +39,7 @@ import { RelationActionButton } from "./relations";
 import { SubIssuesActionButton } from "./sub-issues";
 import { PagesActionButton } from "./pages";
 
-type Props = {
+type IssueDetailWidgetActionButtonsProps = {
   workspaceSlug: string;
   projectId: string;
   issueId: string;
@@ -42,13 +52,30 @@ type Props = {
     canAddLinks: boolean;
     canAddAttachments: boolean;
     canAddPages: boolean;
+    canAddCustomerRequests: boolean;
   };
 };
 
-export function IssueDetailWidgetActionButtons(props: Props) {
+export const IssueDetailWidgetActionButtons = observer(function IssueDetailWidgetActionButtons(
+  props: IssueDetailWidgetActionButtonsProps
+) {
   const { workspaceSlug, projectId, issueId, issueServiceType, hideWidgets, permissions } = props;
   // translation
   const { t } = useTranslation();
+  const { isCustomersFeatureEnabled } = useCustomers();
+  const { createUpdateRequestModalId, toggleCreateUpdateRequestModal } = useCustomers();
+
+  const handleOpenRequestForm = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!createUpdateRequestModalId) toggleCreateUpdateRequestModal(issueId);
+  };
+
+  const shouldRenderAnyWidget =
+    !hideWidgets?.includes("links") ||
+    !hideWidgets?.includes("attachments") ||
+    !hideWidgets?.includes("pages") ||
+    (!hideWidgets?.includes("customer_requests") && isCustomersFeatureEnabled);
 
   return (
     <div className="py-4">
@@ -109,7 +136,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
             )}
           </EntityDetailWidgetToolbar.Section>
         )}
-        {(!hideWidgets?.includes("links") || !hideWidgets?.includes("attachments")) && (
+        {shouldRenderAnyWidget && (
           <EntityDetailWidgetToolbar.Section>
             {!hideWidgets?.includes("links") && (
               <IssueLinksActionButton
@@ -148,31 +175,41 @@ export function IssueDetailWidgetActionButtons(props: Props) {
                 issueServiceType={issueServiceType}
               />
             )}
+            {!hideWidgets?.includes("pages") && (
+              <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
+                <PagesActionButton
+                  issueServiceType={issueServiceType}
+                  disabled={!permissions.canAddPages}
+                  workItemId={issueId}
+                  customButton={
+                    <Tooltip tooltipContent={t("issue.pages.link_pages")}>
+                      <span>
+                        <EntityDetailWidgetToolbar.IconButton
+                          icon={<PageIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
+                          disabled={!permissions.canAddPages}
+                          ariaLabel={t("issue.pages.link_pages")}
+                        />
+                      </span>
+                    </Tooltip>
+                  }
+                />
+              </WithFeatureFlagHOC>
+            )}
+            {!hideWidgets?.includes("customer_requests") && isCustomersFeatureEnabled && (
+              <Tooltip tooltipContent={t("issue.display.properties.requests")}>
+                <span>
+                  <EntityDetailWidgetToolbar.IconButton
+                    icon={<CustomerRequestIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
+                    disabled={!permissions.canAddCustomerRequests}
+                    ariaLabel={t("issue.display.properties.requests")}
+                    onClick={handleOpenRequestForm}
+                  />
+                </span>
+              </Tooltip>
+            )}
           </EntityDetailWidgetToolbar.Section>
-        )}
-        {!hideWidgets?.includes("pages") && (
-          <WithFeatureFlagHOC workspaceSlug={workspaceSlug} flag={E_FEATURE_FLAGS.LINK_PAGES} fallback={<></>}>
-            <EntityDetailWidgetToolbar.Section>
-              <PagesActionButton
-                issueServiceType={issueServiceType}
-                disabled={!permissions.canAddPages}
-                workItemId={issueId}
-                customButton={
-                  <Tooltip tooltipContent={t("issue.pages.link_pages")}>
-                    <span>
-                      <EntityDetailWidgetToolbar.IconButton
-                        icon={<PageIcon className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />}
-                        disabled={!permissions.canAddPages}
-                        ariaLabel={t("issue.pages.link_pages")}
-                      />
-                    </span>
-                  </Tooltip>
-                }
-              />
-            </EntityDetailWidgetToolbar.Section>
-          </WithFeatureFlagHOC>
         )}
       </EntityDetailWidgetToolbar>
     </div>
   );
-}
+});
