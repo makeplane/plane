@@ -19,7 +19,7 @@ import { wait } from "@/helpers/delay";
 import { getAPIClientInternal } from "@/services/client";
 import { ImportTimeoutError } from "@/apps/jira-server-importer/v2/helpers/errors";
 
-const MAX_STALE_POLLS = 120; // ~10 min with no progress = timeout
+const MAX_STALE_POLLS = 240; // ~20 min with no progress = timeout
 const client = getAPIClientInternal();
 
 /**

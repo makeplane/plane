@@ -18,6 +18,7 @@ import { logger } from "@plane/logger";
 import { Client } from "@plane/sdk";
 import type { TImportJob, TWorkspaceCredential } from "@plane/types";
 import { env } from "@/env";
+import { extractErrorMetadata } from "@/helpers/errors";
 import { getJobCredentials, getJobData } from "@/helpers/job";
 import type { TZipFileNode, ZipManager } from "@/lib/zip-manager";
 import { createZipManager, EZipNodeType } from "@/lib/zip-manager";
@@ -183,11 +184,13 @@ export abstract class NotionMigratorBase extends TaskHandler {
 
       return true;
     } catch (error) {
-      logger.error(`Error migrating job ${jobId}`, error);
+      logger.error(`Error migrating job ${jobId}`, { error });
+      const metadata = extractErrorMetadata(error);
       await apiClient.importJob.updateImportJob(jobId, {
         status: E_JOB_STATUS.ERROR,
         error_metadata: {
-          error: error instanceof Error ? error.message : "An unexpected error occurred",
+          ...metadata,
+          error: metadata.message || "An unexpected error occurred",
         },
       });
 

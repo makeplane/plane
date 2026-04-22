@@ -94,7 +94,8 @@ export abstract class APIService {
           status === 504 ||
           code === "ECONNRESET" ||
           code === "ECONNABORTED" ||
-          code === "ETIMEDOUT"
+          code === "ETIMEDOUT" ||
+          code === "EPIPE"
         ) {
           // Initialize retry count if not present
           const retryCount = (error.config.__retryCount || 0) + 1;
