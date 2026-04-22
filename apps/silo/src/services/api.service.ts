@@ -61,14 +61,40 @@ export abstract class APIService {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response && error.response.status === 401) {
+        const status = error?.response?.status;
+        const code = error?.code;
+        logger.error("[api.service:response-interceptor] axios error", {
+          status,
+          statusText: error?.response?.statusText,
+          code,
+          message: error?.message,
+          url: error?.config?.url,
+          method: error?.config?.method,
+          baseURL: error?.config?.baseURL,
+          timeout: error?.config?.timeout,
+          hasResponse: Boolean(error?.response),
+          hasRequest: Boolean(error?.request),
+          dataPreview:
+            typeof error?.response?.data === "string"
+              ? (error.response.data as string).slice(0, 500)
+              : (() => {
+                  try {
+                    return JSON.stringify(error?.response?.data)?.slice(0, 500);
+                  } catch {
+                    return "<unserializable>";
+                  }
+                })(),
+        });
+        if (status === 401) {
           logger.error("401 error");
         }
         if (
-          error.response.status === 502 ||
-          error.response.status === 503 ||
-          error.response.status === 504 ||
-          error.code === "ECONNRESET"
+          status === 502 ||
+          status === 503 ||
+          status === 504 ||
+          code === "ECONNRESET" ||
+          code === "ECONNABORTED" ||
+          code === "ETIMEDOUT"
         ) {
           // Initialize retry count if not present
           const retryCount = (error.config.__retryCount || 0) + 1;
