@@ -20,6 +20,8 @@ from plane.db.models.permission import (
     RolePermissionScheme,
     ResourcePermission,
 )
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.permissions import can, WorkspacePermissions
 from plane.permissions.serializers import PermissionSchemeSerializer
 
@@ -40,6 +42,7 @@ class PermissionSchemeEndpoint(BaseAPIView):
     - DELETE /workspaces/<slug>/permission-schemes/<pk>/ - Delete a custom PS
     """
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         """
@@ -82,6 +85,7 @@ class PermissionSchemeEndpoint(BaseAPIView):
         serializer = PermissionSchemeSerializer(schemes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         """
@@ -107,6 +111,7 @@ class PermissionSchemeEndpoint(BaseAPIView):
         ps = serializer.save(workspace_id=request.workspace_id)
         return Response(PermissionSchemeSerializer(ps).data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def patch(self, request, slug, pk):
         """
@@ -159,6 +164,7 @@ class PermissionSchemeEndpoint(BaseAPIView):
 
         return Response(PermissionSchemeSerializer(ps).data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         """
@@ -219,6 +225,7 @@ class PermissionSchemeImpactEndpoint(BaseAPIView):
     - GET /workspaces/<slug>/permission-schemes/<pk>/impact/ - Get impact summary
     """
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def get(self, request, slug, pk):
         """

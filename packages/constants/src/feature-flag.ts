@@ -186,8 +186,8 @@ export enum E_FEATURE_FLAGS {
   WORKSPACE_SOCKET = "WORKSPACE_SOCKET",
   // project subscribers
   PROJECT_SUBSCRIBERS = "PROJECT_SUBSCRIBERS",
-  // custom roles and permissions
-  CUSTOM_ROLES_AND_PERMISSIONS = "CUSTOM_ROLES_AND_PERMISSIONS",
+  // granular access control (custom roles and permission schemes)
+  GAC = "GAC",
   // releases
   RELEASES = "RELEASES",
   // pql

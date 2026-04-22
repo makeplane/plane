@@ -17,6 +17,8 @@ from rest_framework import status
 from plane.app.views import BaseAPIView
 from plane.db.models import Role, WorkspaceMember, ProjectMember, RoleActivity
 from plane.db.models.permission import RolePermissionScheme
+from plane.payment.flags.flag import FeatureFlag
+from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.permissions import can, WorkspacePermissions
 from plane.permissions.serializers import RoleSerializer
 from plane.permissions.system_roles import member_role_from_role_ref
@@ -37,6 +39,7 @@ class RoleEndpoint(BaseAPIView):
     - DELETE /workspaces/<slug>/roles/<pk>/ - Delete a custom role
     """
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, pk=None):
         """
@@ -110,6 +113,7 @@ class RoleEndpoint(BaseAPIView):
         serializer = RoleSerializer(roles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def post(self, request, slug):
         """
@@ -144,6 +148,7 @@ class RoleEndpoint(BaseAPIView):
         role = serializer.save()
         return Response(RoleSerializer(role).data, status=status.HTTP_201_CREATED)
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def patch(self, request, slug, pk):
         """
@@ -247,6 +252,7 @@ class RoleEndpoint(BaseAPIView):
         role = serializer.save()
         return Response(RoleSerializer(role).data, status=status.HTTP_200_OK)
 
+    @check_feature_flag(feature_key=FeatureFlag.GAC)
     @can(WorkspacePermissions.MANAGE, resource_param="workspace_id")
     def delete(self, request, slug, pk):
         """

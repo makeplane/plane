@@ -45,14 +45,13 @@ export const useWorkspaceSettingsAccess = () => {
 
   const hasWorkspaceSettingPermission = (workspaceSlug: string, settingKey: TWorkspaceSettingsTabs): boolean => {
     const canManageWorkspace = workspacePermissions.getCanManage(workspaceSlug);
-    const isCustomRolesAndPermissionsEnabled = getFeatureFlag(workspaceSlug, "CUSTOM_ROLES_AND_PERMISSIONS", false);
-    const canViewCustomRoles =
-      isCustomRolesAndPermissionsEnabled && can({ resource: "custom_role", action: "view", workspaceSlug });
+    const isGACEnabled = getFeatureFlag(workspaceSlug, "GAC", false);
+    const canViewCustomRoles = isGACEnabled && can({ resource: "custom_role", action: "view", workspaceSlug });
 
     const resourcePermissionChecks: Record<TWorkspaceSettingsTabs, boolean> = {
       general: workspacePermissions.getCanView(workspaceSlug),
       members: workspacePermissions.getCanViewMembers(workspaceSlug),
-      permissions: isCustomRolesAndPermissionsEnabled,
+      permissions: isGACEnabled,
       "billing-and-plans": workspacePermissions.getCanViewBilling(workspaceSlug),
       webhooks: canManageWorkspace,
       connections: integrationPermissions.getCanCreate(workspaceSlug),

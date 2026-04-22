@@ -155,6 +155,8 @@ class FeatureFlag(Enum):
     SPREADSHEET_CUSTOM_PROPERTIES = "SPREADSHEET_CUSTOM_PROPERTIES"
     # Work Item State Duration
     WORK_ITEM_STATE_DURATION = "WORK_ITEM_STATE_DURATION"
+    # Granular access control (custom roles + permission schemes)
+    GAC = "GAC"
 
 
 
