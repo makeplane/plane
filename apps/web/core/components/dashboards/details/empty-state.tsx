@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { PlusIcon } from "@plane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";

@@ -13,7 +13,7 @@
 
 import React, { memo } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane editor
 import type { ExternalEmbedNodeViewProps } from "@plane/editor";
 import { EExternalEmbedAttributeNames, EExternalEmbedEntityType } from "@plane/editor";

@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 // plane imports
 import { EPageAccess } from "@plane/constants";

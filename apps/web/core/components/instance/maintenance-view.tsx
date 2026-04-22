@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // assets
 import maintenanceModeDarkModeImage from "@/app/assets/instance/maintenance-mode-dark.svg?url";
 import maintenanceModeLightModeImage from "@/app/assets/instance/maintenance-mode-light.svg?url";

@@ -15,7 +15,7 @@ import { lazy, Suspense } from "react";
 import type { ComponentType, LazyExoticComponent } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 

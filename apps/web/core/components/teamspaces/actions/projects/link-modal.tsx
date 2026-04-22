@@ -14,7 +14,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { difference, xor } from "lodash-es";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Search } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 // plane imports

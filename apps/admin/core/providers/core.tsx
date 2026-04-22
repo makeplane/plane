@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@plane/react-theme";
 import { SWRConfig } from "swr";
 import { AppProgressBar } from "@/lib/b-progress";
 // local imports
@@ -31,7 +31,7 @@ const DEFAULT_SWR_CONFIG = {
 
 export function CoreProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+    <ThemeProvider themes={["system", "light", "dark"]}>
       <AppProgressBar />
       <ToastWithTheme />
       <SWRConfig value={DEFAULT_SWR_CONFIG}>

@@ -164,7 +164,7 @@ export const SpreadsheetColumnsToggle = observer(function SpreadsheetColumnsTogg
 
     // Check custom properties for changes
     customProperties.forEach((prop) => {
-      const key = `customproperty_${prop.id}` as `customproperty_${string}`;
+      const key = `customproperty_${prop.id}` as const;
       const valueId = `${CUSTOM_PREFIX}${prop.id}`;
       const wasVisible = displayProperties[key] !== false;
       const isNowVisible = newSelectedIds.has(valueId);

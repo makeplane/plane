@@ -12,7 +12,7 @@
  */
 
 import { useParams, usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 import { getButtonStyling } from "@plane/propel/button";
 import { cn, resolveGeneralTheme } from "@plane/utils";

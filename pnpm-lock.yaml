@@ -921,6 +921,9 @@ importers:
       '@plane/propel':
         specifier: workspace:*
         version: link:../../packages/propel
+      '@plane/react-theme':
+        specifier: workspace:*
+        version: link:../../packages/react-theme
       '@plane/services':
         specifier: workspace:*
         version: link:../../packages/services
@@ -969,9 +972,6 @@ importers:
       mobx-utils:
         specifier: 'catalog:'
         version: 6.1.1(mobx@6.15.0)
-      next-themes:
-        specifier: 'catalog:'
-        version: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -1632,6 +1632,9 @@ importers:
       '@plane/propel':
         specifier: workspace:*
         version: link:../../packages/propel
+      '@plane/react-theme':
+        specifier: workspace:*
+        version: link:../../packages/react-theme
       '@plane/services':
         specifier: workspace:*
         version: link:../../packages/services
@@ -1686,9 +1689,6 @@ importers:
       mobx-utils:
         specifier: 'catalog:'
         version: 6.1.1(mobx@6.15.0)
-      next-themes:
-        specifier: 'catalog:'
-        version: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       raf-schd:
         specifier: 'catalog:'
         version: 4.0.3
@@ -1822,6 +1822,9 @@ importers:
       '@plane/propel':
         specifier: workspace:*
         version: link:../../packages/propel
+      '@plane/react-theme':
+        specifier: workspace:*
+        version: link:../../packages/react-theme
       '@plane/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
@@ -1903,9 +1906,6 @@ importers:
       mobx-utils:
         specifier: 'catalog:'
         version: 6.1.1(mobx@6.15.0)
-      next-themes:
-        specifier: 'catalog:'
-        version: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       pako:
         specifier: 'catalog:'
         version: 2.1.0
@@ -2814,6 +2814,28 @@ importers:
         specifier: 'catalog:'
         version: 4.1.3(@opentelemetry/api@1.9.0)(@types/node@25.3.0)(@vitest/browser-playwright@4.1.3)(@vitest/coverage-v8@4.1.3)(jsdom@23.2.0)(vite@8.0.7(@types/node@25.3.0)(esbuild@0.27.3)(jiti@2.6.1)(tsx@4.20.6)(yaml@2.8.3))
 
+  packages/react-theme:
+    dependencies:
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+    devDependencies:
+      '@plane/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.11
+      '@types/react':
+        specifier: 18.3.27
+        version: 18.3.27
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.21.7(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1)(oxc-resolver@11.19.1(@emnapi/core@1.9.1)(@emnapi/runtime@1.9.1))(synckit@0.11.12)(typescript@5.9.3)
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
   packages/sdk:
     dependencies:
       axios:
@@ -3606,10 +3628,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
-
-  '@babel/runtime@7.28.6':
-    resolution: {integrity: sha512-05WQkdpL9COIMz4LjTxGpPNCdlpyimKppYNoJ5Di5EUObifl8t4tuLuUBBZEpoLYOmfvIWrsp9fCl0HoPRVTdA==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.29.2':
     resolution: {integrity: sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==}
@@ -14969,16 +14987,16 @@ snapshots:
   '@atlaskit/pragmatic-drag-and-drop-auto-scroll@1.4.0':
     dependencies:
       '@atlaskit/pragmatic-drag-and-drop': 1.7.7
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
 
   '@atlaskit/pragmatic-drag-and-drop-hitbox@1.1.0':
     dependencies:
       '@atlaskit/pragmatic-drag-and-drop': 1.7.7
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
 
   '@atlaskit/pragmatic-drag-and-drop@1.7.7':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       bind-event-listener: 3.0.0
       raf-schd: 4.0.3
 
@@ -15819,8 +15837,6 @@ snapshots:
       pirates: 4.0.7
       source-map-support: 0.5.21
 
-  '@babel/runtime@7.28.6': {}
-
   '@babel/runtime@7.29.2': {}
 
   '@babel/template@7.28.6':
@@ -15853,7 +15869,7 @@ snapshots:
 
   '@base-ui/react@1.2.0(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@base-ui/utils': 0.2.5(@types/react@18.3.27)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react-dom': 2.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/utils': 0.2.11
@@ -18542,7 +18558,7 @@ snapshots:
 
   '@react-pdf/renderer@4.3.2(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@react-pdf/fns': 3.1.2
       '@react-pdf/font': 4.0.4
       '@react-pdf/layout': 4.4.2

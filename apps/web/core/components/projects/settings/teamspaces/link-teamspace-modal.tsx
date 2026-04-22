@@ -13,7 +13,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Search } from "lucide-react";
 import { InfoIcon } from "@plane/propel/icons";
 import { Combobox } from "@headlessui/react";

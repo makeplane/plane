@@ -12,7 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { useEffect, useMemo } from "react";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";

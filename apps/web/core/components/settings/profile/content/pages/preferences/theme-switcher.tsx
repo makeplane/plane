@@ -13,7 +13,7 @@
 
 import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import type { I_THEME_OPTION } from "@plane/constants";
 import { THEME_OPTIONS } from "@plane/constants";

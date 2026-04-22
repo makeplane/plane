@@ -14,7 +14,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Combobox } from "@headlessui/react";
 // plane ui
 import { useTranslation } from "@plane/i18n";

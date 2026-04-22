@@ -12,7 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";
 import emptyIssueDark from "@/app/assets/empty-state/search/issues-dark.webp?url";

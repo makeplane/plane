@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import { Toast } from "@plane/propel/toast";
 import { resolveGeneralTheme } from "@plane/utils";

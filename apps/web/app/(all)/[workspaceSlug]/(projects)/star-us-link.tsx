@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 // assets

@@ -14,7 +14,7 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 // plane package imports
 import { CHART_COLOR_PALETTES } from "@plane/constants";

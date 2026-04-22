@@ -12,7 +12,7 @@
  */
 
 import { lazy, Suspense } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { SWRConfig } from "swr";
 // Plane Imports
 import { WEB_SWR_CONFIG } from "@plane/constants";

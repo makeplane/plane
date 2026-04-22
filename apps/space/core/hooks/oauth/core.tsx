@@ -13,7 +13,7 @@
 
 // plane imports
 import { useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { API_BASE_URL } from "@plane/constants";
 import type { TOAuthConfigs, TOAuthOption } from "@plane/types";
 // assets

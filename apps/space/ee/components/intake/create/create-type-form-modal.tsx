@@ -12,7 +12,7 @@
  */
 
 import { useRef, useState } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { FormProvider, useForm } from "react-hook-form";
 import type { EditorRefApi } from "@plane/editor";
 import { IntakePublishForm } from "@plane/propel/domain/intake-form";

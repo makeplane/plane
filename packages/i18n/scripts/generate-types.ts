@@ -46,7 +46,7 @@ function flattenKeys(obj: NestedObject, prefix = ""): string[] {
     if (typeof value === "string") {
       keys.push(fullKey);
     } else if (typeof value === "object" && value !== null) {
-      keys.push(...flattenKeys(value as NestedObject, fullKey));
+      keys.push(...flattenKeys(value, fullKey));
     }
   }
 

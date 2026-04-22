@@ -13,7 +13,7 @@
 
 import { useMemo, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { observer } from "mobx-react";
 import type { TTips } from "@plane/types";
 import { IconButton } from "@plane/propel/icon-button";

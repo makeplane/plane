@@ -16,7 +16,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 import { EPageAccess } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

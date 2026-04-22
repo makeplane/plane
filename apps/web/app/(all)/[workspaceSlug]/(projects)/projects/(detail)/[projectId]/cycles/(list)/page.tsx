@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { useTranslation } from "@plane/i18n";
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { TCycleFilters } from "@plane/types";

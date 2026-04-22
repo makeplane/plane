@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { THomeWidgetKeys, THomeWidgetProps } from "@plane/types";

@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { PieChart, ChartNoAxesCombined, MonitorSmartphone, Download } from "lucide-react";
 // plane imports
 import { E_FEATURE_FLAGS } from "@plane/constants";
@@ -63,7 +63,7 @@ export const DashboardsFeatureFlagFallback = observer(function DashboardsFeature
   const { workspaceSlug } = useParams();
   // translation
   const { t } = useTranslation();
-  // next-themes
+  // theme
   const { resolvedTheme } = useTheme();
   // derived values
   const isDarkMode = resolvedTheme === "dark";

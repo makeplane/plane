@@ -13,7 +13,7 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { useTranslation } from "@plane/i18n";
 import RequestEmptyDark from "@/app/assets/empty-state/customers/request-search-dark.svg?url";
 import RequestEmptyLight from "@/app/assets/empty-state/customers/request-search-light.svg?url";

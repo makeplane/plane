@@ -11,6 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { ThemeScript } from "@plane/react-theme";
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 // assets
@@ -21,6 +22,8 @@ import faviconIco from "@/app/assets/favicon/favicon.ico?url";
 import siteWebmanifest from "@/app/assets/favicon/site.webmanifest?url";
 import { LogoSpinner } from "@/components/common/logo-spinner";
 import globalStyles from "@/styles/globals.css?url";
+
+const CRITICAL_THEME_CSS = `html{background:oklch(0.9543 0.001 230.67)}html[data-theme*="dark"]{background:oklch(0.1689 0.0021 230.81)}body{margin:0}.logo-spinner-light,.logo-spinner-dark{height:1.5rem;width:auto;object-fit:contain}@media(min-width:640px){.logo-spinner-light,.logo-spinner-dark{height:2.75rem}}.logo-spinner-dark{display:none}html[data-theme*="dark"] .logo-spinner-light{display:none}html[data-theme*="dark"] .logo-spinner-dark{display:block}`;
 // types
 import type { Route } from "./+types/root";
 // local imports
@@ -60,15 +63,18 @@ export const headers: Route.HeadersFunction = () => ({
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <ThemeScript />
+        <style id="critical-theme" dangerouslySetInnerHTML={{ __html: CRITICAL_THEME_CSS }} />
+        <meta name="theme-color" content="#eff0f0" />
         <meta name="robots" content="noindex, nofollow" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div id="editor-portal" />
         <AppProviders>{children}</AppProviders>
         <Scripts />

@@ -13,7 +13,7 @@
 
 import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import {
   CHART_COLOR_PALETTES,
@@ -75,7 +75,7 @@ export const DashboardDonutChartWidget = observer(function DashboardDonutChartWi
   }, [chart_model, parsedData]);
   const totalCount = data?.data?.reduce((acc, curr) => acc + curr.count, 0);
   const totalCountDigits = totalCount?.toString().length ?? 1;
-  // next-themes
+  // theme
   const { resolvedTheme } = useTheme();
   // Get current palette colors and extend if needed
   const baseColors = CHART_COLOR_PALETTES.find((p) => p.key === widgetConfig?.color_scheme)?.[

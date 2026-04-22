@@ -50,7 +50,7 @@ const rebuildXmlComponent = (node: unknown): ImportedXmlComponent | string | nul
     for (const child of n.root) {
       const rebuilt = rebuildXmlComponent(child);
       if (rebuilt !== null) {
-        component.push(rebuilt as ImportedXmlComponent | string);
+        component.push(rebuilt);
       }
     }
   }

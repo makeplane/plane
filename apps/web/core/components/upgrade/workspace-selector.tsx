@@ -14,7 +14,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 // plane imports
 import type { EExternalUpgradePlanType } from "@plane/constants";

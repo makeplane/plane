@@ -13,7 +13,7 @@
 
 import { format, startOfToday } from "date-fns";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import {
   Area,
   Line,

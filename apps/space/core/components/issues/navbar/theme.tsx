@@ -13,7 +13,7 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Moon, Sun } from "lucide-react";
 
 export const NavbarTheme = observer(function NavbarTheme() {

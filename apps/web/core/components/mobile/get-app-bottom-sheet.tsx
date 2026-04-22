@@ -12,7 +12,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { X } from "lucide-react";
 // components
 import { getButtonStyling } from "@plane/propel/button";

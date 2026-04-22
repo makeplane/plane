@@ -1,0 +1,41 @@
+{
+  "name": "@plane/react-theme",
+  "version": "2.3.0",
+  "private": true,
+  "description": "Shared theme provider for Plane apps",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./package.json": "./package.json"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "check:lint": "oxlint --type-aware -c ../../.oxlintrc.json .",
+    "check:types": "tsc --noEmit",
+    "check:format": "oxfmt . --check",
+    "fix:lint": "oxlint --type-aware --fix -c ../../.oxlintrc.json .",
+    "fix:format": "oxfmt . --write",
+    "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
+  },
+  "dependencies": {
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@plane/typescript-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:"
+  }
+}

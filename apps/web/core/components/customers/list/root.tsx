@@ -13,7 +13,7 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // constants
 import useSWR from "swr";
 // components

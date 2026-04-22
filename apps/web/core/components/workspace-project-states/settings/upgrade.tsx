@@ -14,7 +14,7 @@
 import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Crown } from "lucide-react";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { EProductSubscriptionEnum } from "@plane/types";

@@ -13,7 +13,7 @@
 
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { Combobox } from "@headlessui/react";

@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import { PROGRESS_STATE_GROUPS_DETAILS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";

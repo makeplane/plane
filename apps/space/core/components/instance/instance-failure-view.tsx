@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Button } from "@plane/propel/button";
 // assets
 import InstanceFailureDarkImage from "@/app/assets/instance/instance-failure-dark.svg?url";

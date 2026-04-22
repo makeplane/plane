@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { CHART_COLOR_PALETTES } from "@plane/constants";
@@ -31,7 +31,7 @@ export function WidgetColorSchemeSelect(props: Props) {
   const { t } = useTranslation();
   // form info
   const { control } = useFormContext<TDashboardWidget>();
-  // next-themes
+  // theme
   const { resolvedTheme } = useTheme();
 
   return (

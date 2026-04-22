@@ -12,7 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { useParams } from "react-router";
 import useSWR from "swr";
 import { useTranslation } from "@plane/i18n";

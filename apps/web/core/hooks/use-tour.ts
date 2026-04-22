@@ -12,7 +12,7 @@
  */
 
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { useTranslation } from "@plane/i18n";
 import type { UseTourParams, UseTourReturn } from "@plane/types";
 import type { TTourStep } from "@plane/propel/tour";

@@ -12,10 +12,9 @@
  */
 
 import type { ReactNode } from "react";
-import { useEffect, useRef } from "react";
-import { observer } from "mobx-react";
+import { useEffect } from "react";
 import { reaction } from "mobx";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // helpers
 import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
@@ -28,21 +27,14 @@ type TStoreWrapper = {
   children: ReactNode;
 };
 
-function StoreWrapper(props: TStoreWrapper) {
+export default function StoreWrapper(props: TStoreWrapper) {
   const { children } = props;
   // theme
   const { setTheme } = useTheme();
   // store hooks
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
-  const { data: userProfile } = useUserProfile();
+  const profileStore = useUserProfile();
   const { unreadNotificationsCount } = useWorkspaceNotifications();
-
-  // Track if we've initialized theme from server (one-time only)
-  const hasInitializedThemeRef = useRef(false);
-  // Track current user to reset on logout/login
-  const currentUserIdRef = useRef<string | undefined>(undefined);
-  // Track previous theme to detect transitions from custom theme
-  const previousThemeRef = useRef<string | undefined>(undefined);
 
   /**
    * Sidebar collapsed fetching from local storage
@@ -51,73 +43,82 @@ function StoreWrapper(props: TStoreWrapper) {
     const localValue = localStorage && localStorage.getItem("app_sidebar_collapsed");
     const localBoolValue = localValue ? (localValue === "true" ? true : false) : false;
     if (localValue && sidebarCollapsed === undefined) toggleSidebar(localBoolValue);
-  }, [sidebarCollapsed, setTheme, toggleSidebar]);
+  }, [sidebarCollapsed, toggleSidebar]);
 
   /**
-   * Effect 1: Initial theme sync from server (one-time only)
+   * Theme sync from server (one-time per user session).
    *
-   * This effect runs ONCE per user session to load theme from server.
-   * After initial load, all theme changes are localStorage-driven (next-themes).
-   * This prevents a feedback loop where server updates trigger UI updates in a cycle.
+   * Uses a MobX reaction so the theme updates as soon as the profile
+   * observable changes, regardless of React render timing. This is
+   * important because the profile is fetched in route middleware which
+   * may complete after this component mounts.
+   *
+   * Priority: API profile > localStorage > system preference.
+   * The API theme is written to localStorage so ThemeScript can apply
+   * it immediately on subsequent navigations to prevent flicker.
    */
   useEffect(() => {
-    // THEME: fallback to system theme for desktop app
     if (isDesktop()) {
       setTheme("system");
       return;
     }
 
-    const userId = userProfile?.id;
+    let hasInitialized = false;
+    let currentUserId: string | undefined;
 
-    // Reset initialization flag when user changes (logout/login)
-    // This handles both logout (userId becomes undefined) and login (userId changes)
-    if (userId !== currentUserIdRef.current) {
-      hasInitializedThemeRef.current = false;
-      previousThemeRef.current = undefined;
-      currentUserIdRef.current = userId;
-    }
+    return reaction(
+      () => ({
+        userId: profileStore.data?.id,
+        theme: profileStore.data?.theme?.theme,
+      }),
+      ({ userId, theme }) => {
+        // Reset initialization flag when user changes (logout/login)
+        if (userId !== currentUserId) {
+          hasInitialized = false;
+          currentUserId = userId;
+        }
 
-    // Only initialize theme from server on FIRST load for this user
-    if (!userProfile?.theme?.theme || hasInitializedThemeRef.current) {
-      return; // Skip if already initialized or no profile data
-    }
+        if (!theme || hasInitialized) return;
 
-    // Apply theme from server profile (one-time only)
-    setTheme(userProfile?.theme?.theme || "system");
-
-    // Mark as initialized - prevents future syncs from server
-    hasInitializedThemeRef.current = true;
-  }, [userProfile?.theme?.theme, setTheme]);
+        setTheme(theme);
+        hasInitialized = true;
+      },
+      { fireImmediately: true }
+    );
+  }, [setTheme, profileStore]);
 
   /**
-   * Effect 2: Custom theme CSS application (runs on every change)
+   * Custom theme CSS application.
    *
-   * This effect applies or clears custom theme CSS variables whenever
-   * the theme changes. It runs independently of the initial sync effect.
+   * Uses a MobX reaction to apply or clear custom theme CSS variables
+   * whenever the theme changes.
    */
   useEffect(() => {
-    // THEME: fallback to system theme for desktop app
     if (isDesktop()) return;
 
-    if (!userProfile?.theme?.theme) return;
+    let previousTheme: string | undefined;
 
-    const currentTheme = userProfile?.theme?.theme;
-    const previousTheme = previousThemeRef.current;
-    const themeData = userProfile?.theme;
+    return reaction(
+      () => ({
+        theme: profileStore.data?.theme?.theme,
+        primary: profileStore.data?.theme?.primary,
+        background: profileStore.data?.theme?.background,
+        darkPalette: profileStore.data?.theme?.darkPalette,
+      }),
+      ({ theme, primary, background, darkPalette }) => {
+        if (!theme) return;
 
-    // Apply custom theme if current theme is custom
-    if (currentTheme === "custom" && themeData.primary && themeData.background && themeData.darkPalette !== undefined) {
-      applyCustomTheme(themeData.primary, themeData.background, themeData.darkPalette ? "dark" : "light");
-    }
-    // Clear custom theme CSS when switching away from custom
-    else if (previousTheme === "custom" && currentTheme !== "custom") {
-      clearCustomTheme();
-      // No reload needed - let CSS cascade handle it naturally
-    }
+        if (theme === "custom" && primary && background && darkPalette !== undefined) {
+          applyCustomTheme(primary, background, darkPalette ? "dark" : "light");
+        } else if (previousTheme === "custom" && theme !== "custom") {
+          clearCustomTheme();
+        }
 
-    // Update previous theme for next comparison
-    previousThemeRef.current = currentTheme;
-  }, [userProfile?.theme]);
+        previousTheme = theme;
+      },
+      { fireImmediately: true }
+    );
+  }, [profileStore]);
 
   /**
    * Desktop badge count: sync unread notification count to the native app icon.
@@ -138,5 +139,3 @@ function StoreWrapper(props: TStoreWrapper) {
 
   return <>{children}</>;
 }
-
-export default observer(StoreWrapper);

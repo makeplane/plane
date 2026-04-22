@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@plane/react-theme";
 // components
 import { TranslationProvider } from "@plane/i18n";
 import { AppProgressBar } from "@/lib/b-progress";
@@ -21,7 +21,7 @@ import { ToastProvider } from "@/lib/toast-provider";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider themes={["light", "dark"]} defaultTheme="system" enableSystem>
+    <ThemeProvider themes={["system", "light", "dark"]}>
       <StoreProvider>
         <AppProgressBar />
         <TranslationProvider>

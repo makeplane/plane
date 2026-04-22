@@ -13,7 +13,7 @@
 
 import type { ReactNode } from "react";
 import { Fragment, useRef, useState } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { usePopper } from "react-popper";
 import { Search, SignalHigh } from "lucide-react";
 import { CheckIcon } from "@plane/propel/icons";
@@ -333,7 +333,7 @@ export function PriorityDropdown(props: Props) {
       },
     ],
   });
-  // next-themes
+  // theme
   // TODO: remove this after new theming implementation
   const { resolvedTheme } = useTheme();
 

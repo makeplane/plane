@@ -13,21 +13,21 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useTheme as useNextTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // ui
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { resolveGeneralTheme } from "@plane/utils";
 // hooks
 import TakeoffIconDark from "@/app/assets/logos/takeoff-icon-dark.svg?url";
 import TakeoffIconLight from "@/app/assets/logos/takeoff-icon-light.svg?url";
-import { useTheme } from "@/hooks/store";
+import { useTheme as useThemeStore } from "@/hooks/store";
 // icons
 
 export const NewUserPopup = observer(function NewUserPopup() {
   // hooks
-  const { isNewUserPopup, toggleNewUserPopup } = useTheme();
+  const { isNewUserPopup, toggleNewUserPopup } = useThemeStore();
   // theme
-  const { resolvedTheme } = useNextTheme();
+  const { resolvedTheme } = useTheme();
 
   if (!isNewUserPopup) return <></>;
   return (

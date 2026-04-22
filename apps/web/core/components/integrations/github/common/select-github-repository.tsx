@@ -13,7 +13,7 @@
 
 import type { FC } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // components
 import { useTranslation } from "@plane/i18n";
 // assets

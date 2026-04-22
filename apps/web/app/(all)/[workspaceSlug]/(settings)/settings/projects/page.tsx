@@ -13,7 +13,7 @@
 
 import { observer } from "mobx-react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { cn } from "@plane/utils";

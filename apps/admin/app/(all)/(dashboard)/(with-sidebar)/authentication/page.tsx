@@ -13,7 +13,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 // plane internal packages
 import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";

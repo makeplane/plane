@@ -14,7 +14,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 // plane web components components
 import { Cloud } from "lucide-react";

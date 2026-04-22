@@ -12,7 +12,7 @@
  */
 
 import type { FC } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // helpers
 import { API_BASE_URL } from "@plane/constants";
 // images

@@ -15,7 +15,7 @@ import { useMemo } from "react";
 import type { ColumnDef, Row, RowData, Table } from "@tanstack/react-table";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import useSWR from "swr";
 // plane package imports
 import { Download } from "lucide-react";

@@ -13,7 +13,7 @@
 
 import { lazy, Suspense, useMemo } from "react";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import { CHART_COLOR_PALETTES, DEFAULT_WIDGET_COLOR, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import type { TAreaChartWidgetConfig, TAreaItem } from "@plane/types";
@@ -35,7 +35,7 @@ export const DashboardAreaChartWidget = observer(function DashboardAreaChartWidg
   const widgetConfig = widget?.config as TAreaChartWidgetConfig | undefined;
   const showLegends = !!widgetConfig?.show_legends;
   const isComparisonModel = chart_model === EWidgetChartModels.COMPARISON;
-  // next-themes
+  // theme
   const { resolvedTheme } = useTheme();
   // Get current palette colors and extend if needed
   const baseColors = CHART_COLOR_PALETTES.find((p) => p.key === widgetConfig?.color_scheme)?.[

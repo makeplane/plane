@@ -13,7 +13,7 @@
 
 import React, { useState } from "react";
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { ArrowRightLeft } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 // ui

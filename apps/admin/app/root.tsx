@@ -14,6 +14,7 @@
 import { useContext } from "react";
 import type { ReactNode } from "react";
 import { Links, Meta, Outlet, Scripts } from "react-router";
+import { ThemeScript } from "@plane/react-theme";
 import type { LinksFunction } from "react-router";
 import * as Sentry from "@sentry/react-router";
 import { Button } from "@plane/propel/button";
@@ -31,6 +32,8 @@ import "@fontsource-variable/inter";
 import interVariableWoff2 from "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url";
 import "@fontsource/material-symbols-rounded";
 import "@fontsource/ibm-plex-mono";
+
+const CRITICAL_THEME_CSS = `html{background:oklch(0.9543 0.001 230.67)}html[data-theme*="dark"]{background:oklch(0.1689 0.0021 230.81)}body{margin:0}.logo-spinner-light,.logo-spinner-dark{height:1.5rem;width:auto;object-fit:contain}@media(min-width:640px){.logo-spinner-light,.logo-spinner-dark{height:2.75rem}}.logo-spinner-dark{display:none}html[data-theme*="dark"] .logo-spinner-light{display:none}html[data-theme*="dark"] .logo-spinner-dark{display:block}`;
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 const APP_DESCRIPTION =
@@ -58,6 +61,9 @@ export function Layout({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <ThemeScript />
+        <style id="critical-theme" dangerouslySetInnerHTML={{ __html: CRITICAL_THEME_CSS }} />
+        <meta name="theme-color" content="#eff0f0" />
         <Meta />
         <Links />
       </head>

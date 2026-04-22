@@ -13,7 +13,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { observer } from "mobx-react";
-import { useTheme as useNextTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { LogOut, UserCog2, Palette } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane internal packages
@@ -22,17 +22,17 @@ import { AuthService } from "@plane/services";
 import { Avatar } from "@plane/propel/avatar";
 import { getFileURL, cn } from "@plane/utils";
 // hooks
-import { useTheme, useUser } from "@/hooks/store";
+import { useTheme as useThemeStore, useUser } from "@/hooks/store";
 
 // service initialization
 const authService = new AuthService();
 
 export const AdminSidebarDropdown = observer(function AdminSidebarDropdown() {
   // store hooks
-  const { isSidebarCollapsed } = useTheme();
+  const { isSidebarCollapsed } = useThemeStore();
   const { currentUser, signOut } = useUser();
   // hooks
-  const { resolvedTheme, setTheme } = useNextTheme();
+  const { resolvedTheme, setTheme } = useTheme();
   // state
   const [csrfToken, setCsrfToken] = useState<string | undefined>(undefined);
 

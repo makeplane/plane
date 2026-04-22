@@ -14,7 +14,7 @@
 import { lazy, Suspense, useMemo } from "react";
 import { toJS } from "mobx";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane constants
 import { CHART_COLOR_PALETTES, WIDGET_X_AXIS_PROPERTY_TO_FILTER_KEY } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -83,7 +83,7 @@ export const DashboardPieChartWidget = observer(function DashboardPieChartWidget
     const secondParse = parsePieChartData(parsedData.data, toJS(widgetConfig));
     return secondParse;
   }, [parsedData, widgetConfig]);
-  // next-themes
+  // theme
   const { resolvedTheme } = useTheme();
   // Get current palette colors and extend if needed
   const baseColors = CHART_COLOR_PALETTES.find((p) => p.key === widgetConfig?.color_scheme)?.[

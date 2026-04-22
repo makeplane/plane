@@ -71,7 +71,9 @@ if [ -f "./apps/api/.env" ]; then
         echo -e "${RED}Ensure 'tr' and 'head' commands are available on your system.${NC}"
         success=false
     else
-        echo -e "SECRET_KEY=\"$SECRET_KEY\"" >> ./apps/api/.env
+        # Ensure we start on a new line (the .env.example may not end with a newline)
+        [[ -s ./apps/api/.env && $(tail -c1 ./apps/api/.env) != "" ]] && echo >> ./apps/api/.env
+        echo "SECRET_KEY=\"$SECRET_KEY\"" >> ./apps/api/.env
         echo -e "${GREEN}✓${NC} Added SECRET_KEY to apps/api/.env"
     fi
 else

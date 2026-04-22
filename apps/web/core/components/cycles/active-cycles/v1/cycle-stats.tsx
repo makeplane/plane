@@ -14,7 +14,7 @@
 import { useCallback, useRef, useState } from "react";
 import { isEmpty } from "lodash-es";
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { CalendarCheck } from "lucide-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";

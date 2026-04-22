@@ -12,7 +12,7 @@
  */
 
 import { useNavigate } from "react-router";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Key } from "lucide-react";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";

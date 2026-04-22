@@ -16,7 +16,7 @@ import type { ReactNode } from "react";
 import * as Sentry from "@sentry/react-router";
 import { Links, Meta, Outlet, Scripts } from "react-router";
 import type { LinksFunction } from "react-router";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider, ThemeScript } from "@plane/react-theme";
 // plane imports
 import { SITE_DESCRIPTION, SITE_NAME, IOS_APP_ID } from "@plane/constants";
 import { cn } from "@plane/utils";
@@ -51,10 +51,6 @@ import "@fontsource/ibm-plex-mono";
 
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
-// Runs synchronously in <head> before first paint. Sets data-theme, colorScheme,
-// and theme-color meta from localStorage.
-const THEME_INIT_SCRIPT = `(function(){try{var d=document.documentElement,s=localStorage.getItem("theme")||"system",t=s==="system"?window.matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light":s;d.setAttribute("data-theme",t);d.style.colorScheme=t.includes("dark")?"dark":"light";var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute("content",t.includes("dark")?"#0e0f10":"#eff0f0")}catch(e){}})()`;
-
 // Critical theme CSS — applied before Tailwind loads. Handles background, body margin, and logo spinner.
 // Color values must match packages/tailwindcss/variables.css (--neutral-300 / --neutral-black).
 const CRITICAL_THEME_CSS = `html{background:oklch(0.9543 0.001 230.67)}html[data-theme*="dark"]{background:oklch(0.1689 0.0021 230.81)}body{margin:0}.logo-spinner-light,.logo-spinner-dark{height:1.5rem;width:auto;object-fit:contain}@media(min-width:640px){.logo-spinner-light,.logo-spinner-dark{height:2.75rem}}.logo-spinner-dark{display:none}html[data-theme*="dark"] .logo-spinner-light{display:none}html[data-theme*="dark"] .logo-spinner-dark{display:block}`;
@@ -86,7 +82,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <script id="theme-init" dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <ThemeScript />
         <style id="critical-theme" dangerouslySetInnerHTML={{ __html: CRITICAL_THEME_CSS }} />
         <meta name="theme-color" content="#eff0f0" />
         {/* Meta info for PWA */}
@@ -173,15 +169,7 @@ export default function Root() {
   }, []);
 
   return (
-    <ThemeProvider
-      attribute="data-theme"
-      storageKey="theme"
-      themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]}
-      defaultTheme="system"
-      enableSystem
-      enableColorScheme
-      disableTransitionOnChange
-    >
+    <ThemeProvider themes={["system", "light", "dark", "light-contrast", "dark-contrast", "custom"]}>
       <AppProvider>
         <div
           className={cn(

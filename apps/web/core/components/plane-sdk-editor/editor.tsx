@@ -15,7 +15,7 @@ import { lazy, Suspense, useRef } from "react";
 // oxlint-disable-next-line import/default
 import planeSDKTypes from "@makeplane/plane-node-sdk/dist/types.bundle.d.ts?raw";
 // components
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 
 type Props = {
   value: string;

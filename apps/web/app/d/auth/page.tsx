@@ -13,7 +13,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Button } from "@plane/propel/button";
 import { API_BASE_URL } from "@plane/constants";
 import { PlaneLogo } from "@plane/propel/icons";

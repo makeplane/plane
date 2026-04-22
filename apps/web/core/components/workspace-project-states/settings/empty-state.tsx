@@ -12,7 +12,7 @@
  */
 
 import type { FC } from "react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Button } from "@plane/propel/button";
 
 type Props = {

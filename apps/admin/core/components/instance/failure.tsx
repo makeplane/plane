@@ -12,7 +12,7 @@
  */
 
 import { observer } from "mobx-react";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 import { Button } from "@plane/propel/button";
 // assets
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";

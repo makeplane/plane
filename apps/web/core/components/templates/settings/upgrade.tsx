@@ -15,7 +15,7 @@ import type { FC } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useTheme } from "next-themes";
+import { useTheme } from "@plane/react-theme";
 // plane imports
 import type { TSupportedFlagsForUpgrade } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
