@@ -49,6 +49,8 @@ export const InitiativeSidebarRoot = observer(function InitiativeSidebarRoot(pro
           initiativeId={initiativeId}
           permissions={{
             canEditProperty: permissions.canEditProperty,
+            canAddProject: permissions.canAddProject,
+            canAddEpic: permissions.canAddEpic,
             labels: permissions.labels,
           }}
           handleInitiativeStateUpdate={handleInitiativeStateUpdate}

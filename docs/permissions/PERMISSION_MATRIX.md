@@ -250,14 +250,14 @@ All initiative comment endpoints are gated by `@check_feature_flag(FeatureFlag.I
 
 All initiative attachment endpoints are gated by `@check_feature_flag(FeatureFlag.INITIATIVES)`.
 
-| Action            | Permission Checked             | W-Owner | W-Admin                      | W-Member                                               | W-Guest |
-| ----------------- | ------------------------------ | ------- | ---------------------------- | ------------------------------------------------------ | ------- |
-| Upload attachment | `initiative_attachment:create` | ✅ `*`  | ✅ `initiative_attachment:*` | ✅ `initiative_attachment:create`                      | ❌      |
-| List attachments  | `initiative_attachment:view`   | ✅ `*`  | ✅ `initiative_attachment:*` | ✅ `initiative_attachment:view`                        | ❌      |
-| Mark uploaded     | `initiative_attachment:edit`   | ✅ `*`  | ✅ `initiative_attachment:*` | ✅ `initiative_attachment:edit`                        | ❌      |
-| Delete attachment | `initiative_attachment:delete` | ✅ `*`  | ✅ `initiative_attachment:*` | ✅ `initiative_attachment:delete+creator` (own only) ¹ | ❌      |
+> **Role access (tightened 2026-04-22):** W-Member reduced to VIEW only (no upload/mark-uploaded/delete). This aligns with the FE fold contract where `initiative_attachment:create` is folded under `initiative:edit`, a permission members don't have. See "Role Grant Change: Initiatives — Member Attachment & Link Tightening (2026-04-22)" in `PERMISSION_MIGRATION.md`.
 
-> ¹ `defer_conditions=True` — Member delete uses deferred `+creator` condition checked inline in the view method. Admin deletes any attachment unconditionally.
+| Action            | Permission Checked             | W-Owner | W-Admin                      | W-Member                        | W-Guest |
+| ----------------- | ------------------------------ | ------- | ---------------------------- | ------------------------------- | ------- |
+| Upload attachment | `initiative_attachment:create` | ✅ `*`  | ✅ `initiative_attachment:*` | ❌                              | ❌      |
+| List attachments  | `initiative_attachment:view`   | ✅ `*`  | ✅ `initiative_attachment:*` | ✅ `initiative_attachment:view` | ❌      |
+| Mark uploaded     | `initiative_attachment:edit`   | ✅ `*`  | ✅ `initiative_attachment:*` | ❌                              | ❌      |
+| Delete attachment | `initiative_attachment:delete` | ✅ `*`  | ✅ `initiative_attachment:*` | ❌                              | ❌      |
 
 ### Initiative Epics — `InitiativeEpicViewSet` / `InitiativeEpicIssueViewSet`
 
@@ -291,12 +291,14 @@ Uses existing `InitiativePermissions` (no separate resource type). Managing an i
 
 ### Initiative Links — `InitiativeLinkViewSet`
 
-| Action      | Permission Checked       | W-Owner | W-Admin                | W-Member                    | W-Guest |
-| ----------- | ------------------------ | ------- | ---------------------- | --------------------------- | ------- |
-| List links  | `initiative_link:view`   | ✅ `*`  | ✅ `initiative_link:*` | ✅ `initiative_link:view`   | ❌      |
-| Create link | `initiative_link:create` | ✅ `*`  | ✅ `initiative_link:*` | ✅ `initiative_link:create` | ❌      |
-| Update link | `initiative_link:edit`   | ✅ `*`  | ✅ `initiative_link:*` | ✅ `initiative_link:edit`   | ❌      |
-| Delete link | `initiative_link:delete` | ✅ `*`  | ✅ `initiative_link:*` | ✅ `initiative_link:delete` | ❌      |
+> **Role access (tightened 2026-04-22):** W-Member reduced to VIEW only (no create/edit/delete). Same rationale as initiative attachments: `initiative_link:create/edit/delete` are folded under `initiative:edit` in the FE matrix, which members don't have.
+
+| Action      | Permission Checked       | W-Owner | W-Admin                | W-Member                  | W-Guest |
+| ----------- | ------------------------ | ------- | ---------------------- | ------------------------- | ------- |
+| List links  | `initiative_link:view`   | ✅ `*`  | ✅ `initiative_link:*` | ✅ `initiative_link:view` | ❌      |
+| Create link | `initiative_link:create` | ✅ `*`  | ✅ `initiative_link:*` | ❌                        | ❌      |
+| Update link | `initiative_link:edit`   | ✅ `*`  | ✅ `initiative_link:*` | ❌                        | ❌      |
+| Delete link | `initiative_link:delete` | ✅ `*`  | ✅ `initiative_link:*` | ❌                        | ❌      |
 
 ### Initiative Updates — `InitiativeUpdateViewSet`
 
@@ -403,47 +405,49 @@ Workspace-scoped resource: `WORKITEM_RELATION` (child of `WORKSPACE`). Manages c
 
 ### Releases — `ReleaseEndpoint` / `ReleaseTagEndpoint` / `ReleaseLabelEndpoint` / `ReleaseWorkItemEndpoint` / `ReleaseChangelogEndpoint` / `ReleasePageEndpoint` / `ReleaseAttachmentEndpoint` / `ReleaseActivityEndpoint` / `ReleaseLinkViewSet`
 
-Workspace-scoped resource: `RELEASE`. New resource type with actions VIEW, CREATE, EDIT, DELETE.
+Workspace-scoped resource: `RELEASE` with actions VIEW, CREATE, EDIT, DELETE.
 
-| Action               | Permission Checked | W-Owner | W-Admin        | W-Member            | W-Guest           |
-| -------------------- | ------------------ | ------- | -------------- | ------------------- | ----------------- |
-| List releases        | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Retrieve release     | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Create release       | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Update release       | `release:edit`     | ✅ `*`  | ✅ `release:*` | ✅ `release:edit`   | ❌                |
-| Delete release       | `release:delete`   | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List/view tags       | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Create tag           | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Update tag           | `release:edit`     | ✅ `*`  | ✅ `release:*` | ✅ `release:edit`   | ❌                |
-| Delete tag           | `release:delete`   | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List/view labels     | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Create label         | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Update label         | `release:edit`     | ✅ `*`  | ✅ `release:*` | ✅ `release:edit`   | ❌                |
-| Delete label         | `release:delete`   | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List work items      | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Add work items       | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Remove work item     | `release:delete`   | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List comments        | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Create comment       | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Update comment       | `release:edit` ¹   | ✅ `*`  | ✅ `release:*` | ✅ `release:edit`   | ❌                |
-| Delete comment       | `release:delete` ¹ | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List reactions       | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Add reaction         | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Remove reaction      | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| List/view changelogs | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Create changelog     | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Update changelog     | `release:edit`     | ✅ `*`  | ✅ `release:*` | ✅ `release:edit`   | ❌                |
-| Delete changelog     | `release:delete`   | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List pages           | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Add page             | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Remove page          | `release:delete`   | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List attachments     | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Upload attachment    | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Delete attachment    | `release:delete` ¹ | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
-| List activities      | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view`   | ✅ `release:view` |
-| Create link          | `release:create`   | ✅ `*`  | ✅ `release:*` | ✅ `release:create` | ❌                |
-| Update link          | `release:edit`     | ✅ `*`  | ✅ `release:*` | ✅ `release:edit`   | ❌                |
-| Delete link          | `release:delete`   | ✅ `*`  | ✅ `release:*` | ✅ `release:delete` | ❌                |
+> **Role access (tightened 2026-04-22):** W-Admin retains `release:*`. W-Member has `release:view` only (no create/edit/delete). W-Guest has no release access. See "Role Grant Change: Release — Member/Guest Tightening (2026-04-22)" in `PERMISSION_MIGRATION.md`.
+
+| Action               | Permission Checked | W-Owner | W-Admin        | W-Member          | W-Guest |
+| -------------------- | ------------------ | ------- | -------------- | ----------------- | ------- |
+| List releases        | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Retrieve release     | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Create release       | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Update release       | `release:edit`     | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Delete release       | `release:delete`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List/view tags       | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Create tag           | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Update tag           | `release:edit`     | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Delete tag           | `release:delete`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List/view labels     | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Create label         | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Update label         | `release:edit`     | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Delete label         | `release:delete`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List work items      | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Add work items       | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Remove work item     | `release:delete`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List comments        | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Create comment       | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Update comment       | `release:edit` ¹   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Delete comment       | `release:delete` ¹ | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List reactions       | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Add reaction         | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Remove reaction      | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| List/view changelogs | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Create changelog     | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Update changelog     | `release:edit`     | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Delete changelog     | `release:delete`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List pages           | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Add page             | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Remove page          | `release:delete`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List attachments     | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Upload attachment    | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Delete attachment    | `release:delete` ¹ | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| List activities      | `release:view`     | ✅ `*`  | ✅ `release:*` | ✅ `release:view` | ❌      |
+| Create link          | `release:create`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Update link          | `release:edit`     | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
+| Delete link          | `release:delete`   | ✅ `*`  | ✅ `release:*` | ❌                | ❌      |
 
 > ¹ Inline creator check — only the comment/attachment creator can edit/delete, regardless of role.
 

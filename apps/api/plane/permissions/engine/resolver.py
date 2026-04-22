@@ -53,9 +53,21 @@ class PermissionResolver:
         """
         Resolve a permission using pre-fetched hierarchy chain and tuples.
 
+        Merge rules across the hierarchy:
+          1. Explicit deny anywhere → deny (short-circuits)
+          2. Unconditional grant anywhere → allow (short-circuits, clears conditions)
+          3. Otherwise, union all conditional grants across scopes and return conditional
+          4. No grants found → default deny
+
+        This ensures a higher-scope unconditional grant (e.g., workspace admin's
+        workitem:* wildcard) upgrades a lower-scope conditional grant (e.g., project
+        guest's workitem:view+creator) instead of stopping at the first conditional.
+
         Reusable by check(), check_batch(), and bulk_check() to avoid
         repeated hierarchy + tuple queries.
         """
+        collected_conditions: set[str] = set()
+
         for res_type, res_id in hierarchy_chain:
             perms = direct_tuples.get((res_type, res_id), [])
             logger.debug(
@@ -87,8 +99,14 @@ class PermissionResolver:
                     hierarchy_chain=hierarchy_chain,
                     direct_tuples=direct_tuples,
                 )
-                if result is not None:
+                if result is None:
+                    continue
+                if not result.conditions:
+                    # Unconditional allow — supersedes any accumulated conditions.
                     return result
+                # Deferred conditional — accumulate and keep walking so that
+                # a higher-scope unconditional grant can still upgrade this.
+                collected_conditions.update(result.conditions)
 
             # Check link relations at this level (already prefetched, no extra queries).
             link_perms = link_tuples.get((res_type, res_id))
@@ -116,8 +134,17 @@ class PermissionResolver:
                         hierarchy_chain=hierarchy_chain,
                         direct_tuples=direct_tuples,
                     )
-                    if result is not None:
+                    if result is None:
+                        continue
+                    if not result.conditions:
                         return result
+                    collected_conditions.update(result.conditions)
+
+        if collected_conditions:
+            return AccessResult(
+                allowed=True,
+                conditions=tuple(sorted(collected_conditions)),
+            )
 
         # Default deny
         logger.warning("[PERM] Default deny: %s for user %s", permission_str, user_id)

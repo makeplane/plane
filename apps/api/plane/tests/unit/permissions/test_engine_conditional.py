@@ -22,7 +22,7 @@ from plane.permissions.definitions import (
     WorkitemPermissions,
     CommentPermissions,
 )
-from plane.db.models import Issue, ResourcePermission
+from plane.db.models import Issue, ProjectMember, ResourcePermission
 
 
 @pytest.mark.django_db
@@ -193,3 +193,88 @@ class TestConditionalGrants:
             workspace_id=perm_workspace.id,
         )
         assert result.allowed is False
+
+    def test_deferred_conditions_upgraded_by_workspace_admin_wildcard(
+        self, engine, perm_workspace, perm_project, admin_user, ws_admin_member
+    ):
+        """Workspace admin with project-guest relation must see unconditional view.
+
+        Workspace admin holds workitem:* (wildcard, unconditional) at workspace scope.
+        If the same user is also explicitly added as a project guest, the project-level
+        guest role contributes workitem:view+creator (conditional). When resolving
+        workitem:view at project scope with defer_conditions=True, the merge must upgrade
+        the conditional grant with the higher-scope unconditional wildcard.
+
+        Expected: allowed=True, conditions=() (empty tuple — no creator filter applied).
+        Bug: returns conditions=('creator',), causing admin to only see items they created.
+        """
+        ProjectMember.objects.create(
+            project=perm_project,
+            workspace=perm_workspace,
+            member=admin_user,
+            role=5,
+            is_active=True,
+        )
+
+        result = engine.check(
+            user=admin_user,
+            permission=WorkitemPermissions.VIEW,
+            context=PermissionContext.project(
+                project_id=perm_project.id,
+                workspace_id=perm_workspace.id,
+            ),
+            defer_conditions=True,
+        )
+
+        assert result.allowed is True
+        assert result.conditions == (), (
+            f"workspace admin wildcard must upgrade project-guest conditional, "
+            f"got conditions={result.conditions}"
+        )
+
+    def test_deferred_conditions_upgraded_by_workspace_owner(
+        self, engine, perm_workspace, perm_project, owner_user, ws_owner_member
+    ):
+        """Workspace owner (FULL_ACCESS) with project-guest relation sees unconditional view."""
+        ProjectMember.objects.create(
+            project=perm_project,
+            workspace=perm_workspace,
+            member=owner_user,
+            role=5,
+            is_active=True,
+        )
+
+        result = engine.check(
+            user=owner_user,
+            permission=WorkitemPermissions.VIEW,
+            context=PermissionContext.project(
+                project_id=perm_project.id,
+                workspace_id=perm_workspace.id,
+            ),
+            defer_conditions=True,
+        )
+
+        assert result.allowed is True
+        assert result.conditions == (), (
+            f"workspace owner must upgrade project-guest conditional, "
+            f"got conditions={result.conditions}"
+        )
+
+    def test_deferred_conditions_preserved_for_plain_guest(
+        self, engine, perm_workspace, perm_project, guest_user, project_guest
+    ):
+        """Regression: guest-only (no workspace elevation) must still return creator conditions."""
+        result = engine.check(
+            user=guest_user,
+            permission=WorkitemPermissions.VIEW,
+            context=PermissionContext.project(
+                project_id=perm_project.id,
+                workspace_id=perm_workspace.id,
+            ),
+            defer_conditions=True,
+        )
+
+        assert result.allowed is True
+        assert result.conditions == ("creator",), (
+            f"plain project guest must still return creator condition, got {result.conditions}"
+        )

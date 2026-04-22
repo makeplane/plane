@@ -4660,7 +4660,7 @@ All workspace roles (Owner, Admin, Member, Guest) have `workspace:view`.
 
 ### RELEASE Resource Type (New — Workspace-Scoped)
 
-> **New resource type:** `RELEASE` is a workspace-scoped resource with actions VIEW, CREATE, EDIT, DELETE. W-Admin has `WildcardGrant(RELEASE)`. W-Member has full CRUD (VIEW, CREATE, EDIT, DELETE). W-Guest has VIEW only.
+> **New resource type:** `RELEASE` is a workspace-scoped resource with actions VIEW, CREATE, EDIT, DELETE. W-Admin has `WildcardGrant(RELEASE)`. W-Member originally had full CRUD; W-Guest originally had VIEW. **Updated 2026-04-22:** W-Member reduced to VIEW-only and W-Guest removed entirely — see "Role Grant Change: Release — Member/Guest Tightening (2026-04-22)" below. The per-endpoint tables in this section describe the `@can` decorators on each endpoint (which have not changed); who satisfies those decorators is governed by the current role grants.
 
 ### ReleaseEndpoint
 
@@ -4870,3 +4870,53 @@ All workspace roles (Owner, Admin, Member, Guest) have `workspace:view`.
 **Rationale:** Workspace archive was defined on the backend but never wired into any view or client call — there is no user-facing workspace-archive concept. Keeping it would leave stale permission surface and drift the backend from the frontend resource-action map (which never listed it).
 
 **Impact:** None at runtime — no endpoint, store, or client call referenced `workspace:archive`. Any future attempt to emit that permission string (e.g. from a migrated role scheme) will now correctly fail fast in the role builder UI or backend serializer.
+
+---
+
+## Role Grant Change: Release — Member/Guest Tightening (2026-04-22)
+
+**Change:** Tightened release access in the `member` and `guest` workspace permission schemes in `apps/api/plane/permissions/permission_schemes.py`.
+
+- **Workspace Member** (`member` scheme): removed `ReleasePermissions.CREATE`, `ReleasePermissions.EDIT`, `ReleasePermissions.DELETE`. Retains `ReleasePermissions.VIEW` only.
+- **Workspace Guest** (`guest` scheme): removed `ReleasePermissions.VIEW`. Now has no release access at all.
+- Workspace Owner (`FULL_ACCESS`) and Workspace Admin (`WildcardGrant(ResourceType.RELEASE)`) are unchanged.
+
+**Rationale:** Releases are a workspace-level publishing/coordination artifact; create/edit/delete should be gated to admins. Members retain read-only visibility so they can consume release content. Guests (minimal access) no longer see releases.
+
+| Permission       | W-Owner | W-Admin        | W-Member (before) | W-Member (after)  | W-Guest (before)  | W-Guest (after) |
+| ---------------- | ------- | -------------- | ----------------- | ----------------- | ----------------- | --------------- |
+| `release:view`   | ✅ `*`  | ✅ `release:*` | ✅                | ✅ `release:view` | ✅ `release:view` | ❌              |
+| `release:create` | ✅ `*`  | ✅ `release:*` | ✅                | ❌                | ❌                | ❌              |
+| `release:edit`   | ✅ `*`  | ✅ `release:*` | ✅                | ❌                | ❌                | ❌              |
+| `release:delete` | ✅ `*`  | ✅ `release:*` | ✅                | ❌                | ❌                | ❌              |
+
+**Impact:**
+
+- `@can` decorators on `apps/api/plane/app/views/release/*` are unchanged; the tightening is purely at the role-grant layer. Workspace members now receive 403 on any write to release endpoints (base, tag, label, work item, comment, changelog, page, attachment, link). Workspace guests receive 403 on any release endpoint.
+- FE must hide release create/edit/delete affordances for workspace members, and hide the release surface entirely for workspace guests.
+- Custom workspace roles built before this change that copied the member or guest system scheme will not be auto-updated — those custom schemes retain whatever permissions they were authored with.
+
+---
+
+## Role Grant Change: Initiatives — Member Attachment & Link Tightening (2026-04-22)
+
+**Change:** Removed `initiative_attachment:create/edit/delete` and `initiative_link:create/edit/delete` from the `member` workspace permission scheme in `apps/api/plane/permissions/permission_schemes.py`. `initiative_attachment:view` and `initiative_link:view` are retained.
+
+**Rationale:** In the FE permission matrix (`packages/constants/src/roles-and-permissions/workspace-permission-groups.ts`), `initiative_attachment:create` and `initiative_link:create/edit/delete` are declared with `foldedUnder: "initiative:edit"` — they are hidden rows that only appear (implicitly) when a role has `initiative:edit`. The member role does not have `initiative:edit`, so the prior grants put the role in a state that couldn't be represented or toggled from the custom-role editor: the UI showed `initiative:edit` off while the runtime still granted attachment/link mutations. Aligning the backend with the fold contract means members can view initiative attachments and links (read-only) but cannot add, modify, or delete them.
+
+| Permission                     | W-Owner | W-Admin                      | W-Member (before) | W-Member (after)                | W-Guest |
+| ------------------------------ | ------- | ---------------------------- | ----------------- | ------------------------------- | ------- |
+| `initiative_attachment:view`   | ✅ `*`  | ✅ `initiative_attachment:*` | ✅                | ✅ `initiative_attachment:view` | ❌      |
+| `initiative_attachment:create` | ✅ `*`  | ✅ `initiative_attachment:*` | ✅                | ❌                              | ❌      |
+| `initiative_attachment:edit`   | ✅ `*`  | ✅ `initiative_attachment:*` | ✅                | ❌                              | ❌      |
+| `initiative_attachment:delete` | ✅ `*`  | ✅ `initiative_attachment:*` | ✅ `+creator`     | ❌                              | ❌      |
+| `initiative_link:view`         | ✅ `*`  | ✅ `initiative_link:*`       | ✅                | ✅ `initiative_link:view`       | ❌      |
+| `initiative_link:create`       | ✅ `*`  | ✅ `initiative_link:*`       | ✅                | ❌                              | ❌      |
+| `initiative_link:edit`         | ✅ `*`  | ✅ `initiative_link:*`       | ✅                | ❌                              | ❌      |
+| `initiative_link:delete`       | ✅ `*`  | ✅ `initiative_link:*`       | ✅                | ❌                              | ❌      |
+
+**Impact:**
+
+- `@can` decorators on initiative attachment and link endpoints are unchanged; the tightening is at the role-grant layer. Workspace members now receive 403 on upload/mark-uploaded/delete for initiative attachments and on create/edit/delete for initiative links. Read (list/retrieve) continues to work.
+- FE affordances for adding/editing/deleting initiative attachments and links must be hidden for workspace members. The fold already suppresses these rows in the custom-role editor, so no matrix-editor UI changes are needed.
+- Custom workspace roles authored from the member system scheme before this change are frozen with their old grants — they are not auto-updated.

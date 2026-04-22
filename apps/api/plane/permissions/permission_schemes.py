@@ -288,16 +288,12 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             InitiativeCommentPermissions.EDIT & Condition.CREATOR,
             InitiativeCommentPermissions.DELETE & Condition.CREATOR,
             InitiativeCommentPermissions.REACT,
-            # Initiative attachments — create, edit (mark uploaded), delete own
+            # Initiative attachments — view only (create/edit/delete require initiative:edit,
+            # which members don't have; matches the FE fold contract that keeps
+            # initiative_attachment:create hidden under initiative:edit)
             InitiativeAttachmentPermissions.VIEW,
-            InitiativeAttachmentPermissions.CREATE,
-            InitiativeAttachmentPermissions.EDIT,
-            InitiativeAttachmentPermissions.DELETE & Condition.CREATOR,
-            # Initiative links — full CRUD
+            # Initiative links — view only (same rationale as attachments)
             InitiativeLinkPermissions.VIEW,
-            InitiativeLinkPermissions.CREATE,
-            InitiativeLinkPermissions.EDIT,
-            InitiativeLinkPermissions.DELETE,
             # Initiative updates — view and react
             InitiativeUpdatePermissions.VIEW,
             InitiativeUpdatePermissions.REACT,
@@ -380,11 +376,8 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             WorkitemRelationPermissions.CREATE,
             WorkitemRelationPermissions.EDIT,
             WorkitemRelationPermissions.DELETE,
-            # Releases - full CRUD
+            # Releases - view only
             ReleasePermissions.VIEW,
-            ReleasePermissions.CREATE,
-            ReleasePermissions.EDIT,
-            ReleasePermissions.DELETE,
         ],
     },
     "guest": {
@@ -406,8 +399,6 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             WorkspaceFeaturePermissions.VIEW,
             # Work item relation definitions - view only
             WorkitemRelationPermissions.VIEW,
-            # Releases - view only
-            ReleasePermissions.VIEW,
         ],
     },
 }

@@ -175,6 +175,12 @@ class WorkSpaceMemberViewSet(BaseViewSet):
             workspace_member.role = target_role
             workspace_member.role_ref = target_ws_role
 
+        # Identify the actor for the audit trail and the Layer 2 management
+        # authority guard in PermissionSyncMixin. Without this, role changes
+        # that cross a protected tier (admin/owner) fail the guard because
+        # actor_id resolves to None.
+        workspace_member.updated_by_id = request.user.id
+
         serializer = WorkSpaceMemberSerializer(workspace_member, data=request.data, partial=True)
 
         if serializer.is_valid():

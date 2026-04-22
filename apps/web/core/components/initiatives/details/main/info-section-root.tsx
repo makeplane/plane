@@ -120,6 +120,7 @@ export const InitiativeInfoSection = observer(function InitiativeInfoSection(pro
                 ? EmojiIconPickerTypes.EMOJI
                 : EmojiIconPickerTypes.ICON
             }
+            disabled={!permissions.canEdit}
           />
         </div>
       }

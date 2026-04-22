@@ -46,6 +46,8 @@ type Props = {
   initiativeId: string;
   permissions: {
     canEditProperty: (property: TInitiativeProperty) => boolean;
+    canAddProject: boolean;
+    canAddEpic: boolean;
     labels: TInitiativeDetailPermissions["labels"];
   };
   handleInitiativeStateUpdate: (state: TInitiativeStates) => void;
@@ -119,8 +121,9 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             <span className="text-13 font-medium text-tertiary">{t("projects")}</span>
           </div>
           <button
-            className="text-11 font-medium text-tertiary border-[0.5px] px-2 py-1 border-subtle-1 hover:bg-layer-1-hover rounded-sm cursor-pointer"
+            className="text-11 font-medium text-tertiary border-[0.5px] px-2 py-1 border-subtle-1 hover:bg-layer-1-hover rounded-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent"
             onClick={() => toggleProjectsModal(true)}
+            disabled={!permissions.canAddProject}
           >
             {initiativeProjectIds?.length} {initiativeProjectIds?.length === 1 ? "project" : "projects"}
           </button>
@@ -132,13 +135,14 @@ export const InitiativeSidebarPropertiesRoot = observer(function InitiativeSideb
             <span className="text-13 font-medium text-tertiary">{t("common.epic")}</span>
           </div>
           <button
-            className="text-11 font-medium text-tertiary border-[0.5px] px-2 py-1 border-subtle-1 hover:bg-layer-1-hover rounded-sm cursor-pointer"
+            className="text-11 font-medium text-tertiary border-[0.5px] px-2 py-1 border-subtle-1 hover:bg-layer-1-hover rounded-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent"
             onClick={() =>
               void toggleEpicModal(true, {
                 workspaceSlug: workspaceSlug.toString(),
                 initiativeId: initiative.id,
               })
             }
+            disabled={!permissions.canAddEpic}
           >
             {initiativeEpicIds?.length} {initiativeEpicIds?.length === 1 ? t("epic") : t("common.epics")}
           </button>
