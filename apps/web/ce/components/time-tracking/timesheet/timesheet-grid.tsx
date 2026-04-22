@@ -74,7 +74,8 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
     const weekDates = getWeekDates(data.week_start);
     const rows = data.rows.map((row) => {
       const entry: Record<string, string> = {};
-      if (isCrossWorkspace) entry["Workspace"] = (row as typeof row & { workspace_name?: string }).workspace_name ?? "-";
+      if (isCrossWorkspace)
+        entry["Workspace"] = (row as typeof row & { workspace_name?: string }).workspace_name ?? "-";
       entry["Issue"] = `${row.issue_identifier} ${row.issue_name}`;
       weekDates.forEach((date, idx) => {
         entry[DAY_NAMES[idx]] = formatMinutes(row.days[date] ?? 0);
