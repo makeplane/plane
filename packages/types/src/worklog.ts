@@ -105,6 +105,8 @@ export interface ICapacityDayTask {
   issue_name: string;
   issue_identifier: string;
   total_minutes: number;
+  project_id: string;
+  workspace_slug: string;
 }
 
 export interface ICapacityDayDetailsResponse {

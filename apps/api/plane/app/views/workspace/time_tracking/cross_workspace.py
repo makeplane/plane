@@ -272,6 +272,8 @@ class CrossWorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
                 "issue__name",
                 "issue__sequence_id",
                 "issue__project__identifier",
+                "issue__project_id",
+                "issue__workspace__slug",
             )
             .annotate(total=Sum("duration_minutes"))
         )
@@ -282,6 +284,8 @@ class CrossWorkspaceCapacityDayDetailsEndpoint(BaseAPIView):
                 "issue_name": wl["issue__name"],
                 "issue_identifier": f"{wl['issue__project__identifier']}-{wl['issue__sequence_id']}",
                 "total_minutes": wl["total"],
+                "project_id": str(wl["issue__project_id"]),
+                "workspace_slug": wl["issue__workspace__slug"],
             }
             for wl in worklogs
         ]

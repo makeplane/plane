@@ -158,12 +158,14 @@ class ProjectCapacityDayDetailsEndpoint(BaseAPIView):
                 logged_by_id=member_id,
                 logged_at=date,
             )
-            .select_related("issue__project")
+            .select_related("issue__project", "issue__workspace")
             .values(
                 "issue_id",
                 "issue__name",
                 "issue__sequence_id",
                 "issue__project__identifier",
+                "issue__project_id",
+                "issue__workspace__slug",
             )
             .annotate(total_minutes=Sum("duration_minutes"))
             .order_by("-total_minutes")
@@ -175,6 +177,8 @@ class ProjectCapacityDayDetailsEndpoint(BaseAPIView):
                 "issue_name": wl["issue__name"],
                 "issue_identifier": f"{wl['issue__project__identifier']}-{wl['issue__sequence_id']}",
                 "total_minutes": wl["total_minutes"],
+                "project_id": str(wl["issue__project_id"]),
+                "workspace_slug": wl["issue__workspace__slug"],
             }
             for wl in worklogs
         ]
