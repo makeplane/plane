@@ -127,7 +127,7 @@ export const CreateUpdateRunnerScript = observer(function CreateUpdateRunnerScri
                     void handleSubmit(onSubmit)();
                   }}
                 >
-                  Save & Use
+                  Save and use
                 </Button>
                 <IconButton variant="ghost" onClick={handleCancel} icon={X} />
               </div>

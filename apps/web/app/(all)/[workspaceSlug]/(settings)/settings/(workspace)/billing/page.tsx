@@ -29,7 +29,7 @@ function BillingSettingsPage({ params }: Route.ComponentProps) {
   // store hooks
   const { currentWorkspace } = useWorkspace();
   // derived values
-  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Billing & Plans` : undefined;
+  const pageTitle = currentWorkspace?.name ? `${currentWorkspace.name} - Billing and plans` : undefined;
 
   return (
     <SettingsContentWrapper header={<BillingWorkspaceSettingsHeader />} hugging>
