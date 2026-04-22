@@ -49,9 +49,10 @@ function IconCell({ name }: { name: IconName }) {
   const snippet = `<${componentName} />`;
 
   const handleClick = () => {
-    navigator.clipboard.writeText(snippet).then(() => {
+    void navigator.clipboard.writeText(snippet).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
+      return;
     });
   };
 
@@ -173,9 +174,10 @@ function CopyableCell({
   const snippet = `<${componentName}${sizeProp}${classProp} />`;
 
   const handleClick = () => {
-    navigator.clipboard.writeText(snippet).then(() => {
+    void navigator.clipboard.writeText(snippet).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 1200);
+      return;
     });
   };
 
@@ -412,7 +414,7 @@ export const FormattingIconColors = meta.story({
 const PLAYGROUND_SIZES = [12, 14, 16, 20, 24, 32, 40, 48];
 
 export const Playground = meta.story({
-  render(_args) {
+  render: function Render() {
     const [selectedIcon, setSelectedIcon] = React.useState<IconName>("formatting.bold");
     const [selectedSize, setSelectedSize] = React.useState(20);
     const [selectedColor, setSelectedColor] = React.useState("text-icon-primary");
@@ -434,9 +436,10 @@ export const Playground = meta.story({
         })();
 
     const handleCopy = () => {
-      navigator.clipboard.writeText(snippet).then(() => {
+      void navigator.clipboard.writeText(snippet).then(() => {
         setCopied(true);
         setTimeout(() => setCopied(false), 1200);
+        return;
       });
     };
 
@@ -471,7 +474,7 @@ export const Playground = meta.story({
           <div className="flex-1 space-y-6">
             {/* Icon picker */}
             <div className="space-y-3">
-              <label className="text-12 font-medium text-secondary uppercase tracking-wider">Outline</label>
+              <span className="text-12 font-medium text-secondary uppercase tracking-wider">Outline</span>
               <div className="flex flex-wrap gap-1.5">
                 {outlineKeys.map((name) => (
                   <button
@@ -491,7 +494,7 @@ export const Playground = meta.story({
                   </button>
                 ))}
               </div>
-              <label className="text-12 font-medium text-secondary uppercase tracking-wider">Filled</label>
+              <span className="text-12 font-medium text-secondary uppercase tracking-wider">Filled</span>
               <div className="flex flex-wrap gap-1.5">
                 {filledKeys.map((name) => (
                   <button
@@ -515,7 +518,7 @@ export const Playground = meta.story({
 
             {/* Size: icon px sizes OR IconButton sizes */}
             <div className="space-y-2">
-              <label className="text-12 font-medium text-secondary uppercase tracking-wider">Size</label>
+              <span className="text-12 font-medium text-secondary uppercase tracking-wider">Size</span>
               {useIconButton ? (
                 <div className="flex gap-2">
                   {(["sm", "base", "lg", "xl"] as const).map((s) => (
@@ -555,9 +558,9 @@ export const Playground = meta.story({
 
             {/* Color tokens OR IconButton variant */}
             <div className="space-y-2">
-              <label className="text-12 font-medium text-secondary uppercase tracking-wider">
+              <span className="text-12 font-medium text-secondary uppercase tracking-wider">
                 {useIconButton ? "Variant" : "Color Token"}
-              </label>
+              </span>
               {useIconButton ? (
                 <div className="flex flex-wrap gap-2">
                   {(["primary", "secondary", "tertiary", "ghost", "error-fill", "error-outline"] as const).map((v) => (
@@ -599,7 +602,7 @@ export const Playground = meta.story({
             {/* IconButton toggle */}
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <label className="text-12 font-medium text-secondary uppercase tracking-wider">Use as IconButton</label>
+                <span className="text-12 font-medium text-secondary uppercase tracking-wider">Use as IconButton</span>
                 <button
                   type="button"
                   onClick={() => setUseIconButton(!useIconButton)}
@@ -618,7 +621,7 @@ export const Playground = meta.story({
 
             {/* Code output */}
             <div className="space-y-2">
-              <label className="text-12 font-medium text-secondary uppercase tracking-wider">Code</label>
+              <span className="text-12 font-medium text-secondary uppercase tracking-wider">Code</span>
               <div className="flex items-center gap-3">
                 <code className="flex-1 bg-surface-2 px-4 py-3 rounded-lg text-13 text-primary font-mono">
                   {snippet}

@@ -17,10 +17,10 @@
     "start": "node --env-file=.env .",
     "test": "vitest run",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
-    "check:lint": "oxlint --type-aware -c ../../.oxlintrc.json .",
+    "check:lint": "oxlint --type-aware -c .oxlintrc.json .",
     "check:types": "tsc --noEmit",
     "check:format": "oxfmt . --check",
-    "fix:lint": "oxlint --type-aware --fix -c ../../.oxlintrc.json .",
+    "fix:lint": "oxlint --type-aware --fix -c .oxlintrc.json .",
     "fix:format": "oxfmt . --write",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist && sentry-cli sourcemaps upload --release=$SENTRY_RELEASE_VERSION ./dist"
   },

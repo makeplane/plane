@@ -31,14 +31,14 @@ export function MilestoneWorkItemActionButton(props: Props) {
   const { projectId, workspaceSlug, customButton, handleSubmit, selectedWorkItemIds, milestoneId, canAddWorkItems } =
     props;
 
-  if (!canAddWorkItems) return null;
-
   const [workItemsModal, setWorkItemsModal] = useState<boolean>(false);
+
+  if (!canAddWorkItems) return null;
 
   const workItemSearchCallBack = async (params: TProjectIssuesSearchParams) =>
     milestoneService.workItemsSearch(workspaceSlug, projectId, params);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement | SVGElement, MouseEvent>) => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setWorkItemsModal(true);
@@ -56,9 +56,13 @@ export function MilestoneWorkItemActionButton(props: Props) {
         workItemSearchServiceCallback={workItemSearchCallBack}
       />
       {customButton ? (
-        <div onClick={handleClick}>{customButton}</div>
+        <button type="button" className="appearance-none bg-transparent border-none p-0" onClick={handleClick}>
+          {customButton}
+        </button>
       ) : (
-        <PlusIcon className="size-4 text-secondary cursor-pointer" onClick={handleClick} />
+        <button type="button" className="appearance-none bg-transparent border-none p-0" onClick={handleClick}>
+          <PlusIcon className="size-4 text-secondary cursor-pointer" />
+        </button>
       )}
     </>
   );

@@ -22,7 +22,7 @@ const meta = preview.meta({
 });
 
 export const DefaultOpen = meta.story({
-  render: () => {
+  render: function Render() {
     const [isOpen, setIsOpen] = useState(true);
     return (
       <div className="w-72">
@@ -39,7 +39,7 @@ export const DefaultOpen = meta.story({
 });
 
 export const Closed = meta.story({
-  render: () => {
+  render: function Render() {
     const [isOpen, setIsOpen] = useState(false);
     return (
       <div className="w-72">
@@ -55,7 +55,7 @@ export const Closed = meta.story({
 });
 
 export const MultipleSections = meta.story({
-  render: () => {
+  render: function Render() {
     const [openSections, setOpenSections] = useState<Record<string, boolean>>({
       details: true,
       project: false,

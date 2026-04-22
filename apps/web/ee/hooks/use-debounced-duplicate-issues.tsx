@@ -11,7 +11,7 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import useSWR from "swr";
 // types
 import type { TDeDupeIssue } from "@plane/types";
@@ -37,12 +37,11 @@ export const useDebouncedDuplicateIssues = (
     issueId?: string | undefined;
   }
 ) => {
-  const [debouncedFormData, setDebouncedFormData] = useState(formData);
-
   // Check if the feature flag is enabled
+  const isAiDedupeEnabled = useAiFlag(workspaceSlug, "AI_DEDUPE");
   const isFeatureEnabled =
-    workspaceSlug &&
-    useAiFlag(workspaceSlug, "AI_DEDUPE") &&
+    isAiDedupeEnabled &&
+    !!workspaceSlug &&
     store.workspaceFeatures.isWorkspaceFeatureEnabled(workspaceSlug, EWorkspaceFeatures.IS_PI_ENABLED);
 
   // Debounce the name and description
@@ -50,12 +49,13 @@ export const useDebouncedDuplicateIssues = (
   const debouncedDescription = useDebounce(formData?.description_html, 3000);
 
   // Update debounced form data
-  useEffect(() => {
-    setDebouncedFormData({
+  const debouncedFormData = useMemo(
+    () => ({
       name: debouncedName,
       description_html: debouncedDescription,
-    });
-  }, [debouncedName, debouncedDescription]);
+    }),
+    [debouncedName, debouncedDescription]
+  );
 
   const shouldFetch =
     workspaceId && projectId && debouncedFormData.name && debouncedFormData.name.trim() !== "" && isFeatureEnabled;

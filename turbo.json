@@ -89,7 +89,7 @@
     "check:lint": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "!**/*.md"],
-      "outputs": ["node_modules/.cache/eslint/**"]
+      "outputs": []
     },
     "check:types": {
       "dependsOn": ["^build"],

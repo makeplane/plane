@@ -101,7 +101,7 @@ export type ColumnDragHandleProps = {
   editor: Editor;
 };
 
-export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = ({ columnPos, editor }) => {
+const ColumnDragHandleComponent: React.FC<ColumnDragHandleProps> = ({ editor, columnPos }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dragCleanupRef = useRef<(() => void) | null>(null);
   const hasDraggedRef = useRef(false);
@@ -110,10 +110,6 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = ({ columnPos, e
     mouseup?: (e: MouseEvent) => void;
     mousemove?: (e: MouseEvent) => void;
   }>({});
-
-  if (!editor.isEditable) {
-    return null;
-  }
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
@@ -352,4 +348,12 @@ export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = ({ columnPos, e
       )}
     </>
   );
+};
+
+export const ColumnDragHandle: React.FC<ColumnDragHandleProps> = ({ columnPos, editor }) => {
+  if (!editor.isEditable) {
+    return null;
+  }
+
+  return <ColumnDragHandleComponent editor={editor} columnPos={columnPos} />;
 };

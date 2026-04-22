@@ -115,7 +115,7 @@
     "react/no-string-refs": "error",
     "react/no-unescaped-entities": "error",
     "react/no-unknown-property": "warn",
-    "react-hooks/rules-of-hooks": "warn",
+    "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "jsx-a11y/alt-text": "warn",
     "jsx-a11y/anchor-has-content": "error",

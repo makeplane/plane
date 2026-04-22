@@ -24,7 +24,7 @@ const meta = preview.meta({
 });
 
 export const DefaultOpen = meta.story({
-  render: () => {
+  render: function Render() {
     const section = MOCK_WIDGET_SECTIONS[0];
     const [isOpen, setIsOpen] = useState(true);
     return (
@@ -43,7 +43,7 @@ export const DefaultOpen = meta.story({
 });
 
 export const Closed = meta.story({
-  render: () => {
+  render: function Render() {
     const section = MOCK_WIDGET_SECTIONS[3];
     const [isOpen, setIsOpen] = useState(false);
     return (
@@ -62,7 +62,7 @@ export const Closed = meta.story({
 });
 
 export const WithActionElement = meta.story({
-  render: () => {
+  render: function Render() {
     const section = MOCK_WIDGET_SECTIONS[2];
     const [isOpen, setIsOpen] = useState(true);
     return (

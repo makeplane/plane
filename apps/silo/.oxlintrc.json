@@ -1,0 +1,16 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react-hooks-js/rules-of-hooks": "off",
+    "react-hooks-js/exhaustive-deps": "off",
+    "react-hooks-js/immutability": "off",
+    "react-hooks-js/preserve-manual-memoization": "off",
+    "react-hooks-js/purity": "off",
+    "react-hooks-js/refs": "off",
+    "react-hooks-js/set-state-in-effect": "off",
+    "react-hooks-js/static-components": "off"
+  }
+}

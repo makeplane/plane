@@ -15,7 +15,16 @@
 import type { ICycle, IModule, IProjectView, IWorkspaceView } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 // hooks
-import { useQuickActionsFactory } from "@/components/common/quick-actions/factory";
+import {
+  useQuickActionsFactory,
+  useCycleEndFeature,
+  useCycleExportFeature,
+  useModuleExportFeature,
+  useViewLockFeature,
+  useViewExportFeature,
+  useLayoutExportFeature,
+  useIntakeExportFeature,
+} from "@/components/common/quick-actions/factory";
 
 // Types
 type UseCycleMenuItemsProps = {
@@ -67,7 +76,7 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
       )
     : 0;
 
-  const endCycleFeature = factory.useCycleEndFeature?.({
+  const endCycleFeature = useCycleEndFeature({
     workspaceSlug,
     projectId,
     cycleId,
@@ -77,7 +86,7 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
     canEndCycle: permissions.canEdit,
   });
 
-  const exportFeature = factory.useCycleExportFeature?.({
+  const exportFeature = useCycleExportFeature({
     workspaceSlug,
     projectId,
     cycleId,
@@ -93,8 +102,8 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
       isFavorite,
       shouldRender: permissions.canFavorite && !isArchived,
     }),
-    ...(endCycleFeature?.items ?? []),
-    ...(exportFeature?.items ?? []),
+    ...endCycleFeature.items,
+    ...exportFeature.items,
     factory.createArchiveMenuItem(handlers.handleArchive, {
       shouldRender: permissions.canArchive && !isArchived,
       disabled: !isCompleted,
@@ -107,8 +116,8 @@ export const useCycleMenuItems = (props: UseCycleMenuItemsProps): MenuResult => 
   // Assemble final modals
   const modals = (
     <>
-      {endCycleFeature?.modals}
-      {exportFeature?.modals}
+      {endCycleFeature.modals}
+      {exportFeature.modals}
     </>
   );
 
@@ -142,7 +151,7 @@ export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult =
   const moduleState = moduleDetails?.status?.toLocaleLowerCase();
   const isInArchivableGroup = !!moduleState && ["completed", "cancelled"].includes(moduleState);
 
-  const exportFeature = factory.useModuleExportFeature?.({
+  const exportFeature = useModuleExportFeature({
     workspaceSlug,
     projectId,
     moduleId,
@@ -154,7 +163,7 @@ export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult =
     factory.createEditMenuItem(handlers.handleEdit, permissions.canEdit && !isArchived),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
-    ...(exportFeature?.items ?? []),
+    ...exportFeature.items,
     factory.createArchiveMenuItem(handlers.handleArchive, {
       shouldRender: permissions.canArchive && !isArchived,
       disabled: !isInArchivableGroup,
@@ -165,7 +174,7 @@ export const useModuleMenuItems = (props: UseModuleMenuItemsProps): MenuResult =
   ].filter((item) => item.shouldRender !== false);
 
   // Assemble final modals
-  const modals = exportFeature?.modals ?? null;
+  const modals = exportFeature.modals;
 
   return { items, modals };
 };
@@ -190,21 +199,21 @@ export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
   const factory = useQuickActionsFactory();
   const { workspaceSlug, projectId, view, permissions, isDetailPage, ...handlers } = props;
 
+  const lockFeature = useViewLockFeature({
+    workspaceSlug,
+    projectId,
+    viewId: view?.id ?? "",
+    isLocked: view?.is_locked ?? false,
+    canLock: !!view?.id && permissions.canLock,
+  });
+
+  const exportFeature = useViewExportFeature({
+    workspaceSlug,
+    projectId,
+    viewId: view?.id ?? "",
+  });
+
   if (!view) return { items: [], modals: null };
-
-  const lockFeature = factory.useViewLockFeature?.({
-    workspaceSlug,
-    projectId,
-    viewId: view.id,
-    isLocked: view.is_locked,
-    canLock: permissions.canLock,
-  });
-
-  const exportFeature = factory.useViewExportFeature?.({
-    workspaceSlug,
-    projectId,
-    viewId: view.id,
-  });
 
   // Assemble final menu items - order defined here
   const items = [
@@ -212,12 +221,12 @@ export const useViewMenuItems = (props: UseViewMenuItemsProps): MenuResult => {
     ...(!isDetailPage ? (lockFeature?.items ?? []) : []),
     factory.createOpenInNewTabMenuItem(handlers.handleOpenInNewTab),
     factory.createCopyLinkMenuItem(handlers.handleCopyLink),
-    ...(exportFeature?.items ?? []),
+    ...exportFeature.items,
     factory.createDeleteMenuItem(handlers.handleDelete, permissions.canDelete),
   ].filter((item) => item.shouldRender !== false);
 
   // Assemble final modals
-  const modals = exportFeature?.modals ?? null;
+  const modals = exportFeature.modals;
 
   return { items, modals };
 };
@@ -226,7 +235,7 @@ export const useLayoutMenuItems = (props: UseLayoutMenuItemsProps): MenuResult =
   const factory = useQuickActionsFactory();
   const { workspaceSlug, projectId, storeType, ...handlers } = props;
 
-  const exportFeature = factory.useLayoutExportFeature?.({
+  const exportFeature = useLayoutExportFeature({
     workspaceSlug,
     projectId,
     storeType,
@@ -236,11 +245,11 @@ export const useLayoutMenuItems = (props: UseLayoutMenuItemsProps): MenuResult =
   const items = [
     factory.createOpenInNewTab(handlers.handleOpenInNewTab),
     factory.createCopyLayoutLinkMenuItem(handlers.handleCopyLink),
-    ...(exportFeature?.items ?? []),
+    ...exportFeature.items,
   ].filter((item) => item.shouldRender !== false);
 
   // Assemble final modals
-  const modals = exportFeature?.modals ?? null;
+  const modals = exportFeature.modals;
 
   return { items, modals };
 };
@@ -252,18 +261,18 @@ export const useIntakeHeaderMenuItems = (props: {
 }): MenuResult => {
   const factory = useQuickActionsFactory();
 
-  const exportFeature = factory.useIntakeExportFeature?.({
+  const exportFeature = useIntakeExportFeature({
     workspaceSlug: props.workspaceSlug,
     projectId: props.projectId,
   });
 
   // Assemble final menu items - order defined here
-  const items = [factory.createCopyLinkMenuItem(props.handleCopyLink), ...(exportFeature?.items ?? [])].filter(
+  const items = [factory.createCopyLinkMenuItem(props.handleCopyLink), ...exportFeature.items].filter(
     (item) => item.shouldRender !== false
   );
 
   // Assemble final modals
-  const modals = exportFeature?.modals ?? null;
+  const modals = exportFeature.modals;
 
   return { items, modals };
 };

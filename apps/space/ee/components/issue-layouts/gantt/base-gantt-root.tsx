@@ -76,9 +76,7 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
     if (getIssueLoader() !== "pagination") {
       fetchNextPublicIssues(anchor);
     }
-  }, [fetchNextPublicIssues]);
-
-  if (!Array.isArray(issueIds)) return null;
+  }, [getIssueLoader, fetchNextPublicIssues, anchor]);
 
   const getBlockById = useCallback(
     (id: string, currentViewData?: ChartDataType) => {
@@ -97,6 +95,8 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
     },
     [getIssueById]
   );
+
+  if (!Array.isArray(issueIds)) return null;
 
   return (
     <IssueLayoutHOC getGroupIssueCount={getGroupIssueCount} getIssueLoader={getIssueLoader}>

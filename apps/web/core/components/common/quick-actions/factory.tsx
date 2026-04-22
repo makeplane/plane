@@ -44,7 +44,7 @@ import { useFlag } from "@/plane-web/hooks/store";
 // services
 import exportService from "@/services/export.service";
 
-type FeatureResult = {
+export type FeatureResult = {
   items: TContextMenuItem[];
   modals: JSX.Element | null;
 };
@@ -55,11 +55,6 @@ type FeatureResult = {
 export const useQuickActionsFactory = () => {
   // store hooks
   const { t } = useTranslation();
-  const { permissions: workItemPermissions } = useIssues();
-  const { permissions: epicPermissions } = useEpics();
-  const { permissions: projectViewPermissions } = useProjectView();
-  const { permissions: workspaceViewPermissions } = useGlobalView();
-  const { permissions: intakePermissions } = useProjectInbox();
 
   return {
     // Common menu items
@@ -207,442 +202,6 @@ export const useQuickActionsFactory = () => {
       shouldRender: opts.shouldRender,
     }),
 
-    // EE feature: End Cycle with modal
-    useCycleEndFeature: (props: {
-      workspaceSlug: string;
-      projectId: string;
-      cycleId: string;
-      cycleName: string | undefined;
-      isCurrentCycle: boolean;
-      transferrableIssuesCount: number;
-      canEndCycle: boolean;
-    }): FeatureResult => {
-      const [isOpen, setIsOpen] = useState(false);
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.CYCLE_PROGRESS_CHARTS);
-
-      const items =
-        isEnabled && props.isCurrentCycle
-          ? [
-              {
-                key: "end-cycle",
-                title: "End Cycle",
-                icon: StopCircle,
-                action: () => setIsOpen(true),
-                shouldRender: true,
-              } as TContextMenuItem,
-            ]
-          : [];
-
-      const modals =
-        isEnabled && props.isCurrentCycle ? (
-          <EndCycleModal
-            isOpen={isOpen}
-            handleClose={() => setIsOpen(false)}
-            cycleId={props.cycleId}
-            projectId={props.projectId}
-            workspaceSlug={props.workspaceSlug}
-            transferrableIssuesCount={props.transferrableIssuesCount}
-          />
-        ) : null;
-
-      return { items, modals };
-    },
-
-    // EE feature: Export for Cycles
-    useCycleExportFeature: (props: {
-      workspaceSlug: string;
-      projectId: string;
-      cycleId: string;
-      isArchived: boolean;
-    }): FeatureResult => {
-      const [isOpen, setIsOpen] = useState(false);
-      const { getFilter } = useWorkItemFilters();
-      const richFilters = getFilter(
-        EIssuesStoreType.CYCLE,
-        props.cycleId
-      )?.richFiltersInstance?.getExternalExpression();
-
-      const { issuesFilter: _issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
-      const isEnabled =
-        useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) &&
-        workItemPermissions.getCanExport(props.workspaceSlug, props.projectId);
-
-      const handleExport = async (provider: TExportProvider) => {
-        try {
-          await exportService.exportCycleWorkItems(
-            props.workspaceSlug,
-            props.projectId,
-            props.cycleId,
-            provider,
-            richFilters
-          );
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Export started",
-            message: "Your export will be ready soon.",
-            actionItems: (
-              <div className="flex items-center gap-1 text-11 text-secondary">
-                <a
-                  href={`/${props.workspaceSlug}/settings/exports/`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
-                >
-                  View Exports
-                </a>
-              </div>
-            ),
-          });
-          setIsOpen(false);
-        } catch (_error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Failed to export cycle. Please try again.",
-          });
-        }
-      };
-
-      const items =
-        isEnabled && !props.isArchived
-          ? [
-              {
-                key: "export",
-                title: "Export",
-                icon: Download,
-                action: () => setIsOpen(true),
-                shouldRender: true,
-              } as TContextMenuItem,
-            ]
-          : [];
-
-      const modals = isEnabled ? (
-        <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
-      ) : null;
-
-      return { items, modals };
-    },
-
-    // EE feature: Export for Modules
-    useModuleExportFeature: (props: {
-      workspaceSlug: string;
-      projectId: string;
-      moduleId: string;
-      isArchived: boolean;
-    }): FeatureResult => {
-      const [isOpen, setIsOpen] = useState(false);
-      const { getFilter } = useWorkItemFilters();
-      const richFilters = getFilter(
-        EIssuesStoreType.MODULE,
-        props.moduleId
-      )?.richFiltersInstance?.getExternalExpression();
-      const isEnabled =
-        useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) &&
-        workItemPermissions.getCanExport(props.workspaceSlug, props.projectId);
-
-      const handleExport = async (provider: TExportProvider) => {
-        try {
-          await exportService.exportModuleWorkItems(
-            props.workspaceSlug,
-            props.projectId,
-            props.moduleId,
-            provider,
-            richFilters
-          );
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Export started",
-            message: "Your export will be ready soon.",
-            actionItems: (
-              <div className="flex items-center gap-1 text-11 text-secondary">
-                <a
-                  href={`/${props.workspaceSlug}/settings/exports`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
-                >
-                  View Exports
-                </a>
-              </div>
-            ),
-          });
-          setIsOpen(false);
-        } catch (_error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Failed to export module. Please try again.",
-          });
-        }
-      };
-
-      const items =
-        isEnabled && !props.isArchived
-          ? [
-              {
-                key: "export",
-                title: "Export",
-                icon: Download,
-                action: () => setIsOpen(true),
-                shouldRender: true,
-              } as TContextMenuItem,
-            ]
-          : [];
-
-      const modals = isEnabled ? (
-        <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
-      ) : null;
-
-      return { items, modals };
-    },
-
-    // EE feature: View Lock
-    useViewLockFeature: (props: {
-      workspaceSlug: string;
-      projectId?: string;
-      viewId: string;
-      isLocked: boolean;
-      canLock: boolean;
-    }): FeatureResult => {
-      const { lockView, unLockView } = useProjectView();
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.VIEW_LOCK);
-
-      const handleToggleLock = async () => {
-        if (!props.projectId) return;
-        const operation = props.isLocked ? unLockView : lockView;
-        await operation(props.workspaceSlug, props.projectId, props.viewId)
-          .then(() => {
-            setToast({
-              type: TOAST_TYPE.SUCCESS,
-              title: "Success!",
-              message: props.isLocked ? "View unlocked successfully." : "View locked successfully.",
-            });
-            return;
-          })
-          .catch(() => {
-            setToast({
-              type: TOAST_TYPE.ERROR,
-              title: "Error!",
-              message: props.isLocked
-                ? "View could not be unlocked. Please try again later."
-                : "View could not be locked. Please try again later.",
-            });
-          });
-      };
-
-      const items =
-        isEnabled && props.canLock
-          ? [
-              {
-                key: "toggle-lock",
-                title: props.isLocked ? "Unlock" : "Lock",
-                icon: props.isLocked ? LockOpen : LockIcon,
-                action: () => void handleToggleLock(),
-                shouldRender: true,
-              } as TContextMenuItem,
-            ]
-          : [];
-
-      return { items, modals: null };
-    },
-
-    // EE feature: Export for Views
-    useViewExportFeature: (props: { workspaceSlug: string; projectId?: string; viewId: string }): FeatureResult => {
-      const [isOpen, setIsOpen] = useState(false);
-      const { getFilter } = useWorkItemFilters();
-      const richFilterEntityType = props.projectId ? EIssuesStoreType.PROJECT_VIEW : EIssuesStoreType.GLOBAL;
-      const richFilters = getFilter(richFilterEntityType, props.viewId)?.richFiltersInstance?.getExternalExpression();
-      const canExportView = props.projectId
-        ? projectViewPermissions.getCanExport(props.projectId)
-        : workspaceViewPermissions.getCanExport(props.viewId);
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && canExportView;
-
-      const handleExport = async (provider: TExportProvider) => {
-        try {
-          if (props.projectId) {
-            await exportService.exportProjectViewWorkItems(
-              props.workspaceSlug,
-              props.projectId,
-              props.viewId,
-              provider,
-              richFilters
-            );
-          } else {
-            await exportService.exportWorkspaceViewWorkItems(props.workspaceSlug, props.viewId, provider, richFilters);
-          }
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Export started",
-            message: "Your export will be ready soon.",
-            actionItems: (
-              <div className="flex items-center gap-1 text-11 text-secondary">
-                <a
-                  href={`/${props.workspaceSlug}/settings/exports`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
-                >
-                  View Exports
-                </a>
-              </div>
-            ),
-          });
-          setIsOpen(false);
-        } catch (_error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Failed to export view. Please try again.",
-          });
-        }
-      };
-
-      const items = isEnabled
-        ? [
-            {
-              key: "export",
-              title: "Export",
-              icon: Download,
-              action: () => setIsOpen(true),
-              shouldRender: true,
-            } as TContextMenuItem,
-          ]
-        : [];
-
-      const modals = isEnabled ? (
-        <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
-      ) : null;
-
-      return { items, modals };
-    },
-
-    // EE feature: Export for Layouts
-    useLayoutExportFeature: (props: {
-      workspaceSlug: string;
-      projectId: string;
-      storeType: "PROJECT" | "EPIC";
-    }): FeatureResult => {
-      const [isOpen, setIsOpen] = useState(false);
-      const { getFilter } = useWorkItemFilters();
-      const richFilterEntityType = props.storeType === "EPIC" ? EIssuesStoreType.EPIC : EIssuesStoreType.PROJECT;
-      const richFilters = getFilter(
-        richFilterEntityType,
-        props.projectId
-      )?.richFiltersInstance?.getExternalExpression();
-      const canExportLayout =
-        props.storeType === "EPIC"
-          ? epicPermissions.getCanExport(props.workspaceSlug, props.projectId)
-          : workItemPermissions.getCanExport(props.workspaceSlug, props.projectId);
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && canExportLayout;
-
-      const handleExport = async (provider: TExportProvider) => {
-        try {
-          if (props.storeType === "EPIC") {
-            await exportService.exportEpics(props.workspaceSlug, props.projectId, provider, richFilters);
-          } else {
-            await exportService.exportWorkItems(props.workspaceSlug, props.projectId, provider, richFilters);
-          }
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Export started",
-            message: "Your export will be ready soon.",
-            actionItems: (
-              <div className="flex items-center gap-1 text-11 text-secondary">
-                <a
-                  href={`/${props.workspaceSlug}/settings/exports`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
-                >
-                  View Exports
-                </a>
-              </div>
-            ),
-          });
-          setIsOpen(false);
-        } catch (_error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: `Failed to export ${props.storeType === "EPIC" ? "epics" : "work items"}. Please try again.`,
-          });
-        }
-      };
-
-      const items = isEnabled
-        ? [
-            {
-              key: "export",
-              title: "Export",
-              icon: Download,
-              action: () => setIsOpen(true),
-              shouldRender: true,
-            } as TContextMenuItem,
-          ]
-        : [];
-
-      const modals = isEnabled ? (
-        <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
-      ) : null;
-
-      return { items, modals };
-    },
-
-    // EE feature: Export for Intake
-    useIntakeExportFeature: (props: { workspaceSlug: string; projectId: string }): FeatureResult => {
-      const [isOpen, setIsOpen] = useState(false);
-      const canExportIntake = intakePermissions.getCanExport(props.workspaceSlug, props.projectId);
-      const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && canExportIntake;
-
-      const handleExport = async (provider: TExportProvider) => {
-        try {
-          await exportService.exportIntakeWorkItems(props.workspaceSlug, props.projectId, provider);
-          setToast({
-            type: TOAST_TYPE.SUCCESS,
-            title: "Export started",
-            message: "Your export will be ready soon.",
-            actionItems: (
-              <div className="flex items-center gap-1 text-11 text-secondary">
-                <a
-                  href={`/${props.workspaceSlug}/settings/exports`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
-                >
-                  View Exports
-                </a>
-              </div>
-            ),
-          });
-          setIsOpen(false);
-        } catch (_error) {
-          setToast({
-            type: TOAST_TYPE.ERROR,
-            title: "Error!",
-            message: "Failed to export intake. Please try again.",
-          });
-        }
-      };
-
-      const items = isEnabled
-        ? [
-            {
-              key: "export",
-              title: "Export",
-              icon: Download,
-              action: () => setIsOpen(true),
-              shouldRender: true,
-            } as TContextMenuItem,
-          ]
-        : [];
-
-      const modals = isEnabled ? (
-        <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
-      ) : null;
-
-      return { items, modals };
-    },
-
     // Reply menu items (EE-only)
     createReplyEditMenuItem: (handler: () => void, shouldRender: boolean = true): TContextMenuItem => ({
       key: "edit",
@@ -659,26 +218,463 @@ export const useQuickActionsFactory = () => {
       action: handler,
       shouldRender,
     }),
-
-    // EE feature: Comment Reply
-    useCommentReplyFeature: (props: {
-      commentId: string;
-      handleReply?: () => void;
-      shouldRender: boolean;
-    }): FeatureResult => {
-      const { t } = useTranslation();
-
-      const items = [
-        {
-          key: "reply",
-          title: t("common.actions.reply"),
-          icon: CommentReplyIcon,
-          action: props.handleReply || (() => {}),
-          shouldRender: props.shouldRender,
-        } as TContextMenuItem,
-      ];
-
-      return { items, modals: null };
-    },
   };
+};
+
+// EE feature: End Cycle with modal
+export const useCycleEndFeature = (props: {
+  workspaceSlug: string;
+  projectId: string;
+  cycleId: string;
+  cycleName: string | undefined;
+  isCurrentCycle: boolean;
+  transferrableIssuesCount: number;
+  canEndCycle: boolean;
+}): FeatureResult => {
+  const [isOpen, setIsOpen] = useState(false);
+  const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.CYCLE_PROGRESS_CHARTS);
+
+  const items =
+    isEnabled && props.isCurrentCycle
+      ? [
+          {
+            key: "end-cycle",
+            title: "End Cycle",
+            icon: StopCircle,
+            action: () => setIsOpen(true),
+            shouldRender: true,
+          } as TContextMenuItem,
+        ]
+      : [];
+
+  const modals =
+    isEnabled && props.isCurrentCycle ? (
+      <EndCycleModal
+        isOpen={isOpen}
+        handleClose={() => setIsOpen(false)}
+        cycleId={props.cycleId}
+        projectId={props.projectId}
+        workspaceSlug={props.workspaceSlug}
+        transferrableIssuesCount={props.transferrableIssuesCount}
+      />
+    ) : null;
+
+  return { items, modals };
+};
+
+// EE feature: Export for Cycles
+export const useCycleExportFeature = (props: {
+  workspaceSlug: string;
+  projectId: string;
+  cycleId: string;
+  isArchived: boolean;
+}): FeatureResult => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { getFilter } = useWorkItemFilters();
+  const richFilters = getFilter(EIssuesStoreType.CYCLE, props.cycleId)?.richFiltersInstance?.getExternalExpression();
+
+  const { permissions: workItemPermissions } = useIssues(EIssuesStoreType.CYCLE);
+  const isEnabled =
+    useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) &&
+    workItemPermissions.getCanExport(props.workspaceSlug, props.projectId);
+
+  const handleExport = async (provider: TExportProvider) => {
+    try {
+      await exportService.exportCycleWorkItems(
+        props.workspaceSlug,
+        props.projectId,
+        props.cycleId,
+        provider,
+        richFilters
+      );
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Export started",
+        message: "Your export will be ready soon.",
+        actionItems: (
+          <div className="flex items-center gap-1 text-11 text-secondary">
+            <a
+              href={`/${props.workspaceSlug}/settings/exports/`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
+            >
+              View Exports
+            </a>
+          </div>
+        ),
+      });
+      setIsOpen(false);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to export cycle. Please try again.",
+      });
+    }
+  };
+
+  const items =
+    isEnabled && !props.isArchived
+      ? [
+          {
+            key: "export",
+            title: "Export",
+            icon: Download,
+            action: () => setIsOpen(true),
+            shouldRender: true,
+          } as TContextMenuItem,
+        ]
+      : [];
+
+  const modals = isEnabled ? (
+    <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
+  ) : null;
+
+  return { items, modals };
+};
+
+// EE feature: Export for Modules
+export const useModuleExportFeature = (props: {
+  workspaceSlug: string;
+  projectId: string;
+  moduleId: string;
+  isArchived: boolean;
+}): FeatureResult => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { permissions: workItemPermissions } = useIssues();
+  const { getFilter } = useWorkItemFilters();
+  const richFilters = getFilter(EIssuesStoreType.MODULE, props.moduleId)?.richFiltersInstance?.getExternalExpression();
+  const isEnabled =
+    useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) &&
+    workItemPermissions.getCanExport(props.workspaceSlug, props.projectId);
+
+  const handleExport = async (provider: TExportProvider) => {
+    try {
+      await exportService.exportModuleWorkItems(
+        props.workspaceSlug,
+        props.projectId,
+        props.moduleId,
+        provider,
+        richFilters
+      );
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Export started",
+        message: "Your export will be ready soon.",
+        actionItems: (
+          <div className="flex items-center gap-1 text-11 text-secondary">
+            <a
+              href={`/${props.workspaceSlug}/settings/exports`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
+            >
+              View Exports
+            </a>
+          </div>
+        ),
+      });
+      setIsOpen(false);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to export module. Please try again.",
+      });
+    }
+  };
+
+  const items =
+    isEnabled && !props.isArchived
+      ? [
+          {
+            key: "export",
+            title: "Export",
+            icon: Download,
+            action: () => setIsOpen(true),
+            shouldRender: true,
+          } as TContextMenuItem,
+        ]
+      : [];
+
+  const modals = isEnabled ? (
+    <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
+  ) : null;
+
+  return { items, modals };
+};
+
+// EE feature: View Lock
+export const useViewLockFeature = (props: {
+  workspaceSlug: string;
+  projectId?: string;
+  viewId: string;
+  isLocked: boolean;
+  canLock: boolean;
+}): FeatureResult => {
+  const { lockView, unLockView } = useProjectView();
+  const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.VIEW_LOCK);
+
+  const handleToggleLock = async () => {
+    if (!props.projectId) return;
+    const operation = props.isLocked ? unLockView : lockView;
+    await operation(props.workspaceSlug, props.projectId, props.viewId)
+      .then(() => {
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: "Success!",
+          message: props.isLocked ? "View unlocked successfully." : "View locked successfully.",
+        });
+        return;
+      })
+      .catch(() => {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: "Error!",
+          message: props.isLocked
+            ? "View could not be unlocked. Please try again later."
+            : "View could not be locked. Please try again later.",
+        });
+      });
+  };
+
+  const items =
+    isEnabled && props.canLock
+      ? [
+          {
+            key: "toggle-lock",
+            title: props.isLocked ? "Unlock" : "Lock",
+            icon: props.isLocked ? LockOpen : LockIcon,
+            action: () => void handleToggleLock(),
+            shouldRender: true,
+          } as TContextMenuItem,
+        ]
+      : [];
+
+  return { items, modals: null };
+};
+
+// EE feature: Export for Views
+export const useViewExportFeature = (props: {
+  workspaceSlug: string;
+  projectId?: string;
+  viewId: string;
+}): FeatureResult => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { permissions: projectViewPermissions } = useProjectView();
+  const { permissions: workspaceViewPermissions } = useGlobalView();
+  const { getFilter } = useWorkItemFilters();
+  const richFilterEntityType = props.projectId ? EIssuesStoreType.PROJECT_VIEW : EIssuesStoreType.GLOBAL;
+  const richFilters = getFilter(richFilterEntityType, props.viewId)?.richFiltersInstance?.getExternalExpression();
+  const canExportView = props.projectId
+    ? projectViewPermissions.getCanExport(props.projectId)
+    : workspaceViewPermissions.getCanExport(props.viewId);
+  const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && canExportView;
+
+  const handleExport = async (provider: TExportProvider) => {
+    try {
+      if (props.projectId) {
+        await exportService.exportProjectViewWorkItems(
+          props.workspaceSlug,
+          props.projectId,
+          props.viewId,
+          provider,
+          richFilters
+        );
+      } else {
+        await exportService.exportWorkspaceViewWorkItems(props.workspaceSlug, props.viewId, provider, richFilters);
+      }
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Export started",
+        message: "Your export will be ready soon.",
+        actionItems: (
+          <div className="flex items-center gap-1 text-11 text-secondary">
+            <a
+              href={`/${props.workspaceSlug}/settings/exports`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
+            >
+              View Exports
+            </a>
+          </div>
+        ),
+      });
+      setIsOpen(false);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to export view. Please try again.",
+      });
+    }
+  };
+
+  const items = isEnabled
+    ? [
+        {
+          key: "export",
+          title: "Export",
+          icon: Download,
+          action: () => setIsOpen(true),
+          shouldRender: true,
+        } as TContextMenuItem,
+      ]
+    : [];
+
+  const modals = isEnabled ? (
+    <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
+  ) : null;
+
+  return { items, modals };
+};
+
+// EE feature: Export for Layouts
+export const useLayoutExportFeature = (props: {
+  workspaceSlug: string;
+  projectId: string;
+  storeType: "PROJECT" | "EPIC";
+}): FeatureResult => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { permissions: workItemPermissions } = useIssues();
+  const { permissions: epicPermissions } = useEpics();
+  const { getFilter } = useWorkItemFilters();
+  const richFilterEntityType = props.storeType === "EPIC" ? EIssuesStoreType.EPIC : EIssuesStoreType.PROJECT;
+  const richFilters = getFilter(richFilterEntityType, props.projectId)?.richFiltersInstance?.getExternalExpression();
+  const canExportLayout =
+    props.storeType === "EPIC"
+      ? epicPermissions.getCanExport(props.workspaceSlug, props.projectId)
+      : workItemPermissions.getCanExport(props.workspaceSlug, props.projectId);
+  const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && canExportLayout;
+
+  const handleExport = async (provider: TExportProvider) => {
+    try {
+      if (props.storeType === "EPIC") {
+        await exportService.exportEpics(props.workspaceSlug, props.projectId, provider, richFilters);
+      } else {
+        await exportService.exportWorkItems(props.workspaceSlug, props.projectId, provider, richFilters);
+      }
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Export started",
+        message: "Your export will be ready soon.",
+        actionItems: (
+          <div className="flex items-center gap-1 text-11 text-secondary">
+            <a
+              href={`/${props.workspaceSlug}/settings/exports`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
+            >
+              View Exports
+            </a>
+          </div>
+        ),
+      });
+      setIsOpen(false);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: `Failed to export ${props.storeType === "EPIC" ? "epics" : "work items"}. Please try again.`,
+      });
+    }
+  };
+
+  const items = isEnabled
+    ? [
+        {
+          key: "export",
+          title: "Export",
+          icon: Download,
+          action: () => setIsOpen(true),
+          shouldRender: true,
+        } as TContextMenuItem,
+      ]
+    : [];
+
+  const modals = isEnabled ? (
+    <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
+  ) : null;
+
+  return { items, modals };
+};
+
+// EE feature: Export for Intake
+export const useIntakeExportFeature = (props: { workspaceSlug: string; projectId: string }): FeatureResult => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { permissions: intakePermissions } = useProjectInbox();
+  const canExportIntake = intakePermissions.getCanExport(props.workspaceSlug, props.projectId);
+  const isEnabled = useFlag(props.workspaceSlug, E_FEATURE_FLAGS.ADVANCED_EXPORTS) && canExportIntake;
+
+  const handleExport = async (provider: TExportProvider) => {
+    try {
+      await exportService.exportIntakeWorkItems(props.workspaceSlug, props.projectId, provider);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: "Export started",
+        message: "Your export will be ready soon.",
+        actionItems: (
+          <div className="flex items-center gap-1 text-11 text-secondary">
+            <a
+              href={`/${props.workspaceSlug}/settings/exports`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary px-2 py-1 hover:bg-layer-1 font-medium rounded"
+            >
+              View Exports
+            </a>
+          </div>
+        ),
+      });
+      setIsOpen(false);
+    } catch (_error) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: "Error!",
+        message: "Failed to export intake. Please try again.",
+      });
+    }
+  };
+
+  const items = isEnabled
+    ? [
+        {
+          key: "export",
+          title: "Export",
+          icon: Download,
+          action: () => setIsOpen(true),
+          shouldRender: true,
+        } as TContextMenuItem,
+      ]
+    : [];
+
+  const modals = isEnabled ? (
+    <ExportModal isOpen={isOpen} onClose={() => setIsOpen(false)} onConfirm={handleExport} />
+  ) : null;
+
+  return { items, modals };
+};
+
+// EE feature: Comment Reply
+export const useCommentReplyFeature = (props: {
+  commentId: string;
+  handleReply?: () => void;
+  shouldRender: boolean;
+}): FeatureResult => {
+  const { t } = useTranslation();
+
+  const items = [
+    {
+      key: "reply",
+      title: t("common.actions.reply"),
+      icon: CommentReplyIcon,
+      action: props.handleReply || (() => {}),
+      shouldRender: props.shouldRender,
+    } as TContextMenuItem,
+  ];
+
+  return { items, modals: null };
 };
