@@ -10,9 +10,9 @@ export const HoProjectSelect = observer(function HoProjectSelect() {
   const { t } = useTranslation();
   const store = useHoIssues();
 
-  const workspace = store.accessibleWorkspaces.find((w) => w.department_id === store.selectedDepartmentId);
+  const workspace = store.accessibleWorkspaces.find((w) => w.id === store.selectedDepartmentId);
 
-  if (!workspace) return null; // hidden when no workspace selected
+  if (!workspace) return null; // hidden when no workspace selected ("All Workspaces")
 
   const options = workspace.projects.map((p) => ({
     value: p.id,
@@ -27,7 +27,7 @@ export const HoProjectSelect = observer(function HoProjectSelect() {
 
   const label =
     store.selectedProjectIds.length > 3
-      ? `3+ projects`
+      ? `3+ ${t("common.projects").toLowerCase()}`
       : store.selectedProjectIds.length > 0
         ? workspace.projects
             .filter((p) => store.selectedProjectIds.includes(p.id))

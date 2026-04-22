@@ -14,8 +14,10 @@ export interface IHoIssueStore {
   categorySummary: THoCategorySummary[];
   accessibleWorkspaces: THoAccessibleWorkspace[];
   filterOptions: THoFilterOptions | null;
-  // Computed: unique departments derived from categorySummary
+  // Computed: workspaces the user can access (shown as department selector options)
   departmentOptions: { id: string; name: string }[];
+  // Computed: set of department IDs the user can access
+  accessibleDepartmentIds: Set<string>;
   selectedDepartmentId: string | null;
   selectedProjectIds: string[];
   filters: {
@@ -99,13 +101,16 @@ export class HoIssueStore implements IHoIssueStore {
   private _filterSeq = 0;
   private service: HoIssueService;
 
-  // Unique departments derived from category summary — stays in sync with the table automatically
+  // Workspaces the user is a member of — shown as dropdown options; value=workspace id
   get departmentOptions(): { id: string; name: string }[] {
-    const seen = new Set<string>();
-    return this.categorySummary
-      .filter((r) => r.department_id && !seen.has(r.department_id) && !!seen.add(r.department_id))
-      .map((r) => ({ id: r.department_id, name: r.department_name }))
+    return this.accessibleWorkspaces
+      .map((w) => ({ id: w.id, name: w.name }))
       .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  // Set of department IDs linked to accessible workspaces — used to filter categorySummary client-side
+  get accessibleDepartmentIds(): Set<string> {
+    return new Set(this.accessibleWorkspaces.map((w) => w.department_id).filter(Boolean));
   }
 
   constructor() {
@@ -116,6 +121,7 @@ export class HoIssueStore implements IHoIssueStore {
       accessibleWorkspaces: observable,
       filterOptions: observable,
       departmentOptions: computed,
+      accessibleDepartmentIds: computed,
       selectedDepartmentId: observable,
       selectedProjectIds: observable,
       filters: observable,
@@ -156,7 +162,7 @@ export class HoIssueStore implements IHoIssueStore {
       to_date: this.toDate,
       include_archived: String(this.showArchived),
     };
-    if (this.selectedDepartmentId) params.department_id = this.selectedDepartmentId;
+    if (this.selectedDepartmentId) params.workspace_id = this.selectedDepartmentId;
     if (this.selectedProjectIds.length > 0) params.project_id = this.selectedProjectIds.join(",");
 
     // Additional filters
@@ -280,7 +286,7 @@ export class HoIssueStore implements IHoIssueStore {
     });
     try {
       const params = {
-        department_id: this.selectedDepartmentId || "",
+        workspace_id: this.selectedDepartmentId || "",
         project_id: this.selectedProjectIds.join(","),
         from_date: this.fromDate,
         to_date: this.toDate,

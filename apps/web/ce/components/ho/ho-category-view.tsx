@@ -23,13 +23,23 @@ export const HoCategoryView = observer(function HoCategoryView() {
 
   useEffect(() => {
     void store.fetchCategorySummary();
+    void store.fetchAccessibleWorkspaces();
     void store.fetchFilterOptions();
   }, [store]);
 
   const filtered = useMemo(() => {
-    let data = store.selectedDepartmentId
-      ? store.categorySummary.filter((r) => r.department_id === store.selectedDepartmentId)
-      : store.categorySummary;
+    let data: typeof store.categorySummary;
+    if (store.selectedDepartmentId) {
+      // selectedDepartmentId is a workspace ID — find its linked department for category filtering
+      const ws = store.accessibleWorkspaces.find((w) => w.id === store.selectedDepartmentId);
+      data = ws?.department_id ? store.categorySummary.filter((r) => r.department_id === ws.department_id) : [];
+    } else {
+      // "All workspaces" — show categories from all accessible workspaces' linked departments
+      data =
+        store.accessibleDepartmentIds.size > 0
+          ? store.categorySummary.filter((r) => store.accessibleDepartmentIds.has(r.department_id))
+          : store.categorySummary; // fallback before accessibleWorkspaces loads
+    }
 
     if (store.filters.department.length > 0)
       data = data.filter((r) => store.filters.department.includes(r.department_name));
@@ -43,14 +53,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
-  }, [
-    store.categorySummary,
-    store.selectedDepartmentId,
-    store.filters.department,
-    store.filters.main_task_category,
-    store.filters.sub_task_category,
-    search,
-  ]);
+  }, [store, search]);
 
   const sortedData = useMemo(() => {
     const data = [...filtered];
