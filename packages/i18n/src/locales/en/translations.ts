@@ -1815,6 +1815,15 @@ export default {
           authentication: "Authentication",
           joining_date: "Joining date",
         },
+        export: {
+          col_name: "Name",
+          col_email: "Email",
+          col_role: "Role",
+          col_joining_date: "Joining Date",
+          col_status: "Status",
+          status_active: "Active",
+          status_inactive: "Inactive",
+        },
         modal: {
           title: "Invite people to collaborate",
           description: "Invite people to collaborate on your workspace.",

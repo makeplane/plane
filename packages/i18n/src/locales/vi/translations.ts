@@ -1826,6 +1826,15 @@ export default {
           authentication: "Xác thực",
           joining_date: "Ngày tham gia",
         },
+        export: {
+          col_name: "Tên",
+          col_email: "Email",
+          col_role: "Vai trò",
+          col_joining_date: "Ngày tham gia",
+          col_status: "Trạng thái",
+          status_active: "Hoạt động",
+          status_inactive: "Không hoạt động",
+        },
         modal: {
           title: "Mời người cộng tác",
           description: "Mời người cộng tác trong không gian làm việc của bạn.",

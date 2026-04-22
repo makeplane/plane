@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
+import * as XLSX from "xlsx";
 import { SearchIcon } from "@plane/propel/icons";
 import { Loader } from "@plane/ui";
 import { useTranslation } from "@plane/i18n";
@@ -68,10 +69,30 @@ export const HoCategoryView = observer(function HoCategoryView() {
     });
   }, [filtered, store.orderBy]);
 
+  const handleExport = () => {
+    const rows = sortedData.map((row) => ({
+      [t("spreadsheet.columns.department_name")]: row.department_name ?? "-",
+      [t("spreadsheet.columns.main_task_category")]: row.main_task_category_name ?? "-",
+      [t("spreadsheet.columns.sub_task_category")]: row.sub_task_category_name ?? "-",
+    }));
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Categories");
+    const datetime = new Date().toISOString().slice(0, 16).replace("T", "-").replace(":", "");
+    XLSX.writeFile(wb, `ho-categories-${datetime}.xlsx`);
+  };
+
   return (
     <div className="relative flex h-full flex-col">
       {/* Toolbar: consistent with Datasheet toolbar style */}
       <div className="flex items-center justify-end gap-2 border-b border-subtle bg-surface-1 px-page-x py-2">
+        <button
+          type="button"
+          onClick={handleExport}
+          className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary hover:bg-layer-2 hover:text-primary transition-colors"
+        >
+          {t("workspace_views.export.button")}
+        </button>
         <HoWorkspaceSelect />
 
         {/* Search */}

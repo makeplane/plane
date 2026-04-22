@@ -7,9 +7,11 @@
 import { useCallback, useEffect, useState } from "react";
 import type { FC } from "react";
 import { observer } from "mobx-react";
+import * as XLSX from "xlsx";
 import { useTranslation } from "@plane/i18n";
 import { Switch } from "@plane/propel/switch";
 import { useWorklog } from "@/hooks/store/use-worklog";
+import { formatMinutes, getWeekDates } from "../utils/time-format";
 import { TimesheetWeekNavigator } from "./timesheet-week-navigator";
 import { TimesheetTable } from "./timesheet-table";
 
@@ -66,6 +68,26 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
   const isLoading = worklogStore.isTimesheetLoading;
   const isEmpty = data && data.rows.length === 0;
 
+  const handleExport = () => {
+    if (!data) return;
+    const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const weekDates = getWeekDates(data.week_start);
+    const rows = data.rows.map((row) => {
+      const entry: Record<string, string> = {};
+      if (isCrossWorkspace) entry["Workspace"] = (row as typeof row & { workspace_name?: string }).workspace_name ?? "-";
+      entry["Issue"] = `${row.issue_identifier} ${row.issue_name}`;
+      weekDates.forEach((date, idx) => {
+        entry[DAY_NAMES[idx]] = formatMinutes(row.days[date] ?? 0);
+      });
+      entry[t("timesheet_total")] = formatMinutes(row.total_minutes);
+      return entry;
+    });
+    const ws = XLSX.utils.json_to_sheet(rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Timesheet");
+    XLSX.writeFile(wb, `timesheet-${data.week_start}.xlsx`);
+  };
+
   return (
     <div className="flex flex-col gap-4 p-6 h-full overflow-y-auto custom-scrollbar">
       {/* Header controls (Week navigator + Cross Workspaces toggle) */}
@@ -79,6 +101,14 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
         <div className="flex items-center gap-2.5">
           <span className="text-12 font-medium text-secondary">{t("timesheet_cross_workspaces")}</span>
           <Switch value={isCrossWorkspace} onChange={(val) => setIsCrossWorkspace(val)} size="sm" />
+          <button
+            type="button"
+            disabled={!data || isLoading}
+            onClick={handleExport}
+            className="flex items-center gap-2 rounded-md border border-subtle bg-surface-1 px-3 py-1.5 text-13 font-medium text-secondary hover:bg-layer-2 hover:text-primary transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {t("workspace_views.export.button")}
+          </button>
         </div>
       </div>
 
