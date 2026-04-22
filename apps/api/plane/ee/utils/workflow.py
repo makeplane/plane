@@ -66,10 +66,14 @@ class WorkflowStateManager:
             ).values_list("approver_id", flat=True)
         )
 
-    def _get_workflow(self, type_id: int) -> Workflow:
+    def _get_workflow(self, type_id: int, user_id: str | int | None = None) -> Workflow:
         """Get the workflow for the given issue based on its type, falling back to the default workflow."""
         # Build the filter for the work item type
-        if type_id:
+        if type_id and check_workspace_feature_flag(
+            slug=self.slug,
+            feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
+            user_id=user_id,
+        ):
             workflow_work_item_type = (
                 WorkflowWorkItemType.objects.filter(
                     workspace__slug=self.slug,
@@ -180,7 +184,7 @@ class WorkflowStateManager:
         Returns:
             bool: True if the transition is allowed, False otherwise
         """
-        workflow = self._get_workflow(type_id=issue.type_id)
+        workflow = self._get_workflow(type_id=issue.type_id, user_id=user_id)
 
         if not workflow:
             return True
@@ -254,13 +258,13 @@ class WorkflowStateManager:
             return True
 
         else:
-            # check if the multiple workflows feature flag is enabled
             if not check_workspace_feature_flag(
-                slug=self.slug, feature_key=FeatureFlag.MULTIPLE_WORKFLOWS, user_id=user_id
+                slug=self.slug,
+                feature_key=FeatureFlag.APPROVALS,
+                user_id=user_id,
             ):
                 return True
 
-            # approval state is not allowed
             return False
 
     def validate_issue_creation(self, state_id: int, user_id: str, type_id: int) -> bool:
@@ -281,7 +285,7 @@ class WorkflowStateManager:
             return False
 
         # get the workflow attached with work item type
-        workflow = self._get_workflow(type_id=type_id)
+        workflow = self._get_workflow(type_id=type_id, user_id=user_id)
 
         if not workflow or not workflow.is_active:
             return False

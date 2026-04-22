@@ -37,10 +37,9 @@ from plane.ee.models import (
 )
 from plane.permissions import can, WorkflowPermissions
 from plane.ee.serializers import WorkflowStateSerializer, WorkflowTransitionSerializer
-from plane.payment.flags.flag_decorator import check_feature_flag
+from plane.payment.flags.flag_decorator import check_feature_flag, check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.bgtasks.workflow_activity_task import workflow_activity
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
 
 from django.db.models.functions import Coalesce
@@ -110,6 +109,15 @@ class WorkflowStatesEndpoint(BaseAPIView):
         if not workflow_state:
             return Response({"error": "Workflow state not found"}, status=status.HTTP_404_NOT_FOUND)
         state_type = request.data.get("type")
+        if state_type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
+            slug=slug,
+            feature_key=FeatureFlag.APPROVALS,
+            user_id=str(request.user.id),
+        ):
+            return Response(
+                {"error": "Approvals are not enabled."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         current_instance = json.dumps(
             {"type": workflow_state.type, "state_id": str(state_id)},
             cls=DjangoJSONEncoder,
@@ -343,14 +351,14 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # check if the multiple workflows feature flag is enabled
+        # Approval transitions require the approvals entitlement, independent of multi-workflow mode.
         if workflow_state.type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
             slug=slug,
-            feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
-            user_id=request.user.id,
+            feature_key=FeatureFlag.APPROVALS,
+            user_id=str(request.user.id),
         ):
             return Response(
-                {"error": "You are not allowed to create a approval transition."},
+                {"error": "Approvals are not enabled."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -448,6 +456,15 @@ class WorkflowStateTransitionsEndpoint(BaseAPIView):
             )
 
         workflow_state_type = workflow_transition.workflow_state.type
+        if workflow_state_type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
+            slug=slug,
+            feature_key=FeatureFlag.APPROVALS,
+            user_id=str(request.user.id),
+        ):
+            return Response(
+                {"error": "Approvals are not enabled."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         current_instance = json.dumps(
             {
                 "transition_state_id": (

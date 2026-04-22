@@ -16,7 +16,6 @@ import { useParams } from "next/navigation";
 // plane imports
 import { ApproverIcon, WorkflowIcon } from "@plane/propel/icons";
 import { Popover } from "@plane/propel/popover";
-import type { TIssueGroupByOptions } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -47,7 +46,7 @@ export const WorkFlowGroupTree = observer(function WorkFlowGroupTree(props: Prop
   const isWorkflowEnabled = isWorkflowsEnabled(workspaceSlug.toString(), projectId);
   if (!isWorkflowEnabled) return <></>;
 
-  const typeScopedInfo = getWorkflowStateInfo(projectId, typeId, groupId);
+  const typeScopedInfo = getWorkflowStateInfo(workspaceSlug.toString(), projectId, typeId, groupId);
   const approvalsEnabled = isApprovalsEnabled(workspaceSlug.toString(), projectId);
   const isTransitionEnabledForState = hasTransitionsForState(workspaceSlug.toString(), projectId, groupId, typeId);
   const isTransitionEnabledForUser = user?.id

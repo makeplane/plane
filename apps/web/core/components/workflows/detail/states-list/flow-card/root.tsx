@@ -305,7 +305,7 @@ export const StateFlowCardRoot = observer(function StateFlowCardRoot(props: Prop
 
   return (
     <div className="w-full p-3 bg-layer-2 rounded-lg flex flex-col gap-2 group relative transition-all duration-300">
-      <div className=" items-start grid grid-cols-4 gap-2 relative">
+      <div className=" items-start grid grid-flow-col auto-cols-fr gap-2 relative">
         <div>{renderVia()}</div>
         <div>{showMoveTo && renderMoveTo()}</div>
         <div>{showMembers && renderMembers()}</div>

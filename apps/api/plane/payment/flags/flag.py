@@ -129,6 +129,8 @@ class FeatureFlag(Enum):
     IMPORT_SUMMARY = "IMPORT_SUMMARY"
     # Multiple workflows
     MULTIPLE_WORKFLOWS = "MULTIPLE_WORKFLOWS"
+    # Approvals
+    APPROVALS = "APPROVALS"
     # Releases
     RELEASES = "RELEASES"
     # Formula properties

@@ -26,10 +26,8 @@ from plane.utils.host import base_host
 from plane.db.models import Issue
 from plane.ee.views.base import BaseAPIView
 from plane.ee.models import (
-    Workflow,
     WorkflowTransitionApprover,
     WorkflowTransition,
-    WorkflowWorkItemType,
     WorkflowState,
     WorkflowStateType,
 )
@@ -56,6 +54,15 @@ class WorkflowTransitionMemberEndpoint(BaseAPIView):
         if not workflow_transition:
             return Response(
                 {"error": "Workflow transition not found"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if workflow_transition.workflow_state.type == WorkflowStateType.APPROVAL and not check_workspace_feature_flag(
+            feature_key=FeatureFlag.APPROVALS,
+            slug=slug,
+            user_id=str(request.user.id),
+        ):
+            return Response(
+                {"error": "Approvals are not enabled."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         existing_approver_ids = [
@@ -122,7 +129,7 @@ class WorkflowTransitionMemberEndpoint(BaseAPIView):
 
 
 class WorkflowWorkItemApproverEndpoint(BaseAPIView):
-    @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
+    @check_feature_flag(FeatureFlag.APPROVALS)
     @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, work_item_id):
         action_type = request.data.get("type", None)
@@ -141,20 +148,8 @@ class WorkflowWorkItemApproverEndpoint(BaseAPIView):
 
         # get the workflow associated with the issue's work item type
         # if no type, fall back to the default workflow
-        workflow = None
-        if issue.type_id:
-            workflow_work_item_type = (
-                WorkflowWorkItemType.objects.filter(
-                    project_id=project_id, workspace__slug=slug, work_item_type_id=issue.type_id
-                )
-                .only("workflow_id")
-                .first()
-            )
-            if workflow_work_item_type:
-                workflow = Workflow.objects.filter(id=workflow_work_item_type.workflow_id).first()
-
-        if not workflow:
-            workflow = Workflow.objects.filter(project_id=project_id, workspace__slug=slug, is_default=True).first()
+        workflow_manager = WorkflowStateManager(project_id=project_id, slug=slug)
+        workflow = workflow_manager._get_workflow(type_id=issue.type_id, user_id=str(request.user.id))
 
         if not workflow:
             return Response(
@@ -224,7 +219,6 @@ class WorkflowWorkItemApproverEndpoint(BaseAPIView):
                 slug=slug,
                 user_id=str(request.user.id),
             ):
-                workflow_manager = WorkflowStateManager(project_id=project_id, slug=slug)
                 if not workflow_manager.run_transition_hooks(
                     issue,
                     new_state_id,

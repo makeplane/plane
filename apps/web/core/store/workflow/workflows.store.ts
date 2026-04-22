@@ -91,8 +91,13 @@ export interface IWorkflowsStore {
     stateId: string,
     typeId?: string | null
   ) => TWorkflowInfoTree;
-  resolveWorkflowForType: (projectId: string, typeId?: string | null) => IWorkflow | null;
-  getWorkflowStateInfo: (projectId: string, typeId: string | null | undefined, stateId: string) => TWorkflowStateInfo;
+  resolveWorkflowForType: (workspaceSlug: string, projectId: string, typeId?: string | null) => IWorkflow | null;
+  getWorkflowStateInfo: (
+    workspaceSlug: string,
+    projectId: string,
+    typeId: string | null | undefined,
+    stateId: string
+  ) => TWorkflowStateInfo;
   getAllowedTransitionStateIds: (
     workspaceSlug: string,
     projectId: string,
@@ -232,12 +237,8 @@ export class WorkflowsStore implements IWorkflowsStore {
   });
 
   isApprovalsEnabled = computedFn((workspaceSlug: string, projectId: string): boolean => {
-    const isMultipleWorkflowsFeatureEnabled = this.rootStore.featureFlags.getFeatureFlag(
-      workspaceSlug,
-      "MULTIPLE_WORKFLOWS",
-      false
-    );
-    return this.isWorkflowsEnabled(workspaceSlug, projectId) && isMultipleWorkflowsFeatureEnabled;
+    const isApprovalsFeatureEnabled = this.rootStore.featureFlags.getFeatureFlag(workspaceSlug, "APPROVALS", false);
+    return this.isWorkflowsEnabled(workspaceSlug, projectId) && isApprovalsFeatureEnabled;
   });
 
   getProjectDefaultWorkflow = computedFn((projectId: string): IWorkflow | undefined => {
@@ -397,7 +398,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   canCreateInStateAcrossTypes = computedFn((projectId: string, stateId: string): boolean => {
     const creationTypeId = this.getCreationTypeForState(projectId, stateId);
     if (creationTypeId) return true;
-    const workflow = this.resolveWorkflowForType(projectId, undefined);
+    const workflow = this.getProjectActiveDefaultWorkflow(projectId) ?? null;
     if (!workflow) return false;
     const workflowState = workflow.getStateById(stateId);
     if (!workflowState) return false;
@@ -442,7 +443,7 @@ export class WorkflowsStore implements IWorkflowsStore {
         transitions.some((t) => Boolean(t.transition_state_id || (!approvalsEnabled && t.rejection_state_id)));
 
       if (typeId) {
-        const info = this.getWorkflowStateInfo(projectId, typeId, stateId);
+        const info = this.getWorkflowStateInfo(workspaceSlug, projectId, typeId, stateId);
         return hasTransitions(info.transitions);
       }
 
@@ -543,15 +544,17 @@ export class WorkflowsStore implements IWorkflowsStore {
       });
 
       if (typeId) {
-        const workflow = this.getApplicableWorkflowForType(projectId, typeId);
+        const workflow = this.resolveWorkflowForType(workspaceSlug, projectId, typeId);
         const workItemType = this.rootStore.workItemTypeBridge.getIssueTypeById(typeId);
         const isDefaultWorkflowSection = workflow?.is_default ?? false;
         const defaultWorkflow = this.getProjectActiveDefaultWorkflow(projectId);
-        const otherTypeIdsInDefaultWorkflow = sortedTypeIds.filter(
-          (currentTypeId) =>
-            currentTypeId !== typeId &&
-            this.getApplicableWorkflowForType(projectId, currentTypeId)?.id === defaultWorkflow?.id
-        );
+        const otherTypeIdsInDefaultWorkflow = isMultipleWorkflowModeEnabled
+          ? sortedTypeIds.filter(
+              (currentTypeId) =>
+                currentTypeId !== typeId &&
+                this.getApplicableWorkflowForType(projectId, currentTypeId)?.id === defaultWorkflow?.id
+            )
+          : sortedTypeIds.filter((currentTypeId) => currentTypeId !== typeId);
         const section = getSectionForWorkflow(
           workflow,
           stateId,
@@ -602,11 +605,17 @@ export class WorkflowsStore implements IWorkflowsStore {
    * Resolves the applicable workflow for a given project + work item type.
    * Falls back to the project default workflow when no type-specific match exists.
    */
-  resolveWorkflowForType = computedFn((projectId: string, typeId?: string | null): IWorkflow | null => {
-    if (typeId) return this.getApplicableWorkflowForType(projectId, typeId);
+  resolveWorkflowForType = computedFn(
+    (workspaceSlug: string, projectId: string, typeId?: string | null): IWorkflow | null => {
+      if (!this.isMultipleWorkflowModeEnabled(workspaceSlug, projectId)) {
+        return this.getProjectActiveDefaultWorkflow(projectId) ?? null;
+      }
 
-    return this.getProjectActiveDefaultWorkflow(projectId) ?? null;
-  });
+      if (typeId) return this.getApplicableWorkflowForType(projectId, typeId);
+
+      return this.getProjectActiveDefaultWorkflow(projectId) ?? null;
+    }
+  );
 
   /**
    * Returns transition/approval metadata for a specific state within
@@ -614,14 +623,19 @@ export class WorkflowsStore implements IWorkflowsStore {
    * result is marked `isUnconstrained` so callers can allow all states.
    */
   getWorkflowStateInfo = computedFn(
-    (projectId: string, typeId: string | null | undefined, stateId: string): TWorkflowStateInfo => {
+    (
+      workspaceSlug: string,
+      projectId: string,
+      typeId: string | null | undefined,
+      stateId: string
+    ): TWorkflowStateInfo => {
       const unconstrained: TWorkflowStateInfo = {
         type: "transition",
         transitions: [],
         allowCreation: true,
         isUnconstrained: true,
       };
-      const workflow = this.resolveWorkflowForType(projectId, typeId);
+      const workflow = this.resolveWorkflowForType(workspaceSlug, projectId, typeId);
       if (!workflow) return unconstrained;
       const wfState: IWorkflowState | undefined = workflow.getStateById(stateId);
       if (!wfState) return unconstrained;
@@ -648,14 +662,14 @@ export class WorkflowsStore implements IWorkflowsStore {
       currentStateId: string | null | undefined,
       currentUserId: string | undefined
     ): { [key: string]: boolean } => {
-      const workflow = this.resolveWorkflowForType(projectId, typeId);
+      const workflow = this.resolveWorkflowForType(workspaceSlug, projectId, typeId);
       const allMap = this.buildScopedStateMap(projectId, workflow, true);
 
       if (!currentStateId) return allMap;
       allMap[currentStateId] = true;
 
       const approvalsEnabled = this.isApprovalsEnabled(workspaceSlug, projectId);
-      const info = this.getWorkflowStateInfo(projectId, typeId, currentStateId);
+      const info = this.getWorkflowStateInfo(workspaceSlug, projectId, typeId, currentStateId);
       if (info.isUnconstrained) return allMap;
       // If no transitions are defined, any state inside the workflow should be allowed
       if (info.transitions.length === 0) return allMap;
@@ -687,7 +701,9 @@ export class WorkflowsStore implements IWorkflowsStore {
    * creation is allowed within the resolved workflow.
    */
   getCreationAllowedStateIds = computedFn((projectId: string, typeId?: string | null): { [key: string]: boolean } => {
-    const workflow = this.resolveWorkflowForType(projectId, typeId);
+    const workflow = typeId
+      ? this.getApplicableWorkflowForType(projectId, typeId)
+      : (this.getProjectActiveDefaultWorkflow(projectId) ?? null);
     const allMap = this.buildScopedStateMap(projectId, workflow, true);
     if (!workflow) return allMap;
 
@@ -705,7 +721,7 @@ export class WorkflowsStore implements IWorkflowsStore {
   isApprovalPending = computedFn(
     (workspaceSlug: string, projectId: string, typeId: string | null | undefined, stateId: string): boolean => {
       if (!this.isApprovalsEnabled(workspaceSlug, projectId)) return false;
-      const info = this.getWorkflowStateInfo(projectId, typeId, stateId);
+      const info = this.getWorkflowStateInfo(workspaceSlug, projectId, typeId, stateId);
       return info.type === "approval" && !info.isUnconstrained;
     }
   );
@@ -723,7 +739,7 @@ export class WorkflowsStore implements IWorkflowsStore {
       userId: string
     ): boolean => {
       if (!this.isApprovalsEnabled(workspaceSlug, projectId)) return false;
-      const info = this.getWorkflowStateInfo(projectId, typeId, stateId);
+      const info = this.getWorkflowStateInfo(workspaceSlug, projectId, typeId, stateId);
       if (info.type !== "approval" || info.isUnconstrained) return false;
       return info.transitions.some((t) => t.member_ids.length === 0 || t.member_ids.includes(userId));
     }
