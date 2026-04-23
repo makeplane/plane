@@ -866,3 +866,15 @@
 {"ts":"2026-04-23T04:13:13.542Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
 {"ts":"2026-04-23T04:13:16.317Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":4,"status":"ok","exit":0,"error":""}
 {"ts":"2026-04-23T04:13:16.319Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":8,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:18.215Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:21.116Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":5,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:21.118Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":8,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:31.023Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:33.130Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":4,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:33.133Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":8,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:34.942Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:37.474Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":4,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:37.478Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":9,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:37.680Z","hook":"usage-context-awareness","event":"PostToolUse","tool":"Bash","target":"","note":"throttled","dur":0,"status":"skip","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:39.674Z","hook":"scout-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":5,"status":"ok","exit":0,"error":""}
+{"ts":"2026-04-23T04:13:39.676Z","hook":"privacy-block","event":"PreToolUse","tool":"Bash","target":"","note":"","dur":8,"status":"ok","exit":0,"error":""}
