@@ -70,9 +70,9 @@ export default function TimeTrackingLayout() {
       {/* Top Breadcrumbs Header */}
       <AppHeader header={<TimeTrackingHeader />} />
 
-      {/* Sub-tabs Header - Fixed at top */}
-      <Header variant={EHeaderVariant.SECONDARY} className="border-t border-subtle h-12 shadow-sm z-20">
-        <div className="flex h-full items-center px-4 gap-1">
+      {/* Sub-tabs Header - Fixed at top, matches Intake exactly */}
+      <Header variant={EHeaderVariant.SECONDARY} className="border-t border-subtle">
+        <div className="flex h-full items-center px-3">
           {TAB_ITEMS.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.key;
@@ -82,10 +82,8 @@ export default function TimeTrackingLayout() {
                 role="button"
                 tabIndex={0}
                 className={cn(
-                  "text-13 relative flex items-center gap-2 h-9 px-4 rounded-md cursor-pointer transition-all font-medium whitespace-nowrap outline-none",
-                  isActive
-                    ? "text-accent-primary bg-accent-primary/5"
-                    : "text-secondary hover:text-primary hover:bg-surface-2"
+                  "text-13 relative flex items-center gap-2 h-full px-4 cursor-pointer transition-all font-semibold",
+                  isActive ? "text-accent-primary" : "text-secondary hover:text-primary"
                 )}
                 onClick={() => {
                   if (!isActive) void navigate(`${basePath}${tab.path ? `/${tab.path}` : ""}`);
@@ -98,9 +96,7 @@ export default function TimeTrackingLayout() {
               >
                 <Icon size={14} className={isActive ? "text-accent-primary" : "text-tertiary"} />
                 <span>{t(tab.labelKey)}</span>
-                {isActive && (
-                  <div className="absolute -bottom-[9.5px] left-0 right-0 h-[2px] bg-accent-primary rounded-t-full z-10" />
-                )}
+                {isActive && <div className="absolute bottom-0 left-0 right-0 border-b-2 border-accent-primary" />}
               </div>
             );
           })}
