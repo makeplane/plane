@@ -81,7 +81,7 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
       >
         {cellLabel}
       </Popover.Button>
-      <Popover.Panel className="z-30 w-64 rounded-lg border border-subtle bg-surface-1 shadow-lg p-2 max-h-60 overflow-y-auto custom-scrollbar">
+      <Popover.Panel className="z-30 w-64 rounded-lg border border-subtle bg-surface-1 shadow-lg p-2 max-h-60 overflow-y-auto vertical-scrollbar scrollbar-sm">
         {isLoading ? (
           <div className="py-4 text-center text-12 text-tertiary animate-pulse">{t("common.loading")}</div>
         ) : tasks && tasks.length > 0 ? (
