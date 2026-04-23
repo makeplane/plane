@@ -11,7 +11,6 @@ import { useState } from "react";
 import type { FC } from "react";
 import { useTranslation } from "@plane/i18n";
 import { Popover } from "@plane/propel/popover";
-import { cn } from "@plane/utils";
 import type { ICapacityDayTask } from "@plane/types";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useWorklog } from "@/hooks/store/use-worklog";
@@ -78,12 +77,7 @@ export const CapacityDayDetailsPopover: FC<CapacityDayDetailsPopoverProps> = ({
       }}
     >
       <Popover.Button
-        className={cn(
-          "group mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border text-11 font-bold tracking-tight transition-all duration-200 outline-none",
-          loggedMinutes > 0
-            ? `${cellClassName} shadow-sm hover:scale-110 hover:shadow-md cursor-pointer active:scale-95`
-            : "bg-transparent border-transparent text-tertiary opacity-30 cursor-default"
-        )}
+        className={`mx-auto flex h-8 w-[50px] items-center justify-center rounded-md border shadow-sm transition-all hover:scale-[1.15] hover:shadow-md cursor-pointer ${cellClassName} font-medium text-12 tracking-wide`}
       >
         {cellLabel}
       </Popover.Button>

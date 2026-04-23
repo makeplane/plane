@@ -4,10 +4,13 @@
  * See the LICENSE file for details.
  */
 
+import { useEffect, useState, useCallback } from "react";
+import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
+import { useWorklog } from "@/hooks/store/use-worklog";
 import { Spinner } from "@plane/ui";
 import { renderFormattedPayloadDate } from "@plane/utils";
 import { Switch } from "@plane/propel/switch";
-import { BarChart2, Download } from "lucide-react";
 
 // plane components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -123,32 +126,29 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
   return (
     <div className="flex h-full w-full flex-col overflow-hidden bg-surface-1">
       {/* Title & Description Block */}
-      <div className="px-8 pt-8 pb-6 shrink-0 bg-gradient-to-b from-surface-1 to-surface-2/20">
-        <div className="flex items-start justify-between gap-6">
-          <div className="min-w-0">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent-primary/10 text-accent-primary shadow-sm ring-1 ring-accent-primary/20">
-                <BarChart2 className="h-5 w-5" />
+      <div className="px-6 pt-6 pb-4 shrink-0">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight text-primary flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-primary/10 text-accent-primary">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
               </div>
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight text-primary leading-tight">
-                  {t("capacity_dashboard")}
-                </h2>
-                <p className="text-14 text-secondary mt-1 font-medium italic opacity-80 line-clamp-1">
-                  {t("capacity_dashboard_description")}
-                </p>
-              </div>
-            </div>
+              {t("capacity_dashboard")}
+            </h2>
+            <p className="text-13 text-secondary mt-1.5 ml-0.5">{t("capacity_dashboard_description")}</p>
           </div>
 
-          {/* Cross Workspaces switch with better layout */}
-          <div className="flex flex-col items-end gap-1.5 shrink-0">
-            <div className="flex items-center gap-3 px-3 py-1.5 rounded-full bg-surface-2 border border-subtle shadow-sm">
-              <span className="text-12 font-semibold text-secondary uppercase tracking-wider">
-                {t("timesheet_cross_workspaces")}
-              </span>
-              <Switch value={isCrossWorkspace} onChange={(val) => setIsCrossWorkspace(val)} size="sm" />
-            </div>
+          {/* Cross Workspaces switch */}
+          <div className="flex items-center gap-2.5">
+            <span className="text-12 font-medium text-secondary">{t("timesheet_cross_workspaces")}</span>
+            <Switch value={isCrossWorkspace} onChange={(val) => setIsCrossWorkspace(val)} size="sm" />
           </div>
         </div>
       </div>
@@ -165,28 +165,26 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
         )} */}
 
         {/* Filters Bar */}
-        <div className="mx-8 mb-2 px-4 py-2.5 border border-subtle bg-surface-1 rounded-xl flex items-center justify-between sticky top-0 z-10 shadow-sm backdrop-blur-md">
-          <div className="flex items-center gap-6">
+        <div className="px-6 py-2 border-y border-subtle bg-surface-2/30 flex items-center justify-between sticky top-0 z-10 backdrop-blur-md">
+          <div className="flex items-center gap-4">
             {/* Member filter — shown only when in project mode and not cross-workspace */}
             {projectId && !isCrossWorkspace ? (
-              <div className="flex items-center gap-2.5 whitespace-nowrap">
-                <span className="text-12 font-bold text-tertiary uppercase tracking-wider">
-                  {t("common.assignee")}:
-                </span>
+              <div className="flex items-center gap-2">
+                <span className="text-12 font-medium text-secondary">{t("common.assignee")}:</span>
                 <MemberDropdown
                   value={selectedMembers}
                   onChange={(val: string[]) => setSelectedMembers(val)}
                   projectId={projectId}
                   multiple
                   buttonVariant="transparent-with-text"
-                  buttonClassName="!h-8 !px-3 !py-1 text-13 font-medium bg-surface-2 hover:bg-surface-1 border border-transparent hover:border-subtle rounded-md transition-all"
+                  buttonClassName="!h-7 !px-2.5 !py-0.5 text-12"
                   dropdownArrow
                 />
               </div>
             ) : null}
 
-            <div className="flex items-center gap-2.5 whitespace-nowrap">
-              <span className="text-12 font-bold text-tertiary uppercase tracking-wider">{t("date_range")}:</span>
+            <div className="flex items-center gap-2">
+              <span className="text-12 font-medium text-secondary">{t("date_range")}:</span>
               <DateRangeDropdown
                 buttonVariant="transparent-with-text"
                 value={dateRange}
@@ -195,18 +193,17 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
                     range ? { from: range.from, to: range.to || undefined } : { from: undefined, to: undefined }
                   )
                 }
-                buttonClassName="!h-8 !px-3 !py-1 text-13 font-medium bg-surface-2 hover:bg-surface-1 border border-transparent hover:border-subtle rounded-md transition-all"
+                buttonClassName="!h-7 !px-2.5 !py-0.5 text-12"
                 isClearable
               />
             </div>
           </div>
 
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-primary text-on-primary text-13 font-semibold hover:opacity-90 active:scale-95 transition-all shadow-md shadow-primary/20"
+              className="px-3 py-1 rounded-md bg-accent-primary text-white text-12 font-medium hover:bg-accent-primary/90 transition-colors shadow-sm"
             >
-              <Download className="h-4 w-4" />
               {t("export")}
             </button>
           </div>
