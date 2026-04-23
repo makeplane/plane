@@ -781,16 +781,13 @@ if OPENSEARCH_ENABLED:
 
     if _has_aws_credentials and not (_os_username and _os_password):
         import boto3
-        from opensearchpy import RequestsHttpConnection
-        from requests_aws4auth import AWS4Auth
+        from opensearchpy import AWSV4SignerAuth, RequestsHttpConnection
 
-        _os_credentials = boto3.Session().get_credentials().get_frozen_credentials()
-        _os_awsauth = AWS4Auth(
-            _os_credentials.access_key,
-            _os_credentials.secret_key,
+        _os_credentials = boto3.Session().get_credentials()  # live — auto-refreshed by boto3
+        _os_awsauth = AWSV4SignerAuth(
+            _os_credentials,
             os.environ.get("AWS_REGION", "us-east-1"),
             "es",
-            session_token=_os_credentials.token,
         )
         _os_auth_config = {
             "http_auth": _os_awsauth,

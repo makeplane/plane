@@ -237,8 +237,11 @@ async function resolveRedisUrl(): Promise<string> {
   return `rediss://:${token}@${host}:${port}`;
 }
 
-async function resolveDatabaseUrl(): Promise<string> {
-  if (!env.RDS_SECRET_ARN || env.DATABASE_URL) return env.DATABASE_URL ?? "";
+export async function resolveDatabaseUrl(forceRefresh = false): Promise<string> {
+  // No ARN configured — use the env var directly; Secrets Manager not involved.
+  if (!env.RDS_SECRET_ARN) return env.DATABASE_URL ?? "";
+  // Fast path: URL already resolved and no forced refresh requested.
+  if (!forceRefresh && env.DATABASE_URL) return env.DATABASE_URL;
 
   const secret = await fetchSecret(env.RDS_SECRET_ARN, env.AWS_REGION);
   const user = encodeURIComponent(secretString(secret, env.RDS_DB_USERNAME_KEY));

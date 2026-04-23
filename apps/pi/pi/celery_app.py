@@ -50,6 +50,7 @@ from pi.app.models.message import Message
 log = logger.getChild(__name__)
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError as SQLAlchemyOperationalError
 from sqlalchemy.orm import sessionmaker
 
 from pi import settings
@@ -257,6 +258,8 @@ def db_session():
 
     Uses a shared worker-level database engine to avoid connection churn.
     Includes circuit breaker protection against database failures.
+    On RDS secret rotation, disposes the stale engine and pre-warms the
+    Secrets Manager cache so the caller's next retry uses fresh credentials.
     """
     # Check circuit breaker before attempting connection
     if not _db_circuit_breaker.can_attempt():
@@ -273,8 +276,24 @@ def db_session():
             # If we get here without exception, the operation was successful
             _db_circuit_breaker.record_success()
 
+    except SQLAlchemyOperationalError as e:
+        _db_circuit_breaker.record_failure()
+        if "password authentication failed" in str(e).lower():
+            log.warning(
+                "Authentication failure in db_session — invalidating engine and refreshing credentials. "
+                "Caller should retry. Circuit breaker state: %s",
+                _db_circuit_breaker,
+            )
+            # Dispose stale engine so next _get_worker_engine() call recreates it.
+            _cleanup_worker_engine()
+            # Pre-populate Secrets Manager cache with the rotated secret so the
+            # next engine creation picks up fresh credentials immediately.
+            settings.database.connection_url(force_refresh=True)
+        else:
+            log.error("Database operation failed: %s. Circuit breaker state: %s", e, _db_circuit_breaker)
+        raise
+
     except Exception as e:
-        # Record failure in circuit breaker
         _db_circuit_breaker.record_failure()
         log.error("Database operation failed: %s. Circuit breaker state: %s", e, _db_circuit_breaker)
         raise

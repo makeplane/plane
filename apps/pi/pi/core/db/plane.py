@@ -20,6 +20,7 @@ from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
+import asyncpg.exceptions
 import psycopg2
 from asyncpg import create_pool
 from asyncpg.pool import Pool
@@ -44,13 +45,13 @@ class PlaneDBPool:
     _pool: Optional[Pool] = None
 
     @classmethod
-    async def create_pool(cls, min_size: int = 5, max_size: int = 10) -> None:
+    async def create_pool(cls, min_size: int = 5, max_size: int = 10, force_refresh: bool = False) -> None:
         """Initialize a new connection pool with given min/max connections."""
         if cls._pool is None:
             try:
                 log.info("Initializing async connection pool to the follower PostgreSQL database.")
                 cls._pool = await create_pool(
-                    dsn=settings.follower_connection_url(),
+                    dsn=settings.follower_connection_url(force_refresh=force_refresh),
                     min_size=min_size,
                     max_size=max_size,
                     command_timeout=60,
@@ -83,9 +84,17 @@ class PlaneDBPool:
             await cls.create_pool()
         assert cls._pool is not None  # Tell mypy pool exists
 
-        async with cls._pool.acquire() as conn:
-            await conn.execute(query, *params if params else ())
-            return "OK"
+        try:
+            async with cls._pool.acquire() as conn:
+                await conn.execute(query, *params if params else ())
+                return "OK"
+        except asyncpg.exceptions.InvalidPasswordError:
+            log.warning("Authentication failure on follower async pool — refreshing credentials and retrying.")
+            await cls.close_pool()
+            await cls.create_pool(force_refresh=True)
+            async with cls._pool.acquire() as conn:  # type: ignore[union-attr]
+                await conn.execute(query, *params if params else ())
+                return "OK"
 
     @classmethod
     async def fetch(cls, query: str, params: SQLParams = None) -> List[Dict[str, Any]]:
@@ -95,9 +104,17 @@ class PlaneDBPool:
         if cls._pool is None:
             raise RuntimeError("Database pool not initialized")
 
-        async with cls._pool.acquire() as conn:
-            records = await conn.fetch(query, *params if params else ())
-            return [dict(r) for r in records]
+        try:
+            async with cls._pool.acquire() as conn:
+                records = await conn.fetch(query, *params if params else ())
+                return [dict(r) for r in records]
+        except asyncpg.exceptions.InvalidPasswordError:
+            log.warning("Authentication failure on follower async pool — refreshing credentials and retrying.")
+            await cls.close_pool()
+            await cls.create_pool(force_refresh=True)
+            async with cls._pool.acquire() as conn:  # type: ignore[union-attr]
+                records = await conn.fetch(query, *params if params else ())
+                return [dict(r) for r in records]
 
     @classmethod
     async def fetchrow(cls, query: str, params: SQLParams = None) -> Optional[Dict[str, Any]]:
@@ -107,24 +124,41 @@ class PlaneDBPool:
         if cls._pool is None:
             raise RuntimeError("Database pool not initialized")
 
-        async with cls._pool.acquire() as conn:
-            record = await conn.fetchrow(query, *params if params else ())
-            return dict(record) if record else None
+        try:
+            async with cls._pool.acquire() as conn:
+                record = await conn.fetchrow(query, *params if params else ())
+                return dict(record) if record else None
+        except asyncpg.exceptions.InvalidPasswordError:
+            log.warning("Authentication failure on follower async pool — refreshing credentials and retrying.")
+            await cls.close_pool()
+            await cls.create_pool(force_refresh=True)
+            async with cls._pool.acquire() as conn:  # type: ignore[union-attr]
+                record = await conn.fetchrow(query, *params if params else ())
+                return dict(record) if record else None
 
     @classmethod
     async def fetch_many(cls, queries: Sequence[Tuple[str, Optional[SQLParams]]]) -> List[QueryResult]:
         """Execute multiple queries concurrently and return results for each."""
-        pool = await cls.get_pool()
 
-        async def _execute_single(query: str, params: SQLParams) -> QueryResult:
-            async with pool.acquire() as conn:
-                records = await conn.fetch(query, *params if params else ())
-                return [dict(r) for r in records]
+        async def _run_all(pool: Pool) -> List[Union[QueryResult, BaseException]]:
+            async def _execute_single(query: str, params: SQLParams) -> QueryResult:
+                async with pool.acquire() as conn:
+                    records = await conn.fetch(query, *params if params else ())
+                    return [dict(r) for r in records]
 
-        tasks = [_execute_single(query, params) for query, params in queries]
-        results: List[Union[QueryResult, BaseException]] = await asyncio.gather(*tasks, return_exceptions=True)
+            tasks = [_execute_single(query, params) for query, params in queries]
+            return await asyncio.gather(*tasks, return_exceptions=True)
 
-        # Filter out exceptions and narrow type
+        try:
+            pool = await cls.get_pool()
+            results = await _run_all(pool)
+        except asyncpg.exceptions.InvalidPasswordError:
+            log.warning("Authentication failure on follower async pool — refreshing credentials and retrying.")
+            await cls.close_pool()
+            await cls.create_pool(force_refresh=True)
+            pool = await cls.get_pool()
+            results = await _run_all(pool)
+
         valid_results: List[QueryResult] = []
         for r in results:
             if not isinstance(r, BaseException):
@@ -141,20 +175,28 @@ class PlaneDBSync:
     @classmethod
     def fetchrow(cls, query: str, params: SQLParams = None) -> Optional[Dict[str, Any]]:
         """Execute a query and return the first row (synchronous)."""
-        try:
-            log.info("Establishing synchronous connection to the follower PostgreSQL database.")
-            conn = psycopg2.connect(settings.follower_connection_url())
+
+        def _run(url: str) -> Optional[Dict[str, Any]]:
+            conn = psycopg2.connect(url)
             try:
                 with conn.cursor() as cur:
                     cur.execute(query, params if params else ())
                     row = cur.fetchone()
                     if row:
-                        # Get column names from cursor description
                         columns = [desc[0] for desc in cur.description]
                         return dict(zip(columns, row))
                     return None
             finally:
                 conn.close()
+
+        try:
+            log.info("Establishing synchronous connection to the follower PostgreSQL database.")
+            return _run(settings.follower_connection_url())
+        except psycopg2.OperationalError as e:
+            if "password authentication failed" in str(e).lower():
+                log.warning("Authentication failure on follower sync DB — refreshing credentials and retrying.")
+                return _run(settings.follower_connection_url(force_refresh=True))
+            raise
         except Exception as e:
             log.error(f"Error executing sync query: {e}")
             return None
@@ -162,20 +204,28 @@ class PlaneDBSync:
     @classmethod
     def fetch(cls, query: str, params: SQLParams = None) -> List[Dict[str, Any]]:
         """Execute a query and return all results (synchronous)."""
-        try:
-            log.info("Establishing synchronous connection to the follower PostgreSQL database.")
-            conn = psycopg2.connect(settings.follower_connection_url())
+
+        def _run(url: str) -> List[Dict[str, Any]]:
+            conn = psycopg2.connect(url)
             try:
                 with conn.cursor() as cur:
                     cur.execute(query, params if params else ())
                     rows = cur.fetchall()
                     if rows:
-                        # Get column names from cursor description
                         columns = [desc[0] for desc in cur.description]
                         return [dict(zip(columns, row)) for row in rows]
                     return []
             finally:
                 conn.close()
+
+        try:
+            log.info("Establishing synchronous connection to the follower PostgreSQL database.")
+            return _run(settings.follower_connection_url())
+        except psycopg2.OperationalError as e:
+            if "password authentication failed" in str(e).lower():
+                log.warning("Authentication failure on follower sync DB — refreshing credentials and retrying.")
+                return _run(settings.follower_connection_url(force_refresh=True))
+            raise
         except Exception as e:
             log.error(f"Error executing sync query: {e}")
             return []

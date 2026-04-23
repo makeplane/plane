@@ -418,22 +418,22 @@ class Database:
             "name": secret.get(os.getenv("RDS_DB_NAME_KEY"), self.DB or ""),
         }
 
-    def connection_url(self) -> str:
+    def connection_url(self, force_refresh: bool = False) -> str:
         if self.URL:
             return self.URL
         has_aws_creds = bool(os.getenv("AWS_ROLE_ARN", "") or os.getenv("AWS_CONTAINER_CREDENTIALS_FULL_URI", ""))
         if self.RDS_SECRET_ARN and has_aws_creds:
             from urllib.parse import quote
 
-            c = self._credentials_from_secret()
-            return f"postgresql://{quote(str(c['user']))}:{quote(str(c['password']))}@{c['host']}:{c['port']}/{c['name']}"
+            c = self._credentials_from_secret(force_refresh=force_refresh)
+            return f"postgresql://{quote(str(c['user']), safe='')}:{quote(str(c['password']), safe='')}@{c['host']}:{c['port']}/{c['name']}"
         from urllib.parse import quote
 
         user = quote(str(self.USER or ""), safe="")
         password = quote(str(self.PASSWORD or ""), safe="")
         return f"postgresql://{user}:{password}@{self.HOST}:{self.PORT}/{self.DB}"
 
-    def async_connection_url(self) -> str:
+    def async_connection_url(self, force_refresh: bool = False) -> str:
         if self.URL:
             if "asyncpg" not in self.URL:
                 return self.URL.replace("postgresql", "postgresql+asyncpg")
@@ -442,8 +442,8 @@ class Database:
         if self.RDS_SECRET_ARN and has_aws_creds:
             from urllib.parse import quote
 
-            c = self._credentials_from_secret()
-            return f"postgresql+asyncpg://{quote(str(c['user']))}:{quote(str(c['password']))}@{c['host']}:{c['port']}/{c['name']}"
+            c = self._credentials_from_secret(force_refresh=force_refresh)
+            return f"postgresql+asyncpg://{quote(str(c['user']), safe='')}:{quote(str(c['password']), safe='')}@{c['host']}:{c['port']}/{c['name']}"
         from urllib.parse import quote
 
         user = quote(str(self.USER or ""), safe="")
@@ -650,7 +650,7 @@ class Settings:
     MCP_TOOL_EXECUTION_TIMEOUT: int = get_env_int("MCP_TOOL_EXECUTION_TIMEOUT", "30")
     MCP_CONNECTOR_DISCOVERY_TIMEOUT: int = get_env_int("MCP_CONNECTOR_DISCOVERY_TIMEOUT", "15")
 
-    def follower_connection_url(self) -> str:
+    def follower_connection_url(self, force_refresh: bool = False) -> str:
         """Return the follower DB DSN, refreshing from Secrets Manager on TTL expiry."""
         if self.FOLLOWER_POSTGRES_URI:
             return self.FOLLOWER_POSTGRES_URI
@@ -661,7 +661,7 @@ class Settings:
             from pi.utils.aws_secrets import get_secret
 
             region = os.getenv("AWS_REGION", "us-east-1")
-            secret = get_secret(self.FOLLOWER_RDS_SECRET_ARN, region)
+            secret = get_secret(self.FOLLOWER_RDS_SECRET_ARN, region, force_refresh=force_refresh)
             user = quote(
                 str(secret.get(os.getenv("FOLLOWER_RDS_DB_USERNAME_KEY"), "")),
                 safe="",
