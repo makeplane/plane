@@ -11,17 +11,53 @@ import { EIssuesStoreType } from "@plane/types";
 import type { TIssue } from "@plane/types";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useCycle } from "@/hooks/store/use-cycle";
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
-import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// utils
-import { buildExportRow } from "@/plane-web/components/workspace/views/export-row-builder";
 
 const MAX_FETCH_ITERATIONS = 50;
+
+const formatDate = (dateStr: string | null | undefined): string => {
+  if (!dateStr) return "-";
+  return dateStr.slice(0, 10);
+};
+
+const capitalize = (str: string | null | undefined): string => {
+  if (!str) return "-";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+function buildProfileExportRow(
+  issue: TIssue,
+  stores: {
+    workspaceName: string;
+    getStateName: (stateId: string | null | undefined) => string;
+    getProjectName: (projectId: string | null | undefined) => string;
+    getProjectIdentifier: (projectId: string | null | undefined) => string;
+    getMemberName: (memberId: string) => string;
+    getLabelName: (labelId: string) => string;
+  }
+): Record<string, string> {
+  const identifier = stores.getProjectIdentifier(issue.project_id);
+  const id = identifier ? `${identifier}-${issue.sequence_id}` : `#${issue.sequence_id}`;
+
+  return {
+    ID: id,
+    "Work Item": issue.name ?? "-",
+    Department: stores.workspaceName || "-",
+    Project: stores.getProjectName(issue.project_id),
+    State: stores.getStateName(issue.state_id),
+    Priority: capitalize(issue.priority),
+    Assignees: issue.assignee_ids?.length
+      ? issue.assignee_ids.map((id) => stores.getMemberName(id)).join(", ")
+      : "-",
+    Labels: issue.label_ids?.length ? issue.label_ids.map((id) => stores.getLabelName(id)).join(", ") : "-",
+    "Start Date": formatDate(issue.start_date),
+    "Due Date": formatDate(issue.target_date),
+  };
+}
 
 export const ProfileIssuesExportButton = observer(function ProfileIssuesExportButton() {
   const { workspaceSlug, userId } = useParams();
@@ -31,17 +67,15 @@ export const ProfileIssuesExportButton = observer(function ProfileIssuesExportBu
   const { issueMap, issues } = useIssues(EIssuesStoreType.PROFILE);
   const { getStateById } = useProjectState();
   const { getProjectById } = useProject();
-  const { getModuleById } = useModule();
-  const { getCycleById } = useCycle();
   const { getLabelById } = useLabel();
-  const { workspace: workspaceMember, getUserDetails } = useMember();
+  const { workspace: workspaceMember } = useMember();
   const { currentWorkspace } = useWorkspace();
 
   const handleExport = async () => {
     if (!workspaceSlug || !userId || isExporting) return;
     setIsExporting(true);
     try {
-      // Paginate to fetch remaining pages (only works for flat/ungrouped layout)
+      // Paginate to fetch remaining pages (flat/ungrouped layout only)
       if (issues.groupedIssueIds?.[ALL_ISSUES]) {
         let iterations = 0;
         while (iterations < MAX_FETCH_ITERATIONS) {
@@ -58,19 +92,18 @@ export const ProfileIssuesExportButton = observer(function ProfileIssuesExportBu
       const uniqueIds = [...new Set(allIds)];
       const issuesToExport = uniqueIds.map((id) => issueMap[id]).filter((i): i is TIssue => !!i);
 
-      const rows = issuesToExport.map((issue) =>
-        buildExportRow(issue, t, {
-          workspaceName: currentWorkspace?.name ?? "",
-          getStateById,
-          getProjectById,
-          getModuleById,
-          getCycleById,
-          getLabelById,
-          getWorkspaceMemberDetails: (id) => workspaceMember.getWorkspaceMemberDetails(id),
-          getUserDetails,
-        })
-      );
+      const stores = {
+        workspaceName: currentWorkspace?.name ?? "",
+        getStateName: (stateId: string | null | undefined) => getStateById(stateId)?.name ?? "-",
+        getProjectName: (projectId: string | null | undefined) => getProjectById(projectId)?.name ?? "-",
+        getProjectIdentifier: (projectId: string | null | undefined) =>
+          getProjectById(projectId)?.identifier ?? "",
+        getMemberName: (memberId: string) =>
+          workspaceMember.getWorkspaceMemberDetails(memberId)?.member?.display_name ?? "-",
+        getLabelName: (labelId: string) => getLabelById(labelId)?.name ?? "-",
+      };
 
+      const rows = issuesToExport.map((issue) => buildProfileExportRow(issue, stores));
       const currentView = issues.currentView ?? "issues";
       const sheetName = currentView.charAt(0).toUpperCase() + currentView.slice(1);
       const ws = XLSX.utils.json_to_sheet(rows);
