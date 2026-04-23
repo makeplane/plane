@@ -24,6 +24,7 @@ import { IssuesStoreContext } from "@/hooks/use-issue-layout-store";
 
 type Props = {
   type: "assigned" | "subscribed" | "created";
+  extraFilterRowActions?: React.ReactNode;
 };
 
 /** Ensures start_date and target_date filter chips are always present */
@@ -57,7 +58,7 @@ const ProfileIssuesInitFilters = observer(function ProfileIssuesInitFilters({
 });
 
 export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Props) {
-  const { type } = props;
+  const { type, extraFilterRowActions } = props;
   const { workspaceSlug, userId } = useParams();
   // store hooks
   const {
@@ -96,7 +97,9 @@ export const ProfileIssuesPage = observer(function ProfileIssuesPage(props: Prop
           <>
             {profileWorkItemsFilter && <ProfileIssuesInitFilters filter={profileWorkItemsFilter} />}
             <div className="flex flex-col h-full w-full">
-              {profileWorkItemsFilter && <WorkItemFiltersRow filter={profileWorkItemsFilter} />}
+              {profileWorkItemsFilter && (
+                <WorkItemFiltersRow filter={profileWorkItemsFilter} extraRightActions={extraFilterRowActions} />
+              )}
               <div className="relative h-full w-full overflow-auto">
                 {activeLayout === "list" ? (
                   <ProfileIssuesListLayout />
