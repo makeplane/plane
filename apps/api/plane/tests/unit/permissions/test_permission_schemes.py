@@ -169,6 +169,146 @@ class TestCustomRolePSResolution:
 
 
 # =============================================================================
+# TestPermissionSchemeSerializer — auto-injection of baseline scope-view perm
+# =============================================================================
+
+
+@pytest.mark.django_db
+class TestPermissionSchemeSerializerBaselineView:
+    """
+    Every workspace-namespace PS must include `workspace:view` and every
+    project-namespace PS must include `project:view`. The serializer is
+    responsible for auto-injecting this when callers omit it.
+    """
+
+    def _validated_permissions(self, perm_workspace, namespace, permissions, instance=None):
+        from plane.permissions.serializers import PermissionSchemeSerializer
+
+        data = {"name": "Custom Scheme", "permissions": permissions}
+        if instance is None:
+            data["namespace"] = namespace
+            serializer = PermissionSchemeSerializer(
+                data=data, context={"workspace_id": perm_workspace.id}
+            )
+        else:
+            serializer = PermissionSchemeSerializer(
+                instance, data=data, partial=True, context={"workspace_id": perm_workspace.id}
+            )
+        assert serializer.is_valid(), serializer.errors
+        return serializer.validated_data["permissions"]
+
+    def test_workspace_namespace_injects_workspace_view(self, perm_workspace):
+        perms = self._validated_permissions(
+            perm_workspace, "workspace", ["wiki:view", "wiki:edit"]
+        )
+        assert "workspace:view" in perms
+
+    def test_project_namespace_injects_project_view(self, perm_workspace):
+        perms = self._validated_permissions(
+            perm_workspace, "project", ["workitem:view", "workitem:edit"]
+        )
+        assert "project:view" in perms
+
+    def test_explicit_scope_view_not_duplicated(self, perm_workspace):
+        perms = self._validated_permissions(
+            perm_workspace, "project", ["project:view", "workitem:view"]
+        )
+        assert perms.count("project:view") == 1
+
+    def test_scope_wildcard_rejected(self, perm_workspace):
+        from plane.permissions.serializers import PermissionSchemeSerializer
+
+        serializer = PermissionSchemeSerializer(
+            data={
+                "name": "Custom Scheme",
+                "namespace": "workspace",
+                "permissions": ["workspace:*", "wiki:view"],
+            },
+            context={"workspace_id": perm_workspace.id},
+        )
+        assert not serializer.is_valid()
+        assert "permissions" in serializer.errors
+
+    def test_full_wildcard_rejected(self, perm_workspace):
+        from plane.permissions.serializers import PermissionSchemeSerializer
+
+        serializer = PermissionSchemeSerializer(
+            data={
+                "name": "Custom Scheme",
+                "namespace": "project",
+                "permissions": ["*"],
+            },
+            context={"workspace_id": perm_workspace.id},
+        )
+        assert not serializer.is_valid()
+        assert "permissions" in serializer.errors
+
+    def test_update_without_view_injects_view(self, perm_workspace):
+        from plane.db.models.permission import PermissionScheme
+
+        ps = PermissionScheme.objects.create(
+            workspace=perm_workspace,
+            namespace="project",
+            slug="custom-update-test",
+            name="Update Test",
+            permissions=["project:view", "workitem:view"],
+        )
+        perms = self._validated_permissions(
+            perm_workspace, "project", ["workitem:edit"], instance=ps
+        )
+        assert "project:view" in perms
+
+    def test_project_scheme_rejects_workspace_scope_permissions(self, perm_workspace):
+        from plane.permissions.serializers import PermissionSchemeSerializer
+
+        serializer = PermissionSchemeSerializer(
+            data={
+                "name": "Bad Project Scheme",
+                "namespace": "project",
+                "permissions": ["workitem:edit", "billing:view"],
+            },
+            context={"workspace_id": perm_workspace.id},
+        )
+        assert not serializer.is_valid()
+        assert "permissions" in serializer.errors
+        assert "billing:view" in str(serializer.errors["permissions"])
+
+    def test_project_scheme_accepts_project_subtree_permissions(self, perm_workspace):
+        perms = self._validated_permissions(
+            perm_workspace,
+            "project",
+            ["workitem:edit", "cycle:create", "page:view"],
+        )
+        assert "workitem:edit" in perms
+        assert "project:view" in perms  # auto-injected
+
+    def test_workspace_scheme_accepts_project_scope_permissions(self, perm_workspace):
+        """Workspace-namespace PS is intentionally unrestricted: a workspace role
+        can grant project-scope actions across all projects in the workspace."""
+        perms = self._validated_permissions(
+            perm_workspace,
+            "workspace",
+            ["workitem:edit", "billing:view"],
+        )
+        assert "workitem:edit" in perms
+        assert "billing:view" in perms
+
+    def test_project_scheme_rejects_workspace_scope_conditional(self, perm_workspace):
+        from plane.permissions.serializers import PermissionSchemeSerializer
+
+        serializer = PermissionSchemeSerializer(
+            data={
+                "name": "Bad Conditional",
+                "namespace": "project",
+                "permissions": ["billing:view+creator"],
+            },
+            context={"workspace_id": perm_workspace.id},
+        )
+        assert not serializer.is_valid()
+        assert "permissions" in serializer.errors
+
+
+# =============================================================================
 # TestSystemRolePSResolution — DB tests verifying system roles still work
 # =============================================================================
 

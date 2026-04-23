@@ -41,9 +41,13 @@ const getGroupCheckState = (
 export function PermissionGroupSection(props: Props) {
   const { group, matrixState, isEditing, searchQuery, onRowSelectionChange, onSelectAll, t } = props;
   // derived values
+  // Hide rows marked `alwaysEnabled` — they represent scope-entry permissions
+  // (workspace:view, project:view) that are implicit from role assignment and
+  // should never show as individually toggleable checkboxes.
+  const userToggleableRows = group.rows.filter((row) => !row.alwaysEnabled);
   const visibleRows = searchQuery
-    ? group.rows.filter((row) => t(row.labelKey).toLowerCase().includes(searchQuery.toLowerCase()))
-    : group.rows;
+    ? userToggleableRows.filter((row) => t(row.labelKey).toLowerCase().includes(searchQuery.toLowerCase()))
+    : userToggleableRows;
 
   if (visibleRows.length === 0) return null;
 

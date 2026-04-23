@@ -215,8 +215,8 @@ export class WebhookStore implements IWebhookStore {
   // permissions
   getCanAccessWebhooks: IWebhookStore["getCanAccessWebhooks"] = (workspaceSlug) => {
     return this.rootStore.permissionAccessStore.can({
-      resource: "workspace",
-      action: "manage",
+      resource: "webhook",
+      action: "create",
       workspaceSlug,
       resourceMeta: {
         resourceId: workspaceSlug,

@@ -111,6 +111,7 @@ export const buildPermissionGroups = (
             labelKey: entry.labelKey,
             prerequisites: entry.prerequisites,
             conditions,
+            ...(entry.alwaysEnabled ? { alwaysEnabled: true } : {}),
           } satisfies PermissionMatrixRow);
         }
       }

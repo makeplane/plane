@@ -39,12 +39,12 @@ export const useProjectSettingsAccess = () => {
 
     const resourcePermissionChecks: Record<TProjectSettingsTabs, boolean> = {
       general: canManageProject,
-      members: projectPermissions.getCanManageMembers(workspaceSlug, projectId),
+      members: projectPermissions.getCanViewMembers(workspaceSlug, projectId),
       states: projectPermissions.getCanManageWorkItemStates(workspaceSlug, projectId),
       labels: projectPermissions.getCanManageLabels(workspaceSlug, projectId),
       estimates: projectPermissions.getCanManageEstimates(workspaceSlug, projectId),
       workflows: workflowPermissions.getCanManage(workspaceSlug, projectId),
-      worklogs: canManageProject,
+      worklogs: canManageProject, // TODO: <PermissionEngine> Add project worklogs permission and use it here
       features_cycles: canManageProject,
       features_modules: canManageProject,
       features_views: canManageProject,

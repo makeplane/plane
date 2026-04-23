@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Acces la proiect",
+              "description": "Acces de bază acordat de orice rol de proiect.",
+              "project": {
+                "view": { "label": "Vizualizare proiect" }
+              }
+            },
             "project_membership": {
               "title": "Membri proiect",
               "description": "Invitarea, editarea și eliminarea membrilor proiectului.",

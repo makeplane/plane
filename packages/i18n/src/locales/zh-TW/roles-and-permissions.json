@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "專案存取權限",
+              "description": "任何專案角色授予的基本存取權限。",
+              "project": {
+                "view": { "label": "檢視專案" }
+              }
+            },
             "project_membership": {
               "title": "專案成員",
               "description": "邀請、編輯和移除專案成員。",

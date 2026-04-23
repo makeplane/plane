@@ -35,6 +35,7 @@ export interface ProjectPermissions {
   getCanDragAndDrop: (workspaceSlug: string, projectId: string) => boolean;
   getCanEditProperty: (workspaceSlug: string, projectId: string, property: TProjectProperty) => boolean;
   // Members
+  getCanViewMembers: (workspaceSlug: string, projectId: string) => boolean;
   getCanManageMembers: (workspaceSlug: string, projectId: string) => boolean;
   getCanAccessMembersActivity: (workspaceSlug: string, projectId: string) => boolean;
   getCanChangeRole: (workspaceSlug: string, projectId: string, targetRoleSlug: string) => boolean;
@@ -179,6 +180,15 @@ export class ProjectPermissionsInstance implements ProjectPermissions {
 
   getCanEditProperty: ProjectPermissions["getCanEditProperty"] = computedFn((workspaceSlug, projectId, _property) =>
     this.getCanManage(workspaceSlug, projectId)
+  );
+
+  getCanViewMembers: ProjectPermissions["getCanViewMembers"] = computedFn((workspaceSlug, projectId) =>
+    this.args.can({
+      resource: "project_member",
+      action: "view",
+      workspaceSlug,
+      projectId,
+    })
   );
 
   getCanManageMembers: ProjectPermissions["getCanManageMembers"] = computedFn((workspaceSlug, projectId) =>

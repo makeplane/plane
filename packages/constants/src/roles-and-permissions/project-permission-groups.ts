@@ -50,6 +50,17 @@ const F = "workspace_settings.settings.roles_and_permissions.psets.ui.folded_row
 // ---------------------------------------------------------------------------
 
 const PROJECT_GROUPS: Record<string, ProjectGroupDef> = {
+  project_overview: {
+    titleKey: `${P}.project_overview.title`,
+    descriptionKey: `${P}.project_overview.description`,
+    order: 0,
+    resources: {
+      project: {
+        view: { labelKey: `${P}.project_overview.project.view.label`, alwaysEnabled: true },
+      },
+    },
+  },
+
   project_membership: {
     titleKey: `${P}.project_membership.title`,
     descriptionKey: `${P}.project_membership.description`,

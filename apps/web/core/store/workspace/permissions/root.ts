@@ -34,6 +34,7 @@ export interface WorkspacePermissions {
   getCanRemoveInvitation: (workspaceSlug: string) => boolean;
   getCanViewBilling: (workspaceSlug: string) => boolean;
   getCanManageBilling: (workspaceSlug: string) => boolean;
+  getCanViewWorkspaceWorklogs: (workspaceSlug: string) => boolean;
   getCanJoinAnyProject: (workspaceSlug: string) => boolean;
   getLabelPermissions: (workspaceSlug: string) => WorkspaceLabelPermissionsInstance;
 }
@@ -162,6 +163,14 @@ export class WorkspacePermissionsInstance implements WorkspacePermissions {
       resourceMeta: {
         resourceId: workspaceSlug,
       },
+    });
+  });
+
+  getCanViewWorkspaceWorklogs = computedFn((workspaceSlug: string) => {
+    return this.args.can({
+      resource: "workspace_worklog",
+      action: "view",
+      workspaceSlug,
     });
   });
 

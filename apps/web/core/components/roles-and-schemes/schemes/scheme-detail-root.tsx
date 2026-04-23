@@ -118,7 +118,19 @@ export const SchemeDetailRoot = observer(function SchemeDetailRoot(props: Props)
   }, [initialMatrixState, isEditing, reset, scheme, schemeFormValues]);
 
   const resolvedPermissions = expandFoldedPermissions(matrixStateToPermissions(matrixState, groups), groups);
-  const hasPermissions = Object.keys(resolvedPermissions).length > 0;
+  // `alwaysEnabled` rows (workspace:view, project:view) are auto-injected on save regardless
+  // of user selection — exclude them so the "empty scheme" nudge reflects only user intent.
+  const alwaysEnabledRowIds = useMemo(
+    () =>
+      new Set<string>(
+        groups
+          .flatMap((g) => g.rows)
+          .filter((r) => r.alwaysEnabled)
+          .map((r) => r.rowId)
+      ),
+    [groups]
+  );
+  const hasPermissions = Object.keys(resolvedPermissions).some((grant) => !alwaysEnabledRowIds.has(grant));
   const isMatrixDirty = !isMatrixStateEqual(matrixState, initialMatrixState, groups);
   const hasUnsavedChanges = isDirty || isMatrixDirty;
 

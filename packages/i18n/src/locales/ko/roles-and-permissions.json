@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "프로젝트 액세스",
+              "description": "모든 프로젝트 역할에 의해 부여되는 기본 액세스.",
+              "project": {
+                "view": { "label": "프로젝트 보기" }
+              }
+            },
             "project_membership": {
               "title": "프로젝트 멤버",
               "description": "프로젝트 멤버의 초대, 편집, 제거.",

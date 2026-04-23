@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Projektzugriff",
+              "description": "Grundlegender Zugriff, der durch jede Projektrolle gewährt wird.",
+              "project": {
+                "view": { "label": "Projekt anzeigen" }
+              }
+            },
             "project_membership": {
               "title": "Projektmitglieder",
               "description": "Einladen, Bearbeiten und Entfernen von Projektmitgliedern.",

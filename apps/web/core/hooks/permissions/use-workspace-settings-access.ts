@@ -22,6 +22,7 @@ import { useIntegrationPermissions } from "@/hooks/store/integrations/use-integr
 import { useFeatureFlags, useTeamspaces } from "@/plane-web/hooks/store";
 import { useInitiatives } from "@/plane-web/hooks/store/use-initiatives";
 import { useWorkspaceWorkItemTypes } from "@/plane-web/hooks/store/work-item-types/use-workspace-work-item-types";
+import { useWebhook } from "@/hooks/store/use-webhook";
 
 /**
  * Workspace settings tab authorization helper.
@@ -42,6 +43,7 @@ export const useWorkspaceSettingsAccess = () => {
     initiative: { permissions: initiativePermissions },
   } = useInitiatives();
   const { canCreate: canCreateWorkItemTypes } = useWorkspaceWorkItemTypes();
+  const { getCanAccessWebhooks } = useWebhook();
 
   const hasWorkspaceSettingPermission = (workspaceSlug: string, settingKey: TWorkspaceSettingsTabs): boolean => {
     const canManageWorkspace = workspacePermissions.getCanManage(workspaceSlug);
@@ -53,7 +55,7 @@ export const useWorkspaceSettingsAccess = () => {
       members: workspacePermissions.getCanViewMembers(workspaceSlug),
       permissions: isGACEnabled,
       "billing-and-plans": workspacePermissions.getCanViewBilling(workspaceSlug),
-      webhooks: canManageWorkspace,
+      webhooks: getCanAccessWebhooks(workspaceSlug),
       connections: integrationPermissions.getCanCreate(workspaceSlug),
       integrations: integrationPermissions.getCanCreate(workspaceSlug),
       teamspaces: teamspacePermissions.getCanCreate(workspaceSlug),
@@ -64,15 +66,15 @@ export const useWorkspaceSettingsAccess = () => {
       work_item_types: canCreateWorkItemTypes(workspaceSlug),
       export: canManageWorkspace,
       import: canManageWorkspace,
-      worklogs: canManageWorkspace,
+      worklogs: workspacePermissions.getCanViewWorkspaceWorklogs(workspaceSlug),
       identity: canManageWorkspace,
-      project_states: canManageWorkspace,
+      project_states: canManageWorkspace, // TODO: <PermissionEngine> Add project states permission and use it here
       customers: canManageWorkspace,
       templates: canManageWorkspace,
       "plane-intelligence": canManageWorkspace,
       scripts: canManageWorkspace,
       "access-tokens": canManageWorkspace,
-      releases: canManageWorkspace, // TODO: <PermissionEngine> Update permission check for this (previous admin check)
+      releases: canManageWorkspace,
       "group-syncing": canManageWorkspace,
       automations: canManageWorkspace,
     };

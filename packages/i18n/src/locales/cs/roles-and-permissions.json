@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Přístup k projektu",
+              "description": "Základní přístup udělený jakoukoli rolí v projektu.",
+              "project": {
+                "view": { "label": "Zobrazit projekt" }
+              }
+            },
             "project_membership": {
               "title": "Členové projektu",
               "description": "Zvaní, úpravy a odebírání členů projektu.",

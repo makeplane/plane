@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "项目访问权限",
+              "description": "任何项目角色授予的基本访问权限。",
+              "project": {
+                "view": { "label": "查看项目" }
+              }
+            },
             "project_membership": {
               "title": "项目成员",
               "description": "邀请、编辑和移除项目成员。",

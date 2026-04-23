@@ -282,15 +282,21 @@ class PermissionSchemeSerializer(serializers.ModelSerializer):
             self.fields["namespace"].read_only = True
 
     def validate_permissions(self, value):
-        """Validate each permission string."""
+        """Validate each permission string.
+
+        Wildcards (`*`, `<resource>:*`) are reserved for system role definitions
+        in code and are not accepted in stored custom permission schemes.
+        """
         from .definitions import Condition, Permission
 
         if not isinstance(value, list):
             raise serializers.ValidationError("Permissions must be a list")
 
         invalid = []
+        wildcards = []
         for perm_str in value:
-            if perm_str in ("*",) or perm_str.endswith(":*"):
+            if perm_str == "*" or perm_str.endswith(":*"):
+                wildcards.append(perm_str)
                 continue
             if "+" in perm_str:
                 base, cond = perm_str.split("+", 1)
@@ -307,6 +313,10 @@ class PermissionSchemeSerializer(serializers.ModelSerializer):
                 if perm is None:
                     invalid.append(perm_str)
 
+        if wildcards:
+            raise serializers.ValidationError(
+                f"Wildcard permissions are not allowed in custom schemes: {', '.join(wildcards)}"
+            )
         if invalid:
             raise serializers.ValidationError(
                 f"Invalid permission strings: {', '.join(invalid)}"
@@ -314,6 +324,8 @@ class PermissionSchemeSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        from plane.db.models.permission import RoleNamespace
+
         if self.instance and self.instance.is_system:
             raise serializers.ValidationError("System permission schemes cannot be modified")
         attrs["is_system"] = False
@@ -321,6 +333,46 @@ class PermissionSchemeSerializer(serializers.ModelSerializer):
         # Resolve workspace id from context (set by view via serializer.save(workspace_id=...))
         workspace_id = self.context.get("workspace_id")
         namespace = attrs.get("namespace", getattr(self.instance, "namespace", None))
+
+        # Every workspace-namespace PS must include `workspace:view`; every
+        # project-namespace PS must include `project:view`. Auto-inject the
+        # baseline scope-view grant so a PS always permits seeing its own scope.
+        _baseline_view = {
+            RoleNamespace.WORKSPACE: "workspace:view",
+            RoleNamespace.PROJECT: "project:view",
+        }.get(namespace)
+        if "permissions" in attrs and _baseline_view:
+            perms = list(attrs["permissions"])
+            if _baseline_view not in perms:
+                perms.append(_baseline_view)
+                attrs["permissions"] = perms
+
+        # Project-namespace PS may only hold permissions whose resource type
+        # falls under the project subtree. Workspace-scope permissions (e.g.,
+        # billing:view, workspace:manage) in a project PS would leak workspace
+        # authority through a project-scope role. Workspace-namespace PS is
+        # unrestricted by design — a workspace role can legitimately grant
+        # project-scope actions across all projects in the workspace.
+        if "permissions" in attrs and namespace == RoleNamespace.PROJECT:
+            from plane.permissions.definitions import ResourceType
+            from plane.permissions.inheritance import get_all_resource_types_under
+
+            project_scope_types = get_all_resource_types_under(ResourceType.PROJECT)
+            out_of_scope = []
+            for perm_str in attrs["permissions"]:
+                base = perm_str.split("+", 1)[0]
+                resource_type = base.split(":", 1)[0]
+                if resource_type not in project_scope_types:
+                    out_of_scope.append(perm_str)
+            if out_of_scope:
+                raise serializers.ValidationError(
+                    {
+                        "permissions": (
+                            "Project-namespace permission schemes cannot contain "
+                            f"workspace-scope permissions: {', '.join(out_of_scope)}"
+                        )
+                    }
+                )
 
         if "name" in attrs and "slug" not in attrs:
             from django.utils.text import slugify

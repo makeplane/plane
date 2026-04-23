@@ -34,6 +34,8 @@ export type PermissionMatrixRow = {
   foldedChildren?: PermissionString[];
   /** i18n key for tooltip explaining what's folded under this row. */
   foldTooltipKey?: string;
+  /** Row is hidden from the UI and always present in matrix state + saved grants. */
+  alwaysEnabled?: boolean;
 };
 
 export type PermissionMatrixGroup = {
@@ -52,6 +54,12 @@ export type PermissionEntry = {
   foldedUnder?: PermissionString;
   /** i18n key for tooltip explaining what's folded under this row. Only meaningful on fold parents. */
   foldTooltipKey?: string;
+  /**
+   * Row is hidden from the UI and always present in matrix state + saved grants.
+   * Use for scope-entry permissions (workspace:view, project:view) that are implicit
+   * from role assignment and should not be individually toggleable.
+   */
+  alwaysEnabled?: boolean;
 };
 
 export type ResourcePermissions<R extends PermissionResource> = {

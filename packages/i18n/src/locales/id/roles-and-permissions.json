@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Akses Proyek",
+              "description": "Akses dasar yang diberikan oleh peran proyek apa pun.",
+              "project": {
+                "view": { "label": "Lihat Proyek" }
+              }
+            },
             "project_membership": {
               "title": "Anggota Proyek",
               "description": "Mengundang, mengedit, dan menghapus anggota proyek.",

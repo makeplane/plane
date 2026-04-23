@@ -79,6 +79,7 @@ export const TEAMSPACE_PERMISSION_RESOURCE_ACTIONS = {
  * evaluated against a project context at runtime.
  */
 export const PROJECT_PERMISSION_RESOURCE_ACTIONS = {
+  project: ["view"],
   project_member: ["view", "invite", "edit", "remove", "change_role"],
   project_update: ["view", "create", "edit", "delete", "react"],
   project_update_comment: ["view", "create", "edit", "delete", "react"],

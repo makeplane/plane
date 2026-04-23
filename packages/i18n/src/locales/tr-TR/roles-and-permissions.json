@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Proje Erişimi",
+              "description": "Herhangi bir proje rolü tarafından verilen temel erişim.",
+              "project": {
+                "view": { "label": "Projeyi Görüntüle" }
+              }
+            },
             "project_membership": {
               "title": "Proje Üyeleri",
               "description": "Proje üyelerini davet etme, düzenleme ve kaldırma.",

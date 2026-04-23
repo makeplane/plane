@@ -112,6 +112,11 @@ export const permissionsToMatrixState = (
   const state: PermissionMatrixState = {};
 
   for (const row of rows) {
+    if (row.alwaysEnabled) {
+      state[row.rowId] = { mode: "all" };
+      continue;
+    }
+
     const resourceWildcard = `${row.resource}:*` as PermissionGrantString;
 
     if (
@@ -173,6 +178,11 @@ export const matrixStateToPermissions = (
   const result: Partial<Record<PermissionGrantString, true>> = {};
 
   for (const row of rows) {
+    if (row.alwaysEnabled) {
+      result[row.rowId] = true;
+      continue;
+    }
+
     const selection = matrixState[row.rowId] ?? { mode: "disabled" };
 
     if (selection.mode === "disabled") continue;

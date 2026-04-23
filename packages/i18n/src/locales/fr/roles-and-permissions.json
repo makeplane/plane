@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Accès au projet",
+              "description": "Accès de base accordé par tout rôle de projet.",
+              "project": {
+                "view": { "label": "Voir le projet" }
+              }
+            },
             "project_membership": {
               "title": "Membres du projet",
               "description": "Inviter, modifier et retirer des membres du projet.",

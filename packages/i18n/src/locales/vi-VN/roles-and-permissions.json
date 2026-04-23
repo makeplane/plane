@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Truy cập dự án",
+              "description": "Quyền truy cập cơ bản được cấp bởi bất kỳ vai trò dự án nào.",
+              "project": {
+                "view": { "label": "Xem dự án" }
+              }
+            },
             "project_membership": {
               "title": "Thành viên dự án",
               "description": "Mời, chỉnh sửa và xóa thành viên dự án.",

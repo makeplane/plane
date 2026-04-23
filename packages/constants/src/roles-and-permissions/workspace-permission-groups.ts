@@ -56,7 +56,7 @@ const WORKSPACE_GROUPS: Record<string, WorkspaceGroupDef> = {
     order: 1,
     resources: {
       workspace: {
-        view: { labelKey: `${P}.workspace_settings.workspace.view.label` },
+        view: { labelKey: `${P}.workspace_settings.workspace.view.label`, alwaysEnabled: true },
         edit: { labelKey: `${P}.workspace_settings.workspace.edit.label`, prerequisites: ["workspace:view"] },
         manage: { labelKey: `${P}.workspace_settings.workspace.manage.label`, prerequisites: ["workspace:view"] },
         invite: { labelKey: `${P}.workspace_settings.workspace.invite.label`, prerequisites: ["workspace:view"] },
@@ -104,7 +104,7 @@ const WORKSPACE_GROUPS: Record<string, WorkspaceGroupDef> = {
     resources: {
       project: {
         browse: { labelKey: `${P}.project_management.project.browse.label` },
-        view: { labelKey: `${P}.project_management.project.view.label` },
+        view: { labelKey: `${P}.project_management.project.view.label`, alwaysEnabled: true },
         create: { labelKey: `${P}.project_management.project.create.label` },
         edit: { labelKey: `${P}.project_management.project.edit.label`, prerequisites: ["project:view"] },
         react: { labelKey: `${P}.project_management.project.react.label`, prerequisites: ["project:view"] },

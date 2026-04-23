@@ -287,6 +287,13 @@
             }
           },
           "project": {
+            "project_overview": {
+              "title": "Project Access",
+              "description": "Baseline access granted by any project role.",
+              "project": {
+                "view": { "label": "View Project" }
+              }
+            },
             "project_membership": {
               "title": "Project Members",
               "description": "Inviting, editing, and removing project members.",
