@@ -9,6 +9,7 @@ import { Popover } from "@plane/propel/popover";
 import { EmptyStateCompact } from "@plane/propel/empty-state";
 import { Loader } from "@plane/ui";
 import { ProgressTrackingBadge } from "@/plane-web/components/issues/issue-layouts/progress-tracking-badge";
+import { getProgressStatus } from "@/plane-web/components/issues/issue-layouts/progress-tracking-utils";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 
 const PAGE_SIZE = 10;
@@ -31,8 +32,17 @@ export type EnrichedIssue = TBaseIssue & {
 type SortDir = "asc" | "desc";
 type SortConfig = { col: string; dir: SortDir } | null;
 
-const SORTABLE = new Set(["department", "main_category", "sub_category", "project", "state", "start_date", "due_date"]);
-const FILTERABLE = new Set(["department", "main_category", "sub_category", "project", "state"]);
+const SORTABLE = new Set([
+  "department",
+  "main_category",
+  "sub_category",
+  "project",
+  "state",
+  "start_date",
+  "due_date",
+  "progress",
+]);
+const FILTERABLE = new Set(["department", "main_category", "sub_category", "project", "state", "progress"]);
 
 const getVal = (issue: EnrichedIssue, col: string): string => {
   switch (col) {
@@ -50,6 +60,10 @@ const getVal = (issue: EnrichedIssue, col: string): string => {
       return issue.start_date ?? "";
     case "due_date":
       return issue.target_date ?? "";
+    case "progress": {
+      const ps = getProgressStatus(issue.target_date ?? null);
+      return ps?.label ?? "";
+    }
     default:
       return "";
   }
@@ -98,7 +112,7 @@ const ColHeader = ({
   };
 
   return (
-    <th className="py-2.5 pr-4 whitespace-nowrap align-middle">
+    <th className="py-2.5 pl-3 pr-3 whitespace-nowrap align-middle">
       <Popover open={open} onOpenChange={handleOpenChange}>
         <Popover.Button
           className={cn(
@@ -271,6 +285,7 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
       sub_category: colLabel("sub_category"),
       project: colLabel("project"),
       state: colLabel("state"),
+      progress: colLabel("progress"),
       start_date: colLabel("start_date"),
       due_date: colLabel("due_date"),
     }),
@@ -403,16 +418,13 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="bg-surface-2/50 border-b border-subtle">
-              <th className="py-2.5 pl-4 pr-4 text-12 font-semibold uppercase tracking-wide text-tertiary whitespace-nowrap">
+            <tr className="bg-surface-2 border-b border-subtle">
+              <th className="sticky left-0 z-20 py-2.5 pl-4 pr-3 text-12 font-semibold uppercase tracking-wide text-tertiary whitespace-nowrap bg-surface-2 border-r border-subtle">
                 {colLabel("work_item")}
               </th>
-              {(["department", "main_category", "sub_category", "project", "state"] as const).map((c) => (
+              {(["department", "main_category", "sub_category", "project", "state", "progress"] as const).map((c) => (
                 <ColHeader key={c} col={c} label={colLabel(c)} {...colProps} />
               ))}
-              <th className="py-2.5 pr-4 text-12 font-semibold uppercase tracking-wide text-tertiary whitespace-nowrap">
-                {colLabel("progress")}
-              </th>
               <ColHeader col="start_date" label={colLabel("start_date")} {...colProps} />
               <ColHeader col="due_date" label={colLabel("due_date")} {...colProps} />
             </tr>
@@ -425,9 +437,9 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
                 return (
                   <tr
                     key={`${issue._workspaceSlug}-${issue.id}`}
-                    className="hover:bg-surface-2/50 transition-colors group"
+                    className="hover:bg-surface-2 border-b border-subtle transition-colors group"
                   >
-                    <td className="py-3 pl-4 pr-4">
+                    <td className="sticky left-0 z-10 py-2.5 pl-4 pr-3 bg-surface-1 group-hover:bg-surface-2 transition-colors border-r border-subtle">
                       <button
                         type="button"
                         onClick={() =>
@@ -439,7 +451,7 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
                             issueId: issue.id,
                           })
                         }
-                        className="flex items-center gap-2 text-left max-w-[280px] lg:max-w-[360px] group/btn"
+                        className="flex items-center gap-1.5 text-left max-w-[200px] group/btn"
                       >
                         <span className="flex-shrink-0 text-tertiary text-12 tabular-nums">
                           {project?.identifier ? `${project.identifier}-${issue.sequence_id}` : issue.sequence_id}
@@ -449,28 +461,28 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
                         </span>
                       </button>
                     </td>
-                    <td className="py-3 pr-4 text-13 text-secondary max-w-[130px]">
+                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
                       <span className="truncate block">{issue._workspaceName}</span>
                     </td>
-                    <td className="py-3 pr-4 text-13 text-secondary max-w-[130px]">
+                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
                       <span className="truncate block">
                         {issue._mainCategoryName ?? <span className="text-tertiary">—</span>}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 text-13 text-secondary max-w-[130px]">
+                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
                       <span className="truncate block">
                         {issue._subCategoryName ?? <span className="text-tertiary">—</span>}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 text-13 text-secondary max-w-[130px]">
+                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary max-w-[90px]">
                       <span className="truncate block">
                         {project?.name ?? <span className="text-tertiary">—</span>}
                       </span>
                     </td>
-                    <td className="py-3 pr-4">
+                    <td className="py-2.5 pl-3 pr-3 max-w-[80px]">
                       {state ? (
                         <span
-                          className="inline-flex h-5 items-center rounded px-2 text-12 font-medium max-w-[130px] truncate"
+                          className="inline-flex h-5 items-center rounded px-1.5 text-11 font-medium max-w-[80px] truncate"
                           style={{
                             color: state.color,
                             backgroundColor: `${state.color}18`,
@@ -483,13 +495,13 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
                         <span className="text-tertiary text-13">—</span>
                       )}
                     </td>
-                    <td className="py-3 pr-4">
+                    <td className="py-2.5 pl-3 pr-3 max-w-[90px]">
                       <ProgressTrackingBadge targetDate={issue.target_date} />
                     </td>
-                    <td className="py-3 pr-4 text-13 text-secondary whitespace-nowrap tabular-nums">
+                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
                       {formatDate(issue.start_date)}
                     </td>
-                    <td className="py-3 pr-4 text-13 text-secondary whitespace-nowrap tabular-nums">
+                    <td className="py-2.5 pl-3 pr-3 text-13 text-secondary whitespace-nowrap tabular-nums">
                       {formatDate(issue.target_date)}
                     </td>
                   </tr>

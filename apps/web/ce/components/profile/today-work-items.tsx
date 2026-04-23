@@ -122,7 +122,7 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
           <Switch value={crossWorkspaces} onChange={setCrossWorkspaces} size="sm" />
         </div>
       </div>
-      <Card>
+      <Card className="p-2">
         <WorkItemsTable issues={issueList} isLoading={!isDataReady} i18nNs="today_work_items" />
       </Card>
     </div>

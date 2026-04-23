@@ -119,7 +119,7 @@ export const OverdueWorkItems = observer(function OverdueWorkItems() {
           <Switch value={crossWorkspaces} onChange={setCrossWorkspaces} size="sm" />
         </div>
       </div>
-      <Card>
+      <Card className="p-2">
         <WorkItemsTable issues={issueList} isLoading={!isDataReady} i18nNs="overdue_work_items" />
       </Card>
     </div>
