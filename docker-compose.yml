@@ -1,6 +1,7 @@
 services:
   web:
     container_name: web
+    image: ${PLANE_WEB_IMAGE:-plane-web:local}
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile.web
@@ -12,6 +13,7 @@ services:
 
   admin:
     container_name: admin
+    image: ${PLANE_ADMIN_IMAGE:-plane-admin:local}
     build:
       context: .
       dockerfile: ./apps/admin/Dockerfile.admin
@@ -24,6 +26,7 @@ services:
 
   space:
     container_name: space
+    image: ${PLANE_SPACE_IMAGE:-plane-space:local}
     build:
       context: .
       dockerfile: ./apps/space/Dockerfile.space
@@ -36,6 +39,7 @@ services:
 
   api:
     container_name: api
+    image: ${PLANE_API_IMAGE:-plane-api:local}
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -51,6 +55,7 @@ services:
 
   worker:
     container_name: bgworker
+    image: ${PLANE_API_IMAGE:-plane-api:local}
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -67,6 +72,7 @@ services:
 
   beat-worker:
     container_name: beatworker
+    image: ${PLANE_API_IMAGE:-plane-api:local}
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -83,6 +89,7 @@ services:
 
   migrator:
     container_name: plane-migrator
+    image: ${PLANE_API_IMAGE:-plane-api:local}
     build:
       context: ./apps/api
       dockerfile: Dockerfile.api
@@ -98,6 +105,7 @@ services:
 
   live:
     container_name: plane-live
+    image: ${PLANE_LIVE_IMAGE:-plane-live:local}
     build:
       context: .
       dockerfile: ./apps/live/Dockerfile.live
@@ -154,6 +162,7 @@ services:
   # Comment this if you already have a reverse proxy running
   proxy:
     container_name: proxy
+    image: ${PLANE_PROXY_IMAGE:-plane-proxy:local}
     build:
       context: ./apps/proxy
       dockerfile: Dockerfile.ce
