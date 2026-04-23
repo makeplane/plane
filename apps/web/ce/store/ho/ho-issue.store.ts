@@ -16,8 +16,6 @@ export interface IHoIssueStore {
   filterOptions: THoFilterOptions | null;
   // Computed: workspaces the user can access (shown as department selector options)
   departmentOptions: { id: string; name: string }[];
-  // Computed: set of department IDs the user can access
-  accessibleDepartmentIds: Set<string>;
   selectedDepartmentId: string | null;
   selectedProjectIds: string[];
   filters: {
@@ -108,11 +106,6 @@ export class HoIssueStore implements IHoIssueStore {
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
-  // Set of department IDs linked to accessible workspaces — used to filter categorySummary client-side
-  get accessibleDepartmentIds(): Set<string> {
-    return new Set(this.accessibleWorkspaces.map((w) => w.department_id).filter(Boolean));
-  }
-
   constructor() {
     this.service = new HoIssueService();
     makeObservable(this, {
@@ -121,7 +114,6 @@ export class HoIssueStore implements IHoIssueStore {
       accessibleWorkspaces: observable,
       filterOptions: observable,
       departmentOptions: computed,
-      accessibleDepartmentIds: computed,
       selectedDepartmentId: observable,
       selectedProjectIds: observable,
       filters: observable,
