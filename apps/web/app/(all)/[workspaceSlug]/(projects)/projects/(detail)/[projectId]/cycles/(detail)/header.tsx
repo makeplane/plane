@@ -248,6 +248,7 @@ export const CycleIssuesHeader = observer(function CycleIssuesHeader() {
               size="lg"
               icon={PanelRight}
               onClick={toggleSidebar}
+              data-prevent-outside-click
               className={cn({
                 "text-accent-primary bg-accent-subtle": !isSidebarCollapsed,
               })}

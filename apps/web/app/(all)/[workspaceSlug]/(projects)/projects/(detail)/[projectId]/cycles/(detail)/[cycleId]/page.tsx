@@ -11,8 +11,10 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useRef } from "react";
 import { observer } from "mobx-react";
 // plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
 import { cn } from "@plane/utils";
 // assets
 import emptyCycle from "@/app/assets/empty-state/cycle.svg?url";
@@ -52,6 +54,12 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
   const project = getProjectById(projectId);
   const pageTitle = project?.name && cycle?.name ? `${project?.name} - ${cycle?.name}` : undefined;
 
+  // sidebar ref for outside click detection
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  useOutsideClickDetector(sidebarRef, () => {
+    if (!isSidebarCollapsed) setValue(true);
+  });
+
   /**
    * Toggles the sidebar
    */
@@ -79,6 +87,7 @@ function CycleDetailPage({ params }: Route.ComponentProps) {
             </div>
             {!isSidebarCollapsed && (
               <div
+                ref={sidebarRef}
                 className={cn(
                   "flex h-full w-[21.5rem] flex-shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-4 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-13 shadow-raised-200"
                 )}

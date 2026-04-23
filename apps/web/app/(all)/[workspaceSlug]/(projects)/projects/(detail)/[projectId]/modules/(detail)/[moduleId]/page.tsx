@@ -11,9 +11,11 @@
  * NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
  */
 
+import { useRef } from "react";
 import { observer } from "mobx-react";
 import useSWR from "swr";
 // plane imports
+import { useOutsideClickDetector } from "@plane/hooks";
 import { cn } from "@plane/utils";
 // assets
 import emptyModule from "@/app/assets/empty-state/module.svg?url";
@@ -49,6 +51,12 @@ function ModuleIssuesPage({ params }: Route.ComponentProps) {
   const project = getProjectById(projectId);
   const pageTitle = project?.name && projectModule?.name ? `${project?.name} - ${projectModule?.name}` : undefined;
 
+  // sidebar ref for outside click detection
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  useOutsideClickDetector(sidebarRef, () => {
+    if (!isSidebarCollapsed) setValue("true");
+  });
+
   const toggleSidebar = () => {
     setValue(`${!isSidebarCollapsed}`);
   };
@@ -74,6 +82,7 @@ function ModuleIssuesPage({ params }: Route.ComponentProps) {
           </div>
           {!isSidebarCollapsed && (
             <div
+              ref={sidebarRef}
               className={cn(
                 "flex h-full w-[24rem] shrink-0 flex-col gap-3.5 overflow-y-auto border-l border-subtle bg-surface-1 px-6 duration-300 vertical-scrollbar scrollbar-sm absolute right-0 z-13 shadow-raised-200"
               )}
