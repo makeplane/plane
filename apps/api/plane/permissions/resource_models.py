@@ -61,7 +61,6 @@ def _build_resource_model_map() -> dict:
         RecurringWorkitemTask,
         ProjectLink,
         ProjectState,
-        WorkspaceFeature,
         IssueWorkLog,
         PageComment,
         TeamspaceComment,
@@ -92,7 +91,6 @@ def _build_resource_model_map() -> dict:
         "epic_update_comment": EntityUpdates,
         "release": Release,
         "workspace_project_state": ProjectState,
-        "workspace_feature": WorkspaceFeature,
         "workspace_worklog": IssueWorkLog,
         # Project-level resources
         "project": Project,

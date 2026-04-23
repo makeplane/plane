@@ -75,214 +75,436 @@
               "title": "Workspace 设置",
               "description": "核心 Workspace 配置：名称、徽标、货币、域名、删除和所有权转移。",
               "workspace": {
-                "view": { "label": "查看 Workspace" },
-                "edit": { "label": "编辑 Workspace 设置" },
-                "manage": { "label": "管理 Workspace" },
-                "invite": { "label": "邀请成员" },
-                "delete": { "label": "删除 Workspace" },
-                "transfer": { "label": "转移所有权" }
+                "view": {
+                  "label": "查看 Workspace"
+                },
+                "edit": {
+                  "label": "编辑 Workspace 设置"
+                },
+                "manage": {
+                  "label": "管理 Workspace"
+                },
+                "invite": {
+                  "label": "邀请成员"
+                },
+                "delete": {
+                  "label": "删除 Workspace"
+                },
+                "transfer": {
+                  "label": "转移所有权"
+                }
               }
             },
             "member_management": {
               "title": "成员管理",
               "description": "邀请、编辑、导入和移除 Workspace 成员。",
               "workspace_member": {
-                "view": { "label": "查看成员" },
-                "invite": { "label": "邀请成员" },
-                "edit": { "label": "编辑成员详情" },
-                "import": { "label": "导入成员（CSV / SSO）" },
-                "change_role": { "label": "更改成员角色" },
-                "remove": { "label": "移除成员" }
+                "view": {
+                  "label": "查看成员"
+                },
+                "invite": {
+                  "label": "邀请成员"
+                },
+                "edit": {
+                  "label": "编辑成员详情"
+                },
+                "import": {
+                  "label": "导入成员（CSV / SSO）"
+                },
+                "change_role": {
+                  "label": "更改成员角色"
+                },
+                "remove": {
+                  "label": "移除成员"
+                }
               }
             },
             "project_management": {
               "title": "项目管理",
               "description": "从 Workspace 上下文创建和管理项目。",
               "project": {
-                "browse": { "label": "浏览项目" },
-                "view": { "label": "查看项目详情" },
-                "create": { "label": "创建项目" },
-                "edit": { "label": "编辑项目设置" },
-                "react": { "label": "对项目作出反应" },
-                "publish": { "label": "发布项目（设为公开）" },
-                "archive": { "label": "归档项目" },
-                "delete": { "label": "删除项目" },
-                "manage": { "label": "管理项目访问" }
+                "browse": {
+                  "label": "浏览项目"
+                },
+                "view": {
+                  "label": "查看项目详情"
+                },
+                "create": {
+                  "label": "创建项目"
+                },
+                "edit": {
+                  "label": "编辑项目设置"
+                },
+                "react": {
+                  "label": "对项目作出反应"
+                },
+                "publish": {
+                  "label": "发布项目（设为公开）"
+                },
+                "archive": {
+                  "label": "归档项目"
+                },
+                "delete": {
+                  "label": "删除项目"
+                },
+                "manage": {
+                  "label": "管理项目访问"
+                }
               }
             },
             "role_administration": {
               "title": "角色管理",
               "description": "创建和管理自定义角色和项目角色。",
               "custom_role": {
-                "view": { "label": "查看自定义角色" },
-                "create": { "label": "创建自定义角色" },
-                "edit": { "label": "编辑自定义角色" },
-                "delete": { "label": "删除自定义角色" }
+                "view": {
+                  "label": "查看自定义角色"
+                },
+                "create": {
+                  "label": "创建自定义角色"
+                },
+                "edit": {
+                  "label": "编辑自定义角色"
+                },
+                "delete": {
+                  "label": "删除自定义角色"
+                }
               }
             },
             "workspace_pages": {
               "title": "Workspace Pages（Wiki）",
               "description": "Workspace 级别的文档和 Wiki。",
               "wiki": {
-                "view": { "label": "查看 Wiki" },
-                "create": { "label": "创建 Wiki Pages" },
-                "edit": { "label": "编辑 Wiki Pages" },
-                "share": { "label": "共享 Wiki Pages" },
-                "delete": { "label": "删除 Wiki Pages" },
-                "comment": { "label": "评论 Wiki Pages" }
+                "view": {
+                  "label": "查看 Wiki"
+                },
+                "create": {
+                  "label": "创建 Wiki Pages"
+                },
+                "edit": {
+                  "label": "编辑 Wiki Pages"
+                },
+                "share": {
+                  "label": "共享 Wiki Pages"
+                },
+                "delete": {
+                  "label": "删除 Wiki Pages"
+                },
+                "comment": {
+                  "label": "评论 Wiki Pages"
+                }
               }
             },
             "workspace_views": {
               "title": "Workspace 视图",
               "description": "Workspace 级别的已保存筛选器和视图管理。",
               "workspace_workitem_view": {
-                "view": { "label": "查看 Workspace 视图" },
-                "create": { "label": "创建 Workspace 视图" },
-                "edit": { "label": "编辑 Workspace 视图" },
-                "share": { "label": "共享 Workspace 视图" },
-                "publish": { "label": "发布 Workspace 视图" },
-                "export": { "label": "导出 Workspace 视图" },
-                "delete": { "label": "删除 Workspace 视图" }
+                "view": {
+                  "label": "查看 Workspace 视图"
+                },
+                "create": {
+                  "label": "创建 Workspace 视图"
+                },
+                "edit": {
+                  "label": "编辑 Workspace 视图"
+                },
+                "share": {
+                  "label": "共享 Workspace 视图"
+                },
+                "publish": {
+                  "label": "发布 Workspace 视图"
+                },
+                "export": {
+                  "label": "导出 Workspace 视图"
+                },
+                "delete": {
+                  "label": "删除 Workspace 视图"
+                }
               }
             },
             "initiatives": {
               "title": "Initiatives",
               "description": "跨项目的 Initiative 跟踪，包括评论、附件、链接和更新。",
               "initiative": {
-                "view": { "label": "查看 Initiatives" },
-                "create": { "label": "创建 Initiatives" },
-                "edit": { "label": "编辑 Initiatives" },
-                "manage": { "label": "管理 Initiatives" },
-                "react": { "label": "对 Initiatives 作出反应" },
-                "delete": { "label": "删除 Initiatives" }
+                "view": {
+                  "label": "查看 Initiatives"
+                },
+                "create": {
+                  "label": "创建 Initiatives"
+                },
+                "edit": {
+                  "label": "编辑 Initiatives"
+                },
+                "manage": {
+                  "label": "管理 Initiatives"
+                },
+                "react": {
+                  "label": "对 Initiatives 作出反应"
+                },
+                "delete": {
+                  "label": "删除 Initiatives"
+                }
               },
               "initiative_comment": {
-                "view": { "label": "查看 Initiative 评论" },
-                "create": { "label": "评论 Initiatives" },
-                "edit": { "label": "编辑 Initiative 评论" },
-                "react": { "label": "对 Initiative 评论作出反应" },
-                "delete": { "label": "删除 Initiative 评论" }
+                "view": {
+                  "label": "查看 Initiative 评论"
+                },
+                "create": {
+                  "label": "评论 Initiatives"
+                },
+                "edit": {
+                  "label": "编辑 Initiative 评论"
+                },
+                "react": {
+                  "label": "对 Initiative 评论作出反应"
+                },
+                "delete": {
+                  "label": "删除 Initiative 评论"
+                }
               },
               "initiative_attachment": {
-                "view": { "label": "查看 Initiative 附件" },
-                "create": { "label": "添加 Initiative 附件" },
-                "delete": { "label": "删除 Initiative 附件" }
+                "view": {
+                  "label": "查看 Initiative 附件"
+                },
+                "create": {
+                  "label": "添加 Initiative 附件"
+                },
+                "delete": {
+                  "label": "删除 Initiative 附件"
+                }
               },
               "initiative_link": {
-                "view": { "label": "查看 Initiative 链接" },
-                "create": { "label": "添加 Initiative 链接" },
-                "edit": { "label": "编辑 Initiative 链接" },
-                "delete": { "label": "删除 Initiative 链接" }
+                "view": {
+                  "label": "查看 Initiative 链接"
+                },
+                "create": {
+                  "label": "添加 Initiative 链接"
+                },
+                "edit": {
+                  "label": "编辑 Initiative 链接"
+                },
+                "delete": {
+                  "label": "删除 Initiative 链接"
+                }
               }
             },
             "teamspaces": {
               "title": "Teamspaces",
               "description": "浏览、创建和管理 Teamspaces。",
               "teamspace": {
-                "browse": { "label": "浏览 Teamspaces" },
-                "view": { "label": "查看 Teamspace 详情" },
-                "create": { "label": "创建 Teamspaces" },
-                "edit": { "label": "编辑 Teamspaces" },
-                "manage": { "label": "管理 Teamspace 成员" },
-                "delete": { "label": "删除 Teamspaces" }
+                "browse": {
+                  "label": "浏览 Teamspaces"
+                },
+                "view": {
+                  "label": "查看 Teamspace 详情"
+                },
+                "create": {
+                  "label": "创建 Teamspaces"
+                },
+                "edit": {
+                  "label": "编辑 Teamspaces"
+                },
+                "manage": {
+                  "label": "管理 Teamspace 成员"
+                },
+                "delete": {
+                  "label": "删除 Teamspaces"
+                }
               }
             },
             "integrations": {
               "title": "集成",
               "description": "第三方集成、Webhooks 和 API 令牌。",
               "integration": {
-                "view": { "label": "查看集成" },
-                "create": { "label": "创建集成" },
-                "edit": { "label": "配置集成" },
-                "delete": { "label": "删除集成" }
+                "view": {
+                  "label": "查看集成"
+                },
+                "create": {
+                  "label": "创建集成"
+                },
+                "edit": {
+                  "label": "编辑 集成"
+                },
+                "delete": {
+                  "label": "删除集成"
+                },
+                "connect": {
+                  "label": "连接集成"
+                },
+                "manage": {
+                  "label": "管理 集成"
+                }
               },
               "webhook": {
-                "view": { "label": "查看 Webhooks" },
-                "create": { "label": "创建 Webhooks" },
-                "edit": { "label": "编辑 Webhooks" },
-                "delete": { "label": "删除 Webhooks" }
+                "view": {
+                  "label": "查看 Webhooks"
+                },
+                "create": {
+                  "label": "创建 Webhooks"
+                },
+                "edit": {
+                  "label": "编辑 Webhooks"
+                },
+                "delete": {
+                  "label": "删除 Webhooks"
+                }
               },
               "api_token": {
-                "view": { "label": "查看 API 令牌" },
-                "create": { "label": "创建 API 令牌" },
-                "delete": { "label": "删除 API 令牌" }
+                "view": {
+                  "label": "查看 API 令牌"
+                },
+                "create": {
+                  "label": "创建 API 令牌"
+                },
+                "delete": {
+                  "label": "删除 API 令牌"
+                }
               }
             },
             "analytics_and_dashboards": {
               "title": "分析与报告",
               "description": "Workspace 级别的仪表板、分析和工作日志。",
               "analytics": {
-                "view": { "label": "查看分析" },
-                "export": { "label": "导出分析" }
+                "view": {
+                  "label": "查看分析"
+                },
+                "export": {
+                  "label": "导出分析"
+                }
               },
               "dashboard": {
-                "view": { "label": "查看仪表板" },
-                "create": { "label": "创建仪表板" },
-                "edit": { "label": "编辑仪表板" },
-                "delete": { "label": "删除仪表板" }
+                "view": {
+                  "label": "查看仪表板"
+                },
+                "create": {
+                  "label": "创建仪表板"
+                },
+                "edit": {
+                  "label": "编辑仪表板"
+                },
+                "delete": {
+                  "label": "删除仪表板"
+                }
               },
               "workspace_worklog": {
-                "view": { "label": "查看工作日志" },
-                "export": { "label": "导出工作日志" }
+                "view": {
+                  "label": "查看工作日志"
+                },
+                "export": {
+                  "label": "导出工作日志"
+                }
               },
               "ai": {
-                "use": { "label": "使用 AI 功能" }
+                "use": {
+                  "label": "使用 AI 功能"
+                }
               }
             },
             "customers": {
               "title": "客户反馈",
               "description": "客户和客户请求管理。",
               "customer": {
-                "view": { "label": "查看客户" },
-                "create": { "label": "创建客户" },
-                "edit": { "label": "编辑客户" },
-                "delete": { "label": "删除客户" }
+                "view": {
+                  "label": "查看客户"
+                },
+                "create": {
+                  "label": "创建客户"
+                },
+                "edit": {
+                  "label": "编辑客户"
+                },
+                "delete": {
+                  "label": "删除客户"
+                }
               },
               "customer_attachment": {
-                "create": { "label": "添加客户附件" },
-                "delete": { "label": "删除客户附件" }
+                "create": {
+                  "label": "添加客户附件"
+                },
+                "delete": {
+                  "label": "删除客户附件"
+                }
               }
             },
             "work_item_relations": {
               "title": "工作项关系",
               "description": "管理工作项的自定义关系类型定义。",
               "workitem_relation": {
-                "view": { "label": "查看关系定义" },
-                "create": { "label": "创建关系定义" },
-                "edit": { "label": "编辑关系定义" },
-                "delete": { "label": "删除关系定义" }
+                "view": {
+                  "label": "查看关系定义"
+                },
+                "create": {
+                  "label": "创建关系定义"
+                },
+                "edit": {
+                  "label": "编辑关系定义"
+                },
+                "delete": {
+                  "label": "删除关系定义"
+                }
               }
             },
             "workspace_templates": {
               "title": "模板",
               "description": "创建和管理 Workspace 级别的工作项、Page 和项目模板。",
               "workspace_workitem_template": {
-                "view": { "label": "查看工作项模板" },
-                "create": { "label": "创建工作项模板" },
-                "edit": { "label": "编辑工作项模板" },
-                "delete": { "label": "删除工作项模板" }
+                "view": {
+                  "label": "查看工作项模板"
+                },
+                "create": {
+                  "label": "创建工作项模板"
+                },
+                "edit": {
+                  "label": "编辑工作项模板"
+                },
+                "delete": {
+                  "label": "删除工作项模板"
+                }
               },
               "workspace_page_template": {
-                "view": { "label": "查看 Page 模板" },
-                "create": { "label": "创建 Page 模板" },
-                "edit": { "label": "编辑 Page 模板" },
-                "delete": { "label": "删除 Page 模板" }
+                "view": {
+                  "label": "查看 Page 模板"
+                },
+                "create": {
+                  "label": "创建 Page 模板"
+                },
+                "edit": {
+                  "label": "编辑 Page 模板"
+                },
+                "delete": {
+                  "label": "删除 Page 模板"
+                }
               },
               "workspace_project_template": {
-                "view": { "label": "查看项目模板" },
-                "create": { "label": "创建项目模板" },
-                "edit": { "label": "编辑项目模板" },
-                "delete": { "label": "删除项目模板" }
+                "view": {
+                  "label": "查看项目模板"
+                },
+                "create": {
+                  "label": "创建项目模板"
+                },
+                "edit": {
+                  "label": "编辑项目模板"
+                },
+                "delete": {
+                  "label": "删除项目模板"
+                }
               }
             },
             "workspace_automations": {
               "title": "Workspace 自动化",
               "description": "Workspace 级别的自动化规则和配置。",
               "workspace_automation": {
-                "view": { "label": "查看 Workspace 自动化" },
-                "create": { "label": "创建 Workspace 自动化" },
-                "edit": { "label": "编辑 Workspace 自动化" },
-                "delete": { "label": "删除 Workspace 自动化" }
+                "view": {
+                  "label": "查看 Workspace 自动化"
+                },
+                "create": {
+                  "label": "创建 Workspace 自动化"
+                },
+                "edit": {
+                  "label": "编辑 Workspace 自动化"
+                },
+                "delete": {
+                  "label": "删除 Workspace 自动化"
+                }
               }
             }
           },
@@ -291,245 +513,507 @@
               "title": "项目访问权限",
               "description": "任何项目角色授予的基本访问权限。",
               "project": {
-                "view": { "label": "查看项目" }
+                "view": {
+                  "label": "查看项目"
+                }
               }
             },
             "project_membership": {
               "title": "项目成员",
               "description": "邀请、编辑和移除项目成员。",
               "project_member": {
-                "view": { "label": "查看项目成员" },
-                "invite": { "label": "邀请成员" },
-                "edit": { "label": "编辑成员详情" },
-                "change_role": { "label": "更改成员角色" },
-                "remove": { "label": "移除成员" }
+                "view": {
+                  "label": "查看项目成员"
+                },
+                "invite": {
+                  "label": "邀请成员"
+                },
+                "edit": {
+                  "label": "编辑成员详情"
+                },
+                "change_role": {
+                  "label": "更改成员角色"
+                },
+                "remove": {
+                  "label": "移除成员"
+                }
               }
             },
             "work_items": {
               "title": "工作项",
               "description": "主要的工作项界面。包括评论、附件、链接、关系和自定义属性。",
               "workitem": {
-                "view": { "label": "查看工作项" },
-                "create": { "label": "创建工作项" },
-                "edit": { "label": "编辑工作项" },
-                "bulk_edit": { "label": "批量编辑工作项" },
-                "export": { "label": "导出工作项" },
-                "react": { "label": "对工作项作出反应" },
-                "delete": { "label": "删除工作项" }
+                "view": {
+                  "label": "查看工作项"
+                },
+                "create": {
+                  "label": "创建工作项"
+                },
+                "edit": {
+                  "label": "编辑工作项"
+                },
+                "bulk_edit": {
+                  "label": "批量编辑工作项"
+                },
+                "export": {
+                  "label": "导出工作项"
+                },
+                "react": {
+                  "label": "对工作项作出反应"
+                },
+                "delete": {
+                  "label": "删除工作项"
+                }
               },
               "comment": {
-                "create": { "label": "添加评论" },
-                "edit": { "label": "编辑评论" },
-                "react": { "label": "对评论作出反应" },
-                "delete": { "label": "删除评论" }
+                "create": {
+                  "label": "添加评论"
+                },
+                "edit": {
+                  "label": "编辑评论"
+                },
+                "react": {
+                  "label": "对评论作出反应"
+                },
+                "delete": {
+                  "label": "删除评论"
+                }
               },
               "attachment": {
-                "view": { "label": "查看附件" },
-                "create": { "label": "添加附件" },
-                "delete": { "label": "删除附件" }
+                "view": {
+                  "label": "查看附件"
+                },
+                "create": {
+                  "label": "添加附件"
+                },
+                "delete": {
+                  "label": "删除附件"
+                }
               },
               "workitem_link": {
-                "view": { "label": "查看工作项链接" },
-                "create": { "label": "添加工作项链接" },
-                "edit": { "label": "编辑工作项链接" },
-                "delete": { "label": "删除工作项链接" }
+                "view": {
+                  "label": "查看工作项链接"
+                },
+                "create": {
+                  "label": "添加工作项链接"
+                },
+                "edit": {
+                  "label": "编辑工作项链接"
+                },
+                "delete": {
+                  "label": "删除工作项链接"
+                }
               },
               "issue_property": {
-                "view": { "label": "查看自定义属性" },
-                "edit": { "label": "编辑自定义属性" }
+                "view": {
+                  "label": "查看自定义属性"
+                },
+                "edit": {
+                  "label": "编辑自定义属性"
+                }
               }
             },
             "epics": {
               "title": "Epics",
               "description": "Epic 生命周期，包括链接、属性和更新线程。",
               "epic": {
-                "view": { "label": "查看 Epics" },
-                "create": { "label": "创建 Epics" },
-                "edit": { "label": "编辑 Epics" },
-                "delete": { "label": "删除 Epics" }
+                "view": {
+                  "label": "查看 Epics"
+                },
+                "create": {
+                  "label": "创建 Epics"
+                },
+                "edit": {
+                  "label": "编辑 Epics"
+                },
+                "delete": {
+                  "label": "删除 Epics"
+                }
               },
               "epic_link": {
-                "view": { "label": "查看 Epic 链接" },
-                "create": { "label": "添加 Epic 链接" },
-                "edit": { "label": "编辑 Epic 链接" },
-                "delete": { "label": "删除 Epic 链接" }
+                "view": {
+                  "label": "查看 Epic 链接"
+                },
+                "create": {
+                  "label": "添加 Epic 链接"
+                },
+                "edit": {
+                  "label": "编辑 Epic 链接"
+                },
+                "delete": {
+                  "label": "删除 Epic 链接"
+                }
               },
               "epic_property": {
-                "view": { "label": "查看 Epic 属性" },
-                "edit": { "label": "编辑 Epic 属性" }
+                "view": {
+                  "label": "查看 Epic 属性"
+                },
+                "edit": {
+                  "label": "编辑 Epic 属性"
+                }
               },
               "epic_update": {
-                "view": { "label": "查看 Epic 更新" },
-                "create": { "label": "发布 Epic 更新" },
-                "edit": { "label": "编辑 Epic 更新" },
-                "delete": { "label": "删除 Epic 更新" }
+                "view": {
+                  "label": "查看 Epic 更新"
+                },
+                "create": {
+                  "label": "发布 Epic 更新"
+                },
+                "edit": {
+                  "label": "编辑 Epic 更新"
+                },
+                "delete": {
+                  "label": "删除 Epic 更新"
+                }
               },
               "epic_update_comment": {
-                "view": { "label": "查看 Epic 更新评论" },
-                "create": { "label": "评论 Epic 更新" },
-                "edit": { "label": "编辑 Epic 更新评论" },
-                "react": { "label": "对 Epic 更新评论作出反应" },
-                "delete": { "label": "删除 Epic 更新评论" }
+                "view": {
+                  "label": "查看 Epic 更新评论"
+                },
+                "create": {
+                  "label": "评论 Epic 更新"
+                },
+                "edit": {
+                  "label": "编辑 Epic 更新评论"
+                },
+                "react": {
+                  "label": "对 Epic 更新评论作出反应"
+                },
+                "delete": {
+                  "label": "删除 Epic 更新评论"
+                }
               }
             },
             "modules_and_cycles": {
               "title": "Modules 和 Cycles",
               "description": "功能分组和冲刺/Cycle 管理。",
               "module": {
-                "view": { "label": "查看 Modules" },
-                "create": { "label": "创建 Modules" },
-                "edit": { "label": "编辑 Modules" },
-                "manage": { "label": "管理 Module 成员" },
-                "archive": { "label": "归档 Modules" },
-                "export": { "label": "导出 Modules" },
-                "delete": { "label": "删除 Modules" }
+                "view": {
+                  "label": "查看 Modules"
+                },
+                "create": {
+                  "label": "创建 Modules"
+                },
+                "edit": {
+                  "label": "编辑 Modules"
+                },
+                "manage": {
+                  "label": "管理 Module 成员"
+                },
+                "archive": {
+                  "label": "归档 Modules"
+                },
+                "export": {
+                  "label": "导出 Modules"
+                },
+                "delete": {
+                  "label": "删除 Modules"
+                }
               },
               "cycle": {
-                "view": { "label": "查看 Cycles" },
-                "create": { "label": "创建 Cycles" },
-                "edit": { "label": "编辑 Cycles" },
-                "delete": { "label": "删除 Cycles" }
+                "view": {
+                  "label": "查看 Cycles"
+                },
+                "create": {
+                  "label": "创建 Cycles"
+                },
+                "edit": {
+                  "label": "编辑 Cycles"
+                },
+                "delete": {
+                  "label": "删除 Cycles"
+                }
               },
               "cycle_update": {
-                "view": { "label": "查看 Cycle 更新" },
-                "create": { "label": "发布 Cycle 更新" },
-                "edit": { "label": "编辑 Cycle 更新" },
-                "delete": { "label": "删除 Cycle 更新" }
+                "view": {
+                  "label": "查看 Cycle 更新"
+                },
+                "create": {
+                  "label": "发布 Cycle 更新"
+                },
+                "edit": {
+                  "label": "编辑 Cycle 更新"
+                },
+                "delete": {
+                  "label": "删除 Cycle 更新"
+                }
               }
             },
             "project_pages_and_views": {
               "title": "Pages 和视图",
               "description": "项目级别的 Pages 和已保存视图。",
               "page": {
-                "view": { "label": "查看 Pages" },
-                "create": { "label": "创建 Pages" },
-                "edit": { "label": "编辑 Pages" },
-                "share": { "label": "共享 Pages" },
-                "delete": { "label": "删除 Pages" }
+                "view": {
+                  "label": "查看 Pages"
+                },
+                "create": {
+                  "label": "创建 Pages"
+                },
+                "edit": {
+                  "label": "编辑 Pages"
+                },
+                "share": {
+                  "label": "共享 Pages"
+                },
+                "delete": {
+                  "label": "删除 Pages"
+                }
               },
               "workitem_view": {
-                "view": { "label": "查看项目视图" },
-                "create": { "label": "创建项目视图" },
-                "edit": { "label": "编辑项目视图" },
-                "share": { "label": "共享项目视图" },
-                "publish": { "label": "发布项目视图" },
-                "export": { "label": "导出项目视图" },
-                "delete": { "label": "删除项目视图" }
+                "view": {
+                  "label": "查看项目视图"
+                },
+                "create": {
+                  "label": "创建项目视图"
+                },
+                "edit": {
+                  "label": "编辑项目视图"
+                },
+                "share": {
+                  "label": "共享项目视图"
+                },
+                "publish": {
+                  "label": "发布项目视图"
+                },
+                "export": {
+                  "label": "导出项目视图"
+                },
+                "delete": {
+                  "label": "删除项目视图"
+                }
               }
             },
             "intake": {
               "title": "Intake",
               "description": "工作项接收和分类工作流。",
               "intake": {
-                "view": { "label": "查看 Intake" },
-                "create": { "label": "创建 Intake 项" },
-                "submit": { "label": "提交 Intake 请求" },
-                "edit": { "label": "编辑 Intake 项" },
-                "react": { "label": "对 Intake 项作出反应" },
-                "manage": { "label": "管理 Intake 项" },
-                "configure": { "label": "配置 Intake" },
-                "export": { "label": "导出 Intake" },
-                "delete": { "label": "删除 Intake 项" }
+                "view": {
+                  "label": "查看 Intake"
+                },
+                "create": {
+                  "label": "创建 Intake 项"
+                },
+                "submit": {
+                  "label": "提交 Intake 请求"
+                },
+                "edit": {
+                  "label": "编辑 Intake 项"
+                },
+                "react": {
+                  "label": "对 Intake 项作出反应"
+                },
+                "manage": {
+                  "label": "管理 Intake 项"
+                },
+                "configure": {
+                  "label": "配置 Intake"
+                },
+                "export": {
+                  "label": "导出 Intake"
+                },
+                "delete": {
+                  "label": "删除 Intake 项"
+                }
               }
             },
             "project_configuration": {
               "title": "项目配置",
               "description": "标签、状态、估算和里程碑。",
               "label": {
-                "view": { "label": "查看标签" },
-                "create": { "label": "创建标签" },
-                "edit": { "label": "编辑标签" },
-                "delete": { "label": "删除标签" }
+                "view": {
+                  "label": "查看标签"
+                },
+                "create": {
+                  "label": "创建标签"
+                },
+                "edit": {
+                  "label": "编辑标签"
+                },
+                "delete": {
+                  "label": "删除标签"
+                }
               },
               "state": {
-                "view": { "label": "查看状态" },
-                "create": { "label": "创建状态" },
-                "edit": { "label": "编辑状态" },
-                "delete": { "label": "删除状态" }
+                "view": {
+                  "label": "查看状态"
+                },
+                "create": {
+                  "label": "创建状态"
+                },
+                "edit": {
+                  "label": "编辑状态"
+                },
+                "delete": {
+                  "label": "删除状态"
+                }
               },
               "estimate": {
-                "view": { "label": "查看估算" },
-                "create": { "label": "创建估算" },
-                "edit": { "label": "编辑估算" },
-                "delete": { "label": "删除估算" }
+                "view": {
+                  "label": "查看估算"
+                },
+                "create": {
+                  "label": "创建估算"
+                },
+                "edit": {
+                  "label": "编辑估算"
+                },
+                "delete": {
+                  "label": "删除估算"
+                }
               },
               "milestone": {
-                "view": { "label": "查看里程碑" },
-                "create": { "label": "创建里程碑" },
-                "edit": { "label": "编辑里程碑" },
-                "delete": { "label": "删除里程碑" }
+                "view": {
+                  "label": "查看里程碑"
+                },
+                "create": {
+                  "label": "创建里程碑"
+                },
+                "edit": {
+                  "label": "编辑里程碑"
+                },
+                "delete": {
+                  "label": "删除里程碑"
+                }
               }
             },
             "automations": {
               "title": "自动化与工作流",
               "description": "自动化、工作流规则和周期性工作项。",
               "project_automation": {
-                "view": { "label": "查看自动化" },
-                "create": { "label": "创建自动化" },
-                "edit": { "label": "编辑自动化" },
-                "delete": { "label": "删除自动化" }
+                "view": {
+                  "label": "查看自动化"
+                },
+                "create": {
+                  "label": "创建自动化"
+                },
+                "edit": {
+                  "label": "编辑自动化"
+                },
+                "delete": {
+                  "label": "删除自动化"
+                }
               },
               "workflow": {
-                "view": { "label": "查看工作流" },
-                "create": { "label": "创建工作流" },
-                "edit": { "label": "编辑工作流" },
-                "delete": { "label": "删除工作流" }
+                "view": {
+                  "label": "查看工作流"
+                },
+                "create": {
+                  "label": "创建工作流"
+                },
+                "edit": {
+                  "label": "编辑工作流"
+                },
+                "delete": {
+                  "label": "删除工作流"
+                }
               },
               "recurring_workitem": {
-                "view": { "label": "查看周期性项" },
-                "create": { "label": "创建周期性项" },
-                "edit": { "label": "编辑周期性项" },
-                "delete": { "label": "删除周期性项" }
+                "view": {
+                  "label": "查看周期性项"
+                },
+                "create": {
+                  "label": "创建周期性项"
+                },
+                "edit": {
+                  "label": "编辑周期性项"
+                },
+                "delete": {
+                  "label": "删除周期性项"
+                }
               }
             },
             "project_updates": {
               "title": "项目更新",
               "description": "进度更新以及更新上的评论。",
               "project_update": {
-                "view": { "label": "查看项目更新" },
-                "create": { "label": "发布项目更新" },
-                "edit": { "label": "编辑项目更新" },
-                "delete": { "label": "删除项目更新" }
+                "view": {
+                  "label": "查看项目更新"
+                },
+                "create": {
+                  "label": "发布项目更新"
+                },
+                "edit": {
+                  "label": "编辑项目更新"
+                },
+                "delete": {
+                  "label": "删除项目更新"
+                }
               },
               "project_update_comment": {
-                "view": { "label": "查看项目更新评论" },
-                "create": { "label": "评论项目更新" },
-                "edit": { "label": "编辑项目更新评论" },
-                "react": { "label": "对项目更新评论作出反应" },
-                "delete": { "label": "删除项目更新评论" }
+                "view": {
+                  "label": "查看项目更新评论"
+                },
+                "create": {
+                  "label": "评论项目更新"
+                },
+                "edit": {
+                  "label": "编辑项目更新评论"
+                },
+                "react": {
+                  "label": "对项目更新评论作出反应"
+                },
+                "delete": {
+                  "label": "删除项目更新评论"
+                }
               }
             },
             "project_analytics": {
               "title": "分析与活动",
               "description": "项目分析和活动日志。",
               "project_activity": {
-                "view": { "label": "查看活动日志" }
+                "view": {
+                  "label": "查看活动日志"
+                }
               }
             },
             "project_links": {
               "title": "项目链接",
               "description": "项目级别的链接。",
               "project_link": {
-                "view": { "label": "查看项目链接" },
-                "create": { "label": "添加项目链接" },
-                "edit": { "label": "编辑项目链接" },
-                "delete": { "label": "删除项目链接" }
+                "view": {
+                  "label": "查看项目链接"
+                },
+                "create": {
+                  "label": "添加项目链接"
+                },
+                "edit": {
+                  "label": "编辑项目链接"
+                },
+                "delete": {
+                  "label": "删除项目链接"
+                }
               }
             },
             "project_templates": {
               "title": "模板",
               "description": "项目范围的工作项和 Page 模板。",
               "project_workitem_template": {
-                "view": { "label": "查看工作项模板" },
-                "create": { "label": "创建工作项模板" },
-                "edit": { "label": "编辑工作项模板" },
-                "delete": { "label": "删除工作项模板" }
+                "view": {
+                  "label": "查看工作项模板"
+                },
+                "create": {
+                  "label": "创建工作项模板"
+                },
+                "edit": {
+                  "label": "编辑工作项模板"
+                },
+                "delete": {
+                  "label": "删除工作项模板"
+                }
               },
               "project_page_template": {
-                "view": { "label": "查看 Page 模板" },
-                "create": { "label": "创建 Page 模板" },
-                "edit": { "label": "编辑 Page 模板" },
-                "delete": { "label": "删除 Page 模板" }
+                "view": {
+                  "label": "查看 Page 模板"
+                },
+                "create": {
+                  "label": "创建 Page 模板"
+                },
+                "edit": {
+                  "label": "编辑 Page 模板"
+                },
+                "delete": {
+                  "label": "删除 Page 模板"
+                }
               }
             }
           },

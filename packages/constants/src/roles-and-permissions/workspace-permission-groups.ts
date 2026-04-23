@@ -282,6 +282,8 @@ const WORKSPACE_GROUPS: Record<string, WorkspaceGroupDef> = {
         create: { labelKey: `${P}.integrations.integration.create.label`, prerequisites: ["integration:view"] },
         edit: { labelKey: `${P}.integrations.integration.edit.label`, prerequisites: ["integration:view"] },
         delete: { labelKey: `${P}.integrations.integration.delete.label`, prerequisites: ["integration:view"] },
+        connect: { labelKey: `${P}.integrations.integration.connect.label`, prerequisites: ["integration:view"] },
+        manage: { labelKey: `${P}.integrations.integration.manage.label`, prerequisites: ["integration:view"] },
       },
       webhook: {
         view: { labelKey: `${P}.integrations.webhook.view.label` },

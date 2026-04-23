@@ -75,214 +75,436 @@
               "title": "Workspace Ayarları",
               "description": "Temel workspace yapılandırması: ad, logo, para birimi, alan adı, silme ve sahiplik devri.",
               "workspace": {
-                "view": { "label": "Workspace'i Görüntüle" },
-                "edit": { "label": "Workspace Ayarlarını Düzenle" },
-                "manage": { "label": "Workspace'i Yönet" },
-                "invite": { "label": "Üye Davet Et" },
-                "delete": { "label": "Workspace'i Sil" },
-                "transfer": { "label": "Sahipliği Devret" }
+                "view": {
+                  "label": "Workspace'i Görüntüle"
+                },
+                "edit": {
+                  "label": "Workspace Ayarlarını Düzenle"
+                },
+                "manage": {
+                  "label": "Workspace'i Yönet"
+                },
+                "invite": {
+                  "label": "Üye Davet Et"
+                },
+                "delete": {
+                  "label": "Workspace'i Sil"
+                },
+                "transfer": {
+                  "label": "Sahipliği Devret"
+                }
               }
             },
             "member_management": {
               "title": "Üye Yönetimi",
               "description": "Workspace üyelerini davet etme, düzenleme, içe aktarma ve kaldırma.",
               "workspace_member": {
-                "view": { "label": "Üyeleri Görüntüle" },
-                "invite": { "label": "Üye Davet Et" },
-                "edit": { "label": "Üye Bilgilerini Düzenle" },
-                "import": { "label": "Üyeleri İçe Aktar (CSV / SSO)" },
-                "change_role": { "label": "Üye Rolünü Değiştir" },
-                "remove": { "label": "Üyeleri Kaldır" }
+                "view": {
+                  "label": "Üyeleri Görüntüle"
+                },
+                "invite": {
+                  "label": "Üye Davet Et"
+                },
+                "edit": {
+                  "label": "Üye Bilgilerini Düzenle"
+                },
+                "import": {
+                  "label": "Üyeleri İçe Aktar (CSV / SSO)"
+                },
+                "change_role": {
+                  "label": "Üye Rolünü Değiştir"
+                },
+                "remove": {
+                  "label": "Üyeleri Kaldır"
+                }
               }
             },
             "project_management": {
               "title": "Proje Yönetimi",
               "description": "Workspace bağlamından proje oluşturma ve yönetme.",
               "project": {
-                "browse": { "label": "Projelere Göz At" },
-                "view": { "label": "Proje Ayrıntılarını Görüntüle" },
-                "create": { "label": "Proje Oluştur" },
-                "edit": { "label": "Proje Ayarlarını Düzenle" },
-                "react": { "label": "Projelere Tepki Ver" },
-                "publish": { "label": "Projeleri Yayınla (genel yap)" },
-                "archive": { "label": "Projeleri Arşivle" },
-                "delete": { "label": "Projeleri Sil" },
-                "manage": { "label": "Proje Erişimini Yönet" }
+                "browse": {
+                  "label": "Projelere Göz At"
+                },
+                "view": {
+                  "label": "Proje Ayrıntılarını Görüntüle"
+                },
+                "create": {
+                  "label": "Proje Oluştur"
+                },
+                "edit": {
+                  "label": "Proje Ayarlarını Düzenle"
+                },
+                "react": {
+                  "label": "Projelere Tepki Ver"
+                },
+                "publish": {
+                  "label": "Projeleri Yayınla (genel yap)"
+                },
+                "archive": {
+                  "label": "Projeleri Arşivle"
+                },
+                "delete": {
+                  "label": "Projeleri Sil"
+                },
+                "manage": {
+                  "label": "Proje Erişimini Yönet"
+                }
               }
             },
             "role_administration": {
               "title": "Rol Yönetimi",
               "description": "Özel rolleri ve proje rollerini oluşturma ve yönetme.",
               "custom_role": {
-                "view": { "label": "Özel Rolleri Görüntüle" },
-                "create": { "label": "Özel Rol Oluştur" },
-                "edit": { "label": "Özel Rolleri Düzenle" },
-                "delete": { "label": "Özel Rolleri Sil" }
+                "view": {
+                  "label": "Özel Rolleri Görüntüle"
+                },
+                "create": {
+                  "label": "Özel Rol Oluştur"
+                },
+                "edit": {
+                  "label": "Özel Rolleri Düzenle"
+                },
+                "delete": {
+                  "label": "Özel Rolleri Sil"
+                }
               }
             },
             "workspace_pages": {
               "title": "Workspace Page'leri (Wiki)",
               "description": "Workspace düzeyinde dokümantasyon ve Wiki'ler.",
               "wiki": {
-                "view": { "label": "Wiki'yi Görüntüle" },
-                "create": { "label": "Wiki Page'leri Oluştur" },
-                "edit": { "label": "Wiki Page'leri Düzenle" },
-                "share": { "label": "Wiki Page'leri Paylaş" },
-                "delete": { "label": "Wiki Page'leri Sil" },
-                "comment": { "label": "Wiki Page'lere Yorum Yap" }
+                "view": {
+                  "label": "Wiki'yi Görüntüle"
+                },
+                "create": {
+                  "label": "Wiki Page'leri Oluştur"
+                },
+                "edit": {
+                  "label": "Wiki Page'leri Düzenle"
+                },
+                "share": {
+                  "label": "Wiki Page'leri Paylaş"
+                },
+                "delete": {
+                  "label": "Wiki Page'leri Sil"
+                },
+                "comment": {
+                  "label": "Wiki Page'lere Yorum Yap"
+                }
               }
             },
             "workspace_views": {
               "title": "Workspace Görünümleri",
               "description": "Workspace düzeyinde kayıtlı filtreler ve görünüm yönetimi.",
               "workspace_workitem_view": {
-                "view": { "label": "Workspace Görünümlerini Görüntüle" },
-                "create": { "label": "Workspace Görünümü Oluştur" },
-                "edit": { "label": "Workspace Görünümlerini Düzenle" },
-                "share": { "label": "Workspace Görünümlerini Paylaş" },
-                "publish": { "label": "Workspace Görünümlerini Yayınla" },
-                "export": { "label": "Workspace Görünümlerini Dışa Aktar" },
-                "delete": { "label": "Workspace Görünümlerini Sil" }
+                "view": {
+                  "label": "Workspace Görünümlerini Görüntüle"
+                },
+                "create": {
+                  "label": "Workspace Görünümü Oluştur"
+                },
+                "edit": {
+                  "label": "Workspace Görünümlerini Düzenle"
+                },
+                "share": {
+                  "label": "Workspace Görünümlerini Paylaş"
+                },
+                "publish": {
+                  "label": "Workspace Görünümlerini Yayınla"
+                },
+                "export": {
+                  "label": "Workspace Görünümlerini Dışa Aktar"
+                },
+                "delete": {
+                  "label": "Workspace Görünümlerini Sil"
+                }
               }
             },
             "initiatives": {
               "title": "Girişimler",
               "description": "Yorumlar, ekler, bağlantılar ve güncellemeler dahil projeler arası girişim takibi.",
               "initiative": {
-                "view": { "label": "Girişimleri Görüntüle" },
-                "create": { "label": "Girişim Oluştur" },
-                "edit": { "label": "Girişimleri Düzenle" },
-                "manage": { "label": "Girişimleri Yönet" },
-                "react": { "label": "Girişimlere Tepki Ver" },
-                "delete": { "label": "Girişimleri Sil" }
+                "view": {
+                  "label": "Girişimleri Görüntüle"
+                },
+                "create": {
+                  "label": "Girişim Oluştur"
+                },
+                "edit": {
+                  "label": "Girişimleri Düzenle"
+                },
+                "manage": {
+                  "label": "Girişimleri Yönet"
+                },
+                "react": {
+                  "label": "Girişimlere Tepki Ver"
+                },
+                "delete": {
+                  "label": "Girişimleri Sil"
+                }
               },
               "initiative_comment": {
-                "view": { "label": "Girişim Yorumlarını Görüntüle" },
-                "create": { "label": "Girişimlere Yorum Yap" },
-                "edit": { "label": "Girişim Yorumlarını Düzenle" },
-                "react": { "label": "Girişim Yorumlarına Tepki Ver" },
-                "delete": { "label": "Girişim Yorumlarını Sil" }
+                "view": {
+                  "label": "Girişim Yorumlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Girişimlere Yorum Yap"
+                },
+                "edit": {
+                  "label": "Girişim Yorumlarını Düzenle"
+                },
+                "react": {
+                  "label": "Girişim Yorumlarına Tepki Ver"
+                },
+                "delete": {
+                  "label": "Girişim Yorumlarını Sil"
+                }
               },
               "initiative_attachment": {
-                "view": { "label": "Girişim Eklerini Görüntüle" },
-                "create": { "label": "Girişim Eki Ekle" },
-                "delete": { "label": "Girişim Eklerini Sil" }
+                "view": {
+                  "label": "Girişim Eklerini Görüntüle"
+                },
+                "create": {
+                  "label": "Girişim Eki Ekle"
+                },
+                "delete": {
+                  "label": "Girişim Eklerini Sil"
+                }
               },
               "initiative_link": {
-                "view": { "label": "Girişim Bağlantılarını Görüntüle" },
-                "create": { "label": "Girişim Bağlantısı Ekle" },
-                "edit": { "label": "Girişim Bağlantılarını Düzenle" },
-                "delete": { "label": "Girişim Bağlantılarını Sil" }
+                "view": {
+                  "label": "Girişim Bağlantılarını Görüntüle"
+                },
+                "create": {
+                  "label": "Girişim Bağlantısı Ekle"
+                },
+                "edit": {
+                  "label": "Girişim Bağlantılarını Düzenle"
+                },
+                "delete": {
+                  "label": "Girişim Bağlantılarını Sil"
+                }
               }
             },
             "teamspaces": {
               "title": "Teamspace'ler",
               "description": "Teamspace'lere göz atma, oluşturma ve yönetme.",
               "teamspace": {
-                "browse": { "label": "Teamspace'lere Göz At" },
-                "view": { "label": "Teamspace Ayrıntılarını Görüntüle" },
-                "create": { "label": "Teamspace Oluştur" },
-                "edit": { "label": "Teamspace'leri Düzenle" },
-                "manage": { "label": "Teamspace Üyelerini Yönet" },
-                "delete": { "label": "Teamspace'leri Sil" }
+                "browse": {
+                  "label": "Teamspace'lere Göz At"
+                },
+                "view": {
+                  "label": "Teamspace Ayrıntılarını Görüntüle"
+                },
+                "create": {
+                  "label": "Teamspace Oluştur"
+                },
+                "edit": {
+                  "label": "Teamspace'leri Düzenle"
+                },
+                "manage": {
+                  "label": "Teamspace Üyelerini Yönet"
+                },
+                "delete": {
+                  "label": "Teamspace'leri Sil"
+                }
               }
             },
             "integrations": {
               "title": "Entegrasyonlar",
               "description": "Üçüncü taraf entegrasyonlar, webhook'lar ve API anahtarları.",
               "integration": {
-                "view": { "label": "Entegrasyonları Görüntüle" },
-                "create": { "label": "Entegrasyon Oluştur" },
-                "edit": { "label": "Entegrasyonları Yapılandır" },
-                "delete": { "label": "Entegrasyonları Sil" }
+                "view": {
+                  "label": "Entegrasyonları Görüntüle"
+                },
+                "create": {
+                  "label": "Entegrasyon Oluştur"
+                },
+                "edit": {
+                  "label": "Entegrasyonları Düzenle"
+                },
+                "delete": {
+                  "label": "Entegrasyonları Sil"
+                },
+                "connect": {
+                  "label": "Entegrasyonları Bağla"
+                },
+                "manage": {
+                  "label": "Entegrasyonları Yönet"
+                }
               },
               "webhook": {
-                "view": { "label": "Webhook'ları Görüntüle" },
-                "create": { "label": "Webhook Oluştur" },
-                "edit": { "label": "Webhook'ları Düzenle" },
-                "delete": { "label": "Webhook'ları Sil" }
+                "view": {
+                  "label": "Webhook'ları Görüntüle"
+                },
+                "create": {
+                  "label": "Webhook Oluştur"
+                },
+                "edit": {
+                  "label": "Webhook'ları Düzenle"
+                },
+                "delete": {
+                  "label": "Webhook'ları Sil"
+                }
               },
               "api_token": {
-                "view": { "label": "API Anahtarlarını Görüntüle" },
-                "create": { "label": "API Anahtarı Oluştur" },
-                "delete": { "label": "API Anahtarlarını Sil" }
+                "view": {
+                  "label": "API Anahtarlarını Görüntüle"
+                },
+                "create": {
+                  "label": "API Anahtarı Oluştur"
+                },
+                "delete": {
+                  "label": "API Anahtarlarını Sil"
+                }
               }
             },
             "analytics_and_dashboards": {
               "title": "Analitik ve Raporlama",
               "description": "Workspace düzeyinde panolar, analitik ve iş günlükleri.",
               "analytics": {
-                "view": { "label": "Analitiği Görüntüle" },
-                "export": { "label": "Analitiği Dışa Aktar" }
+                "view": {
+                  "label": "Analitiği Görüntüle"
+                },
+                "export": {
+                  "label": "Analitiği Dışa Aktar"
+                }
               },
               "dashboard": {
-                "view": { "label": "Panoları Görüntüle" },
-                "create": { "label": "Pano Oluştur" },
-                "edit": { "label": "Panoları Düzenle" },
-                "delete": { "label": "Panoları Sil" }
+                "view": {
+                  "label": "Panoları Görüntüle"
+                },
+                "create": {
+                  "label": "Pano Oluştur"
+                },
+                "edit": {
+                  "label": "Panoları Düzenle"
+                },
+                "delete": {
+                  "label": "Panoları Sil"
+                }
               },
               "workspace_worklog": {
-                "view": { "label": "İş Günlüklerini Görüntüle" },
-                "export": { "label": "İş Günlüklerini Dışa Aktar" }
+                "view": {
+                  "label": "İş Günlüklerini Görüntüle"
+                },
+                "export": {
+                  "label": "İş Günlüklerini Dışa Aktar"
+                }
               },
               "ai": {
-                "use": { "label": "AI Özelliklerini Kullan" }
+                "use": {
+                  "label": "AI Özelliklerini Kullan"
+                }
               }
             },
             "customers": {
               "title": "Müşteri Geri Bildirimi",
               "description": "Müşteri ve müşteri talep yönetimi.",
               "customer": {
-                "view": { "label": "Müşterileri Görüntüle" },
-                "create": { "label": "Müşteri Oluştur" },
-                "edit": { "label": "Müşterileri Düzenle" },
-                "delete": { "label": "Müşterileri Sil" }
+                "view": {
+                  "label": "Müşterileri Görüntüle"
+                },
+                "create": {
+                  "label": "Müşteri Oluştur"
+                },
+                "edit": {
+                  "label": "Müşterileri Düzenle"
+                },
+                "delete": {
+                  "label": "Müşterileri Sil"
+                }
               },
               "customer_attachment": {
-                "create": { "label": "Müşteri Eki Ekle" },
-                "delete": { "label": "Müşteri Eklerini Sil" }
+                "create": {
+                  "label": "Müşteri Eki Ekle"
+                },
+                "delete": {
+                  "label": "Müşteri Eklerini Sil"
+                }
               }
             },
             "work_item_relations": {
               "title": "Work Item İlişkileri",
               "description": "Work item'lar için özel ilişki türü tanımlarını yönetme.",
               "workitem_relation": {
-                "view": { "label": "İlişki Tanımlarını Görüntüle" },
-                "create": { "label": "İlişki Tanımı Oluştur" },
-                "edit": { "label": "İlişki Tanımlarını Düzenle" },
-                "delete": { "label": "İlişki Tanımlarını Sil" }
+                "view": {
+                  "label": "İlişki Tanımlarını Görüntüle"
+                },
+                "create": {
+                  "label": "İlişki Tanımı Oluştur"
+                },
+                "edit": {
+                  "label": "İlişki Tanımlarını Düzenle"
+                },
+                "delete": {
+                  "label": "İlişki Tanımlarını Sil"
+                }
               }
             },
             "workspace_templates": {
               "title": "Şablonlar",
               "description": "Workspace düzeyinde work item, Page ve proje şablonları oluşturma ve yönetme.",
               "workspace_workitem_template": {
-                "view": { "label": "Work Item Şablonlarını Görüntüle" },
-                "create": { "label": "Work Item Şablonu Oluştur" },
-                "edit": { "label": "Work Item Şablonlarını Düzenle" },
-                "delete": { "label": "Work Item Şablonlarını Sil" }
+                "view": {
+                  "label": "Work Item Şablonlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Work Item Şablonu Oluştur"
+                },
+                "edit": {
+                  "label": "Work Item Şablonlarını Düzenle"
+                },
+                "delete": {
+                  "label": "Work Item Şablonlarını Sil"
+                }
               },
               "workspace_page_template": {
-                "view": { "label": "Page Şablonlarını Görüntüle" },
-                "create": { "label": "Page Şablonu Oluştur" },
-                "edit": { "label": "Page Şablonlarını Düzenle" },
-                "delete": { "label": "Page Şablonlarını Sil" }
+                "view": {
+                  "label": "Page Şablonlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Page Şablonu Oluştur"
+                },
+                "edit": {
+                  "label": "Page Şablonlarını Düzenle"
+                },
+                "delete": {
+                  "label": "Page Şablonlarını Sil"
+                }
               },
               "workspace_project_template": {
-                "view": { "label": "Proje Şablonlarını Görüntüle" },
-                "create": { "label": "Proje Şablonu Oluştur" },
-                "edit": { "label": "Proje Şablonlarını Düzenle" },
-                "delete": { "label": "Proje Şablonlarını Sil" }
+                "view": {
+                  "label": "Proje Şablonlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Proje Şablonu Oluştur"
+                },
+                "edit": {
+                  "label": "Proje Şablonlarını Düzenle"
+                },
+                "delete": {
+                  "label": "Proje Şablonlarını Sil"
+                }
               }
             },
             "workspace_automations": {
               "title": "Workspace Otomasyonları",
               "description": "Workspace düzeyinde otomasyon kuralları ve yapılandırmaları.",
               "workspace_automation": {
-                "view": { "label": "Workspace Otomasyonlarını Görüntüle" },
-                "create": { "label": "Workspace Otomasyonu Oluştur" },
-                "edit": { "label": "Workspace Otomasyonlarını Düzenle" },
-                "delete": { "label": "Workspace Otomasyonlarını Sil" }
+                "view": {
+                  "label": "Workspace Otomasyonlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Workspace Otomasyonu Oluştur"
+                },
+                "edit": {
+                  "label": "Workspace Otomasyonlarını Düzenle"
+                },
+                "delete": {
+                  "label": "Workspace Otomasyonlarını Sil"
+                }
               }
             }
           },
@@ -291,245 +513,507 @@
               "title": "Proje Erişimi",
               "description": "Herhangi bir proje rolü tarafından verilen temel erişim.",
               "project": {
-                "view": { "label": "Projeyi Görüntüle" }
+                "view": {
+                  "label": "Projeyi Görüntüle"
+                }
               }
             },
             "project_membership": {
               "title": "Proje Üyeleri",
               "description": "Proje üyelerini davet etme, düzenleme ve kaldırma.",
               "project_member": {
-                "view": { "label": "Proje Üyelerini Görüntüle" },
-                "invite": { "label": "Üye Davet Et" },
-                "edit": { "label": "Üye Bilgilerini Düzenle" },
-                "change_role": { "label": "Üye Rolünü Değiştir" },
-                "remove": { "label": "Üyeleri Kaldır" }
+                "view": {
+                  "label": "Proje Üyelerini Görüntüle"
+                },
+                "invite": {
+                  "label": "Üye Davet Et"
+                },
+                "edit": {
+                  "label": "Üye Bilgilerini Düzenle"
+                },
+                "change_role": {
+                  "label": "Üye Rolünü Değiştir"
+                },
+                "remove": {
+                  "label": "Üyeleri Kaldır"
+                }
               }
             },
             "work_items": {
               "title": "İş Öğeleri",
               "description": "Birincil iş öğesi yüzeyi. Yorumlar, ekler, bağlantılar, ilişkiler ve özel özellikler dahildir.",
               "workitem": {
-                "view": { "label": "İş Öğelerini Görüntüle" },
-                "create": { "label": "İş Öğesi Oluştur" },
-                "edit": { "label": "İş Öğelerini Düzenle" },
-                "bulk_edit": { "label": "İş Öğelerini Toplu Düzenle" },
-                "export": { "label": "İş Öğelerini Dışa Aktar" },
-                "react": { "label": "İş Öğelerine Tepki Ver" },
-                "delete": { "label": "İş Öğelerini Sil" }
+                "view": {
+                  "label": "İş Öğelerini Görüntüle"
+                },
+                "create": {
+                  "label": "İş Öğesi Oluştur"
+                },
+                "edit": {
+                  "label": "İş Öğelerini Düzenle"
+                },
+                "bulk_edit": {
+                  "label": "İş Öğelerini Toplu Düzenle"
+                },
+                "export": {
+                  "label": "İş Öğelerini Dışa Aktar"
+                },
+                "react": {
+                  "label": "İş Öğelerine Tepki Ver"
+                },
+                "delete": {
+                  "label": "İş Öğelerini Sil"
+                }
               },
               "comment": {
-                "create": { "label": "Yorum Ekle" },
-                "edit": { "label": "Yorumları Düzenle" },
-                "react": { "label": "Yorumlara Tepki Ver" },
-                "delete": { "label": "Yorumları Sil" }
+                "create": {
+                  "label": "Yorum Ekle"
+                },
+                "edit": {
+                  "label": "Yorumları Düzenle"
+                },
+                "react": {
+                  "label": "Yorumlara Tepki Ver"
+                },
+                "delete": {
+                  "label": "Yorumları Sil"
+                }
               },
               "attachment": {
-                "view": { "label": "Ekleri Görüntüle" },
-                "create": { "label": "Ek Ekle" },
-                "delete": { "label": "Ekleri Sil" }
+                "view": {
+                  "label": "Ekleri Görüntüle"
+                },
+                "create": {
+                  "label": "Ek Ekle"
+                },
+                "delete": {
+                  "label": "Ekleri Sil"
+                }
               },
               "workitem_link": {
-                "view": { "label": "Work Item Bağlantılarını Görüntüle" },
-                "create": { "label": "Work Item Bağlantısı Ekle" },
-                "edit": { "label": "Work Item Bağlantılarını Düzenle" },
-                "delete": { "label": "Work Item Bağlantılarını Sil" }
+                "view": {
+                  "label": "Work Item Bağlantılarını Görüntüle"
+                },
+                "create": {
+                  "label": "Work Item Bağlantısı Ekle"
+                },
+                "edit": {
+                  "label": "Work Item Bağlantılarını Düzenle"
+                },
+                "delete": {
+                  "label": "Work Item Bağlantılarını Sil"
+                }
               },
               "issue_property": {
-                "view": { "label": "Özel Özellikleri Görüntüle" },
-                "edit": { "label": "Özel Özellikleri Düzenle" }
+                "view": {
+                  "label": "Özel Özellikleri Görüntüle"
+                },
+                "edit": {
+                  "label": "Özel Özellikleri Düzenle"
+                }
               }
             },
             "epics": {
               "title": "Epic'ler",
               "description": "Bağlantılar, özellikler ve güncelleme başlıkları dahil Epic yaşam döngüsü.",
               "epic": {
-                "view": { "label": "Epic'leri Görüntüle" },
-                "create": { "label": "Epic Oluştur" },
-                "edit": { "label": "Epic'leri Düzenle" },
-                "delete": { "label": "Epic'leri Sil" }
+                "view": {
+                  "label": "Epic'leri Görüntüle"
+                },
+                "create": {
+                  "label": "Epic Oluştur"
+                },
+                "edit": {
+                  "label": "Epic'leri Düzenle"
+                },
+                "delete": {
+                  "label": "Epic'leri Sil"
+                }
               },
               "epic_link": {
-                "view": { "label": "Epic Bağlantılarını Görüntüle" },
-                "create": { "label": "Epic Bağlantısı Ekle" },
-                "edit": { "label": "Epic Bağlantılarını Düzenle" },
-                "delete": { "label": "Epic Bağlantılarını Sil" }
+                "view": {
+                  "label": "Epic Bağlantılarını Görüntüle"
+                },
+                "create": {
+                  "label": "Epic Bağlantısı Ekle"
+                },
+                "edit": {
+                  "label": "Epic Bağlantılarını Düzenle"
+                },
+                "delete": {
+                  "label": "Epic Bağlantılarını Sil"
+                }
               },
               "epic_property": {
-                "view": { "label": "Epic Özelliklerini Görüntüle" },
-                "edit": { "label": "Epic Özelliklerini Düzenle" }
+                "view": {
+                  "label": "Epic Özelliklerini Görüntüle"
+                },
+                "edit": {
+                  "label": "Epic Özelliklerini Düzenle"
+                }
               },
               "epic_update": {
-                "view": { "label": "Epic Güncellemelerini Görüntüle" },
-                "create": { "label": "Epic Güncellemesi Gönder" },
-                "edit": { "label": "Epic Güncellemelerini Düzenle" },
-                "delete": { "label": "Epic Güncellemelerini Sil" }
+                "view": {
+                  "label": "Epic Güncellemelerini Görüntüle"
+                },
+                "create": {
+                  "label": "Epic Güncellemesi Gönder"
+                },
+                "edit": {
+                  "label": "Epic Güncellemelerini Düzenle"
+                },
+                "delete": {
+                  "label": "Epic Güncellemelerini Sil"
+                }
               },
               "epic_update_comment": {
-                "view": { "label": "Epic Güncellemesi Yorumlarını Görüntüle" },
-                "create": { "label": "Epic Güncellemelerine Yorum Yap" },
-                "edit": { "label": "Epic Güncellemesi Yorumlarını Düzenle" },
-                "react": { "label": "Epic Güncellemesi Yorumlarına Tepki Ver" },
-                "delete": { "label": "Epic Güncellemesi Yorumlarını Sil" }
+                "view": {
+                  "label": "Epic Güncellemesi Yorumlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Epic Güncellemelerine Yorum Yap"
+                },
+                "edit": {
+                  "label": "Epic Güncellemesi Yorumlarını Düzenle"
+                },
+                "react": {
+                  "label": "Epic Güncellemesi Yorumlarına Tepki Ver"
+                },
+                "delete": {
+                  "label": "Epic Güncellemesi Yorumlarını Sil"
+                }
               }
             },
             "modules_and_cycles": {
               "title": "Module'ler ve Cycle'lar",
               "description": "Özellik gruplama ve sprint/Cycle yönetimi.",
               "module": {
-                "view": { "label": "Module'leri Görüntüle" },
-                "create": { "label": "Module Oluştur" },
-                "edit": { "label": "Module'leri Düzenle" },
-                "manage": { "label": "Module Üyelerini Yönet" },
-                "archive": { "label": "Module'leri Arşivle" },
-                "export": { "label": "Module'leri Dışa Aktar" },
-                "delete": { "label": "Module'leri Sil" }
+                "view": {
+                  "label": "Module'leri Görüntüle"
+                },
+                "create": {
+                  "label": "Module Oluştur"
+                },
+                "edit": {
+                  "label": "Module'leri Düzenle"
+                },
+                "manage": {
+                  "label": "Module Üyelerini Yönet"
+                },
+                "archive": {
+                  "label": "Module'leri Arşivle"
+                },
+                "export": {
+                  "label": "Module'leri Dışa Aktar"
+                },
+                "delete": {
+                  "label": "Module'leri Sil"
+                }
               },
               "cycle": {
-                "view": { "label": "Cycle'ları Görüntüle" },
-                "create": { "label": "Cycle Oluştur" },
-                "edit": { "label": "Cycle'ları Düzenle" },
-                "delete": { "label": "Cycle'ları Sil" }
+                "view": {
+                  "label": "Cycle'ları Görüntüle"
+                },
+                "create": {
+                  "label": "Cycle Oluştur"
+                },
+                "edit": {
+                  "label": "Cycle'ları Düzenle"
+                },
+                "delete": {
+                  "label": "Cycle'ları Sil"
+                }
               },
               "cycle_update": {
-                "view": { "label": "Cycle Güncellemelerini Görüntüle" },
-                "create": { "label": "Cycle Güncellemesi Gönder" },
-                "edit": { "label": "Cycle Güncellemelerini Düzenle" },
-                "delete": { "label": "Cycle Güncellemelerini Sil" }
+                "view": {
+                  "label": "Cycle Güncellemelerini Görüntüle"
+                },
+                "create": {
+                  "label": "Cycle Güncellemesi Gönder"
+                },
+                "edit": {
+                  "label": "Cycle Güncellemelerini Düzenle"
+                },
+                "delete": {
+                  "label": "Cycle Güncellemelerini Sil"
+                }
               }
             },
             "project_pages_and_views": {
               "title": "Page'ler ve Görünümler",
               "description": "Proje düzeyinde Page'ler ve kayıtlı görünümler.",
               "page": {
-                "view": { "label": "Page'leri Görüntüle" },
-                "create": { "label": "Page Oluştur" },
-                "edit": { "label": "Page'leri Düzenle" },
-                "share": { "label": "Page'leri Paylaş" },
-                "delete": { "label": "Page'leri Sil" }
+                "view": {
+                  "label": "Page'leri Görüntüle"
+                },
+                "create": {
+                  "label": "Page Oluştur"
+                },
+                "edit": {
+                  "label": "Page'leri Düzenle"
+                },
+                "share": {
+                  "label": "Page'leri Paylaş"
+                },
+                "delete": {
+                  "label": "Page'leri Sil"
+                }
               },
               "workitem_view": {
-                "view": { "label": "Proje Görünümlerini Görüntüle" },
-                "create": { "label": "Proje Görünümü Oluştur" },
-                "edit": { "label": "Proje Görünümlerini Düzenle" },
-                "share": { "label": "Proje Görünümlerini Paylaş" },
-                "publish": { "label": "Proje Görünümlerini Yayınla" },
-                "export": { "label": "Proje Görünümlerini Dışa Aktar" },
-                "delete": { "label": "Proje Görünümlerini Sil" }
+                "view": {
+                  "label": "Proje Görünümlerini Görüntüle"
+                },
+                "create": {
+                  "label": "Proje Görünümü Oluştur"
+                },
+                "edit": {
+                  "label": "Proje Görünümlerini Düzenle"
+                },
+                "share": {
+                  "label": "Proje Görünümlerini Paylaş"
+                },
+                "publish": {
+                  "label": "Proje Görünümlerini Yayınla"
+                },
+                "export": {
+                  "label": "Proje Görünümlerini Dışa Aktar"
+                },
+                "delete": {
+                  "label": "Proje Görünümlerini Sil"
+                }
               }
             },
             "intake": {
               "title": "Intake",
               "description": "İş öğesi alımı ve triyaj iş akışı.",
               "intake": {
-                "view": { "label": "Intake'i Görüntüle" },
-                "create": { "label": "Intake Öğeleri Oluştur" },
-                "submit": { "label": "Intake Talepleri Gönder" },
-                "edit": { "label": "Intake Öğelerini Düzenle" },
-                "react": { "label": "Intake Öğelerine Tepki Ver" },
-                "manage": { "label": "Intake Öğelerini Yönet" },
-                "configure": { "label": "Intake'i Yapılandır" },
-                "export": { "label": "Intake'i Dışa Aktar" },
-                "delete": { "label": "Intake Öğelerini Sil" }
+                "view": {
+                  "label": "Intake'i Görüntüle"
+                },
+                "create": {
+                  "label": "Intake Öğeleri Oluştur"
+                },
+                "submit": {
+                  "label": "Intake Talepleri Gönder"
+                },
+                "edit": {
+                  "label": "Intake Öğelerini Düzenle"
+                },
+                "react": {
+                  "label": "Intake Öğelerine Tepki Ver"
+                },
+                "manage": {
+                  "label": "Intake Öğelerini Yönet"
+                },
+                "configure": {
+                  "label": "Intake'i Yapılandır"
+                },
+                "export": {
+                  "label": "Intake'i Dışa Aktar"
+                },
+                "delete": {
+                  "label": "Intake Öğelerini Sil"
+                }
               }
             },
             "project_configuration": {
               "title": "Proje Yapılandırması",
               "description": "Etiketler, durumlar, tahminler ve kilometre taşları.",
               "label": {
-                "view": { "label": "Etiketleri Görüntüle" },
-                "create": { "label": "Etiket Oluştur" },
-                "edit": { "label": "Etiketleri Düzenle" },
-                "delete": { "label": "Etiketleri Sil" }
+                "view": {
+                  "label": "Etiketleri Görüntüle"
+                },
+                "create": {
+                  "label": "Etiket Oluştur"
+                },
+                "edit": {
+                  "label": "Etiketleri Düzenle"
+                },
+                "delete": {
+                  "label": "Etiketleri Sil"
+                }
               },
               "state": {
-                "view": { "label": "Durumları Görüntüle" },
-                "create": { "label": "Durum Oluştur" },
-                "edit": { "label": "Durumları Düzenle" },
-                "delete": { "label": "Durumları Sil" }
+                "view": {
+                  "label": "Durumları Görüntüle"
+                },
+                "create": {
+                  "label": "Durum Oluştur"
+                },
+                "edit": {
+                  "label": "Durumları Düzenle"
+                },
+                "delete": {
+                  "label": "Durumları Sil"
+                }
               },
               "estimate": {
-                "view": { "label": "Tahminleri Görüntüle" },
-                "create": { "label": "Tahmin Oluştur" },
-                "edit": { "label": "Tahminleri Düzenle" },
-                "delete": { "label": "Tahminleri Sil" }
+                "view": {
+                  "label": "Tahminleri Görüntüle"
+                },
+                "create": {
+                  "label": "Tahmin Oluştur"
+                },
+                "edit": {
+                  "label": "Tahminleri Düzenle"
+                },
+                "delete": {
+                  "label": "Tahminleri Sil"
+                }
               },
               "milestone": {
-                "view": { "label": "Kilometre Taşlarını Görüntüle" },
-                "create": { "label": "Kilometre Taşı Oluştur" },
-                "edit": { "label": "Kilometre Taşlarını Düzenle" },
-                "delete": { "label": "Kilometre Taşlarını Sil" }
+                "view": {
+                  "label": "Kilometre Taşlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Kilometre Taşı Oluştur"
+                },
+                "edit": {
+                  "label": "Kilometre Taşlarını Düzenle"
+                },
+                "delete": {
+                  "label": "Kilometre Taşlarını Sil"
+                }
               }
             },
             "automations": {
               "title": "Otomasyon ve İş Akışları",
               "description": "Otomasyonlar, iş akışı kuralları ve yinelenen work item'lar.",
               "project_automation": {
-                "view": { "label": "Otomasyonları Görüntüle" },
-                "create": { "label": "Otomasyon Oluştur" },
-                "edit": { "label": "Otomasyonları Düzenle" },
-                "delete": { "label": "Otomasyonları Sil" }
+                "view": {
+                  "label": "Otomasyonları Görüntüle"
+                },
+                "create": {
+                  "label": "Otomasyon Oluştur"
+                },
+                "edit": {
+                  "label": "Otomasyonları Düzenle"
+                },
+                "delete": {
+                  "label": "Otomasyonları Sil"
+                }
               },
               "workflow": {
-                "view": { "label": "İş Akışlarını Görüntüle" },
-                "create": { "label": "İş Akışı Oluştur" },
-                "edit": { "label": "İş Akışlarını Düzenle" },
-                "delete": { "label": "İş Akışlarını Sil" }
+                "view": {
+                  "label": "İş Akışlarını Görüntüle"
+                },
+                "create": {
+                  "label": "İş Akışı Oluştur"
+                },
+                "edit": {
+                  "label": "İş Akışlarını Düzenle"
+                },
+                "delete": {
+                  "label": "İş Akışlarını Sil"
+                }
               },
               "recurring_workitem": {
-                "view": { "label": "Yinelenen Öğeleri Görüntüle" },
-                "create": { "label": "Yinelenen Öğe Oluştur" },
-                "edit": { "label": "Yinelenen Öğeleri Düzenle" },
-                "delete": { "label": "Yinelenen Öğeleri Sil" }
+                "view": {
+                  "label": "Yinelenen Öğeleri Görüntüle"
+                },
+                "create": {
+                  "label": "Yinelenen Öğe Oluştur"
+                },
+                "edit": {
+                  "label": "Yinelenen Öğeleri Düzenle"
+                },
+                "delete": {
+                  "label": "Yinelenen Öğeleri Sil"
+                }
               }
             },
             "project_updates": {
               "title": "Proje Güncellemeleri",
               "description": "Güncellemelerdeki ilerleme güncellemeleri ve yorumlar.",
               "project_update": {
-                "view": { "label": "Proje Güncellemelerini Görüntüle" },
-                "create": { "label": "Proje Güncellemesi Gönder" },
-                "edit": { "label": "Proje Güncellemelerini Düzenle" },
-                "delete": { "label": "Proje Güncellemelerini Sil" }
+                "view": {
+                  "label": "Proje Güncellemelerini Görüntüle"
+                },
+                "create": {
+                  "label": "Proje Güncellemesi Gönder"
+                },
+                "edit": {
+                  "label": "Proje Güncellemelerini Düzenle"
+                },
+                "delete": {
+                  "label": "Proje Güncellemelerini Sil"
+                }
               },
               "project_update_comment": {
-                "view": { "label": "Proje Güncellemesi Yorumlarını Görüntüle" },
-                "create": { "label": "Proje Güncellemelerine Yorum Yap" },
-                "edit": { "label": "Proje Güncellemesi Yorumlarını Düzenle" },
-                "react": { "label": "Proje Güncellemesi Yorumlarına Tepki Ver" },
-                "delete": { "label": "Proje Güncellemesi Yorumlarını Sil" }
+                "view": {
+                  "label": "Proje Güncellemesi Yorumlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Proje Güncellemelerine Yorum Yap"
+                },
+                "edit": {
+                  "label": "Proje Güncellemesi Yorumlarını Düzenle"
+                },
+                "react": {
+                  "label": "Proje Güncellemesi Yorumlarına Tepki Ver"
+                },
+                "delete": {
+                  "label": "Proje Güncellemesi Yorumlarını Sil"
+                }
               }
             },
             "project_analytics": {
               "title": "Analitik ve Etkinlik",
               "description": "Proje analitiği ve etkinlik günlükleri.",
               "project_activity": {
-                "view": { "label": "Etkinlik Günlüklerini Görüntüle" }
+                "view": {
+                  "label": "Etkinlik Günlüklerini Görüntüle"
+                }
               }
             },
             "project_links": {
               "title": "Proje Bağlantıları",
               "description": "Proje düzeyinde bağlantılar.",
               "project_link": {
-                "view": { "label": "Proje Bağlantılarını Görüntüle" },
-                "create": { "label": "Proje Bağlantısı Ekle" },
-                "edit": { "label": "Proje Bağlantılarını Düzenle" },
-                "delete": { "label": "Proje Bağlantılarını Sil" }
+                "view": {
+                  "label": "Proje Bağlantılarını Görüntüle"
+                },
+                "create": {
+                  "label": "Proje Bağlantısı Ekle"
+                },
+                "edit": {
+                  "label": "Proje Bağlantılarını Düzenle"
+                },
+                "delete": {
+                  "label": "Proje Bağlantılarını Sil"
+                }
               }
             },
             "project_templates": {
               "title": "Şablonlar",
               "description": "Proje kapsamlı work item ve Page şablonları.",
               "project_workitem_template": {
-                "view": { "label": "Work Item Şablonlarını Görüntüle" },
-                "create": { "label": "Work Item Şablonu Oluştur" },
-                "edit": { "label": "Work Item Şablonlarını Düzenle" },
-                "delete": { "label": "Work Item Şablonlarını Sil" }
+                "view": {
+                  "label": "Work Item Şablonlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Work Item Şablonu Oluştur"
+                },
+                "edit": {
+                  "label": "Work Item Şablonlarını Düzenle"
+                },
+                "delete": {
+                  "label": "Work Item Şablonlarını Sil"
+                }
               },
               "project_page_template": {
-                "view": { "label": "Page Şablonlarını Görüntüle" },
-                "create": { "label": "Page Şablonu Oluştur" },
-                "edit": { "label": "Page Şablonlarını Düzenle" },
-                "delete": { "label": "Page Şablonlarını Sil" }
+                "view": {
+                  "label": "Page Şablonlarını Görüntüle"
+                },
+                "create": {
+                  "label": "Page Şablonu Oluştur"
+                },
+                "edit": {
+                  "label": "Page Şablonlarını Düzenle"
+                },
+                "delete": {
+                  "label": "Page Şablonlarını Sil"
+                }
               }
             }
           },

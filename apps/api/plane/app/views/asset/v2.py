@@ -29,7 +29,7 @@ from ..base import BaseAPIView
 from plane.db.models import FileAsset, Workspace, Project, User
 from plane.ee.models import Customer
 from plane.settings.storage import S3Storage
-from plane.permissions import can, ProjectAssetPermissions, WorkspaceAssetPermissions
+from plane.permissions import can, ProjectAssetPermissions, WorkspaceAssetPermissions, WorkspacePermissions
 from plane.utils.cache import invalidate_cache_directly
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.throttles.asset import AssetRateThrottle
@@ -383,7 +383,13 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         else:
             return
 
-    @can(WorkspaceAssetPermissions.CREATE, resource_param="workspace_id")
+    # Uses workspace:view so project cover images can be uploaded during
+    # project creation — before a Project (and thus project_asset:create)
+    # exists, and from workspaces whose roles/custom schemes may not include
+    # workspace_asset:create. Upload only creates a FileAsset row + presigned
+    # URL; it does not mutate workspace/project state. Attachment mutations
+    # (PATCH/DELETE below) remain on WorkspaceAssetPermissions.
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def post(self, request, slug):
         name = request.data.get("name")
         type = request.data.get("type", "image/jpeg")
@@ -476,7 +482,9 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
         asset.save(update_fields=["is_deleted", "deleted_at"])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")
+    # Read-only download: gate on workspace membership, not workspace_asset:view
+    # (which custom permission schemes may omit).
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id")
     def get(self, request, slug, asset_id):
         # get the asset id
         asset = FileAsset.objects.get(id=asset_id, workspace__slug=slug)

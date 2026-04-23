@@ -114,12 +114,15 @@ def _sync_for_workspace(
         )
         return
 
-    # Extract groups from auth response
+    # Extract groups from auth response. When the IdP drops the user from every
+    # mapped group, the key may be absent entirely — `extract_groups` returns
+    # [] in that case. We still call the sync service so `auto_remove` can
+    # revoke the projects the user joined via group sync.
     groups = provider.extract_groups(auth_response, config.group_attribute_key)
 
-    if not groups:
+    if not groups and not config.auto_remove:
         logger.debug(
-            "No groups found in userinfo response",
+            "No groups found in userinfo response; auto_remove disabled",
             extra={
                 "user_id": str(user.id),
                 "workspace_id": str(workspace_id),
@@ -176,15 +179,20 @@ def _sync_for_all_workspaces(
 
     for config in configs:
         try:
-            # Extract groups using the workspace's configured attribute key
+            # Extract groups using the workspace's configured attribute key.
+            # When the IdP drops the user from every mapped group, the key may
+            # be absent entirely — `extract_groups` returns []. We still call
+            # the sync service when `auto_remove` is enabled so it can revoke
+            # the projects the user joined via group sync.
             groups = provider.extract_groups(
                 auth_response, config.group_attribute_key
             )
 
-            if not groups:
+            if not groups and not config.auto_remove:
                 continue
 
-            # Perform sync - this will add user to workspace if they have matching groups
+            # Perform sync - adds user to workspace if they have matching groups,
+            # or removes synced project memberships when auto_remove is enabled.
             result = sync_service.sync_user_memberships(
                 user_id=user.id,
                 workspace_id=config.workspace_id,

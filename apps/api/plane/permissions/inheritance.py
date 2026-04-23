@@ -102,7 +102,6 @@ _PARENT_DECLARATIONS: dict[str, tuple[Optional[str], Optional[str]]] = {
     ResourceType.CUSTOMER_ATTACHMENT: (ResourceType.CUSTOMER, "entity_identifier"),
     ResourceType.WORKSPACE_ASSET: (ResourceType.WORKSPACE, "workspace_id"),
     ResourceType.WORKSPACE_PROJECT_STATE: (ResourceType.WORKSPACE, "workspace_id"),
-    ResourceType.WORKSPACE_FEATURE: (ResourceType.WORKSPACE, "workspace_id"),
     ResourceType.WORKSPACE_WORKLOG: (ResourceType.WORKSPACE, "workspace_id"),
     ResourceType.WORKSPACE_USER_ACTIVITY: (ResourceType.WORKSPACE, "workspace_id"),
     ResourceType.WORKSPACE_WORKITEM_TEMPLATE: (ResourceType.WORKSPACE, "workspace_id"),

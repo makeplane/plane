@@ -75,214 +75,436 @@
               "title": "ワークスペース設定",
               "description": "コアなワークスペース設定：名前、ロゴ、通貨、ドメイン、削除、所有権の移譲。",
               "workspace": {
-                "view": { "label": "ワークスペースを表示" },
-                "edit": { "label": "ワークスペース設定を編集" },
-                "manage": { "label": "ワークスペースを管理" },
-                "invite": { "label": "メンバーを招待" },
-                "delete": { "label": "ワークスペースを削除" },
-                "transfer": { "label": "所有権を移譲" }
+                "view": {
+                  "label": "ワークスペースを表示"
+                },
+                "edit": {
+                  "label": "ワークスペース設定を編集"
+                },
+                "manage": {
+                  "label": "ワークスペースを管理"
+                },
+                "invite": {
+                  "label": "メンバーを招待"
+                },
+                "delete": {
+                  "label": "ワークスペースを削除"
+                },
+                "transfer": {
+                  "label": "所有権を移譲"
+                }
               }
             },
             "member_management": {
               "title": "メンバー管理",
               "description": "ワークスペースメンバーの招待、編集、インポート、削除。",
               "workspace_member": {
-                "view": { "label": "メンバーを表示" },
-                "invite": { "label": "メンバーを招待" },
-                "edit": { "label": "メンバー情報を編集" },
-                "import": { "label": "メンバーをインポート（CSV / SSO）" },
-                "change_role": { "label": "メンバーのロールを変更" },
-                "remove": { "label": "メンバーを削除" }
+                "view": {
+                  "label": "メンバーを表示"
+                },
+                "invite": {
+                  "label": "メンバーを招待"
+                },
+                "edit": {
+                  "label": "メンバー情報を編集"
+                },
+                "import": {
+                  "label": "メンバーをインポート（CSV / SSO）"
+                },
+                "change_role": {
+                  "label": "メンバーのロールを変更"
+                },
+                "remove": {
+                  "label": "メンバーを削除"
+                }
               }
             },
             "project_management": {
               "title": "プロジェクト管理",
               "description": "ワークスペースのコンテキストからのプロジェクトの作成と管理。",
               "project": {
-                "browse": { "label": "プロジェクトを閲覧" },
-                "view": { "label": "プロジェクトの詳細を表示" },
-                "create": { "label": "プロジェクトを作成" },
-                "edit": { "label": "プロジェクト設定を編集" },
-                "react": { "label": "プロジェクトにリアクション" },
-                "publish": { "label": "プロジェクトを公開（一般公開にする）" },
-                "archive": { "label": "プロジェクトをアーカイブ" },
-                "delete": { "label": "プロジェクトを削除" },
-                "manage": { "label": "プロジェクトアクセスを管理" }
+                "browse": {
+                  "label": "プロジェクトを閲覧"
+                },
+                "view": {
+                  "label": "プロジェクトの詳細を表示"
+                },
+                "create": {
+                  "label": "プロジェクトを作成"
+                },
+                "edit": {
+                  "label": "プロジェクト設定を編集"
+                },
+                "react": {
+                  "label": "プロジェクトにリアクション"
+                },
+                "publish": {
+                  "label": "プロジェクトを公開（一般公開にする）"
+                },
+                "archive": {
+                  "label": "プロジェクトをアーカイブ"
+                },
+                "delete": {
+                  "label": "プロジェクトを削除"
+                },
+                "manage": {
+                  "label": "プロジェクトアクセスを管理"
+                }
               }
             },
             "role_administration": {
               "title": "ロール管理",
               "description": "カスタムロールとプロジェクトロールの作成と管理。",
               "custom_role": {
-                "view": { "label": "カスタムロールを表示" },
-                "create": { "label": "カスタムロールを作成" },
-                "edit": { "label": "カスタムロールを編集" },
-                "delete": { "label": "カスタムロールを削除" }
+                "view": {
+                  "label": "カスタムロールを表示"
+                },
+                "create": {
+                  "label": "カスタムロールを作成"
+                },
+                "edit": {
+                  "label": "カスタムロールを編集"
+                },
+                "delete": {
+                  "label": "カスタムロールを削除"
+                }
               }
             },
             "workspace_pages": {
               "title": "ワークスペースページ（Wiki）",
               "description": "ワークスペースレベルのドキュメントとWiki。",
               "wiki": {
-                "view": { "label": "Wikiを表示" },
-                "create": { "label": "Wikiページを作成" },
-                "edit": { "label": "Wikiページを編集" },
-                "share": { "label": "Wikiページを共有" },
-                "delete": { "label": "Wikiページを削除" },
-                "comment": { "label": "Wikiページにコメント" }
+                "view": {
+                  "label": "Wikiを表示"
+                },
+                "create": {
+                  "label": "Wikiページを作成"
+                },
+                "edit": {
+                  "label": "Wikiページを編集"
+                },
+                "share": {
+                  "label": "Wikiページを共有"
+                },
+                "delete": {
+                  "label": "Wikiページを削除"
+                },
+                "comment": {
+                  "label": "Wikiページにコメント"
+                }
               }
             },
             "workspace_views": {
               "title": "ワークスペースビュー",
               "description": "ワークスペースレベルの保存済みフィルターとビューの管理。",
               "workspace_workitem_view": {
-                "view": { "label": "ワークスペースビューを表示" },
-                "create": { "label": "ワークスペースビューを作成" },
-                "edit": { "label": "ワークスペースビューを編集" },
-                "share": { "label": "ワークスペースビューを共有" },
-                "publish": { "label": "ワークスペースビューを公開" },
-                "export": { "label": "ワークスペースビューをエクスポート" },
-                "delete": { "label": "ワークスペースビューを削除" }
+                "view": {
+                  "label": "ワークスペースビューを表示"
+                },
+                "create": {
+                  "label": "ワークスペースビューを作成"
+                },
+                "edit": {
+                  "label": "ワークスペースビューを編集"
+                },
+                "share": {
+                  "label": "ワークスペースビューを共有"
+                },
+                "publish": {
+                  "label": "ワークスペースビューを公開"
+                },
+                "export": {
+                  "label": "ワークスペースビューをエクスポート"
+                },
+                "delete": {
+                  "label": "ワークスペースビューを削除"
+                }
               }
             },
             "initiatives": {
               "title": "イニシアチブ",
               "description": "プロジェクト横断のイニシアチブ追跡（コメント、添付ファイル、リンク、アップデートを含む）。",
               "initiative": {
-                "view": { "label": "イニシアチブを表示" },
-                "create": { "label": "イニシアチブを作成" },
-                "edit": { "label": "イニシアチブを編集" },
-                "manage": { "label": "イニシアチブを管理" },
-                "react": { "label": "イニシアチブにリアクション" },
-                "delete": { "label": "イニシアチブを削除" }
+                "view": {
+                  "label": "イニシアチブを表示"
+                },
+                "create": {
+                  "label": "イニシアチブを作成"
+                },
+                "edit": {
+                  "label": "イニシアチブを編集"
+                },
+                "manage": {
+                  "label": "イニシアチブを管理"
+                },
+                "react": {
+                  "label": "イニシアチブにリアクション"
+                },
+                "delete": {
+                  "label": "イニシアチブを削除"
+                }
               },
               "initiative_comment": {
-                "view": { "label": "イニシアチブのコメントを表示" },
-                "create": { "label": "イニシアチブにコメント" },
-                "edit": { "label": "イニシアチブのコメントを編集" },
-                "react": { "label": "イニシアチブのコメントにリアクション" },
-                "delete": { "label": "イニシアチブのコメントを削除" }
+                "view": {
+                  "label": "イニシアチブのコメントを表示"
+                },
+                "create": {
+                  "label": "イニシアチブにコメント"
+                },
+                "edit": {
+                  "label": "イニシアチブのコメントを編集"
+                },
+                "react": {
+                  "label": "イニシアチブのコメントにリアクション"
+                },
+                "delete": {
+                  "label": "イニシアチブのコメントを削除"
+                }
               },
               "initiative_attachment": {
-                "view": { "label": "イニシアチブの添付ファイルを表示" },
-                "create": { "label": "イニシアチブに添付ファイルを追加" },
-                "delete": { "label": "イニシアチブの添付ファイルを削除" }
+                "view": {
+                  "label": "イニシアチブの添付ファイルを表示"
+                },
+                "create": {
+                  "label": "イニシアチブに添付ファイルを追加"
+                },
+                "delete": {
+                  "label": "イニシアチブの添付ファイルを削除"
+                }
               },
               "initiative_link": {
-                "view": { "label": "イニシアチブのリンクを表示" },
-                "create": { "label": "イニシアチブにリンクを追加" },
-                "edit": { "label": "イニシアチブのリンクを編集" },
-                "delete": { "label": "イニシアチブのリンクを削除" }
+                "view": {
+                  "label": "イニシアチブのリンクを表示"
+                },
+                "create": {
+                  "label": "イニシアチブにリンクを追加"
+                },
+                "edit": {
+                  "label": "イニシアチブのリンクを編集"
+                },
+                "delete": {
+                  "label": "イニシアチブのリンクを削除"
+                }
               }
             },
             "teamspaces": {
               "title": "チームスペース",
               "description": "チームスペースの閲覧、作成、管理。",
               "teamspace": {
-                "browse": { "label": "チームスペースを閲覧" },
-                "view": { "label": "チームスペースの詳細を表示" },
-                "create": { "label": "チームスペースを作成" },
-                "edit": { "label": "チームスペースを編集" },
-                "manage": { "label": "チームスペースのメンバーを管理" },
-                "delete": { "label": "チームスペースを削除" }
+                "browse": {
+                  "label": "チームスペースを閲覧"
+                },
+                "view": {
+                  "label": "チームスペースの詳細を表示"
+                },
+                "create": {
+                  "label": "チームスペースを作成"
+                },
+                "edit": {
+                  "label": "チームスペースを編集"
+                },
+                "manage": {
+                  "label": "チームスペースのメンバーを管理"
+                },
+                "delete": {
+                  "label": "チームスペースを削除"
+                }
               }
             },
             "integrations": {
               "title": "インテグレーション",
               "description": "サードパーティインテグレーション、Webhook、APIトークン。",
               "integration": {
-                "view": { "label": "インテグレーションを表示" },
-                "create": { "label": "インテグレーションを作成" },
-                "edit": { "label": "インテグレーションを構成" },
-                "delete": { "label": "インテグレーションを削除" }
+                "view": {
+                  "label": "インテグレーションを表示"
+                },
+                "create": {
+                  "label": "インテグレーションを作成"
+                },
+                "edit": {
+                  "label": "インテグレーションを編集"
+                },
+                "delete": {
+                  "label": "インテグレーションを削除"
+                },
+                "connect": {
+                  "label": "インテグレーションを接続"
+                },
+                "manage": {
+                  "label": "インテグレーションを管理"
+                }
               },
               "webhook": {
-                "view": { "label": "Webhookを表示" },
-                "create": { "label": "Webhookを作成" },
-                "edit": { "label": "Webhookを編集" },
-                "delete": { "label": "Webhookを削除" }
+                "view": {
+                  "label": "Webhookを表示"
+                },
+                "create": {
+                  "label": "Webhookを作成"
+                },
+                "edit": {
+                  "label": "Webhookを編集"
+                },
+                "delete": {
+                  "label": "Webhookを削除"
+                }
               },
               "api_token": {
-                "view": { "label": "APIトークンを表示" },
-                "create": { "label": "APIトークンを作成" },
-                "delete": { "label": "APIトークンを削除" }
+                "view": {
+                  "label": "APIトークンを表示"
+                },
+                "create": {
+                  "label": "APIトークンを作成"
+                },
+                "delete": {
+                  "label": "APIトークンを削除"
+                }
               }
             },
             "analytics_and_dashboards": {
               "title": "アナリティクスとレポート",
               "description": "ワークスペースレベルのダッシュボード、アナリティクス、作業ログ。",
               "analytics": {
-                "view": { "label": "アナリティクスを表示" },
-                "export": { "label": "アナリティクスをエクスポート" }
+                "view": {
+                  "label": "アナリティクスを表示"
+                },
+                "export": {
+                  "label": "アナリティクスをエクスポート"
+                }
               },
               "dashboard": {
-                "view": { "label": "ダッシュボードを表示" },
-                "create": { "label": "ダッシュボードを作成" },
-                "edit": { "label": "ダッシュボードを編集" },
-                "delete": { "label": "ダッシュボードを削除" }
+                "view": {
+                  "label": "ダッシュボードを表示"
+                },
+                "create": {
+                  "label": "ダッシュボードを作成"
+                },
+                "edit": {
+                  "label": "ダッシュボードを編集"
+                },
+                "delete": {
+                  "label": "ダッシュボードを削除"
+                }
               },
               "workspace_worklog": {
-                "view": { "label": "作業ログを表示" },
-                "export": { "label": "作業ログをエクスポート" }
+                "view": {
+                  "label": "作業ログを表示"
+                },
+                "export": {
+                  "label": "作業ログをエクスポート"
+                }
               },
               "ai": {
-                "use": { "label": "AI機能を使用" }
+                "use": {
+                  "label": "AI機能を使用"
+                }
               }
             },
             "customers": {
               "title": "カスタマーフィードバック",
               "description": "カスタマーおよびカスタマーリクエストの管理。",
               "customer": {
-                "view": { "label": "カスタマーを表示" },
-                "create": { "label": "カスタマーを作成" },
-                "edit": { "label": "カスタマーを編集" },
-                "delete": { "label": "カスタマーを削除" }
+                "view": {
+                  "label": "カスタマーを表示"
+                },
+                "create": {
+                  "label": "カスタマーを作成"
+                },
+                "edit": {
+                  "label": "カスタマーを編集"
+                },
+                "delete": {
+                  "label": "カスタマーを削除"
+                }
               },
               "customer_attachment": {
-                "create": { "label": "カスタマーに添付ファイルを追加" },
-                "delete": { "label": "カスタマーの添付ファイルを削除" }
+                "create": {
+                  "label": "カスタマーに添付ファイルを追加"
+                },
+                "delete": {
+                  "label": "カスタマーの添付ファイルを削除"
+                }
               }
             },
             "work_item_relations": {
               "title": "ワークアイテムのリレーション",
               "description": "ワークアイテムのカスタムリレーションタイプ定義の管理。",
               "workitem_relation": {
-                "view": { "label": "リレーション定義を表示" },
-                "create": { "label": "リレーション定義を作成" },
-                "edit": { "label": "リレーション定義を編集" },
-                "delete": { "label": "リレーション定義を削除" }
+                "view": {
+                  "label": "リレーション定義を表示"
+                },
+                "create": {
+                  "label": "リレーション定義を作成"
+                },
+                "edit": {
+                  "label": "リレーション定義を編集"
+                },
+                "delete": {
+                  "label": "リレーション定義を削除"
+                }
               }
             },
             "workspace_templates": {
               "title": "テンプレート",
               "description": "ワークスペースレベルのワークアイテム、ページ、プロジェクトのテンプレートの作成と管理。",
               "workspace_workitem_template": {
-                "view": { "label": "ワークアイテムテンプレートを表示" },
-                "create": { "label": "ワークアイテムテンプレートを作成" },
-                "edit": { "label": "ワークアイテムテンプレートを編集" },
-                "delete": { "label": "ワークアイテムテンプレートを削除" }
+                "view": {
+                  "label": "ワークアイテムテンプレートを表示"
+                },
+                "create": {
+                  "label": "ワークアイテムテンプレートを作成"
+                },
+                "edit": {
+                  "label": "ワークアイテムテンプレートを編集"
+                },
+                "delete": {
+                  "label": "ワークアイテムテンプレートを削除"
+                }
               },
               "workspace_page_template": {
-                "view": { "label": "ページテンプレートを表示" },
-                "create": { "label": "ページテンプレートを作成" },
-                "edit": { "label": "ページテンプレートを編集" },
-                "delete": { "label": "ページテンプレートを削除" }
+                "view": {
+                  "label": "ページテンプレートを表示"
+                },
+                "create": {
+                  "label": "ページテンプレートを作成"
+                },
+                "edit": {
+                  "label": "ページテンプレートを編集"
+                },
+                "delete": {
+                  "label": "ページテンプレートを削除"
+                }
               },
               "workspace_project_template": {
-                "view": { "label": "プロジェクトテンプレートを表示" },
-                "create": { "label": "プロジェクトテンプレートを作成" },
-                "edit": { "label": "プロジェクトテンプレートを編集" },
-                "delete": { "label": "プロジェクトテンプレートを削除" }
+                "view": {
+                  "label": "プロジェクトテンプレートを表示"
+                },
+                "create": {
+                  "label": "プロジェクトテンプレートを作成"
+                },
+                "edit": {
+                  "label": "プロジェクトテンプレートを編集"
+                },
+                "delete": {
+                  "label": "プロジェクトテンプレートを削除"
+                }
               }
             },
             "workspace_automations": {
               "title": "ワークスペースオートメーション",
               "description": "ワークスペースレベルのオートメーションルールと設定。",
               "workspace_automation": {
-                "view": { "label": "ワークスペースオートメーションを表示" },
-                "create": { "label": "ワークスペースオートメーションを作成" },
-                "edit": { "label": "ワークスペースオートメーションを編集" },
-                "delete": { "label": "ワークスペースオートメーションを削除" }
+                "view": {
+                  "label": "ワークスペースオートメーションを表示"
+                },
+                "create": {
+                  "label": "ワークスペースオートメーションを作成"
+                },
+                "edit": {
+                  "label": "ワークスペースオートメーションを編集"
+                },
+                "delete": {
+                  "label": "ワークスペースオートメーションを削除"
+                }
               }
             }
           },
@@ -291,245 +513,507 @@
               "title": "プロジェクトアクセス",
               "description": "プロジェクトのロールによって付与される基本アクセス。",
               "project": {
-                "view": { "label": "プロジェクトを表示" }
+                "view": {
+                  "label": "プロジェクトを表示"
+                }
               }
             },
             "project_membership": {
               "title": "プロジェクトメンバー",
               "description": "プロジェクトメンバーの招待、編集、削除。",
               "project_member": {
-                "view": { "label": "プロジェクトメンバーを表示" },
-                "invite": { "label": "メンバーを招待" },
-                "edit": { "label": "メンバー情報を編集" },
-                "change_role": { "label": "メンバーのロールを変更" },
-                "remove": { "label": "メンバーを削除" }
+                "view": {
+                  "label": "プロジェクトメンバーを表示"
+                },
+                "invite": {
+                  "label": "メンバーを招待"
+                },
+                "edit": {
+                  "label": "メンバー情報を編集"
+                },
+                "change_role": {
+                  "label": "メンバーのロールを変更"
+                },
+                "remove": {
+                  "label": "メンバーを削除"
+                }
               }
             },
             "work_items": {
               "title": "ワークアイテム",
               "description": "主要なワークアイテムのサーフェスです。コメント、添付ファイル、リンク、リレーション、カスタムプロパティーを含みます。",
               "workitem": {
-                "view": { "label": "ワークアイテムを表示" },
-                "create": { "label": "ワークアイテムを作成" },
-                "edit": { "label": "ワークアイテムを編集" },
-                "bulk_edit": { "label": "ワークアイテムを一括編集" },
-                "export": { "label": "ワークアイテムをエクスポート" },
-                "react": { "label": "ワークアイテムにリアクション" },
-                "delete": { "label": "ワークアイテムを削除" }
+                "view": {
+                  "label": "ワークアイテムを表示"
+                },
+                "create": {
+                  "label": "ワークアイテムを作成"
+                },
+                "edit": {
+                  "label": "ワークアイテムを編集"
+                },
+                "bulk_edit": {
+                  "label": "ワークアイテムを一括編集"
+                },
+                "export": {
+                  "label": "ワークアイテムをエクスポート"
+                },
+                "react": {
+                  "label": "ワークアイテムにリアクション"
+                },
+                "delete": {
+                  "label": "ワークアイテムを削除"
+                }
               },
               "comment": {
-                "create": { "label": "コメントを追加" },
-                "edit": { "label": "コメントを編集" },
-                "react": { "label": "コメントにリアクション" },
-                "delete": { "label": "コメントを削除" }
+                "create": {
+                  "label": "コメントを追加"
+                },
+                "edit": {
+                  "label": "コメントを編集"
+                },
+                "react": {
+                  "label": "コメントにリアクション"
+                },
+                "delete": {
+                  "label": "コメントを削除"
+                }
               },
               "attachment": {
-                "view": { "label": "添付ファイルを表示" },
-                "create": { "label": "添付ファイルを追加" },
-                "delete": { "label": "添付ファイルを削除" }
+                "view": {
+                  "label": "添付ファイルを表示"
+                },
+                "create": {
+                  "label": "添付ファイルを追加"
+                },
+                "delete": {
+                  "label": "添付ファイルを削除"
+                }
               },
               "workitem_link": {
-                "view": { "label": "ワークアイテムのリンクを表示" },
-                "create": { "label": "ワークアイテムにリンクを追加" },
-                "edit": { "label": "ワークアイテムのリンクを編集" },
-                "delete": { "label": "ワークアイテムのリンクを削除" }
+                "view": {
+                  "label": "ワークアイテムのリンクを表示"
+                },
+                "create": {
+                  "label": "ワークアイテムにリンクを追加"
+                },
+                "edit": {
+                  "label": "ワークアイテムのリンクを編集"
+                },
+                "delete": {
+                  "label": "ワークアイテムのリンクを削除"
+                }
               },
               "issue_property": {
-                "view": { "label": "カスタムプロパティーを表示" },
-                "edit": { "label": "カスタムプロパティーを編集" }
+                "view": {
+                  "label": "カスタムプロパティーを表示"
+                },
+                "edit": {
+                  "label": "カスタムプロパティーを編集"
+                }
               }
             },
             "epics": {
               "title": "エピック",
               "description": "エピックのライフサイクル。リンク、プロパティー、アップデートスレッドを含みます。",
               "epic": {
-                "view": { "label": "エピックを表示" },
-                "create": { "label": "エピックを作成" },
-                "edit": { "label": "エピックを編集" },
-                "delete": { "label": "エピックを削除" }
+                "view": {
+                  "label": "エピックを表示"
+                },
+                "create": {
+                  "label": "エピックを作成"
+                },
+                "edit": {
+                  "label": "エピックを編集"
+                },
+                "delete": {
+                  "label": "エピックを削除"
+                }
               },
               "epic_link": {
-                "view": { "label": "エピックのリンクを表示" },
-                "create": { "label": "エピックにリンクを追加" },
-                "edit": { "label": "エピックのリンクを編集" },
-                "delete": { "label": "エピックのリンクを削除" }
+                "view": {
+                  "label": "エピックのリンクを表示"
+                },
+                "create": {
+                  "label": "エピックにリンクを追加"
+                },
+                "edit": {
+                  "label": "エピックのリンクを編集"
+                },
+                "delete": {
+                  "label": "エピックのリンクを削除"
+                }
               },
               "epic_property": {
-                "view": { "label": "エピックのプロパティーを表示" },
-                "edit": { "label": "エピックのプロパティーを編集" }
+                "view": {
+                  "label": "エピックのプロパティーを表示"
+                },
+                "edit": {
+                  "label": "エピックのプロパティーを編集"
+                }
               },
               "epic_update": {
-                "view": { "label": "エピックのアップデートを表示" },
-                "create": { "label": "エピックのアップデートを投稿" },
-                "edit": { "label": "エピックのアップデートを編集" },
-                "delete": { "label": "エピックのアップデートを削除" }
+                "view": {
+                  "label": "エピックのアップデートを表示"
+                },
+                "create": {
+                  "label": "エピックのアップデートを投稿"
+                },
+                "edit": {
+                  "label": "エピックのアップデートを編集"
+                },
+                "delete": {
+                  "label": "エピックのアップデートを削除"
+                }
               },
               "epic_update_comment": {
-                "view": { "label": "エピックのアップデートコメントを表示" },
-                "create": { "label": "エピックのアップデートにコメント" },
-                "edit": { "label": "エピックのアップデートコメントを編集" },
-                "react": { "label": "エピックのアップデートコメントにリアクション" },
-                "delete": { "label": "エピックのアップデートコメントを削除" }
+                "view": {
+                  "label": "エピックのアップデートコメントを表示"
+                },
+                "create": {
+                  "label": "エピックのアップデートにコメント"
+                },
+                "edit": {
+                  "label": "エピックのアップデートコメントを編集"
+                },
+                "react": {
+                  "label": "エピックのアップデートコメントにリアクション"
+                },
+                "delete": {
+                  "label": "エピックのアップデートコメントを削除"
+                }
               }
             },
             "modules_and_cycles": {
               "title": "モジュールとサイクル",
               "description": "機能のグループ化とスプリント/サイクル管理。",
               "module": {
-                "view": { "label": "モジュールを表示" },
-                "create": { "label": "モジュールを作成" },
-                "edit": { "label": "モジュールを編集" },
-                "manage": { "label": "モジュールのメンバーを管理" },
-                "archive": { "label": "モジュールをアーカイブ" },
-                "export": { "label": "モジュールをエクスポート" },
-                "delete": { "label": "モジュールを削除" }
+                "view": {
+                  "label": "モジュールを表示"
+                },
+                "create": {
+                  "label": "モジュールを作成"
+                },
+                "edit": {
+                  "label": "モジュールを編集"
+                },
+                "manage": {
+                  "label": "モジュールのメンバーを管理"
+                },
+                "archive": {
+                  "label": "モジュールをアーカイブ"
+                },
+                "export": {
+                  "label": "モジュールをエクスポート"
+                },
+                "delete": {
+                  "label": "モジュールを削除"
+                }
               },
               "cycle": {
-                "view": { "label": "サイクルを表示" },
-                "create": { "label": "サイクルを作成" },
-                "edit": { "label": "サイクルを編集" },
-                "delete": { "label": "サイクルを削除" }
+                "view": {
+                  "label": "サイクルを表示"
+                },
+                "create": {
+                  "label": "サイクルを作成"
+                },
+                "edit": {
+                  "label": "サイクルを編集"
+                },
+                "delete": {
+                  "label": "サイクルを削除"
+                }
               },
               "cycle_update": {
-                "view": { "label": "サイクルのアップデートを表示" },
-                "create": { "label": "サイクルのアップデートを投稿" },
-                "edit": { "label": "サイクルのアップデートを編集" },
-                "delete": { "label": "サイクルのアップデートを削除" }
+                "view": {
+                  "label": "サイクルのアップデートを表示"
+                },
+                "create": {
+                  "label": "サイクルのアップデートを投稿"
+                },
+                "edit": {
+                  "label": "サイクルのアップデートを編集"
+                },
+                "delete": {
+                  "label": "サイクルのアップデートを削除"
+                }
               }
             },
             "project_pages_and_views": {
               "title": "ページとビュー",
               "description": "プロジェクトレベルのページと保存済みビュー。",
               "page": {
-                "view": { "label": "ページを表示" },
-                "create": { "label": "ページを作成" },
-                "edit": { "label": "ページを編集" },
-                "share": { "label": "ページを共有" },
-                "delete": { "label": "ページを削除" }
+                "view": {
+                  "label": "ページを表示"
+                },
+                "create": {
+                  "label": "ページを作成"
+                },
+                "edit": {
+                  "label": "ページを編集"
+                },
+                "share": {
+                  "label": "ページを共有"
+                },
+                "delete": {
+                  "label": "ページを削除"
+                }
               },
               "workitem_view": {
-                "view": { "label": "プロジェクトビューを表示" },
-                "create": { "label": "プロジェクトビューを作成" },
-                "edit": { "label": "プロジェクトビューを編集" },
-                "share": { "label": "プロジェクトビューを共有" },
-                "publish": { "label": "プロジェクトビューを公開" },
-                "export": { "label": "プロジェクトビューをエクスポート" },
-                "delete": { "label": "プロジェクトビューを削除" }
+                "view": {
+                  "label": "プロジェクトビューを表示"
+                },
+                "create": {
+                  "label": "プロジェクトビューを作成"
+                },
+                "edit": {
+                  "label": "プロジェクトビューを編集"
+                },
+                "share": {
+                  "label": "プロジェクトビューを共有"
+                },
+                "publish": {
+                  "label": "プロジェクトビューを公開"
+                },
+                "export": {
+                  "label": "プロジェクトビューをエクスポート"
+                },
+                "delete": {
+                  "label": "プロジェクトビューを削除"
+                }
               }
             },
             "intake": {
               "title": "Intake",
               "description": "ワークアイテムの受付とトリアージのワークフローです。",
               "intake": {
-                "view": { "label": "Intakeを表示" },
-                "create": { "label": "Intakeアイテムを作成" },
-                "submit": { "label": "Intakeリクエストを送信" },
-                "edit": { "label": "Intakeアイテムを編集" },
-                "react": { "label": "Intakeアイテムにリアクション" },
-                "manage": { "label": "Intakeアイテムを管理" },
-                "configure": { "label": "Intakeを構成" },
-                "export": { "label": "Intakeをエクスポート" },
-                "delete": { "label": "Intakeアイテムを削除" }
+                "view": {
+                  "label": "Intakeを表示"
+                },
+                "create": {
+                  "label": "Intakeアイテムを作成"
+                },
+                "submit": {
+                  "label": "Intakeリクエストを送信"
+                },
+                "edit": {
+                  "label": "Intakeアイテムを編集"
+                },
+                "react": {
+                  "label": "Intakeアイテムにリアクション"
+                },
+                "manage": {
+                  "label": "Intakeアイテムを管理"
+                },
+                "configure": {
+                  "label": "Intakeを構成"
+                },
+                "export": {
+                  "label": "Intakeをエクスポート"
+                },
+                "delete": {
+                  "label": "Intakeアイテムを削除"
+                }
               }
             },
             "project_configuration": {
               "title": "プロジェクト設定",
               "description": "ラベル、状態、見積もり、マイルストーン。",
               "label": {
-                "view": { "label": "ラベルを表示" },
-                "create": { "label": "ラベルを作成" },
-                "edit": { "label": "ラベルを編集" },
-                "delete": { "label": "ラベルを削除" }
+                "view": {
+                  "label": "ラベルを表示"
+                },
+                "create": {
+                  "label": "ラベルを作成"
+                },
+                "edit": {
+                  "label": "ラベルを編集"
+                },
+                "delete": {
+                  "label": "ラベルを削除"
+                }
               },
               "state": {
-                "view": { "label": "状態を表示" },
-                "create": { "label": "状態を作成" },
-                "edit": { "label": "状態を編集" },
-                "delete": { "label": "状態を削除" }
+                "view": {
+                  "label": "状態を表示"
+                },
+                "create": {
+                  "label": "状態を作成"
+                },
+                "edit": {
+                  "label": "状態を編集"
+                },
+                "delete": {
+                  "label": "状態を削除"
+                }
               },
               "estimate": {
-                "view": { "label": "見積もりを表示" },
-                "create": { "label": "見積もりを作成" },
-                "edit": { "label": "見積もりを編集" },
-                "delete": { "label": "見積もりを削除" }
+                "view": {
+                  "label": "見積もりを表示"
+                },
+                "create": {
+                  "label": "見積もりを作成"
+                },
+                "edit": {
+                  "label": "見積もりを編集"
+                },
+                "delete": {
+                  "label": "見積もりを削除"
+                }
               },
               "milestone": {
-                "view": { "label": "マイルストーンを表示" },
-                "create": { "label": "マイルストーンを作成" },
-                "edit": { "label": "マイルストーンを編集" },
-                "delete": { "label": "マイルストーンを削除" }
+                "view": {
+                  "label": "マイルストーンを表示"
+                },
+                "create": {
+                  "label": "マイルストーンを作成"
+                },
+                "edit": {
+                  "label": "マイルストーンを編集"
+                },
+                "delete": {
+                  "label": "マイルストーンを削除"
+                }
               }
             },
             "automations": {
               "title": "オートメーションとワークフロー",
               "description": "オートメーション、ワークフロールール、定期ワークアイテム。",
               "project_automation": {
-                "view": { "label": "オートメーションを表示" },
-                "create": { "label": "オートメーションを作成" },
-                "edit": { "label": "オートメーションを編集" },
-                "delete": { "label": "オートメーションを削除" }
+                "view": {
+                  "label": "オートメーションを表示"
+                },
+                "create": {
+                  "label": "オートメーションを作成"
+                },
+                "edit": {
+                  "label": "オートメーションを編集"
+                },
+                "delete": {
+                  "label": "オートメーションを削除"
+                }
               },
               "workflow": {
-                "view": { "label": "ワークフローを表示" },
-                "create": { "label": "ワークフローを作成" },
-                "edit": { "label": "ワークフローを編集" },
-                "delete": { "label": "ワークフローを削除" }
+                "view": {
+                  "label": "ワークフローを表示"
+                },
+                "create": {
+                  "label": "ワークフローを作成"
+                },
+                "edit": {
+                  "label": "ワークフローを編集"
+                },
+                "delete": {
+                  "label": "ワークフローを削除"
+                }
               },
               "recurring_workitem": {
-                "view": { "label": "定期アイテムを表示" },
-                "create": { "label": "定期アイテムを作成" },
-                "edit": { "label": "定期アイテムを編集" },
-                "delete": { "label": "定期アイテムを削除" }
+                "view": {
+                  "label": "定期アイテムを表示"
+                },
+                "create": {
+                  "label": "定期アイテムを作成"
+                },
+                "edit": {
+                  "label": "定期アイテムを編集"
+                },
+                "delete": {
+                  "label": "定期アイテムを削除"
+                }
               }
             },
             "project_updates": {
               "title": "プロジェクトアップデート",
               "description": "進捗アップデートとアップデートへのコメント。",
               "project_update": {
-                "view": { "label": "プロジェクトアップデートを表示" },
-                "create": { "label": "プロジェクトアップデートを投稿" },
-                "edit": { "label": "プロジェクトアップデートを編集" },
-                "delete": { "label": "プロジェクトアップデートを削除" }
+                "view": {
+                  "label": "プロジェクトアップデートを表示"
+                },
+                "create": {
+                  "label": "プロジェクトアップデートを投稿"
+                },
+                "edit": {
+                  "label": "プロジェクトアップデートを編集"
+                },
+                "delete": {
+                  "label": "プロジェクトアップデートを削除"
+                }
               },
               "project_update_comment": {
-                "view": { "label": "プロジェクトアップデートコメントを表示" },
-                "create": { "label": "プロジェクトアップデートにコメント" },
-                "edit": { "label": "プロジェクトアップデートコメントを編集" },
-                "react": { "label": "プロジェクトアップデートコメントにリアクション" },
-                "delete": { "label": "プロジェクトアップデートコメントを削除" }
+                "view": {
+                  "label": "プロジェクトアップデートコメントを表示"
+                },
+                "create": {
+                  "label": "プロジェクトアップデートにコメント"
+                },
+                "edit": {
+                  "label": "プロジェクトアップデートコメントを編集"
+                },
+                "react": {
+                  "label": "プロジェクトアップデートコメントにリアクション"
+                },
+                "delete": {
+                  "label": "プロジェクトアップデートコメントを削除"
+                }
               }
             },
             "project_analytics": {
               "title": "アナリティクスとアクティビティ",
               "description": "プロジェクトのアナリティクスとアクティビティログ。",
               "project_activity": {
-                "view": { "label": "アクティビティログを表示" }
+                "view": {
+                  "label": "アクティビティログを表示"
+                }
               }
             },
             "project_links": {
               "title": "プロジェクトリンク",
               "description": "プロジェクトレベルのリンク。",
               "project_link": {
-                "view": { "label": "プロジェクトリンクを表示" },
-                "create": { "label": "プロジェクトリンクを追加" },
-                "edit": { "label": "プロジェクトリンクを編集" },
-                "delete": { "label": "プロジェクトリンクを削除" }
+                "view": {
+                  "label": "プロジェクトリンクを表示"
+                },
+                "create": {
+                  "label": "プロジェクトリンクを追加"
+                },
+                "edit": {
+                  "label": "プロジェクトリンクを編集"
+                },
+                "delete": {
+                  "label": "プロジェクトリンクを削除"
+                }
               }
             },
             "project_templates": {
               "title": "テンプレート",
               "description": "プロジェクトスコープのワークアイテムおよびページテンプレート。",
               "project_workitem_template": {
-                "view": { "label": "ワークアイテムテンプレートを表示" },
-                "create": { "label": "ワークアイテムテンプレートを作成" },
-                "edit": { "label": "ワークアイテムテンプレートを編集" },
-                "delete": { "label": "ワークアイテムテンプレートを削除" }
+                "view": {
+                  "label": "ワークアイテムテンプレートを表示"
+                },
+                "create": {
+                  "label": "ワークアイテムテンプレートを作成"
+                },
+                "edit": {
+                  "label": "ワークアイテムテンプレートを編集"
+                },
+                "delete": {
+                  "label": "ワークアイテムテンプレートを削除"
+                }
               },
               "project_page_template": {
-                "view": { "label": "ページテンプレートを表示" },
-                "create": { "label": "ページテンプレートを作成" },
-                "edit": { "label": "ページテンプレートを編集" },
-                "delete": { "label": "ページテンプレートを削除" }
+                "view": {
+                  "label": "ページテンプレートを表示"
+                },
+                "create": {
+                  "label": "ページテンプレートを作成"
+                },
+                "edit": {
+                  "label": "ページテンプレートを編集"
+                },
+                "delete": {
+                  "label": "ページテンプレートを削除"
+                }
               }
             }
           },

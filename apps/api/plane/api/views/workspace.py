@@ -16,7 +16,7 @@ from plane.api.views.base import ScopedBaseAPIView
 from plane.api.serializers import WorkspaceFeatureSerializer
 from plane.ee.models import WorkspaceFeature
 from plane.db.models import Workspace
-from plane.permissions import can, WorkspaceFeaturePermissions
+from plane.permissions import can, WorkspacePermissions
 
 # OpenAPI imports
 from plane.utils.openapi.decorators import workspace_docs
@@ -64,7 +64,7 @@ class WorkspaceFeatureAPIEndpoint(ScopedBaseAPIView):
             )
         },
     )
-    @can(WorkspaceFeaturePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         workspace_features = self.get_queryset(slug)
         if workspace_features is None:
@@ -84,7 +84,7 @@ class WorkspaceFeatureAPIEndpoint(ScopedBaseAPIView):
             )
         },
     )
-    @can(WorkspaceFeaturePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
+    @can(WorkspacePermissions.MANAGE, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug):
         workspace = Workspace.objects.filter(slug=slug).first()
         if not workspace:

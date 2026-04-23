@@ -37,7 +37,7 @@ from plane.db.models import (
     ProjectMember,
 )
 from plane.app.permissions import ROLE  # ROLE.ADMIN.value used in create_intake_user_bot
-from plane.permissions import can, IntakePermissions
+from plane.permissions import can, IntakePermissions, get_permission_conditions
 from plane.ee.serializers.app.intake import IntakeSettingSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 
@@ -127,8 +127,12 @@ class IntakeSettingEndpoint(BaseAPIView):
 
     @check_feature_flag(FeatureFlag.INTAKE_FORM)
     @check_feature_flag(FeatureFlag.INTAKE_EMAIL)
-    @can(IntakePermissions.VIEW, resource_param="project_id")
+    @can(IntakePermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
+        # Settings are project-level config, not per-item. Consume any creator
+        # condition from guest's intake:view+creator grant without applying it —
+        # there is no row to filter.
+        get_permission_conditions(request)
         intake = Intake.objects.filter(workspace__slug=slug, project_id=project_id).first()
 
         if not intake:

@@ -2623,16 +2623,16 @@ These endpoints are not called by the frontend. Their URL definitions in `plane/
 
 **File:** `apps/api/plane/ee/views/app/intake/base.py`
 
-| Method  | URL Pattern                                                       | Old Permission                                                              | New Permission                                                   | Differences                                                                         |
-| ------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `get`   | `GET /workspaces/<slug>/projects/<project_id>/intake-settings/`   | `@allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")` | `@can(IntakePermissions.VIEW, resource_param="project_id")`      | P-Guest loses access (no `intake:view` grant). Commenter retains access. By design. |
-| `patch` | `PATCH /workspaces/<slug>/projects/<project_id>/intake-settings/` | `@allow_permission([ROLE.ADMIN], level="PROJECT")`                          | `@can(IntakePermissions.CONFIGURE, resource_param="project_id")` | Exact parity: Admin-only via `intake:*` wildcard                                    |
+| Method  | URL Pattern                                                       | Old Permission                                                              | New Permission                                                                     | Differences                                                                                                                                                                           |
+| ------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get`   | `GET /workspaces/<slug>/projects/<project_id>/intake-settings/`   | `@allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="PROJECT")` | `@can(IntakePermissions.VIEW, resource_param="project_id", defer_conditions=True)` | Parity: any role with `intake:view` (unconditional or conditional) reads settings. P-Guest's `+creator` condition is deferred, then discarded in the view — settings aren't per-item. |
+| `patch` | `PATCH /workspaces/<slug>/projects/<project_id>/intake-settings/` | `@allow_permission([ROLE.ADMIN], level="PROJECT")`                          | `@can(IntakePermissions.CONFIGURE, resource_param="project_id")`                   | Exact parity: Admin-only via `intake:*` wildcard                                                                                                                                      |
 
 > **`ROLE` import retained:** `ROLE.ADMIN.value` is used in `create_intake_user_bot` for setting membership role values when creating the intake bot user. This is business logic, not permission checking.
 >
 > **Feature flag reorder:** `@check_feature_flag` decorators moved above `@can` (outermost runs first) so feature flags are checked before permission evaluation.
 >
-> **GET access narrowing (P-Guest):** Old `[ADMIN, MEMBER, GUEST]` was overly permissive. FE already blocks guests — all callers live under project settings page, guarded by `project:manage` (admin-only). Old Guest=true → Commenter (has `intake:view`), Old Guest=false → Guest (no `intake:view`). By design in `system_roles.py`.
+> **GET uses `intake:view` with `defer_conditions=True`:** A plain `@can(IntakePermissions.VIEW)` breaks P-Guest — guest holds `intake:view+creator`, and at project scope the engine evaluates creator against `Project.created_by_id` (guest is never the project creator) → 403. `defer_conditions=True` lets the engine pass conditional grants through the gate (intake is a child of project in the hierarchy, so `is_child_of` holds) and hands the condition to the view. The view calls `get_permission_conditions(request)` purely to satisfy `finalize_response`'s consumption check — the settings endpoint returns a single project-level config document, so there is no row to filter. We stick with `intake:view` (not `intake:submit`) because custom permission schemes may grant intake read access without granting submit, and `intake:view` is the canonical read gate.
 >
 > **Why `resource_param="project_id"`:** `IntakeSetting` is not registered in the permission engine's resource model map. Using `project_id` resolves via the project hierarchy. Both methods are project-scoped.
 
@@ -4080,10 +4080,10 @@ Uses `WorkitemPermissions` — same rationale as `IssuePropertyValueEndpoint`.
 
 **File:** `plane/ee/views/app/workspace/feature.py`
 
-| Method  | URL Pattern           | Old Permission              | New Permission                                                          | Differences           |
-| ------- | --------------------- | --------------------------- | ----------------------------------------------------------------------- | --------------------- |
-| `get`   | `GET .../features/`   | `WorkspaceEntityPermission` | `@can(WorkspaceFeaturePermissions.VIEW, resource_param="workspace_id")` | Parity.               |
-| `patch` | `PATCH .../features/` | `WorkspaceEntityPermission` | `@can(WorkspaceFeaturePermissions.EDIT, resource_param="workspace_id")` | Parity: Admin+Member. |
+| Method  | URL Pattern           | Old Permission              | New Permission                                                     | Differences                                                                                                           |
+| ------- | --------------------- | --------------------------- | ------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `get`   | `GET .../features/`   | `WorkspaceEntityPermission` | `@can(WorkspacePermissions.VIEW, resource_param="workspace_id")`   | Widened to W-Guest (feature toggle state is non-sensitive; FE already surfaces it to all workspace members).          |
+| `patch` | `PATCH .../features/` | `WorkspaceEntityPermission` | `@can(WorkspacePermissions.MANAGE, resource_param="workspace_id")` | Tightened: W-Member loses edit. Workspace feature toggles are admin-only settings; not used by FE for W-Member today. |
 
 ### WorkspaceInviteCheckEndpoint
 
@@ -4345,12 +4345,14 @@ All workspace roles (Owner, Admin, Member, Guest) have `workspace:view`.
 
 **File:** `plane/app/views/asset/v2.py`
 
-| Method   | URL Pattern                                               | Old Permission               | New Permission                                                          | Differences                                                   |
-| -------- | --------------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `post`   | `POST .../workspaces/<slug>/file-assets/v2/`              | `IsAuthenticated` (baseline) | `@can(WorkspaceAssetPermissions.CREATE, resource_param="workspace_id")` | Now requires workspace membership. Member+ can create.        |
-| `get`    | `GET .../workspaces/<slug>/file-assets/v2/<asset_id>/`    | `IsAuthenticated` (baseline) | `@can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id")`   | Now requires workspace membership                             |
-| `patch`  | `PATCH .../workspaces/<slug>/file-assets/v2/<asset_id>/`  | `IsAuthenticated` (baseline) | `@can(WorkspaceAssetPermissions.EDIT, resource_param="workspace_id")`   | Tightened: Owner + Admin only (have `workspace_asset:edit`)   |
-| `delete` | `DELETE .../workspaces/<slug>/file-assets/v2/<asset_id>/` | `IsAuthenticated` (baseline) | `@can(WorkspaceAssetPermissions.DELETE, resource_param="workspace_id")` | Tightened: Owner + Admin only (have `workspace_asset:delete`) |
+| Method   | URL Pattern                                               | Old Permission               | New Permission                                                          | Differences                                                                                                                                          |
+| -------- | --------------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `post`   | `POST .../workspaces/<slug>/file-assets/v2/`              | `IsAuthenticated` (baseline) | `@can(WorkspacePermissions.VIEW, resource_param="workspace_id")`        | Any workspace member (incl. Guest, custom PS without `workspace_asset:create`). See note below — fixes project cover upload during project creation. |
+| `get`    | `GET .../workspaces/<slug>/file-assets/v2/<asset_id>/`    | `IsAuthenticated` (baseline) | `@can(WorkspacePermissions.VIEW, resource_param="workspace_id")`        | Any workspace member. Download is read-only; no workspace/project state mutation.                                                                    |
+| `patch`  | `PATCH .../workspaces/<slug>/file-assets/v2/<asset_id>/`  | `IsAuthenticated` (baseline) | `@can(WorkspaceAssetPermissions.EDIT, resource_param="workspace_id")`   | Kept on `workspace_asset:edit` — PATCH triggers `entity_asset_save`, which flips `workspace.logo_asset_id` / `project.cover_image_asset_id`.         |
+| `delete` | `DELETE .../workspaces/<slug>/file-assets/v2/<asset_id>/` | `IsAuthenticated` (baseline) | `@can(WorkspaceAssetPermissions.DELETE, resource_param="workspace_id")` | Kept on `workspace_asset:delete` — DELETE triggers `entity_asset_delete`, which clears `workspace.logo_asset_id` / `project.cover_image_asset_id`.   |
+
+> **Why POST uses `workspace:view`, not `workspace_asset:create`:** The project creation flow uploads the cover image _before_ the Project row exists, so `project_asset:create` isn't available; `workspace_asset:create` was gating this, but custom permission schemes can omit it, and workspace Guest doesn't hold it — either path produces a 403. The upload endpoint only writes a `FileAsset` row and returns a presigned URL; it does not mutate any workspace/project state. Attachment mutations (PATCH/DELETE) remain on the stricter `workspace_asset:*` gates to prevent a workspace Guest from overwriting or clearing `workspace.logo_asset_id` / `project.cover_image_asset_id` by submitting a crafted request with `entity_type=WORKSPACE_LOGO` or `PROJECT_COVER`.
 
 ### FileAssetEndpoint (Legacy v1)
 

@@ -61,7 +61,6 @@ from .definitions import (  # noqa: E501
     WorkspaceActivityPermissions,
     WorkspaceUserActivityPermissions,
     WorkspaceProjectStatePermissions,
-    WorkspaceFeaturePermissions,
     WorkspaceWorklogPermissions,
     WorkspaceWorkitemTypePermissions,
     WorkspaceCustomPropertyPermissions,
@@ -223,8 +222,6 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             WildcardGrant(ResourceType.WORKSPACE_ASSET),
             # Workspace project states - full access
             WildcardGrant(ResourceType.WORKSPACE_PROJECT_STATE),
-            # Workspace features - full access
-            WildcardGrant(ResourceType.WORKSPACE_FEATURE),
             # Workspace worklogs - full access
             WildcardGrant(ResourceType.WORKSPACE_WORKLOG),
             # Templates - full access (workspace-level)
@@ -366,9 +363,6 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             WorkspaceProjectStatePermissions.CREATE,
             WorkspaceProjectStatePermissions.EDIT,
             WorkspaceProjectStatePermissions.DELETE,
-            # Workspace features - view and edit
-            WorkspaceFeaturePermissions.VIEW,
-            WorkspaceFeaturePermissions.EDIT,
             # Workspace worklogs - view and export
             WorkspaceWorklogPermissions.VIEW,
             WorkspaceWorklogPermissions.EXPORT,
@@ -411,8 +405,6 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             WorkspaceAssetPermissions.VIEW,
             # Workspace project states - view only
             WorkspaceProjectStatePermissions.VIEW,
-            # Workspace features - view only
-            WorkspaceFeaturePermissions.VIEW,
             # Work item relation definitions - view only
             WorkitemRelationPermissions.VIEW,
         ],

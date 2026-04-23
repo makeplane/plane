@@ -75,214 +75,436 @@
               "title": "Configuración del espacio de trabajo",
               "description": "Configuración principal del espacio de trabajo: nombre, logotipo, moneda, dominio, eliminación y transferencia de propiedad.",
               "workspace": {
-                "view": { "label": "Ver espacio de trabajo" },
-                "edit": { "label": "Editar configuración del espacio de trabajo" },
-                "manage": { "label": "Gestionar espacio de trabajo" },
-                "invite": { "label": "Invitar miembros" },
-                "delete": { "label": "Eliminar espacio de trabajo" },
-                "transfer": { "label": "Transferir propiedad" }
+                "view": {
+                  "label": "Ver espacio de trabajo"
+                },
+                "edit": {
+                  "label": "Editar configuración del espacio de trabajo"
+                },
+                "manage": {
+                  "label": "Gestionar espacio de trabajo"
+                },
+                "invite": {
+                  "label": "Invitar miembros"
+                },
+                "delete": {
+                  "label": "Eliminar espacio de trabajo"
+                },
+                "transfer": {
+                  "label": "Transferir propiedad"
+                }
               }
             },
             "member_management": {
               "title": "Gestión de miembros",
               "description": "Invitar, editar, importar y eliminar miembros del espacio de trabajo.",
               "workspace_member": {
-                "view": { "label": "Ver miembros" },
-                "invite": { "label": "Invitar miembros" },
-                "edit": { "label": "Editar detalles de los miembros" },
-                "import": { "label": "Importar miembros (CSV / SSO)" },
-                "change_role": { "label": "Cambiar el rol de un miembro" },
-                "remove": { "label": "Eliminar miembros" }
+                "view": {
+                  "label": "Ver miembros"
+                },
+                "invite": {
+                  "label": "Invitar miembros"
+                },
+                "edit": {
+                  "label": "Editar detalles de los miembros"
+                },
+                "import": {
+                  "label": "Importar miembros (CSV / SSO)"
+                },
+                "change_role": {
+                  "label": "Cambiar el rol de un miembro"
+                },
+                "remove": {
+                  "label": "Eliminar miembros"
+                }
               }
             },
             "project_management": {
               "title": "Gestión de proyectos",
               "description": "Creación y gestión de proyectos desde el contexto del espacio de trabajo.",
               "project": {
-                "browse": { "label": "Explorar proyectos" },
-                "view": { "label": "Ver detalles del proyecto" },
-                "create": { "label": "Crear proyectos" },
-                "edit": { "label": "Editar configuración del proyecto" },
-                "react": { "label": "Reaccionar a proyectos" },
-                "publish": { "label": "Publicar proyectos (hacer públicos)" },
-                "archive": { "label": "Archivar proyectos" },
-                "delete": { "label": "Eliminar proyectos" },
-                "manage": { "label": "Gestionar acceso al proyecto" }
+                "browse": {
+                  "label": "Explorar proyectos"
+                },
+                "view": {
+                  "label": "Ver detalles del proyecto"
+                },
+                "create": {
+                  "label": "Crear proyectos"
+                },
+                "edit": {
+                  "label": "Editar configuración del proyecto"
+                },
+                "react": {
+                  "label": "Reaccionar a proyectos"
+                },
+                "publish": {
+                  "label": "Publicar proyectos (hacer públicos)"
+                },
+                "archive": {
+                  "label": "Archivar proyectos"
+                },
+                "delete": {
+                  "label": "Eliminar proyectos"
+                },
+                "manage": {
+                  "label": "Gestionar acceso al proyecto"
+                }
               }
             },
             "role_administration": {
               "title": "Administración de roles",
               "description": "Creación y gestión de roles personalizados y de proyecto.",
               "custom_role": {
-                "view": { "label": "Ver roles personalizados" },
-                "create": { "label": "Crear roles personalizados" },
-                "edit": { "label": "Editar roles personalizados" },
-                "delete": { "label": "Eliminar roles personalizados" }
+                "view": {
+                  "label": "Ver roles personalizados"
+                },
+                "create": {
+                  "label": "Crear roles personalizados"
+                },
+                "edit": {
+                  "label": "Editar roles personalizados"
+                },
+                "delete": {
+                  "label": "Eliminar roles personalizados"
+                }
               }
             },
             "workspace_pages": {
               "title": "Pages del espacio de trabajo (Wiki)",
               "description": "Documentación y wikis a nivel del espacio de trabajo.",
               "wiki": {
-                "view": { "label": "Ver Wiki" },
-                "create": { "label": "Crear Pages de Wiki" },
-                "edit": { "label": "Editar Pages de Wiki" },
-                "share": { "label": "Compartir Pages de Wiki" },
-                "delete": { "label": "Eliminar Pages de Wiki" },
-                "comment": { "label": "Comentar en Pages de Wiki" }
+                "view": {
+                  "label": "Ver Wiki"
+                },
+                "create": {
+                  "label": "Crear Pages de Wiki"
+                },
+                "edit": {
+                  "label": "Editar Pages de Wiki"
+                },
+                "share": {
+                  "label": "Compartir Pages de Wiki"
+                },
+                "delete": {
+                  "label": "Eliminar Pages de Wiki"
+                },
+                "comment": {
+                  "label": "Comentar en Pages de Wiki"
+                }
               }
             },
             "workspace_views": {
               "title": "Vistas del espacio de trabajo",
               "description": "Filtros guardados y gestión de vistas a nivel del espacio de trabajo.",
               "workspace_workitem_view": {
-                "view": { "label": "Ver vistas del espacio de trabajo" },
-                "create": { "label": "Crear vistas del espacio de trabajo" },
-                "edit": { "label": "Editar vistas del espacio de trabajo" },
-                "share": { "label": "Compartir vistas del espacio de trabajo" },
-                "publish": { "label": "Publicar vistas del espacio de trabajo" },
-                "export": { "label": "Exportar vistas del espacio de trabajo" },
-                "delete": { "label": "Eliminar vistas del espacio de trabajo" }
+                "view": {
+                  "label": "Ver vistas del espacio de trabajo"
+                },
+                "create": {
+                  "label": "Crear vistas del espacio de trabajo"
+                },
+                "edit": {
+                  "label": "Editar vistas del espacio de trabajo"
+                },
+                "share": {
+                  "label": "Compartir vistas del espacio de trabajo"
+                },
+                "publish": {
+                  "label": "Publicar vistas del espacio de trabajo"
+                },
+                "export": {
+                  "label": "Exportar vistas del espacio de trabajo"
+                },
+                "delete": {
+                  "label": "Eliminar vistas del espacio de trabajo"
+                }
               }
             },
             "initiatives": {
               "title": "Iniciativas",
               "description": "Seguimiento de iniciativas entre proyectos, incluidos comentarios, adjuntos, enlaces y actualizaciones.",
               "initiative": {
-                "view": { "label": "Ver iniciativas" },
-                "create": { "label": "Crear iniciativas" },
-                "edit": { "label": "Editar iniciativas" },
-                "manage": { "label": "Gestionar iniciativas" },
-                "react": { "label": "Reaccionar a iniciativas" },
-                "delete": { "label": "Eliminar iniciativas" }
+                "view": {
+                  "label": "Ver iniciativas"
+                },
+                "create": {
+                  "label": "Crear iniciativas"
+                },
+                "edit": {
+                  "label": "Editar iniciativas"
+                },
+                "manage": {
+                  "label": "Gestionar iniciativas"
+                },
+                "react": {
+                  "label": "Reaccionar a iniciativas"
+                },
+                "delete": {
+                  "label": "Eliminar iniciativas"
+                }
               },
               "initiative_comment": {
-                "view": { "label": "Ver comentarios de iniciativas" },
-                "create": { "label": "Comentar en iniciativas" },
-                "edit": { "label": "Editar comentarios de iniciativas" },
-                "react": { "label": "Reaccionar a comentarios de iniciativas" },
-                "delete": { "label": "Eliminar comentarios de iniciativas" }
+                "view": {
+                  "label": "Ver comentarios de iniciativas"
+                },
+                "create": {
+                  "label": "Comentar en iniciativas"
+                },
+                "edit": {
+                  "label": "Editar comentarios de iniciativas"
+                },
+                "react": {
+                  "label": "Reaccionar a comentarios de iniciativas"
+                },
+                "delete": {
+                  "label": "Eliminar comentarios de iniciativas"
+                }
               },
               "initiative_attachment": {
-                "view": { "label": "Ver adjuntos de iniciativas" },
-                "create": { "label": "Añadir adjuntos de iniciativas" },
-                "delete": { "label": "Eliminar adjuntos de iniciativas" }
+                "view": {
+                  "label": "Ver adjuntos de iniciativas"
+                },
+                "create": {
+                  "label": "Añadir adjuntos de iniciativas"
+                },
+                "delete": {
+                  "label": "Eliminar adjuntos de iniciativas"
+                }
               },
               "initiative_link": {
-                "view": { "label": "Ver enlaces de iniciativas" },
-                "create": { "label": "Añadir enlaces de iniciativas" },
-                "edit": { "label": "Editar enlaces de iniciativas" },
-                "delete": { "label": "Eliminar enlaces de iniciativas" }
+                "view": {
+                  "label": "Ver enlaces de iniciativas"
+                },
+                "create": {
+                  "label": "Añadir enlaces de iniciativas"
+                },
+                "edit": {
+                  "label": "Editar enlaces de iniciativas"
+                },
+                "delete": {
+                  "label": "Eliminar enlaces de iniciativas"
+                }
               }
             },
             "teamspaces": {
               "title": "Teamspaces",
               "description": "Explorar, crear y gestionar teamspaces.",
               "teamspace": {
-                "browse": { "label": "Explorar teamspaces" },
-                "view": { "label": "Ver detalles del teamspace" },
-                "create": { "label": "Crear teamspaces" },
-                "edit": { "label": "Editar teamspaces" },
-                "manage": { "label": "Gestionar miembros del teamspace" },
-                "delete": { "label": "Eliminar teamspaces" }
+                "browse": {
+                  "label": "Explorar teamspaces"
+                },
+                "view": {
+                  "label": "Ver detalles del teamspace"
+                },
+                "create": {
+                  "label": "Crear teamspaces"
+                },
+                "edit": {
+                  "label": "Editar teamspaces"
+                },
+                "manage": {
+                  "label": "Gestionar miembros del teamspace"
+                },
+                "delete": {
+                  "label": "Eliminar teamspaces"
+                }
               }
             },
             "integrations": {
               "title": "Integraciones",
               "description": "Integraciones de terceros, webhooks y tokens de API.",
               "integration": {
-                "view": { "label": "Ver integraciones" },
-                "create": { "label": "Crear integraciones" },
-                "edit": { "label": "Configurar integraciones" },
-                "delete": { "label": "Eliminar integraciones" }
+                "view": {
+                  "label": "Ver integraciones"
+                },
+                "create": {
+                  "label": "Crear integraciones"
+                },
+                "edit": {
+                  "label": "Editar integraciones"
+                },
+                "delete": {
+                  "label": "Eliminar integraciones"
+                },
+                "connect": {
+                  "label": "Conectar integraciones"
+                },
+                "manage": {
+                  "label": "Gestionar integraciones"
+                }
               },
               "webhook": {
-                "view": { "label": "Ver webhooks" },
-                "create": { "label": "Crear webhooks" },
-                "edit": { "label": "Editar webhooks" },
-                "delete": { "label": "Eliminar webhooks" }
+                "view": {
+                  "label": "Ver webhooks"
+                },
+                "create": {
+                  "label": "Crear webhooks"
+                },
+                "edit": {
+                  "label": "Editar webhooks"
+                },
+                "delete": {
+                  "label": "Eliminar webhooks"
+                }
               },
               "api_token": {
-                "view": { "label": "Ver tokens de API" },
-                "create": { "label": "Crear tokens de API" },
-                "delete": { "label": "Eliminar tokens de API" }
+                "view": {
+                  "label": "Ver tokens de API"
+                },
+                "create": {
+                  "label": "Crear tokens de API"
+                },
+                "delete": {
+                  "label": "Eliminar tokens de API"
+                }
               }
             },
             "analytics_and_dashboards": {
               "title": "Analíticas e informes",
               "description": "Paneles, analíticas y registros de trabajo a nivel del espacio de trabajo.",
               "analytics": {
-                "view": { "label": "Ver analíticas" },
-                "export": { "label": "Exportar analíticas" }
+                "view": {
+                  "label": "Ver analíticas"
+                },
+                "export": {
+                  "label": "Exportar analíticas"
+                }
               },
               "dashboard": {
-                "view": { "label": "Ver paneles" },
-                "create": { "label": "Crear paneles" },
-                "edit": { "label": "Editar paneles" },
-                "delete": { "label": "Eliminar paneles" }
+                "view": {
+                  "label": "Ver paneles"
+                },
+                "create": {
+                  "label": "Crear paneles"
+                },
+                "edit": {
+                  "label": "Editar paneles"
+                },
+                "delete": {
+                  "label": "Eliminar paneles"
+                }
               },
               "workspace_worklog": {
-                "view": { "label": "Ver registros de trabajo" },
-                "export": { "label": "Exportar registros de trabajo" }
+                "view": {
+                  "label": "Ver registros de trabajo"
+                },
+                "export": {
+                  "label": "Exportar registros de trabajo"
+                }
               },
               "ai": {
-                "use": { "label": "Usar funciones de IA" }
+                "use": {
+                  "label": "Usar funciones de IA"
+                }
               }
             },
             "customers": {
               "title": "Comentarios de clientes",
               "description": "Gestión de clientes y solicitudes de clientes.",
               "customer": {
-                "view": { "label": "Ver clientes" },
-                "create": { "label": "Crear clientes" },
-                "edit": { "label": "Editar clientes" },
-                "delete": { "label": "Eliminar clientes" }
+                "view": {
+                  "label": "Ver clientes"
+                },
+                "create": {
+                  "label": "Crear clientes"
+                },
+                "edit": {
+                  "label": "Editar clientes"
+                },
+                "delete": {
+                  "label": "Eliminar clientes"
+                }
               },
               "customer_attachment": {
-                "create": { "label": "Añadir adjuntos de cliente" },
-                "delete": { "label": "Eliminar adjuntos de cliente" }
+                "create": {
+                  "label": "Añadir adjuntos de cliente"
+                },
+                "delete": {
+                  "label": "Eliminar adjuntos de cliente"
+                }
               }
             },
             "work_item_relations": {
               "title": "Relaciones de work items",
               "description": "Gestión de definiciones de tipos de relación personalizados para work items.",
               "workitem_relation": {
-                "view": { "label": "Ver definiciones de relaciones" },
-                "create": { "label": "Crear definiciones de relaciones" },
-                "edit": { "label": "Editar definiciones de relaciones" },
-                "delete": { "label": "Eliminar definiciones de relaciones" }
+                "view": {
+                  "label": "Ver definiciones de relaciones"
+                },
+                "create": {
+                  "label": "Crear definiciones de relaciones"
+                },
+                "edit": {
+                  "label": "Editar definiciones de relaciones"
+                },
+                "delete": {
+                  "label": "Eliminar definiciones de relaciones"
+                }
               }
             },
             "workspace_templates": {
               "title": "Plantillas",
               "description": "Creación y gestión de plantillas de work items, pages y proyectos a nivel del espacio de trabajo.",
               "workspace_workitem_template": {
-                "view": { "label": "Ver plantillas de work items" },
-                "create": { "label": "Crear plantillas de work items" },
-                "edit": { "label": "Editar plantillas de work items" },
-                "delete": { "label": "Eliminar plantillas de work items" }
+                "view": {
+                  "label": "Ver plantillas de work items"
+                },
+                "create": {
+                  "label": "Crear plantillas de work items"
+                },
+                "edit": {
+                  "label": "Editar plantillas de work items"
+                },
+                "delete": {
+                  "label": "Eliminar plantillas de work items"
+                }
               },
               "workspace_page_template": {
-                "view": { "label": "Ver plantillas de Pages" },
-                "create": { "label": "Crear plantillas de Pages" },
-                "edit": { "label": "Editar plantillas de Pages" },
-                "delete": { "label": "Eliminar plantillas de Pages" }
+                "view": {
+                  "label": "Ver plantillas de Pages"
+                },
+                "create": {
+                  "label": "Crear plantillas de Pages"
+                },
+                "edit": {
+                  "label": "Editar plantillas de Pages"
+                },
+                "delete": {
+                  "label": "Eliminar plantillas de Pages"
+                }
               },
               "workspace_project_template": {
-                "view": { "label": "Ver plantillas de proyectos" },
-                "create": { "label": "Crear plantillas de proyectos" },
-                "edit": { "label": "Editar plantillas de proyectos" },
-                "delete": { "label": "Eliminar plantillas de proyectos" }
+                "view": {
+                  "label": "Ver plantillas de proyectos"
+                },
+                "create": {
+                  "label": "Crear plantillas de proyectos"
+                },
+                "edit": {
+                  "label": "Editar plantillas de proyectos"
+                },
+                "delete": {
+                  "label": "Eliminar plantillas de proyectos"
+                }
               }
             },
             "workspace_automations": {
               "title": "Automatizaciones del espacio de trabajo",
               "description": "Reglas y configuraciones de automatización a nivel del espacio de trabajo.",
               "workspace_automation": {
-                "view": { "label": "Ver automatizaciones del espacio de trabajo" },
-                "create": { "label": "Crear automatizaciones del espacio de trabajo" },
-                "edit": { "label": "Editar automatizaciones del espacio de trabajo" },
-                "delete": { "label": "Eliminar automatizaciones del espacio de trabajo" }
+                "view": {
+                  "label": "Ver automatizaciones del espacio de trabajo"
+                },
+                "create": {
+                  "label": "Crear automatizaciones del espacio de trabajo"
+                },
+                "edit": {
+                  "label": "Editar automatizaciones del espacio de trabajo"
+                },
+                "delete": {
+                  "label": "Eliminar automatizaciones del espacio de trabajo"
+                }
               }
             }
           },
@@ -291,245 +513,507 @@
               "title": "Acceso al proyecto",
               "description": "Acceso básico otorgado por cualquier rol del proyecto.",
               "project": {
-                "view": { "label": "Ver proyecto" }
+                "view": {
+                  "label": "Ver proyecto"
+                }
               }
             },
             "project_membership": {
               "title": "Miembros del proyecto",
               "description": "Invitar, editar y eliminar miembros del proyecto.",
               "project_member": {
-                "view": { "label": "Ver miembros del proyecto" },
-                "invite": { "label": "Invitar miembros" },
-                "edit": { "label": "Editar detalles de los miembros" },
-                "change_role": { "label": "Cambiar el rol de un miembro" },
-                "remove": { "label": "Eliminar miembros" }
+                "view": {
+                  "label": "Ver miembros del proyecto"
+                },
+                "invite": {
+                  "label": "Invitar miembros"
+                },
+                "edit": {
+                  "label": "Editar detalles de los miembros"
+                },
+                "change_role": {
+                  "label": "Cambiar el rol de un miembro"
+                },
+                "remove": {
+                  "label": "Eliminar miembros"
+                }
               }
             },
             "work_items": {
               "title": "Elementos de trabajo",
               "description": "La superficie principal de elementos de trabajo. Incluye comentarios, adjuntos, enlaces, relaciones y propiedades personalizadas.",
               "workitem": {
-                "view": { "label": "Ver elementos de trabajo" },
-                "create": { "label": "Crear elementos de trabajo" },
-                "edit": { "label": "Editar elementos de trabajo" },
-                "bulk_edit": { "label": "Edición masiva de elementos de trabajo" },
-                "export": { "label": "Exportar elementos de trabajo" },
-                "react": { "label": "Reaccionar a elementos de trabajo" },
-                "delete": { "label": "Eliminar elementos de trabajo" }
+                "view": {
+                  "label": "Ver elementos de trabajo"
+                },
+                "create": {
+                  "label": "Crear elementos de trabajo"
+                },
+                "edit": {
+                  "label": "Editar elementos de trabajo"
+                },
+                "bulk_edit": {
+                  "label": "Edición masiva de elementos de trabajo"
+                },
+                "export": {
+                  "label": "Exportar elementos de trabajo"
+                },
+                "react": {
+                  "label": "Reaccionar a elementos de trabajo"
+                },
+                "delete": {
+                  "label": "Eliminar elementos de trabajo"
+                }
               },
               "comment": {
-                "create": { "label": "Añadir comentarios" },
-                "edit": { "label": "Editar comentarios" },
-                "react": { "label": "Reaccionar a comentarios" },
-                "delete": { "label": "Eliminar comentarios" }
+                "create": {
+                  "label": "Añadir comentarios"
+                },
+                "edit": {
+                  "label": "Editar comentarios"
+                },
+                "react": {
+                  "label": "Reaccionar a comentarios"
+                },
+                "delete": {
+                  "label": "Eliminar comentarios"
+                }
               },
               "attachment": {
-                "view": { "label": "Ver adjuntos" },
-                "create": { "label": "Añadir adjuntos" },
-                "delete": { "label": "Eliminar adjuntos" }
+                "view": {
+                  "label": "Ver adjuntos"
+                },
+                "create": {
+                  "label": "Añadir adjuntos"
+                },
+                "delete": {
+                  "label": "Eliminar adjuntos"
+                }
               },
               "workitem_link": {
-                "view": { "label": "Ver enlaces de work items" },
-                "create": { "label": "Añadir enlaces de work items" },
-                "edit": { "label": "Editar enlaces de work items" },
-                "delete": { "label": "Eliminar enlaces de work items" }
+                "view": {
+                  "label": "Ver enlaces de work items"
+                },
+                "create": {
+                  "label": "Añadir enlaces de work items"
+                },
+                "edit": {
+                  "label": "Editar enlaces de work items"
+                },
+                "delete": {
+                  "label": "Eliminar enlaces de work items"
+                }
               },
               "issue_property": {
-                "view": { "label": "Ver propiedades personalizadas" },
-                "edit": { "label": "Editar propiedades personalizadas" }
+                "view": {
+                  "label": "Ver propiedades personalizadas"
+                },
+                "edit": {
+                  "label": "Editar propiedades personalizadas"
+                }
               }
             },
             "epics": {
               "title": "Epics",
               "description": "Ciclo de vida de las Epics, incluidos enlaces, propiedades e hilos de actualización.",
               "epic": {
-                "view": { "label": "Ver Epics" },
-                "create": { "label": "Crear Epics" },
-                "edit": { "label": "Editar Epics" },
-                "delete": { "label": "Eliminar Epics" }
+                "view": {
+                  "label": "Ver Epics"
+                },
+                "create": {
+                  "label": "Crear Epics"
+                },
+                "edit": {
+                  "label": "Editar Epics"
+                },
+                "delete": {
+                  "label": "Eliminar Epics"
+                }
               },
               "epic_link": {
-                "view": { "label": "Ver enlaces de Epics" },
-                "create": { "label": "Añadir enlaces de Epics" },
-                "edit": { "label": "Editar enlaces de Epics" },
-                "delete": { "label": "Eliminar enlaces de Epics" }
+                "view": {
+                  "label": "Ver enlaces de Epics"
+                },
+                "create": {
+                  "label": "Añadir enlaces de Epics"
+                },
+                "edit": {
+                  "label": "Editar enlaces de Epics"
+                },
+                "delete": {
+                  "label": "Eliminar enlaces de Epics"
+                }
               },
               "epic_property": {
-                "view": { "label": "Ver propiedades de Epics" },
-                "edit": { "label": "Editar propiedades de Epics" }
+                "view": {
+                  "label": "Ver propiedades de Epics"
+                },
+                "edit": {
+                  "label": "Editar propiedades de Epics"
+                }
               },
               "epic_update": {
-                "view": { "label": "Ver actualizaciones de Epics" },
-                "create": { "label": "Publicar actualizaciones de Epics" },
-                "edit": { "label": "Editar actualizaciones de Epics" },
-                "delete": { "label": "Eliminar actualizaciones de Epics" }
+                "view": {
+                  "label": "Ver actualizaciones de Epics"
+                },
+                "create": {
+                  "label": "Publicar actualizaciones de Epics"
+                },
+                "edit": {
+                  "label": "Editar actualizaciones de Epics"
+                },
+                "delete": {
+                  "label": "Eliminar actualizaciones de Epics"
+                }
               },
               "epic_update_comment": {
-                "view": { "label": "Ver comentarios de actualizaciones de Epics" },
-                "create": { "label": "Comentar en actualizaciones de Epics" },
-                "edit": { "label": "Editar comentarios de actualizaciones de Epics" },
-                "react": { "label": "Reaccionar a comentarios de actualizaciones de Epics" },
-                "delete": { "label": "Eliminar comentarios de actualizaciones de Epics" }
+                "view": {
+                  "label": "Ver comentarios de actualizaciones de Epics"
+                },
+                "create": {
+                  "label": "Comentar en actualizaciones de Epics"
+                },
+                "edit": {
+                  "label": "Editar comentarios de actualizaciones de Epics"
+                },
+                "react": {
+                  "label": "Reaccionar a comentarios de actualizaciones de Epics"
+                },
+                "delete": {
+                  "label": "Eliminar comentarios de actualizaciones de Epics"
+                }
               }
             },
             "modules_and_cycles": {
               "title": "Modules y Cycles",
               "description": "Agrupación de funcionalidades y gestión de sprints/Cycles.",
               "module": {
-                "view": { "label": "Ver Modules" },
-                "create": { "label": "Crear Modules" },
-                "edit": { "label": "Editar Modules" },
-                "manage": { "label": "Gestionar miembros del Module" },
-                "archive": { "label": "Archivar Modules" },
-                "export": { "label": "Exportar Modules" },
-                "delete": { "label": "Eliminar Modules" }
+                "view": {
+                  "label": "Ver Modules"
+                },
+                "create": {
+                  "label": "Crear Modules"
+                },
+                "edit": {
+                  "label": "Editar Modules"
+                },
+                "manage": {
+                  "label": "Gestionar miembros del Module"
+                },
+                "archive": {
+                  "label": "Archivar Modules"
+                },
+                "export": {
+                  "label": "Exportar Modules"
+                },
+                "delete": {
+                  "label": "Eliminar Modules"
+                }
               },
               "cycle": {
-                "view": { "label": "Ver Cycles" },
-                "create": { "label": "Crear Cycles" },
-                "edit": { "label": "Editar Cycles" },
-                "delete": { "label": "Eliminar Cycles" }
+                "view": {
+                  "label": "Ver Cycles"
+                },
+                "create": {
+                  "label": "Crear Cycles"
+                },
+                "edit": {
+                  "label": "Editar Cycles"
+                },
+                "delete": {
+                  "label": "Eliminar Cycles"
+                }
               },
               "cycle_update": {
-                "view": { "label": "Ver actualizaciones de Cycles" },
-                "create": { "label": "Publicar actualizaciones de Cycles" },
-                "edit": { "label": "Editar actualizaciones de Cycles" },
-                "delete": { "label": "Eliminar actualizaciones de Cycles" }
+                "view": {
+                  "label": "Ver actualizaciones de Cycles"
+                },
+                "create": {
+                  "label": "Publicar actualizaciones de Cycles"
+                },
+                "edit": {
+                  "label": "Editar actualizaciones de Cycles"
+                },
+                "delete": {
+                  "label": "Eliminar actualizaciones de Cycles"
+                }
               }
             },
             "project_pages_and_views": {
               "title": "Pages y vistas",
               "description": "Pages y vistas guardadas a nivel de proyecto.",
               "page": {
-                "view": { "label": "Ver Pages" },
-                "create": { "label": "Crear Pages" },
-                "edit": { "label": "Editar Pages" },
-                "share": { "label": "Compartir Pages" },
-                "delete": { "label": "Eliminar Pages" }
+                "view": {
+                  "label": "Ver Pages"
+                },
+                "create": {
+                  "label": "Crear Pages"
+                },
+                "edit": {
+                  "label": "Editar Pages"
+                },
+                "share": {
+                  "label": "Compartir Pages"
+                },
+                "delete": {
+                  "label": "Eliminar Pages"
+                }
               },
               "workitem_view": {
-                "view": { "label": "Ver vistas del proyecto" },
-                "create": { "label": "Crear vistas del proyecto" },
-                "edit": { "label": "Editar vistas del proyecto" },
-                "share": { "label": "Compartir vistas del proyecto" },
-                "publish": { "label": "Publicar vistas del proyecto" },
-                "export": { "label": "Exportar vistas del proyecto" },
-                "delete": { "label": "Eliminar vistas del proyecto" }
+                "view": {
+                  "label": "Ver vistas del proyecto"
+                },
+                "create": {
+                  "label": "Crear vistas del proyecto"
+                },
+                "edit": {
+                  "label": "Editar vistas del proyecto"
+                },
+                "share": {
+                  "label": "Compartir vistas del proyecto"
+                },
+                "publish": {
+                  "label": "Publicar vistas del proyecto"
+                },
+                "export": {
+                  "label": "Exportar vistas del proyecto"
+                },
+                "delete": {
+                  "label": "Eliminar vistas del proyecto"
+                }
               }
             },
             "intake": {
               "title": "Intake",
               "description": "Flujo de trabajo de recepción y triaje de elementos de trabajo.",
               "intake": {
-                "view": { "label": "Ver Intake" },
-                "create": { "label": "Crear elementos de Intake" },
-                "submit": { "label": "Enviar solicitudes de Intake" },
-                "edit": { "label": "Editar elementos de Intake" },
-                "react": { "label": "Reaccionar a elementos de Intake" },
-                "manage": { "label": "Gestionar elementos de Intake" },
-                "configure": { "label": "Configurar Intake" },
-                "export": { "label": "Exportar Intake" },
-                "delete": { "label": "Eliminar elementos de Intake" }
+                "view": {
+                  "label": "Ver Intake"
+                },
+                "create": {
+                  "label": "Crear elementos de Intake"
+                },
+                "submit": {
+                  "label": "Enviar solicitudes de Intake"
+                },
+                "edit": {
+                  "label": "Editar elementos de Intake"
+                },
+                "react": {
+                  "label": "Reaccionar a elementos de Intake"
+                },
+                "manage": {
+                  "label": "Gestionar elementos de Intake"
+                },
+                "configure": {
+                  "label": "Configurar Intake"
+                },
+                "export": {
+                  "label": "Exportar Intake"
+                },
+                "delete": {
+                  "label": "Eliminar elementos de Intake"
+                }
               }
             },
             "project_configuration": {
               "title": "Configuración del proyecto",
               "description": "Etiquetas, estados, estimaciones e hitos.",
               "label": {
-                "view": { "label": "Ver etiquetas" },
-                "create": { "label": "Crear etiquetas" },
-                "edit": { "label": "Editar etiquetas" },
-                "delete": { "label": "Eliminar etiquetas" }
+                "view": {
+                  "label": "Ver etiquetas"
+                },
+                "create": {
+                  "label": "Crear etiquetas"
+                },
+                "edit": {
+                  "label": "Editar etiquetas"
+                },
+                "delete": {
+                  "label": "Eliminar etiquetas"
+                }
               },
               "state": {
-                "view": { "label": "Ver estados" },
-                "create": { "label": "Crear estados" },
-                "edit": { "label": "Editar estados" },
-                "delete": { "label": "Eliminar estados" }
+                "view": {
+                  "label": "Ver estados"
+                },
+                "create": {
+                  "label": "Crear estados"
+                },
+                "edit": {
+                  "label": "Editar estados"
+                },
+                "delete": {
+                  "label": "Eliminar estados"
+                }
               },
               "estimate": {
-                "view": { "label": "Ver estimaciones" },
-                "create": { "label": "Crear estimaciones" },
-                "edit": { "label": "Editar estimaciones" },
-                "delete": { "label": "Eliminar estimaciones" }
+                "view": {
+                  "label": "Ver estimaciones"
+                },
+                "create": {
+                  "label": "Crear estimaciones"
+                },
+                "edit": {
+                  "label": "Editar estimaciones"
+                },
+                "delete": {
+                  "label": "Eliminar estimaciones"
+                }
               },
               "milestone": {
-                "view": { "label": "Ver hitos" },
-                "create": { "label": "Crear hitos" },
-                "edit": { "label": "Editar hitos" },
-                "delete": { "label": "Eliminar hitos" }
+                "view": {
+                  "label": "Ver hitos"
+                },
+                "create": {
+                  "label": "Crear hitos"
+                },
+                "edit": {
+                  "label": "Editar hitos"
+                },
+                "delete": {
+                  "label": "Eliminar hitos"
+                }
               }
             },
             "automations": {
               "title": "Automatización y flujos de trabajo",
               "description": "Automatizaciones, reglas de flujo de trabajo y work items recurrentes.",
               "project_automation": {
-                "view": { "label": "Ver automatizaciones" },
-                "create": { "label": "Crear automatizaciones" },
-                "edit": { "label": "Editar automatizaciones" },
-                "delete": { "label": "Eliminar automatizaciones" }
+                "view": {
+                  "label": "Ver automatizaciones"
+                },
+                "create": {
+                  "label": "Crear automatizaciones"
+                },
+                "edit": {
+                  "label": "Editar automatizaciones"
+                },
+                "delete": {
+                  "label": "Eliminar automatizaciones"
+                }
               },
               "workflow": {
-                "view": { "label": "Ver flujos de trabajo" },
-                "create": { "label": "Crear flujos de trabajo" },
-                "edit": { "label": "Editar flujos de trabajo" },
-                "delete": { "label": "Eliminar flujos de trabajo" }
+                "view": {
+                  "label": "Ver flujos de trabajo"
+                },
+                "create": {
+                  "label": "Crear flujos de trabajo"
+                },
+                "edit": {
+                  "label": "Editar flujos de trabajo"
+                },
+                "delete": {
+                  "label": "Eliminar flujos de trabajo"
+                }
               },
               "recurring_workitem": {
-                "view": { "label": "Ver elementos recurrentes" },
-                "create": { "label": "Crear elementos recurrentes" },
-                "edit": { "label": "Editar elementos recurrentes" },
-                "delete": { "label": "Eliminar elementos recurrentes" }
+                "view": {
+                  "label": "Ver elementos recurrentes"
+                },
+                "create": {
+                  "label": "Crear elementos recurrentes"
+                },
+                "edit": {
+                  "label": "Editar elementos recurrentes"
+                },
+                "delete": {
+                  "label": "Eliminar elementos recurrentes"
+                }
               }
             },
             "project_updates": {
               "title": "Actualizaciones del proyecto",
               "description": "Actualizaciones de progreso y comentarios sobre las actualizaciones.",
               "project_update": {
-                "view": { "label": "Ver actualizaciones del proyecto" },
-                "create": { "label": "Publicar actualizaciones del proyecto" },
-                "edit": { "label": "Editar actualizaciones del proyecto" },
-                "delete": { "label": "Eliminar actualizaciones del proyecto" }
+                "view": {
+                  "label": "Ver actualizaciones del proyecto"
+                },
+                "create": {
+                  "label": "Publicar actualizaciones del proyecto"
+                },
+                "edit": {
+                  "label": "Editar actualizaciones del proyecto"
+                },
+                "delete": {
+                  "label": "Eliminar actualizaciones del proyecto"
+                }
               },
               "project_update_comment": {
-                "view": { "label": "Ver comentarios de actualizaciones del proyecto" },
-                "create": { "label": "Comentar en actualizaciones del proyecto" },
-                "edit": { "label": "Editar comentarios de actualizaciones del proyecto" },
-                "react": { "label": "Reaccionar a comentarios de actualizaciones del proyecto" },
-                "delete": { "label": "Eliminar comentarios de actualizaciones del proyecto" }
+                "view": {
+                  "label": "Ver comentarios de actualizaciones del proyecto"
+                },
+                "create": {
+                  "label": "Comentar en actualizaciones del proyecto"
+                },
+                "edit": {
+                  "label": "Editar comentarios de actualizaciones del proyecto"
+                },
+                "react": {
+                  "label": "Reaccionar a comentarios de actualizaciones del proyecto"
+                },
+                "delete": {
+                  "label": "Eliminar comentarios de actualizaciones del proyecto"
+                }
               }
             },
             "project_analytics": {
               "title": "Analíticas y actividad",
               "description": "Analíticas del proyecto y registros de actividad.",
               "project_activity": {
-                "view": { "label": "Ver registros de actividad" }
+                "view": {
+                  "label": "Ver registros de actividad"
+                }
               }
             },
             "project_links": {
               "title": "Enlaces del proyecto",
               "description": "Enlaces a nivel del proyecto.",
               "project_link": {
-                "view": { "label": "Ver enlaces del proyecto" },
-                "create": { "label": "Añadir enlaces del proyecto" },
-                "edit": { "label": "Editar enlaces del proyecto" },
-                "delete": { "label": "Eliminar enlaces del proyecto" }
+                "view": {
+                  "label": "Ver enlaces del proyecto"
+                },
+                "create": {
+                  "label": "Añadir enlaces del proyecto"
+                },
+                "edit": {
+                  "label": "Editar enlaces del proyecto"
+                },
+                "delete": {
+                  "label": "Eliminar enlaces del proyecto"
+                }
               }
             },
             "project_templates": {
               "title": "Plantillas",
               "description": "Plantillas de work items y Pages con alcance de proyecto.",
               "project_workitem_template": {
-                "view": { "label": "Ver plantillas de work items" },
-                "create": { "label": "Crear plantillas de work items" },
-                "edit": { "label": "Editar plantillas de work items" },
-                "delete": { "label": "Eliminar plantillas de work items" }
+                "view": {
+                  "label": "Ver plantillas de work items"
+                },
+                "create": {
+                  "label": "Crear plantillas de work items"
+                },
+                "edit": {
+                  "label": "Editar plantillas de work items"
+                },
+                "delete": {
+                  "label": "Eliminar plantillas de work items"
+                }
               },
               "project_page_template": {
-                "view": { "label": "Ver plantillas de Pages" },
-                "create": { "label": "Crear plantillas de Pages" },
-                "edit": { "label": "Editar plantillas de Pages" },
-                "delete": { "label": "Eliminar plantillas de Pages" }
+                "view": {
+                  "label": "Ver plantillas de Pages"
+                },
+                "create": {
+                  "label": "Crear plantillas de Pages"
+                },
+                "edit": {
+                  "label": "Editar plantillas de Pages"
+                },
+                "delete": {
+                  "label": "Eliminar plantillas de Pages"
+                }
               }
             }
           },

@@ -75,214 +75,436 @@
               "title": "Workspace 設定",
               "description": "Workspace 核心設定：名稱、標誌、貨幣、網域、刪除和所有權轉移。",
               "workspace": {
-                "view": { "label": "檢視 Workspace" },
-                "edit": { "label": "編輯 Workspace 設定" },
-                "manage": { "label": "管理 Workspace" },
-                "invite": { "label": "邀請成員" },
-                "delete": { "label": "刪除 Workspace" },
-                "transfer": { "label": "轉移所有權" }
+                "view": {
+                  "label": "檢視 Workspace"
+                },
+                "edit": {
+                  "label": "編輯 Workspace 設定"
+                },
+                "manage": {
+                  "label": "管理 Workspace"
+                },
+                "invite": {
+                  "label": "邀請成員"
+                },
+                "delete": {
+                  "label": "刪除 Workspace"
+                },
+                "transfer": {
+                  "label": "轉移所有權"
+                }
               }
             },
             "member_management": {
               "title": "成員管理",
               "description": "邀請、編輯、匯入和移除 Workspace 成員。",
               "workspace_member": {
-                "view": { "label": "檢視成員" },
-                "invite": { "label": "邀請成員" },
-                "edit": { "label": "編輯成員詳情" },
-                "import": { "label": "匯入成員 (CSV / SSO)" },
-                "change_role": { "label": "變更成員角色" },
-                "remove": { "label": "移除成員" }
+                "view": {
+                  "label": "檢視成員"
+                },
+                "invite": {
+                  "label": "邀請成員"
+                },
+                "edit": {
+                  "label": "編輯成員詳情"
+                },
+                "import": {
+                  "label": "匯入成員 (CSV / SSO)"
+                },
+                "change_role": {
+                  "label": "變更成員角色"
+                },
+                "remove": {
+                  "label": "移除成員"
+                }
               }
             },
             "project_management": {
               "title": "專案管理",
               "description": "從 Workspace 情境中建立和管理專案。",
               "project": {
-                "browse": { "label": "瀏覽專案" },
-                "view": { "label": "檢視專案詳情" },
-                "create": { "label": "建立專案" },
-                "edit": { "label": "編輯專案設定" },
-                "react": { "label": "對專案回應" },
-                "publish": { "label": "發佈專案 (公開)" },
-                "archive": { "label": "封存專案" },
-                "delete": { "label": "刪除專案" },
-                "manage": { "label": "管理專案存取" }
+                "browse": {
+                  "label": "瀏覽專案"
+                },
+                "view": {
+                  "label": "檢視專案詳情"
+                },
+                "create": {
+                  "label": "建立專案"
+                },
+                "edit": {
+                  "label": "編輯專案設定"
+                },
+                "react": {
+                  "label": "對專案回應"
+                },
+                "publish": {
+                  "label": "發佈專案 (公開)"
+                },
+                "archive": {
+                  "label": "封存專案"
+                },
+                "delete": {
+                  "label": "刪除專案"
+                },
+                "manage": {
+                  "label": "管理專案存取"
+                }
               }
             },
             "role_administration": {
               "title": "角色管理",
               "description": "建立和管理自訂角色與專案角色。",
               "custom_role": {
-                "view": { "label": "檢視自訂角色" },
-                "create": { "label": "建立自訂角色" },
-                "edit": { "label": "編輯自訂角色" },
-                "delete": { "label": "刪除自訂角色" }
+                "view": {
+                  "label": "檢視自訂角色"
+                },
+                "create": {
+                  "label": "建立自訂角色"
+                },
+                "edit": {
+                  "label": "編輯自訂角色"
+                },
+                "delete": {
+                  "label": "刪除自訂角色"
+                }
               }
             },
             "workspace_pages": {
               "title": "Workspace Pages (Wiki)",
               "description": "Workspace 層級的文件和 Wiki。",
               "wiki": {
-                "view": { "label": "檢視 Wiki" },
-                "create": { "label": "建立 Wiki Pages" },
-                "edit": { "label": "編輯 Wiki Pages" },
-                "share": { "label": "分享 Wiki Pages" },
-                "delete": { "label": "刪除 Wiki Pages" },
-                "comment": { "label": "在 Wiki Pages 留言" }
+                "view": {
+                  "label": "檢視 Wiki"
+                },
+                "create": {
+                  "label": "建立 Wiki Pages"
+                },
+                "edit": {
+                  "label": "編輯 Wiki Pages"
+                },
+                "share": {
+                  "label": "分享 Wiki Pages"
+                },
+                "delete": {
+                  "label": "刪除 Wiki Pages"
+                },
+                "comment": {
+                  "label": "在 Wiki Pages 留言"
+                }
               }
             },
             "workspace_views": {
               "title": "Workspace 檢視",
               "description": "Workspace 層級的已儲存篩選條件和檢視管理。",
               "workspace_workitem_view": {
-                "view": { "label": "檢視 Workspace 檢視" },
-                "create": { "label": "建立 Workspace 檢視" },
-                "edit": { "label": "編輯 Workspace 檢視" },
-                "share": { "label": "分享 Workspace 檢視" },
-                "publish": { "label": "發佈 Workspace 檢視" },
-                "export": { "label": "匯出 Workspace 檢視" },
-                "delete": { "label": "刪除 Workspace 檢視" }
+                "view": {
+                  "label": "檢視 Workspace 檢視"
+                },
+                "create": {
+                  "label": "建立 Workspace 檢視"
+                },
+                "edit": {
+                  "label": "編輯 Workspace 檢視"
+                },
+                "share": {
+                  "label": "分享 Workspace 檢視"
+                },
+                "publish": {
+                  "label": "發佈 Workspace 檢視"
+                },
+                "export": {
+                  "label": "匯出 Workspace 檢視"
+                },
+                "delete": {
+                  "label": "刪除 Workspace 檢視"
+                }
               }
             },
             "initiatives": {
               "title": "計劃",
               "description": "跨專案的計劃追蹤，包括留言、附件、連結和更新。",
               "initiative": {
-                "view": { "label": "檢視計劃" },
-                "create": { "label": "建立計劃" },
-                "edit": { "label": "編輯計劃" },
-                "manage": { "label": "管理計劃" },
-                "react": { "label": "對計劃回應" },
-                "delete": { "label": "刪除計劃" }
+                "view": {
+                  "label": "檢視計劃"
+                },
+                "create": {
+                  "label": "建立計劃"
+                },
+                "edit": {
+                  "label": "編輯計劃"
+                },
+                "manage": {
+                  "label": "管理計劃"
+                },
+                "react": {
+                  "label": "對計劃回應"
+                },
+                "delete": {
+                  "label": "刪除計劃"
+                }
               },
               "initiative_comment": {
-                "view": { "label": "檢視計劃留言" },
-                "create": { "label": "對計劃留言" },
-                "edit": { "label": "編輯計劃留言" },
-                "react": { "label": "對計劃留言回應" },
-                "delete": { "label": "刪除計劃留言" }
+                "view": {
+                  "label": "檢視計劃留言"
+                },
+                "create": {
+                  "label": "對計劃留言"
+                },
+                "edit": {
+                  "label": "編輯計劃留言"
+                },
+                "react": {
+                  "label": "對計劃留言回應"
+                },
+                "delete": {
+                  "label": "刪除計劃留言"
+                }
               },
               "initiative_attachment": {
-                "view": { "label": "檢視計劃附件" },
-                "create": { "label": "新增計劃附件" },
-                "delete": { "label": "刪除計劃附件" }
+                "view": {
+                  "label": "檢視計劃附件"
+                },
+                "create": {
+                  "label": "新增計劃附件"
+                },
+                "delete": {
+                  "label": "刪除計劃附件"
+                }
               },
               "initiative_link": {
-                "view": { "label": "檢視計劃連結" },
-                "create": { "label": "新增計劃連結" },
-                "edit": { "label": "編輯計劃連結" },
-                "delete": { "label": "刪除計劃連結" }
+                "view": {
+                  "label": "檢視計劃連結"
+                },
+                "create": {
+                  "label": "新增計劃連結"
+                },
+                "edit": {
+                  "label": "編輯計劃連結"
+                },
+                "delete": {
+                  "label": "刪除計劃連結"
+                }
               }
             },
             "teamspaces": {
               "title": "Teamspaces",
               "description": "瀏覽、建立和管理 Teamspaces。",
               "teamspace": {
-                "browse": { "label": "瀏覽 Teamspaces" },
-                "view": { "label": "檢視 Teamspace 詳情" },
-                "create": { "label": "建立 Teamspaces" },
-                "edit": { "label": "編輯 Teamspaces" },
-                "manage": { "label": "管理 Teamspace 成員" },
-                "delete": { "label": "刪除 Teamspaces" }
+                "browse": {
+                  "label": "瀏覽 Teamspaces"
+                },
+                "view": {
+                  "label": "檢視 Teamspace 詳情"
+                },
+                "create": {
+                  "label": "建立 Teamspaces"
+                },
+                "edit": {
+                  "label": "編輯 Teamspaces"
+                },
+                "manage": {
+                  "label": "管理 Teamspace 成員"
+                },
+                "delete": {
+                  "label": "刪除 Teamspaces"
+                }
               }
             },
             "integrations": {
               "title": "整合",
               "description": "第三方整合、Webhooks 和 API 權杖。",
               "integration": {
-                "view": { "label": "檢視整合" },
-                "create": { "label": "建立整合" },
-                "edit": { "label": "設定整合" },
-                "delete": { "label": "刪除整合" }
+                "view": {
+                  "label": "檢視整合"
+                },
+                "create": {
+                  "label": "建立整合"
+                },
+                "edit": {
+                  "label": "編輯 整合"
+                },
+                "delete": {
+                  "label": "刪除整合"
+                },
+                "connect": {
+                  "label": "連接整合"
+                },
+                "manage": {
+                  "label": "管理 整合"
+                }
               },
               "webhook": {
-                "view": { "label": "檢視 Webhooks" },
-                "create": { "label": "建立 Webhooks" },
-                "edit": { "label": "編輯 Webhooks" },
-                "delete": { "label": "刪除 Webhooks" }
+                "view": {
+                  "label": "檢視 Webhooks"
+                },
+                "create": {
+                  "label": "建立 Webhooks"
+                },
+                "edit": {
+                  "label": "編輯 Webhooks"
+                },
+                "delete": {
+                  "label": "刪除 Webhooks"
+                }
               },
               "api_token": {
-                "view": { "label": "檢視 API 權杖" },
-                "create": { "label": "建立 API 權杖" },
-                "delete": { "label": "刪除 API 權杖" }
+                "view": {
+                  "label": "檢視 API 權杖"
+                },
+                "create": {
+                  "label": "建立 API 權杖"
+                },
+                "delete": {
+                  "label": "刪除 API 權杖"
+                }
               }
             },
             "analytics_and_dashboards": {
               "title": "分析與報告",
               "description": "Workspace 層級的儀表板、分析和工作記錄。",
               "analytics": {
-                "view": { "label": "檢視分析" },
-                "export": { "label": "匯出分析" }
+                "view": {
+                  "label": "檢視分析"
+                },
+                "export": {
+                  "label": "匯出分析"
+                }
               },
               "dashboard": {
-                "view": { "label": "檢視儀表板" },
-                "create": { "label": "建立儀表板" },
-                "edit": { "label": "編輯儀表板" },
-                "delete": { "label": "刪除儀表板" }
+                "view": {
+                  "label": "檢視儀表板"
+                },
+                "create": {
+                  "label": "建立儀表板"
+                },
+                "edit": {
+                  "label": "編輯儀表板"
+                },
+                "delete": {
+                  "label": "刪除儀表板"
+                }
               },
               "workspace_worklog": {
-                "view": { "label": "檢視工作記錄" },
-                "export": { "label": "匯出工作記錄" }
+                "view": {
+                  "label": "檢視工作記錄"
+                },
+                "export": {
+                  "label": "匯出工作記錄"
+                }
               },
               "ai": {
-                "use": { "label": "使用 AI 功能" }
+                "use": {
+                  "label": "使用 AI 功能"
+                }
               }
             },
             "customers": {
               "title": "客戶回饋",
               "description": "客戶與客戶請求管理。",
               "customer": {
-                "view": { "label": "檢視客戶" },
-                "create": { "label": "建立客戶" },
-                "edit": { "label": "編輯客戶" },
-                "delete": { "label": "刪除客戶" }
+                "view": {
+                  "label": "檢視客戶"
+                },
+                "create": {
+                  "label": "建立客戶"
+                },
+                "edit": {
+                  "label": "編輯客戶"
+                },
+                "delete": {
+                  "label": "刪除客戶"
+                }
               },
               "customer_attachment": {
-                "create": { "label": "新增客戶附件" },
-                "delete": { "label": "刪除客戶附件" }
+                "create": {
+                  "label": "新增客戶附件"
+                },
+                "delete": {
+                  "label": "刪除客戶附件"
+                }
               }
             },
             "work_item_relations": {
               "title": "工作項目關聯",
               "description": "管理工作項目的自訂關聯類型定義。",
               "workitem_relation": {
-                "view": { "label": "檢視關聯定義" },
-                "create": { "label": "建立關聯定義" },
-                "edit": { "label": "編輯關聯定義" },
-                "delete": { "label": "刪除關聯定義" }
+                "view": {
+                  "label": "檢視關聯定義"
+                },
+                "create": {
+                  "label": "建立關聯定義"
+                },
+                "edit": {
+                  "label": "編輯關聯定義"
+                },
+                "delete": {
+                  "label": "刪除關聯定義"
+                }
               }
             },
             "workspace_templates": {
               "title": "範本",
               "description": "建立和管理 Workspace 層級的工作項目、頁面和專案範本。",
               "workspace_workitem_template": {
-                "view": { "label": "檢視工作項目範本" },
-                "create": { "label": "建立工作項目範本" },
-                "edit": { "label": "編輯工作項目範本" },
-                "delete": { "label": "刪除工作項目範本" }
+                "view": {
+                  "label": "檢視工作項目範本"
+                },
+                "create": {
+                  "label": "建立工作項目範本"
+                },
+                "edit": {
+                  "label": "編輯工作項目範本"
+                },
+                "delete": {
+                  "label": "刪除工作項目範本"
+                }
               },
               "workspace_page_template": {
-                "view": { "label": "檢視頁面範本" },
-                "create": { "label": "建立頁面範本" },
-                "edit": { "label": "編輯頁面範本" },
-                "delete": { "label": "刪除頁面範本" }
+                "view": {
+                  "label": "檢視頁面範本"
+                },
+                "create": {
+                  "label": "建立頁面範本"
+                },
+                "edit": {
+                  "label": "編輯頁面範本"
+                },
+                "delete": {
+                  "label": "刪除頁面範本"
+                }
               },
               "workspace_project_template": {
-                "view": { "label": "檢視專案範本" },
-                "create": { "label": "建立專案範本" },
-                "edit": { "label": "編輯專案範本" },
-                "delete": { "label": "刪除專案範本" }
+                "view": {
+                  "label": "檢視專案範本"
+                },
+                "create": {
+                  "label": "建立專案範本"
+                },
+                "edit": {
+                  "label": "編輯專案範本"
+                },
+                "delete": {
+                  "label": "刪除專案範本"
+                }
               }
             },
             "workspace_automations": {
               "title": "Workspace 自動化",
               "description": "Workspace 層級的自動化規則和設定。",
               "workspace_automation": {
-                "view": { "label": "檢視 Workspace 自動化" },
-                "create": { "label": "建立 Workspace 自動化" },
-                "edit": { "label": "編輯 Workspace 自動化" },
-                "delete": { "label": "刪除 Workspace 自動化" }
+                "view": {
+                  "label": "檢視 Workspace 自動化"
+                },
+                "create": {
+                  "label": "建立 Workspace 自動化"
+                },
+                "edit": {
+                  "label": "編輯 Workspace 自動化"
+                },
+                "delete": {
+                  "label": "刪除 Workspace 自動化"
+                }
               }
             }
           },
@@ -291,245 +513,507 @@
               "title": "專案存取權限",
               "description": "任何專案角色授予的基本存取權限。",
               "project": {
-                "view": { "label": "檢視專案" }
+                "view": {
+                  "label": "檢視專案"
+                }
               }
             },
             "project_membership": {
               "title": "專案成員",
               "description": "邀請、編輯和移除專案成員。",
               "project_member": {
-                "view": { "label": "檢視專案成員" },
-                "invite": { "label": "邀請成員" },
-                "edit": { "label": "編輯成員詳情" },
-                "change_role": { "label": "變更成員角色" },
-                "remove": { "label": "移除成員" }
+                "view": {
+                  "label": "檢視專案成員"
+                },
+                "invite": {
+                  "label": "邀請成員"
+                },
+                "edit": {
+                  "label": "編輯成員詳情"
+                },
+                "change_role": {
+                  "label": "變更成員角色"
+                },
+                "remove": {
+                  "label": "移除成員"
+                }
               }
             },
             "work_items": {
               "title": "工作事項",
               "description": "主要工作事項介面。包括留言、附件、連結、關聯和自訂屬性。",
               "workitem": {
-                "view": { "label": "檢視工作事項" },
-                "create": { "label": "建立工作事項" },
-                "edit": { "label": "編輯工作事項" },
-                "bulk_edit": { "label": "批次編輯工作事項" },
-                "export": { "label": "匯出工作事項" },
-                "react": { "label": "對工作事項回應" },
-                "delete": { "label": "刪除工作事項" }
+                "view": {
+                  "label": "檢視工作事項"
+                },
+                "create": {
+                  "label": "建立工作事項"
+                },
+                "edit": {
+                  "label": "編輯工作事項"
+                },
+                "bulk_edit": {
+                  "label": "批次編輯工作事項"
+                },
+                "export": {
+                  "label": "匯出工作事項"
+                },
+                "react": {
+                  "label": "對工作事項回應"
+                },
+                "delete": {
+                  "label": "刪除工作事項"
+                }
               },
               "comment": {
-                "create": { "label": "新增留言" },
-                "edit": { "label": "編輯留言" },
-                "react": { "label": "對留言回應" },
-                "delete": { "label": "刪除留言" }
+                "create": {
+                  "label": "新增留言"
+                },
+                "edit": {
+                  "label": "編輯留言"
+                },
+                "react": {
+                  "label": "對留言回應"
+                },
+                "delete": {
+                  "label": "刪除留言"
+                }
               },
               "attachment": {
-                "view": { "label": "檢視附件" },
-                "create": { "label": "新增附件" },
-                "delete": { "label": "刪除附件" }
+                "view": {
+                  "label": "檢視附件"
+                },
+                "create": {
+                  "label": "新增附件"
+                },
+                "delete": {
+                  "label": "刪除附件"
+                }
               },
               "workitem_link": {
-                "view": { "label": "檢視工作項目連結" },
-                "create": { "label": "新增工作項目連結" },
-                "edit": { "label": "編輯工作項目連結" },
-                "delete": { "label": "刪除工作項目連結" }
+                "view": {
+                  "label": "檢視工作項目連結"
+                },
+                "create": {
+                  "label": "新增工作項目連結"
+                },
+                "edit": {
+                  "label": "編輯工作項目連結"
+                },
+                "delete": {
+                  "label": "刪除工作項目連結"
+                }
               },
               "issue_property": {
-                "view": { "label": "檢視自訂屬性" },
-                "edit": { "label": "編輯自訂屬性" }
+                "view": {
+                  "label": "檢視自訂屬性"
+                },
+                "edit": {
+                  "label": "編輯自訂屬性"
+                }
               }
             },
             "epics": {
               "title": "Epics",
               "description": "Epic 生命週期，包括連結、屬性和更新討論串。",
               "epic": {
-                "view": { "label": "檢視 Epics" },
-                "create": { "label": "建立 Epics" },
-                "edit": { "label": "編輯 Epics" },
-                "delete": { "label": "刪除 Epics" }
+                "view": {
+                  "label": "檢視 Epics"
+                },
+                "create": {
+                  "label": "建立 Epics"
+                },
+                "edit": {
+                  "label": "編輯 Epics"
+                },
+                "delete": {
+                  "label": "刪除 Epics"
+                }
               },
               "epic_link": {
-                "view": { "label": "檢視 Epic 連結" },
-                "create": { "label": "新增 Epic 連結" },
-                "edit": { "label": "編輯 Epic 連結" },
-                "delete": { "label": "刪除 Epic 連結" }
+                "view": {
+                  "label": "檢視 Epic 連結"
+                },
+                "create": {
+                  "label": "新增 Epic 連結"
+                },
+                "edit": {
+                  "label": "編輯 Epic 連結"
+                },
+                "delete": {
+                  "label": "刪除 Epic 連結"
+                }
               },
               "epic_property": {
-                "view": { "label": "檢視 Epic 屬性" },
-                "edit": { "label": "編輯 Epic 屬性" }
+                "view": {
+                  "label": "檢視 Epic 屬性"
+                },
+                "edit": {
+                  "label": "編輯 Epic 屬性"
+                }
               },
               "epic_update": {
-                "view": { "label": "檢視 Epic 更新" },
-                "create": { "label": "發佈 Epic 更新" },
-                "edit": { "label": "編輯 Epic 更新" },
-                "delete": { "label": "刪除 Epic 更新" }
+                "view": {
+                  "label": "檢視 Epic 更新"
+                },
+                "create": {
+                  "label": "發佈 Epic 更新"
+                },
+                "edit": {
+                  "label": "編輯 Epic 更新"
+                },
+                "delete": {
+                  "label": "刪除 Epic 更新"
+                }
               },
               "epic_update_comment": {
-                "view": { "label": "檢視 Epic 更新留言" },
-                "create": { "label": "對 Epic 更新留言" },
-                "edit": { "label": "編輯 Epic 更新留言" },
-                "react": { "label": "對 Epic 更新留言回應" },
-                "delete": { "label": "刪除 Epic 更新留言" }
+                "view": {
+                  "label": "檢視 Epic 更新留言"
+                },
+                "create": {
+                  "label": "對 Epic 更新留言"
+                },
+                "edit": {
+                  "label": "編輯 Epic 更新留言"
+                },
+                "react": {
+                  "label": "對 Epic 更新留言回應"
+                },
+                "delete": {
+                  "label": "刪除 Epic 更新留言"
+                }
               }
             },
             "modules_and_cycles": {
               "title": "Modules 與 Cycles",
               "description": "功能分組和衝刺 / Cycle 管理。",
               "module": {
-                "view": { "label": "檢視 Modules" },
-                "create": { "label": "建立 Modules" },
-                "edit": { "label": "編輯 Modules" },
-                "manage": { "label": "管理 Module 成員" },
-                "archive": { "label": "封存 Modules" },
-                "export": { "label": "匯出 Modules" },
-                "delete": { "label": "刪除 Modules" }
+                "view": {
+                  "label": "檢視 Modules"
+                },
+                "create": {
+                  "label": "建立 Modules"
+                },
+                "edit": {
+                  "label": "編輯 Modules"
+                },
+                "manage": {
+                  "label": "管理 Module 成員"
+                },
+                "archive": {
+                  "label": "封存 Modules"
+                },
+                "export": {
+                  "label": "匯出 Modules"
+                },
+                "delete": {
+                  "label": "刪除 Modules"
+                }
               },
               "cycle": {
-                "view": { "label": "檢視 Cycles" },
-                "create": { "label": "建立 Cycles" },
-                "edit": { "label": "編輯 Cycles" },
-                "delete": { "label": "刪除 Cycles" }
+                "view": {
+                  "label": "檢視 Cycles"
+                },
+                "create": {
+                  "label": "建立 Cycles"
+                },
+                "edit": {
+                  "label": "編輯 Cycles"
+                },
+                "delete": {
+                  "label": "刪除 Cycles"
+                }
               },
               "cycle_update": {
-                "view": { "label": "檢視 Cycle 更新" },
-                "create": { "label": "發佈 Cycle 更新" },
-                "edit": { "label": "編輯 Cycle 更新" },
-                "delete": { "label": "刪除 Cycle 更新" }
+                "view": {
+                  "label": "檢視 Cycle 更新"
+                },
+                "create": {
+                  "label": "發佈 Cycle 更新"
+                },
+                "edit": {
+                  "label": "編輯 Cycle 更新"
+                },
+                "delete": {
+                  "label": "刪除 Cycle 更新"
+                }
               }
             },
             "project_pages_and_views": {
               "title": "Pages 與檢視",
               "description": "專案層級的 Pages 和已儲存檢視。",
               "page": {
-                "view": { "label": "檢視 Pages" },
-                "create": { "label": "建立 Pages" },
-                "edit": { "label": "編輯 Pages" },
-                "share": { "label": "分享 Pages" },
-                "delete": { "label": "刪除 Pages" }
+                "view": {
+                  "label": "檢視 Pages"
+                },
+                "create": {
+                  "label": "建立 Pages"
+                },
+                "edit": {
+                  "label": "編輯 Pages"
+                },
+                "share": {
+                  "label": "分享 Pages"
+                },
+                "delete": {
+                  "label": "刪除 Pages"
+                }
               },
               "workitem_view": {
-                "view": { "label": "檢視專案檢視" },
-                "create": { "label": "建立專案檢視" },
-                "edit": { "label": "編輯專案檢視" },
-                "share": { "label": "分享專案檢視" },
-                "publish": { "label": "發佈專案檢視" },
-                "export": { "label": "匯出專案檢視" },
-                "delete": { "label": "刪除專案檢視" }
+                "view": {
+                  "label": "檢視專案檢視"
+                },
+                "create": {
+                  "label": "建立專案檢視"
+                },
+                "edit": {
+                  "label": "編輯專案檢視"
+                },
+                "share": {
+                  "label": "分享專案檢視"
+                },
+                "publish": {
+                  "label": "發佈專案檢視"
+                },
+                "export": {
+                  "label": "匯出專案檢視"
+                },
+                "delete": {
+                  "label": "刪除專案檢視"
+                }
               }
             },
             "intake": {
               "title": "Intake",
               "description": "工作事項收件與分流工作流程。",
               "intake": {
-                "view": { "label": "檢視 Intake" },
-                "create": { "label": "建立 Intake 項目" },
-                "submit": { "label": "提交 Intake 請求" },
-                "edit": { "label": "編輯 Intake 項目" },
-                "react": { "label": "對 Intake 項目回應" },
-                "manage": { "label": "管理 Intake 項目" },
-                "configure": { "label": "設定 Intake" },
-                "export": { "label": "匯出 Intake" },
-                "delete": { "label": "刪除 Intake 項目" }
+                "view": {
+                  "label": "檢視 Intake"
+                },
+                "create": {
+                  "label": "建立 Intake 項目"
+                },
+                "submit": {
+                  "label": "提交 Intake 請求"
+                },
+                "edit": {
+                  "label": "編輯 Intake 項目"
+                },
+                "react": {
+                  "label": "對 Intake 項目回應"
+                },
+                "manage": {
+                  "label": "管理 Intake 項目"
+                },
+                "configure": {
+                  "label": "設定 Intake"
+                },
+                "export": {
+                  "label": "匯出 Intake"
+                },
+                "delete": {
+                  "label": "刪除 Intake 項目"
+                }
               }
             },
             "project_configuration": {
               "title": "專案設定",
               "description": "標籤、狀態、估算和里程碑。",
               "label": {
-                "view": { "label": "檢視標籤" },
-                "create": { "label": "建立標籤" },
-                "edit": { "label": "編輯標籤" },
-                "delete": { "label": "刪除標籤" }
+                "view": {
+                  "label": "檢視標籤"
+                },
+                "create": {
+                  "label": "建立標籤"
+                },
+                "edit": {
+                  "label": "編輯標籤"
+                },
+                "delete": {
+                  "label": "刪除標籤"
+                }
               },
               "state": {
-                "view": { "label": "檢視狀態" },
-                "create": { "label": "建立狀態" },
-                "edit": { "label": "編輯狀態" },
-                "delete": { "label": "刪除狀態" }
+                "view": {
+                  "label": "檢視狀態"
+                },
+                "create": {
+                  "label": "建立狀態"
+                },
+                "edit": {
+                  "label": "編輯狀態"
+                },
+                "delete": {
+                  "label": "刪除狀態"
+                }
               },
               "estimate": {
-                "view": { "label": "檢視估算" },
-                "create": { "label": "建立估算" },
-                "edit": { "label": "編輯估算" },
-                "delete": { "label": "刪除估算" }
+                "view": {
+                  "label": "檢視估算"
+                },
+                "create": {
+                  "label": "建立估算"
+                },
+                "edit": {
+                  "label": "編輯估算"
+                },
+                "delete": {
+                  "label": "刪除估算"
+                }
               },
               "milestone": {
-                "view": { "label": "檢視里程碑" },
-                "create": { "label": "建立里程碑" },
-                "edit": { "label": "編輯里程碑" },
-                "delete": { "label": "刪除里程碑" }
+                "view": {
+                  "label": "檢視里程碑"
+                },
+                "create": {
+                  "label": "建立里程碑"
+                },
+                "edit": {
+                  "label": "編輯里程碑"
+                },
+                "delete": {
+                  "label": "刪除里程碑"
+                }
               }
             },
             "automations": {
               "title": "自動化與工作流程",
               "description": "自動化、工作流程規則和週期性工作項目。",
               "project_automation": {
-                "view": { "label": "檢視自動化" },
-                "create": { "label": "建立自動化" },
-                "edit": { "label": "編輯自動化" },
-                "delete": { "label": "刪除自動化" }
+                "view": {
+                  "label": "檢視自動化"
+                },
+                "create": {
+                  "label": "建立自動化"
+                },
+                "edit": {
+                  "label": "編輯自動化"
+                },
+                "delete": {
+                  "label": "刪除自動化"
+                }
               },
               "workflow": {
-                "view": { "label": "檢視工作流程" },
-                "create": { "label": "建立工作流程" },
-                "edit": { "label": "編輯工作流程" },
-                "delete": { "label": "刪除工作流程" }
+                "view": {
+                  "label": "檢視工作流程"
+                },
+                "create": {
+                  "label": "建立工作流程"
+                },
+                "edit": {
+                  "label": "編輯工作流程"
+                },
+                "delete": {
+                  "label": "刪除工作流程"
+                }
               },
               "recurring_workitem": {
-                "view": { "label": "檢視週期性項目" },
-                "create": { "label": "建立週期性項目" },
-                "edit": { "label": "編輯週期性項目" },
-                "delete": { "label": "刪除週期性項目" }
+                "view": {
+                  "label": "檢視週期性項目"
+                },
+                "create": {
+                  "label": "建立週期性項目"
+                },
+                "edit": {
+                  "label": "編輯週期性項目"
+                },
+                "delete": {
+                  "label": "刪除週期性項目"
+                }
               }
             },
             "project_updates": {
               "title": "專案更新",
               "description": "進度更新以及更新上的留言。",
               "project_update": {
-                "view": { "label": "檢視專案更新" },
-                "create": { "label": "發佈專案更新" },
-                "edit": { "label": "編輯專案更新" },
-                "delete": { "label": "刪除專案更新" }
+                "view": {
+                  "label": "檢視專案更新"
+                },
+                "create": {
+                  "label": "發佈專案更新"
+                },
+                "edit": {
+                  "label": "編輯專案更新"
+                },
+                "delete": {
+                  "label": "刪除專案更新"
+                }
               },
               "project_update_comment": {
-                "view": { "label": "檢視專案更新留言" },
-                "create": { "label": "對專案更新留言" },
-                "edit": { "label": "編輯專案更新留言" },
-                "react": { "label": "對專案更新留言回應" },
-                "delete": { "label": "刪除專案更新留言" }
+                "view": {
+                  "label": "檢視專案更新留言"
+                },
+                "create": {
+                  "label": "對專案更新留言"
+                },
+                "edit": {
+                  "label": "編輯專案更新留言"
+                },
+                "react": {
+                  "label": "對專案更新留言回應"
+                },
+                "delete": {
+                  "label": "刪除專案更新留言"
+                }
               }
             },
             "project_analytics": {
               "title": "分析與活動",
               "description": "專案分析與活動記錄。",
               "project_activity": {
-                "view": { "label": "檢視活動記錄" }
+                "view": {
+                  "label": "檢視活動記錄"
+                }
               }
             },
             "project_links": {
               "title": "專案連結",
               "description": "專案層級的連結。",
               "project_link": {
-                "view": { "label": "檢視專案連結" },
-                "create": { "label": "新增專案連結" },
-                "edit": { "label": "編輯專案連結" },
-                "delete": { "label": "刪除專案連結" }
+                "view": {
+                  "label": "檢視專案連結"
+                },
+                "create": {
+                  "label": "新增專案連結"
+                },
+                "edit": {
+                  "label": "編輯專案連結"
+                },
+                "delete": {
+                  "label": "刪除專案連結"
+                }
               }
             },
             "project_templates": {
               "title": "範本",
               "description": "專案範圍的工作項目和頁面範本。",
               "project_workitem_template": {
-                "view": { "label": "檢視工作項目範本" },
-                "create": { "label": "建立工作項目範本" },
-                "edit": { "label": "編輯工作項目範本" },
-                "delete": { "label": "刪除工作項目範本" }
+                "view": {
+                  "label": "檢視工作項目範本"
+                },
+                "create": {
+                  "label": "建立工作項目範本"
+                },
+                "edit": {
+                  "label": "編輯工作項目範本"
+                },
+                "delete": {
+                  "label": "刪除工作項目範本"
+                }
               },
               "project_page_template": {
-                "view": { "label": "檢視頁面範本" },
-                "create": { "label": "建立頁面範本" },
-                "edit": { "label": "編輯頁面範本" },
-                "delete": { "label": "刪除頁面範本" }
+                "view": {
+                  "label": "檢視頁面範本"
+                },
+                "create": {
+                  "label": "建立頁面範本"
+                },
+                "edit": {
+                  "label": "編輯頁面範本"
+                },
+                "delete": {
+                  "label": "刪除頁面範本"
+                }
               }
             }
           },

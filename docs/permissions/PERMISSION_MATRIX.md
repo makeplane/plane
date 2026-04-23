@@ -1062,10 +1062,12 @@ All operations are user-scoped — queryset filters to `user=request.user`.
 
 #### `IntakeSettingEndpoint`
 
-| Action                 | Permission Checked | P-Admin       | P-Contributor    | P-Commenter      | P-Guest | W-Owner | W-Admin       |
-| ---------------------- | ------------------ | ------------- | ---------------- | ---------------- | ------- | ------- | ------------- |
-| Get intake settings    | `intake:view`      | ✅ `intake:*` | ✅ `intake:view` | ✅ `intake:view` | ❌      | ✅ `*`  | ✅ `intake:*` |
-| Update intake settings | `intake:configure` | ✅ `intake:*` | ❌               | ❌               | ❌      | ✅ `*`  | ✅ `intake:*` |
+| Action                 | Permission Checked                 | P-Admin       | P-Contributor    | P-Commenter      | P-Guest                    | W-Owner | W-Admin       |
+| ---------------------- | ---------------------------------- | ------------- | ---------------- | ---------------- | -------------------------- | ------- | ------------- |
+| Get intake settings    | `intake:view` (defer_conditions) ¹ | ✅ `intake:*` | ✅ `intake:view` | ✅ `intake:view` | ✅ `intake:view+creator` ¹ | ✅ `*`  | ✅ `intake:*` |
+| Update intake settings | `intake:configure`                 | ✅ `intake:*` | ❌               | ❌               | ❌                         | ✅ `*`  | ✅ `intake:*` |
+
+¹ GET uses `defer_conditions=True`. P-Guest's `intake:view+creator` passes the gate because intake is a child of project in the resource hierarchy. The view consumes the creator condition via `get_permission_conditions(request)` without filtering — the settings endpoint returns one project-level config document, not per-item data.
 
 #### `IntakeResponsibilityEndpoint`
 
@@ -2845,10 +2847,10 @@ Also gated by `@check_feature_flag(FeatureFlag.PROJECT_GROUPING)`.
 
 ### Workspace Features — `WorkspaceFeaturesEndpoint`
 
-| Action          | Permission Checked       | W-Owner | W-Admin                  | W-Member                    | W-Guest                     |
-| --------------- | ------------------------ | ------- | ------------------------ | --------------------------- | --------------------------- |
-| Get features    | `workspace_feature:view` | ✅ `*`  | ✅ `workspace_feature:*` | ✅ `workspace_feature:view` | ✅ `workspace_feature:view` |
-| Toggle features | `workspace_feature:edit` | ✅ `*`  | ✅ `workspace_feature:*` | ✅ `workspace_feature:edit` | ❌                          |
+| Action          | Permission Checked | W-Owner | W-Admin               | W-Member            | W-Guest             |
+| --------------- | ------------------ | ------- | --------------------- | ------------------- | ------------------- |
+| Get features    | `workspace:view`   | ✅ `*`  | ✅ `workspace:view`   | ✅ `workspace:view` | ✅ `workspace:view` |
+| Toggle features | `workspace:manage` | ✅ `*`  | ✅ `workspace:manage` | ❌                  | ❌                  |
 
 ### Invite Capacity Check — `WorkspaceInviteCheckEndpoint`
 
@@ -2939,14 +2941,16 @@ No outstanding permission gaps. All tables reflect the current state of `system_
 
 ### Workspace File Assets
 
-| Action                      | Permission Checked       | W-Owner | W-Admin                | W-Member                    | W-Guest                   |
-| --------------------------- | ------------------------ | ------- | ---------------------- | --------------------------- | ------------------------- |
-| Upload workspace file asset | `workspace_asset:create` | ✅ `*`  | ✅ `workspace_asset:*` | ✅ `workspace_asset:create` | ❌                        |
-| View workspace file asset   | `workspace_asset:view`   | ✅ `*`  | ✅ `workspace_asset:*` | ✅ `workspace_asset:view`   | ✅ `workspace_asset:view` |
-| Update workspace file asset | `workspace_asset:edit`   | ✅ `*`  | ✅ `workspace_asset:*` | ❌                          | ❌                        |
-| Delete workspace file asset | `workspace_asset:delete` | ✅ `*`  | ✅ `workspace_asset:*` | ❌                          | ❌                        |
+| Action                        | Permission Checked       | W-Owner | W-Admin                | W-Member            | W-Guest             |
+| ----------------------------- | ------------------------ | ------- | ---------------------- | ------------------- | ------------------- |
+| Upload workspace file asset ¹ | `workspace:view`         | ✅ `*`  | ✅ `workspace:*`       | ✅ `workspace:view` | ✅ `workspace:view` |
+| View workspace file asset ¹   | `workspace:view`         | ✅ `*`  | ✅ `workspace:*`       | ✅ `workspace:view` | ✅ `workspace:view` |
+| Update workspace file asset   | `workspace_asset:edit`   | ✅ `*`  | ✅ `workspace_asset:*` | ❌                  | ❌                  |
+| Delete workspace file asset   | `workspace_asset:delete` | ✅ `*`  | ✅ `workspace_asset:*` | ❌                  | ❌                  |
 
 **Endpoints:** `WorkspaceFileAssetEndpoint` (v2), `FileAssetEndpoint` (v1 legacy — `post` uses `@can`, `get`/`delete` use inline `permission_engine.check()` since URL has no slug)
+
+¹ Upload and view are gated on `workspace:view` (not `workspace_asset:*`) so project cover images can be uploaded during project creation — before the Project row exists — and so custom permission schemes that omit `workspace_asset:create` don't break the flow. The upload endpoint only writes a `FileAsset` row + presigned URL; it doesn't mutate workspace/project state. Attachment mutations (edit/delete, which flip `workspace.logo_asset_id` and `project.cover_image_asset_id`) remain on `workspace_asset:edit`/`delete`.
 
 ### Project Member Self-Check
 

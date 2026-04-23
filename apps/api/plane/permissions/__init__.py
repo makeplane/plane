@@ -53,7 +53,6 @@ from .definitions import (
     CustomerAttachmentPermissions,
     WorkspaceAssetPermissions,
     WorkspaceProjectStatePermissions,
-    WorkspaceFeaturePermissions,
     WorkspaceWorklogPermissions,
     WorkspaceCustomPropertyPermissions,
     WorkspaceWorkitemTypePermissions,

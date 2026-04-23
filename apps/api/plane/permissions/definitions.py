@@ -73,7 +73,6 @@ class ResourceType(str, Enum):
     CUSTOMER_ATTACHMENT = "customer_attachment"
     WORKSPACE_ASSET = "workspace_asset"  # Workspace-scoped asset operations
     WORKSPACE_PROJECT_STATE = "workspace_project_state"  # Project grouping states (CRUD on ProjectState)
-    WORKSPACE_FEATURE = "workspace_feature"  # Workspace feature toggles
     WORKSPACE_WORKLOG = "workspace_worklog"  # Workspace-level worklog listing and export
     WORKSPACE_CUSTOM_PROPERTY = "workspace_custom_property"
     WORKSPACE_WORKITEM_TYPE = "workspace_workitem_type"
@@ -640,13 +639,6 @@ class WorkspaceProjectStatePermissions:
     DELETE = Permission(ResourceType.WORKSPACE_PROJECT_STATE, Action.DELETE)
     EDIT = Permission(ResourceType.WORKSPACE_PROJECT_STATE, Action.EDIT)
     VIEW = Permission(ResourceType.WORKSPACE_PROJECT_STATE, Action.VIEW)
-
-
-class WorkspaceFeaturePermissions:
-    """Permissions for workspace_feature resources."""
-
-    EDIT = Permission(ResourceType.WORKSPACE_FEATURE, Action.EDIT)
-    VIEW = Permission(ResourceType.WORKSPACE_FEATURE, Action.VIEW)
 
 
 class WorkspaceWorklogPermissions:

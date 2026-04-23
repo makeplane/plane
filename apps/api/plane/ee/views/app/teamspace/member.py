@@ -35,7 +35,8 @@ from plane.ee.bgtasks.team_space_activities_task import team_space_activity
 class TeamspaceMembersEndpoint(TeamspaceBaseEndpoint):
     use_read_replica = True
 
-    model = TeamspaceMember
+    # No `model` attr: @can passes view.model to the lead-condition evaluator,
+    # which reads `lead_id` — that lives on Teamspace, not TeamspaceMember.
     serializer_class = TeamspaceMemberSerializer
 
     @check_feature_flag(FeatureFlag.TEAMSPACES)

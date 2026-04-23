@@ -44,10 +44,10 @@ This document shows **who can do what** for every v1 API endpoint (`/api/v1/`) t
 
 ### Workspace Features — `WorkspaceFeatureAPIEndpoint`
 
-| Action          | Permission Checked       | W-Owner | W-Admin                  | W-Member                    | W-Guest                     |
-| --------------- | ------------------------ | ------- | ------------------------ | --------------------------- | --------------------------- |
-| Get features    | `workspace_feature:view` | ✅ `*`  | ✅ `workspace_feature:*` | ✅ `workspace_feature:view` | ✅ `workspace_feature:view` |
-| Update features | `workspace_feature:edit` | ✅ `*`  | ✅ `workspace_feature:*` | ✅ `workspace_feature:edit` | ❌                          |
+| Action          | Permission Checked | W-Owner | W-Admin               | W-Member            | W-Guest             |
+| --------------- | ------------------ | ------- | --------------------- | ------------------- | ------------------- |
+| Get features    | `workspace:view`   | ✅ `*`  | ✅ `workspace:view`   | ✅ `workspace:view` | ✅ `workspace:view` |
+| Update features | `workspace:manage` | ✅ `*`  | ✅ `workspace:manage` | ❌                  | ❌                  |
 
 ### Workspace Members — `WorkspaceMemberAPIEndpoint`
 

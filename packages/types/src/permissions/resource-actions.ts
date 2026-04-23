@@ -48,7 +48,6 @@ export const WORKSPACE_PERMISSION_RESOURCE_ACTIONS = {
   customer_attachment: ["create", "delete"],
   workspace_asset: ["view", "create", "edit", "delete", "manage"],
   workspace_project_state: ["view", "create", "edit", "delete"],
-  workspace_feature: ["view", "edit"],
   workspace_worklog: ["view", "export"],
   workitem_relation: ["view", "create", "edit", "delete"],
   release: ["view", "create", "edit", "delete"],

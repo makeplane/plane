@@ -331,10 +331,10 @@ No `@can` applied. Uses `[IsAuthenticated, TokenHasScopeIfOAuth]` with inline qu
 
 #### WorkspaceFeatureAPIEndpoint
 
-| Method  | URL Pattern                                 | Old Permission             | New Permission                                                                                        | Differences      |
-| ------- | ------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------- |
-| `get`   | `GET /api/v1/workspaces/<slug>/features/`   | `WorkSpaceAdminPermission` | `@can(WorkspaceFeaturePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")` | Workspace-scoped |
-| `patch` | `PATCH /api/v1/workspaces/<slug>/features/` | `WorkSpaceAdminPermission` | `@can(WorkspaceFeaturePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")` | Workspace-scoped |
+| Method  | URL Pattern                                 | Old Permission             | New Permission                                                                                   | Differences                                                                                    |
+| ------- | ------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `get`   | `GET /api/v1/workspaces/<slug>/features/`   | `WorkSpaceAdminPermission` | `@can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")`   | Widened from W-Admin-only to all workspace members (feature toggle state is non-sensitive).    |
+| `patch` | `PATCH /api/v1/workspaces/<slug>/features/` | `WorkSpaceAdminPermission` | `@can(WorkspacePermissions.MANAGE, resource_param="workspace_id", scope_param_type="workspace")` | Parity with old W-Admin-only check; kept admin-only since toggles are workspace-wide settings. |
 
 ### `plane/api/views/member.py`
 
