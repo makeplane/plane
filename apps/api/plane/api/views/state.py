@@ -19,9 +19,9 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import StateSerializer
-from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Issue, State
-from .base import BaseAPIView
+from plane.permissions import can, StatePermissions
+from .base import ScopedBaseAPIView
 from plane.utils.openapi import (
     state_docs,
     STATE_ID_PARAMETER,
@@ -41,7 +41,6 @@ from plane.utils.openapi import (
     STATE_CANNOT_DELETE_RESPONSE,
     EXTERNAL_ID_EXISTS_RESPONSE,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -50,12 +49,11 @@ from plane.utils.oauth import (
 )
 
 
-class StateListCreateAPIEndpoint(BaseAPIView):
+class StateListCreateAPIEndpoint(ScopedBaseAPIView):
     """State List and Create Endpoint"""
 
     serializer_class = StateSerializer
     model = State
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_STATES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
@@ -95,6 +93,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
             409: STATE_NAME_EXISTS_RESPONSE,
         },
     )
+    @can(StatePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         """Create state
 
@@ -169,6 +168,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(StatePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """List states
 
@@ -197,12 +197,11 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class StateDetailAPIEndpoint(BaseAPIView):
+class StateDetailAPIEndpoint(ScopedBaseAPIView):
     """State Detail Endpoint"""
 
     serializer_class = StateSerializer
     model = State
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_STATES_READ_SCOPE]],
         "DELETE": [[WRITE_SCOPE], [PROJECTS_STATES_WRITE_SCOPE]],
@@ -240,6 +239,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(StatePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, state_id):
         """Retrieve state
 
@@ -265,6 +265,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
             400: STATE_CANNOT_DELETE_RESPONSE,
         },
     )
+    @can(StatePermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, state_id):
         """Delete state
 
@@ -312,6 +313,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(StatePermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, state_id):
         """Update state
 

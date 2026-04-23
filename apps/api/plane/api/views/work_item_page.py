@@ -28,7 +28,8 @@ from plane.api.serializers import (
     WorkItemPageSerializer,
     WorkItemPageCreateSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, PagePermissions
+from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE, PROJECTS_WORK_ITEMS_WRITE_SCOPE
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import Issue, Page
 from plane.ee.models import WorkItemPage
@@ -48,15 +49,18 @@ from plane.utils.openapi import (
     WORK_ITEM_PAGE_EXAMPLE,
     create_paginated_response,
 )
-from .base import BaseAPIView
+from .base import ScopedBaseAPIView
 
 
-class WorkItemPageListCreateAPIEndpoint(BaseAPIView):
+class WorkItemPageListCreateAPIEndpoint(ScopedBaseAPIView):
     """Work Item Page Link List and Create Endpoint"""
 
     serializer_class = WorkItemPageSerializer
     model = WorkItemPage
-    permission_classes = [ProjectEntityPermission]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     use_read_replica = True
 
     def get_queryset(self):
@@ -87,6 +91,7 @@ class WorkItemPageListCreateAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
+    @can(PagePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, work_item_id):
         """List work item page links
 
@@ -118,6 +123,7 @@ class WorkItemPageListCreateAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
+    @can(PagePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, work_item_id):
         """Create work item page link
 
@@ -190,10 +196,13 @@ class WorkItemPageListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class WorkItemPageDetailAPIEndpoint(BaseAPIView):
+class WorkItemPageDetailAPIEndpoint(ScopedBaseAPIView):
     """Work Item Page Link Detail Endpoint"""
 
-    permission_classes = [ProjectEntityPermission]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     model = WorkItemPage
     serializer_class = WorkItemPageSerializer
     use_read_replica = True
@@ -222,11 +231,14 @@ class WorkItemPageDetailAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_PAGE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(PagePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, work_item_id, pk):
         """Retrieve work item page link
 
         Get details of a specific page link for a work item.
         """
+        # `pk` is the WorkItemPage (link) id, not a Page id, so we gate at
+        # the project scope and let get_queryset() scope the lookup.
         work_item_page = self.get_queryset().filter(pk=pk).first()
         if not work_item_page:
             return Response(
@@ -248,11 +260,14 @@ class WorkItemPageDetailAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_PAGE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(PagePermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, work_item_id, pk):
         """Delete work item page link
 
         Remove a page link from a work item.
         """
+        # `pk` is the WorkItemPage (link) id, not a Page id, so we gate at
+        # the project scope and let get_queryset() scope the lookup.
         work_item_page = self.get_queryset().filter(pk=pk).first()
         if not work_item_page:
             return Response(

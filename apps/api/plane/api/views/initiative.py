@@ -13,13 +13,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 # Plane imports
-from plane.api.views.base import BaseViewSet
+from plane.api.views.base import ScopedBaseViewSet
 from plane.ee.models import Initiative, InitiativeLabel, InitiativeLabelAssociation, InitiativeProject, InitiativeEpic
-from plane.app.permissions import WorkSpaceAdminPermission
 from plane.db.models import Workspace, Project, Issue
 from plane.api.serializers import InitiativeSerializer, InitiativeLabelSerializer, ProjectSerializer, IssueSerializer
 from plane.api.permissions import InitiativesFeatureFlagPermission
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.permissions import can, InitiativePermissions
 
 # OpenAPI imports
 from plane.utils.openapi.decorators import initiative_docs, initiative_entity_docs
@@ -51,12 +50,13 @@ from plane.utils.oauth import (
 )
 
 
-class InitiativeViewSet(BaseViewSet):
+class InitiativeViewSet(ScopedBaseViewSet):
     use_read_replica = True
+
 
     serializer_class = InitiativeSerializer
     model = Initiative
-    permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, InitiativesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [INITIATIVES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE]],
@@ -79,6 +79,7 @@ class InitiativeViewSet(BaseViewSet):
             ),
         },
     )
+    @can(InitiativePermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = InitiativeSerializer(data=request.data, context={"workspace_id": workspace.id})
@@ -102,6 +103,7 @@ class InitiativeViewSet(BaseViewSet):
             ),
         },
     )
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         initiatives = self.get_queryset()
         return self.paginate(
@@ -123,6 +125,7 @@ class InitiativeViewSet(BaseViewSet):
             200: OpenApiResponse(description="Initiative", response=InitiativeSerializer, examples=[INITIATIVE_EXAMPLE])
         },
     )
+    @can(InitiativePermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, pk):
         initiative = self.get_queryset().get(id=pk)
         return Response(InitiativeSerializer(initiative).data, status=status.HTTP_200_OK)
@@ -140,6 +143,7 @@ class InitiativeViewSet(BaseViewSet):
             200: OpenApiResponse(description="Initiative", response=InitiativeSerializer, examples=[INITIATIVE_EXAMPLE])
         },
     )
+    @can(InitiativePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk):
         initiative = self.get_queryset().get(id=pk)
         serializer = InitiativeSerializer(initiative, data=request.data, partial=True)
@@ -158,6 +162,7 @@ class InitiativeViewSet(BaseViewSet):
         description="Delete an initiative by its ID",
         responses={204: DELETED_RESPONSE},
     )
+    @can(InitiativePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
         initiative = self.get_queryset().get(id=pk)
         initiative.delete()
@@ -182,6 +187,7 @@ class InitiativeViewSet(BaseViewSet):
             )
         },
     )
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get_labels(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         labels = InitiativeLabel.objects.filter(
@@ -222,6 +228,7 @@ class InitiativeViewSet(BaseViewSet):
             )
         },
     )
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def add_labels(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         label_ids = request.data.get("label_ids", [])
@@ -269,6 +276,7 @@ class InitiativeViewSet(BaseViewSet):
         ),
         responses={204: DELETED_RESPONSE},
     )
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def remove_labels(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         label_ids = request.data.get("label_ids", [])
@@ -278,12 +286,13 @@ class InitiativeViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class InitiativeEpicsViewSet(BaseViewSet):
+class InitiativeEpicsViewSet(ScopedBaseViewSet):
     use_read_replica = True
+
 
     serializer_class = InitiativeSerializer
     model = Initiative
-    permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, InitiativesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [INITIATIVES_READ_SCOPE, INITIATIVES_EPICS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_EPICS_WRITE_SCOPE]],
@@ -309,6 +318,7 @@ class InitiativeEpicsViewSet(BaseViewSet):
             200: create_paginated_response(IssueSerializer, "Issue", "List of epics", example_name="Paginated Epics")
         },
     )
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get_epics(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         epics = Issue.objects.filter(initiative_epics__initiative=initiative, initiative_epics__deleted_at__isnull=True)
@@ -343,6 +353,7 @@ class InitiativeEpicsViewSet(BaseViewSet):
         ),
         responses={200: OpenApiResponse(description="Epics added", response=IssueSerializer, examples=[EPIC_EXAMPLE])},
     )
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def add_epics(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         epic_ids = request.data.get("epic_ids", [])
@@ -394,6 +405,7 @@ class InitiativeEpicsViewSet(BaseViewSet):
         ),
         responses={204: DELETED_RESPONSE},
     )
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def remove_epics(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         epic_ids = request.data.get("epic_ids", [])
@@ -403,12 +415,13 @@ class InitiativeEpicsViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class InitiativeProjectsViewSet(BaseViewSet):
+class InitiativeProjectsViewSet(ScopedBaseViewSet):
     use_read_replica = True
+
 
     serializer_class = InitiativeSerializer
     model = Initiative
-    permission_classes = [WorkSpaceAdminPermission, InitiativesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, InitiativesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [INITIATIVES_READ_SCOPE, INITIATIVES_PROJECTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [INITIATIVES_WRITE_SCOPE, INITIATIVES_PROJECTS_WRITE_SCOPE]],
@@ -436,6 +449,7 @@ class InitiativeProjectsViewSet(BaseViewSet):
             )
         },
     )
+    @can(InitiativePermissions.VIEW, resource_param="initiative_id")
     def get_projects(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         projects = Project.objects.filter(initiatives__initiative=initiative, initiatives__deleted_at__isnull=True)
@@ -472,6 +486,7 @@ class InitiativeProjectsViewSet(BaseViewSet):
             200: OpenApiResponse(description="Projects added", response=ProjectSerializer, examples=[PROJECT_EXAMPLE])
         },
     )
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def add_projects(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         project_ids = request.data.get("project_ids", [])
@@ -519,6 +534,7 @@ class InitiativeProjectsViewSet(BaseViewSet):
         ),
         responses={204: DELETED_RESPONSE},
     )
+    @can(InitiativePermissions.EDIT, resource_param="initiative_id")
     def remove_projects(self, request, slug, initiative_id):
         initiative = self.get_queryset().get(id=initiative_id)
         project_ids = request.data.get("project_ids", [])
@@ -528,12 +544,13 @@ class InitiativeProjectsViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class InitiativeLabelViewSet(BaseViewSet):
+class InitiativeLabelViewSet(ScopedBaseViewSet):
     use_read_replica = True
+
 
     serializer_class = InitiativeLabelSerializer
     model = InitiativeLabel
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, InitiativesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [INITIATIVES_LABELS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [INITIATIVES_LABELS_WRITE_SCOPE]],
@@ -558,6 +575,7 @@ class InitiativeLabelViewSet(BaseViewSet):
             )
         },
     )
+    @can(InitiativePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = InitiativeLabelSerializer(data=request.data, context={"workspace_id": workspace.id})
@@ -584,9 +602,9 @@ class InitiativeLabelViewSet(BaseViewSet):
             )
         },
     )
+    @can(InitiativePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         initiative_labels = self.get_queryset()
-        print("initiative_labels", initiative_labels)
         paginated_data = self.paginate(
             request=request,
             queryset=initiative_labels,
@@ -609,6 +627,7 @@ class InitiativeLabelViewSet(BaseViewSet):
             )
         },
     )
+    @can(InitiativePermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, pk):
         initiative_label = self.get_queryset().get(id=pk)
         return Response(InitiativeLabelSerializer(initiative_label).data, status=status.HTTP_200_OK)
@@ -628,6 +647,7 @@ class InitiativeLabelViewSet(BaseViewSet):
             )
         },
     )
+    @can(InitiativePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk):
         initiative_label = self.get_queryset().get(id=pk)
         serializer = InitiativeLabelSerializer(
@@ -648,6 +668,7 @@ class InitiativeLabelViewSet(BaseViewSet):
         description="Delete an initiative label by its ID",
         responses={204: DELETED_RESPONSE},
     )
+    @can(InitiativePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
         initiative_label = self.get_queryset().get(id=pk)
         initiative_label.delete()

@@ -26,7 +26,7 @@ from drf_spectacular.utils import (
 )
 
 # Module imports
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, CustomerPermissions
 from plane.ee.models import (
     Customer,
     CustomerRequest,
@@ -52,9 +52,8 @@ from plane.ee.utils.customer_property_validators import (
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models.functions import Cast
 from django.core.exceptions import ValidationError
-from .base import BaseAPIView
+from .base import ScopedBaseAPIView
 from plane.utils.openapi.responses import WORKSPACE_NOT_FOUND_RESPONSE, create_paginated_response
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -71,13 +70,12 @@ from plane.utils.oauth import (
 )
 
 
-class CustomerAPIEndpoint(BaseAPIView):
+class CustomerAPIEndpoint(ScopedBaseAPIView):
     """
     Customer API Endpoint - handles customer list and create operations
     """
 
     model = Customer
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMERS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
@@ -116,6 +114,7 @@ class CustomerAPIEndpoint(BaseAPIView):
             404: WORKSPACE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         """List customers
 
@@ -146,6 +145,7 @@ class CustomerAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Bad request"),
         },
     )
+    @can(CustomerPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         """Create customer
 
@@ -161,13 +161,12 @@ class CustomerAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CustomerDetailAPIEndpoint(BaseAPIView):
+class CustomerDetailAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Detail API Endpoint - handles customer detail, update and delete operations
     """
 
     model = Customer
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMERS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMERS_WRITE_SCOPE]],
@@ -203,6 +202,7 @@ class CustomerDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, pk):
         """Retrieve customer
 
@@ -229,6 +229,7 @@ class CustomerDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, pk):
         """Update customer
 
@@ -258,6 +259,7 @@ class CustomerDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.DELETE, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, pk):
         """Delete customer
 
@@ -268,13 +270,12 @@ class CustomerDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CustomerRequestAPIEndpoint(BaseAPIView):
+class CustomerRequestAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Request API Endpoint - handles customer request list and create operations
     """
 
     model = CustomerRequest
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_REQUESTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
@@ -305,6 +306,7 @@ class CustomerRequestAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, customer_id):
         """List customer requests
 
@@ -340,6 +342,7 @@ class CustomerRequestAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug, customer_id):
         """Create customer request
 
@@ -356,13 +359,12 @@ class CustomerRequestAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CustomerRequestDetailAPIEndpoint(BaseAPIView):
+class CustomerRequestDetailAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Request Detail API Endpoint - handles customer request detail, update and delete operations
     """
 
     model = CustomerRequest
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_REQUESTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_REQUESTS_WRITE_SCOPE]],
@@ -393,6 +395,7 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer request not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, customer_id, pk):
         """Retrieve customer request
 
@@ -422,6 +425,7 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer request not found"),
         },
     )
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, customer_id, pk):
         """Update customer request
 
@@ -447,6 +451,7 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer request not found"),
         },
     )
+    @can(CustomerPermissions.DELETE, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, customer_id, pk):
         """Delete customer request
 
@@ -457,14 +462,13 @@ class CustomerRequestDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CustomerIssuesAPIEndpoint(BaseAPIView):
+class CustomerIssuesAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Issues API Endpoint - handles linking/unlinking issues to customers
     and requests
     """
 
     model = Issue
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
@@ -506,6 +510,7 @@ class CustomerIssuesAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, customer_id):
         """List customer issues
 
@@ -592,6 +597,7 @@ class CustomerIssuesAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug, customer_id):
         """Link issues to customer
 
@@ -665,13 +671,12 @@ class CustomerIssuesAPIEndpoint(BaseAPIView):
         )
 
 
-class CustomerIssueDetailAPIEndpoint(BaseAPIView):
+class CustomerIssueDetailAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Issue Detail API Endpoint - handles unlinking specific issues from customers
     """
 
     model = Issue
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_WORK_ITEMS_WRITE_SCOPE]],
@@ -703,6 +708,7 @@ class CustomerIssueDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Link not found"),
         },
     )
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, customer_id, issue_id):
         """Unlink issue from customer
 
@@ -733,13 +739,12 @@ class CustomerIssueDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CustomerPropertiesAPIEndpoint(BaseAPIView):
+class CustomerPropertiesAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Properties API Endpoint - handles customer property list and create operations
     """
 
     model = CustomerProperty
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_PROPERTIES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
@@ -772,6 +777,7 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Workspace not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         """List customer properties
 
@@ -799,6 +805,7 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Bad request"),
         },
     )
+    @can(CustomerPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         """Create customer property
 
@@ -872,13 +879,12 @@ class CustomerPropertiesAPIEndpoint(BaseAPIView):
         CustomerPropertyOption.objects.bulk_create(bulk_create_options, batch_size=100)
 
 
-class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
+class CustomerPropertyDetailAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Property Detail API Endpoint - handles customer property detail, update and delete operations
     """
 
     model = CustomerProperty
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_PROPERTIES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTIES_WRITE_SCOPE]],
@@ -909,6 +915,7 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer property not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, pk):
         """Retrieve customer property
 
@@ -939,6 +946,7 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer property not found"),
         },
     )
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, pk):
         """Update customer property
 
@@ -1013,6 +1021,7 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer property not found"),
         },
     )
+    @can(CustomerPermissions.DELETE, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, pk):
         """Delete customer property
 
@@ -1065,13 +1074,12 @@ class CustomerPropertyDetailAPIEndpoint(BaseAPIView):
                 self._create_options(customer_property, [option])
 
 
-class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
+class CustomerPropertyValuesAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Property Values API Endpoint - handles all customer property value operations
     """
 
     model = CustomerPropertyValue
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_PROPERTY_VALUES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
@@ -1148,6 +1156,7 @@ class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, customer_id):
         """Get customer property values
 
@@ -1201,6 +1210,7 @@ class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer not found"),
         },
     )
+    @can(CustomerPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug, customer_id):
         """Update customer property values
 
@@ -1260,13 +1270,12 @@ class CustomerPropertyValuesAPIEndpoint(BaseAPIView):
             )
 
 
-class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
+class CustomerPropertyValueDetailAPIEndpoint(ScopedBaseAPIView):
     """
     Customer Property Value Detail API Endpoint - handles single property value operations
     """
 
     model = CustomerPropertyValue
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [CUSTOMER_PROPERTY_VALUES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [CUSTOMER_PROPERTY_VALUES_WRITE_SCOPE]],
@@ -1343,6 +1352,7 @@ class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer or property not found"),
         },
     )
+    @can(CustomerPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, customer_id, property_id):
         """Get single property values
 
@@ -1394,6 +1404,7 @@ class CustomerPropertyValueDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Customer or property not found"),
         },
     )
+    @can(CustomerPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, customer_id, property_id):
         """Update single property value
 

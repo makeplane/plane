@@ -71,11 +71,17 @@ from plane.api.serializers import (
     LabelCreateUpdateSerializer,
     IssueVoteSerializer,
 )
-from plane.app.permissions import (
-    ProjectEntityPermission,
-    ProjectLitePermission,
-    ProjectMemberPermission,
+from plane.permissions import (
+    can,
+    get_permission_conditions,
+    LabelPermissions,
+    WorkitemPermissions,
+    CommentPermissions,
+    WorkitemLinkPermissions,
+    WorkitemRelationPermissions,
+    AttachmentPermissions,
 )
+from plane.permissions.definitions import ResourceType
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -93,12 +99,11 @@ from plane.db.models import (
 )
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from .base import BaseAPIView
+from .base import BaseAPIView, ScopedBaseAPIView
 from plane.utils.host import base_host
 from plane.utils.issue_relation_mapper import get_actual_relation
 
 from plane.bgtasks.webhook_task import model_activity
-from plane.app.permissions import ROLE
 from plane.utils.openapi import (
     work_item_docs,
     issue_docs,
@@ -196,22 +201,7 @@ from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
 from plane.utils.pql import PQLFilterBackend
 
 
-def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=None, allow_creator=True):
-    if allow_creator and issue is not None and user_id == issue.created_by_id:
-        return True
-
-    qs = ProjectMember.objects.filter(
-        project_id=project_id,
-        member_id=user_id,
-        is_active=True,
-    )
-    if allowed_roles is not None:
-        qs = qs.filter(role__in=allowed_roles)
-
-    return qs.exists()
-
-
-class WorkspaceIssueAPIEndpoint(BaseAPIView):
+class WorkspaceIssueAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset provides `retrieveByIssueId` on workspace level
 
@@ -219,7 +209,6 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
     }
@@ -269,6 +258,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, project_identifier=None, issue_identifier=None):
         """Retrieve work item by identifiers
 
@@ -310,14 +300,13 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             )
 
 
-class IssueListCreateAPIEndpoint(BaseAPIView):
+class IssueListCreateAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset provides `list` and `create` on issue level
     """
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
@@ -370,12 +359,16 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
         """List work items
 
         Retrieve a paginated list of all work items in a project.
         Supports filtering, ordering, and field selection through query parameters.
         """
+
+        # Data-level filter: conditional grants (e.g., guest sees only own issues)
+        conditions = get_permission_conditions(request)
 
         external_id = request.GET.get("external_id")
         external_source = request.GET.get("external_source")
@@ -424,8 +417,16 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             )
         )
 
+        # Apply creator-only filter for conditional grants.
+        # Both the visible queryset AND the total-count queryset must honor the
+        # same condition; otherwise pagination metadata leaks the total count of
+        # all issues in the project to roles that should only see their own.
         total_issue_queryset = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug)
         total_issue_queryset = self.filter_queryset(queryset=total_issue_queryset)
+
+        if 'creator' in conditions:
+            issue_queryset = issue_queryset.filter(created_by=request.user)
+            total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -491,6 +492,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         """Create work item
 
@@ -578,12 +580,11 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class IssueDetailAPIEndpoint(BaseAPIView):
+class IssueDetailAPIEndpoint(ScopedBaseAPIView):
     """Issue Detail Endpoint"""
 
     model = Issue
     webhook_event = "issue"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
         "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
@@ -634,6 +635,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="pk")
     def get(self, request, slug, project_id, pk):
         """Retrieve work item
 
@@ -683,6 +685,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         },
     )
     @transaction.atomic
+    @can(WorkitemPermissions.CREATE, resource_param="project_id")
     def put(self, request, slug, project_id):
         """Update or create work item
 
@@ -860,6 +863,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         },
     )
     @transaction.atomic
+    @can(WorkitemPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         """Update work item
 
@@ -954,6 +958,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             404: WORK_ITEM_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         """Delete work item
 
@@ -998,12 +1003,11 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class LabelListCreateAPIEndpoint(BaseAPIView):
+class LabelListCreateAPIEndpoint(ScopedBaseAPIView):
     """Label List and Create Endpoint"""
 
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
@@ -1043,6 +1047,7 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
             409: LABEL_NAME_EXISTS_RESPONSE,
         },
     )
+    @can(LabelPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         """Create label
 
@@ -1116,6 +1121,7 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
             404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(LabelPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """List labels
 
@@ -1133,7 +1139,6 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
 
     serializer_class = LabelSerializer
     model = Label
-    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
@@ -1156,6 +1161,7 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
             404: LABEL_NOT_FOUND_RESPONSE,
         },
     )
+    @can(LabelPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk):
         """Retrieve label
 
@@ -1187,6 +1193,7 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(LabelPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         """Update label
 
@@ -1233,6 +1240,7 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
             404: LABEL_NOT_FOUND_RESPONSE,
         },
     )
+    @can(LabelPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, pk):
         """Delete label
 
@@ -1244,12 +1252,11 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueLinkListCreateAPIEndpoint(BaseAPIView):
+class IssueLinkListCreateAPIEndpoint(ScopedBaseAPIView):
     """Work Item Link List and Create Endpoint"""
 
     serializer_class = IssueLinkSerializer
     model = IssueLink
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_LINKS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
@@ -1292,6 +1299,7 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemLinkPermissions.VIEW, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def get(self, request, slug, project_id, issue_id):
         """List work item links
 
@@ -1325,6 +1333,7 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemLinkPermissions.CREATE, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def post(self, request, slug, project_id, issue_id):
         """Create issue link
 
@@ -1351,17 +1360,15 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class IssueLinkDetailAPIEndpoint(BaseAPIView):
+class IssueLinkDetailAPIEndpoint(ScopedBaseAPIView):
     """Issue Link Detail Endpoint"""
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_LINKS_READ_SCOPE]],
         "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
         "DELETE": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_LINKS_WRITE_SCOPE]],
     }
-
     model = IssueLink
     serializer_class = IssueLinkSerializer
     use_read_replica = True
@@ -1401,6 +1408,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue not found"),
         },
     )
+    @can(WorkitemLinkPermissions.VIEW, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def get(self, request, slug, project_id, issue_id, pk):
         """Retrieve work item link
 
@@ -1442,6 +1450,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
             404: LINK_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemLinkPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, issue_id, pk):
         """Update issue link
 
@@ -1479,6 +1488,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Work item link not found"),
         },
     )
+    @can(WorkitemLinkPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete work item link
 
@@ -1500,13 +1510,12 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueCommentListCreateAPIEndpoint(BaseAPIView):
+class IssueCommentListCreateAPIEndpoint(ScopedBaseAPIView):
     """Issue Comment List and Create Endpoint"""
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
@@ -1559,6 +1568,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue not found"),
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id):
         """List work item comments
 
@@ -1610,6 +1620,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(CommentPermissions.CREATE, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def post(self, request, slug, project_id, issue_id):
         """Create work item comment
 
@@ -1676,13 +1687,12 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class IssueCommentDetailAPIEndpoint(BaseAPIView):
+class IssueCommentDetailAPIEndpoint(ScopedBaseAPIView):
     """Work Item Comment Detail Endpoint"""
 
     serializer_class = IssueCommentSerializer
     model = IssueComment
     webhook_event = "issue_comment"
-    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_READ_SCOPE]],
         "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_COMMENTS_WRITE_SCOPE]],
@@ -1733,6 +1743,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id, pk):
         """Retrieve issue comment
 
@@ -1764,6 +1775,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(CommentPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, issue_id, pk):
         """Update work item comment
 
@@ -1839,6 +1851,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             404: COMMENT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(CommentPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete issue comment
 
@@ -1866,8 +1879,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueActivityListAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+class IssueActivityListAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE]],
     }
@@ -1895,6 +1907,7 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id):
         """List issue activities
 
@@ -1921,10 +1934,9 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
         )
 
 
-class IssueActivityDetailAPIEndpoint(BaseAPIView):
+class IssueActivityDetailAPIEndpoint(ScopedBaseAPIView):
     """Issue Activity Detail Endpoint"""
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ACTIVITIES_READ_SCOPE]],
     }
@@ -1953,6 +1965,7 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id, pk):
         """Retrieve issue activity
 
@@ -1983,13 +1996,12 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
         )
 
 
-class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
+class IssueAttachmentListCreateAPIEndpoint(ScopedBaseAPIView):
     """Issue Attachment List and Create Endpoint"""
 
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
     use_read_replica = True
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
@@ -2065,26 +2077,13 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(AttachmentPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, issue_id):
         """Create work item attachment
 
         Generate presigned URL for uploading file attachments to a work item.
         Validates file type and size before creating the attachment record.
         """
-        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the user is creator or admin,member then allow the upload
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
-        ):
-            return Response(
-                {"error": "You are not allowed to upload this attachment"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         name = request.data.get("name")
         type = request.data.get("type", False)
         size = request.data.get("size")
@@ -2188,6 +2187,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(AttachmentPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id):
         """List issue attachments
 
@@ -2206,13 +2206,12 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
+class IssueAttachmentDetailAPIEndpoint(ScopedBaseAPIView):
     """Issue Attachment Detail Endpoint"""
 
     serializer_class = IssueAttachmentSerializer
     model = FileAsset
     use_read_replica = True
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
         "PUT": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
@@ -2231,26 +2230,13 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(AttachmentPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete work item attachment
 
         Soft delete an attachment from a work item by marking it as deleted.
         Records deletion activity and triggers metadata cleanup.
         """
-        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the request user is creator or admin then delete the attachment
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
-        ):
-            return Response(
-                {"error": "You are not allowed to delete this attachment"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         issue_attachment.is_deleted = True
         issue_attachment.deleted_at = timezone.now()
@@ -2306,24 +2292,12 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(AttachmentPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id, pk):
         """Retrieve work item attachment
 
         Retrieve details of a specific attachment.
         """
-        # if the user is part of the project then allow the download
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=None,
-            allowed_roles=None,
-            allow_creator=False,
-        ):
-            return Response(
-                {"error": "You are not allowed to download this attachment"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         # Get the asset
         asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
 
@@ -2368,27 +2342,13 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             404: ATTACHMENT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(AttachmentPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, issue_id, pk):
         """Confirm attachment upload
 
         Mark an attachment as uploaded after successful file transfer to storage.
         Triggers activity logging and metadata extraction.
         """
-
-        issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the user is creator or admin then allow the upload
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=issue,
-            allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
-        ):
-            return Response(
-                {"error": "You are not allowed to upload this attachment"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         serializer = IssueAttachmentSerializer(issue_attachment)
 
@@ -2417,9 +2377,8 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueAttachmentServerEndpoint(BaseAPIView):
+class IssueAttachmentServerEndpoint(ScopedBaseAPIView):
     serializer_class = IssueAttachmentSerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_ATTACHMENTS_WRITE_SCOPE]],
@@ -2430,6 +2389,7 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
     model = FileAsset
     use_read_replica = True
 
+    @can(AttachmentPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, issue_id):
         name = request.data.get("name")
         type = request.data.get("type", False)
@@ -2518,6 +2478,7 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
             status=status.HTTP_200_OK,
         )
 
+    @can(AttachmentPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, issue_id, pk):
         issue_attachment = FileAsset.objects.get(pk=pk, workspace__slug=slug, project_id=project_id)
         issue_attachment.is_deleted = True
@@ -2542,10 +2503,10 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
         issue_attachment.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def get(self, request, slug, project_id, issue_id, pk=None):
-        if pk:
-            # Get the asset
-            asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
+    @can(AttachmentPermissions.VIEW, resource_param="project_id")
+    def get(self, request, slug, project_id, issue_id, pk):
+        # Get the asset
+        asset = FileAsset.objects.get(id=pk, workspace__slug=slug, project_id=project_id)
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -2562,6 +2523,7 @@ class IssueAttachmentServerEndpoint(BaseAPIView):
         )
         return HttpResponseRedirect(presigned_url)
 
+    @can(AttachmentPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, issue_id, pk):
         """Confirm attachment upload
 
@@ -2694,13 +2656,12 @@ class IssueSearchEndpoint(BaseAPIView):
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
 
 
-class IssueRelationListCreateAPIEndpoint(BaseAPIView):
+class IssueRelationListCreateAPIEndpoint(ScopedBaseAPIView):
     """Issue Relation List and Create Endpoint"""
 
     serializer_class = IssueRelationSerializer
     model = IssueRelation
     relation_definition_model = WorkItemRelationDefinition
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE]],
@@ -2745,6 +2706,7 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemRelationPermissions.VIEW, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def get(self, request, slug, project_id, issue_id):
         """List work item relations
 
@@ -2893,6 +2855,7 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemRelationPermissions.CREATE, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def post(self, request, slug, project_id, issue_id):
         """Create work item relation
 
@@ -3030,10 +2993,9 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class IssueRelationRemoveAPIEndpoint(BaseAPIView):
+class IssueRelationRemoveAPIEndpoint(ScopedBaseAPIView):
     """Issue Relation Remove Endpoint"""
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_RELATIONS_WRITE_SCOPE]],
     }
@@ -3060,6 +3022,7 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Work item relation not found"),
         },
     )
+    @can(WorkitemRelationPermissions.DELETE, resource_param="issue_id", scope_param_type=ResourceType.WORKITEM)
     def post(self, request, slug, project_id, issue_id):
         """Remove a work item relation
 
@@ -3126,10 +3089,9 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class IssueVoteAPIEndpoint(BaseAPIView):
+class IssueVoteAPIEndpoint(ScopedBaseAPIView):
     """Issue Vote API Endpoint"""
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
@@ -3151,6 +3113,7 @@ class IssueVoteAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.REACT, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id):
         votes = IssueVote.objects.filter(
             project_id=project_id,
@@ -3186,6 +3149,7 @@ class IssueVoteAPIEndpoint(BaseAPIView):
             404: ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.REACT, resource_param="issue_id")
     def post(self, request, slug, project_id, issue_id):
         serializer = IssueVoteSerializer(
             data=request.data,
@@ -3212,6 +3176,7 @@ class IssueVoteAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Vote not found"),
         },
     )
+    @can(WorkitemPermissions.REACT, resource_param="issue_id")
     def delete(self, request, slug, project_id, issue_id):
         issue_vote = IssueVote.objects.filter(
             issue_id=issue_id,

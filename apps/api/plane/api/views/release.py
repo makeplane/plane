@@ -12,7 +12,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 
-from plane.api.views.base import BaseViewSet
+from plane.api.views.base import ScopedBaseViewSet
 from plane.db.models import (
     Release,
     ReleaseTag,
@@ -24,7 +24,7 @@ from plane.db.models import (
     Workspace,
     Issue,
 )
-from plane.app.permissions import WorkSpaceAdminPermission
+from plane.permissions import can, ReleasePermissions
 from plane.api.serializers import (
     ReleaseSerializer,
     ReleaseTagSerializer,
@@ -33,7 +33,6 @@ from plane.api.serializers import (
     ReleaseLinkSerializer,
 )
 from plane.api.permissions import ReleasesFeatureFlagPermission
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -52,12 +51,12 @@ from plane.utils.oauth import (
 )
 
 
-class ReleaseViewSet(BaseViewSet):
+class ReleaseViewSet(ScopedBaseViewSet):
     use_read_replica = True
 
     serializer_class = ReleaseSerializer
     model = Release
-    permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, ReleasesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [RELEASES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [RELEASES_WRITE_SCOPE]],
@@ -69,6 +68,7 @@ class ReleaseViewSet(BaseViewSet):
     def get_queryset(self):
         return Release.objects.filter(workspace__slug=self.kwargs.get("slug"))
 
+    @can(ReleasePermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ReleaseSerializer(data=request.data, context={"workspace_id": workspace.id})
@@ -77,6 +77,7 @@ class ReleaseViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         releases = self.get_queryset()
         return self.paginate(
@@ -86,10 +87,12 @@ class ReleaseViewSet(BaseViewSet):
             default_per_page=20,
         )
 
+    @can(ReleasePermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, pk):
         release = self.get_queryset().get(id=pk)
         return Response(ReleaseSerializer(release).data, status=status.HTTP_200_OK)
 
+    @can(ReleasePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk):
         release = self.get_queryset().get(id=pk)
         serializer = ReleaseSerializer(release, data=request.data, partial=True)
@@ -98,12 +101,14 @@ class ReleaseViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
         release = self.get_queryset().get(id=pk)
         release.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Label management on a release
+    @can(ReleasePermissions.VIEW, resource_param="release_id")
     def get_labels(self, request, slug, release_id):
         release = self.get_queryset().get(id=release_id)
         labels = ReleaseLabel.objects.filter(
@@ -116,6 +121,7 @@ class ReleaseViewSet(BaseViewSet):
             default_per_page=20,
         )
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def add_labels(self, request, slug, release_id):
         release = self.get_queryset().get(id=release_id)
         label_ids = request.data.get("label_ids", [])
@@ -135,6 +141,7 @@ class ReleaseViewSet(BaseViewSet):
         serializer = ReleaseLabelSerializer(new_labels, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def remove_labels(self, request, slug, release_id):
         release = self.get_queryset().get(id=release_id)
         label_ids = request.data.get("label_ids", [])
@@ -144,12 +151,12 @@ class ReleaseViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ReleaseTagViewSet(BaseViewSet):
+class ReleaseTagViewSet(ScopedBaseViewSet):
     use_read_replica = True
 
     serializer_class = ReleaseTagSerializer
     model = ReleaseTag
-    permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, ReleasesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [RELEASES_TAGS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [RELEASES_TAGS_WRITE_SCOPE]],
@@ -161,6 +168,7 @@ class ReleaseTagViewSet(BaseViewSet):
     def get_queryset(self):
         return ReleaseTag.objects.filter(workspace__slug=self.kwargs.get("slug"))
 
+    @can(ReleasePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ReleaseTagSerializer(data=request.data, context={"workspace_id": workspace.id})
@@ -169,6 +177,7 @@ class ReleaseTagViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         tags = self.get_queryset()
         return self.paginate(
@@ -178,10 +187,12 @@ class ReleaseTagViewSet(BaseViewSet):
             default_per_page=20,
         )
 
+    @can(ReleasePermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, pk):
         tag = self.get_queryset().get(id=pk)
         return Response(ReleaseTagSerializer(tag).data, status=status.HTTP_200_OK)
 
+    @can(ReleasePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk):
         tag = self.get_queryset().get(id=pk)
         serializer = ReleaseTagSerializer(
@@ -192,18 +203,19 @@ class ReleaseTagViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
         tag = self.get_queryset().get(id=pk)
         tag.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ReleaseLabelViewSet(BaseViewSet):
+class ReleaseLabelViewSet(ScopedBaseViewSet):
     use_read_replica = True
 
     serializer_class = ReleaseLabelSerializer
     model = ReleaseLabel
-    permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, ReleasesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [RELEASES_LABELS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [RELEASES_LABELS_WRITE_SCOPE]],
@@ -215,6 +227,7 @@ class ReleaseLabelViewSet(BaseViewSet):
     def get_queryset(self):
         return ReleaseLabel.objects.filter(workspace__slug=self.kwargs.get("slug")).order_by("sort_order")
 
+    @can(ReleasePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = ReleaseLabelSerializer(data=request.data, context={"workspace_id": workspace.id})
@@ -223,6 +236,7 @@ class ReleaseLabelViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         labels = self.get_queryset()
         return self.paginate(
@@ -232,10 +246,12 @@ class ReleaseLabelViewSet(BaseViewSet):
             default_per_page=20,
         )
 
+    @can(ReleasePermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, pk):
         label = self.get_queryset().get(id=pk)
         return Response(ReleaseLabelSerializer(label).data, status=status.HTTP_200_OK)
 
+    @can(ReleasePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk):
         label = self.get_queryset().get(id=pk)
         serializer = ReleaseLabelSerializer(
@@ -246,18 +262,19 @@ class ReleaseLabelViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
         label = self.get_queryset().get(id=pk)
         label.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ReleaseWorkItemsViewSet(BaseViewSet):
+class ReleaseWorkItemsViewSet(ScopedBaseViewSet):
     use_read_replica = True
 
     serializer_class = ReleaseSerializer
     model = Release
-    permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, ReleasesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [RELEASES_READ_SCOPE, RELEASES_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [RELEASES_WRITE_SCOPE, RELEASES_WORK_ITEMS_WRITE_SCOPE]],
@@ -267,6 +284,7 @@ class ReleaseWorkItemsViewSet(BaseViewSet):
     def get_queryset(self):
         return Release.objects.filter(workspace__slug=self.kwargs.get("slug"))
 
+    @can(ReleasePermissions.VIEW, resource_param="release_id")
     def get_work_items(self, request, slug, release_id):
         release = self.get_queryset().get(id=release_id)
         work_items = Issue.objects.filter(
@@ -281,6 +299,7 @@ class ReleaseWorkItemsViewSet(BaseViewSet):
             default_per_page=20,
         )
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def add_work_items(self, request, slug, release_id):
         release = self.get_queryset().get(id=release_id)
         work_item_ids = request.data.get("work_item_ids", [])
@@ -298,6 +317,7 @@ class ReleaseWorkItemsViewSet(BaseViewSet):
 
         return Response({"message": "Work items added successfully"}, status=status.HTTP_200_OK)
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def remove_work_items(self, request, slug, release_id):
         release = self.get_queryset().get(id=release_id)
         work_item_ids = request.data.get("work_item_ids", [])
@@ -307,12 +327,12 @@ class ReleaseWorkItemsViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ReleaseCommentViewSet(BaseViewSet):
+class ReleaseCommentViewSet(ScopedBaseViewSet):
     use_read_replica = True
 
     serializer_class = ReleaseCommentSerializer
     model = ReleaseComment
-    permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, ReleasesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [RELEASES_READ_SCOPE, RELEASES_COMMENTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [RELEASES_WRITE_SCOPE, RELEASES_COMMENTS_WRITE_SCOPE]],
@@ -326,6 +346,7 @@ class ReleaseCommentViewSet(BaseViewSet):
             release_id=self.kwargs.get("release_id"),
         )
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def create(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
         release = Release.objects.get(id=release_id, workspace=workspace)
@@ -335,6 +356,7 @@ class ReleaseCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.VIEW, resource_param="release_id")
     def list(self, request, slug, release_id):
         comments = self.get_queryset()
         return self.paginate(
@@ -344,10 +366,12 @@ class ReleaseCommentViewSet(BaseViewSet):
             default_per_page=20,
         )
 
+    @can(ReleasePermissions.VIEW, resource_param="release_id")
     def retrieve(self, request, slug, release_id, pk):
         comment = self.get_queryset().get(id=pk)
         return Response(ReleaseCommentSerializer(comment).data, status=status.HTTP_200_OK)
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def partial_update(self, request, slug, release_id, pk):
         comment = self.get_queryset().get(id=pk)
         serializer = ReleaseCommentSerializer(comment, data=request.data, partial=True)
@@ -356,18 +380,19 @@ class ReleaseCommentViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def destroy(self, request, slug, release_id, pk):
         comment = self.get_queryset().get(id=pk)
         comment.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ReleaseLinkViewSet(BaseViewSet):
+class ReleaseLinkViewSet(ScopedBaseViewSet):
     use_read_replica = True
 
     serializer_class = ReleaseLinkSerializer
     model = ReleaseLink
-    permission_classes = [WorkSpaceAdminPermission, ReleasesFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, ReleasesFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [RELEASES_READ_SCOPE, RELEASES_LINKS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [RELEASES_WRITE_SCOPE, RELEASES_LINKS_WRITE_SCOPE]],
@@ -381,6 +406,7 @@ class ReleaseLinkViewSet(BaseViewSet):
             release_id=self.kwargs.get("release_id"),
         )
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def create(self, request, slug, release_id):
         workspace = Workspace.objects.get(slug=slug)
         release = Release.objects.get(id=release_id, workspace=workspace)
@@ -390,6 +416,7 @@ class ReleaseLinkViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.VIEW, resource_param="release_id")
     def list(self, request, slug, release_id):
         links = self.get_queryset()
         return self.paginate(
@@ -399,10 +426,12 @@ class ReleaseLinkViewSet(BaseViewSet):
             default_per_page=20,
         )
 
+    @can(ReleasePermissions.VIEW, resource_param="release_id")
     def retrieve(self, request, slug, release_id, pk):
         link = self.get_queryset().get(id=pk)
         return Response(ReleaseLinkSerializer(link).data, status=status.HTTP_200_OK)
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def partial_update(self, request, slug, release_id, pk):
         link = self.get_queryset().get(id=pk)
         serializer = ReleaseLinkSerializer(link, data=request.data, partial=True)
@@ -411,6 +440,7 @@ class ReleaseLinkViewSet(BaseViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @can(ReleasePermissions.EDIT, resource_param="release_id")
     def destroy(self, request, slug, release_id, pk):
         link = self.get_queryset().get(id=pk)
         link.delete()

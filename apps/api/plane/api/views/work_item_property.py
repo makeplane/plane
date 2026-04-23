@@ -15,16 +15,15 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
-from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project, IssueType
 from plane.ee.models import IssueProperty, PropertyTypeEnum, RelationTypeEnum
 from plane.api.serializers import IssuePropertyAPISerializer
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import issue_property_docs
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
+from plane.permissions import can, IssuePropertyPermissions
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -33,7 +32,7 @@ from plane.utils.oauth import (
 )
 
 
-class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
+class IssuePropertyListCreateAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list` and `create` actions related to issue type properties.
     """
@@ -42,7 +41,6 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
 
     model = IssueProperty
     serializer_class = IssuePropertyAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_WRITE_SCOPE]],
@@ -107,6 +105,7 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, type_id):
         # list of issue properties
         issue_properties = self.model.objects.filter(
@@ -149,6 +148,7 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(IssuePropertyPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, type_id):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_WORK_ITEM_TYPES_ENABLED):
             return Response(
@@ -209,7 +209,7 @@ class IssuePropertyListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class IssuePropertyDetailAPIEndpoint(BaseAPIView):
+class IssuePropertyDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to issue type properties.
@@ -220,7 +220,6 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
 
     model = IssueProperty
     serializer_class = IssuePropertyAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTIES_WRITE_SCOPE]],
@@ -271,6 +270,7 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
             200: OpenApiResponse(description="Issue properties", response=IssuePropertyAPISerializer),
         },
     )
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, type_id, property_id):
         # getting issue property by id
         issue_property = self.model.objects.get(
@@ -311,6 +311,7 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, type_id, property_id):
         issue_property = self.model.objects.get(
             workspace__slug=slug,
@@ -338,6 +339,7 @@ class IssuePropertyDetailAPIEndpoint(BaseAPIView):
             204: OpenApiResponse(description="Issue property deleted"),
         },
     )
+    @can(IssuePropertyPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, type_id, property_id):
         issue_property = self.model.objects.get(
             workspace__slug=self.workspace_slug,

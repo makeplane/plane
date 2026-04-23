@@ -13,12 +13,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
-from plane.api.views.base import BaseViewSet
+from plane.api.views.base import ScopedBaseViewSet
 from plane.api.serializers import TeamspaceSerializer, ProjectSerializer, UserLiteSerializer
 from plane.ee.models import Teamspace, TeamspaceProject, TeamspaceMember
 from plane.db.models import Workspace, Project, User
-from plane.app.permissions import WorkSpaceAdminPermission
 from plane.api.permissions import TeamspaceFeatureFlagPermission
+from plane.permissions import can, TeamspacePermissions
 from plane.utils.openapi.decorators import teamspace_docs, teamspace_entity_docs
 from plane.utils.openapi import (
     TEAMSPACE_EXAMPLE,
@@ -32,7 +32,6 @@ from plane.utils.openapi import (
     PER_PAGE_PARAMETER,
 )
 
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -45,12 +44,13 @@ from plane.utils.oauth import (
 )
 
 
-class TeamspaceViewSet(BaseViewSet):
+class TeamspaceViewSet(ScopedBaseViewSet):
     use_read_replica = True
+
 
     serializer_class = TeamspaceSerializer
     model = Teamspace
-    permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, TeamspaceFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [TEAMSPACES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE]],
@@ -73,6 +73,7 @@ class TeamspaceViewSet(BaseViewSet):
             )
         },
     )
+    @can(TeamspacePermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = TeamspaceSerializer(
@@ -98,6 +99,7 @@ class TeamspaceViewSet(BaseViewSet):
             )
         },
     )
+    @can(TeamspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         teamspaces = self.get_queryset()
         return self.paginate(
@@ -119,6 +121,7 @@ class TeamspaceViewSet(BaseViewSet):
             200: OpenApiResponse(description="Teamspace", response=TeamspaceSerializer, examples=[TEAMSPACE_EXAMPLE])
         },
     )
+    @can(TeamspacePermissions.VIEW, resource_param="pk")
     def retrieve(self, request, slug, pk):
         teamspace = self.get_queryset().get(id=pk)
         return Response(TeamspaceSerializer(teamspace).data, status=status.HTTP_200_OK)
@@ -136,6 +139,7 @@ class TeamspaceViewSet(BaseViewSet):
             200: OpenApiResponse(description="Teamspace", response=TeamspaceSerializer, examples=[TEAMSPACE_EXAMPLE])
         },
     )
+    @can(TeamspacePermissions.EDIT, resource_param="pk")
     def partial_update(self, request, slug, pk):
         teamspace = self.get_queryset().get(id=pk)
         serializer = TeamspaceSerializer(teamspace, data=request.data, partial=True)
@@ -154,18 +158,20 @@ class TeamspaceViewSet(BaseViewSet):
         ],
         responses={204: DELETED_RESPONSE},
     )
+    @can(TeamspacePermissions.DELETE, resource_param="pk")
     def destroy(self, request, slug, pk):
         teamspace = self.get_queryset().get(id=pk)
         teamspace.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TeamspaceProjectViewSet(BaseViewSet):
+class TeamspaceProjectViewSet(ScopedBaseViewSet):
     use_read_replica = True
+
 
     serializer_class = TeamspaceSerializer
     model = Teamspace
-    permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, TeamspaceFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [TEAMSPACES_READ_SCOPE], [TEAMSPACES_PROJECTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE], [TEAMSPACES_PROJECTS_WRITE_SCOPE]],
@@ -191,6 +197,7 @@ class TeamspaceProjectViewSet(BaseViewSet):
             )
         },
     )
+    @can(TeamspacePermissions.VIEW, resource_param="teamspace_id")
     def get_projects(self, request, slug, teamspace_id):
         teamspace = self.get_queryset().get(id=teamspace_id)
         projects = Project.objects.filter(team_spaces__team_space=teamspace, team_spaces__deleted_at__isnull=True)
@@ -228,6 +235,7 @@ class TeamspaceProjectViewSet(BaseViewSet):
             200: OpenApiResponse(description="Projects added", response=ProjectSerializer, examples=[PROJECT_EXAMPLE])
         },
     )
+    @can(TeamspacePermissions.EDIT, resource_param="teamspace_id")
     def add_projects(self, request, slug, teamspace_id):
         teamspace = self.get_queryset().get(id=teamspace_id)
         project_ids = request.data.get("project_ids", [])
@@ -274,6 +282,7 @@ class TeamspaceProjectViewSet(BaseViewSet):
         ],
         responses={204: DELETED_RESPONSE},
     )
+    @can(TeamspacePermissions.EDIT, resource_param="teamspace_id")
     def remove_projects(self, request, slug, teamspace_id):
         teamspace = self.get_queryset().get(id=teamspace_id)
         project_ids = request.data.get("project_ids", [])
@@ -283,12 +292,13 @@ class TeamspaceProjectViewSet(BaseViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TeamspaceMemberViewSet(BaseViewSet):
+class TeamspaceMemberViewSet(ScopedBaseViewSet):
     use_read_replica = True
+
 
     serializer_class = TeamspaceSerializer
     model = Teamspace
-    permission_classes = [WorkSpaceAdminPermission, TeamspaceFeatureFlagPermission, TokenHasScopeIfOAuth]
+    permission_classes = [*ScopedBaseViewSet.permission_classes, TeamspaceFeatureFlagPermission]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [TEAMSPACES_READ_SCOPE, TEAMSPACES_MEMBERS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [TEAMSPACES_WRITE_SCOPE, TEAMSPACES_MEMBERS_WRITE_SCOPE]],
@@ -316,6 +326,7 @@ class TeamspaceMemberViewSet(BaseViewSet):
             )
         },
     )
+    @can(TeamspacePermissions.VIEW, resource_param="teamspace_id")
     def get_members(self, request, slug, teamspace_id):
         teamspace = self.get_queryset().get(id=teamspace_id)
         members = User.objects.filter(team_spaces__team_space=teamspace, team_spaces__deleted_at__isnull=True)
@@ -352,6 +363,7 @@ class TeamspaceMemberViewSet(BaseViewSet):
             200: OpenApiResponse(description="Members added", response=UserLiteSerializer, examples=[USER_EXAMPLE])
         },
     )
+    @can(TeamspacePermissions.EDIT, resource_param="teamspace_id")
     def add_members(self, request, slug, teamspace_id):
         teamspace = self.get_queryset().get(id=teamspace_id)
         member_ids = request.data.get("member_ids", [])
@@ -396,6 +408,7 @@ class TeamspaceMemberViewSet(BaseViewSet):
         ],
         responses={204: DELETED_RESPONSE},
     )
+    @can(TeamspacePermissions.EDIT, resource_param="teamspace_id")
     def remove_members(self, request, slug, teamspace_id):
         teamspace = self.get_queryset().get(id=teamspace_id)
         member_ids = request.data.get("member_ids", [])

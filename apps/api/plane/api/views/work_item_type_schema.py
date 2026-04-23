@@ -19,7 +19,6 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExampl
 from drf_spectacular.types import OpenApiTypes
 
 # Module imports
-from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import (
     ProjectIssueType,
     State,
@@ -33,10 +32,12 @@ from plane.ee.models import (
     PropertyTypeEnum,
     RelationTypeEnum,
 )
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.api.serializers.work_item_type_schema import WorkItemTypeSchemaSerializer
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
+from plane.permissions import can, IssuePropertyPermissions
+from plane.utils.oauth import READ_SCOPE, PROJECTS_WORK_ITEM_TYPES_READ_SCOPE
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -69,7 +70,7 @@ INCLUDE_PARAMETER = OpenApiParameter(
 )
 
 
-class WorkItemTypeSchemaAPIEndpoint(BaseAPIView):
+class WorkItemTypeSchemaAPIEndpoint(ScopedBaseAPIView):
     """
     GET: Returns the complete schema for a work item type including
     all standard fields and custom properties with their available options inline.
@@ -88,7 +89,9 @@ class WorkItemTypeSchemaAPIEndpoint(BaseAPIView):
 
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_TYPES_READ_SCOPE]],
+    }
 
     @extend_schema(
         operation_id="get_work_item_type_schema",
@@ -161,6 +164,7 @@ when creating/updating work items.
             ),
         ],
     )
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         # Parse query params
         type_id = request.GET.get("type_id")

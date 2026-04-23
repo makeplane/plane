@@ -58,8 +58,10 @@ class OauthApplicationWorkspacePermission(BasePermission):
         if not oauth2authenticated:
             return is_authenticated
 
-        # If OAuth2 authenticated but no workspace_slug, allow access
-        workspace_slug: Optional[str] = view.kwargs.get("workspace_slug")
+        # If OAuth2 authenticated but no workspace slug, allow access.
+        # Accept both "slug" (current external + internal convention) and
+        # "workspace_slug" (legacy kwarg name still in use by some endpoints).
+        workspace_slug: Optional[str] = view.kwargs.get("slug") or view.kwargs.get("workspace_slug")
         if not workspace_slug:
             return True
 

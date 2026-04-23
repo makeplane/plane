@@ -18,16 +18,15 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
-from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Workspace, Project
 from plane.ee.models import IssueProperty, IssuePropertyOption
 from plane.api.serializers import IssuePropertyOptionAPISerializer
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import issue_property_option_docs
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
+from plane.permissions import can, IssuePropertyPermissions
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -36,7 +35,7 @@ from plane.utils.oauth import (
 )
 
 
-class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
+class IssuePropertyOptionListCreateAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list` and `create` actions related to issue property options.
     """
@@ -45,7 +44,6 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
 
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE]],
@@ -66,6 +64,7 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue property not found"),
         },
     )
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, property_id):
         # list of issue properties
         issue_properties = self.model.objects.filter(
@@ -110,6 +109,7 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(IssuePropertyPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, property_id):
         if check_workspace_feature(slug, WorkspaceFeatureContext.IS_WORK_ITEM_TYPES_ENABLED):
             return Response(
@@ -198,7 +198,7 @@ class IssuePropertyOptionListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
+class IssuePropertyOptionDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to issue property options.
@@ -209,7 +209,6 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
 
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE]],
@@ -231,6 +230,7 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue property not found"),
         },
     )
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, property_id, option_id):
         # getting issue property by id
         issue_property = self.model.objects.get(
@@ -274,6 +274,7 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue property option not found"),
         },
     )
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, property_id, option_id):
         # validate if ant default property option is already available
         default_option_exists = self.model.objects.filter(
@@ -313,6 +314,7 @@ class IssuePropertyOptionDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue property option not found"),
         },
     )
+    @can(IssuePropertyPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, property_id, option_id):
         property_option = self.model.objects.get(
             workspace__slug=slug,

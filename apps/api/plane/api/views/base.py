@@ -45,7 +45,7 @@ from plane.api.rate_limit import (
 )
 from plane.authentication.rate_limit import OAuthTokenRateThrottle
 from plane.oauth_bridge.rate_limit import ExternalTokenRateThrottle
-from plane.authentication.permissions.oauth import OauthApplicationWorkspacePermission
+from plane.authentication.permissions.oauth import OauthApplicationWorkspacePermission, TokenHasScopeIfOAuth
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
@@ -201,6 +201,10 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
         return self.kwargs.get("slug", None)
 
     @property
+    def workspace_id(self):
+        return getattr(self.request, "workspace_id", None)
+
+    @property
     def project_id(self):
         project_id = self.kwargs.get("project_id", None)
         if project_id:
@@ -339,6 +343,10 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
         return self.kwargs.get("slug", None)
 
     @property
+    def workspace_id(self):
+        return getattr(self.request, "workspace_id", None)
+
+    @property
     def project_id(self):
         project_id = self.kwargs.get("project_id", None)
         if project_id:
@@ -356,3 +364,23 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
     def expand(self):
         expand = [expand for expand in self.request.GET.get("expand", "").split(",") if expand]
         return expand if expand else None
+
+
+class ScopedBaseAPIView(BaseAPIView):
+    """Base class for external API views with standard OAuth/API-key permissions."""
+
+    permission_classes = [
+        IsAuthenticated,
+        OauthApplicationWorkspacePermission,
+        TokenHasScopeIfOAuth,
+    ]
+
+
+class ScopedBaseViewSet(BaseViewSet):
+    """Base class for external API viewsets with standard OAuth/API-key permissions."""
+
+    permission_classes = [
+        IsAuthenticated,
+        OauthApplicationWorkspacePermission,
+        TokenHasScopeIfOAuth,
+    ]

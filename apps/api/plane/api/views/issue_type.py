@@ -24,8 +24,7 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
-from plane.api.views.base import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission
+from plane.api.views.base import ScopedBaseAPIView
 from plane.db.models import Workspace, Project, IssueType, ProjectIssueType, Issue
 from plane.api.serializers import IssueTypeAPISerializer, ProjectIssueTypeAPISerializer
 from plane.payment.flags.flag_decorator import check_feature_flag
@@ -33,7 +32,7 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.utils.helpers import get_boolean_value
 from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 from plane.utils.openapi.decorators import issue_type_docs
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.permissions import can, IssuePropertyPermissions
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -42,7 +41,7 @@ from plane.utils.oauth import (
 )
 
 
-class IssueTypeListCreateAPIEndpoint(BaseAPIView):
+class IssueTypeListCreateAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list` and `create` actions related to issue types.
     """
@@ -51,17 +50,12 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
 
     model = IssueType
     serializer_class = IssueTypeAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     webhook_event = "issue_type"
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_TYPES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_TYPES_WRITE_SCOPE]],
     }
 
-    model = IssueType
-    serializer_class = IssueTypeAPISerializer
-    permission_classes = [ProjectEntityPermission]
-    webhook_event = "issue_type"
 
     @property
     def workspace_slug(self):
@@ -91,7 +85,6 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
         )
 
     # list issue types and get issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     @issue_type_docs(
         operation_id="list_issue_types",
         description="List all issue types for a project",
@@ -104,6 +97,8 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue type not found"),
         },
     )
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id):
         # list of issue types
         issue_types = self.get_queryset()
@@ -135,6 +130,7 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
             409: OpenApiResponse(description="Issue type with the same external id and external source already exists"),
         },
     )
+    @can(IssuePropertyPermissions.CREATE, resource_param="project_id")
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def post(self, request, slug, project_id):
 
@@ -183,7 +179,7 @@ class IssueTypeListCreateAPIEndpoint(BaseAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class IssueTypeDetailAPIEndpoint(BaseAPIView):
+class IssueTypeDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to issue types.
@@ -194,7 +190,6 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
 
     model = IssueType
     serializer_class = IssueTypeAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_TYPES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_TYPES_WRITE_SCOPE]],
@@ -232,7 +227,6 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
         )
 
     # list issue types and get issue type by id
-    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     @issue_type_docs(
         operation_id="retrieve_issue_type",
         summary="Retrieve an issue type by id",
@@ -242,6 +236,8 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue type not found"),
         },
     )
+    @can(IssuePropertyPermissions.VIEW, resource_param="project_id")
+    @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def get(self, request, slug, project_id, type_id):
         issue_type = (
             self.get_queryset()
@@ -286,6 +282,7 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
             409: OpenApiResponse(description="Issue type with the same external id and external source already exists"),
         },
     )
+    @can(IssuePropertyPermissions.EDIT, resource_param="project_id")
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def patch(self, request, slug, project_id, type_id):
         with transaction.atomic():
@@ -333,6 +330,7 @@ class IssueTypeDetailAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Default work item type cannot be deleted"),
         },
     )
+    @can(IssuePropertyPermissions.DELETE, resource_param="project_id")
     @check_feature_flag(FeatureFlag.ISSUE_TYPES)
     def delete(self, request, slug, project_id, type_id):
         issue_type = self.get_queryset().get(pk=type_id)

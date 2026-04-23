@@ -24,8 +24,7 @@ from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, OpenApiExample
 
 # Module imports
-from plane.api.views.base import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission
+from plane.api.views.base import ScopedBaseAPIView
 from plane.db.models import Issue, Workspace, User
 from plane.ee.models import (
     IssueProperty,
@@ -39,6 +38,8 @@ from plane.api.serializers.work_item_properties import (
     build_custom_property_data,
 )
 from plane.api.serializers.issue import IssueSerializer
+from plane.permissions import can, WorkitemPermissions
+from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE, PROJECTS_WORK_ITEMS_WRITE_SCOPE
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi import (
@@ -50,7 +51,7 @@ from plane.utils.openapi import (
 )
 
 
-class WorkItemPropertiesAPIEndpoint(BaseAPIView):
+class WorkItemPropertiesAPIEndpoint(ScopedBaseAPIView):
     """
     API endpoint for retrieving and updating a work item with all default fields
     AND custom properties in a single response.
@@ -62,7 +63,10 @@ class WorkItemPropertiesAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     model = Issue
-    permission_classes = [ProjectEntityPermission]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
     webhook_event = "issue"
 
     def get_issue_with_relations(self, slug, project_id, pk):
@@ -229,6 +233,7 @@ Custom properties are only included if the ISSUE_TYPES feature is enabled for th
         },
         tags=["Work Items"],
     )
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk):
         """
         Get work item with all default fields and custom properties.
@@ -333,6 +338,7 @@ Custom properties can only be updated if the ISSUE_TYPES feature is enabled.""",
         ],
     )
     @transaction.atomic
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         """
         Update work item and/or custom properties.

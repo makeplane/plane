@@ -19,8 +19,7 @@ from drf_spectacular.utils import (
 )
 
 # Module imports
-from plane.api.views.base import BaseViewSet
-from plane.utils.permissions import ProjectMemberPermission
+from plane.api.views.base import ScopedBaseViewSet
 from plane.db.models import Description, Project
 from plane.ee.models import Milestone, MilestoneIssue
 from plane.api.serializers.milestone import (
@@ -28,7 +27,7 @@ from plane.api.serializers.milestone import (
     MilestoneWorkItemSerializer,
     MilestoneWorkItemBulkSerializer,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.permissions import can, MilestonePermissions
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -39,8 +38,7 @@ from plane.utils.oauth import (
 )
 
 
-class MilestoneViewSet(BaseViewSet):
-    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+class MilestoneViewSet(ScopedBaseViewSet):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MILESTONES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE]],
@@ -66,6 +64,7 @@ class MilestoneViewSet(BaseViewSet):
             200: OpenApiResponse(description="Milestones retrieved successfully", response=MilestoneSerializer),
         },
     )
+    @can(MilestonePermissions.VIEW, resource_param="project_id")
     def list(self, request, slug, project_id, *args, **kwargs):
         return self.paginate(
             request=request,
@@ -83,6 +82,7 @@ class MilestoneViewSet(BaseViewSet):
             200: OpenApiResponse(description="Milestone retrieved successfully", response=MilestoneSerializer),
         },
     )
+    @can(MilestonePermissions.VIEW, resource_param="milestone_id")
     def retrieve(self, request, slug, project_id, milestone_id, *args, **kwargs):
         milestone = self.get_object()
         return Response(
@@ -98,6 +98,7 @@ class MilestoneViewSet(BaseViewSet):
         },
         request=OpenApiRequest(request=MilestoneSerializer),
     )
+    @can(MilestonePermissions.CREATE, resource_param="project_id")
     def create(self, request, slug, project_id, *args, **kwargs):
         # Get workspace_id from project
         project = Project.objects.get(id=project_id, workspace__slug=slug)
@@ -130,6 +131,7 @@ class MilestoneViewSet(BaseViewSet):
             200: OpenApiResponse(description="Milestone updated successfully", response=MilestoneSerializer),
         },
     )
+    @can(MilestonePermissions.EDIT, resource_param="milestone_id")
     def patch(self, request, slug, project_id, milestone_id, *args, **kwargs):
         milestone = self.get_object()
         serializer = MilestoneSerializer(milestone, data=request.data, partial=True)
@@ -145,14 +147,14 @@ class MilestoneViewSet(BaseViewSet):
             204: OpenApiResponse(description="Milestone deleted successfully"),
         },
     )
+    @can(MilestonePermissions.DELETE, resource_param="milestone_id")
     def destroy(self, request, slug, project_id, milestone_id, *args, **kwargs):
         milestone = self.get_object()
         milestone.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class MilestoneWorkItemsViewSet(BaseViewSet):
-    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+class MilestoneWorkItemsViewSet(ScopedBaseViewSet):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MILESTONES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_MILESTONES_WRITE_SCOPE, PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
@@ -179,6 +181,7 @@ class MilestoneWorkItemsViewSet(BaseViewSet):
             200: OpenApiResponse(description="Work items retrieved successfully", response=MilestoneWorkItemSerializer),
         },
     )
+    @can(MilestonePermissions.VIEW, resource_param="milestone_id")
     def list(self, request, slug, project_id, milestone_id, *args, **kwargs):
         return self.paginate(
             request=request,
@@ -197,6 +200,7 @@ class MilestoneWorkItemsViewSet(BaseViewSet):
             201: OpenApiResponse(description="Work items added successfully"),
         },
     )
+    @can(MilestonePermissions.EDIT, resource_param="milestone_id")
     def add_work_items(self, request, slug, project_id, milestone_id, *args, **kwargs):
         serializer = MilestoneWorkItemBulkSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -227,6 +231,7 @@ class MilestoneWorkItemsViewSet(BaseViewSet):
             204: OpenApiResponse(description="Work items removed successfully"),
         },
     )
+    @can(MilestonePermissions.EDIT, resource_param="milestone_id")
     def remove_work_items(self, request, slug, project_id, milestone_id, *args, **kwargs):
         serializer = MilestoneWorkItemBulkSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

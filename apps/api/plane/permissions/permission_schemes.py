@@ -63,6 +63,8 @@ from .definitions import (  # noqa: E501
     WorkspaceProjectStatePermissions,
     WorkspaceFeaturePermissions,
     WorkspaceWorklogPermissions,
+    WorkspaceWorkitemTypePermissions,
+    WorkspaceCustomPropertyPermissions,
     ReleasePermissions,
     WorkspaceWorkitemTemplatePermissions,
     WorkspacePageTemplatePermissions,
@@ -267,6 +269,10 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             WildcardGrant(ResourceType.RECURRING_WORKITEM),
             WildcardGrant(ResourceType.PROJECT_ASSET),
             WildcardGrant(ResourceType.PROJECT_LINK),
+            # Workspace work-item types - full access
+            WildcardGrant(ResourceType.WORKSPACE_WORKITEM_TYPE),
+            # Workspace custom properties - full access
+            WildcardGrant(ResourceType.WORKSPACE_CUSTOM_PROPERTY),
         ],
     },
     "member": {
@@ -378,6 +384,16 @@ WORKSPACE_PERMISSION_SCHEMES: dict[str, SystemPermissionSchemeConfig] = {
             WorkitemRelationPermissions.DELETE,
             # Releases - view only
             ReleasePermissions.VIEW,
+            # Workspace work-item types - full CRUD (matches old WorkspaceEntityPermission)
+            WorkspaceWorkitemTypePermissions.VIEW,
+            WorkspaceWorkitemTypePermissions.CREATE,
+            WorkspaceWorkitemTypePermissions.EDIT,
+            WorkspaceWorkitemTypePermissions.DELETE,
+            # Workspace custom properties - full CRUD (matches old WorkspaceEntityPermission)
+            WorkspaceCustomPropertyPermissions.VIEW,
+            WorkspaceCustomPropertyPermissions.CREATE,
+            WorkspaceCustomPropertyPermissions.EDIT,
+            WorkspaceCustomPropertyPermissions.DELETE,
         ],
     },
     "guest": {

@@ -21,16 +21,22 @@ from drf_spectacular.utils import (
 )
 
 # Module imports
-from plane.api.views.base import BaseViewSet
+from plane.api.views.base import ScopedBaseViewSet
 from plane.db.models import WorkspaceMemberInvite, Workspace
 from plane.api.serializers import WorkspaceInviteSerializer
-from plane.utils.permissions import WorkspaceOwnerPermission
+from plane.permissions import can, WorkspaceMemberPermissions
+from plane.utils.oauth import (
+    READ_SCOPE,
+    WRITE_SCOPE,
+    WORKSPACES_MEMBERS_READ_SCOPE,
+    WORKSPACES_MEMBERS_WRITE_SCOPE,
+)
 from plane.utils.openapi.parameters import WORKSPACE_SLUG_PARAMETER
 from plane.utils.host import base_host
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 
 
-class WorkspaceInvitationsViewset(BaseViewSet):
+class WorkspaceInvitationsViewset(ScopedBaseViewSet):
     """
     Endpoint for creating, listing and deleting workspace invites.
     """
@@ -40,9 +46,12 @@ class WorkspaceInvitationsViewset(BaseViewSet):
     serializer_class = WorkspaceInviteSerializer
     model = WorkspaceMemberInvite
 
-    permission_classes = [
-        WorkspaceOwnerPermission,
-    ]
+    required_alternate_scopes = {
+        "GET": [[READ_SCOPE], [WORKSPACES_MEMBERS_READ_SCOPE]],
+        "POST": [[WRITE_SCOPE], [WORKSPACES_MEMBERS_WRITE_SCOPE]],
+        "PATCH": [[WRITE_SCOPE], [WORKSPACES_MEMBERS_WRITE_SCOPE]],
+        "DELETE": [[WRITE_SCOPE], [WORKSPACES_MEMBERS_WRITE_SCOPE]],
+    }
 
     def get_queryset(self):
         return self.filter_queryset(super().get_queryset().filter(workspace__slug=self.kwargs.get("slug")))
@@ -63,6 +72,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             WORKSPACE_SLUG_PARAMETER,
         ],
     )
+    @can(WorkspaceMemberPermissions.INVITE, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         workspace_member_invites = self.get_queryset()
         serializer = WorkspaceInviteSerializer(workspace_member_invites, many=True)
@@ -83,6 +93,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             ),
         ],
     )
+    @can(WorkspaceMemberPermissions.INVITE, resource_param="workspace_id", scope_param_type="workspace")
     def retrieve(self, request, slug, pk):
         workspace_member_invite = self.get_object()
         serializer = WorkspaceInviteSerializer(workspace_member_invite)
@@ -97,6 +108,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             WORKSPACE_SLUG_PARAMETER,
         ],
     )
+    @can(WorkspaceMemberPermissions.INVITE, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = WorkspaceInviteSerializer(data=request.data, context={"slug": slug})
@@ -133,6 +145,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             ),
         ],
     )
+    @can(WorkspaceMemberPermissions.INVITE, resource_param="workspace_id", scope_param_type="workspace")
     def partial_update(self, request, slug, pk):
         workspace_member_invite = self.get_object()
         if request.data.get("email"):
@@ -162,6 +175,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
             ),
         ],
     )
+    @can(WorkspaceMemberPermissions.INVITE, resource_param="workspace_id", scope_param_type="workspace")
     def destroy(self, request, slug, pk):
         workspace_member_invite = self.get_object()
         if workspace_member_invite.accepted:

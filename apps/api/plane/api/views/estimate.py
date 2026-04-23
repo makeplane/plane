@@ -18,8 +18,8 @@ from rest_framework import status
 from drf_spectacular.utils import OpenApiRequest, OpenApiResponse
 
 # Module imports
-from plane.app.permissions.project import ProjectEntityPermission
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
+from plane.permissions import can, EstimatePermissions
 from plane.db.models import Estimate, EstimatePoint, Project, Workspace
 from plane.api.serializers import EstimateSerializer, EstimatePointSerializer
 from plane.utils.openapi.decorators import estimate_docs, estimate_point_docs
@@ -35,12 +35,10 @@ from plane.utils.openapi import (
     PROJECT_ID_PARAMETER,
     ESTIMATE_ID_PARAMETER,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import PROJECTS_ESTIMATES_WRITE_SCOPE, PROJECTS_ESTIMATES_READ_SCOPE, READ_SCOPE, WRITE_SCOPE
 
 
-class ProjectEstimateAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+class ProjectEstimateAPIEndpoint(ScopedBaseAPIView):
     model = Estimate
     serializer_class = EstimateSerializer
     required_alternate_scopes = {
@@ -62,6 +60,7 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
             examples=[ESTIMATE_CREATE_EXAMPLE],
         ),
     )
+    @can(EstimatePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
@@ -117,6 +116,7 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(EstimatePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         estimate = self.get_queryset().first()
         if not estimate:
@@ -140,6 +140,7 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(EstimatePermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id):
         ALLOWED_FIELDS = ["name", "description", "external_id", "external_source"]
         estimate = self.get_queryset().first()
@@ -163,6 +164,7 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
             204: DELETED_RESPONSE,
         },
     )
+    @can(EstimatePermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id):
         estimate = self.get_queryset().first()
         if not estimate:
@@ -171,16 +173,16 @@ class ProjectEstimateAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class EstimatePointListCreateAPIEndpoint(BaseAPIView):
+class EstimatePointListCreateAPIEndpoint(ScopedBaseAPIView):
     """List and bulk create estimate points for an estimate."""
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     model = EstimatePoint
     serializer_class = EstimatePointSerializer
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_ESTIMATES_WRITE_SCOPE]],
         "GET": [[READ_SCOPE], [PROJECTS_ESTIMATES_READ_SCOPE]],
     }
+
     def get_queryset(self):
         return self.model.objects.filter(
             estimate_id=self.kwargs["estimate_id"],
@@ -205,6 +207,7 @@ class EstimatePointListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(EstimatePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.filter(
             id=estimate_id,
@@ -233,6 +236,7 @@ class EstimatePointListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(EstimatePermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, estimate_id):
         estimate = Estimate.objects.filter(
             id=estimate_id,
@@ -302,10 +306,9 @@ class EstimatePointListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class EstimatePointDetailAPIEndpoint(BaseAPIView):
+class EstimatePointDetailAPIEndpoint(ScopedBaseAPIView):
     """Update and delete a single estimate point."""
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     model = EstimatePoint
     serializer_class = EstimatePointSerializer
     required_alternate_scopes = {
@@ -335,6 +338,7 @@ class EstimatePointDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(EstimatePermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, estimate_id, estimate_point_id):
         estimate_point = self.get_queryset().filter(id=estimate_point_id).first()
         if not estimate_point:
@@ -375,6 +379,7 @@ class EstimatePointDetailAPIEndpoint(BaseAPIView):
             204: DELETED_RESPONSE,
         },
     )
+    @can(EstimatePermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, estimate_id, estimate_point_id):
         estimate_point = self.get_queryset().filter(id=estimate_point_id).first()
         if not estimate_point:

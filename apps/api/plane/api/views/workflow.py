@@ -26,9 +26,8 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiRequest, OpenApiResponse, inline_serializer
 from rest_framework import serializers as drf_serializers
 
-from plane.api.views.base import BaseAPIView
-from plane.app.permissions import ProjectEntityPermission
-from plane.api.permissions import WorkflowFeatureFlagPermission, MultipleWorkflowsFeatureFlagPermission
+from plane.api.views.base import ScopedBaseAPIView
+from plane.permissions import can, WorkflowPermissions
 from plane.utils.openapi import (
     workflow_docs,
     workflow_detail_docs,
@@ -53,9 +52,8 @@ from plane.utils.openapi import (
     WORKFLOW_TRANSITION_UPDATE_EXAMPLE,
     WORKFLOW_APPROVAL_REQUEST_EXAMPLE,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.payment.flags.flag import FeatureFlag
-from plane.payment.flags.flag_decorator import check_workspace_feature_flag
+from plane.payment.flags.flag_decorator import check_workspace_feature_flag, check_feature_flag
 from plane.db.models import Workspace, Issue, State
 from plane.app.serializers.issue import IssueSerializer
 from plane.ee.models import (
@@ -88,10 +86,9 @@ from plane.utils.host import base_host
 from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, PROJECTS_WORKFLOWS_READ_SCOPE, PROJECTS_WORKFLOWS_WRITE_SCOPE
 
 
-class WorkflowListCreateAPIEndpoint(BaseAPIView):
+class WorkflowListCreateAPIEndpoint(ScopedBaseAPIView):
     """List and create workflows for a project."""
 
-    permission_classes = [ProjectEntityPermission, WorkflowFeatureFlagPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORKFLOWS_READ_SCOPE]],
@@ -122,6 +119,8 @@ class WorkflowListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         workflows = self._get_queryset(slug, project_id)
         data = WorkflowAPISerializer(workflows, many=True).data
@@ -140,17 +139,9 @@ class WorkflowListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
+    @can(WorkflowPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
-        if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
-            slug=slug,
-            user_id=str(request.user.id),
-        ):
-            return Response(
-                {"error": "Multiple workflows feature is not enabled"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         # check if the workflow is enabled for the project
         if not ProjectFeature.objects.filter(project_id=project_id, is_workflow_enabled=True).exists():
             return Response(
@@ -178,10 +169,9 @@ class WorkflowListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class WorkflowDetailAPIEndpoint(BaseAPIView):
+class WorkflowDetailAPIEndpoint(ScopedBaseAPIView):
     """Retrieve, update, and delete a workflow."""
 
-    permission_classes = [ProjectEntityPermission, WorkflowFeatureFlagPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORKFLOWS_READ_SCOPE]],
@@ -213,6 +203,8 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, pk):
         workflow = self._get_queryset(slug, project_id).filter(id=pk).first()
         if not workflow:
@@ -233,6 +225,8 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         workflow = self._get_queryset(slug, project_id).filter(id=pk).first()
         if not workflow:
@@ -322,16 +316,9 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
         description="Delete a workflow. The default workflow cannot be deleted.",
         responses={204: DELETED_RESPONSE},
     )
+    @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
+    @can(WorkflowPermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, pk):
-        if not check_workspace_feature_flag(
-            feature_key=FeatureFlag.MULTIPLE_WORKFLOWS,
-            slug=slug,
-            user_id=str(request.user.id),
-        ):
-            return Response(
-                {"error": "Multiple workflows feature is not enabled"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         workflow = Workflow.objects.get(project_id=project_id, workspace__slug=slug, id=pk)
         if workflow.is_default:
             return Response({"error": "Default workflow cannot be deleted"}, status=status.HTTP_400_BAD_REQUEST)
@@ -351,10 +338,9 @@ class WorkflowDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkflowStatesAPIEndpoint(BaseAPIView):
+class WorkflowStatesAPIEndpoint(ScopedBaseAPIView):
     """List, add, update, and remove states from a workflow."""
 
-    permission_classes = [ProjectEntityPermission, WorkflowFeatureFlagPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORKFLOWS_READ_SCOPE]],
@@ -375,6 +361,8 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, workflow_id):
         workflow_states = WorkflowState.objects.filter(
             project_id=project_id, workflow_id=workflow_id, workspace__slug=slug
@@ -394,6 +382,8 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
         ),
         responses={201: OpenApiResponse(description="States added successfully")},
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id):
         state_ids = request.data.get("state_ids", [])
         if not state_ids:
@@ -453,6 +443,8 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, workflow_id, state_id):
         workflow_state = WorkflowState.objects.filter(
             project_id=project_id, workflow_id=workflow_id, state_id=state_id
@@ -517,6 +509,8 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
         description="Remove a state from a workflow. This also deletes all transitions associated with the state.",
         responses={204: DELETED_RESPONSE},
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, workflow_id, state_id):
         workflow_state = (
             WorkflowState.objects.filter(project_id=project_id, workflow_id=workflow_id, state_id=state_id)
@@ -566,10 +560,9 @@ class WorkflowStatesAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
+class WorkflowStateTransitionsAPIEndpoint(ScopedBaseAPIView):
     """Create, update, and delete transitions between workflow states."""
 
-    permission_classes = [ProjectEntityPermission, WorkflowFeatureFlagPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
@@ -658,6 +651,8 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id):
         state_id = request.data.pop("state_id")
         member_ids = request.data.pop("member_ids", [])
@@ -768,6 +763,8 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, workflow_id, transition_id):
         transition_state_id = request.data.get("transition_state_id")
         rejection_state_id = request.data.get("rejection_state_id")
@@ -878,6 +875,8 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
         description="Delete a workflow transition.",
         responses={204: DELETED_RESPONSE},
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, workflow_id, transition_id):
         workflow_transition = WorkflowTransition.objects.filter(
             workspace__slug=slug, project_id=project_id, pk=transition_id
@@ -900,10 +899,9 @@ class WorkflowStateTransitionsAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkflowStateTransferAPIEndpoint(BaseAPIView):
+class WorkflowStateTransferAPIEndpoint(ScopedBaseAPIView):
     """Transfer issues from one workflow state to another and remove the source state."""
 
-    permission_classes = [ProjectEntityPermission, WorkflowFeatureFlagPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
     }
@@ -921,6 +919,8 @@ class WorkflowStateTransferAPIEndpoint(BaseAPIView):
         ),
         responses={200: OpenApiResponse(description="State transferred and removed successfully")},
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, workflow_id, state_id):
         new_state_id = request.data.get("new_state_id")
         if not new_state_id:
@@ -1006,10 +1006,9 @@ class WorkflowStateTransferAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class WorkflowWorkItemApproverAPIEndpoint(BaseAPIView):
+class WorkflowWorkItemApproverAPIEndpoint(ScopedBaseAPIView):
     """Approve or reject a work item in an approval workflow state."""
 
-    permission_classes = [ProjectEntityPermission, MultipleWorkflowsFeatureFlagPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_WORKFLOWS_WRITE_SCOPE]],
     }
@@ -1036,6 +1035,8 @@ class WorkflowWorkItemApproverAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.MULTIPLE_WORKFLOWS)
+    @can(WorkflowPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, work_item_id):
         action_type = request.data.get("type", None)
         if action_type not in ["approve", "reject"]:
@@ -1154,10 +1155,9 @@ class WorkflowWorkItemApproverAPIEndpoint(BaseAPIView):
         return Response({"state_id": str(new_state_id)}, status=status.HTTP_200_OK)
 
 
-class WorkflowActivityAPIEndpoint(BaseAPIView):
+class WorkflowActivityAPIEndpoint(ScopedBaseAPIView):
     """List workflow transition activities."""
 
-    permission_classes = [ProjectEntityPermission, WorkflowFeatureFlagPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORKFLOWS_READ_SCOPE]],
@@ -1175,6 +1175,8 @@ class WorkflowActivityAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @check_feature_flag(FeatureFlag.WORKFLOWS)
+    @can(WorkflowPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, workflow_id):
         filters = {}
         if request.GET.get("created_at__gt"):

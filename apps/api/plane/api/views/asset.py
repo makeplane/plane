@@ -24,8 +24,8 @@ from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 # Module Imports
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
-from plane.db.models import FileAsset, User, Workspace
-from plane.api.views.base import BaseAPIView
+from plane.db.models import FileAsset, ProjectMember, User, Workspace
+from plane.api.views.base import BaseAPIView, ScopedBaseAPIView
 from plane.api.serializers import (
     UserAssetUploadSerializer,
     AssetUpdateSerializer,
@@ -51,6 +51,7 @@ from plane.utils.openapi import (
 )
 from plane.utils.exception_logger import log_exception
 from plane.utils.asset import validate_asset_type
+from plane.permissions import can, WorkspaceAssetPermissions
 from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
@@ -415,10 +416,9 @@ class UserServerAssetEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class GenericAssetEndpoint(BaseAPIView):
+class GenericAssetEndpoint(ScopedBaseAPIView):
     """This endpoint is used to upload generic assets that can be later bound to entities."""
 
-    permission_classes = [TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [ASSETS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [ASSETS_WRITE_SCOPE]],
@@ -439,6 +439,7 @@ class GenericAssetEndpoint(BaseAPIView):
             404: ASSET_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkspaceAssetPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, asset_id):
         """Get presigned URL for asset download.
 
@@ -515,6 +516,7 @@ class GenericAssetEndpoint(BaseAPIView):
             409: ASSET_CONFLICT_RESPONSE,
         },
     )
+    @can(WorkspaceAssetPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         """Generate presigned URL for generic asset upload.
 
@@ -527,6 +529,16 @@ class GenericAssetEndpoint(BaseAPIView):
         project_id = request.data.get("project_id")
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
+
+        # If project_id provided, verify user is a member of that project
+        if project_id:
+            if not ProjectMember.objects.filter(
+                project_id=project_id, member=request.user, is_active=True, workspace__slug=slug
+            ).exists():
+                return Response(
+                    {"error": "Not a member of the specified project"},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
 
         # Check if the request is valid
         if not name or not size:
@@ -617,6 +629,7 @@ class GenericAssetEndpoint(BaseAPIView):
             404: ASSET_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkspaceAssetPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, asset_id):
         """Update generic asset after upload completion.
 

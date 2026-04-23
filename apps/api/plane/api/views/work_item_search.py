@@ -49,9 +49,8 @@ from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
 )
 
-from .base import BaseAPIView
-from plane.app.permissions import WorkSpaceAdminPermission
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from .base import ScopedBaseAPIView
+from plane.permissions import can, WorkitemPermissions
 from plane.utils.oauth import READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE
 from plane.utils.pql import PQLFilterBackend
 
@@ -60,13 +59,12 @@ if settings.OPENSEARCH_ENABLED:
     from plane.ee.utils.opensearch_helper import OpenSearchHelper
 
 
-class WorkItemAdvancedSearchEndpoint(BaseAPIView):
+class WorkItemAdvancedSearchEndpoint(ScopedBaseAPIView):
     """Work Item Advanced Search Endpoint"""
 
     filter_backends = (ComplexFilterBackend, PQLFilterBackend)
     filterset_class = IssueFilterSet
 
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_READ_SCOPE]],
     }
@@ -224,6 +222,7 @@ class WorkItemAdvancedSearchEndpoint(BaseAPIView):
             400: INVALID_REQUEST_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         """Work Item Advanced Search"""
         query = request.data.get("query", False)

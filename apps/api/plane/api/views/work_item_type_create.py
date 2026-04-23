@@ -20,7 +20,6 @@ from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializ
 from rest_framework import serializers
 
 # Module imports
-from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import (
     Project,
     ProjectIssueType,
@@ -39,10 +38,12 @@ from plane.ee.models import (
     PropertyTypeEnum,
     RelationTypeEnum,
 )
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.bgtasks.issue_activities_task import issue_activity
+from plane.permissions import can, WorkitemPermissions
+from plane.utils.oauth import WRITE_SCOPE, PROJECTS_WORK_ITEMS_WRITE_SCOPE
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -50,7 +51,7 @@ from plane.utils.openapi import (
 )
 
 
-class WorkItemCreateAPIEndpoint(BaseAPIView):
+class WorkItemCreateAPIEndpoint(ScopedBaseAPIView):
     """
     POST: Create a new work item with support for custom properties.
 
@@ -69,7 +70,9 @@ class WorkItemCreateAPIEndpoint(BaseAPIView):
         custom_field_{name}: Optional. Custom property values using field name as key.
     """
 
-    permission_classes = [ProjectEntityPermission]
+    required_alternate_scopes = {
+        "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WRITE_SCOPE]],
+    }
 
     @extend_schema(
         operation_id="create_work_item",
@@ -185,6 +188,7 @@ class WorkItemCreateAPIEndpoint(BaseAPIView):
             ),
         ],
     )
+    @can(WorkitemPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         # Get project
         project = Project.objects.get(pk=project_id, workspace__slug=slug)

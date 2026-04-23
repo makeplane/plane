@@ -18,16 +18,15 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
-from plane.app.permissions import WorkspaceEntityPermission
 from plane.db.models import Workspace
 from plane.ee.models import IssueProperty, IssuePropertyOption
 from plane.api.serializers import IssuePropertyOptionAPISerializer
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
+from plane.permissions import can, WorkspaceCustomPropertyPermissions
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 from plane.utils.openapi.decorators import workspace_work_item_property_option_docs
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -36,14 +35,13 @@ from plane.utils.oauth import (
 )
 
 
-class WorkspaceWorkItemPropertyOptionListCreateAPIEndpoint(BaseAPIView):
+class WorkspaceWorkItemPropertyOptionListCreateAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list` and `create` actions related to issue property options.
     """
 
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE]],
@@ -64,6 +62,7 @@ class WorkspaceWorkItemPropertyOptionListCreateAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue property not found"),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, property_id):
         # list of issue properties
         issue_properties = self.model.objects.filter(
@@ -107,6 +106,7 @@ class WorkspaceWorkItemPropertyOptionListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug, property_id):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -185,7 +185,7 @@ class WorkspaceWorkItemPropertyOptionListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class WorkspaceWorkItemPropertyOptionDetailAPIEndpoint(BaseAPIView):
+class WorkspaceWorkItemPropertyOptionDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `retrieve`, `update` and `destroy` actions
     related to workspace work item property options.
@@ -193,7 +193,6 @@ class WorkspaceWorkItemPropertyOptionDetailAPIEndpoint(BaseAPIView):
 
     model = IssuePropertyOption
     serializer_class = IssuePropertyOptionAPISerializer
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE]],
@@ -215,6 +214,7 @@ class WorkspaceWorkItemPropertyOptionDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue property not found"),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, property_id, option_id):
         # getting issue property by id
         issue_property = self.model.objects.get(
@@ -257,6 +257,7 @@ class WorkspaceWorkItemPropertyOptionDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Workspace work item property option not found"),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, property_id, option_id):
         # validate if ant default property option is already available
         default_option_exists = self.model.objects.filter(
@@ -294,6 +295,7 @@ class WorkspaceWorkItemPropertyOptionDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Workspace work item property option not found"),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.DELETE, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, property_id, option_id):
         property_option = self.model.objects.get(
             workspace__slug=slug,

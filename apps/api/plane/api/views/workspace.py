@@ -12,12 +12,11 @@
 from rest_framework.response import Response
 from rest_framework import status
 
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.api.serializers import WorkspaceFeatureSerializer
 from plane.ee.models import WorkspaceFeature
 from plane.db.models import Workspace
-from plane.app.permissions import WorkSpaceAdminPermission
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.permissions import can, WorkspaceFeaturePermissions
 
 # OpenAPI imports
 from plane.utils.openapi.decorators import workspace_docs
@@ -26,10 +25,10 @@ from plane.utils.openapi import WORKSPACE_FEATURE_EXAMPLE
 from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, WORKSPACES_FEATURES_READ_SCOPE, WORKSPACES_FEATURES_WRITE_SCOPE
 
 
-class WorkspaceFeatureAPIEndpoint(BaseAPIView):
+class WorkspaceFeatureAPIEndpoint(ScopedBaseAPIView):
     use_read_replica = False
 
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_FEATURES_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [WORKSPACES_FEATURES_WRITE_SCOPE]],
@@ -65,6 +64,7 @@ class WorkspaceFeatureAPIEndpoint(BaseAPIView):
             )
         },
     )
+    @can(WorkspaceFeaturePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         workspace_features = self.get_queryset(slug)
         if workspace_features is None:
@@ -84,6 +84,7 @@ class WorkspaceFeatureAPIEndpoint(BaseAPIView):
             )
         },
     )
+    @can(WorkspaceFeaturePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug):
         workspace = Workspace.objects.filter(slug=slug).first()
         if not workspace:

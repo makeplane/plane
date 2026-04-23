@@ -20,11 +20,10 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import BaseAPIView, ScopedBaseAPIView
 from plane.db.models import Page, DeployBoard, ProjectMember, Workspace
 from plane.ee.models import PageUser
 from plane.api.serializers import PageDetailAPISerializer, PageCreateAPISerializer, PageListAPISerializer
-from plane.ee.permissions import ProjectPagePermission
 from plane.ee.utils.check_user_teamspace_member import (
     check_if_current_user_is_teamspace_member,
 )
@@ -32,7 +31,7 @@ from plane.app.permissions import ROLE
 from plane.bgtasks.copy_s3_object import sync_with_external_service
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.permissions import can, PagePermissions
 
 
 # openapi imports
@@ -59,12 +58,12 @@ from plane.utils.oauth import (
 )
 
 
-class ProjectPageDetailAPIEndpoint(BaseAPIView):
+class ProjectPageDetailAPIEndpoint(ScopedBaseAPIView):
     use_read_replica = True
+
 
     model = Page
     serializer_class = PageDetailAPISerializer
-    permission_classes = [ProjectPagePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_PAGES_READ_SCOPE]],
     }
@@ -91,14 +90,14 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(PagePermissions.VIEW, resource_param="pk")
     def get(self, request, slug, project_id, pk):
-        """
-        if the role is guest and owned by is not the requesting user
-        then dont show the page
-        """
-
         page = self.get_queryset().get(id=pk)
 
+        # Lowest-tier project members (legacy `role=5`, which covers both new
+        # Commenter and new Guest) can only view pages they own or pages shared
+        # with them via teamspace membership. Higher-tier roles bypass this
+        # data-level filter via the @can entry gate above.
         if (
             ProjectMember.objects.filter(
                 workspace__slug=slug,
@@ -112,7 +111,7 @@ class ProjectPageDetailAPIEndpoint(BaseAPIView):
         ):
             return Response(
                 {"error": "You are not allowed to view this page"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         serializer = self.serializer_class(page)
@@ -154,12 +153,12 @@ class PublishedPageDetailAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ProjectPageAPIEndpoint(BaseAPIView):
+class ProjectPageAPIEndpoint(ScopedBaseAPIView):
     use_read_replica = True
+
 
     model = Page
     serializer_class = PageCreateAPISerializer
-    permission_classes = [ProjectPagePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_PAGES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_PAGES_WRITE_SCOPE]],
@@ -196,6 +195,7 @@ class ProjectPageAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(PagePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         page_type = request.GET.get("type", "all")
         search = request.GET.get("search")
@@ -249,6 +249,7 @@ class ProjectPageAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(PagePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         description_html = request.data.get("description_html", "<p></p>")
         external_data = sync_with_external_service(entity_name="PAGE", description_html=description_html)

@@ -41,7 +41,7 @@ from plane.api.serializers import (
     CycleUpdateSerializer,
     IssueSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, CyclePermissions
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
@@ -55,7 +55,7 @@ from plane.db.models import (
 )
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.host import base_host
-from .base import BaseAPIView
+from .base import ScopedBaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.ee.bgtasks.entity_issue_state_progress_task import (
     entity_issue_state_activity_task,
@@ -86,7 +86,6 @@ from plane.utils.openapi import (
     UNARCHIVED_RESPONSE,
     REQUIRED_FIELDS_RESPONSE,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -96,13 +95,12 @@ from plane.utils.oauth import (
 )
 
 
-class CycleListCreateAPIEndpoint(BaseAPIView):
+class CycleListCreateAPIEndpoint(ScopedBaseAPIView):
     """Cycle List and Create Endpoint"""
 
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE]],
@@ -213,6 +211,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """List cycles
 
@@ -332,6 +331,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         """Create cycle
 
@@ -389,7 +389,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
             )
 
 
-class CycleDetailAPIEndpoint(BaseAPIView):
+class CycleDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `retrieve`, `update` and `destroy` actions related to cycle.
     """
@@ -397,7 +397,6 @@ class CycleDetailAPIEndpoint(BaseAPIView):
     serializer_class = CycleSerializer
     model = Cycle
     webhook_event = "cycle"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE]],
@@ -499,6 +498,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.VIEW, resource_param="pk")
     def get(self, request, slug, project_id, pk):
         """List or retrieve cycles
 
@@ -531,6 +531,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         """Update cycle
 
@@ -603,6 +604,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             204: DELETED_RESPONSE,
         },
     )
+    @can(CyclePermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         """Delete cycle
 
@@ -648,10 +650,9 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
+class CycleArchiveUnarchiveAPIEndpoint(ScopedBaseAPIView):
     """Cycle Archive and Unarchive Endpoint"""
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE]],
@@ -780,6 +781,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """List archived cycles
 
@@ -802,6 +804,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             400: CYCLE_CANNOT_ARCHIVE_RESPONSE,
         },
     )
+    @can(CyclePermissions.ARCHIVE, resource_param="cycle_id")
     def post(self, request, slug, project_id, cycle_id):
         """Archive cycle
 
@@ -833,6 +836,7 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             204: UNARCHIVED_RESPONSE,
         },
     )
+    @can(CyclePermissions.ARCHIVE, resource_param="cycle_id")
     def delete(self, request, slug, project_id, cycle_id):
         """Unarchive cycle
 
@@ -845,13 +849,12 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class CycleIssueListCreateAPIEndpoint(BaseAPIView):
+class CycleIssueListCreateAPIEndpoint(ScopedBaseAPIView):
     """Cycle Issue List and Create Endpoint"""
 
     serializer_class = CycleIssueSerializer
     model = CycleIssue
     webhook_event = "cycle_issue"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
@@ -900,6 +903,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.VIEW, resource_param="cycle_id")
     def get(self, request, slug, project_id, cycle_id):
         """List or retrieve cycle work items
 
@@ -966,6 +970,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
             400: REQUIRED_FIELDS_RESPONSE,
         },
     )
+    @can(CyclePermissions.EDIT, resource_param="cycle_id")
     def post(self, request, slug, project_id, cycle_id):
         """Add cycle issues
 
@@ -1098,7 +1103,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class CycleIssueDetailAPIEndpoint(BaseAPIView):
+class CycleIssueDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list`, `create`,
     and `destroy` actions related to cycle issues.
@@ -1109,7 +1114,6 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
     model = CycleIssue
     webhook_event = "cycle_issue"
     bulk = True
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     use_read_replica = True
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_CYCLES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
@@ -1155,6 +1159,7 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.VIEW, resource_param="cycle_id")
     def get(self, request, slug, project_id, cycle_id, issue_id):
         """Retrieve cycle work item
 
@@ -1178,6 +1183,7 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
             204: DELETED_RESPONSE,
         },
     )
+    @can(CyclePermissions.EDIT, resource_param="cycle_id")
     def delete(self, request, slug, project_id, cycle_id, issue_id):
         """Remove cycle work item
 
@@ -1221,13 +1227,12 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TransferCycleIssueAPIEndpoint(BaseAPIView):
+class TransferCycleIssueAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset provides `create` actions for transferring the issues into a particular cycle.
 
     """
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_CYCLES_WRITE_SCOPE]],
     }
@@ -1274,6 +1279,7 @@ class TransferCycleIssueAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(CyclePermissions.EDIT, resource_param="cycle_id")
     def post(self, request, slug, project_id, cycle_id):
         """Transfer cycle issues
 

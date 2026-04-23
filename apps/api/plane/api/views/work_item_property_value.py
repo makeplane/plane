@@ -21,7 +21,6 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ProjectEntityPermission
 from plane.db.models import Issue, Workspace
 from plane.ee.bgtasks.issue_property_activity_task import issue_property_activity
 from plane.ee.models import IssueProperty, IssuePropertyValue, PropertyTypeEnum
@@ -35,11 +34,11 @@ from plane.ee.utils.external_issue_property_validator import (
     externalIssuePropertyValueValidator,
     externalIssuePropertyValueSaver,
 )
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.utils.openapi.decorators import issue_property_value_docs
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.permissions import can, WorkitemPermissions
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -102,7 +101,7 @@ def _annotate_property_values(queryset) -> dict:
     return {str(row["property_id"]): [v for v in row["values"] if v] for row in rows}
 
 
-class IssuePropertyValueAPIEndpoint(BaseAPIView):
+class IssuePropertyValueAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list`, `create`, and `update`
     actions related to issue property values.
@@ -113,7 +112,6 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
 
     model = IssuePropertyValue
     serializer_class = IssuePropertyValueAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_WRITE_SCOPE]],
@@ -136,6 +134,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id, property_id):
         # list of issue properties values
         issue_property_values = self.model.objects.filter(
@@ -183,6 +182,7 @@ class IssuePropertyValueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Issue property not found"),
         },
     )
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, issue_id, property_id):
         workspace = Workspace.objects.get(slug=slug)
         issue_property = IssueProperty.objects.get(pk=property_id, workspace=workspace, project_id=project_id)
@@ -268,7 +268,6 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
 
     model = IssuePropertyValue
     serializer_class = IssuePropertyValueAPISerializer
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_READ_SCOPE]],
     }
@@ -285,6 +284,7 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
             ),
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id):
         # get the issue
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, id=issue_id)
@@ -301,7 +301,7 @@ class IssuePropertyValueListAPIEndpoint(IssuePropertyValueAPIEndpoint):
         return Response(issue_property_values, status=status.HTTP_200_OK)
 
 
-class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
+class WorkItemPropertyValueAPIEndpoint(ScopedBaseAPIView):
     """
     API endpoint for managing a work item's property value(s).
 
@@ -321,7 +321,6 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     model = IssuePropertyValue
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEM_PROPERTY_VALUES_WRITE_SCOPE]],
@@ -352,6 +351,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Property value not set for this work item"),
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, work_item_id, property_id):
         """
         Get the property value(s) for a work item's property.
@@ -460,6 +460,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Workspace or property not found"),
         },
     )
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def post(self, request, slug, project_id, work_item_id, property_id):
         """
         Create or update the property value for a work item.
@@ -623,6 +624,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Workspace, property, or property value not found"),
         },
     )
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, work_item_id, property_id):
         """
         Update an existing property value (partial update).
@@ -719,6 +721,7 @@ class WorkItemPropertyValueAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Property value not found"),
         },
     )
+    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def delete(self, request, slug, project_id, work_item_id, property_id):
         """
         Delete the property value(s) for a work item.

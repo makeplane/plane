@@ -24,8 +24,8 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
-from plane.api.views.base import BaseAPIView
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.api.views.base import ScopedBaseAPIView
+from plane.permissions import can, WorkspaceWorkitemTypePermissions
 from plane.db.models import Workspace, Project, IssueType, ProjectIssueType, Issue
 from plane.ee.models import IssueProperty, IssueTypeProperty
 from plane.api.serializers import (
@@ -36,7 +36,6 @@ from plane.payment.flags.flag import FeatureFlag
 from plane.utils.helpers import get_boolean_value
 from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 from plane.utils.openapi.decorators import workspace_work_item_type_docs
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -45,10 +44,9 @@ from plane.utils.oauth import (
 )
 
 
-class WorkspaceWorkItemTypeListCreateAPIEndpoint(BaseAPIView):
+class WorkspaceWorkItemTypeListCreateAPIEndpoint(ScopedBaseAPIView):
     model = IssueType
     serializer_class = IssueTypeAPISerializer
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE]],
@@ -75,6 +73,7 @@ class WorkspaceWorkItemTypeListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         # Get all issue types for the workspace
         issue_types = (
@@ -124,6 +123,7 @@ class WorkspaceWorkItemTypeListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
 
@@ -193,10 +193,9 @@ class WorkspaceWorkItemTypeListCreateAPIEndpoint(BaseAPIView):
         return Response(self.serializer_class(issue_types).data, status=status.HTTP_201_CREATED)
 
 
-class WorkspaceWorkItemTypeDetailAPIEndpoint(BaseAPIView):
+class WorkspaceWorkItemTypeDetailAPIEndpoint(ScopedBaseAPIView):
     model = IssueType
     serializer_class = IssueTypeAPISerializer
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE]],
@@ -218,6 +217,7 @@ class WorkspaceWorkItemTypeDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, type_id):
         issue_type = (
             self.get_queryset()
@@ -264,6 +264,7 @@ class WorkspaceWorkItemTypeDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, type_id):
         issue_type = self.get_queryset().get(pk=type_id)
 
@@ -336,6 +337,7 @@ class WorkspaceWorkItemTypeDetailAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Cannot delete default work item type or type with associated work items"),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.DELETE, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, type_id):
         issue_type = self.get_queryset().get(pk=type_id)
 
@@ -357,8 +359,7 @@ class WorkspaceWorkItemTypeDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkspaceWorkItemTypeImportAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
+class WorkspaceWorkItemTypeImportAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE]],
     }
@@ -383,6 +384,7 @@ class WorkspaceWorkItemTypeImportAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Project does not exist in this workspace"),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug, project_id):
         work_item_type_ids = request.data.get("work_item_types", [])
         workspace = Workspace.objects.get(slug=slug)
@@ -425,8 +427,7 @@ class WorkspaceWorkItemTypeImportAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class WorkspaceWorkItemTypePropertyListCreateAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
+class WorkspaceWorkItemTypePropertyListCreateAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE]],
@@ -443,6 +444,7 @@ class WorkspaceWorkItemTypePropertyListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, work_item_type_id):
         property_ids = (
             IssueTypeProperty.objects.filter(
@@ -477,6 +479,7 @@ class WorkspaceWorkItemTypePropertyListCreateAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Expected a list of property_ids"),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug, work_item_type_id):
         property_ids = request.data.get("properties", [])
 
@@ -522,8 +525,7 @@ class WorkspaceWorkItemTypePropertyListCreateAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_201_CREATED)
 
 
-class WorkspaceWorkItemTypePropertyDetailAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
+class WorkspaceWorkItemTypePropertyDetailAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "PATCH": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE]],
         "DELETE": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_TYPES_WRITE_SCOPE]],
@@ -549,6 +551,7 @@ class WorkspaceWorkItemTypePropertyDetailAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="sort_order is required"),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, work_item_type_id, work_item_property_id):
         sort_order = request.data.get("sort_order")
         if sort_order is None:
@@ -575,6 +578,7 @@ class WorkspaceWorkItemTypePropertyDetailAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Issue type property does not exist"),
         },
     )
+    @can(WorkspaceWorkitemTypePermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, work_item_type_id, work_item_property_id):
         issue_type_property = IssueTypeProperty.objects.filter(
             workspace__slug=slug,

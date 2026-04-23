@@ -47,7 +47,7 @@ from plane.db.models import (
     StateGroup,
 )
 from plane.bgtasks.webhook_task import model_activity, webhook_activity
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.utils.host import base_host
 from plane.api.serializers import (
     ProjectSerializer,
@@ -55,7 +55,7 @@ from plane.api.serializers import (
     ProjectUpdateSerializer,
     ProjectFeatureSerializer,
 )
-from plane.app.permissions import ProjectBasePermission, ProjectMemberPermission, WorkSpaceAdminPermission
+from plane.permissions import can, ProjectPermissions
 from plane.utils.openapi import (
     project_docs,
     PROJECT_ID_PARAMETER,
@@ -82,7 +82,6 @@ from plane.utils.openapi import (
 )
 
 from plane.ee.models import ProjectFeature, IssueProperty
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -93,13 +92,12 @@ from plane.utils.oauth import (
 )
 
 
-class ProjectListCreateAPIEndpoint(BaseAPIView):
+class ProjectListCreateAPIEndpoint(ScopedBaseAPIView):
     """Project List and Create Endpoint"""
 
     serializer_class = ProjectSerializer
     model = Project
     webhook_event = "project"
-    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
@@ -187,6 +185,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ProjectPermissions.BROWSE, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         """List projects
 
@@ -252,6 +251,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             409: PROJECT_NAME_TAKEN_RESPONSE,
         },
     )
+    @can(ProjectPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         """Create project
 
@@ -390,14 +390,13 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             )
 
 
-class ProjectDetailAPIEndpoint(BaseAPIView):
+class ProjectDetailAPIEndpoint(ScopedBaseAPIView):
     """Project Endpoints to  update, retrieve and delete endpoint"""
 
     serializer_class = ProjectSerializer
     model = Project
     webhook_event = "project"
 
-    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
@@ -481,6 +480,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
             404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ProjectPermissions.VIEW, resource_param="pk")
     def get(self, request, slug, pk):
         """Retrieve project
 
@@ -511,6 +511,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
             409: PROJECT_NAME_TAKEN_RESPONSE,
         },
     )
+    @can(ProjectPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, pk):
         """Update project
 
@@ -610,6 +611,7 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
             204: DELETED_RESPONSE,
         },
     )
+    @can(ProjectPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, pk):
         """Delete project
 
@@ -636,10 +638,9 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
+class ProjectArchiveUnarchiveAPIEndpoint(ScopedBaseAPIView):
     """Project Archive and Unarchive Endpoint"""
 
-    permission_classes = [ProjectBasePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
         "DELETE": [[WRITE_SCOPE], [PROJECTS_WRITE_SCOPE]],
@@ -657,6 +658,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
             204: ARCHIVED_RESPONSE,
         },
     )
+    @can(ProjectPermissions.ARCHIVE, resource_param="project_id")
     def post(self, request, slug, project_id):
         """Archive project
 
@@ -681,6 +683,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
             204: UNARCHIVED_RESPONSE,
         },
     )
+    @can(ProjectPermissions.ARCHIVE, resource_param="project_id")
     def delete(self, request, slug, project_id):
         """Unarchive project
 
@@ -693,8 +696,7 @@ class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectFeatureAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+class ProjectFeatureAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_FEATURES_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_FEATURES_WRITE_SCOPE]],
@@ -735,6 +737,7 @@ class ProjectFeatureAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(ProjectPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         project_features = self.get_queryset()
         return Response(project_features, status=status.HTTP_200_OK)
@@ -759,6 +762,7 @@ class ProjectFeatureAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(ProjectPermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id):
         project_features = self.get_queryset()
         serializer = ProjectFeatureSerializer(
@@ -784,8 +788,7 @@ ALLOWED_PROJECT_SUMMARY_FIELDS = [
 ]
 
 
-class ProjectSummaryAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+class ProjectSummaryAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_READ_SCOPE]],
     }
@@ -800,6 +803,7 @@ class ProjectSummaryAPIEndpoint(BaseAPIView):
             PROJECT_ID_PARAMETER,
         ],
     )
+    @can(ProjectPermissions.MANAGE, resource_param="project_id")
     def get(self, request, slug, project_id):
         """Get project summary
 

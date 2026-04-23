@@ -10,8 +10,9 @@
 # NOTICE: Proprietary and confidential. Unauthorized use or distribution is prohibited.
 
 # Python imports
-import uuid
 import logging
+import uuid
+
 import requests as http_requests
 
 # Django imports
@@ -32,7 +33,6 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from plane.api.serializers import ProjectMemberSerializer, UserLiteSerializer
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.db.models import Project, ProjectMember, User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.db.models.workspace import ROLE as WORKSPACE_ROLE
 from plane.ee.bgtasks.workspace_member_activities_task import workspace_members_activity
@@ -40,6 +40,7 @@ from plane.ee.models import PageUser, TeamspaceMember, TeamspaceProject, Workspa
 from plane.payment.flags.flag import FeatureFlag
 from plane.payment.flags.flag_decorator import check_workspace_feature_flag
 from plane.payment.bgtasks.member_sync_task import member_sync_task
+from plane.permissions import ProjectMemberPermissions, WorkspaceMemberPermissions, can
 from plane.utils.exception_logger import log_exception
 from plane.utils.oauth import (
     PROJECTS_MEMBERS_READ_SCOPE,
@@ -59,17 +60,13 @@ from plane.utils.openapi import (
     WORKSPACE_NOT_FOUND_RESPONSE,
     WORKSPACE_SLUG_PARAMETER,
 )
-from plane.utils.permissions import ProjectAdminPermission, ProjectMemberPermission, WorkSpaceAdminPermission
 
-# Module imports
-from .base import BaseAPIView
-
+from .base import ScopedBaseAPIView
 
 logger = logging.getLogger("plane.api")
 
 
-class WorkspaceMemberAPIEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+class WorkspaceMemberAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_MEMBERS_READ_SCOPE]],
     }
@@ -108,6 +105,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
             404: WORKSPACE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkspaceMemberPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     # Get all the users that are present inside the workspace
     def get(self, request, slug):
         """List workspace members
@@ -134,20 +132,14 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         return Response(users_with_roles, status=status.HTTP_200_OK)
 
 
-class ProjectMemberSiloEndpoint(BaseAPIView):
+class ProjectMemberSiloEndpoint(ScopedBaseAPIView):
     # TODO: Remove this endpoint once the silo is updated to use the new endpoint
 
-    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MEMBERS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
     }
     use_read_replica = True
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [ProjectMemberPermission()]
-        return [ProjectAdminPermission()]
 
     @extend_schema(
         operation_id="get_project_members",
@@ -166,6 +158,7 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
             404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ProjectMemberPermissions.VIEW, resource_param="project_id")
     # Get all the users that are present inside the workspace
     def get(self, request, slug, project_id):
         """List project members
@@ -203,6 +196,7 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
         users = UserLiteSerializer(User.objects.filter(id__in=project_members, is_active=True), many=True).data
         return Response(users, status=status.HTTP_200_OK)
 
+    @can(ProjectMemberPermissions.INVITE, resource_param="project_id")
     def post(self, request, slug, project_id):
         # ------------------- Validation -------------------
         if request.data.get("email") is None or request.data.get("display_name") is None:
@@ -284,8 +278,7 @@ class ProjectMemberSiloEndpoint(BaseAPIView):
         return Response(user_data, status=status.HTTP_201_CREATED)
 
 
-class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectMemberPermission, TokenHasScopeIfOAuth]
+class ProjectMemberListCreateAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MEMBERS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
@@ -294,11 +287,6 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
         "PATCH": [[WRITE_SCOPE], [PROJECTS_MEMBERS_WRITE_SCOPE]],
     }
     use_read_replica = True
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [ProjectMemberPermission()]
-        return [ProjectAdminPermission()]
 
     @extend_schema(
         operation_id="get_project_members",
@@ -317,6 +305,7 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
             404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ProjectMemberPermissions.VIEW, resource_param="project_id")
     # Get all the users that are present inside the workspace
     def get(self, request, slug, project_id):
         """List project members
@@ -348,6 +337,7 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
         responses={201: OpenApiResponse(description="Project member created", response=ProjectMemberSerializer)},
         request=OpenApiRequest(request=ProjectMemberSerializer),
     )
+    @can(ProjectMemberPermissions.INVITE, resource_param="project_id")
     def post(self, request, slug, project_id):
         serializer = ProjectMemberSerializer(data=request.data, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
@@ -370,6 +360,7 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
             404: PROJECT_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ProjectMemberPermissions.VIEW, resource_param="project_id")
     # Get a project member by ID
     def get(self, request, slug, project_id, pk):
         """Get project member
@@ -399,6 +390,7 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         responses={200: OpenApiResponse(description="Project member updated", response=ProjectMemberSerializer)},
         request=OpenApiRequest(request=ProjectMemberSerializer),
     )
+    @can(ProjectMemberPermissions.CHANGE_ROLE, resource_param="project_id")
     def patch(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True, context={"slug": slug})
@@ -414,6 +406,7 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         parameters=[WORKSPACE_SLUG_PARAMETER, PROJECT_ID_PARAMETER],
         responses={204: OpenApiResponse(description="Project member deleted")},
     )
+    @can(ProjectMemberPermissions.REMOVE, resource_param="project_id")
     def delete(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         project_member.is_active = False
@@ -421,8 +414,7 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class WorkspaceMemberRemoveEndpoint(BaseAPIView):
-    permission_classes = [WorkSpaceAdminPermission, TokenHasScopeIfOAuth]
+class WorkspaceMemberRemoveEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [WORKSPACES_MEMBERS_WRITE_SCOPE]],
     }
@@ -441,6 +433,7 @@ class WorkspaceMemberRemoveEndpoint(BaseAPIView):
             404: WORKSPACE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkspaceMemberPermissions.REMOVE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         """Remove workspace member
 

@@ -21,11 +21,10 @@ from django.db.models import Q
 from rest_framework import status
 from rest_framework.response import Response
 
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.db.models import Page, Workspace
 from plane.ee.models import PageUser
 from plane.api.serializers import PageDetailAPISerializer, PageCreateAPISerializer, PageListAPISerializer
-from plane.ee.permissions import WorkspacePagePermission
 from plane.utils.openapi.decorators import page_docs
 from plane.utils.openapi.parameters import (
     WORKSPACE_SLUG_PARAMETER,
@@ -39,7 +38,7 @@ from plane.utils.openapi.examples import SAMPLE_PAGE
 from plane.bgtasks.copy_s3_object import sync_with_external_service
 from plane.bgtasks.page_transaction_task import page_transaction
 from plane.ee.bgtasks.page_update import nested_page_update, PageAction
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.permissions import can, WikiPermissions
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -48,12 +47,12 @@ from plane.utils.oauth import (
 )
 
 
-class WorkspacePageDetailAPIEndpoint(BaseAPIView):
+class WorkspacePageDetailAPIEndpoint(ScopedBaseAPIView):
     use_read_replica = True
+
 
     model = Page
     serializer_class = PageDetailAPISerializer
-    permission_classes = [WorkspacePagePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WIKI_PAGES_READ_SCOPE]],
     }
@@ -76,17 +75,18 @@ class WorkspacePageDetailAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(WikiPermissions.VIEW, resource_param="pk")
     def get(self, request, slug, pk):
         page = self.get_queryset().get(id=pk)
         serializer = self.serializer_class(page)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class WorkspacePageAPIEndpoint(BaseAPIView):
+class WorkspacePageAPIEndpoint(ScopedBaseAPIView):
     use_read_replica = True
 
+
     serializer_class = PageCreateAPISerializer
-    permission_classes = [WorkspacePagePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WIKI_PAGES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [WIKI_PAGES_WRITE_SCOPE]],
@@ -113,6 +113,7 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(WikiPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         page_type = request.query_params.get("type", "all")
         search = request.query_params.get("search")
@@ -160,6 +161,7 @@ class WorkspacePageAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(WikiPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         description_html = request.data.get("description_html", "<p></p>")

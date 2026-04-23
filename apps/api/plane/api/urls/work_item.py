@@ -100,12 +100,12 @@ old_url_patterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/server/",
-        IssueAttachmentServerEndpoint.as_view(),
+        IssueAttachmentServerEndpoint.as_view(http_method_names=["post"]),
         name="attachment",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/issue-attachments/<uuid:pk>/server/",
-        IssueAttachmentServerEndpoint.as_view(),
+        IssueAttachmentServerEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="attachment",
     ),
     path(
@@ -189,12 +189,12 @@ new_url_patterns = [
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/server/",
-        IssueAttachmentServerEndpoint.as_view(),
+        IssueAttachmentServerEndpoint.as_view(http_method_names=["post"]),
         name="work-item-attachment-server",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/work-items/<uuid:issue_id>/attachments/<uuid:pk>/server/",
-        IssueAttachmentServerEndpoint.as_view(),
+        IssueAttachmentServerEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="work-item-attachment-server",
     ),
     path(

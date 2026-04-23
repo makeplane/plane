@@ -18,10 +18,9 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse
 
 # Module imports
-from plane.ee.permissions import ProjectEntityPermission
 from plane.db.models import Project
 from plane.ee.models import IssueWorkLog
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.payment.flags.flag import FeatureFlag
 from plane.api.serializers import (
     IssueWorkLogAPISerializer,
@@ -29,7 +28,6 @@ from plane.api.serializers import (
 )
 from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.permissions import can, WorkitemPermissions
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 
 # OpenAPI imports
 from plane.utils.openapi import issue_worklog_docs
@@ -42,10 +40,10 @@ from plane.utils.oauth import (
 )
 
 
-class WorkItemWorklogEndpoint(BaseAPIView):
+class WorkItemWorklogEndpoint(ScopedBaseAPIView):
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+
     required_alternate_scopes = {
         "POST": [[WRITE_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_WRITE_SCOPE]],
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_READ_SCOPE]],
@@ -67,8 +65,8 @@ class WorkItemWorklogEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Worklog is not enabled for the project"),
         },
     )
-    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @can(WorkitemPermissions.EDIT, resource_param="issue_id")
+    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def post(self, request, slug, project_id, issue_id):
         """Create worklog entry
 
@@ -101,8 +99,8 @@ class WorkItemWorklogEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Worklog is not enabled for the project"),
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="issue_id")
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @can(WorkitemPermissions.EDIT, resource_param="issue_id")
     def get(self, request, slug, project_id, issue_id):
         """List issue worklogs
 
@@ -140,8 +138,8 @@ class WorkItemWorklogEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Worklog not found or time tracking disabled"),
         },
     )
-    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @can(WorkitemPermissions.EDIT, resource_param="issue_id")
+    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def patch(self, request, slug, project_id, issue_id, pk):
         """Update worklog entry
 
@@ -173,8 +171,8 @@ class WorkItemWorklogEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Worklog not found or time tracking disabled"),
         },
     )
-    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     @can(WorkitemPermissions.EDIT, resource_param="issue_id")
+    @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
     def delete(self, request, slug, project_id, issue_id, pk):
         """Delete worklog entry
 
@@ -195,14 +193,14 @@ class WorkItemWorklogEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ProjectWorklogAPIEndpoint(BaseAPIView):
+class ProjectWorklogAPIEndpoint(ScopedBaseAPIView):
     """
     ViewSet to fetch total worklog duration for each unique issue.
     """
 
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_WORK_ITEMS_WORKLOG_READ_SCOPE]],
     }
@@ -219,8 +217,8 @@ class ProjectWorklogAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Worklog is not enabled for the project"),
         },
     )
+    @can(WorkitemPermissions.VIEW, resource_param="project_id")
     @check_feature_flag(FeatureFlag.ISSUE_WORKLOG)
-    @can(WorkitemPermissions.EDIT, resource_param="project_id")
     def get(self, request, slug, project_id):
         """Get project worklog summary
 

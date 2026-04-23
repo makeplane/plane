@@ -21,9 +21,9 @@ from drf_spectacular.utils import (
 )
 
 # Module imports
-from plane.api.views.base import BaseAPIView
-from plane.app.permissions import WorkSpaceAdminPermission, WorkspaceViewerPermission
+from plane.api.views.base import ScopedBaseAPIView
 from plane.db.models import Workspace
+from plane.permissions import can, WorkspacePermissions
 from plane.ee.models import ProjectLabel
 from plane.api.serializers import (
     ProjectLabelSerializer,
@@ -51,11 +51,10 @@ from plane.utils.openapi.examples import (
     PROJECT_LABEL_CREATE_EXAMPLE,
     PROJECT_LABEL_UPDATE_EXAMPLE,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, PROJECTS_LABELS_READ_SCOPE, PROJECTS_LABELS_WRITE_SCOPE
 
 
-class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
+class ProjectLabelListCreateAPIEndpoint(ScopedBaseAPIView):
     """Project Label List and Create Endpoint"""
 
     serializer_class = ProjectLabelSerializer
@@ -65,11 +64,6 @@ class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
         "GET": [[READ_SCOPE], [PROJECTS_LABELS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_LABELS_WRITE_SCOPE]],
     }
-
-    def get_permissions(self):
-        if self.request.method == "GET":
-            return [WorkspaceViewerPermission(), TokenHasScopeIfOAuth()]
-        return [WorkSpaceAdminPermission(), TokenHasScopeIfOAuth()]
 
     def get_queryset(self):
         return (
@@ -96,6 +90,7 @@ class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
             409: PROJECT_LABEL_NAME_EXISTS_RESPONSE,
         },
     )
+    @can(WorkspacePermissions.MANAGE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         """Create project label
 
@@ -149,6 +144,7 @@ class ProjectLabelListCreateAPIEndpoint(BaseAPIView):
             400: INVALID_REQUEST_RESPONSE,
         },
     )
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         """List project labels
 
@@ -183,6 +179,7 @@ class ProjectLabelDetailAPIEndpoint(ProjectLabelListCreateAPIEndpoint):
             404: PROJECT_LABEL_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, pk):
         """Retrieve project label
 
@@ -215,6 +212,7 @@ class ProjectLabelDetailAPIEndpoint(ProjectLabelListCreateAPIEndpoint):
             409: PROJECT_LABEL_NAME_EXISTS_RESPONSE,
         },
     )
+    @can(WorkspacePermissions.MANAGE, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, pk):
         """Update project label
 
@@ -268,6 +266,7 @@ class ProjectLabelDetailAPIEndpoint(ProjectLabelListCreateAPIEndpoint):
             404: PROJECT_LABEL_NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkspacePermissions.MANAGE, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, pk):
         """Delete project label
 

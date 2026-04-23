@@ -39,6 +39,7 @@ from .workspace_work_item_property import urlpatterns as workspace_work_item_pro
 from .worklog import urlpatterns as worklog_patterns
 from .workspace import urlpatterns as workspace_patterns
 from .workflow import urlpatterns as workflow_patterns
+from .permission import urlpatterns as external_permission_patterns
 
 # agents imports
 from plane.agents.urls.api import urlpatterns as agents_api_urls
@@ -74,6 +75,7 @@ urlpatterns = [
     *worklog_patterns,
     *workspace_patterns,
     *workflow_patterns,
+    *external_permission_patterns,
     # silo urls
     *silo_urls,
     # agents urls

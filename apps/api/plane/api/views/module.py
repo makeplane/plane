@@ -32,7 +32,7 @@ from plane.api.serializers import (
     ModuleCreateSerializer,
     ModuleUpdateSerializer,
 )
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, ModulePermissions
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -46,7 +46,7 @@ from plane.db.models import (
     UserFavorite,
 )
 
-from .base import BaseAPIView
+from .base import ScopedBaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
 from plane.utils.openapi import (
@@ -78,7 +78,6 @@ from plane.utils.openapi import (
     MODULE_ISSUE_NOT_FOUND_RESPONSE,
     CANNOT_ARCHIVE_RESPONSE,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -88,13 +87,12 @@ from plane.utils.oauth import (
 )
 
 
-class ModuleListCreateAPIEndpoint(BaseAPIView):
+class ModuleListCreateAPIEndpoint(ScopedBaseAPIView):
     """Module List and Create Endpoint"""
 
     serializer_class = ModuleSerializer
     model = Module
     webhook_event = "module"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
@@ -208,6 +206,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(ModulePermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         """Create module
 
@@ -280,6 +279,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Module not found"),
         },
     )
+    @can(ModulePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """List or retrieve modules
 
@@ -310,11 +310,10 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class ModuleDetailAPIEndpoint(BaseAPIView):
+class ModuleDetailAPIEndpoint(ScopedBaseAPIView):
     """Module Detail Endpoint"""
 
     model = Module
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
@@ -438,6 +437,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             409: OpenApiResponse(description="Module with same external ID already exists"),
         },
     )
+    @can(ModulePermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         """Update module
 
@@ -504,6 +504,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Module not found"),
         },
     )
+    @can(ModulePermissions.VIEW, resource_param="pk")
     def get(self, request, slug, project_id, pk):
         """Retrieve module
 
@@ -526,6 +527,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ModulePermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         """Delete module
 
@@ -572,13 +574,12 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
+class ModuleIssueListCreateAPIEndpoint(ScopedBaseAPIView):
     """Module Work Item List and Create Endpoint"""
 
     serializer_class = ModuleIssueSerializer
     model = ModuleIssue
     webhook_event = "module_issue"
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
@@ -634,6 +635,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Module not found"),
         },
     )
+    @can(ModulePermissions.VIEW, resource_param="module_id")
     def get(self, request, slug, project_id, module_id):
         """List module work items
 
@@ -702,6 +704,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
             404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ModulePermissions.EDIT, resource_param="module_id")
     def post(self, request, slug, project_id, module_id):
         """Add module work items
 
@@ -776,7 +779,7 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         )
 
 
-class ModuleIssueDetailAPIEndpoint(BaseAPIView):
+class ModuleIssueDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset automatically provides `list`, `create`, `retrieve`,
     `update` and `destroy` actions related to module work items.
@@ -789,7 +792,6 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
     bulk = True
     use_read_replica = True
 
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
         "DELETE": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
@@ -844,6 +846,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Module not found"),
         },
     )
+    @can(ModulePermissions.VIEW, resource_param="module_id")
     def get(self, request, slug, project_id, module_id, issue_id):
         """List module work items
 
@@ -908,6 +911,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
             404: MODULE_ISSUE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ModulePermissions.EDIT, resource_param="module_id")
     def delete(self, request, slug, project_id, module_id, issue_id):
         """Remove module work item
 
@@ -935,8 +939,7 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
+class ModuleArchiveUnarchiveAPIEndpoint(ScopedBaseAPIView):
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_MODULES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_MODULES_WRITE_SCOPE]],
@@ -1055,6 +1058,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             404: OpenApiResponse(description="Project not found"),
         },
     )
+    @can(ModulePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         """List archived modules
 
@@ -1083,6 +1087,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ModulePermissions.ARCHIVE, resource_param="pk")
     def post(self, request, slug, project_id, pk):
         """Archive module
 
@@ -1117,6 +1122,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             404: MODULE_NOT_FOUND_RESPONSE,
         },
     )
+    @can(ModulePermissions.ARCHIVE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         """Unarchive module
 

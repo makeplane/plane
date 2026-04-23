@@ -20,9 +20,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiExample, OpenApiRequest
 
-from plane.api.views.base import BaseAPIView
+from plane.api.views.base import ScopedBaseAPIView
 from plane.api.serializers import EpicSerializer, EpicCreateSerializer, IssueSerializer
-from plane.app.permissions import ProjectEntityPermission
+from plane.permissions import can, EpicPermissions, WorkitemPermissions
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.issue_description_version_task import issue_description_version_task
 from plane.db.models import Issue, IssueType, Project, IssueAssignee, IssueLabel
@@ -47,7 +47,6 @@ from plane.utils.openapi.responses import (
     create_paginated_response,
 )
 from plane.utils.openapi.examples import SAMPLE_EPIC, EPIC_EXAMPLE, ISSUE_EXAMPLE
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -57,7 +56,7 @@ from plane.utils.oauth import (
 )
 
 
-class EpicListCreateAPIEndpoint(BaseAPIView):
+class EpicListCreateAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset provides `list` and `create` on epic level
     """
@@ -65,7 +64,6 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     model = Issue
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_EPICS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_EPICS_WRITE_SCOPE]],
@@ -111,6 +109,7 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
             401: UNAUTHORIZED_RESPONSE,
         },
     )
+    @can(EpicPermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id):
         epic_queryset = self.get_queryset()
         return self.paginate(
@@ -139,6 +138,7 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(EpicPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
         epic = IssueType.objects.filter(
@@ -231,7 +231,7 @@ class EpicListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EpicDetailAPIEndpoint(BaseAPIView):
+class EpicDetailAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset provides `retrieve` on epic level
     """
@@ -239,7 +239,6 @@ class EpicDetailAPIEndpoint(BaseAPIView):
     use_read_replica = True
 
     model = Issue
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_EPICS_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [PROJECTS_EPICS_WRITE_SCOPE]],
@@ -272,6 +271,7 @@ class EpicDetailAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(EpicPermissions.VIEW, resource_param="pk")
     def get(self, request, slug, project_id, pk):
         epic = self.get_queryset().get(id=pk)
         return Response(EpicSerializer(epic).data, status=status.HTTP_200_OK)
@@ -299,6 +299,7 @@ class EpicDetailAPIEndpoint(BaseAPIView):
             409: EXTERNAL_ID_EXISTS_RESPONSE,
         },
     )
+    @can(EpicPermissions.EDIT, resource_param="pk")
     def patch(self, request, slug, project_id, pk):
         epic = self.get_queryset().filter(pk=pk).first()
 
@@ -386,6 +387,7 @@ class EpicDetailAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(EpicPermissions.DELETE, resource_param="pk")
     def delete(self, request, slug, project_id, pk):
         epic = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk, type__is_epic=True)
 
@@ -406,13 +408,12 @@ class EpicDetailAPIEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class EpicIssuesAPIEndpoint(BaseAPIView):
+class EpicIssuesAPIEndpoint(ScopedBaseAPIView):
     """
     This viewset provides `list` and `create` on epic issues level
     """
 
     model = Issue
-    permission_classes = [ProjectEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_EPICS_READ_SCOPE, PROJECTS_WORK_ITEMS_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_EPICS_WRITE_SCOPE]],
@@ -435,6 +436,7 @@ class EpicIssuesAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(EpicPermissions.VIEW, resource_param="epic_id")
     def get(self, request, slug, project_id, epic_id):
         epic_issues = (
             Issue.issue_objects.filter(parent_id=epic_id, workspace__slug=slug)
@@ -464,6 +466,7 @@ class EpicIssuesAPIEndpoint(BaseAPIView):
             404: NOT_FOUND_RESPONSE,
         },
     )
+    @can(WorkitemPermissions.CREATE, resource_param="project_id")
     def post(self, request, slug, project_id, epic_id):
         parent_issue = Issue.objects.get(pk=epic_id)
         sub_work_item_ids = request.data.get("work_item_ids", [])

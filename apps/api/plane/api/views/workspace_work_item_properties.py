@@ -18,8 +18,8 @@ from rest_framework.response import Response
 from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiExample
 
 # Module imports
-from plane.api.views.base import BaseAPIView
-from plane.app.permissions import WorkspaceEntityPermission
+from plane.api.views.base import ScopedBaseAPIView
+from plane.permissions import can, WorkspaceCustomPropertyPermissions
 from plane.db.models import Workspace
 from plane.ee.models import IssueProperty, PropertyTypeEnum, RelationTypeEnum, IssuePropertyValue
 from plane.api.serializers import (
@@ -29,7 +29,6 @@ from plane.payment.flags.flag_decorator import check_feature_flag
 from plane.payment.flags.flag import FeatureFlag
 from plane.ee.utils.workspace_feature import check_workspace_feature, WorkspaceFeatureContext
 from plane.utils.openapi.decorators import workspace_work_item_property_docs
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -38,10 +37,9 @@ from plane.utils.oauth import (
 )
 
 
-class WorkspaceWorkItemPropertyListCreateAPIEndpoint(BaseAPIView):
+class WorkspaceWorkItemPropertyListCreateAPIEndpoint(ScopedBaseAPIView):
     model = IssueProperty
     serializer_class = IssuePropertyAPISerializer
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTIES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTIES_WRITE_SCOPE]],
@@ -103,6 +101,7 @@ class WorkspaceWorkItemPropertyListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug):
         issue_properties = self.model.objects.filter(
             workspace__slug=slug,
@@ -135,6 +134,7 @@ class WorkspaceWorkItemPropertyListCreateAPIEndpoint(BaseAPIView):
             409: OpenApiResponse(description="Property with the same external id and source already exists"),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.CREATE, resource_param="workspace_id", scope_param_type="workspace")
     def post(self, request, slug):
         try:
             workspace = Workspace.objects.get(slug=slug)
@@ -209,10 +209,9 @@ class WorkspaceWorkItemPropertyListCreateAPIEndpoint(BaseAPIView):
             )
 
 
-class WorkspaceWorkItemPropertyDetailAPIEndpoint(BaseAPIView):
+class WorkspaceWorkItemPropertyDetailAPIEndpoint(ScopedBaseAPIView):
     model = IssueProperty
     serializer_class = IssuePropertyAPISerializer
-    permission_classes = [WorkspaceEntityPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTIES_READ_SCOPE]],
         "PATCH": [[WRITE_SCOPE], [WORKSPACES_WORK_ITEM_PROPERTIES_WRITE_SCOPE]],
@@ -231,6 +230,7 @@ class WorkspaceWorkItemPropertyDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def get(self, request, slug, property_id):
         issue_property = self.model.objects.get(
             workspace__slug=slug,
@@ -263,6 +263,7 @@ class WorkspaceWorkItemPropertyDetailAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Default value must be a single value for non-multi properties"),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.EDIT, resource_param="workspace_id", scope_param_type="workspace")
     def patch(self, request, slug, property_id):
         issue_property = self.model.objects.get(
             workspace__slug=slug,
@@ -308,6 +309,7 @@ class WorkspaceWorkItemPropertyDetailAPIEndpoint(BaseAPIView):
             400: OpenApiResponse(description="Cannot delete property with associated work items"),
         },
     )
+    @can(WorkspaceCustomPropertyPermissions.DELETE, resource_param="workspace_id", scope_param_type="workspace")
     def delete(self, request, slug, property_id):
         issue_property = self.model.objects.get(
             workspace__slug=slug,

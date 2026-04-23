@@ -32,7 +32,7 @@ from plane.api.serializers import (
     IntakeIssueCreateSerializer,
     IntakeIssueUpdateSerializer,
 )
-from plane.app.permissions import ProjectLitePermission
+from plane.permissions import can, IntakePermissions, get_permission_conditions
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Intake,
@@ -45,7 +45,7 @@ from plane.db.models import (
 )
 from plane.utils.host import base_host
 from plane.ee.models import IntakeSetting
-from .base import BaseAPIView
+from .base import ScopedBaseAPIView
 from plane.db.models.intake import SourceType
 from plane.utils.openapi import (
     intake_docs,
@@ -65,7 +65,6 @@ from plane.utils.openapi import (
     INVALID_REQUEST_RESPONSE,
     DELETED_RESPONSE,
 )
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
 from plane.utils.oauth import (
     READ_SCOPE,
     WRITE_SCOPE,
@@ -74,13 +73,12 @@ from plane.utils.oauth import (
 )
 
 
-class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
+class IntakeIssueListCreateAPIEndpoint(ScopedBaseAPIView):
     """Intake Work Item List and Create Endpoint"""
 
     serializer_class = IntakeIssueSerializer
 
     model = Intake
-    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_INTAKES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
@@ -130,6 +128,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(IntakePermissions.VIEW, resource_param="project_id", defer_conditions=True)
     def get(self, request, slug, project_id):
         """List intake work items
 
@@ -137,6 +136,9 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         Returns paginated results when listing all intake work items.
         """
         issue_queryset = self.get_queryset()
+        conditions = get_permission_conditions(request)
+        if 'creator' in conditions:
+            issue_queryset = issue_queryset.filter(created_by=request.user)
         return self.paginate(
             request=request,
             queryset=(issue_queryset),
@@ -166,6 +168,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             400: INVALID_REQUEST_RESPONSE,
         },
     )
+    @can(IntakePermissions.SUBMIT, resource_param="project_id")
     def post(self, request, slug, project_id):
         """Create intake work item
 
@@ -243,10 +246,9 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class IntakeIssueDetailAPIEndpoint(BaseAPIView):
+class IntakeIssueDetailAPIEndpoint(ScopedBaseAPIView):
     """Intake Issue API Endpoint"""
 
-    permission_classes = [ProjectLitePermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [PROJECTS_INTAKES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [PROJECTS_INTAKES_WRITE_SCOPE]],
@@ -299,6 +301,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             ),
         },
     )
+    @can(IntakePermissions.VIEW, resource_param="project_id")
     def get(self, request, slug, project_id, issue_id):
         """Retrieve intake work item
 
@@ -330,6 +333,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             400: INVALID_REQUEST_RESPONSE,
         },
     )
+    @can(IntakePermissions.EDIT, resource_param="project_id")
     def patch(self, request, slug, project_id, issue_id):
         """Update intake work item
 
@@ -498,6 +502,7 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
             204: DELETED_RESPONSE,
         },
     )
+    @can(IntakePermissions.DELETE, resource_param="project_id")
     def delete(self, request, slug, project_id, issue_id):
         """Delete intake work item
 

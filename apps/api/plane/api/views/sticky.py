@@ -12,9 +12,8 @@
 from rest_framework.response import Response
 from rest_framework import status
 
-from plane.api.views.base import BaseViewSet
-from plane.app.permissions import WorkspaceUserPermission
-from plane.authentication.permissions.oauth import TokenHasScopeIfOAuth
+from plane.api.views.base import ScopedBaseViewSet
+from plane.permissions import can, WorkspacePermissions
 from plane.db.models import Sticky, Workspace
 from plane.api.serializers import StickySerializer
 
@@ -30,11 +29,10 @@ from plane.utils.openapi import (
 from plane.utils.oauth import READ_SCOPE, WRITE_SCOPE, STICKIES_READ_SCOPE, STICKIES_WRITE_SCOPE
 
 
-class StickyViewSet(BaseViewSet):
+class StickyViewSet(ScopedBaseViewSet):
     serializer_class = StickySerializer
     model = Sticky
     use_read_replica = True
-    permission_classes = [WorkspaceUserPermission, TokenHasScopeIfOAuth]
     required_alternate_scopes = {
         "GET": [[READ_SCOPE], [STICKIES_READ_SCOPE]],
         "POST": [[WRITE_SCOPE], [STICKIES_WRITE_SCOPE]],
@@ -61,6 +59,7 @@ class StickyViewSet(BaseViewSet):
             201: OpenApiResponse(description="Sticky created", response=StickySerializer, examples=[STICKY_EXAMPLE])
         },
     )
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def create(self, request, slug):
         workspace = Workspace.objects.get(slug=slug)
         serializer = StickySerializer(data=request.data)
@@ -79,6 +78,7 @@ class StickyViewSet(BaseViewSet):
             )
         },
     )
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def list(self, request, slug):
         query = request.query_params.get("query", False)
         stickies = self.get_queryset().order_by("-created_at")
@@ -98,6 +98,7 @@ class StickyViewSet(BaseViewSet):
         description="Retrieve a sticky by its ID",
         responses={200: OpenApiResponse(description="Sticky", response=StickySerializer, examples=[STICKY_EXAMPLE])},
     )
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def retrieve(self, request, slug, pk):
         sticky = self.get_object()
         return Response(StickySerializer(sticky).data)
@@ -109,6 +110,7 @@ class StickyViewSet(BaseViewSet):
         request=OpenApiRequest(request=StickySerializer),
         responses={200: OpenApiResponse(description="Sticky", response=StickySerializer, examples=[STICKY_EXAMPLE])},
     )
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def partial_update(self, request, slug, pk):
         sticky = self.get_object()
         serializer = StickySerializer(sticky, data=request.data, partial=True)
@@ -123,6 +125,7 @@ class StickyViewSet(BaseViewSet):
         description="Delete a sticky by its ID",
         responses={204: DELETED_RESPONSE},
     )
+    @can(WorkspacePermissions.VIEW, resource_param="workspace_id", scope_param_type="workspace")
     def destroy(self, request, slug, pk):
         sticky = self.get_object()
         sticky.delete()

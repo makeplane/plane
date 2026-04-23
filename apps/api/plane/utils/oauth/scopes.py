@@ -115,6 +115,9 @@ WORKSPACES_WORK_ITEM_PROPERTIES_READ_SCOPE = "workspaces.work_item_properties:re
 WORKSPACES_WORK_ITEM_PROPERTIES_WRITE_SCOPE = "workspaces.work_item_properties:write"
 WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE = "workspaces.work_item_property_options:read"
 WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE = "workspaces.work_item_property_options:write"
+WORKSPACES_PERMISSIONS_READ_SCOPE = "workspaces.permissions:read"
+WORKSPACES_ROLES_READ_SCOPE = "workspaces.roles:read"
+WORKSPACES_PERMISSION_SCHEMES_READ_SCOPE = "workspaces.permission_schemes:read"
 
 # STICKIES SCOPES
 STICKIES_READ_SCOPE = "stickies:read"
@@ -242,6 +245,9 @@ ALL_OAUTH_SCOPES = {
     WORKSPACES_WORK_ITEM_PROPERTIES_WRITE_SCOPE: "Write access to workspace work item properties",
     WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_READ_SCOPE: "Read access to workspace work item property options",
     WORKSPACES_WORK_ITEM_PROPERTY_OPTIONS_WRITE_SCOPE: "Write access to workspace work item property options",
+    WORKSPACES_PERMISSIONS_READ_SCOPE: "Read access to the calling user's effective permissions",
+    WORKSPACES_ROLES_READ_SCOPE: "Read access to workspace roles (system + custom)",
+    WORKSPACES_PERMISSION_SCHEMES_READ_SCOPE: "Read access to workspace permission schemes (system + custom)",
     # Stickies scopes
     STICKIES_READ_SCOPE: "Read access to stickies",
     STICKIES_WRITE_SCOPE: "Write access to stickies",

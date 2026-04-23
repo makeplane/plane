@@ -198,3 +198,9 @@ from .workflow import (
     WorkflowWorkItemApproverAPIEndpoint,
     WorkflowActivityAPIEndpoint,
 )
+
+from .permission import (
+    UserPermissionEndpoint,
+    RoleListAPIEndpoint,
+    PermissionSchemeListAPIEndpoint,
+)
