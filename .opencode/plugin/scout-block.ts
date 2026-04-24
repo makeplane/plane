@@ -17,10 +17,16 @@ export const ScoutBlockPlugin: Plugin = async ({ directory }) => {
       const result = checkScoutBlock({
         toolName: input.tool,
         toolInput: output.args,
-        options: { ckignorePath, claudeDir }
+        options: {
+          ckignorePath,
+          claudeDir,
+          cwd: directory,
+          projectConfigDirName: `.opencode`
+        }
       });
 
       if (result.blocked) {
+        const configPath = result.configPath || `.opencode/.ckignore`;
         let errorMsg = `[Scout Block] Access to '${result.path}' blocked.\n`;
         errorMsg += `Pattern: ${result.pattern}\n`;
 
@@ -29,7 +35,7 @@ export const ScoutBlockPlugin: Plugin = async ({ directory }) => {
           result.suggestions.forEach((s: string) => errorMsg += `  - ${s}\n`);
         }
 
-        errorMsg += `\nTo allow, add '!${result.pattern}' to .opencode/.ckignore`;
+        errorMsg += `\nTo allow, add '!${result.pattern}' to ${configPath}`;
 
         throw new Error(errorMsg);
       }

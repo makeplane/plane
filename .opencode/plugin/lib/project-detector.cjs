@@ -202,7 +202,7 @@ function isGitRepo(startDir) {
  */
 function getGitRemoteUrl() {
   if (!isGitRepo()) return null;
-  return execSafe('git config --get remote.origin.url');
+  return execFileSafe('git', ['config', '--get', 'remote.origin.url']);
 }
 
 /**
@@ -211,7 +211,7 @@ function getGitRemoteUrl() {
  */
 function getGitBranch() {
   if (!isGitRepo()) return null;
-  return execSafe('git branch --show-current');
+  return execFileSafe('git', ['branch', '--show-current']);
 }
 
 /**
@@ -220,7 +220,7 @@ function getGitBranch() {
  */
 function getGitRoot() {
   if (!isGitRepo()) return null;
-  return execSafe('git rev-parse --show-toplevel');
+  return execFileSafe('git', ['rev-parse', '--show-toplevel']);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

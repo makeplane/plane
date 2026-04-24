@@ -7,7 +7,9 @@ metadata:
   version: "1.0.0"
 ---
 
-Create distinctive, production-grade frontend interfaces. Implement real working code with exceptional aesthetic attention.
+This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.
+
+**IMPORTANT**: MUST follow Design Thinking, Frontend Aesthetics Guidelines, Asset & Analysis References, and Anti-Patterns (AI Slop) sections below. DO NOT skip these rules.
 
 ## Workflow Selection
 
@@ -52,7 +54,7 @@ Three configurable parameters that drive design decisions. Set defaults at sessi
 
 See `./references/bento-motion-engine.md` for dial-driven SaaS dashboard implementation.
 
-## Design Thinking (From Scratch)
+## Design Thinking
 
 Before coding, commit to a BOLD aesthetic direction:
 - **Purpose**: What problem does this interface solve? Who uses it?
@@ -60,16 +62,32 @@ Before coding, commit to a BOLD aesthetic direction:
 - **Constraints**: Technical requirements (framework, performance, accessibility).
 - **Differentiation**: What makes this UNFORGETTABLE? What's the one thing someone will remember?
 
-**CRITICAL**: Execute with precision. Bold maximalism and refined minimalism both work - intentionality is key.
+**CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
 
-## Aesthetics Guidelines
+Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
+- Production-grade and functional
+- Visually striking and memorable
+- Cohesive with a clear aesthetic point-of-view
+- Meticulously refined in every detail
 
-- **Typography**: Avoid Arial/Inter; use distinctive, characterful fonts. Pair display + body fonts.
-- **Color**: Commit to cohesive palette. CSS variables. Dominant colors with sharp accents.
-- **Motion**: CSS-first, anime.js for complex (`./references/animejs.md`). Orchestrated page loads > scattered micro-interactions.
-- **Spatial**: Unexpected layouts. Asymmetry. Overlap. Negative space OR controlled density.
-- **Backgrounds**: Atmosphere over solid colors. Gradients, noise, patterns, shadows, grain.
-- **Assets**: Generate with `ck:ai-multimodal`, process with `ck:media-processing`
+## Frontend Aesthetics Guidelines
+
+Focus on:
+- **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
+- **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
+- **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
+- **Spatial Composition**: Unexpected layouts. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
+- **Backgrounds & Visual Details**: Create atmosphere and depth rather than defaulting to solid colors. Add contextual effects and textures that match the overall aesthetic. Apply creative forms like gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, custom cursors, and grain overlays.
+
+NEVER use generic AI-generated aesthetics like overused font families (Inter, Roboto, Arial, system fonts), cliched color schemes (particularly purple gradients on white backgrounds), predictable layouts and component patterns, and cookie-cutter design that lacks context-specific character.
+
+Interpret creatively and make unexpected choices that feel genuinely designed for the context. No design should be the same. Vary between light and dark themes, different fonts, different aesthetics. NEVER converge on common choices (Space Grotesk, for example) across generations.
+
+**IMPORTANT**: Match implementation complexity to the aesthetic vision. Maximalist designs need elaborate code with extensive animations and effects. Minimalist or refined designs need restraint, precision, and careful attention to spacing, typography, and subtle details. Elegance comes from executing the vision well.
+
+**Remember:** Claude is capable of extraordinary creative work. Don't hold back, show what can truly be created when thinking outside the box and committing fully to a distinctive vision.
+
+**Assets**: Generate images with `ck:ai-multimodal`, process with `ck:media-processing`
 
 ## Asset & Analysis References
 
@@ -93,15 +111,17 @@ Quick start: `./references/ai-multimodal-overview.md`
 
 Strongly prefer alternatives to these LLM defaults. Full rules: `./references/anti-slop-rules.md`
 
-**Typography** — Avoid Inter/Roboto/Arial. Prefer: `Geist`, `Outfit`, `Cabinet Grotesk`, `Satoshi`
+**Typography** — Avoid Inter/Roboto/Arial. Prefer: Trending Google Fonts that supports Vietnamese characters, `Geist`, `Outfit`, `Cabinet Grotesk`, `Satoshi` (search for best matches)
+
+**Font size** — ALWAYS use font size larger than 16px for input fields to avoid zoom on mobile devices.
 
 **Color** — Avoid AI purple/blue gradient aesthetic, pure `#000000`, oversaturated accents. Use neutral bases with a single considered accent.
 
-**Layout** — Avoid 3-column equal card feature rows, centered heroes at high variance, `h-screen`. Use asymmetric grids, split-screen, `min-h-[100dvh]`.
+**Layout** — Avoid 3-column equal card feature rows, centered heroes at high variance, `h-screen`. Use asymmetric grids, split-screen, `min-h-[100dvh]`. Mobile-first approach is a must.
 
 **Content** — Avoid "John Doe", "Acme Corp", round numbers, AI copy clichés ("Elevate", "Seamless", "Unleash"). Use realistic names, organic data, plain specific language.
 
-**Effects** — Avoid neon/outer glows, custom cursors, gradient text on headers. Use tinted inner shadows, spring physics.
+**Effects** — Avoid neon/outer glows, custom cursors, gradient text on headers (unless you're asked to do so). Use tinted inner shadows, spring physics.
 
 **Components** — Avoid default unstyled shadcn, Lucide-only icons, generic card-border-shadow pattern at high density. Always customize, try Phosphor/Heroicons, use spacing over cards.
 

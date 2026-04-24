@@ -8,9 +8,13 @@
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { execFileSync } = require('child_process');
 
 const LOCAL_CONFIG_PATH = '.opencode/.ck.json';
 const GLOBAL_CONFIG_PATH = path.join(os.homedir(), '.claude', '.ck.json');
+const SESSION_STATE_LOCK_TIMEOUT_MS = 500;
+const SESSION_STATE_LOCK_RETRY_MS = 10;
+const SESSION_STATE_LOCK_STALE_MS = 5000;
 
 // Legacy export for backward compatibility
 const CONFIG_PATH = LOCAL_CONFIG_PATH;
@@ -56,12 +60,13 @@ const DEFAULT_CONFIG = {
   },
   skills: {
     research: {
-      useGemini: true  // Toggle Gemini CLI usage in research skill
+      useGemini: false  // Opt-in: set true only with working Gemini CLI
     }
   },
   assertions: [],
   statusline: 'full',
   statuslineColors: true,
+  statuslineQuota: true,
   hooks: {
     'session-init': true,
     'subagent-init': true,
@@ -179,6 +184,85 @@ function writeSessionState(sessionId, state) {
   }
 }
 
+function sleepSync(ms) {
+  if (ms <= 0) return;
+
+  if (typeof SharedArrayBuffer === 'function' && typeof Atomics === 'object' && typeof Atomics.wait === 'function') {
+    const signal = new Int32Array(new SharedArrayBuffer(4));
+    Atomics.wait(signal, 0, 0, ms);
+    return;
+  }
+
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    // Busy wait is a last-resort fallback when Atomics.wait is unavailable.
+  }
+}
+
+function getSessionStateLockPath(sessionId) {
+  return `${getSessionTempPath(sessionId)}.lock`;
+}
+
+function removeStaleSessionStateLock(lockPath, now = Date.now()) {
+  try {
+    const stats = fs.statSync(lockPath);
+    if (now - stats.mtimeMs < SESSION_STATE_LOCK_STALE_MS) return false;
+    fs.unlinkSync(lockPath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function acquireSessionStateLock(sessionId) {
+  const lockPath = getSessionStateLockPath(sessionId);
+  const deadline = Date.now() + SESSION_STATE_LOCK_TIMEOUT_MS;
+
+  while (Date.now() <= deadline) {
+    try {
+      const fd = fs.openSync(lockPath, 'wx');
+      fs.writeFileSync(fd, String(process.pid));
+      return { fd, lockPath };
+    } catch (error) {
+      if (error?.code !== 'EEXIST') return null;
+      removeStaleSessionStateLock(lockPath);
+      sleepSync(SESSION_STATE_LOCK_RETRY_MS);
+    }
+  }
+
+  return null;
+}
+
+function releaseSessionStateLock(lock) {
+  if (!lock) return;
+  try { fs.closeSync(lock.fd); } catch (_) { /* ignore */ }
+  try { fs.unlinkSync(lock.lockPath); } catch (_) { /* ignore */ }
+}
+
+/**
+ * Update session state by merging or transforming the existing value.
+ * @param {string} sessionId - Session identifier
+ * @param {Object|Function} updater - Partial state or transform function
+ * @returns {boolean} Success status
+ */
+function updateSessionState(sessionId, updater) {
+  if (!sessionId) return false;
+  const lock = acquireSessionStateLock(sessionId);
+  if (!lock) return false;
+
+  try {
+    const current = readSessionState(sessionId) || {};
+    const next = typeof updater === 'function'
+      ? updater({ ...current })
+      : { ...current, ...(updater || {}) };
+
+    if (!next || typeof next !== 'object') return false;
+    return writeSessionState(sessionId, next);
+  } finally {
+    releaseSessionStateLock(lock);
+  }
+}
+
 /**
  * Characters invalid in filenames across Windows, macOS, Linux
  * Windows: < > : " / \ | ? *
@@ -267,27 +351,27 @@ const DEFAULT_EXEC_TIMEOUT_MS = 5000;
  * @returns {string|null} Command output or null
  */
 function execSafe(cmd, options = {}) {
-  // Whitelist of safe read-only commands
-  const allowedCommands = [
-    'git branch --show-current',
-    'git rev-parse --abbrev-ref HEAD',
-    'git rev-parse --show-toplevel'
-  ];
-  if (!allowedCommands.includes(cmd)) {
+  const allowedCommands = {
+    'git branch --show-current': ['git', ['branch', '--show-current']],
+    'git rev-parse --abbrev-ref HEAD': ['git', ['rev-parse', '--abbrev-ref', 'HEAD']],
+    'git rev-parse --show-toplevel': ['git', ['rev-parse', '--show-toplevel']]
+  };
+  const commandSpec = allowedCommands[cmd];
+  if (!commandSpec) {
     return null;
   }
 
   const { cwd = undefined, timeout = DEFAULT_EXEC_TIMEOUT_MS } = options;
+  const [file, args] = commandSpec;
 
   try {
-    return require('child_process')
-      .execSync(cmd, {
-        encoding: 'utf8',
-        timeout,
-        cwd,
-        stdio: ['pipe', 'pipe', 'pipe']
-      })
-      .trim();
+    return execFileSync(file, args, {
+      encoding: 'utf8',
+      timeout,
+      cwd,
+      stdio: ['pipe', 'pipe', 'pipe'],
+      windowsHide: true
+    }).trim();
   } catch (e) {
     return null;
   }
@@ -525,6 +609,8 @@ function loadConfig(options = {}) {
     // Statusline mode
     result.statusline = merged.statusline || 'full';
     result.statuslineColors = merged.statuslineColors ?? true;
+    result.statuslineQuota = merged.statuslineQuota ?? true;
+    result.statuslineLayout = merged.statuslineLayout || undefined;
 
     return sanitizeConfig(result, projectRoot);
   } catch (e) {
@@ -544,7 +630,8 @@ function getDefaultConfig(includeProject = true, includeAssertions = true, inclu
     skills: { ...DEFAULT_CONFIG.skills },
     hooks: { ...DEFAULT_CONFIG.hooks },
     statusline: 'full',
-    statuslineColors: true
+    statuslineColors: true,
+    statuslineQuota: true
   };
   if (includeLocale) {
     result.locale = { ...DEFAULT_CONFIG.locale };
@@ -821,6 +908,7 @@ module.exports = {
   getSessionTempPath,
   readSessionState,
   writeSessionState,
+  updateSessionState,
   resolvePlanPath,
   extractSlugFromBranch,
   findMostRecentPlan,
@@ -835,3 +923,4 @@ module.exports = {
   extractTaskListId,
   isHookEnabled
 };
+

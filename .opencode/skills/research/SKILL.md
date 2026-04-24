@@ -28,9 +28,10 @@ First, you will clearly define the research scope by:
 You will employ a multi-source research strategy:
 
 1. **Search Strategy**:
-   - **Gemini Toggle**: Check `.opencode/.ck.json` (or `~/.opencode/.ck.json`) for `skills.research.useGemini` (default: `true`). If `false`, skip Gemini and use WebSearch.
+   - **Gemini Toggle**: Check `.opencode/.ck.json` (or `~/.opencode/.ck.json`) for `skills.research.useGemini` (default: `false`). If `false` or absent, skip Gemini and use WebSearch directly.
    - **Gemini Model**: Read from `.opencode/.ck.json`: `gemini.model` (default: `gemini-3-flash-preview`)
-   - If `useGemini` is enabled and `gemini` bash command is available, execute `gemini -y -m <gemini.model> "...your search prompt..."` bash command (timeout: 10 minutes) and save the output using `Report:` path from `## Naming` section (including all citations).
+   - If `useGemini` is `true`: first validate Gemini CLI works by running `command -v gemini && echo "ping" | timeout 15 gemini -y -m <gemini.model>`. If validation fails or times out, fall back to WebSearch and warn: "Gemini CLI unavailable, falling back to WebSearch. Set `skills.research.useGemini: false` in `.opencode/.ck.json` to suppress this check."
+   - If validation passes, execute `echo "...your search prompt..." | timeout 180 gemini -y -m <gemini.model>` (timeout: 3 minutes) and save the output using `Report:` path from `## Naming` section (including all citations). If execution times out, fall back to WebSearch for that query.
    - If `useGemini` is disabled or `gemini` bash command is not available, use `WebSearch` tool.
    - Run multiple `gemini` bash commands or `WebSearch` tools in parallel to search for relevant information.
    - Craft precise search queries with relevant keywords
