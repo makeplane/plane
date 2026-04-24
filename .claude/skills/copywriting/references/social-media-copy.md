@@ -5,12 +5,10 @@ Platform-specific templates and patterns.
 ## Twitter/X
 
 ### Character Limits
-
 - Tweet: 280 characters
 - Preview shown: ~140 characters (critical)
 
 ### Thread Structure
-
 ```
 Tweet 1 (Hook):
 [Bold claim or curiosity gap]
@@ -25,7 +23,6 @@ Final Tweet (CTA):
 ### High-Performing Patterns
 
 **Hot Take:**
-
 ```
 Unpopular opinion: [contrarian view]
 
@@ -33,7 +30,6 @@ Here's why 👇
 ```
 
 **Story Hook:**
-
 ```
 I [did X] and [unexpected result].
 
@@ -41,7 +37,6 @@ Here's what happened:
 ```
 
 **List Post:**
-
 ```
 [Number] things I wish I knew about [topic]:
 
@@ -51,7 +46,6 @@ Here's what happened:
 ```
 
 **Before/After:**
-
 ```
 [Time] ago: [painful state]
 Today: [successful state]
@@ -60,7 +54,6 @@ What changed:
 ```
 
 ### Twitter Tips
-
 - First 140 characters = hook
 - Line breaks = readability
 - No hashtags (usually)
@@ -72,12 +65,10 @@ What changed:
 ## LinkedIn
 
 ### Character Limits
-
 - Post: 3,000 characters
 - "See more" appears after ~210 characters
 
 ### Structure
-
 ```
 [Hook line - must grab attention]
 [Second hook line]
@@ -95,7 +86,6 @@ What changed:
 ### High-Performing Patterns
 
 **Humble Brag:**
-
 ```
 I almost didn't post this.
 
@@ -108,7 +98,6 @@ Key lesson: [insight]
 ```
 
 **Contrarian:**
-
 ```
 Stop saying [common advice].
 
@@ -117,7 +106,6 @@ Here's why it's wrong for most people:
 ```
 
 **Story:**
-
 ```
 [Start with dramatic moment]
 
@@ -131,7 +119,6 @@ Let me back up.
 ```
 
 ### LinkedIn Tips
-
 - First 2 lines = everything
 - Stories outperform tips
 - Personal > professional
@@ -143,7 +130,6 @@ Let me back up.
 ## Instagram
 
 ### Caption Structure
-
 ```
 [Hook - first line visible]
 .
@@ -160,7 +146,6 @@ Let me back up.
 ```
 
 ### Caption Hooks
-
 ```
 Stop scrolling if you [pain point]
 This changed everything for me
@@ -169,7 +154,6 @@ The truth about [topic]
 ```
 
 ### Instagram Tips
-
 - First line = hook (before "more")
 - Use line breaks for readability
 - CTA: Ask for saves, shares, comments
@@ -180,7 +164,6 @@ The truth about [topic]
 ## TikTok/Reels
 
 ### Hook (First 1-3 seconds)
-
 ```
 "Here's why you're [failing at X]"
 "The [thing] nobody's talking about"
@@ -190,7 +173,6 @@ The truth about [topic]
 ```
 
 ### Script Structure (15-60 sec)
-
 ```
 [0-3s] Hook
 [3-20s] Problem/setup
@@ -199,7 +181,6 @@ The truth about [topic]
 ```
 
 ### Overlay Text
-
 ```
 [Attention-grabbing text on screen]
 - Keep it short (2-5 words)
@@ -212,7 +193,6 @@ The truth about [topic]
 ## Universal Social Patterns
 
 ### Engagement Drivers
-
 - Questions that invite opinions
 - Controversial (but defensible) takes
 - Specific numbers and results
@@ -220,7 +200,6 @@ The truth about [topic]
 - Behind-the-scenes content
 
 ### What to Avoid
-
 - Generic motivational quotes
 - Excessive hashtags
 - Links in posts (except Twitter)
@@ -228,7 +207,6 @@ The truth about [topic]
 - Being salesy without value
 
 ### Content Ratio
-
 ```
 80% value (teach, entertain, inspire)
 20% promotion (offers, launches)
@@ -236,9 +214,9 @@ The truth about [topic]
 
 ## Platform Comparison
 
-| Platform  | Tone                   | Length        | Best For             |
-| --------- | ---------------------- | ------------- | -------------------- |
-| Twitter/X | Punchy, opinionated    | Short threads | Hot takes, insights  |
-| LinkedIn  | Professional, personal | Medium-long   | Stories, credibility |
-| Instagram | Visual, lifestyle      | Medium        | Community, brand     |
-| TikTok    | Raw, fast, trendy      | Short         | Awareness, virality  |
+| Platform | Tone | Length | Best For |
+|----------|------|--------|----------|
+| Twitter/X | Punchy, opinionated | Short threads | Hot takes, insights |
+| LinkedIn | Professional, personal | Medium-long | Stories, credibility |
+| Instagram | Visual, lifestyle | Medium | Community, brand |
+| TikTok | Raw, fast, trendy | Short | Awareness, virality |

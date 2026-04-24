@@ -83,31 +83,25 @@ Use the naming pattern from the `## Naming` section injected by hooks. The patte
 ## Phase Implementation Report
 
 ### Executed Phase
-
 - Phase: [phase-XX-name]
 - Plan: [plan directory path]
 - Status: [completed/blocked/partial]
 
 ### Files Modified
-
 [List actual files changed with line counts]
 
 ### Tasks Completed
-
 [Checked list matching phase todo items]
 
 ### Tests Status
-
 - Type check: [pass/fail]
 - Unit tests: [pass/fail + coverage]
 - Integration tests: [pass/fail]
 
 ### Issues Encountered
-
 [Any conflicts, blockers, or deviations]
 
 ### Next Steps
-
 [Dependencies unblocked, follow-up tasks]
 ```
 
@@ -117,7 +111,6 @@ Use the naming pattern from the `## Naming` section injected by hooks. The patte
 ## Team Mode (when spawned as teammate)
 
 When operating as a team member:
-
 1. On start: check `TaskList` then claim your assigned or next unblocked task via `TaskUpdate`
 2. Read full task description via `TaskGet` before starting work
 3. Respect file ownership boundaries stated in task description — never edit files outside your boundary

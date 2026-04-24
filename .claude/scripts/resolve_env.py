@@ -192,11 +192,23 @@ def resolve_env(
             if verbose:
                 print(f"✗ {var_name} not in: {description} (file not found)")
 
-    # Not found anywhere
-    if verbose:
-        print(f"\n❌ {var_name} not found in any location")
-        if default:
-            print(f"   Using default: {default}")
+    # Not found anywhere — always show checked locations to help users debug
+    checked_files = [str(p) for _, p in env_paths if p.exists()]
+    missing_files = [str(p) for _, p in env_paths if not p.exists()]
+    print(f"[!] {var_name} not found in any location", file=sys.stderr)
+    if checked_files:
+        print(f"    Checked (file exists, key absent):", file=sys.stderr)
+        for f in checked_files:
+            print(f"      - {f}", file=sys.stderr)
+    if missing_files and verbose:
+        print(f"    Not found (file missing):", file=sys.stderr)
+        for f in missing_files:
+            print(f"      - {f}", file=sys.stderr)
+    print(f"    Tip: Add {var_name}=<value> to one of the .env files above", file=sys.stderr)
+
+    if default:
+        if verbose:
+            print(f"    Using default: {default}", file=sys.stderr)
 
     return default
 

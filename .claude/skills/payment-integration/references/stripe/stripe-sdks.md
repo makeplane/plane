@@ -4,27 +4,27 @@ Server-side SDKs for secure Stripe API integration.
 
 ## Supported Languages
 
-| Language | Package                  | Install                                  |
-| -------- | ------------------------ | ---------------------------------------- |
-| Node.js  | `stripe`                 | `npm install stripe`                     |
-| Python   | `stripe`                 | `pip install stripe`                     |
-| Ruby     | `stripe`                 | `gem install stripe`                     |
-| Go       | `stripe-go`              | `go get github.com/stripe/stripe-go/v76` |
-| PHP      | `stripe/stripe-php`      | `composer require stripe/stripe-php`     |
-| Java     | `com.stripe:stripe-java` | Maven/Gradle                             |
-| .NET     | `Stripe.net`             | `dotnet add package Stripe.net`          |
+| Language | Package | Install |
+|----------|---------|---------|
+| Node.js | `stripe` | `npm install stripe` |
+| Python | `stripe` | `pip install stripe` |
+| Ruby | `stripe` | `gem install stripe` |
+| Go | `stripe-go` | `go get github.com/stripe/stripe-go/v76` |
+| PHP | `stripe/stripe-php` | `composer require stripe/stripe-php` |
+| Java | `com.stripe:stripe-java` | Maven/Gradle |
+| .NET | `Stripe.net` | `dotnet add package Stripe.net` |
 
 ## Quick Start (Node.js)
 
 ```javascript
-const stripe = require("stripe")("sk_test_...");
+const stripe = require('stripe')('sk_test_...');
 
 // Create checkout session
 const session = await stripe.checkout.sessions.create({
-  mode: "payment",
-  line_items: [{ price: "price_xxx", quantity: 1 }],
-  success_url: "https://example.com/success",
-  cancel_url: "https://example.com/cancel",
+  mode: 'payment',
+  line_items: [{ price: 'price_xxx', quantity: 1 }],
+  success_url: 'https://example.com/success',
+  cancel_url: 'https://example.com/cancel',
 });
 ```
 

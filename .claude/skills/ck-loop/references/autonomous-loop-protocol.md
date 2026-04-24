@@ -30,7 +30,6 @@ cat loop-results.tsv               # full results so far
 ```
 
 Extract patterns:
-
 - Which file types / functions yielded improvements?
 - Which changes were consistently discarded?
 - Is the metric trending, plateauing, or oscillating?
@@ -82,12 +81,12 @@ DELTA=$(echo "$RESULT - $PREV_METRIC" | bc)
 
 ### Crash Recovery
 
-| Outcome                | Meaning      | Action                                             |
-| ---------------------- | ------------ | -------------------------------------------------- |
-| Exit 0, number printed | Success      | Proceed to Phase 5.5 / 6                           |
-| Exit 0, no number      | Bad command  | Log `error:no-number`, revert, fix verify cmd      |
-| Exit non-zero          | Verify crash | Log `error:verify-crash`, revert, treat as discard |
-| Timeout (>30s)         | Too slow     | Log `error:timeout`, abort loop, surface to user   |
+| Outcome | Meaning | Action |
+|---------|---------|--------|
+| Exit 0, number printed | Success | Proceed to Phase 5.5 / 6 |
+| Exit 0, no number | Bad command | Log `error:no-number`, revert, fix verify cmd |
+| Exit non-zero | Verify crash | Log `error:verify-crash`, revert, treat as discard |
+| Timeout (>30s) | Too slow | Log `error:timeout`, abort loop, surface to user |
 
 ---
 
@@ -100,9 +99,9 @@ eval "$GUARD_CMD"
 GUARD_EXIT=$?
 ```
 
-| Guard Exit      | Action                                                             |
-| --------------- | ------------------------------------------------------------------ |
-| 0 (pass)        | Proceed to Phase 6                                                 |
+| Guard Exit | Action |
+|------------|--------|
+| 0 (pass) | Proceed to Phase 6 |
 | Non-zero (fail) | Revert commit, rework change (max 2 rework attempts), then discard |
 
 If rework attempts exhausted: log as discarded with reason `guard-fail`, proceed to Phase 7.
@@ -113,14 +112,14 @@ If rework attempts exhausted: log as discarded with reason `guard-fail`, proceed
 
 ### Decision Matrix
 
-| Metric Direction | Delta vs Min-Delta | Guard | Decision                  |
-| ---------------- | ------------------ | ----- | ------------------------- |
-| higher is better | delta ≥ Min-Delta  | pass  | **KEEP**                  |
-| higher is better | delta < Min-Delta  | pass  | **DISCARD** (no progress) |
-| lower is better  | delta ≤ -Min-Delta | pass  | **KEEP**                  |
-| lower is better  | delta > -Min-Delta | pass  | **DISCARD** (no progress) |
-| any              | any                | fail  | **DISCARD** (guard fail)  |
-| any              | verify crash       | n/a   | **DISCARD** (error)       |
+| Metric Direction | Delta vs Min-Delta | Guard | Decision |
+|------------------|--------------------|-------|----------|
+| higher is better | delta ≥ Min-Delta | pass | **KEEP** |
+| higher is better | delta < Min-Delta | pass | **DISCARD** (no progress) |
+| lower is better  | delta ≤ -Min-Delta | pass | **KEEP** |
+| lower is better  | delta > -Min-Delta | pass | **DISCARD** (no progress) |
+| any | any | fail | **DISCARD** (guard fail) |
+| any | verify crash | n/a | **DISCARD** (error) |
 
 ### Keep
 
@@ -148,7 +147,6 @@ Append one TSV line to `loop-results.tsv`:
 ```
 
 Example:
-
 ```
 3	2026-03-27T14:02:11	84.7	+2.3	yes	add branch coverage to tokenizer edge cases
 4	2026-03-27T14:03:45	84.7	+0.0	no	extract shared assertion helper
@@ -159,17 +157,16 @@ Example:
 ## Phase 8: Repeat or Stop
 
 Continue if ALL conditions met:
-
 - Iteration count < configured max
 - Consecutive discards < 10
 - User has not interrupted (check for `loop-stop` file or Ctrl-C signal)
 
 ### Stuck Detection
 
-| Consecutive Discards | Action                                                                                               |
-| -------------------- | ---------------------------------------------------------------------------------------------------- |
-| 5                    | Analyze `loop-results.tsv` for patterns → shift strategy (different scope area, different technique) |
-| 10                   | **STOP** — surface findings to user, recommend manual intervention                                   |
+| Consecutive Discards | Action |
+|----------------------|--------|
+| 5 | Analyze `loop-results.tsv` for patterns → shift strategy (different scope area, different technique) |
+| 10 | **STOP** — surface findings to user, recommend manual intervention |
 
 ### Final Report
 
@@ -186,11 +183,11 @@ Recommendation: [continue / diminishing returns / target met]
 
 ## Anti-Patterns
 
-| Anti-Pattern                        | Why It Fails                                         | Correct Approach          |
-| ----------------------------------- | ---------------------------------------------------- | ------------------------- |
-| Multiple changes per iteration      | Cannot attribute metric change to specific edit      | One atomic change only    |
-| Verify before commit                | No rollback point if verify crashes mid-run          | Always commit first       |
-| Editing guard-scope files           | Guard becomes meaningless if you edit what it checks | Guard files are read-only |
-| `git reset` instead of `git revert` | Destroys history, breaks pattern analysis            | Use `git revert`          |
-| Skipping Phase 1 review             | Repeats failed patterns, wastes iterations           | Always read log + diff    |
-| Ignoring `Min-Delta`                | Micro-improvements cause noise, no real progress     | Set meaningful threshold  |
+| Anti-Pattern | Why It Fails | Correct Approach |
+|--------------|--------------|------------------|
+| Multiple changes per iteration | Cannot attribute metric change to specific edit | One atomic change only |
+| Verify before commit | No rollback point if verify crashes mid-run | Always commit first |
+| Editing guard-scope files | Guard becomes meaningless if you edit what it checks | Guard files are read-only |
+| `git reset` instead of `git revert` | Destroys history, breaks pattern analysis | Use `git revert` |
+| Skipping Phase 1 review | Repeats failed patterns, wastes iterations | Always read log + diff |
+| Ignoring `Min-Delta` | Micro-improvements cause noise, no real progress | Set meaningful threshold |

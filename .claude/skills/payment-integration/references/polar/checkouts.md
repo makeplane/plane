@@ -5,31 +5,27 @@ Checkout flows, embedded checkout, and session management.
 ## Checkout Approaches
 
 ### 1. Checkout Links
-
 - Pre-configured shareable links
 - Created via dashboard or API
 - For marketing campaigns
 - Can pre-apply discounts
 
 **Create via API:**
-
 ```typescript
 const link = await polar.checkoutLinks.create({
   product_price_id: "price_xxx",
-  success_url: "https://example.com/success",
+  success_url: "https://example.com/success"
 });
 // Returns: link.url
 ```
 
 ### 2. Checkout Sessions (API)
-
 - Programmatically created
 - Server-side API call
 - Dynamic workflows
 - Custom logic
 
 **Create Session:**
-
 ```typescript
 const session = await polar.checkouts.create({
   product_price_id: "price_xxx",
@@ -38,15 +34,14 @@ const session = await polar.checkouts.create({
   external_customer_id: "user_123",
   metadata: {
     user_id: "123",
-    source: "web",
-  },
+    source: "web"
+  }
 });
 
 // Redirect to: session.url
 ```
 
 **Response:**
-
 ```json
 {
   "id": "checkout_xxx",
@@ -58,13 +53,11 @@ const session = await polar.checkouts.create({
 ```
 
 ### 3. Embedded Checkout
-
 - Inline checkout within your site
 - Seamless purchase experience
 - Theme customization
 
 **Implementation:**
-
 ```html
 <script src="https://polar.sh/embed.js"></script>
 
@@ -88,18 +81,17 @@ const session = await polar.checkouts.create({
 ```
 
 **Server-side (create session):**
-
 ```typescript
-app.post("/api/create-checkout", async (req, res) => {
+app.post('/api/create-checkout', async (req, res) => {
   const session = await polar.checkouts.create({
     product_price_id: req.body.productPriceId,
     embed_origin: "https://example.com",
-    external_customer_id: req.user.id,
+    external_customer_id: req.user.id
   });
 
   res.json({
     id: session.id,
-    client_secret: session.client_secret,
+    client_secret: session.client_secret
   });
 });
 ```
@@ -107,12 +99,10 @@ app.post("/api/create-checkout", async (req, res) => {
 ## Configuration Parameters
 
 ### Required
-
 - `product_price_id` - Product to checkout (or `products` array for multiple)
 - `success_url` - Post-payment redirect (absolute URL)
 
 ### Optional
-
 - `external_customer_id` - Your user ID mapping
 - `embed_origin` - For embedded checkouts
 - `customer_email` - Pre-fill email
@@ -124,10 +114,9 @@ app.post("/api/create-checkout", async (req, res) => {
 - `customer_billing_address` - Pre-fill billing address
 
 ### Success URL Placeholder
-
 ```typescript
 {
-  success_url: "https://example.com/success?checkout_id={CHECKOUT_ID}";
+  success_url: "https://example.com/success?checkout_id={CHECKOUT_ID}"
 }
 // Polar replaces {CHECKOUT_ID} with actual checkout ID
 ```
@@ -138,29 +127,27 @@ app.post("/api/create-checkout", async (req, res) => {
 const session = await polar.checkouts.create({
   products: [
     { product_price_id: "price_1", quantity: 1 },
-    { product_price_id: "price_2", quantity: 2 },
+    { product_price_id: "price_2", quantity: 2 }
   ],
-  success_url: "https://example.com/success",
+  success_url: "https://example.com/success"
 });
 ```
 
 ## Discount Application
 
 ### Pre-apply Discount
-
 ```typescript
 const session = await polar.checkouts.create({
   product_price_id: "price_xxx",
   discount_id: "discount_xxx",
-  success_url: "https://example.com/success",
+  success_url: "https://example.com/success"
 });
 ```
 
 ### Allow Customer Codes
-
 ```typescript
 {
-  allow_discount_codes: true; // default
+  allow_discount_codes: true // default
   // Set to false to disable code entry
 }
 ```
@@ -174,20 +161,18 @@ const session = await polar.checkouts.create({
 ## Events
 
 **Webhook Events:**
-
 - `checkout.created` - Session created
 - `checkout.updated` - Session updated
 - `order.created` - Order created after successful payment
 - `order.paid` - Payment confirmed
 
 **Handle Success:**
-
 ```typescript
 // Listen to order.paid webhook
-app.post("/webhook/polar", async (req, res) => {
+app.post('/webhook/polar', async (req, res) => {
   const event = validateEvent(req.body, req.headers, secret);
 
-  if (event.type === "order.paid") {
+  if (event.type === 'order.paid') {
     const order = event.data;
     await fulfillOrder(order);
   }
@@ -240,16 +225,15 @@ app.post("/webhook/polar", async (req, res) => {
 ## Framework Examples
 
 ### Next.js
-
 ```typescript
 // app/actions/checkout.ts
-"use server";
+'use server'
 
 export async function createCheckout(productPriceId: string) {
   const session = await polar.checkouts.create({
     product_price_id: productPriceId,
     success_url: `${process.env.NEXT_PUBLIC_URL}/success?checkout_id={CHECKOUT_ID}`,
-    external_customer_id: await getCurrentUserId(),
+    external_customer_id: await getCurrentUserId()
   });
 
   return session.url;
@@ -267,7 +251,6 @@ export default function ProductPage() {
 ```
 
 ### Laravel
-
 ```php
 Route::post('/checkout', function (Request $request) {
     $polar = new Polar(config('polar.access_token'));

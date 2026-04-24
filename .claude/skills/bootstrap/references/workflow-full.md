@@ -6,7 +6,6 @@
 ## Step 1: Clarify Requirements
 
 Use `AskUserQuestion` to probe user's request, constraints, true objectives.
-
 - Ask 1 question at a time, wait for answer before next
 - Question everything — don't assume
 - Challenge assumptions — best solution often differs from initial vision
@@ -15,7 +14,6 @@ Use `AskUserQuestion` to probe user's request, constraints, true objectives.
 ## Step 2: Research
 
 Spawn multiple `researcher` subagents in parallel:
-
 - Explore request validity, challenges, best solutions
 - Keep every report ≤150 lines
 
@@ -49,7 +47,6 @@ Spawn multiple `researcher` subagents in parallel:
 ## Step 5: Planning
 
 Activate **ck:plan** skill: `/ck:plan --hard <requirements>`
-
 - Planner creates directory using `## Naming` pattern
 - Overview at `plan.md` (<80 lines) + `phase-XX-*.md` files
 - Present pros/cons of plan

@@ -52,7 +52,6 @@ irm https://gitlab.com/gitlab-org/rust/knowledge-graph/-/raw/main/install.ps1 | 
 ## Core Workflows
 
 ### Index and Query
-
 ```bash
 gkg index /path/to/project --stats
 gkg server start
@@ -60,27 +59,25 @@ gkg server start
 ```
 
 ### Find Symbol Usages
-
 1. Index project: `gkg index`
 2. Start server: `gkg server start`
 3. Use MCP tool `get_references` or HTTP API `/api/graph/search`
 
 ### Impact Analysis
-
 1. Index affected repos
 2. Query `get_references` for changed symbols
 3. Review all call sites before refactoring
 
 ## Language Support
 
-| Language   | Cross-file Refs |
-| ---------- | --------------- |
-| Ruby       | ✅ Full         |
-| Java       | ✅ Full         |
-| Kotlin     | ✅ Full         |
-| Python     | 🚧 In progress  |
-| TypeScript | 🚧 In progress  |
-| JavaScript | 🚧 In progress  |
+| Language | Cross-file Refs |
+|----------|-----------------|
+| Ruby | ✅ Full |
+| Java | ✅ Full |
+| Kotlin | ✅ Full |
+| Python | 🚧 In progress |
+| TypeScript | 🚧 In progress |
+| JavaScript | 🚧 In progress |
 
 ## References
 

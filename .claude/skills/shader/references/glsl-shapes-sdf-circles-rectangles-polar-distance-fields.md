@@ -5,7 +5,6 @@ Drawing shapes using Signed Distance Fields (SDF) and distance calculations.
 ## Distance Fields Concept
 
 SDF returns distance from any point to shape edge:
-
 - **Negative**: Inside shape
 - **Zero**: On edge
 - **Positive**: Outside shape

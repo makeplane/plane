@@ -23,7 +23,6 @@ Formulas, templates, patterns, and writing styles for high-converting copy.
 Load: `references/*.md` | Default catalog: `assets/writing-styles/default.md` (50 styles)
 
 **Extract styles from multi-format files:**
-
 ```bash
 python .claude/skills/copywriting/scripts/extract-writing-styles.py --list        # List files
 python .claude/skills/copywriting/scripts/extract-writing-styles.py --style <name> # Extract style
@@ -35,14 +34,14 @@ python .claude/skills/copywriting/scripts/extract-writing-styles.py --style <nam
 
 Load: `references/copy-formulas.md`
 
-| Formula | Structure                                 | Best For                   |
-| ------- | ----------------------------------------- | -------------------------- |
-| AIDA    | Attention → Interest → Desire → Action    | Landing pages, ads         |
-| PAS     | Problem → Agitate → Solution              | Email, sales pages         |
-| BAB     | Before → After → Bridge                   | Testimonials, case studies |
-| 4Ps     | Promise → Picture → Proof → Push          | Long-form sales            |
-| 4Us     | Urgent + Unique + Useful + Ultra-specific | Headlines                  |
-| FAB     | Feature → Advantage → Benefit             | Product descriptions       |
+| Formula | Structure | Best For |
+|---------|-----------|----------|
+| AIDA | Attention → Interest → Desire → Action | Landing pages, ads |
+| PAS | Problem → Agitate → Solution | Email, sales pages |
+| BAB | Before → After → Bridge | Testimonials, case studies |
+| 4Ps | Promise → Picture → Proof → Push | Long-form sales |
+| 4Us | Urgent + Unique + Useful + Ultra-specific | Headlines |
+| FAB | Feature → Advantage → Benefit | Product descriptions |
 
 ## Headlines
 
@@ -65,27 +64,27 @@ CTAs: "Start [verb]ing" • "Get [benefit]" • "Yes, I want [benefit]"
 
 ## Workflows
 
-| Workflow                         | Purpose                                                   | Use When                                    |
-| -------------------------------- | --------------------------------------------------------- | ------------------------------------------- |
-| `references/workflow-cro.md`     | CRO optimization (25 principles) + plan creation workflow | Conversion optimization & CRO plan requests |
-| `references/workflow-enhance.md` | Copy enhancement                                          | Improving existing copy                     |
-| `references/workflow-fast.md`    | Quick copy generation                                     | Simple, time-sensitive requests             |
-| `references/workflow-good.md`    | Quality copy with research                                | High-stakes content                         |
+| Workflow | Purpose | Use When |
+|----------|---------|----------|
+| `references/workflow-cro.md` | CRO optimization (25 principles) + plan creation workflow | Conversion optimization & CRO plan requests |
+| `references/workflow-enhance.md` | Copy enhancement | Improving existing copy |
+| `references/workflow-fast.md` | Quick copy generation | Simple, time-sensitive requests |
+| `references/workflow-good.md` | Quality copy with research | High-stakes content |
 
 ## References
 
-| File                                | Purpose                                |
-| ----------------------------------- | -------------------------------------- |
-| `references/writing-styles.md`      | 30 writing styles quick reference      |
-| `references/copy-formulas.md`       | AIDA, PAS, BAB, 4Ps, FAB formulas      |
-| `references/headline-templates.md`  | Headline patterns & templates          |
-| `references/email-copy.md`          | Email copy patterns                    |
-| `references/landing-page-copy.md`   | Landing page structure                 |
-| `references/cta-patterns.md`        | CTA optimization                       |
-| `references/power-words.md`         | Power words by emotion                 |
-| `references/social-media-copy.md`   | Platform-specific copy                 |
+| File | Purpose |
+|------|---------|
+| `references/writing-styles.md` | 30 writing styles quick reference |
+| `references/copy-formulas.md` | AIDA, PAS, BAB, 4Ps, FAB formulas |
+| `references/headline-templates.md` | Headline patterns & templates |
+| `references/email-copy.md` | Email copy patterns |
+| `references/landing-page-copy.md` | Landing page structure |
+| `references/cta-patterns.md` | CTA optimization |
+| `references/power-words.md` | Power words by emotion |
+| `references/social-media-copy.md` | Platform-specific copy |
 | `scripts/extract-writing-styles.py` | Extract styles from multi-format files |
-| `templates/copy-brief.md`           | Creative brief template                |
+| `templates/copy-brief.md` | Creative brief template |
 
 ## Agent Integration
 
@@ -94,8 +93,8 @@ CTAs: "Start [verb]ing" • "Get [benefit]" • "Yes, I want [benefit]"
 ## Best Practices
 
 1. Lead with benefit, not feature | 2. One CTA per piece
-2. Specificity > vague claims | 4. Read aloud—if awkward, rewrite
-3. Test headlines first | 6. Match copy to awareness level
+3. Specificity > vague claims | 4. Read aloud—if awkward, rewrite
+5. Test headlines first | 6. Match copy to awareness level
 
 ## Outputs
 

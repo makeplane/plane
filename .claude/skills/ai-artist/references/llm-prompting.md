@@ -3,7 +3,6 @@
 ## Prompt Architecture
 
 ### System Prompt Structure
-
 ```
 You are [ROLE] with expertise in [DOMAIN].
 
@@ -22,7 +21,6 @@ You are [ROLE] with expertise in [DOMAIN].
 ```
 
 ### User Prompt Structure
-
 ```xml
 <context>[Background information]</context>
 <task>[Specific action required]</task>
@@ -33,15 +31,13 @@ You are [ROLE] with expertise in [DOMAIN].
 ## Reasoning Techniques
 
 ### Chain of Thought (CoT)
-
-| Variant   | Trigger                         | Best For              |
-| --------- | ------------------------------- | --------------------- |
-| Zero-shot | "Think step by step"            | Quick reasoning tasks |
-| Few-shot  | 2-3 reasoning examples          | Complex multi-step    |
-| Auto-CoT  | "Let's approach systematically" | General reasoning     |
+| Variant | Trigger | Best For |
+|---------|---------|----------|
+| Zero-shot | "Think step by step" | Quick reasoning tasks |
+| Few-shot | 2-3 reasoning examples | Complex multi-step |
+| Auto-CoT | "Let's approach systematically" | General reasoning |
 
 ### Tree of Thoughts (ToT)
-
 ```
 Explore 3 approaches to [problem]:
 For each: 1) Method 2) Pros/cons 3) Success probability
@@ -49,11 +45,9 @@ Evaluate branches, select best path.
 ```
 
 ### Self-Consistency
-
 Run same prompt 3-5x with temp=0.7, take majority answer. Best for: math, logic, factual.
 
 ### ReAct Pattern
-
 ```
 Thought: [Current reasoning]
 Action: [Tool/step to take]
@@ -63,7 +57,6 @@ Final Answer: [Conclusion]
 ```
 
 ### Least-to-Most
-
 ```
 Break [complex task] into subproblems.
 Solve easiest first, build up.
@@ -72,7 +65,6 @@ Solve easiest first, build up.
 ## Instruction Optimization
 
 ### Self-Refine Pattern
-
 ```
 1. Generate initial response
 2. Critique: "What's wrong with this?"
@@ -81,13 +73,11 @@ Solve easiest first, build up.
 ```
 
 ### Role Optimization
-
 - **Expert persona**: "As a senior [role] with 20 years..."
 - **Constraint persona**: "You only respond with..."
 - **Teaching persona**: "Explain as if to a..."
 
 ### Task Decomposition
-
 ```
 <subtasks>
 1. [First step - output X]
@@ -99,7 +89,6 @@ Solve easiest first, build up.
 ## Output Control
 
 ### JSON Enforcement
-
 ```
 Respond in valid JSON only:
 {"field": "type", "required": true}
@@ -107,15 +96,13 @@ No markdown, no explanation, just JSON.
 ```
 
 ### Length Control
-
-| Goal       | Phrase                                |
-| ---------- | ------------------------------------- |
-| Brief      | "In 2-3 sentences"                    |
-| Detailed   | "Comprehensive analysis in 500 words" |
-| Structured | "5 bullet points, max 20 words each"  |
+| Goal | Phrase |
+|------|--------|
+| Brief | "In 2-3 sentences" |
+| Detailed | "Comprehensive analysis in 500 words" |
+| Structured | "5 bullet points, max 20 words each" |
 
 ### Hallucination Reduction
-
 - "Only use information from provided context"
 - "If unsure, say 'I don't know'"
 - "Cite sources for each claim"
@@ -124,19 +111,16 @@ No markdown, no explanation, just JSON.
 ## Model-Specific Tips
 
 ### Claude
-
 - XML tags: `<thinking>`, `<answer>`, `<context>`
 - Extended thinking: "Think deeply before responding"
 - Prefill: Start assistant response to guide format
 
 ### GPT-4
-
 - JSON mode: `response_format: {"type": "json_object"}`
 - Function calling for structured output
 - System message for persistent instructions
 
 ### Gemini
-
 - Multimodal: Image + text in same prompt
 - Grounding: Enable Google Search for facts
 - Safety settings: Adjust thresholds
@@ -144,7 +128,6 @@ No markdown, no explanation, just JSON.
 ## Context Engineering
 
 ### RAG Prompt Pattern
-
 ```
 <retrieved_context>
 [Document chunks with sources]
@@ -155,7 +138,6 @@ If not in context, say "Not found in documents."
 ```
 
 ### Window Optimization
-
 - Front-load critical info (primacy effect)
 - Repeat key constraints at end (recency effect)
 - Chunk long documents with summaries
@@ -163,7 +145,6 @@ If not in context, say "Not found in documents."
 ## Few-Shot Examples
 
 ### Structure
-
 ```
 Example 1:
 Input: [representative input]
@@ -178,7 +159,6 @@ Input: [actual task]
 ```
 
 ### Selection Criteria
-
 - Diverse examples > similar examples
 - Include edge cases
 - Match complexity of target task

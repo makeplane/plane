@@ -2,10 +2,10 @@
  * Slack notification provider using Block Kit format
  * Uses incoming webhooks - zero dependencies
  */
-"use strict";
+'use strict';
 
-const path = require("path");
-const { send } = require("../lib/sender.cjs");
+const path = require('path');
+const { send } = require('../lib/sender.cjs');
 
 /**
  * Get title based on hook event type
@@ -14,14 +14,14 @@ const { send } = require("../lib/sender.cjs");
  */
 function getTitle(hookType) {
   switch (hookType) {
-    case "Stop":
-      return "Claude Code Session Complete";
-    case "SubagentStop":
-      return "Claude Code Subagent Complete";
-    case "AskUserPrompt":
-      return "Claude Code Needs Input";
+    case 'Stop':
+      return 'Claude Code Session Complete';
+    case 'SubagentStop':
+      return 'Claude Code Subagent Complete';
+    case 'AskUserPrompt':
+      return 'Claude Code Needs Input';
     default:
-      return "Claude Code Event";
+      return 'Claude Code Event';
   }
 }
 
@@ -35,34 +35,36 @@ function getTitle(hookType) {
  */
 function buildBlocks(input, hookType, projectName, sessionId) {
   const timestamp = new Date().toLocaleString();
-  const cwd = input.cwd || "Unknown";
+  const cwd = input.cwd || 'Unknown';
 
   const blocks = [
     {
-      type: "header",
-      text: { type: "plain_text", text: getTitle(hookType) },
+      type: 'header',
+      text: { type: 'plain_text', text: getTitle(hookType) }
     },
     {
-      type: "section",
+      type: 'section',
       fields: [
-        { type: "mrkdwn", text: `*Project:*\n${projectName}` },
-        { type: "mrkdwn", text: `*Time:*\n${timestamp}` },
-        { type: "mrkdwn", text: `*Session:*\n\`${sessionId}...\`` },
-        { type: "mrkdwn", text: `*Event:*\n${hookType}` },
-      ],
+        { type: 'mrkdwn', text: `*Project:*\n${projectName}` },
+        { type: 'mrkdwn', text: `*Time:*\n${timestamp}` },
+        { type: 'mrkdwn', text: `*Session:*\n\`${sessionId}...\`` },
+        { type: 'mrkdwn', text: `*Event:*\n${hookType}` }
+      ]
     },
-    { type: "divider" },
+    { type: 'divider' },
     {
-      type: "context",
-      elements: [{ type: "mrkdwn", text: `📍 \`${cwd}\`` }],
-    },
+      type: 'context',
+      elements: [
+        { type: 'mrkdwn', text: `📍 \`${cwd}\`` }
+      ]
+    }
   ];
 
   // Add agent_type for SubagentStop
-  if (hookType === "SubagentStop" && input.agent_type) {
+  if (hookType === 'SubagentStop' && input.agent_type) {
     blocks.splice(2, 0, {
-      type: "section",
-      text: { type: "mrkdwn", text: `*Agent Type:* ${input.agent_type}` },
+      type: 'section',
+      text: { type: 'mrkdwn', text: `*Agent Type:* ${input.agent_type}` }
     });
   }
 
@@ -75,19 +77,19 @@ function buildBlocks(input, hookType, projectName, sessionId) {
  * @returns {Object} Slack payload with text fallback and blocks
  */
 function formatMessage(input) {
-  const hookType = input.hook_event_name || "unknown";
-  const projectDir = input.cwd || "";
-  const projectName = path.basename(projectDir) || "Unknown";
-  const sessionId = (input.session_id || "").slice(0, 8);
+  const hookType = input.hook_event_name || 'unknown';
+  const projectDir = input.cwd || '';
+  const projectName = path.basename(projectDir) || 'Unknown';
+  const sessionId = (input.session_id || '').slice(0, 8);
 
   return {
     text: `Claude Code: ${hookType} in ${projectName}`, // Fallback required
-    blocks: buildBlocks(input, hookType, projectName, sessionId),
+    blocks: buildBlocks(input, hookType, projectName, sessionId)
   };
 }
 
 module.exports = {
-  name: "slack",
+  name: 'slack',
 
   /**
    * Check if Slack provider is enabled
@@ -104,6 +106,6 @@ module.exports = {
    */
   send: async (input, env) => {
     const payload = formatMessage(input);
-    return send("slack", env.SLACK_WEBHOOK_URL, payload);
-  },
+    return send('slack', env.SLACK_WEBHOOK_URL, payload);
+  }
 };

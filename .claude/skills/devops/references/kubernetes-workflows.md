@@ -24,7 +24,6 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 ```
 
 ### Application Manifest
-
 ```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -49,7 +48,6 @@ spec:
 ## Deployment Patterns
 
 ### Rolling Update
-
 ```yaml
 spec:
   strategy:
@@ -60,23 +58,21 @@ spec:
 ```
 
 ### Blue-Green
-
 ```yaml
 # Two deployments: myapp-blue, myapp-green
 # Service selector switches between versions
 selector:
   app: myapp
-  version: blue # Change to 'green' to switch
+  version: blue  # Change to 'green' to switch
 ```
 
 ### Canary (with Istio)
-
 ```yaml
 route:
-  - destination: { host: myapp, subset: v1 }
-    weight: 90
-  - destination: { host: myapp, subset: v2 }
-    weight: 10 # 10% canary
+- destination: { host: myapp, subset: v1 }
+  weight: 90
+- destination: { host: myapp, subset: v2 }
+  weight: 10  # 10% canary
 ```
 
 See `kubernetes-workflows-advanced.md` for CI/CD, Kustomize patterns.

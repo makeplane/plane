@@ -47,8 +47,8 @@ agent:
   name: my-agent
   model: gemini-2.5-flash
   region: us-central1
-  scaling: { min_instances: 1, max_instances: 10 }
-  resources: { cpu: 2, memory: 4Gi }
+  scaling: {min_instances: 1, max_instances: 10}
+  resources: {cpu: 2, memory: 4Gi}
 ```
 
 ```python
@@ -63,39 +63,39 @@ response = endpoint.predict(instances=[{'prompt': 'What is 2+2?'}])
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
-metadata: { name: my-agent }
+metadata: {name: my-agent}
 spec:
   replicas: 3
   template:
     spec:
       containers:
-        - name: agent
-          image: gcr.io/my-project/my-agent:latest
-          ports: [{ containerPort: 8080 }]
-          env:
-            - name: GOOGLE_API_KEY
-              valueFrom: { secretKeyRef: { name: google-api-key, key: key } }
-          resources:
-            requests: { memory: "2Gi", cpu: "1" }
-            limits: { memory: "4Gi", cpu: "2" }
+      - name: agent
+        image: gcr.io/my-project/my-agent:latest
+        ports: [{containerPort: 8080}]
+        env:
+        - name: GOOGLE_API_KEY
+          valueFrom: {secretKeyRef: {name: google-api-key, key: key}}
+        resources:
+          requests: {memory: "2Gi", cpu: "1"}
+          limits: {memory: "4Gi", cpu: "2"}
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: my-agent }
+metadata: {name: my-agent}
 spec:
   type: LoadBalancer
-  ports: [{ port: 80, targetPort: 8080 }]
+  ports: [{port: 80, targetPort: 8080}]
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
-metadata: { name: my-agent-hpa }
+metadata: {name: my-agent-hpa}
 spec:
-  scaleTargetRef: { kind: Deployment, name: my-agent }
+  scaleTargetRef: {kind: Deployment, name: my-agent}
   minReplicas: 2
   maxReplicas: 10
   metrics:
-    - type: Resource
-      resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } }
+  - type: Resource
+    resource: {name: cpu, target: {type: Utilization, averageUtilization: 70}}
 ```
 
 ```bash

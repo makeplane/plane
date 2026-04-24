@@ -11,26 +11,22 @@ Use when generating: SaaS dashboards, feature showcase grids, marketing bento se
 **Aesthetic:** High-end, minimal, functional. Every card feels alive.
 
 **Palette:**
-
 - Background: `#f9fafb` (light) or `#050505` (dark)
 - Cards: pure white `#ffffff` (light) / vantablack with `bg-white/5` (dark)
 - Card borders: `border border-slate-200/50` (light) / `border border-white/10` (dark)
 
 **Surfaces:**
-
 - All major containers use `rounded-[2.5rem]`
 - Diffusion shadow: `shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)]` — depth without clutter
 - Card titles and descriptions sit **outside and below** the card (gallery-style presentation)
 - Card interior: generous `p-8` or `p-10` padding
 
 **Typography:**
-
 - Font stack: `Geist`, `Satoshi`, or `Cabinet Grotesk` only
 - Header tracking: `tracking-tight`
 - Never Inter in a Bento context
 
 **Double-Bezel structure for premium cards:**
-
 - Outer shell: `bg-black/5 ring-1 ring-black/5 p-1.5 rounded-[2rem]`
 - Inner core: own background + `shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]` + `rounded-[calc(2rem-0.375rem)]`
 
@@ -41,28 +37,23 @@ Use when generating: SaaS dashboards, feature showcase grids, marketing bento se
 All cards MUST contain **Perpetual Micro-Interactions**. The dashboard must always feel alive.
 
 **Spring Physics (no linear easing):**
-
 ```js
 // Use for all interactive elements
 { type: "spring", stiffness: 100, damping: 20 }
 ```
 
 **Layout Transitions:**
-
 - Use Framer Motion `layout` and `layoutId` props for smooth reordering, resizing, and shared element transitions
 
 **Infinite Loops:**
-
 - Every card has an active state that loops infinitely: Pulse, Typewriter, Float, or Carousel
 
 **Performance isolation (critical):**
-
 - Every perpetual animation MUST be wrapped in `React.memo`
 - Extract each animated card as its own isolated leaf `'use client'` component
 - Never trigger re-renders in the parent layout
 
 **AnimatePresence:**
-
 - Wrap all dynamic lists — enables proper enter/exit animations
 
 ---
@@ -92,7 +83,6 @@ Mobile: all cards collapse to `grid-cols-1` with `gap-6`. No horizontal overflow
 ## The 5 Card Archetypes
 
 ### 1. Intelligent List
-
 A vertical stack of items with an infinite auto-sorting loop.
 
 - Items swap positions using `layoutId` — simulates AI prioritizing tasks in real-time
@@ -101,7 +91,6 @@ A vertical stack of items with an infinite auto-sorting loop.
 - Use case: task lists, priority queues, leaderboards
 
 ### 2. Command Input
-
 A search/AI bar with a multi-step Typewriter Effect.
 
 - Cycles through 3-5 complex prompts
@@ -111,7 +100,6 @@ A search/AI bar with a multi-step Typewriter Effect.
 - Use case: AI search demos, command palette teasers
 
 ### 3. Live Status
-
 A scheduling or status interface with breathing indicators.
 
 - Status dots with infinite `scale` pulse animation (`1.0 → 1.2 → 1.0`, 2s loop)
@@ -120,7 +108,6 @@ A scheduling or status interface with breathing indicators.
 - Use case: scheduling UIs, monitoring dashboards, live feed indicators
 
 ### 4. Wide Data Stream
-
 A horizontal infinite carousel of data cards or metrics.
 
 - Seamless loop using `x: ["0%", "-50%"]` with duplicate items for continuity
@@ -129,7 +116,6 @@ A horizontal infinite carousel of data cards or metrics.
 - Use case: social proof logos, metric streams, activity feeds
 
 ### 5. Contextual UI (Focus Mode)
-
 A document or content view that highlights and reveals tools.
 
 - Staggered text block highlight animation (sequential word/line highlights, 300ms stagger)

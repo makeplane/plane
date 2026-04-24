@@ -14,7 +14,6 @@ ACTION: Clear CTA with urgency
 ```
 
 **Example:**
-
 ```
 [A] Stop losing 80% of your leads.
 [I] Most businesses capture emails but never convert them.
@@ -35,7 +34,6 @@ SOLUTION: Present your offer as the answer
 ```
 
 **Example:**
-
 ```
 [P] You're posting on LinkedIn daily but getting zero leads.
 [A] Hours of content creation. Crickets in your DMs.
@@ -56,7 +54,6 @@ BRIDGE: Your product/service is the bridge
 ```
 
 **Example:**
-
 ```
 [B] Sarah spent 4 hours/day on customer support emails.
     Burnout was inevitable. Her team was drowning.
@@ -81,12 +78,12 @@ PUSH: Create urgency, clear CTA
 
 Headlines, subject lines, hooks.
 
-| U              | Meaning                    | Example                   |
-| -------------- | -------------------------- | ------------------------- |
-| Urgent         | Time-sensitive             | "24 hours left"           |
-| Unique         | Different from competition | "The only..."             |
-| Useful         | Clear benefit              | "Save 10 hours/week"      |
-| Ultra-specific | Precise details            | "47% increase in 30 days" |
+| U | Meaning | Example |
+|---|---------|---------|
+| Urgent | Time-sensitive | "24 hours left" |
+| Unique | Different from competition | "The only..." |
+| Useful | Clear benefit | "Save 10 hours/week" |
+| Ultra-specific | Precise details | "47% increase in 30 days" |
 
 **Example headline:**
 "[24 hours] The only cold email template that books [23 calls/month]"
@@ -102,7 +99,6 @@ BENEFIT: Why they care
 ```
 
 **Example:**
-
 ```
 [F] One-click export to PDF
 [A] No more screenshots or manual formatting
@@ -143,12 +139,12 @@ HOOK: Compelling CTA
 
 ## Formula Selection Guide
 
-| Situation        | Best Formula |
-| ---------------- | ------------ |
-| Cold audience    | AIDA, ACCA   |
-| Aware of problem | PAS          |
-| Testimonial      | BAB          |
-| Product feature  | FAB          |
-| Headline         | 4Us          |
-| Sales page       | 4Ps          |
-| Quick hook       | 1-2-3-4      |
+| Situation | Best Formula |
+|-----------|--------------|
+| Cold audience | AIDA, ACCA |
+| Aware of problem | PAS |
+| Testimonial | BAB |
+| Product feature | FAB |
+| Headline | 4Us |
+| Sales page | 4Ps |
+| Quick hook | 1-2-3-4 |

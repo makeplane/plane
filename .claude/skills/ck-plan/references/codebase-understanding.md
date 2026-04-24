@@ -5,14 +5,12 @@
 ## Core Activities
 
 ### Parallel Scout Agents
-
 - Use `/ck:scout ext` (preferred) or `/ck:scout` (fallback) skill invocation to search the codebase for files needed to complete the task
 - Each scout locates files needed for specific task aspects
 - Wait for all scout agents to report back before analysis
 - Efficient for finding relevant code across large codebases
 
 ### Essential Documentation Review
-
 ALWAYS read these files first:
 
 1. **`./docs/development-rules.md`** (IMPORTANT)
@@ -38,21 +36,18 @@ ALWAYS read these files first:
    - Component library usage
 
 ### Environment Analysis
-
 - Review development environment setup
 - Analyze dotenv files and configuration
 - Identify required dependencies
 - Understand build and deployment processes
 
 ### Pattern Recognition
-
 - Study existing patterns in codebase
 - Identify conventions and architectural decisions
 - Note consistency in implementation approaches
 - Understand error handling patterns
 
 ### Integration Planning
-
 - Identify how new features integrate with existing architecture
 - Map dependencies between components
 - Understand data flow and state management

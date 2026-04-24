@@ -11,19 +11,19 @@ docker run -i grafana/k6 run - <script.js
 ## Basic Load Test
 
 ```javascript
-import http from "k6/http";
-import { check, sleep } from "k6";
+import http from 'k6/http';
+import { check, sleep } from 'k6';
 
 export const options = {
   vus: 10,
-  duration: "30s",
+  duration: '30s',
 };
 
 export default function () {
-  const res = http.get("http://localhost:3000/api/users");
+  const res = http.get('http://localhost:3000/api/users');
   check(res, {
-    "status is 200": (r) => r.status === 200,
-    "response < 500ms": (r) => r.timings.duration < 500,
+    'status is 200': (r) => r.status === 200,
+    'response < 500ms': (r) => r.timings.duration < 500,
   });
   sleep(1);
 }
@@ -34,14 +34,14 @@ export default function () {
 ```javascript
 export const options = {
   stages: [
-    { duration: "2m", target: 50 },
-    { duration: "5m", target: 50 },
-    { duration: "2m", target: 100 },
-    { duration: "2m", target: 0 },
+    { duration: '2m', target: 50 },
+    { duration: '5m', target: 50 },
+    { duration: '2m', target: 100 },
+    { duration: '2m', target: 0 },
   ],
   thresholds: {
-    http_req_duration: ["p(95)<500"],
-    http_req_failed: ["rate<0.01"],
+    http_req_duration: ['p(95)<500'],
+    http_req_failed: ['rate<0.01'],
   },
 };
 ```
@@ -51,10 +51,9 @@ export const options = {
 ```javascript
 export function setup() {
   const res = http.post(`${BASE_URL}/api/login`, {
-    email: "test@example.com",
-    password: "password",
+    email: 'test@example.com', password: 'password',
   });
-  return { token: res.json("token") };
+  return { token: res.json('token') };
 }
 
 export default function (data) {
@@ -65,11 +64,11 @@ export default function (data) {
 
 ## Performance Thresholds
 
-| Metric      | Good   | Warning |
-| ----------- | ------ | ------- |
-| p50 latency | <200ms | <500ms  |
-| p95 latency | <500ms | <1s     |
-| Error rate  | <0.1%  | <1%     |
+| Metric | Good | Warning |
+|--------|------|---------|
+| p50 latency | <200ms | <500ms |
+| p95 latency | <500ms | <1s |
+| Error rate | <0.1% | <1% |
 
 ## Commands
 
@@ -83,10 +82,10 @@ k6 cloud script.js  # Grafana Cloud
 
 ```yaml
 config:
-  target: "http://localhost:3000"
+  target: 'http://localhost:3000'
   phases: [{ duration: 60, arrivalRate: 10 }]
 scenarios:
-  - flow: [{ get: { url: "/api/users" } }]
+  - flow: [{ get: { url: '/api/users' } }]
 ```
 
 ```bash

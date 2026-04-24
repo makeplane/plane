@@ -8,10 +8,10 @@ Realistic camera with field of view (most common):
 
 ```javascript
 const camera = new THREE.PerspectiveCamera(
-  fov, // field of view in degrees (typically 45-75)
+  fov,    // field of view in degrees (typically 45-75)
   aspect, // width / height
-  near, // near clipping plane (typically 0.1)
-  far // far clipping plane (typically 1000)
+  near,   // near clipping plane (typically 0.1)
+  far     // far clipping plane (typically 1000)
 );
 
 camera.position.set(0, 5, 10);
@@ -30,12 +30,12 @@ No perspective distortion (parallel projection):
 const frustumSize = 10;
 const aspect = window.innerWidth / window.innerHeight;
 const camera = new THREE.OrthographicCamera(
-  (frustumSize * aspect) / -2, // left
-  (frustumSize * aspect) / 2, // right
-  frustumSize / 2, // top
-  frustumSize / -2, // bottom
-  0.1, // near
-  1000 // far
+  frustumSize * aspect / -2, // left
+  frustumSize * aspect / 2,  // right
+  frustumSize / 2,           // top
+  frustumSize / -2,          // bottom
+  0.1,                       // near
+  1000                       // far
 );
 
 // Useful for: 2D games, CAD, isometric views
@@ -44,13 +44,12 @@ const camera = new THREE.OrthographicCamera(
 ## Camera Controls (Addons)
 
 ### OrbitControls (Most Common)
-
 ```javascript
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 0, 0);
-controls.enableDamping = true; // smooth motion
+controls.enableDamping = true;   // smooth motion
 controls.dampingFactor = 0.05;
 controls.minDistance = 5;
 controls.maxDistance = 50;
@@ -64,9 +63,8 @@ function animate() {
 ```
 
 ### FirstPersonControls
-
 ```javascript
-import { FirstPersonControls } from "three/addons/controls/FirstPersonControls.js";
+import { FirstPersonControls } from 'three/addons/controls/FirstPersonControls.js';
 
 const controls = new FirstPersonControls(camera, renderer.domElement);
 controls.movementSpeed = 10;
@@ -81,9 +79,8 @@ function animate() {
 ```
 
 ### FlyControls
-
 ```javascript
-import { FlyControls } from "three/addons/controls/FlyControls.js";
+import { FlyControls } from 'three/addons/controls/FlyControls.js';
 
 const controls = new FlyControls(camera, renderer.domElement);
 controls.movementSpeed = 10;
@@ -92,20 +89,19 @@ controls.dragToLook = true;
 ```
 
 ### TransformControls
-
 ```javascript
-import { TransformControls } from "three/addons/controls/TransformControls.js";
+import { TransformControls } from 'three/addons/controls/TransformControls.js';
 
 const controls = new TransformControls(camera, renderer.domElement);
 controls.attach(mesh);
 scene.add(controls);
 
 // Switch modes
-controls.setMode("translate"); // or 'rotate', 'scale'
+controls.setMode('translate'); // or 'rotate', 'scale'
 
 // Events
-controls.addEventListener("change", () => renderer.render(scene, camera));
-controls.addEventListener("dragging-changed", (event) => {
+controls.addEventListener('change', () => renderer.render(scene, camera));
+controls.addEventListener('dragging-changed', (event) => {
   orbitControls.enabled = !event.value;
 });
 ```
@@ -155,7 +151,10 @@ Automatic optimization (objects outside view are not rendered):
 ```javascript
 // Manually check if object is in view
 const frustum = new THREE.Frustum();
-const matrix = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+const matrix = new THREE.Matrix4().multiplyMatrices(
+  camera.projectionMatrix,
+  camera.matrixWorldInverse
+);
 frustum.setFromProjectionMatrix(matrix);
 
 if (frustum.containsPoint(object.position)) {
@@ -180,15 +179,15 @@ renderer.render(scene, minimapCamera);
 ## Resize Handling
 
 ```javascript
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
   // Perspective camera
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
   // Orthographic camera
   const aspect = window.innerWidth / window.innerHeight;
-  camera.left = (-frustumSize * aspect) / 2;
-  camera.right = (frustumSize * aspect) / 2;
+  camera.left = -frustumSize * aspect / 2;
+  camera.right = frustumSize * aspect / 2;
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);

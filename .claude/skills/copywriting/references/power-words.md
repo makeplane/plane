@@ -13,7 +13,6 @@ Before          Final           Closing
 ```
 
 **Usage:**
-
 ```
 "Get instant access now"
 "Limited spots remaining"
@@ -30,7 +29,6 @@ Invitation      Access          Behind-the-scenes
 ```
 
 **Usage:**
-
 ```
 "Exclusive access for subscribers"
 "The hidden strategy behind..."
@@ -47,7 +45,6 @@ Gift            Complimentary   No-cost
 ```
 
 **Usage:**
-
 ```
 "Free bonus included"
 "Save 50% today only"
@@ -64,7 +61,6 @@ Safe            Secure          Protected
 ```
 
 **Usage:**
-
 ```
 "Proven by 10,000+ users"
 "Verified results"
@@ -81,7 +77,6 @@ Double          Triple          Skyrocket
 ```
 
 **Usage:**
-
 ```
 "Double your conversions"
 "Breakthrough strategy"
@@ -91,7 +86,6 @@ Double          Triple          Skyrocket
 ## Emotion Words
 
 ### Positive
-
 ```
 Amazing         Incredible      Stunning
 Brilliant       Exciting        Delightful
@@ -99,7 +93,6 @@ Wonderful       Remarkable      Inspiring
 ```
 
 ### Negative (for pain points)
-
 ```
 Frustrated      Overwhelmed     Struggling
 Stuck           Stressed        Burned out
@@ -115,7 +108,6 @@ Uncover         Mystery         Behind
 ```
 
 **Usage:**
-
 ```
 "The surprising truth about..."
 "Discover what most people miss"
@@ -141,7 +133,6 @@ Beginner        Step-by-step    Straightforward
 ```
 
 **Usage:**
-
 ```
 "Easy setup in 5 minutes"
 "One-click automation"
@@ -150,17 +141,16 @@ Beginner        Step-by-step    Straightforward
 
 ## Power Word Combinations
 
-| Combo                 | Example                        |
-| --------------------- | ------------------------------ |
-| Urgency + Value       | "Limited-time free access"     |
+| Combo | Example |
+|-------|---------|
+| Urgency + Value | "Limited-time free access" |
 | Exclusivity + Results | "Insider secrets to 2x growth" |
-| Simplicity + Results  | "Easy way to double leads"     |
-| Trust + Exclusivity   | "Proven system used by top 1%" |
+| Simplicity + Results | "Easy way to double leads" |
+| Trust + Exclusivity | "Proven system used by top 1%" |
 
 ## Words to Avoid
 
 ### Vague/Weak
-
 ```
 Nice            Good            Great (overused)
 Very            Really          Actually
@@ -168,7 +158,6 @@ Things          Stuff           Interesting
 ```
 
 ### Corporate Speak
-
 ```
 Synergy         Leverage        Holistic
 Paradigm        Utilize         Optimize (overused)
@@ -176,7 +165,6 @@ Disrupt         Pivot           Solution (overused)
 ```
 
 ### Overused Marketing
-
 ```
 Revolutionary   Cutting-edge    World-class
 Best-in-class   Game-changing   Next-level
@@ -184,13 +172,13 @@ Best-in-class   Game-changing   Next-level
 
 ## Power Word Placement
 
-| Location       | Best Word Types              |
-| -------------- | ---------------------------- |
-| Headlines      | Curiosity, urgency, numbers  |
-| Subheadlines   | Benefits, simplicity         |
-| CTAs           | Action, value, urgency       |
+| Location | Best Word Types |
+|----------|----------------|
+| Headlines | Curiosity, urgency, numbers |
+| Subheadlines | Benefits, simplicity |
+| CTAs | Action, value, urgency |
 | Email subjects | Curiosity, urgency, personal |
-| Body copy      | Trust, results, emotion      |
+| Body copy | Trust, results, emotion |
 
 ## Usage Tips
 

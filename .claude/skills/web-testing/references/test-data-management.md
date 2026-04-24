@@ -3,7 +3,7 @@
 ## Faker.js (Dynamic Data Generation)
 
 ```typescript
-import { faker } from "@faker-js/faker";
+import { faker } from '@faker-js/faker';
 
 // Reproducible data (seeding)
 faker.seed(123);
@@ -20,20 +20,20 @@ const user = {
 ## Factory Pattern (Fishery)
 
 ```typescript
-import { Factory } from "fishery";
-import { faker } from "@faker-js/faker";
+import { Factory } from 'fishery';
+import { faker } from '@faker-js/faker';
 
 // Define factory
 const userFactory = Factory.define<User>(() => ({
   id: faker.string.uuid(),
   name: faker.person.fullName(),
   email: faker.internet.email(),
-  role: "user",
+  role: 'user',
 }));
 
 // Usage
 const user = userFactory.build();
-const admin = userFactory.build({ role: "admin" });
+const admin = userFactory.build({ role: 'admin' });
 const users = userFactory.buildList(5);
 ```
 
@@ -47,7 +47,7 @@ const postFactory = Factory.define<Post>(({ associations }) => ({
 }));
 
 const post = postFactory.build({
-  author: userFactory.build({ role: "admin" }),
+  author: userFactory.build({ role: 'admin' }),
 });
 ```
 
@@ -57,19 +57,19 @@ const post = postFactory.build({
 // fixtures/users.ts
 export const testUsers = {
   admin: {
-    id: "admin-001",
-    email: "admin@test.com",
-    role: "admin",
+    id: 'admin-001',
+    email: 'admin@test.com',
+    role: 'admin',
   },
   member: {
-    id: "member-001",
-    email: "member@test.com",
-    role: "member",
+    id: 'member-001',
+    email: 'member@test.com',
+    role: 'member',
   },
 };
 
 // In tests
-import { testUsers } from "./fixtures/users";
+import { testUsers } from './fixtures/users';
 ```
 
 ## Combined Pattern (Fixtures + Factories)
@@ -117,19 +117,15 @@ async function clearTestData(db: Database, workerIndex: number) {
 
 ```typescript
 // BAD: Hardcoded values
-const user = { email: "test@test.com" }; // Collisions!
+const user = { email: 'test@test.com' }; // Collisions!
 
 // GOOD: Dynamic generation
 const user = { email: faker.internet.email() };
 
 // BAD: Shared mutable state
 let globalUser;
-beforeAll(() => {
-  globalUser = createUser();
-});
+beforeAll(() => { globalUser = createUser(); });
 
 // GOOD: Fresh data per test
-beforeEach(() => {
-  user = userFactory.build();
-});
+beforeEach(() => { user = userFactory.build(); });
 ```

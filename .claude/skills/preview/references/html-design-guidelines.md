@@ -24,7 +24,6 @@ These patterns are explicitly forbidden — they signal "AI-generated template" 
 - Any palette describable as "Tailwind defaults with purple/pink/cyan accents"
 
 **Forbidden color effects:**
-
 - Gradient text on headings (`background: linear-gradient(...); background-clip: text;`) — screams AI-generated
 - Animated glowing box-shadows (`@keyframes glow { box-shadow: 0 0 20px... }`) — always produces AI slop
 - Multiple overlapping radial glows in accent colors creating a "neon haze"
@@ -32,7 +31,6 @@ These patterns are explicitly forbidden — they signal "AI-generated template" 
 - Continuous animations that run after page load (except progress indicators)
 
 **Required accents (use these):**
-
 - Terracotta + sage (`#c2410c`, `#65a30d`) — warm, earthy
 - Teal + slate (`#0891b2`, `#0369a1`) — technical, precise
 - Rose + cranberry (`#be123c`, `#881337`) — editorial, refined
@@ -65,7 +63,6 @@ These patterns are explicitly forbidden — they signal "AI-generated template" 
 Before delivering, check: **Would a developer immediately think "AI generated this"?**
 
 Signs of slop:
-
 1. Inter or Roboto font with purple/violet gradient accents
 2. Every heading has `background-clip: text` gradient
 3. Emoji icons leading every section
@@ -106,8 +103,8 @@ Technical drawing feel. Subtle grid background, deep slate/blue palette, monospa
 
 ```css
 :root {
-  --font-body: "DM Sans", system-ui, sans-serif;
-  --font-mono: "Fira Code", "SF Mono", monospace;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'SF Mono', monospace;
   --bg: #0d1421;
   --surface: #111d2e;
   --surface-elevated: #162438;
@@ -140,8 +137,8 @@ Serif headlines (Instrument Serif or Crimson Pro), generous whitespace, muted ea
 
 ```css
 :root {
-  --font-body: "Instrument Serif", Georgia, serif;
-  --font-mono: "JetBrains Mono", "SF Mono", monospace;
+  --font-body: 'Instrument Serif', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
   --bg: #0f1729;
   --surface: #162040;
   --surface-elevated: #1d2b52;
@@ -171,8 +168,8 @@ Warm cream `#faf7f5` background, terracotta/sage accents, informal feel.
 
 ```css
 :root {
-  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-mono: "Azeret Mono", "SF Mono", monospace;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'Azeret Mono', 'SF Mono', monospace;
   --bg: #faf6f0;
   --surface: #ffffff;
   --surface-elevated: #fffdf5;
@@ -202,8 +199,8 @@ Green/amber on near-black, monospace everything. Developer-native.
 
 ```css
 :root {
-  --font-body: "Geist Mono", "SF Mono", Consolas, monospace;
-  --font-mono: "Geist Mono", "SF Mono", Consolas, monospace;
+  --font-body: 'Geist Mono', 'SF Mono', Consolas, monospace;
+  --font-mono: 'Geist Mono', 'SF Mono', Consolas, monospace;
   --bg: #0a0e14;
   --surface: #12161e;
   --surface-elevated: #222836;
@@ -234,8 +231,8 @@ White, geometric sans, single bold accent, visible grid. Minimal and precise.
 
 ```css
 :root {
-  --font-body: "DM Sans", system-ui, sans-serif;
-  --font-mono: "Fira Code", "SF Mono", monospace;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'SF Mono', monospace;
   --bg: #ffffff;
   --surface: #f8f8f8;
   --surface-elevated: #ffffff;
@@ -271,32 +268,29 @@ Uses Plus Jakarta Sans + Azeret Mono, terracotta `#c2410c` accent. See Paper/Ink
 
 ### Font Pairings (12 options — rotate, never repeat consecutively)
 
-| Body / Headings     | Mono / Labels   | Feel                    | Use for                     |
-| ------------------- | --------------- | ----------------------- | --------------------------- |
-| DM Sans             | Fira Code       | Friendly, developer     | Blueprint, technical docs   |
-| Instrument Serif    | JetBrains Mono  | Editorial, refined      | Plan reviews, decision logs |
-| IBM Plex Sans       | IBM Plex Mono   | Reliable, readable      | Architecture diagrams       |
-| Bricolage Grotesque | Fragment Mono   | Bold, characterful      | Data tables, dashboards     |
-| Plus Jakarta Sans   | Azeret Mono     | Rounded, approachable   | Status reports, audits      |
-| Outfit              | Space Mono      | Clean geometric, modern | Flowcharts, pipelines       |
-| Sora                | IBM Plex Mono   | Technical, precise      | ER diagrams, schemas        |
-| Crimson Pro         | Noto Sans Mono  | Scholarly, serious      | RFC reviews, specs          |
-| Fraunces            | Source Code Pro | Warm, distinctive       | Project recaps              |
-| Geist               | Geist Mono      | Vercel-inspired, sharp  | Modern API docs             |
-| Red Hat Display     | Red Hat Mono    | Cohesive family         | System overviews            |
-| Libre Franklin      | Inconsolata     | Classic, reliable       | Data-dense tables           |
+| Body / Headings | Mono / Labels | Feel | Use for |
+|---|---|---|---|
+| DM Sans | Fira Code | Friendly, developer | Blueprint, technical docs |
+| Instrument Serif | JetBrains Mono | Editorial, refined | Plan reviews, decision logs |
+| IBM Plex Sans | IBM Plex Mono | Reliable, readable | Architecture diagrams |
+| Bricolage Grotesque | Fragment Mono | Bold, characterful | Data tables, dashboards |
+| Plus Jakarta Sans | Azeret Mono | Rounded, approachable | Status reports, audits |
+| Outfit | Space Mono | Clean geometric, modern | Flowcharts, pipelines |
+| Sora | IBM Plex Mono | Technical, precise | ER diagrams, schemas |
+| Crimson Pro | Noto Sans Mono | Scholarly, serious | RFC reviews, specs |
+| Fraunces | Source Code Pro | Warm, distinctive | Project recaps |
+| Geist | Geist Mono | Vercel-inspired, sharp | Modern API docs |
+| Red Hat Display | Red Hat Mono | Cohesive family | System overviews |
+| Libre Franklin | Inconsolata | Classic, reliable | Data-dense tables |
 
 The first 5 pairings are recommended for most use cases.
 
 ### Load via Google Fonts
 
 ```html
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
-  rel="stylesheet"
-/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 ```
 
 Always use `display=swap` for fast rendering. Include system font fallback in `font-family` stack.
@@ -305,12 +299,12 @@ Always use `display=swap` for fast rendering. Include system font fallback in `f
 
 For prose-heavy pages, match fonts to content voice:
 
-| Voice                 | Fonts                                               | Best For                          |
-| --------------------- | --------------------------------------------------- | --------------------------------- |
-| Literary / Thoughtful | Literata, Lora, Newsreader, Merriweather            | Essays, personal posts, long-form |
-| Technical / Precise   | IBM Plex Sans + Mono, Geist + Geist Mono            | Documentation, READMEs, API refs  |
-| Bold / Contemporary   | Bricolage Grotesque, Space Grotesk, DM Sans         | Product pages, announcements      |
-| Minimal / Focused     | Source Serif 4 + Source Sans 3, Karla + Inconsolata | Tutorials, focused reading        |
+| Voice | Fonts | Best For |
+|-------|-------|----------|
+| Literary / Thoughtful | Literata, Lora, Newsreader, Merriweather | Essays, personal posts, long-form |
+| Technical / Precise | IBM Plex Sans + Mono, Geist + Geist Mono | Documentation, READMEs, API refs |
+| Bold / Contemporary | Bricolage Grotesque, Space Grotesk, DM Sans | Product pages, announcements |
+| Minimal / Focused | Source Serif 4 + Source Sans 3, Karla + Inconsolata | Tutorials, focused reading |
 
 ---
 
@@ -344,9 +338,7 @@ Vary card depth to signal importance. Hero sections dominate; reference sections
 /* Elevated — KPIs, key sections */
 .ve-card--elevated {
   background: var(--surface-elevated);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.08),
-    0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 /* Recessed — code blocks, secondary content */
@@ -358,9 +350,7 @@ Vary card depth to signal importance. Hero sections dominate; reference sections
 /* Hero — executive summaries, focal elements */
 .ve-card--hero {
   background: color-mix(in srgb, var(--surface) 92%, var(--accent) 8%);
-  box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.08),
-    0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.04);
   border-color: color-mix(in srgb, var(--border) 50%, var(--accent) 50%);
 }
 ```
@@ -373,22 +363,22 @@ Rule: Don't make everything elevated — when everything pops, nothing does.
 
 When deciding how to render content:
 
-| Content type                    | Approach                            | Why                                               |
-| ------------------------------- | ----------------------------------- | ------------------------------------------------- |
-| Architecture (text-heavy)       | CSS Grid cards + flow arrows        | Rich card content needs CSS control               |
-| Architecture (topology-focused) | **Mermaid**                         | Visible connections need automatic edge routing   |
-| Flowchart / pipeline            | **Mermaid**                         | Automatic node positioning                        |
-| Sequence diagram                | **Mermaid**                         | Lifelines need automatic layout                   |
-| Data flow                       | **Mermaid** with edge labels        | Connections need auto-routing                     |
-| ER / schema diagram             | **Mermaid**                         | Relationship lines between entities               |
-| State machine                   | **Mermaid**                         | State transitions with labeled edges              |
-| Mind map                        | **Mermaid**                         | Hierarchical branching                            |
-| Class diagram                   | **Mermaid**                         | Inheritance lines with auto-routing               |
-| C4 architecture                 | **Mermaid** `graph TD` + `subgraph` | Native C4 hardcodes its own styles                |
-| Data table                      | HTML `<table>`                      | Semantic markup, accessibility, copy-paste        |
-| Timeline                        | CSS (central line + cards)          | Simple linear layout                              |
-| Dashboard                       | CSS Grid + Chart.js                 | Card grid with embedded charts                    |
-| Simple A→B→C flows in slides    | CSS Pipeline cards                  | Mermaid renders too small for simple linear flows |
+| Content type | Approach | Why |
+|---|---|---|
+| Architecture (text-heavy) | CSS Grid cards + flow arrows | Rich card content needs CSS control |
+| Architecture (topology-focused) | **Mermaid** | Visible connections need automatic edge routing |
+| Flowchart / pipeline | **Mermaid** | Automatic node positioning |
+| Sequence diagram | **Mermaid** | Lifelines need automatic layout |
+| Data flow | **Mermaid** with edge labels | Connections need auto-routing |
+| ER / schema diagram | **Mermaid** | Relationship lines between entities |
+| State machine | **Mermaid** | State transitions with labeled edges |
+| Mind map | **Mermaid** | Hierarchical branching |
+| Class diagram | **Mermaid** | Inheritance lines with auto-routing |
+| C4 architecture | **Mermaid** `graph TD` + `subgraph` | Native C4 hardcodes its own styles |
+| Data table | HTML `<table>` | Semantic markup, accessibility, copy-paste |
+| Timeline | CSS (central line + cards) | Simple linear layout |
+| Dashboard | CSS Grid + Chart.js | Card grid with embedded charts |
+| Simple A→B→C flows in slides | CSS Pipeline cards | Mermaid renders too small for simple linear flows |
 
 ---
 

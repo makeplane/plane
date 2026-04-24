@@ -19,41 +19,32 @@
  *   --wait-for-login <pattern> : Open headed browser, wait for URL to match regex pattern
  *   --login-timeout <ms>       : Max wait time for login (default: 300000 = 5 min)
  */
-import {
-  getBrowser,
-  getPage,
-  closeBrowser,
-  disconnectBrowser,
-  saveAuthSession,
-  parseArgs,
-  outputJSON,
-  outputError,
-} from "./lib/browser.js";
+import { getBrowser, getPage, closeBrowser, disconnectBrowser, saveAuthSession, parseArgs, outputJSON, outputError } from './lib/browser.js';
 
 async function navigate() {
   const args = parseArgs(process.argv.slice(2));
 
   if (!args.url) {
-    outputError(new Error("--url is required"));
+    outputError(new Error('--url is required'));
     return;
   }
 
   try {
     // Force headed mode when waiting for interactive login
-    const headless = args["wait-for-login"] ? false : args.headless;
+    const headless = args['wait-for-login'] ? false : args.headless;
 
     const browser = await getBrowser({
       headless,
-      useDefaultProfile: args["use-default-profile"] === "true",
+      useDefaultProfile: args['use-default-profile'] === 'true',
       profile: args.profile,
-      browserUrl: args["browser-url"],
+      browserUrl: args['browser-url']
     });
 
     const page = await getPage(browser);
 
     const options = {
-      waitUntil: args["wait-until"] || "networkidle2",
-      timeout: parseInt(args.timeout || "30000"),
+      waitUntil: args['wait-until'] || 'networkidle2',
+      timeout: parseInt(args.timeout || '30000')
     };
 
     await page.goto(args.url, options);
@@ -61,17 +52,17 @@ async function navigate() {
     const result = {
       success: true,
       url: page.url(),
-      title: await page.title(),
+      title: await page.title()
     };
 
     // Interactive login: wait for user to complete OAuth/SSO flow
-    if (args["wait-for-login"]) {
-      const pattern = args["wait-for-login"];
-      const loginTimeout = parseInt(args["login-timeout"] || "300000");
+    if (args['wait-for-login']) {
+      const pattern = args['wait-for-login'];
+      const loginTimeout = parseInt(args['login-timeout'] || '300000');
 
       // Validate timeout value
       if (!Number.isFinite(loginTimeout) || loginTimeout <= 0) {
-        outputError(new Error("--login-timeout must be a positive integer (ms)"));
+        outputError(new Error('--login-timeout must be a positive integer (ms)'));
         return;
       }
 
@@ -102,7 +93,7 @@ async function navigate() {
         } catch {
           // Page may be mid-navigation, retry
         }
-        await new Promise((r) => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 500));
       }
 
       if (loginDetected) {
@@ -112,7 +103,7 @@ async function navigate() {
           saveAuthSession({ cookies });
           result.cookiesSaved = cookies.length;
         } else {
-          process.stderr.write("[!] No cookies captured. Previous session preserved.\n");
+          process.stderr.write('[!] No cookies captured. Previous session preserved.\n');
           result.cookiesSaved = 0;
         }
 
@@ -132,7 +123,7 @@ async function navigate() {
 
     // Default: disconnect to keep browser running for session persistence
     // Use --close true to fully close browser
-    if (args.close === "true") {
+    if (args.close === 'true') {
       await closeBrowser();
     } else {
       await disconnectBrowser();

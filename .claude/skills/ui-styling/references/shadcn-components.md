@@ -5,7 +5,6 @@ Complete catalog of shadcn/ui components with usage patterns and installation.
 ## Installation
 
 **Add specific components:**
-
 ```bash
 npx shadcn@latest add button
 npx shadcn@latest add button card dialog  # Multiple
@@ -17,7 +16,6 @@ Components install to `components/ui/` with automatic dependency management.
 ## Form & Input Components
 
 ### Button
-
 ```tsx
 import { Button } from "@/components/ui/button"
 
@@ -32,65 +30,58 @@ Variants: `default | destructive | outline | secondary | ghost | link`
 Sizes: `default | sm | lg | icon`
 
 ### Input
-
 ```tsx
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 <div className="space-y-2">
   <Label htmlFor="email">Email</Label>
   <Input id="email" type="email" placeholder="you@example.com" />
-</div>;
+</div>
 ```
 
 ### Form (with React Hook Form + Zod)
-
 ```tsx
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 const schema = z.object({
   username: z.string().min(2).max(50),
-  email: z.string().email(),
-});
+  email: z.string().email()
+})
 
 function ProfileForm() {
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { username: "", email: "" },
-  });
+    defaultValues: { username: "", email: "" }
+  })
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(console.log)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FormField control={form.control} name="username" render={({ field }) => (
+          <FormItem>
+            <FormLabel>Username</FormLabel>
+            <FormControl>
+              <Input placeholder="shadcn" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )} />
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-  );
+  )
 }
 ```
 
 ### Select
-
 ```tsx
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 <Select>
   <SelectTrigger className="w-[180px]">
@@ -101,26 +92,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
     <SelectItem value="dark">Dark</SelectItem>
     <SelectItem value="system">System</SelectItem>
   </SelectContent>
-</Select>;
+</Select>
 ```
 
 ### Checkbox
-
 ```tsx
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 
 <div className="flex items-center space-x-2">
   <Checkbox id="terms" />
   <Label htmlFor="terms">Accept terms</Label>
-</div>;
+</div>
 ```
 
 ### Radio Group
-
 ```tsx
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 
 <RadioGroup defaultValue="option-one">
   <div className="flex items-center space-x-2">
@@ -131,31 +120,28 @@ import { Label } from "@/components/ui/label";
     <RadioGroupItem value="option-two" id="option-two" />
     <Label htmlFor="option-two">Option Two</Label>
   </div>
-</RadioGroup>;
+</RadioGroup>
 ```
 
 ### Textarea
-
 ```tsx
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea"
 
-<Textarea placeholder="Type your message here." />;
+<Textarea placeholder="Type your message here." />
 ```
 
 ### Switch
-
 ```tsx
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 
 <div className="flex items-center space-x-2">
   <Switch id="airplane-mode" />
   <Label htmlFor="airplane-mode">Airplane Mode</Label>
-</div>;
+</div>
 ```
 
 ### Date Picker
-
 ```tsx
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -182,9 +168,8 @@ const [date, setDate] = useState<Date>()
 ## Layout & Navigation
 
 ### Card
-
 ```tsx
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 <Card>
   <CardHeader>
@@ -197,13 +182,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
   <CardFooter>
     <Button>Action</Button>
   </CardFooter>
-</Card>;
+</Card>
 ```
 
 ### Tabs
-
 ```tsx
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 <Tabs defaultValue="account">
   <TabsList>
@@ -212,37 +196,32 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
   </TabsList>
   <TabsContent value="account">Account settings</TabsContent>
   <TabsContent value="password">Password settings</TabsContent>
-</Tabs>;
+</Tabs>
 ```
 
 ### Accordion
-
 ```tsx
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 <Accordion type="single" collapsible>
   <AccordionItem value="item-1">
     <AccordionTrigger>Is it accessible?</AccordionTrigger>
-    <AccordionContent>Yes. It adheres to WAI-ARIA design pattern.</AccordionContent>
+    <AccordionContent>
+      Yes. It adheres to WAI-ARIA design pattern.
+    </AccordionContent>
   </AccordionItem>
   <AccordionItem value="item-2">
     <AccordionTrigger>Is it styled?</AccordionTrigger>
-    <AccordionContent>Yes. Comes with default styles customizable with Tailwind.</AccordionContent>
+    <AccordionContent>
+      Yes. Comes with default styles customizable with Tailwind.
+    </AccordionContent>
   </AccordionItem>
-</Accordion>;
+</Accordion>
 ```
 
 ### Navigation Menu
-
 ```tsx
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu"
 
 <NavigationMenu>
   <NavigationMenuList>
@@ -254,22 +233,14 @@ import {
       </NavigationMenuContent>
     </NavigationMenuItem>
   </NavigationMenuList>
-</NavigationMenu>;
+</NavigationMenu>
 ```
 
 ## Overlays & Dialogs
 
 ### Dialog
-
 ```tsx
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
 <Dialog>
   <DialogTrigger asChild>
@@ -281,22 +252,12 @@ import {
       <DialogDescription>This action cannot be undone.</DialogDescription>
     </DialogHeader>
   </DialogContent>
-</Dialog>;
+</Dialog>
 ```
 
 ### Drawer
-
 ```tsx
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
 <Drawer>
   <DrawerTrigger>Open</DrawerTrigger>
@@ -310,22 +271,20 @@ import {
       <DrawerClose>Cancel</DrawerClose>
     </DrawerFooter>
   </DrawerContent>
-</Drawer>;
+</Drawer>
 ```
 
 ### Popover
-
 ```tsx
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 <Popover>
   <PopoverTrigger>Open</PopoverTrigger>
   <PopoverContent>Content here</PopoverContent>
-</Popover>;
+</Popover>
 ```
 
 ### Toast
-
 ```tsx
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
@@ -343,9 +302,8 @@ const { toast } = useToast()
 ```
 
 ### Command
-
 ```tsx
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 
 <Command>
   <CommandInput placeholder="Type a command or search..." />
@@ -357,23 +315,12 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
       <CommandItem>Calculator</CommandItem>
     </CommandGroup>
   </CommandList>
-</Command>;
+</Command>
 ```
 
 ### Alert Dialog
-
 ```tsx
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 
 <AlertDialog>
   <AlertDialogTrigger asChild>
@@ -391,13 +338,12 @@ import {
       <AlertDialogAction>Continue</AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
-</AlertDialog>;
+</AlertDialog>
 ```
 
 ## Feedback & Status
 
 ### Alert
-
 ```tsx
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
@@ -413,17 +359,15 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 ```
 
 ### Progress
-
 ```tsx
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/components/ui/progress"
 
-<Progress value={33} />;
+<Progress value={33} />
 ```
 
 ### Skeleton
-
 ```tsx
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton"
 
 <div className="flex items-center space-x-4">
   <Skeleton className="h-12 w-12 rounded-full" />
@@ -431,15 +375,14 @@ import { Skeleton } from "@/components/ui/skeleton";
     <Skeleton className="h-4 w-[250px]" />
     <Skeleton className="h-4 w-[200px]" />
   </div>
-</div>;
+</div>
 ```
 
 ## Display Components
 
 ### Table
-
 ```tsx
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 <Table>
   <TableCaption>Recent invoices</TableCaption>
@@ -457,22 +400,20 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
       <TableCell>$250.00</TableCell>
     </TableRow>
   </TableBody>
-</Table>;
+</Table>
 ```
 
 ### Avatar
-
 ```tsx
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 <Avatar>
   <AvatarImage src="https://github.com/shadcn.png" />
   <AvatarFallback>CN</AvatarFallback>
-</Avatar>;
+</Avatar>
 ```
 
 ### Badge
-
 ```tsx
 import { Badge } from "@/components/ui/badge"
 

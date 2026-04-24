@@ -1,7 +1,6 @@
 # Marketing Copy Patterns
 
 ## Headlines
-
 ```
 Write 5 headline variations for [product].
 Frameworks:
@@ -13,7 +12,6 @@ Frameworks:
 ```
 
 ## Product Descriptions
-
 ```
 <product>[Name, features]</product>
 <audience>[Demographics, pain points]</audience>
@@ -28,7 +26,6 @@ Write description that:
 ```
 
 ## Email Subject Lines
-
 ```
 Generate 10 subject lines for [campaign].
 Mix approaches:
@@ -41,7 +38,6 @@ Under 50 chars. Test 2-3 with emojis.
 ```
 
 ## Ad Copy
-
 ```
 Platform: [Google/Meta/LinkedIn]
 Objective: [awareness/conversion]
@@ -55,7 +51,6 @@ Create [N] variations with:
 ```
 
 ## Landing Pages
-
 ```
 <offer>[Product/service]</offer>
 <goal>[signup/purchase/download]</goal>

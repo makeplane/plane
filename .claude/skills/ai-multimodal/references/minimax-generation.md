@@ -19,7 +19,7 @@ Base URL: `https://api.minimax.io/v1` | Auth: `Bearer {MINIMAX_API_KEY}`
   "n": 2,
   "response_format": "url",
   "prompt_optimizer": true,
-  "subject_reference": [{ "type": "character", "image_file": "url", "weight": 0.8 }]
+  "subject_reference": [{"type": "character", "image_file": "url", "weight": 0.8}]
 }
 ```
 
@@ -33,13 +33,12 @@ Base URL: `https://api.minimax.io/v1` | Auth: `Bearer {MINIMAX_API_KEY}`
 **Async workflow**: Submit task → poll every 10s → download file (URL valid 9h)
 
 ### Models
-
-| Model                     | Features                 | Resolution |
-| ------------------------- | ------------------------ | ---------- |
-| `MiniMax-Hailuo-2.3`      | Text/image-to-video      | 720p/1080p |
+| Model | Features | Resolution |
+|-------|----------|-----------|
+| `MiniMax-Hailuo-2.3` | Text/image-to-video | 720p/1080p |
 | `MiniMax-Hailuo-2.3-Fast` | Same, 50% faster+cheaper | 720p/1080p |
-| `MiniMax-Hailuo-02`       | First+last frame mode    | 720p       |
-| `S2V-01`                  | Subject reference        | 720p       |
+| `MiniMax-Hailuo-02` | First+last frame mode | 720p |
+| `S2V-01` | Subject reference | 720p |
 
 **Rate**: 5 RPM | **Cost**: $0.25 (6s/768p), $0.52 (10s/768p)
 
@@ -82,12 +81,10 @@ Base URL: `https://api.minimax.io/v1` | Auth: `Bearer {MINIMAX_API_KEY}`
 **Text limit**: 10,000 chars
 
 ### Voice Cloning
-
 ```json
 POST /voice_clone
 {"audio_url": "https://sample.wav", "clone_name": "my_voice"}
 ```
-
 Requires 10+ seconds of reference audio. Rate: 60 RPM.
 
 ## Music Generation
@@ -102,7 +99,7 @@ Requires 10+ seconds of reference audio. Rate: 60 RPM.
   "lyrics": "Verse 1\nLine one\n\n[Chorus]\nChorus line",
   "prompt": "Upbeat pop with electronic elements",
   "output_format": "url",
-  "audio_setting": { "sample_rate": 44100, "bitrate": 128000, "format": "mp3" }
+  "audio_setting": {"sample_rate": 44100, "bitrate": 128000, "format": "mp3"}
 }
 ```
 
@@ -113,12 +110,12 @@ Requires 10+ seconds of reference audio. Rate: 60 RPM.
 
 ## Error Codes
 
-| Code | Meaning              |
-| ---- | -------------------- |
-| 0    | Success              |
-| 1002 | Rate limit exceeded  |
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1002 | Rate limit exceeded |
 | 1008 | Insufficient balance |
-| 2013 | Invalid parameters   |
+| 2013 | Invalid parameters |
 
 ## CLI Examples
 

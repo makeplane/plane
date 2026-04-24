@@ -26,16 +26,16 @@ pnpm exec remotion add @remotion/captions # If project uses pnpm
 Use `createTikTokStyleCaptions()` to group captions into pages. The `combineTokensWithinMilliseconds` option controls how many words appear at once:
 
 ```tsx
-import { useMemo } from "react";
-import { createTikTokStyleCaptions } from "@remotion/captions";
-import type { Caption } from "@remotion/captions";
+import {useMemo} from 'react';
+import {createTikTokStyleCaptions} from '@remotion/captions';
+import type {Caption} from '@remotion/captions';
 
 // How often captions should switch (in milliseconds)
 // Higher values = more words per page
 // Lower values = fewer words (more word-by-word)
 const SWITCH_CAPTIONS_EVERY_MS = 1200;
 
-const { pages } = useMemo(() => {
+const {pages} = useMemo(() => {
   return createTikTokStyleCaptions({
     captions,
     combineTokensWithinMilliseconds: SWITCH_CAPTIONS_EVERY_MS,
@@ -48,11 +48,11 @@ const { pages } = useMemo(() => {
 Map over the pages and render each one in a `<Sequence>`. Calculate the start frame and duration from the page timing:
 
 ```tsx
-import { Sequence, useVideoConfig, AbsoluteFill } from "remotion";
-import type { TikTokPage } from "@remotion/captions";
+import {Sequence, useVideoConfig, AbsoluteFill} from 'remotion';
+import type {TikTokPage} from '@remotion/captions';
 
 const CaptionedContent: React.FC = () => {
-  const { fps } = useVideoConfig();
+  const {fps} = useVideoConfig();
 
   return (
     <AbsoluteFill>
@@ -61,7 +61,7 @@ const CaptionedContent: React.FC = () => {
         const startFrame = (page.startMs / 1000) * fps;
         const endFrame = Math.min(
           nextPage ? (nextPage.startMs / 1000) * fps : Infinity,
-          startFrame + (SWITCH_CAPTIONS_EVERY_MS / 1000) * fps
+          startFrame + (SWITCH_CAPTIONS_EVERY_MS / 1000) * fps,
         );
         const durationInFrames = endFrame - startFrame;
 
@@ -70,7 +70,11 @@ const CaptionedContent: React.FC = () => {
         }
 
         return (
-          <Sequence key={index} from={startFrame} durationInFrames={durationInFrames}>
+          <Sequence
+            key={index}
+            from={startFrame}
+            durationInFrames={durationInFrames}
+          >
             <CaptionPage page={page} />
           </Sequence>
         );
@@ -85,14 +89,14 @@ const CaptionedContent: React.FC = () => {
 A caption page contains `tokens` which you can use to highlight the currently spoken word:
 
 ```tsx
-import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import type { TikTokPage } from "@remotion/captions";
+import {AbsoluteFill, useCurrentFrame, useVideoConfig} from 'remotion';
+import type {TikTokPage} from '@remotion/captions';
 
-const HIGHLIGHT_COLOR = "#39E508";
+const HIGHLIGHT_COLOR = '#39E508';
 
-const CaptionPage: React.FC<{ page: TikTokPage }> = ({ page }) => {
+const CaptionPage: React.FC<{page: TikTokPage}> = ({page}) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const {fps} = useVideoConfig();
 
   // Current time relative to the start of the sequence
   const currentTimeMs = (frame / fps) * 1000;
@@ -100,13 +104,17 @@ const CaptionPage: React.FC<{ page: TikTokPage }> = ({ page }) => {
   const absoluteTimeMs = page.startMs + currentTimeMs;
 
   return (
-    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center" }}>
-      <div style={{ fontSize: 80, fontWeight: "bold", whiteSpace: "pre" }}>
+    <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
+      <div style={{fontSize: 80, fontWeight: 'bold', whiteSpace: 'pre'}}>
         {page.tokens.map((token) => {
-          const isActive = token.fromMs <= absoluteTimeMs && token.toMs > absoluteTimeMs;
+          const isActive =
+            token.fromMs <= absoluteTimeMs && token.toMs > absoluteTimeMs;
 
           return (
-            <span key={token.fromMs} style={{ color: isActive ? HIGHLIGHT_COLOR : "white" }}>
+            <span
+              key={token.fromMs}
+              style={{color: isActive ? HIGHLIGHT_COLOR : 'white'}}
+            >
               {token.text}
             </span>
           );

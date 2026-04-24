@@ -5,7 +5,6 @@ Visual verification of frontend implementations using Chrome MCP (Claude Chrome 
 ## Applicability Check
 
 **Skip entirely if task is NOT frontend-related.** Frontend indicators:
-
 - Files modified: `*.tsx`, `*.jsx`, `*.vue`, `*.svelte`, `*.html`, `*.css`, `*.scss`
 - Changes to: components, layouts, pages, styles, DOM structure, UI behavior
 - Keywords: render, display, layout, responsive, animation, visual, UI, UX
@@ -39,12 +38,11 @@ Use Chrome MCP tools to verify the implementation in the user's actual browser. 
 ### Visual Inspection Checklist
 
 After capturing screenshot, verify:
-
 1. **Layout** — Elements positioned correctly, no overflow/overlap
 2. **Content** — Text, images, data rendered as expected
 3. **Responsiveness** — Resize viewport if MCP supports it
-4. **Interactions** — Use chrome**click / chrome**type to test interactive elements
-5. **Console errors** — Use chrome\_\_evaluate to check `console.error` output
+4. **Interactions** — Use chrome__click / chrome__type to test interactive elements
+5. **Console errors** — Use chrome__evaluate to check `console.error` output
 
 ### Console Error Check
 
@@ -76,13 +74,11 @@ node "$SKILL_DIR/console.js" --url http://localhost:3000 --types error,pageerror
 ```
 
 If `ck:chrome-devtools` skill is also unavailable, skip visual verification and note in report:
-
 > "Visual verification skipped — no Chrome MCP or chrome-devtools available."
 
 ## Step 3: Analyze Results
 
 After capture:
-
 1. **Read screenshot** — Use Read tool on the PNG to visually inspect
 2. **Check console output** — Zero errors = pass; errors = investigate before claiming done
 3. **Compare with expected** — Match against design specs or user description
@@ -97,7 +93,6 @@ Standard verification → Tests pass → Build succeeds → Frontend visual veri
 ```
 
 Report format:
-
 ```
 ## Frontend Verification
 - Method: [Chrome MCP | chrome-devtools | skipped]

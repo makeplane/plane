@@ -7,7 +7,6 @@
 **When to use:** User asks about specific feature/component
 
 **Examples:**
-
 ```
 shadcn/ui date picker
 → https://context7.com/shadcn-ui/ui/llms.txt?topic=date
@@ -45,7 +44,6 @@ better-auth → better-auth/better-auth
 ## Official Site Fallbacks
 
 Use ONLY if context7.com unavailable:
-
 ```
 Astro: https://docs.astro.build/llms.txt
 Next.js: https://nextjs.org/llms.txt
@@ -56,14 +54,12 @@ SvelteKit: https://kit.svelte.dev/llms.txt
 ## Topic Keyword Normalization
 
 **Rules:**
-
 - Lowercase
 - Remove special chars
 - Use first word for multi-word topics
 - Max 20 chars
 
 **Examples:**
-
 ```
 "date picker" → "date"
 "OAuth" → "oauth"

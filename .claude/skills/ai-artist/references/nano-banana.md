@@ -2,10 +2,10 @@
 
 ## Models
 
-| Model ID                     | Type  | Best For                        |
-| ---------------------------- | ----- | ------------------------------- |
-| `gemini-2.5-flash-image`     | Flash | Speed, high-volume              |
-| `gemini-3-pro-image-preview` | Pro   | Text rendering, complex prompts |
+| Model ID | Type | Best For |
+|----------|------|----------|
+| `gemini-2.5-flash-image` | Flash | Speed, high-volume |
+| `gemini-3-pro-image-preview` | Pro | Text rendering, complex prompts |
 
 ## Core Principle
 
@@ -58,15 +58,15 @@ For complex scenes, use JSON structure:
 
 ## Techniques
 
-| Technique            | Example                                                          |
-| -------------------- | ---------------------------------------------------------------- |
-| Emphasis             | `ALL CAPS` for critical requirements                             |
-| Precision colors     | `#9F2B68` instead of "dark magenta"                              |
-| Negative constraints | `NEVER include text/watermarks. DO NOT add labels.`              |
-| Realism trigger      | `Natural lighting, DOF. Captured with Canon EOS 90D DSLR.`       |
-| Structured edits     | `Make ALL edits: - [1] - [2] - [3]`                              |
-| Complex logic        | `Kittens MUST have heterochromatic eyes matching fur colors`     |
-| Identity lock        | `Use reference as EXACT facial reference. STRICT identity lock.` |
+| Technique | Example |
+|-----------|---------|
+| Emphasis | `ALL CAPS` for critical requirements |
+| Precision colors | `#9F2B68` instead of "dark magenta" |
+| Negative constraints | `NEVER include text/watermarks. DO NOT add labels.` |
+| Realism trigger | `Natural lighting, DOF. Captured with Canon EOS 90D DSLR.` |
+| Structured edits | `Make ALL edits: - [1] - [2] - [3]` |
+| Complex logic | `Kittens MUST have heterochromatic eyes matching fur colors` |
+| Identity lock | `Use reference as EXACT facial reference. STRICT identity lock.` |
 
 ## Advanced Features
 
@@ -79,7 +79,6 @@ For complex scenes, use JSON structure:
 ## Popular Use Case Templates
 
 ### Quote Card
-
 ```
 A wide quote card with {background} background, {font_style} font.
 Quote: "{quote_text}" — {author}
@@ -88,7 +87,6 @@ Text: 2/3 width, portrait: 1/3 width. Gradient transition on portrait.
 ```
 
 ### Infographic (Bento Grid)
-
 ```
 Premium liquid glass Bento grid product infographic with 8 modules.
 Product: [name]. Language: [lang].
@@ -104,7 +102,6 @@ Background: Apple liquid glass cards (85-90% transparent).
 ```
 
 ### Mirror Selfie
-
 ```
 Scene: Mirror selfie in [room type], [color] tone.
 Subject: [demographics], [body type], [hairstyle].
@@ -116,7 +113,6 @@ Negative: [artifacts to avoid].
 ```
 
 ### Style Transformation
-
 ```
 A Japanese Edo-period Ukiyo-e woodblock print reimagining [modern scene].
 Characters: Edo-era kimono but modern actions.

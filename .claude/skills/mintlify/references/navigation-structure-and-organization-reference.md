@@ -42,7 +42,6 @@ Simple page groups:
 ```
 
 **Properties:**
-
 - `group` - Group title (required)
 - `icon` - Icon from Font Awesome or Lucide
 - `tag` - Badge text (e.g., "New", "Beta", "Deprecated")
@@ -58,14 +57,17 @@ Reference MDX files without extension.
   "navigation": [
     {
       "group": "Guides",
-      "pages": ["guides/getting-started", "guides/authentication", "guides/deployment"]
+      "pages": [
+        "guides/getting-started",
+        "guides/authentication",
+        "guides/deployment"
+      ]
     }
   ]
 }
 ```
 
 **File mapping:**
-
 - `"introduction"` → `/introduction.mdx`
 - `"api/users"` → `/api/users.mdx`
 - `"guides/quickstart"` → `/guides/quickstart.mdx`
@@ -138,13 +140,11 @@ Organize documentation into major sections with tabs.
 ```
 
 **Tab properties:**
-
 - `name` - Tab display name (required)
 - `url` - URL path segment (required)
 - `icon` - Tab icon
 
 **Important:** Page paths must match tab URL:
-
 - Tab `"url": "api"` → pages must start with `api/`
 - Tab `"url": "docs"` → pages must start with `docs/`
 
@@ -521,7 +521,6 @@ Complex navigation with all organizational patterns:
 3. **Max depth:** Limited nesting (typically 2-3 levels)
 
 **Valid nesting:**
-
 ```json
 {
   "navigation": [
@@ -540,7 +539,6 @@ Complex navigation with all organizational patterns:
 ```
 
 **Invalid nesting:**
-
 ```json
 {
   "navigation": [
@@ -571,12 +569,18 @@ Pages must match their organizational context:
 ```json
 {
   "tabs": [
-    { "name": "Docs", "url": "docs" },
-    { "name": "API", "url": "api" }
+    {"name": "Docs", "url": "docs"},
+    {"name": "API", "url": "api"}
   ],
-  "products": [{ "name": "Platform", "slug": "platform" }],
-  "versions": [{ "name": "v2", "slug": "v2" }],
-  "languages": [{ "name": "English", "slug": "en" }],
+  "products": [
+    {"name": "Platform", "slug": "platform"}
+  ],
+  "versions": [
+    {"name": "v2", "slug": "v2"}
+  ],
+  "languages": [
+    {"name": "English", "slug": "en"}
+  ],
   "navigation": [
     {
       "group": "Guide",
@@ -605,7 +609,6 @@ Enable multi-level expandable navigation.
 ```
 
 With drilldown enabled:
-
 - Groups expand/collapse on click
 - Deep nesting feels more navigable
 - Better for complex documentation structures
@@ -637,7 +640,6 @@ Use Font Awesome or Lucide icons in navigation.
 ```
 
 Common Font Awesome icons:
-
 - `rocket` - Getting started
 - `book` - Documentation
 - `code` - API reference
@@ -671,7 +673,6 @@ Common Font Awesome icons:
 ```
 
 Common Lucide icons:
-
 - `book-open` - Guides
 - `layout` - Components
 - `terminal` - CLI
@@ -698,8 +699,8 @@ Full-featured navigation structure:
       "url": "api",
       "icon": "code",
       "menu": [
-        { "name": "v2.0", "url": "api/v2" },
-        { "name": "v1.0", "url": "api/v1" }
+        {"name": "v2.0", "url": "api/v2"},
+        {"name": "v1.0", "url": "api/v1"}
       ]
     }
   ],
@@ -720,8 +721,8 @@ Full-featured navigation structure:
       "name": "Resources",
       "icon": "book-open",
       "items": [
-        { "name": "Blog", "url": "https://blog.example.com" },
-        { "name": "Status", "url": "https://status.example.com" }
+        {"name": "Blog", "url": "https://blog.example.com"},
+        {"name": "Status", "url": "https://status.example.com"}
       ]
     }
   ],

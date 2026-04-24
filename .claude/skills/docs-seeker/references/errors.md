@@ -3,19 +3,16 @@
 ## Error Codes
 
 **404 Not Found**
-
 - Topic-specific URL not available
 - Library not on context7.com
 - llms.txt doesn't exist
 
 **Timeout**
-
 - Network issues
 - Large repository clone
 - Slow API response
 
 **Invalid Response**
-
 - Malformed llms.txt
 - Empty content
 - Invalid URLs
@@ -57,7 +54,6 @@
 ## Timeout Handling
 
 **Set limits:**
-
 - WebFetch: 60s
 - Repository clone: 5min
 - Repomix: 10min

@@ -7,7 +7,6 @@ Core concepts for building your first 3D scene.
 Every Three.js app needs 3 core elements:
 
 ### 1. Scene
-
 Container for all 3D objects, lights, cameras.
 
 ```javascript
@@ -17,30 +16,28 @@ scene.fog = new THREE.Fog(0xffffff, 1, 5000); // distance fog
 ```
 
 ### 2. Camera
-
 Viewpoint into the 3D scene.
 
 **PerspectiveCamera** (realistic, most common):
-
 ```javascript
 const camera = new THREE.PerspectiveCamera(
-  75, // fov - field of view in degrees
-  window.innerWidth / window.innerHeight, // aspect ratio
-  0.1, // near clipping plane
-  1000 // far clipping plane
+  75,  // fov - field of view in degrees
+  window.innerWidth / window.innerHeight,  // aspect ratio
+  0.1,  // near clipping plane
+  1000  // far clipping plane
 );
 camera.position.set(0, 0, 5);
 camera.lookAt(0, 0, 0);
 ```
 
 **OrthographicCamera** (no perspective distortion):
-
 ```javascript
-const camera = new THREE.OrthographicCamera(left, right, top, bottom, near, far);
+const camera = new THREE.OrthographicCamera(
+  left, right, top, bottom, near, far
+);
 ```
 
 ### 3. Renderer
-
 Renders scene using camera perspective.
 
 ```javascript
@@ -79,27 +76,24 @@ new THREE.TorusGeometry(radius, tube, radialSegments, tubularSegments);
 Materials define surface appearance:
 
 **MeshBasicMaterial** - unlit, flat color:
-
 ```javascript
 new THREE.MeshBasicMaterial({ color: 0xff0000 });
 ```
 
 **MeshStandardMaterial** - PBR, responds to lights:
-
 ```javascript
 new THREE.MeshStandardMaterial({
   color: 0x00ff00,
   metalness: 0.5,
-  roughness: 0.5,
+  roughness: 0.5
 });
 ```
 
 **MeshPhongMaterial** - specular highlights:
-
 ```javascript
 new THREE.MeshPhongMaterial({
   color: 0x0000ff,
-  shininess: 100,
+  shininess: 100
 });
 ```
 
@@ -157,7 +151,7 @@ animate();
 Keep aspect ratio correct:
 
 ```javascript
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);

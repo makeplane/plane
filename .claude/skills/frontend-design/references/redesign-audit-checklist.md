@@ -9,7 +9,6 @@ Use when upgrading an existing project. Follow Scan → Diagnose → Fix in orde
 3. **Fix** — Apply targeted upgrades working with the existing stack. Do not rewrite from scratch.
 
 **Rules:**
-
 - Work with the existing tech stack. Do not migrate frameworks.
 - Do not break existing functionality. Test after every change.
 - Check `package.json` before adding any new dependency.
@@ -20,7 +19,6 @@ Use when upgrading an existing project. Follow Scan → Diagnose → Fix in orde
 ## Audit Categories
 
 ### 1. Typography
-
 - [ ] Browser default fonts or Inter everywhere → replace with `Geist`, `Outfit`, `Cabinet Grotesk`, or `Satoshi`
 - [ ] Headlines lack presence → tighten tracking, reduce line-height, increase display size
 - [ ] Body text too wide → limit to ~65ch, increase line-height
@@ -31,7 +29,6 @@ Use when upgrading an existing project. Follow Scan → Diagnose → Fix in orde
 - [ ] Serif fonts on dashboard UI → use high-end sans-serif pairs only
 
 ### 2. Color and Surfaces
-
 - [ ] Pure `#000000` → replace with off-black or tinted dark
 - [ ] Oversaturated accents → desaturate below 80%
 - [ ] More than one accent color → reduce to one
@@ -43,7 +40,6 @@ Use when upgrading an existing project. Follow Scan → Diagnose → Fix in orde
 - [ ] Random dark section in light-mode page (or vice versa) → commit to consistent tone or use slightly darker shade of same palette
 
 ### 3. Layout
-
 - [ ] Everything centered and symmetrical → break with offset margins, mixed aspect ratios
 - [ ] Three equal card columns as feature row → use 2-col zig-zag, asymmetric grid, or horizontal scroll
 - [ ] `h-screen` / `height: 100vh` → replace with `min-height: 100dvh`
@@ -56,7 +52,6 @@ Use when upgrading an existing project. Follow Scan → Diagnose → Fix in orde
 - [ ] Missing whitespace on marketing pages → double spacing, let design breathe
 
 ### 4. Interactivity and States
-
 - [ ] No hover states on buttons → add background shift, scale, or translate
 - [ ] No active/pressed feedback → add `scale(0.98)` or `translateY(1px)` on press
 - [ ] Instant transitions → add 200-300ms smooth transitions
@@ -70,7 +65,6 @@ Use when upgrading an existing project. Follow Scan → Diagnose → Fix in orde
 - [ ] Animations using `top`/`left`/`width`/`height` → switch to `transform` + `opacity`
 
 ### 5. Content
-
 - [ ] Generic placeholder names → use diverse, realistic names
 - [ ] Round fake numbers → use organic messy data
 - [ ] AI copywriting clichés → plain, specific language
@@ -81,7 +75,6 @@ Use when upgrading an existing project. Follow Scan → Diagnose → Fix in orde
 - [ ] Blog post dates all identical → randomize
 
 ### 6. Components and Code
-
 - [ ] Generic card (border + shadow + white bg) at high density → use spacing/dividers
 - [ ] Always one filled + one ghost button → add text links, reduce visual noise
 - [ ] Lucide/Feather icons only → try Phosphor or Heroicons for differentiation

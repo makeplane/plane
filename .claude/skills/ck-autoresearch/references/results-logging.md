@@ -10,26 +10,26 @@ iteration	commit	metric	delta	status	description
 
 ### Column Definitions
 
-| Column      | Type    | Notes                                                                                             |
-| ----------- | ------- | ------------------------------------------------------------------------------------------------- |
-| iteration   | integer | 0-indexed. 0 = baseline.                                                                          |
-| commit      | string  | Short SHA (7 chars) or `-` if discarded/crashed                                                   |
-| metric      | float   | Measured value from verify command                                                                |
-| delta       | float   | Signed change from previous best. Negative = improvement for "lower is better". `-` for baseline. |
-| status      | enum    | See status values below                                                                           |
-| description | string  | One sentence: what was attempted                                                                  |
+| Column | Type | Notes |
+|--------|------|-------|
+| iteration | integer | 0-indexed. 0 = baseline. |
+| commit | string | Short SHA (7 chars) or `-` if discarded/crashed |
+| metric | float | Measured value from verify command |
+| delta | float | Signed change from previous best. Negative = improvement for "lower is better". `-` for baseline. |
+| status | enum | See status values below |
+| description | string | One sentence: what was attempted |
 
 ### Status Values
 
-| Status            | Meaning                                                                  |
-| ----------------- | ------------------------------------------------------------------------ |
-| `baseline`        | Initial measurement before any changes                                   |
-| `keep`            | Improvement passed guard, committed                                      |
-| `keep (reworked)` | Failed guard on first attempt, reworked, then passed                     |
-| `discard`         | No improvement or below min-delta threshold                              |
-| `guard-failed`    | Metric improved but guard command exited non-zero; reverted              |
-| `crash`           | Verify command errored or timed out                                      |
-| `no-op`           | Improvement below min-delta threshold (not a failure, just insufficient) |
+| Status | Meaning |
+|--------|---------|
+| `baseline` | Initial measurement before any changes |
+| `keep` | Improvement passed guard, committed |
+| `keep (reworked)` | Failed guard on first attempt, reworked, then passed |
+| `discard` | No improvement or below min-delta threshold |
+| `guard-failed` | Metric improved but guard command exited non-zero; reverted |
+| `crash` | Verify command errored or timed out |
+| `no-op` | Improvement below min-delta threshold (not a failure, just insufficient) |
 
 ### Example Log
 

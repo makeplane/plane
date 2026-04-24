@@ -8,12 +8,12 @@
  * Export: logHook(hookName, data), createHookTimer(hookName, baseData), logHookCrash(hookName, error, data)
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const LOG_DIR = path.join(__dirname, "..", ".logs");
-const LOG_FILE = path.join(LOG_DIR, "hook-log.jsonl");
-const LOCK_FILE = path.join(LOG_DIR, "hook-log.lock");
+const LOG_DIR = path.join(__dirname, '..', '.logs');
+const LOG_FILE = path.join(LOG_DIR, 'hook-log.jsonl');
+const LOCK_FILE = path.join(LOG_DIR, 'hook-log.lock');
 const MAX_LINES = 1000;
 const TRUNCATE_TO = 500;
 const LOCK_TIMEOUT_MS = 250;
@@ -35,19 +35,15 @@ function withLogLock(fn) {
   while (Date.now() - startedAt < LOCK_TIMEOUT_MS) {
     let fd;
     try {
-      fd = fs.openSync(LOCK_FILE, "wx");
+      fd = fs.openSync(LOCK_FILE, 'wx');
       try {
         return fn();
       } finally {
-        try {
-          fs.closeSync(fd);
-        } catch (_) {}
-        try {
-          fs.unlinkSync(LOCK_FILE);
-        } catch (_) {}
+        try { fs.closeSync(fd); } catch (_) {}
+        try { fs.unlinkSync(LOCK_FILE); } catch (_) {}
       }
     } catch (error) {
-      if (!error || error.code !== "EEXIST") {
+      if (!error || error.code !== 'EEXIST') {
         throw error;
       }
       sleep(LOCK_RETRY_MS);
@@ -76,10 +72,10 @@ function ensureLogDir() {
 function rotateIfNeeded() {
   try {
     if (!fs.existsSync(LOG_FILE)) return;
-    const lines = fs.readFileSync(LOG_FILE, "utf-8").split("\n").filter(Boolean);
+    const lines = fs.readFileSync(LOG_FILE, 'utf-8').split('\n').filter(Boolean);
     if (lines.length >= MAX_LINES) {
-      const truncated = lines.slice(-TRUNCATE_TO).join("\n") + "\n";
-      fs.writeFileSync(LOG_FILE, truncated, "utf-8");
+      const truncated = lines.slice(-TRUNCATE_TO).join('\n') + '\n';
+      fs.writeFileSync(LOG_FILE, truncated, 'utf-8');
     }
   } catch (_) {
     // Fail silently
@@ -96,25 +92,25 @@ function logHook(hookName, data) {
     const entry = {
       ts: new Date().toISOString(),
       hook: hookName,
-      event: data.event || "",
-      tool: data.tool || "",
-      target: data.target || "",
-      note: data.note || "",
+      event: data.event || '',
+      tool: data.tool || '',
+      target: data.target || '',
+      note: data.note || '',
       dur: data.dur || 0,
-      status: data.status || "ok",
+      status: data.status || 'ok',
       exit: data.exit !== undefined ? data.exit : 0,
-      error: data.error || "",
+      error: data.error || ''
     };
 
-    const serialized = JSON.stringify(entry) + "\n";
+    const serialized = JSON.stringify(entry) + '\n';
     const wroteWithLock = withLogLock(() => {
-      fs.appendFileSync(LOG_FILE, serialized, "utf-8");
+      fs.appendFileSync(LOG_FILE, serialized, 'utf-8');
       rotateIfNeeded();
       return true;
     });
 
     if (wroteWithLock === null) {
-      fs.appendFileSync(LOG_FILE, serialized, "utf-8");
+      fs.appendFileSync(LOG_FILE, serialized, 'utf-8');
     }
   } catch (_) {
     // Never crash — fail silently
@@ -136,7 +132,7 @@ function createHookTimer(hookName, baseData = {}) {
       ended = true;
       const dur = Date.now() - start;
       logHook(hookName, { ...baseData, ...data, dur });
-    },
+    }
   };
 }
 
@@ -148,17 +144,21 @@ function createHookTimer(hookName, baseData = {}) {
  */
 function logHookCrash(hookName, error, data = {}) {
   const message =
-    error instanceof Error ? error.message : typeof error === "string" ? error : String(error || "unknown error");
+    error instanceof Error
+      ? error.message
+      : typeof error === 'string'
+        ? error
+        : String(error || 'unknown error');
   logHook(hookName, {
     ...data,
-    status: "crash",
+    status: 'crash',
     exit: data.exit !== undefined ? data.exit : 0,
-    error: message,
+    error: message
   });
 }
 
 module.exports = {
   logHook,
   createHookTimer,
-  logHookCrash,
+  logHookCrash
 };

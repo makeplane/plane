@@ -1,3 +1,4 @@
+
 # 🚀 Awesome Nano Banana Pro Prompts
 
 [![Awesome](https://awesome.re/badge.svg)](https://github.com/sindresorhus/awesome)
@@ -14,7 +15,7 @@
 
 ---
 
-[![English](https://img.shields.io/badge/English-Current-brightgreen)](README.md) [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-Click%20to%20View-lightgrey)](README_zh.md) [![繁體中文](https://img.shields.io/badge/%E7%B9%81%E9%AB%94%E4%B8%AD%E6%96%87-Click%20to%20View-lightgrey)](README_zh-TW.md) [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-Click%20to%20View-lightgrey)](README_ja-JP.md) [![한국어](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-Click%20to%20View-lightgrey)](README_ko-KR.md) [![ไทย](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-Click%20to%20View-lightgrey)](README_th-TH.md) [![Tiếng Việt](https://img.shields.io/badge/Ti%E1%BA%BFng%20Vi%E1%BB%87t-Click%20to%20View-lightgrey)](README_vi-VN.md) [![हिन्दी](https://img.shields.io/badge/%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80-Click%20to%20View-lightgrey)](README_hi-IN.md) [![Español](https://img.shields.io/badge/Espa%C3%B1ol-Click%20to%20View-lightgrey)](README_es-ES.md) [![Español (Latinoamérica)](<https://img.shields.io/badge/Espa%C3%B1ol%20(Latinoam%C3%A9rica)-Click%20to%20View-lightgrey>)](README_es-419.md) [![Deutsch](https://img.shields.io/badge/Deutsch-Click%20to%20View-lightgrey)](README_de-DE.md) [![Français](https://img.shields.io/badge/Fran%C3%A7ais-Click%20to%20View-lightgrey)](README_fr-FR.md) [![Italiano](https://img.shields.io/badge/Italiano-Click%20to%20View-lightgrey)](README_it-IT.md) [![Português (Brasil)](<https://img.shields.io/badge/Portugu%C3%AAs%20(Brasil)-Click%20to%20View-lightgrey>)](README_pt-BR.md) [![Português](https://img.shields.io/badge/Portugu%C3%AAs-Click%20to%20View-lightgrey)](README_pt-PT.md) [![Türkçe](https://img.shields.io/badge/T%C3%BCrk%C3%A7e-Click%20to%20View-lightgrey)](README_tr-TR.md)
+[![English](https://img.shields.io/badge/English-Current-brightgreen)](README.md) [![简体中文](https://img.shields.io/badge/%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87-Click%20to%20View-lightgrey)](README_zh.md) [![繁體中文](https://img.shields.io/badge/%E7%B9%81%E9%AB%94%E4%B8%AD%E6%96%87-Click%20to%20View-lightgrey)](README_zh-TW.md) [![日本語](https://img.shields.io/badge/%E6%97%A5%E6%9C%AC%E8%AA%9E-Click%20to%20View-lightgrey)](README_ja-JP.md) [![한국어](https://img.shields.io/badge/%ED%95%9C%EA%B5%AD%EC%96%B4-Click%20to%20View-lightgrey)](README_ko-KR.md) [![ไทย](https://img.shields.io/badge/%E0%B9%84%E0%B8%97%E0%B8%A2-Click%20to%20View-lightgrey)](README_th-TH.md) [![Tiếng Việt](https://img.shields.io/badge/Ti%E1%BA%BFng%20Vi%E1%BB%87t-Click%20to%20View-lightgrey)](README_vi-VN.md) [![हिन्दी](https://img.shields.io/badge/%E0%A4%B9%E0%A4%BF%E0%A4%A8%E0%A5%8D%E0%A4%A6%E0%A5%80-Click%20to%20View-lightgrey)](README_hi-IN.md) [![Español](https://img.shields.io/badge/Espa%C3%B1ol-Click%20to%20View-lightgrey)](README_es-ES.md) [![Español (Latinoamérica)](https://img.shields.io/badge/Espa%C3%B1ol%20(Latinoam%C3%A9rica)-Click%20to%20View-lightgrey)](README_es-419.md) [![Deutsch](https://img.shields.io/badge/Deutsch-Click%20to%20View-lightgrey)](README_de-DE.md) [![Français](https://img.shields.io/badge/Fran%C3%A7ais-Click%20to%20View-lightgrey)](README_fr-FR.md) [![Italiano](https://img.shields.io/badge/Italiano-Click%20to%20View-lightgrey)](README_it-IT.md) [![Português (Brasil)](https://img.shields.io/badge/Portugu%C3%AAs%20(Brasil)-Click%20to%20View-lightgrey)](README_pt-BR.md) [![Português](https://img.shields.io/badge/Portugu%C3%AAs-Click%20to%20View-lightgrey)](README_pt-PT.md) [![Türkçe](https://img.shields.io/badge/T%C3%BCrk%C3%A7e-Click%20to%20View-lightgrey)](README_tr-TR.md)
 
 ---
 
@@ -30,13 +31,14 @@
 
 Why use our gallery?
 
-| Feature                    | GitHub README | youmind.com Gallery           |
-| -------------------------- | ------------- | ----------------------------- |
-| 🎨 Visual Layout           | Linear list   | Beautiful Masonry Grid        |
-| 🔍 Search                  | Ctrl+F only   | Full-text search with filters |
-| 🤖 AI One-Click Generation | -             | AI one-click generation       |
-| 📱 Mobile                  | Basic         | Fully responsive              |
-| 🏷️ Categories              | -             | Category browsing             |
+| Feature | GitHub README | youmind.com Gallery |
+|---------|--------------|---------------------|
+| 🎨 Visual Layout | Linear list | Beautiful Masonry Grid |
+| 🔍 Search | Ctrl+F only | Full-text search with filters |
+| 🤖 AI One-Click Generation | - | AI one-click generation |
+| 📱 Mobile | Basic | Fully responsive |
+| 🏷️ Categories | - | Category browsing |
+
 
 ### 🏷️ Browse by Category
 
@@ -119,7 +121,6 @@ Why use our gallery?
 Some prompts support **dynamic arguments** using [Raycast Snippets](https://raycast.com/help/snippets) syntax. Look for the 🚀 Raycast Friendly badge!
 
 **Example:**
-
 ```
 A quote card with "{argument name="quote" default="Stay hungry, stay foolish"}"
 by {argument name="author" default="Steve Jobs"}
@@ -133,11 +134,11 @@ When used in Raycast, you can dynamically replace the arguments for quick iterat
 
 <div align="center">
 
-| Metric           | Count                                             |
-| ---------------- | ------------------------------------------------- |
-| 📝 Total Prompts | **6021**                                          |
-| ⭐ Featured      | **9**                                             |
-| 🔄 Last Updated  | **Wednesday, January 21, 2026 at 4:36:24 AM UTC** |
+| Metric | Count |
+|--------|-------|
+| 📝 Total Prompts | **6021** |
+| ⭐ Featured | **9** |
+| 🔄 Last Updated | **Wednesday, January 21, 2026 at 4:36:24 AM UTC** |
 
 </div>
 
@@ -241,7 +242,7 @@ M3 — How to Use: 4 usage methods + icons
 M4 — Key Metrics: 5 EXACT data points
 Format: [icon] [Label] [Bold Value] [Unit]
 FOOD: Calories: [X] kcal/100g, Carbs: [X]g (fiber [X]g, sugar [X]g), Protein: [X]g, [Key Vitamin]: [X]mg ([X]% DV), [Key Mineral]: [X]mg ([X]% DV)
-MEDICINE:Active: [name], Strength: [X] mg, Onset: [X] min, Duration: [X] hrs, Half-life: [X] hrs
+MEDICINE:Active: [name], Strength: [X] mg, Onset: [X] min, Duration: [X] hrs, Half-life: [X] hrs 
 TECH:Chip: [model], Battery: [X] hrs, Weight: [X]g,[Key spec]: [value], Connectivity: [protocols]
 M5 — Who It's For: 4 recommended groups with green checkmark icons | 3 caution groups with amber warning icons
 M6 — Important Notes: 4 precautions + warning icons
@@ -3537,7 +3538,7 @@ A highly conceptual prompt designed to visualize a layered dish as an architectu
 #### 📝 Prompt
 
 ```
-<instructions>
+<instructions> 
 Input A: Any layered/textured dish (e.g., {argument name="layered dish" default="lasagna, baklava, mille-feuille, biryani"})
 Input B: Anatomical model / architectural blueprint
 Goal: Half-eaten slice displayed like an architectural model with each layer labeled, showing structural engineering and material science of cooking.
@@ -3677,34 +3678,34 @@ A complex, structured prompt for generating a 'Culinary Science' diorama photogr
 
 ```
 do this for {argument name="Food Item" default="caramel"} <instruction>
-
+ 
 Input A is a Complex Food Item or Dish (e.g., Chocolate, Bread, Cheese, Coffee).
 Deconstruct the subject into   3 Scientific Layers  :
      The States of Matter:  Identify 4–5 stages of processing.
-         (e.g., Cocoa Bean -> Nibs -> Liquor -> Powder. Wheat -> Flour -> Dough -> Crumb).
+         (e.g., Cocoa Bean -> Nibs -> Liquor -> Powder. Wheat -> Flour -> Dough -> Crumb). 
      The Texture Samples:  Identify the physical properties to display as swatches.
-         (e.g., Snap/Gloss for Chocolate. Porosity/Crust for Bread. Rind/Creaminess for Cheese).
+         (e.g., Snap/Gloss for Chocolate. Porosity/Crust for Bread. Rind/Creaminess for Cheese). 
      The Material: Identify the substance for the 3D text.
-         (e.g., Molded Dark Chocolate, Baked Bread Crust, Hard Wax/Cheese).
+         (e.g., Molded Dark Chocolate, Baked Bread Crust, Hard Wax/Cheese). 
 
-  2. Container:
+  2. Container: 
 Goal: "Culinary Science" Diorama Photography.
      The Stage:  An   L-Shaped Display Box   (Vertical Backboard + Horizontal Floor).
      The Finish:  Clean, matte Cream or White plastic, resembling a high-end educational kit or museum exhibit.
      The Frame:  A simple wooden or plastic border framing the scene.
 
-  3. Periodic Table background:
+  3. Periodic Table background: 
      The Grid:  The vertical wall features a neat, symmetrical grid of circular   Petri Dishes or Ceramic Bowls  .
      The Contents:  Each dish contains a sample of the "States of Matter" (Step 1).
      The Swatches:  Below the dishes are square tiles displaying the "Texture Samples" (e.g., a square of perfectly tempered chocolate next to a bloomed one).
      The Labels:  Tiny, legible scientific text (Serif font) printed directly on the wall under each sample.
 
-  4. The Floor (The Laboratory):
+  4. The Floor (The Laboratory):  
      The Narrative:  A 1:12 scale   Scientist or Chef   figure (wearing a lab coat) stands at a central wooden workbench.
     Equipment:  The desk is cluttered with a mix of   Chemistry Glassware   (Beakers, Flasks) and   Culinary Tools   (Whisks, Scales).
      The Experiment:  The figure is actively testing or measuring the food product.
 
-  5. Typography :
+  5. Typography : 
      Placement:  Massive, thick   3D Extruded Letters   stand on the very front edge of the floor, acting as a barrier.
      Construction:  The letters are made  of  the food itself (e.g., "THE CHEMISTRY OF CHOCOLATE" molded in dark chocolate).
      Text:  "THE CHEMISTRY OF {argument name="Input A" default="CHOCOLATE"}".
@@ -3784,7 +3785,7 @@ A complex, multi-panel prompt designed to visualize the invention and marketing 
 #### 📝 Prompt
 
 ```
-Input Variable: {argument name="input objects" default="[INSERT 1 or 2 OBJECTS]"}
+Input Variable: {argument name="input objects" default="[INSERT 1 or 2 OBJECTS]"} 
 Instruction:
 Act as a Visionary Industrial Designer and Patent Clerk. Create a 2x2 Grid visualizing the invention of a new product based on the Input.
  Innovation Logic  :
@@ -4053,7 +4054,7 @@ A user-developed 'Master Prompt' for the Nano Banana PRO model, designed to crea
 #### 📝 Prompt
 
 ```
-Master Prompt" using the Nano Banana PRO model that creates elite-tier arena promos.
+Master Prompt" using the Nano Banana PRO model that creates elite-tier arena promos. 
 It doesn't just put a logo on a court; it captures the electric pre-game energy of any franchise.
 ```
 
@@ -7794,7 +7795,7 @@ A detailed prompt for generating hyper-realistic commercial food photography, sp
 
 "global_settings": {
 
-"background_style": "Solid or smooth gradient background, color varies per module",
+"background_style": "Solid or smooth gradient background, color varies per module", 
 "camera": "High-speed photography look, shallow to medium depth of field", "post_processing": "Balanced contrast, natural saturation, no artificial glow" }}
 ```
 
@@ -8118,10 +8119,10 @@ A structured prompt for generating a 2x2 grid collage of high-resolution profess
       "details": {
         "packaging": "Elegant dark brown gift box with a cream base",
         "varieties": [
-          "Milk chocolate swirls",
-          "White chocolate striped truffles",
-          "Cocoa-dusted dark chocolate balls",
-          "Gold-leaf accented squares",
+          "Milk chocolate swirls", 
+          "White chocolate striped truffles", 
+          "Cocoa-dusted dark chocolate balls", 
+          "Gold-leaf accented squares", 
           "Hazelnut-topped pralines"
         ],
         "quantity": "12 visible handcrafted pieces in individual paper liners"

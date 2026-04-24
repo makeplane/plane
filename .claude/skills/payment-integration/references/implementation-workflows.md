@@ -1,7 +1,6 @@
 # Implementation Workflows
 
 ## SePay Implementation
-
 1. Load `references/sepay/overview.md` for auth setup
 2. Load `references/sepay/api.md` or `references/sepay/sdk.md` for integration
 3. Load `references/sepay/webhooks.md` for payment notifications
@@ -9,7 +8,6 @@
 5. Load `references/sepay/best-practices.md` for production readiness
 
 ## Polar Implementation
-
 1. Load `references/polar/overview.md` for auth and concepts
 2. Load `references/polar/products.md` for product setup
 3. Load `references/polar/checkouts.md` for payment flows
@@ -19,7 +17,6 @@
 7. Load `references/polar/best-practices.md` for production readiness
 
 ## Stripe Implementation
-
 1. Load `references/stripe/stripe-best-practices.md` for integration design
 2. Load `references/stripe/stripe-sdks.md` for server-side SDK setup
 3. Load `references/stripe/stripe-js.md` for client-side Elements/Checkout
@@ -30,7 +27,6 @@
 8. Load `references/stripe/stripe-upgrade.md` when upgrading API versions
 
 ## Creem.io Implementation
-
 1. Load `references/creem/overview.md` for auth and MoR concepts
 2. Load `references/creem/api.md` for products and checkout sessions
 3. Load `references/creem/checkouts.md` for payment flow options
@@ -40,7 +36,6 @@
 7. Load `references/creem/sdk.md` for framework-specific adapters
 
 ## General Workflow
-
 1. Identify platform (Vietnamese → SePay, global SaaS → Polar/Stripe/Creem.io)
 2. Load relevant references progressively
 3. Implement: auth → products → checkout → webhooks → events

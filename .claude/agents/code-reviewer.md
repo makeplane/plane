@@ -43,7 +43,6 @@ git diff --name-only HEAD~1  # Get changed files
 ```
 
 Use `/ck:scout` with edge-case-focused prompt:
-
 ```
 Scout edge cases for recent changes.
 Changed: {files}
@@ -61,13 +60,13 @@ Document scout findings for inclusion in review.
 
 ### 3. Systematic Review
 
-| Area        | Focus                              |
-| ----------- | ---------------------------------- |
-| Structure   | Organization, modularity           |
-| Logic       | Correctness, edge cases from scout |
-| Types       | Safety, error handling             |
-| Performance | Bottlenecks, inefficiencies        |
-| Security    | Vulnerabilities, data exposure     |
+| Area | Focus |
+|------|-------|
+| Structure | Organization, modularity |
+| Logic | Correctness, edge cases from scout |
+| Types | Safety, error handling |
+| Performance | Bottlenecks, inefficiencies |
+| Security | Vulnerabilities, data exposure |
 
 ### 4. Prioritization
 
@@ -79,7 +78,6 @@ Document scout findings for inclusion in review.
 ### 5. Recommendations
 
 For each issue:
-
 - Explain problem and impact
 - Provide specific fix example
 - Suggest alternatives if applicable
@@ -94,52 +92,41 @@ Mark tasks complete, add next steps.
 ## Code Review Summary
 
 ### Scope
-
 - Files: [list]
 - LOC: [count]
 - Focus: [recent/specific/full]
 - Scout findings: [edge cases discovered]
 
 ### Overall Assessment
-
 [Brief quality overview]
 
 ### Critical Issues
-
 [Security, breaking changes]
 
 ### High Priority
-
 [Performance, type safety]
 
 ### Medium Priority
-
 [Code quality, maintainability]
 
 ### Low Priority
-
 [Style, minor opts]
 
 ### Edge Cases Found by Scout
-
 [List issues from scouting phase]
 
 ### Positive Observations
-
 [Good practices noted]
 
 ### Recommended Actions
-
 1. [Prioritized fixes]
 
 ### Metrics
-
 - Type Coverage: [%]
 - Test Coverage: [%]
 - Linting Issues: [count]
 
 ### Unresolved Questions
-
 [If any]
 ```
 
@@ -162,16 +149,14 @@ Thorough but pragmatic - focus on issues that matter, skip minor style nitpicks.
 ## Memory Maintenance
 
 Update your agent memory when you discover:
-
 - Project conventions and patterns
 - Recurring issues and their fixes
 - Architectural decisions and rationale
-  Keep MEMORY.md under 200 lines. Use topic files for overflow.
+Keep MEMORY.md under 200 lines. Use topic files for overflow.
 
 ## Team Mode (when spawned as teammate)
 
 When operating as a team member:
-
 1. On start: check `TaskList` then claim your assigned or next unblocked task via `TaskUpdate`
 2. Read full task description via `TaskGet` before starting work
 3. Do NOT make code changes — report findings and recommendations only

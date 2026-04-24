@@ -11,25 +11,24 @@ All components in `app/` directory are Server Components by default:
 ```tsx
 // app/posts/page.tsx - Server Component
 async function getPosts() {
-  const res = await fetch("https://api.example.com/posts");
-  return res.json();
+  const res = await fetch('https://api.example.com/posts')
+  return res.json()
 }
 
 export default async function PostsPage() {
-  const posts = await getPosts();
+  const posts = await getPosts()
 
   return (
     <div>
-      {posts.map((post) => (
+      {posts.map(post => (
         <article key={post.id}>{post.title}</article>
       ))}
     </div>
-  );
+  )
 }
 ```
 
 **Benefits:**
-
 - Fetch data on server (direct database access)
 - Keep sensitive data/keys on server
 - Reduce client-side JavaScript bundle
@@ -38,7 +37,6 @@ export default async function PostsPage() {
 - Stream content to client
 
 **Limitations:**
-
 - Cannot use React hooks (useState, useEffect, useContext)
 - Cannot use browser APIs (window, localStorage)
 - Cannot add event listeners (onClick, onChange)
@@ -50,19 +48,22 @@ Mark with `'use client'` directive at top of file:
 
 ```tsx
 // components/counter.tsx - Client Component
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useState } from 'react'
 
 export function Counter() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(0)
 
-  return <button onClick={() => setCount(count + 1)}>Count: {count}</button>;
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Count: {count}
+    </button>
+  )
 }
 ```
 
 **Use Client Components for:**
-
 - Interactive UI (event handlers)
 - State management (useState, useReducer)
 - Effects (useEffect, useLayoutEffect)
@@ -78,11 +79,11 @@ Best practice: Keep Server Components as parent, pass Client Components as child
 
 ```tsx
 // app/page.tsx - Server Component
-import { ClientSidebar } from "./sidebar";
-import { ClientButton } from "./button";
+import { ClientSidebar } from './sidebar'
+import { ClientButton } from './button'
 
 export default async function Page() {
-  const data = await fetchData(); // Server-side data fetch
+  const data = await fetchData() // Server-side data fetch
 
   return (
     <div>
@@ -91,7 +92,7 @@ export default async function Page() {
       <ClientButton />
       <p>More server-rendered content: {data.title}</p>
     </div>
-  );
+  )
 }
 ```
 
@@ -101,30 +102,30 @@ Use children pattern to avoid making entire tree client-side:
 
 ```tsx
 // app/page.tsx - Server Component
-import { ClientProvider } from "./client-provider";
-import { ServerContent } from "./server-content";
+import { ClientProvider } from './client-provider'
+import { ServerContent } from './server-content'
 
 export default function Page() {
   return (
     <ClientProvider>
       <ServerContent /> {/* Stays as Server Component */}
     </ClientProvider>
-  );
+  )
 }
 
 // client-provider.tsx - Client Component
-("use client");
+'use client'
 
 export function ClientProvider({ children }: { children: React.ReactNode }) {
-  const [state, setState] = useState();
+  const [state, setState] = useState()
 
-  return <div>{children}</div>;
+  return <div>{children}</div>
 }
 
 // server-content.tsx - Server Component
 export async function ServerContent() {
-  const data = await fetchData();
-  return <p>{data.content}</p>;
+  const data = await fetchData()
+  return <p>{data.content}</p>
 }
 ```
 
@@ -135,26 +136,26 @@ No need for props or context - just fetch data where needed:
 ```tsx
 // lib/data.ts
 export async function getUser() {
-  const res = await fetch("https://api.example.com/user", {
-    cache: "force-cache", // Will dedupe automatically
-  });
-  return res.json();
+  const res = await fetch('https://api.example.com/user', {
+    cache: 'force-cache' // Will dedupe automatically
+  })
+  return res.json()
 }
 
 // app/header.tsx
-import { getUser } from "@/lib/data";
+import { getUser } from '@/lib/data'
 
 export async function Header() {
-  const user = await getUser(); // Fetch 1
-  return <div>Welcome, {user.name}</div>;
+  const user = await getUser() // Fetch 1
+  return <div>Welcome, {user.name}</div>
 }
 
 // app/profile.tsx
-import { getUser } from "@/lib/data";
+import { getUser } from '@/lib/data'
 
 export async function Profile() {
-  const user = await getUser(); // Fetch 2 (deduped automatically)
-  return <div>Email: {user.email}</div>;
+  const user = await getUser() // Fetch 2 (deduped automatically)
+  return <div>Email: {user.email}</div>
 }
 ```
 
@@ -167,18 +168,21 @@ Server Components can be async functions:
 ```tsx
 // app/posts/[id]/page.tsx
 async function getPost(id: string) {
-  const res = await fetch(`https://api.example.com/posts/${id}`);
-  return res.json();
+  const res = await fetch(`https://api.example.com/posts/${id}`)
+  return res.json()
 }
 
 async function getComments(postId: string) {
-  const res = await fetch(`https://api.example.com/posts/${postId}/comments`);
-  return res.json();
+  const res = await fetch(`https://api.example.com/posts/${postId}/comments`)
+  return res.json()
 }
 
 export default async function Post({ params }: { params: { id: string } }) {
   // Parallel data fetching
-  const [post, comments] = await Promise.all([getPost(params.id), getComments(params.id)]);
+  const [post, comments] = await Promise.all([
+    getPost(params.id),
+    getComments(params.id)
+  ])
 
   return (
     <article>
@@ -186,7 +190,7 @@ export default async function Post({ params }: { params: { id: string } }) {
       <p>{post.content}</p>
       <CommentsList comments={comments} />
     </article>
-  );
+  )
 }
 ```
 
@@ -196,16 +200,16 @@ Stream components as they resolve:
 
 ```tsx
 // app/page.tsx
-import { Suspense } from "react";
+import { Suspense } from 'react'
 
 async function SlowComponent() {
-  await new Promise((resolve) => setTimeout(resolve, 3000));
-  return <div>Loaded after 3 seconds</div>;
+  await new Promise(resolve => setTimeout(resolve, 3000))
+  return <div>Loaded after 3 seconds</div>
 }
 
 async function FastComponent() {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return <div>Loaded after 0.5 seconds</div>;
+  await new Promise(resolve => setTimeout(resolve, 500))
+  return <div>Loaded after 0.5 seconds</div>
 }
 
 export default function Page() {
@@ -221,12 +225,11 @@ export default function Page() {
         <SlowComponent />
       </Suspense>
     </div>
-  );
+  )
 }
 ```
 
 Benefits:
-
 - Fast components render immediately
 - Slow components don't block page
 - Progressive enhancement
@@ -238,12 +241,16 @@ Benefits:
 
 ```tsx
 // ❌ Won't work - Server Components can't use context
-import { createContext } from "react";
+import { createContext } from 'react'
 
-const ThemeContext = createContext();
+const ThemeContext = createContext()
 
 export default function Layout({ children }) {
-  return <ThemeContext.Provider value="dark">{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value="dark">
+      {children}
+    </ThemeContext.Provider>
+  )
 }
 ```
 
@@ -251,31 +258,37 @@ export default function Layout({ children }) {
 
 ```tsx
 // app/providers.tsx - Client Component
-"use client";
+'use client'
 
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react'
 
-const ThemeContext = createContext("light");
+const ThemeContext = createContext('light')
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  return <ThemeContext.Provider value="dark">{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value="dark">
+      {children}
+    </ThemeContext.Provider>
+  )
 }
 
 export function useTheme() {
-  return useContext(ThemeContext);
+  return useContext(ThemeContext)
 }
 
 // app/layout.tsx - Server Component
-import { ThemeProvider } from "./providers";
+import { ThemeProvider } from './providers'
 
 export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }
 ```
 
@@ -285,17 +298,17 @@ Many third-party components need client-side features:
 
 ```tsx
 // components/carousel.tsx
-"use client";
+'use client'
 
-import "slick-carousel/slick/slick.css";
-import Slider from "react-slick";
+import 'slick-carousel/slick/slick.css'
+import Slider from 'react-slick'
 
 export function Carousel({ children }) {
-  return <Slider>{children}</Slider>;
+  return <Slider>{children}</Slider>
 }
 
 // app/page.tsx - Server Component
-import { Carousel } from "@/components/carousel";
+import { Carousel } from '@/components/carousel'
 
 export default function Page() {
   return (
@@ -303,7 +316,7 @@ export default function Page() {
       <div>Slide 1</div>
       <div>Slide 2</div>
     </Carousel>
-  );
+  )
 }
 ```
 
@@ -313,24 +326,24 @@ Call server-side functions from Client Components:
 
 ```tsx
 // app/actions.ts
-"use server";
+'use server'
 
-import { revalidatePath } from "next/cache";
-import { db } from "@/lib/db";
+import { revalidatePath } from 'next/cache'
+import { db } from '@/lib/db'
 
 export async function createPost(formData: FormData) {
-  const title = formData.get("title") as string;
-  const content = formData.get("content") as string;
+  const title = formData.get('title') as string
+  const content = formData.get('content') as string
 
   await db.post.create({
-    data: { title, content },
-  });
+    data: { title, content }
+  })
 
-  revalidatePath("/posts");
+  revalidatePath('/posts')
 }
 
 // app/new-post/page.tsx
-import { createPost } from "@/app/actions";
+import { createPost } from '@/app/actions'
 
 export default function NewPost() {
   return (
@@ -339,26 +352,25 @@ export default function NewPost() {
       <textarea name="content" required />
       <button type="submit">Create Post</button>
     </form>
-  );
+  )
 }
 ```
 
 With Client Component:
-
 ```tsx
 // components/post-form.tsx
-"use client";
+'use client'
 
-import { createPost } from "@/app/actions";
-import { useFormStatus } from "react-dom";
+import { createPost } from '@/app/actions'
+import { useFormStatus } from 'react-dom'
 
 function SubmitButton() {
-  const { pending } = useFormStatus();
+  const { pending } = useFormStatus()
   return (
     <button type="submit" disabled={pending}>
-      {pending ? "Creating..." : "Create Post"}
+      {pending ? 'Creating...' : 'Create Post'}
     </button>
-  );
+  )
 }
 
 export function PostForm() {
@@ -368,14 +380,13 @@ export function PostForm() {
       <textarea name="content" required />
       <SubmitButton />
     </form>
-  );
+  )
 }
 ```
 
 ## When to Use Each Component Type
 
 ### Use Server Components When:
-
 - Fetching data from database or API
 - Accessing backend resources directly
 - Keeping sensitive information on server (tokens, keys)
@@ -384,7 +395,6 @@ export function PostForm() {
 - No interactivity needed
 
 ### Use Client Components When:
-
 - Adding interactivity (onClick, onChange)
 - Managing state (useState, useReducer)
 - Using lifecycle effects (useEffect)
@@ -409,17 +419,17 @@ export function PostForm() {
 
 ```tsx
 // app/dashboard/page.tsx - Server Component
-import { redirect } from "next/navigation";
-import { getUser } from "@/lib/auth";
+import { redirect } from 'next/navigation'
+import { getUser } from '@/lib/auth'
 
 export default async function Dashboard() {
-  const user = await getUser();
+  const user = await getUser()
 
   if (!user) {
-    redirect("/login");
+    redirect('/login')
   }
 
-  return <div>Welcome, {user.name}</div>;
+  return <div>Welcome, {user.name}</div>
 }
 ```
 
@@ -427,24 +437,27 @@ export default async function Dashboard() {
 
 ```tsx
 // components/like-button.tsx
-"use client";
+'use client'
 
-import { useOptimistic } from "react";
-import { likePost } from "@/app/actions";
+import { useOptimistic } from 'react'
+import { likePost } from '@/app/actions'
 
 export function LikeButton({ postId, initialLikes }) {
-  const [optimisticLikes, addOptimisticLike] = useOptimistic(initialLikes, (state, amount) => state + amount);
+  const [optimisticLikes, addOptimisticLike] = useOptimistic(
+    initialLikes,
+    (state, amount) => state + amount
+  )
 
   return (
     <button
       onClick={async () => {
-        addOptimisticLike(1);
-        await likePost(postId);
+        addOptimisticLike(1)
+        await likePost(postId)
       }}
     >
       Likes: {optimisticLikes}
     </button>
-  );
+  )
 }
 ```
 
@@ -452,16 +465,16 @@ export function LikeButton({ postId, initialLikes }) {
 
 ```tsx
 // app/dashboard/page.tsx
-import { Suspense } from "react";
+import { Suspense } from 'react'
 
 async function RevenueChart() {
-  const data = await fetchRevenue(); // Slow query
-  return <Chart data={data} />;
+  const data = await fetchRevenue() // Slow query
+  return <Chart data={data} />
 }
 
 async function RecentSales() {
-  const sales = await fetchSales(); // Fast query
-  return <SalesTable sales={sales} />;
+  const sales = await fetchSales() // Fast query
+  return <SalesTable sales={sales} />
 }
 
 export default function Dashboard() {
@@ -477,6 +490,6 @@ export default function Dashboard() {
         <RecentSales />
       </Suspense>
     </div>
-  );
+  )
 }
 ```

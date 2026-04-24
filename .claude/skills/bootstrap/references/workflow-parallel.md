@@ -6,7 +6,6 @@
 ## Step 1: Research
 
 Spawn max 2 `researcher` agents in parallel:
-
 - Explore requirements, validation, challenges, solutions
 - Keep reports ≤150 lines
 
@@ -38,7 +37,6 @@ No user gate — proceed automatically.
 ## Step 4: Parallel Planning
 
 Activate **ck:plan** skill: `/ck:plan --parallel <requirements>`
-
 - Creates phases with **exclusive file ownership** per phase (no overlap)
 - **Dependency matrix**: which phases run concurrently vs sequentially
 - `plan.md` includes dependency graph, execution strategy, file ownership matrix
@@ -51,7 +49,6 @@ No user gate — proceed to implementation.
 Load `references/shared-phases.md` for remaining phases.
 
 Activate **ck:cook** skill: `/ck:cook --parallel <plan-path>`
-
 - Read `plan.md` for dependency graph and execution strategy
 - Launch multiple `fullstack-developer` agents in PARALLEL for concurrent phases
   - Pass: phase file path, environment info

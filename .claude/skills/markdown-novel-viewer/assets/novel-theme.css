@@ -5,12 +5,12 @@
  * Imports all module stylesheets in correct cascade order.
  */
 
-@import url("./styles/novel-theme-variables.css");
-@import url("./styles/novel-theme-base.css");
-@import url("./styles/novel-theme-header.css");
-@import url("./styles/novel-theme-sidebar.css");
-@import url("./styles/novel-theme-content.css");
-@import url("./styles/novel-theme-components.css");
-@import url("./styles/novel-theme-mermaid.css");
-@import url("./styles/novel-theme-overlays.css");
-@import url("./styles/novel-theme-responsive.css");
+@import url('./styles/novel-theme-variables.css');
+@import url('./styles/novel-theme-base.css');
+@import url('./styles/novel-theme-header.css');
+@import url('./styles/novel-theme-sidebar.css');
+@import url('./styles/novel-theme-content.css');
+@import url('./styles/novel-theme-components.css');
+@import url('./styles/novel-theme-mermaid.css');
+@import url('./styles/novel-theme-overlays.css');
+@import url('./styles/novel-theme-responsive.css');

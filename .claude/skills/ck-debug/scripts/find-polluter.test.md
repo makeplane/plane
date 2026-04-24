@@ -1,13 +1,11 @@
 # find-polluter.sh Test Documentation
 
 ## Purpose
-
 Bisection script to find which test creates unwanted files or state pollution.
 
 ## Manual Test Procedure
 
 ### Setup Test Scenario
-
 ```bash
 # Create test directory
 mkdir -p /tmp/polluter-test && cd /tmp/polluter-test
@@ -31,7 +29,6 @@ EOF
 ```
 
 ### Run Script
-
 ```bash
 # For projects with npm test
 /path/to/find-polluter.sh '.git' 'src/**/*.test.ts'
@@ -41,7 +38,6 @@ EOF
 ```
 
 ### Expected Output
-
 ```
 🔍 Searching for test that creates: .git
 Test pattern: *.test.js
@@ -57,7 +53,6 @@ Found 3 test files
 ```
 
 ### Cleanup
-
 ```bash
 rm -rf /tmp/polluter-test
 ```
@@ -65,7 +60,6 @@ rm -rf /tmp/polluter-test
 ## Test Results
 
 ✅ Script logic verified (2025-11-11)
-
 - Correctly iterates through test files
 - Detects pollution creation
 - Reports the polluting test file
@@ -74,14 +68,12 @@ rm -rf /tmp/polluter-test
 ## Usage Notes
 
 **Prerequisites:**
-
 - Test runner (npm test) must be configured in project
 - Test pattern must match actual test files
 - Pollution path must be accurate
 
 **Customization:**
 If your project doesn't use `npm test`, modify line 42:
-
 ```bash
 # Replace
 npm test "$TEST_FILE" > /dev/null 2>&1 || true
@@ -95,13 +87,11 @@ jest "$TEST_FILE" > /dev/null 2>&1 || true
 ## Common Use Cases
 
 1. **Find test creating .git directory:**
-
    ```bash
    ./find-polluter.sh '.git' 'src/**/*.test.ts'
    ```
 
 2. **Find test creating node_modules:**
-
    ```bash
    ./find-polluter.sh 'node_modules' 'test/**/*.spec.js'
    ```

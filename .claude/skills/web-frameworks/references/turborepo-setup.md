@@ -7,14 +7,12 @@ Installation, workspace configuration, and project structure for monorepos.
 ### Create New Monorepo
 
 Using official starter:
-
 ```bash
 npx create-turbo@latest my-monorepo
 cd my-monorepo
 ```
 
 Interactive prompts:
-
 - Project name
 - Package manager (npm, yarn, pnpm, bun)
 - Example template
@@ -22,7 +20,6 @@ Interactive prompts:
 ### Manual Installation
 
 Install in existing project:
-
 ```bash
 # npm
 npm install turbo --save-dev
@@ -42,22 +39,23 @@ bun add turbo --dev
 ### Package Manager Setup
 
 **pnpm (recommended):**
-
 ```yaml
 # pnpm-workspace.yaml
 packages:
-  - "apps/*"
-  - "packages/*"
+  - 'apps/*'
+  - 'packages/*'
 ```
 
 **npm/yarn:**
-
 ```json
 // package.json (root)
 {
   "name": "my-monorepo",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"]
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
 ```
 
@@ -269,7 +267,11 @@ packages/typescript-config/
   "name": "@repo/typescript-config",
   "version": "0.0.0",
   "main": "base.json",
-  "files": ["base.json", "nextjs.json", "react-library.json"]
+  "files": [
+    "base.json",
+    "nextjs.json",
+    "react-library.json"
+  ]
 }
 ```
 
@@ -335,29 +337,29 @@ packages/eslint-config/
 ```js
 // packages/eslint-config/library.js
 module.exports = {
-  extends: ["eslint:recommended", "prettier"],
+  extends: ['eslint:recommended', 'prettier'],
   env: {
     node: true,
     es2020: true,
   },
   parserOptions: {
     ecmaVersion: 2020,
-    sourceType: "module",
+    sourceType: 'module',
   },
   rules: {
-    "no-console": "warn",
+    'no-console': 'warn',
   },
-};
+}
 ```
 
 ```js
 // packages/eslint-config/next.js
 module.exports = {
-  extends: ["next", "prettier"],
+  extends: ['next', 'prettier'],
   rules: {
-    "@next/next/no-html-link-for-pages": "off",
+    '@next/next/no-html-link-for-pages': 'off',
   },
-};
+}
 ```
 
 ## Dependency Management
@@ -367,7 +369,6 @@ module.exports = {
 Use workspace protocol:
 
 **pnpm:**
-
 ```json
 {
   "dependencies": {
@@ -377,7 +378,6 @@ Use workspace protocol:
 ```
 
 **npm/yarn:**
-
 ```json
 {
   "dependencies": {
@@ -410,8 +410,13 @@ Basic configuration file:
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local", "tsconfig.json"],
-  "globalEnv": ["NODE_ENV"],
+  "globalDependencies": [
+    "**/.env.*local",
+    "tsconfig.json"
+  ],
+  "globalEnv": [
+    "NODE_ENV"
+  ],
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
@@ -442,7 +447,10 @@ Basic configuration file:
 ```json
 // turbo.json
 {
-  "globalEnv": ["NODE_ENV", "CI"]
+  "globalEnv": [
+    "NODE_ENV",
+    "CI"
+  ]
 }
 ```
 

@@ -30,7 +30,6 @@ fi
 Always load: `checklists/base.md`
 
 Overlay based on detection:
-
 - `web-app` → also load `checklists/web-app.md`
 - `api` → also load `checklists/api.md`
 - Both detected → load both overlays
@@ -47,13 +46,11 @@ git diff origin/main
 ### 4. Two-Pass Review
 
 **Pass 1 (CRITICAL) — Run first:**
-
 - Scan diff against ALL critical categories (base + overlays)
 - Each finding must include: `[file:line]`, problem, fix
 - These block `/ship` pipeline
 
 **Pass 2 (INFORMATIONAL) — Run second:**
-
 - Scan diff against ALL informational categories (base + overlays)
 - Same format: `[file:line]`, problem, fix
 - Included in PR body but don't block
@@ -63,7 +60,6 @@ git diff origin/main
 Before reporting any finding, verify it's NOT in the suppressions list (bottom of `base.md`).
 
 Key suppressions:
-
 - Already addressed in the diff
 - Readability-aiding redundancy
 - Style/formatting issues
@@ -86,7 +82,6 @@ Pre-Landing Review: N issues (X critical, Y informational)
 ### 7. Critical Issue Resolution
 
 For each critical issue, use `AskUserQuestion`:
-
 - Problem with `file:line`
 - Recommended fix
 - Options:

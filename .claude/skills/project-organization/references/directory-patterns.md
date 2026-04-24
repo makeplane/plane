@@ -23,7 +23,6 @@ docs/
 ```
 
 **Rules:**
-
 - Evergreen docs: no date prefix, slug-only naming
 - Journals: always timestamped, one per session/event
 - ADRs: date-prefixed, sequential numbering optional
@@ -57,7 +56,6 @@ plans/
 **Report type prefixes:** `scout-`, `researcher-`, `brainstorm-`, `code-reviewer-`, `tester-`, `debugger-`, `planner-`
 
 **Rules:**
-
 - Plan folders always timestamped
 - Phase files: `phase-{NN}-{name}.md` with zero-padded numbers (01, 02...)
 - Scoped reports go inside their plan folder
@@ -83,7 +81,6 @@ tests/
 ```
 
 **Rules:**
-
 - Mirror source directory structure where practical
 - Use `.test.`, `.spec.`, `.integration.`, `.e2e.` suffixes
 - Fixtures: descriptive names, no dates
@@ -101,7 +98,6 @@ scripts/
 ```
 
 **Rules:**
-
 - Kebab-case, verb-first naming: `generate-manifest.cjs`, `send-notification.py`
 - Group into subdirs only when 5+ scripts in same category
 - Include shebang line for shell scripts
@@ -135,7 +131,6 @@ assets/
 ```
 
 **Rules:**
-
 - Single file → flat in category dir
 - Multi-file → self-contained subdirectory
 - Variants: append `-{variant}` suffix (not separate folders)
@@ -159,7 +154,6 @@ project-root/
 ```
 
 **Rules:**
-
 - Follow ecosystem conventions (package.json at root, not in .config/)
 - `.env` files: never commit actual secrets, only `.example` templates
 - Group into `.config/` only if ecosystem supports it
@@ -177,7 +171,6 @@ guide/
 ```
 
 **Rules:**
-
 - Evergreen naming (no dates)
 - Flat structure unless 5+ files warrant categorization
 - Self-documenting names: `SKILLS.md`, `COMMANDS.md`, `ENVIRONMENT_RESOLVER.md`

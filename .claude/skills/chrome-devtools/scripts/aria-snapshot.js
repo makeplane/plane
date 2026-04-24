@@ -13,18 +13,10 @@
  *   By default, browser stays running for session persistence
  *   Use --close true to fully close browser
  */
-import {
-  getBrowser,
-  getPage,
-  closeBrowser,
-  disconnectBrowser,
-  parseArgs,
-  outputJSON,
-  outputError,
-} from "./lib/browser.js";
-import fs from "fs/promises";
-import path from "path";
-import { fileURLToPath } from "url";
+import { getBrowser, getPage, closeBrowser, disconnectBrowser, parseArgs, outputJSON, outputError } from './lib/browser.js';
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -310,7 +302,7 @@ async function ariaSnapshot() {
 
   try {
     const browser = await getBrowser({
-      headless: args.headless,
+      headless: args.headless
     });
 
     const page = await getPage(browser);
@@ -318,7 +310,7 @@ async function ariaSnapshot() {
     // Navigate if URL provided
     if (args.url) {
       await page.goto(args.url, {
-        waitUntil: args["wait-until"] || "networkidle2",
+        waitUntil: args['wait-until'] || 'networkidle2'
       });
     }
 
@@ -330,8 +322,8 @@ async function ariaSnapshot() {
       success: true,
       url: page.url(),
       title: await page.title(),
-      format: "yaml",
-      snapshot: snapshot,
+      format: 'yaml',
+      snapshot: snapshot
     };
 
     // Output to file or stdout
@@ -343,12 +335,12 @@ async function ariaSnapshot() {
       await fs.mkdir(outputDir, { recursive: true });
 
       // Write YAML snapshot
-      await fs.writeFile(outputPath, snapshot, "utf8");
+      await fs.writeFile(outputPath, snapshot, 'utf8');
 
       outputJSON({
         success: true,
         output: path.resolve(outputPath),
-        url: page.url(),
+        url: page.url()
       });
     } else {
       // Output to stdout
@@ -357,7 +349,7 @@ async function ariaSnapshot() {
 
     // Default: disconnect to keep browser running for session persistence
     // Use --close true to fully close browser
-    if (args.close === "true") {
+    if (args.close === 'true') {
       await closeBrowser();
     } else {
       await disconnectBrowser();

@@ -77,7 +77,6 @@ gkg clean --dry-run
 ## Common Workflows
 
 ### Initial Setup
-
 ```bash
 cd /my/project
 gkg index --stats
@@ -85,7 +84,6 @@ gkg server start
 ```
 
 ### Re-index After Changes
-
 ```bash
 gkg server stop
 gkg index
@@ -93,7 +91,6 @@ gkg server start
 ```
 
 ### Multi-repo Workspace
-
 ```bash
 # Index parent directory containing multiple repos
 gkg index /path/to/workspace
@@ -101,9 +98,9 @@ gkg index /path/to/workspace
 
 ## Troubleshooting
 
-| Issue           | Solution                         |
-| --------------- | -------------------------------- |
-| High memory     | Reduce `--threads`               |
-| Slow indexing   | Increase `--threads` or use `-v` |
-| Server conflict | Run `gkg server stop` first      |
-| Stale data      | Run `gkg clean`                  |
+| Issue | Solution |
+|-------|----------|
+| High memory | Reduce `--threads` |
+| Slow indexing | Increase `--threads` or use `-v` |
+| Server conflict | Run `gkg server stop` first |
+| Stale data | Run `gkg clean` |

@@ -37,7 +37,6 @@ Require plan approval before they make any changes.
 ```
 
 **Flow:**
-
 1. Teammate works in read-only plan mode
 2. Teammate finishes planning -> sends `plan_approval_request` to lead
 3. Lead reviews -> approves via `SendMessage(type: "plan_approval_response", approve: true)`

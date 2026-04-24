@@ -21,30 +21,29 @@ Before ANY design work, AI MUST check:
 
 **MUST ask if missing:**
 
-| Missing Info           | Required Question                                             |
-| ---------------------- | ------------------------------------------------------------- |
-| Entities unclear       | "What are the main entities involved in this feature?"        |
-| Query patterns unknown | "What queries/reports will run most often?"                   |
-| Granularity unclear    | "What level of detail needed? (per order, per item, per day)" |
-| Constraints unknown    | "Any uniqueness, retention, or multi-tenant requirements?"    |
-| Relationships unclear  | "How do these entities relate to each other?"                 |
+| Missing Info | Required Question |
+|--------------|-------------------|
+| Entities unclear | "What are the main entities involved in this feature?" |
+| Query patterns unknown | "What queries/reports will run most often?" |
+| Granularity unclear | "What level of detail needed? (per order, per item, per day)" |
+| Constraints unknown | "Any uniqueness, retention, or multi-tenant requirements?" |
+| Relationships unclear | "How do these entities relate to each other?" |
 
 **DO NOT assume or proceed without answers. DO NOT design schema without understanding the business context.**
 
 ### Step 3: Load Documentation by Intent
 
-| Intent   | Keywords                                                      | Load file                                |
-| -------- | ------------------------------------------------------------- | ---------------------------------------- |
-| **OLTP** | "business tables", "transactional", "CRUD", "orders", "users" | [transactional.md](transactional.md)     |
-| **OLAP** | "analytics", "statistics", "reports", "fact", "dimension"     | [analytics.md](analytics.md)             |
-| **ETL**  | "incremental", "load", "sync", "watermark", "etl"             | [incremental-etl.md](incremental-etl.md) |
+| Intent | Keywords | Load file |
+|--------|----------|-----------|
+| **OLTP** | "business tables", "transactional", "CRUD", "orders", "users" | [transactional.md](transactional.md) |
+| **OLAP** | "analytics", "statistics", "reports", "fact", "dimension" | [analytics.md](analytics.md) |
+| **ETL** | "incremental", "load", "sync", "watermark", "etl" | [incremental-etl.md](incremental-etl.md) |
 
 **Database stacks:** [MySQL](stacks/mysql.md) · [PostgreSQL](stacks/postgres.md) · [BigQuery](stacks/bigquery.md) · [SQLite](stacks/sqlite.md) · [D1 Cloudflare](stacks/d1_cloudflare.md)
 
 ### Step 4: Design & Propose
 
 Only after Steps 1-3 complete:
-
 - Propose DDL with reasoning
 - **Wait for user approval before execution**
 - Never auto-execute DDL
@@ -176,7 +175,7 @@ Before delivering final DDL:
 ```
 .claude/skills/databases/
 ├── SKILL.md                  # Skill description (entry + execution process + checklist)
-├── db-design.md              # This file
+├── db-design.md              # This file 
 ├── transactional.md          # OLTP design rules
 ├── analytics.md              # OLAP / Star Schema rules
 ├── incremental-etl.md        # ETL & watermark patterns
