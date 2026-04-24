@@ -50,9 +50,7 @@ function buildProfileExportRow(
     Project: stores.getProjectName(issue.project_id),
     State: stores.getStateName(issue.state_id),
     Priority: capitalize(issue.priority),
-    Assignees: issue.assignee_ids?.length
-      ? issue.assignee_ids.map((id) => stores.getMemberName(id)).join(", ")
-      : "-",
+    Assignees: issue.assignee_ids?.length ? issue.assignee_ids.map((id) => stores.getMemberName(id)).join(", ") : "-",
     Labels: issue.label_ids?.length ? issue.label_ids.map((id) => stores.getLabelName(id)).join(", ") : "-",
     "Start Date": formatDate(issue.start_date),
     "Due Date": formatDate(issue.target_date),
@@ -96,8 +94,7 @@ export const ProfileIssuesExportButton = observer(function ProfileIssuesExportBu
         workspaceName: currentWorkspace?.name ?? "",
         getStateName: (stateId: string | null | undefined) => getStateById(stateId)?.name ?? "-",
         getProjectName: (projectId: string | null | undefined) => getProjectById(projectId)?.name ?? "-",
-        getProjectIdentifier: (projectId: string | null | undefined) =>
-          getProjectById(projectId)?.identifier ?? "",
+        getProjectIdentifier: (projectId: string | null | undefined) => getProjectById(projectId)?.identifier ?? "",
         getMemberName: (memberId: string) =>
           workspaceMember.getWorkspaceMemberDetails(memberId)?.member?.display_name ?? "-",
         getLabelName: (labelId: string) => getLabelById(labelId)?.name ?? "-",

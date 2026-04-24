@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
-import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { IState, TBaseIssue } from "@plane/types";
 import { Switch } from "@plane/propel/switch";
 import { Card } from "@plane/ui";
+import { cn } from "@plane/utils";
 // ce imports
 import {
   WorkItemsTable,
@@ -17,7 +18,6 @@ import {
   type ProjectLookup,
   type StateLookup,
 } from "@/plane-web/components/profile/work-items-table";
-import { ProgressTrackingBadge } from "@/plane-web/components/issues/issue-layouts/progress-tracking-badge";
 import { exportWorkItemsXLSX } from "./export-work-items";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
