@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import useSWR from "swr";
 // plane imports
 import { useTranslation } from "@plane/i18n";
@@ -16,6 +17,8 @@ import {
   type ProjectLookup,
   type StateLookup,
 } from "@/plane-web/components/profile/work-items-table";
+import { ProgressTrackingBadge } from "@/plane-web/components/issues/issue-layouts/progress-tracking-badge";
+import { exportWorkItemsXLSX } from "./export-work-items";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useTaskCategory } from "@/hooks/store/use-task-category";
@@ -114,9 +117,24 @@ export const OverdueWorkItems = observer(function OverdueWorkItems() {
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <h3 className="text-16 font-medium">{t("profile.stats.overdue_work_items.title")}</h3>
-        <div className="flex items-center gap-2">
-          <span className="text-13 text-secondary">{t("profile.stats.overdue_work_items.cross_workspaces")}</span>
-          <Switch value={crossWorkspaces} onChange={setCrossWorkspaces} size="sm" />
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="text-13 text-secondary">{t("profile.stats.overdue_work_items.cross_workspaces")}</span>
+            <Switch value={crossWorkspaces} onChange={setCrossWorkspaces} size="sm" />
+          </div>
+          <div className="border-l border-subtle h-4" />
+          <button
+            type="button"
+            onClick={() => exportWorkItemsXLSX(issueList, `overdue-work-items-${todayStr}`)}
+            disabled={!isDataReady || issueList.length === 0}
+            className={cn(
+              "flex items-center gap-1 text-13 text-secondary hover:text-primary transition-colors",
+              (!isDataReady || issueList.length === 0) && "opacity-40 cursor-not-allowed"
+            )}
+          >
+            <Download className="h-3.5 w-3.5" />
+            {t("export")}
+          </button>
         </div>
       </div>
       <Card className="p-2">
