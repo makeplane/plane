@@ -34,11 +34,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
       const ws = store.accessibleWorkspaces.find((w) => w.id === store.selectedDepartmentId);
       data = ws?.department_id ? store.categorySummary.filter((r) => r.department_id === ws.department_id) : [];
     } else {
-      // "All workspaces" — show categories from all accessible workspaces' linked departments
-      data =
-        store.accessibleDepartmentIds.size > 0
-          ? store.categorySummary.filter((r) => store.accessibleDepartmentIds.has(r.department_id))
-          : store.categorySummary; // fallback before accessibleWorkspaces loads
+      data = store.categorySummary;
     }
 
     if (store.filters.department.length > 0)
@@ -53,7 +49,15 @@ export const HoCategoryView = observer(function HoCategoryView() {
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
-  }, [store, search]);
+  }, [
+    store.categorySummary,
+    store.selectedDepartmentId,
+    store.accessibleWorkspaces,
+    store.filters.department,
+    store.filters.main_task_category,
+    store.filters.sub_task_category,
+    search,
+  ]);
 
   const sortedData = useMemo(() => {
     const data = [...filtered];
