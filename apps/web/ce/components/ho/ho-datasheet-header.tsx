@@ -81,6 +81,8 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
     },
     bank_wide_project: {
       label: t("spreadsheet.columns.bank_wide_project"),
+      asc: "project__is_bank_wide",
+      desc: "-project__is_bank_wide",
       filterKey: "bank_wide",
       width: "min-w-[120px]",
     },
@@ -150,6 +152,13 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
   };
 
   const getFilterOptions = (key: string) => {
+    // bank_wide options are hardcoded — not dependent on server filterOptions
+    if (key === "bank_wide") {
+      return [
+        { value: "true", label: t("common.yes") },
+        { value: "false", label: t("common.no") },
+      ];
+    }
     if (!options) return undefined;
     switch (key) {
       case "priority":
@@ -170,11 +179,6 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
         return options.leads?.map((l) => ({ value: l.id, label: l.display_name }));
       case "progress":
         return options.progress?.map((p) => ({ value: p, label: t(`ho.progress_status.${p}`) }));
-      case "bank_wide":
-        return [
-          { value: "true", label: t("common.yes") },
-          { value: "false", label: t("common.no") },
-        ];
       default:
         return undefined;
     }

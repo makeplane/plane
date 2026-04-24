@@ -206,8 +206,8 @@ _ALLOWED_ORDER_BY = {
     "-name",
     "project__project_lead__display_name",
     "-project__project_lead__display_name",
-    "is_bank_wide_project",
-    "-is_bank_wide_project",
+    "project__is_bank_wide",
+    "-project__is_bank_wide",
     "sub_issues_count",
     "-sub_issues_count",
     "reference_link_count",
@@ -352,7 +352,7 @@ class HoIssueListView(BaseAPIView):
 
         bank_wide = request.query_params.get("bank_wide")
         if bank_wide:
-            qs = qs.filter(is_bank_wide_project=bank_wide.lower() == "true")
+            qs = qs.filter(project__is_bank_wide=bank_wide.lower() == "true")
 
         progress = request.query_params.get("progress")
         if progress:
