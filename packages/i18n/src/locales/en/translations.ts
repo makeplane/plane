@@ -2007,6 +2007,8 @@ export default {
         columns: {
           work_item: "Work Item",
           department: "Department",
+          main_category: "Main Category",
+          sub_category: "Sub Category",
           project: "Project",
           state: "State",
           progress: "Progress Tracking",
@@ -2024,6 +2026,8 @@ export default {
         columns: {
           work_item: "Work Item",
           department: "Department",
+          main_category: "Main Category",
+          sub_category: "Sub Category",
           project: "Project",
           state: "State",
           progress: "Progress Tracking",

@@ -2017,6 +2017,8 @@ export default {
         columns: {
           work_item: "Mục công việc",
           department: "Phòng ban",
+          main_category: "Danh mục chính",
+          sub_category: "Danh mục phụ",
           project: "Dự án",
           state: "Trạng thái",
           progress: "Theo dõi tiến độ",
@@ -2034,6 +2036,8 @@ export default {
         columns: {
           work_item: "Mục công việc",
           department: "Phòng ban",
+          main_category: "Danh mục chính",
+          sub_category: "Danh mục phụ",
           project: "Dự án",
           state: "Trạng thái",
           progress: "Theo dõi tiến độ",

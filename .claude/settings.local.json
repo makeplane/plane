@@ -1,6 +1,13 @@
 {
   "permissions": {
-    "allow": ["*", "Bash(ls:*)", "Bash(python:*)", "Bash(pnpm tsc:*)"],
+    "allow": [
+      "*",
+      "Bash(ls:*)",
+      "Bash(python:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(mkdir -p __TRACKED_VAR__/.claude/chrome-devtools/screenshots)",
+      "Bash(node __TRACKED_VAR__/navigate.js --url http://localhost:3000/yesyes/profile/11d01b65-7154-48cf-8852-975c36ec8907/)"
+    ],
     "deny": []
   }
 }
