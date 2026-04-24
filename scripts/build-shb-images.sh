@@ -45,8 +45,8 @@ mkdir -p "${DIST_DIR}"
 # ── Image build definitions: NAME | DOCKERFILE | BUILD_CONTEXT ───────────────
 # Each entry is a colon-separated tuple stored in an indexed array.
 IMAGES=(
-  "plane-frontend:apps/web/Dockerfile.web:."
-  "plane-admin:apps/admin/Dockerfile.admin:."
+  # "plane-frontend:apps/web/Dockerfile.web:."
+  # "plane-admin:apps/admin/Dockerfile.admin:."
   # "plane-space:apps/space/Dockerfile.space:."
   # "plane-live:apps/live/Dockerfile.live:."
   "plane-backend:apps/api/Dockerfile.api:./apps/api"
