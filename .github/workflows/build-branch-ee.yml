@@ -43,6 +43,21 @@ on:
         required: false
         default: false
         type: boolean
+      register_on_prime:
+        description: "Register this release on Prime (sends encryption key + metadata)"
+        required: false
+        default: false
+        type: boolean
+      prime_is_pre_release:
+        description: "Mark this Version as pre-release on Prime (independent of build-level isPrerelease)"
+        required: false
+        default: false
+        type: boolean
+      release_date:
+        description: "Release date for Prime (ISO8601, e.g. 2026-04-24T10:00:00Z). Empty = now."
+        required: false
+        default: ""
+        type: string
 
 env:
   TARGET_BRANCH: ${{ github.ref_name }}
@@ -449,6 +464,14 @@ jobs:
           # Generating the private key env for the generated keys
           PRIVATE_KEY=$(cat private_key.pem | base64 -w 0)
           echo "PRIVATE_KEY=${PRIVATE_KEY}" >> $GITHUB_ENV
+
+      - name: Upload Private Key for Prime
+        if: ${{ github.event.inputs.register_on_prime == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: prime-private-key
+          path: private_key.pem
+          retention-days: 1
 
       - name: Monitor Build and Push
         uses: makeplane/actions/build-push@v1.5.1
@@ -884,3 +907,56 @@ jobs:
             ${{ github.workspace }}/deployments/cli/commercial/docker-compose-fips.yml
             ${{ github.workspace }}/deployments/coolify/commercial/coolify-compose-fips.yml
             ${{ github.workspace }}/deployments/portainer/commercial/portainer-compose-fips.yml
+
+  register_on_prime_version:
+    if: ${{ github.event.inputs.register_on_prime == 'true' }}
+    name: Register Release on Prime
+    runs-on: ubuntu-22.04-4core
+    needs:
+      [
+        branch_build_setup,
+        branch_build_push_admin,
+        branch_build_push_web,
+        branch_build_push_space,
+        branch_build_push_live,
+        branch_build_push_api,
+        branch_build_push_proxy,
+        branch_build_push_monitor,
+        branch_build_push_email,
+        branch_build_push_silo,
+        branch_build_push_plane_pi,
+        branch_build_push_node_runner,
+        branch_build_push_flux,
+      ]
+    steps:
+      - name: Download Private Key
+        uses: actions/download-artifact@v8
+        with:
+          name: prime-private-key
+
+      - name: Register on Prime
+        env:
+          PRIME_URL:           ${{ secrets.PRIME_VERSION_WEBHOOK_URL }}
+          PRIME_SECRET:        ${{ secrets.PRIME_VERSION_REGISTRATION_SECRET }}
+          TAG:                 ${{ needs.branch_build_setup.outputs.release_version }}
+          PRIME_IS_PRERELEASE: ${{ github.event.inputs.prime_is_pre_release }}
+          RELEASE_DATE:        ${{ github.event.inputs.release_date }}
+        run: |
+          # jq --rawfile reads private_key.pem verbatim (including newlines)
+          # and JSON-escapes it. Prime receives the raw PEM text, not base64.
+          curl --fail-with-body -sS -X POST "$PRIME_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Prime-Registration-Secret: $PRIME_SECRET" \
+            -d "$(jq -n \
+              --arg tag "$TAG" \
+              --arg pre "$PRIME_IS_PRERELEASE" \
+              --arg rd  "$RELEASE_DATE" \
+              --rawfile key private_key.pem \
+              '{tag:$tag, is_pre_release:($pre == "true"), release_date:$rd, encryption_key:$key}')"
+
+      - name: Delete Private Key Artifact
+        if: always()
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: prime-private-key
+          failOnError: false
