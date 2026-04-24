@@ -7,7 +7,6 @@ Guide for developing Shopify themes with Liquid templating.
 ### Syntax Basics
 
 **Objects (Output):**
-
 ```liquid
 {{ product.title }}
 {{ product.price | money }}
@@ -15,7 +14,6 @@ Guide for developing Shopify themes with Liquid templating.
 ```
 
 **Tags (Logic):**
-
 ```liquid
 {% if product.available %}
   <button>Add to Cart</button>
@@ -38,7 +36,6 @@ Guide for developing Shopify themes with Liquid templating.
 ```
 
 **Filters (Transform):**
-
 ```liquid
 {{ product.title | upcase }}
 {{ product.price | money }}
@@ -50,7 +47,6 @@ Guide for developing Shopify themes with Liquid templating.
 ### Common Objects
 
 **Product:**
-
 ```liquid
 {{ product.id }}
 {{ product.title }}
@@ -69,7 +65,6 @@ Guide for developing Shopify themes with Liquid templating.
 ```
 
 **Collection:**
-
 ```liquid
 {{ collection.title }}
 {{ collection.handle }}
@@ -81,7 +76,6 @@ Guide for developing Shopify themes with Liquid templating.
 ```
 
 **Cart:**
-
 ```liquid
 {{ cart.item_count }}
 {{ cart.total_price }}
@@ -91,7 +85,6 @@ Guide for developing Shopify themes with Liquid templating.
 ```
 
 **Customer:**
-
 ```liquid
 {{ customer.email }}
 {{ customer.first_name }}
@@ -103,7 +96,6 @@ Guide for developing Shopify themes with Liquid templating.
 ```
 
 **Shop:**
-
 ```liquid
 {{ shop.name }}
 {{ shop.email }}
@@ -116,20 +108,17 @@ Guide for developing Shopify themes with Liquid templating.
 ### Common Filters
 
 **String:**
-
 - `upcase`, `downcase`, `capitalize`
 - `strip_html`, `strip_newlines`
 - `truncate: 100`, `truncatewords: 20`
 - `replace: 'old', 'new'`
 
 **Number:**
-
 - `money` - Format currency
 - `round`, `ceil`, `floor`
 - `times`, `divided_by`, `plus`, `minus`
 
 **Array:**
-
 - `join: ', '`
 - `first`, `last`
 - `size`
@@ -137,13 +126,11 @@ Guide for developing Shopify themes with Liquid templating.
 - `where: 'property', 'value'`
 
 **URL:**
-
 - `img_url: 'size'` - Image URL
 - `url_for_type`, `url_for_vendor`
 - `link_to`, `link_to_type`
 
 **Date:**
-
 - `date: '%B %d, %Y'`
 
 ## Theme Architecture
@@ -227,7 +214,6 @@ Page-specific structures (`templates/product.json`):
 ```
 
 Legacy format (`templates/product.liquid`):
-
 ```liquid
 <div class="product">
   <div class="product-images">
@@ -316,7 +302,6 @@ Small reusable components (`snippets/product-card.liquid`):
 ```
 
 Include snippet:
-
 ```liquid
 {% render 'product-card', product: product %}
 ```
@@ -371,7 +356,6 @@ shopify theme push --only=sections,snippets
 ### Theme Check
 
 Lint theme code:
-
 ```bash
 shopify theme check
 shopify theme check --auto-correct
@@ -439,31 +423,32 @@ shopify theme check --auto-correct
 
 ```javascript
 // Add to cart
-fetch("/cart/add.js", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
+fetch('/cart/add.js', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     id: variantId,
-    quantity: 1,
-  }),
+    quantity: 1
+  })
 })
-  .then((res) => res.json())
-  .then((item) => console.log("Added:", item));
+.then(res => res.json())
+.then(item => console.log('Added:', item));
 
 // Get cart
-fetch("/cart.js")
-  .then((res) => res.json())
-  .then((cart) => console.log("Cart:", cart));
+fetch('/cart.js')
+  .then(res => res.json())
+  .then(cart => console.log('Cart:', cart));
 
 // Update cart
-fetch("/cart/change.js", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
+fetch('/cart/change.js', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     id: lineItemKey,
-    quantity: 2,
-  }),
-}).then((res) => res.json());
+    quantity: 2
+  })
+})
+.then(res => res.json());
 ```
 
 ## Metafields in Themes
@@ -482,28 +467,24 @@ Access custom data:
 ## Best Practices
 
 **Performance:**
-
 - Optimize images (use appropriate sizes)
 - Minimize Liquid logic complexity
 - Use lazy loading for images
 - Defer non-critical JavaScript
 
 **Accessibility:**
-
 - Use semantic HTML
 - Include alt text for images
 - Support keyboard navigation
 - Ensure sufficient color contrast
 
 **SEO:**
-
 - Use descriptive page titles
 - Include meta descriptions
 - Structure content with headings
 - Implement schema markup
 
 **Code Quality:**
-
 - Follow Shopify theme guidelines
 - Use consistent naming conventions
 - Comment complex logic

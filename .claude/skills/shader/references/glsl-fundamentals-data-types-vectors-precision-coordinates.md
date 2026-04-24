@@ -20,14 +20,14 @@ void main() {
 
 ## Data Types
 
-| Type             | Description      | Example                                 |
-| ---------------- | ---------------- | --------------------------------------- |
-| `float`          | Single decimal   | `float x = 1.0;`                        |
-| `vec2`           | 2D vector        | `vec2 pos = vec2(0.5, 0.5);`            |
-| `vec3`           | 3D vector / RGB  | `vec3 color = vec3(1.0, 0.0, 0.0);`     |
-| `vec4`           | 4D vector / RGBA | `vec4 rgba = vec4(1.0, 0.0, 0.0, 1.0);` |
-| `mat2/mat3/mat4` | Matrices         | `mat2 rotation;`                        |
-| `sampler2D`      | 2D texture       | `uniform sampler2D u_tex;`              |
+| Type | Description | Example |
+|------|-------------|---------|
+| `float` | Single decimal | `float x = 1.0;` |
+| `vec2` | 2D vector | `vec2 pos = vec2(0.5, 0.5);` |
+| `vec3` | 3D vector / RGB | `vec3 color = vec3(1.0, 0.0, 0.0);` |
+| `vec4` | 4D vector / RGBA | `vec4 rgba = vec4(1.0, 0.0, 0.0, 1.0);` |
+| `mat2/mat3/mat4` | Matrices | `mat2 rotation;` |
+| `sampler2D` | 2D texture | `uniform sampler2D u_tex;` |
 
 ## Precision Qualifiers
 

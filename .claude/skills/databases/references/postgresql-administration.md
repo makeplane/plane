@@ -5,7 +5,6 @@ User management, backups, replication, maintenance, and production database admi
 ## User and Role Management
 
 ### Create Users
-
 ```sql
 -- Create user with password
 CREATE USER appuser WITH PASSWORD 'secure_password';
@@ -24,7 +23,6 @@ CREATE USER developer WITH
 ```
 
 ### Alter Users
-
 ```sql
 -- Change password
 ALTER USER appuser WITH PASSWORD 'new_password';
@@ -43,7 +41,6 @@ ALTER USER appuser CONNECTION LIMIT 10;
 ```
 
 ### Roles and Inheritance
-
 ```sql
 -- Create role hierarchy
 CREATE ROLE readonly;
@@ -63,7 +60,6 @@ REVOKE readonly FROM appuser;
 ### Permissions
 
 #### Database Level
-
 ```sql
 -- Grant database access
 GRANT CONNECT ON DATABASE mydb TO appuser;
@@ -76,7 +72,6 @@ REVOKE CONNECT ON DATABASE mydb FROM appuser;
 ```
 
 #### Table Level
-
 ```sql
 -- Grant table permissions
 GRANT SELECT ON users TO appuser;
@@ -91,7 +86,6 @@ REVOKE INSERT ON users FROM appuser;
 ```
 
 #### Column Level
-
 ```sql
 -- Grant specific columns
 GRANT SELECT (id, name, email) ON users TO appuser;
@@ -99,7 +93,6 @@ GRANT UPDATE (status) ON orders TO appuser;
 ```
 
 #### Sequence Permissions
-
 ```sql
 -- Grant sequence usage (for SERIAL/auto-increment)
 GRANT USAGE, SELECT ON SEQUENCE users_id_seq TO appuser;
@@ -107,14 +100,12 @@ GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO appuser;
 ```
 
 #### Function Permissions
-
 ```sql
 -- Grant execute on function
 GRANT EXECUTE ON FUNCTION get_user(integer) TO appuser;
 ```
 
 ### Default Privileges
-
 ```sql
 -- Set default privileges for future objects
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
@@ -128,7 +119,6 @@ GRANT USAGE ON SEQUENCES TO readwrite;
 ```
 
 ### View Permissions
-
 ```sql
 -- Show table permissions
 \dp users
@@ -145,7 +135,6 @@ WHERE table_name = 'users';
 ## Backup and Restore
 
 ### pg_dump (Logical Backup)
-
 ```bash
 # Dump database to SQL file
 pg_dump mydb > mydb.sql
@@ -176,7 +165,6 @@ pg_dump -Fc -Z 9 mydb > mydb.dump
 ```
 
 ### pg_dumpall (All Databases)
-
 ```bash
 # Dump all databases
 pg_dumpall > all_databases.sql
@@ -186,7 +174,6 @@ pg_dumpall --globals-only > globals.sql
 ```
 
 ### pg_restore
-
 ```bash
 # Restore from custom format
 pg_restore -d mydb mydb.dump
@@ -208,7 +195,6 @@ pg_restore -C -d postgres mydb.dump
 ```
 
 ### Restore from SQL
-
 ```bash
 # Restore SQL dump
 psql mydb < mydb.sql
@@ -225,7 +211,6 @@ psql --set ON_ERROR_STOP=on mydb < mydb.sql
 ```
 
 ### Automated Backup Script
-
 ```bash
 #!/bin/bash
 # backup.sh
@@ -247,7 +232,6 @@ echo "Backup completed: ${DB_NAME}_${DATE}.dump"
 ```
 
 ### Point-in-Time Recovery (PITR)
-
 ```bash
 # Enable WAL archiving (postgresql.conf)
 wal_level = replica
@@ -270,7 +254,6 @@ pg_basebackup -D /backup/base -Ft -z -P
 ### Streaming Replication (Primary-Replica)
 
 #### Primary Setup
-
 ```sql
 -- Create replication user
 CREATE USER replicator WITH REPLICATION PASSWORD 'replica_pass';
@@ -285,7 +268,6 @@ host replication replicator replica_ip/32 md5
 ```
 
 #### Replica Setup
-
 ```bash
 # Stop replica PostgreSQL
 systemctl stop postgresql
@@ -306,7 +288,6 @@ SELECT * FROM pg_stat_replication;  -- On primary
 ### Logical Replication
 
 #### Publisher (Primary)
-
 ```sql
 -- Create publication
 CREATE PUBLICATION my_publication FOR ALL TABLES;
@@ -320,7 +301,6 @@ SELECT * FROM pg_publication;
 ```
 
 #### Subscriber (Replica)
-
 ```sql
 -- Create subscription
 CREATE SUBSCRIPTION my_subscription
@@ -338,7 +318,6 @@ SELECT * FROM pg_stat_subscription;
 ## Monitoring
 
 ### Database Size
-
 ```sql
 -- Database size
 SELECT pg_size_pretty(pg_database_size('mydb'));
@@ -357,7 +336,6 @@ ORDER BY pg_relation_size(indexrelid) DESC;
 ```
 
 ### Connections
-
 ```sql
 -- Current connections
 SELECT count(*) FROM pg_stat_activity;
@@ -373,7 +351,6 @@ SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE pid = 12345;
 ```
 
 ### Activity
-
 ```sql
 -- Active queries
 SELECT pid, usename, state, query, query_start
@@ -397,7 +374,6 @@ JOIN pg_stat_activity blocking
 ```
 
 ### Cache Hit Ratio
-
 ```sql
 -- Should be > 0.99 for good performance
 SELECT
@@ -406,7 +382,6 @@ FROM pg_statio_user_tables;
 ```
 
 ### Table Bloat
-
 ```sql
 -- Check for table bloat (requires pgstattuple extension)
 CREATE EXTENSION pgstattuple;
@@ -421,7 +396,6 @@ WHERE schemaname = 'public';
 ## Maintenance
 
 ### VACUUM
-
 ```sql
 -- Reclaim storage
 VACUUM users;
@@ -440,7 +414,6 @@ VACUUM;
 ```
 
 ### Auto-Vacuum
-
 ```sql
 -- Check last vacuum
 SELECT schemaname, tablename, last_vacuum, last_autovacuum
@@ -455,7 +428,6 @@ autovacuum_analyze_scale_factor = 0.1
 ```
 
 ### REINDEX
-
 ```sql
 -- Rebuild index
 REINDEX INDEX idx_users_email;
@@ -471,7 +443,6 @@ REINDEX INDEX CONCURRENTLY idx_users_email;
 ```
 
 ### ANALYZE
-
 ```sql
 -- Update statistics
 ANALYZE users;
@@ -489,13 +460,11 @@ ANALYZE VERBOSE users;
 ## Configuration
 
 ### postgresql.conf Location
-
 ```sql
 SHOW config_file;
 ```
 
 ### Key Settings
-
 ```conf
 # Memory
 shared_buffers = 4GB                 # 25% of RAM
@@ -531,7 +500,6 @@ autovacuum_analyze_scale_factor = 0.1
 ```
 
 ### Reload Configuration
-
 ```sql
 -- Reload config without restart
 SELECT pg_reload_conf();
@@ -543,7 +511,6 @@ pg_ctl reload
 ## Security
 
 ### SSL/TLS
-
 ```conf
 # postgresql.conf
 ssl = on
@@ -553,7 +520,6 @@ ssl_ca_file = '/path/to/ca.crt'
 ```
 
 ### pg_hba.conf (Host-Based Authentication)
-
 ```conf
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
@@ -573,7 +539,6 @@ hostssl all             all             0.0.0.0/0               md5
 ```
 
 ### Row Level Security
-
 ```sql
 -- Enable RLS
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;

@@ -8,10 +8,10 @@ kind: ClusterRole
 metadata:
   name: secret-reader
 rules:
-  - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["get"]
-    resourceNames: ["app-credentials"] # Restrict to specific
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+  resourceNames: ["app-credentials"]  # Restrict to specific
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -19,9 +19,9 @@ kind: ClusterRoleBinding
 metadata:
   name: admin-binding
 subjects:
-  - kind: User
-    name: admin@example.com
-    apiGroup: rbac.authorization.k8s.io
+- kind: User
+  name: admin@example.com
+  apiGroup: rbac.authorization.k8s.io
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -42,27 +42,25 @@ stringData:
 ```
 
 ### Mount as env
-
 ```yaml
 env:
-  - name: DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: db-credentials
-        key: password
+- name: DB_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: db-credentials
+      key: password
 ```
 
 ### Mount as volume
-
 ```yaml
 volumeMounts:
-  - name: secret-volume
-    mountPath: /etc/secrets
-    readOnly: true
+- name: secret-volume
+  mountPath: /etc/secrets
+  readOnly: true
 volumes:
-  - name: secret-volume
-    secret:
-      secretName: db-credentials
+- name: secret-volume
+  secret:
+    secretName: db-credentials
 ```
 
 ## Allow DNS (Required for most apps)
@@ -76,12 +74,12 @@ spec:
   podSelector: {}
   policyTypes: [Egress]
   egress:
-    - to:
-        - namespaceSelector:
-            matchLabels:
-              name: kube-system
-      ports:
-        - { protocol: UDP, port: 53 }
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - { protocol: UDP, port: 53 }
 ```
 
 ## Security Checklist

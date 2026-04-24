@@ -3,7 +3,6 @@
 ## Core Principles
 
 Follow these fundamental principles:
-
 - **YAGNI** (You Aren't Gonna Need It) - Don't add functionality until necessary
 - **KISS** (Keep It Simple, Stupid) - Prefer simple solutions over complex ones
 - **DRY** (Don't Repeat Yourself) - Avoid code duplication
@@ -11,7 +10,6 @@ Follow these fundamental principles:
 ## Design Activities
 
 ### Technical Trade-off Analysis
-
 - Evaluate multiple approaches for each requirement
 - Compare pros and cons of different solutions
 - Consider short-term vs long-term implications
@@ -20,7 +18,6 @@ Follow these fundamental principles:
 - Recommend optimal solution based on current best practices
 
 ### Security Assessment
-
 - Identify potential vulnerabilities during design phase
 - Consider authentication and authorization requirements
 - Assess data protection needs
@@ -30,7 +27,6 @@ Follow these fundamental principles:
 - Consider API security (rate limiting, CORS, etc.)
 
 ### Performance & Scalability
-
 - Identify potential bottlenecks early
 - Consider database query optimization needs
 - Plan for caching strategies
@@ -40,7 +36,6 @@ Follow these fundamental principles:
 - Consider asynchronous processing where appropriate
 
 ### Edge Cases & Failure Modes
-
 - Think through error scenarios
 - Plan for network failures
 - Consider partial failure handling
@@ -50,7 +45,6 @@ Follow these fundamental principles:
 - Design for graceful degradation
 
 ### Architecture Design
-
 - Create scalable system architectures
 - Design for maintainability
 - Plan component interactions

@@ -51,26 +51,22 @@ vec3 color = colorA + colorB;
 ## Gradients
 
 ### Horizontal gradient
-
 ```glsl
 vec3 color = mix(colorA, colorB, st.x);
 ```
 
 ### Vertical gradient
-
 ```glsl
 vec3 color = mix(colorA, colorB, st.y);
 ```
 
 ### Radial gradient
-
 ```glsl
 float d = distance(st, vec2(0.5));
 vec3 color = mix(centerColor, edgeColor, d);
 ```
 
 ### Multi-stop gradient
-
 ```glsl
 vec3 gradient(float t) {
     vec3 a = vec3(0.0, 0.0, 0.5);  // Dark blue
@@ -89,7 +85,6 @@ vec3 gradient(float t) {
 More intuitive: Hue (color wheel), Saturation (intensity), Brightness.
 
 ### RGB to HSB
-
 ```glsl
 vec3 rgb2hsb(vec3 c) {
     vec4 K = vec4(0.0, -1.0/3.0, 2.0/3.0, -1.0);
@@ -102,7 +97,6 @@ vec3 rgb2hsb(vec3 c) {
 ```
 
 ### HSB to RGB
-
 ```glsl
 vec3 hsb2rgb(vec3 c) {
     vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0,
@@ -113,7 +107,6 @@ vec3 hsb2rgb(vec3 c) {
 ```
 
 ### HSB Usage
-
 ```glsl
 // Rainbow across x-axis
 vec3 color = hsb2rgb(vec3(st.x, 1.0, 1.0));

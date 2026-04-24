@@ -75,7 +75,6 @@ mint migrate-mdx            # Migrate mint.json to docs.json
 ## Common Patterns
 
 **Basic docs.json:**
-
 ```json
 {
   "theme": "mint",
@@ -93,8 +92,7 @@ mint migrate-mdx            # Migrate mint.json to docs.json
 ```
 
 **MDX page with components:**
-
-````mdx
+```mdx
 ---
 title: "Getting Started"
 description: "Quick introduction"
@@ -105,12 +103,11 @@ description: "Quick introduction"
 <CodeGroup>
 ```bash
 npm install
-````
+```
 
 ```python
 pip install
 ```
-
 </CodeGroup>
 
 <Steps>

@@ -5,7 +5,6 @@ Monitor usage limits and context window utilization in real-time to optimize Cla
 ## Overview
 
 Runtime awareness provides visibility into two critical metrics:
-
 1. **Usage Limits** - API quota consumption (5-hour and 7-day rolling windows)
 2. **Context Window** - Current token utilization within the 200K context limit
 
@@ -39,11 +38,11 @@ Requires OAuth Bearer token with `anthropic-beta: oauth-2025-04-20` header.
 
 ### Credential Locations
 
-| Platform | Method   | Location                                  |
-| -------- | -------- | ----------------------------------------- |
-| macOS    | Keychain | `Claude Code-credentials`                 |
-| Windows  | File     | `%USERPROFILE%\.claude\.credentials.json` |
-| Linux    | File     | `~/.claude/.credentials.json`             |
+| Platform | Method | Location |
+|----------|--------|----------|
+| macOS | Keychain | `Claude Code-credentials` |
+| Windows | File | `%USERPROFILE%\.claude\.credentials.json` |
+| Linux | File | `~/.claude/.credentials.json` |
 
 ### Response Structure
 
@@ -110,16 +109,15 @@ Context: 67%
 
 ### Warning Indicators
 
-| Level    | Threshold | Indicator        |
-| -------- | --------- | ---------------- |
-| Normal   | < 70%     | Plain percentage |
-| Warning  | 70-89%    | `[WARNING]`      |
-| Critical | ≥ 90%     | `[CRITICAL]`     |
+| Level | Threshold | Indicator |
+|-------|-----------|-----------|
+| Normal | < 70% | Plain percentage |
+| Warning | 70-89% | `[WARNING]` |
+| Critical | ≥ 90% | `[CRITICAL]` |
 
 ### Examples
 
 Normal state:
-
 ```xml
 <usage-awareness>
 Limits: 5h=45%, 7d=32%
@@ -128,7 +126,6 @@ Context: 67%
 ```
 
 Warning state:
-
 ```xml
 <usage-awareness>
 Limits: 5h=75% [WARNING], 7d=32%
@@ -137,7 +134,6 @@ Context: 78% [WARNING - consider compaction]
 ```
 
 Critical state:
-
 ```xml
 <usage-awareness>
 Limits: 5h=92% [CRITICAL], 7d=65%
@@ -149,26 +145,26 @@ Context: 91% [CRITICAL - compaction needed]
 
 ### Context Window
 
-| Utilization | Action                                |
-| ----------- | ------------------------------------- |
-| < 70%       | Continue normally                     |
-| 70-80%      | Plan compaction strategy              |
-| 80-90%      | Execute compaction                    |
-| > 90%       | Immediate compaction or session reset |
+| Utilization | Action |
+|-------------|--------|
+| < 70% | Continue normally |
+| 70-80% | Plan compaction strategy |
+| 80-90% | Execute compaction |
+| > 90% | Immediate compaction or session reset |
 
 ### Usage Limits
 
-| 5-Hour | Action                                        |
-| ------ | --------------------------------------------- |
-| < 70%  | Normal usage                                  |
+| 5-Hour | Action |
+|--------|--------|
+| < 70% | Normal usage |
 | 70-90% | Reduce parallelization, delegate to subagents |
-| > 90%  | Wait for reset or use lower-tier models       |
+| > 90% | Wait for reset or use lower-tier models |
 
-| 7-Day  | Action                         |
-| ------ | ------------------------------ |
-| < 70%  | Normal usage                   |
-| 70-90% | Monitor daily consumption      |
-| > 90%  | Limit usage to essential tasks |
+| 7-Day | Action |
+|-------|--------|
+| < 70% | Normal usage |
+| 70-90% | Monitor daily consumption |
+| > 90% | Limit usage to essential tasks |
 
 ## Configuration
 
@@ -180,12 +176,10 @@ Context: 91% [CRITICAL - compaction needed]
     "PostToolUse": [
       {
         "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/usage-context-awareness.cjs"
-          }
-        ]
+        "hooks": [{
+          "type": "command",
+          "command": "node .claude/hooks/usage-quota-cache-refresh.cjs"
+        }]
       }
     ]
   }
@@ -200,9 +194,9 @@ Context: 91% [CRITICAL - compaction needed]
 
 ## Troubleshooting
 
-| Issue                 | Cause                   | Solution                   |
-| --------------------- | ----------------------- | -------------------------- |
-| No usage limits shown | No OAuth token          | Run `claude login`         |
-| Stale context data    | Statusline not updating | Check statusline config    |
-| 401 Unauthorized      | Expired token           | Re-authenticate            |
-| Hook not firing       | Settings misconfigured  | Verify PostToolUse matcher |
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| No usage limits shown | No OAuth token | Run `claude login` |
+| Stale context data | Statusline not updating | Check statusline config |
+| 401 Unauthorized | Expired token | Re-authenticate |
+| Hook not firing | Settings misconfigured | Verify PostToolUse matcher |

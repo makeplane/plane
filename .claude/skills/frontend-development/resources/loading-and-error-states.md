@@ -11,19 +11,18 @@
 ```typescript
 // ❌ NEVER DO THIS - Early return with loading spinner
 const Component = () => {
-  const { data, isLoading } = useQuery();
+    const { data, isLoading } = useQuery();
 
-  // WRONG: This causes layout shift and poor UX
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
+    // WRONG: This causes layout shift and poor UX
+    if (isLoading) {
+        return <LoadingSpinner />;
+    }
 
-  return <Content data={data} />;
+    return <Content data={data} />;
 };
 ```
 
 **Why this is bad:**
-
 1. **Layout Shift**: Content position jumps when loading completes
 2. **CLS (Cumulative Layout Shift)**: Poor Core Web Vital score
 3. **Jarring UX**: Page structure changes suddenly
@@ -34,16 +33,16 @@ const Component = () => {
 **Option 1: SuspenseLoader (PREFERRED for new components)**
 
 ```typescript
-import { SuspenseLoader } from "~components/SuspenseLoader";
+import { SuspenseLoader } from '~components/SuspenseLoader';
 
-const HeavyComponent = React.lazy(() => import("./HeavyComponent"));
+const HeavyComponent = React.lazy(() => import('./HeavyComponent'));
 
 export const MyComponent: React.FC = () => {
-  return (
-    <SuspenseLoader>
-      <HeavyComponent />
-    </SuspenseLoader>
-  );
+    return (
+        <SuspenseLoader>
+            <HeavyComponent />
+        </SuspenseLoader>
+    );
 };
 ```
 
@@ -77,42 +76,42 @@ export const MyComponent: React.FC = () => {
 ### Import
 
 ```typescript
-import { SuspenseLoader } from "~components/SuspenseLoader";
+import { SuspenseLoader } from '~components/SuspenseLoader';
 // Or
-import { SuspenseLoader } from "@/components/SuspenseLoader";
+import { SuspenseLoader } from '@/components/SuspenseLoader';
 ```
 
 ### Basic Usage
 
 ```typescript
 <SuspenseLoader>
-  <LazyLoadedComponent />
+    <LazyLoadedComponent />
 </SuspenseLoader>
 ```
 
 ### With useSuspenseQuery
 
 ```typescript
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { SuspenseLoader } from "~components/SuspenseLoader";
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { SuspenseLoader } from '~components/SuspenseLoader';
 
 const Inner: React.FC = () => {
-  // No isLoading needed!
-  const { data } = useSuspenseQuery({
-    queryKey: ["data"],
-    queryFn: () => api.getData(),
-  });
+    // No isLoading needed!
+    const { data } = useSuspenseQuery({
+        queryKey: ['data'],
+        queryFn: () => api.getData(),
+    });
 
-  return <Display data={data} />;
+    return <Display data={data} />;
 };
 
 // Outer component wraps in Suspense
 export const Outer: React.FC = () => {
-  return (
-    <SuspenseLoader>
-      <Inner />
-    </SuspenseLoader>
-  );
+    return (
+        <SuspenseLoader>
+            <Inner />
+        </SuspenseLoader>
+    );
 };
 ```
 
@@ -122,26 +121,25 @@ export const Outer: React.FC = () => {
 
 ```typescript
 export const Dashboard: React.FC = () => {
-  return (
-    <Box>
-      <SuspenseLoader>
-        <Header />
-      </SuspenseLoader>
+    return (
+        <Box>
+            <SuspenseLoader>
+                <Header />
+            </SuspenseLoader>
 
-      <SuspenseLoader>
-        <MainContent />
-      </SuspenseLoader>
+            <SuspenseLoader>
+                <MainContent />
+            </SuspenseLoader>
 
-      <SuspenseLoader>
-        <Sidebar />
-      </SuspenseLoader>
-    </Box>
-  );
+            <SuspenseLoader>
+                <Sidebar />
+            </SuspenseLoader>
+        </Box>
+    );
 };
 ```
 
 **Benefits:**
-
 - Each section loads independently
 - User sees partial content sooner
 - Better perceived performance
@@ -150,17 +148,17 @@ export const Dashboard: React.FC = () => {
 
 ```typescript
 export const ParentComponent: React.FC = () => {
-  return (
-    <SuspenseLoader>
-      {/* Parent suspends while loading */}
-      <ParentContent>
+    return (
         <SuspenseLoader>
-          {/* Nested suspense for child */}
-          <ChildComponent />
+            {/* Parent suspends while loading */}
+            <ParentContent>
+                <SuspenseLoader>
+                    {/* Nested suspense for child */}
+                    <ChildComponent />
+                </SuspenseLoader>
+            </ParentContent>
         </SuspenseLoader>
-      </ParentContent>
-    </SuspenseLoader>
-  );
+    );
 };
 ```
 
@@ -177,24 +175,25 @@ export const ParentComponent: React.FC = () => {
 ### Usage
 
 ```typescript
-import { LoadingOverlay } from "~components/LoadingOverlay";
+import { LoadingOverlay } from '~components/LoadingOverlay';
 
 export const MyComponent: React.FC = () => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["data"],
-    queryFn: () => api.getData(),
-  });
+    const { data, isLoading } = useQuery({
+        queryKey: ['data'],
+        queryFn: () => api.getData(),
+    });
 
-  return (
-    <LoadingOverlay loading={isLoading}>
-      <Box sx={{ p: 2 }}>{data && <Content data={data} />}</Box>
-    </LoadingOverlay>
-  );
+    return (
+        <LoadingOverlay loading={isLoading}>
+            <Box sx={{ p: 2 }}>
+                {data && <Content data={data} />}
+            </Box>
+        </LoadingOverlay>
+    );
 };
 ```
 
 **What it does:**
-
 - Shows semi-transparent overlay with spinner
 - Content area reserved (no layout shift)
 - Prevents interaction while loading
@@ -208,26 +207,25 @@ export const MyComponent: React.FC = () => {
 **NEVER use react-toastify** - Project standard is MUI Snackbar
 
 ```typescript
-import { useMuiSnackbar } from "@/hooks/useMuiSnackbar";
+import { useMuiSnackbar } from '@/hooks/useMuiSnackbar';
 
 export const MyComponent: React.FC = () => {
-  const { showSuccess, showError, showInfo, showWarning } = useMuiSnackbar();
+    const { showSuccess, showError, showInfo, showWarning } = useMuiSnackbar();
 
-  const handleAction = async () => {
-    try {
-      await api.doSomething();
-      showSuccess("Operation completed successfully");
-    } catch (error) {
-      showError("Operation failed");
-    }
-  };
+    const handleAction = async () => {
+        try {
+            await api.doSomething();
+            showSuccess('Operation completed successfully');
+        } catch (error) {
+            showError('Operation failed');
+        }
+    };
 
-  return <Button onClick={handleAction}>Do Action</Button>;
+    return <Button onClick={handleAction}>Do Action</Button>;
 };
 ```
 
 **Available Methods:**
-
 - `showSuccess(message)` - Green success message
 - `showError(message)` - Red error message
 - `showWarning(message)` - Orange warning message
@@ -236,52 +234,55 @@ export const MyComponent: React.FC = () => {
 ### TanStack Query Error Callbacks
 
 ```typescript
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useMuiSnackbar } from "@/hooks/useMuiSnackbar";
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { useMuiSnackbar } from '@/hooks/useMuiSnackbar';
 
 export const MyComponent: React.FC = () => {
-  const { showError } = useMuiSnackbar();
+    const { showError } = useMuiSnackbar();
 
-  const { data } = useSuspenseQuery({
-    queryKey: ["data"],
-    queryFn: () => api.getData(),
+    const { data } = useSuspenseQuery({
+        queryKey: ['data'],
+        queryFn: () => api.getData(),
 
-    // Handle errors
-    onError: (error) => {
-      showError("Failed to load data");
-      console.error("Query error:", error);
-    },
-  });
+        // Handle errors
+        onError: (error) => {
+            showError('Failed to load data');
+            console.error('Query error:', error);
+        },
+    });
 
-  return <Content data={data} />;
+    return <Content data={data} />;
 };
 ```
 
 ### Error Boundaries
 
 ```typescript
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary } from 'react-error-boundary';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
-  return (
-    <Box sx={{ p: 4, textAlign: "center" }}>
-      <Typography variant="h5" color="error">
-        Something went wrong
-      </Typography>
-      <Typography>{error.message}</Typography>
-      <Button onClick={resetErrorBoundary}>Try Again</Button>
-    </Box>
-  );
+    return (
+        <Box sx={{ p: 4, textAlign: 'center' }}>
+            <Typography variant='h5' color='error'>
+                Something went wrong
+            </Typography>
+            <Typography>{error.message}</Typography>
+            <Button onClick={resetErrorBoundary}>Try Again</Button>
+        </Box>
+    );
 }
 
 export const MyPage: React.FC = () => {
-  return (
-    <ErrorBoundary FallbackComponent={ErrorFallback} onError={(error) => console.error("Boundary caught:", error)}>
-      <SuspenseLoader>
-        <ComponentThatMightError />
-      </SuspenseLoader>
-    </ErrorBoundary>
-  );
+    return (
+        <ErrorBoundary
+            FallbackComponent={ErrorFallback}
+            onError={(error) => console.error('Boundary caught:', error)}
+        >
+            <SuspenseLoader>
+                <ComponentThatMightError />
+            </SuspenseLoader>
+        </ErrorBoundary>
+    );
 };
 ```
 
@@ -292,37 +293,37 @@ export const MyPage: React.FC = () => {
 ### Example 1: Modern Component with Suspense
 
 ```typescript
-import React from "react";
-import { Box, Paper } from "@mui/material";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { SuspenseLoader } from "~components/SuspenseLoader";
-import { myFeatureApi } from "../api/myFeatureApi";
+import React from 'react';
+import { Box, Paper } from '@mui/material';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { SuspenseLoader } from '~components/SuspenseLoader';
+import { myFeatureApi } from '../api/myFeatureApi';
 
 // Inner component uses useSuspenseQuery
 const InnerComponent: React.FC<{ id: number }> = ({ id }) => {
-  const { data } = useSuspenseQuery({
-    queryKey: ["entity", id],
-    queryFn: () => myFeatureApi.getEntity(id),
-  });
+    const { data } = useSuspenseQuery({
+        queryKey: ['entity', id],
+        queryFn: () => myFeatureApi.getEntity(id),
+    });
 
-  // data is always defined - no isLoading needed!
-  return (
-    <Paper sx={{ p: 2 }}>
-      <h2>{data.title}</h2>
-      <p>{data.description}</p>
-    </Paper>
-  );
+    // data is always defined - no isLoading needed!
+    return (
+        <Paper sx={{ p: 2 }}>
+            <h2>{data.title}</h2>
+            <p>{data.description}</p>
+        </Paper>
+    );
 };
 
 // Outer component provides Suspense boundary
 export const OuterComponent: React.FC<{ id: number }> = ({ id }) => {
-  return (
-    <Box>
-      <SuspenseLoader>
-        <InnerComponent id={id} />
-      </SuspenseLoader>
-    </Box>
-  );
+    return (
+        <Box>
+            <SuspenseLoader>
+                <InnerComponent id={id} />
+            </SuspenseLoader>
+        </Box>
+    );
 };
 
 export default OuterComponent;
@@ -331,64 +332,68 @@ export default OuterComponent;
 ### Example 2: Legacy Pattern with LoadingOverlay
 
 ```typescript
-import React from "react";
-import { Box } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { LoadingOverlay } from "~components/LoadingOverlay";
-import { myFeatureApi } from "../api/myFeatureApi";
+import React from 'react';
+import { Box } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { LoadingOverlay } from '~components/LoadingOverlay';
+import { myFeatureApi } from '../api/myFeatureApi';
 
 export const LegacyComponent: React.FC<{ id: number }> = ({ id }) => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["entity", id],
-    queryFn: () => myFeatureApi.getEntity(id),
-  });
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['entity', id],
+        queryFn: () => myFeatureApi.getEntity(id),
+    });
 
-  return (
-    <LoadingOverlay loading={isLoading}>
-      <Box sx={{ p: 2 }}>
-        {error && <ErrorDisplay error={error} />}
-        {data && <Content data={data} />}
-      </Box>
-    </LoadingOverlay>
-  );
+    return (
+        <LoadingOverlay loading={isLoading}>
+            <Box sx={{ p: 2 }}>
+                {error && <ErrorDisplay error={error} />}
+                {data && <Content data={data} />}
+            </Box>
+        </LoadingOverlay>
+    );
 };
 ```
 
 ### Example 3: Error Handling with Snackbar
 
 ```typescript
-import React from "react";
-import { useSuspenseQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@mui/material";
-import { useMuiSnackbar } from "@/hooks/useMuiSnackbar";
-import { myFeatureApi } from "../api/myFeatureApi";
+import React from 'react';
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@mui/material';
+import { useMuiSnackbar } from '@/hooks/useMuiSnackbar';
+import { myFeatureApi } from '../api/myFeatureApi';
 
 export const EntityEditor: React.FC<{ id: number }> = ({ id }) => {
-  const queryClient = useQueryClient();
-  const { showSuccess, showError } = useMuiSnackbar();
+    const queryClient = useQueryClient();
+    const { showSuccess, showError } = useMuiSnackbar();
 
-  const { data } = useSuspenseQuery({
-    queryKey: ["entity", id],
-    queryFn: () => myFeatureApi.getEntity(id),
-    onError: () => {
-      showError("Failed to load entity");
-    },
-  });
+    const { data } = useSuspenseQuery({
+        queryKey: ['entity', id],
+        queryFn: () => myFeatureApi.getEntity(id),
+        onError: () => {
+            showError('Failed to load entity');
+        },
+    });
 
-  const updateMutation = useMutation({
-    mutationFn: (updates) => myFeatureApi.update(id, updates),
+    const updateMutation = useMutation({
+        mutationFn: (updates) => myFeatureApi.update(id, updates),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entity", id] });
-      showSuccess("Entity updated successfully");
-    },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['entity', id] });
+            showSuccess('Entity updated successfully');
+        },
 
-    onError: () => {
-      showError("Failed to update entity");
-    },
-  });
+        onError: () => {
+            showError('Failed to update entity');
+        },
+    });
 
-  return <Button onClick={() => updateMutation.mutate({ name: "New" })}>Update</Button>;
+    return (
+        <Button onClick={() => updateMutation.mutate({ name: 'New' })}>
+            Update
+        </Button>
+    );
 };
 ```
 
@@ -401,28 +406,24 @@ export const EntityEditor: React.FC<{ id: number }> = ({ id }) => {
 ```typescript
 // ❌ NEVER - Early return
 if (isLoading) {
-  return <CircularProgress />;
+    return <CircularProgress />;
 }
 
 // ❌ NEVER - Conditional rendering
-{
-  isLoading ? <Spinner /> : <Content />;
-}
+{isLoading ? <Spinner /> : <Content />}
 
 // ❌ NEVER - Layout changes
 if (isLoading) {
-  return (
-    <Box sx={{ height: 100 }}>
-      <Spinner />
-    </Box>
-  );
+    return (
+        <Box sx={{ height: 100 }}>
+            <Spinner />
+        </Box>
+    );
 }
 return (
-  <Box sx={{ height: 500 }}>
-    {" "}
-    // Different height!
-    <Content />
-  </Box>
+    <Box sx={{ height: 500 }}>  // Different height!
+        <Content />
+    </Box>
 );
 ```
 
@@ -484,20 +485,17 @@ export const MyComponent: React.FC = () => {
 ## Summary
 
 **Loading States:**
-
 - ✅ **PREFERRED**: SuspenseLoader + useSuspenseQuery (modern pattern)
 - ✅ **ACCEPTABLE**: LoadingOverlay (legacy pattern)
 - ✅ **OK**: Skeleton with same layout
 - ❌ **NEVER**: Early returns or conditional layout
 
 **Error Handling:**
-
 - ✅ **ALWAYS**: useMuiSnackbar for user feedback
 - ❌ **NEVER**: react-toastify
 - ✅ Use onError callbacks in queries/mutations
 - ✅ Error boundaries for component-level errors
 
 **See Also:**
-
 - [component-patterns.md](component-patterns.md) - Suspense integration
 - [data-fetching.md](data-fetching.md) - useSuspenseQuery details

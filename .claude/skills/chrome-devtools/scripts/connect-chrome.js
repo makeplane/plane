@@ -14,8 +14,8 @@
  *   - Using existing Chrome session with all logged-in accounts
  *   - Avoiding Puppeteer's bundled Chromium
  */
-import { spawn } from "child_process";
-import { getBrowser, getPage, disconnectBrowser, parseArgs, outputJSON, outputError } from "./lib/browser.js";
+import { spawn } from 'child_process';
+import { getBrowser, getPage, disconnectBrowser, parseArgs, outputJSON, outputError } from './lib/browser.js';
 
 /**
  * Get Chrome executable path based on OS
@@ -23,19 +23,19 @@ import { getBrowser, getPage, disconnectBrowser, parseArgs, outputJSON, outputEr
  */
 function getChromeExecutablePath() {
   switch (process.platform) {
-    case "darwin":
-      return "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
-    case "win32":
+    case 'darwin':
+      return '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    case 'win32':
       // Try common installation paths
       const paths = [
-        `${process.env["PROGRAMFILES"]}/Google/Chrome/Application/chrome.exe`,
-        `${process.env["PROGRAMFILES(X86)"]}/Google/Chrome/Application/chrome.exe`,
-        `${process.env.LOCALAPPDATA}/Google/Chrome/Application/chrome.exe`,
+        `${process.env['PROGRAMFILES']}/Google/Chrome/Application/chrome.exe`,
+        `${process.env['PROGRAMFILES(X86)']}/Google/Chrome/Application/chrome.exe`,
+        `${process.env.LOCALAPPDATA}/Google/Chrome/Application/chrome.exe`
       ];
       // Return first path (user should have Chrome installed in standard location)
       return paths[0];
     default: // Linux
-      return "google-chrome";
+      return 'google-chrome';
   }
 }
 
@@ -46,11 +46,15 @@ function getChromeExecutablePath() {
  */
 function launchChromeWithDebugging(port = 9222) {
   const chromePath = getChromeExecutablePath();
-  const args = [`--remote-debugging-port=${port}`, "--no-first-run", "--no-default-browser-check"];
+  const args = [
+    `--remote-debugging-port=${port}`,
+    '--no-first-run',
+    '--no-default-browser-check'
+  ];
 
   const chrome = spawn(chromePath, args, {
     detached: true,
-    stdio: "ignore",
+    stdio: 'ignore'
   });
 
   chrome.unref();
@@ -74,15 +78,15 @@ async function waitForDebugEndpoint(browserUrl, timeout = 10000) {
     } catch {
       // Not ready yet
     }
-    await new Promise((r) => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 500));
   }
   return false;
 }
 
 async function connectChrome() {
   const args = parseArgs(process.argv.slice(2));
-  const port = parseInt(args.port || "9222");
-  const browserUrl = args["browser-url"] || `http://localhost:${port}`;
+  const port = parseInt(args.port || '9222');
+  const browserUrl = args['browser-url'] || `http://localhost:${port}`;
 
   try {
     // Launch Chrome if requested
@@ -104,8 +108,8 @@ async function connectChrome() {
     // Navigate if URL provided
     if (args.url) {
       await page.goto(args.url, {
-        waitUntil: args["wait-until"] || "networkidle2",
-        timeout: parseInt(args.timeout || "30000"),
+        waitUntil: args['wait-until'] || 'networkidle2',
+        timeout: parseInt(args.timeout || '30000')
       });
     }
 
@@ -116,8 +120,8 @@ async function connectChrome() {
       url: page.url(),
       title: await page.title(),
       hint: args.launch
-        ? "Chrome launched with debugging. Browser window is visible."
-        : "Connected to existing Chrome instance.",
+        ? 'Chrome launched with debugging. Browser window is visible.'
+        : 'Connected to existing Chrome instance.'
     };
 
     outputJSON(result);
@@ -127,14 +131,12 @@ async function connectChrome() {
     process.exit(0);
   } catch (error) {
     // Provide helpful error message
-    if (error.message.includes("ECONNREFUSED")) {
-      outputError(
-        new Error(
-          `Could not connect to Chrome at ${browserUrl}. ` +
-            `Make sure Chrome is running with: ` +
-            `chrome --remote-debugging-port=${port}`
-        )
-      );
+    if (error.message.includes('ECONNREFUSED')) {
+      outputError(new Error(
+        `Could not connect to Chrome at ${browserUrl}. ` +
+        `Make sure Chrome is running with: ` +
+        `chrome --remote-debugging-port=${port}`
+      ));
     } else {
       outputError(error);
     }

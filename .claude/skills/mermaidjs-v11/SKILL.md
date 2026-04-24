@@ -16,14 +16,12 @@ Create text-based diagrams using Mermaid.js v11 declarative syntax. Convert code
 ## Quick Start
 
 **Basic Diagram Structure:**
-
 ```
 {diagram-type}
   {diagram-content}
 ```
 
 **Common Diagram Types:**
-
 - `flowchart` - Process flows, decision trees
 - `sequenceDiagram` - Actor interactions, API flows
 - `classDiagram` - OOP structures, data models
@@ -37,7 +35,6 @@ See `references/diagram-types.md` for all 24+ types with syntax.
 ## Creating Diagrams
 
 **Inline Markdown Code Blocks:**
-
 ````markdown
 ```mermaid
 flowchart TD
@@ -48,7 +45,6 @@ flowchart TD
 ````
 
 **Configuration via Frontmatter:**
-
 ````markdown
 ```mermaid
 ---
@@ -64,7 +60,6 @@ flowchart LR
 ## CLI Usage
 
 Convert `.mmd` files to images:
-
 ```bash
 # Installation
 npm install -g @mermaid-js/mermaid-cli
@@ -84,16 +79,13 @@ See `references/cli-usage.md` for Docker, batch processing, and advanced workflo
 ## JavaScript Integration
 
 **HTML Embedding:**
-
 ```html
 <pre class="mermaid">
   flowchart TD
     A[Client] --> B[Server]
 </pre>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
-<script>
-  mermaid.initialize({ startOnLoad: true });
-</script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
 ```
 
 See `references/integration.md` for Node.js API and advanced integration patterns.
@@ -101,7 +93,6 @@ See `references/integration.md` for Node.js API and advanced integration pattern
 ## Configuration & Theming
 
 **Common Options:**
-
 - `theme`: "default", "dark", "forest", "neutral", "base"
 - `look`: "classic", "handDrawn"
 - `fontFamily`: Custom font specification
@@ -112,7 +103,6 @@ See `references/configuration.md` for complete config options, theming, and cust
 ## Practical Patterns
 
 Load `references/examples.md` for:
-
 - Architecture diagrams
 - API documentation flows
 - Database schemas

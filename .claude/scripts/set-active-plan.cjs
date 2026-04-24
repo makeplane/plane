@@ -13,7 +13,7 @@
  */
 
 const path = require('path');
-const { writeSessionState, readSessionState } = require('../hooks/lib/ck-config-utils.cjs');
+const { updateSessionState } = require('../hooks/lib/ck-config-utils.cjs');
 
 const sessionId = process.env.CK_SESSION_ID;
 const newPlan = process.argv[2];
@@ -35,12 +35,11 @@ if (!sessionId) {
   process.exit(0);
 }
 
-const current = readSessionState(sessionId) || {};
-const success = writeSessionState(sessionId, {
+const success = updateSessionState(sessionId, (current) => ({
   ...current,
   activePlan: absolutePlan,
   timestamp: Date.now()
-});
+}));
 
 if (success) {
   console.log(`Active plan set to: ${absolutePlan}`);

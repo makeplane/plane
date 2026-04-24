@@ -16,7 +16,6 @@ Stripe uses date-based API versions (e.g., `2025-12-15.clover`, `2025-08-27.basi
 ### Types of Changes
 
 **Backward-Compatible Changes** (do not require code updates):
-
 - New API resources
 - New optional request parameters
 - New properties in existing responses
@@ -24,7 +23,6 @@ Stripe uses date-based API versions (e.g., `2025-12-15.clover`, `2025-08-27.basi
 - New webhook event types
 
 **Breaking Changes** (require code updates):
-
 - Field renames or removals
 - Behavioral modifications
 - Removed endpoints or parameters
@@ -40,7 +38,6 @@ See [SDK Version Management](https://docs.stripe.com/sdks/set-version.md) for de
 These SDKs offer flexible version control:
 
 **Global Configuration:**
-
 ```python
 import stripe
 stripe.api_version = '2025-12-15.clover'
@@ -51,13 +48,12 @@ Stripe.api_version = '2025-12-15.clover'
 ```
 
 ```javascript
-const stripe = require("stripe")("sk_test_xxx", {
-  apiVersion: "2025-12-15.clover",
+const stripe = require('stripe')('sk_test_xxx', {
+  apiVersion: '2025-12-15.clover'
 });
 ```
 
 **Per-Request Override:**
-
 ```python
 stripe.Customer.create(
   email="customer@example.com",
@@ -75,12 +71,12 @@ Always specify the API version you're integrating against in your code instead o
 
 ```javascript
 // Good: Explicit version
-const stripe = require("stripe")("sk_test_xxx", {
-  apiVersion: "2025-12-15.clover",
+const stripe = require('stripe')('sk_test_xxx', {
+  apiVersion: '2025-12-15.clover'
 });
 
 // Avoid: Relying on account default
-const stripe = require("stripe")("sk_test_xxx");
+const stripe = require('stripe')('sk_test_xxx');
 ```
 
 ## Stripe.js Versioning
@@ -92,13 +88,11 @@ Stripe.js uses an evergreen model with major releases (Acacia, Basil, Clover) on
 ### Loading Versioned Stripe.js
 
 **Via Script Tag:**
-
 ```html
 <script src="https://js.stripe.com/clover/stripe.js"></script>
 ```
 
 **Via npm:**
-
 ```bash
 npm install @stripe/stripe-js
 ```
@@ -108,7 +102,6 @@ Major npm versions correspond to specific Stripe.js versions.
 ### API Version Pairing
 
 Each Stripe.js version automatically pairs with its corresponding API version. For instance:
-
 - Clover Stripe.js uses `2025-12-15.clover` API
 - Acacia Stripe.js uses `2024-12-18.acacia` API
 
@@ -128,7 +121,6 @@ See [Mobile SDK Versioning](https://docs.stripe.com/sdks/mobile-sdk-versioning.m
 ### iOS and Android SDKs
 
 Both platforms follow **semantic versioning** (MAJOR.MINOR.PATCH):
-
 - **MAJOR**: Breaking API changes
 - **MINOR**: New functionality (backward-compatible)
 - **PATCH**: Bug fixes (backward-compatible)
@@ -138,7 +130,6 @@ New features and fixes release only on the latest major version. Upgrade regular
 ### React Native SDK
 
 Uses a different model (0.x.y schema):
-
 - **Minor version changes** (x): Breaking changes AND new features
 - **Patch updates** (y): Critical bug fixes only
 
@@ -171,8 +162,8 @@ curl https://api.stripe.com/v1/customers \
 Or in code:
 
 ```javascript
-const stripe = require("stripe")("sk_test_xxx", {
-  apiVersion: "2025-12-15.clover", // Test with new version
+const stripe = require('stripe')('sk_test_xxx', {
+  apiVersion: '2025-12-15.clover'  // Test with new version
 });
 ```
 

@@ -50,8 +50,7 @@
     gap: 1rem;
   }
 
-  .nav-prev,
-  .nav-next {
+  .nav-prev, .nav-next {
     width: 100%;
     justify-content: center;
   }
@@ -97,9 +96,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px var(--shadow);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-decoration: none;
 }
 

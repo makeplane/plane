@@ -5,66 +5,60 @@ Getting started with Cloudflare Workers: serverless functions that run on edge n
 ## Handler Types
 
 ### Fetch Handler (HTTP Requests)
-
 ```typescript
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    return new Response("Hello World!");
-  },
+    return new Response('Hello World!');
+  }
 };
 ```
 
 ### Scheduled Handler (Cron Jobs)
-
 ```typescript
 export default {
   async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext): Promise<void> {
-    await fetch("https://api.example.com/cleanup");
-  },
+    await fetch('https://api.example.com/cleanup');
+  }
 };
 ```
 
 **Configure in wrangler.toml:**
-
 ```toml
 [triggers]
 crons = ["0 0 * * *"]  # Daily at midnight
 ```
 
 ### Queue Handler (Message Processing)
-
 ```typescript
 export default {
   async queue(batch: MessageBatch, env: Env, ctx: ExecutionContext): Promise<void> {
     for (const message of batch.messages) {
       await processMessage(message.body);
-      message.ack(); // Acknowledge success
+      message.ack();  // Acknowledge success
     }
-  },
+  }
 };
 ```
 
 ### Email Handler (Email Routing)
-
 ```typescript
 export default {
   async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext): Promise<void> {
-    await message.forward("destination@example.com");
-  },
+    await message.forward('destination@example.com');
+  }
 };
 ```
 
 ## Request/Response Basics
 
 ### Parsing Request
-
 ```typescript
 const url = new URL(request.url);
 const method = request.method;
 const headers = request.headers;
 
 // Query parameters
-const name = url.searchParams.get("name");
+const name = url.searchParams.get('name');
 
 // JSON body
 const data = await request.json();
@@ -77,57 +71,54 @@ const formData = await request.formData();
 ```
 
 ### Creating Response
-
 ```typescript
 // Text response
-return new Response("Hello", { status: 200 });
+return new Response('Hello', { status: 200 });
 
 // JSON response
-return new Response(JSON.stringify({ message: "Hello" }), {
+return new Response(JSON.stringify({ message: 'Hello' }), {
   status: 200,
-  headers: { "Content-Type": "application/json" },
+  headers: { 'Content-Type': 'application/json' }
 });
 
 // Stream response
 return new Response(readable, {
-  headers: { "Content-Type": "text/plain" },
+  headers: { 'Content-Type': 'text/plain' }
 });
 
 // Redirect
-return Response.redirect("https://example.com", 302);
+return Response.redirect('https://example.com', 302);
 ```
 
 ## Routing Patterns
 
 ### URL-Based Routing
-
 ```typescript
 export default {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
 
     switch (url.pathname) {
-      case "/":
-        return new Response("Home");
-      case "/about":
-        return new Response("About");
+      case '/':
+        return new Response('Home');
+      case '/about':
+        return new Response('About');
       default:
-        return new Response("Not Found", { status: 404 });
+        return new Response('Not Found', { status: 404 });
     }
-  },
+  }
 };
 ```
 
 ### Using Hono Framework (Recommended)
-
 ```typescript
-import { Hono } from "hono";
+import { Hono } from 'hono';
 
 const app = new Hono();
 
-app.get("/", (c) => c.text("Home"));
-app.get("/api/users/:id", async (c) => {
-  const id = c.req.param("id");
+app.get('/', (c) => c.text('Home'));
+app.get('/api/users/:id', async (c) => {
+  const id = c.req.param('id');
   const user = await getUser(id);
   return c.json(user);
 });
@@ -138,7 +129,6 @@ export default app;
 ## Working with Bindings
 
 ### Environment Variables
-
 ```toml
 # wrangler.toml
 [vars]
@@ -150,88 +140,87 @@ const apiUrl = env.API_URL;
 ```
 
 ### KV Namespace
-
 ```typescript
 // Put with TTL
-await env.KV.put("session:token", JSON.stringify(data), {
-  expirationTtl: 3600,
+await env.KV.put('session:token', JSON.stringify(data), {
+  expirationTtl: 3600
 });
 
 // Get
-const data = await env.KV.get("session:token", "json");
+const data = await env.KV.get('session:token', 'json');
 
 // Delete
-await env.KV.delete("session:token");
+await env.KV.delete('session:token');
 
 // List with prefix
-const list = await env.KV.list({ prefix: "user:123:" });
+const list = await env.KV.list({ prefix: 'user:123:' });
 ```
 
 ### D1 Database
-
 ```typescript
 // Query
-const result = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first();
+const result = await env.DB.prepare(
+  'SELECT * FROM users WHERE id = ?'
+).bind(userId).first();
 
 // Insert
-await env.DB.prepare("INSERT INTO users (name, email) VALUES (?, ?)").bind("Alice", "alice@example.com").run();
+await env.DB.prepare(
+  'INSERT INTO users (name, email) VALUES (?, ?)'
+).bind('Alice', 'alice@example.com').run();
 
 // Batch (atomic)
 await env.DB.batch([
-  env.DB.prepare("UPDATE accounts SET balance = balance - 100 WHERE id = ?").bind(1),
-  env.DB.prepare("UPDATE accounts SET balance = balance + 100 WHERE id = ?").bind(2),
+  env.DB.prepare('UPDATE accounts SET balance = balance - 100 WHERE id = ?').bind(1),
+  env.DB.prepare('UPDATE accounts SET balance = balance + 100 WHERE id = ?').bind(2)
 ]);
 ```
 
 ### R2 Bucket
-
 ```typescript
 // Put object
-await env.R2_BUCKET.put("path/to/file.jpg", fileBuffer, {
+await env.R2_BUCKET.put('path/to/file.jpg', fileBuffer, {
   httpMetadata: {
-    contentType: "image/jpeg",
-  },
+    contentType: 'image/jpeg'
+  }
 });
 
 // Get object
-const object = await env.R2_BUCKET.get("path/to/file.jpg");
+const object = await env.R2_BUCKET.get('path/to/file.jpg');
 if (!object) {
-  return new Response("Not found", { status: 404 });
+  return new Response('Not found', { status: 404 });
 }
 
 // Stream response
 return new Response(object.body, {
   headers: {
-    "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
-  },
+    'Content-Type': object.httpMetadata?.contentType || 'application/octet-stream'
+  }
 });
 
 // Delete
-await env.R2_BUCKET.delete("path/to/file.jpg");
+await env.R2_BUCKET.delete('path/to/file.jpg');
 ```
 
 ## Context API
 
 ### waitUntil (Background Tasks)
-
 ```typescript
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     // Run analytics after response sent
     ctx.waitUntil(
-      fetch("https://analytics.example.com/log", {
-        method: "POST",
-        body: JSON.stringify({ url: request.url }),
+      fetch('https://analytics.example.com/log', {
+        method: 'POST',
+        body: JSON.stringify({ url: request.url })
       })
     );
 
-    return new Response("OK");
-  },
+    return new Response('OK');
+  }
 };
 ```
 
 ### passThroughOnException
-
 ```typescript
 // Continue to origin on error
 ctx.passThroughOnException();
@@ -249,22 +238,22 @@ export default {
       const response = await processRequest(request, env);
       return response;
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
 
       // Log to external service
       ctx.waitUntil(
-        fetch("https://logging.example.com/error", {
-          method: "POST",
+        fetch('https://logging.example.com/error', {
+          method: 'POST',
           body: JSON.stringify({
             error: error.message,
-            url: request.url,
-          }),
+            url: request.url
+          })
         })
       );
 
-      return new Response("Internal Server Error", { status: 500 });
+      return new Response('Internal Server Error', { status: 500 });
     }
-  },
+  }
 };
 ```
 
@@ -273,19 +262,19 @@ export default {
 ```typescript
 function corsHeaders(origin: string) {
   return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Max-Age": "86400",
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400'
   };
 }
 
 export default {
   async fetch(request: Request): Promise<Response> {
-    const origin = request.headers.get("Origin") || "*";
+    const origin = request.headers.get('Origin') || '*';
 
     // Handle preflight
-    if (request.method === "OPTIONS") {
+    if (request.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders(origin) });
     }
 
@@ -298,9 +287,9 @@ export default {
 
     return new Response(response.body, {
       status: response.status,
-      headers,
+      headers
     });
-  },
+  }
 };
 ```
 
@@ -323,7 +312,7 @@ export default {
     ctx.waitUntil(cache.put(cacheKey, response.clone()));
 
     return response;
-  },
+  }
 };
 ```
 
@@ -369,20 +358,21 @@ wrangler deploy --dry-run
 ## Common Patterns
 
 ### API Gateway
-
 ```typescript
-import { Hono } from "hono";
+import { Hono } from 'hono';
 
 const app = new Hono();
 
-app.get("/api/users", async (c) => {
-  const users = await c.env.DB.prepare("SELECT * FROM users").all();
+app.get('/api/users', async (c) => {
+  const users = await c.env.DB.prepare('SELECT * FROM users').all();
   return c.json(users.results);
 });
 
-app.post("/api/users", async (c) => {
+app.post('/api/users', async (c) => {
   const { name, email } = await c.req.json();
-  await c.env.DB.prepare("INSERT INTO users (name, email) VALUES (?, ?)").bind(name, email).run();
+  await c.env.DB.prepare(
+    'INSERT INTO users (name, email) VALUES (?, ?)'
+  ).bind(name, email).run();
   return c.json({ success: true }, 201);
 });
 
@@ -390,7 +380,6 @@ export default app;
 ```
 
 ### Rate Limiting
-
 ```typescript
 async function rateLimit(ip: string, env: Env): Promise<boolean> {
   const key = `ratelimit:${ip}`;
@@ -403,7 +392,7 @@ async function rateLimit(ip: string, env: Env): Promise<boolean> {
   if (count >= limit) return false;
 
   await env.KV.put(key, (count + 1).toString(), {
-    expirationTtl: window,
+    expirationTtl: window
   });
 
   return true;
@@ -411,14 +400,14 @@ async function rateLimit(ip: string, env: Env): Promise<boolean> {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
 
-    if (!(await rateLimit(ip, env))) {
-      return new Response("Rate limit exceeded", { status: 429 });
+    if (!await rateLimit(ip, env)) {
+      return new Response('Rate limit exceeded', { status: 429 });
     }
 
-    return new Response("OK");
-  },
+    return new Response('OK');
+  }
 };
 ```
 

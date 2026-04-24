@@ -25,9 +25,9 @@
  *   { slide, placeholders } where placeholders is an array of { id, x, y, w, h }
  */
 
-const { chromium } = require("playwright");
-const path = require("path");
-const sharp = require("sharp");
+const { chromium } = require('playwright');
+const path = require('path');
+const sharp = require('sharp');
 
 const PT_PER_PX = 0.75;
 const PX_PER_IN = 96;
@@ -43,7 +43,7 @@ async function getBodyDimensions(page) {
       width: parseFloat(style.width),
       height: parseFloat(style.height),
       scrollWidth: body.scrollWidth,
-      scrollHeight: body.scrollHeight,
+      scrollHeight: body.scrollHeight
     };
   });
 
@@ -58,8 +58,8 @@ async function getBodyDimensions(page) {
     const directions = [];
     if (widthOverflowPt > 0) directions.push(`${widthOverflowPt.toFixed(1)}pt horizontally`);
     if (heightOverflowPt > 0) directions.push(`${heightOverflowPt.toFixed(1)}pt vertically`);
-    const reminder = heightOverflowPt > 0 ? ' (Remember: leave 0.5" margin at bottom of slide)' : "";
-    errors.push(`HTML content overflows body by ${directions.join(" and ")}${reminder}`);
+    const reminder = heightOverflowPt > 0 ? ' (Remember: leave 0.5" margin at bottom of slide)' : '';
+    errors.push(`HTML content overflows body by ${directions.join(' and ')}${reminder}`);
   }
 
   return { ...bodyDimensions, errors };
@@ -78,7 +78,7 @@ function validateDimensions(bodyDimensions, pres) {
     if (Math.abs(layoutWidth - widthInches) > 0.1 || Math.abs(layoutHeight - heightInches) > 0.1) {
       errors.push(
         `HTML dimensions (${widthInches.toFixed(1)}" × ${heightInches.toFixed(1)}") ` +
-          `don't match presentation layout (${layoutWidth.toFixed(1)}" × ${layoutHeight.toFixed(1)}")`
+        `don't match presentation layout (${layoutWidth.toFixed(1)}" × ${layoutHeight.toFixed(1)}")`
       );
     }
   }
@@ -92,23 +92,23 @@ function validateTextBoxPosition(slideData, bodyDimensions) {
 
   for (const el of slideData.elements) {
     // Check text elements (p, h1-h6, list)
-    if (["p", "h1", "h2", "h3", "h4", "h5", "h6", "list"].includes(el.type)) {
+    if (['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'list'].includes(el.type)) {
       const fontSize = el.style?.fontSize || 0;
       const bottomEdge = el.position.y + el.position.h;
       const distanceFromBottom = slideHeightInches - bottomEdge;
 
       if (fontSize > 12 && distanceFromBottom < minBottomMargin) {
         const getText = () => {
-          if (typeof el.text === "string") return el.text;
-          if (Array.isArray(el.text)) return el.text.find((t) => t.text)?.text || "";
-          if (Array.isArray(el.items)) return el.items.find((item) => item.text)?.text || "";
-          return "";
+          if (typeof el.text === 'string') return el.text;
+          if (Array.isArray(el.text)) return el.text.find(t => t.text)?.text || '';
+          if (Array.isArray(el.items)) return el.items.find(item => item.text)?.text || '';
+          return '';
         };
-        const textPrefix = getText().substring(0, 50) + (getText().length > 50 ? "..." : "");
+        const textPrefix = getText().substring(0, 50) + (getText().length > 50 ? '...' : '');
 
         errors.push(
           `Text box "${textPrefix}" ends too close to bottom edge ` +
-            `(${distanceFromBottom.toFixed(2)}" from bottom, minimum ${minBottomMargin}" required)`
+          `(${distanceFromBottom.toFixed(2)}" from bottom, minimum ${minBottomMargin}" required)`
         );
       }
     }
@@ -119,12 +119,12 @@ function validateTextBoxPosition(slideData, bodyDimensions) {
 
 // Helper: Add background to slide
 async function addBackground(slideData, targetSlide, tmpDir) {
-  if (slideData.background.type === "image" && slideData.background.path) {
-    let imagePath = slideData.background.path.startsWith("file://")
-      ? slideData.background.path.replace("file://", "")
+  if (slideData.background.type === 'image' && slideData.background.path) {
+    let imagePath = slideData.background.path.startsWith('file://')
+      ? slideData.background.path.replace('file://', '')
       : slideData.background.path;
     targetSlide.background = { path: imagePath };
-  } else if (slideData.background.type === "color" && slideData.background.value) {
+  } else if (slideData.background.type === 'color' && slideData.background.value) {
     targetSlide.background = { color: slideData.background.value };
   }
 }
@@ -132,30 +132,30 @@ async function addBackground(slideData, targetSlide, tmpDir) {
 // Helper: Add elements to slide
 function addElements(slideData, targetSlide, pres) {
   for (const el of slideData.elements) {
-    if (el.type === "image") {
-      let imagePath = el.src.startsWith("file://") ? el.src.replace("file://", "") : el.src;
+    if (el.type === 'image') {
+      let imagePath = el.src.startsWith('file://') ? el.src.replace('file://', '') : el.src;
       targetSlide.addImage({
         path: imagePath,
         x: el.position.x,
         y: el.position.y,
         w: el.position.w,
-        h: el.position.h,
+        h: el.position.h
       });
-    } else if (el.type === "line") {
+    } else if (el.type === 'line') {
       targetSlide.addShape(pres.ShapeType.line, {
         x: el.x1,
         y: el.y1,
         w: el.x2 - el.x1,
         h: el.y2 - el.y1,
-        line: { color: el.color, width: el.width },
+        line: { color: el.color, width: el.width }
       });
-    } else if (el.type === "shape") {
+    } else if (el.type === 'shape') {
       const shapeOptions = {
         x: el.position.x,
         y: el.position.y,
         w: el.position.w,
         h: el.position.h,
-        shape: el.shape.rectRadius > 0 ? pres.ShapeType.roundRect : pres.ShapeType.rect,
+        shape: el.shape.rectRadius > 0 ? pres.ShapeType.roundRect : pres.ShapeType.rect
       };
 
       if (el.shape.fill) {
@@ -166,8 +166,8 @@ function addElements(slideData, targetSlide, pres) {
       if (el.shape.rectRadius > 0) shapeOptions.rectRadius = el.shape.rectRadius;
       if (el.shape.shadow) shapeOptions.shadow = el.shape.shadow;
 
-      targetSlide.addText(el.text || "", shapeOptions);
-    } else if (el.type === "list") {
+      targetSlide.addText(el.text || '', shapeOptions);
+    } else if (el.type === 'list') {
       const listOptions = {
         x: el.position.x,
         y: el.position.y,
@@ -177,11 +177,11 @@ function addElements(slideData, targetSlide, pres) {
         fontFace: el.style.fontFace,
         color: el.style.color,
         align: el.style.align,
-        valign: "top",
+        valign: 'top',
         lineSpacing: el.style.lineSpacing,
         paraSpaceBefore: el.style.paraSpaceBefore,
         paraSpaceAfter: el.style.paraSpaceAfter,
-        margin: el.style.margin,
+        margin: el.style.margin
       };
       if (el.style.margin) listOptions.margin = el.style.margin;
       targetSlide.addText(el.items, listOptions);
@@ -198,11 +198,11 @@ function addElements(slideData, targetSlide, pres) {
         const widthIncrease = el.position.w * 0.02;
         const align = el.style.align;
 
-        if (align === "center") {
+        if (align === 'center') {
           // Center: expand both sides
-          adjustedX = el.position.x - widthIncrease / 2;
+          adjustedX = el.position.x - (widthIncrease / 2);
           adjustedW = el.position.w + widthIncrease;
-        } else if (align === "right") {
+        } else if (align === 'right') {
           // Right: expand to the left
           adjustedX = el.position.x - widthIncrease;
           adjustedW = el.position.w + widthIncrease;
@@ -223,18 +223,17 @@ function addElements(slideData, targetSlide, pres) {
         bold: el.style.bold,
         italic: el.style.italic,
         underline: el.style.underline,
-        valign: "top",
+        valign: 'top',
         lineSpacing: el.style.lineSpacing,
         paraSpaceBefore: el.style.paraSpaceBefore,
         paraSpaceAfter: el.style.paraSpaceAfter,
-        inset: 0, // Remove default PowerPoint internal padding
+        inset: 0  // Remove default PowerPoint internal padding
       };
 
       if (el.style.align) textOptions.align = el.style.align;
       if (el.style.margin) textOptions.margin = el.style.margin;
       if (el.style.rotate !== undefined) textOptions.rotate = el.style.rotate;
-      if (el.style.transparency !== null && el.style.transparency !== undefined)
-        textOptions.transparency = el.style.transparency;
+      if (el.style.transparency !== null && el.style.transparency !== undefined) textOptions.transparency = el.style.transparency;
 
       targetSlide.addText(el.text, textOptions);
     }
@@ -249,12 +248,12 @@ async function extractSlideData(page) {
 
     // Fonts that are single-weight and should not have bold applied
     // (applying bold causes PowerPoint to use faux bold which makes text wider)
-    const SINGLE_WEIGHT_FONTS = ["impact"];
+    const SINGLE_WEIGHT_FONTS = ['impact'];
 
     // Helper: Check if a font should skip bold formatting
     const shouldSkipBold = (fontFamily) => {
       if (!fontFamily) return false;
-      const normalizedFont = fontFamily.toLowerCase().replace(/['"]/g, "").split(",")[0].trim();
+      const normalizedFont = fontFamily.toLowerCase().replace(/['"]/g, '').split(',')[0].trim();
       return SINGLE_WEIGHT_FONTS.includes(normalizedFont);
     };
 
@@ -263,14 +262,11 @@ async function extractSlideData(page) {
     const pxToPoints = (pxStr) => parseFloat(pxStr) * PT_PER_PX;
     const rgbToHex = (rgbStr) => {
       // Handle transparent backgrounds by defaulting to white
-      if (rgbStr === "rgba(0, 0, 0, 0)" || rgbStr === "transparent") return "FFFFFF";
+      if (rgbStr === 'rgba(0, 0, 0, 0)' || rgbStr === 'transparent') return 'FFFFFF';
 
       const match = rgbStr.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (!match) return "FFFFFF";
-      return match
-        .slice(1)
-        .map((n) => parseInt(n).toString(16).padStart(2, "0"))
-        .join("");
+      if (!match) return 'FFFFFF';
+      return match.slice(1).map(n => parseInt(n).toString(16).padStart(2, '0')).join('');
     };
 
     const extractAlpha = (rgbStr) => {
@@ -281,10 +277,10 @@ async function extractSlideData(page) {
     };
 
     const applyTextTransform = (text, textTransform) => {
-      if (textTransform === "uppercase") return text.toUpperCase();
-      if (textTransform === "lowercase") return text.toLowerCase();
-      if (textTransform === "capitalize") {
-        return text.replace(/\b\w/g, (c) => c.toUpperCase());
+      if (textTransform === 'uppercase') return text.toUpperCase();
+      if (textTransform === 'lowercase') return text.toLowerCase();
+      if (textTransform === 'capitalize') {
+        return text.replace(/\b\w/g, c => c.toUpperCase());
       }
       return text;
     };
@@ -296,16 +292,16 @@ async function extractSlideData(page) {
       // Handle writing-mode first
       // PowerPoint: 90° = text rotated 90° clockwise (reads top to bottom, letters upright)
       // PowerPoint: 270° = text rotated 270° clockwise (reads bottom to top, letters upright)
-      if (writingMode === "vertical-rl") {
+      if (writingMode === 'vertical-rl') {
         // vertical-rl alone = text reads top to bottom = 90° in PowerPoint
         angle = 90;
-      } else if (writingMode === "vertical-lr") {
+      } else if (writingMode === 'vertical-lr') {
         // vertical-lr alone = text reads bottom to top = 270° in PowerPoint
         angle = 270;
       }
 
       // Then add any transform rotation
-      if (transform && transform !== "none") {
+      if (transform && transform !== 'none') {
         // Try to match rotate() function
         const rotateMatch = transform.match(/rotate\((-?\d+(?:\.\d+)?)deg\)/);
         if (rotateMatch) {
@@ -314,7 +310,7 @@ async function extractSlideData(page) {
           // Browser may compute as matrix - extract rotation from matrix
           const matrixMatch = transform.match(/matrix\(([^)]+)\)/);
           if (matrixMatch) {
-            const values = matrixMatch[1].split(",").map(parseFloat);
+            const values = matrixMatch[1].split(',').map(parseFloat);
             // matrix(a, b, c, d, e, f) where rotation = atan2(b, a)
             const matrixAngle = Math.atan2(values[1], values[0]) * (180 / Math.PI);
             angle += Math.round(matrixAngle);
@@ -350,7 +346,7 @@ async function extractSlideData(page) {
           x: centerX - rect.height / 2,
           y: centerY - rect.width / 2,
           w: rect.height,
-          h: rect.width,
+          h: rect.width
         };
       }
 
@@ -361,13 +357,13 @@ async function extractSlideData(page) {
         x: centerX - el.offsetWidth / 2,
         y: centerY - el.offsetHeight / 2,
         w: el.offsetWidth,
-        h: el.offsetHeight,
+        h: el.offsetHeight
       };
     };
 
     // Parse CSS box-shadow into PptxGenJS shadow properties
     const parseBoxShadow = (boxShadow) => {
-      if (!boxShadow || boxShadow === "none") return null;
+      if (!boxShadow || boxShadow === 'none') return null;
 
       // Browser computed style format: "rgba(0, 0, 0, 0.3) 2px 2px 8px 0px [inset]"
       // CSS format: "[inset] 2px 2px 8px 0px rgba(0, 0, 0, 0.3)"
@@ -405,17 +401,17 @@ async function extractSlideData(page) {
       if (colorMatch) {
         const opacityMatch = colorMatch[0].match(/[\d.]+\)$/);
         if (opacityMatch) {
-          opacity = parseFloat(opacityMatch[0].replace(")", ""));
+          opacity = parseFloat(opacityMatch[0].replace(')', ''));
         }
       }
 
       return {
-        type: "outer",
+        type: 'outer',
         angle: Math.round(angle),
         blur: blur * 0.75, // Convert to points
-        color: colorMatch ? rgbToHex(colorMatch[0]) : "000000",
+        color: colorMatch ? rgbToHex(colorMatch[0]) : '000000',
         offset: offset,
-        opacity,
+        opacity
       };
     };
 
@@ -426,33 +422,27 @@ async function extractSlideData(page) {
       element.childNodes.forEach((node) => {
         let textTransform = baseTextTransform;
 
-        const isText = node.nodeType === Node.TEXT_NODE || node.tagName === "BR";
+        const isText = node.nodeType === Node.TEXT_NODE || node.tagName === 'BR';
         if (isText) {
-          const text = node.tagName === "BR" ? "\n" : textTransform(node.textContent.replace(/\s+/g, " "));
+          const text = node.tagName === 'BR' ? '\n' : textTransform(node.textContent.replace(/\s+/g, ' '));
           const prevRun = runs[runs.length - 1];
           if (prevNodeIsText && prevRun) {
             prevRun.text += text;
           } else {
             runs.push({ text, options: { ...baseOptions } });
           }
+
         } else if (node.nodeType === Node.ELEMENT_NODE && node.textContent.trim()) {
           const options = { ...baseOptions };
           const computed = window.getComputedStyle(node);
 
           // Handle inline elements with computed styles
-          if (
-            node.tagName === "SPAN" ||
-            node.tagName === "B" ||
-            node.tagName === "STRONG" ||
-            node.tagName === "I" ||
-            node.tagName === "EM" ||
-            node.tagName === "U"
-          ) {
-            const isBold = computed.fontWeight === "bold" || parseInt(computed.fontWeight) >= 600;
+          if (node.tagName === 'SPAN' || node.tagName === 'B' || node.tagName === 'STRONG' || node.tagName === 'I' || node.tagName === 'EM' || node.tagName === 'U') {
+            const isBold = computed.fontWeight === 'bold' || parseInt(computed.fontWeight) >= 600;
             if (isBold && !shouldSkipBold(computed.fontFamily)) options.bold = true;
-            if (computed.fontStyle === "italic") options.italic = true;
-            if (computed.textDecoration && computed.textDecoration.includes("underline")) options.underline = true;
-            if (computed.color && computed.color !== "rgb(0, 0, 0)") {
+            if (computed.fontStyle === 'italic') options.italic = true;
+            if (computed.textDecoration && computed.textDecoration.includes('underline')) options.underline = true;
+            if (computed.color && computed.color !== 'rgb(0, 0, 0)') {
               options.color = rgbToHex(computed.color);
               const transparency = extractAlpha(computed.color);
               if (transparency !== null) options.transparency = transparency;
@@ -460,31 +450,23 @@ async function extractSlideData(page) {
             if (computed.fontSize) options.fontSize = pxToPoints(computed.fontSize);
 
             // Apply text-transform on the span element itself
-            if (computed.textTransform && computed.textTransform !== "none") {
+            if (computed.textTransform && computed.textTransform !== 'none') {
               const transformStr = computed.textTransform;
               textTransform = (text) => applyTextTransform(text, transformStr);
             }
 
             // Validate: Check for margins on inline elements
             if (computed.marginLeft && parseFloat(computed.marginLeft) > 0) {
-              errors.push(
-                `Inline element <${node.tagName.toLowerCase()}> has margin-left which is not supported in PowerPoint. Remove margin from inline elements.`
-              );
+              errors.push(`Inline element <${node.tagName.toLowerCase()}> has margin-left which is not supported in PowerPoint. Remove margin from inline elements.`);
             }
             if (computed.marginRight && parseFloat(computed.marginRight) > 0) {
-              errors.push(
-                `Inline element <${node.tagName.toLowerCase()}> has margin-right which is not supported in PowerPoint. Remove margin from inline elements.`
-              );
+              errors.push(`Inline element <${node.tagName.toLowerCase()}> has margin-right which is not supported in PowerPoint. Remove margin from inline elements.`);
             }
             if (computed.marginTop && parseFloat(computed.marginTop) > 0) {
-              errors.push(
-                `Inline element <${node.tagName.toLowerCase()}> has margin-top which is not supported in PowerPoint. Remove margin from inline elements.`
-              );
+              errors.push(`Inline element <${node.tagName.toLowerCase()}> has margin-top which is not supported in PowerPoint. Remove margin from inline elements.`);
             }
             if (computed.marginBottom && parseFloat(computed.marginBottom) > 0) {
-              errors.push(
-                `Inline element <${node.tagName.toLowerCase()}> has margin-bottom which is not supported in PowerPoint. Remove margin from inline elements.`
-              );
+              errors.push(`Inline element <${node.tagName.toLowerCase()}> has margin-bottom which is not supported in PowerPoint. Remove margin from inline elements.`);
             }
 
             // Recursively process the child node. This will flatten nested spans into multiple runs.
@@ -497,11 +479,11 @@ async function extractSlideData(page) {
 
       // Trim leading space from first run and trailing space from last run
       if (runs.length > 0) {
-        runs[0].text = runs[0].text.replace(/^\s+/, "");
-        runs[runs.length - 1].text = runs[runs.length - 1].text.replace(/\s+$/, "");
+        runs[0].text = runs[0].text.replace(/^\s+/, '');
+        runs[runs.length - 1].text = runs[runs.length - 1].text.replace(/\s+$/, '');
       }
 
-      return runs.filter((r) => r.text.length > 0);
+      return runs.filter(r => r.text.length > 0);
     };
 
     // Extract background from body (image or color)
@@ -514,71 +496,70 @@ async function extractSlideData(page) {
     const errors = [];
 
     // Validate: Check for CSS gradients
-    if (bgImage && (bgImage.includes("linear-gradient") || bgImage.includes("radial-gradient"))) {
+    if (bgImage && (bgImage.includes('linear-gradient') || bgImage.includes('radial-gradient'))) {
       errors.push(
-        "CSS gradients are not supported. Use Sharp to rasterize gradients as PNG images first, " +
-          "then reference with background-image: url('gradient.png')"
+        'CSS gradients are not supported. Use Sharp to rasterize gradients as PNG images first, ' +
+        'then reference with background-image: url(\'gradient.png\')'
       );
     }
 
     let background;
-    if (bgImage && bgImage !== "none") {
+    if (bgImage && bgImage !== 'none') {
       // Extract URL from url("...") or url(...)
       const urlMatch = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
       if (urlMatch) {
         background = {
-          type: "image",
-          path: urlMatch[1],
+          type: 'image',
+          path: urlMatch[1]
         };
       } else {
         background = {
-          type: "color",
-          value: rgbToHex(bgColor),
+          type: 'color',
+          value: rgbToHex(bgColor)
         };
       }
     } else {
       background = {
-        type: "color",
-        value: rgbToHex(bgColor),
+        type: 'color',
+        value: rgbToHex(bgColor)
       };
     }
 
     // Process all elements
     const elements = [];
     const placeholders = [];
-    const textTags = ["P", "H1", "H2", "H3", "H4", "H5", "H6", "UL", "OL", "LI"];
+    const textTags = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'UL', 'OL', 'LI'];
     const processed = new Set();
 
-    document.querySelectorAll("*").forEach((el) => {
+    document.querySelectorAll('*').forEach((el) => {
       if (processed.has(el)) return;
 
       // Validate text elements don't have backgrounds, borders, or shadows
       if (textTags.includes(el.tagName)) {
         const computed = window.getComputedStyle(el);
-        const hasBg = computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)";
-        const hasBorder =
-          (computed.borderWidth && parseFloat(computed.borderWidth) > 0) ||
-          (computed.borderTopWidth && parseFloat(computed.borderTopWidth) > 0) ||
-          (computed.borderRightWidth && parseFloat(computed.borderRightWidth) > 0) ||
-          (computed.borderBottomWidth && parseFloat(computed.borderBottomWidth) > 0) ||
-          (computed.borderLeftWidth && parseFloat(computed.borderLeftWidth) > 0);
-        const hasShadow = computed.boxShadow && computed.boxShadow !== "none";
+        const hasBg = computed.backgroundColor && computed.backgroundColor !== 'rgba(0, 0, 0, 0)';
+        const hasBorder = (computed.borderWidth && parseFloat(computed.borderWidth) > 0) ||
+                          (computed.borderTopWidth && parseFloat(computed.borderTopWidth) > 0) ||
+                          (computed.borderRightWidth && parseFloat(computed.borderRightWidth) > 0) ||
+                          (computed.borderBottomWidth && parseFloat(computed.borderBottomWidth) > 0) ||
+                          (computed.borderLeftWidth && parseFloat(computed.borderLeftWidth) > 0);
+        const hasShadow = computed.boxShadow && computed.boxShadow !== 'none';
 
         if (hasBg || hasBorder || hasShadow) {
           errors.push(
-            `Text element <${el.tagName.toLowerCase()}> has ${hasBg ? "background" : hasBorder ? "border" : "shadow"}. ` +
-              "Backgrounds, borders, and shadows are only supported on <div> elements, not text elements."
+            `Text element <${el.tagName.toLowerCase()}> has ${hasBg ? 'background' : hasBorder ? 'border' : 'shadow'}. ` +
+            'Backgrounds, borders, and shadows are only supported on <div> elements, not text elements.'
           );
           return;
         }
       }
 
       // Extract placeholder elements (for charts, etc.)
-      if (el.className && el.className.includes("placeholder")) {
+      if (el.className && el.className.includes('placeholder')) {
         const rect = el.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) {
           errors.push(
-            `Placeholder "${el.id || "unnamed"}" has ${rect.width === 0 ? "width: 0" : "height: 0"}. Check the layout CSS.`
+            `Placeholder "${el.id || 'unnamed'}" has ${rect.width === 0 ? 'width: 0' : 'height: 0'}. Check the layout CSS.`
           );
         } else {
           placeholders.push({
@@ -586,7 +567,7 @@ async function extractSlideData(page) {
             x: pxToInch(rect.left),
             y: pxToInch(rect.top),
             w: pxToInch(rect.width),
-            h: pxToInch(rect.height),
+            h: pxToInch(rect.height)
           });
         }
         processed.add(el);
@@ -594,18 +575,18 @@ async function extractSlideData(page) {
       }
 
       // Extract images
-      if (el.tagName === "IMG") {
+      if (el.tagName === 'IMG') {
         const rect = el.getBoundingClientRect();
         if (rect.width > 0 && rect.height > 0) {
           elements.push({
-            type: "image",
+            type: 'image',
             src: el.src,
             position: {
               x: pxToInch(rect.left),
               y: pxToInch(rect.top),
               w: pxToInch(rect.width),
-              h: pxToInch(rect.height),
-            },
+              h: pxToInch(rect.height)
+            }
           });
           processed.add(el);
           return;
@@ -613,10 +594,10 @@ async function extractSlideData(page) {
       }
 
       // Extract DIVs with backgrounds/borders as shapes
-      const isContainer = el.tagName === "DIV" && !textTags.includes(el.tagName);
+      const isContainer = el.tagName === 'DIV' && !textTags.includes(el.tagName);
       if (isContainer) {
         const computed = window.getComputedStyle(el);
-        const hasBg = computed.backgroundColor && computed.backgroundColor !== "rgba(0, 0, 0, 0)";
+        const hasBg = computed.backgroundColor && computed.backgroundColor !== 'rgba(0, 0, 0, 0)';
 
         // Validate: Check for unwrapped text content in DIV
         for (const node of el.childNodes) {
@@ -624,8 +605,8 @@ async function extractSlideData(page) {
             const text = node.textContent.trim();
             if (text) {
               errors.push(
-                `DIV element contains unwrapped text "${text.substring(0, 50)}${text.length > 50 ? "..." : ""}". ` +
-                  "All text must be wrapped in <p>, <h1>-<h6>, <ul>, or <ol> tags to appear in PowerPoint."
+                `DIV element contains unwrapped text "${text.substring(0, 50)}${text.length > 50 ? '...' : ''}". ` +
+                'All text must be wrapped in <p>, <h1>-<h6>, <ul>, or <ol> tags to appear in PowerPoint.'
               );
             }
           }
@@ -633,10 +614,10 @@ async function extractSlideData(page) {
 
         // Check for background images on shapes
         const bgImage = computed.backgroundImage;
-        if (bgImage && bgImage !== "none") {
+        if (bgImage && bgImage !== 'none') {
           errors.push(
-            "Background images on DIV elements are not supported. " +
-              "Use solid colors or borders for shapes, or use slide.addImage() in PptxGenJS to layer images."
+            'Background images on DIV elements are not supported. ' +
+            'Use solid colors or borders for shapes, or use slide.addImage() in PptxGenJS to layer images.'
           );
           return;
         }
@@ -646,9 +627,9 @@ async function extractSlideData(page) {
         const borderRight = computed.borderRightWidth;
         const borderBottom = computed.borderBottomWidth;
         const borderLeft = computed.borderLeftWidth;
-        const borders = [borderTop, borderRight, borderBottom, borderLeft].map((b) => parseFloat(b) || 0);
-        const hasBorder = borders.some((b) => b > 0);
-        const hasUniformBorder = hasBorder && borders.every((b) => b === borders[0]);
+        const borders = [borderTop, borderRight, borderBottom, borderLeft].map(b => parseFloat(b) || 0);
+        const hasBorder = borders.some(b => b > 0);
+        const hasUniformBorder = hasBorder && borders.every(b => b === borders[0]);
         const borderLines = [];
 
         if (hasBorder && !hasUniformBorder) {
@@ -661,54 +642,42 @@ async function extractSlideData(page) {
           // Collect lines to add after shape (inset by half the line width to center on edge)
           if (parseFloat(borderTop) > 0) {
             const widthPt = pxToPoints(borderTop);
-            const inset = widthPt / 72 / 2; // Convert points to inches, then half
+            const inset = (widthPt / 72) / 2; // Convert points to inches, then half
             borderLines.push({
-              type: "line",
-              x1: x,
-              y1: y + inset,
-              x2: x + w,
-              y2: y + inset,
+              type: 'line',
+              x1: x, y1: y + inset, x2: x + w, y2: y + inset,
               width: widthPt,
-              color: rgbToHex(computed.borderTopColor),
+              color: rgbToHex(computed.borderTopColor)
             });
           }
           if (parseFloat(borderRight) > 0) {
             const widthPt = pxToPoints(borderRight);
-            const inset = widthPt / 72 / 2;
+            const inset = (widthPt / 72) / 2;
             borderLines.push({
-              type: "line",
-              x1: x + w - inset,
-              y1: y,
-              x2: x + w - inset,
-              y2: y + h,
+              type: 'line',
+              x1: x + w - inset, y1: y, x2: x + w - inset, y2: y + h,
               width: widthPt,
-              color: rgbToHex(computed.borderRightColor),
+              color: rgbToHex(computed.borderRightColor)
             });
           }
           if (parseFloat(borderBottom) > 0) {
             const widthPt = pxToPoints(borderBottom);
-            const inset = widthPt / 72 / 2;
+            const inset = (widthPt / 72) / 2;
             borderLines.push({
-              type: "line",
-              x1: x,
-              y1: y + h - inset,
-              x2: x + w,
-              y2: y + h - inset,
+              type: 'line',
+              x1: x, y1: y + h - inset, x2: x + w, y2: y + h - inset,
               width: widthPt,
-              color: rgbToHex(computed.borderBottomColor),
+              color: rgbToHex(computed.borderBottomColor)
             });
           }
           if (parseFloat(borderLeft) > 0) {
             const widthPt = pxToPoints(borderLeft);
-            const inset = widthPt / 72 / 2;
+            const inset = (widthPt / 72) / 2;
             borderLines.push({
-              type: "line",
-              x1: x + inset,
-              y1: y,
-              x2: x + inset,
-              y2: y + h,
+              type: 'line',
+              x1: x + inset, y1: y, x2: x + inset, y2: y + h,
               width: widthPt,
-              color: rgbToHex(computed.borderLeftColor),
+              color: rgbToHex(computed.borderLeftColor)
             });
           }
         }
@@ -721,23 +690,21 @@ async function extractSlideData(page) {
             // Only add shape if there's background or uniform border
             if (hasBg || hasUniformBorder) {
               elements.push({
-                type: "shape",
-                text: "", // Shape only - child text elements render on top
+                type: 'shape',
+                text: '',  // Shape only - child text elements render on top
                 position: {
                   x: pxToInch(rect.left),
                   y: pxToInch(rect.top),
                   w: pxToInch(rect.width),
-                  h: pxToInch(rect.height),
+                  h: pxToInch(rect.height)
                 },
                 shape: {
                   fill: hasBg ? rgbToHex(computed.backgroundColor) : null,
                   transparency: hasBg ? extractAlpha(computed.backgroundColor) : null,
-                  line: hasUniformBorder
-                    ? {
-                        color: rgbToHex(computed.borderColor),
-                        width: pxToPoints(computed.borderWidth),
-                      }
-                    : null,
+                  line: hasUniformBorder ? {
+                    color: rgbToHex(computed.borderColor),
+                    width: pxToPoints(computed.borderWidth)
+                  } : null,
                   // Convert border-radius to rectRadius (in inches)
                   // % values: 50%+ = circle (1), <50% = percentage of min dimension
                   // pt values: divide by 72 (72pt = 1 inch)
@@ -747,18 +714,18 @@ async function extractSlideData(page) {
                     const radiusValue = parseFloat(radius);
                     if (radiusValue === 0) return 0;
 
-                    if (radius.includes("%")) {
+                    if (radius.includes('%')) {
                       if (radiusValue >= 50) return 1;
                       // Calculate percentage of smaller dimension
                       const minDim = Math.min(rect.width, rect.height);
                       return (radiusValue / 100) * pxToInch(minDim);
                     }
 
-                    if (radius.includes("pt")) return radiusValue / 72;
+                    if (radius.includes('pt')) return radiusValue / 72;
                     return radiusValue / PX_PER_IN;
                   })(),
-                  shadow: shadow,
-                },
+                  shadow: shadow
+                }
               });
             }
 
@@ -772,11 +739,11 @@ async function extractSlideData(page) {
       }
 
       // Extract bullet lists as single text block
-      if (el.tagName === "UL" || el.tagName === "OL") {
+      if (el.tagName === 'UL' || el.tagName === 'OL') {
         const rect = el.getBoundingClientRect();
         if (rect.width === 0 || rect.height === 0) return;
 
-        const liElements = Array.from(el.querySelectorAll("li"));
+        const liElements = Array.from(el.querySelectorAll('li'));
         const items = [];
         const ulComputed = window.getComputedStyle(el);
         const ulPaddingLeftPt = pxToPoints(ulComputed.paddingLeft);
@@ -791,7 +758,7 @@ async function extractSlideData(page) {
           const runs = parseInlineFormatting(li, { breakLine: false });
           // Clean manual bullets from first run
           if (runs.length > 0) {
-            runs[0].text = runs[0].text.replace(/^[•\-\*▪▸]\s*/, "");
+            runs[0].text = runs[0].text.replace(/^[•\-\*▪▸]\s*/, '');
             runs[0].options.bullet = { indent: textIndent };
           }
           // Set breakLine on last run
@@ -804,30 +771,29 @@ async function extractSlideData(page) {
         const computed = window.getComputedStyle(liElements[0] || el);
 
         elements.push({
-          type: "list",
+          type: 'list',
           items: items,
           position: {
             x: pxToInch(rect.left),
             y: pxToInch(rect.top),
             w: pxToInch(rect.width),
-            h: pxToInch(rect.height),
+            h: pxToInch(rect.height)
           },
           style: {
             fontSize: pxToPoints(computed.fontSize),
-            fontFace: computed.fontFamily.split(",")[0].replace(/['"]/g, "").trim(),
+            fontFace: computed.fontFamily.split(',')[0].replace(/['"]/g, '').trim(),
             color: rgbToHex(computed.color),
             transparency: extractAlpha(computed.color),
-            align: computed.textAlign === "start" ? "left" : computed.textAlign,
-            lineSpacing:
-              computed.lineHeight && computed.lineHeight !== "normal" ? pxToPoints(computed.lineHeight) : null,
+            align: computed.textAlign === 'start' ? 'left' : computed.textAlign,
+            lineSpacing: computed.lineHeight && computed.lineHeight !== 'normal' ? pxToPoints(computed.lineHeight) : null,
             paraSpaceBefore: 0,
             paraSpaceAfter: pxToPoints(computed.marginBottom),
             // PptxGenJS margin array is [left, right, bottom, top]
-            margin: [marginLeft, 0, 0, 0],
-          },
+            margin: [marginLeft, 0, 0, 0]
+          }
         });
 
-        liElements.forEach((li) => processed.add(li));
+        liElements.forEach(li => processed.add(li));
         processed.add(el);
         return;
       }
@@ -840,10 +806,10 @@ async function extractSlideData(page) {
       if (rect.width === 0 || rect.height === 0 || !text) return;
 
       // Validate: Check for manual bullet symbols in text elements (not in lists)
-      if (el.tagName !== "LI" && /^[•\-\*▪▸○●◆◇■□]\s/.test(text.trimStart())) {
+      if (el.tagName !== 'LI' && /^[•\-\*▪▸○●◆◇■□]\s/.test(text.trimStart())) {
         errors.push(
           `Text element <${el.tagName.toLowerCase()}> starts with bullet symbol "${text.substring(0, 20)}...". ` +
-            "Use <ul> or <ol> lists instead of manual bullet symbols."
+          'Use <ul> or <ol> lists instead of manual bullet symbols.'
         );
         return;
       }
@@ -854,9 +820,9 @@ async function extractSlideData(page) {
 
       const baseStyle = {
         fontSize: pxToPoints(computed.fontSize),
-        fontFace: computed.fontFamily.split(",")[0].replace(/['"]/g, "").trim(),
+        fontFace: computed.fontFamily.split(',')[0].replace(/['"]/g, '').trim(),
         color: rgbToHex(computed.color),
-        align: computed.textAlign === "start" ? "left" : computed.textAlign,
+        align: computed.textAlign === 'start' ? 'left' : computed.textAlign,
         lineSpacing: pxToPoints(computed.lineHeight),
         paraSpaceBefore: pxToPoints(computed.marginTop),
         paraSpaceAfter: pxToPoints(computed.marginBottom),
@@ -865,8 +831,8 @@ async function extractSlideData(page) {
           pxToPoints(computed.paddingLeft),
           pxToPoints(computed.paddingRight),
           pxToPoints(computed.paddingBottom),
-          pxToPoints(computed.paddingTop),
-        ],
+          pxToPoints(computed.paddingTop)
+        ]
       };
 
       const transparency = extractAlpha(computed.color);
@@ -874,7 +840,7 @@ async function extractSlideData(page) {
 
       if (rotation !== null) baseStyle.rotate = rotation;
 
-      const hasFormatting = el.querySelector("b, i, u, strong, em, span, br");
+      const hasFormatting = el.querySelector('b, i, u, strong, em, span, br');
 
       if (hasFormatting) {
         // Text with inline formatting
@@ -884,7 +850,10 @@ async function extractSlideData(page) {
         // Adjust lineSpacing based on largest fontSize in runs
         const adjustedStyle = { ...baseStyle };
         if (adjustedStyle.lineSpacing) {
-          const maxFontSize = Math.max(adjustedStyle.fontSize, ...runs.map((r) => r.options?.fontSize || 0));
+          const maxFontSize = Math.max(
+            adjustedStyle.fontSize,
+            ...runs.map(r => r.options?.fontSize || 0)
+          );
           if (maxFontSize > adjustedStyle.fontSize) {
             const lineHeightMultiplier = adjustedStyle.lineSpacing / adjustedStyle.fontSize;
             adjustedStyle.lineSpacing = maxFontSize * lineHeightMultiplier;
@@ -895,14 +864,14 @@ async function extractSlideData(page) {
           type: el.tagName.toLowerCase(),
           text: runs,
           position: { x: pxToInch(x), y: pxToInch(y), w: pxToInch(w), h: pxToInch(h) },
-          style: adjustedStyle,
+          style: adjustedStyle
         });
       } else {
         // Plain text - inherit CSS formatting
         const textTransform = computed.textTransform;
         const transformedText = applyTextTransform(text, textTransform);
 
-        const isBold = computed.fontWeight === "bold" || parseInt(computed.fontWeight) >= 600;
+        const isBold = computed.fontWeight === 'bold' || parseInt(computed.fontWeight) >= 600;
 
         elements.push({
           type: el.tagName.toLowerCase(),
@@ -911,9 +880,9 @@ async function extractSlideData(page) {
           style: {
             ...baseStyle,
             bold: isBold && !shouldSkipBold(computed.fontFamily),
-            italic: computed.fontStyle === "italic",
-            underline: computed.textDecoration.includes("underline"),
-          },
+            italic: computed.fontStyle === 'italic',
+            underline: computed.textDecoration.includes('underline')
+          }
         });
       }
 
@@ -925,13 +894,16 @@ async function extractSlideData(page) {
 }
 
 async function html2pptx(htmlFile, pres, options = {}) {
-  const { tmpDir = process.env.TMPDIR || "/tmp", slide = null } = options;
+  const {
+    tmpDir = process.env.TMPDIR || '/tmp',
+    slide = null
+  } = options;
 
   try {
     // Use Chrome on macOS, default Chromium on Unix
     const launchOptions = { env: { TMPDIR: tmpDir } };
-    if (process.platform === "darwin") {
-      launchOptions.channel = "chrome";
+    if (process.platform === 'darwin') {
+      launchOptions.channel = 'chrome';
     }
 
     const browser = await chromium.launch(launchOptions);
@@ -944,7 +916,7 @@ async function html2pptx(htmlFile, pres, options = {}) {
 
     try {
       const page = await browser.newPage();
-      page.on("console", (msg) => {
+      page.on('console', (msg) => {
         // Log the message text to your test runner's console
         console.log(`Browser console: ${msg.text()}`);
       });
@@ -955,7 +927,7 @@ async function html2pptx(htmlFile, pres, options = {}) {
 
       await page.setViewportSize({
         width: Math.round(bodyDimensions.width),
-        height: Math.round(bodyDimensions.height),
+        height: Math.round(bodyDimensions.height)
       });
 
       slideData = await extractSlideData(page);
@@ -984,10 +956,9 @@ async function html2pptx(htmlFile, pres, options = {}) {
 
     // Throw all errors at once if any exist
     if (validationErrors.length > 0) {
-      const errorMessage =
-        validationErrors.length === 1
-          ? validationErrors[0]
-          : `Multiple validation errors found:\n${validationErrors.map((e, i) => `  ${i + 1}. ${e}`).join("\n")}`;
+      const errorMessage = validationErrors.length === 1
+        ? validationErrors[0]
+        : `Multiple validation errors found:\n${validationErrors.map((e, i) => `  ${i + 1}. ${e}`).join('\n')}`;
       throw new Error(errorMessage);
     }
 

@@ -11,7 +11,6 @@ CONTROL PLANE                    WORKER NODES
 ```
 
 ## Pod
-
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -19,17 +18,16 @@ metadata:
   name: myapp-pod
 spec:
   containers:
-    - name: myapp
-      image: myapp:1.0
-      ports:
-        - containerPort: 8080
-      resources:
-        requests: { memory: "256Mi", cpu: "250m" }
-        limits: { memory: "512Mi", cpu: "500m" }
+  - name: myapp
+    image: myapp:1.0
+    ports:
+    - containerPort: 8080
+    resources:
+      requests: { memory: "256Mi", cpu: "250m" }
+      limits: { memory: "512Mi", cpu: "500m" }
 ```
 
 ## Deployment
-
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -47,27 +45,25 @@ spec:
       labels: { app: myapp }
     spec:
       containers:
-        - name: myapp
-          image: myapp:1.0
+      - name: myapp
+        image: myapp:1.0
 ```
 
 ## Service
-
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: myapp-service
 spec:
-  type: ClusterIP # ClusterIP, NodePort, LoadBalancer
+  type: ClusterIP  # ClusterIP, NodePort, LoadBalancer
   selector: { app: myapp }
   ports:
-    - port: 8080
-      targetPort: 8080
+  - port: 8080
+    targetPort: 8080
 ```
 
 ## ConfigMap & Secret
-
 ```yaml
 apiVersion: v1
 kind: ConfigMap
@@ -85,16 +81,15 @@ stringData:
 
 ## Workload Types
 
-| Type        | Use Case       |
-| ----------- | -------------- |
-| Deployment  | Stateless apps |
-| StatefulSet | Databases      |
-| DaemonSet   | One per node   |
-| Job         | Batch tasks    |
-| CronJob     | Scheduled      |
+| Type | Use Case |
+|------|----------|
+| Deployment | Stateless apps |
+| StatefulSet | Databases |
+| DaemonSet | One per node |
+| Job | Batch tasks |
+| CronJob | Scheduled |
 
 ## Labels
-
 ```yaml
 labels:
   app: myapp

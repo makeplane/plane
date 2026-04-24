@@ -7,9 +7,9 @@ Apply visual effects after rendering.
 Post-processing pipeline (addon):
 
 ```javascript
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 // Create composer
 const composer = new EffectComposer(renderer);
@@ -32,7 +32,7 @@ function animate() {
 }
 
 // Handle resize
-window.addEventListener("resize", () => {
+window.addEventListener('resize', () => {
   composer.setSize(window.innerWidth, window.innerHeight);
 });
 ```
@@ -42,13 +42,13 @@ window.addEventListener("resize", () => {
 Glow effect for bright areas:
 
 ```javascript
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 
 const bloomPass = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  1.5, // strength
-  0.4, // radius
-  0.85 // threshold (brightness trigger)
+  1.5,  // strength
+  0.4,  // radius
+  0.85  // threshold (brightness trigger)
 );
 composer.addPass(bloomPass);
 
@@ -63,7 +63,7 @@ bloomPass.threshold = 0.5;
 Realistic shadowing in crevices:
 
 ```javascript
-import { SSAOPass } from "three/addons/postprocessing/SSAOPass.js";
+import { SSAOPass } from 'three/addons/postprocessing/SSAOPass.js';
 
 const ssaoPass = new SSAOPass(scene, camera, width, height);
 ssaoPass.kernelRadius = 16;
@@ -77,14 +77,14 @@ composer.addPass(ssaoPass);
 Real-time reflections:
 
 ```javascript
-import { SSRPass } from "three/addons/postprocessing/SSRPass.js";
+import { SSRPass } from 'three/addons/postprocessing/SSRPass.js';
 
 const ssrPass = new SSRPass({
   renderer,
   scene,
   camera,
   width: window.innerWidth,
-  height: window.innerHeight,
+  height: window.innerHeight
 });
 
 ssrPass.opacity = 0.5;
@@ -97,12 +97,12 @@ composer.addPass(ssrPass);
 Blur based on depth:
 
 ```javascript
-import { BokehPass } from "three/addons/postprocessing/BokehPass.js";
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
 
 const bokehPass = new BokehPass(scene, camera, {
-  focus: 10.0, // focal distance
-  aperture: 0.025, // blur amount
-  maxblur: 0.01, // max blur size
+  focus: 10.0,      // focal distance
+  aperture: 0.025,  // blur amount
+  maxblur: 0.01     // max blur size
 });
 composer.addPass(bokehPass);
 ```
@@ -112,12 +112,12 @@ composer.addPass(bokehPass);
 Smooth jagged edges:
 
 ```javascript
-import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
-import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 
 const fxaaPass = new ShaderPass(FXAAShader);
-fxaaPass.material.uniforms["resolution"].value.x = 1 / window.innerWidth;
-fxaaPass.material.uniforms["resolution"].value.y = 1 / window.innerHeight;
+fxaaPass.material.uniforms['resolution'].value.x = 1 / window.innerWidth;
+fxaaPass.material.uniforms['resolution'].value.y = 1 / window.innerHeight;
 composer.addPass(fxaaPass);
 ```
 
@@ -126,15 +126,19 @@ composer.addPass(fxaaPass);
 Highlight selected objects:
 
 ```javascript
-import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js";
+import { OutlinePass } from 'three/addons/postprocessing/OutlinePass.js';
 
-const outlinePass = new OutlinePass(new THREE.Vector2(window.innerWidth, window.innerHeight), scene, camera);
+const outlinePass = new OutlinePass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  scene,
+  camera
+);
 
 outlinePass.edgeStrength = 3;
 outlinePass.edgeGlow = 0.5;
 outlinePass.edgeThickness = 1;
-outlinePass.visibleEdgeColor.set("#ffffff");
-outlinePass.hiddenEdgeColor.set("#190a05");
+outlinePass.visibleEdgeColor.set('#ffffff');
+outlinePass.hiddenEdgeColor.set('#190a05');
 
 // Set objects to outline
 outlinePass.selectedObjects = [mesh1, mesh2];
@@ -147,13 +151,13 @@ composer.addPass(outlinePass);
 Add film grain and scanlines:
 
 ```javascript
-import { FilmPass } from "three/addons/postprocessing/FilmPass.js";
+import { FilmPass } from 'three/addons/postprocessing/FilmPass.js';
 
 const filmPass = new FilmPass(
-  0.35, // noise intensity
-  0.5, // scanline intensity
-  648, // scanline count
-  false // grayscale
+  0.35,  // noise intensity
+  0.5,   // scanline intensity
+  648,   // scanline count
+  false  // grayscale
 );
 composer.addPass(filmPass);
 ```
@@ -163,7 +167,7 @@ composer.addPass(filmPass);
 Digital glitch distortion:
 
 ```javascript
-import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
+import { GlitchPass } from 'three/addons/postprocessing/GlitchPass.js';
 
 const glitchPass = new GlitchPass();
 composer.addPass(glitchPass);
@@ -174,12 +178,12 @@ composer.addPass(glitchPass);
 Create custom effects:
 
 ```javascript
-import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 
 const customShader = {
   uniforms: {
     tDiffuse: { value: null },
-    amount: { value: 1.0 },
+    amount: { value: 1.0 }
   },
   vertexShader: `
     varying vec2 vUv;
@@ -199,7 +203,7 @@ const customShader = {
       color.r *= amount;
       gl_FragColor = color;
     }
-  `,
+  `
 };
 
 const customPass = new ShaderPass(customShader);
@@ -221,7 +225,7 @@ composer.addPass(outputPass);
 bloomPass.renderToScreen = false; // render to texture, not screen
 
 // Clear pass
-import { ClearPass } from "three/addons/postprocessing/ClearPass.js";
+import { ClearPass } from 'three/addons/postprocessing/ClearPass.js';
 const clearPass = new ClearPass();
 composer.addPass(clearPass);
 ```

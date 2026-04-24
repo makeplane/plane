@@ -11,30 +11,30 @@ Modern styling patterns for using MUI v7 sx prop, inline styles, and theme integ
 **<100 lines: Inline styles at top of component**
 
 ```typescript
-import type { SxProps, Theme } from "@mui/material";
+import type { SxProps, Theme } from '@mui/material';
 
 const componentStyles: Record<string, SxProps<Theme>> = {
-  container: {
-    p: 2,
-    display: "flex",
-    flexDirection: "column",
-  },
-  header: {
-    mb: 2,
-    borderBottom: "1px solid",
-    borderColor: "divider",
-  },
-  // ... more styles
+    container: {
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    header: {
+        mb: 2,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+    },
+    // ... more styles
 };
 
 export const MyComponent: React.FC = () => {
-  return (
-    <Box sx={componentStyles.container}>
-      <Box sx={componentStyles.header}>
-        <h2>Title</h2>
-      </Box>
-    </Box>
-  );
+    return (
+        <Box sx={componentStyles.container}>
+            <Box sx={componentStyles.header}>
+                <h2>Title</h2>
+            </Box>
+        </Box>
+    );
 };
 ```
 
@@ -64,17 +64,17 @@ export const MyComponent: React.FC = () => {
 
 ```typescript
 const formStyles: Record<string, SxProps<Theme>> = {
-  gridContainer: {
-    height: "100%",
-    maxHeight: "calc(100vh - 220px)",
-  },
-  section: {
-    height: "100%",
-    maxHeight: "calc(100vh - 220px)",
-    overflow: "auto",
-    p: 4,
-  },
-  // ... 15 more style objects
+    gridContainer: {
+        height: '100%',
+        maxHeight: 'calc(100vh - 220px)',
+    },
+    section: {
+        height: '100%',
+        maxHeight: 'calc(100vh - 220px)',
+        overflow: 'auto',
+        p: 4,
+    },
+    // ... 15 more style objects
 };
 ```
 
@@ -87,21 +87,23 @@ const formStyles: Record<string, SxProps<Theme>> = {
 ### Basic Usage
 
 ```typescript
-<Box sx={{ p: 2, mb: 3, display: "flex" }}>Content</Box>
+<Box sx={{ p: 2, mb: 3, display: 'flex' }}>
+    Content
+</Box>
 ```
 
 ### With Theme Access
 
 ```typescript
 <Box
-  sx={{
-    p: 2,
-    backgroundColor: (theme) => theme.palette.primary.main,
-    color: (theme) => theme.palette.primary.contrastText,
-    borderRadius: (theme) => theme.shape.borderRadius,
-  }}
+    sx={{
+        p: 2,
+        backgroundColor: (theme) => theme.palette.primary.main,
+        color: (theme) => theme.palette.primary.contrastText,
+        borderRadius: (theme) => theme.shape.borderRadius,
+    }}
 >
-  Themed Box
+    Themed Box
 </Box>
 ```
 
@@ -109,13 +111,13 @@ const formStyles: Record<string, SxProps<Theme>> = {
 
 ```typescript
 <Box
-  sx={{
-    p: { xs: 1, sm: 2, md: 3 },
-    width: { xs: "100%", md: "50%" },
-    flexDirection: { xs: "column", md: "row" },
-  }}
+    sx={{
+        p: { xs: 1, sm: 2, md: 3 },
+        width: { xs: '100%', md: '50%' },
+        flexDirection: { xs: 'column', md: 'row' },
+    }}
 >
-  Responsive Layout
+    Responsive Layout
 </Box>
 ```
 
@@ -123,20 +125,20 @@ const formStyles: Record<string, SxProps<Theme>> = {
 
 ```typescript
 <Box
-  sx={{
-    p: 2,
-    "&:hover": {
-      backgroundColor: "rgba(0,0,0,0.05)",
-    },
-    "&:active": {
-      backgroundColor: "rgba(0,0,0,0.1)",
-    },
-    "& .child-class": {
-      color: "primary.main",
-    },
-  }}
+    sx={{
+        p: 2,
+        '&:hover': {
+            backgroundColor: 'rgba(0,0,0,0.05)',
+        },
+        '&:active': {
+            backgroundColor: 'rgba(0,0,0,0.1)',
+        },
+        '& .child-class': {
+            color: 'primary.main',
+        },
+    }}
 >
-  Interactive Box
+    Interactive Box
 </Box>
 ```
 
@@ -173,7 +175,9 @@ import { Grid } from '@mui/material';
 
 ```typescript
 <Grid container spacing={3}>
-  <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>Responsive Column</Grid>
+    <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+        Responsive Column
+    </Grid>
 </Grid>
 ```
 
@@ -181,14 +185,20 @@ import { Grid } from '@mui/material';
 
 ```typescript
 <Grid container spacing={2}>
-  <Grid size={{ xs: 12, md: 8 }}>
-    <Grid container spacing={1}>
-      <Grid size={{ xs: 12, sm: 6 }}>Nested 1</Grid>
-      <Grid size={{ xs: 12, sm: 6 }}>Nested 2</Grid>
+    <Grid size={{ xs: 12, md: 8 }}>
+        <Grid container spacing={1}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+                Nested 1
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+                Nested 2
+            </Grid>
+        </Grid>
     </Grid>
-  </Grid>
 
-  <Grid size={{ xs: 12, md: 4 }}>Sidebar</Grid>
+    <Grid size={{ xs: 12, md: 4 }}>
+        Sidebar
+    </Grid>
 </Grid>
 ```
 
@@ -199,20 +209,20 @@ import { Grid } from '@mui/material';
 ### Style Object Type
 
 ```typescript
-import type { SxProps, Theme } from "@mui/material";
+import type { SxProps, Theme } from '@mui/material';
 
 // Type-safe styles
 const styles: Record<string, SxProps<Theme>> = {
-  container: {
-    p: 2,
-    // Autocomplete and type checking work here
-  },
+    container: {
+        p: 2,
+        // Autocomplete and type checking work here
+    },
 };
 
 // Or individual style
 const containerStyle: SxProps<Theme> = {
-  p: 2,
-  display: "flex",
+    p: 2,
+    display: 'flex',
 };
 ```
 
@@ -220,17 +230,17 @@ const containerStyle: SxProps<Theme> = {
 
 ```typescript
 const styles: Record<string, SxProps<Theme>> = {
-  primary: {
-    color: (theme) => theme.palette.primary.main,
-    backgroundColor: (theme) => theme.palette.primary.light,
-    "&:hover": {
-      backgroundColor: (theme) => theme.palette.primary.dark,
+    primary: {
+        color: (theme) => theme.palette.primary.main,
+        backgroundColor: (theme) => theme.palette.primary.light,
+        '&:hover': {
+            backgroundColor: (theme) => theme.palette.primary.dark,
+        },
     },
-  },
-  customSpacing: {
-    padding: (theme) => theme.spacing(2),
-    margin: (theme) => theme.spacing(1, 2), // top/bottom: 1, left/right: 2
-  },
+    customSpacing: {
+        padding: (theme) => theme.spacing(2),
+        margin: (theme) => theme.spacing(1, 2), // top/bottom: 1, left/right: 2
+    },
 };
 ```
 
@@ -242,12 +252,12 @@ const styles: Record<string, SxProps<Theme>> = {
 
 ```typescript
 // ❌ AVOID - Old Material-UI v4 pattern
-import { makeStyles } from "@mui/styles";
+import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
+    root: {
+        padding: theme.spacing(2),
+    },
 }));
 ```
 
@@ -257,10 +267,10 @@ const useStyles = makeStyles((theme) => ({
 
 ```typescript
 // ❌ AVOID - styled-components pattern
-import { styled } from "@mui/material/styles";
+import { styled } from '@mui/material/styles';
 
 const StyledBox = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
+    padding: theme.spacing(2),
 }));
 ```
 
@@ -271,12 +281,12 @@ const StyledBox = styled(Box)(({ theme }) => ({
 ```typescript
 // ✅ PREFERRED
 <Box
-  sx={{
-    p: 2,
-    backgroundColor: "primary.main",
-  }}
+    sx={{
+        p: 2,
+        backgroundColor: 'primary.main',
+    }}
 >
-  Content
+    Content
 </Box>
 ```
 
@@ -290,11 +300,11 @@ const StyledBox = styled(Box)(({ theme }) => ({
 
 ```typescript
 const styles: Record<string, SxProps<Theme>> = {
-  container: {
-    p: 2,
-    display: "flex",
-    flexDirection: "column",
-  },
+    container: {
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+    },
 };
 ```
 
@@ -304,8 +314,8 @@ const styles: Record<string, SxProps<Theme>> = {
 
 ```typescript
 // ✅ CORRECT
-const color = "primary.main";
-import { Box } from "@mui/material";
+const color = 'primary.main';
+import { Box } from '@mui/material';
 
 // ❌ WRONG
 const color = "primary.main";
@@ -319,19 +329,19 @@ import { Box } from "@mui/material";
 ```typescript
 // ✅ CORRECT
 const styles = {
-  container: { p: 2 },
-  header: { mb: 1 }, // Trailing comma
+    container: { p: 2 },
+    header: { mb: 1 },  // Trailing comma
 };
 
 const items = [
-  "item1",
-  "item2", // Trailing comma
+    'item1',
+    'item2',  // Trailing comma
 ];
 
 // ❌ WRONG - No trailing comma
 const styles = {
-  container: { p: 2 },
-  header: { mb: 1 }, // Missing comma
+    container: { p: 2 },
+    header: { mb: 1 }  // Missing comma
 };
 ```
 
@@ -343,22 +353,22 @@ const styles = {
 
 ```typescript
 const styles = {
-  flexRow: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2,
-  },
-  flexColumn: {
-    display: "flex",
-    flexDirection: "column",
-    gap: 1,
-  },
-  spaceBetween: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
+    flexRow: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 2,
+    },
+    flexColumn: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+    },
+    spaceBetween: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
 };
 ```
 
@@ -383,19 +393,19 @@ p: 0.5  // = 4px
 
 ```typescript
 const styles = {
-  relative: {
-    position: "relative",
-  },
-  absolute: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-  },
-  sticky: {
-    position: "sticky",
-    top: 0,
-    zIndex: 1000,
-  },
+    relative: {
+        position: 'relative',
+    },
+    absolute: {
+        position: 'absolute',
+        top: 0,
+        right: 0,
+    },
+    sticky: {
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+    },
 };
 ```
 
@@ -404,7 +414,6 @@ const styles = {
 ## Summary
 
 **Styling Checklist:**
-
 - ✅ Use `sx` prop for MUI styling
 - ✅ Type-safe with `SxProps<Theme>`
 - ✅ <100 lines: inline; >100 lines: separate file
@@ -415,6 +424,5 @@ const styles = {
 - ❌ No makeStyles or styled()
 
 **See Also:**
-
 - [component-patterns.md](component-patterns.md) - Component structure
 - [complete-examples.md](complete-examples.md) - Full styling examples

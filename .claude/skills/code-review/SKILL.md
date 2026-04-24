@@ -15,14 +15,14 @@ Adversarial code review with technical rigor, evidence-based claims, and verific
 
 Auto-detect from arguments. If ambiguous or no arguments, prompt via `AskUserQuestion`.
 
-| Input                       | Mode          | What Gets Reviewed                       |
-| --------------------------- | ------------- | ---------------------------------------- |
-| `#123` or PR URL            | **PR**        | Full PR diff fetched via `gh pr diff`    |
-| `abc1234` (7+ hex chars)    | **Commit**    | Single commit diff via `git show`        |
-| `--pending`                 | **Pending**   | Staged + unstaged changes via `git diff` |
-| _(no args, recent changes)_ | **Default**   | Recent changes in context                |
-| `codebase`                  | **Codebase**  | Full codebase scan                       |
-| `codebase parallel`         | **Codebase+** | Parallel multi-reviewer audit            |
+| Input | Mode | What Gets Reviewed |
+|-------|------|--------------------|
+| `#123` or PR URL | **PR** | Full PR diff fetched via `gh pr diff` |
+| `abc1234` (7+ hex chars) | **Commit** | Single commit diff via `git show` |
+| `--pending` | **Pending** | Staged + unstaged changes via `git diff` |
+| *(no args, recent changes)* | **Default** | Recent changes in context |
+| `codebase` | **Codebase** | Full codebase scan |
+| `codebase parallel` | **Codebase+** | Parallel multi-reviewer audit |
 
 **Resolution details:** `references/input-mode-resolution.md`
 
@@ -30,13 +30,13 @@ Auto-detect from arguments. If ambiguous or no arguments, prompt via `AskUserQue
 
 If invoked WITHOUT arguments and no recent changes in context, use `AskUserQuestion` with header "Review Target", question "What would you like to review?":
 
-| Option                  | Description                     |
-| ----------------------- | ------------------------------- |
-| Pending changes         | Review staged/unstaged git diff |
-| Enter PR number         | Fetch and review a specific PR  |
-| Enter commit hash       | Review a specific commit        |
-| Full codebase scan      | Deep codebase analysis          |
-| Parallel codebase audit | Multi-reviewer codebase scan    |
+| Option | Description |
+|--------|-------------|
+| Pending changes | Review staged/unstaged git diff |
+| Enter PR number | Fetch and review a specific PR |
+| Enter commit hash | Review a specific commit |
+| Full codebase scan | Deep codebase analysis |
+| Parallel codebase audit | Multi-reviewer codebase scan |
 
 ## Core Principle
 
@@ -47,16 +47,16 @@ Verify before implementing. Ask before assuming. Evidence before claims.
 
 ## Practices
 
-| Practice                 | When                                                           | Reference                                      |
-| ------------------------ | -------------------------------------------------------------- | ---------------------------------------------- |
-| **Spec compliance**      | After implementing from plan/spec, BEFORE quality review       | `references/spec-compliance-review.md`         |
-| **Adversarial review**   | Always-on Stage 3 — actively tries to break the code           | `references/adversarial-review.md`             |
-| Receiving feedback       | Unclear feedback, external reviewers, needs prioritization     | `references/code-review-reception.md`          |
-| Requesting review        | After tasks, before merge, stuck on problem                    | `references/requesting-code-review.md`         |
-| Verification gates       | Before any completion claim, commit, PR                        | `references/verification-before-completion.md` |
-| Edge case scouting       | After implementation, before review                            | `references/edge-case-scouting.md`             |
-| **Checklist review**     | Pre-landing, `/ck:ship` pipeline, security audit               | `references/checklist-workflow.md`             |
-| **Task-managed reviews** | Multi-file features (3+ files), parallel reviewers, fix cycles | `references/task-management-reviews.md`        |
+| Practice | When | Reference |
+|----------|------|-----------|
+| **Spec compliance** | After implementing from plan/spec, BEFORE quality review | `references/spec-compliance-review.md` |
+| **Adversarial review** | Always-on Stage 3 — actively tries to break the code | `references/adversarial-review.md` |
+| Receiving feedback | Unclear feedback, external reviewers, needs prioritization | `references/code-review-reception.md` |
+| Requesting review | After tasks, before merge, stuck on problem | `references/requesting-code-review.md` |
+| Verification gates | Before any completion claim, commit, PR | `references/verification-before-completion.md` |
+| Edge case scouting | After implementation, before review | `references/edge-case-scouting.md` |
+| **Checklist review** | Pre-landing, `/ck:ship` pipeline, security audit | `references/checklist-workflow.md` |
+| **Task-managed reviews** | Multi-file features (3+ files), parallel reviewers, fix cycles | `references/task-management-reviews.md` |
 
 ## Quick Decision Tree
 
@@ -88,18 +88,15 @@ SITUATION?
 ### Three-Stage Review Protocol
 
 **Stage 1 — Spec Compliance** (load `references/spec-compliance-review.md`)
-
 - Does code match what was requested?
 - Any missing requirements? Any unjustified extras?
 - MUST pass before Stage 2
 
 **Stage 2 — Code Quality** (code-reviewer subagent)
-
 - Only runs AFTER spec compliance passes
 - Standards, security, performance, edge cases
 
 **Stage 3 — Adversarial Review** (load `references/adversarial-review.md`)
-
 - Runs AFTER Stage 2 passes, subject to scope gate (skip if <=2 files, <=30 lines, no security files)
 - Spawn adversarial reviewer with context anchoring (runtime, framework, context files)
 - Find: security holes, false assumptions, resource exhaustion, race conditions, supply chain, observability gaps
@@ -118,7 +115,6 @@ No performative agreement. Verify before implementing. Push back if wrong.
 **When:** After each task, major features, before merge
 
 **Process:**
-
 1. **Scout edge cases first** (see below)
 2. Get SHAs: `BASE_SHA=$(git rev-parse HEAD~1)` and `HEAD_SHA=$(git rev-parse HEAD)`
 3. Dispatch code-reviewer subagent with: WHAT, PLAN, BASE_SHA, HEAD_SHA, DESCRIPTION
@@ -131,7 +127,6 @@ No performative agreement. Verify before implementing. Push back if wrong.
 **When:** After implementation, before requesting code-reviewer
 
 **Process:**
-
 1. Invoke `/ck:scout` with edge-case-focused prompt
 2. Scout analyzes: affected files, data flows, error paths, boundary conditions
 3. Review scout findings for potential issues
@@ -168,7 +163,6 @@ TaskCreate: "Verify fixes pass"        → pending, blockedBy: [fix]
 **Gate:** IDENTIFY command → RUN full → READ output → VERIFY confirms → THEN claim
 
 **Requirements:**
-
 - Tests pass: Output shows 0 failures
 - Build succeeds: Exit 0
 - Bug fixed: Original symptom passes
@@ -189,9 +183,9 @@ TaskCreate: "Verify fixes pass"        → pending, blockedBy: [fix]
 
 ## Codebase Analysis Subcommands
 
-| Subcommand                          | Reference                                | Purpose                                     |
-| ----------------------------------- | ---------------------------------------- | ------------------------------------------- |
-| `/ck:code-review codebase`          | `references/codebase-scan-workflow.md`   | Scan & analyze the codebase                 |
+| Subcommand | Reference | Purpose |
+|------------|-----------|---------|
+| `/ck:code-review codebase` | `references/codebase-scan-workflow.md` | Scan & analyze the codebase |
 | `/ck:code-review codebase parallel` | `references/parallel-review-workflow.md` | Ultrathink edge cases, then parallel verify |
 
 ## Bottom Line

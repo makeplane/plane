@@ -5,7 +5,6 @@ Complete guide to video and audio filters, complex filtergraphs, and effect chai
 ## Filter Basics
 
 ### Filter Syntax
-
 Filters are applied with `-vf` (video) or `-af` (audio).
 
 ```bash
@@ -24,7 +23,6 @@ ffmpeg -i input.mp4 -i logo.png \
 ## Video Filters
 
 ### Scale (Resize)
-
 Change video dimensions.
 
 ```bash
@@ -45,13 +43,11 @@ ffmpeg -i input.mp4 -vf scale=1280:-1:flags=lanczos output.mp4
 ```
 
 **Scaling algorithms:**
-
 - `bilinear` - Fast, default
 - `bicubic` - Better quality
 - `lanczos` - Best quality, slower
 
 ### Crop
-
 Extract portion of video.
 
 ```bash
@@ -69,7 +65,6 @@ ffmpeg -i input.mp4 -vf crop=1920:800:0:140 output.mp4
 ```
 
 ### Rotate & Flip
-
 Change video orientation.
 
 ```bash
@@ -93,7 +88,6 @@ ffmpeg -i input.mp4 -vf rotate=45*PI/180 output.mp4
 ```
 
 ### Overlay (Watermark)
-
 Composite images over video.
 
 ```bash
@@ -120,7 +114,6 @@ ffmpeg -i video.mp4 -i logo.png \
 ```
 
 ### Denoise
-
 Reduce video noise.
 
 ```bash
@@ -138,7 +131,6 @@ ffmpeg -i input.mp4 -vf dctdnoiz output.mp4
 ```
 
 ### Deinterlace
-
 Remove interlacing artifacts.
 
 ```bash
@@ -153,7 +145,6 @@ ffmpeg -i input.mp4 -vf bwdif output.mp4
 ```
 
 ### Speed & Slow Motion
-
 Change playback speed.
 
 ```bash
@@ -168,7 +159,6 @@ ffmpeg -i input.mp4 -vf setpts=0.25*PTS -af atempo=2.0,atempo=2.0 output.mp4
 ```
 
 ### Pad (Add Borders)
-
 Add borders or letterbox.
 
 ```bash
@@ -183,7 +173,6 @@ ffmpeg -i input.mp4 -vf "scale=1080:-1,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:color=b
 ```
 
 ### Sharpen & Blur
-
 Adjust image sharpness.
 
 ```bash
@@ -201,7 +190,6 @@ ffmpeg -i input.mp4 -vf boxblur=5:1 output.mp4
 ```
 
 ### Color Adjustments
-
 Modify colors and exposure.
 
 ```bash
@@ -228,7 +216,6 @@ ffmpeg -i input.mp4 -vf hue=h=90 output.mp4
 ```
 
 ### Grayscale & Effects
-
 Convert to monochrome or apply effects.
 
 ```bash
@@ -249,7 +236,6 @@ ffmpeg -i input.mp4 -vf vignette output.mp4
 ```
 
 ### Fade In/Out
-
 Smooth transitions.
 
 ```bash
@@ -264,7 +250,6 @@ ffmpeg -i input.mp4 -vf "fade=in:0:30,fade=out:st=28:d=2" output.mp4
 ```
 
 ### Stabilization
-
 Reduce camera shake.
 
 ```bash
@@ -277,7 +262,6 @@ ffmpeg -i input.mp4 -vf vidstabtransform=smoothing=30:input="transforms.trf" out
 ```
 
 ### Text Overlay
-
 Add text to video.
 
 ```bash
@@ -294,7 +278,6 @@ ffmpeg -i input.mp4 -vf "drawtext=text='%{pts\:hms}':fontsize=20:x=10:y=10:fontc
 ## Audio Filters
 
 ### Volume
-
 Adjust audio level.
 
 ```bash
@@ -309,7 +292,6 @@ ffmpeg -i input.mp4 -af volume=2.0 output.mp4
 ```
 
 ### Normalize
-
 Balance audio levels.
 
 ```bash
@@ -328,7 +310,6 @@ ffmpeg -i input.mp4 -af loudnorm=measured_I=-23:measured_LRA=7:measured_TP=-2:me
 ```
 
 ### Equalizer
-
 Adjust frequency bands.
 
 ```bash
@@ -343,7 +324,6 @@ ffmpeg -i input.mp4 -af "equalizer=f=100:g=5,equalizer=f=1000:g=-3" output.mp4
 ```
 
 ### Compressor
-
 Dynamic range compression.
 
 ```bash
@@ -355,7 +335,6 @@ ffmpeg -i input.mp4 -af acompressor=threshold=-20dB:ratio=4:attack=200:release=1
 ```
 
 ### Noise Reduction
-
 Remove background noise.
 
 ```bash
@@ -370,7 +349,6 @@ ffmpeg -i input.mp4 -af "highpass=f=200,lowpass=f=3000" output.mp4
 ```
 
 ### Fade Audio
-
 Smooth audio transitions.
 
 ```bash
@@ -385,7 +363,6 @@ ffmpeg -i input.mp4 -af "afade=t=in:st=0:d=2,afade=t=out:st=27:d=3" output.mp4
 ```
 
 ### Audio Mixing
-
 Combine multiple audio tracks.
 
 ```bash
@@ -402,7 +379,6 @@ ffmpeg -i audio1.mp3 -i audio2.mp3 \
 ## Complex Filtergraphs
 
 ### Multiple Outputs
-
 Create multiple versions simultaneously.
 
 ```bash
@@ -419,7 +395,6 @@ ffmpeg -i input.mp4 \
 ```
 
 ### Picture-in-Picture
-
 Overlay small video on main video.
 
 ```bash
@@ -430,7 +405,6 @@ ffmpeg -i main.mp4 -i small.mp4 \
 ```
 
 ### Side-by-Side Comparison
-
 Compare two videos.
 
 ```bash
@@ -446,7 +420,6 @@ ffmpeg -i top.mp4 -i bottom.mp4 \
 ```
 
 ### Crossfade Transition
-
 Smooth transition between videos.
 
 ```bash
@@ -458,7 +431,6 @@ ffmpeg -i video1.mp4 -i video2.mp4 \
 **Transition types:** fade, wipeleft, wiperight, wipeup, wipedown, slideleft, slideright, slideup, slidedown, circlecrop, rectcrop, distance, fadeblack, fadewhite, radial, smoothleft, smoothright, smoothup, smoothdown
 
 ### Color Correction Pipeline
-
 Professional color grading.
 
 ```bash
@@ -473,7 +445,6 @@ ffmpeg -i input.mp4 \
 ## Filter Performance
 
 ### GPU Acceleration
-
 Use hardware filters when available.
 
 ```bash
@@ -489,7 +460,6 @@ ffmpeg -hwaccel cuda -i input.mp4 \
 ```
 
 ### Optimize Filter Order
-
 More efficient filter chains.
 
 ```bash
@@ -503,7 +473,6 @@ ffmpeg -i input.mp4 -vf "scale=1280:720,hqdn3d,unsharp=5:5:1.0" output.mp4
 ## Common Filter Recipes
 
 ### YouTube Optimized
-
 ```bash
 ffmpeg -i input.mp4 \
   -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2" \
@@ -512,7 +481,6 @@ ffmpeg -i input.mp4 \
 ```
 
 ### Instagram Portrait
-
 ```bash
 ffmpeg -i input.mp4 \
   -vf "scale=1080:1350:force_original_aspect_ratio=decrease,pad=1080:1350:(ow-iw)/2:(oh-ih)/2:color=white" \
@@ -521,7 +489,6 @@ ffmpeg -i input.mp4 \
 ```
 
 ### Vintage Film Look
-
 ```bash
 ffmpeg -i input.mp4 \
   -vf "curves=vintage,vignette=angle=PI/4,eq=saturation=0.8,noise=alls=10:allf=t" \
@@ -529,7 +496,6 @@ ffmpeg -i input.mp4 \
 ```
 
 ### Clean & Enhance
-
 ```bash
 ffmpeg -i input.mp4 \
   -vf "hqdn3d=4:3:6:4.5,unsharp=5:5:1.0,eq=contrast=1.05:saturation=1.1" \

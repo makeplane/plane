@@ -18,9 +18,9 @@ adk deploy --target cloud-run --agent my_agent.py:agent
 {
   "name": "math_evalset",
   "test_cases": [
-    { "id": "add", "input": "2+2?", "expected_output": "4", "evaluation_type": "exact_match" },
-    { "id": "mult", "input": "5*6?", "expected_output": "30", "evaluation_type": "contains" },
-    { "id": "judge", "input": "(10+5)*2", "expected_output": "30", "evaluation_type": "llm_judge" }
+    {"id": "add", "input": "2+2?", "expected_output": "4", "evaluation_type": "exact_match"},
+    {"id": "mult", "input": "5*6?", "expected_output": "30", "evaluation_type": "contains"},
+    {"id": "judge", "input": "(10+5)*2", "expected_output": "30", "evaluation_type": "llm_judge"}
   ]
 }
 ```

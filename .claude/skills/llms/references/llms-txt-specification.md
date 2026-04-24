@@ -35,9 +35,9 @@ Place at the END of the file.
 
 ## Companion Files
 
-| File            | Purpose                                            |
-| --------------- | -------------------------------------------------- |
-| `llms.txt`      | Curated index with links                           |
+| File | Purpose |
+|------|---------|
+| `llms.txt` | Curated index with links |
 | `llms-full.txt` | Complete content inlined (no external URLs needed) |
 
 ## Writing Guidelines

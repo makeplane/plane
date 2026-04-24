@@ -15,9 +15,9 @@ Register a device against a license key:
 ```javascript
 // POST /v1/licenses/activate
 const activation = await creem.licenses.activate({
-  license_key: "XXXX-XXXX-XXXX-XXXX",
-  instance_id: "device_fingerprint_123", // Unique device identifier
-  instance_name: "MacBook Pro", // Optional friendly name
+  license_key: 'XXXX-XXXX-XXXX-XXXX',
+  instance_id: 'device_fingerprint_123',  // Unique device identifier
+  instance_name: 'MacBook Pro'            // Optional friendly name
 });
 
 // Returns: {
@@ -36,8 +36,8 @@ Check if license is active for specific device:
 ```javascript
 // POST /v1/licenses/validate
 const validation = await creem.licenses.validate({
-  license_key: "XXXX-XXXX-XXXX-XXXX",
-  instance_id: "device_fingerprint_123",
+  license_key: 'XXXX-XXXX-XXXX-XXXX',
+  instance_id: 'device_fingerprint_123'
 });
 
 // Returns: {
@@ -58,8 +58,8 @@ Remove device activation to free slot:
 ```javascript
 // POST /v1/licenses/deactivate
 await creem.licenses.deactivate({
-  license_key: "XXXX-XXXX-XXXX-XXXX",
-  instance_id: "device_fingerprint_123",
+  license_key: 'XXXX-XXXX-XXXX-XXXX',
+  instance_id: 'device_fingerprint_123'
 });
 ```
 
@@ -75,36 +75,36 @@ class LicenseManager {
 
   getDeviceFingerprint() {
     // Generate unique device ID (machine ID, hardware hash, etc.)
-    return require("node-machine-id").machineIdSync();
+    return require('node-machine-id').machineIdSync();
   }
 
   async activate(licenseKey) {
-    const response = await fetch("https://api.creem.io/v1/licenses/activate", {
-      method: "POST",
+    const response = await fetch('https://api.creem.io/v1/licenses/activate', {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${this.apiKey}`,
-        "Content-Type": "application/json",
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         license_key: licenseKey,
         instance_id: this.instanceId,
-        instance_name: os.hostname(),
-      }),
+        instance_name: os.hostname()
+      })
     });
     return response.json();
   }
 
   async validate(licenseKey) {
-    const response = await fetch("https://api.creem.io/v1/licenses/validate", {
-      method: "POST",
+    const response = await fetch('https://api.creem.io/v1/licenses/validate', {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${this.apiKey}`,
-        "Content-Type": "application/json",
+        'Authorization': `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         license_key: licenseKey,
-        instance_id: this.instanceId,
-      }),
+        instance_id: this.instanceId
+      })
     });
     const data = await response.json();
     return data.valid;
@@ -118,12 +118,12 @@ Configure per product - limits simultaneous device activations:
 
 ```javascript
 const product = await creem.products.create({
-  name: "Desktop App License",
+  name: 'Desktop App License',
   price: 4900,
-  currency: "usd",
+  currency: 'usd',
   license_config: {
-    activations_limit: 3, // Max 3 devices per license
-  },
+    activations_limit: 3  // Max 3 devices per license
+  }
 });
 ```
 

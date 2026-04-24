@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: "npm" }
+        with: { node-version: 20, cache: 'npm' }
       - run: npm ci
       - run: npm run test:unit -- --coverage
       - uses: actions/upload-artifact@v4
@@ -31,7 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: 20, cache: "npm" }
+        with: { node-version: 20, cache: 'npm' }
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npx playwright test --shard=${{ matrix.shard }}/4
@@ -70,7 +70,7 @@ npx playwright test --shard=1/4
 
 ```yaml
 - run: npx playwright test --retries=2
-- run: npx playwright test --grep-invert @flaky # Quarantine
+- run: npx playwright test --grep-invert @flaky  # Quarantine
 ```
 
 ## Performance & Security Gates

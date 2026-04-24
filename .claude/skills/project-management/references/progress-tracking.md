@@ -39,16 +39,15 @@ only change the Status column cell, preserve table structure exactly.
 
 Update `plan.md` frontmatter `status` field:
 
-| Condition             | Status        |
-| --------------------- | ------------- |
-| No phases started     | `pending`     |
+| Condition | Status |
+|-----------|--------|
+| No phases started | `pending` |
 | Any phase in progress | `in-progress` |
-| All phases complete   | `completed`   |
+| All phases complete | `completed` |
 
 ### Phase-Level Status
 
 Each `phase-XX-*.md` tracks with checkboxes:
-
 - `[ ]` = pending
 - `[x]` = completed
 - Count ratio for progress percentage
@@ -79,21 +78,17 @@ When verifying task completeness:
 ## Project Status: [Date]
 
 ### Active Plans
-
-| Plan   | Progress | Priority | Status   | Branch   |
-| ------ | -------- | -------- | -------- | -------- |
-| [name] | [X]%     | P[N]     | [status] | [branch] |
+| Plan | Progress | Priority | Status | Branch |
+|------|----------|----------|--------|--------|
+| [name] | [X]% | P[N] | [status] | [branch] |
 
 ### Completed This Session
-
 - [x] [description]
 
 ### Blockers & Risks
-
 - [ ] [description] — [mitigation]
 
 ### Next Steps
-
 1. [Priority action]
 2. [Follow-up]
 ```
@@ -104,19 +99,15 @@ When verifying task completeness:
 ## [Plan Name] - Detailed Status
 
 ### Achievements
-
 - Completed features, resolved issues, delivered value
 
 ### Testing Status
-
 - Components needing validation, test scenarios, quality gates
 
 ### Risk Assessment
-
 - Potential blockers, technical debt, mitigation strategies
 
 ### Recommendations
-
 - Prioritized next steps, resource needs, timeline projections
 ```
 

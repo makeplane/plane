@@ -6,17 +6,17 @@
  * Supports ANSI colors with NO_COLOR env var respect.
  */
 
-const path = require("path");
+const path = require('path');
 
 // ANSI color codes
 const COLORS = {
-  red: "\x1b[31m",
-  yellow: "\x1b[33m",
-  blue: "\x1b[34m",
-  cyan: "\x1b[36m",
-  bold: "\x1b[1m",
-  dim: "\x1b[2m",
-  reset: "\x1b[0m",
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  cyan: '\x1b[36m',
+  bold: '\x1b[1m',
+  dim: '\x1b[2m',
+  reset: '\x1b[0m'
 };
 
 /**
@@ -45,7 +45,7 @@ function supportsColor() {
  */
 function colorize(text, color) {
   if (!supportsColor()) return text;
-  const colorCode = COLORS[color] || "";
+  const colorCode = COLORS[color] || '';
   return `${colorCode}${text}${COLORS.reset}`;
 }
 
@@ -53,13 +53,17 @@ function colorize(text, color) {
  * Get .ckignore config path
  *
  * @param {string} claudeDir - Path to .claude directory
+ * @param {string} [configPath] - Explicit config path to prefer
  * @returns {string}
  */
-function formatConfigPath(claudeDir) {
-  if (claudeDir) {
-    return path.join(claudeDir, ".ckignore");
+function formatConfigPath(claudeDir, configPath) {
+  if (configPath) {
+    return configPath;
   }
-  return ".claude/.ckignore";
+  if (claudeDir) {
+    return path.join(claudeDir, '.ckignore');
+  }
+  return '.claude/.ckignore';
 }
 
 /**
@@ -72,32 +76,35 @@ function formatConfigPath(claudeDir) {
  * @param {string} details.pattern - The pattern that matched
  * @param {string} details.tool - The tool that was blocked
  * @param {string} details.claudeDir - Path to .claude directory
+ * @param {string} [details.configPath] - Explicit config path to edit
  * @returns {string}
  */
 function formatBlockedError(details) {
-  const { path: blockedPath, pattern, tool, claudeDir } = details;
-  const configPath = formatConfigPath(claudeDir);
+  const { path: blockedPath, pattern, tool, claudeDir, configPath } = details;
+  const resolvedConfigPath = formatConfigPath(claudeDir, configPath);
 
   // Truncate path if too long
-  const displayPath = blockedPath.length > 60 ? "..." + blockedPath.slice(-57) : blockedPath;
+  const displayPath = blockedPath.length > 60
+    ? '...' + blockedPath.slice(-57)
+    : blockedPath;
 
   const lines = [
-    "",
-    colorize("NOTE:", "cyan") + " This is not an error - this block is intentional to optimize context.",
-    "",
-    colorize("BLOCKED", "red") + `: Access to '${displayPath}' denied`,
-    "",
-    `  ${colorize("Pattern:", "yellow")}  ${pattern}`,
-    `  ${colorize("Tool:", "yellow")}     ${tool || "unknown"}`,
-    "",
-    `  ${colorize("To allow, add to", "blue")} ${configPath}:`,
+    '',
+    colorize('NOTE:', 'cyan') + ' This is not an error - this block is intentional to optimize context.',
+    '',
+    colorize('BLOCKED', 'red') + `: Access to '${displayPath}' denied`,
+    '',
+    `  ${colorize('Pattern:', 'yellow')}  ${pattern}`,
+    `  ${colorize('Tool:', 'yellow')}     ${tool || 'unknown'}`,
+    '',
+    `  ${colorize('To allow, add to', 'blue')} ${resolvedConfigPath}:`,
     `    !${pattern}`,
-    "",
-    `  ${colorize("Config:", "dim")} ${configPath}`,
-    "",
+    '',
+    `  ${colorize('Config:', 'dim')} ${resolvedConfigPath}`,
+    ''
   ];
 
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 /**
@@ -119,16 +126,16 @@ function formatSimpleError(pattern, blockedPath) {
  * @returns {string}
  */
 function formatMachineError(details) {
-  const { path: blockedPath, pattern, tool, claudeDir } = details;
-  const configPath = formatConfigPath(claudeDir);
+  const { path: blockedPath, pattern, tool, claudeDir, configPath } = details;
+  const resolvedConfigPath = formatConfigPath(claudeDir, configPath);
 
   return JSON.stringify({
-    error: "BLOCKED",
+    error: 'BLOCKED',
     path: blockedPath,
     pattern: pattern,
     tool: tool,
-    config: configPath,
-    fix: `Add '!${pattern}' to ${configPath} to allow this path`,
+    config: resolvedConfigPath,
+    fix: `Add '!${pattern}' to ${resolvedConfigPath} to allow this path`
   });
 }
 
@@ -139,7 +146,7 @@ function formatMachineError(details) {
  * @returns {string}
  */
 function formatWarning(message) {
-  return colorize("WARN:", "yellow") + " " + message;
+  return colorize('WARN:', 'yellow') + ' ' + message;
 }
 
 module.exports = {
@@ -150,5 +157,5 @@ module.exports = {
   formatConfigPath,
   supportsColor,
   colorize,
-  COLORS,
+  COLORS
 };

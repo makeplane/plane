@@ -9,42 +9,42 @@ npm install @paddle/paddle-node-sdk
 ```
 
 ```typescript
-import Paddle from "@paddle/paddle-node-sdk";
+import Paddle from '@paddle/paddle-node-sdk';
 
 const paddle = new Paddle(process.env.PADDLE_API_KEY, {
-  environment: "sandbox", // 'production'
+  environment: 'sandbox' // 'production'
 });
 
 // Products
 const products = await paddle.products.list();
 const product = await paddle.products.create({
-  name: "Pro Plan",
-  taxCategory: "standard",
+  name: 'Pro Plan',
+  taxCategory: 'standard'
 });
 
 // Prices
-const prices = await paddle.prices.list({ productId: "pro_xxx" });
+const prices = await paddle.prices.list({ productId: 'pro_xxx' });
 const price = await paddle.prices.create({
-  productId: "pro_xxx",
-  description: "Monthly",
-  unitPrice: { amount: "999", currencyCode: "USD" },
-  billingCycle: { interval: "month", frequency: 1 },
+  productId: 'pro_xxx',
+  description: 'Monthly',
+  unitPrice: { amount: '999', currencyCode: 'USD' },
+  billingCycle: { interval: 'month', frequency: 1 }
 });
 
 // Transactions
 const transaction = await paddle.transactions.create({
-  items: [{ priceId: "pri_xxx", quantity: 1 }],
+  items: [{ priceId: 'pri_xxx', quantity: 1 }]
 });
 
 // Subscriptions
-const subscription = await paddle.subscriptions.get("sub_xxx");
-await paddle.subscriptions.update("sub_xxx", {
-  items: [{ priceId: "pri_new", quantity: 1 }],
+const subscription = await paddle.subscriptions.get('sub_xxx');
+await paddle.subscriptions.update('sub_xxx', {
+  items: [{ priceId: 'pri_new', quantity: 1 }]
 });
-await paddle.subscriptions.cancel("sub_xxx", { effectiveFrom: "nextBillingPeriod" });
+await paddle.subscriptions.cancel('sub_xxx', { effectiveFrom: 'nextBillingPeriod' });
 
 // Customers
-const customers = await paddle.customers.list({ email: "user@example.com" });
+const customers = await paddle.customers.list({ email: 'user@example.com' });
 ```
 
 ## Python
@@ -122,10 +122,10 @@ sub, _ := client.GetSubscription(ctx, "sub_xxx")
 
 ```typescript
 try {
-  await paddle.subscriptions.get("sub_invalid");
+  await paddle.subscriptions.get('sub_invalid');
 } catch (error) {
-  if (error.code === "entity_not_found") {
-    console.log("Subscription not found");
+  if (error.code === 'entity_not_found') {
+    console.log('Subscription not found');
   }
 }
 ```

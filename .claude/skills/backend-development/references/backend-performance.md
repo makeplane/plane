@@ -27,14 +27,12 @@ WHERE user_id = 123 AND created_at > '2025-01-01';
 ```
 
 **Index Types:**
-
 - **B-tree** - Default, general-purpose (equality, range queries)
 - **Hash** - Fast equality lookups, no range queries
 - **GIN** - Full-text search, JSONB queries
 - **GiST** - Geospatial queries, range types
 
 **When NOT to Index:**
-
 - Small tables (<1000 rows)
 - Frequently updated columns
 - Low-cardinality columns (e.g., boolean with 2 values)
@@ -45,7 +43,7 @@ WHERE user_id = 123 AND created_at > '2025-01-01';
 
 ```typescript
 // PostgreSQL with pg-pool
-import { Pool } from "pg";
+import { Pool } from 'pg';
 
 const pool = new Pool({
   host: process.env.DB_HOST,
@@ -59,11 +57,10 @@ const pool = new Pool({
 });
 
 // Use pool for queries
-const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
+const result = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
 ```
 
 **Recommended Pool Sizes:**
-
 - **Web servers:** `connections = (core_count * 2) + effective_spindle_count`
 - **Typical:** 20-30 connections per app instance
 - **Monitor:** Connection saturation in production
@@ -71,7 +68,6 @@ const result = await pool.query("SELECT * FROM users WHERE id = $1", [userId]);
 ### N+1 Query Problem
 
 **Bad: N+1 queries**
-
 ```typescript
 // Fetches 1 query for posts, then N queries for authors
 const posts = await Post.findAll();
@@ -81,11 +77,10 @@ for (const post of posts) {
 ```
 
 **Good: Join or eager loading**
-
 ```typescript
 // Single query with JOIN
 const posts = await Post.findAll({
-  include: [{ model: User, as: "author" }],
+  include: [{ model: User, as: 'author' }],
 });
 ```
 
@@ -138,7 +133,7 @@ async function deleteUser(userId: string) {
 }
 
 // Pattern-based invalidation
-await redis.keys("user:*").then((keys) => redis.del(...keys));
+await redis.keys('user:*').then(keys => redis.del(...keys));
 ```
 
 ### Cache Layers
@@ -165,7 +160,6 @@ Client
 ### Algorithms
 
 **Round Robin** - Distribute evenly across servers
-
 ```nginx
 upstream backend {
     server backend1.example.com;
@@ -175,7 +169,6 @@ upstream backend {
 ```
 
 **Least Connections** - Route to server with fewest connections
-
 ```nginx
 upstream backend {
     least_conn;
@@ -185,7 +178,6 @@ upstream backend {
 ```
 
 **IP Hash** - Same client → same server (session affinity)
-
 ```nginx
 upstream backend {
     ip_hash;
@@ -198,7 +190,7 @@ upstream backend {
 
 ```typescript
 // Express health check endpoint
-app.get("/health", async (req, res) => {
+app.get('/health', async (req, res) => {
   const checks = {
     uptime: process.uptime(),
     timestamp: Date.now(),
@@ -218,25 +210,24 @@ app.get("/health", async (req, res) => {
 
 ```typescript
 // Producer - Add job to queue
-import Queue from "bull";
+import Queue from 'bull';
 
-const emailQueue = new Queue("email", {
-  redis: { host: "localhost", port: 6379 },
+const emailQueue = new Queue('email', {
+  redis: { host: 'localhost', port: 6379 },
 });
 
-await emailQueue.add("send-welcome", {
+await emailQueue.add('send-welcome', {
   userId: user.id,
   email: user.email,
 });
 
 // Consumer - Process jobs
-emailQueue.process("send-welcome", async (job) => {
+emailQueue.process('send-welcome', async (job) => {
   await sendWelcomeEmail(job.data.email);
 });
 ```
 
 **Use Cases:**
-
 - Email sending
 - Image/video processing
 - Report generation
@@ -251,13 +242,12 @@ emailQueue.process("send-welcome", async (job) => {
 
 ```typescript
 // Cache-Control headers
-res.setHeader("Cache-Control", "public, max-age=31536000, immutable"); // Static assets
-res.setHeader("Cache-Control", "public, max-age=3600"); // API responses
-res.setHeader("Cache-Control", "private, no-cache"); // User-specific data
+res.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); // Static assets
+res.setHeader('Cache-Control', 'public, max-age=3600'); // API responses
+res.setHeader('Cache-Control', 'private, no-cache'); // User-specific data
 ```
 
 **CDN Providers:**
-
 - Cloudflare (generous free tier, global coverage)
 - AWS CloudFront (AWS integration)
 - Fastly (real-time purging)
@@ -267,13 +257,11 @@ res.setHeader("Cache-Control", "private, no-cache"); // User-specific data
 ### Horizontal Scaling (Scale Out)
 
 **Pros:**
-
 - Better fault tolerance
 - Unlimited scaling potential
 - Cost-effective (commodity hardware)
 
 **Cons:**
-
 - Complex architecture
 - Data consistency challenges
 - Network overhead
@@ -283,13 +271,11 @@ res.setHeader("Cache-Control", "private, no-cache"); // User-specific data
 ### Vertical Scaling (Scale Up)
 
 **Pros:**
-
 - Simple architecture
 - No code changes needed
 - Easier data consistency
 
 **Cons:**
-
 - Hardware limits
 - Single point of failure
 - Expensive at high end
@@ -307,7 +293,6 @@ Primary (Write) → Replica 1 (Read)
 ```
 
 **Implementation:**
-
 ```typescript
 // Write to primary
 await primaryDb.users.create(userData);
@@ -317,7 +302,6 @@ const users = await replicaDb.users.findAll();
 ```
 
 **Use Cases:**
-
 - Read-heavy workloads (90%+ reads)
 - Analytics queries
 - Reporting dashboards
@@ -338,7 +322,6 @@ const user = await db.users.findById(userId);
 ```
 
 **Sharding Strategies:**
-
 - **Range-based:** Users 1-1M → Shard 1, 1M-2M → Shard 2
 - **Hash-based:** Hash(userId) % shard_count
 - **Geographic:** EU users → EU shard, US users → US shard
@@ -349,21 +332,18 @@ const user = await db.users.findById(userId);
 ### Key Metrics
 
 **Application:**
-
 - Response time (p50, p95, p99)
 - Throughput (requests/second)
 - Error rate
 - CPU/memory usage
 
 **Database:**
-
 - Query execution time
 - Connection pool saturation
 - Cache hit rate
 - Slow query log
 
 **Tools:**
-
 - Prometheus + Grafana (metrics)
 - New Relic / Datadog (APM)
 - Sentry (error tracking)
@@ -372,7 +352,6 @@ const user = await db.users.findById(userId);
 ## Performance Optimization Checklist
 
 ### Database
-
 - [ ] Indexes on frequently queried columns
 - [ ] Connection pooling configured
 - [ ] N+1 queries eliminated
@@ -380,15 +359,13 @@ const user = await db.users.findById(userId);
 - [ ] Query execution plans analyzed
 
 ### Caching
-
 - [ ] Redis cache for hot data
 - [ ] Cache TTL configured appropriately
 - [ ] Cache invalidation on writes
 - [ ] CDN for static assets
-- [ ] > 80% cache hit rate achieved
+- [ ] >80% cache hit rate achieved
 
 ### Application
-
 - [ ] Async processing for long tasks
 - [ ] Response compression enabled (gzip)
 - [ ] Load balancing configured
@@ -396,7 +373,6 @@ const user = await db.users.findById(userId);
 - [ ] Resource limits set (CPU, memory)
 
 ### Monitoring
-
 - [ ] APM tool configured (New Relic/Datadog)
 - [ ] Error tracking (Sentry)
 - [ ] Performance dashboards (Grafana)

@@ -25,18 +25,18 @@ Best for tasks where parallel exploration adds real value:
 
 ### Subagents vs Agent Teams
 
-|                   | Subagents                                       | Agent Teams                                       |
-| ----------------- | ----------------------------------------------- | ------------------------------------------------- |
-| **Tool**          | `Agent` (formerly `Task`)                       | `Agent` + `TeamCreate`/`TaskCreate`/`SendMessage` |
-| **Context**       | Own 200K-token window; results return to caller | Own full Claude Code instance + context           |
-| **Communication** | Report back to parent only                      | Message each other directly via SendMessage       |
-| **Coordination**  | Parent manages all work                         | Shared task list, self-coordination               |
-| **Isolation**     | Optional `isolation: "worktree"`                | Each teammate = separate session                  |
-| **Model**         | Any (haiku/sonnet/opus per agent)               | All teammates must run Opus 4.6                   |
-| **Max parallel**  | ~10 simultaneous                                | Depends on system resources                       |
-| **Best for**      | Focused tasks, result-only                      | Complex work requiring discussion                 |
-| **Token cost**    | Lower                                           | Higher (each teammate = separate instance)        |
-| **Status**        | Production (stable)                             | Experimental (requires opt-in flag)               |
+| | Subagents | Agent Teams |
+|---|---|---|
+| **Tool** | `Agent` (formerly `Task`) | `Agent` + `TeamCreate`/`TaskCreate`/`SendMessage` |
+| **Context** | Own 200K-token window; results return to caller | Own full Claude Code instance + context |
+| **Communication** | Report back to parent only | Message each other directly via SendMessage |
+| **Coordination** | Parent manages all work | Shared task list, self-coordination |
+| **Isolation** | Optional `isolation: "worktree"` | Each teammate = separate session |
+| **Model** | Any (haiku/sonnet/opus per agent) | All teammates must run Opus 4.6 |
+| **Max parallel** | ~10 simultaneous | Depends on system resources |
+| **Best for** | Focused tasks, result-only | Complex work requiring discussion |
+| **Token cost** | Lower | Higher (each teammate = separate instance) |
+| **Status** | Production (stable) | Experimental (requires opt-in flag) |
 
 ## Enable
 
@@ -51,7 +51,6 @@ Set in shell environment or settings.json.
 ## How Teams Start
 
 Two paths:
-
 1. **You request**: describe task + ask for agent team. Claude creates based on instructions.
 2. **Claude proposes**: suggests team if task benefits from parallel work.
 
@@ -59,15 +58,14 @@ Both require your confirmation. Claude won't create a team without approval.
 
 ## Architecture
 
-| Component     | Role                                                        |
-| ------------- | ----------------------------------------------------------- |
+| Component | Role |
+|-----------|------|
 | **Team lead** | Main session -- creates team, spawns teammates, coordinates |
-| **Teammates** | Separate Claude Code instances with own context windows     |
-| **Task list** | Shared work items at `~/.claude/tasks/{team-name}/`         |
-| **Mailbox**   | Messaging system for inter-agent communication              |
+| **Teammates** | Separate Claude Code instances with own context windows |
+| **Task list** | Shared work items at `~/.claude/tasks/{team-name}/` |
+| **Mailbox** | Messaging system for inter-agent communication |
 
 Storage:
-
 - **Team config**: `~/.claude/teams/{team-name}/config.json` (members array with name, agent ID, type)
 - **Task list**: `~/.claude/tasks/{team-name}/`
 
@@ -104,29 +102,29 @@ Remove team/task dirs. **Takes NO parameters** -- just call `TeamDelete` with em
 
 ### SendMessage Types
 
-| Type                     | Purpose                                                     |
-| ------------------------ | ----------------------------------------------------------- |
-| `message`                | DM to one teammate (requires `recipient`)                   |
-| `broadcast`              | Send to ALL teammates (use sparingly -- costs scale with N) |
-| `shutdown_request`       | Ask teammate to gracefully exit                             |
-| `shutdown_response`      | Teammate approves/rejects shutdown (requires `request_id`)  |
+| Type | Purpose |
+|------|---------|
+| `message` | DM to one teammate (requires `recipient`) |
+| `broadcast` | Send to ALL teammates (use sparingly -- costs scale with N) |
+| `shutdown_request` | Ask teammate to gracefully exit |
+| `shutdown_response` | Teammate approves/rejects shutdown (requires `request_id`) |
 | `plan_approval_response` | Lead approves/rejects teammate plan (requires `request_id`) |
 
 **Resume pattern:** `SendMessage(to: "<agent-name>")` resumes an idle teammate.
 
 ### Task System Fields
 
-| Field          | Values/Purpose                                           |
-| -------------- | -------------------------------------------------------- |
-| `status`       | `pending` -> `in_progress` -> `completed` (or `deleted`) |
-| `owner`        | Agent name assigned to task                              |
-| `blocks`       | Task IDs this task blocks (read via TaskGet)             |
-| `blockedBy`    | Task IDs that must complete first (read via TaskGet)     |
-| `addBlocks`    | Set blocking relations (write via TaskUpdate)            |
-| `addBlockedBy` | Set dependency relations (write via TaskUpdate)          |
-| `metadata`     | Arbitrary key-value pairs                                |
-| `subject`      | Brief imperative title                                   |
-| `description`  | Full requirements and context                            |
+| Field | Values/Purpose |
+|-------|---------------|
+| `status` | `pending` -> `in_progress` -> `completed` (or `deleted`) |
+| `owner` | Agent name assigned to task |
+| `blocks` | Task IDs this task blocks (read via TaskGet) |
+| `blockedBy` | Task IDs that must complete first (read via TaskGet) |
+| `addBlocks` | Set blocking relations (write via TaskUpdate) |
+| `addBlockedBy` | Set dependency relations (write via TaskUpdate) |
+| `metadata` | Arbitrary key-value pairs |
+| `subject` | Brief imperative title |
+| `description` | Full requirements and context |
 
 Task claiming uses file locking to prevent race conditions.
 Task dependencies resolve automatically -- completing a blocker unblocks dependents.
@@ -137,22 +135,22 @@ Task dependencies resolve automatically -- completing a blocker unblocks depende
 
 Fires when teammate calls `TaskUpdate` with `status: "completed"`.
 
-| Field              | Type   | Description           |
-| ------------------ | ------ | --------------------- |
-| `task_id`          | string | Completed task ID     |
-| `task_subject`     | string | Task title            |
+| Field | Type | Description |
+|-------|------|-------------|
+| `task_id` | string | Completed task ID |
+| `task_subject` | string | Task title |
 | `task_description` | string | Full task description |
-| `teammate_name`    | string | Who completed it      |
-| `team_name`        | string | Team name             |
+| `teammate_name` | string | Who completed it |
+| `team_name` | string | Team name |
 
 ### TeammateIdle
 
 Fires after `SubagentStop` for team members.
 
-| Field           | Type   | Description        |
-| --------------- | ------ | ------------------ |
+| Field | Type | Description |
+|-------|------|-------------|
 | `teammate_name` | string | Idle teammate name |
-| `team_name`     | string | Team name          |
+| `team_name` | string | Team name |
 
 ### Event Lifecycle
 
@@ -165,7 +163,6 @@ TaskCompleted fires BEFORE SubagentStop/TeammateIdle.
 ## Worktree Isolation
 
 For implementation teams, the `isolation: "worktree"` parameter on the Agent tool gives each teammate:
-
 - **Own git worktree** -- isolated working directory, staging area, HEAD
 - **Own branch** -- auto-created feature branch
 - **No file conflicts** -- multiple devs can edit same files independently
@@ -177,10 +174,10 @@ After completion, lead merges worktree branches. This is the recommended pattern
 
 Agents can declare `memory` in frontmatter for persistent cross-session learning.
 
-| Scope     | Location                         | Persists across          |
-| --------- | -------------------------------- | ------------------------ |
-| `user`    | `~/.claude/agent-memory/<name>/` | All projects             |
-| `project` | `.claude/agent-memory/<name>/`   | Sessions in same project |
+| Scope | Location | Persists across |
+|-------|----------|-----------------|
+| `user` | `~/.claude/agent-memory/<name>/` | All projects |
+| `project` | `.claude/agent-memory/<name>/` | Sessions in same project |
 
 First 200 lines of `MEMORY.md` auto-injected into system prompt.
 

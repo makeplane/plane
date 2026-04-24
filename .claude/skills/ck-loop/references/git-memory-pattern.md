@@ -15,7 +15,6 @@ cat loop-results.tsv               # metric trend + keep/discard record
 ```
 
 Together these answer three questions:
-
 1. **What worked?** (kept=yes rows with positive delta)
 2. **What failed?** (kept=no rows, repeated file paths)
 3. **Where is the trend going?** (last 5 deltas — accelerating, flat, or reversing?)
@@ -39,7 +38,6 @@ Together these answer three questions:
 ### Detect Diminishing Returns
 
 If last 5 kept iterations all have `delta < Min-Delta * 2`, the low-hanging fruit is gone. Signal:
-
 - Broaden scope to adjacent files
 - Switch technique entirely
 - Report plateau to user rather than grinding
@@ -71,10 +69,10 @@ fi
 
 Always prefer `git revert`. Only fall back to `git reset` when revert produces a conflict.
 
-| Command                     | Preserves history | Safe for pattern analysis | Use when              |
-| --------------------------- | ----------------- | ------------------------- | --------------------- |
-| `git revert HEAD --no-edit` | Yes               | Yes                       | Default discard path  |
-| `git reset --hard HEAD~1`   | No                | No                        | Revert conflicts only |
+| Command | Preserves history | Safe for pattern analysis | Use when |
+|---------|------------------|--------------------------|----------|
+| `git revert HEAD --no-edit` | Yes | Yes | Default discard path |
+| `git reset --hard HEAD~1` | No | No | Revert conflicts only |
 
 Reason: `git log --grep="loop(iter-"` relies on intact history. A reset destroys the record of what was tried and silently breaks pattern analysis in future iterations.
 
@@ -87,7 +85,6 @@ loop(iter-N): <one-line description of the change>
 ```
 
 Examples:
-
 ```
 loop(iter-3): add null guard to parseToken in lexer.ts
 loop(iter-7): split large test fixture into focused unit cases
@@ -105,7 +102,6 @@ git log --oneline --grep="loop(iter-" | head -20
 ```
 
 Reverted commits remain in history with the standard revert message:
-
 ```
 Revert "loop(iter-4): ..."
 ```

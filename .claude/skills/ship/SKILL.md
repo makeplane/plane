@@ -16,16 +16,16 @@ Single command to ship a feature branch. Fully automated — only stops for test
 
 ## Arguments
 
-| Flag             | Effect                                                                  |
-| ---------------- | ----------------------------------------------------------------------- |
-| `official`       | Ship to default branch (main/master). Full pipeline with docs + journal |
-| `beta`           | Ship to dev/beta branch. Lighter pipeline, skip docs update             |
-| (none)           | Auto-detect: if base branch is main/master → official, else → beta      |
-| `--skip-tests`   | Skip test step (use when tests already passed)                          |
-| `--skip-review`  | Skip pre-landing review step                                            |
-| `--skip-journal` | Skip journal writing step                                               |
-| `--skip-docs`    | Skip docs update step                                                   |
-| `--dry-run`      | Show what would happen without executing                                |
+| Flag | Effect |
+|------|--------|
+| `official` | Ship to default branch (main/master). Full pipeline with docs + journal |
+| `beta` | Ship to dev/beta branch. Lighter pipeline, skip docs update |
+| (none) | Auto-detect: if base branch is main/master → official, else → beta |
+| `--skip-tests` | Skip test step (use when tests already passed) |
+| `--skip-review` | Skip pre-landing review step |
+| `--skip-journal` | Skip journal writing step |
+| `--skip-docs` | Skip docs update step |
+| `--dry-run` | Show what would happen without executing |
 
 ## Ship Mode Detection
 

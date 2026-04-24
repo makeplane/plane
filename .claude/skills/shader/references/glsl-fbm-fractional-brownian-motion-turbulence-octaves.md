@@ -23,11 +23,11 @@ float fbm(vec2 st) {
 
 ## fBm Parameters
 
-| Parameter      | Effect               | Typical Value |
-| -------------- | -------------------- | ------------- |
-| **Octaves**    | Detail level         | 4-8           |
-| **Lacunarity** | Frequency multiplier | 2.0           |
-| **Gain**       | Amplitude multiplier | 0.5           |
+| Parameter | Effect | Typical Value |
+|-----------|--------|---------------|
+| **Octaves** | Detail level | 4-8 |
+| **Lacunarity** | Frequency multiplier | 2.0 |
+| **Gain** | Amplitude multiplier | 0.5 |
 
 ```glsl
 float fbm(vec2 st, int octaves, float lacunarity, float gain) {

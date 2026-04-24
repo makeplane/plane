@@ -29,7 +29,6 @@ stripe login
 ```
 
 Environment variable (CI/CD):
-
 ```bash
 export STRIPE_API_KEY=sk_test_...
 ```
@@ -57,7 +56,6 @@ stripe trigger checkout.session.completed
 ### Event Types
 
 Common events to test:
-
 - `payment_intent.succeeded`
 - `payment_intent.payment_failed`
 - `checkout.session.completed`
@@ -99,7 +97,6 @@ stripe products delete prod_xxx
 ## Fixtures (Batch Operations)
 
 Create `fixtures.json`:
-
 ```json
 {
   "_name": "test_flow",
@@ -128,7 +125,6 @@ Run: `stripe fixtures fixtures.json`
 ## Common Workflows
 
 ### Test Checkout Integration
-
 ```bash
 # Terminal 1: Listen for webhooks
 stripe listen --forward-to localhost:3000/webhook
@@ -138,7 +134,6 @@ stripe trigger checkout.session.completed
 ```
 
 ### Test Subscription Lifecycle
-
 ```bash
 stripe trigger customer.subscription.created
 stripe trigger invoice.paid

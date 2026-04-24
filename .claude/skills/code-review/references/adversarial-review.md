@@ -10,7 +10,6 @@ Runs after every Stage 2 (Code Quality) pass. Subject to scope gate below.
 ## Scope Gate
 
 Skip adversarial review when ALL of these are true:
-
 - Changed files <= 2
 - Lines changed <= 30
 - No security-sensitive files touched (auth, crypto, input parsing, SQL, env)
@@ -19,7 +18,6 @@ Skip adversarial review when ALL of these are true:
 When skipped, note: `Adversarial: skipped (below threshold)` in review output.
 
 **NEVER skip when:**
-
 - Any file in: `auth/`, `middleware/`, `security/`, `crypto/`
 - `package.json`, `package-lock.json`, or lockfile changed
 - Environment variables added/changed
@@ -35,7 +33,6 @@ This is NOT a standard code review. Standard reviews check if code meets require
 ## What to Attack
 
 ### Security Holes
-
 - Injection vectors (SQL, command, XSS, template)
 - Auth bypass paths (missing checks, privilege escalation)
 - Secrets exposure (logs, error messages, stack traces)
@@ -43,7 +40,6 @@ This is NOT a standard code review. Standard reviews check if code meets require
 - SSRF, path traversal, deserialization attacks
 
 ### False Assumptions
-
 - "This will never be null" -- prove it can be
 - "This list always has elements" -- find the empty case
 - "Users always call A before B" -- find the out-of-order path
@@ -52,7 +48,6 @@ This is NOT a standard code review. Standard reviews check if code meets require
 - "This API shape won't change" -- find the breaking caller
 
 ### Failure Modes & Resource Exhaustion
-
 - What happens when disk is full?
 - What happens when network times out mid-operation?
 - What happens when the database connection drops during a transaction?
@@ -63,27 +58,23 @@ This is NOT a standard code review. Standard reviews check if code meets require
 - Regex catastrophic backtracking (ReDoS)
 
 ### Race Conditions
-
 - Shared mutable state without locks
 - Time-of-check-to-time-of-use (TOCTOU)
 - Async operations with implicit ordering assumptions
 - Cache invalidation during concurrent writes
 
 ### Data Corruption
-
 - Partial writes on failure (no transaction/rollback)
 - Type coercion surprises (string "0" as falsy)
 - Floating point comparison for equality
 - Timezone-naive datetime operations
 
 ### Supply Chain & Dependencies
-
 - New dependencies: postinstall scripts, maintainer reputation, bundle size
 - Lockfile changes: version drift, removed integrity hashes
 - Transitive deps pulling in known-vulnerable packages
 
 ### Observability Blind Spots
-
 - Swallowed errors (`catch {}` with no log)
 - Missing structured context in error logs
 - PII in log output
@@ -140,14 +131,13 @@ For each finding, report:
 
 Main agent reviews each adversarial finding and assigns verdict:
 
-| Verdict    | Meaning                                             | Action                           |
-| ---------- | --------------------------------------------------- | -------------------------------- |
-| **Accept** | Valid flaw, reproducible or clearly reasoned        | Must fix before merge            |
-| **Reject** | False positive, already handled, or impossible path | Document why, no action          |
-| **Defer**  | Valid but low-risk, tracked for later               | Create GitHub issue for tracking |
+| Verdict | Meaning | Action |
+|---------|---------|--------|
+| **Accept** | Valid flaw, reproducible or clearly reasoned | Must fix before merge |
+| **Reject** | False positive, already handled, or impossible path | Document why, no action |
+| **Defer** | Valid but low-risk, tracked for later | Create GitHub issue for tracking |
 
 **Rules:**
-
 - Every finding gets a verdict -- no silent dismissals
 - Critical findings: Accept unless you can PROVE false positive
 - Benefit of doubt goes to the adversary (safer to fix than to dismiss)
@@ -155,11 +145,11 @@ Main agent reviews each adversarial finding and assigns verdict:
 
 **Calibration examples:**
 
-| Verdict | Example                                                   | Reasoning                                                                                     |
-| ------- | --------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| Accept  | "SQL injection via string interpolation in query builder" | Clearly exploitable, concrete path shown                                                      |
-| Reject  | "Missing null check on config.apiUrl"                     | Config loaded at startup with schema validation (see config.ts:12), cannot be null at runtime |
-| Defer   | "No rate limiting on POST /api/upload"                    | Valid concern but internal-only tool currently; track for public exposure                     |
+| Verdict | Example | Reasoning |
+|---------|---------|-----------|
+| Accept | "SQL injection via string interpolation in query builder" | Clearly exploitable, concrete path shown |
+| Reject | "Missing null check on config.apiUrl" | Config loaded at startup with schema validation (see config.ts:12), cannot be null at runtime |
+| Defer | "No rate limiting on POST /api/upload" | Valid concern but internal-only tool currently; track for public exposure |
 
 ### 3. Report Format
 
@@ -202,7 +192,6 @@ Main agent reviews each adversarial finding and assigns verdict:
 ### Re-review Optimization
 
 On fix cycles (re-running after accepted findings were fixed):
-
 - Only pass the FIX diff to adversarial, not the full original diff
 - Verify accepted findings are resolved
 - Check for regression: did the fix introduce new issues?

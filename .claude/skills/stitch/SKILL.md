@@ -17,29 +17,37 @@ metadata:
 
 Generate high-fidelity UI designs from text prompts via Google Stitch. Export Tailwind/HTML, orchestrate design-to-code pipelines with existing UI skills.
 
-**Free tier:** 200 credits/day (standard), 50/day (experimental). Resets at midnight UTC.
+**Free tier:** 400 credits/day + 15 redesign credits/day. Resets at midnight UTC.
 
 ## Setup
 
-### Required
+### 1. API Key
+
+Get an API key at https://stitch.withgoogle.com → Settings → API Keys.
+
+Add `STITCH_API_KEY=sk_...` to `~/.claude/.env` (or `~/.claude/skills/.env`).
+
+Running `install.sh` auto-adds the placeholder if missing — just fill in the value.
+
+### 2. Install SDK
 
 ```bash
-# Get API key at https://stitch.withgoogle.com → Settings → API Keys
-export STITCH_API_KEY="sk_..."
+cd ~/.claude/skills/stitch/scripts && npm install
 ```
 
-Add to `.env` or `.claude/.env`.
+Or run `~/.claude/skills/install.sh` which handles this automatically.
 
-### Optional
+### 3. Optional
 
 ```bash
-export STITCH_PROJECT_ID="my-project"    # Default project (auto-creates if unset)
-export STITCH_QUOTA_LIMIT="200"          # Override daily limit
+# In ~/.claude/.env
+STITCH_PROJECT_ID="my-project"    # Default project (auto-creates "claudekit-default" if unset)
+STITCH_QUOTA_LIMIT="200"          # Override daily limit
 ```
 
-### MCP Server (recommended)
+### 4. MCP Server (optional)
 
-Add to `.claude/.mcp.json` for native design context in Claude Code:
+Add to `~/.claude/.mcp.json` for native design context in Claude Code:
 
 ```json
 {
@@ -54,12 +62,6 @@ Add to `.claude/.mcp.json` for native design context in Claude Code:
 ```
 
 See `references/stitch-mcp-setup.md` for alternative options (gcloud, auto-installer).
-
-### Install SDK
-
-```bash
-cd .claude/skills/stitch/scripts && npm install
-```
 
 ## Quick Start
 
@@ -81,7 +83,7 @@ npx tsx scripts/stitch-export.ts <screen-id> --format all --output ./stitch-expo
 Generate UI design from text prompt.
 
 ```bash
-npx tsx scripts/stitch-generate.ts "<prompt>" [--project <id>] [--device mobile|desktop|tablet] [--variants <count>]
+npx tsx scripts/stitch-generate.ts "<prompt>" [--project <id>] [--device MOBILE|DESKTOP|TABLET] [--variants <count>]
 ```
 
 Returns: screen ID, preview image URL. With `--variants`: additional design alternatives.
@@ -95,7 +97,6 @@ npx tsx scripts/stitch-export.ts <screen-id> [--format html|image|all] [--output
 ```
 
 Outputs:
-
 - `design.html` — Semantic HTML with Tailwind CSS classes
 - `design.png` — Screenshot of the design
 - `DESIGN.md` — Agent-readable design spec (colors, typography, spacing, components)
@@ -144,7 +145,7 @@ See `references/design-to-code-pipeline.md` for detailed patterns and examples.
 
 ## Quota Management
 
-- 200 credits/day (standard mode), resets at midnight UTC
+- 400 credits/day + 15 redesign/day, resets at midnight UTC
 - Local tracking via `~/.claudekit/.stitch-quota.json`
 - Warns when remaining credits < 20%
 - **Fallback:** When exhausted, use `ck:ui-ux-pro-max` for text-based design generation
@@ -162,9 +163,9 @@ See `references/quota-management.md` for strategies.
 
 ## References
 
-| Topic             | File                                    |
-| ----------------- | --------------------------------------- |
-| SDK API           | `references/stitch-sdk-api.md`          |
-| MCP Setup         | `references/stitch-mcp-setup.md`        |
+| Topic | File |
+|-------|------|
+| SDK API | `references/stitch-sdk-api.md` |
+| MCP Setup | `references/stitch-mcp-setup.md` |
 | Pipeline Patterns | `references/design-to-code-pipeline.md` |
-| Quota Strategy    | `references/quota-management.md`        |
+| Quota Strategy | `references/quota-management.md` |

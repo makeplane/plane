@@ -1,7 +1,6 @@
 # Helm Advanced - Templates & Hooks
 
 ## Template Variables
-
 ```yaml
 # templates/deployment.yaml
 apiVersion: apps/v1
@@ -22,7 +21,6 @@ spec:
 ```
 
 ## Helper Templates
-
 ```yaml
 # templates/_helpers.tpl
 {{- define "mychart.fullname" -}}
@@ -36,7 +34,6 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 ```
 
 ## Hooks
-
 ```yaml
 apiVersion: batch/v1
 kind: Job
@@ -49,15 +46,14 @@ spec:
   template:
     spec:
       containers:
-        - name: post-install
-          command: ["/bin/sh", "-c", "echo 'Done'"]
+      - name: post-install
+        command: ["/bin/sh", "-c", "echo 'Done'"]
       restartPolicy: Never
 ```
 
 Hook types: `pre-install`, `post-install`, `pre-upgrade`, `post-upgrade`
 
 ## Packaging
-
 ```bash
 helm package mychart
 helm repo index . --url https://charts.example.com
@@ -68,12 +64,12 @@ helm install myapp myrepo/mychart
 
 ## Commands
 
-| Command          | Purpose  |
-| ---------------- | -------- |
-| `helm create`    | Create   |
-| `helm lint`      | Validate |
-| `helm template`  | Render   |
-| `helm install`   | Deploy   |
-| `helm upgrade`   | Update   |
-| `helm rollback`  | Revert   |
-| `helm uninstall` | Remove   |
+| Command | Purpose |
+|---------|---------|
+| `helm create` | Create |
+| `helm lint` | Validate |
+| `helm template` | Render |
+| `helm install` | Deploy |
+| `helm upgrade` | Update |
+| `helm rollback` | Revert |
+| `helm uninstall` | Remove |

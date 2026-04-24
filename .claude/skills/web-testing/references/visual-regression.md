@@ -3,22 +3,22 @@
 ## Playwright Screenshot Comparison
 
 ```typescript
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
-test("homepage visual", async ({ page }) => {
-  await page.goto("http://localhost:3000");
-  await expect(page).toHaveScreenshot("homepage.png");
+test('homepage visual', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await expect(page).toHaveScreenshot('homepage.png');
 });
 
-test("component visual", async ({ page }) => {
-  await page.goto("http://localhost:3000");
-  const header = page.locator("header");
-  await expect(header).toHaveScreenshot("header.png");
+test('component visual', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  const header = page.locator('header');
+  await expect(header).toHaveScreenshot('header.png');
 });
 
-test("with threshold", async ({ page }) => {
-  await page.goto("http://localhost:3000");
-  await expect(page).toHaveScreenshot("page.png", {
+test('with threshold', async ({ page }) => {
+  await page.goto('http://localhost:3000');
+  await expect(page).toHaveScreenshot('page.png', {
     maxDiffPixels: 100,
     maxDiffPixelRatio: 0.01,
   });
@@ -34,8 +34,8 @@ export default defineConfig({
     toHaveScreenshot: { maxDiffPixels: 50, threshold: 0.2 },
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile", use: { ...devices["iPhone 12"] } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'mobile', use: { ...devices['iPhone 12'] } },
   ],
 });
 ```
@@ -64,11 +64,11 @@ npx playwright test visual.spec.ts -u         # Update specific
 
 ## Third-Party Tools
 
-| Tool       | Use Case                              |
-| ---------- | ------------------------------------- |
-| Percy      | Cloud-based, BrowserStack integration |
-| Chromatic  | Storybook visual testing              |
-| Playwright | Built-in, no vendor lock-in           |
+| Tool | Use Case |
+|------|----------|
+| Percy | Cloud-based, BrowserStack integration |
+| Chromatic | Storybook visual testing |
+| Playwright | Built-in, no vendor lock-in |
 
 ## CI Integration
 
@@ -84,9 +84,9 @@ npx playwright test visual.spec.ts -u         # Update specific
 
 ## Visual vs Accessibility
 
-| Aspect  | Visual         | Accessibility  |
-| ------- | -------------- | -------------- |
+| Aspect | Visual | Accessibility |
+|--------|--------|---------------|
 | Catches | Layout, colors | Semantic, ARIA |
-| Method  | Pixel diff     | DOM analysis   |
+| Method | Pixel diff | DOM analysis |
 
 **Use both**: Visual misses semantic issues, a11y misses layout bugs.

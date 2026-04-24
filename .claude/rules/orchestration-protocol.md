@@ -9,7 +9,6 @@ When spawning subagents via Task tool, **ALWAYS** include in prompt:
 3. **Plans Path**: `{work_context}/plans/` for that project
 
 **Example:**
-
 ```
 Task prompt: "Fix parser bug.
 Work context: /path/to/project-b
@@ -22,18 +21,14 @@ Plans: /path/to/project-b/plans/"
 ---
 
 #### Sequential Chaining
-
 Chain subagents when tasks have dependencies or require outputs from previous steps:
-
 - **Planning → Implementation → Simplification → Testing → Review**: Use for feature development (tests verify simplified code)
 - **Research → Design → Code → Documentation**: Use for new system components
 - Each agent completes fully before the next begins
 - Pass context and outputs between agents in the chain
 
 #### Parallel Execution
-
 Spawn multiple subagents simultaneously for independent tasks:
-
 - **Code + Tests + Docs**: When implementing separate, non-conflicting components
 - **Multiple Feature Branches**: Different agents working on isolated features
 - **Cross-platform Development**: iOS and Android specific implementations
@@ -46,12 +41,12 @@ Spawn multiple subagents simultaneously for independent tasks:
 
 Subagents MUST report one of these statuses when completing work:
 
-| Status                 | Meaning                        | Controller Action                                                             |
-| ---------------------- | ------------------------------ | ----------------------------------------------------------------------------- |
-| **DONE**               | Task completed successfully    | Proceed to next step (review, next task)                                      |
-| **DONE_WITH_CONCERNS** | Completed but flagged doubts   | Read concerns → address if correctness/scope issue → proceed if observational |
-| **BLOCKED**            | Cannot complete task           | Assess blocker → provide context / break task / escalate to user              |
-| **NEEDS_CONTEXT**      | Missing information to proceed | Provide missing context → re-dispatch                                         |
+| Status | Meaning | Controller Action |
+|--------|---------|-------------------|
+| **DONE** | Task completed successfully | Proceed to next step (review, next task) |
+| **DONE_WITH_CONCERNS** | Completed but flagged doubts | Read concerns → address if correctness/scope issue → proceed if observational |
+| **BLOCKED** | Cannot complete task | Assess blocker → provide context / break task / escalate to user |
+| **NEEDS_CONTEXT** | Missing information to proceed | Provide missing context → re-dispatch |
 
 ### Handling Rules
 
@@ -101,12 +96,12 @@ Reports: [reports path]
 
 ### Anti-Patterns
 
-| Bad                                   | Good                                                           |
-| ------------------------------------- | -------------------------------------------------------------- |
-| "Continue from where we left off"     | "Implement X feature per spec in phase-02.md"                  |
-| "Fix the issues we discussed"         | "Fix null check in auth.ts:45, root cause: missing validation" |
-| "Look at the codebase and figure out" | "Read src/api/routes.ts and add POST /users endpoint"          |
-| Passing 50+ lines of conversation     | 5-line task summary with file paths                            |
+| Bad | Good |
+|-----|------|
+| "Continue from where we left off" | "Implement X feature per spec in phase-02.md" |
+| "Fix the issues we discussed" | "Fix null check in auth.ts:45, root cause: missing validation" |
+| "Look at the codebase and figure out" | "Read src/api/routes.ts and add POST /users endpoint" |
+| Passing 50+ lines of conversation | 5-line task summary with file paths |
 
 ---
 

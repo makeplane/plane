@@ -28,7 +28,7 @@
 
 ```yaml
 ---
-name: kebab-case-name # optional namespace: ck:kebab-case-name
+name: kebab-case-name  # optional namespace: ck:kebab-case-name
 description: Under 200 chars, specific triggers and use cases
 license: Optional
 version: Optional
@@ -65,7 +65,6 @@ See `references/script-quality-criteria.md` for full criteria.
 ## Progressive Disclosure
 
 Three-level loading for context efficiency:
-
 1. **Metadata** (~200 chars) — always in context
 2. **SKILL.md body** (<300 lines) — when skill triggers
 3. **Bundled resources** — as needed (scripts: unlimited, execute without loading)
@@ -75,4 +74,4 @@ Three-level loading for context efficiency:
 - **Imperative form:** "To accomplish X, do Y"
 - **Third-person metadata:** "This skill should be used when..."
 - **Concise:** Sacrifice grammar for brevity in references
-- **Practical:** Teach _how_ to do tasks, not _what_ tools are
+- **Practical:** Teach *how* to do tasks, not *what* tools are

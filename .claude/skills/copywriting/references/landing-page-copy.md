@@ -33,7 +33,6 @@ Get [result]. [Handle objection].
 ```
 
 **Examples:**
-
 - Write emails that convert without sounding salesy
 - The fastest way to build landing pages
 - Double your leads in 30 days
@@ -49,7 +48,6 @@ The [only/first/fastest] [thing] that [benefit]
 ```
 
 **Examples:**
-
 - Our AI helps marketers write copy 10x faster so they can focus on strategy
 - Even if you've never written a sales email before
 - Without hiring expensive copywriters
@@ -57,20 +55,17 @@ The [only/first/fastest] [thing] that [benefit]
 ## Social Proof Section
 
 ### Testimonials
-
 ```
 "[Result achieved] in [timeframe]. [Emotional reaction]."
 — [Name], [Title] at [Company]
 ```
 
 ### Stats Bar
-
 ```
 [10,000+] customers | [4.9/5] rating | [50M+] emails sent
 ```
 
 ### Logo Cloud
-
 ```
 "Trusted by teams at [Logo1] [Logo2] [Logo3]..."
 ```
@@ -78,7 +73,6 @@ The [only/first/fastest] [thing] that [benefit]
 ## Benefits Section
 
 Use this structure:
-
 ```
 [Benefit headline]
 [1-2 sentence explanation]
@@ -87,10 +81,10 @@ Use this structure:
 
 **Write benefits, not features:**
 
-| Feature              | Benefit                       |
-| -------------------- | ----------------------------- |
-| "AI-powered"         | "Writes copy in seconds"      |
-| "Cloud-based"        | "Access from anywhere"        |
+| Feature | Benefit |
+|---------|---------|
+| "AI-powered" | "Writes copy in seconds" |
+| "Cloud-based" | "Access from anywhere" |
 | "Advanced analytics" | "Know exactly what's working" |
 
 ## How It Works Section
@@ -102,7 +96,6 @@ Step 3: [Action verb] → [Outcome]
 ```
 
 **Example:**
-
 ```
 Step 1: Connect your data → One-click setup
 Step 2: Choose your template → AI writes your copy
@@ -127,7 +120,6 @@ Address objections disguised as questions:
 ## CTA Section Patterns
 
 ### Primary CTA
-
 ```
 [Action verb] + [benefit]
 Get Started Free
@@ -136,7 +128,6 @@ Build Your First [Thing]
 ```
 
 ### With Risk Reversal
-
 ```
 [CTA button]
 No credit card required. Cancel anytime.
@@ -144,7 +135,6 @@ No credit card required. Cancel anytime.
 ```
 
 ### With Urgency
-
 ```
 [CTA button]
 Limited time: Save 40% (ends Friday)

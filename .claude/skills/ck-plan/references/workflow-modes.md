@@ -4,19 +4,18 @@
 
 When no flag specified, analyze task and pick mode:
 
-| Signal                                    | Mode     | Rationale                |
-| ----------------------------------------- | -------- | ------------------------ |
-| Simple task, clear scope, no unknowns     | fast     | Skip research overhead   |
-| Complex task, unfamiliar domain, new tech | hard     | Research needed          |
-| 3+ independent features/layers/modules    | parallel | Enable concurrent agents |
-| Ambiguous approach, multiple valid paths  | two      | Compare alternatives     |
+| Signal | Mode | Rationale |
+|--------|------|-----------|
+| Simple task, clear scope, no unknowns | fast | Skip research overhead |
+| Complex task, unfamiliar domain, new tech | hard | Research needed |
+| 3+ independent features/layers/modules | parallel | Enable concurrent agents |
+| Ambiguous approach, multiple valid paths | two | Compare alternatives |
 
 Use `AskUserQuestion` if detection is uncertain.
 
 ## Scope Challenge Integration
 
 Step 0 (Scope Challenge, see `scope-challenge.md`) runs before mode detection and can influence it:
-
 - If user selects **EXPANSION** → auto-suggest `--hard` or `--two`
 - If user selects **REDUCTION** → auto-suggest `--fast`
 - If user selects **HOLD** → proceed with auto-detected mode
@@ -65,7 +64,6 @@ Research → Scout → Plan with file ownership → Red Team → Validate → Hy
 7. **Context reminder:** `/ck:cook --parallel {absolute-plan-path}/plan.md`
 
 ### Parallel Phase Requirements
-
 - Each phase self-contained, no runtime deps on other phases
 - Clear file boundaries — each file modified in ONE phase only
 - Group by: architectural layer, feature domain, or technology stack
@@ -87,12 +85,12 @@ Research → Scout → Plan 2 approaches → Compare → Hydrate Tasks.
 
 ## Task Hydration Per Mode
 
-| Mode     | Task Granularity            | Dependency Pattern                |
-| -------- | --------------------------- | --------------------------------- |
-| fast     | Phase-level only            | Sequential chain                  |
-| hard     | Phase + critical steps      | Sequential + step deps            |
-| parallel | Phase + steps + ownership   | Parallel groups + sequential deps |
-| two      | After user selects approach | Sequential chain                  |
+| Mode | Task Granularity | Dependency Pattern |
+|------|------------------|--------------------|
+| fast | Phase-level only | Sequential chain |
+| hard | Phase + critical steps | Sequential + step deps |
+| parallel | Phase + steps + ownership | Parallel groups + sequential deps |
+| two | After user selects approach | Sequential chain |
 
 All modes: See `task-management.md` for TaskCreate patterns and metadata.
 
@@ -103,13 +101,11 @@ Adversarial review that spawns hostile reviewers to find flaws before validation
 **Available in:** hard, parallel, two modes. **Skipped in:** fast mode.
 
 **Invocation:** Run `/ck:plan red-team {plan-directory-path}`.
-
 ```
 /ck:plan red-team {plan-directory-path}
 ```
 
 **Sequence:** Red team runs BEFORE validation because:
-
 1. Red team may change the plan (added risks, removed sections, new constraints)
 2. Validation should confirm the FINAL plan, not a pre-review draft
 3. Validating first then red-teaming would invalidate validation answers
@@ -118,14 +114,13 @@ Adversarial review that spawns hostile reviewers to find flaws before validation
 
 Check `## Plan Context` → `Validation: mode=X, questions=MIN-MAX`:
 
-| Mode     | Behavior                                                           |
-| -------- | ------------------------------------------------------------------ |
+| Mode | Behavior |
+|------|----------|
 | `prompt` | Ask: "Validate this plan with interview?" → Yes (Recommended) / No |
-| `auto`   | Run `/ck:plan validate {plan-directory-path}`                      |
-| `off`    | Skip validation                                                    |
+| `auto` | Run `/ck:plan validate {plan-directory-path}` |
+| `off` | Skip validation |
 
 **Invocation (when prompt mode, user says yes):** Run:
-
 ```
 /ck:plan validate {plan-directory-path}
 ```
@@ -136,12 +131,12 @@ Check `## Plan Context` → `Validation: mode=X, questions=MIN-MAX`:
 
 After plan creation, MUST output with **actual absolute path**:
 
-| Mode     | Cook Command                         |
-| -------- | ------------------------------------ |
-| fast     | `/ck:cook --auto {path}/plan.md`     |
-| hard     | `/ck:cook {path}/plan.md`            |
+| Mode | Cook Command |
+|------|-----------------------------|
+| fast | `/ck:cook --auto {path}/plan.md` |
+| hard | `/ck:cook {path}/plan.md` |
 | parallel | `/ck:cook --parallel {path}/plan.md` |
-| two      | `/ck:cook {path}/plan.md`            |
+| two | `/ck:cook {path}/plan.md` |
 
 > **Best Practice:** Run `/clear` before implementing to reduce planning-context carryover.
 > Then run the cook command above.
@@ -152,7 +147,6 @@ This reminder is **NON-NEGOTIABLE** — always output after presenting the plan.
 ## Pre-Creation Check
 
 Check `## Plan Context` in injected context:
-
 - **"Plan: {path}"** → Ask "Continue with existing plan? [Y/n]"
 - **"Suggested: {path}"** → Branch hint only, ask if activate or create new
 - **"Plan: none"** → Create new using `Plan dir:` from `## Naming`

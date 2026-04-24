@@ -5,7 +5,7 @@ Multi-container application orchestration.
 ## Basic Structure
 
 ```yaml
-version: "3.8"
+version: '3.8'
 
 services:
   web:
@@ -99,7 +99,6 @@ docker compose config
 ## Environment-Specific Configs
 
 **compose.yml (base):**
-
 ```yaml
 services:
   web:
@@ -109,12 +108,11 @@ services:
 ```
 
 **compose.override.yml (dev, auto-loaded):**
-
 ```yaml
 services:
   web:
     volumes:
-      - ./src:/app/src # Live reload
+      - ./src:/app/src  # Live reload
     environment:
       - NODE_ENV=development
       - DEBUG=true
@@ -122,7 +120,6 @@ services:
 ```
 
 **compose.prod.yml (production):**
-
 ```yaml
 services:
   web:
@@ -134,12 +131,11 @@ services:
       replicas: 3
       resources:
         limits:
-          cpus: "0.5"
+          cpus: '0.5'
           memory: 512M
 ```
 
 **Usage:**
-
 ```bash
 # Development (uses compose.yml + compose.override.yml)
 docker compose up
@@ -169,10 +165,10 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.5"
+          cpus: '0.5'
           memory: 512M
         reservations:
-          cpus: "0.25"
+          cpus: '0.25'
           memory: 256M
 ```
 
@@ -191,7 +187,6 @@ services:
 ## Environment Variables
 
 **Using .env file:**
-
 ```bash
 # .env
 DATABASE_URL=postgresql://user:pass@db:5432/app
@@ -234,7 +229,6 @@ docker compose run --rm -v app_data:/data -v $(pwd):/backup \
 ## Common Stacks
 
 ### Web + Database + Cache
-
 ```yaml
 services:
   web:
@@ -249,7 +243,6 @@ services:
 ```
 
 ### Microservices
-
 ```yaml
 services:
   api-gateway:

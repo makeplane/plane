@@ -5,48 +5,46 @@ Production patterns for managing orders across multiple payment providers (Polar
 ## Order Schema Design
 
 ### Unified Orders Table
-
 ```typescript
 // db/schema/orders.ts
-import { pgTable, uuid, text, integer, numeric, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, numeric, timestamp, boolean } from 'drizzle-orm/pg-core';
 
-export const orders = pgTable("orders", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").references(() => users.id),
-  email: text("email").notNull(),
+export const orders = pgTable('orders', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id),
+  email: text('email').notNull(),
 
   // Product info
-  productType: text("product_type").notNull(), // 'engineer_kit', 'marketing_kit', 'combo', 'team_*'
-  quantity: integer("quantity").default(1),
+  productType: text('product_type').notNull(), // 'engineer_kit', 'marketing_kit', 'combo', 'team_*'
+  quantity: integer('quantity').default(1),
 
   // Pricing (stored in provider's currency)
-  amount: integer("amount").notNull(), // Final amount after discounts
-  originalAmount: integer("original_amount"), // Before any discounts
-  currency: text("currency").default("USD"), // 'USD' or 'VND'
+  amount: integer('amount').notNull(),           // Final amount after discounts
+  originalAmount: integer('original_amount'),    // Before any discounts
+  currency: text('currency').default('USD'),     // 'USD' or 'VND'
 
   // Status
-  status: text("status").default("pending"), // pending, completed, failed, refunded
+  status: text('status').default('pending'),     // pending, completed, failed, refunded
 
   // Provider info
-  paymentProvider: text("payment_provider").notNull(), // 'polar' or 'sepay'
-  paymentId: text("payment_id"), // External payment/transaction ID
+  paymentProvider: text('payment_provider').notNull(), // 'polar' or 'sepay'
+  paymentId: text('payment_id'),                 // External payment/transaction ID
 
   // Referral tracking
-  referredBy: uuid("referred_by").references(() => users.id),
-  discountAmount: integer("discount_amount").default(0),
-  discountRate: numeric("discount_rate", { precision: 5, scale: 2 }),
+  referredBy: uuid('referred_by').references(() => users.id),
+  discountAmount: integer('discount_amount').default(0),
+  discountRate: numeric('discount_rate', { precision: 5, scale: 2 }),
 
   // Audit trail (JSON)
-  metadata: text("metadata"),
+  metadata: text('metadata'),
 
   // Timestamps
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 ```
 
 ### Provider-Specific Metadata
-
 ```typescript
 // Polar order metadata
 interface PolarOrderMetadata {
@@ -59,7 +57,7 @@ interface PolarOrderMetadata {
   githubUsername: string;
   polarDiscountId?: string;
   polarDiscountSynced?: boolean;
-  polarDiscountSyncAction?: "decremented" | "deleted" | "already_deleted";
+  polarDiscountSyncAction?: 'decremented' | 'deleted' | 'already_deleted';
   polarDiscountSyncedAt?: string;
   isTeamPurchase?: boolean;
   teamId?: string;
@@ -70,7 +68,7 @@ interface SepayOrderMetadata {
   originalAmount: number;
   couponCode?: string;
   couponDiscountAmount?: number;
-  couponId?: string; // For Polar discount sync
+  couponId?: string;              // For Polar discount sync
   referralCode?: string;
   referralDiscountAmount?: number;
   referrerId?: string;
@@ -90,19 +88,18 @@ interface SepayOrderMetadata {
 ## Currency Conversion
 
 ### Multi-Layer Fallback Architecture
-
 ```typescript
 // lib/currency.ts
 const EXCHANGE_RATE_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 const FALLBACK_RATES = {
-  VND_TO_USD: 24500, // Conservative estimate
+  VND_TO_USD: 24500,  // Conservative estimate
   USD_TO_VND: 24500,
 };
 
 interface ExchangeRateCache {
   rates: { VND: number; USD: number };
   timestamp: number;
-  source: "api" | "cached" | "expired" | "fallback";
+  source: 'api' | 'cached' | 'expired' | 'fallback';
 }
 
 let rateCache: ExchangeRateCache | null = null;
@@ -112,35 +109,37 @@ export async function getExchangeRates(): Promise<ExchangeRateCache> {
 
   // Layer 1: Fresh cache (< 1 hour)
   if (rateCache && now - rateCache.timestamp < EXCHANGE_RATE_CACHE_TTL) {
-    return { ...rateCache, source: "cached" };
+    return { ...rateCache, source: 'cached' };
   }
 
   // Layer 2: Live API
   try {
-    const response = await fetch("https://api.exchangerate-api.com/v4/latest/USD", {
-      signal: AbortSignal.timeout(5000),
-    });
+    const response = await fetch(
+      'https://api.exchangerate-api.com/v4/latest/USD',
+      { signal: AbortSignal.timeout(5000) }
+    );
     const data = await response.json();
 
     rateCache = {
       rates: { VND: data.rates.VND, USD: 1 },
       timestamp: now,
-      source: "api",
+      source: 'api',
     };
     return rateCache;
+
   } catch (error) {
-    console.warn("Exchange rate API failed:", error);
+    console.warn('Exchange rate API failed:', error);
 
     // Layer 3: Expired cache (better than nothing)
     if (rateCache) {
-      return { ...rateCache, source: "expired" };
+      return { ...rateCache, source: 'expired' };
     }
 
     // Layer 4: Hardcoded fallback
     return {
       rates: { VND: FALLBACK_RATES.VND_TO_USD, USD: 1 },
       timestamp: now,
-      source: "fallback",
+      source: 'fallback',
     };
   }
 }
@@ -167,7 +166,6 @@ export async function convertUsdToVnd(usdCents: number): Promise<{
 ```
 
 ### Normalizing Revenue to USD
-
 ```typescript
 // For reporting/dashboard - normalize all revenue to USD cents
 export async function normalizeOrderToUsd(order: Order): Promise<{
@@ -175,17 +173,19 @@ export async function normalizeOrderToUsd(order: Order): Promise<{
   originalAmountUsdCents: number;
   conversionSource: string;
 }> {
-  if (order.currency === "USD") {
+  if (order.currency === 'USD') {
     return {
       amountUsdCents: order.amount,
       originalAmountUsdCents: order.originalAmount || order.amount,
-      conversionSource: "native",
+      conversionSource: 'native',
     };
   }
 
   // VND order
   const conversion = await convertVndToUsd(order.amount);
-  const originalConversion = order.originalAmount ? await convertVndToUsd(order.originalAmount) : conversion;
+  const originalConversion = order.originalAmount
+    ? await convertVndToUsd(order.originalAmount)
+    : conversion;
 
   return {
     amountUsdCents: conversion.usdCents,
@@ -198,49 +198,41 @@ export async function normalizeOrderToUsd(order: Order): Promise<{
 ## Commission System
 
 ### Commission Schema
-
 ```typescript
 // db/schema/commissions.ts
-export const commissions = pgTable("commissions", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  orderId: uuid("order_id")
-    .references(() => orders.id)
-    .notNull(),
-  referrerId: uuid("referrer_id")
-    .references(() => users.id)
-    .notNull(),
-  referredUserId: uuid("referred_user_id")
-    .references(() => users.id)
-    .notNull(),
-  referralCodeId: uuid("referral_code_id").references(() => referralCodes.id),
+export const commissions = pgTable('commissions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  orderId: uuid('order_id').references(() => orders.id).notNull(),
+  referrerId: uuid('referrer_id').references(() => users.id).notNull(),
+  referredUserId: uuid('referred_user_id').references(() => users.id).notNull(),
+  referralCodeId: uuid('referral_code_id').references(() => referralCodes.id),
 
   // Amount in original currency
-  orderAmount: integer("order_amount").notNull(), // Base amount for commission
-  orderCurrency: text("order_currency").notNull(), // 'USD' or 'VND'
+  orderAmount: integer('order_amount').notNull(),      // Base amount for commission
+  orderCurrency: text('order_currency').notNull(),     // 'USD' or 'VND'
 
   // Commission calculation
-  commissionRate: numeric("commission_rate", { precision: 5, scale: 4 }).default("0.20"), // 20%
-  commissionAmount: integer("commission_amount").notNull(),
-  commissionCurrency: text("commission_currency").notNull(),
+  commissionRate: numeric('commission_rate', { precision: 5, scale: 4 }).default('0.20'), // 20%
+  commissionAmount: integer('commission_amount').notNull(),
+  commissionCurrency: text('commission_currency').notNull(),
 
   // Normalized USD (for tier tracking)
-  orderAmountUsdCents: integer("order_amount_usd_cents"),
-  commissionAmountUsdCents: integer("commission_amount_usd_cents"),
-  exchangeRateSource: text("exchange_rate_source"),
+  orderAmountUsdCents: integer('order_amount_usd_cents'),
+  commissionAmountUsdCents: integer('commission_amount_usd_cents'),
+  exchangeRateSource: text('exchange_rate_source'),
 
   // Status
-  status: text("status").default("pending"), // pending, approved, paid, cancelled
+  status: text('status').default('pending'),  // pending, approved, paid, cancelled
 
   // Timestamps
-  createdAt: timestamp("created_at").defaultNow(),
-  approvedAt: timestamp("approved_at"),
-  paidAt: timestamp("paid_at"),
-  cancelledAt: timestamp("cancelled_at"),
+  createdAt: timestamp('created_at').defaultNow(),
+  approvedAt: timestamp('approved_at'),
+  paidAt: timestamp('paid_at'),
+  cancelledAt: timestamp('cancelled_at'),
 });
 ```
 
 ### Creating Commission (Multi-Currency)
-
 ```typescript
 // lib/commissions.ts
 export async function createCommission(params: {
@@ -249,10 +241,10 @@ export async function createCommission(params: {
   referredUserId: string;
   referralCodeId: string;
   orderAmount: number;
-  orderCurrency: "USD" | "VND";
+  orderCurrency: 'USD' | 'VND';
   commissionRate?: number;
 }): Promise<Commission> {
-  const rate = params.commissionRate || 0.2; // Default 20%
+  const rate = params.commissionRate || 0.20; // Default 20%
 
   // Calculate commission in original currency
   const commissionAmount = Math.round(params.orderAmount * rate);
@@ -262,10 +254,10 @@ export async function createCommission(params: {
   let commissionAmountUsdCents: number;
   let exchangeRateSource: string;
 
-  if (params.orderCurrency === "USD") {
+  if (params.orderCurrency === 'USD') {
     orderAmountUsdCents = params.orderAmount;
     commissionAmountUsdCents = commissionAmount;
-    exchangeRateSource = "native";
+    exchangeRateSource = 'native';
   } else {
     const conversion = await convertVndToUsd(params.orderAmount);
     orderAmountUsdCents = conversion.usdCents;
@@ -273,24 +265,21 @@ export async function createCommission(params: {
     exchangeRateSource = conversion.source;
   }
 
-  const [commission] = await db
-    .insert(commissions)
-    .values({
-      orderId: params.orderId,
-      referrerId: params.referrerId,
-      referredUserId: params.referredUserId,
-      referralCodeId: params.referralCodeId,
-      orderAmount: params.orderAmount,
-      orderCurrency: params.orderCurrency,
-      commissionRate: String(rate),
-      commissionAmount,
-      commissionCurrency: params.orderCurrency,
-      orderAmountUsdCents,
-      commissionAmountUsdCents,
-      exchangeRateSource,
-      status: "pending",
-    })
-    .returning();
+  const [commission] = await db.insert(commissions).values({
+    orderId: params.orderId,
+    referrerId: params.referrerId,
+    referredUserId: params.referredUserId,
+    referralCodeId: params.referralCodeId,
+    orderAmount: params.orderAmount,
+    orderCurrency: params.orderCurrency,
+    commissionRate: String(rate),
+    commissionAmount,
+    commissionCurrency: params.orderCurrency,
+    orderAmountUsdCents,
+    commissionAmountUsdCents,
+    exchangeRateSource,
+    status: 'pending',
+  }).returning();
 
   // Update referrer's tier based on USD revenue
   await updateReferrerTier(params.referrerId, orderAmountUsdCents);
@@ -300,18 +289,23 @@ export async function createCommission(params: {
 ```
 
 ### Referrer Tier System
-
 ```typescript
 // lib/referrals.ts
 const TIER_THRESHOLDS = [
-  { tier: "bronze", minRevenue: 0, commissionRate: 0.2 },
-  { tier: "silver", minRevenue: 50000, commissionRate: 0.25 }, // $500
-  { tier: "gold", minRevenue: 150000, commissionRate: 0.3 }, // $1,500
-  { tier: "platinum", minRevenue: 500000, commissionRate: 0.35 }, // $5,000
+  { tier: 'bronze', minRevenue: 0, commissionRate: 0.20 },
+  { tier: 'silver', minRevenue: 50000, commissionRate: 0.25 },     // $500
+  { tier: 'gold', minRevenue: 150000, commissionRate: 0.30 },      // $1,500
+  { tier: 'platinum', minRevenue: 500000, commissionRate: 0.35 },  // $5,000
 ];
 
-export async function updateReferrerTier(referrerId: string, newRevenueUsdCents: number): Promise<void> {
-  const referrer = await db.select().from(users).where(eq(users.id, referrerId)).limit(1);
+export async function updateReferrerTier(
+  referrerId: string,
+  newRevenueUsdCents: number
+): Promise<void> {
+  const referrer = await db.select()
+    .from(users)
+    .where(eq(users.id, referrerId))
+    .limit(1);
 
   if (!referrer[0]) return;
 
@@ -319,8 +313,8 @@ export async function updateReferrerTier(referrerId: string, newRevenueUsdCents:
   const totalRevenue = currentRevenue + newRevenueUsdCents;
 
   // Determine new tier
-  let newTier = "bronze";
-  let newRate = 0.2;
+  let newTier = 'bronze';
+  let newRate = 0.20;
 
   for (const threshold of TIER_THRESHOLDS) {
     if (totalRevenue >= threshold.minRevenue) {
@@ -331,8 +325,7 @@ export async function updateReferrerTier(referrerId: string, newRevenueUsdCents:
 
   // Update if tier changed
   if (referrer[0].referralTier !== newTier) {
-    await db
-      .update(users)
+    await db.update(users)
       .set({
         referralTier: newTier,
         referralCommissionRate: String(newRate),
@@ -342,16 +335,13 @@ export async function updateReferrerTier(referrerId: string, newRevenueUsdCents:
       .where(eq(users.id, referrerId));
 
     // Send tier upgrade notification
-    if (
-      TIER_THRESHOLDS.findIndex((t) => t.tier === newTier) >
-      TIER_THRESHOLDS.findIndex((t) => t.tier === referrer[0].referralTier)
-    ) {
+    if (TIER_THRESHOLDS.findIndex(t => t.tier === newTier) >
+        TIER_THRESHOLDS.findIndex(t => t.tier === referrer[0].referralTier)) {
       await sendTierUpgradeEmail(referrerId, newTier, newRate);
     }
   } else {
     // Just update revenue
-    await db
-      .update(users)
+    await db.update(users)
       .set({
         referralRevenueUsdCents: totalRevenue,
         updatedAt: new Date(),
@@ -364,16 +354,20 @@ export async function updateReferrerTier(referrerId: string, newRevenueUsdCents:
 ## Revenue Tracking
 
 ### Combined Provider Revenue
-
 ```typescript
 // lib/revenue.ts
-export async function getTotalRevenue(options?: { startDate?: Date; endDate?: Date }): Promise<{
+export async function getTotalRevenue(options?: {
+  startDate?: Date;
+  endDate?: Date;
+}): Promise<{
   totalUsdCents: number;
   byProvider: { polar: number; sepay: number };
   orderCount: number;
   averageOrderValueCents: number;
 }> {
-  let query = db.select().from(orders).where(eq(orders.status, "completed"));
+  let query = db.select()
+    .from(orders)
+    .where(eq(orders.status, 'completed'));
 
   if (options?.startDate) {
     query = query.where(gte(orders.createdAt, options.startDate));
@@ -393,7 +387,7 @@ export async function getTotalRevenue(options?: { startDate?: Date; endDate?: Da
 
     totalUsdCents += normalized.amountUsdCents;
 
-    if (order.paymentProvider === "polar") {
+    if (order.paymentProvider === 'polar') {
       polarUsdCents += normalized.amountUsdCents;
     } else {
       sepayUsdCents += normalized.amountUsdCents;
@@ -404,24 +398,25 @@ export async function getTotalRevenue(options?: { startDate?: Date; endDate?: Da
     totalUsdCents,
     byProvider: { polar: polarUsdCents, sepay: sepayUsdCents },
     orderCount: completedOrders.length,
-    averageOrderValueCents: completedOrders.length > 0 ? Math.round(totalUsdCents / completedOrders.length) : 0,
+    averageOrderValueCents: completedOrders.length > 0
+      ? Math.round(totalUsdCents / completedOrders.length)
+      : 0,
   };
 }
 ```
 
 ### Maintainer Revenue Calculation
-
 ```typescript
 // lib/maintainer-revenue.ts
 // Calculate actual payout after fees and costs
 
 interface MaintainerRevenue {
-  grossRevenue: number; // Total received
-  platformFees: number; // Polar/Stripe fees
-  operatingCosts: number; // Proportional costs
-  taxDeduction: number; // 17% tax
-  netPayout: number; // Final amount
-  currency: "USD";
+  grossRevenue: number;      // Total received
+  platformFees: number;      // Polar/Stripe fees
+  operatingCosts: number;    // Proportional costs
+  taxDeduction: number;      // 17% tax
+  netPayout: number;         // Final amount
+  currency: 'USD';
 }
 
 export async function calculateMaintainerRevenue(
@@ -429,17 +424,14 @@ export async function calculateMaintainerRevenue(
   dateRange: { start: Date; end: Date }
 ): Promise<MaintainerRevenue> {
   // Get orders for these products
-  const orders = await db
-    .select()
+  const orders = await db.select()
     .from(orders)
-    .where(
-      and(
-        eq(orders.status, "completed"),
-        inArray(orders.productType, productIds),
-        gte(orders.createdAt, dateRange.start),
-        lte(orders.createdAt, dateRange.end)
-      )
-    );
+    .where(and(
+      eq(orders.status, 'completed'),
+      inArray(orders.productType, productIds),
+      gte(orders.createdAt, dateRange.start),
+      lte(orders.createdAt, dateRange.end)
+    ));
 
   let grossRevenue = 0;
   let platformFees = 0;
@@ -448,7 +440,7 @@ export async function calculateMaintainerRevenue(
     const normalized = await normalizeOrderToUsd(order);
     grossRevenue += normalized.amountUsdCents;
 
-    if (order.paymentProvider === "polar") {
+    if (order.paymentProvider === 'polar') {
       const fees = calculatePolarFees(normalized.amountUsdCents);
       platformFees += fees.totalFee;
     }
@@ -476,7 +468,7 @@ export async function calculateMaintainerRevenue(
     operatingCosts,
     taxDeduction,
     netPayout,
-    currency: "USD",
+    currency: 'USD',
   };
 }
 ```
@@ -484,26 +476,28 @@ export async function calculateMaintainerRevenue(
 ## Refund Handling
 
 ### Unified Refund Flow
-
 ```typescript
 // lib/refunds.ts
 export async function processRefund(
   orderId: string,
   options: { keepAccess?: boolean; reason?: string }
 ): Promise<{ success: boolean; error?: string }> {
-  const order = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+  const order = await db.select()
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
 
   if (!order[0]) {
-    return { success: false, error: "Order not found" };
+    return { success: false, error: 'Order not found' };
   }
 
-  if (order[0].status !== "completed") {
-    return { success: false, error: "Order not refundable" };
+  if (order[0].status !== 'completed') {
+    return { success: false, error: 'Order not refundable' };
   }
 
   try {
     // 1. Process refund with payment provider
-    if (order[0].paymentProvider === "polar") {
+    if (order[0].paymentProvider === 'polar') {
       await polar.orders.refund({ id: order[0].paymentId! });
     } else {
       // SePay: Manual bank transfer refund required
@@ -512,12 +506,11 @@ export async function processRefund(
     }
 
     // 2. Update order status
-    await db
-      .update(orders)
+    await db.update(orders)
       .set({
-        status: "refunded",
+        status: 'refunded',
         metadata: JSON.stringify({
-          ...JSON.parse(order[0].metadata || "{}"),
+          ...JSON.parse(order[0].metadata || '{}'),
           refundedAt: new Date().toISOString(),
           refundReason: options.reason,
           keepAccess: options.keepAccess,
@@ -528,10 +521,9 @@ export async function processRefund(
 
     // 3. Cancel commission (if any)
     if (order[0].referredBy) {
-      await db
-        .update(commissions)
+      await db.update(commissions)
         .set({
-          status: "cancelled",
+          status: 'cancelled',
           cancelledAt: new Date(),
         })
         .where(eq(commissions.orderId, orderId));
@@ -542,18 +534,21 @@ export async function processRefund(
 
     // 4. Revoke access (unless keepAccess)
     if (!options.keepAccess) {
-      const metadata = JSON.parse(order[0].metadata || "{}");
+      const metadata = JSON.parse(order[0].metadata || '{}');
       if (metadata.githubUsername) {
         await revokeGitHubAccess(metadata.githubUsername, order[0].productType);
       }
 
-      await db.update(licenses).set({ isActive: false, revokedAt: new Date() }).where(eq(licenses.orderId, orderId));
+      await db.update(licenses)
+        .set({ isActive: false, revokedAt: new Date() })
+        .where(eq(licenses.orderId, orderId));
     }
 
     return { success: true };
+
   } catch (error) {
-    console.error("Refund failed:", error);
-    return { success: false, error: error instanceof Error ? error.message : "Refund failed" };
+    console.error('Refund failed:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Refund failed' };
   }
 }
 ```
@@ -561,19 +556,18 @@ export async function processRefund(
 ## Webhook Event Tracking
 
 ### Unified Webhook Events Table
-
 ```typescript
 // db/schema/webhook-events.ts
-export const webhookEvents = pgTable("webhook_events", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  provider: text("provider").notNull(), // 'polar' or 'sepay'
-  eventType: text("event_type").notNull(), // Event type/name
-  eventId: text("event_id").notNull().unique(), // Idempotency key
-  payload: text("payload").notNull(), // Raw JSON payload
-  processed: boolean("processed").default(false),
-  processedAt: timestamp("processed_at"),
-  error: text("error"), // Error message if failed
-  createdAt: timestamp("created_at").defaultNow(),
+export const webhookEvents = pgTable('webhook_events', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  provider: text('provider').notNull(),          // 'polar' or 'sepay'
+  eventType: text('event_type').notNull(),       // Event type/name
+  eventId: text('event_id').notNull().unique(),  // Idempotency key
+  payload: text('payload').notNull(),            // Raw JSON payload
+  processed: boolean('processed').default(false),
+  processedAt: timestamp('processed_at'),
+  error: text('error'),                          // Error message if failed
+  createdAt: timestamp('created_at').defaultNow(),
 });
 
 // Partial index for unprocessed events
@@ -582,18 +576,20 @@ export const webhookEvents = pgTable("webhook_events", {
 ```
 
 ### Idempotent Webhook Processing
-
 ```typescript
 // lib/webhooks.ts
 export async function processWebhookIdempotently<T>(
-  provider: "polar" | "sepay",
+  provider: 'polar' | 'sepay',
   eventId: string,
   eventType: string,
   payload: string,
   handler: () => Promise<T>
 ): Promise<{ processed: boolean; result?: T; error?: string }> {
   // Check for duplicate
-  const existing = await db.select().from(webhookEvents).where(eq(webhookEvents.eventId, eventId)).limit(1);
+  const existing = await db.select()
+    .from(webhookEvents)
+    .where(eq(webhookEvents.eventId, eventId))
+    .limit(1);
 
   if (existing.length > 0) {
     return { processed: false }; // Already processed
@@ -612,17 +608,16 @@ export async function processWebhookIdempotently<T>(
   try {
     const result = await handler();
 
-    await db
-      .update(webhookEvents)
+    await db.update(webhookEvents)
       .set({ processed: true, processedAt: new Date() })
       .where(eq(webhookEvents.eventId, eventId));
 
     return { processed: true, result };
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
-    await db
-      .update(webhookEvents)
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    await db.update(webhookEvents)
       .set({
         processed: true,
         processedAt: new Date(),
@@ -638,7 +633,6 @@ export async function processWebhookIdempotently<T>(
 ## Discount Cross-Provider Sync
 
 ### Syncing SePay Usage to Polar
-
 ```typescript
 // lib/polar-discount-sync.ts
 // When a Polar discount is used via SePay, decrement Polar's redemption count
@@ -648,17 +642,20 @@ export async function syncDiscountRedemptionToPolar(
   discountId: string,
   discountCode: string
 ): Promise<{ success: boolean; action: string }> {
-  const order = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
+  const order = await db.select()
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
 
   if (!order[0]) {
-    return { success: false, action: "order_not_found" };
+    return { success: false, action: 'order_not_found' };
   }
 
   const metadata = order[0].metadata ? JSON.parse(order[0].metadata) : {};
 
   // Idempotency check
   if (metadata.polarDiscountSynced) {
-    return { success: true, action: "already_synced" };
+    return { success: true, action: 'already_synced' };
   }
 
   const polar = getPolar();
@@ -668,8 +665,8 @@ export async function syncDiscountRedemptionToPolar(
 
     // Skip if unlimited redemptions
     if (discount.maxRedemptions === null) {
-      await markSynced(orderId, "skipped_unlimited");
-      return { success: true, action: "skipped_unlimited" };
+      await markSynced(orderId, 'skipped_unlimited');
+      return { success: true, action: 'skipped_unlimited' };
     }
 
     const currentMax = discount.maxRedemptions;
@@ -677,21 +674,22 @@ export async function syncDiscountRedemptionToPolar(
     if (currentMax <= 1) {
       // Delete discount if this was last use
       await polar.discounts.delete({ id: discountId });
-      await markSynced(orderId, "deleted");
-      return { success: true, action: "deleted" };
+      await markSynced(orderId, 'deleted');
+      return { success: true, action: 'deleted' };
     } else {
       // Decrement max redemptions
       await polar.discounts.update({
         id: discountId,
         discountUpdate: { maxRedemptions: currentMax - 1 },
       });
-      await markSynced(orderId, "decremented");
-      return { success: true, action: "decremented" };
+      await markSynced(orderId, 'decremented');
+      return { success: true, action: 'decremented' };
     }
+
   } catch (error: any) {
     if (error.statusCode === 404) {
-      await markSynced(orderId, "already_deleted");
-      return { success: true, action: "already_deleted" };
+      await markSynced(orderId, 'already_deleted');
+      return { success: true, action: 'already_deleted' };
     }
     throw error;
   }
@@ -701,8 +699,7 @@ async function markSynced(orderId: string, action: string) {
   const order = await db.select().from(orders).where(eq(orders.id, orderId)).limit(1);
   const metadata = order[0].metadata ? JSON.parse(order[0].metadata) : {};
 
-  await db
-    .update(orders)
+  await db.update(orders)
     .set({
       metadata: JSON.stringify({
         ...metadata,
@@ -739,17 +736,18 @@ export async function syncWithRetry(
 ## Admin Order Management API
 
 ### Order Listing with Provider Info
-
 ```typescript
 // app/api/admin/orders/route.ts
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "50");
-  const provider = searchParams.get("provider"); // 'polar' | 'sepay' | null
-  const status = searchParams.get("status");
+  const page = parseInt(searchParams.get('page') || '1');
+  const limit = parseInt(searchParams.get('limit') || '50');
+  const provider = searchParams.get('provider'); // 'polar' | 'sepay' | null
+  const status = searchParams.get('status');
 
-  let query = db.select().from(orders).orderBy(desc(orders.createdAt));
+  let query = db.select()
+    .from(orders)
+    .orderBy(desc(orders.createdAt));
 
   if (provider) {
     query = query.where(eq(orders.paymentProvider, provider));
@@ -758,7 +756,9 @@ export async function GET(request: Request) {
     query = query.where(eq(orders.status, status));
   }
 
-  const results = await query.limit(limit).offset((page - 1) * limit);
+  const results = await query
+    .limit(limit)
+    .offset((page - 1) * limit);
 
   // Normalize amounts to USD for display
   const ordersWithNormalized = await Promise.all(
@@ -767,7 +767,9 @@ export async function GET(request: Request) {
       return {
         ...order,
         amountUsdCents: normalized.amountUsdCents,
-        displayAmount: order.currency === "VND" ? formatVND(order.amount) : formatUSD(order.amount),
+        displayAmount: order.currency === 'VND'
+          ? formatVND(order.amount)
+          : formatUSD(order.amount),
       };
     })
   );
@@ -786,39 +788,33 @@ export async function GET(request: Request) {
 ## Best Practices Summary
 
 ### 1. Currency Handling
-
 - Store amounts in original currency (USD or VND)
 - Always store currency code with amount
 - Use multi-layer fallback for exchange rates
 - Convert to USD for reporting/comparison
 
 ### 2. Order Management
-
 - Use unified orders table for both providers
 - Store provider-specific data in metadata JSON
 - Normalize to USD for tier calculations
 
 ### 3. Commission System
-
 - Store original currency and USD equivalent
 - Calculate tier based on USD values
 - Handle currency conversion in commission creation
 
 ### 4. Webhook Processing
-
 - Use idempotency keys for deduplication
 - Record event before processing
 - Always return 200 to prevent retry loops
 - Log errors in event record for debugging
 
 ### 5. Cross-Provider Sync
-
 - Sync discount redemptions from SePay to Polar
 - Use retry with exponential backoff
 - Mark orders as synced to prevent duplicates
 
 ### 6. Refund Handling
-
 - Check order status before processing
 - Cancel related commissions
 - Recalculate referrer tier after cancellation

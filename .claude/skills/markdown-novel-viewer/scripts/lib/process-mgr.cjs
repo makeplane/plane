@@ -3,11 +3,11 @@
  * Used by markdown-novel-viewer server
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
-const PID_DIR = "/tmp";
-const PID_PREFIX = "md-novel-viewer-";
+const PID_DIR = '/tmp';
+const PID_PREFIX = 'md-novel-viewer-';
 
 /**
  * Get PID file path for a port
@@ -36,7 +36,7 @@ function writePidFile(port, pid) {
 function readPidFile(port) {
   const pidPath = getPidFilePath(port);
   if (fs.existsSync(pidPath)) {
-    const pid = fs.readFileSync(pidPath, "utf8").trim();
+    const pid = fs.readFileSync(pidPath, 'utf8').trim();
     return parseInt(pid, 10);
   }
   return null;
@@ -62,8 +62,8 @@ function findRunningInstances() {
   const files = fs.readdirSync(PID_DIR);
 
   for (const file of files) {
-    if (file.startsWith(PID_PREFIX) && file.endsWith(".pid")) {
-      const port = parseInt(file.replace(PID_PREFIX, "").replace(".pid", ""), 10);
+    if (file.startsWith(PID_PREFIX) && file.endsWith('.pid')) {
+      const port = parseInt(file.replace(PID_PREFIX, '').replace('.pid', ''), 10);
       const pid = readPidFile(port);
       if (pid) {
         // Check if process is actually running
@@ -91,7 +91,7 @@ function stopServer(port) {
   if (!pid) return false;
 
   try {
-    process.kill(pid, "SIGTERM");
+    process.kill(pid, 'SIGTERM');
     removePidFile(port);
     return true;
   } catch {
@@ -110,7 +110,7 @@ function stopAllServers() {
 
   for (const { port, pid } of instances) {
     try {
-      process.kill(pid, "SIGTERM");
+      process.kill(pid, 'SIGTERM');
       removePidFile(port);
       stopped++;
     } catch {
@@ -133,8 +133,8 @@ function setupShutdownHandlers(port, cleanup) {
     process.exit(0);
   };
 
-  process.on("SIGTERM", handler);
-  process.on("SIGINT", handler);
+  process.on('SIGTERM', handler);
+  process.on('SIGINT', handler);
 }
 
 module.exports = {
@@ -146,5 +146,5 @@ module.exports = {
   stopServer,
   stopAllServers,
   setupShutdownHandlers,
-  PID_PREFIX,
+  PID_PREFIX
 };

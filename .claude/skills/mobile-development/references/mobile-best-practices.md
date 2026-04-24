@@ -5,7 +5,6 @@ Cross-platform best practices for modern mobile development (2024-2025).
 ## Mobile-First Design Principles
 
 ### Core Principles
-
 1. **Content First**: Remove chrome, focus on content
 2. **Progressive Disclosure**: Hide complexity behind layers
 3. **Thumb-Friendly**: Primary actions within reach
@@ -13,14 +12,12 @@ Cross-platform best practices for modern mobile development (2024-2025).
 5. **Offline-First**: Design for unreliable networks
 
 ### Touch Targets
-
 - **iOS**: 44x44px minimum (HIG guideline)
 - **Android**: 48x48px minimum (Material Design)
 - **Optimal**: 44-57px for important actions
 - **Spacing**: 8px minimum between targets
 
 ### Typography
-
 - **iOS**: San Francisco (system font)
 - **Android**: Roboto (Material)
 - **Minimum**: 16px body text (accessibility)
@@ -29,36 +26,29 @@ Cross-platform best practices for modern mobile development (2024-2025).
 ## Performance Optimization
 
 ### Launch Time Optimization
-
 **Targets:**
-
 - Cold start: <2s
 - Warm start: <1s
 - Hot start: <0.5s
 
 **Techniques:**
-
 - Defer non-critical initialization
 - Lazy load dependencies
 - Preload critical data only
 - Show UI before data ready
 
 ### Memory Management
-
 **Targets:**
-
 - Typical screen: <100MB
 - Peak usage: <200MB
 
 **Techniques:**
-
 - Image pagination/virtualization
 - Release resources in background
 - Profile with Instruments/Profiler
 - Avoid retain cycles/memory leaks
 
 **React Native Example:**
-
 ```javascript
 // Use FlatList instead of ScrollView for long lists
 <FlatList
@@ -72,9 +62,7 @@ Cross-platform best practices for modern mobile development (2024-2025).
 ```
 
 ### Network Optimization
-
 **Techniques:**
-
 - Batch API requests
 - Cache aggressively
 - Compress images (WebP, AVIF)
@@ -82,7 +70,6 @@ Cross-platform best practices for modern mobile development (2024-2025).
 - Implement request deduplication
 
 **Example Strategy:**
-
 ```
 User opens screen
 ├─ Show cached data immediately (stale-while-revalidate)
@@ -91,9 +78,7 @@ User opens screen
 ```
 
 ### Battery Optimization
-
 **Techniques:**
-
 - Batch network requests
 - Reduce GPS accuracy when possible
 - Use push instead of polling
@@ -101,37 +86,31 @@ User opens screen
 - Background App Refresh (iOS)
 
 **Targets:**
-
 - Active use: <5% per hour
 - Background: <1% per hour
 
 ## Offline-First Architecture
 
 ### Local Storage Options
-
 **React Native:**
-
 - AsyncStorage (small data, <6MB)
 - Realm (complex objects, relationships)
 - SQLite (relational data)
 - MMKV (fastest key-value)
 
 **Flutter:**
-
 - SharedPreferences (small data)
 - Hive (NoSQL, fast)
 - Drift (SQLite wrapper)
 - ObjectBox (object database)
 
 **iOS:**
-
 - UserDefaults (small data)
 - Core Data (complex objects)
 - SwiftData (modern replacement)
 - Realm
 
 **Android:**
-
 - SharedPreferences (small data)
 - Room (SQLite ORM)
 - Realm
@@ -140,7 +119,6 @@ User opens screen
 ### Data Synchronization Strategies
 
 **1. Write-Through Cache**
-
 ```
 User makes change
 ├─ Update local database immediately
@@ -150,7 +128,6 @@ User makes change
 ```
 
 **2. Hybrid Sync (Push + Pull)**
-
 ```
 Push Sync (Real-time)
 ├─ WebSocket connection for critical updates
@@ -163,7 +140,6 @@ Pull Sync (Periodic)
 ```
 
 **3. Conflict Resolution**
-
 - **Last-write-wins**: Use timestamps
 - **Operational transformation**: Merge changes
 - **CRDT**: Conflict-free replicated data
@@ -181,14 +157,14 @@ class CommentService {
       text,
       postId,
       synced: false,
-      timestamp: Date.now(),
+      timestamp: Date.now()
     };
 
     // 1. Save locally immediately
     await db.comments.insert(comment);
 
     // 2. Update UI (optimistic)
-    eventBus.emit("comment:added", comment);
+    eventBus.emit('comment:added', comment);
 
     // 3. Sync to server in background
     try {
@@ -196,14 +172,14 @@ class CommentService {
       // Replace temp ID with server ID
       await db.comments.update(tempId, {
         id: serverComment.id,
-        synced: true,
+        synced: true
       });
     } catch (error) {
       // Mark as pending sync, retry later
       await db.comments.update(tempId, {
-        syncError: error.message,
+        syncError: error.message
       });
-      syncQueue.add({ type: "comment", id: tempId });
+      syncQueue.add({ type: 'comment', id: tempId });
     }
   }
 }
@@ -214,7 +190,6 @@ class CommentService {
 ### Analytics Platforms (2024-2025)
 
 **Firebase Analytics (Recommended)**
-
 - Free tier generous
 - Mobile-specific events
 - Integrated with Crashlytics
@@ -222,7 +197,6 @@ class CommentService {
 - Supports all platforms
 
 **Sentry**
-
 - Error tracking + performance
 - Cross-platform support
 - Source map upload
@@ -230,7 +204,6 @@ class CommentService {
 - Custom breadcrumbs
 
 **Amplitude**
-
 - Product analytics
 - User behavior tracking
 - Cohort analysis
@@ -239,7 +212,6 @@ class CommentService {
 ### Essential Events to Track
 
 **User Journey:**
-
 - App opened
 - Screen viewed
 - Feature used
@@ -247,7 +219,6 @@ class CommentService {
 - User retention
 
 **Performance:**
-
 - App launch time
 - Screen load time
 - API latency
@@ -255,7 +226,6 @@ class CommentService {
 - ANR rate (Android)
 
 **Business:**
-
 - Purchases
 - Subscriptions
 - Ad impressions
@@ -265,12 +235,11 @@ class CommentService {
 ### Crashlytics Integration
 
 **React Native:**
-
 ```javascript
-import crashlytics from "@react-native-firebase/crashlytics";
+import crashlytics from '@react-native-firebase/crashlytics';
 
 // Log events
-crashlytics().log("User tapped purchase button");
+crashlytics().log('User tapped purchase button');
 
 // Set user attributes
 crashlytics().setUserId(user.id);
@@ -284,7 +253,6 @@ try {
 ```
 
 **Flutter:**
-
 ```dart
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
@@ -305,7 +273,6 @@ await FirebaseCrashlytics.instance.recordError(
 ## Push Notifications Best Practices
 
 ### Platforms
-
 - **iOS**: APNs (Apple Push Notification service)
 - **Android**: FCM (Firebase Cloud Messaging)
 - **Cross-platform**: OneSignal, Firebase, AWS SNS
@@ -313,7 +280,6 @@ await FirebaseCrashlytics.instance.recordError(
 ### Best Practices
 
 **1. Permission Request Strategy**
-
 ```
 ❌ Bad: Request permission on app launch
 ✅ Good: Request after user sees value
@@ -326,33 +292,29 @@ Flow:
 ```
 
 **2. Personalization**
-
 - Segment users by behavior
 - Send at optimal times (time zones)
 - Personalize content
 - A/B test messaging
 
 **3. Frequency**
-
 - Avoid notification spam
 - Respect user preferences
 - Implement quiet hours
 - Group related notifications
 
 **4. Deep Linking**
-
 ```javascript
 // React Native
-import messaging from "@react-native-firebase/messaging";
+import messaging from '@react-native-firebase/messaging';
 
-messaging().onNotificationOpenedApp((remoteMessage) => {
+messaging().onNotificationOpenedApp(remoteMessage => {
   const { screen, params } = remoteMessage.data;
   navigation.navigate(screen, params);
 });
 ```
 
 **Impact:**
-
 - 25% revenue increase with proper personalization
 - 88% opt-in rate with pre-permission modal (vs 40% without)
 
@@ -361,7 +323,6 @@ messaging().onNotificationOpenedApp((remoteMessage) => {
 ### Modern Auth Stack (2024-2025)
 
 **Standard Pattern:**
-
 ```
 OAuth 2.0 (Authorization)
 ├─ JWT (Stateless auth tokens)
@@ -372,7 +333,6 @@ OAuth 2.0 (Authorization)
 ### Implementation
 
 **Biometric Authentication (iOS)**
-
 ```swift
 import LocalAuthentication
 
@@ -390,7 +350,6 @@ if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &e
 ```
 
 **Biometric Authentication (Android)**
-
 ```kotlin
 import androidx.biometric.BiometricPrompt
 
@@ -413,7 +372,6 @@ biometricPrompt.authenticate(promptInfo)
 ### Secure Token Storage
 
 **iOS: Keychain**
-
 ```swift
 import Security
 
@@ -430,7 +388,6 @@ func saveToken(_ token: String, for key: String) {
 ```
 
 **Android: EncryptedSharedPreferences**
-
 ```kotlin
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -451,12 +408,11 @@ sharedPreferences.edit().putString("auth_token", token).apply()
 ```
 
 **React Native: react-native-keychain**
-
 ```javascript
-import * as Keychain from "react-native-keychain";
+import * as Keychain from 'react-native-keychain';
 
 // Save credentials
-await Keychain.setGenericPassword("username", token, {
+await Keychain.setGenericPassword('username', token, {
   accessControl: Keychain.ACCESS_CONTROL.BIOMETRY_CURRENT_SET,
   accessible: Keychain.ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
 });
@@ -471,26 +427,22 @@ const token = credentials.password;
 ### App Store (iOS)
 
 **Requirements (2024-2025):**
-
 - Xcode 15+ with iOS 17 SDK (minimum)
 - Xcode 16+ with iOS 18 SDK (recommended for 2025)
 - Privacy manifest required
 - Account deletion in-app mandatory
 
 **Release Process:**
-
 1. Archive in Xcode
 2. Upload to App Store Connect
 3. Submit for review
 4. Phased release (7-day rollout)
 
 **Review Time:**
-
 - Average: 1-2 days
 - Expedited: 1-2 hours (emergencies only)
 
 **Rejection Reasons:**
-
 - Crashes (50%)
 - Privacy violations (25%)
 - Incomplete information (15%)
@@ -499,45 +451,38 @@ const token = credentials.password;
 ### Google Play (Android)
 
 **Requirements (2024-2025):**
-
 - Target Android 14 (API 34) now
 - Target Android 15 (API 35) by Aug 31, 2025
 - Privacy policy required
 - Data safety form required
 
 **Release Process:**
-
 1. Build signed AAB (Android App Bundle)
 2. Upload to Play Console
 3. Submit to production track
 4. Staged rollout (10% → 50% → 100%)
 
 **Review Time:**
-
 - Average: 1-3 days
 - Updates: 1-2 days
 
 ### Staged Rollout Strategy
 
 **Week 1:**
-
 - 10% of users
 - Monitor crash-free rate
 - Watch for critical bugs
 
 **Week 2:**
-
 - 50% of users
 - Validate performance metrics
 - Check user feedback
 
 **Week 3:**
-
 - 100% of users
 - Full release if metrics healthy
 
 **Rollback Triggers:**
-
 - Crash-free rate drops >5%
 - Critical bug discovered
 - Major user complaints
@@ -546,20 +491,19 @@ const token = credentials.password;
 
 ### Flutter vs React Native (2024-2025)
 
-| Metric          | React Native | Flutter     |
-| --------------- | ------------ | ----------- |
-| **Adoption**    | 35%          | 46%         |
-| **Performance** | 80-90%       | 85-95%      |
-| **App Size**    | 40-50MB      | 15-20MB     |
-| **Dev Speed**   | Fast         | Very Fast   |
-| **Commercial**  | 12.57%       | 5.24%       |
-| **Developers**  | 20:1 ratio   | 1 ratio     |
-| **Best For**    | JS teams     | Performance |
+| Metric | React Native | Flutter |
+|--------|--------------|---------|
+| **Adoption** | 35% | 46% |
+| **Performance** | 80-90% | 85-95% |
+| **App Size** | 40-50MB | 15-20MB |
+| **Dev Speed** | Fast | Very Fast |
+| **Commercial** | 12.57% | 5.24% |
+| **Developers** | 20:1 ratio | 1 ratio |
+| **Best For** | JS teams | Performance |
 
 ### Architecture Comparison
 
 **MVVM (Small Apps):**
-
 ```
 View
  ↓
@@ -569,7 +513,6 @@ Model (data)
 ```
 
 **Clean Architecture (Large Apps):**
-
 ```
 Presentation (UI)
  ↓
@@ -581,25 +524,21 @@ Data (repositories, APIs, DB)
 ## Resources
 
 **Performance:**
-
 - iOS: https://developer.apple.com/documentation/xcode/improving-your-app-s-performance
 - Android: https://developer.android.com/topic/performance
 - React Native: https://reactnative.dev/docs/performance
 
 **Analytics:**
-
 - Firebase: https://firebase.google.com/docs/analytics
 - Sentry: https://docs.sentry.io/platforms/react-native/
 - Amplitude: https://amplitude.com/docs
 
 **Security:**
-
 - OWASP Mobile: https://owasp.org/www-project-mobile-top-10/
 - iOS Security: https://support.apple.com/guide/security/
 - Android Security: https://source.android.com/docs/security
 
 **Testing:**
-
 - Detox: https://wix.github.io/Detox/
 - Appium: https://appium.io/docs/en/latest/
 - XCTest: https://developer.apple.com/documentation/xctest

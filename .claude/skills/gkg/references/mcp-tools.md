@@ -22,7 +22,6 @@ List all indexed projects with paths.
 Search for functions, classes, methods, constants, interfaces.
 
 **Parameters**:
-
 - `query`: Search terms
 - `limit`: Max results (pagination)
 
@@ -35,7 +34,6 @@ Search for functions, classes, methods, constants, interfaces.
 Re-index a project to reflect code changes.
 
 **Parameters**:
-
 - `project_path`: Path to project
 
 **Use**: Update graph after code modifications.
@@ -47,7 +45,6 @@ Re-index a project to reflect code changes.
 Find all usages of a specific definition.
 
 **Parameters**:
-
 - `definition_id`: Symbol identifier
 - `project_path`: Project context
 
@@ -60,7 +57,6 @@ Find all usages of a specific definition.
 Retrieve complete source code for multiple symbols.
 
 **Parameters**:
-
 - `definition_ids`: List of symbol IDs
 
 **Use**: Batch-read implementations. Token-efficient for same-file symbols.
@@ -72,7 +68,6 @@ Retrieve complete source code for multiple symbols.
 Navigate to definition of a call on specific line.
 
 **Parameters**:
-
 - `file_path`: Source file
 - `line`: Line number
 - `column`: Column position
@@ -86,7 +81,6 @@ Navigate to definition of a call on specific line.
 Generate token-efficient ASCII tree of repository structure.
 
 **Parameters**:
-
 - `project_path`: Repository path
 - `depth`: Tree depth limit
 

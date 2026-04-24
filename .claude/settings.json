@@ -2,7 +2,7 @@
   "includeCoAuthoredBy": false,
   "statusLine": {
     "type": "command",
-    "command": "node \"$CLAUDE_PROJECT_DIR/.claude/statusline.cjs\"",
+    "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/statusline.cjs",
     "padding": 0
   },
   "hooks": {
@@ -12,11 +12,22 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-init.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-init.cjs"
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-state.cjs\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-state.cjs",
+            "_origin": "engineer"
+          }
+        ]
+      },
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/usage-quota-cache-refresh.cjs",
+            "timeout": 8,
             "_origin": "engineer"
           }
         ]
@@ -28,11 +39,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/subagent-init.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/subagent-init.cjs"
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/team-context-inject.cjs\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/team-context-inject.cjs",
             "_origin": "engineer"
           }
         ]
@@ -44,7 +55,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/cook-after-plan-reminder.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/cook-after-plan-reminder.cjs"
           }
         ]
       },
@@ -52,7 +63,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-state.cjs\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-state.cjs",
             "_origin": "engineer"
           }
         ]
@@ -63,12 +74,22 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/dev-rules-reminder.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/dev-rules-reminder.cjs"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/dev-rules-reminder.cjs",
+            "_origin": "engineer"
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/usage-context-awareness.cjs\"",
-            "timeout": 30
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/usage-quota-cache-refresh.cjs",
+            "timeout": 30,
+            "_origin": "engineer"
           }
         ]
       }
@@ -79,7 +100,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/descriptive-name.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/descriptive-name.cjs"
           }
         ]
       },
@@ -88,11 +109,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/scout-block.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scout-block.cjs"
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/privacy-block.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/privacy-block.cjs"
           }
         ]
       }
@@ -103,11 +124,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/post-edit-simplify-reminder.cjs\""
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-simplify-reminder.cjs"
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/plan-format-kanban.cjs\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/plan-format-kanban.cjs",
             "_origin": "engineer"
           }
         ]
@@ -117,8 +138,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/usage-context-awareness.cjs\"",
-            "timeout": 10
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/usage-quota-cache-refresh.cjs",
+            "timeout": 10,
+            "_origin": "engineer"
           }
         ]
       }
@@ -128,7 +150,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-state.cjs\"",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-state.cjs",
             "_origin": "engineer"
           }
         ]

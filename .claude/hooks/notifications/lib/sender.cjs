@@ -2,13 +2,13 @@
  * HTTP sender with smart throttling
  * Uses native fetch (Node 18+) - zero dependencies
  */
-"use strict";
+'use strict';
 
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
+const fs = require('fs');
+const path = require('path');
+const os = require('os');
 
-const THROTTLE_FILE = path.join(os.tmpdir(), "ck-noti-throttle.json");
+const THROTTLE_FILE = path.join(os.tmpdir(), 'ck-noti-throttle.json');
 const THROTTLE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 
 /**
@@ -18,7 +18,7 @@ const THROTTLE_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 function loadThrottleState() {
   try {
     if (fs.existsSync(THROTTLE_FILE)) {
-      const content = fs.readFileSync(THROTTLE_FILE, "utf8");
+      const content = fs.readFileSync(THROTTLE_FILE, 'utf8');
       return JSON.parse(content);
     }
   } catch (err) {
@@ -34,7 +34,7 @@ function loadThrottleState() {
  */
 function saveThrottleState(state) {
   try {
-    fs.writeFileSync(THROTTLE_FILE, JSON.stringify(state, null, 2), "utf8");
+    fs.writeFileSync(THROTTLE_FILE, JSON.stringify(state, null, 2), 'utf8');
   } catch (err) {
     console.error(`[sender] Failed to save throttle state: ${err.message}`);
   }
@@ -93,16 +93,16 @@ async function send(provider, url, body, headers = {}) {
 
   try {
     const response = await fetch(url, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         ...headers,
       },
       body: JSON.stringify(body),
     });
 
     if (!response.ok) {
-      const errorText = await response.text().catch(() => "Unknown error");
+      const errorText = await response.text().catch(() => 'Unknown error');
       const errorMsg = `HTTP ${response.status}: ${errorText.slice(0, 100)}`;
 
       // Record error for throttling
@@ -115,6 +115,7 @@ async function send(provider, url, body, headers = {}) {
     // Success - clear any previous throttle
     clearThrottle(provider);
     return { success: true };
+
   } catch (err) {
     // Network error - record for throttling
     recordError(provider);

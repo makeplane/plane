@@ -8,21 +8,21 @@ Spot patterns appearing in 3+ domains to find universal principles.
 
 ## When to Use
 
-| Symptom                           | Action                     |
-| --------------------------------- | -------------------------- |
-| Same issue in different places    | Extract the abstract form  |
-| Déjà vu in problem-solving        | Find the universal pattern |
-| Reinventing wheels across domains | Identify the meta-pattern  |
-| "Haven't we done this before?"    | Yes, find and reuse it     |
+| Symptom | Action |
+|---------|--------|
+| Same issue in different places | Extract the abstract form |
+| Déjà vu in problem-solving | Find the universal pattern |
+| Reinventing wheels across domains | Identify the meta-pattern |
+| "Haven't we done this before?" | Yes, find and reuse it |
 
 ## Quick Reference
 
-| Pattern Appears In                 | Abstract Form                               | Where Else?                 |
-| ---------------------------------- | ------------------------------------------- | --------------------------- |
-| CPU/DB/HTTP/DNS caching            | Store frequently-accessed data closer       | LLM prompt caching, CDN     |
-| Layering (network/storage/compute) | Separate concerns into abstraction levels   | Architecture, org structure |
-| Queuing (message/task/request)     | Decouple producer from consumer with buffer | Event systems, async        |
-| Pooling (connection/thread/object) | Reuse expensive resources                   | Memory mgmt, governance     |
+| Pattern Appears In | Abstract Form | Where Else? |
+|-------------------|---------------|-------------|
+| CPU/DB/HTTP/DNS caching | Store frequently-accessed data closer | LLM prompt caching, CDN |
+| Layering (network/storage/compute) | Separate concerns into abstraction levels | Architecture, org structure |
+| Queuing (message/task/request) | Decouple producer from consumer with buffer | Event systems, async |
+| Pooling (connection/thread/object) | Reuse expensive resources | Memory mgmt, governance |
 
 ## Process
 
@@ -35,7 +35,6 @@ Spot patterns appearing in 3+ domains to find universal principles.
 ## Detailed Example
 
 **Pattern spotted:** Rate limiting appears in:
-
 - API throttling (requests per minute)
 - Traffic shaping (packets per second)
 - Circuit breakers (failures per window)
@@ -44,13 +43,11 @@ Spot patterns appearing in 3+ domains to find universal principles.
 **Abstract form:** Bound resource consumption to prevent exhaustion
 
 **Variation points:**
-
 - What resource (requests, packets, failures, connections)
 - What limit (per time window, concurrent, cumulative)
 - What happens when exceeded (reject, queue, degrade)
 
 **New application:** LLM token budgets
-
 - Same pattern: prevent context window exhaustion
 - Resource: tokens
 - Limit: context window size
@@ -59,7 +56,6 @@ Spot patterns appearing in 3+ domains to find universal principles.
 ## 3+ Domain Rule
 
 **Why 3 domains?**
-
 - 1 occurrence = coincidence
 - 2 occurrences = possible pattern
 - 3+ occurrences = likely universal
@@ -70,7 +66,6 @@ Can you describe the pattern without mentioning specific domains?
 ## Red Flags
 
 Signs you're missing meta-patterns:
-
 - "This problem is unique" (probably not)
 - Multiple teams solving "different" problems identically
 - Reinventing wheels across domains

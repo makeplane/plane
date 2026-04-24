@@ -15,6 +15,8 @@ const { execSync } = require('child_process');
 
 // Usage cache file path (written by usage-context-awareness.cjs hook)
 const USAGE_CACHE_FILE = path.join(os.tmpdir(), 'ck-usage-limits-cache.json');
+const RECENT_INJECTION_TTL_MS = 5 * 60 * 1000;
+const PENDING_INJECTION_TTL_MS = 30 * 1000;
 const WARN_THRESHOLD = 70;
 const CRITICAL_THRESHOLD = 90;
 const {
@@ -22,22 +24,16 @@ const {
   resolvePlanPath,
   getReportsPath,
   resolveNamingPattern,
-  normalizePath
+  normalizePath,
+  getGitBranch,
+  readSessionState,
+  updateSessionState
 } = require('./ck-config-utils.cjs');
 
-// ═══════════════════════════════════════════════════════════════════════════
-// HELPER FUNCTIONS
-// ═══════════════════════════════════════════════════════════════════════════
-
-/**
- * Safely execute a command with timeout
- * @param {string} cmd - Command to execute
- * @returns {string|null} Output or null on error
- */
 function execSafe(cmd) {
   try {
     return execSync(cmd, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -114,7 +110,7 @@ function resolveSkillsVenv(configDirName = '.claude') {
  */
 function buildPlanContext(sessionId, config) {
   const { plan, paths } = config;
-  const gitBranch = execSafe('git branch --show-current');
+  const gitBranch = getGitBranch();
   const resolved = resolvePlanPath(sessionId, config);
   const reportsPath = getReportsPath(resolved.path, resolved.resolvedBy, plan, paths);
 
@@ -137,17 +133,241 @@ function buildPlanContext(sessionId, config) {
 }
 
 /**
- * Check if context was recently injected (prevent duplicate injection)
- * @param {string} transcriptPath - Path to transcript file
- * @returns {boolean} true if recently injected
+ * Build a scope key for reminder dedup so cwd-sensitive output can re-inject when needed.
+ * @param {Object} params
+ * @param {string} [params.baseDir] - Working directory for the hook invocation
+ * @returns {string} Stable scope key
  */
-function wasRecentlyInjected(transcriptPath) {
+function buildInjectionScopeKey({ baseDir } = {}) {
+  const cwdKey = normalizePath(path.resolve(baseDir || process.cwd())) || process.cwd();
+  return cwdKey;
+}
+
+function parseTimestamp(value) {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') return Date.parse(value);
+  return NaN;
+}
+
+function getReminderScopeState(reminderState, scopeKey) {
+  const scopes = reminderState?.scopes;
+  if (!scopes || typeof scopes !== 'object') return null;
+  const scopeState = scopes[scopeKey];
+  return scopeState && typeof scopeState === 'object' ? scopeState : null;
+}
+
+function hasRecentInjection(scopeState, now = Date.now()) {
+  const injectedTs = parseTimestamp(scopeState?.lastInjectedAt);
+  return Number.isFinite(injectedTs) && now - injectedTs < RECENT_INJECTION_TTL_MS;
+}
+
+function hasPendingInjection(scopeState, now = Date.now()) {
+  const pendingTs = parseTimestamp(scopeState?.pendingAt);
+  return Number.isFinite(pendingTs) && now - pendingTs < PENDING_INJECTION_TTL_MS;
+}
+
+function pruneReminderScopes(scopes, now = Date.now()) {
+  const nextScopes = {};
+  for (const [scopeKey, scopeState] of Object.entries(scopes || {})) {
+    if (!scopeState || typeof scopeState !== 'object') continue;
+    if (hasRecentInjection(scopeState, now) || hasPendingInjection(scopeState, now)) {
+      nextScopes[scopeKey] = scopeState;
+    }
+  }
+  return nextScopes;
+}
+
+function wasTranscriptRecentlyInjected(transcriptPath, scopeKey = null) {
   try {
     if (!transcriptPath || !fs.existsSync(transcriptPath)) return false;
-    const transcript = fs.readFileSync(transcriptPath, 'utf-8');
-    // Check last 150 lines (hook output is ~30 lines, so this covers ~5 user prompts)
-    return transcript.split('\n').slice(-150).some(line => line.includes('[IMPORTANT] Consider Modularization'));
-  } catch (e) {
+    const tail = fs.readFileSync(transcriptPath, 'utf-8').split('\n').slice(-150);
+    const hasReminderMarker = tail.some(line => line.includes('[IMPORTANT] Consider Modularization'));
+    if (!hasReminderMarker) return false;
+    if (!scopeKey) return true;
+
+    // The reminder output is cwd-sensitive; only treat transcript fallback as a match
+    // when the same cwd-specific session lines were already injected recently.
+    return tail.some(line => line === `- CWD: ${scopeKey}` || line === `- Working directory: ${scopeKey}`);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Check if context was recently injected (prevent duplicate injection).
+ * Uses session-scoped markers when a session ID is available, otherwise falls back to transcript scan.
+ * @param {string} transcriptPath - Path to transcript file
+ * @param {string|null} [sessionId] - Session identifier for temp-state dedup
+ * @param {string|null} [scopeKey='session'] - Scope key for cwd/transcript-aware dedup
+ * @returns {boolean} true if recently injected
+ */
+function wasRecentlyInjected(transcriptPath, sessionId = null, scopeKey = 'session') {
+  try {
+    if (sessionId) {
+      const reminderState = readSessionState(sessionId)?.devRulesReminder;
+      if (hasRecentInjection(getReminderScopeState(reminderState, scopeKey))) {
+        return true;
+      }
+    }
+
+    return wasTranscriptRecentlyInjected(transcriptPath, scopeKey);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Reserve an injection slot atomically so concurrent hooks do not double-inject.
+ * @param {string|null} sessionId - Session identifier
+ * @param {string|null} [scopeKey='session'] - Scope key for cwd/transcript-aware dedup
+ * @param {string|null} [transcriptPath] - Transcript path for legacy fallback when no session ID exists
+ * @returns {{ shouldInject: boolean, reserved: boolean }} Whether to inject and whether a pending reservation was written
+ */
+function reserveInjectionScope(sessionId, scopeKey = 'session', transcriptPath = null) {
+  const transcriptAlreadyInjected = wasTranscriptRecentlyInjected(transcriptPath, scopeKey);
+
+  if (!sessionId) {
+    return {
+      shouldInject: !transcriptAlreadyInjected,
+      reserved: false
+    };
+  }
+
+  try {
+    let shouldInject = false;
+    const now = Date.now();
+    const updated = updateSessionState(sessionId, (state) => {
+      const reminderState = state.devRulesReminder && typeof state.devRulesReminder === 'object'
+        ? state.devRulesReminder
+        : {};
+      const scopes = pruneReminderScopes(reminderState.scopes, now);
+      const scopeState = getReminderScopeState({ scopes }, scopeKey) || {};
+
+      if (hasRecentInjection(scopeState, now) || hasPendingInjection(scopeState, now)) {
+        return state;
+      }
+
+      if (transcriptAlreadyInjected) {
+        scopes[scopeKey] = {
+          ...scopeState,
+          lastInjectedAt: new Date(now).toISOString()
+        };
+
+        return {
+          ...state,
+          devRulesReminder: {
+            ...reminderState,
+            scopes
+          }
+        };
+      }
+
+      shouldInject = true;
+      scopes[scopeKey] = {
+        ...scopeState,
+        pendingAt: new Date(now).toISOString()
+      };
+
+      return {
+        ...state,
+        devRulesReminder: {
+          ...reminderState,
+          scopes
+        }
+      };
+    });
+
+    if (!updated) {
+      return {
+        shouldInject: !transcriptAlreadyInjected,
+        reserved: false
+      };
+    }
+
+    return { shouldInject, reserved: shouldInject };
+  } catch {
+    return {
+      shouldInject: !transcriptAlreadyInjected,
+      reserved: false
+    };
+  }
+}
+
+/**
+ * Persist a recent injection marker for the current session and clear the pending reservation.
+ * @param {string|null} sessionId - Session identifier
+ * @param {string|null} [scopeKey='session'] - Scope key for cwd/transcript-aware dedup
+ * @returns {boolean} true when the marker is written
+ */
+function markRecentlyInjected(sessionId, scopeKey = 'session') {
+  if (!sessionId) return false;
+
+  try {
+    return updateSessionState(sessionId, (state) => {
+      const reminderState = state.devRulesReminder && typeof state.devRulesReminder === 'object'
+        ? state.devRulesReminder
+        : {};
+      const scopes = pruneReminderScopes(reminderState.scopes);
+      const scopeState = getReminderScopeState({ scopes }, scopeKey) || {};
+
+      scopes[scopeKey] = {
+        ...scopeState,
+        lastInjectedAt: new Date().toISOString()
+      };
+      delete scopes[scopeKey].pendingAt;
+
+      return {
+        ...state,
+        devRulesReminder: {
+          ...reminderState,
+          scopes
+        }
+      };
+    });
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Clear a pending reservation when the hook fails after reserving a slot.
+ * @param {string|null} sessionId - Session identifier
+ * @param {string|null} [scopeKey='session'] - Scope key for cwd/transcript-aware dedup
+ * @returns {boolean} true when cleanup succeeds
+ */
+function clearPendingInjection(sessionId, scopeKey = 'session') {
+  if (!sessionId) return false;
+
+  try {
+    return updateSessionState(sessionId, (state) => {
+      const reminderState = state.devRulesReminder && typeof state.devRulesReminder === 'object'
+        ? state.devRulesReminder
+        : {};
+      const scopes = pruneReminderScopes(reminderState.scopes);
+      const scopeState = getReminderScopeState({ scopes }, scopeKey);
+
+      if (!scopeState || !scopeState.pendingAt) {
+        return state;
+      }
+
+      const nextScopeState = { ...scopeState };
+      delete nextScopeState.pendingAt;
+
+      if (Object.keys(nextScopeState).length === 0) {
+        delete scopes[scopeKey];
+      } else {
+        scopes[scopeKey] = nextScopeState;
+      }
+
+      return {
+        ...state,
+        devRulesReminder: {
+          ...reminderState,
+          scopes
+        }
+      };
+    });
+  } catch {
     return false;
   }
 }
@@ -611,7 +831,11 @@ module.exports = {
   resolveScriptPath,
   resolveSkillsVenv,
   buildPlanContext,
+  buildInjectionScopeKey,
   wasRecentlyInjected,
+  reserveInjectionScope,
+  markRecentlyInjected,
+  clearPendingInjection,
 
   // Backward compat alias
   resolveWorkflowPath: resolveRulesPath

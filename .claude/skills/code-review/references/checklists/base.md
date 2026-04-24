@@ -29,7 +29,6 @@ Be terse. One line problem, one line fix. No preamble.
 ## Pass 1 — CRITICAL (blocking)
 
 ### Injection & Data Safety
-
 - String interpolation in SQL/database queries (even with type casting — use parameterized queries)
 - Unsanitized user input written to database or rendered in HTML
 - Raw HTML output from user-controlled data (`innerHTML`, `dangerouslySetInnerHTML`, `html_safe`, `raw()`, `| safe`)
@@ -37,14 +36,12 @@ Be terse. One line problem, one line fix. No preamble.
 - Path traversal via user input in file operations
 
 ### Race Conditions & Concurrency
-
 - Read-check-write without atomic operations (check-then-set should be atomic WHERE + UPDATE)
 - Find-or-create without unique database constraint (concurrent calls create duplicates)
 - Status transitions without atomic WHERE old_status + UPDATE new_status
 - Shared mutable state accessed without synchronization
 
 ### Security Boundaries
-
 - Missing authentication checks on new endpoints/routes
 - Privilege escalation paths (user can access/modify another user's data — IDOR)
 - Secrets in logs, error responses, or client-side code
@@ -52,7 +49,6 @@ Be terse. One line problem, one line fix. No preamble.
 - JWT/token comparison using `==` instead of constant-time comparison
 
 ### Auth & Access Control
-
 - New API endpoints without auth middleware
 - Missing authorization check (authenticated but not authorized)
 - Admin-only operations accessible to regular users
@@ -63,35 +59,29 @@ Be terse. One line problem, one line fix. No preamble.
 ## Pass 2 — INFORMATIONAL (non-blocking)
 
 ### Conditional Side Effects
-
 - Code branches on condition but forgets side effect on one branch (e.g., sets status but not associated data)
 - Log messages claiming action happened but action was conditionally skipped
 
 ### Magic Numbers & String Coupling
-
 - Bare numeric literals used in multiple files — should be named constants
 - Error message strings used as query filters elsewhere (grep for the string)
 
 ### Dead Code & Consistency
-
 - Variables assigned but never read
 - Stale comments describing old behavior after code changed
 - Import/require statements for unused modules
 
 ### Test Gaps
-
 - Missing negative-path tests (error cases, validation failures)
 - Assertions on type/status but not side effects (e.g., checks status but not that email was sent)
 - Missing integration tests for security enforcement (auth, rate limiting, access control)
 
 ### Type Coercion at Boundaries
-
 - Values crossing language/system boundaries where type could change (string vs number)
 - Hash/digest inputs that don't normalize types before serialization
 
 ### Performance
-
-- O(n\*m) lookups in views/templates (array search inside loops — use hash/map lookup)
+- O(n*m) lookups in views/templates (array search inside loops — use hash/map lookup)
 - Missing pagination on list endpoints returning unbounded results
 - N+1 queries: loading associations inside loops without eager loading
 - Unbounded queries without LIMIT

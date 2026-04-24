@@ -35,13 +35,13 @@ The **hydration pattern** bridges sessions:
 **Skip with:** `--no-tasks` flag in planning request
 **3-Task Rule:** <3 phases → skip tasks (overhead exceeds benefit)
 
-| Scenario                            | Tasks? | Why                             |
-| ----------------------------------- | ------ | ------------------------------- |
-| Multi-phase feature (3+ phases)     | Yes    | Track progress, enable parallel |
-| Complex dependencies between phases | Yes    | Automatic unblocking            |
-| Plan will be executed by cook       | Yes    | Seamless handoff                |
-| Single-phase quick fix              | No     | Just do it directly             |
-| Trivial 1-2 step plan               | No     | Overhead not worth it           |
+| Scenario | Tasks? | Why |
+|----------|--------|-----|
+| Multi-phase feature (3+ phases) | Yes | Track progress, enable parallel |
+| Complex dependencies between phases | Yes | Automatic unblocking |
+| Plan will be executed by cook | Yes | Seamless handoff |
+| Single-phase quick fix | No | Just do it directly |
+| Trivial 1-2 step plan | No | Overhead not worth it |
 
 ## Task Creation Patterns
 
@@ -79,11 +79,9 @@ TaskCreate(
 **Optional metadata:** `step`, `critical`, `riskLevel`, `dependencies`
 
 **subject** (imperative): Action verb + deliverable, <60 chars
-
 - "Setup database migrations", "Implement OAuth2 flow", "Create user profile endpoints"
 
 **activeForm** (present continuous): Matches subject in -ing form
-
 - "Setting up database", "Implementing OAuth2", "Creating user profile endpoints"
 
 **description**: 1-2 sentences, concrete deliverables, reference phase file
@@ -129,7 +127,6 @@ Use `addBlocks` when creating parent first ("X blocks these children").
 ## Quality Checks
 
 After task hydration, verify:
-
 - Dependency chain has no cycles
 - All phases have corresponding tasks
 - Required metadata fields present (phase, priority, effort, planDir, phaseFile)

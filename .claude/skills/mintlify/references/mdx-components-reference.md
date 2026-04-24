@@ -10,9 +10,15 @@ Organize content into tabbed sections.
 
 ```mdx
 <Tabs>
-  <Tab title="JavaScript">JavaScript content here</Tab>
-  <Tab title="Python">Python content here</Tab>
-  <Tab title="Go">Go content here</Tab>
+  <Tab title="JavaScript">
+    JavaScript content here
+  </Tab>
+  <Tab title="Python">
+    Python content here
+  </Tab>
+  <Tab title="Go">
+    Go content here
+  </Tab>
 </Tabs>
 ```
 
@@ -20,11 +26,11 @@ Organize content into tabbed sections.
 
 Display code examples in multiple languages with syntax highlighting.
 
-````mdx
+```mdx
 <CodeGroup>
 ```bash npm
 npm install package
-````
+```
 
 ```bash yarn
 yarn add package
@@ -33,7 +39,6 @@ yarn add package
 ```bash pnpm
 pnpm add package
 ```
-
 </CodeGroup>
 ```
 
@@ -43,9 +48,15 @@ Create numbered step-by-step instructions.
 
 ```mdx
 <Steps>
-  <Step title="Install dependencies">Run `npm install` to install required packages.</Step>
-  <Step title="Configure environment">Create `.env` file with your API keys.</Step>
-  <Step title="Start the server">Run `npm start` to launch the application.</Step>
+  <Step title="Install dependencies">
+    Run `npm install` to install required packages.
+  </Step>
+  <Step title="Configure environment">
+    Create `.env` file with your API keys.
+  </Step>
+  <Step title="Start the server">
+    Run `npm start` to launch the application.
+  </Step>
 </Steps>
 ```
 
@@ -55,9 +66,15 @@ Create multi-column layouts.
 
 ```mdx
 <Columns>
-  <Column>Content in first column</Column>
-  <Column>Content in second column</Column>
-  <Column>Content in third column</Column>
+  <Column>
+    Content in first column
+  </Column>
+  <Column>
+    Content in second column
+  </Column>
+  <Column>
+    Content in third column
+  </Column>
 </Columns>
 ```
 
@@ -66,7 +83,9 @@ Create multi-column layouts.
 Create bordered content panels.
 
 ```mdx
-<Panel>This content appears in a bordered panel.</Panel>
+<Panel>
+  This content appears in a bordered panel.
+</Panel>
 ```
 
 ## Draw Attention
@@ -76,15 +95,25 @@ Create bordered content panels.
 Four types of callouts for different message types.
 
 ```mdx
-<Note>This is a general note or information.</Note>
+<Note>
+  This is a general note or information.
+</Note>
 
-<Warning>This is a warning about potential issues.</Warning>
+<Warning>
+  This is a warning about potential issues.
+</Warning>
 
-<Tip>This is a helpful tip or best practice.</Tip>
+<Tip>
+  This is a helpful tip or best practice.
+</Tip>
 
-<Info>This is informational content.</Info>
+<Info>
+  This is informational content.
+</Info>
 
-<Check>This indicates success or completion.</Check>
+<Check>
+  This indicates success or completion.
+</Check>
 ```
 
 ### Banner
@@ -92,7 +121,9 @@ Four types of callouts for different message types.
 Display prominent banners at the top of pages.
 
 ```mdx
-<Banner>Important announcement or message</Banner>
+<Banner>
+  Important announcement or message
+</Banner>
 ```
 
 ### Badge
@@ -111,7 +142,9 @@ Add inline badges for labels or statuses.
 Highlight recent updates or changelog entries.
 
 ```mdx
-<Update date="2024-01-15">Added new authentication methods</Update>
+<Update date="2024-01-15">
+  Added new authentication methods
+</Update>
 ```
 
 ### Frames
@@ -133,7 +166,9 @@ Embed iframes or external content.
 Add hover tooltips to text.
 
 ```mdx
-<Tooltip tip="This is additional context">Hover over this text</Tooltip>
+<Tooltip tip="This is additional context">
+  Hover over this text
+</Tooltip>
 ```
 
 ## Show/Hide
@@ -147,8 +182,12 @@ Create collapsible accordion sections.
   <Accordion title="What is Mintlify?">
     Mintlify is a modern documentation platform that helps you create beautiful docs.
   </Accordion>
-  <Accordion title="How do I get started?">Run `mint new` to create a new documentation project.</Accordion>
-  <Accordion title="Can I use custom components?">Yes, you can use React components in your MDX files.</Accordion>
+  <Accordion title="How do I get started?">
+    Run `mint new` to create a new documentation project.
+  </Accordion>
+  <Accordion title="Can I use custom components?">
+    Yes, you can use React components in your MDX files.
+  </Accordion>
 </AccordionGroup>
 ```
 
@@ -157,7 +196,9 @@ Create collapsible accordion sections.
 Create expandable content sections.
 
 ```mdx
-<Expandable title="Click to expand">Hidden content that appears when expanded.</Expandable>
+<Expandable title="Click to expand">
+  Hidden content that appears when expanded.
+</Expandable>
 
 <Expandable title="Advanced configuration" defaultOpen={true}>
   This content is expanded by default.
@@ -169,9 +210,13 @@ Create expandable content sections.
 Show/hide content based on conditions.
 
 ```mdx
-<View if="api">This content only shows for API documentation.</View>
+<View if="api">
+  This content only shows for API documentation.
+</View>
 
-<View ifNot="mobile">This content is hidden on mobile devices.</View>
+<View ifNot="mobile">
+  This content is hidden on mobile devices.
+</View>
 ```
 
 ## Document API
@@ -199,7 +244,6 @@ Document API parameters with type information.
 ```
 
 **Attributes:**
-
 - `path` / `query` / `body` / `header` - Parameter location
 - `type` - Data type (string, number, boolean, object, array)
 - `required` - Mark as required parameter
@@ -217,7 +261,7 @@ Document API parameters with type information.
   enumDescriptions={{
     active: "User is active and can access the system",
     inactive: "User account is disabled",
-    pending: "User registration pending approval",
+    pending: "User registration pending approval"
   }}
 >
   Account status
@@ -263,14 +307,14 @@ Document API response fields.
 
 Show example API requests in multiple languages.
 
-````mdx
+```mdx
 <RequestExample>
 ```bash cURL
 curl -X POST https://api.example.com/users \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"email": "user@example.com"}'
-````
+```
 
 ```python Python
 import requests
@@ -286,13 +330,12 @@ response = requests.post(
 fetch("https://api.example.com/users", {
   method: "POST",
   headers: {
-    Authorization: "Bearer YOUR_TOKEN",
-    "Content-Type": "application/json",
+    "Authorization": "Bearer YOUR_TOKEN",
+    "Content-Type": "application/json"
   },
-  body: JSON.stringify({ email: "user@example.com" }),
-});
+  body: JSON.stringify({ email: "user@example.com" })
+})
 ```
-
 </RequestExample>
 ```
 
@@ -300,7 +343,7 @@ fetch("https://api.example.com/users", {
 
 Show example API responses.
 
-````mdx
+```mdx
 <ResponseExample>
 ```json Success Response
 {
@@ -308,7 +351,7 @@ Show example API responses.
   "email": "user@example.com",
   "created_at": "2024-01-15T10:30:00Z"
 }
-````
+```
 
 ```json Error Response
 {
@@ -318,7 +361,6 @@ Show example API responses.
   }
 }
 ```
-
 </ResponseExample>
 ```
 
@@ -346,14 +388,12 @@ Create clickable cards that link to other pages.
 ```
 
 **Attributes:**
-
 - `title` - Card title
 - `icon` - Icon name (Font Awesome or Lucide)
 - `href` - Link destination
 - `color` - Card accent color
 
 **CardGroup attributes:**
-
 - `cols` - Number of columns (1-4)
 
 ### Tiles
@@ -382,7 +422,6 @@ Display icons inline using Font Awesome or Lucide.
 ```
 
 **Attributes:**
-
 - `icon` - Icon name
 - `size` - Icon size in pixels
 - `color` - Icon color
@@ -403,7 +442,6 @@ graph TD
 ````
 
 **Supported diagram types:**
-
 - Flowcharts
 - Sequence diagrams
 - Class diagrams
@@ -477,7 +515,6 @@ Page content here...
 ```
 
 **Common frontmatter fields:**
-
 - `title` - Page title
 - `description` - SEO description
 - `icon` - Page icon
@@ -486,7 +523,6 @@ Page content here...
 - `openapi` - OpenAPI operation (e.g., "GET /users")
 
 **Mode options:**
-
 - `default` - Standard content width
 - `wide` - Wider content area
 - `custom` - Full-width custom layout
@@ -502,10 +538,12 @@ Import and use custom React components in MDX.
 title: "Custom Components"
 ---
 
-import { CustomButton } from "@/components/CustomButton";
-import { Chart } from "@/components/Chart";
+import { CustomButton } from '@/components/CustomButton'
+import { Chart } from '@/components/Chart'
 
-<CustomButton onClick={() => console.log("clicked")}>Click me</CustomButton>
+<CustomButton onClick={() => console.log('clicked')}>
+  Click me
+</CustomButton>
 
 <Chart data={[1, 2, 3, 4, 5]} />
 ```

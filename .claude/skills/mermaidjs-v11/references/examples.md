@@ -5,7 +5,6 @@ Real-world patterns and use cases for common documentation scenarios.
 ## Software Architecture
 
 **Microservices Architecture:**
-
 ```mermaid
 flowchart TB
   Client[Web Client]
@@ -29,7 +28,6 @@ flowchart TB
 ```
 
 **System Components (C4):**
-
 ```mermaid
 C4Context
   Person(customer, "Customer", "A user of the system")
@@ -43,7 +41,6 @@ C4Context
 ## API Documentation
 
 **Authentication Flow:**
-
 ```mermaid
 sequenceDiagram
   participant C as Client
@@ -68,7 +65,6 @@ sequenceDiagram
 ```
 
 **REST API Endpoints:**
-
 ```mermaid
 flowchart LR
   API[API]
@@ -90,7 +86,6 @@ flowchart LR
 ## Database Design
 
 **E-Commerce Schema:**
-
 ```mermaid
 erDiagram
   CUSTOMER ||--o{ ORDER : places
@@ -124,7 +119,6 @@ erDiagram
 ## State Machines
 
 **Order Processing:**
-
 ```mermaid
 stateDiagram-v2
   [*] --> Pending
@@ -140,7 +134,6 @@ stateDiagram-v2
 ```
 
 **User Authentication States:**
-
 ```mermaid
 stateDiagram-v2
   [*] --> LoggedOut
@@ -157,7 +150,6 @@ stateDiagram-v2
 ## Project Planning
 
 **Sprint Timeline:**
-
 ```mermaid
 gantt
   title Sprint 12 (2 weeks)
@@ -175,7 +167,6 @@ gantt
 ```
 
 **Feature Development Journey:**
-
 ```mermaid
 journey
   title Feature Implementation Journey
@@ -194,7 +185,6 @@ journey
 ## Object-Oriented Design
 
 **Payment System Classes:**
-
 ```mermaid
 classDiagram
   class PaymentProcessor {
@@ -230,7 +220,6 @@ classDiagram
 ## CI/CD Pipeline
 
 **Deployment Flow:**
-
 ```mermaid
 flowchart LR
   Code[Push Code] --> CI{CI Checks}
@@ -247,7 +236,6 @@ flowchart LR
 ```
 
 **Git Branching Strategy:**
-
 ```mermaid
 gitGraph
   commit
@@ -275,7 +263,6 @@ gitGraph
 ## User Experience
 
 **Customer Onboarding:**
-
 ```mermaid
 journey
   title New Customer Onboarding
@@ -297,7 +284,6 @@ journey
 ## Cloud Infrastructure
 
 **AWS Architecture:**
-
 ```mermaid
 architecture-beta
   group vpc(cloud)[VPC]
@@ -319,7 +305,6 @@ architecture-beta
 ## Data Visualization
 
 **Traffic Analysis:**
-
 ```mermaid
 pie showData
   title Traffic Sources Q4 2024
@@ -331,7 +316,6 @@ pie showData
 ```
 
 **Team Skills Assessment:**
-
 ```mermaid
 radar-beta
   axis Frontend, Backend, DevOps, Testing, Design
@@ -343,13 +327,11 @@ radar-beta
 ## Best Practices
 
 **Naming Conventions:**
-
 - Use descriptive node IDs: `userService` not `A`
 - Clear labels: `[User Service]` not `[US]`
 - Meaningful connections: `-->|authenticates|` not `-->`
 
 **Styling Tips:**
-
 ```mermaid
 %%{init: {'theme':'dark', 'themeVariables': {'primaryColor':'#ff6347'}}}%%
 flowchart TD

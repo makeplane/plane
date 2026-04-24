@@ -2,12 +2,12 @@
 
 ## Project Info
 
-| Field       | Value |
-| ----------- | ----- |
-| Project     |       |
-| Deliverable |       |
-| Due Date    |       |
-| Writer      |       |
+| Field | Value |
+|-------|-------|
+| Project | |
+| Deliverable | |
+| Due Date | |
+| Writer | |
 
 ## Audience
 
@@ -42,7 +42,7 @@
 
 ## Formula to Use
 
-[ ] AIDA [ ] PAS [ ] BAB [ ] 4Ps [ ] FAB
+[ ] AIDA  [ ] PAS  [ ] BAB  [ ] 4Ps  [ ] FAB
 
 ## Success Metrics
 

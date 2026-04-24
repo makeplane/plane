@@ -449,9 +449,7 @@
                   <td>
                     <p style="font-size: 0.8rem; font-weight: 500; color: #525252">State:</p>
                   </td>
-                  {% if update.changes.state.old_value.0 == 'Backlog' or update.changes.state.old_value.0 == 'In
-                  Progress' or update.changes.state.old_value.0 == 'Done' or update.changes.state.old_value.0 ==
-                  'Cancelled' %}
+                  {% if update.changes.state.old_value.0 == 'Backlog' or update.changes.state.old_value.0 == 'In Progress' or update.changes.state.old_value.0 == 'Done' or update.changes.state.old_value.0 == 'Cancelled' %}
                   <td>
                     <img
                       src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
@@ -476,9 +474,7 @@
                       style="display: block"
                     />
                   </td>
-                  {% if update.changes.state.new_value|last == 'Backlog' or update.changes.state.new_value|last == 'In
-                  Progress' or update.changes.state.new_value|last == 'Done' or update.changes.state.new_value|last ==
-                  'Cancelled' %}
+                  {% if update.changes.state.new_value|last == 'Backlog' or update.changes.state.new_value|last == 'In Progress' or update.changes.state.new_value|last == 'Done' or update.changes.state.new_value|last == 'Cancelled' %}
                   <td>
                     <img
                       src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.png{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
@@ -520,8 +516,7 @@
                     >
                       {{ link }}
                     </a>
-                    {% endfor %} {% if update.changes.link.old_value|length > 0 %} {% if update.changes.link.old_value.0
-                    != "None" %}
+                    {% endfor %} {% if update.changes.link.old_value|length > 0 %} {% if update.changes.link.old_value.0 != "None" %}
                     <p href="" style="font-size: 0.8rem; font-weight: 500; color: #60646c">2 Links were removed</p>
                     {% endif %} {% endif %}
                   </td>

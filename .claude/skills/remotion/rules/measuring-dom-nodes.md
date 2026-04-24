@@ -32,3 +32,4 @@ export const MyComponent = () => {
   return <div ref={ref}>Content to measure</div>;
 };
 ```
+

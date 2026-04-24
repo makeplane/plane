@@ -78,7 +78,6 @@ Automatically generate preview deployments for PRs:
 Deploy specific branches for testing:
 
 1. **Configure Branch Patterns:**
-
    ```json
    {
      "deployments": {
@@ -102,7 +101,6 @@ Connect custom domain to documentation.
 1. **Add DNS Records:**
 
    **Apex domain (example.com):**
-
    ```
    Type: TXT
    Name: @
@@ -114,7 +112,6 @@ Connect custom domain to documentation.
    ```
 
    **Subdomain (docs.example.com):**
-
    ```
    Type: TXT
    Name: docs
@@ -181,21 +178,21 @@ location /docs {
 **Cloudflare Workers:**
 
 ```javascript
-addEventListener("fetch", (event) => {
-  event.respondWith(handleRequest(event.request));
-});
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
 
 async function handleRequest(request) {
-  const url = new URL(request.url);
+  const url = new URL(request.url)
 
-  if (url.pathname.startsWith("/docs")) {
-    const newUrl = url.pathname.replace(/^\/docs/, "");
+  if (url.pathname.startsWith('/docs')) {
+    const newUrl = url.pathname.replace(/^\/docs/, '')
     return fetch(`https://your-site.mintlify.app${newUrl}`, {
-      headers: request.headers,
-    });
+      headers: request.headers
+    })
   }
 
-  return fetch(request);
+  return fetch(request)
 }
 ```
 
@@ -210,7 +207,6 @@ Configure base path in `docs.json`:
 ```
 
 All routes prefixed with `/ck:docs`:
-
 - `/ck:docs/introduction`
 - `/ck:docs/api/users`
 - `/ck:docs/guides/quickstart`
@@ -222,13 +218,11 @@ All routes prefixed with `/ck:docs`:
 Deploy Mintlify docs alongside Next.js app.
 
 1. **Install Mintlify:**
-
    ```bash
    npm install -D mintlify
    ```
 
 2. **Add Build Script:**
-
    ```json
    {
      "scripts": {
@@ -239,7 +233,6 @@ Deploy Mintlify docs alongside Next.js app.
    ```
 
 3. **Configure Vercel:**
-
    ```json
    {
      "buildCommand": "npm run docs:build",
@@ -278,13 +271,11 @@ Deploy Mintlify docs alongside Next.js app.
 Host static Mintlify build on AWS.
 
 1. **Build Docs:**
-
    ```bash
    mintlify build
    ```
 
 2. **Upload to S3:**
-
    ```bash
    aws s3 sync .mintlify/out s3://docs-bucket/ \
      --delete \
@@ -364,7 +355,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "packages/docs/**"
+      - 'packages/docs/**'
 
 jobs:
   deploy:
@@ -401,8 +392,8 @@ name: Validate Docs
 on:
   pull_request:
     paths:
-      - "docs/**"
-      - "docs.json"
+      - 'docs/**'
+      - 'docs.json'
 
 jobs:
   validate:
@@ -518,7 +509,6 @@ Integrate with existing auth system:
    - Proxy authenticated requests
 
 2. **Example (Nginx + OAuth2 Proxy):**
-
    ```nginx
    location /docs {
        auth_request /oauth2/auth;
@@ -548,24 +538,24 @@ Content-Security-Policy:
 ### Cloudflare Configuration
 
 ```javascript
-addEventListener("fetch", (event) => {
-  event.respondWith(handleRequest(event.request));
-});
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
 
 async function handleRequest(request) {
-  const response = await fetch(request);
-  const newHeaders = new Headers(response.headers);
+  const response = await fetch(request)
+  const newHeaders = new Headers(response.headers)
 
   newHeaders.set(
-    "Content-Security-Policy",
+    'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-inline' https://mintlify.com"
-  );
+  )
 
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers: newHeaders,
-  });
+    headers: newHeaders
+  })
 }
 ```
 
@@ -651,7 +641,6 @@ Settings:
 Invalidate cache after deployment:
 
 **Cloudflare:**
-
 ```bash
 curl -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
   -H "Authorization: Bearer ${CF_API_TOKEN}" \
@@ -660,7 +649,6 @@ curl -X POST "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache"
 ```
 
 **AWS CloudFront:**
-
 ```bash
 aws cloudfront create-invalidation \
   --distribution-id ${DISTRIBUTION_ID} \

@@ -10,15 +10,15 @@ npx playwright install
 ## Test Structure
 
 ```typescript
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 
-test.describe("User Login", () => {
-  test("should login successfully", async ({ page }) => {
-    await page.goto("/login");
-    await page.getByLabel("Email").fill("user@example.com");
-    await page.getByLabel("Password").fill("password123");
-    await page.getByRole("button", { name: "Login" }).click();
-    await expect(page).toHaveURL("/dashboard");
+test.describe('User Login', () => {
+  test('should login successfully', async ({ page }) => {
+    await page.goto('/login');
+    await page.getByLabel('Email').fill('user@example.com');
+    await page.getByLabel('Password').fill('password123');
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(page).toHaveURL('/dashboard');
   });
 });
 ```
@@ -38,22 +38,21 @@ test.describe("User Login", () => {
 ```typescript
 // fixtures/auth.ts
 export const test = baseTest.extend<{ authPage: Page }>({
-  authPage: [
-    async ({ browser, request }, use, testInfo) => {
-      // API login per worker
-      const res = await request.post("/api/auth", {
-        data: { email: "test@example.com", password: "pass" },
-      });
-      const { token } = await res.json();
+  authPage: [async ({ browser, request }, use, testInfo) => {
+    // API login per worker
+    const res = await request.post('/api/auth', {
+      data: { email: 'test@example.com', password: 'pass' }
+    });
+    const { token } = await res.json();
 
-      const context = await browser.newContext();
-      await context.addCookies([{ name: "token", value: token, domain: "localhost", path: "/" }]);
-      const page = await context.newPage();
-      await use(page);
-      await context.close();
-    },
-    { scope: "worker" },
-  ],
+    const context = await browser.newContext();
+    await context.addCookies([
+      { name: 'token', value: token, domain: 'localhost', path: '/' }
+    ]);
+    const page = await context.newPage();
+    await use(page);
+    await context.close();
+  }, { scope: 'worker' }]
 });
 ```
 
@@ -68,7 +67,7 @@ export const test = baseTest.extend<{ authPage: Page }>({
 ### Wait for API
 
 ```typescript
-const responsePromise = page.waitForResponse("**/api/users");
+const responsePromise = page.waitForResponse('**/api/users');
 await page.click('button:text("Load")');
 await responsePromise;
 ```
@@ -76,7 +75,9 @@ await responsePromise;
 ### Mock API
 
 ```typescript
-await page.route("**/api/users", (route) => route.fulfill({ status: 200, body: JSON.stringify([]) }));
+await page.route('**/api/users', route =>
+  route.fulfill({ status: 200, body: JSON.stringify([]) })
+);
 ```
 
 ## Configuration
@@ -87,9 +88,9 @@ export default defineConfig({
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   use: {
-    screenshot: "only-on-failure",
-    trace: "on-first-retry",
-    video: "retain-on-failure",
+    screenshot: 'only-on-failure',
+    trace: 'on-first-retry',
+    video: 'retain-on-failure',
   },
 });
 ```

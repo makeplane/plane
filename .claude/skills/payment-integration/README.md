@@ -5,7 +5,6 @@ Comprehensive payment integration skill for SePay (Vietnamese payment gateway), 
 ## Features
 
 ### SePay Integration
-
 - Vietnamese payment gateway with VietQR, NAPAS, bank transfers, and cards
 - 44+ supported banks
 - Webhook verification with API Key/OAuth2 authentication
@@ -14,7 +13,6 @@ Comprehensive payment integration skill for SePay (Vietnamese payment gateway), 
 - SDK support for Node.js, PHP, and Laravel
 
 ### Polar Integration
-
 - Global SaaS monetization platform
 - Merchant of Record (handles global tax compliance)
 - Subscription management with trials, upgrades, downgrades
@@ -25,7 +23,6 @@ Comprehensive payment integration skill for SePay (Vietnamese payment gateway), 
 - Framework adapters (Next.js, Laravel, Remix, etc.)
 
 ### Stripe Integration
-
 - Global payment infrastructure
 - CheckoutSessions, PaymentIntents, SetupIntents APIs
 - Billing and subscriptions at scale
@@ -78,7 +75,6 @@ Claude Code will automatically activate this skill when you mention payment inte
 ### Manual Activation
 
 In conversations, simply reference the platforms:
-
 - "Implement SePay payment integration"
 - "Set up Polar subscriptions with usage-based billing"
 - "Create webhook handler for payment notifications"
@@ -86,20 +82,17 @@ In conversations, simply reference the platforms:
 ### Using Scripts
 
 **SePay Webhook Verification:**
-
 ```bash
 cd $HOME/.claude/skills/payment-integration/scripts
 node sepay-webhook-verify.js '{"id":12345,"gateway":"Vietcombank",...}'
 ```
 
 **Polar Webhook Verification:**
-
 ```bash
 node polar-webhook-verify.js '{"type":"order.paid","data":{...}}' base64secret
 ```
 
 **Checkout Helper:**
-
 ```bash
 # SePay
 node checkout-helper.js sepay '{"orderInvoiceNumber":"ORD001","orderAmount":100000,...}'
@@ -109,7 +102,6 @@ node checkout-helper.js polar '{"productPriceId":"price_xxx","successUrl":"https
 ```
 
 **Run Tests:**
-
 ```bash
 npm test
 ```
@@ -134,7 +126,6 @@ POLAR_WEBHOOK_SECRET=base64_secret
 ## Progressive Disclosure
 
 The skill uses progressive disclosure to minimize context usage:
-
 1. **SKILL.md** - Overview and quick reference (~99 lines)
 2. **references/** - Detailed guides loaded as needed (<100 lines each)
 3. **scripts/** - Executable helpers with embedded examples
@@ -144,7 +135,6 @@ Load only the references you need for your current task.
 ## Platform Selection Guide
 
 **Choose SePay for:**
-
 - Vietnamese market targeting
 - Bank transfer automation
 - Local payment methods
@@ -152,7 +142,6 @@ Load only the references you need for your current task.
 - Direct bank monitoring
 
 **Choose Polar for:**
-
 - Global market
 - SaaS/subscription business
 - Usage-based billing
@@ -161,7 +150,6 @@ Load only the references you need for your current task.
 - Customer self-service
 
 **Choose Stripe for:**
-
 - Global payment infrastructure
 - Enterprise-grade payment processing
 - Connect platforms (marketplaces)
@@ -172,7 +160,6 @@ Load only the references you need for your current task.
 ## Examples
 
 ### SePay Payment Flow
-
 1. Load `references/sepay/overview.md` for authentication
 2. Load `references/sepay/sdk.md` for integration
 3. Use `checkout-helper.js` to generate payment form
@@ -180,7 +167,6 @@ Load only the references you need for your current task.
 5. Use `sepay-webhook-verify.js` to verify authenticity
 
 ### Polar Subscription Flow
-
 1. Load `references/polar/overview.md` for setup
 2. Load `references/polar/products.md` for pricing
 3. Load `references/polar/checkouts.md` for payment
@@ -189,7 +175,6 @@ Load only the references you need for your current task.
 6. Load `references/polar/benefits.md` for automation
 
 ### Stripe Integration Flow
-
 1. Load `references/stripe/stripe-best-practices.md` for integration design
 2. Choose: Checkout (hosted/embedded) or Payment Element
 3. Use CheckoutSessions API for most use cases
@@ -198,7 +183,6 @@ Load only the references you need for your current task.
 ## Testing
 
 All scripts include comprehensive test coverage:
-
 - SePay webhook verification (with/without authentication)
 - Polar webhook signature validation
 - Checkout configuration generation
@@ -209,19 +193,16 @@ Run `npm test` in the scripts directory to verify functionality.
 ## Support
 
 ### SePay
-
 - Docs: https://developer.sepay.vn/en
 - Email: info@sepay.vn
 - Hotline: 02873059589
 
 ### Polar
-
 - Docs: https://polar.sh/docs
 - API Reference: https://polar.sh/docs/api-reference
 - GitHub: https://github.com/polarsource/polar
 
 ### Stripe
-
 - Docs: https://docs.stripe.com
 - API Reference: https://docs.stripe.com/api
 - Changelog: https://docs.stripe.com/changelog

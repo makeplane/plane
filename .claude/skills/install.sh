@@ -250,6 +250,7 @@ init_state() {
     "system_deps": "pending",
     "node_deps": "pending",
     "python_env": "pending",
+    "env_migration": "pending",
     "verify": "pending"
   },
   "packages": {
@@ -913,6 +914,93 @@ setup_python_env() {
     deactivate
 }
 
+# Migrate env vars — idempotently append new vars to existing .env files
+# Reads from .env.example, adds missing vars to .env without clobbering existing values
+migrate_env_vars() {
+    print_header "Environment Variable Migration"
+
+    local claude_dir="$SCRIPT_DIR/.."
+    local env_files=(
+        "$claude_dir/.env:$claude_dir/.env.example"
+        "$SCRIPT_DIR/.env:$SCRIPT_DIR/.env.example"
+    )
+
+    for pair in "${env_files[@]}"; do
+        local env_file="${pair%%:*}"
+        local example_file="${pair##*:}"
+
+        if [[ ! -f "$example_file" ]]; then
+            continue
+        fi
+
+        if [[ ! -f "$env_file" ]]; then
+            print_info "No $(basename "$(dirname "$env_file")")/$(basename "$env_file") found — skipping (user can copy from .env.example)"
+            continue
+        fi
+
+        local added=0
+        local skipped=0
+
+        # Parse .env.example for var names (skip comments, blank lines)
+        while IFS= read -r line || [[ -n "$line" ]]; do
+            # Skip comments and blank lines
+            [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+
+            # Extract var name (handle KEY=value and KEY= formats)
+            local var_name="${line%%=*}"
+            # Skip if var name is empty or contains spaces (malformed)
+            [[ -z "$var_name" || "$var_name" =~ [[:space:]] ]] && continue
+
+            # Check if var already exists in user's .env (as KEY= or KEY=value or # KEY=)
+            if grep -q "^[[:space:]]*#\{0,1\}[[:space:]]*${var_name}=" "$env_file" 2>/dev/null; then
+                skipped=$((skipped + 1))
+                continue
+            fi
+
+            # Find the comment block above this var in .env.example for context
+            local comment_block=""
+            local line_num
+            line_num=$(grep -n "^${var_name}=" "$example_file" 2>/dev/null | head -1 | cut -d: -f1)
+            if [[ -n "$line_num" && "$line_num" -gt 1 ]]; then
+                # Collect preceding comment lines (walk backwards)
+                local start=$((line_num - 1))
+                local comments=()
+                while [[ $start -ge 1 ]]; do
+                    local prev_line
+                    prev_line=$(sed -n "${start}p" "$example_file")
+                    if [[ "$prev_line" =~ ^[[:space:]]*# ]]; then
+                        comments=("$prev_line" "${comments[@]}")
+                        start=$((start - 1))
+                    else
+                        break
+                    fi
+                done
+                if [[ ${#comments[@]} -gt 0 ]]; then
+                    comment_block=$(printf '%s\n' "${comments[@]}")
+                fi
+            fi
+
+            # Append to .env with context comment
+            {
+                echo ""
+                if [[ -n "$comment_block" ]]; then
+                    echo "$comment_block"
+                fi
+                echo "$var_name="
+            } >> "$env_file"
+
+            added=$((added + 1))
+            print_info "Added $var_name to $(basename "$(dirname "$env_file")")/$(basename "$env_file")"
+        done < "$example_file"
+
+        if [[ $added -gt 0 ]]; then
+            print_success "$(basename "$(dirname "$env_file")")/$(basename "$env_file"): $added new var(s) added, $skipped already present"
+        else
+            print_success "$(basename "$(dirname "$env_file")")/$(basename "$env_file"): all vars present ($skipped checked)"
+        fi
+    done
+}
+
 # Verify installations
 verify_installations() {
     print_header "Verifying Installations"
@@ -1338,7 +1426,16 @@ main() {
         update_phase "python_env" "done"
     fi
 
-    # Phase 4: Verify
+    # Phase 4: Env migration (idempotent — safe to re-run)
+    if phase_done "env_migration"; then
+        print_success "Env migration: already processed (resume)"
+    else
+        update_phase "env_migration" "running"
+        migrate_env_vars
+        update_phase "env_migration" "done"
+    fi
+
+    # Phase 5: Verify
     update_phase "verify" "running"
     verify_installations
     update_phase "verify" "done"

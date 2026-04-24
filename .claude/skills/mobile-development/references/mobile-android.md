@@ -5,7 +5,6 @@ Complete guide to Android development with Kotlin and Jetpack Compose (2024-2025
 ## Kotlin 2.1 Overview
 
 ### Key Features
-
 - **Null safety**: No more NullPointerExceptions
 - **Coroutines**: Structured concurrency
 - **Extension functions**: Extend classes without inheritance
@@ -15,7 +14,6 @@ Complete guide to Android development with Kotlin and Jetpack Compose (2024-2025
 ### Modern Kotlin Patterns
 
 **Coroutines:**
-
 ```kotlin
 // Suspend function
 suspend fun fetchUser(id: String): User {
@@ -36,7 +34,6 @@ viewModelScope.launch {
 ```
 
 **Flow (Reactive streams):**
-
 ```kotlin
 class UserRepository {
     fun observeUsers(): Flow<List<User>> = flow {
@@ -58,7 +55,6 @@ init {
 ```
 
 **Sealed classes (Type-safe states):**
-
 ```kotlin
 sealed class UiState {
     object Loading : UiState()
@@ -77,7 +73,6 @@ when (uiState) {
 ## Jetpack Compose
 
 ### Why Compose?
-
 - **Declarative**: Describe UI state, not imperative commands
 - **60% adoption**: In top 1,000 apps (2024)
 - **Less code**: 40% reduction vs Views
@@ -131,7 +126,6 @@ fun UserItem(user: User) {
 ```
 
 **Key Composables:**
-
 - `Column/Row/Box`: Layout
 - `LazyColumn/LazyRow`: Recycler equivalent (virtualized)
 - `Text/Image/Icon`: Content
@@ -213,7 +207,6 @@ data class UserUiState(
 ### MVI (Model-View-Intent)
 
 **When to use:**
-
 - Unidirectional data flow needed
 - Complex state management
 - Time-travel debugging
@@ -254,7 +247,6 @@ class UserViewModel : ViewModel() {
 ### Hilt (Recommended for Large Apps)
 
 **Setup:**
-
 ```kotlin
 // App class
 @HiltAndroidApp
@@ -292,7 +284,6 @@ object NetworkModule {
 ### Koin (Lightweight Alternative)
 
 **Setup:**
-
 ```kotlin
 // Module definition
 val appModule = module {
@@ -318,7 +309,6 @@ class UserViewModel(
 ```
 
 **Hilt vs Koin:**
-
 - **Hilt**: Compile-time, type-safe, Google-backed, complex setup
 - **Koin**: Runtime, simple DSL, 50% faster setup, reflection-based
 
@@ -327,7 +317,6 @@ class UserViewModel(
 ### R8 Optimization
 
 **Automatic optimizations:**
-
 - Code shrinking (remove unused)
 - Obfuscation (rename classes/methods)
 - Optimization (method inlining)
@@ -346,7 +335,6 @@ android {
 ```
 
 **Impact:**
-
 - 10-20% app size reduction
 - 20% faster startup
 - Harder to reverse engineer
@@ -354,7 +342,6 @@ android {
 ### Baseline Profiles
 
 **Performance boost:**
-
 - 10-20% faster startup
 - Reduced jank in critical paths
 - AOT compilation of hot code
@@ -369,7 +356,6 @@ dependencies {
 ### Compose Performance
 
 **1. Stability annotations:**
-
 ```kotlin
 // Mark stable classes
 @Stable
@@ -381,7 +367,6 @@ data class UserList(val users: List<User>)
 ```
 
 **2. Avoid recomposition:**
-
 ```kotlin
 // ❌ Bad: Recomposes every render
 @Composable
@@ -405,7 +390,6 @@ fun UserList(users: List<User>) {
 ```
 
 **3. Remember expensive computations:**
-
 ```kotlin
 @Composable
 fun ExpensiveList(items: List<Item>) {
@@ -561,19 +545,16 @@ NavigationBar {
 ## Google Play Requirements (2024-2025)
 
 ### SDK Requirements
-
 - **Current**: Target Android 14 (API 34)
 - **Mandatory (Aug 31, 2025)**: Target Android 15 (API 35)
 
 ### Privacy & Security
-
 - **Privacy policy**: Required for apps collecting data
 - **Data safety**: Form in Play Console
 - **Permissions**: Request only needed, justify dangerous permissions
 - **Encryption**: HTTPS for network, KeyStore for sensitive data
 
 ### AAB (Android App Bundle)
-
 ```gradle
 android {
     bundle {
@@ -591,7 +572,6 @@ android {
 ```
 
 **Benefits:**
-
 - 15-30% smaller downloads
 - Dynamic feature modules
 - Instant apps support
@@ -612,14 +592,12 @@ android {
 ## Resources
 
 **Official:**
-
 - Kotlin Docs: https://kotlinlang.org/docs/home.html
 - Compose Docs: https://developer.android.com/jetpack/compose
 - Material 3: https://m3.material.io/
 - Android Guides: https://developer.android.com/guide
 
 **Community:**
-
 - Android Weekly: https://androidweekly.net/
 - Kt.Academy: https://kt.academy/
 - Coding in Flow: https://codinginflow.com/

@@ -15,7 +15,6 @@ Core concepts and workflows for Docker containerization.
 ## Dockerfile Best Practices
 
 ### Essential Instructions
-
 ```dockerfile
 FROM node:20-alpine              # Base image (use specific versions)
 WORKDIR /app                     # Working directory
@@ -29,7 +28,6 @@ CMD ["node", "server.js"]        # Default command
 ```
 
 ### Multi-Stage Builds (Production)
-
 ```dockerfile
 # Stage 1: Build
 FROM node:20-alpine AS build
@@ -52,7 +50,6 @@ CMD ["node", "dist/server.js"]
 Benefits: Smaller images, improved security, no build tools in production.
 
 ### .dockerignore
-
 ```
 node_modules
 .git
@@ -178,7 +175,6 @@ docker network disconnect my-network myapp
 ## Language-Specific Dockerfiles
 
 ### Node.js
-
 ```dockerfile
 FROM node:20-alpine AS build
 WORKDIR /app
@@ -196,7 +192,6 @@ CMD ["node", "dist/server.js"]
 ```
 
 ### Python
-
 ```dockerfile
 FROM python:3.11-slim AS build
 WORKDIR /app
@@ -213,7 +208,6 @@ CMD ["python", "app.py"]
 ```
 
 ### Go
-
 ```dockerfile
 FROM golang:1.21-alpine AS build
 WORKDIR /app
@@ -247,7 +241,6 @@ USER nodejs
 ## Troubleshooting
 
 ### Container exits immediately
-
 ```bash
 docker logs myapp
 docker run -it myapp /bin/sh
@@ -255,7 +248,6 @@ docker run -it --entrypoint /bin/sh myapp
 ```
 
 ### Cannot connect
-
 ```bash
 docker ps
 docker port myapp
@@ -264,7 +256,6 @@ docker inspect myapp | grep IPAddress
 ```
 
 ### Out of disk space
-
 ```bash
 docker system df
 docker system prune -a
@@ -272,7 +263,6 @@ docker volume prune
 ```
 
 ### Build cache issues
-
 ```bash
 docker build --no-cache -t myapp .
 docker builder prune
@@ -290,15 +280,15 @@ docker builder prune
 
 ## Quick Reference
 
-| Task   | Command                                |
-| ------ | -------------------------------------- |
-| Build  | `docker build -t myapp:1.0 .`          |
-| Run    | `docker run -d -p 8080:3000 myapp:1.0` |
-| Logs   | `docker logs -f myapp`                 |
-| Shell  | `docker exec -it myapp /bin/sh`        |
-| Stop   | `docker stop myapp`                    |
-| Remove | `docker rm myapp`                      |
-| Clean  | `docker system prune -a`               |
+| Task | Command |
+|------|---------|
+| Build | `docker build -t myapp:1.0 .` |
+| Run | `docker run -d -p 8080:3000 myapp:1.0` |
+| Logs | `docker logs -f myapp` |
+| Shell | `docker exec -it myapp /bin/sh` |
+| Stop | `docker stop myapp` |
+| Remove | `docker rm myapp` |
+| Clean | `docker system prune -a` |
 
 ## Resources
 

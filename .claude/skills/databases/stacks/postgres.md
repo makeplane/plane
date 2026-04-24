@@ -6,23 +6,22 @@ Guidelines for designing schemas specific to PostgreSQL.
 
 ## Data Types
 
-| Use case            | Type                   | Notes                           |
-| ------------------- | ---------------------- | ------------------------------- |
-| Primary key         | `BIGSERIAL`            | Auto-increment BIGINT           |
-| Primary key (small) | `SERIAL`               | Auto-increment INT              |
-| Foreign key         | Match with PK type     |                                 |
-| Money/Price         | `NUMERIC(18,2)`        | Precise                         |
-| Boolean             | `BOOLEAN`              | TRUE/FALSE/NULL                 |
-| Short text          | `VARCHAR(n)` or `TEXT` | TEXT has no limit               |
-| JSON                | `JSONB`                | **Queryable**, prefer over JSON |
-| Timestamp           | `TIMESTAMPTZ`          | **Always use with timezone**    |
-| Date                | `DATE`                 |                                 |
-| UUID                | `UUID`                 | Native type                     |
-| Array               | `TEXT[]`, `INT[]`      |                                 |
-| IP Address          | `INET`                 |                                 |
+| Use case | Type | Notes |
+|----------|------|-------|
+| Primary key | `BIGSERIAL` | Auto-increment BIGINT |
+| Primary key (small) | `SERIAL` | Auto-increment INT |
+| Foreign key | Match with PK type | |
+| Money/Price | `NUMERIC(18,2)` | Precise |
+| Boolean | `BOOLEAN` | TRUE/FALSE/NULL |
+| Short text | `VARCHAR(n)` or `TEXT` | TEXT has no limit |
+| JSON | `JSONB` | **Queryable**, prefer over JSON |
+| Timestamp | `TIMESTAMPTZ` | **Always use with timezone** |
+| Date | `DATE` | |
+| UUID | `UUID` | Native type |
+| Array | `TEXT[]`, `INT[]` | |
+| IP Address | `INET` | |
 
 ### TIMESTAMPTZ vs TIMESTAMP
-
 **IMPORTANT**: Always use `TIMESTAMPTZ` to avoid timezone issues.
 
 ---
@@ -32,13 +31,11 @@ Guidelines for designing schemas specific to PostgreSQL.
 PostgreSQL supports `COMMENT ON`:
 
 ### Table comment
-
 ```sql
 COMMENT ON TABLE orders IS 'Table storing customer orders';
 ```
 
 ### Column comments
-
 ```sql
 COMMENT ON COLUMN orders.id IS 'Primary key, auto increment';
 COMMENT ON COLUMN orders.order_number IS 'Unique order code, format: ORD-YYYYMMDD-XXXXX';
@@ -46,7 +43,6 @@ COMMENT ON COLUMN orders.status IS 'Status: pending|confirmed|shipped|cancelled'
 ```
 
 ### Query comments
-
 ```sql
 -- Table comment
 SELECT obj_description('orders'::regclass);
@@ -68,14 +64,12 @@ WHERE c.table_name = 'orders';
 ## Index Types
 
 ### B-Tree (default)
-
 ```sql
 CREATE INDEX idx_orders_status ON orders(status);
 CREATE INDEX idx_orders_user_status_created ON orders(user_id, status, created_at DESC);
 ```
 
 ### Partial Index (very useful)
-
 ```sql
 -- Only index non-deleted records
 CREATE INDEX idx_orders_active ON orders(user_id, status)
@@ -87,7 +81,6 @@ CREATE INDEX idx_orders_pending ON orders(created_at)
 ```
 
 ### GIN (for JSONB, Arrays, Full-text)
-
 ```sql
 CREATE INDEX idx_orders_metadata ON orders USING GIN(metadata);
 CREATE INDEX idx_products_tags ON products USING GIN(tags);
@@ -98,7 +91,6 @@ CREATE INDEX idx_products_search ON products
 ```
 
 ### BRIN (for large tables with ordered data)
-
 ```sql
 CREATE INDEX idx_logs_created ON logs USING BRIN(created_at);
 ```
@@ -169,7 +161,6 @@ ALTER TYPE order_status ADD VALUE 'refunded' AFTER 'completed';
 ## Partitioning
 
 ### Range partitioning
-
 ```sql
 CREATE TABLE fact_orders (
     id BIGSERIAL,
@@ -184,7 +175,6 @@ CREATE TABLE fact_orders_default PARTITION OF fact_orders DEFAULT;
 ```
 
 ### Hash partitioning
-
 ```sql
 CREATE TABLE logs PARTITION BY HASH (user_id);
 CREATE TABLE logs_0 PARTITION OF logs FOR VALUES WITH (MODULUS 4, REMAINDER 0);

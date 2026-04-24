@@ -33,30 +33,35 @@ const DEFAULT_PATTERNS = [
   'coverage',
 ];
 
-/**
- * Load patterns from .ckignore file
- * Falls back to DEFAULT_PATTERNS if file doesn't exist or is empty
- *
- * @param {string} ckignorePath - Path to .ckignore file
- * @returns {string[]} Array of patterns
- */
-function loadPatterns(ckignorePath) {
-  if (!ckignorePath || !fs.existsSync(ckignorePath)) {
-    return DEFAULT_PATTERNS;
+function readPatternsFromFile(filePath) {
+  if (!filePath || !fs.existsSync(filePath)) {
+    return [];
   }
 
   try {
-    const content = fs.readFileSync(ckignorePath, 'utf-8');
-    const patterns = content
+    return fs.readFileSync(filePath, 'utf-8')
       .split('\n')
       .map(line => line.trim())
       .filter(line => line && !line.startsWith('#'));
-
-    return patterns.length > 0 ? patterns : DEFAULT_PATTERNS;
   } catch (error) {
     console.error('WARN: Failed to read .ckignore:', error.message);
-    return DEFAULT_PATTERNS;
+    return [];
   }
+}
+
+/**
+ * Load patterns from the shipped .ckignore plus an optional project override.
+ * Falls back to DEFAULT_PATTERNS if the shipped file doesn't exist or is empty.
+ *
+ * @param {string} ckignorePath - Path to shipped/global .ckignore file
+ * @param {string} [projectCkignorePath] - Optional project-local .ckignore path
+ * @returns {string[]} Array of patterns
+ */
+function loadPatterns(ckignorePath, projectCkignorePath) {
+  const shippedPatterns = readPatternsFromFile(ckignorePath);
+  const projectPatterns = readPatternsFromFile(projectCkignorePath);
+  const basePatterns = shippedPatterns.length > 0 ? shippedPatterns : DEFAULT_PATTERNS;
+  return [...basePatterns, ...projectPatterns];
 }
 
 /**

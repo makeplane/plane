@@ -7,13 +7,11 @@ Metadata determines when Claude activates the skill. Poor metadata = wrong activ
 **Format:** use either `skill-name` or `namespace:skill-name` (for example `ck:plan`), all lowercase
 
 **Good Examples:**
-
 - `pdf-editor` - clear domain
 - `ck:bigquery-analyst` - namespaced variant
 - `frontend-webapp-builder` - specific function
 
 **Bad Examples:**
-
 - `helper` - too generic
 - `mySkill` - wrong case
 - `pdf` - too short, unclear purpose
@@ -41,11 +39,11 @@ description: Process PDFs with rotation, splitting, merging. Use for document ma
 Too generic or educational:
 
 ```yaml
-description: A skill for working with databases. # Too vague
+description: A skill for working with databases.  # Too vague
 ```
 
 ```yaml
-description: This skill helps you understand how React works. # Educational, not actionable
+description: This skill helps you understand how React works.  # Educational, not actionable
 ```
 
 ## Trigger Precision
@@ -53,7 +51,6 @@ description: This skill helps you understand how React works. # Educational, not
 Description should answer: "What phrases would a user say that should trigger this skill?"
 
 **Example for `image-editor` skill:**
-
 - "Remove red-eye from this image"
 - "Rotate this photo 90 degrees"
 - "Crop the background out"
@@ -74,7 +71,6 @@ scripts/package_skill.py <skill-path>
 ```
 
 Fails if:
-
 - Missing name or description
 - Description exceeds 1024 characters
 - Name exceeds 64 characters

@@ -3,7 +3,6 @@
 ## D1 (SQLite Database)
 
 ### Setup
-
 ```bash
 # Create database
 wrangler d1 create my-database
@@ -22,15 +21,19 @@ wrangler d1 execute my-database --file=./schema.sql
 
 ```typescript
 // Query
-const result = await env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(userId).first();
+const result = await env.DB.prepare(
+  "SELECT * FROM users WHERE id = ?"
+).bind(userId).first();
 
 // Insert
-await env.DB.prepare("INSERT INTO users (name, email) VALUES (?, ?)").bind("Alice", "alice@example.com").run();
+await env.DB.prepare(
+  "INSERT INTO users (name, email) VALUES (?, ?)"
+).bind("Alice", "alice@example.com").run();
 
 // Batch (atomic)
 await env.DB.batch([
   env.DB.prepare("UPDATE accounts SET balance = balance - 100 WHERE id = ?").bind(user1),
-  env.DB.prepare("UPDATE accounts SET balance = balance + 100 WHERE id = ?").bind(user2),
+  env.DB.prepare("UPDATE accounts SET balance = balance + 100 WHERE id = ?").bind(user2)
 ]);
 
 // All results
@@ -38,7 +41,6 @@ const { results } = await env.DB.prepare("SELECT * FROM users").all();
 ```
 
 ### Features
-
 - Global read replication (low-latency reads)
 - Single-writer consistency
 - Standard SQLite syntax
@@ -48,7 +50,6 @@ const { results } = await env.DB.prepare("SELECT * FROM users").all();
 ## KV (Key-Value Store)
 
 ### Setup
-
 ```bash
 # Create namespace
 wrangler kv:namespace create MY_KV
@@ -65,7 +66,7 @@ id = "YOUR_NAMESPACE_ID"
 // Put with TTL
 await env.KV.put("session:token", JSON.stringify(data), {
   expirationTtl: 3600,
-  metadata: { userId: "123" },
+  metadata: { userId: "123" }
 });
 
 // Get
@@ -85,7 +86,6 @@ const list = await env.KV.list({ prefix: "user:" });
 ```
 
 ### Features
-
 - Sub-millisecond reads (edge-cached)
 - Eventual consistency (~60 seconds globally)
 - 25MB value size limit
@@ -94,14 +94,12 @@ const list = await env.KV.list({ prefix: "user:" });
 ## Use Cases
 
 ### D1
-
 - Relational data
 - Complex queries with JOINs
 - ACID transactions
 - User accounts, orders, inventory
 
 ### KV
-
 - Cache
 - Sessions
 - Feature flags
@@ -110,14 +108,14 @@ const list = await env.KV.list({ prefix: "user:" });
 
 ## Decision Matrix
 
-| Need                  | Choose                       |
-| --------------------- | ---------------------------- |
-| SQL queries           | D1                           |
-| Sub-millisecond reads | KV                           |
-| ACID transactions     | D1                           |
-| Large values (>25MB)  | R2                           |
-| Strong consistency    | D1 (writes), Durable Objects |
-| Automatic expiration  | KV                           |
+| Need | Choose |
+|------|--------|
+| SQL queries | D1 |
+| Sub-millisecond reads | KV |
+| ACID transactions | D1 |
+| Large values (>25MB) | R2 |
+| Strong consistency | D1 (writes), Durable Objects |
+| Automatic expiration | KV |
 
 ## Resources
 

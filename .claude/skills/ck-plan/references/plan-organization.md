@@ -11,7 +11,6 @@ Use `Plan dir:` from `## Naming` section injected by hooks. This is the full com
 ### File Organization
 
 IN CURRENT WORKING PROJECT DIRECTORY:
-
 ```
 {plan-dir}/                                    # From `Plan dir:` in ## Naming
 ├── research/
@@ -34,7 +33,6 @@ IN CURRENT WORKING PROJECT DIRECTORY:
 ### Task Hydration
 
 After creating plan.md and phase files, hydrate tasks (unless `--no-tasks`):
-
 1. TaskCreate per phase with `addBlockedBy` dependency chain
 2. Add critical step tasks for high-risk items
 3. See `task-management.md` for patterns and cook handoff protocol
@@ -42,7 +40,6 @@ After creating plan.md and phase files, hydrate tasks (unless `--no-tasks`):
 ### Active Plan State Tracking
 
 See SKILL.md "Active Plan State" section for full rules. Key points:
-
 - Check `## Plan Context` injected by hooks for active/suggested/none state
 - After creating plan: `node .claude/scripts/set-active-plan.cjs {plan-dir}`
 - Active plans use plan-specific reports path; suggested plans use default path
@@ -52,7 +49,6 @@ See SKILL.md "Active Plan State" section for full rules. Key points:
 After determining phases from research/design:
 
 1. **Scaffold via CLI:**
-
    ```bash
    ck plan create \
      --title "{plan title}" \
@@ -83,7 +79,6 @@ write plan.md directly using the canonical 3-column format.
 **IMPORTANT:** All plan.md files MUST include YAML frontmatter. See `output-standards.md` for schema.
 
 **Example plan.md structure:**
-
 ```markdown
 ---
 title: "Feature Implementation Plan"
@@ -107,17 +102,17 @@ Brief description of what this plan accomplishes.
 
 ## Cross-Plan Dependencies
 
-| Relationship | Plan                                                                | Status  |
-| ------------ | ------------------------------------------------------------------- | ------- |
-| Blocks       | [260115-0900-user-dashboard](../260115-0900-user-dashboard/plan.md) | pending |
+| Relationship | Plan | Status |
+|-------------|------|--------|
+| Blocks | [260115-0900-user-dashboard](../260115-0900-user-dashboard/plan.md) | pending |
 
 ## Phases
 
-| Phase | Name                                       | Status  |
-| ----- | ------------------------------------------ | ------- |
-| 1     | [Setup Environment](./phase-01-setup.md)   | Pending |
-| 2     | [Core Implementation](./phase-02-impl.md)  | Pending |
-| 3     | [Testing & Validation](./phase-03-test.md) | Pending |
+| Phase | Name | Status |
+|-------|------|--------|
+| 1 | [Setup Environment](./phase-01-setup.md) | Pending |
+| 2 | [Core Implementation](./phase-02-impl.md) | Pending |
+| 3 | [Testing & Validation](./phase-03-test.md) | Pending |
 
 <!-- IMPORTANT: Link text MUST be human-readable names (not filenames).
      Bad:  [phase-01-setup.md](./phase-01-setup.md)
@@ -129,74 +124,60 @@ Brief description of what this plan accomplishes.
 ```
 
 **Guidelines:**
-
 - Keep generic and under 80 lines
 - List each phase with status/progress
 - Link to detailed phase files
 - Key dependencies
 
 ### Phase Files (phase-XX-name.md)
-
 Fully respect the `./docs/development-rules.md` file.
 Each phase file should contain:
 
 **Context Links**
-
 - Links to related reports, files, documentation
 
 **Overview**
-
 - Priority
 - Current status
 - Brief description
 
 **Key Insights**
-
 - Important findings from research
 - Critical considerations
 
 **Requirements**
-
 - Functional requirements
 - Non-functional requirements
 
 **Architecture**
-
 - System design
 - Component interactions
 - Data flow
 
 **Related Code Files**
-
 - List of files to modify
 - List of files to create
 - List of files to delete
 
 **Implementation Steps**
-
 - Detailed, numbered steps
 - Specific instructions
 
 **Todo List**
-
 - Checkbox list for tracking
 
 **Success Criteria**
-
 - Definition of done
 - Validation methods
 
 **Risk Assessment**
-
 - Potential issues
 - Mitigation strategies
 
 **Security Considerations**
-
 - Auth/authorization
 - Data protection
 
 **Next Steps**
-
 - Dependencies
 - Follow-up tasks

@@ -20,7 +20,6 @@ Read model from `.claude/.ck.json`: `gemini.model` (default: `gemini-3-flash-pre
 ## Execution Strategy
 
 **Priority Order**:
-
 1. **Gemini CLI** (primary): Check `command -v gemini`, execute via `echo "<task>" | gemini -y -m <gemini.model>`
 2. **Direct Scripts** (secondary): Use `npx tsx scripts/cli.ts call-tool`
 3. **Report Failure**: If both fail, report error to main agent
@@ -48,7 +47,6 @@ Read model from `.claude/.ck.json`: `gemini.model` (default: `gemini-3-flash-pre
 ### 1. Gemini CLI Execution
 
 Primary execution method:
-
 ```bash
 # Check availability
 command -v gemini >/dev/null 2>&1 || exit 1
@@ -63,7 +61,6 @@ echo "<task description>" | gemini -y -m <gemini.model>
 ### 2. Script Execution (Fallback)
 
 When Gemini unavailable:
-
 ```bash
 npx tsx .claude/skills/mcp-management/scripts/cli.ts call-tool <server> <tool> '<json-args>'
 ```
@@ -71,7 +68,6 @@ npx tsx .claude/skills/mcp-management/scripts/cli.ts call-tool <server> <tool> '
 ### 3. Result Reporting
 
 Concise summaries:
-
 - Execution status (success/failure)
 - Output/results
 - File paths for artifacts (screenshots, etc.)
@@ -87,7 +83,6 @@ Concise summaries:
 4. **Report**: Send concise summary (status, output, artifacts, errors)
 
 **Example**:
-
 ```
 User Task: "Take screenshot of example.com"
 
@@ -105,7 +100,6 @@ $ npx tsx cli.ts call-tool human-mcp playwright_screenshot_fullpage '{"url":"htt
 ## Team Mode (when spawned as teammate)
 
 When operating as a team member:
-
 1. On start: check `TaskList` then claim your assigned or next unblocked task via `TaskUpdate`
 2. Read full task description via `TaskGet` before starting work
 3. Only execute MCP operations specified in task — do not modify project code files
