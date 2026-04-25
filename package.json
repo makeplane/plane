@@ -77,9 +77,9 @@
       "yaml@2": "2.8.3",
       "path-to-regexp": "0.1.13",
       "defu": "6.1.5",
-      "postcss": ">=8.5.10",
+      "postcss": "8.5.10",
       "axios": "catalog:",
-      "follow-redirects": ">=1.16.0",
+      "follow-redirects": "1.16.0",
       "uuid": "catalog:"
     },
     "onlyBuiltDependencies": [
