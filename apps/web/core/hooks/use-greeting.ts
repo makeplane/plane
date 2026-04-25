@@ -10,42 +10,27 @@ import { useCurrentTime } from "@/hooks/use-current-time";
 
 export type TGreeting = "morning" | "afternoon" | "evening";
 
-export const useGreeting = (user: IUser) => {
+export const useGreeting = (_user: IUser) => {
   const { currentTime } = useCurrentTime();
 
-  const userTimezone = useMemo(() => {
-    if (!user?.user_timezone) return undefined;
-    try {
-      new Intl.DateTimeFormat(undefined, { timeZone: user.user_timezone });
-      return user.user_timezone;
-    } catch (e) {
-      console.warn(
-        `[useGreeting] Invalid user_timezone "${user.user_timezone}", falling back to browser timezone.`,
-        e
-      );
-      return undefined;
-    }
-  }, [user?.user_timezone]);
-
   const hourFormatter = useMemo(
-    () => new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, hourCycle: "h23", hour: "numeric" }),
-    [userTimezone]
+    () => new Intl.DateTimeFormat("en-US", { hourCycle: "h23", hour: "numeric" }),
+    []
   );
 
   const dateFormatter = useMemo(
-    () => new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, month: "short", day: "numeric" }),
-    [userTimezone]
+    () => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }),
+    []
   );
 
   const weekDayFormatter = useMemo(
-    () => new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, weekday: "long" }),
-    [userTimezone]
+    () => new Intl.DateTimeFormat("en-US", { weekday: "long" }),
+    []
   );
 
   const timeStringFormatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat("en-US", { timeZone: userTimezone, hourCycle: "h23", hour: "2-digit", minute: "2-digit" }),
-    [userTimezone]
+    () => new Intl.DateTimeFormat("en-US", { hourCycle: "h23", hour: "2-digit", minute: "2-digit" }),
+    []
   );
 
   const hour = hourFormatter.format(currentTime);
