@@ -1,8 +1,11 @@
 # Python imports
+import logging
 import zoneinfo
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
+
+logger = logging.getLogger(__name__)
 
 # Django imports
 from django.utils import timezone
@@ -97,14 +100,14 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(
+                logger.debug(
                     f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
                 )
             return response
 
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def fields(self):
