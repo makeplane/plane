@@ -52,6 +52,11 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
         });
       } catch (e) {
         console.error(e);
+        setToast({
+          title: t("common.error"),
+          message: t("notification.toasts.snooze_failed"),
+          type: TOAST_TYPE.ERROR,
+        });
       }
     } else {
       try {
@@ -63,6 +68,11 @@ export const NotificationItemSnoozeOption = observer(function NotificationItemSn
         });
       } catch (e) {
         console.error(e);
+        setToast({
+          title: t("common.error"),
+          message: t("notification.toasts.un_snooze_failed"),
+          type: TOAST_TYPE.ERROR,
+        });
       }
     }
 
