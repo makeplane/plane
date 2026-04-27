@@ -93,7 +93,7 @@ class S3Storage(S3Boto3Storage):
             )
         # Handle errors
         except ClientError as e:
-            print(f"Error generating presigned POST URL: {e}")
+            log_exception(e)
             return None
 
         return response
