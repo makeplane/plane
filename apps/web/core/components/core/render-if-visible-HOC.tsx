@@ -7,7 +7,7 @@
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
-import { safeRequestIdleCallback } from "@/lib/polyfills";
+import { safeCancelIdleCallback, safeRequestIdleCallback } from "@/lib/polyfills";
 
 type Props = {
   defaultHeight?: string;
@@ -50,11 +50,13 @@ function RenderIfVisible(props: Props) {
   useEffect(() => {
     const node = intersectionRef.current;
     if (node) {
+      let idleHandle: number | undefined;
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
           if (useIdletime) {
-            safeRequestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
+            if (idleHandle !== undefined) safeCancelIdleCallback(idleHandle);
+            idleHandle = safeRequestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
               timeout: 300,
             });
           } else {
@@ -69,6 +71,7 @@ function RenderIfVisible(props: Props) {
       observer.observe(node);
       return () => {
         observer.unobserve(node);
+        if (idleHandle !== undefined) safeCancelIdleCallback(idleHandle);
       };
     }
   }, [intersectionRef, children, root, verticalOffset, horizontalOffset, useIdletime]);
