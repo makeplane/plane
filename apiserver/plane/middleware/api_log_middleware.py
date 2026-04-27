@@ -1,4 +1,8 @@
+import logging
+
 from plane.db.models import APIActivityLog
+
+logger = logging.getLogger(__name__)
 
 
 class APITokenLogMiddleware:
@@ -33,7 +37,7 @@ class APITokenLogMiddleware:
                 )
 
             except Exception as e:
-                print(e)
+                logger.error("Failed to create API activity log entry", exc_info=e)
                 # If the token does not exist, you can decide whether to log this as an invalid attempt
 
         return None
