@@ -6,6 +6,14 @@ import { FALLBACK_LANGUAGE, SUPPORTED_LANGUAGES, STORAGE_KEY } from "../constant
 // types
 import { TLanguage, ILanguageOption, ITranslations } from "../types";
 
+// Module-level logger — keeps noise out of production while preserving dev visibility
+const isDev = typeof process !== "undefined" && process.env?.NODE_ENV === "development";
+/* eslint-disable no-console */
+const logger = {
+  error: (message: string, ...args: unknown[]) => isDev && console.error(`[TranslationStore] ${message}`, ...args),
+};
+/* eslint-enable no-console */
+
 /**
  * Mobx store class for handling translations and language changes in the application
  * Provides methods to translate keys with params and change the language
@@ -44,7 +52,7 @@ export class TranslationStore {
       this.translations = translations;
       this.messageCache.clear(); // Clear cache when translations change
     } catch (error) {
-      console.error("Failed to load translations:", error);
+      logger.error("Failed to load translations:", error);
     }
   }
 
@@ -133,7 +141,7 @@ export class TranslationStore {
       this.messageCache.set(cacheKey, formatter);
       return formatter;
     } catch (error) {
-      console.error(`Failed to create message formatter for key "${key}":`, error);
+      logger.error(`Failed to create message formatter for key "${key}":`, error);
       return null;
     }
   }
@@ -164,7 +172,7 @@ export class TranslationStore {
       // Last resort: return the key itself
       return key;
     } catch (error) {
-      console.error(`Translation error for key "${key}":`, error);
+      logger.error(`Translation error for key "${key}":`, error);
       return key;
     }
   }
@@ -188,7 +196,7 @@ export class TranslationStore {
         document.documentElement.lang = lng;
       }
     } catch (error) {
-      console.error("Failed to set language:", error);
+      logger.error("Failed to set language:", error);
     }
   }
 
