@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 # Python imports
+import logging
 import zoneinfo
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -26,6 +27,9 @@ from rest_framework.viewsets import ModelViewSet
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.authentication.session import BaseSessionAuthentication
+
+
+logger = logging.getLogger(__name__)
 
 
 class TimezoneMixin:
@@ -109,12 +113,17 @@ class BaseViewSet(TimezoneMixin, ModelViewSet, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
+                logger.debug(
+                    "%s - %s of Queries: %d",
+                    request.method,
+                    request.get_full_path(),
+                    len(connection.queries),
+                )
 
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def workspace_slug(self):
@@ -192,12 +201,17 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
             if settings.DEBUG:
                 from django.db import connection
 
-                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
+                logger.debug(
+                    "%s - %s of Queries: %d",
+                    request.method,
+                    request.get_full_path(),
+                    len(connection.queries),
+                )
             return response
 
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def workspace_slug(self):
