@@ -34,7 +34,7 @@ class Command(BaseCommand):
             user_email = options["user_email"]
             role = options.get("role", 20)
 
-            print(f"Role: {role}")
+            self.stdout.write(self.style.NOTICE(f"Role: {role}"))
 
             user = User.objects.filter(email=user_email).first()
             if not user:
