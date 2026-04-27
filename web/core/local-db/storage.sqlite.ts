@@ -87,15 +87,15 @@ export class Storage {
 
   _initialize = async (workspaceSlug: string): Promise<boolean> => {
     if (this.status === "initializing") {
-      console.warn(`Initialization already in progress for workspace ${workspaceSlug}`);
+      log(`Initialization already in progress for workspace ${workspaceSlug}`);
       return false;
     }
     if (this.status === "ready") {
-      console.warn(`Already initialized for workspace ${workspaceSlug}`);
+      log(`Already initialized for workspace ${workspaceSlug}`);
       return true;
     }
     if (this.status === "error") {
-      console.warn(`Initialization failed for workspace ${workspaceSlug}`);
+      log(`Initialization failed for workspace ${workspaceSlug}`);
       return false;
     }
 
@@ -372,7 +372,6 @@ export class Storage {
       }
     } catch (err) {
       logError(err);
-      console.warn("unable to fetch issue from local db");
     }
 
     return;
