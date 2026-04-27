@@ -56,9 +56,8 @@ export const useUploader = (args: TUploaderArgs) => {
         }
         onUpload(url);
       } catch (errPayload: any) {
-        console.log(errPayload);
         const error = errPayload?.response?.data?.error || "Something went wrong";
-        console.error(error);
+        console.error("Image upload failed:", error);
       } finally {
         setImageUploadInProgress(false);
         setUploading(false);
