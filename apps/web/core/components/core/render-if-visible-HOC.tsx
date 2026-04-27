@@ -7,6 +7,7 @@
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
+import { safeRequestIdleCallback } from "@/lib/polyfills";
 
 type Props = {
   defaultHeight?: string;
@@ -47,12 +48,13 @@ function RenderIfVisible(props: Props) {
 
   // Set visibility with intersection observer
   useEffect(() => {
-    if (intersectionRef.current) {
+    const node = intersectionRef.current;
+    if (node) {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          if (typeof window !== undefined && window.requestIdleCallback && useIdletime) {
-            window.requestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
+          if (useIdletime) {
+            safeRequestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
               timeout: 300,
             });
           } else {
@@ -64,20 +66,17 @@ function RenderIfVisible(props: Props) {
           rootMargin: `${verticalOffset}% ${horizontalOffset}% ${verticalOffset}% ${horizontalOffset}%`,
         }
       );
-      observer.observe(intersectionRef.current);
+      observer.observe(node);
       return () => {
-        if (intersectionRef.current) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          observer.unobserve(intersectionRef.current);
-        }
+        observer.unobserve(node);
       };
     }
-  }, [intersectionRef, children, root, verticalOffset, horizontalOffset]);
+  }, [intersectionRef, children, root, verticalOffset, horizontalOffset, useIdletime]);
 
   //Set height after render
   useEffect(() => {
     if (intersectionRef.current && isVisible && shouldRecordHeights) {
-      window.requestIdleCallback(() => {
+      safeRequestIdleCallback(() => {
         if (intersectionRef.current) placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
       });
     }
