@@ -96,15 +96,17 @@ class BaseAPIView(TimezoneMixin, APIView, BasePaginator):
 
             if settings.DEBUG:
                 from django.db import connection
+                import logging
 
-                print(
+                logger = logging.getLogger("plane")
+                logger.debug(
                     f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}"
                 )
             return response
 
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     @property
     def fields(self):
