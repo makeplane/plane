@@ -4,8 +4,11 @@
 
 # Python imports
 import json
+import logging
 import uuid
 from uuid import UUID
+
+logger = logging.getLogger(__name__)
 
 
 # Module imports
@@ -670,5 +673,5 @@ def notifications(
             EmailNotificationLog.objects.bulk_create(bulk_email_logs, batch_size=100, ignore_conflicts=True)
         return
     except Exception as e:
-        print(e)
+        logger.error("Error sending notifications", exc_info=True)
         return
