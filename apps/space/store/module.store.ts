@@ -70,7 +70,7 @@ export class ModuleStore implements IIssueModuleStore {
       });
       return modulesResponse;
     } catch (error) {
-      console.error("Failed to fetch members:", error);
+      console.error("Failed to fetch modules:", error);
       return [];
     }
   };
