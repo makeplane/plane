@@ -9,6 +9,14 @@ import type { WebSocket } from "ws";
 
 import "reflect-metadata";
 
+// Minimal structured logger so errors reach the process log in production
+// rather than disappearing into an unmonitored console stream.
+const log = {
+  error: (message: string, ...args: unknown[]) => {
+    process.stderr.write(`[ERROR] ${message} ${args.map((a) => (a instanceof Error ? a.stack : JSON.stringify(a))).join(" ")}\n`);
+  },
+};
+
 export type HttpMethod = "get" | "post" | "put" | "delete" | "patch" | "options" | "head" | "ws";
 
 type ControllerInstance = {
@@ -98,7 +106,7 @@ function registerWebSocketController(
           try {
             handler.call(instance, ws, req);
           } catch (error) {
-            console.error(`WebSocket error in ${Controller.name}.${methodName}`, error);
+            log.error(`WebSocket error in ${Controller.name}.${methodName}`, error);
             ws.close(1011, error instanceof Error ? error.message : "Internal server error");
           }
         });
