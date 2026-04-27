@@ -71,11 +71,7 @@ export const createSimilarString = (str: string) => {
  */
 export const copyTextToClipboard = async (text: string): Promise<void> => {
   if (typeof navigator === "undefined") return;
-  try {
-    await navigator.clipboard.writeText(text);
-  } catch (err) {
-    console.error("Failed to copy text: ", err);
-  }
+  await navigator.clipboard.writeText(text);
 };
 
 /**
