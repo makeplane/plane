@@ -158,7 +158,6 @@ export const useParseEditorContent = () => {
    */
   const replaceCustomComponentsFromMarkdownContent = useCallback(
     (props: { markdownContent: string; noAssets?: boolean }): string => {
-      const start = performance.now();
       const { markdownContent, noAssets = false } = props;
       let parsedMarkdownContent = markdownContent;
       // replace the matched mention components with [display_name](redirect_url)
@@ -201,8 +200,6 @@ export const useParseEditorContent = () => {
       // remove all issue-embed components
       const issueEmbedRegex = /<issue-embed-component[^>]*>[^]*<\/issue-embed-component>/g;
       parsedMarkdownContent = parsedMarkdownContent.replace(issueEmbedRegex, "");
-      const end = performance.now();
-      console.log("Exec time:", end - start);
       return parsedMarkdownContent;
     },
     [getUserDetails, workspaceSlug]
