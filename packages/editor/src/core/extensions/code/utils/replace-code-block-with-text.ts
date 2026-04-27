@@ -38,10 +38,12 @@ export function replaceCodeWithText(editor: Editor): void {
     });
 
     if (!replaced) {
-      console.log("No code block to replace.");
+      // No code block was found in the current selection; nothing to do.
+      return;
     }
   } catch (error) {
-    console.error("An error occurred while replacing code block content:", error);
+    // Rethrow so the caller (keyboard shortcut handler) can decide how to surface the failure.
+    throw error;
   }
 }
 
@@ -57,8 +59,7 @@ function transformCodeBlockToParagraphs({
   const docSize = editor.state.doc.content.size;
 
   if (from < 0 || to > docSize || from > to) {
-    console.error("Invalid range for replacement: ", from, to, "in a document of size", docSize);
-    return;
+    throw new Error(`Invalid range for code-block replacement: from=${from} to=${to} docSize=${docSize}`);
   }
 
   // Split the textContent by new lines to handle each line as a separate paragraph for Windows (\r\n) and Unix (\n)
