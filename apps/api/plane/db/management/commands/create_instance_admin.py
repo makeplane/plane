@@ -39,5 +39,5 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS("Successfully created the admin"))
         except Exception as e:
-            print(e)
+            self.stderr.write(self.style.ERROR(str(e)))
             raise CommandError("Failed to create the instance admin.")
