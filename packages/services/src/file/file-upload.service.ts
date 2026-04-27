@@ -39,7 +39,8 @@ export class FileUploadService extends APIService {
       .then((response) => response?.data)
       .catch((error) => {
         if (axios.isCancel(error)) {
-          console.log(error.message);
+          // Upload was intentionally cancelled; swallow the cancellation silently.
+          return;
         } else {
           throw error?.response?.data;
         }
