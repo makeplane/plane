@@ -91,7 +91,7 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
   // Basic filename validation
   const filenameError = validateFilename(file.name);
   if (filenameError) {
-    console.warn(`File validation warning: ${filenameError}`);
+    throw new Error(filenameError);
   }
 
   try {
@@ -100,7 +100,7 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
       return signatureType;
     }
   } catch (_error) {
-    console.warn("Error detecting file type from signature:", _error);
+    // Signature detection is best-effort; fall through to the unknown-type fallback.
   }
 
   // fallback for unknown files
