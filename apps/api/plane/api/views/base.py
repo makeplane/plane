@@ -119,11 +119,16 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
             if settings.DEBUG:
                 from django.db import connection
 
-                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
+                logger.debug(
+                    "%s - %s of Queries: %d",
+                    request.method,
+                    request.get_full_path(),
+                    len(connection.queries),
+                )
             return response
         except Exception as exc:
             response = self.handle_exception(exc)
-            return exc
+            return response
 
     def finalize_response(self, request, response, *args, **kwargs):
         # Call super to get the default response
@@ -248,7 +253,12 @@ class BaseViewSet(TimezoneMixin, ReadReplicaControlMixin, ModelViewSet, BasePagi
             if settings.DEBUG:
                 from django.db import connection
 
-                print(f"{request.method} - {request.get_full_path()} of Queries: {len(connection.queries)}")
+                logger.debug(
+                    "%s - %s of Queries: %d",
+                    request.method,
+                    request.get_full_path(),
+                    len(connection.queries),
+                )
 
             return response
         except Exception as exc:
