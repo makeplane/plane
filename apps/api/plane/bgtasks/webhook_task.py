@@ -458,9 +458,8 @@ def webhook_activity(
         # Return if a does not exist error occurs
         if isinstance(e, ObjectDoesNotExist):
             return
-        if settings.DEBUG:
-            print(e)
         log_exception(e)
+        logger.error(f"Webhook activity error: {e}")
         return
 
 
