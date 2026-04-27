@@ -207,6 +207,7 @@ class IssueFlatSerializer(BaseSerializer):
             "program",     # sport app Field
             "category",    # sport app Field
             "year",        # sport app Field
+            "opposition_team",
         ]
 
 

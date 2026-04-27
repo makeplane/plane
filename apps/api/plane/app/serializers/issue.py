@@ -44,6 +44,7 @@ from plane.utils.content_validator import (
     validate_binary_data,
 )
 from plane.utils.issue_datetime import is_issue_start_datetime_in_past
+from plane.utils.opposition_team import normalize_opposition_team
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -68,6 +69,7 @@ class IssueFlatSerializer(BaseSerializer):
             "program",  # sport app Field
             "year",     # sport app Field
             "category", # sport app Field
+            "opposition_team",
             "sg_event_id",
         ]
 
@@ -100,6 +102,7 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    opposition_team = serializers.JSONField(required=False, allow_null=True)
     project_id = serializers.UUIDField(source="project.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
@@ -154,6 +157,12 @@ class IssueCreateSerializer(BaseSerializer):
             is_valid, error_msg = validate_binary_data(attrs["description_binary"])
             if not is_valid:
                 raise serializers.ValidationError({"description_binary": "Invalid binary data"})
+
+        if "opposition_team" in attrs:
+            try:
+                attrs["opposition_team"] = normalize_opposition_team(attrs["opposition_team"])
+            except ValueError as exc:
+                raise serializers.ValidationError({"opposition_team": str(exc)})
 
         # Validate assignees are from project
         if attrs.get("assignee_ids", []):
@@ -802,6 +811,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "program",  # sport app Field
             "year",     # sport app Field
             "category", # sport app Field
+            "opposition_team",
             "sg_event_id",
         ]
         read_only_fields = fields
@@ -860,6 +870,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "program": instance.program,
             "year": instance.year,
             "category": instance.category,
+            "opposition_team": instance.opposition_team,
             "sg_event_id": instance.sg_event_id,
         }
 

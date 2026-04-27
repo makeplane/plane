@@ -35,12 +35,17 @@ export enum EIssuesStoreType {
   TEAM_PROJECT_WORK_ITEMS = "TEAM_PROJECT_WORK_ITEMS",
 }
 
+export type TOppositionTeam = {
+  name: string;
+  logo: string;
+};
+
 export type TBaseIssue = {
   id: string;
   sequence_id: number;
   name: string;
   sort_order: number;
-  opposition_team: string | null;
+  opposition_team: TOppositionTeam | string | null;
 
   state_id: string | null;
   priority: TIssuePriorities | null;
