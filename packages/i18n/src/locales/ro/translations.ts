@@ -399,7 +399,6 @@ export default {
   time_tracking_description: "Înregistrează timpul petrecut pe activități și proiecte.",
   work_management_description: "Gestionează-ți munca și proiectele cu ușurință.",
   documentation: "Documentație",
-  message_support: "Trimite mesaj la suport",
   contact_sales: "Contactează vânzările",
   hyper_mode: "Mod Hyper",
   keyboard_shortcuts: "Scurtături tastatură",

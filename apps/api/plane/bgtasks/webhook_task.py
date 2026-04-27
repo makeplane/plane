@@ -52,6 +52,7 @@ from plane.db.models import (
 from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
+from plane.utils.ip_address import validate_url
 from plane.settings.mongo import MongoConnection
 
 
@@ -325,6 +326,9 @@ def webhook_send_task(
         return
 
     try:
+        # Re-validate the webhook URL at send time to prevent DNS-rebinding attacks
+        validate_url(webhook.url, allowed_ips=settings.WEBHOOK_ALLOWED_IPS)
+
         # Send the webhook event
         response = requests.post(webhook.url, headers=headers, json=payload, timeout=30)
 

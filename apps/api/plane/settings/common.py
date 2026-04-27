@@ -5,6 +5,8 @@
 """Global Settings"""
 
 # Python imports
+import ipaddress
+import logging
 import os
 from urllib.parse import urlparse
 from urllib.parse import urljoin
@@ -31,6 +33,21 @@ DEBUG = int(os.environ.get("DEBUG", "0"))
 
 # Self-hosted mode
 IS_SELF_MANAGED = True
+
+# Webhook IP allowlist — comma-separated IPs or CIDR ranges that are allowed as
+# webhook targets even if they resolve to private networks.
+# Example: "10.0.0.0/8,192.168.1.0/24,172.16.0.5"
+_webhook_allowed_ips_raw = os.environ.get("WEBHOOK_ALLOWED_IPS", "")
+WEBHOOK_ALLOWED_IPS = []
+_logger = logging.getLogger("plane")
+for _cidr in _webhook_allowed_ips_raw.split(","):
+    _cidr = _cidr.strip()
+    if not _cidr:
+        continue
+    try:
+        WEBHOOK_ALLOWED_IPS.append(ipaddress.ip_network(_cidr, strict=False))
+    except ValueError:
+        _logger.warning("WEBHOOK_ALLOWED_IPS: skipping invalid entry %r", _cidr)
 
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")

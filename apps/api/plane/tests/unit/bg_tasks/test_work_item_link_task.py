@@ -2,9 +2,12 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+import ipaddress
+
 import pytest
 from unittest.mock import patch, MagicMock
 from plane.bgtasks.work_item_link_task import safe_get, validate_url_ip
+from plane.utils.ip_address import validate_url
 
 
 def _make_response(status_code=200, headers=None, is_redirect=False, content=b""):
@@ -41,6 +44,49 @@ class TestValidateUrlIp:
         with patch("plane.bgtasks.work_item_link_task.socket.getaddrinfo") as mock_dns:
             mock_dns.return_value = [(None, None, None, None, ("93.184.216.34", 0))]
             validate_url_ip("https://example.com")  # Should not raise
+
+
+@pytest.mark.unit
+class TestValidateUrlAllowlist:
+    """Test validate_url allowlist permits specific private IPs."""
+
+    def test_allowlist_permits_private_ip(self):
+        allowed = [ipaddress.ip_network("192.168.1.0/24")]
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("192.168.1.50", 0))]
+            validate_url("http://example.com", allowed_ips=allowed)  # Should not raise
+
+    def test_allowlist_does_not_permit_other_private_ip(self):
+        allowed = [ipaddress.ip_network("192.168.1.0/24")]
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("10.0.0.1", 0))]
+            with pytest.raises(ValueError, match="private/internal"):
+                validate_url("http://example.com", allowed_ips=allowed)
+
+    def test_allowlist_permits_loopback_when_explicitly_allowed(self):
+        allowed = [ipaddress.ip_network("127.0.0.0/8")]
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("127.0.0.1", 0))]
+            validate_url("http://example.com", allowed_ips=allowed)  # Should not raise
+
+    def test_allowlist_permits_matching_ipv4_with_mixed_version_networks(self):
+        allowed = [
+            ipaddress.ip_network("2001:db8::/32"),
+            ipaddress.ip_network("192.168.1.0/24"),
+        ]
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("192.168.1.50", 0))]
+            validate_url("http://example.com", allowed_ips=allowed)  # Should not raise
+
+    def test_allowlist_blocks_non_matching_ipv4_with_mixed_version_networks(self):
+        allowed = [
+            ipaddress.ip_network("2001:db8::/32"),
+            ipaddress.ip_network("192.168.1.0/24"),
+        ]
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("10.0.0.1", 0))]
+            with pytest.raises(ValueError, match="private/internal"):
+                validate_url("http://example.com", allowed_ips=allowed)
 
 
 @pytest.mark.unit

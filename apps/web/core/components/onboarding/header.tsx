@@ -12,6 +12,7 @@ import type { TOnboardingStep } from "@plane/types";
 import { EOnboardingSteps } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useUser } from "@/hooks/store/user";
 // local imports
 import { SwitchAccountDropdown } from "./switch-account-dropdown";
@@ -26,6 +27,8 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
   const { currentStep, updateCurrentStep, hasInvitations } = props;
   // store hooks
   const { data: user } = useUser();
+  const { config: instanceConfig } = useInstance();
+  const isSelfManaged = instanceConfig?.is_self_managed;
 
   // handle step back
   const handleStepBack = () => {
@@ -37,7 +40,7 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
         updateCurrentStep(EOnboardingSteps.ROLE_SETUP);
         break;
       case EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN:
-        updateCurrentStep(EOnboardingSteps.USE_CASE_SETUP);
+        updateCurrentStep(isSelfManaged ? EOnboardingSteps.PROFILE_SETUP : EOnboardingSteps.USE_CASE_SETUP);
         break;
     }
   };
@@ -45,22 +48,18 @@ export const OnboardingHeader = observer(function OnboardingHeader(props: Onboar
   // can go back
   const canGoBack = ![EOnboardingSteps.PROFILE_SETUP, EOnboardingSteps.INVITE_MEMBERS].includes(currentStep);
 
-  // Get current step number for progress tracking
-  const getCurrentStepNumber = (): number => {
-    const stepOrder: TOnboardingStep[] = [
-      EOnboardingSteps.PROFILE_SETUP,
-      EOnboardingSteps.ROLE_SETUP,
-      EOnboardingSteps.USE_CASE_SETUP,
-      ...(hasInvitations
-        ? [EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN]
-        : [EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN, EOnboardingSteps.INVITE_MEMBERS]),
-    ];
-    return stepOrder.indexOf(currentStep) + 1;
-  };
+  // step order for progress tracking — include INVITE_MEMBERS if user is currently on it
+  const showInviteStep = !hasInvitations || currentStep === EOnboardingSteps.INVITE_MEMBERS;
+  const stepOrder: TOnboardingStep[] = [
+    EOnboardingSteps.PROFILE_SETUP,
+    ...(isSelfManaged ? [] : [EOnboardingSteps.ROLE_SETUP, EOnboardingSteps.USE_CASE_SETUP]),
+    EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN,
+    ...(showInviteStep ? [EOnboardingSteps.INVITE_MEMBERS] : []),
+  ];
 
   // derived values
-  const currentStepNumber = getCurrentStepNumber();
-  const totalSteps = hasInvitations ? 4 : 5; // 4 if invites available, 5 if not
+  const currentStepNumber = stepOrder.indexOf(currentStep) + 1;
+  const totalSteps = stepOrder.length;
   const userName = user?.display_name
     ? user?.display_name
     : user?.first_name
