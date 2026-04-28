@@ -589,5 +589,94 @@ Roles per level:
 
 ---
 
-**Last Updated:** 2026-04-08
-**Version:** 1.1
+## Business Calendar Subsystem
+
+> Plan: `plans/260428-1427-vietnam-working-day-holiday-management/`
+> Research: `plans/reports/researcher-260428-1412-vietnam-working-day-holiday-management.md`
+
+### Overview
+
+Manual, god-mode source-of-truth for Vietnamese working-day rules. No third-party calendar API, no auto-import. Instance admins define schedules, holidays, and day overrides via the `/calendar` admin UI; Celery tasks consult the service at invocation time.
+
+**Design goals:** deterministic (same inputs → same result), fail-open (calendar errors never block critical background jobs), cache-backed (TTL 1 day, signal-invalidated on any data change).
+
+### Data Model
+
+```
+WorkSchedule (1) ──────────┬── Holiday (N)
+  id, name                 │     id, schedule_fk, date, name
+  week_pattern[7] bool     │
+  timezone (Asia/HCM)      └── DayOverride (N)
+  is_default bool                id, schedule_fk, date
+  country_code "VN"              type WORKDAY|HOLIDAY
+  workspace_fk (null=instance)   reason, swap_with_date
+```
+
+**Resolution priority** (highest wins):
+
+1. `DayOverride` for the date → WORKDAY or HOLIDAY
+2. `Holiday` for the date → not working
+3. `week_pattern[weekday]` → True/False
+
+### Service
+
+`plane/utils/business_calendar/service.py` — `BusinessCalendarService` (all class methods, no state):
+
+| Method                 | Signature                              | Purpose                   |
+| ---------------------- | -------------------------------------- | ------------------------- |
+| `is_working_day`       | `(d, schedule_id=None) → bool`         | Core predicate            |
+| `next_working_day`     | `(d, schedule_id=None) → date`         | Skip to next working date |
+| `add_business_days`    | `(d, n, schedule_id=None) → date`      | Walk forward/back N days  |
+| `working_days_between` | `(start, end, schedule_id=None) → int` | Count half-open interval  |
+
+**Cache:** `calendar:{schedule_id}:{year}` → serialised holiday+override dict, TTL 86400 s.
+
+**Signal invalidation** (`plane/db/models/business_calendar.py`):
+
+- `Holiday` post_save/post_delete → `cache.delete(calendar:{schedule_id}:{year})`
+- `DayOverride` post_save/post_delete → same
+- `WorkSchedule` post_delete (hard) → year-range sweep; post_save with `deleted_at` set → same
+
+Signals auto-imported in `plane/db/apps.py` `ready()`.
+
+### API
+
+Instance-admin layer at `plane/license/api/` — requires `InstanceAdminPermission`.
+
+| Method           | Path                                                      | Action                          |
+| ---------------- | --------------------------------------------------------- | ------------------------------- |
+| GET/POST         | `/api/instances/calendar/schedules/`                      | List / create schedules         |
+| GET/PATCH/DELETE | `/api/instances/calendar/schedules/{id}/`                 | Retrieve / update / soft-delete |
+| GET/POST         | `/api/instances/calendar/schedules/{id}/holidays/`        | List / bulk-create holidays     |
+| DELETE           | `/api/instances/calendar/schedules/{id}/holidays/{hid}/`  | Delete holiday                  |
+| GET/POST         | `/api/instances/calendar/schedules/{id}/overrides/`       | List / create overrides         |
+| DELETE           | `/api/instances/calendar/schedules/{id}/overrides/{oid}/` | Delete override                 |
+| POST             | `/api/instances/calendar/schedules/{id}/copy-year/`       | Bulk-copy one year to another   |
+| GET              | `/api/instances/calendar/schedules/default/`              | Resolve instance default        |
+
+### UI
+
+`apps/admin` — route `/calendar`:
+
+- Workweek toggle panel (Mon–Sun checkboxes per schedule)
+- Holidays grid (date + name, inline add/delete, grouped by month)
+- Overrides table (date, type WORKDAY/HOLIDAY, reason, swap-with link)
+- Copy-year action (clone all holidays/overrides from year A to year B)
+
+### Celery Integration
+
+`plane/utils/celery_helpers.py` — `working_day_required()` decorator factory:
+
+```python
+@shared_task          # outermost — Celery registers it
+@working_day_required()  # inner — guard runs at invocation
+def archive_and_close_old_issues(): ...
+```
+
+**Fail-open:** if `BusinessCalendarService` raises, logs exception and runs task anyway.
+**Log on skip:** `INFO plane.utils.celery_helpers "Skip {task}: {date} (VN) is not a working day"`.
+
+---
+
+**Last Updated:** 2026-04-28
+**Version:** 1.2

@@ -133,6 +133,8 @@ urlpatterns = [
     path("", include("plane.license.api.urls.task_category")),
     # Job position management
     path("", include("plane.license.api.urls.job_position")),
+    # Business calendar management (WorkSchedule / Holiday / DayOverride)
+    path("", include("plane.license.api.urls.business_calendar")),
     # Monitoring
     path(
         "monitoring/email-logs/",

@@ -38,6 +38,8 @@ export default [
     route("monitoring", "./(all)/(dashboard)/monitoring/page.tsx"),
     route("task-categories", "./(all)/(dashboard)/task-categories/page.tsx"),
     route("job-positions", "./(all)/(dashboard)/job-positions/page.tsx"),
+    route("calendar", "./(all)/(dashboard)/calendar/page.tsx"),
+    route("calendar/:scheduleId", "./(all)/(dashboard)/calendar/detail/page.tsx"),
   ]),
   // Catch-all route for 404 handling - must be last
   route("*", "./components/404.tsx"),
