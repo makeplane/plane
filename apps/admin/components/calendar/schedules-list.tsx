@@ -24,12 +24,12 @@ export const SchedulesList = observer(function SchedulesList() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="space-y-0.5">
-          <h2 className="text-h6-semibold text-primary">Lịch làm việc</h2>
-          <p className="text-body-sm-regular text-secondary">Quản lý các lịch làm việc và ngày nghỉ lễ cho instance.</p>
+          <h2 className="text-h6-semibold text-primary">Business calendars</h2>
+          <p className="text-body-sm-regular text-secondary">Manage work schedules and holidays for the instance.</p>
         </div>
         <Button variant="primary" size="sm" onClick={() => setCreateOpen(true)}>
           <Plus className="w-4 h-4" />
-          Tạo lịch mới
+          New schedule
         </Button>
       </div>
 
@@ -41,8 +41,10 @@ export const SchedulesList = observer(function SchedulesList() {
         </Loader>
       ) : schedules.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-subtle rounded-lg">
-          <p className="text-body-sm-semibold text-secondary">Chưa có lịch làm việc nào</p>
-          <p className="text-caption-sm-regular text-tertiary mt-1">Tạo lịch đầu tiên để quản lý ngày làm việc</p>
+          <p className="text-body-sm-semibold text-secondary">No business calendars yet</p>
+          <p className="text-caption-sm-regular text-tertiary mt-1">
+            Create your first schedule to manage working days
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

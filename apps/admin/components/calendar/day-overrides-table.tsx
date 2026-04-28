@@ -19,13 +19,13 @@ type Props = {
 };
 
 const TYPE_LABEL: Record<string, string> = {
-  WORKDAY: "Ngày làm việc bù",
-  HOLIDAY: "Ngày nghỉ bù",
+  WORKDAY: "Make-up workday",
+  HOLIDAY: "Make-up day off",
 };
 
 const TYPE_STYLE: Record<string, string> = {
-  WORKDAY: "bg-amber-500/10 text-amber-700",
-  HOLIDAY: "bg-yellow-500/10 text-yellow-700",
+  WORKDAY: "bg-warning-subtle text-warning-primary",
+  HOLIDAY: "bg-success-subtle text-success-primary",
 };
 
 export const DayOverridesTable = observer(function DayOverridesTable({ scheduleId, overrides }: Props) {
@@ -34,13 +34,13 @@ export const DayOverridesTable = observer(function DayOverridesTable({ scheduleI
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Xoá override này?")) return;
+    if (!confirm("Delete this override?")) return;
     setDeletingId(id);
     try {
       await deleteOverride(scheduleId, id);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Đã xoá override" });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Override deleted" });
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Không thể xoá override" });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to delete override" });
     } finally {
       setDeletingId(null);
     }
@@ -49,7 +49,7 @@ export const DayOverridesTable = observer(function DayOverridesTable({ scheduleI
   if (overrides.length === 0) {
     return (
       <div className="py-8 text-center text-body-sm-regular text-secondary border border-dashed border-subtle rounded-lg">
-        Chưa có override nào trong năm này
+        No overrides for this year
       </div>
     );
   }
@@ -60,10 +60,10 @@ export const DayOverridesTable = observer(function DayOverridesTable({ scheduleI
         <table className="w-full text-body-sm-regular">
           <thead className="bg-surface-2 border-b border-subtle">
             <tr>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Ngày</th>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Loại</th>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Hoán đổi với</th>
-              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Lý do</th>
+              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Date</th>
+              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Type</th>
+              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Swap with</th>
+              <th className="text-left px-4 py-2 text-body-xs-semibold text-secondary">Reason</th>
               <th className="px-4 py-2" />
             </tr>
           </thead>

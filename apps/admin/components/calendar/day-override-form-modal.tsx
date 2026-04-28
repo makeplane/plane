@@ -77,14 +77,14 @@ export const DayOverrideFormModal = observer(function DayOverrideFormModal({
       };
       if (editOverride) {
         await updateOverride(scheduleId, editOverride.id, payload);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Cập nhật override thành công" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Override updated" });
       } else {
         await createOverride(scheduleId, payload);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Thêm override thành công" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Override added" });
       }
       onClose();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Không thể lưu override" });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to save override" });
     } finally {
       setIsSubmitting(false);
     }
@@ -94,24 +94,24 @@ export const DayOverrideFormModal = observer(function DayOverrideFormModal({
     <Dialog open={open} onOpenChange={(o) => !o && onClose()} modal>
       <Dialog.Panel width={EDialogWidth.SM}>
         <div className="p-6 space-y-4">
-          <Dialog.Title>{editOverride ? "Sửa override ngày" : "Thêm override ngày"}</Dialog.Title>
+          <Dialog.Title>{editOverride ? "Edit day override" : "Add day override"}</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-3">
             <div className="space-y-1">
               <label htmlFor="override-date" className="text-body-xs-medium text-secondary">
-                Ngày (YYYY-MM-DD) *
+                Date (YYYY-MM-DD) *
               </label>
               <Input
                 id="override-date"
                 {...register("date", {
-                  required: "Bắt buộc",
-                  pattern: { value: DATE_PATTERN, message: "Định dạng YYYY-MM-DD" },
+                  required: "Required",
+                  pattern: { value: DATE_PATTERN, message: "Format must be YYYY-MM-DD" },
                 })}
                 placeholder="2025-04-26"
               />
               {errors.date && <p className="text-caption-sm-regular text-danger-primary">{errors.date.message}</p>}
             </div>
             <div className="space-y-1">
-              <div className="text-body-xs-medium text-secondary">Loại *</div>
+              <div className="text-body-xs-medium text-secondary">Type *</div>
               <div className="flex gap-4">
                 {(["WORKDAY", "HOLIDAY"] as TDayOverrideType[]).map((t) => (
                   <label key={t} htmlFor={`override-type-${t}`} className="flex items-center gap-2 cursor-pointer">
@@ -123,7 +123,7 @@ export const DayOverrideFormModal = observer(function DayOverrideFormModal({
                       className="accent-accent-primary"
                     />
                     <span className="text-body-sm-regular text-primary">
-                      {t === "WORKDAY" ? "Ngày làm việc bù" : "Ngày nghỉ bù"}
+                      {t === "WORKDAY" ? "Make-up workday" : "Make-up day off"}
                     </span>
                   </label>
                 ))}
@@ -131,24 +131,24 @@ export const DayOverrideFormModal = observer(function DayOverrideFormModal({
             </div>
             <div className="space-y-1">
               <label htmlFor="override-reason" className="text-body-xs-medium text-secondary">
-                Lý do *
+                Reason *
               </label>
               <Input
                 id="override-reason"
-                {...register("reason", { required: "Bắt buộc" })}
-                placeholder="VD: Làm bù cho ngày 30/4"
+                {...register("reason", { required: "Required" })}
+                placeholder="e.g. Make-up workday for Apr 30"
               />
               {errors.reason && <p className="text-caption-sm-regular text-danger-primary">{errors.reason.message}</p>}
             </div>
             {overrideType === "WORKDAY" && (
               <div className="space-y-1">
                 <label htmlFor="override-swap" className="text-body-xs-medium text-secondary">
-                  Hoán đổi với ngày (tuỳ chọn)
+                  Swap with date (optional)
                 </label>
                 <Input
                   id="override-swap"
                   {...register("swap_with_date", {
-                    pattern: { value: /^$|^\d{4}-\d{2}-\d{2}$/, message: "Định dạng YYYY-MM-DD hoặc để trống" },
+                    pattern: { value: /^$|^\d{4}-\d{2}-\d{2}$/, message: "Format must be YYYY-MM-DD or empty" },
                   })}
                   placeholder="2025-04-30"
                 />
@@ -159,10 +159,10 @@ export const DayOverrideFormModal = observer(function DayOverrideFormModal({
             )}
             <div className="flex justify-end gap-2 pt-1">
               <Button variant="secondary" size="sm" type="button" onClick={onClose}>
-                Huỷ
+                Cancel
               </Button>
               <Button variant="primary" size="sm" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Đang lưu..." : editOverride ? "Cập nhật" : "Thêm"}
+                {isSubmitting ? "Saving..." : editOverride ? "Update" : "Add"}
               </Button>
             </div>
           </form>

@@ -6,85 +6,61 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
-import { useNavigate } from "react-router";
-import { ArrowLeft, Trash2 } from "lucide-react";
-import { Button } from "@plane/propel/button";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Pencil } from "lucide-react";
+import type { IWorkSchedule } from "@plane/types";
+import { cn } from "@plane/utils";
 import { useBusinessCalendar } from "@/hooks/store";
-import { WorkweekToggle } from "./workweek-toggle";
 import { HolidaysYearView } from "./holidays-year-view";
+import { MonthOverview } from "./month-overview";
+import { WorkweekEditModal } from "./workweek-edit-modal";
 
-type Tab = "workweek" | "calendar";
+type Tab = "month" | "calendar";
+
+const DAY_INITIALS = ["M", "T", "W", "T", "F", "S", "S"];
+
+const TAB_ITEMS: { key: Tab; label: string }[] = [
+  { key: "month", label: "Month" },
+  { key: "calendar", label: "Year calendar" },
+];
 
 type Props = { scheduleId: string };
 
 export const ScheduleDetail = observer(function ScheduleDetail({ scheduleId }: Props) {
-  const { schedulesMap, deleteSchedule } = useBusinessCalendar();
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<Tab>("workweek");
-  const [isDeleting, setIsDeleting] = useState(false);
+  const { schedulesMap } = useBusinessCalendar();
+  const [activeTab, setActiveTab] = useState<Tab>("month");
+  const [workweekOpen, setWorkweekOpen] = useState(false);
 
   const schedule = schedulesMap[scheduleId];
 
   if (!schedule) {
     return (
       <div className="py-16 text-center text-body-sm-regular text-secondary">
-        Không tìm thấy lịch làm việc.{" "}
-        <button className="text-accent-primary underline" onClick={() => void navigate("/calendar/")}>
-          Quay lại danh sách
-        </button>
+        Schedule not found. Please refresh the page.
       </div>
     );
   }
-
-  const handleDelete = async () => {
-    if (!confirm(`Xoá lịch "${schedule.name}"? Hành động này không thể hoàn tác.`)) return;
-    setIsDeleting(true);
-    try {
-      await deleteSchedule(scheduleId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Đã xoá lịch làm việc" });
-      void navigate("/calendar/");
-    } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Không thể xoá lịch làm việc" });
-      setIsDeleting(false);
-    }
-  };
-
-  const TAB_ITEMS: { key: Tab; label: string }[] = [
-    { key: "workweek", label: "Tuần làm việc" },
-    { key: "calendar", label: "Lịch năm" },
-  ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => void navigate("/calendar/")}
-            className="text-secondary hover:text-primary transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-h5-semibold text-primary">{schedule.name}</h1>
-              {schedule.is_default && (
-                <span className="px-2 py-0.5 rounded text-caption-sm-medium bg-accent-subtle text-accent-primary">
-                  Mặc định
-                </span>
-              )}
-            </div>
-            <p className="text-caption-sm-regular text-secondary mt-0.5">
-              {schedule.timezone} · {schedule.country_code}
-            </p>
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-h5-semibold text-primary">{schedule.name}</h1>
+            {schedule.is_default && (
+              <span className="px-2 py-0.5 rounded text-caption-sm-medium bg-accent-subtle text-accent-primary">
+                Default
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-caption-sm-regular text-secondary flex-wrap">
+            <span>{schedule.timezone}</span>
+            <span>·</span>
+            <span>{schedule.country_code}</span>
+            <span>·</span>
+            <WorkweekChip weekPattern={schedule.week_pattern} onEdit={() => setWorkweekOpen(true)} />
           </div>
         </div>
-        <Button variant="secondary" size="sm" onClick={() => void handleDelete()} disabled={isDeleting}>
-          <Trash2 className="w-4 h-4 text-danger-primary" />
-          {isDeleting ? "Đang xoá..." : "Xoá"}
-        </Button>
       </div>
 
       {/* Tabs */}
@@ -109,9 +85,38 @@ export const ScheduleDetail = observer(function ScheduleDetail({ scheduleId }: P
 
       {/* Tab content */}
       <div>
-        {activeTab === "workweek" && <WorkweekToggle schedule={schedule} />}
+        {activeTab === "month" && <MonthOverview scheduleId={scheduleId} />}
         {activeTab === "calendar" && <HolidaysYearView scheduleId={scheduleId} />}
       </div>
+
+      <WorkweekEditModal open={workweekOpen} onClose={() => setWorkweekOpen(false)} schedule={schedule} />
     </div>
   );
 });
+
+type ChipProps = { weekPattern: IWorkSchedule["week_pattern"]; onEdit: () => void };
+
+const WorkweekChip = ({ weekPattern, onEdit }: ChipProps) => (
+  <button
+    type="button"
+    onClick={onEdit}
+    title="Edit working week"
+    className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-subtle hover:border-strong hover:bg-surface-2 transition-colors cursor-pointer"
+  >
+    <span className="text-caption-sm-regular text-secondary">Working:</span>
+    <span className="flex items-center gap-0.5 font-mono">
+      {DAY_INITIALS.map((d, i) => (
+        <span
+          key={i}
+          className={cn(
+            "text-caption-sm-medium tabular-nums",
+            weekPattern[i] ? "text-primary" : "text-tertiary line-through"
+          )}
+        >
+          {d}
+        </span>
+      ))}
+    </span>
+    <Pencil className="w-3 h-3 text-tertiary" />
+  </button>
+);

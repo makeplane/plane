@@ -4,68 +4,70 @@
  * See the LICENSE file for details.
  */
 
+import { useMemo } from "react";
 import { observer } from "mobx-react";
-import type { IHoliday, IDayOverride } from "@plane/types";
+import type { IDayOverride, IHoliday } from "@plane/types";
+import { cn } from "@plane/utils";
+import {
+  MON_FIRST_OFFSET,
+  formatDate,
+  getCellClasses,
+  getCellState,
+  getDaysInMonth,
+  getFirstDayOfWeek,
+  getTodayString,
+  type CellState,
+} from "./calendar-cell-helper";
+import type { MonthStats } from "./calendar-stats-helper";
 
-// Sunday=0..Saturday=6 → Mon-first offset
-const MON_FIRST_OFFSET = [6, 0, 1, 2, 3, 4, 5];
-
-/** Pure-JS helpers — no date-fns dependency needed */
-function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function getFirstDayOfWeek(year: number, month: number): number {
-  return new Date(year, month, 1).getDay();
-}
-
-type CellState = "holiday" | "override-workday" | "override-holiday" | "default";
-
-function getCellState(dateStr: string, holidays: IHoliday[], overrides: IDayOverride[]): CellState {
-  if (holidays.some((h) => h.date === dateStr)) return "holiday";
-  const ov = overrides.find((o) => o.date === dateStr);
-  if (ov) return ov.type === "WORKDAY" ? "override-workday" : "override-holiday";
-  return "default";
-}
-
-const CELL_STYLES: Record<CellState, string> = {
-  holiday: "bg-red-500/10 text-red-700 font-medium",
-  "override-workday": "bg-amber-500/10 text-amber-700 font-medium",
-  "override-holiday": "bg-yellow-500/10 text-yellow-700 font-medium",
-  default: "text-primary hover:bg-surface-2",
-};
+const DAY_HEADERS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 type Props = {
   year: number;
   month: number; // 0-indexed
   holidays: IHoliday[];
   overrides: IDayOverride[];
+  weekPattern: boolean[];
+  monthStats?: MonthStats;
+  monthHolidays?: IHoliday[];
   onCellClick: (date: string, state: CellState) => void;
 };
+
+function formatHolidayLine(h: IHoliday): string {
+  const [, m, d] = h.date.split("-");
+  return `${Number(d)}/${Number(m)} ${h.name}`;
+}
 
 export const HolidaysMonthGrid = observer(function HolidaysMonthGrid({
   year,
   month,
   holidays,
   overrides,
+  weekPattern,
+  monthStats,
+  monthHolidays,
   onCellClick,
 }: Props) {
+  const today = useMemo(() => getTodayString(), []);
   const daysInMonth = getDaysInMonth(year, month);
   const firstDayOfWeek = MON_FIRST_OFFSET[getFirstDayOfWeek(year, month)];
   const totalCells = firstDayOfWeek + daysInMonth;
   const rows = Math.ceil(totalCells / 7);
-
-  const monthLabel = `${String(month + 1).padStart(2, "0")}/${year}`;
-  const dayHeaders = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+  const monthLabel = new Date(year, month, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" });
 
   return (
     <div className="border border-subtle rounded-lg overflow-hidden bg-surface-1">
-      <div className="bg-surface-2 px-3 py-2 text-body-xs-semibold text-secondary text-center border-b border-subtle">
-        Tháng {month + 1} / {year}
+      <div className="bg-surface-2 px-3 pt-2 text-body-xs-semibold text-secondary text-center border-b border-subtle">
+        {monthLabel}
       </div>
+      {monthStats && (
+        <div className="bg-surface-2 px-3 pb-2 text-caption-sm-medium text-secondary text-center border-b border-subtle">
+          {monthStats.workingDays} working · {monthStats.holidayCount} holidays · {monthStats.weekendCount} off
+        </div>
+      )}
       <div className="p-2">
         <div className="grid grid-cols-7 mb-1">
-          {dayHeaders.map((d) => (
+          {DAY_HEADERS.map((d) => (
             <div key={d} className="text-center text-caption-sm-medium text-tertiary py-1">
               {d}
             </div>
@@ -77,22 +79,38 @@ export const HolidaysMonthGrid = observer(function HolidaysMonthGrid({
             if (day < 1 || day > daysInMonth) {
               return <div key={idx} className="aspect-square" />;
             }
-            const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-            const state = getCellState(dateStr, holidays, overrides);
+            const dateStr = formatDate(year, month, day);
+            const weekdayMonFirst = MON_FIRST_OFFSET[new Date(year, month, day).getDay()];
+            const state = getCellState(dateStr, weekdayMonFirst, holidays, overrides, weekPattern);
+            const isToday = dateStr === today;
+            const { className, style } = getCellClasses(state);
             return (
               <button
                 key={idx}
                 type="button"
                 title={`${dateStr} — ${monthLabel}`}
                 onClick={() => onCellClick(dateStr, state)}
-                className={`aspect-square flex items-center justify-center rounded text-caption-sm-regular transition-colors cursor-pointer ${CELL_STYLES[state]}`}
+                className={cn(
+                  "relative aspect-square flex flex-col items-center justify-center rounded text-caption-sm-regular transition-colors cursor-pointer",
+                  className,
+                  isToday && "ring-2 ring-accent-strong ring-inset"
+                )}
+                style={style}
               >
-                {day}
+                <span>{day}</span>
+                {state === "holiday" && <span className="text-[6px] leading-none mt-0.5">●</span>}
               </button>
             );
           })}
         </div>
       </div>
+      {monthHolidays && monthHolidays.length > 0 && (
+        <ul className="px-3 py-2 space-y-1 text-caption-sm-regular text-tertiary border-t border-subtle max-h-32 overflow-y-auto">
+          {monthHolidays.map((h) => (
+            <li key={h.id}>• {formatHolidayLine(h)}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 });

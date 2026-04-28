@@ -17,13 +17,13 @@ import { useBusinessCalendar } from "@/hooks/store";
 
 // Ordered Mon=0..Sun=6 — index matches backend week_pattern boolean array
 const WEEK_DAYS: { key: TWeekPatternKey; label: string; index: number }[] = [
-  { key: "MON", label: "T2", index: 0 },
-  { key: "TUE", label: "T3", index: 1 },
-  { key: "WED", label: "T4", index: 2 },
-  { key: "THU", label: "T5", index: 3 },
-  { key: "FRI", label: "T6", index: 4 },
-  { key: "SAT", label: "T7", index: 5 },
-  { key: "SUN", label: "CN", index: 6 },
+  { key: "MON", label: "Mon", index: 0 },
+  { key: "TUE", label: "Tue", index: 1 },
+  { key: "WED", label: "Wed", index: 2 },
+  { key: "THU", label: "Thu", index: 3 },
+  { key: "FRI", label: "Fri", index: 4 },
+  { key: "SAT", label: "Sat", index: 5 },
+  { key: "SUN", label: "Sun", index: 6 },
 ];
 
 // Default: Mon–Fri working, Sat–Sun off
@@ -80,11 +80,11 @@ export const CreateScheduleModal = observer(function CreateScheduleModal({ open,
         week_pattern: data.week_pattern,
       };
       await createSchedule(payload);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Tạo lịch làm việc thành công" });
+      setToast({ type: TOAST_TYPE.SUCCESS, title: "Schedule created" });
       reset();
       onClose();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Không thể tạo lịch làm việc" });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to create schedule" });
     } finally {
       setIsSubmitting(false);
     }
@@ -94,16 +94,16 @@ export const CreateScheduleModal = observer(function CreateScheduleModal({ open,
     <Dialog open={open} onOpenChange={(o) => !o && onClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
         <div className="p-6 space-y-4">
-          <Dialog.Title>Tạo lịch làm việc</Dialog.Title>
+          <Dialog.Title>Create business calendar</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-4">
             <div className="space-y-1">
               <label htmlFor="schedule-name" className="text-body-xs-medium text-secondary">
-                Tên lịch *
+                Schedule name *
               </label>
               <Input
                 id="schedule-name"
-                {...register("name", { required: "Bắt buộc" })}
-                placeholder="VD: VN Banking Schedule"
+                {...register("name", { required: "Required" })}
+                placeholder="e.g. VN Banking Schedule"
               />
               {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
             </div>
@@ -116,14 +116,14 @@ export const CreateScheduleModal = observer(function CreateScheduleModal({ open,
               </div>
               <div className="space-y-1">
                 <label htmlFor="schedule-country" className="text-body-xs-medium text-secondary">
-                  Quốc gia
+                  Country
                 </label>
                 <Input id="schedule-country" {...register("country_code")} placeholder="VN" />
               </div>
             </div>
             <div className="space-y-2">
               <label htmlFor="schedule-workdays" className="text-body-xs-medium text-secondary">
-                Ngày làm việc trong tuần
+                Working days
               </label>
               <div id="schedule-workdays" className="flex gap-2 flex-wrap">
                 {WEEK_DAYS.map(({ key, label, index }) => (
@@ -147,19 +147,17 @@ export const CreateScheduleModal = observer(function CreateScheduleModal({ open,
                 control={control}
                 name="is_default"
                 render={({ field }) => (
-                  <Switch id="schedule-default" value={field.value} onChange={field.onChange} size="sm" />
+                  <Switch value={field.value} onChange={field.onChange} size="sm" label="Set as default schedule" />
                 )}
               />
-              <label htmlFor="schedule-default" className="text-body-xs-medium text-secondary">
-                Đặt làm lịch mặc định
-              </label>
+              <span className="text-body-xs-medium text-secondary">Set as default schedule</span>
             </div>
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="secondary" size="sm" onClick={onClose} type="button">
-                Huỷ
+                Cancel
               </Button>
               <Button variant="primary" size="sm" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Đang tạo..." : "Tạo lịch"}
+                {isSubmitting ? "Creating..." : "Create schedule"}
               </Button>
             </div>
           </form>

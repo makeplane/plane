@@ -15,7 +15,7 @@ type Props = {
 };
 
 // Ordered Mon=0..Sun=6 — index matches backend week_pattern boolean array
-const WEEKDAY_BADGE_LABELS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"] as const;
+const WEEKDAY_BADGE_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;
 
 export const ScheduleCard = observer(function ScheduleCard({ schedule }: Props) {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ export const ScheduleCard = observer(function ScheduleCard({ schedule }: Props) 
             {schedule.is_default && (
               <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-caption-sm-medium bg-accent-subtle text-accent-primary shrink-0">
                 <CheckCircle className="w-3 h-3" />
-                Mặc định
+                Default
               </span>
             )}
           </div>

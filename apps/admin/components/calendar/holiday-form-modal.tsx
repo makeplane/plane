@@ -57,14 +57,14 @@ export const HolidayFormModal = observer(function HolidayFormModal({
     try {
       if (editHoliday) {
         await updateHoliday(scheduleId, editHoliday.id, data);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Cập nhật ngày lễ thành công" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Holiday updated" });
       } else {
         await createHoliday(scheduleId, data);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Thêm ngày lễ thành công" });
+        setToast({ type: TOAST_TYPE.SUCCESS, title: "Holiday added" });
       }
       onClose();
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Không thể lưu ngày lễ" });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to save holiday" });
     } finally {
       setIsSubmitting(false);
     }
@@ -74,17 +74,17 @@ export const HolidayFormModal = observer(function HolidayFormModal({
     <Dialog open={open} onOpenChange={(o) => !o && onClose()} modal>
       <Dialog.Panel width={EDialogWidth.SM}>
         <div className="p-6 space-y-4">
-          <Dialog.Title>{editHoliday ? "Sửa ngày lễ" : "Thêm ngày lễ"}</Dialog.Title>
+          <Dialog.Title>{editHoliday ? "Edit holiday" : "Add holiday"}</Dialog.Title>
           <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-3">
             <div className="space-y-1">
               <label htmlFor="holiday-date" className="text-body-xs-medium text-secondary">
-                Ngày (YYYY-MM-DD) *
+                Date (YYYY-MM-DD) *
               </label>
               <Input
                 id="holiday-date"
                 {...register("date", {
-                  required: "Bắt buộc",
-                  pattern: { value: /^\d{4}-\d{2}-\d{2}$/, message: "Định dạng YYYY-MM-DD" },
+                  required: "Required",
+                  pattern: { value: /^\d{4}-\d{2}-\d{2}$/, message: "Format must be YYYY-MM-DD" },
                 })}
                 placeholder="2025-04-30"
               />
@@ -92,21 +92,21 @@ export const HolidayFormModal = observer(function HolidayFormModal({
             </div>
             <div className="space-y-1">
               <label htmlFor="holiday-name" className="text-body-xs-medium text-secondary">
-                Tên ngày lễ *
+                Holiday name *
               </label>
               <Input
                 id="holiday-name"
-                {...register("name", { required: "Bắt buộc" })}
-                placeholder="VD: Ngày Giải phóng miền Nam"
+                {...register("name", { required: "Required" })}
+                placeholder="e.g. Reunification Day"
               />
               {errors.name && <p className="text-caption-sm-regular text-danger-primary">{errors.name.message}</p>}
             </div>
             <div className="flex justify-end gap-2 pt-1">
               <Button variant="secondary" size="sm" type="button" onClick={onClose}>
-                Huỷ
+                Cancel
               </Button>
               <Button variant="primary" size="sm" type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Đang lưu..." : editHoliday ? "Cập nhật" : "Thêm"}
+                {isSubmitting ? "Saving..." : editHoliday ? "Update" : "Add"}
               </Button>
             </div>
           </form>

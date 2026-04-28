@@ -6,20 +6,20 @@
 
 import { useCallback, useRef } from "react";
 import { observer } from "mobx-react";
-import { Switch } from "@plane/propel/switch";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IWorkSchedule } from "@plane/types";
+import { cn } from "@plane/utils";
 import { useBusinessCalendar } from "@/hooks/store";
 
 // Index matches backend week_pattern boolean array: Mon=0 … Sun=6
 const WEEKDAY_LABELS: { label: string; full: string }[] = [
-  { label: "T2", full: "Thứ Hai" },
-  { label: "T3", full: "Thứ Ba" },
-  { label: "T4", full: "Thứ Tư" },
-  { label: "T5", full: "Thứ Năm" },
-  { label: "T6", full: "Thứ Sáu" },
-  { label: "T7", full: "Thứ Bảy" },
-  { label: "CN", full: "Chủ Nhật" },
+  { label: "Mon", full: "Monday" },
+  { label: "Tue", full: "Tuesday" },
+  { label: "Wed", full: "Wednesday" },
+  { label: "Thu", full: "Thursday" },
+  { label: "Fri", full: "Friday" },
+  { label: "Sat", full: "Saturday" },
+  { label: "Sun", full: "Sunday" },
 ];
 
 type Props = { schedule: IWorkSchedule };
@@ -38,7 +38,7 @@ export const WorkweekToggle = observer(function WorkweekToggle({ schedule }: Pro
 
       debounceRef.current = setTimeout(() => {
         void updateSchedule(schedule.id, { week_pattern: next }).catch(() => {
-          setToast({ type: TOAST_TYPE.ERROR, title: "Không thể cập nhật lịch làm việc" });
+          setToast({ type: TOAST_TYPE.ERROR, title: "Failed to update schedule" });
         });
       }, 300);
     },
@@ -47,23 +47,26 @@ export const WorkweekToggle = observer(function WorkweekToggle({ schedule }: Pro
 
   return (
     <div className="space-y-3">
-      <p className="text-body-sm-regular text-secondary">
-        Bật/tắt các ngày trong tuần. Thay đổi tự động lưu sau 300ms.
-      </p>
-      <div className="divide-y divide-subtle border border-subtle rounded-lg overflow-hidden">
+      <p className="text-body-sm-regular text-secondary">Toggle working days. Changes auto-save after 300ms.</p>
+      <div className="flex w-full gap-2">
         {WEEKDAY_LABELS.map(({ label, full }, index) => {
           const isActive = Boolean(schedule.week_pattern[index]);
           return (
-            <div
+            <button
               key={index}
-              className="flex items-center justify-between px-4 py-3 bg-surface-1 hover:bg-surface-2 transition-colors"
+              type="button"
+              aria-label={full}
+              aria-pressed={isActive}
+              onClick={() => handleToggle(index, !isActive)}
+              className={cn(
+                "flex-1 px-3 py-2 rounded-md border text-body-sm-medium text-center transition-colors cursor-pointer select-none",
+                isActive
+                  ? "bg-accent-primary text-on-color border-accent-strong hover:bg-accent-strong"
+                  : "bg-surface-2 text-tertiary line-through border-subtle hover:bg-accent-subtle"
+              )}
             >
-              <div className="flex items-center gap-3">
-                <span className="w-7 text-center text-body-xs-semibold text-secondary">{label}</span>
-                <span className="text-body-sm-regular text-primary">{full}</span>
-              </div>
-              <Switch value={isActive} onChange={(val) => handleToggle(index, val)} size="md" label={full} />
-            </div>
+              {label}
+            </button>
           );
         })}
       </div>

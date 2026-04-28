@@ -4,25 +4,29 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { ChevronLeft, ChevronRight, Copy } from "lucide-react";
+import type { IDayOverride, IHoliday } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useBusinessCalendar } from "@/hooks/store";
-import { HolidaysMonthGrid } from "./holidays-month-grid";
+import type { CellState } from "./calendar-cell-helper";
+import { computeMonthStats, computeYearStats, getMonthHolidays } from "./calendar-stats-helper";
+import { CopyYearModal } from "./copy-year-modal";
+import { DayOverrideFormModal } from "./day-override-form-modal";
 import { DayOverridesTable } from "./day-overrides-table";
 import { HolidayFormModal } from "./holiday-form-modal";
-import { DayOverrideFormModal } from "./day-override-form-modal";
-import { CopyYearModal } from "./copy-year-modal";
-import type { IHoliday, IDayOverride } from "@plane/types";
+import { HolidaysMonthGrid } from "./holidays-month-grid";
+import { YearStatsCard } from "./year-stats-card";
 
 type ModalMode = "holiday" | "override" | null;
 
 type Props = { scheduleId: string };
 
 export const HolidaysYearView = observer(function HolidaysYearView({ scheduleId }: Props) {
-  const { fetchHolidays, fetchOverrides, getHolidaysForYear, getOverridesForYear } = useBusinessCalendar();
+  const { schedulesMap, fetchHolidays, fetchOverrides, getHolidaysForYear, getOverridesForYear } =
+    useBusinessCalendar();
   const [year, setYear] = useState(new Date().getFullYear());
   const [copyOpen, setCopyOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>(null);
@@ -31,14 +35,25 @@ export const HolidaysYearView = observer(function HolidaysYearView({ scheduleId 
   const [defaultDate, setDefaultDate] = useState<string>("");
 
   useEffect(() => {
-    fetchHolidays(scheduleId, year).catch(() => setToast({ type: TOAST_TYPE.ERROR, title: "Không thể tải ngày lễ" }));
-    fetchOverrides(scheduleId, year).catch(() => setToast({ type: TOAST_TYPE.ERROR, title: "Không thể tải override" }));
+    fetchHolidays(scheduleId, year).catch(() => setToast({ type: TOAST_TYPE.ERROR, title: "Failed to load holidays" }));
+    fetchOverrides(scheduleId, year).catch(() =>
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to load overrides" })
+    );
   }, [scheduleId, year, fetchHolidays, fetchOverrides]);
 
+  const schedule = schedulesMap[scheduleId];
   const holidays = getHolidaysForYear(scheduleId, year);
   const overrides = getOverridesForYear(scheduleId, year);
+  const weekPattern = schedule?.week_pattern;
 
-  const handleCellClick = (date: string, state: string) => {
+  const yearStats = useMemo(
+    () => computeYearStats(year, holidays, overrides, weekPattern),
+    [year, holidays, overrides, weekPattern]
+  );
+
+  if (!schedule) return null;
+
+  const handleCellClick = (date: string, state: CellState) => {
     setDefaultDate(date);
     if (state === "holiday") {
       const h = holidays.find((hol) => hol.date === date) ?? null;
@@ -48,7 +63,12 @@ export const HolidaysYearView = observer(function HolidaysYearView({ scheduleId 
       const o = overrides.find((ov) => ov.date === date) ?? null;
       setEditOverride(o);
       setModalMode("override");
+    } else if (state === "weekend") {
+      // Single-click on weekend → add make-up workday (most common case)
+      setEditOverride(null);
+      setModalMode("override");
     } else {
+      // working day → add holiday
       setEditHoliday(null);
       setEditOverride(null);
       setModalMode("holiday");
@@ -57,6 +77,9 @@ export const HolidaysYearView = observer(function HolidaysYearView({ scheduleId 
 
   return (
     <div className="space-y-6">
+      {/* Year stats card */}
+      <YearStatsCard year={year} stats={yearStats} />
+
       {/* Year nav + actions */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
@@ -71,43 +94,50 @@ export const HolidaysYearView = observer(function HolidaysYearView({ scheduleId 
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-3 text-caption-sm-regular text-secondary">
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-red-500/20 inline-block" />
-              Lễ
+              <span className="w-3 h-3 rounded bg-danger-subtle inline-block" />
+              Holiday
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-amber-500/20 inline-block" />
-              Làm bù
+              <span className="w-3 h-3 rounded bg-warning-subtle inline-block border border-dashed border-warning-strong" />
+              Make-up workday
             </span>
             <span className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded bg-yellow-500/20 inline-block" />
-              Nghỉ bù
+              <span className="w-3 h-3 rounded bg-success-subtle inline-block border border-dashed border-success-strong" />
+              Make-up day off
             </span>
           </div>
           <Button variant="secondary" size="sm" onClick={() => setCopyOpen(true)}>
             <Copy className="w-4 h-4" />
-            Sao chép năm
+            Copy year
           </Button>
         </div>
       </div>
 
-      {/* 12-month grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {Array.from({ length: 12 }).map((_, m) => (
-          <HolidaysMonthGrid
-            key={m}
-            year={year}
-            month={m}
-            holidays={holidays}
-            overrides={overrides}
-            onCellClick={handleCellClick}
-          />
-        ))}
+      {/* 12-month grid: fixed 4x3 */}
+      <div className="grid grid-cols-4 gap-3">
+        {Array.from({ length: 12 }).map((_, m) => {
+          const monthStats = computeMonthStats(year, m, holidays, overrides, weekPattern);
+          const monthHolidays = getMonthHolidays(year, m, holidays);
+          return (
+            <HolidaysMonthGrid
+              key={m}
+              year={year}
+              month={m}
+              holidays={holidays}
+              overrides={overrides}
+              weekPattern={weekPattern ?? []}
+              monthStats={monthStats}
+              monthHolidays={monthHolidays}
+              onCellClick={handleCellClick}
+            />
+          );
+        })}
       </div>
 
       {/* Overrides table */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h3 className="text-body-sm-semibold text-primary">Danh sách override năm {year}</h3>
+          <h3 className="text-body-sm-semibold text-primary">{year} overrides</h3>
           <Button
             variant="secondary"
             size="sm"
@@ -117,7 +147,7 @@ export const HolidaysYearView = observer(function HolidaysYearView({ scheduleId 
               setModalMode("override");
             }}
           >
-            + Thêm override
+            + Add override
           </Button>
         </div>
         <DayOverridesTable scheduleId={scheduleId} overrides={overrides} />

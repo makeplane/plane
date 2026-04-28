@@ -45,10 +45,10 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
       setResult(res);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: `Đã sao chép: ${res.copied_holidays} ngày lễ, ${res.copied_overrides} override`,
+        title: `Copied: ${res.copied_holidays} holidays, ${res.copied_overrides} overrides`,
       });
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Không thể sao chép năm" });
+      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to copy year" });
     } finally {
       setIsSubmitting(false);
     }
@@ -64,7 +64,7 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
     <Dialog open={open} onOpenChange={(o) => !o && handleClose()} modal>
       <Dialog.Panel width={EDialogWidth.MD}>
         <div className="p-6 space-y-4">
-          <Dialog.Title>Sao chép năm lịch</Dialog.Title>
+          <Dialog.Title>Copy calendar year</Dialog.Title>
 
           {result ? (
             <div className="space-y-4">
@@ -73,25 +73,27 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
                 <AlertTriangle className="w-5 h-5 text-warning-primary shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <p className="text-body-sm-semibold text-warning-primary">
-                    ⚠️ Tết và Giỗ Tổ là ngày âm — vui lòng xác minh và chỉnh sửa thủ công
+                    ⚠️ Tet and Hung Kings' Day are lunar holidays — please verify and edit manually
                   </p>
                   <p className="text-caption-sm-regular text-secondary">
-                    Các ngày lễ theo lịch âm thay đổi mỗi năm. Dữ liệu đã sao chép cần được kiểm tra lại.
+                    Lunar-calendar holidays shift every year. Review the copied data before relying on it.
                   </p>
                 </div>
               </div>
 
               <div className="text-body-sm-regular text-secondary space-y-1">
                 <p>
-                  Đã sao chép <strong>{result.copied_holidays}</strong> ngày lễ và{" "}
-                  <strong>{result.copied_overrides}</strong> override.
+                  Copied <strong>{result.copied_holidays}</strong> holidays and{" "}
+                  <strong>{result.copied_overrides}</strong> overrides.
                 </p>
-                {result.skipped > 0 && <p className="text-warning-primary">Bỏ qua {result.skipped} mục trùng lặp.</p>}
+                {result.skipped > 0 && (
+                  <p className="text-warning-primary">Skipped {result.skipped} duplicate entries.</p>
+                )}
               </div>
 
               {result.warnings.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-body-xs-semibold text-secondary">Cảnh báo chi tiết:</p>
+                  <p className="text-body-xs-semibold text-secondary">Warnings:</p>
                   <ul className="space-y-1 max-h-40 overflow-y-auto">
                     {result.warnings.map((w, i) => (
                       <li key={i} className="text-caption-sm-regular text-warning-primary flex gap-1.5">
@@ -105,25 +107,25 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
 
               <div className="flex justify-end">
                 <Button variant="primary" size="sm" onClick={handleClose}>
-                  Đóng
+                  Close
                 </Button>
               </div>
             </div>
           ) : (
             <form onSubmit={(e) => void handleSubmit(onSubmit)(e)} className="space-y-4">
               <p className="text-body-sm-regular text-secondary">
-                Sao chép tất cả ngày lễ và override từ một năm sang năm khác.
+                Copy all holidays and overrides from one year to another.
               </p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label htmlFor="from-year" className="text-body-xs-medium text-secondary">
-                    Năm nguồn *
+                    Source year *
                   </label>
                   <Input
                     id="from-year"
                     {...register("from_year", {
-                      required: "Bắt buộc",
-                      pattern: { value: /^\d{4}$/, message: "Nhập năm 4 chữ số" },
+                      required: "Required",
+                      pattern: { value: /^\d{4}$/, message: "Enter a 4-digit year" },
                     })}
                     placeholder="2025"
                   />
@@ -133,13 +135,13 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
                 </div>
                 <div className="space-y-1">
                   <label htmlFor="to-year" className="text-body-xs-medium text-secondary">
-                    Năm đích *
+                    Target year *
                   </label>
                   <Input
                     id="to-year"
                     {...register("to_year", {
-                      required: "Bắt buộc",
-                      pattern: { value: /^\d{4}$/, message: "Nhập năm 4 chữ số" },
+                      required: "Required",
+                      pattern: { value: /^\d{4}$/, message: "Enter a 4-digit year" },
                     })}
                     placeholder="2026"
                   />
@@ -150,10 +152,10 @@ export const CopyYearModal = observer(function CopyYearModal({ scheduleId, open,
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="secondary" size="sm" type="button" onClick={handleClose}>
-                  Huỷ
+                  Cancel
                 </Button>
                 <Button variant="primary" size="sm" type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Đang sao chép..." : "Sao chép"}
+                  {isSubmitting ? "Copying..." : "Copy"}
                 </Button>
               </div>
             </form>
