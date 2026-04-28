@@ -23,6 +23,7 @@ export enum EServerGroupByToFilterOptions {
   "assignees__id" = "assignees",
   "cycle_id" = "cycle",
   "issue_module__module_id" = "module",
+  "start_date" = "start_date",
   "target_date" = "target_date",
   "project_id" = "project",
   "created_by" = "created_by",

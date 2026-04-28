@@ -38,8 +38,6 @@ export const CalendarEventBlock: React.FC<Props> = observer(
     };
 
     const startTime = issue.start_time ? formatTime(issue.start_time) : null;
-    const endTime = issue.end_time ? formatTime(issue.end_time) : null;
-
     return (
       <div
         ref={issueRef}
@@ -57,7 +55,6 @@ export const CalendarEventBlock: React.FC<Props> = observer(
           {startTime && (
             <div className="text-[10px] font-medium text-custom-text-300">
               {startTime}
-              {endTime && ` - ${endTime}`}
             </div>
           )}
 

@@ -5,7 +5,7 @@ import { useCallback, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EIssueGroupByToServerOptions, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { TGroupedIssues } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
@@ -81,10 +81,9 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
   const groupedIssueIds = (issues.groupedIssueIds ?? {}) as TGroupedIssues;
 
   const layout = displayFilters?.calendar?.layout ?? "month";
-  // Determine the date range for fetching issues based on the current layout.
-  // For week layout we use the active week range; for day and month layouts we
-  // fall back to the month range so that day view always has data after reload.
-  const rangeLayout: "week" | "month" = layout === "week" ? "week" : "month";
+  // Current persisted calendar layouts are month/day, and both fetch against
+  // the month range so day view retains data after reload.
+  const rangeLayout = "month" as const;
   const { startDate, endDate } = issueCalendarView.getStartAndEndDate(rangeLayout) ?? {};
 
   useEffect(() => {
@@ -96,7 +95,7 @@ export const BaseCalendarRoot = observer((props: IBaseCalendarRoot) => {
           perPageCount: layout === "month" ? 4 : 30,
           before: endDate,
           after: startDate,
-          groupedBy: EIssueGroupByToServerOptions["start_date"],
+          groupedBy: "start_date",
         },
         viewId
       );

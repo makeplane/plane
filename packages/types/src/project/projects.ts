@@ -144,6 +144,7 @@ export interface ISearchIssueResponse {
   sequence_id: number;
   start_date: string | null;
   start_time: string | null;
+  target_date: string | null;
   state__color: string;
   state__group: TStateGroups;
   state__name: string;

@@ -1,1 +1,1 @@
-export * from "ce/store/root.store";
+export * from "@/plane-admin/store/root.store";

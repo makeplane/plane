@@ -1,1 +1,1 @@
-export * from "ce/components/authentication/authentication-modes";
+export * from "@/plane-admin/components/authentication/authentication-modes";

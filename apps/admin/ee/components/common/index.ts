@@ -1,1 +1,1 @@
-export * from "ce/components/common";
+export * from "@/plane-admin/components/common";

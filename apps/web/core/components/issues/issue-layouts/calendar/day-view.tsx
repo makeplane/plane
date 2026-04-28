@@ -110,7 +110,7 @@ export const DayView: React.FC<Props> = observer(({
       const latestIssue = issueStore.getIssueById(issue.id) || issue;
       if (!latestIssue.start_time) return;
 
-      const position = calculateEventPosition(latestIssue.start_time, latestIssue.end_time);
+      const position = calculateEventPosition(latestIssue.start_time);
       if (!map[position.hourIndex]) {
         map[position.hourIndex] = [];
       }
@@ -229,7 +229,7 @@ export const DayView: React.FC<Props> = observer(({
 
                   return (
                     <div
-                      key={`${issue.id}-${issueStore.getIssueById(issue.id)?.start_time}-${issueStore.getIssueById(issue.id)?.end_time}`}
+                      key={`${issue.id}-${issueStore.getIssueById(issue.id)?.start_time}`}
                       className="absolute z-1-"
                       style={{
                         top: `${position.topOffset}px`,

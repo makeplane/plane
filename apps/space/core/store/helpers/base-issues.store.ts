@@ -60,6 +60,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   labels: "label_ids",
   created_by: "created_by",
   assignees: "assignee_ids",
+  start_date: "start_date",
   target_date: "target_date",
 };
 

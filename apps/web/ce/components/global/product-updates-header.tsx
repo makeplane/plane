@@ -4,7 +4,7 @@ import { PlaneLogo } from "@plane/propel/icons";
 // helpers
 import { cn } from "@plane/utils";
 // package.json
-import packageJson from "package.json";
+import packageJson from "../../../package.json";
 
 export const ProductUpdatesHeader = observer(() => {
   const { t } = useTranslation();

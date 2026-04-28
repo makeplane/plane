@@ -14,6 +14,7 @@ export type TIssueGroupByOptions =
   | "assignees"
   | "cycle"
   | "module"
+  | "start_date"
   | "target_date"
   | "team_project"
   | null;
