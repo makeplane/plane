@@ -36,6 +36,7 @@ import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
+import { parseOppositionTeam, serializeOppositionTeam } from "@/helpers/opposition-team";
 // plane web components
 // import { IssueIdentifier } from "@/plane-web/components/issues/issue-details/issue-identifier";
 import OppositionTeamProperty from "@/plane-web/components/issues/issue-details/opposition-team-property";
@@ -57,11 +58,6 @@ type TIssueDefaultPropertiesProps = {
   isDraft: boolean;
   handleFormChange: () => void;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
-};
-
-type TOppositionTeamOption = {
-  name: string;
-  logo: string;
 };
 
 export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = observer((props) => {
@@ -485,9 +481,9 @@ export const IssueDefaultProperties: React.FC<TIssueDefaultPropertiesProps> = ob
           >
             <OppositionTeamProperty
               storageKey={`opp-team-${id}`}
-              value={value as unknown as TOppositionTeamOption | null | undefined}
+              value={parseOppositionTeam(value)}
               onChange={(team) => {
-                onChange(team as unknown as string | null);
+                onChange(serializeOppositionTeam(team));
                 handleFormChange();
               }}
             />

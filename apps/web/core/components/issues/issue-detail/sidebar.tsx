@@ -43,6 +43,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { parseOppositionTeam, serializeOppositionTeam } from "@/helpers/opposition-team";
 // plane web components
 // components
 import { WorkItemAdditionalSidebarProperties } from "@/plane-web/components/issues/issue-details/additional-properties";
@@ -60,11 +61,6 @@ type Props = {
   issueId: string;
   issueOperations: TIssueOperations;
   isEditable: boolean;
-};
-
-type TOppositionTeamOption = {
-  name: string;
-  logo: string;
 };
 
 export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
@@ -345,10 +341,10 @@ export const IssueDetailsSidebar: React.FC<Props> = observer((props) => {
               </div>
               <OppositionTeamProperty
                 storageKey={`opp-team-${issueId}`}
-                value={issue?.opposition_team as unknown as TOppositionTeamOption | null | undefined}
+                value={parseOppositionTeam(issue?.opposition_team)}
                 onChange={(team) =>
                   issueOperations.update(workspaceSlug, projectId, issueId, {
-                    opposition_team: team as unknown as string | null,
+                    opposition_team: serializeOppositionTeam(team),
                   })
                 }
                 disabled={!isEditable}

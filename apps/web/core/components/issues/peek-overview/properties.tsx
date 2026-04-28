@@ -22,6 +22,7 @@ import { ProgramDropdown } from "@/components/dropdowns/program-property";
 import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { YearRangeDropdown } from "@/components/dropdowns/year-property";
+import { parseOppositionTeam, serializeOppositionTeam } from "@/helpers/opposition-team";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -39,11 +40,6 @@ interface IPeekOverviewProperties {
   disabled: boolean;
   issueOperations: TIssueOperations;
 }
-
-type TOppositionTeamOption = {
-  name: string;
-  logo: string;
-};
 
 export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((props) => {
   const { workspaceSlug, projectId, issueId, issueOperations, disabled } = props;
@@ -294,10 +290,10 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
 
           <OppositionTeamProperty
             storageKey={`opp-team-${issueId}`}
-            value={issue?.opposition_team as unknown as TOppositionTeamOption | null | undefined}
+            value={parseOppositionTeam(issue?.opposition_team)}
             onChange={(team) =>
               void handlePropertyUpdate({
-                opposition_team: team as unknown as string | null,
+                opposition_team: serializeOppositionTeam(team),
               })
             }
             disabled={isReadOnly}

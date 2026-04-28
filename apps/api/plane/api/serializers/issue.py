@@ -27,6 +27,7 @@ from plane.utils.content_validator import (
     validate_binary_data,
 )
 from plane.utils.issue_datetime import is_issue_start_datetime_in_past
+from plane.utils.opposition_team import normalize_opposition_team
 
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
@@ -62,6 +63,7 @@ class IssueSerializer(BaseSerializer):
     type_id = serializers.PrimaryKeyRelatedField(
         source="type", queryset=IssueType.objects.all(), required=False, allow_null=True
     )
+    opposition_team = serializers.JSONField(required=False, allow_null=True)
 
     class Meta:
         model = Issue
@@ -107,6 +109,12 @@ class IssueSerializer(BaseSerializer):
             is_valid, error_msg = validate_binary_data(data["description_binary"])
             if not is_valid:
                 raise serializers.ValidationError({"description_binary": "Invalid binary data"})
+
+        if "opposition_team" in data:
+            try:
+                data["opposition_team"] = normalize_opposition_team(data["opposition_team"])
+            except ValueError as exc:
+                raise serializers.ValidationError({"opposition_team": str(exc)})
 
         # Validate assignees are from project
         if data.get("assignees", []):

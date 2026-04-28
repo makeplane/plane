@@ -21,6 +21,7 @@ import { ProgramDropdown } from "@/components/dropdowns/program-property";
 import SportDropdown from "@/components/dropdowns/sport-property";
 import { TimeDropdown } from "@/components/dropdowns/time-picker";
 import { YearRangeDropdown } from "@/components/dropdowns/year-property";
+import { normalizeOppositionTeam, parseOppositionTeam, serializeOppositionTeam } from "@/helpers/opposition-team";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
 import { MediaLibraryService } from "@/services/media-library.service";
@@ -85,22 +86,15 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
   const resolvedSeason = pickIssueOrMetaString(issueSeasonValue, ["season"]);
 
   const resolvedOpposition = useMemo<any>(() => {
-    const issueOpposition = issue?.opposition_team;
-    if (issueOpposition && typeof issueOpposition === "object" && !Array.isArray(issueOpposition)) {
-      return issueOpposition;
-    }
+    const parsedIssueOpposition = parseOppositionTeam(issue?.opposition_team);
+    if (parsedIssueOpposition) return parsedIssueOpposition;
+
     const metaOpposition = mediaMeta.opposition;
-    if (metaOpposition && typeof metaOpposition === "object" && !Array.isArray(metaOpposition)) {
-      return metaOpposition as any;
-    }
+    const normalizedMetaOpposition = normalizeOppositionTeam(metaOpposition);
+    if (normalizedMetaOpposition) return normalizedMetaOpposition;
+
     const oppositionLabel = getMetaStringValue(["opposition"]);
-    if (oppositionLabel) {
-      return {
-        name: oppositionLabel,
-        logo: "",
-      };
-    }
-    return null;
+    return oppositionLabel ? { name: oppositionLabel, logo: "" } : null;
   }, [getMetaStringValue, issue?.opposition_team, mediaMeta.opposition]);
 
   if (!issue && !mediaItem) return <></>;
@@ -332,7 +326,7 @@ export const PeekOverviewProperties: FC<IPeekOverviewProperties> = observer((pro
             value={resolvedOpposition as any}
             onChange={(team) =>
               void handlePropertyUpdate({
-                opposition_team: team as any,
+                opposition_team: serializeOppositionTeam(team),
               })
             }
             disabled={isReadOnly}

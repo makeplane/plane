@@ -1,32 +1,21 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Ban, CirclePlus, Search } from "lucide-react";
 import { cn } from "@plane/utils";
+import { normalizeOppositionTeam, TOppositionTeamOption } from "@/helpers/opposition-team";
 
-interface Team {
-  name: string;
-  logo: string;
-}
+type Team = TOppositionTeamOption;
 
 interface OppositionTeamPropertyProps {
   value?: Team | null;
   onChange?: (team: Team | null) => void;
   disabled?: boolean;
-  storageKey: string;
+  storageKey?: string;
 }
-
-const TEMP_STORAGE_KEY = "opp-team-temp-create";
-
-const determineStorageKey = (key: string): { actualKey: string; isCreating: boolean } => {
-  const isCreating = key.includes("undefined");
-  const actualKey = isCreating ? TEMP_STORAGE_KEY : key;
-  return { actualKey, isCreating };
-};
 
 const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   value,
   onChange,
   disabled = false,
-  storageKey,
 }) => {
   const [teams, setTeams] = useState<Team[]>([]);
   const [open, setOpen] = useState(false);
@@ -34,42 +23,6 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // Determine the current keys/status based on the prop
-  const { actualKey, isCreating } = determineStorageKey(storageKey);
-
-  useEffect(() => {
-    // 💡 FIX: Check for both undefined and null (which react-hook-form uses for empty fields)
-    if (value === undefined || value === null) {
-      try {
-        const saved = localStorage.getItem(actualKey);
-        if (saved) {
-          const loadedValue = JSON.parse(saved) as Team | null;
-          onChange?.(loadedValue);
-        }
-      } catch (e) {
-        console.warn("LocalStorage read failed", e);
-      }
-    }
-  }, [actualKey, value, onChange]);
-
-  useEffect(() => {
-    if (!isCreating && actualKey !== TEMP_STORAGE_KEY) {
-      try {
-        const tempSaved = localStorage.getItem(TEMP_STORAGE_KEY);
-
-        if (tempSaved) {
-          localStorage.setItem(actualKey, tempSaved);
-
-        }
-
-        // Clean up the temporary key now that we've successfully transferred/checked it
-        localStorage.removeItem(TEMP_STORAGE_KEY);
-      } catch (e) {
-        console.error("Failed to transition/clean up storage key.", e);
-      }
-    }
-  }, [isCreating, actualKey]); // Dependency on the status change
 
   useEffect(() => {
     const API_URL = `${process.env.NEXT_PUBLIC_CP_SERVER_URL}/meta-type?key='OPPOSITIONTEAM'`;
@@ -101,16 +54,8 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
 
   // 3. Handling Select (Write Logic)
   const handleSelect = (team: Team | null) => {
-    try {
-      if (team) {
-        // Use actualKey to save (either the temp key or the permanent ID key)
-        localStorage.setItem(actualKey, JSON.stringify(team));
-      } else {
-        localStorage.removeItem(actualKey);
-      }
-    } catch {}
-
-    onChange?.(team);
+    const normalizedTeam = normalizeOppositionTeam(team);
+    onChange?.(normalizedTeam);
     setOpen(false);
     setSearch("");
   };
@@ -132,11 +77,13 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
       >
         {value ? (
           <div className="flex items-center gap-1.5">
-            <img
-              src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${value.logo}`}
-              alt={value.name}
-              className="w-5 h-5 rounded-full object-cover"
-            />
+            {value.logo ? (
+              <img
+                src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${value.logo}`}
+                alt={value.name}
+                className="w-5 h-5 rounded-full object-cover"
+              />
+            ) : null}
             <span className="text-xs whitespace-normal">{value.name}</span>
           </div>
         ) : (
@@ -179,11 +126,13 @@ const OppositionTeamProperty: React.FC<OppositionTeamPropertyProps> = ({
                 onClick={() => handleSelect(team)}
                 className="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-custom-background-80"
               >
-                <img
-                  src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${team.logo}`}
-                  alt={team.name}
-                  className="w-5 h-5 rounded-full object-cover"
-                />
+                {team.logo ? (
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_CP_SERVER_URL}/blobs/${team.logo}`}
+                    alt={team.name}
+                    className="w-5 h-5 rounded-full object-cover"
+                  />
+                ) : null}
                 <span className="text-xs whitespace-normal">{team.name}</span>
               </div>
             ))}

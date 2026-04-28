@@ -145,6 +145,7 @@ class Issue(ProjectBaseModel):
     sport = models.CharField(max_length=100, null=True, blank=True)
     year = models.CharField(max_length=20, null=True, blank=True)
     category = models.CharField(max_length=100, null=True, blank=True)
+    opposition_team = models.JSONField(null=True, blank=True)
     sg_event_id = models.BigIntegerField(null=True, blank=True, db_index=True)
 
     priority = models.CharField(
