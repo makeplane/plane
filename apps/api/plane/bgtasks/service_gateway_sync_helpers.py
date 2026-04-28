@@ -241,11 +241,9 @@ def _parse_meridiem_token(raw_token: str) -> Optional[str]:
 
 @functools.lru_cache(maxsize=4)
 def _service_gateway_tzinfo() -> datetime.tzinfo:
-    tz_name = (
-        _none_if_blank(getattr(settings, "SERVICE_GATEWAY_TIMEZONE", None))
-        or _none_if_blank(getattr(settings, "TIME_ZONE", None))
-        or "UTC"
-    )
+    # service-gateway stores wall-clock event date/time values, so Plane must
+    # serialize them in UTC to match the gateway runtime interpretation.
+    tz_name = _none_if_blank(getattr(settings, "SERVICE_GATEWAY_TIMEZONE", None)) or "UTC"
     try:
         return ZoneInfo(str(tz_name))
     except Exception:
