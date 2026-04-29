@@ -386,6 +386,8 @@ def webhook_activity(
     event_id: str | uuid.UUID,
     old_identifier: Optional[str],
     new_identifier: Optional[str],
+    event_data: Optional[Dict[str, Any]] = None,
+    skip_service_gateway: bool = False,
 ) -> None:
     """
     Process and send webhook notifications for various activities in the system.
@@ -405,6 +407,8 @@ def webhook_activity(
         event_id (str | uuid.UUID): ID of the event object
         old_identifier (Optional[str]): Previous identifier if any
         new_identifier (Optional[str]): New identifier if any
+        event_data (Optional[Dict[str, Any]]): Optional explicit event payload.
+        skip_service_gateway (bool): When True, do not run service-gateway sync from this task.
 
     Returns:
         None
@@ -431,7 +435,10 @@ def webhook_activity(
         if event == "issue_comment":
             webhooks = webhooks.filter(issue_comment=True)
 
-        event_payload = {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
+        if event_data is not None:
+            event_payload = event_data
+        else:
+            event_payload = {"id": event_id} if verb == "deleted" else get_model_data(event=event, event_id=event_id)
         actor_payload = get_model_data(event="user", event_id=actor_id)
 
         for webhook in webhooks:
@@ -452,7 +459,8 @@ def webhook_activity(
                 },
             )
 
-        service_gateway_event_sync(event=event, verb=verb, event_data=event_payload)
+        if not skip_service_gateway:
+            service_gateway_event_sync(event=event, verb=verb, event_data=event_payload)
         return
     except Exception as e:
         # Return if a does not exist error occurs
