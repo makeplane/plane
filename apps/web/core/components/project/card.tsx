@@ -5,10 +5,12 @@
  */
 
 import React, { useRef, useState } from "react";
-import { observer } from "mobx-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { observer } from "mobx-react";
+import { useStore } from "packages/shared-state/src/hooks/use-store";
 import { ArchiveRestoreIcon, Settings, UserPlus } from "lucide-react";
+import { renderFormattedDate } from "packages/utils/src/date"; // Assuming this utility exists or similar
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, IS_FAVORITE_MENU_OPEN } from "@plane/constants";
 import { useLocalStorage } from "@plane/hooks";
@@ -20,7 +22,7 @@ import { Tooltip } from "@plane/propel/tooltip";
 import type { IProject } from "@plane/types";
 import type { TContextMenuItem } from "@plane/ui";
 import { Avatar, AvatarGroup, ContextMenu, FavoriteStar } from "@plane/ui";
-import { copyUrlToClipboard, cn, getFileURL, renderFormattedDate } from "@plane/utils";
+import { copyUrlToClipboard, cn, getFileURL } from "@plane/utils";
 // components
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -37,6 +39,34 @@ import { ArchiveRestoreProjectModal } from "./archive-restore-modal";
 type Props = {
   project: IProject;
 };
+
+const BudgetBar = observer(({ project }: { project: IProject }) => {
+  const { issueStore } = useStore();
+  const issues = issueStore.getIssuesByProjectId(project.id) || [];
+
+  const estimated = issues.reduce((sum, issue) => sum + (issue.budget_estimated || 0), 0);
+  const actual = issues.reduce((sum, issue) => sum + (issue.budget_actual || 0), 0);
+  const budgetTotal = project.budget_total || 0;
+  const progress = budgetTotal > 0 ? (actual / budgetTotal) * 100 : 0;
+  const isOverBudget = estimated > budgetTotal;
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="text-sm text-gray-600">
+        💰 план {estimated.toLocaleString()} ₽ • факт {actual.toLocaleString()} ₽
+      </div>
+      <div className="w-full bg-gray-200 rounded-full h-2">
+        <div
+          className="bg-blue-600 h-2 rounded-full"
+          style={{ width: `${Math.min(progress, 100)}%` }}
+        ></div>
+      </div>
+      {isOverBudget && (
+        <div className="text-xs text-red-500">Превышение бюджета!</div>
+      )}
+    </div>
+  );
+});
 
 export const ProjectCard = observer(function ProjectCard(props: Props) {
   const { project } = props;
@@ -267,7 +297,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
         </div>
 
         <div
-          className={cn("flex h-[104px] w-full flex-col justify-between rounded-b-sm p-4", {
+          className={cn("flex min-h-[104px] w-full flex-col justify-between rounded-b-sm p-4", {
             "opacity-90": isArchived,
           })}
         >
@@ -276,6 +306,12 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               ? project.description
               : `Created on ${renderFormattedDate(project.created_at)}`}
           </p>
+          {project.event_date && (
+            <div className="text-sm text-gray-600">
+              📅 {renderFormattedDate(project.event_date)}
+            </div>
+          )}
+          {project.budget_total && <BudgetBar project={project} />}
           <div className="item-center flex justify-between">
             <div className="flex items-center justify-center gap-2">
               <Tooltip

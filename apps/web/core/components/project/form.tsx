@@ -315,116 +315,41 @@ export function ProjectDetailsForm(props: IProjectDetailsForm) {
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="flex flex-col gap-1">
-            <h4 className="text-13">Project ID</h4>
-            <div className="relative">
-              <Controller
-                control={control}
-                name="identifier"
-                rules={{
-                  required: t("project_id_is_required"),
-                  validate: (value) => /^[ÇŞĞIİÖÜA-Z0-9]+$/.test(value.toUpperCase()) || t("project_id_allowed_char"),
-                  minLength: {
-                    value: 1,
-                    message: t("project_id_min_char"),
-                  },
-                  maxLength: {
-                    value: 10,
-                    message: t("project_id_max_char"),
-                  },
-                }}
-                render={({ field: { value, ref } }) => (
-                  <Input
-                    id="identifier"
-                    name="identifier"
-                    type="text"
-                    value={value}
-                    onChange={handleIdentifierChange}
-                    ref={ref}
-                    hasError={Boolean(errors.identifier)}
-                    placeholder={t("project_settings.general.enter_project_id")}
-                    className="w-full font-medium"
-                    disabled={!isAdmin}
-                  />
-                )}
-              />
-              <Tooltip
-                isMobile={isMobile}
-                tooltipContent={t("project_id_tooltip_content")}
-                className="text-13"
-                position="right-start"
-              >
-                <Info className="absolute top-2.5 right-2 h-4 w-4 text-placeholder" />
-              </Tooltip>
-            </div>
-            <span className="text-11 text-danger-primary">
-              <>{errors?.identifier?.message}</>
-            </span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <h4 className="text-13">{t("workspace_projects.network.label")}</h4>
+            <h4 className="text-13">Дата мероприятия</h4>
             <Controller
-              name="network"
+              name="event_date"
               control={control}
-              render={({ field: { value, onChange } }) => {
-                const selectedNetwork = NETWORK_CHOICES.find((n) => n.key === value);
-                return (
-                  <CustomSelect
-                    value={value}
-                    onChange={onChange}
-                    label={
-                      <div className="flex items-center gap-1">
-                        {selectedNetwork ? (
-                          <>
-                            <ProjectNetworkIcon iconKey={selectedNetwork.iconKey} className="h-3.5 w-3.5" />
-                            {t(selectedNetwork.i18n_label)}
-                          </>
-                        ) : (
-                          <span className="text-placeholder">{t("select_network")}</span>
-                        )}
-                      </div>
-                    }
-                    buttonClassName="!border-subtle !shadow-none font-medium rounded-md"
-                    input
-                    disabled={!isAdmin}
-                    // optionsClassName="w-full"
-                  >
-                    {NETWORK_CHOICES.map((network) => (
-                      <CustomSelect.Option key={network.key} value={network.key}>
-                        <div className="flex items-start gap-2">
-                          <ProjectNetworkIcon iconKey={network.iconKey} className="h-3.5 w-3.5" />
-                          <div className="-mt-1">
-                            <p>{t(network.i18n_label)}</p>
-                            <p className="text-11 text-placeholder">{t(network.description)}</p>
-                          </div>
-                        </div>
-                      </CustomSelect.Option>
-                    ))}
-                  </CustomSelect>
-                );
-              }}
-            />
-          </div>
-          <div className="col-span-1 flex flex-col gap-1 sm:col-span-2 xl:col-span-1">
-            <h4 className="text-13">{t("common.project_timezone")}</h4>
-            <Controller
-              name="timezone"
-              control={control}
-              rules={{ required: t("project_settings.general.please_select_a_timezone") }}
               render={({ field: { value, onChange } }) => (
-                <>
-                  <TimezoneSelect
-                    value={value}
-                    onChange={(value: string) => {
-                      onChange(value);
-                    }}
-                    error={Boolean(errors.timezone)}
-                    buttonClassName="border-none"
-                    disabled={!isAdmin}
-                  />
-                </>
+                <Input
+                  id="event_date"
+                  name="event_date"
+                  type="date"
+                  value={value ?? ""}
+                  onChange={onChange}
+                  className="rounded-md !p-3 font-medium"
+                  disabled={!isAdmin}
+                />
               )}
             />
-            {errors.timezone && <span className="text-11 text-danger-primary">{errors.timezone.message}</span>}
+          </div>
+          <div className="flex flex-col gap-1">
+            <h4 className="text-13">Бюджет (₽)</h4>
+            <Controller
+              name="budget_total"
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  id="budget_total"
+                  name="budget_total"
+                  type="number"
+                  value={value ?? ""}
+                  onChange={onChange}
+                  placeholder="0"
+                  className="rounded-md !p-3 font-medium"
+                  disabled={!isAdmin}
+                />
+              )}
+            />
           </div>
         </div>
         <div className="flex items-center justify-between py-2">

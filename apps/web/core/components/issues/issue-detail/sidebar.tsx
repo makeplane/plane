@@ -188,6 +188,36 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               </div>
             </SidebarPropertyListItem>
 
+            <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("issue.budget_estimated")}>
+              <input
+                type="number"
+                value={issue.budget_estimated ?? ""}
+                onChange={(e) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    budget_estimated: e.target.value ? parseFloat(e.target.value) : null,
+                  })
+                }
+                disabled={!isEditable}
+                placeholder="0"
+                className="h-7.5 w-full rounded-sm border border-subtle-1 bg-transparent px-2 py-0.5 text-body-xs-regular focus:border-primary focus:outline-none"
+              />
+            </SidebarPropertyListItem>
+
+            <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("issue.budget_actual")}>
+              <input
+                type="number"
+                value={issue.budget_actual ?? ""}
+                onChange={(e) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    budget_actual: e.target.value ? parseFloat(e.target.value) : null,
+                  })
+                }
+                disabled={!isEditable}
+                placeholder="0"
+                className="h-7.5 w-full rounded-sm border border-subtle-1 bg-transparent px-2 py-0.5 text-body-xs-regular focus:border-primary focus:outline-none"
+              />
+            </SidebarPropertyListItem>
+
             {projectId && areEstimateEnabledByProjectId(projectId) && (
               <SidebarPropertyListItem icon={EstimatePropertyIcon} label={t("common.estimate")}>
                 <EstimateDropdown
