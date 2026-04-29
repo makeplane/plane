@@ -182,3 +182,35 @@ class TestProjectListCreateAPIEndpoint:
         # And the deferred Celery task must not have been dispatched —
         # transaction.on_commit() callbacks only fire on a successful commit.
         mocked_activity.delay.assert_not_called()
+
+    @pytest.mark.django_db(transaction=True)
+    def test_response_still_201_when_broker_dispatch_fails(self, api_key_client, workspace, create_user):
+        """If model_activity.delay raises *after* the atomic block has
+        committed (e.g., the Celery broker is down), the project, member
+        rows and states are already persisted — the response must remain
+        201 and the failure must be absorbed by Django's robust=True
+        on_commit handling, not surface as a 500.
+
+        Uses ``transaction=True`` so the surrounding test transaction is
+        actually committed and the ``on_commit`` callback fires (the
+        default ``django_db`` wrapper would suppress it via rollback)."""
+        url = self.get_url(workspace.slug)
+        payload = {
+            "name": "Broker Down",
+            "identifier": "BD",
+            "project_lead": str(create_user.id),
+        }
+
+        with mock.patch("plane.api.views.project.model_activity") as mocked_activity:
+            mocked_activity.delay.side_effect = RuntimeError("broker unavailable")
+            response = api_key_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
+        # Project and its scaffolding are persisted (commit happened
+        # before the on_commit callback fired).
+        project = Project.objects.get(id=response.data["id"])
+        assert ProjectMember.objects.filter(project=project).count() == 1
+        assert State.objects.filter(project=project).count() == 5
+        # The dispatch was attempted but its failure was swallowed by
+        # transaction.on_commit(robust=True).
+        mocked_activity.delay.assert_called_once()

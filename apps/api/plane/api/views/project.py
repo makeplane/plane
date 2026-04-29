@@ -4,7 +4,6 @@
 
 # Python imports
 import json
-from functools import partial
 
 # Django imports
 from django.db import IntegrityError, transaction
@@ -266,12 +265,21 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
 
                     # Defer the activity-log task until the surrounding
                     # transaction commits, so it never fires on a rolled-back
-                    # creation. Use functools.partial so the bound arguments
-                    # are captured at scheduling time rather than via a
-                    # late-binding closure.
-                    transaction.on_commit(
-                        partial(
-                            model_activity.delay,
+                    # creation.
+                    # robust=True so broker / dispatch failures are logged
+                    # internally by Django and don't surface as 500 after a
+                    # successful commit (the inverse of the rollback path
+                    # covered by test_model_activity_not_called_on_rollback).
+                    # A nested function (rather than functools.partial) is
+                    # used here because Django's robust on_commit logging
+                    # path reads ``func.__qualname__`` to format the error
+                    # message; ``partial`` objects don't have that dunder
+                    # by default and the workaround is brittle when the
+                    # wrapped callable is a mock. The closure captures
+                    # the locals at construction time and they are never
+                    # rebound, so late-binding is not a hazard here.
+                    def _dispatch_model_activity():
+                        model_activity.delay(
                             model_name="project",
                             model_id=str(project.id),
                             requested_data=request.data,
@@ -280,7 +288,8 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                             slug=slug,
                             origin=base_host(request=request, is_app=True),
                         )
-                    )
+
+                    transaction.on_commit(_dispatch_model_activity, robust=True)
 
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
