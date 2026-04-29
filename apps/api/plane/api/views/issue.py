@@ -996,7 +996,9 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
+        deleted_issue_event_data = {"id": issue.id, "sg_event_id": issue.sg_event_id}
         issue.delete()
+        service_gateway_event_sync(event="issue", verb="deleted", event_data=deleted_issue_event_data)
         # delete workitems using service gateway for proper cascade delete and webhook trigger
         webhook_activity.delay(
             event="issue",
@@ -1010,6 +1012,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             event_id=issue.id,
             old_identifier=None,
             new_identifier=None,
+            event_data=deleted_issue_event_data,
+            skip_service_gateway=True,
         )
         issue_activity.delay(
             type="issue.activity.deleted",

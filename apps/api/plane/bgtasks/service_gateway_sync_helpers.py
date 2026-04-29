@@ -514,6 +514,15 @@ def _make_force_upcoming_payload(service_gateway_event_id: int) -> Dict[str, Any
     }
 
 
+def _make_event_send_payload(service_gateway_event_id: int) -> Dict[str, Any]:
+    return {
+        "table": "event",
+        "criteria": [
+            {"field": "id", "type": 0, "value": _json_safe_value(service_gateway_event_id)},
+        ],
+    }
+
+
 def _with_row_id_criteria(payload: Dict[str, Any], row_id: int) -> Dict[str, Any]:
     updated_payload = dict(payload)
     updated_payload["criteria"] = [
@@ -620,6 +629,18 @@ def _derive_scheduled_event_api(event_api: str) -> str:
         return ""
 
     return urlunsplit((parsed.scheme, parsed.netloc, path, parsed.query, parsed.fragment))
+
+
+def _derive_event_send_api(event_api: str) -> str:
+    if not event_api:
+        return ""
+
+    parsed = urlsplit(event_api.strip())
+    path = parsed.path.rstrip("/")
+    if path.endswith("/send"):
+        return urlunsplit((parsed.scheme, parsed.netloc, path, parsed.query, parsed.fragment))
+
+    return urlunsplit((parsed.scheme, parsed.netloc, f"{path}/send", parsed.query, parsed.fragment))
 
 
 def _unique_positive_ints(values: list[Optional[int]]) -> list[int]:

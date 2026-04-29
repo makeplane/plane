@@ -142,9 +142,67 @@ def _force_upcoming_status(
         )
 
 
+def _trigger_event_send(
+    session: requests.Session,
+    event_api: str,
+    event_send_api: str,
+    service_gateway_event_id: int,
+    issue_id: Any,
+    timeout: int,
+) -> None:
+    resolved_event_send_api = event_send_api or sg._derive_event_send_api(event_api)
+    if not resolved_event_send_api:
+        logger.warning(
+            "SERVICE_GATEWAY_EVENT_SEND_API is empty, skipping event send for Plane work-item %s",
+            issue_id,
+        )
+        return
+
+    try:
+        _send_request(
+            session=session,
+            method="POST",
+            url=resolved_event_send_api,
+            payload=sg._make_event_send_payload(service_gateway_event_id),
+            timeout=timeout,
+        )
+        logger.info(
+            "Triggered service-gateway /api/event/send for Plane work-item %s event id=%s",
+            issue_id,
+            service_gateway_event_id,
+        )
+    except Exception as exc:
+        logger.warning(
+            "Could not trigger service-gateway /api/event/send for Plane work-item %s event id=%s: %s",
+            issue_id,
+            service_gateway_event_id,
+            exc,
+        )
+
+
+def _trigger_event_send_for_ids(
+    session: requests.Session,
+    event_api: str,
+    event_send_api: str,
+    service_gateway_event_ids: list[Optional[int]],
+    issue_id: Any,
+    timeout: int,
+) -> None:
+    for service_gateway_event_id in sg._unique_positive_ints(service_gateway_event_ids):
+        _trigger_event_send(
+            session=session,
+            event_api=event_api,
+            event_send_api=event_send_api,
+            service_gateway_event_id=service_gateway_event_id,
+            issue_id=issue_id,
+            timeout=timeout,
+        )
+
+
 def _sync_created_event(
     session: requests.Session,
     event_api: str,
+    event_send_api: str,
     scheduled_event_api: str,
     timeout: int,
     default_team_id: int,
@@ -202,6 +260,14 @@ def _sync_created_event(
             service_gateway_event_id,
             scheduled_event_id,
         )
+        _trigger_event_send_for_ids(
+            session=session,
+            event_api=event_api,
+            event_send_api=event_send_api,
+            service_gateway_event_ids=[service_gateway_event_id],
+            issue_id=sync_ctx.event_data.get("id"),
+            timeout=timeout,
+        )
         return
 
     if scheduled_event_api:
@@ -213,6 +279,14 @@ def _sync_created_event(
             sync_ctx.event_data.get("id"),
             service_gateway_event_id,
         )
+        _trigger_event_send_for_ids(
+            session=session,
+            event_api=event_api,
+            event_send_api=event_send_api,
+            service_gateway_event_ids=[service_gateway_event_id],
+            issue_id=sync_ctx.event_data.get("id"),
+            timeout=timeout,
+        )
         return
 
     logger.warning(
@@ -223,11 +297,20 @@ def _sync_created_event(
         sync_ctx.event_data.get("id"),
         service_gateway_event_id,
     )
+    _trigger_event_send_for_ids(
+        session=session,
+        event_api=event_api,
+        event_send_api=event_send_api,
+        service_gateway_event_ids=[service_gateway_event_id],
+        issue_id=sync_ctx.event_data.get("id"),
+        timeout=timeout,
+    )
 
 
 def _sync_updated_event(
     session: requests.Session,
     event_api: str,
+    event_send_api: str,
     scheduled_event_api: str,
     timeout: int,
     default_team_id: int,
@@ -259,6 +342,7 @@ def _sync_updated_event(
         _sync_created_event(
             session=session,
             event_api=event_api,
+            event_send_api=event_send_api,
             scheduled_event_api=scheduled_event_api,
             timeout=timeout,
             default_team_id=default_team_id,
@@ -290,6 +374,14 @@ def _sync_updated_event(
             "Updated service-gateway /api/event rows for work-item %s but skipped scheduled-event (endpoint missing)",
             sync_ctx.event_data.get("id"),
         )
+        _trigger_event_send_for_ids(
+            session=session,
+            event_api=event_api,
+            event_send_api=event_send_api,
+            service_gateway_event_ids=event_ids,
+            issue_id=sync_ctx.event_data.get("id"),
+            timeout=timeout,
+        )
         return
 
     scheduled_event_ids = sg._unique_positive_ints([row.get("scheduled_event_id") for row in linked_rows])
@@ -311,6 +403,14 @@ def _sync_updated_event(
             ),
             sync_ctx.event_data.get("id"),
             removed_scheduled_count,
+        )
+        _trigger_event_send_for_ids(
+            session=session,
+            event_api=event_api,
+            event_send_api=event_send_api,
+            service_gateway_event_ids=event_ids,
+            issue_id=sync_ctx.event_data.get("id"),
+            timeout=timeout,
         )
         return
 
@@ -348,6 +448,14 @@ def _sync_updated_event(
             len(event_ids),
             updated_scheduled_count,
         )
+        _trigger_event_send_for_ids(
+            session=session,
+            event_api=event_api,
+            event_send_api=event_send_api,
+            service_gateway_event_ids=event_ids,
+            issue_id=sync_ctx.event_data.get("id"),
+            timeout=timeout,
+        )
         return
 
     scheduled_payload = sg._make_scheduled_event_payload(
@@ -372,6 +480,14 @@ def _sync_updated_event(
         ),
         sync_ctx.event_data.get("id"),
         scheduled_event_id,
+    )
+    _trigger_event_send_for_ids(
+        session=session,
+        event_api=event_api,
+        event_send_api=event_send_api,
+        service_gateway_event_ids=event_ids,
+        issue_id=sync_ctx.event_data.get("id"),
+        timeout=timeout,
     )
 
 
@@ -437,6 +553,7 @@ def _delete_scheduled_rows_if_supported(
 def _sync_deleted_event(
     session: requests.Session,
     event_api: str,
+    event_send_api: str,
     scheduled_event_api: str,
     timeout: int,
     event_data: Dict[str, Any],
@@ -447,7 +564,9 @@ def _sync_deleted_event(
         event_data=event_data,
         timeout=timeout,
     )
-    event_ids = sg._unique_positive_ints([row.get("event_id") for row in linked_rows])
+    event_ids = sg._unique_positive_ints(
+        [sg._int_field(event_data.get("sg_event_id"))] + [row.get("event_id") for row in linked_rows]
+    )
     if not event_ids:
         _set_issue_sg_event_id(event_data, None)
         logger.warning(
@@ -455,6 +574,15 @@ def _sync_deleted_event(
             event_data.get("id"),
         )
         return
+
+    _trigger_event_send_for_ids(
+        session=session,
+        event_api=event_api,
+        event_send_api=event_send_api,
+        service_gateway_event_ids=event_ids,
+        issue_id=event_data.get("id"),
+        timeout=timeout,
+    )
 
     for service_gateway_event_id in event_ids:
         _send_request(
@@ -514,6 +642,7 @@ def service_gateway_event_sync(event: str, verb: str, event_data: Optional[Dict[
         logger.warning("SERVICE_GATEWAY_EVENT_API is empty, skipping service-gateway sync")
         return
 
+    event_send_api = getattr(settings, "SERVICE_GATEWAY_EVENT_SEND_API", "")
     scheduled_event_api = getattr(settings, "SERVICE_GATEWAY_SCHEDULED_EVENT_API", "")
     if not scheduled_event_api:
         scheduled_event_api = sg._derive_scheduled_event_api(event_api)
@@ -544,6 +673,7 @@ def service_gateway_event_sync(event: str, verb: str, event_data: Optional[Dict[
                 "created": lambda: _sync_created_event(
                     session=session,
                     event_api=event_api,
+                    event_send_api=event_send_api,
                     scheduled_event_api=scheduled_event_api,
                     timeout=timeout,
                     default_team_id=default_team_id,
@@ -552,6 +682,7 @@ def service_gateway_event_sync(event: str, verb: str, event_data: Optional[Dict[
                 "updated": lambda: _sync_updated_event(
                     session=session,
                     event_api=event_api,
+                    event_send_api=event_send_api,
                     scheduled_event_api=scheduled_event_api,
                     timeout=timeout,
                     default_team_id=default_team_id,
@@ -560,6 +691,7 @@ def service_gateway_event_sync(event: str, verb: str, event_data: Optional[Dict[
                 "deleted": lambda: _sync_deleted_event(
                     session=session,
                     event_api=event_api,
+                    event_send_api=event_send_api,
                     scheduled_event_api=scheduled_event_api,
                     timeout=timeout,
                     event_data=sync_ctx.event_data,

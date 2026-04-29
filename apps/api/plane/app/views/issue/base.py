@@ -751,8 +751,10 @@ class IssueViewSet(BaseViewSet):
                 # delete workitems using service gateway for proper cascade delete and webhook trigger
 
         deleted_issue_id = issue.id
+        deleted_issue_event_data = {"id": deleted_issue_id, "sg_event_id": issue.sg_event_id}
 
         issue.delete()
+        service_gateway_event_sync(event="issue", verb="deleted", event_data=deleted_issue_event_data)
         webhook_activity.delay(
             event="issue",
             verb="deleted",
@@ -765,6 +767,8 @@ class IssueViewSet(BaseViewSet):
             event_id=deleted_issue_id,
             old_identifier=None,
             new_identifier=None,
+            event_data=deleted_issue_event_data,
+            skip_service_gateway=True,
         )
         # delete the issue from recent visits
         UserRecentVisit.objects.filter(
@@ -817,8 +821,8 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
             return Response({"error": "Issue IDs are required"}, status=status.HTTP_400_BAD_REQUEST)
 
         issues = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issue_ids)
-
-        total_issues = len(issues)
+        deleted_issue_payloads = list(issues.values("id", "sg_event_id"))
+        total_issues = len(deleted_issue_payloads)
 
         # First, delete all related cycle issues
         CycleIssue.objects.filter(issue_id__in=issue_ids).delete()
@@ -828,6 +832,24 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         # Finally, delete the issues themselves
         issues.delete()
+
+        for deleted_issue_payload in deleted_issue_payloads:
+            service_gateway_event_sync(event="issue", verb="deleted", event_data=deleted_issue_payload)
+            webhook_activity.delay(
+                event="issue",
+                verb="deleted",
+                field=None,
+                old_value=None,
+                new_value=None,
+                actor_id=request.user.id,
+                slug=slug,
+                current_site=base_host(request=request, is_app=True),
+                event_id=deleted_issue_payload["id"],
+                old_identifier=None,
+                new_identifier=None,
+                event_data=deleted_issue_payload,
+                skip_service_gateway=True,
+            )
 
         return Response(
             {"message": f"{total_issues} issues were deleted"},
