@@ -7,6 +7,7 @@
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
+import { scheduleIdleCallback } from "@/lib/polyfills";
 
 type Props = {
   defaultHeight?: string;
@@ -51,8 +52,8 @@ function RenderIfVisible(props: Props) {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          if (typeof window !== undefined && window.requestIdleCallback && useIdletime) {
-            window.requestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
+          if (typeof window !== "undefined" && useIdletime) {
+            scheduleIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
               timeout: 300,
             });
           } else {
@@ -77,7 +78,7 @@ function RenderIfVisible(props: Props) {
   //Set height after render
   useEffect(() => {
     if (intersectionRef.current && isVisible && shouldRecordHeights) {
-      window.requestIdleCallback(() => {
+      scheduleIdleCallback(() => {
         if (intersectionRef.current) placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
       });
     }

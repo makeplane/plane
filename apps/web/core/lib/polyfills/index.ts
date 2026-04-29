@@ -4,8 +4,12 @@
  * See the LICENSE file for details.
  */
 
-if (typeof window !== "undefined" && window) {
-  // Add request callback polyfill to browser in case it does not exist
+/** Installs `window.requestIdleCallback` / `cancelIdleCallback` when missing (e.g. older Safari). Idempotent. */
+function ensureRequestIdleCallbackPolyfilled(): void {
+  if (typeof window === "undefined" || !window) {
+    return;
+  }
+
   window.requestIdleCallback =
     window.requestIdleCallback ??
     function (cb) {
@@ -27,4 +31,15 @@ if (typeof window !== "undefined" && window) {
     };
 }
 
-export {};
+ensureRequestIdleCallbackPolyfilled();
+
+export function scheduleIdleCallback(
+  callback: IdleRequestCallback,
+  options?: IdleRequestOptions,
+): number {
+  ensureRequestIdleCallbackPolyfilled();
+  if (typeof window === "undefined") {
+    return 0;
+  }
+  return window.requestIdleCallback(callback, options);
+}
