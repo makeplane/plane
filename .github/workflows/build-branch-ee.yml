@@ -44,12 +44,12 @@ on:
         default: false
         type: boolean
       register_on_prime:
-        description: "Register this release on Prime (sends encryption key + metadata)"
+        description: "Register this release on Prime"
         required: false
         default: false
         type: boolean
       prime_is_pre_release:
-        description: "Mark this Version as pre-release on Prime (independent of build-level isPrerelease)"
+        description: "Mark this Version as pre-release on Prime"
         required: false
         default: false
         type: boolean
