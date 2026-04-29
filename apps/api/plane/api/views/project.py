@@ -4,6 +4,7 @@
 
 # Python imports
 import json
+from functools import partial
 
 # Django imports
 from django.db import IntegrityError, transaction
@@ -265,9 +266,12 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
 
                     # Defer the activity-log task until the surrounding
                     # transaction commits, so it never fires on a rolled-back
-                    # creation.
+                    # creation. Use functools.partial so the bound arguments
+                    # are captured at scheduling time rather than via a
+                    # late-binding closure.
                     transaction.on_commit(
-                        lambda: model_activity.delay(
+                        partial(
+                            model_activity.delay,
                             model_name="project",
                             model_id=str(project.id),
                             requested_data=request.data,
@@ -287,6 +291,10 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_409_CONFLICT,
                 )
+            # Any other IntegrityError is unexpected — let the catch-all
+            # `Exception` branch below log it and return 500 instead of
+            # falling through to an implicit 200 with no body.
+            raise
         except Workspace.DoesNotExist:
             return Response({"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except ValidationError:
@@ -295,12 +303,14 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 status=status.HTTP_409_CONFLICT,
             )
         except Exception as e:
-            # Surface unexpected failures in the api logs so future regressions
-            # are debuggable. Keep the public response generic.
+            # Unexpected server-side failure: log the traceback and return a
+            # generic 500 so the client can distinguish it from a 4xx caused
+            # by bad input. Returning 400 here was the anti-pattern that
+            # masked the original ghost-create bug.
             log_exception(e)
             return Response(
-                {"error": "Please provide valid detail"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"error": "An unexpected error occurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
