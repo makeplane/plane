@@ -205,7 +205,14 @@ TIME_ZONE = "UTC"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Email settings
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# Email settings
+# Use custom SMTP backend that disables SSL hostname verification by default.
+# This fixes issues with SMTP providers (e.g., Brevo/Sendinblue) whose SSL certificates
+# are issued for regional hostnames that differ from the DNS-resolvable hostname.
+EMAIL_BACKEND = os.environ.get(
+    "EMAIL_BACKEND",
+    "plane.utils.email_backend.SMTPEmailBackend"
+)
 
 # Storage Settings
 # Use Minio settings
