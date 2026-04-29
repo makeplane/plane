@@ -81,15 +81,12 @@ overrides:
   mdast-util-to-hast: 13.2.1
   valibot: 1.2.0
   glob: 11.1.0
-  js-yaml: 4.1.1
   brace-expansion: 5.0.5
   nanoid: 3.3.8
   esbuild: 0.25.0
   '@babel/helpers': 7.26.10
   '@babel/runtime': 7.26.10
   chokidar: 3.6.0
-  happy-dom: 20.0.2
-  tar-fs: 3.0.9
   prosemirror-view: 1.40.0
   '@types/express': 4.17.23
   typescript: 5.8.3
@@ -98,7 +95,6 @@ overrides:
   diff: 5.2.2
   webpack: 5.104.1
   lodash-es: 4.18.0
-  '@isaacs/brace-expansion': 5.0.1
   lodash: 4.18.1
   markdown-it: 14.1.1
   rollup: 4.59.0
@@ -8537,7 +8533,7 @@ packages:
       '@vitest/browser-preview': 4.0.15
       '@vitest/browser-webdriverio': 4.0.15
       '@vitest/ui': 4.0.15
-      happy-dom: 20.0.2
+      happy-dom: '*'
       jsdom: '*'
     peerDependenciesMeta:
       '@edge-runtime/vm':
