@@ -74,7 +74,7 @@ function RenderIfVisible(props: Props) {
         observer.disconnect();
       };
     }
-  }, [intersectionRef, children, root, verticalOffset, horizontalOffset, useIdletime]);
+  }, [intersectionRef, root, verticalOffset, horizontalOffset, useIdletime]);
 
   //Set height after render
   useEffect(() => {
