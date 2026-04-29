@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+from unittest import mock
+from uuid import uuid4
+
 import pytest
 from rest_framework import status
 
@@ -11,8 +14,6 @@ from plane.db.models import Project, ProjectMember, State, User, WorkspaceMember
 @pytest.fixture
 def other_workspace_member(db, workspace):
     """Create another user that is a member of the workspace, distinct from the creator."""
-    from uuid import uuid4
-
     unique_id = uuid4().hex[:8]
     other = User.objects.create(
         email=f"other-{unique_id}@plane.so",
@@ -24,6 +25,21 @@ def other_workspace_member(db, workspace):
     other.save()
     WorkspaceMember.objects.create(workspace=workspace, member=other, role=20)
     return other
+
+
+@pytest.fixture
+def outsider_user(db):
+    """Create a user that is NOT a member of any workspace under test."""
+    unique_id = uuid4().hex[:8]
+    outsider = User.objects.create(
+        email=f"outsider-{unique_id}@plane.so",
+        username=f"outsider_{unique_id}",
+        first_name="Out",
+        last_name="Sider",
+    )
+    outsider.set_password("test-password")
+    outsider.save()
+    return outsider
 
 
 @pytest.mark.contract
@@ -55,9 +71,10 @@ class TestProjectListCreateAPIEndpoint:
         response = api_key_client.post(url, payload, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
-        assert Project.objects.count() == 1
 
-        project = Project.objects.first()
+        # Look up the project we just created instead of relying on
+        # ordering-sensitive Project.objects.first().
+        project = Project.objects.get(id=response.data["id"])
         # Creator is registered as admin (single membership; lead == creator
         # should not produce a duplicate row).
         assert ProjectMember.objects.filter(project=project, member=create_user, role=20).count() == 1
@@ -80,7 +97,7 @@ class TestProjectListCreateAPIEndpoint:
         response = api_key_client.post(url, payload, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
-        project = Project.objects.first()
+        project = Project.objects.get(id=response.data["id"])
 
         # Both creator and other_workspace_member are admins.
         assert ProjectMember.objects.filter(project=project, member=create_user, role=20).exists()
@@ -100,6 +117,68 @@ class TestProjectListCreateAPIEndpoint:
         response = api_key_client.post(url, payload, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
-        project = Project.objects.first()
+        project = Project.objects.get(id=response.data["id"])
         assert ProjectMember.objects.filter(project=project, member=create_user, role=20).count() == 1
         assert State.objects.filter(project=project).count() == 5
+
+    @pytest.mark.django_db
+    def test_create_project_with_lead_not_in_workspace_returns_400(self, api_key_client, workspace, outsider_user):
+        """When project_lead refers to a user that is NOT a member of the
+        target workspace, the endpoint must reject the request with a 400
+        carrying a field-shaped error and must not persist the Project."""
+        url = self.get_url(workspace.slug)
+        payload = {
+            "name": "Outsider Lead Project",
+            "identifier": "OUT",
+            "project_lead": str(outsider_user.id),
+        }
+
+        response = api_key_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST, f"Got {response.status_code}: {response.data!r}"
+        assert "project_lead" in response.data, (
+            f"Expected field-shaped error under 'project_lead', got {response.data!r}"
+        )
+        # No project should have been persisted.
+        assert Project.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_model_activity_not_called_on_rollback(self, api_key_client, workspace, create_user):
+        """If anything inside the transaction.atomic() block raises, the
+        whole creation must roll back (no Project, no ProjectMember, no
+        State) and the deferred model_activity.delay() task must not fire,
+        because it is registered with transaction.on_commit().
+
+        Force the failure inside State.objects.bulk_create — past the point
+        where the original ghost-create bug would have committed a partial
+        Project — and verify the response is 500 with no side effects.
+        """
+        url = self.get_url(workspace.slug)
+        payload = {
+            "name": "Rollback Probe",
+            "identifier": "RB",
+            "project_lead": str(create_user.id),
+        }
+
+        forced_error = RuntimeError("forced failure for rollback test")
+
+        with (
+            mock.patch(
+                "plane.api.views.project.State.objects.bulk_create",
+                side_effect=forced_error,
+            ),
+            mock.patch("plane.api.views.project.model_activity") as mocked_activity,
+        ):
+            response = api_key_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR, (
+            f"Got {response.status_code}: {response.data!r}"
+        )
+        # Transaction must have rolled back: no Project, no ProjectMember,
+        # no State persisted.
+        assert Project.objects.count() == 0
+        assert ProjectMember.objects.count() == 0
+        assert State.objects.count() == 0
+        # And the deferred Celery task must not have been dispatched —
+        # transaction.on_commit() callbacks only fire on a successful commit.
+        mocked_activity.delay.assert_not_called()
