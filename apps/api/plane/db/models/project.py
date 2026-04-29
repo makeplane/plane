@@ -115,6 +115,9 @@ class Project(BaseModel):
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
+    #event date and budget
+    event_date = models.DateField(null=True, blank=True, verbose_name="Event Date")
+    budget_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name="Budget Total")
     # external_id for imports
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)

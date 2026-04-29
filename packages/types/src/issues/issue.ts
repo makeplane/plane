@@ -77,6 +77,9 @@ export type TBaseIssue = {
   is_draft: boolean;
   is_epic?: boolean;
   is_intake?: boolean;
+
+  budget_estimated?: number | string | null;
+  budget_actual?: number | string | null;
 };
 
 type IssueRelation = {

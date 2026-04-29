@@ -92,6 +92,8 @@ class ProjectCreateSerializer(BaseSerializer):
             "external_id",
             "is_issue_type_enabled",
             "is_time_tracking_enabled",
+            "event_date",
+            "budget_total",
         ]
 
         read_only_fields = [

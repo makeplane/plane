@@ -144,6 +144,8 @@ class Issue(ProjectBaseModel):
     )
     start_date = models.DateField(null=True, blank=True)
     target_date = models.DateField(null=True, blank=True)
+    budget_estimated = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name="Budget Estimated")
+    budget_actual = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True, verbose_name="Budget Actual")
     assignees = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         blank=True,
