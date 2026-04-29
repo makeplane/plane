@@ -300,10 +300,17 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                     {"name": "The project name is already taken"},
                     status=status.HTTP_409_CONFLICT,
                 )
-            # Any other IntegrityError is unexpected — let the catch-all
-            # `Exception` branch below log it and return 500 instead of
-            # falling through to an implicit 200 with no body.
-            raise
+            # Any other IntegrityError is unexpected: log it the same way
+            # the catch-all `except Exception` below would and return the
+            # same generic 500 so the client gets a uniform error shape.
+            # `raise` here would not fall through to a sibling except
+            # clause — it would exit the try/except entirely and bypass
+            # both the logging and the JSON response.
+            log_exception(e)
+            return Response(
+                {"error": "An unexpected error occurred"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
         except Workspace.DoesNotExist:
             return Response({"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except ValidationError:
