@@ -33,10 +33,7 @@ function ensureRequestIdleCallbackPolyfilled(): void {
 
 ensureRequestIdleCallbackPolyfilled();
 
-export function scheduleIdleCallback(
-  callback: IdleRequestCallback,
-  options?: IdleRequestOptions,
-): number {
+export function scheduleIdleCallback(callback: IdleRequestCallback, options?: IdleRequestOptions): number {
   ensureRequestIdleCallbackPolyfilled();
   if (typeof window === "undefined") {
     return 0;

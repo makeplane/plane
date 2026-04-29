@@ -67,13 +67,10 @@ function RenderIfVisible(props: Props) {
       );
       observer.observe(intersectionRef.current);
       return () => {
-        if (intersectionRef.current) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          observer.unobserve(intersectionRef.current);
-        }
+        observer.disconnect();
       };
     }
-  }, [intersectionRef, children, root, verticalOffset, horizontalOffset]);
+  }, [intersectionRef, children, root, verticalOffset, horizontalOffset, useIdletime]);
 
   //Set height after render
   useEffect(() => {
