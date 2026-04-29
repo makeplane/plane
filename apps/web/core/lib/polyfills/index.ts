@@ -4,7 +4,11 @@
  * See the LICENSE file for details.
  */
 
-/** Installs `window.requestIdleCallback` / `cancelIdleCallback` when missing (e.g. older Safari). Idempotent. */
+/**
+ * Ensures `window.requestIdleCallback` and `window.cancelIdleCallback` exist.
+ * Installs minimal shims when the browser omits them (e.g. older Safari / WebKit).
+ * Safe to call repeatedly; only assigns missing APIs once.
+ */
 function ensureRequestIdleCallbackPolyfilled(): void {
   if (typeof window === "undefined" || !window) {
     return;
@@ -33,6 +37,13 @@ function ensureRequestIdleCallbackPolyfilled(): void {
 
 ensureRequestIdleCallbackPolyfilled();
 
+/**
+ * Schedules work to run when the browser is idle, or after a short delay when idle scheduling is unavailable.
+ *
+ * @param callback - Invoked with an `IdleDeadline`-like object (native or polyfilled).
+ * @param options - Optional `timeout` forwarded to the native API when present.
+ * @returns An idle handle for cancellation, or `0` when `window` is undefined (SSR).
+ */
 export function scheduleIdleCallback(callback: IdleRequestCallback, options?: IdleRequestOptions): number {
   ensureRequestIdleCallbackPolyfilled();
   if (typeof window === "undefined") {

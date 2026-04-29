@@ -24,6 +24,10 @@ type Props = {
   forceRender?: boolean;
 };
 
+/**
+ * Renders children only when the element intersects the viewport (or is forced visible), using a placeholder and
+ * optional height recording to reduce work for long lists.
+ */
 function RenderIfVisible(props: Props) {
   const {
     defaultHeight = "300px",
