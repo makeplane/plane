@@ -14,7 +14,12 @@ export const EnterKeyExtension = (onEnterKeyPress?: () => void) =>
 
     addKeyboardShortcuts(this) {
       return {
-        Enter: () => {
+        Enter: ({ editor }) => {
+          // Ignore Enter during IME composition (Chinese/Japanese/Korean)
+          // isComposing is true while the user is selecting a character via IME;
+          // letting the event through would prematurely submit the form/comment.
+          if (editor.view.composing) return false;
+
           const { activeDropbarExtensions } = this.editor.storage.utility;
 
           if (activeDropbarExtensions.length === 0) {
