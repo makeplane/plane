@@ -143,6 +143,7 @@ export const AllIssueQuickActions = observer(function AllIssueQuickActions(props
           handleClose={() => setTransferToProjectModal(false)}
           issueIds={[issue.id]}
           sourceProjectId={issue.project_id}
+          storeType={EIssuesStoreType.GLOBAL}
         />
       )}
 

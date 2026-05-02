@@ -255,6 +255,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
           }}
           issueIds={[issue.id]}
           sourceProjectId={issue.project_id}
+          storeType={EIssuesStoreType.PROJECT}
         />
       )}
 

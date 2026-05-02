@@ -776,6 +776,50 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   };
 
   /**
+   * @description Helper method to remove an issue from all relevant stores
+   * This ensures that when an issue is transferred, it's removed from all views that might contain it
+   * @param issueId
+   */
+  removeIssueFromAllRelevantStores = (issueId: string) => {
+    runInAction(() => {
+      this.removeIssueFromList(issueId);
+      this.rootIssueStore.issues.removeIssue(issueId);
+
+      if (this.rootIssueStore.projectIssues) {
+        this.rootIssueStore.projectIssues.removeIssueFromList(issueId);
+      }
+      if (this.rootIssueStore.cycleIssues) {
+        this.rootIssueStore.cycleIssues.removeIssueFromList(issueId);
+      }
+      if (this.rootIssueStore.moduleIssues) {
+        this.rootIssueStore.moduleIssues.removeIssueFromList(issueId);
+      }
+      if (this.rootIssueStore.workspaceIssues) {
+        this.rootIssueStore.workspaceIssues.removeIssueFromList(issueId);
+      }
+      if (this.rootIssueStore.profileIssues) {
+        this.rootIssueStore.profileIssues.removeIssueFromList(issueId);
+      }
+      if (this.rootIssueStore.projectViewIssues) {
+        this.rootIssueStore.projectViewIssues.removeIssueFromList(issueId);
+      }
+      if (this.rootIssueStore.archivedIssues) {
+        this.rootIssueStore.archivedIssues.removeIssueFromList(issueId);
+      }
+    });
+  };
+
+  /**
+   * @description Helper method to add fetched issues to the global issue map
+   * @param issues
+   */
+  addFetchedIssuesToStore = (issues: TIssue[]) => {
+    runInAction(() => {
+      this.rootIssueStore.issues.addIssue(issues);
+    });
+  };
+
+  /**
    * @description transfer a single issue to another project
    * @param workspaceSlug
    * @param sourceProjectId
@@ -795,13 +839,13 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
 
     if (response.success) {
       this.fetchParentStats(workspaceSlug, sourceProjectId);
-      runInAction(() => {
-        this.removeIssueFromList(issueId);
-        this.rootIssueStore.issues.removeIssue(issueId);
-      });
+      this.removeIssueFromAllRelevantStores(issueId);
 
       try {
-        await this.issueService.retrieve(workspaceSlug, targetProjectId, issueId);
+        const transferredIssue = await this.issueService.retrieve(workspaceSlug, targetProjectId, issueId);
+        if (transferredIssue) {
+          this.addFetchedIssuesToStore([transferredIssue]);
+        }
       } catch (e) {
         console.warn("Failed to fetch transferred issue details:", e);
       }
@@ -834,13 +878,19 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       this.fetchParentStats(workspaceSlug, sourceProjectId);
       runInAction(() => {
         transferredIssues.forEach((issueId) => {
-          this.removeIssueFromList(issueId);
-          this.rootIssueStore.issues.removeIssue(issueId);
+          this.removeIssueFromAllRelevantStores(issueId);
         });
       });
 
       try {
-        await this.issueService.retrieveIssues(workspaceSlug, targetProjectId, transferredIssues);
+        const transferredIssuesDetails = await this.issueService.retrieveIssues(
+          workspaceSlug,
+          targetProjectId,
+          transferredIssues
+        );
+        if (transferredIssuesDetails && transferredIssuesDetails.length > 0) {
+          this.addFetchedIssuesToStore(transferredIssuesDetails);
+        }
       } catch (e) {
         console.warn("Failed to fetch transferred issues details:", e);
       }

@@ -20,16 +20,17 @@ type Props = {
   handleClose: () => void;
   issueIds: string[];
   sourceProjectId: string;
+  storeType?: EIssuesStoreType;
   onSuccess?: () => void;
 };
 
 export const TransferIssueToProjectModal = observer(function TransferIssueToProjectModal(props: Props) {
-  const { isOpen, handleClose, issueIds, sourceProjectId, onSuccess } = props;
+  const { isOpen, handleClose, issueIds, sourceProjectId, storeType = EIssuesStoreType.PROJECT, onSuccess } = props;
   const [query, setQuery] = useState("");
 
   const { workspaceSlug } = useParams();
   const { joinedProjectIds, getProjectById } = useProject();
-  const { issues } = useIssues(EIssuesStoreType.PROJECT);
+  const { issues } = useIssues(storeType);
 
   const availableProjectIds = joinedProjectIds?.filter((id) => id !== sourceProjectId) ?? [];
 

@@ -156,6 +156,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
           handleClose={() => setTransferToProjectModal(false)}
           issueIds={[issue.id]}
           sourceProjectId={issue.project_id}
+          storeType={EIssuesStoreType.CYCLE}
         />
       )}
 
