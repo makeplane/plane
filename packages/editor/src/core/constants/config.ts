@@ -33,6 +33,7 @@ export const ACCEPTED_ATTACHMENT_MIME_TYPES = [
   "application/vnd.openxmlformats-officedocument.presentationml.presentation",
   "text/plain",
   "text/markdown",
+  "text/mdx",
   "application/rtf",
   "audio/mpeg",
   "audio/wav",
