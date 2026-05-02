@@ -26,6 +26,7 @@ import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layo
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
+import { TransferIssueToProjectModal } from "../../transfer-issue-to-project-modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useCycleIssueMenuItems } from "./helper";
@@ -49,6 +50,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
+  const [transferToProjectModal, setTransferToProjectModal] = useState(false);
   // router
   const { workspaceSlug, cycleId } = useParams();
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
@@ -91,6 +93,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
     setDeleteIssueModal,
     setArchiveIssueModal,
     setDuplicateWorkItemModal,
+    setTransferToProjectModal,
     handleRemoveFromView,
     cycleId: cycleId?.toString(),
     handleDelete,
@@ -145,6 +148,14 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
           onClose={() => setDuplicateWorkItemModal(false)}
           workspaceSlug={workspaceSlug.toString()}
           projectId={issue.project_id}
+        />
+      )}
+      {issue.project_id && workspaceSlug && (
+        <TransferIssueToProjectModal
+          isOpen={transferToProjectModal}
+          handleClose={() => setTransferToProjectModal(false)}
+          issueIds={[issue.id]}
+          sourceProjectId={issue.project_id}
         />
       )}
 

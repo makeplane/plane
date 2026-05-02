@@ -26,6 +26,7 @@ import { DuplicateWorkItemModal } from "@/plane-web/components/issues/issue-layo
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
+import { TransferIssueToProjectModal } from "../../transfer-issue-to-project-modal";
 import type { IQuickActionProps } from "../list/list-view-types";
 import type { MenuItemFactoryProps } from "./helper";
 import { useWorkItemDetailMenuItems } from "./helper";
@@ -36,6 +37,7 @@ type TWorkItemDetailQuickActionProps = IQuickActionProps & {
   toggleDeleteIssueModal?: (value: boolean) => void;
   toggleDuplicateIssueModal?: (value: boolean) => void;
   toggleArchiveIssueModal?: (value: boolean) => void;
+  toggleTransferIssueModal?: (value: boolean) => void;
   isPeekMode?: boolean;
 };
 
@@ -56,6 +58,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     toggleDeleteIssueModal,
     toggleDuplicateIssueModal,
     toggleArchiveIssueModal,
+    toggleTransferIssueModal,
     isPeekMode = false,
   } = props;
   // router
@@ -66,6 +69,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   const [deleteIssueModal, setDeleteIssueModal] = useState(false);
   const [archiveIssueModal, setArchiveIssueModal] = useState(false);
   const [duplicateWorkItemModal, setDuplicateWorkItemModal] = useState(false);
+  const [transferToProjectModal, setTransferToProjectModal] = useState(false);
   // store hooks
   const { allowPermissions } = useUserPermissions();
   const { issuesFilter } = useIssues(EIssuesStoreType.PROJECT);
@@ -121,6 +125,11 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     if (toggleArchiveIssueModal) toggleArchiveIssueModal(true);
   };
 
+  const customTransferAction = async () => {
+    setTransferToProjectModal(true);
+    if (toggleTransferIssueModal) toggleTransferIssueModal(true);
+  };
+
   const customRestoreAction = async () => {
     if (handleRestore) await handleRestore();
   };
@@ -141,6 +150,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     setDeleteIssueModal: customDeleteAction,
     setArchiveIssueModal: customArchiveAction,
     setDuplicateWorkItemModal: customDuplicateAction,
+    setTransferToProjectModal: customTransferAction,
     handleDelete: customDeleteAction,
     handleUpdate,
     handleArchive: customArchiveAction,
@@ -234,6 +244,17 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
           }}
           workspaceSlug={workspaceSlug.toString()}
           projectId={issue.project_id}
+        />
+      )}
+      {issue.project_id && workspaceSlug && (
+        <TransferIssueToProjectModal
+          isOpen={transferToProjectModal}
+          handleClose={() => {
+            setTransferToProjectModal(false);
+            if (toggleTransferIssueModal) toggleTransferIssueModal(false);
+          }}
+          issueIds={[issue.id]}
+          sourceProjectId={issue.project_id}
         />
       )}
 

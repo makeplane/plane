@@ -40,6 +40,50 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 
 
+def check_user_project_permission(slug, project_id, user_id, required_role=15):
+    """
+    Check if a user has the required permission for a project.
+
+    Args:
+        slug: Workspace slug
+        project_id: Project ID
+        user_id: User ID
+        required_role: Minimum required role (default: 15 = MEMBER)
+
+    Returns:
+        bool: True if user has permission, False otherwise
+    """
+    from plane.db.models import WorkspaceMember
+
+    project_member = ProjectMember.objects.filter(
+        workspace__slug=slug,
+        project_id=project_id,
+        member_id=user_id,
+        role__gte=required_role,
+        is_active=True,
+    ).exists()
+
+    if project_member:
+        return True
+
+    workspace_admin = (
+        ProjectMember.objects.filter(
+            workspace__slug=slug,
+            project_id=project_id,
+            member_id=user_id,
+            is_active=True,
+        ).exists()
+        and WorkspaceMember.objects.filter(
+            workspace__slug=slug,
+            member_id=user_id,
+            role=20,
+            is_active=True,
+        ).exists()
+    )
+
+    return workspace_admin
+
+
 def transfer_issue(
     slug,
     source_project_id,
@@ -70,6 +114,12 @@ def transfer_issue(
     """
     try:
         with transaction.atomic():
+            if not check_user_project_permission(slug, target_project_id, user_id):
+                return {
+                    "success": False,
+                    "error": "You do not have permission to transfer issues to the target project",
+                }
+
             target_project = Project.objects.filter(
                 workspace__slug=slug,
                 pk=target_project_id,
@@ -450,6 +500,7 @@ def bulk_transfer_issues(
     """
     results = []
     success_count = 0
+    transferred_issues = []
     errors = []
 
     for issue_id in issue_ids:
@@ -464,6 +515,7 @@ def bulk_transfer_issues(
         results.append(result)
         if result.get("success"):
             success_count += 1
+            transferred_issues.append(result.get("issue_id", issue_id))
         else:
             errors.append(
                 {
@@ -476,6 +528,8 @@ def bulk_transfer_issues(
         "success": success_count == len(issue_ids),
         "total": len(issue_ids),
         "success_count": success_count,
+        "transferred_count": success_count,
+        "transferred_issues": transferred_issues,
         "errors": errors,
         "results": results,
     }

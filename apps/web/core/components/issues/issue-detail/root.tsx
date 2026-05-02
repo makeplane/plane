@@ -33,6 +33,12 @@ export type TIssueOperations = {
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  transfer?: (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    data: { issue_ids: string[] }
+  ) => Promise<void>;
   addCycleToIssue?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle?: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -70,6 +76,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
     updateIssue,
     removeIssue,
     archiveIssue,
+    transferIssue,
     addCycleToIssue,
     addIssueToCycle,
     removeIssueFromCycle,
@@ -126,6 +133,18 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           await archiveIssue(workspaceSlug, projectId, issueId);
         } catch (error) {
           console.log("Error in archiving issue:", error);
+        }
+      },
+      transfer: async (
+        workspaceSlug: string,
+        sourceProjectId: string,
+        targetProjectId: string,
+        data: { issue_ids: string[] }
+      ) => {
+        try {
+          await transferIssue(workspaceSlug, sourceProjectId, targetProjectId, data);
+        } catch (error) {
+          console.log("Error in transferring issue:", error);
         }
       },
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
@@ -205,6 +224,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
       updateIssue,
       removeIssue,
       archiveIssue,
+      transferIssue,
       removeArchivedIssue,
       addIssueToCycle,
       addCycleToIssue,

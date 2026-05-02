@@ -799,6 +799,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         this.removeIssueFromList(issueId);
         this.rootIssueStore.issues.removeIssue(issueId);
       });
+
+      try {
+        await this.issueService.retrieve(workspaceSlug, targetProjectId, issueId);
+      } catch (e) {
+        console.warn("Failed to fetch transferred issue details:", e);
+      }
     }
 
     return response;
@@ -832,6 +838,12 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
           this.rootIssueStore.issues.removeIssue(issueId);
         });
       });
+
+      try {
+        await this.issueService.retrieveIssues(workspaceSlug, targetProjectId, transferredIssues);
+      } catch (e) {
+        console.warn("Failed to fetch transferred issues details:", e);
+      }
     }
 
     return response;

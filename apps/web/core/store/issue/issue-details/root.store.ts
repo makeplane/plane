@@ -280,6 +280,12 @@ export abstract class IssueDetail implements IIssueDetail {
     this.issue.removeIssue(workspaceSlug, projectId, issueId);
   archiveIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.archiveIssue(workspaceSlug, projectId, issueId);
+  transferIssue = async (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    data: { issue_ids: string[] }
+  ) => this.issue.transferIssue(workspaceSlug, sourceProjectId, targetProjectId, data);
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) =>
     this.issue.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
   addIssueToCycle = async (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) =>

@@ -20,6 +20,12 @@ export interface IIssueStoreActions {
   updateIssue: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
   removeIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archiveIssue: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
+  transferIssue: (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    data: { issue_ids: string[] }
+  ) => Promise<void>;
   addCycleToIssue: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
   addIssueToCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueIds: string[]) => Promise<void>;
   removeIssueFromCycle: (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => Promise<void>;
@@ -204,6 +210,19 @@ export class IssueStore implements IIssueStore {
         ? this.rootIssueDetailStore.rootIssueStore.projectEpics
         : this.rootIssueDetailStore.rootIssueStore.projectIssues;
     currentStore.archiveIssue(workspaceSlug, projectId, issueId);
+  };
+
+  transferIssue = async (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    data: { issue_ids: string[] }
+  ) => {
+    const currentStore =
+      this.serviceType === EIssueServiceType.EPICS
+        ? this.rootIssueDetailStore.rootIssueStore.projectEpics
+        : this.rootIssueDetailStore.rootIssueStore.projectIssues;
+    await currentStore.transferIssue(workspaceSlug, sourceProjectId, targetProjectId, data);
   };
 
   addCycleToIssue = async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
