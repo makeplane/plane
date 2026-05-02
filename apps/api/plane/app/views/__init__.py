@@ -126,6 +126,8 @@ from .issue.base import (
     IssueBulkUpdateDateEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    TransferIssueEndpoint,
+    BulkTransferIssuesEndpoint,
 )
 
 from .issue.activity import IssueActivityEndpoint

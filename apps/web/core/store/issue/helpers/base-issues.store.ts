@@ -110,6 +110,29 @@ export interface IBaseIssuesStore {
     removeModuleIds: string[]
   ): Promise<void>;
   updateIssueDates(workspaceSlug: string, updates: IBlockUpdateDependencyData[], projectId?: string): Promise<void>;
+
+  transferIssue: (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    issueId: string
+  ) => Promise<{
+    success: boolean;
+    issue_id: string;
+    source_project_id: string;
+    target_project_id: string;
+  }>;
+  bulkTransferIssues: (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    issueIds: string[]
+  ) => Promise<{
+    success: boolean;
+    transferred_count: number;
+    transferred_issues: string[];
+    errors: { issue_id: string; error: string }[];
+  }>;
 }
 
 // This constant maps the group by keys to the respective issue property that the key relies on
@@ -750,6 +773,68 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         this.updateIssueList(issueDetails, issueBeforeUpdate);
       });
     });
+  };
+
+  /**
+   * @description transfer a single issue to another project
+   * @param workspaceSlug
+   * @param sourceProjectId
+   * @param targetProjectId
+   * @param issueId
+   */
+  transferIssue = async (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    issueId: string
+  ) => {
+    const response = await this.issueService.transferIssue(workspaceSlug, sourceProjectId, {
+      target_project_id: targetProjectId,
+      issue_id: issueId,
+    });
+
+    if (response.success) {
+      this.fetchParentStats(workspaceSlug, sourceProjectId);
+      runInAction(() => {
+        this.removeIssueFromList(issueId);
+        this.rootIssueStore.issues.removeIssue(issueId);
+      });
+    }
+
+    return response;
+  };
+
+  /**
+   * @description transfer multiple issues to another project
+   * @param workspaceSlug
+   * @param sourceProjectId
+   * @param targetProjectId
+   * @param issueIds
+   */
+  bulkTransferIssues = async (
+    workspaceSlug: string,
+    sourceProjectId: string,
+    targetProjectId: string,
+    issueIds: string[]
+  ) => {
+    const response = await this.issueService.bulkTransferIssues(workspaceSlug, sourceProjectId, {
+      target_project_id: targetProjectId,
+      issue_ids: issueIds,
+    });
+
+    const transferredIssues = response.transferred_issues || [];
+
+    if (transferredIssues.length > 0) {
+      this.fetchParentStats(workspaceSlug, sourceProjectId);
+      runInAction(() => {
+        transferredIssues.forEach((issueId) => {
+          this.removeIssueFromList(issueId);
+          this.rootIssueStore.issues.removeIssue(issueId);
+        });
+      });
+    }
+
+    return response;
   };
 
   async updateIssueDates(

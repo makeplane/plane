@@ -1353,3 +1353,91 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
         # Serialize the issue
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TransferIssueEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        from plane.utils.issue_transfer import transfer_issue
+
+        target_project_id = request.data.get("target_project_id")
+        issue_id = request.data.get("issue_id")
+
+        if not target_project_id:
+            return Response(
+                {"error": "Target project ID is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not issue_id:
+            return Response(
+                {"error": "Issue ID is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if str(project_id) == str(target_project_id):
+            return Response(
+                {"error": "Source and target projects are the same"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        result = transfer_issue(
+            slug=slug,
+            source_project_id=project_id,
+            target_project_id=target_project_id,
+            issue_id=issue_id,
+            request=request,
+            user_id=request.user.id,
+        )
+
+        if not result.get("success"):
+            return Response(
+                {"error": result.get("error", "Failed to transfer issue")},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class BulkTransferIssuesEndpoint(BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        from plane.utils.issue_transfer import bulk_transfer_issues
+
+        target_project_id = request.data.get("target_project_id")
+        issue_ids = request.data.get("issue_ids", [])
+
+        if not target_project_id:
+            return Response(
+                {"error": "Target project ID is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if not issue_ids or len(issue_ids) == 0:
+            return Response(
+                {"error": "Issue IDs are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if str(project_id) == str(target_project_id):
+            return Response(
+                {"error": "Source and target projects are the same"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        result = bulk_transfer_issues(
+            slug=slug,
+            source_project_id=project_id,
+            target_project_id=target_project_id,
+            issue_ids=issue_ids,
+            request=request,
+            user_id=request.user.id,
+        )
+
+        if len(result.get("errors", [])) > 0:
+            return Response(
+                result,
+                status=status.HTTP_207_MULTI_STATUS,
+            )
+
+        return Response(result, status=status.HTTP_200_OK)

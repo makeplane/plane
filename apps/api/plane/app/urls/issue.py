@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from django.urls import path
-
 from plane.app.views import (
     BulkCreateIssueLabelsEndpoint,
     BulkDeleteIssuesEndpoint,
@@ -31,6 +29,8 @@ from plane.app.views import (
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
     IssueDetailIdentifierEndpoint,
+    TransferIssueEndpoint,
+    BulkTransferIssuesEndpoint,
 )
 
 urlpatterns = [
@@ -282,5 +282,15 @@ urlpatterns = [
         "workspaces/<str:slug>/work-items/<str:project_identifier>-<str:issue_identifier>/",
         IssueDetailIdentifierEndpoint.as_view(),
         name="issue-detail-identifier",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/transfer-issue/",
+        TransferIssueEndpoint.as_view(),
+        name="transfer-issue",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/bulk-transfer-issues/",
+        BulkTransferIssuesEndpoint.as_view(),
+        name="bulk-transfer-issues",
     ),
 ]

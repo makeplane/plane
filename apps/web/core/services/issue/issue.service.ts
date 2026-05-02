@@ -374,6 +374,46 @@ export class IssueService extends APIService {
       });
   }
 
+  async transferIssue(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      target_project_id: string;
+      issue_id: string;
+    }
+  ): Promise<{
+    success: boolean;
+    issue_id: string;
+    source_project_id: string;
+    target_project_id: string;
+  }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/transfer-issue/`, data)
+      .then(async (response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async bulkTransferIssues(
+    workspaceSlug: string,
+    projectId: string,
+    data: {
+      target_project_id: string;
+      issue_ids: string[];
+    }
+  ): Promise<{
+    success: boolean;
+    transferred_count: number;
+    transferred_issues: string[];
+    errors: { issue_id: string; error: string }[];
+  }> {
+    return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/bulk-transfer-issues/`, data)
+      .then(async (response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
   // issue subscriptions
   async getIssueNotificationSubscriptionStatus(
     workspaceSlug: string,
