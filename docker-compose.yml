@@ -7,6 +7,15 @@ services:
       dockerfile: ./apps/web/Dockerfile.web
       args:
         DOCKER_BUILDKIT: 1
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_ADMIN_BASE_URL: ${NEXT_PUBLIC_ADMIN_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_ADMIN_BASE_PATH: ${NEXT_PUBLIC_ADMIN_BASE_PATH:-/god-mode}
+        NEXT_PUBLIC_LIVE_BASE_URL: ${NEXT_PUBLIC_LIVE_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_LIVE_BASE_PATH: ${NEXT_PUBLIC_LIVE_BASE_PATH:-/live}
+        NEXT_PUBLIC_SPACE_BASE_URL: ${NEXT_PUBLIC_SPACE_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_SPACE_BASE_PATH: ${NEXT_PUBLIC_SPACE_BASE_PATH:-/spaces}
+        NEXT_PUBLIC_WEB_BASE_URL: ${NEXT_PUBLIC_WEB_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_CP_SERVER_URL: ${NEXT_PUBLIC_CP_SERVER_URL:-https://sports.kanavio.com/sports/api}
     restart: always
     depends_on:
       - api
@@ -19,6 +28,12 @@ services:
       dockerfile: ./apps/admin/Dockerfile.admin
       args:
         DOCKER_BUILDKIT: 1
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_ADMIN_BASE_URL: ${NEXT_PUBLIC_ADMIN_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_ADMIN_BASE_PATH: ${NEXT_PUBLIC_ADMIN_BASE_PATH:-/god-mode}
+        NEXT_PUBLIC_SPACE_BASE_URL: ${NEXT_PUBLIC_SPACE_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_SPACE_BASE_PATH: ${NEXT_PUBLIC_SPACE_BASE_PATH:-/spaces}
+        NEXT_PUBLIC_WEB_BASE_URL: ${NEXT_PUBLIC_WEB_BASE_URL:-https://sports.kanavio.com}
     restart: always
     depends_on:
       - api
@@ -32,6 +47,12 @@ services:
       dockerfile: ./apps/space/Dockerfile.space
       args:
         DOCKER_BUILDKIT: 1
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_ADMIN_BASE_URL: ${NEXT_PUBLIC_ADMIN_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_ADMIN_BASE_PATH: ${NEXT_PUBLIC_ADMIN_BASE_PATH:-/god-mode}
+        NEXT_PUBLIC_SPACE_BASE_URL: ${NEXT_PUBLIC_SPACE_BASE_URL:-https://sports.kanavio.com}
+        NEXT_PUBLIC_SPACE_BASE_PATH: ${NEXT_PUBLIC_SPACE_BASE_PATH:-/spaces}
+        NEXT_PUBLIC_WEB_BASE_URL: ${NEXT_PUBLIC_WEB_BASE_URL:-https://sports.kanavio.com}
     restart: always
     depends_on:
       - api
