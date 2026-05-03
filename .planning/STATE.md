@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Phase 1 complete: precedence graph loader implemented (filter + direction translation + both-endpoints cross-project + iterative three-color DFS) + 11 GREEN unit tests pinning every PROP/D-NN identifier in Phase 1; D-08 lint-grep purity invariant locked for future Phase 2 modules."
-last_updated: "2026-05-03T15:37:28Z"
-last_activity: 2026-05-03 -- Plan 01-02 complete; Phase 1 done; Phase 2 unblocked
+stopped_at: "Phase 2 context gathered (--auto): 14 implementation decisions locked in 02-CONTEXT.md (algorithm = frontier-expansion BFS, Result-pattern PropagationResult, frozen-dataclass MoveIntent/ScheduledWorkItem/WorkItemUpdate, StrEnum PropagationErrorCode, fixed validation order, fail-fast cycle, dragged-item-only stale check, lazy INCOMPLETE_SCHEDULE / cross-project-reachability / 100-limit, pure scheduling helpers as ADR 0002 swap seam, free-function public surface, in-memory test fixtures, lint-grep purity carried forward)."
+last_updated: "2026-05-04T00:00:00Z"
+last_activity: 2026-05-04 -- Phase 2 CONTEXT.md committed; auto-advancing to plan-phase
 progress:
   total_phases: 6
   completed_phases: 1
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-03)
 
 ## Current Position
 
-Phase: 1 (Precedence Graph Loader & Normalization) — COMPLETE
-Plan: 2 of 2 (done)
-Status: Phase 1 complete; Phase 2 unblocked
-Last activity: 2026-05-03 -- Plan 01-02 complete; Phase 1 done; Phase 2 unblocked
+Phase: 2 (Date-Range Scheduling Helper & Propagation Algorithm Core) — CONTEXT GATHERED
+Plan: 0 of N (not yet planned)
+Status: Phase 2 context locked; auto-advancing to plan-phase
+Last activity: 2026-05-04 -- Phase 2 CONTEXT.md (14 decisions) + DISCUSSION-LOG.md committed (5d1f181bbf)
 
 Progress: [█░░░░░░░░░] 17%
 
@@ -112,6 +112,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-03
-Stopped at: Plan 01-02 complete (2/2 tasks committed; SUMMARY.md written; STATE / ROADMAP / REQUIREMENTS updated). Phase 1 done: 11 unit tests green, D-08 lint-grep purity invariant locked, cross-phase contracts (`Adjacency`, `Edge`, `LoadResult`, `WorkItemNode`, `load_precedence_graph`) ready for Phase 2 consumption.
-Resume file: .planning/phases/02-... (next phase, not yet planned)
+Last session: 2026-05-04
+Stopped at: Phase 2 context gathered via `--auto` discuss-phase. 14 decisions locked covering algorithm shape (BFS frontier expansion), Result-pattern `PropagationResult`, frozen-dataclass typing, `StrEnum` 7-code error contract, fixed validation order, fail-fast cycle pre-check, dragged-item-only stale check (`expected_versions: Mapping`), lazy `INCOMPLETE_SCHEDULE` / `PROJECT_BOUNDARY_EXCEEDED` reachability / 100-limit, calendar-day arithmetic isolated in `scheduling.py` as the ADR 0002 swap seam, free-function `propagate_move(...)` public surface, pure in-memory test fixtures (no `@django_db`), lint-grep purity invariant carried forward (D-14). Public surface additions: `MoveIntent`, `ScheduledWorkItem`, `WorkItemUpdate`, `PropagationResult`, `PropagationFailure`, `PropagationErrorCode`. Auto-advancing to plan-phase.
+Resume file: .planning/phases/02-date-range-scheduling-helper-propagation-algorithm-core/02-CONTEXT.md
