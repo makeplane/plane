@@ -30,6 +30,13 @@ Order of operations inside ``post``:
        e. On success, ``Issue.objects.bulk_update`` with the explicit
           ``["start_date", "target_date", "updated_at"]`` field list —
           ``auto_now`` is bypassed by ``bulk_update`` (RESEARCH Pitfall 1).
+       f. Register ``issue_activity.delay`` (per moved field per issue —
+          ``start_date`` and ``target_date`` logged as separate events,
+          mirroring views/issue/base.py:1141-1166) and
+          ``model_activity.delay`` (one event per moved issue,
+          mirroring views/module/base.py:708-716) under
+          ``transaction.on_commit`` so each fires ONLY on successful
+          commit (CONTEXT D-07/D-08/D-09; Plan 03-03).
     5. Return success Response with the single captured ``now`` shared
        across every ``work_items[].updated_at`` (D-05f).
 
@@ -38,17 +45,28 @@ caught at the view level — ``BaseAPIView.handle_exception`` returns
 generic 4xx/500 responses (D-13). The 7 typed codes are domain failures;
 operational failures must surface to monitoring.
 
-Plan 03-03 layers ``transaction.on_commit`` registrations for
-``issue_activity.delay`` and ``model_activity.delay`` on top of the
-success path. The marker comment ``# Plan 03-03: transaction.on_commit
-registrations go here`` indicates the seam.
+Plan 03-03: audit (``issue_activity``) and webhook (``model_activity``)
+tasks fire only on successful commit via ``transaction.on_commit``
+registration with per-iteration default-arg capture
+(``lambda inst=inst, pre=pre: ...``) to avoid the late-binding-loop-
+variable trap (RESEARCH Pitfall 4). The existing
+``IssueBulkUpdateDateEndpoint`` (apps/api/plane/app/views/issue/base.py:
+1141-1166) calls ``.delay(...)`` synchronously BEFORE ``bulk_update`` —
+a latent audit-leak bug we deliberately do NOT replicate here (API-11
+keeps that endpoint untouched; backlog: migrate that endpoint to
+``transaction.on_commit`` and add ``updated_at`` to its bulk_update
+field list per RESEARCH Pitfall 6 / Pitfall 7).
 
 Django 4.2 references:
     https://docs.djangoproject.com/en/4.2/ref/models/querysets/#select-for-update
     https://docs.djangoproject.com/en/4.2/topics/db/transactions/#performing-actions-after-commit
 """
 
+# Python imports
+import json
+
 # Django imports
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
@@ -67,7 +85,10 @@ from plane.app.services.timeline_propagation import (
     load_precedence_graph,
     propagate_move,
 )
+from plane.bgtasks.issue_activities_task import issue_activity
+from plane.bgtasks.webhook_task import model_activity
 from plane.db.models import Issue, IssueRelation, ProjectMember
+from plane.utils.host import base_host
 
 from ..base import BaseAPIView
 
@@ -233,12 +254,101 @@ class TimelinePropagationView(BaseAPIView):
                 instances, ["start_date", "target_date", "updated_at"]
             )
 
-            # Plan 03-03: transaction.on_commit registrations go here
-            # (issue_activity.delay + model_activity.delay per updated issue).
-            # NOTE: pre_update_snapshot is captured above so Plan 03-03 has
-            # the pre-update values for current_instance kwargs without
-            # re-querying the DB.
-            _ = pre_update_snapshot  # silence unused-variable warning until 03-03
+            # Plan 03-03 — Audit + webhook fan-out. Register every ``.delay(...)``
+            # under ``transaction.on_commit`` so the Celery tasks fire ONLY on
+            # successful commit (CONTEXT D-07 / D-08 / D-09).
+            #
+            # Default-arg capture (``lambda inst=inst, pre=pre: ...``) is
+            # MANDATORY — without it, every callback would close over the LAST
+            # iteration's loop variable (Python late binding) and fire with
+            # identical (wrong) values (RESEARCH Pitfall 4). Pinned by
+            # ``test_activity_tasks_register_per_updated_issue`` asserting
+            # distinct issue_ids across the patched .delay call_args_list.
+            #
+            # The existing ``IssueBulkUpdateDateEndpoint``
+            # (views/issue/base.py:1141-1166) calls ``.delay(...)`` synchronously
+            # BEFORE ``bulk_update`` — a latent audit-leak bug (RESEARCH
+            # Pitfall 7) we deliberately do NOT replicate. API-11 keeps that
+            # endpoint untouched; backlog item: migrate that endpoint to the
+            # on_commit pattern and add ``updated_at`` to its bulk_update
+            # field list (RESEARCH Pitfall 6).
+            epoch = int(now.timestamp())
+            origin = base_host(request=request, is_app=True)
+            actor_id_str = str(request.user.id)
+            project_id_str = str(project_id)
+
+            # Per-pair issue_activity.delay (mirrors views/issue/base.py:1141-1166
+            # shape). Log start_date and target_date as SEPARATE events when
+            # both move; skip the event if the field didn't actually change so
+            # we never emit a "moved by 0" audit row.
+            for inst in instances:
+                pre = pre_update_snapshot[inst.id]
+                if inst.start_date != pre.start_date:
+                    transaction.on_commit(
+                        lambda inst=inst, pre=pre: issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=json.dumps(
+                                {"start_date": str(inst.start_date)},
+                                cls=DjangoJSONEncoder,
+                            ),
+                            current_instance=json.dumps(
+                                {"start_date": str(pre.start_date)},
+                                cls=DjangoJSONEncoder,
+                            ),
+                            issue_id=str(inst.id),
+                            actor_id=actor_id_str,
+                            project_id=project_id_str,
+                            epoch=epoch,
+                        )
+                    )
+                if inst.target_date != pre.target_date:
+                    transaction.on_commit(
+                        lambda inst=inst, pre=pre: issue_activity.delay(
+                            type="issue.activity.updated",
+                            requested_data=json.dumps(
+                                {"target_date": str(inst.target_date)},
+                                cls=DjangoJSONEncoder,
+                            ),
+                            current_instance=json.dumps(
+                                {"target_date": str(pre.target_date)},
+                                cls=DjangoJSONEncoder,
+                            ),
+                            issue_id=str(inst.id),
+                            actor_id=actor_id_str,
+                            project_id=project_id_str,
+                            epoch=epoch,
+                        )
+                    )
+
+            # Per-issue model_activity.delay (mirrors views/module/base.py:708-716
+            # shape). One event per propagated issue, combined start+target
+            # payload. ``actor_id`` is passed as the UUID (not str) to match
+            # the existing module endpoint pattern.
+            for inst in instances:
+                pre = pre_update_snapshot[inst.id]
+                transaction.on_commit(
+                    lambda inst=inst, pre=pre: model_activity.delay(
+                        model_name="issue",
+                        model_id=str(inst.id),
+                        requested_data=json.dumps(
+                            {
+                                "start_date": str(inst.start_date),
+                                "target_date": str(inst.target_date),
+                            },
+                            cls=DjangoJSONEncoder,
+                        ),
+                        current_instance=json.dumps(
+                            {
+                                "start_date": str(pre.start_date),
+                                "target_date": str(pre.target_date),
+                            },
+                            cls=DjangoJSONEncoder,
+                        ),
+                        actor_id=request.user.id,
+                        slug=slug,
+                        origin=origin,
+                    )
+                )
 
             # 5. Success Response — single captured ``now`` shared across
             #    every work_items[].updated_at (CONTEXT D-05f).
