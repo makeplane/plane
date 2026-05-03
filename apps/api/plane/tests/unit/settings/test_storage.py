@@ -127,6 +127,47 @@ class TestS3StorageSignedURLExpiration:
         clear=True,
     )
     @patch("plane.settings.storage.boto3")
+    def test_generate_presigned_post_does_not_duplicate_bucket_or_key(self, mock_boto3):
+        """boto3 auto-injects {bucket}/{key} when Bucket=/Key= are passed.
+
+        Adding them again by hand pads the policy by ~80 bytes — a no-op on
+        AWS S3, but enough to overflow stricter S3-compatible backends that
+        cap the `policy` field at 1024 bytes and reject the upload with
+        `MaxMessageLengthExceeded`.
+
+        This is the regression test for that fix.
+        """
+        mock_s3_client = Mock()
+        mock_s3_client.generate_presigned_post.return_value = {
+            "url": "https://test-url.com",
+            "fields": {},
+        }
+        mock_boto3.client.return_value = mock_s3_client
+        storage = S3Storage()
+
+        storage.generate_presigned_post("test-object", "image/png", 1024)
+
+        kw = mock_s3_client.generate_presigned_post.call_args[1]
+        # Bucket+Key must be passed as named args (boto3 derives conditions from them).
+        assert kw["Bucket"] == "test-bucket"
+        assert kw["Key"] == "test-object"
+        # Conditions must NOT contain hand-rolled {"bucket": ...} or {"key": ...}.
+        for cond in kw["Conditions"]:
+            if isinstance(cond, dict):
+                assert "bucket" not in cond, f"hand-rolled bucket condition: {cond}"
+                assert "key" not in cond, f"hand-rolled key condition: {cond}"
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
     def test_generate_presigned_url_uses_default_expiration(self, mock_boto3):
         """Test that generate_presigned_url uses the configured default expiration"""
         # Mock the boto3 client and its response

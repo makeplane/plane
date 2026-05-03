@@ -68,8 +68,13 @@ class S3Storage(S3Boto3Storage):
             expiration = self.signed_url_expiration
         fields = {"Content-Type": file_type}
 
+        # boto3.generate_presigned_post auto-injects {"bucket": ...} and
+        # {"key": ...} conditions when Bucket=/Key= are passed below; do NOT
+        # also add them by hand here. AWS S3 silently accepts the resulting
+        # over-sized policy, but stricter S3-compatible backends enforce a
+        # hard cap on the `policy` form field (some as low as 1024 bytes)
+        # and reject the upload with `MaxMessageLengthExceeded`.
         conditions = [
-            {"bucket": self.aws_storage_bucket_name},
             ["content-length-range", 1, file_size],
             {"Content-Type": file_type},
         ]
@@ -79,7 +84,6 @@ class S3Storage(S3Boto3Storage):
             conditions.append(["starts-with", "$key", object_name[: -len("${filename}")]])
         else:
             fields["key"] = object_name
-            conditions.append({"key": object_name})
 
         # Generate the presigned POST URL
         try:
