@@ -239,7 +239,7 @@ Phases execute strictly in numeric order: 1 → 2 → 3 → 4 → 5 → 6. Each 
 | Phase                                                        | Plans Complete | Status      | Completed  |
 | ------------------------------------------------------------ | -------------- | ----------- | ---------- |
 | 1. Precedence Graph Loader & Normalization                   | 2/2            | Complete    | 2026-05-03 |
-| 2. Date-Range Scheduling Helper & Propagation Algorithm Core | 0/TBD          | Not started | -          |
+| 2. Date-Range Scheduling Helper & Propagation Algorithm Core | 0/3            | Planned     | -          |
 | 3. Propagation API Endpoint, Persistence & Contract          | 0/TBD          | Not started | -          |
 | 4. Frontend Service Client & MobX Preview Store              | 0/TBD          | Not started | -          |
 | 5. Drag Handler Integration & Error UX                       | 0/TBD          | Not started | -          |
@@ -251,3 +251,11 @@ Phases execute strictly in numeric order: 1 → 2 → 3 → 4 → 5 → 6. Each 
 
 - [x] 01-01-PLAN.md — Scaffold timeline_propagation package + types.py (frozen dataclasses) + first failing pytest case for relates_to exclusion (PROP-18 declared at module surface) — completed 2026-05-03 (4m43s; commits 299261c8a2, c86eccdaf8, 8252a268c6; see [01-01-SUMMARY.md](phases/01-precedence-graph-loader-normalization/01-01-SUMMARY.md))
 - [x] 01-02-PLAN.md — Implement graph.py (loader + iterative three-color DFS cycle detection) + 9 additional tests covering PROP-01, PROP-02, PROP-15, PROP-16, TEST-11 + lint-grep purity (D-08) — completed 2026-05-03 (5m55s; commits 7c8cf118b7, e0d9d07eef; see [01-02-SUMMARY.md](phases/01-precedence-graph-loader-normalization/01-02-SUMMARY.md))
+
+## Phase 2 — Plans
+
+**Plans:** 3 plans (sequential, Wave 1 → Wave 2 → Wave 3)
+
+- [ ] 02-01-scaffold-errors-types-scheduling-PLAN.md — Scaffold errors.py (PropagationErrorCode StrEnum + PropagationFailure), append four frozen+slots dataclasses to types.py (ScheduledWorkItem, MoveIntent, WorkItemUpdate, PropagationResult), implement scheduling.py six helpers (D-03 swap seam), STUB propagation.py, extend **init**.py with 18 re-exports, ship 18 GREEN tests (12 scheduling + 6 propagation scaffolding) — addresses PROP-08, PROP-10, PROP-11, PROP-14, PROP-17 setup
+- [ ] 02-02-propagation-algorithm-core-PLAN.md — Replace propagation.py STUB with full BFS frontier-walk algorithm per CONTEXT.md D-01..D-12 (forward/backward direction parameterized by delta sign, frontier-stop on zero shift, lazy INCOMPLETE_SCHEDULE/PROJECT_BOUNDARY_EXCEEDED/limit checks, dragged-only stale check, dragged-first deterministic update ordering), grow test_propagation.py with 11 PRD-pinned cases (TEST-01..TEST-09, TEST-12, TEST-14) plus 16 auxiliary edge-case tests pinning D-06/D-07/D-08/D-10/D-11 — addresses PROP-03, PROP-04, PROP-05, PROP-06, PROP-07, PROP-09, PROP-12, PROP-13, TEST-01..TEST-09, TEST-12, TEST-14
+- [ ] 02-03-purity-and-coverage-PLAN.md — Create test_purity.py (sibling to Phase 1's test_graph.py lint-grep) with TestModulePurity (D-14: extends Phase 1's forbidden-imports list with transaction.atomic / model_activity.delay / Issue.objects / from django.db.models import) and TestSchedulingSeam (D-03 / Pitfall 9: propagation.py MUST NOT import timedelta directly), validate package coverage ≥ 95% via run_tests.py -u --coverage — addresses PROP-11, PROP-14
