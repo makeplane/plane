@@ -33,12 +33,12 @@ Work Item 1 件しか動かず、依存連鎖が壊れたまま見えるため�
 - ✓ Playwright E2E 基盤(認証 + storageState + Issue 依存ドラッグ 3 ケース) — `apps/web/e2e/`
 - ✓ `data-block-id` / `data-dependency-key` E2E アサート用 attribute — `apps/web/core/components/gantt-chart/blocks/block.tsx`, `apps/web/ce/components/gantt-chart/dependency/dependency-paths.tsx`
 - ✓ ドラフト ADR/PRD/CONTEXT/follow-up tasks ドキュメント整備済 — `docs/adr/`, `docs/prd/`, `CONTEXT.md`, `docs/timeline-dependency-follow-up-tasks.md`
+- ✓ Same-project precedence graph loader(`IssueRelation` を predecessor→successor 正規化、サイクル検出、cross-project edge 分類付き) — `apps/api/plane/app/services/timeline_propagation/{__init__.py,types.py,graph.py}`、11/11 unit tests green。Validated in Phase 1 (2026-05-03)。
 
 ### Active
 
 <!-- 本マイルストーンで実装するもの。すべて「shipped かつ検証 OK」になるまでは仮説扱い。-->
 
-- [ ] Same-project precedence graph loader(`IssueRelation` を predecessor→successor 正規化、サイクル検出付き)
 - [ ] Date-range scheduling helper(duration 保存、boundary 判定、minimum-movement 計算、calendar-day date math)
 - [ ] Backend propagation service(deep module、graph 走査 + 方向正規化 + 移動 + limit + 失敗選択を小さい interface で隠蔽)
 - [ ] 既存 bulk update から独立した propagation API endpoint(move intent を受け取り、updated work items を返す)
