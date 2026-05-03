@@ -878,3 +878,195 @@ class TestTimelinePropagationView:
         body = response.json()
         assert body["code"] == PropagationErrorCode.SCHEDULE_CHANGED.value
         _assert_no_db_writes(snapshot)
+
+
+# ---------------------------------------------------------------------------
+# Plan 03-03 — transaction.on_commit registration of issue_activity.delay +
+# model_activity.delay. Pins:
+#   - count: 2 issue_activity events per moved issue (start_date + target_date
+#     as separate events) and 1 model_activity event per moved issue.
+#   - timing: registrations only — when on_commit swallows them, .delay never
+#     fires (RESEARCH Pitfall 7 regression guard).
+#   - failure path: domain failure (cycle) returns BEFORE on_commit registration
+#     block; even with on_commit firing immediately, .delay stays at 0.
+#   - Pitfall 4: per-iteration default-arg capture proves distinct issue_id /
+#     model_id values across the patched .delay call_args_list.
+#   - Pitfall 9: pytest.mark.django_db rolls back rather than commits, so we
+#     patch the LOCAL ``plane.app.views.issue.timeline_propagation.transaction.on_commit``
+#     binding with side_effect=lambda fn: fn() to make registrations execute.
+# ---------------------------------------------------------------------------
+
+
+class TestTimelinePropagationActivityFanOut:
+    """Plan 03-03: transaction.on_commit fan-out for audit + webhook tasks."""
+
+    def test_activity_tasks_register_per_updated_issue(
+        self, mocker, session_client, workspace, create_user
+    ):
+        """Chain A→B→C; all three move both fields → 6 issue_activity + 3
+        model_activity registrations; distinct issue_ids prove Pitfall 4 capture.
+        """
+        on_commit_spy = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.transaction.on_commit",
+            side_effect=lambda fn: fn(),
+        )
+        issue_activity_spy = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.issue_activity.delay"
+        )
+        model_activity_spy = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.model_activity.delay"
+        )
+
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        b = IssueFactory.create(
+            project=project, start_date="2026-01-03", target_date="2026-01-04"
+        )
+        c = IssueFactory.create(
+            project=project, start_date="2026-01-05", target_date="2026-01-06"
+        )
+        # b blocked_by a; c blocked_by b — chain.
+        IssueRelationFactory.create(project=project, issue=b, related_issue=a)
+        IssueRelationFactory.create(project=project, issue=c, related_issue=b)
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_200_OK, response.content
+        # 3 issues × 2 events each (start_date + target_date) = 6 issue_activity
+        # events. Each one wrapped in its own transaction.on_commit.
+        assert issue_activity_spy.call_count == 6
+        # 3 issues × 1 model_activity event each = 3.
+        assert model_activity_spy.call_count == 3
+        # Pitfall 4 regression: each issue_activity invocation references a
+        # DISTINCT issue_id (proves default-arg ``inst=inst`` capture worked;
+        # without it every callback would carry the LAST loop iteration's id).
+        seen_issue_ids = {
+            call.kwargs["issue_id"] for call in issue_activity_spy.call_args_list
+        }
+        assert len(seen_issue_ids) == 3, (
+            f"Expected 3 distinct issue_ids across issue_activity registrations "
+            f"(Pitfall 4 default-arg capture); got {seen_issue_ids}"
+        )
+        # Same for model_activity model_id.
+        seen_model_ids = {
+            call.kwargs["model_id"] for call in model_activity_spy.call_args_list
+        }
+        assert len(seen_model_ids) == 3, (
+            f"Expected 3 distinct model_ids across model_activity registrations; "
+            f"got {seen_model_ids}"
+        )
+        # 6 issue_activity + 3 model_activity = 9 on_commit registrations.
+        assert on_commit_spy.call_count == 9
+
+    def test_activity_tasks_only_fire_on_commit(
+        self, mocker, session_client, workspace, create_user
+    ):
+        """Patch on_commit to SWALLOW its callback (simulates rollback). Even
+        on the success HTTP 200 path, .delay must NOT have run synchronously.
+
+        Pitfall 7 regression guard: the existing IssueBulkUpdateDateEndpoint
+        invokes .delay(...) BEFORE bulk_update — a latent audit-leak bug we
+        deliberately do NOT replicate. This test pins that the new view
+        registers callbacks rather than calling .delay synchronously.
+        """
+        on_commit_swallow = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.transaction.on_commit",
+            side_effect=lambda fn: None,
+        )
+        issue_activity_spy = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.issue_activity.delay"
+        )
+        model_activity_spy = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.model_activity.delay"
+        )
+
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_200_OK, response.content
+        # Registrations were made (at least 1 issue_activity + 1 model_activity
+        # for the dragged issue) but on_commit swallowed every callable; .delay
+        # never ran.
+        assert on_commit_swallow.call_count >= 2
+        assert issue_activity_spy.call_count == 0, (
+            "issue_activity.delay was invoked synchronously — view must wrap "
+            "every .delay in transaction.on_commit (Pitfall 7 regression)."
+        )
+        assert model_activity_spy.call_count == 0, (
+            "model_activity.delay was invoked synchronously — view must wrap "
+            "every .delay in transaction.on_commit (Pitfall 7 regression)."
+        )
+
+    def test_activity_tasks_not_invoked_on_failure(
+        self, mocker, session_client, workspace, create_user
+    ):
+        """Even with on_commit firing immediately, a domain failure (cycle)
+        returns BEFORE the registration block. .delay must stay at 0 — proves
+        the registrations sit AFTER the ``if result.failure is not None: ...``
+        early return.
+        """
+        mocker.patch(
+            "plane.app.views.issue.timeline_propagation.transaction.on_commit",
+            side_effect=lambda fn: fn(),
+        )
+        issue_activity_spy = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.issue_activity.delay"
+        )
+        model_activity_spy = mocker.patch(
+            "plane.app.views.issue.timeline_propagation.model_activity.delay"
+        )
+
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        b = IssueFactory.create(
+            project=project, start_date="2026-01-03", target_date="2026-01-04"
+        )
+        # cycle: b blocked_by a; a blocked_by b
+        IssueRelationFactory.create(project=project, issue=b, related_issue=a)
+        IssueRelationFactory.create(project=project, issue=a, related_issue=b)
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.DEPENDENCY_CYCLE.value
+        assert issue_activity_spy.call_count == 0
+        assert model_activity_spy.call_count == 0
