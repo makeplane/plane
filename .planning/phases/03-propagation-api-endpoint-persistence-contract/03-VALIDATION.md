@@ -2,8 +2,8 @@
 phase: 3
 slug: propagation-api-endpoint-persistence-contract
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: false  # Wave 0 fixture work executes inside Plan 03-01 Task 1
 created: 2026-05-04
 ---
 
@@ -44,19 +44,25 @@ created: 2026-05-04
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 03-XX-XX | XX | 1 | API-01 | — | URL routes to view; `reverse("project-timeline-propagation")` resolves | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::test_url_reverses -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 1 | API-02 | T-V5 | Serializer accepts documented body; rejects malformed | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "serializer" -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | API-03 / API-04 / TEST-16 | — | Success payload shape & content; `total_updated_count` matches `len(work_items)`; `updated_at` consistent across array | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::test_chain_propagation_returns_200_with_full_payload -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | API-05 / API-06 / TEST-17 | T-V7 | `{code, message}` envelope for each of 7 error codes | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "envelope" -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | API-07 / TEST-13 | T-V4 | `expected_updated_at` mismatch → 409 + envelope; no DB writes | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::test_stale_updated_at_returns_409_envelope -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | API-08 / TEST-15 | T-V7 | All-or-nothing on every failure (snapshot-pre/post `updated_at` per id) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "no_db_writes" -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 1 | API-09 / TEST-18 | T-V4 | Permission rejection envelope (non-member → 403, GUEST → 403) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "permission" -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | API-10 | — | Invalid date range → 422 envelope (algorithm-level, not serializer-level) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::test_invalid_date_range_returns_422_envelope -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | API-11 | — | Existing `IssueBulkUpdateDateEndpoint` regression (structural smoke) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::test_existing_bulk_update_endpoint_unchanged -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | API-12 | T-Repudiation | `issue_activity.delay` and `model_activity.delay` register on commit only (mocker-driven) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "activity" -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | XX | 2 | PROP-16 / TEST-10 | T-V4 | Cross-project path → `PROJECT_BOUNDARY_EXCEEDED` 422 envelope | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::test_cross_project_path_returns_422_envelope -v` | ❌ W0 | ⬜ pending |
-| 03-XX-XX | W0 | 0 | (helper) | — | Snapshot-pre/post helper for "no DB writes on failure" assertion | shared util | (called from many tests) | ❌ W0 | ⬜ pending |
-| 03-XX-XX | W0 | 0 | (helper) | — | `IssueFactory` / `IssueRelationFactory` / `StateFactory` extension to `apps/api/plane/tests/factories.py` | shared util | (used by every contract test) | ❌ W0 | ⬜ pending |
+| 03-01-T1 | 03-01 | 1 | (helper) | T-03-01-05 | `IssueFactory` / `IssueRelationFactory` / `StateFactory` extension to `apps/api/plane/tests/factories.py` (Wave-0 fixture base used by every Phase 3 test) | shared util | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "factory" -v` | ❌ W0 | ⬜ pending |
+| 03-01-T2 | 03-01 | 1 | API-01 | T-03-01-02 | URL routes to view; `reverse("project-timeline-propagation")` resolves to canonical path | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_url_reverses -v` | ❌ W0 | ⬜ pending |
+| 03-01-T2 | 03-01 | 1 | API-09 / TEST-18 (partial) | T-03-01-01 | Unauthenticated POST returns DRF 401 (NOT envelope) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_unauthenticated_request_returns_401 -v` | ❌ W0 | ⬜ pending |
+| 03-01-T2 | 03-01 | 1 | API-11 | T-03-01-04 | Existing `IssueBulkUpdateDateEndpoint` regression (structural smoke; one POST + assertEqual on shape) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_existing_bulk_update_endpoint_unchanged -v` | ❌ W0 | ⬜ pending |
+| 03-02-T1 | 03-02 | 2 | API-02 | T-03-02-02 | Serializer accepts documented body; `validate_data` carries UUID/date/datetime/int types | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "serializer" -v` | ❌ W0 | ⬜ pending |
+| 03-02-T1 | 03-02 | 2 | API-02 / API-10 | T-03-02-02 | DRF default 400 (NOT envelope) for missing field, malformed UUID/date, `operation="resize"` | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_serializer_rejects_resize_operation -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-09 / TEST-18 | T-03-02-10 | Permission rejection envelope (non-member → 403, GUEST → 403, dragged-issue-not-in-project → 403) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "permission_denied" -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-03 / API-04 / TEST-16 | T-03-02-04 | Success payload shape; `total_updated_count` matches `len(work_items)`; chain propagation A→B→C returns 3 updates with single shared `updated_at` | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_chain_propagation_returns_200_with_full_payload -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-03 / API-04 / TEST-16 | T-03-02-04 | Single-`now` invariant: all `updated_at` values across success payload are identical | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_success_payload_uses_single_now_for_updated_at -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-05 / API-06 / TEST-17 | T-03-02-05 | `{code, message}` envelope for DEPENDENCY_CYCLE → 422 | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_dependency_cycle_returns_422_envelope -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-05 / API-06 / TEST-17 / TEST-10 / PROP-16 | T-03-02-05 | `{code, message}` envelope for PROJECT_BOUNDARY_EXCEEDED → 422 | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_cross_project_path_returns_422_envelope -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-05 / API-06 / TEST-17 | T-03-02-05 | `{code, message}` envelope for INCOMPLETE_SCHEDULE → 422 | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_incomplete_schedule_descendant_returns_422_envelope -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-05 / API-06 / TEST-17 | T-03-02-08 | `{code, message}` envelope for PROPAGATION_LIMIT_EXCEEDED → 422 (101-issue chain) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_propagation_limit_at_101_returns_422_envelope -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-05 / API-06 / TEST-17 / API-10 | T-03-02-05 | `{code, message}` envelope for INVALID_DATE_RANGE → 422 (algorithm-level, not serializer-level) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_invalid_date_range_returns_422_envelope -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-07 / TEST-13 | T-03-02-04 | Stale `expected_updated_at` → SCHEDULE_CHANGED 409 + envelope; no DB writes | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_stale_updated_at_returns_409_envelope -v` | ❌ W0 | ⬜ pending |
+| 03-02-T2 | 03-02 | 2 | API-08 / TEST-15 | T-03-02-05 | All-or-nothing pinned by `_assert_no_db_writes(snapshot)` helper across all 6 failure tests | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py -k "envelope" -v` (helper invoked in each) | ❌ W0 | ⬜ pending |
+| 03-03-T1 | 03-03 | 3 | API-12 | T-03-03-01 / T-03-03-02 | `issue_activity.delay` and `model_activity.delay` register per-issue per-pair on commit only (mocker-patched on_commit + .delay) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_activity_tasks_register_per_updated_issue -v` | ❌ W0 | ⬜ pending |
+| 03-03-T1 | 03-03 | 3 | API-12 | T-03-03-01 | `.delay()` invocations are zero when `transaction.on_commit` swallows registrations (simulates rollback) | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_activity_tasks_only_fire_on_commit -v` | ❌ W0 | ⬜ pending |
+| 03-03-T1 | 03-03 | 3 | API-12 / API-08 | T-03-03-01 | `.delay()` invocations are zero on domain-failure path (cycle) — proves on_commit registration block sits AFTER `if result.failure is not None: return _error(...)` | contract | `pytest plane/tests/contract/app/test_timeline_propagation.py::TestTimelinePropagation::test_activity_tasks_not_invoked_on_failure -v` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -89,4 +95,4 @@ created: 2026-05-04
 - [ ] Feedback latency < 30 seconds for per-task signal.
 - [ ] `nyquist_compliant: true` set in frontmatter when planner finishes filling the Per-Task Verification Map.
 
-**Approval:** pending
+**Approval:** planned (3 plans, 25 GREEN tests target)
