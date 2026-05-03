@@ -24,6 +24,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from plane.app.serializers import TimelinePropagationRequestSerializer
+from plane.app.services.timeline_propagation import PropagationErrorCode
 from plane.db.models import Issue, IssueRelation
 from plane.tests.factories import (
     IssueFactory,
@@ -326,3 +327,554 @@ class TestTimelinePropagationRequestSerializer:
         serializer = TimelinePropagationRequestSerializer(data=payload)
 
         assert serializer.is_valid(), serializer.errors
+
+
+# ---------------------------------------------------------------------------
+# Plan 03-02 Task 2 — TimelinePropagationView body tests.
+# 11 view-level tests + 1 helper covering: permission gates, success
+# (no-violation + chain), single-now invariant, all 5 domain failure
+# envelopes, stale check, and the all-or-nothing DB-write guarantee.
+# ---------------------------------------------------------------------------
+
+
+def _snapshot(issue_ids):
+    """Return ``{id: updated_at}`` for each id; for the all-or-nothing pin.
+
+    Captured BEFORE the POST under test; compared against post-call values
+    via ``_assert_no_db_writes``. Used by every domain-failure test.
+    """
+    return dict(
+        Issue.objects.filter(id__in=issue_ids).values_list("id", "updated_at")
+    )
+
+
+def _assert_no_db_writes(snapshot):
+    """Fail if any Issue's ``updated_at`` differs from its pre-call snapshot.
+
+    Pins API-08 / TEST-15 / TEST-17: every domain-failure path must roll back
+    the transaction with zero row mutations. Snapshot is bit-identical
+    datetime equality (datetimes are timezone-aware datetimes from Django).
+    """
+    post = dict(
+        Issue.objects.filter(id__in=list(snapshot)).values_list("id", "updated_at")
+    )
+    assert post == snapshot, (
+        f"Some Issue.updated_at values changed despite a domain failure. "
+        f"Pre: {snapshot}; Post: {post}"
+    )
+
+
+def _unique_project(workspace, create_user, label="P"):
+    """Create a project with unique name AND unique identifier.
+
+    ``django_get_or_create=('name', 'workspace')`` on ProjectFactory plus the
+    Project ``unique_together`` on ``(identifier, workspace, deleted_at=NULL)``
+    both demand uniqueness; tests that need >1 project in one workspace must
+    set both explicitly.
+    """
+    suffix = uuid4().hex[:6].upper()
+    return ProjectFactory.create(
+        workspace=workspace,
+        created_by=create_user,
+        name=f"Project {label} {suffix}",
+        identifier=f"{label}{suffix}"[:12],
+    )
+
+
+def _build_member_project(workspace, create_user, role=20):
+    """Helper: create a unique project and a ProjectMember row at the given role."""
+    project = _unique_project(workspace, create_user, label="A")
+    ProjectMemberFactory.create(project=project, member=create_user, role=role)
+    return project
+
+
+def _post_propagate(client, slug, project_id, **overrides):
+    """Helper: POST to the propagation endpoint with a default valid payload.
+
+    Caller may override any field via kwargs (e.g.,
+    ``_post_propagate(..., expected_updated_at="2020-01-01T00:00:00Z")``
+    for the stale-check test).
+    """
+    payload = {
+        "work_item_id": overrides["work_item_id"],
+        "original_start_date": overrides["original_start_date"],
+        "original_target_date": overrides["original_target_date"],
+        "expected_updated_at": overrides["expected_updated_at"],
+        "requested_start_date": overrides["requested_start_date"],
+        "requested_target_date": overrides["requested_target_date"],
+        "operation": overrides.get("operation", "move"),
+    }
+    if "client_preview_count" in overrides:
+        payload["client_preview_count"] = overrides["client_preview_count"]
+    url = reverse(
+        "project-timeline-propagation",
+        kwargs={"slug": slug, "project_id": project_id},
+    )
+    return client.post(url, payload, format="json")
+
+
+class TestTimelinePropagationView:
+    """Plan 03-02 Task 2: full view body — permission, success, all 7
+    failure envelopes, stale check, all-or-nothing DB-write guarantee.
+    """
+
+    # --- Permission gates -------------------------------------------------
+
+    def test_non_member_returns_permission_denied_403(
+        self, api_client, workspace, create_user
+    ):
+        """Authenticated user with NO ProjectMember row → 403 + envelope.
+
+        Mirrors the inline membership filter from CONTEXT D-02. The project
+        is created without a membership row for the requesting user, so the
+        ``.exists()`` returns False and ``_error(PERMISSION_DENIED)`` fires
+        before any algorithm or DB write (TEST-18 piece 1).
+        """
+        # workspace fixture creates a workspace owned by create_user, but no
+        # ProjectMember rows. We authenticate a DIFFERENT user with no
+        # membership at all.
+        # Note: User has unique=True on username; UserFactory in this repo
+        # doesn't set username, so we explicitly pass one to avoid collisions
+        # with other tests that share the test DB.
+        outsider_id = uuid4()
+        outsider = UserFactory.create(
+            email=f"outsider-{outsider_id.hex[:8]}@plane.so",
+            username=f"outsider_{outsider_id.hex[:8]}",
+        )
+        api_client.force_authenticate(user=outsider)
+
+        project = ProjectFactory.create(workspace=workspace, created_by=create_user)
+        issue = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+
+        response = _post_propagate(
+            api_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(issue.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=issue.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.PERMISSION_DENIED.value
+        assert isinstance(body["message"], str) and body["message"]
+
+    def test_guest_returns_permission_denied_403(
+        self, session_client, workspace, create_user
+    ):
+        """``ProjectMember(role=ROLE.GUEST.value=5)`` → 403 + envelope.
+
+        GUEST is excluded by the inline ``role__in=[ADMIN, MEMBER]`` filter
+        per CONTEXT D-02 (TEST-18 piece 2).
+        """
+        project = ProjectFactory.create(workspace=workspace, created_by=create_user)
+        ProjectMemberFactory.create(project=project, member=create_user, role=5)
+        issue = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(issue.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=issue.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.PERMISSION_DENIED.value
+
+    def test_dragged_issue_not_in_project_returns_permission_denied_403(
+        self, session_client, workspace, create_user
+    ):
+        """Valid member but ``work_item_id`` belongs to a different project →
+        403 + envelope (CONTEXT D-05c info-leak prevention).
+
+        A non-member must not learn whether a work item exists or not. The
+        ``Issue.DoesNotExist`` from ``select_for_update().get(...)`` maps to
+        ``PERMISSION_DENIED``, matching the inline membership-check envelope.
+        """
+        # Member of project A, but the dragged work_item_id is in project B
+        # under the same workspace.
+        project_a = _unique_project(workspace, create_user, label="A")
+        ProjectMemberFactory.create(project=project_a, member=create_user, role=20)
+        project_b = _unique_project(workspace, create_user, label="B")
+        # No ProjectMember row binding create_user to project_b.
+        issue_b = IssueFactory.create(
+            project=project_b,
+            start_date="2026-01-01",
+            target_date="2026-01-02",
+        )
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project_a.id,  # POST to project A …
+            work_item_id=str(issue_b.id),  # … but with a B-issue id
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=issue_b.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.PERMISSION_DENIED.value
+
+    # --- Success paths ----------------------------------------------------
+
+    def test_no_violation_move_returns_200_with_dragged_only(
+        self, session_client, workspace, create_user
+    ):
+        """No-violation move (single Issue, no relations) → 200 + 1 update.
+
+        Dragged item only; ``total_updated_count == 1`` (TEST-16 piece 1).
+        """
+        project = _build_member_project(workspace, create_user)
+        issue = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        pre_updated_at = issue.updated_at
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(issue.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=issue.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_200_OK, response.content
+        body = response.json()
+        assert body["requested_work_item_id"] == str(issue.id)
+        assert body["total_updated_count"] == 1
+        assert body["client_preview_count"] is None
+        assert len(body["work_items"]) == 1
+        item = body["work_items"][0]
+        assert item["id"] == str(issue.id)
+        assert item["start_date"] == "2026-01-10"
+        assert item["target_date"] == "2026-01-11"
+        # updated_at is the captured ``now``; differs from pre-call value.
+        issue.refresh_from_db()
+        assert issue.updated_at != pre_updated_at
+        assert issue.start_date == date(2026, 1, 10)
+        assert issue.target_date == date(2026, 1, 11)
+
+    def test_chain_propagation_returns_200_with_full_payload(
+        self, session_client, workspace, create_user
+    ):
+        """A→B→C tight chain, drag A right past B's start → 3 updates.
+
+        Asserts ``total_updated_count == 3`` and that all three returned
+        ``updated_at`` values are equal (single captured ``now``;
+        CONTEXT D-05a / D-05f, TEST-16 main).
+        """
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        b = IssueFactory.create(
+            project=project, start_date="2026-01-03", target_date="2026-01-04"
+        )
+        c = IssueFactory.create(
+            project=project, start_date="2026-01-05", target_date="2026-01-06"
+        )
+        # b blocked_by a; c blocked_by b
+        IssueRelationFactory.create(project=project, issue=b, related_issue=a)
+        IssueRelationFactory.create(project=project, issue=c, related_issue=b)
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+            client_preview_count=3,
+        )
+
+        assert response.status_code == status.HTTP_200_OK, response.content
+        body = response.json()
+        assert body["total_updated_count"] == 3
+        assert body["client_preview_count"] == 3
+        assert len(body["work_items"]) == 3
+
+    def test_success_payload_uses_single_now_for_updated_at(
+        self, session_client, workspace, create_user
+    ):
+        """All ``updated_at`` values across ``work_items`` are equal
+        (single captured ``now``; CONTEXT D-05a / D-05f).
+        """
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        b = IssueFactory.create(
+            project=project, start_date="2026-01-03", target_date="2026-01-04"
+        )
+        c = IssueFactory.create(
+            project=project, start_date="2026-01-05", target_date="2026-01-06"
+        )
+        IssueRelationFactory.create(project=project, issue=b, related_issue=a)
+        IssueRelationFactory.create(project=project, issue=c, related_issue=b)
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_200_OK, response.content
+        body = response.json()
+        timestamps = {item["updated_at"] for item in body["work_items"]}
+        assert len(timestamps) == 1, (
+            f"Expected single shared updated_at across all work_items; "
+            f"got distinct values: {timestamps}"
+        )
+
+    # --- Domain failure envelopes (5 codes × 422; +1 stale × 409) --------
+
+    def test_dependency_cycle_returns_422_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """Graph cycle → 422 ``DEPENDENCY_CYCLE`` + no DB writes."""
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        b = IssueFactory.create(
+            project=project, start_date="2026-01-03", target_date="2026-01-04"
+        )
+        # cycle: b blocked_by a; a blocked_by b
+        IssueRelationFactory.create(project=project, issue=b, related_issue=a)
+        IssueRelationFactory.create(project=project, issue=a, related_issue=b)
+        snapshot = _snapshot([a.id, b.id])
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.DEPENDENCY_CYCLE.value
+        assert isinstance(body["message"], str) and body["message"]
+        _assert_no_db_writes(snapshot)
+
+    def test_cross_project_path_returns_422_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """Cross-project edge from active project → 422
+        ``PROJECT_BOUNDARY_EXCEEDED`` + no DB writes (TEST-10).
+        """
+        project_a = _build_member_project(workspace, create_user)
+        project_b = _unique_project(workspace, create_user, label="X")
+        a = IssueFactory.create(
+            project=project_a, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        b = IssueFactory.create(
+            project=project_b, start_date="2026-01-03", target_date="2026-01-04"
+        )
+        # b is in project_b, but the relation row is registered to project_a
+        # (same shape Phase 1 D-03 detects via the related_project_id annotation).
+        # b blocked_by a; relation owned by project_a.
+        IssueRelation.objects.create(
+            id=uuid4(),
+            project=project_a,
+            workspace=workspace,
+            issue=b,
+            related_issue=a,
+            relation_type="blocked_by",
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        snapshot = _snapshot([a.id, b.id])
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project_a.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.PROJECT_BOUNDARY_EXCEEDED.value
+        _assert_no_db_writes(snapshot)
+
+    def test_incomplete_schedule_descendant_returns_422_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """Successor with ``target_date=None`` → 422 ``INCOMPLETE_SCHEDULE``
+        + no DB writes.
+        """
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        # b has NO dates — INCOMPLETE_SCHEDULE on visit during forward walk.
+        b = IssueFactory.create(project=project)
+        IssueRelationFactory.create(project=project, issue=b, related_issue=a)
+        snapshot = _snapshot([a.id, b.id])
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.INCOMPLETE_SCHEDULE.value
+        _assert_no_db_writes(snapshot)
+
+    def test_propagation_limit_at_101_returns_422_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """Tight chain of 101 affected items → 422
+        ``PROPAGATION_LIMIT_EXCEEDED`` + no DB writes (TEST-12 endpoint-level).
+
+        The algorithm's ``LIMIT = 100`` (services/timeline_propagation/
+        propagation.py:64) is the dragged-included cap. A chain of length 101
+        with all dates equal forces every node to shift, exceeding the cap.
+        """
+        project = _build_member_project(workspace, create_user)
+        # Create 101 issues all on the same date, chained tightly so a 1-day
+        # rightward drag of the head propagates through every node.
+        issues = [
+            IssueFactory.create(
+                project=project,
+                start_date="2026-01-01",
+                target_date="2026-01-01",
+            )
+            for _ in range(101)
+        ]
+        # Chain: issues[i] blocked_by issues[i-1]
+        for i in range(1, 101):
+            IssueRelationFactory.create(
+                project=project, issue=issues[i], related_issue=issues[i - 1]
+            )
+        head = issues[0]
+        snapshot = _snapshot([i.id for i in issues])
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(head.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-01",
+            expected_updated_at=head.updated_at.isoformat(),
+            requested_start_date="2026-01-02",
+            requested_target_date="2026-01-02",
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.PROPAGATION_LIMIT_EXCEEDED.value
+        _assert_no_db_writes(snapshot)
+
+    def test_invalid_date_range_returns_422_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """``requested_target_date < requested_start_date`` → 422
+        ``INVALID_DATE_RANGE`` + no DB writes (Phase 2 D-06 step 1).
+        """
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        snapshot = _snapshot([a.id])
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-15",
+            requested_target_date="2026-01-10",  # target < start
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.INVALID_DATE_RANGE.value
+        _assert_no_db_writes(snapshot)
+
+    def test_stale_updated_at_returns_409_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """``expected_updated_at`` older than dragged Issue's current value
+        → 409 ``SCHEDULE_CHANGED`` + no DB writes (TEST-13).
+        """
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        snapshot = _snapshot([a.id])
+
+        # 1 hour in the past — algorithm's D-08 dragged-only stale check
+        # rejects the mismatch.
+        stale = (a.updated_at - timedelta(hours=1)).isoformat()
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=stale,
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.SCHEDULE_CHANGED.value
+        _assert_no_db_writes(snapshot)
