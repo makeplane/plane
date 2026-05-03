@@ -161,7 +161,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 | PROP-16     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
 | PROP-17     | Phase 2 | Pending                       |
 | PROP-18     | Phase 1 | Done (Plan 01-01, 2026-05-03) |
-| API-01      | Phase 3 | Pending                       |
+| API-01      | Phase 3 | Done (Plan 03-01, 2026-05-04) |
 | API-02      | Phase 3 | Pending                       |
 | API-03      | Phase 3 | Pending                       |
 | API-04      | Phase 3 | Pending                       |
@@ -169,9 +169,9 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 | API-06      | Phase 3 | Pending                       |
 | API-07      | Phase 3 | Pending                       |
 | API-08      | Phase 3 | Pending                       |
-| API-09      | Phase 3 | Pending                       |
+| API-09      | Phase 3 | Partial (Plan 03-01: 401 unauth path locked; member/GUEST/non-member 403 paths in Plan 03-02) |
 | API-10      | Phase 3 | Pending                       |
-| API-11      | Phase 3 | Pending                       |
+| API-11      | Phase 3 | Done (Plan 03-01, 2026-05-04) |
 | API-12      | Phase 3 | Pending                       |
 | FE-01       | Phase 4 | Pending                       |
 | FE-02       | Phase 4 | Pending                       |
@@ -207,7 +207,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 | TEST-15     | Phase 3 | Pending                       |
 | TEST-16     | Phase 3 | Pending                       |
 | TEST-17     | Phase 3 | Pending                       |
-| TEST-18     | Phase 3 | Pending                       |
+| TEST-18     | Phase 3 | Partial (Plan 03-01: 401 unauth path locked; member-permission cases in Plan 03-02) |
 | TEST-19     | Phase 4 | Pending                       |
 | TEST-20     | Phase 4 | Pending                       |
 | TEST-21     | Phase 4 | Pending                       |

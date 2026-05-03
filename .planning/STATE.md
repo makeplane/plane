@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 context gathered
-last_updated: "2026-05-03T19:15:55.024Z"
-last_activity: 2026-05-03 -- Phase 3 planning complete
+stopped_at: Phase 3 Plan 03-01 complete (routing scaffold + Wave-0 fixtures + auth tests)
+last_updated: "2026-05-04T00:00:00.000Z"
+last_activity: 2026-05-04 -- Plan 03-01 complete (6 GREEN contract tests, 2 commits)
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 8
-  completed_plans: 5
-  percent: 63
+  total_plans: 9
+  completed_plans: 6
+  percent: 67
 ---
 
 # Project State
@@ -21,34 +21,34 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-03)
 
 **Core value:** ドラッグ移動が Precedence Boundary を超えても、サーバ権威で必要最小限の連鎖を all-or-nothing で再配置し、失敗時は明示的な reason code で UI に説明できる。
-**Current focus:** Phase 2 — Date-Range Scheduling Helper & Propagation Algorithm Core (next)
+**Current focus:** Phase 3 — Propagation API Endpoint, Persistence & Contract
 
 ## Current Position
 
-Phase: 2 (Date-Range Scheduling Helper & Propagation Algorithm Core) — COMPLETE
-Plan: 3 of 3 (done)
-Status: Ready to execute
-Last activity: 2026-05-03 -- Phase 3 planning complete
+Phase: 3 (Propagation API Endpoint, Persistence & Contract) — EXECUTING
+Plan: 2 of 3 (next: 03-02 — serializer fields + permission check + algorithm wiring)
+Status: Executing Phase 3
+Last activity: 2026-05-04 -- Plan 03-01 complete (6 GREEN contract tests; routing scaffold + Wave-0 fixtures locked)
 
-Progress: [██░░░░░░░░] 33%
+Progress: [███░░░░░░░] 67% (6/9 plans)
 
-Progress (legacy bar — see Current Position above for current value): [██░░░░░░░░] 33%
+Progress (legacy bar — see Current Position above for current value): [███░░░░░░░] 67%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 2
-- Average duration: 5m19s
-- Total execution time: 10m38s
+- Total plans completed: 6
+- Average duration: ~7m
+- Total execution time: ~42m
 
 **By Phase:**
 
 | Phase                                             | Plans | Total  | Avg/Plan |
 | ------------------------------------------------- | ----- | ------ | -------- |
 | 1. Precedence Graph Loader & Normalization        | 2/2   | 10m38s | 5m19s    |
-| 2. Scheduling Helper & Propagation Algorithm Core | 0     | —      | —        |
-| 3. Propagation API Endpoint & Contract            | 0     | —      | —        |
+| 2. Scheduling Helper & Propagation Algorithm Core | 3/3   | ~21m   | ~7m      |
+| 3. Propagation API Endpoint & Contract            | 1/3   | ~10m   | ~10m     |
 | 4. Frontend Service Client & MobX Preview Store   | 0     | —      | —        |
 | 5. Drag Handler Integration & Error UX            | 0     | —      | —        |
 | 6. End-to-End Coverage & Polish                   | 0     | —      | —        |
@@ -59,6 +59,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | ---------- | ----- | ----- | -------- | -------------------- |
 | 01-01      | 3     | 6     | 4m43s    | 2026-05-03T15:26:37Z |
 | 01-02      | 2     | 3     | 5m55s    | 2026-05-03T15:37:28Z |
+| 03-01      | 2     | 7     | ~10m     | 2026-05-04T00:00:00Z |
 
 **Recent Trend:**
 
@@ -86,6 +87,9 @@ Recent decisions affecting current work:
 - (01-02) Cycle detection is iterative three-color DFS with explicit list-of-(node, iter) stack, deterministic sort order on roots and successors (Pitfall 4), self-edge guard before color tracking (D-05). No recursion; no `sys.setrecursionlimit`. Returns the closed cycle path as `tuple[UUID, ...]` (last element equals first); never throws across the module boundary.
 - (01-02) D-08 / PROP-18 lint-grep test (`test_no_drf_or_http_imports_in_module`) walks `pathlib.Path.rglob("*.py")` under the package and asserts no `rest_framework`, `django.http`, `plane.app.views`, `plane.app.serializers` imports — locks isolation for future Phase 2 modules (`scheduling.py`, `propagation.py`, `errors.py`).
 - (01-02) `RelationLike` Protocol is the loader's structural input contract — first `typing.Protocol` use in apps/api/plane/. Lets tests pass plain dataclasses if desired without import-time coupling to ORM rows; Phase 3 `IssueRelation` queryset rows satisfy it automatically.
+- (03-01) URL canonical path is `/api/workspaces/<slug>/projects/<uuid>/timeline-propagation/` (not `/api/v1/...` as CONTEXT D-01 narrative implied). The URL **name** `project-timeline-propagation` is what's locked; tests use `reverse(...)` rather than hardcoded paths. CONTEXT D-01 narrative was an off-by-one description of the urlconf mount.
+- (03-01) `IssueFactory` pins `state.project` to the issue's project via `factory.SubFactory(StateFactory, project=factory.SelfAttribute("..project"))` — the cross-FK invariant must be wired at the SubFactory level or callers passing `project=p` get a state with a different (auto-generated) project.
+- (03-01) `TimelinePropagationView.post(...)` returns 501 in Plan 03-01 — Plan 03-02 replaces the body wholesale. Module docstring documents the `transaction.on_commit` Django 4.2 pattern even though Plan 03-03 owns the actual call site.
 
 ### Pending Todos
 
@@ -114,6 +118,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-03T18:15:23.894Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-propagation-api-endpoint-persistence-contract/03-CONTEXT.md
+Last session: 2026-05-04T00:00:00.000Z
+Stopped at: Phase 3 Plan 03-01 complete (routing scaffold + Wave-0 fixtures + auth tests; 6 GREEN contract tests)
+Resume file: .planning/phases/03-propagation-api-endpoint-persistence-contract/03-02-PLAN.md
