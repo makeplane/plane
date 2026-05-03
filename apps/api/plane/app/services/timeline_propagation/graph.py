@@ -19,13 +19,18 @@ Filters applied (in order):
     2. deleted_at IS NULL                        (defensive, D-05)
 
 Cross-project classification (PROP-16, D-03, RESEARCH.md "Pitfall 2"):
-    - The cross-project signal is `related_issue.project_id != project_id`
-      (the loader argument). It is NEVER `row.project_id != project_id`
-      (the relation's own project_id, which only reflects which project
-      "owns" the row, not the endpoints).
+    - An edge is cross-project when EITHER endpoint's `project_id` differs
+      from the loader's `project_id` argument — i.e. ANY foreign endpoint
+      taints the edge ("paths reaching outside the project fail
+      propagation"). Each endpoint's project_id is read via a precomputed
+      annotation (`issue_project_id`, `related_project_id`) when present,
+      falling back to `row.issue.project_id` / `row.related_issue.project_id`.
+    - The cross-project signal is NEVER `row.project_id` (Pitfall 2: that
+      field only records which project owns the row, not the endpoints).
     - Cross-project edges are kept in `Adjacency.cross_project_edges`
       with `cross_project=True`. They do NOT appear in `successors` /
-      `predecessors`. The loader does NOT dereference foreign issue dates.
+      `predecessors`. The loader does NOT dereference foreign issue dates,
+      names, descriptions, or any other field beyond `project_id`.
 
 Cycle detection (D-02):
     - Iterative three-color DFS over `Adjacency.successors`.
@@ -134,20 +139,36 @@ def _make_edge(row: RelationLike, project_id: UUID) -> Edge:
     For row (issue=X, related_issue=Y, relation_type='blocked_by'):
       - predecessor_id = Y (row.related_issue_id)
       - successor_id   = X (row.issue_id)
-      - cross_project  = (Y's project_id != project_id loader argument)
+      - cross_project  = ANY endpoint's project_id != loader project_id
 
-    Prefers a precomputed `related_project_id` annotation; falls back to
-    traversing `row.related_issue.project_id`. The cross-project signal
-    is the related_issue's project, NOT `row.project_id` (Pitfall 2).
+    PROP-16 semantics ("paths reaching outside the project fail propagation")
+    require classifying an edge as cross-project when EITHER endpoint lives
+    outside the loader's project — not just the predecessor side. A row may
+    have `IssueRelation.project_id == loader project_id` (set by whichever
+    project's view created the row) while one endpoint Issue has migrated /
+    been created against a different project.
+
+    For each endpoint we prefer a precomputed annotation
+    (`issue_project_id`, `related_project_id`) and fall back to
+    `row.issue.project_id` / `row.related_issue.project_id`. The
+    cross-project signal is NEVER `row.project_id` (Pitfall 2: that field
+    only records which project owns the row, not the endpoints).
     """
+    issue_project_id = getattr(row, "issue_project_id", None)
+    if issue_project_id is None:
+        issue_project_id = row.issue.project_id
     related_project_id = getattr(row, "related_project_id", None)
     if related_project_id is None:
         related_project_id = row.related_issue.project_id
+    cross_project = (
+        issue_project_id != project_id
+        or related_project_id != project_id
+    )
     return Edge(
         predecessor_id=row.related_issue_id,
         successor_id=row.issue_id,
         source_relation_id=row.id,
-        cross_project=(related_project_id != project_id),
+        cross_project=cross_project,
     )
 
 
