@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 Plan 03-02 complete (serializers + view body + 17 new contract tests)
-last_updated: "2026-05-04T01:30:00.000Z"
-last_activity: 2026-05-04 -- Plan 03-02 complete (23 GREEN contract tests in test_timeline_propagation.py; view body atomic + select_for_update + bulk_update + 7 envelopes)
+stopped_at: Phase 3 complete (Plan 03-03 wired transaction.on_commit fan-out; 26 GREEN contract tests; API-12 closed)
+last_updated: "2026-05-04T02:00:00.000Z"
+last_activity: 2026-05-04 -- Plan 03-03 complete (3 new GREEN contract tests; transaction.on_commit fan-out for issue_activity + model_activity; first on_commit usage in apps/api/plane)
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 9
-  completed_plans: 7
-  percent: 78
+  completed_plans: 8
+  percent: 89
 ---
 
 # Project State
@@ -25,22 +25,22 @@ See: .planning/PROJECT.md (updated 2026-05-03)
 
 ## Current Position
 
-Phase: 3 (Propagation API Endpoint, Persistence & Contract) — EXECUTING
-Plan: 3 of 3 (next: 03-03 — transaction.on_commit fan-out for issue_activity + model_activity)
-Status: Executing Phase 3
-Last activity: 2026-05-04 -- Plan 03-02 complete (23 GREEN contract tests; full view body + 7 typed envelopes + single-now invariant)
+Phase: 3 (Propagation API Endpoint, Persistence & Contract) — COMPLETE
+Plan: 3/3 done (Phase 3 finished; next: Phase 4 — Frontend Service Client & MobX Preview Store)
+Status: Phase 3 closed; awaiting plan-phase for Phase 4
+Last activity: 2026-05-04 -- Plan 03-03 complete (3 new GREEN contract tests for transaction.on_commit fan-out; API-12 closed)
 
-Progress: [████░░░░░░] 78% (7/9 plans)
+Progress: [████████░░] 89% (8/9 plans)
 
-Progress (legacy bar — see Current Position above for current value): [████░░░░░░] 78%
+Progress (legacy bar — see Current Position above for current value): [████████░░] 89%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: ~9m
-- Total execution time: ~60m
+- Total execution time: ~72m
 
 **By Phase:**
 
@@ -48,7 +48,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | ------------------------------------------------- | ----- | ------ | -------- |
 | 1. Precedence Graph Loader & Normalization        | 2/2   | 10m38s | 5m19s    |
 | 2. Scheduling Helper & Propagation Algorithm Core | 3/3   | ~21m   | ~7m      |
-| 3. Propagation API Endpoint & Contract            | 2/3   | ~28m   | ~14m     |
+| 3. Propagation API Endpoint & Contract            | 3/3   | ~40m   | ~13m     |
 | 4. Frontend Service Client & MobX Preview Store   | 0     | —      | —        |
 | 5. Drag Handler Integration & Error UX            | 0     | —      | —        |
 | 6. End-to-End Coverage & Polish                   | 0     | —      | —        |
@@ -61,6 +61,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | 01-02      | 2     | 3     | 5m55s    | 2026-05-03T15:37:28Z |
 | 03-01      | 2     | 7     | ~10m     | 2026-05-04T00:00:00Z |
 | 03-02      | 2     | 4     | ~18m     | 2026-05-04T01:30:00Z |
+| 03-03      | 1     | 2     | ~12m     | 2026-05-04T02:00:00Z |
 
 **Recent Trend:**
 
@@ -96,6 +97,10 @@ Recent decisions affecting current work:
 - (03-02) `select_for_update(of=("self",))` locks ONLY the Issue row, not the JOIN-side workspace/project/state rows that `IssueManager` pulls in. Avoids "FOR UPDATE cannot be applied to nullable side of OUTER JOIN" issues with the `state__group != TRIAGE` exclusion (Open Question 3 recommendation).
 - (03-02) `Issue.objects.bulk_update(instances, ["start_date", "target_date", "updated_at"])` includes `"updated_at"` in the field list because `bulk_update` bypasses `auto_now` (RESEARCH Pitfall 1). The single captured `now = timezone.now()` is shared across every Issue instance and every `work_items[].updated_at` in the response — pinned by `test_success_payload_uses_single_now_for_updated_at`.
 - (03-02) Project's `unique_together=(identifier, workspace, deleted_at)` forces tests with >1 project per workspace to set `identifier=` explicitly. Added `_unique_project(workspace, create_user, label)` test helper that pins both `name` AND `identifier` to UUID-derived values.
+- (03-03) `transaction.on_commit(lambda inst=inst, pre=pre: ...)` is the wire pattern for audit + webhook fan-out from `TimelinePropagationView` — fires Celery `.delay(...)` ONLY on successful commit. Default-arg capture (`inst=inst, pre=pre`) is mandatory to avoid Python's late-binding loop-variable trap (RESEARCH Pitfall 4). First `transaction.on_commit` usage anywhere in `apps/api/plane`; sets the pattern for migrating `IssueBulkUpdateDateEndpoint`'s pre-commit `.delay` shape (RESEARCH Pitfall 7) in a follow-up.
+- (03-03) `actor_id` type asymmetry between `issue_activity.delay` (string `str(request.user.id)`) and `model_activity.delay` (UUID `request.user.id`) is dictated by the existing endpoint patterns at `views/issue/base.py:1147` and `views/module/base.py:713` respectively. The two task signatures genuinely differ; the new view honors both.
+- (03-03) Per-pair issue_activity events use `if inst.start_date != pre.start_date:` (and same for target_date) so propagated issues that only shift one field log only that one event — no "moved by 0" audit rows. The dragged item, which always moves both fields by the requested delta, typically logs both events.
+- (03-03) Test patch path is the LOCAL view-module binding `plane.app.views.issue.timeline_propagation.transaction.on_commit` (NOT `django.db.transaction.on_commit`). After `from django.db import transaction`, the view's `transaction` name references the module object, so we patch `transaction.on_commit` ON the view module to redirect the lookup. Pinned by RESEARCH Pitfall 9 — pytest.mark.django_db never commits, so registrations would never fire without this patch.
 
 ### Pending Todos
 
@@ -124,6 +129,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-04T01:30:00.000Z
-Stopped at: Phase 3 Plan 03-02 complete (serializers + view body + 17 new contract tests; 23 GREEN total in test_timeline_propagation.py; 7 typed envelopes verified with their D-03 HTTP statuses)
-Resume file: .planning/phases/03-propagation-api-endpoint-persistence-contract/03-03-PLAN.md
+Last session: 2026-05-04T02:00:00.000Z
+Stopped at: Phase 3 COMPLETE (Plan 03-03: transaction.on_commit fan-out for issue_activity + model_activity; 26 GREEN contract tests; first on_commit usage in apps/api/plane; API-12 closed)
+Resume file: None (Phase 3 complete; awaiting Phase 4 plan-phase)

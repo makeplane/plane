@@ -50,7 +50,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 - [ ] **API-09**: 既存 project permission を再利用し、unauthorized は `PERMISSION_DENIED` で fail(US-31)
 - [ ] **API-10**: 不正な date range(例: `target_date < start_date`)は `INVALID_DATE_RANGE` で fail
 - [ ] **API-11**: 既存 bulk date update endpoint は触らず、非伝播経路として残す(Implementation Decision)
-- [ ] **API-12**: 伝播による Work Item 更新も既存の `updated_at` 更新規則に従い、audit に追跡可能(US-32)
+- [x] **API-12**: 伝播による Work Item 更新も既存の `updated_at` 更新規則に従い、audit に追跡可能(US-32)
 
 ### Frontend — Loaded-Graph Preview & Reconciliation
 
@@ -172,7 +172,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 | API-09      | Phase 3 | Done (Plan 03-02, 2026-05-04 — 401 unauth + 403 envelope across non-member/GUEST/cross-project all GREEN) |
 | API-10      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
 | API-11      | Phase 3 | Done (Plan 03-01, 2026-05-04) |
-| API-12      | Phase 3 | Pending                       |
+| API-12      | Phase 3 | Done (Plan 03-03, 2026-05-04) |
 | FE-01       | Phase 4 | Pending                       |
 | FE-02       | Phase 4 | Pending                       |
 | FE-03       | Phase 5 | Pending                       |
