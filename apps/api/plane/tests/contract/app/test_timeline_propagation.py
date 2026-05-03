@@ -14,14 +14,17 @@ default. Tests in 03-03 use ``mocker.patch`` on
 ``django.db.transaction.on_commit`` with ``side_effect=lambda fn: fn()`` to
 bypass this.
 """
+from datetime import date, datetime, timedelta, timezone as dt_timezone
 from uuid import uuid4
 
 import pytest
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import IssueRelation
+from plane.app.serializers import TimelinePropagationRequestSerializer
+from plane.db.models import Issue, IssueRelation
 from plane.tests.factories import (
     IssueFactory,
     IssueRelationFactory,
@@ -185,3 +188,141 @@ class TestTimelinePropagation:
             f"IssueBulkUpdateDateEndpoint shape changed; got keys "
             f"{set(body.keys())}. API-11 regression — see Plan 03-01."
         )
+
+
+# ---------------------------------------------------------------------------
+# Plan 03-02 Task 1 — Serializer-level tests for
+# ``TimelinePropagationRequestSerializer`` (CONTEXT D-04 structural-only).
+# These pin the structural-vs-domain split: missing fields and ``operation``
+# values other than ``"move"`` produce DRF default 400 (NOT envelope) when
+# the live view runs ``is_valid(raise_exception=True)``.
+# ---------------------------------------------------------------------------
+
+
+def _valid_request_payload(work_item_id=None, expected_updated_at=None):
+    """Build a minimal valid payload for the request serializer."""
+    return {
+        "work_item_id": str(work_item_id or uuid4()),
+        "original_start_date": "2026-01-01",
+        "original_target_date": "2026-01-02",
+        "expected_updated_at": (
+            expected_updated_at
+            or datetime(2026, 1, 1, 12, 0, 0, tzinfo=dt_timezone.utc).isoformat()
+        ),
+        "requested_start_date": "2026-01-10",
+        "requested_target_date": "2026-01-11",
+        "operation": "move",
+    }
+
+
+class TestTimelinePropagationRequestSerializer:
+    """Plan 03-02 Task 1: structural-only serializer behavior (CONTEXT D-04)."""
+
+    def test_serializer_accepts_valid_payload(self):
+        """A well-formed payload validates and round-trips proper Python types."""
+        wid = uuid4()
+        payload = _valid_request_payload(work_item_id=wid)
+
+        serializer = TimelinePropagationRequestSerializer(data=payload)
+
+        assert serializer.is_valid(), serializer.errors
+        validated = serializer.validated_data
+        assert validated["work_item_id"] == wid
+        assert isinstance(validated["original_start_date"], date)
+        assert isinstance(validated["original_target_date"], date)
+        assert isinstance(validated["expected_updated_at"], datetime)
+        assert validated["expected_updated_at"].tzinfo is not None
+        assert isinstance(validated["requested_start_date"], date)
+        assert isinstance(validated["requested_target_date"], date)
+        assert validated["operation"] == "move"
+
+    def test_serializer_rejects_missing_field(
+        self, session_client, workspace, create_user
+    ):
+        """Dropping ``expected_updated_at`` returns DRF default 400 (NOT envelope).
+
+        Pins CONTEXT D-13 / Pitfall 8: the structural failure surface is the
+        DRF parser, distinct from the ``{code, message}`` envelope reserved
+        for the 7 PropagationErrorCode values.
+        """
+        project = ProjectFactory.create(workspace=workspace, created_by=create_user)
+        ProjectMemberFactory.create(project=project, member=create_user, role=20)
+        issue = IssueFactory.create(project=project)
+
+        payload = _valid_request_payload(work_item_id=issue.id)
+        del payload["expected_updated_at"]
+
+        url = reverse(
+            "project-timeline-propagation",
+            kwargs={"slug": workspace.slug, "project_id": project.id},
+        )
+        response = session_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        body = response.json()
+        # DRF default 400 body is per-field: {"expected_updated_at": [...]}.
+        # The ``{code, message}`` envelope MUST NOT be triggered for
+        # structural failures (CONTEXT D-04 / Pitfall 8).
+        assert "code" not in body
+        assert "message" not in body or "expected_updated_at" in body
+
+    def test_serializer_rejects_resize_operation(
+        self, session_client, workspace, create_user
+    ):
+        """``operation="resize"`` returns DRF default 400 (NOT envelope).
+
+        The ChoiceField at the parser layer rejects every value except ``"move"``
+        per CONTEXT D-04 / PROP-18 / FE-09. This pins the structural-vs-domain
+        split — ``"resize"`` never reaches the algorithm and never produces a
+        ``{code, message}`` envelope.
+        """
+        project = ProjectFactory.create(workspace=workspace, created_by=create_user)
+        ProjectMemberFactory.create(project=project, member=create_user, role=20)
+        issue = IssueFactory.create(project=project)
+
+        payload = _valid_request_payload(work_item_id=issue.id)
+        payload["operation"] = "resize"
+
+        url = reverse(
+            "project-timeline-propagation",
+            kwargs={"slug": workspace.slug, "project_id": project.id},
+        )
+        response = session_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        body = response.json()
+        assert "code" not in body, (
+            f"resize must return DRF default 400, NOT envelope; got {body}"
+        )
+
+    def test_serializer_accepts_optional_client_preview_count(self):
+        """``client_preview_count`` is optional; preserved when present."""
+        # Present case
+        payload = _valid_request_payload()
+        payload["client_preview_count"] = 42
+        serializer = TimelinePropagationRequestSerializer(data=payload)
+        assert serializer.is_valid(), serializer.errors
+        assert serializer.validated_data["client_preview_count"] == 42
+
+        # Absent case
+        payload2 = _valid_request_payload()
+        assert "client_preview_count" not in payload2
+        serializer2 = TimelinePropagationRequestSerializer(data=payload2)
+        assert serializer2.is_valid(), serializer2.errors
+        assert "client_preview_count" not in serializer2.validated_data
+
+    def test_serializer_does_not_check_cross_field_invariants(self):
+        """``requested_target_date < requested_start_date`` still passes
+        ``is_valid()`` (CONTEXT D-04).
+
+        The algorithm owns ``INVALID_DATE_RANGE`` per Phase 2 D-06 step 1; the
+        serializer is structural-only. This test pins the absence of any
+        cross-field ``validate(...)`` method.
+        """
+        payload = _valid_request_payload()
+        payload["requested_start_date"] = "2026-01-15"
+        payload["requested_target_date"] = "2026-01-10"  # target < start
+
+        serializer = TimelinePropagationRequestSerializer(data=payload)
+
+        assert serializer.is_valid(), serializer.errors

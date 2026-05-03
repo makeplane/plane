@@ -135,7 +135,8 @@ from .draft import (
 )
 
 from .timeline_propagation import (
+    TimelinePropagationErrorSerializer,
     TimelinePropagationRequestSerializer,
     TimelinePropagationResponseSerializer,
-    TimelinePropagationErrorSerializer,
+    TimelinePropagationWorkItemSerializer,
 )
