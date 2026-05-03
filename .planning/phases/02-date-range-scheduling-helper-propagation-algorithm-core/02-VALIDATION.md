@@ -1,11 +1,13 @@
 ---
 phase: 2
 slug: date-range-scheduling-helper-propagation-algorithm-core
-status: draft
-nyquist_compliant: false
-wave_0_complete: false
+status: ready
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-05-04
 ---
+
+> **Wave 0 note:** Plans 02-01..02-03 deliver GREEN implementations directly rather than landing empty RED scaffolds first. The Wave 0 Requirements section below is preserved as a historical record of the scaffold targets, but the inter-plan RED handoff is encoded differently: `propagation.py` ships in Plan 02-01 as a `NotImplementedError` STUB whose failing test (`TestPublicSurface::test_init_exports_propagate_move_and_value_types` resolves the import path; the algorithm-level RED tests live inside Plan 02-02's `test_propagation.py` and turn green within the same plan). This is consistent with the inter-plan handoff Phase 1 used (`__init__.py` forward-referenced `.graph` before `graph.py` existed).
 
 # Phase 2 — Validation Strategy
 
