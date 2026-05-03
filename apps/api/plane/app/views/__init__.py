@@ -152,6 +152,8 @@ from .issue.sub_issue import SubIssuesEndpoint
 
 from .issue.subscriber import IssueSubscriberViewSet
 
+from .issue.timeline_propagation import TimelinePropagationView
+
 from .issue.version import IssueVersionEndpoint, WorkItemDescriptionVersionEndpoint
 
 from .module.base import (

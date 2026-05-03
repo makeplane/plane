@@ -92,3 +92,96 @@ class TestFactorySmoke:
         assert issue.project_id == project.id
         assert issue.state.project_id == project.id
         assert issue.workspace_id == project.workspace_id
+
+
+# ---------------------------------------------------------------------------
+# Task 2 — Routing scaffold + API-11 regression smoke.
+# These pin the public HTTP surface; Plan 03-02 grows them into the full
+# permission/algorithm contract suite.
+# ---------------------------------------------------------------------------
+
+
+class TestTimelinePropagation:
+    """Routing scaffold tests for the new endpoint + API-11 regression."""
+
+    def test_url_reverses(self):
+        """``reverse("project-timeline-propagation")`` resolves to the
+        canonical project-scoped path (CONTEXT D-01).
+
+        plane.app.urls is mounted at ``/api/`` (see plane/urls.py:18), so the
+        canonical path begins with ``/api/workspaces/...``.
+        """
+        slug = "ws-test"
+        project_id = uuid4()
+
+        url = reverse(
+            "project-timeline-propagation",
+            kwargs={"slug": slug, "project_id": project_id},
+        )
+
+        expected = (
+            f"/api/workspaces/{slug}/projects/{project_id}/timeline-propagation/"
+        )
+        assert url == expected
+
+    def test_unauthenticated_request_returns_401(self):
+        """Unauthenticated POST returns DRF default 401 (NOT envelope).
+
+        BaseAPIView's ``IsAuthenticated`` permission class fires before any
+        view code; the response body is DRF's stock
+        ``{"detail": "Authentication credentials were not provided."}``,
+        which is NOT the ``{code, message}`` failure envelope reserved for
+        the 7 PropagationErrorCode values (CONTEXT D-13 / Pitfall 8).
+        """
+        client = APIClient()  # no force_authenticate
+        url = reverse(
+            "project-timeline-propagation",
+            kwargs={"slug": "ws-test", "project_id": uuid4()},
+        )
+
+        response = client.post(url, {}, format="json")
+
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_existing_bulk_update_endpoint_unchanged(
+        self, session_client, workspace, create_user
+    ):
+        """API-11 regression smoke against ``IssueBulkUpdateDateEndpoint``.
+
+        Per Open Question 5: structural smoke only, NOT a full behavior
+        re-verification. We POST one updates entry with new dates, assert
+        200, and assert the response body's top-level keys match the
+        existing ``{"message": ...}`` shape (see
+        ``apps/api/plane/app/views/issue/base.py:1093-1170``).
+        """
+        # Set up a project + issue + project membership so the existing
+        # @allow_permission([ROLE.ADMIN, ROLE.MEMBER]) decorator passes.
+        project = ProjectFactory.create(workspace=workspace, created_by=create_user)
+        ProjectMemberFactory.create(
+            project=project, member=create_user, role=20
+        )  # ADMIN
+        issue = IssueFactory.create(project=project)
+
+        url = reverse(
+            "project-issue-dates",
+            kwargs={"slug": workspace.slug, "project_id": project.id},
+        )
+        payload = {
+            "updates": [
+                {
+                    "id": str(issue.id),
+                    "start_date": "2026-06-01",
+                    "target_date": "2026-06-05",
+                }
+            ]
+        }
+
+        response = session_client.post(url, payload, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        body = response.json()
+        # Existing endpoint returns a flat {"message": "..."} body.
+        assert set(body.keys()) == {"message"}, (
+            f"IssueBulkUpdateDateEndpoint shape changed; got keys "
+            f"{set(body.keys())}. API-11 regression — see Plan 03-01."
+        )

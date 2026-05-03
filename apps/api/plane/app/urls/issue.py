@@ -27,6 +27,7 @@ from plane.app.views import (
     IssueDetailEndpoint,
     IssueAttachmentV2Endpoint,
     IssueBulkUpdateDateEndpoint,
+    TimelinePropagationView,
     IssueVersionEndpoint,
     WorkItemDescriptionVersionEndpoint,
     IssueMetaEndpoint,
@@ -252,6 +253,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/issue-dates/",
         IssueBulkUpdateDateEndpoint.as_view(),
         name="project-issue-dates",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/timeline-propagation/",
+        TimelinePropagationView.as_view(),
+        name="project-timeline-propagation",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/issues/<uuid:issue_id>/versions/",

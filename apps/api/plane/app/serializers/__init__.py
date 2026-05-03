@@ -133,3 +133,9 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .timeline_propagation import (
+    TimelinePropagationRequestSerializer,
+    TimelinePropagationResponseSerializer,
+    TimelinePropagationErrorSerializer,
+)
