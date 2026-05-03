@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 3 Plan 03-01 complete (routing scaffold + Wave-0 fixtures + auth tests)
-last_updated: "2026-05-04T00:00:00.000Z"
-last_activity: 2026-05-04 -- Plan 03-01 complete (6 GREEN contract tests, 2 commits)
+stopped_at: Phase 3 Plan 03-02 complete (serializers + view body + 17 new contract tests)
+last_updated: "2026-05-04T01:30:00.000Z"
+last_activity: 2026-05-04 -- Plan 03-02 complete (23 GREEN contract tests in test_timeline_propagation.py; view body atomic + select_for_update + bulk_update + 7 envelopes)
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 9
-  completed_plans: 6
-  percent: 67
+  completed_plans: 7
+  percent: 78
 ---
 
 # Project State
@@ -26,21 +26,21 @@ See: .planning/PROJECT.md (updated 2026-05-03)
 ## Current Position
 
 Phase: 3 (Propagation API Endpoint, Persistence & Contract) — EXECUTING
-Plan: 2 of 3 (next: 03-02 — serializer fields + permission check + algorithm wiring)
+Plan: 3 of 3 (next: 03-03 — transaction.on_commit fan-out for issue_activity + model_activity)
 Status: Executing Phase 3
-Last activity: 2026-05-04 -- Plan 03-01 complete (6 GREEN contract tests; routing scaffold + Wave-0 fixtures locked)
+Last activity: 2026-05-04 -- Plan 03-02 complete (23 GREEN contract tests; full view body + 7 typed envelopes + single-now invariant)
 
-Progress: [███░░░░░░░] 67% (6/9 plans)
+Progress: [████░░░░░░] 78% (7/9 plans)
 
-Progress (legacy bar — see Current Position above for current value): [███░░░░░░░] 67%
+Progress (legacy bar — see Current Position above for current value): [████░░░░░░] 78%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
-- Average duration: ~7m
-- Total execution time: ~42m
+- Total plans completed: 7
+- Average duration: ~9m
+- Total execution time: ~60m
 
 **By Phase:**
 
@@ -48,7 +48,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | ------------------------------------------------- | ----- | ------ | -------- |
 | 1. Precedence Graph Loader & Normalization        | 2/2   | 10m38s | 5m19s    |
 | 2. Scheduling Helper & Propagation Algorithm Core | 3/3   | ~21m   | ~7m      |
-| 3. Propagation API Endpoint & Contract            | 1/3   | ~10m   | ~10m     |
+| 3. Propagation API Endpoint & Contract            | 2/3   | ~28m   | ~14m     |
 | 4. Frontend Service Client & MobX Preview Store   | 0     | —      | —        |
 | 5. Drag Handler Integration & Error UX            | 0     | —      | —        |
 | 6. End-to-End Coverage & Polish                   | 0     | —      | —        |
@@ -60,6 +60,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | 01-01      | 3     | 6     | 4m43s    | 2026-05-03T15:26:37Z |
 | 01-02      | 2     | 3     | 5m55s    | 2026-05-03T15:37:28Z |
 | 03-01      | 2     | 7     | ~10m     | 2026-05-04T00:00:00Z |
+| 03-02      | 2     | 4     | ~18m     | 2026-05-04T01:30:00Z |
 
 **Recent Trend:**
 
@@ -90,6 +91,11 @@ Recent decisions affecting current work:
 - (03-01) URL canonical path is `/api/workspaces/<slug>/projects/<uuid>/timeline-propagation/` (not `/api/v1/...` as CONTEXT D-01 narrative implied). The URL **name** `project-timeline-propagation` is what's locked; tests use `reverse(...)` rather than hardcoded paths. CONTEXT D-01 narrative was an off-by-one description of the urlconf mount.
 - (03-01) `IssueFactory` pins `state.project` to the issue's project via `factory.SubFactory(StateFactory, project=factory.SelfAttribute("..project"))` — the cross-FK invariant must be wired at the SubFactory level or callers passing `project=p` get a state with a different (auto-generated) project.
 - (03-01) `TimelinePropagationView.post(...)` returns 501 in Plan 03-01 — Plan 03-02 replaces the body wholesale. Module docstring documents the `transaction.on_commit` Django 4.2 pattern even though Plan 03-03 owns the actual call site.
+- (03-02) Permission check FIRST (before serializer parse) per Open Question 1 — mirrors @allow_permission so an unauthorized caller never sees a structural 400 (less info-leak). Inline `ProjectMember` filter `role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value]`; GUEST excluded; no workspace-admin fallback (D-02b).
+- (03-02) `STATUS_BY_CODE: dict[PropagationErrorCode, int]` is the single source of truth for the wire HTTP status mapping (D-03). The `_error(code, message)` helper looks up via the table; no inline `status=403/409/422` literals at call sites.
+- (03-02) `select_for_update(of=("self",))` locks ONLY the Issue row, not the JOIN-side workspace/project/state rows that `IssueManager` pulls in. Avoids "FOR UPDATE cannot be applied to nullable side of OUTER JOIN" issues with the `state__group != TRIAGE` exclusion (Open Question 3 recommendation).
+- (03-02) `Issue.objects.bulk_update(instances, ["start_date", "target_date", "updated_at"])` includes `"updated_at"` in the field list because `bulk_update` bypasses `auto_now` (RESEARCH Pitfall 1). The single captured `now = timezone.now()` is shared across every Issue instance and every `work_items[].updated_at` in the response — pinned by `test_success_payload_uses_single_now_for_updated_at`.
+- (03-02) Project's `unique_together=(identifier, workspace, deleted_at)` forces tests with >1 project per workspace to set `identifier=` explicitly. Added `_unique_project(workspace, create_user, label)` test helper that pins both `name` AND `identifier` to UUID-derived values.
 
 ### Pending Todos
 
@@ -118,6 +124,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-04T00:00:00.000Z
-Stopped at: Phase 3 Plan 03-01 complete (routing scaffold + Wave-0 fixtures + auth tests; 6 GREEN contract tests)
-Resume file: .planning/phases/03-propagation-api-endpoint-persistence-contract/03-02-PLAN.md
+Last session: 2026-05-04T01:30:00.000Z
+Stopped at: Phase 3 Plan 03-02 complete (serializers + view body + 17 new contract tests; 23 GREEN total in test_timeline_propagation.py; 7 typed envelopes verified with their D-03 HTTP statuses)
+Resume file: .planning/phases/03-propagation-api-endpoint-persistence-contract/03-03-PLAN.md
