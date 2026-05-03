@@ -14,18 +14,19 @@ The directionality story is verified across all `IssueRelation`-creation paths i
 
 ## Architectural Responsibility Map
 
-| Capability | Primary Tier | Secondary Tier | Rationale |
-|------------|-------------|----------------|-----------|
-| Read `IssueRelation` rows for a project | API / Backend (Django ORM) | — | The loader only **consumes** an `Iterable[IssueRelation]` per D-01; the queryset itself is owned by Phase 3's view, not Phase 1. |
-| Filter `relation_type='blocked_by'` (PROP-01, PROP-02) | API / Backend (service module) | — | Pure data filter; lives inside the loader to keep the precedence-only invariant centralized. |
-| Translate `(issue, related_issue, 'blocked_by')` → `predecessor → successor` edge (PROP-01) | API / Backend (service module) | — | The "normalization" concept of D-04. Not stored; computed at load time. |
-| Cross-project edge classification (PROP-16) | API / Backend (service module) | — | Loader marks `Edge.cross_project=True` based on `related_issue.project_id` carried on the input row; never dereferences foreign issue dates per D-03. |
-| Cycle detection on the precedence subgraph (PROP-15, TEST-11) | API / Backend (service module) | — | Iterative three-color DFS (D-02). Returns `LoadResult.cycle: tuple[UUID, ...] | None`; never raises across the module boundary. |
-| Build forward + backward adjacency (D-06) | API / Backend (service module) | — | Both directions are pre-computed because Phase 2 walks forward (rightward moves) and backward (leftward moves) from the dragged item. |
-| Soft-delete / archive / draft filtering | API / Backend (Phase 3 view) | API / Backend (loader, defensive) | Loader **assumes** Phase 3 has already pre-filtered endpoints (D-05); loader defensively re-applies `deleted_at IS NULL` on each row but does **not** join `Issue`. |
-| Move-only scope marker (PROP-18) | API / Backend (service module surface) | — | Module docstring + `__init__.py` exports name the module "precedence graph loader" and explicitly mention that it is consumed only by `propagate_move` (Phase 2); resize is not a public concept here. |
+| Capability                                                                                  | Primary Tier                           | Secondary Tier                    | Rationale                                                                                                                                                                                              |
+| ------------------------------------------------------------------------------------------- | -------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Read `IssueRelation` rows for a project                                                     | API / Backend (Django ORM)             | —                                 | The loader only **consumes** an `Iterable[IssueRelation]` per D-01; the queryset itself is owned by Phase 3's view, not Phase 1.                                                                       |
+| Filter `relation_type='blocked_by'` (PROP-01, PROP-02)                                      | API / Backend (service module)         | —                                 | Pure data filter; lives inside the loader to keep the precedence-only invariant centralized.                                                                                                           |
+| Translate `(issue, related_issue, 'blocked_by')` → `predecessor → successor` edge (PROP-01) | API / Backend (service module)         | —                                 | The "normalization" concept of D-04. Not stored; computed at load time.                                                                                                                                |
+| Cross-project edge classification (PROP-16)                                                 | API / Backend (service module)         | —                                 | Loader marks `Edge.cross_project=True` based on `related_issue.project_id` carried on the input row; never dereferences foreign issue dates per D-03.                                                  |
+| Cycle detection on the precedence subgraph (PROP-15, TEST-11)                               | API / Backend (service module)         | —                                 | Iterative three-color DFS (D-02). Returns `LoadResult.cycle: tuple[UUID, ...]                                                                                                                          | None`; never raises across the module boundary. |
+| Build forward + backward adjacency (D-06)                                                   | API / Backend (service module)         | —                                 | Both directions are pre-computed because Phase 2 walks forward (rightward moves) and backward (leftward moves) from the dragged item.                                                                  |
+| Soft-delete / archive / draft filtering                                                     | API / Backend (Phase 3 view)           | API / Backend (loader, defensive) | Loader **assumes** Phase 3 has already pre-filtered endpoints (D-05); loader defensively re-applies `deleted_at IS NULL` on each row but does **not** join `Issue`.                                    |
+| Move-only scope marker (PROP-18)                                                            | API / Backend (service module surface) | —                                 | Module docstring + `__init__.py` exports name the module "precedence graph loader" and explicitly mention that it is consumed only by `propagate_move` (Phase 2); resize is not a public concept here. |
 
 <user_constraints>
+
 ## User Constraints (from CONTEXT.md)
 
 ### Locked Decisions
@@ -43,6 +44,7 @@ The directionality story is verified across all `IssueRelation`-creation paths i
 **D-05 (Soft-deleted / archived / draft Work Item handling):** The loader **defensively re-applies** `deleted_at IS NULL` on each input `IssueRelation` row, but it **assumes the caller (Phase 3 view) has already filtered out** edges whose endpoint Work Items are `archived_at IS NOT NULL`, `is_draft=True`, or `deleted_at IS NOT NULL`. Reason: those endpoint filters require a JOIN onto `Issue`, which the loader stays agnostic of. Phase 3's queryset will join and filter; the loader's docstring will declare the assumption explicitly so Phase 3 cannot forget. Self-edges (`issue_id == related_issue_id`, defensive guard against direct-DB rows) are classified as a one-element cycle by D-02.
 
 **D-06 (Adjacency data structure):** `Adjacency` is a **frozen dataclass** holding:
+
 - `successors: Mapping[UUID, frozenset[UUID]]` — predecessor → set of successors (same-project only)
 - `predecessors: Mapping[UUID, frozenset[UUID]]` — successor → set of predecessors (same-project only)
 - `nodes: frozenset[UUID]` — every Work Item id touched by any precedence edge in this project
@@ -51,6 +53,7 @@ The directionality story is verified across all `IssueRelation`-creation paths i
 - Convenience methods: `successors_of(node_id) -> frozenset[UUID]` and `predecessors_of(node_id) -> frozenset[UUID]` returning empty frozenset for unknown ids (no `KeyError`s leaking to callers).
 
 **D-07 (Type module shape):** `types.py` exposes only **identity-and-classification** types (no schedule dates):
+
 - `WorkItemNode` = `frozen dataclass(id: UUID, project_id: UUID)` — used as the node identity for cross-project edge classification.
 - `Edge` = `frozen dataclass(predecessor_id: UUID, successor_id: UUID, source_relation_id: UUID, cross_project: bool)` — `source_relation_id` preserved for diagnostics and future audit logging.
 - `Adjacency` (per D-06).
@@ -69,7 +72,7 @@ The directionality story is verified across all `IssueRelation`-creation paths i
 - **Cross-project input shape:** precomputed `related_project_id` annotation vs. `select_related("related_issue__project_id")`.
   - **Recommendation:** Define the loader's row-input contract as a small `Protocol` (or duck-typed interface) requiring `.project_id`, `.related_issue_id`, `.issue_id`, `.relation_type`, `.id`, `.deleted_at`, **and** access to `related_issue.project_id` via either attribute traversal (`row.related_issue.project_id`) OR an annotated `related_project_id`. The loader prefers `getattr(row, "related_project_id", None)` first and falls back to `row.related_issue.project_id`. Phase 3 then has freedom to use `select_related` or `annotate` without changing the loader. This keeps the loader truly pure and lets unit tests pass plain dataclasses.
 - **Free function vs. small class:** `load_precedence_graph(relations, project_id) -> LoadResult` vs. `class GraphLoader`.
-  - **Recommendation:** Free function. The loader has no instance state, no DI hooks needed (the `Iterable` argument *is* the DI seam), and class-based loaders typically smuggle in `self.queryset` over time. If Phase 3 later needs DI, wrapping a free function in a small adapter class is trivial; un-wrapping a class isn't.
+  - **Recommendation:** Free function. The loader has no instance state, no DI hooks needed (the `Iterable` argument _is_ the DI seam), and class-based loaders typically smuggle in `self.queryset` over time. If Phase 3 later needs DI, wrapping a free function in a small adapter class is trivial; un-wrapping a class isn't.
 
 ### Deferred Ideas (OUT OF SCOPE)
 
@@ -80,19 +83,21 @@ The directionality story is verified across all `IssueRelation`-creation paths i
 - **Audit logging of loaded graphs** — would consume `Edge.source_relation_id`; deferred to a later observability pass.
 - **Caching loaded graphs per project** — premature optimization; defer until Phase 3 measures real latency.
 - **Loader support for the future Working Calendar / working-day model** — explicitly out of scope per ADR 0002 and PROJECT.md; Phase 1's date-free design is what makes the future swap a no-op for this module.
-</user_constraints>
+  </user_constraints>
 
 <phase_requirements>
+
 ## Phase Requirements
 
-| ID | Description (verbatim from REQUIREMENTS.md) | Research Support |
-|----|---------------------------------------------|------------------|
-| **PROP-01** | サーバは current project の同一プロジェクト範囲で `IssueRelation` を読み、`blocking` / `blocked_by` を **predecessor → successor** に正規化したグラフを構築できる(US-34, US-16) | D-04 directionality fact verified across all relation-creation paths in §"Existing Code Insights — Directionality Verification". Edge direction: `predecessor=row.related_issue_id`, `successor=row.issue_id`. |
-| **PROP-02** | `relates_to` / `duplicate` はグラフに**含めない**(US-17, US-18) | D-04 filter — drop every row whose `relation_type != "blocked_by"`. Test case (b) in §"Validation Architecture" pins the behavior. |
-| **PROP-15** | precedence graph 上の循環(cycle)は伝播を停止し `DEPENDENCY_CYCLE` で fail(US-28) | D-02 iterative three-color DFS — see §"Cycle Detection Algorithm" for pseudocode. Loader returns `LoadResult.cycle`; Phase 2 maps to error code. |
-| **PROP-16** | 同一プロジェクト範囲外に到達する依存パスは伝播全体を停止し `PROJECT_BOUNDARY_EXCEEDED` で fail(US-20) | D-03 cross-project edge classification — kept in `cross_project_edges`, never dereferenced. Phase 2 owns reachability decision. |
-| **PROP-18** | 伝播はサービスレイヤとして resize は対象外、move(完全 schedule の移動)のみ対応 | D-09 calendar-day-neutral by construction; module docstring + `__init__.py` exports document "consumed by `propagate_move` only". No resize concept enters this module. |
-| **TEST-11** | backend service unit test: cycle detection → `DEPENDENCY_CYCLE` | Phase 1 covers the loader-side: tests (d) "cycle on precedence subgraph → `LoadResult.cycle` is not None" and (g) "self-edge handled as one-element cycle" in §"Validation Architecture". Phase 2 will add the algorithm-side translation to the error code. |
+| ID          | Description (verbatim from REQUIREMENTS.md)                                                                                                                                     | Research Support                                                                                                                                                                                                                                             |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **PROP-01** | サーバは current project の同一プロジェクト範囲で `IssueRelation` を読み、`blocking` / `blocked_by` を **predecessor → successor** に正規化したグラフを構築できる(US-34, US-16) | D-04 directionality fact verified across all relation-creation paths in §"Existing Code Insights — Directionality Verification". Edge direction: `predecessor=row.related_issue_id`, `successor=row.issue_id`.                                               |
+| **PROP-02** | `relates_to` / `duplicate` はグラフに**含めない**(US-17, US-18)                                                                                                                 | D-04 filter — drop every row whose `relation_type != "blocked_by"`. Test case (b) in §"Validation Architecture" pins the behavior.                                                                                                                           |
+| **PROP-15** | precedence graph 上の循環(cycle)は伝播を停止し `DEPENDENCY_CYCLE` で fail(US-28)                                                                                                | D-02 iterative three-color DFS — see §"Cycle Detection Algorithm" for pseudocode. Loader returns `LoadResult.cycle`; Phase 2 maps to error code.                                                                                                             |
+| **PROP-16** | 同一プロジェクト範囲外に到達する依存パスは伝播全体を停止し `PROJECT_BOUNDARY_EXCEEDED` で fail(US-20)                                                                           | D-03 cross-project edge classification — kept in `cross_project_edges`, never dereferenced. Phase 2 owns reachability decision.                                                                                                                              |
+| **PROP-18** | 伝播はサービスレイヤとして resize は対象外、move(完全 schedule の移動)のみ対応                                                                                                  | D-09 calendar-day-neutral by construction; module docstring + `__init__.py` exports document "consumed by `propagate_move` only". No resize concept enters this module.                                                                                      |
+| **TEST-11** | backend service unit test: cycle detection → `DEPENDENCY_CYCLE`                                                                                                                 | Phase 1 covers the loader-side: tests (d) "cycle on precedence subgraph → `LoadResult.cycle` is not None" and (g) "self-edge handled as one-element cycle" in §"Validation Architecture". Phase 2 will add the algorithm-side translation to the error code. |
+
 </phase_requirements>
 
 ## Project Constraints (from CLAUDE.md)
@@ -112,31 +117,32 @@ The following directives from `./CLAUDE.md` constrain Phase 1 implementation. Tr
 
 ### Core (Phase 1 only — no new dependencies)
 
-| Library | Version | Purpose | Why Standard |
-|---------|---------|---------|--------------|
-| Python stdlib `dataclasses` | 3.12 | `@dataclass(frozen=True)` for `WorkItemNode`, `Edge`, `Adjacency`, `LoadResult` | `[VERIFIED: codebase grep]` — already used in `apps/api/plane/utils/exporters/schemas/base.py`. Frozen dataclasses give hashable, immutable, `==`-comparable value types ideal for graph nodes. |
-| Python stdlib `typing` | 3.12 | `Mapping`, `Iterable`, `Protocol` for the row-input contract | `[VERIFIED: codebase grep]` — codebase mixes `typing.Mapping/List/Dict` and PEP-585 `list[str]`. PEP-604 unions (`int | None`) are in use. New code may use either; **Phase 1 should use Python 3.12 native generics** (`list`, `tuple`, `frozenset`, `Mapping` from `collections.abc`) for new code, matching `apps/api/plane/db/mixins.py:167`. |
-| Python stdlib `uuid.UUID` | 3.12 | Node identity type | `[VERIFIED: codebase grep]` — `Issue.id`, `Project.id` are `models.UUIDField`. `apps/api/plane/db/models/base.py:18`. |
-| Python stdlib `collections.deque` | 3.12 | DFS work stack (iterative) | `[CITED: docs.python.org/3.12/library/collections.html#collections.deque]` — O(1) `append`/`pop` from either end; the stdlib's standard "stack" container. `[ASSUMED]` for the specific pattern's idiomatic use here, but it is canonical Python. |
-| `pytest` | 9.0.3 | Test runner | `[VERIFIED: apps/api/requirements/test.txt:115 of STACK.md]` |
-| `pytest-django` | 4.5.2 | `@pytest.mark.django_db` | `[VERIFIED: apps/api/requirements/test.txt]` — already in use across `apps/api/plane/tests/unit/`. |
-| `factory-boy` | 3.3.0 | Test fixture factories (only if extending `factories.py`) | `[VERIFIED: STACK.md:115]` — already in `requirements/test.txt`. Test-side `IssueFactory`/`IssueRelationFactory` are **optional**; existing unit tests use direct `Model.objects.create(...)`. |
+| Library                           | Version | Purpose                                                                         | Why Standard                                                                                                                                                                                                                                      |
+| --------------------------------- | ------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Python stdlib `dataclasses`       | 3.12    | `@dataclass(frozen=True)` for `WorkItemNode`, `Edge`, `Adjacency`, `LoadResult` | `[VERIFIED: codebase grep]` — already used in `apps/api/plane/utils/exporters/schemas/base.py`. Frozen dataclasses give hashable, immutable, `==`-comparable value types ideal for graph nodes.                                                   |
+| Python stdlib `typing`            | 3.12    | `Mapping`, `Iterable`, `Protocol` for the row-input contract                    | `[VERIFIED: codebase grep]` — codebase mixes `typing.Mapping/List/Dict` and PEP-585 `list[str]`. PEP-604 unions (`int                                                                                                                             | None`) are in use. New code may use either; **Phase 1 should use Python 3.12 native generics** (`list`, `tuple`, `frozenset`, `Mapping`from`collections.abc`) for new code, matching `apps/api/plane/db/mixins.py:167`. |
+| Python stdlib `uuid.UUID`         | 3.12    | Node identity type                                                              | `[VERIFIED: codebase grep]` — `Issue.id`, `Project.id` are `models.UUIDField`. `apps/api/plane/db/models/base.py:18`.                                                                                                                             |
+| Python stdlib `collections.deque` | 3.12    | DFS work stack (iterative)                                                      | `[CITED: docs.python.org/3.12/library/collections.html#collections.deque]` — O(1) `append`/`pop` from either end; the stdlib's standard "stack" container. `[ASSUMED]` for the specific pattern's idiomatic use here, but it is canonical Python. |
+| `pytest`                          | 9.0.3   | Test runner                                                                     | `[VERIFIED: apps/api/requirements/test.txt:115 of STACK.md]`                                                                                                                                                                                      |
+| `pytest-django`                   | 4.5.2   | `@pytest.mark.django_db`                                                        | `[VERIFIED: apps/api/requirements/test.txt]` — already in use across `apps/api/plane/tests/unit/`.                                                                                                                                                |
+| `factory-boy`                     | 3.3.0   | Test fixture factories (only if extending `factories.py`)                       | `[VERIFIED: STACK.md:115]` — already in `requirements/test.txt`. Test-side `IssueFactory`/`IssueRelationFactory` are **optional**; existing unit tests use direct `Model.objects.create(...)`.                                                    |
 
 **No production dependency changes required.** This phase introduces zero new package installs; the existing Python 3.12.10 + Django 4.2.30 + pytest stack covers everything.
 
 **Version verification:**
+
 - Python 3.12.10 is pinned by Docker base image `apps/api/Dockerfile.api:1` and `apps/api/Dockerfile.dev`. `[VERIFIED: bash head -3 of Dockerfiles]`.
 - pytest, pytest-django, factory-boy versions read from `apps/api/requirements/test.txt` summary in `.planning/codebase/STACK.md:115`. `[VERIFIED: STACK.md]`.
 
 ### Alternatives Considered
 
-| Instead of | Could Use | Tradeoff |
-|------------|-----------|----------|
-| Frozen `@dataclass(frozen=True)` | `attrs` / `pydantic.BaseModel` | None used in `apps/api/plane/`. Stdlib `dataclasses` matches existing convention (`apps/api/plane/utils/exporters/schemas/base.py`). `[VERIFIED: grep across apps/api/plane]` — only `@dataclass` decorators found, zero `attrs`/`pydantic` value-type usage. |
-| `frozenset[UUID]` per-key | `set[UUID]` | `set` is mutable; `Adjacency` is supposed to be frozen end-to-end so callers cannot accidentally mutate adjacency lists. Performance is identical for membership tests. |
-| Iterative DFS | Recursive DFS | Recursive DFS hits Python's `sys.getrecursionlimit()` (default 1000) on graphs ~1000+ deep. The 100-item propagation limit (PROP-13, Phase 2) is well below 1000, but graphs themselves can exceed that — and iterative DFS is exactly the same code complexity. CONTEXT.md D-02 already locks iterative. |
-| Tarjan's SCC | Three-color DFS | Tarjan finds **all** cycles; we only need "is there at least one cycle, and if so, give us a representative cycle path for diagnostics." Three-color DFS first-back-edge satisfies that with simpler code. |
-| Throwing `DependencyCycleError` | Returning `LoadResult.cycle: tuple[UUID, ...] | None` | CONTEXT.md D-02 explicitly rules out exceptions across the module boundary. Typed result fields keep the API surface predictable for Phase 2. |
+| Instead of                       | Could Use                                     | Tradeoff                                                                                                                                                                                                                                                                                                  |
+| -------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frozen `@dataclass(frozen=True)` | `attrs` / `pydantic.BaseModel`                | None used in `apps/api/plane/`. Stdlib `dataclasses` matches existing convention (`apps/api/plane/utils/exporters/schemas/base.py`). `[VERIFIED: grep across apps/api/plane]` — only `@dataclass` decorators found, zero `attrs`/`pydantic` value-type usage.                                             |
+| `frozenset[UUID]` per-key        | `set[UUID]`                                   | `set` is mutable; `Adjacency` is supposed to be frozen end-to-end so callers cannot accidentally mutate adjacency lists. Performance is identical for membership tests.                                                                                                                                   |
+| Iterative DFS                    | Recursive DFS                                 | Recursive DFS hits Python's `sys.getrecursionlimit()` (default 1000) on graphs ~1000+ deep. The 100-item propagation limit (PROP-13, Phase 2) is well below 1000, but graphs themselves can exceed that — and iterative DFS is exactly the same code complexity. CONTEXT.md D-02 already locks iterative. |
+| Tarjan's SCC                     | Three-color DFS                               | Tarjan finds **all** cycles; we only need "is there at least one cycle, and if so, give us a representative cycle path for diagnostics." Three-color DFS first-back-edge satisfies that with simpler code.                                                                                                |
+| Throwing `DependencyCycleError`  | Returning `LoadResult.cycle: tuple[UUID, ...] | None`                                                                                                                                                                                                                                                                                                     | CONTEXT.md D-02 explicitly rules out exceptions across the module boundary. Typed result fields keep the API surface predictable for Phase 2. |
 
 ### Test stack: factory_boy SubFactory pattern (open question resolved)
 
@@ -264,6 +270,7 @@ apps/api/plane/tests/unit/services/                 # NEW
 **`__init__.py` export convention:** `apps/api/plane/db/models/__init__.py` re-exports symbols flat (`from .issue import Issue, IssueRelation, IssueRelationChoices`). Apply the same flat re-export style to `apps/api/plane/app/services/timeline_propagation/__init__.py`. Per `apps/api/pyproject.toml:69-70`, `__init__.py` files have `F401` ignored, so re-export-only files are idiomatic.
 
 Recommended `__init__.py` content for Phase 1:
+
 ```python
 # apps/api/plane/app/services/timeline_propagation/__init__.py
 """Precedence graph loader & normalization for Timeline Dependency Schedule Propagation.
@@ -286,11 +293,13 @@ __all__ = [
 ```
 
 ### Pattern 1: Frozen value-type dataclasses for graph nodes
+
 **What:** Use `@dataclass(frozen=True, slots=True)` for `WorkItemNode`, `Edge`, `LoadResult`. Use a custom frozen wrapper for `Adjacency` (because `Mapping` is structural, not a single concrete type).
 **When to use:** Always for the public surface of `types.py` — these are value types (compared by content, hashable, immutable).
 **Note on `slots=True`:** No existing dataclass in `apps/api/plane/` uses `slots=True` `[VERIFIED: grep slots=True returned 0]`. It is purely an optimization; not load-bearing for correctness. **Recommend `frozen=True, slots=True`** — `slots` cuts memory and makes "did I accidentally add a field at runtime" bugs impossible. Both are stdlib Python 3.10+, fully supported on 3.12.
 
 **Example:**
+
 ```python
 # apps/api/plane/app/services/timeline_propagation/types.py
 # Source: stdlib `dataclasses` docs (https://docs.python.org/3.12/library/dataclasses.html)
@@ -355,11 +364,13 @@ class LoadResult:
 ```
 
 ### Pattern 2: Service-module loader as a free function
+
 **What:** A single public free function `load_precedence_graph(relations: Iterable[IssueRelation | RelationLike], project_id: UUID) -> LoadResult`.
 **When to use:** Whenever the Phase 3 view needs to materialize the graph for a propagation request.
 **Why a free function:** Per `[CITED: CONTEXT.md D-01 + Discretion bullet 2]` — no instance state, the `Iterable` argument is already the DI seam. Free functions are the simplest interface; we can always wrap one in a class later if Phase 3 needs DI.
 
 **Example signature (illustrative, not yet implemented):**
+
 ```python
 # apps/api/plane/app/services/timeline_propagation/graph.py
 from collections.abc import Iterable
@@ -417,6 +428,7 @@ def load_precedence_graph(
 ```
 
 ### Pattern 3: Iterative three-color DFS for cycle detection (D-02)
+
 **What:** White / gray / black coloring driven by an explicit work stack of `(node_id, iterator_over_successors)`.
 **When to use:** Once at the end of `load_precedence_graph`, after `Adjacency` is built.
 **Why iterative:** Recursive DFS would crash on graphs > Python's default recursion limit (1000). The propagation limit (PROP-13) is 100 work items, but project graphs can be much larger — and iterative DFS is identical complexity.
@@ -473,6 +485,7 @@ return None
 ```
 
 Notes for the planner:
+
 - Use `sorted(...)` on both root iteration and child iteration for **deterministic test outputs**. Without sorting, frozenset iteration order is arbitrary and tests become flaky.
 - The reconstructed path is rotated so the "first" node sorts deterministically — Phase 2 may want to canonicalize further (rotate so smallest UUID is first) but Phase 1's contract is just "any closed cycle path."
 - Self-edge handling is critical: without the guard, a single `node -> node` edge causes infinite loop (push child → child becomes node, child again → push, …).
@@ -482,49 +495,54 @@ Notes for the planner:
 - **Mutating `Adjacency.successors` after construction:** `Adjacency` is frozen by intent. If you find you need to "fix up" the adjacency later, build a new one instead (copy + replace), or your design has a bug.
 - **Recursive DFS with `sys.setrecursionlimit` bumps:** Tempting one-liner, fragile in production. CONTEXT.md D-02 forbids it.
 - **Throwing on cycle detection:** Violates D-02. Always return `LoadResult.cycle` with a path or None.
-- **Calling `IssueRelation.objects.filter(...)` from inside the loader:** Violates D-01. The Iterable argument *is* the seam.
+- **Calling `IssueRelation.objects.filter(...)` from inside the loader:** Violates D-01. The Iterable argument _is_ the seam.
 - **Importing anything from `rest_framework`, `django.http`, `plane.app.views`, or `plane.app.serializers` inside this module:** Violates D-08. Add a grep-based test (`assert_no_drf_imports`) to keep this honest going forward.
 - **Using `IssueRelation`'s own `project_id` for cross-project classification:** The relation's own `project_id` is set by `ProjectBaseModel.save()` from `self.project.workspace`; it does NOT necessarily match `related_issue.project_id`. The cross-project signal is **`related_issue.project_id != project_id (loader argument)`**, not `relation.project_id != project_id`.
 
 ## Don't Hand-Roll
 
-| Problem | Don't Build | Use Instead | Why |
-|---------|-------------|-------------|-----|
-| Cycle detection over a small DAG | A custom adjacency hashing or "visit count" heuristic | Stdlib iterative three-color DFS (above) | Standard, correct, O(V+E), gives a back-edge path for diagnostics. |
-| Hashable, immutable graph node types | Plain `dict` / `tuple` / namedtuple-by-hand | `@dataclass(frozen=True, slots=True)` (Python 3.12 stdlib) | Frozen dataclass gives `__hash__`, `__eq__`, `__repr__`, type checking, and slot memory savings for free. |
-| Read-only adjacency lists | Wrapped lists with manual freezing | `frozenset[UUID]` per-key + `Mapping[UUID, frozenset[UUID]]` | `frozenset` is immutable and O(1) `in`. `Mapping` is structural — accept any read-only dict-like at runtime. |
-| Soft-delete filter on `IssueRelation` | Custom `if row.deleted_at is None` walks | Trust `IssueRelation.objects` (manager already filters via `SoftDeletionManager`) AND defensively re-apply in loader | `apps/api/plane/db/mixins.py:48-58` already implements `SoftDeletionManager.get_queryset()` that filters `deleted_at__isnull=True`. Loader's defensive filter is for direct-DB rows or `all_objects` callers. |
-| Test fixtures for Issue/IssueRelation | Hand-roll a global `IssueFactory` in `factories.py` for one phase | Use per-test-file `@pytest.fixture` + `Model.objects.create(...)` (existing pattern in `tests/unit/models/test_issue_comment_modal.py`) | Matches existing convention. Phase 2/3 can promote to a global factory if duplication appears. |
+| Problem                               | Don't Build                                                       | Use Instead                                                                                                                             | Why                                                                                                                                                                                                           |
+| ------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cycle detection over a small DAG      | A custom adjacency hashing or "visit count" heuristic             | Stdlib iterative three-color DFS (above)                                                                                                | Standard, correct, O(V+E), gives a back-edge path for diagnostics.                                                                                                                                            |
+| Hashable, immutable graph node types  | Plain `dict` / `tuple` / namedtuple-by-hand                       | `@dataclass(frozen=True, slots=True)` (Python 3.12 stdlib)                                                                              | Frozen dataclass gives `__hash__`, `__eq__`, `__repr__`, type checking, and slot memory savings for free.                                                                                                     |
+| Read-only adjacency lists             | Wrapped lists with manual freezing                                | `frozenset[UUID]` per-key + `Mapping[UUID, frozenset[UUID]]`                                                                            | `frozenset` is immutable and O(1) `in`. `Mapping` is structural — accept any read-only dict-like at runtime.                                                                                                  |
+| Soft-delete filter on `IssueRelation` | Custom `if row.deleted_at is None` walks                          | Trust `IssueRelation.objects` (manager already filters via `SoftDeletionManager`) AND defensively re-apply in loader                    | `apps/api/plane/db/mixins.py:48-58` already implements `SoftDeletionManager.get_queryset()` that filters `deleted_at__isnull=True`. Loader's defensive filter is for direct-DB rows or `all_objects` callers. |
+| Test fixtures for Issue/IssueRelation | Hand-roll a global `IssueFactory` in `factories.py` for one phase | Use per-test-file `@pytest.fixture` + `Model.objects.create(...)` (existing pattern in `tests/unit/models/test_issue_comment_modal.py`) | Matches existing convention. Phase 2/3 can promote to a global factory if duplication appears.                                                                                                                |
 
 **Key insight:** This module's job is normalization, not invention. The DB already enforces (a) the canonical `blocked_by` direction (via `get_actual_relation()` in every relation-creation path), (b) soft-delete semantics (via `SoftDeletionManager`), and (c) `relation_type` constraints (via `IssueRelationChoices`). The loader **mirrors and surfaces** those invariants for the algorithm — it does not re-implement them.
 
 ## Common Pitfalls
 
 ### Pitfall 1: Reversing the predecessor / successor mapping
+
 **What goes wrong:** The dragged Work Item moves rightward, the algorithm walks "successors" but those are actually the predecessors, and the test expects predecessor X but gets successor Y.
 **Why it happens:** "X is blocked by Y" reads as "X depends on Y", but in the row `IssueRelation(issue=X, related_issue=Y, blocked_by)`, the **`issue` column is X (the dependent)** and the **`related_issue` column is Y (the prerequisite)**. The English natural-language flow ("X blocked by Y") goes opposite to the row column ordering.
 **How to avoid:** **Test case (c)** in §"Validation Architecture" pins this directly: build a relation `IssueRelation.objects.create(issue=successor_issue, related_issue=predecessor_issue, relation_type="blocked_by")` and assert `adjacency.successors_of(predecessor.id) == frozenset({successor.id})`. Add a comment in `graph.py` next to the edge construction line: `# IssueRelation row (issue=X, related=Y, blocked_by) means X is blocked by Y → predecessor=Y, successor=X`.
 **Warning signs:** Any plan task that names the source row column "predecessor" without qualification. Any task that says "iterate predecessors using row.issue_id" — that's wrong; row.issue_id is the SUCCESSOR.
 
 ### Pitfall 2: Assuming `IssueRelation.project_id` answers the cross-project question
+
 **What goes wrong:** Loader says "no cross-project edges" but Phase 2 then walks the graph and somehow reaches a foreign project Issue.
 **Why it happens:** `IssueRelation.project_id` is set to the workspace's project at row-creation time and reflects which project's relation table the row "belongs to." It does **not** constrain `related_issue.project_id`. The codebase has no FK constraint forcing same-project endpoints. So a relation can have `project_id=A` while `related_issue.project_id=B`.
 **How to avoid:** Always classify cross-project edges by comparing `related_issue.project_id` (or annotated `related_project_id`) to the **loader argument `project_id`**, not to `row.project_id`. **Test case (e)** validates this directly.
 **Warning signs:** Any plan task that filters cross-project via `row.project_id != project_id`. The correct filter is `row.related_issue.project_id != project_id`.
 
 ### Pitfall 3: factory_boy `IssueFactory.SubFactory` triggering `Issue.save()` invariants
+
 **What goes wrong:** Test creates `IssueFactory(project=project)` and Django blows up with "no default state" or `IssueSequence` constraint violation.
 **Why it happens:** `Issue.save()` (`apps/api/plane/db/models/issue.py:178-234`) auto-resolves `state` from `State.objects.filter(project=..., default=True)` and acquires a Postgres advisory lock to compute `sequence_id`. If the test project has no `State` rows, this branch silently leaves `state=None` (which is fine) but `IssueSequence` creation needs the project-scoped lock.
 **How to avoid:** Either (a) create a `State(project=project, default=True)` fixture before any `Issue` (matches `tests/unit/models/test_issue_comment_modal.py:32-39`), OR (b) pass `state=None` explicitly and let `save()` no-op. Recommend (a) for consistency with existing tests. Document in the test conftest module docstring.
 **Warning signs:** First test run fails with `IntegrityError` or `State.DoesNotExist`. Solution: add a `state` fixture.
 
 ### Pitfall 4: `frozenset` ordering non-determinism in test assertions
+
 **What goes wrong:** A test asserts `result.cycle == (a, b, c, a)` but the actual returned tuple is `(b, c, a, b)` — both are valid cycle paths through the same SCC, but tests fail on the first non-deterministic run.
 **Why it happens:** DFS root iteration order is `for root in adj.nodes` where `adj.nodes` is a `frozenset[UUID]`. Frozenset iteration order is NOT defined in Python 3.7+ (unlike `dict` which preserves insertion order).
 **How to avoid:** In the algorithm, iterate `for root in sorted(adj.nodes)` and `for child in sorted(adj.successors_of(node))`. Tests then assert against a single canonical path. Document this in `graph.py` near the `sorted()` call.
 **Warning signs:** Tests pass on one machine, fail on CI, pass again locally. Flaky assertions on tuple equality.
 
 ### Pitfall 5: Mistakenly importing the loader from a Django view too early
+
 **What goes wrong:** Phase 3's view imports `load_precedence_graph` and tests pass, but circular-import errors appear when the worker process starts.
 **Why it happens:** Django apps use lazy imports (`from plane.db.models import IssueRelation`) at top of files; Phase 1's loader does too. If Phase 1's `__init__.py` later starts importing Django models eagerly to expose convenience helpers (e.g., a "queryset adapter"), those imports execute at app-load time and can race ORM AppConfig.
 **How to avoid:** Keep `__init__.py` lean (re-exports only). Loader imports `IssueRelation` only inside type hints (which become strings under `from __future__ import annotations` if added) or via the `RelationLike` Protocol. Avoid eager `from plane.db.models import IssueRelation` at module top-of-file unless functionally necessary. **Recommendation:** Do NOT use `from __future__ import annotations` for Phase 1 — no codebase precedent (`grep` returned 0 hits) and it would set a new convention silently.
@@ -801,11 +819,13 @@ The CONTEXT.md D-04 claim ("for each `blocked_by` row `(issue=X, related_issue=Y
        ...
    )
    ```
+
    So storing `("blocking", source→target)` becomes `IssueRelation(issue=target, related_issue=source, relation_type="blocked_by")` — i.e., target is blocked by source, source is the predecessor.
 
 2. **External API viewset** (`apps/api/plane/api/views/issue.py:2427-2441`): Same swap pattern via `is_reverse` flag and `get_actual_relation`. Stores canonical `blocked_by` rows.
 
 3. **Historical migration `0043_*.py`** (`apps/api/plane/db/migrations/0043_alter_analyticview_created_by_and_more.py:16-25`): Migrating from old `IssueBlocker` table:
+
    ```python
    IssueRelation(
        issue_id=blocked_issue.block_id,           # the issue that IS blocked
@@ -814,6 +834,7 @@ The CONTEXT.md D-04 claim ("for each `blocked_by` row `(issue=X, related_issue=Y
        ...
    )
    ```
+
    `IssueBlocker.block` is "the issue that's blocked"; `IssueBlocker.blocked_by` is "the blocking issue." So `block` (successor) → `issue_id`, `blocked_by` (predecessor) → `related_issue_id`. **Confirmed: `predecessor = related_issue_id`, `successor = issue_id`.**
 
 4. **`get_actual_relation` mapper** (`apps/api/plane/utils/issue_relation_mapper.py:19-32`): Single source of truth. Maps `"blocking" → "blocked_by"`, identity for `"blocked_by"`. Confirms only canonical direction is stored.
@@ -828,13 +849,13 @@ The CONTEXT.md D-04 claim ("for each `blocked_by` row `(issue=X, related_issue=Y
 
 This phase is **greenfield code creation** — no rename, refactor, or migration. New module, new tests, no existing data to update.
 
-| Category | Items Found | Action Required |
-|----------|-------------|-----------------|
-| Stored data | None — verified by grep across `apps/api/plane`. No existing `timeline_propagation` references in DB columns, JSON keys, or table names. | None |
-| Live service config | None — no n8n / Datadog / Tailscale / external-service registration of "timeline_propagation" | None |
-| OS-registered state | None — no Celery beat schedule entry, no scheduled task, no systemd unit references the new module | None |
-| Secrets/env vars | None — phase introduces no new env var | None |
-| Build artifacts | None — Phase 1 adds Python files only; no compiled artifacts, no egg-info, no Docker tag | None |
+| Category            | Items Found                                                                                                                              | Action Required |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| Stored data         | None — verified by grep across `apps/api/plane`. No existing `timeline_propagation` references in DB columns, JSON keys, or table names. | None            |
+| Live service config | None — no n8n / Datadog / Tailscale / external-service registration of "timeline_propagation"                                            | None            |
+| OS-registered state | None — no Celery beat schedule entry, no scheduled task, no systemd unit references the new module                                       | None            |
+| Secrets/env vars    | None — phase introduces no new env var                                                                                                   | None            |
+| Build artifacts     | None — Phase 1 adds Python files only; no compiled artifacts, no egg-info, no Docker tag                                                 | None            |
 
 **Skip rationale:** Phase 1 creates new files under brand-new package paths. No existing system has a stale reference to update.
 
@@ -843,36 +864,39 @@ This phase is **greenfield code creation** — no rename, refactor, or migration
 > Phase 1 is the only phase whose ONLY assigned TEST requirement is TEST-11. The rest of the test plan (TEST-01..TEST-10, TEST-12..TEST-22, TEST-23, TEST-24) is owned by Phases 2–6.
 
 ### Test Framework
-| Property | Value |
-|----------|-------|
-| Framework | pytest 9.0.3 + pytest-django 4.5.2 |
-| Config file | `apps/api/pytest.ini` (settings: `plane.settings.test`, defaults `--strict-markers --reuse-db --nomigrations -vs`) |
-| Quick run command | `cd apps/api && DJANGO_SETTINGS_MODULE=plane.settings.test pytest plane/tests/unit/services/timeline_propagation/test_graph.py -x` |
-| Full suite command | `cd apps/api && python run_tests.py -u` (runs all `@pytest.mark.unit` tests) |
+
+| Property           | Value                                                                                                                              |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Framework          | pytest 9.0.3 + pytest-django 4.5.2                                                                                                 |
+| Config file        | `apps/api/pytest.ini` (settings: `plane.settings.test`, defaults `--strict-markers --reuse-db --nomigrations -vs`)                 |
+| Quick run command  | `cd apps/api && DJANGO_SETTINGS_MODULE=plane.settings.test pytest plane/tests/unit/services/timeline_propagation/test_graph.py -x` |
+| Full suite command | `cd apps/api && python run_tests.py -u` (runs all `@pytest.mark.unit` tests)                                                       |
 
 ### Phase Requirements → Test Map
 
 Each row corresponds to a test case from ROADMAP.md Phase 1 §"Test strategy" plus the directionality and module-purity invariants surfaced during research.
 
-| Req ID | Behavior | Test Type | Automated Command | File Exists? |
-|--------|----------|-----------|-------------------|-------------|
-| PROP-01 / D-04 | (a) Direction translation: `(issue=X, related=Y, blocked_by)` → `predecessor=Y → successor=X` | unit | `pytest plane/tests/unit/services/timeline_propagation/test_graph.py::TestLoadPrecedenceGraphDirection -x` | ❌ Wave 0 |
-| PROP-02 | (b) `relates_to` and `duplicate` rows excluded from adjacency | unit | `pytest …::TestLoadPrecedenceGraphFilters -x` | ❌ Wave 0 |
-| PROP-01 (alias) | (c) Both API directions (`blocking` and `blocked_by` from frontend) end up as one `blocked_by` row → one normalized edge | unit | `pytest …::TestLoadPrecedenceGraphFilters::test_blocking_via_get_actual_relation_normalizes_to_one_edge -x` | ❌ Wave 0 |
-| PROP-15 / TEST-11 | (d) Three-node cycle on precedence subgraph surfaces in `LoadResult.cycle` (closed path) | unit | `pytest …::TestLoadPrecedenceGraphCycle::test_three_node_cycle_is_detected -x` | ❌ Wave 0 |
-| PROP-16 | (e) Cross-project successor goes to `cross_project_edges`, not `successors` | unit | `pytest …::TestLoadPrecedenceGraphCrossProject -x` | ❌ Wave 0 |
-| (default) | (f) Empty input → empty `Adjacency`, `cycle=None` (regression guard) | unit | `pytest …::TestLoadPrecedenceGraphEmpty -x` | ❌ Wave 0 |
-| PROP-15 / D-05 | (g) Self-edge (`issue == related_issue`) → 1-node cycle `(a, a)` | unit | `pytest …::TestLoadPrecedenceGraphCycle::test_self_edge_is_one_node_cycle -x` | ❌ Wave 0 |
-| D-06 | Two transitive chains, split, merge — adjacency contents match expectations | unit | `pytest …::TestLoadPrecedenceGraphAdjacencyShape -x` | ❌ Wave 0 |
-| D-08 / PROP-18 | Module imports nothing from `rest_framework`, `django.http`, `plane.app.views`, `plane.app.serializers` (lint/grep test) | unit | `pytest …::test_no_drf_or_http_imports_in_module -x` | ❌ Wave 0 |
-| D-06 (convenience) | `successors_of(unknown_id)` returns empty `frozenset()`, never raises | unit | `pytest …::TestAdjacencyConvenienceMethods -x` | ❌ Wave 0 |
+| Req ID             | Behavior                                                                                                                 | Test Type | Automated Command                                                                                           | File Exists? |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------ | --------- | ----------------------------------------------------------------------------------------------------------- | ------------ |
+| PROP-01 / D-04     | (a) Direction translation: `(issue=X, related=Y, blocked_by)` → `predecessor=Y → successor=X`                            | unit      | `pytest plane/tests/unit/services/timeline_propagation/test_graph.py::TestLoadPrecedenceGraphDirection -x`  | ❌ Wave 0    |
+| PROP-02            | (b) `relates_to` and `duplicate` rows excluded from adjacency                                                            | unit      | `pytest …::TestLoadPrecedenceGraphFilters -x`                                                               | ❌ Wave 0    |
+| PROP-01 (alias)    | (c) Both API directions (`blocking` and `blocked_by` from frontend) end up as one `blocked_by` row → one normalized edge | unit      | `pytest …::TestLoadPrecedenceGraphFilters::test_blocking_via_get_actual_relation_normalizes_to_one_edge -x` | ❌ Wave 0    |
+| PROP-15 / TEST-11  | (d) Three-node cycle on precedence subgraph surfaces in `LoadResult.cycle` (closed path)                                 | unit      | `pytest …::TestLoadPrecedenceGraphCycle::test_three_node_cycle_is_detected -x`                              | ❌ Wave 0    |
+| PROP-16            | (e) Cross-project successor goes to `cross_project_edges`, not `successors`                                              | unit      | `pytest …::TestLoadPrecedenceGraphCrossProject -x`                                                          | ❌ Wave 0    |
+| (default)          | (f) Empty input → empty `Adjacency`, `cycle=None` (regression guard)                                                     | unit      | `pytest …::TestLoadPrecedenceGraphEmpty -x`                                                                 | ❌ Wave 0    |
+| PROP-15 / D-05     | (g) Self-edge (`issue == related_issue`) → 1-node cycle `(a, a)`                                                         | unit      | `pytest …::TestLoadPrecedenceGraphCycle::test_self_edge_is_one_node_cycle -x`                               | ❌ Wave 0    |
+| D-06               | Two transitive chains, split, merge — adjacency contents match expectations                                              | unit      | `pytest …::TestLoadPrecedenceGraphAdjacencyShape -x`                                                        | ❌ Wave 0    |
+| D-08 / PROP-18     | Module imports nothing from `rest_framework`, `django.http`, `plane.app.views`, `plane.app.serializers` (lint/grep test) | unit      | `pytest …::test_no_drf_or_http_imports_in_module -x`                                                        | ❌ Wave 0    |
+| D-06 (convenience) | `successors_of(unknown_id)` returns empty `frozenset()`, never raises                                                    | unit      | `pytest …::TestAdjacencyConvenienceMethods -x`                                                              | ❌ Wave 0    |
 
 ### Sampling Rate
+
 - **Per task commit:** `cd apps/api && DJANGO_SETTINGS_MODULE=plane.settings.test pytest plane/tests/unit/services/timeline_propagation/test_graph.py -x` (~ 1–3 s with `--reuse-db --nomigrations`)
 - **Per wave merge:** `cd apps/api && python run_tests.py -u` (full unit suite — keeps Phase 1 tests integrated with the rest of `tests/unit/`)
 - **Phase gate:** `cd apps/api && python run_tests.py --coverage` reports `--fail-under=90`. The `timeline_propagation` package should reach ~100% line coverage given how small it is; the threshold gate is for the whole `plane/` package.
 
 ### Wave 0 Gaps
+
 - [ ] `apps/api/plane/tests/unit/services/__init__.py` — empty marker file
 - [ ] `apps/api/plane/tests/unit/services/timeline_propagation/__init__.py` — empty marker file
 - [ ] `apps/api/plane/tests/unit/services/timeline_propagation/test_graph.py` — full test module covering rows above
@@ -883,69 +907,61 @@ Each row corresponds to a test case from ROADMAP.md Phase 1 §"Test strategy" pl
 - [ ] No framework install needed — pytest, pytest-django, factory-boy already pinned in `apps/api/requirements/test.txt`
 
 ### Coverage threshold note
+
 Phase 1's contribution to `--fail-under=90` is a small line count. The failure mode to watch is **not Phase 1 dropping coverage** but **Phase 1 introducing dead code that pulls average down**. Mitigation: any branch in `graph.py` should be exercised by at least one of the cases (a)–(g) above. The lint-grep test (D-08) is purely structural and adds no production-line coverage; that's expected.
 
 ## State of the Art
 
-| Old Approach | Current Approach | When Changed | Impact |
-|--------------|------------------|--------------|--------|
-| `typing.List`, `typing.Dict`, `typing.Tuple` | PEP-585 native generics: `list`, `dict`, `tuple`, plus `collections.abc.Mapping` etc. | Python 3.9 (2020); preferred from 3.10 | `apps/api/plane/` is mixed; new code in 3.12 should use native generics. |
-| `Optional[T]` / `Union[A, B]` | PEP-604 union: `T \| None`, `A \| B` | Python 3.10 (2021) | Already in use across `apps/api/plane/` (e.g., `apps/api/plane/utils/exporters/exporter.py:43`). Phase 1 should use it. |
-| Recursive DFS for cycle detection | Iterative DFS with explicit stack | Always — guards against `RecursionError` | Locked by CONTEXT.md D-02. |
-| Hand-rolled value types | `@dataclass(frozen=True, slots=True)` | `slots=True` available since Python 3.10 | Codebase uses `@dataclass` but no `slots=True` instances yet. Phase 1 should use it (memory + safety win, no downside). |
-| Throwing `DependencyCycleError` | Returning `LoadResult.cycle` discriminated value | Locked by CONTEXT.md D-02 | Aligns with "no exceptions across module boundary" — predictable for callers. |
+| Old Approach                                 | Current Approach                                                                      | When Changed                             | Impact                                                                                                                  |
+| -------------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `typing.List`, `typing.Dict`, `typing.Tuple` | PEP-585 native generics: `list`, `dict`, `tuple`, plus `collections.abc.Mapping` etc. | Python 3.9 (2020); preferred from 3.10   | `apps/api/plane/` is mixed; new code in 3.12 should use native generics.                                                |
+| `Optional[T]` / `Union[A, B]`                | PEP-604 union: `T \| None`, `A \| B`                                                  | Python 3.10 (2021)                       | Already in use across `apps/api/plane/` (e.g., `apps/api/plane/utils/exporters/exporter.py:43`). Phase 1 should use it. |
+| Recursive DFS for cycle detection            | Iterative DFS with explicit stack                                                     | Always — guards against `RecursionError` | Locked by CONTEXT.md D-02.                                                                                              |
+| Hand-rolled value types                      | `@dataclass(frozen=True, slots=True)`                                                 | `slots=True` available since Python 3.10 | Codebase uses `@dataclass` but no `slots=True` instances yet. Phase 1 should use it (memory + safety win, no downside). |
+| Throwing `DependencyCycleError`              | Returning `LoadResult.cycle` discriminated value                                      | Locked by CONTEXT.md D-02                | Aligns with "no exceptions across module boundary" — predictable for callers.                                           |
 
 **Deprecated/outdated:**
+
 - `from __future__ import annotations`: optional in 3.12 since stringification is automatic in many cases; **not used anywhere in `apps/api/plane/`** (`grep` returned 0 hits). **Do not introduce it for Phase 1** to avoid setting a new convention silently.
 - `typing.Iterable` / `typing.Mapping`: deprecated alias for `collections.abc.Iterable` / `collections.abc.Mapping`. Use `collections.abc` in new code per PEP 585.
 - `typing.NamedTuple` for value types: superseded by `@dataclass(frozen=True)` in Python 3.7+. Codebase uses neither, but dataclasses are the modern choice.
 
 ## Assumptions Log
 
-| # | Claim | Section | Risk if Wrong |
-|---|-------|---------|---------------|
-| A1 | `slots=True` is safe for these dataclasses (no `__dict__`-based introspection downstream). | "Pattern 1: Frozen value-type dataclasses" | Low. If Phase 2 needs to monkey-patch `Adjacency` in a test, it can't with `slots`. Mitigation: drop `slots=True` if the first downstream collision occurs. |
-| A2 | `factory_boy.SubFactory` works as documented for cross-project relation tests. | "Test stack: factory_boy SubFactory pattern" | Low — canonical pattern from official docs `[CITED: factoryboy.readthedocs.io]`. Recommendation is to NOT use factories in Phase 1 anyway. |
-| A3 | The Django `IssueRelation.objects` manager (via `SoftDeletionManager`) already filters `deleted_at__isnull=True`. | "Don't Hand-Roll" + "Existing Code Insights" | Verified `[VERIFIED: codebase grep mixins.py:48-58]`. Defensive re-filter in loader still recommended for non-`objects` callers. |
-| A4 | All current relation-creation paths route through `get_actual_relation`, so non-`blocked_by` precedence rows do not exist in the DB. | "Existing Code Insights — Directionality Verification" | Verified `[VERIFIED: grep across apps/api/plane]` for all 3 active code paths + 1 historical migration. Future code could violate this; the loader's `relation_type == "blocked_by"` filter is the safety net regardless. |
-| A5 | Cross-project `IssueRelation` rows can exist in production (no FK enforces same-project endpoints). | "Pitfall 2" + "Existing Code Insights" | Verified `[VERIFIED: grep no project-scoped CHECK constraint]`. PROP-16 implementation is therefore necessary, not theoretical. |
-| A6 | Recommended factory_boy version for `IssueFactory` skeleton remains `factory-boy 3.3.0` per `requirements/test.txt`. | "Test stack" sub-section | `[VERIFIED: STACK.md:115]`. |
-| A7 | `from __future__ import annotations` is not used anywhere in `apps/api/plane/`, so introducing it would be a new convention. | "Deprecated/outdated" | `[VERIFIED: grep "from __future__ import annotations" apps/api/plane returned No files]`. |
-| A8 | Frozen dataclasses are NOT yet used in `apps/api/plane/` (no `frozen=True` or `slots=True` hits anywhere). | "Pattern 1" + Alternatives | `[VERIFIED: grep frozen=True\|slots=True returned 0 hits]`. Phase 1 introduces this convention deliberately for value-type immutability. |
+| #   | Claim                                                                                                                                | Section                                                | Risk if Wrong                                                                                                                                                                                                             |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A1  | `slots=True` is safe for these dataclasses (no `__dict__`-based introspection downstream).                                           | "Pattern 1: Frozen value-type dataclasses"             | Low. If Phase 2 needs to monkey-patch `Adjacency` in a test, it can't with `slots`. Mitigation: drop `slots=True` if the first downstream collision occurs.                                                               |
+| A2  | `factory_boy.SubFactory` works as documented for cross-project relation tests.                                                       | "Test stack: factory_boy SubFactory pattern"           | Low — canonical pattern from official docs `[CITED: factoryboy.readthedocs.io]`. Recommendation is to NOT use factories in Phase 1 anyway.                                                                                |
+| A3  | The Django `IssueRelation.objects` manager (via `SoftDeletionManager`) already filters `deleted_at__isnull=True`.                    | "Don't Hand-Roll" + "Existing Code Insights"           | Verified `[VERIFIED: codebase grep mixins.py:48-58]`. Defensive re-filter in loader still recommended for non-`objects` callers.                                                                                          |
+| A4  | All current relation-creation paths route through `get_actual_relation`, so non-`blocked_by` precedence rows do not exist in the DB. | "Existing Code Insights — Directionality Verification" | Verified `[VERIFIED: grep across apps/api/plane]` for all 3 active code paths + 1 historical migration. Future code could violate this; the loader's `relation_type == "blocked_by"` filter is the safety net regardless. |
+| A5  | Cross-project `IssueRelation` rows can exist in production (no FK enforces same-project endpoints).                                  | "Pitfall 2" + "Existing Code Insights"                 | Verified `[VERIFIED: grep no project-scoped CHECK constraint]`. PROP-16 implementation is therefore necessary, not theoretical.                                                                                           |
+| A6  | Recommended factory_boy version for `IssueFactory` skeleton remains `factory-boy 3.3.0` per `requirements/test.txt`.                 | "Test stack" sub-section                               | `[VERIFIED: STACK.md:115]`.                                                                                                                                                                                               |
+| A7  | `from __future__ import annotations` is not used anywhere in `apps/api/plane/`, so introducing it would be a new convention.         | "Deprecated/outdated"                                  | `[VERIFIED: grep "from __future__ import annotations" apps/api/plane returned No files]`.                                                                                                                                 |
+| A8  | Frozen dataclasses are NOT yet used in `apps/api/plane/` (no `frozen=True` or `slots=True` hits anywhere).                           | "Pattern 1" + Alternatives                             | `[VERIFIED: grep frozen=True\|slots=True returned 0 hits]`. Phase 1 introduces this convention deliberately for value-type immutability.                                                                                  |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
-1. **Does Phase 3's queryset use `select_related("related_issue")` (ORM traversal) or `annotate(related_project_id=F("related_issue__project_id"))` (cheaper, no JOIN-load)?**
-   - What we know: D-03 explicitly defers this to Phase 3 implementation detail.
-   - What's unclear: whether the loader Protocol should "officially" require `related_project_id` (forcing Phase 3 to annotate) or accept either form.
-   - Recommendation: Define the Protocol with `getattr(row, "related_project_id", None)` fallback to `row.related_issue.project_id` (already in §"Code Examples"). Phase 3 is free to choose; the loader is robust to both. Document in the Protocol's docstring.
+> All four questions below have been resolved during plan-phase. Their resolutions are encoded in `01-01-PLAN.md` and `01-02-PLAN.md`. Kept here as an audit trail for downstream reviewers.
 
-2. **Does `Adjacency.predecessors` / `successors` use `dict[UUID, frozenset[UUID]]` or a `MappingProxyType` wrap?**
-   - What we know: D-06 says `Mapping[UUID, frozenset[UUID]]` (structural type). Implementation can choose.
-   - What's unclear: `dict` is mutable; `MappingProxyType(dict_instance)` is read-only.
-   - Recommendation: Use `dict` internally and expose as `Mapping` via the type annotation. The `frozen=True` dataclass blocks attribute reassignment (`adj.successors = ...` raises) but does NOT block `adj.successors[k] = v`. If Phase 2 review finds anyone trying to mutate, wrap with `MappingProxyType` defensively. For Phase 1, `dict` is fine — assertions in tests catch any leak.
+1. **RESOLVED — Phase 3 queryset shape:** Define the loader's `IssueRelationLike` Protocol with a `getattr(row, "related_project_id", None)` fallback to `row.related_issue.project_id`. Phase 3 is free to use either `select_related("related_issue")` or `annotate(related_project_id=F("related_issue__project_id"))`; the loader is robust to both. Encoded in Plan 01-02 Task 1's `<action>` (Protocol docstring).
 
-3. **Should `WorkItemNode` actually be used in `Adjacency`, or is `UUID` sufficient?**
-   - What we know: D-07 declares `WorkItemNode = (id, project_id)`, but `Adjacency` uses `UUID` keys directly.
-   - What's unclear: where does `WorkItemNode` actually appear in the public surface?
-   - Recommendation: `WorkItemNode` is reserved for **future** Phase 2/3 use when we want to pass identity-with-project together (e.g., to a `MoveIntent`). Phase 1 may export `WorkItemNode` from `types.py` but only `Adjacency` and `LoadResult` consume it (transitively, never directly stored). Document this in `types.py` so reviewers don't ask "why is `WorkItemNode` unused in Phase 1?"
+2. **RESOLVED — `Adjacency.predecessors` / `successors` mapping type:** Use `dict[UUID, frozenset[UUID]]` internally and expose as `Mapping[UUID, frozenset[UUID]]` via type annotation. `frozen=True` blocks attribute reassignment; per-key mutation via `adj.successors[k] = v` is technically possible but caught by tests. `MappingProxyType` wrap is deferred to Phase 2 review if a real mutation incident occurs. Encoded in Plan 01-01 Task 2 (types.py field annotations).
 
-4. **Should the lint-grep "no DRF imports" test live in Phase 1 or be a separate plan task?**
-   - What we know: D-08 says "verifiable by `grep`/lint in the test suite."
-   - What's unclear: whether to put it inside `test_graph.py` or a sibling `test_module_purity.py`.
-   - Recommendation: Inside `test_graph.py` for Phase 1 (one file, simpler). If Phase 2 / 3 add more files in `timeline_propagation/`, the test naturally extends to scan `*.py` recursively (already does in §"Code Examples"). Splitting later is cheap.
+3. **RESOLVED — `WorkItemNode` export without consumption in Phase 1:** Export `WorkItemNode` from `types.py` and the package barrel `__init__.py`, but `Adjacency` keys remain bare `UUID`s in Phase 1. `WorkItemNode` is reserved for Phase 2's `MoveIntent` and Phase 3's typed identity-with-project payload. Encoded in Plan 01-01 (types.py docstring documents the "reserved for downstream" status).
+
+4. **RESOLVED — Lint-grep "no DRF/HTTP imports" test location:** Lives inside `test_graph.py` for Phase 1 as a single function-level test that scans `apps/api/plane/app/services/timeline_propagation/*.py` recursively. If Phase 2/3 expand the package, the same test naturally covers the new files. Splitting into `test_module_purity.py` is cheap and deferred. Encoded in Plan 01-02 Task 2 (test class `TestModulePurity` or equivalent function inside `test_graph.py`).
 
 ## Environment Availability
 
-| Dependency | Required By | Available | Version | Fallback |
-|------------|------------|-----------|---------|----------|
-| Python | All Phase 1 work | ✓ (in container) | 3.12.10 (Docker) | Local 3.13 also works for editing/typing; tests run via Docker compose |
-| pytest | Test runner | ✓ | 9.0.3 (per requirements/test.txt) | — |
-| pytest-django | `@pytest.mark.django_db` | ✓ | 4.5.2 | — |
-| factory-boy | Optional test factories | ✓ | 3.3.0 | — (not actually needed for Phase 1; recommendation is to not use it) |
-| Postgres 15 | Test DB (via `--reuse-db`) | ✓ | 15.7-alpine | — (must be running via `docker-compose-local.yml`) |
-| Django ORM | `IssueRelation`, `Issue`, etc. | ✓ | 4.2.30 | — |
-| `ruff` | Lint check (CI) | ✓ | 0.9.7 | — |
+| Dependency    | Required By                    | Available        | Version                           | Fallback                                                               |
+| ------------- | ------------------------------ | ---------------- | --------------------------------- | ---------------------------------------------------------------------- |
+| Python        | All Phase 1 work               | ✓ (in container) | 3.12.10 (Docker)                  | Local 3.13 also works for editing/typing; tests run via Docker compose |
+| pytest        | Test runner                    | ✓                | 9.0.3 (per requirements/test.txt) | —                                                                      |
+| pytest-django | `@pytest.mark.django_db`       | ✓                | 4.5.2                             | —                                                                      |
+| factory-boy   | Optional test factories        | ✓                | 3.3.0                             | — (not actually needed for Phase 1; recommendation is to not use it)   |
+| Postgres 15   | Test DB (via `--reuse-db`)     | ✓                | 15.7-alpine                       | — (must be running via `docker-compose-local.yml`)                     |
+| Django ORM    | `IssueRelation`, `Issue`, etc. | ✓                | 4.2.30                            | —                                                                      |
+| `ruff`        | Lint check (CI)                | ✓                | 0.9.7                             | —                                                                      |
 
 **Missing dependencies with no fallback:** None.
 
@@ -956,6 +972,7 @@ Phase 1's contribution to `--fail-under=90` is a small line count. The failure m
 ## Sources
 
 ### Primary (HIGH confidence)
+
 - **CONTEXT.md** (`.planning/phases/01-precedence-graph-loader-normalization/01-CONTEXT.md`) — `<decisions>` block D-01..D-10 (locked by user, treated as fact).
 - **REQUIREMENTS.md** (`.planning/REQUIREMENTS.md`) — PROP-01, PROP-02, PROP-15, PROP-16, PROP-18, TEST-11 phase assignments.
 - **ROADMAP.md** (`.planning/ROADMAP.md` Phase 1 section) — Goal, success criteria, modules-to-change, first-minimum-task.
@@ -984,14 +1001,17 @@ Phase 1's contribution to `--fail-under=90` is a small line count. The failure m
 - PEP 604 (https://peps.python.org/pep-0604/) — Union with `|`.
 
 ### Secondary (MEDIUM confidence)
+
 - factory_boy docs `https://factoryboy.readthedocs.io/en/stable/reference.html#factory.SubFactory` — `[CITED]`, used to confirm SubFactory pattern works with parameter passing for `workspace`/`project` plumbing across multiple `Issue` instances. Not verified via Context7 (CLI ETARGET error during research session); the pattern is canonical and well-documented.
 
 ### Tertiary (LOW confidence)
+
 - None. Every claim in this research is either `[VERIFIED]` against the codebase or `[CITED]` against an authoritative source.
 
 ## Metadata
 
 **Confidence breakdown:**
+
 - Standard stack: **HIGH** — every dependency already in `requirements/test.txt`; no new packages introduced.
 - Architecture: **HIGH** — all 10 user decisions are locked; ROADMAP.md modules-to-change list is concrete; Phase 1 is small and well-scoped.
 - Pitfalls: **HIGH** — directionality verified across 3 code paths + 1 migration; cross-project FK absence verified by absence-of-grep-hit; soft-delete behavior verified via mixin source.
