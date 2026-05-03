@@ -965,3 +965,303 @@ class TestValidationOrder:
         assert not result.is_success
         # D-06 order: CYCLE (step 2) fires before INCOMPLETE on dragged (step 3)
         assert result.failure.code == PropagationErrorCode.DEPENDENCY_CYCLE
+
+
+# --------------------------------------------------------------------------
+# Coverage-gap tests (Plan 02-03 Task 2): propagation.py uncovered branches
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+class TestForwardWalkGaps:
+    """Coverage-gap tests for _walk_forward uncovered branches (Plan 02-03)."""
+
+    def test_forward_successor_not_in_work_items_returns_incomplete_schedule(self):
+        """Line 225: succ_id in graph adjacency but missing from work_items_by_id."""
+        proj = uuid4()
+        a = uuid4()
+        missing = uuid4()  # in graph edges but NOT in work_items_by_id
+        items = {
+            a: _make_scheduled(a, proj, start=date(2026, 5, 4), target=date(2026, 5, 6)),
+            # 'missing' deliberately absent from items
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {missing}}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 4),
+            original_target=date(2026, 5, 6),
+            requested_start=date(2026, 5, 7),  # rightward; triggers walk
+            requested_target=date(2026, 5, 9),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        assert not result.is_success
+        assert result.failure.code == PropagationErrorCode.INCOMPLETE_SCHEDULE
+        assert result.failure.work_item_id == missing
+
+    def test_forward_merge_re_enqueue_on_larger_shift(self):
+        """Lines 274-277: succ already visited but new predecessor demands a larger shift.
+
+        Graph: A→C and B→C; drag A right by 7 days forcing C to require start=14.
+        Then C also has a successor D adjacent to C's original position. We drag B
+        as the item, with A and B both predecessors of C, to produce the merge
+        re-enqueue path where C is visited twice.
+
+        Simpler setup: A→B→D and A→C→D. Drag A rightward. C is visited via A first
+        (via direct edge A→C), then via B→C where B also moved. This exercises the
+        'already in affected AND new_start > existing_start' branch.
+        """
+        proj = uuid4()
+        a, b, c = uuid4(), uuid4(), uuid4()
+        # A → B and A → C, where C is a successor of both A and B.
+        # A.target=5/6, B.start=5/7 (adjacent to A). C.start=5/7 adjacent to A.
+        # After dragging A right by 5 days:
+        #   A new target = 5/11
+        #   B required_start = 5/12 (from A's new target 5/11 +1)
+        #   C first visit: required_start from A's new target 5/11+1=5/12, new_start=5/12 (shift=5)
+        #   Then B is visited and also has C as successor. B new target=5/14.
+        #   C re-visit: required_start from B's new target 5/14+1=5/15 > 5/12 → re-enqueue C.
+        items = {
+            a: _make_scheduled(a, proj, start=date(2026, 5, 4), target=date(2026, 5, 6)),
+            b: _make_scheduled(b, proj, start=date(2026, 5, 7), target=date(2026, 5, 12)),
+            c: _make_scheduled(c, proj, start=date(2026, 5, 7), target=date(2026, 5, 9)),
+        }
+        # A→B, A→C, B→C (both A and B point to C; B also gets shifted by A's rightward move)
+        graph = _make_load_result(_make_adjacency(successors={a: {b, c}, b: {c}}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 4),
+            original_target=date(2026, 5, 6),
+            requested_start=date(2026, 5, 9),  # +5 days
+            requested_target=date(2026, 5, 11),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        # All three should move; C gets the larger shift from B's constraint
+        assert result.is_success
+        assert result.total_updated_count == 3
+        c_update = next(u for u in result.updates if u.id == c)
+        # B new target = 5/12 + 5 = 5/17; required_start for C = 5/18
+        # C new start = max(5/7, 5/18) = 5/18
+        assert c_update.start_date == date(2026, 5, 18)
+
+
+@pytest.mark.unit
+class TestBackwardWalkGaps:
+    """Coverage-gap tests for _walk_backward uncovered branches (Plan 02-03)."""
+
+    def test_backward_cross_project_edge_fails(self):
+        """Line 301: backward walk hits a cross-project edge keyed by successor (cross_project_in)."""
+        proj = uuid4()
+        foreign = uuid4()
+        a = uuid4()
+        relation_id = uuid4()
+        # Cross-project edge: foreign (predecessor) → a (successor).
+        # cross_project_in is keyed by successor, so 'a' will be in cross_project_in.
+        cross_edge = Edge(
+            predecessor_id=foreign,
+            successor_id=a,
+            source_relation_id=relation_id,
+            cross_project=True,
+        )
+        items = {
+            a: _make_scheduled(a, proj, start=date(2026, 5, 7), target=date(2026, 5, 9)),
+        }
+        adj = _make_adjacency(nodes={a, foreign}, cross_project_edges=(cross_edge,))
+        graph = _make_load_result(adj)
+        # Drag a LEFTWARD so _walk_backward is used; 'a' is in cross_project_in → fails
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 7),
+            original_target=date(2026, 5, 9),
+            requested_start=date(2026, 5, 4),  # leftward
+            requested_target=date(2026, 5, 6),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(a))
+
+        assert not result.is_success
+        assert result.failure.code == PropagationErrorCode.PROJECT_BOUNDARY_EXCEEDED
+        assert result.failure.work_item_id == a
+
+    def test_backward_predecessor_not_in_work_items_returns_incomplete_schedule(self):
+        """Line 310: pred_id in graph adjacency but missing from work_items_by_id (backward walk)."""
+        proj = uuid4()
+        missing = uuid4()  # predecessor in graph but NOT in work_items_by_id
+        b = uuid4()
+        items = {
+            b: _make_scheduled(b, proj, start=date(2026, 5, 7), target=date(2026, 5, 9)),
+            # 'missing' deliberately absent
+        }
+        graph = _make_load_result(_make_adjacency(successors={missing: {b}}))
+        intent = _make_intent(
+            b,
+            original_start=date(2026, 5, 7),
+            original_target=date(2026, 5, 9),
+            requested_start=date(2026, 5, 4),  # leftward
+            requested_target=date(2026, 5, 6),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(b))
+
+        assert not result.is_success
+        assert result.failure.code == PropagationErrorCode.INCOMPLETE_SCHEDULE
+        assert result.failure.work_item_id == missing
+
+    def test_backward_predecessor_missing_dates_returns_incomplete_schedule(self):
+        """Line 316: predecessor is in work_items_by_id but has None dates (backward walk)."""
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        items = {
+            a: _make_scheduled(a, proj, start=None, target=None),  # missing dates
+            b: _make_scheduled(b, proj, start=date(2026, 5, 7), target=date(2026, 5, 9)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            b,
+            original_start=date(2026, 5, 7),
+            original_target=date(2026, 5, 9),
+            requested_start=date(2026, 5, 4),  # leftward
+            requested_target=date(2026, 5, 6),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(b))
+
+        assert not result.is_success
+        assert result.failure.code == PropagationErrorCode.INCOMPLETE_SCHEDULE
+        assert result.failure.work_item_id == a
+
+    def test_backward_gap_preservation_frontier_stop(self):
+        """Line 335: leftward gap-preservation — predecessor has large enough gap, no shift."""
+        proj = uuid4()
+        a = uuid4()
+        b = uuid4()
+        # A.target=5/1, B.start=5/10 (8-day gap). Drag B left by 3 days → B.start=5/7.
+        # A.target+1 = 5/2 < 5/7, so no boundary violation → frontier-stop on A.
+        items = {
+            a: _make_scheduled(a, proj, start=date(2026, 4, 28), target=date(2026, 5, 1)),
+            b: _make_scheduled(b, proj, start=date(2026, 5, 10), target=date(2026, 5, 13)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={a: {b}}))
+        intent = _make_intent(
+            b,
+            original_start=date(2026, 5, 10),
+            original_target=date(2026, 5, 13),
+            requested_start=date(2026, 5, 7),  # -3 days; still > A.target+1=5/2
+            requested_target=date(2026, 5, 10),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(b))
+
+        assert result.is_success
+        assert len(result.updates) == 1  # Only B; A is frontier-stopped
+        assert result.updates[0].id == b
+
+    def test_backward_limit_exceeded_in_backward_walk(self):
+        """Line 342: PROPAGATION_LIMIT_EXCEEDED during the backward walk (> 100 predecessors)."""
+        from datetime import timedelta as _td
+        proj = uuid4()
+        # Build a chain of 101 predecessors: P1 ← P2 ← ... ← P101 ← B.
+        # All adjacent. Drag B leftward; the backward walk must update > 100 items.
+        length = 101
+        ids = [uuid4() for _ in range(length + 1)]  # ids[0..100]=predecessors, ids[101]=dragged
+        dragged_id = ids[-1]
+        base = date(2026, 1, 1)
+        items: dict[UUID, ScheduledWorkItem] = {}
+        successors: dict[UUID, set[UUID]] = {}
+
+        # Build chain: ids[0] → ids[1] → ... → ids[100] → dragged_id
+        for i in range(length):
+            item_start = base + _td(days=2 * i)
+            item_target = item_start + _td(days=1)
+            items[ids[i]] = _make_scheduled(ids[i], proj, start=item_start, target=item_target)
+            successors[ids[i]] = {ids[i + 1]}
+
+        # Dragged item at the end of the chain
+        last_pred_target = base + _td(days=2 * (length - 1) + 1)
+        dragged_start = last_pred_target + _td(days=1)
+        dragged_target = dragged_start + _td(days=1)
+        items[dragged_id] = _make_scheduled(dragged_id, proj, start=dragged_start, target=dragged_target)
+
+        graph = _make_load_result(_make_adjacency(successors=successors))
+        # Drag the last item leftward by 2 days; forces all 101 predecessors to shift left
+        intent = _make_intent(
+            dragged_id,
+            original_start=dragged_start,
+            original_target=dragged_target,
+            requested_start=dragged_start - _td(days=2),
+            requested_target=dragged_target - _td(days=2),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(dragged_id))
+
+        assert not result.is_success
+        assert result.failure.code == PropagationErrorCode.PROPAGATION_LIMIT_EXCEEDED
+
+    def test_backward_merge_re_enqueue_on_smaller_target(self):
+        """Lines 352-355: predecessor already visited but new successor demands a smaller target.
+
+        Graph: C→A and C→B, both B and A are successors of C (C is the predecessor).
+        Drag A leftward; A's backward walk reaches C. Then A is also a predecessor of B
+        (wait, that doesn't make sense for backward walk). Let's model it correctly:
+
+        Forward edges: C→A, C→B. So predecessors(A)={C}, predecessors(B)={C}.
+        Drag B leftward. B's backward walk visits C (C is B's predecessor). C must shift.
+        Then C also has A as a successor; if A was also dragged... Actually we need
+        a graph where C is visited twice from two different successors.
+
+        Correct setup for backward merge: X→Y, X→Z. Drag Z leftward.
+        Z's backward walk visits X (X's required_target = Z.start-1). X shifts.
+        Then X also has Y as successor (Y.start hasn't moved — still in new_dates_by_id?
+        No, Y hasn't been visited yet.
+
+        Better setup: Z→Y→X. Drag X leftward. X's backward walk visits Y.
+        Y shifts. Y's backward walk visits Z. Z shifts. Z is now in new_dates_by_id.
+        If X also has Z as a predecessor (X→..., Z→X), that creates the merge scenario.
+
+        Actually: A→C, B→C, C is the dragged item leftward. Wait, backward walk visits
+        predecessors A and B. That exercises the normal path.
+
+        True merge in backward walk: D→A, D→B, A→C, B→C. Drag C leftward.
+        Backward walk from C visits A and B (both predecessors of C). Both shift.
+        Then A and B visit D (D is predecessor of both A and B). D is visited first
+        via A (requiring target = A.new_start - 1). Then D is visited again via B
+        requiring target = B.new_start - 1 where B.new_start < A.new_start.
+        If B.new_start - 1 < D's current new_target → re-enqueue D.
+        """
+        proj = uuid4()
+        d, a, b, c = uuid4(), uuid4(), uuid4(), uuid4()
+        # D→A, D→B, A→C, B→C. All adjacent.
+        # D.target=5/5, A.start=5/6, B.start=5/6, C.start=5/7 adj to A (target=5/6).
+        # But B.target=5/8 (longer duration), so C.start must be >= B.target+1=5/9.
+        # Wait, let's think more carefully:
+        # D: start=5/1, target=5/5 (5 days)
+        # A: start=5/6, target=5/8 (3 days) → adjacent to D
+        # B: start=5/6, target=5/10 (5 days) → adjacent to D
+        # C: start=5/11, target=5/13 → adjacent to B (5/10+1=5/11), NOT adjacent to A
+        # Drag C left by 4 days → C.start=5/7, C.target=5/9
+        # Backward walk from C: visit A (required_target = C.new_start-1 = 5/6; new_target=min(5/8,5/6)=5/6 → shift=2)
+        # A new: start=5/4, target=5/6. Visit B (required_target = C.new_start-1 = 5/6; new_target=min(5/10,5/6)=5/6 → shift=4)
+        # B new: start=5/2, target=5/6.
+        # From A: visit D (required_target = A.new_start-1 = 5/3; D.new_target=min(5/5,5/3)=5/3 → shift=2)
+        # D visited, new_dates_by_id[D]=(5/-1..wait), D: start=5/1-2=4/29, target=5/3.
+        # From B: visit D again (required_target = B.new_start-1 = 5/1; need new_target=min(5/3,5/1)=5/1 < 5/3 → re-enqueue)
+        items = {
+            d: _make_scheduled(d, proj, start=date(2026, 5, 1), target=date(2026, 5, 5)),
+            a: _make_scheduled(a, proj, start=date(2026, 5, 6), target=date(2026, 5, 8)),
+            b: _make_scheduled(b, proj, start=date(2026, 5, 6), target=date(2026, 5, 10)),
+            c: _make_scheduled(c, proj, start=date(2026, 5, 11), target=date(2026, 5, 13)),
+        }
+        graph = _make_load_result(_make_adjacency(successors={d: {a, b}, a: {c}, b: {c}}))
+        intent = _make_intent(
+            c,
+            original_start=date(2026, 5, 11),
+            original_target=date(2026, 5, 13),
+            requested_start=date(2026, 5, 7),  # -4 days leftward
+            requested_target=date(2026, 5, 9),
+        )
+        result = propagate_move(graph, items, intent, _make_versions(c))
+
+        # All four items move; D gets the larger pullback from B's constraint
+        assert result.is_success
+        assert result.total_updated_count == 4
+        d_update = next(u for u in result.updates if u.id == d)
+        # From B: D.required_target = B.new_start - 1 = 5/2 - 1 = 5/1
+        # D.new_target = min(5/5, 5/1) = 5/1; shift = 4; D.new_start = 5/1 - 4 = 4/27
+        assert d_update.target_date == date(2026, 5, 1)
