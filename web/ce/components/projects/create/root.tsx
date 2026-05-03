@@ -106,19 +106,31 @@ export const CreateProjectForm: FC<TCreateProjectFormProps> = observer((props) =
         handleNextStep(res.id);
       })
       .catch((err) => {
-        Object.keys(err.data).map((key) => {
+        const errorData = err?.data;
+        if (errorData && typeof errorData === "object" && Object.keys(errorData).length > 0) {
+          Object.keys(errorData).map((key) => {
+            const fieldError = errorData[key];
+            // Django REST Framework returns field errors as arrays; join them for display
+            const message = Array.isArray(fieldError) ? fieldError.join(" ") : String(fieldError);
+            setToast({
+              type: TOAST_TYPE.ERROR,
+              title: t("error"),
+              message,
+            });
+          });
+        } else {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: t("error"),
-            message: err.data[key],
+            message: t("something_went_wrong_please_try_again"),
           });
-          captureProjectEvent({
-            eventName: PROJECT_CREATED,
-            payload: {
-              ...formData,
-              state: "FAILED",
-            },
-          });
+        }
+        captureProjectEvent({
+          eventName: PROJECT_CREATED,
+          payload: {
+            ...formData,
+            state: "FAILED",
+          },
         });
       });
   };
