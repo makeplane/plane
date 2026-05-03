@@ -809,37 +809,45 @@ The `-c` flag adds `-m contract` to the pytest command. New tests in `apps/api/p
 
 The Assumptions Log is intentionally short — most claims in this research are tied to either Django 4.2 official docs or the existing codebase. The two `[ASSUMED]` items are the test-mocking pattern (A2) and the StateFactory necessity (A1); both are low-risk and easy to verify in plan-phase.
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> All six questions resolved during plan-phase. Recommendations applied to PLAN.md files via the locked CONTEXT.md decisions cited below.
 
 1. **Should the inline membership check sit BEFORE or AFTER the serializer validation?**
    - What we know: CONTEXT.md D-02 + D-04 don't specify order. The existing `@allow_permission` decorator runs BEFORE the view body, so currently permission is checked before serializer parsing.
    - What's unclear: If serializer fails (DRF 400 default body) before permission check, an unauthenticated/non-member user sees 401 (auth) but a malformed-body authenticated non-member sees 400. If permission first, they see 403. Both are defensible.
    - Recommendation: **Permission check FIRST**, serializer SECOND. Matches existing decorator order; an unauthenticated user never sees a 400 (less info-leak). Pin in plan-phase.
+   - **RESOLVED:** Plan 03-02 Task 2 step 2 — inline `ProjectMember` filter runs FIRST; serializer.is_valid() runs SECOND. Cited at CONTEXT D-02.
 
 2. **Should `test_status_code_per_error_code` be a parametrized matrix or 7 separate tests?**
    - What we know: CONTEXT D-14 lists 7 separate tests (one per code). Specifics §6 explicitly recommends keeping them separate for readable failure output.
    - What's unclear: Plan-phase may opt for a parametrize sweep + one focused test to assert the response BODY shape — saves lines but loses test-name clarity.
    - Recommendation: Keep 7 separate (per CONTEXT D-14); parametrize one auxiliary test for body-shape if helpful. Lock in plan-phase.
+   - **RESOLVED:** Plan 03-02 Task 2 ships 7 dedicated `test_<code>_returns_<status>_envelope` tests (one per `PropagationErrorCode` value). No parametrize sweep added. Cited at CONTEXT D-14.
 
 3. **`select_for_update(of=("self",))` vs `select_for_update()` (default = lock everything joined)?**
    - What we know: Django 4.2 supports `of=("self",)` to lock only the row in the queryset's main model (not joined `workspace`, `project`). Without it, a long-running concurrent transaction can deadlock on FK-side rows.
    - What's unclear: Whether the Plane test environment ever sees concurrent writers on `Workspace` or `Project` rows during a propagation. Almost certainly not (those tables are mostly read-mostly), but `of=("self",)` is the cheaper lock.
    - Recommendation: Use `select_for_update(of=("self",))` for the dragged Issue. Confirm via plan-phase that no model is blocked from joins. Falls back to default behavior cleanly.
+   - **RESOLVED:** Plan 03-02 Task 2 step 5a uses `select_for_update(of=("self",))`. Acceptance criterion greps for the exact `of=("self",)` argument. Cited at CONTEXT D-05.
 
 4. **Should the response payload's `updated_at` be `now.isoformat()` or `now` itself (DRF's serializer formatting)?**
    - What we know: CONTEXT D-04 says "DRF default ISO 8601 with microseconds." If we pass `now` (a `datetime` object) into a dict-and-Response, DRF serializes via `JSONRenderer.encode` which uses `DjangoJSONEncoder` — which emits `isoformat()` automatically.
    - What's unclear: Whether the test asserts the literal isoformat string (microseconds, "Z" or "+00:00" suffix). Matter of test precision.
    - Recommendation: Pass `now` as a datetime; let DRF handle formatting. Tests assert via `datetime.fromisoformat(response.json()["work_items"][0]["updated_at"])` for round-trip safety. Lock in plan-phase.
+   - **RESOLVED:** Plan 03-02 Task 2 step 11 passes the `datetime` object directly to the response dict; tests use `datetime.fromisoformat(...)` for round-trip assertions. Cited at CONTEXT D-04.
 
 5. **For the `test_existing_bulk_update_endpoint_unchanged` regression, what exactly is "unchanged"?**
    - What we know: API-11 says "leave it alone." The endpoint at `views/issue/base.py:1093-1170` should not be touched by Phase 3.
    - What's unclear: Should the regression test be a structural smoke (one POST, one assertEqual on response body shape) or also assert the bulk_update side-effect is correct?
    - Recommendation: Structural smoke only. The existing endpoint's correctness is not Phase 3's concern; we only assert it didn't break by accident. One POST + one `assertEqual(response.status_code, 200)` + one assert on the response body shape. Lock in plan-phase.
+   - **RESOLVED:** Plan 03-01 Task 2 ships `test_existing_bulk_update_endpoint_unchanged` as structural smoke only — one POST + status assert + body-shape assert. No assertions on persisted side effects.
 
 6. **Does the `IssueRelation` queryset need to filter `relation_type='blocked_by'` OR is the loader's filter sufficient?**
    - What we know: Phase 1 D-04 — the loader drops every `relation_type != "blocked_by"` row internally. So a queryset that includes ALL relation types would still produce the correct adjacency.
    - What's unclear: Whether to pre-filter at queryset level (cheaper SQL) or rely on the loader (cleaner separation).
    - Recommendation: Do not pre-filter at the view. Let the loader own the filter (Phase 1 D-04 is binding). The queryset just narrows by `project_id` + `deleted_at__isnull=True` + the two project_id annotations. Lock in plan-phase.
+   - **RESOLVED:** Plan 03-02 Task 2 step 6 — view's IssueRelation queryset filters only `project_id` + `deleted_at__isnull=True` + adds annotations per CONTEXT D-11. Loader owns the `relation_type` filter per Phase 1 D-04.
 
 ## Sources
 
