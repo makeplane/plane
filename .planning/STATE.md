@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: "Plan 01-01 complete: timeline_propagation package scaffolded + frozen value-type contracts + first failing pytest case (RED handoff to Plan 02)."
-last_updated: "2026-05-03T15:26:37Z"
-last_activity: 2026-05-03 -- Plan 01-01 complete; Plan 01-02 unblocked
+stopped_at: "Phase 1 complete: precedence graph loader implemented (filter + direction translation + both-endpoints cross-project + iterative three-color DFS) + 11 GREEN unit tests pinning every PROP/D-NN identifier in Phase 1; D-08 lint-grep purity invariant locked for future Phase 2 modules."
+last_updated: "2026-05-03T15:37:28Z"
+last_activity: 2026-05-03 -- Plan 01-02 complete; Phase 1 done; Phase 2 unblocked
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 2
-  completed_plans: 1
-  percent: 8
+  completed_plans: 2
+  percent: 17
 ---
 
 # Project State
@@ -21,46 +21,47 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-03)
 
 **Core value:** ドラッグ移動が Precedence Boundary を超えても、サーバ権威で必要最小限の連鎖を all-or-nothing で再配置し、失敗時は明示的な reason code で UI に説明できる。
-**Current focus:** Phase 1 — Precedence Graph Loader & Normalization
+**Current focus:** Phase 2 — Date-Range Scheduling Helper & Propagation Algorithm Core (next)
 
 ## Current Position
 
-Phase: 1 (Precedence Graph Loader & Normalization) — EXECUTING
-Plan: 2 of 2 (next)
-Status: Plan 01-01 complete (RED handoff); Plan 01-02 ready
-Last activity: 2026-05-03 -- Plan 01-01 complete; Plan 01-02 unblocked
+Phase: 1 (Precedence Graph Loader & Normalization) — COMPLETE
+Plan: 2 of 2 (done)
+Status: Phase 1 complete; Phase 2 unblocked
+Last activity: 2026-05-03 -- Plan 01-02 complete; Phase 1 done; Phase 2 unblocked
 
-Progress: [█░░░░░░░░░] 8%
+Progress: [█░░░░░░░░░] 17%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 1
-- Average duration: 4m43s
-- Total execution time: 4m43s
+- Total plans completed: 2
+- Average duration: 5m19s
+- Total execution time: 10m38s
 
 **By Phase:**
 
-| Phase                                             | Plans | Total | Avg/Plan |
-| ------------------------------------------------- | ----- | ----- | -------- |
-| 1. Precedence Graph Loader & Normalization        | 1/2   | 4m43s | 4m43s    |
-| 2. Scheduling Helper & Propagation Algorithm Core | 0     | —     | —        |
-| 3. Propagation API Endpoint & Contract            | 0     | —     | —        |
-| 4. Frontend Service Client & MobX Preview Store   | 0     | —     | —        |
-| 5. Drag Handler Integration & Error UX            | 0     | —     | —        |
-| 6. End-to-End Coverage & Polish                   | 0     | —     | —        |
+| Phase                                             | Plans | Total  | Avg/Plan |
+| ------------------------------------------------- | ----- | ------ | -------- |
+| 1. Precedence Graph Loader & Normalization        | 2/2   | 10m38s | 5m19s    |
+| 2. Scheduling Helper & Propagation Algorithm Core | 0     | —      | —        |
+| 3. Propagation API Endpoint & Contract            | 0     | —      | —        |
+| 4. Frontend Service Client & MobX Preview Store   | 0     | —      | —        |
+| 5. Drag Handler Integration & Error UX            | 0     | —      | —        |
+| 6. End-to-End Coverage & Polish                   | 0     | —      | —        |
 
 **Plan execution log:**
 
 | Phase-Plan | Tasks | Files | Duration | Completed            |
 | ---------- | ----- | ----- | -------- | -------------------- |
 | 01-01      | 3     | 6     | 4m43s    | 2026-05-03T15:26:37Z |
+| 01-02      | 2     | 3     | 5m55s    | 2026-05-03T15:37:28Z |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01 (4m43s)
-- Trend: First plan completed; baseline established
+- Last 5 plans: 01-01 (4m43s), 01-02 (5m55s)
+- Trend: Phase 1 complete in ~10m; loader contract locked for downstream phases.
 
 _Updated after each plan completion_
 
@@ -79,6 +80,10 @@ Recent decisions affecting current work:
 - (01-01) `Adjacency.successors_of` / `.predecessors_of` return empty frozenset for unknown ids — Phase 2 walks the graph from arbitrary moved nodes and relies on this no-KeyError contract (D-06).
 - (01-01) PROP-18 move-only scope is declared at the public surface (both `types.py` and `__init__.py` module docstrings) — resize is not a concept in the timeline_propagation module.
 - (01-01) Inter-plan RED handoff pattern: ship the failing pytest case in plan N so plan N+1 has an immediate GREEN target. `__init__.py` forward-references the not-yet-created `.graph` module by design.
+- (01-02) Cross-project edge classification reads BOTH endpoints' `project_id` (issue + related_issue), not only the related_issue side as the plan's literal `_make_edge` skeleton showed. PROP-16 semantics ("paths reaching outside the project fail propagation") apply regardless of which side of the IssueRelation row the foreign Issue lives on; Pitfall 2 invariant (no `row.project_id` use) is preserved.
+- (01-02) Cycle detection is iterative three-color DFS with explicit list-of-(node, iter) stack, deterministic sort order on roots and successors (Pitfall 4), self-edge guard before color tracking (D-05). No recursion; no `sys.setrecursionlimit`. Returns the closed cycle path as `tuple[UUID, ...]` (last element equals first); never throws across the module boundary.
+- (01-02) D-08 / PROP-18 lint-grep test (`test_no_drf_or_http_imports_in_module`) walks `pathlib.Path.rglob("*.py")` under the package and asserts no `rest_framework`, `django.http`, `plane.app.views`, `plane.app.serializers` imports — locks isolation for future Phase 2 modules (`scheduling.py`, `propagation.py`, `errors.py`).
+- (01-02) `RelationLike` Protocol is the loader's structural input contract — first `typing.Protocol` use in apps/api/plane/. Lets tests pass plain dataclasses if desired without import-time coupling to ORM rows; Phase 3 `IssueRelation` queryset rows satisfy it automatically.
 
 ### Pending Todos
 
@@ -89,6 +94,7 @@ None yet.
 - **Vitest harness decision for `apps/web` / `@plane/utils`** (Phase 4): TEST-19..TEST-22 require frontend store/helper unit tests. `apps/web` has no JS test harness today (per `CONCERNS.md`). Recommendation locked in Phase 4 to put pure preview/diff logic in `@plane/utils` with Vitest, but final decision needs user sign-off in plan-phase.
 - **`expected_updated_at` precision and HTTP status mapping** (Phase 3): exact ISO format and 409 vs 422 selection per error code must be locked during Phase 3 plan-phase.
 - **Adjacency definition** (Phase 2): confirm `successor.start = predecessor.target + 1 calendar day` is the canonical adjacent case (PRD says yes; nail down at plan-phase).
+- **Pre-existing unit-suite failures** (logged in `.planning/phases/01-precedence-graph-loader-normalization/deferred-items.md`): 5 tests fail in `bg_tasks/test_copy_s3_objects.py`, `bg_tasks/test_work_item_link_task.py`, `utils/test_url.py`. They pre-date this milestone (verified by re-running on Plan 01-01's tip `c7df9b8d2d`). Not blocking Phase 2 — out of scope per SCOPE BOUNDARY. May need triage outside this milestone if any timeline_propagation work depends on those modules.
 
 ## Deferred Items
 
@@ -107,5 +113,5 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 ## Session Continuity
 
 Last session: 2026-05-03
-Stopped at: Plan 01-01 complete (3/3 tasks committed; SUMMARY.md written; STATE / ROADMAP / REQUIREMENTS updated). RED handoff to Plan 01-02 in place — `__init__.py` forward-references `.graph`, `test_relates_to_is_dropped` is the first GREEN target.
-Resume file: .planning/phases/01-precedence-graph-loader-normalization/01-02-PLAN.md
+Stopped at: Plan 01-02 complete (2/2 tasks committed; SUMMARY.md written; STATE / ROADMAP / REQUIREMENTS updated). Phase 1 done: 11 unit tests green, D-08 lint-grep purity invariant locked, cross-phase contracts (`Adjacency`, `Edge`, `LoadResult`, `WorkItemNode`, `load_precedence_graph`) ready for Phase 2 consumption.
+Resume file: .planning/phases/02-... (next phase, not yet planned)

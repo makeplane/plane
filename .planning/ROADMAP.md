@@ -13,7 +13,7 @@ This milestone delivers server-authoritative dependency schedule propagation for
 
 Phases execute strictly sequentially (`config.json: parallelization=false`). Each phase locks a contract that the next phase consumes.
 
-- [ ] **Phase 1: Precedence Graph Loader & Normalization** - Pure same-project precedence graph builder with cycle detection, isolated from Django views and HTTP.
+- [x] **Phase 1: Precedence Graph Loader & Normalization** - Pure same-project precedence graph builder with cycle detection, isolated from Django views and HTTP. (Completed 2026-05-03; 6 of 6 requirements done: PROP-01, PROP-02, PROP-15, PROP-16, PROP-18, TEST-11.)
 - [ ] **Phase 2: Date-Range Scheduling Helper & Propagation Algorithm Core** - Pure deep-module algorithm: duration preservation, boundary checks, transitive propagation, limit, typed failures.
 - [ ] **Phase 3: Propagation API Endpoint, Persistence & Contract** - DRF endpoint with all-or-nothing transactional persistence, stale detection, permission, stable `{code, message}` failure shape.
 - [ ] **Phase 4: Frontend Service Client & MobX Preview Store** - `@plane/services` propagation client + MobX advisory preview / server-replace / rollback / hidden-update store.
@@ -236,18 +236,18 @@ Phases execute strictly sequentially (`config.json: parallelization=false`). Eac
 **Execution Order:**
 Phases execute strictly in numeric order: 1 → 2 → 3 → 4 → 5 → 6. Each phase locks a contract its successor depends on; `parallelization=false` in `config.json`.
 
-| Phase                                                        | Plans Complete | Status      | Completed |
-| ------------------------------------------------------------ | -------------- | ----------- | --------- |
-| 1. Precedence Graph Loader & Normalization                   | 1/2            | In progress | -         |
-| 2. Date-Range Scheduling Helper & Propagation Algorithm Core | 0/TBD          | Not started | -         |
-| 3. Propagation API Endpoint, Persistence & Contract          | 0/TBD          | Not started | -         |
-| 4. Frontend Service Client & MobX Preview Store              | 0/TBD          | Not started | -         |
-| 5. Drag Handler Integration & Error UX                       | 0/TBD          | Not started | -         |
-| 6. End-to-End Coverage & Polish                              | 0/TBD          | Not started | -         |
+| Phase                                                        | Plans Complete | Status      | Completed  |
+| ------------------------------------------------------------ | -------------- | ----------- | ---------- |
+| 1. Precedence Graph Loader & Normalization                   | 2/2            | Complete    | 2026-05-03 |
+| 2. Date-Range Scheduling Helper & Propagation Algorithm Core | 0/TBD          | Not started | -          |
+| 3. Propagation API Endpoint, Persistence & Contract          | 0/TBD          | Not started | -          |
+| 4. Frontend Service Client & MobX Preview Store              | 0/TBD          | Not started | -          |
+| 5. Drag Handler Integration & Error UX                       | 0/TBD          | Not started | -          |
+| 6. End-to-End Coverage & Polish                              | 0/TBD          | Not started | -          |
 
 ## Phase 1 — Plans
 
 **Plans:** 2 plans (sequential, Wave 1 → Wave 2)
 
 - [x] 01-01-PLAN.md — Scaffold timeline_propagation package + types.py (frozen dataclasses) + first failing pytest case for relates_to exclusion (PROP-18 declared at module surface) — completed 2026-05-03 (4m43s; commits 299261c8a2, c86eccdaf8, 8252a268c6; see [01-01-SUMMARY.md](phases/01-precedence-graph-loader-normalization/01-01-SUMMARY.md))
-- [ ] 01-02-PLAN.md — Implement graph.py (loader + iterative three-color DFS cycle detection) + 9 additional tests covering PROP-01, PROP-02, PROP-15, PROP-16, TEST-11 + lint-grep purity (D-08)
+- [x] 01-02-PLAN.md — Implement graph.py (loader + iterative three-color DFS cycle detection) + 9 additional tests covering PROP-01, PROP-02, PROP-15, PROP-16, TEST-11 + lint-grep purity (D-08) — completed 2026-05-03 (5m55s; commits 7c8cf118b7, e0d9d07eef; see [01-02-SUMMARY.md](phases/01-precedence-graph-loader-normalization/01-02-SUMMARY.md))

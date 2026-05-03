@@ -16,8 +16,8 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 
 サーバ権威、deep module、TDD 単位で完結すべき箇所。
 
-- [ ] **PROP-01**: サーバは current project の同一プロジェクト範囲で `IssueRelation` を読み、`blocking` / `blocked_by` を **predecessor → successor** に正規化したグラフを構築できる(US-34, US-16)
-- [ ] **PROP-02**: `relates_to` / `duplicate` はグラフに**含めない**(US-17, US-18)
+- [x] **PROP-01**: サーバは current project の同一プロジェクト範囲で `IssueRelation` を読み、`blocking` / `blocked_by` を **predecessor → successor** に正規化したグラフを構築できる(US-34, US-16) — Plan 01-02 (2026-05-03): `load_precedence_graph` in `apps/api/plane/app/services/timeline_propagation/graph.py` filters `blocked_by` and emits `Edge(predecessor=related_issue_id, successor=issue_id)`; pinned by `TestLoadPrecedenceGraphDirection` and `TestLoadPrecedenceGraphFilters::test_blocking_via_get_actual_relation_normalizes_to_one_edge`.
+- [x] **PROP-02**: `relates_to` / `duplicate` はグラフに**含めない**(US-17, US-18) — Plan 01-02 (2026-05-03): loader drops every `relation_type != "blocked_by"`; pinned by `TestLoadPrecedenceGraphFilters::test_relates_to_is_dropped` and `test_duplicate_is_dropped`.
 - [ ] **PROP-03**: 移動した Work Item が既存の Precedence Boundary を**1 つも違反しない**場合、その Work Item だけが更新される(US-2, US-5, US-10, US-11)
 - [ ] **PROP-04**: rightward(後ろへ)の move が successor の Precedence Boundary を違反したとき、影響する successor だけを最小量で前進させる(US-4, US-10)
 - [ ] **PROP-05**: leftward(前へ)の move が predecessor の Precedence Boundary を違反したとき、影響する predecessor だけを最小量で後退させる(US-3, US-11)
@@ -30,8 +30,8 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 - [ ] **PROP-12**: 伝播は all-or-nothing で適用される(US-21)
 - [ ] **PROP-13**: 伝播される Work Item 数の上限は 100。超過時は `PROPAGATION_LIMIT_EXCEEDED` で fail(US-29)
 - [ ] **PROP-14**: 伝播ロジックは独立した service module(graph traversal / direction normalize / date-range move / limit / 失敗選択を小さい interface で隠蔽)として実装される(US-33)
-- [ ] **PROP-15**: precedence graph 上の循環(cycle)は伝播を停止し `DEPENDENCY_CYCLE` で fail(US-28)
-- [ ] **PROP-16**: 同一プロジェクト範囲外に到達する依存パスは伝播全体を停止し `PROJECT_BOUNDARY_EXCEEDED` で fail(US-20)
+- [x] **PROP-15**: precedence graph 上の循環(cycle)は伝播を停止し `DEPENDENCY_CYCLE` で fail(US-28) — Plan 01-02 (2026-05-03): graph-side cycle detection via iterative three-color DFS (`_detect_cycle` in `graph.py`) returns the closed cycle path tuple in `LoadResult.cycle` (Phase 2 will translate this into `DEPENDENCY_CYCLE` typed failure); pinned by `TestLoadPrecedenceGraphCycle::test_three_node_cycle_is_detected` and `test_self_edge_is_one_node_cycle`.
+- [x] **PROP-16**: 同一プロジェクト範囲外に到達する依存パスは伝播全体を停止し `PROJECT_BOUNDARY_EXCEEDED` で fail(US-20) — Plan 01-02 (2026-05-03): graph-side classification only — `_make_edge` reads BOTH endpoints' `project_id` (preferring `issue_project_id` / `related_project_id` annotations) and routes ANY cross-project edge into `Adjacency.cross_project_edges` with `cross_project=True`, never entering same-project successors/predecessors (Phase 2/3 will translate reachability into `PROJECT_BOUNDARY_EXCEEDED`); pinned by `TestLoadPrecedenceGraphCrossProject::test_cross_project_successor_marked`.
 - [ ] **PROP-17**: 伝播対象に `start_date` または `target_date` を欠く Work Item があれば伝播を停止し `INCOMPLETE_SCHEDULE` で fail(US-19)
 - [x] **PROP-18**: 伝播はサービスレイヤとして resize は対象外、move(完全 schedule の移動)のみ対応(Implementation Decision: move only) — Plan 01-01 (2026-05-03): module-surface declaration in apps/api/plane/app/services/timeline_propagation/**init**.py and types.py module docstrings.
 
@@ -89,7 +89,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 - [ ] **TEST-08**: backend service unit test: exact boundary adjacency
 - [ ] **TEST-09**: backend service unit test: incomplete scheduled work item → `INCOMPLETE_SCHEDULE`
 - [ ] **TEST-10**: backend service unit test: cross-project dependency path → `PROJECT_BOUNDARY_EXCEEDED`
-- [ ] **TEST-11**: backend service unit test: cycle detection → `DEPENDENCY_CYCLE`
+- [x] **TEST-11**: backend service unit test: cycle detection → `DEPENDENCY_CYCLE` — Plan 01-02 (2026-05-03): `TestLoadPrecedenceGraphCycle::test_three_node_cycle_is_detected` and `test_self_edge_is_one_node_cycle` in `apps/api/plane/tests/unit/services/timeline_propagation/test_graph.py` cover three-node and self-edge cycle cases.
 - [ ] **TEST-12**: backend service unit test: 100 work item limit → `PROPAGATION_LIMIT_EXCEEDED`
 - [ ] **TEST-13**: backend service unit test: stale schedule rejection → `SCHEDULE_CHANGED`
 - [ ] **TEST-14**: backend service unit test: invalid date range → `INVALID_DATE_RANGE`
@@ -143,8 +143,8 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 
 | Requirement | Phase   | Status                        |
 | ----------- | ------- | ----------------------------- |
-| PROP-01     | Phase 1 | Pending                       |
-| PROP-02     | Phase 1 | Pending                       |
+| PROP-01     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
+| PROP-02     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
 | PROP-03     | Phase 2 | Pending                       |
 | PROP-04     | Phase 2 | Pending                       |
 | PROP-05     | Phase 2 | Pending                       |
@@ -157,8 +157,8 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 | PROP-12     | Phase 2 | Pending                       |
 | PROP-13     | Phase 2 | Pending                       |
 | PROP-14     | Phase 2 | Pending                       |
-| PROP-15     | Phase 1 | Pending                       |
-| PROP-16     | Phase 1 | Pending                       |
+| PROP-15     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
+| PROP-16     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
 | PROP-17     | Phase 2 | Pending                       |
 | PROP-18     | Phase 1 | Done (Plan 01-01, 2026-05-03) |
 | API-01      | Phase 3 | Pending                       |
@@ -200,7 +200,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 | TEST-08     | Phase 2 | Pending                       |
 | TEST-09     | Phase 2 | Pending                       |
 | TEST-10     | Phase 3 | Pending                       |
-| TEST-11     | Phase 1 | Pending                       |
+| TEST-11     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
 | TEST-12     | Phase 2 | Pending                       |
 | TEST-13     | Phase 3 | Pending                       |
 | TEST-14     | Phase 2 | Pending                       |
