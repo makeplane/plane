@@ -33,7 +33,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 - [ ] **PROP-15**: precedence graph 上の循環(cycle)は伝播を停止し `DEPENDENCY_CYCLE` で fail(US-28)
 - [ ] **PROP-16**: 同一プロジェクト範囲外に到達する依存パスは伝播全体を停止し `PROJECT_BOUNDARY_EXCEEDED` で fail(US-20)
 - [ ] **PROP-17**: 伝播対象に `start_date` または `target_date` を欠く Work Item があれば伝播を停止し `INCOMPLETE_SCHEDULE` で fail(US-19)
-- [ ] **PROP-18**: 伝播はサービスレイヤとして resize は対象外、move(完全 schedule の移動)のみ対応(Implementation Decision: move only)
+- [x] **PROP-18**: 伝播はサービスレイヤとして resize は対象外、move(完全 schedule の移動)のみ対応(Implementation Decision: move only) — Plan 01-01 (2026-05-03): module-surface declaration in apps/api/plane/app/services/timeline_propagation/**init**.py and types.py module docstrings.
 
 ### API — Dedicated Propagation Endpoint
 
@@ -141,79 +141,79 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 
 各要件はちょうど一つの Phase に割り当てる(orphan なし、duplicate なし)。Phase 詳細は `.planning/ROADMAP.md` を参照。
 
-| Requirement | Phase   | Status  |
-| ----------- | ------- | ------- |
-| PROP-01     | Phase 1 | Pending |
-| PROP-02     | Phase 1 | Pending |
-| PROP-03     | Phase 2 | Pending |
-| PROP-04     | Phase 2 | Pending |
-| PROP-05     | Phase 2 | Pending |
-| PROP-06     | Phase 2 | Pending |
-| PROP-07     | Phase 2 | Pending |
-| PROP-08     | Phase 2 | Pending |
-| PROP-09     | Phase 2 | Pending |
-| PROP-10     | Phase 2 | Pending |
-| PROP-11     | Phase 2 | Pending |
-| PROP-12     | Phase 2 | Pending |
-| PROP-13     | Phase 2 | Pending |
-| PROP-14     | Phase 2 | Pending |
-| PROP-15     | Phase 1 | Pending |
-| PROP-16     | Phase 1 | Pending |
-| PROP-17     | Phase 2 | Pending |
-| PROP-18     | Phase 1 | Pending |
-| API-01      | Phase 3 | Pending |
-| API-02      | Phase 3 | Pending |
-| API-03      | Phase 3 | Pending |
-| API-04      | Phase 3 | Pending |
-| API-05      | Phase 3 | Pending |
-| API-06      | Phase 3 | Pending |
-| API-07      | Phase 3 | Pending |
-| API-08      | Phase 3 | Pending |
-| API-09      | Phase 3 | Pending |
-| API-10      | Phase 3 | Pending |
-| API-11      | Phase 3 | Pending |
-| API-12      | Phase 3 | Pending |
-| FE-01       | Phase 4 | Pending |
-| FE-02       | Phase 4 | Pending |
-| FE-03       | Phase 5 | Pending |
-| FE-04       | Phase 4 | Pending |
-| FE-05       | Phase 4 | Pending |
-| FE-06       | Phase 4 | Pending |
-| FE-07       | Phase 4 | Pending |
-| FE-08       | Phase 4 | Pending |
-| FE-09       | Phase 5 | Pending |
-| ERR-01      | Phase 5 | Pending |
-| ERR-02      | Phase 5 | Pending |
-| ERR-03      | Phase 5 | Pending |
-| ERR-04      | Phase 5 | Pending |
-| ERR-05      | Phase 5 | Pending |
-| ERR-06      | Phase 5 | Pending |
-| ERR-07      | Phase 5 | Pending |
-| ERR-08      | Phase 5 | Pending |
-| TEST-01     | Phase 2 | Pending |
-| TEST-02     | Phase 2 | Pending |
-| TEST-03     | Phase 2 | Pending |
-| TEST-04     | Phase 2 | Pending |
-| TEST-05     | Phase 2 | Pending |
-| TEST-06     | Phase 2 | Pending |
-| TEST-07     | Phase 2 | Pending |
-| TEST-08     | Phase 2 | Pending |
-| TEST-09     | Phase 2 | Pending |
-| TEST-10     | Phase 3 | Pending |
-| TEST-11     | Phase 1 | Pending |
-| TEST-12     | Phase 2 | Pending |
-| TEST-13     | Phase 3 | Pending |
-| TEST-14     | Phase 2 | Pending |
-| TEST-15     | Phase 3 | Pending |
-| TEST-16     | Phase 3 | Pending |
-| TEST-17     | Phase 3 | Pending |
-| TEST-18     | Phase 3 | Pending |
-| TEST-19     | Phase 4 | Pending |
-| TEST-20     | Phase 4 | Pending |
-| TEST-21     | Phase 4 | Pending |
-| TEST-22     | Phase 4 | Pending |
-| TEST-23     | Phase 6 | Pending |
-| TEST-24     | Phase 6 | Pending |
+| Requirement | Phase   | Status                        |
+| ----------- | ------- | ----------------------------- |
+| PROP-01     | Phase 1 | Pending                       |
+| PROP-02     | Phase 1 | Pending                       |
+| PROP-03     | Phase 2 | Pending                       |
+| PROP-04     | Phase 2 | Pending                       |
+| PROP-05     | Phase 2 | Pending                       |
+| PROP-06     | Phase 2 | Pending                       |
+| PROP-07     | Phase 2 | Pending                       |
+| PROP-08     | Phase 2 | Pending                       |
+| PROP-09     | Phase 2 | Pending                       |
+| PROP-10     | Phase 2 | Pending                       |
+| PROP-11     | Phase 2 | Pending                       |
+| PROP-12     | Phase 2 | Pending                       |
+| PROP-13     | Phase 2 | Pending                       |
+| PROP-14     | Phase 2 | Pending                       |
+| PROP-15     | Phase 1 | Pending                       |
+| PROP-16     | Phase 1 | Pending                       |
+| PROP-17     | Phase 2 | Pending                       |
+| PROP-18     | Phase 1 | Done (Plan 01-01, 2026-05-03) |
+| API-01      | Phase 3 | Pending                       |
+| API-02      | Phase 3 | Pending                       |
+| API-03      | Phase 3 | Pending                       |
+| API-04      | Phase 3 | Pending                       |
+| API-05      | Phase 3 | Pending                       |
+| API-06      | Phase 3 | Pending                       |
+| API-07      | Phase 3 | Pending                       |
+| API-08      | Phase 3 | Pending                       |
+| API-09      | Phase 3 | Pending                       |
+| API-10      | Phase 3 | Pending                       |
+| API-11      | Phase 3 | Pending                       |
+| API-12      | Phase 3 | Pending                       |
+| FE-01       | Phase 4 | Pending                       |
+| FE-02       | Phase 4 | Pending                       |
+| FE-03       | Phase 5 | Pending                       |
+| FE-04       | Phase 4 | Pending                       |
+| FE-05       | Phase 4 | Pending                       |
+| FE-06       | Phase 4 | Pending                       |
+| FE-07       | Phase 4 | Pending                       |
+| FE-08       | Phase 4 | Pending                       |
+| FE-09       | Phase 5 | Pending                       |
+| ERR-01      | Phase 5 | Pending                       |
+| ERR-02      | Phase 5 | Pending                       |
+| ERR-03      | Phase 5 | Pending                       |
+| ERR-04      | Phase 5 | Pending                       |
+| ERR-05      | Phase 5 | Pending                       |
+| ERR-06      | Phase 5 | Pending                       |
+| ERR-07      | Phase 5 | Pending                       |
+| ERR-08      | Phase 5 | Pending                       |
+| TEST-01     | Phase 2 | Pending                       |
+| TEST-02     | Phase 2 | Pending                       |
+| TEST-03     | Phase 2 | Pending                       |
+| TEST-04     | Phase 2 | Pending                       |
+| TEST-05     | Phase 2 | Pending                       |
+| TEST-06     | Phase 2 | Pending                       |
+| TEST-07     | Phase 2 | Pending                       |
+| TEST-08     | Phase 2 | Pending                       |
+| TEST-09     | Phase 2 | Pending                       |
+| TEST-10     | Phase 3 | Pending                       |
+| TEST-11     | Phase 1 | Pending                       |
+| TEST-12     | Phase 2 | Pending                       |
+| TEST-13     | Phase 3 | Pending                       |
+| TEST-14     | Phase 2 | Pending                       |
+| TEST-15     | Phase 3 | Pending                       |
+| TEST-16     | Phase 3 | Pending                       |
+| TEST-17     | Phase 3 | Pending                       |
+| TEST-18     | Phase 3 | Pending                       |
+| TEST-19     | Phase 4 | Pending                       |
+| TEST-20     | Phase 4 | Pending                       |
+| TEST-21     | Phase 4 | Pending                       |
+| TEST-22     | Phase 4 | Pending                       |
+| TEST-23     | Phase 6 | Pending                       |
+| TEST-24     | Phase 6 | Pending                       |
 
 **Coverage:**
 

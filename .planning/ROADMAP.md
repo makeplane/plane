@@ -238,7 +238,7 @@ Phases execute strictly in numeric order: 1 → 2 → 3 → 4 → 5 → 6. Each 
 
 | Phase                                                        | Plans Complete | Status      | Completed |
 | ------------------------------------------------------------ | -------------- | ----------- | --------- |
-| 1. Precedence Graph Loader & Normalization                   | 0/2            | Planned     | -         |
+| 1. Precedence Graph Loader & Normalization                   | 1/2            | In progress | -         |
 | 2. Date-Range Scheduling Helper & Propagation Algorithm Core | 0/TBD          | Not started | -         |
 | 3. Propagation API Endpoint, Persistence & Contract          | 0/TBD          | Not started | -         |
 | 4. Frontend Service Client & MobX Preview Store              | 0/TBD          | Not started | -         |
@@ -249,5 +249,5 @@ Phases execute strictly in numeric order: 1 → 2 → 3 → 4 → 5 → 6. Each 
 
 **Plans:** 2 plans (sequential, Wave 1 → Wave 2)
 
-- [ ] 01-01-PLAN.md — Scaffold timeline_propagation package + types.py (frozen dataclasses) + first failing pytest case for relates_to exclusion (PROP-18 declared at module surface)
+- [x] 01-01-PLAN.md — Scaffold timeline_propagation package + types.py (frozen dataclasses) + first failing pytest case for relates_to exclusion (PROP-18 declared at module surface) — completed 2026-05-03 (4m43s; commits 299261c8a2, c86eccdaf8, 8252a268c6; see [01-01-SUMMARY.md](phases/01-precedence-graph-loader-normalization/01-01-SUMMARY.md))
 - [ ] 01-02-PLAN.md — Implement graph.py (loader + iterative three-color DFS cycle detection) + 9 additional tests covering PROP-01, PROP-02, PROP-15, PROP-16, TEST-11 + lint-grep purity (D-08)
