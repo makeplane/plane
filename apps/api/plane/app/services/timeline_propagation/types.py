@@ -23,7 +23,11 @@ Module scope (PROP-18): move-only. Resize is not a concept here.
 # Python imports
 from collections.abc import Mapping
 from dataclasses import dataclass
+from datetime import date, datetime
 from uuid import UUID
+
+# Module imports
+from .errors import PropagationFailure
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,3 +94,71 @@ class LoadResult:
 
     adjacency: Adjacency
     cycle: tuple[UUID, ...] | None
+
+
+@dataclass(frozen=True, slots=True)
+class ScheduledWorkItem:
+    """Schedule snapshot of a Work Item that the propagation algorithm reads (D-04).
+
+    Mirrors `Issue` model fields the algorithm consumes (apps/api/plane/db/models/issue.py:145-146
+    are `DateField(null=True)`; `updated_at` is `DateTimeField(auto_now=True)` from
+    `TimeAuditModel`). `start_date` / `target_date` may be `None` to model PROP-17
+    (incomplete schedule); `updated_at` is always present (Django guarantees).
+    """
+
+    id: UUID
+    project_id: UUID
+    start_date: date | None
+    target_date: date | None
+    updated_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class MoveIntent:
+    """A user's drag intent for a single Work Item (D-04, US-35, API-02).
+
+    All five fields required — by definition the dragged item must be a complete
+    schedule. PROP-08 duration preservation is NOT enforced on construction;
+    `propagate_move` rejects mismatched durations as `INVALID_DATE_RANGE` (D-06
+    step 1) so the failure surfaces as a typed result, not an exception.
+    """
+
+    work_item_id: UUID
+    original_start_date: date
+    original_target_date: date
+    requested_start_date: date
+    requested_target_date: date
+
+
+@dataclass(frozen=True, slots=True)
+class WorkItemUpdate:
+    """One entry in `PropagationResult.updates` (D-04).
+
+    `updated_at` carries the INPUT value (Phase 3 sets the post-write value
+    after `bulk_update`). This keeps Phase 2 free of clock dependence.
+    """
+
+    id: UUID
+    start_date: date
+    target_date: date
+    updated_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class PropagationResult:
+    """Public result of `propagate_move` (D-04, Result-pattern mirror of `LoadResult`).
+
+    `failure is None` iff success. On success, `updates` ALWAYS includes the
+    dragged item itself (PROP-03 / TEST-01 — even no-violation moves return
+    one update). On failure, `updates == ()` (all-or-nothing — PROP-12).
+    """
+
+    requested_work_item_id: UUID
+    failure: PropagationFailure | None
+    updates: tuple[WorkItemUpdate, ...]
+    total_updated_count: int
+
+    @property
+    def is_success(self) -> bool:
+        """True iff `failure is None` (convenience accessor)."""
+        return self.failure is None
