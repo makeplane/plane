@@ -808,5 +808,28 @@
     "missing_fields": "Отсутствуют поля",
     "success": "{fileName} загружен!"
   },
-  "project_name_cannot_contain_special_characters": "Название проекта не может содержать специальные символы."
+  "project_name_cannot_contain_special_characters": "Название проекта не может содержать специальные символы.",
+  "date": "Дата",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Экспорт рабочих элементов в CSV-файл.",
+      "short_description": "Экспорт в csv"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Экспорт рабочих элементов в файл Excel.",
+      "short_description": "Экспорт в excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Экспорт рабочих элементов в файл Excel.",
+      "short_description": "Экспорт в excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Экспорт рабочих элементов в JSON-файл.",
+      "short_description": "Экспорт в json"
+    }
+  }
 }

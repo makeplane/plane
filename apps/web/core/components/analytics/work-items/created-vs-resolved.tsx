@@ -108,7 +108,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
           }}
           yAxis={{
             key: "count",
-            label: t("common.no_of", { entity: isEpic ? t("epics") : t("work_items") }),
+            label: t("common.no_of", { entity: isEpic ? t("common.epics") : t("work_items") }),
             offset: -60,
             dx: -24,
           }}

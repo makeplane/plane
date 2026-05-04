@@ -369,5 +369,21 @@
         "suffix": "? Všetky údaje súvisiace s touto opakujúcou sa úlohou budú natrvalo odstránené. Táto akcia je nevratná."
       }
     }
+  },
+  "epic": {
+    "new": "Nová epika",
+    "label": "{count, plural, one {Epika} few {Epiky} other {Epík}}",
+    "adding": "Pridávam epiku",
+    "create": {
+      "success": "Epika bola úspešne vytvorená"
+    },
+    "add": {
+      "label": "Pridať epiku",
+      "press_enter": "Pre pridanie ďalšej epiky stlačte 'Enter'"
+    },
+    "title": {
+      "label": "Názov epiky",
+      "required": "Názov epiky je povinný."
+    }
   }
 }

@@ -806,5 +806,28 @@
     "missing_fields": "Campi mancanti",
     "success": "{fileName} Caricato!"
   },
-  "project_name_cannot_contain_special_characters": "Il nome del progetto non può contenere caratteri speciali."
+  "project_name_cannot_contain_special_characters": "Il nome del progetto non può contenere caratteri speciali.",
+  "date": "Data",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Esporta elementi di lavoro in un file CSV.",
+      "short_description": "Esporta come CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Esporta elementi di lavoro in un file Excel.",
+      "short_description": "Esporta come Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Esporta elementi di lavoro in un file Excel.",
+      "short_description": "Esporta come Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Esporta elementi di lavoro in un file JSON.",
+      "short_description": "Esporta come JSON"
+    }
+  }
 }

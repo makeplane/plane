@@ -808,5 +808,28 @@
     "missing_fields": "Chýbajúce polia",
     "success": "{fileName} nahraný!"
   },
-  "project_name_cannot_contain_special_characters": "Názov projektu nesmie obsahovať špeciálne znaky."
+  "project_name_cannot_contain_special_characters": "Názov projektu nesmie obsahovať špeciálne znaky.",
+  "date": "Dátum",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exportujte položky do CSV.",
+      "short_description": "Exportovať ako CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Exportujte položky do Excelu.",
+      "short_description": "Exportovať ako Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exportujte položky do Excelu.",
+      "short_description": "Exportovať ako Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exportujte položky do JSON.",
+      "short_description": "Exportovať ako JSON"
+    }
+  }
 }

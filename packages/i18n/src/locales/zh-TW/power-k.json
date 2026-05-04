@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "批次刪除工作事項"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "工作事項操作",
+        "indicator": "工作事項",
+        "change_state": "變更狀態",
+        "change_priority": "變更優先順序",
+        "change_assignees": "指派給",
+        "assign_to_me": "指派給我",
+        "unassign_from_me": "取消指派給我",
+        "change_estimate": "變更評估",
+        "add_to_cycle": "新增至週期",
+        "add_to_modules": "新增至模組",
+        "add_labels": "新增標籤",
+        "subscribe": "訂閱通知",
+        "unsubscribe": "取消訂閱通知",
+        "delete": "刪除",
+        "copy_id": "複製 ID",
+        "copy_id_toast_success": "工作事項 ID 已複製到剪貼簿。",
+        "copy_id_toast_error": "複製工作事項 ID 至剪貼簿時發生錯誤。",
+        "copy_title": "複製標題",
+        "copy_title_toast_success": "工作事項標題已複製到剪貼簿。",
+        "copy_title_toast_error": "複製工作事項標題至剪貼簿時發生錯誤。",
+        "copy_url": "複製 URL",
+        "copy_url_toast_success": "工作事項 URL 已複製到剪貼簿。",
+        "copy_url_toast_error": "複製工作事項 URL 至剪貼簿時發生錯誤。"
+      },
+      "cycle": {
+        "title": "週期操作",
+        "indicator": "週期",
+        "add_to_favorites": "加入我的最愛",
+        "remove_from_favorites": "從我的最愛移除",
+        "copy_url": "複製 URL",
+        "copy_url_toast_success": "週期 URL 已複製到剪貼簿。",
+        "copy_url_toast_error": "複製週期 URL 至剪貼簿時發生錯誤。"
+      },
+      "module": {
+        "title": "模組操作",
+        "indicator": "模組",
+        "add_remove_members": "新增/移除成員",
+        "change_status": "變更狀態",
+        "add_to_favorites": "加入我的最愛",
+        "remove_from_favorites": "從我的最愛移除",
+        "copy_url": "複製 URL",
+        "copy_url_toast_success": "模組 URL 已複製到剪貼簿。",
+        "copy_url_toast_error": "複製模組 URL 至剪貼簿時發生錯誤。"
+      },
+      "page": {
+        "title": "頁面操作",
+        "indicator": "頁面",
+        "lock": "鎖定",
+        "unlock": "解鎖",
+        "make_private": "設為私人",
+        "make_public": "設為公開",
+        "archive": "封存",
+        "restore": "還原",
+        "add_to_favorites": "加入我的最愛",
+        "remove_from_favorites": "從我的最愛移除",
+        "copy_url": "複製 URL",
+        "copy_url_toast_success": "頁面 URL 已複製到剪貼簿。",
+        "copy_url_toast_error": "複製頁面 URL 至剪貼簿時發生錯誤。"
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "新工作事項",
+      "create_page": "新頁面",
+      "create_view": "新檢視",
+      "create_cycle": "新週期",
+      "create_module": "新模組",
+      "create_project": "新專案",
+      "create_workspace": "新工作區",
+      "create_project_automation": "新自動化"
+    },
+    "navigation_actions": {
+      "open_workspace": "開啟工作區",
+      "nav_home": "前往首頁",
+      "nav_inbox": "前往收件匣",
+      "nav_your_work": "前往您的工作",
+      "nav_account_settings": "前往帳號設定",
+      "open_project": "開啟專案",
+      "nav_projects_list": "前往專案清單",
+      "nav_all_workspace_work_items": "前往所有工作事項",
+      "nav_assigned_workspace_work_items": "前往已指派工作事項",
+      "nav_created_workspace_work_items": "前往已建立工作事項",
+      "nav_subscribed_workspace_work_items": "前往已訂閱工作事項",
+      "nav_workspace_analytics": "前往工作區分析",
+      "nav_workspace_drafts": "前往工作區草稿",
+      "nav_workspace_archives": "前往工作區封存",
+      "open_workspace_setting": "開啟工作區設定",
+      "nav_workspace_settings": "前往工作區設定",
+      "nav_project_work_items": "前往工作事項",
+      "open_project_cycle": "開啟週期",
+      "nav_project_cycles": "前往週期",
+      "open_project_module": "開啟模組",
+      "nav_project_modules": "前往模組",
+      "open_project_view": "開啟專案檢視",
+      "nav_project_views": "前往專案檢視",
+      "nav_project_pages": "前往頁面",
+      "nav_project_intake": "前往進件",
+      "nav_project_archives": "前往專案封存",
+      "open_project_setting": "開啟專案設定",
+      "nav_project_settings": "前往專案設定",
+      "nav_workspace_active_cycle": "前往所有進行中的週期",
+      "nav_project_overview": "前往專案概覽"
+    },
+    "account_actions": {
+      "sign_out": "登出",
+      "workspace_invites": "工作區邀請"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "切換應用程式側邊欄",
+      "copy_current_page_url": "複製目前頁面 URL",
+      "copy_current_page_url_toast_success": "目前頁面 URL 已複製到剪貼簿。",
+      "copy_current_page_url_toast_error": "複製目前頁面 URL 至剪貼簿時發生錯誤。",
+      "focus_top_nav_search": "聚焦搜尋輸入欄"
+    },
+    "preferences_actions": {
+      "update_theme": "變更介面主題",
+      "update_timezone": "變更時區",
+      "update_start_of_week": "變更一週的第一天",
+      "update_language": "變更介面語言",
+      "toast": {
+        "theme": {
+          "success": "主題更新成功。",
+          "error": "主題更新失敗，請再試一次。"
+        },
+        "timezone": {
+          "success": "時區更新成功。",
+          "error": "時區更新失敗，請再試一次。"
+        },
+        "generic": {
+          "success": "偏好設定更新成功。",
+          "error": "偏好設定更新失敗，請再試一次。"
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "開啟鍵盤快速鍵",
+      "open_plane_documentation": "開啟 Plane 文件",
+      "join_forum": "加入我們的 Forum",
+      "report_bug": "回報錯誤",
+      "chat_with_us": "與我們聊天"
+    },
+    "page_placeholders": {
+      "default": "輸入指令或搜尋",
+      "open_workspace": "開啟工作區",
+      "open_project": "開啟專案",
+      "open_workspace_setting": "開啟工作區設定",
+      "open_project_cycle": "開啟週期",
+      "open_project_module": "開啟模組",
+      "open_project_view": "開啟專案檢視",
+      "open_project_setting": "開啟專案設定",
+      "update_work_item_state": "變更狀態",
+      "update_work_item_priority": "變更優先順序",
+      "update_work_item_assignee": "指派給",
+      "update_work_item_estimate": "變更評估",
+      "update_work_item_cycle": "新增至週期",
+      "update_work_item_module": "新增至模組",
+      "update_work_item_labels": "新增標籤",
+      "update_module_member": "變更成員",
+      "update_module_status": "變更狀態",
+      "update_theme": "變更主題",
+      "update_timezone": "變更時區",
+      "update_start_of_week": "變更一週的第一天",
+      "update_language": "變更語言"
+    },
+    "search_menu": {
+      "no_results": "找不到結果",
+      "clear_search": "清除搜尋",
+      "go_to_advanced_search": "前往進階搜尋"
+    },
+    "footer": {
+      "workspace_level": "工作區層級"
+    },
+    "group_titles": {
+      "actions": "操作",
+      "contextual": "情境",
+      "navigation": "導覽",
+      "create": "建立",
+      "general": "一般",
+      "settings": "設定",
+      "account": "帳號",
+      "miscellaneous": "其他",
+      "preferences": "偏好設定",
+      "help": "說明"
+    }
+  }
+}

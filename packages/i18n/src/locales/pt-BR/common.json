@@ -825,5 +825,28 @@
       "project": "Nenhum modelo encontrado."
     }
   },
-  "project_name_cannot_contain_special_characters": "O nome do projeto não pode conter caracteres especiais."
+  "project_name_cannot_contain_special_characters": "O nome do projeto não pode conter caracteres especiais.",
+  "date": "Data",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exporte itens de trabalho para um arquivo CSV.",
+      "short_description": "Exportar como CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Exporte itens de trabalho para um arquivo Excel.",
+      "short_description": "Exportar como Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exporte itens de trabalho para um arquivo Excel.",
+      "short_description": "Exportar como Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exporte itens de trabalho para um arquivo JSON.",
+      "short_description": "Exportar como JSON"
+    }
+  }
 }

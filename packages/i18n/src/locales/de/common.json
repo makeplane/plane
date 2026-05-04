@@ -839,5 +839,28 @@
     "missing_fields": "Fehlende Felder",
     "success": "{fileName} hochgeladen!"
   },
-  "project_name_cannot_contain_special_characters": "Der Projektname darf keine Sonderzeichen enthalten."
+  "project_name_cannot_contain_special_characters": "Der Projektname darf keine Sonderzeichen enthalten.",
+  "date": "Datum",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Arbeitselemente in CSV exportieren.",
+      "short_description": "Als CSV exportieren"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Arbeitselemente in Excel exportieren.",
+      "short_description": "Als Excel exportieren"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Arbeitselemente in Excel exportieren.",
+      "short_description": "Als Excel exportieren"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Arbeitselemente in JSON exportieren.",
+      "short_description": "Als JSON exportieren"
+    }
+  }
 }

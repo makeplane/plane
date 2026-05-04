@@ -38,7 +38,7 @@ export const APITokensProfileSettings = observer(function APITokensProfileSettin
     <div className="size-full">
       <CreateApiTokenModal isOpen={isCreateTokenModalOpen} onClose={() => setIsCreateTokenModalOpen(false)} />
       <ProfileSettingsHeading
-        title={t("account_settings.api_tokens.heading")}
+        title={t("account_settings.api_tokens.title")}
         description={t("account_settings.api_tokens.description")}
         control={
           <Button variant="primary" size="lg" onClick={() => setIsCreateTokenModalOpen(true)}>

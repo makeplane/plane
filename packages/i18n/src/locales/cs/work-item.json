@@ -369,5 +369,21 @@
         "suffix": "? Všechna data související s touto opakující se pracovní položkou budou trvale odstraněna. Tuto akci nelze vrátit zpět."
       }
     }
+  },
+  "epic": {
+    "new": "Nový epik",
+    "label": "{count, plural, one {Epik} other {Epiky}}",
+    "adding": "Přidávám epik",
+    "create": {
+      "success": "Epik úspěšně vytvořen"
+    },
+    "add": {
+      "label": "Přidat epik",
+      "press_enter": "Pro přidání dalšího epiku stiskněte 'Enter'"
+    },
+    "title": {
+      "label": "Název epiku",
+      "required": "Název epiku je povinný."
+    }
   }
 }

@@ -809,5 +809,28 @@
     "missing_fields": "Eksik alanlar",
     "success": "{fileName} Yüklendi!"
   },
-  "project_name_cannot_contain_special_characters": "Proje adı özel karakterler içeremez."
+  "project_name_cannot_contain_special_characters": "Proje adı özel karakterler içeremez.",
+  "date": "Tarih",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "İş öğelerini CSV dosyasına aktarın.",
+      "short_description": "CSV olarak aktar"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "İş öğelerini Excel dosyasına aktarın.",
+      "short_description": "Excel olarak aktar"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "İş öğelerini Excel dosyasına aktarın.",
+      "short_description": "Excel olarak aktar"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "İş öğelerini JSON dosyasına aktarın.",
+      "short_description": "JSON olarak aktar"
+    }
+  }
 }

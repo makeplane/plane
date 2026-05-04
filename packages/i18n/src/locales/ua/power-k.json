@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Масове видалення робочих одиниць"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Дії робочої одиниці",
+        "indicator": "Робоча одиниця",
+        "change_state": "Змінити стан",
+        "change_priority": "Змінити пріоритет",
+        "change_assignees": "Призначити",
+        "assign_to_me": "Призначити мені",
+        "unassign_from_me": "Зняти призначення з мене",
+        "change_estimate": "Змінити оцінку",
+        "add_to_cycle": "Додати до циклу",
+        "add_to_modules": "Додати до модулів",
+        "add_labels": "Додати мітки",
+        "subscribe": "Підписатися на сповіщення",
+        "unsubscribe": "Скасувати підписку на сповіщення",
+        "delete": "Видалити",
+        "copy_id": "Скопіювати ID",
+        "copy_id_toast_success": "ID робочої одиниці скопійовано в буфер обміну.",
+        "copy_id_toast_error": "Під час копіювання ID робочої одиниці в буфер обміну сталася помилка.",
+        "copy_title": "Скопіювати назву",
+        "copy_title_toast_success": "Назву робочої одиниці скопійовано в буфер обміну.",
+        "copy_title_toast_error": "Під час копіювання назви робочої одиниці в буфер обміну сталася помилка.",
+        "copy_url": "Скопіювати URL",
+        "copy_url_toast_success": "URL робочої одиниці скопійовано в буфер обміну.",
+        "copy_url_toast_error": "Під час копіювання URL робочої одиниці в буфер обміну сталася помилка."
+      },
+      "cycle": {
+        "title": "Дії циклу",
+        "indicator": "Цикл",
+        "add_to_favorites": "Додати у вибране",
+        "remove_from_favorites": "Вилучити з вибраного",
+        "copy_url": "Скопіювати URL",
+        "copy_url_toast_success": "URL циклу скопійовано в буфер обміну.",
+        "copy_url_toast_error": "Під час копіювання URL циклу в буфер обміну сталася помилка."
+      },
+      "module": {
+        "title": "Дії модуля",
+        "indicator": "Модуль",
+        "add_remove_members": "Додати/видалити учасників",
+        "change_status": "Змінити статус",
+        "add_to_favorites": "Додати у вибране",
+        "remove_from_favorites": "Вилучити з вибраного",
+        "copy_url": "Скопіювати URL",
+        "copy_url_toast_success": "URL модуля скопійовано в буфер обміну.",
+        "copy_url_toast_error": "Під час копіювання URL модуля в буфер обміну сталася помилка."
+      },
+      "page": {
+        "title": "Дії сторінки",
+        "indicator": "Сторінка",
+        "lock": "Заблокувати",
+        "unlock": "Розблокувати",
+        "make_private": "Зробити приватною",
+        "make_public": "Зробити публічною",
+        "archive": "Заархівувати",
+        "restore": "Відновити",
+        "add_to_favorites": "Додати у вибране",
+        "remove_from_favorites": "Вилучити з вибраного",
+        "copy_url": "Скопіювати URL",
+        "copy_url_toast_success": "URL сторінки скопійовано в буфер обміну.",
+        "copy_url_toast_error": "Під час копіювання URL сторінки в буфер обміну сталася помилка."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Нова робоча одиниця",
+      "create_page": "Нова сторінка",
+      "create_view": "Нове подання",
+      "create_cycle": "Новий цикл",
+      "create_module": "Новий модуль",
+      "create_project": "Новий проєкт",
+      "create_workspace": "Новий робочий простір",
+      "create_project_automation": "Нова автоматизація"
+    },
+    "navigation_actions": {
+      "open_workspace": "Відкрити робочий простір",
+      "nav_home": "Перейти на головну",
+      "nav_inbox": "Перейти до вхідних",
+      "nav_your_work": "Перейти до вашої роботи",
+      "nav_account_settings": "Перейти до налаштувань облікового запису",
+      "open_project": "Відкрити проєкт",
+      "nav_projects_list": "Перейти до списку проєктів",
+      "nav_all_workspace_work_items": "Перейти до всіх робочих одиниць",
+      "nav_assigned_workspace_work_items": "Перейти до призначених робочих одиниць",
+      "nav_created_workspace_work_items": "Перейти до створених робочих одиниць",
+      "nav_subscribed_workspace_work_items": "Перейти до підписаних робочих одиниць",
+      "nav_workspace_analytics": "Перейти до аналітики робочого простору",
+      "nav_workspace_drafts": "Перейти до чернеток робочого простору",
+      "nav_workspace_archives": "Перейти до архівів робочого простору",
+      "open_workspace_setting": "Відкрити налаштування робочого простору",
+      "nav_workspace_settings": "Перейти до налаштувань робочого простору",
+      "nav_project_work_items": "Перейти до робочих одиниць",
+      "open_project_cycle": "Відкрити цикл",
+      "nav_project_cycles": "Перейти до циклів",
+      "open_project_module": "Відкрити модуль",
+      "nav_project_modules": "Перейти до модулів",
+      "open_project_view": "Відкрити подання проєкту",
+      "nav_project_views": "Перейти до подань проєкту",
+      "nav_project_pages": "Перейти до сторінок",
+      "nav_project_intake": "Перейти до надходжень",
+      "nav_project_archives": "Перейти до архівів проєкту",
+      "open_project_setting": "Відкрити налаштування проєкту",
+      "nav_project_settings": "Перейти до налаштувань проєкту",
+      "nav_workspace_active_cycle": "Перейти до всіх активних циклів",
+      "nav_project_overview": "Перейти до огляду проєкту"
+    },
+    "account_actions": {
+      "sign_out": "Вийти",
+      "workspace_invites": "Запрошення до робочого простору"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Перемкнути бічну панель застосунку",
+      "copy_current_page_url": "Скопіювати URL поточної сторінки",
+      "copy_current_page_url_toast_success": "URL поточної сторінки скопійовано в буфер обміну.",
+      "copy_current_page_url_toast_error": "Під час копіювання URL поточної сторінки в буфер обміну сталася помилка.",
+      "focus_top_nav_search": "Фокус на полі пошуку"
+    },
+    "preferences_actions": {
+      "update_theme": "Змінити тему інтерфейсу",
+      "update_timezone": "Змінити часовий пояс",
+      "update_start_of_week": "Змінити перший день тижня",
+      "update_language": "Змінити мову інтерфейсу",
+      "toast": {
+        "theme": {
+          "success": "Тему успішно оновлено.",
+          "error": "Не вдалося оновити тему. Спробуйте ще раз."
+        },
+        "timezone": {
+          "success": "Часовий пояс успішно оновлено.",
+          "error": "Не вдалося оновити часовий пояс. Спробуйте ще раз."
+        },
+        "generic": {
+          "success": "Налаштування успішно оновлено.",
+          "error": "Не вдалося оновити налаштування. Спробуйте ще раз."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Відкрити гарячі клавіші",
+      "open_plane_documentation": "Відкрити документацію Plane",
+      "join_forum": "Приєднатися до нашого форуму",
+      "report_bug": "Повідомити про помилку",
+      "chat_with_us": "Поспілкуватися з нами"
+    },
+    "page_placeholders": {
+      "default": "Введіть команду або пошуковий запит",
+      "open_workspace": "Відкрити робочий простір",
+      "open_project": "Відкрити проєкт",
+      "open_workspace_setting": "Відкрити налаштування робочого простору",
+      "open_project_cycle": "Відкрити цикл",
+      "open_project_module": "Відкрити модуль",
+      "open_project_view": "Відкрити подання проєкту",
+      "open_project_setting": "Відкрити налаштування проєкту",
+      "update_work_item_state": "Змінити стан",
+      "update_work_item_priority": "Змінити пріоритет",
+      "update_work_item_assignee": "Призначити",
+      "update_work_item_estimate": "Змінити оцінку",
+      "update_work_item_cycle": "Додати до циклу",
+      "update_work_item_module": "Додати до модулів",
+      "update_work_item_labels": "Додати мітки",
+      "update_module_member": "Змінити учасників",
+      "update_module_status": "Змінити статус",
+      "update_theme": "Змінити тему",
+      "update_timezone": "Змінити часовий пояс",
+      "update_start_of_week": "Змінити перший день тижня",
+      "update_language": "Змінити мову"
+    },
+    "search_menu": {
+      "no_results": "Не знайдено результатів",
+      "clear_search": "Очистити пошук",
+      "go_to_advanced_search": "Перейти до розширеного пошуку"
+    },
+    "footer": {
+      "workspace_level": "Рівень робочого простору"
+    },
+    "group_titles": {
+      "actions": "Дії",
+      "contextual": "Контекстні",
+      "navigation": "Навігація",
+      "create": "Створити",
+      "general": "Загальне",
+      "settings": "Налаштування",
+      "account": "Обліковий запис",
+      "miscellaneous": "Інше",
+      "preferences": "Налаштування",
+      "help": "Довідка"
+    }
+  }
+}

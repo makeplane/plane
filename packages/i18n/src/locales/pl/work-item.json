@@ -369,5 +369,21 @@
         "suffix": "? Wszystkie dane powiązane z cyklicznym elementem pracy zostaną trwale usunięte. Tej operacji nie można cofnąć."
       }
     }
+  },
+  "epic": {
+    "new": "Nowy epik",
+    "label": "{count, plural, one {Epik} other {Epiki}}",
+    "adding": "Dodawanie epiku",
+    "create": {
+      "success": "Epik utworzono pomyślnie"
+    },
+    "add": {
+      "label": "Dodaj epik",
+      "press_enter": "Naciśnij 'Enter', aby dodać kolejny epik"
+    },
+    "title": {
+      "label": "Tytuł epiku",
+      "required": "Tytuł epiku jest wymagany."
+    }
   }
 }

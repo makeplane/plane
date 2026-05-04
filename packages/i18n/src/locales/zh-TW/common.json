@@ -808,5 +808,28 @@
     "missing_fields": "缺少字段",
     "success": "{fileName} 已上傳！"
   },
-  "project_name_cannot_contain_special_characters": "專案名稱不能包含特殊字元。"
+  "project_name_cannot_contain_special_characters": "專案名稱不能包含特殊字元。",
+  "date": "日期",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "將工作事項匯出為 CSV 檔案。",
+      "short_description": "匯出為 CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "將工作事項匯出為 Excel 檔案。",
+      "short_description": "匯出為 Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "將工作事項匯出為 Excel 檔案。",
+      "short_description": "匯出為 Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "將工作事項匯出為 JSON 檔案。",
+      "short_description": "匯出為 JSON"
+    }
+  }
 }

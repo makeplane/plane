@@ -839,5 +839,28 @@
     "invalid_file_type": "Invalid file type",
     "missing_fields": "Missing fields",
     "success": "{fileName} Uploaded!"
+  },
+  "date": "Date",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Export work items to a CSV file.",
+      "short_description": "Export as csv"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Export work items to a Excel file.",
+      "short_description": "Export as excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Export work items to a Excel file.",
+      "short_description": "Export as excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Export work items to a JSON file.",
+      "short_description": "Export as json"
+    }
   }
 }

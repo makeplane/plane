@@ -808,5 +808,28 @@
     "missing_fields": "Відсутні поля",
     "success": "{fileName} Завантажено!"
   },
-  "project_name_cannot_contain_special_characters": "Назва проєкту не може містити спеціальні символи."
+  "project_name_cannot_contain_special_characters": "Назва проєкту не може містити спеціальні символи.",
+  "date": "Дата",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Експортуйте одиниці у формат CSV.",
+      "short_description": "Експортувати як CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Експортуйте одиниці у формат Excel.",
+      "short_description": "Експортувати як Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Експортуйте одиниці у формат Excel.",
+      "short_description": "Експортувати як Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Експортуйте одиниці у формат JSON.",
+      "short_description": "Експортувати як JSON"
+    }
+  }
 }

@@ -807,5 +807,28 @@
     "missing_fields": "Bidang yang hilang",
     "success": "{fileName} Diunggah!"
   },
-  "project_name_cannot_contain_special_characters": "Nama proyek tidak boleh mengandung karakter khusus."
+  "project_name_cannot_contain_special_characters": "Nama proyek tidak boleh mengandung karakter khusus.",
+  "date": "Tanggal",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Ekspor item kerja ke file CSV.",
+      "short_description": "Ekspor sebagai csv"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Ekspor item kerja ke file Excel.",
+      "short_description": "Ekspor sebagai excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Ekspor item kerja ke file Excel.",
+      "short_description": "Ekspor sebagai excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Ekspor item kerja ke file JSON.",
+      "short_description": "Ekspor sebagai json"
+    }
+  }
 }

@@ -807,5 +807,28 @@
     "missing_fields": "Thiếu trường",
     "success": "{fileName} đã được tải lên!"
   },
-  "project_name_cannot_contain_special_characters": "Tên dự án không được chứa ký tự đặc biệt."
+  "project_name_cannot_contain_special_characters": "Tên dự án không được chứa ký tự đặc biệt.",
+  "date": "Ngày",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Xuất mục công việc thành tệp CSV.",
+      "short_description": "Xuất sang CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Xuất mục công việc thành tệp Excel.",
+      "short_description": "Xuất sang Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Xuất mục công việc thành tệp Excel.",
+      "short_description": "Xuất sang Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Xuất mục công việc thành tệp JSON.",
+      "short_description": "Xuất sang JSON"
+    }
+  }
 }

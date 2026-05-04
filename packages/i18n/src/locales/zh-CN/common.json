@@ -806,5 +806,28 @@
     "missing_fields": "缺少字段",
     "success": "{fileName} 已上传！"
   },
-  "project_name_cannot_contain_special_characters": "项目名称不能包含特殊字符。"
+  "project_name_cannot_contain_special_characters": "项目名称不能包含特殊字符。",
+  "date": "日期",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "将工作项导出为 CSV 文件。",
+      "short_description": "导出为 CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "将工作项导出为 Excel 文件。",
+      "short_description": "导出为 Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "将工作项导出为 Excel 文件。",
+      "short_description": "导出为 Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "将工作项导出为 JSON 文件。",
+      "short_description": "导出为 JSON"
+    }
+  }
 }

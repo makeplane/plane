@@ -369,5 +369,21 @@
         "suffix": "? Todos os dados relacionados ao item de trabalho recorrente serão removidos permanentemente. Esta ação não pode ser desfeita."
       }
     }
+  },
+  "epic": {
+    "new": "Novo Épico",
+    "label": "{count, plural, one {Épico} other {Épicos}}",
+    "adding": "Adicionando épico",
+    "create": {
+      "success": "Épico criado com sucesso"
+    },
+    "add": {
+      "label": "Adicionar Épico",
+      "press_enter": "Pressione 'Enter' para adicionar outro épico"
+    },
+    "title": {
+      "label": "Título do Épico",
+      "required": "O título do épico é obrigatório."
+    }
   }
 }

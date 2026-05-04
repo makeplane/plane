@@ -406,5 +406,21 @@
         "suffix": "? Alle mit der wiederkehrenden Arbeitsaufgabe verbundenen Daten werden dauerhaft entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
       }
     }
+  },
+  "epic": {
+    "new": "Neues Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Epic wird hinzugefügt",
+    "create": {
+      "success": "Epic erfolgreich erstellt"
+    },
+    "add": {
+      "label": "Epic hinzufügen",
+      "press_enter": "Drücken Sie 'Enter', um ein weiteres Epic hinzuzufügen"
+    },
+    "title": {
+      "label": "Epic-Titel",
+      "required": "Ein Titel für das Epic ist erforderlich."
+    }
   }
 }

@@ -406,5 +406,21 @@
         "suffix": "? All of the data related to the recurring work item will be permanently removed. This action cannot be undone."
       }
     }
+  },
+  "epic": {
+    "new": "New Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Adding epic",
+    "create": {
+      "success": "Epic created successfully"
+    },
+    "add": {
+      "label": "Add Epic",
+      "press_enter": "Press 'Enter' to add another epic"
+    },
+    "title": {
+      "label": "Epic Title",
+      "required": "Epic title is required."
+    }
   }
 }

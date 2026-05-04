@@ -806,5 +806,28 @@
     "missing_fields": "Câmpuri lipsă",
     "success": "{fileName} Încărcat!"
   },
-  "project_name_cannot_contain_special_characters": "Numele proiectului nu poate conține caractere speciale."
+  "project_name_cannot_contain_special_characters": "Numele proiectului nu poate conține caractere speciale.",
+  "date": "Dată",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "Exportă activitățile într-un fișier CSV.",
+      "short_description": "Exportă ca CSV"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "Exportă activitățile într-un fișier Excel.",
+      "short_description": "Exportă ca Excel"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "Exportă activitățile într-un fișier Excel.",
+      "short_description": "Exportă ca Excel"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "Exportă activitățile într-un fișier JSON.",
+      "short_description": "Exportă ca JSON"
+    }
+  }
 }

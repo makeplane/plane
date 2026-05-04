@@ -808,5 +808,28 @@
     "missing_fields": "필드 누락",
     "success": "{fileName} 업로드 완료!"
   },
-  "project_name_cannot_contain_special_characters": "프로젝트 이름에는 특수 문자를 사용할 수 없습니다."
+  "project_name_cannot_contain_special_characters": "프로젝트 이름에는 특수 문자를 사용할 수 없습니다.",
+  "date": "데이트",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "작업 항목을 CSV 파일로 내보냅니다.",
+      "short_description": "CSV로 내보내기"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "작업 항목을 Excel 파일로 내보냅니다.",
+      "short_description": "Excel로 내보내기"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "작업 항목을 Excel 파일로 내보냅니다.",
+      "short_description": "Excel로 내보내기"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "작업 항목을 JSON 파일로 내보냅니다.",
+      "short_description": "JSON으로 내보내기"
+    }
+  }
 }

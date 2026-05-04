@@ -369,5 +369,21 @@
         "suffix": "? Semua data terkait item kerja berulang akan dihapus secara permanen. Tindakan ini tidak dapat dibatalkan."
       }
     }
+  },
+  "epic": {
+    "new": "Epik Baru",
+    "label": "{count, plural, one {Epik} other {Epik}}",
+    "adding": "Menambahkan epik",
+    "create": {
+      "success": "Epik berhasil dibuat"
+    },
+    "add": {
+      "label": "Tambahkan Epik",
+      "press_enter": "Tekan 'Enter' untuk menambahkan epik lain"
+    },
+    "title": {
+      "label": "Judul Epik",
+      "required": "Judul epik wajib diisi."
+    }
   }
 }

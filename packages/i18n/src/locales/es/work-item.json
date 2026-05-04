@@ -369,5 +369,21 @@
         "suffix": "? Todos los datos relacionados con la tarea recurrente se eliminarán permanentemente. Esta acción no se puede deshacer."
       }
     }
+  },
+  "epic": {
+    "new": "Nuevo Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Agregando epic",
+    "create": {
+      "success": "Epic creado correctamente"
+    },
+    "add": {
+      "label": "Agregar Epic",
+      "press_enter": "Presiona 'Enter' para agregar otro epic"
+    },
+    "title": {
+      "label": "Título del Epic",
+      "required": "El título del epic es obligatorio."
+    }
   }
 }

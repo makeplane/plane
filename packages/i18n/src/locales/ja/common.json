@@ -806,5 +806,28 @@
     "missing_fields": "必須フィールドが不足しています",
     "success": "{fileName}がアップロードされました！"
   },
-  "project_name_cannot_contain_special_characters": "プロジェクト名に特殊文字を含めることはできません。"
+  "project_name_cannot_contain_special_characters": "プロジェクト名に特殊文字を含めることはできません。",
+  "date": "日付",
+  "exporter": {
+    "csv": {
+      "title": "CSV",
+      "description": "作業項目をCSVファイルにエクスポートします。",
+      "short_description": "CSVとしてエクスポート"
+    },
+    "excel": {
+      "title": "Excel",
+      "description": "作業項目をExcelファイルにエクスポートします。",
+      "short_description": "Excelとしてエクスポート"
+    },
+    "xlsx": {
+      "title": "Excel",
+      "description": "作業項目をExcelファイルにエクスポートします。",
+      "short_description": "Excelとしてエクスポート"
+    },
+    "json": {
+      "title": "JSON",
+      "description": "作業項目をJSONファイルにエクスポートします。",
+      "short_description": "JSONとしてエクスポート"
+    }
+  }
 }

@@ -369,5 +369,21 @@
         "suffix": "? Toutes les données liées à l'élément de travail récurrent seront définitivement supprimées. Cette action ne peut pas être annulée."
       }
     }
+  },
+  "epic": {
+    "new": "Nouvel Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Ajout d’un epic",
+    "create": {
+      "success": "Epic créé avec succès"
+    },
+    "add": {
+      "label": "Ajouter un Epic",
+      "press_enter": "Appuyez sur 'Entrée' pour ajouter un autre epic"
+    },
+    "title": {
+      "label": "Titre de l’Epic",
+      "required": "Le titre de l’Epic est requis."
+    }
   }
 }

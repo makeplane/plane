@@ -369,5 +369,21 @@
         "suffix": "? Toate datele legate de acest element de lucru recurent vor fi eliminate permanent. Această acțiune nu poate fi anulată."
       }
     }
+  },
+  "epic": {
+    "new": "Sarcină majoră",
+    "label": "{count, plural, one {Sarcină majoră} other {Sarcini majore}}",
+    "adding": "Se adaugă sarcină majoră",
+    "create": {
+      "success": "Sarcină majoră creată cu succes"
+    },
+    "add": {
+      "label": "Adaugă sarcină majoră",
+      "press_enter": "Apasă 'Enter' pentru a adăuga o altă sarcină majoră"
+    },
+    "title": {
+      "label": "Titlu sarcină majoră",
+      "required": "Titlul sarcinii majore este obligatoriu."
+    }
   }
 }

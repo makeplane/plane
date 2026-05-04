@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Hapus item kerja secara massal"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Aksi item kerja",
+        "indicator": "Item kerja",
+        "change_state": "Ubah status",
+        "change_priority": "Ubah prioritas",
+        "change_assignees": "Tugaskan ke",
+        "assign_to_me": "Tugaskan ke saya",
+        "unassign_from_me": "Batalkan penugasan dari saya",
+        "change_estimate": "Ubah estimasi",
+        "add_to_cycle": "Tambahkan ke siklus",
+        "add_to_modules": "Tambahkan ke modul",
+        "add_labels": "Tambah label",
+        "subscribe": "Berlangganan notifikasi",
+        "unsubscribe": "Berhenti berlangganan notifikasi",
+        "delete": "Hapus",
+        "copy_id": "Salin ID",
+        "copy_id_toast_success": "ID item kerja disalin ke clipboard.",
+        "copy_id_toast_error": "Terjadi kesalahan saat menyalin ID item kerja ke clipboard.",
+        "copy_title": "Salin judul",
+        "copy_title_toast_success": "Judul item kerja disalin ke clipboard.",
+        "copy_title_toast_error": "Terjadi kesalahan saat menyalin judul item kerja ke clipboard.",
+        "copy_url": "Salin URL",
+        "copy_url_toast_success": "URL item kerja disalin ke clipboard.",
+        "copy_url_toast_error": "Terjadi kesalahan saat menyalin URL item kerja ke clipboard."
+      },
+      "cycle": {
+        "title": "Aksi siklus",
+        "indicator": "Siklus",
+        "add_to_favorites": "Tambah ke favorit",
+        "remove_from_favorites": "Hapus dari favorit",
+        "copy_url": "Salin URL",
+        "copy_url_toast_success": "URL siklus disalin ke clipboard.",
+        "copy_url_toast_error": "Terjadi kesalahan saat menyalin URL siklus ke clipboard."
+      },
+      "module": {
+        "title": "Aksi modul",
+        "indicator": "Modul",
+        "add_remove_members": "Tambah/hapus anggota",
+        "change_status": "Ubah status",
+        "add_to_favorites": "Tambah ke favorit",
+        "remove_from_favorites": "Hapus dari favorit",
+        "copy_url": "Salin URL",
+        "copy_url_toast_success": "URL modul disalin ke clipboard.",
+        "copy_url_toast_error": "Terjadi kesalahan saat menyalin URL modul ke clipboard."
+      },
+      "page": {
+        "title": "Aksi halaman",
+        "indicator": "Halaman",
+        "lock": "Kunci",
+        "unlock": "Buka kunci",
+        "make_private": "Jadikan pribadi",
+        "make_public": "Jadikan publik",
+        "archive": "Arsipkan",
+        "restore": "Pulihkan",
+        "add_to_favorites": "Tambah ke favorit",
+        "remove_from_favorites": "Hapus dari favorit",
+        "copy_url": "Salin URL",
+        "copy_url_toast_success": "URL halaman disalin ke clipboard.",
+        "copy_url_toast_error": "Terjadi kesalahan saat menyalin URL halaman ke clipboard."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Item kerja baru",
+      "create_page": "Halaman baru",
+      "create_view": "Tampilan baru",
+      "create_cycle": "Siklus baru",
+      "create_module": "Modul baru",
+      "create_project": "Proyek baru",
+      "create_workspace": "Ruang kerja baru",
+      "create_project_automation": "Otomatisasi baru"
+    },
+    "navigation_actions": {
+      "open_workspace": "Buka ruang kerja",
+      "nav_home": "Ke beranda",
+      "nav_inbox": "Ke kotak masuk",
+      "nav_your_work": "Ke pekerjaan Anda",
+      "nav_account_settings": "Ke pengaturan akun",
+      "open_project": "Buka proyek",
+      "nav_projects_list": "Ke daftar proyek",
+      "nav_all_workspace_work_items": "Ke semua item kerja",
+      "nav_assigned_workspace_work_items": "Ke item kerja yang ditugaskan",
+      "nav_created_workspace_work_items": "Ke item kerja yang dibuat",
+      "nav_subscribed_workspace_work_items": "Ke item kerja yang dilanggan",
+      "nav_workspace_analytics": "Ke analitik ruang kerja",
+      "nav_workspace_drafts": "Ke draf ruang kerja",
+      "nav_workspace_archives": "Ke arsip ruang kerja",
+      "open_workspace_setting": "Buka pengaturan ruang kerja",
+      "nav_workspace_settings": "Ke pengaturan ruang kerja",
+      "nav_project_work_items": "Ke item kerja",
+      "open_project_cycle": "Buka siklus",
+      "nav_project_cycles": "Ke siklus",
+      "open_project_module": "Buka modul",
+      "nav_project_modules": "Ke modul",
+      "open_project_view": "Buka tampilan proyek",
+      "nav_project_views": "Ke tampilan proyek",
+      "nav_project_pages": "Ke halaman",
+      "nav_project_intake": "Ke intake",
+      "nav_project_archives": "Ke arsip proyek",
+      "open_project_setting": "Buka pengaturan proyek",
+      "nav_project_settings": "Ke pengaturan proyek",
+      "nav_workspace_active_cycle": "Ke semua siklus aktif",
+      "nav_project_overview": "Ke ikhtisar proyek"
+    },
+    "account_actions": {
+      "sign_out": "Keluar",
+      "workspace_invites": "Undangan ruang kerja"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Alihkan sidebar aplikasi",
+      "copy_current_page_url": "Salin URL halaman saat ini",
+      "copy_current_page_url_toast_success": "URL halaman saat ini disalin ke clipboard.",
+      "copy_current_page_url_toast_error": "Terjadi kesalahan saat menyalin URL halaman saat ini ke clipboard.",
+      "focus_top_nav_search": "Fokus input pencarian"
+    },
+    "preferences_actions": {
+      "update_theme": "Ubah tema antarmuka",
+      "update_timezone": "Ubah zona waktu",
+      "update_start_of_week": "Ubah hari pertama minggu",
+      "update_language": "Ubah bahasa antarmuka",
+      "toast": {
+        "theme": {
+          "success": "Tema berhasil diperbarui.",
+          "error": "Gagal memperbarui tema. Silakan coba lagi."
+        },
+        "timezone": {
+          "success": "Zona waktu berhasil diperbarui.",
+          "error": "Gagal memperbarui zona waktu. Silakan coba lagi."
+        },
+        "generic": {
+          "success": "Preferensi berhasil diperbarui.",
+          "error": "Gagal memperbarui preferensi. Silakan coba lagi."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Buka pintasan keyboard",
+      "open_plane_documentation": "Buka dokumentasi Plane",
+      "join_forum": "Gabung dengan Forum kami",
+      "report_bug": "Laporkan bug",
+      "chat_with_us": "Ngobrol dengan kami"
+    },
+    "page_placeholders": {
+      "default": "Ketik perintah atau cari",
+      "open_workspace": "Buka ruang kerja",
+      "open_project": "Buka proyek",
+      "open_workspace_setting": "Buka pengaturan ruang kerja",
+      "open_project_cycle": "Buka siklus",
+      "open_project_module": "Buka modul",
+      "open_project_view": "Buka tampilan proyek",
+      "open_project_setting": "Buka pengaturan proyek",
+      "update_work_item_state": "Ubah status",
+      "update_work_item_priority": "Ubah prioritas",
+      "update_work_item_assignee": "Tugaskan ke",
+      "update_work_item_estimate": "Ubah estimasi",
+      "update_work_item_cycle": "Tambahkan ke siklus",
+      "update_work_item_module": "Tambahkan ke modul",
+      "update_work_item_labels": "Tambah label",
+      "update_module_member": "Ubah anggota",
+      "update_module_status": "Ubah status",
+      "update_theme": "Ubah tema",
+      "update_timezone": "Ubah zona waktu",
+      "update_start_of_week": "Ubah hari pertama minggu",
+      "update_language": "Ubah bahasa"
+    },
+    "search_menu": {
+      "no_results": "Tidak ada hasil yang ditemukan",
+      "clear_search": "Hapus pencarian",
+      "go_to_advanced_search": "Ke pencarian lanjutan"
+    },
+    "footer": {
+      "workspace_level": "Tingkat ruang kerja"
+    },
+    "group_titles": {
+      "actions": "Aksi",
+      "contextual": "Kontekstual",
+      "navigation": "Navigasi",
+      "create": "Buat",
+      "general": "Umum",
+      "settings": "Pengaturan",
+      "account": "Akun",
+      "miscellaneous": "Lain-lain",
+      "preferences": "Preferensi",
+      "help": "Bantuan"
+    }
+  }
+}
