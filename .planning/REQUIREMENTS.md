@@ -58,13 +58,13 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 
 - [x] **FE-01**: ドラッグ中、Gantt にロード済の Work Item に対して伝播を **preview** できる(simple / chain / branch)(US-23, Testing Decision) — `computeLoadedPreview` helper covers simple/chain/branch via 3 GREEN Vitest cases (Plan 04-01, 2026-05-04). UI render is Phase 5.
 - [x] **FE-02**: preview はあくまで visual affordance であり、保存値ではない(Implementation Decision) — helper returns a new Map; immutability invariant pinned by 3 `it("immutability ...")` cases (Plan 04-01, 2026-05-04). Store rollback action lands in Plan 04-02.
-- [ ] **FE-03**: ドロップ時は新 propagation endpoint に move intent を送る
+- [x] **FE-03**: ドロップ時は新 propagation endpoint に move intent を送る — Plan 05-02 (2026-05-04): D-01 split inside `BaseGanttRoot.updateBlockDates` routes single-row date-only payloads (the move case) to `propagationStore.commitWithServerResult(...)`; the move-only branch in `useGanttResizable.handleBlockDrag` snapshots `block.data.updated_at` at mousedown and fires `beginPreview` / per-mousemove `updatePreview`. See `.planning/phases/05-drag-handler-integration-error-ux/05-02-SUMMARY.md`.
 - [x] **FE-04**: 成功時、サーバの updates で preview 状態を**置換する**(local 推定で上書きしない)(US-24) — `applyServerWorkItems` pure projection covers TEST-21 with 3 GREEN cases (Plan 04-01, 2026-05-04). MobX commit action wires it in Plan 04-02.
 - [ ] **FE-05**: 失敗時、preview を完全 rollback して元の schedule に戻し、reason を表示する(US-26, US-22)
 - [x] **FE-06**: サーバが preview に含まれていない Work Item を更新したとき、UI に「viewport 外でも N 件更新された」notification を出す(US-25) — `diffHiddenUpdate` helper covers TEST-22 with 3 GREEN cases (Plan 04-01, 2026-05-04). Toast / i18n keys are Phase 5.
 - [ ] **FE-07**: safe limit 内(≤100)の伝播は確認ダイアログを出さずに保存する(US-30)
 - [ ] **FE-08**: 既存の関係作成 cycle-check(UI 即時フィードバック)は残置(US-28 と二重保険、Implementation Decision)
-- [ ] **FE-09**: 既存 timeline drag handler を新 endpoint に切替えるが、resize 経路は触らない(US-15)
+- [x] **FE-09**: 既存 timeline drag handler を新 endpoint に切替えるが、resize 経路は触らない(US-15) — Plan 05-02 (2026-05-04): the `dragDirection === "left"` and `dragDirection === "right"` branches inside `useGanttResizable.handleMouseMove` keep their existing quantization logic; D-01b in `BaseGanttRoot.updateBlockDates` routes resize / half-block / multi-row payloads to `issues.updateIssueDates(...)` verbatim (FE-09 / PROP-18 inert). All 4 CE dependency-drag files (`use-dependency-drag.ts`, `cycle-check.ts`, `date-check.ts`, `dependency-paths.tsx`) and Phase 4's `timeline-propagation.store.ts` and `apps/web/core/services/issue/issue.service.ts` are byte-identical (`git diff --stat 831c261543..HEAD`).
 
 ### Errors & UX
 
@@ -75,7 +75,7 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 - [x] **ERR-05**: `SCHEDULE_CHANGED` のとき、「他のユーザによる更新を検知、再読込してください」旨を表示する
 - [x] **ERR-06**: `PERMISSION_DENIED` のとき、「権限が不足しています」旨を表示する
 - [x] **ERR-07**: `INVALID_DATE_RANGE` のとき、「日付範囲が不正です」旨を表示する
-- [ ] **ERR-08**: 失敗時は Timeline の状態を**ドラッグ前の見え方**に戻す(US-26)
+- [x] **ERR-08**: 失敗時は Timeline の状態を**ドラッグ前の見え方**に戻す(US-26) — Plan 05-02 (2026-05-04): on `commitWithServerResult` failure (lastError) or unexpectedError, the failure branch in `BaseGanttRoot.updateBlockDates` calls `showPropagationErrorToast(code | "UNEXPECTED", t)`; the Phase 4 store's `_doCommit` discards `previewById` and clears `isPreviewActive` on every failure path (Phase 4 D-05c), so sibling blocks fall back to `block.position` via the new override path in `GanttChartBlock` and the dragged block's direct DOM writes are reset by the next React render against `block.position` (Phase 4 D-02c). Manual smoke (D-11a scenarios 4-10) gated to `/gsd-verify-work`.
 
 ### Tests
 
