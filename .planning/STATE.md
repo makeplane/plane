@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 4 context captured (auto mode); awaiting plan-phase for Phase 4
-stopped_at: Phase 4 context gathered — 10 gray areas auto-resolved; Vitest harness (D-01) + wire contract types (D-02) + 4-action MobX store surface (D-05) locked
-last_updated: "2026-05-04T03:00:00.000Z"
-last_activity: 2026-05-04 -- Phase 4 CONTEXT.md written via /gsd-discuss-phase 4 --auto (commit 745ee1cb58)
+status: Phase 4 planned; ready to execute (2 plans, 7 tasks across 2 waves)
+stopped_at: Phase 4 PLANNING COMPLETE — 04-01-PLAN.md (Wave 1, 5 tasks: types + service + Vitest harness + 3 helpers) and 04-02-PLAN.md (Wave 2, 2 tasks: MobX store + CE root extension); 18/18 phase-specific + 12/12 standard checker dimensions PASS
+last_updated: "2026-05-04T03:30:00.000Z"
+last_activity: 2026-05-04 -- /gsd-plan-phase 4 --auto chain wrote RESEARCH/VALIDATION/PATTERNS + 2 PLAN.md files; checker VERIFICATION PASSED with 0 BLOCKER / 0 WARNING
 progress:
   total_phases: 6
   completed_phases: 3
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-03)
 
 ## Current Position
 
-Phase: 4 (Frontend Service Client & MobX Preview Store) — discuss-phase complete
-Plan: 0/TBD (next: /gsd-plan-phase 4 — auto-advance triggered by --chain/--auto)
-Status: Phase 4 CONTEXT.md captured; awaiting plan-phase
-Last activity: 2026-05-04 -- /gsd-discuss-phase 4 --auto wrote 04-CONTEXT.md (10 decisions: D-01..D-10) + 04-DISCUSSION-LOG.md (commit 745ee1cb58)
+Phase: 4 (Frontend Service Client & MobX Preview Store) — PLANNED, ready to execute
+Plan: 0/2 done (next: /gsd-execute-phase 4 — auto-advance pending)
+Status: Phase 4 plans verified by gsd-plan-checker (PASS); awaiting execution
+Last activity: 2026-05-04 -- /gsd-plan-phase 4 --auto wrote 04-RESEARCH.md + 04-VALIDATION.md + 04-PATTERNS.md + 04-01-PLAN.md + 04-02-PLAN.md; ROADMAP annotated with wave deps + cross-cutting constraints
 
 Progress: [████████░░] 89% (8/9 plans)
 
@@ -49,7 +49,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | 1. Precedence Graph Loader & Normalization        | 2/2   | 10m38s | 5m19s    |
 | 2. Scheduling Helper & Propagation Algorithm Core | 3/3   | ~21m   | ~7m      |
 | 3. Propagation API Endpoint & Contract            | 3/3   | ~40m   | ~13m     |
-| 4. Frontend Service Client & MobX Preview Store   | 0     | —      | —        |
+| 4. Frontend Service Client & MobX Preview Store   | 0/2   | planned | —        |
 | 5. Drag Handler Integration & Error UX            | 0     | —      | —        |
 | 6. End-to-End Coverage & Polish                   | 0     | —      | —        |
 
