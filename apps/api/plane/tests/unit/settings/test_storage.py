@@ -156,6 +156,9 @@ class TestS3StorageSignedURLExpiration:
             if isinstance(cond, dict):
                 assert "bucket" not in cond, f"hand-rolled bucket condition: {cond}"
                 assert "key" not in cond, f"hand-rolled key condition: {cond}"
+        # Fields must NOT contain a hand-rolled `key` either (boto3 derives
+        # it from Key= and adds it to the returned form fields itself).
+        assert "key" not in kw["Fields"], f"hand-rolled key field: {kw['Fields']}"
 
     @patch.dict(
         os.environ,

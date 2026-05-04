@@ -79,11 +79,13 @@ class S3Storage(S3Boto3Storage):
             {"Content-Type": file_type},
         ]
 
-        # Add condition for the object name (key)
+        # For prefix uploads (`${filename}` placeholder) we still need a
+        # `starts-with` condition; boto3 cannot derive that from `Key=`.
+        # For exact-key uploads, `Key=<value>` below also makes boto3 add
+        # `"key": <value>` to the returned `fields[]` automatically — no
+        # manual injection needed.
         if object_name.startswith("${filename}"):
             conditions.append(["starts-with", "$key", object_name[: -len("${filename}")]])
-        else:
-            fields["key"] = object_name
 
         # Generate the presigned POST URL
         try:
