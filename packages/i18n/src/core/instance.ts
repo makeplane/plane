@@ -39,6 +39,11 @@ export const initPromise = i18nInstance
     interpolation: { escapeValue: false },
     returnNull: false,
     returnEmptyString: false,
+    // Pinned explicitly even though it's the default — i18next-icu intercepts the
+    // format pipeline and returns raw objects regardless of this flag, so the runtime
+    // guard in useTranslation is what actually prevents React crashes. Documenting
+    // intent here so this isn't accidentally flipped.
+    returnObjects: false,
     react: { useSuspense: false },
   })
   // Eagerly pre-load all namespaces for the initial language so they're cached

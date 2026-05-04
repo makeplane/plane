@@ -16,6 +16,26 @@ export type TTranslationStore = {
   languages: ILanguageOption[];
 };
 
+// Crash guard: i18next-icu unconditionally returns raw objects when t() is called
+// with a branch (namespace-node) key, regardless of returnObjects:false. Without
+// this wrapper, React unmounts the subtree with "Objects are not valid as a React
+// child". Strings pass through; numbers/booleans are stringified; objects/null/
+// undefined fall back to the key itself plus a dev-mode warning. Can be removed
+// once t() gains key-level type safety (Phase 2 of the i18n roadmap).
+function coerceToString(key: string, value: unknown): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  if (process.env.NODE_ENV !== "production") {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[i18n] Translation for key "${key}" is not a string (got ${
+        value === null ? "null" : typeof value
+      }). This is likely a missing key or a namespace-node lookup. Returning the key as fallback.`
+    );
+  }
+  return key;
+}
+
 export function useTranslation(): TTranslationStore {
   // No namespace arg — fallbackNS in the i18next config ensures all namespaces
   // are searched for any key. Passing NAMESPACES here would trigger concurrent
@@ -39,8 +59,7 @@ export function useTranslation(): TTranslationStore {
   );
 
   return {
-    // oxlint-disable-next-line typescript/no-explicit-any - i18next handles numbers, booleans, etc. natively
-    t: (key: string, params?: any) => t(key, params) as string,
+    t: (key: string, params?: Record<string, unknown>) => coerceToString(key, t(key, params)),
     currentLocale: i18n.language as TLanguage,
     changeLanguage,
     languages: SUPPORTED_LANGUAGES,
