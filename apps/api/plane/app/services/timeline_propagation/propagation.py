@@ -22,7 +22,7 @@ Validation order (D-06; first failure short-circuits):
     2. DEPENDENCY_CYCLE   — graph.cycle is not None (D-07 fail-fast)
     3. INCOMPLETE_SCHEDULE — dragged item missing dates (eager)
     4. SCHEDULE_CHANGED   — dragged item's current schedule no longer matches
-       the drag-start original dates after an updated_at mismatch (D-08 dragged-only)
+       the drag-start original dates (D-08 dragged-only)
     5. Walk; per-visited-node lazy checks: INCOMPLETE_SCHEDULE (D-09),
        PROJECT_BOUNDARY_EXCEEDED (D-10 reachability), PROPAGATION_LIMIT_EXCEEDED (D-11 lazy).
 
@@ -137,9 +137,7 @@ def propagate_move(
         dragged.start_date != move_intent.original_start_date
         or dragged.target_date != move_intent.original_target_date
     )
-    if expected_updated_at is None or (
-        expected_updated_at != dragged.updated_at and has_schedule_changed_since_drag_start
-    ):
+    if expected_updated_at is None or has_schedule_changed_since_drag_start:
         return _fail(
             dragged_id,
             PropagationErrorCode.SCHEDULE_CHANGED,

@@ -739,6 +739,51 @@ class TestTimelinePropagationView:
         assert body["code"] == PropagationErrorCode.PROJECT_BOUNDARY_EXCEEDED.value
         _assert_no_db_writes(snapshot)
 
+    def test_cross_project_path_owned_by_other_endpoint_returns_422_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """Cross-project edge whose relation row is owned by the foreign
+        endpoint's project is still part of the active project's graph.
+        """
+        project_a = _build_member_project(workspace, create_user)
+        project_b = _unique_project(workspace, create_user, label="Y")
+        a = IssueFactory.create(
+            project=project_a, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        b = IssueFactory.create(
+            project=project_b, start_date="2026-01-03", target_date="2026-01-04"
+        )
+        # b blocked_by a; relation row owned by project_b because it was
+        # created from the B side.
+        IssueRelation.objects.create(
+            id=uuid4(),
+            project=project_b,
+            workspace=workspace,
+            issue=b,
+            related_issue=a,
+            relation_type="blocked_by",
+            created_by=create_user,
+            updated_by=create_user,
+        )
+        snapshot = _snapshot([a.id, b.id])
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project_a.id,
+            work_item_id=str(a.id),
+            original_start_date="2026-01-01",
+            original_target_date="2026-01-02",
+            expected_updated_at=a.updated_at.isoformat(),
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.PROJECT_BOUNDARY_EXCEEDED.value
+        _assert_no_db_writes(snapshot)
+
     def test_incomplete_schedule_descendant_returns_422_envelope(
         self, session_client, workspace, create_user
     ):
@@ -896,6 +941,35 @@ class TestTimelinePropagationView:
             original_start_date="2025-12-29",
             original_target_date="2025-12-30",
             expected_updated_at=stale,
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        body = response.json()
+        assert body["code"] == PropagationErrorCode.SCHEDULE_CHANGED.value
+        _assert_no_db_writes(snapshot)
+
+    def test_stale_schedule_with_same_updated_at_returns_409_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """/issue-dates/ can change dates without advancing updated_at; date
+        mismatch alone must reject propagation.
+        """
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        snapshot = _snapshot([a.id])
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2025-12-29",
+            original_target_date="2025-12-30",
+            expected_updated_at=a.updated_at.isoformat(),
             requested_start_date="2026-01-10",
             requested_target_date="2026-01-11",
         )

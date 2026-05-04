@@ -7,7 +7,12 @@
 import { useRef, useState } from "react";
 // Plane
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IBlockUpdateDependencyData, IGanttBlock } from "@plane/types";
+import type {
+  IBlockUpdateDependencyData,
+  IBlockUpdateDragContext,
+  IGanttBlock,
+  TGanttBlockDragDirection,
+} from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
@@ -42,7 +47,7 @@ export const useGanttResizable = (
   block: IGanttBlock,
   resizableRef: React.RefObject<HTMLDivElement>,
   ganttContainerRef: React.RefObject<HTMLDivElement>,
-  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>,
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[], context: IBlockUpdateDragContext) => Promise<void>,
   propagationCallbacks?: PropagationCallbacks | null
 ) => {
   // refs
@@ -61,12 +66,12 @@ export const useGanttResizable = (
     getUpdatedPositionAfterDrag,
     getDateFromPositionOnGantt,
   } = useTimeLineChartStore();
-  const [isMoving, setIsMoving] = useState<"left" | "right" | "move" | undefined>();
+  const [isMoving, setIsMoving] = useState<TGanttBlockDragDirection | undefined>();
 
   // handle block resize from the left end
   const handleBlockDrag = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    dragDirection: "left" | "right" | "move"
+    dragDirection: TGanttBlockDragDirection
   ) => {
     const ganttContainerElement = ganttContainerRef.current;
     if (!currentViewData || !resizableRef.current || !block.position || !ganttContainerElement) return;
@@ -197,7 +202,7 @@ export const useGanttResizable = (
 
       try {
         const blockUpdates = getUpdatedPositionAfterDrag(block.id, shouldUpdateHalfBlock);
-        if (updateBlockDates) updateBlockDates(blockUpdates);
+        if (updateBlockDates) updateBlockDates(blockUpdates, { dragDirection });
       } catch {
         setToast({
           type: TOAST_TYPE.ERROR,

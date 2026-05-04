@@ -9,7 +9,13 @@ import { observer } from "mobx-react";
 import { createPortal } from "react-dom";
 // plane imports
 // components
-import type { ChartDataType, IBlockUpdateData, IBlockUpdateDependencyData, TGanttViews } from "@plane/types";
+import type {
+  ChartDataType,
+  IBlockUpdateData,
+  IBlockUpdateDependencyData,
+  IBlockUpdateDragContext,
+  TGanttViews,
+} from "@plane/types";
 import { cn } from "@plane/utils";
 import { GanttChartHeader, GanttChartMainContent } from "@/components/gantt-chart";
 // helpers
@@ -40,7 +46,7 @@ type ChartViewRootProps = {
   bottomSpacing: boolean;
   showAllBlocks: boolean;
   loadMoreBlocks?: () => void;
-  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[], context: IBlockUpdateDragContext) => Promise<void>;
   canLoadMoreBlocks?: boolean;
   quickAdd?: React.ReactNode | undefined;
   showToday: boolean;

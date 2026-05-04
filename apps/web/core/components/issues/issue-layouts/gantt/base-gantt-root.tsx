@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 import { ALL_ISSUES, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { EIssuesStoreType, IBlockUpdateData, TIssue } from "@plane/types";
+import type { EIssuesStoreType, IBlockUpdateData, IBlockUpdateDragContext, TIssue } from "@plane/types";
 import { EIssueLayoutTypes, GANTT_TIMELINE_TYPE } from "@plane/types";
 import { renderFormattedPayloadDate } from "@plane/utils";
 // components
@@ -143,13 +143,15 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
         id: string;
         start_date?: string;
         target_date?: string;
-      }[]
+      }[],
+      context: IBlockUpdateDragContext
     ) => {
-      // D-01a: payload-shape predicate — single entry, both dates present, dragged
-      // block had both dates pre-drag.
+      // D-01a: move predicate — the drag source must be a move, with one
+      // complete date range for a block that was complete pre-drag.
       const single = updates.length === 1 && !!updates[0].start_date && !!updates[0].target_date;
       const preDragBlock = single ? issueTimelineStore.blocksMap[updates[0].id] : undefined;
-      const isMove = single && !!preDragBlock?.start_date && !!preDragBlock?.target_date;
+      const isMove =
+        context.dragDirection === "move" && single && !!preDragBlock?.start_date && !!preDragBlock?.target_date;
 
       if (isMove) {
         // D-01: move path → propagation endpoint via Phase 4 store.

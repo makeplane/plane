@@ -12,6 +12,7 @@ import type {
   ChartDataType,
   IBlockUpdateData,
   IBlockUpdateDependencyData,
+  IBlockUpdateDragContext,
   IGanttBlock,
   TGanttViews,
 } from "@plane/types";
@@ -42,7 +43,7 @@ type Props = {
   blockIds: string[];
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
-  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[], context: IBlockUpdateDragContext) => Promise<void>;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   bottomSpacing: boolean;

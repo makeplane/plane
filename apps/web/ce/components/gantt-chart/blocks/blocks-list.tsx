@@ -5,7 +5,7 @@
  */
 
 //
-import type { IBlockUpdateDependencyData } from "@plane/types";
+import type { IBlockUpdateDependencyData, IBlockUpdateDragContext } from "@plane/types";
 import { GanttChartBlock } from "@/components/gantt-chart/blocks/block";
 
 export type GanttChartBlocksProps = {
@@ -16,7 +16,7 @@ export type GanttChartBlocksProps = {
   enableBlockMove: boolean | ((blockId: string) => boolean);
   ganttContainerRef: React.RefObject<HTMLDivElement>;
   showAllBlocks: boolean;
-  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[], context: IBlockUpdateDragContext) => Promise<void>;
   enableDependency: boolean | ((blockId: string) => boolean);
 };
 

@@ -8,7 +8,7 @@ import type { RefObject } from "react";
 import { useContext, useRef } from "react";
 import { observer } from "mobx-react";
 // components
-import type { IBlockUpdateDependencyData } from "@plane/types";
+import type { IBlockUpdateDependencyData, IBlockUpdateDragContext } from "@plane/types";
 import { cn } from "@plane/utils";
 import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 // helpers
@@ -31,7 +31,7 @@ type Props = {
   enableBlockMove: boolean;
   enableDependency: boolean;
   ganttContainerRef: RefObject<HTMLDivElement>;
-  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[], context: IBlockUpdateDragContext) => Promise<void>;
 };
 
 export const GanttChartBlock = observer(function GanttChartBlock(props: Props) {

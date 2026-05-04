@@ -7,7 +7,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 // components
-import type { IBlockUpdateData, IBlockUpdateDependencyData } from "@plane/types";
+import type { IBlockUpdateData, IBlockUpdateDependencyData, IBlockUpdateDragContext } from "@plane/types";
 // hooks
 import { useTimeLineChartStore } from "@/hooks/use-timeline-chart";
 import { ChartViewRoot } from "./chart/root";
@@ -23,7 +23,7 @@ type GanttChartRootProps = {
   quickAdd?: React.ReactNode | undefined;
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
-  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[], context: IBlockUpdateDragContext) => Promise<void>;
   enableBlockLeftResize?: boolean | ((blockId: string) => boolean);
   enableBlockRightResize?: boolean | ((blockId: string) => boolean);
   enableBlockMove?: boolean | ((blockId: string) => boolean);

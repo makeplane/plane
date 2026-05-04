@@ -68,7 +68,7 @@ import json
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
 from django.utils import timezone
 
 # Third Party imports
@@ -191,7 +191,10 @@ class TimelinePropagationView(BaseAPIView):
             #     ``relation_type='blocked_by'`` internally per Phase 1 D-04.
             relations = (
                 IssueRelation.objects.filter(
-                    project_id=project_id, deleted_at__isnull=True
+                    Q(issue__project_id=project_id)
+                    | Q(related_issue__project_id=project_id),
+                    workspace__slug=slug,
+                    deleted_at__isnull=True,
                 )
                 .annotate(
                     issue_project_id=F("issue__project_id"),

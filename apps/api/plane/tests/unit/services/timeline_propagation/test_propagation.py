@@ -852,6 +852,33 @@ class TestStaleSchedule:
         assert result.failure.code == PropagationErrorCode.SCHEDULE_CHANGED
         assert result.failure.work_item_id == a
 
+    def test_dragged_item_date_mismatch_with_same_updated_at_fails(self):
+        proj = uuid4()
+        a = uuid4()
+        updated_at = datetime(2026, 5, 4, 12, 0, 0, tzinfo=timezone.utc)
+        items = {
+            a: _make_scheduled(
+                a,
+                proj,
+                start=date(2026, 5, 5),
+                target=date(2026, 5, 7),
+                updated_at=updated_at,
+            ),
+        }
+        graph = _make_load_result(_make_adjacency(nodes={a}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 4),
+            original_target=date(2026, 5, 6),
+            requested_start=date(2026, 5, 7),
+            requested_target=date(2026, 5, 9),
+        )
+        result = propagate_move(graph, items, intent, {a: updated_at})
+
+        assert not result.is_success
+        assert result.failure.code == PropagationErrorCode.SCHEDULE_CHANGED
+        assert result.failure.work_item_id == a
+
     def test_untouched_neighbor_updated_at_difference_does_not_fail(self):
         """Pitfall 7 / D-08: only the dragged item's updated_at is compared."""
         proj = uuid4()
