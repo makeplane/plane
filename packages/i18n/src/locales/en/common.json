@@ -712,7 +712,12 @@
     "open_in_full_screen": "Open {page} in full screen",
     "details": "Details",
     "project_structure": "Project structure",
-    "custom_properties": "Custom properties"
+    "custom_properties": "Custom properties",
+    "your_profile": "Your profile",
+    "developer": "Developer",
+    "work_structure": "Work structure",
+    "execution": "Execution",
+    "administration": "Administration"
   },
   "chart": {
     "x_axis": "X-axis",

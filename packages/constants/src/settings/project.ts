@@ -22,6 +22,13 @@ export const PROJECT_SETTINGS_CATEGORIES: PROJECT_SETTINGS_CATEGORY[] = [
   PROJECT_SETTINGS_CATEGORY.EXECUTION,
 ];
 
+export const PROJECT_SETTINGS_CATEGORY_LABELS: Record<PROJECT_SETTINGS_CATEGORY, string> = {
+  [PROJECT_SETTINGS_CATEGORY.GENERAL]: "common.general",
+  [PROJECT_SETTINGS_CATEGORY.FEATURES]: "common.features",
+  [PROJECT_SETTINGS_CATEGORY.WORK_STRUCTURE]: "common.work_structure",
+  [PROJECT_SETTINGS_CATEGORY.EXECUTION]: "common.execution",
+};
+
 export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem> = {
   general: {
     key: "general",
