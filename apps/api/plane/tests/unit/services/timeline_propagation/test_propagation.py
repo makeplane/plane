@@ -808,15 +808,35 @@ class TestCrossProjectReachable:
 
 @pytest.mark.unit
 class TestStaleSchedule:
-    """SCHEDULE_CHANGED fires only on dragged-item updated_at mismatch (D-08)."""
+    """SCHEDULE_CHANGED fires only when the dragged item's schedule changed (D-08)."""
 
-    def test_dragged_item_updated_at_mismatch_fails(self):
+    def test_dragged_item_updated_at_mismatch_with_same_dates_succeeds(self):
         proj = uuid4()
         a = uuid4()
         actual = datetime(2026, 5, 4, 12, 0, 0, tzinfo=timezone.utc)
         stale = datetime(2026, 5, 4, 11, 0, 0, tzinfo=timezone.utc)  # 1h older
         items = {
             a: _make_scheduled(a, proj, start=date(2026, 5, 4), target=date(2026, 5, 6), updated_at=actual),
+        }
+        graph = _make_load_result(_make_adjacency(nodes={a}))
+        intent = _make_intent(
+            a,
+            original_start=date(2026, 5, 4),
+            original_target=date(2026, 5, 6),
+            requested_start=date(2026, 5, 7),
+            requested_target=date(2026, 5, 9),
+        )
+        result = propagate_move(graph, items, intent, {a: stale})
+
+        assert result.is_success
+
+    def test_dragged_item_date_mismatch_after_updated_at_mismatch_fails(self):
+        proj = uuid4()
+        a = uuid4()
+        actual = datetime(2026, 5, 4, 12, 0, 0, tzinfo=timezone.utc)
+        stale = datetime(2026, 5, 4, 11, 0, 0, tzinfo=timezone.utc)  # 1h older
+        items = {
+            a: _make_scheduled(a, proj, start=date(2026, 5, 5), target=date(2026, 5, 7), updated_at=actual),
         }
         graph = _make_load_result(_make_adjacency(nodes={a}))
         intent = _make_intent(

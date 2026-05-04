@@ -846,20 +846,16 @@ class TestTimelinePropagationView:
         assert body["code"] == PropagationErrorCode.INVALID_DATE_RANGE.value
         _assert_no_db_writes(snapshot)
 
-    def test_stale_updated_at_returns_409_envelope(
+    def test_stale_updated_at_with_current_schedule_succeeds(
         self, session_client, workspace, create_user
     ):
         """``expected_updated_at`` older than dragged Issue's current value
-        → 409 ``SCHEDULE_CHANGED`` + no DB writes (TEST-13).
+        does not fail when the drag-start date range still matches the DB.
         """
         project = _build_member_project(workspace, create_user)
         a = IssueFactory.create(
             project=project, start_date="2026-01-01", target_date="2026-01-02"
         )
-        snapshot = _snapshot([a.id])
-
-        # 1 hour in the past — algorithm's D-08 dragged-only stale check
-        # rejects the mismatch.
         stale = (a.updated_at - timedelta(hours=1)).isoformat()
 
         response = _post_propagate(
@@ -869,6 +865,36 @@ class TestTimelinePropagationView:
             work_item_id=str(a.id),
             original_start_date="2026-01-01",
             original_target_date="2026-01-02",
+            expected_updated_at=stale,
+            requested_start_date="2026-01-10",
+            requested_target_date="2026-01-11",
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+
+    def test_stale_schedule_returns_409_envelope(
+        self, session_client, workspace, create_user
+    ):
+        """Drag-start date range older than dragged Issue's current schedule
+        → 409 ``SCHEDULE_CHANGED`` + no DB writes (TEST-13).
+        """
+        project = _build_member_project(workspace, create_user)
+        a = IssueFactory.create(
+            project=project, start_date="2026-01-01", target_date="2026-01-02"
+        )
+        snapshot = _snapshot([a.id])
+
+        # 1 hour in the past plus a stale original range — algorithm's D-08
+        # dragged-only schedule check rejects the mismatch.
+        stale = (a.updated_at - timedelta(hours=1)).isoformat()
+
+        response = _post_propagate(
+            session_client,
+            workspace.slug,
+            project.id,
+            work_item_id=str(a.id),
+            original_start_date="2025-12-29",
+            original_target_date="2025-12-30",
             expected_updated_at=stale,
             requested_start_date="2026-01-10",
             requested_target_date="2026-01-11",
