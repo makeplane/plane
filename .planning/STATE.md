@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 4 COMPLETE (2/2 plans); ready for Phase 5 (drag handler integration + error UX)
-stopped_at: Phase 4 Plan 02 EXECUTED — TimelinePropagationStore (4-action MobX store with dual-observable error split, in-flight promise cache, lastPreviewIds-pre-clear) + TimeLineStore wiring; 2 atomic commits; Phase 3 contract (26) + unit (64) and Wave 1 Vitest (11) all still GREEN; FE-08 + D-03b + D-05d + D-06 inert constraints honored
-last_updated: "2026-05-04T04:06:09.000Z"
-last_activity: 2026-05-04 -- /gsd-execute-phase 4 plan 02 shipped 1 new MobX store + 1 modified barrel across 2 atomic commits; rootStore.timelineStore.timelinePropagationStore is now the seam Phase 5's drag handler will consume
+status: Phase 5 context gathered (12 decisions D-01..D-12); ready for /gsd-plan-phase 5
+stopped_at: Phase 5 — Drag Handler Integration & Error UX context captured. 12 decisions: D-01 split inside base-gantt-root.tsx::updateBlockDates (issue-Gantt-only); D-02 per-mousemove updatePreview + observer-driven sibling re-render; D-03 edges/items_by_id assembled from IssuesTimeLineStore.blocksMap + IssueRelation accessor; D-04 single ERROR severity, per-code message-only; D-05 INFO toast with ICU plural for hidden update; D-06 timeline.propagation.* namespace, en+ja required; D-07 no in-flight visual change; D-08 no Esc-cancel; D-09 mousedown-time updated_at snapshot; D-10 all changes in apps/web/core/; D-11 zero new automated tests (Phase 6 closes E2E); D-12 OxLint warnings 0. 13 deferred ideas captured.
+last_updated: "2026-05-04T05:00:00.000Z"
+last_activity: 2026-05-04 -- /gsd-discuss-phase 5 captured 05-CONTEXT.md + 05-DISCUSSION-LOG.md across 1 atomic commit (9ce6d495ff); user selected Recommended for all 8 gray areas across 2 AskUserQuestion turns
 progress:
   total_phases: 6
   completed_phases: 4
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-03)
 
 ## Current Position
 
-Phase: 4 (Frontend Service Client & MobX Preview Store) — COMPLETE
-Plan: 2/2 done (next: Phase 5 — Drag Handler Integration & Error UX, plans TBD)
-Status: Phase 4 ships typed wire contract + 3 pure helpers + Vitest harness + 4-action MobX store with dual-observable error path + TimeLineStore wiring; 11 Vitest GREEN; Phase 3 backend regression (26 contract + 64 unit) GREEN
-Last activity: 2026-05-04 -- /gsd-execute-phase 4 plan 02 atomic-committed 2 tasks (d810b92105, 888ff6c32b)
+Phase: 5 (Drag Handler Integration & Error UX) — CONTEXT GATHERED
+Plan: 0/TBD (next: /gsd-plan-phase 5)
+Status: 12 decisions locked (D-01..D-12) + 13 deferred ideas; covers integration entrypoint (base-gantt-root split), preview rendering (per-mousemove + observer), error UX (per-code message-only), hidden-update toast, timeline.propagation.\* i18n namespace (en+ja), in-flight no-spinner, no-Esc, mousedown-snapshot for stale check
+Last activity: 2026-05-04 -- /gsd-discuss-phase 5 (1 commit 9ce6d495ff)
 
 Progress: [█████████░] 100% (9/9 plans completed; Phase 4 milestone tracker re-counts at next /gsd-transition)
 
