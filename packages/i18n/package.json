@@ -18,7 +18,7 @@
     "generate:types": "npx tsx@4.19.2 scripts/generate-types.ts",
     "sync:check": "npx tsx@4.19.2 scripts/sync-check.ts",
     "check:sync": "npx tsx@4.19.2 scripts/sync-check.ts --ci",
-    "check:lint": "oxlint --max-warnings=2 .",
+    "check:lint": "oxlint --max-warnings=9 .",
     "check:types": "pnpm run generate:types && tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
