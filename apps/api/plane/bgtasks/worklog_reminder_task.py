@@ -9,6 +9,7 @@ from celery import shared_task
 from django.core.mail import EmailMultiAlternatives, get_connection
 
 from plane.license.utils.instance_value import get_email_configuration
+from plane.utils.celery_helpers import working_day_required
 from plane.utils.exception_logger import log_exception
 
 logger = logging.getLogger("plane.worker")
@@ -23,8 +24,13 @@ REMINDER_BODY = (
 
 
 @shared_task
+@working_day_required()
 def worklog_daily_reminder():
-    """Send daily reminder to users who haven't logged time today."""
+    """Send daily reminder to users who haven't logged time today.
+
+    Skipped automatically on weekends and VN public holidays via the
+    @working_day_required() decorator (Asia/Ho_Chi_Minh timezone, fail-open).
+    """
     try:
         _send_reminders()
     except Exception as e:
