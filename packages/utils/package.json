@@ -20,7 +20,8 @@
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
     "fix:format": "oxfmt .",
-    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
+    "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
+    "test": "vitest run"
   },
   "dependencies": {
     "@plane/constants": "workspace:*",
@@ -53,6 +54,7 @@
     "@types/react": "catalog:",
     "@types/sanitize-html": "2.16.0",
     "tsdown": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "^4.0.8"
   }
 }
