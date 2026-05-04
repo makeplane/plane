@@ -110,4 +110,31 @@ test.describe("timeline dependency propagation", () => {
       await api.deleteIssue(issue.id);
     }
   });
+
+  test("#smoke: propagationPair seeds relation and propagationTimeline renders both blocks", async ({
+    propagationPair,
+    propagationTimeline,
+    page,
+  }) => {
+    const { src, tgt } = propagationPair;
+
+    // propagationTimeline fixture 構築直後 → 両ブロックが DOM にいる(waitForBlock を経由)
+    const srcBox = await propagationTimeline.getBlockBox(src.id);
+    const tgtBox = await propagationTimeline.getBlockBox(tgt.id);
+
+    expect(srcBox.width).toBeGreaterThan(0);
+    expect(tgtBox.width).toBeGreaterThan(0);
+
+    // tgt は src の右側にあるはず (D-06b: src end=+3, tgt start=+5 → tgt.x > src.x + src.width)
+    expect(tgtBox.x).toBeGreaterThan(srcBox.x + srcBox.width);
+
+    // 両ブロックが可視状態
+    await expect(propagationTimeline.block(src.id)).toBeVisible();
+    await expect(propagationTimeline.block(tgt.id)).toBeVisible();
+
+    // optional: 関係線が描画されているか(propagationPair が API 経由で関係を作っているので必ず存在)
+    await expect(page.locator(`[data-dependency-key="${src.id}-blocking-${tgt.id}"]`)).toBeVisible({
+      timeout: 5_000,
+    });
+  });
 });
