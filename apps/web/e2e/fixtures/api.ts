@@ -10,8 +10,8 @@ const AUTH_STATE = path.join(__dirname, "..", "..", "playwright", ".auth", "user
 export type CreatedIssue = {
   id: string;
   name: string;
-  start_date: string;
-  target_date: string;
+  start_date: string | null;
+  target_date: string | null;
 };
 
 /**
@@ -125,5 +125,27 @@ export class Api {
     expect([200, 204], `clearIssueDate unexpected status: ${resp.status()} ${await resp.text()}`).toContain(
       resp.status()
     );
+  }
+
+  /**
+   * Issue を 1 件取得する(D-05)。
+   *
+   * URL: GET /api/workspaces/<slug>/projects/<projectId>/issues/<id>/
+   * Expected: 200 OK
+   * Returns: CreatedIssue 型(部分集合 — GET レスポンスは追加フィールドを持つが
+   *          test 側は id / start_date / target_date のみ参照する)。
+   *
+   * 用途: TEST-23 で tgt.start_date / target_date が伝播後に
+   *      bulk_update で永続化されたことを直接 DB から読み出して確認する。
+   *      DRF の retrieve は Redis キャッシュを使わない(RESEARCH §Persistence Read Path)
+   *      ため stale read のリスクなし。
+   */
+  async getIssue(issueId: string): Promise<CreatedIssue> {
+    const resp = await this.ctx.get(
+      `/api/workspaces/${env.workspaceSlug}/projects/${env.projectId}/issues/${issueId}/`,
+      { headers: { "X-CSRFTOKEN": this.csrf } }
+    );
+    expect(resp.status(), `getIssue failed: ${resp.status()} ${await resp.text()}`).toBe(200);
+    return (await resp.json()) as CreatedIssue;
   }
 }

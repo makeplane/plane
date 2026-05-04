@@ -1,4 +1,4 @@
-import { test } from "../fixtures/test-fixtures";
+import { test, expect } from "../fixtures/test-fixtures";
 
 /**
  * Phase 6 — Timeline Dependency Schedule Propagation E2E coverage.
@@ -46,6 +46,26 @@ test.describe("timeline dependency propagation", () => {
       // Verify via getIssue (which is added in Task 06-01-04 — temporarily inline-call here
       // is rejected; instead assert the PATCH succeeded by verifying the next createIssue+drag
       // doesn't include this issue. For Task 06-01-03 we only assert the helper does not throw).
+    } finally {
+      await api.deleteIssue(issue.id);
+    }
+  });
+
+  test("#smoke: getIssue reads back created dates and clearIssueDate persists null", async ({ api }, testInfo) => {
+    const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
+    const issue = await api.createIssue(`e2e-smoke-get-${suffix}`, { start: 0, end: 7 });
+    try {
+      // Initial read — should have both dates populated
+      const initial = await api.getIssue(issue.id);
+      expect(initial.start_date).toBeTruthy();
+      expect(initial.target_date).toBeTruthy();
+
+      // Clear target_date — server-side null
+      await api.clearIssueDate(issue.id, "target_date");
+
+      // Re-read — target_date must now be null (stale cache check)
+      const after = await api.getIssue(issue.id);
+      expect(after.target_date).toBeNull();
     } finally {
       await api.deleteIssue(issue.id);
     }
