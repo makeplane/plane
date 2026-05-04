@@ -117,3 +117,7 @@ temp/
 # GitNexus knowledge graph (large binary, regenerable)
 /.gitnexus/
 
+# Local backup files
+*.bak
+*.bak.*
+
