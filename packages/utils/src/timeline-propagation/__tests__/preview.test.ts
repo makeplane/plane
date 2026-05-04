@@ -4,9 +4,16 @@
  * See the LICENSE file for details.
  */
 
+import type { TTimelinePropagationWorkItem } from "@plane/types";
 import { describe, expect, it } from "vitest";
 
-import { computeLoadedPreview, type LoadedGraphEdge, type LoadedWorkItem } from "../preview";
+import {
+  applyServerWorkItems,
+  computeLoadedPreview,
+  diffHiddenUpdate,
+  type LoadedGraphEdge,
+  type LoadedWorkItem,
+} from "../preview";
 
 describe("computeLoadedPreview (TEST-19 / FE-01 / FE-02)", () => {
   it("simple: rightward move pushes a single loaded successor", () => {
@@ -122,5 +129,111 @@ describe("computeLoadedPreview (TEST-19 / FE-01 / FE-02)", () => {
 
     expect(items_by_id).toEqual(itemsSnapshot);
     expect(edges).toEqual(edgesSnapshot);
+  });
+});
+
+describe("applyServerWorkItems (TEST-21 / FE-04)", () => {
+  it("server work_items REPLACE existing dates+updated_at on every matched id", () => {
+    const current = {
+      "wi-A": {
+        id: "wi-A",
+        start_date: "2026-05-04",
+        target_date: "2026-05-08",
+        updated_at: "2026-05-04T00:00:00Z",
+        name: "A",
+      },
+      "wi-B": {
+        id: "wi-B",
+        start_date: "2026-05-09",
+        target_date: "2026-05-13",
+        updated_at: "2026-05-04T00:00:00Z",
+        name: "B",
+      },
+    };
+    const server: TTimelinePropagationWorkItem[] = [
+      { id: "wi-A", start_date: "2026-05-09", target_date: "2026-05-13", updated_at: "2026-05-04T12:00:00.000000Z" },
+      { id: "wi-B", start_date: "2026-05-14", target_date: "2026-05-18", updated_at: "2026-05-04T12:00:00.000000Z" },
+    ];
+
+    const next = applyServerWorkItems(current, server);
+
+    expect(next["wi-A"]).toEqual({
+      id: "wi-A",
+      start_date: "2026-05-09",
+      target_date: "2026-05-13",
+      updated_at: "2026-05-04T12:00:00.000000Z",
+      name: "A",
+    });
+    expect(next["wi-B"]).toEqual({
+      id: "wi-B",
+      start_date: "2026-05-14",
+      target_date: "2026-05-18",
+      updated_at: "2026-05-04T12:00:00.000000Z",
+      name: "B",
+    });
+  });
+
+  it("server work_items not present in current map are NOT inserted (hidden updates surface via diffHiddenUpdate, D-05e)", () => {
+    const current = {
+      "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08", updated_at: "2026-05-04T00:00:00Z" },
+    };
+    const server: TTimelinePropagationWorkItem[] = [
+      { id: "wi-A", start_date: "2026-05-09", target_date: "2026-05-13", updated_at: "2026-05-04T12:00:00.000000Z" },
+      { id: "wi-Z", start_date: "2026-05-20", target_date: "2026-05-25", updated_at: "2026-05-04T12:00:00.000000Z" },
+    ];
+
+    const next = applyServerWorkItems(current, server);
+
+    expect(next["wi-A"].start_date).toBe("2026-05-09");
+    expect(next["wi-Z"]).toBeUndefined();
+    expect(Object.keys(next)).toEqual(["wi-A"]);
+  });
+
+  it("immutability (D-04c): does not mutate the input current snapshot or server array", () => {
+    const current = {
+      "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08", updated_at: "2026-05-04T00:00:00Z" },
+    };
+    const server: TTimelinePropagationWorkItem[] = [
+      { id: "wi-A", start_date: "2026-05-09", target_date: "2026-05-13", updated_at: "2026-05-04T12:00:00.000000Z" },
+    ];
+    const currentSnapshot = JSON.parse(JSON.stringify(current));
+    const serverSnapshot = JSON.parse(JSON.stringify(server));
+
+    const next = applyServerWorkItems(current, server);
+
+    expect(current).toEqual(currentSnapshot);
+    expect(server).toEqual(serverSnapshot);
+    // Returned value is a new object reference.
+    expect(next).not.toBe(current);
+    expect(next["wi-A"]).not.toBe(current["wi-A"]);
+  });
+});
+
+describe("diffHiddenUpdate (TEST-22 / FE-06)", () => {
+  it("counts server work_items not present in preview ids", () => {
+    const server: TTimelinePropagationWorkItem[] = [
+      { id: "wi-A", start_date: "2026-05-09", target_date: "2026-05-13", updated_at: "x" },
+      { id: "wi-B", start_date: "2026-05-14", target_date: "2026-05-18", updated_at: "x" },
+      { id: "wi-Z", start_date: "2026-05-20", target_date: "2026-05-25", updated_at: "x" },
+    ];
+    const previewIds = new Set<string>(["wi-A", "wi-B"]);
+
+    expect(diffHiddenUpdate(server, previewIds)).toBe(1);
+  });
+
+  it("returns 0 when every server work_item is in the preview", () => {
+    const server: TTimelinePropagationWorkItem[] = [
+      { id: "wi-A", start_date: "2026-05-09", target_date: "2026-05-13", updated_at: "x" },
+    ];
+    const previewIds = new Set<string>(["wi-A", "wi-B"]);
+    expect(diffHiddenUpdate(server, previewIds)).toBe(0);
+  });
+
+  it("returns server.length when preview is empty", () => {
+    const server: TTimelinePropagationWorkItem[] = [
+      { id: "wi-A", start_date: "2026-05-09", target_date: "2026-05-13", updated_at: "x" },
+      { id: "wi-B", start_date: "2026-05-14", target_date: "2026-05-18", updated_at: "x" },
+    ];
+    expect(diffHiddenUpdate(server, new Set())).toBe(2);
   });
 });
