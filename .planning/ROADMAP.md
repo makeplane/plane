@@ -18,7 +18,7 @@ Phases execute strictly sequentially (`config.json: parallelization=false`). Eac
 - [x] **Phase 3: Propagation API Endpoint, Persistence & Contract** - DRF endpoint with all-or-nothing transactional persistence, stale detection, permission, stable `{code, message}` failure shape. (Completed 2026-05-04; 3 of 3 plans done; 26 GREEN contract tests in test_timeline_propagation.py + 64 Phase 1+2 unit tests still GREEN; transaction.on_commit fan-out wired with default-arg capture; first transaction.on_commit usage anywhere in apps/api/plane.)
 - [x] **Phase 4: Frontend Service Client & MobX Preview Store** - `@plane/services` propagation client + MobX advisory preview / server-replace / rollback / hidden-update store. (Completed 2026-05-04; 2 of 2 plans done; 11 GREEN Vitest cases for the pure helpers; MobX store wired via `TimeLineStore.timelinePropagationStore`; Phase 3 backend regression still GREEN.)
 - [x] **Phase 5: Drag Handler Integration & Error UX** - Switch the existing Gantt move drag handler to the propagation endpoint and surface the 7 error codes plus the hidden-update notification. (Completed 2026-05-04; 2 of 2 plans done; 05-01 shipped the typed seam — 10 i18n keys + hook + toast resolver; 05-02 wired the drag path — D-01 split, sibling preview override via observer, FE-03 / FE-09 / ERR-08 closed; manual smoke (D-11a) gated to /gsd-verify-work.)
-- [ ] **Phase 6: End-to-End Coverage & Polish** - Playwright happy-path and failure-path drag specs that exercise the full stack.
+- [x] **Phase 6: End-to-End Coverage & Polish** - Playwright happy-path and failure-path drag specs that exercise the full stack. (completed 2026-05-04)
 
 ## Phase Details
 
@@ -236,18 +236,18 @@ Phases execute strictly sequentially (`config.json: parallelization=false`). Eac
 **Execution Order:**
 Phases execute strictly in numeric order: 1 → 2 → 3 → 4 → 5 → 6. Each phase locks a contract its successor depends on; `parallelization=false` in `config.json`.
 
-| Phase                                                        | Plans Complete | Status      | Completed  |
-| ------------------------------------------------------------ | -------------- | ----------- | ---------- |
-| 1. Precedence Graph Loader & Normalization                   | 2/2            | Complete    | 2026-05-03 |
-| 2. Date-Range Scheduling Helper & Propagation Algorithm Core | 0/3            | Planned     | -          |
-| 3. Propagation API Endpoint, Persistence & Contract          | 3/3            | Complete    | 2026-05-04 |
-| 4. Frontend Service Client & MobX Preview Store              | 2/2            | Complete    | 2026-05-04 |
-| 5. Drag Handler Integration & Error UX                       | 2/2            | Complete    | 2026-05-04 |
-| 6. End-to-End Coverage & Polish                              | 1/2            | In Progress |            |
+| Phase                                                        | Plans Complete | Status   | Completed  |
+| ------------------------------------------------------------ | -------------- | -------- | ---------- |
+| 1. Precedence Graph Loader & Normalization                   | 2/2            | Complete | 2026-05-03 |
+| 2. Date-Range Scheduling Helper & Propagation Algorithm Core | 0/3            | Planned  | -          |
+| 3. Propagation API Endpoint, Persistence & Contract          | 3/3            | Complete | 2026-05-04 |
+| 4. Frontend Service Client & MobX Preview Store              | 2/2            | Complete | 2026-05-04 |
+| 5. Drag Handler Integration & Error UX                       | 2/2            | Complete | 2026-05-04 |
+| 6. End-to-End Coverage & Polish                              | 2/2            | Complete | 2026-05-04 |
 
 ## Phase 1 — Plans
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 - [x] 01-01-PLAN.md — Scaffold timeline_propagation package + types.py (frozen dataclasses) + first failing pytest case for relates_to exclusion (PROP-18 declared at module surface) — completed 2026-05-03 (4m43s; commits 299261c8a2, c86eccdaf8, 8252a268c6; see [01-01-SUMMARY.md](phases/01-precedence-graph-loader-normalization/01-01-SUMMARY.md))
 - [x] 01-02-PLAN.md — Implement graph.py (loader + iterative three-color DFS cycle detection) + 9 additional tests covering PROP-01, PROP-02, PROP-15, PROP-16, TEST-11 + lint-grep purity (D-08) — completed 2026-05-03 (5m55s; commits 7c8cf118b7, e0d9d07eef; see [01-02-SUMMARY.md](phases/01-precedence-graph-loader-normalization/01-02-SUMMARY.md))
@@ -287,4 +287,4 @@ Phases execute strictly in numeric order: 1 → 2 → 3 → 4 → 5 → 6. Each 
 **Plans:** 2 plans (sequential, Wave 1 → Wave 2)
 
 - [x] 06-01-PLAN.md — Wave 1 fixtures + API helpers + POM methods + smoke self-tests: NEW `apps/web/e2e/specs/timeline-dependency-propagation.spec.ts` (placeholder + 4 smoke tests for D-13a self-test). MODIFY `apps/web/e2e/fixtures/api.ts` (additive: `createIssueRelation` / `clearIssueDate` / `getIssue`). MODIFY `apps/web/e2e/fixtures/test-fixtures.ts` (additive: `propagationPair` / `propagationTimeline`). MODIFY `apps/web/e2e/pages/timeline.page.ts` (additive: `dragBlockBy` / `getBlockBox` / `getDayWidthFromBlock`). 7 tasks, smoke-tested per-task. Existing 3 relation-creation specs byte-identical. OxLint budget 11957 honored. Requirements: none directly (infrastructure plan).
-- [ ] 06-02-PLAN.md — Wave 2 TEST-23 + TEST-24 implementation: replace placeholder skips with active tests. TEST-23 = network 200 + DOM tgt-shift + DB persistence (3-tier). TEST-24 = `clearIssueDate` after timeline render → drag → 422 INCOMPLETE_SCHEDULE → toast `"Schedule update failed"` + `"A dependent work item is missing start or target dates."` + DOM rollback both blocks within ±2px. Wave 1 smokes converted to `test.skip(...)`. README adds locale precondition (D-08a). Idempotency check: full suite passes 2x consecutively. 3 tasks. Requirements: TEST-23 + TEST-24.
+- [x] 06-02-PLAN.md — Wave 2 TEST-23 + TEST-24 implementation: replace placeholder skips with active tests. TEST-23 = network 200 + DOM tgt-shift + DB persistence (3-tier). TEST-24 = `clearIssueDate` after timeline render → drag → 422 INCOMPLETE_SCHEDULE → toast `"Schedule update failed"` + `"A dependent work item is missing start or target dates."` + DOM rollback both blocks within ±2px. Wave 1 smokes converted to `test.skip(...)`. README adds locale precondition (D-08a). Idempotency check: full suite passes 2x consecutively. 3 tasks. Requirements: TEST-23 + TEST-24.
