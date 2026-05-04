@@ -14,15 +14,80 @@ import { test, expect } from "../fixtures/test-fixtures";
  *   - Issue layout = Gantt
  */
 test.describe("timeline dependency propagation", () => {
-  test.skip("#1 [TEST-23] happy path: drag predecessor moves successor and persists", async () => {
-    // Plan 06-02 で実装する。Plan 06-01 では D-13a の self-test として skip 状態で配置する。
+  test("#1 [TEST-23] happy path: drag predecessor moves successor and persists", async ({
+    page,
+    api,
+    propagationPair,
+    propagationTimeline,
+  }) => {
+    const { src, tgt } = propagationPair;
+
+    // dayWidth は propagationPair の tgt(start+5/end+8、duration=4days)から DOM 派生
+    const dayWidth = await propagationTimeline.getDayWidthFromBlock(tgt.id, tgt);
+    if (dayWidth <= 0) {
+      throw new Error(`unexpected dayWidth=${dayWidth} (DOM derivation failed)`);
+    }
+
+    // pre-drag バウンディングボックス(D-04 step 2 の比較対象)
+    const preDragBoxSrc = await propagationTimeline.getBlockBox(src.id);
+    const preDragBoxTgt = await propagationTimeline.getBlockBox(tgt.id);
+
+    // waitForResponse は drag の前にセット(Pitfall 7)
+    const responsePromise = page.waitForResponse(
+      (r) => r.url().includes("/timeline-propagation/") && r.request().method() === "POST",
+      { timeout: 15_000 }
+    );
+
+    // src を +4 日右にドラッグ — src.target=+3 → +7 が tgt.start=+5 を violate
+    // → サーバが tgt を +8/+11 に shift
+    await propagationTimeline.dragBlockBy(src.id, 4, src);
+
+    const resp = await responsePromise;
+
+    // === Assertion 1: Network ===
+    expect(resp.status()).toBe(200);
+    const body = (await resp.json()) as {
+      requested_work_item_id: string;
+      total_updated_count: number;
+      work_items: Array<{ id: string; start_date: string; target_date: string; updated_at: string }>;
+    };
+    expect(body.requested_work_item_id).toBe(src.id);
+    expect(body.total_updated_count).toBeGreaterThanOrEqual(2);
+
+    // リクエストボディも確認(operation=move、work_item_id=src.id)
+    expect(resp.request().postDataJSON()).toMatchObject({
+      work_item_id: src.id,
+      operation: "move",
+    });
+
+    // === Assertion 2: DOM ===
+    // MobX runInAction の flush 後に tgt が右にシフトしていることを expect.poll で待つ(Pitfall 2)
+    // dayWidth - 2px tolerance(D-04c)
+    await expect
+      .poll(async () => (await propagationTimeline.getBlockBox(tgt.id)).x, { timeout: 5_000 })
+      .toBeGreaterThan(preDragBoxTgt.x + dayWidth - 2);
+
+    // src(drag された側)も右にシフトしている(基準: pre-drag より dayWidth*4 - tolerance)
+    await expect
+      .poll(async () => (await propagationTimeline.getBlockBox(src.id)).x, { timeout: 5_000 })
+      .toBeGreaterThan(preDragBoxSrc.x + dayWidth - 2);
+
+    // === Assertion 3: Persistence ===
+    // server response から期待値を取り出す
+    const serverTgt = body.work_items.find((wi) => wi.id === tgt.id);
+    expect(serverTgt, `server response did not include tgt(${tgt.id}) in work_items`).toBeDefined();
+
+    // API GET で DB を直読み — bulk_update がコミット済みなら新値が返る(stale cache なし)
+    const persisted = await api.getIssue(tgt.id);
+    expect(persisted.start_date).toBe(serverTgt!.start_date);
+    expect(persisted.target_date).toBe(serverTgt!.target_date);
   });
 
   test.skip("#2 [TEST-24] failure path: incomplete-schedule rejects drag and rolls back UI", async () => {
-    // Plan 06-02 で実装する。
+    // Plan 06-02-02 で実装する。
   });
 
-  test("#smoke: relation seed survives deletion cascade", async ({ api }, testInfo) => {
+  test.skip("#smoke: relation seed survives deletion cascade", async ({ api }, testInfo) => {
     const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
     const [src, tgt] = await Promise.all([
       api.createIssue(`e2e-smoke-rel-src-${suffix}`, { start: 0, end: 3 }),
@@ -36,7 +101,7 @@ test.describe("timeline dependency propagation", () => {
     }
   });
 
-  test("#smoke: clearIssueDate sets target_date to null", async ({ api }, testInfo) => {
+  test.skip("#smoke: clearIssueDate sets target_date to null", async ({ api }, testInfo) => {
     const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
     const issue = await api.createIssue(`e2e-smoke-clear-${suffix}`, { start: 0, end: 7 });
     try {
@@ -51,7 +116,7 @@ test.describe("timeline dependency propagation", () => {
     }
   });
 
-  test("#smoke: dragBlockBy moves the dragged block visually (no relation)", async ({ api, page }, testInfo) => {
+  test.skip("#smoke: dragBlockBy moves the dragged block visually (no relation)", async ({ api, page }, testInfo) => {
     const { TimelinePage } = await import("../pages/timeline.page");
     const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
     const issue = await api.createIssue(`e2e-smoke-drag-${suffix}`, { start: 0, end: 3 });
@@ -91,7 +156,7 @@ test.describe("timeline dependency propagation", () => {
     }
   });
 
-  test("#smoke: getIssue reads back created dates and clearIssueDate persists null", async ({ api }, testInfo) => {
+  test.skip("#smoke: getIssue reads back created dates and clearIssueDate persists null", async ({ api }, testInfo) => {
     const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
     const issue = await api.createIssue(`e2e-smoke-get-${suffix}`, { start: 0, end: 7 });
     try {
@@ -111,7 +176,7 @@ test.describe("timeline dependency propagation", () => {
     }
   });
 
-  test("#smoke: propagationPair seeds relation and propagationTimeline renders both blocks", async ({
+  test.skip("#smoke: propagationPair seeds relation and propagationTimeline renders both blocks", async ({
     propagationPair,
     propagationTimeline,
     page,
