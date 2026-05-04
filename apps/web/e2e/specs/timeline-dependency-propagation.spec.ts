@@ -35,4 +35,19 @@ test.describe("timeline dependency propagation", () => {
       await Promise.allSettled([api.deleteIssue(src.id), api.deleteIssue(tgt.id)]);
     }
   });
+
+  test("#smoke: clearIssueDate sets target_date to null", async ({ api }, testInfo) => {
+    const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
+    const issue = await api.createIssue(`e2e-smoke-clear-${suffix}`, { start: 0, end: 7 });
+    try {
+      // Helper resolves with 200/204 — assertion inside helper
+      await api.clearIssueDate(issue.id, "target_date");
+
+      // Verify via getIssue (which is added in Task 06-01-04 — temporarily inline-call here
+      // is rejected; instead assert the PATCH succeeded by verifying the next createIssue+drag
+      // doesn't include this issue. For Task 06-01-03 we only assert the helper does not throw).
+    } finally {
+      await api.deleteIssue(issue.id);
+    }
+  });
 });

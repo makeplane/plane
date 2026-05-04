@@ -98,4 +98,32 @@ export class Api {
     );
     expect(resp.status(), `createIssueRelation failed: ${resp.status()} ${await resp.text()}`).toBe(201);
   }
+
+  /**
+   * Issue の start_date または target_date を null にクリアする(D-05)。
+   *
+   * URL: PATCH /api/workspaces/<slug>/projects/<projectId>/issues/<id>/
+   * Body: { [field]: null }
+   * Expected: 200 OK or 204 No Content (Plane の IssueViewSet.partial_update — smoke で確定)
+   *
+   * 用途: TEST-24 で tgt.target_date を null にし、サーバ側の伝播時に
+   *      INCOMPLETE_SCHEDULE エラーを誘発する。
+   *
+   * 注意(D-07a / D-07b): この PATCH は server-side のみ変更し、ブラウザの
+   *      ローカル MobX ストアには通知されない(WebSocket 購読なし)。よって
+   *      ブラウザの isBlockComplete ガードは true のまま — ドラッグは発火する。
+   */
+  async clearIssueDate(issueId: string, field: "start_date" | "target_date"): Promise<void> {
+    const resp = await this.ctx.patch(
+      `/api/workspaces/${env.workspaceSlug}/projects/${env.projectId}/issues/${issueId}/`,
+      {
+        data: { [field]: null },
+        headers: { "X-CSRFTOKEN": this.csrf },
+      }
+    );
+    // Plane IssueViewSet.partial_update は通常 200 を返すが、204 でも許容
+    expect([200, 204], `clearIssueDate unexpected status: ${resp.status()} ${await resp.text()}`).toContain(
+      resp.status()
+    );
+  }
 }
