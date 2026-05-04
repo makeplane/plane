@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: verifying
+status: executing
 stopped_at: Phase 6 context gathered
-last_updated: "2026-05-04T11:06:58.844Z"
-last_activity: 2026-05-04 -- /gsd-execute-phase 5 plan 02 (3 task commits 2c2330c6dc/d647349e81/c2e6281e79; SUMMARY at 05-02-SUMMARY.md)
+last_updated: "2026-05-04T11:49:41.671Z"
+last_activity: 2026-05-04
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 12
-  completed_plans: 12
-  percent: 100
+  total_plans: 14
+  completed_plans: 13
+  percent: 93
 ---
 
 # Project State
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-03)
 
 **Core value:** ドラッグ移動が Precedence Boundary を超えても、サーバ権威で必要最小限の連鎖を all-or-nothing で再配置し、失敗時は明示的な reason code で UI に説明できる。
-**Current focus:** Phase 6 — End-to-End Coverage & Polish (Playwright happy path + failure path)
+**Current focus:** Phase 6 — End-to-End Coverage & Polish
 
 ## Current Position
 
-Phase: 5 (Drag Handler Integration & Error UX) — COMPLETE
-Plan: 2/2 (Phase 5 ships; Phase 6 is the final milestone — Playwright TEST-23 / TEST-24)
-Status: Wave 2 (05-02) shipped — 3 atomic commits wire Phase 4's typed seam into the Issue Gantt move drag path: D-01 predicate split routes move → commitWithServerResult; non-move → issues.updateIssueDates; mousedown beginPreview snapshots expected_updated_at (D-09); per-mousemove updatePreview at day-boundary quantization; sibling blocks shift visually via observer-driven previewById override; success + hiddenUpdateCount > 0 → showHiddenUpdateToast; failure → showPropagationErrorToast(code | "UNEXPECTED"). FE-03 / FE-09 / ERR-08 marked complete in REQUIREMENTS.md. All 4 CE dependency-drag files + Phase 4 store + issue.service.ts byte-identical. Manual smoke checklist (D-11a, 14 scenarios) gated to /gsd-verify-work.
-Last activity: 2026-05-04 -- /gsd-execute-phase 5 plan 02 (3 task commits 2c2330c6dc/d647349e81/c2e6281e79; SUMMARY at 05-02-SUMMARY.md)
+Phase: 6 (End-to-End Coverage & Polish) — EXECUTING
+Plan: 2 of 2
+Status: Ready to execute
+Last activity: 2026-05-04
 
 Progress: [██████████] 100% (12/12 plans completed; Phase 5 COMPLETE; Phase 6 next — Playwright E2E)
 
@@ -73,6 +73,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 - Trend: Phase 5 Wave 2 lands in ~8m — 1 NEW small context module + 3 UPDATE files (the wiring layer). Pre-commit oxfmt/oxlint enforced 2 drive-by lint cleanups (Rule 3 fix attempts) for `--deny-warnings` compliance. Phase 5 ships at ~17m total (slightly under expected); the typed seam in 05-01 paid off in 05-02 — every Wave 2 import was already present and locked. Phase 6 (Playwright E2E TEST-23 / TEST-24) is the only remaining milestone.
 
 _Updated after each plan completion_
+| Phase 6 P1 | 6 | 7 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -133,6 +134,7 @@ Recent decisions affecting current work:
 - (05-02) Mousemove `updatePreview` args derivation in `useGanttResizable`: startDate from `getDateFromPositionOnGantt(marginLeft, 0)`; targetDate from `getDateFromPositionOnGantt(marginLeft + width, -1)`. The `-1` day offset matches `base-timeline.store.ts::getUpdatedPositionAfterDrag`'s target_date computation (line 376), so the preview's `requested_target_date` stays byte-aligned with what `handleMouseUp` ultimately submits via `updateBlockDates`.
 - (05-02) Failure-branch ordering in `BaseGanttRoot.updateBlockDates`: check `propagationStore.unexpectedError` BEFORE `result.code`. Reason: Phase 4's `commitWithServerResult` synthesizes a local-only `INVALID_DATE_RANGE` envelope on network/5xx failure (Phase 4 D-05a) AND sets `unexpectedError` simultaneously. Routing on the synthetic code first would render a misleading INVALID_DATE_RANGE message for what was actually a network error.
 - (05-02) Drive-by `oxlint --deny-warnings` Rule 3 fixes: `use-gantt-resizable.ts` had pre-existing `no-shadow` warnings on the inner `(e: MouseEvent)` and `const mouseX` inside `handleMouseMove` — renamed to `moveEvent` / `moveMouseX` (no behavior change; the `Math.round(.../dayWidth)*dayWidth` quantization formula is identical, only the local-variable identifier changed). `base-gantt-root.tsx` had pre-existing `props` shadowing in `sidebarToRender={(props) => ...}` (renamed to `sidebarProps`), `no-unused-expressions` on `updateIssue && (await updateIssue(...))` (converted to `if (updateIssue) await ...`), and missing exhaustive-deps on the on-mount `initGantt` effect (added `// eslint-disable-next-line react-hooks/exhaustive-deps`). Net warning budget: 1001 → 995 (down 6).
+- [Phase ?]: 06-01: CreatedIssue dates relaxed to string|null — getIssue after clearIssueDate returns null, existing specs unaffected
 
 ### Pending Todos
 
@@ -161,6 +163,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-04T11:06:58.839Z
+Last session: 2026-05-04T11:49:41.668Z
 Stopped at: Phase 6 context gathered
-Resume file: .planning/phases/06-end-to-end-coverage-polish/06-CONTEXT.md
+Resume file: None
