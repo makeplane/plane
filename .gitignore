@@ -114,3 +114,6 @@ temp/
 /.claude/scripts
 /.claude/session-state/archive
 
+# GitNexus knowledge graph (large binary, regenerable)
+/.gitnexus/
+
