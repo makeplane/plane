@@ -2763,4 +2763,22 @@ export default {
       duplicate: "Duplicate",
     },
   },
+  timeline: {
+    propagation: {
+      error: {
+        title: "Schedule update failed",
+        dependency_cycle: "A dependency cycle prevents this schedule change.",
+        project_boundary_exceeded: "Propagation across project boundaries is not supported.",
+        incomplete_schedule: "A dependent work item is missing start or target dates.",
+        propagation_limit_exceeded: "More than 100 work items would be affected. Reduce the chain before moving.",
+        schedule_changed: "Another user changed this work item's schedule. Reload and try again.",
+        permission_denied: "You do not have permission to update the affected work items.",
+        invalid_date_range: "The requested dates produce an invalid date range.",
+        unexpected: "An unexpected error occurred. Please try again.",
+      },
+      hidden_update_notification:
+        "{count, plural, one {# additional work item was updated} other {# additional work items were updated}}",
+      hidden_update_notification_title: "Work items updated",
+    },
+  },
 } as const;
