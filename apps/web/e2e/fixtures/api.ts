@@ -73,4 +73,29 @@ export class Api {
   async dispose(): Promise<void> {
     await this.ctx.dispose();
   }
+
+  /**
+   * 2 つの Issue 間にリレーションをシードする(D-05)。
+   *
+   * URL: POST /api/workspaces/<slug>/projects/<projectId>/issues/<srcIssueId>/issue-relation/
+   * Body: { relation_type, issues: [targetIssueId] }
+   * Expected: 201 Created
+   *
+   * カスケード削除: IssueRelation.issue は ON DELETE CASCADE なので、
+   * deleteIssue(srcIssueId) で関係行も自動削除される(D-05b)。
+   */
+  async createIssueRelation(
+    srcIssueId: string,
+    targetIssueId: string,
+    relationType: "blocking" | "blocked_by" | "relates_to" | "duplicate" = "blocking"
+  ): Promise<void> {
+    const resp = await this.ctx.post(
+      `/api/workspaces/${env.workspaceSlug}/projects/${env.projectId}/issues/${srcIssueId}/issue-relation/`,
+      {
+        data: { relation_type: relationType, issues: [targetIssueId] },
+        headers: { "X-CSRFTOKEN": this.csrf },
+      }
+    );
+    expect(resp.status(), `createIssueRelation failed: ${resp.status()} ${await resp.text()}`).toBe(201);
+  }
 }

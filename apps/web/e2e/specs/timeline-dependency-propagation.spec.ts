@@ -21,4 +21,18 @@ test.describe("timeline dependency propagation", () => {
   test.skip("#2 [TEST-24] failure path: incomplete-schedule rejects drag and rolls back UI", async () => {
     // Plan 06-02 で実装する。
   });
+
+  test("#smoke: relation seed survives deletion cascade", async ({ api }, testInfo) => {
+    const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
+    const [src, tgt] = await Promise.all([
+      api.createIssue(`e2e-smoke-rel-src-${suffix}`, { start: 0, end: 3 }),
+      api.createIssue(`e2e-smoke-rel-tgt-${suffix}`, { start: 5, end: 8 }),
+    ]);
+    try {
+      // Should resolve to 201 (assertion is inside the helper)
+      await api.createIssueRelation(src.id, tgt.id, "blocking");
+    } finally {
+      await Promise.allSettled([api.deleteIssue(src.id), api.deleteIssue(tgt.id)]);
+    }
+  });
 });
