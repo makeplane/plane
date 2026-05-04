@@ -6,7 +6,17 @@ import factory
 from uuid import uuid4
 from django.utils import timezone
 
-from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMember,
+    Project,
+    ProjectMember,
+    State,
+    Issue,
+    IssueRelation,
+)
+from plane.db.models.issue import IssueRelationChoices
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -81,5 +91,85 @@ class ProjectMemberFactory(factory.django.DjangoModelFactory):
     project = factory.SubFactory(ProjectFactory)
     member = factory.SubFactory(UserFactory)
     role = 20  # Admin role by default
+    created_at = factory.LazyFunction(timezone.now)
+    updated_at = factory.LazyFunction(timezone.now)
+
+
+class StateFactory(factory.django.DjangoModelFactory):
+    """Factory for creating State instances.
+
+    Phase 3 Wave-0 fixture: Issue.save() falls back to a project default State
+    when ``state`` is None, but ProjectFactory does not seed any states. The
+    contract suite needs an explicit State so IssueFactory can satisfy the
+    state FK without depending on side effects in Project creation.
+    """
+
+    class Meta:
+        model = State
+
+    id = factory.LazyFunction(uuid4)
+    name = factory.Sequence(lambda n: f"State {n}")
+    color = "#60646C"
+    project = factory.SubFactory(ProjectFactory)
+    workspace = factory.SelfAttribute("project.workspace")
+    # IssueManager excludes triage-grouped states; "backlog" keeps the issue
+    # visible to the manager-default queryset (per Phase 3 Pitfall 3).
+    group = "backlog"
+    default = False
+    created_by = factory.SelfAttribute("project.created_by")
+    updated_by = factory.SelfAttribute("project.updated_by")
+    created_at = factory.LazyFunction(timezone.now)
+    updated_at = factory.LazyFunction(timezone.now)
+
+
+class IssueFactory(factory.django.DjangoModelFactory):
+    """Factory for creating Issue instances.
+
+    Wires a ``StateFactory`` SubFactory whose ``project`` is bound to the
+    Issue's ``project`` so the state's FK invariant is preserved when callers
+    pass an explicit project (Phase 3 Plan 03-01 Task 1, sanity Test 3).
+    """
+
+    class Meta:
+        model = Issue
+
+    id = factory.LazyFunction(uuid4)
+    name = factory.Sequence(lambda n: f"Issue {n}")
+    project = factory.SubFactory(ProjectFactory)
+    workspace = factory.SelfAttribute("project.workspace")
+    # Pin the state's project to the issue's project so we never spawn a
+    # mismatched (state.project, issue.project) pair.
+    state = factory.SubFactory(StateFactory, project=factory.SelfAttribute("..project"))
+    created_by = factory.SelfAttribute("project.created_by")
+    updated_by = factory.SelfAttribute("project.updated_by")
+    created_at = factory.LazyFunction(timezone.now)
+    updated_at = factory.LazyFunction(timezone.now)
+    # NOTE: start_date / target_date intentionally not set — many failure-case
+    # tests need NULL dates (e.g., INCOMPLETE_SCHEDULE for a descendant).
+    # NOTE: is_draft / archived_at intentionally not set — model defaults are
+    # correct (False / None) and IssueManager filters them out.
+
+
+class IssueRelationFactory(factory.django.DjangoModelFactory):
+    """Factory for creating IssueRelation instances.
+
+    Defaults to ``relation_type="blocked_by"`` per Phase 1 D-04: every
+    precedence row is canonically stored as ``blocked_by``; the precedence
+    graph loader filters on this exact string.
+    """
+
+    class Meta:
+        model = IssueRelation
+
+    id = factory.LazyFunction(uuid4)
+    issue = factory.SubFactory(IssueFactory)
+    related_issue = factory.SubFactory(
+        IssueFactory, project=factory.SelfAttribute("..issue.project")
+    )
+    project = factory.SelfAttribute("issue.project")
+    workspace = factory.SelfAttribute("issue.workspace")
+    relation_type = IssueRelationChoices.BLOCKED_BY.value
+    created_by = factory.SelfAttribute("issue.created_by")
+    updated_by = factory.SelfAttribute("issue.updated_by")
     created_at = factory.LazyFunction(timezone.now)
     updated_at = factory.LazyFunction(timezone.now)

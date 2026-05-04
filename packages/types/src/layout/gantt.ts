@@ -41,6 +41,12 @@ export interface IBlockUpdateDependencyData {
   meta?: Record<string, any>;
 }
 
+export type TGanttBlockDragDirection = "left" | "right" | "move";
+
+export interface IBlockUpdateDragContext {
+  dragDirection: TGanttBlockDragDirection;
+}
+
 export type TGanttViews = "week" | "month" | "quarter";
 
 // chart render types

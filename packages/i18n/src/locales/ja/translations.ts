@@ -2681,4 +2681,38 @@ export default {
     close_button: "ナビゲーションパネルを閉じる",
     outline_floating_button: "アウトラインを開く",
   },
+  gantt_dependency: {
+    notice_title: "依存関係",
+    creation_failed: "依存関係の保存に失敗しました。もう一度お試しください。",
+    cycle_detected:
+      "この依存関係を追加すると、現在表示中のタイムライン内で循環が発生します(表示外のアイテムを経由する循環はサーバー側で検出されます)。",
+    already_exists: "これらのワークアイテム間には既に依存関係があります。",
+    invalid_target: "自分自身には依存関係を作成できません。",
+    delete_confirm: "依存関係を削除",
+    picker: {
+      blocking: "ブロックする",
+      blocked_by: "ブロックされる",
+      relates_to: "関連する",
+      duplicate: "重複",
+    },
+  },
+  timeline: {
+    propagation: {
+      error: {
+        title: "日程の更新に失敗しました",
+        dependency_cycle: "依存関係に循環があるため、この日程変更は適用できません。",
+        project_boundary_exceeded: "プロジェクト境界を越える伝播はサポートされていません。",
+        incomplete_schedule: "依存する作業項目に開始日または目標日が設定されていません。",
+        propagation_limit_exceeded:
+          "影響する作業項目が 100 件を超えるため、適用できません。先に依存チェーンを整理してください。",
+        schedule_changed: "他のユーザーがこの作業項目の日程を変更しました。再読み込みしてやり直してください。",
+        permission_denied: "影響する作業項目を更新する権限がありません。",
+        invalid_date_range: "指定された日付の範囲が不正です。",
+        unexpected: "予期しないエラーが発生しました。もう一度お試しください。",
+      },
+      hidden_update_notification:
+        "{count, plural, one {表示外の作業項目を # 件更新しました} other {表示外の作業項目を # 件更新しました}}",
+      hidden_update_notification_title: "作業項目を更新しました",
+    },
+  },
 } as const;

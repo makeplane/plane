@@ -2748,4 +2748,37 @@ export default {
   enter_number_of_projects: "Enter number of projects",
   pin: "Pin",
   unpin: "Unpin",
+  gantt_dependency: {
+    notice_title: "Dependency",
+    creation_failed: "Couldn't save the dependency. Please try again.",
+    cycle_detected:
+      "Adding this dependency would create a cycle within the visible timeline. Cycles routed through unloaded work items are caught by the server.",
+    already_exists: "A dependency already connects these work items.",
+    invalid_target: "Can't link a work item to itself.",
+    delete_confirm: "Remove dependency",
+    picker: {
+      blocking: "Blocking",
+      blocked_by: "Blocked by",
+      relates_to: "Relates to",
+      duplicate: "Duplicate",
+    },
+  },
+  timeline: {
+    propagation: {
+      error: {
+        title: "Schedule update failed",
+        dependency_cycle: "A dependency cycle prevents this schedule change.",
+        project_boundary_exceeded: "Propagation across project boundaries is not supported.",
+        incomplete_schedule: "A dependent work item is missing start or target dates.",
+        propagation_limit_exceeded: "More than 100 work items would be affected. Reduce the chain before moving.",
+        schedule_changed: "Another user changed this work item's schedule. Reload and try again.",
+        permission_denied: "You do not have permission to update the affected work items.",
+        invalid_date_range: "The requested dates produce an invalid date range.",
+        unexpected: "An unexpected error occurred. Please try again.",
+      },
+      hidden_update_notification:
+        "{count, plural, one {# additional work item was updated} other {# additional work items were updated}}",
+      hidden_update_notification_title: "Work items updated",
+    },
+  },
 } as const;

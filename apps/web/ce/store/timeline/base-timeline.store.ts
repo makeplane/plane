@@ -36,14 +36,56 @@ type BlockData = {
   project_id?: string | undefined | null;
 };
 
+export type TDependencyDragEdge = "left" | "right";
+
+export type TDependencyDragSource = {
+  blockId: string;
+  edge: TDependencyDragEdge;
+  /**
+   * Chart-local coordinates of the source endpoint. Captured once on
+   * mousedown so the fixed end of the bezier doesn't jitter with the pointer
+   * — the block DOM rect is only queried at drag start.
+   */
+  anchor: TDependencyDragPoint;
+};
+
+export type TDependencyDragTarget = {
+  blockId: string;
+  edge: TDependencyDragEdge;
+  /** Set by the hook when the current target passes self-ref / duplicate / cycle checks. */
+  isValid: boolean;
+};
+
+/**
+ * Drag point in gantt-chart-local coordinates (NOT client coords).
+ * The pointer handler is responsible for converting `clientX/clientY` using
+ * `ganttContainer.getBoundingClientRect()` + `scrollLeft/scrollTop` before
+ * writing here.
+ */
+export type TDependencyDragPoint = {
+  x: number;
+  y: number;
+};
+
 export interface IBaseTimelineStore {
   // observables
+  blocksMap: Record<string, IGanttBlock>;
+  blockIds: string[] | undefined;
   currentView: TGanttViews;
   currentViewData: ChartDataType | undefined;
   activeBlockId: string | null;
   renderView: any;
   isDragging: boolean;
+  /**
+   * Whether this timeline store is allowed to surface dependency-drag UI.
+   * Only flip to `true` for the Issue gantt — modules/cycles/projects do not
+   * have issue-relation semantics and the drag handles would post to the
+   * issue-relation endpoint which would fail.
+   */
   isDependencyEnabled: boolean;
+  dragSource: TDependencyDragSource | null;
+  dragTarget: TDependencyDragTarget | null;
+  dragPoint: TDependencyDragPoint | null;
   //
   setBlockIds: (ids: string[]) => void;
   getBlockById: (blockId: string) => IGanttBlock;
@@ -65,6 +107,10 @@ export interface IBaseTimelineStore {
   getNumberOfDaysFromPosition: (position: number | undefined) => number | undefined;
   setIsDragging: (isDragging: boolean) => void;
   initGantt: () => void;
+  beginDependencyDrag: (source: TDependencyDragSource, point: TDependencyDragPoint) => void;
+  updateDependencyDragPoint: (point: TDependencyDragPoint) => void;
+  setDependencyDragTarget: (target: TDependencyDragTarget | null) => void;
+  endDependencyDrag: () => void;
 
   getDateFromPositionOnGantt: (position: number, offsetDays: number) => Date | undefined;
   getPositionFromDateOnGantt: (date: string | Date, offSetWidth: number) => number | undefined;
@@ -82,7 +128,16 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
 
   rootStore: RootStore;
 
+  /**
+   * Default stays `false`. The Issue gantt subclass flips it to `true` because
+   * only issues support the `issue-relation` endpoint — modules / cycles /
+   * projects do not.
+   */
   isDependencyEnabled = false;
+
+  dragSource: TDependencyDragSource | null = null;
+  dragTarget: TDependencyDragTarget | null = null;
+  dragPoint: TDependencyDragPoint | null = null;
 
   constructor(_rootStore: RootStore) {
     makeObservable(this, {
@@ -94,6 +149,9 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
       currentViewData: observable,
       activeBlockId: observable.ref,
       renderView: observable,
+      dragSource: observable.ref,
+      dragTarget: observable.ref,
+      dragPoint: observable.ref,
       // actions
       setIsDragging: action,
       setBlockIds: action.bound,
@@ -102,6 +160,10 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
       updateCurrentViewData: action.bound,
       updateActiveBlockId: action.bound,
       updateRenderView: action.bound,
+      beginDependencyDrag: action.bound,
+      updateDependencyDragPoint: action.bound,
+      setDependencyDragTarget: action.bound,
+      endDependencyDrag: action.bound,
     });
 
     this.initGantt();
@@ -341,6 +403,47 @@ export class BaseTimeLineStore implements IBaseTimelineStore {
     });
   });
 
-  // Dummy method to return if the current Block's dependency is being dragged
-  getIsCurrentDependencyDragging = computedFn((_blockId: string) => false);
+  /**
+   * True while the given block is either the source of an active dependency
+   * drag or the current drop target. The core gantt block component uses this
+   * to force-render the block even when it's outside the virtualized viewport
+   * so the drag gesture does not drop into a `null` DOM target.
+   */
+  getIsCurrentDependencyDragging = computedFn(
+    (blockId: string): boolean => this.dragSource?.blockId === blockId || this.dragTarget?.blockId === blockId
+  );
+
+  /**
+   * Open a dependency drag from the given block edge. Resets any target from a
+   * previous drag so stale red-feedback doesn't flash on the next gesture.
+   */
+  beginDependencyDrag = (source: TDependencyDragSource, point: TDependencyDragPoint) => {
+    runInAction(() => {
+      this.dragSource = source;
+      this.dragTarget = null;
+      this.dragPoint = point;
+    });
+  };
+
+  /**
+   * High-frequency write (mousemove at 60fps). Kept on `observable.ref` so
+   * every update triggers exactly one reactive notification instead of a
+   * deep-object diff.
+   */
+  updateDependencyDragPoint = (point: TDependencyDragPoint) => {
+    if (!this.dragSource) return;
+    this.dragPoint = point;
+  };
+
+  setDependencyDragTarget = (target: TDependencyDragTarget | null) => {
+    this.dragTarget = target;
+  };
+
+  endDependencyDrag = () => {
+    runInAction(() => {
+      this.dragSource = null;
+      this.dragTarget = null;
+      this.dragPoint = null;
+    });
+  };
 }

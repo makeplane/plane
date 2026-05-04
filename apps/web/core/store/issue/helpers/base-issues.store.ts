@@ -575,7 +575,11 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       } as TIssue);
 
       // call API to update the issue
-      await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      const response = await this.issueService.patchIssue(workspaceSlug, projectId, issueId, data);
+      if (response?.updated_at) {
+        // Keep optimistic state aligned with the server version used by timeline propagation stale checks.
+        this.rootIssueStore.issues.updateIssue(issueId, { updated_at: response.updated_at });
+      }
 
       // call fetch Parent Stats
       this.fetchParentStats(workspaceSlug, projectId);
@@ -758,38 +762,42 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     projectId?: string
   ) {
     if (!projectId) return;
-    const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string }[] = [];
+    const issueDatesBeforeChange: { id: string; start_date?: string; target_date?: string; updated_at?: string }[] = [];
     try {
       const getIssueById = this.rootIssueStore.issues.getIssueById;
       runInAction(() => {
-        for (const update of updates) {
+        for (const dateUpdate of updates) {
           const dates: Partial<TIssue> = {};
-          if (update.start_date) dates.start_date = update.start_date;
-          if (update.target_date) dates.target_date = update.target_date;
+          if (dateUpdate.start_date) dates.start_date = dateUpdate.start_date;
+          if (dateUpdate.target_date) dates.target_date = dateUpdate.target_date;
 
-          const currIssue = getIssueById(update.id);
+          const currIssue = getIssueById(dateUpdate.id);
 
           if (currIssue) {
             issueDatesBeforeChange.push({
-              id: update.id,
+              id: dateUpdate.id,
               start_date: currIssue.start_date ?? undefined,
               target_date: currIssue.target_date ?? undefined,
+              updated_at: currIssue.updated_at ?? undefined,
             });
+            // /issue-dates/ does not advance updated_at, so preserve the DB-matching version locally.
+            dates.updated_at = currIssue.updated_at;
           }
 
-          this.issueUpdate(workspaceSlug, projectId, update.id, dates, false);
+          this.issueUpdate(workspaceSlug, projectId, dateUpdate.id, dates, false);
         }
       });
 
       await this.issueService.updateIssueDates(workspaceSlug, projectId, updates);
     } catch (e) {
       runInAction(() => {
-        for (const update of issueDatesBeforeChange) {
+        for (const previousDates of issueDatesBeforeChange) {
           const dates: Partial<TIssue> = {};
-          if (update.start_date) dates.start_date = update.start_date;
-          if (update.target_date) dates.target_date = update.target_date;
+          if (previousDates.start_date) dates.start_date = previousDates.start_date;
+          if (previousDates.target_date) dates.target_date = previousDates.target_date;
+          if (previousDates.updated_at) dates.updated_at = previousDates.updated_at;
 
-          this.issueUpdate(workspaceSlug, projectId, update.id, dates, false);
+          this.issueUpdate(workspaceSlug, projectId, previousDates.id, dates, false);
         }
       });
       console.error("error while updating Timeline dependencies");

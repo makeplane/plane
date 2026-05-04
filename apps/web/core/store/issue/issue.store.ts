@@ -69,7 +69,17 @@ export class IssueStore implements IIssueStore {
         set(this.issuesIdentifierMap, issueIdentifier, issue.id);
 
         if (!this.issuesMap[issue.id]) set(this.issuesMap, issue.id, issue);
-        else update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
+        else {
+          const existingUpdatedAt = Date.parse(this.issuesMap[issue.id]?.updated_at ?? "");
+          const incomingUpdatedAt = Date.parse(issue.updated_at ?? "");
+          if (
+            !Number.isNaN(existingUpdatedAt) &&
+            !Number.isNaN(incomingUpdatedAt) &&
+            incomingUpdatedAt < existingUpdatedAt
+          )
+            return;
+          update(this.issuesMap, issue.id, (prevIssue) => ({ ...prevIssue, ...issue }));
+        }
       });
     });
   };

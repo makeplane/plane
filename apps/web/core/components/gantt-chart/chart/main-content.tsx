@@ -12,6 +12,7 @@ import type {
   ChartDataType,
   IBlockUpdateData,
   IBlockUpdateDependencyData,
+  IBlockUpdateDragContext,
   IGanttBlock,
   TGanttViews,
 } from "@plane/types";
@@ -42,7 +43,7 @@ type Props = {
   blockIds: string[];
   canLoadMoreBlocks?: boolean;
   loadMoreBlocks?: () => void;
-  updateBlockDates?: (updates: IBlockUpdateDependencyData[]) => Promise<void>;
+  updateBlockDates?: (updates: IBlockUpdateDependencyData[], context: IBlockUpdateDragContext) => Promise<void>;
   blockToRender: (data: any) => React.ReactNode;
   blockUpdateHandler: (block: any, payload: IBlockUpdateData) => void;
   bottomSpacing: boolean;
@@ -110,7 +111,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
         canScroll: ({ source }) => source.data.dragInstanceId === "GANTT_REORDER",
       })
     );
-  }, [ganttContainerRef?.current]);
+  }, []);
 
   // handling scroll functionality
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
@@ -203,6 +204,9 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
                 <ActiveChartView />
                 {currentViewData && (
                   <div
+                    // Stable DOM id — the dependency-drag feature uses this as
+                    // the coordinate origin for source anchors and dragPoint.
+                    id="gantt-chart-content"
                     className="relative h-full"
                     style={{
                       width: `${itemsContainerWidth}px`,

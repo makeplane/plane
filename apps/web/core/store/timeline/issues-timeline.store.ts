@@ -15,6 +15,14 @@ export interface IIssuesTimeLineStore extends IBaseTimelineStore {
 }
 
 export class IssuesTimeLineStore extends BaseTimeLineStore implements IIssuesTimeLineStore {
+  /**
+   * Issue gantt is the only timeline that owns `issue-relation` records, so
+   * this is the single place the dependency-drag UI is allowed to light up.
+   * The corresponding `enableDependency` prop must stay gated to Issue gantt
+   * as well (see `apps/web/core/components/issues/issue-layouts/gantt/base-gantt-root.tsx`).
+   */
+  isDependencyEnabled = true;
+
   constructor(_rootStore: RootStore) {
     super(_rootStore);
 

@@ -2705,4 +2705,19 @@ export default {
     close_button: "Fechar painel de navegação",
     outline_floating_button: "Abrir estrutura",
   },
+  gantt_dependency: {
+    notice_title: "Dependency",
+    creation_failed: "Couldn't save the dependency. Please try again.",
+    cycle_detected:
+      "Adding this dependency would create a cycle within the visible timeline. Cycles routed through unloaded work items are caught by the server.",
+    already_exists: "A dependency already connects these work items.",
+    invalid_target: "Can't link a work item to itself.",
+    delete_confirm: "Remove dependency",
+    picker: {
+      blocking: "Blocking",
+      blocked_by: "Blocked by",
+      relates_to: "Relates to",
+      duplicate: "Duplicate",
+    },
+  },
 } as const;

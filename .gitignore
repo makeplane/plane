@@ -110,3 +110,9 @@ build/
 .react-router/
 temp/
 scripts/
+
+# Playwright E2E (apps/web)
+apps/web/playwright/.auth/
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/e2e/.env.e2e
