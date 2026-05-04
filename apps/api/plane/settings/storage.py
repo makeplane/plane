@@ -68,24 +68,18 @@ class S3Storage(S3Boto3Storage):
             expiration = self.signed_url_expiration
         fields = {"Content-Type": file_type}
 
-        # boto3.generate_presigned_post auto-injects {"bucket": ...} and
-        # {"key": ...} conditions when Bucket=/Key= are passed below; do NOT
-        # also add them by hand here. AWS S3 silently accepts the resulting
-        # over-sized policy, but stricter S3-compatible backends enforce a
-        # hard cap on the `policy` form field (some as low as 1024 bytes)
-        # and reject the upload with `MaxMessageLengthExceeded`.
+        # boto3.generate_presigned_post derives every key-related condition
+        # itself: it injects {"bucket": ...}, {"key": <value>}, and (when
+        # `Key` ends with the literal "${filename}" placeholder) the
+        # corresponding ["starts-with", "$key", <prefix>] entry. Do NOT add
+        # any of them by hand here — AWS S3 silently accepts the resulting
+        # duplicates, but stricter S3-compatible backends enforce a hard
+        # cap on the `policy` form field (some as low as 1024 bytes) and
+        # reject the upload with `MaxMessageLengthExceeded`.
         conditions = [
             ["content-length-range", 1, file_size],
             {"Content-Type": file_type},
         ]
-
-        # For prefix uploads (`${filename}` placeholder) we still need a
-        # `starts-with` condition; boto3 cannot derive that from `Key=`.
-        # For exact-key uploads, `Key=<value>` below also makes boto3 add
-        # `"key": <value>` to the returned `fields[]` automatically — no
-        # manual injection needed.
-        if object_name.startswith("${filename}"):
-            conditions.append(["starts-with", "$key", object_name[: -len("${filename}")]])
 
         # Generate the presigned POST URL
         try:

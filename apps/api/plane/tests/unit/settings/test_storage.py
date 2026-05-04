@@ -171,6 +171,45 @@ class TestS3StorageSignedURLExpiration:
         clear=True,
     )
     @patch("plane.settings.storage.boto3")
+    def test_generate_presigned_post_no_manual_starts_with_for_filename_placeholder(
+        self, mock_boto3
+    ):
+        """Boto3 derives ["starts-with", "$key", <prefix>] itself when Key
+        ends with the literal "${filename}". The wrapper must not add it
+        again, or the policy carries duplicate starts-with entries.
+        """
+        mock_s3_client = Mock()
+        mock_s3_client.generate_presigned_post.return_value = {
+            "url": "https://test-url.com",
+            "fields": {},
+        }
+        mock_boto3.client.return_value = mock_s3_client
+        storage = S3Storage()
+
+        storage.generate_presigned_post("uploads/${filename}", "image/png", 1024)
+
+        kw = mock_s3_client.generate_presigned_post.call_args[1]
+        # Key is forwarded as-is; boto3 will see the placeholder and inject
+        # the starts-with condition itself.
+        assert kw["Key"] == "uploads/${filename}"
+        # Conditions must NOT contain a hand-rolled starts-with.
+        for cond in kw["Conditions"]:
+            if isinstance(cond, list) and cond and cond[0] == "starts-with":
+                raise AssertionError(
+                    f"hand-rolled starts-with leaked into Conditions: {cond}"
+                )
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
     def test_generate_presigned_url_uses_default_expiration(self, mock_boto3):
         """Test that generate_presigned_url uses the configured default expiration"""
         # Mock the boto3 client and its response
