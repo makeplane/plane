@@ -279,11 +279,16 @@ class WorkspaceUserPropertiesEndpoint(BaseAPIView):
 
 class WorkspaceUserProfileEndpoint(BaseAPIView):
     def get(self, request, slug, user_id):
-        user_data = User.objects.get(pk=user_id)
-
         requesting_workspace_member = WorkspaceMember.objects.get(
             workspace__slug=slug, member=request.user, is_active=True
         )
+
+        # Verify the target user is also an active member of this workspace
+        # before exposing their profile data.
+        target_workspace_member = WorkspaceMember.objects.select_related("member").get(
+            workspace__slug=slug, member_id=user_id, is_active=True
+        )
+        user_data = target_workspace_member.member
         projects = []
         if requesting_workspace_member.role >= 15:
             projects = (
