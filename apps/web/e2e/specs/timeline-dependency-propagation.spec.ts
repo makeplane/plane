@@ -83,8 +83,68 @@ test.describe("timeline dependency propagation", () => {
     expect(persisted.target_date).toBe(serverTgt!.target_date);
   });
 
-  test.skip("#2 [TEST-24] failure path: incomplete-schedule rejects drag and rolls back UI", async () => {
-    // Plan 06-02-02 で実装する。
+  test("#2 [TEST-24] failure path: incomplete-schedule rejects drag and rolls back UI", async ({
+    page,
+    api,
+    propagationPair,
+    propagationTimeline,
+  }) => {
+    const { src, tgt } = propagationPair;
+
+    // === Setup (D-07a: clearIssueDate AFTER propagationTimeline 完了) ===
+    // propagationTimeline fixture は既に gotoIssueGantt + waitForBlock(src,tgt) 済み。
+    // ブラウザのローカル MobX ストアは tgt.target_date を populated でホールド(D-07b — WS 通知なし)。
+    // 今 server-side のみクリアすることで、UI の isBlockComplete ガードは true のまま — drag が発火する。
+    await api.clearIssueDate(tgt.id, "target_date");
+
+    // dayWidth は src(start+0/end+3、duration=4days)から DOM 派生
+    const dayWidth = await propagationTimeline.getDayWidthFromBlock(src.id, src);
+
+    // pre-drag バウンディングボックス(rollback 比較用、D-04a step 3)
+    const preDragBoxSrc = await propagationTimeline.getBlockBox(src.id);
+    const preDragBoxTgt = await propagationTimeline.getBlockBox(tgt.id);
+
+    // waitForResponse を drag の前にセット(Pitfall 7)
+    const responsePromise = page.waitForResponse(
+      (r) => r.url().includes("/timeline-propagation/") && r.request().method() === "POST",
+      { timeout: 15_000 }
+    );
+
+    // src を +4 日右にドラッグ → server は tgt の target_date=null を検知 → 422 + INCOMPLETE_SCHEDULE
+    await propagationTimeline.dragBlockBy(src.id, 4, src);
+
+    const resp = await responsePromise;
+
+    // === Assertion 1: Network — 422 + envelope ===
+    expect(resp.status()).toBe(422);
+    const body = (await resp.json()) as { code: string; message: string };
+    expect(body).toMatchObject({ code: "INCOMPLETE_SCHEDULE" });
+    expect(typeof body.message).toBe("string");
+    expect(body.message.length).toBeGreaterThan(0);
+
+    // === Assertion 2: Toast — text-based seam(@plane/propel/toast に data-testid なし)===
+    // 英語 i18n 文字列は `packages/i18n/src/locales/en/translations.ts:2769,2772` 参照
+    await expect(page.getByText("Schedule update failed")).toBeVisible({ timeout: 8_000 });
+    await expect(page.getByText("A dependent work item is missing start or target dates.")).toBeVisible();
+
+    // === Assertion 3: DOM rollback — both blocks return to pre-drag positions(D-04c, ±2px)===
+    // previewById.clear() が runInAction 内で実行される → block.position fallback で元位置に
+    // expect.poll で MobX flush を待つ(Pitfall 2)
+    await expect
+      .poll(async () => (await propagationTimeline.getBlockBox(src.id)).x, { timeout: 5_000 })
+      .toBeGreaterThanOrEqual(preDragBoxSrc.x - 2);
+    await expect
+      .poll(async () => (await propagationTimeline.getBlockBox(src.id)).x, { timeout: 5_000 })
+      .toBeLessThanOrEqual(preDragBoxSrc.x + 2);
+    await expect
+      .poll(async () => (await propagationTimeline.getBlockBox(tgt.id)).x, { timeout: 5_000 })
+      .toBeGreaterThanOrEqual(preDragBoxTgt.x - 2);
+    await expect
+      .poll(async () => (await propagationTimeline.getBlockBox(tgt.id)).x, { timeout: 5_000 })
+      .toBeLessThanOrEqual(preDragBoxTgt.x + 2);
+
+    // dayWidth consumed above — suppress unused-variable warning
+    void dayWidth;
   });
 
   test.skip("#smoke: relation seed survives deletion cascade", async ({ api }, testInfo) => {

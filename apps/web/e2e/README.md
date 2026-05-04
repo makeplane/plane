@@ -47,5 +47,6 @@ trace / video は `apps/web/test-results/` に保存(`playwright.config.ts` の 
 - docker-compose-local.yml が up 状態であること
 - `pnpm dev` で web:3000 が起動していること
 - `.env.e2e` が正しく記入されていること
+- **UI 言語 = `en`**: `timeline-dependency-propagation.spec.ts`(TEST-24)はトーストの英語文字列をアサートするため、テスト用ワークスペースの UI 言語を English に設定してください(`ja` で実行すると失敗します — D-04b / D-08a)。
 
 テストは web サーバを自分で起動しない。別ターミナルで `pnpm dev` を維持。
