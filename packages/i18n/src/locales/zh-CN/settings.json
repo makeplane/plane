@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "偏好设置",
+      "description": "按照您的工作方式自定义您的应用体验"
+    },
     "notifications": {
+      "heading": "邮件通知",
+      "description": "及时了解您订阅的工作项。启用此功能以接收通知。",
       "select_default_view": "选择默认视图",
       "compact": "紧凑",
       "full": "全屏"
+    },
+    "security": {
+      "heading": "安全"
+    },
+    "api_tokens": {
+      "title": "个人访问令牌",
+      "description": "生成安全的 API 令牌，将您的数据与外部系统和应用程序集成。"
+    },
+    "activity": {
+      "heading": "活动",
+      "description": "跟踪您在所有项目和工作项中的最近操作和更改。"
+    },
+    "connections": {
+      "title": "连接",
+      "heading": "连接",
+      "description": "管理您的工作区连接设置。"
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "个人资料",
       "security": "安全",
       "activity": "活动",
-      "appearance": "外观",
+      "preferences": "偏好设置",
       "notifications": "通知",
+      "api-tokens": "个人访问令牌",
       "connections": "连接"
     },
     "tabs": {

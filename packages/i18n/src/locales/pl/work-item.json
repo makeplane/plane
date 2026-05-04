@@ -20,6 +20,7 @@
       "due_date": "Dodaj termin",
       "parent": "Dodaj element nadrzędny",
       "sub_issue": "Dodaj podrzędny element pracy",
+      "dependency": "Dodaj zależność",
       "relation": "Dodaj relację",
       "link": "Dodaj link",
       "existing": "Dodaj istniejący element pracy"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "Link do komentarza skopiowany do schowka",
         "error": "Błąd podczas kopiowania linka do komentarza. Spróbuj ponownie później."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Dodaj odpowiedź",
+          "placeholder": "Dodaj odpowiedź"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Nie udało się pobrać odpowiedzi"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Odpowiedź utworzono pomyślnie"
+            },
+            "error": {
+              "message": "Nie udało się utworzyć odpowiedzi"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Odpowiedź zaktualizowano pomyślnie"
+            },
+            "error": {
+              "message": "Nie udało się zaktualizować odpowiedzi"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Odpowiedź usunięto pomyślnie"
+            },
+            "error": {
+              "message": "Nie udało się usunąć odpowiedzi"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "Odznacz wszystko"
     },
     "open_in_full_screen": "Otwórz element pracy na pełnym ekranie",
+    "duplicate": {
+      "modal": {
+        "title": "Utwórz kopię w innym projekcie",
+        "description1": "Tworzy to kopię elementu pracy.",
+        "description2": "Podczas duplikowania wszystkie dane właściwości zostaną usunięte.",
+        "placeholder": "Wybierz projekt"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Element pracy zduplikowano pomyślnie"
+        },
+        "error": {
+          "message": "Nie udało się zduplikować elementu pracy"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Połącz strony",
+      "show_wiki_pages": "Pokaż strony Wiki",
+      "link_pages_to": "Połącz strony z",
+      "linked_pages": "Połączone strony",
+      "no_description": "To pusta strona. Napisz coś wewnątrz, a pojawi się tutaj podobnie jak ten placeholder",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Strony zaktualizowane",
+            "message": "Strony zaktualizowano pomyślnie"
+          },
+          "error": {
+            "title": "Aktualizacja stron nie powiodła się",
+            "message": "Aktualizacja stron nie powiodła się"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Strona usunięta",
+            "message": "Strona usunięta pomyślnie"
+          },
+          "error": {
+            "title": "Usunięcie strony nie powiodło się",
+            "message": "Usunięcie strony nie powiodło się"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Kliknij, aby zagłosować za",
       "click_to_downvote": "Kliknij, aby zagłosować przeciw",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "Nie można zaktualizować elementów pracy",
         "message": "Zmiana stanu nie jest dozwolona dla niektórych elementów pracy. Upewnij się, że zmiana stanu jest dozwolona."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Włącz workflowy",
-        "description": "Skonfiguruj workflowy, aby kontrolować przepływ elementów pracy",
-        "no_states_tooltip": "Do workflowu nie dodano żadnych stanów.",
-        "toast": {
-          "loading": {
-            "enabling": "Włączanie workflowów",
-            "disabling": "Wyłączanie workflowów"
-          },
-          "success": {
-            "title": "Sukces!",
-            "message": "Workflowy zostały pomyślnie włączone."
-          },
-          "error": {
-            "title": "Błąd!",
-            "message": "Nie udało się włączyć workflowów. Spróbuj ponownie."
-          }
-        }
-      },
-      "heading": "Workflowy",
-      "description": "Zautomatyzuj przejścia elementów pracy i ustaw reguły kontrolujące, jak zadania przemieszczają się przez pipeline projektu.",
-      "add_button": "Dodaj nowy workflow",
-      "search": "Szukaj workflowów",
-      "detail": {
-        "define": "Zdefiniuj workflow",
-        "add_states": "Dodaj stany",
-        "unmapped_states": {
-          "title": "Wykryto nieprzypisane stany",
-          "description": "Niektóre elementy pracy wybranych typów znajdują się obecnie w stanach, które nie istnieją w tym workflowie.",
-          "note": "Jeśli włączysz ten workflow, te elementy zostaną automatycznie przeniesione do początkowego stanu tego workflowu.",
-          "label": "Brakujące stany",
-          "tooltip": "Niektóre elementy pracy znajdują się w stanach, które nie są przypisane do tego workflowu. Otwórz workflow, aby go sprawdzić."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Wszystkie stany są w użyciu",
-          "description": "Wszystkie stany zdefiniowane dla tego projektu są już obecne w bieżącym workflowie."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Ten workflow dotyczy każdego typu elementu pracy, który nie jest przypisany do żadnego workflowu."
-      },
-      "create": {
-        "heading": "Utwórz nowy workflow"
       }
     }
   },

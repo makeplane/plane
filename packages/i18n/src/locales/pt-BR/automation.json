@@ -53,6 +53,9 @@
       "button": {
         "previous": "Voltar",
         "next": "Adicionar ação"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Você não pode alterar o tipo do gatilho após a criação"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Selecione uma opção",
       "handler_name": {
         "add_comment": "Adicionar comentário",
-        "change_property": "Alterar propriedade"
+        "change_property": "Alterar propriedade",
+        "run_script": "Executar Script"
       },
       "configuration": {
         "label": "Configuração",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Adicionar comentário"
+      },
+      "run_script_block": {
+        "title": "Executar script"
       },
       "change_property_block": {
         "title": "Alterar propriedade"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Título da automação",
+      "scope": "Escopo",
+      "projects": "Projetos",
       "last_run_on": "Última execução em",
       "created_on": "Criado em",
       "last_updated_on": "Última atualização em",
@@ -229,6 +238,35 @@
         "title": "Automações",
         "description": "Automações são uma forma de automatizar tarefas no seu projeto.",
         "sub_description": "Recupere 80% do seu tempo administrativo quando usar Automações."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Selecione os projetos nos quais esta automação será executada",
+        "all_projects": {
+          "label": "Todos os projetos",
+          "description": "A automação será executada para todos os projetos do espaço de trabalho."
+        },
+        "select_projects": {
+          "label": "Selecionar projetos",
+          "description": "A automação será executada para os projetos selecionados do espaço de trabalho.",
+          "placeholder": "Selecionar projetos"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automações",
+        "title": "Automações",
+        "description": "Padronize processos em todo o seu espaço de trabalho com automações globais."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Projeto",
+            "multiple": "Múltiplos",
+            "all": "Todos"
+          }
+        }
       }
     }
   }

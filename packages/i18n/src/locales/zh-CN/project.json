@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "为您的项目保存筛选视图。根据需要创建任意数量",
+        "description": "视图是您经常使用或想要轻松访问的一组已保存的筛选条件。项目中的所有同事都可以看到每个人的视图，并选择最适合他们需求的视图。",
+        "primary_button": {
+          "text": "创建您的第一个视图",
+          "comic": {
+            "title": "视图基于工作项属性运作。",
+            "description": "您可以在此处创建一个视图，根据需要使用任意数量的属性作为筛选条件。"
+          }
+        },
+        "filter": {
+          "title": "没有匹配的视图",
+          "description": "没有符合搜索条件的视图。\n创建一个新视图。"
+        }
+      },
+      "no_archived_issues": {
+        "title": "尚无已归档的工作项",
+        "description": "通过手动或自动化方式，您可以归档已完成或已取消的工作项。归档后可以在这里找到它们。",
+        "primary_button": {
+          "text": "设置自动化"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "未找到符合筛选条件的工作项",
+        "secondary_button": {
+          "text": "清除所有筛选条件"
+        }
+      },
+      "public": {
+        "title": "尚无公共页面",
+        "description": "在这里查看与项目中所有人共享的页面。",
+        "primary_button": {
+          "text": "创建您的第一个页面"
+        }
+      },
+      "archived": {
+        "title": "尚无已归档的页面",
+        "description": "归档不在您关注范围内的页面。需要时可以在这里访问它们。"
+      },
+      "shared": {
+        "title": "尚无共享页面",
+        "description": "其他人与您共享的页面将显示在此处。"
+      }
+    },
+    "delete_view": {
+      "title": "您确定要删除此视图吗？",
+      "content": "如果您确认，您为此视图选择的所有排序、筛选和显示选项 + 布局将被永久删除，无法恢复。"
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -215,29 +266,6 @@
         "success": "模块删除成功",
         "error": "删除模块失败"
       }
-    }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "为您的项目保存筛选视图。根据需要创建任意数量",
-        "description": "视图是您经常使用或想要轻松访问的一组已保存的筛选条件。项目中的所有同事都可以看到每个人的视图，并选择最适合他们需求的视图。",
-        "primary_button": {
-          "text": "创建您的第一个视图",
-          "comic": {
-            "title": "视图基于工作项属性运作。",
-            "description": "您可以在此处创建一个视图，根据需要使用任意数量的属性作为筛选条件。"
-          }
-        }
-      },
-      "filter": {
-        "title": "没有匹配的视图",
-        "description": "没有符合搜索条件的视图。\n创建一个新视图。"
-      }
-    },
-    "delete_view": {
-      "title": "您确定要删除此视图吗？",
-      "content": "如果您确认，您为此视图选择的所有排序、筛选和显示选项 + 布局将被永久删除，无法恢复。"
     }
   },
   "project_page": {
@@ -330,6 +358,13 @@
       "created_at": "创建日期",
       "manual": "手动"
     }
+  },
+  "project_members": {
+    "full_name": "全名",
+    "display_name": "显示名称",
+    "email": "邮箱",
+    "joining_date": "加入日期",
+    "role": "角色"
   },
   "project": {
     "members_import": {

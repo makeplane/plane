@@ -95,16 +95,28 @@
       "scope_and_demand": "Umfang und Nachfrage",
       "custom": "Benutzerdefinierte Analysen"
     },
+    "total": "Gesamte {entity}",
+    "started_work_items": "Begonnene {entity}",
+    "backlog_work_items": "Backlog-{entity}",
+    "un_started_work_items": "Nicht begonnene {entity}",
+    "completed_work_items": "Abgeschlossene {entity}",
+    "project_insights": "Projekteinblicke",
+    "summary_of_projects": "Projektübersicht",
+    "all_projects": "Alle Projekte",
+    "trend_on_charts": "Trend in Diagrammen",
+    "active_projects": "Aktive Projekte",
+    "customized_insights": "Individuelle Einblicke",
+    "created_vs_resolved": "Erstellt vs Gelöst",
     "empty_state": {
-      "customized_insights": {
-        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt.",
-        "title": "Noch keine Daten"
+      "project_insights": {
+        "title": "Noch keine Daten",
+        "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
       },
       "created_vs_resolved": {
-        "description": "Im Laufe der Zeit erstellte und gelöste Arbeitselemente werden hier angezeigt.",
-        "title": "Noch keine Daten"
+        "title": "Noch keine Daten",
+        "description": "Im Laufe der Zeit erstellte und gelöste Arbeitselemente werden hier angezeigt."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Noch keine Daten",
         "description": "Ihnen zugewiesene Arbeitselemente, aufgeschlüsselt nach Status, werden hier angezeigt."
       },
@@ -132,23 +144,11 @@
         "description": "Analyse der Intake-Trends wird hier angezeigt. Fügen Sie Arbeitsaufgaben zum Intake hinzu, um Trends zu verfolgen."
       }
     },
-    "created_vs_resolved": "Erstellt vs Gelöst",
-    "customized_insights": "Individuelle Einblicke",
-    "backlog_work_items": "Backlog-{entity}",
-    "active_projects": "Aktive Projekte",
-    "trend_on_charts": "Trend in Diagrammen",
-    "all_projects": "Alle Projekte",
-    "summary_of_projects": "Projektübersicht",
-    "project_insights": "Projekteinblicke",
-    "started_work_items": "Begonnene {entity}",
-    "un_started_work_items": "Nicht begonnene {entity}",
-    "completed_work_items": "Abgeschlossene {entity}",
-    "total": "Gesamte {entity}",
+    "upgrade_to_plan": "Upgrade auf {plan}, um {tab} freizuschalten",
+    "workitem_resolved_vs_pending": "Gelöste vs. ausstehende Arbeitsaufgaben",
     "projects_by_status": "Projekte nach Status",
     "active_users": "Aktive Nutzer",
-    "intake_trends": "Aufnahmetrends",
-    "workitem_resolved_vs_pending": "Gelöste vs. ausstehende Arbeitsaufgaben",
-    "upgrade_to_plan": "Upgrade auf {plan}, um {tab} freizuschalten"
+    "intake_trends": "Aufnahmetrends"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekte} other {Projekte}}",

@@ -53,6 +53,9 @@
       "button": {
         "previous": "Retour",
         "next": "Ajouter une action"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Vous ne pouvez pas modifier le type de déclencheur une fois qu’il a été créé"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Sélectionnez une option",
       "handler_name": {
         "add_comment": "Ajouter un commentaire",
-        "change_property": "Modifier la propriété"
+        "change_property": "Modifier la propriété",
+        "run_script": "Exécuter un script"
       },
       "configuration": {
         "label": "Configuration",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Ajouter un commentaire"
+      },
+      "run_script_block": {
+        "title": "Exécuter un script"
       },
       "change_property_block": {
         "title": "Modifier la propriété"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Titre de l'automatisation",
+      "scope": "Portée",
+      "projects": "Projets",
       "last_run_on": "Dernière exécution le",
       "created_on": "Créé le",
       "last_updated_on": "Dernière mise à jour le",
@@ -229,6 +238,35 @@
         "title": "Automatisations",
         "description": "Les automatisations sont un moyen d'automatiser les tâches dans votre projet.",
         "sub_description": "Récupérez 80% de votre temps administratif lorsque vous utilisez les Automatisations."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Sélectionnez les projets sur lesquels exécuter cette automatisation",
+        "all_projects": {
+          "label": "Tous les projets",
+          "description": "L’automatisation s’exécutera pour tous les projets de l’espace de travail."
+        },
+        "select_projects": {
+          "label": "Sélectionner des projets",
+          "description": "L’automatisation s’exécutera pour les projets sélectionnés dans l’espace de travail.",
+          "placeholder": "Sélectionner des projets"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatisations",
+        "title": "Automatisations",
+        "description": "Standardisez les processus dans votre espace de travail grâce aux automatisations globales."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Projet",
+            "multiple": "Plusieurs",
+            "all": "Tous"
+          }
+        }
       }
     }
   }

@@ -95,16 +95,28 @@
       "scope_and_demand": "Escopo e Demanda",
       "custom": "Análises Personalizadas"
     },
+    "total": "Total de {entity}",
+    "started_work_items": "{entity} iniciados",
+    "backlog_work_items": "{entity} no backlog",
+    "un_started_work_items": "{entity} não iniciados",
+    "completed_work_items": "{entity} concluídos",
+    "project_insights": "Insights do projeto",
+    "summary_of_projects": "Resumo dos projetos",
+    "all_projects": "Todos os projetos",
+    "trend_on_charts": "Tendência nos gráficos",
+    "active_projects": "Projetos ativos",
+    "customized_insights": "Insights personalizados",
+    "created_vs_resolved": "Criado vs Resolvido",
     "empty_state": {
-      "customized_insights": {
-        "description": "Os itens de trabalho atribuídos a você, divididos por estado, aparecerão aqui.",
-        "title": "Ainda não há dados"
+      "project_insights": {
+        "title": "Ainda não há dados",
+        "description": "Os itens de trabalho atribuídos a você, divididos por estado, aparecerão aqui."
       },
       "created_vs_resolved": {
-        "description": "Os itens de trabalho criados e resolvidos ao longo do tempo aparecerão aqui.",
-        "title": "Ainda não há dados"
+        "title": "Ainda não há dados",
+        "description": "Os itens de trabalho criados e resolvidos ao longo do tempo aparecerão aqui."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Ainda não há dados",
         "description": "Os itens de trabalho atribuídos a você, divididos por estado, aparecerão aqui."
       },
@@ -132,29 +144,11 @@
         "description": "A análise de tendências de intake aparecerá aqui. Adicione itens de trabalho ao intake para começar a acompanhar as tendências."
       }
     },
-    "created_vs_resolved": "Criado vs Resolvido",
-    "customized_insights": "Insights personalizados",
-    "backlog_work_items": "{entity} no backlog",
-    "active_projects": "Projetos ativos",
-    "trend_on_charts": "Tendência nos gráficos",
-    "all_projects": "Todos os projetos",
-    "summary_of_projects": "Resumo dos projetos",
-    "project_insights": "Insights do projeto",
-    "started_work_items": "{entity} iniciados",
-    "total_work_items": "Total de {entity}",
-    "total_projects": "Total de projetos",
-    "total_admins": "Total de administradores",
-    "total_users": "Total de usuários",
-    "total_intake": "Receita total",
-    "un_started_work_items": "{entity} não iniciados",
-    "total_guests": "Total de convidados",
-    "completed_work_items": "{entity} concluídos",
-    "total": "Total de {entity}",
+    "upgrade_to_plan": "Faça upgrade para {plan} para desbloquear {tab}",
+    "workitem_resolved_vs_pending": "Itens de trabalho resolvidos vs pendentes",
     "projects_by_status": "Projetos por status",
     "active_users": "Usuários ativos",
-    "intake_trends": "Tendências de entrada",
-    "workitem_resolved_vs_pending": "Itens de trabalho resolvidos vs pendentes",
-    "upgrade_to_plan": "Faça upgrade para {plan} para desbloquear {tab}"
+    "intake_trends": "Tendências de entrada"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projeto} other {Projetos}}",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Ainda não há páginas arquivadas",
         "description": "Arquive páginas fora do seu radar. Acesse-as aqui quando necessário."
+      },
+      "shared": {
+        "title": "Ainda não há páginas compartilhadas",
+        "description": "As páginas que outros compartilharam com você aparecerão aqui."
       }
     }
   },

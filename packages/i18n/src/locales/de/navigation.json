@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Keine Ergebnisse gefunden"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Notizen",
+    "your_work": "Ihre Arbeit",
     "projects": "Projekte",
     "pages": "Seiten",
     "new_work_item": "Neues Arbeitselement",
     "home": "Startseite",
-    "your_work": "Ihre Arbeit",
     "inbox": "Posteingang",
     "workspace": "Arbeitsbereich",
     "views": "Ansichten",
@@ -21,14 +29,6 @@
     "epics": "Epics",
     "upgrade_plan": "Plan upgraden",
     "plane_pro": "Plane Pro",
-    "business": "Business",
-    "stickies": "Notizen"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Keine Ergebnisse gefunden"
-      }
-    }
+    "business": "Business"
   }
 }

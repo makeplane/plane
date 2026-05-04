@@ -21,7 +21,11 @@
     "members": {
       "label": "Mitglieder",
       "project_lead": "Projektleitung",
+      "project_lead_description": "Wählen Sie den Projektleiter für das Projekt aus.",
       "default_assignee": "Standardzuweisung",
+      "default_assignee_description": "Wählen Sie den Standard-Zuständigen für das Projekt aus.",
+      "project_subscribers": "Projektabonnenten",
+      "project_subscribers_description": "Wählen Sie Mitglieder aus, die Benachrichtigungen für dieses Projekt erhalten.",
       "guest_super_permissions": {
         "title": "Gastbenutzern Zugriff auf alle Elemente gewähren:",
         "sub_heading": "Gäste sehen alle Elemente im Projekt."
@@ -30,11 +34,7 @@
         "title": "Mitglieder einladen",
         "sub_heading": "Laden Sie Mitglieder in das Projekt ein.",
         "select_co_worker": "Wählen Sie einen Mitarbeiter"
-      },
-      "project_lead_description": "Wählen Sie den Projektleiter für das Projekt aus.",
-      "default_assignee_description": "Wählen Sie den Standard-Zuständigen für das Projekt aus.",
-      "project_subscribers": "Projektabonnenten",
-      "project_subscribers_description": "Wählen Sie Mitglieder aus, die Benachrichtigungen für dieses Projekt erhalten."
+      }
     },
     "states": {
       "heading": "Status",
@@ -57,10 +57,10 @@
     },
     "estimates": {
       "heading": "Schätzungen",
-      "enable_description": "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
+      "description": "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
       "label": "Schätzungen",
       "title": "Schätzungen für mein Projekt aktivieren",
-      "description": "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
+      "enable_description": "Sie helfen Ihnen, die Komplexität und Arbeitsbelastung des Teams zu kommunizieren.",
       "no_estimate": "Keine Schätzung",
       "new": "Neues Schätzungssystem",
       "create": {
@@ -73,16 +73,6 @@
         "label": "Schätzung erstellen"
       },
       "toasts": {
-        "switch": {
-          "success": {
-            "title": "Schätzungssystem erstellt",
-            "message": "Erfolgreich erstellt und aktiviert"
-          },
-          "error": {
-            "title": "Fehler",
-            "message": "Etwas ist schiefgelaufen"
-          }
-        },
         "created": {
           "success": {
             "title": "Schätzung erstellt",
@@ -127,6 +117,16 @@
           "error": {
             "title": "Neuordnung der Schätzungen fehlgeschlagen",
             "message": "Die Schätzungen konnten nicht neu geordnet werden, bitte versuchen Sie es erneut"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Schätzungssystem erstellt",
+            "message": "Erfolgreich erstellt und aktiviert"
+          },
+          "error": {
+            "title": "Fehler",
+            "message": "Etwas ist schiefgelaufen"
           }
         }
       },
@@ -177,9 +177,9 @@
       "select": "Wählen Sie ein Schätzsystem"
     },
     "automations": {
+      "label": "Automatisierungen",
       "heading": "Automatisierungen",
       "description": "Konfigurieren Sie automatisierte Aktionen, um Ihren Projektmanagement-Workflow zu optimieren und manuelle Aufgaben zu reduzieren.",
-      "label": "Automatisierungen",
       "auto-archive": {
         "title": "Geschlossene Arbeitselemente automatisch archivieren",
         "description": "Plane archiviert automatisch Arbeitselemente, die abgeschlossen oder abgebrochen wurden.",
@@ -212,89 +212,115 @@
         "description": "Konfigurieren Sie GitHub und andere Integrationen, um Ihre Projektarbeitsaufgaben zu synchronisieren."
       }
     },
-    "cycles": {
-      "auto_schedule": {
-        "heading": "Automatische Zyklusplanung",
-        "description": "Halten Sie Zyklen ohne manuelle Einrichtung in Bewegung.",
-        "tooltip": "Erstellen Sie automatisch neue Zyklen basierend auf Ihrem gewählten Zeitplan.",
-        "edit_button": "Bearbeiten",
-        "form": {
-          "cycle_title": {
-            "label": "Zyklustitel",
-            "placeholder": "Titel",
-            "tooltip": "Der Titel wird für nachfolgende Zyklen mit Nummern ergänzt. Zum Beispiel: Design - 1/2/3",
-            "validation": {
-              "required": "Zyklustitel ist erforderlich",
-              "max_length": "Der Titel darf 255 Zeichen nicht überschreiten"
-            }
-          },
-          "cycle_duration": {
-            "label": "Zyklusdauer",
-            "unit": "Wochen",
-            "validation": {
-              "required": "Zyklusdauer ist erforderlich",
-              "min": "Die Zyklusdauer muss mindestens 1 Woche betragen",
-              "max": "Die Zyklusdauer darf 30 Wochen nicht überschreiten",
-              "positive": "Die Zyklusdauer muss positiv sein"
-            }
-          },
-          "cooldown_period": {
-            "label": "Abkühlungsphase",
-            "unit": "Tage",
-            "tooltip": "Pause zwischen Zyklen, bevor der nächste beginnt.",
-            "validation": {
-              "required": "Abkühlungsphase ist erforderlich",
-              "negative": "Die Abkühlungsphase darf nicht negativ sein"
-            }
-          },
-          "start_date": {
-            "label": "Zyklus-Starttag",
-            "validation": {
-              "required": "Startdatum ist erforderlich",
-              "past": "Das Startdatum darf nicht in der Vergangenheit liegen"
-            }
-          },
-          "number_of_cycles": {
-            "label": "Anzahl zukünftiger Zyklen",
-            "validation": {
-              "required": "Anzahl der Zyklen ist erforderlich",
-              "min": "Mindestens 1 Zyklus ist erforderlich",
-              "max": "Es können nicht mehr als 3 Zyklen geplant werden"
-            }
-          },
-          "auto_rollover": {
-            "label": "Automatische Übertragung von Arbeitselementen",
-            "tooltip": "Am Tag der Zyklusbeendigung werden alle unvollendeten Arbeitselemente in den nächsten Zyklus verschoben."
-          }
-        },
+    "workflows": {
+      "toggle": {
+        "title": "Workflows aktivieren",
+        "description": "Legen Sie Workflows fest, um die Bewegung von Arbeitselementen zu steuern",
+        "no_states_tooltip": "Keine Status wurden dem Workflow hinzugefügt.",
+        "no_work_item_types_tooltip": "Keine Arbeitsaufgabentypen wurden dem Workflow hinzugefügt.",
+        "no_states_or_work_item_types_tooltip": "Keine Status oder Arbeitsaufgabentypen wurden dem Workflow hinzugefügt.",
         "toast": {
-          "toggle": {
-            "loading_enable": "Automatische Zyklusplanung wird aktiviert",
-            "loading_disable": "Automatische Zyklusplanung wird deaktiviert",
-            "success": {
-              "title": "Erfolg!",
-              "message": "Automatische Zyklusplanung erfolgreich aktiviert."
-            },
-            "error": {
-              "title": "Fehler!",
-              "message": "Aktivierung der automatischen Zyklusplanung fehlgeschlagen."
-            }
+          "loading": {
+            "enabling": "Workflows werden aktiviert",
+            "disabling": "Workflows werden deaktiviert"
           },
-          "save": {
-            "loading": "Konfiguration der automatischen Zyklusplanung wird gespeichert",
-            "success": {
-              "title": "Erfolg!",
-              "message_create": "Konfiguration der automatischen Zyklusplanung erfolgreich gespeichert.",
-              "message_update": "Konfiguration der automatischen Zyklusplanung erfolgreich aktualisiert."
-            },
-            "error": {
-              "title": "Fehler!",
-              "message_create": "Speichern der Konfiguration der automatischen Zyklusplanung fehlgeschlagen.",
-              "message_update": "Aktualisierung der Konfiguration der automatischen Zyklusplanung fehlgeschlagen."
-            }
+          "success": {
+            "title": "Erfolg!",
+            "message": "Workflows erfolgreich aktiviert."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Workflows konnten nicht aktiviert werden. Bitte versuchen Sie es erneut."
           }
         }
+      },
+      "heading": "Workflows",
+      "description": "Automatisieren Sie Übergänge von Arbeitselementen und legen Sie Regeln fest, um zu steuern, wie Aufgaben durch Ihre Projektpipeline fließen.",
+      "add_button": "Neuen Workflow hinzufügen",
+      "search": "Workflows suchen",
+      "detail": {
+        "define": "Workflow definieren",
+        "add_states": "Status hinzufügen",
+        "unmapped_states": {
+          "title": "Nicht zugeordnete Status erkannt",
+          "description": "Einige Arbeitselemente der ausgewählten Typen befinden sich derzeit in Status, die in diesem Workflow nicht vorhanden sind.",
+          "note": "Wenn Sie diesen Workflow aktivieren, werden diese Elemente automatisch in den Anfangsstatus dieses Workflows verschoben.",
+          "label": "Fehlende Status",
+          "tooltip": "Einige Arbeitselemente befinden sich in Status, die diesem Workflow nicht zugeordnet sind. Öffnen Sie den Workflow zur Überprüfung."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Alle Status werden verwendet",
+          "description": "Alle für dieses Projekt definierten Status sind bereits in Ihrem aktuellen Workflow vorhanden."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Dieser Workflow gilt für jeden Arbeitselementtyp, der keinem Workflow zugeordnet ist."
+      },
+      "create": {
+        "heading": "Neuen Workflow erstellen",
+        "name": {
+          "placeholder": "Einen eindeutigen Namen hinzufügen",
+          "validation": {
+            "max_length": "Der Name darf nicht mehr als 255 Zeichen haben",
+            "required": "Name ist erforderlich",
+            "invalid": "Der Name darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten"
+          }
+        },
+        "description": {
+          "placeholder": "Eine kurze Beschreibung hinzufügen",
+          "validation": {
+            "invalid": "Die Beschreibung darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten"
+          }
+        },
+        "work_item_type": {
+          "label": "Arbeitselementtyp"
+        },
+        "success": {
+          "title": "Erfolg!",
+          "message": "Workflow erfolgreich erstellt."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Workflow konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Workflow erfolgreich aktualisiert."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Workflow konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "delete": {
+        "loading": "Workflow wird gelöscht",
+        "success": {
+          "title": "Erfolg!",
+          "message": "Workflow erfolgreich gelöscht."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Workflow konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Status erfolgreich hinzugefügt."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Status konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut."
+        }
       }
+    },
+    "work_item_types": {
+      "heading": "Arbeitselementtypen",
+      "description": "Erstellen und passen Sie verschiedene Typen von Arbeitselementen mit einzigartigen Eigenschaften an"
     },
     "features": {
       "cycles": {
@@ -404,114 +430,6 @@
         "error": "Beim Aktualisieren der Projektfunktion ist etwas schiefgelaufen. Bitte versuchen Sie es erneut."
       }
     },
-    "workflows": {
-      "toggle": {
-        "title": "Workflows aktivieren",
-        "description": "Legen Sie Workflows fest, um die Bewegung von Arbeitselementen zu steuern",
-        "no_states_tooltip": "Keine Status wurden dem Workflow hinzugefügt.",
-        "toast": {
-          "loading": {
-            "enabling": "Workflows werden aktiviert",
-            "disabling": "Workflows werden deaktiviert"
-          },
-          "success": {
-            "title": "Erfolg!",
-            "message": "Workflows erfolgreich aktiviert."
-          },
-          "error": {
-            "title": "Fehler!",
-            "message": "Workflows konnten nicht aktiviert werden. Bitte versuchen Sie es erneut."
-          }
-        }
-      },
-      "heading": "Workflows",
-      "description": "Automatisieren Sie Übergänge von Arbeitselementen und legen Sie Regeln fest, um zu steuern, wie Aufgaben durch Ihre Projektpipeline fließen.",
-      "add_button": "Neuen Workflow hinzufügen",
-      "search": "Workflows suchen",
-      "detail": {
-        "define": "Workflow definieren",
-        "add_states": "Status hinzufügen",
-        "unmapped_states": {
-          "title": "Nicht zugeordnete Status erkannt",
-          "description": "Einige Arbeitselemente der ausgewählten Typen befinden sich derzeit in Status, die in diesem Workflow nicht vorhanden sind.",
-          "note": "Wenn Sie diesen Workflow aktivieren, werden diese Elemente automatisch in den Anfangsstatus dieses Workflows verschoben.",
-          "label": "Fehlende Status",
-          "tooltip": "Einige Arbeitselemente befinden sich in Status, die diesem Workflow nicht zugeordnet sind. Öffnen Sie den Workflow zur Überprüfung."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Alle Status werden verwendet",
-          "description": "Alle für dieses Projekt definierten Status sind bereits in Ihrem aktuellen Workflow vorhanden."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Dieser Workflow gilt für jeden Arbeitselementtyp, der keinem Workflow zugeordnet ist."
-      },
-      "create": {
-        "heading": "Neuen Workflow erstellen",
-        "name": {
-          "placeholder": "Einen eindeutigen Namen hinzufügen",
-          "validation": {
-            "max_length": "Der Name darf nicht mehr als 255 Zeichen haben",
-            "required": "Name ist erforderlich",
-            "invalid": "Der Name darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten"
-          }
-        },
-        "description": {
-          "placeholder": "Eine kurze Beschreibung hinzufügen",
-          "validation": {
-            "invalid": "Die Beschreibung darf nur Buchstaben, Zahlen, Leerzeichen, Bindestriche und Apostrophe enthalten"
-          }
-        },
-        "work_item_type": {
-          "label": "Arbeitselementtyp"
-        },
-        "success": {
-          "title": "Erfolg!",
-          "message": "Workflow erfolgreich erstellt."
-        },
-        "error": {
-          "title": "Fehler!",
-          "message": "Workflow konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
-        }
-      },
-      "update": {
-        "success": {
-          "title": "Erfolg!",
-          "message": "Workflow erfolgreich aktualisiert."
-        },
-        "error": {
-          "title": "Fehler!",
-          "message": "Workflow konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut."
-        }
-      },
-      "delete": {
-        "loading": "Workflow wird gelöscht",
-        "success": {
-          "title": "Erfolg!",
-          "message": "Workflow erfolgreich gelöscht."
-        },
-        "error": {
-          "title": "Fehler!",
-          "message": "Workflow konnte nicht gelöscht werden. Bitte versuchen Sie es erneut."
-        }
-      },
-      "add_states": {
-        "success": {
-          "title": "Erfolg!",
-          "message": "Status erfolgreich hinzugefügt."
-        },
-        "error": {
-          "title": "Fehler!",
-          "message": "Status konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut."
-        }
-      }
-    },
-    "work_item_types": {
-      "heading": "Arbeitselementtypen",
-      "description": "Erstellen und passen Sie verschiedene Typen von Arbeitselementen mit einzigartigen Eigenschaften an"
-    },
     "project_updates": {
       "heading": "Projektaktualisierungen",
       "description": "Konsolidierte Nachverfolgung und Fortschrittsüberwachung für dieses Projekt"
@@ -519,6 +437,90 @@
     "templates": {
       "heading": "Vorlagen",
       "description": "Sparen Sie 80% der Zeit beim Erstellen von Projekten, Arbeitselementen und Seiten, wenn Sie Vorlagen verwenden."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Automatische Zyklusplanung",
+        "description": "Halten Sie Zyklen ohne manuelle Einrichtung in Bewegung.",
+        "tooltip": "Erstellen Sie automatisch neue Zyklen basierend auf Ihrem gewählten Zeitplan.",
+        "edit_button": "Bearbeiten",
+        "form": {
+          "cycle_title": {
+            "label": "Zyklustitel",
+            "placeholder": "Titel",
+            "tooltip": "Der Titel wird für nachfolgende Zyklen mit Nummern ergänzt. Zum Beispiel: Design - 1/2/3",
+            "validation": {
+              "required": "Zyklustitel ist erforderlich",
+              "max_length": "Der Titel darf 255 Zeichen nicht überschreiten"
+            }
+          },
+          "cycle_duration": {
+            "label": "Zyklusdauer",
+            "unit": "Wochen",
+            "validation": {
+              "required": "Zyklusdauer ist erforderlich",
+              "min": "Die Zyklusdauer muss mindestens 1 Woche betragen",
+              "max": "Die Zyklusdauer darf 30 Wochen nicht überschreiten",
+              "positive": "Die Zyklusdauer muss positiv sein"
+            }
+          },
+          "cooldown_period": {
+            "label": "Abkühlungsphase",
+            "unit": "Tage",
+            "tooltip": "Pause zwischen Zyklen, bevor der nächste beginnt.",
+            "validation": {
+              "required": "Abkühlungsphase ist erforderlich",
+              "negative": "Die Abkühlungsphase darf nicht negativ sein"
+            }
+          },
+          "start_date": {
+            "label": "Zyklus-Starttag",
+            "validation": {
+              "required": "Startdatum ist erforderlich",
+              "past": "Das Startdatum darf nicht in der Vergangenheit liegen"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Anzahl zukünftiger Zyklen",
+            "validation": {
+              "required": "Anzahl der Zyklen ist erforderlich",
+              "min": "Mindestens 1 Zyklus ist erforderlich",
+              "max": "Es können nicht mehr als 3 Zyklen geplant werden"
+            }
+          },
+          "auto_rollover": {
+            "label": "Automatische Übertragung von Arbeitselementen",
+            "tooltip": "Am Tag der Zyklusbeendigung werden alle unvollendeten Arbeitselemente in den nächsten Zyklus verschoben."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Automatische Zyklusplanung wird aktiviert",
+            "loading_disable": "Automatische Zyklusplanung wird deaktiviert",
+            "success": {
+              "title": "Erfolg!",
+              "message": "Automatische Zyklusplanung erfolgreich aktiviert."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message": "Aktivierung der automatischen Zyklusplanung fehlgeschlagen."
+            }
+          },
+          "save": {
+            "loading": "Konfiguration der automatischen Zyklusplanung wird gespeichert",
+            "success": {
+              "title": "Erfolg!",
+              "message_create": "Konfiguration der automatischen Zyklusplanung erfolgreich gespeichert.",
+              "message_update": "Konfiguration der automatischen Zyklusplanung erfolgreich aktualisiert."
+            },
+            "error": {
+              "title": "Fehler!",
+              "message_create": "Speichern der Konfiguration der automatischen Zyklusplanung fehlgeschlagen.",
+              "message_update": "Aktualisierung der Konfiguration der automatischen Zyklusplanung fehlgeschlagen."
+            }
+          }
+        }
+      }
     }
   }
 }

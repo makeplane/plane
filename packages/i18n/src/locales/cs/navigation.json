@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nenalezeny výsledky"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Poznámky",
+    "your_work": "Vaše práce",
     "projects": "Projekty",
     "pages": "Stránky",
     "new_work_item": "Nová pracovní položka",
     "home": "Domov",
-    "your_work": "Vaše práce",
     "inbox": "Doručená pošta",
     "workspace": "Pracovní prostor",
     "views": "Pohledy",
@@ -21,14 +29,6 @@
     "epics": "Epiky",
     "upgrade_plan": "Plán upgradu",
     "plane_pro": "Plane Pro",
-    "business": "Byznys",
-    "recurring_work_items": "Opakující se pracovní položky"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Nenalezeny výsledky"
-      }
-    }
+    "business": "Byznys"
   }
 }

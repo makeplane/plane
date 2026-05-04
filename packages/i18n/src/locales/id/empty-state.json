@@ -249,10 +249,22 @@
       "title": "Lacak lembar waktu untuk semua anggota",
       "description": "Catat waktu pada item kerja untuk melihat lembar waktu terperinci untuk anggota tim mana pun di seluruh proyek."
     },
+    "group_syncing": {
+      "title": "Belum ada pemetaan grup"
+    },
     "template_setting": {
       "title": "Belum ada templat",
       "description": "Kurangi waktu pengaturan dengan membuat templat untuk proyek, item kerja, dan halaman — dan mulai pekerjaan baru dalam hitungan detik.",
       "cta_primary": "Buat templat"
+    },
+    "workflows": {
+      "title": "Belum ada alur kerja",
+      "description": "Buat alur kerja untuk mengelola kemajuan item kerja Anda.",
+      "cta_primary": "Tambah alur kerja baru",
+      "states": {
+        "title": "Tambah status",
+        "description": "Pilih status yang dilalui item kerja."
+      }
     }
   }
 }

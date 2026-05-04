@@ -3,6 +3,9 @@
     "settings": {
       "title": "Modelli",
       "description": "Risparmia l'80% del tempo dedicato alla creazione di progetti, elementi di lavoro e pagine quando utilizzi i modelli.",
+      "new_project_template": "Nuovo modello di progetto",
+      "new_work_item_template": "Nuovo modello di elemento di lavoro",
+      "new_page_template": "Nuovo modello di pagina",
       "options": {
         "project": {
           "label": "Modelli di progetto"
@@ -157,6 +160,14 @@
               "required": "Almeno una parola chiave è obbligatoria"
             }
           },
+          "website": {
+            "label": "URL del sito web",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL non valido",
+              "maxLength": "L'URL deve contenere meno di 800 caratteri"
+            }
+          },
           "company_name": {
             "label": "Nome dell'azienda",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Indirizzo email non valido",
-              "required": "L'email di supporto è obbligatoria",
               "maxLength": "L'email di supporto deve contenere meno di 255 caratteri"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " Nessuna etichetta ancora. Crea etichette per aiutare a organizzare e filtrare gli elementi di lavoro nel tuo progetto."
+      },
+      "no_modules": {
+        "description": "Nessun modulo ancora. Organizza il lavoro in sotto-progetti con responsabili e assegnatari dedicati."
       },
       "no_work_items": {
         "description": "Nessun elemento di lavoro ancora. Aggiungi uno per strutturare il tuo lavoro meglio."

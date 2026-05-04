@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "結果が見つかりません"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "付箋",
+    "your_work": "あなたの作業",
     "projects": "プロジェクト",
     "pages": "ページ",
     "new_work_item": "新規作業項目",
     "home": "ホーム",
-    "your_work": "あなたの作業",
     "inbox": "受信トレイ",
     "workspace": "ワークスペース",
     "views": "ビュー",
@@ -21,14 +29,6 @@
     "epics": "エピック",
     "upgrade_plan": "プランをアップグレード",
     "plane_pro": "Plane Pro",
-    "business": "ビジネス",
-    "recurring_work_items": "繰り返し作業項目"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "結果が見つかりません"
-      }
-    }
+    "business": "ビジネス"
   }
 }

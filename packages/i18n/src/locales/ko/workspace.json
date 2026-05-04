@@ -95,16 +95,28 @@
       "scope_and_demand": "범위 및 수요",
       "custom": "맞춤형 분석"
     },
+    "total": "총 {entity}",
+    "started_work_items": "시작된 {entity}",
+    "backlog_work_items": "백로그 {entity}",
+    "un_started_work_items": "시작되지 않은 {entity}",
+    "completed_work_items": "완료된 {entity}",
+    "project_insights": "프로젝트 인사이트",
+    "summary_of_projects": "프로젝트 요약",
+    "all_projects": "모든 프로젝트",
+    "trend_on_charts": "차트의 추세",
+    "active_projects": "활성 프로젝트",
+    "customized_insights": "맞춤형 인사이트",
+    "created_vs_resolved": "생성됨 vs 해결됨",
     "empty_state": {
-      "customized_insights": {
-        "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다.",
-        "title": "아직 데이터가 없습니다"
+      "project_insights": {
+        "title": "아직 데이터가 없습니다",
+        "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다."
       },
       "created_vs_resolved": {
-        "description": "시간이 지나면서 생성되고 해결된 작업 항목이 여기에 표시됩니다.",
-        "title": "아직 데이터가 없습니다"
+        "title": "아직 데이터가 없습니다",
+        "description": "시간이 지나면서 생성되고 해결된 작업 항목이 여기에 표시됩니다."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "아직 데이터가 없습니다",
         "description": "귀하에게 할당된 작업 항목이 상태별로 나누어 여기에 표시됩니다."
       },
@@ -132,29 +144,11 @@
         "description": "인테이크 트렌드 분석이 여기에 표시됩니다. 작업 항목을 인테이크에 추가하여 트렌드를 추적하세요."
       }
     },
-    "created_vs_resolved": "생성됨 vs 해결됨",
-    "customized_insights": "맞춤형 인사이트",
-    "backlog_work_items": "백로그 {entity}",
-    "active_projects": "활성 프로젝트",
-    "trend_on_charts": "차트의 추세",
-    "all_projects": "모든 프로젝트",
-    "summary_of_projects": "프로젝트 요약",
-    "project_insights": "프로젝트 인사이트",
-    "started_work_items": "시작된 {entity}",
-    "total_work_items": "총 {entity}",
-    "total_projects": "총 프로젝트 수",
-    "total_admins": "총 관리자 수",
-    "total_users": "총 사용자 수",
-    "total_intake": "총 수입",
-    "un_started_work_items": "시작되지 않은 {entity}",
-    "total_guests": "총 게스트 수",
-    "completed_work_items": "완료된 {entity}",
-    "total": "총 {entity}",
+    "upgrade_to_plan": "{tab} 잠금 해제를 위해 {plan}(으)로 업그레이드하세요",
+    "workitem_resolved_vs_pending": "해결된 vs 대기 중인 작업 항목",
     "projects_by_status": "상태별 프로젝트",
     "active_users": "활성 사용자",
-    "intake_trends": "수용 추세",
-    "workitem_resolved_vs_pending": "해결된 vs 대기 중인 작업 항목",
-    "upgrade_to_plan": "{tab} 잠금 해제를 위해 {plan}(으)로 업그레이드하세요"
+    "intake_trends": "수용 추세"
   },
   "workspace_projects": {
     "label": "{count, plural, one {프로젝트} other {프로젝트}}",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "아직 보관된 페이지가 없습니다",
         "description": "현재 관심 없는 페이지를 보관하세요. 필요할 때 여기서 액세스하세요."
+      },
+      "shared": {
+        "title": "아직 공유된 페이지가 없습니다",
+        "description": "다른 사람이 공유한 페이지가 여기에 표시됩니다."
       }
     }
   },

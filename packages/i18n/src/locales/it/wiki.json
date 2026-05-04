@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "Impossibile creare la pagina o aggiungerla alla raccolta. Riprova.",
       "collection_link_copied": "Link della raccolta copiato negli appunti."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Aggiorna per sbloccare il Wiki",
+      "description": "Sblocca pagine pubbliche, cronologia delle versioni, pagine condivise, collaborazione in tempo reale e pagine dello spazio di lavoro per wiki, documenti aziendali e basi di conoscenza con Plane Pro.",
+      "upgrade_button": {
+        "text": "Aggiorna"
+      },
+      "learn_more_button": {
+        "text": "Scopri di più"
+      },
+      "download_button": {
+        "text": "Scarica dati",
+        "loading": "Download in corso"
+      },
+      "tabs": {
+        "nested_pages": "Pagine annidate",
+        "add_embeds": "Aggiungi incorporamenti",
+        "publish_pages": "Pubblica pagine",
+        "comments": "Commenti"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Le pagine annidate richiedono un piano a pagamento. Aggiorna per sbloccare."
+    }
   }
 }

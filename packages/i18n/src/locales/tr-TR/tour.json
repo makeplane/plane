@@ -110,6 +110,12 @@
         "description": "Bir çalışma öğesi daha sonra incelemek üzere ertelenebilir. Açık istek listenizin alt kısmına taşınacaktır."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Sekmeler arası geçişi bırakın. Dünyanızı bağlayın.",
+        "description": "PR'ları takip etmek ve sohbetleri doğrudan Plane AI'da özetlemek için GitHub ve Slack'i bağlayın."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigasyon, yeniden hayal edildi",

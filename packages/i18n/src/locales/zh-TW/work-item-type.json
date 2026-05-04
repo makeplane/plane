@@ -3,11 +3,25 @@
     "label": "工作項目類型",
     "label_lowercase": "工作項目類型",
     "settings": {
-      "title": "工作項目類型",
+      "description": "自訂並新增您自己的屬性，以符合您團隊的需求。",
+      "cant_delete_default_message": "無法刪除此工作項目類型，因為它已設置為該專案的預設類型。",
+      "set_as_default": "設為預設",
+      "cant_set_default_inactive_message": "請先啟用此類型再將其設為預設",
+      "set_default_confirmation": {
+        "title": "設為預設工作項目類型",
+        "description": "將 {name} 設為預設後，它將被匯入到此工作區的所有專案中。所有新工作項目將預設使用此類型。",
+        "confirm_button": "設為預設"
+      },
       "properties": {
         "title": "自定義屬性",
+        "description": "建立和自訂屬性。",
         "tooltip": "每種工作項目類型都有一組默認屬性，如標題、描述、負責人、狀態、優先級、開始日期、截止日期、模塊、週期等。您還可以自定義並添加自己的屬性，以適應您團隊的需求。",
         "add_button": "添加新屬性",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "從工作區匯入"
+          }
+        },
         "dropdown": {
           "label": "屬性類型",
           "placeholder": "選擇類型"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "建立新自訂屬性",
+            "update": "更新自訂屬性"
+          },
           "form": {
             "display_name": {
               "placeholder": "標題"
@@ -213,9 +231,50 @@
           "description": "您為此工作項目類型添加的新屬性將顯示在此處。"
         }
       },
+      "types": {
+        "title": "類型",
+        "description": "建立和自訂具有屬性的工作事項類型。",
+        "sort_options": {
+          "project_count": "參與專案的數量"
+        },
+        "filter_options": {
+          "show_active": "顯示啟用中",
+          "show_inactive": "顯示停用中"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "建立新的",
+            "import_from_workspace": "從工作區匯入"
+          },
+          "banner": {
+            "with_access": "啟用工作事項類型以從工作區層級匯入類型",
+            "without_access": "工作事項類型已停用。請聯絡工作區管理員在工作區設定中啟用。"
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "自訂屬性",
+        "add_button": "新增屬性",
+        "modal": {
+          "title": "新增屬性",
+          "empty": {
+            "title": "沒有可用的屬性",
+            "description": "所有屬性都已連結到此類型。"
+          }
+        },
+        "unlink_confirmation": {
+          "title": "取消連結屬性",
+          "description": "取消連結此屬性將永久刪除使用此類型的每個工作事項中的所有值。此操作無法還原。",
+          "input_label": "輸入",
+          "input_label_suffix": "以繼續：",
+          "confirm": "取消連結屬性",
+          "loading": "取消連結中"
+        }
+      },
       "item_delete_confirmation": {
         "title": "刪除此類型",
         "description": "刪除類型可能會導致現有資料遺失。",
+        "can_disable_warning": "您想改為停用此類型嗎？",
         "primary_button": "是的，刪除它",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "無法刪除預設工作項目類型",
           "cannot_delete_work_item_type_with_associated_work_items": "無法刪除具有關聯工作項目的工作項目類型"
-        },
-        "can_disable_warning": "您想改為停用此類型嗎？"
-      },
-      "cant_delete_default_message": "無法刪除此工作項目類型，因為它已設置為該專案的預設類型。",
-      "set_as_default": "設為預設",
-      "cant_set_default_inactive_message": "請先啟用此類型再將其設為預設",
-      "set_default_confirmation": {
-        "title": "設為預設工作項目類型",
-        "description": "將 {name} 設為預設後，它將被匯入到此工作區的所有專案中。所有新工作項目將預設使用此類型。",
-        "confirm_button": "設為預設"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "錯誤！",
           "message": {
+            "default": "建立工作事項類型失敗。請再試一次！",
             "conflict": "{name} 類型已存在。請選擇其他名稱。"
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "錯誤！",
           "message": {
+            "default": "更新工作事項類型失敗。請再試一次！",
             "conflict": "{name} 類型已存在。請選擇其他名稱。"
           }
         }
@@ -383,10 +435,10 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "驗證錯誤！",
+      "title": "儲存後將中斷現有連結",
       "content": {
         "intro": "工作項目類型 {workItemTypeName} 包含：",
-        "parent_items": "{count, plural, other {個父工作項目}}",
+        "parent_items": "{count, plural, other {將清除 # 個父層連結}}。",
         "child_items": "{count, plural, other {個子工作項目}}",
         "parent_line_suffix_when_also_children": "，以及 ",
         "footer": "此變更將從 {workItemTypeName} 工作項目類型的現有工作項目中移除父子關係。"
@@ -397,11 +449,11 @@
       },
       "error_toast": {
         "title": "錯誤！",
-        "message": "無法中斷層級結構。請重試。"
+        "message": "解除連結並儲存失敗，請再試一次。"
       },
       "confirm_button": {
-        "loading": "正在套用",
-        "default": "套用並解除連結"
+        "loading": "正在儲存",
+        "default": "仍要儲存"
       }
     },
     "work_item_modal": {

@@ -21,7 +21,11 @@
     "members": {
       "label": "成員",
       "project_lead": "專案負責人",
+      "project_lead_description": "請選擇該專案的專案負責人。",
       "default_assignee": "預設指派對象",
+      "default_assignee_description": "請選擇該專案的預設指派人。",
+      "project_subscribers": "專案訂閱者",
+      "project_subscribers_description": "請選擇將接收此專案通知的成員。",
       "guest_super_permissions": {
         "title": "授予訪客使用者檢視所有工作事項的權限：",
         "sub_heading": "這將允許訪客檢視所有專案工作事項。"
@@ -30,13 +34,11 @@
         "title": "邀請成員",
         "sub_heading": "邀請成員參與您的專案。",
         "select_co_worker": "選擇同事"
-      },
-      "project_lead_description": "請選擇該專案的專案負責人。",
-      "default_assignee_description": "請選擇該專案的預設指派人。",
-      "project_subscribers": "專案訂閱者",
-      "project_subscribers_description": "請選擇將接收此專案通知的成員。"
+      }
     },
     "states": {
+      "heading": "狀態",
+      "description": "定義並自訂工作流程狀態以追蹤工作事項的進度。",
       "describe_this_state_for_your_members": "為您的成員描述此狀態。",
       "empty_state": {
         "title": "{groupKey} 群組沒有可用的狀態",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "標籤",
+      "description": "建立自訂標籤以分類和整理您的工作事項",
       "label_title": "標籤標題",
       "label_title_is_required": "標籤標題為必填",
       "label_max_char": "標籤名稱不應超過 255 個字元",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "評估",
+      "description": "幫助你傳達團隊的複雜性和工作負荷。",
       "label": "預估",
       "title": "為我的專案啟用預估",
-      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "enable_description": "它們能幫助您傳達團隊的複雜度和工作量。",
       "no_estimate": "無預估",
       "new": "新估算系統",
       "create": {
@@ -112,6 +118,16 @@
             "title": "估算重新排序失敗",
             "message": "我們無法重新排序估算，請再試一次"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "估算系統已建立",
+            "message": "已成功建立並啟用"
+          },
+          "error": {
+            "title": "錯誤",
+            "message": "發生錯誤"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "自動化",
+      "heading": "自動化",
+      "description": "設定自動化動作以簡化您的專案管理流程並減少手動任務。",
       "auto-archive": {
         "title": "自動封存已關閉的工作項目",
         "description": "Plane將自動封存已完成或已取消的工作項目。",
@@ -194,89 +212,115 @@
         "description": "配置 GitHub 和其他整合以同步您的專案工作項目。"
       }
     },
-    "cycles": {
-      "auto_schedule": {
-        "heading": "自動排程週期",
-        "description": "無需手動設定即可保持週期運作。",
-        "tooltip": "根據您選擇的排程自動建立新週期。",
-        "edit_button": "編輯",
-        "form": {
-          "cycle_title": {
-            "label": "週期標題",
-            "placeholder": "標題",
-            "tooltip": "標題將為後續週期添加編號。例如：設計 - 1/2/3",
-            "validation": {
-              "required": "週期標題為必填項",
-              "max_length": "標題不得超過255個字元"
-            }
-          },
-          "cycle_duration": {
-            "label": "週期持續時間",
-            "unit": "週",
-            "validation": {
-              "required": "週期持續時間為必填項",
-              "min": "週期持續時間必須至少為1週",
-              "max": "週期持續時間不得超過30週",
-              "positive": "週期持續時間必須為正數"
-            }
-          },
-          "cooldown_period": {
-            "label": "冷卻期",
-            "unit": "天",
-            "tooltip": "下一個週期開始前的週期間隔暫停期。",
-            "validation": {
-              "required": "冷卻期為必填項",
-              "negative": "冷卻期不能為負數"
-            }
-          },
-          "start_date": {
-            "label": "週期開始日",
-            "validation": {
-              "required": "開始日期為必填項",
-              "past": "開始日期不能是過去的日期"
-            }
-          },
-          "number_of_cycles": {
-            "label": "未來週期數",
-            "validation": {
-              "required": "週期數為必填項",
-              "min": "至少需要1個週期",
-              "max": "無法排程超過3個週期"
-            }
-          },
-          "auto_rollover": {
-            "label": "工作項自動結轉",
-            "tooltip": "在週期完成的當天，將所有未完成的工作項移至下一個週期。"
-          }
-        },
+    "workflows": {
+      "toggle": {
+        "title": "啟用工作流程",
+        "description": "設定工作流程以控制工作事項的流轉",
+        "no_states_tooltip": "此工作流程尚未新增任何狀態。",
+        "no_work_item_types_tooltip": "此工作流程尚未新增任何工作事項類型。",
+        "no_states_or_work_item_types_tooltip": "此工作流程尚未新增任何狀態或工作事項類型。",
         "toast": {
-          "toggle": {
-            "loading_enable": "正在啟用自動排程週期",
-            "loading_disable": "正在停用自動排程週期",
-            "success": {
-              "title": "成功！",
-              "message": "自動排程週期已成功切換。"
-            },
-            "error": {
-              "title": "錯誤！",
-              "message": "切換自動排程週期失敗。"
-            }
+          "loading": {
+            "enabling": "正在啟用工作流程",
+            "disabling": "正在停用工作流程"
           },
-          "save": {
-            "loading": "正在儲存自動排程週期設定",
-            "success": {
-              "title": "成功！",
-              "message_create": "自動排程週期設定已成功儲存。",
-              "message_update": "自動排程週期設定已成功更新。"
-            },
-            "error": {
-              "title": "錯誤！",
-              "message_create": "儲存自動排程週期設定失敗。",
-              "message_update": "更新自動排程週期設定失敗。"
-            }
+          "success": {
+            "title": "成功！",
+            "message": "工作流程已成功啟用。"
+          },
+          "error": {
+            "title": "錯誤！",
+            "message": "啟用工作流程失敗。請再試一次。"
           }
         }
+      },
+      "heading": "工作流程",
+      "description": "自動化工作事項轉換，並設定規則以控制任務在您的專案流程中推進的方式。",
+      "add_button": "新增工作流程",
+      "search": "搜尋工作流程",
+      "detail": {
+        "define": "定義工作流程",
+        "add_states": "新增狀態",
+        "unmapped_states": {
+          "title": "偵測到未對應的狀態",
+          "description": "所選類型的某些工作事項目前處於此工作流程中不存在的狀態。",
+          "note": "如果您啟用此工作流程，這些項目將自動移至此工作流程的初始狀態。",
+          "label": "缺少的狀態",
+          "tooltip": "某些工作事項處於未對應至此工作流程的狀態。開啟工作流程以檢視。"
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "所有狀態皆已使用中",
+          "description": "此專案定義的所有狀態皆已存在於您目前的工作流程中。"
+        }
+      },
+      "default_footer": {
+        "fallback_message": "此工作流程適用於任何未指派給工作流程的工作事項類型。"
+      },
+      "create": {
+        "heading": "建立新工作流程",
+        "name": {
+          "placeholder": "新增一個獨特的名稱",
+          "validation": {
+            "max_length": "名稱長度必須少於 255 個字元",
+            "required": "名稱為必填",
+            "invalid": "名稱只能包含字母、數字、空格、連字號和撇號"
+          }
+        },
+        "description": {
+          "placeholder": "新增簡短描述",
+          "validation": {
+            "invalid": "描述只能包含字母、數字、空格、連字號和撇號"
+          }
+        },
+        "work_item_type": {
+          "label": "工作事項類型"
+        },
+        "success": {
+          "title": "成功！",
+          "message": "工作流程建立成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "建立工作流程失敗。請再試一次。"
+        }
+      },
+      "update": {
+        "success": {
+          "title": "成功！",
+          "message": "工作流程更新成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "更新工作流程失敗。請再試一次。"
+        }
+      },
+      "delete": {
+        "loading": "正在刪除工作流程",
+        "success": {
+          "title": "成功！",
+          "message": "工作流程刪除成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "刪除工作流程失敗。請再試一次。"
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "成功！",
+          "message": "狀態新增成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "新增狀態失敗。請再試一次。"
+        }
       }
+    },
+    "work_item_types": {
+      "heading": "工作事項類型",
+      "description": "使用獨特屬性建立和自訂不同類型的工作事項"
     },
     "features": {
       "cycles": {
@@ -379,6 +423,103 @@
         "description": "里程碑提供了一個層，用於將工作項目對齊到共享的完成日期。",
         "toggle_title": "啟用里程碑",
         "toggle_description": "按里程碑截止日期組織工作項目。"
+      },
+      "toasts": {
+        "loading": "正在更新專案功能...",
+        "success": "專案功能更新成功。",
+        "error": "更新專案功能時發生錯誤。請再試一次。"
+      }
+    },
+    "project_updates": {
+      "heading": "專案更新",
+      "description": "此專案的整合追蹤和進度監控"
+    },
+    "templates": {
+      "heading": "模板",
+      "description": "使用範本可節省 80% 建立專案、工作事項和頁面所花費的時間。"
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "自動排程週期",
+        "description": "無需手動設定即可保持週期運作。",
+        "tooltip": "根據您選擇的排程自動建立新週期。",
+        "edit_button": "編輯",
+        "form": {
+          "cycle_title": {
+            "label": "週期標題",
+            "placeholder": "標題",
+            "tooltip": "標題將為後續週期添加編號。例如：設計 - 1/2/3",
+            "validation": {
+              "required": "週期標題為必填項",
+              "max_length": "標題不得超過255個字元"
+            }
+          },
+          "cycle_duration": {
+            "label": "週期持續時間",
+            "unit": "週",
+            "validation": {
+              "required": "週期持續時間為必填項",
+              "min": "週期持續時間必須至少為1週",
+              "max": "週期持續時間不得超過30週",
+              "positive": "週期持續時間必須為正數"
+            }
+          },
+          "cooldown_period": {
+            "label": "冷卻期",
+            "unit": "天",
+            "tooltip": "下一個週期開始前的週期間隔暫停期。",
+            "validation": {
+              "required": "冷卻期為必填項",
+              "negative": "冷卻期不能為負數"
+            }
+          },
+          "start_date": {
+            "label": "週期開始日",
+            "validation": {
+              "required": "開始日期為必填項",
+              "past": "開始日期不能是過去的日期"
+            }
+          },
+          "number_of_cycles": {
+            "label": "未來週期數",
+            "validation": {
+              "required": "週期數為必填項",
+              "min": "至少需要1個週期",
+              "max": "無法排程超過3個週期"
+            }
+          },
+          "auto_rollover": {
+            "label": "工作項自動結轉",
+            "tooltip": "在週期完成的當天，將所有未完成的工作項移至下一個週期。"
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "正在啟用自動排程週期",
+            "loading_disable": "正在停用自動排程週期",
+            "success": {
+              "title": "成功！",
+              "message": "自動排程週期已成功切換。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message": "切換自動排程週期失敗。"
+            }
+          },
+          "save": {
+            "loading": "正在儲存自動排程週期設定",
+            "success": {
+              "title": "成功！",
+              "message_create": "自動排程週期設定已成功儲存。",
+              "message_update": "自動排程週期設定已成功更新。"
+            },
+            "error": {
+              "title": "錯誤！",
+              "message_create": "儲存自動排程週期設定失敗。",
+              "message_update": "更新自動排程週期設定失敗。"
+            }
+          }
+        }
       }
     }
   }

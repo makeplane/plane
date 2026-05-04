@@ -3,6 +3,9 @@
     "settings": {
       "title": "Template",
       "description": "Hemat 80% waktu yang dihabiskan untuk membuat proyek, item kerja, dan halaman ketika Anda menggunakan template.",
+      "new_project_template": "Template proyek baru",
+      "new_work_item_template": "Template item kerja baru",
+      "new_page_template": "Template halaman baru",
       "options": {
         "project": {
           "label": "Template proyek"
@@ -157,6 +160,14 @@
               "required": "Setidaknya satu kata kunci diperlukan"
             }
           },
+          "website": {
+            "label": "URL Website",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL tidak valid",
+              "maxLength": "URL harus kurang dari 800 karakter"
+            }
+          },
           "company_name": {
             "label": "Nama perusahaan",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Alamat email tidak valid",
-              "required": "Email dukungan diperlukan",
               "maxLength": "Email dukungan harus kurang dari 255 karakter"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " Belum ada label. Buat label untuk membantu mengatur dan memfilter item kerja dalam proyek Anda."
+      },
+      "no_modules": {
+        "description": "Belum ada modul. Atur pekerjaan ke dalam sub-proyek dengan pemimpin dan penanggung jawab khusus."
       },
       "no_work_items": {
         "description": "Belum ada item kerja. Tambahkan satu untuk membantu mengatur pekerjaan Anda lebih baik."

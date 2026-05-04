@@ -110,6 +110,12 @@
         "description": "可以推遲工作項以便稍後查看。它將移至您的打開請求列表的底部。"
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "停止切換分頁。連接您的世界。",
+        "description": "連結 GitHub、Slack 以直接在 Plane AI 中追蹤 PR 並摘要聊天內容。"
+      }
+    },
     "navigation": {
       "modal": {
         "title": "導航，重新想像",

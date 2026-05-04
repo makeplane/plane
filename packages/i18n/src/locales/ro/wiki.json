@@ -33,7 +33,7 @@
       "submit": "Șterge colecția"
     },
     "header": {
-      "add_page": "Adaugă pagină"
+      "add_page": "Adaugă o pagină"
     },
     "menu": {
       "create_new_page": "Creează o pagină nouă",
@@ -83,6 +83,31 @@
       "create_page_error": "Pagina nu a putut fi creată. Te rugăm să încerci din nou.",
       "create_page_in_collection_error": "Pagina nu a putut fi creată sau adăugată în colecție. Te rugăm să încerci din nou.",
       "collection_link_copied": "Linkul colecției a fost copiat în clipboard."
+    }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Actualizează pentru a debloca Wiki",
+      "description": "Deblochează pagini publice, istoric de versiuni, pagini partajate, colaborare în timp real și pagini ale spațiului de lucru pentru wiki-uri, documente la nivel de companie și baze de cunoștințe cu Plane Pro.",
+      "upgrade_button": {
+        "text": "Actualizează"
+      },
+      "learn_more_button": {
+        "text": "Află mai multe"
+      },
+      "download_button": {
+        "text": "Descarcă datele",
+        "loading": "Se descarcă"
+      },
+      "tabs": {
+        "nested_pages": "Pagini imbricate",
+        "add_embeds": "Adaugă încorporări",
+        "publish_pages": "Publică pagini",
+        "comments": "Comentarii"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Paginile imbricate necesită un plan plătit. Actualizează pentru a debloca."
     }
   }
 }

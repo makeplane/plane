@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Lütfen geçerli bir URL girin."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Bu bloğun içeriğini açıklayın",
+      "generated_here": "AI içeriğiniz burada oluşturulacak"
+    },
+    "block_types": {
+      "placeholder": "Blok türü seçin",
+      "summarize_page": "Sayfayı Özetle",
+      "custom_prompt": "Özel İstem"
+    },
+    "actions": {
+      "discard": "Vazgeç",
+      "generate": "Oluştur",
+      "generating": "Oluşturuluyor",
+      "rewriting": "Yeniden yazılıyor",
+      "rewrite": "Yeniden yaz",
+      "use_this": "Bunu kullan",
+      "refine": "İyileştir"
+    }
   }
 }

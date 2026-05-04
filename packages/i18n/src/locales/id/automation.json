@@ -53,6 +53,9 @@
       "button": {
         "previous": "Kembali",
         "next": "Tambah aksi"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Anda tidak dapat mengubah jenis pemicu setelah dibuat"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Pilih opsi",
       "handler_name": {
         "add_comment": "Tambah komentar",
-        "change_property": "Ubah properti"
+        "change_property": "Ubah properti",
+        "run_script": "Jalankan Skrip"
       },
       "configuration": {
         "label": "Konfigurasi",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Tambah komentar"
+      },
+      "run_script_block": {
+        "title": "Jalankan skrip"
       },
       "change_property_block": {
         "title": "Ubah properti"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Judul otomatisasi",
+      "scope": "Cakupan",
+      "projects": "Proyek",
       "last_run_on": "Terakhir dijalankan pada",
       "created_on": "Dibuat pada",
       "last_updated_on": "Terakhir diperbarui pada",
@@ -229,6 +238,35 @@
         "title": "Otomatisasi",
         "description": "Otomatisasi adalah cara untuk mengotomatisasi tugas dalam proyek Anda.",
         "sub_description": "Dapatkan kembali 80% waktu admin Anda ketika menggunakan Otomatisasi."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Pilih proyek untuk menjalankan otomatisasi ini",
+        "all_projects": {
+          "label": "Semua proyek",
+          "description": "Otomatisasi akan berjalan untuk semua proyek di ruang kerja."
+        },
+        "select_projects": {
+          "label": "Pilih proyek",
+          "description": "Otomatisasi akan berjalan untuk proyek yang dipilih di ruang kerja.",
+          "placeholder": "Pilih proyek"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Otomatisasi",
+        "title": "Otomatisasi",
+        "description": "Standarisasi proses di seluruh ruang kerja Anda dengan otomatisasi global."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Proyek",
+            "multiple": "Beberapa",
+            "all": "Semua"
+          }
+        }
       }
     }
   }

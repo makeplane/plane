@@ -53,6 +53,9 @@
       "button": {
         "previous": "Späť",
         "next": "Pridať akciu"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Typ spúšťača nie je možné po vytvorení zmeniť"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Vyberte možnosť",
       "handler_name": {
         "add_comment": "Pridať komentár",
-        "change_property": "Zmeniť vlastnosť"
+        "change_property": "Zmeniť vlastnosť",
+        "run_script": "Spustiť skript"
       },
       "configuration": {
         "label": "Konfigurácia",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Pridať komentár"
+      },
+      "run_script_block": {
+        "title": "Spustiť skript"
       },
       "change_property_block": {
         "title": "Zmeniť vlastnosť"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Názov automatizácie",
+      "scope": "Rozsah",
+      "projects": "Projekty",
       "last_run_on": "Posledné spustenie",
       "created_on": "Vytvorené",
       "last_updated_on": "Posledná aktualizácia",
@@ -229,6 +238,35 @@
         "title": "Automatizácie",
         "description": "Automatizácie sú spôsob automatizácie úloh vo vašom projekte.",
         "sub_description": "Získajte späť 80% svojho administratívneho času, keď používate automatizácie."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Vyberte projekty, v ktorých sa má táto automatizácia spúšťať",
+        "all_projects": {
+          "label": "Všetky projekty",
+          "description": "Automatizácia sa bude spúšťať pre všetky projekty v pracovnom priestore."
+        },
+        "select_projects": {
+          "label": "Vybrať projekty",
+          "description": "Automatizácia sa bude spúšťať pre vybrané projekty v pracovnom priestore.",
+          "placeholder": "Vybrať projekty"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatizácie",
+        "title": "Automatizácie",
+        "description": "Štandardizujte procesy v celom pracovnom priestore pomocou globálnych automatizácií."
+      },
+      "table": {
+        "scope": {
+          "global": "Globálny",
+          "project": {
+            "label": "Projekt",
+            "multiple": "Viacero",
+            "all": "Všetky"
+          }
+        }
       }
     }
   }

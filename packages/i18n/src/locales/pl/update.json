@@ -1,22 +1,15 @@
 {
   "updates": {
+    "progress": {
+      "title": "Postęp",
+      "since_last_update": "Od ostatniej aktualizacji",
+      "comments": "{count, plural, one{# komentarz} other{# komentarze}}"
+    },
     "add_update": "Dodaj aktualizację",
     "add_update_placeholder": "Dodaj swoją aktualizację tutaj",
     "empty": {
       "title": "Nie ma jeszcze aktualizacji",
       "description": "Możesz tutaj zobaczyć aktualizacje."
-    },
-    "delete": {
-      "title": "Usuń aktualizację",
-      "confirmation": "Czy na pewno chcesz usunąć tę aktualizację? Ta operacja jest nieodwracalna.",
-      "success": {
-        "title": "Aktualizacja została usunięta",
-        "message": "Aktualizacja została pomyślnie usunięta."
-      },
-      "error": {
-        "title": "Aktualizacja nie została usunięta",
-        "message": "Nie udało się usunąć aktualizacji."
-      }
     },
     "reaction": {
       "create": {
@@ -40,11 +33,6 @@
         }
       }
     },
-    "progress": {
-      "title": "Postęp",
-      "since_last_update": "Od ostatniej aktualizacji",
-      "comments": "{count, plural, one{# komentarz} other{# komentarze}}"
-    },
     "create": {
       "success": {
         "title": "Aktualizacja została stworzona",
@@ -53,6 +41,18 @@
       "error": {
         "title": "Aktualizacja nie została stworzona",
         "message": "Nie udało się stworzyć aktualizacji."
+      }
+    },
+    "delete": {
+      "title": "Usuń aktualizację",
+      "confirmation": "Czy na pewno chcesz usunąć tę aktualizację? Ta operacja jest nieodwracalna.",
+      "success": {
+        "title": "Aktualizacja została usunięta",
+        "message": "Aktualizacja została pomyślnie usunięta."
+      },
+      "error": {
+        "title": "Aktualizacja nie została usunięta",
+        "message": "Nie udało się usunąć aktualizacji."
       }
     },
     "update": {

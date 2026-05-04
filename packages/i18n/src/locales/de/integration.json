@@ -129,10 +129,6 @@
     "webhook_secret_error": "Webhook Secret ist erforderlich",
     "connect_app": "App verbinden"
   },
-  "bitbucket_dc_integration": {
-    "name": "Bitbucket Data Center",
-    "description": "Verbinden und synchronisieren Sie Ihre Bitbucket Data Center-Repositories mit Plane."
-  },
   "slack_integration": {
     "name": "Slack",
     "description": "Verbinden Sie Ihren Slack-Workspace mit Plane.",
@@ -197,6 +193,10 @@
       "states_not_found": "Projekt-Status nicht gefunden",
       "server_error_states": "Serverfehler beim Laden der Status"
     }
+  },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Verbinden und synchronisieren Sie Ihre Bitbucket Data Center-Repositories mit Plane."
   },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
@@ -301,12 +301,12 @@
     "connect_app": "App verbinden"
   },
   "silo_errors": {
-    "cannot_create_multiple_connections": "Sie haben Ihre Organisation bereits mit einem Arbeitsbereich verbunden. Bitte trennen Sie die bestehende Verbindung, bevor Sie eine neue herstellen.",
     "invalid_query_params": "Die angegebenen Abfrageparameter sind ungültig oder enthalten nicht die erforderlichen Felder",
     "invalid_installation_account": "Das angegebene Installationskonto ist nicht gültig",
     "generic_error": "Bei der Verarbeitung Ihrer Anfrage ist ein unerwarteter Fehler aufgetreten",
     "connection_not_found": "Die angeforderte Verbindung konnte nicht gefunden werden",
     "multiple_connections_found": "Es wurden mehrere Verbindungen gefunden, obwohl nur eine erwartet wurde",
+    "cannot_create_multiple_connections": "Sie haben Ihre Organisation bereits mit einem Arbeitsbereich verbunden. Bitte trennen Sie die bestehende Verbindung, bevor Sie eine neue herstellen.",
     "installation_not_found": "Die angeforderte Installation konnte nicht gefunden werden",
     "user_not_found": "Der angeforderte Benutzer konnte nicht gefunden werden",
     "error_fetching_token": "Fehler beim Abrufen des Authentifizierungstokens",
@@ -314,13 +314,13 @@
     "invalid_app_installation_id": "Fehler beim Installieren der App"
   },
   "import_status": {
-    "progressing": "In Bearbeitung",
     "queued": "In Warteschlange",
     "created": "Erstellt",
     "initiated": "Eingeleitet",
     "pulling": "Abrufen",
     "timed_out": "Zeitüberschreitung",
     "pulled": "Abgerufen",
+    "progressing": "In Bearbeitung",
     "transforming": "Umwandeln",
     "transformed": "Umgewandelt",
     "pushing": "Hochladen",

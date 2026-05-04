@@ -3,6 +3,9 @@
     "settings": {
       "title": "模板",
       "description": "使用模板可以节省80%创建项目、工作项和页面的时间。",
+      "new_project_template": "新建项目模板",
+      "new_work_item_template": "新建工作项模板",
+      "new_page_template": "新建页面模板",
       "options": {
         "project": {
           "label": "项目模板"
@@ -157,6 +160,14 @@
               "required": "至少需要一个关键词"
             }
           },
+          "website": {
+            "label": "网站 URL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "无效的 URL",
+              "maxLength": "URL 应少于800个字符"
+            }
+          },
           "company_name": {
             "label": "公司名称",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "无效的邮箱地址",
-              "required": "支持邮箱是必填项",
               "maxLength": "支持邮箱应少于255个字符"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " 还没有标签。创建标签以帮助组织和筛选项目中的工作项。"
+      },
+      "no_modules": {
+        "description": "还没有模块。将工作组织成具有专门负责人和受理人的子项目。"
       },
       "no_work_items": {
         "description": "还没有工作项。添加一个以更好地组织您的工作。"

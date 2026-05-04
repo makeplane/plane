@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Không tìm thấy kết quả"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Ghi chú nhanh",
+    "your_work": "Công việc của tôi",
     "projects": "Dự án",
     "pages": "Trang",
     "new_work_item": "Mục công việc mới",
     "home": "Trang chủ",
-    "your_work": "Công việc của tôi",
     "inbox": "Hộp thư đến",
     "workspace": "Không gian làm việc",
     "views": "Chế độ xem",
@@ -21,14 +29,6 @@
     "epics": "Epics",
     "upgrade_plan": "Nâng cấp gói",
     "plane_pro": "Plane Pro",
-    "business": "Doanh nghiệp",
-    "recurring_work_items": "Công việc lặp lại"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Không tìm thấy kết quả"
-      }
-    }
+    "business": "Doanh nghiệp"
   }
 }

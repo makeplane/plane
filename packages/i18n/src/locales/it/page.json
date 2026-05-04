@@ -1,33 +1,4 @@
 {
-  "pages": {
-    "link_pages": "Connetti pagine",
-    "show_wiki_pages": "Mostra pagine wiki",
-    "link_pages_to": "Connetti pagine a",
-    "linked_pages": "Pagine collegate",
-    "no_description": "Questa pagina è vuota. Scrivi qualcosa e vedi qui come questo segnaposto",
-    "toasts": {
-      "link": {
-        "success": {
-          "title": "Pagine aggiornate",
-          "message": "Le pagine sono state aggiornate con successo"
-        },
-        "error": {
-          "title": "Pagine non aggiornate",
-          "message": "Le pagine non possono essere aggiornate"
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "Pagina eliminata",
-          "message": "La pagina è stata eliminata con successo"
-        },
-        "error": {
-          "title": "Pagina non eliminata",
-          "message": "La pagina non può essere eliminata"
-        }
-      }
-    }
-  },
   "page_navigation_pane": {
     "tabs": {
       "outline": {
@@ -62,6 +33,43 @@
           "title": "Immagini mancanti",
           "description": "Aggiungi immagini per vederle qui."
         }
+      },
+      "comments": {
+        "label": "Commenti",
+        "empty_state": {
+          "title": "Nessun commento",
+          "description": "Aggiungi commenti per vederli qui."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Il nome dello sticky non può superare i 100 caratteri.",
+        "already_exists": "Esiste già uno sticky senza descrizione"
+      },
+      "created": {
+        "title": "Sticky creato",
+        "message": "Lo sticky è stato creato con successo"
+      },
+      "not_created": {
+        "title": "Sticky non creato",
+        "message": "Lo sticky non può essere creato"
+      },
+      "updated": {
+        "title": "Sticky aggiornato",
+        "message": "Lo sticky è stato aggiornato con successo"
+      },
+      "not_updated": {
+        "title": "Sticky non aggiornato",
+        "message": "Lo sticky non può essere aggiornato"
+      },
+      "removed": {
+        "title": "Sticky rimosso",
+        "message": "Lo sticky è stato rimosso con successo"
+      },
+      "not_removed": {
+        "title": "Sticky non rimosso",
+        "message": "Lo sticky non può essere rimosso"
       }
     },
     "open_button": "Apri pannello di navigazione",
@@ -70,11 +78,28 @@
   },
   "page_actions": {
     "move_page": {
+      "submit_button": {
+        "default": "Sposta",
+        "loading": "Spostamento"
+      },
+      "cannot_move_to_teamspace": "Le pagine private e condivise non possono essere spostate in un teamspace.",
       "placeholders": {
+        "workspace_to_all": "Cerca progetti e teamspace",
+        "workspace_to_project": "Cerca progetti",
+        "project_to_all": "Cerca progetti e teamspace",
+        "project_to_project": "Cerca progetti",
         "project_to_all_with_wiki": "Cerca raccolte wiki, progetti e teamspace",
         "project_to_project_with_wiki": "Cerca raccolte wiki e progetti"
       },
       "toasts": {
+        "success": {
+          "title": "Successo!",
+          "message": "Pagina spostata con successo."
+        },
+        "error": {
+          "title": "Errore!",
+          "message": "Impossibile spostare la pagina. Riprova più tardi."
+        },
         "collection_error": {
           "title": "Spostata nel wiki",
           "message": "La pagina è stata spostata nel wiki, ma non è stato possibile aggiungerla alla raccolta selezionata. Rimane in General."

@@ -3,11 +3,25 @@
     "label": "工作项类型",
     "label_lowercase": "工作项类型",
     "settings": {
-      "title": "工作项类型",
+      "description": "自定义并添加您自己的属性以适应团队需求。",
+      "cant_delete_default_message": "无法删除此工作项类型，因为它已设置为该项目的默认类型。",
+      "set_as_default": "设为默认",
+      "cant_set_default_inactive_message": "请先激活此类型再将其设为默认",
+      "set_default_confirmation": {
+        "title": "设为默认工作项类型",
+        "description": "将 {name} 设为默认后，它将被导入到此工作区的所有项目中。所有新工作项将默认使用此类型。",
+        "confirm_button": "设为默认"
+      },
       "properties": {
-        "title": "自定义工作项属性",
+        "title": "属性",
+        "description": "创建和自定义属性。",
         "tooltip": "每种工作项类型都带有一组默认属性，如标题、描述、负责人、状态、优先级、开始日期、截止日期、模块、周期等。您还可以自定义并添加自己的属性以满足团队需求。",
         "add_button": "添加新属性",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "从工作区导入"
+          }
+        },
         "dropdown": {
           "label": "属性类型",
           "placeholder": "选择类型"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "创建新的自定义属性",
+            "update": "更新自定义属性"
+          },
           "form": {
             "display_name": {
               "placeholder": "标题"
@@ -213,9 +231,50 @@
           "description": "您为此工作项类型添加的新属性将显示在此处。"
         }
       },
+      "types": {
+        "title": "类型",
+        "description": "使用属性创建和自定义工作项类型。",
+        "sort_options": {
+          "project_count": "所属项目数量"
+        },
+        "filter_options": {
+          "show_active": "显示活动",
+          "show_inactive": "显示不活动"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "新建",
+            "import_from_workspace": "从工作区导入"
+          },
+          "banner": {
+            "with_access": "启用工作项类型以从工作区级别导入类型",
+            "without_access": "工作项类型已禁用。请联系工作区管理员在工作区设置中启用。"
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "自定义属性",
+        "add_button": "添加属性",
+        "modal": {
+          "title": "添加属性",
+          "empty": {
+            "title": "没有可用属性",
+            "description": "所有属性均已关联到此类型。"
+          }
+        },
+        "unlink_confirmation": {
+          "title": "取消关联属性",
+          "description": "取消关联此属性将永久删除使用此类型的所有工作项中该属性的所有值。此操作无法撤销。",
+          "input_label": "输入",
+          "input_label_suffix": "以继续：",
+          "confirm": "取消关联属性",
+          "loading": "正在取消关联"
+        }
+      },
       "item_delete_confirmation": {
         "title": "删除此类型",
         "description": "删除类型可能会导致现有数据丢失。",
+        "can_disable_warning": "您想改为禁用该类型吗？",
         "primary_button": "是的，删除它",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "无法删除默认工作项类型",
           "cannot_delete_work_item_type_with_associated_work_items": "无法删除有关联工作项的工作项类型"
-        },
-        "can_disable_warning": "您想改为禁用该类型吗？"
-      },
-      "cant_delete_default_message": "无法删除此工作项类型，因为它已设置为该项目的默认类型。",
-      "set_as_default": "设为默认",
-      "cant_set_default_inactive_message": "请先激活此类型再将其设为默认",
-      "set_default_confirmation": {
-        "title": "设为默认工作项类型",
-        "description": "将 {name} 设为默认后，它将被导入到此工作区的所有项目中。所有新工作项将默认使用此类型。",
-        "confirm_button": "设为默认"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "错误！",
           "message": {
+            "default": "创建工作项类型失败。请重试！",
             "conflict": "{name} 类型已存在。请选择其他名称。"
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "错误！",
           "message": {
+            "default": "更新工作项类型失败。请重试！",
             "conflict": "{name} 类型已存在。请选择其他名称。"
           }
         }
@@ -383,10 +435,10 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "验证错误！",
+      "title": "保存后将断开现有链接",
       "content": {
         "intro": "工作项类型 {workItemTypeName} 包含：",
-        "parent_items": "{count, plural, other {个父工作项}}",
+        "parent_items": "{count, plural, other {将清除 # 个父级链接}}。",
         "child_items": "{count, plural, other {个子工作项}}",
         "parent_line_suffix_when_also_children": "，以及 ",
         "footer": "此变更将从 {workItemTypeName} 工作项类型的现有工作项中移除父子关系。"
@@ -397,11 +449,11 @@
       },
       "error_toast": {
         "title": "错误！",
-        "message": "无法中断层级结构。请重试。"
+        "message": "解除链接并保存失败，请重试。"
       },
       "confirm_button": {
-        "loading": "正在应用",
-        "default": "应用并解除关联"
+        "loading": "正在保存",
+        "default": "仍要保存"
       }
     },
     "work_item_modal": {

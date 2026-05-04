@@ -513,6 +513,8 @@
     "order_by": {
       "label": "Sortuj według",
       "manual": "Ręcznie - Ranking",
+      "last_created": "Last created",
+      "last_updated": "Last updated",
       "start_date": "Data rozpoczęcia",
       "due_date": "Termin",
       "asc": "Rosnąco",
@@ -710,7 +712,12 @@
     "open_in_full_screen": "Otwórz {page} na pełnym ekranie",
     "details": "Szczegóły",
     "project_structure": "Struktura projektu",
-    "custom_properties": "Właściwości niestandardowe"
+    "custom_properties": "Właściwości niestandardowe",
+    "your_profile": "Your profile",
+    "developer": "Developer",
+    "work_structure": "Work structure",
+    "execution": "Execution",
+    "administration": "Administration"
   },
   "chart": {
     "x_axis": "Oś X",

@@ -53,6 +53,9 @@
       "button": {
         "previous": "Atrás",
         "next": "Agregar acción"
+      },
+      "warning": {
+        "disabled_trigger_switching": "No puedes cambiar el tipo de disparador una vez creado"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Selecciona una opción",
       "handler_name": {
         "add_comment": "Agregar comentario",
-        "change_property": "Cambiar propiedad"
+        "change_property": "Cambiar propiedad",
+        "run_script": "Ejecutar script"
       },
       "configuration": {
         "label": "Configuración",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Agregar comentario"
+      },
+      "run_script_block": {
+        "title": "Ejecutar script"
       },
       "change_property_block": {
         "title": "Cambiar propiedad"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Título de la automatización",
+      "scope": "Alcance",
+      "projects": "Proyectos",
       "last_run_on": "Última ejecución",
       "created_on": "Creado el",
       "last_updated_on": "Última actualización",
@@ -229,6 +238,35 @@
         "title": "Automatizaciones",
         "description": "Las automatizaciones son una forma de automatizar tareas en tu proyecto.",
         "sub_description": "Recupera el 80% de tu tiempo administrativo cuando uses Automatizaciones."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Selecciona los proyectos en los que ejecutar esta automatización",
+        "all_projects": {
+          "label": "Todos los proyectos",
+          "description": "La automatización se ejecutará para todos los proyectos del espacio de trabajo."
+        },
+        "select_projects": {
+          "label": "Seleccionar proyectos",
+          "description": "La automatización se ejecutará para los proyectos seleccionados del espacio de trabajo.",
+          "placeholder": "Seleccionar proyectos"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatizaciones",
+        "title": "Automatizaciones",
+        "description": "Estandariza los procesos en tu espacio de trabajo con automatizaciones globales."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Proyecto",
+            "multiple": "Múltiples",
+            "all": "Todos"
+          }
+        }
       }
     }
   }

@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "Không thể tạo trang hoặc thêm trang vào bộ sưu tập. Vui lòng thử lại.",
       "collection_link_copied": "Đã sao chép liên kết bộ sưu tập vào bộ nhớ tạm."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Nâng cấp để mở khóa Wiki",
+      "description": "Mở khóa trang công khai, lịch sử phiên bản, trang được chia sẻ, cộng tác thời gian thực và trang không gian làm việc cho wiki, tài liệu toàn công ty và cơ sở kiến thức với Plane Pro.",
+      "upgrade_button": {
+        "text": "Nâng cấp"
+      },
+      "learn_more_button": {
+        "text": "Tìm hiểu thêm"
+      },
+      "download_button": {
+        "text": "Tải xuống dữ liệu",
+        "loading": "Đang tải xuống"
+      },
+      "tabs": {
+        "nested_pages": "Trang lồng nhau",
+        "add_embeds": "Thêm nội dung nhúng",
+        "publish_pages": "Xuất bản trang",
+        "comments": "Bình luận"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Trang lồng nhau yêu cầu gói trả phí. Nâng cấp để mở khóa."
+    }
   }
 }

@@ -2,10 +2,10 @@
   "templates": {
     "settings": {
       "title": "Vorlagen",
+      "description": "Sparen Sie 80% der Zeit, die für die Erstellung von Projekten, Arbeitsaufgaben und Seiten aufgewendet wird, wenn Sie Vorlagen verwenden.",
       "new_project_template": "Neue Projektvorlage",
       "new_work_item_template": "Neue Arbeitselementvorlage",
       "new_page_template": "Neue Seitenvorlage",
-      "description": "Sparen Sie 80% der Zeit, die für die Erstellung von Projekten, Arbeitsaufgaben und Seiten aufgewendet wird, wenn Sie Vorlagen verwenden.",
       "options": {
         "project": {
           "label": "Projektvorlagen"
@@ -160,20 +160,20 @@
               "required": "Mindestens ein Schlüsselwort ist erforderlich"
             }
           },
-          "company_name": {
-            "label": "Unternehmensname",
-            "placeholder": "Plane",
-            "validation": {
-              "required": "Unternehmensname ist erforderlich",
-              "maxLength": "Unternehmensname sollte weniger als 255 Zeichen enthalten"
-            }
-          },
           "website": {
             "label": "Website-URL",
             "placeholder": "https://plane.so",
             "validation": {
               "invalid": "Ungültige URL",
               "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
+            }
+          },
+          "company_name": {
+            "label": "Unternehmensname",
+            "placeholder": "Plane",
+            "validation": {
+              "required": "Unternehmensname ist erforderlich",
+              "maxLength": "Unternehmensname sollte weniger als 255 Zeichen enthalten"
             }
           },
           "contact_email": {
@@ -235,6 +235,9 @@
       },
       "no_labels": {
         "description": "Noch keine Labels vorhanden. Erstellen Sie Labels, um Arbeitsaufgaben in Ihrem Projekt zu organisieren und zu filtern."
+      },
+      "no_modules": {
+        "description": "Noch keine Module. Organisieren Sie Arbeit in Unterprojekte mit dedizierten Verantwortlichen und Bearbeitern."
       },
       "no_work_items": {
         "description": "Noch keine Arbeitsaufgaben. Fügen Sie eine hinzu, um Ihre Arbeit besser zu strukturieren."

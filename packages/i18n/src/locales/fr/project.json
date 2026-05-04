@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que nécessaire",
+        "description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous souhaitez avoir un accès facile. Tous les acteurs d’un projet peuvent voir les vues de chacun et choisir celle qui convient le mieux à leurs besoins.",
+        "primary_button": {
+          "text": "Créez votre première vue",
+          "comic": {
+            "title": "Les vues fonctionnent sur les propriétés des éléments de travail.",
+            "description": "Vous pouvez créer une vue ici avec autant de propriétés comme filtres que souhaité."
+          }
+        },
+        "filter": {
+          "title": "Aucune vue correspondante",
+          "description": "Aucune vue ne correspond aux critères de recherche.\n Créez plutôt une nouvelle vue."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Aucun élément de travail archivé pour le moment",
+        "description": "Manuellement ou par automatisation, vous pouvez archiver les éléments de travail terminés ou annulés. Retrouvez-les ici une fois archivés.",
+        "primary_button": {
+          "text": "Configurer l’automatisation"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Aucun élément de travail trouvé correspondant aux filtres appliqués",
+        "secondary_button": {
+          "text": "Effacer tous les filtres"
+        }
+      },
+      "public": {
+        "title": "Pas encore de pages publiques",
+        "description": "Consultez ici les pages partagées avec tout le monde dans votre projet.",
+        "primary_button": {
+          "text": "Créez votre première page"
+        }
+      },
+      "archived": {
+        "title": "Pas encore de pages archivées",
+        "description": "Archivez les pages qui ne sont pas dans votre radar. Accédez-y ici quand nécessaire."
+      },
+      "shared": {
+        "title": "Pas encore de pages partagées",
+        "description": "Les pages que d’autres ont partagées avec vous apparaîtront ici."
+      }
+    },
+    "delete_view": {
+      "title": "Êtes-vous sûr de vouloir supprimer cette vue ?",
+      "content": "Si vous confirmez, toutes les options de tri, de filtrage et d’affichage et la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer."
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -215,29 +266,6 @@
         "success": "Module supprimé avec succès",
         "error": "Échec de la suppression du module"
       }
-    }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "Enregistrez des vues filtrées pour votre projet. Créez-en autant que nécessaire",
-        "description": "Les vues sont un ensemble de filtres enregistrés que vous utilisez fréquemment ou auxquels vous souhaitez avoir un accès facile. Tous les acteurs d’un projet peuvent voir les vues de chacun et choisir celle qui convient le mieux à leurs besoins.",
-        "primary_button": {
-          "text": "Créez votre première vue",
-          "comic": {
-            "title": "Les vues fonctionnent sur les propriétés des éléments de travail.",
-            "description": "Vous pouvez créer une vue ici avec autant de propriétés comme filtres que souhaité."
-          }
-        }
-      },
-      "filter": {
-        "title": "Aucune vue correspondante",
-        "description": "Aucune vue ne correspond aux critères de recherche.\n Créez plutôt une nouvelle vue."
-      }
-    },
-    "delete_view": {
-      "title": "Êtes-vous sûr de vouloir supprimer cette vue ?",
-      "content": "Si vous confirmez, toutes les options de tri, de filtrage et d’affichage et la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer."
     }
   },
   "project_page": {
@@ -330,6 +358,13 @@
       "created_at": "Date de création",
       "manual": "Manuel"
     }
+  },
+  "project_members": {
+    "full_name": "Nom complet",
+    "display_name": "Nom d’affichage",
+    "email": "E-mail",
+    "joining_date": "Date d’adhésion",
+    "role": "Rôle"
   },
   "project": {
     "members_import": {

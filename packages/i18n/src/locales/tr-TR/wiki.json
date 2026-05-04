@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "Sayfa oluşturulamadı veya koleksiyona eklenemedi. Lütfen tekrar deneyin.",
       "collection_link_copied": "Koleksiyon bağlantısı panoya kopyalandı."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Wiki'yi açmak için yükseltin",
+      "description": "Plane Pro ile genel sayfaları, sürüm geçmişini, paylaşılan sayfaları, gerçek zamanlı işbirliğini ve wiki'ler, şirket içi belgeler ve bilgi tabanları için çalışma alanı sayfalarını açın.",
+      "upgrade_button": {
+        "text": "Yükselt"
+      },
+      "learn_more_button": {
+        "text": "Daha fazla bilgi"
+      },
+      "download_button": {
+        "text": "Verileri indir",
+        "loading": "İndiriliyor"
+      },
+      "tabs": {
+        "nested_pages": "İç İçe Sayfalar",
+        "add_embeds": "Gömülü içerik ekle",
+        "publish_pages": "Sayfaları yayınla",
+        "comments": "Yorumlar"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "İç içe sayfalar ücretli bir plan gerektirir. Açmak için yükseltin."
+    }
   }
 }

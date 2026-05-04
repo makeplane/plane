@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "環境設定",
+      "description": "あなたの働き方に合わせてアプリの体験をカスタマイズします"
+    },
     "notifications": {
+      "heading": "メール通知",
+      "description": "購読している作業項目の最新情報を受け取ります。通知を受け取るには有効にしてください。",
       "select_default_view": "デフォルト表示を選択",
       "compact": "コンパクト",
       "full": "全画面"
+    },
+    "security": {
+      "heading": "セキュリティ"
+    },
+    "api_tokens": {
+      "title": "個人アクセストークン",
+      "description": "外部システムやアプリケーションとデータを統合するための安全なAPIトークンを生成します。"
+    },
+    "activity": {
+      "heading": "アクティビティ",
+      "description": "すべてのプロジェクトと作業項目にわたる最近のアクションと変更を追跡します。"
+    },
+    "connections": {
+      "title": "接続",
+      "heading": "接続",
+      "description": "ワークスペースの接続設定を管理します。"
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "プロフィール",
       "security": "セキュリティ",
       "activity": "アクティビティ",
-      "appearance": "外観",
+      "preferences": "環境設定",
       "notifications": "通知",
+      "api-tokens": "個人アクセストークン",
       "connections": "接続"
     },
     "tabs": {

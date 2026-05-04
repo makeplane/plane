@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "偏好設定",
+      "description": "以您工作的方式自訂您的應用程式體驗"
+    },
     "notifications": {
+      "heading": "電子郵件通知",
+      "description": "隨時掌握您訂閱的工作事項。啟用此功能以接收通知。",
       "select_default_view": "選擇預設檢視",
       "compact": "緊湊",
       "full": "全螢幕"
+    },
+    "security": {
+      "heading": "安全性"
+    },
+    "api_tokens": {
+      "title": "個人存取權杖",
+      "description": "產生安全的 API 權杖，以將您的資料與外部系統和應用程式整合。"
+    },
+    "activity": {
+      "heading": "活動",
+      "description": "追蹤您在所有專案和工作事項中的近期操作和變更。"
+    },
+    "connections": {
+      "title": "連接",
+      "heading": "連接",
+      "description": "管理您的工作區連接設定。"
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "個人資料",
       "security": "安全性",
       "activity": "活動",
-      "appearance": "外觀",
+      "preferences": "偏好設定",
       "notifications": "通知",
+      "api-tokens": "個人存取權杖",
       "connections": "連接"
     },
     "tabs": {

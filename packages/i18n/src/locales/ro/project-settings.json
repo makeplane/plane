@@ -21,7 +21,11 @@
     "members": {
       "label": "Membri",
       "project_lead": "Lider de proiect",
+      "project_lead_description": "Selectați liderul proiectului.",
       "default_assignee": "Persoană atribuită implicit",
+      "default_assignee_description": "Selectați persoana implicită atribuită proiectului.",
+      "project_subscribers": "Abonații proiectului",
+      "project_subscribers_description": "Selectați membrii care vor primi notificări pentru acest proiect.",
       "guest_super_permissions": {
         "title": "Acordă acces la perspectivă pentru toți utilizatorii de tip Invitat:",
         "sub_heading": "Aceasta va permite utilizatorilor din categoria Invitați să vadă toate activitățile din proiect."
@@ -30,13 +34,11 @@
         "title": "Invită membri",
         "sub_heading": "Invită membri să lucreze la proiectul tău.",
         "select_co_worker": "Selectează colegul de echipă"
-      },
-      "project_lead_description": "Selectați liderul proiectului.",
-      "default_assignee_description": "Selectați persoana implicită atribuită proiectului.",
-      "project_subscribers": "Abonații proiectului",
-      "project_subscribers_description": "Selectați membrii care vor primi notificări pentru acest proiect."
+      }
     },
     "states": {
+      "heading": "Stări",
+      "description": "Definește și personalizează stările fluxului de lucru pentru a urmări progresul activităților tale.",
       "describe_this_state_for_your_members": "Descrie această stare pentru membrii tăi.",
       "empty_state": {
         "title": "Nicio stare disponibilă pentru grupul {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etichete",
+      "description": "Creează etichete personalizate pentru a categoriza și organiza activitățile tale",
       "label_title": "Titlu etichetă",
       "label_title_is_required": "Titlul etichetei este obligatoriu",
       "label_max_char": "Numele etichetei nu trebuie să depășească 255 de caractere",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimări",
+      "description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
       "label": "Estimări",
       "title": "Activează estimările pentru proiectul meu",
-      "description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
+      "enable_description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
       "no_estimate": "Fără estimare",
       "new": "Noul sistem de estimare",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Reordonarea estimărilor a eșuat",
             "message": "Nu am putut reordona estimările, te rugăm să încerci din nou"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistem de estimări creat",
+            "message": "Creat și activat cu succes"
+          },
+          "error": {
+            "title": "Eroare",
+            "message": "Ceva a mers greșit"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automatizări",
+      "heading": "Automatizări",
+      "description": "Configurează acțiuni automate pentru a-ți eficientiza fluxul de lucru al proiectului și a reduce sarcinile manuale.",
       "auto-archive": {
         "title": "Auto-arhivează activitățile finalizate",
         "description": "Plane va arhiva automat activitățile care au fost finalizate sau anulate.",
@@ -194,89 +212,115 @@
         "description": "Configurează GitHub și alte integrări pentru a sincroniza elementele de lucru ale proiectului tău."
       }
     },
-    "cycles": {
-      "auto_schedule": {
-        "heading": "Programare automată a ciclurilor",
-        "description": "Mențineți ciclurile în mișcare fără configurare manuală.",
-        "tooltip": "Creați automat cicluri noi pe baza programului ales.",
-        "edit_button": "Editează",
-        "form": {
-          "cycle_title": {
-            "label": "Titlul ciclului",
-            "placeholder": "Titlu",
-            "tooltip": "Titlul va fi completat cu numere pentru ciclurile următoare. De exemplu: Design - 1/2/3",
-            "validation": {
-              "required": "Titlul ciclului este obligatoriu",
-              "max_length": "Titlul nu trebuie să depășească 255 de caractere"
-            }
-          },
-          "cycle_duration": {
-            "label": "Durata ciclului",
-            "unit": "Săptămâni",
-            "validation": {
-              "required": "Durata ciclului este obligatorie",
-              "min": "Durata ciclului trebuie să fie de cel puțin 1 săptămână",
-              "max": "Durata ciclului nu poate depăși 30 de săptămâni",
-              "positive": "Durata ciclului trebuie să fie pozitivă"
-            }
-          },
-          "cooldown_period": {
-            "label": "Perioadă de răcire",
-            "unit": "zile",
-            "tooltip": "Pauză între cicluri înainte de începerea următorului.",
-            "validation": {
-              "required": "Perioada de răcire este obligatorie",
-              "negative": "Perioada de răcire nu poate fi negativă"
-            }
-          },
-          "start_date": {
-            "label": "Ziua de început a ciclului",
-            "validation": {
-              "required": "Data de început este obligatorie",
-              "past": "Data de început nu poate fi în trecut"
-            }
-          },
-          "number_of_cycles": {
-            "label": "Numărul de cicluri viitoare",
-            "validation": {
-              "required": "Numărul de cicluri este obligatoriu",
-              "min": "Este necesar cel puțin 1 ciclu",
-              "max": "Nu se pot programa mai mult de 3 cicluri"
-            }
-          },
-          "auto_rollover": {
-            "label": "Transfer automat al elementelor de lucru",
-            "tooltip": "În ziua în care se completează un ciclu, mutați toate elementele de lucru nefinalizate în ciclul următor."
-          }
-        },
+    "workflows": {
+      "toggle": {
+        "title": "Activează fluxurile de lucru",
+        "description": "Setează fluxuri de lucru pentru a controla mișcarea activităților",
+        "no_states_tooltip": "Nu există stări adăugate în fluxul de lucru.",
+        "no_work_item_types_tooltip": "Nu există tipuri de activități adăugate în fluxul de lucru.",
+        "no_states_or_work_item_types_tooltip": "Nu există stări sau tipuri de activități adăugate în fluxul de lucru.",
         "toast": {
-          "toggle": {
-            "loading_enable": "Se activează programarea automată a ciclurilor",
-            "loading_disable": "Se dezactivează programarea automată a ciclurilor",
-            "success": {
-              "title": "Succes!",
-              "message": "Programarea automată a ciclurilor a fost comutată cu succes."
-            },
-            "error": {
-              "title": "Eroare!",
-              "message": "Nu s-a putut comuta programarea automată a ciclurilor."
-            }
+          "loading": {
+            "enabling": "Se activează fluxurile de lucru",
+            "disabling": "Se dezactivează fluxurile de lucru"
           },
-          "save": {
-            "loading": "Se salvează configurația programării automate a ciclurilor",
-            "success": {
-              "title": "Succes!",
-              "message_create": "Configurația programării automate a ciclurilor a fost salvată cu succes.",
-              "message_update": "Configurația programării automate a ciclurilor a fost actualizată cu succes."
-            },
-            "error": {
-              "title": "Eroare!",
-              "message_create": "Nu s-a putut salva configurația programării automate a ciclurilor.",
-              "message_update": "Nu s-a putut actualiza configurația programării automate a ciclurilor."
-            }
+          "success": {
+            "title": "Succes!",
+            "message": "Fluxurile de lucru au fost activate cu succes."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Activarea fluxurilor de lucru a eșuat. Te rugăm să încerci din nou."
           }
         }
+      },
+      "heading": "Fluxuri de lucru",
+      "description": "Automatizează tranzițiile activităților și setează reguli pentru a controla modul în care sarcinile se deplasează prin fluxul proiectului tău.",
+      "add_button": "Adaugă flux de lucru nou",
+      "search": "Caută fluxuri de lucru",
+      "detail": {
+        "define": "Definește fluxul de lucru",
+        "add_states": "Adaugă stări",
+        "unmapped_states": {
+          "title": "Stări nemapate detectate",
+          "description": "Unele activități pentru tipurile selectate sunt în prezent în stări care nu există în acest flux de lucru.",
+          "note": "Dacă activezi acest flux de lucru, aceste elemente se vor muta automat în starea inițială a acestui flux de lucru.",
+          "label": "Stări lipsă",
+          "tooltip": "Unele activități sunt în stări care nu sunt mapate la acest flux de lucru. Deschide fluxul de lucru pentru a revizui."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Toate stările sunt utilizate",
+          "description": "Toate stările definite pentru acest proiect sunt deja prezente în fluxul tău de lucru curent."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Acest flux de lucru se aplică oricărui tip de activitate care nu este atribuit unui flux de lucru."
+      },
+      "create": {
+        "heading": "Creează flux de lucru nou",
+        "name": {
+          "placeholder": "Adaugă un nume unic",
+          "validation": {
+            "max_length": "Numele trebuie să aibă mai puțin de 255 de caractere",
+            "required": "Numele este obligatoriu",
+            "invalid": "Numele poate conține doar litere, cifre, spații, cratime și apostrofe"
+          }
+        },
+        "description": {
+          "placeholder": "Adaugă o scurtă descriere",
+          "validation": {
+            "invalid": "Descrierea poate conține doar litere, cifre, spații, cratime și apostrofe"
+          }
+        },
+        "work_item_type": {
+          "label": "Tip de activitate"
+        },
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru creat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Crearea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru actualizat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Actualizarea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "delete": {
+        "loading": "Se șterge fluxul de lucru",
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru șters cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Ștergerea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Succes!",
+          "message": "Stări adăugate cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Adăugarea stărilor a eșuat. Te rugăm să încerci din nou."
+        }
       }
+    },
+    "work_item_types": {
+      "heading": "Tipuri de activități",
+      "description": "Creează și personalizează diferite tipuri de activități cu proprietăți unice"
     },
     "features": {
       "cycles": {
@@ -384,6 +428,98 @@
         "loading": "Se actualizează funcționalitatea proiectului...",
         "success": "Funcționalitatea proiectului a fost actualizată cu succes.",
         "error": "Ceva a mers greșit la actualizarea funcționalității proiectului. Vă rugăm să încercați din nou."
+      }
+    },
+    "project_updates": {
+      "heading": "Actualizări proiect",
+      "description": "Urmărire consolidată și monitorizare a progresului pentru acest proiect"
+    },
+    "templates": {
+      "heading": "Șabloane",
+      "description": "Economisește 80% din timpul petrecut creând proiecte, activități și pagini atunci când folosești șabloane."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Programare automată a ciclurilor",
+        "description": "Mențineți ciclurile în mișcare fără configurare manuală.",
+        "tooltip": "Creați automat cicluri noi pe baza programului ales.",
+        "edit_button": "Editează",
+        "form": {
+          "cycle_title": {
+            "label": "Titlul ciclului",
+            "placeholder": "Titlu",
+            "tooltip": "Titlul va fi completat cu numere pentru ciclurile următoare. De exemplu: Design - 1/2/3",
+            "validation": {
+              "required": "Titlul ciclului este obligatoriu",
+              "max_length": "Titlul nu trebuie să depășească 255 de caractere"
+            }
+          },
+          "cycle_duration": {
+            "label": "Durata ciclului",
+            "unit": "Săptămâni",
+            "validation": {
+              "required": "Durata ciclului este obligatorie",
+              "min": "Durata ciclului trebuie să fie de cel puțin 1 săptămână",
+              "max": "Durata ciclului nu poate depăși 30 de săptămâni",
+              "positive": "Durata ciclului trebuie să fie pozitivă"
+            }
+          },
+          "cooldown_period": {
+            "label": "Perioadă de răcire",
+            "unit": "zile",
+            "tooltip": "Pauză între cicluri înainte de începerea următorului.",
+            "validation": {
+              "required": "Perioada de răcire este obligatorie",
+              "negative": "Perioada de răcire nu poate fi negativă"
+            }
+          },
+          "start_date": {
+            "label": "Ziua de început a ciclului",
+            "validation": {
+              "required": "Data de început este obligatorie",
+              "past": "Data de început nu poate fi în trecut"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Numărul de cicluri viitoare",
+            "validation": {
+              "required": "Numărul de cicluri este obligatoriu",
+              "min": "Este necesar cel puțin 1 ciclu",
+              "max": "Nu se pot programa mai mult de 3 cicluri"
+            }
+          },
+          "auto_rollover": {
+            "label": "Transfer automat al elementelor de lucru",
+            "tooltip": "În ziua în care se completează un ciclu, mutați toate elementele de lucru nefinalizate în ciclul următor."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Se activează programarea automată a ciclurilor",
+            "loading_disable": "Se dezactivează programarea automată a ciclurilor",
+            "success": {
+              "title": "Succes!",
+              "message": "Programarea automată a ciclurilor a fost comutată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut comuta programarea automată a ciclurilor."
+            }
+          },
+          "save": {
+            "loading": "Se salvează configurația programării automate a ciclurilor",
+            "success": {
+              "title": "Succes!",
+              "message_create": "Configurația programării automate a ciclurilor a fost salvată cu succes.",
+              "message_update": "Configurația programării automate a ciclurilor a fost actualizată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message_create": "Nu s-a putut salva configurația programării automate a ciclurilor.",
+              "message_update": "Nu s-a putut actualiza configurația programării automate a ciclurilor."
+            }
+          }
+        }
       }
     }
   }

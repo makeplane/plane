@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "프로젝트에 대한 필터링된 뷰를 저장하세요. 필요한 만큼 생성하세요",
+        "description": "뷰는 자주 사용하는 필터 또는 쉽게 접근하고 싶은 필터 세트입니다. 프로젝트의 모든 동료가 모든 사람의 뷰를 보고 자신에게 가장 적합한 뷰를 선택할 수 있습니다.",
+        "primary_button": {
+          "text": "첫 번째 뷰 생성",
+          "comic": {
+            "title": "뷰는 작업 항목 속성 위에서 작동합니다.",
+            "description": "여기에서 원하는 만큼의 속성을 필터로 사용하여 뷰를 생성할 수 있습니다."
+          }
+        },
+        "filter": {
+          "title": "일치하는 뷰 없음",
+          "description": "검색 기준과 일치하는 뷰가 없습니다.\n 대신 새 뷰를 생성하세요."
+        }
+      },
+      "no_archived_issues": {
+        "title": "아직 아카이브된 작업 항목이 없습니다",
+        "description": "수동으로 또는 자동화를 통해 완료되거나 취소된 작업 항목을 아카이브할 수 있습니다. 아카이브되면 여기에서 찾을 수 있습니다.",
+        "primary_button": {
+          "text": "자동화 설정"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "적용된 필터와 일치하는 작업 항목을 찾을 수 없습니다",
+        "secondary_button": {
+          "text": "모든 필터 지우기"
+        }
+      },
+      "public": {
+        "title": "아직 공개 페이지가 없습니다",
+        "description": "프로젝트의 모든 사람과 공유된 페이지를 여기에서 확인하세요.",
+        "primary_button": {
+          "text": "첫 번째 페이지 생성"
+        }
+      },
+      "archived": {
+        "title": "아직 아카이브된 페이지가 없습니다",
+        "description": "레이더에 없는 페이지를 아카이브하세요. 필요할 때 여기에서 접근하세요."
+      },
+      "shared": {
+        "title": "아직 공유된 페이지가 없습니다",
+        "description": "다른 사람이 공유한 페이지가 여기에 표시됩니다."
+      }
+    },
+    "delete_view": {
+      "title": "이 뷰를 삭제하시겠습니까?",
+      "content": "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다."
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -215,29 +266,6 @@
         "success": "모듈이 성공적으로 삭제되었습니다",
         "error": "모듈 삭제 실패"
       }
-    }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "프로젝트에 대한 필터링된 뷰를 저장하세요. 필요한 만큼 생성하세요",
-        "description": "뷰는 자주 사용하는 필터 또는 쉽게 접근하고 싶은 필터 세트입니다. 프로젝트의 모든 동료가 모든 사람의 뷰를 보고 자신에게 가장 적합한 뷰를 선택할 수 있습니다.",
-        "primary_button": {
-          "text": "첫 번째 뷰 생성",
-          "comic": {
-            "title": "뷰는 작업 항목 속성 위에서 작동합니다.",
-            "description": "여기에서 원하는 만큼의 속성을 필터로 사용하여 뷰를 생성할 수 있습니다."
-          }
-        }
-      },
-      "filter": {
-        "title": "일치하는 뷰 없음",
-        "description": "검색 기준과 일치하는 뷰가 없습니다. 대신 새 뷰를 생성하세요."
-      }
-    },
-    "delete_view": {
-      "title": "이 뷰를 삭제하시겠습니까?",
-      "content": "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다."
     }
   },
   "project_page": {
@@ -330,6 +358,13 @@
       "created_at": "생성일",
       "manual": "수동"
     }
+  },
+  "project_members": {
+    "full_name": "성명",
+    "display_name": "표시 이름",
+    "email": "이메일",
+    "joining_date": "가입일",
+    "role": "역할"
   },
   "project": {
     "members_import": {

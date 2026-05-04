@@ -34,7 +34,8 @@
             "max_length": "Názov priestoru nesmie presiahnuť 80 znakov"
           },
           "company_size": {
-            "required": "Veľkosť spoločnosti je povinná"
+            "required": "Veľkosť spoločnosti je povinná",
+            "select_a_range": "Vyberte veľkosť organizácie"
           }
         }
       },
@@ -65,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Fakturácia a plány",
+        "description": "Vyberte si plán, spravujte predplatné a jednoducho upgradujte podľa vašich potrieb.",
         "title": "Fakturácia a plány",
         "current_plan": "Aktuálny plán",
         "free_plan": "Používate bezplatný plán",
         "view_plans": "Zobraziť plány"
       },
       "exports": {
+        "heading": "Exporty",
+        "description": "Exportujte údaje o projektoch v rôznych formátoch a získajte prístup k histórii exportov s odkazmi na stiahnutie.",
         "title": "Exporty",
         "exporting": "Exportovanie",
         "previous_exports": "Predchádzajúce exporty",
         "export_separate_files": "Exportovať dáta do samostatných súborov",
+        "exporting_projects": "Exportovanie projektu",
+        "format": "Formát",
         "filters_info": "Použite filtre na export konkrétnych pracovných položiek podľa vašich kritérií.",
         "modal": {
           "title": "Exportovať do",
@@ -91,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooky",
+        "description": "Automatizujte oznámenia do externých služieb pri udalostiach v projekte.",
         "title": "Webhooky",
         "add_webhook": "Pridať webhook",
         "modal": {
@@ -165,14 +174,20 @@
       },
       "integrations": {
         "title": "Integrácie",
+        "heading": "Integrácie",
+        "description": "Prepojte sa s populárnymi nástrojmi a službami a synchronizujte svoju prácu v rámci celého ekosystému pracovného postupu.",
         "page_title": "Pracujte so svojimi údajmi Plane v dostupných aplikáciách alebo vo vlastných.",
         "page_description": "Zobraziť všetky integrácie používané týmto pracovným priestorom alebo vami."
       },
       "imports": {
-        "title": "Importy"
+        "title": "Importy",
+        "heading": "Importy",
+        "description": "Pripojte a importujte údaje z existujúcich nástrojov na riadenie projektov a zefektívnite integráciu svojho pracovného postupu."
       },
       "worklogs": {
-        "title": "Pracovné záznamy"
+        "title": "Pracovné záznamy",
+        "heading": "Záznamy práce",
+        "description": "Stiahnite si záznamy práce (timesheety) pre kohokoľvek v akomkoľvek projekte."
       },
       "group_syncing": {
         "title": "Synchronizácia skupín",
@@ -241,7 +256,10 @@
         "description": "Nakonfigurujte svoju doménu a povolte jednotné prihlásenie"
       },
       "project_states": {
-        "title": "Stavy projektu"
+        "title": "Stavy projektu",
+        "heading": "Zobrazte prehľad priebehu všetkých projektov.",
+        "description": "Stavy projektov sú funkcia exkluzívna pre Plane na sledovanie priebehu všetkých vašich projektov podľa ľubovoľnej vlastnosti projektu.",
+        "go_to_settings": "Prejsť na nastavenia"
       },
       "projects": {
         "title": "Projekty",
@@ -250,6 +268,16 @@
           "states": "Stavy projektu",
           "labels": "Štítky projektu"
         }
+      },
+      "templates": {
+        "title": "Šablóny",
+        "heading": "Šablóny",
+        "description": "Ušetrite 80 % času stráveného vytváraním projektov, pracovných položiek a stránok pomocou šablón."
+      },
+      "relations": {
+        "title": "Vzťahy",
+        "heading": "Vzťahy",
+        "description": "Vytvárajte a spravujte typy vzťahov, ktoré prepájajú pracovné položky naprieč vaším pracovným priestorom."
       },
       "cancel_trial": {
         "title": "Najprv zrušte vašu skúšobnú verziu.",
@@ -262,6 +290,7 @@
         "cancel_error_message": "Skúste to znova, prosím."
       },
       "applications": {
+        "internal": "Interný",
         "title": "Aplikácie",
         "applicationId_copied": "ID aplikácie skopírované do schránky",
         "clientId_copied": "ID klienta skopírované do schránky",
@@ -270,10 +299,61 @@
         "your_apps": "Vaše aplikácie",
         "connect": "Pripojiť",
         "connected": "Pripojené",
+        "disconnect": "Odpojiť",
         "install": "Nainštalovať",
         "installed": "Nainštalované",
         "configure": "Konfigurovať",
         "app_available": "Túto aplikáciu ste sprístupnili na použitie s pracovným priestorom Plane",
+        "app_credentials_regenrated": {
+          "title": "Prihlasovacie údaje aplikácie boli úspešne znovu vygenerované",
+          "description": "Nahraďte klientsky kľúč všade, kde sa používa. Predchádzajúci kľúč už nie je platný."
+        },
+        "app_created": {
+          "title": "Aplikácia bola úspešne vytvorená",
+          "description": "Použite prihlasovacie údaje na inštaláciu aplikácie do pracovného priestoru Plane"
+        },
+        "installed_apps": "Nainštalované aplikácie",
+        "all_apps": "Všetky aplikácie",
+        "internal_apps": "Interné aplikácie",
+        "app_name_title": "Ako pomenujete túto aplikáciu",
+        "app_description_title": {
+          "label": "Dlhý popis",
+          "placeholder": "Napíšte dlhý popis pre trhovisko. Stlačte '/' pre príkazy."
+        },
+        "authorization_grant_type": {
+          "title": "Typ pripojenia",
+          "description": "Vyberte, či má byť vaša aplikácia nainštalovaná raz pre pracovný priestor alebo umožniť každému používateľovi pripojiť svoj vlastný účet"
+        },
+        "website": {
+          "title": "Webová stránka",
+          "description": "Odkaz na webovú stránku vašej aplikácie.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Tvorca aplikácií",
+          "description": "Osoba alebo organizácia, ktorá vytvára aplikáciu."
+        },
+        "app_maker_error": "Tvorca aplikácie je povinný",
+        "setup_url": {
+          "label": "URL nastavenia",
+          "description": "Používatelia budú po nainštalovaní aplikácie presmerovaní na túto URL.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "Tu budeme posielať udalosti webhook a aktualizácie z pracovných priestorov, kde je vaša aplikácia nainštalovaná.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook Secret",
+          "description": "Tajný kľúč používaný na overenie prichádzajúcich webhook požiadaviek.",
+          "placeholder": "Zadajte náhodný tajný kľúč"
+        },
+        "redirect_uris": {
+          "label": "Presmerovacie URI (oddelené medzerou)",
+          "description": "Používatelia budú po autentifikácii pomocou Plane presmerovaní na túto cestu.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Pripojte pracovný priestor Plane pre začatie používania",
         "client_id_and_secret": "ID a Tajomstvo Klienta",
         "client_id_and_secret_description": "Skopírujte a uložte tento tajný kľúč. Po kliknutí na Zavrieť tento kľúč už neuvidíte.",
@@ -285,23 +365,13 @@
         "slug_already_exists": "Slug už existuje",
         "failed_to_create_application": "Nepodarilo sa vytvoriť aplikáciu",
         "upload_logo": "Nahrať Logo",
-        "app_name_title": "Ako pomenujete túto aplikáciu",
         "app_name_error": "Názov aplikácie je povinný",
         "app_short_description_title": "Dajte tejto aplikácii krátky popis",
         "app_short_description_error": "Krátky popis aplikácie je povinný",
-        "app_description_title": {
-          "label": "Dlhý popis",
-          "placeholder": "Napíšte dlhý popis pre trhovisko. Stlačte '/' pre príkazy."
-        },
-        "authorization_grant_type": {
-          "title": "Typ pripojenia",
-          "description": "Vyberte, či má byť vaša aplikácia nainštalovaná raz pre pracovný priestor alebo umožniť každému používateľovi pripojiť svoj vlastný účet"
-        },
         "app_description_error": "Popis aplikácie je povinný",
         "app_slug_title": "Slug aplikácie",
         "app_slug_error": "Slug aplikácie je povinný",
-        "app_maker_title": "Tvorca aplikácie",
-        "app_maker_error": "Tvorca aplikácie je povinný",
+        "invalid_website_error": "Neplatná webová stránka",
         "webhook_url_title": "URL Webhooku",
         "webhook_url_error": "URL webhooku je povinné",
         "invalid_webhook_url_error": "Neplatné URL webhooku",
@@ -315,6 +385,8 @@
         "authorized_javascript_origins_description": "Zadajte pôvody oddelené medzerami, odkiaľ bude môcť aplikácia robiť požiadavky, napr. app.com example.com",
         "create_app": "Vytvoriť aplikáciu",
         "update_app": "Aktualizovať aplikáciu",
+        "build_your_own_app": "Vytvorte si vlastnú aplikáciu",
+        "edit_app_details": "Upraviť detaily aplikácie",
         "regenerate_client_secret_description": "Znovu vygenerovať tajomstvo klienta. Po regenerácii môžete kľúč skopírovať alebo stiahnuť do CSV súboru.",
         "regenerate_client_secret": "Znovu vygenerovať tajomstvo klienta",
         "regenerate_client_secret_confirm_title": "Ste si istí, že chcete znovu vygenerovať tajomstvo klienta?",
@@ -361,7 +433,6 @@
         "video_url_title": "URL Video",
         "video_url_error": "URL Video je povinné",
         "invalid_video_url_error": "Neplatné URL Video",
-        "setup_url_title": "URL Nastavenia",
         "setup_url_error": "URL Nastavenia je povinné",
         "invalid_setup_url_error": "Neplatné URL Nastavenia",
         "configuration_url_title": "URL Konfigurácie",
@@ -377,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "Neplatný súbor alebo presahuje limit veľkosti ({size} MB)",
         "uploading": "Nahrávanie...",
         "upload_and_save": "Nahrať a uložiť",
-        "app_credentials_regenrated": {
-          "title": "Prihlasovacie údaje aplikácie boli úspešne znovu vygenerované",
-          "description": "Nahraďte klientsky kľúč všade, kde sa používa. Predchádzajúci kľúč už nie je platný."
-        },
-        "app_created": {
-          "title": "Aplikácia bola úspešne vytvorená",
-          "description": "Použite prihlasovacie údaje na inštaláciu aplikácie do pracovného priestoru Plane"
-        },
-        "installed_apps": "Nainštalované aplikácie",
-        "all_apps": "Všetky aplikácie",
-        "internal_apps": "Interné aplikácie",
-        "website": {
-          "title": "Webová stránka",
-          "description": "Odkaz na webovú stránku vašej aplikácie.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Tvorca aplikácií",
-          "description": "Osoba alebo organizácia, ktorá vytvára aplikáciu."
-        },
-        "setup_url": {
-          "label": "URL nastavenia",
-          "description": "Používatelia budú po nainštalovaní aplikácie presmerovaní na túto URL.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "Webhook URL",
-          "description": "Tu budeme posielať udalosti webhook a aktualizácie z pracovných priestorov, kde je vaša aplikácia nainštalovaná.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "Presmerovacie URI (oddelené medzerou)",
-          "description": "Používatelia budú po autentifikácii pomocou Plane presmerovaní na túto cestu.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Požiadavka na inštaláciu",
         "app_consent_no_access_description": "Táto aplikácia môže byť nainštalovaná až po jej inštalácii administrátorom pracovného priestoru. Kontaktujte svojho administrátora pracovného priestoru, aby ste mohli pokračovať.",
+        "app_consent_unapproved_title": "Túto aplikáciu Plane ešte neskontrolovalo ani neschválilo.",
+        "app_consent_unapproved_description": "Pred prepojením s pracovným priestorom sa uistite, že tejto aplikácii dôverujete.",
+        "go_to_app": "Prejsť na aplikáciu",
         "enable_app_mentions": "Povoliť zmienky o aplikácii",
         "enable_app_mentions_tooltip": "Keď je toto povolené, používatelia môžu spomenúť alebo priradiť pracovné položky tejto aplikácii.",
         "scopes": "Rozsahy",
@@ -432,15 +472,18 @@
           "profile": "Prístup k informáciám o profile používateľa",
           "agents": "Prístup k agentom a všetkým súvisiacim entitám",
           "assets": "Prístup k aktívam a všetkým súvisiacim entitám"
-        },
-        "build_your_own_app": "Vytvorte si vlastnú aplikáciu",
-        "edit_app_details": "Upraviť detaily aplikácie",
-        "internal": "Interný"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Vidíte, ako sa vaša práca stáva inteligentnejšou a rýchlejšou s pomocou AI, ktorá je natívne pripojená k vašej práci a znalostnej základni."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skripty",
+        "new_script": "Nový skript",
+        "description": "Automatizujte svoje pracovné postupy pomocou vlastných skriptov a automatizačných pravidiel."
       }
     },
     "empty_state": {

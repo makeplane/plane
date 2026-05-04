@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Zapisuj filtry jako widoki.",
+        "description": "Widoki to zapisane filtry zapewniające łatwy dostęp. Udostępnij je zespołowi.",
+        "primary_button": {
+          "text": "Utwórz pierwszy widok",
+          "comic": {
+            "title": "Widoki działają z właściwościami elementów pracy.",
+            "description": "Utwórz widok z żądanymi filtrami."
+          }
+        },
+        "filter": {
+          "title": "Brak pasujących widoków",
+          "description": "Żadne widoki nie pasują do kryteriów wyszukiwania.\n Utwórz nowy widok."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Brak zarchiwizowanych elementów pracy",
+        "description": "Ręcznie lub przez automatyzację możesz archiwizować elementy pracy, które są ukończone lub anulowane. Znajdziesz je tutaj po zarchiwizowaniu.",
+        "primary_button": {
+          "text": "Ustaw automatyzację"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Nie znaleziono elementów pracy pasujących do zastosowanych filtrów",
+        "secondary_button": {
+          "text": "Wyczyść wszystkie filtry"
+        }
+      },
+      "public": {
+        "title": "Brak publicznych stron",
+        "description": "Zobacz strony udostępnione wszystkim w Twoim projekcie tutaj.",
+        "primary_button": {
+          "text": "Utwórz pierwszą stronę"
+        }
+      },
+      "archived": {
+        "title": "Brak zarchiwizowanych stron",
+        "description": "Archiwizuj strony, które nie są już na Twoim radarze. Uzyskaj do nich dostęp tutaj, gdy będą potrzebne."
+      },
+      "shared": {
+        "title": "Brak udostępnionych stron",
+        "description": "Strony, które inni Ci udostępnili, pojawią się tutaj."
+      }
+    },
+    "delete_view": {
+      "title": "Czy na pewno chcesz usunąć ten widok?",
+      "content": "Jeśli potwierdzisz, wszystkie opcje sortowania, filtrowania i wyświetlania + układ, który wybrałeś dla tego widoku, zostaną trwale usunięte bez możliwości przywrócenia."
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -215,29 +266,6 @@
         "success": "Moduł usunięto",
         "error": "Nie udało się usunąć modułu"
       }
-    }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "Zapisuj filtry jako widoki.",
-        "description": "Widoki to zapisane filtry zapewniające łatwy dostęp. Udostępnij je zespołowi.",
-        "primary_button": {
-          "text": "Utwórz pierwszy widok",
-          "comic": {
-            "title": "Widoki działają z właściwościami elementów pracy.",
-            "description": "Utwórz widok z żądanymi filtrami."
-          }
-        }
-      },
-      "filter": {
-        "title": "Brak pasujących widoków",
-        "description": "Utwórz nowy widok."
-      }
-    },
-    "delete_view": {
-      "title": "Czy na pewno chcesz usunąć ten widok?",
-      "content": "Jeśli potwierdzisz, wszystkie opcje sortowania, filtrowania i wyświetlania + układ, który wybrałeś dla tego widoku, zostaną trwale usunięte bez możliwości przywrócenia."
     }
   },
   "project_page": {
@@ -330,6 +358,13 @@
       "created_at": "Data utworzenia",
       "manual": "Ręcznie"
     }
+  },
+  "project_members": {
+    "full_name": "Imię i nazwisko",
+    "display_name": "Nazwa wyświetlana",
+    "email": "E-mail",
+    "joining_date": "Data dołączenia",
+    "role": "Rola"
   },
   "project": {
     "members_import": {

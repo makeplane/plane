@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Fakturace a plány",
+        "description": "Vyberte si plán, spravujte předplatná a snadno je upgradujte, jak rostou vaše potřeby.",
         "title": "Fakturace a plány",
         "current_plan": "Aktuální plán",
         "free_plan": "Používáte bezplatný plán",
         "view_plans": "Zobrazit plány"
       },
       "exports": {
+        "heading": "Exporty",
+        "description": "Exportujte data projektu v různých formátech a přistupujte k historii exportů s odkazy ke stažení.",
         "title": "Exporty",
         "exporting": "Exportování",
         "previous_exports": "Předchozí exporty",
         "export_separate_files": "Exportovat data do samostatných souborů",
+        "exporting_projects": "Export projektu",
+        "format": "Formát",
         "filters_info": "Použijte filtry k exportu konkrétních pracovních položek podle vašich kritérií.",
         "modal": {
           "title": "Exportovat do",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooky",
+        "description": "Automatizujte oznámení externím službám při výskytu událostí projektu.",
         "title": "Webhooky",
         "add_webhook": "Přidat webhook",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integrace",
+        "heading": "Integrace",
+        "description": "Propojte se s oblíbenými nástroji a službami pro synchronizaci vaší práce napříč celým ekosystémem.",
         "page_title": "Pracujte se svými daty Plane v dostupných aplikacích nebo ve svých vlastních.",
         "page_description": "Zobrazte všechny integrace používané tímto pracovním prostorem nebo vámi."
       },
       "imports": {
-        "title": "Importy"
+        "title": "Importy",
+        "heading": "Importy",
+        "description": "Propojte a importujte data z vašich stávajících nástrojů pro řízení projektů pro zefektivnění integrace pracovního postupu."
       },
       "worklogs": {
-        "title": "Pracovní záznamy"
+        "title": "Pracovní záznamy",
+        "heading": "Pracovní záznamy",
+        "description": "Stáhněte si pracovní záznamy neboli časové výkazy pro kohokoli v jakémkoli projektu."
       },
       "group_syncing": {
         "title": "Synchronizace skupin",
@@ -242,7 +256,10 @@
         "description": "Nakonfigurujte svou doménu a povolte jednotné přihlašování"
       },
       "project_states": {
-        "title": "Stavy projektů"
+        "title": "Stavy projektů",
+        "heading": "Zobrazit přehled pokroku pro všechny projekty.",
+        "description": "Stavy projektů jsou funkce výhradně Plane pro sledování pokroku všech vašich projektů podle libovolné vlastnosti projektu.",
+        "go_to_settings": "Přejít do nastavení"
       },
       "projects": {
         "title": "Projekty",
@@ -251,6 +268,16 @@
           "states": "Stavy projektů",
           "labels": "Štítky projektů"
         }
+      },
+      "templates": {
+        "title": "Šablony",
+        "heading": "Šablony",
+        "description": "Ušetřete 80 % času stráveného vytvářením projektů, pracovních položek a stránek, když použijete šablony."
+      },
+      "relations": {
+        "title": "Vztahy",
+        "heading": "Vztahy",
+        "description": "Vytvářejte a spravujte typy vztahů, které propojují pracovní položky napříč vaším pracovním prostorem."
       },
       "cancel_trial": {
         "title": "Nejprve zrušte svou zkušební verzi.",
@@ -263,6 +290,7 @@
         "cancel_error_message": "Zkuste to prosím znovu."
       },
       "applications": {
+        "internal": "Interní",
         "title": "Aplikace",
         "applicationId_copied": "ID aplikace zkopírováno do schránky",
         "clientId_copied": "ID klienta zkopírováno do schránky",
@@ -271,10 +299,61 @@
         "your_apps": "Vaše aplikace",
         "connect": "Připojit",
         "connected": "Připojeno",
+        "disconnect": "Odpojit",
         "install": "Instalovat",
         "installed": "Instalováno",
         "configure": "Konfigurovat",
         "app_available": "Tuto aplikaci jste zpřístupnili pro použití s pracovním prostorem Plane",
+        "app_credentials_regenrated": {
+          "title": "Přihlašovací údaje aplikace byly úspěšně znovu vygenerovány",
+          "description": "Nahraďte klientský klíč všude, kde je používán. Předchozí klíč již není platný."
+        },
+        "app_created": {
+          "title": "Aplikace byla úspěšně vytvořena",
+          "description": "Použijte přihlašovací údaje k instalaci aplikace do pracovního prostoru Plane"
+        },
+        "installed_apps": "Nainstalované aplikace",
+        "all_apps": "Všechny aplikace",
+        "internal_apps": "Interní aplikace",
+        "app_name_title": "Jak pojmenujete tuto aplikaci",
+        "app_description_title": {
+          "label": "Dlouhý popis",
+          "placeholder": "Napište dlouhý popis pro tržiště. Stiskněte '/' pro příkazy."
+        },
+        "authorization_grant_type": {
+          "title": "Typ připojení",
+          "description": "Vyberte, zda má být vaše aplikace nainstalována jednou pro pracovní prostor nebo zda má každý uživatel připojit svůj vlastní účet"
+        },
+        "website": {
+          "title": "Webová stránka",
+          "description": "Odkaz na webové stránky vaší aplikace.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Tvůrce aplikací",
+          "description": "Osoba nebo organizace, která vytváří aplikaci."
+        },
+        "app_maker_error": "Tvůrce aplikace je povinný",
+        "setup_url": {
+          "label": "URL nastavení",
+          "description": "Uživatelé budou po instalaci aplikace přesměrováni na tuto URL.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "Sem budeme odesílat události webhook a aktualizace z pracovních prostorů, kde je vaše aplikace nainstalována.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Tajný klíč webhooku",
+          "description": "Tajný klíč používaný k ověření příchozích požadavků webhooku.",
+          "placeholder": "Zadejte náhodný tajný klíč"
+        },
+        "redirect_uris": {
+          "label": "Přesměrovací URI (oddělené mezerou)",
+          "description": "Uživatelé budou po ověření pomocí Plane přesměrováni na tuto cestu.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Připojte pracovní prostor Plane pro začátek používání",
         "client_id_and_secret": "ID a Tajemství Klienta",
         "client_id_and_secret_description": "Zkopírujte a uložte tento tajný klíč. Po kliknutí na Zavřít tento klíč již neuvidíte.",
@@ -286,23 +365,13 @@
         "slug_already_exists": "Slug již existuje",
         "failed_to_create_application": "Nepodařilo se vytvořit aplikaci",
         "upload_logo": "Nahrát Logo",
-        "app_name_title": "Jak pojmenujete tuto aplikaci",
         "app_name_error": "Název aplikace je povinný",
         "app_short_description_title": "Dejte této aplikaci krátký popis",
         "app_short_description_error": "Krátký popis aplikace je povinný",
-        "app_description_title": {
-          "label": "Dlouhý popis",
-          "placeholder": "Napište dlouhý popis pro tržiště. Stiskněte '/' pro příkazy."
-        },
-        "authorization_grant_type": {
-          "title": "Typ připojení",
-          "description": "Vyberte, zda má být vaše aplikace nainstalována jednou pro pracovní prostor nebo zda má každý uživatel připojit svůj vlastní účet"
-        },
         "app_description_error": "Popis aplikace je povinný",
         "app_slug_title": "Slug aplikace",
         "app_slug_error": "Slug aplikace je povinný",
-        "app_maker_title": "Tvůrce aplikace",
-        "app_maker_error": "Tvůrce aplikace je povinný",
+        "invalid_website_error": "Neplatná webová stránka",
         "webhook_url_title": "URL Webhooku",
         "webhook_url_error": "URL webhooku je povinné",
         "invalid_webhook_url_error": "Neplatné URL webhooku",
@@ -316,6 +385,8 @@
         "authorized_javascript_origins_description": "Zadejte původy oddělené mezerami, odkud bude moci aplikace dělat požadavky, např. app.com example.com",
         "create_app": "Vytvořit aplikaci",
         "update_app": "Aktualizovat aplikaci",
+        "build_your_own_app": "Vytvořte si vlastní aplikaci",
+        "edit_app_details": "Upravit detaily aplikace",
         "regenerate_client_secret_description": "Znovu vygenerovat tajemství klienta. Po regeneraci můžete klíč zkopírovat nebo stáhnout do CSV souboru.",
         "regenerate_client_secret": "Znovu vygenerovat tajemství klienta",
         "regenerate_client_secret_confirm_title": "Jste si jisti, že chcete znovu vygenerovat tajemství klienta?",
@@ -362,7 +433,6 @@
         "video_url_title": "URL Video",
         "video_url_error": "URL Video je povinné",
         "invalid_video_url_error": "Neplatné URL Video",
-        "setup_url_title": "URL Nastavení",
         "setup_url_error": "URL Nastavení je povinné",
         "invalid_setup_url_error": "Neplatné URL Nastavení",
         "configuration_url_title": "URL Konfigurace",
@@ -378,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "Neplatný soubor nebo překračuje limit velikosti ({size} MB)",
         "uploading": "Nahrávání...",
         "upload_and_save": "Nahrát a uložit",
-        "app_credentials_regenrated": {
-          "title": "Přihlašovací údaje aplikace byly úspěšně znovu vygenerovány",
-          "description": "Nahraďte klientský klíč všude, kde je používán. Předchozí klíč již není platný."
-        },
-        "app_created": {
-          "title": "Aplikace byla úspěšně vytvořena",
-          "description": "Použijte přihlašovací údaje k instalaci aplikace do pracovního prostoru Plane"
-        },
-        "installed_apps": "Nainstalované aplikace",
-        "all_apps": "Všechny aplikace",
-        "internal_apps": "Interní aplikace",
-        "website": {
-          "title": "Webová stránka",
-          "description": "Odkaz na webové stránky vaší aplikace.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Tvůrce aplikací",
-          "description": "Osoba nebo organizace, která vytváří aplikaci."
-        },
-        "setup_url": {
-          "label": "URL nastavení",
-          "description": "Uživatelé budou po instalaci aplikace přesměrováni na tuto URL.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "Webhook URL",
-          "description": "Sem budeme odesílat události webhook a aktualizace z pracovních prostorů, kde je vaše aplikace nainstalována.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "Přesměrovací URI (oddělené mezerou)",
-          "description": "Uživatelé budou po ověření pomocí Plane přesměrováni na tuto cestu.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Žádost o instalaci",
         "app_consent_no_access_description": "Tato aplikace může být nainstalována pouze po jejím nainstalování správcem pracovního prostoru. Kontaktujte svého správce pracovního prostoru, abyste mohli pokračovat.",
+        "app_consent_unapproved_title": "Tato aplikace zatím nebyla zkontrolována ani schválena společností Plane.",
+        "app_consent_unapproved_description": "Před připojením této aplikace k vašemu pracovnímu prostoru se ujistěte, že jí důvěřujete.",
+        "go_to_app": "Přejít na aplikaci",
         "enable_app_mentions": "Povolit zmínky o aplikaci",
         "enable_app_mentions_tooltip": "Když je tato možnost povolena, uživatelé mohou zmínit nebo přiřadit pracovní položky této aplikaci.",
         "scopes": "Rozsahy",
@@ -433,15 +472,18 @@
           "profile": "Přístup k informacím o profilu uživatele",
           "agents": "Přístup k agentům a všem souvisejícím entitám",
           "assets": "Přístup k aktivům a všem souvisejícím entitám"
-        },
-        "build_your_own_app": "Vytvořte si vlastní aplikaci",
-        "edit_app_details": "Upravit detaily aplikace",
-        "internal": "Interní"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Sledujte, jak se vaše práce stává chytřejší a rychlejší s AI, která je nativně propojena s vaší prací a znalostní základnou."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skripty",
+        "new_script": "Nový skript",
+        "description": "Automatizujte své pracovní postupy pomocí vlastních skriptů a pravidel automatizace."
       }
     },
     "empty_state": {

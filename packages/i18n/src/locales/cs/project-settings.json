@@ -21,7 +21,11 @@
     "members": {
       "label": "Členové",
       "project_lead": "Vedoucí projektu",
+      "project_lead_description": "Vyberte vedoucího projektu.",
       "default_assignee": "Výchozí přiřazení",
+      "default_assignee_description": "Vyberte výchozího přiřazeného pro projekt.",
+      "project_subscribers": "Odběratelé projektu",
+      "project_subscribers_description": "Vyberte členy, kteří budou dostávat oznámení pro tento projekt.",
       "guest_super_permissions": {
         "title": "Udělit hostům přístup ke všem položkám:",
         "sub_heading": "Hosté uvidí všechny položky v projektu."
@@ -30,13 +34,11 @@
         "title": "Pozvat členy",
         "sub_heading": "Pozvěte členy do projektu.",
         "select_co_worker": "Vybrat spolupracovníka"
-      },
-      "project_lead_description": "Vyberte vedoucího projektu.",
-      "default_assignee_description": "Vyberte výchozího přiřazeného pro projekt.",
-      "project_subscribers": "Odběratelé projektu",
-      "project_subscribers_description": "Vyberte členy, kteří budou dostávat oznámení pro tento projekt."
+      }
     },
     "states": {
+      "heading": "Stavy",
+      "description": "Definujte a přizpůsobte stavy workflow pro sledování průběhu vašich pracovních položek.",
       "describe_this_state_for_your_members": "Popište tento stav členům.",
       "empty_state": {
         "title": "Žádné stavy pro skupinu {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Štítky",
+      "description": "Vytvářejte vlastní štítky pro kategorizaci a organizaci vašich pracovních položek",
       "label_title": "Název štítku",
       "label_title_is_required": "Název štítku je povinný",
       "label_max_char": "Název štítku nesmí přesáhnout 255 znaků",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Odhady",
+      "description": "Nastavte systémy odhadů pro sledování a komunikaci úsilí potřebného pro každou pracovní položku.",
       "label": "Odhady",
       "title": "Povolit odhady pro můj projekt",
-      "description": "Pomáhají vám komunikovat složitost a pracovní zátěž týmu.",
+      "enable_description": "Pomáhají vám komunikovat složitost a pracovní zátěž týmu.",
       "no_estimate": "Bez odhadu",
       "new": "Nový systém odhadů",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Přeuspořádání odhadů selhalo",
             "message": "Nepodařilo se přeuspořádat odhady, zkuste to prosím znovu"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Systém odhadů vytvořen",
+            "message": "Úspěšně vytvořeno a povoleno"
+          },
+          "error": {
+            "title": "Chyba",
+            "message": "Něco se pokazilo"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automatizace",
+      "heading": "Automatizace",
+      "description": "Konfigurujte automatické akce pro zefektivnění procesu řízení projektu a snížení manuálních úkolů.",
       "auto-archive": {
         "title": "Automaticky archivovat uzavřené pracovní položky",
         "description": "Plane bude automaticky archivovat pracovní položky, které byly dokončeny nebo zrušeny.",
@@ -193,6 +211,116 @@
         "title": "Žádné integrace nejsou nakonfigurovány",
         "description": "Nakonfigurujte GitHub a další integrace pro synchronizaci vašich pracovních položek projektu."
       }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Povolit workflow",
+        "description": "Nastavte workflow pro řízení pohybu pracovních položek",
+        "no_states_tooltip": "Do workflow nejsou přidány žádné stavy.",
+        "no_work_item_types_tooltip": "Do workflow nejsou přidány žádné typy pracovních položek.",
+        "no_states_or_work_item_types_tooltip": "Do workflow nejsou přidány žádné stavy nebo typy pracovních položek.",
+        "toast": {
+          "loading": {
+            "enabling": "Povolování workflow",
+            "disabling": "Zakazování workflow"
+          },
+          "success": {
+            "title": "Úspěch!",
+            "message": "Workflow úspěšně povolena."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Povolení workflow se nezdařilo. Zkuste to prosím znovu."
+          }
+        }
+      },
+      "heading": "Workflow",
+      "description": "Automatizujte přechody pracovních položek a nastavte pravidla pro řízení toho, jak se úkoly pohybují vaším projektem.",
+      "add_button": "Přidat nové workflow",
+      "search": "Hledat workflow",
+      "detail": {
+        "define": "Definovat workflow",
+        "add_states": "Přidat stavy",
+        "unmapped_states": {
+          "title": "Detekovány nenamapované stavy",
+          "description": "Některé pracovní položky vybraných typů jsou aktuálně ve stavech, které v tomto workflow neexistují.",
+          "note": "Pokud toto workflow povolíte, budou tyto položky automaticky přesunuty do počátečního stavu tohoto workflow.",
+          "label": "Chybějící stavy",
+          "tooltip": "Některé pracovní položky jsou ve stavech, které nejsou namapovány do tohoto workflow. Otevřete workflow pro kontrolu."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Všechny stavy se používají",
+          "description": "Všechny definované stavy pro tento projekt jsou již přítomny ve vašem aktuálním workflow."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Toto workflow se vztahuje na jakýkoli typ pracovní položky, který není přiřazen k workflow."
+      },
+      "create": {
+        "heading": "Vytvořit nové workflow",
+        "name": {
+          "placeholder": "Přidejte jedinečný název",
+          "validation": {
+            "max_length": "Název musí mít méně než 255 znaků",
+            "required": "Název je povinný",
+            "invalid": "Název může obsahovat pouze písmena, číslice, mezery, pomlčky a apostrofy"
+          }
+        },
+        "description": {
+          "placeholder": "Přidejte krátký popis",
+          "validation": {
+            "invalid": "Popis může obsahovat pouze písmena, číslice, mezery, pomlčky a apostrofy"
+          }
+        },
+        "work_item_type": {
+          "label": "Typ pracovní položky"
+        },
+        "success": {
+          "title": "Úspěch!",
+          "message": "Workflow úspěšně vytvořeno."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Vytvoření workflow se nezdařilo. Zkuste to prosím znovu."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Workflow úspěšně aktualizováno."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Aktualizace workflow se nezdařila. Zkuste to prosím znovu."
+        }
+      },
+      "delete": {
+        "loading": "Mazání workflow",
+        "success": {
+          "title": "Úspěch!",
+          "message": "Workflow úspěšně smazáno."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Smazání workflow se nezdařilo. Zkuste to prosím znovu."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Stavy úspěšně přidány."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Přidání stavů se nezdařilo. Zkuste to prosím znovu."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Typy pracovních položek",
+      "description": "Vytvářejte a přizpůsobujte různé typy pracovních položek s jedinečnými vlastnostmi"
     },
     "features": {
       "cycles": {
@@ -301,6 +429,14 @@
         "success": "Funkce projektu byla úspěšně aktualizována.",
         "error": "Při aktualizaci funkce projektu se něco pokazilo. Zkuste to prosím znovu."
       }
+    },
+    "project_updates": {
+      "heading": "Aktualizace projektu",
+      "description": "Konsolidované sledování a monitorování pokroku tohoto projektu"
+    },
+    "templates": {
+      "heading": "Šablony",
+      "description": "Ušetřete 80 % času stráveného vytvářením projektů, pracovních položek a stránek, když použijete šablony."
     },
     "cycles": {
       "auto_schedule": {

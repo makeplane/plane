@@ -194,6 +194,10 @@
       "server_error_states": "Errore del server nel caricamento degli stati"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Connetti e sincronizza i tuoi repository Bitbucket Data Center con Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Convalida i token IdP esterni per l'accesso API.",
@@ -302,10 +306,10 @@
     "generic_error": "Si è verificato un errore imprevisto durante la elaborazione della tua richiesta",
     "connection_not_found": "La connessione richiesta non è stata trovata",
     "multiple_connections_found": "Sono state trovate più connessioni di quanto previsto",
+    "cannot_create_multiple_connections": "Hai già connesso la tua organizzazione con uno spazio di lavoro. Per favore disconnetti la connessione esistente prima di connettere una nuova.",
     "installation_not_found": "L'installazione richiesta non è stata trovata",
     "user_not_found": "L'utente richiesto non è stato trovato",
     "error_fetching_token": "Impossibile ottenere il token di autenticazione",
-    "cannot_create_multiple_connections": "Hai già connesso la tua organizzazione con uno spazio di lavoro. Per favore disconnetti la connessione esistente prima di connettere una nuova.",
     "invalid_app_credentials": "Le credenziali dell'app fornite non sono valide",
     "invalid_app_installation_id": "Impossibile installare l'app"
   },
@@ -316,6 +320,7 @@
     "pulling": "Trascinamento",
     "timed_out": "Tempo scaduto",
     "pulled": "Trascinato",
+    "progressing": "In corso",
     "transforming": "Trasformazione",
     "transformed": "Trasformato",
     "pushing": "Inserimento",

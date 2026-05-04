@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "No se pudo crear la página o añadirla a la colección. Inténtalo de nuevo.",
       "collection_link_copied": "Enlace de la colección copiado al portapapeles."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Mejora para desbloquear Wiki",
+      "description": "Desbloquea páginas públicas, historial de versiones, páginas compartidas, colaboración en tiempo real y páginas del espacio de trabajo para wikis, documentación de la empresa y bases de conocimiento con Plane Pro.",
+      "upgrade_button": {
+        "text": "Mejorar"
+      },
+      "learn_more_button": {
+        "text": "Más información"
+      },
+      "download_button": {
+        "text": "Descargar datos",
+        "loading": "Descargando"
+      },
+      "tabs": {
+        "nested_pages": "Páginas anidadas",
+        "add_embeds": "Agregar incrustaciones",
+        "publish_pages": "Publicar páginas",
+        "comments": "Comentarios"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Las páginas anidadas requieren un plan de pago. Mejora para desbloquearlas."
+    }
   }
 }

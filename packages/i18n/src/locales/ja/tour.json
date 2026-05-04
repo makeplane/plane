@@ -110,6 +110,12 @@
         "description": "作業項目をスヌーズして後で確認できます。開いているリクエストリストの一番下に移動します。"
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "タブ切り替えをやめて、あなたの世界をつなげましょう。",
+        "description": "GitHubやSlackをリンクして、Plane AIで直接PRを追跡したりチャットを要約したりできます。"
+      }
+    },
     "navigation": {
       "modal": {
         "title": "ナビゲーション、再構築",

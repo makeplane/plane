@@ -110,6 +110,12 @@
         "description": "Un element de lucru poate fi amânat pentru a-l revizui mai târziu. Va fi mutat la sfârșitul listei tale de cereri deschise."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Oprește schimbarea filelor. Conectează-ți lumea.",
+        "description": "Conectează GitHub, Slack pentru a urmări PR-urile și a rezuma conversațiile direct în Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigare, reimaginată",

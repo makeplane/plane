@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Tùy chọn",
+      "description": "Tùy chỉnh trải nghiệm ứng dụng theo cách bạn làm việc"
+    },
     "notifications": {
+      "heading": "Thông báo qua email",
+      "description": "Cập nhật những mục công việc bạn đã đăng ký. Bật tính năng này để nhận thông báo.",
       "select_default_view": "Chọn chế độ xem mặc định",
       "compact": "Gọn",
       "full": "Toàn màn hình"
+    },
+    "security": {
+      "heading": "Bảo mật"
+    },
+    "api_tokens": {
+      "title": "Mã truy cập cá nhân",
+      "description": "Tạo mã API bảo mật để tích hợp dữ liệu của bạn với các hệ thống và ứng dụng bên ngoài."
+    },
+    "activity": {
+      "heading": "Hoạt động",
+      "description": "Theo dõi các hành động và thay đổi gần đây của bạn trong tất cả dự án và mục công việc."
+    },
+    "connections": {
+      "title": "Kết nối",
+      "heading": "Kết nối",
+      "description": "Quản lý cài đặt kết nối không gian làm việc của bạn."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "Hồ sơ",
       "security": "Bảo mật",
       "activity": "Hoạt động",
-      "appearance": "Giao diện",
+      "preferences": "Tùy chọn",
       "notifications": "Thông báo",
+      "api-tokens": "Mã truy cập cá nhân",
       "connections": "Kết nối"
     },
     "tabs": {

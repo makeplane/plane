@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Tidak ada hasil ditemukan"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Stickies",
+    "your_work": "Pekerjaan anda",
     "projects": "Projek",
     "pages": "Halaman",
     "new_work_item": "Item kerja baru",
     "home": "Beranda",
-    "your_work": "Pekerjaan anda",
     "inbox": "Inbox",
     "workspace": "Workspace",
     "views": "Views",
@@ -21,14 +29,6 @@
     "epics": "Epics",
     "upgrade_plan": "Tingkatkan paket",
     "plane_pro": "Plane Pro",
-    "business": "Bisnis",
-    "recurring_work_items": "Tugas Berulang"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Tidak ada hasil ditemukan"
-      }
-    }
+    "business": "Bisnis"
   }
 }

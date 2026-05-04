@@ -95,16 +95,28 @@
       "scope_and_demand": "Scope et Demande",
       "custom": "Analytique Personnalisée"
     },
+    "total": "Total des {entity}",
+    "started_work_items": "{entity} commencés",
+    "backlog_work_items": "{entity} en backlog",
+    "un_started_work_items": "{entity} non commencés",
+    "completed_work_items": "{entity} terminés",
+    "project_insights": "Aperçus du projet",
+    "summary_of_projects": "Résumé des projets",
+    "all_projects": "Tous les projets",
+    "trend_on_charts": "Tendance sur les graphiques",
+    "active_projects": "Projets actifs",
+    "customized_insights": "Informations personnalisées",
+    "created_vs_resolved": "Créé vs Résolu",
     "empty_state": {
-      "customized_insights": {
-        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s’afficheront ici.",
-        "title": "Pas encore de données"
+      "project_insights": {
+        "title": "Pas encore de données",
+        "description": "Les éléments de travail qui vous sont assignés, répartis par état, s’afficheront ici."
       },
       "created_vs_resolved": {
-        "description": "Les éléments de travail créés et résolus au fil du temps s’afficheront ici.",
-        "title": "Pas encore de données"
+        "title": "Pas encore de données",
+        "description": "Les éléments de travail créés et résolus au fil du temps s’afficheront ici."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Pas encore de données",
         "description": "Les éléments de travail qui vous sont assignés, répartis par état, s’afficheront ici."
       },
@@ -132,29 +144,11 @@
         "description": "Les analyses des tendances d'entrée apparaîtront ici. Ajoutez des éléments de travail à l'entrée pour commencer à suivre les tendances."
       }
     },
-    "created_vs_resolved": "Créé vs Résolu",
-    "customized_insights": "Informations personnalisées",
-    "backlog_work_items": "{entity} en backlog",
-    "active_projects": "Projets actifs",
-    "trend_on_charts": "Tendance sur les graphiques",
-    "all_projects": "Tous les projets",
-    "summary_of_projects": "Résumé des projets",
-    "project_insights": "Aperçus du projet",
-    "started_work_items": "{entity} commencés",
-    "total_work_items": "Total des {entity}",
-    "total_projects": "Total des projets",
-    "total_admins": "Total des administrateurs",
-    "total_users": "Nombre total d’utilisateurs",
-    "total_intake": "Revenu total",
-    "un_started_work_items": "{entity} non commencés",
-    "total_guests": "Nombre total d’invités",
-    "completed_work_items": "{entity} terminés",
-    "total": "Total des {entity}",
+    "upgrade_to_plan": "Passez à {plan} pour débloquer {tab}",
+    "workitem_resolved_vs_pending": "Éléments de travail résolus vs en attente",
     "projects_by_status": "Projets par statut",
     "active_users": "Utilisateurs actifs",
-    "intake_trends": "Tendances des admissions",
-    "workitem_resolved_vs_pending": "Éléments de travail résolus vs en attente",
-    "upgrade_to_plan": "Passez à {plan} pour débloquer {tab}"
+    "intake_trends": "Tendances des admissions"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projet} other {Projets}}",
@@ -162,6 +156,7 @@
       "label": "Ajouter un Projet"
     },
     "network": {
+      "label": "Réseau",
       "private": {
         "title": "Privé",
         "description": "Accessible uniquement sur invitation"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "Pas encore de Pages archivées",
         "description": "Archivez les Pages qui ne sont pas dans votre radar. Accédez-y ici quand nécessaire."
+      },
+      "shared": {
+        "title": "Pas encore de pages partagées",
+        "description": "Les pages que d’autres ont partagées avec vous apparaîtront ici."
       }
     }
   },

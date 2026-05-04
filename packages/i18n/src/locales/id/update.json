@@ -1,32 +1,15 @@
 {
   "updates": {
+    "progress": {
+      "title": "Progres",
+      "since_last_update": "Sejak update terakhir",
+      "comments": "{count, plural, one{# komentar} other{# komentar}}"
+    },
     "add_update": "Tambahkan update",
     "add_update_placeholder": "Tambahkan update Anda di sini",
     "empty": {
       "title": "Belum ada update",
       "description": "Anda dapat melihat update di sini."
-    },
-    "delete": {
-      "title": "Hapus update",
-      "confirmation": "Apakah Anda yakin ingin menghapus update ini? Aksi ini tidak dapat dibatalkan.",
-      "success": {
-        "title": "Update berhasil dihapus",
-        "message": "Update berhasil dihapus."
-      },
-      "error": {
-        "title": "Update tidak berhasil dihapus",
-        "message": "Update tidak berhasil dihapus."
-      }
-    },
-    "update": {
-      "success": {
-        "title": "Update berhasil diperbarui",
-        "message": "Update berhasil diperbarui."
-      },
-      "error": {
-        "title": "Update tidak berhasil diperbarui",
-        "message": "Update tidak berhasil diperbarui."
-      }
     },
     "reaction": {
       "create": {
@@ -50,11 +33,6 @@
         }
       }
     },
-    "progress": {
-      "title": "Progres",
-      "since_last_update": "Sejak update terakhir",
-      "comments": "{count, plural, one{# komentar} other{# komentar}}"
-    },
     "create": {
       "success": {
         "title": "Update berhasil dibuat",
@@ -63,6 +41,28 @@
       "error": {
         "title": "Update tidak berhasil dibuat",
         "message": "Update tidak berhasil dibuat."
+      }
+    },
+    "delete": {
+      "title": "Hapus update",
+      "confirmation": "Apakah Anda yakin ingin menghapus update ini? Aksi ini tidak dapat dibatalkan.",
+      "success": {
+        "title": "Update berhasil dihapus",
+        "message": "Update berhasil dihapus."
+      },
+      "error": {
+        "title": "Update tidak berhasil dihapus",
+        "message": "Update tidak berhasil dihapus."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Update berhasil diperbarui",
+        "message": "Update berhasil diperbarui."
+      },
+      "error": {
+        "title": "Update tidak berhasil diperbarui",
+        "message": "Update tidak berhasil diperbarui."
       }
     }
   }

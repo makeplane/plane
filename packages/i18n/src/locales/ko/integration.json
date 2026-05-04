@@ -194,6 +194,10 @@
       "server_error_states": "상태 로딩 중 서버 오류"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Bitbucket Data Center 리포지토리를 Plane과 연결하고 동기화하세요."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "API 접근을 위해 외부 IdP 토큰을 검증합니다.",
@@ -302,6 +306,7 @@
     "generic_error": "요청을 처리하는 동안 예상치 못한 오류가 발생했습니다",
     "connection_not_found": "요청한 연결을 찾을 수 없습니다",
     "multiple_connections_found": "하나만 예상했을 때 여러 연결이 발견되었습니다",
+    "cannot_create_multiple_connections": "이미 조직을 작업 공간과 연결했습니다. 새 연결을 추가하기 전에 기존 연결을 해제해 주세요.",
     "installation_not_found": "요청한 인스톨레이션을 찾을 수 없습니다",
     "user_not_found": "요청한 사용자를 찾을 수 없습니다",
     "error_fetching_token": "인증 토큰 가져오기에 실패했습니다",
@@ -315,6 +320,7 @@
     "pulling": "풀링 중",
     "timed_out": "시간 초과",
     "pulled": "풀링 완료",
+    "progressing": "진행 중",
     "transforming": "변환 중",
     "transformed": "변환 완료",
     "pushing": "푸싱 중",

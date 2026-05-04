@@ -1,33 +1,4 @@
 {
-  "pages": {
-    "link_pages": "Conectar páginas",
-    "show_wiki_pages": "Mostrar páginas wiki",
-    "link_pages_to": "Conectar páginas a",
-    "linked_pages": "Páginas vinculadas",
-    "no_description": "Esta página está vazia. Escreva algo aqui e veja isso como este espaço reservado",
-    "toasts": {
-      "link": {
-        "success": {
-          "title": "Páginas atualizadas",
-          "message": "Páginas atualizadas com sucesso"
-        },
-        "error": {
-          "title": "Páginas não atualizadas",
-          "message": "Páginas não puderam ser atualizadas"
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "Página removida",
-          "message": "Página removida com sucesso"
-        },
-        "error": {
-          "title": "Página não removida",
-          "message": "Página não pôde ser removida"
-        }
-      }
-    }
-  },
   "page_navigation_pane": {
     "tabs": {
       "outline": {
@@ -62,6 +33,43 @@
           "title": "Imagens ausentes",
           "description": "Adicione imagens para vê-las aqui."
         }
+      },
+      "comments": {
+        "label": "Comentários",
+        "empty_state": {
+          "title": "Nenhum comentário",
+          "description": "Adicione comentários para vê-los aqui."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "O nome da nota adesiva não pode ter mais de 100 caracteres.",
+        "already_exists": "Já existe uma nota adesiva sem descrição"
+      },
+      "created": {
+        "title": "Nota adesiva criada",
+        "message": "A nota adesiva foi criada com sucesso"
+      },
+      "not_created": {
+        "title": "Nota adesiva não criada",
+        "message": "A nota adesiva não pôde ser criada"
+      },
+      "updated": {
+        "title": "Nota adesiva atualizada",
+        "message": "A nota adesiva foi atualizada com sucesso"
+      },
+      "not_updated": {
+        "title": "Nota adesiva não atualizada",
+        "message": "A nota adesiva não pôde ser atualizada"
+      },
+      "removed": {
+        "title": "Nota adesiva removida",
+        "message": "A nota adesiva foi removida com sucesso"
+      },
+      "not_removed": {
+        "title": "Nota adesiva não removida",
+        "message": "A nota adesiva não pôde ser removida"
       }
     },
     "open_button": "Abrir painel de navegação",
@@ -70,11 +78,28 @@
   },
   "page_actions": {
     "move_page": {
+      "submit_button": {
+        "default": "Mover",
+        "loading": "Movendo"
+      },
+      "cannot_move_to_teamspace": "Páginas privadas e compartilhadas não podem ser movidas para um espaço de equipe.",
       "placeholders": {
+        "workspace_to_all": "Pesquisar por projetos e espaços de equipe",
+        "workspace_to_project": "Pesquisar por projetos",
+        "project_to_all": "Pesquisar por projetos e espaços de equipe",
+        "project_to_project": "Pesquisar por projetos",
         "project_to_all_with_wiki": "Pesquisar coleções wiki, projetos e teamspaces",
         "project_to_project_with_wiki": "Pesquisar coleções wiki e projetos"
       },
       "toasts": {
+        "success": {
+          "title": "Sucesso!",
+          "message": "Página movida com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Não foi possível mover a página. Tente novamente mais tarde."
+        },
         "collection_error": {
           "title": "Movida para o wiki",
           "message": "A página foi movida para o wiki, mas não pôde ser adicionada à coleção selecionada. Ela permanece em General."

@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Préférences",
+      "description": "Personnalisez votre expérience de l’application selon votre façon de travailler"
+    },
     "notifications": {
+      "heading": "Notifications par e-mail",
+      "description": "Restez informé des éléments de travail auxquels vous êtes abonné. Activez cette option pour être notifié.",
       "select_default_view": "Sélectionner la vue par défaut",
       "compact": "Compact",
       "full": "Plein écran"
+    },
+    "security": {
+      "heading": "Sécurité"
+    },
+    "api_tokens": {
+      "title": "Jetons d’accès personnel",
+      "description": "Générez des jetons API sécurisés pour intégrer vos données avec des systèmes et applications externes."
+    },
+    "activity": {
+      "heading": "Activité",
+      "description": "Suivez vos actions et modifications récentes dans tous les projets et éléments de travail."
+    },
+    "connections": {
+      "title": "Connexions",
+      "heading": "Connexions",
+      "description": "Gérez les paramètres de connexion de votre espace de travail."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "Profil",
       "security": "Sécurité",
       "activity": "Activité",
-      "appearance": "Apparence",
+      "preferences": "Préférences",
       "notifications": "Notifications",
+      "api-tokens": "Jetons d’accès personnel",
       "connections": "Connexions"
     },
     "tabs": {

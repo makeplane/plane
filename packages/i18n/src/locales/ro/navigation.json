@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Niciun rezultat găsit"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Notițe",
+    "your_work": "Munca ta",
     "projects": "Proiecte",
     "pages": "Documentație",
     "new_work_item": "Activitate nouă",
     "home": "Acasă",
-    "your_work": "Munca ta",
     "inbox": "Căsuță de mesaje",
     "workspace": "Spațiu de lucru",
     "views": "Perspective",
@@ -21,14 +29,6 @@
     "epics": "Epice",
     "upgrade_plan": "Actualizare plan",
     "plane_pro": "Plane Pro",
-    "business": "Business",
-    "recurring_work_items": "Elemente de lucru repetitive"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Niciun rezultat găsit"
-      }
-    }
+    "business": "Business"
   }
 }

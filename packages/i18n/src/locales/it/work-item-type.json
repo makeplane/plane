@@ -3,11 +3,25 @@
     "label": "Tipi di elemento di lavoro",
     "label_lowercase": "tipi di elementi di lavoro",
     "settings": {
-      "title": "Tipi di elemento di lavoro",
+      "description": "Personalizza e aggiungi le tue proprietà per adattarle alle esigenze del tuo team.",
+      "cant_delete_default_message": "Il tipo di elemento di lavoro non può essere eliminato perché è impostato come tipo predefinito per questo progetto.",
+      "set_as_default": "Imposta come predefinito",
+      "cant_set_default_inactive_message": "Attiva questo tipo prima di impostarlo come predefinito",
+      "set_default_confirmation": {
+        "title": "Imposta come tipo di elemento di lavoro predefinito",
+        "description": "Impostando {name} come predefinito, verrà importato in tutti i progetti di questo spazio di lavoro. Tutti i nuovi elementi di lavoro utilizzeranno questo tipo per impostazione predefinita.",
+        "confirm_button": "Imposta come predefinito"
+      },
       "properties": {
         "title": "Proprietà personalizzate",
+        "description": "Crea e personalizza le proprietà.",
         "tooltip": "Ogni tipo di elemento di lavoro viene fornito con un set predefinito di proprietà come Titolo, Descrizione, Assegnatario, Stato, Priorità, Data di inizio, Data di scadenza, Modulo, Ciclo etc. Puoi anche personalizzare e aggiungere le tue proprietà per adattarle alle esigenze del tuo team.",
         "add_button": "Aggiungi nuova proprietà",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importa dallo spazio di lavoro"
+          }
+        },
         "dropdown": {
           "label": "Tipo di proprietà",
           "placeholder": "Seleziona tipo"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Crea nuova proprietà personalizzata",
+            "update": "Aggiorna proprietà personalizzata"
+          },
           "form": {
             "display_name": {
               "placeholder": "Titolo"
@@ -213,9 +231,50 @@
           "description": "Nuove proprietà che aggiungi per questo tipo di elemento di lavoro appariranno qui."
         }
       },
+      "types": {
+        "title": "Tipi",
+        "description": "Crea e personalizza tipi di elementi di lavoro con proprietà.",
+        "sort_options": {
+          "project_count": "Numero di progetti di cui fa parte"
+        },
+        "filter_options": {
+          "show_active": "Mostra attivi",
+          "show_inactive": "Mostra inattivi"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Crea nuovo",
+            "import_from_workspace": "Importa dallo spazio di lavoro"
+          },
+          "banner": {
+            "with_access": "Abilita i tipi di elementi di lavoro per importare i tipi dal livello dello spazio di lavoro",
+            "without_access": "I tipi di elementi di lavoro sono disabilitati. Contatta l'admin dello spazio di lavoro per abilitarli nelle impostazioni dello spazio di lavoro."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Proprietà personalizzate",
+        "add_button": "Aggiungi proprietà",
+        "modal": {
+          "title": "Aggiungi proprietà",
+          "empty": {
+            "title": "Nessuna proprietà disponibile",
+            "description": "Tutte le proprietà sono già state collegate a questo tipo."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Scollega proprietà",
+          "description": "Scollegando questa proprietà verranno eliminati permanentemente tutti i suoi valori su ogni elemento di lavoro che utilizza questo tipo. Questa azione non può essere annullata.",
+          "input_label": "Digita",
+          "input_label_suffix": "per continuare:",
+          "confirm": "Scollega proprietà",
+          "loading": "Scollegamento"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Elimina questo tipo",
         "description": "L'eliminazione dei tipi può comportare la perdita di dati esistenti.",
+        "can_disable_warning": "Vuoi disabilitare il tipo invece?",
         "primary_button": "Sì, eliminalo",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "Impossibile eliminare il tipo di elemento di lavoro predefinito",
           "cannot_delete_work_item_type_with_associated_work_items": "Impossibile eliminare il tipo di elemento di lavoro con elementi di lavoro associati"
-        },
-        "can_disable_warning": "Vuoi disabilitare il tipo invece?"
-      },
-      "cant_delete_default_message": "Il tipo di elemento di lavoro non può essere eliminato perché è impostato come tipo predefinito per questo progetto.",
-      "set_as_default": "Imposta come predefinito",
-      "cant_set_default_inactive_message": "Attiva questo tipo prima di impostarlo come predefinito",
-      "set_default_confirmation": {
-        "title": "Imposta come tipo di elemento di lavoro predefinito",
-        "description": "Impostando {name} come predefinito, verrà importato in tutti i progetti di questo spazio di lavoro. Tutti i nuovi elementi di lavoro utilizzeranno questo tipo per impostazione predefinita.",
-        "confirm_button": "Imposta come predefinito"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "Errore!",
           "message": {
+            "default": "Impossibile creare il tipo di elemento di lavoro. Riprova!",
             "conflict": "Il tipo {name} esiste già. Scegli un nome diverso."
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "Errore!",
           "message": {
+            "default": "Impossibile aggiornare il tipo di elemento di lavoro. Riprova!",
             "conflict": "Il tipo {name} esiste già. Scegli un nome diverso."
           }
         }
@@ -383,25 +435,25 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Errore di convalida!",
+      "title": "Salvare interromperà i collegamenti esistenti",
       "content": {
         "intro": "Il tipo di elemento di lavoro {workItemTypeName} include:",
-        "parent_items": "{count, plural, one {elemento di lavoro padre} other {elementi di lavoro padre}}",
+        "parent_items": "{count, plural, one {Verrà rimosso # collegamento padre} other {Verranno rimossi # collegamenti padre}}.",
         "child_items": "{count, plural, one {sotto-elemento di lavoro} other {sotto-elementi di lavoro}}",
         "parent_line_suffix_when_also_children": ", e ",
         "footer": "Questa modifica rimuoverà le relazioni padre-figlio dagli elementi di lavoro esistenti del tipo {workItemTypeName}."
       },
       "confirm_input": {
-        "label": "Digita «Conferma» per continuare.",
-        "placeholder": "Conferma"
+        "label": "Digita «conferma» per continuare.",
+        "placeholder": "conferma"
       },
       "error_toast": {
         "title": "Errore!",
-        "message": "Impossibile interrompere la gerarchia. Riprovare."
+        "message": "Impossibile scollegare e salvare. Riprovare."
       },
       "confirm_button": {
-        "loading": "Applicazione in corso",
-        "default": "Applica e scollega"
+        "loading": "Salvataggio",
+        "default": "Salva comunque"
       }
     },
     "work_item_modal": {

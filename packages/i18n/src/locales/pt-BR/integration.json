@@ -194,6 +194,10 @@
       "server_error_states": "Erro do servidor ao carregar estados"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Conecte e sincronize seus repositórios do Bitbucket Data Center com o Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Validar tokens de IdP externos para acesso à API.",
@@ -302,6 +306,7 @@
     "generic_error": "Ocorreu um erro inesperado ao processar sua solicitação",
     "connection_not_found": "A conexão solicitada não pôde ser encontrada",
     "multiple_connections_found": "Várias conexões foram encontradas quando apenas uma era esperada",
+    "cannot_create_multiple_connections": "Você já conectou sua organização a um espaço de trabalho. Por favor, desconecte a conexão existente antes de conectar uma nova.",
     "installation_not_found": "A instalação solicitada não pôde ser encontrada",
     "user_not_found": "O usuário solicitado não pôde ser encontrado",
     "error_fetching_token": "Falha ao buscar token de autenticação",
@@ -315,6 +320,7 @@
     "pulling": "Extraindo",
     "timed_out": "Tempo limite esgotado",
     "pulled": "Extraído",
+    "progressing": "Em progresso",
     "transforming": "Transformando",
     "transformed": "Transformado",
     "pushing": "Enviando",

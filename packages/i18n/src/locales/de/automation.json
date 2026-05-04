@@ -53,6 +53,9 @@
       "button": {
         "previous": "Zurück",
         "next": "Aktion hinzufügen"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Sie können den Auslösertyp nach der Erstellung nicht mehr ändern"
       }
     },
     "condition": {
@@ -70,9 +73,6 @@
         "add_comment": "Kommentar hinzufügen",
         "change_property": "Eigenschaft ändern",
         "run_script": "Skript ausführen"
-      },
-      "run_script_block": {
-        "title": "Skript ausführen"
       },
       "configuration": {
         "label": "Konfiguration",
@@ -92,6 +92,9 @@
       },
       "comment_block": {
         "title": "Kommentar hinzufügen"
+      },
+      "run_script_block": {
+        "title": "Skript ausführen"
       },
       "change_property_block": {
         "title": "Eigenschaft ändern"
@@ -119,6 +122,8 @@
     },
     "table": {
       "title": "Automatisierungstitel",
+      "scope": "Bereich",
+      "projects": "Projekte",
       "last_run_on": "Zuletzt ausgeführt am",
       "created_on": "Erstellt am",
       "last_updated_on": "Zuletzt aktualisiert am",
@@ -233,6 +238,35 @@
         "title": "Automatisierungen",
         "description": "Automatisierungen sind eine Möglichkeit, Aufgaben in Ihrem Projekt zu automatisieren.",
         "sub_description": "Gewinnen Sie 80% Ihrer Verwaltungszeit zurück, wenn Sie Automatisierungen verwenden."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Projekte auswählen, für die diese Automatisierung ausgeführt werden soll",
+        "all_projects": {
+          "label": "Alle Projekte",
+          "description": "Automatisierung wird für alle Projekte im Arbeitsbereich ausgeführt."
+        },
+        "select_projects": {
+          "label": "Projekte auswählen",
+          "description": "Automatisierung wird für ausgewählte Projekte im Arbeitsbereich ausgeführt.",
+          "placeholder": "Projekte auswählen"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatisierungen",
+        "title": "Automatisierungen",
+        "description": "Standardisieren Sie Prozesse in Ihrem Arbeitsbereich mit globalen Automatisierungen."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Projekt",
+            "multiple": "Mehrere",
+            "all": "Alle"
+          }
+        }
       }
     }
   }

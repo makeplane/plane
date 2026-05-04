@@ -95,16 +95,28 @@
       "scope_and_demand": "Обсяг і попит",
       "custom": "Користувацька аналітика"
     },
+    "total": "Усього {entity}",
+    "started_work_items": "Розпочаті {entity}",
+    "backlog_work_items": "{entity} у беклозі",
+    "un_started_work_items": "Нерозпочаті {entity}",
+    "completed_work_items": "Завершені {entity}",
+    "project_insights": "Аналітика проєкту",
+    "summary_of_projects": "Зведення проєктів",
+    "all_projects": "Усі проєкти",
+    "trend_on_charts": "Тенденція на графіках",
+    "active_projects": "Активні проєкти",
+    "customized_insights": "Персоналізовані аналітичні дані",
+    "created_vs_resolved": "Створено vs Вирішено",
     "empty_state": {
-      "customized_insights": {
-        "description": "Призначені вам робочі елементи, розбиті за станом, з’являться тут.",
-        "title": "Ще немає даних"
+      "project_insights": {
+        "title": "Ще немає даних",
+        "description": "Призначені вам робочі елементи, розбиті за станом, з’являться тут."
       },
       "created_vs_resolved": {
-        "description": "Створені та вирішені з часом робочі елементи з’являться тут.",
-        "title": "Ще немає даних"
+        "title": "Ще немає даних",
+        "description": "Створені та вирішені з часом робочі елементи з’являться тут."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Ще немає даних",
         "description": "Призначені вам робочі елементи, розбиті за станом, з’являться тут."
       },
@@ -132,29 +144,11 @@
         "description": "Аналітика тенденцій intake з’явиться тут. Додайте робочі елементи до intake, щоб почати відстеження тенденцій."
       }
     },
-    "created_vs_resolved": "Створено vs Вирішено",
-    "customized_insights": "Персоналізовані аналітичні дані",
-    "backlog_work_items": "{entity} у беклозі",
-    "active_projects": "Активні проєкти",
-    "trend_on_charts": "Тенденція на графіках",
-    "all_projects": "Усі проєкти",
-    "summary_of_projects": "Зведення проєктів",
-    "project_insights": "Аналітика проєкту",
-    "started_work_items": "Розпочаті {entity}",
-    "total_work_items": "Усього {entity}",
-    "total_projects": "Усього проєктів",
-    "total_admins": "Усього адміністраторів",
-    "total_users": "Усього користувачів",
-    "total_intake": "Загальний дохід",
-    "un_started_work_items": "Нерозпочаті {entity}",
-    "total_guests": "Усього гостей",
-    "completed_work_items": "Завершені {entity}",
-    "total": "Усього {entity}",
+    "upgrade_to_plan": "Оновіть до {plan}, щоб розблокувати {tab}",
+    "workitem_resolved_vs_pending": "Вирішені vs очікуючі робочі елементи",
     "projects_by_status": "Проєкти за статусом",
     "active_users": "Активні користувачі",
-    "intake_trends": "Тенденції прийому",
-    "workitem_resolved_vs_pending": "Вирішені vs очікуючі робочі елементи",
-    "upgrade_to_plan": "Оновіть до {plan}, щоб розблокувати {tab}"
+    "intake_trends": "Тенденції прийому"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проєкт} few {Проєкти} other {Проєктів}}",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Ще немає заархівованих пейджів",
         "description": "Архівуйте пейджі, які не на вашому радарі. Доступ до них тут, коли потрібно."
+      },
+      "shared": {
+        "title": "Поки що немає спільних сторінок",
+        "description": "Сторінки, якими з вами поділилися, з'являться тут."
       }
     }
   },

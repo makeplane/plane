@@ -1,22 +1,15 @@
 {
   "updates": {
+    "progress": {
+      "title": "進捗",
+      "since_last_update": "最後の更新以来",
+      "comments": "{count, plural, one{# コメント} other{# コメント}}"
+    },
     "add_update": "更新を追加",
     "add_update_placeholder": "ここに更新を入力してください",
     "empty": {
       "title": "まだ更新がありません",
       "description": "ここで更新を確認できます。"
-    },
-    "delete": {
-      "title": "更新を削除",
-      "confirmation": "この更新を削除してもよろしいですか？この操作は元に戻すことができません。",
-      "success": {
-        "title": "更新が削除されました",
-        "message": "更新が正常に削除されました。"
-      },
-      "error": {
-        "title": "更新が削除されませんでした",
-        "message": "更新を削除できませんでした。"
-      }
     },
     "reaction": {
       "create": {
@@ -40,11 +33,6 @@
         }
       }
     },
-    "progress": {
-      "title": "進捗",
-      "since_last_update": "最後の更新以来",
-      "comments": "{count, plural, one{# コメント} other{# コメント}}"
-    },
     "create": {
       "success": {
         "title": "更新が作成されました",
@@ -53,6 +41,18 @@
       "error": {
         "title": "更新が作成されませんでした",
         "message": "更新を作成できませんでした。"
+      }
+    },
+    "delete": {
+      "title": "更新を削除",
+      "confirmation": "この更新を削除してもよろしいですか？この操作は元に戻すことができません。",
+      "success": {
+        "title": "更新が削除されました",
+        "message": "更新が正常に削除されました。"
+      },
+      "error": {
+        "title": "更新が削除されませんでした",
+        "message": "更新を削除できませんでした。"
       }
     },
     "update": {

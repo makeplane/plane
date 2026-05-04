@@ -20,6 +20,7 @@
       "due_date": "Adicionar data de vencimento",
       "parent": "Adicionar item de trabalho pai",
       "sub_issue": "Adicionar sub-item de trabalho",
+      "dependency": "Adicionar dependência",
       "relation": "Adicionar relação",
       "link": "Adicionar link",
       "existing": "Adicionar item de trabalho existente"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "Link do comentário copiado para a área de transferência",
         "error": "Erro ao copiar o link do comentário. Tente novamente mais tarde."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Adicionar resposta",
+          "placeholder": "Adicionar resposta"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Falha ao buscar as respostas"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Resposta criada com sucesso"
+            },
+            "error": {
+              "message": "Falha ao criar a resposta"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Resposta atualizada com sucesso"
+            },
+            "error": {
+              "message": "Falha ao atualizar a resposta"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Resposta excluída com sucesso"
+            },
+            "error": {
+              "message": "Falha ao excluir a resposta"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "Desmarcar tudo"
     },
     "open_in_full_screen": "Abrir item de trabalho em tela cheia",
+    "duplicate": {
+      "modal": {
+        "title": "Fazer uma cópia para outro projeto",
+        "description1": "Isto cria uma cópia do item de trabalho.",
+        "description2": "Todos os dados de propriedades serão removidos ao duplicar.",
+        "placeholder": "Selecionar um projeto"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Item de trabalho duplicado com sucesso"
+        },
+        "error": {
+          "message": "Falha ao duplicar o item de trabalho"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Conectar páginas",
+      "show_wiki_pages": "Mostrar páginas Wiki",
+      "link_pages_to": "Conectar páginas a",
+      "linked_pages": "Páginas vinculadas",
+      "no_description": "Esta página está vazia. Por que você não escreve algo dentro dela e vê isso aparecer aqui como este espaço reservado",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Páginas atualizadas",
+            "message": "Páginas atualizadas com sucesso"
+          },
+          "error": {
+            "title": "Falha ao atualizar páginas",
+            "message": "Falha ao atualizar páginas"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Página removida",
+            "message": "Página removida com sucesso"
+          },
+          "error": {
+            "title": "Falha ao remover página",
+            "message": "Falha ao remover página"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Clique para votar a favor",
       "click_to_downvote": "Clique para votar contra",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "Não é possível atualizar itens de trabalho",
         "message": "A mudança de estado não é permitida para alguns itens de trabalho. Certifique-se de que a mudança de estado seja permitida."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Habilitar fluxos de trabalho",
-        "description": "Defina fluxos de trabalho para controlar a movimentação dos itens de trabalho",
-        "no_states_tooltip": "Nenhum estado foi adicionado ao fluxo de trabalho.",
-        "toast": {
-          "loading": {
-            "enabling": "Habilitando fluxos de trabalho",
-            "disabling": "Desabilitando fluxos de trabalho"
-          },
-          "success": {
-            "title": "Sucesso!",
-            "message": "Fluxos de trabalho habilitados com sucesso."
-          },
-          "error": {
-            "title": "Erro!",
-            "message": "Falha ao habilitar os fluxos de trabalho. Tente novamente."
-          }
-        }
-      },
-      "heading": "Fluxos de trabalho",
-      "description": "Automatize as transições dos itens de trabalho e defina regras para controlar como as tarefas avançam pelo fluxo do seu projeto.",
-      "add_button": "Adicionar novo fluxo de trabalho",
-      "search": "Pesquisar fluxos de trabalho",
-      "detail": {
-        "define": "Definir fluxo de trabalho",
-        "add_states": "Adicionar estados",
-        "unmapped_states": {
-          "title": "Estados não mapeados detectados",
-          "description": "Alguns itens de trabalho dos tipos selecionados estão atualmente em estados que não existem neste fluxo de trabalho.",
-          "note": "Se você habilitar este fluxo de trabalho, esses itens serão movidos automaticamente para o estado inicial deste fluxo de trabalho.",
-          "label": "Estados ausentes",
-          "tooltip": "Alguns itens de trabalho estão em estados que não estão mapeados para este fluxo de trabalho. Abra o fluxo de trabalho para revisá-lo."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Todos os estados estão em uso",
-          "description": "Todos os estados definidos para este projeto já estão presentes no seu fluxo de trabalho atual."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Este fluxo de trabalho se aplica a qualquer tipo de item de trabalho que não esteja atribuído a um fluxo de trabalho."
-      },
-      "create": {
-        "heading": "Criar novo fluxo de trabalho"
       }
     }
   },

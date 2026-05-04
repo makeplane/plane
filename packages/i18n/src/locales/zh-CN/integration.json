@@ -194,6 +194,10 @@
       "server_error_states": "加载状态时服务器错误"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "将您的 Bitbucket Data Center 仓库与 Plane 连接并同步。"
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "验证外部 IdP 令牌以进行 API 访问。",
@@ -302,10 +306,10 @@
     "generic_error": "处理您的请求时发生意外错误",
     "connection_not_found": "找不到请求的连接",
     "multiple_connections_found": "找到多个连接，但只期望一个",
+    "cannot_create_multiple_connections": "您已经将组织连接到工作区。请在连接新组织之前断开现有连接。",
     "installation_not_found": "找不到请求的安装",
     "user_not_found": "找不到请求的用户",
     "error_fetching_token": "获取身份验证令牌失败",
-    "cannot_create_multiple_connections": "您已经将组织连接到工作区。请在连接新组织之前断开现有连接。",
     "invalid_app_credentials": "提供的应用凭证无效",
     "invalid_app_installation_id": "安装应用失败"
   },
@@ -316,6 +320,7 @@
     "pulling": "拉取中",
     "timed_out": "超时",
     "pulled": "已拉取",
+    "progressing": "进行中",
     "transforming": "转换中",
     "transformed": "已转换",
     "pushing": "推送中",

@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "為您的專案儲存篩選的檢視。依需要建立多個檢視",
+        "description": "檢視是您經常使用或想要輕鬆存取的已儲存篩選器集。專案中的所有同事都可以看到每個人的檢視，並選擇最適合他們需求的檢視。",
+        "primary_button": {
+          "text": "建立您的第一個檢視",
+          "comic": {
+            "title": "檢視基於工作事項屬性運作。",
+            "description": "您可以從這裡建立檢視，使用您認為合適的屬性作為篩選器。"
+          }
+        },
+        "filter": {
+          "title": "沒有符合的檢視",
+          "description": "沒有檢視符合搜尋條件。\n改為建立新檢視。"
+        }
+      },
+      "no_archived_issues": {
+        "title": "尚無已封存的工作事項",
+        "description": "您可以手動或透過自動化封存已完成或已取消的工作事項。封存後會在這裡找到它們。",
+        "primary_button": {
+          "text": "設定自動化"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "找不到符合所套用篩選器的工作事項",
+        "secondary_button": {
+          "text": "清除所有篩選器"
+        }
+      },
+      "public": {
+        "title": "尚無公開頁面",
+        "description": "在此檢視與專案中所有人共享的頁面。",
+        "primary_button": {
+          "text": "建立您的第一個頁面"
+        }
+      },
+      "archived": {
+        "title": "尚無已封存的頁面",
+        "description": "封存不在您雷達上的頁面。需要時在此處存取。"
+      },
+      "shared": {
+        "title": "尚無共享頁面",
+        "description": "其他人與您共享的頁面會顯示在這裡。"
+      }
+    },
+    "delete_view": {
+      "title": "您確定要刪除此視圖嗎？",
+      "content": "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。"
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -215,29 +266,6 @@
         "success": "模組刪除成功",
         "error": "刪除模組失敗"
       }
-    }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "為您的專案儲存篩選的檢視。依需要建立多個檢視",
-        "description": "檢視是您經常使用或想要輕鬆存取的已儲存篩選器集。專案中的所有同事都可以看到每個人的檢視，並選擇最適合他們需求的檢視。",
-        "primary_button": {
-          "text": "建立您的第一個檢視",
-          "comic": {
-            "title": "檢視基於工作事項屬性運作。",
-            "description": "您可以從這裡建立檢視，使用您認為合適的屬性作為篩選器。"
-          }
-        }
-      },
-      "filter": {
-        "title": "沒有符合的檢視",
-        "description": "沒有檢視符合搜尋條件。\n改為建立新檢視。"
-      }
-    },
-    "delete_view": {
-      "title": "您確定要刪除此視圖嗎？",
-      "content": "如果您確認，您為此視圖選擇的所有排序、篩選和顯示選項 + 布局將被永久刪除，無法恢復。"
     }
   },
   "project_page": {
@@ -330,6 +358,13 @@
       "created_at": "建立日期",
       "manual": "手動"
     }
+  },
+  "project_members": {
+    "full_name": "全名",
+    "display_name": "顯示名稱",
+    "email": "電子郵件",
+    "joining_date": "加入日期",
+    "role": "角色"
   },
   "project": {
     "members_import": {

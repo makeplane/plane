@@ -15,9 +15,9 @@
   "scripts": {
     "dev": "tsdown --watch --no-clean",
     "build": "pnpm run generate:types && tsdown",
-    "generate:types": "npx tsx@4.19.2 scripts/generate-types.ts",
-    "sync:check": "npx tsx@4.19.2 scripts/sync-check.ts",
-    "check:sync": "npx tsx@4.19.2 scripts/sync-check.ts --ci",
+    "generate:types": "tsx scripts/generate-types.ts",
+    "sync:check": "tsx scripts/sync-check.ts",
+    "check:sync": "tsx scripts/sync-check.ts --ci",
     "check:lint": "oxlint --max-warnings=9 .",
     "check:types": "pnpm run generate:types && tsc --noEmit",
     "check:format": "oxfmt --check .",
@@ -37,6 +37,7 @@
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "tsdown": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:"
   }
 }

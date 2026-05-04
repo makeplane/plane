@@ -194,6 +194,10 @@
       "server_error_states": "Erreur serveur lors du chargement des états"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Connectez et synchronisez vos dépôts Bitbucket Data Center avec Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Valider les jetons IdP externes pour l'accès API.",
@@ -302,10 +306,10 @@
     "generic_error": "Une erreur inattendue s'est produite lors du traitement de votre demande",
     "connection_not_found": "La connexion demandée n'a pas pu être trouvée",
     "multiple_connections_found": "Plusieurs connexions ont été trouvées alors qu'une seule était attendue",
+    "cannot_create_multiple_connections": "Vous avez déjà connecté votre organisation avec un espace de travail. Veuillez déconnecter la connexion existante avant de connecter une nouvelle.",
     "installation_not_found": "L'installation demandée n'a pas pu être trouvée",
     "user_not_found": "L'utilisateur demandé n'a pas pu être trouvé",
     "error_fetching_token": "Échec de la récupération du jeton d'authentification",
-    "cannot_create_multiple_connections": "Vous avez déjà connecté votre organisation avec un espace de travail. Veuillez déconnecter la connexion existante avant de connecter une nouvelle.",
     "invalid_app_credentials": "Les informations d'identification de l'application fournies sont invalides",
     "invalid_app_installation_id": "Échec de l'installation de l'application"
   },
@@ -316,6 +320,7 @@
     "pulling": "Extraction",
     "timed_out": "Temps écoulé",
     "pulled": "Extrait",
+    "progressing": "En progression",
     "transforming": "Transformation",
     "transformed": "Transformé",
     "pushing": "Envoi",

@@ -110,6 +110,12 @@
         "description": "Un elemento di lavoro può essere posticipato per rivederlo in un secondo momento. Verrà spostato in fondo all elenco delle richieste aperte."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Smetti di cambiare scheda. Connetti il tuo mondo.",
+        "description": "Collega GitHub, Slack per tracciare le PR e riassumere le chat direttamente in Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigazione, reinventata",

@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "账单与计划",
+        "description": "选择您的计划、管理订阅，并随着需求增长轻松升级。",
         "title": "账单与计划",
         "current_plan": "当前计划",
         "free_plan": "您目前使用的是免费计划",
         "view_plans": "查看计划"
       },
       "exports": {
+        "heading": "导出",
+        "description": "以多种格式导出项目数据，并通过下载链接访问导出历史记录。",
         "title": "导出",
         "exporting": "导出中",
         "previous_exports": "以前的导出",
         "export_separate_files": "将数据导出为单独的文件",
+        "exporting_projects": "正在导出项目",
+        "format": "格式",
         "filters_info": "应用筛选器以根据您的条件导出特定工作项。",
         "modal": {
           "title": "导出到",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "在项目事件发生时自动向外部服务发送通知。",
         "title": "Webhooks",
         "add_webhook": "添加 webhook",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "集成",
+        "heading": "集成",
+        "description": "与流行的工具和服务连接，在整个工作流生态系统中同步您的工作。",
         "page_title": "在可用的应用或您自己的应用中使用您的 Plane 数据。",
         "page_description": "查看此工作区或您正在使用的所有集成。"
       },
       "imports": {
-        "title": "导入"
+        "title": "导入",
+        "heading": "导入",
+        "description": "连接并从现有的项目管理工具导入数据，以简化您的工作流集成。"
       },
       "worklogs": {
-        "title": "工作日志"
+        "title": "工作日志",
+        "heading": "工作日志",
+        "description": "为任何项目中的任何人下载工作日志（即工时表）。"
       },
       "group_syncing": {
         "title": "组同步",
@@ -242,7 +256,10 @@
         "description": "配置您的域名并启用单点登录"
       },
       "project_states": {
-        "title": "项目状态"
+        "title": "项目状态",
+        "heading": "查看所有项目的进度概览。",
+        "description": "项目状态是 Plane 独有的功能，用于按任何项目属性跟踪您所有项目的进度。",
+        "go_to_settings": "前往设置"
       },
       "projects": {
         "title": "项目",
@@ -251,6 +268,16 @@
           "states": "项目状态",
           "labels": "项目标签"
         }
+      },
+      "templates": {
+        "title": "模板",
+        "heading": "模板",
+        "description": "使用模板可节省 80% 创建项目、工作项和页面的时间。"
+      },
+      "relations": {
+        "title": "关系",
+        "heading": "关系",
+        "description": "创建和管理连接工作区中工作项的关系类型。"
       },
       "cancel_trial": {
         "title": "请先取消试用期。",
@@ -263,6 +290,7 @@
         "cancel_error_message": "请重试。"
       },
       "applications": {
+        "internal": "内部",
         "title": "应用程序",
         "applicationId_copied": "应用ID已复制到剪贴板",
         "clientId_copied": "客户端ID已复制到剪贴板",
@@ -271,10 +299,61 @@
         "your_apps": "您的应用",
         "connect": "连接",
         "connected": "已连接",
+        "disconnect": "断开连接",
         "install": "安装",
         "installed": "已安装",
         "configure": "配置",
         "app_available": "您已使此应用可用于Plane工作空间",
+        "app_credentials_regenrated": {
+          "title": "应用凭证已成功重新生成",
+          "description": "请在所有使用的地方替换客户端密钥。之前的密钥已不再有效。"
+        },
+        "app_created": {
+          "title": "应用已成功创建",
+          "description": "使用凭证将应用安装到 Plane 工作区中"
+        },
+        "installed_apps": "已安装的应用",
+        "all_apps": "所有应用",
+        "internal_apps": "内部应用",
+        "app_name_title": "您将如何命名此应用",
+        "app_description_title": {
+          "label": "详细描述",
+          "placeholder": "为市场编写详细描述。按 '/' 查看命令。"
+        },
+        "authorization_grant_type": {
+          "title": "连接类型",
+          "description": "选择您的应用程序应该为工作区安装一次，还是让每个用户连接自己的账户"
+        },
+        "website": {
+          "title": "网站",
+          "description": "链接到您的应用程序网站。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "应用创建者",
+          "description": "创建该应用的个人或组织。"
+        },
+        "app_maker_error": "应用制作者为必填项",
+        "setup_url": {
+          "label": "设置 URL",
+          "description": "用户在安装应用时将被重定向到此 URL。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "我们将在此接收来自安装了您应用的工作区的 Webhook 事件和更新。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook 密钥",
+          "description": "用于验证传入 Webhook 请求的密钥。",
+          "placeholder": "输入随机密钥"
+        },
+        "redirect_uris": {
+          "label": "重定向 URI（以空格分隔）",
+          "description": "用户在通过 Plane 认证后将被重定向到此路径。",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "连接Plane工作空间以开始使用",
         "client_id_and_secret": "客户端ID和密钥",
         "client_id_and_secret_description": "复制并保存此密钥。关闭后您将无法再次查看此密钥。",
@@ -286,23 +365,13 @@
         "slug_already_exists": "别名已存在",
         "failed_to_create_application": "创建应用程序失败",
         "upload_logo": "上传标志",
-        "app_name_title": "您将如何命名此应用",
         "app_name_error": "应用名称为必填项",
         "app_short_description_title": "为此应用提供简短描述",
         "app_short_description_error": "应用简短描述为必填项",
-        "app_description_title": {
-          "label": "详细描述",
-          "placeholder": "为市场编写详细描述。按 '/' 查看命令。"
-        },
-        "authorization_grant_type": {
-          "title": "连接类型",
-          "description": "选择您的应用程序应该为工作区安装一次，还是让每个用户连接自己的账户"
-        },
         "app_description_error": "应用描述为必填项",
         "app_slug_title": "应用别名",
         "app_slug_error": "应用别名为必填项",
-        "app_maker_title": "应用制作者",
-        "app_maker_error": "应用制作者为必填项",
+        "invalid_website_error": "无效的网站",
         "webhook_url_title": "Webhook URL",
         "webhook_url_error": "Webhook URL为必填项",
         "invalid_webhook_url_error": "无效的Webhook URL",
@@ -364,7 +433,6 @@
         "video_url_title": "视频URL",
         "video_url_error": "视频URL是必填项",
         "invalid_video_url_error": "无效的视频URL",
-        "setup_url_title": "设置URL",
         "setup_url_error": "设置URL是必填项",
         "invalid_setup_url_error": "无效的设置URL",
         "configuration_url_title": "配置URL",
@@ -380,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "无效的文件或超过大小限制 ({size} MB)",
         "uploading": "上传中...",
         "upload_and_save": "上传并保存",
-        "app_credentials_regenrated": {
-          "title": "应用凭证已成功重新生成",
-          "description": "请在所有使用的地方替换客户端密钥。之前的密钥已不再有效。"
-        },
-        "app_created": {
-          "title": "应用已成功创建",
-          "description": "使用凭证将应用安装到 Plane 工作区中"
-        },
-        "installed_apps": "已安装的应用",
-        "all_apps": "所有应用",
-        "internal_apps": "内部应用",
-        "website": {
-          "title": "网站",
-          "description": "链接到您的应用程序网站。",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "应用创建者",
-          "description": "创建该应用的个人或组织。"
-        },
-        "setup_url": {
-          "label": "设置 URL",
-          "description": "用户在安装应用时将被重定向到此 URL。",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "Webhook URL",
-          "description": "我们将在此接收来自安装了您应用的工作区的 Webhook 事件和更新。",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "重定向 URI（以空格分隔）",
-          "description": "用户在通过 Plane 认证后将被重定向到此路径。",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "安装请求",
         "app_consent_no_access_description": "此应用只能在工作区管理员安装后才能安装。请联系您的工作区管理员以继续。",
+        "app_consent_unapproved_title": "此应用尚未经过 Plane 审核或批准。",
+        "app_consent_unapproved_description": "在将此应用连接到您的工作区之前，请确保您信任此应用。",
+        "go_to_app": "前往应用",
         "enable_app_mentions": "启用应用提及",
         "enable_app_mentions_tooltip": "启用此功能后，用户可以提及或分配工作项到此应用。",
         "scopes": "范围",
@@ -435,13 +472,18 @@
           "profile": "访问用户资料信息",
           "agents": "访问代理以及所有代理相关实体",
           "assets": "访问资产以及所有资产相关实体"
-        },
-        "internal": "内部"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "使用与您的工作和知识库原生连接的 AI，让您的任务变得更智能、更快速。"
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "脚本",
+        "new_script": "新建脚本",
+        "description": "使用自定义脚本和自动化规则自动化您的工作流程。"
       }
     },
     "empty_state": {

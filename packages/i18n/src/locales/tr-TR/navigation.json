@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Sonuç bulunamadı"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Yapışkan Notlar",
+    "your_work": "Çalışmalarınız",
     "projects": "Projeler",
     "pages": "Sayfalar",
     "new_work_item": "Yeni iş öğesi",
     "home": "Ana Sayfa",
-    "your_work": "Çalışmalarınız",
     "inbox": "Gelen Kutusu",
     "workspace": "Çalışma Alanı",
     "views": "Görünümler",
@@ -21,14 +29,6 @@
     "epics": "Epiks",
     "upgrade_plan": "Apgreyd plen",
     "plane_pro": "Pleyn Pro",
-    "business": "Biznis",
-    "recurring_work_items": "Yinelenen iş öğeleri"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Sonuç bulunamadı"
-      }
-    }
+    "business": "Biznis"
   }
 }

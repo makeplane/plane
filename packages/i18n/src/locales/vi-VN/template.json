@@ -3,6 +3,9 @@
     "settings": {
       "title": "Mẫu",
       "description": "Lưu 80% thời gian đã tiêu tốn trong việc tạo dự án, mục công việc và trang khi bạn sử dụng các mẫu.",
+      "new_project_template": "Mẫu dự án mới",
+      "new_work_item_template": "Mẫu mục công việc mới",
+      "new_page_template": "Mẫu trang mới",
       "options": {
         "project": {
           "label": "Mẫu dự án"
@@ -157,6 +160,14 @@
               "required": "Cần ít nhất một từ khóa"
             }
           },
+          "website": {
+            "label": "URL trang web",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL không hợp lệ",
+              "maxLength": "URL không nên vượt quá 800 ký tự"
+            }
+          },
           "company_name": {
             "label": "Tên công ty",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Địa chỉ email không hợp lệ",
-              "required": "Email hỗ trợ là bắt buộc",
               "maxLength": "Email hỗ trợ không nên vượt quá 255 ký tự"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": "Chưa có nhãn nào. Tạo nhãn để giúp tổ chức và lọc mục công việc trong dự án của bạn."
+      },
+      "no_modules": {
+        "description": "Chưa có mô-đun nào. Tổ chức công việc thành các dự án phụ với người dẫn đầu và người được phân công chuyên trách."
       },
       "no_work_items": {
         "description": "Chưa có mục công việc nào. Thêm một để cấu trúc công việc của bạn tốt hơn."
