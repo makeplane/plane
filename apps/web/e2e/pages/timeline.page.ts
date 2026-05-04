@@ -119,4 +119,92 @@ export class TimelinePage {
     };
     await this.picker.getByRole("button", { name: nameRegex[option] }).click();
   }
+
+  /**
+   * ブロックのバウンディングボックスを取得する(D-03)。
+   *
+   * hover を挟むことで RenderIfVisible が viewport 外でも stable になる。
+   * 用途: TEST-23 / TEST-24 の pre-drag / post-drag 位置キャプチャ。
+   */
+  async getBlockBox(issueId: string): Promise<{ x: number; y: number; width: number; height: number }> {
+    await this.block(issueId).hover();
+    const box = await this.block(issueId).boundingBox();
+    if (!box) {
+      throw new Error(`block ${issueId} has no bounding box (off-screen or zero-sized)`);
+    }
+    return box;
+  }
+
+  /**
+   * DOM レンダリングから dayWidth を導出する(D-03a)。
+   *
+   * 公式: block.tsx の getPositionFromDateOnGantt は (daysDiff + 1) * dayWidth を使う
+   *       (start_date 当日も含む inclusive count)。よって:
+   *       dayCount = (target_date - start_date) calendar days + 1
+   *       dayWidth = boundingBox.width / dayCount
+   *
+   * 注: D-03b — DOM 派生のみ。prod 定数ファイルは import しない。
+   */
+  async getDayWidthFromBlock(
+    issueId: string,
+    issue: { start_date: string | null; target_date: string | null }
+  ): Promise<number> {
+    const box = await this.block(issueId).boundingBox();
+    if (!box) {
+      throw new Error(`block ${issueId} has no bounding box (off-screen or zero-sized)`);
+    }
+    if (!issue.start_date || !issue.target_date) {
+      throw new Error(`getDayWidthFromBlock: dates missing — start=${issue.start_date} target=${issue.target_date}`);
+    }
+    const start = new Date(issue.start_date);
+    const end = new Date(issue.target_date);
+    // (daysDiff + 1) inclusive count — block.tsx:99-106 と一致
+    const dayCount = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    if (dayCount <= 0) {
+      throw new Error(
+        `getDayWidthFromBlock: invalid date range (start=${issue.start_date}, target=${issue.target_date})`
+      );
+    }
+    return box.width / dayCount;
+  }
+
+  /**
+   * ブロック本体をドラッグして deltaDays 日分だけ右に移動させる(D-03 / D-12)。
+   *
+   * - centerX/Y: ブロック本体の中央(data-block-id の bounding box 中央)
+   * - draggable.tsx:61 の onMouseDown は pointer-events:none ではないため
+   *   native page.mouse.down() で発火できる(D-12 第一選択)。
+   *   万一 React 合成イベントが発火しない場合は dispatchEvent fallback に切り替える(下記コメント参照)。
+   * - DRAG_STEPS = 20 で既存の handle-drag と同じ歩数で動かす。
+   *
+   * 引数 issue: dayWidth 算出のため start_date / target_date を受け取る(D-03a — DOM 派生)。
+   */
+  async dragBlockBy(
+    issueId: string,
+    deltaDays: number,
+    issue: { start_date: string | null; target_date: string | null }
+  ): Promise<void> {
+    await this.block(issueId).hover();
+
+    const box = await this.block(issueId).boundingBox();
+    if (!box) {
+      throw new Error(`block ${issueId} has no bounding box (off-screen or zero-sized)`);
+    }
+
+    const centerX = box.x + box.width / 2;
+    const centerY = box.y + box.height / 2;
+
+    const dayWidth = await this.getDayWidthFromBlock(issueId, issue);
+    const pixelDelta = deltaDays * dayWidth;
+
+    // D-12: native mouse.down を第一選択(ブロックボディは pointer-events:auto)
+    // fallback (smoke で発火しない場合): handle.dispatchEvent("mousedown", { ... }) パターン
+    //   apps/web/e2e/pages/timeline.page.ts:70-81 の startDragFromEdge 参照
+    await this.page.mouse.move(centerX, centerY);
+    await this.page.mouse.down();
+
+    await this.page.mouse.move(centerX + pixelDelta, centerY, { steps: DRAG_STEPS });
+
+    await this.page.mouse.up();
+  }
 }

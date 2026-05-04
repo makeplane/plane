@@ -51,6 +51,46 @@ test.describe("timeline dependency propagation", () => {
     }
   });
 
+  test("#smoke: dragBlockBy moves the dragged block visually (no relation)", async ({ api, page }, testInfo) => {
+    const { TimelinePage } = await import("../pages/timeline.page");
+    const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
+    const issue = await api.createIssue(`e2e-smoke-drag-${suffix}`, { start: 0, end: 3 });
+    try {
+      const tp = new TimelinePage(page);
+      await tp.gotoIssueGantt();
+      await tp.waitForBlock(issue.id);
+
+      const preBox = await tp.getBlockBox(issue.id);
+
+      // 単独 issue を 4 日右にドラッグ — server は 200 (no propagation needed) を返す
+      // 注: relation がないため伝播エンドポイントが返すのは src 単独の更新
+      const responsePromise = page.waitForResponse(
+        (r) => r.url().includes("/timeline-propagation/") && r.request().method() === "POST",
+        { timeout: 15_000 }
+      );
+      await tp.dragBlockBy(issue.id, 4, issue);
+      const resp = await responsePromise;
+      // ステータスは 200 (no boundary violation で伝播も発火する)。relation がない場合の挙動は
+      // Phase 5 の base-gantt-root の D-01 split に依存 — ここではステータスが 200 か 422 のいずれかを許容。
+      // 実際: relation なし → propagationStore.commitWithServerResult が呼ばれるが、伝播対象は dragged のみ
+      //       → サーバは 200 を返し total_updated_count = 1
+      if (resp.status() !== 200) {
+        throw new Error(`smoke drag: expected 200, got ${resp.status()} body=${await resp.text()}`);
+      }
+
+      // DOM が動いたこと(MobX flush 後)を expect.poll で確認 — D-12b
+      // Drag 後の box.x は preBox.x + pixelDelta(±tolerance)
+      const dayWidth = await tp.getDayWidthFromBlock(issue.id, issue);
+      // server がドラッグ後の position に再配置 — block.position から計算される final box.x は
+      // preBox.x + 4 * dayWidth(server から返った start_date が +4 されたため)
+      await expect
+        .poll(async () => (await tp.getBlockBox(issue.id)).x, { timeout: 5_000 })
+        .toBeGreaterThan(preBox.x + dayWidth - 2);
+    } finally {
+      await api.deleteIssue(issue.id);
+    }
+  });
+
   test("#smoke: getIssue reads back created dates and clearIssueDate persists null", async ({ api }, testInfo) => {
     const suffix = `${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
     const issue = await api.createIssue(`e2e-smoke-get-${suffix}`, { start: 0, end: 7 });
