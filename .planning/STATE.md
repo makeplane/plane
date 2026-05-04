@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 3 closed; awaiting plan-phase for Phase 4
-stopped_at: Phase 3 PHASE COMPLETE — 3/3 plans, 26 GREEN contract tests, 64 unit tests still GREEN, all 18 verifier dimensions passed
-last_updated: "2026-05-03T19:59:19.962Z"
-last_activity: 2026-05-04 -- Plan 03-03 complete (3 new GREEN contract tests for transaction.on_commit fan-out; API-12 closed)
+status: Phase 4 context captured (auto mode); awaiting plan-phase for Phase 4
+stopped_at: Phase 4 context gathered — 10 gray areas auto-resolved; Vitest harness (D-01) + wire contract types (D-02) + 4-action MobX store surface (D-05) locked
+last_updated: "2026-05-04T03:00:00.000Z"
+last_activity: 2026-05-04 -- Phase 4 CONTEXT.md written via /gsd-discuss-phase 4 --auto (commit 745ee1cb58)
 progress:
   total_phases: 6
   completed_phases: 3
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-05-03)
 
 ## Current Position
 
-Phase: 3 (Propagation API Endpoint, Persistence & Contract) — COMPLETE
-Plan: 3/3 done (Phase 3 finished; next: Phase 4 — Frontend Service Client & MobX Preview Store)
-Status: Phase 3 closed; awaiting plan-phase for Phase 4
-Last activity: 2026-05-04 -- Plan 03-03 complete (3 new GREEN contract tests for transaction.on_commit fan-out; API-12 closed)
+Phase: 4 (Frontend Service Client & MobX Preview Store) — discuss-phase complete
+Plan: 0/TBD (next: /gsd-plan-phase 4 — auto-advance triggered by --chain/--auto)
+Status: Phase 4 CONTEXT.md captured; awaiting plan-phase
+Last activity: 2026-05-04 -- /gsd-discuss-phase 4 --auto wrote 04-CONTEXT.md (10 decisions: D-01..D-10) + 04-DISCUSSION-LOG.md (commit 745ee1cb58)
 
 Progress: [████████░░] 89% (8/9 plans)
 
@@ -101,6 +101,9 @@ Recent decisions affecting current work:
 - (03-03) `actor_id` type asymmetry between `issue_activity.delay` (string `str(request.user.id)`) and `model_activity.delay` (UUID `request.user.id`) is dictated by the existing endpoint patterns at `views/issue/base.py:1147` and `views/module/base.py:713` respectively. The two task signatures genuinely differ; the new view honors both.
 - (03-03) Per-pair issue_activity events use `if inst.start_date != pre.start_date:` (and same for target_date) so propagated issues that only shift one field log only that one event — no "moved by 0" audit rows. The dragged item, which always moves both fields by the requested delta, typically logs both events.
 - (03-03) Test patch path is the LOCAL view-module binding `plane.app.views.issue.timeline_propagation.transaction.on_commit` (NOT `django.db.transaction.on_commit`). After `from django.db import transaction`, the view's `transaction` name references the module object, so we patch `transaction.on_commit` ON the view module to redirect the lookup. Pinned by RESEARCH Pitfall 9 — pytest.mark.django_db never commits, so registrations would never fire without this patch.
+- (04 discuss) Vitest harness placement decision (open since milestone start): introduce Vitest to `@plane/utils` as the third Vitest package in the monorepo (after `apps/live` and `packages/codemods`). Pure preview/diff helpers in `packages/utils/src/timeline-propagation/preview.ts` cover TEST-19/20/21/22; MobX store is a thin shell tested transitively by Phase 6 E2E. `apps/web` Vitest deferred. Aligns with `CONCERNS.md` lines 35–40 recommendation.
+- (04 discuss) Wire-contract TS types live in `packages/types/src/issues/timeline-propagation.ts` as snake_case literal-union + interfaces, mirroring Phase 3's serializers verbatim. Service layer rejects promises with `TTimelinePropagationError` body (matches existing `apps/web/core/services/issue/issue.service.ts:248-251` convention); no `{ ok: true | false }` discriminated union. Adding a server-side error code requires a TS update at this single file.
+- (04 discuss) MobX store at `apps/web/ce/store/timeline/timeline-propagation.store.ts` exposes a 4-action surface (`beginPreview`, `updatePreview`, `commitWithServerResult`, `rollback`) plus `previewById` / `lastError` / `lastResponse` / `hiddenUpdateCount` (computed) / `unexpectedError`. Non-protocol errors (network 500) are kept off `lastError` and exposed via separate `unexpectedError` observable so the 7-code wire-error observable stays clean. Phase 5 supplies `edges` + `items_by_id` snapshot to `beginPreview` — Phase 4 store does NOT inspect the MobX tree on its own.
 
 ### Pending Todos
 
@@ -108,7 +111,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Vitest harness decision for `apps/web` / `@plane/utils`** (Phase 4): TEST-19..TEST-22 require frontend store/helper unit tests. `apps/web` has no JS test harness today (per `CONCERNS.md`). Recommendation locked in Phase 4 to put pure preview/diff logic in `@plane/utils` with Vitest, but final decision needs user sign-off in plan-phase.
+- **Vitest harness decision for `apps/web` / `@plane/utils`** (Phase 4): RESOLVED in Phase 4 discuss-phase (D-01) — Vitest added to `@plane/utils`; pure preview helpers cover TEST-19..22; `apps/web` Vitest deferred; store covered transitively by Phase 6 E2E.
 - **`expected_updated_at` precision and HTTP status mapping** (Phase 3): exact ISO format and 409 vs 422 selection per error code must be locked during Phase 3 plan-phase.
 - **Adjacency definition** (Phase 2): confirm `successor.start = predecessor.target + 1 calendar day` is the canonical adjacent case (PRD says yes; nail down at plan-phase).
 - **Pre-existing unit-suite failures** (logged in `.planning/phases/01-precedence-graph-loader-normalization/deferred-items.md`): 5 tests fail in `bg_tasks/test_copy_s3_objects.py`, `bg_tasks/test_work_item_link_task.py`, `utils/test_url.py`. They pre-date this milestone (verified by re-running on Plan 01-01's tip `c7df9b8d2d`). Not blocking Phase 2 — out of scope per SCOPE BOUNDARY. May need triage outside this milestone if any timeline_propagation work depends on those modules.
@@ -129,6 +132,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-03T19:59:19.959Z
-Stopped at: Phase 3 PHASE COMPLETE — 3/3 plans, 26 GREEN contract tests, 64 unit tests still GREEN, all 18 verifier dimensions passed
-Resume file: .planning/phases/03-propagation-api-endpoint-persistence-contract/03-VERIFICATION.md
+Last session: 2026-05-04T03:00:00.000Z
+Stopped at: Phase 4 context gathered — 10 gray areas auto-resolved; Vitest harness (D-01) + wire contract types (D-02) + 4-action MobX store surface (D-05) locked
+Resume file: .planning/phases/04-frontend-service-client-mobx-preview-store/04-CONTEXT.md
