@@ -1,0 +1,23 @@
+=== TRANSFER SIZE COMPARISON ===
+
+Baseline (dev mode + no compression):
+  - Cannot measure (chạy Vite dev với /@fs/ paths, hàng nghìn files)
+
+Production build, NO optimization:
+  - Initial preload: 30 assets, 2.41 MB raw transfer (no encoding)
+  - Total JS in build: 10.6 MB raw / 2.95 MB gzip
+  - Cache: NONE (every reload = full re-download)
+
+Phase 01 — gzip + cache-control + Caddy zstd/gzip + nginx immutable:
+  - Initial preload: 30 assets, 0.62 MB gzip transfer
+  - Cold cache: -74.6% transfer vs baseline
+  - Repeat visit: ~0 byte (immutable cache hit)
+
+Phase 02 — manualChunks split:
+  - REGRESSION (5.95 MB raw) due to React Router v7 eager modulepreload of all chunks
+  - Rolled back
+
+Phase 03 — lazy heavy deps (xlsx, pdf, recharts):
+  - NOT IMPLEMENTED in this session (requires refactoring 10+ caller files + async signatures)
+  - Estimated additional saving: 30-50% initial JS if implemented
+

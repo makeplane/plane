@@ -78,17 +78,19 @@ plane/
 
 ### Backend (Django)
 
-| File/Dir                                   | Purpose                                     |
-| ------------------------------------------ | ------------------------------------------- |
-| `apps/api/plane/settings/base.py`          | Django core config (DB, cache, middleware)  |
-| `apps/api/plane/settings/urls.py`          | API URL routing (v0, v1)                    |
-| `apps/api/plane/db/models/`                | 37 ORM models (BaseModel, ProjectBaseModel) |
-| `apps/api/plane/app/views/`                | 41+ DRF viewsets (@allow_permission)        |
-| `apps/api/plane/app/serializers/v0/`       | Legacy serializers (session auth)           |
-| `apps/api/plane/app/serializers/v1/`       | External API (API key auth, OpenAPI)        |
-| `apps/api/plane/utils/workflow_checker.py` | Workflow validation logic                   |
-| `apps/api/plane/tasks/`                    | Celery async tasks (41 tasks)               |
-| `apps/api/manage.py`                       | Django CLI                                  |
+| File/Dir                                   | Purpose                                                   |
+| ------------------------------------------ | --------------------------------------------------------- |
+| `apps/api/plane/settings/base.py`          | Django core config (DB, cache, middleware)                |
+| `apps/api/plane/settings/urls.py`          | API URL routing (v0, v1)                                  |
+| `apps/api/plane/db/models/`                | 37 ORM models (BaseModel, ProjectBaseModel)               |
+| `apps/api/plane/app/views/`                | 41+ DRF viewsets (@allow_permission)                      |
+| `apps/api/plane/app/serializers/v0/`       | Legacy serializers (session auth)                         |
+| `apps/api/plane/app/serializers/v1/`       | External API (API key auth, OpenAPI)                      |
+| `apps/api/plane/utils/workflow_checker.py` | Workflow validation logic                                 |
+| `apps/api/plane/utils/business_calendar/`  | Business calendar service (holidays, schedule, overrides) |
+| `apps/api/plane/utils/celery_helpers.py`   | Celery decorators (@working_day_required)                 |
+| `apps/api/plane/tasks/`                    | Celery async tasks (41 tasks)                             |
+| `apps/api/manage.py`                       | Django CLI                                                |
 
 ### Frontend (React)
 
@@ -142,6 +144,7 @@ BaseModel (id, created_at, updated_at)
 - **Analytics, AnalyticsData** (CE: dashboards, reports)
 - **TaskCategory** (CE: admin task categorization)
 - **MonitoringMetric** (CE: admin monitoring dashboard)
+- **WorkSchedule, Holiday, DayOverride** (CE: business calendar, Vietnam working-day rules)
 
 **Key Patterns:**
 

@@ -1,0 +1,5 @@
+[Phase 01 — gzip + cache-control]
+Initial assets count: 30
+Total raw:    2529397 B (2.41 MB)
+Total gzip:   641556 B (0.61 MB)
+Saving:       74.6%

@@ -4,7 +4,19 @@
  * See the LICENSE file for details.
  */
 
-import { Activity, Briefcase, Image, BrainCog, Cog, Mail, Users, Network, UserCheck, Tag } from "lucide-react";
+import {
+  Activity,
+  Briefcase,
+  CalendarDays,
+  Image,
+  BrainCog,
+  Cog,
+  Mail,
+  Users,
+  Network,
+  UserCheck,
+  Tag,
+} from "lucide-react";
 // plane imports
 import { LockIcon, WorkspaceIcon } from "@plane/propel/icons";
 // types
@@ -22,7 +34,8 @@ export type TCoreSidebarMenuKey =
   | "image"
   | "monitoring"
   | "task-categories"
-  | "job-positions";
+  | "job-positions"
+  | "calendar";
 
 export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem> = {
   general: {
@@ -96,5 +109,11 @@ export const coreSidebarMenuLinks: Record<TCoreSidebarMenuKey, TSidebarMenuItem>
     name: "Job Positions",
     description: "Manage job positions and grades.",
     href: `/job-positions/`,
+  },
+  calendar: {
+    Icon: CalendarDays,
+    name: "Business Calendar",
+    description: "Manage working schedules and public holidays.",
+    href: `/calendar/`,
   },
 };
