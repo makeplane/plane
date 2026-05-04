@@ -39,9 +39,9 @@ function WorkspaceInvitationPage() {
   const { data: currentUser } = useUser();
 
   const { data: invitationDetail, error } = useSWR(
-    invitation_id && slug && WORKSPACE_INVITATION(invitation_id.toString()),
-    invitation_id && slug
-      ? () => workspaceService.getWorkspaceInvitation(slug.toString(), invitation_id.toString())
+    invitation_id && slug && token && WORKSPACE_INVITATION(invitation_id.toString()),
+    invitation_id && slug && token
+      ? () => workspaceService.getWorkspaceInvitation(slug.toString(), invitation_id.toString(), token.toString())
       : null
   );
 
@@ -58,6 +58,7 @@ function WorkspaceInvitationPage() {
         } else {
           router.push("/");
         }
+        return;
       })
       .catch((err: unknown) => console.error(err));
   };
@@ -71,6 +72,7 @@ function WorkspaceInvitationPage() {
       })
       .then(() => {
         router.push("/");
+        return;
       })
       .catch((err: unknown) => console.error(err));
   };
