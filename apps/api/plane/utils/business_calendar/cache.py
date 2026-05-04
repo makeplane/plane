@@ -11,7 +11,6 @@ TTL: 86400 seconds (1 day) — invalidated on Holiday/DayOverride signal.
 from __future__ import annotations
 
 import pickle
-from datetime import date
 from typing import Any
 from uuid import UUID
 
