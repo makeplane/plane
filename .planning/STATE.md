@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 4 Wave 1 complete (1/2 plans); ready for Wave 2 (04-02 MobX store)
-stopped_at: Phase 4 Plan 01 EXECUTED — types + service + Vitest harness + 3 pure helpers; 11 vitest cases GREEN; Phase 3 contract (26) + unit (64) regression suites still GREEN; FE-08 + D-03b inert constraints honored
-last_updated: "2026-05-04T03:55:00.000Z"
-last_activity: 2026-05-04 -- /gsd-execute-phase 4 plan 01 shipped 6 new files + 5 modified files across 5 atomic commits; @plane/utils onboarded to Vitest; Wave 2 (04-02) unblocked
+status: Phase 4 COMPLETE (2/2 plans); ready for Phase 5 (drag handler integration + error UX)
+stopped_at: Phase 4 Plan 02 EXECUTED — TimelinePropagationStore (4-action MobX store with dual-observable error split, in-flight promise cache, lastPreviewIds-pre-clear) + TimeLineStore wiring; 2 atomic commits; Phase 3 contract (26) + unit (64) and Wave 1 Vitest (11) all still GREEN; FE-08 + D-03b + D-05d + D-06 inert constraints honored
+last_updated: "2026-05-04T04:06:09.000Z"
+last_activity: 2026-05-04 -- /gsd-execute-phase 4 plan 02 shipped 1 new MobX store + 1 modified barrel across 2 atomic commits; rootStore.timelineStore.timelinePropagationStore is now the seam Phase 5's drag handler will consume
 progress:
   total_phases: 6
   completed_phases: 3
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-03)
 
 **Core value:** ドラッグ移動が Precedence Boundary を超えても、サーバ権威で必要最小限の連鎖を all-or-nothing で再配置し、失敗時は明示的な reason code で UI に説明できる。
-**Current focus:** Phase 3 — Propagation API Endpoint, Persistence & Contract
+**Current focus:** Phase 4 — COMPLETE (next: Phase 5 — Drag Handler Integration & Error UX)
 
 ## Current Position
 
-Phase: 4 (Frontend Service Client & MobX Preview Store) — Wave 1 EXECUTED
-Plan: 1/2 done (next: /gsd-execute-phase 4 plan 02 — Wave 2 MobX store + CE root extension)
-Status: Wave 1 ships typed wire contract + 3 pure helpers + Vitest harness; 11 vitest GREEN; Phase 3 backend regression GREEN
-Last activity: 2026-05-04 -- /gsd-execute-phase 4 plan 01 atomic-committed 5 tasks (6db219631d, a126b6fbf6, 3326239c1c, fa300e3efb, e16d19dc56)
+Phase: 4 (Frontend Service Client & MobX Preview Store) — COMPLETE
+Plan: 2/2 done (next: Phase 5 — Drag Handler Integration & Error UX, plans TBD)
+Status: Phase 4 ships typed wire contract + 3 pure helpers + Vitest harness + 4-action MobX store with dual-observable error path + TimeLineStore wiring; 11 Vitest GREEN; Phase 3 backend regression (26 contract + 64 unit) GREEN
+Last activity: 2026-05-04 -- /gsd-execute-phase 4 plan 02 atomic-committed 2 tasks (d810b92105, 888ff6c32b)
 
 Progress: [█████████░] 100% (9/9 plans completed; Phase 4 milestone tracker re-counts at next /gsd-transition)
 
@@ -49,7 +49,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | 1. Precedence Graph Loader & Normalization        | 2/2   | 10m38s | 5m19s    |
 | 2. Scheduling Helper & Propagation Algorithm Core | 3/3   | ~21m   | ~7m      |
 | 3. Propagation API Endpoint & Contract            | 3/3   | ~40m   | ~13m     |
-| 4. Frontend Service Client & MobX Preview Store   | 1/2   | ~8m    | ~8m      |
+| 4. Frontend Service Client & MobX Preview Store   | 2/2   | ~12m   | ~6m      |
 | 5. Drag Handler Integration & Error UX            | 0     | —      | —        |
 | 6. End-to-End Coverage & Polish                   | 0     | —      | —        |
 
@@ -63,11 +63,12 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | 03-02      | 2     | 4     | ~18m     | 2026-05-04T01:30:00Z |
 | 03-03      | 1     | 2     | ~12m     | 2026-05-04T02:00:00Z |
 | 04-01      | 5     | 11    | ~8m      | 2026-05-04T03:55:00Z |
+| 04-02      | 2     | 2     | ~4m      | 2026-05-04T04:06:09Z |
 
 **Recent Trend:**
 
-- Last 5 plans: 03-01 (~10m), 03-02 (~18m), 03-03 (~12m), 04-01 (~8m)
-- Trend: Phase 4 Wave 1 ships in ~8m — pure helpers + types only, no view churn. Wave 2 (MobX store) up next.
+- Last 5 plans: 03-02 (~18m), 03-03 (~12m), 04-01 (~8m), 04-02 (~4m)
+- Trend: Phase 4 Wave 2 ships in ~4m — surgical 1 NEW + 1 UPDATE on top of GREEN Wave 1 contract; the lean per-task structure (no test scaffolding, no Vitest add) explains the speedup. Phase 5 (drag handler integration + error UX) is now the only remaining frontend work; Phase 6 (E2E) closes the milestone.
 
 _Updated after each plan completion_
 
@@ -111,6 +112,14 @@ Recent decisions affecting current work:
 - (04-01) `computeLoadedPreview` walks the loaded subset of the precedence graph as BFS from the dragged item; chain propagation arises naturally from re-enqueueing successors whose new dates were just computed; branch case picks the most-restrictive `predecessor.new_target+1` floor across ALL loaded predecessors (resolved by `_resolveSuccessorStart`). Missing successors in `items_by_id` are silently skipped — server is authoritative (D-04a).
 - (04-01) Helpers reuse `@plane/utils/datetime` primitives (`addDaysToDate`, `findTotalDaysInRange`, `renderFormattedPayloadDate`); NO direct `date-fns` import in `preview.ts` (D-04b). Keeps the future Working-Calendar swap (ADR 0002) confined to the `datetime` module without touching propagation logic.
 - (04-01) Immutability invariants pinned by 3 explicit `it("immutability ...")` test cases (one per helper) using `JSON.parse(JSON.stringify(...))` snapshot diff. Required so MobX `runInAction` blocks in the Wave 2 store can call helpers without leaking writes through the input maps (D-04c).
+- (04-02) `TimelinePropagationStore` exposes the 4-action surface `beginPreview / updatePreview / commitWithServerResult / rollback` plus 6 observables (`previewById` deep `Map`, `isPreviewActive` / `lastError` / `lastResponse` / `lastPreviewIds` / `unexpectedError` all `.ref`) and `hiddenUpdateCount` `computed`. State machine: IDLE ↔ PREVIEWING; stale calls to `updatePreview` and `commitWithServerResult` no-op; the latter resolves to a synthetic local-only `INVALID_DATE_RANGE` envelope to keep Phase 5's branch surface uniform without claiming a real wire code (D-05a).
+- (04-02) `lastError` carries one of the 7 wire codes ONLY — closed-set discriminator `_isProtocolError(value): value is TTimelinePropagationError` validates `code` against a `ReadonlySet<string>` of the 7 codes plus `message: string` shape. Non-protocol errors (network failure, 5xx, missing `code`) go to a separate `unexpectedError: Error | null` observable. The two stay strictly separate; Phase 5 chooses which to render (D-05c — no synthetic 8th code).
+- (04-02) Canonical write-back surface on commit success is `this.rootStore.issue.issues.updateIssue(wi.id, { start_date, target_date, updated_at })` looped per server `work_items` entry. The store does NOT mutate `IssuesTimeLineStore.blocksMap` directly. The per-id loop sits inside ONE outer `runInAction` so MobX batches the N writes into a single reaction (D-05d / Pitfall 8).
+- (04-02) `lastPreviewIds` snapshot is captured BEFORE the network call (`previewIdsAtSend = new Set(this.previewById.keys())`), then assigned BEFORE `previewById.clear()` inside the success `runInAction`. This survives both the success-path reset AND a concurrent `beginPreview` that lands during the in-flight window — `hiddenUpdateCount` works deterministically (D-05e / Pitfall 6).
+- (04-02) In-flight commit sharing: `private inflightCommit: Promise<...> | null` cache. Second concurrent `commitWithServerResult` call returns the same promise (`if (this.inflightCommit) return this.inflightCommit;`); cleared in `finally`. Matches "one drag = one network call" UX (D-08a / Pitfall 7).
+- (04-02) `previewById: observable` (deep) per Pitfall 3 — Map mutations via `.set()` / `.clear()` trigger MobX reactions correctly. The other observables use `observable.ref` to avoid unnecessary deep diffs (`isPreviewActive` / `lastError` / `lastResponse` / `lastPreviewIds` / `unexpectedError`). All four actions use `action.bound` for parity with `BaseTimeLineStore`'s drag actions.
+- (04-02) `apps/web/ce/store/timeline/index.ts` extension is +5 lines: 2 imports, 1 `ITimelineStore` field, 1 `TimeLineStore` field, 1 constructor instantiation. `apps/web/ce/store/root.store.ts` UNCHANGED — `RootStore` already wires `TimeLineStore` and the new store is composed under it (D-06). Phase 5 reaches it via `rootStore.timelineStore.timelinePropagationStore`.
+- (04-02) TEST-20 (failure → preview rollback) covered transitively: (1) Wave 1 helper-immutability invariants pinned by `preview.test.ts`; (2) `rollback()` is a single `runInAction` block that clears state without ever calling `updateIssue` — greppable: `rootStore.issue.issues.updateIssue` appears exactly once in the file inside the success branch; (3) Phase 6 E2E TEST-24 drives the full UI → store → server → store failure-path cycle. A dedicated Phase 4 Vitest test would require introducing Vitest in `apps/web` — REJECTED by D-01.
 
 ### Pending Todos
 
@@ -139,6 +148,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-04T03:55:00.000Z
-Stopped at: Phase 4 Plan 01 EXECUTED — types + service + Vitest harness + 3 pure helpers shipped across 5 atomic commits. 11/11 vitest cases GREEN; 26 contract + 64 unit Phase 3 backend tests still GREEN; FE-08 + D-03b inert constraints honored.
-Resume file: .planning/phases/04-frontend-service-client-mobx-preview-store/04-02-PLAN.md
+Last session: 2026-05-04T04:06:09.000Z
+Stopped at: Phase 4 COMPLETE — Plan 02 EXECUTED on top of GREEN Wave 1. `TimelinePropagationStore` shipped with 4 actions + 6 observables + 1 computed + closed-set protocol-error discriminator + in-flight commit cache + `lastPreviewIds`-pre-clear pattern. `TimeLineStore` extended; `RootStore` UNCHANGED. 11 Wave 1 Vitest cases GREEN; 26 contract + 64 unit Phase 3 backend tests still GREEN; FE-08 + D-03b + D-05d + D-06 inert constraints honored. Phase 4 closes the typed-frontend seam Phase 5 will consume.
+Resume file: Phase 5 — Drag Handler Integration & Error UX (run `/gsd-transition` to start Phase 5 planning)
