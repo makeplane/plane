@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Facturación y Planes",
+        "description": "Elige tu plan, gestiona las suscripciones y actualiza fácilmente a medida que crecen tus necesidades.",
         "title": "Facturación y Planes",
         "current_plan": "Plan actual",
         "free_plan": "Actualmente estás usando el plan gratuito",
         "view_plans": "Ver planes"
       },
       "exports": {
+        "heading": "Exportaciones",
+        "description": "Exporta los datos de tu proyecto en varios formatos y accede a tu historial de exportaciones con enlaces de descarga.",
         "title": "Exportaciones",
         "exporting": "Exportando",
         "previous_exports": "Exportaciones anteriores",
         "export_separate_files": "Exportar los datos en archivos separados",
+        "exporting_projects": "Exportando proyecto",
+        "format": "Formato",
         "filters_info": "Aplica filtros para exportar elementos de trabajo específicos según tus criterios.",
         "modal": {
           "title": "Exportar a",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooks",
+        "description": "Automatiza las notificaciones a servicios externos cuando ocurren eventos del proyecto.",
         "title": "Webhooks",
         "add_webhook": "Agregar webhook",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integraciones",
+        "heading": "Integraciones",
+        "description": "Conéctate con herramientas y servicios populares para sincronizar tu trabajo en todo tu ecosistema de flujo de trabajo.",
         "page_title": "Trabaja con tus datos de Plane en aplicaciones disponibles o en las tuyas propias.",
         "page_description": "Ver todas las integraciones en uso por este espacio de trabajo o por ti."
       },
       "imports": {
-        "title": "Importaciones"
+        "title": "Importaciones",
+        "heading": "Importaciones",
+        "description": "Conecta e importa datos desde tus herramientas de gestión de proyectos existentes para optimizar la integración de tu flujo de trabajo."
       },
       "worklogs": {
-        "title": "Registros de trabajo"
+        "title": "Registros de trabajo",
+        "heading": "Registros de trabajo",
+        "description": "Descarga los registros de trabajo, también conocidos como hojas de tiempo, de cualquier persona en cualquier proyecto."
       },
       "group_syncing": {
         "title": "Sincronización de grupos",
@@ -242,7 +256,10 @@
         "description": "Configure su dominio y habilite el inicio de sesión único"
       },
       "project_states": {
-        "title": "Estados del proyecto"
+        "title": "Estados del proyecto",
+        "heading": "Ver resumen de progreso de todos los proyectos.",
+        "description": "Los Estados de proyecto son una función exclusiva de Plane para rastrear el progreso de todos tus proyectos por cualquier propiedad del proyecto.",
+        "go_to_settings": "Ir a configuración"
       },
       "projects": {
         "title": "Proyectos",
@@ -251,6 +268,16 @@
           "states": "Estados del proyecto",
           "labels": "Etiquetas del proyecto"
         }
+      },
+      "templates": {
+        "title": "Plantillas",
+        "heading": "Plantillas",
+        "description": "Ahorra el 80 % del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando usas plantillas."
+      },
+      "relations": {
+        "title": "Relaciones",
+        "heading": "Relaciones",
+        "description": "Crea y gestiona tipos de relaciones que conectan elementos de trabajo en tu espacio de trabajo."
       },
       "cancel_trial": {
         "title": "Cancela primero tu periodo de prueba.",
@@ -263,6 +290,7 @@
         "cancel_error_message": "Por favor, inténtalo de nuevo."
       },
       "applications": {
+        "internal": "Interno",
         "title": "Aplicaciones",
         "applicationId_copied": "ID de aplicación copiado al portapapeles",
         "clientId_copied": "ID de cliente copiado al portapapeles",
@@ -271,10 +299,61 @@
         "your_apps": "Tus aplicaciones",
         "connect": "Conectar",
         "connected": "Conectado",
+        "disconnect": "Desconectar",
         "install": "Instalar",
         "installed": "Instalado",
         "configure": "Configurar",
         "app_available": "Has hecho que esta aplicación esté disponible para usar con un espacio de trabajo de Plane",
+        "app_credentials_regenrated": {
+          "title": "Las credenciales de la aplicación se han regenerado correctamente",
+          "description": "Reemplace el secreto del cliente en todos los lugares donde se utilice. El secreto anterior ya no es válido."
+        },
+        "app_created": {
+          "title": "La aplicación se creó correctamente",
+          "description": "Utilice las credenciales para instalar la aplicación en un espacio de trabajo de Plane"
+        },
+        "installed_apps": "Aplicaciones instaladas",
+        "all_apps": "Todas las aplicaciones",
+        "internal_apps": "Aplicaciones internas",
+        "app_name_title": "¿Cómo llamarás a esta aplicación?",
+        "app_description_title": {
+          "label": "Descripción larga",
+          "placeholder": "Escriba una descripción larga para el mercado. Presione '/' para ver los comandos."
+        },
+        "authorization_grant_type": {
+          "title": "Tipo de conexión",
+          "description": "Elija si su aplicación debe instalarse una vez para el espacio de trabajo o permitir que cada usuario conecte su propia cuenta"
+        },
+        "website": {
+          "title": "Sitio web",
+          "description": "Enlace al sitio web de su aplicación.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Creador de aplicaciones",
+          "description": "La persona u organización que crea la aplicación."
+        },
+        "app_maker_error": "El creador de la aplicación es obligatorio",
+        "setup_url": {
+          "label": "URL de configuración",
+          "description": "Los usuarios serán redirigidos a esta URL cuando instalen la aplicación.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL del webhook",
+          "description": "Aquí es donde enviaremos eventos y actualizaciones de webhook desde los espacios de trabajo donde está instalada su aplicación.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Secreto del webhook",
+          "description": "Secreto utilizado para verificar las solicitudes entrantes del webhook.",
+          "placeholder": "Ingresa una clave secreta aleatoria"
+        },
+        "redirect_uris": {
+          "label": "URIs de redirección (separadas por espacios)",
+          "description": "Los usuarios serán redirigidos a esta ruta después de haberse autenticado con Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Conecta un espacio de trabajo de Plane para comenzar a usarla",
         "client_id_and_secret": "ID y Secreto de Cliente",
         "client_id_and_secret_description": "Copia y guarda esta clave secreta. No podrás ver esta clave después de hacer clic en Cerrar.",
@@ -286,23 +365,13 @@
         "slug_already_exists": "El slug ya existe",
         "failed_to_create_application": "Error al crear la aplicación",
         "upload_logo": "Subir Logo",
-        "app_name_title": "¿Cómo llamarás a esta aplicación?",
         "app_name_error": "El nombre de la aplicación es obligatorio",
         "app_short_description_title": "Dale una breve descripción a esta aplicación",
         "app_short_description_error": "La descripción corta de la aplicación es obligatoria",
-        "app_description_title": {
-          "label": "Descripción larga",
-          "placeholder": "Escriba una descripción larga para el mercado. Presione '/' para ver los comandos."
-        },
-        "authorization_grant_type": {
-          "title": "Tipo de conexión",
-          "description": "Elija si su aplicación debe instalarse una vez para el espacio de trabajo o permitir que cada usuario conecte su propia cuenta"
-        },
         "app_description_error": "La descripción de la aplicación es obligatoria",
         "app_slug_title": "Slug de la aplicación",
         "app_slug_error": "El slug de la aplicación es obligatorio",
-        "app_maker_title": "Creador de la aplicación",
-        "app_maker_error": "El creador de la aplicación es obligatorio",
+        "invalid_website_error": "Sitio web inválido",
         "webhook_url_title": "URL del Webhook",
         "webhook_url_error": "La URL del webhook es obligatoria",
         "invalid_webhook_url_error": "URL del webhook inválida",
@@ -364,7 +433,6 @@
         "video_url_title": "URL del Video",
         "video_url_error": "El URL del Video es requerido",
         "invalid_video_url_error": "URL del Video inválida",
-        "setup_url_title": "URL de Configuración",
         "setup_url_error": "La URL de Configuración es requerida",
         "invalid_setup_url_error": "URL de Configuración inválida",
         "configuration_url_title": "URL de Configuración",
@@ -380,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "Archivo inválido o excede el límite de tamaño ({size} MB)",
         "uploading": "Subiendo...",
         "upload_and_save": "Subir y guardar",
-        "app_credentials_regenrated": {
-          "title": "Las credenciales de la aplicación se han regenerado correctamente",
-          "description": "Reemplace el secreto del cliente en todos los lugares donde se utilice. El secreto anterior ya no es válido."
-        },
-        "app_created": {
-          "title": "La aplicación se creó correctamente",
-          "description": "Utilice las credenciales para instalar la aplicación en un espacio de trabajo de Plane"
-        },
-        "installed_apps": "Aplicaciones instaladas",
-        "all_apps": "Todas las aplicaciones",
-        "internal_apps": "Aplicaciones internas",
-        "website": {
-          "title": "Sitio web",
-          "description": "Enlace al sitio web de su aplicación.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Creador de aplicaciones",
-          "description": "La persona u organización que crea la aplicación."
-        },
-        "setup_url": {
-          "label": "URL de configuración",
-          "description": "Los usuarios serán redirigidos a esta URL cuando instalen la aplicación.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "URL del webhook",
-          "description": "Aquí es donde enviaremos eventos y actualizaciones de webhook desde los espacios de trabajo donde está instalada su aplicación.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "URIs de redirección (separadas por espacios)",
-          "description": "Los usuarios serán redirigidos a esta ruta después de haberse autenticado con Plane.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Solicitud de instalación",
         "app_consent_no_access_description": "Esta aplicación solo se puede instalar después de que un administrador del espacio de trabajo la instale. Contacta con el administrador de tu espacio de trabajo para continuar.",
+        "app_consent_unapproved_title": "Esta aplicación aún no ha sido revisada ni aprobada por Plane.",
+        "app_consent_unapproved_description": "Asegúrate de confiar en esta aplicación antes de conectarla a tu espacio de trabajo.",
+        "go_to_app": "Ir a la aplicación",
         "enable_app_mentions": "Habilitar menciones de la aplicación",
         "enable_app_mentions_tooltip": "Cuando esto está habilitado, los usuarios pueden mencionar o asignar elementos de trabajo a esta aplicación.",
         "scopes": "Ámbitos",
@@ -435,13 +472,18 @@
           "profile": "Acceso a la información del perfil de usuario",
           "agents": "Acceso a agentes y todas las entidades relacionadas con agentes",
           "assets": "Acceso a activos y todas las entidades relacionadas con activos"
-        },
-        "internal": "Interno"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Ve tu trabajo obtener más inteligente y más rápido con IA que está conectada de forma nativa a tu trabajo y base de conocimientos."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Scripts",
+        "new_script": "Nuevo script",
+        "description": "Automatiza tus flujos de trabajo con scripts personalizados y reglas de automatización."
       }
     },
     "empty_state": {

@@ -20,6 +20,7 @@
       "due_date": "期限日を追加",
       "parent": "親作業項目を追加",
       "sub_issue": "サブ作業項目を追加",
+      "dependency": "依存関係を追加",
       "relation": "関連を追加",
       "link": "リンクを追加",
       "existing": "既存の作業項目を追加"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "コメントリンクがクリップボードにコピーされました",
         "error": "コメントリンクのコピーに失敗しました。後でもう一度お試しください。"
+      },
+      "replies": {
+        "create": {
+          "submit_button": "返信を追加",
+          "placeholder": "返信を追加"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "返信の取得に失敗しました"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "返信を作成しました"
+            },
+            "error": {
+              "message": "返信の作成に失敗しました"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "返信を更新しました"
+            },
+            "error": {
+              "message": "返信の更新に失敗しました"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "返信を削除しました"
+            },
+            "error": {
+              "message": "返信の削除に失敗しました"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "すべての選択を解除"
     },
     "open_in_full_screen": "作業項目をフルスクリーンで開く",
+    "duplicate": {
+      "modal": {
+        "title": "別のプロジェクトにコピーを作成",
+        "description1": "作業項目のコピーを作成します。",
+        "description2": "複製の際にすべてのプロパティデータが削除されます。",
+        "placeholder": "プロジェクトを選択"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "作業項目を複製しました"
+        },
+        "error": {
+          "message": "作業項目の複製に失敗しました"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "ページを接続",
+      "show_wiki_pages": "Wikiページを表示",
+      "link_pages_to": "ページを接続",
+      "linked_pages": "リンクされたページ",
+      "no_description": "このページは空です。何かを書いて、ここにこのプレースホルダーとして表示してください。",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "ページが更新されました",
+            "message": "ページが正常に更新されました"
+          },
+          "error": {
+            "title": "ページが更新されませんでした",
+            "message": "ページを更新できませんでした"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "ページが削除されました",
+            "message": "ページが正常に削除されました"
+          },
+          "error": {
+            "title": "ページが削除されませんでした",
+            "message": "ページを削除できませんでした"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "クリックして賛成票を投じる",
       "click_to_downvote": "クリックして反対票を投じる",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "作業項目を更新できません",
         "message": "一部の作業項目では状態の変更が許可されていません。状態の変更が許可されていることを確認してください。"
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "ワークフローを有効化",
-        "description": "ワークアイテムの移動を制御するためのワークフローを設定します",
-        "no_states_tooltip": "ワークフローに状態が追加されていません。",
-        "toast": {
-          "loading": {
-            "enabling": "ワークフローを有効化しています",
-            "disabling": "ワークフローを無効化しています"
-          },
-          "success": {
-            "title": "成功！",
-            "message": "ワークフローが正常に有効化されました。"
-          },
-          "error": {
-            "title": "エラー！",
-            "message": "ワークフローを有効化できませんでした。もう一度お試しください。"
-          }
-        }
-      },
-      "heading": "ワークフロー",
-      "description": "作業項目の遷移を自動化し、タスクがプロジェクトのパイプラインをどのように進むかを制御するルールを設定します。",
-      "add_button": "新しいワークフローを追加",
-      "search": "ワークフローを検索",
-      "detail": {
-        "define": "ワークフローを定義",
-        "add_states": "状態を追加",
-        "unmapped_states": {
-          "title": "未マッピングの状態が検出されました",
-          "description": "選択したタイプの一部の作業項目は、現在このワークフローに存在しない状態にあります。",
-          "note": "このワークフローを有効にすると、それらの項目はこのワークフローの初期状態に自動的に移動します。",
-          "label": "不足している状態",
-          "tooltip": "一部の作業項目は、このワークフローにマッピングされていない状態にあります。確認するにはワークフローを開いてください。"
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "すべての状態が使用中です",
-          "description": "このプロジェクトで定義されているすべての状態は、すでに現在のワークフローに含まれています。"
-        }
-      },
-      "default_footer": {
-        "fallback_message": "このワークフローは、どのワークフローにも割り当てられていない作業項目タイプに適用されます。"
-      },
-      "create": {
-        "heading": "新しいワークフローを作成"
       }
     }
   },

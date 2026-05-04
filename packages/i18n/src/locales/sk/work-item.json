@@ -20,6 +20,7 @@
       "due_date": "Pridať termín",
       "parent": "Pridať nadradenú pracovnú položku",
       "sub_issue": "Pridať podriadenú pracovnú položku",
+      "dependency": "Pridať závislosť",
       "relation": "Pridať vzťah",
       "link": "Pridať odkaz",
       "existing": "Pridať existujúcu pracovnú položku"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "Odkaz na komentár bol skopírovaný do schránky",
         "error": "Chyba pri kopírovaní odkazu na komentár. Skúste to prosím neskôr."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Pridať odpoveď",
+          "placeholder": "Pridať odpoveď"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Načítanie odpovedí zlyhalo"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Odpoveď bola úspešne vytvorená"
+            },
+            "error": {
+              "message": "Vytvorenie odpovede zlyhalo"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Odpoveď bola úspešne aktualizovaná"
+            },
+            "error": {
+              "message": "Aktualizácia odpovede zlyhala"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Odpoveď bola úspešne odstránená"
+            },
+            "error": {
+              "message": "Odstránenie odpovede zlyhalo"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "Zrušiť výber všetkého"
     },
     "open_in_full_screen": "Otvoriť pracovnú položku na celú obrazovku",
+    "duplicate": {
+      "modal": {
+        "title": "Vytvoriť kópiu do iného projektu",
+        "description1": "Toto vytvorí kópiu pracovnej položky.",
+        "description2": "Pri duplikovaní budú odstránené všetky údaje vlastností.",
+        "placeholder": "Vybrať projekt"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Pracovná položka bola úspešne duplikovaná"
+        },
+        "error": {
+          "message": "Duplikovanie pracovnej položky zlyhalo"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Prepojiť stránky",
+      "show_wiki_pages": "Zobraziť wiki stránky",
+      "link_pages_to": "Prepojiť stránky s",
+      "linked_pages": "Prepojené stránky",
+      "no_description": "Toto je prázdna stránka. Prečo nenapíšete dovnútra niečo a neuvidíte to zobrazené ako tento zástupný text",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Stránky boli aktualizované",
+            "message": "Stránky boli úspešne aktualizované"
+          },
+          "error": {
+            "title": "Aktualizácia stránok zlyhala",
+            "message": "Aktualizácia stránok zlyhala"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Stránka bola odstránená",
+            "message": "Stránka bola úspešne odstránená"
+          },
+          "error": {
+            "title": "Odstránenie stránky zlyhalo",
+            "message": "Odstránenie stránky zlyhalo"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Kliknite pre hlasovanie hore",
       "click_to_downvote": "Kliknite pre hlasovanie dole",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "Nemožno aktualizovať pracovné položky",
         "message": "Zmena stavu nie je povolená pre niektoré pracovné položky. Uistite sa, že zmena stavu je povolená."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Povoliť pracovné postupy",
-        "description": "Nastavte pracovné postupy na riadenie pohybu pracovných položiek",
-        "no_states_tooltip": "Do pracovného postupu neboli pridané žiadne stavy.",
-        "toast": {
-          "loading": {
-            "enabling": "Povoľovanie pracovných postupov",
-            "disabling": "Vypínanie pracovných postupov"
-          },
-          "success": {
-            "title": "Úspech!",
-            "message": "Pracovné postupy boli úspešne povolené."
-          },
-          "error": {
-            "title": "Chyba!",
-            "message": "Pracovné postupy sa nepodarilo povoliť. Skúste to znova."
-          }
-        }
-      },
-      "heading": "Pracovné postupy",
-      "description": "Automatizujte prechody pracovných položiek a nastavte pravidlá, ktoré riadia, ako sa úlohy pohybujú cez tok projektu.",
-      "add_button": "Pridať nový pracovný postup",
-      "search": "Hľadať pracovné postupy",
-      "detail": {
-        "define": "Definovať pracovný postup",
-        "add_states": "Pridať stavy",
-        "unmapped_states": {
-          "title": "Zistené nenamapované stavy",
-          "description": "Niektoré pracovné položky vybraných typov sa momentálne nachádzajú v stavoch, ktoré v tomto pracovnom postupe neexistujú.",
-          "note": "Ak povolíte tento pracovný postup, tieto položky sa automaticky presunú do počiatočného stavu tohto pracovného postupu.",
-          "label": "Chýbajúce stavy",
-          "tooltip": "Niektoré pracovné položky sú v stavoch, ktoré nie sú namapované na tento pracovný postup. Otvorte pracovný postup a skontrolujte ho."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Všetky stavy sa používajú",
-          "description": "Všetky stavy definované pre tento projekt sú už prítomné vo vašom aktuálnom pracovnom postupe."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Tento pracovný postup sa vzťahuje na každý typ pracovnej položky, ktorý nie je priradený k žiadnemu pracovnému postupu."
-      },
-      "create": {
-        "heading": "Vytvoriť nový pracovný postup"
       }
     }
   },

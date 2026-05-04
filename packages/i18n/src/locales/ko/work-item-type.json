@@ -3,11 +3,25 @@
     "label": "워크 아이템 타입",
     "label_lowercase": "워크 아이템 타입",
     "settings": {
-      "title": "워크 아이템 타입",
+      "description": "팀의 요구에 맞게 자신만의 프로퍼티를 사용자 정의하고 추가하세요.",
+      "cant_delete_default_message": "이 작업 항목 유형은 삭제할 수 없습니다. 이 프로젝트의 기본 작업 항목 유형으로 설정되어 있기 때문입니다.",
+      "set_as_default": "기본값으로 설정",
+      "cant_set_default_inactive_message": "기본값으로 설정하기 전에 이 유형을 활성화하세요",
+      "set_default_confirmation": {
+        "title": "기본 작업 항목 유형으로 설정",
+        "description": "{name}을(를) 기본값으로 설정하면 이 워크스페이스의 모든 프로젝트에 가져옵니다. 모든 새 작업 항목은 기본적으로 이 유형을 사용합니다.",
+        "confirm_button": "기본값으로 설정"
+      },
       "properties": {
         "title": "커스텀 프로퍼티",
+        "description": "프로퍼티를 생성하고 사용자 정의하세요.",
         "tooltip": "각 워크 아이템 타입에는 제목, 설명, 담당자, 상태, 우선순위, 시작 날짜, 마감일, 모듈, 사이클 등과 같은 기본 프로퍼티 세트가 함께 제공됩니다. 팀의 요구에 맞게 자신만의 프로퍼티를 사용자 정의하고 추가할 수도 있습니다.",
         "add_button": "새 프로퍼티 추가",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "워크스페이스에서 가져오기"
+          }
+        },
         "dropdown": {
           "label": "프로퍼티 타입",
           "placeholder": "타입 선택"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "새 커스텀 프로퍼티 생성",
+            "update": "커스텀 프로퍼티 업데이트"
+          },
           "form": {
             "display_name": {
               "placeholder": "타이틀"
@@ -213,9 +231,50 @@
           "description": "이 워크 아이템 타입에 대해 추가하는 새 프로퍼티가 여기에 표시됩니다."
         }
       },
+      "types": {
+        "title": "타입",
+        "description": "프로퍼티로 작업 항목 유형을 생성하고 사용자 정의하세요.",
+        "sort_options": {
+          "project_count": "소속된 프로젝트 수"
+        },
+        "filter_options": {
+          "show_active": "활성 표시",
+          "show_inactive": "비활성 표시"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "새로 생성",
+            "import_from_workspace": "워크스페이스에서 가져오기"
+          },
+          "banner": {
+            "with_access": "워크스페이스 수준에서 타입을 가져오려면 작업 항목 유형을 활성화하세요",
+            "without_access": "작업 항목 유형이 비활성화되어 있습니다. 워크스페이스 관리자에게 문의하여 워크스페이스 설정에서 활성화하세요."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "커스텀 프로퍼티",
+        "add_button": "프로퍼티 추가",
+        "modal": {
+          "title": "프로퍼티 추가",
+          "empty": {
+            "title": "사용 가능한 프로퍼티 없음",
+            "description": "모든 프로퍼티가 이미 이 타입에 연결되어 있습니다."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "프로퍼티 연결 해제",
+          "description": "이 프로퍼티의 연결을 해제하면 이 타입을 사용하는 모든 작업 항목에서 해당 값이 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다.",
+          "input_label": "입력",
+          "input_label_suffix": "계속하려면:",
+          "confirm": "프로퍼티 연결 해제",
+          "loading": "연결 해제 중"
+        }
+      },
       "item_delete_confirmation": {
         "title": "이 유형 삭제",
         "description": "유형을 삭제하면 기존 데이터가 손실될 수 있습니다.",
+        "can_disable_warning": "대신 유형을 비활성화하시겠습니까?",
         "primary_button": "예, 삭제합니다",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "기본 작업 항목 유형은 삭제할 수 없습니다",
           "cannot_delete_work_item_type_with_associated_work_items": "연결된 작업 항목이 있는 작업 항목 유형은 삭제할 수 없습니다"
-        },
-        "can_disable_warning": "대신 유형을 비활성화하시겠습니까?"
-      },
-      "cant_delete_default_message": "이 작업 항목 유형은 삭제할 수 없습니다. 이 프로젝트의 기본 작업 항목 유형으로 설정되어 있기 때문입니다.",
-      "set_as_default": "기본값으로 설정",
-      "cant_set_default_inactive_message": "기본값으로 설정하기 전에 이 유형을 활성화하세요",
-      "set_default_confirmation": {
-        "title": "기본 작업 항목 유형으로 설정",
-        "description": "{name}을(를) 기본값으로 설정하면 이 워크스페이스의 모든 프로젝트에 가져옵니다. 모든 새 작업 항목은 기본적으로 이 유형을 사용합니다.",
-        "confirm_button": "기본값으로 설정"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "에러!",
           "message": {
+            "default": "작업 항목 유형 생성에 실패했습니다. 다시 시도해 주세요!",
             "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요."
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "에러!",
           "message": {
+            "default": "작업 항목 유형 업데이트에 실패했습니다. 다시 시도해 주세요!",
             "conflict": "{name} 유형이 이미 존재합니다. 다른 이름을 선택하세요."
           }
         }
@@ -383,10 +435,10 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "유효성 검사 오류!",
+      "title": "저장하면 기존 링크가 끊어집니다",
       "content": {
         "intro": "작업 항목 유형 {workItemTypeName}에 다음이 있습니다.",
-        "parent_items": "{count, plural, other {상위 작업 항목}}",
+        "parent_items": "{count, plural, other {#개 상위 링크가}} 제거됩니다.",
         "child_items": "{count, plural, other {하위 작업 항목}}",
         "parent_line_suffix_when_also_children": ", 그리고 ",
         "footer": "이 변경은 {workItemTypeName} 작업 항목 유형의 기존 작업 항목에서 상위·하위 관계를 제거합니다."
@@ -397,11 +449,11 @@
       },
       "error_toast": {
         "title": "오류!",
-        "message": "계층 구조를 깨뜨리지 못했습니다. 다시 시도해 주세요."
+        "message": "연결을 해제하고 저장하지 못했습니다. 다시 시도해 주세요."
       },
       "confirm_button": {
-        "loading": "적용 중",
-        "default": "적용 및 연결 해제"
+        "loading": "저장 중",
+        "default": "그래도 저장"
       }
     },
     "work_item_modal": {

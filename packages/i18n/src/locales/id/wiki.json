@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "Halaman tidak dapat dibuat atau ditambahkan ke koleksi. Silakan coba lagi.",
       "collection_link_copied": "Tautan koleksi disalin ke clipboard."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Tingkatkan untuk membuka Wiki",
+      "description": "Buka halaman publik, riwayat versi, halaman yang dibagikan, kolaborasi real-time, dan halaman ruang kerja untuk wiki, dokumen seluruh perusahaan, dan basis pengetahuan dengan Plane Pro.",
+      "upgrade_button": {
+        "text": "Tingkatkan"
+      },
+      "learn_more_button": {
+        "text": "Pelajari lebih lanjut"
+      },
+      "download_button": {
+        "text": "Unduh data",
+        "loading": "Mengunduh"
+      },
+      "tabs": {
+        "nested_pages": "Halaman Bertingkat",
+        "add_embeds": "Tambah embed",
+        "publish_pages": "Publikasikan halaman",
+        "comments": "Komentar"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Halaman bertingkat memerlukan paket berbayar. Tingkatkan untuk membukanya."
+    }
   }
 }

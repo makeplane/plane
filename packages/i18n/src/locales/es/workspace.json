@@ -95,16 +95,28 @@
       "scope_and_demand": "Alcance y Demanda",
       "custom": "Análisis Personalizado"
     },
+    "total": "Total de {entity}",
+    "started_work_items": "{entity} iniciados",
+    "backlog_work_items": "{entity} en backlog",
+    "un_started_work_items": "{entity} no iniciados",
+    "completed_work_items": "{entity} completados",
+    "project_insights": "Información del proyecto",
+    "summary_of_projects": "Resumen de proyectos",
+    "all_projects": "Todos los proyectos",
+    "trend_on_charts": "Tendencia en gráficos",
+    "active_projects": "Proyectos activos",
+    "customized_insights": "Información personalizada",
+    "created_vs_resolved": "Creado vs Resuelto",
     "empty_state": {
-      "customized_insights": {
-        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí.",
-        "title": "Aún no hay datos"
+      "project_insights": {
+        "title": "Aún no hay datos",
+        "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí."
       },
       "created_vs_resolved": {
-        "description": "Los elementos de trabajo creados y resueltos con el tiempo aparecerán aquí.",
-        "title": "Aún no hay datos"
+        "title": "Aún no hay datos",
+        "description": "Los elementos de trabajo creados y resueltos con el tiempo aparecerán aquí."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Aún no hay datos",
         "description": "Los elementos de trabajo asignados a ti, desglosados por estado, aparecerán aquí."
       },
@@ -132,29 +144,11 @@
         "description": "Los análisis de tendencias de entrada aparecerán aquí. Agrega elementos de trabajo a la entrada para comenzar a rastrear tendencias."
       }
     },
-    "created_vs_resolved": "Creado vs Resuelto",
-    "customized_insights": "Información personalizada",
-    "backlog_work_items": "{entity} en backlog",
-    "active_projects": "Proyectos activos",
-    "trend_on_charts": "Tendencia en gráficos",
-    "all_projects": "Todos los proyectos",
-    "summary_of_projects": "Resumen de proyectos",
-    "project_insights": "Información del proyecto",
-    "started_work_items": "{entity} iniciados",
-    "total_work_items": "Total de {entity}",
-    "total_projects": "Total de proyectos",
-    "total_admins": "Total de administradores",
-    "total_users": "Total de usuarios",
-    "total_intake": "Ingreso total",
-    "un_started_work_items": "{entity} no iniciados",
-    "total_guests": "Total de invitados",
-    "completed_work_items": "{entity} completados",
-    "total": "Total de {entity}",
+    "upgrade_to_plan": "Mejora a {plan} para desbloquear {tab}",
+    "workitem_resolved_vs_pending": "Elementos de trabajo resueltos vs pendientes",
     "projects_by_status": "Proyectos por estado",
     "active_users": "Usuarios activos",
-    "intake_trends": "Tendencias de admisión",
-    "workitem_resolved_vs_pending": "Elementos de trabajo resueltos vs pendientes",
-    "upgrade_to_plan": "Mejora a {plan} para desbloquear {tab}"
+    "intake_trends": "Tendencias de admisión"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proyecto} other {Proyectos}}",
@@ -162,6 +156,7 @@
       "label": "Agregar Proyecto"
     },
     "network": {
+      "label": "Red",
       "private": {
         "title": "Privado",
         "description": "Accesible solo por invitación"
@@ -195,7 +190,8 @@
       "archived_projects": "Archivados"
     },
     "common": {
-      "months_count": "{months, plural, one{# mes} other{# meses}}"
+      "months_count": "{months, plural, one{# mes} other{# meses}}",
+      "days_count": "{days, plural, one{# día} other{# días}}"
     },
     "empty_state": {
       "general": {
@@ -316,6 +312,10 @@
       "archived": {
         "title": "Aún no hay Pages archivadas",
         "description": "Archiva las Pages que no estén en tu radar. Accede a ellas aquí cuando las necesites."
+      },
+      "shared": {
+        "title": "Aún no hay páginas compartidas",
+        "description": "Las páginas que otros han compartido contigo aparecerán aquí."
       }
     }
   },

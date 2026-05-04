@@ -1,22 +1,15 @@
 {
   "updates": {
+    "progress": {
+      "title": "Progreso",
+      "since_last_update": "Desde la última actualización",
+      "comments": "{count, plural, one{# comentario} other{# comentarios}}"
+    },
     "add_update": "Agregar actualización",
     "add_update_placeholder": "Escribe tu actualización aquí",
     "empty": {
       "title": "Aún no hay actualizaciones",
       "description": "Puedes ver las actualizaciones aquí."
-    },
-    "delete": {
-      "title": "Eliminar actualización",
-      "confirmation": "¿Estás seguro de querer eliminar esta actualización? Esta acción es irreversible.",
-      "success": {
-        "title": "Actualización eliminada",
-        "message": "La actualización se ha eliminado correctamente"
-      },
-      "error": {
-        "title": "Actualización no eliminada",
-        "message": "La actualización no se pudo eliminar"
-      }
     },
     "reaction": {
       "create": {
@@ -40,11 +33,6 @@
         }
       }
     },
-    "progress": {
-      "title": "Progreso",
-      "since_last_update": "Desde la última actualización",
-      "comments": "{count, plural, one{# comentario} other{# comentarios}}"
-    },
     "create": {
       "success": {
         "title": "Actualización creada",
@@ -53,6 +41,18 @@
       "error": {
         "title": "Actualización no creada",
         "message": "No se pudo crear la actualización"
+      }
+    },
+    "delete": {
+      "title": "Eliminar actualización",
+      "confirmation": "¿Estás seguro de querer eliminar esta actualización? Esta acción es irreversible.",
+      "success": {
+        "title": "Actualización eliminada",
+        "message": "La actualización se ha eliminado correctamente"
+      },
+      "error": {
+        "title": "Actualización no eliminada",
+        "message": "La actualización no se pudo eliminar"
       }
     },
     "update": {

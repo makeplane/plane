@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Thanh toán và Kế hoạch",
+        "description": "Chọn gói của bạn, quản lý đăng ký và dễ dàng nâng cấp khi nhu cầu của bạn phát triển.",
         "title": "Thanh toán và Kế hoạch",
         "current_plan": "Kế hoạch hiện tại",
         "free_plan": "Bạn đang sử dụng kế hoạch miễn phí",
         "view_plans": "Xem kế hoạch"
       },
       "exports": {
+        "heading": "Xuất",
+        "description": "Xuất dữ liệu dự án của bạn dưới nhiều định dạng và truy cập lịch sử xuất với các liên kết tải xuống.",
         "title": "Xuất",
         "exporting": "Đang xuất",
         "previous_exports": "Xuất trước đây",
         "export_separate_files": "Xuất dữ liệu thành các tệp riêng biệt",
+        "exporting_projects": "Đang xuất dự án",
+        "format": "Định dạng",
         "filters_info": "Áp dụng bộ lọc để xuất các mục công việc cụ thể dựa trên tiêu chí của bạn.",
         "modal": {
           "title": "Xuất đến",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhook",
+        "description": "Tự động hóa thông báo đến các dịch vụ bên ngoài khi các sự kiện dự án xảy ra.",
         "title": "Webhooks",
         "add_webhook": "Thêm webhook",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Tích hợp",
+        "heading": "Tích hợp",
+        "description": "Kết nối với các công cụ và dịch vụ phổ biến để đồng bộ hóa công việc của bạn trong toàn bộ hệ sinh thái quy trình làm việc.",
         "page_title": "Làm việc với dữ liệu Plane của bạn trong các ứng dụng có sẵn hoặc ứng dụng riêng của bạn.",
         "page_description": "Xem tất cả các tích hợp được workspace này hoặc bạn đang sử dụng."
       },
       "imports": {
-        "title": "Nhập dữ liệu"
+        "title": "Nhập dữ liệu",
+        "heading": "Nhập",
+        "description": "Kết nối và nhập dữ liệu từ các công cụ quản lý dự án hiện có của bạn để tinh giản việc tích hợp quy trình làm việc."
       },
       "worklogs": {
-        "title": "Nhật ký công việc"
+        "title": "Nhật ký công việc",
+        "heading": "Nhật ký công việc",
+        "description": "Tải xuống nhật ký công việc (bảng chấm công) cho bất kỳ ai trong bất kỳ dự án nào."
       },
       "group_syncing": {
         "title": "Đồng bộ nhóm",
@@ -242,7 +256,10 @@
         "description": "Cấu hình miền của bạn và bật Đăng nhập một lần"
       },
       "project_states": {
-        "title": "Trạng thái dự án"
+        "title": "Trạng thái dự án",
+        "heading": "Xem tổng quan tiến độ cho tất cả dự án.",
+        "description": "Trạng thái Dự án là tính năng chỉ có trong Plane để theo dõi tiến độ của tất cả các dự án của bạn theo bất kỳ thuộc tính dự án nào.",
+        "go_to_settings": "Đi đến cài đặt"
       },
       "projects": {
         "title": "Dự án",
@@ -251,6 +268,16 @@
           "states": "Trạng thái dự án",
           "labels": "Nhãn dự án"
         }
+      },
+      "templates": {
+        "title": "Mẫu",
+        "heading": "Mẫu",
+        "description": "Tiết kiệm 80% thời gian dành cho việc tạo dự án, mục công việc và trang khi bạn sử dụng mẫu."
+      },
+      "relations": {
+        "title": "Quan hệ",
+        "heading": "Quan hệ",
+        "description": "Tạo và quản lý các loại quan hệ kết nối các mục công việc trong không gian làm việc của bạn."
       },
       "cancel_trial": {
         "title": "Hủy bỏ dùng thử trước.",
@@ -263,6 +290,7 @@
         "cancel_error_message": "Vui lòng thử lại."
       },
       "applications": {
+        "internal": "Nội bộ",
         "title": "Ứng dụng",
         "applicationId_copied": "ID ứng dụng đã được sao chép vào clipboard",
         "clientId_copied": "ID khách hàng đã được sao chép vào clipboard",
@@ -271,10 +299,61 @@
         "your_apps": "Ứng dụng của bạn",
         "connect": "Kết nối",
         "connected": "Đã kết nối",
+        "disconnect": "Ngắt kết nối",
         "install": "Cài đặt",
         "installed": "Đã cài đặt",
         "configure": "Cấu hình",
         "app_available": "Bạn đã làm cho ứng dụng này có sẵn để sử dụng với một workspace Plane",
+        "app_credentials_regenrated": {
+          "title": "Thông tin xác thực ứng dụng đã được tạo lại thành công",
+          "description": "Thay thế client secret ở mọi nơi nó được sử dụng. Secret trước đó không còn hợp lệ."
+        },
+        "app_created": {
+          "title": "Ứng dụng đã được tạo thành công",
+          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong không gian làm việc Plane"
+        },
+        "installed_apps": "Ứng dụng đã cài đặt",
+        "all_apps": "Tất cả ứng dụng",
+        "internal_apps": "Ứng dụng nội bộ",
+        "app_name_title": "Bạn sẽ gọi ứng dụng này là gì",
+        "app_description_title": {
+          "label": "Mô tả dài",
+          "placeholder": "Viết mô tả dài cho marketplace. Nhấn '/' để xem lệnh."
+        },
+        "authorization_grant_type": {
+          "title": "Loại kết nối",
+          "description": "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ"
+        },
+        "website": {
+          "title": "Trang web",
+          "description": "Liên kết đến trang web của ứng dụng của bạn.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Trình tạo ứng dụng",
+          "description": "Người hoặc tổ chức tạo ra ứng dụng."
+        },
+        "app_maker_error": "Người tạo ứng dụng là bắt buộc",
+        "setup_url": {
+          "label": "URL thiết lập",
+          "description": "Người dùng sẽ được chuyển hướng đến URL này khi họ cài đặt ứng dụng.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Đây là nơi chúng tôi sẽ gửi các sự kiện và cập nhật webhook từ các workspace nơi ứng dụng của bạn được cài đặt.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Khóa bí mật Webhook",
+          "description": "Khóa bí mật được sử dụng để xác minh các yêu cầu webhook đến.",
+          "placeholder": "Nhập một khóa bí mật ngẫu nhiên"
+        },
+        "redirect_uris": {
+          "label": "URI chuyển hướng (cách nhau bằng dấu cách)",
+          "description": "Người dùng sẽ được chuyển hướng đến đường dẫn này sau khi xác thực với Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Kết nối một workspace Plane để bắt đầu sử dụng nó",
         "client_id_and_secret": "ID khách hàng và Secret",
         "client_id_and_secret_description": "Sao chép và lưu khóa bí mật này trong Pages. Bạn không thể nhìn thấy khóa này lại sau khi bạn đóng.",
@@ -286,23 +365,13 @@
         "slug_already_exists": "Slug đã tồn tại",
         "failed_to_create_application": "Không thể tạo ứng dụng",
         "upload_logo": "Tải lên Logo",
-        "app_name_title": "Bạn sẽ gọi ứng dụng này là gì",
         "app_name_error": "Tên ứng dụng là bắt buộc",
         "app_short_description_title": "Đưa ra một mô tả ngắn cho ứng dụng này",
         "app_short_description_error": "Mô tả ngắn ứng dụng là bắt buộc",
-        "app_description_title": {
-          "label": "Mô tả dài",
-          "placeholder": "Viết mô tả dài cho marketplace. Nhấn '/' để xem lệnh."
-        },
-        "authorization_grant_type": {
-          "title": "Loại kết nối",
-          "description": "Chọn liệu ứng dụng của bạn nên được cài đặt một lần cho không gian làm việc hay để mỗi người dùng kết nối tài khoản riêng của họ"
-        },
         "app_description_error": "Mô tả ứng dụng là bắt buộc",
         "app_slug_title": "Slug ứng dụng",
         "app_slug_error": "Slug ứng dụng là bắt buộc",
-        "app_maker_title": "Người tạo ứng dụng",
-        "app_maker_error": "Người tạo ứng dụng là bắt buộc",
+        "invalid_website_error": "Trang web không hợp lệ",
         "webhook_url_title": "URL Webhook",
         "webhook_url_error": "URL Webhook là bắt buộc",
         "invalid_webhook_url_error": "URL Webhook không hợp lệ",
@@ -316,6 +385,8 @@
         "authorized_javascript_origins_description": "Nhập các nguồn cách nhau bởi dấu cách mà ứng dụng sẽ được phép thực hiện yêu cầu e.g app.com example.com",
         "create_app": "Tạo ứng dụng",
         "update_app": "Cập nhật ứng dụng",
+        "build_your_own_app": "Tạo ứng dụng của riêng bạn",
+        "edit_app_details": "Chỉnh sửa chi tiết ứng dụng",
         "regenerate_client_secret_description": "Tạo lại khóa bí mật. Nếu bạn tạo lại khóa, bạn có thể sao chép khóa hoặc tải xuống nó thành một tệp CSV ngay sau đó.",
         "regenerate_client_secret": "Tạo lại khóa bí mật",
         "regenerate_client_secret_confirm_title": "Bạn có chắc chắn muốn tạo lại khóa bí mật?",
@@ -362,7 +433,6 @@
         "video_url_title": "URL Video",
         "video_url_error": "URL Video là bắt buộc",
         "invalid_video_url_error": "URL Video không hợp lệ",
-        "setup_url_title": "URL Cài đặt",
         "setup_url_error": "URL Cài đặt là bắt buộc",
         "invalid_setup_url_error": "URL Cài đặt không hợp lệ",
         "configuration_url_title": "URL Cấu hình",
@@ -378,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "Tệp không hợp lệ hoặc vượt quá giới hạn kích thước ({size} MB)",
         "uploading": "Đang tải lên...",
         "upload_and_save": "Tải lên và lưu",
-        "app_credentials_regenrated": {
-          "title": "Thông tin xác thực ứng dụng đã được tạo lại thành công",
-          "description": "Thay thế client secret ở mọi nơi nó được sử dụng. Secret trước đó không còn hợp lệ."
-        },
-        "app_created": {
-          "title": "Ứng dụng đã được tạo thành công",
-          "description": "Sử dụng thông tin xác thực để cài đặt ứng dụng trong không gian làm việc Plane"
-        },
-        "installed_apps": "Ứng dụng đã cài đặt",
-        "all_apps": "Tất cả ứng dụng",
-        "internal_apps": "Ứng dụng nội bộ",
-        "website": {
-          "title": "Trang web",
-          "description": "Liên kết đến trang web của ứng dụng của bạn.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Trình tạo ứng dụng",
-          "description": "Người hoặc tổ chức tạo ra ứng dụng."
-        },
-        "setup_url": {
-          "label": "URL thiết lập",
-          "description": "Người dùng sẽ được chuyển hướng đến URL này khi họ cài đặt ứng dụng.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "URL webhook",
-          "description": "Đây là nơi chúng tôi sẽ gửi các sự kiện và cập nhật webhook từ các workspace nơi ứng dụng của bạn được cài đặt.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "URI chuyển hướng (cách nhau bằng dấu cách)",
-          "description": "Người dùng sẽ được chuyển hướng đến đường dẫn này sau khi xác thực với Plane.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Yêu cầu cài đặt",
         "app_consent_no_access_description": "Ứng dụng này chỉ có thể được cài đặt sau khi quản trị viên workspace cài đặt nó. Liên hệ với quản trị viên workspace của bạn để tiếp tục.",
+        "app_consent_unapproved_title": "Ứng dụng này chưa được Plane xem xét hoặc phê duyệt.",
+        "app_consent_unapproved_description": "Hãy chắc chắn rằng bạn tin tưởng ứng dụng này trước khi kết nối nó với không gian làm việc của bạn.",
+        "go_to_app": "Đi đến ứng dụng",
         "enable_app_mentions": "Bật đề cập ứng dụng",
         "enable_app_mentions_tooltip": "Khi bật tính năng này, người dùng có thể đề cập hoặc gán Work Items cho ứng dụng này.",
         "scopes": "Phạm vi",
@@ -433,15 +472,18 @@
           "profile": "Truy cập thông tin hồ sơ người dùng",
           "agents": "Truy cập vào agents và tất cả các thực thể liên quan đến agent",
           "assets": "Truy cập vào tài sản và tất cả các thực thể liên quan đến tài sản"
-        },
-        "build_your_own_app": "Tạo ứng dụng của riêng bạn",
-        "edit_app_details": "Chỉnh sửa chi tiết ứng dụng",
-        "internal": "Nội bộ"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Xem công việc của bạn trở nên thông minh và nhanh hơn với AI được kết nối một cách tự nhiên với công việc và cơ sở kiến thức của bạn."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Script",
+        "new_script": "Script mới",
+        "description": "Tự động hóa quy trình làm việc của bạn với các script và quy tắc tự động hóa tùy chỉnh."
       }
     },
     "empty_state": {

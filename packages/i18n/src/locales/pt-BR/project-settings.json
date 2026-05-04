@@ -21,7 +21,11 @@
     "members": {
       "label": "Membros",
       "project_lead": "Líder do projeto",
+      "project_lead_description": "Selecione o líder do projeto.",
       "default_assignee": "Responsável padrão",
+      "default_assignee_description": "Selecione o responsável padrão do projeto.",
+      "project_subscribers": "Assinantes do projeto",
+      "project_subscribers_description": "Selecione os membros que receberão notificações deste projeto.",
       "guest_super_permissions": {
         "title": "Conceder acesso de visualização a todos os itens de trabalho para usuários convidados:",
         "sub_heading": "Isso permitirá que os convidados tenham acesso de visualização a todos os itens de trabalho do projeto."
@@ -30,13 +34,11 @@
         "title": "Convidar membros",
         "sub_heading": "Convide membros para trabalhar em seu projeto.",
         "select_co_worker": "Selecionar colega de trabalho"
-      },
-      "project_lead_description": "Selecione o líder do projeto.",
-      "default_assignee_description": "Selecione o responsável padrão do projeto.",
-      "project_subscribers": "Assinantes do projeto",
-      "project_subscribers_description": "Selecione os membros que receberão notificações deste projeto."
+      }
     },
     "states": {
+      "heading": "Estados",
+      "description": "Defina e personalize os estados de fluxo de trabalho para acompanhar o progresso dos seus itens de trabalho.",
       "describe_this_state_for_your_members": "Descreva este estado para seus membros.",
       "empty_state": {
         "title": "Nenhum estado disponível para o grupo {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etiquetas",
+      "description": "Crie etiquetas personalizadas para categorizar e organizar seus itens de trabalho",
       "label_title": "Título da etiqueta",
       "label_title_is_required": "O título da etiqueta é obrigatório",
       "label_max_char": "O nome da etiqueta não deve exceder 255 caracteres",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimativas",
+      "description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe.",
       "label": "Estimativas",
       "title": "Habilitar estimativas para meu projeto",
-      "description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe.",
+      "enable_description": "Elas ajudam você a comunicar a complexidade e a carga de trabalho da equipe.",
       "no_estimate": "Sem estimativa",
       "new": "Novo sistema de estimativa",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Falha ao reordenar estimativas",
             "message": "Não foi possível reordenar as estimativas, tente novamente"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistema de estimativa criado",
+            "message": "Criado e habilitado com sucesso"
+          },
+          "error": {
+            "title": "Erro",
+            "message": "Algo deu errado"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automações",
+      "heading": "Automações",
+      "description": "Configure ações automatizadas para otimizar seu fluxo de trabalho de gerenciamento de projetos e reduzir tarefas manuais.",
       "auto-archive": {
         "title": "Arquivar automaticamente itens de trabalho fechados",
         "description": "O Plane arquivará automaticamente os itens de trabalho que foram concluídos ou cancelados.",
@@ -194,89 +212,115 @@
         "description": "Configure o GitHub e outras integrações para sincronizar os itens de trabalho do seu projeto."
       }
     },
-    "cycles": {
-      "auto_schedule": {
-        "heading": "Agendamento automático de ciclos",
-        "description": "Mantenha os ciclos em movimento sem configuração manual.",
-        "tooltip": "Crie automaticamente novos ciclos com base na programação escolhida.",
-        "edit_button": "Editar",
-        "form": {
-          "cycle_title": {
-            "label": "Título do ciclo",
-            "placeholder": "Título",
-            "tooltip": "O título será acrescido de números para os ciclos subsequentes. Por exemplo: Design - 1/2/3",
-            "validation": {
-              "required": "O título do ciclo é obrigatório",
-              "max_length": "O título não deve exceder 255 caracteres"
-            }
-          },
-          "cycle_duration": {
-            "label": "Duração do ciclo",
-            "unit": "Semanas",
-            "validation": {
-              "required": "A duração do ciclo é obrigatória",
-              "min": "A duração do ciclo deve ser de pelo menos 1 semana",
-              "max": "A duração do ciclo não pode exceder 30 semanas",
-              "positive": "A duração do ciclo deve ser positiva"
-            }
-          },
-          "cooldown_period": {
-            "label": "Período de resfriamento",
-            "unit": "dias",
-            "tooltip": "Pausa entre ciclos antes do início do próximo.",
-            "validation": {
-              "required": "O período de resfriamento é obrigatório",
-              "negative": "O período de resfriamento não pode ser negativo"
-            }
-          },
-          "start_date": {
-            "label": "Dia de início do ciclo",
-            "validation": {
-              "required": "A data de início é obrigatória",
-              "past": "A data de início não pode estar no passado"
-            }
-          },
-          "number_of_cycles": {
-            "label": "Número de ciclos futuros",
-            "validation": {
-              "required": "O número de ciclos é obrigatório",
-              "min": "Pelo menos 1 ciclo é obrigatório",
-              "max": "Não é possível agendar mais de 3 ciclos"
-            }
-          },
-          "auto_rollover": {
-            "label": "Transferência automática de itens de trabalho",
-            "tooltip": "No dia em que um ciclo for concluído, mover todos os itens de trabalho não concluídos para o próximo ciclo."
-          }
-        },
+    "workflows": {
+      "toggle": {
+        "title": "Habilitar fluxos de trabalho",
+        "description": "Defina fluxos de trabalho para controlar a movimentação dos itens de trabalho",
+        "no_states_tooltip": "Nenhum estado foi adicionado ao fluxo de trabalho.",
+        "no_work_item_types_tooltip": "Nenhum tipo de item de trabalho foi adicionado ao fluxo de trabalho.",
+        "no_states_or_work_item_types_tooltip": "Nenhum estado ou tipo de item de trabalho foi adicionado ao fluxo de trabalho.",
         "toast": {
-          "toggle": {
-            "loading_enable": "Ativando agendamento automático de ciclos",
-            "loading_disable": "Desativando agendamento automático de ciclos",
-            "success": {
-              "title": "Sucesso!",
-              "message": "Agendamento automático de ciclos ativado com sucesso."
-            },
-            "error": {
-              "title": "Erro!",
-              "message": "Falha ao ativar o agendamento automático de ciclos."
-            }
+          "loading": {
+            "enabling": "Habilitando fluxos de trabalho",
+            "disabling": "Desabilitando fluxos de trabalho"
           },
-          "save": {
-            "loading": "Salvando configuração de agendamento automático de ciclos",
-            "success": {
-              "title": "Sucesso!",
-              "message_create": "Configuração de agendamento automático de ciclos salva com sucesso.",
-              "message_update": "Configuração de agendamento automático de ciclos atualizada com sucesso."
-            },
-            "error": {
-              "title": "Erro!",
-              "message_create": "Falha ao salvar a configuração de agendamento automático de ciclos.",
-              "message_update": "Falha ao atualizar a configuração de agendamento automático de ciclos."
-            }
+          "success": {
+            "title": "Sucesso!",
+            "message": "Fluxos de trabalho habilitados com sucesso."
+          },
+          "error": {
+            "title": "Erro!",
+            "message": "Falha ao habilitar os fluxos de trabalho. Tente novamente."
           }
         }
+      },
+      "heading": "Fluxos de trabalho",
+      "description": "Automatize as transições dos itens de trabalho e defina regras para controlar como as tarefas avançam pelo fluxo do seu projeto.",
+      "add_button": "Adicionar novo fluxo de trabalho",
+      "search": "Pesquisar fluxos de trabalho",
+      "detail": {
+        "define": "Definir fluxo de trabalho",
+        "add_states": "Adicionar estados",
+        "unmapped_states": {
+          "title": "Estados não mapeados detectados",
+          "description": "Alguns itens de trabalho dos tipos selecionados estão atualmente em estados que não existem neste fluxo de trabalho.",
+          "note": "Se você habilitar este fluxo de trabalho, esses itens serão movidos automaticamente para o estado inicial deste fluxo de trabalho.",
+          "label": "Estados ausentes",
+          "tooltip": "Alguns itens de trabalho estão em estados que não estão mapeados para este fluxo de trabalho. Abra o fluxo de trabalho para revisar."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Todos os estados estão em uso",
+          "description": "Todos os estados definidos para este projeto já estão presentes no seu fluxo de trabalho atual."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Este fluxo de trabalho se aplica a qualquer tipo de item de trabalho que não esteja atribuído a um fluxo de trabalho."
+      },
+      "create": {
+        "heading": "Criar novo fluxo de trabalho",
+        "name": {
+          "placeholder": "Adicione um nome único",
+          "validation": {
+            "max_length": "O nome deve ter menos de 255 caracteres",
+            "required": "O nome é obrigatório",
+            "invalid": "O nome só pode conter letras, números, espaços, hifens e apóstrofos"
+          }
+        },
+        "description": {
+          "placeholder": "Adicione uma breve descrição",
+          "validation": {
+            "invalid": "A descrição só pode conter letras, números, espaços, hifens e apóstrofos"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipo de item de trabalho"
+        },
+        "success": {
+          "title": "Sucesso!",
+          "message": "Fluxo de trabalho criado com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao criar o fluxo de trabalho. Tente novamente."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Sucesso!",
+          "message": "Fluxo de trabalho atualizado com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao atualizar o fluxo de trabalho. Tente novamente."
+        }
+      },
+      "delete": {
+        "loading": "Excluindo fluxo de trabalho",
+        "success": {
+          "title": "Sucesso!",
+          "message": "Fluxo de trabalho excluído com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao excluir o fluxo de trabalho. Tente novamente."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Sucesso!",
+          "message": "Estados adicionados com sucesso."
+        },
+        "error": {
+          "title": "Erro!",
+          "message": "Falha ao adicionar estados. Tente novamente."
+        }
       }
+    },
+    "work_item_types": {
+      "heading": "Tipos de item de trabalho",
+      "description": "Crie e personalize diferentes tipos de itens de trabalho com propriedades únicas"
     },
     "features": {
       "cycles": {
@@ -384,6 +428,98 @@
         "loading": "Atualizando recurso do projeto...",
         "success": "Recurso do projeto atualizado com sucesso.",
         "error": "Algo deu errado ao atualizar o recurso do projeto. Por favor, tente novamente."
+      }
+    },
+    "project_updates": {
+      "heading": "Atualizações do projeto",
+      "description": "Acompanhamento consolidado e monitoramento do progresso para este projeto"
+    },
+    "templates": {
+      "heading": "Modelos",
+      "description": "Economize 80% do tempo gasto na criação de projetos, itens de trabalho e páginas quando você usar modelos."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Agendamento automático de ciclos",
+        "description": "Mantenha os ciclos em movimento sem configuração manual.",
+        "tooltip": "Crie automaticamente novos ciclos com base na programação escolhida.",
+        "edit_button": "Editar",
+        "form": {
+          "cycle_title": {
+            "label": "Título do ciclo",
+            "placeholder": "Título",
+            "tooltip": "O título será acrescido de números para os ciclos subsequentes. Por exemplo: Design - 1/2/3",
+            "validation": {
+              "required": "O título do ciclo é obrigatório",
+              "max_length": "O título não deve exceder 255 caracteres"
+            }
+          },
+          "cycle_duration": {
+            "label": "Duração do ciclo",
+            "unit": "Semanas",
+            "validation": {
+              "required": "A duração do ciclo é obrigatória",
+              "min": "A duração do ciclo deve ser de pelo menos 1 semana",
+              "max": "A duração do ciclo não pode exceder 30 semanas",
+              "positive": "A duração do ciclo deve ser positiva"
+            }
+          },
+          "cooldown_period": {
+            "label": "Período de resfriamento",
+            "unit": "dias",
+            "tooltip": "Pausa entre ciclos antes do início do próximo.",
+            "validation": {
+              "required": "O período de resfriamento é obrigatório",
+              "negative": "O período de resfriamento não pode ser negativo"
+            }
+          },
+          "start_date": {
+            "label": "Dia de início do ciclo",
+            "validation": {
+              "required": "A data de início é obrigatória",
+              "past": "A data de início não pode estar no passado"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Número de ciclos futuros",
+            "validation": {
+              "required": "O número de ciclos é obrigatório",
+              "min": "Pelo menos 1 ciclo é obrigatório",
+              "max": "Não é possível agendar mais de 3 ciclos"
+            }
+          },
+          "auto_rollover": {
+            "label": "Transferência automática de itens de trabalho",
+            "tooltip": "No dia em que um ciclo for concluído, mover todos os itens de trabalho não concluídos para o próximo ciclo."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Ativando agendamento automático de ciclos",
+            "loading_disable": "Desativando agendamento automático de ciclos",
+            "success": {
+              "title": "Sucesso!",
+              "message": "Agendamento automático de ciclos ativado com sucesso."
+            },
+            "error": {
+              "title": "Erro!",
+              "message": "Falha ao ativar o agendamento automático de ciclos."
+            }
+          },
+          "save": {
+            "loading": "Salvando configuração de agendamento automático de ciclos",
+            "success": {
+              "title": "Sucesso!",
+              "message_create": "Configuração de agendamento automático de ciclos salva com sucesso.",
+              "message_update": "Configuração de agendamento automático de ciclos atualizada com sucesso."
+            },
+            "error": {
+              "title": "Erro!",
+              "message_create": "Falha ao salvar a configuração de agendamento automático de ciclos.",
+              "message_update": "Falha ao atualizar a configuração de agendamento automático de ciclos."
+            }
+          }
+        }
       }
     }
   }

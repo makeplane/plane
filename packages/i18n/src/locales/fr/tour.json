@@ -110,6 +110,12 @@
         "description": "Un élément de travail peut être reporté pour le réviser plus tard. Il sera déplacé au bas de votre liste de demandes ouvertes."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Arrêtez de changer d’onglet. Connectez votre monde.",
+        "description": "Liez GitHub et Slack pour suivre les PR et résumer les discussions directement dans Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigation, réinventée",

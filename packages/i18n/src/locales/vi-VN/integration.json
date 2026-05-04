@@ -194,6 +194,10 @@
       "server_error_states": "Lỗi máy chủ khi tải trạng thái"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Kết nối và đồng bộ kho Bitbucket Data Center của bạn với Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Xác thực token IdP bên ngoài để truy cập API.",
@@ -302,6 +306,7 @@
     "generic_error": "Đã xảy ra lỗi không mong muốn khi xử lý yêu cầu của bạn",
     "connection_not_found": "Không thể tìm thấy kết nối được yêu cầu",
     "multiple_connections_found": "Nhiều kết nối đã được tìm thấy khi chỉ mong đợi một kết nối",
+    "cannot_create_multiple_connections": "Bạn đã kết nối tổ chức của mình với một không gian làm việc. Vui lòng ngắt kết nối hiện tại trước khi kết nối mới.",
     "installation_not_found": "Không thể tìm thấy cài đặt được yêu cầu",
     "user_not_found": "Không thể tìm thấy người dùng được yêu cầu",
     "error_fetching_token": "Không thể lấy mã thông báo xác thực",
@@ -315,6 +320,7 @@
     "pulling": "Đang kéo",
     "timed_out": "Quá thời gian",
     "pulled": "Đã kéo",
+    "progressing": "Đang tiến hành",
     "transforming": "Đang chuyển đổi",
     "transformed": "Đã chuyển đổi",
     "pushing": "Đang đẩy",

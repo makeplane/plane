@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Silakan masukkan URL yang valid."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Deskripsikan konten blok ini",
+      "generated_here": "Konten AI Anda akan dihasilkan di sini"
+    },
+    "block_types": {
+      "placeholder": "Pilih jenis blok",
+      "summarize_page": "Ringkas Halaman",
+      "custom_prompt": "Prompt Kustom"
+    },
+    "actions": {
+      "discard": "Buang",
+      "generate": "Hasilkan",
+      "generating": "Menghasilkan",
+      "rewriting": "Menulis ulang",
+      "rewrite": "Tulis ulang",
+      "use_this": "Gunakan ini",
+      "refine": "Perbaiki"
+    }
   }
 }

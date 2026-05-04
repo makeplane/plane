@@ -249,10 +249,22 @@
       "title": "Suivez les feuilles de temps pour tous les membres",
       "description": "Enregistrez le temps sur les éléments de travail pour afficher des feuilles de temps détaillées pour tout membre de l'équipe à travers les projets."
     },
+    "group_syncing": {
+      "title": "Aucun mappage de groupe pour le moment"
+    },
     "template_setting": {
       "title": "Aucun modèle pour le moment",
       "description": "Réduisez le temps de configuration en créant des modèles pour les projets, les éléments de travail et les pages — et démarrez un nouveau travail en quelques secondes.",
       "cta_primary": "Créer un modèle"
+    },
+    "workflows": {
+      "title": "Aucun flux de travail pour le moment",
+      "description": "Créez des flux de travail pour gérer la progression de vos éléments de travail.",
+      "cta_primary": "Ajouter un nouveau flux de travail",
+      "states": {
+        "title": "Ajouter des états",
+        "description": "Sélectionnez les états par lesquels passe l’élément de travail."
+      }
     }
   }
 }

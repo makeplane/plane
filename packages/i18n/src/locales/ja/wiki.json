@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "ページを作成するか、コレクションに追加できませんでした。もう一度お試しください。",
       "collection_link_copied": "コレクションリンクをクリップボードにコピーしました。"
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "アップグレードしてWikiを利用",
+      "description": "Plane Proで、公開ページ、バージョン履歴、共有ページ、リアルタイム共同編集、Wiki・社内ドキュメント・ナレッジベース向けのワークスペースページを利用できます。",
+      "upgrade_button": {
+        "text": "アップグレード"
+      },
+      "learn_more_button": {
+        "text": "詳細を見る"
+      },
+      "download_button": {
+        "text": "データをダウンロード",
+        "loading": "ダウンロード中"
+      },
+      "tabs": {
+        "nested_pages": "ネストされたページ",
+        "add_embeds": "埋め込みを追加",
+        "publish_pages": "ページを公開",
+        "comments": "コメント"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "ネストされたページには有料プランが必要です。アップグレードしてご利用ください。"
+    }
   }
 }

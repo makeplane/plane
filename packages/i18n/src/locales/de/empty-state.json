@@ -249,13 +249,13 @@
       "title": "Zeiterfassungen für alle Mitglieder verfolgen",
       "description": "Erfassen Sie Zeit für Arbeitselemente, um detaillierte Zeiterfassungen für jedes Teammitglied über Projekte hinweg anzuzeigen."
     },
+    "group_syncing": {
+      "title": "Noch keine Gruppenzuordnungen"
+    },
     "template_setting": {
       "title": "Noch keine Vorlagen",
       "description": "Reduzieren Sie die Einrichtungszeit, indem Sie Vorlagen für Projekte, Arbeitselemente und Seiten erstellen — und starten Sie neue Arbeit in Sekunden.",
       "cta_primary": "Vorlage erstellen"
-    },
-    "group_syncing": {
-      "title": "Noch keine Gruppenzuordnungen"
     },
     "workflows": {
       "title": "Noch keine Workflows",

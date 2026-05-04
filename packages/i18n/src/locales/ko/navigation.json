@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "결과 없음"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "스티키",
+    "your_work": "나의 작업",
     "projects": "프로젝트",
     "pages": "페이지",
     "new_work_item": "새 작업 항목",
     "home": "홈",
-    "your_work": "나의 작업",
     "inbox": "받은 편지함",
     "workspace": "작업 공간",
     "views": "보기",
@@ -21,14 +29,6 @@
     "epics": "에픽스",
     "upgrade_plan": "업그레이드 플랜",
     "plane_pro": "플레인 프로",
-    "business": "비즈니스",
-    "recurring_work_items": "반복 작업 항목"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "결과 없음"
-      }
-    }
+    "business": "비즈니스"
   }
 }

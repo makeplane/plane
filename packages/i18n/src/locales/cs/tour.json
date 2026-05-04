@@ -110,6 +110,12 @@
         "description": "Pracovní položku lze odložit, abyste ji zkontrolovali později. Přesune se na konec seznamu otevřených požadavků."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "Přestaňte přepínat záložky. Propojte svůj svět.",
+        "description": "Propojte GitHub, Slack pro sledování PR a shrnutí chatů přímo v Plane AI."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "Navigace, nově promyšlená",

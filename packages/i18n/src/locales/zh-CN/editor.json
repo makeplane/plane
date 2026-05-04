@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "请输入有效的 URL。"
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "描述此块的内容",
+      "generated_here": "您的 AI 内容将在此处生成"
+    },
+    "block_types": {
+      "placeholder": "选择块类型",
+      "summarize_page": "总结页面",
+      "custom_prompt": "自定义提示"
+    },
+    "actions": {
+      "discard": "放弃",
+      "generate": "生成",
+      "generating": "生成中",
+      "rewriting": "重写中",
+      "rewrite": "重写",
+      "use_this": "使用此",
+      "refine": "优化"
+    }
   }
 }

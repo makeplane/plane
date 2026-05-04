@@ -20,10 +20,10 @@
       "due_date": "Fälligkeitsdatum hinzufügen",
       "parent": "Übergeordnetes Arbeitselement hinzufügen",
       "sub_issue": "Untergeordnetes Arbeitselement hinzufügen",
+      "dependency": "Abhängigkeit hinzufügen",
       "relation": "Beziehung hinzufügen",
       "link": "Link hinzufügen",
-      "existing": "Vorhandenes Arbeitselement hinzufügen",
-      "dependency": "Abhängigkeit hinzufügen"
+      "existing": "Vorhandenes Arbeitselement hinzufügen"
     },
     "remove": {
       "label": "Arbeitselement entfernen",

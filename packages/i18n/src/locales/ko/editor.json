@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "유효한 URL을 입력해 주세요."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "이 블록의 내용을 설명하세요",
+      "generated_here": "AI 콘텐츠가 여기에 생성됩니다"
+    },
+    "block_types": {
+      "placeholder": "블록 타입 선택",
+      "summarize_page": "페이지 요약",
+      "custom_prompt": "커스텀 프롬프트"
+    },
+    "actions": {
+      "discard": "폐기",
+      "generate": "생성",
+      "generating": "생성 중",
+      "rewriting": "다시 작성 중",
+      "rewrite": "다시 작성",
+      "use_this": "이것 사용",
+      "refine": "정제"
+    }
   }
 }

@@ -194,6 +194,10 @@
       "server_error_states": "状態の読み込み中にサーバーエラーが発生しました"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Bitbucket Data CenterのリポジトリをPlaneと連携・同期します。"
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "外部IdPトークンをAPI アクセス用に検証します。",
@@ -302,10 +306,10 @@
     "generic_error": "リクエストの処理中に予期せぬエラーが発生しました",
     "connection_not_found": "要求された接続が見つかりませんでした",
     "multiple_connections_found": "1つの接続が期待される場合に複数の接続が見つかりました",
+    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。",
     "installation_not_found": "要求されたインストールが見つかりませんでした",
     "user_not_found": "要求されたユーザーが見つかりませんでした",
     "error_fetching_token": "認証トークンの取得に失敗しました",
-    "cannot_create_multiple_connections": "あなたはすでに組織をワークスペースと接続しています。新しい接続を作成する前に、既存の接続を切断してください。",
     "invalid_app_credentials": "提供されたアプリの資格情報が無効です",
     "invalid_app_installation_id": "アプリのインストールに失敗しました"
   },
@@ -316,6 +320,7 @@
     "pulling": "取得中",
     "timed_out": "タイムアウト",
     "pulled": "取得済み",
+    "progressing": "進行中",
     "transforming": "変換中",
     "transformed": "変換済み",
     "pushing": "送信中",

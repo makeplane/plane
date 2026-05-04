@@ -3,6 +3,9 @@
     "settings": {
       "title": "Šablóny",
       "description": "Ušetríte 80% času stráveného vytváraním projektov, pracovných položiek a stránok, keď použijete šablóny.",
+      "new_project_template": "Nová šablóna projektu",
+      "new_work_item_template": "Nová šablóna pracovnej položky",
+      "new_page_template": "Nová šablóna stránky",
       "options": {
         "project": {
           "label": "Šablóny projektov"
@@ -157,6 +160,14 @@
               "required": "Aspoň jedno kľúčové slovo je povinné"
             }
           },
+          "website": {
+            "label": "URL webovej stránky",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Neplatná URL",
+              "maxLength": "URL musí mať menej ako 800 znakov"
+            }
+          },
           "company_name": {
             "label": "Názov spoločnosti",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Neplatná emailová adresa",
-              "required": "Email podpory je povinný",
               "maxLength": "Email podpory by nemal presiahnuť 255 znakov"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": "Žiadne štítky ešte neexistujú. Vytvorte štítky na pomoc organizácii a filtrovaniu pracovných položiek v projekte."
+      },
+      "no_modules": {
+        "description": "Zatiaľ žiadne moduly. Zorganizujte prácu do podprojektov s vyhradenými vedúcimi a priradenými."
       },
       "no_work_items": {
         "description": "Ešte nemáte pracovné položky. Pridajte jednu, aby ste lepšie struktúrovali svoju prácu."

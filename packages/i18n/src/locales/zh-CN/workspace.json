@@ -95,16 +95,28 @@
       "scope_and_demand": "范围和需求",
       "custom": "自定义分析"
     },
+    "total": "{entity}总数",
+    "started_work_items": "已开始的{entity}",
+    "backlog_work_items": "待办的{entity}",
+    "un_started_work_items": "未开始的{entity}",
+    "completed_work_items": "已完成的{entity}",
+    "project_insights": "项目洞察",
+    "summary_of_projects": "项目概览",
+    "all_projects": "所有项目",
+    "trend_on_charts": "图表趋势",
+    "active_projects": "活跃项目",
+    "customized_insights": "自定义洞察",
+    "created_vs_resolved": "已创建 vs 已解决",
     "empty_state": {
-      "customized_insights": {
-        "description": "分配给您的工作项将按状态分类显示在此处。",
-        "title": "暂无数据"
+      "project_insights": {
+        "title": "暂无数据",
+        "description": "分配给您的工作项将按状态分类显示在此处。"
       },
       "created_vs_resolved": {
-        "description": "随着时间推移创建和解决的工作项将显示在此处。",
-        "title": "暂无数据"
+        "title": "暂无数据",
+        "description": "随着时间推移创建和解决的工作项将显示在此处。"
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "暂无数据",
         "description": "分配给您的工作项将按状态分类显示在此处。"
       },
@@ -132,29 +144,11 @@
         "description": "引入趋势分析将显示在此处。将工作项添加到引入中以开始跟踪趋势。"
       }
     },
-    "created_vs_resolved": "已创建 vs 已解决",
-    "customized_insights": "自定义洞察",
-    "backlog_work_items": "待办的{entity}",
-    "active_projects": "活跃项目",
-    "trend_on_charts": "图表趋势",
-    "all_projects": "所有项目",
-    "summary_of_projects": "项目概览",
-    "project_insights": "项目洞察",
-    "started_work_items": "已开始的{entity}",
-    "total_work_items": "{entity}总数",
-    "total_projects": "项目总数",
-    "total_admins": "管理员总数",
-    "total_users": "用户总数",
-    "total_intake": "总收入",
-    "un_started_work_items": "未开始的{entity}",
-    "total_guests": "访客总数",
-    "completed_work_items": "已完成的{entity}",
-    "total": "{entity}总数",
+    "upgrade_to_plan": "升级到 {plan} 以解锁 {tab}",
+    "workitem_resolved_vs_pending": "已解决 vs 待处理的工作项",
     "projects_by_status": "按状态分类的项目",
     "active_users": "活跃用户",
-    "intake_trends": "入学趋势",
-    "workitem_resolved_vs_pending": "已解决 vs 待处理的工作项",
-    "upgrade_to_plan": "升级到 {plan} 以解锁 {tab}"
+    "intake_trends": "入学趋势"
   },
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
@@ -162,6 +156,7 @@
       "label": "添加项目"
     },
     "network": {
+      "label": "网络",
       "private": {
         "title": "私有",
         "description": "仅限邀请访问"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "还没有已归档的页面",
         "description": "归档不在您关注范围内的页面。需要时可以在这里访问它们。"
+      },
+      "shared": {
+        "title": "尚无共享页面",
+        "description": "其他人与您共享的页面将显示在此处。"
       }
     }
   },

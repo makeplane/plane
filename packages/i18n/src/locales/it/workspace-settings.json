@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Fatturazione e piani",
+        "description": "Scegli il tuo piano, gestisci gli abbonamenti e aggiorna facilmente man mano che le tue esigenze crescono.",
         "title": "Fatturazione e Piani",
         "current_plan": "Piano attuale",
         "free_plan": "Stai attualmente utilizzando il piano gratuito",
         "view_plans": "Visualizza piani"
       },
       "exports": {
+        "heading": "Esportazioni",
+        "description": "Esporta i dati del tuo progetto in vari formati e accedi alla cronologia delle esportazioni con i link per il download.",
         "title": "Esportazioni",
         "exporting": "Esportazione in corso",
         "previous_exports": "Esportazioni precedenti",
         "export_separate_files": "Esporta i dati in file separati",
+        "exporting_projects": "Esportazione del progetto",
+        "format": "Formato",
         "filters_info": "Applica filtri per esportare elementi di lavoro specifici in base ai tuoi criteri.",
         "modal": {
           "title": "Esporta in",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhook",
+        "description": "Automatizza le notifiche verso servizi esterni quando si verificano eventi del progetto.",
         "title": "Webhooks",
         "add_webhook": "Aggiungi webhook",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integrazioni",
+        "heading": "Integrazioni",
+        "description": "Connettiti a strumenti e servizi popolari per sincronizzare il tuo lavoro nell'intero ecosistema del tuo flusso di lavoro.",
         "page_title": "Lavora con i tuoi dati Plane nelle app disponibili o nelle tue.",
         "page_description": "Visualizza tutte le integrazioni utilizzate da questo workspace o da te."
       },
       "imports": {
-        "title": "Importazioni"
+        "title": "Importazioni",
+        "heading": "Importazioni",
+        "description": "Connetti e importa dati dai tuoi strumenti di gestione progetti esistenti per ottimizzare l'integrazione del flusso di lavoro."
       },
       "worklogs": {
-        "title": "Registrazioni di lavoro"
+        "title": "Registrazioni di lavoro",
+        "heading": "Registrazioni di lavoro",
+        "description": "Scarica le registrazioni di lavoro, alias timesheet, per chiunque in qualsiasi progetto."
       },
       "group_syncing": {
         "title": "Sincronizzazione gruppi",
@@ -242,7 +256,10 @@
         "description": "Configura il tuo dominio e abilita Single sign-on"
       },
       "project_states": {
-        "title": "Stati del progetto"
+        "title": "Stati del progetto",
+        "heading": "Visualizza una panoramica dei progressi per tutti i progetti.",
+        "description": "Gli stati dei progetti sono una funzionalità esclusiva di Plane per tracciare i progressi di tutti i tuoi progetti in base a qualsiasi proprietà del progetto.",
+        "go_to_settings": "Vai alle impostazioni"
       },
       "projects": {
         "title": "Progetti",
@@ -251,6 +268,16 @@
           "states": "Stati del progetto",
           "labels": "Etichette del progetto"
         }
+      },
+      "templates": {
+        "title": "Modelli",
+        "heading": "Modelli",
+        "description": "Risparmia l'80% del tempo dedicato alla creazione di progetti, elementi di lavoro e pagine quando usi i modelli."
+      },
+      "relations": {
+        "title": "Relazioni",
+        "heading": "Relazioni",
+        "description": "Crea e gestisci tipi di relazione che collegano elementi di lavoro nel tuo spazio di lavoro."
       },
       "cancel_trial": {
         "title": "Cancella la tua prova prima.",
@@ -263,6 +290,7 @@
         "cancel_error_message": "Prova di nuovo, per favore."
       },
       "applications": {
+        "internal": "Interno",
         "title": "Applicazioni",
         "applicationId_copied": "ID applicazione copiato negli appunti",
         "clientId_copied": "ID cliente copiato negli appunti",
@@ -271,10 +299,61 @@
         "your_apps": "Le tue app",
         "connect": "Connetti",
         "connected": "Connesso",
+        "disconnect": "Disconnetti",
         "install": "Installa",
         "installed": "Installato",
         "configure": "Configura",
         "app_available": "Hai reso questa app disponibile per l'uso con un workspace Plane",
+        "app_credentials_regenrated": {
+          "title": "Le credenziali dell'app sono state rigenerate con successo",
+          "description": "Sostituisci il client secret ovunque venga utilizzato. Il secret precedente non è più valido."
+        },
+        "app_created": {
+          "title": "App creata con successo",
+          "description": "Usa le credenziali per installare l'app in uno spazio di lavoro Plane"
+        },
+        "installed_apps": "App installate",
+        "all_apps": "Tutte le app",
+        "internal_apps": "App interne",
+        "app_name_title": "Come chiamerai questa app",
+        "app_description_title": {
+          "label": "Descrizione lunga",
+          "placeholder": "Scrivi una descrizione lunga per il marketplace. Premi '/' per i comandi."
+        },
+        "authorization_grant_type": {
+          "title": "Tipo di connessione",
+          "description": "Scegli se la tua app deve essere installata una volta per il workspace o permettere a ogni utente di collegare il proprio account"
+        },
+        "website": {
+          "title": "Sito web",
+          "description": "Link al sito web della tua app.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Creatore di app",
+          "description": "La persona o l'organizzazione che crea l'app."
+        },
+        "app_maker_error": "Il creatore dell'app è obbligatorio",
+        "setup_url": {
+          "label": "URL di configurazione",
+          "description": "Gli utenti verranno reindirizzati a questo URL quando installeranno l'app.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL del webhook",
+          "description": "Qui invieremo eventi e aggiornamenti webhook dagli workspace in cui la tua app è installata.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Secret del webhook",
+          "description": "Secret utilizzato per verificare le richieste webhook in arrivo.",
+          "placeholder": "Inserisci una chiave segreta casuale"
+        },
+        "redirect_uris": {
+          "label": "URI di reindirizzamento (separate da spazi)",
+          "description": "Gli utenti verranno reindirizzati a questo percorso dopo essersi autenticati con Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Connetti un workspace Plane per iniziare a usarla",
         "client_id_and_secret": "ID e Secret Cliente",
         "client_id_and_secret_description": "Copia e salva questa chiave segreta. Non potrai più vedere questa chiave dopo aver cliccato su Chiudi.",
@@ -286,23 +365,13 @@
         "slug_already_exists": "Lo slug esiste già",
         "failed_to_create_application": "Impossibile creare l'applicazione",
         "upload_logo": "Carica Logo",
-        "app_name_title": "Come chiamerai questa app",
         "app_name_error": "Il nome dell'app è obbligatorio",
         "app_short_description_title": "Dai una breve descrizione a questa app",
         "app_short_description_error": "La breve descrizione dell'app è obbligatoria",
-        "app_description_title": {
-          "label": "Descrizione lunga",
-          "placeholder": "Scrivi una descrizione lunga per il marketplace. Premi '/' per i comandi."
-        },
-        "authorization_grant_type": {
-          "title": "Tipo di connessione",
-          "description": "Scegli se la tua app deve essere installata una volta per il workspace o permettere a ogni utente di collegare il proprio account"
-        },
         "app_description_error": "La descrizione dell'app è obbligatoria",
         "app_slug_title": "Slug dell'app",
         "app_slug_error": "Lo slug dell'app è obbligatorio",
-        "app_maker_title": "Creatore dell'app",
-        "app_maker_error": "Il creatore dell'app è obbligatorio",
+        "invalid_website_error": "Sito web non valido",
         "webhook_url_title": "URL del Webhook",
         "webhook_url_error": "L'URL del webhook è obbligatorio",
         "invalid_webhook_url_error": "URL del webhook non valido",
@@ -316,6 +385,8 @@
         "authorized_javascript_origins_description": "Inserisci le origini separate da spazi da cui l'app potrà effettuare richieste, ad esempio app.com example.com",
         "create_app": "Crea app",
         "update_app": "Aggiorna app",
+        "build_your_own_app": "Crea la tua app",
+        "edit_app_details": "Modifica i dettagli dell'app",
         "regenerate_client_secret_description": "Rigenera il secret cliente. Se rigeneri il secret, potrai copiare la chiave o scaricarla in un file CSV subito dopo.",
         "regenerate_client_secret": "Rigenera secret cliente",
         "regenerate_client_secret_confirm_title": "Sei sicuro di voler rigenerare il secret cliente?",
@@ -362,7 +433,6 @@
         "video_url_title": "URL del Video",
         "video_url_error": "Il URL del video è obbligatorio",
         "invalid_video_url_error": "URL del video non valido",
-        "setup_url_title": "URL di Setup",
         "setup_url_error": "Il URL di setup è obbligatorio",
         "invalid_setup_url_error": "URL di setup non valido",
         "configuration_url_title": "URL di configurazione",
@@ -378,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "File non valido o supera il limite di dimensione ({size} MB)",
         "uploading": "Caricamento...",
         "upload_and_save": "Carica e salva",
-        "app_credentials_regenrated": {
-          "title": "Le credenziali dell'app sono state rigenerate con successo",
-          "description": "Sostituisci il client secret ovunque venga utilizzato. Il secret precedente non è più valido."
-        },
-        "app_created": {
-          "title": "App creata con successo",
-          "description": "Usa le credenziali per installare l'app in uno spazio di lavoro Plane"
-        },
-        "installed_apps": "App installate",
-        "all_apps": "Tutte le app",
-        "internal_apps": "App interne",
-        "website": {
-          "title": "Sito web",
-          "description": "Link al sito web della tua app.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Creatore di app",
-          "description": "La persona o l'organizzazione che crea l'app."
-        },
-        "setup_url": {
-          "label": "URL di configurazione",
-          "description": "Gli utenti verranno reindirizzati a questo URL quando installeranno l'app.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "URL del webhook",
-          "description": "Qui invieremo eventi e aggiornamenti webhook dagli workspace in cui la tua app è installata.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "URI di reindirizzamento (separate da spazi)",
-          "description": "Gli utenti verranno reindirizzati a questo percorso dopo essersi autenticati con Plane.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Richiesta di installazione",
         "app_consent_no_access_description": "Questa app può essere installata solo dopo che un amministratore del workspace l'ha installata. Contatta l'amministratore del tuo workspace per procedere.",
+        "app_consent_unapproved_title": "Questa app non è stata ancora esaminata o approvata da Plane.",
+        "app_consent_unapproved_description": "Assicurati di fidarti di questa app prima di connetterla al tuo spazio di lavoro.",
+        "go_to_app": "Vai all'app",
         "enable_app_mentions": "Abilita menzioni dell'app",
         "enable_app_mentions_tooltip": "Quando è abilitato, gli utenti possono menzionare o assegnare Work Item a questa applicazione.",
         "scopes": "Ambiti",
@@ -433,15 +472,18 @@
           "profile": "Accesso alle informazioni del profilo utente",
           "agents": "Accesso agli agenti e a tutte le entità correlate",
           "assets": "Accesso agli asset e a tutte le entità correlate"
-        },
-        "build_your_own_app": "Crea la tua app",
-        "edit_app_details": "Modifica i dettagli dell'app",
-        "internal": "Interno"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Vedi il tuo lavoro diventare più intelligente e più veloce con l'IA che è connessa in modo nativo al tuo lavoro e alla tua base di conoscenza."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Script",
+        "new_script": "Nuovo script",
+        "description": "Automatizza i tuoi flussi di lavoro con script personalizzati e regole di automazione."
       }
     },
     "empty_state": {

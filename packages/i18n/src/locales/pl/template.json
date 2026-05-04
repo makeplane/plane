@@ -3,6 +3,9 @@
     "settings": {
       "title": "Szablony",
       "description": "Zaoszczędź 80% czasu spędzonego na tworzeniu projektów, elementów pracy i stron, korzystając z szablonów.",
+      "new_project_template": "Nowy szablon projektu",
+      "new_work_item_template": "Nowy szablon elementu pracy",
+      "new_page_template": "Nowy szablon strony",
       "options": {
         "project": {
           "label": "Szablony projektów"
@@ -157,6 +160,14 @@
               "required": "Przynajmniej jedno słowo kluczowe jest wymagane"
             }
           },
+          "website": {
+            "label": "Adres URL strony",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Nieprawidłowy adres URL",
+              "maxLength": "Adres URL powinien mieć mniej niż 800 znaków"
+            }
+          },
           "company_name": {
             "label": "Nazwa firmy",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Nieprawidłowy adres email",
-              "required": "Adres email obsługi jest wymagany",
               "maxLength": "Adres email obsługi powinien mieć mniej niż 255 znaków"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " Brak etykiet. Utwórz etykiety, aby pomóc zorganizować i filtrować elementy pracy w Twoim projekcie."
+      },
+      "no_modules": {
+        "description": "Brak modułów. Organizuj pracę w podprojekty z dedykowanymi liderami i przypisanymi osobami."
       },
       "no_work_items": {
         "description": "Brak elementów pracy. Dodaj jeden, aby lepiej zorganizować swoją pracę."

@@ -39,16 +39,16 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Einstellungen",
+      "description": "Passen Sie Ihre App-Erfahrung an Ihre Arbeitsweise an"
+    },
     "notifications": {
       "heading": "E-Mail-Benachrichtigungen",
       "description": "Bleiben Sie bei Arbeitselementen auf dem Laufenden, die Sie abonniert haben. Aktivieren Sie dies, um benachrichtigt zu werden.",
       "select_default_view": "Standardansicht auswählen",
       "compact": "Kompakt",
       "full": "Vollbild"
-    },
-    "preferences": {
-      "heading": "Einstellungen",
-      "description": "Passen Sie Ihre App-Erfahrung an Ihre Arbeitsweise an"
     },
     "security": {
       "heading": "Sicherheit"
@@ -101,8 +101,8 @@
       "security": "Sicherheit",
       "activity": "Aktivität",
       "preferences": "Einstellungen",
-      "api-tokens": "Persönliche Zugriffstoken",
       "notifications": "Benachrichtigungen",
+      "api-tokens": "Persönliche Zugriffstoken",
       "connections": "Verbindungen"
     },
     "tabs": {

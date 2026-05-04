@@ -249,10 +249,22 @@
       "title": "Urmăriți foile de pontaj pentru toți membrii",
       "description": "Înregistrați timpul pe elemente de lucru pentru a vedea foi de pontaj detaliate pentru orice membru al echipei din proiecte."
     },
+    "group_syncing": {
+      "title": "Încă nu există mapări de grup"
+    },
     "template_setting": {
       "title": "Încă nu există șabloane",
       "description": "Reduceți timpul de configurare prin crearea de șabloane pentru proiecte, elemente de lucru și pagini — și începeți munca nouă în câteva secunde.",
       "cta_primary": "Creați șablon"
+    },
+    "workflows": {
+      "title": "Încă nu există fluxuri de lucru",
+      "description": "Creați fluxuri de lucru pentru a gestiona progresul elementelor de lucru.",
+      "cta_primary": "Adaugă flux de lucru nou",
+      "states": {
+        "title": "Adaugă stări",
+        "description": "Selectează stările prin care progresează elementul de lucru."
+      }
     }
   }
 }

@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Penagihan & Rencana",
+        "description": "Pilih rencana Anda, kelola langganan, dan tingkatkan dengan mudah seiring pertumbuhan kebutuhan Anda.",
         "title": "Penagihan & Rencana",
         "current_plan": "Rencana saat ini",
         "free_plan": "Anda saat ini menggunakan rencana gratis",
         "view_plans": "Lihat rencana"
       },
       "exports": {
+        "heading": "Ekspor",
+        "description": "Ekspor data proyek Anda dalam berbagai format dan akses riwayat ekspor Anda dengan tautan unduhan.",
         "title": "Ekspor",
         "exporting": "Mengeskpor",
         "previous_exports": "Ekspor sebelumnya",
         "export_separate_files": "Ekspor data ke file terpisah",
+        "exporting_projects": "Mengekspor proyek",
+        "format": "Format",
         "filters_info": "Terapkan filter untuk mengekspor item kerja tertentu berdasarkan kriteria Anda.",
         "modal": {
           "title": "Ekspor ke",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhook",
+        "description": "Otomatiskan notifikasi ke layanan eksternal saat peristiwa proyek terjadi.",
         "title": "Webhook",
         "add_webhook": "Tambah webhook",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Integrasi",
+        "heading": "Integrasi",
+        "description": "Hubungkan dengan alat dan layanan populer untuk menyinkronkan pekerjaan Anda di seluruh ekosistem alur kerja Anda.",
         "page_title": "Gunakan data Plane Anda di aplikasi yang tersedia atau aplikasi Anda sendiri.",
         "page_description": "Lihat semua integrasi yang digunakan oleh workspace ini atau oleh Anda."
       },
       "imports": {
-        "title": "Impor"
+        "title": "Impor",
+        "heading": "Impor",
+        "description": "Hubungkan dan impor data dari alat manajemen proyek Anda yang sudah ada untuk menyederhanakan integrasi alur kerja."
       },
       "worklogs": {
-        "title": "Log kerja"
+        "title": "Log kerja",
+        "heading": "Log kerja",
+        "description": "Unduh log kerja alias lembar waktu untuk siapa pun dalam proyek apa pun."
       },
       "group_syncing": {
         "title": "Sinkronisasi grup",
@@ -242,7 +256,10 @@
         "description": "Konfigurasi domain Anda dan aktifkan Single sign-on"
       },
       "project_states": {
-        "title": "Status proyek"
+        "title": "Status proyek",
+        "heading": "Lihat ikhtisar kemajuan untuk semua proyek.",
+        "description": "Status Proyek adalah fitur khusus Plane untuk melacak kemajuan semua proyek Anda berdasarkan properti proyek apa pun.",
+        "go_to_settings": "Pergi ke pengaturan"
       },
       "projects": {
         "title": "Proyek",
@@ -251,6 +268,16 @@
           "states": "Status proyek",
           "labels": "Label proyek"
         }
+      },
+      "templates": {
+        "title": "Templat",
+        "heading": "Templat",
+        "description": "Hemat 80% waktu yang dihabiskan untuk membuat proyek, item kerja, dan halaman saat Anda menggunakan templat."
+      },
+      "relations": {
+        "title": "Relasi",
+        "heading": "Relasi",
+        "description": "Buat dan kelola tipe relasi yang menghubungkan item kerja di seluruh ruang kerja Anda."
       },
       "cancel_trial": {
         "title": "Batalkan uji coba Anda terlebih dahulu.",
@@ -263,6 +290,7 @@
         "cancel_error_message": "Silakan coba lagi."
       },
       "applications": {
+        "internal": "Internal",
         "title": "Aplikasi",
         "applicationId_copied": "ID aplikasi disalin ke clipboard",
         "clientId_copied": "ID klien disalin ke clipboard",
@@ -271,10 +299,61 @@
         "your_apps": "Aplikasi Anda",
         "connect": "Koneksi",
         "connected": "Terhubung",
+        "disconnect": "Putuskan",
         "install": "Pasang",
         "installed": "Terpasang",
         "configure": "Konfigurasi",
         "app_available": "Anda telah membuat aplikasi ini tersedia untuk digunakan dengan workspace Plane",
+        "app_credentials_regenrated": {
+          "title": "Kredensial aplikasi berhasil digenerasi ulang",
+          "description": "Ganti client secret di semua tempat yang digunakan. Secret sebelumnya sudah tidak berlaku."
+        },
+        "app_created": {
+          "title": "Aplikasi berhasil dibuat",
+          "description": "Gunakan kredensial untuk menginstal aplikasi di ruang kerja Plane"
+        },
+        "installed_apps": "Aplikasi terpasang",
+        "all_apps": "Semua aplikasi",
+        "internal_apps": "Aplikasi internal",
+        "app_name_title": "Apa nama Anda untuk aplikasi ini",
+        "app_description_title": {
+          "label": "Deskripsi panjang",
+          "placeholder": "Tulis deskripsi panjang untuk marketplace. Tekan '/' untuk perintah."
+        },
+        "authorization_grant_type": {
+          "title": "Jenis Koneksi",
+          "description": "Pilih apakah aplikasi Anda harus diinstal sekali untuk workspace atau biarkan setiap pengguna menghubungkan akun mereka sendiri"
+        },
+        "website": {
+          "title": "Situs web",
+          "description": "Tautan ke situs web aplikasi Anda.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Pembuat Aplikasi",
+          "description": "Orang atau organisasi yang membuat aplikasi."
+        },
+        "app_maker_error": "Pembuat aplikasi diperlukan",
+        "setup_url": {
+          "label": "URL pengaturan",
+          "description": "Pengguna akan diarahkan ke URL ini saat mereka menginstal aplikasi.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Di sinilah kami akan mengirimkan event dan pembaruan webhook dari workspace tempat aplikasi Anda terpasang.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Rahasia Webhook",
+          "description": "Rahasia yang digunakan untuk memverifikasi permintaan webhook yang masuk.",
+          "placeholder": "Masukkan kunci rahasia acak"
+        },
+        "redirect_uris": {
+          "label": "URI pengalihan (dipisahkan spasi)",
+          "description": "Pengguna akan diarahkan ke jalur ini setelah mereka masuk dengan Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Hubungkan workspace Plane untuk mulai menggunakannya",
         "client_id_and_secret": "ID klien dan Rahasia",
         "client_id_and_secret_description": "Salin dan simpan kunci rahasia ini di Pages. Anda tidak dapat melihat kunci ini lagi setelah Anda menutupnya.",
@@ -286,23 +365,13 @@
         "slug_already_exists": "Slug sudah ada",
         "failed_to_create_application": "Gagal membuat aplikasi",
         "upload_logo": "Unggah Logo",
-        "app_name_title": "Apa nama Anda untuk aplikasi ini",
         "app_name_error": "Nama aplikasi diperlukan",
         "app_short_description_title": "Berikan aplikasi ini deskripsi singkat",
         "app_short_description_error": "Deskripsi aplikasi singkat diperlukan",
-        "app_description_title": {
-          "label": "Deskripsi panjang",
-          "placeholder": "Tulis deskripsi panjang untuk marketplace. Tekan '/' untuk perintah."
-        },
-        "authorization_grant_type": {
-          "title": "Jenis Koneksi",
-          "description": "Pilih apakah aplikasi Anda harus diinstal sekali untuk workspace atau biarkan setiap pengguna menghubungkan akun mereka sendiri"
-        },
         "app_description_error": "Deskripsi aplikasi diperlukan",
         "app_slug_title": "Slug aplikasi",
         "app_slug_error": "Slug aplikasi diperlukan",
-        "app_maker_title": "Pembuat aplikasi",
-        "app_maker_error": "Pembuat aplikasi diperlukan",
+        "invalid_website_error": "Website tidak valid",
         "webhook_url_title": "URL Webhook",
         "webhook_url_error": "URL Webhook diperlukan",
         "invalid_webhook_url_error": "URL Webhook tidak valid",
@@ -316,6 +385,8 @@
         "authorized_javascript_origins_description": "Masukkan URI yang dipisahkan oleh spasi di mana aplikasi akan diizinkan untuk membuat permintaan e.g app.com example.com",
         "create_app": "Buat aplikasi",
         "update_app": "Perbarui aplikasi",
+        "build_your_own_app": "Bangun aplikasi Anda sendiri",
+        "edit_app_details": "Edit detail aplikasi",
         "regenerate_client_secret_description": "Regenerate kunci rahasia klien. Jika Anda menghasilkan kunci rahasia, Anda dapat menyalin kunci atau mengunduhnya ke file CSV setelah itu.",
         "regenerate_client_secret": "Regenerate kunci rahasia klien",
         "regenerate_client_secret_confirm_title": "Apakah Anda yakin ingin menghasilkan kembali kunci rahasia klien?",
@@ -362,7 +433,6 @@
         "video_url_title": "URL Video",
         "video_url_error": "URL Video diperlukan",
         "invalid_video_url_error": "URL Video tidak valid",
-        "setup_url_title": "URL Setup",
         "setup_url_error": "URL Setup diperlukan",
         "invalid_setup_url_error": "URL Setup tidak valid",
         "configuration_url_title": "URL Konfigurasi",
@@ -378,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "File tidak valid atau melebihi batas ukuran ({size} MB)",
         "uploading": "Mengunggah...",
         "upload_and_save": "Unggah dan Simpan",
-        "app_credentials_regenrated": {
-          "title": "Kredensial aplikasi berhasil digenerasi ulang",
-          "description": "Ganti client secret di semua tempat yang digunakan. Secret sebelumnya sudah tidak berlaku."
-        },
-        "app_created": {
-          "title": "Aplikasi berhasil dibuat",
-          "description": "Gunakan kredensial untuk menginstal aplikasi di ruang kerja Plane"
-        },
-        "installed_apps": "Aplikasi terpasang",
-        "all_apps": "Semua aplikasi",
-        "internal_apps": "Aplikasi internal",
-        "website": {
-          "title": "Situs web",
-          "description": "Tautan ke situs web aplikasi Anda.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Pembuat Aplikasi",
-          "description": "Orang atau organisasi yang membuat aplikasi."
-        },
-        "setup_url": {
-          "label": "URL pengaturan",
-          "description": "Pengguna akan diarahkan ke URL ini saat mereka menginstal aplikasi.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "URL webhook",
-          "description": "Di sinilah kami akan mengirimkan event dan pembaruan webhook dari workspace tempat aplikasi Anda terpasang.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "URI pengalihan (dipisahkan spasi)",
-          "description": "Pengguna akan diarahkan ke jalur ini setelah mereka masuk dengan Plane.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Permintaan untuk menginstal",
         "app_consent_no_access_description": "Aplikasi ini hanya dapat diinstal setelah admin workspace menginstalnya. Hubungi admin workspace Anda untuk melanjutkan.",
+        "app_consent_unapproved_title": "Aplikasi ini belum ditinjau atau disetujui oleh Plane.",
+        "app_consent_unapproved_description": "Pastikan Anda memercayai aplikasi ini sebelum menghubungkannya ke ruang kerja Anda.",
+        "go_to_app": "Buka aplikasi",
         "enable_app_mentions": "Aktifkan penyebutan aplikasi",
         "enable_app_mentions_tooltip": "Saat ini diaktifkan, pengguna dapat menyebut atau menetapkan Work Items ke aplikasi ini.",
         "scopes": "Lingkup",
@@ -433,15 +472,18 @@
           "profile": "Akses ke informasi profil pengguna",
           "agents": "Akses ke agen dan semua entitas terkait agen",
           "assets": "Akses ke aset dan semua entitas terkait aset"
-        },
-        "build_your_own_app": "Bangun aplikasi Anda sendiri",
-        "edit_app_details": "Edit detail aplikasi",
-        "internal": "Internal"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Lihat pekerjaan Anda menjadi lebih cerdas dan lebih cepat dengan AI yang terhubung secara native ke pekerjaan dan basis pengetahuan Anda."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skrip",
+        "new_script": "Skrip Baru",
+        "description": "Otomatisasi alur kerja Anda dengan skrip kustom dan aturan otomatisasi."
       }
     },
     "empty_state": {

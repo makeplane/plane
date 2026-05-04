@@ -4,16 +4,24 @@
     "label_lowercase": "arbeitsaufgabentypen",
     "settings": {
       "description": "Passen Sie eigene Eigenschaften an und fügen Sie sie hinzu, um sie an die Bedürfnisse Ihres Teams anzupassen.",
+      "cant_delete_default_message": "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er als Standard für dieses Projekt festgelegt ist.",
+      "set_as_default": "Als Standard festlegen",
+      "cant_set_default_inactive_message": "Aktivieren Sie diesen Typ, bevor Sie ihn als Standard festlegen",
+      "set_default_confirmation": {
+        "title": "Als Standard-Arbeitselementtyp festlegen",
+        "description": "Wenn Sie {name} als Standard festlegen, wird er in alle Projekte in diesem Arbeitsbereich importiert. Alle neuen Arbeitselemente verwenden dann standardmäßig diesen Typ.",
+        "confirm_button": "Als Standard festlegen"
+      },
       "properties": {
         "title": "Benutzerdefinierte Eigenschaften",
         "description": "Erstellen und passen Sie Eigenschaften an.",
+        "tooltip": "Jeder Arbeitsaufgabentyp wird mit einem Standardsatz von Eigenschaften wie Titel, Beschreibung, Bearbeiter, Status, Priorität, Startdatum, Fälligkeitsdatum, Modul, Zyklus usw. geliefert. Sie können auch Ihre eigenen Eigenschaften anpassen und hinzufügen, um sie an die Bedürfnisse Ihres Teams anzupassen.",
+        "add_button": "Neue Eigenschaft hinzufügen",
         "project": {
           "add_button": {
             "import_from_workspace": "Aus Arbeitsbereich importieren"
           }
         },
-        "tooltip": "Jeder Arbeitsaufgabentyp wird mit einem Standardsatz von Eigenschaften wie Titel, Beschreibung, Bearbeiter, Status, Priorität, Startdatum, Fälligkeitsdatum, Modul, Zyklus usw. geliefert. Sie können auch Ihre eigenen Eigenschaften anpassen und hinzufügen, um sie an die Bedürfnisse Ihres Teams anzupassen.",
-        "add_button": "Neue Eigenschaft hinzufügen",
         "dropdown": {
           "label": "Eigenschaftstyp",
           "placeholder": "Typ auswählen"
@@ -223,34 +231,6 @@
           "description": "Neue Eigenschaften, die Sie für diesen Arbeitsaufgabentyp hinzufügen, werden hier angezeigt."
         }
       },
-      "item_delete_confirmation": {
-        "title": "Diesen Typ löschen",
-        "description": "Das Löschen von Typen kann zum Verlust vorhandener Daten führen.",
-        "primary_button": "Ja, löschen",
-        "toast": {
-          "success": {
-            "title": "Erfolg!",
-            "message": "Arbeitselementtyp wurde erfolgreich gelöscht."
-          },
-          "error": {
-            "title": "Fehler!",
-            "message": "Löschen des Arbeitselementtyps fehlgeschlagen. Bitte versuchen Sie es erneut!"
-          }
-        },
-        "errors": {
-          "cannot_delete_default_work_item_type": "Der Standard-Arbeitselementtyp kann nicht gelöscht werden",
-          "cannot_delete_work_item_type_with_associated_work_items": "Arbeitselementtyp mit zugeordneten Arbeitselementen kann nicht gelöscht werden"
-        },
-        "can_disable_warning": "Möchten Sie stattdessen den Typ deaktivieren?"
-      },
-      "cant_delete_default_message": "Dieser Arbeitselementtyp kann nicht gelöscht werden, da er als Standard für dieses Projekt festgelegt ist.",
-      "set_as_default": "Als Standard festlegen",
-      "cant_set_default_inactive_message": "Aktivieren Sie diesen Typ, bevor Sie ihn als Standard festlegen",
-      "set_default_confirmation": {
-        "title": "Als Standard-Arbeitselementtyp festlegen",
-        "description": "Wenn Sie {name} als Standard festlegen, wird er in alle Projekte in diesem Arbeitsbereich importiert. Alle neuen Arbeitselemente verwenden dann standardmäßig diesen Typ.",
-        "confirm_button": "Als Standard festlegen"
-      },
       "types": {
         "title": "Typen",
         "description": "Erstellen und passen Sie Arbeitselementtypen mit Eigenschaften an.",
@@ -265,6 +245,10 @@
           "add_button": {
             "create_new": "Neu erstellen",
             "import_from_workspace": "Aus Arbeitsbereich importieren"
+          },
+          "banner": {
+            "with_access": "Aktivieren Sie Arbeitsaufgabentypen, um Typen von der Arbeitsbereichsebene zu importieren",
+            "without_access": "Arbeitsaufgabentypen sind deaktiviert. Wenden Sie sich an den Arbeitsbereichs-Administrator, um sie in den Arbeitsbereichseinstellungen zu aktivieren."
           }
         }
       },
@@ -285,6 +269,26 @@
           "input_label_suffix": "zum Fortfahren ein:",
           "confirm": "Eigenschaft trennen",
           "loading": "Wird getrennt"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Diesen Typ löschen",
+        "description": "Das Löschen von Typen kann zum Verlust vorhandener Daten führen.",
+        "can_disable_warning": "Möchten Sie stattdessen den Typ deaktivieren?",
+        "primary_button": "Ja, löschen",
+        "toast": {
+          "success": {
+            "title": "Erfolg!",
+            "message": "Arbeitselementtyp wurde erfolgreich gelöscht."
+          },
+          "error": {
+            "title": "Fehler!",
+            "message": "Löschen des Arbeitselementtyps fehlgeschlagen. Bitte versuchen Sie es erneut!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Der Standard-Arbeitselementtyp kann nicht gelöscht werden",
+          "cannot_delete_work_item_type_with_associated_work_items": "Arbeitselementtyp mit zugeordneten Arbeitselementen kann nicht gelöscht werden"
         }
       }
     },
@@ -431,25 +435,25 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Validierungsfehler!",
+      "title": "Speichern trennt bestehende Verknüpfungen",
       "content": {
         "intro": "Der Arbeitselement-Typ „{workItemTypeName}“ umfasst:",
-        "parent_items": "{count, plural, one {übergeordnetes Arbeitselement} other {übergeordnete Arbeitselemente}}",
+        "parent_items": "{count, plural, one {# übergeordnete Verknüpfung wird} other {# übergeordnete Verknüpfungen werden}} entfernt.",
         "child_items": "{count, plural, one {Unterarbeitselement} other {Unterarbeitselemente}}",
         "parent_line_suffix_when_also_children": ", und ",
         "footer": "Diese Änderung entfernt übergeordnete und untergeordnete Beziehungen bei vorhandenen Arbeitselementen des Typs {workItemTypeName}."
       },
       "confirm_input": {
-        "label": "Geben Sie „Bestätigen“ ein, um fortzufahren.",
-        "placeholder": "Bestätigen"
+        "label": "Geben Sie „bestätigen“ ein, um fortzufahren.",
+        "placeholder": "bestätigen"
       },
       "error_toast": {
         "title": "Fehler!",
-        "message": "Hierarchie konnte nicht aufgebrochen werden. Bitte versuchen Sie es erneut."
+        "message": "Verknüpfungen konnten nicht aufgehoben und gespeichert werden. Bitte versuchen Sie es erneut."
       },
       "confirm_button": {
-        "loading": "Wird angewendet",
-        "default": "Anwenden & Verknüpfung aufheben"
+        "loading": "Speichern",
+        "default": "Trotzdem speichern"
       }
     },
     "work_item_modal": {

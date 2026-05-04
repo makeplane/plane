@@ -21,7 +21,11 @@
     "members": {
       "label": "Miembros",
       "project_lead": "Líder del proyecto",
+      "project_lead_description": "Seleccione el responsable del proyecto.",
       "default_assignee": "Asignado por defecto",
+      "default_assignee_description": "Seleccione el asignado predeterminado para el proyecto.",
+      "project_subscribers": "Suscriptores del proyecto",
+      "project_subscribers_description": "Seleccione los miembros que recibirán notificaciones para este proyecto.",
       "guest_super_permissions": {
         "title": "Otorgar acceso de visualización a todos los elementos de trabajo para usuarios invitados:",
         "sub_heading": "Esto permitirá a los invitados tener acceso de visualización a todos los elementos de trabajo del proyecto."
@@ -30,13 +34,11 @@
         "title": "Invitar miembros",
         "sub_heading": "Invita miembros para trabajar en tu proyecto.",
         "select_co_worker": "Seleccionar compañero de trabajo"
-      },
-      "project_lead_description": "Seleccione el responsable del proyecto.",
-      "default_assignee_description": "Seleccione el asignado predeterminado para el proyecto.",
-      "project_subscribers": "Suscriptores del proyecto",
-      "project_subscribers_description": "Seleccione los miembros que recibirán notificaciones para este proyecto."
+      }
     },
     "states": {
+      "heading": "Estados",
+      "description": "Define y personaliza los estados del flujo de trabajo para rastrear el progreso de tus elementos de trabajo.",
       "describe_this_state_for_your_members": "Describe este estado para tus miembros.",
       "empty_state": {
         "title": "No estados disponibles para el grupo {groupKey}",
@@ -44,6 +46,8 @@
       }
     },
     "labels": {
+      "heading": "Etiquetas",
+      "description": "Crea etiquetas personalizadas para categorizar y organizar tus elementos de trabajo",
       "label_title": "Título de la etiqueta",
       "label_title_is_required": "El título de la etiqueta es requerido",
       "label_max_char": "El nombre de la etiqueta no debe exceder 255 caracteres",
@@ -52,9 +56,11 @@
       }
     },
     "estimates": {
+      "heading": "Estimaciones",
+      "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
       "label": "Estimaciones",
       "title": "Activar estimaciones para mi proyecto",
-      "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
+      "enable_description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
       "no_estimate": "Sin estimación",
       "new": "Nuevo sistema de estimación",
       "create": {
@@ -112,6 +118,16 @@
             "title": "Error al reordenar estimaciones",
             "message": "No pudimos reordenar las estimaciones, por favor intenta de nuevo"
           }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistema de estimaciones creado",
+            "message": "Creado y habilitado correctamente"
+          },
+          "error": {
+            "title": "Error",
+            "message": "Algo salió mal"
+          }
         }
       },
       "validation": {
@@ -162,6 +178,8 @@
     },
     "automations": {
       "label": "Automatizaciones",
+      "heading": "Automatizaciones",
+      "description": "Configura acciones automatizadas para optimizar tu flujo de trabajo de gestión de proyectos y reducir tareas manuales.",
       "auto-archive": {
         "title": "Archivar automáticamente elementos de trabajo cerrados",
         "description": "Plane archivará automáticamente los elementos de trabajo que hayan sido completados o cancelados.",
@@ -194,89 +212,115 @@
         "description": "Configura GitHub y otras integraciones para sincronizar los elementos de trabajo de tu proyecto."
       }
     },
-    "cycles": {
-      "auto_schedule": {
-        "heading": "Programación automática de ciclos",
-        "description": "Mantén los ciclos en movimiento sin configuración manual.",
-        "tooltip": "Crea automáticamente nuevos ciclos basados en tu programación elegida.",
-        "edit_button": "Editar",
-        "form": {
-          "cycle_title": {
-            "label": "Título del ciclo",
-            "placeholder": "Título",
-            "tooltip": "El título se agregará con números para los ciclos subsiguientes. Por ejemplo: Diseño - 1/2/3",
-            "validation": {
-              "required": "El título del ciclo es requerido",
-              "max_length": "El título no debe exceder los 255 caracteres"
-            }
-          },
-          "cycle_duration": {
-            "label": "Duración del ciclo",
-            "unit": "Semanas",
-            "validation": {
-              "required": "La duración del ciclo es requerida",
-              "min": "La duración del ciclo debe ser al menos 1 semana",
-              "max": "La duración del ciclo no puede exceder 30 semanas",
-              "positive": "La duración del ciclo debe ser positiva"
-            }
-          },
-          "cooldown_period": {
-            "label": "Período de enfriamiento",
-            "unit": "días",
-            "tooltip": "Pausa entre ciclos antes de que comience el siguiente.",
-            "validation": {
-              "required": "El período de enfriamiento es requerido",
-              "negative": "El período de enfriamiento no puede ser negativo"
-            }
-          },
-          "start_date": {
-            "label": "Día de inicio del ciclo",
-            "validation": {
-              "required": "La fecha de inicio es requerida",
-              "past": "La fecha de inicio no puede estar en el pasado"
-            }
-          },
-          "number_of_cycles": {
-            "label": "Número de ciclos futuros",
-            "validation": {
-              "required": "El número de ciclos es requerido",
-              "min": "Se requiere al menos 1 ciclo",
-              "max": "No se pueden programar más de 3 ciclos"
-            }
-          },
-          "auto_rollover": {
-            "label": "Transferencia automática de elementos de trabajo",
-            "tooltip": "El día que se complete un ciclo, mover todos los elementos de trabajo sin terminar al siguiente ciclo."
-          }
-        },
+    "workflows": {
+      "toggle": {
+        "title": "Habilitar flujos de trabajo",
+        "description": "Configura flujos de trabajo para controlar el movimiento de los elementos de trabajo",
+        "no_states_tooltip": "No se han agregado estados al flujo de trabajo.",
+        "no_work_item_types_tooltip": "No se han agregado tipos de elementos de trabajo al flujo de trabajo.",
+        "no_states_or_work_item_types_tooltip": "No se han agregado estados ni tipos de elementos de trabajo al flujo de trabajo.",
         "toast": {
-          "toggle": {
-            "loading_enable": "Habilitando programación automática de ciclos",
-            "loading_disable": "Deshabilitando programación automática de ciclos",
-            "success": {
-              "title": "¡Éxito!",
-              "message": "Programación automática de ciclos activada exitosamente."
-            },
-            "error": {
-              "title": "¡Error!",
-              "message": "Error al activar la programación automática de ciclos."
-            }
+          "loading": {
+            "enabling": "Habilitando flujos de trabajo",
+            "disabling": "Deshabilitando flujos de trabajo"
           },
-          "save": {
-            "loading": "Guardando configuración de programación automática de ciclos",
-            "success": {
-              "title": "¡Éxito!",
-              "message_create": "Configuración de programación automática de ciclos guardada exitosamente.",
-              "message_update": "Configuración de programación automática de ciclos actualizada exitosamente."
-            },
-            "error": {
-              "title": "¡Error!",
-              "message_create": "Error al guardar la configuración de programación automática de ciclos.",
-              "message_update": "Error al actualizar la configuración de programación automática de ciclos."
-            }
+          "success": {
+            "title": "¡Éxito!",
+            "message": "Flujos de trabajo habilitados correctamente."
+          },
+          "error": {
+            "title": "¡Error!",
+            "message": "Error al habilitar los flujos de trabajo. Por favor, inténtalo de nuevo."
           }
         }
+      },
+      "heading": "Flujos de trabajo",
+      "description": "Automatiza las transiciones de elementos de trabajo y establece reglas para controlar cómo se mueven las tareas a través del flujo de tu proyecto.",
+      "add_button": "Agregar nuevo flujo de trabajo",
+      "search": "Buscar flujos de trabajo",
+      "detail": {
+        "define": "Definir flujo de trabajo",
+        "add_states": "Agregar estados",
+        "unmapped_states": {
+          "title": "Estados no asignados detectados",
+          "description": "Algunos elementos de trabajo para los tipos seleccionados están actualmente en estados que no existen en este flujo de trabajo.",
+          "note": "Si habilitas este flujo de trabajo, estos elementos se moverán automáticamente al estado inicial de este flujo de trabajo.",
+          "label": "Estados faltantes",
+          "tooltip": "Algunos elementos de trabajo están en estados que no están asignados a este flujo de trabajo. Abre el flujo de trabajo para revisarlo."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Todos los estados están en uso",
+          "description": "Todos los estados definidos para este proyecto ya están presentes en tu flujo de trabajo actual."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Este flujo de trabajo se aplica a cualquier tipo de elemento de trabajo que no esté asignado a un flujo de trabajo."
+      },
+      "create": {
+        "heading": "Crear nuevo flujo de trabajo",
+        "name": {
+          "placeholder": "Agrega un nombre único",
+          "validation": {
+            "max_length": "El nombre debe tener menos de 255 caracteres",
+            "required": "El nombre es obligatorio",
+            "invalid": "El nombre solo puede contener letras, números, espacios, guiones y apóstrofes"
+          }
+        },
+        "description": {
+          "placeholder": "Agrega una descripción breve",
+          "validation": {
+            "invalid": "La descripción solo puede contener letras, números, espacios, guiones y apóstrofes"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipo de elemento de trabajo"
+        },
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Flujo de trabajo creado correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al crear el flujo de trabajo. Por favor, inténtalo de nuevo."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Flujo de trabajo actualizado correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al actualizar el flujo de trabajo. Por favor, inténtalo de nuevo."
+        }
+      },
+      "delete": {
+        "loading": "Eliminando flujo de trabajo",
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Flujo de trabajo eliminado correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al eliminar el flujo de trabajo. Por favor, inténtalo de nuevo."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "¡Éxito!",
+          "message": "Estados agregados correctamente."
+        },
+        "error": {
+          "title": "¡Error!",
+          "message": "Error al agregar los estados. Por favor, inténtalo de nuevo."
+        }
       }
+    },
+    "work_item_types": {
+      "heading": "Tipos de elemento de trabajo",
+      "description": "Crea y personaliza diferentes tipos de elementos de trabajo con propiedades únicas"
     },
     "features": {
       "cycles": {
@@ -384,6 +428,98 @@
         "loading": "Actualizando función del proyecto...",
         "success": "Función del proyecto actualizada correctamente.",
         "error": "Algo salió mal al actualizar la función del proyecto. Por favor, inténtalo de nuevo."
+      }
+    },
+    "project_updates": {
+      "heading": "Actualizaciones del proyecto",
+      "description": "Seguimiento consolidado y monitoreo del progreso de este proyecto"
+    },
+    "templates": {
+      "heading": "Plantillas",
+      "description": "Ahorra el 80 % del tiempo dedicado a crear proyectos, elementos de trabajo y páginas cuando usas plantillas."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Programación automática de ciclos",
+        "description": "Mantén los ciclos en movimiento sin configuración manual.",
+        "tooltip": "Crea automáticamente nuevos ciclos basados en tu programación elegida.",
+        "edit_button": "Editar",
+        "form": {
+          "cycle_title": {
+            "label": "Título del ciclo",
+            "placeholder": "Título",
+            "tooltip": "El título se agregará con números para los ciclos subsiguientes. Por ejemplo: Diseño - 1/2/3",
+            "validation": {
+              "required": "El título del ciclo es requerido",
+              "max_length": "El título no debe exceder los 255 caracteres"
+            }
+          },
+          "cycle_duration": {
+            "label": "Duración del ciclo",
+            "unit": "Semanas",
+            "validation": {
+              "required": "La duración del ciclo es requerida",
+              "min": "La duración del ciclo debe ser al menos 1 semana",
+              "max": "La duración del ciclo no puede exceder 30 semanas",
+              "positive": "La duración del ciclo debe ser positiva"
+            }
+          },
+          "cooldown_period": {
+            "label": "Período de enfriamiento",
+            "unit": "días",
+            "tooltip": "Pausa entre ciclos antes de que comience el siguiente.",
+            "validation": {
+              "required": "El período de enfriamiento es requerido",
+              "negative": "El período de enfriamiento no puede ser negativo"
+            }
+          },
+          "start_date": {
+            "label": "Día de inicio del ciclo",
+            "validation": {
+              "required": "La fecha de inicio es requerida",
+              "past": "La fecha de inicio no puede estar en el pasado"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Número de ciclos futuros",
+            "validation": {
+              "required": "El número de ciclos es requerido",
+              "min": "Se requiere al menos 1 ciclo",
+              "max": "No se pueden programar más de 3 ciclos"
+            }
+          },
+          "auto_rollover": {
+            "label": "Transferencia automática de elementos de trabajo",
+            "tooltip": "El día que se complete un ciclo, mover todos los elementos de trabajo sin terminar al siguiente ciclo."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Habilitando programación automática de ciclos",
+            "loading_disable": "Deshabilitando programación automática de ciclos",
+            "success": {
+              "title": "¡Éxito!",
+              "message": "Programación automática de ciclos activada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message": "Error al activar la programación automática de ciclos."
+            }
+          },
+          "save": {
+            "loading": "Guardando configuración de programación automática de ciclos",
+            "success": {
+              "title": "¡Éxito!",
+              "message_create": "Configuración de programación automática de ciclos guardada exitosamente.",
+              "message_update": "Configuración de programación automática de ciclos actualizada exitosamente."
+            },
+            "error": {
+              "title": "¡Error!",
+              "message_create": "Error al guardar la configuración de programación automática de ciclos.",
+              "message_update": "Error al actualizar la configuración de programación automática de ciclos."
+            }
+          }
+        }
       }
     }
   }

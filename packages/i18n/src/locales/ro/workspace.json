@@ -95,16 +95,28 @@
       "scope_and_demand": "Activități asumate și cerere",
       "custom": "Analitice personalizate"
     },
+    "total": "Totalul {entity}",
+    "started_work_items": "{entity} începute",
+    "backlog_work_items": "{entity} din backlog",
+    "un_started_work_items": "{entity} neîncepute",
+    "completed_work_items": "{entity} finalizate",
+    "project_insights": "Informații despre proiect",
+    "summary_of_projects": "Sumarul proiectelor",
+    "all_projects": "Toate proiectele",
+    "trend_on_charts": "Tendință în grafice",
+    "active_projects": "Proiecte active",
+    "customized_insights": "Perspective personalizate",
+    "created_vs_resolved": "Creat vs Rezolvat",
     "empty_state": {
-      "customized_insights": {
-        "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici.",
-        "title": "Nu există date încă"
+      "project_insights": {
+        "title": "Nu există date încă",
+        "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici."
       },
       "created_vs_resolved": {
-        "description": "Elementele de lucru create și rezolvate în timp vor apărea aici.",
-        "title": "Nu există date încă"
+        "title": "Nu există date încă",
+        "description": "Elementele de lucru create și rezolvate în timp vor apărea aici."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Nu există date încă",
         "description": "Elementele de lucru atribuite ție, împărțite pe stări, vor apărea aici."
       },
@@ -132,29 +144,11 @@
         "description": "Analizele tendințelor de intake vor apărea aici. Adăugați elemente de lucru la intake pentru a începe să urmăriți tendințele."
       }
     },
-    "created_vs_resolved": "Creat vs Rezolvat",
-    "customized_insights": "Perspective personalizate",
-    "backlog_work_items": "{entity} din backlog",
-    "active_projects": "Proiecte active",
-    "trend_on_charts": "Tendință în grafice",
-    "all_projects": "Toate proiectele",
-    "summary_of_projects": "Sumarul proiectelor",
-    "project_insights": "Informații despre proiect",
-    "started_work_items": "{entity} începute",
-    "total_work_items": "Totalul {entity}",
-    "total_projects": "Total proiecte",
-    "total_admins": "Total administratori",
-    "total_users": "Total utilizatori",
-    "total_intake": "Venit total",
-    "un_started_work_items": "{entity} neîncepute",
-    "total_guests": "Total invitați",
-    "completed_work_items": "{entity} finalizate",
-    "total": "Totalul {entity}",
+    "upgrade_to_plan": "Upgradează la {plan} pentru a debloca {tab}",
+    "workitem_resolved_vs_pending": "Elemente de lucru rezolvate vs în așteptare",
     "projects_by_status": "Proiecte după statut",
     "active_users": "Utilizatori activi",
-    "intake_trends": "Tendințe de admitere",
-    "workitem_resolved_vs_pending": "Elemente de lucru rezolvate vs în așteptare",
-    "upgrade_to_plan": "Upgradează la {plan} pentru a debloca {tab}"
+    "intake_trends": "Tendințe de admitere"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proiect} other {Proiecte}}",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "Încă nu există pagini arhivate",
         "description": "Arhivează paginile care nu sunt pe radarul tău. Accesează-le aici când ai nevoie."
+      },
+      "shared": {
+        "title": "Nicio pagină partajată încă",
+        "description": "Paginile pe care alții le-au partajat cu tine vor apărea aici."
       }
     }
   },

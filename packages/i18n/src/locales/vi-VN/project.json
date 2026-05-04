@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Lưu chế độ xem đã lọc cho dự án của bạn. Tạo bao nhiêu tùy ý",
+        "description": "Chế độ xem là bộ bộ lọc đã lưu mà bạn thường xuyên sử dụng hoặc muốn truy cập dễ dàng. Tất cả đồng nghiệp trong dự án có thể thấy chế độ xem của mọi người và chọn cái phù hợp nhất với nhu cầu của họ.",
+        "primary_button": {
+          "text": "Tạo chế độ xem đầu tiên của bạn",
+          "comic": {
+            "title": "Chế độ xem hoạt động dựa trên thuộc tính mục công việc.",
+            "description": "Bạn có thể tạo chế độ xem ở đây sử dụng bất kỳ số lượng thuộc tính nào làm bộ lọc theo nhu cầu của bạn."
+          }
+        },
+        "filter": {
+          "title": "Không có chế độ xem phù hợp",
+          "description": "Không có chế độ xem phù hợp với tiêu chí tìm kiếm.\n Tạo chế độ xem mới."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Chưa có mục công việc đã lưu trữ",
+        "description": "Thủ công hoặc thông qua tự động hóa, bạn có thể lưu trữ mục công việc đã hoàn thành hoặc đã hủy. Tìm chúng ở đây sau khi lưu trữ.",
+        "primary_button": {
+          "text": "Thiết lập tự động hóa"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Không tìm thấy mục công việc nào phù hợp với bộ lọc đã áp dụng",
+        "secondary_button": {
+          "text": "Xóa tất cả bộ lọc"
+        }
+      },
+      "public": {
+        "title": "Chưa có trang công khai",
+        "description": "Xem các trang được chia sẻ với mọi người trong dự án của bạn tại đây.",
+        "primary_button": {
+          "text": "Tạo trang đầu tiên của bạn"
+        }
+      },
+      "archived": {
+        "title": "Chưa có trang đã lưu trữ",
+        "description": "Lưu trữ các trang không còn trong tầm nhìn của bạn. Truy cập chúng ở đây khi cần."
+      },
+      "shared": {
+        "title": "Chưa có trang được chia sẻ",
+        "description": "Các trang mà người khác đã chia sẻ với bạn sẽ xuất hiện ở đây."
+      }
+    },
+    "delete_view": {
+      "title": "Bạn có chắc chắn muốn xóa chế độ xem này không?",
+      "content": "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục."
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -215,29 +266,6 @@
         "success": "Đã xóa mô-đun thành công",
         "error": "Xóa mô-đun thất bại"
       }
-    }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "Lưu chế độ xem đã lọc cho dự án của bạn. Tạo bao nhiêu tùy ý",
-        "description": "Chế độ xem là bộ bộ lọc đã lưu mà bạn thường xuyên sử dụng hoặc muốn truy cập dễ dàng. Tất cả đồng nghiệp trong dự án có thể thấy chế độ xem của mọi người và chọn cái phù hợp nhất với nhu cầu của họ.",
-        "primary_button": {
-          "text": "Tạo chế độ xem đầu tiên của bạn",
-          "comic": {
-            "title": "Chế độ xem hoạt động dựa trên thuộc tính mục công việc.",
-            "description": "Bạn có thể tạo chế độ xem ở đây sử dụng bất kỳ số lượng thuộc tính nào làm bộ lọc theo nhu cầu của bạn."
-          }
-        }
-      },
-      "filter": {
-        "title": "Không có chế độ xem phù hợp",
-        "description": "Không có chế độ xem phù hợp với tiêu chí tìm kiếm.\nTạo chế độ xem mới."
-      }
-    },
-    "delete_view": {
-      "title": "Bạn có chắc chắn muốn xóa chế độ xem này không?",
-      "content": "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục."
     }
   },
   "project_page": {
@@ -330,6 +358,13 @@
       "created_at": "Ngày tạo",
       "manual": "Thủ công"
     }
+  },
+  "project_members": {
+    "full_name": "Họ và tên",
+    "display_name": "Tên hiển thị",
+    "email": "Email",
+    "joining_date": "Ngày tham gia",
+    "role": "Vai trò"
   },
   "project": {
     "members_import": {

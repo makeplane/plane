@@ -20,6 +20,7 @@
       "due_date": "Tambah tanggal jatuh tempo",
       "parent": "Tambah item kerja induk",
       "sub_issue": "Tambah sub-item kerja",
+      "dependency": "Tambah ketergantungan",
       "relation": "Tambah hubungan",
       "link": "Tambah tautan",
       "existing": "Tambah item kerja yang ada"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "Tautan komentar berhasil disalin ke clipboard",
         "error": "Gagal menyalin tautan komentar. Silakan coba lagi nanti."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Tambah balasan",
+          "placeholder": "Tambah balasan"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Gagal mengambil balasan"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Balasan berhasil dibuat"
+            },
+            "error": {
+              "message": "Gagal membuat balasan"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Balasan berhasil diperbarui"
+            },
+            "error": {
+              "message": "Gagal memperbarui balasan"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Balasan berhasil dihapus"
+            },
+            "error": {
+              "message": "Gagal menghapus balasan"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "Batalkan pilihan semua item kerja"
     },
     "open_in_full_screen": "Buka item kerja dalam layar penuh",
+    "duplicate": {
+      "modal": {
+        "title": "Buat salinan ke proyek lain",
+        "description1": "Ini membuat salinan item kerja.",
+        "description2": "Semua data properti akan dihapus saat menduplikasi.",
+        "placeholder": "Pilih proyek"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Item kerja berhasil diduplikasi"
+        },
+        "error": {
+          "message": "Gagal menduplikasi item kerja"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Hubungkan halaman",
+      "show_wiki_pages": "Tampilkan halaman Wiki",
+      "link_pages_to": "Hubungkan halaman ke",
+      "linked_pages": "Halaman yang terhubung",
+      "no_description": "Ini adalah halaman kosong. Mengapa tidak menulis sesuatu di dalamnya dan melihatnya muncul di sini seperti placeholder ini",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Halaman diperbarui",
+            "message": "Halaman berhasil diperbarui"
+          },
+          "error": {
+            "title": "Pembaruan halaman gagal",
+            "message": "Pembaruan halaman gagal"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Halaman dihapus",
+            "message": "Halaman berhasil dihapus"
+          },
+          "error": {
+            "title": "Penghapusan halaman gagal",
+            "message": "Penghapusan halaman gagal"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Klik untuk memberi suara naik",
       "click_to_downvote": "Klik untuk memberi suara turun",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "Tidak dapat memperbarui item kerja",
         "message": "Perubahan status tidak diizinkan untuk beberapa item kerja. Pastikan perubahan status diizinkan."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Aktifkan alur kerja",
-        "description": "Atur alur kerja untuk mengontrol perpindahan item kerja",
-        "no_states_tooltip": "Tidak ada status yang ditambahkan ke alur kerja.",
-        "toast": {
-          "loading": {
-            "enabling": "Mengaktifkan alur kerja",
-            "disabling": "Menonaktifkan alur kerja"
-          },
-          "success": {
-            "title": "Berhasil!",
-            "message": "Alur kerja berhasil diaktifkan."
-          },
-          "error": {
-            "title": "Kesalahan!",
-            "message": "Gagal mengaktifkan alur kerja. Silakan coba lagi."
-          }
-        }
-      },
-      "heading": "Alur kerja",
-      "description": "Otomatiskan transisi item kerja dan tetapkan aturan untuk mengontrol bagaimana tugas bergerak melalui alur proyek Anda.",
-      "add_button": "Tambahkan alur kerja baru",
-      "search": "Cari alur kerja",
-      "detail": {
-        "define": "Tentukan alur kerja",
-        "add_states": "Tambahkan status",
-        "unmapped_states": {
-          "title": "Status yang belum dipetakan terdeteksi",
-          "description": "Beberapa item kerja untuk tipe yang dipilih saat ini berada dalam status yang tidak ada di alur kerja ini.",
-          "note": "Jika Anda mengaktifkan alur kerja ini, item-item tersebut akan otomatis dipindahkan ke status awal untuk alur kerja ini.",
-          "label": "Status yang hilang",
-          "tooltip": "Beberapa item kerja berada dalam status yang tidak dipetakan ke alur kerja ini. Buka alur kerja untuk meninjaunya."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Semua status sedang digunakan",
-          "description": "Semua status yang ditentukan untuk proyek ini sudah ada di alur kerja Anda saat ini."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Alur kerja ini berlaku untuk tipe item kerja apa pun yang tidak ditetapkan ke alur kerja mana pun."
-      },
-      "create": {
-        "heading": "Buat alur kerja baru"
       }
     }
   },

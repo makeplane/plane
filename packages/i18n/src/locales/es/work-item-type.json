@@ -3,11 +3,25 @@
     "label": "Tipos de elementos de trabajo",
     "label_lowercase": "tipos de elementos de trabajo",
     "settings": {
-      "title": "Tipos de elementos de trabajo",
+      "description": "Personaliza y agrega tus propias propiedades para adaptarlo a las necesidades de tu equipo.",
+      "cant_delete_default_message": "No se puede eliminar este tipo de elemento de trabajo porque está establecido como el tipo predeterminado para este proyecto.",
+      "set_as_default": "Establecer como predeterminado",
+      "cant_set_default_inactive_message": "Activa este tipo antes de establecerlo como predeterminado",
+      "set_default_confirmation": {
+        "title": "Establecer como tipo de elemento de trabajo predeterminado",
+        "description": "Al establecer {name} como predeterminado, se importará a todos los proyectos de este espacio de trabajo. Todos los nuevos elementos de trabajo usarán este tipo de forma predeterminada.",
+        "confirm_button": "Establecer como predeterminado"
+      },
       "properties": {
         "title": "Propiedades personalizadas del elemento de trabajo",
+        "description": "Crea y personaliza propiedades.",
         "tooltip": "Cada tipo de elemento de trabajo viene con un conjunto predeterminado de propiedades como Título, Descripción, Asignado, Estado, Prioridad, Fecha de inicio, Fecha de vencimiento, Module, Cycle, etc. También puedes personalizar y agregar tus propias propiedades para adaptarlo a las necesidades de tu equipo.",
         "add_button": "Agregar nueva propiedad",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importar desde el espacio de trabajo"
+          }
+        },
         "dropdown": {
           "label": "Tipo de propiedad",
           "placeholder": "Seleccionar tipo"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Crear nueva propiedad personalizada",
+            "update": "Actualizar propiedad personalizada"
+          },
           "form": {
             "display_name": {
               "placeholder": "Título"
@@ -213,9 +231,50 @@
           "description": "Las nuevas propiedades que agregues para este tipo de elemento de trabajo aparecerán aquí."
         }
       },
+      "types": {
+        "title": "Tipos",
+        "description": "Crea y personaliza tipos de elementos de trabajo con propiedades.",
+        "sort_options": {
+          "project_count": "Número de proyectos que forma parte"
+        },
+        "filter_options": {
+          "show_active": "Mostrar activos",
+          "show_inactive": "Mostrar inactivos"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Crear nuevo",
+            "import_from_workspace": "Importar desde el espacio de trabajo"
+          },
+          "banner": {
+            "with_access": "Habilita los tipos de elementos de trabajo para importar tipos desde el nivel del espacio de trabajo",
+            "without_access": "Los tipos de elementos de trabajo están deshabilitados. Contacta al administrador del espacio de trabajo para habilitarlos en la configuración del espacio de trabajo."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Propiedades personalizadas",
+        "add_button": "Agregar propiedades",
+        "modal": {
+          "title": "Agregar propiedades",
+          "empty": {
+            "title": "No hay propiedades disponibles",
+            "description": "Todas las propiedades ya han sido vinculadas a este tipo."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Desvincular propiedad",
+          "description": "Al desvincular esta propiedad se eliminarán permanentemente todos sus valores en cada elemento de trabajo que use este tipo. Esta acción no se puede deshacer.",
+          "input_label": "Escribe",
+          "input_label_suffix": "para continuar:",
+          "confirm": "Desvincular propiedad",
+          "loading": "Desvinculando"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Eliminar este tipo",
         "description": "La eliminación de tipos puede provocar la pérdida de datos existentes.",
+        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?",
         "primary_button": "Sí, eliminarlo",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "No se puede eliminar el tipo de elemento de trabajo predeterminado",
           "cannot_delete_work_item_type_with_associated_work_items": "No se puede eliminar el tipo de elemento de trabajo con elementos de trabajo asociados"
-        },
-        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?"
-      },
-      "cant_delete_default_message": "No se puede eliminar este tipo de elemento de trabajo porque está establecido como el tipo predeterminado para este proyecto.",
-      "set_as_default": "Establecer como predeterminado",
-      "cant_set_default_inactive_message": "Activa este tipo antes de establecerlo como predeterminado",
-      "set_default_confirmation": {
-        "title": "Establecer como tipo de elemento de trabajo predeterminado",
-        "description": "Al establecer {name} como predeterminado, se importará a todos los proyectos de este espacio de trabajo. Todos los nuevos elementos de trabajo usarán este tipo de forma predeterminada.",
-        "confirm_button": "Establecer como predeterminado"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "¡Error!",
           "message": {
+            "default": "Error al crear el tipo de elemento de trabajo. ¡Por favor intente nuevamente!",
             "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "¡Error!",
           "message": {
+            "default": "Error al actualizar el tipo de elemento de trabajo. ¡Por favor intente nuevamente!",
             "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
           }
         }
@@ -383,25 +435,25 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "¡Error de validación!",
+      "title": "Guardar romperá los enlaces existentes",
       "content": {
         "intro": "El tipo de elemento de trabajo {workItemTypeName} tiene:",
-        "parent_items": "{count, plural, one {elemento de trabajo padre} other {elementos de trabajo padre}}",
+        "parent_items": "{count, plural, one {Se eliminará # enlace principal} other {Se eliminarán # enlaces principales}}.",
         "child_items": "{count, plural, one {subelemento de trabajo} other {subelementos de trabajo}}",
         "parent_line_suffix_when_also_children": ", y ",
         "footer": "Este cambio eliminará las relaciones padre-hijo de los elementos de trabajo existentes del tipo {workItemTypeName}."
       },
       "confirm_input": {
-        "label": "Escribe «Confirmar» para continuar.",
-        "placeholder": "Confirmar"
+        "label": "Escribe «confirmar» para continuar.",
+        "placeholder": "confirmar"
       },
       "error_toast": {
         "title": "¡Error!",
-        "message": "No se pudo romper la jerarquía. Inténtalo de nuevo."
+        "message": "No se pudieron desvincular los enlaces ni guardar. Inténtelo de nuevo."
       },
       "confirm_button": {
-        "loading": "Aplicando",
-        "default": "Aplicar y desvincular"
+        "loading": "Guardando",
+        "default": "Guardar de todos modos"
       }
     },
     "work_item_modal": {

@@ -136,6 +136,57 @@
       }
     }
   },
+  "project_views": {
+    "empty_state": {
+      "general": {
+        "title": "Speichern Sie Filter als Ansichten.",
+        "description": "Ansichten sind gespeicherte Filter, auf die Sie schnell zugreifen und die Sie im Team teilen können.",
+        "primary_button": {
+          "text": "Erste Ansicht erstellen",
+          "comic": {
+            "title": "Ansichten funktionieren mit den Eigenschaften der Arbeitselemente.",
+            "description": "Erstellen Sie eine Ansicht mit den gewünschten Filtern."
+          }
+        },
+        "filter": {
+          "title": "Keine passenden Ansichten",
+          "description": "Keine Ansichten entsprechen den Suchkriterien.\n Erstellen Sie stattdessen eine neue Ansicht."
+        }
+      },
+      "no_archived_issues": {
+        "title": "Noch keine archivierten Arbeitselemente",
+        "description": "Manuell oder durch Automatisierung können Sie abgeschlossene oder abgebrochene Arbeitselemente archivieren. Finden Sie sie hier, sobald sie archiviert sind.",
+        "primary_button": {
+          "text": "Automatisierung einrichten"
+        }
+      },
+      "issues_empty_filter": {
+        "title": "Keine Arbeitselemente gefunden, die den angewendeten Filtern entsprechen",
+        "secondary_button": {
+          "text": "Alle Filter löschen"
+        }
+      },
+      "public": {
+        "title": "Noch keine öffentlichen Seiten",
+        "description": "Sehen Sie hier Seiten, die mit allen in Ihrem Projekt geteilt wurden.",
+        "primary_button": {
+          "text": "Ihre erste Seite erstellen"
+        }
+      },
+      "archived": {
+        "title": "Noch keine archivierten Seiten",
+        "description": "Archivieren Sie Seiten, die nicht auf Ihrem Radar sind. Greifen Sie hier bei Bedarf darauf zu."
+      },
+      "shared": {
+        "title": "Noch keine geteilten Seiten",
+        "description": "Seiten, die andere mit Ihnen geteilt haben, werden hier angezeigt."
+      }
+    },
+    "delete_view": {
+      "title": "Sind Sie sicher, dass Sie diese Ansicht löschen möchten?",
+      "content": "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden."
+    }
+  },
   "project_issues": {
     "empty_state": {
       "no_issues": {
@@ -216,64 +267,6 @@
         "error": "Löschen fehlgeschlagen"
       }
     }
-  },
-  "project_views": {
-    "empty_state": {
-      "general": {
-        "title": "Speichern Sie Filter als Ansichten.",
-        "description": "Ansichten sind gespeicherte Filter, auf die Sie schnell zugreifen und die Sie im Team teilen können.",
-        "primary_button": {
-          "text": "Erste Ansicht erstellen",
-          "comic": {
-            "title": "Ansichten funktionieren mit den Eigenschaften der Arbeitselemente.",
-            "description": "Erstellen Sie eine Ansicht mit den gewünschten Filtern."
-          }
-        },
-        "filter": {
-          "title": "Keine passenden Ansichten",
-          "description": "Keine Ansichten entsprechen den Suchkriterien.\n Erstellen Sie stattdessen eine neue Ansicht."
-        }
-      },
-      "no_archived_issues": {
-        "title": "Noch keine archivierten Arbeitselemente",
-        "description": "Manuell oder durch Automatisierung können Sie abgeschlossene oder abgebrochene Arbeitselemente archivieren. Finden Sie sie hier, sobald sie archiviert sind.",
-        "primary_button": {
-          "text": "Automatisierung einrichten"
-        }
-      },
-      "issues_empty_filter": {
-        "title": "Keine Arbeitselemente gefunden, die den angewendeten Filtern entsprechen",
-        "secondary_button": {
-          "text": "Alle Filter löschen"
-        }
-      },
-      "public": {
-        "title": "Noch keine öffentlichen Seiten",
-        "description": "Sehen Sie hier Seiten, die mit allen in Ihrem Projekt geteilt wurden.",
-        "primary_button": {
-          "text": "Ihre erste Seite erstellen"
-        }
-      },
-      "archived": {
-        "title": "Noch keine archivierten Seiten",
-        "description": "Archivieren Sie Seiten, die nicht auf Ihrem Radar sind. Greifen Sie hier bei Bedarf darauf zu."
-      },
-      "shared": {
-        "title": "Noch keine geteilten Seiten",
-        "description": "Seiten, die andere mit Ihnen geteilt haben, werden hier angezeigt."
-      }
-    },
-    "delete_view": {
-      "title": "Sind Sie sicher, dass Sie diese Ansicht löschen möchten?",
-      "content": "Wenn Sie bestätigen, werden alle Sortier-, Filter- und Anzeigeoptionen + das Layout, das Sie für diese Ansicht gewählt haben, dauerhaft gelöscht und können nicht wiederhergestellt werden."
-    }
-  },
-  "project_members": {
-    "full_name": "Vollständiger Name",
-    "display_name": "Anzeigename",
-    "email": "E-Mail",
-    "joining_date": "Beitrittsdatum",
-    "role": "Rolle"
   },
   "project_page": {
     "empty_state": {
@@ -365,6 +358,13 @@
       "created_at": "Erstellungsdatum",
       "manual": "Manuell"
     }
+  },
+  "project_members": {
+    "full_name": "Vollständiger Name",
+    "display_name": "Anzeigename",
+    "email": "E-Mail",
+    "joining_date": "Beitrittsdatum",
+    "role": "Rolle"
   },
   "project": {
     "members_import": {

@@ -95,16 +95,28 @@
       "scope_and_demand": "スコープと需要",
       "custom": "カスタムアナリティクス"
     },
+    "total": "{entity}の合計",
+    "started_work_items": "開始された{entity}",
+    "backlog_work_items": "バックログの{entity}",
+    "un_started_work_items": "未開始の{entity}",
+    "completed_work_items": "完了した{entity}",
+    "project_insights": "プロジェクトのインサイト",
+    "summary_of_projects": "プロジェクトの概要",
+    "all_projects": "すべてのプロジェクト",
+    "trend_on_charts": "グラフの傾向",
+    "active_projects": "アクティブなプロジェクト",
+    "customized_insights": "カスタマイズされたインサイト",
+    "created_vs_resolved": "作成 vs 解決",
     "empty_state": {
-      "customized_insights": {
-        "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。",
-        "title": "まだデータがありません"
+      "project_insights": {
+        "title": "まだデータがありません",
+        "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。"
       },
       "created_vs_resolved": {
-        "description": "時間の経過とともに作成および解決された作業項目がここに表示されます。",
-        "title": "まだデータがありません"
+        "title": "まだデータがありません",
+        "description": "時間の経過とともに作成および解決された作業項目がここに表示されます。"
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "まだデータがありません",
         "description": "あなたに割り当てられた作業項目は、ステータスごとに分類されてここに表示されます。"
       },
@@ -132,29 +144,11 @@
         "description": "インテークの傾向分析がここに表示されます。作業項目をインテークに追加して傾向の追跡を開始してください。"
       }
     },
-    "created_vs_resolved": "作成 vs 解決",
-    "customized_insights": "カスタマイズされたインサイト",
-    "backlog_work_items": "バックログの{entity}",
-    "active_projects": "アクティブなプロジェクト",
-    "trend_on_charts": "グラフの傾向",
-    "all_projects": "すべてのプロジェクト",
-    "summary_of_projects": "プロジェクトの概要",
-    "project_insights": "プロジェクトのインサイト",
-    "started_work_items": "開始された{entity}",
-    "total_work_items": "{entity}の合計",
-    "total_projects": "プロジェクト合計",
-    "total_admins": "管理者の合計",
-    "total_users": "ユーザー総数",
-    "total_intake": "総収入",
-    "un_started_work_items": "未開始の{entity}",
-    "total_guests": "ゲストの合計",
-    "completed_work_items": "完了した{entity}",
-    "total": "{entity}の合計",
+    "upgrade_to_plan": "{tab} をアンロックするには {plan} にアップグレードしてください",
+    "workitem_resolved_vs_pending": "解決済み vs 保留中の作業項目",
     "projects_by_status": "ステータス別のプロジェクト",
     "active_users": "アクティブユーザー",
-    "intake_trends": "受け入れの傾向",
-    "workitem_resolved_vs_pending": "解決済み vs 保留中の作業項目",
-    "upgrade_to_plan": "{tab} をアンロックするには {plan} にアップグレードしてください"
+    "intake_trends": "受け入れの傾向"
   },
   "workspace_projects": {
     "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",
@@ -162,6 +156,7 @@
       "label": "プロジェクトを追加"
     },
     "network": {
+      "label": "ネットワーク",
       "private": {
         "title": "非公開",
         "description": "招待された人のみアクセス可能"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "まだアーカイブされたページがありません",
         "description": "注目していないページをアーカイブします。必要な時にここでアクセスできます。"
+      },
+      "shared": {
+        "title": "共有されたページはまだありません",
+        "description": "他のメンバーがあなたと共有したページがここに表示されます。"
       }
     }
   },

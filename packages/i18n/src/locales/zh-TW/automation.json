@@ -53,6 +53,9 @@
       "button": {
         "previous": "返回",
         "next": "新增動作"
+      },
+      "warning": {
+        "disabled_trigger_switching": "建立後即無法變更觸發器類型"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "選擇一個選項",
       "handler_name": {
         "add_comment": "新增評論",
-        "change_property": "變更屬性"
+        "change_property": "變更屬性",
+        "run_script": "執行指令碼"
       },
       "configuration": {
         "label": "設定",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "新增評論"
+      },
+      "run_script_block": {
+        "title": "執行指令碼"
       },
       "change_property_block": {
         "title": "變更屬性"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "自動化標題",
+      "scope": "範圍",
+      "projects": "專案",
       "last_run_on": "最後執行時間",
       "created_on": "建立時間",
       "last_updated_on": "最後更新時間",
@@ -229,6 +238,35 @@
         "title": "自動化",
         "description": "自動化是在您的專案中自動執行任務的方式。",
         "sub_description": "使用自動化可以節省80%的管理時間。"
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "選擇要執行此自動化的專案",
+        "all_projects": {
+          "label": "所有專案",
+          "description": "自動化將針對工作區中的所有專案執行。"
+        },
+        "select_projects": {
+          "label": "選擇專案",
+          "description": "自動化將針對工作區中選取的專案執行。",
+          "placeholder": "選擇專案"
+        }
+      },
+      "settings": {
+        "sidebar_label": "自動化",
+        "title": "自動化",
+        "description": "透過全域自動化讓工作區中的流程標準化。"
+      },
+      "table": {
+        "scope": {
+          "global": "全域",
+          "project": {
+            "label": "專案",
+            "multiple": "多個",
+            "all": "全部"
+          }
+        }
       }
     }
   }

@@ -3,11 +3,25 @@
     "label": "作業項目タイプ",
     "label_lowercase": "作業項目タイプ",
     "settings": {
-      "title": "作業項目タイプ",
+      "description": "チームのニーズに合わせて独自のプロパティをカスタマイズして追加できます。",
+      "cant_delete_default_message": "この作業項目タイプは削除できません。このプロジェクトのデフォルトの作業項目タイプとして設定されているためです。",
+      "set_as_default": "デフォルトに設定",
+      "cant_set_default_inactive_message": "デフォルトに設定する前にこのタイプを有効にしてください",
+      "set_default_confirmation": {
+        "title": "デフォルトの作業項目タイプに設定",
+        "description": "{name}をデフォルトに設定すると、このワークスペース内のすべてのプロジェクトにインポートされます。すべての新しい作業項目はデフォルトでこのタイプを使用します。",
+        "confirm_button": "デフォルトに設定"
+      },
       "properties": {
         "title": "カスタム作業項目プロパティ",
+        "description": "プロパティを作成・カスタマイズします。",
         "tooltip": "各作業項目タイプには、タイトル、説明、担当者、状態、優先度、開始日、期限日、モジュール、サイクルなどのデフォルトのプロパティセットが付属しています。チームのニーズに合わせて独自のプロパティをカスタマイズして追加することもできます。",
         "add_button": "新しいプロパティを追加",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "ワークスペースからインポート"
+          }
+        },
         "dropdown": {
           "label": "プロパティタイプ",
           "placeholder": "タイプを選択"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "新しいカスタムプロパティを作成",
+            "update": "カスタムプロパティを更新"
+          },
           "form": {
             "display_name": {
               "placeholder": "タイトル"
@@ -213,9 +231,50 @@
           "description": "この作業項目タイプに追加する新しいプロパティがここに表示されます。"
         }
       },
+      "types": {
+        "title": "タイプ",
+        "description": "プロパティを持つ作業項目タイプを作成・カスタマイズします。",
+        "sort_options": {
+          "project_count": "所属プロジェクト数"
+        },
+        "filter_options": {
+          "show_active": "アクティブを表示",
+          "show_inactive": "非アクティブを表示"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "新規作成",
+            "import_from_workspace": "ワークスペースからインポート"
+          },
+          "banner": {
+            "with_access": "ワークスペースレベルからタイプをインポートするには、作業項目タイプを有効にしてください",
+            "without_access": "作業項目タイプは無効になっています。ワークスペース管理者に連絡して、ワークスペース設定で有効にしてもらってください。"
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "カスタムプロパティ",
+        "add_button": "プロパティを追加",
+        "modal": {
+          "title": "プロパティを追加",
+          "empty": {
+            "title": "利用可能なプロパティがありません",
+            "description": "すべてのプロパティはすでにこのタイプにリンクされています。"
+          }
+        },
+        "unlink_confirmation": {
+          "title": "プロパティのリンクを解除",
+          "description": "このプロパティのリンクを解除すると、このタイプを使用するすべての作業項目のすべての値が完全に削除されます。この操作は元に戻せません。",
+          "input_label": "入力",
+          "input_label_suffix": "して続行：",
+          "confirm": "プロパティのリンクを解除",
+          "loading": "リンク解除中"
+        }
+      },
       "item_delete_confirmation": {
         "title": "このタイプを削除",
         "description": "タイプの削除は既存データの損失につながる可能性があります。",
+        "can_disable_warning": "代わりにタイプを無効にしますか？",
         "primary_button": "はい、削除します",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "デフォルトの作業項目タイプは削除できません",
           "cannot_delete_work_item_type_with_associated_work_items": "関連する作業項目がある作業項目タイプは削除できません"
-        },
-        "can_disable_warning": "代わりにタイプを無効にしますか？"
-      },
-      "cant_delete_default_message": "この作業項目タイプは削除できません。このプロジェクトのデフォルトの作業項目タイプとして設定されているためです。",
-      "set_as_default": "デフォルトに設定",
-      "cant_set_default_inactive_message": "デフォルトに設定する前にこのタイプを有効にしてください",
-      "set_default_confirmation": {
-        "title": "デフォルトの作業項目タイプに設定",
-        "description": "{name}をデフォルトに設定すると、このワークスペース内のすべてのプロジェクトにインポートされます。すべての新しい作業項目はデフォルトでこのタイプを使用します。",
-        "confirm_button": "デフォルトに設定"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "エラー！",
           "message": {
+            "default": "作業項目タイプの作成に失敗しました。もう一度お試しください！",
             "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "エラー！",
           "message": {
+            "default": "作業項目タイプの更新に失敗しました。もう一度お試しください！",
             "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
           }
         }
@@ -383,10 +435,10 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "検証エラー！",
+      "title": "保存すると既存のリンクが解除されます",
       "content": {
         "intro": "作業アイテムタイプ「{workItemTypeName}」には次が含まれます。",
-        "parent_items": "{count, plural, other {親の作業アイテム}}",
+        "parent_items": "{count, plural, other {親リンク # 件が解除されます。}}",
         "child_items": "{count, plural, other {子の作業アイテム}}",
         "parent_line_suffix_when_also_children": "、および ",
         "footer": "この変更により、{workItemTypeName} 作業アイテムタイプの既存の作業アイテムから親子関係が削除されます。"
@@ -397,11 +449,11 @@
       },
       "error_toast": {
         "title": "エラー！",
-        "message": "階層を解除できませんでした。もう一度お試しください。"
+        "message": "リンク解除と保存に失敗しました。もう一度お試しください。"
       },
       "confirm_button": {
-        "loading": "適用中",
-        "default": "適用してリンク解除"
+        "loading": "保存中",
+        "default": "それでも保存する"
       }
     },
     "work_item_modal": {

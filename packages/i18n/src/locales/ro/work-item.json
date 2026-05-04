@@ -20,6 +20,7 @@
       "due_date": "Adaugă termenul limită",
       "parent": "Adaugă activitate părinte",
       "sub_issue": "Adaugă sub-activitate",
+      "dependency": "Adaugă dependență",
       "relation": "Adaugă relație",
       "link": "Adaugă link",
       "existing": "Adaugă activitate existentă"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "Linkul comentariului a fost copiat în clipboard",
         "error": "Eroare la copierea linkului comentariului. Încercați din nou mai târziu."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Adaugă răspuns",
+          "placeholder": "Adaugă răspuns"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Preluarea răspunsurilor a eșuat"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Răspuns creat cu succes"
+            },
+            "error": {
+              "message": "Crearea răspunsului a eșuat"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Răspuns actualizat cu succes"
+            },
+            "error": {
+              "message": "Actualizarea răspunsului a eșuat"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Răspuns șters cu succes"
+            },
+            "error": {
+              "message": "Ștergerea răspunsului a eșuat"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "Deselează tot"
     },
     "open_in_full_screen": "Deschide activitatea pe tot ecranul",
+    "duplicate": {
+      "modal": {
+        "title": "Creează o copie într-un alt proiect",
+        "description1": "Aceasta creează o copie a activității.",
+        "description2": "Toate datele proprietăților vor fi eliminate la duplicare.",
+        "placeholder": "Selectează un proiect"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Activitate duplicată cu succes"
+        },
+        "error": {
+          "message": "Duplicarea activității a eșuat"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Conectează pagini",
+      "show_wiki_pages": "Afișează paginile Wiki",
+      "link_pages_to": "Conectează pagini la",
+      "linked_pages": "Pagini conectate",
+      "no_description": "Aceasta este o pagină goală. De ce nu scrii ceva înăuntru și o vezi apărând aici ca acest text indicator",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Pagini actualizate",
+            "message": "Paginile au fost actualizate cu succes"
+          },
+          "error": {
+            "title": "Actualizarea paginilor a eșuat",
+            "message": "Actualizarea paginilor a eșuat"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Pagină eliminată",
+            "message": "Pagina a fost eliminată cu succes"
+          },
+          "error": {
+            "title": "Eliminarea paginii a eșuat",
+            "message": "Eliminarea paginii a eșuat"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Clic pentru a vota pozitiv",
       "click_to_downvote": "Clic pentru a vota negativ",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "Imposibil de actualizat elementele de lucru",
         "message": "Schimbarea stării nu este permisă pentru unele elemente de lucru. Asigură-te că schimbarea stării este permisă."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Activează fluxurile de lucru",
-        "description": "Setează fluxurile de lucru pentru a controla mișcarea elementelor de lucru",
-        "no_states_tooltip": "Nicio stare nu a fost adăugată în fluxul de lucru.",
-        "toast": {
-          "loading": {
-            "enabling": "Se activează fluxurile de lucru",
-            "disabling": "Se dezactivează fluxurile de lucru"
-          },
-          "success": {
-            "title": "Succes!",
-            "message": "Fluxurile de lucru au fost activate cu succes."
-          },
-          "error": {
-            "title": "Eroare!",
-            "message": "Fluxurile de lucru nu au putut fi activate. Te rugăm să încerci din nou."
-          }
-        }
-      },
-      "heading": "Fluxuri de lucru",
-      "description": "Automatizează tranzițiile elementelor de lucru și stabilește reguli pentru a controla modul în care sarcinile avansează prin fluxul proiectului tău.",
-      "add_button": "Adaugă un flux de lucru nou",
-      "search": "Caută fluxuri de lucru",
-      "detail": {
-        "define": "Definește fluxul de lucru",
-        "add_states": "Adaugă stări",
-        "unmapped_states": {
-          "title": "Au fost detectate stări nemapate",
-          "description": "Unele elemente de lucru ale tipurilor selectate se află în prezent în stări care nu există în acest flux de lucru.",
-          "note": "Dacă activezi acest flux de lucru, aceste elemente vor fi mutate automat în starea inițială a acestui flux de lucru.",
-          "label": "Stări lipsă",
-          "tooltip": "Unele elemente de lucru se află în stări care nu sunt mapate la acest flux de lucru. Deschide fluxul de lucru pentru a-l revizui."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Toate stările sunt în uz",
-          "description": "Toate stările definite pentru acest proiect sunt deja prezente în fluxul de lucru curent."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Acest flux de lucru se aplică oricărui tip de element de lucru care nu este atribuit unui flux de lucru."
-      },
-      "create": {
-        "heading": "Creează un flux de lucru nou"
       }
     }
   },

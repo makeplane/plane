@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Nenhum resultado encontrado"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Notas adesivas",
+    "your_work": "Seu trabalho",
     "projects": "Projetos",
     "pages": "Páginas",
     "new_work_item": "Novo item",
     "home": "Home",
-    "your_work": "Seu trabalho",
     "inbox": "Inbox",
     "workspace": "Workspace",
     "views": "Visualizações",
@@ -21,14 +29,6 @@
     "epics": "Épicos",
     "upgrade_plan": "Atualizar plano",
     "plane_pro": "Plane Pro",
-    "business": "Business",
-    "recurring_work_items": "Itens de trabalho recorrentes"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Nenhum resultado encontrado"
-      }
-    }
+    "business": "Business"
   }
 }

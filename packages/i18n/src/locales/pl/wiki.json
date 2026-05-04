@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "Nie udało się utworzyć strony lub dodać jej do kolekcji. Spróbuj ponownie.",
       "collection_link_copied": "Link do kolekcji skopiowano do schowka."
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "Uaktualnij, aby odblokować Wiki",
+      "description": "Odblokuj publiczne strony, historię wersji, udostępnione strony, współpracę w czasie rzeczywistym oraz strony przestrzeni roboczej dla wiki, dokumentacji firmowej i baz wiedzy dzięki Plane Pro.",
+      "upgrade_button": {
+        "text": "Uaktualnij"
+      },
+      "learn_more_button": {
+        "text": "Dowiedz się więcej"
+      },
+      "download_button": {
+        "text": "Pobierz dane",
+        "loading": "Pobieranie"
+      },
+      "tabs": {
+        "nested_pages": "Zagnieżdżone strony",
+        "add_embeds": "Dodaj osadzenia",
+        "publish_pages": "Publikuj strony",
+        "comments": "Komentarze"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "Zagnieżdżone strony wymagają planu płatnego. Uaktualnij, aby odblokować."
+    }
   }
 }

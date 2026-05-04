@@ -20,6 +20,7 @@
       "due_date": "添加截止日期",
       "parent": "添加父工作项",
       "sub_issue": "添加子工作项",
+      "dependency": "添加依赖",
       "relation": "添加关系",
       "link": "添加链接",
       "existing": "添加现有工作项"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "评论链接已复制到剪贴板",
         "error": "复制评论链接时出错。请稍后再试。"
+      },
+      "replies": {
+        "create": {
+          "submit_button": "添加回复",
+          "placeholder": "添加回复"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "获取回复失败"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "回复创建成功"
+            },
+            "error": {
+              "message": "创建回复失败"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "回复更新成功"
+            },
+            "error": {
+              "message": "更新回复失败"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "回复删除成功"
+            },
+            "error": {
+              "message": "删除回复失败"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "取消全选"
     },
     "open_in_full_screen": "在全屏中打开工作项",
+    "duplicate": {
+      "modal": {
+        "title": "复制到另一个项目",
+        "description1": "这将创建工作项的副本。",
+        "description2": "复制时将移除所有属性数据。",
+        "placeholder": "选择一个项目"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "工作项复制成功"
+        },
+        "error": {
+          "message": "工作项复制失败"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "连接页面",
+      "show_wiki_pages": "显示 Wiki 页面",
+      "link_pages_to": "连接页面到",
+      "linked_pages": "连接的页面",
+      "no_description": "此页面为空。在此输入一些内容，并在此处查看此占位符",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "页面已更新",
+            "message": "页面已成功更新"
+          },
+          "error": {
+            "title": "页面更新失败",
+            "message": "页面更新失败"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "页面已删除",
+            "message": "页面已成功删除"
+          },
+          "error": {
+            "title": "页面删除失败",
+            "message": "页面删除失败"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "点击赞成",
       "click_to_downvote": "点击反对",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "无法更新工作项",
         "message": "某些工作项的状态更改不被允许。请确保状态更改是被允许的。"
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "启用工作流",
-        "description": "设置工作流以控制工作项的流转",
-        "no_states_tooltip": "该工作流中尚未添加任何状态。",
-        "toast": {
-          "loading": {
-            "enabling": "正在启用工作流",
-            "disabling": "正在停用工作流"
-          },
-          "success": {
-            "title": "成功！",
-            "message": "工作流已成功启用。"
-          },
-          "error": {
-            "title": "错误！",
-            "message": "启用工作流失败。请重试。"
-          }
-        }
-      },
-      "heading": "工作流",
-      "description": "自动化工作项流转，并设置规则来控制任务如何在项目流程中推进。",
-      "add_button": "添加新工作流",
-      "search": "搜索工作流",
-      "detail": {
-        "define": "定义工作流",
-        "add_states": "添加状态",
-        "unmapped_states": {
-          "title": "检测到未映射的状态",
-          "description": "所选类型的一些工作项当前处于该工作流中不存在的状态。",
-          "note": "如果启用该工作流，这些工作项将自动移动到该工作流的初始状态。",
-          "label": "缺失的状态",
-          "tooltip": "一些工作项处于未映射到该工作流的状态。打开工作流进行查看。"
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "所有状态均已在使用中",
-          "description": "为该项目定义的所有状态都已存在于当前工作流中。"
-        }
-      },
-      "default_footer": {
-        "fallback_message": "该工作流适用于未分配给任何工作流的任何工作项类型。"
-      },
-      "create": {
-        "heading": "创建新工作流"
       }
     }
   },

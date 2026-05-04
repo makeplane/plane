@@ -34,7 +34,8 @@
             "max_length": "Nazwa przestrzeni nie może przekraczać 80 znaków"
           },
           "company_size": {
-            "required": "Rozmiar firmy jest wymagany"
+            "required": "Rozmiar firmy jest wymagany",
+            "select_a_range": "Wybierz rozmiar organizacji"
           }
         }
       },
@@ -65,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Rozliczenia i plany",
+        "description": "Wybierz plan, zarządzaj subskrypcjami i łatwo dokonaj uaktualnienia w miarę rozwoju Twoich potrzeb.",
         "title": "Rozliczenia i plany",
         "current_plan": "Obecny plan",
         "free_plan": "Używasz bezpłatnego planu",
         "view_plans": "Wyświetl plany"
       },
       "exports": {
+        "heading": "Eksporty",
+        "description": "Eksportuj dane projektu w różnych formatach i uzyskaj dostęp do historii eksportów z linkami do pobrania.",
         "title": "Eksporty",
         "exporting": "Eksportowanie",
         "previous_exports": "Poprzednie eksporty",
         "export_separate_files": "Eksportuj dane do oddzielnych plików",
+        "exporting_projects": "Eksportowanie projektu",
+        "format": "Format",
         "filters_info": "Zastosuj filtry, aby wyeksportować określone elementy robocze według Twoich kryteriów.",
         "modal": {
           "title": "Eksport do",
@@ -91,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhooki",
+        "description": "Automatyzuj powiadomienia do usług zewnętrznych, gdy wystąpią zdarzenia projektowe.",
         "title": "Webhooki",
         "add_webhook": "Dodaj webhook",
         "modal": {
@@ -165,14 +174,20 @@
       },
       "integrations": {
         "title": "Integracje",
+        "heading": "Integracje",
+        "description": "Łącz się z popularnymi narzędziami i usługami, aby synchronizować pracę w całym ekosystemie przepływu pracy.",
         "page_title": "Pracuj ze swoimi danymi Plane w dostępnych aplikacjach lub we własnych.",
         "page_description": "Zobacz wszystkie integracje używane przez tę przestrzeń roboczą lub przez Ciebie."
       },
       "imports": {
-        "title": "Importy"
+        "title": "Importy",
+        "heading": "Importy",
+        "description": "Łącz i importuj dane z istniejących narzędzi do zarządzania projektami, aby usprawnić integrację przepływu pracy."
       },
       "worklogs": {
-        "title": "Logi pracy"
+        "title": "Logi pracy",
+        "heading": "Logi pracy",
+        "description": "Pobierz logi pracy (karty czasu pracy) dla każdej osoby w dowolnym projekcie."
       },
       "group_syncing": {
         "title": "Synchronizacja grup",
@@ -241,7 +256,10 @@
         "description": "Skonfiguruj swoją domenę i włącz logowanie jednokrotne"
       },
       "project_states": {
-        "title": "Stany projektu"
+        "title": "Stany projektu",
+        "heading": "Zobacz przegląd postępu dla wszystkich projektów.",
+        "description": "Stany projektów to funkcja Plane służąca do śledzenia postępu wszystkich projektów według dowolnej właściwości projektu.",
+        "go_to_settings": "Przejdź do ustawień"
       },
       "projects": {
         "title": "Projekty",
@@ -250,6 +268,16 @@
           "states": "Stany projektu",
           "labels": "Etykiety projektu"
         }
+      },
+      "templates": {
+        "title": "Szablony",
+        "heading": "Szablony",
+        "description": "Zaoszczędź 80% czasu poświęcanego na tworzenie projektów, elementów pracy i stron, gdy używasz szablonów."
+      },
+      "relations": {
+        "title": "Relacje",
+        "heading": "Relacje",
+        "description": "Twórz typy relacji i zarządzaj nimi, które łączą elementy pracy w całej przestrzeni roboczej."
       },
       "cancel_trial": {
         "title": "Najpierw anuluj swój okres próbny.",
@@ -262,6 +290,7 @@
         "cancel_error_message": "Spróbuj ponownie, proszę."
       },
       "applications": {
+        "internal": "Wewnętrzny",
         "title": "Aplikacje",
         "applicationId_copied": "ID aplikacji skopiowane do schowka",
         "clientId_copied": "ID klienta skopiowane do schowka",
@@ -270,10 +299,61 @@
         "your_apps": "Twoje aplikacje",
         "connect": "Połącz",
         "connected": "Połączono",
+        "disconnect": "Odłącz",
         "install": "Zainstaluj",
         "installed": "Zainstalowano",
         "configure": "Konfiguruj",
         "app_available": "Udostępniłeś tę aplikację do użytku z przestrzenią roboczą Plane",
+        "app_credentials_regenrated": {
+          "title": "Dane uwierzytelniające aplikacji zostały pomyślnie wygenerowane ponownie",
+          "description": "Zastąp sekret klienta wszędzie tam, gdzie jest używany. Poprzedni sekret nie jest już ważny."
+        },
+        "app_created": {
+          "title": "Aplikacja została pomyślnie utworzona",
+          "description": "Użyj danych uwierzytelniających, aby zainstalować aplikację w przestrzeni roboczej Plane"
+        },
+        "installed_apps": "Zainstalowane aplikacje",
+        "all_apps": "Wszystkie aplikacje",
+        "internal_apps": "Aplikacje wewnętrzne",
+        "app_name_title": "Jak nazwiesz tę aplikację",
+        "app_description_title": {
+          "label": "Długi opis",
+          "placeholder": "Napisz długi opis dla marketplace. Naciśnij '/', aby zobaczyć polecenia."
+        },
+        "authorization_grant_type": {
+          "title": "Typ połączenia",
+          "description": "Wybierz, czy Twoja aplikacja ma być zainstalowana raz dla obszaru roboczego, czy pozwolić każdemu użytkownikowi na połączenie własnego konta"
+        },
+        "website": {
+          "title": "Strona internetowa",
+          "description": "Link do strony internetowej Twojej aplikacji.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Twórca aplikacji",
+          "description": "Osoba lub organizacja tworząca aplikację."
+        },
+        "app_maker_error": "Twórca aplikacji jest wymagany",
+        "setup_url": {
+          "label": "URL konfiguracji",
+          "description": "Użytkownicy zostaną przekierowani na ten adres URL po zainstalowaniu aplikacji.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhooka",
+          "description": "Tutaj będziemy wysyłać zdarzenia webhook i aktualizacje z przestrzeni roboczych, w których zainstalowano Twoją aplikację.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Sekret webhooka",
+          "description": "Sekret używany do weryfikacji przychodzących żądań webhooka.",
+          "placeholder": "Wprowadź losowy klucz sekretny"
+        },
+        "redirect_uris": {
+          "label": "URI przekierowań (oddzielone spacją)",
+          "description": "Użytkownicy zostaną przekierowani na tę ścieżkę po uwierzytelnieniu się w Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Połącz przestrzeń roboczą Plane, aby rozpocząć korzystanie",
         "client_id_and_secret": "ID i Sekret Klienta",
         "client_id_and_secret_description": "Skopiuj i zapisz ten klucz sekretny. Nie będziesz mógł zobaczyć tego klucza po kliknięciu Zamknij.",
@@ -285,23 +365,13 @@
         "slug_already_exists": "Slug już istnieje",
         "failed_to_create_application": "Nie udało się utworzyć aplikacji",
         "upload_logo": "Prześlij Logo",
-        "app_name_title": "Jak nazwiesz tę aplikację",
         "app_name_error": "Nazwa aplikacji jest wymagana",
         "app_short_description_title": "Podaj krótki opis tej aplikacji",
         "app_short_description_error": "Krótki opis aplikacji jest wymagany",
-        "app_description_title": {
-          "label": "Długi opis",
-          "placeholder": "Napisz długi opis dla marketplace. Naciśnij '/', aby zobaczyć polecenia."
-        },
-        "authorization_grant_type": {
-          "title": "Typ połączenia",
-          "description": "Wybierz, czy Twoja aplikacja ma być zainstalowana raz dla obszaru roboczego, czy pozwolić każdemu użytkownikowi na połączenie własnego konta"
-        },
         "app_description_error": "Opis aplikacji jest wymagany",
         "app_slug_title": "Slug aplikacji",
         "app_slug_error": "Slug aplikacji jest wymagany",
-        "app_maker_title": "Twórca aplikacji",
-        "app_maker_error": "Twórca aplikacji jest wymagany",
+        "invalid_website_error": "Nieprawidłowa strona internetowa",
         "webhook_url_title": "URL Webhooka",
         "webhook_url_error": "URL webhooka jest wymagany",
         "invalid_webhook_url_error": "Nieprawidłowy URL webhooka",
@@ -315,6 +385,8 @@
         "authorized_javascript_origins_description": "Wprowadź źródła oddzielone spacjami, z których aplikacja będzie mogła wysyłać żądania, np. app.com example.com",
         "create_app": "Utwórz aplikację",
         "update_app": "Aktualizuj aplikację",
+        "build_your_own_app": "Zbuduj własną aplikację",
+        "edit_app_details": "Edytuj szczegóły aplikacji",
         "regenerate_client_secret_description": "Wygeneruj ponownie sekret klienta. Po regeneracji możesz skopiować klucz lub pobrać go do pliku CSV.",
         "regenerate_client_secret": "Wygeneruj ponownie sekret klienta",
         "regenerate_client_secret_confirm_title": "Czy na pewno chcesz wygenerować ponownie sekret klienta?",
@@ -361,7 +433,6 @@
         "video_url_title": "URL Filmu",
         "video_url_error": "URL Filmu jest wymagany",
         "invalid_video_url_error": "Nieprawidłowy URL Filmu",
-        "setup_url_title": "URL Konfiguracji",
         "setup_url_error": "URL Konfiguracji jest wymagany",
         "invalid_setup_url_error": "Nieprawidłowy URL Konfiguracji",
         "configuration_url_title": "URL Konfiguracji",
@@ -377,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "Nieprawidłowy plik lub przekracza limit rozmiaru ({size} MB)",
         "uploading": "Przesyłanie...",
         "upload_and_save": "Prześlij i zapisz",
-        "app_credentials_regenrated": {
-          "title": "Dane uwierzytelniające aplikacji zostały pomyślnie wygenerowane ponownie",
-          "description": "Zastąp sekret klienta wszędzie tam, gdzie jest używany. Poprzedni sekret nie jest już ważny."
-        },
-        "app_created": {
-          "title": "Aplikacja została pomyślnie utworzona",
-          "description": "Użyj danych uwierzytelniających, aby zainstalować aplikację w przestrzeni roboczej Plane"
-        },
-        "installed_apps": "Zainstalowane aplikacje",
-        "all_apps": "Wszystkie aplikacje",
-        "internal_apps": "Aplikacje wewnętrzne",
-        "website": {
-          "title": "Strona internetowa",
-          "description": "Link do strony internetowej Twojej aplikacji.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Twórca aplikacji",
-          "description": "Osoba lub organizacja tworząca aplikację."
-        },
-        "setup_url": {
-          "label": "URL konfiguracji",
-          "description": "Użytkownicy zostaną przekierowani na ten adres URL po zainstalowaniu aplikacji.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "URL webhooka",
-          "description": "Tutaj będziemy wysyłać zdarzenia webhook i aktualizacje z przestrzeni roboczych, w których zainstalowano Twoją aplikację.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "URI przekierowań (oddzielone spacją)",
-          "description": "Użytkownicy zostaną przekierowani na tę ścieżkę po uwierzytelnieniu się w Plane.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Prośba o instalację",
         "app_consent_no_access_description": "Aplikacja może być zainstalowana dopiero po tym, jak administrator workspace ją zainstaluje. Skontaktuj się z administratorem workspace, aby kontynuować.",
+        "app_consent_unapproved_title": "Ta aplikacja nie została jeszcze sprawdzona ani zatwierdzona przez Plane.",
+        "app_consent_unapproved_description": "Upewnij się, że ufasz tej aplikacji, zanim połączysz ją ze swoją przestrzenią roboczą.",
+        "go_to_app": "Przejdź do aplikacji",
         "enable_app_mentions": "Włącz wzmianki o aplikacji",
         "enable_app_mentions_tooltip": "Po włączeniu tej opcji użytkownicy mogą wspominać lub przypisywać elementy pracy do tej aplikacji.",
         "scopes": "Zakresy",
@@ -432,15 +472,18 @@
           "profile": "Dostęp do informacji o profilu użytkownika",
           "agents": "Dostęp do agentów i wszystkich powiązanych encji",
           "assets": "Dostęp do zasobów i wszystkich powiązanych encji"
-        },
-        "build_your_own_app": "Zbuduj własną aplikację",
-        "edit_app_details": "Edytuj szczegóły aplikacji",
-        "internal": "Wewnętrzny"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "Twoja praca staje się inteligentniejsza i szybsza dzięki AI, która jest natywnie połączona z Twoją pracą i bazą wiedzy."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skrypty",
+        "new_script": "Nowy skrypt",
+        "description": "Automatyzuj swoje przepływy pracy za pomocą niestandardowych skryptów i reguł automatyzacji."
       }
     },
     "empty_state": {

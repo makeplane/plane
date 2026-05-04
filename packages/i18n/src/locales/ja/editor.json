@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "有効なURLを入力してください。"
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "このブロックの内容を説明してください",
+      "generated_here": "ここにAIコンテンツが生成されます"
+    },
+    "block_types": {
+      "placeholder": "ブロックタイプを選択",
+      "summarize_page": "ページを要約",
+      "custom_prompt": "カスタムプロンプト"
+    },
+    "actions": {
+      "discard": "破棄",
+      "generate": "生成",
+      "generating": "生成中",
+      "rewriting": "書き換え中",
+      "rewrite": "書き換え",
+      "use_this": "これを使用",
+      "refine": "改良"
+    }
   }
 }

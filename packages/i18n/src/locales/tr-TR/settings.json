@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Tercihler",
+      "description": "Uygulama deneyiminizi çalışma şeklinize göre özelleştirin"
+    },
     "notifications": {
+      "heading": "E-posta bildirimleri",
+      "description": "Abone olduğunuz İş öğelerinden haberdar olun. Bildirim almak için bunu etkinleştirin.",
       "select_default_view": "Varsayılan görünümü seç",
       "compact": "Kompakt",
       "full": "Tam ekran"
+    },
+    "security": {
+      "heading": "Güvenlik"
+    },
+    "api_tokens": {
+      "title": "Kişisel Erişim Tokenları",
+      "description": "Verilerinizi harici sistemler ve uygulamalarla entegre etmek için güvenli API tokenları oluşturun."
+    },
+    "activity": {
+      "heading": "Aktivite",
+      "description": "Tüm projeler ve iş öğeleri genelinde son eylemlerinizi ve değişikliklerinizi izleyin."
+    },
+    "connections": {
+      "title": "Bağlantılar",
+      "heading": "Bağlantılar",
+      "description": "Çalışma alanı bağlantı ayarlarınızı yönetin."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "Profil",
       "security": "Güvenlik",
       "activity": "Aktivite",
-      "appearance": "Görünüm",
+      "preferences": "Tercihler",
       "notifications": "Bildirimler",
+      "api-tokens": "Kişisel Erişim Tokenları",
       "connections": "Bağlantılar"
     },
     "tabs": {

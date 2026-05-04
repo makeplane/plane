@@ -194,6 +194,10 @@
       "server_error_states": "Chyba serveru při načítání stavů"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Připojte a synchronizujte své repozitáře Bitbucket Data Center s Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Ověření tokenů externích IdP pro přístup k API.",
@@ -302,10 +306,10 @@
     "generic_error": "Při zpracování vaší žádosti došlo k neočekávané chybě",
     "connection_not_found": "Požadované připojení nebylo nalezeno",
     "multiple_connections_found": "Bylo nalezeno více připojení, když bylo očekáváno pouze jedno",
+    "cannot_create_multiple_connections": "Už jste připojili svou organizaci s pracovním prostorem. Prosím, odpojte existující připojení před připojením nového.",
     "installation_not_found": "Požadovaná instalace nebyla nalezena",
     "user_not_found": "Požadovaný uživatel nebyl nalezen",
     "error_fetching_token": "Nepodařilo se získat autentizační token",
-    "cannot_create_multiple_connections": "Už jste připojili svou organizaci s pracovním prostorem. Prosím, odpojte existující připojení před připojením nového.",
     "invalid_app_credentials": "Poskytnuté přihlašovací údaje aplikace jsou neplatné",
     "invalid_app_installation_id": "Nepodařilo se nainstalovat aplikaci"
   },
@@ -316,6 +320,7 @@
     "pulling": "Stahování",
     "timed_out": "Časový limit vypršel",
     "pulled": "Staženo",
+    "progressing": "Probíhá",
     "transforming": "Transformace",
     "transformed": "Transformováno",
     "pushing": "Odesílání",

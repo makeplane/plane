@@ -76,12 +76,12 @@
       "exports": {
         "heading": "Exporte",
         "description": "Exportieren Sie Ihre Projektdaten in verschiedenen Formaten und greifen Sie auf Ihre Exporthistorie mit Download-Links zu.",
-        "exporting_projects": "Projekt wird exportiert",
-        "format": "Format",
         "title": "Exporte",
         "exporting": "Wird exportiert",
         "previous_exports": "Bisherige Exporte",
         "export_separate_files": "Daten in separaten Dateien exportieren",
+        "exporting_projects": "Projekt wird exportiert",
+        "format": "Format",
         "filters_info": "Wenden Sie Filter an, um bestimmte Arbeitselemente basierend auf Ihren Kriterien zu exportieren.",
         "modal": {
           "title": "Exportieren nach",
@@ -173,21 +173,21 @@
         }
       },
       "integrations": {
+        "title": "Integrationen",
         "heading": "Integrationen",
         "description": "Verbinden Sie sich mit beliebten Tools und Diensten, um Ihre Arbeit über Ihr gesamtes Workflow-Ökosystem zu synchronisieren.",
-        "title": "Integrationen",
         "page_title": "Arbeiten Sie mit Ihren Plane-Daten in verfügbaren Apps oder in Ihren eigenen.",
         "page_description": "Sehen Sie sich alle Integrationen an, die von diesem Workspace oder von Ihnen verwendet werden."
       },
       "imports": {
+        "title": "Importe",
         "heading": "Importe",
-        "description": "Verbinden und importieren Sie Daten aus Ihren bestehenden Projektmanagement-Tools, um Ihre Workflow-Integration zu optimieren.",
-        "title": "Importe"
+        "description": "Verbinden und importieren Sie Daten aus Ihren bestehenden Projektmanagement-Tools, um Ihre Workflow-Integration zu optimieren."
       },
       "worklogs": {
+        "title": "Arbeitsberichte",
         "heading": "Arbeitsberichte",
-        "description": "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter.",
-        "title": "Arbeitsberichte"
+        "description": "Laden Sie Arbeitsberichte (Zeiterfassungen) für jeden in jedem Projekt herunter."
       },
       "group_syncing": {
         "title": "Gruppensynchronisation",
@@ -256,9 +256,10 @@
         "description": "Konfigurieren Sie Ihre Domain und aktivieren Sie Single Sign-On"
       },
       "project_states": {
+        "title": "Projektstatus",
         "heading": "Fortschrittsübersicht für alle Projekte anzeigen.",
         "description": "Projektstatus ist eine Plane-exklusive Funktion zur Verfolgung des Fortschritts aller Ihrer Projekte nach beliebiger Projekteigenschaft.",
-        "title": "Projektstatus"
+        "go_to_settings": "Zu den Einstellungen"
       },
       "projects": {
         "title": "Projekte",
@@ -278,17 +279,6 @@
         "heading": "Beziehungen",
         "description": "Erstellen und verwalten Sie Beziehungstypen, die Arbeitselemente in Ihrem Arbeitsbereich verbinden."
       },
-      "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
-        "description": "Lassen Sie Ihre Arbeit intelligenter und schneller werden mit KI, die nativ mit Ihrer Arbeit und Wissensbasis verbunden ist."
-      },
-      "runners": {
-        "title": "Plane Runner",
-        "heading": "Skripte",
-        "new_script": "Neues Skript",
-        "description": "Automatisieren Sie Ihre Workflows mit benutzerdefinierten Skripten und Automatisierungsregeln."
-      },
       "cancel_trial": {
         "title": "Kündigen Sie zuerst Ihre Testphase.",
         "description": "Sie haben eine aktive Testphase für einen unserer kostenpflichtigen Pläne. Bitte kündigen Sie diese zuerst, um fortzufahren.",
@@ -300,17 +290,8 @@
         "cancel_error_message": "Bitte versuchen Sie es erneut."
       },
       "applications": {
+        "internal": "Intern",
         "title": "Anwendungen",
-        "webhook_secret": {
-          "label": "Webhook-Secret",
-          "description": "Secret zur Überprüfung eingehender Webhook-Anfragen.",
-          "placeholder": "Geben Sie einen zufälligen geheimen Schlüssel ein"
-        },
-        "invalid_website_error": "Ungültige Website",
-        "app_consent_no_access_title": "Installationsanfrage",
-        "app_consent_unapproved_title": "Diese App wurde noch nicht von Plane überprüft oder genehmigt.",
-        "app_consent_unapproved_description": "Stellen Sie sicher, dass Sie dieser App vertrauen, bevor Sie sie mit Ihrem Arbeitsbereich verbinden.",
-        "go_to_app": "Zur App",
         "applicationId_copied": "Anwendungs-ID in die Zwischenablage kopiert",
         "clientId_copied": "Client-ID in die Zwischenablage kopiert",
         "clientSecret_copied": "Client-Secret in die Zwischenablage kopiert",
@@ -318,10 +299,61 @@
         "your_apps": "Ihre Apps",
         "connect": "Verbinden",
         "connected": "Verbunden",
+        "disconnect": "Trennen",
         "install": "Installieren",
         "installed": "Installiert",
         "configure": "Konfigurieren",
         "app_available": "Sie haben diese App für die Verwendung mit einem Plane-Workspace verfügbar gemacht",
+        "app_credentials_regenrated": {
+          "title": "App-Anmeldedaten wurden erfolgreich neu generiert",
+          "description": "Ersetzen Sie das Client-Secret überall, wo es verwendet wird. Das vorherige Secret ist nicht mehr gültig."
+        },
+        "app_created": {
+          "title": "App wurde erfolgreich erstellt",
+          "description": "Verwenden Sie die Anmeldedaten, um die App in einem Plane-Arbeitsbereich zu installieren"
+        },
+        "installed_apps": "Installierte Apps",
+        "all_apps": "Alle Apps",
+        "internal_apps": "Interne Apps",
+        "app_name_title": "Wie möchten Sie diese App nennen",
+        "app_description_title": {
+          "label": "Lange Beschreibung",
+          "placeholder": "Schreiben Sie eine lange Beschreibung für den Marktplatz. Drücken Sie '/' für Befehle."
+        },
+        "authorization_grant_type": {
+          "title": "Verbindungstyp",
+          "description": "Wählen Sie, ob Ihre App einmal für den Arbeitsbereich installiert werden soll oder ob jeder Benutzer sein eigenes Konto verbinden soll"
+        },
+        "website": {
+          "title": "Webseite",
+          "description": "Link zur Website Ihrer App.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "App-Entwickler",
+          "description": "Die Person oder Organisation, die die App erstellt."
+        },
+        "app_maker_error": "App-Entwickler ist erforderlich",
+        "setup_url": {
+          "label": "Setup-URL",
+          "description": "Benutzer werden zu dieser URL weitergeleitet, wenn sie die App installieren.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook-URL",
+          "description": "Hier werden wir Webhook-Ereignisse und Updates von den Arbeitsbereichen senden, in denen Ihre App installiert ist.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook-Secret",
+          "description": "Secret zur Überprüfung eingehender Webhook-Anfragen.",
+          "placeholder": "Geben Sie einen zufälligen geheimen Schlüssel ein"
+        },
+        "redirect_uris": {
+          "label": "Redirect-URIs (durch Leerzeichen getrennt)",
+          "description": "Benutzer werden nach der Authentifizierung mit Plane auf diesen Pfad weitergeleitet.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Verbinden Sie einen Plane-Workspace, um die Nutzung zu beginnen",
         "client_id_and_secret": "Client-ID und Secret",
         "client_id_and_secret_description": "Kopieren und speichern Sie diesen geheimen Schlüssel. Sie können diesen Schlüssel nach dem Schließen nicht mehr sehen.",
@@ -333,22 +365,13 @@
         "slug_already_exists": "Slug existiert bereits",
         "failed_to_create_application": "Erstellen der Anwendung fehlgeschlagen",
         "upload_logo": "Logo hochladen",
-        "app_name_title": "Wie möchten Sie diese App nennen",
         "app_name_error": "App-Name ist erforderlich",
         "app_short_description_title": "Geben Sie dieser App eine kurze Beschreibung",
         "app_short_description_error": "Kurze App-Beschreibung ist erforderlich",
-        "app_description_title": {
-          "label": "Lange Beschreibung",
-          "placeholder": "Schreiben Sie eine lange Beschreibung für den Marktplatz. Drücken Sie '/' für Befehle."
-        },
-        "authorization_grant_type": {
-          "title": "Verbindungstyp",
-          "description": "Wählen Sie, ob Ihre App einmal für den Arbeitsbereich installiert werden soll oder ob jeder Benutzer sein eigenes Konto verbinden soll"
-        },
         "app_description_error": "App-Beschreibung ist erforderlich",
         "app_slug_title": "App-Slug",
         "app_slug_error": "App-Slug ist erforderlich",
-        "app_maker_error": "App-Entwickler ist erforderlich",
+        "invalid_website_error": "Ungültige Website",
         "webhook_url_title": "Webhook-URL",
         "webhook_url_error": "Webhook-URL ist erforderlich",
         "invalid_webhook_url_error": "Ungültige Webhook-URL",
@@ -425,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "Ungültige Datei oder überschreitet die Größe ({size} MB)",
         "uploading": "Hochladen...",
         "upload_and_save": "Hochladen und speichern",
-        "app_credentials_regenrated": {
-          "title": "App-Anmeldedaten wurden erfolgreich neu generiert",
-          "description": "Ersetzen Sie das Client-Secret überall, wo es verwendet wird. Das vorherige Secret ist nicht mehr gültig."
-        },
-        "app_created": {
-          "title": "App wurde erfolgreich erstellt",
-          "description": "Verwenden Sie die Anmeldedaten, um die App in einem Plane-Arbeitsbereich zu installieren"
-        },
-        "installed_apps": "Installierte Apps",
-        "all_apps": "Alle Apps",
-        "internal_apps": "Interne Apps",
-        "website": {
-          "title": "Webseite",
-          "description": "Link zur Website Ihrer App.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "App-Entwickler",
-          "description": "Die Person oder Organisation, die die App erstellt."
-        },
-        "setup_url": {
-          "label": "Setup-URL",
-          "description": "Benutzer werden zu dieser URL weitergeleitet, wenn sie die App installieren.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "Webhook-URL",
-          "description": "Hier werden wir Webhook-Ereignisse und Updates von den Arbeitsbereichen senden, in denen Ihre App installiert ist.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "Redirect-URIs (durch Leerzeichen getrennt)",
-          "description": "Benutzer werden nach der Authentifizierung mit Plane auf diesen Pfad weitergeleitet.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Installationsanfrage",
         "app_consent_no_access_description": "Diese App kann nur installiert werden, nachdem ein Workspace-Administrator sie installiert hat. Wenden Sie sich an Ihren Workspace-Administrator, um fortzufahren.",
+        "app_consent_unapproved_title": "Diese App wurde noch nicht von Plane überprüft oder genehmigt.",
+        "app_consent_unapproved_description": "Stellen Sie sicher, dass Sie dieser App vertrauen, bevor Sie sie mit Ihrem Arbeitsbereich verbinden.",
+        "go_to_app": "Zur App",
         "enable_app_mentions": "App-Erwähnungen aktivieren",
         "enable_app_mentions_tooltip": "Wenn dies aktiviert ist, können Benutzer Arbeitsaufgaben an diese Anwendung erwähnen oder zuweisen.",
         "scopes": "Bereiche",
@@ -480,8 +472,18 @@
           "profile": "Zugriff auf Benutzerprofilinformationen",
           "agents": "Zugriff auf Agenten und alle agentenbezogenen Entitäten",
           "assets": "Zugriff auf Assets und alle asset-bezogenen Entitäten"
-        },
-        "internal": "Intern"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Lassen Sie Ihre Arbeit intelligenter und schneller werden mit KI, die nativ mit Ihrer Arbeit und Wissensbasis verbunden ist."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Skripte",
+        "new_script": "Neues Skript",
+        "description": "Automatisieren Sie Ihre Workflows mit benutzerdefinierten Skripten und Automatisierungsregeln."
       }
     },
     "empty_state": {

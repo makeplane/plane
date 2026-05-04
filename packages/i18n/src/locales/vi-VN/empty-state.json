@@ -249,10 +249,22 @@
       "title": "Theo dõi bảng chấm công cho tất cả thành viên",
       "description": "Ghi nhật ký thời gian trên các mục công việc để xem bảng chấm công chi tiết cho bất kỳ thành viên nào trong đội qua các dự án."
     },
+    "group_syncing": {
+      "title": "Chưa có ánh xạ nhóm"
+    },
     "template_setting": {
       "title": "Chưa có mẫu",
       "description": "Giảm thời gian thiết lập bằng cách tạo mẫu cho dự án, mục công việc và trang — và bắt đầu công việc mới trong vài giây.",
       "cta_primary": "Tạo mẫu"
+    },
+    "workflows": {
+      "title": "Chưa có quy trình làm việc",
+      "description": "Tạo quy trình làm việc để quản lý tiến độ của các mục công việc.",
+      "cta_primary": "Thêm quy trình làm việc mới",
+      "states": {
+        "title": "Thêm trạng thái",
+        "description": "Chọn các trạng thái mà mục công việc sẽ đi qua."
+      }
     }
   }
 }

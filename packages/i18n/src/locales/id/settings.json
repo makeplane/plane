@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Preferensi",
+      "description": "Sesuaikan pengalaman aplikasi Anda dengan cara kerja Anda"
+    },
     "notifications": {
+      "heading": "Notifikasi email",
+      "description": "Tetap terupdate tentang item kerja yang Anda langgani. Aktifkan ini untuk mendapatkan notifikasi.",
       "select_default_view": "Pilih tampilan default",
       "compact": "Ringkas",
       "full": "Layar penuh"
+    },
+    "security": {
+      "heading": "Keamanan"
+    },
+    "api_tokens": {
+      "title": "Token Akses Personal",
+      "description": "Hasilkan token API yang aman untuk mengintegrasikan data Anda dengan sistem dan aplikasi eksternal."
+    },
+    "activity": {
+      "heading": "Aktivitas",
+      "description": "Lacak tindakan dan perubahan terkini Anda di semua proyek dan item kerja."
+    },
+    "connections": {
+      "title": "Koneksi",
+      "heading": "Koneksi",
+      "description": "Kelola pengaturan koneksi ruang kerja Anda."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "Profil",
       "security": "Keamanan",
       "activity": "Aktivitas",
-      "appearance": "Tampilan",
+      "preferences": "Preferensi",
       "notifications": "Notifikasi",
+      "api-tokens": "Token Akses Personal",
       "connections": "Koneksi"
     },
     "tabs": {

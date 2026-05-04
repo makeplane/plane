@@ -1,32 +1,15 @@
 {
   "updates": {
+    "progress": {
+      "title": "Postup",
+      "since_last_update": "Od poslednej aktualizácie",
+      "comments": "{count, plural, one{# komentár} few{# komentáre} other{# komentárov}}"
+    },
     "add_update": "Pridať aktualizáciu",
     "add_update_placeholder": "Vložte vašu aktualizáciu tu",
     "empty": {
       "title": "Ešte nie sú žiadne aktualizácie",
       "description": "Tu môžete zobraziť aktualizácie."
-    },
-    "delete": {
-      "title": "Odstrániť aktualizáciu",
-      "confirmation": "Naozaj chcete odstrániť túto aktualizáciu? Táto akcia je neobnoviteľná.",
-      "success": {
-        "title": "Aktualizácia odstránená",
-        "message": "Aktualizácia bola úspešne odstránená."
-      },
-      "error": {
-        "title": "Aktualizáciu sa nepodarilo odstrániť",
-        "message": "Aktualizáciu sa nepodarilo odstrániť."
-      }
-    },
-    "update": {
-      "success": {
-        "title": "Aktualizácia aktualizovaná",
-        "message": "Aktualizácia bola úspešne aktualizovaná."
-      },
-      "error": {
-        "title": "Aktualizáciu sa nepodarilo aktualizovať",
-        "message": "Aktualizáciu sa nepodarilo aktualizovať."
-      }
     },
     "reaction": {
       "create": {
@@ -50,11 +33,6 @@
         }
       }
     },
-    "progress": {
-      "title": "Postup",
-      "since_last_update": "Od poslednej aktualizácie",
-      "comments": "{count, plural, one{# komentár} few{# komentáre} other{# komentárov}}"
-    },
     "create": {
       "success": {
         "title": "Aktualizácia vytvorená",
@@ -63,6 +41,28 @@
       "error": {
         "title": "Aktualizáciu sa nepodarilo vytvoriť",
         "message": "Aktualizáciu sa nepodarilo vytvoriť."
+      }
+    },
+    "delete": {
+      "title": "Odstrániť aktualizáciu",
+      "confirmation": "Naozaj chcete odstrániť túto aktualizáciu? Táto akcia je neobnoviteľná.",
+      "success": {
+        "title": "Aktualizácia odstránená",
+        "message": "Aktualizácia bola úspešne odstránená."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo odstrániť",
+        "message": "Aktualizáciu sa nepodarilo odstrániť."
+      }
+    },
+    "update": {
+      "success": {
+        "title": "Aktualizácia aktualizovaná",
+        "message": "Aktualizácia bola úspešne aktualizovaná."
+      },
+      "error": {
+        "title": "Aktualizáciu sa nepodarilo aktualizovať",
+        "message": "Aktualizáciu sa nepodarilo aktualizovať."
       }
     }
   }

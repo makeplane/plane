@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Předvolby",
+      "description": "Přizpůsobte si prostředí aplikace podle toho, jak pracujete"
+    },
     "notifications": {
+      "heading": "E-mailová oznámení",
+      "description": "Zůstaňte v obraze u pracovních položek, které odebíráte. Aktivujte toto pro zasílání oznámení.",
       "select_default_view": "Vybrat výchozí zobrazení",
       "compact": "Kompaktní",
       "full": "Celá obrazovka"
+    },
+    "security": {
+      "heading": "Zabezpečení"
+    },
+    "api_tokens": {
+      "title": "Osobní přístupové tokeny",
+      "description": "Generujte bezpečné API tokeny pro integraci vašich dat s externími systémy a aplikacemi."
+    },
+    "activity": {
+      "heading": "Aktivita",
+      "description": "Sledujte vaše nedávné akce a změny napříč všemi projekty a pracovními položkami."
+    },
+    "connections": {
+      "title": "Spojení",
+      "heading": "Spojení",
+      "description": "Spravujte nastavení spojení vašeho pracovního prostoru."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "Profil",
       "security": "Zabezpečení",
       "activity": "Aktivita",
-      "appearance": "Vzhled",
+      "preferences": "Předvolby",
       "notifications": "Oznámení",
+      "api-tokens": "Osobní přístupové tokeny",
       "connections": "Spojení"
     },
     "tabs": {

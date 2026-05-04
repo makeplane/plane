@@ -20,6 +20,7 @@
       "due_date": "Son tarih ekle",
       "parent": "Üst iş öğesi ekle",
       "sub_issue": "Alt iş öğesi ekle",
+      "dependency": "Bağımlılık ekle",
       "relation": "İlişki ekle",
       "link": "Bağlantı ekle",
       "existing": "Varolan iş öğesi ekle"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "Yorum bağlantısı panoya kopyalandı",
         "error": "Yorum bağlantısı kopyalanırken hata oluştu. Lütfen daha sonra tekrar deneyin."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Yanıt ekle",
+          "placeholder": "Yanıt ekle"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Yanıtlar alınamadı"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Yanıt başarıyla oluşturuldu"
+            },
+            "error": {
+              "message": "Yanıt oluşturulamadı"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Yanıt başarıyla güncellendi"
+            },
+            "error": {
+              "message": "Yanıt güncellenemedi"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Yanıt başarıyla silindi"
+            },
+            "error": {
+              "message": "Yanıt silinemedi"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "Tümünü seçme"
     },
     "open_in_full_screen": "İş öğesini tam ekranda aç",
+    "duplicate": {
+      "modal": {
+        "title": "Başka bir projeye kopya oluştur",
+        "description1": "Bu, iş öğesinin bir kopyasını oluşturur.",
+        "description2": "Çoğaltılırken tüm özellik verileri kaldırılacaktır.",
+        "placeholder": "Bir proje seçin"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "İş öğesi başarıyla çoğaltıldı"
+        },
+        "error": {
+          "message": "İş öğesi çoğaltılamadı"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Sayfaları bağla",
+      "show_wiki_pages": "Wiki sayfalarını göster",
+      "link_pages_to": "Sayfaları bağla:",
+      "linked_pages": "Bağlı sayfalar",
+      "no_description": "Bu boş bir sayfa. Neden içine bir şeyler yazmıyorsunuz ve bu yer tutucu gibi burada görünmesini sağlamıyorsunuz",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Sayfalar güncellendi",
+            "message": "Sayfalar başarıyla güncellendi"
+          },
+          "error": {
+            "title": "Sayfa güncelleme başarısız",
+            "message": "Sayfa güncelleme başarısız"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Sayfa kaldırıldı",
+            "message": "Sayfa başarıyla kaldırıldı"
+          },
+          "error": {
+            "title": "Sayfa kaldırma başarısız",
+            "message": "Sayfa kaldırma başarısız"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Olumlu oy vermek için tıklayın",
       "click_to_downvote": "Olumsuz oy vermek için tıklayın",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "İş öğeleri güncellenemiyor",
         "message": "Bazı iş öğeleri için durum değişikliğine izin verilmiyor. Durum değişikliğine izin verildiğinden emin olun."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "İş akışlarını etkinleştir",
-        "description": "İş öğesi hareketini kontrol etmek için iş akışları ayarlayın",
-        "no_states_tooltip": "İş akışına eklenmiş durum yok.",
-        "toast": {
-          "loading": {
-            "enabling": "İş akışları etkinleştiriliyor",
-            "disabling": "İş akışları devre dışı bırakılıyor"
-          },
-          "success": {
-            "title": "Başarılı!",
-            "message": "İş akışları başarıyla etkinleştirildi."
-          },
-          "error": {
-            "title": "Hata!",
-            "message": "İş akışları etkinleştirilemedi. Lütfen tekrar deneyin."
-          }
-        }
-      },
-      "heading": "İş akışları",
-      "description": "İş öğesi geçişlerini otomatikleştirin ve görevlerin proje akışınızda nasıl ilerlediğini kontrol etmek için kurallar belirleyin.",
-      "add_button": "Yeni iş akışı ekle",
-      "search": "İş akışlarında ara",
-      "detail": {
-        "define": "İş akışını tanımla",
-        "add_states": "Durum ekle",
-        "unmapped_states": {
-          "title": "Eşlenmemiş durumlar tespit edildi",
-          "description": "Seçilen türlerdeki bazı iş öğeleri şu anda bu iş akışında bulunmayan durumlarda yer alıyor.",
-          "note": "Bu iş akışını etkinleştirirseniz, bu öğeler otomatik olarak bu iş akışının başlangıç durumuna taşınacaktır.",
-          "label": "Eksik durumlar",
-          "tooltip": "Bazı iş öğeleri bu iş akışına eşlenmemiş durumlarda bulunuyor. İncelemek için iş akışını açın."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Tüm durumlar kullanımda",
-          "description": "Bu proje için tanımlanan tüm durumlar mevcut iş akışınızda zaten bulunuyor."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Bu iş akışı, herhangi bir iş akışına atanmamış tüm iş öğesi türlerine uygulanır."
-      },
-      "create": {
-        "heading": "Yeni iş akışı oluştur"
       }
     }
   },

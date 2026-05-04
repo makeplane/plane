@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Prosím, zadajte platnú URL adresu."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Opíšte obsah tohto bloku",
+      "generated_here": "Tu bude vygenerovaný váš AI obsah"
+    },
+    "block_types": {
+      "placeholder": "Vybrať typ bloku",
+      "summarize_page": "Zhrnúť stránku",
+      "custom_prompt": "Vlastná výzva"
+    },
+    "actions": {
+      "discard": "Zahodiť",
+      "generate": "Vygenerovať",
+      "generating": "Generovanie",
+      "rewriting": "Prepisovanie",
+      "rewrite": "Prepísať",
+      "use_this": "Použiť toto",
+      "refine": "Upraviť"
+    }
   }
 }

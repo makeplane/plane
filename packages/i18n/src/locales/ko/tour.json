@@ -110,6 +110,12 @@
         "description": "작업 항목을 스누즈하여 나중에 검토할 수 있습니다. 열린 요청 목록의 맨 아래로 이동됩니다."
       }
     },
+    "mcp_connectors": {
+      "step_zero": {
+        "title": "탭 전환은 그만. 당신의 세계를 연결하세요.",
+        "description": "GitHub, Slack을 연결하여 PR을 추적하고 Plane AI에서 직접 채팅을 요약하세요."
+      }
+    },
     "navigation": {
       "modal": {
         "title": "탐색, 재구상",

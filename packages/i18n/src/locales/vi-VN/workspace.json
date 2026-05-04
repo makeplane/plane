@@ -95,16 +95,28 @@
       "scope_and_demand": "Phạm vi và nhu cầu",
       "custom": "Phân tích tùy chỉnh"
     },
+    "total": "Tổng số {entity}",
+    "started_work_items": "{entity} đã bắt đầu",
+    "backlog_work_items": "{entity} tồn đọng",
+    "un_started_work_items": "{entity} chưa bắt đầu",
+    "completed_work_items": "{entity} đã hoàn thành",
+    "project_insights": "Thông tin chi tiết dự án",
+    "summary_of_projects": "Tóm tắt dự án",
+    "all_projects": "Tất cả dự án",
+    "trend_on_charts": "Xu hướng trên biểu đồ",
+    "active_projects": "Dự án đang hoạt động",
+    "customized_insights": "Thông tin chi tiết tùy chỉnh",
+    "created_vs_resolved": "Đã tạo vs Đã giải quyết",
     "empty_state": {
-      "customized_insights": {
-        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây.",
-        "title": "Chưa có dữ liệu"
+      "project_insights": {
+        "title": "Chưa có dữ liệu",
+        "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
       },
       "created_vs_resolved": {
-        "description": "Các hạng mục công việc được tạo và giải quyết theo thời gian sẽ hiển thị tại đây.",
-        "title": "Chưa có dữ liệu"
+        "title": "Chưa có dữ liệu",
+        "description": "Các hạng mục công việc được tạo và giải quyết theo thời gian sẽ hiển thị tại đây."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Chưa có dữ liệu",
         "description": "Các hạng mục công việc được giao cho bạn, phân loại theo trạng thái, sẽ hiển thị tại đây."
       },
@@ -132,29 +144,11 @@
         "description": "Phân tích xu hướng intake sẽ hiển thị ở đây. Thêm các hạng mục công việc vào intake để bắt đầu theo dõi xu hướng."
       }
     },
-    "created_vs_resolved": "Đã tạo vs Đã giải quyết",
-    "customized_insights": "Thông tin chi tiết tùy chỉnh",
-    "backlog_work_items": "{entity} tồn đọng",
-    "active_projects": "Dự án đang hoạt động",
-    "trend_on_charts": "Xu hướng trên biểu đồ",
-    "all_projects": "Tất cả dự án",
-    "summary_of_projects": "Tóm tắt dự án",
-    "project_insights": "Thông tin chi tiết dự án",
-    "started_work_items": "{entity} đã bắt đầu",
-    "total_work_items": "Tổng số {entity}",
-    "total_projects": "Tổng số dự án",
-    "total_admins": "Tổng số quản trị viên",
-    "total_users": "Tổng số người dùng",
-    "total_intake": "Tổng thu",
-    "un_started_work_items": "{entity} chưa bắt đầu",
-    "total_guests": "Tổng số khách",
-    "completed_work_items": "{entity} đã hoàn thành",
-    "total": "Tổng số {entity}",
+    "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}",
+    "workitem_resolved_vs_pending": "Mục công việc đã giải quyết vs đang chờ",
     "projects_by_status": "Dự án theo trạng thái",
     "active_users": "Người dùng hoạt động",
-    "intake_trends": "Xu hướng tiếp nhận",
-    "workitem_resolved_vs_pending": "Mục công việc đã giải quyết vs đang chờ",
-    "upgrade_to_plan": "Nâng cấp lên {plan} để mở khóa {tab}"
+    "intake_trends": "Xu hướng tiếp nhận"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
@@ -162,6 +156,7 @@
       "label": "Thêm dự án"
     },
     "network": {
+      "label": "Mạng",
       "private": {
         "title": "Riêng tư",
         "description": "Chỉ truy cập bằng lời mời"
@@ -317,6 +312,10 @@
       "archived": {
         "title": "Chưa có trang đã lưu trữ",
         "description": "Lưu trữ các trang không nằm trong tầm nhìn của bạn. Truy cập chúng ở đây khi cần thiết."
+      },
+      "shared": {
+        "title": "Chưa có trang được chia sẻ",
+        "description": "Các trang mà người khác đã chia sẻ với bạn sẽ xuất hiện ở đây."
       }
     }
   },

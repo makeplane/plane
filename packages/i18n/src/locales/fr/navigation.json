@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Aucun résultat trouvé"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Stickies",
+    "your_work": "Votre travail",
     "projects": "Projets",
     "pages": "Pages",
     "new_work_item": "Nouvel élément de travail",
     "home": "Accueil",
-    "your_work": "Votre travail",
     "inbox": "Boîte de réception",
     "workspace": "Espace de travail",
     "views": "Vues",
@@ -21,14 +29,6 @@
     "epics": "Epics",
     "upgrade_plan": "Mettre à niveau",
     "plane_pro": "Plane Pro",
-    "business": "Business",
-    "recurring_work_items": "Tâches récurrentes"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Aucun résultat trouvé"
-      }
-    }
+    "business": "Business"
   }
 }

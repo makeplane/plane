@@ -3,11 +3,25 @@
     "label": "Typy Elementów Pracy",
     "label_lowercase": "typy elementów pracy",
     "settings": {
-      "title": "Typy Elementów Pracy",
+      "description": "Dostosuj i dodaj własne właściwości, aby dopasować do potrzeb zespołu.",
+      "cant_delete_default_message": "Nie można usunąć tego typu elementu pracy, ponieważ jest on ustawiony jako domyślny dla tego projektu.",
+      "set_as_default": "Ustaw jako domyślny",
+      "cant_set_default_inactive_message": "Aktywuj ten typ przed ustawieniem go jako domyślny",
+      "set_default_confirmation": {
+        "title": "Ustaw jako domyślny typ elementu pracy",
+        "description": "Ustawienie {name} jako domyślnego zaimportuje go do wszystkich projektów w tym obszarze roboczym. Wszystkie nowe elementy pracy będą domyślnie używać tego typu.",
+        "confirm_button": "Ustaw jako domyślny"
+      },
       "properties": {
-        "title": "Własne właściwości",
+        "title": "Właściwości",
+        "description": "Twórz i dostosowuj właściwości.",
         "tooltip": "Każdy typ elementu pracy posiada domyślny zestaw właściwości, takich jak Tytuł, Opis, Przypisany, Stan, Priorytet, Data rozpoczęcia, Termin zakończenia, Moduł, Cykl itp. Możesz również dostosować i dodać własne właściwości, aby dopasować je do potrzeb Twojego zespołu.",
         "add_button": "Dodaj nową właściwość",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importuj z przestrzeni roboczej"
+          }
+        },
         "dropdown": {
           "label": "Typ właściwości",
           "placeholder": "Wybierz typ"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Utwórz nową niestandardową właściwość",
+            "update": "Zaktualizuj niestandardową właściwość"
+          },
           "form": {
             "display_name": {
               "placeholder": "Tytuł"
@@ -213,9 +231,50 @@
           "description": "Nowe właściwości, które dodasz dla tego typu elementu pracy, pojawią się tutaj."
         }
       },
+      "types": {
+        "title": "Typy",
+        "description": "Twórz i dostosowuj typy elementów pracy z właściwościami.",
+        "sort_options": {
+          "project_count": "Liczba projektów, w których uczestniczy"
+        },
+        "filter_options": {
+          "show_active": "Pokaż aktywne",
+          "show_inactive": "Pokaż nieaktywne"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Utwórz nowy",
+            "import_from_workspace": "Importuj z przestrzeni roboczej"
+          },
+          "banner": {
+            "with_access": "Włącz typy elementów pracy, aby importować typy z poziomu przestrzeni roboczej",
+            "without_access": "Typy elementów pracy są wyłączone. Skontaktuj się z administratorem przestrzeni roboczej, aby je włączyć w ustawieniach przestrzeni roboczej."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Niestandardowe właściwości",
+        "add_button": "Dodaj właściwości",
+        "modal": {
+          "title": "Dodaj właściwości",
+          "empty": {
+            "title": "Brak dostępnych właściwości",
+            "description": "Wszystkie właściwości zostały już powiązane z tym typem."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Odłącz właściwość",
+          "description": "Odłączenie tej właściwości trwale usunie wszystkie jej wartości z każdego elementu pracy używającego tego typu. Tej akcji nie można cofnąć.",
+          "input_label": "Wpisz",
+          "input_label_suffix": "aby kontynuować:",
+          "confirm": "Odłącz właściwość",
+          "loading": "Odłączanie"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Usuń ten typ",
         "description": "Usunięcie typów może prowadzić do utraty istniejących danych.",
+        "can_disable_warning": "Czy chcesz zamiast tego wyłączyć ten typ?",
         "primary_button": "Tak, usuń to",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "Nie można usunąć domyślnego typu elementu pracy",
           "cannot_delete_work_item_type_with_associated_work_items": "Nie można usunąć typu elementu pracy z powiązanymi elementami pracy"
-        },
-        "can_disable_warning": "Czy chcesz zamiast tego wyłączyć ten typ?"
-      },
-      "cant_delete_default_message": "Nie można usunąć tego typu elementu pracy, ponieważ jest on ustawiony jako domyślny dla tego projektu.",
-      "set_as_default": "Ustaw jako domyślny",
-      "cant_set_default_inactive_message": "Aktywuj ten typ przed ustawieniem go jako domyślny",
-      "set_default_confirmation": {
-        "title": "Ustaw jako domyślny typ elementu pracy",
-        "description": "Ustawienie {name} jako domyślnego zaimportuje go do wszystkich projektów w tym obszarze roboczym. Wszystkie nowe elementy pracy będą domyślnie używać tego typu.",
-        "confirm_button": "Ustaw jako domyślny"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "Błąd!",
           "message": {
+            "default": "Nie udało się utworzyć typu elementu pracy. Spróbuj ponownie!",
             "conflict": "Typ {name} już istnieje. Wybierz inną nazwę."
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "Błąd!",
           "message": {
+            "default": "Nie udało się zaktualizować typu elementu pracy. Spróbuj ponownie!",
             "conflict": "Typ {name} już istnieje. Wybierz inną nazwę."
           }
         }
@@ -383,25 +435,25 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Błąd walidacji!",
+      "title": "Zapisanie usunie istniejące powiązania",
       "content": {
         "intro": "Typ elementu roboczego {workItemTypeName} obejmuje:",
-        "parent_items": "{count, plural, one {element nadrzędny} few {elementy nadrzędne} other {elementów nadrzędnych}}",
+        "parent_items": "{count, plural, one {Zostanie usunięte # powiązanie nadrzędne} few {Zostaną usunięte # powiązania nadrzędne} other {Zostanie usuniętych # powiązań nadrzędnych}}.",
         "child_items": "{count, plural, one {podelement} few {podelementy} other {podelementów}}",
         "parent_line_suffix_when_also_children": ", oraz ",
         "footer": "Ta zmiana usunie relacje nadrzędne i podrzędne z istniejących elementów roboczych typu {workItemTypeName}."
       },
       "confirm_input": {
-        "label": "Wpisz „Potwierdź”, aby kontynuować.",
-        "placeholder": "Potwierdź"
+        "label": "Wpisz „potwierdź”, aby kontynuować.",
+        "placeholder": "potwierdź"
       },
       "error_toast": {
         "title": "Błąd!",
-        "message": "Nie udało się zerwać hierarchii. Spróbuj ponownie."
+        "message": "Nie udało się odłączyć powiązań i zapisać. Spróbuj ponownie."
       },
       "confirm_button": {
-        "loading": "Stosowanie",
-        "default": "Zastosuj i odłącz"
+        "loading": "Zapisywanie",
+        "default": "Zapisz mimo to"
       }
     },
     "work_item_modal": {

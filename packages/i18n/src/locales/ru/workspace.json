@@ -95,16 +95,28 @@
       "scope_and_demand": "Объём и спрос",
       "custom": "Пользовательская аналитика"
     },
+    "total": "Общее количество {entity}",
+    "started_work_items": "Начатые {entity}",
+    "backlog_work_items": "{entity} в бэклоге",
+    "un_started_work_items": "Не начатые {entity}",
+    "completed_work_items": "Завершённые {entity}",
+    "project_insights": "Аналитика проекта",
+    "summary_of_projects": "Сводка по проектам",
+    "all_projects": "Все проекты",
+    "trend_on_charts": "Тренд на графиках",
+    "active_projects": "Активные проекты",
+    "customized_insights": "Индивидуальные аналитические данные",
+    "created_vs_resolved": "Создано vs Решено",
     "empty_state": {
-      "customized_insights": {
-        "description": "Назначенные вам рабочие элементы, разбитые по статусам, появятся здесь.",
-        "title": "Данных пока нет"
+      "project_insights": {
+        "title": "Данных пока нет",
+        "description": "Назначенные вам рабочие элементы, разбитые по статусам, появятся здесь."
       },
       "created_vs_resolved": {
-        "description": "Созданные и решённые со временем рабочие элементы появятся здесь.",
-        "title": "Данных пока нет"
+        "title": "Данных пока нет",
+        "description": "Созданные и решённые со временем рабочие элементы появятся здесь."
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "Данных пока нет",
         "description": "Назначенные вам рабочие элементы, разбитые по статусам, появятся здесь."
       },
@@ -132,29 +144,11 @@
         "description": "Аналитика тенденций intake появится здесь. Добавьте рабочие элементы в intake, чтобы начать отслеживать тенденции."
       }
     },
-    "created_vs_resolved": "Создано vs Решено",
-    "customized_insights": "Индивидуальные аналитические данные",
-    "backlog_work_items": "{entity} в бэклоге",
-    "active_projects": "Активные проекты",
-    "trend_on_charts": "Тренд на графиках",
-    "all_projects": "Все проекты",
-    "summary_of_projects": "Сводка по проектам",
-    "project_insights": "Аналитика проекта",
-    "started_work_items": "Начатые {entity}",
-    "total_work_items": "Общее количество {entity}",
-    "total_projects": "Всего проектов",
-    "total_admins": "Всего администраторов",
-    "total_users": "Всего пользователей",
-    "total_intake": "Общий доход",
-    "un_started_work_items": "Не начатые {entity}",
-    "total_guests": "Всего гостей",
-    "completed_work_items": "Завершённые {entity}",
-    "total": "Общее количество {entity}",
+    "upgrade_to_plan": "Обновитесь до {plan}, чтобы разблокировать {tab}",
+    "workitem_resolved_vs_pending": "Решенные vs ожидающие рабочие элементы",
     "projects_by_status": "Проекты по статусу",
     "active_users": "Активные пользователи",
-    "intake_trends": "Тенденции приёма",
-    "workitem_resolved_vs_pending": "Решенные vs ожидающие рабочие элементы",
-    "upgrade_to_plan": "Обновитесь до {plan}, чтобы разблокировать {tab}"
+    "intake_trends": "Тенденции приёма"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проект} other {Проекты}}",
@@ -303,7 +297,10 @@
       },
       "private": {
         "title": "Пока нет частных страниц",
-        "description": "Держите свои частные мысли здесь. Когда вы будете готовы поделиться, команда всего в одном клике."
+        "description": "Держите свои частные мысли здесь. Когда вы будете готовы поделиться, команда всего в одном клике.",
+        "primary_button": {
+          "text": "Создать вашу первую страницу"
+        }
       },
       "public": {
         "title": "Пока нет страниц рабочего пространства",
@@ -315,6 +312,10 @@
       "archived": {
         "title": "Пока нет архивированных страниц",
         "description": "Архивируйте страницы, которые не на вашем радаре. Получите к ним доступ здесь, когда это необходимо."
+      },
+      "shared": {
+        "title": "Пока нет общих страниц",
+        "description": "Страницы, которыми с вами поделились, будут отображаться здесь."
       }
     }
   },

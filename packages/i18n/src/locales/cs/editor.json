@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Zadejte prosím platnou URL adresu."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Popište obsah tohoto bloku",
+      "generated_here": "Zde bude vygenerován obsah AI"
+    },
+    "block_types": {
+      "placeholder": "Vyberte typ bloku",
+      "summarize_page": "Shrnout stránku",
+      "custom_prompt": "Vlastní prompt"
+    },
+    "actions": {
+      "discard": "Zahodit",
+      "generate": "Vygenerovat",
+      "generating": "Generování",
+      "rewriting": "Přepisování",
+      "rewrite": "Přepsat",
+      "use_this": "Použít toto",
+      "refine": "Upřesnit"
+    }
   }
 }

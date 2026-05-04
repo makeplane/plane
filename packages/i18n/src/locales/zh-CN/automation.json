@@ -53,6 +53,9 @@
       "button": {
         "previous": "返回",
         "next": "添加操作"
+      },
+      "warning": {
+        "disabled_trigger_switching": "创建后无法更改触发器类型"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "选择一个选项",
       "handler_name": {
         "add_comment": "添加评论",
-        "change_property": "更改属性"
+        "change_property": "更改属性",
+        "run_script": "运行脚本"
       },
       "configuration": {
         "label": "配置",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "添加评论"
+      },
+      "run_script_block": {
+        "title": "运行脚本"
       },
       "change_property_block": {
         "title": "更改属性"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "自动化标题",
+      "scope": "范围",
+      "projects": "项目",
       "last_run_on": "最后运行时间",
       "created_on": "创建时间",
       "last_updated_on": "最后更新时间",
@@ -229,6 +238,35 @@
         "title": "自动化",
         "description": "自动化是在您的项目中自动执行任务的方式。",
         "sub_description": "使用自动化可以节省80%的管理时间。"
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "选择要运行此自动化的项目",
+        "all_projects": {
+          "label": "所有项目",
+          "description": "自动化将在工作区的所有项目中运行。"
+        },
+        "select_projects": {
+          "label": "选择项目",
+          "description": "自动化将在工作区中所选的项目中运行。",
+          "placeholder": "选择项目"
+        }
+      },
+      "settings": {
+        "sidebar_label": "自动化",
+        "title": "自动化",
+        "description": "通过全局自动化标准化工作区中的流程。"
+      },
+      "table": {
+        "scope": {
+          "global": "全局",
+          "project": {
+            "label": "项目",
+            "multiple": "多个",
+            "all": "全部"
+          }
+        }
       }
     }
   }

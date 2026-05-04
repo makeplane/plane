@@ -41,5 +41,25 @@
     "error": {
       "not_valid_link": "Пожалуйста, введите действительный URL."
     }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Опишите содержимое этого блока",
+      "generated_here": "Ваш AI-контент будет сгенерирован здесь"
+    },
+    "block_types": {
+      "placeholder": "Выберите тип блока",
+      "summarize_page": "Суммировать страницу",
+      "custom_prompt": "Пользовательский запрос"
+    },
+    "actions": {
+      "discard": "Отменить",
+      "generate": "Сгенерировать",
+      "generating": "Генерация",
+      "rewriting": "Переписывание",
+      "rewrite": "Переписать",
+      "use_this": "Использовать это",
+      "refine": "Уточнить"
+    }
   }
 }

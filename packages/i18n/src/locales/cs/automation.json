@@ -53,6 +53,9 @@
       "button": {
         "previous": "Zpět",
         "next": "Přidat akci"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Po vytvoření nelze typ spouštěče změnit"
       }
     },
     "condition": {
@@ -68,7 +71,8 @@
       "input_placeholder": "Vyberte možnost",
       "handler_name": {
         "add_comment": "Přidat komentář",
-        "change_property": "Změnit vlastnost"
+        "change_property": "Změnit vlastnost",
+        "run_script": "Spustit skript"
       },
       "configuration": {
         "label": "Konfigurace",
@@ -88,6 +92,9 @@
       },
       "comment_block": {
         "title": "Přidat komentář"
+      },
+      "run_script_block": {
+        "title": "Spustit skript"
       },
       "change_property_block": {
         "title": "Změnit vlastnost"
@@ -115,6 +122,8 @@
     },
     "table": {
       "title": "Název automatizace",
+      "scope": "Rozsah",
+      "projects": "Projekty",
       "last_run_on": "Naposledy spuštěno",
       "created_on": "Vytvořeno",
       "last_updated_on": "Naposledy aktualizováno",
@@ -229,6 +238,35 @@
         "title": "Automatizace",
         "description": "Automatizace jsou způsob, jak automatizovat úkoly ve vašem projektu.",
         "sub_description": "Získejte zpět 80% svého administrativního času, když používáte automatizace."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Vyberte projekty, na kterých se má tato automatizace spouštět",
+        "all_projects": {
+          "label": "Všechny projekty",
+          "description": "Automatizace poběží pro všechny projekty v pracovním prostoru."
+        },
+        "select_projects": {
+          "label": "Vybrat projekty",
+          "description": "Automatizace poběží pro vybrané projekty v pracovním prostoru.",
+          "placeholder": "Vybrat projekty"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatizace",
+        "title": "Automatizace",
+        "description": "Standardizujte procesy napříč pracovním prostorem pomocí globálních automatizací."
+      },
+      "table": {
+        "scope": {
+          "global": "Globální",
+          "project": {
+            "label": "Projekt",
+            "multiple": "Více",
+            "all": "Vše"
+          }
+        }
       }
     }
   }

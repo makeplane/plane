@@ -42,9 +42,6 @@
         }
       }
     },
-    "open_button": "Navigationsbereich öffnen",
-    "close_button": "Navigationsbereich schließen",
-    "outline_floating_button": "Gliederung öffnen",
     "toasts": {
       "errors": {
         "wrong_name": "Der Notizname darf nicht länger als 100 Zeichen sein.",
@@ -74,7 +71,10 @@
         "title": "Notiz nicht entfernt",
         "message": "Die Notiz konnte nicht entfernt werden"
       }
-    }
+    },
+    "open_button": "Navigationsbereich öffnen",
+    "close_button": "Navigationsbereich schließen",
+    "outline_floating_button": "Gliederung öffnen"
   },
   "page_actions": {
     "move_page": {

@@ -1,33 +1,4 @@
 {
-  "pages": {
-    "link_pages": "Menghubungkan halaman",
-    "show_wiki_pages": "Tampilkan halaman wiki",
-    "link_pages_to": "Menghubungkan halaman ke",
-    "linked_pages": "Halaman yang terhubung",
-    "no_description": "Halaman ini kosong. Tulis sesuatu di sini dan lihatnya di sini sebagai placeholder",
-    "toasts": {
-      "link": {
-        "success": {
-          "title": "Halaman diperbarui",
-          "message": "Halaman berhasil diperbarui"
-        },
-        "error": {
-          "title": "Halaman tidak diperbarui",
-          "message": "Halaman tidak dapat diperbarui"
-        }
-      },
-      "remove": {
-        "success": {
-          "title": "Halaman dihapus",
-          "message": "Halaman berhasil dihapus"
-        },
-        "error": {
-          "title": "Halaman tidak dihapus",
-          "message": "Halaman tidak dapat dihapus"
-        }
-      }
-    }
-  },
   "page_navigation_pane": {
     "tabs": {
       "outline": {
@@ -62,6 +33,43 @@
           "title": "Gambar hilang",
           "description": "Tambahkan gambar untuk melihatnya di sini."
         }
+      },
+      "comments": {
+        "label": "Komentar",
+        "empty_state": {
+          "title": "Tidak ada komentar",
+          "description": "Tambahkan komentar untuk melihatnya di sini."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Nama sticky tidak boleh lebih dari 100 karakter.",
+        "already_exists": "Sudah ada sticky tanpa deskripsi"
+      },
+      "created": {
+        "title": "Sticky dibuat",
+        "message": "Sticky berhasil dibuat"
+      },
+      "not_created": {
+        "title": "Sticky tidak dibuat",
+        "message": "Sticky tidak dapat dibuat"
+      },
+      "updated": {
+        "title": "Sticky diperbarui",
+        "message": "Sticky berhasil diperbarui"
+      },
+      "not_updated": {
+        "title": "Sticky tidak diperbarui",
+        "message": "Sticky tidak dapat diperbarui"
+      },
+      "removed": {
+        "title": "Sticky dihapus",
+        "message": "Sticky berhasil dihapus"
+      },
+      "not_removed": {
+        "title": "Sticky tidak dihapus",
+        "message": "Sticky tidak dapat dihapus"
       }
     },
     "open_button": "Buka panel navigasi",
@@ -70,11 +78,28 @@
   },
   "page_actions": {
     "move_page": {
+      "submit_button": {
+        "default": "Pindahkan",
+        "loading": "Memindahkan"
+      },
+      "cannot_move_to_teamspace": "Halaman pribadi dan yang dibagikan tidak dapat dipindahkan ke teamspace.",
       "placeholders": {
+        "workspace_to_all": "Cari proyek dan teamspace",
+        "workspace_to_project": "Cari proyek",
+        "project_to_all": "Cari proyek dan teamspace",
+        "project_to_project": "Cari proyek",
         "project_to_all_with_wiki": "Cari koleksi wiki, proyek, dan teamspace",
         "project_to_project_with_wiki": "Cari koleksi wiki dan proyek"
       },
       "toasts": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Halaman berhasil dipindahkan."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Halaman tidak dapat dipindahkan. Silakan coba lagi nanti."
+        },
         "collection_error": {
           "title": "Dipindahkan ke wiki",
           "message": "Halaman dipindahkan ke wiki, tetapi tidak dapat ditambahkan ke koleksi yang dipilih. Halaman tetap berada di General."

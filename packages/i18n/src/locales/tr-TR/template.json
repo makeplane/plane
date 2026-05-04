@@ -3,6 +3,9 @@
     "settings": {
       "title": "Şablonlar",
       "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmak için harcanan zamanın %80'ini tasarruf edin.",
+      "new_project_template": "Yeni proje şablonu",
+      "new_work_item_template": "Yeni iş öğesi şablonu",
+      "new_page_template": "Yeni sayfa şablonu",
       "options": {
         "project": {
           "label": "Proje şablonları"
@@ -22,7 +25,10 @@
         }
       },
       "use_template": {
-        "button": "Şablonu kullan"
+        "button": {
+          "default": "Şablonu kullan",
+          "loading": "Uygulanıyor"
+        }
       },
       "template_source": {
         "workspace": {
@@ -154,6 +160,14 @@
               "required": "En az bir anahtar kelime gereklidir"
             }
           },
+          "website": {
+            "label": "Web sitesi URL'si",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "Geçersiz URL",
+              "maxLength": "URL 800 karakterden az olmalıdır"
+            }
+          },
           "company_name": {
             "label": "Şirket adı",
             "placeholder": "Plane",
@@ -167,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Geçersiz e-posta adresi",
-              "required": "Destek e-postası gereklidir",
               "maxLength": "Destek e-postası 255 karakterden az olmalıdır"
             }
           },
@@ -222,6 +235,9 @@
       },
       "no_labels": {
         "description": "Henüz etiket yok. Projenizde iş öğelerini düzenlemek ve filtrelemek için etiketler oluşturun."
+      },
+      "no_modules": {
+        "description": "Henüz modül yok. Özel liderler ve atananlarla işleri alt projelere organize edin."
       },
       "no_work_items": {
         "description": "Henüz iş öğesi yok. Bir tane ekleyin, işinizi daha iyi yapılandırın."

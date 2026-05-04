@@ -66,16 +66,22 @@
         }
       },
       "billing_and_plans": {
+        "heading": "Faturalandırma ve Planlar",
+        "description": "Planınızı seçin, abonelikleri yönetin ve ihtiyaçlarınız arttıkça kolayca yükseltin.",
         "title": "Faturalandırma ve Planlar",
         "current_plan": "Mevcut plan",
         "free_plan": "Şu anda ücretsiz planı kullanıyorsunuz",
         "view_plans": "Planları görüntüle"
       },
       "exports": {
+        "heading": "Dışa Aktarımlar",
+        "description": "Proje verilerinizi çeşitli formatlarda dışa aktarın ve indirme bağlantılarıyla dışa aktarma geçmişinize erişin.",
         "title": "Dışa Aktarımlar",
         "exporting": "Dışa aktarılıyor",
         "previous_exports": "Önceki dışa aktarımlar",
         "export_separate_files": "Verileri ayrı dosyalara aktar",
+        "exporting_projects": "Proje dışa aktarılıyor",
+        "format": "Format",
         "filters_info": "Kriterlerinize göre belirli iş öğelerini dışa aktarmak için filtreler uygulayın.",
         "modal": {
           "title": "Şuraya aktar",
@@ -92,6 +98,8 @@
         }
       },
       "webhooks": {
+        "heading": "Webhook'lar",
+        "description": "Proje olayları gerçekleştiğinde harici hizmetlere bildirimleri otomatikleştirin.",
         "title": "Webhook'lar",
         "add_webhook": "Webhook ekle",
         "modal": {
@@ -166,14 +174,20 @@
       },
       "integrations": {
         "title": "Entegrasyonlar",
+        "heading": "Entegrasyonlar",
+        "description": "Tüm iş akışı ekosisteminizde işinizi senkronize etmek için popüler araçlar ve hizmetlerle bağlantı kurun.",
         "page_title": "Plane verilerinizi mevcut uygulamalarda veya kendi uygulamalarınızda kullanın.",
         "page_description": "Bu çalışma alanı veya sizin tarafınızdan kullanılan tüm entegrasyonları görüntüleyin."
       },
       "imports": {
-        "title": "İmportlar"
+        "title": "İmportlar",
+        "heading": "İmportlar",
+        "description": "İş akışı entegrasyonunuzu kolaylaştırmak için mevcut proje yönetim araçlarınızdan verileri bağlayın ve içe aktarın."
       },
       "worklogs": {
-        "title": "Workloglar"
+        "title": "Workloglar",
+        "heading": "Workloglar",
+        "description": "Herhangi bir projedeki herkes için çalışma günlüklerini (zaman çizelgelerini) indirin."
       },
       "group_syncing": {
         "title": "Grup senkronizasyonu",
@@ -242,7 +256,10 @@
         "description": "Alan adınızı yapılandırın ve Tek oturum açmayı etkinleştirin"
       },
       "project_states": {
-        "title": "Proje durumları"
+        "title": "Proje durumları",
+        "heading": "Tüm projeler için ilerleme özetini görün.",
+        "description": "Proje Durumları, herhangi bir proje özelliğine göre tüm projelerinizin ilerlemesini takip etmek için Plane'e özgü bir özelliktir.",
+        "go_to_settings": "Ayarlara git"
       },
       "projects": {
         "title": "Projeler",
@@ -251,6 +268,16 @@
           "states": "Proje durumları",
           "labels": "Proje etiketleri"
         }
+      },
+      "templates": {
+        "title": "Şablonlar",
+        "heading": "Şablonlar",
+        "description": "Şablonları kullandığınızda projeler, iş öğeleri ve sayfalar oluşturmaya harcanan zamanın %80'ini tasarruf edin."
+      },
+      "relations": {
+        "title": "İlişkiler",
+        "heading": "İlişkiler",
+        "description": "Çalışma alanınızdaki iş öğelerini birbirine bağlayan ilişki türlerini oluşturun ve yönetin."
       },
       "cancel_trial": {
         "title": "Önce deneme sürenizi iptal edin.",
@@ -263,6 +290,7 @@
         "cancel_error_message": "Lütfen tekrar deneyin."
       },
       "applications": {
+        "internal": "Dahili",
         "title": "Aplikasyonlar",
         "applicationId_copied": "Aplikasyon ID panoya kopyalandı",
         "clientId_copied": "Klayınt ID panoya kopyalandı",
@@ -271,10 +299,61 @@
         "your_apps": "Aplikasyonlarınız",
         "connect": "Bağlan",
         "connected": "Bağlandı",
+        "disconnect": "Bağlantıyı kes",
         "install": "Yükle",
         "installed": "Yüklendi",
         "configure": "Yapılandır",
         "app_available": "Bu aplikasyonu bir Pleyn workspeysi ile kullanılabilir hale getirdiniz",
+        "app_credentials_regenrated": {
+          "title": "Uygulama kimlik bilgileri başarıyla yeniden oluşturuldu",
+          "description": "İstemci sırrını kullanıldığı her yerde değiştirin. Önceki sır artık geçerli değil."
+        },
+        "app_created": {
+          "title": "Uygulama başarıyla oluşturuldu",
+          "description": "Uygulamayı bir Plane çalışma alanına yüklemek için kimlik bilgilerini kullanın"
+        },
+        "installed_apps": "Yüklü uygulamalar",
+        "all_apps": "Tüm uygulamalar",
+        "internal_apps": "Dahili uygulamalar",
+        "app_name_title": "Bu aplikasyonu ne olarak adlandıracaksınız",
+        "app_description_title": {
+          "label": "Uzun açıklama",
+          "placeholder": "Pazar yeri için uzun bir açıklama yazın. Komutlar için '/' tuşuna basın."
+        },
+        "authorization_grant_type": {
+          "title": "Bağlantı türü",
+          "description": "Uygulamanızın çalışma alanı için bir kez mi kurulması gerektiğini yoksa her kullanıcının kendi hesabını bağlamasına mı izin verileceğini seçin"
+        },
+        "website": {
+          "title": "Web sitesi",
+          "description": "Uygulamanızın web sitesine bağlantı.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Uygulama Yapıcı",
+          "description": "Uygulamayı oluşturan kişi veya kuruluş."
+        },
+        "app_maker_error": "Aplikasyon meykır gerekli",
+        "setup_url": {
+          "label": "Kurulum URL'si",
+          "description": "Kullanıcılar uygulamayı yüklediklerinde bu URL'ye yönlendirilecektir.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL'si",
+          "description": "Uygulamanızın yüklü olduğu çalışma alanlarından webhook olaylarını ve güncellemelerini buraya göndereceğiz.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook Gizli Anahtarı",
+          "description": "Gelen webhook isteklerini doğrulamak için kullanılan gizli anahtar.",
+          "placeholder": "Rastgele bir gizli anahtar girin"
+        },
+        "redirect_uris": {
+          "label": "Yönlendirme URI'leri (boşluk ile ayrılmış)",
+          "description": "Kullanıcılar Plane ile kimlik doğrulaması yaptıktan sonra bu yola yönlendirilecektir.",
+          "placeholder": "https://example.com https://example.com/"
+        },
         "app_available_description": "Kullanmaya başlamak için bir Pleyn workspeysi bağlayın",
         "client_id_and_secret": "Klayınt ID ve Sikrıt",
         "client_id_and_secret_description": "Bu sikrıt anahtarı Peycislere kopyalayıp kaydedin. Kapat'a bastıktan sonra bu anahtarı tekrar göremezsiniz.",
@@ -286,23 +365,13 @@
         "slug_already_exists": "Slag zaten mevcut",
         "failed_to_create_application": "Aplikasyon oluşturulamadı",
         "upload_logo": "Logo yükle",
-        "app_name_title": "Bu aplikasyonu ne olarak adlandıracaksınız",
         "app_name_error": "Aplikasyon adı gerekli",
         "app_short_description_title": "Bu aplikasyona kısa bir açıklama verin",
         "app_short_description_error": "Aplikasyon kısa açıklaması gerekli",
-        "app_description_title": {
-          "label": "Uzun açıklama",
-          "placeholder": "Pazar yeri için uzun bir açıklama yazın. Komutlar için '/' tuşuna basın."
-        },
-        "authorization_grant_type": {
-          "title": "Bağlantı türü",
-          "description": "Uygulamanızın çalışma alanı için bir kez mi kurulması gerektiğini yoksa her kullanıcının kendi hesabını bağlamasına mı izin verileceğini seçin"
-        },
         "app_description_error": "Aplikasyon açıklaması gerekli",
         "app_slug_title": "Aplikasyon slag",
         "app_slug_error": "Aplikasyon slag gerekli",
-        "app_maker_title": "Aplikasyon Meykır",
-        "app_maker_error": "Aplikasyon meykır gerekli",
+        "invalid_website_error": "Geçersiz web sitesi",
         "webhook_url_title": "Webhuk URL",
         "webhook_url_error": "Webhuk URL gerekli",
         "invalid_webhook_url_error": "Geçersiz webhuk URL",
@@ -316,6 +385,8 @@
         "authorized_javascript_origins_description": "Aplikasyonun istek yapmasına izin verilecek boşlukla ayrılmış orijinleri girin örn. app.com example.com",
         "create_app": "Aplikasyon oluştur",
         "update_app": "Aplikasyonu güncelle",
+        "build_your_own_app": "Kendi uygulamanızı oluşturun",
+        "edit_app_details": "Uygulama ayrıntılarını düzenle",
         "regenerate_client_secret_description": "Klayınt sikrıtı yeniden oluştur. Sikrıtı yeniden oluşturursanız, anahtarı kopyalayabilir veya hemen sonra bir CSV dosyasına indirebilirsiniz.",
         "regenerate_client_secret": "Klayınt sikrıtı yeniden oluştur",
         "regenerate_client_secret_confirm_title": "Klayınt sikrıtı yeniden oluşturmak istediğinizden emin misiniz?",
@@ -362,7 +433,6 @@
         "video_url_title": "Video URL",
         "video_url_error": "Video URL gerekli",
         "invalid_video_url_error": "Geçersiz video URL",
-        "setup_url_title": "Kurulum URL",
         "setup_url_error": "Kurulum URL gerekli",
         "invalid_setup_url_error": "Geçersiz kurulum URL",
         "configuration_url_title": "Yapılandırma URL",
@@ -378,42 +448,11 @@
         "invalid_file_or_exceeds_size_limit": "Geçersiz dosya veya boyut sınırını aşıyor ({size} MB)",
         "uploading": "Yükleniyor...",
         "upload_and_save": "Yükle ve kaydet",
-        "app_credentials_regenrated": {
-          "title": "Uygulama kimlik bilgileri başarıyla yeniden oluşturuldu",
-          "description": "İstemci sırrını kullanıldığı her yerde değiştirin. Önceki sır artık geçerli değil."
-        },
-        "app_created": {
-          "title": "Uygulama başarıyla oluşturuldu",
-          "description": "Uygulamayı bir Plane çalışma alanına yüklemek için kimlik bilgilerini kullanın"
-        },
-        "installed_apps": "Yüklü uygulamalar",
-        "all_apps": "Tüm uygulamalar",
-        "internal_apps": "Dahili uygulamalar",
-        "website": {
-          "title": "Web sitesi",
-          "description": "Uygulamanızın web sitesine bağlantı.",
-          "placeholder": "https://example.com"
-        },
-        "app_maker": {
-          "title": "Uygulama Yapıcı",
-          "description": "Uygulamayı oluşturan kişi veya kuruluş."
-        },
-        "setup_url": {
-          "label": "Kurulum URL'si",
-          "description": "Kullanıcılar uygulamayı yüklediklerinde bu URL'ye yönlendirilecektir.",
-          "placeholder": "https://example.com/setup"
-        },
-        "webhook_url": {
-          "label": "Webhook URL'si",
-          "description": "Uygulamanızın yüklü olduğu çalışma alanlarından webhook olaylarını ve güncellemelerini buraya göndereceğiz.",
-          "placeholder": "https://example.com/webhook"
-        },
-        "redirect_uris": {
-          "label": "Yönlendirme URI'leri (boşluk ile ayrılmış)",
-          "description": "Kullanıcılar Plane ile kimlik doğrulaması yaptıktan sonra bu yola yönlendirilecektir.",
-          "placeholder": "https://example.com https://example.com/"
-        },
+        "app_consent_no_access_title": "Yükleme talebi",
         "app_consent_no_access_description": "Bu uygulama yalnızca bir workspace yöneticisi tarafından kurulduktan sonra yüklenebilir. Devam etmek için workspace yöneticinizle iletişime geçin.",
+        "app_consent_unapproved_title": "Bu uygulama henüz Plane tarafından incelenmedi veya onaylanmadı.",
+        "app_consent_unapproved_description": "Bu uygulamayı çalışma alanınıza bağlamadan önce güvendiğinizden emin olun.",
+        "go_to_app": "Uygulamaya git",
         "enable_app_mentions": "Uygulama bahsini etkinleştir",
         "enable_app_mentions_tooltip": "Bu etkinleştirildiğinde, kullanıcılar Çalışma Öğelerini bu uygulamaya atayabilir veya bahsedebilir.",
         "scopes": "Kapsamlar",
@@ -433,15 +472,18 @@
           "profile": "Kullanıcı profil bilgilerine erişim",
           "agents": "Ajanlara ve tüm ajana bağlı varlıklara erişim",
           "assets": "Varlıklara ve tüm varlıkla ilgili öğelere erişim"
-        },
-        "build_your_own_app": "Kendi uygulamanızı oluşturun",
-        "edit_app_details": "Uygulama ayrıntılarını düzenle",
-        "internal": "Dahili"
+        }
       },
       "plane-intelligence": {
         "title": "Plane AI",
         "heading": "Plane AI",
         "description": "İşinizi daha akıllı ve daha hızlı hale getirmek için doğal olarak işinize ve bilgi tabanınıza bağlı olan AI kullanın."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Komut Dosyaları",
+        "new_script": "Yeni Komut Dosyası",
+        "description": "İş akışlarınızı özel komut dosyaları ve otomasyon kurallarıyla otomatikleştirin."
       }
     },
     "empty_state": {

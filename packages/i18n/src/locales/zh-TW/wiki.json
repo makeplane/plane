@@ -84,5 +84,30 @@
       "create_page_in_collection_error": "無法建立頁面或將其加入集合。請再試一次。",
       "collection_link_copied": "集合連結已複製到剪貼簿。"
     }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "升級以解鎖 Wiki",
+      "description": "透過 Plane Pro 解鎖公開頁面、版本歷史、共享頁面、即時協作，以及用於 Wiki、公司文件和知識庫的工作區頁面。",
+      "upgrade_button": {
+        "text": "升級"
+      },
+      "learn_more_button": {
+        "text": "了解更多"
+      },
+      "download_button": {
+        "text": "下載資料",
+        "loading": "下載中"
+      },
+      "tabs": {
+        "nested_pages": "巢狀頁面",
+        "add_embeds": "新增嵌入內容",
+        "publish_pages": "發佈頁面",
+        "comments": "留言"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "巢狀頁面需要付費方案。升級以解鎖。"
+    }
   }
 }

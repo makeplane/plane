@@ -194,6 +194,10 @@
       "server_error_states": "Błąd serwera podczas ładowania stanów"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Połącz i synchronizuj repozytoria Bitbucket Data Center z Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Walidacja tokenów zewnętrznych IdP dla dostępu do API.",
@@ -302,6 +306,7 @@
     "generic_error": "Wystąpił nieoczekiwany błąd podczas przetwarzania Twojego żądania",
     "connection_not_found": "Nie można znaleźć żądanego połączenia",
     "multiple_connections_found": "Znaleziono wiele połączeń, gdy oczekiwano tylko jednego",
+    "cannot_create_multiple_connections": "Twoja organizacja jest już połączona z przestrzenią roboczą. Rozłącz istniejące połączenie przed utworzeniem nowego.",
     "installation_not_found": "Nie można znaleźć żądanej instalacji",
     "user_not_found": "Nie można znaleźć żądanego użytkownika",
     "error_fetching_token": "Nie udało się pobrać tokenu uwierzytelniającego",
@@ -315,6 +320,7 @@
     "pulling": "Pobieranie",
     "timed_out": "Przekroczenie czasu oczekiwania",
     "pulled": "Pobrano",
+    "progressing": "W toku",
     "transforming": "Transformowanie",
     "transformed": "Przekształcono",
     "pushing": "Przesyłanie",

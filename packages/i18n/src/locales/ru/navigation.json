@@ -1,10 +1,18 @@
 {
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Ничего не найдено"
+      }
+    }
+  },
   "sidebar": {
+    "stickies": "Стикеры",
+    "your_work": "Ваша работа",
     "projects": "Проекты",
     "pages": "Страницы",
     "new_work_item": "Новый рабочий элемент",
     "home": "Главная",
-    "your_work": "Ваша работа",
     "inbox": "Входящие",
     "workspace": "Рабочие пространства",
     "views": "Представления",
@@ -21,14 +29,6 @@
     "epics": "Эпики",
     "upgrade_plan": "Апгрейд план",
     "plane_pro": "Плейн Про",
-    "business": "Бизнес",
-    "recurring_work_items": "Повторяющиеся рабочие элементы"
-  },
-  "command_k": {
-    "empty_state": {
-      "search": {
-        "title": "Ничего не найдено"
-      }
-    }
+    "business": "Бизнес"
   }
 }

@@ -35,6 +35,7 @@ catalog:
   react-i18next: 16.6.6
   swr: 2.2.4
   tsdown: 0.16.0
+  tsx: 4.20.6
   typescript: 5.8.3
   uuid: 13.0.0
   vite: 7.3.2

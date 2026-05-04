@@ -20,6 +20,7 @@
       "due_date": "Přidat termín",
       "parent": "Přidat nadřazenou pracovní položku",
       "sub_issue": "Přidat podřízenou pracovní položku",
+      "dependency": "Přidat závislost",
       "relation": "Přidat vztah",
       "link": "Přidat odkaz",
       "existing": "Přidat existující pracovní položku"
@@ -110,6 +111,43 @@
       "copy_link": {
         "success": "Odkaz na komentář byl zkopírován do schránky",
         "error": "Chyba při kopírování odkazu na komentář. Zkuste to prosím později."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Přidat odpověď",
+          "placeholder": "Přidat odpověď"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Načtení odpovědí se nezdařilo"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Odpověď úspěšně vytvořena"
+            },
+            "error": {
+              "message": "Vytvoření odpovědi se nezdařilo"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Odpověď úspěšně aktualizována"
+            },
+            "error": {
+              "message": "Aktualizace odpovědi se nezdařila"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Odpověď úspěšně smazána"
+            },
+            "error": {
+              "message": "Smazání odpovědi se nezdařilo"
+            }
+          }
+        }
       }
     },
     "empty_state": {
@@ -176,6 +214,53 @@
       "deselect_all": "Zrušit výběr všeho"
     },
     "open_in_full_screen": "Otevřít pracovní položku na celou obrazovku",
+    "duplicate": {
+      "modal": {
+        "title": "Vytvořit kopii do jiného projektu",
+        "description1": "Toto vytvoří kopii pracovní položky.",
+        "description2": "Při duplikování budou odstraněna všechna data vlastností.",
+        "placeholder": "Vyberte projekt"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Pracovní položka úspěšně duplikována"
+        },
+        "error": {
+          "message": "Duplikování pracovní položky se nezdařilo"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Propojit stránky",
+      "show_wiki_pages": "Zobrazit wiki stránky",
+      "link_pages_to": "Propojit stránky s",
+      "linked_pages": "Propojené stránky",
+      "no_description": "Toto je prázdná stránka. Napište něco dovnitř a uvidíte to zde jako tento zástupný text",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Stránky aktualizovány",
+            "message": "Stránky úspěšně aktualizovány"
+          },
+          "error": {
+            "title": "Aktualizace stránek se nezdařila",
+            "message": "Aktualizace stránek se nezdařila"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Stránka odstraněna",
+            "message": "Stránka úspěšně odstraněna"
+          },
+          "error": {
+            "title": "Odstranění stránky se nezdařilo",
+            "message": "Odstranění stránky se nezdařilo"
+          }
+        }
+      }
+    },
     "vote": {
       "click_to_upvote": "Klikněte pro hlasování nahoru",
       "click_to_downvote": "Klikněte pro hlasování dolů",
@@ -240,54 +325,6 @@
       "invalid_state_transition": {
         "title": "Nelze aktualizovat pracovní položky",
         "message": "Změna stavu není povolena pro některé pracovní položky. Ujistěte se, že je změna stavu povolena."
-      }
-    },
-    "workflows": {
-      "toggle": {
-        "title": "Povolit workflow",
-        "description": "Nastavte workflow pro řízení pohybu pracovních položek",
-        "no_states_tooltip": "Do workflow nebyly přidány žádné stavy.",
-        "toast": {
-          "loading": {
-            "enabling": "Povolování workflow",
-            "disabling": "Vypínání workflow"
-          },
-          "success": {
-            "title": "Úspěch!",
-            "message": "Workflow byla úspěšně povolena."
-          },
-          "error": {
-            "title": "Chyba!",
-            "message": "Nepodařilo se povolit workflow. Zkuste to prosím znovu."
-          }
-        }
-      },
-      "heading": "Workflow",
-      "description": "Automatizujte přechody pracovních položek a nastavte pravidla, která řídí, jak úkoly procházejí projektovým procesem.",
-      "add_button": "Přidat nový workflow",
-      "search": "Hledat workflow",
-      "detail": {
-        "define": "Definovat workflow",
-        "add_states": "Přidat stavy",
-        "unmapped_states": {
-          "title": "Byly zjištěny nepřiřazené stavy",
-          "description": "Některé pracovní položky vybraných typů jsou aktuálně ve stavech, které v tomto workflow neexistují.",
-          "note": "Pokud tento workflow povolíte, tyto položky se automaticky přesunou do výchozího stavu tohoto workflow.",
-          "label": "Chybějící stavy",
-          "tooltip": "Některé pracovní položky jsou ve stavech, které nejsou mapovány do tohoto workflow. Otevřete workflow a zkontrolujte jej."
-        }
-      },
-      "select_states": {
-        "empty_state": {
-          "title": "Všechny stavy jsou použity",
-          "description": "Všechny stavy definované pro tento projekt jsou již obsaženy ve vašem aktuálním workflow."
-        }
-      },
-      "default_footer": {
-        "fallback_message": "Tento workflow se vztahuje na jakýkoli typ pracovní položky, který není přiřazen k žádnému workflow."
-      },
-      "create": {
-        "heading": "Vytvořit nový workflow"
       }
     }
   },

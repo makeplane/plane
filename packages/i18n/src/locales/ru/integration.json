@@ -194,6 +194,10 @@
       "server_error_states": "Ошибка сервера при загрузке состояний"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "Подключите и синхронизируйте репозитории Bitbucket Data Center с Plane."
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "Проверка токенов внешних IdP для доступа к API.",
@@ -302,10 +306,10 @@
     "generic_error": "Произошла неожиданная ошибка при обработке вашего запроса",
     "connection_not_found": "Запрашиваемое подключение не найдено",
     "multiple_connections_found": "Найдено несколько подключений, когда ожидалось только одно",
+    "cannot_create_multiple_connections": "Вы уже подключили свою организацию к рабочему пространству. Пожалуйста, отключите существующее подключение перед подключением нового.",
     "installation_not_found": "Запрашиваемая установка не найдена",
     "user_not_found": "Запрашиваемый пользователь не найден",
     "error_fetching_token": "Не удалось получить токен аутентификации",
-    "cannot_create_multiple_connections": "Вы уже подключили свою организацию к рабочему пространству. Пожалуйста, отключите существующее подключение перед подключением нового.",
     "invalid_app_credentials": "Предоставленные учетные данные приложения недействительны",
     "invalid_app_installation_id": "Не удалось установить приложение"
   },
@@ -316,6 +320,7 @@
     "pulling": "Извлечение",
     "timed_out": "Время истекло",
     "pulled": "Извлечено",
+    "progressing": "В процессе",
     "transforming": "Преобразование",
     "transformed": "Преобразовано",
     "pushing": "Отправка",

@@ -39,10 +39,32 @@
         }
       }
     },
+    "preferences": {
+      "heading": "Preferências",
+      "description": "Personalize sua experiência no aplicativo do jeito que você trabalha"
+    },
     "notifications": {
+      "heading": "Notificações por e-mail",
+      "description": "Mantenha-se informado sobre os itens de trabalho aos quais você está inscrito. Ative isso para ser notificado.",
       "select_default_view": "Selecionar visualização padrão",
       "compact": "Compacto",
       "full": "Tela cheia"
+    },
+    "security": {
+      "heading": "Segurança"
+    },
+    "api_tokens": {
+      "title": "Tokens de Acesso Pessoal",
+      "description": "Gere tokens de API seguros para integrar seus dados com sistemas e aplicativos externos."
+    },
+    "activity": {
+      "heading": "Atividade",
+      "description": "Acompanhe suas ações e alterações recentes em todos os projetos e itens de trabalho."
+    },
+    "connections": {
+      "title": "Conexões",
+      "heading": "Conexões",
+      "description": "Gerencie as configurações de conexões do seu espaço de trabalho."
     }
   },
   "profile": {
@@ -78,8 +100,9 @@
       "profile": "Perfil",
       "security": "Segurança",
       "activity": "Atividade",
-      "appearance": "Aparência",
+      "preferences": "Preferências",
       "notifications": "Notificações",
+      "api-tokens": "Tokens de Acesso Pessoal",
       "connections": "Conexões"
     },
     "tabs": {

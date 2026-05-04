@@ -95,16 +95,28 @@
       "scope_and_demand": "範圍與需求",
       "custom": "自訂分析"
     },
+    "total": "{entity}總數",
+    "started_work_items": "已開始的{entity}",
+    "backlog_work_items": "待辦的{entity}",
+    "un_started_work_items": "未開始的{entity}",
+    "completed_work_items": "已完成的{entity}",
+    "project_insights": "專案洞察",
+    "summary_of_projects": "專案摘要",
+    "all_projects": "所有專案",
+    "trend_on_charts": "圖表趨勢",
+    "active_projects": "啟用中的專案",
+    "customized_insights": "自訂化洞察",
+    "created_vs_resolved": "已建立 vs 已解決",
     "empty_state": {
-      "customized_insights": {
-        "description": "指派給您的工作項目將依狀態分類顯示在此處。",
-        "title": "尚無資料"
+      "project_insights": {
+        "title": "尚無資料",
+        "description": "指派給您的工作項目將依狀態分類顯示在此處。"
       },
       "created_vs_resolved": {
-        "description": "隨著時間推移所建立與解決的工作項目將顯示在此處。",
-        "title": "尚無資料"
+        "title": "尚無資料",
+        "description": "隨著時間推移所建立與解決的工作項目將顯示在此處。"
       },
-      "project_insights": {
+      "customized_insights": {
         "title": "尚無資料",
         "description": "指派給您的工作項目將依狀態分類顯示在此處。"
       },
@@ -132,29 +144,11 @@
         "description": "引入趨勢分析將顯示在此處。將工作項目加入引入以開始追蹤趨勢。"
       }
     },
-    "created_vs_resolved": "已建立 vs 已解決",
-    "customized_insights": "自訂化洞察",
-    "backlog_work_items": "待辦的{entity}",
-    "active_projects": "啟用中的專案",
-    "trend_on_charts": "圖表趨勢",
-    "all_projects": "所有專案",
-    "summary_of_projects": "專案摘要",
-    "project_insights": "專案洞察",
-    "started_work_items": "已開始的{entity}",
-    "total_work_items": "{entity}總數",
-    "total_projects": "專案總數",
-    "total_admins": "管理員總數",
-    "total_users": "使用者總數",
-    "total_intake": "總收入",
-    "un_started_work_items": "未開始的{entity}",
-    "total_guests": "訪客總數",
-    "completed_work_items": "已完成的{entity}",
-    "total": "{entity}總數",
+    "upgrade_to_plan": "升級至 {plan} 以解鎖 {tab}",
+    "workitem_resolved_vs_pending": "已解決 vs 待處理的工作項目",
     "projects_by_status": "按狀態分類的專案",
     "active_users": "活躍使用者",
-    "intake_trends": "入學趨勢",
-    "workitem_resolved_vs_pending": "已解決 vs 待處理的工作項目",
-    "upgrade_to_plan": "升級至 {plan} 以解鎖 {tab}"
+    "intake_trends": "入學趨勢"
   },
   "workspace_projects": {
     "label": "{count, plural, one {專案} other {專案}}",
@@ -318,6 +312,10 @@
       "archived": {
         "title": "還沒有歸檔的頁面",
         "description": "歸檔不在您雷達上的頁面。需要時在這裡訪問它們。"
+      },
+      "shared": {
+        "title": "尚無共享頁面",
+        "description": "其他人與您共享的頁面會顯示在這裡。"
       }
     }
   },

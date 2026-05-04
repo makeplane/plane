@@ -3,11 +3,25 @@
     "label": "Tipe Item Kerja",
     "label_lowercase": "tipe item kerja",
     "settings": {
-      "title": "Tipe Item Kerja",
+      "description": "Sesuaikan dan tambahkan properti Anda sendiri untuk menyesuaikannya dengan kebutuhan tim Anda.",
+      "cant_delete_default_message": "Jenis item kerja ini tidak dapat dihapus karena diatur sebagai default untuk proyek ini.",
+      "set_as_default": "Atur sebagai default",
+      "cant_set_default_inactive_message": "Aktifkan tipe ini sebelum mengaturnya sebagai default",
+      "set_default_confirmation": {
+        "title": "Atur sebagai tipe item kerja default",
+        "description": "Mengatur {name} sebagai default akan mengimpornya ke semua proyek di ruang kerja ini. Semua item kerja baru akan menggunakan tipe ini secara default.",
+        "confirm_button": "Atur sebagai default"
+      },
       "properties": {
         "title": "Properti kustom",
+        "description": "Buat dan sesuaikan properti.",
         "tooltip": "Setiap tipe item kerja dilengkapi dengan serangkaian properti default seperti Judul, Deskripsi, Penerima tugas, Status, Prioritas, Tanggal mulai, Tanggal jatuh tempo, Modul, Siklus, dll. Anda juga dapat menyesuaikan dan menambahkan properti Anda sendiri untuk menyesuaikannya dengan kebutuhan tim Anda.",
         "add_button": "Tambah properti baru",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Impor dari ruang kerja"
+          }
+        },
         "dropdown": {
           "label": "Tipe properti",
           "placeholder": "Pilih tipe"
@@ -140,6 +154,10 @@
           }
         },
         "create_update": {
+          "title": {
+            "create": "Buat properti kustom baru",
+            "update": "Perbarui properti kustom"
+          },
           "form": {
             "display_name": {
               "placeholder": "Judul"
@@ -213,9 +231,50 @@
           "description": "Properti baru yang Anda tambahkan untuk tipe item kerja ini akan ditampilkan di sini."
         }
       },
+      "types": {
+        "title": "Tipe",
+        "description": "Buat dan sesuaikan tipe item kerja dengan properti.",
+        "sort_options": {
+          "project_count": "Jumlah proyek yang menjadi bagian"
+        },
+        "filter_options": {
+          "show_active": "Tampilkan aktif",
+          "show_inactive": "Tampilkan tidak aktif"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Buat baru",
+            "import_from_workspace": "Impor dari ruang kerja"
+          },
+          "banner": {
+            "with_access": "Aktifkan tipe item kerja untuk mengimpor tipe dari level ruang kerja",
+            "without_access": "Tipe item kerja dinonaktifkan. Hubungi admin ruang kerja untuk mengaktifkannya di pengaturan ruang kerja."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Properti kustom",
+        "add_button": "Tambah properti",
+        "modal": {
+          "title": "Tambah properti",
+          "empty": {
+            "title": "Tidak ada properti tersedia",
+            "description": "Semua properti telah ditautkan ke tipe ini."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Lepas tautan properti",
+          "description": "Melepas tautan properti ini akan menghapus secara permanen semua nilainya di setiap item kerja yang menggunakan tipe ini. Tindakan ini tidak dapat dibatalkan.",
+          "input_label": "Ketik",
+          "input_label_suffix": "untuk melanjutkan:",
+          "confirm": "Lepas tautan properti",
+          "loading": "Melepas tautan"
+        }
+      },
       "item_delete_confirmation": {
         "title": "Hapus jenis ini",
         "description": "Penghapusan tipe dapat menyebabkan hilangnya data yang ada.",
+        "can_disable_warning": "Apakah Anda ingin menonaktifkan jenisnya saja?",
         "primary_button": "Ya, hapus",
         "toast": {
           "success": {
@@ -230,16 +289,7 @@
         "errors": {
           "cannot_delete_default_work_item_type": "Tidak dapat menghapus jenis item kerja default",
           "cannot_delete_work_item_type_with_associated_work_items": "Tidak dapat menghapus jenis item kerja yang memiliki item kerja terkait"
-        },
-        "can_disable_warning": "Apakah Anda ingin menonaktifkan jenisnya saja?"
-      },
-      "cant_delete_default_message": "Jenis item kerja ini tidak dapat dihapus karena diatur sebagai default untuk proyek ini.",
-      "set_as_default": "Atur sebagai default",
-      "cant_set_default_inactive_message": "Aktifkan tipe ini sebelum mengaturnya sebagai default",
-      "set_default_confirmation": {
-        "title": "Atur sebagai tipe item kerja default",
-        "description": "Mengatur {name} sebagai default akan mengimpornya ke semua proyek di ruang kerja ini. Semua item kerja baru akan menggunakan tipe ini secara default.",
-        "confirm_button": "Atur sebagai default"
+        }
       }
     },
     "create": {
@@ -253,6 +303,7 @@
         "error": {
           "title": "Kesalahan!",
           "message": {
+            "default": "Gagal membuat tipe item kerja. Silakan coba lagi!",
             "conflict": "Tipe {name} sudah ada. Pilih nama lain."
           }
         }
@@ -269,6 +320,7 @@
         "error": {
           "title": "Kesalahan!",
           "message": {
+            "default": "Gagal memperbarui tipe item kerja. Silakan coba lagi!",
             "conflict": "Tipe {name} sudah ada. Pilih nama lain."
           }
         }
@@ -383,25 +435,25 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Kesalahan validasi!",
+      "title": "Menyimpan akan memutus tautan yang ada",
       "content": {
         "intro": "Jenis item pekerjaan {workItemTypeName} memiliki:",
-        "parent_items": "{count, plural, other {item pekerjaan induk}}",
+        "parent_items": "{count, plural, other {# tautan induk akan dihapus}}.",
         "child_items": "{count, plural, other {sub-item pekerjaan}}",
         "parent_line_suffix_when_also_children": ", dan ",
         "footer": "Perubahan ini akan menghapus hubungan induk-anak dari item pekerjaan yang ada dengan jenis {workItemTypeName}."
       },
       "confirm_input": {
-        "label": "Ketik \"Konfirmasi\" untuk melanjutkan.",
-        "placeholder": "Konfirmasi"
+        "label": "Ketik \"konfirmasi\" untuk melanjutkan.",
+        "placeholder": "konfirmasi"
       },
       "error_toast": {
         "title": "Kesalahan!",
-        "message": "Gagal memutus hierarki. Silakan coba lagi."
+        "message": "Gagal melepaskan tautan dan menyimpan. Silakan coba lagi."
       },
       "confirm_button": {
-        "loading": "Menerapkan",
-        "default": "Terapkan & lepas tautan"
+        "loading": "Menyimpan",
+        "default": "Simpan tetap"
       }
     },
     "work_item_modal": {

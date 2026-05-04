@@ -194,6 +194,10 @@
       "server_error_states": "載入狀態時伺服器錯誤"
     }
   },
+  "bitbucket_dc_integration": {
+    "name": "Bitbucket Data Center",
+    "description": "將您的 Bitbucket Data Center 儲存庫與 Plane 連接並同步。"
+  },
   "oauth_bridge_integration": {
     "name": "OAuth Bridge",
     "description": "驗證外部 IdP 權杖以進行 API 存取。",
@@ -302,6 +306,7 @@
     "generic_error": "處理您的請求時發生意外錯誤",
     "connection_not_found": "找不到請求的連接",
     "multiple_connections_found": "在只期望一個連接時找到了多個連接",
+    "cannot_create_multiple_connections": "您已將組織連接到某個工作區。請先中斷現有連接，再連接新的工作區。",
     "installation_not_found": "找不到請求的安裝",
     "user_not_found": "找不到請求的用戶",
     "error_fetching_token": "獲取認證令牌失敗",
@@ -315,6 +320,7 @@
     "pulling": "拉取中",
     "timed_out": "超時",
     "pulled": "已拉取",
+    "progressing": "進行中",
     "transforming": "轉換中",
     "transformed": "已轉換",
     "pushing": "推送中",

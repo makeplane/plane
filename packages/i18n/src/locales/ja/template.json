@@ -3,6 +3,9 @@
     "settings": {
       "title": "テンプレート",
       "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成に費やす時間を80％節約できます。",
+      "new_project_template": "新しいプロジェクトテンプレート",
+      "new_work_item_template": "新しい作業項目テンプレート",
+      "new_page_template": "新しいページテンプレート",
       "options": {
         "project": {
           "label": "プロジェクトテンプレート"
@@ -157,6 +160,14 @@
               "required": "少なくとも1つのキーワードが必要です"
             }
           },
+          "website": {
+            "label": "WebサイトのURL",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "無効なURL",
+              "maxLength": "URLは800文字未満にしてください"
+            }
+          },
           "company_name": {
             "label": "会社名",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "無効なメールアドレス",
-              "required": "サポートメールアドレスは必須です",
               "maxLength": "サポートメールアドレスは255文字未満にしてください"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " まだラベルがありません。プロジェクト内の作業項目を整理してフィルタリングするためのラベルを作成してください。"
+      },
+      "no_modules": {
+        "description": "まだモジュールがありません。専任のリーダーと担当者を持つサブプロジェクトに作業を整理します。"
       },
       "no_work_items": {
         "description": "まだ作業項目がありません。1つ追加して、より良い構造にしてください。"

@@ -3,6 +3,9 @@
     "settings": {
       "title": "Modèles",
       "description": "Économisez 80% du temps consacré à la création de projets, d'éléments de travail et de pages lorsque vous utilisez des modèles.",
+      "new_project_template": "Nouveau modèle de projet",
+      "new_work_item_template": "Nouveau modèle d’élément de travail",
+      "new_page_template": "Nouveau modèle de page",
       "options": {
         "project": {
           "label": "Modèles de projet"
@@ -157,6 +160,14 @@
               "required": "Au moins un mot-clé est requis"
             }
           },
+          "website": {
+            "label": "URL du site web",
+            "placeholder": "https://plane.so",
+            "validation": {
+              "invalid": "URL invalide",
+              "maxLength": "L’URL doit comporter moins de 800 caractères"
+            }
+          },
           "company_name": {
             "label": "Nom de l'entreprise",
             "placeholder": "Plane",
@@ -170,7 +181,6 @@
             "placeholder": "help@plane.so",
             "validation": {
               "invalid": "Adresse email invalide",
-              "required": "L'adresse email du support est requise",
               "maxLength": "L'adresse email du support doit comporter moins de 255 caractères"
             }
           },
@@ -225,6 +235,9 @@
       },
       "no_labels": {
         "description": " Aucune étiquette pour le moment. Créez des étiquettes pour aider à organiser et filtrer les éléments de travail dans votre projet."
+      },
+      "no_modules": {
+        "description": "Aucun module pour le moment. Organisez le travail en sous-projets avec des responsables et des acteurs dédiés."
       },
       "no_work_items": {
         "description": "Aucun élément de travail pour le moment. Ajoutez-en un pour structurer votre travail mieux."
