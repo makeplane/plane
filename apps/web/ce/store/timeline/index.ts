@@ -11,12 +11,15 @@ import { ModulesTimeLineStore } from "@/store/timeline/modules-timeline.store";
 import type { IModulesTimeLineStore } from "@/store/timeline/modules-timeline.store";
 import { BaseTimeLineStore } from "./base-timeline.store";
 import type { IBaseTimelineStore } from "./base-timeline.store";
+import { TimelinePropagationStore } from "./timeline-propagation.store";
+import type { ITimelinePropagationStore } from "./timeline-propagation.store";
 
 export interface ITimelineStore {
   issuesTimeLineStore: IIssuesTimeLineStore;
   modulesTimeLineStore: IModulesTimeLineStore;
   projectTimeLineStore: IBaseTimelineStore;
   groupedTimeLineStore: IBaseTimelineStore;
+  timelinePropagationStore: ITimelinePropagationStore;
 }
 
 export class TimeLineStore implements ITimelineStore {
@@ -24,6 +27,7 @@ export class TimeLineStore implements ITimelineStore {
   modulesTimeLineStore: IModulesTimeLineStore;
   projectTimeLineStore: IBaseTimelineStore;
   groupedTimeLineStore: IBaseTimelineStore;
+  timelinePropagationStore: ITimelinePropagationStore;
 
   constructor(rootStore: RootStore) {
     this.issuesTimeLineStore = new IssuesTimeLineStore(rootStore);
@@ -31,5 +35,6 @@ export class TimeLineStore implements ITimelineStore {
     // Dummy store
     this.projectTimeLineStore = new BaseTimeLineStore(rootStore);
     this.groupedTimeLineStore = new BaseTimeLineStore(rootStore);
+    this.timelinePropagationStore = new TimelinePropagationStore(rootStore);
   }
 }
