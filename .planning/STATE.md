@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 5 context gathered (12 decisions D-01..D-12); ready for /gsd-plan-phase 5
-stopped_at: Phase 5 — Drag Handler Integration & Error UX context captured. 12 decisions: D-01 split inside base-gantt-root.tsx::updateBlockDates (issue-Gantt-only); D-02 per-mousemove updatePreview + observer-driven sibling re-render; D-03 edges/items_by_id assembled from IssuesTimeLineStore.blocksMap + IssueRelation accessor; D-04 single ERROR severity, per-code message-only; D-05 INFO toast with ICU plural for hidden update; D-06 timeline.propagation.* namespace, en+ja required; D-07 no in-flight visual change; D-08 no Esc-cancel; D-09 mousedown-time updated_at snapshot; D-10 all changes in apps/web/core/; D-11 zero new automated tests (Phase 6 closes E2E); D-12 OxLint warnings 0. 13 deferred ideas captured.
-last_updated: "2026-05-04T05:00:00.000Z"
-last_activity: 2026-05-04 -- /gsd-discuss-phase 5 captured 05-CONTEXT.md + 05-DISCUSSION-LOG.md across 1 atomic commit (9ce6d495ff); user selected Recommended for all 8 gray areas across 2 AskUserQuestion turns
+status: Phase 5 plans complete (2 plans, 2 waves); ready to execute via /gsd-execute-phase 5
+stopped_at: Phase 5 plan-phase complete. 2 plans across 2 sequential waves — 05-01 (Wave 1: i18n keys en+ja, useTimelinePropagationStore hook, toast resolver with MESSAGE_KEY_BY_CODE over 7 wire codes) covers ERR-01..ERR-07; 05-02 (Wave 2: D-01 split in updateBlockDates, beginPreview/updatePreview in use-gantt-resizable.ts move-only branch, previewById override in GanttChartBlock; resize/dependency-creation byte-identical) covers FE-03, FE-09, ERR-08. Plan-checker VERIFICATION PASSED across all 12 dimensions. Zero new automated tests per D-11; manual smoke checklist (14 scenarios) is the gate; Phase 6 closes the E2E loop.
+last_updated: "2026-05-04T06:00:00.000Z"
+last_activity: 2026-05-04 -- /gsd-plan-phase 5 produced 05-RESEARCH.md, 05-VALIDATION.md, 05-PATTERNS.md, 05-01-PLAN.md, 05-02-PLAN.md across 4 atomic commits (a71ed65f06, 598dde362c, 6a41dc88cb + pattern map commit); plan-checker passed first iteration with no revisions needed
 progress:
   total_phases: 6
   completed_phases: 4
@@ -21,14 +21,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-03)
 
 **Core value:** ドラッグ移動が Precedence Boundary を超えても、サーバ権威で必要最小限の連鎖を all-or-nothing で再配置し、失敗時は明示的な reason code で UI に説明できる。
-**Current focus:** Phase 4 — COMPLETE (next: Phase 5 — Drag Handler Integration & Error UX)
+**Current focus:** Phase 5 — Drag Handler Integration & Error UX (plans complete, ready to execute)
 
 ## Current Position
 
-Phase: 5 (Drag Handler Integration & Error UX) — CONTEXT GATHERED
-Plan: 0/TBD (next: /gsd-plan-phase 5)
-Status: 12 decisions locked (D-01..D-12) + 13 deferred ideas; covers integration entrypoint (base-gantt-root split), preview rendering (per-mousemove + observer), error UX (per-code message-only), hidden-update toast, timeline.propagation.\* i18n namespace (en+ja), in-flight no-spinner, no-Esc, mousedown-snapshot for stale check
-Last activity: 2026-05-04 -- /gsd-discuss-phase 5 (1 commit 9ce6d495ff)
+Phase: 5 (Drag Handler Integration & Error UX) — PLANNED
+Plan: 0/2 (next: /gsd-execute-phase 5)
+Status: 2 plans across 2 sequential waves. Wave 1 (05-01): i18n + hook + toast resolver. Wave 2 (05-02): drag-handler wiring + sibling-preview rendering. All 10 phase req IDs covered (ERR-01..07 in Wave 1; FE-03, FE-09, ERR-08 in Wave 2). VERIFICATION PASSED.
+Last activity: 2026-05-04 -- /gsd-plan-phase 5 (4 commits: research a71ed65f06, validation 598dde362c, plans 6a41dc88cb)
 
 Progress: [█████████░] 100% (9/9 plans completed; Phase 4 milestone tracker re-counts at next /gsd-transition)
 
