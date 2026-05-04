@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# Re-index GitNexus after branch switch (not after individual file checkout).
+# Args: $1=prev_head $2=new_head $3=branch_switch (1 = branch, 0 = file)
+
+[ "${3}" != "1" ] && exit 0
+[ "${1}" = "${2}" ] && exit 0
+[ ! -d .gitnexus ] && exit 0
+[ ! -x ./scripts/gitnexus.sh ] && exit 0
+
+echo "[gitnexus] branch switch detected → re-indexing in background"
+./scripts/gitnexus.sh reindex-bg
