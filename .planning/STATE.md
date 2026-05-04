@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 5 COMPLETE — 2/2 plans done; 05-02 wired Phase 4's typed propagation seam into the existing Issue Gantt move drag path. Phase 6 (E2E) is the only remaining milestone.
-stopped_at: Phase 5 Wave 2 (05-02) COMPLETE — 3 atomic commits ship the drag-handler wiring layer. Task 1 `2c2330c6dc` adds optional `propagationCallbacks?: PropagationCallbacks | null` 5th param to useGanttResizable; mousedown beginPreview snapshots block.data.updated_at (D-09 / Pitfall 5) and per-mousemove updatePreview derives requested_* via getDateFromPositionOnGantt + renderFormattedPayloadDate; resize branches kept existing quantization logic (no behavior change). Task 2 `d647349e81` adds NEW callbacks-context.ts (Option B plumbing — Option A would have touched apps/web/ce/.../blocks-list.tsx, forbidden by D-10a) and splits BaseGanttRoot.updateBlockDates per D-01: payload-shape predicate routes move → commitWithServerResult; non-move → issues.updateIssueDates verbatim; success + hiddenUpdateCount > 0 → showHiddenUpdateToast; failure → showPropagationErrorToast (unexpectedError wins over result.code). Task 3 `c2e6281e79` overrides marginLeft/width in GanttChartBlock from previewById.get(blockId) via getPositionFromDateOnGantt with full dayWidth offset for the right edge (matches getItemPositionWidth's canonical formula); falls back to block.position when no preview entry; observer wrapping keeps reactivity. All 4 CE dependency-drag files + Phase 4 store + apps/web/core/services/issue/issue.service.ts byte-identical (`git diff --stat 831c261543..HEAD` zero on each). pnpm --filter=web check:types GREEN; check:lint 995/11957 (down 6 from drive-by lint fixes in base-gantt-root.tsx); @plane/utils Vitest 11/11 GREEN. Manual smoke checklist (D-11a, 14 scenarios + dependency-creation regression) deferred to /gsd-verify-work against docker-compose-local.
-last_updated: "2026-05-04T05:50:25.000Z"
-last_activity: 2026-05-04 -- /gsd-execute-phase 5 plan 02 complete: 3 task commits (2c2330c6dc use-gantt-resizable, d647349e81 base-gantt-root + callbacks-context, c2e6281e79 block.tsx); SUMMARY.md created at .planning/phases/05-drag-handler-integration-error-ux/05-02-SUMMARY.md
+status: verifying
+stopped_at: Phase 6 context gathered
+last_updated: "2026-05-04T11:06:58.844Z"
+last_activity: 2026-05-04 -- /gsd-execute-phase 5 plan 02 (3 task commits 2c2330c6dc/d647349e81/c2e6281e79; SUMMARY at 05-02-SUMMARY.md)
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 12
   completed_plans: 12
-  percent: 83
+  percent: 100
 ---
 
 # Project State
@@ -161,6 +161,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-04T05:50:25.000Z
-Stopped at: Phase 5 Wave 2 (05-02) COMPLETE — 3 atomic commits ship the drag-handler wiring layer: `2c2330c6dc` adds optional `propagationCallbacks` to useGanttResizable with mousedown beginPreview snapshot of `block.data.updated_at` (D-09 / Pitfall 5) and per-mousemove updatePreview deriving requested\__ via getDateFromPositionOnGantt + renderFormattedPayloadDate; `d647349e81` creates new `callbacks-context.ts` (Option B plumbing — necessary because Option A would have touched apps/web/ce/.../blocks-list.tsx, forbidden by D-10a) and splits BaseGanttRoot.updateBlockDates per D-01: payload-shape predicate routes move → commitWithServerResult; non-move → issues.updateIssueDates verbatim; success branch fires showHiddenUpdateToast on hiddenUpdateCount > 0; failure branch fires showPropagationErrorToast (unexpectedError wins over result.code so network/5xx renders UNEXPECTED message rather than the synthetic INVALID_DATE_RANGE envelope). `c2e6281e79` overrides marginLeft/width in GanttChartBlock from previewById.get(blockId) via getPositionFromDateOnGantt with `currentViewData.data.dayWidth` offset for the right edge (matches getItemPositionWidth's `(daysDiff + 1) _ dayWidth` canonical formula). All 4 CE dependency-drag files + Phase 4 store + apps/web/core/services/issue/issue.service.ts byte-identical (`git diff --stat 831c261543..HEAD`zero on each). FE-03 / FE-09 / ERR-08 marked complete in REQUIREMENTS.md (10/24 v1 reqs done).`pnpm --filter=web check:types`GREEN;`pnpm --filter=web check:lint`995/11957 (down 6 from drive-by fixes);`pnpm --filter=@plane/utils test` 11/11 GREEN. Manual smoke checklist (D-11a 14 scenarios + dependency-creation regression) deferred to /gsd-verify-work against docker-compose-local.
-Resume file: 06-PLAN.md (Phase 6 — Playwright TEST-23 / TEST-24 + POM helpers) — Phase 5 ships; only milestone left is E2E coverage.
+Last session: 2026-05-04T11:06:58.839Z
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-end-to-end-coverage-polish/06-CONTEXT.md
