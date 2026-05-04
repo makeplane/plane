@@ -56,12 +56,12 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 
 クライアントは advisory preview のみ。最終状態はサーバ応答で置換。
 
-- [ ] **FE-01**: ドラッグ中、Gantt にロード済の Work Item に対して伝播を **preview** できる(simple / chain / branch)(US-23, Testing Decision)
-- [ ] **FE-02**: preview はあくまで visual affordance であり、保存値ではない(Implementation Decision)
+- [x] **FE-01**: ドラッグ中、Gantt にロード済の Work Item に対して伝播を **preview** できる(simple / chain / branch)(US-23, Testing Decision) — `computeLoadedPreview` helper covers simple/chain/branch via 3 GREEN Vitest cases (Plan 04-01, 2026-05-04). UI render is Phase 5.
+- [x] **FE-02**: preview はあくまで visual affordance であり、保存値ではない(Implementation Decision) — helper returns a new Map; immutability invariant pinned by 3 `it("immutability ...")` cases (Plan 04-01, 2026-05-04). Store rollback action lands in Plan 04-02.
 - [ ] **FE-03**: ドロップ時は新 propagation endpoint に move intent を送る
-- [ ] **FE-04**: 成功時、サーバの updates で preview 状態を**置換する**(local 推定で上書きしない)(US-24)
+- [x] **FE-04**: 成功時、サーバの updates で preview 状態を**置換する**(local 推定で上書きしない)(US-24) — `applyServerWorkItems` pure projection covers TEST-21 with 3 GREEN cases (Plan 04-01, 2026-05-04). MobX commit action wires it in Plan 04-02.
 - [ ] **FE-05**: 失敗時、preview を完全 rollback して元の schedule に戻し、reason を表示する(US-26, US-22)
-- [ ] **FE-06**: サーバが preview に含まれていない Work Item を更新したとき、UI に「viewport 外でも N 件更新された」notification を出す(US-25)
+- [x] **FE-06**: サーバが preview に含まれていない Work Item を更新したとき、UI に「viewport 外でも N 件更新された」notification を出す(US-25) — `diffHiddenUpdate` helper covers TEST-22 with 3 GREEN cases (Plan 04-01, 2026-05-04). Toast / i18n keys are Phase 5.
 - [ ] **FE-07**: safe limit 内(≤100)の伝播は確認ダイアログを出さずに保存する(US-30)
 - [ ] **FE-08**: 既存の関係作成 cycle-check(UI 即時フィードバック)は残置(US-28 と二重保険、Implementation Decision)
 - [ ] **FE-09**: 既存 timeline drag handler を新 endpoint に切替えるが、resize 経路は触らない(US-15)
@@ -97,10 +97,10 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 - [x] **TEST-16**: API contract test: 成功 payload に updated work item dates と `updated_at` が含まれる — Phase 3 (2026-05-04): completed by `apps/api/plane/app/views/issue/timeline_propagation.py` + `apps/api/plane/app/serializers/timeline_propagation.py` + `apps/api/plane/tests/contract/app/test_timeline_propagation.py` (26 GREEN contract tests). See `.planning/phases/03-propagation-api-endpoint-persistence-contract/03-VERIFICATION.md`.
 - [x] **TEST-17**: API contract test: 失敗 payload に stable code と user-readable message が含まれる — Phase 3 (2026-05-04): completed by `apps/api/plane/app/views/issue/timeline_propagation.py` + `apps/api/plane/app/serializers/timeline_propagation.py` + `apps/api/plane/tests/contract/app/test_timeline_propagation.py` (26 GREEN contract tests). See `.planning/phases/03-propagation-api-endpoint-persistence-contract/03-VERIFICATION.md`.
 - [x] **TEST-18**: API contract test: permission rejection は `PERMISSION_DENIED`(viewset 層)(US-31) — Phase 3 (2026-05-04): completed by `apps/api/plane/app/views/issue/timeline_propagation.py` + `apps/api/plane/app/serializers/timeline_propagation.py` + `apps/api/plane/tests/contract/app/test_timeline_propagation.py` (26 GREEN contract tests). See `.planning/phases/03-propagation-api-endpoint-persistence-contract/03-VERIFICATION.md`.
-- [ ] **TEST-19**: frontend store test: loaded-graph preview(simple / chain / branch)
+- [x] **TEST-19**: frontend store test: loaded-graph preview(simple / chain / branch) — `computeLoadedPreview` Vitest covers simple + chain + branch + incomplete + immutability = 5 GREEN cases (Plan 04-01, 2026-05-04)
 - [ ] **TEST-20**: frontend store test: failure 後の preview rollback
-- [ ] **TEST-21**: frontend store test: server-returned updates が preview を置換
-- [ ] **TEST-22**: frontend store test: hidden-update notification(`server count > preview count`)
+- [x] **TEST-21**: frontend store test: server-returned updates が preview を置換 — `applyServerWorkItems` Vitest covers replace + missing-id + immutability = 3 GREEN cases (Plan 04-01, 2026-05-04)
+- [x] **TEST-22**: frontend store test: hidden-update notification(`server count > preview count`) — `diffHiddenUpdate` Vitest covers diff + full + empty = 3 GREEN cases (Plan 04-01, 2026-05-04)
 - [ ] **TEST-23**: E2E happy path: drag → 依存 work item が動く → 永続化
 - [ ] **TEST-24**: E2E failure path: drag → reject → UI が原状復帰
 
@@ -141,79 +141,79 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 
 各要件はちょうど一つの Phase に割り当てる(orphan なし、duplicate なし)。Phase 詳細は `.planning/ROADMAP.md` を参照。
 
-| Requirement | Phase   | Status                        |
-| ----------- | ------- | ----------------------------- |
-| PROP-01     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
-| PROP-02     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
-| PROP-03     | Phase 2 | Pending                       |
-| PROP-04     | Phase 2 | Pending                       |
-| PROP-05     | Phase 2 | Pending                       |
-| PROP-06     | Phase 2 | Pending                       |
-| PROP-07     | Phase 2 | Pending                       |
-| PROP-08     | Phase 2 | Pending                       |
-| PROP-09     | Phase 2 | Pending                       |
-| PROP-10     | Phase 2 | Pending                       |
-| PROP-11     | Phase 2 | Pending                       |
-| PROP-12     | Phase 2 | Pending                       |
-| PROP-13     | Phase 2 | Pending                       |
-| PROP-14     | Phase 2 | Pending                       |
-| PROP-15     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
-| PROP-16     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
-| PROP-17     | Phase 2 | Pending                       |
-| PROP-18     | Phase 1 | Done (Plan 01-01, 2026-05-03) |
-| API-01      | Phase 3 | Done (Plan 03-01, 2026-05-04) |
-| API-02      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| API-03      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| API-04      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| API-05      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| API-06      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| API-07      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| API-08      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
+| Requirement | Phase   | Status                                                                                                    |
+| ----------- | ------- | --------------------------------------------------------------------------------------------------------- |
+| PROP-01     | Phase 1 | Done (Plan 01-02, 2026-05-03)                                                                             |
+| PROP-02     | Phase 1 | Done (Plan 01-02, 2026-05-03)                                                                             |
+| PROP-03     | Phase 2 | Pending                                                                                                   |
+| PROP-04     | Phase 2 | Pending                                                                                                   |
+| PROP-05     | Phase 2 | Pending                                                                                                   |
+| PROP-06     | Phase 2 | Pending                                                                                                   |
+| PROP-07     | Phase 2 | Pending                                                                                                   |
+| PROP-08     | Phase 2 | Pending                                                                                                   |
+| PROP-09     | Phase 2 | Pending                                                                                                   |
+| PROP-10     | Phase 2 | Pending                                                                                                   |
+| PROP-11     | Phase 2 | Pending                                                                                                   |
+| PROP-12     | Phase 2 | Pending                                                                                                   |
+| PROP-13     | Phase 2 | Pending                                                                                                   |
+| PROP-14     | Phase 2 | Pending                                                                                                   |
+| PROP-15     | Phase 1 | Done (Plan 01-02, 2026-05-03)                                                                             |
+| PROP-16     | Phase 1 | Done (Plan 01-02, 2026-05-03)                                                                             |
+| PROP-17     | Phase 2 | Pending                                                                                                   |
+| PROP-18     | Phase 1 | Done (Plan 01-01, 2026-05-03)                                                                             |
+| API-01      | Phase 3 | Done (Plan 03-01, 2026-05-04)                                                                             |
+| API-02      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| API-03      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| API-04      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| API-05      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| API-06      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| API-07      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| API-08      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
 | API-09      | Phase 3 | Done (Plan 03-02, 2026-05-04 — 401 unauth + 403 envelope across non-member/GUEST/cross-project all GREEN) |
-| API-10      | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| API-11      | Phase 3 | Done (Plan 03-01, 2026-05-04) |
-| API-12      | Phase 3 | Done (Plan 03-03, 2026-05-04) |
-| FE-01       | Phase 4 | Pending                       |
-| FE-02       | Phase 4 | Pending                       |
-| FE-03       | Phase 5 | Pending                       |
-| FE-04       | Phase 4 | Pending                       |
-| FE-05       | Phase 4 | Pending                       |
-| FE-06       | Phase 4 | Pending                       |
-| FE-07       | Phase 4 | Pending                       |
-| FE-08       | Phase 4 | Pending                       |
-| FE-09       | Phase 5 | Pending                       |
-| ERR-01      | Phase 5 | Pending                       |
-| ERR-02      | Phase 5 | Pending                       |
-| ERR-03      | Phase 5 | Pending                       |
-| ERR-04      | Phase 5 | Pending                       |
-| ERR-05      | Phase 5 | Pending                       |
-| ERR-06      | Phase 5 | Pending                       |
-| ERR-07      | Phase 5 | Pending                       |
-| ERR-08      | Phase 5 | Pending                       |
-| TEST-01     | Phase 2 | Pending                       |
-| TEST-02     | Phase 2 | Pending                       |
-| TEST-03     | Phase 2 | Pending                       |
-| TEST-04     | Phase 2 | Pending                       |
-| TEST-05     | Phase 2 | Pending                       |
-| TEST-06     | Phase 2 | Pending                       |
-| TEST-07     | Phase 2 | Pending                       |
-| TEST-08     | Phase 2 | Pending                       |
-| TEST-09     | Phase 2 | Pending                       |
-| TEST-10     | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| TEST-11     | Phase 1 | Done (Plan 01-02, 2026-05-03) |
-| TEST-12     | Phase 2 | Pending                       |
-| TEST-13     | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| TEST-14     | Phase 2 | Pending                       |
-| TEST-15     | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| TEST-16     | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| TEST-17     | Phase 3 | Done (Plan 03-02, 2026-05-04) |
-| TEST-18     | Phase 3 | Done (Plan 03-02, 2026-05-04 — 401 unauth + 403 non-member + 403 GUEST all GREEN) |
-| TEST-19     | Phase 4 | Pending                       |
-| TEST-20     | Phase 4 | Pending                       |
-| TEST-21     | Phase 4 | Pending                       |
-| TEST-22     | Phase 4 | Pending                       |
-| TEST-23     | Phase 6 | Pending                       |
-| TEST-24     | Phase 6 | Pending                       |
+| API-10      | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| API-11      | Phase 3 | Done (Plan 03-01, 2026-05-04)                                                                             |
+| API-12      | Phase 3 | Done (Plan 03-03, 2026-05-04)                                                                             |
+| FE-01       | Phase 4 | Done (Plan 04-01, 2026-05-04 — helper layer; UI render Phase 5)                                           |
+| FE-02       | Phase 4 | Done (Plan 04-01, 2026-05-04 — immutable helpers pinned by 3 immutability tests)                          |
+| FE-03       | Phase 5 | Pending                                                                                                   |
+| FE-04       | Phase 4 | Done (Plan 04-01, 2026-05-04 — applyServerWorkItems projection + TEST-21)                                 |
+| FE-05       | Phase 4 | Pending (helper-side immutability shipped; store rollback Plan 04-02)                                     |
+| FE-06       | Phase 4 | Done (Plan 04-01, 2026-05-04 — diffHiddenUpdate + TEST-22; UI notification Phase 5)                       |
+| FE-07       | Phase 4 | Pending                                                                                                   |
+| FE-08       | Phase 4 | Pending                                                                                                   |
+| FE-09       | Phase 5 | Pending                                                                                                   |
+| ERR-01      | Phase 5 | Pending                                                                                                   |
+| ERR-02      | Phase 5 | Pending                                                                                                   |
+| ERR-03      | Phase 5 | Pending                                                                                                   |
+| ERR-04      | Phase 5 | Pending                                                                                                   |
+| ERR-05      | Phase 5 | Pending                                                                                                   |
+| ERR-06      | Phase 5 | Pending                                                                                                   |
+| ERR-07      | Phase 5 | Pending                                                                                                   |
+| ERR-08      | Phase 5 | Pending                                                                                                   |
+| TEST-01     | Phase 2 | Pending                                                                                                   |
+| TEST-02     | Phase 2 | Pending                                                                                                   |
+| TEST-03     | Phase 2 | Pending                                                                                                   |
+| TEST-04     | Phase 2 | Pending                                                                                                   |
+| TEST-05     | Phase 2 | Pending                                                                                                   |
+| TEST-06     | Phase 2 | Pending                                                                                                   |
+| TEST-07     | Phase 2 | Pending                                                                                                   |
+| TEST-08     | Phase 2 | Pending                                                                                                   |
+| TEST-09     | Phase 2 | Pending                                                                                                   |
+| TEST-10     | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| TEST-11     | Phase 1 | Done (Plan 01-02, 2026-05-03)                                                                             |
+| TEST-12     | Phase 2 | Pending                                                                                                   |
+| TEST-13     | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| TEST-14     | Phase 2 | Pending                                                                                                   |
+| TEST-15     | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| TEST-16     | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| TEST-17     | Phase 3 | Done (Plan 03-02, 2026-05-04)                                                                             |
+| TEST-18     | Phase 3 | Done (Plan 03-02, 2026-05-04 — 401 unauth + 403 non-member + 403 GUEST all GREEN)                         |
+| TEST-19     | Phase 4 | Done (Plan 04-01, 2026-05-04 — 5 GREEN cases: simple, chain, branch, incomplete, immutability)            |
+| TEST-20     | Phase 4 | Pending (covered transitively by helper immutability + Plan 04-02 store rollback + Phase 6 E2E)           |
+| TEST-21     | Phase 4 | Done (Plan 04-01, 2026-05-04 — 3 GREEN cases: replace, missing-id, immutability)                          |
+| TEST-22     | Phase 4 | Done (Plan 04-01, 2026-05-04 — 3 GREEN cases: diff, full-coverage, empty preview)                         |
+| TEST-23     | Phase 6 | Pending                                                                                                   |
+| TEST-24     | Phase 6 | Pending                                                                                                   |
 
 **Coverage:**
 
