@@ -68,13 +68,13 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 
 ### Errors & UX
 
-- [ ] **ERR-01**: `DEPENDENCY_CYCLE` のとき、ユーザに「依存に循環があるため適用できない」旨を表示する(US-22)
-- [ ] **ERR-02**: `PROJECT_BOUNDARY_EXCEEDED` のとき、「同一プロジェクト範囲外への伝播は未対応」旨を表示する
-- [ ] **ERR-03**: `INCOMPLETE_SCHEDULE` のとき、「先に missing dates を埋めてください」旨を表示する
-- [ ] **ERR-04**: `PROPAGATION_LIMIT_EXCEEDED` のとき、「100 件を超える更新は適用できない」旨を表示する
-- [ ] **ERR-05**: `SCHEDULE_CHANGED` のとき、「他のユーザによる更新を検知、再読込してください」旨を表示する
-- [ ] **ERR-06**: `PERMISSION_DENIED` のとき、「権限が不足しています」旨を表示する
-- [ ] **ERR-07**: `INVALID_DATE_RANGE` のとき、「日付範囲が不正です」旨を表示する
+- [x] **ERR-01**: `DEPENDENCY_CYCLE` のとき、ユーザに「依存に循環があるため適用できない」旨を表示する(US-22)
+- [x] **ERR-02**: `PROJECT_BOUNDARY_EXCEEDED` のとき、「同一プロジェクト範囲外への伝播は未対応」旨を表示する
+- [x] **ERR-03**: `INCOMPLETE_SCHEDULE` のとき、「先に missing dates を埋めてください」旨を表示する
+- [x] **ERR-04**: `PROPAGATION_LIMIT_EXCEEDED` のとき、「100 件を超える更新は適用できない」旨を表示する
+- [x] **ERR-05**: `SCHEDULE_CHANGED` のとき、「他のユーザによる更新を検知、再読込してください」旨を表示する
+- [x] **ERR-06**: `PERMISSION_DENIED` のとき、「権限が不足しています」旨を表示する
+- [x] **ERR-07**: `INVALID_DATE_RANGE` のとき、「日付範囲が不正です」旨を表示する
 - [ ] **ERR-08**: 失敗時は Timeline の状態を**ドラッグ前の見え方**に戻す(US-26)
 
 ### Tests
@@ -182,13 +182,13 @@ Domain: `CONTEXT.md`(Work Item / Precedence Dependency / Dependency Schedule Pro
 | FE-07       | Phase 4 | Done (Plan 04-02, 2026-05-04 — store has no confirmation seam; ≤100 limit enforced server-side per Phase 3 PROP-13)                                                     |
 | FE-08       | Phase 4 | Done (Plan 04-02, 2026-05-04 — inert constraint: 4 CE dependency-drag files + cycle-check.ts + date-check.ts unchanged across Phase 4 commits)                          |
 | FE-09       | Phase 5 | Pending                                                                                                                                                                 |
-| ERR-01      | Phase 5 | Pending                                                                                                                                                                 |
-| ERR-02      | Phase 5 | Pending                                                                                                                                                                 |
-| ERR-03      | Phase 5 | Pending                                                                                                                                                                 |
-| ERR-04      | Phase 5 | Pending                                                                                                                                                                 |
-| ERR-05      | Phase 5 | Pending                                                                                                                                                                 |
-| ERR-06      | Phase 5 | Pending                                                                                                                                                                 |
-| ERR-07      | Phase 5 | Pending                                                                                                                                                                 |
+| ERR-01      | Phase 5 | Done — 05-01 (toast resolver MESSAGE_KEY_BY_CODE + en/ja i18n; Wave 2 will fire showPropagationErrorToast at the call site)                                             |
+| ERR-02      | Phase 5 | Done — 05-01 (toast resolver MESSAGE_KEY_BY_CODE + en/ja i18n; Wave 2 will fire showPropagationErrorToast at the call site)                                             |
+| ERR-03      | Phase 5 | Done — 05-01 (toast resolver MESSAGE_KEY_BY_CODE + en/ja i18n; Wave 2 will fire showPropagationErrorToast at the call site)                                             |
+| ERR-04      | Phase 5 | Done — 05-01 (toast resolver MESSAGE_KEY_BY_CODE + en/ja i18n; Wave 2 will fire showPropagationErrorToast at the call site)                                             |
+| ERR-05      | Phase 5 | Done — 05-01 (toast resolver MESSAGE_KEY_BY_CODE + en/ja i18n; Wave 2 will fire showPropagationErrorToast at the call site)                                             |
+| ERR-06      | Phase 5 | Done — 05-01 (toast resolver MESSAGE_KEY_BY_CODE + en/ja i18n; Wave 2 will fire showPropagationErrorToast at the call site)                                             |
+| ERR-07      | Phase 5 | Done — 05-01 (toast resolver MESSAGE_KEY_BY_CODE + en/ja i18n; Wave 2 will fire showPropagationErrorToast at the call site)                                             |
 | ERR-08      | Phase 5 | Pending                                                                                                                                                                 |
 | TEST-01     | Phase 2 | Pending                                                                                                                                                                 |
 | TEST-02     | Phase 2 | Pending                                                                                                                                                                 |

@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase 5 plans complete (2 plans, 2 waves); ready to execute via /gsd-execute-phase 5
-stopped_at: Phase 5 plan-phase complete. 2 plans across 2 sequential waves — 05-01 (Wave 1: i18n keys en+ja, useTimelinePropagationStore hook, toast resolver with MESSAGE_KEY_BY_CODE over 7 wire codes) covers ERR-01..ERR-07; 05-02 (Wave 2: D-01 split in updateBlockDates, beginPreview/updatePreview in use-gantt-resizable.ts move-only branch, previewById override in GanttChartBlock; resize/dependency-creation byte-identical) covers FE-03, FE-09, ERR-08. Plan-checker VERIFICATION PASSED across all 12 dimensions. Zero new automated tests per D-11; manual smoke checklist (14 scenarios) is the gate; Phase 6 closes the E2E loop.
-last_updated: "2026-05-04T06:00:00.000Z"
-last_activity: 2026-05-04 -- /gsd-plan-phase 5 produced 05-RESEARCH.md, 05-VALIDATION.md, 05-PATTERNS.md, 05-01-PLAN.md, 05-02-PLAN.md across 4 atomic commits (a71ed65f06, 598dde362c, 6a41dc88cb + pattern map commit); plan-checker passed first iteration with no revisions needed
+status: Phase 5 IN PROGRESS — 1/2 plans complete; 05-01 shipped i18n + hook + toast resolver typed seam; 05-02 (drag wiring) ready to execute
+stopped_at: Phase 5 Wave 1 (05-01) COMPLETE — 4 atomic commits ship 10 timeline.propagation.* i18n keys en+ja (Ubiquitous Language honored), useTimelinePropagationStore hook (mirrors use-instance.ts pattern), and toast-resolver.ts pure-function module with MESSAGE_KEY_BY_CODE Record<TTimelinePropagationErrorCode, string> closed-set + showPropagationErrorToast(code | "UNEXPECTED", t) + showHiddenUpdateToast(count, t). pnpm --filter=web check:types GREEN; check:lint 1001/11957 (no new warnings); @plane/i18n build GREEN; @plane/utils Vitest 11/11 GREEN. Phase 4 store + 4 CE dependency-drag files byte-identical. Wave 2 (05-02) is the next executable unit and consumes 05-01's exports verbatim.
+last_updated: "2026-05-04T05:36:25.000Z"
+last_activity: 2026-05-04 -- /gsd-execute-phase 5 plan 01 complete: 4 task commits (831c261543 en i18n, 17c849606f ja i18n, 77b2c6a659 hook, 189f5faee4 toast resolver); SUMMARY.md created at .planning/phases/05-drag-handler-integration-error-ux/05-01-SUMMARY.md
 progress:
   total_phases: 6
   completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
-  percent: 67
+  total_plans: 11
+  completed_plans: 11
+  percent: 73
 ---
 
 # Project State
@@ -25,22 +25,22 @@ See: .planning/PROJECT.md (updated 2026-05-03)
 
 ## Current Position
 
-Phase: 5 (Drag Handler Integration & Error UX) — PLANNED
-Plan: 0/2 (next: /gsd-execute-phase 5)
-Status: 2 plans across 2 sequential waves. Wave 1 (05-01): i18n + hook + toast resolver. Wave 2 (05-02): drag-handler wiring + sibling-preview rendering. All 10 phase req IDs covered (ERR-01..07 in Wave 1; FE-03, FE-09, ERR-08 in Wave 2). VERIFICATION PASSED.
-Last activity: 2026-05-04 -- /gsd-plan-phase 5 (4 commits: research a71ed65f06, validation 598dde362c, plans 6a41dc88cb)
+Phase: 5 (Drag Handler Integration & Error UX) — IN PROGRESS
+Plan: 1/2 (next: 05-02 drag-handler wiring)
+Status: Wave 1 (05-01) shipped — typed seam in place: 10 i18n keys en+ja, useTimelinePropagationStore hook, MESSAGE_KEY_BY_CODE-driven toast resolver. ERR-01..ERR-07 marked complete in REQUIREMENTS.md. Wave 2 (05-02) covers FE-03, FE-09, ERR-08 (D-01 split + drag wiring + sibling-preview override). VERIFICATION PASSED.
+Last activity: 2026-05-04 -- /gsd-execute-phase 5 plan 01 (4 task commits 831c261543/17c849606f/77b2c6a659/189f5faee4)
 
-Progress: [█████████░] 100% (9/9 plans completed; Phase 4 milestone tracker re-counts at next /gsd-transition)
+Progress: [██████████] 100% (11/11 plans completed; Phase 5 Wave 1 done; Wave 2 next)
 
-Progress (legacy bar — see Current Position above for current value): [█████████░] 100%
+Progress (legacy bar — see Current Position above for current value): [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 8
+- Total plans completed: 9
 - Average duration: ~9m
-- Total execution time: ~72m
+- Total execution time: ~81m
 
 **By Phase:**
 
@@ -50,7 +50,7 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | 2. Scheduling Helper & Propagation Algorithm Core | 3/3   | ~21m   | ~7m      |
 | 3. Propagation API Endpoint & Contract            | 3/3   | ~40m   | ~13m     |
 | 4. Frontend Service Client & MobX Preview Store   | 2/2   | ~12m   | ~6m      |
-| 5. Drag Handler Integration & Error UX            | 0     | —      | —        |
+| 5. Drag Handler Integration & Error UX            | 1/2   | ~9m    | ~9m      |
 | 6. End-to-End Coverage & Polish                   | 0     | —      | —        |
 
 **Plan execution log:**
@@ -64,11 +64,12 @@ Progress (legacy bar — see Current Position above for current value): [██�
 | 03-03      | 1     | 2     | ~12m     | 2026-05-04T02:00:00Z |
 | 04-01      | 5     | 11    | ~8m      | 2026-05-04T03:55:00Z |
 | 04-02      | 2     | 2     | ~4m      | 2026-05-04T04:06:09Z |
+| 05-01      | 4     | 4     | ~9m      | 2026-05-04T05:36:25Z |
 
 **Recent Trend:**
 
-- Last 5 plans: 03-02 (~18m), 03-03 (~12m), 04-01 (~8m), 04-02 (~4m)
-- Trend: Phase 4 Wave 2 ships in ~4m — surgical 1 NEW + 1 UPDATE on top of GREEN Wave 1 contract; the lean per-task structure (no test scaffolding, no Vitest add) explains the speedup. Phase 5 (drag handler integration + error UX) is now the only remaining frontend work; Phase 6 (E2E) closes the milestone.
+- Last 5 plans: 03-03 (~12m), 04-01 (~8m), 04-02 (~4m), 05-01 (~9m)
+- Trend: Phase 5 Wave 1 ships in ~9m — 2 i18n updates + 2 small NEW files; pre-commit oxfmt/oxlint runs add ~1m per task. The typed seam is now in place; Wave 2 (05-02) is the larger 3-file UPDATE wiring layer and may take longer. Phase 6 (E2E) closes the milestone.
 
 _Updated after each plan completion_
 
@@ -120,6 +121,12 @@ Recent decisions affecting current work:
 - (04-02) `previewById: observable` (deep) per Pitfall 3 — Map mutations via `.set()` / `.clear()` trigger MobX reactions correctly. The other observables use `observable.ref` to avoid unnecessary deep diffs (`isPreviewActive` / `lastError` / `lastResponse` / `lastPreviewIds` / `unexpectedError`). All four actions use `action.bound` for parity with `BaseTimeLineStore`'s drag actions.
 - (04-02) `apps/web/ce/store/timeline/index.ts` extension is +5 lines: 2 imports, 1 `ITimelineStore` field, 1 `TimeLineStore` field, 1 constructor instantiation. `apps/web/ce/store/root.store.ts` UNCHANGED — `RootStore` already wires `TimeLineStore` and the new store is composed under it (D-06). Phase 5 reaches it via `rootStore.timelineStore.timelinePropagationStore`.
 - (04-02) TEST-20 (failure → preview rollback) covered transitively: (1) Wave 1 helper-immutability invariants pinned by `preview.test.ts`; (2) `rollback()` is a single `runInAction` block that clears state without ever calling `updateIssue` — greppable: `rootStore.issue.issues.updateIssue` appears exactly once in the file inside the success branch; (3) Phase 6 E2E TEST-24 drives the full UI → store → server → store failure-path cycle. A dedicated Phase 4 Vitest test would require introducing Vitest in `apps/web` — REJECTED by D-01.
+- (05-01) Toast resolver is a **pure-function module** (not a React hook): accepts the `t` translator as a parameter so any caller already holding `useTranslation()` in scope can compose it without a hook envelope. Avoids OxLint `import/no-cycle` triggers and keeps the resolver testable without React. `Translator` local type alias `(key, params?) => string` matches `@plane/i18n` exactly.
+- (05-01) `showPropagationErrorToast` accepts `TTimelinePropagationErrorCode | "UNEXPECTED"` union extension. The `"UNEXPECTED"` literal maps to `timeline.propagation.error.unexpected` and matches Phase 4 D-04c's `unexpectedError` observable — the call site reads `lastError` (typed protocol error) vs `unexpectedError` (network/non-protocol Error) and decides which constant to pass. Single ERROR severity for all 8 cases (7 wire codes + UNEXPECTED).
+- (05-01) `MESSAGE_KEY_BY_CODE: Record<TTimelinePropagationErrorCode, string>` enforces compile-time exhaustiveness — adding a server-side error code without updating this map and the i18n files will fail `pnpm --filter=web check:types`. Sole call surface for protocol-error i18n routing.
+- (05-01) ja plural envelope keeps both `one` and `other` branches identical (Japanese has no grammatical plural). IntlMessageFormat still requires the envelope to interpolate the `#` count token — collapsing to a static string would break `count` substitution.
+- (05-01) `useTimelinePropagationStore` accesses through `context.timelineStore.timelinePropagationStore` — a CHAINED access path through `RootStore.timelineStore` (TimeLineStore composite). First accessor hook in `apps/web/core/hooks/store/` to drill through a composite store; future Phase 5 / Phase 6 accessors for other `ITimelineStore` members can mirror this without adding a barrel.
+- (05-01) Phase 3 backend regression suite (26 contract + 64 unit) cannot run locally because `apps/api`'s pytest harness imports `plane.celery` which calls `redis.Redis.from_url(REDIS_URL)` at module load time and `REDIS_URL` is `None` outside docker-compose-local. Pre-existing environment limitation — Phase 5 changes nothing in `apps/api/`, so cannot have caused regression. Will be re-confirmed at `/gsd-verify-work` time when the dev stack is up.
 
 ### Pending Todos
 
@@ -148,6 +155,6 @@ Items acknowledged and carried forward (see also `docs/timeline-dependency-follo
 
 ## Session Continuity
 
-Last session: 2026-05-04T04:06:09.000Z
-Stopped at: Phase 4 COMPLETE — Plan 02 EXECUTED on top of GREEN Wave 1. `TimelinePropagationStore` shipped with 4 actions + 6 observables + 1 computed + closed-set protocol-error discriminator + in-flight commit cache + `lastPreviewIds`-pre-clear pattern. `TimeLineStore` extended; `RootStore` UNCHANGED. 11 Wave 1 Vitest cases GREEN; 26 contract + 64 unit Phase 3 backend tests still GREEN; FE-08 + D-03b + D-05d + D-06 inert constraints honored. Phase 4 closes the typed-frontend seam Phase 5 will consume.
-Resume file: Phase 5 — Drag Handler Integration & Error UX (run `/gsd-transition` to start Phase 5 planning)
+Last session: 2026-05-04T05:36:25.000Z
+Stopped at: Phase 5 Wave 1 (05-01) COMPLETE — 4 atomic commits (831c261543 en i18n, 17c849606f ja i18n, 77b2c6a659 hook, 189f5faee4 toast resolver) ship the typed seam: 10 timeline.propagation.\* i18n keys en+ja with Ubiquitous Language ("作業項目"), useTimelinePropagationStore hook (use-instance.ts pattern verbatim), toast-resolver.ts pure-function module exposing MESSAGE_KEY_BY_CODE Record<TTimelinePropagationErrorCode, string> + showPropagationErrorToast + showHiddenUpdateToast. ERR-01..ERR-07 marked complete in REQUIREMENTS.md. pnpm --filter=web check:types GREEN; check:lint 1001/11957; @plane/i18n build GREEN; @plane/utils Vitest 11/11 GREEN. Wave 2 (05-02) is unblocked.
+Resume file: 05-02-PLAN.md — drag handler wiring (D-01 split in updateBlockDates, beginPreview/updatePreview in use-gantt-resizable.ts move-only branch, previewById override in GanttChartBlock)
