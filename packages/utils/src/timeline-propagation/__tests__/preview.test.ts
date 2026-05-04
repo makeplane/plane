@@ -1,0 +1,126 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { describe, expect, it } from "vitest";
+
+import { computeLoadedPreview, type LoadedGraphEdge, type LoadedWorkItem } from "../preview";
+
+describe("computeLoadedPreview (TEST-19 / FE-01 / FE-02)", () => {
+  it("simple: rightward move pushes a single loaded successor", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08" },
+      "wi-B": { id: "wi-B", start_date: "2026-05-09", target_date: "2026-05-13" },
+    };
+    const edges: LoadedGraphEdge[] = [{ predecessor_id: "wi-A", successor_id: "wi-B" }];
+
+    // Drag A 5 days right → A: May 9-13; B was adjacent (May 9), now violates → push to May 14-18 (duration preserved = 4 non-inclusive days).
+    const preview = computeLoadedPreview(edges, items_by_id, {
+      id: "wi-A",
+      original_start_date: "2026-05-04",
+      original_target_date: "2026-05-08",
+      requested_start_date: "2026-05-09",
+      requested_target_date: "2026-05-13",
+    });
+
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-05-09", target_date: "2026-05-13" });
+    expect(preview.get("wi-B")).toEqual({ start_date: "2026-05-14", target_date: "2026-05-18" });
+    expect(preview.size).toBe(2);
+  });
+
+  it("chain: transitive walk pushes A → B → C through the loaded subset", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08" },
+      "wi-B": { id: "wi-B", start_date: "2026-05-09", target_date: "2026-05-13" },
+      "wi-C": { id: "wi-C", start_date: "2026-05-14", target_date: "2026-05-18" },
+    };
+    const edges: LoadedGraphEdge[] = [
+      { predecessor_id: "wi-A", successor_id: "wi-B" },
+      { predecessor_id: "wi-B", successor_id: "wi-C" },
+    ];
+
+    const preview = computeLoadedPreview(edges, items_by_id, {
+      id: "wi-A",
+      original_start_date: "2026-05-04",
+      original_target_date: "2026-05-08",
+      requested_start_date: "2026-05-09",
+      requested_target_date: "2026-05-13",
+    });
+
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-05-09", target_date: "2026-05-13" });
+    expect(preview.get("wi-B")).toEqual({ start_date: "2026-05-14", target_date: "2026-05-18" });
+    expect(preview.get("wi-C")).toEqual({ start_date: "2026-05-19", target_date: "2026-05-23" });
+    expect(preview.size).toBe(3);
+  });
+
+  it("branch: most-restrictive boundary wins when a successor has multiple loaded predecessors", () => {
+    // wi-D has two loaded predecessors: wi-A (drags right) and wi-B (does not move).
+    // Give wi-B a LATER target so it dominates the most-restrictive max.
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08" },
+      "wi-B": { id: "wi-B", start_date: "2026-05-10", target_date: "2026-05-15" },
+      "wi-D": { id: "wi-D", start_date: "2026-05-09", target_date: "2026-05-15" },
+    };
+    const edges: LoadedGraphEdge[] = [
+      { predecessor_id: "wi-A", successor_id: "wi-D" },
+      { predecessor_id: "wi-B", successor_id: "wi-D" },
+    ];
+
+    // Drag A 5 days right (May 9-13). wi-D's new floor = max(A.new_target + 1, B.target + 1) = max(May 14, May 16) = May 16.
+    const preview = computeLoadedPreview(edges, items_by_id, {
+      id: "wi-A",
+      original_start_date: "2026-05-04",
+      original_target_date: "2026-05-08",
+      requested_start_date: "2026-05-09",
+      requested_target_date: "2026-05-13",
+    });
+
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-05-09", target_date: "2026-05-13" });
+    // wi-D duration (non-inclusive diff) = 6 days; newTarget = May 16 + 6 = May 22.
+    expect(preview.get("wi-D")).toEqual({ start_date: "2026-05-16", target_date: "2026-05-22" });
+    expect(preview.size).toBe(2);
+  });
+
+  it("incomplete loaded data: silently skips successors not in items_by_id (server is authoritative; D-04a)", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08" },
+      // wi-B is referenced by an edge but NOT in items_by_id → must be skipped silently.
+    };
+    const edges: LoadedGraphEdge[] = [{ predecessor_id: "wi-A", successor_id: "wi-B" }];
+
+    const preview = computeLoadedPreview(edges, items_by_id, {
+      id: "wi-A",
+      original_start_date: "2026-05-04",
+      original_target_date: "2026-05-08",
+      requested_start_date: "2026-05-09",
+      requested_target_date: "2026-05-13",
+    });
+
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-05-09", target_date: "2026-05-13" });
+    expect(preview.has("wi-B")).toBe(false);
+    expect(preview.size).toBe(1);
+  });
+
+  it("immutability (D-04c): inputs are not mutated", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08" },
+      "wi-B": { id: "wi-B", start_date: "2026-05-09", target_date: "2026-05-13" },
+    };
+    const edges: LoadedGraphEdge[] = [{ predecessor_id: "wi-A", successor_id: "wi-B" }];
+    const itemsSnapshot = JSON.parse(JSON.stringify(items_by_id));
+    const edgesSnapshot = JSON.parse(JSON.stringify(edges));
+
+    computeLoadedPreview(edges, items_by_id, {
+      id: "wi-A",
+      original_start_date: "2026-05-04",
+      original_target_date: "2026-05-08",
+      requested_start_date: "2026-05-09",
+      requested_target_date: "2026-05-13",
+    });
+
+    expect(items_by_id).toEqual(itemsSnapshot);
+    expect(edges).toEqual(edgesSnapshot);
+  });
+});

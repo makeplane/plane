@@ -35,6 +35,7 @@ export * from "./subscription";
 export * from "./tab-indices";
 export * from "./theme";
 export { resolveGeneralTheme } from "./theme-legacy";
+export * from "./timeline-propagation";
 export * from "./url";
 export * from "./validation";
 export * from "./work-item-filters";
