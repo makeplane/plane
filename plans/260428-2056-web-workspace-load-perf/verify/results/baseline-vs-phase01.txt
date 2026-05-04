@@ -1,0 +1,2 @@
+phase01_raw=0
+phase01_gz=0
