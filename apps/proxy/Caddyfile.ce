@@ -10,6 +10,8 @@
 }
 
 (plane_proxy) {
+	encode zstd gzip
+
 	request_body {
 		max_size {$FILE_SIZE_LIMIT}
 	}

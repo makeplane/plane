@@ -6,7 +6,6 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
-// Expose only vars starting with VITE_
 const viteEnv = Object.keys(process.env)
   .filter((k) => k.startsWith("VITE_"))
   .reduce<Record<string, string>>((a, k) => {
@@ -19,7 +18,7 @@ export default defineConfig(() => ({
     "process.env": JSON.stringify(viteEnv),
   },
   build: {
-    assetsInlineLimit: 0,
+    assetsInlineLimit: 4096,
   },
   plugins: [reactRouter(), tsconfigPaths({ projects: [path.resolve(__dirname, "tsconfig.json")] })],
   resolve: {
