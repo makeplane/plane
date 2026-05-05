@@ -22,17 +22,18 @@ variables:
   NODE_OPTIONS: "--max-old-space-size=4096"
   # Docker image tag — short commit SHA (e.g. "a1b2c3d")
   IMAGE_TAG: $CI_COMMIT_SHORT_SHA
-  # Target servers — defined as CI/CD variables in GitLab (Settings → CI/CD → Variables)
-  #   TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST → UAT  (10.94.232.123)
-  #   PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD → Prod (10.94.125.86)
-  # Deploy directory — must match on ALL servers (test, prod, external VPS)
+  # Deploy directory — must match on ALL servers (dev, prod, external VPS)
   PLANE_DIR: "/opt/shb-deploy/plane-app"
-  # Toggle: "true"  = Shell Executor, local Docker daemon (Mac runner, air-gapped internal)
+  # Offline dependency cache — maintained by ops team on dev server
+  PLANE_CACHE_DIR: "/opt/plane-cache"
+  # Toggle: "true"  = Shell Executor, local Docker daemon (air-gapped internal)
   #         "false" = Docker Executor + DinD (gitlab.com shared runners)
   # Override to "false" in GitLab Settings → CI/CD → Variables when running on gitlab.com
   IS_AIRGAPPED: "true"
   # Full git history required for turbo --affected to detect changed packages
   GIT_DEPTH: 0
+  # Package registry name for release packages
+  PACKAGE_NAME: "plane-shb-release"
 
 # ─── Cache Templates ──────────────────────────────────────────────────────────
 
@@ -285,15 +286,18 @@ build:web:docker:
         $IS_AIRGAPPED == "false"
 
 # Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
-# Docker runs on host — no DinD, use local daemon via unix socket
-# Also produces .shb-version and version.env (dotenv) for the release stage
+# Runs on development server (shb-dev runner) which is the only linux/amd64 build machine.
+# Also produces .shb-version and version.env (dotenv) for downstream jobs.
 build:web:shell:
   extends: .build_shell_base
+  tags:
+    - shb-dev
+    - shell
   script:
     # Extract version from package.json — used as Docker tag + tar.gz filename
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
-    # --platform linux/amd64: runner is arm64 (macOS) but target servers are x86_64
+    # --platform linux/amd64: target servers are x86_64; dev server produces amd64 images
     - docker build --platform linux/amd64 -t makeplane/plane-frontend:${SHB_VERSION} -f apps/web/Dockerfile.web .
     - mkdir -p dist
     - docker save makeplane/plane-frontend:${SHB_VERSION} | gzip > dist/plane-frontend-${SHB_VERSION}.tar.gz
@@ -308,7 +312,7 @@ build:web:shell:
     expire_in: 1 day
   rules:
     - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview" || $CI_COMMIT_TAG =~ /^prod\//) &&
         $IS_AIRGAPPED == "true"
 
 # ── Admin ─────────────────────────────────────────────────────────────────────
@@ -334,6 +338,9 @@ build:admin:docker:
 # Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
 build:admin:shell:
   extends: .build_shell_base
+  tags:
+    - shb-dev
+    - shell
   script:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
@@ -346,7 +353,7 @@ build:admin:shell:
     expire_in: 1 day
   rules:
     - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview" || $CI_COMMIT_TAG =~ /^prod\//) &&
         $IS_AIRGAPPED == "true"
 
 # ── API ───────────────────────────────────────────────────────────────────────
@@ -373,6 +380,9 @@ build:api:docker:
 # Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
 build:api:shell:
   extends: .build_shell_base
+  tags:
+    - shb-dev
+    - shell
   script:
     - VERSION=$(grep -m1 version package.json | cut -d'"' -f4)
     - SHB_VERSION=shb_v${VERSION}
@@ -386,75 +396,100 @@ build:api:shell:
     expire_in: 1 day
   rules:
     - if: >-
-        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview" || $CI_COMMIT_TAG =~ /^prod\//) &&
         $IS_AIRGAPPED == "true"
 
 # =============================================================================
 # STAGE 4: DEPLOY
-# Deploy strategy: SCP tar.gz + scripts/ci-deploy.sh to server, then SSH execute
+# Two deploy strategies:
+#   deploy:dev        — local runner on dev server, uses CI artifacts (no SSH)
+#   deploy:dev:release — manual, pulls exact release package from internal GitLab
+#   deploy:prod:release — manual, prod/* tag only, shb-prod runner on prod server
+#
+# No SSH/SCP for internal deploys — runners already execute on their target server.
+# Server credentials are NOT stored in GitLab CI variables.
+# Each server reads /etc/plane-release-deploy.env (chmod 0400, runner-owned).
 # =============================================================================
 
-# ─── Deploy Before Script Template ──────────────────────────────────────────────
-# Custom image node:22-alpine already has sshpass/rsync/openssh installed.
-# Only need to set up .ssh directory.
-.deploy_before: &deploy_before
-  - mkdir -p ~/.ssh && chmod 700 ~/.ssh
-
-# ── Deploy Test — auto on merge to develop (air-gapped internal) ──────────────
-# Auth: password-based via sshpass — variables: TEST_SERVER, SSH_USER_TEST, SSH_PASSWORD_TEST
-deploy:test:
+# ── Deploy Dev — auto on merge to develop, runner already on dev server ───────
+# Runner: shb-dev (shell executor on dev server); no SSH, no sshpass.
+# Copies CI artifacts to /tmp/plane-deploy/ and runs ci-deploy.sh locally.
+deploy:dev:
   stage: deploy
-  image: node:22-alpine
+  tags:
+    - shb-dev
+    - shell
+    - deploy
   interruptible: false
-  before_script:
-    - *deploy_before
-    # Skip deploy if TEST_SERVER is not configured (e.g. during local CI testing)
-    - '[ -n "$TEST_SERVER" ] || { echo "TEST_SERVER not set — skipping deploy"; exit 0; }'
-    - ssh-keyscan -H $TEST_SERVER >> ~/.ssh/known_hosts
+  needs:
+    - job: build:web:shell
+      artifacts: true
+    - job: build:admin:shell
+      artifacts: true
+    - job: build:api:shell
+      artifacts: true
+  variables:
+    GIT_STRATEGY: none
   script:
-    - '[ -n "$TEST_SERVER" ] || exit 0'
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
-    - sshpass -p "$SSH_PASSWORD_TEST" scp dist/*.tar.gz dist/.shb-version $SSH_USER_TEST@$TEST_SERVER:/tmp/plane-deploy/
-    - sshpass -p "$SSH_PASSWORD_TEST" scp scripts/ci-deploy.sh $SSH_USER_TEST@$TEST_SERVER:/tmp/ci-deploy.sh
     - SHB_VERSION=$(cat dist/.shb-version)
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
-    - sshpass -p "$SSH_PASSWORD_TEST" ssh $SSH_USER_TEST@$TEST_SERVER "rm -f /tmp/ci-deploy.sh"
+    - rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy
+    - cp dist/*.tar.gz dist/.shb-version /tmp/plane-deploy/
+    - SHB_VERSION="${SHB_VERSION}" bash scripts/ci-deploy.sh
   rules:
     - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "true"
   environment:
-    name: test
+    name: dev
     url: https://uat-jms.shinhan.com.vn
 
-# ── Deploy Production — manual approve on merge to preview (air-gapped internal) ──
-# Auth: password-based via sshpass — variables: PROD_SERVER, SSH_USER_PROD, SSH_PASSWORD_PROD
-deploy:production:
+# ── Deploy Dev from Release Package — manual, validates release artifact path ──
+# Triggers deploy-from-internal-gitlab-release.sh on dev server.
+# Set RELEASE_TAG when triggering (e.g. dev/shb_v1.2.0-build.5).
+deploy:dev:release:
   stage: deploy
-  image: node:22-alpine
+  tags:
+    - shb-dev
+    - shell
+    - deploy
   interruptible: false
-  before_script:
-    - *deploy_before
-    # Skip deploy if PROD_SERVER is not configured
-    - '[ -n "$PROD_SERVER" ] || { echo "PROD_SERVER not set — skipping deploy"; exit 0; }'
-    - ssh-keyscan -H $PROD_SERVER >> ~/.ssh/known_hosts
+  variables:
+    GIT_STRATEGY: none
+    # RELEASE_TAG: set this variable when triggering the job manually
   script:
-    - '[ -n "$PROD_SERVER" ] || exit 0'
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy"
-    - sshpass -p "$SSH_PASSWORD_PROD" scp dist/*.tar.gz dist/.shb-version $SSH_USER_PROD@$PROD_SERVER:/tmp/plane-deploy/
-    - sshpass -p "$SSH_PASSWORD_PROD" scp scripts/ci-deploy.sh $SSH_USER_PROD@$PROD_SERVER:/tmp/ci-deploy.sh
-    - SHB_VERSION=$(cat dist/.shb-version)
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "SHB_VERSION=$SHB_VERSION bash /tmp/ci-deploy.sh"
-    - sshpass -p "$SSH_PASSWORD_PROD" ssh $SSH_USER_PROD@$PROD_SERVER "rm -f /tmp/ci-deploy.sh"
+    - bash scripts/deploy-from-internal-gitlab-release.sh
   rules:
-    - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "true"
+    - if: $IS_AIRGAPPED == "true"
+      when: manual
+      allow_failure: false
+  environment:
+    name: dev/release
+    url: https://uat-jms.shinhan.com.vn
+
+# ── Deploy Prod from Release Package — manual, exact prod/* tag required ───────
+# Triggers on prod/* tag pipelines only. Runner is shb-prod on production server.
+# RELEASE_TAG is automatically the triggering tag (prod/shb_vX.Y.Z).
+deploy:prod:release:
+  stage: deploy
+  tags:
+    - shb-prod
+    - shell
+    - deploy-only
+  interruptible: false
+  variables:
+    GIT_STRATEGY: none
+    RELEASE_TAG: "${CI_COMMIT_TAG}"
+  script:
+    - bash scripts/deploy-from-internal-gitlab-release.sh
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^prod\// && $IS_AIRGAPPED == "true"
       when: manual
       allow_failure: false
   environment:
     name: production
-    url: http://$PROD_SERVER
+    url: https://jms.shinhan.com.vn
 
-# ── Deploy External Test — auto on merge to develop (external gitlab.com) ─────
-# Uses a temporary VPS as deploy target to validate SSH + SCP flow end-to-end
-# Auth: password-based via sshpass (VPS_PASSWORD variable) — no SSH key needed
+# ── Deploy External Test — auto on merge to develop (external gitlab.com only) ─
+# Uses a temporary VPS to validate SSH + SCP flow end-to-end on gitlab.com path.
+# Not used in air-gapped environment.
 deploy:external-test:
   stage: deploy
   interruptible: false
@@ -478,15 +513,22 @@ deploy:external-test:
 
 # =============================================================================
 # STAGE 5: RELEASE
-# Runs after deploy:production succeeds (manual gate).
-# Creates a git tag + GitLab Release using the version from package.json.
-# Requires CI variable: GITLAB_TOKEN (project/group access token, scope: api)
-# Tag format: shb_v{version} — e.g. shb_v1.2.0 (matches .shb-version file)
+# Publish release packages to internal GitLab Generic Package Registry.
+#
+# Requires CI variables (GitLab Settings → CI/CD → Variables):
+#   GITLAB_PUBLISH_TOKEN — project access token (write_package_registry + api scopes)
+#                          NEVER use api scope for deploy token on prod; publish only.
+#
+# Tag format:
+#   dev/*  — e.g. dev/shb_v1.2.0-build.5   (dev server validation release)
+#   prod/* — e.g. prod/shb_v1.2.0            (Maintainer+ creates this tag manually)
+#
+# Protected tag rule must be configured in GitLab:
+#   Settings → Repository → Protected tags → prod/* → Allowed to create: Maintainer+
 # =============================================================================
 
 # Docker Executor variant — external GitLab (IS_AIRGAPPED=false)
-# No real production server on external path — release runs after builds succeed.
-# On internal (IS_AIRGAPPED=true), release:production:shell waits for deploy:production.
+# Creates a legacy-style release after build succeeds (no binary package upload).
 release:production:docker:
   stage: release
   image: alpine:latest
@@ -499,53 +541,72 @@ release:production:docker:
     - apk add --no-cache curl
   script:
     - echo "Creating tag + release for ${SHB_VERSION} ..."
-    # Create annotated git tag via GitLab API
     - |
       curl --fail -s \
         --request POST \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --data "tag_name=${SHB_VERSION}&ref=${CI_COMMIT_SHA}&message=Release ${SHB_VERSION}" \
         "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/tags"
-    # Create GitLab Release linked to the tag
     - |
       curl --fail -s \
         --request POST \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --header "Content-Type: application/json" \
-        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Production deploy ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
+        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Release ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
         "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
     - echo "  ✓ Released ${SHB_VERSION}"
   rules:
     - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "false"
       when: on_success
 
-# Shell Executor variant — air-gapped internal GitLab (IS_AIRGAPPED=true)
-release:production:shell:
+# ── Publish Dev Release — air-gapped, runs after build on develop or preview ──
+# Publishes a dev/* release package to internal GitLab for parity testing.
+# Tag: dev/shb_v{VERSION}-build.{PIPELINE_IID}
+# Uses GITLAB_PUBLISH_TOKEN (write_package_registry + api) — NOT api-only.
+release:publish:dev:
   stage: release
+  tags:
+    - shb-dev
+    - shell
   needs:
-    - job: deploy:production
     - job: build:web:shell
-      artifacts: true # provides $SHB_VERSION from dotenv
+      artifacts: true # provides SHB_VERSION via dotenv
+    - job: build:admin:shell
+      artifacts: true
+    - job: build:api:shell
+      artifacts: true
   variables:
     GIT_STRATEGY: none
   script:
-    - echo "Creating tag + release for ${SHB_VERSION} ..."
-    # Create annotated git tag via GitLab API
-    - |
-      curl --fail -s \
-        --request POST \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --data "tag_name=${SHB_VERSION}&ref=${CI_COMMIT_SHA}&message=Release ${SHB_VERSION}" \
-        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/tags"
-    # Create GitLab Release linked to the tag
-    - |
-      curl --fail -s \
-        --request POST \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --header "Content-Type: application/json" \
-        --data "{\"name\":\"${SHB_VERSION}\",\"tag_name\":\"${SHB_VERSION}\",\"description\":\"Production deploy ${SHB_VERSION} — commit ${CI_COMMIT_SHORT_SHA}\"}" \
-        "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
-    - echo "  ✓ Released ${SHB_VERSION}"
+    - export RELEASE_TAG="dev/${SHB_VERSION}-build.${CI_PIPELINE_IID}"
+    - bash scripts/publish-gitlab-release-package.sh
   rules:
-    - if: $CI_COMMIT_BRANCH == "preview" && $IS_AIRGAPPED == "true"
+    - if: >-
+        ($CI_COMMIT_BRANCH == "develop" || $CI_COMMIT_BRANCH == "preview") &&
+        $IS_AIRGAPPED == "true"
+      when: on_success
+
+# ── Publish Prod Release — triggered when Maintainer creates a prod/* tag ─────
+# Builds are re-run from the exact tagged commit to produce the prod release package.
+# The prod/* tag must already be protected (Maintainer+ create only).
+# Uses GITLAB_PUBLISH_TOKEN (write_package_registry + api).
+release:publish:prod:
+  stage: release
+  tags:
+    - shb-dev
+    - shell
+  needs:
+    - job: build:web:shell
+      artifacts: true # provides SHB_VERSION via dotenv
+    - job: build:admin:shell
+      artifacts: true
+    - job: build:api:shell
+      artifacts: true
+  variables:
+    GIT_STRATEGY: none
+    RELEASE_TAG: "${CI_COMMIT_TAG}"
+  script:
+    - bash scripts/publish-gitlab-release-package.sh
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^prod\// && $IS_AIRGAPPED == "true"
       when: on_success
