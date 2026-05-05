@@ -149,3 +149,4 @@ from .workflow import (
 
 from .task_category import MainTaskCategorySerializer, SubTaskCategorySerializer
 from .job_position import JobPositionSerializer, JobGradeSerializer
+from .user_work_items import UserCrossWorkspaceWorkItemSerializer

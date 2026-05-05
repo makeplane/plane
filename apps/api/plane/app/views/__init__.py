@@ -37,6 +37,8 @@ from .user.base import (
 
 from .user.daily_worklog import UserDailyWorklogTotalEndpoint
 
+from .user.work_items import UserWorkItemsTodayEndpoint, UserWorkItemsOverdueEndpoint
+
 
 from .base import BaseAPIView, BaseViewSet
 
