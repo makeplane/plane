@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 # Assemble a self-contained deploy package at ./deploy/
-# Ready to scp INTO the server's existing plane-selfhost/plane-app/ directory.
+# Contains only the 3 dynamic images: frontend, admin, backend (api/worker/beat).
+# Static services (space, live, proxy, postgres, redis) are pre-loaded at initial provisioning.
 #
 # Usage: ./scripts/prepare-deploy-package.sh
 #
 # Produces:
 #   deploy/
-#   ├── docker-compose.shb.yml   ← SHB image override (applied on top of server's docker-compose.yaml)
+#   ├── docker-compose.shb.yml   ← SHB image override (dynamic services only)
 #   ├── scripts/
 #   │   └── deploy-shb.sh
 #   └── dist/
 #       ├── .shb-version
-#       └── plane-*-shb_v*.tar.gz  (6 images: frontend, admin, space, live, backend, proxy)
+#       └── plane-{frontend,admin,backend}-shb_v*.tar.gz
 #
-# NOTE: The base docker-compose.yaml is NOT included — it must already exist on the server
-#       (installed via plane-selfhost). SCP deploy/* into the plane-app/ directory.
+# NOTE: The base docker-compose.yaml is NOT included — it must already exist on the server.
 
 set -euo pipefail
 
@@ -30,9 +30,9 @@ DEPLOY_DIR="deploy"
 
 TAG=$(tr -d '[:space:]' < dist/.shb-version)
 
-# Check all 6 tar.gz exist and are non-empty
+# Check all 3 dynamic tar.gz exist and are non-empty
 MISSING=0
-for NAME in plane-frontend plane-admin plane-space plane-live plane-backend plane-proxy; do
+for NAME in plane-frontend plane-admin plane-backend; do
   FILE="dist/${NAME}-${TAG}.tar.gz"
   if [ ! -f "${FILE}" ]; then
     echo "  MISSING : ${FILE}"
@@ -65,7 +65,7 @@ cp scripts/deploy-shb.sh       "${DEPLOY_DIR}/scripts/deploy-shb.sh"
 chmod +x                       "${DEPLOY_DIR}/scripts/deploy-shb.sh"
 cp dist/.shb-version           "${DEPLOY_DIR}/dist/.shb-version"
 
-for NAME in plane-frontend plane-admin plane-space plane-live plane-backend plane-proxy; do
+for NAME in plane-frontend plane-admin plane-backend; do
   cp "dist/${NAME}-${TAG}.tar.gz" "${DEPLOY_DIR}/dist/"
 done
 
