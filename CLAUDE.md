@@ -84,9 +84,9 @@ When blocked by privacy hook, output contains JSON between `@@PRIVACY_PROMPT_STA
 
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **plane** (60548 symbols, 105143 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **plane** (60562 symbols, 105189 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
-> If any GitNexus tool warns the index is stale, run `./scripts/gitnexus.sh analyze` (Docker-pinned to 1.6.4-rc.63 — see `docs/gitnexus-guide.md`).
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
 ## Always Do
 
