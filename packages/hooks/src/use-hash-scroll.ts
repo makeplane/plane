@@ -87,8 +87,8 @@ export const useHashScroll = (args: TArgs): TReturnType => {
   // Effect to handle hash changes and initial load
   useEffect(() => {
     if (!elementId) {
-      setIsHashMatch(false);
-      setHashIds([]);
+      queueMicrotask(() => setIsHashMatch(false));
+      queueMicrotask(() => setHashIds([]));
       return;
     }
 
@@ -97,11 +97,11 @@ export const useHashScroll = (args: TArgs): TReturnType => {
 
       // Extract all IDs from the hash
       const idsInHash = extractIdsFromHash(hash);
-      setHashIds(idsInHash);
+      queueMicrotask(() => setHashIds(idsInHash));
 
       // Check if provided element ID is present in the hash
       const hashMatches = idsInHash.includes(elementId);
-      setIsHashMatch(hashMatches);
+      queueMicrotask(() => setIsHashMatch(hashMatches));
 
       // If hash matches, attempt to scroll to the element
       if (hashMatches) {

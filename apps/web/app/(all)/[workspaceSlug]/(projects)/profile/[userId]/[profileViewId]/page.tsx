@@ -8,6 +8,7 @@ import React from "react";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { ProfileIssuesPage } from "@/components/profile/profile-issues";
+import { ProfileIssuesExportButton } from "@/plane-web/components/profile/profile-issues-export-button";
 import type { Route } from "./+types/page";
 
 const ProfilePageHeader = {
@@ -30,7 +31,7 @@ function ProfileIssuesTypePage({ params }: Route.ComponentProps) {
   return (
     <>
       <PageHead title={header} />
-      <ProfileIssuesPage type={profileViewId} />
+      <ProfileIssuesPage type={profileViewId} extraFilterRowActions={<ProfileIssuesExportButton />} />
     </>
   );
 }

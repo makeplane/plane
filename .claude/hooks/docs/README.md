@@ -146,7 +146,7 @@ notifications/
 
 Cross-platform hook blocking heavy directories to improve Claude performance.
 
-**Blocked Patterns** (configured in `.claude/.ckignore`):
+**Blocked Patterns** (baseline in `.claude/.ckignore`, optional override in `<project-root>/.claude/.ckignore`):
 - `node_modules`, `__pycache__`, `.git`, `dist`, `build`
 
 **Testing:**

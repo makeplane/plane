@@ -16,11 +16,12 @@ import {
 } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
+import { ArchiveIcon, ViewsIcon } from "@plane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties, ICustomSearchSelectOption } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
-import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown } from "@plane/ui";
+import { Breadcrumbs, Header, BreadcrumbNavigationSearchDropdown, ToggleSwitch } from "@plane/ui";
 // components
+import { ExcelExportButton } from "@/plane-web/components/workspace/views/excel-export-button";
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { SwitcherLabel } from "@/components/common/switcher-label";
 import { DisplayFiltersSelection, FiltersDropdown } from "@/components/issues/issue-layouts/filters";
@@ -56,7 +57,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleDisplayFilters = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
@@ -70,7 +71,13 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleDisplayProperties = useCallback(
     (property: Partial<IIssueDisplayProperties>) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(workspaceSlug.toString(), undefined, EIssueFilterType.DISPLAY_PROPERTIES, property, globalViewId);
+      void updateFilters(
+        workspaceSlug.toString(),
+        undefined,
+        EIssueFilterType.DISPLAY_PROPERTIES,
+        property,
+        globalViewId
+      );
     },
     [workspaceSlug, updateFilters, globalViewId]
   );
@@ -78,7 +85,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
   const handleLayoutChange = useCallback(
     (layout: EIssueLayoutTypes) => {
       if (!workspaceSlug || !globalViewId) return;
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,
@@ -158,18 +165,26 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
               workspaceSlug={workspaceSlug.toString()}
             />
           )}
+          {/* Show Archived toggle */}
+          <div className="flex items-center gap-1.5 rounded-md border border-subtle px-2.5 py-1 text-xs">
+            <ArchiveIcon className="size-3.5 text-tertiary" />
+            <span className="text-13 whitespace-nowrap">Archived</span>
+            <ToggleSwitch
+              value={issueFilters?.displayFilters?.show_archived ?? true}
+              onChange={(value) => handleDisplayFilters({ show_archived: value })}
+              size="sm"
+            />
+          </div>
           {globalViewId && <WorkItemFiltersToggle entityType={EIssuesStoreType.GLOBAL} entityId={globalViewId} />}
-          {!isLocked && (
-            <FiltersDropdown title={t("common.display")} placement="bottom-end">
-              <DisplayFiltersSelection
-                layoutDisplayFiltersOptions={currentLayoutFilters}
-                displayFilters={issueFilters?.displayFilters ?? {}}
-                handleDisplayFiltersUpdate={handleDisplayFilters}
-                displayProperties={issueFilters?.displayProperties ?? {}}
-                handleDisplayPropertiesUpdate={handleDisplayProperties}
-              />
-            </FiltersDropdown>
-          )}
+          <FiltersDropdown title={t("common.display")} placement="bottom-end">
+            <DisplayFiltersSelection
+              layoutDisplayFiltersOptions={currentLayoutFilters}
+              displayFilters={issueFilters?.displayFilters ?? {}}
+              handleDisplayFiltersUpdate={handleDisplayFilters}
+              displayProperties={issueFilters?.displayProperties ?? {}}
+              handleDisplayPropertiesUpdate={handleDisplayProperties}
+            />
+          </FiltersDropdown>
           <Button
             variant="primary"
             size="lg"
@@ -178,6 +193,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
           >
             {t("workspace_views.add_view")}
           </Button>
+          {globalViewId && <ExcelExportButton workspaceSlug={workspaceSlug.toString()} globalViewId={globalViewId} />}
           <div className="hidden md:block">
             {viewDetails && <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={viewDetails} />}
             {isDefaultView && defaultViewDetails && (

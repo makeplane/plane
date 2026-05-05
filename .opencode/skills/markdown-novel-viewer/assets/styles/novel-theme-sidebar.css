@@ -306,18 +306,17 @@
   color: var(--text-muted);
 }
 
-/* Phase items container */
+/* Phase items container — visible by default, collapsed state hides */
 .phase-items {
   list-style: none;
   padding-left: 1.25rem;
   margin-top: 0.25rem;
-  overflow: hidden;
-  max-height: 500px;
   transition: max-height 0.3s ease, opacity 0.2s ease;
 }
 
 .phase-group.collapsed .phase-items {
   max-height: 0;
+  overflow: hidden;
   opacity: 0;
   margin-top: 0;
 }

@@ -1,0 +1,16 @@
+# Web Frameworks Skill Dependencies
+# Python 3.10+ required
+
+# No Python package dependencies - uses only standard library
+
+# Testing dependencies (dev)
+pytest>=8.0.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Note: This skill works with Node.js frameworks
+# Requires Node.js and package managers:
+#   - Node.js 18+: https://nodejs.org/
+#   - npm (comes with Node.js)
+#   - pnpm: npm install -g pnpm
+#   - yarn: npm install -g yarn

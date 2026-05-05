@@ -10,6 +10,11 @@ from .common import *  # noqa
 
 DEBUG = True
 
+# Run Celery tasks synchronously in dev mode (no separate worker needed).
+# Background tasks (activity tracking, notifications, etc.) execute inline.
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+
 # Debug Toolbar settings
 INSTALLED_APPS += ("debug_toolbar",)  # noqa
 MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa

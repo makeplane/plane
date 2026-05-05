@@ -10,6 +10,7 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 const { execSync } = require('child_process');
 
 // Import modules
@@ -23,7 +24,9 @@ const {
   magenta,
   dim,
   RESET,
-  getContextColor
+  getContextColor,
+  resolveColor,
+  setColorEnabled
 } = require('../colors.cjs');
 
 const {
@@ -38,6 +41,11 @@ const {
   countMcpServersInFile,
   countHooksInFile
 } = require('../config-counter.cjs');
+
+const {
+  getGitInfo,
+  invalidateCache
+} = require('../git-info-cache.cjs');
 
 // Test framework
 let passed = 0;
@@ -205,6 +213,26 @@ test('getContextColor(70%) returns YELLOW (exactly 70%)', () => {
 test('getContextColor(85%) returns RED (exactly 85%)', () => {
   const color = getContextColor(85);
   assertEquals(color, '\x1b[31m', 'Should return RED for exactly 85%');
+});
+
+test('getContextColor honors custom palette overrides', () => {
+  const color = getContextColor(10, { low: 'brightGreen' });
+  assertEquals(color, '\x1b[92m', 'Should return bright green when theme overrides the low threshold color');
+});
+
+test('resolveColor adds an explicit style clear around ANSI spans', () => {
+  const previousNoColor = process.env.NO_COLOR;
+  delete process.env.NO_COLOR;
+  setColorEnabled(true);
+  try {
+    const result = resolveColor('brightGreen')('stable');
+    assertContains(result, '\x1b[22m\x1b[39m\x1b[92m', 'Should clear dim/foreground before applying custom color');
+    assertTrue(result.endsWith('\x1b[0m\x1b[22m\x1b[39m'), 'Should finish with an explicit reset sequence');
+  } finally {
+    if (previousNoColor === undefined) delete process.env.NO_COLOR;
+    else process.env.NO_COLOR = previousNoColor;
+    setColorEnabled(null);
+  }
 });
 
 // ============================================================================
@@ -605,6 +633,214 @@ test('processEntry handles malformed tool_result', () => {
   processEntry(entry, toolMap, agentMap, latestTodos, result);
   // Should not crash, just skip
   assertEquals(toolMap.size, 0, 'Should handle malformed tool_result');
+});
+
+test('processEntry TaskUpdate numeric fallback targets native tasks only', () => {
+  const toolMap = new Map();
+  const agentMap = new Map();
+  const latestTodos = [];
+  const result = { sessionStart: null };
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:00Z',
+    message: {
+      content: [{
+        type: 'tool_use',
+        id: 'todo-legacy',
+        name: 'TodoWrite',
+        input: {
+          todos: [
+            { content: 'Legacy first', status: 'pending' },
+            { content: 'Legacy second', status: 'pending' }
+          ]
+        }
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:01Z',
+    message: {
+      content: [{
+        type: 'tool_use',
+        id: 'native-create-1',
+        name: 'TaskCreate',
+        input: { subject: 'Native task' }
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:02Z',
+    message: {
+      content: [{
+        type: 'tool_use',
+        id: 'native-update-1',
+        name: 'TaskUpdate',
+        input: { taskId: '1', status: 'completed' }
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  assertEquals(latestTodos[0].status, 'pending', 'Legacy todo must not be updated by native task index fallback');
+  const nativeTodo = latestTodos.find(t => t.id === 'native-create-1');
+  assertTrue(Boolean(nativeTodo), 'Native task should exist');
+  assertEquals(nativeTodo.status, 'completed', 'Native task should be updated');
+});
+
+test('processEntry ignores non-numeric fallback taskId values', () => {
+  const toolMap = new Map();
+  const agentMap = new Map();
+  const latestTodos = [];
+  const result = { sessionStart: null };
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:00Z',
+    message: {
+      content: [{
+        type: 'tool_use',
+        id: 'native-create-1',
+        name: 'TaskCreate',
+        input: { subject: 'Native task one' }
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:01Z',
+    message: {
+      content: [{
+        type: 'tool_use',
+        id: 'native-update-1',
+        name: 'TaskUpdate',
+        input: { taskId: '1abc', status: 'completed' }
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  assertEquals(latestTodos[0].status, 'pending', 'Non-numeric taskId should not trigger index fallback');
+});
+
+test('processEntry hydrates native task id from TaskCreate tool_result', () => {
+  const toolMap = new Map();
+  const agentMap = new Map();
+  const latestTodos = [];
+  const result = { sessionStart: null };
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:00Z',
+    message: {
+      content: [{
+        type: 'tool_use',
+        id: 'native-create-1',
+        name: 'TaskCreate',
+        input: { subject: 'Native task one' }
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:01Z',
+    message: {
+      content: [{
+        type: 'tool_result',
+        tool_use_id: 'native-create-1',
+        is_error: false,
+        content: '{"taskId":"task-123"}'
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  processEntry({
+    timestamp: '2026-01-06T12:00:02Z',
+    message: {
+      content: [{
+        type: 'tool_use',
+        id: 'native-update-1',
+        name: 'TaskUpdate',
+        input: { taskId: 'task-123', status: 'in_progress', activeForm: 'Working task one' }
+      }]
+    }
+  }, toolMap, agentMap, latestTodos, result);
+
+  assertEquals(latestTodos[0].id, 'task-123', 'TaskCreate result should hydrate native task id');
+  assertEquals(latestTodos[0].status, 'in_progress', 'Hydrated id should allow direct TaskUpdate matching');
+  assertEquals(latestTodos[0].activeForm, 'Working task one', 'TaskUpdate should refresh activeForm');
+});
+
+test('getGitInfo timeout does not cache null result', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'git-timeout-no-cache-'));
+  const fakeBinDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fake-git-bin-'));
+  const fakeGit = path.join(fakeBinDir, 'git');
+  const hash = crypto.createHash('md5').update(tmpDir).digest('hex').slice(0, 8);
+  const cachePath = path.join(os.tmpdir(), `ck-git-cache-${hash}.json`);
+  const originalPath = process.env.PATH;
+  const originalTimeout = process.env.CK_GIT_TIMEOUT_MS;
+
+  fs.writeFileSync(
+    fakeGit,
+    '#!/bin/sh\nsleep 0.2\necho ""\n',
+    { mode: 0o755 }
+  );
+
+  try {
+    try { fs.unlinkSync(cachePath); } catch {}
+    invalidateCache(tmpDir);
+    process.env.PATH = `${fakeBinDir}:${originalPath || ''}`;
+    process.env.CK_GIT_TIMEOUT_MS = '50';
+
+    const result = getGitInfo(tmpDir);
+    assertEquals(result, null, 'Timeout with no stale cache should return null');
+    assertFalse(fs.existsSync(cachePath), 'Timeout should not write null cache');
+  } finally {
+    if (originalPath == null) delete process.env.PATH;
+    else process.env.PATH = originalPath;
+    if (originalTimeout == null) delete process.env.CK_GIT_TIMEOUT_MS;
+    else process.env.CK_GIT_TIMEOUT_MS = originalTimeout;
+    try { fs.unlinkSync(fakeGit); } catch {}
+    try { fs.rmdirSync(fakeBinDir); } catch {}
+    try { fs.rmdirSync(tmpDir); } catch {}
+    try { fs.unlinkSync(cachePath); } catch {}
+  }
+});
+
+test('getGitInfo timeout reuses stale cache when available', () => {
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'git-timeout-stale-'));
+  const fakeBinDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fake-git-bin-'));
+  const fakeGit = path.join(fakeBinDir, 'git');
+  const hash = crypto.createHash('md5').update(tmpDir).digest('hex').slice(0, 8);
+  const cachePath = path.join(os.tmpdir(), `ck-git-cache-${hash}.json`);
+  const originalPath = process.env.PATH;
+  const originalTimeout = process.env.CK_GIT_TIMEOUT_MS;
+  const staleData = { branch: 'stale', unstaged: 1, staged: 2, ahead: 0, behind: 0 };
+
+  fs.writeFileSync(
+    fakeGit,
+    '#!/bin/sh\nsleep 0.2\necho ""\n',
+    { mode: 0o755 }
+  );
+
+  try {
+    fs.writeFileSync(
+      cachePath,
+      JSON.stringify({ timestamp: Date.now() - 120000, data: staleData })
+    );
+    process.env.PATH = `${fakeBinDir}:${originalPath || ''}`;
+    process.env.CK_GIT_TIMEOUT_MS = '50';
+
+    const result = getGitInfo(tmpDir);
+    assertEquals(result.branch, 'stale', 'Timeout should fall back to stale cache data');
+    assertEquals(result.staged, 2, 'Stale cache data should be preserved');
+  } finally {
+    if (originalPath == null) delete process.env.PATH;
+    else process.env.PATH = originalPath;
+    if (originalTimeout == null) delete process.env.CK_GIT_TIMEOUT_MS;
+    else process.env.CK_GIT_TIMEOUT_MS = originalTimeout;
+    try { fs.unlinkSync(fakeGit); } catch {}
+    try { fs.rmdirSync(fakeBinDir); } catch {}
+    try { fs.rmdirSync(tmpDir); } catch {}
+    try { fs.unlinkSync(cachePath); } catch {}
+  }
 });
 
 // ============================================================================

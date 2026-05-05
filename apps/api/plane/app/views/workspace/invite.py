@@ -52,6 +52,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
     def create(self, request, slug):
         emails = request.data.get("emails", [])
+
         # Check if email is provided
         if not emails:
             return Response({"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -85,8 +86,50 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Split emails into two groups: auto-join and standard invite
+        auto_join_emails = [e for e in emails if e.get("auto_join", False)]
+        invite_emails = [e for e in emails if not e.get("auto_join", False)]
+
+        # Auto Join: directly add existing platform users as workspace members (no email sent)
+        if auto_join_emails:
+            email_list = [e.get("email", "").strip().lower() for e in auto_join_emails]
+            role_map = {e.get("email", "").strip().lower(): e.get("role", 5) for e in auto_join_emails}
+            existing_users = {u.email: u for u in User.objects.filter(email__in=email_list, is_active=True)}
+
+            new_members = []
+            for email_addr in email_list:
+                user = existing_users.get(email_addr)
+                if user:
+                    new_members.append(
+                        WorkspaceMember(
+                            workspace=workspace,
+                            member=user,
+                            role=role_map[email_addr],
+                            created_by=request.user,
+                        )
+                    )
+
+            WorkspaceMember.objects.bulk_create(new_members, batch_size=10, ignore_conflicts=True)
+
+            for member in new_members:
+                track_event.delay(
+                    user_id=request.user.id,
+                    event_name=USER_JOINED_WORKSPACE,
+                    slug=slug,
+                    event_properties={
+                        "user_id": member.member_id,
+                        "workspace_id": workspace.id,
+                        "workspace_slug": workspace.slug,
+                        "joined_at": str(timezone.now()),
+                    },
+                )
+
+        if not invite_emails:
+            return Response({"message": "Members added successfully"}, status=status.HTTP_200_OK)
+
+        # Standard invite flow: create pending invitations and send emails
         workspace_invitations = []
-        for email in emails:
+        for email in invite_emails:
             try:
                 validate_email(email.get("email"))
                 workspace_invitations.append(

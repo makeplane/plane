@@ -8,9 +8,22 @@ import { set } from "lodash-es";
 import { action, observable, runInAction, makeObservable, computed } from "mobx";
 // plane imports
 import { InstanceWorkspaceService } from "@plane/services";
+import type {
+  IWorkspaceBulkCreateResponse,
+  IWorkspaceBulkAssignResponse,
+  IWorkspaceProjectBulkImportResponse,
+  IWorkspaceModuleBulkImportResponse,
+} from "@plane/services";
 import type { IWorkspace, TLoader, TPaginationInfo } from "@plane/types";
 // root store
 import type { RootStore } from "@/store/root.store";
+
+export type {
+  IWorkspaceBulkCreateResponse,
+  IWorkspaceBulkAssignResponse,
+  IWorkspaceProjectBulkImportResponse,
+  IWorkspaceModuleBulkImportResponse,
+};
 
 export interface IWorkspaceStore {
   // observables
@@ -25,8 +38,38 @@ export interface IWorkspaceStore {
   // fetch actions
   fetchWorkspaces: () => Promise<IWorkspace[]>;
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
+  fetchAllWorkspaces: () => Promise<void>;
   // curd actions
   createWorkspace: (data: IWorkspace) => Promise<IWorkspace>;
+  bulkCreateWorkspaces: (
+    workspaces: Array<{ name: string; organization_size?: string }>
+  ) => Promise<IWorkspaceBulkCreateResponse>;
+  bulkAssignMembers: (
+    members: Array<{ email: string; workspace_slug: string; role: number }>
+  ) => Promise<IWorkspaceBulkAssignResponse>;
+  bulkImportProjects: (
+    projects: Array<{
+      workspace_slug: string;
+      name: string;
+      description?: string;
+      network?: number;
+      project_leader?: string;
+      members?: string;
+      member_roles?: string;
+    }>
+  ) => Promise<IWorkspaceProjectBulkImportResponse>;
+  bulkImportModules: (
+    modules: Array<{
+      workspace_slug: string;
+      project_name: string;
+      name: string;
+      description?: string;
+      status?: string;
+      start_date?: string;
+      target_date?: string;
+    }>
+  ) => Promise<IWorkspaceModuleBulkImportResponse>;
+  deleteWorkspace: (workspaceId: string, workspaceSlug: string) => Promise<void>;
 }
 
 export class WorkspaceStore implements IWorkspaceStore {
@@ -51,8 +94,14 @@ export class WorkspaceStore implements IWorkspaceStore {
       // fetch actions
       fetchWorkspaces: action,
       fetchNextWorkspaces: action,
+      fetchAllWorkspaces: action,
       // curd actions
       createWorkspace: action,
+      bulkCreateWorkspaces: action,
+      bulkAssignMembers: action,
+      bulkImportProjects: action,
+      bulkImportModules: action,
+      deleteWorkspace: action,
     });
     this.instanceWorkspaceService = new InstanceWorkspaceService();
   }
@@ -132,6 +181,16 @@ export class WorkspaceStore implements IWorkspaceStore {
     }
   };
 
+  /**
+   * @description Fetches all workspaces across all pages
+   */
+  fetchAllWorkspaces = async (): Promise<void> => {
+    await this.fetchWorkspaces();
+    while (this.paginationInfo?.next_page_results) {
+      await this.fetchNextWorkspaces();
+    }
+  };
+
   // curd actions
   /**
    * @description Creates a new workspace
@@ -152,5 +211,65 @@ export class WorkspaceStore implements IWorkspaceStore {
     } finally {
       this.loader = "loaded";
     }
+  };
+
+  /**
+   * @description Bulk creates workspaces from a parsed Excel row array.
+   * Uses the InstanceWorkspaceService.bulkCreate() method.
+   */
+  bulkCreateWorkspaces = async (
+    workspaces: Array<{ name: string; organization_size?: string }>
+  ): Promise<IWorkspaceBulkCreateResponse> => {
+    this.loader = "mutation";
+    try {
+      const result = await this.instanceWorkspaceService.bulkCreate(workspaces);
+      runInAction(() => {
+        result.created.forEach((ws: IWorkspace) => set(this.workspaces, [ws.id], ws));
+      });
+      return result;
+    } finally {
+      this.loader = "loaded";
+    }
+  };
+
+  bulkAssignMembers = (
+    members: Array<{ email: string; workspace_slug: string; role: number }>
+  ): Promise<IWorkspaceBulkAssignResponse> => {
+    return this.instanceWorkspaceService.bulkAssignMembers(members);
+  };
+
+  bulkImportProjects = (
+    projects: Array<{
+      workspace_slug: string;
+      name: string;
+      description?: string;
+      network?: number;
+      project_leader?: string;
+      members?: string;
+      member_roles?: string;
+    }>
+  ): Promise<IWorkspaceProjectBulkImportResponse> => {
+    return this.instanceWorkspaceService.bulkImportProjects(projects);
+  };
+
+  bulkImportModules = (
+    modules: Array<{
+      workspace_slug: string;
+      project_name: string;
+      name: string;
+      description?: string;
+      status?: string;
+      start_date?: string;
+      target_date?: string;
+    }>
+  ): Promise<IWorkspaceModuleBulkImportResponse> => {
+    return this.instanceWorkspaceService.bulkImportModules(modules);
+  };
+
+  deleteWorkspace = async (workspaceId: string, workspaceSlug: string): Promise<void> => {
+    await this.instanceWorkspaceService.destroy(workspaceSlug);
+    runInAction(() => {
+      delete this.workspaces[workspaceId];
+    });
   };
 }

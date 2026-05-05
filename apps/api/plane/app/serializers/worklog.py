@@ -2,21 +2,42 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from datetime import date, timedelta
+from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from rest_framework import serializers
 
 from .base import BaseSerializer
 from plane.db.models import IssueWorkLog
 
-# Max 24 hours in a single worklog entry
-MAX_DURATION_MINUTES = 1440
-# Max days into the future for logged_at
-MAX_FUTURE_DAYS = 7
+# Max 12 hours in a single worklog entry (also daily aggregate max)
+MAX_DURATION_MINUTES = 720
+
+
+def _today_in_tz(tz_str):
+    """Return today's date in the given timezone string (falls back to UTC)."""
+    try:
+        tz = ZoneInfo(tz_str) if tz_str else ZoneInfo("UTC")
+    except (ZoneInfoNotFoundError, KeyError):
+        tz = ZoneInfo("UTC")
+    return datetime.now(tz).date()
+
+
+def get_min_allowed_date(working_days=60, tz_str="UTC"):
+    """Calculate date that is N working days ago (Mon-Fri only) in the given timezone."""
+    current = _today_in_tz(tz_str)
+    days_counted = 0
+    while days_counted < working_days:
+        current -= timedelta(days=1)
+        if current.weekday() < 5:  # Mon=0..Fri=4
+            days_counted += 1
+    return current
 
 
 class IssueWorkLogSerializer(BaseSerializer):
     logged_by_detail = serializers.SerializerMethodField()
+    issue_detail = serializers.SerializerMethodField()
+    project_detail = serializers.SerializerMethodField()
 
     class Meta:
         model = IssueWorkLog
@@ -30,6 +51,8 @@ class IssueWorkLogSerializer(BaseSerializer):
             "created_at",
             "updated_at",
             "logged_by_detail",
+            "issue_detail",
+            "project_detail",
         ]
         read_only_fields = [
             "id",
@@ -48,15 +71,21 @@ class IssueWorkLogSerializer(BaseSerializer):
             raise serializers.ValidationError("Duration must be greater than 0.")
         if value > MAX_DURATION_MINUTES:
             raise serializers.ValidationError(
-                f"Duration cannot exceed {MAX_DURATION_MINUTES} minutes (24 hours)."
+                f"Duration cannot exceed {MAX_DURATION_MINUTES} minutes (12 hours)."
             )
         return value
 
     def validate_logged_at(self, value):
-        max_future = date.today() + timedelta(days=MAX_FUTURE_DAYS)
-        if value > max_future:
+        tz_str = self.context.get("project_timezone", "UTC")
+        today = _today_in_tz(tz_str)
+        if value > today:
             raise serializers.ValidationError(
-                f"Date cannot be more than {MAX_FUTURE_DAYS} days in the future."
+                "Cannot log time for future dates."
+            )
+        min_date = get_min_allowed_date(tz_str=tz_str)
+        if value < min_date:
+            raise serializers.ValidationError(
+                "Cannot log time more than 60 working days ago."
             )
         return value
 
@@ -69,18 +98,44 @@ class IssueWorkLogSerializer(BaseSerializer):
             }
         return None
 
+    def get_issue_detail(self, obj):
+        if obj.issue:
+            return {
+                "id": str(obj.issue.id),
+                "name": obj.issue.name,
+                "sequence_id": obj.issue.sequence_id,
+                "identifier": f"{obj.project.identifier}-{obj.issue.sequence_id}" if obj.project else "",
+            }
+        return None
+
+    def get_project_detail(self, obj):
+        if obj.project:
+            return {
+                "id": str(obj.project.id),
+                "name": obj.project.name,
+                "identifier": obj.project.identifier,
+            }
+        return None
+
 
 class TimesheetBulkEntrySerializer(serializers.Serializer):
     """Validates a single entry in a bulk timesheet update payload."""
 
     issue_id = serializers.UUIDField()
     logged_at = serializers.DateField()
+    # min_value=0 intentional: zero duration triggers delete in bulk upsert
     duration_minutes = serializers.IntegerField(min_value=0, max_value=MAX_DURATION_MINUTES)
 
     def validate_logged_at(self, value):
-        max_future = date.today() + timedelta(days=MAX_FUTURE_DAYS)
-        if value > max_future:
+        tz_str = self.context.get("project_timezone", "UTC")
+        today = _today_in_tz(tz_str)
+        if value > today:
             raise serializers.ValidationError(
-                f"Date cannot be more than {MAX_FUTURE_DAYS} days in the future."
+                "Cannot log time for future dates."
+            )
+        min_date = get_min_allowed_date(tz_str=tz_str)
+        if value < min_date:
+            raise serializers.ValidationError(
+                "Cannot log time more than 60 working days ago."
             )
         return value

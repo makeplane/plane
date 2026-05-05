@@ -1,4 +1,5 @@
 # Django imports
+from django.db.models import Count, Q
 from rest_framework import serializers
 
 # Module imports
@@ -10,28 +11,55 @@ class DepartmentSerializer(BaseSerializer):
     """Flat department serializer for CRUD operations."""
 
     staff_count = serializers.IntegerField(read_only=True, default=0)
+    linked_workspace_detail = serializers.SerializerMethodField()
+    task_category_ids = serializers.SerializerMethodField()
+    code = serializers.CharField(max_length=20, required=False, allow_blank=True, default="")
+    short_name = serializers.CharField(max_length=10, required=False, allow_blank=True, allow_null=True, default=None)
+    dept_code = serializers.CharField(max_length=4, required=False, allow_blank=True, allow_null=True, default=None)
 
     class Meta:
         model = Department
         fields = [
             "id",
-            "workspace",
             "name",
             "code",
             "short_name",
             "dept_code",
             "description",
+            "dept_type",
             "parent",
             "level",
             "manager",
-            "linked_project",
+            "linked_workspace",
+            "linked_workspace_detail",
+            "task_category_ids",
             "sort_order",
             "is_active",
             "staff_count",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "workspace", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def validate_dept_code(self, value):
+        return value or None
+
+    def validate_short_name(self, value):
+        return value or None
+
+    def get_linked_workspace_detail(self, obj):
+        if not obj.linked_workspace:
+            return None
+        return {
+            "id": str(obj.linked_workspace.id),
+            "name": obj.linked_workspace.name,
+            "slug": obj.linked_workspace.slug,
+        }
+
+    def get_task_category_ids(self, obj):
+        return list(
+            obj.main_task_categories.filter(deleted_at__isnull=True).values_list("id", flat=True)
+        )
 
 
 class DepartmentTreeSerializer(BaseSerializer):
@@ -40,7 +68,8 @@ class DepartmentTreeSerializer(BaseSerializer):
     children = serializers.SerializerMethodField()
     staff_count = serializers.IntegerField(read_only=True, default=0)
     manager_detail = serializers.SerializerMethodField()
-    linked_project_detail = serializers.SerializerMethodField()
+    linked_workspace_detail = serializers.SerializerMethodField()
+    task_category_ids = serializers.SerializerMethodField()
 
     class Meta:
         model = Department
@@ -51,12 +80,14 @@ class DepartmentTreeSerializer(BaseSerializer):
             "dept_code",
             "name",
             "description",
+            "dept_type",
             "level",
             "parent",
             "manager",
             "manager_detail",
-            "linked_project",
-            "linked_project_detail",
+            "linked_workspace",
+            "linked_workspace_detail",
+            "task_category_ids",
             "staff_count",
             "sort_order",
             "is_active",
@@ -64,8 +95,16 @@ class DepartmentTreeSerializer(BaseSerializer):
         ]
 
     def get_children(self, obj):
-        # Use prefetched children if available
-        children = obj.children.filter(deleted_at__isnull=True).order_by("sort_order", "name")
+        children = (
+            obj.children.filter(deleted_at__isnull=True)
+            .annotate(
+                staff_count=Count(
+                    "staff_members",
+                    filter=Q(staff_members__deleted_at__isnull=True),
+                )
+            )
+            .order_by("sort_order", "name")
+        )
         return DepartmentTreeSerializer(children, many=True, context=self.context).data
 
     def get_manager_detail(self, obj):
@@ -77,11 +116,16 @@ class DepartmentTreeSerializer(BaseSerializer):
             "email": obj.manager.email,
         }
 
-    def get_linked_project_detail(self, obj):
-        if not obj.linked_project:
+    def get_linked_workspace_detail(self, obj):
+        if not obj.linked_workspace:
             return None
         return {
-            "id": str(obj.linked_project.id),
-            "name": obj.linked_project.name,
-            "identifier": obj.linked_project.identifier,
+            "id": str(obj.linked_workspace.id),
+            "name": obj.linked_workspace.name,
+            "slug": obj.linked_workspace.slug,
         }
+
+    def get_task_category_ids(self, obj):
+        return list(
+            obj.main_task_categories.filter(deleted_at__isnull=True).values_list("id", flat=True)
+        )

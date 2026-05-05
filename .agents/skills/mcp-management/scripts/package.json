@@ -1,0 +1,20 @@
+{
+  "name": "mcp-management-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MCP client scripts for managing MCP servers",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --loader ts-node/esm test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

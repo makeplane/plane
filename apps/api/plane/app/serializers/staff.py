@@ -18,7 +18,6 @@ class StaffProfileSerializer(BaseSerializer):
         model = StaffProfile
         fields = [
             "id",
-            "workspace",
             "user",
             "staff_id",
             "department",
@@ -39,7 +38,6 @@ class StaffProfileSerializer(BaseSerializer):
         ]
         read_only_fields = [
             "id",
-            "workspace",
             "user",
             "created_at",
             "updated_at",
@@ -73,8 +71,8 @@ class MyStaffProfileSerializer(BaseSerializer):
 
     class Meta:
         model = StaffProfile
-        fields = ["id", "staff_id", "position", "department", "department_detail"]
-        read_only_fields = ["id", "staff_id", "position", "department", "department_detail"]
+        fields = ["id", "staff_id", "position", "department", "department_detail", "is_department_manager"]
+        read_only_fields = ["id", "staff_id", "position", "department", "department_detail", "is_department_manager"]
 
     def get_department_detail(self, obj):
         if not obj.department:
@@ -90,13 +88,15 @@ class StaffProfileCreateSerializer(serializers.Serializer):
     """Serializer for creating staff with auto User creation."""
 
     staff_id = serializers.CharField(max_length=8)
-    first_name = serializers.CharField(max_length=150)
-    last_name = serializers.CharField(max_length=150)
-    department_id = serializers.UUIDField(required=False, allow_null=True)
-    position = serializers.CharField(max_length=255, required=False, default="")
-    job_grade = serializers.CharField(max_length=50, required=False, default="")
-    phone = serializers.CharField(max_length=20, required=False, default="")
+    first_name = serializers.CharField(max_length=150, required=False, allow_blank=True, default="")
+    last_name = serializers.CharField(max_length=150, required=False, allow_blank=True, default="")
+    # Accept "department" (UUID of dept) — used by both frontend and bulk import (via department_id)
+    department = serializers.UUIDField(required=False, allow_null=True)
+    position = serializers.CharField(max_length=255, required=False, allow_blank=True, default="")
+    job_grade = serializers.CharField(max_length=50, required=False, allow_blank=True, default="")
+    phone = serializers.CharField(max_length=20, required=False, allow_blank=True, default="")
     date_of_joining = serializers.DateField(required=False, allow_null=True)
     is_department_manager = serializers.BooleanField(required=False, default=False)
-    password = serializers.CharField(max_length=128, write_only=True)
-    notes = serializers.CharField(required=False, default="")
+    # Optional — auto-generated random password if not provided
+    password = serializers.CharField(max_length=128, write_only=True, required=False, allow_blank=True, default="")
+    notes = serializers.CharField(required=False, allow_blank=True, default="")

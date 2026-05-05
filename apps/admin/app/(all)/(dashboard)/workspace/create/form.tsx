@@ -50,7 +50,7 @@ export function WorkspaceCreateForm() {
     await instanceWorkspaceService
       .slugCheck(formData.slug)
       .then(async (res) => {
-        if (res.status === true && !RESTRICTED_URLS.includes(formData.slug)) {
+        if (res.is_available === true && !RESTRICTED_URLS.includes(formData.slug)) {
           setSlugError(false);
           await createWorkspace(formData)
             .then(async () => {

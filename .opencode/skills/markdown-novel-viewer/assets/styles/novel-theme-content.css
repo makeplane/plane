@@ -42,7 +42,10 @@ body:not(.has-plan) .main-content {
   max-width: var(--content-width);
   margin: 0 auto;
   padding-bottom: 4rem;
+  /* Allow code blocks to visually overflow beyond content width */
+  overflow: visible;
 }
+
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {

@@ -137,6 +137,7 @@ class Workspace(BaseModel):
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     background_color = models.CharField(max_length=255, default=get_random_color)
+    is_board_of_director_workspace = models.BooleanField(default=False)
 
     def __str__(self):
         """Return name of the Workspace"""

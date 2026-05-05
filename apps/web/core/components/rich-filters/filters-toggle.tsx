@@ -33,10 +33,7 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
   const showAddFilterButton = !hasAnyConditions && !isFilterRowVisible && !hasUpdates;
 
   const handleToggleFilter = () => {
-    if (!filter) {
-      console.error("Filters toggle error - filter instance not available");
-      return;
-    }
+    if (!filter) return;
     filter.toggleVisibility();
   };
 

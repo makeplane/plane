@@ -85,7 +85,9 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
             if not key:
                 continue
 
-            preference = WorkspaceUserPreference.objects.filter(key=key, workspace__slug=slug).first()
+            preference = WorkspaceUserPreference.objects.filter(
+                key=key, workspace__slug=slug, user=request.user
+            ).first()
 
             if not preference:
                 continue

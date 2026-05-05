@@ -304,6 +304,18 @@ test('escapeShellValue returns non-string as-is', () => {
   assertEquals(escapeShellValue(undefined), undefined);
 });
 
+test('getReportsPath does not double-join when planPath is already absolute (Issue #335)', () => {
+  const planConfig = { reportsDir: 'reports' };
+  const pathsConfig = { plans: 'plans' };
+  const baseDir = '/home/user/project';
+  // Issue #335 made planPath absolute in session state
+  const absolutePlanPath = '/home/user/project/plans/my-plan';
+
+  const result = getReportsPath(absolutePlanPath, 'session', planConfig, pathsConfig, baseDir);
+  // Should NOT produce /home/user/project/home/user/project/plans/my-plan/reports
+  assertEquals(result, '/home/user/project/plans/my-plan/reports');
+});
+
 console.log('\n=== getReportsPath edge cases ===\n');
 
 test('getReportsPath with empty reportsDir falls back to "reports"', () => {

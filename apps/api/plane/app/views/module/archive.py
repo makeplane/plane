@@ -33,6 +33,7 @@ from plane.app.serializers import ModuleDetailSerializer
 from plane.db.models import Issue, Module, ModuleLink, UserFavorite, Project
 from plane.utils.analytics_plot import burndown_plot
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.utils.module_activity import log_module_activity
 
 
 # Module imports
@@ -550,6 +551,7 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
             )
         module.archived_at = timezone.now()
         module.save()
+        log_module_activity(module=module, actor=request.user, verb="archived")
         UserFavorite.objects.filter(
             entity_type="module",
             entity_identifier=module_id,
@@ -562,4 +564,5 @@ class ModuleArchiveUnarchiveEndpoint(BaseAPIView):
         module = Module.objects.get(pk=module_id, project_id=project_id, workspace__slug=slug)
         module.archived_at = None
         module.save()
+        log_module_activity(module=module, actor=request.user, verb="unarchived")
         return Response(status=status.HTTP_204_NO_CONTENT)

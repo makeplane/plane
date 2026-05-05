@@ -4,19 +4,18 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-import React from "react";
 import { Paperclip } from "lucide-react";
+
 import { useTranslation } from "@plane/i18n";
-import { LinkIcon, ViewsIcon, RelationPropertyIcon } from "@plane/propel/icons";
+import { LinkIcon, RelationPropertyIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
 // plane web imports
 import { WorkItemAdditionalWidgetActionButtons } from "@/plane-web/components/issues/issue-detail-widgets/action-buttons";
 // local imports
-import { IssueAttachmentActionButton } from "./attachments";
+import { IssueAttachmentActionButton } from "./attachments/quick-action-button";
 import { IssueLinksActionButton } from "./links";
-import { RelationActionButton } from "./relations";
+import { RelationActionButton } from "./relations/quick-action-button";
 import { SubIssuesActionButton } from "./sub-issues";
 import { IssueDetailWidgetButton } from "./widget-button";
 
@@ -50,6 +49,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+
       {!hideWidgets?.includes("relations") && (
         <RelationActionButton
           issueId={issueId}
@@ -64,6 +64,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+
       {!hideWidgets?.includes("links") && (
         <IssueLinksActionButton
           customButton={
@@ -77,6 +78,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+
       {!hideWidgets?.includes("attachments") && (
         <IssueAttachmentActionButton
           workspaceSlug={workspaceSlug}
@@ -93,6 +95,7 @@ export function IssueDetailWidgetActionButtons(props: Props) {
           issueServiceType={issueServiceType}
         />
       )}
+
       <WorkItemAdditionalWidgetActionButtons
         disabled={disabled}
         hideWidgets={hideWidgets ?? []}

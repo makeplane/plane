@@ -1,26 +1,32 @@
 # Phase 6: Testing & Polish
 
 ## Context Links
+
 - API tests pattern: `apps/api/plane/tests/` (if exists) or inline testing
 - Frontend compilation: `pnpm build` or `pnpm typecheck`
 
 ## Overview
+
 - **Priority**: P2
 - **Status**: complete
 - Comprehensive testing, edge case handling, final polish.
 
 ## Key Insights
+
 - Backend: Django test framework with DRF test client
 - Frontend: TypeScript compilation check is primary validation
 - Edge cases: zero duration, future dates, concurrent edits, timezone handling
 
 ## Requirements
+
 ### Functional
+
 - API endpoint tests (CRUD + permissions + validation)
 - Frontend TypeScript compilation passes
 - Edge cases handled gracefully
 
 ### Non-functional
+
 - No regression in existing features
 - Clean error messages for validation failures
 
@@ -59,6 +65,7 @@
    - Verify rollback works
 
 ## Todo List
+
 - [ ] Write API endpoint tests
 - [ ] Run TypeScript compilation check
 - [ ] Handle edge cases in API validation
@@ -69,6 +76,7 @@
 - [ ] Manual E2E walkthrough
 
 ## Success Criteria
+
 - All API tests pass
 - TypeScript compiles without errors
 - Edge cases return proper error messages
@@ -76,13 +84,16 @@
 - Migration is reversible
 
 ## Risk Assessment
+
 - **Test infrastructure**: May need to set up test fixtures for worklog tests
 - **Migration rollback**: Removing a field requires careful backward migration
 
 ## Security Considerations
+
 - Test that unauthenticated requests are rejected
 - Test that cross-workspace access is blocked
 - Verify no data leakage in summary endpoints
 
 ## Next Steps
+
 - Feature complete — ready for code review and merge

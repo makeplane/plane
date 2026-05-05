@@ -53,7 +53,7 @@ python scripts/gemini_batch_process.py \
 
 ### Score 6-7/10: Minor Refinements Needed
 **Actions**:
-- Use `media-processing` skill for adjustments (brightness/contrast/saturation)
+- Use `ck:media-processing` skill for adjustments (brightness/contrast/saturation)
 - Consider selective regeneration of problem areas
 - May proceed with caution if time-constrained
 

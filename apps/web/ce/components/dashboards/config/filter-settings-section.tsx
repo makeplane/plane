@@ -2,10 +2,14 @@
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
+ *
+ * Widget filter settings: priority, state group, date ranges.
+ * Field paths match backend DashboardWidget.filters JSON field.
  */
 
 import { Controller } from "react-hook-form";
 import type { Control } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import {
   ANALYTICS_PRIORITY_OPTIONS,
   ANALYTICS_STATE_GROUP_OPTIONS,
@@ -17,7 +21,6 @@ type FilterSettingsSectionProps = {
   control: Control<any>;
 };
 
-// Reusable multi-select chip component for entity filters
 function MultiSelectChips({
   options,
   value,
@@ -40,10 +43,11 @@ function MultiSelectChips({
             key={opt.key}
             type="button"
             onClick={() => toggle(opt.key)}
-            className={`rounded-md border px-2 py-1 text-xs transition-colors ${selected
+            className={`rounded-md border px-2 py-1 text-xs transition-colors ${
+              selected
                 ? "border-accent-strong bg-accent-subtle text-accent-primary"
                 : "border-subtle text-tertiary hover:bg-layer-2"
-              }`}
+            }`}
           >
             {opt.label}
           </button>
@@ -53,7 +57,6 @@ function MultiSelectChips({
   );
 }
 
-// Date range picker row with after/before inputs
 function DateRangeRow({
   label,
   value,
@@ -71,16 +74,14 @@ function DateRangeRow({
           type="date"
           value={value?.after ?? ""}
           onChange={(e) => onChange({ ...value, after: e.target.value || undefined })}
-          className="w-full rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
-          placeholder="After"
+          className="w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
         />
-        <span className="text-xs text-placeholder">to</span>
+        <span className="text-xs text-tertiary">to</span>
         <input
           type="date"
           value={value?.before ?? ""}
           onChange={(e) => onChange({ ...value, before: e.target.value || undefined })}
-          className="w-full rounded-md border border-subtle bg-surface-1 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
-          placeholder="Before"
+          className="w-full rounded-md border border-subtle bg-layer-2 px-2.5 py-1.5 text-xs text-secondary outline-none focus:border-accent-strong"
         />
       </div>
     </div>
@@ -88,17 +89,15 @@ function DateRangeRow({
 }
 
 export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-5">
-      <p className="text-xs text-placeholder">
-        Filter widget data by specific dimensions. Only matching issues will be included in the chart.
-      </p>
+      <p className="text-xs text-tertiary">{t("analytics_dashboard.filter_description")}</p>
 
-      {/* Priority filter */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-tertiary">Priority</span>
+        <span className="text-xs font-medium text-tertiary">{t("analytics_dashboard.filter_priority")}</span>
         <Controller
-          name="config.filters.priority"
+          name="filters.priority"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
@@ -111,11 +110,10 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
         />
       </div>
 
-      {/* State Group filter */}
       <div className="flex flex-col gap-1.5">
-        <span className="text-xs font-medium text-tertiary">State Group</span>
+        <span className="text-xs font-medium text-tertiary">{t("analytics_dashboard.filter_state_group")}</span>
         <Controller
-          name="config.filters.state_group"
+          name="filters.state_group"
           control={control}
           defaultValue={[]}
           render={({ field }) => (
@@ -128,13 +126,12 @@ export function FilterSettingsSection({ control }: FilterSettingsSectionProps) {
         />
       </div>
 
-      {/* Date range filters */}
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-medium text-secondary">Date Ranges</span>
+        <span className="text-xs font-medium text-secondary">{t("analytics_dashboard.filter_date_ranges")}</span>
         {ANALYTICS_DATE_FILTER_OPTIONS.map((opt) => (
           <Controller
             key={opt.key}
-            name={`config.filters.${opt.key}` as const}
+            name={`filters.${opt.key}` as const}
             control={control}
             defaultValue={{}}
             render={({ field }) => (

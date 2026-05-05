@@ -33,7 +33,6 @@ import {
   SpreadsheetAssigneeColumn,
   SpreadsheetAttachmentColumn,
   SpreadsheetCreatedOnColumn,
-  SpreadsheetDueDateColumn,
   SpreadsheetEstimateColumn,
   SpreadsheetLabelColumn,
   SpreadsheetModuleColumn,
@@ -45,6 +44,19 @@ import {
   SpreadsheetSubIssueColumn,
   SpreadsheetUpdatedOnColumn,
 } from "@/components/issues/issue-layouts/spreadsheet/columns";
+import {
+  SpreadsheetDepartmentNameColumn,
+  SpreadsheetProjectNameColumn,
+  SpreadsheetProjectLeadColumn,
+  SpreadsheetBankWideProjectColumn,
+  SpreadsheetMainTaskCategoryColumn,
+  SpreadsheetSubTaskCategoryColumn,
+  SpreadsheetProgressTrackingColumn,
+  SpreadsheetCompletedDateColumn,
+  SpreadsheetReferenceLinkColumn,
+  SpreadsheetTotalLogTimeColumn,
+} from "@/plane-web/components/issues/spreadsheet/columns";
+import { SpreadsheetDueDateColumnWithReason } from "@/plane-web/components/issues/issue-layouts/spreadsheet-due-date-column-with-reason";
 // store
 import { store } from "@/lib/store-context";
 
@@ -97,7 +109,7 @@ export const SpreadSheetPropertyIconMap: Record<string, FC<ISvgIcons>> = {
 export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpreadsheetColumn } = {
   assignee: SpreadsheetAssigneeColumn,
   created_on: SpreadsheetCreatedOnColumn,
-  due_date: SpreadsheetDueDateColumn,
+  due_date: SpreadsheetDueDateColumnWithReason,
   estimate: SpreadsheetEstimateColumn,
   labels: SpreadsheetLabelColumn,
   modules: SpreadsheetModuleColumn,
@@ -109,6 +121,17 @@ export const SPREADSHEET_COLUMNS: { [key in keyof IIssueDisplayProperties]: TSpr
   sub_issue_count: SpreadsheetSubIssueColumn,
   updated_on: SpreadsheetUpdatedOnColumn,
   attachment_count: SpreadsheetAttachmentColumn,
+  // CE extended columns
+  department_name: SpreadsheetDepartmentNameColumn,
+  project_name: SpreadsheetProjectNameColumn,
+  project_lead: SpreadsheetProjectLeadColumn,
+  bank_wide_project: SpreadsheetBankWideProjectColumn,
+  main_task_category: SpreadsheetMainTaskCategoryColumn,
+  sub_task_category: SpreadsheetSubTaskCategoryColumn,
+  progress_tracking: SpreadsheetProgressTrackingColumn,
+  completed_date: SpreadsheetCompletedDateColumn,
+  reference_link: SpreadsheetReferenceLinkColumn,
+  total_log_time: SpreadsheetTotalLogTimeColumn,
 };
 
 export const useGroupByOptions = (

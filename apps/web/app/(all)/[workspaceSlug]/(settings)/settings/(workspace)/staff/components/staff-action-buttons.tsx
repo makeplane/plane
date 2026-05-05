@@ -24,12 +24,7 @@ export const StaffActionButtons = ({ member, onEdit, onDeactivate, onDelete }: S
 
   return (
     <div className="flex items-center justify-end gap-2">
-      <Button
-        variant="secondary"
-        size="sm"
-        onClick={() => onEdit(member)}
-        className="flex items-center gap-1"
-      >
+      <Button variant="secondary" size="sm" onClick={() => onEdit(member)} className="flex items-center gap-1">
         <Edit2 className="h-3 w-3" />
       </Button>
       {member.employment_status === "active" && (
@@ -42,12 +37,7 @@ export const StaffActionButtons = ({ member, onEdit, onDeactivate, onDelete }: S
           {t("staff.deactivate")}
         </Button>
       )}
-      <Button
-        variant="error-outline"
-        size="sm"
-        onClick={() => onDelete(member.id)}
-        className="flex items-center gap-1"
-      >
+      <Button variant="error-outline" size="sm" onClick={() => onDelete(member.id)} className="flex items-center gap-1">
         <Trash2 className="h-3 w-3" />
       </Button>
     </div>

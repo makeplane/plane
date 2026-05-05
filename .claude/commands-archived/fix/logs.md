@@ -6,9 +6,11 @@ argument-hint: [issue]
 **IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
 
 ## Mission
+
 <issue>$ARGUMENTS</issue>
 
 ## Workflow
+
 1. Check if `./logs.txt` exists:
    - If missing, set up permanent log piping in project's script config (`package.json`, `Makefile`, `pyproject.toml`, etc.):
      - **Bash/Unix**: append `2>&1 | tee logs.txt`

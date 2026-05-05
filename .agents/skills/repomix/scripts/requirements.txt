@@ -1,0 +1,15 @@
+# Repomix Skill Dependencies
+# Python 3.10+ required
+
+# No Python package dependencies - uses only standard library
+
+# Testing dependencies (dev)
+pytest>=8.0.0
+pytest-cov>=4.1.0
+pytest-mock>=3.12.0
+
+# Note: This script requires the Repomix CLI tool
+# Install Repomix globally:
+#   npm install -g repomix
+#   pnpm add -g repomix
+#   yarn global add repomix

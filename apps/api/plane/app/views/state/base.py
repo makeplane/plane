@@ -19,6 +19,7 @@ from plane.app.serializers import StateSerializer
 from plane.app.permissions import ROLE, allow_permission
 from plane.db.models import State, Issue
 from plane.utils.cache import invalidate_cache
+from plane.utils.instance_admin import is_instance_admin
 
 
 class StateViewSet(BaseViewSet):
@@ -46,7 +47,11 @@ class StateViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
         try:
-            serializer = StateSerializer(data=request.data)
+            data = request.data.copy()
+            # Strip is_system from non-instance-admins; only instance admins can create system states
+            if not is_instance_admin(request.user):
+                data.pop("is_system", None)
+            serializer = StateSerializer(data=data)
             if serializer.is_valid():
                 serializer.save(project_id=project_id)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -62,6 +67,14 @@ class StateViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk):
         try:
             state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
+            # Allow sequence-only patches (drag reorder) for any admin;
+            # block other field mutations on system states for non-instance-admins
+            is_sequence_only = set(request.data.keys()) <= {"sequence"}
+            if state.is_system and not is_sequence_only and not is_instance_admin(request.user):
+                return Response(
+                    {"error": "Only instance admins can modify system states."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             serializer = StateSerializer(state, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -104,15 +117,27 @@ class StateViewSet(BaseViewSet):
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def mark_as_default(self, request, slug, project_id, pk):
-        # Select all the states which are marked as default
-        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).update(default=False)
-        _ = State.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).update(default=True)
+        state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
+        if state.is_system and not is_instance_admin(request.user):
+            return Response(
+                {"error": "Only instance admins can mark a system state as default."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # Unmark current default then mark the target state
+        State.objects.filter(workspace__slug=slug, project_id=project_id, default=True).update(default=False)
+        State.objects.filter(workspace__slug=slug, project_id=project_id, pk=pk).update(default=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(path="workspaces/:slug/states/", url_params=True, user=False)
     @allow_permission([ROLE.ADMIN])
     def destroy(self, request, slug, project_id, pk):
         state = State.objects.get(is_triage=False, pk=pk, project_id=project_id, workspace__slug=slug)
+
+        if state.is_system and not is_instance_admin(request.user):
+            return Response(
+                {"error": "Only instance admins can delete system states."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         if state.default:
             return Response(

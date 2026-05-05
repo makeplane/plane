@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TIssuePriorities } from "../issues";
+import type { TIssuePriorities, TIssueFrequency } from "../issues";
 import type { TStateGroups } from "../state";
 import type { TIssuePublicComment } from "./activity/issue_comment";
 import type { TIssueAttachment } from "./issue_attachment";
@@ -50,10 +50,10 @@ export type TBaseIssue = {
 
   state_id: string | null;
   priority: TIssuePriorities | null;
+  frequency: TIssueFrequency | null;
   label_ids: string[];
   assignee_ids: string[];
   estimate_point: string | null;
-  estimate_time: number | null;
 
   sub_issues_count: number;
   attachment_count: number;
@@ -64,6 +64,8 @@ export type TBaseIssue = {
   cycle_id: string | null;
   module_ids: string[] | null;
   type_id: string | null;
+  main_task_category_id: string | null;
+  sub_task_category_id: string | null;
 
   created_at: string;
   updated_at: string;
@@ -102,6 +104,11 @@ export type TIssue = TBaseIssue & {
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
   sourceIssueId?: string;
   state__group?: TStateGroups | null;
+  // CE extended data from worklog annotation
+  total_logged_minutes?: number | null;
+  // CE extended data from task category annotation
+  main_task_category_name?: string | null;
+  sub_task_category_name?: string | null;
 };
 
 export type TIssueMap = {
@@ -159,6 +166,9 @@ export type TBulkOperationsPayload = {
 export type TWorkItemWidgets = "sub-work-items" | "relations" | "links" | "attachments";
 
 export type TIssueServiceType = EIssueServiceType.ISSUES | EIssueServiceType.EPICS | EIssueServiceType.WORK_ITEMS;
+
+/** Payload for PATCH /issues/{id}/ — `reason` is transient (popped by backend before save) */
+export type TIssueUpdatePayload = Partial<TIssue> & { reason?: string };
 
 export interface IPublicIssue extends Pick<
   TIssue,

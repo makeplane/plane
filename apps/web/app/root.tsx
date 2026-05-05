@@ -77,7 +77,7 @@ export function Layout({ children }: { children: ReactNode }) {
       <body suppressHydrationWarning>
         <div id="context-menu-portal" />
         <div id="editor-portal" />
-        <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="system">
+        <ThemeProvider themes={["light", "dark", "light-contrast", "dark-contrast", "custom"]} defaultTheme="light">
           {children}
         </ThemeProvider>
         <Scripts />

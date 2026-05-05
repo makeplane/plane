@@ -217,7 +217,7 @@ export const getSlashCommandFilteredSections =
         items: [
           {
             commandKey: "text-color",
-            key: "text-color-default",
+            key: "text-default",
             title: "Default",
             description: "Change text color",
             searchTerms: ["color", "text", "default"],

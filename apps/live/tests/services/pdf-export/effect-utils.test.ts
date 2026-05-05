@@ -34,7 +34,7 @@ describe("effect-utils", () => {
 
       assert(Either.isLeft(result), "Expected Left but got Right");
       expect(result.left).toBeInstanceOf(PdfTimeoutError);
-      expect((result.left as PdfTimeoutError).operation).toBe("test-operation");
+      expect(result.left.operation).toBe("test-operation");
     });
 
     it("should retry on failure up to maxRetries times", async () => {
@@ -119,7 +119,7 @@ describe("effect-utils", () => {
     it("should wrap successful promise", async () => {
       const effect = tryAsync(
         () => Promise.resolve("success"),
-        (err) => new Error(`wrapped: ${err}`)
+        (err) => new Error(`wrapped: ${String(err)}`)
       );
 
       const result = await Effect.runPromise(effect);

@@ -203,6 +203,56 @@ describe('Issue #327: Path Resolution Integration', () => {
       );
     });
 
+    it('scout-block uses payload.cwd to discover a git-root .claude/.ckignore', async () => {
+      const tempHome = path.join(os.tmpdir(), 'integration-scout-home-' + Date.now());
+      const projectRoot = path.join(os.tmpdir(), 'integration-scout-project-' + Date.now());
+      const processCwd = path.join(os.tmpdir(), 'integration-scout-cwd-' + Date.now());
+      const nestedDir = path.join(projectRoot, 'src', 'commands');
+
+      fs.mkdirSync(path.join(tempHome, '.claude'), { recursive: true });
+      fs.writeFileSync(
+        path.join(tempHome, '.claude', '.ck.json'),
+        JSON.stringify({ hooks: { 'scout-block': true } })
+      );
+      fs.mkdirSync(path.join(projectRoot, '.claude'), { recursive: true });
+      fs.mkdirSync(nestedDir, { recursive: true });
+      fs.mkdirSync(processCwd, { recursive: true });
+      fs.writeFileSync(path.join(projectRoot, '.git'), 'gitdir: ./.git/worktrees/test\n');
+      fs.writeFileSync(path.join(projectRoot, '.claude', '.ckignore'), '!build\n');
+
+      try {
+        const allowResult = await runHook('scout-block.cjs', {
+          tool_name: 'Read',
+          tool_input: { file_path: 'src/commands/build/run.rb' },
+          cwd: nestedDir
+        }, {
+          cwd: processCwd,
+          env: { HOME: tempHome }
+        });
+
+        assert.strictEqual(allowResult.exitCode, 0, 'scout-block should allow build via payload.cwd override');
+
+        const blockResult = await runHook('scout-block.cjs', {
+          tool_name: 'Read',
+          tool_input: { file_path: 'node_modules/pkg/index.js' },
+          cwd: nestedDir
+        }, {
+          cwd: processCwd,
+          env: { HOME: tempHome }
+        });
+
+        assert.strictEqual(blockResult.exitCode, 2, 'scout-block should still block node_modules');
+        assert.ok(
+          blockResult.stderr.includes(path.join(projectRoot, '.claude', '.ckignore')),
+          'blocked output should point to the project override file'
+        );
+      } finally {
+        fs.rmSync(tempHome, { recursive: true, force: true });
+        fs.rmSync(projectRoot, { recursive: true, force: true });
+        fs.rmSync(processCwd, { recursive: true, force: true });
+      }
+    });
+
   });
 
   describe('Git Scenarios', () => {

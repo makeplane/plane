@@ -118,7 +118,7 @@ export const useResponsiveTabLayout = ({
       count = 1;
     }
 
-    setVisibleCount(count);
+    queueMicrotask(() => setVisibleCount(count));
   }, [containerWidth, visibleNavigationItems.length, gap, overflowButtonWidth]);
 
   // Memoize active tab index to prevent unnecessary re-renders

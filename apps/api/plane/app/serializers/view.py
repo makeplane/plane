@@ -49,6 +49,11 @@ class ViewIssueListSerializer(serializers.Serializer):
             "assignee_ids": self.get_assignee_ids(instance),
             "label_ids": self.get_label_ids(instance),
             "module_ids": self.get_module_ids(instance),
+            "total_logged_minutes": getattr(instance, "total_logged_minutes", None),
+            "main_task_category_id": instance.main_task_category_id,
+            "sub_task_category_id": instance.sub_task_category_id,
+            "main_task_category_name": instance.main_task_category.name if instance.main_task_category else None,
+            "sub_task_category_name": instance.sub_task_category.name if instance.sub_task_category else None,
         }
         return data
 
@@ -66,6 +71,7 @@ class IssueViewSerializer(DynamicBaseSerializer):
             "owned_by",
             "access",
             "is_locked",
+            "is_default",
         ]
 
     def create(self, validated_data):

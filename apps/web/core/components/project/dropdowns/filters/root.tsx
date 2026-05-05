@@ -65,6 +65,15 @@ export const ProjectFiltersSelection = observer(function ProjectFiltersSelection
             }
             title="My projects"
           />
+          <FilterOption
+            isChecked={!!displayFilters.is_bank_wide}
+            onClick={() =>
+              handleDisplayFiltersUpdate({
+                is_bank_wide: !displayFilters.is_bank_wide,
+              })
+            }
+            title="Bank-wide only"
+          />
         </div>
 
         {/* access */}

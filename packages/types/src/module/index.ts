@@ -5,4 +5,5 @@
  */
 
 export * from "./module_filters";
+export * from "./module-activity";
 export * from "./modules";

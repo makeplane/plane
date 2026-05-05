@@ -14,25 +14,28 @@
  * Core logic extracted to lib/privacy-checker.cjs for OpenCode plugin reuse.
  */
 
-const path = require('path');
+(async () => {
+  try {
+  const path = require('path');
+  const { createHookTimer, logHookCrash } = require('./lib/hook-logger.cjs');
 
-// Import shared privacy checking logic
-const {
-  checkPrivacy,
-  isSafeFile,
-  isPrivacyBlockDisabled,
-  isPrivacySensitive,
-  hasApprovalPrefix,
-  stripApprovalPrefix,
-  extractPaths,
-  isSuspiciousPath
-} = require('./lib/privacy-checker.cjs');
-const { isHookEnabled } = require('./lib/ck-config-utils.cjs');
+    // Import shared privacy checking logic
+    const {
+      checkPrivacy,
+      isSafeFile,
+      isPrivacyBlockDisabled,
+      isPrivacySensitive,
+      hasApprovalPrefix,
+      stripApprovalPrefix,
+      extractPaths,
+      isSuspiciousPath
+    } = require('./lib/privacy-checker.cjs');
+    const { isHookEnabled } = require('./lib/ck-config-utils.cjs');
 
-// Early exit if hook disabled in config
-if (!isHookEnabled('privacy-block')) {
-  process.exit(0);
-}
+    // Early exit if hook disabled in config
+    if (!isHookEnabled('privacy-block')) {
+      process.exit(0);
+    }
 
 /**
  * Format block message with approval instructions and JSON marker for AskUserQuestion
@@ -87,6 +90,7 @@ function formatApprovalNotice(filePath) {
 
 // Main
 async function main() {
+  const timer = createHookTimer('privacy-block', { event: 'PreToolUse' });
   let input = '';
   for await (const chunk of process.stdin) {
     input += chunk;
@@ -96,6 +100,7 @@ async function main() {
   try {
     hookData = JSON.parse(input);
   } catch (e) {
+    timer.end({ status: 'warn', exit: 0, note: 'json-parse-failed', error: e.message });
     process.exit(0); // Invalid JSON, allow
   }
 
@@ -115,37 +120,70 @@ async function main() {
       console.error('\x1b[33mWARN:\x1b[0m Approved path is outside project:', result.filePath);
     }
     console.error(formatApprovalNotice(result.filePath));
+    timer.end({
+      tool: toolName,
+      status: 'ok',
+      exit: 0,
+      target: path.basename(result.filePath || ''),
+      note: result.suspicious ? 'approved-suspicious-path' : 'approved'
+    });
     process.exit(0);
   }
 
   if (result.isBash) {
     // Bash: warn but don't block - allows "Yes → bash cat" flow
     console.error(`\x1b[33mWARN:\x1b[0m ${result.reason}`);
+    timer.end({
+      tool: toolName,
+      status: 'warn',
+      exit: 0,
+      target: path.basename(result.filePath || ''),
+      note: 'bash-sensitive-file'
+    });
     process.exit(0);
   }
 
   if (result.blocked) {
     // No approval - block
     console.error(formatBlockMessage(result.filePath));
+    timer.end({
+      tool: toolName,
+      status: 'block',
+      exit: 2,
+      target: path.basename(result.filePath || ''),
+      note: 'approval-required'
+    });
     process.exit(2);
   }
 
+  timer.end({ tool: toolName, status: 'ok', exit: 0 });
   process.exit(0); // Allow
 }
 
-// Run main only when executed directly (not when required for testing)
-if (require.main === module) {
-  main().catch(() => process.exit(0));
-}
+    // Run main only when executed directly (not when required for testing)
+    if (require.main === module) {
+      main().catch((error) => {
+        logHookCrash('privacy-block', error, { event: 'PreToolUse' });
+        process.exit(0);
+      });
+    }
 
-// Export functions for unit testing
-if (typeof module !== 'undefined') {
-  module.exports = {
-    isSafeFile,
-    isPrivacyBlockDisabled,
-    isPrivacySensitive,
-    hasApprovalPrefix,
-    stripApprovalPrefix,
-    extractPaths,
-  };
-}
+    // Export functions for unit testing
+    if (typeof module !== 'undefined') {
+      module.exports = {
+        isSafeFile,
+        isPrivacyBlockDisabled,
+        isPrivacySensitive,
+        hasApprovalPrefix,
+        stripApprovalPrefix,
+        extractPaths,
+      };
+    }
+} catch (e) {
+  try {
+    const { logHookCrash } = require('./lib/hook-logger.cjs');
+    logHookCrash('privacy-block', e, { event: 'PreToolUse' });
+    } catch (_) {}
+    process.exit(0); // fail-open
+  }
+})();

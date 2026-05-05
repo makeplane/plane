@@ -54,6 +54,12 @@ class InstanceConfigurationEndpoint(BaseAPIView):
 
         InstanceConfiguration.objects.bulk_update(bulk_configurations, ["value"], batch_size=100)
 
+        # Mutual exclusion: LDAP ⊕ Swing SSO — only one can be active
+        if request.data.get("IS_SWING_SSO_ENABLED") == "1":
+            InstanceConfiguration.objects.filter(key="IS_LDAP_ENABLED").update(value="0")
+        if request.data.get("IS_LDAP_ENABLED") == "1":
+            InstanceConfiguration.objects.filter(key="IS_SWING_SSO_ENABLED").update(value="0")
+
         serializer = InstanceConfigurationSerializer(configurations, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

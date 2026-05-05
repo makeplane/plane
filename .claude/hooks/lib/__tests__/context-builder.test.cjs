@@ -89,11 +89,12 @@ describe('context-builder.cjs', () => {
 
     it('falls back to workflows/ when rules/ does not exist', () => {
       tempDir = createTempDir(['.claude/workflows']);
-      createTestFile(path.join(tempDir, '.claude/workflows'), 'development-rules.md');
+      const uniqueFilename = `legacy-workflow-${Date.now()}-${Math.random().toString(36).slice(2)}.md`;
+      createTestFile(path.join(tempDir, '.claude/workflows'), uniqueFilename);
       process.chdir(tempDir);
 
-      const result = contextBuilder.resolveRulesPath('development-rules.md');
-      assert.strictEqual(result, '.claude/workflows/development-rules.md',
+      const result = contextBuilder.resolveRulesPath(uniqueFilename);
+      assert.strictEqual(result, `.claude/workflows/${uniqueFilename}`,
         'Should fall back to workflows/ directory');
     });
 
@@ -260,6 +261,24 @@ describe('context-builder.cjs', () => {
       assert.ok(lines.some(l => l.includes('Rules')), 'Should include Rules header');
     });
 
+    it('buildRulesSection uses absolute paths when provided (Issue #476)', () => {
+      const lines = contextBuilder.buildRulesSection({
+        plansPath: '/Users/test/project/plans',
+        docsPath: '/Users/test/project/docs'
+      });
+      const joined = lines.join('\n');
+      assert.ok(joined.includes('/Users/test/project/plans'), 'Should include absolute plans path');
+      assert.ok(joined.includes('/Users/test/project/docs'), 'Should include absolute docs path');
+      assert.ok(!joined.includes('Plans → "plans/"'), 'Should NOT use bare relative "plans/" when absolute path provided');
+    });
+
+    it('buildRulesSection falls back to relative when no paths provided (Issue #476)', () => {
+      const lines = contextBuilder.buildRulesSection({});
+      const joined = lines.join('\n');
+      assert.ok(joined.includes('"plans"'), 'Should fall back to relative plans');
+      assert.ok(joined.includes('"docs"'), 'Should fall back to relative docs');
+    });
+
     it('buildModularizationSection returns array with Modularization', () => {
       const lines = contextBuilder.buildModularizationSection();
       assert.ok(Array.isArray(lines), 'Should return array');
@@ -287,6 +306,98 @@ describe('context-builder.cjs', () => {
       assert.ok(lines.some(l => l.includes('Naming')), 'Should include Naming');
     });
 
+  });
+
+  describe('Session-scoped dedup markers', () => {
+    const sessionId = `context-builder-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const sessionStatePath = path.join(os.tmpdir(), `ck-session-${sessionId}.json`);
+
+    after(() => {
+      fs.rmSync(sessionStatePath, { force: true });
+    });
+
+    it('marks and detects recent injections without a transcript path', () => {
+      fs.rmSync(sessionStatePath, { force: true });
+
+      assert.strictEqual(contextBuilder.wasRecentlyInjected(null, sessionId), false,
+        'Session should start without a recent injection marker');
+      assert.strictEqual(contextBuilder.markRecentlyInjected(sessionId), true,
+        'Should persist a session-scoped dedup marker');
+      assert.strictEqual(contextBuilder.wasRecentlyInjected(null, sessionId), true,
+        'Session marker should dedupe repeated injections even without transcript access');
+    });
+
+    it('ignores expired session markers', () => {
+      fs.writeFileSync(sessionStatePath, JSON.stringify({
+        devRulesReminder: {
+          scopes: {
+            session: {
+              lastInjectedAt: new Date(Date.now() - (6 * 60 * 1000)).toISOString()
+            }
+          }
+        }
+      }));
+
+      assert.strictEqual(contextBuilder.wasRecentlyInjected(null, sessionId), false,
+        'Expired markers should allow reminder reinjection');
+    });
+
+    it('fails open when the session marker is corrupt', () => {
+      fs.writeFileSync(sessionStatePath, '{not-json');
+
+      assert.strictEqual(contextBuilder.wasRecentlyInjected(null, sessionId), false,
+        'Corrupt session state should not suppress reminders');
+    });
+
+    it('tracks pending reservations per scope', () => {
+      fs.rmSync(sessionStatePath, { force: true });
+
+      assert.deepStrictEqual(
+        contextBuilder.reserveInjectionScope(sessionId, 'scope-a', null),
+        { shouldInject: true, reserved: true }
+      );
+      assert.deepStrictEqual(
+        contextBuilder.reserveInjectionScope(sessionId, 'scope-a', null),
+        { shouldInject: false, reserved: false }
+      );
+      assert.deepStrictEqual(
+        contextBuilder.reserveInjectionScope(sessionId, 'scope-b', null),
+        { shouldInject: true, reserved: true }
+      );
+      assert.strictEqual(contextBuilder.clearPendingInjection(sessionId, 'scope-a'), true,
+        'Should clear the pending reservation for the matched scope');
+    });
+
+    it('falls back to transcript evidence for the same cwd after marker expiry', () => {
+      const tempDir = createTempDir();
+      const transcriptPath = path.join(tempDir, 'transcript.txt');
+      const scopeKey = contextBuilder.buildInjectionScopeKey({ baseDir: tempDir });
+
+      try {
+        const lines = Array(200).fill('x');
+        lines[170] = `- CWD: ${scopeKey}`;
+        lines[180] = '[IMPORTANT] Consider Modularization';
+        fs.writeFileSync(transcriptPath, lines.join('\n'));
+        fs.writeFileSync(sessionStatePath, JSON.stringify({
+          devRulesReminder: {
+            scopes: {
+              [scopeKey]: {
+                lastInjectedAt: new Date(Date.now() - (6 * 60 * 1000)).toISOString()
+              }
+            }
+          }
+        }));
+
+        assert.strictEqual(contextBuilder.wasRecentlyInjected(transcriptPath, sessionId, scopeKey), true,
+          'Transcript fallback should still dedupe the same cwd after marker expiry');
+        assert.deepStrictEqual(
+          contextBuilder.reserveInjectionScope(sessionId, scopeKey, transcriptPath),
+          { shouldInject: false, reserved: false }
+        );
+      } finally {
+        cleanupTempDir(tempDir);
+      }
+    });
   });
 
   describe('Hooks config behavior (Issue #413)', () => {
@@ -384,7 +495,11 @@ describe('context-builder.cjs', () => {
         'resolveScriptPath',
         'resolveSkillsVenv',
         'buildPlanContext',
+        'buildInjectionScopeKey',
         'wasRecentlyInjected',
+        'reserveInjectionScope',
+        'markRecentlyInjected',
+        'clearPendingInjection',
         'resolveWorkflowPath' // Backward compat alias
       ];
 
@@ -437,10 +552,11 @@ describe('context-builder.cjs', () => {
     it('resolves legacy @workflows/ references via fallback', () => {
       // Test that legacy references still work
       tempDir = createTempDir(['.claude/workflows']);
-      createTestFile(path.join(tempDir, '.claude/workflows'), 'primary-workflow.md');
+      const uniqueFilename = `legacy-primary-${Date.now()}-${Math.random().toString(36).slice(2)}.md`;
+      createTestFile(path.join(tempDir, '.claude/workflows'), uniqueFilename);
       process.chdir(tempDir);
 
-      const result = contextBuilder.resolveRulesPath('primary-workflow.md');
+      const result = contextBuilder.resolveRulesPath(uniqueFilename);
       assert.ok(result !== null, 'Should resolve legacy workflow file');
       assert.ok(result.includes('workflows/'), 'Should find in workflows/');
     });

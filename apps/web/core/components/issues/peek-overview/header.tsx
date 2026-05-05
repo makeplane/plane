@@ -31,7 +31,7 @@ import { IconButton } from "@plane/propel/icon-button";
 
 export type TPeekModes = "side-peek" | "modal" | "full-screen";
 
-const PEEK_OPTIONS: { key: TPeekModes; icon: any; i18n_title: string }[] = [
+const PEEK_OPTIONS: { key: TPeekModes; icon: (props: { className?: string }) => JSX.Element; i18n_title: string }[] = [
   {
     key: "side-peek",
     icon: SidePanelIcon,
@@ -116,25 +116,27 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
     isArchived,
   });
 
-  const handleCopyText = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCopyText = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
-    copyUrlToClipboard(workItemLink).then(() => {
+    try {
+      await copyUrlToClipboard(workItemLink);
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: t("common.link_copied"),
         message: t("common.link_copied_to_clipboard"),
       });
-    });
+    } catch {
+      // silently fail
+    }
   };
 
   const handleDeleteIssue = async () => {
     try {
       const deleteIssue = issueDetails?.archived_at ? removeArchivedIssue : removeIssue;
 
-      return deleteIssue(workspaceSlug, projectId, issueId).then(() => {
-        setPeekIssue(undefined);
-      });
+      await deleteIssue(workspaceSlug, projectId, issueId);
+      setPeekIssue(undefined);
     } catch (_error) {
       setToast({
         title: t("toast.error"),
@@ -174,7 +176,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
           <div className="flex flex-shrink-0 items-center gap-2">
             <CustomSelect
               value={currentMode}
-              onChange={(val: any) => setPeekMode(val)}
+              onChange={(val: TPeekModes) => setPeekMode(val)}
               customButton={
                 <Tooltip tooltipContent={t("common.toggle_peek_view_layout")} isMobile={isMobile}>
                   <button type="button" className="">
@@ -206,7 +208,7 @@ export const IssuePeekOverviewHeader = observer(function IssuePeekOverviewHeader
             <IssueSubscription workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} />
           )}
           <Tooltip tooltipContent={t("common.actions.copy_link")} isMobile={isMobile}>
-            <IconButton variant="secondary" size="lg" onClick={handleCopyText} icon={CopyLinkIcon} />
+            <IconButton variant="secondary" size="lg" onClick={(e) => void handleCopyText(e)} icon={CopyLinkIcon} />
           </Tooltip>
           {issueDetails && (
             <WorkItemDetailQuickActions

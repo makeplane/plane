@@ -308,7 +308,13 @@ export class WorkspaceMemberStore implements IWorkspaceMemberStore {
    */
   inviteMembersToWorkspace = async (workspaceSlug: string, data: IWorkspaceBulkInviteFormData) => {
     const response = await this.workspaceService.inviteWorkspace(workspaceSlug, data);
-    await this.fetchWorkspaceMemberInvitations(workspaceSlug);
+    const hasAutoJoin = data.emails.some((e) => e.auto_join);
+    const hasInvite = data.emails.some((e) => !e.auto_join);
+    // refresh relevant lists based on which flows were triggered
+    await Promise.all([
+      hasAutoJoin ? this.fetchWorkspaceMembers(workspaceSlug) : null,
+      hasInvite ? this.fetchWorkspaceMemberInvitations(workspaceSlug) : null,
+    ]);
     return response;
   };
 

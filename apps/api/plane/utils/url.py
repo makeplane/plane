@@ -38,19 +38,11 @@ def contains_url(value: str) -> bool:
     Returns:
         bool: True if the string contains a URL, False otherwise
     """
-    # Prevent ReDoS by limiting input length
+    # Prevent ReDoS by limiting total input length before any regex work
     if len(value) > 1000:  # Reasonable limit for URL detection
         return False
 
-    # Additional safety: truncate very long lines that might contain URLs
-    lines = value.split("\n")
-    for line in lines:
-        if len(line) > 500:  # Process only reasonable length lines
-            line = line[:500]
-        if URL_PATTERN.search(line):
-            return True
-
-    return False
+    return bool(URL_PATTERN.search(value))
 
 
 def is_valid_url(url: str) -> bool:

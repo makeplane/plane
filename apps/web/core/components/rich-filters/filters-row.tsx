@@ -21,6 +21,7 @@ import { FilterItem } from "./filter-item/root";
 export type TFiltersRowProps<K extends TFilterProperty, E extends TExternalFilter> = {
   buttonConfig?: TAddFilterButtonProps<K, E>["buttonConfig"];
   disabledAllOperations?: boolean;
+  extraRightActions?: React.ReactNode;
   filter: IFilterInstance<K, E>;
   variant?: "modal" | "header";
   trackerElements?: {
@@ -36,6 +37,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
   const {
     buttonConfig,
     disabledAllOperations: disabledAllOperationsProp = false,
+    extraRightActions,
     filter,
     variant = "header",
     trackerElements,
@@ -87,40 +89,45 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
     </>
   );
 
-  const rightContent = !disabledAllOperations && (
+  const rightContent = (
     <>
-      <ElementTransition show={filter.canClearFilters}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={filter.clearFilters}
-          data-ph-element={trackerElements?.clearFilter}
-        >
-          {filter.clearFilterOptions?.label ?? "Clear all"}
-        </Button>
-      </ElementTransition>
-      <ElementTransition show={filter.canSaveView}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={filter.saveView}
-          data-ph-element={trackerElements?.saveView}
-        >
-          {filter.saveViewOptions?.label ?? "Save view"}
-        </Button>
-      </ElementTransition>
-      <ElementTransition show={filter.canUpdateView}>
-        <Button
-          variant="secondary"
-          className={COMMON_OPERATION_BUTTON_CLASSNAME}
-          onClick={handleUpdate}
-          loading={isUpdating}
-          disabled={isUpdating}
-          data-ph-element={trackerElements?.updateView}
-        >
-          {isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
-        </Button>
-      </ElementTransition>
+      {!disabledAllOperations && (
+        <>
+          <ElementTransition show={filter.canClearFilters}>
+            <Button
+              variant="secondary"
+              className={COMMON_OPERATION_BUTTON_CLASSNAME}
+              onClick={filter.clearFilters}
+              data-ph-element={trackerElements?.clearFilter}
+            >
+              {filter.clearFilterOptions?.label ?? "Clear all"}
+            </Button>
+          </ElementTransition>
+          <ElementTransition show={filter.canSaveView}>
+            <Button
+              variant="secondary"
+              className={COMMON_OPERATION_BUTTON_CLASSNAME}
+              onClick={filter.saveView}
+              data-ph-element={trackerElements?.saveView}
+            >
+              {filter.saveViewOptions?.label ?? "Save view"}
+            </Button>
+          </ElementTransition>
+          <ElementTransition show={filter.canUpdateView}>
+            <Button
+              variant="secondary"
+              className={COMMON_OPERATION_BUTTON_CLASSNAME}
+              onClick={handleUpdate}
+              loading={isUpdating}
+              disabled={isUpdating}
+              data-ph-element={trackerElements?.updateView}
+            >
+              {isUpdating ? "Confirming" : (filter.updateViewOptions?.label ?? "Update view")}
+            </Button>
+          </ElementTransition>
+        </>
+      )}
+      {extraRightActions}
     </>
   );
 
@@ -129,7 +136,7 @@ export const FiltersRow = observer(function FiltersRow<K extends TFilterProperty
       <div className="w-full flex flex-wrap items-center gap-2">{leftContent}</div>
       <div
         className={cn("flex items-center gap-2 border-l border-subtle pl-4", {
-          "border-l-transparent pl-0": !hasAvailableOperations,
+          "border-l-transparent pl-0": !hasAvailableOperations && !extraRightActions,
         })}
       >
         {rightContent}

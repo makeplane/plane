@@ -4,20 +4,68 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { useState } from "react";
+import { useParams } from "react-router";
 import type { TIssueGroupByOptions } from "@plane/types";
+// hooks
+import { useUser } from "@/hooks/store/user";
+import { useWorkflowStore } from "@/hooks/store/use-workflow";
 
 export const useWorkFlowFDragNDrop = (
   groupBy: TIssueGroupByOptions | undefined,
-  subGroupBy?: TIssueGroupByOptions
-) => ({
-  workflowDisabledSource: undefined,
-  isWorkflowDropDisabled: false,
-  getIsWorkflowWorkItemCreationDisabled: (groupId: string, subGroupId?: string) => false,
-  handleWorkFlowState: (
+  _subGroupBy?: TIssueGroupByOptions
+) => {
+  const { projectId } = useParams<{ projectId: string }>();
+  const workflowStore = useWorkflowStore();
+  const { data: currentUser } = useUser();
+
+  // Track which source stateId is currently blocked for this destination column
+  const [workflowDisabledSource, setWorkflowDisabledSource] = useState<string | undefined>(undefined);
+  const [isWorkflowDropDisabled, setIsWorkflowDropDisabled] = useState(false);
+
+  /**
+   * Called on onDragEnter / onDragStart for a Kanban column.
+   * sourceGroupId = the column being dragged FROM (= fromStateId when groupBy=state)
+   * destinationGroupId = this column (= toStateId when groupBy=state)
+   */
+  const handleWorkFlowState = (
     sourceGroupId: string,
     destinationGroupId: string,
-    sourceSubGroupId?: string,
-    destinationSubGroupId?: string
-  ) => {},
-});
+    _sourceSubGroupId?: string,
+    _destinationSubGroupId?: string
+  ) => {
+    if (!projectId || groupBy !== "state" || !workflowStore.isLive(projectId)) {
+      setWorkflowDisabledSource(undefined);
+      setIsWorkflowDropDisabled(false);
+      return;
+    }
+
+    // Don't show blocker on the source column itself
+    if (sourceGroupId === destinationGroupId) {
+      setWorkflowDisabledSource(undefined);
+      setIsWorkflowDropDisabled(false);
+      return;
+    }
+
+    const allowed = workflowStore.isTransitionAllowed(projectId, sourceGroupId, destinationGroupId, currentUser?.id);
+    setIsWorkflowDropDisabled(!allowed);
+    setWorkflowDisabledSource(!allowed ? sourceGroupId : undefined);
+  };
+
+  /**
+   * Returns true if work item creation should be disabled for the given column.
+   * Disabled when: groupBy=state, workflow is live, and allow_issue_creation=false for that state.
+   */
+  const getIsWorkflowWorkItemCreationDisabled = (groupId: string, _subGroupId?: string): boolean => {
+    if (!projectId || groupBy !== "state" || !workflowStore.isLive(projectId)) return false;
+    const stateData = workflowStore.workflowByProject.get(projectId)?.states[groupId];
+    return stateData?.allow_issue_creation === false;
+  };
+
+  return {
+    workflowDisabledSource,
+    isWorkflowDropDisabled,
+    getIsWorkflowWorkItemCreationDisabled,
+    handleWorkFlowState,
+  };
+};

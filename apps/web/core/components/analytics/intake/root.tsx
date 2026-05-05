@@ -5,13 +5,13 @@ import IntakeInsightTable from "./intake-insight-table";
 import IntakeDistribution from "./intake-distribution";
 
 export function Intake() {
-    return (
-        <AnalyticsWrapper i18nTitle="sidebar.intake">
-            <div className="flex flex-col gap-14">
-                <TotalInsights analyticsType="intake" />
-                <IntakeDistribution />
-                <IntakeInsightTable />
-            </div>
-        </AnalyticsWrapper>
-    );
+  return (
+    <AnalyticsWrapper i18nTitle="sidebar.intake">
+      <div className="flex flex-col gap-14">
+        <TotalInsights analyticsType="intake" />
+        <IntakeDistribution />
+        <IntakeInsightTable />
+      </div>
+    </AnalyticsWrapper>
+  );
 }

@@ -6,6 +6,7 @@
 
 import { useCallback } from "react";
 import { observer } from "mobx-react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -26,15 +27,13 @@ import { ProjectViewsList } from "@/components/views/views-list";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectView } from "@/hooks/store/use-project-view";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 import type { Route } from "./+types/page";
 
 function ProjectViewsPage({ params }: Route.ComponentProps) {
-  // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = params;
   // theme hook
   const { resolvedTheme } = useTheme();
+  const router = useRouter();
   // plane hooks
   const { t } = useTranslation();
   // store
@@ -103,4 +102,5 @@ function ProjectViewsPage({ params }: Route.ComponentProps) {
   );
 }
 
-export default observer(ProjectViewsPage);
+export const ProjectViewsPageComponent = observer(ProjectViewsPage);
+export default ProjectViewsPageComponent;

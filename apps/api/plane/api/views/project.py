@@ -22,7 +22,6 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 from plane.db.models import (
     Cycle,
     Intake,
-    ProjectUserProperty,
     Module,
     Project,
     DeployBoard,
@@ -242,6 +241,7 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                             workspace=serializer.instance.workspace,
                             group=state["group"],
                             default=state.get("default", False),
+                            is_system=state.get("is_system", False),
                             created_by=request.user,
                         )
                         for state in DEFAULT_STATES

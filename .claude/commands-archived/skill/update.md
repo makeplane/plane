@@ -8,19 +8,23 @@ Use `skill-creator` skill and `claude-code-guide` subagent.
 Use `docs-seeker` skills to search for documentation if needed.
 
 ## Arguments
+
 SKILL: $1 (default: `*`)
 PROMPT: $2 (default: empty)
 
 ## Your mission
-Update an existing skill or its reference files in `.claude/skills/${SKILL}` directory based on the user's prompt. 
+
+Update an existing skill or its reference files in `.claude/skills/${SKILL}` directory based on the user's prompt.
 Always keep in mind that `SKILL.md` and reference files should be token consumption efficient, so that **progressive disclosure** can be leveraged at best.
 `SKILL.md` is always short and concise, straight to the point, treat it as a quick reference guide.
 
 ### Scopes
+
 - Project-scope: Current working project directory (e.g. `.claude/`)
 - User-scope: Home/user directory (e.g. `~/.claude/`)
 
 ## IMPORTANT NOTES:
+
 - ALWAYS make changes to skills in the project-scope `.claude/skills/` directory (UNLESS you're allowed to).
 - DO NOT make any changes to skills in the home/user-scope `~/.claude/skills/` directory (UNLESS you're allowed to).
 - If you're given nothing, use `AskUserQuestion` tool for clarifications and `researcher` subagent to research about the topic.
@@ -33,4 +37,5 @@ Always keep in mind that `SKILL.md` and reference files should be token consumpt
 - Claude Code can activate multiple skills automatically to achieve the user's request.
 
 ## Additional instructions
+
 <additional-instructions>$PROMPT</additional-instructions>

@@ -10,11 +10,13 @@ This document outlines the standard tools and commands used in this monorepo.
 ## Package Manager
 
 We use **pnpm** for package management.
+
 - **Do not use `npm` or `yarn`.**
 - Lockfile: `pnpm-lock.yaml`
 - Workspace configuration: `pnpm-workspace.yaml`
 
 ### Common Commands
+
 - Install dependencies: `pnpm install`
 - Run a script in a specific package: `pnpm --filter <package_name> run <script>`
 - Run a script in all packages: `pnpm -r run <script>`
@@ -22,6 +24,7 @@ We use **pnpm** for package management.
 ## Monorepo Tooling
 
 We use **Turbo** for build system orchestration.
+
 - Configuration: `turbo.json`
 
 ## Project Structure

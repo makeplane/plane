@@ -1,6 +1,6 @@
 # Parallel Exploration
 
-Patterns for launching multiple subagents in parallel to scout codebase and verify implementation.
+Patterns for launching multiple subagents in parallel to scout codebase, verify implementation, and coordinate via native Tasks.
 
 ## Parallel Exploration (Scouting)
 
@@ -42,6 +42,27 @@ Task("Bash", "Run lint: bun run lint", "Verify lint")
 Task("Bash", "Run build: bun run build", "Verify build")
 ```
 
+## Task-Coordinated Parallel (Moderate+)
+
+For multi-phase fixes, use native Tasks to coordinate parallel agents.
+See `references/task-orchestration.md` for full patterns.
+
+**Pattern - Parallel issue trees:**
+```
+// Create separate task trees per independent issue
+T_A1 = TaskCreate(subject="[Issue A] Debug", activeForm="Debugging A")
+T_A2 = TaskCreate(subject="[Issue A] Fix",   activeForm="Fixing A",   addBlockedBy=[T_A1])
+T_B1 = TaskCreate(subject="[Issue B] Debug", activeForm="Debugging B")
+T_B2 = TaskCreate(subject="[Issue B] Fix",   activeForm="Fixing B",   addBlockedBy=[T_B1])
+T_final = TaskCreate(subject="Integration verify", addBlockedBy=[T_A2, T_B2])
+
+// Spawn agents per issue tree
+Task("fullstack-developer", "Fix Issue A. Claim tasks via TaskUpdate.", "Fix A")
+Task("fullstack-developer", "Fix Issue B. Claim tasks via TaskUpdate.", "Fix B")
+```
+
+Agents claim work via `TaskUpdate(status="in_progress")` and complete via `TaskUpdate(status="completed")`. Blocked tasks auto-unblock when dependencies resolve.
+
 ## When to Use Parallel
 
 | Scenario | Parallel Strategy |
@@ -50,11 +71,12 @@ Task("Bash", "Run build: bun run build", "Verify build")
 | Multi-module fix | Explore each module in parallel |
 | After implementation | Bash agents for typecheck + lint + build |
 | Before commit | Bash agents for test + build + lint |
+| 2+ independent issues | Task trees per issue + fullstack-developer agents |
 
-## Combining Explore + Bash
+## Combining Explore + Tasks + Bash
 
 **Step 1:** Parallel Explore to scout
-**Step 2:** Sequential implementation
+**Step 2:** Sequential implementation (update Tasks as phases complete)
 **Step 3:** Parallel Bash to verify
 
 ```
@@ -62,7 +84,7 @@ Task("Bash", "Run build: bun run build", "Verify build")
 Task("Explore", "Find payment handlers", "Scout payments")
 Task("Explore", "Find order processors", "Scout orders")
 
-// Wait for results, implement fix
+// Wait for results, implement fix, TaskUpdate each phase
 
 // Verify phase - parallel
 Task("Bash", "Run tests: bun test", "Run tests")
@@ -75,3 +97,4 @@ Task("Bash", "Run build", "Verify build")
 - Max 3 parallel agents recommended (system resources)
 - Each subagent has 200K token context limit
 - Keep prompts concise to avoid context bloat
+- Use `TaskList()` to check for available unblocked work

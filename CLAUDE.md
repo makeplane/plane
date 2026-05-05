@@ -1,40 +1,51 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Architecture
 
-## Role & Responsibilities
+- React 18 + Router v7 + MobX + Tailwind v4 | Django 4.2 + DRF + Postgres + Celery
+- CE pattern: new features in `ce/`, never modify `core/`
+- UI: prefer `@plane/propel/*` over `@plane/ui`
+- **Web vs Admin**: `apps/web/` uses i18n (`t()`); `apps/admin/` is **English-only, NO i18n**, uses Propel Dialog (`onOpenChange`) — admin rules auto-load via `.claude/rules/admin-app-conventions.md`
 
-Your role is to analyze user requirements, delegate tasks to appropriate sub-agents, and ensure cohesive delivery of features that meet specifications and architectural standards.
+## Rules & Workflows
 
-## Workflows
+- Detailed rules: `.claude/rules/` (auto-loaded by file path)
+- **Workflow**: `.claude/rules/primary-workflow.md` (orchestrator pipeline)
+- **Orchestration**: `.claude/rules/orchestration-protocol.md` (subagent delegation)
+- **Dev rules**: `.claude/rules/development-rules.md` (always loaded)
+- Skills catalog: `.claude/skills/` (activate per task)
+- Docs: `./docs/`
 
-- Primary workflow: `./.claude/rules/primary-workflow.md`
-- Development rules: `./.claude/rules/development-rules.md`
-- Orchestration protocols: `./.claude/rules/orchestration-protocol.md`
-- Documentation management: `./.claude/rules/documentation-management.md`
-- And other workflows: `./.claude/rules/*`
+## Git Safety (NON-NEGOTIABLE)
 
-**IMPORTANT:** Analyze the skills catalog and activate the skills that are needed for the task during the process.
-**IMPORTANT:** You must follow strictly the development rules in `./.claude/rules/development-rules.md` file.
-**IMPORTANT:** Before you plan or proceed any implementation, always read the `./README.md` file first to get context.
-**IMPORTANT:** Sacrifice grammar for the sake of concision when writing reports.
-**IMPORTANT:** In reports, list any unresolved questions at the end, if any.
+- Origin: `github.com/shbvn/plane.git` | Default: `preview` | Staging: `develop`
+- Branch: `{user}/{type}/{desc}` → develop (PR) → preview (PR)
+- ❌ NEVER pull/merge/rebase from upstream (`makeplane/plane`)
+- ❌ NEVER force push to `preview` or `develop`
+- ❌ NEVER push directly to `preview` or `develop` (PR required, 1 review)
+- For commits, PRs, merges: use `/git` skill
+
+## Build
+
+- PM: pnpm | Lint: `pnpm check:lint` | Format: `pnpm check:format`
+- Backend tests: `cd apps/api && python run_tests.py`
+
+## File Standards
+
+- kebab-case, <200 lines code, <150 lines components
+- YAGNI / KISS / DRY
+
+## Python Skills
+
+- Use `.claude/skills/.venv/bin/python3` for skill scripts
+- Fix broken skills directly, don't stop
 
 ## Hook Response Protocol
 
 ### Privacy Block Hook (`@@PRIVACY_PROMPT@@`)
 
-When a tool call is blocked by the privacy-block hook, the output contains a JSON marker between `@@PRIVACY_PROMPT_START@@` and `@@PRIVACY_PROMPT_END@@`. **You MUST use the `AskUserQuestion` tool** to get proper user approval.
-
-**Required Flow:**
-
-1. Parse the JSON from the hook output
-2. Use `AskUserQuestion` with the question data from the JSON
-3. Based on user's selection:
-   - **"Yes, approve access"** → Use `bash cat "filepath"` to read the file (bash is auto-approved)
-   - **"No, skip this file"** → Continue without accessing the file
-
-**Example AskUserQuestion call:**
+When blocked by privacy hook, output contains JSON between `@@PRIVACY_PROMPT_START@@` and `@@PRIVACY_PROMPT_END@@`.
+**You MUST use `AskUserQuestion`** to get user approval:
 
 ```json
 {
@@ -52,42 +63,65 @@ When a tool call is blocked by the privacy-block hook, the output contains a JSO
 }
 ```
 
-**IMPORTANT:** Always ask the user via `AskUserQuestion` first. Never try to work around the privacy block without explicit user approval.
+- **"Yes"** → Use `bash cat "filepath"` to read
+- **"No"** → Continue without accessing
 
-## Python Scripts (Skills)
+## Modularization
 
-When running Python scripts from `.claude/skills/`, use the venv Python interpreter:
-
-- **Linux/macOS:** `.claude/skills/.venv/bin/python3 scripts/xxx.py`
-- **Windows:** `.claude\skills\.venv\Scripts\python.exe scripts\xxx.py`
-
-This ensures packages installed by `install.sh` (google-genai, pypdf, etc.) are available.
-
-**IMPORTANT:** When scripts of skills failed, don't stop, try to fix them directly.
-
-## [IMPORTANT] Consider Modularization
-
-- If a code file exceeds 200 lines of code, consider modularizing it
+- Files >200 lines → split into focused modules
 - Check existing modules before creating new
-- Analyze logical separation boundaries (functions, classes, concerns)
-- Use kebab-case naming with long descriptive names, it's fine if the file name is long because this ensures file names are self-documenting for LLM tools (Grep, Glob, Search)
-- Write descriptive code comments
-- After modularization, continue with main task
-- When not to modularize: Markdown files, plain text files, bash scripts, configuration files, environment variables files, etc.
+- kebab-case with descriptive names
+- Markdown/text/config files: don't modularize
 
-## Documentation Management
-
-We keep all important docs in `./docs` folder and keep updating them, structure like below:
+## Docs
 
 ```
-./docs
-├── project-overview-pdr.md
-├── code-standards.md
-├── codebase-summary.md
-├── design-guidelines.md
-├── deployment-guide.md
-├── system-architecture.md
-└── project-roadmap.md
+./docs: project-overview-pdr.md | code-standards.md | codebase-summary.md
+        design-guidelines.md | deployment-guide.md | system-architecture.md
 ```
 
-**IMPORTANT:** _MUST READ_ and _MUST COMPLY_ all _INSTRUCTIONS_ in project `./CLAUDE.md`, especially _WORKFLOWS_ section is _CRITICALLY IMPORTANT_, this rule is _MANDATORY. NON-NEGOTIABLE. NO EXCEPTIONS. MUST REMEMBER AT ALL TIMES!!!_
+<!-- gitnexus:start -->
+
+# GitNexus — Code Intelligence
+
+This project is indexed by GitNexus as **plane** (60562 symbols, 105189 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+
+> First-time setup? See [`docs/gitnexus-guide.md`](./docs/gitnexus-guide.md) (Docker-based, version pinned).
+> If any GitNexus tool warns the index is stale, run `./scripts/gitnexus.sh analyze` in terminal first.
+
+## Always Do
+
+- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
+- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
+- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
+- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
+- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
+
+## Never Do
+
+- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
+- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
+- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
+- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
+
+## Resources
+
+| Resource                               | Use for                                  |
+| -------------------------------------- | ---------------------------------------- |
+| `gitnexus://repo/plane/context`        | Codebase overview, check index freshness |
+| `gitnexus://repo/plane/clusters`       | All functional areas                     |
+| `gitnexus://repo/plane/processes`      | All execution flows                      |
+| `gitnexus://repo/plane/process/{name}` | Step-by-step execution trace             |
+
+## CLI
+
+| Task                                         | Read this skill file                                        |
+| -------------------------------------------- | ----------------------------------------------------------- |
+| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md`       |
+| Blast radius / "What breaks if I change X?"  | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
+| Trace bugs / "Why is X failing?"             | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md`       |
+| Rename / extract / split / refactor          | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md`     |
+| Tools, resources, schema reference           | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md`           |
+| Index, status, clean, wiki CLI commands      | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md`             |
+
+<!-- gitnexus:end -->

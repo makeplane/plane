@@ -37,9 +37,7 @@ export const IssueWorklogProperty = observer(function IssueWorklogProperty(props
   return (
     <div className="flex items-center gap-1 text-xs text-tertiary">
       <Timer className="h-3.5 w-3.5 flex-shrink-0" />
-      <span title={t("worklog.total_logged")}>
-        {formatMinutesToDisplay(totalMinutes)}
-      </span>
+      <span title={t("worklog.total_logged")}>{formatMinutesToDisplay(totalMinutes)}</span>
     </div>
   );
 });

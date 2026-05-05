@@ -14,6 +14,8 @@ from .app.google import GoogleCallbackEndpoint, GoogleOauthInitiateEndpoint
 from .app.magic import MagicGenerateEndpoint, MagicSignInEndpoint, MagicSignUpEndpoint
 
 from .app.ldap import LDAPSignInEndpoint
+from .app.swing_sso import SwingSSOSignInEndpoint, SwingSSOTestEndpoint
+from .app.swing_sso_token_callback import SwingSSOTokenCallbackEndpoint
 from .app.signout import SignOutAuthEndpoint
 
 

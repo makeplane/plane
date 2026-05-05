@@ -14,11 +14,11 @@ export const StaffProfileSection = observer(() => {
 
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-14 font-medium text-color-primary">{t("staff.profile_section_title")}</h3>
+      <h3 className="text-14 font-medium text-primary">{t("staff.profile_section_title")}</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-4">
         {/* Staff ID */}
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 font-medium text-color-secondary">{t("staff.staff_id.label")}</h4>
+          <h4 className="text-13 font-medium text-secondary">{t("staff.staff_id.label")}</h4>
           <Input
             type="text"
             value={staffProfile.staff_id || "—"}
@@ -28,7 +28,7 @@ export const StaffProfileSection = observer(() => {
         </div>
         {/* Department */}
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 font-medium text-color-secondary">{t("staff.department.label")}</h4>
+          <h4 className="text-13 font-medium text-secondary">{t("staff.department.label")}</h4>
           <Input
             type="text"
             value={staffProfile.department_detail?.name ?? "—"}
@@ -38,7 +38,7 @@ export const StaffProfileSection = observer(() => {
         </div>
         {/* Position */}
         <div className="flex flex-col gap-1">
-          <h4 className="text-13 font-medium text-color-secondary">{t("staff.position.label")}</h4>
+          <h4 className="text-13 font-medium text-secondary">{t("staff.position.label")}</h4>
           <Input
             type="text"
             value={staffProfile.position || "—"}

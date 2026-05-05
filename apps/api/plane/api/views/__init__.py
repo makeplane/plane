@@ -62,10 +62,3 @@ from .invite import WorkspaceInvitationsViewset
 
 from .sticky import StickyViewSet
 
-from .analytics_dashboard import (
-    AnalyticsDashboardEndpoint,
-    AnalyticsDashboardDetailEndpoint,
-    AnalyticsDashboardWidgetEndpoint,
-    AnalyticsDashboardWidgetDetailEndpoint,
-    AnalyticsDashboardWidgetDataEndpoint,
-)

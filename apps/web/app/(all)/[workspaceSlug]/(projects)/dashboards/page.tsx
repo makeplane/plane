@@ -9,133 +9,127 @@ import { observer } from "mobx-react";
 import { LayoutDashboard } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { IAnalyticsDashboard, TAnalyticsDashboardCreate, TAnalyticsDashboardUpdate } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { PageHead } from "@/components/core/page-title";
-import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
+import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
 import type { Route } from "./+types/page";
-import { AnalyticsDashboardCard } from "./components/analytics-dashboard-card";
-import { AnalyticsDashboardDeleteModal } from "./components/analytics-dashboard-delete-modal";
-import { AnalyticsDashboardFormModal } from "./components/analytics-dashboard-form-modal";
-import { AnalyticsDashboardListHeader } from "./components/analytics-dashboard-list-header";
+import type { IDashboard } from "@plane/types";
+import { DashboardCard } from "./components/dashboard-card";
+import { DashboardDeleteModal } from "./components/dashboard-delete-modal";
+import { DashboardFormModal } from "@/plane-web/components/dashboards/dashboard-form-modal";
+import type { DashboardFormPayload } from "@/plane-web/components/dashboards/dashboard-form-modal";
+import { DashboardListHeader } from "./components/dashboard-list-header";
 
 const DashboardListPage = observer(function DashboardListPage({ params }: Route.ComponentProps) {
   const { t } = useTranslation();
   const { workspaceSlug } = params;
-  const analyticsDashboardStore = useAnalyticsDashboard();
+  const store = useCustomDashboard();
 
   // modal states
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editDashboard, setEditDashboard] = useState<IAnalyticsDashboard | null>(null);
-  const [deleteDashboard, setDeleteDashboard] = useState<IAnalyticsDashboard | null>(null);
+  const [editDashboard, setEditDashboard] = useState<IDashboard | null>(null);
+  const [deleteDashboard, setDeleteDashboard] = useState<IDashboard | null>(null);
 
   // fetch dashboards on mount
   useEffect(() => {
-    if (workspaceSlug) void analyticsDashboardStore.fetchDashboards(workspaceSlug);
-  }, [workspaceSlug, analyticsDashboardStore]);
+    if (workspaceSlug) void store.fetchDashboards(workspaceSlug);
+  }, [workspaceSlug, store]);
 
   const handleCreate = useCallback(
-    async (data: TAnalyticsDashboardCreate) => {
+    async (data: DashboardFormPayload) => {
       if (!workspaceSlug) return;
       try {
-        await analyticsDashboardStore.createDashboard(workspaceSlug, data);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Dashboard created successfully." });
+        await store.createDashboard(workspaceSlug, data);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("analytics_dashboard.success"),
+          message: t("analytics_dashboard.created_success"),
+        });
       } catch (error) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to create dashboard" });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.create_failed") });
         throw error;
       }
     },
-    [workspaceSlug, analyticsDashboardStore]
+    [workspaceSlug, store, t]
   );
 
   const handleUpdate = useCallback(
-    async (data: TAnalyticsDashboardUpdate) => {
+    async (data: DashboardFormPayload) => {
       if (!workspaceSlug || !editDashboard) return;
       try {
-        await analyticsDashboardStore.updateDashboard(workspaceSlug, editDashboard.id, data);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Dashboard updated successfully." });
+        await store.updateDashboard(workspaceSlug, editDashboard.id, data);
+        setToast({
+          type: TOAST_TYPE.SUCCESS,
+          title: t("analytics_dashboard.success"),
+          message: t("analytics_dashboard.updated_success"),
+        });
+        setEditDashboard(null);
       } catch (error) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to update dashboard" });
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.update_failed") });
         throw error;
       }
     },
-    [workspaceSlug, editDashboard, analyticsDashboardStore]
-  );
-
-  const handleDuplicate = useCallback(
-    async (dashboard: IAnalyticsDashboard) => {
-      if (!workspaceSlug) return;
-      try {
-        const newDashboard = await analyticsDashboardStore.duplicateDashboard(workspaceSlug, dashboard.id);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Dashboard duplicated",
-          message: `Created "${newDashboard.name}"`,
-        });
-      } catch (_error) {
-        setToast({ type: TOAST_TYPE.ERROR, title: "Failed to duplicate dashboard" });
-      }
-    },
-    [workspaceSlug, analyticsDashboardStore]
+    [workspaceSlug, editDashboard, store, t]
   );
 
   const handleDelete = useCallback(async () => {
     if (!workspaceSlug || !deleteDashboard) return;
     try {
-      await analyticsDashboardStore.deleteDashboard(workspaceSlug, deleteDashboard.id);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Success!", message: "Dashboard deleted successfully." });
+      await store.deleteDashboard(workspaceSlug, deleteDashboard.id);
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("analytics_dashboard.success"),
+        message: t("analytics_dashboard.deleted_success"),
+      });
+      setDeleteDashboard(null);
     } catch (error) {
-      setToast({ type: TOAST_TYPE.ERROR, title: "Failed to delete dashboard" });
+      setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.delete_failed") });
       throw error;
     }
-  }, [workspaceSlug, deleteDashboard, analyticsDashboardStore]);
+  }, [workspaceSlug, deleteDashboard, store, t]);
 
   const pageTitle = t("dashboards");
-  const { dashboardsList, loader } = analyticsDashboardStore;
+  const { dashboards, isLoading } = store;
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex h-full flex-col overflow-hidden">
-        <AnalyticsDashboardListHeader onCreateClick={() => setIsCreateOpen(true)} />
+      <div className="flex h-full flex-col">
+        <DashboardListHeader onCreateClick={() => setIsCreateOpen(true)} />
 
-        <div className="flex-1 overflow-auto">
-          {loader ? (
+        <div className="flex-1">
+          {isLoading ? (
             <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Loader key={i} className="rounded-lg border border-custom-border-200 p-4">
+                <Loader key={i} className="rounded-lg border border-subtle p-4">
                   <Loader.Item height="20px" width="60%" />
                   <Loader.Item height="14px" width="80%" className="mt-3" />
                   <Loader.Item height="12px" width="40%" className="mt-4" />
                 </Loader>
               ))}
             </div>
-          ) : dashboardsList.length === 0 ? (
+          ) : dashboards.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-custom-primary-100/10">
-                <LayoutDashboard className="h-8 w-8 text-custom-primary-100" />
-              </div>
-              <div className="text-center">
-                <h3 className="text-lg font-medium text-custom-text-100">No dashboards yet</h3>
-                <p className="mt-1 text-sm text-custom-text-300">
-                  Create your first analytics dashboard to visualize work item data.
-                </p>
-              </div>
-              <Button variant="primary" size="sm" onClick={() => setIsCreateOpen(true)}>
-                Create dashboard
+              <LayoutDashboard className="h-12 w-12 text-tertiary" />
+              <p className="text-center text-sm text-secondary">
+                {t("analytics_dashboard.empty_title")}
+                <br />
+                {t("analytics_dashboard.create_first")}
+              </p>
+              <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
+                {t("analytics_dashboard.create_dashboard")}
               </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 lg:grid-cols-3">
-              {dashboardsList.map((dashboard) => (
-                <AnalyticsDashboardCard
+              {dashboards.map((dashboard) => (
+                <DashboardCard
                   key={dashboard.id}
                   dashboard={dashboard}
                   workspaceSlug={workspaceSlug}
                   onEdit={setEditDashboard}
                   onDelete={setDeleteDashboard}
-                  onDuplicate={(d) => void handleDuplicate(d)}
                 />
               ))}
             </div>
@@ -143,28 +137,31 @@ const DashboardListPage = observer(function DashboardListPage({ params }: Route.
         </div>
       </div>
 
-      {/* Create modal */}
-      <AnalyticsDashboardFormModal
-        isOpen={isCreateOpen}
+      {/* Modals */}
+      <DashboardFormModal
+        isOpen={isCreateOpen && !editDashboard}
         onClose={() => setIsCreateOpen(false)}
         onSubmit={handleCreate}
       />
 
-      {/* Edit modal */}
-      <AnalyticsDashboardFormModal
-        isOpen={!!editDashboard}
-        onClose={() => setEditDashboard(null)}
-        onSubmit={handleUpdate}
-        dashboard={editDashboard}
-      />
+      {editDashboard && (
+        <DashboardFormModal
+          isOpen={!!editDashboard}
+          onClose={() => setEditDashboard(null)}
+          onSubmit={handleUpdate}
+          dashboard={editDashboard}
+        />
+      )}
 
-      {/* Delete modal */}
-      <AnalyticsDashboardDeleteModal
-        isOpen={!!deleteDashboard}
-        onClose={() => setDeleteDashboard(null)}
-        onConfirm={handleDelete}
-        dashboard={deleteDashboard}
-      />
+      {deleteDashboard && (
+        <DashboardDeleteModal
+          isOpen={!!deleteDashboard}
+          onClose={() => setDeleteDashboard(null)}
+          onConfirm={handleDelete}
+          dashboardName={deleteDashboard.name}
+          workspaceSlug={workspaceSlug}
+        />
+      )}
     </>
   );
 });

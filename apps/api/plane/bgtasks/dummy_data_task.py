@@ -82,7 +82,7 @@ def create_project_members(workspace, project, members):
 def create_states(workspace, project, user_id):
     states = [
         {
-            "name": "Backlog",
+            "name": "Draft",
             "color": "#A3A3A3",
             "sequence": 15000,
             "group": "backlog",
@@ -313,7 +313,7 @@ def create_issues(workspace, project, user_id, issue_count):
                 sort_order=largest_sort_order,
                 start_date=start_date,
                 target_date=end_date,
-                priority=["urgent", "high", "medium", "low", "none"][random.randint(0, 4)],
+                priority=["urgent", "high", "medium", "low"][random.randint(0, 3)],
                 created_by_id=creators[random.randint(0, len(creators) - 1)],
             )
         )

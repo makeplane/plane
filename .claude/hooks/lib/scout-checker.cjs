@@ -8,6 +8,7 @@
  * @module scout-checker
  */
 
+const fs = require('fs');
 const path = require('path');
 
 // Import scout-block modules
@@ -23,8 +24,8 @@ const { detectBroadPatternIssue } = require('../scout-block/broad-pattern-detect
 // Handles flags and filters: npm build, pnpm --filter web run build, yarn workspace app build
 const BUILD_COMMAND_PATTERN = /^(npm|pnpm|yarn|bun)\s+([^\s]+\s+)*(run\s+)?(build|test|lint|dev|start|install|ci|add|remove|update|publish|pack|init|create|exec)/;
 
-// Tool commands - go, cargo, make, mvn/mvnw, gradle/gradlew, dotnet, docker, bazel, cmake, sbt, flutter, swift, ant, ninja, meson
-const TOOL_COMMAND_PATTERN = /^(\.\/)?(npx|pnpx|bunx|tsc|esbuild|vite|webpack|rollup|turbo|nx|jest|vitest|mocha|eslint|prettier|go|cargo|make|mvn|mvnw|gradle|gradlew|dotnet|docker|podman|kubectl|helm|terraform|ansible|bazel|cmake|sbt|flutter|swift|ant|ninja|meson)/;
+// Tool commands - JS/TS, Go, Rust, Java, .NET, containers, IaC, Python, Ruby, PHP, Deno, Elixir
+const TOOL_COMMAND_PATTERN = /^(\.\/)?(npx|pnpx|bunx|tsc|esbuild|vite|webpack|rollup|turbo|nx|jest|vitest|mocha|eslint|prettier|go|cargo|make|mvn|mvnw|gradle|gradlew|dotnet|docker|podman|kubectl|helm|terraform|ansible|bazel|cmake|sbt|flutter|swift|ant|ninja|meson|python3?|pip|uv|deno|bundle|rake|gem|php|composer|ruby|mix|elixir)/;
 
 // Allow execution from .venv/bin/ or venv/bin/ (Unix) and .venv/Scripts/ or venv/Scripts/ (Windows)
 const VENV_EXECUTABLE_PATTERN = /(^|[\/\\])\.?venv[\/\\](bin|Scripts)[\/\\]/;
@@ -41,6 +42,24 @@ const VENV_CREATION_PATTERN = /^(python3?|py)\s+(-[\w.]+\s+)*-m\s+venv\s+|^uv\s+
 // ═══════════════════════════════════════════════════════════════════════════
 
 /**
+ * Strip leading ENV variable assignments and command wrappers (sudo, env, etc.)
+ * e.g., "NODE_ENV=production npm run build" → "npm run build"
+ * @param {string} command - The command to strip
+ * @returns {string}
+ */
+function stripCommandPrefix(command) {
+  if (!command || typeof command !== 'string') return command;
+  let stripped = command.trim();
+  // Strip env var assignments (KEY=VALUE KEY2=VALUE2 ...)
+  stripped = stripped.replace(/^(\w+=\S+\s+)+/, '');
+  // Strip common command wrappers (one level)
+  stripped = stripped.replace(/^(sudo|env|nice|nohup|time|timeout)\s+/, '');
+  // Strip env vars again (sudo env VAR=x cmd)
+  stripped = stripped.replace(/^(\w+=\S+\s+)+/, '');
+  return stripped.trim();
+}
+
+/**
  * Check if a command is a build/tooling command (should be allowed)
  * @param {string} command - The command to check
  * @returns {boolean}
@@ -49,6 +68,34 @@ function isBuildCommand(command) {
   if (!command || typeof command !== 'string') return false;
   const trimmed = command.trim();
   return BUILD_COMMAND_PATTERN.test(trimmed) || TOOL_COMMAND_PATTERN.test(trimmed);
+}
+
+/**
+ * Split a compound command into sub-commands on &&, ||, and ;.
+ * Does NOT split on newlines — newlines in command strings are typically
+ * heredoc bodies or multiline strings, not compound operators.
+ * Does not handle operators inside quoted strings (extremely rare in practice).
+ *
+ * @param {string} command - The compound command string
+ * @returns {string[]} Array of sub-commands (trimmed, non-empty)
+ */
+function splitCompoundCommand(command) {
+  if (!command || typeof command !== 'string') return [];
+  return command.split(/\s*(?:&&|\|\||;)\s*/).filter(cmd => cmd && cmd.trim().length > 0);
+}
+
+/**
+ * Unwrap shell executor wrappers (bash -c "...", sh -c '...', eval "...").
+ * Returns the inner command string for re-processing.
+ * @param {string} command - The command to unwrap
+ * @returns {string} Inner command, or original if not a shell executor
+ */
+function unwrapShellExecutor(command) {
+  if (!command || typeof command !== 'string') return command;
+  const match = command.trim().match(
+    /^(?:(?:bash|sh|zsh)\s+-c|eval)\s+["'](.+)["']\s*$/
+  );
+  return match ? match[1] : command;
 }
 
 /**
@@ -73,11 +120,44 @@ function isVenvCreationCommand(command) {
 
 /**
  * Check if command should be allowed (build, venv executable, or venv creation)
+ * Strips ENV prefixes and command wrappers before checking.
  * @param {string} command - The command to check
  * @returns {boolean}
  */
 function isAllowedCommand(command) {
-  return isBuildCommand(command) || isVenvExecutable(command) || isVenvCreationCommand(command);
+  const stripped = stripCommandPrefix(command);
+  return isBuildCommand(stripped) || isVenvExecutable(stripped) || isVenvCreationCommand(stripped);
+}
+
+function findGitRoot(startDir) {
+  if (!startDir || typeof startDir !== 'string') return null;
+
+  let dir = path.resolve(startDir);
+  const root = path.parse(dir).root;
+
+  while (true) {
+    if (fs.existsSync(path.join(dir, '.git')) || dir === root) {
+      return fs.existsSync(path.join(dir, '.git')) ? dir : null;
+    }
+
+    dir = path.dirname(dir);
+  }
+}
+
+/**
+ * Find an optional project-local .ckignore at the git root config directory.
+ * This keeps overrides stable regardless of the caller cwd inside the repo.
+ *
+ * @param {string} startDir - Directory to start searching from
+ * @param {string} [configDirName] - Config directory at git root (.claude, .opencode)
+ * @returns {string|null}
+ */
+function findProjectCkignore(startDir, configDirName) {
+  if (!configDirName || typeof configDirName !== 'string') return null;
+  const gitRoot = findGitRoot(startDir);
+  if (!gitRoot) return null;
+  const candidate = path.join(gitRoot, configDirName, '.ckignore');
+  return fs.existsSync(candidate) ? candidate : null;
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -92,28 +172,56 @@ function isAllowedCommand(command) {
  * @param {Object} params.toolInput - Tool input with file_path, path, pattern, command
  * @param {Object} [params.options]
  * @param {string} [params.options.ckignorePath] - Path to .ckignore file
+ * @param {string} [params.options.projectCkignorePath] - Explicit project-local .ckignore path
  * @param {string} [params.options.claudeDir] - Path to .claude or .opencode directory
+ * @param {string} [params.options.cwd] - Working directory used to discover a project .ckignore
+ * @param {string} [params.options.projectConfigDirName] - Git-root config dir for project-local overrides
  * @param {boolean} [params.options.checkBroadPatterns] - Check for overly broad glob patterns (default: true)
  * @returns {{
  *   blocked: boolean,
- *   path?: string,
- *   pattern?: string,
- *   reason?: string,
- *   isBroadPattern?: boolean,
- *   suggestions?: string[],
- *   isAllowedCommand?: boolean
+  *   path?: string,
+  *   pattern?: string,
+  *   reason?: string,
+ *   configPath?: string,
+  *   isBroadPattern?: boolean,
+  *   suggestions?: string[],
+  *   isAllowedCommand?: boolean
  * }}
  */
 function checkScoutBlock({ toolName, toolInput, options = {} }) {
   const {
     ckignorePath,
+    projectCkignorePath,
     claudeDir = path.join(process.cwd(), '.claude'),
+    cwd = process.cwd(),
+    projectConfigDirName,
     checkBroadPatterns = true
   } = options;
 
-  // Check if it's a build command or venv executable (allowed regardless of paths)
-  if (toolInput.command && isAllowedCommand(toolInput.command)) {
-    return { blocked: false, isAllowedCommand: true };
+  // Unwrap shell executor wrappers (bash -c "...", eval "...")
+  // so the inner command gets properly analyzed
+  if (toolInput.command) {
+    const unwrapped = unwrapShellExecutor(toolInput.command);
+    if (unwrapped !== toolInput.command) {
+      toolInput = { ...toolInput, command: unwrapped };
+    }
+  }
+
+  // For Bash commands, split compound commands (&&, ||, ;) and check
+  // each sub-command independently. This prevents "echo msg && npm run build"
+  // from being blocked due to "build" token in the allowed build sub-command.
+  // Must split BEFORE isAllowedCommand because BUILD_COMMAND_PATTERN has no end
+  // anchor and would match the prefix of "npm run build && cat dist/file.js".
+  if (toolInput.command) {
+    const subCommands = splitCompoundCommand(toolInput.command);
+    const nonAllowed = subCommands.filter(cmd => !isAllowedCommand(cmd.trim()));
+    if (nonAllowed.length === 0) {
+      return { blocked: false, isAllowedCommand: true };
+    }
+    // Only extract paths from non-allowed sub-commands
+    if (nonAllowed.length < subCommands.length) {
+      toolInput = { ...toolInput, command: nonAllowed.join(' ; ') };
+    }
   }
 
   // Check for overly broad glob patterns (Glob tool)
@@ -132,9 +240,15 @@ function checkScoutBlock({ toolName, toolInput, options = {} }) {
 
   // Resolve .ckignore path
   const resolvedCkignorePath = ckignorePath || path.join(claudeDir, '.ckignore');
+  const discoveredProjectCkignorePath = projectCkignorePath || findProjectCkignore(cwd, projectConfigDirName);
+  const resolvedProjectCkignorePath = discoveredProjectCkignorePath
+    && path.resolve(discoveredProjectCkignorePath) !== path.resolve(resolvedCkignorePath)
+      ? discoveredProjectCkignorePath
+      : null;
+  const configPath = resolvedProjectCkignorePath || resolvedCkignorePath;
 
   // Load patterns and create matcher
-  const patterns = loadPatterns(resolvedCkignorePath);
+  const patterns = loadPatterns(resolvedCkignorePath, resolvedProjectCkignorePath);
   const matcher = createMatcher(patterns);
 
   // Extract paths from tool input
@@ -153,6 +267,7 @@ function checkScoutBlock({ toolName, toolInput, options = {} }) {
         blocked: true,
         path: extractedPath,
         pattern: result.pattern,
+        configPath,
         reason: `Path matches blocked pattern: ${result.pattern}`
       };
     }
@@ -175,6 +290,11 @@ module.exports = {
   isVenvExecutable,
   isVenvCreationCommand,
   isAllowedCommand,
+  splitCompoundCommand,
+  stripCommandPrefix,
+  unwrapShellExecutor,
+  findGitRoot,
+  findProjectCkignore,
 
   // Re-export scout-block modules for direct access
   loadPatterns,

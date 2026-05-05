@@ -8,6 +8,7 @@ from rest_framework import serializers
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
 from .project import ProjectLiteSerializer
+from .user import UserLiteSerializer
 
 # Django imports
 from django.core.validators import URLValidator
@@ -16,6 +17,7 @@ from django.core.exceptions import ValidationError
 from plane.db.models import (
     User,
     Module,
+    ModuleActivity,
     ModuleMember,
     ModuleIssue,
     ModuleLink,
@@ -31,6 +33,7 @@ class ModuleWriteSerializer(BaseSerializer):
         child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()),
         write_only=True,
         required=False,
+        allow_null=True,
     )
 
     class Meta:
@@ -278,3 +281,11 @@ class ModuleUserPropertiesSerializer(BaseSerializer):
         model = ModuleUserProperties
         fields = "__all__"
         read_only_fields = ["workspace", "project", "module", "user"]
+
+
+class ModuleActivitySerializer(BaseSerializer):
+    actor_detail = UserLiteSerializer(source="actor", read_only=True)
+
+    class Meta:
+        model = ModuleActivity
+        fields = "__all__"

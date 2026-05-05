@@ -25,3 +25,7 @@ coverage
 # Allow reading these files
 !.env
 !.env.*
+!dist
+!.venv
+!build
+!vendor

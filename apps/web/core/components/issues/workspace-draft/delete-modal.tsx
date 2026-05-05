@@ -39,7 +39,7 @@ export function WorkspaceDraftIssueDeleteIssueModal(props: Props) {
   const canPerformProjectAdminActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   useEffect(() => {
-    setIsDeleting(false);
+    queueMicrotask(() => setIsDeleting(false));
   }, [isOpen]);
 
   if (!dataId && !data) return null;

@@ -20,6 +20,7 @@ import { cn } from "@plane/utils";
 // components
 import { ExistingIssuesListModal } from "@/components/core/modals/existing-issues-list-modal";
 // hooks
+import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { QuickAddIssueRoot } from "../quick-add";
 
@@ -43,6 +44,7 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isExistingIssueModalOpen, setIsExistingIssueModalOpen] = useState(false);
   const { updateIssue } = useIssueDetail();
+  const { toggleCreateIssueModal } = useCommandPalette();
   // derived values
   const ExistingIssuesListModalPayload = addIssuesToView
     ? moduleId
@@ -72,7 +74,7 @@ export const CalendarQuickAddIssueActions = observer(function CalendarQuickAddIs
   };
 
   const handleNewIssue = () => {
-    setIsOpen(true);
+    toggleCreateIssueModal(true);
     if (onOpen) onOpen();
   };
   const handleExistingIssue = () => {

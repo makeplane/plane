@@ -1,0 +1,16 @@
+{
+  "name": "chrome-devtools-scripts",
+  "version": "1.1.0",
+  "description": "Browser automation scripts for Chrome DevTools Agent Skill",
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "debug": "^4.4.0",
+    "puppeteer": "^24.15.0",
+    "sharp": "^0.33.5",
+    "yargs": "^17.7.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

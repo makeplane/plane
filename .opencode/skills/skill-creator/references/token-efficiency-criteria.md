@@ -5,7 +5,7 @@ Skills use progressive disclosure to minimize context window usage.
 ## Three-Level Loading
 
 1. **Metadata** - Always loaded (~200 chars)
-2. **SKILL.md body** - Loaded when skill triggers (<150 lines)
+2. **SKILL.md body** - Loaded when skill triggers (<300 lines)
 3. **Bundled resources** - Loaded as needed (unlimited for scripts)
 
 ## Size Limits
@@ -13,8 +13,8 @@ Skills use progressive disclosure to minimize context window usage.
 | Resource | Limit | Notes |
 |----------|-------|-------|
 | Description | <200 chars | In YAML frontmatter |
-| SKILL.md | <150 lines | Core instructions only |
-| Each reference file | <150 lines | Split if larger |
+| SKILL.md | <300 lines | Core instructions only |
+| Each reference file | <300 lines | Split if larger |
 | Scripts | No limit | Executed, not loaded into context |
 
 ## SKILL.md Content Strategy
@@ -44,7 +44,7 @@ Information lives in ONE place:
 
 ## Splitting Large Files
 
-If reference exceeds 150 lines, split by logical boundaries:
+If reference exceeds 300 lines, split by logical boundaries:
 
 ```
 references/

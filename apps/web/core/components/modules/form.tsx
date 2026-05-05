@@ -23,7 +23,7 @@ import { ModuleStatusSelect } from "@/components/modules";
 import { useUser } from "@/hooks/store/user/user-user";
 
 type Props = {
-  handleFormSubmit: (values: Partial<IModule>, dirtyFields: any) => Promise<void>;
+  handleFormSubmit: (values: Partial<IModule>, dirtyFields: Partial<Record<keyof IModule, boolean>>) => Promise<void>;
   handleClose: () => void;
   status: boolean;
   projectId: string;
@@ -66,7 +66,7 @@ export function ModuleForm(props: Props) {
   const { t } = useTranslation();
 
   const handleCreateUpdateModule = async (formData: Partial<IModule>) => {
-    await handleFormSubmit(formData, dirtyFields);
+    await handleFormSubmit(formData, dirtyFields as Partial<Record<keyof IModule, boolean>>);
 
     reset({
       ...defaultValues,
@@ -77,11 +77,12 @@ export function ModuleForm(props: Props) {
     reset({
       ...defaultValues,
       ...data,
+      member_ids: data?.member_ids ?? [],
     });
   }, [data, reset]);
 
   return (
-    <form onSubmit={handleSubmit(handleCreateUpdateModule)}>
+    <form onSubmit={(e) => void handleSubmit(handleCreateUpdateModule)(e)}>
       <div className="space-y-5 p-5">
         <div className="flex items-center gap-x-3">
           {!status && (
@@ -134,6 +135,7 @@ export function ModuleForm(props: Props) {
                   placeholder={t("title")}
                   className="w-full text-14"
                   tabIndex={getIndex("name")}
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
                   autoFocus
                 />
               )}

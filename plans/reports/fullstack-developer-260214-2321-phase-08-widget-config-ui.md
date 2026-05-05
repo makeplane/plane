@@ -19,18 +19,21 @@
 ### 1. Config Components (6 files, ~450 lines total)
 
 **`apps/web/core/components/dashboards/config/widget-type-selector.tsx`** (83 lines)
+
 - Widget type selection grid with 6 chart types
 - Visual cards with icons (BarChart3, LineChart, AreaChart, PieChart, Hash)
 - Selected state with custom-primary-100 border
 - Hover effects and transitions
 
 **`apps/web/core/components/dashboards/config/color-preset-selector.tsx`** (59 lines)
+
 - Visual color preset selector
 - Displays 6 color swatches per preset
 - Shows preset name and description
 - Supports modern, horizon, earthen presets from constants
 
 **`apps/web/core/components/dashboards/config/basic-settings-section.tsx`** (123 lines)
+
 - Title input with validation
 - Property dropdown (12 options: priority, state, assignee, etc.)
 - Metric dropdown (2 options: count, estimate_points)
@@ -38,6 +41,7 @@
 - Form validation with error display
 
 **`apps/web/core/components/dashboards/config/style-settings-section.tsx`** (133 lines)
+
 - Color preset selector integration
 - Fill opacity slider (native HTML range input)
 - Show border toggle (conditional: bar only)
@@ -45,6 +49,7 @@
 - Conditional rendering based on widget type
 
 **`apps/web/core/components/dashboards/config/display-settings-section.tsx`** (104 lines)
+
 - Show legend toggle (all except number)
 - Show tooltip toggle (all except number)
 - Center value toggle (donut, pie only)
@@ -52,11 +57,13 @@
 - All conditional based on widget type
 
 **`apps/web/core/components/dashboards/config/index.ts`** (11 lines)
+
 - Barrel export for clean imports
 
 ### 2. Main Modal Component
 
 **`apps/web/core/components/dashboards/widget-config-modal.tsx`** (235 lines)
+
 - ModalCore from @plane/ui with proper positioning
 - Tabs component with 4 tabs: Type, Basic, Style, Display
 - react-hook-form integration with Controller
@@ -68,6 +75,7 @@
 ### 3. Dashboard Page Updates
 
 **`apps/web/app/(all)/[workspaceSlug]/(projects)/dashboards/[dashboardId]/page.tsx`** (+52 lines)
+
 - Added configWidget and isAddWidgetOpen state
 - handleAddWidget opens modal in create mode
 - handleConfigureWidget finds widget and opens in edit mode
@@ -121,32 +129,34 @@
 
 ```typescript
 // Fill opacity: bar, area
-showFillOpacity = [BAR, AREA].includes(widgetType)
+showFillOpacity = [BAR, AREA].includes(widgetType);
 
 // Smoothing: line, area
-showSmoothing = [LINE, AREA].includes(widgetType)
+showSmoothing = [LINE, AREA].includes(widgetType);
 
 // Border: bar only
-showBorder = widgetType === BAR
+showBorder = widgetType === BAR;
 
 // Legend/Tooltip: all except number
-showLegend = widgetType !== NUMBER
+showLegend = widgetType !== NUMBER;
 
 // Center value: donut, pie
-showCenterValue = [DONUT, PIE].includes(widgetType)
+showCenterValue = [DONUT, PIE].includes(widgetType);
 
 // Markers: line only
-showMarkers = widgetType === LINE
+showMarkers = widgetType === LINE;
 ```
 
 ### Default Configuration
 
 When creating new widget:
+
 1. Load default config from `ANALYTICS_DEFAULT_WIDGET_CONFIGS[type]`
 2. Load default size from `ANALYTICS_DEFAULT_WIDGET_SIZES[type]`
 3. Reset position to {row: 0, col: 0}
 
 When editing widget:
+
 1. Load existing config, position, and all fields
 2. Preserve user customizations
 3. Don't reset on type change
@@ -163,6 +173,7 @@ When editing widget:
 ### Modular Component Structure
 
 Split configuration UI into focused components:
+
 - **Type Selector**: Visual chart type picker
 - **Color Preset**: Visual color palette selector
 - **Basic Settings**: Core widget properties
@@ -170,6 +181,7 @@ Split configuration UI into focused components:
 - **Display Settings**: Chart display options
 
 Benefits:
+
 - Each file under 200 lines
 - Clear separation of concerns
 - Reusable components
@@ -178,6 +190,7 @@ Benefits:
 ### Native Range Input for Opacity
 
 Used native `<input type="range">` instead of custom slider:
+
 - No Slider component in @plane/ui
 - Native input with Tailwind styling
 - Custom gradient background for visual feedback
@@ -186,6 +199,7 @@ Used native `<input type="range">` instead of custom slider:
 ### Form State Management
 
 react-hook-form provides:
+
 - Built-in validation
 - Controlled components via Controller
 - Error state management
@@ -198,19 +212,10 @@ react-hook-form provides:
 
 ```typescript
 // Create widget
-await analyticsDashboardStore.createWidget(
-  workspaceSlug,
-  dashboardId,
-  data as TAnalyticsWidgetCreate
-);
+await analyticsDashboardStore.createWidget(workspaceSlug, dashboardId, data as TAnalyticsWidgetCreate);
 
 // Update widget
-await analyticsDashboardStore.updateWidget(
-  workspaceSlug,
-  dashboardId,
-  widgetId,
-  data as TAnalyticsWidgetUpdate
-);
+await analyticsDashboardStore.updateWidget(workspaceSlug, dashboardId, widgetId, data as TAnalyticsWidgetUpdate);
 ```
 
 ### Constants Integration
@@ -242,7 +247,7 @@ import {
 - ✅ Observer wrapper for MobX reactivity
 - ✅ DisplayName set for all components
 - ✅ Proper TypeScript typing throughout
-- ✅ Consistent Tailwind classes (custom-text-*, custom-border-*, etc.)
+- ✅ Consistent Tailwind classes (custom-text-_, custom-border-_, etc.)
 - ✅ Error handling with try-catch
 - ✅ Loading states during async operations
 - ✅ Accessible labels and ARIA attributes
@@ -250,6 +255,7 @@ import {
 ## File Ownership
 
 All files created/modified in this phase:
+
 - ✅ `apps/web/core/components/dashboards/config/widget-type-selector.tsx`
 - ✅ `apps/web/core/components/dashboards/config/color-preset-selector.tsx`
 - ✅ `apps/web/core/components/dashboards/config/basic-settings-section.tsx`
@@ -264,6 +270,7 @@ No file conflicts with other phases.
 ## Issues Encountered
 
 None. Implementation proceeded smoothly with:
+
 - Clear requirements from phase plan
 - Proper UI components available in @plane/ui
 - Well-defined types and constants
@@ -289,6 +296,7 @@ None. Implementation proceeded smoothly with:
 Phase 8 completes the Analytics Dashboard Pro feature implementation.
 
 All 8 phases delivered:
+
 1. ✅ Backend Models & Migrations
 2. ✅ Backend API Endpoints
 3. ✅ Frontend Types, Constants & Service
@@ -301,6 +309,7 @@ All 8 phases delivered:
 **Feature Status**: Implementation Complete
 
 Recommended follow-up:
+
 - Manual QA testing of widget creation/editing
 - Integration testing with real API
 - Performance testing with multiple widgets

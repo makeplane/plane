@@ -42,7 +42,7 @@ class LegacyToRichFiltersConverter:
     # Default valid choices for choice fields
     DEFAULT_VALID_CHOICES = {
         "state_group": ["backlog", "unstarted", "started", "completed", "cancelled"],
-        "priority": ["urgent", "high", "medium", "low", "none"],
+        "priority": ["urgent", "high", "medium", "low"],
     }
 
     # Default date fields

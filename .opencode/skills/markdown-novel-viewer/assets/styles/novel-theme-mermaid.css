@@ -25,6 +25,12 @@ pre.mermaid[data-processed="true"],
   padding: 0;
 }
 
+/* Ensure rendered SVGs scale within their container */
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
 .mermaid-error-container {
   background: #fff5f5;
   border-color: #f5c6cb;
@@ -100,17 +106,30 @@ pre.mermaid[data-processed="true"],
   opacity: 1;
 }
 
+/* Always show button when expanded so user can collapse */
+.mermaid-wrapper.expanded .mermaid-expand-btn {
+  opacity: 1;
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
 .mermaid-expand-btn:hover {
   background: var(--bg-secondary);
   color: var(--text-primary);
   border-color: var(--accent);
 }
 
-/* Expanded state */
+.mermaid-wrapper.expanded .mermaid-expand-btn:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Expanded state — width and offset set dynamically by JS (initMermaidExpand)
+   to fill .main-content without affecting sibling content or using viewport units */
 .mermaid-wrapper.expanded {
   max-width: none;
-  margin-left: calc(-50vw + 50%);
-  margin-right: calc(-50vw + 50%);
+  position: relative;
   padding: 1rem 2rem;
   background: var(--bg-secondary);
   border-radius: 8px;
@@ -118,6 +137,12 @@ pre.mermaid[data-processed="true"],
 
 .mermaid-wrapper.expanded .mermaid {
   max-width: none;
+}
+
+/* Override Mermaid's inline max-width so SVG fills expanded container */
+.mermaid-wrapper.expanded .mermaid svg {
+  max-width: 100% !important;
+  width: 100%;
 }
 
 /* Icon visibility toggle */

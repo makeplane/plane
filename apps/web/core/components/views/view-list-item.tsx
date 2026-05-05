@@ -4,10 +4,10 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
+import { LockIcon } from "lucide-react";
 import { Logo } from "@plane/propel/emoji-icon-picker";
 import { ViewsIcon } from "@plane/propel/icons";
 // types
@@ -33,6 +33,8 @@ export const ProjectViewListItem = observer(function ProjectViewListItem(props: 
   // store hooks
   const { isMobile } = usePlatformOS();
 
+  const isDefault = view.is_default;
+
   return (
     <ListItem
       prependTitleElement={
@@ -45,17 +47,27 @@ export const ProjectViewListItem = observer(function ProjectViewListItem(props: 
         </>
       }
       title={view.name}
+      appendTitleElement={
+        isDefault ? (
+          <span className="flex items-center gap-1 rounded bg-accent-primary/10 px-1.5 py-0.5 text-10 font-medium text-accent-primary">
+            <LockIcon className="h-3 w-3" />
+            Default
+          </span>
+        ) : undefined
+      }
       itemLink={`/${workspaceSlug}/projects/${projectId}/views/${view.id}`}
-      actionableItems={<ViewListItemAction parentRef={parentRef} view={view} />}
+      actionableItems={!isDefault ? <ViewListItemAction parentRef={parentRef} view={view} /> : undefined}
       quickActionElement={
-        <div className="block md:hidden">
-          <ViewQuickActions
-            parentRef={parentRef}
-            projectId={projectId.toString()}
-            view={view}
-            workspaceSlug={workspaceSlug.toString()}
-          />
-        </div>
+        !isDefault ? (
+          <div className="block md:hidden">
+            <ViewQuickActions
+              parentRef={parentRef}
+              projectId={projectId.toString()}
+              view={view}
+              workspaceSlug={workspaceSlug.toString()}
+            />
+          </div>
+        ) : undefined
       }
       isMobile={isMobile}
       parentRef={parentRef}

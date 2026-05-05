@@ -66,7 +66,7 @@ const CreatedVsResolved = observer(function CreatedVsResolved() {
     () => [
       {
         key: "completed_issues",
-        label: t("common.resolved"),
+        label: t("workspace_analytics.completed"),
         fill: "#19803833",
         fillOpacity: 1,
         stackId: "bar-one",

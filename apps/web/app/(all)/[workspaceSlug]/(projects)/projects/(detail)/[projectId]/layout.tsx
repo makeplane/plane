@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Outlet } from "react-router";
+import useSWR from "swr";
 // plane imports
 import { Header, Row } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -14,9 +15,12 @@ import { TabNavigationRoot } from "@/components/navigation/tab-navigation-root";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useWorkflowStore } from "@/hooks/store/use-workflow";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // layouts
 import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
+// plane-web
+import { WorkflowBlockerModal } from "@/plane-web/components/issues/workflow/workflow-blocker-modal";
 // local imports
 import type { Route } from "./+types/layout";
 
@@ -25,8 +29,17 @@ function ProjectLayout({ params }: Route.ComponentProps) {
   const { workspaceSlug, projectId } = params;
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
+  const workflowStore = useWorkflowStore();
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
+
+  // Fetch workflow data when entering a project so Kanban indicators and
+  // drag-block checks have up-to-date transition rules.
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_WORKFLOW_${workspaceSlug}_${projectId}` : null,
+    () => workflowStore.fetchWorkflow(workspaceSlug, projectId),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
 
   return (
     <>
@@ -53,8 +66,11 @@ function ProjectLayout({ params }: Route.ComponentProps) {
       <ProjectAuthWrapper workspaceSlug={workspaceSlug} projectId={projectId}>
         <Outlet />
       </ProjectAuthWrapper>
+      {/* Workflow blocker modal — mounts here, self-opens on WORKFLOW_TRANSITION_BLOCKED 403s */}
+      <WorkflowBlockerModal projectId={projectId} />
     </>
   );
 }
 
-export default observer(ProjectLayout);
+const ProjectLayoutObserved = observer(ProjectLayout);
+export default ProjectLayoutObserved;

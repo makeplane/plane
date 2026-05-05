@@ -161,21 +161,21 @@ export function CycleCreateUpdateModal(props: CycleModalProps) {
     // if modal is closed, reset active project to null
     // and return to avoid activeProject being set to some other project
     if (!isOpen) {
-      setActiveProject(null);
+      queueMicrotask(() => setActiveProject(null));
       return;
     }
 
     // if data is present, set active project to the project of the
     // issue. This has more priority than the project in the url.
     if (data && data.project_id) {
-      setActiveProject(data.project_id);
+      queueMicrotask(() => setActiveProject(data.project_id));
       return;
     }
 
     // if data is not present, set active project to the project
     // in the url. This has the least priority.
     if (workspaceProjectIds && workspaceProjectIds.length > 0 && !activeProject)
-      setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null);
+      queueMicrotask(() => setActiveProject(projectId ?? workspaceProjectIds?.[0] ?? null));
   }, [activeProject, data, projectId, workspaceProjectIds, isOpen]);
 
   useKeypress("Escape", () => {

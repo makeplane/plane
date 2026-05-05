@@ -9,7 +9,6 @@ import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 // Plane imports
 import useSWR from "swr";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
 import type { IWorkItemPeekOverview, TIssue } from "@plane/types";
@@ -17,8 +16,8 @@ import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
+import { useCanEditIssue } from "@/plane-web/hooks/use-can-edit-issue";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
 // local imports
 import type { TIssueOperations } from "../issue-detail";
@@ -35,7 +34,6 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   // router
   const pathname = usePathname();
   // store hook
-  const { allowPermissions } = useUserPermissions();
 
   const {
     issues: { restoreIssue },
@@ -49,6 +47,9 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   const issueStoreType = useIssueStoreType();
   const storeType = issueStoreFromProps ?? issueStoreType;
   const { issues } = useIssues(storeType);
+  // checking if issue is editable: workspace admin, project admin, creator, or assignee
+  // must be called before any early return to satisfy React hook rules
+  const isEditable = useCanEditIssue(peekIssue?.issueId, peekIssue?.workspaceSlug, peekIssue?.projectId);
 
   useWorkItemProperties(
     peekIssue?.projectId,
@@ -79,11 +80,11 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
         if (issues?.updateIssue) {
           await issues
             .updateIssue(workspaceSlug, projectId, issueId, data)
-            .then(async () => {
-              fetchActivities(workspaceSlug, projectId, issueId);
+            .then(() => {
+              void fetchActivities(workspaceSlug, projectId, issueId);
               return;
             })
-            .catch((error) => {
+            .catch((_error) => {
               setToast({
                 title: t("toast.error"),
                 type: TOAST_TYPE.ERROR,
@@ -133,7 +134,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
       addCycleToIssue: async (workspaceSlug: string, projectId: string, cycleId: string, issueId: string) => {
         try {
           await issues.addCycleToIssue(workspaceSlug, projectId, cycleId, issueId);
-          fetchActivities(workspaceSlug, projectId, issueId);
+          void fetchActivities(workspaceSlug, projectId, issueId);
         } catch (_error) {
           setToast({
             type: TOAST_TYPE.ERROR,
@@ -168,7 +169,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             },
           });
           await removeFromCyclePromise;
-          fetchActivities(workspaceSlug, projectId, issueId);
+          void fetchActivities(workspaceSlug, projectId, issueId);
         } catch (error) {
           console.error("Error removing issue from cycle", error);
         }
@@ -187,7 +188,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
           addModuleIds,
           removeModuleIds
         );
-        fetchActivities(workspaceSlug, projectId, issueId);
+        void fetchActivities(workspaceSlug, projectId, issueId);
         return promise;
       },
       removeIssueFromModule: async (workspaceSlug: string, projectId: string, moduleId: string, issueId: string) => {
@@ -205,7 +206,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
             },
           });
           await removeFromModulePromise;
-          fetchActivities(workspaceSlug, projectId, issueId);
+          void fetchActivities(workspaceSlug, projectId, issueId);
         } catch (error) {
           console.error("Error removing issue from module", error);
         }
@@ -226,14 +227,6 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
   );
 
   if (!peekIssue?.workspaceSlug || !peekIssue?.projectId || !peekIssue?.issueId) return <></>;
-
-  // Check if issue is editable, based on user role
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    peekIssue?.workspaceSlug,
-    peekIssue?.projectId
-  );
 
   return (
     <IssueView

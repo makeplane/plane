@@ -55,7 +55,7 @@ def get_default_props():
             "type": None,
             "sub_issue": True,
             "show_empty_groups": True,
-            "layout": "list",
+            "layout": "kanban",
             "calendar_date_range": "",
         },
     }
@@ -92,12 +92,13 @@ class Project(BaseModel):
     icon_prop = models.JSONField(null=True)
     module_view = models.BooleanField(default=False)
     cycle_view = models.BooleanField(default=False)
-    issue_views_view = models.BooleanField(default=False)
+    issue_views_view = models.BooleanField(default=True)
     page_view = models.BooleanField(default=True)
     intake_view = models.BooleanField(default=False)
     is_time_tracking_enabled = models.BooleanField(default=True)
     is_issue_type_enabled = models.BooleanField(default=False)
     guest_view_all_features = models.BooleanField(default=False)
+    is_bank_wide = models.BooleanField(default=False, verbose_name="Is Bank-wide Project")
     cover_image = models.TextField(blank=True, null=True)
     cover_image_asset = models.ForeignKey(
         "db.FileAsset",

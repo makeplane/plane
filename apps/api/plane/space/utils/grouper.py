@@ -225,7 +225,7 @@ def issue_group_values(
         queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
         return list(queryset)
     if field == "priority":
-        return ["low", "medium", "high", "urgent", "none"]
+        return ["low", "medium", "high", "urgent"]
     if field == "state__group":
         return ["backlog", "unstarted", "started", "completed", "cancelled"]
     if field == "target_date":

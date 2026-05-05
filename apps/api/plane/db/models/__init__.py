@@ -46,7 +46,7 @@ from .issue import (
     IssueVersion,
     IssueDescriptionVersion,
 )
-from .module import Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
+from .module import Module, ModuleActivity, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties
 from .notification import EmailNotificationLog, Notification, UserNotificationPreference
 from .page import Page, PageLabel, PageLog, ProjectPage, PageVersion
 from .project import (
@@ -92,7 +92,19 @@ from .sticky import Sticky
 from .description import Description, DescriptionVersion
 from .worklog import IssueWorkLog
 
-from .analytics_dashboard import AnalyticsDashboard, AnalyticsDashboardWidget
+from .dashboard import Dashboard, DashboardWidget
 
 from .department import Department
 from .staff import StaffProfile, EmploymentStatus
+
+from .workflow import (
+    ProjectWorkflow,
+    WorkflowStateConfig,
+    WorkflowTransition,
+    WorkflowTransitionApprover,
+    WorkflowActivity,
+)
+
+from .task_category import MainTaskCategory, SubTaskCategory, DepartmentTaskCategory
+from .job_position import JobPosition, JobGrade
+from .business_calendar import WorkSchedule, Holiday, DayOverride

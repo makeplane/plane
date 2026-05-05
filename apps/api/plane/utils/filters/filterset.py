@@ -157,13 +157,19 @@ class IssueFilterSet(BaseFilterSet):
     subscriber_id = filters.UUIDFilter(method="filter_subscriber_id")
     subscriber_id__in = UUIDInFilter(method="filter_subscriber_id_in", lookup_expr="in")
 
+    # "today" filter: resolves to current date at query time
+    start_date__today = filters.BooleanFilter(method="filter_start_date_today")
+    target_date__today = filters.BooleanFilter(method="filter_target_date_today")
+    created_at__today = filters.BooleanFilter(method="filter_created_at_today")
+    updated_at__today = filters.BooleanFilter(method="filter_updated_at_today")
+
     class Meta:
         model = Issue
         fields = {
-            "start_date": ["exact", "range"],
-            "target_date": ["exact", "range"],
-            "created_at": ["exact", "range"],
-            "updated_at": ["exact", "range"],
+            "start_date": ["exact", "range", "gt", "lt"],
+            "target_date": ["exact", "range", "gt", "lt"],
+            "created_at": ["exact", "range", "gt", "lt"],
+            "updated_at": ["exact", "range", "gt", "lt"],
             "is_draft": ["exact"],
             "priority": ["exact", "in"],
         }
@@ -264,3 +270,33 @@ class IssueFilterSet(BaseFilterSet):
             issue_subscribers__subscriber_id__in=value,
             issue_subscribers__deleted_at__isnull=True,
         )
+
+    def filter_start_date_today(self, queryset, name, value):
+        """Filter by start_date = today (resolved at query time)"""
+        from django.utils import timezone
+        if value:
+            return Q(start_date=timezone.now().date())
+        return Q()
+
+    def filter_target_date_today(self, queryset, name, value):
+        """Filter by target_date = today (resolved at query time)"""
+        from django.utils import timezone
+        if value:
+            return Q(target_date=timezone.now().date())
+        return Q()
+
+    def filter_created_at_today(self, queryset, name, value):
+        """Filter by created_at date = today (resolved at query time)"""
+        from django.utils import timezone
+        today = timezone.now().date()
+        if value:
+            return Q(created_at__date=today)
+        return Q()
+
+    def filter_updated_at_today(self, queryset, name, value):
+        """Filter by updated_at date = today (resolved at query time)"""
+        from django.utils import timezone
+        today = timezone.now().date()
+        if value:
+            return Q(updated_at__date=today)
+        return Q()

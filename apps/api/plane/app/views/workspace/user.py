@@ -17,6 +17,7 @@ from django.db.models import (
     IntegerField,
     OuterRef,
     Q,
+    Sum,
     Value,
     When,
     Subquery,
@@ -43,6 +44,7 @@ from plane.db.models import (
     CycleIssue,
     Issue,
     IssueActivity,
+    IssueWorkLog,
     FileAsset,
     IssueLink,
     IssueSubscriber,
@@ -129,7 +131,19 @@ class WorkspaceUserProfileIssuesEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
             .prefetch_related("assignees", "labels", "issue_module__module")
+            .annotate(
+                main_task_category_name=F("main_task_category__name"),
+                sub_task_category_name=F("sub_task_category__name"),
+            )
         )
 
     def get(self, request, slug, user_id):
@@ -286,6 +300,13 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
         )
         projects = []
         if requesting_workspace_member.role >= 15:
+            # Base Q shared by all 4 count annotations — excludes sub-tasks, deleted, archived, drafts
+            _base_issue_q = Q(
+                project_issue__deleted_at__isnull=True,
+                project_issue__archived_at__isnull=True,
+                project_issue__is_draft=False,
+                project_issue__parent__isnull=True,
+            )
             projects = (
                 Project.objects.filter(
                     workspace__slug=slug,
@@ -296,46 +317,36 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 .annotate(
                     created_issues=Count(
                         "project_issue",
-                        filter=Q(
-                            project_issue__created_by_id=user_id,
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
-                        ),
+                        filter=_base_issue_q & Q(project_issue__created_by_id=user_id),
                     )
                 )
                 .annotate(
                     assigned_issues=Count(
                         "project_issue",
-                        filter=Q(
-                            project_issue__assignees__in=[user_id],
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
-                        ),
+                        filter=_base_issue_q & Q(project_issue__assignees__in=[user_id]),
                     )
                 )
                 .annotate(
                     completed_issues=Count(
                         "project_issue",
-                        filter=Q(
-                            project_issue__completed_at__isnull=False,
+                        filter=_base_issue_q
+                        & Q(
+                            project_issue__state__group="completed",
                             project_issue__assignees__in=[user_id],
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
                         ),
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "project_issue",
-                        filter=Q(
+                        filter=_base_issue_q
+                        & Q(
                             project_issue__state__group__in=[
                                 "backlog",
                                 "unstarted",
                                 "started",
                             ],
                             project_issue__assignees__in=[user_id],
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
                         ),
                     )
                 )
@@ -411,7 +422,7 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             .order_by("state_group")
         )
 
-        priority_order = ["urgent", "high", "medium", "low", "none"]
+        priority_order = ["urgent", "high", "medium", "low"]
 
         priority_distribution = (
             Issue.issue_objects.filter(
@@ -434,50 +445,31 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             .order_by("priority_order")
         )
 
-        created_issues = (
+        # Single aggregate query replacing 4 sequential COUNT(*) round-trips.
+        # active_assignee: user is assignee and the assignment record is not soft-deleted.
+        active_assignee = Q(assignees=user_id) & Q(issue_assignee__deleted_at__isnull=True)
+        counts = (
             Issue.issue_objects.filter(
                 workspace__slug=slug,
                 project__project_projectmember__member=request.user,
                 project__project_projectmember__is_active=True,
-                created_by_id=user_id,
+                parent__isnull=True,
             )
             .filter(**filters)
-            .count()
-        )
-
-        assigned_issues_count = (
-            Issue.issue_objects.filter(
-                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
-                workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
+            .aggregate(
+                created_issues=Count("id", filter=Q(created_by_id=user_id), distinct=True),
+                assigned_issues=Count("id", filter=active_assignee, distinct=True),
+                pending_issues=Count(
+                    "id",
+                    filter=active_assignee & ~Q(state__group__in=["completed", "cancelled"]),
+                    distinct=True,
+                ),
+                completed_issues=Count(
+                    "id",
+                    filter=active_assignee & Q(state__group="completed"),
+                    distinct=True,
+                ),
             )
-            .filter(**filters)
-            .count()
-        )
-
-        pending_issues_count = (
-            Issue.issue_objects.filter(
-                ~Q(state__group__in=["completed", "cancelled"]),
-                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
-                workspace__slug=slug,
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
-            )
-            .filter(**filters)
-            .count()
-        )
-
-        completed_issues_count = (
-            Issue.issue_objects.filter(
-                (Q(assignees__in=[user_id]) & Q(issue_assignee__deleted_at__isnull=True)),
-                workspace__slug=slug,
-                state__group="completed",
-                project__project_projectmember__member=request.user,
-                project__project_projectmember__is_active=True,
-            )
-            .filter(**filters)
-            .count()
         )
 
         subscribed_issues_count = (
@@ -509,10 +501,10 @@ class WorkspaceUserProfileStatsEndpoint(BaseAPIView):
             {
                 "state_distribution": state_distribution,
                 "priority_distribution": priority_distribution,
-                "created_issues": created_issues,
-                "assigned_issues": assigned_issues_count,
-                "completed_issues": completed_issues_count,
-                "pending_issues": pending_issues_count,
+                "created_issues": counts["created_issues"],
+                "assigned_issues": counts["assigned_issues"],
+                "completed_issues": counts["completed_issues"],
+                "pending_issues": counts["pending_issues"],
                 "subscribed_issues": subscribed_issues_count,
                 "present_cycles": present_cycle,
                 "upcoming_cycles": upcoming_cycles,

@@ -37,6 +37,16 @@ from plane.app.views import (
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
     WorkspaceWorkLogSummaryEndpoint,
+    CrossWorkspaceTimesheetEndpoint,
+    CrossWorkspaceCapacityEndpoint,
+    CrossWorkspaceCapacityDayDetailsEndpoint,
+    WorkspaceAnalyticsTimesheetEndpoint,
+    WorkspaceCapacityEndpoint,
+    WorkspaceCapacityDayDetailsEndpoint,
+    DashboardViewSet,
+    DashboardWidgetViewSet,
+    DashboardWidgetChartEndpoint,
+    DashboardWidgetBulkPositionEndpoint,
 )
 
 
@@ -99,6 +109,11 @@ urlpatterns = [
         "workspaces/<str:slug>/members/<uuid:pk>/",
         WorkSpaceMemberViewSet.as_view({"patch": "partial_update", "delete": "destroy", "get": "retrieve"}),
         name="workspace-member",
+    ),
+    path(
+        "workspaces/<str:slug>/members/user-search/",
+        WorkSpaceMemberViewSet.as_view({"get": "user_search"}),
+        name="workspace-member-user-search",
     ),
     path(
         "workspaces/<str:slug>/members/leave/",
@@ -226,6 +241,37 @@ urlpatterns = [
         QuickLinkViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
         name="workspace-quick-links",
     ),
+    # Dashboards
+    path(
+        "workspaces/<str:slug>/dashboards/",
+        DashboardViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-dashboards",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:pk>/",
+        DashboardViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        name="workspace-dashboard",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/",
+        DashboardWidgetViewSet.as_view({"get": "list", "post": "create"}),
+        name="workspace-dashboard-widgets",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/<uuid:pk>/",
+        DashboardWidgetViewSet.as_view({"get": "retrieve", "patch": "partial_update", "delete": "destroy"}),
+        name="workspace-dashboard-widget",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/<uuid:widget_id>/charts/",
+        DashboardWidgetChartEndpoint.as_view(),
+        name="workspace-dashboard-widget-charts",
+    ),
+    path(
+        "workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/positions/",
+        DashboardWidgetBulkPositionEndpoint.as_view(),
+        name="workspace-dashboard-widget-positions",
+    ),
     # Widgets
     path(
         "workspaces/<str:slug>/home-preferences/",
@@ -263,5 +309,35 @@ urlpatterns = [
         "workspaces/<str:slug>/time-tracking/summary/",
         WorkspaceWorkLogSummaryEndpoint.as_view(),
         name="workspace-time-tracking-summary",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/cross-workspace/timesheet/",
+        CrossWorkspaceTimesheetEndpoint.as_view(),
+        name="cross-workspace-timesheet",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/cross-workspace/capacity/",
+        CrossWorkspaceCapacityEndpoint.as_view(),
+        name="cross-workspace-capacity",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/cross-workspace/capacity/day-details/",
+        CrossWorkspaceCapacityDayDetailsEndpoint.as_view(),
+        name="cross-workspace-capacity-day-details",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/analytics/timesheet/",
+        WorkspaceAnalyticsTimesheetEndpoint.as_view(),
+        name="workspace-analytics-timesheet",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/analytics/capacity/",
+        WorkspaceCapacityEndpoint.as_view(),
+        name="workspace-capacity",
+    ),
+    path(
+        "workspaces/<str:slug>/time-tracking/analytics/capacity/day-details/",
+        WorkspaceCapacityDayDetailsEndpoint.as_view(),
+        name="workspace-capacity-day-details",
     ),
 ]

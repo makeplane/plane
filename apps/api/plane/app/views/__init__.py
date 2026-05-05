@@ -11,6 +11,10 @@ from .project.base import (
     ProjectArchiveUnarchiveEndpoint,
 )
 
+from .project.worklog import ProjectWorkLogViewSet, ProjectWorklogExportView
+
+from .project.bank_wide import WorkspaceBankWideProjectsEndpoint
+
 from .project.invite import (
     UserProjectInvitationsViewset,
     ProjectInvitationsViewset,
@@ -30,6 +34,10 @@ from .user.base import (
     UpdateUserTourCompletedEndpoint,
     UserActivityEndpoint,
 )
+
+from .user.daily_worklog import UserDailyWorklogTotalEndpoint
+
+from .user.work_items import UserWorkItemsTodayEndpoint, UserWorkItemsOverdueEndpoint
 
 
 from .base import BaseAPIView, BaseViewSet
@@ -83,10 +91,17 @@ from .workspace.cycle import WorkspaceCyclesEndpoint
 from .workspace.quick_link import QuickLinkViewSet
 from .workspace.sticky import WorkspaceStickyViewSet
 from .workspace.time_tracking import (
+    ProjectAnalyticsTimesheetEndpoint,
+    CrossWorkspaceTimesheetEndpoint,
+    CrossWorkspaceCapacityEndpoint,
+    CrossWorkspaceCapacityDayDetailsEndpoint,
     ProjectWorkLogSummaryEndpoint,
     WorkspaceWorkLogSummaryEndpoint,
     TimesheetGridEndpoint,
     TimesheetBulkUpdateEndpoint,
+    WorkspaceAnalyticsTimesheetEndpoint,
+    WorkspaceCapacityEndpoint,
+    WorkspaceCapacityDayDetailsEndpoint,
 )
 
 from .state.base import StateViewSet, IntakeStateEndpoint
@@ -172,6 +187,8 @@ from .module.issue import ModuleIssueViewSet
 
 from .module.archive import ModuleArchiveUnarchiveEndpoint
 
+from .module.activity import ModuleActivityEndpoint
+
 from .api import ApiTokenEndpoint, ServiceApiTokenEndpoint
 
 from .page.base import (
@@ -239,14 +256,6 @@ from .webhook.base import (
     WebhookSecretRegenerateEndpoint,
 )
 
-from .analytics_dashboard import (
-    AnalyticsDashboardEndpoint,
-    AnalyticsDashboardDetailEndpoint,
-    AnalyticsDashboardWidgetEndpoint,
-    AnalyticsDashboardWidgetDetailEndpoint,
-    AnalyticsDashboardWidgetDataEndpoint,
-)
-
 from .workspace.department import (
     DepartmentEndpoint,
     DepartmentDetailEndpoint,
@@ -264,6 +273,9 @@ from .workspace.staff import (
     StaffStatsEndpoint,
 )
 
+from .dashboard import DashboardViewSet, DashboardWidgetViewSet, DashboardWidgetBulkPositionEndpoint
+from .dashboard_chart import DashboardWidgetChartEndpoint
+
 from .error_404 import custom_404_view
 
 from .notification.base import MarkAllReadNotificationViewSet
@@ -271,4 +283,15 @@ from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
 
-from .capacity import ProjectCapacityEndpoint
+from .capacity import (
+    ProjectCapacityEndpoint,
+    ProjectCapacityDayDetailsEndpoint,
+    ProjectCapacityCategoriesEndpoint,
+)
+
+from .workflow import (
+    ProjectWorkflowViewSet,
+    WorkflowStateConfigViewSet,
+    WorkflowTransitionViewSet,
+    WorkflowTransitionApproverViewSet,
+)

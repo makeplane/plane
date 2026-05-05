@@ -4,8 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
 import type { TIssue, TIssueServiceType } from "@plane/types";
 import { EIssueServiceType, EIssuesStoreType } from "@plane/types";
@@ -100,7 +99,7 @@ export const SubIssuesCollapsibleContent = observer(function SubIssuesCollapsibl
   }, [parentIssueId, projectId, setSubIssueHelpers, subIssueHelpersByIssueId, subIssueOperations, workspaceSlug]);
 
   useEffect(() => {
-    handleFetchSubIssues();
+    void handleFetchSubIssues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentIssueId]);
 

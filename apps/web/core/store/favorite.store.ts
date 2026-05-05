@@ -340,16 +340,18 @@ export class FavoriteStore implements IFavoriteStore {
           (this.projectStore.projectMap[entity_identifier].is_favorite = false)
         );
       case "analytics_dashboard": {
-        // analyticsDashboard lives on CE RootStore, not CoreRootStore
-        /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
-        const store = (this.rootStore as any).analyticsDashboard;
-        if (store) {
-          const dashboard = store.dashboardMap.get(entity_identifier);
-          if (dashboard) {
-            store.dashboardMap.set(entity_identifier, { ...dashboard, is_favorite: false });
+        // analytics_dashboard entity type maps to V2 customDashboard store (V1 removed)
+        /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
+        const store = (this.rootStore as any).customDashboard;
+        if (store?.dashboards) {
+          const idx = (store.dashboards as Array<{ id: string; is_favorite?: boolean }>).findIndex(
+            (d) => d.id === entity_identifier
+          );
+          if (idx !== -1) {
+            store.dashboards[idx].is_favorite = false;
           }
         }
-        /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call */
+        /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment */
         return;
       }
       default:

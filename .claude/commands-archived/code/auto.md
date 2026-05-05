@@ -7,17 +7,20 @@ argument-hint: [plan] [all-phases-yes-or-no] (default: yes)
 <plan>$ARGUMENTS</plan>
 
 ## Arguments
+
 - $PLAN: $1 (Mention specific plan or auto detected, default: latest plan)
 - $ALL_PHASES: $2 (`Yest` to finish all phases in one run or `No` to implement phase-by-phase and wait for confirmation, default is `Yes`)
 
 ---
 
 ## Role Responsibilities
+
 - You are a senior software engineer who must study the provided implementation plan end-to-end before writing code.
 - Validate the plan's assumptions, surface blockers, and confirm priorities with the user prior to execution.
 - Drive the implementation from start to finish, reporting progress and adjusting the plan responsibly while honoring **YAGNI**, **KISS**, and **DRY** principles.
 
 **IMPORTANT:** Remind these rules with subagents communication:
+
 - Sacrifice grammar for the sake of concision when writing reports.
 - In reports, list any unresolved questions at the end, if any.
 - Ensure token efficiency while maintaining high quality.
@@ -29,6 +32,7 @@ argument-hint: [plan] [all-phases-yes-or-no] (default: yes)
 ## Step 0: Plan Detection & Phase Selection
 
 **If `$PLAN` is empty:**
+
 1. Find latest `plan.md` in `./plans` | `find ./plans -name "plan.md" -type f -exec stat -f "%m %N" {} \; 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-`
 2. Parse plan for phases and status, auto-select next incomplete (prefer IN_PROGRESS or earliest Planned)
 
@@ -37,6 +41,7 @@ argument-hint: [plan] [all-phases-yes-or-no] (default: yes)
 **Output:** `✓ Step 0: [Plan Name] - [Phase Name]`
 
 **Subagent Pattern (use throughout):**
+
 ```
 Task(subagent_type="[type]", prompt="[task description]", description="[brief]")
 ```
@@ -50,10 +55,12 @@ Task(subagent_type="[type]", prompt="[task description]", description="[brief]")
 ---
 
 ## Step 1: Analysis & Task Extraction
+
 Use `project-manager` agent to read plan file completely. Map dependencies between tasks. List ambiguities or blockers. Identify required skills/tools and activate from catalog. Parse phase file and extract actionable tasks.
 
 **TodoWrite Initialization & Task Extraction:**
 `project-manager` agent must respond back with:
+
 - Initialize `TodoWrite` with `Step 0: [Plan Name] - [Phase Name]` and all command steps (Step 1 through Step 5)
 - Read phase file (e.g., phase-01-preparation.md)
 - Look for tasks/steps/phases/sections/numbered/bulleted lists
@@ -128,6 +135,7 @@ LOOP:
 **Critical issues:** Security vulnerabilities (XSS, SQL injection, OWASP), performance bottlenecks, architectural violations, principle violations.
 
 **Output formats:**
+
 - Auto-approved: `✓ Step 4: Code reviewed - 9.8/10 - Auto-approved (2 warnings logged)`
 - After auto-fix: `✓ Step 4: Code reviewed - 7.2/10 → Auto-fixed 2 critical → 9.5/10 - Approved`
 - Escalation: `⚠ Step 4: 3 fix cycles exhausted, [N] critical remain - User input required`
@@ -141,13 +149,16 @@ Mark Step 4 complete in TodoWrite, mark Step 5 in_progress.
 ## Step 5: Finalize
 
 1. **STATUS UPDATE - BOTH MANDATORY - PARALLEL EXECUTION:**
+
 - **Call** `project-manager` sub-agent: "Update plan status in [plan-path]. Mark plan phase [phase-name] as DONE with timestamp. Update roadmap."
 - **Call** `docs-manager` sub-agent: "Update docs for plan phase [phase-name]. Changed files: [list]."
 
 2. **ONBOARDING CHECK:** Detect onboarding requirements (API keys, env vars, config) + generate summary report with next steps.
+
 - If this is the last phase: use `AskUserQuestion` tool to ask if user wants to set up onboarding requirements.
 
 3. **AUTO-COMMIT (after steps 1 and 2 completes):**
+
 - **Call** `git-manager` subagent to handle git operation.
 - Run only if: Steps 1 and 2 successful + Tests passed
 - Auto-stage, commit with conventional commit message based on actual changes
@@ -159,11 +170,14 @@ Mark Step 5 complete in `TodoWrite`.
 **Important:**
 If $ALL_PHASES is `Yes`, proceed to the next phase automatically.
 If $ALL_PHASES is `No`, wait for user confirmation before proceeding to the next phase:
+
 - Use `AskUserQuestion` tool to ask if user wants to proceed to the next phase: "**Phase workflow finished. Ready for next plan phase.**"
 
 ## Summary report
+
 If this is the last phase, generate a concise summary report.
 Use `AskUserQuestion` tool to ask these questions:
+
 - If user wants to preview the report with `/preview` slash command.
 - If user wants to archive the plan with `/plan:archive` slash command.
 
@@ -174,6 +188,7 @@ Use `AskUserQuestion` tool to ask these questions:
 **Step outputs must follow unified format:** `✓ Step [N]: [Brief status] - [Key metrics]`
 
 **Examples:**
+
 - Step 0: `✓ Step 0: [Plan Name] - [Phase Name]`
 - Step 1: `✓ Step 1: Found [N] tasks across [M] phases - Ambiguities: [list]`
 - Step 2: `✓ Step 2: Implemented [N] files - [X/Y] tasks complete`
@@ -186,15 +201,18 @@ Use `AskUserQuestion` tool to ask these questions:
 **TodoWrite tracking required:** Initialize at Step 0, mark each step complete before next.
 
 **Mandatory subagent calls:**
+
 - Step 3: `tester`
 - Step 4: `code-reviewer`
 - Step 5: `project-manager` AND `docs-manager` AND `git-manager`
 
 **Blocking gates:**
+
 - Step 3: Tests must be 100% passing
 - Step 4: Critical issues must be 0
 
 **REMEMBER:**
+
 - Do not skip steps. Do not proceed if validation fails.
 - One plan phase at a time. Do not proceed to the next phase until the current phase is complete and validated.
 - You can always generate images with `ai-multimodal` skill on the fly for visual assets.

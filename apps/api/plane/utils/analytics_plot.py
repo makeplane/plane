@@ -45,10 +45,10 @@ def extract_axis(queryset, x_axis):
 def sort_data(data, temp_axis):
     # When the axis is in priority order by
     if temp_axis == "priority":
-        order = ["low", "medium", "high", "urgent", "none"]
+        order = ["low", "medium", "high", "urgent"]
         return {key: data[key] for key in order if key in data}
     else:
-        return dict(sorted(data.items(), key=lambda x: (x[0] == "none", x[0])))
+        return dict(sorted(data.items()))
 
 
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):

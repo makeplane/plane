@@ -9,11 +9,13 @@
 ## Scope
 
 **Changed Files:**
+
 - `/Volumes/Data/SHBVN/plane.so/apps/web/core/store/analytics-dashboard.store.ts`
 - `/Volumes/Data/SHBVN/plane.so/apps/web/core/components/dashboards/analytics-dashboard-widget-card.tsx`
 - `/Volumes/Data/SHBVN/plane.so/apps/web/app/(all)/[workspaceSlug]/(projects)/dashboards/page.tsx`
 
 **Focus Areas:**
+
 - Store error typing fix
 - Widget card click-outside detection
 - List page button component migration
@@ -53,17 +55,20 @@ The fixes are correctly implemented and follow established patterns in the codeb
 **Issue:** The error handling pattern differs from service layer expectations.
 
 **Details:**
+
 - Store converts errors to strings: `error instanceof Error ? error.message : String(error)`
 - Service layer throws `error?.response?.data` (object structure)
 - When service throws `{detail: "message", code: "ERR_CODE"}`, store receives object not Error instance
 - String conversion loses structured error data (error codes, field-level validation errors)
 
 **Impact:**
+
 - Loss of error context for debugging
 - Unable to handle specific error codes (401, 403, 404) differently
 - Field-level validation errors from backend lost
 
 **Example Scenario:**
+
 ```typescript
 // Backend returns: {detail: "Dashboard not found", status: 404}
 // Service throws: {detail: "Dashboard not found", status: 404}
@@ -71,6 +76,7 @@ The fixes are correctly implemented and follow established patterns in the codeb
 ```
 
 **Recommendation:**
+
 ```typescript
 // Option 1: Extract message from structured errors
 this.error = error instanceof Error
@@ -96,6 +102,7 @@ this.error = error instanceof Error
 **Issue:** `fetchWidgetData` doesn't reset store-level error state.
 
 **Details:**
+
 ```typescript
 fetchWidgetData = async (...) => {
   try {
@@ -113,11 +120,13 @@ fetchWidgetData = async (...) => {
 **Comparison:** Other methods set `this.error = null` on success and set error on failure.
 
 **Impact:**
+
 - Stale error from previous operation may remain in store
 - Component handles errors locally (widget-card.tsx line 53-60), so not breaking
 - Inconsistent error state management pattern
 
 **Recommendation:**
+
 ```typescript
 fetchWidgetData = async (...) => {
   try {
@@ -159,6 +168,7 @@ useEffect(() => {
 ```
 
 **Impact:**
+
 - Adds/removes listener on every render (performance minor)
 - handleClick reference changes cause unnecessary re-registrations
 - Works correctly but inefficient
@@ -166,6 +176,7 @@ useEffect(() => {
 **Note:** This is existing codebase pattern, not introduced by the fix. Fixing requires updating all 40+ usages across codebase to ensure no breaking changes.
 
 **Recommendation:** Add memoization:
+
 ```typescript
 const handleClick = useCallback((event: MouseEvent) => { ... }, [ref, callback]);
 useEffect(() => { ... }, [handleClick, useCapture]);
@@ -180,6 +191,7 @@ useEffect(() => { ... }, [handleClick, useCapture]);
 **File:** `apps/web/core/components/dashboards/analytics-dashboard-widget-card.tsx`
 
 **Scenario:**
+
 1. User opens widget menu (showMenu = true)
 2. User clicks "Delete"
 3. onDelete callback triggers, removes widget from store
@@ -196,6 +208,7 @@ useEffect(() => { ... }, [handleClick, useCapture]);
 **Integration:** `widget-config-modal.tsx`
 
 **Scenario:**
+
 1. Widget menu open (menuRef active)
 2. User clicks "Configure" → setShowMenu(false) → modal opens
 3. Outside click fires during modal transition
@@ -213,17 +226,20 @@ useEffect(() => { ... }, [handleClick, useCapture]);
 **Related:** `apps/web/core/services/analytics-dashboard.service.ts`
 
 **Scenario Tested:**
+
 - Network errors (no response): Error instance
 - API errors (4xx/5xx): `{detail: "...", code?: "..."}` object
 - Axios errors: `error.response.data` structure
 - Non-Error throws: strings, nulls, undefined
 
 **Current Handling:**
+
 ```typescript
-error instanceof Error ? error.message : String(error)
+error instanceof Error ? error.message : String(error);
 ```
 
 **Coverage:**
+
 - ✅ Error instances: `error.message`
 - ⚠️ API error objects: `"[object Object]"` (MED-1 above)
 - ✅ Strings: passthrough
@@ -251,6 +267,7 @@ error instanceof Error ? error.message : String(error)
 **Status:** No security issues introduced.
 
 **Reviewed:**
+
 - ✅ No XSS vectors (error messages properly escaped in React)
 - ✅ No sensitive data in error states
 - ✅ Click handlers don't bypass CSRF protections
@@ -263,6 +280,7 @@ error instanceof Error ? error.message : String(error)
 **Impact:** Negligible to positive.
 
 **Analysis:**
+
 - Outside click detector: Same performance as existing pattern (LOW-1 affects all usages equally)
 - Error string conversion: Minimal overhead vs object storage
 - Button component: No performance change (same underlying implementation)
@@ -312,11 +330,13 @@ apps/web/app/(all)/[workspaceSlug]/(projects)/dashboards/page.tsx(16,28):
 ## Metrics
 
 **Before Review:**
+
 - Type Coverage: ~85% (any types in error handling)
 - Linting Issues: 3 (raw button, any types, hook deps)
 - Pattern Consistency: Medium (error handling varied)
 
 **After Fixes:**
+
 - Type Coverage: ~95% (error: string | null)
 - Linting Issues: 0
 - Pattern Consistency: High (matches codebase conventions)
@@ -340,11 +360,13 @@ apps/web/app/(all)/[workspaceSlug]/(projects)/dashboards/page.tsx(16,28):
 ## Unresolved Questions
 
 **Q1:** Should store-level errors be structured objects instead of strings?
+
 - **Context:** Current pattern converts all errors to strings, losing API error metadata
 - **Impact:** May limit future error handling capabilities (retry logic, specific error UI)
 - **Recommendation:** Discuss with team if structured errors needed for analytics features
 
 **Q2:** Is global error state in store necessary when components handle errors locally?
+
 - **Context:** Widget card manages own `hasError` state, store error may be redundant
 - **Impact:** None currently, but adds maintenance overhead
 - **Observation:** Other stores (module.store.ts, workspace.store.ts) follow same pattern
@@ -356,6 +378,7 @@ apps/web/app/(all)/[workspaceSlug]/(projects)/dashboards/page.tsx(16,28):
 **Verdict:** ✅ Approve for merge
 
 All three fixes are correctly implemented:
+
 - Store typing improves type safety
 - Outside click detector follows established patterns
 - Button component migration maintains consistency

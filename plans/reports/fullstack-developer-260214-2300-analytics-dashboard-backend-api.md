@@ -30,13 +30,13 @@
 
 ### Modified Files (3 files)
 
-4. **apps/api/plane/api/serializers/__init__.py**
+4. **apps/api/plane/api/serializers/**init**.py**
    - Added analytics_dashboard serializer imports
 
-5. **apps/api/plane/api/views/__init__.py**
+5. **apps/api/plane/api/views/**init**.py**
    - Added analytics_dashboard view imports
 
-6. **apps/api/plane/api/urls/__init__.py**
+6. **apps/api/plane/api/urls/**init**.py**
    - Added analytics_dashboard URL pattern imports
    - Included in urlpatterns list
 
@@ -51,7 +51,7 @@
 - [x] Applied security whitelist for filter keys
 - [x] Soft delete support for dashboards and widgets
 - [x] Error handling with 404/400/500 responses
-- [x] Updated all __init__.py files for proper exports
+- [x] Updated all **init**.py files for proper exports
 - [x] Verified syntax with Django setup
 
 ## Implementation Details
@@ -85,7 +85,7 @@ GET    /api/workspaces/{slug}/analytics-dashboards/{dashboard_id}/widgets/{widge
 
 4. **Error Handling**: All endpoints return proper 404/400 responses with descriptive error messages
 
-5. **Soft Delete**: All queries filter deleted_at__isnull=True
+5. **Soft Delete**: All queries filter deleted_at\_\_isnull=True
 
 ## Tests Status
 

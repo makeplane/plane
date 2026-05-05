@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "@/services/api.service";
 
@@ -28,6 +28,12 @@ export interface IDepartment {
     id: string;
     name: string;
     identifier: string;
+  } | null;
+  linked_workspace?: string | null;
+  linked_workspace_detail?: {
+    id: string;
+    name: string;
+    slug: string;
   } | null;
   staff_count: number;
   children?: IDepartment[];

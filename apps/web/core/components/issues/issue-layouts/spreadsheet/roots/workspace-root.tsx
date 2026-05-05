@@ -4,10 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { observer } from "mobx-react";
 // plane constants
-import { ALL_ISSUES, EIssueFilterType, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+// TODO: re-enable inline editing when ready — restore EUserPermissions, EUserPermissionsLevel
+import { ALL_ISSUES, EIssueFilterType } from "@plane/constants";
 import type { IIssueDisplayFilterOptions } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
@@ -15,7 +16,8 @@ import { AllIssueQuickActions } from "@/components/issues/issue-layouts/quick-ac
 import { SpreadsheetLayoutLoader } from "@/components/ui/loader/layouts/spreadsheet-layout-loader";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
+// TODO: re-enable inline editing when ready — restore useUserPermissions
+// import { useUserPermissions } from "@/hooks/store/user";
 import { useIssuesActions } from "@/hooks/use-issues-actions";
 import { useWorkspaceIssueProperties } from "@/hooks/use-workspace-issue-properties";
 // store
@@ -49,31 +51,23 @@ export const WorkspaceSpreadsheetRoot = observer(function WorkspaceSpreadsheetRo
     issues: { getIssueLoader, getPaginationData, groupedIssueIds },
   } = useIssues(EIssuesStoreType.GLOBAL);
   const { updateIssue, removeIssue, archiveIssue } = useIssuesActions(EIssuesStoreType.GLOBAL);
-  const { allowPermissions } = useUserPermissions();
+  // TODO: re-enable inline editing when ready — restore allowPermissions usage
+  // const { allowPermissions } = useUserPermissions();
 
   // Derived values
   const issueFilters = globalViewId ? filters?.[globalViewId.toString()] : undefined;
 
   // Permission checker
-  const canEditProperties = useCallback(
-    (projectId: string | undefined) => {
-      if (!projectId) return false;
-      return allowPermissions(
-        [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-        EUserPermissionsLevel.PROJECT,
-        workspaceSlug.toString(),
-        projectId
-      );
-    },
-    [allowPermissions, workspaceSlug]
-  );
+  // TODO: re-enable inline editing when ready (restore the allowPermissions check below)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const canEditProperties = useCallback((_projectId: string | undefined) => false, []);
 
   // Display filters handler
   const handleDisplayFiltersUpdate = useCallback(
     (updatedDisplayFilter: Partial<IIssueDisplayFilterOptions>) => {
       if (!workspaceSlug || !globalViewId) return;
 
-      updateFilters(
+      void updateFilters(
         workspaceSlug.toString(),
         undefined,
         EIssueFilterType.DISPLAY_FILTERS,

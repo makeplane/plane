@@ -63,7 +63,7 @@ export class ThemeStore implements IThemeStore {
    * @description Sets the user theme and applies it to the platform
    * @param currentTheme
    */
-  setTheme = async (currentTheme: TTheme) => {
+  setTheme = (currentTheme: TTheme) => {
     try {
       localStorage.setItem("theme", currentTheme);
       this.theme = currentTheme;

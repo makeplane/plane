@@ -28,6 +28,10 @@ const BROAD_PATTERN_REGEXES = [
   /^\*\.\w+$/,
   // *.{ext,ext2} at root
   /^\*\.\{[^}]+\}$/,
+  // **/*.ext - all files of type everywhere (e.g., **/*.ts, **/*.js)
+  /^\*\*\/\*\.\w+$/,
+  // **/*.{ext,ext2} - all files of multiple types everywhere
+  /^\*\*\/\*\.\{[^}]+\}$/,
 ];
 
 // Common source directories that indicate a more specific search

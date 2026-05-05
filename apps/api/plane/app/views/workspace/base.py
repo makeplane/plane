@@ -289,7 +289,12 @@ class UserWorkspaceDashboardEndpoint(BaseAPIView):
             .order_by("week_in_month")
         )
 
-        assigned_issues = Issue.issue_objects.filter(workspace__slug=slug, assignees__in=[request.user]).count()
+                # [Tri Ho] Bug fix: filter parent__isnull=True to avoid counting sub-tasks
+        assigned_issues = Issue.issue_objects.filter(
+            workspace__slug=slug,
+            assignees__in=[request.user],
+            parent__isnull=True,
+        ).count()
 
         pending_issues_count = Issue.issue_objects.filter(
             ~Q(state__group__in=["completed", "cancelled"]),

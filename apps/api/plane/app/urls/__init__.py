@@ -22,9 +22,11 @@ from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
-from .analytics_dashboard import urlpatterns as analytics_dashboard_urls
 from .department import urlpatterns as department_urls
 from .staff import urlpatterns as staff_urls
+from .workflow import urlpatterns as workflow_urls
+from .task_category import urlpatterns as task_category_urls
+from .ho import urlpatterns as ho_urls
 
 urlpatterns = [
     *analytic_urls,
@@ -47,7 +49,9 @@ urlpatterns = [
     *webhook_urls,
     *timezone_urls,
     *exporter_urls,
-    *analytics_dashboard_urls,
     *department_urls,
     *staff_urls,
+    *workflow_urls,
+    *task_category_urls,
+    *ho_urls,
 ]

@@ -11,8 +11,8 @@
  *   --fail-threshold <n> Exit with code 1 if pass rate below n% (default: 0)
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 // Parse arguments
 const args = process.argv.slice(2);
@@ -21,11 +21,11 @@ function getArg(name) {
   return index !== -1 ? args[index + 1] : null;
 }
 
-const playwrightPath = getArg("playwright");
-const vitestPath = getArg("vitest");
-const junitPath = getArg("junit");
-const outputFormat = getArg("output") || "text";
-const failThreshold = parseInt(getArg("fail-threshold") || "0", 10);
+const playwrightPath = getArg('playwright');
+const vitestPath = getArg('vitest');
+const junitPath = getArg('junit');
+const outputFormat = getArg('output') || 'text';
+const failThreshold = parseInt(getArg('fail-threshold') || '0', 10);
 
 // Result aggregator
 const summary = {
@@ -46,10 +46,10 @@ function parsePlaywright(filePath) {
     return;
   }
 
-  const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
   for (const suite of data.suites || []) {
-    parseSuite(suite, "playwright");
+    parseSuite(suite, 'playwright');
   }
 
   summary.duration += data.stats?.duration || 0;
@@ -57,7 +57,7 @@ function parsePlaywright(filePath) {
 
 function parseSuite(suite, source) {
   const suiteSummary = {
-    name: suite.title || suite.file || "Unknown",
+    name: suite.title || suite.file || 'Unknown',
     source,
     passed: 0,
     failed: 0,
@@ -67,20 +67,20 @@ function parseSuite(suite, source) {
   for (const spec of suite.specs || []) {
     for (const test of spec.tests || []) {
       summary.total++;
-      suiteSummary[test.status === "expected" ? "passed" : test.status]++;
+      suiteSummary[test.status === 'expected' ? 'passed' : test.status]++;
 
-      if (test.status === "expected") {
+      if (test.status === 'expected') {
         summary.passed++;
-      } else if (test.status === "unexpected") {
+      } else if (test.status === 'unexpected') {
         summary.failed++;
         summary.failures.push({
           name: `${suite.title} > ${spec.title}`,
           source,
-          error: test.results?.[0]?.error?.message || "Unknown error",
+          error: test.results?.[0]?.error?.message || 'Unknown error',
         });
-      } else if (test.status === "skipped") {
+      } else if (test.status === 'skipped') {
         summary.skipped++;
-      } else if (test.status === "flaky") {
+      } else if (test.status === 'flaky') {
         summary.flaky++;
         summary.passed++; // Flaky tests that eventually passed
       }
@@ -104,12 +104,12 @@ function parseVitest(filePath) {
     return;
   }
 
-  const data = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
   for (const file of data.testResults || []) {
     const suiteSummary = {
       name: path.basename(file.name),
-      source: "vitest",
+      source: 'vitest',
       passed: 0,
       failed: 0,
       skipped: 0,
@@ -118,18 +118,18 @@ function parseVitest(filePath) {
     for (const test of file.assertionResults || []) {
       summary.total++;
 
-      if (test.status === "passed") {
+      if (test.status === 'passed') {
         summary.passed++;
         suiteSummary.passed++;
-      } else if (test.status === "failed") {
+      } else if (test.status === 'failed') {
         summary.failed++;
         suiteSummary.failed++;
         summary.failures.push({
           name: test.fullName || test.title,
-          source: "vitest",
-          error: test.failureMessages?.[0] || "Unknown error",
+          source: 'vitest',
+          error: test.failureMessages?.[0] || 'Unknown error',
         });
-      } else if (test.status === "skipped" || test.status === "pending") {
+      } else if (test.status === 'skipped' || test.status === 'pending') {
         summary.skipped++;
         suiteSummary.skipped++;
       }
@@ -138,7 +138,9 @@ function parseVitest(filePath) {
     summary.suites.push(suiteSummary);
   }
 
-  summary.duration += data.startTime ? Date.now() - data.startTime : 0;
+  summary.duration += data.startTime
+    ? Date.now() - data.startTime
+    : 0;
 }
 
 // Parse JUnit XML results
@@ -148,17 +150,17 @@ function parseJunit(filePath) {
     return;
   }
 
-  const xml = fs.readFileSync(filePath, "utf-8");
+  const xml = fs.readFileSync(filePath, 'utf-8');
 
   // Simple XML parsing (avoid external dependencies)
   const testsuites = xml.match(/<testsuite[^>]*>/g) || [];
 
   for (const testsuite of testsuites) {
-    const name = testsuite.match(/name="([^"]+)"/)?.[1] || "Unknown";
-    const tests = parseInt(testsuite.match(/tests="(\d+)"/)?.[1] || "0", 10);
-    const failures = parseInt(testsuite.match(/failures="(\d+)"/)?.[1] || "0", 10);
-    const skipped = parseInt(testsuite.match(/skipped="(\d+)"/)?.[1] || "0", 10);
-    const time = parseFloat(testsuite.match(/time="([\d.]+)"/)?.[1] || "0");
+    const name = testsuite.match(/name="([^"]+)"/)?.[1] || 'Unknown';
+    const tests = parseInt(testsuite.match(/tests="(\d+)"/)?.[1] || '0', 10);
+    const failures = parseInt(testsuite.match(/failures="(\d+)"/)?.[1] || '0', 10);
+    const skipped = parseInt(testsuite.match(/skipped="(\d+)"/)?.[1] || '0', 10);
+    const time = parseFloat(testsuite.match(/time="([\d.]+)"/)?.[1] || '0');
 
     summary.total += tests;
     summary.passed += tests - failures - skipped;
@@ -168,7 +170,7 @@ function parseJunit(filePath) {
 
     summary.suites.push({
       name,
-      source: "junit",
+      source: 'junit',
       passed: tests - failures - skipped,
       failed: failures,
       skipped,
@@ -180,7 +182,7 @@ function parseJunit(filePath) {
   for (const match of failureMatches) {
     summary.failures.push({
       name: match[1],
-      source: "junit",
+      source: 'junit',
       error: match[2].trim().slice(0, 200),
     });
   }
@@ -188,10 +190,12 @@ function parseJunit(filePath) {
 
 // Output formatters
 function outputText() {
-  const passRate = summary.total > 0 ? ((summary.passed / summary.total) * 100).toFixed(1) : 0;
+  const passRate = summary.total > 0
+    ? ((summary.passed / summary.total) * 100).toFixed(1)
+    : 0;
 
-  console.log("\n📊 Test Results Summary");
-  console.log("=".repeat(50));
+  console.log('\n📊 Test Results Summary');
+  console.log('='.repeat(50));
   console.log(`Total:   ${summary.total}`);
   console.log(`Passed:  ${summary.passed} ✅`);
   console.log(`Failed:  ${summary.failed} ❌`);
@@ -203,7 +207,7 @@ function outputText() {
   console.log(`Duration: ${(summary.duration / 1000).toFixed(2)}s`);
 
   if (summary.failures.length > 0) {
-    console.log("\n❌ Failures:");
+    console.log('\n❌ Failures:');
     for (const failure of summary.failures.slice(0, 10)) {
       console.log(`  - [${failure.source}] ${failure.name}`);
       console.log(`    ${failure.error.slice(0, 100)}...`);
@@ -213,7 +217,7 @@ function outputText() {
     }
   }
 
-  console.log("");
+  console.log('');
 }
 
 function outputJson() {
@@ -221,11 +225,13 @@ function outputJson() {
 }
 
 function outputMarkdown() {
-  const passRate = summary.total > 0 ? ((summary.passed / summary.total) * 100).toFixed(1) : 0;
+  const passRate = summary.total > 0
+    ? ((summary.passed / summary.total) * 100).toFixed(1)
+    : 0;
 
-  console.log("## Test Results Summary\n");
-  console.log("| Metric | Value |");
-  console.log("|--------|-------|");
+  console.log('## Test Results Summary\n');
+  console.log('| Metric | Value |');
+  console.log('|--------|-------|');
   console.log(`| Total | ${summary.total} |`);
   console.log(`| Passed | ${summary.passed} ✅ |`);
   console.log(`| Failed | ${summary.failed} ❌ |`);
@@ -234,7 +240,7 @@ function outputMarkdown() {
   console.log(`| Duration | ${(summary.duration / 1000).toFixed(2)}s |`);
 
   if (summary.failures.length > 0) {
-    console.log("\n### Failures\n");
+    console.log('\n### Failures\n');
     for (const failure of summary.failures.slice(0, 10)) {
       console.log(`- **[${failure.source}]** ${failure.name}`);
     }
@@ -247,19 +253,19 @@ if (vitestPath) parseVitest(vitestPath);
 if (junitPath) parseJunit(junitPath);
 
 if (summary.total === 0) {
-  console.log("No test results found. Specify at least one input:");
-  console.log("  --playwright <path>  Playwright JSON results");
-  console.log("  --vitest <path>      Vitest JSON results");
-  console.log("  --junit <path>       JUnit XML results");
+  console.log('No test results found. Specify at least one input:');
+  console.log('  --playwright <path>  Playwright JSON results');
+  console.log('  --vitest <path>      Vitest JSON results');
+  console.log('  --junit <path>       JUnit XML results');
   process.exit(1);
 }
 
 // Output results
 switch (outputFormat) {
-  case "json":
+  case 'json':
     outputJson();
     break;
-  case "markdown":
+  case 'markdown':
     outputMarkdown();
     break;
   default:

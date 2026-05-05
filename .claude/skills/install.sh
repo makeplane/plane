@@ -250,6 +250,7 @@ init_state() {
     "system_deps": "pending",
     "node_deps": "pending",
     "python_env": "pending",
+    "env_migration": "pending",
     "verify": "pending"
   },
   "packages": {
@@ -655,6 +656,16 @@ install_node_deps() {
         print_success "plans-kanban dependencies installed"
     fi
 
+    # stitch (@google/stitch-sdk)
+    if [ -d "$SCRIPT_DIR/stitch/scripts" ] && [ -f "$SCRIPT_DIR/stitch/scripts/package.json" ]; then
+        print_info "Installing Stitch SDK dependencies..."
+        if (cd "$SCRIPT_DIR/stitch/scripts" && npm install --quiet); then
+            print_success "Stitch SDK dependencies installed"
+        else
+            print_warning "Stitch SDK install failed (optional)"
+        fi
+    fi
+
     # Optional: Shopify CLI (ask user unless auto-confirming)
     if [ -d "$SCRIPT_DIR/shopify" ]; then
         if [[ "$SKIP_CONFIRM" == "true" ]]; then
@@ -688,19 +699,9 @@ setup_python_env() {
         PYTHON_PATH=$(which python3)
         print_success "Python3 found ($PYTHON_VERSION)"
 
-        # Check for broken UV Python installation
+        # Detect UV-managed Python — warn but don't exit (create_venv handles fallback)
         if [[ "$PYTHON_PATH" == *"/.local/share/uv/"* ]]; then
-            # Verify UV Python works by testing venv creation
-            if ! python3 -c "import sys; sys.exit(0 if '/install' not in sys.base_prefix else 1)" 2>/dev/null; then
-                print_error "UV Python installation is broken (corrupted sys.base_prefix)"
-                print_info "Please reinstall Python using Homebrew:"
-                print_info "  brew install python@3.12"
-                print_info "  export PATH=\"/opt/homebrew/bin:\$PATH\""
-                print_info "Or fix UV Python:"
-                print_info "  uv python uninstall 3.12"
-                print_info "  uv python install 3.12"
-                exit 1
-            fi
+            print_info "UV-managed Python detected (venv creation will use uv if needed)"
         fi
     else
         print_error "Python3 not found. Please install Python 3.7+"
@@ -714,9 +715,32 @@ setup_python_env() {
             return 0
         fi
 
+        # Try uv venv if available (handles uv-managed Python where python3 -m venv breaks)
+        if command_exists uv; then
+            print_warning "Standard venv creation failed, trying uv venv..."
+            if uv venv "$VENV_DIR" 2>/dev/null; then
+                # uv venv doesn't include pip — bootstrap it
+                if ! curl -sS https://bootstrap.pypa.io/get-pip.py | "$VENV_DIR/bin/python3" 2>/dev/null; then
+                    print_warning "Could not bootstrap pip via get-pip.py, trying uv pip..."
+                    if ! uv pip install pip --python "$VENV_DIR/bin/python3" 2>/dev/null; then
+                        print_error "Failed to install pip in uv venv"
+                        rm -rf "$VENV_DIR"
+                        return 1
+                    fi
+                fi
+                return 0
+            fi
+        fi
+
         # If ensurepip fails (common on macOS), create without pip and bootstrap manually
         print_warning "Standard venv creation failed, trying without ensurepip..."
-        if python3 -m venv --without-pip "$VENV_DIR"; then
+        if python3 -m venv --without-pip "$VENV_DIR" 2>/dev/null; then
+            # Verify the venv Python works (uv-managed Python may create broken venvs)
+            if ! "$VENV_DIR/bin/python3" -c "import sys" 2>/dev/null; then
+                print_warning "Venv Python is broken (cannot import stdlib), skipping..."
+                rm -rf "$VENV_DIR"
+                return 1
+            fi
             # Bootstrap pip manually with error handling
             source "$VENV_DIR/bin/activate"
             if ! curl -sS https://bootstrap.pypa.io/get-pip.py | python3; then
@@ -840,7 +864,7 @@ setup_python_env() {
         fi
     done
 
-    # Install .claude/scripts requirements (contains pyyaml for generate_catalogs.py)
+    # Install .claude/scripts requirements (contains pyyaml for scan_skills.py)
     local SCRIPTS_REQ="$SCRIPT_DIR/../scripts/requirements.txt"
     if [ -f "$SCRIPTS_REQ" ]; then
         local SCRIPTS_LOG="$LOG_DIR/install-scripts.log"
@@ -888,6 +912,93 @@ setup_python_env() {
     fi
 
     deactivate
+}
+
+# Migrate env vars — idempotently append new vars to existing .env files
+# Reads from .env.example, adds missing vars to .env without clobbering existing values
+migrate_env_vars() {
+    print_header "Environment Variable Migration"
+
+    local claude_dir="$SCRIPT_DIR/.."
+    local env_files=(
+        "$claude_dir/.env:$claude_dir/.env.example"
+        "$SCRIPT_DIR/.env:$SCRIPT_DIR/.env.example"
+    )
+
+    for pair in "${env_files[@]}"; do
+        local env_file="${pair%%:*}"
+        local example_file="${pair##*:}"
+
+        if [[ ! -f "$example_file" ]]; then
+            continue
+        fi
+
+        if [[ ! -f "$env_file" ]]; then
+            print_info "No $(basename "$(dirname "$env_file")")/$(basename "$env_file") found — skipping (user can copy from .env.example)"
+            continue
+        fi
+
+        local added=0
+        local skipped=0
+
+        # Parse .env.example for var names (skip comments, blank lines)
+        while IFS= read -r line || [[ -n "$line" ]]; do
+            # Skip comments and blank lines
+            [[ -z "$line" || "$line" =~ ^[[:space:]]*# ]] && continue
+
+            # Extract var name (handle KEY=value and KEY= formats)
+            local var_name="${line%%=*}"
+            # Skip if var name is empty or contains spaces (malformed)
+            [[ -z "$var_name" || "$var_name" =~ [[:space:]] ]] && continue
+
+            # Check if var already exists in user's .env (as KEY= or KEY=value or # KEY=)
+            if grep -q "^[[:space:]]*#\{0,1\}[[:space:]]*${var_name}=" "$env_file" 2>/dev/null; then
+                skipped=$((skipped + 1))
+                continue
+            fi
+
+            # Find the comment block above this var in .env.example for context
+            local comment_block=""
+            local line_num
+            line_num=$(grep -n "^${var_name}=" "$example_file" 2>/dev/null | head -1 | cut -d: -f1)
+            if [[ -n "$line_num" && "$line_num" -gt 1 ]]; then
+                # Collect preceding comment lines (walk backwards)
+                local start=$((line_num - 1))
+                local comments=()
+                while [[ $start -ge 1 ]]; do
+                    local prev_line
+                    prev_line=$(sed -n "${start}p" "$example_file")
+                    if [[ "$prev_line" =~ ^[[:space:]]*# ]]; then
+                        comments=("$prev_line" "${comments[@]}")
+                        start=$((start - 1))
+                    else
+                        break
+                    fi
+                done
+                if [[ ${#comments[@]} -gt 0 ]]; then
+                    comment_block=$(printf '%s\n' "${comments[@]}")
+                fi
+            fi
+
+            # Append to .env with context comment
+            {
+                echo ""
+                if [[ -n "$comment_block" ]]; then
+                    echo "$comment_block"
+                fi
+                echo "$var_name="
+            } >> "$env_file"
+
+            added=$((added + 1))
+            print_info "Added $var_name to $(basename "$(dirname "$env_file")")/$(basename "$env_file")"
+        done < "$example_file"
+
+        if [[ $added -gt 0 ]]; then
+            print_success "$(basename "$(dirname "$env_file")")/$(basename "$env_file"): $added new var(s) added, $skipped already present"
+        else
+            print_success "$(basename "$(dirname "$env_file")")/$(basename "$env_file"): all vars present ($skipped checked)"
+        fi
+    done
 }
 
 # Verify installations
@@ -1315,7 +1426,16 @@ main() {
         update_phase "python_env" "done"
     fi
 
-    # Phase 4: Verify
+    # Phase 4: Env migration (idempotent — safe to re-run)
+    if phase_done "env_migration"; then
+        print_success "Env migration: already processed (resume)"
+    else
+        update_phase "env_migration" "running"
+        migrate_env_vars
+        update_phase "env_migration" "done"
+    fi
+
+    # Phase 5: Verify
     update_phase "verify" "running"
     verify_installations
     update_phase "verify" "done"

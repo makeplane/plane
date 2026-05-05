@@ -20,8 +20,10 @@ Key strengths: Proper permission checks, clean MobX store pattern, good componen
 ### CRITICAL Issues
 
 #### 1. **Unsafe Duration Validation in Serializer** (HIGH RISK)
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/api/plane/app/serializers/worklog.py`
 **Problem:**
+
 - `duration_minutes` is `PositiveIntegerField` but serializer has no validation
 - Frontend constrains hours to 0-23, minutes to 0-59, so max is 1439 minutes (23h 59m)
 - But client can directly POST: `{"duration_minutes": 999999}` or `{"duration_minutes": 0}`
@@ -31,6 +33,7 @@ Key strengths: Proper permission checks, clean MobX store pattern, good componen
 **Impact:** Data quality issue; reports would sum garbage values. Violates business logic (duration > 0).
 
 **Fix:**
+
 ```python
 class IssueWorkLogSerializer(BaseSerializer):
     def validate_duration_minutes(self, value):
@@ -44,8 +47,10 @@ class IssueWorkLogSerializer(BaseSerializer):
 ---
 
 #### 2. **Race Condition in Optimistic Delete** (CONCURRENCY RISK)
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/core/store/worklog.store.ts` (lines 138-151)
 **Problem:**
+
 - Optimistic delete removes item from state immediately, then calls API
 - If API fails (network error, permission denied), item is restored
 - BUT if two rapid deletes happen:
@@ -57,6 +62,7 @@ class IssueWorkLogSerializer(BaseSerializer):
 **Impact:** State inconsistency; deleted items reappear; user confusion.
 
 **Fix:**
+
 ```typescript
 private deleteInFlight: Set<string> = new Set();
 
@@ -92,8 +98,10 @@ deleteWorklog = async (
 ---
 
 #### 3. **Missing Workspace Filtering in API** (SECURITY RISK)
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/api/plane/app/views/workspace/time_tracking.py` (lines 72-88)
 **Problem:**
+
 - `WorkspaceWorkLogSummaryEndpoint.get()` filters by `workspace__slug` but has NO membership check
 - User can request `/api/workspaces/{any_slug}/time-tracking/summary/` and if slug exists, they see data
 - Permission decorator is `@allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")` but "WORKSPACE" level may not validate that user is in the workspace
@@ -102,6 +110,7 @@ deleteWorklog = async (
 **Impact:** Potential info disclosure — one user may see another workspace's time data if permission decorator is buggy.
 
 **Fix:** Verify that `allow_permission(..., level="WORKSPACE")` actually checks workspace membership. If not, add explicit check:
+
 ```python
 from plane.db.models import WorkspaceMember
 
@@ -121,8 +130,10 @@ class WorkspaceWorkLogSummaryEndpoint(BaseAPIView):
 ---
 
 #### 4. **Null Pointer in Duration Calculation** (DATA CONSISTENCY)
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/api/plane/app/views/workspace/time_tracking.py` (lines 92)
 **Problem:**
+
 - `aggregate(total=Sum("duration_minutes"))["total"]` returns `None` if no worklogs exist (correct)
 - Code defaults to `0` (line 92: `or 0`)
 - BUT in TypeScript: `IWorkLogSummary.total_duration_minutes: number` is NOT nullable
@@ -134,8 +145,10 @@ class WorkspaceWorkLogSummaryEndpoint(BaseAPIView):
 **Impact:** Low risk because frontend does null checks, but inconsistent nullability in types is confusing.
 
 **Fix:** Either:
+
 1. Backend always returns 0 instead of null for numeric fields, OR
 2. Update TypeScript interface to allow null consistently:
+
 ```typescript
 export interface IWorkLogSummary {
   total_duration_minutes: number; // Never null due to `or 0`
@@ -158,8 +171,10 @@ export interface IWorkLogSummary {
 ### HIGH Priority Issues
 
 #### 5. **Missing Read Permissions Check on GET /list**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/api/plane/app/views/issue/worklog.py` (lines 52-56)
 **Problem:**
+
 - `list()` has `@allow_permission([ROLE.ADMIN, ROLE.MEMBER])` but doesn't explicitly check project membership before `get_queryset()`
 - `get_queryset()` DOES filter by project membership (lines 34-35), which is good
 - HOWEVER: If user is not a member, queryset returns empty list instead of 403
@@ -169,6 +184,7 @@ export interface IWorkLogSummary {
 **Impact:** Confusing error handling; frontend won't know if empty list means "no worklogs" or "no permission".
 
 **Fix:**
+
 ```python
 @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
 def list(self, request, slug, project_id, issue_id):
@@ -191,8 +207,10 @@ def list(self, request, slug, project_id, issue_id):
 ---
 
 #### 6. **Timezone Handling Inconsistency**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/packages/types/src/worklog.ts` + backend model
 **Problem:**
+
 - Backend `logged_at: DateField` (date only, no timezone)
 - Frontend WorklogModal constrains to `max={todayDate()}` where `todayDate()` uses `new Date().toISOString().split("T")[0]`
 - This assumes client's local timezone == server timezone
@@ -202,6 +220,7 @@ def list(self, request, slug, project_id, issue_id):
 **Impact:** Multi-timezone teams may see incorrect log dates. Worklogs might appear on wrong day in reports.
 
 **Fix:**
+
 ```typescript
 // WorklogModal.tsx — use server date, not client date
 const getTodayDateServerTime = async (): Promise<string> => {
@@ -216,8 +235,10 @@ const getTodayDateServerTime = async (): Promise<string> => {
 ---
 
 #### 7. **Unhandled Error Cases in Frontend Service**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/core/services/worklog.service.ts`
 **Problem:**
+
 - All methods use `.catch((e) => { throw e?.response?.data; })`
 - If API returns 500 error, `response` might be undefined → throws `TypeError` instead of meaningful error
 - Also: If network is offline, `e?.response` is undefined
@@ -226,6 +247,7 @@ const getTodayDateServerTime = async (): Promise<string> => {
 **Impact:** Poor error messaging; harder to debug; UX shows generic "Failed to load" for all error types.
 
 **Fix:**
+
 ```typescript
 private handleError(error: any): never {
   const message = error?.response?.data?.detail ||
@@ -252,8 +274,10 @@ async listWorklogs(workspaceSlug: string, projectId: string, issueId: string): P
 ---
 
 #### 8. **Missing Null Check in Modal Form**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/ce/components/issues/worklog/worklog-modal.tsx` (lines 57-61)
 **Problem:**
+
 - `parseDisplayToMinutes(hours, minutes)` called without null checks on `hours` and `minutes` state
 - If these are somehow undefined (state corruption), will get NaN
 - Then check `duration_minutes <= 0` will be true (NaN <= 0 is false, so no error)
@@ -262,14 +286,12 @@ async listWorklogs(workspaceSlug: string, projectId: string, issueId: string): P
 **Impact:** Low — will just be rejected. But state could be corrupted if useEffect fails to initialize.
 
 **Fix:**
+
 ```typescript
 const handleSubmit = async (e: FormEvent) => {
   e.preventDefault();
 
-  const duration_minutes = parseDisplayToMinutes(
-    hours ?? 0,
-    minutes ?? 0
-  );
+  const duration_minutes = parseDisplayToMinutes(hours ?? 0, minutes ?? 0);
 
   if (!Number.isInteger(duration_minutes) || duration_minutes <= 0) {
     setToast({ type: TOAST_TYPE.ERROR, title: t("worklog.error"), message: t("worklog.duration_required") });
@@ -282,8 +304,10 @@ const handleSubmit = async (e: FormEvent) => {
 ---
 
 #### 9. **Date Input Constraint Only Client-Side**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/ce/components/issues/worklog/worklog-modal.tsx` (line 100)
 **Problem:**
+
 - `max={todayDate()}` prevents UI from selecting future dates
 - But direct API POST can set `logged_at` to any date (tomorrow, next year, 1970)
 - No backend validation on `logged_at` field
@@ -292,6 +316,7 @@ const handleSubmit = async (e: FormEvent) => {
 **Impact:** Data quality; backdated/forward-dated worklogs in reports; audit trail unreliable.
 
 **Fix:**
+
 ```python
 # serializers/worklog.py
 class IssueWorkLogSerializer(BaseSerializer):
@@ -309,8 +334,10 @@ class IssueWorkLogSerializer(BaseSerializer):
 ---
 
 #### 10. **Caching Issues in Report Page**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/core/components/time-tracking/time-tracking-report-page.tsx` (lines 48-52)
 **Problem:**
+
 - `useEffect` has `eslint-disable-next-line react-hooks/exhaustive-deps`
 - Dependencies missing: `dateFrom`, `dateTo`
 - Comment says "Fetch on mount only; subsequent fetches triggered by Apply button"
@@ -320,6 +347,7 @@ class IssueWorkLogSerializer(BaseSerializer):
 **Impact:** Low — works as intended, but violates React best practices. If dates auto-change (from routing), won't refetch.
 
 **Fix:**
+
 ```typescript
 useEffect(() => {
   fetchSummary();
@@ -338,8 +366,10 @@ useEffect(() => {
 ### MEDIUM Priority Issues
 
 #### 11. **Missing Null Coalescing in Issue Name Display**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/core/components/time-tracking/time-tracking-issue-table.tsx`
 **Problem:** (Need to check file content)
+
 - `by_issue` data comes from backend aggregation selecting `issue__name`
 - If issue is deleted after worklog created, `issue__name` is NULL in the query result
 - Frontend receives `issue_name: null` but type says `string`
@@ -348,6 +378,7 @@ useEffect(() => {
 **Impact:** UI looks broken; shows "null" in table instead of "Deleted Issue" or placeholder.
 
 **Fix:**
+
 ```typescript
 // Component
 const displayName = issue.issue_name || "(Deleted issue)";
@@ -358,8 +389,10 @@ const displayName = issue.issue_name || "(Deleted issue)";
 ---
 
 #### 12. **No Optimistic Update in Modal**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/ce/components/issues/worklog/worklog-modal.tsx`
 **Problem:**
+
 - Create/update actions await server response before closing modal
 - User sees loading spinner; if network is slow, modal feels frozen
 - Store does optimistic add (line 104 in worklog.store.ts) but modal doesn't
@@ -368,6 +401,7 @@ const displayName = issue.issue_name || "(Deleted issue)";
 **Impact:** UX; slower perceived interaction time.
 
 **Fix:** Add optimistic UI in modal (optional, low priority):
+
 ```typescript
 setIsSubmitting(true);
 onClose(); // Close immediately (optimistic)
@@ -384,8 +418,10 @@ try {
 ---
 
 #### 13. **No Limit on GET /summary Aggregation**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/api/plane/app/views/workspace/time_tracking.py`
 **Problem:**
+
 - `WorkspaceWorkLogSummaryEndpoint.get()` queries ALL worklogs in workspace with optional filters
 - No pagination, no limit on result size
 - If workspace has 100,000 worklogs, query returns all of them, groups by issue (could be 50,000 groups)
@@ -395,6 +431,7 @@ try {
 **Impact:** Performance; slow API response; OOM risk for large workspaces.
 
 **Fix:**
+
 ```python
 # Add limit parameter
 limit = int(request.query_params.get("limit", 100))
@@ -412,8 +449,10 @@ by_issue = list(
 ---
 
 #### 14. **Workspace Context Lost in TimeTrackingReportPage**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/core/components/time-tracking/time-tracking-report-page.tsx`
 **Problem:**
+
 - Component receives `workspaceSlug` and `projectId` as props
 - But doesn't validate that project exists in workspace
 - If URL is `/workspace-a/project-b/time-tracking` but project-b belongs to workspace-c, API will 404
@@ -422,6 +461,7 @@ by_issue = list(
 **Impact:** Poor error UX; user thinks feature is broken, but it's a routing issue.
 
 **Fix:**
+
 ```typescript
 // Add validation
 useEffect(() => {
@@ -438,12 +478,15 @@ useEffect(() => {
 ### LOW Priority Issues / Code Quality
 
 #### 15. **Unused Import in time_tracking.py**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/api/plane/app/views/workspace/time_tracking.py` (line 5)
 **Problem:**
+
 - `from django.db.models import Sum, F, Value, CharField` — `Value` and `CharField` unused
 - Line 6: `from django.db.models.functions import Concat` — also unused
 
 **Fix:**
+
 ```python
 from django.db.models import Sum, F
 ```
@@ -451,8 +494,10 @@ from django.db.models import Sum, F
 ---
 
 #### 16. **Magic String in Report Page**
+
 **File:** `/Volumes/Data/SHBVN/plane.so/apps/web/core/components/time-tracking/time-tracking-report-page.tsx` (line 42)
 **Problem:**
+
 - Error message is hardcoded: `"Failed to load time tracking data."`
 - Should use i18n for consistency with rest of app
 - Modal uses `t("worklog.error")` and `t("...")` pattern
@@ -460,6 +505,7 @@ from django.db.models import Sum, F
 **Impact:** Low; inconsistent with codebase standards for i18n.
 
 **Fix:**
+
 ```typescript
 setError(t("time_tracking.failed_to_load"));
 ```
@@ -470,37 +516,37 @@ setError(t("time_tracking.failed_to_load"));
 
 ## Security Assessment
 
-| Category | Status | Notes |
-|----------|--------|-------|
-| **Permission Checks** | ✓ Good | `@allow_permission` decorators present; role-based access |
-| **Input Validation** | ⚠ Partial | Duration lacks validation; date not validated |
-| **SQL Injection** | ✓ Safe | ORM usage; parameterized queries |
-| **Auth Bypass** | ⚠ Risky | Workspace summary endpoint may not validate membership |
-| **Data Exposure** | ⚠ Watch | Assumes users in workspace can see all worklogs (by design) |
-| **Error Handling** | ⚠ Weak | Generic error messages; no stack traces leaked |
+| Category              | Status    | Notes                                                       |
+| --------------------- | --------- | ----------------------------------------------------------- |
+| **Permission Checks** | ✓ Good    | `@allow_permission` decorators present; role-based access   |
+| **Input Validation**  | ⚠ Partial | Duration lacks validation; date not validated               |
+| **SQL Injection**     | ✓ Safe    | ORM usage; parameterized queries                            |
+| **Auth Bypass**       | ⚠ Risky   | Workspace summary endpoint may not validate membership      |
+| **Data Exposure**     | ⚠ Watch   | Assumes users in workspace can see all worklogs (by design) |
+| **Error Handling**    | ⚠ Weak    | Generic error messages; no stack traces leaked              |
 
 ---
 
 ## Type Safety Assessment
 
-| File | Status | Notes |
-|------|--------|-------|
-| `worklog.ts` | ✓ Good | Proper interfaces; nullability marked |
-| `worklog.store.ts` | ✓ Good | MobX typing correct; no `any` |
-| `worklog.service.ts` | ✓ Good | Strong typing; error handling could improve |
-| `worklog-modal.tsx` | ⚠ Fair | State types implicit (number); could use stricter types |
-| `time-tracking-report-page.tsx` | ✓ Good | Proper typing throughout |
+| File                            | Status | Notes                                                   |
+| ------------------------------- | ------ | ------------------------------------------------------- |
+| `worklog.ts`                    | ✓ Good | Proper interfaces; nullability marked                   |
+| `worklog.store.ts`              | ✓ Good | MobX typing correct; no `any`                           |
+| `worklog.service.ts`            | ✓ Good | Strong typing; error handling could improve             |
+| `worklog-modal.tsx`             | ⚠ Fair | State types implicit (number); could use stricter types |
+| `time-tracking-report-page.tsx` | ✓ Good | Proper typing throughout                                |
 
 ---
 
 ## Performance Assessment
 
-| Issue | Severity | Notes |
-|-------|----------|-------|
-| Workspace summary unbounded query | HIGH | Could return huge result sets |
-| No pagination in reports | MEDIUM | OK for current use, but not scalable |
-| Multiple `.values().annotate().values()` calls | MEDIUM | Could optimize to single query |
-| Service fetch on every report open | LOW | Caching via store would help, but acceptable |
+| Issue                                          | Severity | Notes                                        |
+| ---------------------------------------------- | -------- | -------------------------------------------- |
+| Workspace summary unbounded query              | HIGH     | Could return huge result sets                |
+| No pagination in reports                       | MEDIUM   | OK for current use, but not scalable         |
+| Multiple `.values().annotate().values()` calls | MEDIUM   | Could optimize to single query               |
+| Service fetch on every report open             | LOW      | Caching via store would help, but acceptable |
 
 ---
 
@@ -520,22 +566,26 @@ setError(t("time_tracking.failed_to_load"));
 ## Recommended Actions (Priority Order)
 
 ### Critical (Must Fix Before Merge)
+
 1. Add `validate_duration_minutes` to serializer (Issue #1)
 2. Fix race condition in optimistic delete (Issue #2)
 3. Verify workspace membership check in summary endpoint (Issue #3)
 4. Add date validation to backend (Issue #9)
 
 ### High (Should Fix in This Sprint)
+
 5. Add explicit project membership check on GET /list (Issue #5)
 6. Improve error handling in service layer (Issue #7)
 7. Add timezone handling documentation/fix (Issue #6)
 
 ### Medium (Next Sprint or Polish)
+
 8. Add pagination/limit to workspace summary endpoint (Issue #13)
 9. Fix modal null checks (Issue #8)
 10. Remove unused imports (Issue #15)
 
 ### Low (Nice to Have)
+
 11. i18n for error messages (Issue #16)
 12. Optimistic close in modal (Issue #12)
 
@@ -544,17 +594,20 @@ setError(t("time_tracking.failed_to_load"));
 ## Testing Recommendations
 
 ### Unit Tests Needed
+
 - `test_worklog_duration_validation()` — zero, negative, very large values
 - `test_worklog_past_date_validation()` — future dates, ancient dates
 - `test_workspace_summary_permission()` — verify workspace member check
 - `test_store_delete_race_condition()` — rapid delete followed by failure
 
 ### Integration Tests
+
 - `test_worklog_create_and_list_same_issue()` — basic CRUD
 - `test_worklog_list_empty_project()` — empty data handling
 - `test_time_tracking_report_filters()` — date range filtering
 
 ### E2E Tests
+
 - User logs time via modal, sees in report
 - User deletes worklog, report updates
 - Report shows correct variance (over/under budget)
@@ -574,16 +627,16 @@ setError(t("time_tracking.failed_to_load"));
 
 ## Summary Metrics
 
-| Metric | Value | Target |
-|--------|-------|--------|
-| **Critical Issues** | 4 | 0 |
-| **High Issues** | 6 | 0 |
-| **Medium Issues** | 4 | < 3 |
-| **Low Issues** | 2 | < 5 |
-| **Type Coverage** | ~95% | > 95% |
-| **LOC (Backend)** | ~280 | ✓ Good |
-| **LOC (Frontend)** | ~550 | ✓ Good |
-| **Test Coverage** | 0% | TBD |
+| Metric              | Value | Target |
+| ------------------- | ----- | ------ |
+| **Critical Issues** | 4     | 0      |
+| **High Issues**     | 6     | 0      |
+| **Medium Issues**   | 4     | < 3    |
+| **Low Issues**      | 2     | < 5    |
+| **Type Coverage**   | ~95%  | > 95%  |
+| **LOC (Backend)**   | ~280  | ✓ Good |
+| **LOC (Frontend)**  | ~550  | ✓ Good |
+| **Test Coverage**   | 0%    | TBD    |
 
 ---
 

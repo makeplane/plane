@@ -15,7 +15,7 @@ from django.template.loader import render_to_string
 # Module imports
 from plane.db.models import User, Workspace, WorkspaceMemberInvite
 from plane.license.utils.instance_value import get_email_configuration
-from plane.utils.email import generate_plain_text_from_html
+from plane.utils.email import generate_plain_text_from_html, get_email_logo_url
 from plane.utils.exception_logger import log_exception
 
 
@@ -53,6 +53,7 @@ def workspace_invitation(email, workspace_id, token, current_site, inviter):
             "first_name": user.first_name or user.display_name or user.email,
             "workspace_name": workspace.name,
             "abs_url": abs_url,
+            "logo_url": get_email_logo_url(),
         }
 
         html_content = render_to_string("emails/invitations/workspace_invitation.html", context)

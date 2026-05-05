@@ -47,6 +47,16 @@ export function HeaderColumn(props: Props) {
 
   if (!propertyDetails) return null;
 
+  // Non-sortable columns render a plain label without the sort dropdown
+  if (propertyDetails.isSortable === false) {
+    return (
+      <Row className="flex w-full items-center gap-1.5 py-2 px-page-x text-13 text-secondary">
+        {<SpreadSheetPropertyIcon iconKey={propertyDetails.icon} className="h-4 w-4 text-placeholder" />}
+        {property === "sub_issue_count" && isEpic ? t("issue.label", { count: 2 }) : t(propertyDetails.i18n_title)}
+      </Row>
+    );
+  }
+
   return (
     <CustomMenu
       customButtonClassName="clickable !w-full"

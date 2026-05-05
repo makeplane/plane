@@ -31,6 +31,9 @@ export interface IUserLite {
   is_bot: boolean;
   last_name: string;
   joining_date?: string;
+  department_name?: string | null;
+  staff_id?: string | null;
+  position?: string | null;
 }
 export interface IUser extends IUserLite {
   // only for uploading the cover image
@@ -187,6 +190,7 @@ export interface IUserEmailNotificationSettings {
   comment: boolean;
   mention: boolean;
   issue_completed: boolean;
+  worklog_reminder: boolean;
 }
 
 export type TProfileViews = "assigned" | "created" | "subscribed";

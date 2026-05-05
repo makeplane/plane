@@ -12,9 +12,15 @@ export function useSidebarMenu(): TSidebarMenuItem[] {
   return [
     coreSidebarMenuLinks.general,
     coreSidebarMenuLinks.email,
-    coreSidebarMenuLinks.authentication,
     coreSidebarMenuLinks.workspace,
+    coreSidebarMenuLinks.users,
+    coreSidebarMenuLinks.departments,
+    coreSidebarMenuLinks.staff,
+    coreSidebarMenuLinks.authentication,
     coreSidebarMenuLinks.ai,
     coreSidebarMenuLinks.image,
+    coreSidebarMenuLinks.monitoring,
+    coreSidebarMenuLinks["task-categories"],
+    coreSidebarMenuLinks["calendar"],
   ];
 }

@@ -12,7 +12,7 @@ import { MoreHorizontal } from "lucide-react";
 import { SPREADSHEET_SELECT_GROUP } from "@plane/constants";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
-import { ChevronRightIcon } from "@plane/propel/icons";
+import { ArchiveIcon, ChevronRightIcon } from "@plane/propel/icons";
 // types
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
@@ -356,15 +356,21 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
 
               <div className="flex items-center gap-2 justify-between h-full w-full truncate my-auto">
                 <div className="w-full line-clamp-1 text-14 text-primary">
-                  <div className="w-full overflow-hidden">
+                  <div className="w-full overflow-hidden flex items-center gap-1.5">
                     <Tooltip tooltipContent={issueDetail.name} isMobile={isMobile}>
                       <div
-                        className="h-full w-full cursor-pointer truncate pr-4 text-left text-13 text-primary focus:outline-none"
+                        className="h-full cursor-pointer truncate pr-1 text-left text-13 text-primary focus:outline-none"
                         tabIndex={-1}
                       >
                         {issueDetail.name}
                       </div>
                     </Tooltip>
+                    {issueDetail.archived_at && (
+                      <div className="flex-shrink-0 flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-medium text-amber-600 bg-amber-50 border border-amber-200">
+                        <ArchiveIcon className="size-2.5" />
+                        <span>Archived</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div

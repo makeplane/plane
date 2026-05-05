@@ -59,7 +59,7 @@ export interface IIssueSubIssuesStore extends IIssueSubIssuesStoreActions {
   subIssuesByIssueId: (issueId: string) => string[] | undefined;
   subIssueHelpersByIssueId: (issueId: string) => TSubIssueHelpers;
   // actions
-  fetchOtherProjectProperties: (workspaceSlug: string, projectIds: string[]) => Promise<void>;
+  fetchOtherProjectProperties: (workspaceSlug: string, projectIds: string[]) => void;
   setSubIssueHelpers: (parentIssueId: string, key: TSubIssueHelpersKeys, value: string) => void;
 }
 
@@ -120,6 +120,9 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     if (!parentIssueId || !key || !value) return;
 
     update(this.subIssueHelpers, [parentIssueId, key], (_subIssueHelpers: string[] = []) => {
+      // issue_visibility: idempotent add (no toggle) to prevent StrictMode double-invoke from removing the entry
+      if (key === "issue_visibility")
+        return _subIssueHelpers.includes(value) ? _subIssueHelpers : concat(_subIssueHelpers, value);
       if (_subIssueHelpers.includes(value)) return pull(_subIssueHelpers, value);
       return concat(_subIssueHelpers, value);
     });
@@ -140,7 +143,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       const otherProjectIds = uniq(
         issueList.map((issue) => issue.project_id).filter((id) => !!id && id !== projectId)
       ) as string[];
-      this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
+      void this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
     }
     if (issueList) {
       this.rootIssueDetailStore.rootIssueStore.issues.updateIssue(parentIssueId, {
@@ -174,7 +177,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       const otherProjectIds = uniq(
         subIssues.map((issue) => issue.project_id).filter((id) => !!id && id !== projectId)
       ) as string[];
-      this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
+      void this.fetchOtherProjectProperties(workspaceSlug, otherProjectIds);
     }
 
     runInAction(() => {
@@ -223,7 +226,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
       );
 
     // parent update
-    if (issueData.hasOwnProperty("parent_id") && issueData.parent_id !== oldIssue.parent_id) {
+    if (Object.prototype.hasOwnProperty.call(issueData, "parent_id") && issueData.parent_id !== oldIssue.parent_id) {
       runInAction(() => {
         if (oldIssue.parent_id) pull(this.subIssues[oldIssue.parent_id], issueId);
         if (issueData.parent_id)
@@ -232,7 +235,7 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     }
 
     // state update
-    if (issueData.hasOwnProperty("state_id") && issueData.state_id !== oldIssue.state_id) {
+    if (Object.prototype.hasOwnProperty.call(issueData, "state_id") && issueData.state_id !== oldIssue.state_id) {
       let oldIssueStateGroup: string | undefined = undefined;
       let issueStateGroup: string | undefined = undefined;
 
@@ -334,24 +337,24 @@ export class IssueSubIssuesStore implements IIssueSubIssuesStore {
     return;
   };
 
-  fetchOtherProjectProperties = async (workspaceSlug: string, projectIds: string[]) => {
+  fetchOtherProjectProperties = (workspaceSlug: string, projectIds: string[]) => {
     if (projectIds.length > 0) {
       for (const projectId of projectIds) {
         // fetching other project states
-        this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
+        void this.rootIssueDetailStore.rootIssueStore.rootStore.state.fetchProjectStates(workspaceSlug, projectId);
         // fetching other project members
-        this.rootIssueDetailStore.rootIssueStore.rootStore.memberRoot.project.fetchProjectMembers(
+        void this.rootIssueDetailStore.rootIssueStore.rootStore.memberRoot.project.fetchProjectMembers(
           workspaceSlug,
           projectId
         );
         // fetching other project labels
-        this.rootIssueDetailStore.rootIssueStore.rootStore.label.fetchProjectLabels(workspaceSlug, projectId);
+        void this.rootIssueDetailStore.rootIssueStore.rootStore.label.fetchProjectLabels(workspaceSlug, projectId);
         // fetching other project cycles
-        this.rootIssueDetailStore.rootIssueStore.rootStore.cycle.fetchAllCycles(workspaceSlug, projectId);
+        void this.rootIssueDetailStore.rootIssueStore.rootStore.cycle.fetchAllCycles(workspaceSlug, projectId);
         // fetching other project modules
-        this.rootIssueDetailStore.rootIssueStore.rootStore.module.fetchModules(workspaceSlug, projectId);
+        void this.rootIssueDetailStore.rootIssueStore.rootStore.module.fetchModules(workspaceSlug, projectId);
         // fetching other project estimates
-        this.rootIssueDetailStore.rootIssueStore.rootStore.projectEstimate.getProjectEstimates(
+        void this.rootIssueDetailStore.rootIssueStore.rootStore.projectEstimate.getProjectEstimates(
           workspaceSlug,
           projectId
         );

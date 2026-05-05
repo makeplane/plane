@@ -45,7 +45,15 @@ RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store CI=true pnpm install --o
 
 ENV TURBO_TELEMETRY_DISABLED=1
 
-RUN pnpm turbo run build --filter=live
+# Pre-create .turbo log directories to avoid EINTR errors in Docker layer filesystem
+RUN mkdir -p packages/logger/.turbo \
+    packages/types/.turbo \
+    packages/hooks/.turbo \
+    packages/decorators/.turbo \
+    apps/live/.turbo
+
+# Redirect Turbo cache/logs to /tmp to avoid EINTR on mounted cache layers
+RUN pnpm turbo run build --filter=live --cache-dir=/tmp/.turbo
 
 # *****************************************************************************
 # STAGE 3: Run the project

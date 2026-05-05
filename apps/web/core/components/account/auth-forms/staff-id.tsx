@@ -6,34 +6,36 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import Link from "next/link";
 // icons
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // plane imports
-import { API_BASE_URL } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { Input, Spinner } from "@plane/ui";
+import { Spinner } from "@plane/ui";
+// components
+import { ForgotPasswordPopover } from "@/components/account/auth-forms/forgot-password-popover";
+// helpers
+import {
+  STAFF_EMAIL_PREFIX,
+  STAFF_EMAIL_DOMAIN,
+  isStaffId,
+  isEmail,
+  resolveFormAction,
+  validateStaffIdentifier,
+} from "./staff-id-helpers";
 // services
 import { AuthService } from "@/services/auth.service";
 
 type Props = {
   nextPath: string | undefined;
   isLDAPEnabled: boolean;
+  isSwingSSOEnabled: boolean;
+  isSMTPConfigured: boolean;
 };
-
-// Staff ID email transform constants
-const STAFF_EMAIL_PREFIX = "sh";
-const STAFF_EMAIL_DOMAIN = "@swing.shinhan.com";
-const STAFF_ID_PATTERN = /^\d{8}$/;
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Detect input type: 8-digit staff ID, email, or LDAP username
-const isStaffId = (value: string): boolean => STAFF_ID_PATTERN.test(value);
-const isEmail = (value: string): boolean => EMAIL_PATTERN.test(value);
 
 const authService = new AuthService();
 
 export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props) {
-  const { nextPath, isLDAPEnabled } = props;
+  const { nextPath, isLDAPEnabled, isSwingSSOEnabled, isSMTPConfigured } = props;
   // refs
   const formRef = useRef<HTMLFormElement>(null);
   // states
@@ -53,20 +55,10 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
     }
   }, [csrfPromise]);
 
-  // Validate identifier based on LDAP config
   const validateIdentifier = (value: string): boolean => {
-    const isAllNumeric = /^\d+$/.test(value);
-    if (isAllNumeric && value.length !== 8) {
-      setIdentifierError("Staff ID must be exactly 8 digits");
-      return false;
-    }
-    // When LDAP off: only 8-digit staff ID or email are valid
-    if (!isLDAPEnabled && !isStaffId(value) && !isEmail(value)) {
-      setIdentifierError("Enter 8-digit staff ID or email address");
-      return false;
-    }
-    setIdentifierError(undefined);
-    return true;
+    const error = validateStaffIdentifier(value, isLDAPEnabled, isSwingSSOEnabled);
+    setIdentifierError(error);
+    return !error;
   };
 
   const handleIdentifierChange = (value: string) => {
@@ -91,22 +83,10 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
       await handleCSRFToken();
       if (!formRef.current) return;
 
-      if (isEmail(identifier)) {
-        // Email mode: POST email directly to /auth/sign-in/
-        const emailInput = formRef.current.querySelector<HTMLInputElement>("input[name=email]");
-        if (emailInput) emailInput.value = identifier;
-        formRef.current.action = `${API_BASE_URL}/auth/sign-in/`;
-      } else if (isStaffId(identifier) && !isLDAPEnabled) {
-        // Staff ID + LDAP off: transform to email, POST to /auth/sign-in/
-        const emailInput = formRef.current.querySelector<HTMLInputElement>("input[name=email]");
-        if (emailInput) emailInput.value = `${STAFF_EMAIL_PREFIX}${identifier}${STAFF_EMAIL_DOMAIN}`;
-        formRef.current.action = `${API_BASE_URL}/auth/sign-in/`;
-      } else {
-        // LDAP mode: 8-digit staff ID or username → POST to /auth/ldap/sign-in/
-        const usernameInput = formRef.current.querySelector<HTMLInputElement>("input[name=username]");
-        if (usernameInput) usernameInput.value = identifier;
-        formRef.current.action = `${API_BASE_URL}/auth/ldap/sign-in/`;
-      }
+      const { action, inputName, value } = resolveFormAction(identifier, isSwingSSOEnabled, isLDAPEnabled);
+      const input = formRef.current.querySelector<HTMLInputElement>(`input[name=${inputName}]`);
+      if (input) input.value = value;
+      formRef.current.action = action;
 
       setIsSubmitting(true);
       formRef.current.submit();
@@ -116,19 +96,36 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
   const isButtonDisabled = !identifier || !password || isSubmitting || !isCsrfReady;
 
   return (
-    <form ref={formRef} className="space-y-4" method="POST" onSubmit={handleSubmit}>
+    <form ref={formRef} className="space-y-6" method="POST" onSubmit={handleSubmit}>
       <input type="hidden" name="csrfmiddlewaretoken" />
       <input type="hidden" name="email" value="" />
       <input type="hidden" name="username" value="" />
       {nextPath && <input type="hidden" value={nextPath} name="next_path" />}
 
-      {/* Identifier input — staff ID (8 digits) or LDAP username */}
-      <div className="space-y-1">
-        <label htmlFor="login-identifier" className="text-13 font-medium text-tertiary">
-          {isLDAPEnabled ? "Staff ID, Email, or Username" : "Staff ID or Email"}
+      {/* Identifier input */}
+      <div>
+        <label
+          htmlFor="login-identifier"
+          className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2"
+        >
+          {isLDAPEnabled ? "Employee No. / Email / Username" : "Employee No. / Email"}
         </label>
-        <div className="relative flex items-center rounded-md bg-surface-1 border border-strong">
-          <Input
+        <div className="flex items-center bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:border-shinhan-blue focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
+          <svg
+            className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+            />
+          </svg>
+          <input
             id="login-identifier"
             type="text"
             value={identifier}
@@ -136,8 +133,8 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
             onBlur={() => {
               if (identifier.length > 0) validateIdentifier(identifier);
             }}
-            placeholder={isLDAPEnabled ? "Enter staff ID, email, or username" : "Enter staff ID or email"}
-            className="disable-autofill-style h-10 w-full placeholder:text-placeholder border-0"
+            placeholder="e.g. 20508888"
+            className="disable-autofill-style bg-transparent w-full text-[#111827] font-semibold placeholder-[#9ca3af] focus:outline-none text-[15px]"
           />
           {identifier.length > 0 && (
             <button
@@ -146,51 +143,89 @@ export const StaffIdLoginForm = observer(function StaffIdLoginForm(props: Props)
                 setIdentifier("");
                 setIdentifierError(undefined);
               }}
-              className="absolute right-3 size-5 grid place-items-center"
+              className="ml-2 size-5 grid place-items-center flex-shrink-0"
               aria-label="Clear input"
               tabIndex={-1}
             >
-              <XCircle className="size-5 stroke-placeholder" />
+              <XCircle className="size-5 stroke-[#9ca3af] hover:stroke-[#4b5563]" />
             </button>
           )}
         </div>
-        {identifierError && <p className="text-11 text-danger-primary px-0.5">{identifierError}</p>}
+        {identifierError && <p className="text-11 text-[#dc2626] px-0.5 mt-1">{identifierError}</p>}
       </div>
 
       {/* Password input */}
-      <div className="space-y-1">
-        <label htmlFor="login-password" className="text-13 text-tertiary font-medium">
+      <div>
+        <label
+          htmlFor="login-password"
+          className="block text-[12px] font-semibold text-[#0a1e3f] tracking-wider mb-2 ml-2"
+        >
           Password
         </label>
-        <div className="relative flex items-center rounded-md bg-surface-1">
-          <Input
+        <div className="flex items-center relative bg-[#f4f7f9] border border-transparent rounded-md py-[14px] px-[18px] transition-all duration-200 focus-within:bg-[#ffffff] focus-within:border-shinhan-blue focus-within:shadow-[0_0_0_3px_rgba(0,112,224,0.1)]">
+          <svg
+            className="h-5 w-5 text-[#6b7280] mr-3 flex-shrink-0"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+            />
+          </svg>
+          <input
             type={showPassword ? "text" : "password"}
             id="login-password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password"
-            className="disable-autofill-style h-10 w-full border border-strong !bg-surface-1 pr-12 placeholder:text-placeholder"
+            placeholder="•••••••"
+            className={`disable-autofill-style bg-transparent w-full text-[#111827] placeholder-[#9ca3af] focus:outline-none pr-8 ${showPassword ? "text-[15px] font-semibold" : "font-semibold tracking-[0.35em] text-[16px] translate-y-[2px]"}`}
             autoComplete="on"
           />
           <button
             type="button"
             onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute right-3 size-5 grid place-items-center"
+            className="absolute right-5 top-1/2 -translate-y-1/2 text-[#9ca3af] cursor-pointer hover:text-[#4b5563]"
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {showPassword ? (
-              <EyeOff className="size-5 stroke-placeholder" />
-            ) : (
-              <Eye className="size-5 stroke-placeholder" />
-            )}
+            {showPassword ? <EyeOff className="size-[22px]" /> : <Eye className="size-[22px]" />}
           </button>
         </div>
+        {!isSwingSSOEnabled &&
+          (isSMTPConfigured ? (
+            <Link
+              href={
+                isEmail(identifier)
+                  ? `/accounts/forgot-password?email=${encodeURIComponent(identifier)}`
+                  : isStaffId(identifier)
+                    ? `/accounts/forgot-password?email=${encodeURIComponent(`${STAFF_EMAIL_PREFIX}${identifier}${STAFF_EMAIL_DOMAIN}`)}`
+                    : "/accounts/forgot-password"
+              }
+              className="text-[12px] font-semibold text-shinhan-blue hover:text-shinhan-dark ml-2 mt-3 inline-block"
+            >
+              Forgot password?
+            </Link>
+          ) : (
+            <div className="ml-2 mt-3">
+              <ForgotPasswordPopover />
+            </div>
+          ))}
       </div>
 
-      <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign in"}
-      </Button>
+      <div className="pt-6">
+        <button
+          type="submit"
+          disabled={isButtonDisabled}
+          className="w-full flex justify-center items-center py-[18px] text-white font-semibold text-[16px] tracking-wide rounded-md transition-all duration-200 bg-gradient-to-r from-shinhan-gradientStart via-shinhan-blue to-shinhan-gradientEnd shadow-[0_8px_16px_rgba(0,112,224,0.3)] hover:shadow-[0_10px_20px_rgba(0,112,224,0.4)] hover:-translate-y-[2px] disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[0_8px_16px_rgba(0,112,224,0.3)]"
+        >
+          {isSubmitting ? <Spinner height="20px" width="20px" /> : "Sign In"}
+        </button>
+      </div>
     </form>
   );
 });

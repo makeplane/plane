@@ -227,13 +227,21 @@ export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspa
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
     highlight: (pathname: string, url: string) => pathname.includes(url),
   },
+  "time-tracking": {
+    key: "time-tracking",
+    labelTranslationKey: "time_tracking",
+    href: `/time-tracking/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.startsWith(url + "/"),
+  },
 };
 
 export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["views"],
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["analytics"],
-  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["dashboards"],
+  // WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["dashboards"], // temporarily hidden
   WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["archives"],
+  WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS["time-tracking"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
@@ -279,10 +287,26 @@ export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS: Record<string, IWorkspac
     access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER, EUserWorkspaceRoles.GUEST],
     highlight: (pathname: string, url: string) => pathname === url,
   },
+  ho: {
+    key: "ho",
+    labelTranslationKey: "HO",
+    href: `/ho/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
+  "bank-wide-projects": {
+    key: "bank-wide-projects",
+    labelTranslationKey: "bank_wide_projects.sidebar_label",
+    href: `/bank-wide-projects/`,
+    access: [EUserWorkspaceRoles.ADMIN, EUserWorkspaceRoles.MEMBER],
+    highlight: (pathname: string, url: string) => pathname.includes(url),
+  },
 };
 
 export const WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [
   WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["home"],
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["ho"],
+  WORKSPACE_SIDEBAR_STATIC_NAVIGATION_ITEMS["bank-wide-projects"],
 ];
 
 export const WORKSPACE_SIDEBAR_STATIC_PINNED_NAVIGATION_ITEMS_LINKS: IWorkspaceSidebarNavigationItem[] = [

@@ -1,74 +1,70 @@
 ---
-name: ai-multimodal
-description: Analyze images/audio/video with Gemini API (better vision than Claude). Generate images (Imagen 4), videos (Veo 3). Use for vision analysis, transcription, OCR, design extraction, multimodal AI.
+name: ck:ai-multimodal
+description: Analyze images/audio/video with Gemini API (better vision than Claude). Generate images (Imagen 4, Nano Banana 2, MiniMax), videos (Veo 3, Hailuo), speech (MiniMax TTS), music (MiniMax). Use for vision analysis, transcription, OCR, design extraction, multimodal AI.
 license: MIT
 allowed-tools:
   - Bash
   - Read
   - Write
   - Edit
+argument-hint: "[file-path] [prompt]"
 ---
 
 # AI Multimodal
 
-Process audio, images, videos, documents, and generate images/videos using Google Gemini's multimodal API.
+Process audio, images, videos, documents using Gemini. Generate images, videos, speech, music via Gemini + MiniMax.
 
 ## Setup
 
 ```bash
-export GEMINI_API_KEY="your-key"  # Get from https://aistudio.google.com/apikey
-pip install google-genai python-dotenv pillow
+# Google Gemini (analysis + image/video gen)
+export GEMINI_API_KEY="your-key"  # https://aistudio.google.com/apikey
+# MiniMax (image/video/speech/music gen)
+export MINIMAX_API_KEY="your-key"  # https://platform.minimax.io/user-center/basic-information/interface-key
+pip install google-genai python-dotenv pillow requests
 ```
 
 ### API Key Rotation (Optional)
 
-For high-volume usage or when hitting rate limits, configure multiple API keys:
+For high-volume Gemini usage, configure multiple keys:
 
 ```bash
-# Primary key (required)
 export GEMINI_API_KEY="key1"
-
-# Additional keys for rotation (optional)
-export GEMINI_API_KEY_2="key2"
-export GEMINI_API_KEY_3="key3"
+export GEMINI_API_KEY_2="key2"  # auto-rotates on rate limit
 ```
-
-Or in your `.env` file:
-```
-GEMINI_API_KEY=key1
-GEMINI_API_KEY_2=key2
-GEMINI_API_KEY_3=key3
-```
-
-**Features:**
-- Auto-rotates on rate limit (429/RESOURCE_EXHAUSTED) errors
-- 60-second cooldown per key after rate limit
-- Logs rotation events with `--verbose` flag
-- Backward compatible: single key still works
 
 ## Quick Start
 
 **Verify setup**: `python scripts/check_setup.py`
 **Analyze media**: `python scripts/gemini_batch_process.py --files <file> --task <analyze|transcribe|extract>`
-  - TIP: When you're asked to analyze an image, check if `gemini` command is available, then use `echo "<prompt to analyze image>" | gemini -y -m <gemini.model>` command (read model from `.claude/.ck.json`: `gemini.model`). If `gemini` command is not available, use `python scripts/gemini_batch_process.py --files <file> --task analyze` command.
-**Generate content**: `python scripts/gemini_batch_process.py --task <generate|generate-video> --prompt "description"`
+  - TIP: When you're asked to analyze an image, check if `gemini` command is available, then use `echo "<prompt to analyze image>" | gemini -y -m <gemini.model>` command (read model from `$HOME/.claude/.ck.json`: `gemini.model`). If `gemini` command is not available, use `python scripts/gemini_batch_process.py --files <file> --task analyze` command.
+**Generate (Gemini)**: `python scripts/gemini_batch_process.py --task <generate|generate-video> --prompt "desc"`
+**Generate (MiniMax)**: `python scripts/minimax_cli.py --task <generate|generate-video|generate-speech|generate-music> --prompt "desc"`
 
-> **Stdin support**: You can pipe files directly via stdin (auto-detects PNG/JPG/PDF/WAV/MP3).
-> - `cat image.png | python scripts/gemini_batch_process.py --task analyze --prompt "Describe this"`
-> - `python scripts/gemini_batch_process.py --files image.png --task analyze` (traditional)
+> **Stdin support**: Pipe files via stdin for Gemini analysis (auto-detects PNG/JPG/PDF/WAV/MP3).
 
 ## Models
 
-- **Image generation**: `imagen-4.0-generate-001` (standard), `imagen-4.0-ultra-generate-001` (quality), `imagen-4.0-fast-generate-001` (speed)
-- **Video generation**: `veo-3.1-generate-preview` (8s clips with audio)
+### Google Gemini / Imagen
+- **Image gen**: `gemini-3.1-flash-image-preview` (Nano Banana 2 - DEFAULT), `gemini-2.5-flash-image` (Flash), `gemini-3-pro-image-preview` (Pro 4K), `imagen-4.0-generate-001` (standard), `imagen-4.0-ultra-generate-001` (quality), `imagen-4.0-fast-generate-001` (speed)
+- **Video gen**: `veo-3.1-generate-preview` (8s clips with audio)
 - **Analysis**: `gemini-2.5-flash` (recommended), `gemini-2.5-pro` (advanced)
+
+### MiniMax (NEW)
+- **Image gen**: `image-01` (standard), `image-01-live` (enhanced) - $0.03/image, 1-9 batch
+- **Video gen (Hailuo)**: `MiniMax-Hailuo-2.3` (1080p), `MiniMax-Hailuo-2.3-Fast` (50% cheaper), `MiniMax-Hailuo-02` (first+last frame), `S2V-01` (subject ref)
+- **Speech/TTS**: `speech-2.8-hd` (best), `speech-2.8-turbo` (fast) - 300+ voices, 40+ languages, emotion control
+- **Music**: `music-2.5` - 4-minute songs with vocals, synchronized lyrics
 
 ## Scripts
 
-- **`gemini_batch_process.py`**: CLI orchestrator for `transcribe|analyze|extract|generate|generate-video` that auto-resolves API keys, picks sensible default models per task, streams files inline vs File API, and saves structured outputs (text/JSON/CSV/markdown plus generated assets) for Imagen 4 + Veo workflows.
-- **`media_optimizer.py`**: ffmpeg/Pillow-based preflight tool that compresses/resizes/converts audio, image, and video inputs, enforces target sizes/bitrates, splits long clips into hour chunks, and batch-processes directories so media stays within Gemini limits.
-- **`document_converter.py`**: Gemini-powered converter that uploads PDFs/images/Office docs, applies a markdown-preserving prompt, batches multiple files, auto-names outputs under `docs/assets`, and exposes CLI flags for model, prompt, auto-file naming, and verbose logging.
-- **`check_setup.py`**: Interactive readiness checker that verifies directory layout, centralized env resolver, required Python deps, and GEMINI_API_KEY availability/format, then performs a live Gemini API call and prints remediation instructions if anything fails.
+- **`gemini_batch_process.py`**: Gemini CLI for `transcribe|analyze|extract|generate|generate-video`. Auto-resolves API keys, Imagen 4 + Veo + Nano Banana workflows.
+- **`minimax_cli.py`**: MiniMax CLI for `generate|generate-video|generate-speech|generate-music`. Supports all MiniMax models.
+- **`minimax_generate.py`**: MiniMax generation functions (image, video, speech, music). Library for programmatic use.
+- **`minimax_api_client.py`**: MiniMax HTTP client, auth, async polling, file download utilities.
+- **`media_optimizer.py`**: ffmpeg/Pillow preflight: compress/resize/convert media to stay within API limits.
+- **`document_converter.py`**: Gemini-powered PDF/image/Office → markdown converter.
+- **`check_setup.py`**: Setup checker for API keys and dependencies.
 
 Use `--help` for options.
 
@@ -84,6 +80,7 @@ Load for detailed guidance:
 | Image Gen | `references/image-generation.md` | Imagen 4 and Gemini image model overview, generate_images vs generate_content APIs, aspect ratios and costs, text/image/both modalities, editing and composition, style and quality control, safety settings, best practices, troubleshooting, and common marketing/concept-art/UI scenarios. |
 | Video | `references/video-analysis.md` | Video analysis capabilities and supported formats, model/context choices, local/inline/YouTube inputs, clipping and FPS control, multi-video comparison, temporal Q&A and scene detection, transcription with visual context, token and cost guidance, and optimization/best-practice patterns. |
 | Video Gen | `references/video-generation.md` | Veo model matrix, text-to-video and image-to-video quick start, multi-reference and extension flows, camera and timing control, configuration (resolution, aspect, audio, safety), prompt design patterns, performance tips, limitations, troubleshooting, and cost estimates. |
+| MiniMax | `references/minimax-generation.md` | MiniMax image (image-01), video (Hailuo 2.3), speech (TTS 2.8), and music (2.5) generation APIs. Endpoints, models, parameters, async workflows, pricing, rate limits, voice library, and examples. |
 
 ## Limits
 
@@ -103,7 +100,13 @@ Load for detailed guidance:
   ...
   ```
 
+## Outputs
+
+**IMPORTANT:** Invoke "/ck:project-organization" skill to organize the outputs.
+
 ## Resources
 
-- [API Docs](https://ai.google.dev/gemini-api/docs/)
-- [Pricing](https://ai.google.dev/pricing)
+- [Gemini API Docs](https://ai.google.dev/gemini-api/docs/)
+- [Gemini Pricing](https://ai.google.dev/pricing)
+- [MiniMax API Docs](https://platform.minimax.io/docs/api-reference/api-overview)
+- [MiniMax Pricing](https://platform.minimax.io/pricing)

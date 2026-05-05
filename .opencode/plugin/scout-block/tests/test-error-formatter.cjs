@@ -32,6 +32,7 @@ console.log('Testing error-formatter module...\n');
 // formatConfigPath tests
 console.log('--- formatConfigPath Tests ---');
 test('formatConfigPath with claudeDir', formatConfigPath('/home/user/.claude').includes('.ckignore'));
+test('formatConfigPath prefers explicit configPath', formatConfigPath('/home/user/.claude', '/tmp/project/.ckignore') === '/tmp/project/.ckignore');
 test('formatConfigPath without claudeDir', formatConfigPath(null) === '.claude/.ckignore');
 test('formatConfigPath empty string', formatConfigPath('') === '.claude/.ckignore');
 
@@ -41,13 +42,15 @@ const blockError = formatBlockedError({
   path: 'packages/web/node_modules/react',
   pattern: 'node_modules',
   tool: 'Bash',
-  claudeDir: '/home/user/project/.claude'
+  claudeDir: '/home/user/project/.claude',
+  configPath: '/home/user/project/.ckignore'
 });
 test('formatBlockedError contains BLOCKED', blockError.includes('BLOCKED'));
 test('formatBlockedError contains path', blockError.includes('packages/web/node_modules/react'));
 test('formatBlockedError contains pattern', blockError.includes('node_modules'));
 test('formatBlockedError contains tool', blockError.includes('Bash'));
 test('formatBlockedError contains fix hint', blockError.includes('!node_modules'));
+test('formatBlockedError prefers explicit config path', blockError.includes('/home/user/project/.ckignore'));
 
 // Test long path truncation
 const longPath = 'a/'.repeat(50) + 'node_modules/package/index.js';
@@ -72,7 +75,8 @@ const machineError = formatMachineError({
   path: 'dist/bundle.js',
   pattern: 'dist',
   tool: 'Read',
-  claudeDir: '.claude'
+  claudeDir: '.claude',
+  configPath: '/tmp/project/.ckignore'
 });
 const parsed = JSON.parse(machineError);
 test('formatMachineError is valid JSON', typeof parsed === 'object');
@@ -80,6 +84,7 @@ test('formatMachineError has error field', parsed.error === 'BLOCKED');
 test('formatMachineError has path field', parsed.path === 'dist/bundle.js');
 test('formatMachineError has pattern field', parsed.pattern === 'dist');
 test('formatMachineError has tool field', parsed.tool === 'Read');
+test('formatMachineError has config field', parsed.config === '/tmp/project/.ckignore');
 test('formatMachineError has fix field', parsed.fix.includes('!dist'));
 
 // formatWarning tests

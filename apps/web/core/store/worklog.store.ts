@@ -37,18 +37,20 @@ export interface IWorklogStore {
     worklogId: string,
     data: IWorkLogUpdate
   ): Promise<IWorkLog>;
-  deleteWorklog(workspaceSlug: string, projectId: string, issueId: string, worklogId: string): Promise<void>;
+  deleteWorklog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string,
+    reason?: string
+  ): Promise<void>;
   fetchProjectSummary(
     workspaceSlug: string,
     projectId: string,
     params?: Record<string, string>
   ): Promise<IWorkLogSummary>;
   fetchTimesheetGrid(workspaceSlug: string, projectId: string, weekStart?: string): Promise<ITimesheetGridResponse>;
-  bulkUpdateTimesheet(
-    workspaceSlug: string,
-    projectId: string,
-    entries: ITimesheetBulkEntry[]
-  ): Promise<void>;
+  bulkUpdateTimesheet(workspaceSlug: string, projectId: string, entries: ITimesheetBulkEntry[]): Promise<void>;
   addEmptyTimesheetRow(issueId: string, issueName: string, issueIdentifier: string, projectId: string): void;
   fetchCapacityReport(
     workspaceSlug: string,
@@ -151,7 +153,8 @@ export class WorklogStore implements IWorklogStore {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    worklogId: string
+    worklogId: string,
+    reason?: string
   ): Promise<void> => {
     if (this.deleteInFlight.has(worklogId)) return;
 
@@ -161,7 +164,7 @@ export class WorklogStore implements IWorklogStore {
       this.worklogsByIssueId[issueId] = prevList.filter((w) => w.id !== worklogId);
     });
     try {
-      await this.worklogService.deleteWorklog(workspaceSlug, projectId, issueId, worklogId);
+      await this.worklogService.deleteWorklog(workspaceSlug, projectId, issueId, worklogId, reason);
     } catch (error) {
       runInAction(() => {
         this.worklogsByIssueId[issueId] = prevList;

@@ -16,6 +16,7 @@ export const useAuthenticationModes = (props: TGetAuthenticationModeProps): TIns
     authenticationModes["unique-codes"],
     authenticationModes["passwords-login"],
     authenticationModes["ldap"],
+    authenticationModes["swing-sso"],
   ];
 
   return availableAuthenticationModes;

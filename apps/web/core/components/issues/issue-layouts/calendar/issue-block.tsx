@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useState, useRef, forwardRef } from "react";
+import { useState, useRef, forwardRef, useEffect } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
@@ -41,6 +41,7 @@ export const CalendarIssueBlock = observer(
     const { issue, quickActions, isDragging = false, isEpic = false } = props;
     // states
     const [isMenuActive, setIsMenuActive] = useState(false);
+    const [isMenuAboveScreenBottom, setIsMenuAboveScreenBottom] = useState(false);
     // refs
     const blockRef = useRef(null);
     const menuActionRef = useRef<HTMLDivElement | null>(null);
@@ -62,6 +63,14 @@ export const CalendarIssueBlock = observer(
 
     useOutsideClickDetector(menuActionRef, () => setIsMenuActive(false));
 
+    useEffect(() => {
+      queueMicrotask(() =>
+        setIsMenuAboveScreenBottom(
+          !!menuActionRef?.current && menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220
+        )
+      );
+    }, [isMenuActive]);
+
     const customActionButton = (
       <div
         ref={menuActionRef}
@@ -74,10 +83,7 @@ export const CalendarIssueBlock = observer(
       </div>
     );
 
-    const isMenuActionRefAboveScreenBottom =
-      menuActionRef?.current && menuActionRef?.current?.getBoundingClientRect().bottom < window.innerHeight - 220;
-
-    const placement = isMenuActionRefAboveScreenBottom ? "bottom-end" : "top-end";
+    const placement = isMenuAboveScreenBottom ? "bottom-end" : "top-end";
 
     const workItemLink = generateWorkItemLink({
       workspaceSlug: workspaceSlug?.toString(),

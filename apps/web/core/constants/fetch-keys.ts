@@ -6,7 +6,7 @@
 
 import type { EUserPermissions, IJiraMetadata } from "@plane/types";
 
-const paramsToKey = (params: any) => {
+const paramsToKey = (params: Record<string, string | undefined>) => {
   const {
     state,
     state_group,
@@ -23,32 +23,21 @@ const paramsToKey = (params: any) => {
     subscriber,
   } = params;
 
-  let projectKey = project ? project.split(",") : [];
-  let stateKey = state ? state.split(",") : [];
-  let stateGroupKey = state_group ? state_group.split(",") : [];
-  let priorityKey = priority ? priority.split(",") : [];
-  let mentionsKey = mentions ? mentions.split(",") : [];
-  let assigneesKey = assignees ? assignees.split(",") : [];
-  let createdByKey = created_by ? created_by.split(",") : [];
-  let labelsKey = labels ? labels.split(",") : [];
-  let subscriberKey = subscriber ? subscriber.split(",") : [];
+  const projectKey = project ? project.split(",").sort().join("_") : "";
+  const stateKey = state ? state.split(",").sort().join("_") : "";
+  const stateGroupKey = state_group ? state_group.split(",").sort().join("_") : "";
+  const priorityKey = priority ? priority.split(",").sort().join("_") : "";
+  const mentionsKey = mentions ? mentions.split(",").sort().join("_") : "";
+  const assigneesKey = assignees ? assignees.split(",").sort().join("_") : "";
+  const createdByKey = created_by ? created_by.split(",").sort().join("_") : "";
+  const labelsKey = labels ? labels.split(",").sort().join("_") : "";
+  const subscriberKey = subscriber ? subscriber.split(",").sort().join("_") : "";
   const startDateKey = start_date ?? "";
   const targetDateKey = target_date ?? "";
   const type = params.type ? params.type.toUpperCase() : "NULL";
   const groupBy = params.group_by ? params.group_by.toUpperCase() : "NULL";
   const orderBy = params.order_by ? params.order_by.toUpperCase() : "NULL";
   const layoutKey = layout ? layout.toUpperCase() : "";
-
-  // sorting each keys in ascending order
-  projectKey = projectKey.sort().join("_");
-  stateKey = stateKey.sort().join("_");
-  stateGroupKey = stateGroupKey.sort().join("_");
-  priorityKey = priorityKey.sort().join("_");
-  assigneesKey = assigneesKey.sort().join("_");
-  mentionsKey = mentionsKey.sort().join("_");
-  createdByKey = createdByKey.sort().join("_");
-  labelsKey = labelsKey.sort().join("_");
-  subscriberKey = subscriberKey.sort().join("_");
 
   return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };
@@ -97,7 +86,8 @@ export const PROJECT_GITHUB_REPOSITORY = (projectId: string) => `PROJECT_GITHUB_
 // cycles
 export const WORKSPACE_ACTIVE_CYCLES_LIST = (workspaceSlug: string, cursor: string, per_page: string) =>
   `WORKSPACE_ACTIVE_CYCLES_LIST_${workspaceSlug.toUpperCase()}_${cursor.toUpperCase()}_${per_page.toUpperCase()}`;
-export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: any) => {
+
+export const CYCLE_ISSUES_WITH_PARAMS = (cycleId: string, params?: Record<string, string | undefined>) => {
   if (!params) return `CYCLE_ISSUES_WITH_PARAMS_${cycleId.toUpperCase()}`;
 
   const paramsKey = paramsToKey(params);
@@ -149,6 +139,8 @@ export const USER_PROFILE_ACTIVITY = (
 ) => `USER_WORKSPACE_PROFILE_ACTIVITY_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}_${params?.cursor}`;
 export const USER_PROFILE_PROJECT_SEGREGATION = (workspaceSlug: string, userId: string) =>
   `USER_PROFILE_PROJECT_SEGREGATION_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
+export const USER_PROFILE_TODAY_ISSUES = (workspaceSlug: string, userId: string) =>
+  `USER_PROFILE_TODAY_ISSUES_${workspaceSlug.toUpperCase()}_${userId.toUpperCase()}`;
 
 // api-tokens
 export const API_TOKENS_LIST = `API_TOKENS_LIST`;

@@ -6,7 +6,76 @@ Scan .claude/skills directory and extract skill metadata.
 import re
 from pathlib import Path
 from typing import Dict, List
-import yaml
+try:
+    import yaml
+except ModuleNotFoundError:
+    raise SystemExit(
+        "PyYAML is required. Install with: python3 -m pip install -r .claude/scripts/requirements.txt"
+    )
+
+# Exact mappings for high-signal CK skills to avoid falling into "other".
+EXACT_CATEGORY_MAP = {
+    # Utilities & Helpers
+    "ask": "utilities",
+    "bootstrap": "utilities",
+    "brainstorm": "utilities",
+    "ck-autoresearch": "utilities",
+    "ck-debug": "utilities",
+    "ck-loop": "utilities",
+    "ck-predict": "utilities",
+    "ck-scenario": "utilities",
+    "code-review": "utilities",
+    "coding-level": "utilities",
+    "context-engineering": "utilities",
+    "cook": "utilities",
+    "copywriting": "utilities",
+    "debug": "utilities",
+    "docs": "utilities",
+    "fix": "utilities",
+    "journal": "utilities",
+    "markdown-novel-viewer": "utilities",
+    "mermaidjs-v11": "utilities",
+    "plan": "utilities",
+    "ck-plan": "utilities",
+    "preview": "utilities",
+    "problem-solving": "utilities",
+    "project-management": "utilities",
+    "project-organization": "utilities",
+    "research": "utilities",
+    "retro": "utilities",
+    "sequential-thinking": "utilities",
+    "test": "utilities",
+    "watzup": "utilities",
+    # Development Tools
+    "find-skills": "dev-tools",
+    "git": "dev-tools",
+    "gkg": "dev-tools",
+    "kanban": "dev-tools",
+    "llms": "dev-tools",
+    "mintlify": "dev-tools",
+    "plans-kanban": "dev-tools",
+    "scout": "dev-tools",
+    "ship": "dev-tools",
+    "team": "dev-tools",
+    "use-mcp": "dev-tools",
+    "worktree": "dev-tools",
+    # Frontend & Design
+    "react-best-practices": "frontend",
+    "remotion": "frontend",
+    "shader": "frontend",
+    "stitch": "frontend",
+    "web-design-guidelines": "frontend",
+    # Frameworks & Platforms
+    "tanstack": "frameworks",
+    # Infrastructure & DevOps
+    "deploy": "infrastructure",
+    # Multimedia & Processing
+    "agent-browser": "multimedia",
+    "web-testing": "multimedia",
+    # Security (mapped to utilities)
+    "ck-security": "utilities",
+    "security-scan": "utilities",
+}
 
 def extract_frontmatter(content: str) -> Dict:
     """Extract YAML frontmatter from markdown content."""
@@ -72,14 +141,21 @@ def scan_skills(base_path: Path) -> List[Dict]:
             # Categorize based on content/name
             category = categorize_skill(skill_name, description, content)
 
-            skills.append({
+            skill_entry = {
                 'name': skill_name,
                 'path': str(skill_file.relative_to(Path('.claude/skills'))),
                 'description': description,
                 'category': category,
                 'has_scripts': (skill_dir / 'scripts').exists(),
                 'has_references': (skill_dir / 'references').exists()
-            })
+            }
+
+            # Include argument-hint if present in frontmatter
+            argument_hint = frontmatter.get('argument-hint', '')
+            if argument_hint:
+                skill_entry['argument_hint'] = str(argument_hint)
+
+            skills.append(skill_entry)
         except Exception as e:
             print(f"Error processing {skill_file}: {e}")
 
@@ -88,8 +164,8 @@ def scan_skills(base_path: Path) -> List[Dict]:
 def categorize_skill(name: str, description: str, content: str) -> str:
     """Categorize skill based on name and content."""
     lower_name = name.lower()
-    lower_desc = description.lower()
-    lower_content = content[:500].lower()
+    if lower_name in EXACT_CATEGORY_MAP:
+        return EXACT_CATEGORY_MAP[lower_name]
 
     # AI/ML
     if any(x in lower_name for x in ['ai-', 'gemini', 'multimodal', 'adk']):
@@ -177,8 +253,9 @@ def main():
             refs = '📚' if skill['has_references'] else '  '
             print(f"  {scripts}{refs} {skill['name']:30} {skill['description'][:80]}")
 
-    # Output YAML for processing (generate_catalogs.py reads YAML)
+    # Output YAML to scripts directory
     output_path = Path('.claude/scripts/skills_data.yaml')
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(yaml.dump(skills, allow_unicode=True, default_flow_style=False))
     print(f"\n✓ Saved metadata to {output_path}")
 

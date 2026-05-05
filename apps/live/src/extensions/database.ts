@@ -27,7 +27,7 @@ const fetchDocument = async ({ context, documentName: pageId, instance }: FetchP
   try {
     const service = getPageService(context.documentType, context);
     // fetch details
-    const response = (await service.fetchDescriptionBinary(pageId)) as Buffer;
+    const response = await service.fetchDescriptionBinary(pageId);
     const binaryData = new Uint8Array(response);
     // if binary data is empty, convert HTML to binary data
     if (binaryData.byteLength === 0) {

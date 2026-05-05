@@ -11,7 +11,7 @@ import useSWR from "swr";
 import type { IInsightField } from "@plane/constants";
 import { ANALYTICS_INSIGHTS_FIELDS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { IAnalyticsResponse, TAnalyticsTabsBase } from "@plane/types";
+import type { IAnalyticsResponse, IAnalyticsResponseFields, TAnalyticsTabsBase } from "@plane/types";
 import { cn } from "@plane/utils";
 // hooks
 import { useAnalytics } from "@/hooks/store/use-analytics";
@@ -92,7 +92,7 @@ const TotalInsights = observer(function TotalInsights({
         <InsightCard
           key={`${analyticsType}-${item.key}`}
           isLoading={isLoading}
-          data={totalInsightsData?.[item.key]}
+          data={totalInsightsData?.[item.key] as IAnalyticsResponseFields | undefined}
           label={getInsightLabel(analyticsType, item, isEpic, t)}
         />
       ))}

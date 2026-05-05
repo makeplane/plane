@@ -1,11 +1,17 @@
 ---
-name: markdown-novel-viewer
+name: ck:markdown-novel-viewer
 description: View markdown files with calm, book-like reading experience via HTTP server. Use for long-form content, documentation preview, novel reading, report viewing, distraction-free reading.
+argument-hint: "[file-or-directory]"
+metadata:
+  author: claudekit
+  version: "1.0.0"
 ---
 
 # markdown-novel-viewer
 
 Background HTTP server rendering markdown files with calm, book-like reading experience.
+
+**Note:** HTML generation mode (`/ck:preview --html ...`) produces self-contained HTML files that open directly in the browser — they do not use this server.
 
 ## ⚠️ Installation Required
 
@@ -53,14 +59,14 @@ node .claude/skills/markdown-novel-viewer/scripts/server.cjs \
 node .claude/skills/markdown-novel-viewer/scripts/server.cjs --stop
 ```
 
-## Slash Command
+## Skill Invocation
 
-Use `/preview` for quick access:
+Use `/ck:preview` for quick access:
 
 ```bash
-/preview plans/my-plan/plan.md    # View markdown file
-/preview plans/                   # Browse directory
-/preview --stop                   # Stop server
+/ck:preview plans/my-plan/plan.md    # View markdown file
+/ck:preview plans/                   # Browse directory
+/ck:preview --stop                   # Stop server
 ```
 
 ## Features
@@ -200,7 +206,7 @@ To access from another device on your network:
 
 ```bash
 # Start with 0.0.0.0 to bind to all interfaces
-node server.cjs --file ./README.md --host 0.0.0.0 --port 3456
+node .claude/skills/markdown-novel-viewer/scripts/server.cjs --file ./README.md --host 0.0.0.0 --port 3456
 ```
 
 When using `--host 0.0.0.0`, the server auto-detects your local network IP and includes it in the output:

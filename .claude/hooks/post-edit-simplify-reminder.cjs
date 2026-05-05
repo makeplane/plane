@@ -12,15 +12,19 @@
  * - Resets counter when simplifier is mentioned in conversation
  */
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const { isHookEnabled } = require('./lib/ck-config-utils.cjs');
+// Crash wrapper
+try {
+  const fs = require('fs');
+  const path = require('path');
+  const os = require('os');
+  const { isHookEnabled } = require('./lib/ck-config-utils.cjs');
+  const { invalidateCache } = require('./lib/git-info-cache.cjs');
+  const { createHookTimer, logHookCrash } = require('./lib/hook-logger.cjs');
 
-// Early exit if hook disabled in config
-if (!isHookEnabled('post-edit-simplify-reminder')) {
-  process.exit(0);
-}
+  // Early exit if hook disabled in config
+  if (!isHookEnabled('post-edit-simplify-reminder')) {
+    process.exit(0);
+  }
 
 // Session tracking file
 const SESSION_TRACK_FILE = path.join(os.tmpdir(), 'ck-simplify-session.json');
@@ -73,6 +77,7 @@ function saveSessionData(data) {
  * Main hook logic
  */
 function main() {
+  const timer = createHookTimer('post-edit-simplify-reminder', { event: 'PostToolUse' });
   try {
     // Read hook input from stdin
     let input = '';
@@ -88,10 +93,14 @@ function main() {
     // Only track edit operations
     const editTools = ['Edit', 'Write', 'MultiEdit'];
     if (!editTools.includes(toolName)) {
-      // Pass through without modification
+      timer.end({ tool: toolName, status: 'skip', exit: 0, note: 'non-edit-tool' });
       console.log(JSON.stringify({ continue: true }));
       return;
     }
+
+    // Invalidate git cache so statusline shows fresh state after file changes
+    // Use hookData.cwd (not process.cwd()) to handle subagent CWD mismatch
+    invalidateCache(hookData.cwd || process.cwd());
 
     // Load session data
     const session = loadSessionData();
@@ -127,12 +136,26 @@ function main() {
       result.additionalContext = additionalContext;
     }
 
+    timer.end({
+      tool: toolName,
+      status: 'ok',
+      exit: 0,
+      note: additionalContext ? 'reminder-injected' : 'tracked-edit'
+    });
     console.log(JSON.stringify(result));
 
   } catch (e) {
     // On error, allow the operation to continue
+    logHookCrash('post-edit-simplify-reminder', e, { event: 'PostToolUse' });
     console.log(JSON.stringify({ continue: true }));
   }
-}
+  }
 
-main();
+  main();
+} catch (e) {
+  try {
+    const { logHookCrash } = require('./lib/hook-logger.cjs');
+    logHookCrash('post-edit-simplify-reminder', e, { event: 'PostToolUse' });
+  } catch (_) {}
+  process.exit(0); // fail-open
+}

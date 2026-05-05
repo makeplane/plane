@@ -14,6 +14,7 @@ import type {
   TIssueLink,
   TIssueReaction,
   TIssueServiceType,
+  TIssueUpdatePayload,
   TWorkItemWidgets,
 } from "@plane/types";
 // plane web store
@@ -275,7 +276,7 @@ export abstract class IssueDetail implements IIssueDetail {
     this.issue.fetchIssue(workspaceSlug, projectId, issueId);
   fetchIssueWithIdentifier = async (workspaceSlug: string, projectIdentifier: string, sequenceId: string) =>
     this.issue.fetchIssueWithIdentifier(workspaceSlug, projectIdentifier, sequenceId);
-  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) =>
+  updateIssue = async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueUpdatePayload) =>
     this.issue.updateIssue(workspaceSlug, projectId, issueId, data);
   removeIssue = async (workspaceSlug: string, projectId: string, issueId: string) =>
     this.issue.removeIssue(workspaceSlug, projectId, issueId);

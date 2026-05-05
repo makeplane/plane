@@ -49,7 +49,9 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
+            url = serializer.data.get("url", "")
+            if url.startswith("http://") or url.startswith("https://"):
+                crawl_work_item_link_title.delay(serializer.data.get("id"), url)
             issue_activity.delay(
                 type="link.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -76,7 +78,9 @@ class IssueLinkViewSet(BaseViewSet):
         serializer = IssueLinkSerializer(issue_link, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            crawl_work_item_link_title.delay(serializer.data.get("id"), serializer.data.get("url"))
+            url = serializer.data.get("url", "")
+            if url.startswith("http://") or url.startswith("https://"):
+                crawl_work_item_link_title.delay(serializer.data.get("id"), url)
 
             issue_activity.delay(
                 type="link.activity.updated",

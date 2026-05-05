@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { API_BASE_URL } from "@plane/constants";
 import { APIService } from "@/services/api.service";
 
@@ -92,6 +92,7 @@ export interface IMyStaffProfile {
     name: string;
     code: string;
   } | null;
+  is_department_manager: boolean;
 }
 
 export class StaffService extends APIService {

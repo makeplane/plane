@@ -19,6 +19,7 @@ from django.db.models import (
     Prefetch,
     Q,
     Subquery,
+    Sum,
     UUIDField,
     Value,
 )
@@ -33,6 +34,7 @@ from rest_framework.response import Response
 
 # Module imports
 from plane.app.permissions import ROLE, allow_permission
+from plane.utils.workflow_checker import check_workflow_creation, check_workflow_transition
 from plane.app.serializers import (
     IssueCreateSerializer,
     IssueDetailSerializer,
@@ -55,6 +57,7 @@ from plane.db.models import (
     IssueReaction,
     IssueRelation,
     IssueSubscriber,
+    IssueWorkLog,
     ProjectUserProperty,
     ModuleIssue,
     Project,
@@ -134,6 +137,14 @@ class IssueListEndpoint(BaseAPIView):
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
             )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
             .distinct()
         )
 
@@ -186,6 +197,7 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "total_logged_minutes",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -243,6 +255,18 @@ class IssueViewSet(BaseViewSet):
                     .annotate(count=Count("id"))
                     .values("count")
                 )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
+            .annotate(
+                main_task_category_name=F("main_task_category__name"),
+                sub_task_category_name=F("sub_task_category__name"),
             )
         )
 
@@ -392,8 +416,20 @@ class IssueViewSet(BaseViewSet):
     def create(self, request, slug, project_id):
         project = Project.objects.get(pk=project_id)
 
+        # Normalize empty strings to None for optional UUID FK fields
+        data = request.data.copy()
+        for field in ("state_id", "parent_id", "estimate_point"):
+            if data.get(field) == "":
+                data[field] = None
+
+        # Workflow creation guard: block if workflow is live and state restricts new items
+        if data.get("state_id"):
+            is_allowed, error_msg = check_workflow_creation(project_id, data["state_id"])
+            if not is_allowed:
+                return Response({"error": error_msg}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = IssueCreateSerializer(
-            data=request.data,
+            data=data,
             context={
                 "project_id": project_id,
                 "workspace_id": project.workspace_id,
@@ -451,6 +487,9 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "total_logged_minutes",
+                    "main_task_category_id",
+                    "sub_task_category_id",
                 )
                 .first()
             )
@@ -513,6 +552,14 @@ class IssueViewSet(BaseViewSet):
                     .values("parent")
                     .annotate(count=Count("id"))
                     .values("count")
+                )
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
                 )
             )
             .annotate(
@@ -611,7 +658,7 @@ class IssueViewSet(BaseViewSet):
         serializer = IssueDetailSerializer(issue, expand=self.expand)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
+    @allow_permission(allowed_roles=[ROLE.ADMIN], creator=True, assignee=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk=None):
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
@@ -661,17 +708,57 @@ class IssueViewSet(BaseViewSet):
         if not issue:
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Workflow transition guard: block if workflow is live and transition is not permitted
+        new_state_id = request.data.get("state_id")
+        if new_state_id and str(new_state_id) != str(issue.state_id):
+            is_allowed, detail = check_workflow_transition(project_id, issue.state_id, new_state_id, request.user)
+            if not is_allowed:
+                return Response(
+                    {
+                        "error": "WORKFLOW_TRANSITION_BLOCKED",
+                        "message": "You are not authorized to move this work item to the selected state.",
+                        "detail": detail,
+                    },
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+
         current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
 
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
-        serializer = IssueCreateSerializer(issue, data=request.data, partial=True, context={"project_id": project_id})
+
+        # Validate: reason required when *changing* an existing target_date or completed_at
+        # (not when setting for the first time)
+        REASON_REQUIRED_FIELDS = {"target_date", "completed_at"}
+        is_changing_protected = any(
+            field in request.data
+            and request.data[field] not in (None, "", [])
+            and getattr(issue, field) not in (None, "")
+            for field in REASON_REQUIRED_FIELDS
+        )
+        if is_changing_protected:
+            reason = (request.data.get("reason") or "").strip()
+            if not reason:
+                return Response(
+                    {"error": "A reason is required when changing the due date or completed date."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+        # Build serializer data without transient `reason` field (not an Issue model field)
+        serializer_data = {k: v for k, v in request.data.items() if k != "reason"}
+        serializer = IssueCreateSerializer(
+            issue, data=serializer_data, partial=True, context={"project_id": project_id}
+        )
         if serializer.is_valid():
             serializer.save()
             # Check if the update is a migration description update
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates
             if not is_migration_description_update:
-                issue_activity.delay(
+                # Run activity creation synchronously so the record exists
+                # before the HTTP response — the frontend can fetch it
+                # immediately. Notifications are still dispatched async
+                # inside the task via notifications.delay().
+                issue_activity(
                     type="issue.activity.updated",
                     requested_data=requested_data,
                     actor_id=str(request.user.id),
@@ -837,6 +924,14 @@ class IssuePaginatedViewSet(BaseViewSet):
                     .values("count")
                 )
             )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
         )
 
     def process_paginated_result(self, fields, results, timezone):
@@ -882,6 +977,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "total_logged_minutes",
         ]
 
         if str(is_description_required).lower() == "true":
@@ -1009,6 +1105,14 @@ class IssueDetailEndpoint(BaseAPIView):
                     queryset=ModuleIssue.objects.all(),
                 )
             )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
         )
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -1044,7 +1148,7 @@ class IssueDetailEndpoint(BaseAPIView):
         # Main issue query
         issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
             Exists(permission_subquery)
-        )
+        ).select_related("main_task_category", "sub_task_category")
 
         # Add additional prefetch based on expand parameter
         if self.expand:

@@ -121,17 +121,12 @@ WidgetConfigModal
 ### Step 1: Create Widget Type Selector
 
 <!-- Updated: Validation Session 2 - ALL config components moved to core/components/dashboards/config/ -->
+
 **File**: `apps/web/core/components/dashboards/config/widget-type-selector.tsx`
 
 ```typescript
 import { observer } from "mobx-react";
-import {
-  BarChart3,
-  LineChart,
-  AreaChart,
-  PieChart,
-  Hash,
-} from "lucide-react";
+import { BarChart3, LineChart, AreaChart, PieChart, Hash } from "lucide-react";
 import type { EWidgetType } from "@plane/types";
 
 interface WidgetTypeSelectorProps {
@@ -178,36 +173,30 @@ const WIDGET_TYPES = [
   },
 ];
 
-export const WidgetTypeSelector = observer(
-  ({ selectedType, onChange }: WidgetTypeSelectorProps) => {
-    return (
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-        {WIDGET_TYPES.map(({ type, label, description, icon: Icon }) => (
-          <button
-            key={type}
-            type="button"
-            onClick={() => onChange(type)}
-            className={`flex flex-col items-start rounded-lg border-2 p-3 text-left transition-all ${
-              selectedType === type
-                ? "border-custom-primary-100 bg-custom-primary-100/10"
-                : "border-custom-border-200 hover:border-custom-border-300"
-            }`}
-          >
-            <Icon
-              className={`mb-2 h-6 w-6 ${
-                selectedType === type
-                  ? "text-custom-primary-100"
-                  : "text-custom-text-300"
-              }`}
-            />
-            <div className="font-medium text-custom-text-100">{label}</div>
-            <div className="text-xs text-custom-text-300">{description}</div>
-          </button>
-        ))}
-      </div>
-    );
-  }
-);
+export const WidgetTypeSelector = observer(({ selectedType, onChange }: WidgetTypeSelectorProps) => {
+  return (
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+      {WIDGET_TYPES.map(({ type, label, description, icon: Icon }) => (
+        <button
+          key={type}
+          type="button"
+          onClick={() => onChange(type)}
+          className={`flex flex-col items-start rounded-lg border-2 p-3 text-left transition-all ${
+            selectedType === type
+              ? "border-custom-primary-100 bg-custom-primary-100/10"
+              : "border-custom-border-200 hover:border-custom-border-300"
+          }`}
+        >
+          <Icon
+            className={`mb-2 h-6 w-6 ${selectedType === type ? "text-custom-primary-100" : "text-custom-text-300"}`}
+          />
+          <div className="font-medium text-custom-text-100">{label}</div>
+          <div className="text-xs text-custom-text-300">{description}</div>
+        </button>
+      ))}
+    </div>
+  );
+});
 
 WidgetTypeSelector.displayName = "WidgetTypeSelector";
 ```
@@ -225,47 +214,37 @@ interface ColorPresetSelectorProps {
   onChange: (presetId: string) => void;
 }
 
-export const ColorPresetSelector = observer(
-  ({ selectedPreset, onChange }: ColorPresetSelectorProps) => {
-    return (
-      <div className="space-y-3">
-        {Object.values(COLOR_PRESETS).map((preset) => (
-          <button
-            key={preset.id}
-            type="button"
-            onClick={() => onChange(preset.id)}
-            className={`flex w-full items-center gap-3 rounded-lg border-2 p-3 text-left transition-all ${
-              selectedPreset === preset.id
-                ? "border-custom-primary-100 bg-custom-primary-100/10"
-                : "border-custom-border-200 hover:border-custom-border-300"
-            }`}
-          >
-            {/* Color Swatches */}
-            <div className="flex gap-1">
-              {preset.colors.slice(0, 6).map((color, index) => (
-                <div
-                  key={index}
-                  className="h-8 w-8 rounded"
-                  style={{ backgroundColor: color }}
-                />
-              ))}
-            </div>
+export const ColorPresetSelector = observer(({ selectedPreset, onChange }: ColorPresetSelectorProps) => {
+  return (
+    <div className="space-y-3">
+      {Object.values(COLOR_PRESETS).map((preset) => (
+        <button
+          key={preset.id}
+          type="button"
+          onClick={() => onChange(preset.id)}
+          className={`flex w-full items-center gap-3 rounded-lg border-2 p-3 text-left transition-all ${
+            selectedPreset === preset.id
+              ? "border-custom-primary-100 bg-custom-primary-100/10"
+              : "border-custom-border-200 hover:border-custom-border-300"
+          }`}
+        >
+          {/* Color Swatches */}
+          <div className="flex gap-1">
+            {preset.colors.slice(0, 6).map((color, index) => (
+              <div key={index} className="h-8 w-8 rounded" style={{ backgroundColor: color }} />
+            ))}
+          </div>
 
-            {/* Preset Info */}
-            <div className="flex-1">
-              <div className="font-medium text-custom-text-100">
-                {preset.name}
-              </div>
-              <div className="text-xs text-custom-text-300">
-                {preset.description}
-              </div>
-            </div>
-          </button>
-        ))}
-      </div>
-    );
-  }
-);
+          {/* Preset Info */}
+          <div className="flex-1">
+            <div className="font-medium text-custom-text-100">{preset.name}</div>
+            <div className="text-xs text-custom-text-300">{preset.description}</div>
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+});
 
 ColorPresetSelector.displayName = "ColorPresetSelector";
 ```
@@ -278,114 +257,87 @@ ColorPresetSelector.displayName = "ColorPresetSelector";
 import { observer } from "mobx-react";
 import { Controller, Control } from "react-hook-form";
 import { Input } from "@plane/propel/input";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@plane/propel/select";
-import {
-  CHART_PROPERTY_OPTIONS,
-  CHART_METRIC_OPTIONS,
-} from "@plane/constants";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@plane/propel/select";
+import { CHART_PROPERTY_OPTIONS, CHART_METRIC_OPTIONS } from "@plane/constants";
 
 interface BasicSettingsSectionProps {
   control: Control<any>;
   errors: any;
 }
 
-export const BasicSettingsSection = observer(
-  ({ control, errors }: BasicSettingsSectionProps) => {
-    return (
-      <div className="space-y-4">
-        {/* Title */}
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            Widget Title <span className="text-red-500">*</span>
-          </label>
-          <Controller
-            name="title"
-            control={control}
-            rules={{ required: "Title is required" }}
-            render={({ field }) => (
-              <Input
-                {...field}
-                placeholder="Issues by Priority"
-                hasError={!!errors.title}
-              />
-            )}
-          />
-          {errors.title && (
-            <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>
-          )}
-        </div>
-
-        {/* Property (X-Axis) */}
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            Property (X-Axis) <span className="text-red-500">*</span>
-          </label>
-          <Controller
-            name="chart_property"
-            control={control}
-            rules={{ required: "Property is required" }}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select property" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CHART_PROPERTY_OPTIONS.map((option) => (
-                    <SelectItem key={option.key} value={option.key}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.chart_property && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.chart_property.message}
-            </p>
-          )}
-        </div>
-
-        {/* Metric (Y-Axis) */}
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            Metric (Y-Axis) <span className="text-red-500">*</span>
-          </label>
-          <Controller
-            name="chart_metric"
-            control={control}
-            rules={{ required: "Metric is required" }}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select metric" />
-                </SelectTrigger>
-                <SelectContent>
-                  {CHART_METRIC_OPTIONS.map((option) => (
-                    <SelectItem key={option.key} value={option.key}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {errors.chart_metric && (
-            <p className="mt-1 text-xs text-red-500">
-              {errors.chart_metric.message}
-            </p>
-          )}
-        </div>
+export const BasicSettingsSection = observer(({ control, errors }: BasicSettingsSectionProps) => {
+  return (
+    <div className="space-y-4">
+      {/* Title */}
+      <div>
+        <label className="mb-1 block text-sm font-medium">
+          Widget Title <span className="text-red-500">*</span>
+        </label>
+        <Controller
+          name="title"
+          control={control}
+          rules={{ required: "Title is required" }}
+          render={({ field }) => <Input {...field} placeholder="Issues by Priority" hasError={!!errors.title} />}
+        />
+        {errors.title && <p className="mt-1 text-xs text-red-500">{errors.title.message}</p>}
       </div>
-    );
-  }
-);
+
+      {/* Property (X-Axis) */}
+      <div>
+        <label className="mb-1 block text-sm font-medium">
+          Property (X-Axis) <span className="text-red-500">*</span>
+        </label>
+        <Controller
+          name="chart_property"
+          control={control}
+          rules={{ required: "Property is required" }}
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select property" />
+              </SelectTrigger>
+              <SelectContent>
+                {CHART_PROPERTY_OPTIONS.map((option) => (
+                  <SelectItem key={option.key} value={option.key}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {errors.chart_property && <p className="mt-1 text-xs text-red-500">{errors.chart_property.message}</p>}
+      </div>
+
+      {/* Metric (Y-Axis) */}
+      <div>
+        <label className="mb-1 block text-sm font-medium">
+          Metric (Y-Axis) <span className="text-red-500">*</span>
+        </label>
+        <Controller
+          name="chart_metric"
+          control={control}
+          rules={{ required: "Metric is required" }}
+          render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select metric" />
+              </SelectTrigger>
+              <SelectContent>
+                {CHART_METRIC_OPTIONS.map((option) => (
+                  <SelectItem key={option.key} value={option.key}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
+        {errors.chart_metric && <p className="mt-1 text-xs text-red-500">{errors.chart_metric.message}</p>}
+      </div>
+    </div>
+  );
+});
 
 BasicSettingsSection.displayName = "BasicSettingsSection";
 ```
@@ -407,88 +359,73 @@ interface StyleSettingsSectionProps {
   widgetType: EWidgetType;
 }
 
-export const StyleSettingsSection = observer(
-  ({ control, widgetType }: StyleSettingsSectionProps) => {
-    const showFillOpacity = ["bar", "area"].includes(widgetType);
-    const showSmoothing = ["line", "area"].includes(widgetType);
-    const showBorder = widgetType === "bar";
+export const StyleSettingsSection = observer(({ control, widgetType }: StyleSettingsSectionProps) => {
+  const showFillOpacity = ["bar", "area"].includes(widgetType);
+  const showSmoothing = ["line", "area"].includes(widgetType);
+  const showBorder = widgetType === "bar";
 
-    return (
-      <div className="space-y-4">
-        {/* Color Preset */}
+  return (
+    <div className="space-y-4">
+      {/* Color Preset */}
+      <div>
+        <label className="mb-2 block text-sm font-medium">Color Preset</label>
+        <Controller
+          name="config.color_preset"
+          control={control}
+          render={({ field }) => <ColorPresetSelector selectedPreset={field.value} onChange={field.onChange} />}
+        />
+      </div>
+
+      {/* Fill Opacity */}
+      {showFillOpacity && (
         <div>
-          <label className="mb-2 block text-sm font-medium">Color Preset</label>
+          <label className="mb-2 block text-sm font-medium">Fill Opacity</label>
           <Controller
-            name="config.color_preset"
+            name="config.fill_opacity"
             control={control}
             render={({ field }) => (
-              <ColorPresetSelector
-                selectedPreset={field.value}
-                onChange={field.onChange}
-              />
+              <div className="flex items-center gap-4">
+                <Slider
+                  value={[field.value * 100]}
+                  onValueChange={(values) => field.onChange(values[0] / 100)}
+                  min={0}
+                  max={100}
+                  step={10}
+                  className="flex-1"
+                />
+                <span className="text-sm text-custom-text-300">{Math.round(field.value * 100)}%</span>
+              </div>
             )}
           />
         </div>
+      )}
 
-        {/* Fill Opacity */}
-        {showFillOpacity && (
-          <div>
-            <label className="mb-2 block text-sm font-medium">
-              Fill Opacity
-            </label>
-            <Controller
-              name="config.fill_opacity"
-              control={control}
-              render={({ field }) => (
-                <div className="flex items-center gap-4">
-                  <Slider
-                    value={[field.value * 100]}
-                    onValueChange={(values) => field.onChange(values[0] / 100)}
-                    min={0}
-                    max={100}
-                    step={10}
-                    className="flex-1"
-                  />
-                  <span className="text-sm text-custom-text-300">
-                    {Math.round(field.value * 100)}%
-                  </span>
-                </div>
-              )}
-            />
-          </div>
-        )}
+      {/* Show Border */}
+      {showBorder && (
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Show Border</label>
+          <Controller
+            name="config.show_border"
+            control={control}
+            render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+          />
+        </div>
+      )}
 
-        {/* Show Border */}
-        {showBorder && (
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Show Border</label>
-            <Controller
-              name="config.show_border"
-              control={control}
-              render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />
-          </div>
-        )}
-
-        {/* Smoothing */}
-        {showSmoothing && (
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Smooth Lines</label>
-            <Controller
-              name="config.smoothing"
-              control={control}
-              render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
-);
+      {/* Smoothing */}
+      {showSmoothing && (
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Smooth Lines</label>
+          <Controller
+            name="config.smoothing"
+            control={control}
+            render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+          />
+        </div>
+      )}
+    </div>
+  );
+});
 
 StyleSettingsSection.displayName = "StyleSettingsSection";
 ```
@@ -508,74 +445,64 @@ interface DisplaySettingsSectionProps {
   widgetType: EWidgetType;
 }
 
-export const DisplaySettingsSection = observer(
-  ({ control, widgetType }: DisplaySettingsSectionProps) => {
-    const showLegend = widgetType !== "number";
-    const showTooltip = widgetType !== "number";
-    const showCenterValue = ["donut", "pie"].includes(widgetType);
-    const showMarkers = widgetType === "line";
+export const DisplaySettingsSection = observer(({ control, widgetType }: DisplaySettingsSectionProps) => {
+  const showLegend = widgetType !== "number";
+  const showTooltip = widgetType !== "number";
+  const showCenterValue = ["donut", "pie"].includes(widgetType);
+  const showMarkers = widgetType === "line";
 
-    return (
-      <div className="space-y-4">
-        {/* Legend */}
-        {showLegend && (
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Show Legend</label>
-            <Controller
-              name="config.show_legend"
-              control={control}
-              render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />
-          </div>
-        )}
+  return (
+    <div className="space-y-4">
+      {/* Legend */}
+      {showLegend && (
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Show Legend</label>
+          <Controller
+            name="config.show_legend"
+            control={control}
+            render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+          />
+        </div>
+      )}
 
-        {/* Tooltip */}
-        {showTooltip && (
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Show Tooltip</label>
-            <Controller
-              name="config.show_tooltip"
-              control={control}
-              render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />
-          </div>
-        )}
+      {/* Tooltip */}
+      {showTooltip && (
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Show Tooltip</label>
+          <Controller
+            name="config.show_tooltip"
+            control={control}
+            render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+          />
+        </div>
+      )}
 
-        {/* Center Value */}
-        {showCenterValue && (
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Show Center Value</label>
-            <Controller
-              name="config.center_value"
-              control={control}
-              render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />
-          </div>
-        )}
+      {/* Center Value */}
+      {showCenterValue && (
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Show Center Value</label>
+          <Controller
+            name="config.center_value"
+            control={control}
+            render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+          />
+        </div>
+      )}
 
-        {/* Markers */}
-        {showMarkers && (
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-medium">Show Data Points</label>
-            <Controller
-              name="config.show_markers"
-              control={control}
-              render={({ field }) => (
-                <Switch checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />
-          </div>
-        )}
-      </div>
-    );
-  }
-);
+      {/* Markers */}
+      {showMarkers && (
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium">Show Data Points</label>
+          <Controller
+            name="config.show_markers"
+            control={control}
+            render={({ field }) => <Switch checked={field.value} onCheckedChange={field.onChange} />}
+          />
+        </div>
+      )}
+    </div>
+  );
+});
 
 DisplaySettingsSection.displayName = "DisplaySettingsSection";
 ```
@@ -591,13 +518,7 @@ import { useForm } from "react-hook-form";
 import type { IDashboardWidget, EWidgetType, TWidgetCreate, TWidgetUpdate } from "@plane/types";
 import { DEFAULT_WIDGET_CONFIGS, DEFAULT_WIDGET_SIZES } from "@plane/constants";
 import { Button } from "@plane/propel/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@plane/propel/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@plane/propel/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@plane/propel/tabs";
 
 import { WidgetTypeSelector } from "./config/widget-type-selector";
@@ -635,137 +556,118 @@ interface FormData {
   };
 }
 
-export const WidgetConfigModal = observer(
-  ({ isOpen, onClose, onSubmit, widget }: WidgetConfigModalProps) => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
+export const WidgetConfigModal = observer(({ isOpen, onClose, onSubmit, widget }: WidgetConfigModalProps) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const {
-      control,
-      handleSubmit,
-      formState: { errors },
-      reset,
-      watch,
-      setValue,
-    } = useForm<FormData>({
-      defaultValues: widget
-        ? {
-            widget_type: widget.widget_type,
-            title: widget.title,
-            chart_property: widget.chart_property,
-            chart_metric: widget.chart_metric,
-            config: widget.config,
-            position: widget.position,
-          }
-        : {
-            widget_type: "bar" as EWidgetType,
-            title: "",
-            chart_property: "priority",
-            chart_metric: "count",
-            config: DEFAULT_WIDGET_CONFIGS.bar,
-            position: { row: 0, col: 0, ...DEFAULT_WIDGET_SIZES.bar },
-          },
-    });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    watch,
+    setValue,
+  } = useForm<FormData>({
+    defaultValues: widget
+      ? {
+          widget_type: widget.widget_type,
+          title: widget.title,
+          chart_property: widget.chart_property,
+          chart_metric: widget.chart_metric,
+          config: widget.config,
+          position: widget.position,
+        }
+      : {
+          widget_type: "bar" as EWidgetType,
+          title: "",
+          chart_property: "priority",
+          chart_metric: "count",
+          config: DEFAULT_WIDGET_CONFIGS.bar,
+          position: { row: 0, col: 0, ...DEFAULT_WIDGET_SIZES.bar },
+        },
+  });
 
-    const widgetType = watch("widget_type");
+  const widgetType = watch("widget_type");
 
-    // Reset config when widget type changes
-    useEffect(() => {
-      if (!widget && widgetType) {
-        setValue("config", DEFAULT_WIDGET_CONFIGS[widgetType] || {});
-        setValue("position", {
-          row: 0,
-          col: 0,
-          ...DEFAULT_WIDGET_SIZES[widgetType],
-        });
-      }
-    }, [widgetType, widget, setValue]);
+  // Reset config when widget type changes
+  useEffect(() => {
+    if (!widget && widgetType) {
+      setValue("config", DEFAULT_WIDGET_CONFIGS[widgetType] || {});
+      setValue("position", {
+        row: 0,
+        col: 0,
+        ...DEFAULT_WIDGET_SIZES[widgetType],
+      });
+    }
+  }, [widgetType, widget, setValue]);
 
-    const handleFormSubmit = async (data: FormData) => {
-      try {
-        setIsSubmitting(true);
-        await onSubmit(data);
-        reset();
-        onClose();
-      } catch (error) {
-        console.error("Failed to save widget:", error);
-      } finally {
-        setIsSubmitting(false);
-      }
-    };
-
-    const handleClose = () => {
+  const handleFormSubmit = async (data: FormData) => {
+    try {
+      setIsSubmitting(true);
+      await onSubmit(data);
       reset();
       onClose();
-    };
+    } catch (error) {
+      console.error("Failed to save widget:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-    return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              {widget ? "Configure Widget" : "Add Widget"}
-            </DialogTitle>
-          </DialogHeader>
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
 
-          <form onSubmit={handleSubmit(handleFormSubmit)}>
-            <Tabs defaultValue="type" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="type">Type</TabsTrigger>
-                <TabsTrigger value="basic">Basic</TabsTrigger>
-                <TabsTrigger value="style">Style</TabsTrigger>
-                <TabsTrigger value="display">Display</TabsTrigger>
-              </TabsList>
+  return (
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>{widget ? "Configure Widget" : "Add Widget"}</DialogTitle>
+        </DialogHeader>
 
-              {/* Type Tab */}
-              <TabsContent value="type" className="space-y-4">
-                <WidgetTypeSelector
-                  selectedType={widgetType}
-                  onChange={(type) => setValue("widget_type", type)}
-                />
-              </TabsContent>
+        <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <Tabs defaultValue="type" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="type">Type</TabsTrigger>
+              <TabsTrigger value="basic">Basic</TabsTrigger>
+              <TabsTrigger value="style">Style</TabsTrigger>
+              <TabsTrigger value="display">Display</TabsTrigger>
+            </TabsList>
 
-              {/* Basic Tab */}
-              <TabsContent value="basic" className="space-y-4">
-                <BasicSettingsSection control={control} errors={errors} />
-              </TabsContent>
+            {/* Type Tab */}
+            <TabsContent value="type" className="space-y-4">
+              <WidgetTypeSelector selectedType={widgetType} onChange={(type) => setValue("widget_type", type)} />
+            </TabsContent>
 
-              {/* Style Tab */}
-              <TabsContent value="style" className="space-y-4">
-                <StyleSettingsSection control={control} widgetType={widgetType} />
-              </TabsContent>
+            {/* Basic Tab */}
+            <TabsContent value="basic" className="space-y-4">
+              <BasicSettingsSection control={control} errors={errors} />
+            </TabsContent>
 
-              {/* Display Tab */}
-              <TabsContent value="display" className="space-y-4">
-                <DisplaySettingsSection
-                  control={control}
-                  widgetType={widgetType}
-                />
-              </TabsContent>
-            </Tabs>
+            {/* Style Tab */}
+            <TabsContent value="style" className="space-y-4">
+              <StyleSettingsSection control={control} widgetType={widgetType} />
+            </TabsContent>
 
-            <DialogFooter className="mt-6">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button type="submit" variant="primary" disabled={isSubmitting}>
-                {isSubmitting
-                  ? "Saving..."
-                  : widget
-                  ? "Update Widget"
-                  : "Add Widget"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-);
+            {/* Display Tab */}
+            <TabsContent value="display" className="space-y-4">
+              <DisplaySettingsSection control={control} widgetType={widgetType} />
+            </TabsContent>
+          </Tabs>
+
+          <DialogFooter className="mt-6">
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" disabled={isSubmitting}>
+              {isSubmitting ? "Saving..." : widget ? "Update Widget" : "Add Widget"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+});
 
 WidgetConfigModal.displayName = "WidgetConfigModal";
 ```
@@ -813,15 +715,19 @@ Update the dashboard detail page to use the config modal for add/edit operations
 ## Risk Assessment
 
 **Risk**: Form state gets out of sync
+
 - **Mitigation**: Use react-hook-form controlled components
 
 **Risk**: Widget type change loses user edits
+
 - **Mitigation**: Confirm before resetting config
 
 **Risk**: Color presets don't render correctly
+
 - **Mitigation**: Test color swatch rendering with valid hex codes
 
 **Risk**: Conditional fields cause form errors
+
 - **Mitigation**: Clear validation errors when fields hidden
 
 ## Security Considerations
@@ -834,6 +740,7 @@ Update the dashboard detail page to use the config modal for add/edit operations
 ## Completion
 
 This phase completes the Dashboard Pro feature implementation. All 8 phases provide:
+
 - ✅ Backend models and API endpoints
 - ✅ Frontend types, constants, and services
 - ✅ MobX store for state management

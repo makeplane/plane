@@ -34,10 +34,12 @@ Updated project documentation to reflect the newly implemented Time Tracking / W
   - Sidebar navigation integration
 
 **Updated Statistics**:
+
 - Database Models: 33 → 34 (added IssueWorkLog)
 - MobX Stores (web): 33 → 34 (added WorklogStore)
 
 **Metadata**:
+
 - Version: 1.2.1 → 1.2.2
 - Last Updated: 2026-02-14 → 2026-02-18
 - Line count: ~480 → ~520
@@ -45,6 +47,7 @@ Updated project documentation to reflect the newly implemented Time Tracking / W
 ### 2. System Architecture (`./docs/system-architecture.md`)
 
 **Updated Data Model**:
+
 - Added `IssueWorkLog` to Issue relationship
 - Added `estimate_time` field to Issue
 - Added `is_time_tracking_enabled` to Project
@@ -71,6 +74,7 @@ Updated project documentation to reflect the newly implemented Time Tracking / W
    - Sidebar navigation
 
 **Metadata**:
+
 - Version: 1.2.1 → 1.2.2
 - Last Updated: 2026-02-14 → 2026-02-18
 - Line count: ~420 → ~510
@@ -82,6 +86,7 @@ Updated project documentation to reflect the newly implemented Time Tracking / W
 All documentation updates were verified against actual codebase files:
 
 ### Backend Verification
+
 - `apps/api/plane/db/models/worklog.py` - IssueWorkLog model (39 lines)
 - `apps/api/plane/db/models/issue.py` - estimate_time field
 - `apps/api/plane/db/models/project.py` - is_time_tracking_enabled flag
@@ -90,6 +95,7 @@ All documentation updates were verified against actual codebase files:
 - `apps/api/plane/db/migrations/0124_...` - Migration file
 
 ### Frontend Verification
+
 - `apps/web/core/store/worklog.store.ts` - MobX store (160 lines)
 - `apps/web/core/services/worklog.service.ts` - API service
 - `apps/web/core/hooks/store/use-worklog.ts` - Custom hook
@@ -100,11 +106,13 @@ All documentation updates were verified against actual codebase files:
 - `packages/constants/src/worklog.ts` - Constants file
 
 ### Type Definitions Verified
+
 ```typescript
-IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary
+(IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary);
 ```
 
 ### Endpoints Verified
+
 - List: `GET /api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`
 - Create: `POST /api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/`
 - Update: `PATCH /api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/`
@@ -117,6 +125,7 @@ IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary
 ## Documentation Quality
 
 **Standards Applied**:
+
 - Evidence-based: Only documented verified implementation
 - Concise: Added only relevant details without rewriting
 - Consistent: Followed existing doc structure and terminology
@@ -124,12 +133,14 @@ IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary
 - Accurate: Field names, types, and case sensitivity verified
 
 **Naming & Case Sensitivity**:
+
 - Model: `IssueWorkLog` (PascalCase)
 - Fields: `duration_minutes`, `logged_at`, `logged_by` (snake_case)
 - Field types: PositiveIntegerField, FK, DateField
 - API response: Uses lowercase snake_case per DRF convention
 
 **No Breaking Changes**:
+
 - Documentation is descriptive only (no changes to functionality)
 - `is_time_tracking_enabled` defaults to True (feature enabled by default)
 - All existing APIs and models remain unchanged
@@ -138,10 +149,10 @@ IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary
 
 ## Files Updated
 
-| File | Lines | Change Type | Details |
-| ---- | ----- | ----------- | ------- |
-| `docs/codebase-summary.md` | +40 | Feature section + stats | Time Tracking backend/frontend |
-| `docs/system-architecture.md` | +90 | Model update + new section | Data model + 6 API endpoints |
+| File                          | Lines | Change Type                | Details                        |
+| ----------------------------- | ----- | -------------------------- | ------------------------------ |
+| `docs/codebase-summary.md`    | +40   | Feature section + stats    | Time Tracking backend/frontend |
+| `docs/system-architecture.md` | +90   | Model update + new section | Data model + 6 API endpoints   |
 
 **Total Lines Added**: ~130 (concise, focused)
 **Rewritten Sections**: 0 (preserved existing content)
@@ -151,6 +162,7 @@ IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary
 ## Impact
 
 ### Documentation Coverage
+
 - Time Tracking feature: 100% documented
 - API endpoints: Complete (6/6)
 - Data model: Fully mapped
@@ -159,6 +171,7 @@ IWorkLog, IWorkLogCreate, IWorkLogUpdate, IWorkLogSummary
 - Routes: Included
 
 ### Developer Understanding
+
 - Enables developers to understand time tracking architecture quickly
 - Provides complete API contract documentation
 - Shows integration points (model → serializer → viewset → frontend)

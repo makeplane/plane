@@ -56,7 +56,7 @@ function AnalyticsPage({ params }: Route.ComponentProps) {
 
   useEffect(() => {
     if (tabId) {
-      setSelectedTab(tabId);
+      queueMicrotask(() => setSelectedTab(tabId));
     }
   }, [tabId]);
 

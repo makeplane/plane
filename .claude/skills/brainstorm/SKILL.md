@@ -1,8 +1,11 @@
 ---
-name: brainstorm
-description: Brainstorm solutions with trade-off analysis and brutal honesty. Use for ideation, architecture decisions, technical debates, feature exploration, feasibility assessment, design discussions.
+name: ck:brainstorm
+description: "Brainstorm solutions with trade-off analysis and brutal honesty. Use for ideation, architecture decisions, technical debates, feature exploration, feasibility assessment, design discussions."
 license: MIT
-version: 2.0.0
+argument-hint: "[topic or problem]"
+metadata:
+  author: claudekit
+  version: "2.0.0"
 ---
 
 # Brainstorming Skill
@@ -34,28 +37,74 @@ You operate by the holy trinity of software engineering: **YAGNI** (You Aren't G
 - Consult the `planner` agent to research industry best practices and find proven solutions
 - Engage the `docs-manager` agent to understand existing project implementation and constraints
 - Use `WebSearch` tool to find efficient approaches and learn from others' experiences
-- Use `docs-seeker` skill to read latest documentation of external plugins/packages
-- Leverage `ai-multimodal` skill to analyze visual materials and mockups
+- Use `ck:docs-seeker` skill to read latest documentation of external plugins/packages
+- Leverage `ck:ai-multimodal` skill to analyze visual materials and mockups
 - Query `psql` command to understand current database structure and existing data
-- Employ `sequential-thinking` skill for complex problem-solving that requires structured analysis
+- Employ `ck:sequential-thinking` skill for complex problem-solving that requires structured analysis
+
+<HARD-GATE>
+Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it.
+This applies to EVERY brainstorming session regardless of perceived simplicity.
+The design can be brief for simple projects, but you MUST present it and get approval.
+</HARD-GATE>
+
+## Anti-Rationalization
+
+| Thought | Reality |
+|---------|---------|
+| "This is too simple to need a design" | Simple projects = most wasted work from unexamined assumptions. |
+| "I already know the solution" | Then writing it down takes 30 seconds. Do it. |
+| "The user wants action, not talk" | Bad action wastes more time than good planning. |
+| "Let me explore the code first" | Brainstorming tells you HOW to explore. Follow the process. |
+| "I'll just prototype quickly" | Prototypes become production code. Design first. |
+
+## Process Flow (Authoritative)
+
+```mermaid
+flowchart TD
+    A[Scout Project Context] --> B[Ask Clarifying Questions]
+    B --> C{Scope too large?}
+    C -->|Yes| D[Decompose into Sub-Projects]
+    D --> B
+    C -->|No| E[Propose 2-3 Approaches]
+    E --> F[Present Design Sections]
+    F --> G{User Approves?}
+    G -->|No| F
+    G -->|Yes| H[Write Design Doc / Report]
+    H --> I{Create Plan?}
+    I -->|Yes| J[Invoke /ck:plan]
+    I -->|No| K[End Session]
+    J --> L[Journal]
+    K --> L
+```
+
+**This diagram is the authoritative workflow.** If prose conflicts with this flow, follow the diagram. The terminal state is either `/ck:plan` or end.
 
 ## Your Process
-1. **Scout Phase**: Use `scout` skill to discover relevant files and code patterns, read relevant docs in `<project-dir>/docs` directory, to understand the current state of the project
+1. **Scout Phase**: Use `ck:scout` skill to discover relevant files and code patterns, read relevant docs in `<project-dir>/docs` directory, to understand the current state of the project
 2. **Discovery Phase**: Use `AskUserQuestion` tool to ask clarifying questions about requirements, constraints, timeline, and success criteria
-3. **Research Phase**: Gather information from other agents and external sources
-4. **Analysis Phase**: Evaluate multiple approaches using your expertise and principles
-5. **Debate Phase**: Use `AskUserQuestion` tool to Present options, challenge user preferences, and work toward the optimal solution
-6. **Consensus Phase**: Ensure alignment on the chosen approach and document decisions
-7. **Documentation Phase**: Create a comprehensive markdown summary report with the final agreed solution
-8. **Finalize Phase**: Use `AskUserQuestion` tool to ask if user wants to create a detailed implementation plan.
-   - If `Yes`: Run `/plan` command with the brainstorm summary context as the argument to ensure plan continuity.
+3. **Scope Assessment**: Before deep-diving, assess if request covers multiple independent subsystems:
+   - If request describes 3+ independent concerns (e.g., "build platform with chat, billing, analytics") → flag immediately
+   - Help user decompose into sub-projects: identify pieces, relationships, build order
+   - Each sub-project gets its own brainstorm → plan → implement cycle
+   - Don't spend questions refining details of a project that needs decomposition first
+4. **Research Phase**: Gather information from other agents and external sources
+5. **Analysis Phase**: Evaluate multiple approaches using your expertise and principles
+6. **Debate Phase**: Use `AskUserQuestion` tool to Present options, challenge user preferences, and work toward the optimal solution
+7. **Consensus Phase**: Ensure alignment on the chosen approach and document decisions
+8. **Documentation Phase**: Create a comprehensive markdown summary report with the final agreed solution
+9. **Finalize Phase**: Use `AskUserQuestion` tool to ask if user wants to create a detailed implementation plan.
+   - If `Yes`: Run `/ck:plan` command with the brainstorm summary context as the argument to ensure plan continuity.
      **CRITICAL:** The invoked plan command will create `plan.md` with YAML frontmatter including `status: pending`.
    - If `No`: End the session.
+10. **Journal Phase**: Run `/ck:journal` to write a concise technical journal entry upon completion.
 
 ## Report Output
 Use the naming pattern from the `## Naming` section in the injected context. The pattern includes the full path and computed date.
 
 ## Output Requirements
+**IMPORTANT:** Invoke "/ck:project-organization" skill to organize the reports.
+
 When brainstorming concludes with agreement, create a detailed markdown summary report including:
 - Problem statement and requirements
 - Evaluated approaches with pros/cons

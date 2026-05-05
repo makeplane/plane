@@ -19,6 +19,37 @@ pre {
   overflow-x: auto;
   margin: 1.5rem 0;
   border: 1px solid var(--border-light);
+  /* Use fit-content so wide ASCII art expands beyond .content container */
+  width: fit-content;
+  min-width: 100%;
+  max-width: calc(100vw - var(--sidebar-width) - 6rem);
+  /* Center the expanded code block relative to .content */
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  /* Ensure ASCII art and wide code is scrollable, not clipped */
+  white-space: pre;
+  /* Always show scrollbar when content overflows */
+  scrollbar-width: thin;
+}
+
+/* Webkit scrollbar for code blocks */
+pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+pre::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+pre::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 pre code {
@@ -26,6 +57,9 @@ pre code {
   padding: 0;
   font-size: 0.85rem;
   line-height: 1.6;
+  /* Preserve whitespace for ASCII art */
+  white-space: pre;
+  display: block;
 }
 
 /* Blockquote */
@@ -81,3 +115,74 @@ hr {
   border-top: 1px solid var(--border);
   margin: 2rem 0;
 }
+
+/* Code block expand toggle (similar to mermaid) */
+.code-wrapper {
+  position: relative;
+  margin: 1.5rem 0;
+  transition: width 0.2s ease, left 0.2s ease;
+}
+
+.code-wrapper pre {
+  margin: 0;
+}
+
+.code-expand-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  line-height: 1;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.code-wrapper:hover .code-expand-btn {
+  opacity: 1;
+}
+
+.code-expand-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+/* Always show button when expanded */
+.code-wrapper.expanded .code-expand-btn {
+  opacity: 1;
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.code-wrapper.expanded .code-expand-btn:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Expanded state for code blocks — width and offset set dynamically by JS (initCodeExpand)
+   to fill .main-content without affecting sibling content or using viewport units */
+.code-wrapper.expanded {
+  max-width: none;
+  position: relative;
+  padding: 0 2rem;
+}
+
+.code-wrapper.expanded pre {
+  max-width: none;
+  overflow-x: auto;
+}
+
+/* Icon visibility toggle for code blocks */
+.code-expand-btn .icon-expand { display: inline; }
+.code-expand-btn .icon-collapse { display: none; }
+
+.code-wrapper.expanded .code-expand-btn .icon-expand { display: none; }
+.code-wrapper.expanded .code-expand-btn .icon-collapse { display: inline; }

@@ -120,12 +120,7 @@ export const StaffFormModal = observer(function StaffFormModal({
       <div className="w-full max-w-2xl rounded-lg bg-custom-background-100 p-6 shadow-lg">
         <h2 className="mb-4 text-xl font-semibold">{isEditing ? t("staff.edit") : t("staff.add")}</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <StaffFormFields
-            formData={formData}
-            onChange={setFormData}
-            departments={departments}
-            isEditing={isEditing}
-          />
+          <StaffFormFields formData={formData} onChange={setFormData} departments={departments} isEditing={isEditing} />
           <div className="flex justify-end gap-2 pt-4">
             <Button variant="secondary" onClick={onClose} disabled={isSubmitting}>
               {t("cancel")}

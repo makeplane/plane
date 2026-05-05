@@ -5,8 +5,8 @@
  * Respects order: process.env > skill/.env > skills/.env > .claude/.env
  */
 
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 /**
  * Parse .env file content into key-value pairs
@@ -15,11 +15,11 @@ const path = require("path");
  */
 function parseEnvFile(content) {
   const env = {};
-  const lines = content.split("\n");
+  const lines = content.split('\n');
 
   for (const line of lines) {
     // Skip comments and empty lines
-    if (!line || line.trim().startsWith("#")) continue;
+    if (!line || line.trim().startsWith('#')) continue;
 
     const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
     if (match) {
@@ -27,7 +27,8 @@ function parseEnvFile(content) {
       let value = match[2].trim();
 
       // Remove quotes if present
-      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      if ((value.startsWith('"') && value.endsWith('"')) ||
+          (value.startsWith("'") && value.endsWith("'"))) {
         value = value.slice(1, -1);
       }
 
@@ -44,14 +45,14 @@ function parseEnvFile(content) {
  * @returns {Object} Merged environment variables
  */
 function loadEnv() {
-  const skillDir = path.resolve(__dirname, "../..");
-  const skillsDir = path.resolve(skillDir, "..");
-  const claudeDir = path.resolve(skillsDir, "..");
+  const skillDir = path.resolve(__dirname, '../..');
+  const skillsDir = path.resolve(skillDir, '..');
+  const claudeDir = path.resolve(skillsDir, '..');
 
   const envPaths = [
-    path.join(claudeDir, ".env"), // Lowest priority
-    path.join(skillsDir, ".env"),
-    path.join(skillDir, ".env"), // Highest priority (file)
+    path.join(claudeDir, '.env'),      // Lowest priority
+    path.join(skillsDir, '.env'),
+    path.join(skillDir, '.env'),       // Highest priority (file)
   ];
 
   let mergedEnv = {};
@@ -60,7 +61,7 @@ function loadEnv() {
   for (const envPath of envPaths) {
     if (fs.existsSync(envPath)) {
       try {
-        const content = fs.readFileSync(envPath, "utf8");
+        const content = fs.readFileSync(envPath, 'utf8');
         const parsed = parseEnvFile(content);
         mergedEnv = { ...mergedEnv, ...parsed };
       } catch (error) {
@@ -81,7 +82,7 @@ function loadEnv() {
  * @param {string} defaultValue - Default value if not found
  * @returns {string} Environment variable value
  */
-function getEnv(key, defaultValue = "") {
+function getEnv(key, defaultValue = '') {
   const env = loadEnv();
   return env[key] || defaultValue;
 }

@@ -131,6 +131,7 @@ DashboardDetailPage
 ### Step 1: Create Dashboard Detail Header
 
 <!-- Updated: Validation Session 2 - ALL components moved to core/components/dashboards/ -->
+
 **File**: `apps/web/core/components/dashboards/dashboard-detail-header.tsx`
 
 ```typescript
@@ -149,32 +150,18 @@ interface DashboardDetailHeaderProps {
 }
 
 export const DashboardDetailHeader = observer(
-  ({
-    dashboard,
-    workspaceSlug,
-    isEditMode,
-    onToggleEditMode,
-    onRefresh,
-  }: DashboardDetailHeaderProps) => {
+  ({ dashboard, workspaceSlug, isEditMode, onToggleEditMode, onRefresh }: DashboardDetailHeaderProps) => {
     const navigate = useNavigate();
 
     return (
       <div className="flex items-center justify-between border-b border-custom-border-200 p-4">
         <div className="flex items-center gap-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(`/${workspaceSlug}/dashboards/`)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/${workspaceSlug}/dashboards/`)}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
             <h1 className="text-xl font-semibold">{dashboard.name}</h1>
-            {dashboard.description && (
-              <p className="text-sm text-custom-text-300">
-                {dashboard.description}
-              </p>
-            )}
+            {dashboard.description && <p className="text-sm text-custom-text-300">{dashboard.description}</p>}
           </div>
         </div>
 
@@ -183,11 +170,7 @@ export const DashboardDetailHeader = observer(
             <RefreshCw className="h-4 w-4" />
             <span>Refresh</span>
           </Button>
-          <Button
-            variant={isEditMode ? "primary" : "outline"}
-            size="sm"
-            onClick={onToggleEditMode}
-          >
+          <Button variant={isEditMode ? "primary" : "outline"} size="sm" onClick={onToggleEditMode}>
             <Edit2 className="h-4 w-4" />
             <span>{isEditMode ? "Done Editing" : "Edit"}</span>
           </Button>
@@ -203,6 +186,7 @@ DashboardDetailHeader.displayName = "DashboardDetailHeader";
 ### Step 2: Create Widget Card Wrapper
 
 <!-- Updated: Validation Session 2 - ALL components moved to core/components/dashboards/ -->
+
 **File**: `apps/web/core/components/dashboards/widget-card.tsx`
 
 ```typescript
@@ -212,12 +196,7 @@ import { MoreVertical, Trash2, Settings } from "lucide-react";
 import type { IDashboardWidget, IChartData, INumberWidgetData } from "@plane/types";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/propel/loader";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@plane/propel/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@plane/propel/dropdown-menu";
 import { useDashboardStore } from "@/core/hooks/use-dashboard-store";
 
 // Import widget components
@@ -238,14 +217,7 @@ interface WidgetCardProps {
 }
 
 export const WidgetCard = observer(
-  ({
-    widget,
-    workspaceSlug,
-    dashboardId,
-    isEditMode,
-    onDelete,
-    onConfigure,
-  }: WidgetCardProps) => {
+  ({ widget, workspaceSlug, dashboardId, isEditMode, onDelete, onConfigure }: WidgetCardProps) => {
     const dashboardStore = useDashboardStore();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<any>(null);
@@ -256,11 +228,7 @@ export const WidgetCard = observer(
         try {
           setIsLoading(true);
           setError(null);
-          await dashboardStore.fetchWidgetData(
-            workspaceSlug,
-            dashboardId,
-            widget.id
-          );
+          await dashboardStore.fetchWidgetData(workspaceSlug, dashboardId, widget.id);
         } catch (err) {
           setError(err);
         } finally {
@@ -326,9 +294,7 @@ export const WidgetCard = observer(
       >
         {/* Widget Header */}
         <div className="flex items-center justify-between border-b border-custom-border-200 px-4 py-2">
-          <h3 className="font-medium text-custom-text-100">
-            {widget.title || widget.widget_type_display}
-          </h3>
+          <h3 className="font-medium text-custom-text-100">{widget.title || widget.widget_type_display}</h3>
 
           {isEditMode && (
             <DropdownMenu>
@@ -342,10 +308,7 @@ export const WidgetCard = observer(
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Configure</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => onDelete(widget)}
-                  className="text-red-500"
-                >
+                <DropdownMenuItem onClick={() => onDelete(widget)} className="text-red-500">
                   <Trash2 className="mr-2 h-4 w-4" />
                   <span>Delete</span>
                 </DropdownMenuItem>
@@ -367,6 +330,7 @@ WidgetCard.displayName = "WidgetCard";
 ### Step 3: Create Bar Chart Widget
 
 <!-- Updated: Validation Session 2 - ALL components moved to core/components/dashboards/ -->
+
 **File**: `apps/web/core/components/dashboards/widgets/bar-chart-widget.tsx`
 
 ```typescript
@@ -380,25 +344,23 @@ interface BarChartWidgetProps {
   data: IChartData;
 }
 
-export const BarChartWidget = observer(
-  ({ widget, data }: BarChartWidgetProps) => {
-    const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
+export const BarChartWidget = observer(({ widget, data }: BarChartWidgetProps) => {
+  const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
 
-    return (
-      <div className="h-full w-full">
-        <BarChart
-          data={data.data}
-          xAxisKey={widget.chart_property}
-          yAxisKey={widget.chart_metric}
-          colors={colorPreset.colors}
-          showLegend={widget.config.show_legend ?? true}
-          showTooltip={widget.config.show_tooltip ?? true}
-          fillOpacity={widget.config.fill_opacity ?? 0.8}
-        />
-      </div>
-    );
-  }
-);
+  return (
+    <div className="h-full w-full">
+      <BarChart
+        data={data.data}
+        xAxisKey={widget.chart_property}
+        yAxisKey={widget.chart_metric}
+        colors={colorPreset.colors}
+        showLegend={widget.config.show_legend ?? true}
+        showTooltip={widget.config.show_tooltip ?? true}
+        fillOpacity={widget.config.fill_opacity ?? 0.8}
+      />
+    </div>
+  );
+});
 
 BarChartWidget.displayName = "BarChartWidget";
 ```
@@ -418,26 +380,24 @@ interface LineChartWidgetProps {
   data: IChartData;
 }
 
-export const LineChartWidget = observer(
-  ({ widget, data }: LineChartWidgetProps) => {
-    const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
+export const LineChartWidget = observer(({ widget, data }: LineChartWidgetProps) => {
+  const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
 
-    return (
-      <div className="h-full w-full">
-        <LineChart
-          data={data.data}
-          xAxisKey={widget.chart_property}
-          yAxisKey={widget.chart_metric}
-          colors={colorPreset.colors}
-          showLegend={widget.config.show_legend ?? true}
-          showTooltip={widget.config.show_tooltip ?? true}
-          smooth={widget.config.smoothing ?? true}
-          showDots={widget.config.show_markers ?? true}
-        />
-      </div>
-    );
-  }
-);
+  return (
+    <div className="h-full w-full">
+      <LineChart
+        data={data.data}
+        xAxisKey={widget.chart_property}
+        yAxisKey={widget.chart_metric}
+        colors={colorPreset.colors}
+        showLegend={widget.config.show_legend ?? true}
+        showTooltip={widget.config.show_tooltip ?? true}
+        smooth={widget.config.smoothing ?? true}
+        showDots={widget.config.show_markers ?? true}
+      />
+    </div>
+  );
+});
 
 LineChartWidget.displayName = "LineChartWidget";
 ```
@@ -457,26 +417,24 @@ interface AreaChartWidgetProps {
   data: IChartData;
 }
 
-export const AreaChartWidget = observer(
-  ({ widget, data }: AreaChartWidgetProps) => {
-    const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
+export const AreaChartWidget = observer(({ widget, data }: AreaChartWidgetProps) => {
+  const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
 
-    return (
-      <div className="h-full w-full">
-        <AreaChart
-          data={data.data}
-          xAxisKey={widget.chart_property}
-          yAxisKey={widget.chart_metric}
-          colors={colorPreset.colors}
-          showLegend={widget.config.show_legend ?? true}
-          showTooltip={widget.config.show_tooltip ?? true}
-          fillOpacity={widget.config.fill_opacity ?? 0.3}
-          smooth={widget.config.smoothing ?? true}
-        />
-      </div>
-    );
-  }
-);
+  return (
+    <div className="h-full w-full">
+      <AreaChart
+        data={data.data}
+        xAxisKey={widget.chart_property}
+        yAxisKey={widget.chart_metric}
+        colors={colorPreset.colors}
+        showLegend={widget.config.show_legend ?? true}
+        showTooltip={widget.config.show_tooltip ?? true}
+        fillOpacity={widget.config.fill_opacity ?? 0.3}
+        smooth={widget.config.smoothing ?? true}
+      />
+    </div>
+  );
+});
 
 AreaChartWidget.displayName = "AreaChartWidget";
 ```
@@ -496,26 +454,24 @@ interface DonutChartWidgetProps {
   data: IChartData;
 }
 
-export const DonutChartWidget = observer(
-  ({ widget, data }: DonutChartWidgetProps) => {
-    const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
+export const DonutChartWidget = observer(({ widget, data }: DonutChartWidgetProps) => {
+  const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
 
-    return (
-      <div className="h-full w-full">
-        <PieChart
-          data={data.data}
-          nameKey={widget.chart_property}
-          valueKey={widget.chart_metric}
-          colors={colorPreset.colors}
-          showLegend={widget.config.show_legend ?? true}
-          showTooltip={widget.config.show_tooltip ?? true}
-          innerRadius={60} // Makes it a donut
-          showCenterValue={widget.config.center_value ?? true}
-        />
-      </div>
-    );
-  }
-);
+  return (
+    <div className="h-full w-full">
+      <PieChart
+        data={data.data}
+        nameKey={widget.chart_property}
+        valueKey={widget.chart_metric}
+        colors={colorPreset.colors}
+        showLegend={widget.config.show_legend ?? true}
+        showTooltip={widget.config.show_tooltip ?? true}
+        innerRadius={60} // Makes it a donut
+        showCenterValue={widget.config.center_value ?? true}
+      />
+    </div>
+  );
+});
 
 DonutChartWidget.displayName = "DonutChartWidget";
 ```
@@ -533,25 +489,23 @@ interface PieChartWidgetProps {
   data: IChartData;
 }
 
-export const PieChartWidget = observer(
-  ({ widget, data }: PieChartWidgetProps) => {
-    const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
+export const PieChartWidget = observer(({ widget, data }: PieChartWidgetProps) => {
+  const colorPreset = COLOR_PRESETS[widget.config.color_preset || "modern"];
 
-    return (
-      <div className="h-full w-full">
-        <PieChart
-          data={data.data}
-          nameKey={widget.chart_property}
-          valueKey={widget.chart_metric}
-          colors={colorPreset.colors}
-          showLegend={widget.config.show_legend ?? true}
-          showTooltip={widget.config.show_tooltip ?? true}
-          innerRadius={0} // Full pie
-        />
-      </div>
-    );
-  }
-);
+  return (
+    <div className="h-full w-full">
+      <PieChart
+        data={data.data}
+        nameKey={widget.chart_property}
+        valueKey={widget.chart_metric}
+        colors={colorPreset.colors}
+        showLegend={widget.config.show_legend ?? true}
+        showTooltip={widget.config.show_tooltip ?? true}
+        innerRadius={0} // Full pie
+      />
+    </div>
+  );
+});
 
 PieChartWidget.displayName = "PieChartWidget";
 ```
@@ -572,9 +526,7 @@ interface NumberWidgetProps {
 export const NumberWidget = observer(({ widget, data }: NumberWidgetProps) => {
   return (
     <div className="flex h-full flex-col items-center justify-center">
-      <div className="text-5xl font-bold text-custom-primary-100">
-        {data.value.toLocaleString()}
-      </div>
+      <div className="text-5xl font-bold text-custom-primary-100">{data.value.toLocaleString()}</div>
       <div className="mt-2 text-sm text-custom-text-300">
         {widget.chart_metric === "count" ? "Issues" : "Estimate Points"}
       </div>
@@ -635,9 +587,7 @@ export const WidgetGrid = observer(
           />
         ))}
 
-        {isEditMode && (
-          <AddWidgetButton onClick={onAddWidget} />
-        )}
+        {isEditMode && <AddWidgetButton onClick={onAddWidget} />}
       </div>
     );
   }
@@ -809,15 +759,19 @@ export default observer(DashboardDetailPage);
 ## Risk Assessment
 
 **Risk**: Propel chart components missing required props
+
 - **Mitigation**: Check propel chart API documentation, add missing props
 
 **Risk**: Widget data fetch causes performance issues
+
 - **Mitigation**: Fetch in parallel, implement caching
 
 **Risk**: Grid layout breaks on mobile
+
 - **Mitigation**: Test responsive breakpoints, adjust column spans
 
 **Risk**: Chart colors don't match presets
+
 - **Mitigation**: Verify color preset arrays match Recharts format
 
 ## Security Considerations
@@ -830,6 +784,7 @@ export default observer(DashboardDetailPage);
 ## Next Steps
 
 Proceed to [Phase 8: Widget Configuration UI](./phase-08-widget-configuration.md)
+
 - Create widget config modal
 - Add chart type selector
 - Add property/metric dropdowns

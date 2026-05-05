@@ -23,7 +23,7 @@ import {
   ChevronRightIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import type { ILinkDetails, IModule, ModuleLink } from "@plane/types";
+import type { ILinkDetails, IModule, ModuleLink, TModuleStatus } from "@plane/types";
 // plane ui
 import { Loader, CustomSelect, TextArea } from "@plane/ui";
 // components
@@ -32,6 +32,7 @@ import { getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { DateRangeDropdown } from "@/components/dropdowns/date-range";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { CreateUpdateModuleLinkModal, ModuleAnalyticsProgress, ModuleLinksList } from "@/components/modules";
+import { ModuleSidebarActivities } from "@/plane-web/components/modules/activity";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useModule } from "@/hooks/store/use-module";
@@ -112,8 +113,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
     }
   };
 
-  const handleDateChange = async (startDate: Date | undefined, targetDate: Date | undefined) => {
-    submitChanges({
+  const handleDateChange = (startDate: Date | undefined, targetDate: Date | undefined) => {
+    void submitChanges({
       start_date: startDate ? renderFormattedPayloadDate(startDate) : null,
       target_date: targetDate ? renderFormattedPayloadDate(targetDate) : null,
     });
@@ -163,10 +164,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
       ? "0 work items"
       : `${moduleDetails.completed_estimate_points}/${moduleDetails.total_estimate_points}`;
 
-  const isEditingAllowed = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT
-  );
+  const isEditingAllowed = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   return (
     <div className="relative">
@@ -215,8 +213,8 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                     </span>
                   }
                   value={value}
-                  onChange={(value: any) => {
-                    submitChanges({ status: value });
+                  onChange={(value: TModuleStatus) => {
+                    submitChanges({ status: value }).catch(() => {});
                   }}
                   disabled={!isEditingAllowed || isArchived}
                 >
@@ -299,7 +297,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                   <MemberDropdown
                     value={value ?? null}
                     onChange={(val) => {
-                      submitChanges({ lead_id: val });
+                      void submitChanges({ lead_id: val });
                     }}
                     projectId={projectId?.toString() ?? ""}
                     multiple={false}
@@ -325,7 +323,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                   <MemberDropdown
                     value={value ?? []}
                     onChange={(val: string[]) => {
-                      submitChanges({ member_ids: val });
+                      void submitChanges({ member_ids: val });
                     }}
                     multiple
                     projectId={projectId?.toString() ?? ""}
@@ -397,7 +395,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                               <div className="flex w-full items-center justify-end">
                                 <button
                                   className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
-                                  onClick={() => setModuleLinkModal(true)}
+                                  onClick={() => void setModuleLinkModal(true)}
                                 >
                                   <PlusIcon className="h-3 w-3" />
                                   {t("add_link")}
@@ -409,7 +407,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                               <ModuleLinksList
                                 moduleId={moduleId}
                                 handleEditLink={handleEditLink}
-                                handleDeleteLink={handleDeleteLink}
+                                handleDeleteLink={(linkId) => void handleDeleteLink(linkId)}
                                 disabled={!isEditingAllowed || isArchived}
                               />
                             )}
@@ -423,7 +421,7 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
                             {isEditingAllowed && !isArchived && (
                               <button
                                 className="flex items-center gap-1.5 text-13 font-medium text-accent-primary"
-                                onClick={() => setModuleLinkModal(true)}
+                                onClick={() => void setModuleLinkModal(true)}
                               >
                                 <PlusIcon className="h-3 w-3" />
                                 {t("add_link")}
@@ -439,6 +437,14 @@ export const ModuleAnalyticsSidebar = observer(function ModuleAnalyticsSidebar(p
             </Disclosure>
           </div>
         </div>
+
+        {workspaceSlug && projectId && moduleId && (
+          <ModuleSidebarActivities
+            workspaceSlug={workspaceSlug.toString()}
+            projectId={projectId.toString()}
+            moduleId={moduleId}
+          />
+        )}
       </>
     </div>
   );

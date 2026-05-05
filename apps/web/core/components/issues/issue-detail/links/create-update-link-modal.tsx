@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { useEffect } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
@@ -60,8 +59,11 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
     if (handleOnClose) handleOnClose();
   };
 
-  const handleFormSubmit = async (formData: TIssueLinkCreateFormFieldOptions) => {
-    const parsedUrl = formData.url.startsWith("http") ? formData.url : `http://${formData.url}`;
+  const onFormSubmit = async (formData: TIssueLinkCreateFormFieldOptions) => {
+    // Detect RFC 3986 scheme (e.g., http://, https://, z://, ftp://) to preserve custom protocols.
+    // Protocol-relative URLs (//example.com) are not matched and get http:// prepended.
+    const hasProtocol = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(formData.url);
+    const parsedUrl = hasProtocol ? formData.url : `http://${formData.url.replace(/^\/\//, "")}`;
     try {
       if (!formData || !formData.id) await linkOperations.create({ title: formData.title, url: parsedUrl });
       else await linkOperations.update(formData.id, { title: formData.title, url: parsedUrl });
@@ -77,7 +79,12 @@ export const IssueLinkCreateUpdateModal = observer(function IssueLinkCreateUpdat
 
   return (
     <ModalCore isOpen={isModalOpen} handleClose={onClose}>
-      <form onSubmit={handleSubmit(handleFormSubmit)}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSubmit(onFormSubmit)();
+        }}
+      >
         <div className="space-y-5 p-5">
           <h3 className="text-h4-medium text-secondary">
             {preloadedData?.id ? t("common.update_link") : t("common.add_link")}

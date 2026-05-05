@@ -57,3 +57,10 @@ GoogleService-Info.plist
 .mcp.json
 .gemini/*
 commands/**/meta/*
+
+# Per-session / per-machine state (not for sync)
+hooks/.logs/
+session-state/latest.md
+session-state/archive/
+settings.local.json
+

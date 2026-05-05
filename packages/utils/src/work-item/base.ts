@@ -23,7 +23,7 @@ import type {
   TSubGroupedIssues,
   TUnGroupedIssues,
 } from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+import type { TIssueLayouts } from "@plane/types";
 // local imports
 import { orderArrayBy } from "../array";
 import { getDate } from "../datetime";
@@ -102,7 +102,7 @@ export const handleIssuesMutation: THandleIssuesMutation = (
 };
 
 export const handleIssueQueryParamsByLayout = (
-  layout: EIssueLayoutTypes | undefined,
+  layout: TIssueLayouts | undefined,
   viewType:
     | "my_issues"
     | "issues"
@@ -148,7 +148,7 @@ export const createIssuePayload: (projectId: string, formData: Partial<TIssue>) 
   const payload: TIssue = {
     id: uuidv4(),
     project_id: projectId,
-    priority: "none",
+    priority: "medium",
     label_ids: [],
     assignee_ids: [],
     sub_issues_count: 0,
@@ -224,7 +224,7 @@ export const getDescriptionPlaceholderI18n = (isFocused: boolean, description: s
 
 export const issueCountBasedOnFilters = (
   issueIds: TGroupedIssues | TUnGroupedIssues | TSubGroupedIssues,
-  layout: EIssueLayoutTypes,
+  layout: TIssueLayouts,
   groupBy: string | undefined,
   subGroupBy: string | undefined
 ): number => {
@@ -277,12 +277,13 @@ export const getComputedDisplayFilters = (
       show_weekends: filters?.calendar?.show_weekends || false,
       layout: filters?.calendar?.layout || "month",
     },
-    layout: filters?.layout || EIssueLayoutTypes.LIST,
+    layout: filters?.layout || "list",
     order_by: filters?.order_by || "sort_order",
     group_by: filters?.group_by || null,
     sub_group_by: filters?.sub_group_by || null,
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
+    show_archived: filters?.show_archived ?? true,
   };
 };
 
@@ -294,22 +295,34 @@ export const getComputedDisplayFilters = (
 export const getComputedDisplayProperties = (
   displayProperties: IIssueDisplayProperties = {}
 ): IIssueDisplayProperties => ({
+  // CE extended display properties (Shinhan Bank custom columns)
+  department_name: displayProperties?.department_name ?? true,
+  project_name: displayProperties?.project_name ?? true,
+  main_task_category: displayProperties?.main_task_category ?? true,
+  sub_task_category: displayProperties?.sub_task_category ?? true,
+  sub_issue_count: displayProperties?.sub_issue_count ?? true,
+  project_lead: displayProperties?.project_lead ?? true,
   assignee: displayProperties?.assignee ?? true,
-  start_date: displayProperties?.start_date ?? true,
-  due_date: displayProperties?.due_date ?? true,
-  labels: displayProperties?.labels ?? true,
+  bank_wide_project: displayProperties?.bank_wide_project ?? true,
   priority: displayProperties?.priority ?? true,
   state: displayProperties?.state ?? true,
-  sub_issue_count: displayProperties?.sub_issue_count ?? true,
-  attachment_count: displayProperties?.attachment_count ?? true,
-  link: displayProperties?.link ?? true,
-  estimate: displayProperties?.estimate ?? true,
-  key: displayProperties?.key ?? true,
-  created_on: displayProperties?.created_on ?? true,
-  updated_on: displayProperties?.updated_on ?? true,
-  modules: displayProperties?.modules ?? true,
-  cycle: displayProperties?.cycle ?? true,
-  issue_type: displayProperties?.issue_type ?? true,
+  progress_tracking: displayProperties?.progress_tracking ?? true,
+  // hidden by default
+  modules: displayProperties?.modules ?? false,
+  cycle: displayProperties?.cycle ?? false,
+  start_date: displayProperties?.start_date ?? true,
+  due_date: displayProperties?.due_date ?? true,
+  completed_date: displayProperties?.completed_date ?? true,
+  total_log_time: displayProperties?.total_log_time ?? true,
+  reference_link: displayProperties?.reference_link ?? true,
+  labels: displayProperties?.labels ?? false,
+  attachment_count: displayProperties?.attachment_count ?? false,
+  link: displayProperties?.link ?? false,
+  key: displayProperties?.key ?? false,
+  issue_type: displayProperties?.issue_type ?? false,
+  estimate: displayProperties?.estimate ?? false,
+  created_on: displayProperties?.created_on ?? false,
+  updated_on: displayProperties?.updated_on ?? false,
 });
 
 export const generateWorkItemLink = ({

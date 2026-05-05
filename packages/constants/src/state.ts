@@ -21,8 +21,8 @@ export const STATE_GROUPS: {
 } = {
   backlog: {
     key: "backlog",
-    label: "Backlog",
-    defaultStateName: "Backlog",
+    label: "Draft",
+    defaultStateName: "Draft",
     color: "#d9d9d9",
   },
   unstarted: {
@@ -106,7 +106,7 @@ export const PROGRESS_STATE_GROUPS_DETAILS = [
   },
   {
     key: "backlog_issues",
-    title: "Backlog",
+    title: "Draft",
     color: "#A3A3A3",
   },
 ];

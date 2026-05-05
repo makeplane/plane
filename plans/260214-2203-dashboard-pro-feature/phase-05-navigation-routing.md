@@ -98,10 +98,7 @@ app/(all)/[workspaceSlug]/(projects)/
 Find `WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS` and add:
 
 ```typescript
-export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<
-  string,
-  IWorkspaceSidebarNavigationItem
-> = {
+export const WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS: Record<string, IWorkspaceSidebarNavigationItem> = {
   // ... existing items (views, analytics, etc.)
 
   dashboards: {
@@ -166,6 +163,7 @@ Add translation key:
 ```
 
 Repeat for other locale files (es, fr, de, etc.):
+
 - `packages/i18n/locales/es/default.json`: `"dashboards": "Paneles"`
 - `packages/i18n/locales/fr/default.json`: `"dashboards": "Tableaux de bord"`
 - `packages/i18n/locales/de/default.json`: `"dashboards": "Dashboards"`
@@ -197,9 +195,7 @@ function DashboardListPage({ params }: Route.ComponentProps) {
 
         {/* Content - will be implemented in Phase 6 */}
         <div className="flex-1 overflow-auto p-4">
-          <div className="text-sm text-custom-text-300">
-            Dashboard list will be implemented in Phase 6
-          </div>
+          <div className="text-sm text-custom-text-300">Dashboard list will be implemented in Phase 6</div>
         </div>
       </div>
     </>
@@ -368,15 +364,19 @@ export default function DashboardLoading() {
 ## Risk Assessment
 
 **Risk**: Navigation item doesn't appear in sidebar
+
 - **Mitigation**: Verify constants export and import chain
 
 **Risk**: Icon not found or doesn't render
+
 - **Mitigation**: Verify lucide-react icon import
 
 **Risk**: Route parameters not typed
+
 - **Mitigation**: Use `Route.ComponentProps` from `+types/page`
 
 **Risk**: Translation keys missing
+
 - **Mitigation**: Add to all locale files, fallback to English
 
 ## Security Considerations
@@ -389,6 +389,7 @@ export default function DashboardLoading() {
 ## Next Steps
 
 Proceed to [Phase 6: Dashboard List & CRUD UI](./phase-06-dashboard-list-crud.md)
+
 - Implement dashboard list page with cards
 - Create dashboard create/edit modal
 - Add delete confirmation dialog

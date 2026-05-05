@@ -526,57 +526,37 @@ try {
 
 console.log('\nTEST 14: Agent/Todo Tracking Display\n');
 
-const tmpTranscriptPath = path.join(os.tmpdir(), `test-transcript-${Date.now()}.jsonl`);
-
-// Create transcript with agents and todos
-const transcriptLines = [
-  JSON.stringify({
-    timestamp: new Date(Date.now() - 120000).toISOString(),
-    message: {
-      content: [{
-        type: 'tool_use',
+const sessionId = `statusline-agent-${Date.now()}`;
+const tmpSessionPath = path.join(os.tmpdir(), `ck-session-${sessionId}.json`);
+fs.writeFileSync(tmpSessionPath, JSON.stringify({
+  statusline: {
+    sessionStart: new Date(Date.now() - 120000).toISOString(),
+    updatedAt: new Date().toISOString(),
+    warmed: true,
+    agents: [
+      {
         id: 'agent-1',
-        name: 'Task',
-        input: { subagent_type: 'researcher', model: 'haiku', description: 'Researching API docs' }
-      }]
-    }
-  }),
-  JSON.stringify({
-    timestamp: new Date(Date.now() - 60000).toISOString(),
-    message: {
-      content: [{
-        type: 'tool_result',
-        tool_use_id: 'agent-1',
-        is_error: false
-      }]
-    }
-  }),
-  JSON.stringify({
-    timestamp: new Date().toISOString(),
-    message: {
-      content: [{
-        type: 'tool_use',
-        id: 'todo-1',
-        name: 'TodoWrite',
-        input: {
-          todos: [
-            { content: 'First task', status: 'completed', activeForm: 'Completing first task' },
-            { content: 'Second task', status: 'in_progress', activeForm: 'Working on second task' },
-            { content: 'Third task', status: 'pending', activeForm: 'Starting third task' }
-          ]
-        }
-      }]
-    }
-  })
-];
-
-fs.writeFileSync(tmpTranscriptPath, transcriptLines.join('\n'));
+        type: 'researcher',
+        model: 'haiku',
+        description: 'Researching API docs',
+        status: 'completed',
+        startTime: new Date(Date.now() - 120000).toISOString(),
+        endTime: new Date(Date.now() - 60000).toISOString()
+      }
+    ],
+    todos: [
+      { content: 'First task', status: 'completed', activeForm: 'Completing first task' },
+      { content: 'Second task', status: 'in_progress', activeForm: 'Working on second task' },
+      { content: 'Third task', status: 'pending', activeForm: 'Starting third task' }
+    ]
+  }
+}, null, 2));
 
 const agentTodoInput = JSON.stringify({
+  session_id: sessionId,
   model: { display_name: 'Opus 4.5' },
   workspace: { current_dir: '/home/user/project' },
-  context_window: { context_window_size: 200000 },
-  transcript_path: tmpTranscriptPath
+  context_window: { context_window_size: 200000 }
 });
 
 try {
@@ -607,7 +587,7 @@ try {
 } catch (e) {
   test('Agent/Todo tracking produces output', () => { throw e; });
 } finally {
-  try { fs.unlinkSync(tmpTranscriptPath); } catch {}
+  try { fs.unlinkSync(tmpSessionPath); } catch {}
 }
 
 // ============================================================================

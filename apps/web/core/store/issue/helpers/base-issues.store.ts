@@ -25,12 +25,14 @@ import type {
   TPaginationData,
   TBulkOperationsPayload,
   IBlockUpdateDependencyData,
+  TIssueUpdatePayload,
 } from "@plane/types";
 import { EIssueServiceType, EIssueLayoutTypes } from "@plane/types";
 // helpers
 import { convertToISODateString } from "@plane/utils";
 // plane web imports
 import { workItemSortWithOrderByExtended } from "@/plane-web/store/issue/helpers/base-issue.store";
+import { ISSUE_ORDERBY_KEY_EXTENDED } from "@/plane-web/store/issue/helpers/issue-orderby-key-extended";
 // services
 import { CycleService } from "@/services/cycle.service";
 import { IssueArchiveService, IssueService } from "@/services/issue";
@@ -142,7 +144,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
 };
 
 // This constant maps the order by keys to the respective issue property that the key relies on
-const ISSUE_ORDERBY_KEY: Record<TIssueOrderByOptions, keyof TIssue> = {
+const ISSUE_ORDERBY_KEY: Partial<Record<TIssueOrderByOptions, keyof TIssue>> = {
   created_at: "created_at",
   "-created_at": "created_at",
   updated_at: "updated_at",
@@ -312,19 +314,26 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     if (!groupedIssueIds) return undefined;
 
     const allIssues = groupedIssueIds[ALL_ISSUES] ?? [];
+    let ids: string[] | undefined;
+
     if (!this.groupBy && !this.subGroupBy && allIssues && Array.isArray(allIssues)) {
-      return allIssues;
+      ids = allIssues;
+    } else if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
+      ids = groupedIssueIds[groupId] ?? [];
+    } else if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
+      ids = (groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? [];
     }
 
-    if (this.groupBy && groupId && groupedIssueIds?.[groupId] && Array.isArray(groupedIssueIds[groupId])) {
-      return groupedIssueIds[groupId] ?? [];
+    if (!ids) return undefined;
+
+    // For CE sort keys (e.g. project__name, main/sub task category name), re-sort reactively here.
+    // getIssueIds is called from observer() components, so MobX tracks reads of taskCategoryStore
+    // observables inside workItemSortWithOrderByExtended — re-rendering when categories load.
+    if (ids.length && this.orderBy && ISSUE_ORDERBY_KEY_EXTENDED[this.orderBy as TIssueOrderByOptions]) {
+      return this.issuesSortWithOrderBy(ids, this.orderBy);
     }
 
-    if (this.groupBy && this.subGroupBy && groupId && subGroupId) {
-      return (groupedIssueIds as TSubGroupedIssues)[groupId]?.[subGroupId] ?? [];
-    }
-
-    return undefined;
+    return ids;
   };
 
   // The Issue Property corresponding to the order by value
@@ -332,7 +341,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     const orderBy = this.orderBy;
     if (!orderBy) return;
 
-    return ISSUE_ORDERBY_KEY[orderBy];
+    return ISSUE_ORDERBY_KEY[orderBy] ?? ISSUE_ORDERBY_KEY_EXTENDED[orderBy];
   }
 
   // The Issue Property corresponding to the group by value
@@ -555,15 +564,17 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     workspaceSlug: string,
     projectId: string,
     issueId: string,
-    data: Partial<TIssue>,
+    data: TIssueUpdatePayload,
     shouldSync = true
   ) {
     // Store Before state of the issue
     const issueBeforeUpdate = clone(this.rootIssueStore.issues.getIssueById(issueId));
+    // Strip transient `reason` field before merging into MobX store (reason is not an issue model field)
+    const { reason: _reason, ...issueData } = data;
     try {
       // Update the Respective Stores
-      this.rootIssueStore.issues.updateIssue(issueId, data);
-      this.updateIssueList({ ...issueBeforeUpdate, ...data } as TIssue, issueBeforeUpdate);
+      this.rootIssueStore.issues.updateIssue(issueId, issueData);
+      this.updateIssueList({ ...issueBeforeUpdate, ...issueData } as TIssue, issueBeforeUpdate);
 
       // Check if should Sync
       if (!shouldSync) return;
@@ -1745,7 +1756,10 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   }
 
   issuesSortWithOrderBy = (issueIds: string[], key: TIssueOrderByOptions | undefined): string[] => {
-    const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, this.isArchived ? "archived" : "un-archived");
+    // Determine archive filter type: "all" when show_archived is enabled (includes both), else standard filter
+    const showArchived = this.issueFilterStore?.issueFilters?.displayFilters?.show_archived;
+    const archiveType = this.isArchived ? "archived" : showArchived ? "all" : "un-archived";
+    const issues = this.rootIssueStore.issues.getIssuesByIds(issueIds, archiveType);
     const array = orderBy(issues, (issue) => convertToISODateString(issue["created_at"]), ["desc"]);
 
     switch (key) {
@@ -1930,7 +1944,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
         );
 
       default:
-        return workItemSortWithOrderByExtended(array, key);
+        return workItemSortWithOrderByExtended(array, key, this.rootIssueStore.rootStore);
     }
   };
 

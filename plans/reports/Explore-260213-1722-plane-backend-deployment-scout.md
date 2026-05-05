@@ -9,6 +9,7 @@
 ## EXECUTIVE SUMMARY
 
 Plane.so is a comprehensive project management platform with:
+
 - **Backend**: Django 4.2 REST API with DRF, PostgreSQL + MongoDB
 - **Message Queue**: RabbitMQ (AMQP) with Celery background tasks
 - **Cache**: Redis/Valkey for caching and sessions
@@ -61,18 +62,19 @@ Plane.so is a comprehensive project management platform with:
 
 **Files**: `/Volumes/Data/SHBVN/plane.so/apps/api/plane/settings/`
 
-| File | Purpose |
-|------|---------|
-| `common.py` | Base settings (installed apps, middleware, REST framework config) |
-| `production.py` | Production-specific overrides |
-| `local.py` | Local development settings |
-| `test.py` | Test configuration |
-| `redis.py` | Redis connection utility |
-| `mongo.py` | MongoDB connection settings |
-| `storage.py` | S3/MinIO storage configuration |
-| `openapi.py` | DRF Spectacular (OpenAPI/Swagger) config |
+| File            | Purpose                                                           |
+| --------------- | ----------------------------------------------------------------- |
+| `common.py`     | Base settings (installed apps, middleware, REST framework config) |
+| `production.py` | Production-specific overrides                                     |
+| `local.py`      | Local development settings                                        |
+| `test.py`       | Test configuration                                                |
+| `redis.py`      | Redis connection utility                                          |
+| `mongo.py`      | MongoDB connection settings                                       |
+| `storage.py`    | S3/MinIO storage configuration                                    |
+| `openapi.py`    | DRF Spectacular (OpenAPI/Swagger) config                          |
 
 **Key Details**:
+
 - Django 4.2.28 with DRF 3.15.2
 - SESSION_ENGINE uses Redis via django-redis
 - DEFAULT_PERMISSION_CLASSES = IsAuthenticated (most APIs require auth)
@@ -99,6 +101,7 @@ urlpatterns = [
 ```
 
 **API Modules** (`/plane/app/urls/`):
+
 - `analytic.py` - Analytics
 - `asset.py` - File assets
 - `cycle.py` - Release cycles
@@ -120,6 +123,7 @@ urlpatterns = [
 - `exporter.py` - Export/import
 
 **New API** (`/plane/api/urls/`):
+
 - Similar modular structure with newer viewsets
 - v1 endpoints at `/api/v1/*`
 
@@ -127,38 +131,38 @@ urlpatterns = [
 
 **Database Models** (`/plane/db/models/` - 31 model files):
 
-| Model | Purpose |
-|-------|---------|
-| `user.py` | User, Account, Profile, BotTypeEnum |
-| `workspace.py` | Workspace, WorkspaceMember, WorkspaceMemberInvite, WorkspaceTheme, WorkspaceUserProperties |
-| `project.py` | Project, ProjectMember, ProjectMemberInvite, ProjectIdentifier, ProjectPublicMember, ProjectUserProperty |
-| `issue.py` | Issue, IssueActivity, IssueAssignee, IssueComment, IssueLabel, IssueLink, IssueBlocker, IssueReaction, IssueRelation, IssueSubscriber, IssueVote, IssueVersion, IssueDescriptionVersion |
-| `cycle.py` | Cycle, CycleIssue, CycleUserProperties |
-| `module.py` | Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties |
-| `state.py` | State, StateGroup, DEFAULT_STATES |
-| `page.py` | Page, ProjectPage, PageLabel, PageLog, PageVersion |
-| `label.py` | Label (tags) |
-| `estimate.py` | Estimate, EstimatePoint |
-| `view.py` | IssueView (saved filters) |
-| `asset.py` | FileAsset (uploaded files) |
-| `intake.py` | Intake, IntakeIssue (intake board) |
-| `notification.py` | Notification, EmailNotificationLog, UserNotificationPreference |
-| `webhook.py` | Webhook, WebhookLog |
-| `api.py` | APIToken, APIActivityLog |
-| `exporter.py` | ExporterHistory |
-| `importer.py` | Importer |
-| `draft.py` | DraftIssue, DraftIssueAssignee, DraftIssueLabel, DraftIssueModule, DraftIssueCycle |
-| `session.py` | Session (custom session model) |
-| `device.py` | Device, DeviceSession (device tracking) |
-| `favorite.py` | UserFavorite |
-| `recent_visit.py` | UserRecentVisit |
-| `sticky.py` | Sticky (sticky sidebar items) |
-| `issue_type.py` | IssueType |
-| `deploy_board.py` | DeployBoard |
-| `description.py` | Description, DescriptionVersion |
-| `analytic.py` | AnalyticView |
-| `social_connection.py` | SocialLoginConnection |
-| `integration.py` | Integration, WorkspaceIntegration, GithubRepository, GithubRepositorySync, GithubIssueSync, GithubCommentSync, SlackProjectSync |
+| Model                  | Purpose                                                                                                                                                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `user.py`              | User, Account, Profile, BotTypeEnum                                                                                                                                                     |
+| `workspace.py`         | Workspace, WorkspaceMember, WorkspaceMemberInvite, WorkspaceTheme, WorkspaceUserProperties                                                                                              |
+| `project.py`           | Project, ProjectMember, ProjectMemberInvite, ProjectIdentifier, ProjectPublicMember, ProjectUserProperty                                                                                |
+| `issue.py`             | Issue, IssueActivity, IssueAssignee, IssueComment, IssueLabel, IssueLink, IssueBlocker, IssueReaction, IssueRelation, IssueSubscriber, IssueVote, IssueVersion, IssueDescriptionVersion |
+| `cycle.py`             | Cycle, CycleIssue, CycleUserProperties                                                                                                                                                  |
+| `module.py`            | Module, ModuleIssue, ModuleLink, ModuleMember, ModuleUserProperties                                                                                                                     |
+| `state.py`             | State, StateGroup, DEFAULT_STATES                                                                                                                                                       |
+| `page.py`              | Page, ProjectPage, PageLabel, PageLog, PageVersion                                                                                                                                      |
+| `label.py`             | Label (tags)                                                                                                                                                                            |
+| `estimate.py`          | Estimate, EstimatePoint                                                                                                                                                                 |
+| `view.py`              | IssueView (saved filters)                                                                                                                                                               |
+| `asset.py`             | FileAsset (uploaded files)                                                                                                                                                              |
+| `intake.py`            | Intake, IntakeIssue (intake board)                                                                                                                                                      |
+| `notification.py`      | Notification, EmailNotificationLog, UserNotificationPreference                                                                                                                          |
+| `webhook.py`           | Webhook, WebhookLog                                                                                                                                                                     |
+| `api.py`               | APIToken, APIActivityLog                                                                                                                                                                |
+| `exporter.py`          | ExporterHistory                                                                                                                                                                         |
+| `importer.py`          | Importer                                                                                                                                                                                |
+| `draft.py`             | DraftIssue, DraftIssueAssignee, DraftIssueLabel, DraftIssueModule, DraftIssueCycle                                                                                                      |
+| `session.py`           | Session (custom session model)                                                                                                                                                          |
+| `device.py`            | Device, DeviceSession (device tracking)                                                                                                                                                 |
+| `favorite.py`          | UserFavorite                                                                                                                                                                            |
+| `recent_visit.py`      | UserRecentVisit                                                                                                                                                                         |
+| `sticky.py`            | Sticky (sticky sidebar items)                                                                                                                                                           |
+| `issue_type.py`        | IssueType                                                                                                                                                                               |
+| `deploy_board.py`      | DeployBoard                                                                                                                                                                             |
+| `description.py`       | Description, DescriptionVersion                                                                                                                                                         |
+| `analytic.py`          | AnalyticView                                                                                                                                                                            |
+| `social_connection.py` | SocialLoginConnection                                                                                                                                                                   |
+| `integration.py`       | Integration, WorkspaceIntegration, GithubRepository, GithubRepositorySync, GithubIssueSync, GithubCommentSync, SlackProjectSync                                                         |
 
 **Database**: PostgreSQL 15.7 + MongoDB 4.6.3 (hybrid)
 
@@ -174,6 +178,7 @@ urlpatterns = [
 **File**: `/Volumes/Data/SHBVN/plane.so/apps/api/plane/authentication/`
 
 **Structure**:
+
 ```
 authentication/
 ├── urls.py                          # 14 endpoints
@@ -186,6 +191,7 @@ authentication/
 ```
 
 **Supported Auth Methods**:
+
 1. **Session Authentication** (Django sessions via Redis)
 2. **OAuth Providers**:
    - Google (`google/`, `google/callback/`)
@@ -203,6 +209,7 @@ authentication/
 5. **API Keys** (for API-based access)
 
 **Exception Handler**: Custom `auth_exception_handler` at `/plane/authentication/adapter/exception.py`
+
 - Returns 401 for NotAuthenticated
 - Returns 429 for Throttled (rate limit)
 - Custom error codes for auth failures
@@ -212,27 +219,29 @@ authentication/
 **Configuration**: `/Volumes/Data/SHBVN/plane.so/apps/api/plane/celery.py`
 
 **Task Scheduler**: Django Celery Beat with database scheduler
+
 - Broker: RabbitMQ (AMQP)
 - Backend: Redis
 - DB Scheduler: Stores schedules in database
 
 **Scheduled Tasks**:
 
-| Task | Schedule | Purpose |
-|------|----------|---------|
-| `stack_email_notification` | Every 5 min | Send queued email notifications |
-| `instance_traces` | Every 6 hours | Instance telemetry |
-| `hard_delete` | Daily 00:00 UTC | Hard delete soft-deleted records |
-| `archive_and_close_old_issues` | Daily 01:00 UTC | Auto-archive old issues |
-| `delete_old_s3_link` | Daily 01:30 & 03:45 UTC | Clean up export links |
-| `delete_unuploaded_file_asset` | Daily 02:00 UTC | Clean up unfinalized uploads |
-| `delete_api_logs` | Daily 02:30 UTC | Archive API logs |
-| `delete_email_notification_logs` | Daily 02:45 UTC | Archive email logs |
-| `delete_page_versions` | Daily 03:00 UTC | Archive page versions |
-| `delete_issue_description_versions` | Daily 03:15 UTC | Archive descriptions |
-| `delete_webhook_logs` | Daily 03:30 UTC | Archive webhook logs |
+| Task                                | Schedule                | Purpose                          |
+| ----------------------------------- | ----------------------- | -------------------------------- |
+| `stack_email_notification`          | Every 5 min             | Send queued email notifications  |
+| `instance_traces`                   | Every 6 hours           | Instance telemetry               |
+| `hard_delete`                       | Daily 00:00 UTC         | Hard delete soft-deleted records |
+| `archive_and_close_old_issues`      | Daily 01:00 UTC         | Auto-archive old issues          |
+| `delete_old_s3_link`                | Daily 01:30 & 03:45 UTC | Clean up export links            |
+| `delete_unuploaded_file_asset`      | Daily 02:00 UTC         | Clean up unfinalized uploads     |
+| `delete_api_logs`                   | Daily 02:30 UTC         | Archive API logs                 |
+| `delete_email_notification_logs`    | Daily 02:45 UTC         | Archive email logs               |
+| `delete_page_versions`              | Daily 03:00 UTC         | Archive page versions            |
+| `delete_issue_description_versions` | Daily 03:15 UTC         | Archive descriptions             |
+| `delete_webhook_logs`               | Daily 03:30 UTC         | Archive webhook logs             |
 
 **Task Modules** (`/plane/bgtasks/` - 36 files):
+
 - `email_notification_task.py` - Email queueing
 - `notification_task.py` - In-app notifications
 - `issue_activities_task.py` - Issue activity logs
@@ -246,6 +255,7 @@ authentication/
 - And 26 more...
 
 **Entry Points**:
+
 - `docker-entrypoint-worker.sh`: `celery -A plane worker -l info`
 - `docker-entrypoint-beat.sh`: `celery -A plane beat -l info`
 
@@ -253,13 +263,14 @@ authentication/
 
 **File**: `/Volumes/Data/SHBVN/plane.so/apps/api/plane/middleware/`
 
-| Middleware | Purpose |
-|------------|---------|
-| `RequestLoggerMiddleware` | Log all requests (path, method, status, duration, user) to JSON logs |
-| `APITokenLogMiddleware` | Log external API token requests to PostgreSQL/MongoDB |
-| `RequestBodySizeLimitMiddleware` | Limit request body size |
+| Middleware                       | Purpose                                                              |
+| -------------------------------- | -------------------------------------------------------------------- |
+| `RequestLoggerMiddleware`        | Log all requests (path, method, status, duration, user) to JSON logs |
+| `APITokenLogMiddleware`          | Log external API token requests to PostgreSQL/MongoDB                |
+| `RequestBodySizeLimitMiddleware` | Limit request body size                                              |
 
 **Global Middleware Stack** (settings/common.py):
+
 1. CorsMiddleware - CORS headers
 2. SecurityMiddleware - Security headers
 3. WhiteNoiseMiddleware - Static file serving
@@ -285,6 +296,7 @@ authentication/
 **Purpose**: Reverse proxy frontend for routing requests to backend services
 
 **Files**:
+
 - `Caddyfile.ce` - Community Edition configuration
 - `Caddyfile.aio.ce` - All-in-one deployment config
 - `Dockerfile.ce` - Container image (Caddy 2.10)
@@ -293,11 +305,13 @@ authentication/
 ### 2.2 Configuration (Caddyfile.ce)
 
 **Base Image**: Caddy 2.10 with custom plugins:
+
 - `caddy-dns/cloudflare` - CloudFlare DNS validation
 - `caddy-dns/digitalocean` - DigitalOcean DNS validation
 - `mholt/caddy-l4` - Layer 4 (TCP/UDP) routing
 
 **Routing Rules** (in order):
+
 ```
 /spaces/*          → space:3000        (public/shared spaces)
 /god-mode/*        → admin:3000        (admin panel)
@@ -310,6 +324,7 @@ authentication/
 ```
 
 **Security Features**:
+
 - Max request body size: `{FILE_SIZE_LIMIT}` (default 5MB)
 - ACME/Let's Encrypt SSL support
 - Trusted proxies configuration
@@ -317,6 +332,7 @@ authentication/
 - Client IP detection from X-Forwarded-For / X-Real-IP
 
 **Ports**:
+
 - HTTP: 80 (configurable via LISTEN_HTTP_PORT)
 - HTTPS: 443 (configurable via LISTEN_HTTPS_PORT)
 
@@ -353,23 +369,24 @@ deployments/
 
 **Services**:
 
-| Service | Image | Purpose | Replicas |
-|---------|-------|---------|----------|
-| **web** | plane-frontend | Next.js frontend | 1+ (WEB_REPLICAS) |
-| **space** | plane-space | Public workspace view | 1+ (SPACE_REPLICAS) |
-| **admin** | plane-admin | Admin panel | 1+ (ADMIN_REPLICAS) |
-| **live** | plane-live | WebSocket/live updates | 1+ (LIVE_REPLICAS) |
-| **api** | plane-backend | Django REST API | 1+ (API_REPLICAS) |
-| **worker** | plane-backend | Celery worker (tasks) | 1+ (WORKER_REPLICAS) |
-| **beat-worker** | plane-backend | Celery beat (scheduler) | 1+ (BEAT_WORKER_REPLICAS) |
-| **migrator** | plane-backend | DB migrations | 1 (runs once) |
-| **plane-db** | postgres:15.7-alpine | PostgreSQL database | 1 |
-| **plane-redis** | valkey:7.2.11-alpine | Redis cache | 1 |
-| **plane-mq** | rabbitmq:3.13.6-management | RabbitMQ message queue | 1 |
-| **plane-minio** | minio/latest | S3-compatible storage | 1 |
-| **proxy** | plane-proxy | Caddy reverse proxy | 1 |
+| Service         | Image                      | Purpose                 | Replicas                  |
+| --------------- | -------------------------- | ----------------------- | ------------------------- |
+| **web**         | plane-frontend             | Next.js frontend        | 1+ (WEB_REPLICAS)         |
+| **space**       | plane-space                | Public workspace view   | 1+ (SPACE_REPLICAS)       |
+| **admin**       | plane-admin                | Admin panel             | 1+ (ADMIN_REPLICAS)       |
+| **live**        | plane-live                 | WebSocket/live updates  | 1+ (LIVE_REPLICAS)        |
+| **api**         | plane-backend              | Django REST API         | 1+ (API_REPLICAS)         |
+| **worker**      | plane-backend              | Celery worker (tasks)   | 1+ (WORKER_REPLICAS)      |
+| **beat-worker** | plane-backend              | Celery beat (scheduler) | 1+ (BEAT_WORKER_REPLICAS) |
+| **migrator**    | plane-backend              | DB migrations           | 1 (runs once)             |
+| **plane-db**    | postgres:15.7-alpine       | PostgreSQL database     | 1                         |
+| **plane-redis** | valkey:7.2.11-alpine       | Redis cache             | 1                         |
+| **plane-mq**    | rabbitmq:3.13.6-management | RabbitMQ message queue  | 1                         |
+| **plane-minio** | minio/latest               | S3-compatible storage   | 1                         |
+| **proxy**       | plane-proxy                | Caddy reverse proxy     | 1                         |
 
 **Environment Variable Groups**:
+
 - `x-db-env` - PostgreSQL connection
 - `x-redis-env` - Redis connection
 - `x-minio-env` - MinIO credentials
@@ -380,6 +397,7 @@ deployments/
 - `x-app-env` - Application settings
 
 **Volumes**:
+
 - `pgdata` - PostgreSQL data
 - `redisdata` - Redis persistence
 - `uploads` - MinIO storage
@@ -388,6 +406,7 @@ deployments/
 - `proxy_config`, `proxy_data` - Proxy configuration
 
 **Dependencies**:
+
 - API depends on: DB, Redis, RabbitMQ
 - Worker depends on: API, DB, Redis, RabbitMQ
 - Beat worker depends on: API, DB, Redis, RabbitMQ
@@ -395,19 +414,23 @@ deployments/
 - Proxy depends on: all frontends + API
 
 **Database**:
+
 - PostgreSQL 15.7 with `max_connections=1000`
 - Initial databases created via migrations
 
 **Message Queue**:
+
 - RabbitMQ 3.13.6 with management plugin
 - Default credentials: plane:plane
 - Default vhost: plane
 
 **Cache & Session Store**:
+
 - Valkey (Redis fork) 7.2.11
 - Used for Django sessions, caching, Celery results
 
 **Storage**:
+
 - MinIO (S3-compatible) latest
 - Default bucket: `uploads`
 - Console at port 9090
@@ -434,6 +457,7 @@ deployments/
 **Location**: `deployments/kubernetes/community/`
 
 **Reference**: Artifact Hub Helm Chart
+
 - Chart link provided in README
 - Helm chart for cloud deployments (AWS EKS, GKE, AKS, etc.)
 - Version 15+ of Kubernetes
@@ -446,39 +470,40 @@ deployments/
 
 **Location**: `/plane/settings/`
 
-| File | Size | Contains |
-|------|------|----------|
-| `common.py` | ~15KB | INSTALLED_APPS, MIDDLEWARE, REST_FRAMEWORK config, DATABASES, CACHES |
-| `production.py` | ~3KB | Production overrides (DEBUG=False) |
-| `local.py` | ~2.5KB | Dev overrides |
-| `redis.py` | ~610B | Redis connection utility |
-| `mongo.py` | ~4KB | MongoDB configuration |
-| `storage.py` | ~7.7KB | S3/MinIO storage backends |
-| `openapi.py` | ~13KB | DRF Spectacular (Swagger/ReDoc) |
-| `test.py` | ~355B | Test settings |
+| File            | Size   | Contains                                                             |
+| --------------- | ------ | -------------------------------------------------------------------- |
+| `common.py`     | ~15KB  | INSTALLED_APPS, MIDDLEWARE, REST_FRAMEWORK config, DATABASES, CACHES |
+| `production.py` | ~3KB   | Production overrides (DEBUG=False)                                   |
+| `local.py`      | ~2.5KB | Dev overrides                                                        |
+| `redis.py`      | ~610B  | Redis connection utility                                             |
+| `mongo.py`      | ~4KB   | MongoDB configuration                                                |
+| `storage.py`    | ~7.7KB | S3/MinIO storage backends                                            |
+| `openapi.py`    | ~13KB  | DRF Spectacular (Swagger/ReDoc)                                      |
+| `test.py`       | ~355B  | Test settings                                                        |
 
 ### 4.2 Main Entry Points
 
-| File | Purpose |
-|------|---------|
-| `plane/wsgi.py` | WSGI application for Gunicorn |
-| `plane/asgi.py` | ASGI application for Uvicorn (WebSocket support via Channels) |
-| `plane/urls.py` | Root URL router |
-| `plane/celery.py` | Celery app with beat schedule |
+| File              | Purpose                                                       |
+| ----------------- | ------------------------------------------------------------- |
+| `plane/wsgi.py`   | WSGI application for Gunicorn                                 |
+| `plane/asgi.py`   | ASGI application for Uvicorn (WebSocket support via Channels) |
+| `plane/urls.py`   | Root URL router                                               |
+| `plane/celery.py` | Celery app with beat schedule                                 |
 
 ### 4.3 Docker Entrypoints
 
 **Location**: `/bin/`
 
-| Script | Runs | Migrations | Purpose |
-|--------|------|-----------|---------|
-| `docker-entrypoint-api.sh` | Django + Gunicorn | Yes | API server (port 8000) |
-| `docker-entrypoint-worker.sh` | Celery worker | Yes | Background task processor |
-| `docker-entrypoint-beat.sh` | Celery beat | Yes | Scheduled task scheduler |
-| `docker-entrypoint-migrator.sh` | Django migrate | Yes | Run migrations only |
-| `docker-entrypoint-api-local.sh` | Django dev server | Yes | Local development |
+| Script                           | Runs              | Migrations | Purpose                   |
+| -------------------------------- | ----------------- | ---------- | ------------------------- |
+| `docker-entrypoint-api.sh`       | Django + Gunicorn | Yes        | API server (port 8000)    |
+| `docker-entrypoint-worker.sh`    | Celery worker     | Yes        | Background task processor |
+| `docker-entrypoint-beat.sh`      | Celery beat       | Yes        | Scheduled task scheduler  |
+| `docker-entrypoint-migrator.sh`  | Django migrate    | Yes        | Run migrations only       |
+| `docker-entrypoint-api-local.sh` | Django dev server | Yes        | Local development         |
 
 **Common Startup Flow**:
+
 1. `wait_for_db` - Wait for PostgreSQL
 2. `wait_for_migrations` - Check if DB is migrated
 3. `register_instance` - Register instance with machine signature
@@ -497,6 +522,7 @@ deployments/
 **File**: `/requirements/base.txt`
 
 **Framework Stack**:
+
 - Django 4.2.28 - Web framework
 - djangorestframework 3.15.2 - REST API
 - Channels 4.1.0 - WebSocket support
@@ -505,11 +531,13 @@ deployments/
 - drf-spectacular 0.28.0 - OpenAPI/Swagger
 
 **Database**:
+
 - psycopg 3.3.0 - PostgreSQL driver
 - pymongo 4.6.3 - MongoDB driver
 - dj-database-url 2.1.0 - Database URL parsing
 
 **Async/Caching**:
+
 - Celery 5.4.0 - Task queue
 - django-celery-beat 2.6.0 - Periodic tasks
 - django-celery-results 2.5.1 - Task result backend
@@ -517,26 +545,31 @@ deployments/
 - django-redis 5.4.0 - Redis cache backend
 
 **Authentication/Security**:
+
 - PyJWT 2.8.0 - JWT tokens
 - cryptography 46.0.5 - Encryption
 - zxcvbn 4.4.28 - Password strength validation
 
 **Storage & Files**:
+
 - boto3 1.34.96 - S3/AWS client
 - django-storages 1.14.2 - Storage backends
 - whitenoise 6.11.0 - Static file serving
 
 **API & Integration**:
+
 - slack-sdk 3.27.1 - Slack integration
 - openai 1.63.2 - OpenAI/LLM integration
 - requests (via dependencies) - HTTP client
 
 **Data Processing**:
+
 - openpyxl 3.1.2 - Excel generation
 - beautifulsoup4 4.12.3 - HTML parsing
 - lxml 6.0.0 - XML parsing
 
 **Utilities**:
+
 - django-filter 24.2 - Query filtering
 - django-cors-headers 4.3.1 - CORS support
 - django-crum 0.7.9 - Current request/user middleware
@@ -545,17 +578,20 @@ deployments/
 - pytz 2024.1 - Timezone handling
 
 **Monitoring/Logging**:
+
 - python-json-logger 3.3.0 - JSON logging
 - scout-apm 3.1.0 - APM monitoring
 - posthog 3.5.0 - Product analytics
 
 **Observability**:
+
 - opentelemetry-api 1.28.1 - Instrumentation API
 - opentelemetry-sdk 1.28.1 - SDK
 - opentelemetry-instrumentation-django 0.49b1 - Django instrumentation
 - opentelemetry-exporter-otlp 1.28.1 - OTLP exporter
 
 **HTML/Security**:
+
 - nh3 0.2.18 - HTML sanitizer
 
 ---
@@ -565,12 +601,14 @@ deployments/
 ### 6.1 Dual Database Setup
 
 **Primary**: PostgreSQL 15.7
+
 - All model data (users, workspaces, projects, issues, etc.)
 - 31 model files covering complete domain
 - Migration system via Django ORM
 - 120+ migration files in `/plane/db/migrations/`
 
 **Secondary**: MongoDB 4.6.3
+
 - API activity logs (for external API requests)
 - Event tracking data
 - Flexible schema for analytics
@@ -581,6 +619,7 @@ deployments/
 **Location**: `/plane/db/migrations/` (~120 files)
 
 **Entry Point**: Management command
+
 ```bash
 python manage.py migrate              # Run all pending migrations
 python manage.py makemigrations       # Create new migrations
@@ -589,17 +628,20 @@ python manage.py wait_for_migrations  # Health check
 
 ### 6.3 Permission System
 
-**Files**: 
+**Files**:
+
 - `/plane/app/permissions/` - Role-based permissions
 - `/plane/utils/permissions/` - Shared permission utilities
 
 **Modules**:
+
 - `base.py` - Base permission classes
 - `workspace.py` - Workspace-level permissions
 - `project.py` - Project-level permissions
 - `page.py` - Page-level permissions
 
 **Pattern**: Django REST framework permission classes
+
 ```python
 class BasePermission(DjangoModelPermissions):
     # Role-based access control
@@ -614,12 +656,13 @@ class BasePermission(DjangoModelPermissions):
 ### 7.1 Versioning Strategy
 
 **Two Parallel APIs**:
-1. **Legacy `/api/` endpoints** (plane.app.*)
+
+1. **Legacy `/api/` endpoints** (plane.app.\*)
    - Older, more stable endpoints
    - Used by frontend
    - Still actively maintained
 
-2. **New `/api/v1/` endpoints** (plane.api.*)
+2. **New `/api/v1/` endpoints** (plane.api.\*)
    - Refactored, cleaner structure
    - Better organized
    - Future primary API
@@ -627,6 +670,7 @@ class BasePermission(DjangoModelPermissions):
 ### 7.2 Common Patterns
 
 **ViewSets**: Based on DRF BaseViewSet
+
 - Create, Retrieve, Update, Destroy (CRUD)
 - Custom actions via @action decorator
 - Filtering via django-filter
@@ -634,12 +678,14 @@ class BasePermission(DjangoModelPermissions):
 - Permission checking per endpoint
 
 **Serializers**: DRF ModelSerializer + custom logic
+
 - Nested relationships
 - Read-only vs write fields
 - Validation
 - Performance optimization (select_related, prefetch_related)
 
 **URL Structure**:
+
 ```
 /api/v1/workspaces/                    # List
 /api/v1/workspaces/{id}/               # Detail
@@ -650,6 +696,7 @@ class BasePermission(DjangoModelPermissions):
 ### 7.3 Rate Limiting
 
 **Configuration** (settings/common.py):
+
 ```python
 DEFAULT_THROTTLE_RATES = {
     "anon": "30/minute",          # Anonymous users
@@ -658,6 +705,7 @@ DEFAULT_THROTTLE_RATES = {
 ```
 
 **Custom Rate Limiting**:
+
 - `/plane/authentication/rate_limit.py` - Auth endpoints
 - `/plane/api/rate_limit.py` - API endpoints
 - Redis-backed throttling
@@ -669,6 +717,7 @@ DEFAULT_THROTTLE_RATES = {
 ### 8.1 Request Logging
 
 **RequestLoggerMiddleware** logs:
+
 - Method, path, status code
 - Duration (ms)
 - Client IP
@@ -681,6 +730,7 @@ DEFAULT_THROTTLE_RATES = {
 ### 8.2 API Token Logging
 
 **APITokenLogMiddleware** logs external API requests:
+
 - X-Api-Key header detection
 - Request: headers, body, query params
 - Response: status, body
@@ -690,6 +740,7 @@ DEFAULT_THROTTLE_RATES = {
 ### 8.3 Background Task Logging
 
 **Celery Logging**:
+
 - JSON format via pythonjsonlogger
 - Separate loggers for tasks
 - Task name, result, exception tracking
@@ -699,6 +750,7 @@ DEFAULT_THROTTLE_RATES = {
 ## SECTION 9: KEY FEATURES BY DOMAIN
 
 ### 9.1 Workspace Management
+
 - Multi-workspace support
 - Workspace members with roles
 - Workspace invitations
@@ -706,6 +758,7 @@ DEFAULT_THROTTLE_RATES = {
 - Workspace-wide settings
 
 ### 9.2 Project Management
+
 - Projects within workspaces
 - Project members with roles
 - Project identifier (key prefix for issues)
@@ -713,6 +766,7 @@ DEFAULT_THROTTLE_RATES = {
 - Public/private projects
 
 ### 9.3 Issue Management
+
 - Issues with full lifecycle
 - Issue types & custom fields
 - Assignments & mentions
@@ -722,6 +776,7 @@ DEFAULT_THROTTLE_RATES = {
 - Draft issues (pre-publish)
 
 ### 9.4 Planning & Organization
+
 - Release cycles
 - Modules/sprints
 - Issue states (To Do, In Progress, Done, etc.)
@@ -731,21 +786,25 @@ DEFAULT_THROTTLE_RATES = {
 - Favorites
 
 ### 9.5 Intake & Triage
+
 - Intake board (external submissions)
 - Issue conversion to backlog
 
 ### 9.6 Pages/Documentation
+
 - Project pages (wiki-style)
 - Page versioning
 - Page labels
 
 ### 9.7 File Management
+
 - File asset upload/download
 - S3/MinIO integration
 - File metadata tracking
 - Cleanup of unfinalized uploads
 
 ### 9.8 Integrations
+
 - GitHub repository sync
 - GitHub issue sync
 - GitHub comment sync
@@ -753,12 +812,14 @@ DEFAULT_THROTTLE_RATES = {
 - Custom webhooks with delivery tracking
 
 ### 9.9 Analytics
+
 - Issue analytics/charts
 - Custom analytics views
 - Analytics plot generation
 - Export to charts
 
 ### 9.10 User Management
+
 - User registration (OAuth + magic link + password)
 - User invitations
 - Profile management
@@ -896,12 +957,14 @@ Plus optional:
 ### 12.1 Horizontal Scaling
 
 **Stateless Components** (scale via replicas):
+
 - API servers (WEB_REPLICAS, API_REPLICAS)
 - Celery workers (WORKER_REPLICAS)
 - Frontend (SPACE_REPLICAS, ADMIN_REPLICAS)
 - Live servers (LIVE_REPLICAS)
 
 **Configuration via Compose**:
+
 ```yaml
 services:
   api:
@@ -912,21 +975,25 @@ services:
 ### 12.2 Performance Features
 
 **Caching**:
+
 - Redis for session store
 - Django cache framework
 - Query result caching
 
 **Database**:
+
 - PostgreSQL with `max_connections=1000`
 - Connection pooling
 - Index optimization
 
 **Async Processing**:
+
 - Celery for long-running tasks
 - Beat scheduler for periodic cleanup
 - Background notifications
 
 **API Optimization**:
+
 - Pagination (default 20 items per page)
 - Filtering & search
 - select_related/prefetch_related in ORM
@@ -935,6 +1002,7 @@ services:
 ### 12.3 Resource Management
 
 **Cleanup Jobs** (scheduled):
+
 - Delete API logs (daily 02:30)
 - Delete email logs (daily 02:45)
 - Delete page versions (daily 03:00)
@@ -1042,25 +1110,26 @@ deployments/
 
 ## SECTION 15: KEY STATISTICS
 
-| Metric | Value |
-|--------|-------|
-| Django Apps (INSTALLED_APPS) | 16 |
-| Database Models | 31 (in plane.db.models) |
-| Django Migrations | 120+ |
-| Celery Background Tasks | 36+ |
-| API Modules (v0) | 18 URL modules |
-| API Modules (v1) | ~23 URL modules |
-| Middleware (Global) | 13 |
-| Dependencies (Core) | 50+ Python packages |
-| Docker Compose Services | 13 |
-| Deployment Methods | 4 (AIO, Compose, Swarm, K8s) |
-| Supported OAuth Providers | 4 (Google, GitHub, GitLab, Gitea) |
+| Metric                       | Value                             |
+| ---------------------------- | --------------------------------- |
+| Django Apps (INSTALLED_APPS) | 16                                |
+| Database Models              | 31 (in plane.db.models)           |
+| Django Migrations            | 120+                              |
+| Celery Background Tasks      | 36+                               |
+| API Modules (v0)             | 18 URL modules                    |
+| API Modules (v1)             | ~23 URL modules                   |
+| Middleware (Global)          | 13                                |
+| Dependencies (Core)          | 50+ Python packages               |
+| Docker Compose Services      | 13                                |
+| Deployment Methods           | 4 (AIO, Compose, Swarm, K8s)      |
+| Supported OAuth Providers    | 4 (Google, GitHub, GitLab, Gitea) |
 
 ---
 
 ## RESOLUTION SUMMARY
 
 ### Clear Findings
+
 ✓ Hybrid PostgreSQL + MongoDB architecture
 ✓ Celery-based async task processing with RabbitMQ
 ✓ Dual API versioning strategy (legacy + v1)
@@ -1072,12 +1141,14 @@ deployments/
 ✓ S3-compatible file storage via MinIO
 
 ### Deployment Flexibility
+
 - Docker Compose for self-hosted
 - All-in-one container for simple deployments
 - Docker Swarm for cluster deployments
 - Kubernetes/Helm for cloud-native deployments
 
 ### Technology Stack Rationale
+
 - Django/DRF: Mature, feature-rich web framework
 - PostgreSQL: ACID compliance, complex queries
 - MongoDB: Flexible schema for logs/analytics

@@ -71,6 +71,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   );
   const stickiesResolvedPath = resolvedTheme === "light" ? lightStickiesAsset : darkStickiesAsset;
   const stickiesSearchResolvedPath = resolvedTheme === "light" ? lightStickiesSearchAsset : darkStickiesSearchAsset;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const masonryRef = useRef<any>(null);
 
   const handleLayout = () => {
@@ -102,6 +103,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
 
     try {
       if (!instruction || !droppedId || !sourceId) return;
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       stickyOperations.updatePosition(workspaceSlug, sourceId as string, droppedId as string, instruction);
     } catch (error) {
       console.error("Error reordering sticky:", error);
@@ -133,6 +135,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
                   text: t("stickies.empty_state.general.primary_button.text"),
                   onClick: () => {
                     toggleShowNewSticky(true);
+                    // eslint-disable-next-line @typescript-eslint/no-floating-promises
                     stickyOperations.create();
                   },
                   disabled: !hasGuestLevelPermissions,
@@ -182,11 +185,13 @@ export function StickiesLayout(props: TStickiesLayout) {
   useEffect(() => {
     if (!ref?.current) return;
 
-    setContainerWidth(ref?.current.offsetWidth);
+    queueMicrotask(() => {
+      if (ref.current) setContainerWidth(ref.current.offsetWidth);
+    });
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width);
+        queueMicrotask(() => setContainerWidth(entry.contentRect.width));
       }
     });
 

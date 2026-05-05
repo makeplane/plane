@@ -11,6 +11,7 @@ import type {
   IIssueFilterOptions,
   TIssue,
   EIssuesStoreType,
+  TIssueFrequency,
 } from "@plane/types";
 
 export const ALL_ISSUES = "All Issues";
@@ -84,10 +85,21 @@ export const ISSUE_PRIORITIES: {
     key: "low",
     title: "Low",
   },
-  {
-    key: "none",
-    title: "None",
-  },
+];
+
+export const ISSUE_FREQUENCIES: {
+  key: TIssueFrequency;
+  title: string;
+  color: string;
+}[] = [
+  { key: "daily", title: "Daily", color: "#ef4444" },
+  { key: "weekly", title: "Weekly", color: "#f97316" },
+  { key: "bi_weekly", title: "Bi-weekly", color: "#eab308" },
+  { key: "monthly", title: "Monthly", color: "#22c55e" },
+  { key: "quarterly", title: "Quarterly", color: "#3b82f6" },
+  { key: "half_year", title: "Half-year", color: "#8b5cf6" },
+  { key: "yearly", title: "Yearly", color: "#6366f1" },
+  { key: "ad_hoc", title: "Ad-hoc", color: "#6b7280" },
 ];
 
 export const DRAG_ALLOWED_GROUPS: TIssueGroupByOptions[] = [
@@ -156,6 +168,17 @@ export const ISSUE_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = 
   "modules",
   "cycle",
   "issue_type",
+  "progress_tracking",
+  // CE extended display properties
+  "department_name",
+  "project_name",
+  "project_lead",
+  "bank_wide_project",
+  "main_task_category",
+  "sub_task_category",
+  "completed_date",
+  "reference_link",
+  "total_log_time",
 ];
 
 export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)[] = [
@@ -208,23 +231,45 @@ export const ISSUE_DISPLAY_PROPERTIES: {
   },
   { key: "modules", titleTranslationKey: "common.module" },
   { key: "cycle", titleTranslationKey: "common.cycle" },
+  { key: "progress_tracking", titleTranslationKey: "spreadsheet.columns.progress_tracking" },
+  // CE extended display properties
+  { key: "department_name", titleTranslationKey: "spreadsheet.columns.department_name" },
+  { key: "project_name", titleTranslationKey: "spreadsheet.columns.project_name" },
+  { key: "project_lead", titleTranslationKey: "spreadsheet.columns.project_lead" },
+  { key: "bank_wide_project", titleTranslationKey: "spreadsheet.columns.bank_wide_project" },
+  { key: "main_task_category", titleTranslationKey: "spreadsheet.columns.main_task_category" },
+  { key: "sub_task_category", titleTranslationKey: "spreadsheet.columns.sub_task_category" },
+  { key: "completed_date", titleTranslationKey: "spreadsheet.columns.completed_date" },
+  { key: "reference_link", titleTranslationKey: "spreadsheet.columns.reference_link" },
+  { key: "total_log_time", titleTranslationKey: "spreadsheet.columns.total_log_time" },
 ];
 
 export const SPREADSHEET_PROPERTY_LIST: (keyof IIssueDisplayProperties)[] = [
-  "state",
-  "priority",
+  "department_name",
+  "project_name",
+  "main_task_category",
+  "sub_task_category",
+  "sub_issue_count",
+  "project_lead",
   "assignee",
-  "labels",
+  "bank_wide_project",
+  "priority",
+  "state",
+  "progress_tracking",
   "modules",
   "cycle",
   "start_date",
   "due_date",
+  "completed_date",
+  "total_log_time",
+  "reference_link",
+  // hidden by default columns below
+  "labels",
   "estimate",
   "created_on",
   "updated_on",
   "link",
   "attachment_count",
-  "sub_issue_count",
 ];
 
 export const SPREADSHEET_PROPERTY_DETAILS: {
@@ -235,6 +280,8 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: TIssueOrderByOptions;
     descendingOrderTitle: string;
     icon: string;
+    /** When false, the header renders as plain text without a sort dropdown */
+    isSortable?: boolean;
   };
 } = {
   assignee: {
@@ -296,7 +343,7 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
   priority: {
     i18n_title: "common.priority",
     ascendingOrderKey: "priority",
-    ascendingOrderTitle: "None",
+    ascendingOrderTitle: "Low",
     descendingOrderKey: "-priority",
     descendingOrderTitle: "Urgent",
     icon: "PriorityPropertyIcon",
@@ -348,6 +395,106 @@ export const SPREADSHEET_PROPERTY_DETAILS: {
     descendingOrderKey: "sub_issues_count",
     descendingOrderTitle: "Least",
     icon: "LayersIcon",
+  },
+  // CE extended columns
+  department_name: {
+    i18n_title: "spreadsheet.columns.department_name",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "Z",
+    icon: "BuildingIcon",
+    isSortable: false,
+  },
+  project_name: {
+    i18n_title: "spreadsheet.columns.project_name",
+    ascendingOrderKey: "project__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-project__name",
+    descendingOrderTitle: "Z",
+    icon: "FolderIcon",
+  },
+  project_lead: {
+    i18n_title: "spreadsheet.columns.project_lead",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "Z",
+    icon: "MembersPropertyIcon",
+    isSortable: false,
+  },
+  bank_wide_project: {
+    i18n_title: "spreadsheet.columns.bank_wide_project",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "Yes",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "No",
+    icon: "BankIcon",
+    isSortable: false,
+  },
+  main_task_category: {
+    i18n_title: "spreadsheet.columns.main_task_category",
+    ascendingOrderKey: "main_task_category__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-main_task_category__name",
+    descendingOrderTitle: "Z",
+    icon: "TagIcon",
+  },
+  sub_task_category: {
+    i18n_title: "spreadsheet.columns.sub_task_category",
+    ascendingOrderKey: "sub_task_category__name",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "-sub_task_category__name",
+    descendingOrderTitle: "Z",
+    icon: "TagIcon",
+  },
+  progress_tracking: {
+    i18n_title: "spreadsheet.columns.progress_tracking",
+    ascendingOrderKey: "-target_date",
+    ascendingOrderTitle: "Newest",
+    descendingOrderKey: "target_date",
+    descendingOrderTitle: "Oldest",
+    icon: "TrendingUpIcon",
+  },
+  completed_date: {
+    i18n_title: "spreadsheet.columns.completed_date",
+    ascendingOrderKey: "-completed_at",
+    ascendingOrderTitle: "New",
+    descendingOrderKey: "completed_at",
+    descendingOrderTitle: "Old",
+    icon: "CalendarDays",
+  },
+  reference_link: {
+    i18n_title: "spreadsheet.columns.reference_link",
+    ascendingOrderKey: "-link_count",
+    ascendingOrderTitle: "Most",
+    descendingOrderKey: "link_count",
+    descendingOrderTitle: "Least",
+    icon: "Link2",
+  },
+  total_log_time: {
+    i18n_title: "spreadsheet.columns.total_log_time",
+    ascendingOrderKey: "-total_logged_minutes",
+    ascendingOrderTitle: "Most",
+    descendingOrderKey: "total_logged_minutes",
+    descendingOrderTitle: "Least",
+    icon: "TimerIcon",
+  },
+  issue_type: {
+    i18n_title: "common.issue_type",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "A",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "Z",
+    icon: "TagIcon",
+  },
+  key: {
+    i18n_title: "issue.display.properties.id",
+    ascendingOrderKey: "-created_at",
+    ascendingOrderTitle: "New",
+    descendingOrderKey: "created_at",
+    descendingOrderTitle: "Old",
+    icon: "HashIcon",
   },
 };
 

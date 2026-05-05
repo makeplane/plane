@@ -135,7 +135,7 @@ class TestLDAPSignInEndpointAuth:
 
     def test_successful_login_redirects(self):
         view = LDAPSignInEndpoint()
-        request = _post_request({"username": "jdoe", "password": "secret"})
+        request = _post_request({"username": "12345678", "password": "secret"})
         mock_user = MagicMock()
         with (
             patch(INSTANCE_PATCH) as mock_instance_cls,

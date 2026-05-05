@@ -127,6 +127,11 @@ def issue_on_results(
         "is_draft",
         "archived_at",
         "state__group",
+        "total_logged_minutes",
+        "main_task_category_id",
+        "sub_task_category_id",
+        "main_task_category_name",
+        "sub_task_category_name",
     ]
 
     if group_by in FIELD_MAPPER:
@@ -188,7 +193,7 @@ def issue_group_values(
         return list(queryset)
 
     if field == "priority":
-        return ["low", "medium", "high", "urgent", "none"]
+        return ["low", "medium", "high", "urgent"]
 
     if field == "state__group":
         return ["backlog", "unstarted", "started", "completed", "cancelled"]

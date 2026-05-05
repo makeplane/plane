@@ -5,11 +5,12 @@
  */
 
 import type { IProjectMemberNavigationPreferences } from "./project";
-import type { TIssue } from "./issues/issue";
+import type { EIssueLayoutTypes, TIssue } from "./issues/issue";
 import type { LOGICAL_OPERATOR, TSupportedOperators } from "./rich-filters";
 import type { CompleteOrEmpty } from "./utils";
 
-export type TIssueLayouts = "list" | "kanban" | "calendar" | "spreadsheet" | "gantt_chart";
+// TIssueLayouts uses EIssueLayoutTypes enum values for layout compatibility
+export type TIssueLayouts = EIssueLayoutTypes;
 
 export type TIssueGroupByOptions =
   | "state"
@@ -54,7 +55,18 @@ export type TIssueOrderByOptions =
   | "attachment_count"
   | "-attachment_count"
   | "sub_issues_count"
-  | "-sub_issues_count";
+  | "-sub_issues_count"
+  // CE extended sort options
+  | "project__name"
+  | "-project__name"
+  | "completed_at"
+  | "-completed_at"
+  | "total_logged_minutes"
+  | "-total_logged_minutes"
+  | "main_task_category__name"
+  | "-main_task_category__name"
+  | "sub_task_category__name"
+  | "-sub_task_category__name";
 
 export type TIssueGroupingFilters = "active" | "backlog";
 
@@ -86,7 +98,8 @@ export type TIssueParams =
   | "issue_type"
   | "layout"
   | "expand"
-  | "filters";
+  | "filters"
+  | "include_archived";
 
 export type TCalendarLayouts = "month" | "week";
 
@@ -153,10 +166,11 @@ export interface IIssueDisplayFilterOptions {
   };
   group_by?: TIssueGroupByOptions;
   sub_group_by?: TIssueGroupByOptions;
-  layout?: any; // TODO: Need to fix this and set it to enum EIssueLayoutTypes
+  layout?: TIssueLayouts;
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
+  show_archived?: boolean;
 }
 export interface IIssueDisplayProperties {
   assignee?: boolean;
@@ -175,6 +189,17 @@ export interface IIssueDisplayProperties {
   modules?: boolean;
   cycle?: boolean;
   issue_type?: boolean;
+  // CE extended columns
+  department_name?: boolean;
+  project_name?: boolean;
+  project_lead?: boolean;
+  bank_wide_project?: boolean;
+  main_task_category?: boolean;
+  sub_task_category?: boolean;
+  progress_tracking?: boolean;
+  completed_date?: boolean;
+  reference_link?: boolean;
+  total_log_time?: boolean;
 }
 
 export type TIssueKanbanFilters = {
@@ -268,6 +293,6 @@ export interface IssuePaginationOptions {
 export type TSpreadsheetColumn = React.FC<{
   issue: TIssue;
   onClose: () => void;
-  onChange: (issue: TIssue, data: Partial<TIssue>, updates: any) => void;
+  onChange: (issue: TIssue, data: Partial<TIssue>, updates: Record<string, unknown>) => void;
   disabled: boolean;
 }>;

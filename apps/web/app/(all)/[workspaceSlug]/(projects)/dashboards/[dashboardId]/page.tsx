@@ -4,145 +4,89 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { observer } from "mobx-react";
+import { Plus } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { Loader } from "@plane/ui";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { PageHead } from "@/components/core/page-title";
-import { useAnalyticsDashboard } from "@/plane-web/hooks/store/use-analytics-dashboard";
 import { useAppRouter } from "@/hooks/use-app-router";
-import { AnalyticsDashboardWidgetGrid } from "@/plane-web/components/dashboards/analytics-dashboard-widget-grid";
+import { useCustomDashboard } from "@/plane-web/hooks/store/use-custom-dashboard";
+import { WidgetAdapter } from "@/plane-web/components/dashboards/widget-adapter";
+import { WidgetContextMenu } from "@/plane-web/components/dashboards/widget-context-menu";
 import { WidgetConfigModal } from "@/plane-web/components/dashboards/widget-config-modal";
-import type { IAnalyticsDashboardWidget, TAnalyticsWidgetCreate, TAnalyticsWidgetUpdate } from "@plane/types";
 import type { Route } from "./+types/page";
-import { DashboardToolbar } from "./dashboard-toolbar";
 
 const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Route.ComponentProps) {
+  const { t } = useTranslation();
   const { workspaceSlug, dashboardId } = params;
   const router = useAppRouter();
-  const analyticsDashboardStore = useAnalyticsDashboard();
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [configWidget, setConfigWidget] = useState<IAnalyticsDashboardWidget | null>(null);
-  const [isAddWidgetOpen, setIsAddWidgetOpen] = useState(false);
+  const store = useCustomDashboard();
+  const [isConfigOpen, setIsConfigOpen] = useState(false);
+  const [editingWidgetId, setEditingWidgetId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (workspaceSlug && dashboardId) {
-      analyticsDashboardStore.setActiveDashboard(dashboardId);
-      void analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
-    }
-    return () => {
-      analyticsDashboardStore.setActiveDashboard(null);
-    };
-  }, [workspaceSlug, dashboardId, analyticsDashboardStore]);
+    if (!workspaceSlug || !dashboardId) return;
+    void store.fetchDashboards(workspaceSlug);
+    void store.fetchWidgets(workspaceSlug, dashboardId);
+  }, [workspaceSlug, dashboardId, store]);
 
-  const { currentDashboard, sortedWidgets, loader } = analyticsDashboardStore;
-  const pageTitle = currentDashboard?.name ?? "Dashboard";
+  const widgets = store.dashboardWidgets[dashboardId] ?? [];
 
-  const handleRefresh = async () => {
-    try {
-      await analyticsDashboardStore.fetchDashboard(workspaceSlug, dashboardId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Dashboard refreshed" });
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Failed to refresh dashboard",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  };
-
-  const handleDeleteWidget = async (widgetId: string) => {
-    try {
-      await analyticsDashboardStore.deleteWidget(workspaceSlug, dashboardId, widgetId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget deleted" });
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Failed to delete widget",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  };
-
-  const handleAddWidget = () => {
-    setIsAddWidgetOpen(true);
-  };
-
-  const handleConfigureWidget = (widgetId: string) => {
-    setConfigWidget(sortedWidgets.find((w) => w.id === widgetId) ?? null);
-  };
-
-  const handleLayoutChange = async (
-    positions: Array<{ id: string; position: { row: number; col: number; width: number; height: number } }>
-  ) => {
-    try {
-      await analyticsDashboardStore.updateWidgetPositions(workspaceSlug, dashboardId, positions);
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Failed to update layout",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  };
-
-  const handleDuplicateWidget = async (widgetId: string) => {
-    try {
-      await analyticsDashboardStore.duplicateWidget(workspaceSlug, dashboardId, widgetId);
-      setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget duplicated" });
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Failed to duplicate widget",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-    }
-  };
-
-  const handleWidgetSubmit = async (data: TAnalyticsWidgetCreate | TAnalyticsWidgetUpdate) => {
-    try {
-      if (configWidget) {
-        await analyticsDashboardStore.updateWidget(
-          workspaceSlug,
-          dashboardId,
-          configWidget.id,
-          data as TAnalyticsWidgetUpdate
-        );
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget updated" });
-      } else {
-        await analyticsDashboardStore.createWidget(workspaceSlug, dashboardId, data as TAnalyticsWidgetCreate);
-        setToast({ type: TOAST_TYPE.SUCCESS, title: "Widget added" });
+  // Fetch chart data for each widget once widgets are loaded
+  const widgetIds = widgets.map((w) => w.id).join(",");
+  useEffect(() => {
+    if (!workspaceSlug || !dashboardId || !widgetIds) return;
+    widgetIds.split(",").forEach((id) => {
+      if (!store.widgetChartData[id]) {
+        void store.fetchWidgetChartData(workspaceSlug, dashboardId, id);
       }
-      setIsAddWidgetOpen(false);
-      setConfigWidget(null);
-    } catch (error) {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: configWidget ? "Failed to update widget" : "Failed to add widget",
-        message: error instanceof Error ? error.message : "Unknown error",
-      });
-      throw error;
-    }
-  };
+    });
+  }, [workspaceSlug, dashboardId, widgetIds, store]);
+
+  const dashboard = store.dashboards.find((d) => d.id === dashboardId);
+  const pageTitle = dashboard?.name ?? "Dashboard";
+
+  const handleDeleteWidget = useCallback(
+    async (widgetId: string) => {
+      try {
+        await store.deleteWidget(workspaceSlug, dashboardId, widgetId);
+        setToast({ type: TOAST_TYPE.SUCCESS, title: t("analytics_dashboard.widget_deleted") });
+      } catch {
+        setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.delete_widget_failed") });
+      }
+    },
+    [store, workspaceSlug, dashboardId, t]
+  );
 
   return (
     <>
       <PageHead title={pageTitle} />
-      <div className="flex h-full flex-col overflow-hidden relative">
-        <DashboardToolbar
-          pageTitle={pageTitle}
-          description={currentDashboard?.description}
-          isEditMode={isEditMode}
-          onBack={() => router.push(`/${workspaceSlug}/dashboards`)}
-          onAddWidget={handleAddWidget}
-          onRefresh={() => void handleRefresh()}
-          onToggleEdit={() => setIsEditMode(!isEditMode)}
-        />
+      <div className="flex h-full flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-subtle px-4 py-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push(`/${workspaceSlug}/dashboards`)}
+              className="text-secondary hover:text-primary text-sm"
+            >
+              {t("analytics_dashboard.breadcrumb_dashboards")}
+            </button>
+            <span className="text-tertiary">/</span>
+            <h1 className="text-base font-medium text-primary">{pageTitle}</h1>
+          </div>
+          <Button variant="primary" size="sm" onClick={() => setIsConfigOpen(true)}>
+            <Plus className="h-4 w-4 mr-1" />
+            {t("analytics_dashboard.add_widget")}
+          </Button>
+        </div>
 
-        <div className="flex-1 overflow-auto p-4 relative z-0">
-          {loader ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* Grid */}
+        <div className="flex-1 p-4">
+          {store.isLoading ? (
+            <div className="grid grid-cols-2 gap-4">
               {Array.from({ length: 4 }).map((_, i) => (
                 <Loader key={i} className="rounded-lg border border-subtle p-4">
                   <Loader.Item height="16px" width="40%" />
@@ -150,37 +94,56 @@ const DashboardDetailPage = observer(function DashboardDetailPage({ params }: Ro
                 </Loader>
               ))}
             </div>
-          ) : sortedWidgets.length === 0 ? (
+          ) : widgets.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-4">
-              <p className="text-sm text-tertiary">No widgets yet. Add your first widget to get started.</p>
-              <Button onClick={handleAddWidget} className="gap-2">
-                Add Widget
-              </Button>
+              <p className="text-sm text-tertiary">{t("analytics_dashboard.empty_widgets")}</p>
+              <Button onClick={() => setIsConfigOpen(true)}>{t("analytics_dashboard.add_widget")}</Button>
             </div>
           ) : (
-            <AnalyticsDashboardWidgetGrid
-              widgets={sortedWidgets}
-              workspaceSlug={workspaceSlug}
-              dashboardId={dashboardId}
-              isEditMode={isEditMode}
-              onAddWidget={handleAddWidget}
-              onDeleteWidget={(id) => void handleDeleteWidget(id)}
-              onConfigureWidget={handleConfigureWidget}
-              onDuplicateWidget={(id) => void handleDuplicateWidget(id)}
-              onLayoutChange={(positions) => void handleLayoutChange(positions)}
-            />
+            <div className="grid grid-cols-12 gap-4 auto-rows-[200px]">
+              {widgets.map((w) => (
+                <div
+                  key={w.id}
+                  className="rounded-lg border border-subtle bg-surface-1 overflow-hidden"
+                  style={{ gridColumn: `span ${w.width ?? 6}`, gridRow: `span ${w.height ?? 2}` }}
+                >
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-subtle">
+                    <span className="text-sm font-medium text-primary truncate">{w.name ?? "Widget"}</span>
+                    <WidgetContextMenu
+                      widget={w}
+                      workspaceSlug={workspaceSlug}
+                      onEdit={() => setEditingWidgetId(w.id)}
+                      onDelete={() => void handleDeleteWidget(w.id)}
+                    />
+                  </div>
+                  <WidgetAdapter widget={w} workspaceSlug={workspaceSlug} dashboardId={dashboardId} />
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
 
       <WidgetConfigModal
-        isOpen={isAddWidgetOpen || !!configWidget}
+        isOpen={isConfigOpen || !!editingWidgetId}
         onClose={() => {
-          setIsAddWidgetOpen(false);
-          setConfigWidget(null);
+          setIsConfigOpen(false);
+          setEditingWidgetId(null);
         }}
-        onSubmit={handleWidgetSubmit}
-        widget={configWidget}
+        onSubmit={async (data) => {
+          try {
+            if (editingWidgetId) {
+              await store.updateWidget(workspaceSlug, dashboardId, editingWidgetId, data);
+            } else {
+              await store.createWidget(workspaceSlug, dashboardId, data);
+            }
+            setIsConfigOpen(false);
+            setEditingWidgetId(null);
+          } catch {
+            setToast({ type: TOAST_TYPE.ERROR, title: t("analytics_dashboard.update_widget_failed") });
+          }
+        }}
+        widget={editingWidgetId ? widgets.find((w) => w.id === editingWidgetId) : null}
       />
     </>
   );

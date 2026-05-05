@@ -15,6 +15,7 @@ import { CommentCard } from "@/components/comments/card/root";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // plane web components
 import { IssueAdditionalPropertiesActivity } from "@/plane-web/components/issues/issue-details/issue-properties-activity";
+import { WorklogActivityGroup } from "@/plane-web/components/issues/worklog/activity/worklog-activity-group";
 import { IssueActivityWorklog } from "@/plane-web/components/issues/worklog/activity/root";
 // local imports
 import { IssueActivityItem } from "./activity/activity-list";
@@ -62,6 +63,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
     <div>
       {filteredActivityAndComments.map((activityComment, index) => {
         const comment = getCommentById(activityComment.id);
+        const ends = index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined;
         return activityComment.activity_type === "COMMENT" ? (
           <CommentCard
             key={activityComment.id}
@@ -69,7 +71,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             entityId={issueId}
             comment={comment}
             activityOperations={activityOperations}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
+            ends={ends}
             showAccessSpecifier={!!showAccessSpecifier}
             showCopyLinkOption={!isIntakeIssue}
             disabled={disabled}
@@ -77,17 +79,9 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             enableReplies
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
-          <IssueActivityItem
-            key={activityComment.id}
-            activityId={activityComment.id}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
+          <IssueActivityItem key={activityComment.id} activityId={activityComment.id} ends={ends} />
         ) : activityComment.activity_type === "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY" ? (
-          <IssueAdditionalPropertiesActivity
-            key={activityComment.id}
-            activityId={activityComment.id}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
+          <IssueAdditionalPropertiesActivity key={activityComment.id} activityId={activityComment.id} ends={ends} />
         ) : activityComment.activity_type === "WORKLOG" ? (
           <IssueActivityWorklog
             key={activityComment.id}
@@ -95,7 +89,16 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             projectId={projectId}
             issueId={issueId}
             activityComment={activityComment}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
+            ends={ends}
+          />
+        ) : activityComment.activity_type === "WORKLOG_GROUP" ? (
+          <WorklogActivityGroup
+            key={activityComment.id}
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            activityComment={activityComment}
+            ends={ends}
           />
         ) : (
           <></>

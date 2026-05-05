@@ -158,26 +158,30 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
       sub_group_by: [],
     };
 
-    const _filters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
-    displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
+    const localFilters = this.handleIssuesLocalFilters.get(EIssuesStoreType.GLOBAL, workspaceSlug, undefined, viewId);
+    displayFilters = this.computedDisplayFilters(localFilters?.display_filters, {
       layout: EIssueLayoutTypes.SPREADSHEET,
       order_by: "-created_at",
     });
-    displayProperties = this.computedDisplayProperties(_filters?.display_properties);
+    displayProperties = this.computedDisplayProperties(localFilters?.display_properties);
     kanbanFilters = {
-      group_by: _filters?.kanban_filters?.group_by || [],
-      sub_group_by: _filters?.kanban_filters?.sub_group_by || [],
+      group_by: localFilters?.kanban_filters?.group_by || [],
+      sub_group_by: localFilters?.kanban_filters?.sub_group_by || [],
     };
 
     // Get the view details if the view is not a static view
     if (STATIC_VIEW_TYPES.includes(viewId) === false) {
-      const _filters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
-      richFilters = _filters?.rich_filters;
-      displayFilters = this.computedDisplayFilters(_filters?.display_filters, {
-        layout: EIssueLayoutTypes.SPREADSHEET,
-        order_by: "-created_at",
+      const viewFilters = await this.issueFilterService.getViewDetails(workspaceSlug, viewId);
+      richFilters = viewFilters?.rich_filters;
+      // Merge local overrides over backend defaults so per-user display preferences persist
+      displayFilters = this.computedDisplayFilters(
+        { ...(viewFilters?.display_filters ?? {}), ...(localFilters?.display_filters ?? {}) },
+        { layout: EIssueLayoutTypes.SPREADSHEET, order_by: "-created_at" }
+      );
+      displayProperties = this.computedDisplayProperties({
+        ...(viewFilters?.display_properties ?? {}),
+        ...(localFilters?.display_properties ?? {}),
       });
-      displayProperties = this.computedDisplayProperties(_filters?.display_properties);
     }
 
     // override existing order by if ordered by manual sort_order
@@ -204,14 +208,14 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
         set(this.filters, [viewId, "richFilters"], filters);
       });
 
-      this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+      await this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
     } catch (error) {
       console.log("error while updating rich filters", error);
       throw error;
     }
   };
 
-  updateFilters: IWorkspaceIssuesFilter["updateFilters"] = async (workspaceSlug, projectId, type, filters, viewId) => {
+  updateFilters: IWorkspaceIssuesFilter["updateFilters"] = async (workspaceSlug, _projectId, type, filters, viewId) => {
     try {
       const issueFilters = this.getIssueFilters(viewId);
 
@@ -258,12 +262,16 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
             });
           });
 
-          this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(workspaceSlug, viewId, "mutation");
+          await this.rootIssueStore.workspaceIssues.fetchIssuesWithExistingPagination(
+            workspaceSlug,
+            viewId,
+            "mutation"
+          );
 
-          if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
-            this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
-              display_filters: _filters.displayFilters,
-            });
+          // Persist display filter changes locally for all workspace views
+          this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
+            display_filters: _filters.displayFilters,
+          });
           break;
         }
         case EIssueFilterType.DISPLAY_PROPERTIES: {
@@ -278,10 +286,10 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
                 updatedDisplayProperties[_key as keyof IIssueDisplayProperties]
               );
             });
-            if (["all-issues", "assigned", "created", "subscribed"].includes(viewId))
-              this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
-                display_properties: _filters.displayProperties,
-              });
+          });
+          // Persist display property changes locally for all workspace views
+          this.handleIssuesLocalFilters.set(EIssuesStoreType.GLOBAL, type, workspaceSlug, undefined, viewId, {
+            display_properties: _filters.displayProperties,
           });
           break;
         }
@@ -312,7 +320,7 @@ export class WorkspaceIssuesFilter extends IssueFilterHelperStore implements IWo
           break;
       }
     } catch (error) {
-      if (viewId) this.fetchFilters(workspaceSlug, viewId);
+      if (viewId) await this.fetchFilters(workspaceSlug, viewId);
       throw error;
     }
   };

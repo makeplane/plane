@@ -20,6 +20,7 @@ import { CommentCreate } from "@/components/comments/comment-create";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useWorklog } from "@/hooks/store/use-worklog";
 // plane web components
@@ -76,11 +77,18 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
 
   // derived values
   const issue = issueId ? getIssueById(issueId) : undefined;
+  const project = getProjectById(projectId);
   const currentUserProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
   const isAdmin = currentUserProjectRole === EUserPermissions.ADMIN;
   const isGuest = currentUserProjectRole === EUserPermissions.GUEST;
   const isAssigned = issue?.assignee_ids && currentUser?.id ? issue?.assignee_ids.includes(currentUser?.id) : false;
-  const isWorklogButtonEnabled = !isIntakeIssue && !isGuest && (isAdmin || isAssigned);
+  const isTimeTrackingEnabled = project?.is_time_tracking_enabled !== false;
+  const { getStateById } = useProjectState();
+  const stateGroup = issue?.state_id ? getStateById(issue.state_id)?.group : undefined;
+  const isStateTerminal = stateGroup === "completed" || stateGroup === "cancelled";
+  const hasSubIssues = (issue?.sub_issues_count ?? 0) > 0;
+  const isWorklogButtonEnabled =
+    !isIntakeIssue && !isGuest && isTimeTrackingEnabled && (isAdmin || isAssigned) && !isStateTerminal && !hasSubIssues;
   // toggle filter
   const toggleFilter = (filter: TActivityFilters) => {
     if (!selectedFilters) return;
@@ -102,7 +110,6 @@ export const IssueActivity = observer(function IssueActivity(props: TIssueActivi
   // helper hooks
   const activityOperations = useWorkItemCommentOperations(workspaceSlug, projectId, issueId);
 
-  const project = getProjectById(projectId);
   const renderCommentCreationBox = useMemo(
     () => (
       <CommentCreate

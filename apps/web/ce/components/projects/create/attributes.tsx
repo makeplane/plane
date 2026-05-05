@@ -5,25 +5,32 @@
  */
 
 import { Controller, useFormContext } from "react-hook-form";
+import { observer } from "mobx-react";
 // plane imports
-import { NETWORK_CHOICES, ETabIndices } from "@plane/constants";
+import { NETWORK_CHOICES, ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import type { IProject } from "@plane/types";
-import { CustomSelect } from "@plane/ui";
+import { CustomSelect, ToggleSwitch } from "@plane/ui";
 import { getTabIndex } from "@plane/utils";
 // components
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
 import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
+// hooks
+import { useUserPermissions } from "@/hooks/store/user";
+// types
+import type { TProject } from "@/plane-web/types/projects";
 
 type Props = {
   isMobile?: boolean;
 };
 
-function ProjectAttributes(props: Props) {
+const ProjectAttributes = observer(function ProjectAttributes(props: Props) {
   const { isMobile = false } = props;
   const { t } = useTranslation();
-  const { control } = useFormContext<IProject>();
+  const { control } = useFormContext<TProject>();
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
+  const { allowPermissions } = useUserPermissions();
+  const isAdmin = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.WORKSPACE);
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Controller
@@ -91,9 +98,38 @@ function ProjectAttributes(props: Props) {
           else return <></>;
         }}
       />
+      {isAdmin && (
+        <Controller
+          name="is_bank_wide"
+          control={control}
+          render={({ field: { value, onChange } }) => {
+            const handleClick = () => onChange(!value);
+            const handleKeyDown = (e: React.KeyboardEvent) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onChange(!value);
+              }
+            };
+            return (
+              <div
+                role="button"
+                tabIndex={0}
+                className="flex-shrink-0 h-7 flex items-center gap-2 rounded border border-subtle px-2 cursor-pointer"
+                onClick={handleClick}
+                onKeyDown={handleKeyDown}
+              >
+                <span className="flex-grow truncate leading-5 text-left text-body-xs-medium">
+                  {t("bank_wide_project.label")}
+                </span>
+                <ToggleSwitch value={value ?? false} onChange={handleClick} size="sm" />
+              </div>
+            );
+          }}
+        />
+      )}
     </div>
   );
-}
+});
 
 export default ProjectAttributes;
 

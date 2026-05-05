@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
-import { Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { ETabIndices, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { ParentPropertyIcon } from "@plane/propel/icons";
@@ -15,7 +15,7 @@ import { ParentPropertyIcon } from "@plane/propel/icons";
 import type { ISearchIssueResponse, TIssue } from "@plane/types";
 // ui
 import { CustomMenu } from "@plane/ui";
-import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
+import { getDate, renderFormattedPayloadDate, getTabIndex, cn } from "@plane/utils";
 // components
 import { CycleDropdown } from "@/components/dropdowns/cycle";
 import { DateDropdown } from "@/components/dropdowns/date";
@@ -29,6 +29,7 @@ import { IssueLabelSelect } from "@/components/issues/select";
 // helpers
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
+import { useIssueFormValidation } from "@/hooks/store/use-issue-form-validation";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 import { usePlatformOS } from "@/hooks/use-platform-os";
@@ -47,6 +48,7 @@ type TIssueDefaultPropertiesProps = {
   isDraft: boolean;
   handleFormChange: () => void;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
+  children?: React.ReactNode;
 };
 
 export const IssueDefaultProperties = observer(function IssueDefaultProperties(props: TIssueDefaultPropertiesProps) {
@@ -62,15 +64,21 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
     isDraft,
     handleFormChange,
     setSelectedParentIssue,
+    children,
   } = props;
   // states
   const [parentIssueListModalOpen, setParentIssueListModalOpen] = useState(false);
+  // form context — errors only populate after first submit (default RHF mode)
+  const {
+    formState: { errors },
+  } = useFormContext<TIssue>();
   // store hooks
   const { t } = useTranslation();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getProjectById } = useProject();
   const { isMobile } = usePlatformOS();
   const { allowPermissions } = useUserPermissions();
+  const { getFieldRules } = useIssueFormValidation(projectId);
   // derived values
   const projectDetails = getProjectById(projectId);
 
@@ -110,7 +118,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         control={control}
         name="priority"
         render={({ field: { value, onChange } }) => (
-          <div className="h-7">
+          <div className={cn("h-7 rounded-sm", errors.priority && "outline outline-1 outline-danger-strong")}>
             <PriorityDropdown
               value={value}
               onChange={(priority) => {
@@ -126,8 +134,11 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="assignee_ids"
+        rules={getFieldRules({
+          validate: (v: unknown) => (v && (v as string[]).length > 0) || t("assignee_is_required"),
+        })}
         render={({ field: { value, onChange } }) => (
-          <div className="h-7">
+          <div className={cn("h-7 rounded-sm", errors.assignee_ids && "outline outline-1 outline-danger-strong")}>
             <MemberDropdown
               projectId={projectId ?? undefined}
               value={value}
@@ -165,8 +176,9 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="start_date"
+        rules={getFieldRules({ required: t("start_date_is_required") })}
         render={({ field: { value, onChange } }) => (
-          <div className="h-7">
+          <div className={cn("h-7 rounded-sm", errors.start_date && "outline outline-1 outline-danger-strong")}>
             <DateDropdown
               value={value}
               onChange={(date) => {
@@ -184,8 +196,9 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
       <Controller
         control={control}
         name="target_date"
+        rules={getFieldRules({ required: t("due_date_is_required") })}
         render={({ field: { value, onChange } }) => (
-          <div className="h-7">
+          <div className={cn("h-7 rounded-sm", errors.target_date && "outline outline-1 outline-danger-strong")}>
             <DateDropdown
               value={value}
               onChange={(date) => {
@@ -225,8 +238,9 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         <Controller
           control={control}
           name="module_ids"
+          rules={{}}
           render={({ field: { value, onChange } }) => (
-            <div className="h-7">
+            <div className={cn("h-7 rounded-sm", errors.module_ids && "outline outline-1 outline-danger-strong")}>
               <ModuleDropdown
                 projectId={projectId ?? undefined}
                 value={value ?? []}
@@ -321,6 +335,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           </button>
         )}
       </div>
+      {children}
       <Controller
         control={control}
         name="parent_id"

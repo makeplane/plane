@@ -36,7 +36,7 @@ export function StateForm(props: TStateForm) {
   const [errors, setErrors] = useState<Partial<Record<keyof IState, string>> | undefined>(undefined);
 
   useEffect(() => {
-    if (data && !formData) setFromData(data);
+    if (data && !formData) queueMicrotask(() => setFromData(data));
   }, [data, formData]);
 
   const handleFormData = <T extends keyof IState>(key: T, value: IState[T]) => {

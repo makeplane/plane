@@ -1,0 +1,142 @@
+# Phase 01: Add Edit Click to Worklog Activity
+
+## Context Links
+- Target file: `apps/web/ce/components/issues/worklog/activity/root.tsx`
+- Modal: `apps/web/ce/components/issues/worklog/worklog-modal.tsx`
+- Create button pattern: `apps/web/ce/components/issues/worklog/activity/worklog-create-button.tsx`
+- Worklog types: `packages/types/src/worklog.ts`
+
+## Overview
+- **Priority**: P2
+- **Status**: Complete
+- **Description**: Add onClick handler + WorklogModal to IssueActivityWorklog component so users can click to edit their worklogs
+
+## Key Insights
+- `WorklogModal` already accepts `existingWorklog?: IWorkLog` prop for edit mode
+- `worklog-create-button.tsx` shows exact pattern: `useState(false)` + render `<WorklogModal>` in fragment
+- `useUserPermissions()` returns `{ allowPermissions }` function
+- Backend should enforce: only ADMIN can PATCH/DELETE
+
+## Permission Rules
+- **Log time (create)**: Project member + Project admin
+- **Edit/Delete**: Only **Project admin**
+
+## Requirements
+- Clicking a worklog activity entry opens WorklogModal in edit mode
+- Only clickable if current user is **Project admin**
+- Visual hint: Pencil icon on hover when user is admin
+- cursor-pointer styling when user is admin
+
+## Related Code Files
+- **Modify**: `apps/web/ce/components/issues/worklog/activity/root.tsx`
+- No new files needed
+
+## Embedded Rules
+- `observer()` on all MobX-reading components (already present)
+- Use `@plane/propel/*` for UI components
+- Semantic color tokens only
+- Keep file under 200 lines
+- Conventional imports: hooks from `@/hooks/store/...`, types from `@plane/types`
+
+## Implementation Steps
+
+<!-- Updated: Validation Session 1 - Added pre-steps for pattern grep and backend verification -->
+
+### 0a. Grep existing edit-on-click patterns
+Search codebase for existing patterns where activity/list items open edit modals on click. Match the UX convention (entire row vs icon-only, hover styles, cursor behavior) to ensure consistency.
+
+### 0b. Verify backend permissions
+Check worklog PATCH/DELETE view's `permission_classes` to confirm admin-only enforcement. If missing, add backend permission fix to this phase.
+
+### 1. Add imports
+```tsx
+import { useState } from "react";
+import { Pencil } from "lucide-react";  // add alongside existing Timer
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { useUserPermissions } from "@/hooks/store/user/user-permissions";
+import { WorklogModal } from "../worklog-modal";
+```
+
+### 2. Add state and permission logic inside component
+```tsx
+const { allowPermissions } = useUserPermissions();
+const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+// Only project admin can edit/delete worklogs
+const canEdit = !!(worklog && allowPermissions(
+  [EUserPermissions.ADMIN],
+  EUserPermissionsLevel.PROJECT,
+  workspaceSlug,
+  projectId
+));
+```
+
+### 3. Add click handler to outer div
+- When `canEdit` is true: add `onClick={() => setIsEditModalOpen(true)}`, `cursor-pointer`, `hover:bg-layer-3`, `rounded-md`, `transition-colors`
+- Keep `role="button"` and `tabIndex={0}` for a11y when editable
+- Add `onKeyDown` for Enter/Space to open modal
+
+### 4. Add Pencil icon (hover-visible)
+Inside the `<p>` tag, after the date span:
+```tsx
+{canEdit && (
+  <Pencil className="inline-block ml-1 h-3 w-3 text-color-tertiary opacity-0 group-hover:opacity-100 transition-opacity" />
+)}
+```
+Add `group` class to the outer div.
+
+### 5. Render WorklogModal
+After the main div, inside a fragment wrapper:
+```tsx
+{canEdit && (
+  <WorklogModal
+    isOpen={isEditModalOpen}
+    onClose={() => setIsEditModalOpen(false)}
+    workspaceSlug={workspaceSlug}
+    projectId={projectId}
+    issueId={issueId}
+    existingWorklog={worklog}
+  />
+)}
+```
+
+### 6. Wrap return in fragment
+Current return is a single `<div>`. Wrap in `<>...</>` to include the modal.
+
+## Post-Phase Checklist
+- [ ] `observer()` wrapper preserved
+- [ ] File under 200 lines
+- [ ] Semantic color tokens only (no hardcoded colors)
+- [ ] `useUserPermissions` hook imported from correct path
+- [ ] WorklogModal receives `existingWorklog` prop
+- [ ] Permission check: Project admin only
+- [ ] Pencil icon only shows on hover
+- [ ] Click handler only active when `canEdit` is true
+- [ ] Keyboard accessible (Enter/Space)
+- [ ] No TypeScript errors (`pnpm check:lint`)
+
+## Todo List
+- [ ] Add imports (useState, Pencil, permissions, WorklogModal)
+- [ ] Add state + admin permission logic
+- [ ] Add click handler + hover styling
+- [ ] Add Pencil icon with hover visibility
+- [ ] Render WorklogModal conditionally
+- [ ] Run lint check
+- [ ] Manual test: click worklog as project admin -> modal opens in edit mode
+- [ ] Manual test: click worklog as project member (non-admin) -> nothing happens
+- [ ] Manual test: edit duration/description -> saves correctly
+
+## Success Criteria
+- Clicking worklog activity entry opens edit modal (for project admins only)
+- Non-admin users see no visual change, no click handler
+- Edit saves correctly via existing WorklogModal + store flow
+- No regression on worklog display or create flow
+
+## Risk Assessment
+- **Low risk**: Single file change, reusing existing modal/store/API
+- **Edge case**: `worklog` could be undefined if store hasn't loaded yet -> guarded by `canEdit` check requiring `worklog` to be truthy
+
+## Security Considerations
+- Frontend permission check: only Project ADMIN can edit/delete
+- Backend PATCH/DELETE endpoints should also enforce admin-only permission
+- Frontend check is UX-only (hides button), not security boundary

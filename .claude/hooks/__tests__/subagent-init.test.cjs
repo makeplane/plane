@@ -135,6 +135,60 @@ describe('subagent-init.cjs', () => {
 
   });
 
+  describe('Issue #540: ck plan CLI injection for plan-aware agents', () => {
+
+    it('injects ck plan CLI section for plan-aware agent types', async () => {
+      const planAwareTypes = ['planner', 'project-manager', 'code-simplifier', 'brainstormer', 'code-reviewer', 'fullstack-developer'];
+
+      for (const agentType of planAwareTypes) {
+        const result = await runHook({
+          agent_type: agentType,
+          agent_id: 'test-540',
+          cwd: process.cwd()
+        });
+
+        const context = result.output?.hookSpecificOutput?.additionalContext || '';
+
+        // Exact subcommand syntax per CLI registry
+        assert.ok(
+          context.includes('ck plan check'),
+          `Agent type '${agentType}' should receive 'ck plan check' command`
+        );
+        assert.ok(
+          context.includes('ck plan check') && context.includes('--start'),
+          `Agent type '${agentType}' should receive 'ck plan check <id> --start' for in-progress`
+        );
+        assert.ok(
+          context.includes('ck plan uncheck'),
+          `Agent type '${agentType}' should receive 'ck plan uncheck' command`
+        );
+        assert.ok(
+          context.includes('Fallback'),
+          `Agent type '${agentType}' should include fallback note`
+        );
+      }
+    });
+
+    it('does NOT inject ck plan CLI for non-plan agents', async () => {
+      const nonPlanTypes = ['tester', 'debugger', 'researcher', 'git-manager', 'test-agent'];
+
+      for (const agentType of nonPlanTypes) {
+        const result = await runHook({
+          agent_type: agentType,
+          agent_id: 'test-540',
+          cwd: process.cwd()
+        });
+
+        const context = result.output?.hookSpecificOutput?.additionalContext || '';
+        assert.ok(
+          !context.includes('Plan CLI'),
+          `Agent type '${agentType}' should NOT receive Plan CLI section`
+        );
+      }
+    });
+
+  });
+
   describe('Issue #291: CWD and Git Root Handling', () => {
 
     it('uses payload.cwd for context output', async () => {

@@ -10,8 +10,8 @@ Quick, creative copy generation with minimal research.
 
 ## Workflow Steps
 
-1. **Screenshots provided** → Use `ai-multimodal` skill to analyze context
-2. **Videos provided** → Use `ai-multimodal` video-analysis for context
+1. **Screenshots provided** → Use `ck:ai-multimodal` skill to analyze context
+2. **Videos provided** → Use `ck:ai-multimodal` video-analysis for context
 3. **Write** → Use `fullstack-developer` agent directly to produce copy
 
 ## Speed Optimization

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture Diagram — Reference Template</title>
+<!--
+  Reference template for the ck:preview skill: CSS Grid architecture layout.
+  Warm terracotta/sage palette — distinctly different from the teal (mermaid)
+  and rose (data-table) templates so agents absorb variety, not a single palette.
+  Key patterns demonstrated:
+  - Warm non-default palette (terracotta + sage, NOT indigo/violet)
+  - Depth tiers: hero (input sources), default (mid sections), recessed (callout)
+  - Asymmetric background atmosphere (off-center gradient mesh)
+  - Large heading (38px) for typographic contrast
+  - Section cards with colored accent borders and dot labels
+  - Vertical flow arrows between sections (inline SVG)
+  - Horizontal pipeline with step boxes and arrow separators
+  - Parallel branch within a pipeline
+  - Color-coded legend, three-column output row
+  - Staggered fade-in via --i CSS variable (works with interleaved elements)
+  - Reduced motion respect, responsive single-column fallback
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ THEME ============ */
+  :root {
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+
+    /* Light theme — warm terracotta + sage palette */
+    --bg: #faf7f5;
+    --surface: #ffffff;
+    --surface2: #f5f0ec;
+    --surface-elevated: #fff9f5;
+    --border: rgba(0, 0, 0, 0.07);
+    --border-bright: rgba(0, 0, 0, 0.14);
+    --text: #292017;
+    --text-dim: #8a7e72;
+    --accent: #c2410c;
+    --accent-dim: rgba(194, 65, 12, 0.07);
+    --green: #4d7c0f;
+    --green-dim: rgba(77, 124, 15, 0.07);
+    --orange: #b45309;
+    --orange-dim: rgba(180, 83, 9, 0.07);
+    --sage: #65a30d;
+    --sage-dim: rgba(101, 163, 13, 0.07);
+    --teal: #0f766e;
+    --teal-dim: rgba(15, 118, 110, 0.07);
+    --plum: #9f1239;
+    --plum-dim: rgba(159, 18, 57, 0.07);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1412;
+      --surface: #231d1a;
+      --surface2: #2e2622;
+      --surface-elevated: #352d28;
+      --border: rgba(255, 255, 255, 0.06);
+      --border-bright: rgba(255, 255, 255, 0.12);
+      --text: #ede5dd;
+      --text-dim: #a69889;
+      --accent: #fb923c;
+      --accent-dim: rgba(251, 146, 60, 0.12);
+      --green: #a3e635;
+      --green-dim: rgba(163, 230, 53, 0.1);
+      --orange: #fbbf24;
+      --orange-dim: rgba(251, 191, 36, 0.1);
+      --sage: #bef264;
+      --sage-dim: rgba(190, 242, 100, 0.1);
+      --teal: #5eead4;
+      --teal-dim: rgba(94, 234, 212, 0.1);
+      --plum: #fda4af;
+      --plum-dim: rgba(253, 164, 175, 0.1);
+    }
+  }
+
+  /* ── Dark (manual toggle override) ── */
+  [data-theme="dark"] {
+    --bg: #1a1412;
+    --surface: #231d1a;
+    --surface2: #2e2622;
+    --surface-elevated: #352d28;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-bright: rgba(255, 255, 255, 0.12);
+    --text: #ede5dd;
+    --text-dim: #a69889;
+    --accent: #fb923c;
+    --accent-dim: rgba(251, 146, 60, 0.12);
+    --green: #a3e635;
+    --green-dim: rgba(163, 230, 53, 0.1);
+    --orange: #fbbf24;
+    --orange-dim: rgba(251, 191, 36, 0.1);
+    --sage: #bef264;
+    --sage-dim: rgba(190, 242, 100, 0.1);
+    --teal: #5eead4;
+    --teal-dim: rgba(94, 234, 212, 0.1);
+    --plum: #fda4af;
+    --plum-dim: rgba(253, 164, 175, 0.1);
+  }
+
+  /* ============ THEME TOGGLE ============ */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 300;
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: background 0.15s, color 0.15s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .theme-toggle:hover { background: var(--surface2); color: var(--text); }
+
+  /* ============ RESET + BASE ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse at 20% 0%, var(--accent-dim) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, var(--sage-dim) 0%, transparent 40%);
+    color: var(--text);
+    font-family: var(--font-body);
+    padding: 40px;
+    min-height: 100vh;
+  }
+
+  /* ============ ANIMATION ============ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section, .flow-arrow {
+    animation: fadeUp 0.4s ease-out both;
+    animation-delay: calc(var(--i, 0) * 0.06s);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* ============ TYPOGRAPHY ============ */
+  h1 {
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 6px;
+    text-wrap: balance;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 40px;
+    font-family: var(--font-mono);
+  }
+
+  /* ============ LAYOUT ============ */
+  .diagram {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* ============ SECTION CARD ============ */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .section--hero {
+    background: var(--surface-elevated);
+    border-color: color-mix(in srgb, var(--border) 50%, var(--accent) 50%);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    padding: 28px 32px;
+  }
+
+  .section--recessed {
+    background: var(--surface2);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Color variants */
+  .section--accent { border-color: var(--accent-dim); }
+  .section--accent .section-label { color: var(--accent); }
+  .section--accent .section-label .dot { background: var(--accent); }
+
+  .section--green { border-color: var(--green-dim); }
+  .section--green .section-label { color: var(--green); }
+  .section--green .section-label .dot { background: var(--green); }
+
+  .section--orange { border-color: var(--orange-dim); }
+  .section--orange .section-label { color: var(--orange); }
+  .section--orange .section-label .dot { background: var(--orange); }
+
+  .section--sage { border-color: var(--sage-dim); }
+  .section--sage .section-label { color: var(--sage); }
+  .section--sage .section-label .dot { background: var(--sage); }
+
+  .section--teal { border-color: var(--teal-dim); }
+  .section--teal .section-label { color: var(--teal); }
+  .section--teal .section-label .dot { background: var(--teal); }
+
+  .section--plum { border-color: var(--plum-dim); }
+  .section--plum .section-label { color: var(--plum); }
+  .section--plum .section-label .dot { background: var(--plum); }
+
+  /* ============ INNER GRID ============ */
+  .inner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .inner-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+
+  .inner-card .title {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .inner-card .desc {
+    color: var(--text-dim);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .inner-card code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ============ FLOW ARROW ============ */
+  .flow-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 4px 0;
+  }
+
+  .flow-arrow svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--border-bright);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ============ PIPELINE ============ */
+  .pipeline {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .pipeline-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    min-width: 120px;
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .pipeline-step .step-num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .pipeline-step .step-name {
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .pipeline-step .step-detail {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* Step color variants */
+  .pipeline-step--teal { border-color: var(--teal-dim); }
+  .pipeline-step--teal .step-num { color: var(--teal); }
+
+  .pipeline-step--sage { border-color: var(--sage-dim); }
+  .pipeline-step--sage .step-num { color: var(--sage); }
+
+  .pipeline-step--orange { border-color: var(--orange-dim); }
+  .pipeline-step--orange .step-num { color: var(--orange); }
+
+  .pipeline-step--green { border-color: var(--green-dim); }
+  .pipeline-step--green .step-num { color: var(--green); }
+
+  .pipeline-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 2px;
+    color: var(--border-bright);
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .pipeline-parallel {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* ============ THREE COLUMN ROW ============ */
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* ============ LIST ============ */
+  .node-list {
+    list-style: none;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+
+  .node-list li {
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .node-list li::before {
+    content: '›';
+    color: var(--text-dim);
+    font-weight: 600;
+    position: absolute;
+    left: 0;
+  }
+
+  .node-list code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ============ CALLOUT ============ */
+  .callout {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-dim);
+  }
+
+  .callout strong { color: var(--text); font-weight: 600; }
+
+  .callout code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ============ LEGEND ============ */
+  .legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  .legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* ============ SOURCE PILLS ============ */
+  .sources {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .source {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: border-color 0.2s;
+  }
+
+  .source:hover { border-color: var(--border-bright); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    body { padding: 20px; }
+    .inner-grid { grid-template-columns: 1fr; }
+    .three-col { grid-template-columns: 1fr; }
+    .pipeline { flex-wrap: wrap; gap: 6px; }
+    .pipeline-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme"></button>
+<script>
+(function() {
+  var t = document.getElementById('themeToggle');
+  var s = localStorage.getItem('theme');
+  var i = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  if (s) document.documentElement.setAttribute('data-theme', i);
+  t.textContent = i === 'dark' ? '\u2600' : '\u263E';
+  t.addEventListener('click', function() {
+    var c = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var n = c === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', n);
+    localStorage.setItem('theme', n);
+    t.textContent = n === 'dark' ? '\u2600' : '\u263E';
+  });
+})();
+</script>
+
+<h1>System Architecture</h1>
+<p class="subtitle">reference template &mdash; architecture diagram pattern</p>
+
+<div class="diagram">
+
+  <!-- Source pills row — hero depth for the entry point -->
+  <div class="section section--hero" style="--i:0">
+    <div class="section-label"><span class="dot" style="background:var(--text-dim)"></span> Input Sources</div>
+    <div class="sources">
+      <div class="source"><span>💬</span> Slack</div>
+      <div class="source"><span>🐙</span> GitHub</div>
+      <div class="source"><span>📧</span> Email</div>
+    </div>
+  </div>
+
+  <!-- Flow arrow -->
+  <div class="flow-arrow" style="--i:1">
+    <svg viewBox="0 0 20 20"><path d="M10 4 L10 16 M6 12 L10 16 L14 12"/></svg>
+    incoming events
+  </div>
+
+  <!-- Gateway section with inner grid -->
+  <div class="section section--accent" style="--i:2">
+    <div class="section-label"><span class="dot"></span> Gateway Layer</div>
+    <div class="inner-grid">
+      <div class="inner-card">
+        <div class="title">Router</div>
+        <div class="desc">Routes messages to agents via <code>resolveRoute()</code></div>
+      </div>
+      <div class="inner-card">
+        <div class="title">HTTP Server</div>
+        <div class="desc">Plugin routes + handlers for webhooks and API</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow" style="--i:3">
+    <svg viewBox="0 0 20 20"><path d="M10 4 L10 16 M6 12 L10 16 L14 12"/></svg>
+    pipeline entry
+  </div>
+
+  <!-- Pipeline section -->
+  <div class="section section--green" style="--i:4">
+    <div class="section-label"><span class="dot"></span> Processing Pipeline</div>
+    <div class="legend" style="margin-bottom:14px">
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--teal-dim);border:1px solid var(--teal)"></div>no LLM</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--sage-dim);border:1px solid var(--sage)"></div>LLM call</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--orange-dim);border:1px solid var(--orange)"></div>embedding</div>
+      <div class="legend-item"><div class="legend-swatch" style="background:var(--green-dim);border:1px solid var(--green)"></div>DB write</div>
+    </div>
+    <div class="pipeline">
+      <div class="pipeline-step pipeline-step--teal">
+        <div class="step-num">STEP 0</div>
+        <div class="step-name">Pre-filter</div>
+        <div class="step-detail">Allowlist, bots,<br>dedup check</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step pipeline-step--sage">
+        <div class="step-num">STEP 1</div>
+        <div class="step-name">Relevance</div>
+        <div class="step-detail">Cheap LLM<br>boolean check</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step pipeline-step--sage">
+        <div class="step-num">STEP 2</div>
+        <div class="step-name">Classify</div>
+        <div class="step-detail">JSON schema<br>validated output</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-parallel">
+        <div class="pipeline-step pipeline-step--orange">
+          <div class="step-num">STEP 3</div>
+          <div class="step-name">Embed</div>
+          <div class="step-detail">Vector embedding</div>
+        </div>
+        <div class="pipeline-step pipeline-step--teal">
+          <div class="step-num">STEP 5</div>
+          <div class="step-name">Enrich</div>
+          <div class="step-detail">User resolution</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step pipeline-step--green">
+        <div class="step-num">STEP 4</div>
+        <div class="step-name">Cluster</div>
+        <div class="step-detail">Cosine similarity<br>+ INSERT</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow" style="--i:5">
+    <svg viewBox="0 0 20 20"><path d="M10 4 L10 16 M6 12 L10 16 L14 12"/></svg>
+    stored and queryable
+  </div>
+
+  <!-- Database section -->
+  <div class="section section--orange" style="--i:6">
+    <div class="section-label"><span class="dot"></span> Database</div>
+    <div class="inner-grid">
+      <div class="inner-card">
+        <div class="title">feedback_items</div>
+        <div class="desc">Classification, embedding, cluster assignment, source dedup</div>
+      </div>
+      <div class="inner-card">
+        <div class="title">clusters</div>
+        <div class="desc">Centroid vectors, trends, ticket links, severity rollup</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow" style="--i:7">
+    <svg viewBox="0 0 20 20"><path d="M10 4 L10 16 M6 12 L10 16 L14 12"/></svg>
+    consumed by
+  </div>
+
+  <!-- Three column output -->
+  <div class="three-col">
+    <div class="section section--sage" style="--i:8">
+      <div class="section-label"><span class="dot"></span> Agent Tools</div>
+      <ul class="node-list">
+        <li><code>search</code> semantic vector search</li>
+        <li><code>clusters</code> browse and filter</li>
+        <li><code>stats</code> aggregate metrics</li>
+      </ul>
+    </div>
+    <div class="section section--plum" style="--i:9">
+      <div class="section-label"><span class="dot"></span> Actions</div>
+      <ul class="node-list">
+        <li>Create tickets from clusters</li>
+        <li>Notify customers on ship</li>
+        <li>Generate release notes</li>
+      </ul>
+    </div>
+    <div class="section section--teal" style="--i:10">
+      <div class="section-label"><span class="dot"></span> Dashboard</div>
+      <ul class="node-list">
+        <li>Metrics overview</li>
+        <li>Feedback stream</li>
+        <li>NL chat interface</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Callout — recessed depth for secondary info -->
+  <div class="callout section section--recessed" style="--i:11">
+    <strong>Multi-tenant</strong> &mdash; Each agent gets an isolated database at
+    <code>{agentDir}/intelligence/feedback.db</code> with per-agent config overlay
+    and credential isolation.
+  </div>
+
+</div>
+
+</body>
+</html>

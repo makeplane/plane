@@ -32,6 +32,7 @@ from plane.db.models import (
     User,
     EstimatePoint,
 )
+from plane.db.models.task_category import MainTaskCategory, SubTaskCategory
 from plane.settings.redis import redis_instance
 from plane.utils.exception_logger import log_exception
 from plane.utils.issue_relation_mapper import get_inverse_relation
@@ -185,6 +186,33 @@ def track_priority(
         )
 
 
+def track_frequency(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if current_instance.get("frequency") != requested_data.get("frequency"):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=current_instance.get("frequency"),
+                new_value=requested_data.get("frequency"),
+                field="frequency",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the frequency to",
+                epoch=epoch,
+            )
+        )
+
+
 # Track changes in state of the issue
 def track_state(
     requested_data,
@@ -238,6 +266,7 @@ def track_target_date(
     epoch,
 ):
     if current_instance.get("target_date") != requested_data.get("target_date"):
+        reason = (requested_data.get("reason") or "").strip()
         issue_activities.append(
             IssueActivity(
                 issue_id=issue_id,
@@ -250,7 +279,40 @@ def track_target_date(
                 field="target_date",
                 project_id=project_id,
                 workspace_id=workspace_id,
-                comment="updated the target date to",
+                comment=reason,
+                epoch=epoch,
+            )
+        )
+
+
+# Track changes in issue completed date (manual edits only)
+def track_completed_at(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    if current_instance.get("completed_at") != requested_data.get("completed_at"):
+        reason = (requested_data.get("reason") or "").strip()
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=(
+                    current_instance.get("completed_at") if current_instance.get("completed_at") is not None else ""
+                ),
+                new_value=(
+                    requested_data.get("completed_at") if requested_data.get("completed_at") is not None else ""
+                ),
+                field="completed_at",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=reason,
                 epoch=epoch,
             )
         )
@@ -554,6 +616,88 @@ def track_closed_to(
         )
 
 
+# Track changes in main task category
+def track_main_task_category(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_id = current_instance.get("main_task_category_id") or current_instance.get("main_task_category")
+    requested_id = requested_data.get("main_task_category_id") or requested_data.get("main_task_category")
+
+    if current_id is not None and not is_valid_uuid(current_id):
+        current_id = None
+    if requested_id is not None and not is_valid_uuid(requested_id):
+        requested_id = None
+
+    if current_id != requested_id:
+        old_category = MainTaskCategory.objects.filter(pk=current_id).first() if current_id else None
+        new_category = MainTaskCategory.objects.filter(pk=requested_id).first() if requested_id else None
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_category.name if old_category else None,
+                new_value=new_category.name if new_category else None,
+                field="main_task_category",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the main task category to",
+                old_identifier=old_category.id if old_category else None,
+                new_identifier=new_category.id if new_category else None,
+                epoch=epoch,
+            )
+        )
+
+
+# Track changes in sub task category
+def track_sub_task_category(
+    requested_data,
+    current_instance,
+    issue_id,
+    project_id,
+    workspace_id,
+    actor_id,
+    issue_activities,
+    epoch,
+):
+    current_id = current_instance.get("sub_task_category_id") or current_instance.get("sub_task_category")
+    requested_id = requested_data.get("sub_task_category_id") or requested_data.get("sub_task_category")
+
+    if current_id is not None and not is_valid_uuid(current_id):
+        current_id = None
+    if requested_id is not None and not is_valid_uuid(requested_id):
+        requested_id = None
+
+    if current_id != requested_id:
+        old_category = SubTaskCategory.objects.filter(pk=current_id).first() if current_id else None
+        new_category = SubTaskCategory.objects.filter(pk=requested_id).first() if requested_id else None
+
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old_category.name if old_category else None,
+                new_value=new_category.name if new_category else None,
+                field="sub_task_category",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the sub task category to",
+                old_identifier=old_category.id if old_category else None,
+                new_identifier=new_category.id if new_category else None,
+                epoch=epoch,
+            )
+        )
+
+
 def create_issue_activity(
     requested_data,
     current_instance,
@@ -591,44 +735,6 @@ def create_issue_activity(
         )
 
 
-# Track changes in estimate time
-def track_estimate_time(
-    requested_data,
-    current_instance,
-    issue_id,
-    project_id,
-    workspace_id,
-    actor_id,
-    issue_activities,
-    epoch,
-):
-    def format_time(m):
-        if not m:
-            return "None"
-        h = m // 60
-        mins = m % 60
-        if h == 0:
-            return f"{mins}m"
-        if mins == 0:
-            return f"{h}h"
-        return f"{h}h {mins}m"
-
-    if "estimate_time" in requested_data and current_instance.get("estimate_time") != requested_data.get("estimate_time"):
-        issue_activities.append(
-            IssueActivity(
-                issue_id=issue_id,
-                actor_id=actor_id,
-                verb="updated",
-                old_value=format_time(current_instance.get("estimate_time")),
-                new_value=format_time(requested_data.get("estimate_time")),
-                field="estimate_time",
-                project_id=project_id,
-                workspace_id=workspace_id,
-                comment="updated the estimate time to ",
-                epoch=epoch,
-            )
-        )
-
 
 def update_issue_activity(
     requested_data,
@@ -644,21 +750,26 @@ def update_issue_activity(
         "name": track_name,
         "parent_id": track_parent,
         "priority": track_priority,
+        "frequency": track_frequency,
         "state_id": track_state,
         "description_html": track_description,
         "target_date": track_target_date,
         "start_date": track_start_date,
+        "completed_at": track_completed_at,
         "label_ids": track_labels,
         "assignee_ids": track_assignees,
         "estimate_point": track_estimate_points,
-        "estimate_time": track_estimate_time,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        "main_task_category_id": track_main_task_category,
+        "sub_task_category_id": track_sub_task_category,
         # External endpoint keys
         "parent": track_parent,
         "state": track_state,
         "assignees": track_assignees,
         "labels": track_labels,
+        "main_task_category": track_main_task_category,
+        "sub_task_category": track_sub_task_category,
     }
 
     requested_data = json.loads(requested_data) if requested_data is not None else None
@@ -1539,6 +1650,48 @@ def create_intake_activity(
         )
 
 
+def worklog_activity_updated(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    requested = json.loads(requested_data) if requested_data else {}
+    current = json.loads(current_instance) if current_instance else {}
+    reason = requested.get("reason", "")
+
+    changes = []
+    if "duration_minutes" in requested and requested.get("duration_minutes") != current.get("duration_minutes"):
+        changes.append(f"duration: {current.get('duration_minutes')}m → {requested.get('duration_minutes')}m")
+    if "logged_at" in requested and requested.get("logged_at") != current.get("logged_at"):
+        changes.append(f"date: {current.get('logged_at')} → {requested.get('logged_at')}")
+    if "description" in requested and requested.get("description") != current.get("description"):
+        changes.append("description updated")
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id, project_id=project_id, workspace_id=workspace_id,
+            actor_id=actor_id, verb="updated", field="worklog",
+            old_value=", ".join(changes) if changes else "worklog updated",
+            new_value=reason, epoch=epoch,
+        )
+    )
+
+
+def worklog_activity_deleted(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    requested = json.loads(requested_data) if requested_data else {}
+    current = json.loads(current_instance) if current_instance else {}
+    reason = requested.get("reason", "")
+    duration = current.get("duration_minutes", 0)
+
+    issue_activities.append(
+        IssueActivity(
+            issue_id=issue_id, project_id=project_id, workspace_id=workspace_id,
+            actor_id=actor_id, verb="deleted", field="worklog",
+            old_value=f"{duration}m logged", new_value=reason, epoch=epoch,
+        )
+    )
+
+
 # Receive message from room group
 @shared_task
 def issue_activity(
@@ -1605,6 +1758,8 @@ def issue_activity(
             "issue_draft.activity.updated": update_draft_issue_activity,
             "issue_draft.activity.deleted": delete_draft_issue_activity,
             "intake.activity.created": create_intake_activity,
+            "worklog.activity.updated": worklog_activity_updated,
+            "worklog.activity.deleted": worklog_activity_deleted,
         }
 
         func = ACTIVITY_MAPPER.get(type)

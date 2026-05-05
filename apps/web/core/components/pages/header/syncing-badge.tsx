@@ -23,12 +23,12 @@ export function PageSyncingBadge({ syncStatus }: Props) {
       if (syncStatus === "synced") {
         // Delay hiding to allow exit animation to complete
         setTimeout(() => {
-          setIsVisible(false);
+          queueMicrotask(() => setIsVisible(false));
         }, 300); // match animation duration
       } else {
-        setIsVisible(true);
+        queueMicrotask(() => setIsVisible(true));
       }
-      setPrevSyncStatus(syncStatus);
+      queueMicrotask(() => setPrevSyncStatus(syncStatus));
     }
   }, [syncStatus, prevSyncStatus]);
 

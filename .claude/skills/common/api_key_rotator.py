@@ -210,6 +210,40 @@ def is_rate_limit_error(error: Exception) -> bool:
     return any(indicator in error_str for indicator in rate_limit_indicators)
 
 
+def is_server_error(error: Exception) -> bool:
+    """
+    Check if an exception indicates a transient server error (5xx).
+
+    Detects 500, 502, 503, 504 and common server error messages
+    from Google API. These are transient and should be retried
+    with longer backoff than client errors.
+
+    Args:
+        error: The exception to check
+
+    Returns:
+        True if this is a server-side error worth retrying
+    """
+    error_str = str(error).lower()
+
+    server_error_indicators = [
+        '500',
+        '502',
+        '503',
+        '504',
+        'internal server error',
+        'internal_server_error',
+        'service unavailable',
+        'service_unavailable',
+        'bad gateway',
+        'gateway timeout',
+        'temporarily unavailable',
+        'overloaded',
+    ]
+
+    return any(indicator in error_str for indicator in server_error_indicators)
+
+
 if __name__ == '__main__':
     # Demo/test the rotator
     print("=== KeyRotator Demo ===\n")

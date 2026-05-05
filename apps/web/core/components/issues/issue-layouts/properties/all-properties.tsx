@@ -5,7 +5,7 @@
  */
 
 import type { SyntheticEvent } from "react";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { xor } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -34,23 +34,28 @@ import { ModuleDropdown } from "@/components/dropdowns/module/dropdown";
 import { PriorityDropdown } from "@/components/dropdowns/priority";
 import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
+import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useLabel } from "@/hooks/store/use-label";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useDraftStateTransition } from "@/hooks/store/use-draft-state-transition";
 import { useAppRouter } from "@/hooks/use-app-router";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web components
 import { WorkItemLayoutAdditionalProperties } from "@/plane-web/components/issues/issue-layouts/additional-properties";
+import { FieldChangeReasonModal } from "@/plane-web/components/issues/issue-details/sidebar/field-change-reason-modal";
 // local components
 import { IssuePropertyLabels } from "./labels";
 import { WithDisplayPropertiesHOC } from "./with-display-properties-HOC";
 
 export interface IIssueProperties {
   issue: TIssue;
-  updateIssue: ((projectId: string | null, issueId: string, data: Partial<TIssue>) => Promise<void>) | undefined;
+  updateIssue:
+    | ((projectId: string | null, issueId: string, data: Partial<TIssue> & { reason?: string }) => Promise<void>)
+    | undefined;
   displayProperties: IIssueDisplayProperties | undefined;
   isReadOnly: boolean;
   className: string;
@@ -62,6 +67,9 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   const { issue, updateIssue, displayProperties, isReadOnly, className, isEpic = false } = props;
   // i18n
   const { t } = useTranslation();
+  // due date reason modal state
+  const [pendingTargetDate, setPendingTargetDate] = useState<string | null>(null);
+  const [isTargetDateModalOpen, setIsTargetDateModalOpen] = useState(false);
   // store hooks
   const { getProjectById } = useProject();
   const { labelMap } = useLabel();
@@ -74,6 +82,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   } = useIssues(storeType);
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { getStateById } = useProjectState();
+  const { validateTransition } = useDraftStateTransition();
   const { isMobile } = usePlatformOS();
   const projectDetails = getProjectById(issue.project_id);
 
@@ -108,6 +117,15 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   );
 
   const handleState = async (stateId: string) => {
+    const { missingFieldLabels } = validateTransition(issue, stateId, stateDetails?.group);
+    if (missingFieldLabels.length > 0) {
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("issue.required_fields_missing"),
+        message: missingFieldLabels.join(", "),
+      });
+      return;
+    }
     if (updateIssue) await updateIssue(issue.project_id, issue.id, { state_id: stateId });
   };
 
@@ -153,9 +171,21 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       await updateIssue(issue.project_id, issue.id, { start_date: date ? renderFormattedPayloadDate(date) : null });
   };
 
-  const handleTargetDate = async (date: Date | null) => {
-    if (updateIssue)
-      await updateIssue(issue.project_id, issue.id, { target_date: date ? renderFormattedPayloadDate(date) : null });
+  const handleTargetDate = (date: Date | null) => {
+    const formatted = date ? renderFormattedPayloadDate(date) : null;
+    if (!formatted) {
+      // Clearing — no reason required
+      if (updateIssue) void updateIssue(issue.project_id, issue.id, { target_date: null });
+      return;
+    }
+    setPendingTargetDate(formatted);
+    setIsTargetDateModalOpen(true);
+  };
+
+  const handleTargetDateConfirm = async (reason: string) => {
+    if (updateIssue) await updateIssue(issue.project_id, issue.id, { target_date: pendingTargetDate, reason });
+    setIsTargetDateModalOpen(false);
+    setPendingTargetDate(null);
   };
 
   const handleEstimate = async (value: string | undefined) => {
@@ -487,6 +517,15 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
           maxRender={3}
         />
       </WithDisplayPropertiesHOC>
+      <FieldChangeReasonModal
+        isOpen={isTargetDateModalOpen}
+        onClose={() => {
+          setIsTargetDateModalOpen(false);
+          setPendingTargetDate(null);
+        }}
+        onConfirm={handleTargetDateConfirm}
+        fieldLabel={t("common.order_by.due_date")}
+      />
     </div>
   );
 });

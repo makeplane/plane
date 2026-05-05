@@ -1,8 +1,11 @@
 ---
-name: better-auth
+name: ck:better-auth
 description: Add authentication with Better Auth (TypeScript). Use for email/password, OAuth providers (Google, GitHub), 2FA/MFA, passkeys/WebAuthn, sessions, RBAC, rate limiting.
 license: MIT
-version: 2.0.0
+argument-hint: "[auth-method or feature]"
+metadata:
+  author: claudekit
+  version: "2.0.0"
 ---
 
 # Better Auth Skill

@@ -5,7 +5,7 @@
 from django.db.models import Case, CharField, Min, Value, When
 
 # Custom ordering for priority and state
-PRIORITY_ORDER = ["urgent", "high", "medium", "low", "none"]
+PRIORITY_ORDER = ["urgent", "high", "medium", "low"]
 STATE_ORDER = ["backlog", "unstarted", "started", "completed", "cancelled"]
 
 

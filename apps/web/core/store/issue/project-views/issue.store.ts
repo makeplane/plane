@@ -58,7 +58,9 @@ export class ProjectViewIssues extends BaseIssuesStore implements IProjectViewIs
   viewFlags = {
     enableQuickAdd: true,
     enableIssueCreation: true,
-    enableInlineEditing: true,
+    // TODO: re-enable inline editing when ready
+    // enableInlineEditing: true,
+    enableInlineEditing: false,
   };
   //filter store
   issueFilterStore: IProjectViewIssuesFilter;

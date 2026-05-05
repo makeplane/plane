@@ -16,7 +16,7 @@ class ROLE(Enum):
     GUEST = 5
 
 
-def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
+def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None, assignee=False):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(instance, request, *args, **kwargs):
@@ -24,6 +24,17 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
             if creator and model:
                 obj = model.objects.filter(id=kwargs["pk"], created_by=request.user).exists()
                 if obj:
+                    return view_func(instance, request, *args, **kwargs)
+
+            # Check for assignee if required
+            if assignee:
+                from plane.db.models import IssueAssignee
+                is_assignee = IssueAssignee.objects.filter(
+                    issue_id=kwargs["pk"],
+                    assignee=request.user,
+                    deleted_at__isnull=True,
+                ).exists()
+                if is_assignee:
                     return view_func(instance, request, *args, **kwargs)
 
             # Convert allowed_roles to their values if they are enum members

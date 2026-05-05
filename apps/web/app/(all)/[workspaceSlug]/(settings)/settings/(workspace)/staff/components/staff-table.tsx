@@ -62,13 +62,27 @@ export const StaffTable = observer(function StaffTable({ staff, workspaceSlug, o
       <table className="w-full">
         <thead className="bg-custom-background-80">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">{t("staff.staff_id.label")}</th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">{t("name")}</th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">{t("staff.department.label")}</th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">{t("staff.position.label")}</th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">{t("staff.status.label")}</th>
-            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">{t("staff.date_of_joining.label")}</th>
-            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-custom-text-300">{t("staff.actions")}</th>
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">
+              {t("staff.staff_id.label")}
+            </th>
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">
+              {t("name")}
+            </th>
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">
+              {t("staff.department.label")}
+            </th>
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">
+              {t("staff.position.label")}
+            </th>
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">
+              {t("staff.status.label")}
+            </th>
+            <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-custom-text-300">
+              {t("staff.date_of_joining.label")}
+            </th>
+            <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-custom-text-300">
+              {t("staff.actions")}
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-custom-border-200">

@@ -294,13 +294,13 @@ class UserNotificationPreferenceEndpoint(BaseAPIView):
 
     # request the object
     def get(self, request):
-        user_notification_preference = UserNotificationPreference.objects.get(user=request.user)
+        user_notification_preference, _ = UserNotificationPreference.objects.get_or_create(user=request.user)
         serializer = UserNotificationPreferenceSerializer(user_notification_preference)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # update the object
     def patch(self, request):
-        user_notification_preference = UserNotificationPreference.objects.get(user=request.user)
+        user_notification_preference, _ = UserNotificationPreference.objects.get_or_create(user=request.user)
         serializer = UserNotificationPreferenceSerializer(user_notification_preference, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

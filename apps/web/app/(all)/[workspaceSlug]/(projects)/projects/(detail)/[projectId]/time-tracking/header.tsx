@@ -18,28 +18,28 @@ import { useProject } from "@/hooks/store/use-project";
 import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
 
 export const TimeTrackingHeader = observer(function TimeTrackingHeader() {
-    const { workspaceSlug, projectId } = useParams();
-    const { t } = useTranslation();
-    const { loader } = useProject();
+  const { workspaceSlug, projectId } = useParams();
+  const { t } = useTranslation();
+  const { loader } = useProject();
 
-    return (
-        <Header>
-            <Header.LeftItem>
-                <Breadcrumbs isLoading={loader === "init-loader"}>
-                    <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
-                    <Breadcrumbs.Item
-                        component={
-                            <BreadcrumbLink
-                                label={t("time_tracking")}
-                                href={`/${workspaceSlug}/projects/${projectId}/time-tracking/`}
-                                icon={<Timer className="h-4 w-4 text-tertiary" />}
-                                isLast
-                            />
-                        }
-                        isLast
-                    />
-                </Breadcrumbs>
-            </Header.LeftItem>
-        </Header>
-    );
+  return (
+    <Header>
+      <Header.LeftItem>
+        <Breadcrumbs isLoading={loader === "init-loader"}>
+          <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <Breadcrumbs.Item
+            component={
+              <BreadcrumbLink
+                label={t("time_tracking")}
+                href={`/${workspaceSlug}/projects/${projectId}/time-tracking/`}
+                icon={<Timer className="h-4 w-4 text-tertiary" />}
+                isLast
+              />
+            }
+            isLast
+          />
+        </Breadcrumbs>
+      </Header.LeftItem>
+    </Header>
+  );
 });

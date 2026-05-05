@@ -42,10 +42,11 @@
 - **DO NOT** create new enhanced files, update to the existing files directly.
 
 ## Visual Aids
-- Use `/preview --explain` when explaining unfamiliar code patterns or complex logic
-- Use `/preview --diagram` for architecture diagrams and data flow visualization
-- Use `/preview --slides` for step-by-step walkthroughs and presentations
-- Use `/preview --ascii` for terminal-friendly diagrams (no browser needed to understand)
+- Use `/ck:preview --explain` when explaining unfamiliar code patterns or complex logic
+- Use `/ck:preview --diagram` for architecture diagrams and data flow visualization
+- Use `/ck:preview --slides` for step-by-step walkthroughs and presentations
+- Use `/ck:preview --ascii` for terminal-friendly diagrams (no browser needed to understand)
+- Add `--html` to any generation flag for self-contained HTML output (opens in browser, no server needed)
 - **Plan context:** Active plan determined from `## Plan Context` in hook injection; visuals save to `{plan_dir}/visuals/`
 - If no active plan, fallback to `plans/visuals/` directory
 - For Mermaid diagrams, use `/mermaidjs-v11` skill for v11 syntax rules

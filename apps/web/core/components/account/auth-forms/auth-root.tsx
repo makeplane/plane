@@ -54,8 +54,10 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   const oAuthActionText = authMode === EAuthModes.SIGN_UP ? "Sign up" : "Sign in";
   const { isOAuthEnabled, oAuthOptions } = useOAuthConfig(oAuthActionText);
   const isLDAPEnabled = config?.is_ldap_enabled || false;
+  const isSwingSSOEnabled = config?.is_swing_sso_enabled || false;
+  const isSMTPConfigured = config?.is_smtp_configured || false;
   const isEmailBasedAuthEnabled = config?.is_email_password_enabled || config?.is_magic_login_enabled;
-  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled;
+  const noAuthMethodsAvailable = !isOAuthEnabled && !isEmailBasedAuthEnabled && !isLDAPEnabled && !isSwingSSOEnabled;
 
   useEffect(() => {
     if (!authMode && currentAuthMode) setAuthMode(currentAuthMode);
@@ -121,16 +123,23 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
       {errorInfo && errorInfo?.type === EErrorAlertType.BANNER_ALERT && (
         <AuthBanner message={errorInfo.message} handleBannerData={(value) => setErrorInfo(value)} />
       )}
-      <AuthHeader
-        workspaceSlug={workspaceSlug?.toString() || undefined}
-        invitationId={invitation_id?.toString() || undefined}
-        invitationEmail={email || undefined}
-        authMode={authMode}
-        currentAuthStep={authStep}
-      />
+      {invitation_id && workspaceSlug && emailParam ? (
+        <AuthHeader
+          workspaceSlug={workspaceSlug.toString()}
+          invitationId={invitation_id.toString()}
+          invitationEmail={email}
+          authMode={authMode}
+          currentAuthStep={authStep}
+        />
+      ) : null}
       {authMode === EAuthModes.SIGN_IN ? (
         /* Unified login — Staff ID / LDAP / Email auto-detect */
-        <StaffIdLoginForm nextPath={nextPath || undefined} isLDAPEnabled={isLDAPEnabled} />
+        <StaffIdLoginForm
+          nextPath={nextPath || undefined}
+          isLDAPEnabled={isLDAPEnabled}
+          isSwingSSOEnabled={isSwingSSOEnabled}
+          isSMTPConfigured={isSMTPConfigured}
+        />
       ) : (
         <>
           {isOAuthEnabled && (
@@ -161,8 +170,8 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
 
 function AuthContainer({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col justify-center items-center flex-grow w-full py-6 mt-10">
-      <div className="relative flex flex-col gap-6 max-w-[22.5rem] w-full">{children}</div>
+    <div className="flex flex-col justify-center items-center flex-grow w-full h-full">
+      <div className="relative flex flex-col gap-6 w-full">{children}</div>
     </div>
   );
 }

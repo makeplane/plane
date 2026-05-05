@@ -4,8 +4,6 @@
 
 # Django imports
 from django.utils import timezone
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 
 # Third Party imports
@@ -42,6 +40,8 @@ from plane.db.models import (
     IssueDescriptionVersion,
     ProjectMember,
     EstimatePoint,
+    MainTaskCategory,
+    SubTaskCategory,
 )
 from plane.utils.content_validator import (
     validate_html_content,
@@ -60,6 +60,7 @@ class IssueFlatSerializer(BaseSerializer):
             "description_json",
             "description_html",
             "priority",
+            "frequency",
             "start_date",
             "target_date",
             "sequence_id",
@@ -97,6 +98,18 @@ class IssueCreateSerializer(BaseSerializer):
         write_only=True,
         required=False,
     )
+    main_task_category_id = serializers.PrimaryKeyRelatedField(
+        source="main_task_category",
+        queryset=MainTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True),
+        required=False,
+        allow_null=True,
+    )
+    sub_task_category_id = serializers.PrimaryKeyRelatedField(
+        source="sub_task_category",
+        queryset=SubTaskCategory.objects.filter(deleted_at__isnull=True, is_active=True),
+        required=False,
+        allow_null=True,
+    )
     project_id = serializers.UUIDField(source="project.id", read_only=True)
     workspace_id = serializers.UUIDField(source="workspace.id", read_only=True)
 
@@ -123,6 +136,13 @@ class IssueCreateSerializer(BaseSerializer):
     def validate(self, attrs):
         allow_triage = self.context.get("allow_triage_state", False)
         state_manager = State.triage_objects if allow_triage else State.objects
+
+        # Validate frequency against allowed choices
+        frequency = attrs.get("frequency")
+        if frequency is not None:
+            valid_frequencies = {choice[0] for choice in Issue.FREQUENCY_CHOICES}
+            if frequency not in valid_frequencies:
+                raise serializers.ValidationError({"frequency": f"Invalid frequency value '{frequency}'"})
 
         if (
             attrs.get("start_date", None) is not None
@@ -164,6 +184,14 @@ class IssueCreateSerializer(BaseSerializer):
                 ).values_list("id", flat=True)
             )
 
+        # completed_at may only be set when the issue state is in the "completed" group
+        if attrs.get("completed_at") is not None:
+            state = attrs.get("state") or (self.instance.state if self.instance else None)
+            if state and state.group != "completed":
+                raise serializers.ValidationError(
+                    {"completed_at": "completed_at can only be set on issues in a completed state"}
+                )
+
         # Check state is from the project only else raise validation error
         if (
             attrs.get("state")
@@ -192,6 +220,26 @@ class IssueCreateSerializer(BaseSerializer):
             ).exists()
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
+
+        # Validate task categories — only on CREATE, only when categories exist in the system
+        if not self.instance and MainTaskCategory.objects.exists():
+            state = attrs.get("state")
+            is_draft_state = state is not None and state.group == "backlog"
+            if not is_draft_state:
+                main_cat = attrs.get("main_task_category")
+                sub_cat = attrs.get("sub_task_category")
+                if not main_cat:
+                    raise serializers.ValidationError(
+                        {"main_task_category_id": "Main task category is required for non-draft issues."}
+                    )
+                if not sub_cat:
+                    raise serializers.ValidationError(
+                        {"sub_task_category_id": "Sub task category is required for non-draft issues."}
+                    )
+                if sub_cat and main_cat and str(sub_cat.main_category_id) != str(main_cat.id):
+                    raise serializers.ValidationError(
+                        {"sub_task_category_id": "Sub task category does not belong to the selected main category."}
+                    )
 
         return attrs
 
@@ -562,20 +610,32 @@ class IssueLinkSerializer(BaseSerializer):
             "issue",
         ]
 
-    def to_internal_value(self, data):
-        # Modify the URL before validation by appending http:// if missing
-        url = data.get("url", "")
-        if url and not url.startswith(("http://", "https://")):
-            data["url"] = "http://" + url
-
-        return super().to_internal_value(data)
-
     def validate_url(self, value):
-        # Use Django's built-in URLValidator for validation
-        url_validator = URLValidator()
-        try:
-            url_validator(value)
-        except ValidationError:
+        from urllib.parse import urlparse
+
+        # Block dangerous schemes that can lead to XSS or content injection
+        BLOCKED_SCHEMES = {"javascript", "data", "vbscript"}
+
+        parsed = urlparse(value)
+
+        if not parsed.scheme:
+            raise serializers.ValidationError({"error": "Invalid URL format. URL must include a protocol scheme."})
+
+        if parsed.scheme.lower() in BLOCKED_SCHEMES:
+            raise serializers.ValidationError({"error": "This URL scheme is not allowed."})
+
+        # http/https require a netloc (domain)
+        if parsed.scheme.lower() in ("http", "https") and not parsed.netloc:
+            raise serializers.ValidationError({"error": "Invalid URL format."})
+
+        # Guard against netloc smuggling blocked schemes (e.g., http://vbscript:payload)
+        if parsed.netloc:
+            netloc_prefix = parsed.netloc.split(":")[0].lower()
+            if netloc_prefix in BLOCKED_SCHEMES:
+                raise serializers.ValidationError({"error": "This URL scheme is not allowed."})
+
+        # Custom protocols require at least scheme://something
+        if not parsed.netloc and not parsed.path:
             raise serializers.ValidationError({"error": "Invalid URL format."})
 
         return value
@@ -770,6 +830,7 @@ class IssueSerializer(DynamicBaseSerializer):
     sub_issues_count = serializers.IntegerField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
+    total_logged_minutes = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue
@@ -781,6 +842,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "completed_at",
             "estimate_point",
             "priority",
+            "frequency",
             "start_date",
             "target_date",
             "sequence_id",
@@ -799,7 +861,9 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
-            "estimate_time",
+            "total_logged_minutes",
+            "main_task_category_id",
+            "sub_task_category_id",
         ]
         read_only_fields = fields
 
@@ -839,6 +903,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "completed_at": instance.completed_at,
             "estimate_point": instance.estimate_point_id,
             "priority": instance.priority,
+            "frequency": instance.frequency,
             "start_date": instance.start_date,
             "target_date": instance.target_date,
             "sequence_id": instance.sequence_id,
@@ -858,6 +923,11 @@ class IssueListDetailSerializer(serializers.Serializer):
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
+            "total_logged_minutes": getattr(instance, "total_logged_minutes", None),
+            "main_task_category_id": instance.main_task_category_id,
+            "sub_task_category_id": instance.sub_task_category_id,
+            "main_task_category_name": instance.main_task_category.name if instance.main_task_category else None,
+            "sub_task_category_name": instance.sub_task_category.name if instance.sub_task_category else None,
         }
 
         # Handle expanded fields only when requested - using direct field access
@@ -994,10 +1064,10 @@ class IssueVersionDetailSerializer(BaseSerializer):
             "external_source",
             "external_id",
             "type",
+            "frequency",
             "cycle",
             "modules",
             "meta",
-            "name",
             "last_saved_at",
             "owned_by",
             "created_at",

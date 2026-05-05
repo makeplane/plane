@@ -7,11 +7,10 @@
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TOAST_TYPE, setPromiseToast, setToast } from "@plane/propel/toast";
-import type { TIssue } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
+import type { TIssueUpdatePayload } from "@plane/types";
 // assets
 import emptyIssue from "@/app/assets/empty-state/issue.svg?url";
 // components
@@ -20,8 +19,8 @@ import { EmptyState } from "@/components/common/empty-state";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
+import { useCanEditIssue } from "@/plane-web/hooks/use-can-edit-issue";
 // local components
 import { IssuePeekOverview } from "../peek-overview";
 import { IssueMainContent } from "./main-content";
@@ -29,7 +28,7 @@ import { IssueDetailsSidebar } from "./sidebar";
 
 export type TIssueOperations = {
   fetch: (workspaceSlug: string, projectId: string, issueId: string, loader?: boolean) => Promise<void>;
-  update: (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => Promise<void>;
+  update: (workspaceSlug: string, projectId: string, issueId: string, data: TIssueUpdatePayload) => Promise<void>;
   remove: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   archive?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
   restore?: (workspaceSlug: string, projectId: string, issueId: string) => Promise<void>;
@@ -79,7 +78,6 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
   const {
     issues: { removeIssue: removeArchivedIssue },
   } = useIssues(EIssuesStoreType.ARCHIVED);
-  const { allowPermissions } = useUserPermissions();
   const { issueDetailSidebarCollapsed } = useAppTheme();
 
   const issueOperations: TIssueOperations = useMemo(
@@ -91,7 +89,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
           console.error("Error fetching the parent issue:", error);
         }
       },
-      update: async (workspaceSlug: string, projectId: string, issueId: string, data: Partial<TIssue>) => {
+      update: async (workspaceSlug: string, projectId: string, issueId: string, data: TIssueUpdatePayload) => {
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
         } catch (error) {
@@ -217,13 +215,8 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
 
   // issue details
   const issue = getIssueById(issueId);
-  // checking if issue is editable, based on user role
-  const isEditable = allowPermissions(
-    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
-    EUserPermissionsLevel.PROJECT,
-    workspaceSlug,
-    projectId
-  );
+  // checking if issue is editable: workspace admin, project admin, creator, or assignee
+  const isEditable = useCanEditIssue(issueId, workspaceSlug, projectId);
 
   return (
     <>

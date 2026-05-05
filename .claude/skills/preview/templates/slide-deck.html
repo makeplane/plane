@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Gateway Redesign — Reference Slide Deck</title>
+<!--
+  Reference template for the ck:preview skill: slide decks.
+  Midnight Editorial preset — deep navy, serif display, warm gold accents.
+  Distinctly different from the terracotta (architecture), teal (mermaid),
+  and rose (data-table) templates so agents absorb variety.
+  Key patterns demonstrated:
+  - All 10 slide types in a cohesive narrative
+  - SlideEngine JS: keyboard/touch/wheel nav, progress bar, dots, counter, hints
+  - Cinematic transitions: fade + translateY + scale, staggered child reveals
+  - Per-slide background variation (gradient direction, accent glow position)
+  - Decorative SVG accents (corner marks, quote mark, divider)
+  - Typography scale: 120px display → 48px heading → 22px body → 14px label
+  - Compositional variety: centered, left-heavy, split, full-bleed
+  - Mermaid at presentation scale (18px labels, 2px edges, 8 nodes)
+  - Dark-first with light mode via prefers-color-scheme
+  - Responsive height breakpoints for projection and small viewports
+  - Nav chrome with backdrop blur for mixed-background visibility
+  - Event delegation: Mermaid zoom and table scroll don't trigger slide nav
+  - prefers-reduced-motion respected
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ THEME: Midnight Editorial ============ */
+  :root {
+    --font-body: 'Instrument Serif', Georgia, serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    --bg: #0f1729;
+    --surface: #162040;
+    --surface2: #1d2b52;
+    --surface-elevated: #243362;
+    --border: rgba(200, 180, 140, 0.08);
+    --border-bright: rgba(200, 180, 140, 0.16);
+    --text: #e8e4d8;
+    --text-dim: #9a9484;
+    --accent: #d4a73a;
+    --accent-dim: rgba(212, 167, 58, 0.1);
+    --code-bg: #0a0f1e;
+    --code-text: #d4d0c4;
+    --green: #4ade80;
+    --green-dim: rgba(74, 222, 128, 0.1);
+    --red: #f87171;
+    --red-dim: rgba(248, 113, 113, 0.1);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96, 165, 250, 0.1);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #faf8f2;
+      --surface: #ffffff;
+      --surface2: #f5f0e6;
+      --surface-elevated: #fffdf5;
+      --border: rgba(30, 30, 50, 0.08);
+      --border-bright: rgba(30, 30, 50, 0.16);
+      --text: #1a1814;
+      --text-dim: #7a7468;
+      --accent: #b8860b;
+      --accent-dim: rgba(184, 134, 11, 0.08);
+      --code-bg: #2a2520;
+      --code-text: #e8e4d8;
+      --green: #16a34a;
+      --green-dim: rgba(22, 163, 74, 0.08);
+      --red: #dc2626;
+      --red-dim: rgba(220, 38, 38, 0.08);
+      --blue: #2563eb;
+      --blue-dim: rgba(37, 99, 235, 0.08);
+    }
+  }
+
+  /* ── Light (manual toggle override) ── */
+  [data-theme="light"] {
+    --bg: #faf8f2;
+    --surface: #ffffff;
+    --surface2: #f5f0e6;
+    --surface-elevated: #fffdf5;
+    --border: rgba(30, 30, 50, 0.08);
+    --border-bright: rgba(30, 30, 50, 0.16);
+    --text: #1a1814;
+    --text-dim: #7a7468;
+    --accent: #b8860b;
+    --accent-dim: rgba(184, 134, 11, 0.08);
+    --code-bg: #2a2520;
+    --code-text: #e8e4d8;
+    --green: #16a34a;
+    --green-dim: rgba(22, 163, 74, 0.08);
+    --red: #dc2626;
+    --red-dim: rgba(220, 38, 38, 0.08);
+    --blue: #2563eb;
+    --blue-dim: rgba(37, 99, 235, 0.08);
+  }
+
+  /* ============ THEME TOGGLE ============ */
+  .theme-toggle {
+    position: fixed; top: 16px; right: 16px; z-index: 300;
+    width: 36px; height: 36px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface);
+    color: var(--text-dim); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; transition: background 0.15s, color 0.15s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+  .theme-toggle:hover { background: var(--surface2); color: var(--text); }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--text);
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  /* ============ DECK ENGINE ============ */
+  .deck {
+    height: 100dvh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .slide {
+    height: 100dvh;
+    scroll-snap-align: start;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(40px, 6vh, 80px) clamp(40px, 8vw, 120px);
+    isolation: isolate;
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    transition:
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .slide.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .slide .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition:
+      opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .slide.visible .reveal { opacity: 1; transform: none; }
+  .slide.visible .reveal:nth-child(1) { transition-delay: 0.1s; }
+  .slide.visible .reveal:nth-child(2) { transition-delay: 0.2s; }
+  .slide.visible .reveal:nth-child(3) { transition-delay: 0.3s; }
+  .slide.visible .reveal:nth-child(4) { transition-delay: 0.4s; }
+  .slide.visible .reveal:nth-child(5) { transition-delay: 0.5s; }
+  .slide.visible .reveal:nth-child(6) { transition-delay: 0.6s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slide, .slide .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* ============ NAV CHROME ============ */
+  .deck-progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--accent); z-index: 100;
+    transition: width 0.3s ease; pointer-events: none;
+  }
+
+  .deck-dots {
+    position: fixed; right: clamp(12px, 2vw, 24px); top: 50%;
+    transform: translateY(-50%); display: flex; flex-direction: column;
+    gap: 8px; z-index: 100; padding: 8px;
+    background: color-mix(in srgb, var(--bg) 60%, transparent 40%);
+    border-radius: 20px;
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+
+  .deck-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--text-dim); opacity: 0.3; border: none; padding: 0;
+    cursor: pointer; transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .deck-dot:hover { opacity: 0.6; }
+  .deck-dot.active { opacity: 1; transform: scale(1.5); background: var(--accent); }
+
+  .deck-counter {
+    position: fixed; bottom: clamp(12px, 2vh, 24px); right: clamp(12px, 2vw, 24px);
+    font-family: var(--font-mono); font-size: 12px; color: var(--text-dim);
+    z-index: 100; font-variant-numeric: tabular-nums;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .deck-hints {
+    position: fixed; bottom: clamp(12px, 2vh, 24px); left: 50%;
+    transform: translateX(-50%); font-family: var(--font-mono);
+    font-size: 11px; color: var(--text-dim); opacity: 0.6; z-index: 100;
+    transition: opacity 0.5s ease; white-space: nowrap;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .deck-hints.faded { opacity: 0; pointer-events: none; }
+
+  /* ============ SHARED SLIDE ELEMENTS ============ */
+  .slide__display {
+    font-size: clamp(48px, 10vw, 120px);
+    font-weight: 400;
+    letter-spacing: -2px;
+    line-height: 0.95;
+    text-wrap: balance;
+  }
+
+  .slide__heading {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .slide__body {
+    font-size: clamp(16px, 2.2vw, 22px);
+    line-height: 1.6;
+    color: var(--text-dim);
+    text-wrap: pretty;
+  }
+
+  .slide__subtitle {
+    font-family: var(--font-mono);
+    font-size: clamp(12px, 1.5vw, 18px);
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .slide__label {
+    font-family: var(--font-mono);
+    font-size: clamp(10px, 1.2vw, 13px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  /* ============ DECORATIVE SVG ============ */
+  .slide__decor {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ============ SLIDE TYPE: TITLE ============ */
+  .slide--title {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-image: radial-gradient(ellipse at 50% 30%, var(--accent-dim) 0%, transparent 50%);
+  }
+
+  .slide--title .slide__display { color: var(--accent); }
+
+  /* ============ SLIDE TYPE: DIVIDER ============ */
+  .slide--divider { justify-content: center; }
+
+  .slide--divider .slide__number {
+    font-size: clamp(100px, 22vw, 260px);
+    font-weight: 200;
+    line-height: 0.85;
+    opacity: 0.06;
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+  }
+
+  /* ============ SLIDE TYPE: CONTENT ============ */
+  .slide--content .slide__inner {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: clamp(24px, 4vw, 60px);
+    align-items: center;
+    width: 100%;
+  }
+
+  .slide__bullets {
+    list-style: none;
+    padding: 0;
+  }
+
+  .slide__bullets li {
+    padding: 10px 0 10px 24px;
+    position: relative;
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.5;
+    color: var(--text-dim);
+  }
+
+  .slide__bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 20px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .slide__aside {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+  }
+
+  /* ============ SLIDE TYPE: SPLIT ============ */
+  .slide--split { padding: 0; }
+
+  .slide--split .slide__panels {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    height: 100%;
+  }
+
+  .slide--split .slide__panel {
+    padding: clamp(40px, 6vh, 80px) clamp(32px, 4vw, 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide--split .slide__panel--primary { background: var(--surface); }
+  .slide--split .slide__panel--secondary {
+    background: var(--surface2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ============ SLIDE TYPE: DIAGRAM ============ */
+  .slide--diagram {
+    padding: clamp(24px, 4vh, 48px) clamp(24px, 4vw, 60px);
+  }
+  .slide--diagram .slide__heading { margin-bottom: clamp(8px, 1.5vh, 20px); }
+
+  .mermaid-wrap {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .mermaid-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+  .mermaid-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+
+
+  .zoom-controls {
+    position: absolute; top: 8px; right: 8px;
+    display: flex; gap: 2px; z-index: 10;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 2px;
+  }
+  .zoom-controls button {
+    width: 28px; height: 28px; border: none; background: transparent;
+    color: var(--text-dim); font-family: var(--font-mono); font-size: 14px;
+    cursor: pointer; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .zoom-controls button:hover { background: var(--border); color: var(--text); }
+  .mermaid-wrap { cursor: grab; }
+  .mermaid-wrap.is-panning { cursor: grabbing; user-select: none; }
+
+  .mermaid .nodeLabel { color: var(--text) !important; }
+  .mermaid .edgeLabel { color: var(--text-dim) !important; background-color: var(--bg) !important; }
+  .mermaid .edgeLabel rect { fill: var(--bg) !important; }
+  .slide--diagram .mermaid svg {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+  }
+
+  .slide--diagram .mermaid .nodeLabel { font-size: 18px !important; }
+  .slide--diagram .mermaid .edgeLabel { font-family: var(--font-mono) !important; font-size: 14px !important; }
+  .slide--diagram .mermaid .node rect,
+  .slide--diagram .mermaid .node circle,
+  .slide--diagram .mermaid .node polygon { stroke-width: 2px; }
+  .slide--diagram .mermaid .edge-pattern-solid { stroke-width: 2px; }
+
+  /* ============ SLIDE TYPE: DASHBOARD ============ */
+  .slide--dashboard .slide__kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 20vw, 220px), 1fr));
+    gap: clamp(12px, 2vw, 24px);
+  }
+
+  .slide__kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: clamp(16px, 3vh, 32px) clamp(16px, 2vw, 24px);
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .slide__kpi-val {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 400;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .slide__kpi-label {
+    font-family: var(--font-mono);
+    font-size: clamp(9px, 1.2vw, 13px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-top: 8px;
+  }
+
+  .slide__kpi-trend {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  /* ============ SLIDE TYPE: TABLE ============ */
+  .slide--table { padding: clamp(24px, 4vh, 48px) clamp(24px, 4vw, 60px); }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+  .table-scroll { overflow-x: auto; }
+
+  .data-table { width: 100%; border-collapse: collapse; }
+
+  .data-table th {
+    background: var(--surface2);
+    font-family: var(--font-mono);
+    font-size: clamp(10px, 1.3vw, 14px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    text-align: left;
+    padding: clamp(10px, 1.5vh, 16px) clamp(14px, 2vw, 24px);
+    border-bottom: 2px solid var(--border-bright);
+    white-space: nowrap;
+  }
+
+  .data-table td {
+    padding: clamp(10px, 1.5vh, 16px) clamp(14px, 2vw, 24px);
+    border-bottom: 1px solid var(--border);
+    font-size: clamp(14px, 1.8vw, 20px);
+    vertical-align: top;
+  }
+  .data-table tbody tr:last-child td { border-bottom: none; }
+  .data-table tbody tr:nth-child(even) { background: var(--surface2); }
+  .data-table tbody tr { transition: background 0.15s; }
+  .data-table tbody tr:hover { background: var(--accent-dim); }
+  .data-table code {
+    font-family: var(--font-mono); font-size: 0.85em;
+    background: var(--accent-dim); color: var(--accent);
+    padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* ============ SLIDE TYPE: CODE ============ */
+  .slide--code { align-items: center; }
+
+  .slide__code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: clamp(24px, 4vh, 48px) clamp(24px, 4vw, 48px);
+    max-width: 900px;
+    width: 100%;
+    position: relative;
+  }
+
+  .slide__code-filename {
+    position: absolute;
+    top: -12px; left: 24px;
+    font-family: var(--font-mono);
+    font-size: 11px; font-weight: 600;
+    padding: 4px 12px; border-radius: 4px;
+    background: var(--accent); color: var(--bg);
+  }
+
+  .slide__code-block pre { margin: 0; overflow-x: auto; }
+  .slide__code-block code {
+    font-family: var(--font-mono);
+    font-size: clamp(14px, 1.6vw, 18px);
+    line-height: 1.7;
+    color: var(--code-text);
+  }
+  .slide__code-block .hl { color: var(--accent); }
+  .slide__code-block .cm { color: var(--text-dim); }
+
+  /* ============ SLIDE TYPE: QUOTE ============ */
+  .slide--quote {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: clamp(60px, 10vh, 120px) clamp(60px, 12vw, 200px);
+  }
+
+  .slide__quote-mark {
+    font-size: clamp(80px, 14vw, 180px);
+    line-height: 0.5;
+    opacity: 0.06;
+    font-family: Georgia, serif;
+    pointer-events: none;
+    margin-bottom: -20px;
+    color: var(--accent);
+  }
+
+  .slide--quote blockquote {
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: 400;
+    line-height: 1.35;
+    font-style: italic;
+  }
+
+  .slide--quote cite {
+    font-family: var(--font-mono);
+    font-size: clamp(11px, 1.4vw, 14px);
+    font-style: normal;
+    margin-top: clamp(16px, 3vh, 32px);
+    display: block;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* ============ SLIDE TYPE: FULL-BLEED ============ */
+  .slide--bleed {
+    padding: 0;
+    justify-content: flex-end;
+  }
+
+  .slide__bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+    z-index: 0;
+  }
+
+  .slide__bg--gradient {
+    background: linear-gradient(135deg, #1a0f3c 0%, #0f1729 40%, #162040 100%);
+  }
+
+  .slide__scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 40%, transparent 100%);
+    z-index: 1;
+  }
+
+  .slide--bleed .slide__content {
+    position: relative; z-index: 2;
+    padding: clamp(40px, 6vh, 80px) clamp(40px, 8vw, 120px);
+    color: #ffffff;
+  }
+  .slide--bleed .slide__heading { color: #ffffff; }
+  .slide--bleed .slide__subtitle { color: rgba(255,255,255,0.7); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-height: 700px) {
+    .slide { padding: clamp(24px, 4vh, 40px) clamp(32px, 6vw, 80px); }
+    .slide__display { font-size: clamp(36px, 8vw, 72px); }
+    .slide--divider .slide__number { font-size: clamp(80px, 16vw, 160px); }
+  }
+
+  @media (max-height: 600px) {
+    .slide__decor { display: none; }
+    .slide--quote { padding: clamp(32px, 6vh, 60px) clamp(40px, 8vw, 100px); }
+    .slide__quote-mark { display: none; }
+  }
+
+  @media (max-height: 500px) {
+    .slide { padding: clamp(16px, 3vh, 24px) clamp(24px, 5vw, 48px); }
+    .deck-dots { display: none; }
+    .slide__display { font-size: clamp(28px, 7vw, 48px); }
+  }
+
+  @media (max-width: 768px) {
+    .slide--content .slide__inner { grid-template-columns: 1fr; }
+    .slide--content .slide__aside { display: none; }
+    .slide--split .slide__panels { grid-template-columns: 1fr; }
+    .slide--dashboard .slide__kpis { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme"></button>
+<script>
+(function() {
+  var t = document.getElementById('themeToggle');
+  var s = localStorage.getItem('theme');
+  var i = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  if (s) document.documentElement.setAttribute('data-theme', i);
+  t.textContent = i === 'dark' ? '\u2600' : '\u263E';
+  t.addEventListener('click', function() {
+    var c = document.documentElement.getAttribute('data-theme')
+      || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var n = c === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', n);
+    localStorage.setItem('theme', n);
+    t.textContent = n === 'dark' ? '\u2600' : '\u263E';
+  });
+})();
+</script>
+
+<div class="deck">
+
+  <!-- SLIDE 1: TITLE -->
+  <section class="slide slide--title">
+    <svg class="slide__decor" style="top:0;right:0;" width="120" height="120" viewBox="0 0 120 120">
+      <line x1="120" y1="0" x2="120" y2="40" stroke="var(--accent)" stroke-width="2" opacity="0.15"/>
+      <line x1="80" y1="0" x2="120" y2="0" stroke="var(--accent)" stroke-width="2" opacity="0.15"/>
+    </svg>
+    <svg class="slide__decor" style="bottom:0;left:0;" width="120" height="120" viewBox="0 0 120 120">
+      <line x1="0" y1="80" x2="0" y2="120" stroke="var(--accent)" stroke-width="2" opacity="0.15"/>
+      <line x1="0" y1="120" x2="40" y2="120" stroke="var(--accent)" stroke-width="2" opacity="0.15"/>
+    </svg>
+    <div class="reveal">
+      <p class="slide__subtitle" style="margin-bottom:clamp(16px,2vh,32px);">Engineering Review &mdash; Q1 2026</p>
+    </div>
+    <h1 class="slide__display reveal">API Gateway Redesign</h1>
+    <div class="reveal">
+      <p class="slide__subtitle" style="margin-top:clamp(16px,2vh,32px);">From monolith proxy to edge-native routing</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: SECTION DIVIDER -->
+  <section class="slide slide--divider" style="background-image:radial-gradient(ellipse at 80% 60%, var(--accent-dim) 0%, transparent 40%);">
+    <span class="slide__number">01</span>
+    <div>
+      <h2 class="slide__heading reveal">The Problem</h2>
+      <p class="slide__subtitle reveal" style="margin-top:12px;">Why the current gateway can't scale</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: CONTENT (left-heavy asymmetric) -->
+  <section class="slide slide--content" style="background-image:radial-gradient(ellipse at 20% 80%, var(--accent-dim) 0%, transparent 45%);">
+    <div class="slide__inner">
+      <div>
+        <p class="slide__label reveal">Current State</p>
+        <h2 class="slide__heading reveal">Single Point of Failure</h2>
+        <ul class="slide__bullets">
+          <li class="reveal">All traffic routes through one Node.js process</li>
+          <li class="reveal">Rate limiting is per-instance, not distributed</li>
+          <li class="reveal">Auth validation adds 40ms per request</li>
+          <li class="reveal">No circuit breaking &mdash; cascade failures hit everything</li>
+        </ul>
+      </div>
+      <div class="slide__aside reveal">
+        <svg viewBox="0 0 160 160" width="160" height="160">
+          <circle cx="80" cy="80" r="60" fill="none" stroke="var(--red)" stroke-width="2" opacity="0.3"/>
+          <circle cx="80" cy="80" r="40" fill="none" stroke="var(--red)" stroke-width="1.5" opacity="0.2" stroke-dasharray="4 4"/>
+          <circle cx="80" cy="80" r="8" fill="var(--red)" opacity="0.4"/>
+          <text x="80" y="130" text-anchor="middle" font-family="var(--font-mono)" font-size="11" fill="var(--text-dim)">SINGLE PROCESS</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: SPLIT (before/after) -->
+  <section class="slide slide--split">
+    <div class="slide__panels">
+      <div class="slide__panel slide__panel--primary">
+        <p class="slide__label reveal" style="color:var(--red);">Before</p>
+        <h2 class="slide__heading reveal" style="font-size:clamp(22px,3.5vw,36px);">Monolith Proxy</h2>
+        <ul class="slide__bullets" style="margin-top:16px;">
+          <li class="reveal">Express.js middleware chain</li>
+          <li class="reveal">In-memory rate limit counters</li>
+          <li class="reveal">Synchronous JWT validation</li>
+          <li class="reveal">Manual upstream health checks</li>
+        </ul>
+      </div>
+      <div class="slide__panel slide__panel--secondary">
+        <p class="slide__label reveal" style="color:var(--green);">After</p>
+        <h2 class="slide__heading reveal" style="font-size:clamp(22px,3.5vw,36px);">Edge-Native</h2>
+        <ul class="slide__bullets" style="margin-top:16px;">
+          <li class="reveal">Cloudflare Workers at the edge</li>
+          <li class="reveal">Durable Objects for distributed state</li>
+          <li class="reveal">Async JWT with key caching</li>
+          <li class="reveal">Automatic circuit breakers</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: SECTION DIVIDER -->
+  <section class="slide slide--divider" style="background-image:radial-gradient(ellipse at 30% 40%, var(--accent-dim) 0%, transparent 40%);">
+    <span class="slide__number">02</span>
+    <div>
+      <h2 class="slide__heading reveal">Architecture</h2>
+      <p class="slide__subtitle reveal" style="margin-top:12px;">How the new system works</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: DIAGRAM -->
+  <section class="slide slide--diagram">
+    <h2 class="slide__heading reveal">Request Flow</h2>
+    <div class="mermaid-wrap reveal">
+      <div class="zoom-controls">
+        <button onclick="zoomDiagram(this,1.2)" title="Zoom in">+</button>
+        <button onclick="zoomDiagram(this,0.8)" title="Zoom out">&minus;</button>
+        <button onclick="resetZoom(this)" title="Reset">&#8634;</button>
+        <button onclick="openDiagramFullscreen(this)" title="Open full size in new tab">&#x26F6;</button>
+      </div>
+      <pre class="mermaid">
+graph LR
+  Client["Client"] --> Edge["Edge Worker"]
+  Edge --> Auth["Auth Cache"]
+  Edge --> RL["Rate Limiter<br/>Durable Object"]
+  Edge --> Router["Route Resolver"]
+  Router --> API["API Service"]
+  Router --> Static["Static Assets"]
+  API --> DB["Database"]
+
+  classDef primary fill:#d4a73a22,stroke:#d4a73a,stroke-width:2px
+  classDef secondary fill:#60a5fa22,stroke:#60a5fa,stroke-width:2px
+  classDef storage fill:#4ade8022,stroke:#4ade80,stroke-width:2px
+
+  class Client,Edge primary
+  class Auth,RL,Router secondary
+  class API,Static,DB storage
+      </pre>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: DASHBOARD -->
+  <section class="slide slide--dashboard" style="background-image:radial-gradient(ellipse at 70% 30%, var(--accent-dim) 0%, transparent 40%);">
+    <h2 class="slide__heading reveal">Performance Impact</h2>
+    <div class="slide__kpis">
+      <div class="slide__kpi reveal">
+        <div class="slide__kpi-val" style="color:var(--accent);">12ms</div>
+        <div class="slide__kpi-label">P99 Latency</div>
+        <div class="slide__kpi-trend" style="color:var(--green);">&darr; from 142ms</div>
+      </div>
+      <div class="slide__kpi reveal">
+        <div class="slide__kpi-val" style="color:var(--green);">99.97%</div>
+        <div class="slide__kpi-label">Uptime</div>
+        <div class="slide__kpi-trend" style="color:var(--green);">&uarr; from 99.2%</div>
+      </div>
+      <div class="slide__kpi reveal">
+        <div class="slide__kpi-val" style="color:var(--blue);">340</div>
+        <div class="slide__kpi-label">Edge Locations</div>
+        <div class="slide__kpi-trend" style="color:var(--text-dim);">global coverage</div>
+      </div>
+      <div class="slide__kpi reveal">
+        <div class="slide__kpi-val" style="color:var(--accent);">$0.02</div>
+        <div class="slide__kpi-label">Per 10K Requests</div>
+        <div class="slide__kpi-trend" style="color:var(--green);">&darr; 68% cost reduction</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8: TABLE -->
+  <section class="slide slide--table">
+    <h2 class="slide__heading reveal">Migration Phases</h2>
+    <div class="table-wrap reveal" style="flex:1; min-height:0; margin-top:clamp(8px,1.5vh,20px);">
+      <div class="table-scroll">
+        <table class="data-table">
+          <thead><tr><th>Phase</th><th>Scope</th><th>Timeline</th><th>Risk</th></tr></thead>
+          <tbody>
+            <tr><td>1. Shadow mode</td><td>Mirror traffic to edge, compare responses</td><td>Week 1&ndash;2</td><td style="color:var(--green);">Low</td></tr>
+            <tr><td>2. Canary rollout</td><td>5% traffic to edge, monitor errors</td><td>Week 3</td><td style="color:var(--green);">Low</td></tr>
+            <tr><td>3. Gradual shift</td><td>25% &rarr; 50% &rarr; 75% traffic</td><td>Week 4&ndash;5</td><td style="color:var(--accent);">Medium</td></tr>
+            <tr><td>4. Full cutover</td><td>100% traffic, decommission old proxy</td><td>Week 6</td><td style="color:var(--accent);">Medium</td></tr>
+            <tr><td>5. Cleanup</td><td>Remove feature flags, archive old code</td><td>Week 7</td><td style="color:var(--green);">Low</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: CODE -->
+  <section class="slide slide--code" style="background-image:radial-gradient(ellipse at 50% 80%, var(--accent-dim) 0%, transparent 40%);">
+    <h2 class="slide__heading reveal" style="text-align:center;">Edge Worker Entry Point</h2>
+    <div class="slide__code-block reveal" style="margin-top:clamp(12px,2vh,24px);">
+      <span class="slide__code-filename">gateway.ts</span>
+      <pre><code><span class="hl">export default</span> {
+  <span class="hl">async fetch</span>(req: Request, env: Env) {
+    <span class="cm">// Auth check with edge-cached keys</span>
+    const identity = <span class="hl">await</span> verifyAuth(req, env);
+    <span class="cm">// Distributed rate limiting</span>
+    const limit = env.RATE_LIMITER.get(identity.id);
+    <span class="hl">if</span> (<span class="hl">await</span> limit.check()) <span class="hl">return</span> tooMany();
+    <span class="cm">// Route to upstream</span>
+    <span class="hl">return</span> route(req, env.SERVICES);
+  }
+};</code></pre>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: QUOTE -->
+  <section class="slide slide--quote" style="background-image:radial-gradient(ellipse at 50% 50%, var(--accent-dim) 0%, transparent 35%);">
+    <div class="slide__quote-mark reveal">&ldquo;</div>
+    <blockquote class="reveal">
+      The fastest request is the one that never leaves the edge.
+    </blockquote>
+    <cite class="reveal">&mdash; Edge Computing Principle</cite>
+  </section>
+
+  <!-- SLIDE 11: FULL-BLEED -->
+  <section class="slide slide--bleed">
+    <div class="slide__bg slide__bg--gradient"></div>
+    <div class="slide__scrim"></div>
+    <div class="slide__content">
+      <p class="slide__label reveal" style="color:rgba(255,255,255,0.6);">Next Steps</p>
+      <h2 class="slide__heading reveal">Ship Shadow Mode This Week</h2>
+      <p class="slide__subtitle reveal" style="color:rgba(255,255,255,0.6); margin-top:12px;">Full cutover targeted for end of Q1</p>
+    </div>
+  </section>
+
+</div><!-- /deck -->
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    look: 'classic',
+    themeVariables: {
+      primaryColor: isDark ? '#1d2b52' : '#fef3e0',
+      primaryBorderColor: isDark ? '#d4a73a' : '#b8860b',
+      primaryTextColor: isDark ? '#e8e4d8' : '#1a1814',
+      secondaryColor: isDark ? '#162040' : '#eff6ff',
+      secondaryBorderColor: isDark ? '#60a5fa' : '#2563eb',
+      secondaryTextColor: isDark ? '#e8e4d8' : '#1a1814',
+      tertiaryColor: isDark ? '#0f2620' : '#f0fdf4',
+      tertiaryBorderColor: isDark ? '#4ade80' : '#16a34a',
+      tertiaryTextColor: isDark ? '#e8e4d8' : '#1a1814',
+      lineColor: isDark ? '#9a9484' : '#7a7468',
+      fontSize: '18px',
+      fontFamily: 'var(--font-body)',
+      noteBkgColor: isDark ? '#1d2b52' : '#fef3e0',
+      noteTextColor: isDark ? '#e8e4d8' : '#1a1814',
+      noteBorderColor: isDark ? '#d4a73a' : '#b8860b',
+    }
+  });
+
+  function autoFit() {
+    document.querySelectorAll('.mermaid svg').forEach(function(svg) {
+      svg.removeAttribute('height');
+      svg.style.width = '100%';
+      svg.style.maxWidth = '100%';
+      svg.style.height = 'auto';
+      svg.parentElement.style.width = '100%';
+    });
+    document.querySelectorAll('.slide__kpi-val').forEach(function(el) {
+      if (el.scrollWidth > el.clientWidth) {
+        var s = el.clientWidth / el.scrollWidth;
+        el.style.transform = 'scale(' + s + ')';
+        el.style.transformOrigin = 'left top';
+      }
+    });
+    document.querySelectorAll('.slide--quote blockquote').forEach(function(el) {
+      var len = el.textContent.trim().length;
+      if (len > 100) {
+        var scale = Math.max(0.5, 100 / len);
+        var fs = parseFloat(getComputedStyle(el).fontSize);
+        el.style.fontSize = Math.max(16, Math.round(fs * scale)) + 'px';
+      }
+    });
+  }
+
+  mermaid.run().then(function() {
+    autoFit();
+    new SlideEngine();
+  });
+</script>
+
+<script>
+  // Mermaid zoom controls + click-to-expand
+  var INITIAL_ZOOM=1;
+  function zoomDiagram(b,f){var w=b.closest('.mermaid-wrap');var t=w.querySelector('.mermaid');var c=parseFloat(t.dataset.zoom||INITIAL_ZOOM);var n=Math.min(Math.max(c*f,0.5),5);t.dataset.zoom=n;t.style.zoom=n;}
+  function resetZoom(b){var w=b.closest('.mermaid-wrap');var t=w.querySelector('.mermaid');t.dataset.zoom=INITIAL_ZOOM;t.style.zoom=INITIAL_ZOOM;}
+  function openDiagramFullscreen(b){openMermaidInNewTab(b.closest('.mermaid-wrap'));}
+  function openMermaidInNewTab(w){var svg=w.querySelector('.mermaid svg');if(!svg)return;var clone=svg.cloneNode(true);clone.style.zoom='';clone.style.transform='';var styles=getComputedStyle(document.documentElement);var bg=styles.getPropertyValue('--bg').trim()||'#ffffff';var html='<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Diagram</title><style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:'+bg+';padding:40px;box-sizing:border-box}svg{max-width:100%;max-height:90vh;height:auto}</style></head><body>'+clone.outerHTML+'</body></html>';window.open(URL.createObjectURL(new Blob([html],{type:'text/html'})),'_blank');}
+  document.querySelectorAll('.mermaid-wrap').forEach(function(w){w.addEventListener('wheel',function(e){if(!e.ctrlKey&&!e.metaKey)return;e.preventDefault();var t=w.querySelector('.mermaid');var c=parseFloat(t.dataset.zoom||INITIAL_ZOOM);var f=e.deltaY<0?1.1:0.9;var n=Math.min(Math.max(c*f,0.5),5);t.dataset.zoom=n;t.style.zoom=n;},{passive:false});var sX,sY,sL,sT,sTime,didPan;w.addEventListener('mousedown',function(e){if(e.target.closest('.zoom-controls'))return;w.classList.add('is-panning');sX=e.clientX;sY=e.clientY;sL=w.scrollLeft;sT=w.scrollTop;sTime=Date.now();didPan=false;});window.addEventListener('mousemove',function(e){if(!w.classList.contains('is-panning'))return;var dx=e.clientX-sX,dy=e.clientY-sY;if(Math.abs(dx)>5||Math.abs(dy)>5)didPan=true;w.scrollLeft=sL-dx;w.scrollTop=sT-dy;});window.addEventListener('mouseup',function(){if(!w.classList.contains('is-panning'))return;w.classList.remove('is-panning');if(!didPan&&Date.now()-sTime<300)openMermaidInNewTab(w);});});
+
+  // SlideEngine
+  function SlideEngine(){
+    this.deck=document.querySelector('.deck');
+    this.slides=[].slice.call(document.querySelectorAll('.slide'));
+    this.current=0;
+    this.total=this.slides.length;
+    this.buildChrome();
+    this.bindEvents();
+    this.observe();
+    this.update();
+  }
+  SlideEngine.prototype.buildChrome=function(){
+    var bar=document.createElement('div');bar.className='deck-progress';document.body.appendChild(bar);this.bar=bar;
+    var dots=document.createElement('div');dots.className='deck-dots';var self=this;
+    this.slides.forEach(function(_,i){var d=document.createElement('button');d.className='deck-dot';d.title='Slide '+(i+1);d.onclick=function(){self.goTo(i);};dots.appendChild(d);});
+    document.body.appendChild(dots);this.dots=[].slice.call(dots.children);
+    var ctr=document.createElement('div');ctr.className='deck-counter';document.body.appendChild(ctr);this.counter=ctr;
+    var hints=document.createElement('div');hints.className='deck-hints';hints.textContent='\u2190 \u2192 or scroll to navigate';document.body.appendChild(hints);this.hints=hints;
+    this.hintTimer=setTimeout(function(){hints.classList.add('faded');},4000);
+  };
+  SlideEngine.prototype.bindEvents=function(){
+    var self=this;
+    document.addEventListener('keydown',function(e){
+      if(e.target.closest('.mermaid-wrap,.table-scroll,.code-scroll,input,textarea,[contenteditable]'))return;
+      if(['ArrowDown','ArrowRight',' ','PageDown'].indexOf(e.key)>-1){e.preventDefault();self.next();}
+      else if(['ArrowUp','ArrowLeft','PageUp'].indexOf(e.key)>-1){e.preventDefault();self.prev();}
+      else if(e.key==='Home'){e.preventDefault();self.goTo(0);}
+      else if(e.key==='End'){e.preventDefault();self.goTo(self.total-1);}
+      self.fadeHints();
+    });
+    var tY;
+    this.deck.addEventListener('touchstart',function(e){tY=e.touches[0].clientY;},{passive:true});
+    this.deck.addEventListener('touchend',function(e){var dy=tY-e.changedTouches[0].clientY;if(Math.abs(dy)>50){dy>0?self.next():self.prev();}});
+  };
+  SlideEngine.prototype.observe=function(){
+    var self=this;
+    var obs=new IntersectionObserver(function(entries){entries.forEach(function(entry){if(entry.isIntersecting){entry.target.classList.add('visible');self.current=self.slides.indexOf(entry.target);self.update();}});},{threshold:0.5});
+    this.slides.forEach(function(s){obs.observe(s);});
+  };
+  SlideEngine.prototype.goTo=function(i){this.slides[Math.max(0,Math.min(i,this.total-1))].scrollIntoView({behavior:'smooth'});};
+  SlideEngine.prototype.next=function(){if(this.current<this.total-1)this.goTo(this.current+1);};
+  SlideEngine.prototype.prev=function(){if(this.current>0)this.goTo(this.current-1);};
+  SlideEngine.prototype.update=function(){
+    this.bar.style.width=((this.current+1)/this.total*100)+'%';
+    var c=this.current;this.dots.forEach(function(d,i){d.classList.toggle('active',i===c);});
+    this.counter.textContent=(this.current+1)+' / '+this.total;
+  };
+  SlideEngine.prototype.fadeHints=function(){clearTimeout(this.hintTimer);this.hints.classList.add('faded');};
+</script>
+
+</body>
+</html>

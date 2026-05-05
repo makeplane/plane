@@ -45,7 +45,7 @@ export function PowerKModalSearchMenu(props: Props) {
 
   useEffect(() => {
     if (activePage || !workspaceSlug) return;
-    setIsSearching(true);
+    queueMicrotask(() => setIsSearching(true));
 
     if (debouncedSearchTerm) {
       workspaceService
@@ -55,21 +55,21 @@ export function PowerKModalSearchMenu(props: Props) {
           workspace_search: !projectId ? true : isWorkspaceLevel,
         })
         .then((results) => {
-          setResults(results);
+          queueMicrotask(() => setResults(results));
           const count = Object.keys(results.results).reduce(
             (accumulator, key) => results.results[key as keyof typeof results.results]?.length + accumulator,
             0
           );
-          setResultsCount(count);
+          queueMicrotask(() => setResultsCount(count));
         })
         .catch(() => {
-          setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
-          setResultsCount(0);
+          queueMicrotask(() => setResults(WORKSPACE_DEFAULT_SEARCH_RESULT));
+          queueMicrotask(() => setResultsCount(0));
         })
-        .finally(() => setIsSearching(false));
+        .finally(() => queueMicrotask(() => setIsSearching(false)));
     } else {
-      setResults(WORKSPACE_DEFAULT_SEARCH_RESULT);
-      setIsSearching(false);
+      queueMicrotask(() => setResults(WORKSPACE_DEFAULT_SEARCH_RESULT));
+      queueMicrotask(() => setIsSearching(false));
     }
   }, [debouncedSearchTerm, isWorkspaceLevel, projectId, workspaceSlug, activePage]);
 

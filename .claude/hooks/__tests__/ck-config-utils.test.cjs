@@ -552,6 +552,10 @@ describe('ck-config-utils.cjs', () => {
       assert.strictEqual(DEFAULT_CONFIG.trust.enabled, false);
     });
 
+    it('enables statusline quota chips by default', () => {
+      assert.strictEqual(DEFAULT_CONFIG.statuslineQuota, true);
+    });
+
   });
 
 });

@@ -1,0 +1,21 @@
+ID,Use Case,Keywords,Recommended Examples,Complexity,Technologies,Description
+1,Product Configurator,"configurator, e-commerce, product, 3d viewer",webgl_loader_gltf; webgl_materials_variations_physical; webgl_lights_rectarealight,Medium,"GLTF, PBR Materials, Environment Maps",Interactive product visualization with material/color options
+2,Data Visualization,"data viz, charts, 3d graphs, analytics",webgl_buffergeometry_points; webgl_interactive_points; webgl_geometry_dynamic,Medium,"BufferGeometry, Points, Custom Shaders",3D data visualization and interactive charts
+3,Architectural Visualization,"archviz, building, interior, real estate",webgl_loader_gltf; webgl_materials_envmaps_hdr; webgl_shadowmap_csm; webgl_postprocessing_ssr,High,"GLTF, HDR, CSM Shadows, SSR",Architectural and interior design visualization
+4,Game Development,"game, fps, rpg, interactive",webgl_animation_skinning_blending; physics; webgpu_compute_birds; webgl_portal,High,"Animation, Physics, Compute, Controls",Game mechanics and interactive experiences
+5,Medical Visualization,"medical, anatomy, ct scan, volume",webgl_loader_nrrd; webgl_volume_cloud; webgl_loader_pdb,High,"Volume Rendering, NRRD, PDB",Medical imaging and anatomical visualization
+6,Scientific Visualization,"scientific, simulation, physics, research",webgl_gpgpu_protoplanet; webgl_gpgpu_water; webgpu_compute_particles,High,"GPGPU, Compute Shaders, Simulation",Scientific data and physics simulation
+7,360 Panorama Viewer,"360, panorama, vr, virtual tour",webgl_panorama_equirectangular; webgl_video_panorama_equirectangular; webxr_vr_panorama,Low-Medium,"Equirectangular, Video, WebXR",360-degree photo and video viewing
+8,E-commerce 3D,"e-commerce, shopping, ar, product view",webgl_loader_gltf; webgl_loader_usdz; webgl_materials_physical_transmission,Medium,"GLTF, USDZ, Transmission",Product viewing for online shopping
+9,Character Animation,"character, avatar, animation, rigging",webgl_animation_keyframes; webgl_animation_skinning_ik; webgl_morphtargets_face,Medium-High,"Animation, IK, Morph Targets",Character animation and avatar systems
+10,Particle Effects,"particles, effects, vfx, simulation",webgl_gpgpu_birds; webgl_points_dynamic; webgpu_compute_particles_rain,Medium-High,"GPGPU, Points, Compute",Particle systems and visual effects
+11,CAD Viewer,"cad, engineering, step, iges",webgl_loader_3mf; webgl_loader_stl; webgl_geometry_nurbs; webgl_clipping,Medium,"Loaders, NURBS, Clipping",CAD and engineering model viewing
+12,Virtual Reality,"vr, immersive, headset, quest",webxr_vr_sandbox; webxr_vr_teleport; webxr_vr_rollercoaster,High,"WebXR, Controllers, Hand Tracking",VR experiences and applications
+13,Augmented Reality,"ar, mobile, camera, overlay",webxr_ar_cones; webxr_ar_hittest; webxr_ar_lighting,High,"WebXR AR, Hit Test, Lighting Estimation",AR experiences on mobile devices
+14,Portfolio Website,"portfolio, creative, art, showcase",webgl_postprocessing_unreal_bloom; webgl_shaders_ocean; webgl_trails,Medium,"Post-processing, Custom Shaders, Effects",Creative portfolio and artistic showcases
+15,Real-time Collaboration,"collaboration, multiplayer, networking",webgl_multiple_scenes_comparison; webgl_multiple_views,Medium,"Multiple Scenes, Sync, State",Multi-user collaborative 3D environments
+16,Point Cloud Visualization,"point cloud, lidar, scan, photogrammetry",webgl_loader_pcd; webgl_loader_ply; webgl_points_sprites,Medium,"PCD, PLY, Point Rendering",Point cloud data visualization
+17,Terrain and Landscape,"terrain, landscape, heightmap, outdoor",webgl_geometry_terrain; webgl_geometry_minecraft; webgl_water,Medium,"Heightmap, LOD, Water",Outdoor and terrain visualization
+18,Car Configurator,"car, automotive, paint, configurator",webgl_materials_car; webgl_materials_physical_clearcoat; webgl_materials_envmaps_groundprojected,High,"Clearcoat, Environment, Reflection",Automotive visualization and configuration
+19,Educational 3D,"education, learning, interactive, simulation",webgl_loader_pdb; webgl_morphtargets; webgl_geometry_text,Low-Medium,"Models, Animation, Interaction",Educational and learning applications
+20,WebGPU Modern,"webgpu, modern, compute, next-gen",webgpu_compute_birds; webgpu_tsl_editor; webgpu_postprocessing_bloom,High,"WebGPU, TSL, Compute Shaders",Modern WebGPU-based applications

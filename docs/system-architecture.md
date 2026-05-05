@@ -1,722 +1,722 @@
 # System Architecture
 
-**Last Updated**: 2026-02-18
-**Version**: 1.2.2
-**Scope**: Production deployment architecture, data flows, real-time collaboration
-
-## High-Level System Overview
+## High-Level Overview
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│                        Client Browser                           │
-│              (Web App, Admin, Space, Desktop)                   │
-└──────────────────────┬─────────────────────────────────────────┘
-                       │
-                       │ HTTP/HTTPS (80/443)
-                       ▼
-        ┌──────────────────────────────────┐
-        │  Caddy Reverse Proxy (port 80)   │
-        │  - TLS/HTTPS termination         │
-        │  - Request routing               │
-        │  - Load balancing (health checks)│
-        └──┬──────────┬──────────┬─────────┘
-           │          │          │
-      ┌────▼──┐  ┌────▼────┐ ┌──▼────┐
-      │Web    │  │Space    │ │Admin   │
-      │3000   │  │3000     │ │3000    │
-      └───────┘  └─────────┘ └────────┘
-           │          │          │
-           └──────────┴──────────┘
-                      │
-              ┌───────▼────────┐
-              │API (8000)      │
-              │Django + DRF    │
-              │Gunicorn        │
-              └────┬────────┬──┘
-                   │        │
-        ┌──────────▼──┐  ┌──▼──────────┐
-        │ PostgreSQL  │  │   Redis     │
-        │ (5432)      │  │  (6379)     │
-        │ Users,      │  │ Cache,      │
-        │ Workspaces, │  │ Sessions,   │
-        │ Issues, etc │  │ Celery      │
-        └─────────────┘  └─────────────┘
-                │
-        ┌───────▼──────────┐
-        │   RabbitMQ       │
-        │  (5672)          │
-        │  Message Broker  │
-        └────┬──────┬──────┘
-             │      │
-        ┌────▼──┐ ┌─▼─────┐
-        │Worker │ │Beat    │
-        │Celery │ │Celery  │
-        │Tasks  │ │Scheduler
-        └───────┘ └────────┘
-                │
-        ┌───────▼──────────┐
-        │   MinIO (S3)     │
-        │  (9000)          │
-        │  File Storage    │
-        └──────────────────┘
-
-Plus Real-time Layer:
-        ┌──────────────────────────┐
-        │Live Server (3000)        │
-        │Express.js + Hocuspocus   │
-        │WebSocket/CRDT            │
-        └──────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                        Internet / Users                          │
+└────────────────────────────────┬────────────────────────────────┘
+                                 │
+                    ┌────────────┴────────────┐
+                    │  Caddy Reverse Proxy    │
+                    │  (apps/proxy)           │
+                    └────┬──────┬──────┬──────┘
+         ┌──────────────┬─┘      │      └┬──────────────────┐
+         │              │        │       │                  │
+    ┌────▼───┐  ┌──────▼──┐ ┌───▼───┐ ┌▼────────┐  ┌──────▼──┐
+    │ web    │  │  admin  │ │ space │ │ live    │  │ Webhook │
+    │ (3000) │  │ (3001)  │ │ (3002)│ │ (3003)  │  │ Handler │
+    └─┬──────┘  └────┬────┘ └───┬───┘ └────┬────┘  └─────────┘
+      │              │          │          │
+      └──────────────┴──────────┴──────────┘
+                     │
+            ┌────────▼────────┐
+            │  Django API     │
+            │  (apps/api:8000)│
+            │  10-layer stack │
+            └────────┬────────┘
+                     │
+      ┌──────────────┼──────────────┐
+      │              │              │
+   ┌──▼──┐      ┌───▼────┐     ┌──▼──┐
+   │ PG  │      │ Redis  │     │ S3  │
+   └─────┘      └────┬───┘     └─────┘
+           ┌────────────┴──────────┐
+           │                       │
+       ┌───▼────┐          ┌──────▼─┐
+       │ Cache  │          │ Session│
+       │ Layers │          │ Store  │
+       └────────┘          └────────┘
+                     │
+            ┌────────▼──────────┐
+            │  RabbitMQ Broker  │
+            │  (Celery Queue)   │
+            └────────┬──────────┘
+                     │
+         ┌───────────┴────────────┐
+         │                        │
+    ┌────▼─────┐          ┌──────▼──┐
+    │  Workers │          │  Beat   │
+    │ (Celery) │          │Scheduler│
+    └──────────┘          └─────────┘
 ```
 
-## Request Lifecycle
+## Frontend Architecture
 
-### 1. HTTP Request Flow (Client → API)
-
-```
-1. Browser makes HTTP request
-   ↓
-2. Caddy Proxy (reverse proxy)
-   - Routes based on path
-   - Terminates TLS
-   - Adds security headers
-   ↓
-3. Django Application
-   - Middleware pipeline:
-     a) CorsMiddleware - CORS validation
-     b) SecurityMiddleware - Security headers
-     c) SessionMiddleware - Session setup
-     d) AuthenticationMiddleware - User detection
-     e) Custom: APITokenLogMiddleware - API token logging
-     f) Custom: RequestLoggerMiddleware - Request logging
-   ↓
-4. URL Router
-   - Matches route pattern
-   - Dispatches to ViewSet
-   ↓
-5. ViewSet/View
-   - Permission checks (has access?)
-   - Data fetching (ORM queries)
-   - Serialization (to JSON)
-   ↓
-6. Response
-   - JSON serialized response
-   - Cache headers (if applicable)
-   - Back through middleware
-   ↓
-7. Caddy Proxy
-   - Compression (gzip)
-   - Response headers
-   ↓
-8. Browser receives response
-```
-
-### 2. Real-Time Collaboration Flow (WebSocket)
+### React Application Structure (apps/web)
 
 ```
-1. Browser connects to /live WebSocket
-   ↓
-2. Live Server (Express.js + Hocuspocus)
-   - Establishes WebSocket connection
-   - Creates Y.js document for document ID
-   ↓
-3. Client sends CRDT updates
-   ↓
-4. Hocuspocus receives update
-   - Applies to Y.js document state
-   - Persists to database
-   - Broadcasts to other clients via Redis pub-sub
-   ↓
-5. Other connected clients receive update
-   ↓
-6. Client-side editor applies update
-   - Y.js CRDT merge algorithm
-   - No conflicts (CRDTs handle merging)
-   ↓
-7. Browser renders updated content
+apps/web/
+├── core/                           # Upstream code (read-only)
+│   ├── app/                        # Next.js app router
+│   │   ├── layout.tsx              # Root layout
+│   │   ├── (auth)/                 # Auth routes (login, signup)
+│   │   └── (all)/[workspaceSlug]/  # Main app routes
+│   │
+│   ├── store/                      # MobX stores (33+)
+│   │   ├── root-store.ts           # Root store
+│   │   ├── workspace.store.ts      # Workspace root store
+│   │   ├── project.store.ts        # Project root store
+│   │   ├── issue.store.ts          # Issue root store (multi-layout)
+│   │   ├── cycle.store.ts          # Cycle (sprint) store
+│   │   ├── module.store.ts         # Module store
+│   │   ├── page.store.ts           # Page (wiki) store
+│   │   └── [other].store.ts
+│   │
+│   ├── hooks/                      # Custom hooks (47 total)
+│   │   ├── store/                  # Store access hooks
+│   │   │   ├── use-workspace.ts
+│   │   │   ├── use-project.ts
+│   │   │   ├── use-issue.ts
+│   │   │   └── use-workflow.ts    # Reads CE store
+│   │   ├── use-issue-form.ts
+│   │   ├── use-drag-n-drop.ts
+│   │   └── [other].ts
+│   │
+│   ├── services/                   # API clients (30+)
+│   │   ├── api-base.ts             # Axios instance
+│   │   ├── workspace.service.ts
+│   │   ├── issue.service.ts
+│   │   └── [other].service.ts
+│   │
+│   ├── components/                 # Shared components (51 dirs)
+│   │   ├── layouts/
+│   │   ├── modals/
+│   │   ├── form/
+│   │   ├── issue-layouts/          # List, Kanban, Gantt, Calendar, Sheet
+│   │   └── [other]/
+│   │
+│   └── context/                    # React context
+│       └── store-context.ts        # Provides RootStore
+│
+├── ce/                             # Shinhan customizations (extend core)
+│   ├── store/
+│   │   ├── root.store.ts           # Extends CoreRootStore
+│   │   ├── workflow.store.ts       # Workflow MobX store
+│   │   ├── time-tracking.store.ts  # Time tracking store
+│   │   ├── ho.store.ts             # Org chart (HO) store
+│   │   ├── analytics.store.ts      # Analytics dashboard store
+│   │   ├── task-category.store.ts  # Task categories store
+│   │   └── monitoring.store.ts     # Monitoring dashboard store
+│   │
+│   ├── services/
+│   │   ├── workflow.service.ts
+│   │   ├── time-tracking.service.ts
+│   │   ├── ho.service.ts
+│   │   ├── analytics.service.ts
+│   │   ├── task-category.service.ts
+│   │   └── monitoring.service.ts
+│   │
+│   └── components/
+│       ├── workflow/                # Workflow UI
+│       │   ├── use-workflow-drag-n-drop.ts  # Kanban DnD hook
+│       │   ├── kanban-group.tsx
+│       │   └── workflow-blocker-modal.tsx
+│       ├── time-tracking/           # Time tracking UI
+│       ├── ho/                       # Org chart UI
+│       ├── analytics/                # Analytics dashboard UI
+│       ├── task-category/            # Task categories admin UI
+│       ├── monitoring/               # Monitoring dashboard UI
+│       └── [other]/
+│
+├── app/                            # Old routing (gradual migration)
+└── tsconfig.json                   # Path aliases
+    # @/* → core/*
+    # @/plane-web/* → ce/*
 ```
 
-### 3. Background Task Flow (Async)
+### State Management (MobX)
+
+**Store Hierarchy:**
 
 ```
-1. API endpoint receives request
-   - Task needs to run async
-   ↓
-2. Enqueue Celery task
-   - Store in RabbitMQ queue
-   ↓
-3. Worker picks up from queue
-   - Executes task logic
-   - Database operations
-   - External API calls
-   - Email sending
-   ↓
-4. Task completes/fails
-   - Result stored in Redis
-   ↓
-5. Client polls or receives websocket update
-   - Result available
+RootStore (ce/store/root.store.ts extends CoreRootStore)
+├── workspaceStore: WorkspaceRootStore
+│   └── workspaces: Map<id, Workspace>
+├── projectStore: ProjectRootStore
+│   └── projects: Map<id, Project>
+├── issueStore: IssueRootStore
+│   ├── issues: Map<id, Issue>
+│   ├── issueFilters: IssueFilters
+│   ├── issueLayouts: "list" | "kanban" | "gantt" | "calendar" | "spreadsheet"
+│   └── issueDetails: Map<id, DetailedIssue>
+├── cycleStore: CycleRootStore
+├── moduleStore: ModuleRootStore
+├── pageStore: PageRootStore
+├── workflowStore: WorkflowRootStore (CE)
+│   └── workflows: Map<projectId, Workflow>
+├── timeTrackingStore: TimeTrackingRootStore (CE)
+│   └── timeLogs: Map<issueId, TimeLog[]>
+├── hoStore: HORootStore (CE)
+│   └── orgChart: OrgNode[]
+├── analyticsStore: AnalyticsRootStore (CE)
+│   └── dashboardData: Map<projectId, AnalyticsData>
+├── taskCategoryStore: TaskCategoryRootStore (CE)
+│   └── categories: Map<workspaceId, TaskCategory[]>
+└── monitoringStore: MonitoringRootStore (CE)
+    └── metrics: Map<projectId, MonitoringMetrics>
 ```
 
-## Component Architecture
-
-### Frontend Architecture (Web App)
+**Data Flow:**
 
 ```
-┌─────────────────────────────────────────────────────┐
-│             React Router v7 (SPA)                   │
-├─────────────────────────────────────────────────────┤
-│                                                      │
-│  ┌──────────────────────────────────────────────┐   │
-│  │ Page Components (app/routes)                 │   │
-│  │ - WorkspaceHome, ProjectBoard, IssueDetail   │   │
-│  │ - AnalyticsDashboard (list & detail)         │   │
-│  │ - Dashboard list & widget detail pages       │   │
-│  └──────┬───────────────────────────────────────┘   │
-│         │                                            │
-│  ┌──────▼──────────────────────────────────────┐   │
-│  │ Core Components (core/components/)          │   │
-│  │ - Reusable UI components                    │   │
-│  │ - Page-specific sub-components              │   │
-│  └──────┬───────────────────────────────────────┘   │
-│         │                                            │
-│  ┌──────▼──────────────────────────────────────┐   │
-│  │ State Management (MobX)                     │   │
-│  │ ┌────────────────────────────────────────┐  │   │
-│  │ │ Root Store                             │  │   │
-│  │ ├─ user.store.ts (auth, profile)              │  │   │
-│  │ ├─ workspace.store.ts (workspace data)        │  │   │
-│  │ ├─ project.store.ts (project list)            │  │   │
-│  │ ├─ issue.store.ts (issue list)                │  │   │
-│  │ ├─ issue-detail.store.ts (single issue)       │  │   │
-│  │ ├─ cycle.store.ts (sprints)                   │  │   │
-│  │ ├─ module.store.ts (modules)                  │  │   │
-│  │ ├─ analytics-dashboard.store.ts (dashboards)  │  │   │
-│  │ ├─ theme.store.ts (dark/light mode)           │  │   │
-│  │ └─ [27 more stores...]                        │  │   │
-│  │ └────────────────────────────────────────┘  │   │
-│  └──────┬───────────────────────────────────────┘   │
-│         │                                            │
-│  ┌──────▼──────────────────────────────────────┐   │
-│  │ Hooks Layer (core/hooks/)                   │   │
-│  │ - useStore() → access stores                │   │
-│  │ - Custom hooks for common patterns          │   │
-│  └──────┬───────────────────────────────────────┘   │
-│         │                                            │
-│  ┌──────▼──────────────────────────────────────┐   │
-│  │ Services Layer (core/services/)               │   │
-│  │ - API calls via axios                         │   │
-│  │ - workspaceService.getAll()                   │   │
-│  │ - issueService.create(payload)                │   │
-│  │ - analyticsDashboardService (CRUD + widgets)  │   │
-│  │ - Domain-specific API wrappers                │   │
-│  └────────────────────────────────────────────────┘   │
-│                                                      │
-└─────────────────────────────────────────────────────┘
+User Action (click, drag, form submit)
+    ↓
+Hook (useIssue, useWorkflow)
+    ↓
+Store.action (updateIssue, moveIssueToState)
+    ↓
+Service.fetch (issueService.update)
+    ↓
+API v0 (PUT /api/v0/issues/{id}/)
+    ↓
+Store.runInAction (apply response data)
+    ↓
+Component re-renders (via observer)
 ```
 
-### Backend Architecture (Django API)
+### Issue Layouts (Multi-View, Single Store)
+
+**Architecture:**
 
 ```
-┌──────────────────────────────────────────────────────┐
-│        Django REST Framework (DRF)                   │
-├──────────────────────────────────────────────────────┤
-│                                                       │
-│  ┌────────────────────────────────────────────────┐  │
-│  │ URL Routing (plane/urls.py + plane/app/urls/) │  │
-│  │ - /api/v0/ → legacy endpoints                 │  │
-│  │ - /api/v1/ → new endpoints                    │  │
-│  │ - /auth/ → authentication                     │  │
-│  └────────────┬─────────────────────────────────┘  │
-│               │                                      │
-│  ┌────────────▼──────────────────────────────────┐  │
-│  │ Middleware Pipeline (custom + Django default)│  │
-│  │ - Authentication (user from session/token)    │  │
-│  │ - Logging (RequestLoggerMiddleware)           │  │
-│  │ - Rate limiting (throttle checks)             │  │
-│  └────────────┬─────────────────────────────────┘  │
-│               │                                      │
-│  ┌────────────▼──────────────────────────────────┐  │
-│  │ ViewSets (plane/app/views/)                   │  │
-│  │ - Permission checks (who can access?)         │  │
-│  │ - Serialization (ORM → JSON)                  │  │
-│  │ - Analytics dashboard CRUD & aggregation      │  │
-│  │ - Business logic dispatch                     │  │
-│  └────────────┬─────────────────────────────────┘  │
-│               │                                      │
-│  ┌────────────▼──────────────────────────────────┐  │
-│  │ Permissions (plane/app/permissions/)          │  │
-│  │ - WorkspaceMemberPermission                   │  │
-│  │ - ProjectMemberPermission                     │  │
-│  │ - ResourceOwnerPermission                     │  │
-│  └────────────┬─────────────────────────────────┘  │
-│               │                                      │
-│  ┌────────────▼──────────────────────────────────┐  │
-│  │ ORM Operations (plane/db/models/)             │  │
-│  │ - select_related() for JOINs                  │  │
-│  │ - prefetch_related() for reverse relations    │  │
-│  │ - Bulk operations for performance             │  │
-│  └────────────┬─────────────────────────────────┘  │
-│               │                                      │
-│               ├─────────────────────┐               │
-│               ▼                     ▼               │
-│  ┌──────────────────┐  ┌──────────────────────┐   │
-│  │   PostgreSQL     │  │   Task Queue         │   │
-│  │   (Primary DB)   │  │   (RabbitMQ + Celery)│   │
-│  └──────────────────┘  └──────────────────────┘   │
-│                                                       │
-└──────────────────────────────────────────────────────┘
+IssueRootStore (single source of truth)
+├── issues: Map<id, Issue>
+├── filters: IssueFilters
+├── sortBy: string
+└── groupBy: string
+
+Layout Selector (in project view)
+├─ List View   → ListLayout component
+├─ Kanban      → KanbanLayout component (with DnD)
+├─ Gantt       → GanttLayout component
+├─ Calendar    → CalendarLayout component
+└─ Spreadsheet → SpreadsheetLayout component
+
+All layouts read from same store
+All mutations update same store
+Switching layouts = changing view, not refetching
 ```
 
-## Data Model Overview
-
-### Core Entity Relationships
+**Kanban with DnD & Workflow Validation:**
 
 ```
-User
-├── owns → Workspace (1:N)
-│   ├── WorkspaceMember (1:N) → User
-│   ├── Department (1:N) - Hierarchical, max 5 levels
-│   │   ├── manager → User (optional)
-│   │   ├── linked_project → Project (optional)
-│   │   └── parent → Department (self-referential, null=root)
-│   ├── StaffProfile (1:1) - Employee record per workspace
-│   │   ├── user → User
-│   │   ├── department → Department (optional)
-│   │   └── employment_status (active/probation/resigned/suspended/transferred)
-│   ├── Project (1:N)
-│   │   ├── ProjectMember (1:N) → User
-│   │   ├── linked_department → Department (optional, for auto-sync)
-│   │   ├── is_time_tracking_enabled (Boolean, default=True)
-│   │   ├── Issue (1:N)
-│   │   │   ├── IssueAssignee → User (M:N)
-│   │   │   ├── IssueLabel → Label (M:N)
-│   │   │   ├── IssueCycle → Cycle (1:1 soft)
-│   │   │   ├── IssueModule → Module (1:1 soft)
-│   │   │   ├── IssueComment (1:N)
-│   │   │   ├── IssueLink (1:N)
-│   │   │   ├── IssueActivity (1:N)
-│   │   │   ├── IssueWorkLog (1:N) - Time tracking
-│   │   │   └── estimate_time (PositiveInt, nullable) - Time estimate in minutes
-│   │   ├── Cycle (1:N)
-│   │   │   └── CycleIssue → Issue (M:N)
-│   │   ├── Module (1:N)
-│   │   │   └── ModuleIssue → Issue (M:N)
-│   │   ├── Page (1:N)
-│   │   │   └── PageVersion (1:N)
-│   │   ├── State (1:N) - e.g., "To Do", "In Progress"
-│   │   ├── Label (1:N)
-│   │   ├── AnalyticsDashboard (1:N) - Pro feature
-│   │   │   ├── AnalyticsDashboardWidget (1:N)
-│   │   │   │   └── Widget config (charts, filters)
-│   │   │   └── UserFavorite (M:N, annotated as is_favorite)
-│   │   ├── IssueView (saved filters)
-│   │   └── UserFavorite (M:N, annotated as is_favorite on views)
-│   └── Notifications → Notification
-└── UserFavorite (M:N) → Multiple favoritable entities (dashboards, cycles, modules, etc.)
+KanbanLayout
+├── KanbanGroup (per state, one per column)
+│   ├── useWorkflowFDragNDrop hook
+│   │   ├── Validates state transition via workflow
+│   │   └── Returns: disabled flags, handleWorkFlowState
+│   ├── IssueCard (Atlaskit pragmatic DnD)
+│   └── onDragEnter → handleWorkFlowState(source, dest)
+│
+└── Blocked transition
+    └── throw WORKFLOW_TRANSITION_BLOCKED
+        └── unhandledrejection event
+            └── WorkflowBlockerModal catches & shows reason
 ```
 
-**UserFavorite Pattern** (shared across dashboards, views, pages, cycles, modules):
+## Backend Architecture
 
-- Backend annotates `is_favorite=Exists(UserFavorite.objects.filter(...))` on list queries
-- Frontend reads `is_favorite` boolean flag in API response
-- Favorited items appear in sidebar Favorites section
-- Uses optimistic updates with rollback on error
-
-### Database Choice Rationale
-
-**PostgreSQL 15.7 (Primary)**:
-
-- ACID compliance for transactional data
-- Complex queries (JOINs, window functions)
-- Full-text search capabilities
-- JSON data type for flexible fields
-- 33 models covering entire domain (includes Department, StaffProfile)
-
-**MongoDB 4.6 (Secondary)**:
-
-- API activity logs (high volume, write-heavy)
-- Flexible schema for analytics
-- Time-series data storage
-- Sharding for large-scale logging
-
-## Authentication & Authorization
-
-### Authentication Methods
+### Django Application Structure (apps/api)
 
 ```
-Request
-  ├─ Session Cookie
-  │  └─ Redis-backed session store
-  ├─ Bearer Token (JWT)
-  │  └─ API token for external apps
-  ├─ OAuth (Google/GitHub/GitLab/Gitea)
-  │  └─ OAuth adapter → session
-  └─ Magic Link
-     └─ Email token → session
+apps/api/
+├── plane/
+│   ├── settings/
+│   │   ├── base.py           # Core Django config
+│   │   ├── urls.py           # API routing (v0, v1)
+│   │   ├── asgi.py           # ASGI entry
+│   │   └── celery.py         # Celery config
+│   │
+│   ├── db/
+│   │   ├── models/           # 37 ORM models
+│   │   │   ├── workspace.py  # Workspace, WorkspaceMember
+│   │   │   ├── project.py    # Project, ProjectMember
+│   │   │   ├── issue.py      # Issue, IssueLabel, IssueLink
+│   │   │   ├── cycle.py      # Cycle, CycleIssue
+│   │   │   ├── module.py     # Module, ModuleIssue
+│   │   │   ├── page.py       # Page, PageBlock
+│   │   │   ├── state.py      # State (workflow states)
+│   │   │   ├── workflow.py   # WorkflowState, WorkflowTransition (CE)
+│   │   │   ├── time-log.py   # TimeLog (CE)
+│   │   │   └── [other].py
+│   │   └── managers.py       # SoftDeletionManager, etc.
+│   │
+│   ├── app/
+│   │   ├── views/            # DRF ViewSets (41+ endpoints)
+│   │   │   ├── workspace/
+│   │   │   ├── project/
+│   │   │   ├── issue/
+│   │   │   ├── cycle/
+│   │   │   ├── module/
+│   │   │   ├── page/
+│   │   │   ├── workflow/     # CE endpoints
+│   │   │   └── [other]/
+│   │   │
+│   │   ├── serializers/
+│   │   │   ├── v0/           # Session auth (internal)
+│   │   │   │   ├── issue.py
+│   │   │   │   └── [other].py
+│   │   │   └── v1/           # API key auth (external)
+│   │   │       ├── issue.py
+│   │   │       └── [other].py
+│   │   │
+│   │   ├── permissions.py    # Custom DRF permissions
+│   │   └── authentication.py # API key + Session auth
+│   │
+│   ├── utils/
+│   │   ├── workflow_checker.py   # Workflow transition validation
+│   │   ├── decorators.py         # @allow_permission decorator
+│   │   ├── export.py             # CSV/JSON export logic
+│   │   └── [other].py
+│   │
+│   ├── middleware/
+│   │   ├── auth.py               # Session/API key extraction
+│   │   ├── logging.py            # Request/response logging
+│   │   ├── workspace.py          # Workspace detection
+│   │   ├── read_replica.py       # Route reads vs writes
+│   │   └── [9 more layers]
+│   │
+│   ├── tasks/                    # Celery async tasks (41 tasks)
+│   │   ├── notification.py       # Email, Slack, webhooks
+│   │   ├── activity.py           # Activity logging
+│   │   ├── export.py             # CSV/PDF exports to S3
+│   │   └── [other].py
+│   │
+│   └── constants/
+│       ├── roles.py              # ROLE.ADMIN, MEMBER, GUEST
+│       └── [other].py
+│
+├── manage.py
+├── requirements.txt
+└── Dockerfile
 ```
 
-### Authorization (RBAC)
+### Request Pipeline (10-Layer Middleware)
 
-**Workspace Roles**:
-
-- Owner - Full control
-- Admin - Manage members, projects
-- Member - Create/edit issues
-- Guest - Read-only access
-
-**Project Roles**:
-
-- Owner - Full control
-- Admin - Manage members
-- Member - Create/edit issues
-- Guest - Read-only
-
-**Implementation**: Permission classes in DRF check:
-
-1. Is user workspace member?
-2. Does user have required role?
-3. Can user access resource?
-
-## Organizational Structure: Department & Staff Management
-
-### Department Model
-
-**Hierarchical tree structure** supporting up to 5 levels:
-
-| Field            | Type                     | Purpose                           |
-| ---------------- | ------------------------ | --------------------------------- |
-| `workspace`      | FK → Workspace           | Scope (departments per workspace) |
-| `name`           | CharField(255)           | Full department name              |
-| `code`           | CharField(20)            | Department code (unique)          |
-| `short_name`     | CharField(10, uppercase) | Short code like "IT", "HR"        |
-| `dept_code`      | CharField(4, 4 digits)   | Numeric department ID             |
-| `parent`         | Self-FK (nullable)       | Parent department (null = root)   |
-| `level`          | SmallIntField (1-5)      | Depth in hierarchy                |
-| `manager`        | FK → User (nullable)     | Department manager                |
-| `linked_project` | FK → Project (nullable)  | Team project for auto-sync        |
-| `is_active`      | Boolean                  | Department status                 |
-
-**Key Constraints**:
-
-- Unique per workspace: `(workspace, code)`, `(workspace, short_name)`, `(workspace, dept_code)`
-- Circular parent prevention in `.clean()` method
-- Soft-delete support via `deleted_at` field
-
-**API Endpoints**:
-
-- `GET /api/v1/workspaces/{slug}/departments/` - List (filters: parent, level, is_active)
-- `POST /api/v1/workspaces/{slug}/departments/` - Create
-- `GET /api/v1/workspaces/{slug}/departments/tree/` - Hierarchical tree (nested JSON)
-- `GET /api/v1/workspaces/{slug}/departments/{id}/` - Retrieve
-- `PUT /api/v1/workspaces/{slug}/departments/{id}/` - Update
-- `DELETE /api/v1/workspaces/{slug}/departments/{id}/` - Soft delete
-
-### StaffProfile Model
-
-**Employee record** linked 1:1 to User, scoped per workspace:
-
-| Field                   | Type                 | Purpose                                         |
-| ----------------------- | -------------------- | ----------------------------------------------- |
-| `workspace`             | FK → Workspace       | Scope to single workspace                       |
-| `user`                  | OneToOne → User      | Linked user account                             |
-| `staff_id`              | CharField(8, unique) | Employee ID (unique per workspace)              |
-| `department`            | FK → Department      | Current department (nullable)                   |
-| `position`              | CharField(255)       | Job title                                       |
-| `job_grade`             | CharField(50)        | Salary/level grade                              |
-| `phone`                 | CharField(20)        | Contact phone                                   |
-| `date_of_joining`       | DateField            | Hiring date                                     |
-| `date_of_leaving`       | DateField            | Exit date (if applicable)                       |
-| `employment_status`     | Choices              | active/probation/resigned/suspended/transferred |
-| `is_department_manager` | Boolean              | Auto-join children projects                     |
-| `notes`                 | TextField            | Internal notes                                  |
-
-**Employment Status Choices**:
-
-- `active` - Currently employed
-- `probation` - Probationary period
-- `resigned` - Former employee
-- `suspended` - Temporarily inactive
-- `transferred` - Moved to different workspace
-
-**Auto-Sync Feature**:
-
-- When staff marked as department manager: automatically added to linked_project and child departments' projects
-- Reverse: when removed from department, auto-removed from project (if last department affiliation)
-
-**API Endpoints**:
-
-- `GET /api/v1/workspaces/{slug}/staff/` - List (filters: department, employment_status)
-- `POST /api/v1/workspaces/{slug}/staff/` - Create
-- `GET /api/v1/workspaces/{slug}/staff/{id}/` - Retrieve
-- `PUT /api/v1/workspaces/{slug}/staff/{id}/` - Update
-- `DELETE /api/v1/workspaces/{slug}/staff/{id}/` - Soft delete
-- `POST /api/v1/workspaces/{slug}/staff/{id}/transfer/` - Transfer to different department
-- `POST /api/v1/workspaces/{slug}/staff/{id}/deactivate/` - Set employment_status to resigned
-- `POST /api/v1/workspaces/{slug}/staff/bulk-import/` - CSV/JSON bulk import
-- `GET /api/v1/workspaces/{slug}/staff/export/` - Export to CSV
-- `GET /api/v1/workspaces/{slug}/staff/stats/` - Count per department, status
-
-**Frontend Components** (Workspace Settings):
-
-- **Department Management** - Create, edit, delete, reorder, view hierarchy
-- **Staff Management** - CRUD staff, assign departments, manage status
-- **Bulk Import/Export** - Import employees from CSV, export staff list
-- **Dashboard** - Staff count, active/inactive ratio per department
-
-**Frontend Routes**:
-
-- `/[workspaceSlug]/(settings)/settings/departments/` - Department tree UI
-- `/[workspaceSlug]/(settings)/settings/staff/` - Staff table + management
-
-## Time Tracking (Work Logs)
-
-### Core Model
-
-**IssueWorkLog**: Tracks time logged on issues per member
-
-| Field              | Type                 | Purpose                          |
-| ------------------ | -------------------- | -------------------------------- |
-| `issue`            | FK → Issue           | Work log belongs to issue        |
-| `logged_by`        | FK → User            | Team member who logged time      |
-| `duration_minutes` | PositiveInt          | Minutes spent (e.g., 120 = 2hrs) |
-| `description`      | TextField            | Notes on work completed          |
-| `logged_at`        | DateField            | Date work was performed          |
-
-**Issue Fields**:
-
-- `estimate_time` (PositiveInt, nullable) - Expected duration in minutes
-- Enables comparison of estimated vs actual time
-
-**Project Flag**:
-
-- `is_time_tracking_enabled` (Boolean, default=True) - Feature toggle per project
-
-### API Endpoints
-
-| Endpoint | Method | Purpose |
-| -------- | ------ | ------- |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` | GET | List worklogs for issue |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/` | POST | Create worklog entry |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | PATCH | Update worklog |
-| `/api/v1/workspaces/{slug}/projects/{pid}/issues/{iid}/worklogs/{id}/` | DELETE | Delete worklog |
-| `/api/v1/workspaces/{slug}/projects/{pid}/worklogs/summary/` | GET | Project summary (by member/issue) |
-| `/api/v1/workspaces/{slug}/time-tracking/summary/` | GET | Workspace summary |
-
-**Permissions**: ROLE.ADMIN and ROLE.MEMBER; creator can edit own logs; requires `is_time_tracking_enabled`
-
-### Frontend
-
-- **Route**: `/:workspaceSlug/projects/:projectId/time-tracking`
-- **Page**: `TimeTrackingReportPage` - Summary, filters, worklog table
-- **Store**: `WorklogStore` (MobX) - CRUD + summary queries
-- **Components**: WorklogModal, IssueWorklogProperty
-- **Sidebar Nav**: "Time Tracking" link in project navigation
-
-## Scalability Patterns
-
-### Horizontal Scaling
-
-**Stateless Components** (scale via replicas):
-
-| Component    | Role          | Replicas        | Health Check        |
-| ------------ | ------------- | --------------- | ------------------- |
-| Web (3000)   | Frontend SPA  | WEB_REPLICAS    | HTTP 200 on /       |
-| Admin (3000) | Admin SPA     | ADMIN_REPLICAS  | HTTP 200 on /       |
-| Space (3000) | Public portal | SPACE_REPLICAS  | HTTP 200 on /       |
-| Live (3000)  | WebSocket     | LIVE_REPLICAS   | HTTP 200 on /health |
-| API (8000)   | REST server   | API_REPLICAS    | HTTP 200 on /health |
-| Worker       | Celery tasks  | WORKER_REPLICAS | (managed by Celery) |
-
-**Configuration** (docker-compose.yml):
-
-```yaml
-services:
-  api:
-    deploy:
-      replicas: ${API_REPLICAS:-1}
 ```
+HTTP Request
+    ↓
+1. CORS Middleware           (Domain validation)
+    ↓
+2. Auth Middleware           (Extract session/API key)
+    ↓
+3. Logging Middleware        (Winston structured logs)
+    ↓
+4. Workspace Detection       (Slug → workspace_id)
+    ↓
+5. Read-Replica Router       (Route to read/write DB)
+    ↓
+6. Rate Limiting            (Per user/API key)
+    ↓
+7. GZip Compression         (Response compression)
+    ↓
+8. Request Validation       (Schema validation)
+    ↓
+9. @allow_permission Check  (RBAC: ADMIN/MEMBER/GUEST)
+    ↓
+10. View Logic              (DRF serializers, queryset)
+    ↓
+Response (JSON)
+```
+
+### API Versioning
+
+**V0 API (Session Auth, Internal):**
+
+- Used by web UI (apps/web)
+- Cookie-based session
+- Endpoint: `/api/v0/{resource}/`
+- Serializers: `apps/api/plane/app/serializers/v0/`
+- Auth: `@require_http_methods("POST")`, `@login_required`
+
+**V1 API (API Key Auth, External):**
+
+- Used by external integrations
+- Header-based API key: `X-API-KEY`
+- OpenAPI docs: `/api/v1/docs/`
+- Endpoint: `/api/v1/{resource}/`
+- Serializers: `apps/api/plane/app/serializers/v1/`
+- Auth: Token authentication (DRF)
+
+**Never share serializers between v0/v1**
+
+### User & Profile Endpoints (V0 API)
+
+Cross-workspace aggregation for performance (Session auth, internal use).
+
+| Method | Path                                | Auth            | Purpose                                                    |
+| ------ | ----------------------------------- | --------------- | ---------------------------------------------------------- |
+| GET    | `/api/users/me/work-items/today/`   | Session + login | Open issues assigned to user, not yet overdue (≤200 items) |
+| GET    | `/api/users/me/work-items/overdue/` | Session + login | Open issues assigned to user, past due (≤200 items)        |
+
+**Parameters:**
+
+- `?workspace=<slug>` (optional) — Filter to single workspace; default: all workspaces
+
+**Serializer:** `UserCrossWorkspaceWorkItemSerializer` — ID-only response (minimal payload):
+
+- `id`, `name`, `identifier`, `state_id`, `priority`, `target_date`
+- `assignee_ids: UUID[]` (list of assignee IDs, not objects)
+- `label_ids: UUID[]` (list of label IDs, not objects)
+- `workspace_id`, `project_id`
+
+**Filters:**
+
+- Assignee = current user
+- Active workspace membership (`workspace_member.is_active=True`)
+- Active project membership (`project_member.is_active=True`)
+- Project not archived
+- State group in {backlog, unstarted, started} (open tasks only)
+- Parent is null (excludes sub-tasks — critical for accuracy)
+
+**Query optimization:**
+
+- `use_read_replica=True` — read-only queries
+- `select_related("workspace", "project", "state")` — joins on meta
+- `prefetch_related("assignees", "labels")` — bulk-fetch relationships
+- Supports DB partial index `issues_workitems_idx` on `(target_date, state_id) WHERE parent_id IS NULL AND deleted_at IS NULL AND archived_at IS NULL AND is_draft=FALSE`
+
+**Capping:** 200-item hard limit (KISS principle; sub-task exclusion + state filter keeps real-world counts much lower).
+
+**Feature flag:** `VITE_USE_AGGREGATE_PROFILE_ENDPOINT` (frontend env var, default `"true"`). When `"false"`, UI falls back to legacy client-side fan-out across individual workspace profile endpoints.
+
+### Database Schema
+
+**Core Hierarchy:**
+
+```
+Workspace
+├── WorkspaceMember (user, role, join_date)
+├── Project
+│   ├── ProjectMember (user, role)
+│   ├── Issue
+│   │   ├── IssueFavorite
+│   │   ├── IssueLabel
+│   │   ├── IssueLink (parent/duplicate/related)
+│   │   ├── IssueActivity (audit trail)
+│   │   └── TimeLog (CE)
+│   ├── Cycle (sprints)
+│   │   └── CycleIssue (M2M)
+│   ├── Module (features)
+│   │   └── ModuleIssue (M2M)
+│   ├── State (workflow states)
+│   │   └── WorkflowTransition (CE, state A → B)
+│   ├── Label
+│   ├── Priority
+│   ├── Estimate
+│   ├── Page (wiki)
+│   │   └── PageBlock (nested blocks)
+│   ├── PageFavorite
+│   └── ProjectTemplate
+│
+├── Notification
+├── Webhook
+│   └── WebhookLog
+└── Activity (audit log, workspace-level)
+```
+
+**Key Features:**
+
+- Soft delete: `deleted_at` field with unique constraint conditions
+- Audit trail: `created_by`, `updated_by` foreignkeys
+- Timestamps: `created_at`, `updated_at` auto-set
+- Indexing: Frequent queries indexed
+- Relationships: `select_related()` + `prefetch_related()`
+
+### Celery Task Queue
+
+**Broker:** RabbitMQ
+**Result Backend:** Redis
+**Scheduler:** Celery Beat
+
+**Task Categories (41+ tasks):**
+
+| Category             | Tasks | Examples                                                                          |
+| -------------------- | ----- | --------------------------------------------------------------------------------- |
+| **Notifications**    | 8     | Email notification, Slack webhook, user mention                                   |
+| **Webhooks**         | 6     | Send webhook event, retry failed delivery                                         |
+| **Activity Logging** | 5     | Log issue state change, activity digest                                           |
+| **Exports**          | 4     | CSV export, PDF report generation                                                 |
+| **Cleanup**          | 6     | Archive soft-deleted issues, expire sessions                                      |
+| **Analytics**        | 3     | Generate dashboard data, report aggregation                                       |
+| **Real-Time Sync**   | 5     | Update WebSocket connections, Y.js sync                                           |
+| **CE-Specific**      | 4+    | Time log processing, org chart updates, analytics computation, monitoring metrics |
+
+**Async Patterns:**
+
+```python
+# View triggers task
+@allow_permission("project.member")
+def create_issue(request, workspace_slug, project_slug):
+    issue = Issue.objects.create(...)
+    # Fire async task
+    send_issue_notification.delay(issue.id, request.user.id)
+    return Response(issue_serializer.data, status=201)
+
+# Task runs in worker
+@shared_task
+def send_issue_notification(issue_id, user_id):
+    issue = Issue.objects.get(id=issue_id)
+    user = User.objects.get(id=user_id)
+    # Send email
+    send_mail(...)
+```
+
+## Real-Time Architecture (apps/live)
+
+```
+WebSocket Server (Hocuspocus + Y.js CRDT)
+    ↓
+┌─────────────────────────────────┐
+│ Shared Document State (Y.Doc)   │
+│ ├─ PageBlock edits (text, rich) │
+│ ├─ Issue updates (fields)       │
+│ └─ Cursors/Awareness (future)   │
+└─────────────────────────────────┘
+    ↓
+Y.js CRDT Engine (Conflict-Free)
+    ↓
+Broadcast to all connected clients
+    ↓
+ClientA, ClientB, ClientC receive updates
+```
+
+**Characteristics:**
+
+- Operational Transform (CRDT): No conflict on concurrent edits
+- Websocket upgrade from HTTP
+- Y.js Awareness for presence (cursors, user colors)
+- Persistent state: Y.js IndexedDB adapter
+- Scalable: Y.js can scale to 10k+ users per document
+
+## Reverse Proxy (Caddy)
+
+```
+caddy reverse proxy (apps/proxy)
+    ↓
+Route by Host/Path:
+├── /api/* → :8000 (Django API)
+├── /live/* → :3003 (Websocket)
+├── /admin* → :3001 (Admin panel)
+├── /space/* → :3002 (Public projects)
+└── /* → :3000 (React web)
+```
+
+**Responsibilities:**
+
+- TLS/SSL termination
+- Load balancing
+- Rate limiting
+- Static file caching
+- Gzip compression
+
+## Data Flow Diagram: Creating an Issue
+
+```
+User submits form
+    ↓
+useIssueForm hook (useMemo)
+    ↓
+issueService.createIssue (POST /api/v0/issues/)
+    ↓
+Django View (IssueViewSet.create)
+    ├─ @allow_permission("project.member")
+    ├─ Serializer validation
+    ├─ Issue.objects.create()
+    ├─ Fire Celery task: send_issue_notification.delay()
+    └─ Return IssueSerializer(issue)
+    ↓
+issueStore.addIssue(response)
+    ├─ issues.set(id, new_issue)
+    ├─ runInAction()
+    └─ Notify observers
+    ↓
+List/Kanban/Gantt view re-renders
+    ↓
+New issue appears in all layouts
+```
+
+## Scalability & Performance
 
 ### Caching Strategy
 
-**Layer 1 - Browser Cache**:
+| Layer              | Tool                 | Data                                 | TTL           |
+| ------------------ | -------------------- | ------------------------------------ | ------------- |
+| **Browser**        | LocalStorage         | User preferences, UI state           | Session       |
+| **HTTP Cache**     | ETags, Cache-Control | API responses                        | Varies        |
+| **Redis Cache**    | Redis                | Workspace/project metadata, sessions | 1h            |
+| **DB Query Cache** | ORM select/prefetch  | Related objects                      | Request scope |
 
-- Static assets (CSS, JS) with cache headers
-- Service Worker for offline support
+### Database Optimization
 
-**Layer 2 - CDN Cache** (optional):
+- **Indexing:** Frequent filter fields indexed
+- **Denormalization:** Count fields cached (issue_count on project)
+- **Query optimization:** No N+1 queries (select_related, prefetch_related)
+- **Read replicas:** Middleware routes reads to replicas
+- **Connection pooling:** Psycopg2 pool (10-20 connections)
 
-- Static files cached at edge
-- Configurable TTL
+### Frontend Optimization
 
-**Layer 3 - Redis Cache**:
+- **Code splitting:** Route-based chunks (Next.js)
+- **Image optimization:** WebP, lazy loading
+- **Tree shaking:** Unused code removed (Webpack)
+- **Kanban virtualization:** Only visible items rendered
+- **MobX optimization:** Fine-grained reactivity
 
-- Session storage
-- Computed results
-- Rate limit counters
-- Celery task results
+## Security
 
-**Layer 4 - Database Query Cache**:
+### Authentication & Authorization
 
-- ORM select_related/prefetch_related
-- Materialized views (if needed)
+**Authentication:**
 
-### Database Connection Pooling
+- V0 API: Django session (cookie-based)
+- V1 API: API Key (header-based)
+- CSRF protection: Token validation
 
-**PostgreSQL** (via Django):
+**Authorization (RBAC):**
 
-- Default pool: 5 connections
-- Maximum: 1000 (configured)
-- Min idle: monitored
-- Connection timeout: 5s
-
-**Redis** (via django-redis):
-
-- Connection pool enabled
-- Max connections: 50
-
-## Real-Time Collaboration System
-
-### CRDT (Conflict-free Replicated Data Type)
-
-**Technology**: Y.js CRDT + Hocuspocus
-
-**Flow**:
-
-```
-User A edits document
-  ↓
-Y.js generates update (diff)
-  ↓
-Hocuspocus sends to server
-  ↓
-Server persists to DB
-  ↓
-Redis pub-sub broadcasts to other clients
-  ↓
-User B's Y.js merges update automatically
-  ↓
-No conflicts, no manual merging needed
+```python
+@allow_permission("workspace.member")  # User is workspace member
+@allow_permission("project.member")    # User is project member
+@allow_permission("workspace.admin")   # User is workspace admin
 ```
 
-### Benefits of CRDTs
+Roles per level:
 
-- **Conflict-free**: Automatic merge of concurrent edits
-- **Offline-first**: Works without server connection
-- **Scalable**: No central merge authority needed
-- **Fast**: Local operations (no waiting for server)
+- Workspace: ADMIN, MEMBER, GUEST
+- Project: ADMIN, MEMBER, GUEST
+
+### Data Security
+
+- **Soft delete:** Data preserved, not deleted
+- **Audit trail:** All changes logged (created_by, updated_by)
+- **API scoping:** Queries filtered by workspace slug
+- **S3 upload:** Pre-signed URLs, no direct access
+- **Secrets:** Env vars (never hardcoded)
 
 ## Monitoring & Observability
 
-### Logging
+**Logging:**
 
-**Request Logging** (RequestLoggerMiddleware):
+- Winston structured JSON logs
+- Correlation IDs for request tracing
+- Log levels: ERROR, WARN, INFO, DEBUG
+- Central log aggregation (future)
 
-- All HTTP requests logged to JSON
-- Fields: method, path, status, duration, user_id, ip
+**Metrics:**
 
-**API Token Logging** (APITokenLogMiddleware):
+- APM: Request duration, error rates
+- Database: Query count, execution time
+- Celery: Task success/fail rates
+- Redis: Cache hit rates
 
-- External API requests tracked
-- Fields: token, request body, response, timestamp
-- Storage: PostgreSQL + MongoDB
+**Health Check:**
 
-**Application Logging**:
-
-- Django logger at DEBUG level (dev) / WARNING (prod)
-- Celery task logging per task
-- Error tracking via Sentry (optional)
-
-### Error Tracking
-
-**Optional Integrations**:
-
-- Sentry - Error monitoring & alerting
-- Scout APM - Performance monitoring
-- PostHog - Product analytics
-- OpenTelemetry - Distributed tracing
-
-## Security Architecture
-
-### TLS/HTTPS
-
-- Caddy auto-provisions certificates (Let's Encrypt)
-- DNS providers: CloudFlare, DigitalOcean
-- ACME challenge support
-
-### Request Validation
-
-- Input validation (Zod schemas)
-- Rate limiting (per user/IP)
-- CSRF tokens (Django middleware)
-- CORS whitelist enforcement
-
-### Data Protection
-
-- Password hashing (Django default: PBKDF2)
-- Session encryption (secure cookies)
-- API tokens stored as hashes
-- HTML sanitization (nh3 library)
-
-## Deployment Architecture
-
-### Docker Compose (Single Server)
-
-```
-Services:
-├─ web (port 3000)
-├─ admin (port 3000)
-├─ space (port 3000)
-├─ live (port 3000)
-├─ api (port 8000)
-├─ worker (background)
-├─ beat-worker (scheduler)
-├─ postgres (port 5432)
-├─ redis (port 6379)
-├─ rabbitmq (port 5672)
-├─ minio (port 9000)
-└─ proxy (port 80/443)
-
-Volumes:
-├─ pgdata (PostgreSQL persistence)
-├─ redisdata (Redis persistence)
-├─ uploads (MinIO storage)
-└─ logs (application logs)
-```
-
-### Kubernetes Deployment
-
-- Helm chart with customizable replicas
-- StatefulSets for database/storage
-- Deployments for stateless services
-- Horizontal Pod Autoscaler (HPA) for scaling
-
-## Performance Optimization
-
-### Frontend
-
-- Code splitting (React.lazy)
-- Tree-shaking (ES modules)
-- Asset compression (gzip, brotli)
-- Image optimization (webp)
-- Bundle size: <500KB (gzipped)
-
-### Backend
-
-- Query optimization (select_related, prefetch_related)
-- Database indexing on frequently queried fields
-- Pagination (default 20 items/page)
-- Response compression (gzip)
-- API response caching where applicable
-
-### Infrastructure
-
-- Load balancing (Caddy health checks)
-- Connection pooling (DB, Redis)
-- Async tasks (long-running operations)
-- Cache strategy (3-tier caching)
+- Endpoint: `/health`
+- Checks: DB connection, Redis, RabbitMQ
+- Response: JSON status
 
 ---
 
-**Document Location**: `/Volumes/Data/SHBVN/plane.so/docs/system-architecture.md`
-**Lines**: ~510
-**Status**: Updated with Time Tracking API & data model
+## Business Calendar Subsystem
+
+> Plan: `plans/260428-1427-vietnam-working-day-holiday-management/`
+> Research: `plans/reports/researcher-260428-1412-vietnam-working-day-holiday-management.md`
+
+### Overview
+
+Manual, god-mode source-of-truth for Vietnamese working-day rules. No third-party calendar API, no auto-import. Instance admins define schedules, holidays, and day overrides via the `/calendar` admin UI; Celery tasks consult the service at invocation time.
+
+**Design goals:** deterministic (same inputs → same result), fail-open (calendar errors never block critical background jobs), cache-backed (TTL 1 day, signal-invalidated on any data change).
+
+### Data Model
+
+```
+WorkSchedule (1) ──────────┬── Holiday (N)
+  id, name                 │     id, schedule_fk, date, name
+  week_pattern[7] bool     │
+  timezone (Asia/HCM)      └── DayOverride (N)
+  is_default bool                id, schedule_fk, date
+  country_code "VN"              type WORKDAY|HOLIDAY
+  workspace_fk (null=instance)   reason, swap_with_date
+```
+
+**Resolution priority** (highest wins):
+
+1. `DayOverride` for the date → WORKDAY or HOLIDAY
+2. `Holiday` for the date → not working
+3. `week_pattern[weekday]` → True/False
+
+### Service
+
+`plane/utils/business_calendar/service.py` — `BusinessCalendarService` (all class methods, no state):
+
+| Method                 | Signature                              | Purpose                   |
+| ---------------------- | -------------------------------------- | ------------------------- |
+| `is_working_day`       | `(d, schedule_id=None) → bool`         | Core predicate            |
+| `next_working_day`     | `(d, schedule_id=None) → date`         | Skip to next working date |
+| `add_business_days`    | `(d, n, schedule_id=None) → date`      | Walk forward/back N days  |
+| `working_days_between` | `(start, end, schedule_id=None) → int` | Count half-open interval  |
+
+**Cache:** `calendar:{schedule_id}:{year}` → serialised holiday+override dict, TTL 86400 s.
+
+**Signal invalidation** (`plane/db/models/business_calendar.py`):
+
+- `Holiday` post_save/post_delete → `cache.delete(calendar:{schedule_id}:{year})`
+- `DayOverride` post_save/post_delete → same
+- `WorkSchedule` post_delete (hard) → year-range sweep; post_save with `deleted_at` set → same
+
+Signals auto-imported in `plane/db/apps.py` `ready()`.
+
+### API
+
+Instance-admin layer at `plane/license/api/` — requires `InstanceAdminPermission`.
+
+| Method           | Path                                                      | Action                          |
+| ---------------- | --------------------------------------------------------- | ------------------------------- |
+| GET/POST         | `/api/instances/calendar/schedules/`                      | List / create schedules         |
+| GET/PATCH/DELETE | `/api/instances/calendar/schedules/{id}/`                 | Retrieve / update / soft-delete |
+| GET/POST         | `/api/instances/calendar/schedules/{id}/holidays/`        | List / bulk-create holidays     |
+| DELETE           | `/api/instances/calendar/schedules/{id}/holidays/{hid}/`  | Delete holiday                  |
+| GET/POST         | `/api/instances/calendar/schedules/{id}/overrides/`       | List / create overrides         |
+| DELETE           | `/api/instances/calendar/schedules/{id}/overrides/{oid}/` | Delete override                 |
+| POST             | `/api/instances/calendar/schedules/{id}/copy-year/`       | Bulk-copy one year to another   |
+| GET              | `/api/instances/calendar/schedules/default/`              | Resolve instance default        |
+
+### UI
+
+`apps/admin` — route `/calendar`:
+
+- Workweek toggle panel (Mon–Sun checkboxes per schedule)
+- Holidays grid (date + name, inline add/delete, grouped by month)
+- Overrides table (date, type WORKDAY/HOLIDAY, reason, swap-with link)
+- Copy-year action (clone all holidays/overrides from year A to year B)
+
+### Celery Integration
+
+`plane/utils/celery_helpers.py` — `working_day_required()` decorator factory:
+
+```python
+@shared_task          # outermost — Celery registers it
+@working_day_required()  # inner — guard runs at invocation
+def archive_and_close_old_issues(): ...
+```
+
+**Fail-open:** if `BusinessCalendarService` raises, logs exception and runs task anyway.
+**Log on skip:** `INFO plane.utils.celery_helpers "Skip {task}: {date} (VN) is not a working day"`.
+
+---
+
+**Last Updated:** 2026-04-28
+**Version:** 1.2

@@ -18,6 +18,13 @@
     "sequential-thinking": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    },
+    "stitch": {
+      "command": "npx",
+      "args": ["@_davideast/stitch-mcp", "proxy"],
+      "env": {
+        "STITCH_API_KEY": "YOUR_STITCH_API_KEY"
+      }
     }
   }
 }

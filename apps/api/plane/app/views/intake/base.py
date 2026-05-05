@@ -224,12 +224,11 @@ class IntakeIssueViewSet(BaseViewSet):
             return Response({"error": "Name is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Check for valid priority
-        if request.data.get("issue", {}).get("priority", "none") not in [
+        if request.data.get("issue", {}).get("priority", "medium") not in [
             "low",
             "medium",
             "high",
             "urgent",
-            "none",
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 

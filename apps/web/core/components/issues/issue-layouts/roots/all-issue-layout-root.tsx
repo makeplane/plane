@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { observer } from "mobx-react";
 import { useParams, useSearchParams } from "next/navigation";
 import useSWR from "swr";
@@ -13,8 +13,6 @@ import { GLOBAL_VIEW_TRACKER_ELEMENTS, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@pl
 import { EmptyStateDetailed } from "@plane/propel/empty-state";
 import type { EIssueLayoutTypes } from "@plane/types";
 import { EIssuesStoreType, STATIC_VIEW_TYPES } from "@plane/types";
-// assets
-import emptyView from "@/app/assets/empty-state/view.svg?url";
 // components
 import { IssuePeekOverview } from "@/components/issues/peek-overview";
 import { WorkspaceActiveLayout } from "@/components/views/helper";
@@ -59,13 +57,14 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
     const isStaticView = STATIC_VIEW_TYPES.includes(globalViewId);
     const hasViewDetails = Boolean(viewDetails);
 
-    if (!isStaticView && !hasViewDetails) return undefined;
+    // For non-static views, proceed once fetchFilters populates richFilters (faster than waiting for viewDetails)
+    if (!isStaticView && !workItemFilters?.richFilters && !hasViewDetails) return undefined;
 
     return {
       displayFilters: workItemFilters?.displayFilters,
       displayProperties: workItemFilters?.displayProperties,
       kanbanFilters: workItemFilters?.kanbanFilters,
-      richFilters: viewDetails?.rich_filters ?? {},
+      richFilters: workItemFilters?.richFilters ?? viewDetails?.rich_filters ?? {},
     };
   }, [globalViewId, viewDetails, workItemFilters]);
 

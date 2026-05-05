@@ -14,9 +14,12 @@
  * when multiple Claude Code sessions run in the same directory.
  */
 
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+// Crash wrapper
+try {
+  const fs = require('fs');
+  const path = require('path');
+  const os = require('os');
+  const { createHookTimer, logHookCrash } = require('./lib/hook-logger.cjs');
 
 // Directories to never shadow (internal infrastructure, not real skills)
 const SKIP_DIRS = new Set(['.shadowed', '.venv', 'node_modules', '__pycache__']);
@@ -209,46 +212,58 @@ function cleanupShadowedDir(paths) {
   }
 }
 
-// -- Main --------------------------------------------------------------------
+  // -- Main --------------------------------------------------------------------
 
-function main() {
-  try {
-    let payload = {};
+  function main() {
+    const timer = createHookTimer('skill-dedup');
+    let hookEvent = 'SessionStart';
     try {
-      const input = fs.readFileSync('/dev/stdin', 'utf8').trim();
-      if (input) payload = JSON.parse(input);
-    } catch {
-      // No stdin or invalid JSON
+      let payload = {};
+      try {
+        const input = fs.readFileSync('/dev/stdin', 'utf8').trim();
+        if (input) payload = JSON.parse(input);
+      } catch {
+        // No stdin or invalid JSON
+      }
+
+      const paths = getDefaultPaths();
+      const event = payload.hook_event_name || '';
+      hookEvent = event === 'SessionEnd' || event === 'Stop' ? event : 'SessionStart';
+
+      if (event === 'SessionEnd' || event === 'Stop') {
+        handleSessionEnd(paths);
+      } else {
+        handleSessionStart(paths);
+      }
+      timer.end({ event: hookEvent, status: 'ok', exit: 0, note: 'dedup-complete' });
+    } catch (err) {
+      process.stderr.write(`[skill-dedup] Error: ${err.message}\n`);
+      logHookCrash('skill-dedup', err, { event: hookEvent });
     }
 
-    const paths = getDefaultPaths();
-    const event = payload.hook_event_name || '';
-
-    if (event === 'SessionEnd' || event === 'Stop') {
-      handleSessionEnd(paths);
-    } else {
-      handleSessionStart(paths);
-    }
-  } catch (err) {
-    process.stderr.write(`[skill-dedup] Error: ${err.message}\n`);
+    process.exit(0);
   }
 
-  process.exit(0);
-}
+  // Export for testing
+  if (require.main === module) {
+    main();
+  }
 
-// Export for testing
-if (require.main === module) {
-  main();
+  module.exports = {
+    listSkillNames,
+    findOverlaps,
+    resolvePaths,
+    handleSessionStart,
+    handleSessionEnd,
+    doShadow,
+    restoreOrphanedSkills,
+    cleanupShadowedDir,
+    SKIP_DIRS
+  };
+} catch (e) {
+  try {
+    const { logHookCrash } = require('./lib/hook-logger.cjs');
+    logHookCrash('skill-dedup', e, { event: 'SessionStart' });
+  } catch (_) {}
+  process.exit(0); // fail-open
 }
-
-module.exports = {
-  listSkillNames,
-  findOverlaps,
-  resolvePaths,
-  handleSessionStart,
-  handleSessionEnd,
-  doShadow,
-  restoreOrphanedSkills,
-  cleanupShadowedDir,
-  SKIP_DIRS
-};

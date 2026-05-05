@@ -6,10 +6,12 @@ argument-hint: [issues]
 Analyze the skills catalog and activate the skills that are needed for the task during the process.
 
 ## Mission
+
 **Think hard** to analyze and fix these issues:
 <issues>$ARGUMENTS</issues>
 
 ## Workflow
+
 1. If the user provides a screenshots or videos, use `ai-multimodal` skill to describe as detailed as possible the issue, make sure developers can predict the root causes easily based on the description.
 2. Use `debugger` subagent to find the root cause of the issues and report back to main agent.
 3. Activate `debug` skills and `problem-solving` skills to tackle the issues.

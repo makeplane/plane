@@ -104,6 +104,15 @@ export enum EAuthenticationErrorCodes {
   LDAP_USER_NOT_FOUND = "5203",
   LDAP_AUTHENTICATION_FAILED = "5204",
   LDAP_PLANE_USER_NOT_FOUND = "5205",
+  // Swing SSO
+  SWING_SSO_NOT_CONFIGURED = "5210",
+  SWING_SSO_SERVER_UNREACHABLE = "5211",
+  SWING_SSO_AUTHENTICATION_FAILED = "5212",
+  SWING_SSO_PLANE_USER_NOT_FOUND = "5213",
+  SWING_SSO_PASSWORD_ATTEMPTS_EXCEEDED = "5214",
+  SWING_SSO_PASSWORD_EXPIRED = "5215",
+  SWING_SSO_LOGIN_DENIED = "5216",
+  SWING_SSO_INVALID_TOKEN = "5217",
   // Rate limit
   RATE_LIMIT_EXCEEDED = "5900",
 }
@@ -397,6 +406,39 @@ const errorCodeMessages: {
     title: `Account not activated`,
     message: () => `Your account has not been activated yet. Please contact your administrator.`,
   },
+  // Swing SSO
+  [EAuthenticationErrorCodes.SWING_SSO_NOT_CONFIGURED]: {
+    title: `SSO not configured`,
+    message: () => `Swing SSO is not configured. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.SWING_SSO_SERVER_UNREACHABLE]: {
+    title: `SSO server unreachable`,
+    message: () => `Cannot connect to the SSO server. Please try again later.`,
+  },
+  [EAuthenticationErrorCodes.SWING_SSO_AUTHENTICATION_FAILED]: {
+    title: `Authentication failed`,
+    message: () => `Invalid Staff ID or password. Please try again.`,
+  },
+  [EAuthenticationErrorCodes.SWING_SSO_PLANE_USER_NOT_FOUND]: {
+    title: `Account not activated`,
+    message: () => `Your account has not been activated yet. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.SWING_SSO_PASSWORD_ATTEMPTS_EXCEEDED]: {
+    title: `Too many attempts`,
+    message: () => `Password attempts exceeded. Your account may be locked. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.SWING_SSO_PASSWORD_EXPIRED]: {
+    title: `Password expired`,
+    message: () => `Your password has expired. Please contact your administrator to reset it.`,
+  },
+  [EAuthenticationErrorCodes.SWING_SSO_LOGIN_DENIED]: {
+    title: `Login denied`,
+    message: () => `Your login has been denied. Please contact your administrator.`,
+  },
+  [EAuthenticationErrorCodes.SWING_SSO_INVALID_TOKEN]: {
+    title: `Invalid token`,
+    message: () => `SSO token is invalid or expired. Please try again.`,
+  },
   [EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED]: {
     title: "",
     message: () => `Rate limit exceeded. Please try again later.`,
@@ -460,6 +502,14 @@ export const authErrorHandler = (errorCode: EAuthenticationErrorCodes, email?: s
     EAuthenticationErrorCodes.LDAP_USER_NOT_FOUND,
     EAuthenticationErrorCodes.LDAP_AUTHENTICATION_FAILED,
     EAuthenticationErrorCodes.LDAP_PLANE_USER_NOT_FOUND,
+    EAuthenticationErrorCodes.SWING_SSO_NOT_CONFIGURED,
+    EAuthenticationErrorCodes.SWING_SSO_SERVER_UNREACHABLE,
+    EAuthenticationErrorCodes.SWING_SSO_AUTHENTICATION_FAILED,
+    EAuthenticationErrorCodes.SWING_SSO_PLANE_USER_NOT_FOUND,
+    EAuthenticationErrorCodes.SWING_SSO_PASSWORD_ATTEMPTS_EXCEEDED,
+    EAuthenticationErrorCodes.SWING_SSO_PASSWORD_EXPIRED,
+    EAuthenticationErrorCodes.SWING_SSO_LOGIN_DENIED,
+    EAuthenticationErrorCodes.SWING_SSO_INVALID_TOKEN,
     EAuthenticationErrorCodes.RATE_LIMIT_EXCEEDED,
     EAuthenticationErrorCodes.PASSWORD_TOO_WEAK,
   ];

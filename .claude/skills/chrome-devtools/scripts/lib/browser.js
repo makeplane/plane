@@ -2,21 +2,51 @@
  * Shared browser utilities for Chrome DevTools scripts
  * Supports persistent browser sessions via WebSocket endpoint file
  */
-import puppeteer from "puppeteer";
-import debug from "debug";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import puppeteer from 'puppeteer';
+import debug from 'debug';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const log = debug("chrome-devtools:browser");
+const log = debug('chrome-devtools:browser');
 
 // Session file stores WebSocket endpoint for browser reuse across processes
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const SESSION_FILE = path.join(__dirname, "..", ".browser-session.json");
-const AUTH_SESSION_FILE = path.join(__dirname, "..", ".auth-session.json");
+const SESSION_FILE = path.join(__dirname, '..', '.browser-session.json');
+const AUTH_SESSION_FILE = path.join(__dirname, '..', '.auth-session.json');
 
 let browserInstance = null;
 let pageInstance = null;
+
+/**
+ * Resolve headless mode based on explicit value or OS auto-detection.
+ * - Explicit 'true'/'false' or boolean always wins
+ * - CI environments (CI, GITHUB_ACTIONS, GITLAB_CI, JENKINS_URL) → headless
+ * - Linux → headless (servers/WSL typically have no display)
+ * - macOS/Windows → headed for better debugging
+ * @param {string|boolean|undefined} value - CLI arg value or boolean
+ * @returns {boolean} - true for headless, false for headed
+ */
+export function resolveHeadless(value) {
+  if (value === false || value === 'false') return false;
+  if (value === true || value === 'true') return true;
+
+  // Auto-detect: CI → headless
+  if (process.env.CI || process.env.GITHUB_ACTIONS || process.env.GITLAB_CI || process.env.JENKINS_URL) {
+    log('Auto-detected CI environment → headless');
+    return true;
+  }
+
+  // Linux → headless (includes WSL, remote servers)
+  if (process.platform === 'linux') {
+    log('Auto-detected Linux → headless');
+    return true;
+  }
+
+  // macOS/Windows → headed for debugging
+  log(`Auto-detected ${process.platform} → headed`);
+  return false;
+}
 
 /**
  * Get default Chrome profile path based on OS
@@ -24,9 +54,9 @@ let pageInstance = null;
  */
 function getDefaultChromeProfilePath() {
   switch (process.platform) {
-    case "darwin":
+    case 'darwin':
       return `${process.env.HOME}/Library/Application Support/Google/Chrome`;
-    case "win32":
+    case 'win32':
       return `${process.env.LOCALAPPDATA}/Google/Chrome/User Data`;
     default: // Linux and others
       return `${process.env.HOME}/.config/google-chrome`;
@@ -39,14 +69,14 @@ function getDefaultChromeProfilePath() {
 function readSession() {
   try {
     if (fs.existsSync(SESSION_FILE)) {
-      const data = JSON.parse(fs.readFileSync(SESSION_FILE, "utf8"));
+      const data = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf8'));
       // Check if session is not too old (max 1 hour)
       if (Date.now() - data.timestamp < 3600000) {
         return data;
       }
     }
   } catch (e) {
-    log("Failed to read session:", e.message);
+    log('Failed to read session:', e.message);
   }
   return null;
 }
@@ -56,15 +86,12 @@ function readSession() {
  */
 function writeSession(wsEndpoint) {
   try {
-    fs.writeFileSync(
-      SESSION_FILE,
-      JSON.stringify({
-        wsEndpoint,
-        timestamp: Date.now(),
-      })
-    );
+    fs.writeFileSync(SESSION_FILE, JSON.stringify({
+      wsEndpoint,
+      timestamp: Date.now()
+    }));
   } catch (e) {
-    log("Failed to write session:", e.message);
+    log('Failed to write session:', e.message);
   }
 }
 
@@ -77,7 +104,7 @@ function clearSession() {
       fs.unlinkSync(SESSION_FILE);
     }
   } catch (e) {
-    log("Failed to clear session:", e.message);
+    log('Failed to clear session:', e.message);
   }
 }
 
@@ -90,9 +117,9 @@ export function saveAuthSession(authData) {
     const existing = readAuthSession() || {};
     const merged = { ...existing, ...authData, timestamp: Date.now() };
     fs.writeFileSync(AUTH_SESSION_FILE, JSON.stringify(merged, null, 2));
-    log("Auth session saved");
+    log('Auth session saved');
   } catch (e) {
-    log("Failed to save auth session:", e.message);
+    log('Failed to save auth session:', e.message);
   }
 }
 
@@ -103,14 +130,14 @@ export function saveAuthSession(authData) {
 export function readAuthSession() {
   try {
     if (fs.existsSync(AUTH_SESSION_FILE)) {
-      const data = JSON.parse(fs.readFileSync(AUTH_SESSION_FILE, "utf8"));
+      const data = JSON.parse(fs.readFileSync(AUTH_SESSION_FILE, 'utf8'));
       // Auth sessions valid for 24 hours
       if (Date.now() - data.timestamp < 86400000) {
         return data;
       }
     }
   } catch (e) {
-    log("Failed to read auth session:", e.message);
+    log('Failed to read auth session:', e.message);
   }
   return null;
 }
@@ -122,10 +149,10 @@ export function clearAuthSession() {
   try {
     if (fs.existsSync(AUTH_SESSION_FILE)) {
       fs.unlinkSync(AUTH_SESSION_FILE);
-      log("Auth session cleared");
+      log('Auth session cleared');
     }
   } catch (e) {
-    log("Failed to clear auth session:", e.message);
+    log('Failed to clear auth session:', e.message);
   }
 }
 
@@ -137,7 +164,7 @@ export function clearAuthSession() {
 export async function applyAuthSession(page, url) {
   const authData = readAuthSession();
   if (!authData) {
-    log("No auth session found");
+    log('No auth session found');
     return false;
   }
 
@@ -152,31 +179,31 @@ export async function applyAuthSession(page, url) {
     if (authData.localStorage && Object.keys(authData.localStorage).length > 0) {
       await page.evaluate((data) => {
         Object.entries(data).forEach(([key, value]) => {
-          localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+          localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
         });
       }, authData.localStorage);
-      log("Applied localStorage data");
+      log('Applied localStorage data');
     }
 
     // Apply sessionStorage
     if (authData.sessionStorage && Object.keys(authData.sessionStorage).length > 0) {
       await page.evaluate((data) => {
         Object.entries(data).forEach(([key, value]) => {
-          sessionStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+          sessionStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value));
         });
       }, authData.sessionStorage);
-      log("Applied sessionStorage data");
+      log('Applied sessionStorage data');
     }
 
     // Apply extra headers
     if (authData.headers) {
       await page.setExtraHTTPHeaders(authData.headers);
-      log("Applied HTTP headers");
+      log('Applied HTTP headers');
     }
 
     return true;
   } catch (e) {
-    log("Failed to apply auth session:", e.message);
+    log('Failed to apply auth session:', e.message);
     return false;
   }
 }
@@ -189,7 +216,7 @@ export async function applyAuthSession(page, url) {
 export async function getBrowser(options = {}) {
   // If we already have a connected browser in this process, reuse it
   if (browserInstance && browserInstance.isConnected()) {
-    log("Reusing existing browser instance from process");
+    log('Reusing existing browser instance from process');
     return browserInstance;
   }
 
@@ -197,24 +224,24 @@ export async function getBrowser(options = {}) {
   const session = readSession();
   if (session && session.wsEndpoint) {
     try {
-      log("Attempting to connect to existing browser session");
+      log('Attempting to connect to existing browser session');
       browserInstance = await puppeteer.connect({
-        browserWSEndpoint: session.wsEndpoint,
+        browserWSEndpoint: session.wsEndpoint
       });
-      log("Connected to existing browser");
+      log('Connected to existing browser');
       return browserInstance;
     } catch (e) {
-      log("Failed to connect to existing browser:", e.message);
+      log('Failed to connect to existing browser:', e.message);
       clearSession();
     }
   }
 
   // Connect via provided wsEndpoint or browserUrl
   if (options.wsEndpoint || options.browserUrl) {
-    log("Connecting to browser via provided endpoint");
+    log('Connecting to browser via provided endpoint');
     browserInstance = await puppeteer.connect({
       browserWSEndpoint: options.wsEndpoint,
-      browserURL: options.browserUrl,
+      browserURL: options.browserUrl
     });
     return browserInstance;
   }
@@ -226,25 +253,33 @@ export async function getBrowser(options = {}) {
     log(`Using default Chrome profile: ${userDataDir}`);
   }
 
+  // Destructure known properties — only pass Puppeteer-valid options to launch()
+  const { headless, args: extraArgs, viewport, useDefaultProfile, profile, browserUrl, wsEndpoint: _ws, userDataDir: _udd, ...restOptions } = options;
+
   // Launch new browser
   const launchOptions = {
-    headless: options.headless !== false,
-    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage", ...(options.args || [])],
-    defaultViewport: options.viewport || {
+    headless: resolveHeadless(headless),
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      ...(extraArgs || [])
+    ],
+    defaultViewport: viewport || {
       width: 1920,
-      height: 1080,
+      height: 1080
     },
     ...(userDataDir && { userDataDir }),
-    ...options,
+    ...restOptions
   };
 
-  log("Launching new browser");
+  log('Launching new browser');
   browserInstance = await puppeteer.launch(launchOptions);
 
   // Save wsEndpoint for future connections
   const wsEndpoint = browserInstance.wsEndpoint();
   writeSession(wsEndpoint);
-  log("Browser launched, session saved");
+  log('Browser launched, session saved');
 
   return browserInstance;
 }
@@ -254,7 +289,7 @@ export async function getBrowser(options = {}) {
  */
 export async function getPage(browser) {
   if (pageInstance && !pageInstance.isClosed()) {
-    log("Reusing existing page");
+    log('Reusing existing page');
     return pageInstance;
   }
 
@@ -277,7 +312,7 @@ export async function closeBrowser() {
     browserInstance = null;
     pageInstance = null;
     clearSession();
-    log("Browser closed, session cleared");
+    log('Browser closed, session cleared');
   }
 }
 
@@ -290,7 +325,7 @@ export async function disconnectBrowser() {
     browserInstance.disconnect();
     browserInstance = null;
     pageInstance = null;
-    log("Disconnected from browser (browser still running)");
+    log('Disconnected from browser (browser still running)');
   }
 }
 
@@ -303,11 +338,11 @@ export function parseArgs(argv, options = {}) {
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
 
-    if (arg.startsWith("--")) {
+    if (arg.startsWith('--')) {
       const key = arg.slice(2);
       const nextArg = argv[i + 1];
 
-      if (nextArg && !nextArg.startsWith("--")) {
+      if (nextArg && !nextArg.startsWith('--')) {
         args[key] = nextArg;
         i++;
       } else {
@@ -330,16 +365,10 @@ export function outputJSON(data) {
  * Output error
  */
 export function outputError(error) {
-  console.error(
-    JSON.stringify(
-      {
-        success: false,
-        error: error.message,
-        stack: error.stack,
-      },
-      null,
-      2
-    )
-  );
+  console.error(JSON.stringify({
+    success: false,
+    error: error.message,
+    stack: error.stack
+  }, null, 2));
   process.exit(1);
 }

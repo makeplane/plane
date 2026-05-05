@@ -160,12 +160,11 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             )
 
         # Check for valid priority
-        if request.data.get("issue", {}).get("priority", "none") not in [
+        if request.data.get("issue", {}).get("priority", "medium") not in [
             "low",
             "medium",
             "high",
             "urgent",
-            "none",
         ]:
             return Response({"error": "Invalid priority"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -191,7 +190,7 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             name=issue_data.get("name"),
             description_json=description_json,
             description_html=issue_data.get("description_html", "<p></p>"),
-            priority=issue_data.get("priority", "none"),
+            priority=issue_data.get("priority", "medium"),
             project_id=project_id,
             state_id=triage_state.id,
         )

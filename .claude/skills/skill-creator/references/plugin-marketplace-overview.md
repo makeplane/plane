@@ -1,55 +1,89 @@
-# Plugin Marketplace Overview
+# Plugin Marketplaces Overview
 
-Build and host plugin marketplaces to distribute Claude Code extensions across teams and communities.
+Plugin marketplace = catalog distributing Claude Code extensions across teams/communities.
+Provides centralized discovery, version tracking, automatic updates, multiple source types.
 
-## What is a Plugin Marketplace
+## Creation & Distribution Flow
 
-A plugin marketplace is a catalog that lets you distribute plugins to others. Marketplaces provide:
-- Centralized discovery
-- Version tracking
-- Automatic updates
-- Support for multiple source types (git repositories, local paths, etc.)
+1. **Create plugins** — commands, agents, hooks, MCP servers, LSP servers (see [Plugins docs](https://code.claude.com/docs/en/plugins.md))
+2. **Create marketplace file** — `.claude-plugin/marketplace.json` listing plugins + sources
+3. **Host marketplace** — push to GitHub/GitLab/git host
+4. **Share** — users add via `/plugin marketplace add`, install via `/plugin install`
 
-## Creating & Distributing a Marketplace
-
-1. **Create plugins**: Build plugins with commands, agents, hooks, MCP servers, or LSP servers
-2. **Create marketplace file**: Define `marketplace.json` listing plugins and sources
-3. **Host the marketplace**: Push to GitHub, GitLab, or another git host
-4. **Share with users**: Users add with `/plugin marketplace add` and install individual plugins
+Updates: push changes to repo → users refresh via `/plugin marketplace update`.
 
 ## Directory Structure
 
 ```
 my-marketplace/
 ├── .claude-plugin/
-│   └── marketplace.json       # Required: marketplace catalog
+│   └── marketplace.json        # Marketplace catalog (required)
 └── plugins/
-    └── my-plugin/
+    └── review-plugin/
         ├── .claude-plugin/
-        │   └── plugin.json    # Plugin manifest
+        │   └── plugin.json     # Plugin manifest
         └── skills/
-            └── my-skill/
-                └── SKILL.md
+            └── review/
+                └── SKILL.md    # Skill definition
 ```
 
-## Marketplace File Location
+## Walkthrough: Local Marketplace
 
-Create `.claude-plugin/marketplace.json` in repository root.
+```bash
+# 1. Create structure
+mkdir -p my-marketplace/.claude-plugin
+mkdir -p my-marketplace/plugins/review-plugin/.claude-plugin
+mkdir -p my-marketplace/plugins/review-plugin/skills/review
+
+# 2. Create skill (SKILL.md), plugin manifest (plugin.json), marketplace catalog (marketplace.json)
+
+# 3. Add and install
+/plugin marketplace add ./my-marketplace
+/plugin install review-plugin@my-plugins
+
+# 4. Test
+/review
+```
+
+## Plugin Installation Behavior
+
+Plugins copied to cache location on install. Cannot reference files outside plugin directory with `../`.
+Workarounds: symlinks (followed during copying) or restructure so shared files are inside plugin source path.
 
 ## User Commands
 
-- Add marketplace: `/plugin marketplace add owner/repo` or `/plugin marketplace add ./local-path`
-- Install plugin: `/plugin install plugin-name@marketplace-name`
-- Update marketplace: `/plugin marketplace update`
-- Validate: `/plugin validate .` or `claude plugin validate .`
+| Command | Purpose |
+|---------|---------|
+| `/plugin marketplace add <source>` | Add marketplace |
+| `/plugin marketplace update` | Refresh marketplace |
+| `/plugin install <name>@<marketplace>` | Install plugin |
+| `/plugin validate .` | Validate marketplace JSON |
+| `claude plugin validate .` | CLI validation |
+
+## Validation & Testing
+
+```bash
+# Validate marketplace JSON
+claude plugin validate .
+# or within Claude Code:
+/plugin validate .
+
+# Test locally before distribution
+/plugin marketplace add ./my-local-marketplace
+/plugin install test-plugin@my-local-marketplace
+```
 
 ## Related References
 
-- Schema details: `references/plugin-marketplace-schema.md`
-- Plugin sources: `references/plugin-marketplace-sources.md`
-- Hosting & distribution: `references/plugin-marketplace-hosting.md`
-- Troubleshooting: `references/plugin-marketplace-troubleshooting.md`
+- **Schema:** `references/plugin-marketplace-schema.md`
+- **Sources:** `references/plugin-marketplace-sources.md`
+- **Hosting:** `references/plugin-marketplace-hosting.md`
+- **Troubleshooting:** `references/plugin-marketplace-troubleshooting.md`
 
 ## Official Documentation
 
-https://code.claude.com/docs/en/plugin-marketplaces.md
+- [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces.md)
+- [Discover Plugins](https://code.claude.com/docs/en/discover-plugins.md)
+- [Create Plugins](https://code.claude.com/docs/en/plugins.md)
+- [Plugins Reference](https://code.claude.com/docs/en/plugins-reference.md)
+- [Plugin Settings](https://code.claude.com/docs/en/settings.md#plugin-settings)

@@ -12,9 +12,9 @@
     "codingLevel": {
       "type": "integer",
       "minimum": -1,
-      "maximum": 3,
+      "maximum": 5,
       "default": -1,
-      "description": "User coding experience level: -1=auto, 0=beginner, 1=intermediate, 2=advanced, 3=expert"
+      "description": "User coding experience level: -1=disabled, 0=eli5, 1=junior, 2=mid-level, 3=senior, 4=tech-lead, 5=god-mode"
     },
     "privacyBlock": {
       "type": "boolean",
@@ -284,8 +284,8 @@
           "properties": {
             "useGemini": {
               "type": "boolean",
-              "default": true,
-              "description": "Use Gemini CLI for research (false=use WebSearch)"
+              "default": false,
+              "description": "Use Gemini CLI for research (default: false, opt-in). Set to true only if you have a working Gemini CLI."
             }
           },
           "additionalProperties": true
@@ -323,6 +323,144 @@
       "enum": ["full", "compact", "minimal", "none"],
       "default": "full",
       "description": "Statusline display mode: full=all features, compact=2-3 lines, minimal=single text line, none=disabled"
+    },
+    "statuslineQuota": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show the cosmetic 5h / wk quota chips in the statusline for native Claude subscription sessions. Disable to keep the layout without usage-window percentages."
+    },
+    "watch": {
+      "type": "object",
+      "description": "GitHub issue auto-implementation daemon config (ck watch)",
+      "properties": {
+        "pollIntervalMs": {
+          "type": "number",
+          "minimum": 10000,
+          "default": 30000,
+          "description": "Poll interval in milliseconds (min 10s)"
+        },
+        "maxTurnsPerIssue": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "description": "Max conversation turns per issue"
+        },
+        "maxIssuesPerHour": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "description": "Rate limit: max issues processed per hour"
+        },
+        "excludeAuthors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "GitHub usernames to ignore issues from"
+        },
+        "showBranding": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show ClaudeKit branding in issue comments"
+        },
+        "logMaxBytes": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Max log file size in bytes (0=unlimited)"
+        },
+        "timeouts": {
+          "type": "object",
+          "description": "Timeout settings for each phase",
+          "properties": {
+            "brainstormSec": { "type": "number", "default": 300, "description": "Brainstorm phase timeout (seconds)" },
+            "planSec": { "type": "number", "default": 600, "description": "Planning phase timeout (seconds)" },
+            "implementSec": { "type": "number", "default": 18000, "description": "Implementation phase timeout (seconds, default 5h)" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "content": {
+      "type": "object",
+      "description": "Multi-channel content automation daemon config (ck content)",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable content engine"
+        },
+        "pollIntervalMs": {
+          "type": "number",
+          "default": 60000,
+          "description": "Poll interval in milliseconds"
+        },
+        "platforms": {
+          "type": "object",
+          "description": "Platform-specific settings",
+          "properties": {
+            "x": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": false, "description": "Enable X/Twitter publishing" },
+                "maxPostsPerDay": { "type": "integer", "default": 5, "description": "Max posts per day on X" },
+                "threadMaxParts": { "type": "integer", "default": 6, "description": "Max parts in a thread" }
+              },
+              "additionalProperties": false
+            },
+            "facebook": {
+              "type": "object",
+              "properties": {
+                "enabled": { "type": "boolean", "default": false, "description": "Enable Facebook publishing" },
+                "pageId": { "type": "string", "default": "", "description": "Facebook Page ID" },
+                "maxPostsPerDay": { "type": "integer", "default": 3, "description": "Max posts per day on Facebook" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "reviewMode": {
+          "type": "string",
+          "enum": ["auto", "manual", "hybrid"],
+          "default": "auto",
+          "description": "Content review mode: auto=publish immediately, manual=require approval, hybrid=auto for low-risk"
+        },
+        "schedule": {
+          "type": "object",
+          "properties": {
+            "timezone": { "type": "string", "default": "UTC", "description": "IANA timezone for scheduling" },
+            "quietHoursStart": { "type": "string", "default": "23:00", "description": "Quiet hours start (HH:MM)" },
+            "quietHoursEnd": { "type": "string", "default": "06:00", "description": "Quiet hours end (HH:MM)" }
+          },
+          "additionalProperties": false
+        },
+        "selfImprovement": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean", "default": true, "description": "Enable engagement tracking and self-improvement" },
+            "engagementCheckIntervalHours": { "type": "number", "default": 6, "description": "Hours between engagement checks" },
+            "topPerformingCount": { "type": "integer", "default": 10, "description": "Number of top posts to analyze" }
+          },
+          "additionalProperties": false
+        },
+        "maxContentPerDay": {
+          "type": "integer",
+          "default": 10,
+          "description": "Max content items generated per day across all platforms"
+        },
+        "contentDir": {
+          "type": "string",
+          "default": "~/.claudekit/content/",
+          "description": "Directory for content media files"
+        },
+        "dbPath": {
+          "type": "string",
+          "default": "~/.claudekit/content.db",
+          "description": "SQLite database path"
+        }
+      },
+      "additionalProperties": true
     },
     "hooks": {
       "type": "object",

@@ -228,6 +228,33 @@ const testCases = [
     expected: 'ALLOWED'
   },
 
+  // Compound/multi-line commands with build - should be ALLOWED (Issue: scout-block false positive)
+  {
+    name: '[COMPOUND] echo + npm run build (newline)',
+    input: { tool_name: 'Bash', tool_input: { command: 'echo "Checking build output..."\nnpm run build 2>&1 | tail -15' } },
+    expected: 'ALLOWED'
+  },
+  {
+    name: '[COMPOUND] echo + npm run build (&&)',
+    input: { tool_name: 'Bash', tool_input: { command: 'echo "Building..." && npm run build' } },
+    expected: 'ALLOWED'
+  },
+  {
+    name: '[COMPOUND] npm install + npm run build (&&)',
+    input: { tool_name: 'Bash', tool_input: { command: 'npm install && npm run build' } },
+    expected: 'ALLOWED'
+  },
+  {
+    name: '[COMPOUND] echo + cd node_modules (should block)',
+    input: { tool_name: 'Bash', tool_input: { command: 'echo "test" && cd node_modules' } },
+    expected: 'BLOCKED'
+  },
+  {
+    name: '[COMPOUND] npm run build + cat dist/file.js (should block)',
+    input: { tool_name: 'Bash', tool_input: { command: 'npm run build && cat dist/bundle.js' } },
+    expected: 'BLOCKED'
+  },
+
   // Non-venv python commands - should NOT be specially allowed (Issue #386 negative tests)
   {
     name: '[#386] Bash: python3 --version (not specially allowed)',

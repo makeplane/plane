@@ -30,6 +30,7 @@ export interface IPartialProject {
   module_view: boolean;
   page_view: boolean;
   inbox_view: boolean;
+  is_time_tracking_enabled: boolean;
   guest_view_all_features?: boolean;
   project_lead?: IUserLite | string | null;
   network?: number;
@@ -42,9 +43,16 @@ export interface IPartialProject {
   intake_count?: number;
 }
 
+export interface IBankWideProject extends IProject {
+  workspace_slug: string;
+  workspace_name: string;
+  member_count: number;
+}
+
 export interface IProject extends IPartialProject {
   archive_in?: number;
   close_in?: number;
+  is_bank_wide?: boolean;
   // only for uploading the cover image
   cover_image_asset?: null;
   cover_image?: string;

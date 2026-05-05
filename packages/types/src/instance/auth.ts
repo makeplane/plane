@@ -11,7 +11,8 @@ export type TCoreInstanceAuthenticationModeKeys =
   | "github"
   | "gitlab"
   | "gitea"
-  | "ldap";
+  | "ldap"
+  | "swing-sso";
 
 export type TInstanceAuthenticationModeKeys = TCoreInstanceAuthenticationModeKeys;
 
@@ -33,7 +34,8 @@ export type TInstanceAuthenticationMethodKeys =
   | "IS_GITHUB_ENABLED"
   | "IS_GITLAB_ENABLED"
   | "IS_GITEA_ENABLED"
-  | "IS_LDAP_ENABLED";
+  | "IS_LDAP_ENABLED"
+  | "IS_SWING_SSO_ENABLED";
 
 export type TInstanceGoogleAuthenticationConfigurationKeys =
   | "GOOGLE_CLIENT_ID"
@@ -66,12 +68,19 @@ export type TInstanceLDAPAuthenticationConfigurationKeys =
   | "LDAP_USER_FILTER"
   | "LDAP_USE_TLS";
 
+export type TInstanceSwingSSOAuthenticationConfigurationKeys =
+  | "SWING_SSO_URL"
+  | "SWING_SSO_CLIENT_ID"
+  | "SWING_SSO_CLIENT_SECRET"
+  | "SWING_SSO_COMPANY_CODE";
+
 export type TInstanceAuthenticationConfigurationKeys =
   | TInstanceGoogleAuthenticationConfigurationKeys
   | TInstanceGithubAuthenticationConfigurationKeys
   | TInstanceGitlabAuthenticationConfigurationKeys
   | TInstanceGiteaAuthenticationConfigurationKeys
-  | TInstanceLDAPAuthenticationConfigurationKeys;
+  | TInstanceLDAPAuthenticationConfigurationKeys
+  | TInstanceSwingSSOAuthenticationConfigurationKeys;
 
 export type TInstanceAuthenticationKeys = TInstanceAuthenticationMethodKeys | TInstanceAuthenticationConfigurationKeys;
 

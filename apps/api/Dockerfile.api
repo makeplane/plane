@@ -16,7 +16,8 @@ RUN apk add --no-cache --upgrade \
     "libxslt" \
     "xmlsec" \
     "ca-certificates" \
-    "openssl"
+    "openssl" \
+    "openldap"
 
 COPY requirements.txt ./
 COPY requirements ./requirements
@@ -31,6 +32,8 @@ RUN apk add --no-cache --virtual .build-deps \
     "postgresql-dev" \
     "libc-dev" \
     "linux-headers" \
+    "openldap-dev" \
+    "cyrus-sasl-dev" \
     && \
     pip install -r requirements.txt --compile --no-cache-dir \
     && \

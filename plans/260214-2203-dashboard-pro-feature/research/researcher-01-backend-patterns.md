@@ -9,14 +9,18 @@
 ## Model Base Classes & Field Patterns
 
 ### BaseModel Pattern
+
 All workspace models inherit from `BaseModel` which provides:
+
 - UUID primary key (implicit)
 - Soft delete support via `deleted_at` field
 - Automatic timestamps: `created_at`, `updated_at`
 - Soft delete override method available
 
 ### WorkspaceBaseModel Pattern
+
 Used for workspace-scoped models (line 185-195):
+
 - Extends `BaseModel`
 - Auto-includes `workspace` FK to `db.Workspace`
 - Auto-includes `project` FK to `db.Project` (nullable)
@@ -25,6 +29,7 @@ Used for workspace-scoped models (line 185-195):
 ### Field Patterns Observed
 
 **User-scoped preferences** (WorkspaceHomePreference, line 374-414):
+
 - ForeignKey to workspace (CASCADE)
 - ForeignKey to user (CASCADE)
 - `key` CharField for preference type
@@ -33,6 +38,7 @@ Used for workspace-scoped models (line 185-195):
 - `sort_order` FloatField (default 65535) for ordering
 
 **Unique constraints pattern:**
+
 ```python
 unique_together = ["workspace", "user", "key", "deleted_at"]
 constraints = [
@@ -45,6 +51,7 @@ constraints = [
 ```
 
 **TextChoices for enums** (line 377-382):
+
 ```python
 class HomeWidgetKeys(models.TextChoices):
     QUICK_LINKS = "quick_links", "Quick Links"
@@ -56,7 +63,9 @@ class HomeWidgetKeys(models.TextChoices):
 ## ViewSet Patterns
 
 ### Base View Structure
+
 Advanced analytics views use custom base view pattern (line 31-40):
+
 - Inherit from `BaseAPIView` (not ModelViewSet)
 - Use `initialize_workspace()` method to set workspace context
 - Extract filters using utility: `get_analytics_filters()`
@@ -64,7 +73,9 @@ Advanced analytics views use custom base view pattern (line 31-40):
 - Store computed filters in `self.filters`
 
 ### Permission Decorator
+
 Use `@allow_permission` decorator (line 104, 158, 285):
+
 ```python
 @allow_permission([ROLE.ADMIN, ROLE.MEMBER], level="WORKSPACE")
 def get(self, request: HttpRequest, slug: str) -> Response:
@@ -73,6 +84,7 @@ def get(self, request: HttpRequest, slug: str) -> Response:
 ### Method Patterns
 
 **Tab-based routing** (line 107-119):
+
 ```python
 tab = request.GET.get("tab", "overview")
 if tab == "overview":
@@ -82,6 +94,7 @@ elif tab == "work-items":
 ```
 
 **Type-based routing** (line 288-318):
+
 ```python
 type = request.GET.get("type", "projects")
 if type == "projects":
@@ -91,6 +104,7 @@ elif type == "custom-work-items":
 ```
 
 **Data aggregation pattern** (line 44-64):
+
 - Create helper methods for filtered counts
 - Return dict structure: `{"count": int, "filter_count": int}`
 - Apply date range filters from `self.filters["analytics_date_range"]`
@@ -100,9 +114,11 @@ elif type == "custom-work-items":
 ## URL Routing Conventions
 
 ### Workspace-scoped endpoints
+
 Pattern: `workspaces/<str:slug>/<resource>/` (line 42-260)
 
 **Examples:**
+
 ```python
 # List/Create pattern
 path("workspaces/<str:slug>/home-preferences/",
@@ -118,12 +134,14 @@ path("workspaces/<str:slug>/stickies/<uuid:pk>/",
 ```
 
 **ViewSet method mapping:**
+
 ```python
 {"get": "list", "post": "create"}  # Collection
 {"get": "retrieve", "patch": "partial_update", "delete": "destroy"}  # Item
 ```
 
 **Custom actions:**
+
 ```python
 {"post": "create_draft_to_issue"}  # Custom action
 ```
@@ -133,9 +151,11 @@ path("workspaces/<str:slug>/stickies/<uuid:pk>/",
 ## Chart Builder Utility Reusability
 
 ### build_analytics_chart() Function
+
 Located: `plane.utils.build_chart` (line 153-194)
 
 **Signature:**
+
 ```python
 def build_analytics_chart(
     queryset: QuerySet[Issue],
@@ -146,6 +166,7 @@ def build_analytics_chart(
 ```
 
 **Key features:**
+
 1. **Validation:** Validates x_axis and group_by against `x_axis_mapper` (line 20-34)
 2. **Field mapping:** Maps axis types to model fields via `get_x_axis_field()` (line 44-75)
 3. **Additional filters:** Supports additional filters per axis type (e.g., soft delete checks)
@@ -155,6 +176,7 @@ def build_analytics_chart(
    - Grouped chart: `{"data": [...], "schema": {...}}`
 
 **Supported x_axis types:**
+
 - STATES, STATE_GROUPS, LABELS, ASSIGNEES
 - ESTIMATE_POINTS, CYCLES, MODULES, PRIORITY
 - START_DATE, TARGET_DATE, CREATED_AT, COMPLETED_AT, CREATED_BY
@@ -168,6 +190,7 @@ def build_analytics_chart(
 ### Model Design
 
 **Dashboard Model:**
+
 ```python
 class Dashboard(WorkspaceBaseModel):
     """Pro feature dashboard for workspace analytics"""
@@ -191,6 +214,7 @@ class Dashboard(WorkspaceBaseModel):
 ```
 
 **DashboardWidget Model:**
+
 ```python
 class DashboardWidget(BaseModel):
     """Widget configuration for dashboard"""
@@ -220,6 +244,7 @@ class DashboardWidget(BaseModel):
 ### API Design
 
 **Views structure:**
+
 ```python
 # Base view for dashboard operations
 class DashboardBaseView(BaseAPIView):
@@ -253,6 +278,7 @@ class DashboardWidgetDataEndpoint(DashboardBaseView):
 ```
 
 **URL patterns:**
+
 ```python
 path("workspaces/<str:slug>/dashboards/",
      DashboardEndpoint.as_view(), name="dashboards"),
@@ -270,6 +296,7 @@ path("workspaces/<str:slug>/dashboards/<uuid:dashboard_id>/widgets/<uuid:widget_
 ### Chart Integration
 
 **Reuse build_analytics_chart():**
+
 ```python
 def get_widget_data(self, widget):
     if widget.widget_type == "work_items_chart":

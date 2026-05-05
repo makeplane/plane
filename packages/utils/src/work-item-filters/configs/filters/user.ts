@@ -6,7 +6,12 @@
 
 // plane imports
 import type { TFilterProperty } from "@plane/types";
-import { EQUALITY_OPERATOR, COLLECTION_OPERATOR } from "@plane/types";
+import {
+  EQUALITY_OPERATOR,
+  COLLECTION_OPERATOR,
+  EXTENDED_COLLECTION_OPERATOR,
+  EXTENDED_EQUALITY_OPERATOR,
+} from "@plane/types";
 // local imports
 import type { TCreateFilterConfig, TCreateUserFilterParams } from "../../../rich-filters";
 import { createFilterConfig, createOperatorConfigEntry, getMemberMultiSelectConfig } from "../../../rich-filters";
@@ -36,6 +41,9 @@ export const getAssigneeFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        createOperatorConfigEntry(EXTENDED_COLLECTION_OPERATOR.NOT_IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams, EXTENDED_EQUALITY_OPERATOR.NOT_EXACT)
+        ),
       ]),
     });
 
@@ -63,6 +71,9 @@ export const getMentionFilterConfig =
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
+        createOperatorConfigEntry(EXTENDED_COLLECTION_OPERATOR.NOT_IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams, EXTENDED_EQUALITY_OPERATOR.NOT_EXACT)
         ),
       ]),
     });
@@ -92,6 +103,9 @@ export const getCreatedByFilterConfig =
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
         ),
+        createOperatorConfigEntry(EXTENDED_COLLECTION_OPERATOR.NOT_IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams, EXTENDED_EQUALITY_OPERATOR.NOT_EXACT)
+        ),
       ]),
     });
 
@@ -119,6 +133,9 @@ export const getSubscriberFilterConfig =
       supportedOperatorConfigsMap: new Map([
         createOperatorConfigEntry(COLLECTION_OPERATOR.IN, params, (updatedParams) =>
           getMemberMultiSelectConfig(updatedParams, EQUALITY_OPERATOR.EXACT)
+        ),
+        createOperatorConfigEntry(EXTENDED_COLLECTION_OPERATOR.NOT_IN, params, (updatedParams) =>
+          getMemberMultiSelectConfig(updatedParams, EXTENDED_EQUALITY_OPERATOR.NOT_EXACT)
         ),
       ]),
     });

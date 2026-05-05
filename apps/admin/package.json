@@ -47,7 +47,8 @@
     "react-router": "catalog:",
     "serve": "14.2.5",
     "swr": "catalog:",
-    "uuid": "catalog:"
+    "uuid": "catalog:",
+    "xlsx": "0.18.5"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "catalog:",

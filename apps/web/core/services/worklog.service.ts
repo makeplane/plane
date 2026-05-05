@@ -1,12 +1,15 @@
 import { API_BASE_URL } from "@plane/constants";
 import type {
+  IAnalyticsTimesheetResponse,
+  ICapacityCategoriesResponse,
+  ICapacityDayDetailsResponse,
+  ICapacityReportResponse,
+  ITimesheetBulkPayload,
+  ITimesheetGridResponse,
   IWorkLog,
   IWorkLogCreate,
-  IWorkLogUpdate,
   IWorkLogSummary,
-  ITimesheetGridResponse,
-  ITimesheetBulkPayload,
-  ICapacityReportResponse,
+  IWorkLogUpdate,
 } from "@plane/types";
 import { APIService } from "@/services/api.service";
 
@@ -69,14 +72,23 @@ export class WorklogService extends APIService {
       });
   }
 
-  async deleteWorklog(workspaceSlug: string, projectId: string, issueId: string, worklogId: string): Promise<void> {
+  async deleteWorklog(
+    workspaceSlug: string,
+    projectId: string,
+    issueId: string,
+    worklogId: string,
+    reason?: string
+  ): Promise<void> {
     return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`
-    ).then(() => {
-      return;
-    }).catch((error: { response?: { data: unknown } }) => {
-      throw error?.response?.data;
-    });
+      `/api/workspaces/${workspaceSlug}/projects/${projectId}/issues/${issueId}/worklogs/${worklogId}/`,
+      reason ? { reason } : undefined
+    )
+      .then(() => {
+        return;
+      })
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
   }
 
   // Summary endpoints
@@ -151,6 +163,159 @@ export class WorklogService extends APIService {
   ): Promise<ICapacityReportResponse> {
     return (
       this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/capacity/`, {
+        params,
+      }) as Promise<{ data: ICapacityReportResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Analytics timesheet endpoint (all users' logs for a project)
+  async getAnalyticsTimesheet(
+    workspaceSlug: string,
+    projectId: string,
+    params?: Record<string, string>
+  ): Promise<IAnalyticsTimesheetResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/analytics/timesheet/`, {
+        params,
+      }) as Promise<{ data: IAnalyticsTimesheetResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Workspace analytics timesheet endpoint (all users' logs for a workspace)
+  async getWorkspaceAnalyticsTimesheet(
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ): Promise<IAnalyticsTimesheetResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/analytics/timesheet/`, {
+        params,
+      }) as Promise<{ data: IAnalyticsTimesheetResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw error?.response?.data ?? error;
+      });
+  }
+
+  // Capacity categories (grouped by main_task_category / sub_task_category)
+  async getCapacityCategories(
+    workspaceSlug: string,
+    projectId: string,
+    params?: Record<string, string>
+  ): Promise<ICapacityCategoriesResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/capacity/categories/`, {
+        params,
+      }) as Promise<{ data: ICapacityCategoriesResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Capacity day details (tasks logged by a member on a specific date)
+  async getCapacityDayDetails(
+    workspaceSlug: string,
+    projectId: string,
+    memberId: string,
+    date: string
+  ): Promise<ICapacityDayDetailsResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/time-tracking/capacity/day-details/`, {
+        params: { member_id: memberId, date },
+      }) as Promise<{ data: ICapacityDayDetailsResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Cross-workspace timesheet (current user's logs across all workspaces)
+  async getCrossWorkspaceTimesheet(
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ): Promise<ITimesheetGridResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/cross-workspace/timesheet/`, {
+        params,
+      }) as Promise<{ data: ITimesheetGridResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Cross-workspace capacity (all members across all user workspaces)
+  async getCrossWorkspaceCapacity(
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ): Promise<ICapacityReportResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/cross-workspace/capacity/`, {
+        params,
+      }) as Promise<{ data: ICapacityReportResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getCrossWorkspaceCapacityDayDetails(
+    workspaceSlug: string,
+    memberId: string,
+    date: string
+  ): Promise<ICapacityDayDetailsResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/cross-workspace/capacity/day-details/`, {
+        params: { member_id: memberId, date },
+      }) as Promise<{ data: ICapacityDayDetailsResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Workspace capacity day-details (current workspace or cross-workspace based on param)
+  async getWorkspaceAnalyticsCapacityDayDetails(
+    workspaceSlug: string,
+    memberId: string,
+    date: string,
+    crossWorkspace?: boolean
+  ): Promise<ICapacityDayDetailsResponse> {
+    const params: Record<string, string> = { member_id: memberId, date };
+    if (crossWorkspace === true) params["cross_workspace"] = "true";
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/analytics/capacity/day-details/`, {
+        params,
+      }) as Promise<{ data: ICapacityDayDetailsResponse }>
+    )
+      .then(getData)
+      .catch((error: { response?: { data: unknown } }) => {
+        throw error?.response?.data;
+      });
+  }
+
+  // Workspace-scoped capacity (current workspace members only, admin-only endpoint)
+  async getWorkspaceAnalyticsCapacity(
+    workspaceSlug: string,
+    params?: Record<string, string>
+  ): Promise<ICapacityReportResponse> {
+    return (
+      this.get(`/api/workspaces/${workspaceSlug}/time-tracking/analytics/capacity/`, {
         params,
       }) as Promise<{ data: ICapacityReportResponse }>
     )

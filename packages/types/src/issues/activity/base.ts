@@ -86,4 +86,11 @@ export type TIssueActivityComment =
       id: string;
       activity_type: "ISSUE_ADDITIONAL_PROPERTIES_ACTIVITY";
       created_at?: string;
+    }
+  | {
+      id: string;
+      activity_type: "WORKLOG_GROUP";
+      created_at?: string;
+      groupedEntryIds: string[];
+      totalMinutes: number;
     };

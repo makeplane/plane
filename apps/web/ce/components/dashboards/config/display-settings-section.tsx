@@ -2,32 +2,35 @@
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
+ *
+ * Display settings: legend, tooltip, center value, markers toggles.
+ * Uses plain string chart_type values matching backend model.
  */
 
 import { observer } from "mobx-react";
 import type { Control } from "react-hook-form";
 import { Controller } from "react-hook-form";
+import { useTranslation } from "@plane/i18n";
 import { ToggleSwitch } from "@plane/ui";
-import { EAnalyticsWidgetType } from "@plane/types";
 
 interface DisplaySettingsSectionProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- react-hook-form Control requires generic form type
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
-  widgetType: EAnalyticsWidgetType;
+  chartType: string;
 }
 
-export const DisplaySettingsSection = observer(({ control, widgetType }: DisplaySettingsSectionProps) => {
-  const showLegend = widgetType !== EAnalyticsWidgetType.NUMBER;
-  const showTooltip = widgetType !== EAnalyticsWidgetType.NUMBER;
-  const showCenterValue = [EAnalyticsWidgetType.DONUT, EAnalyticsWidgetType.PIE].includes(widgetType);
-  const showMarkers = widgetType === EAnalyticsWidgetType.LINE;
+export const DisplaySettingsSection = observer(({ control, chartType }: DisplaySettingsSectionProps) => {
+  const { t } = useTranslation();
+  const showLegend = chartType !== "NUMBER";
+  const showTooltip = chartType !== "NUMBER";
+  const showCenterValue = ["DONUT_CHART", "PIE_CHART"].includes(chartType);
+  const showMarkers = chartType === "LINE_CHART";
 
   return (
     <div className="space-y-4">
-      {/* Legend */}
       {showLegend && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-secondary">Show Legend</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_legend")}</span>
           <Controller
             name="config.show_legend"
             control={control}
@@ -41,10 +44,9 @@ export const DisplaySettingsSection = observer(({ control, widgetType }: Display
         </div>
       )}
 
-      {/* Tooltip */}
       {showTooltip && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-secondary">Show Tooltip</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_tooltip")}</span>
           <Controller
             name="config.show_tooltip"
             control={control}
@@ -58,10 +60,9 @@ export const DisplaySettingsSection = observer(({ control, widgetType }: Display
         </div>
       )}
 
-      {/* Center Value */}
       {showCenterValue && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-secondary">Show Center Value</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_center_value")}</span>
           <Controller
             name="config.center_value"
             control={control}
@@ -75,10 +76,9 @@ export const DisplaySettingsSection = observer(({ control, widgetType }: Display
         </div>
       )}
 
-      {/* Markers */}
       {showMarkers && (
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-secondary">Show Data Points</span>
+          <span className="text-sm font-medium text-secondary">{t("analytics_dashboard.show_data_points")}</span>
           <Controller
             name="config.show_markers"
             control={control}

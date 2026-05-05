@@ -1,6 +1,7 @@
 node_modules
 .next
 .yarn
+.pnpm-store/
 
 ### NextJS ###
 # Dependencies
@@ -110,3 +111,13 @@ build/
 temp/
 # scripts/
 /.opencode
+/.claude/scripts
+/.claude/session-state/archive
+
+# GitNexus knowledge graph (large binary, regenerable)
+/.gitnexus/
+
+# Local backup files
+*.bak
+*.bak.*
+

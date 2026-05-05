@@ -273,6 +273,35 @@ class ProjectViewSet(BaseViewSet):
                     role=ROLE.ADMIN.value,
                 )
 
+            # Auto-add department manager linked to this workspace as Admin
+            dept = getattr(workspace, "linked_department", None)
+            if dept and dept.manager_id and dept.manager_id != request.user.id:
+                ProjectMember.objects.get_or_create(
+                    project_id=serializer.data["id"],
+                    member_id=dept.manager_id,
+                    defaults={"role": ROLE.ADMIN.value},
+                )
+
+            # Auto-add all active workspace admins as Admin
+            already_added = {request.user.id}
+            if serializer.data["project_lead"]:
+                already_added.add(serializer.data["project_lead"])
+            if dept and dept.manager_id:
+                already_added.add(dept.manager_id)
+
+            workspace_admins = WorkspaceMember.objects.filter(
+                workspace=workspace,
+                role=ROLE.ADMIN.value,
+                is_active=True,
+            ).exclude(member_id__in=already_added).select_related("member")
+
+            for wm in workspace_admins:
+                ProjectMember.objects.get_or_create(
+                    project_id=serializer.data["id"],
+                    member=wm.member,
+                    defaults={"role": ROLE.ADMIN.value},
+                )
+
             State.objects.bulk_create(
                 [
                     State(
@@ -283,10 +312,12 @@ class ProjectViewSet(BaseViewSet):
                         workspace=serializer.instance.workspace,
                         group=state["group"],
                         default=state.get("default", False),
+                        is_system=state.get("is_system", False),
                         created_by=request.user,
                     )
                     for state in DEFAULT_STATES
-                ]
+                ],
+                ignore_conflicts=True,
             )
 
             project = self.get_queryset().filter(pk=serializer.data["id"]).first()

@@ -83,6 +83,7 @@ from .issue import (
 )
 
 from .module import (
+    ModuleActivitySerializer,
     ModuleDetailSerializer,
     ModuleWriteSerializer,
     ModuleSerializer,
@@ -134,6 +135,18 @@ from .draft import (
     DraftIssueDetailSerializer,
 )
 
+from .dashboard import DashboardSerializer, DashboardWidgetSerializer
 from .department import DepartmentSerializer, DepartmentTreeSerializer
 from .staff import StaffProfileSerializer, StaffProfileCreateSerializer
 from .worklog import IssueWorkLogSerializer, TimesheetBulkEntrySerializer
+
+from .workflow import (
+    ProjectWorkflowSerializer,
+    WorkflowActivitySerializer,
+    WorkflowStateConfigSerializer,
+    WorkflowTransitionSerializer,
+)
+
+from .task_category import MainTaskCategorySerializer, SubTaskCategorySerializer
+from .job_position import JobPositionSerializer, JobGradeSerializer
+from .user_work_items import UserCrossWorkspaceWorkItemSerializer

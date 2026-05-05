@@ -144,10 +144,55 @@ export class IssueActivityStore implements IIssueActivityStore {
     return orderBy(items, (e) => new Date(e.created_at || 0), sortOrder);
   }
 
+  /**
+   * Group consecutive WORKLOG items (>3) into a collapsible WORKLOG_GROUP.
+   * Admin modification/deletion entries (ACTIVITY with field="worklog") are NOT grouped.
+   */
+  private groupConsecutiveWorklogs(items: TIssueActivityComment[], issueId: string): TIssueActivityComment[] {
+    const result: TIssueActivityComment[] = [];
+    const worklogs = this.store.worklog?.getWorklogsForIssue(issueId) ?? [];
+    let i = 0;
+
+    while (i < items.length) {
+      if (items[i].activity_type !== EActivityFilterType.WORKLOG) {
+        result.push(items[i]);
+        i++;
+        continue;
+      }
+      // Collect consecutive WORKLOG items
+      const start = i;
+      while (i < items.length && items[i].activity_type === EActivityFilterType.WORKLOG) {
+        i++;
+      }
+      const group = items.slice(start, i);
+
+      if (group.length <= 3) {
+        result.push(...group);
+      } else {
+        // Show first 3 individually, collapse rest into a group
+        result.push(group[0], group[1], group[2]);
+        const collapsed = group.slice(3);
+        const totalMinutes = collapsed.reduce((sum, item) => {
+          const wl = worklogs.find((w) => w.id === item.id);
+          return sum + (wl?.duration_minutes ?? 0);
+        }, 0);
+        result.push({
+          id: `worklog-group-${collapsed[0].id}`,
+          activity_type: EActivityFilterType.WORKLOG_GROUP as "WORKLOG_GROUP",
+          created_at: collapsed[0].created_at,
+          groupedEntryIds: collapsed.map((c) => c.id),
+          totalMinutes,
+        });
+      }
+    }
+    return result;
+  }
+
   getActivityAndCommentsByIssueId = computedFn((issueId: string, sortOrder: E_SORT_ORDER) => {
     const baseItems = this.buildActivityAndCommentItems(issueId);
     if (!baseItems) return undefined;
-    return this.sortActivityComments(baseItems, sortOrder);
+    const sorted = this.sortActivityComments(baseItems, sortOrder);
+    return this.groupConsecutiveWorklogs(sorted, issueId);
   });
 
   // actions

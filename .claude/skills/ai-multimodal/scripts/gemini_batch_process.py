@@ -8,7 +8,7 @@ Supports all Gemini modalities:
 - Video: Summarization, Q&A, scene detection
 - Document: PDF extraction, structured output
 - Generation: Image creation via Imagen 4 or Nano Banana (Gemini native)
-  - Nano Banana Flash (gemini-2.5-flash-image): Speed/volume
+  - Nano Banana 2 (gemini-3.1-flash-image-preview): Fastest, 95% Pro quality (default)
   - Nano Banana Pro (gemini-3-pro-image-preview): Quality/4K text/reasoning
   - Imagen 4 (imagen-4.0-*): Production-grade generation
 """
@@ -40,13 +40,14 @@ except ImportError:
 # Import key rotation support
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'common'))
 try:
-    from api_key_rotator import KeyRotator, is_rate_limit_error
+    from api_key_rotator import KeyRotator, is_rate_limit_error, is_server_error
     from api_key_helper import find_all_api_keys
     KEY_ROTATION_AVAILABLE = True
 except ImportError:
     KEY_ROTATION_AVAILABLE = False
     KeyRotator = None
     is_rate_limit_error = None
+    is_server_error = None
     find_all_api_keys = None
 
 try:
@@ -59,11 +60,11 @@ except ImportError:
 
 
 # Image generation model configuration
-# Default: gemini-2.5-flash-image (Nano Banana Flash - fast, cost-effective)
+# Default: gemini-3.1-flash-image-preview (Nano Banana 2 - 3-5x faster, 95% Pro quality)
 # Alternative: imagen-4.0-generate-001 (production quality)
 # All image generation requires billing - no completely free option exists
-IMAGE_MODEL_DEFAULT = 'gemini-2.5-flash-image'  # Nano Banana Flash (~$1/1M tokens)
-IMAGE_MODEL_FALLBACK = 'gemini-2.5-flash-image'  # Fallback if Imagen fails (billing)
+IMAGE_MODEL_DEFAULT = 'gemini-3.1-flash-image-preview'  # Nano Banana 2 (fastest, near-Pro quality)
+IMAGE_MODEL_FALLBACK = 'gemini-2.5-flash-image'  # Fallback if Nano Banana 2 fails
 IMAGEN_MODELS = {
     'imagen-4.0-generate-001',
     'imagen-4.0-ultra-generate-001',
@@ -135,9 +136,9 @@ def get_default_model(task: str) -> str:
         model = os.getenv('GEMINI_IMAGE_GEN_MODEL')
         if model:
             return model
-        # Default to Nano Banana Flash (fast, cost-effective)
+        # Default to Nano Banana 2 (fastest, near-Pro quality)
         # Alternative: imagen-4.0-generate-001 for production quality
-        return 'gemini-2.5-flash-image'
+        return 'gemini-3.1-flash-image-preview'
 
     elif task == 'generate-video':
         model = os.getenv('VIDEO_GEN_MODEL')
@@ -179,6 +180,7 @@ def validate_model_task_combination(model: str, task: str) -> None:
             'imagen-4.0-generate-001',
             'imagen-4.0-ultra-generate-001',
             'imagen-4.0-fast-generate-001',
+            'gemini-3.1-flash-image-preview',
             'gemini-3-pro-image-preview',
             'gemini-2.5-flash-image',
             'gemini-2.5-flash-image-preview',
@@ -680,7 +682,17 @@ def process_file(
                 is_rate_limit_error(e)
             )
 
-            if attempt == max_retries - 1:
+            # Check if this is a transient server error (503, 500, etc.)
+            is_5xx = (
+                KEY_ROTATION_AVAILABLE and
+                is_server_error and
+                is_server_error(e)
+            )
+
+            # Use more retries for transient 5xx errors (up to 5 attempts)
+            effective_max = max(max_retries, 5) if is_5xx else max_retries
+
+            if attempt == effective_max - 1:
                 return {
                     'file': str(file_path) if file_path else 'generated',
                     'status': 'error',
@@ -688,9 +700,14 @@ def process_file(
                     'rate_limited': is_rate_limited  # Flag for caller to handle rotation
                 }
 
-            wait_time = 2 ** attempt
+            # Longer backoff for 5xx (4s, 8s, 16s, 32s) vs default (1s, 2s, 4s)
+            if is_5xx:
+                wait_time = 4 * (2 ** attempt)  # 4, 8, 16, 32, 64
+            else:
+                wait_time = 2 ** attempt  # 1, 2, 4
             if verbose:
-                print(f"  Retry {attempt + 1} after {wait_time}s: {e}")
+                error_type = "5xx server error" if is_5xx else "error"
+                print(f"  Retry {attempt + 1}/{effective_max - 1} after {wait_time}s ({error_type}): {e}")
             time.sleep(wait_time)
 
 
@@ -733,13 +750,22 @@ def batch_process(
         api_key = find_api_key()
 
     if not api_key:
-        print("Error: GEMINI_API_KEY not found")
-        print("\nSetup options:")
-        print("1. Run setup checker: python scripts/check_setup.py")
-        print("2. Show hierarchy: python ~/.claude/scripts/resolve_env.py --show-hierarchy --skill ai-multimodal")
-        print("3. Quick setup: export GEMINI_API_KEY='your-key'")
-        print("4. Create .env: cd ~/.claude/skills/ai-multimodal && cp .env.example .env")
-        print("\nFor key rotation, add multiple keys:")
+        print("Error: GEMINI_API_KEY not found in any location")
+        print("\nSearched locations (highest to lowest priority):")
+        print("  1. OS environment (process.env)")
+        if CENTRALIZED_RESOLVER_AVAILABLE:
+            from resolve_env import get_env_file_paths
+            for i, (desc, path) in enumerate(get_env_file_paths('ai-multimodal'), 2):
+                exists = "[OK]" if path.exists() else "[  ]"
+                print(f"  {i}. {exists} {path}")
+        else:
+            print("  2-7. .env files (centralized resolver unavailable)")
+        print("\nQuick fix — add your key to any .env file above:")
+        print("  echo 'GEMINI_API_KEY=your-key' >> ~/.claude/.env")
+        print("\nOther options:")
+        print("  - Run setup checker: python scripts/check_setup.py")
+        print("  - Show full hierarchy: python ~/.claude/scripts/resolve_env.py --show-hierarchy --skill ai-multimodal -v")
+        print("\nFor key rotation, add multiple keys to any .env:")
         print("   GEMINI_API_KEY=key1")
         print("   GEMINI_API_KEY_2=key2")
         print("   GEMINI_API_KEY_3=key3")

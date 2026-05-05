@@ -1,0 +1,8 @@
+# .ckignore with negation patterns
+node_modules
+vendor
+!src/vendor
+!src/vendor/**
+dist
+!dist/public
+!dist/public/**

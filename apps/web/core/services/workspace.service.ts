@@ -6,6 +6,7 @@
 
 import { API_BASE_URL } from "@plane/constants";
 import type {
+  IUserLite,
   IWorkspace,
   IWorkspaceMemberMe,
   IWorkspaceMember,
@@ -135,6 +136,14 @@ export class WorkspaceService extends APIService {
 
   async fetchWorkspaceMembers(workspaceSlug: string): Promise<IWorkspaceMember[]> {
     return this.get(`/api/workspaces/${workspaceSlug}/members/`)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async searchUsersForInvite(workspaceSlug: string, query: string): Promise<IUserLite[]> {
+    return this.get(`/api/workspaces/${workspaceSlug}/members/user-search/`, { params: { search: query } })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

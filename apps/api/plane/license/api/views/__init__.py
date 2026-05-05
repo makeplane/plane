@@ -25,4 +25,47 @@ from .admin import (
 from .workspace import (
     InstanceWorkSpaceAvailabilityCheckEndpoint,
     InstanceWorkSpaceEndpoint,
+    InstanceWorkSpaceDetailEndpoint,
+)
+
+from .user import (
+    InstanceUserEndpoint,
+    InstanceUserResetPasswordEndpoint,
+    InstanceUserWorkspaceEndpoint,
+)
+from .user_bulk_import import InstanceUserBulkImportEndpoint
+from .workspace_bulk_create import InstanceWorkspaceBulkCreateEndpoint
+from .workspace_member_bulk_assign import InstanceWorkspaceBulkAssignMembersEndpoint
+from .workspace_project_bulk_import import InstanceWorkspaceProjectBulkImportEndpoint
+from .workspace_module_bulk_import import InstanceWorkspaceModuleBulkImportEndpoint
+
+from .monitoring import (
+    EmailLogMonitoringEndpoint,
+    ScheduledJobMonitoringEndpoint,
+    WorkerHealthMonitoringEndpoint,
+)
+
+from .task_category import (
+    InstanceMainTaskCategoryEndpoint,
+    InstanceMainTaskCategoryDetailEndpoint,
+    InstanceSubTaskCategoryEndpoint,
+    InstanceSubTaskCategoryDetailEndpoint,
+)
+from .job_position import (
+    InstanceJobPositionEndpoint,
+    InstanceJobPositionDetailEndpoint,
+    InstanceJobGradeEndpoint,
+    InstanceJobGradeDetailEndpoint,
+)
+from .job_position_bulk_import import JobPositionBulkImportView
+
+from .business_calendar import (
+    InstanceWorkScheduleEndpoint,
+    InstanceWorkScheduleDetailEndpoint,
+    InstanceHolidayEndpoint,
+    InstanceHolidayDetailEndpoint,
+    InstanceDayOverrideEndpoint,
+    InstanceDayOverrideDetailEndpoint,
+    InstanceCalendarCopyYearEndpoint,
+    InstanceCalendarCheckEndpoint,
 )

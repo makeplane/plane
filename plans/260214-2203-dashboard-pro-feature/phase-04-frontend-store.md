@@ -135,40 +135,19 @@ export interface IDashboardStore {
 
   // Actions
   fetchDashboards: (workspaceSlug: string) => Promise<IDashboard[]>;
-  createDashboard: (
-    workspaceSlug: string,
-    data: TDashboardCreate
-  ) => Promise<IDashboard>;
-  updateDashboard: (
-    workspaceSlug: string,
-    dashboardId: string,
-    data: TDashboardUpdate
-  ) => Promise<IDashboard>;
+  createDashboard: (workspaceSlug: string, data: TDashboardCreate) => Promise<IDashboard>;
+  updateDashboard: (workspaceSlug: string, dashboardId: string, data: TDashboardUpdate) => Promise<IDashboard>;
   deleteDashboard: (workspaceSlug: string, dashboardId: string) => Promise<void>;
-  fetchDashboard: (
-    workspaceSlug: string,
-    dashboardId: string
-  ) => Promise<IDashboardDetail>;
-  fetchWidgets: (
-    workspaceSlug: string,
-    dashboardId: string
-  ) => Promise<IDashboardWidget[]>;
-  createWidget: (
-    workspaceSlug: string,
-    dashboardId: string,
-    data: TWidgetCreate
-  ) => Promise<IDashboardWidget>;
+  fetchDashboard: (workspaceSlug: string, dashboardId: string) => Promise<IDashboardDetail>;
+  fetchWidgets: (workspaceSlug: string, dashboardId: string) => Promise<IDashboardWidget[]>;
+  createWidget: (workspaceSlug: string, dashboardId: string, data: TWidgetCreate) => Promise<IDashboardWidget>;
   updateWidget: (
     workspaceSlug: string,
     dashboardId: string,
     widgetId: string,
     data: TWidgetUpdate
   ) => Promise<IDashboardWidget>;
-  deleteWidget: (
-    workspaceSlug: string,
-    dashboardId: string,
-    widgetId: string
-  ) => Promise<void>;
+  deleteWidget: (workspaceSlug: string, dashboardId: string, widgetId: string) => Promise<void>;
   fetchWidgetData: (
     workspaceSlug: string,
     dashboardId: string,
@@ -245,15 +224,11 @@ export class DashboardStore implements IDashboardStore {
 
   get currentWidgets(): IDashboardWidget[] {
     if (!this.activeDashboardId) return [];
-    return Array.from(this.widgetMap.values()).filter(
-      (widget) => widget.dashboard === this.activeDashboardId
-    );
+    return Array.from(this.widgetMap.values()).filter((widget) => widget.dashboard === this.activeDashboardId);
   }
 
   get sortedWidgets(): IDashboardWidget[] {
-    return this.currentWidgets.sort(
-      (a, b) => a.sort_order - b.sort_order || b.created_at.localeCompare(a.created_at)
-    );
+    return this.currentWidgets.sort((a, b) => a.sort_order - b.sort_order || b.created_at.localeCompare(a.created_at));
   }
 
   // Dashboard actions
@@ -284,20 +259,14 @@ export class DashboardStore implements IDashboardStore {
     }
   };
 
-  createDashboard = async (
-    workspaceSlug: string,
-    data: TDashboardCreate
-  ): Promise<IDashboard> => {
+  createDashboard = async (workspaceSlug: string, data: TDashboardCreate): Promise<IDashboard> => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = null;
       });
 
-      const dashboard = await this.dashboardService.createDashboard(
-        workspaceSlug,
-        data
-      );
+      const dashboard = await this.dashboardService.createDashboard(workspaceSlug, data);
 
       runInAction(() => {
         this.dashboardMap.set(dashboard.id, dashboard);
@@ -315,22 +284,14 @@ export class DashboardStore implements IDashboardStore {
     }
   };
 
-  updateDashboard = async (
-    workspaceSlug: string,
-    dashboardId: string,
-    data: TDashboardUpdate
-  ): Promise<IDashboard> => {
+  updateDashboard = async (workspaceSlug: string, dashboardId: string, data: TDashboardUpdate): Promise<IDashboard> => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = null;
       });
 
-      const dashboard = await this.dashboardService.updateDashboard(
-        workspaceSlug,
-        dashboardId,
-        data
-      );
+      const dashboard = await this.dashboardService.updateDashboard(workspaceSlug, dashboardId, data);
 
       runInAction(() => {
         this.dashboardMap.set(dashboard.id, dashboard);
@@ -348,10 +309,7 @@ export class DashboardStore implements IDashboardStore {
     }
   };
 
-  deleteDashboard = async (
-    workspaceSlug: string,
-    dashboardId: string
-  ): Promise<void> => {
+  deleteDashboard = async (workspaceSlug: string, dashboardId: string): Promise<void> => {
     try {
       runInAction(() => {
         this.isLoading = true;
@@ -384,20 +342,14 @@ export class DashboardStore implements IDashboardStore {
     }
   };
 
-  fetchDashboard = async (
-    workspaceSlug: string,
-    dashboardId: string
-  ): Promise<IDashboardDetail> => {
+  fetchDashboard = async (workspaceSlug: string, dashboardId: string): Promise<IDashboardDetail> => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = null;
       });
 
-      const dashboard = await this.dashboardService.getDashboard(
-        workspaceSlug,
-        dashboardId
-      );
+      const dashboard = await this.dashboardService.getDashboard(workspaceSlug, dashboardId);
 
       runInAction(() => {
         this.dashboardMap.set(dashboard.id, dashboard);
@@ -419,20 +371,14 @@ export class DashboardStore implements IDashboardStore {
   };
 
   // Widget actions
-  fetchWidgets = async (
-    workspaceSlug: string,
-    dashboardId: string
-  ): Promise<IDashboardWidget[]> => {
+  fetchWidgets = async (workspaceSlug: string, dashboardId: string): Promise<IDashboardWidget[]> => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = null;
       });
 
-      const widgets = await this.dashboardService.getWidgets(
-        workspaceSlug,
-        dashboardId
-      );
+      const widgets = await this.dashboardService.getWidgets(workspaceSlug, dashboardId);
 
       runInAction(() => {
         widgets.forEach((widget) => {
@@ -452,22 +398,14 @@ export class DashboardStore implements IDashboardStore {
     }
   };
 
-  createWidget = async (
-    workspaceSlug: string,
-    dashboardId: string,
-    data: TWidgetCreate
-  ): Promise<IDashboardWidget> => {
+  createWidget = async (workspaceSlug: string, dashboardId: string, data: TWidgetCreate): Promise<IDashboardWidget> => {
     try {
       runInAction(() => {
         this.isLoading = true;
         this.error = null;
       });
 
-      const widget = await this.dashboardService.createWidget(
-        workspaceSlug,
-        dashboardId,
-        data
-      );
+      const widget = await this.dashboardService.createWidget(workspaceSlug, dashboardId, data);
 
       runInAction(() => {
         this.widgetMap.set(widget.id, widget);
@@ -505,12 +443,7 @@ export class DashboardStore implements IDashboardStore {
         this.error = null;
       });
 
-      const widget = await this.dashboardService.updateWidget(
-        workspaceSlug,
-        dashboardId,
-        widgetId,
-        data
-      );
+      const widget = await this.dashboardService.updateWidget(workspaceSlug, dashboardId, widgetId, data);
 
       runInAction(() => {
         this.widgetMap.set(widget.id, widget);
@@ -530,11 +463,7 @@ export class DashboardStore implements IDashboardStore {
     }
   };
 
-  deleteWidget = async (
-    workspaceSlug: string,
-    dashboardId: string,
-    widgetId: string
-  ): Promise<void> => {
+  deleteWidget = async (workspaceSlug: string, dashboardId: string, widgetId: string): Promise<void> => {
     try {
       runInAction(() => {
         this.isLoading = true;
@@ -573,12 +502,7 @@ export class DashboardStore implements IDashboardStore {
     params?: Record<string, any>
   ): Promise<IChartData | INumberWidgetData> => {
     try {
-      const data = await this.dashboardService.getWidgetData(
-        workspaceSlug,
-        dashboardId,
-        widgetId,
-        params
-      );
+      const data = await this.dashboardService.getWidgetData(workspaceSlug, dashboardId, widgetId, params);
 
       runInAction(() => {
         this.widgetDataMap.set(widgetId, data);
@@ -713,15 +637,19 @@ describe("DashboardStore", () => {
 ## Risk Assessment
 
 **Risk**: Memory leaks from cached widget data
+
 - **Mitigation**: Clear cache on dashboard change, implement max cache size
 
 **Risk**: Race conditions on concurrent updates
+
 - **Mitigation**: Use runInAction for atomic updates
 
 **Risk**: Stale data after updates
+
 - **Mitigation**: Clear widget data cache after widget config updates
 
 **Risk**: Store not reactive in components
+
 - **Mitigation**: Ensure components wrapped with `observer()`
 
 ## Security Considerations
@@ -734,6 +662,7 @@ describe("DashboardStore", () => {
 ## Next Steps
 
 Proceed to [Phase 5: Navigation & Routing](./phase-05-navigation-routing.md)
+
 - Add "Dashboards" to sidebar navigation
 - Create dashboard list and detail routes
 - Set up route parameters
