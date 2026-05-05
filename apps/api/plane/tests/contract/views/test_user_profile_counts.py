@@ -55,9 +55,6 @@ class TestUserProfileCountsExcludeSubtasks:
         backlog = State.objects.create(
             workspace=workspace, project=project, name="Backlog", group=StateGroup.BACKLOG.value, color="#000000"
         )
-        completed = State.objects.create(
-            workspace=workspace, project=project, name="Done", group=StateGroup.COMPLETED.value, color="#111111"
-        )
 
         # Create parent issue assigned to user (this is what gets counted)
         parent_issue = Issue.objects.create(
@@ -126,6 +123,7 @@ class TestUserProfileCountsExcludeSubtasks:
         completed = State.objects.create(
             workspace=workspace, project=project, name="Done", group=StateGroup.COMPLETED.value, color="#111111"
         )
+
 
         # Create completed parent issue assigned to user
         parent_issue = Issue.objects.create(

@@ -351,6 +351,46 @@ Response (JSON)
 
 **Never share serializers between v0/v1**
 
+### User & Profile Endpoints (V0 API)
+
+Cross-workspace aggregation for performance (Session auth, internal use).
+
+| Method | Path                                | Auth            | Purpose                                                    |
+| ------ | ----------------------------------- | --------------- | ---------------------------------------------------------- |
+| GET    | `/api/users/me/work-items/today/`   | Session + login | Open issues assigned to user, not yet overdue (≤200 items) |
+| GET    | `/api/users/me/work-items/overdue/` | Session + login | Open issues assigned to user, past due (≤200 items)        |
+
+**Parameters:**
+
+- `?workspace=<slug>` (optional) — Filter to single workspace; default: all workspaces
+
+**Serializer:** `UserCrossWorkspaceWorkItemSerializer` — ID-only response (minimal payload):
+
+- `id`, `name`, `identifier`, `state_id`, `priority`, `target_date`
+- `assignee_ids: UUID[]` (list of assignee IDs, not objects)
+- `label_ids: UUID[]` (list of label IDs, not objects)
+- `workspace_id`, `project_id`
+
+**Filters:**
+
+- Assignee = current user
+- Active workspace membership (`workspace_member.is_active=True`)
+- Active project membership (`project_member.is_active=True`)
+- Project not archived
+- State group in {backlog, unstarted, started} (open tasks only)
+- Parent is null (excludes sub-tasks — critical for accuracy)
+
+**Query optimization:**
+
+- `use_read_replica=True` — read-only queries
+- `select_related("workspace", "project", "state")` — joins on meta
+- `prefetch_related("assignees", "labels")` — bulk-fetch relationships
+- Supports DB partial index `issues_workitems_idx` on `(target_date, state_id) WHERE parent_id IS NULL AND deleted_at IS NULL AND archived_at IS NULL AND is_draft=FALSE`
+
+**Capping:** 200-item hard limit (KISS principle; sub-task exclusion + state filter keeps real-world counts much lower).
+
+**Feature flag:** `VITE_USE_AGGREGATE_PROFILE_ENDPOINT` (frontend env var, default `"true"`). When `"false"`, UI falls back to legacy client-side fan-out across individual workspace profile endpoints.
+
 ### Database Schema
 
 **Core Hierarchy:**

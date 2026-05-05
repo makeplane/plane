@@ -50,9 +50,6 @@ class TestUserProfileStatsAggregation:
         backlog = State.objects.create(
             workspace=workspace, project=project, name="Backlog", group=StateGroup.BACKLOG.value, color="#000000"
         )
-        unstarted = State.objects.create(
-            workspace=workspace, project=project, name="Unstarted", group=StateGroup.UNSTARTED.value, color="#111111"
-        )
         started = State.objects.create(
             workspace=workspace, project=project, name="Started", group=StateGroup.STARTED.value, color="#222222"
         )
@@ -74,16 +71,6 @@ class TestUserProfileStatsAggregation:
             parent=None,
         )
         IssueAssignee.objects.create(issue=created_and_assigned, assignee=create_user, project=project, workspace=workspace)
-
-        # Created by create_user, not assigned
-        created_not_assigned = Issue.objects.create(
-            workspace=workspace,
-            project=project,
-            name="Created Not Assigned",
-            state=unstarted,
-            created_by=create_user,
-            parent=None,
-        )
 
         # Created by other user, assigned to create_user
         other_user = create_user.__class__.objects.create(
