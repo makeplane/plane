@@ -2,6 +2,13 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Django imports
+from django.db import transaction
+from django.shortcuts import get_object_or_404
+
+# Third party imports
+from rest_framework import serializers
+
 # Module imports
 from .base import BaseSerializer
 from plane.db.models import Page, ProjectPage, Project
@@ -50,11 +57,26 @@ class PageSerializer(BaseSerializer):
             "updated_by",
         ]
 
+    def validate_parent(self, value):
+        if value is None:
+            return value
+        project_id = self.context.get("project_id")
+        if project_id and not ProjectPage.objects.filter(
+            page_id=value.id,
+            project_id=project_id,
+            deleted_at__isnull=True,
+        ).exists():
+            raise serializers.ValidationError(
+                "Parent page must belong to the same project."
+            )
+        return value
+
+    @transaction.atomic
     def create(self, validated_data):
         project_id = self.context["project_id"]
         owned_by_id = self.context["owned_by_id"]
 
-        project = Project.objects.get(pk=project_id)
+        project = get_object_or_404(Project, pk=project_id)
 
         page = Page.objects.create(
             **validated_data,
