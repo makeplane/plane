@@ -152,10 +152,9 @@ plane.so/
 
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **plane** (60429 symbols, 105092 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **plane** (60562 symbols, 105189 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
-> If any GitNexus tool warns the index is stale, re-index via Docker (npm release is broken in 1.6.x):
-> `docker run --rm -v gitnexus-data:/data/gitnexus -v /Volumes/Data/SHBVN/plane.so:/Volumes/Data/SHBVN/plane.so --workdir /Volumes/Data/SHBVN/plane.so --entrypoint sh akonlabs/gitnexus:1.6.4-rc.51 -c "node /app/gitnexus/dist/cli/index.js analyze"`
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
 ## Always Do
 
