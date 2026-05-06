@@ -143,6 +143,15 @@
             "_origin": "engineer"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/gitnexus-stale-check.cjs"
+          }
+        ]
       }
     ],
     "Stop": [

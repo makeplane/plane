@@ -21,5 +21,6 @@ export function useSidebarMenu(): TSidebarMenuItem[] {
     coreSidebarMenuLinks.image,
     coreSidebarMenuLinks.monitoring,
     coreSidebarMenuLinks["task-categories"],
+    coreSidebarMenuLinks["calendar"],
   ];
 }

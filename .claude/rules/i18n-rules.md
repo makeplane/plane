@@ -6,7 +6,9 @@ paths:
 
 # i18n (Internationalization) — MANDATORY
 
-**Scope**: `apps/web` and `packages/i18n` only. NOT for `apps/admin` — admin app has no i18n.
+**Scope**: `apps/web` and `packages/i18n` ONLY.
+
+> **Admin app (`apps/admin/`) is English-only — NO i18n.** See `.claude/rules/admin-app-conventions.md` (auto-loads when editing admin code). Do NOT import `useTranslation` or `@plane/i18n` in admin.
 
 **NEVER hardcode user-facing strings.** Every visible text must use `t()` from `@plane/i18n`.
 

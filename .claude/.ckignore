@@ -26,3 +26,6 @@ coverage
 !.env
 !.env.*
 !dist
+!.venv
+!build
+!vendor

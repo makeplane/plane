@@ -14,6 +14,10 @@ WEB_URL = "http://localhost:3000"
 # Send it in a dummy outbox
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
+# Run Celery tasks synchronously in-process so tests don't need a broker
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+
 INSTALLED_APPS.append(  # noqa
     "plane.tests"
 )

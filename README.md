@@ -17,6 +17,7 @@
   - [Design Guidelines](./docs/design-guidelines.md)
   - [Deployment Guide](./docs/deployment-guide.md)
   - [Project Roadmap](./docs/project-roadmap.md)
+  - [GitNexus Setup Guide](./docs/gitnexus-guide.md) — code intelligence for Claude Code
 - **Repository:** https://github.com/shbvn/plane
 - **Upstream:** https://github.com/makeplane/plane
 
@@ -114,6 +115,15 @@ docker-compose -f docker-compose.dev.yml up
 Visit http://localhost:3000 and log in with your superuser credentials.
 
 **Full Guide:** [Deployment Guide → Local Development](./docs/deployment-guide.md#local-development-setup)
+
+**5. (Recommended) Setup Code Intelligence**
+
+```bash
+./scripts/gitnexus.sh pull       # pull pinned Docker image (~1.2GB)
+./scripts/gitnexus.sh analyze    # index codebase (~2-3 min)
+```
+
+Enables Claude Code's GitNexus MCP tools (impact analysis, call graph, refactor safety). See [GitNexus Setup Guide](./docs/gitnexus-guide.md) for details.
 
 ## Project Structure
 
