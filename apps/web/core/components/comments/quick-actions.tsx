@@ -78,10 +78,12 @@ export const CommentQuickActions = observer(function CommentQuickActions(props: 
           icon: TrashIcon,
           shouldRender: canDelete,
         },
-      ];
+      ].filter((item) => item.shouldRender !== false);
     },
     [t, setEditMode, canEdit, showCopyLinkOption, activityOperations, comment, showAccessSpecifier, canDelete]
   );
+
+  if (MENU_ITEMS.length === 0) return null;
 
   return (
     <CustomMenu customButton={<IconButton icon={MoreHorizontal} variant="ghost" size="sm" />} closeOnSelect>
