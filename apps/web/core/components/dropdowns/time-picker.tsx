@@ -7,7 +7,7 @@ import { usePopper } from "react-popper";
 import { Clock, X } from "lucide-react";
 import { Combobox } from "@headlessui/react";
 import { ComboDropDown } from "@plane/ui";
-import { cn, isoTo24Hour, updateISOTime } from "@plane/utils";
+import { cn, isoTo12Hour, isoTo24Hour, updateISOTime } from "@plane/utils";
 
 import { useDropdown } from "@/hooks/use-dropdown";
 import { DropdownButton } from "./buttons";
@@ -105,7 +105,7 @@ export const TimeDropdown: React.FC<Props> = observer((props) => {
     }
   };
 
-  const displayValue = value ? isoTo24Hour(value) : placeholder;
+  const displayValue = value ? isoTo12Hour(value) ?? placeholder : placeholder;
 
   const comboButton = (
     <button

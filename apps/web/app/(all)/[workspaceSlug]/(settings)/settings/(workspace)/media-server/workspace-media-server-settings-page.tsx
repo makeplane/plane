@@ -12,6 +12,7 @@ import { SettingsContentWrapper } from "@/components/settings/content-wrapper";
 import { SettingsHeading } from "@/components/settings/heading";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
+import { deleteDevice, fetchDevices } from "../devices/devices.api";
 import { ApplicationConfigurationCard } from "./components/application-configuration-card";
 import { ApplicationFormModal } from "./components/application-form-modal";
 import { CollapsibleConfigurationCard } from "./components/collapsible-configuration-card";
@@ -21,6 +22,8 @@ import { createApplication, fetchApplications, fetchVirtualHost, removeApplicati
 import { EMPTY_VIRTUAL_HOST } from "./media-server.types";
 import type { TVirtualHostState } from "./media-server.types";
 import { getCpServerBaseUrl, getErrorMessage } from "./media-server.utils";
+
+const normalizeApplicationKey = (value: string) => value.trim().toLowerCase();
 
 const WorkspaceMediaServerSettingsPage = observer(() => {
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
@@ -144,11 +147,43 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
       setIsMutating(true);
 
       try {
-        await removeApplication(baseUrl, applicationName);
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: "Application removed.",
-        });
+        const normalizedApplicationName = applicationName.trim();
+        const associatedDevices = (await fetchDevices(baseUrl)).filter(
+          (device) => normalizeApplicationKey(device.appName) === normalizeApplicationKey(normalizedApplicationName)
+        );
+
+        await removeApplication(baseUrl, normalizedApplicationName);
+
+        const deviceDeletionResults = await Promise.allSettled(
+          associatedDevices.map((device) => deleteDevice(baseUrl, device.id))
+        );
+        const failedDeviceDeletionCount = deviceDeletionResults.filter((result) => result.status === "rejected").length;
+        const deletedDeviceCount = associatedDevices.length - failedDeviceDeletionCount;
+
+        if (failedDeviceDeletionCount > 0) {
+          setToast({
+            type: TOAST_TYPE.WARNING,
+            title: "Application removed.",
+            message:
+              failedDeviceDeletionCount === associatedDevices.length
+                ? "The stream name was deleted, but its associated devices could not be removed."
+                : `The stream name was deleted, ${deletedDeviceCount} associated ${
+                    deletedDeviceCount === 1 ? "device was" : "devices were"
+                  } removed, and ${failedDeviceDeletionCount} ${failedDeviceDeletionCount === 1 ? "device" : "devices"} could not be deleted.`,
+          });
+        } else {
+          setToast({
+            type: TOAST_TYPE.SUCCESS,
+            title: "Application removed.",
+            message:
+              associatedDevices.length > 0
+                ? `${associatedDevices.length} associated ${
+                    associatedDevices.length === 1 ? "device was" : "devices were"
+                  } also deleted.`
+                : undefined,
+          });
+        }
+
         await loadApplications();
       } catch (err) {
         setToast({
@@ -266,9 +301,9 @@ const WorkspaceMediaServerSettingsPage = observer(() => {
         title="Delete application"
         content={
           <>
-            Are you sure you want to delete{" "}
-            <span className="font-medium text-custom-text-100">{applicationToDelete ?? "this application"}</span>? This
-            action cannot be undone.
+            Are you sure you want to delete application{" "}
+            <span className="font-medium text-custom-text-100">{applicationToDelete ?? "this application"}</span>? If
+            you delete this application, its associated devices will also be deleted.
           </>
         }
       />
