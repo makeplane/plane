@@ -73,6 +73,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.app.services.weekend_working_days import normalize_working_day_schedule
 
 from .. import BaseAPIView, BaseViewSet
 
@@ -169,6 +170,7 @@ class IssueListEndpoint(BaseAPIView):
                 "priority",
                 "start_date",
                 "target_date",
+                "planned_duration_working_days",
                 "sequence_id",
                 "project_id",
                 "parent_id",
@@ -434,6 +436,7 @@ class IssueViewSet(BaseViewSet):
                     "priority",
                     "start_date",
                     "target_date",
+                    "planned_duration_working_days",
                     "sequence_id",
                     "project_id",
                     "parent_id",
@@ -697,7 +700,17 @@ class IssueViewSet(BaseViewSet):
                     issue_id=str(serializer.data.get("id", None)),
                     user_id=request.user.id,
                 )
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            updated_issue = serializer.instance
+            return Response(
+                {
+                    "id": str(updated_issue.id),
+                    "start_date": updated_issue.start_date,
+                    "target_date": updated_issue.target_date,
+                    "planned_duration_working_days": updated_issue.planned_duration_working_days,
+                    "updated_at": updated_issue.updated_at,
+                },
+                status=status.HTTP_200_OK,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN], creator=True, model=Issue)
@@ -731,21 +744,11 @@ class ProjectUserDisplayPropertyEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id):
         try:
-            issue_property = ProjectUserProperty.objects.get(
-                user=request.user, 
-                project_id=project_id
-            )
+            issue_property = ProjectUserProperty.objects.get(user=request.user, project_id=project_id)
         except ProjectUserProperty.DoesNotExist:
-            issue_property = ProjectUserProperty.objects.create(
-                user=request.user, 
-                project_id=project_id
-            )
+            issue_property = ProjectUserProperty.objects.create(user=request.user, project_id=project_id)
 
-        serializer = ProjectUserPropertySerializer(
-            issue_property, 
-            data=request.data,
-            partial=True
-        )
+        serializer = ProjectUserPropertySerializer(issue_property, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -866,6 +869,7 @@ class IssuePaginatedViewSet(BaseViewSet):
             "priority",
             "start_date",
             "target_date",
+            "planned_duration_working_days",
             "sequence_id",
             "project_id",
             "parent_id",
@@ -1084,31 +1088,21 @@ class IssueDetailEndpoint(BaseAPIView):
             order_by=order_by_param,
             queryset=issue,
             total_count_queryset=total_issue_queryset,
-            on_results=lambda issue: IssueListDetailSerializer(
-                issue, many=True, fields=self.fields, expand=self.expand
-            ).data,
+            on_results=lambda issue: (
+                IssueListDetailSerializer(issue, many=True, fields=self.fields, expand=self.expand).data
+            ),
         )
 
 
 class IssueBulkUpdateDateEndpoint(BaseAPIView):
-    def validate_dates(self, current_start, current_target, new_start, new_target):
-        """
-        Validate that start date is before target date.
-        """
+    def parse_date(self, value):
         from datetime import datetime
 
-        start = new_start or current_start
-        target = new_target or current_target
-
-        # Convert string dates to datetime objects if they're strings
-        if isinstance(start, str):
-            start = datetime.strptime(start, "%Y-%m-%d").date()
-        if isinstance(target, str):
-            target = datetime.strptime(target, "%Y-%m-%d").date()
-
-        if start and target and start > target:
-            return False
-        return True
+        if value in (None, ""):
+            return None
+        if isinstance(value, str):
+            return datetime.strptime(value, "%Y-%m-%d").date()
+        return value
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def post(self, request, slug, project_id):
@@ -1129,19 +1123,34 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
             if not issue:
                 continue
 
-            start_date = update.get("start_date")
-            target_date = update.get("target_date")
-            validate_dates = self.validate_dates(issue.start_date, issue.target_date, start_date, target_date)
-            if not validate_dates:
+            schedule_patch = {}
+            if "start_date" in update:
+                schedule_patch["start_date"] = self.parse_date(update.get("start_date"))
+            if "target_date" in update:
+                schedule_patch["target_date"] = self.parse_date(update.get("target_date"))
+            if "planned_duration_working_days" in update:
+                schedule_patch["planned_duration_working_days"] = update.get("planned_duration_working_days")
+
+            if not schedule_patch:
+                continue
+
+            try:
+                start_date, target_date, planned_duration = normalize_working_day_schedule(
+                    current_start_date=issue.start_date,
+                    current_target_date=issue.target_date,
+                    current_planned_duration_working_days=issue.planned_duration_working_days,
+                    **schedule_patch,
+                )
+            except ValueError as exc:
                 return Response(
-                    {"message": "Start date cannot exceed target date"},
+                    {"message": str(exc)},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            if start_date:
+            if issue.start_date != start_date:
                 issue_activity.delay(
                     type="issue.activity.updated",
-                    requested_data=json.dumps({"start_date": update.get("start_date")}),
+                    requested_data=json.dumps({"start_date": str(start_date)}),
                     current_instance=json.dumps({"start_date": str(issue.start_date)}),
                     issue_id=str(issue_id),
                     actor_id=str(request.user.id),
@@ -1149,12 +1158,11 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
                     epoch=epoch,
                 )
                 issue.start_date = start_date
-                issues_to_update.append(issue)
 
-            if target_date:
+            if issue.target_date != target_date:
                 issue_activity.delay(
                     type="issue.activity.updated",
-                    requested_data=json.dumps({"target_date": update.get("target_date")}),
+                    requested_data=json.dumps({"target_date": str(target_date)}),
                     current_instance=json.dumps({"target_date": str(issue.target_date)}),
                     issue_id=str(issue_id),
                     actor_id=str(request.user.id),
@@ -1162,12 +1170,37 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
                     epoch=epoch,
                 )
                 issue.target_date = target_date
-                issues_to_update.append(issue)
+
+            issue.planned_duration_working_days = planned_duration
+            issues_to_update.append(issue)
+
+        if not issues_to_update:
+            return Response(
+                {"message": "Issues updated successfully", "issues": []},
+                status=status.HTTP_200_OK,
+            )
 
         # Bulk update issues
-        Issue.objects.bulk_update(issues_to_update, ["start_date", "target_date"])
+        Issue.objects.bulk_update(
+            issues_to_update,
+            ["start_date", "target_date", "planned_duration_working_days"],
+        )
 
-        return Response({"message": "Issues updated successfully"}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "message": "Issues updated successfully",
+                "issues": [
+                    {
+                        "id": str(issue.id),
+                        "start_date": issue.start_date.isoformat() if issue.start_date else None,
+                        "target_date": issue.target_date.isoformat() if issue.target_date else None,
+                        "planned_duration_working_days": issue.planned_duration_working_days,
+                    }
+                    for issue in issues_to_update
+                ],
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class IssueMetaEndpoint(BaseAPIView):

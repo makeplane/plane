@@ -34,12 +34,22 @@ export interface PropagationCallbacks {
     original_target_date: string;
     expected_updated_at: string;
     edges: ReadonlyArray<{ predecessor_id: string; successor_id: string }>;
-    items_by_id: Readonly<Record<string, { id: string; start_date: string; target_date: string }>>;
+    items_by_id: Readonly<
+      Record<
+        string,
+        { id: string; start_date: string; target_date: string; planned_duration_working_days?: number | null }
+      >
+    >;
   }) => void;
   updatePreview: (args: { requested_start_date: string; requested_target_date: string }) => void;
   getEdgesAndItems: () => {
     edges: ReadonlyArray<{ predecessor_id: string; successor_id: string }>;
-    items_by_id: Readonly<Record<string, { id: string; start_date: string; target_date: string }>>;
+    items_by_id: Readonly<
+      Record<
+        string,
+        { id: string; start_date: string; target_date: string; planned_duration_working_days?: number | null }
+      >
+    >;
   };
 }
 

@@ -243,7 +243,10 @@ export class IssueService extends APIService {
     workspaceSlug: string,
     projectId: string,
     updates: { id: string; start_date?: string; target_date?: string }[]
-  ): Promise<void> {
+  ): Promise<{
+    message: string;
+    issues: Pick<TIssue, "id" | "start_date" | "target_date" | "planned_duration_working_days">[];
+  }> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/issue-dates/`, { updates })
       .then((response) => response?.data)
       .catch((error) => {

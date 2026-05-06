@@ -47,6 +47,40 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.app.services.weekend_working_days import normalize_working_day_schedule
+
+
+def _normalize_issue_working_day_schedule(attrs, instance=None):
+    schedule_fields = {
+        "start_date",
+        "target_date",
+        "planned_duration_working_days",
+    }
+    if not any(field in attrs for field in schedule_fields):
+        return attrs
+
+    schedule_patch = {}
+    if "start_date" in attrs:
+        schedule_patch["start_date"] = attrs["start_date"]
+    if "target_date" in attrs:
+        schedule_patch["target_date"] = attrs["target_date"]
+    if "planned_duration_working_days" in attrs:
+        schedule_patch["planned_duration_working_days"] = attrs["planned_duration_working_days"]
+
+    try:
+        start_date, target_date, planned_duration = normalize_working_day_schedule(
+            current_start_date=getattr(instance, "start_date", None),
+            current_target_date=getattr(instance, "target_date", None),
+            current_planned_duration_working_days=getattr(instance, "planned_duration_working_days", None),
+            **schedule_patch,
+        )
+    except ValueError as exc:
+        raise serializers.ValidationError({"planned_duration_working_days": str(exc)}) from exc
+
+    attrs["start_date"] = start_date
+    attrs["target_date"] = target_date
+    attrs["planned_duration_working_days"] = planned_duration
+    return attrs
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -62,6 +96,7 @@ class IssueFlatSerializer(BaseSerializer):
             "priority",
             "start_date",
             "target_date",
+            "planned_duration_working_days",
             "sequence_id",
             "sort_order",
             "is_draft",
@@ -123,6 +158,8 @@ class IssueCreateSerializer(BaseSerializer):
     def validate(self, attrs):
         allow_triage = self.context.get("allow_triage_state", False)
         state_manager = State.triage_objects if allow_triage else State.objects
+
+        attrs = _normalize_issue_working_day_schedule(attrs, self.instance)
 
         if (
             attrs.get("start_date", None) is not None
@@ -783,6 +820,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "priority",
             "start_date",
             "target_date",
+            "planned_duration_working_days",
             "sequence_id",
             "project_id",
             "parent_id",
@@ -840,6 +878,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "priority": instance.priority,
             "start_date": instance.start_date,
             "target_date": instance.target_date,
+            "planned_duration_working_days": instance.planned_duration_working_days,
             "sequence_id": instance.sequence_id,
             "project_id": instance.project_id,
             "parent_id": instance.parent_id,

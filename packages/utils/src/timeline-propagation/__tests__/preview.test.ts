@@ -90,6 +90,35 @@ describe("computeLoadedPreview (TEST-19 / FE-01 / FE-02)", () => {
     expect(preview.size).toBe(2);
   });
 
+  it("working-day duration: dragged and successor targets skip weekends", () => {
+    const items_by_id: Record<string, LoadedWorkItem> = {
+      "wi-A": {
+        id: "wi-A",
+        start_date: "2026-05-07",
+        target_date: "2026-05-08",
+        planned_duration_working_days: 2,
+      },
+      "wi-B": {
+        id: "wi-B",
+        start_date: "2026-05-11",
+        target_date: "2026-05-12",
+        planned_duration_working_days: 2,
+      },
+    };
+    const edges: LoadedGraphEdge[] = [{ predecessor_id: "wi-A", successor_id: "wi-B" }];
+
+    const preview = computeLoadedPreview(edges, items_by_id, {
+      id: "wi-A",
+      original_start_date: "2026-05-07",
+      original_target_date: "2026-05-08",
+      requested_start_date: "2026-05-08",
+      requested_target_date: "2026-05-09",
+    });
+
+    expect(preview.get("wi-A")).toEqual({ start_date: "2026-05-08", target_date: "2026-05-11" });
+    expect(preview.get("wi-B")).toEqual({ start_date: "2026-05-12", target_date: "2026-05-13" });
+  });
+
   it("incomplete loaded data: silently skips successors not in items_by_id (server is authoritative; D-04a)", () => {
     const items_by_id: Record<string, LoadedWorkItem> = {
       "wi-A": { id: "wi-A", start_date: "2026-05-04", target_date: "2026-05-08" },

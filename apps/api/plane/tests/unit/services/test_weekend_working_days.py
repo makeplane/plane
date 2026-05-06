@@ -1,0 +1,73 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+from datetime import date
+
+import pytest
+
+from plane.app.services.weekend_working_days import (
+    add_working_days,
+    count_working_days,
+    is_weekend,
+    is_working_day,
+    normalize_working_day_schedule,
+    subtract_working_days,
+)
+
+
+@pytest.mark.unit
+class TestWeekendWorkingDays:
+    def test_friday_plus_one_working_day_ends_friday(self):
+        assert add_working_days(date(2026, 5, 8), 1) == date(2026, 5, 8)
+
+    def test_friday_plus_two_working_days_ends_monday(self):
+        assert add_working_days(date(2026, 5, 8), 2) == date(2026, 5, 11)
+
+    def test_thursday_plus_three_working_days_ends_monday(self):
+        assert add_working_days(date(2026, 5, 7), 3) == date(2026, 5, 11)
+
+    def test_saturday_plus_one_working_day_ends_next_monday(self):
+        assert add_working_days(date(2026, 5, 9), 1) == date(2026, 5, 11)
+
+    def test_counts_working_days_across_weekend(self):
+        assert count_working_days(date(2026, 5, 8), date(2026, 5, 11)) == 2
+
+    def test_monday_minus_two_working_days_starts_friday(self):
+        assert subtract_working_days(date(2026, 5, 11), 2) == date(2026, 5, 8)
+
+    def test_weekend_target_minus_one_working_day_starts_previous_friday(self):
+        assert subtract_working_days(date(2026, 5, 10), 1) == date(2026, 5, 8)
+
+    def test_normalizes_start_change_by_preserving_existing_working_duration(self):
+        assert normalize_working_day_schedule(
+            current_start_date=date(2026, 5, 7),
+            current_target_date=date(2026, 5, 11),
+            current_planned_duration_working_days=3,
+            start_date=date(2026, 5, 8),
+        ) == (date(2026, 5, 8), date(2026, 5, 12), 3)
+
+    def test_normalizes_target_change_by_recalculating_working_duration(self):
+        assert normalize_working_day_schedule(
+            current_start_date=date(2026, 5, 8),
+            current_target_date=date(2026, 5, 8),
+            current_planned_duration_working_days=None,
+            target_date=date(2026, 5, 11),
+        ) == (date(2026, 5, 8), date(2026, 5, 11), 2)
+
+    def test_weekend_and_working_day_classification(self):
+        assert is_weekend(date(2026, 5, 9)) is True
+        assert is_working_day(date(2026, 5, 9)) is False
+        assert is_weekend(date(2026, 5, 11)) is False
+        assert is_working_day(date(2026, 5, 11)) is True
+
+    def test_rejects_non_positive_duration(self):
+        with pytest.raises(ValueError, match="duration must be at least 1"):
+            add_working_days(date(2026, 5, 8), 0)
+
+        with pytest.raises(ValueError, match="duration must be at least 1"):
+            subtract_working_days(date(2026, 5, 8), 0)
+
+    def test_rejects_target_before_start_when_counting(self):
+        with pytest.raises(ValueError, match="target must be on or after start"):
+            count_working_days(date(2026, 5, 11), date(2026, 5, 8))

@@ -280,6 +280,7 @@ export class TimelinePropagationStore implements ITimelinePropagationStore {
           this.rootStore.issue.issues.updateIssue(wi.id, {
             start_date: wi.start_date,
             target_date: wi.target_date,
+            planned_duration_working_days: wi.planned_duration_working_days,
             updated_at: wi.updated_at,
           });
         }

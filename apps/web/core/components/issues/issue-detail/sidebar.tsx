@@ -4,9 +4,12 @@
  * See the LICENSE file for details.
  */
 
+import { CalendarDays } from "lucide-react";
 import { observer } from "mobx-react";
+import { useEffect, useState } from "react";
 // i18n
 import { useTranslation } from "@plane/i18n";
+import { Input } from "@plane/ui";
 // ui
 import {
   CycleIcon,
@@ -48,6 +51,8 @@ import { IssueLabel } from "./label";
 import { IssueModuleSelect } from "./module-select";
 import type { TIssueOperations } from "./root";
 
+const DurationPropertyIcon = ({ className }: { className?: string }) => <CalendarDays className={className} />;
+
 type Props = {
   workspaceSlug: string;
   projectId: string;
@@ -68,6 +73,12 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { getUserDetails } = useMember();
   const { getStateById } = useProjectState();
   const issue = getIssueById(issueId);
+  const [durationInput, setDurationInput] = useState("");
+
+  useEffect(() => {
+    setDurationInput(issue?.planned_duration_working_days?.toString() ?? "");
+  }, [issue?.planned_duration_working_days]);
+
   if (!issue) return <></>;
 
   const createdByDetails = getUserDetails(issue.created_by);
@@ -81,6 +92,32 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
 
   const maxDate = issue.target_date ? getDate(issue.target_date) : null;
   maxDate?.setDate(maxDate.getDate());
+
+  const commitDurationInput = () => {
+    const currentValue = issue.planned_duration_working_days?.toString() ?? "";
+    const nextValue = durationInput.trim();
+    if (nextValue === currentValue) return;
+
+    if (nextValue === "") {
+      issueOperations.update(workspaceSlug, projectId, issueId, { planned_duration_working_days: null });
+      return;
+    }
+
+    if (!/^\d+$/.test(nextValue)) {
+      setDurationInput(currentValue);
+      return;
+    }
+
+    const parsedDuration = Number.parseInt(nextValue, 10);
+    if (parsedDuration < 1 || parsedDuration > 366) {
+      setDurationInput(currentValue);
+      return;
+    }
+
+    issueOperations.update(workspaceSlug, projectId, issueId, {
+      planned_duration_working_days: parsedDuration,
+    });
+  };
 
   return (
     <>
@@ -186,6 +223,28 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 />
                 {issue.target_date && <DateAlert date={issue.target_date} workItem={issue} projectId={projectId} />}
               </div>
+            </SidebarPropertyListItem>
+
+            <SidebarPropertyListItem icon={DurationPropertyIcon} label={t("common.duration")}>
+              <Input
+                type="text"
+                inputMode="numeric"
+                value={durationInput}
+                onChange={(event) => setDurationInput(event.target.value.replace(/\D/g, ""))}
+                onBlur={commitDurationInput}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") event.currentTarget.blur();
+                  if (event.key === "Escape") {
+                    setDurationInput(issue.planned_duration_working_days?.toString() ?? "");
+                    event.currentTarget.blur();
+                  }
+                }}
+                placeholder={t("common.none")}
+                disabled={!isEditable}
+                mode="transparent"
+                inputSize="xs"
+                className="h-7.5 w-full text-body-xs-regular"
+              />
             </SidebarPropertyListItem>
 
             {projectId && areEstimateEnabledByProjectId(projectId) && (

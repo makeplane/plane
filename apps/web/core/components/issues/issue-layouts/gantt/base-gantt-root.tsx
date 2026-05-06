@@ -124,11 +124,19 @@ export const BaseGanttRoot = observer(function BaseGanttRoot(props: IBaseGanttRo
             edges.push({ predecessor_id: srcId, successor_id: targetId });
           }
         }
-        const items_by_id: Record<string, { id: string; start_date: string; target_date: string }> = {};
+        const items_by_id: Record<
+          string,
+          { id: string; start_date: string; target_date: string; planned_duration_working_days?: number | null }
+        > = {};
         for (const id of visibleIds) {
           const block = blocksMap[id];
           if (block?.start_date && block?.target_date) {
-            items_by_id[id] = { id, start_date: block.start_date, target_date: block.target_date };
+            items_by_id[id] = {
+              id,
+              start_date: block.start_date,
+              target_date: block.target_date,
+              planned_duration_working_days: block.data?.planned_duration_working_days,
+            };
           }
         }
         return { edges, items_by_id };

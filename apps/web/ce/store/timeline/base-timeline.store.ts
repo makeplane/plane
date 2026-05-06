@@ -33,6 +33,7 @@ type BlockData = {
   sort_order: number | null;
   start_date?: string | undefined | null;
   target_date?: string | undefined | null;
+  planned_duration_working_days?: number | undefined | null;
   project_id?: string | undefined | null;
 };
 
