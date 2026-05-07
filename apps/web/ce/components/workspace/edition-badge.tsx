@@ -6,7 +6,7 @@ import { Button } from "@plane/propel/button";
 import { Tooltip } from "@plane/propel/tooltip";
 // hooks
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import packageJson from "package.json";
+import packageJson from "../../../package.json";
 // local components
 import { PaidPlanUpgradeModal } from "../license";
 

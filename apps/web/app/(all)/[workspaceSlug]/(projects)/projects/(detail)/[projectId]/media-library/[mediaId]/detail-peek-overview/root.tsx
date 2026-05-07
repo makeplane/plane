@@ -17,9 +17,9 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/plane-web/hooks/use-issue-properties";
+import type { TIssueOperations } from "@/components/issues/issue-detail";
 // local imports
 import { IssueView } from "./view";
-import { TIssueOperations } from "@/components/issues/issue-detail";
 import type { TMediaItem } from "../../types";
 
 export const DetailIssueOverview: FC<

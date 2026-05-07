@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
     let urlObj;
     try {
       urlObj = new URL(url);
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
     }
 
@@ -46,14 +47,14 @@ export async function POST(req: NextRequest) {
       const favicon = getMetaContent("icon") || `${urlObj.origin}/favicon.ico`;
 
       return NextResponse.json({
-        title: title || urlObj.hostname.replace('www.', ''),
+        title: title || urlObj.hostname.replace("www.", ""),
         description: description || "",
         image: image || null,
         favicon: favicon || null,
       });
-    } catch (fetchError) {
+    } catch {
       // Fallback to basic info if fetch fails
-      const domain = urlObj.hostname.replace('www.', '');
+      const domain = urlObj.hostname.replace("www.", "");
       return NextResponse.json({
         title: domain,
         description: `Link to ${domain}`,
@@ -63,8 +64,8 @@ export async function POST(req: NextRequest) {
     }
   } catch (error: any) {
     console.error("Link preview error:", error?.message || error);
-    return NextResponse.json({ 
-      error: error?.message || "Failed to fetch link preview" 
+    return NextResponse.json({
+      error: error?.message || "Failed to fetch link preview"
     }, { status: 500 });
   }
 }

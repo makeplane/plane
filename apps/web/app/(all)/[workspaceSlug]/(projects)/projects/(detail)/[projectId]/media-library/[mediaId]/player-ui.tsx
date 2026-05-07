@@ -161,9 +161,9 @@ export const PlayerSettingsPanel = ({
                   <span className="player-settings-check">✓</span>
                   <span>{option.label}</span>
                 </button>
-              ))}         
+              ))}
             </div>
-          ) : null}             
+          ) : null}
         </>
       ) : null}
       {showSpeedRow ? (

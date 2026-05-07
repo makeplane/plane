@@ -130,9 +130,9 @@ const MediaListSection = ({
         >
           View all
         </Link>
-        
+
         </>
-      
+
       ) : null}
     </div>
     <div className="overflow-hidden rounded-lg border border-custom-border-200 bg-custom-background-100">

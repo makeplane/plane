@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
+import type { ReactNode } from "react";
 import { FileText, Image as ImageIcon, Video, X } from "lucide-react";
 import type { TMediaItem } from "../types";
 import { useMember } from "@/hooks/store/use-member";

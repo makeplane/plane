@@ -15,7 +15,7 @@ import { cn } from "@plane/utils";
 import { useTheme } from "@/hooks/store";
 // assets
 // eslint-disable-next-line import/order
-import packageJson from "package.json";
+import packageJson from "../../../package.json";
 
 const helpOptions = [
   {

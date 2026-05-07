@@ -35,6 +35,7 @@ export const convertWorkItemDataToSearchResponse = (
   state__color: state?.color ?? "",
   start_date: workItem.start_date,
   start_time: workItem.start_time,
+  target_date: workItem.target_date,
   state__group: state?.group ?? "backlog",
   state__name: state?.name ?? "",
   workspace__slug: workspaceSlug,

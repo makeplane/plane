@@ -401,7 +401,7 @@ export const useDocumentPreview = ({
           const XLSX = "default" in xlsxModule ? xlsxModule.default : xlsxModule;
           let workbook;
           if (documentFormat === "csv") {
-            const headers: HeadersInit = { Range: `bytes=0-${csvPreviewBytes - 1}` };
+            const headers = { Range: `bytes=0-${csvPreviewBytes - 1}` };
             let response = await fetch(fileSrc, {
               credentials: useDocumentCredentials ? "include" : "omit",
               headers,
