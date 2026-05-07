@@ -162,48 +162,70 @@ TAG_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   "${API_BASE}/repository/tags/${TAG_ENCODED}")
 
 if [ "${TAG_STATUS}" = "200" ]; then
-  echo "  Tag already exists."
+  echo "  Tag already exists — skipping."
 else
-  curl --fail -s --request POST \
+  TAG_RESPONSE=$(curl -s -w "\n%{http_code}" --request POST \
     --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
-    --data-urlencode "tag_name=${RELEASE_TAG}" \
-    --data-urlencode "ref=${CI_COMMIT_SHA}" \
-    --data-urlencode "message=Release ${RELEASE_TAG}" \
-    "${API_BASE}/repository/tags" > /dev/null
-  echo "  ✓ Tag created"
+    --header "Content-Type: application/json" \
+    --data "{\"tag_name\":\"${RELEASE_TAG}\",\"ref\":\"${CI_COMMIT_SHA}\",\"message\":\"Release ${RELEASE_TAG}\"}" \
+    "${API_BASE}/repository/tags")
+  TAG_HTTP=$(echo "${TAG_RESPONSE}" | tail -1)
+  TAG_BODY=$(echo "${TAG_RESPONSE}" | head -n -1)
+  case "${TAG_HTTP}" in
+    200|201) echo "  ✓ Tag created" ;;
+    409|422) echo "  Tag already exists — skipping." ;;
+    401)     echo "ERROR: Unauthorized — GITLAB_PUBLISH_TOKEN missing 'api' scope"; exit 1 ;;
+    404)     echo "ERROR: Project not found — check CI_PROJECT_ID (${CI_PROJECT_ID})"; exit 1 ;;
+    *)       echo "ERROR: Tag creation failed (HTTP ${TAG_HTTP}): ${TAG_BODY}"; exit 1 ;;
+  esac
 fi
 
 # ── Create/update GitLab Release with SHA256 in description ───────────────────
 # SHA256 written here is the integrity anchor read by deploy-from-internal-gitlab-release.sh
 # via the Releases API — independent of the package registry asset.
 echo "[4/5] Creating GitLab Release ..."
+
+# json_str: pure bash JSON string escaping (no python3 / jq required)
+json_str() {
+  local s="$1"
+  s="${s//\\/\\\\}"   # \ → \\
+  s="${s//\"/\\\"}"   # " → \"
+  s="${s//$'\n'/\\n}" # newline → \n
+  printf '"%s"' "${s}"
+}
+
 RELEASE_DESC="Release ${SHB_VERSION} — commit ${CI_COMMIT_SHA:0:8}
 
 Package: ${PACKAGE_URL}
 
 SHA256: ${ARCHIVE_SHA256}"
 
+DESC_JSON=$(json_str "${RELEASE_DESC}")
+
 RELEASE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
   "${API_BASE}/releases/${TAG_ENCODED}")
 
 if [ "${RELEASE_STATUS}" = "200" ]; then
-  # Update description only (preserve existing asset links)
-  DESC_JSON=$(printf '%s' "${RELEASE_DESC}" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
-  curl --fail -s --request PUT \
+  REL_RESPONSE=$(curl -s -w "\n%{http_code}" --request PUT \
     --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
     --header "Content-Type: application/json" \
     --data "{\"description\":${DESC_JSON}}" \
-    "${API_BASE}/releases/${TAG_ENCODED}" > /dev/null
+    "${API_BASE}/releases/${TAG_ENCODED}")
+  REL_HTTP=$(echo "${REL_RESPONSE}" | tail -1)
+  REL_BODY=$(echo "${REL_RESPONSE}" | head -n -1)
+  [ "${REL_HTTP}" = "200" ] || { echo "ERROR: Release update failed (HTTP ${REL_HTTP}): ${REL_BODY}"; exit 1; }
   echo "  ✓ Release updated"
 else
-  DESC_JSON=$(printf '%s' "${RELEASE_DESC}" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')
   ASSET_JSON="{\"links\":[{\"name\":\"Release Package\",\"url\":\"${PACKAGE_URL}\",\"link_type\":\"package\"}]}"
-  curl --fail -s --request POST \
+  REL_RESPONSE=$(curl -s -w "\n%{http_code}" --request POST \
     --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
     --header "Content-Type: application/json" \
     --data "{\"name\":\"${RELEASE_TAG}\",\"tag_name\":\"${RELEASE_TAG}\",\"description\":${DESC_JSON},\"assets\":${ASSET_JSON}}" \
-    "${API_BASE}/releases" > /dev/null
+    "${API_BASE}/releases")
+  REL_HTTP=$(echo "${REL_RESPONSE}" | tail -1)
+  REL_BODY=$(echo "${REL_RESPONSE}" | head -n -1)
+  [ "${REL_HTTP}" = "200" ] || [ "${REL_HTTP}" = "201" ] || { echo "ERROR: Release creation failed (HTTP ${REL_HTTP}): ${REL_BODY}"; exit 1; }
   echo "  ✓ Release created"
 fi
 
