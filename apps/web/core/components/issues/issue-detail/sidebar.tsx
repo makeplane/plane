@@ -6,7 +6,7 @@
 
 import { CalendarDays } from "lucide-react";
 import { observer } from "mobx-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 import { Input } from "@plane/ui";
@@ -74,6 +74,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
   const { getStateById } = useProjectState();
   const issue = getIssueById(issueId);
   const [durationInput, setDurationInput] = useState("");
+  const durationInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setDurationInput(issue?.planned_duration_working_days?.toString() ?? "");
@@ -204,8 +205,22 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               label={t("common.duration")}
               childrenClassName="min-w-0"
             >
-              <div className="flex h-7.5 w-full min-w-0 items-center gap-1.5 rounded-sm border border-subtle-1 bg-layer-1 px-2 focus-within:border-accent-strong focus-within:ring-1 focus-within:ring-accent-strong">
+              <label
+                className={cn(
+                  "flex h-7.5 w-full min-w-0 items-center gap-1.5 rounded-sm border px-2 focus-within:border-accent-strong focus-within:ring-1 focus-within:ring-accent-strong",
+                  isEditable
+                    ? "cursor-text border-strong bg-surface-1"
+                    : "cursor-not-allowed border-subtle-1 bg-layer-1"
+                )}
+                onMouseDown={(event) => {
+                  if (event.target !== durationInputRef.current) {
+                    event.preventDefault();
+                    durationInputRef.current?.focus();
+                  }
+                }}
+              >
                 <Input
+                  ref={durationInputRef}
                   aria-label={t("common.duration_placeholder")}
                   type="text"
                   inputMode="numeric"
@@ -223,10 +238,10 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   disabled={!isEditable}
                   mode="true-transparent"
                   inputSize="xs"
-                  className="h-full min-w-0 flex-1 px-0 py-0 text-body-xs-regular"
+                  className="h-full min-w-0 flex-1 px-0 py-0 text-body-xs-regular text-primary disabled:cursor-not-allowed"
                 />
                 <span className="shrink-0 text-body-xs-regular text-tertiary">{t("common.working_days")}</span>
-              </div>
+              </label>
             </SidebarPropertyListItem>
 
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>

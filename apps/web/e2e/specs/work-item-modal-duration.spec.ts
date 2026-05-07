@@ -48,4 +48,45 @@ test.describe("work item modal duration", () => {
       if (issueId) await api.deleteIssue(issueId);
     }
   });
+
+  test("shows and saves duration from the gantt peek overview", async ({ page, api }, testInfo) => {
+    const issueName = `e2e-duration-peek-${testInfo.title.replace(/\s+/g, "-").slice(0, 40)}-${Date.now()}`;
+    const issue = await api.createIssue(issueName, { start: 0, end: 2 });
+
+    try {
+      await page.goto(`/${env.workspaceSlug}/projects/${env.projectId}/issues/`);
+      await page.locator("#gantt-container").waitFor({ state: "visible", timeout: 15_000 });
+      await page.locator(`[data-block-id="${issue.id}"]`).waitFor({ state: "visible", timeout: 10_000 });
+      await page.locator(`[data-block-id="${issue.id}"]`).click({ position: { x: 20, y: 10 } });
+
+      const durationInput = page.getByLabel("Enter days");
+      await expect(durationInput).toBeVisible();
+      await page.getByText("working days").last().click();
+      await expect(durationInput).toBeFocused();
+      await page.keyboard.press("ControlOrMeta+A");
+      await page.keyboard.type("5");
+      await expect(durationInput).toHaveValue("5");
+
+      const updateResponsePromise = page.waitForResponse(
+        (response) =>
+          response
+            .url()
+            .includes(`/api/workspaces/${env.workspaceSlug}/projects/${env.projectId}/issues/${issue.id}/`) &&
+          response.request().method() === "PATCH"
+      );
+      await page.mouse.click(20, 20);
+      const updateResponse = await updateResponsePromise;
+      expect(updateResponse.status()).toBe(200);
+      expect(updateResponse.request().postDataJSON()).toMatchObject({
+        planned_duration_working_days: 5,
+      });
+
+      const updatedIssue = (await api.getIssue(issue.id)) as Awaited<ReturnType<typeof api.getIssue>> & {
+        planned_duration_working_days: number | null;
+      };
+      expect(updatedIssue.planned_duration_working_days).toBe(5);
+    } finally {
+      await api.deleteIssue(issue.id);
+    }
+  });
 });
