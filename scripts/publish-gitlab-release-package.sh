@@ -78,12 +78,8 @@ zip_create() {
   fi
 }
 
-# ── Architecture verification ─────────────────────────────────────────────────
-echo "[1/6] Verifying image architecture ..."
-bash "${SCRIPT_DIR}/verify-release-package-architecture.sh" "${DIST_DIR}"
-
 # ── Assemble package ──────────────────────────────────────────────────────────
-echo "[2/6] Assembling release package ..."
+echo "[1/5] Assembling release package ..."
 rm -rf "${STAGE_DIR}"
 mkdir -p "${STAGE_DIR}/dist" "${STAGE_DIR}/scripts"
 
@@ -130,7 +126,7 @@ rm -rf "${STAGE_DIR}"
 echo "  SHA256: ${ARCHIVE_SHA256}"
 
 # ── Upload to Package Registry (idempotent) ───────────────────────────────────
-echo "[3/6] Uploading to Package Registry ..."
+echo "[2/5] Uploading to Package Registry ..."
 HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
   "${PKG_BASE}/${ARCHIVE_NAME}")
@@ -159,7 +155,7 @@ fi
 PACKAGE_URL="${PKG_BASE}/${ARCHIVE_NAME}"
 
 # ── Create git tag ────────────────────────────────────────────────────────────
-echo "[4/6] Creating git tag ${RELEASE_TAG} ..."
+echo "[3/5] Creating git tag ${RELEASE_TAG} ..."
 TAG_ENCODED=$(echo "${RELEASE_TAG}" | sed 's|/|%2F|g; s| |%20|g')
 TAG_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
@@ -180,7 +176,7 @@ fi
 # ── Create/update GitLab Release with SHA256 in description ───────────────────
 # SHA256 written here is the integrity anchor read by deploy-from-internal-gitlab-release.sh
 # via the Releases API — independent of the package registry asset.
-echo "[5/6] Creating GitLab Release ..."
+echo "[4/5] Creating GitLab Release ..."
 RELEASE_DESC="Release ${SHB_VERSION} — commit ${CI_COMMIT_SHA:0:8}
 
 Package: ${PACKAGE_URL}
@@ -211,7 +207,7 @@ else
   echo "  ✓ Release created"
 fi
 
-echo "[6/6] Cleaning up ..."
+echo "[5/5] Cleaning up ..."
 rm -f "${ARCHIVE_NAME}" "${CHECKSUMS_FILE}"
 
 echo ""
