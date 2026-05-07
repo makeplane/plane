@@ -45,10 +45,38 @@ echo " Pkg version: ${PKG_VERSION}"
 echo "========================================="
 
 # ── Preflight ─────────────────────────────────────────────────────────────────
-command -v curl     >/dev/null 2>&1 || { echo "ERROR: curl not found"; exit 1; }
-command -v zip      >/dev/null 2>&1 || { echo "ERROR: zip not found"; exit 1; }
-command -v sha256sum >/dev/null 2>&1 || { echo "ERROR: sha256sum not found"; exit 1; }
-[ -f "${DIST_DIR}/.shb-version" ]    || { echo "ERROR: ${DIST_DIR}/.shb-version not found — run builds first"; exit 1; }
+command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found"; exit 1; }
+[ -f "${DIST_DIR}/.shb-version" ] || { echo "ERROR: ${DIST_DIR}/.shb-version not found — run builds first"; exit 1; }
+
+# sha256sum: Linux/Windows Git Bash use sha256sum; macOS uses shasum -a 256
+if ! command -v sha256sum >/dev/null 2>&1; then
+  if command -v shasum >/dev/null 2>&1; then
+    sha256sum() { shasum -a 256 "$@"; }
+  else
+    echo "ERROR: sha256sum / shasum not found"; exit 1
+  fi
+fi
+
+# zip_create <archive.zip> <source-dir>
+# Tries: zip (Linux/macOS/Git Bash with zip) → 7z (Windows 7-Zip) → PowerShell (Windows fallback)
+zip_create() {
+  local archive="$1" source="$2"
+  if command -v zip >/dev/null 2>&1; then
+    zip -r "${archive}" "${source}/"
+  elif command -v 7z >/dev/null 2>&1; then
+    7z a -tzip "${archive}" "${source}/" > /dev/null
+  elif command -v powershell.exe >/dev/null 2>&1; then
+    local abs_src abs_dst
+    abs_src=$(cygpath -w "$(realpath "${source}")" 2>/dev/null || echo "${source}")
+    abs_dst=$(cygpath -w "$(realpath ".")\\$(basename "${archive}")" 2>/dev/null || echo "${archive}")
+    powershell.exe -NoProfile -Command \
+      "Compress-Archive -Path '${abs_src}\\*' -DestinationPath '${abs_dst}' -Force"
+  else
+    echo "ERROR: No zip tool found."
+    echo "       Install one of: zip (Git Bash: pacman -S zip), 7-Zip, or ensure PowerShell is in PATH."
+    exit 1
+  fi
+}
 
 # ── Architecture verification ─────────────────────────────────────────────────
 echo "[1/6] Verifying image architecture ..."
@@ -95,7 +123,7 @@ TARGET_ARCH=linux/amd64
 IMAGES=makeplane/plane-frontend:${SHB_VERSION},makeplane/plane-admin:${SHB_VERSION},makeplane/plane-backend:${SHB_VERSION}
 MANIFEST
 
-zip -r "${ARCHIVE_NAME}" "${STAGE_DIR}/"
+zip_create "${ARCHIVE_NAME}" "${STAGE_DIR}"
 ARCHIVE_SHA256=$(sha256sum "${ARCHIVE_NAME}" | awk '{print $1}')
 echo "${ARCHIVE_SHA256}  ${ARCHIVE_NAME}" > "${CHECKSUMS_FILE}"
 rm -rf "${STAGE_DIR}"
