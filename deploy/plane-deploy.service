@@ -1,0 +1,16 @@
+[Unit]
+Description=Plane vibe-fork auto-deploy loop
+After=network-online.target docker.service
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/root/deploy-loop.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
