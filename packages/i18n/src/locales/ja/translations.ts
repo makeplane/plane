@@ -792,6 +792,8 @@ export default {
     toggle_peek_view_layout: "ピークビューのレイアウトを切り替え",
     options: "オプション",
     duration: "期間",
+    duration_placeholder: "日数を入力",
+    working_days: "営業日",
     today: "今日",
     week: "週",
     month: "月",

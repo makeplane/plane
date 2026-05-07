@@ -199,6 +199,36 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               />
             </SidebarPropertyListItem>
 
+            <SidebarPropertyListItem
+              icon={DurationPropertyIcon}
+              label={t("common.duration")}
+              childrenClassName="min-w-0"
+            >
+              <div className="flex h-7.5 w-full min-w-0 items-center gap-1.5 rounded-sm border border-subtle-1 bg-layer-1 px-2 focus-within:border-accent-strong focus-within:ring-1 focus-within:ring-accent-strong">
+                <Input
+                  aria-label={t("common.duration_placeholder")}
+                  type="text"
+                  inputMode="numeric"
+                  value={durationInput}
+                  onChange={(event) => setDurationInput(event.target.value.replace(/\D/g, ""))}
+                  onBlur={commitDurationInput}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") event.currentTarget.blur();
+                    if (event.key === "Escape") {
+                      setDurationInput(issue.planned_duration_working_days?.toString() ?? "");
+                      event.currentTarget.blur();
+                    }
+                  }}
+                  placeholder={t("common.duration_placeholder")}
+                  disabled={!isEditable}
+                  mode="true-transparent"
+                  inputSize="xs"
+                  className="h-full min-w-0 flex-1 px-0 py-0 text-body-xs-regular"
+                />
+                <span className="shrink-0 text-body-xs-regular text-tertiary">{t("common.working_days")}</span>
+              </div>
+            </SidebarPropertyListItem>
+
             <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
               <div className="flex w-full items-center gap-2">
                 <DateDropdown
@@ -223,28 +253,6 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 />
                 {issue.target_date && <DateAlert date={issue.target_date} workItem={issue} projectId={projectId} />}
               </div>
-            </SidebarPropertyListItem>
-
-            <SidebarPropertyListItem icon={DurationPropertyIcon} label={t("common.duration")}>
-              <Input
-                type="text"
-                inputMode="numeric"
-                value={durationInput}
-                onChange={(event) => setDurationInput(event.target.value.replace(/\D/g, ""))}
-                onBlur={commitDurationInput}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") event.currentTarget.blur();
-                  if (event.key === "Escape") {
-                    setDurationInput(issue.planned_duration_working_days?.toString() ?? "");
-                    event.currentTarget.blur();
-                  }
-                }}
-                placeholder={t("common.none")}
-                disabled={!isEditable}
-                mode="transparent"
-                inputSize="xs"
-                className="h-7.5 w-full text-body-xs-regular"
-              />
             </SidebarPropertyListItem>
 
             {projectId && areEstimateEnabledByProjectId(projectId) && (
