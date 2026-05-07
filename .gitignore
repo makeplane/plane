@@ -121,3 +121,6 @@ temp/
 *.bak
 *.bak.*
 
+
+# Local release upload config (contains GitLab token — never commit)
+upload-release.env

@@ -401,10 +401,11 @@ build:api:shell:
 
 # =============================================================================
 # STAGE 4: DEPLOY
-# Two deploy strategies:
-#   deploy:dev        — local runner on dev server, uses CI artifacts (no SSH)
-#   deploy:dev:release — manual, pulls exact release package from internal GitLab
-#   deploy:prod:release — manual, prod/* tag only, shb-prod runner on prod server
+# Three deploy strategies:
+#   deploy:dev              — local runner on dev server, uses CI artifacts (no SSH)
+#   publish:manual:dev       — uploads pre-built images from server dist/ to registry (no build)
+#   deploy:dev:release      — auto after publish:manual:dev, pulls from registry
+#   deploy:prod:release     — auto on prod/* tag, shb-prod runner on prod server
 #
 # No SSH/SCP for internal deploys — runners already execute on their target server.
 # Server credentials are NOT stored in GitLab CI variables.
@@ -441,9 +442,33 @@ deploy:dev:
     name: dev
     url: https://uat-jms.shinhan.com.vn
 
-# ── Deploy Dev from Release Package — manual, validates release artifact path ──
-# Triggers deploy-from-internal-gitlab-release.sh on dev server.
-# Set RELEASE_TAG when triggering (e.g. dev/shb_v1.2.0-build.5).
+# ── Publish Dev Release (Manual Build) — auto on dev/* tag ───────────────────
+# Uploads pre-built images from the runner server's local dist/ to GitLab Package Registry.
+# Images must already exist on the server at PLANE_DIR/dist/ (scp'd from local Mac).
+# No build dependencies — skips the CI build step entirely.
+publish:manual:dev:
+  stage: release
+  tags:
+    - shb-dev
+    - shell
+  needs:
+    - none
+  variables:
+    GIT_STRATEGY: none
+    # SHB_VERSION derived from tag: dev/shb_v1.2.0 → shb_v1.2.0
+    SHB_VERSION: "${CI_COMMIT_TAG#dev/}"
+    RELEASE_TAG: "${CI_COMMIT_TAG}"
+    CI_COMMIT_SHA: "${CI_COMMIT_SHA:-0000000000000000000000000000000000000000}"
+  script:
+    - bash scripts/publish-gitlab-release-package.sh
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^dev\// && $IS_AIRGAPPED == "true"
+      when: on_success
+
+# ── Deploy Dev from Release Package — auto on dev/* tag ───────────────────────
+# Pulls the release package from GitLab Package Registry and deploys.
+# Package must already exist in registry (uploaded via publish-gitlab-release-package.sh
+# from an internal machine before pushing the tag).
 deploy:dev:release:
   stage: deploy
   tags:
@@ -453,18 +478,17 @@ deploy:dev:release:
   interruptible: false
   variables:
     GIT_STRATEGY: none
-    # RELEASE_TAG: set this variable when triggering the job manually
+    RELEASE_TAG: "${CI_COMMIT_TAG}"
   script:
     - bash scripts/deploy-from-internal-gitlab-release.sh
   rules:
-    - if: $IS_AIRGAPPED == "true"
-      when: manual
-      allow_failure: false
+    - if: $CI_COMMIT_TAG =~ /^dev\// && $IS_AIRGAPPED == "true"
+      when: on_success
   environment:
     name: dev/release
     url: https://uat-jms.shinhan.com.vn
 
-# ── Deploy Prod from Release Package — manual, exact prod/* tag required ───────
+# ── Deploy Prod from Release Package — auto on prod/* tag ─────────────
 # Triggers on prod/* tag pipelines only. Runner is shb-prod on production server.
 # RELEASE_TAG is automatically the triggering tag (prod/shb_vX.Y.Z).
 deploy:prod:release:
@@ -481,7 +505,7 @@ deploy:prod:release:
     - bash scripts/deploy-from-internal-gitlab-release.sh
   rules:
     - if: $CI_COMMIT_TAG =~ /^prod\// && $IS_AIRGAPPED == "true"
-      when: manual
+      when: on_success
       allow_failure: false
   environment:
     name: production
