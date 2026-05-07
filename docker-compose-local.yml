@@ -1,3 +1,8 @@
+x-backend-env: &backend-env
+  AWS_S3_ENDPOINT_URL: http://plane-minio:9000
+  MINIO_EXTERNAL_ENDPOINT: http://localhost:9000
+  USE_MINIO: "1"
+
 services:
   plane-redis:
     image: valkey/valkey:7.2.11-alpine
@@ -134,6 +139,8 @@ services:
     command: ./bin/docker-entrypoint-api-local.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - plane-db
       - plane-redis
@@ -155,6 +162,8 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - api
       - plane-db
@@ -174,6 +183,8 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - api
       - plane-db
@@ -193,6 +204,8 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh --settings=plane.settings.local
     env_file:
       - ./apps/api/.env
+    environment:
+      <<: *backend-env
     depends_on:
       - plane-db
       - plane-redis
