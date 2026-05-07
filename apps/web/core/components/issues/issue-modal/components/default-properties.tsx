@@ -186,7 +186,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
         control={control}
         name="planned_duration_working_days"
         render={({ field: { value, onChange } }) => (
-          <div className="flex h-7 items-center gap-1.5 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 text-caption-sm-regular">
+          <label className="flex h-7 min-w-36 cursor-text items-center gap-1.5 rounded-sm border-[0.5px] border-strong bg-surface-1 px-2 text-caption-sm-regular">
             <CalendarDays className="h-3 w-3 shrink-0 text-secondary" />
             <Input
               aria-label={t("common.duration_placeholder")}
@@ -203,11 +203,11 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
               placeholder={t("common.duration")}
               mode="true-transparent"
               inputSize="xs"
-              className="h-full w-12 px-0 py-0 text-caption-sm-regular"
+              className="h-full min-w-0 flex-1 px-0 py-0 text-caption-sm-regular"
               tabIndex={getIndex("planned_duration_working_days")}
             />
             <span className="shrink-0 whitespace-nowrap text-tertiary">{t("common.working_days")}</span>
-          </div>
+          </label>
         )}
       />
       <Controller
