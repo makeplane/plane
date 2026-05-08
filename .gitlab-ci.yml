@@ -442,10 +442,10 @@ deploy:dev:
     name: dev
     url: https://uat-jms.shinhan.com.vn
 
-# ── Publish Dev Release (Manual Build) — auto on dev/* tag ───────────────────
+# ── Publish Dev Release (Manual, Branch Only) ──────────────────────────────
 # Uploads pre-built images from the runner server's local dist/ to GitLab Package Registry.
 # Images must already exist on the server at PLANE_DIR/dist/ (scp'd from local Mac).
-# No build dependencies — skips the CI build step entirely.
+# Only runs when manually triggered on a branch (not on tag — tag flow uses upload-release.sh).
 publish:manual:dev:
   stage: release
   tags:
@@ -454,15 +454,15 @@ publish:manual:dev:
   needs: []
   variables:
     GIT_STRATEGY: none
-    # SHB_VERSION derived from tag: dev/shb_v1.2.0 → shb_v1.2.0
-    SHB_VERSION: "${CI_COMMIT_TAG#dev/}"
-    RELEASE_TAG: "${CI_COMMIT_TAG}"
+    SHB_VERSION: ""
+    RELEASE_TAG: ""
     CI_COMMIT_SHA: "${CI_COMMIT_SHA:-0000000000000000000000000000000000000000}"
   script:
     - bash scripts/publish-gitlab-release-package.sh
   rules:
-    - if: $CI_COMMIT_TAG =~ /^dev\// && $IS_AIRGAPPED == "true"
-      when: on_success
+    - if: $CI_COMMIT_BRANCH == "develop" && $IS_AIRGAPPED == "true"
+      when: manual
+      allow_failure: true
 
 # ── Deploy Dev from Release Package — auto on dev/* tag ───────────────────────
 # Pulls the release package from GitLab Package Registry and deploys.
