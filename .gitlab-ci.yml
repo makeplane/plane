@@ -451,8 +451,7 @@ publish:manual:dev:
   tags:
     - shb-dev
     - shell
-  needs:
-    - none
+  needs: []
   variables:
     GIT_STRATEGY: none
     # SHB_VERSION derived from tag: dev/shb_v1.2.0 → shb_v1.2.0
