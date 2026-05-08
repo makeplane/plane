@@ -476,7 +476,8 @@ deploy:dev:release:
     - deploy
   interruptible: false
   variables:
-    GIT_STRATEGY: none
+    GIT_STRATEGY: fetch
+    GIT_DEPTH: 1
     RELEASE_TAG: "${CI_COMMIT_TAG}"
   script:
     - bash scripts/deploy-from-internal-gitlab-release.sh
@@ -498,7 +499,8 @@ deploy:prod:release:
     - deploy-only
   interruptible: false
   variables:
-    GIT_STRATEGY: none
+    GIT_STRATEGY: fetch
+    GIT_DEPTH: 1
     RELEASE_TAG: "${CI_COMMIT_TAG}"
   script:
     - bash scripts/deploy-from-internal-gitlab-release.sh
