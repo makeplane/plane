@@ -430,7 +430,8 @@ deploy:dev:
     - job: build:api:shell
       artifacts: true
   variables:
-    GIT_STRATEGY: none
+    GIT_STRATEGY: fetch
+    GIT_DEPTH: 1
   script:
     - SHB_VERSION=$(cat dist/.shb-version)
     - rm -rf /tmp/plane-deploy && mkdir -p /tmp/plane-deploy
