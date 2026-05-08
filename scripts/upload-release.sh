@@ -37,6 +37,14 @@ ENV_FILE="${ROOT_DIR}/upload-release.env"
   exit 1
 }
 
+if [[ "${RELEASE_TAG}" == dev/* ]]; then
+  [[ "${RELEASE_TAG}" =~ ^dev/.+-build\.[0-9]+$ ]] || {
+    echo "ERROR: dev release tags must include build suffix, e.g. dev/shb_v1.2.0-build.5"
+    echo "       Got: '${RELEASE_TAG}'"
+    exit 1
+  }
+fi
+
 # ── Load local config (not committed to git) ──────────────────────────────────
 [ -f "${ENV_FILE}" ] || {
   echo "ERROR: ${ENV_FILE} not found."
@@ -55,26 +63,14 @@ DIST_DIR="${DIST_DIR:-dist}"
 }
 SHB_VERSION=$(tr -d '[:space:]' < "${DIST_DIR}/.shb-version")
 
-# ── Validate CI_COMMIT_SHA is set and looks like a SHA ───────────────────────
-[ -n "${CI_COMMIT_SHA:-}" ] || {
-  echo "ERROR: CI_COMMIT_SHA is not set in ${ENV_FILE}."
-  echo "       Run 'git rev-parse HEAD' on the build machine and paste the result."
-  exit 1
-}
-[[ "${CI_COMMIT_SHA}" =~ ^[0-9a-f]{40}$ ]] || {
-  echo "ERROR: CI_COMMIT_SHA '${CI_COMMIT_SHA}' is not a valid full SHA (40 hex chars)."
-  exit 1
-}
-
 echo "========================================="
 echo " Upload Release: ${RELEASE_TAG}"
 echo " Version       : ${SHB_VERSION}"
-echo " Commit        : ${CI_COMMIT_SHA:0:8}"
 echo " Dist dir      : ${DIST_DIR}"
 echo "========================================="
 
 # ── Delegate to publish script ────────────────────────────────────────────────
-export GITLAB_URL CI_PROJECT_ID GITLAB_PUBLISH_TOKEN CI_COMMIT_SHA
+export GITLAB_URL CI_PROJECT_ID GITLAB_PUBLISH_TOKEN
 export SHB_VERSION RELEASE_TAG DIST_DIR
 
 bash "${SCRIPT_DIR}/publish-gitlab-release-package.sh"

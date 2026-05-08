@@ -10,31 +10,79 @@
 #                         (NOT api-only — separate from the deploy read token)
 #   SHB_VERSION           Package version string (e.g. shb_v1.2.0)
 #   RELEASE_TAG           Git tag to create (dev/shb_v1.2.0-build.5 or prod/shb_v1.2.0)
-#   CI_COMMIT_SHA         Full commit SHA
 #
 # Optional:
 #   PACKAGE_NAME          Registry package name (default: plane-shb-release)
 #   DIST_DIR              Source dist directory   (default: dist)
+#   TAG_REF               Git ref for tag target (default: develop for dev/*, preview for prod/*)
 
 set -euo pipefail
+
+on_error() {
+  local line="$1" cmd="$2"
+  echo "ERROR: Command failed at line ${line}: ${cmd}" >&2
+}
+trap 'on_error ${LINENO} "${BASH_COMMAND}"' ERR
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${ROOT_DIR}"
 
-for VAR in GITLAB_URL CI_PROJECT_ID GITLAB_PUBLISH_TOKEN SHB_VERSION RELEASE_TAG CI_COMMIT_SHA; do
+GITLAB_URL="${GITLAB_URL:-${CI_SERVER_URL:-}}"
+
+for VAR in GITLAB_URL CI_PROJECT_ID GITLAB_PUBLISH_TOKEN SHB_VERSION RELEASE_TAG; do
   [ -n "${!VAR:-}" ] || { echo "ERROR: ${VAR} is required but not set"; exit 1; }
 done
 
 PACKAGE_NAME="${PACKAGE_NAME:-plane-shb-release}"
 DIST_DIR="${DIST_DIR:-dist}"
-ARCHIVE_NAME="${PACKAGE_NAME}-${SHB_VERSION}.zip"
-CHECKSUMS_FILE="${PACKAGE_NAME}-${SHB_VERSION}.SHA256SUMS"
+PKG_VERSION=$(echo "${RELEASE_TAG}" | sed 's|.*/||')
+ARCHIVE_NAME="${PACKAGE_NAME}-${PKG_VERSION}.zip"
+CHECKSUMS_FILE="${PACKAGE_NAME}-${PKG_VERSION}.SHA256SUMS"
 STAGE_DIR="release-stage-${SHB_VERSION}"
 API_BASE="${GITLAB_URL}/api/v4/projects/${CI_PROJECT_ID}"
-# Package version strips build suffix for registry grouping (dev/prod share version slot)
-PKG_VERSION=$(echo "${RELEASE_TAG}" | sed 's|.*/||; s|-build\.[0-9]*||')
 PKG_BASE="${API_BASE}/packages/generic/${PACKAGE_NAME}/${PKG_VERSION}"
+TAG_REF="${TAG_REF:-}"
+
+if [ -z "${TAG_REF}" ]; then
+  case "${RELEASE_TAG}" in
+    dev/*) TAG_REF="develop" ;;
+    prod/*) TAG_REF="preview" ;;
+    *) echo "ERROR: RELEASE_TAG must start with dev/ or prod/"; exit 1 ;;
+  esac
+fi
+
+split_http_response() {
+  local response="$1"
+  local http body
+  if [[ "${response}" == *$'\n'* ]]; then
+    http="${response##*$'\n'}"
+    body="${response%$'\n'*}"
+  else
+    http="${response}"
+    body=""
+  fi
+  printf '%s\n%s\n' "${http}" "${body}"
+}
+
+ensure_release_asset_link() {
+  local link_response link_http link_body
+  link_response=$(curl -s -w "\n%{http_code}" --request POST \
+    --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
+    --data-urlencode "name=Release Package" \
+    --data-urlencode "url=${PACKAGE_URL}" \
+    --data-urlencode "link_type=other" \
+    "${API_BASE}/releases/${TAG_ENCODED}/assets/links")
+  link_http=$(printf '%s' "${link_response##*$'\n'}")
+  link_body=$(printf '%s' "${link_response%$'\n'*}")
+
+  case "${link_http}" in
+    200|201) echo "  ✓ Release asset link created" ;;
+    409|422) echo "  Release asset link already exists — skipping." ;;
+    404)     echo "ERROR: Release not found while creating asset link"; exit 1 ;;
+    *)       echo "ERROR: Release asset link failed (HTTP ${link_http}): ${link_body}"; exit 1 ;;
+  esac
+}
 
 echo "========================================="
 echo " Publish Release Package"
@@ -43,6 +91,32 @@ echo " Version    : ${SHB_VERSION}"
 echo " Release tag: ${RELEASE_TAG}"
 echo " Pkg version: ${PKG_VERSION}"
 echo "========================================="
+
+# ── Validate tag target ref exists in GitLab project ──────────────────────────
+echo "[0/5] Validating tag target ref ${TAG_REF} ..."
+REF_ENCODED=$(printf '%s' "${TAG_REF}" | sed 's|/|%2F|g; s| |%20|g')
+REF_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+  --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
+  "${API_BASE}/repository/branches/${REF_ENCODED}")
+
+case "${REF_STATUS}" in
+  200)
+    echo "  ✓ Ref exists in project"
+    ;;
+  401)
+    echo "ERROR: Unauthorized — GITLAB_PUBLISH_TOKEN missing required access (api scope)"
+    exit 1
+    ;;
+  404)
+    echo "ERROR: TAG_REF '${TAG_REF}' does not exist in project ${CI_PROJECT_ID}."
+    echo "  Set TAG_REF in upload-release.env to an existing branch or commit ref."
+    exit 1
+    ;;
+  *)
+    echo "ERROR: Unable to validate ref '${TAG_REF}' (HTTP ${REF_STATUS})"
+    exit 1
+    ;;
+esac
 
 # ── Preflight ─────────────────────────────────────────────────────────────────
 command -v curl >/dev/null 2>&1 || { echo "ERROR: curl not found"; exit 1; }
@@ -58,17 +132,23 @@ if ! command -v sha256sum >/dev/null 2>&1; then
 fi
 
 # zip_create <archive.zip> <source-dir>
-# Tries: zip (Linux/macOS/Git Bash with zip) → 7z (Windows 7-Zip) → PowerShell (Windows fallback)
+# Always cd into parent dir before zipping so paths inside the archive use
+# forward slashes regardless of OS (prevents backslash paths on Windows Git Bash).
+# Tries: zip → 7z → PowerShell
 zip_create() {
   local archive="$1" source="$2"
+  local abs_archive parent base
+  abs_archive="$(cd "$(dirname "${archive}")" 2>/dev/null && pwd)/$(basename "${archive}")"
+  parent="$(dirname "${source}")"
+  base="$(basename "${source}")"
   if command -v zip >/dev/null 2>&1; then
-    zip -r "${archive}" "${source}/"
+    (cd "${parent}" && zip -r "${abs_archive}" "${base}/")
   elif command -v 7z >/dev/null 2>&1; then
-    7z a -tzip "${archive}" "${source}/" > /dev/null
+    (cd "${parent}" && 7z a -tzip "${abs_archive}" "${base}/" > /dev/null)
   elif command -v powershell.exe >/dev/null 2>&1; then
     local abs_src abs_dst
     abs_src=$(cygpath -w "$(realpath "${source}")" 2>/dev/null || echo "${source}")
-    abs_dst=$(cygpath -w "$(realpath ".")\\$(basename "${archive}")" 2>/dev/null || echo "${archive}")
+    abs_dst=$(cygpath -w "${abs_archive}" 2>/dev/null || echo "${abs_archive}")
     powershell.exe -NoProfile -Command \
       "Compress-Archive -Path '${abs_src}\\*' -DestinationPath '${abs_dst}' -Force"
   else
@@ -114,7 +194,8 @@ cat > "${STAGE_DIR}/MANIFEST" <<MANIFEST
 VERSION=${SHB_VERSION}
 RELEASE_TAG=${RELEASE_TAG}
 BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-COMMIT=${CI_COMMIT_SHA}
+COMMIT_REF=${TAG_REF}
+TAG_REF=${TAG_REF}
 TARGET_ARCH=linux/amd64
 IMAGES=makeplane/plane-frontend:${SHB_VERSION},makeplane/plane-admin:${SHB_VERSION},makeplane/plane-backend:${SHB_VERSION}
 MANIFEST
@@ -167,10 +248,11 @@ else
   TAG_RESPONSE=$(curl -s -w "\n%{http_code}" --request POST \
     --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
     --header "Content-Type: application/json" \
-    --data "{\"tag_name\":\"${RELEASE_TAG}\",\"ref\":\"${CI_COMMIT_SHA}\",\"message\":\"Release ${RELEASE_TAG}\"}" \
+    --data "{\"tag_name\":\"${RELEASE_TAG}\",\"ref\":\"${TAG_REF}\",\"message\":\"Release ${RELEASE_TAG}\"}" \
     "${API_BASE}/repository/tags")
-  TAG_HTTP=$(echo "${TAG_RESPONSE}" | tail -1)
-  TAG_BODY=$(echo "${TAG_RESPONSE}" | head -n -1)
+  TAG_PARTS=$(split_http_response "${TAG_RESPONSE}")
+  TAG_HTTP=$(printf '%s' "${TAG_PARTS}" | sed -n '1p')
+  TAG_BODY=$(printf '%s' "${TAG_PARTS}" | sed -n '2,$p')
   case "${TAG_HTTP}" in
     200|201) echo "  ✓ Tag created" ;;
     409|422) echo "  Tag already exists — skipping." ;;
@@ -185,22 +267,8 @@ fi
 # via the Releases API — independent of the package registry asset.
 echo "[4/5] Creating GitLab Release ..."
 
-# json_str: pure bash JSON string escaping (no python3 / jq required)
-json_str() {
-  local s="$1"
-  s="${s//\\/\\\\}"   # \ → \\
-  s="${s//\"/\\\"}"   # " → \"
-  s="${s//$'\n'/\\n}" # newline → \n
-  printf '"%s"' "${s}"
-}
-
-RELEASE_DESC="Release ${SHB_VERSION} — commit ${CI_COMMIT_SHA:0:8}
-
-Package: ${PACKAGE_URL}
-
-SHA256: ${ARCHIVE_SHA256}"
-
-DESC_JSON=$(json_str "${RELEASE_DESC}")
+# Plain-ASCII single-line description for max GitLab API compatibility.
+RELEASE_DESC="Release ${SHB_VERSION} (ref ${TAG_REF}). Package: ${PACKAGE_URL}. SHA256: ${ARCHIVE_SHA256}"
 
 RELEASE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
@@ -209,24 +277,37 @@ RELEASE_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
 if [ "${RELEASE_STATUS}" = "200" ]; then
   REL_RESPONSE=$(curl -s -w "\n%{http_code}" --request PUT \
     --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --data "{\"description\":${DESC_JSON}}" \
+    --data-urlencode "description=${RELEASE_DESC}" \
     "${API_BASE}/releases/${TAG_ENCODED}")
-  REL_HTTP=$(echo "${REL_RESPONSE}" | tail -1)
-  REL_BODY=$(echo "${REL_RESPONSE}" | head -n -1)
-  [ "${REL_HTTP}" = "200" ] || { echo "ERROR: Release update failed (HTTP ${REL_HTTP}): ${REL_BODY}"; exit 1; }
+  REL_PARTS=$(split_http_response "${REL_RESPONSE}")
+  REL_HTTP=$(printf '%s' "${REL_PARTS}" | sed -n '1p')
+  REL_BODY=$(printf '%s' "${REL_PARTS}" | sed -n '2,$p')
+  if [ "${REL_HTTP}" != "200" ]; then
+    echo "ERROR: Release update failed (HTTP ${REL_HTTP})"
+    echo "  endpoint : ${API_BASE}/releases/${TAG_ENCODED}"
+    echo "  body     : ${REL_BODY}"
+    exit 1
+  fi
   echo "  ✓ Release updated"
+  ensure_release_asset_link
 else
-  ASSET_JSON="{\"links\":[{\"name\":\"Release Package\",\"url\":\"${PACKAGE_URL}\",\"link_type\":\"package\"}]}"
   REL_RESPONSE=$(curl -s -w "\n%{http_code}" --request POST \
     --header "PRIVATE-TOKEN: ${GITLAB_PUBLISH_TOKEN}" \
-    --header "Content-Type: application/json" \
-    --data "{\"name\":\"${RELEASE_TAG}\",\"tag_name\":\"${RELEASE_TAG}\",\"description\":${DESC_JSON},\"assets\":${ASSET_JSON}}" \
+    --data-urlencode "tag_name=${RELEASE_TAG}" \
+    --data-urlencode "description=${RELEASE_DESC}" \
     "${API_BASE}/releases")
-  REL_HTTP=$(echo "${REL_RESPONSE}" | tail -1)
-  REL_BODY=$(echo "${REL_RESPONSE}" | head -n -1)
-  [ "${REL_HTTP}" = "200" ] || [ "${REL_HTTP}" = "201" ] || { echo "ERROR: Release creation failed (HTTP ${REL_HTTP}): ${REL_BODY}"; exit 1; }
+  REL_PARTS=$(split_http_response "${REL_RESPONSE}")
+  REL_HTTP=$(printf '%s' "${REL_PARTS}" | sed -n '1p')
+  REL_BODY=$(printf '%s' "${REL_PARTS}" | sed -n '2,$p')
+  if [ "${REL_HTTP}" != "200" ] && [ "${REL_HTTP}" != "201" ]; then
+    echo "ERROR: Release creation failed (HTTP ${REL_HTTP})"
+    echo "  tag_name : ${RELEASE_TAG}"
+    echo "  endpoint : ${API_BASE}/releases"
+    echo "  body     : ${REL_BODY}"
+    exit 1
+  fi
   echo "  ✓ Release created"
+  ensure_release_asset_link
 fi
 
 echo "[5/5] Cleaning up ..."

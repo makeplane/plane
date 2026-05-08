@@ -2,47 +2,41 @@
 # Deploy an exact release package from internal GitLab to the local server.
 # The runner must already be executing on the target server (no SSH/SCP).
 #
-# Configuration file: /etc/plane-release-deploy.env (chmod 0400, runner-user owned)
-# Required vars in that file:
-#   GITLAB_URL    Internal GitLab base URL
-#   PROJECT_ID    GitLab project ID
-#   PACKAGE_NAME  Package name in registry (e.g. plane-shb-release)
-#   DEPLOY_TOKEN  Deploy token — read_package_registry scope ONLY
-#   TARGET_ENV    dev | prod
-#   PLANE_DIR     Deployment directory (e.g. /opt/shb-deploy/plane-app)
+# All configuration comes from GitLab CI variables — no server-side env file needed.
 #
-# RELEASE_TAG must be provided explicitly — set in CI variable or env file.
-# It is NEVER defaulted to "latest". Unset RELEASE_TAG always aborts.
+# Required CI variables (Settings → CI/CD → Variables):
+#   PLANE_DIR      Deployment directory — set per environment scope
+#
+# Built-in CI variables used automatically:
+#   CI_SERVER_URL, CI_PROJECT_ID, CI_JOB_TOKEN, CI_COMMIT_TAG, PACKAGE_NAME, RELEASE_TAG
+#
+# TARGET_ENV is derived from the tag prefix (dev/* → dev, prod/* → prod).
 
 set -euo pipefail
 
-ENV_FILE="${DEPLOY_ENV_FILE:-/etc/plane-release-deploy.env}"
+STAGE_DIR="/tmp/plane-release-stage-$$"
+trap 'rm -rf "${STAGE_DIR}"' EXIT
 
-# ── Validate env file permissions and load ────────────────────────────────────
-[ -f "${ENV_FILE}" ] || { echo "ERROR: ${ENV_FILE} not found. Provision this file before deploying."; exit 1; }
-PERMS=$(stat -c '%a' "${ENV_FILE}" 2>/dev/null || stat -f '%A' "${ENV_FILE}" 2>/dev/null || echo "unknown")
-[ "${PERMS}" = "400" ] || echo "WARNING: ${ENV_FILE} permissions are ${PERMS} — should be 0400 (chmod 0400 ${ENV_FILE})"
+# ── Resolve variables from CI environment ─────────────────────────────────────
+GITLAB_URL="${CI_SERVER_URL:-}"
+PROJECT_ID="${CI_PROJECT_ID:-}"
+RELEASE_TAG="${RELEASE_TAG:-${CI_COMMIT_TAG:-}}"
 
-# shellcheck disable=SC1090
-set +x; source "${ENV_FILE}"; set +x  # never trace lines that may reveal token
-
-for VAR in GITLAB_URL PROJECT_ID PACKAGE_NAME DEPLOY_TOKEN TARGET_ENV PLANE_DIR; do
-  [ -n "${!VAR:-}" ] || { echo "ERROR: ${VAR} must be set in ${ENV_FILE}"; exit 1; }
-done
-# RELEASE_TAG: CI variable overrides env file, but must always be explicit
-: "${RELEASE_TAG:?ERROR: RELEASE_TAG must be set explicitly — no latest fallback in any environment}"
-
-# Enforce tag prefix matches environment
-case "${TARGET_ENV}" in
-  prod) [[ "${RELEASE_TAG}" == prod/* ]] || { echo "ERROR: TARGET_ENV=prod requires a prod/* tag; got '${RELEASE_TAG}'"; exit 1; } ;;
-  dev)  [[ "${RELEASE_TAG}" == dev/*  ]] || echo "WARNING: deploying non-dev/* tag '${RELEASE_TAG}' to dev environment" ;;
-  *)    echo "ERROR: TARGET_ENV must be 'dev' or 'prod'; got '${TARGET_ENV}'"; exit 1 ;;
+# Derive TARGET_ENV from tag prefix
+case "${RELEASE_TAG}" in
+  prod/*) TARGET_ENV="prod" ;;
+  dev/*)  TARGET_ENV="dev"  ;;
+  *)      echo "ERROR: RELEASE_TAG '${RELEASE_TAG}' must start with dev/ or prod/"; exit 1 ;;
 esac
 
-STAGE_DIR="/tmp/plane-release-stage-$$"
+# Validate all required vars are present
+for VAR in GITLAB_URL PROJECT_ID CI_JOB_TOKEN PACKAGE_NAME PLANE_DIR RELEASE_TAG; do
+  [ -n "${!VAR:-}" ] || { echo "ERROR: ${VAR} is not set. Configure it as a GitLab CI variable."; exit 1; }
+done
+
 ARCHIVE_DIR="${PLANE_DIR}/archive"
 AUDIT_LOG="${PLANE_DIR}/deploy-audit.log"
-PKG_VERSION=$(echo "${RELEASE_TAG}" | sed 's|.*/||; s|-build\.[0-9]*||')
+PKG_VERSION=$(echo "${RELEASE_TAG}" | sed 's|.*/||')
 ARCHIVE_NAME="${PACKAGE_NAME}-${PKG_VERSION}.zip"
 API_BASE="${GITLAB_URL}/api/v4/projects/${PROJECT_ID}"
 TAG_ENCODED=$(echo "${RELEASE_TAG}" | sed 's|/|%2F|g; s| |%20|g')
@@ -68,7 +62,7 @@ AVAIL_MB=$(df -m "${PLANE_DIR}" | awk 'NR==2 {print $4}')
 echo "[1/8] Fetching Release metadata from Releases API ..."
 set +x
 RELEASE_JSON=$(curl -sf \
-  --header "Deploy-Token: ${DEPLOY_TOKEN}" \
+  --header "Job-Token: ${CI_JOB_TOKEN}" \
   "${API_BASE}/releases/${TAG_ENCODED}" 2>&1) || {
   echo "ERROR: Failed to fetch Release '${RELEASE_TAG}' from ${GITLAB_URL}"
   exit 1
@@ -92,8 +86,8 @@ echo "[2/8] Downloading ${ARCHIVE_NAME} ..."
 mkdir -p "${STAGE_DIR}"
 PKG_URL="${API_BASE}/packages/generic/${PACKAGE_NAME}/${PKG_VERSION}/${ARCHIVE_NAME}"
 set +x
-curl -sf -o "${STAGE_DIR}/${ARCHIVE_NAME}" \
-  --header "Deploy-Token: ${DEPLOY_TOKEN}" \
+curl -sfS -o "${STAGE_DIR}/${ARCHIVE_NAME}" \
+  --header "Job-Token: ${CI_JOB_TOKEN}" \
   "${PKG_URL}"
 set +x
 echo "  Downloaded: ${STAGE_DIR}/${ARCHIVE_NAME}"
@@ -112,15 +106,31 @@ echo "  ✓ Checksum verified"
 
 # ── Extract and validate manifest ─────────────────────────────────────────────
 echo "[4/8] Extracting package ..."
-unzip -q "${STAGE_DIR}/${ARCHIVE_NAME}" -d "${STAGE_DIR}/pkg"
-PKG_DIR=$(find "${STAGE_DIR}/pkg" -mindepth 1 -maxdepth 1 -type d | head -1)
-[ -d "${PKG_DIR}" ] || { echo "ERROR: Package extraction produced no directory"; exit 1; }
-
-MANIFEST="${PKG_DIR}/MANIFEST"
-[ -f "${MANIFEST}" ] || { echo "ERROR: MANIFEST not found in package — may be corrupt"; exit 1; }
+# Use python3 to extract: normalizes backslash paths from Windows zip tools
+python3 - "${STAGE_DIR}/${ARCHIVE_NAME}" "${STAGE_DIR}/pkg" << 'PYEOF'
+import zipfile, os, sys
+archive, dest = sys.argv[1], sys.argv[2]
+os.makedirs(dest, exist_ok=True)
+with zipfile.ZipFile(archive) as zf:
+    for info in zf.infolist():
+        info.filename = info.filename.replace(chr(92), '/')
+        if info.filename.endswith('/'):
+            os.makedirs(os.path.join(dest, info.filename), exist_ok=True)
+        else:
+            zf.extract(info, dest)
+PYEOF
+# Find package dir by locating MANIFEST (skips Mac __MACOSX metadata dirs)
+MANIFEST=$(find "${STAGE_DIR}/pkg" -mindepth 2 -maxdepth 3 -name MANIFEST -type f ! -path '*__MACOSX*' | head -1)
+[ -n "${MANIFEST}" ] && [ -f "${MANIFEST}" ] || {
+  echo "ERROR: MANIFEST not found in package — may be corrupt"
+  echo "  Extracted contents:"
+  find "${STAGE_DIR}/pkg" -maxdepth 2 | sed 's/^/    /'
+  exit 1
+}
+PKG_DIR=$(dirname "${MANIFEST}")
 MANIFEST_ARCH=$(grep '^TARGET_ARCH=' "${MANIFEST}" | cut -d= -f2)
-MANIFEST_VERSION=$(grep '^VERSION=' "${MANIFEST}" | cut -d= -f2)
 MANIFEST_IMAGES=$(grep '^IMAGES=' "${MANIFEST}" | cut -d= -f2)
+MANIFEST_VERSION=$(grep '^VERSION=' "${MANIFEST}" | cut -d= -f2)
 
 [ "${MANIFEST_ARCH}" = "linux/amd64" ] || {
   echo "ERROR: Package TARGET_ARCH is '${MANIFEST_ARCH}' — expected linux/amd64"
