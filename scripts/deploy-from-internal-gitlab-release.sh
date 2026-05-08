@@ -120,11 +120,12 @@ with zipfile.ZipFile(archive) as zf:
             zf.extract(info, dest)
 PYEOF
 # Find package dir by locating MANIFEST (skips Mac __MACOSX metadata dirs)
-MANIFEST=$(find "${STAGE_DIR}/pkg" -mindepth 2 -maxdepth 3 -name MANIFEST -type f ! -path '*__MACOSX*' | head -1)
+# Depth-agnostic: handles flat zips, single-wrapped zips, and double-nested artifacts.
+MANIFEST=$(find "${STAGE_DIR}/pkg" -name MANIFEST -type f ! -path '*__MACOSX*' | head -1)
 [ -n "${MANIFEST}" ] && [ -f "${MANIFEST}" ] || {
   echo "ERROR: MANIFEST not found in package — may be corrupt"
-  echo "  Extracted contents:"
-  find "${STAGE_DIR}/pkg" -maxdepth 2 | sed 's/^/    /'
+  echo "  Extracted contents (up to 4 levels):"
+  find "${STAGE_DIR}/pkg" -maxdepth 4 | sed 's/^/    /'
   exit 1
 }
 PKG_DIR=$(dirname "${MANIFEST}")
