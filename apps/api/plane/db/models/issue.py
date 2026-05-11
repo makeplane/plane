@@ -234,8 +234,8 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
 
             default_state = State.objects.filter(~models.Q(is_triage=True), project=self.project, default=True).first()
             self.state = default_state or State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
-        except ImportError:
-            pass
+        except ImportError as e:
+            log_exception(e)
 
     def _sync_completed_at(self, kwargs):
         """Update completed_at when state changes. Returns kwargs."""
