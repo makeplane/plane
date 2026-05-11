@@ -3503,6 +3503,10 @@ export default {
     loading: "로딩 중...", // TODO: native review
     category: "카테고리", // TODO: native review
     search: "검색...", // TODO: native review
+    sort: "정렬", // TODO: native review
+    filter: "필터", // TODO: native review
+    selected_count: "{count}개 선택됨", // TODO: native review
+    clear_filter: "필터 초기화", // TODO: native review
     clear_sort: "정렬 초기화", // TODO: native review
     clear_filters_sort: "필터 및 정렬 초기화", // TODO: native review
     ascending: "오름차순", // TODO: native review

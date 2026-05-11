@@ -3553,6 +3553,10 @@ export default {
     loading: "Đang tải...", // TODO: native review
     category: "Danh mục", // TODO: native review
     search: "Tìm kiếm...", // TODO: native review
+    sort: "Sắp xếp", // TODO: native review
+    filter: "Lọc", // TODO: native review
+    selected_count: "Đã chọn {count}", // TODO: native review
+    clear_filter: "Xóa lọc", // TODO: native review
     clear_sort: "Xóa sắp xếp", // TODO: native review
     clear_filters_sort: "Xóa lọc & sắp xếp", // TODO: native review
     ascending: "Tăng dần", // TODO: native review
