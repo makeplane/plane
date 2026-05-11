@@ -44,6 +44,7 @@ export interface IHoIssueStore {
   fromDate: string;
   toDate: string;
   showArchived: boolean;
+  includeSubIssues: boolean;
   displayProperties: THoDisplayProperties;
   // Actions
   fetchIssues: (page?: number) => Promise<void>;
@@ -54,6 +55,7 @@ export interface IHoIssueStore {
   updateOrderBy: (key: string) => void;
   setDateRange: (from: string, to: string) => void;
   setShowArchived: (value: boolean) => void;
+  setIncludeSubIssues: (value: boolean) => void;
   updateDisplayProperties: (props: Partial<THoDisplayProperties>) => void;
   setDepartmentFilter: (departmentId: string | null) => void;
   setProjectFilter: (ids: string[]) => void;
@@ -94,6 +96,7 @@ export class HoIssueStore implements IHoIssueStore {
   fromDate: string = todayISO();
   toDate: string = todayISO();
   showArchived = true;
+  includeSubIssues = false;
   displayProperties: THoDisplayProperties = { ...HO_DEFAULT_DISPLAY_PROPERTIES };
 
   private _filterSeq = 0;
@@ -130,6 +133,7 @@ export class HoIssueStore implements IHoIssueStore {
       fromDate: observable,
       toDate: observable,
       showArchived: observable,
+      includeSubIssues: observable,
       displayProperties: observable,
       fetchIssues: action,
       fetchNextPage: action,
@@ -139,6 +143,7 @@ export class HoIssueStore implements IHoIssueStore {
       updateOrderBy: action,
       setDateRange: action,
       setShowArchived: action,
+      setIncludeSubIssues: action,
       updateDisplayProperties: action,
       setDepartmentFilter: action,
       setProjectFilter: action,
@@ -153,6 +158,7 @@ export class HoIssueStore implements IHoIssueStore {
       from_date: this.fromDate,
       to_date: this.toDate,
       include_archived: String(this.showArchived),
+      include_sub_issues: String(this.includeSubIssues),
     };
     if (this.selectedDepartmentId) params.workspace_id = this.selectedDepartmentId;
     if (this.selectedProjectIds.length > 0) params.project_id = this.selectedProjectIds.join(",");
@@ -314,6 +320,12 @@ export class HoIssueStore implements IHoIssueStore {
     this.currentPage = 1;
     void this._fetchFiltered();
     void this.fetchFilterOptions();
+  };
+
+  setIncludeSubIssues = (value: boolean): void => {
+    this.includeSubIssues = value;
+    this.currentPage = 1;
+    void this._fetchFiltered();
   };
 
   updateDisplayProperties = (props: Partial<THoDisplayProperties>): void => {

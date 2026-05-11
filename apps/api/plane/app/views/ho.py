@@ -261,6 +261,7 @@ class HoIssueListView(BaseAPIView):
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
         include_archived = request.query_params.get("include_archived", "true").lower() == "true"
+        include_sub_issues = request.query_params.get("include_sub_issues", "false").lower() == "true"
 
         scope_q = _get_user_scope_q(request.user, workspace_ids)
         base_filters = {
@@ -270,6 +271,9 @@ class HoIssueListView(BaseAPIView):
         if not include_archived:
             base_filters["archived_at__isnull"] = True
             base_filters["project__archived_at__isnull"] = True
+        # Default: show only level-1 (parent-less) work items. Toggle includes sub-items.
+        if not include_sub_issues:
+            base_filters["parent__isnull"] = True
         qs = (
             Issue.objects.filter(
                 scope_q,

@@ -3548,6 +3548,7 @@ export default {
     from: "From",
     to: "To",
     show_archived: "Show archived",
+    show_sub_work_items: "Show Sub-work items",
     no_work_items: "No work items found.",
     no_matching_rows: "No matching rows.",
     no_data: "No data found.",

@@ -3495,6 +3495,7 @@ export default {
     from: "시작", // TODO: native review
     to: "종료", // TODO: native review
     show_archived: "보관된 항목 표시", // TODO: native review
+    show_sub_work_items: "하위 작업 표시", // TODO: native review
     no_work_items: "작업 항목을 찾을 수 없습니다.", // TODO: native review
     no_matching_rows: "일치하는 행이 없습니다.", // TODO: native review
     no_data: "데이터가 없습니다.", // TODO: native review

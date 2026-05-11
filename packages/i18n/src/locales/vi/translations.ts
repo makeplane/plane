@@ -3545,6 +3545,7 @@ export default {
     from: "Từ", // TODO: native review
     to: "Đến", // TODO: native review
     show_archived: "Hiện mục đã lưu trữ", // TODO: native review
+    show_sub_work_items: "Hiện công việc con", // TODO: native review
     no_work_items: "Không tìm thấy công việc nào.", // TODO: native review
     no_matching_rows: "Không có hàng nào khớp.", // TODO: native review
     no_data: "Không có dữ liệu.", // TODO: native review
