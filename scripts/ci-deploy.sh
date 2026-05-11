@@ -23,7 +23,7 @@ set -euo pipefail
 
 SHB_VERSION="${SHB_VERSION:?SHB_VERSION env var is required}"
 # Override via env var for non-standard setups (e.g. VPS test: PLANE_DIR=/home/user/plane-app)
-PLANE_DIR="${PLANE_DIR:-/root/Documents/plane-offline-pack/plane-app}"
+PLANE_DIR="${PLANE_DIR:-/opt/shb-deploy/plane-app}"
 IMAGES_DIR="/tmp/plane-deploy"
 ENV_FILE="${PLANE_DIR}/plane.env"
 BASE_COMPOSE="${PLANE_DIR}/docker-compose.yaml"

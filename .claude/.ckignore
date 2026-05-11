@@ -29,3 +29,4 @@ coverage
 !.venv
 !build
 !vendor
+!.git
