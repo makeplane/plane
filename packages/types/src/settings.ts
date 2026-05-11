@@ -41,7 +41,8 @@ export type TProjectSettingsTabs =
   | "worklogs"
   | "features_time_tracking"
   | "workflows"
-  | "bank_wide";
+  | "bank_wide"
+  | "field-permissions";
 export type TProjectSettingsItem = {
   key: TProjectSettingsTabs;
   i18n_label: string;
