@@ -108,3 +108,5 @@ from .workflow import (
 from .task_category import MainTaskCategory, SubTaskCategory, DepartmentTaskCategory
 from .job_position import JobPosition, JobGrade
 from .business_calendar import WorkSchedule, Holiday, DayOverride
+
+from .project_field_permission import ProjectFieldPermission
