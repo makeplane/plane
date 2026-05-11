@@ -11,48 +11,43 @@ export const HoWorkspaceSelect = observer(function HoWorkspaceSelect() {
   const { t } = useTranslation();
   const store = useHoIssues();
 
-  // Prepend sentinel "All departments" option so user can deselect
-  const options = [
-    {
-      value: "",
-      query: t("ho.all_departments"),
-      content: (
-        <div className="flex items-center gap-2 max-w-[250px]">
-          <Building2 className="h-4 w-4 flex-shrink-0 text-custom-text-300" />
-          <span className="truncate text-custom-text-300">{t("ho.all_departments")}</span>
-        </div>
-      ),
-    },
-    ...store.departmentOptions.map((dept) => ({
-      value: dept.id,
-      query: dept.name,
-      content: (
-        <div className="flex items-center gap-2 max-w-[250px]">
-          <Building2 className="h-4 w-4 flex-shrink-0" />
-          <span className="truncate">{dept.name}</span>
-        </div>
-      ),
-    })),
-  ];
+  const options = store.departmentOptions.map((dept) => ({
+    value: dept.id,
+    query: dept.name,
+    content: (
+      <div className="flex items-center gap-2 max-w-[250px]">
+        <Building2 className="h-4 w-4 flex-shrink-0" />
+        <span className="truncate">{dept.name}</span>
+      </div>
+    ),
+  }));
 
-  const selectedName = store.selectedDepartmentId
-    ? store.departmentOptions.find((d) => d.id === store.selectedDepartmentId)?.name
-    : null;
+  const selected = store.selectedDepartmentIds;
+  const label =
+    selected.length === 0
+      ? t("ho.all_departments")
+      : selected.length > 2
+        ? `${selected.length} ${t("ho.departments_selected") ?? "departments"}`
+        : store.departmentOptions
+            .filter((d) => selected.includes(d.id))
+            .map((d) => d.name)
+            .join(", ");
 
   return (
     <CustomSearchSelect
-      value={store.selectedDepartmentId ?? ""}
-      onChange={(val: string) => store.setDepartmentFilter(val || null)}
+      value={selected}
+      onChange={(val: string[]) => store.setDepartmentFilter(val)}
       options={options}
       className="border-none p-0"
       customButton={
         <div className={cn(getButtonStyling("secondary", "lg"), "gap-2")}>
           <Building2 className="h-4 w-4" />
-          {selectedName ?? t("ho.all_departments")}
+          <span className="max-w-[220px] truncate">{label}</span>
           <ChevronDownIcon className="h-3 w-3" aria-hidden="true" />
         </div>
       }
       customButtonClassName="border-none p-0 bg-transparent hover:bg-transparent w-auto h-auto"
+      multiple
     />
   );
 });

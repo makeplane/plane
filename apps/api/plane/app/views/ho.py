@@ -194,6 +194,8 @@ _ALLOWED_ORDER_BY = {
     "-priority",
     "state__name",
     "-state__name",
+    "state__group",
+    "-state__group",
     "start_date",
     "-start_date",
     "target_date",
@@ -225,12 +227,14 @@ class HoIssueListView(BaseAPIView):
         if not workspace_ids:
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Optional workspace filter — narrow to a single workspace by ID
+        # Optional workspace filter — narrow to one or more workspaces by ID (comma-separated)
         workspace_id = request.query_params.get("workspace_id")
         if workspace_id:
-            if workspace_id not in [str(wid) for wid in workspace_ids]:
+            allowed = {str(wid) for wid in workspace_ids}
+            requested = [wid.strip() for wid in workspace_id.split(",") if wid.strip()]
+            if not requested or any(wid not in allowed for wid in requested):
                 return Response({"detail": "Workspace not found or inaccessible."}, status=status.HTTP_404_NOT_FOUND)
-            workspace_ids = [workspace_id]
+            workspace_ids = requested
 
         # Optional project filter — validate UUIDs and enforce workspace boundary
         project_ids_param = request.query_params.get("project_id")
@@ -328,7 +332,7 @@ class HoIssueListView(BaseAPIView):
 
         state = request.query_params.get("state")
         if state:
-            qs = qs.filter(state__name__in=state.split(","))
+            qs = qs.filter(state__group__in=state.split(","))
 
         assignees = request.query_params.get("assignees")
         if assignees:
@@ -467,55 +471,65 @@ class HoFilterOptionsView(BaseAPIView):
     """GET /api/ho/filter-options/ - return unique values for filters."""
 
     def get(self, request):
-        workspace_ids = get_accessible_workspace_ids(request.user)
-        if not workspace_ids:
+        accessible_workspace_ids = get_accessible_workspace_ids(request.user)
+        if not accessible_workspace_ids:
             return Response({}, status=status.HTTP_200_OK)
 
-        # Optional workspace/project filters to narrow down options
+        # Optional workspace/project filters to narrow down options (comma-separated)
         workspace_id = request.query_params.get("workspace_id")
-        if workspace_id and workspace_id in [str(wid) for wid in workspace_ids]:
-            workspace_ids = [workspace_id]
+        narrowed_workspace_ids = accessible_workspace_ids
+        if workspace_id:
+            allowed = {str(wid) for wid in accessible_workspace_ids}
+            requested = [wid.strip() for wid in workspace_id.split(",") if wid.strip() in allowed]
+            if requested:
+                narrowed_workspace_ids = requested
 
         project_ids_param = request.query_params.get("project_id")
         project_ids = []
         if project_ids_param:
             raw_ids = [pid.strip() for pid in project_ids_param.split(",") if pid.strip()]
             project_ids = list(
-                Project.objects.filter(id__in=raw_ids, workspace_id__in=workspace_ids).values_list("id", flat=True)
+                Project.objects.filter(id__in=raw_ids, workspace_id__in=narrowed_workspace_ids).values_list(
+                    "id", flat=True
+                )
             )
 
         from_date = request.query_params.get("from_date")
         to_date = request.query_params.get("to_date")
         include_archived = request.query_params.get("include_archived", "true").lower() == "true"
 
-        filter_kwargs = {
-            "workspace_id__in": workspace_ids,
-            "is_draft": False,
-            "deleted_at__isnull": True,
-        }
-        if not include_archived:
-            filter_kwargs["archived_at__isnull"] = True
-            filter_kwargs["project__archived_at__isnull"] = True
-        base_qs = Issue.objects.filter(**filter_kwargs)
-        scope_q = _get_user_scope_q(request.user, workspace_ids)
-        base_qs = base_qs.filter(scope_q)
-        if project_ids:
-            base_qs = base_qs.filter(project_id__in=project_ids)
-        if from_date:
-            base_qs = base_qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
-        if to_date:
-            base_qs = base_qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
+        def _build_qs(ws_ids, apply_project_filter=True):
+            kw = {"workspace_id__in": ws_ids, "is_draft": False, "deleted_at__isnull": True}
+            if not include_archived:
+                kw["archived_at__isnull"] = True
+                kw["project__archived_at__isnull"] = True
+            qs = Issue.objects.filter(**kw).filter(_get_user_scope_q(request.user, ws_ids))
+            if apply_project_filter and project_ids:
+                qs = qs.filter(project_id__in=project_ids)
+            if from_date:
+                qs = qs.filter(Q(target_date__gte=from_date) | Q(target_date__isnull=True))
+            if to_date:
+                qs = qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
+            return qs
 
-        # Fix for duplicates: collect IDs first then extract distinct values
-        issue_ids = base_qs.values_list("id", flat=True).distinct()
+        # Main facets pool (workspace + project filters applied)
+        issue_ids = _build_qs(narrowed_workspace_ids).values_list("id", flat=True).distinct()
+        # Workspaces facet: ignore workspace_id filter so user can pick more
+        workspaces_issue_ids = (
+            _build_qs(accessible_workspace_ids, apply_project_filter=False).values_list("id", flat=True).distinct()
+        )
+        # Projects facet: respect workspace filter but ignore project_id filter
+        projects_issue_ids = (
+            _build_qs(narrowed_workspace_ids, apply_project_filter=False).values_list("id", flat=True).distinct()
+        )
 
         # Extract options
         states = (
             Issue.objects.filter(id__in=issue_ids)
             .exclude(state__isnull=True)
-            .values_list("state__name", flat=True)
+            .values_list("state__group", flat=True)
             .distinct()
-            .order_by("state__name")
+            .order_by("state__group")
         )
         raw_priorities = (
             Issue.objects.filter(id__in=issue_ids)
@@ -590,6 +604,30 @@ class HoFilterOptionsView(BaseAPIView):
             for lead in leads
         ]
 
+        # Workspaces (shown as "department" filter) — restrict to those holding visible issues
+        # NOTE: ignores workspace_id filter so the user can still pick additional workspaces
+        ws_ids_with_issues = (
+            Issue.objects.filter(id__in=workspaces_issue_ids)
+            .values_list("workspace_id", flat=True)
+            .distinct()
+        )
+        workspaces_list = [
+            {"id": str(w.id), "name": w.name}
+            for w in Workspace.objects.filter(id__in=ws_ids_with_issues).only("id", "name").order_by("name")
+        ]
+
+        # Projects — restrict to those holding visible issues
+        # NOTE: ignores project_id filter so the user can still pick additional projects
+        proj_ids_with_issues = (
+            Issue.objects.filter(id__in=projects_issue_ids)
+            .values_list("project_id", flat=True)
+            .distinct()
+        )
+        projects_list = [
+            {"id": str(p.id), "name": p.name}
+            for p in Project.objects.filter(id__in=proj_ids_with_issues).only("id", "name").order_by("name")
+        ]
+
         return Response({
             "states": sorted(list(set(states))),
             "main_task_categories": sorted(list(set(main_cats))),
@@ -598,6 +636,8 @@ class HoFilterOptionsView(BaseAPIView):
             "modules": sorted(list(set(modules))),
             "assignees": assignees_list,
             "leads": leads_list,
+            "workspaces": workspaces_list,
+            "projects": projects_list,
             "priorities": priorities,
             "progress": ["off_track", "due_today", "at_risk", "on_track"],
         }, status=status.HTTP_200_OK)

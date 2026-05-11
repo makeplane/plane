@@ -32,13 +32,30 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
   const SortIcon =
     store.orderBy === asc ? ArrowUpNarrowWide : store.orderBy === desc ? ArrowDownWideNarrow : ChevronsUpDown;
 
-  const activeFilters = (filterKey ? (store.filters as Record<string, unknown>)[filterKey] : []) as string[] | null;
+  // department + project filters bind to top-level state (mirrored with top-bar selectors)
+  const isTopLevelKey = filterKey === "department" || filterKey === "project";
+  const readTopLevel = (): string[] =>
+    filterKey === "department" ? store.selectedDepartmentIds : filterKey === "project" ? store.selectedProjectIds : [];
+  const writeTopLevel = (next: string[]) => {
+    if (filterKey === "department") store.setDepartmentFilter(next);
+    else if (filterKey === "project") store.setProjectFilter(next);
+  };
+
+  const activeFilters = (
+    isTopLevelKey ? readTopLevel() : filterKey ? (store.filters as Record<string, unknown>)[filterKey] : []
+  ) as string[] | null;
   const isFiltered = Array.isArray(activeFilters)
     ? activeFilters.length > 0
     : activeFilters !== null && activeFilters !== undefined;
 
   const handleToggleFilter = (value: string) => {
     if (!filterKey) return;
+    if (isTopLevelKey) {
+      const current = readTopLevel();
+      const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+      writeTopLevel(next);
+      return;
+    }
     const current = (store.filters as Record<string, unknown>)[filterKey];
     if (multiple) {
       const next = Array.isArray(current)
@@ -150,7 +167,10 @@ export const HoHeaderFilter = observer(function HoHeaderFilter({
 
         <CustomMenu.MenuItem
           onClick={() => {
-            if (filterKey) store.updateFilters({ [filterKey]: multiple ? [] : null });
+            if (filterKey) {
+              if (isTopLevelKey) writeTopLevel([]);
+              else store.updateFilters({ [filterKey]: multiple ? [] : null });
+            }
             store.updateOrderBy("-created_at");
           }}
         >

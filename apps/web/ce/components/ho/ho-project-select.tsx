@@ -10,11 +10,17 @@ export const HoProjectSelect = observer(function HoProjectSelect() {
   const { t } = useTranslation();
   const store = useHoIssues();
 
-  const workspace = store.accessibleWorkspaces.find((w) => w.id === store.selectedDepartmentId);
+  const selectedDeptIds = store.selectedDepartmentIds;
+  if (selectedDeptIds.length === 0) return null; // hidden when no workspace selected ("All Workspaces")
 
-  if (!workspace) return null; // hidden when no workspace selected ("All Workspaces")
+  // Union of projects across all selected workspaces, deduped
+  const projectMap = new Map<string, { id: string; name: string; identifier: string }>();
+  store.accessibleWorkspaces
+    .filter((w) => selectedDeptIds.includes(w.id))
+    .forEach((w) => w.projects.forEach((p) => projectMap.set(p.id, p)));
+  const projects = Array.from(projectMap.values());
 
-  const options = workspace.projects.map((p) => ({
+  const options = projects.map((p) => ({
     value: p.id,
     query: `${p.name} ${p.identifier}`,
     content: (
@@ -29,7 +35,7 @@ export const HoProjectSelect = observer(function HoProjectSelect() {
     store.selectedProjectIds.length > 3
       ? `3+ ${t("common.projects").toLowerCase()}`
       : store.selectedProjectIds.length > 0
-        ? workspace.projects
+        ? projects
             .filter((p) => store.selectedProjectIds.includes(p.id))
             .map((p) => p.name)
             .join(", ")
