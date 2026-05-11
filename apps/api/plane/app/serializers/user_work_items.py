@@ -34,6 +34,7 @@ class UserCrossWorkspaceWorkItemSerializer(BaseSerializer):
             "sequence_id",
             "project_id",
             "state_id",
+            "parent_id",
             "start_date",
             "target_date",
             "main_task_category_id",

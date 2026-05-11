@@ -34,7 +34,9 @@ class _BaseUserWorkItemsEndpoint(BaseAPIView):
         - project member active (excludes inaccessible projects)
         - project not archived
         - state group in {backlog, unstarted, started} (open tasks only)
-        - parent is null (exclude sub-tasks)
+
+        Sub-tasks assigned to the user are included so the frontend can render
+        them indented under their parent (only when the parent is also returned).
         """
         workspace_slug = request.query_params.get("workspace", None)
 
@@ -47,7 +49,6 @@ class _BaseUserWorkItemsEndpoint(BaseAPIView):
                 project__project_projectmember__is_active=True,
                 project__archived_at__isnull=True,
                 state__group__in=["backlog", "unstarted", "started"],
-                parent__isnull=True,
             )
             .select_related("workspace", "project", "state")
             .prefetch_related("assignees", "labels")
