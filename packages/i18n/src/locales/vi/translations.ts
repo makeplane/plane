@@ -2226,6 +2226,38 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "Quyền chỉnh sửa trường",
+      description: "Kiểm soát các trường mà thành viên dự án được phép chỉnh sửa hoặc xóa.",
+      locked_tooltip: "Locked by project admin",
+      rows: {
+        completed_date: {
+          title: "Ngày hoàn thành",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày hoàn thành của công việc.",
+        },
+        target_date: {
+          title: "Ngày đến hạn",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày đến hạn của công việc.",
+        },
+        start_date: {
+          title: "Ngày bắt đầu",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày bắt đầu của công việc.",
+        },
+        delete_work_item: {
+          title: "Xóa công việc",
+          description: "Cho phép thành viên xóa vĩnh viễn các công việc trong dự án này.",
+        },
+      },
+      toast: {
+        update_success: "Quyền chỉnh sửa trường đã được cập nhật thành công.",
+        update_error: "Không thể cập nhật quyền chỉnh sửa trường. Vui lòng thử lại.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "Quyền chỉnh sửa trường",
+      },
+    },
     worklogs: {
       label: "Nhật ký công việc",
       heading: "Nhật ký công việc",

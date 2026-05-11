@@ -2216,6 +2216,38 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "Field Permissions",
+      description: "Control which fields project members are allowed to modify or delete.",
+      locked_tooltip: "Locked by project admin",
+      rows: {
+        completed_date: {
+          title: "Completed date",
+          description: "Allow members to set or change the completed date on work items.",
+        },
+        target_date: {
+          title: "Due date",
+          description: "Allow members to set or change the due date on work items.",
+        },
+        start_date: {
+          title: "Start date",
+          description: "Allow members to set or change the start date on work items.",
+        },
+        delete_work_item: {
+          title: "Delete work items",
+          description: "Allow members to permanently delete work items in this project.",
+        },
+      },
+      toast: {
+        update_success: "Field permissions updated successfully.",
+        update_error: "Failed to update field permissions. Please try again.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "Field Permissions",
+      },
+    },
     worklogs: {
       label: "Worklogs",
       heading: "Worklogs",

@@ -2206,6 +2206,38 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "필드 권한",
+      description: "프로젝트 멤버가 수정하거나 삭제할 수 있는 필드를 제어합니다.",
+      locked_tooltip: "Locked by project admin",
+      rows: {
+        completed_date: {
+          title: "완료 날짜",
+          description: "멤버가 작업 항목의 완료 날짜를 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        target_date: {
+          title: "마감일",
+          description: "멤버가 작업 항목의 마감일을 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        start_date: {
+          title: "시작 날짜",
+          description: "멤버가 작업 항목의 시작 날짜를 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        delete_work_item: {
+          title: "작업 항목 삭제",
+          description: "멤버가 이 프로젝트의 작업 항목을 영구적으로 삭제할 수 있도록 허용합니다.",
+        },
+      },
+      toast: {
+        update_success: "필드 권한이 성공적으로 업데이트되었습니다.",
+        update_error: "필드 권한 업데이트에 실패했습니다. 다시 시도해 주세요.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "필드 권한",
+      },
+    },
     worklogs: {
       label: "작업 일지",
       heading: "작업 일지",
