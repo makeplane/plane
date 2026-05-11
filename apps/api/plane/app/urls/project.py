@@ -21,6 +21,7 @@ from plane.app.views import (
     ProjectWorkLogViewSet,
     ProjectWorklogExportView,
     WorkspaceBankWideProjectsEndpoint,
+    ProjectFieldPermissionViewSet,
 )
 
 
@@ -146,5 +147,10 @@ urlpatterns = [
         "workspaces/<str:slug>/bank-wide-projects/",
         WorkspaceBankWideProjectsEndpoint.as_view(),
         name="workspace-bank-wide-projects",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/field-permissions/",
+        ProjectFieldPermissionViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
+        name="project-field-permissions",
     ),
 ]
