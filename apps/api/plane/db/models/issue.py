@@ -244,7 +244,7 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
         if not self._state.adding and not self.has_changed("state_id"):
             return kwargs
 
-        if self.state.group == "completed":
+        if self.state.group == StateGroup.COMPLETED.value:
             self.completed_at = timezone.now()
         else:
             self.completed_at = None
