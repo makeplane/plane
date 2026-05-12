@@ -17,12 +17,14 @@ import githubLightModeImage from "@/app/assets/logos/github-black.png?url";
 import githubDarkModeImage from "@/app/assets/logos/github-white.png?url";
 import gitlabLogo from "@/app/assets/logos/gitlab-logo.svg?url";
 import googleLogo from "@/app/assets/logos/google-logo.svg?url";
+import larkLogo from "@/app/assets/logos/lark-logo.svg?url";
 // components
 import { EmailCodesConfiguration } from "@/components/authentication/email-config-switch";
 import { GiteaConfiguration } from "@/components/authentication/gitea-config";
 import { GithubConfiguration } from "@/components/authentication/github-config";
 import { GitlabConfiguration } from "@/components/authentication/gitlab-config";
 import { GoogleConfiguration } from "@/components/authentication/google-config";
+import { LarkConfiguration } from "@/components/authentication/lark-config";
 import { PasswordLoginConfiguration } from "@/components/authentication/password-config-switch";
 
 // Authentication methods
@@ -88,5 +90,13 @@ export const getCoreAuthenticationModesMap: (
     icon: <img src={giteaLogo} height={20} width={20} alt="Gitea Logo" />,
     config: <GiteaConfiguration disabled={disabled} updateConfig={updateConfig} />,
     enabledConfigKey: "IS_GITEA_ENABLED",
+  },
+  lark: {
+    key: "lark",
+    name: "Lark / Feishu",
+    description: "Allow members to log in or sign up for Plane with their Lark or Feishu accounts.",
+    icon: <img src={larkLogo} height={20} width={20} alt="Lark Logo" />,
+    config: <LarkConfiguration disabled={disabled} updateConfig={updateConfig} />,
+    enabledConfigKey: "IS_LARK_ENABLED",
   },
 });
