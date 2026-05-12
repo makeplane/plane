@@ -3335,7 +3335,7 @@ export default {
     activity_reason: "Lý do",
     reminder_title: "Nhắc nhở ghi nhận giờ làm việc",
     reminder_message:
-      "Hey bạn ơi! 👋 Một ngày làm việc sắp kết thúc rồi — đừng quên ghi nhận giờ làm việc cho hôm nay nhé. Việc cập nhật timesheet đều đặn giúp cả team nắm bắt tiến độ tốt hơn đấy. Chỉ mất một phút thôi, bạn tương lai sẽ cảm ơn bạn hiện tại! Ghé vào project và log time trước khi hết ngày nha.",
+      "Chào bạn! Một lời nhắc nhẹ nhàng 😊\nĐừng quên ghi nhận giờ làm việc cho hôm nay nhé.\nViệc cập nhật timesheet đều đặn giúp cả team theo sát tiến độ tốt hơn.\nChỉ mất một phút thôi! Ghé vào project và log giờ làm trước khi kết thúc ngày nha.",
     reminder_toggle: "Nhắc nhở ghi nhận giờ",
     reminder_toggle_description: "Nhắc nhở hàng ngày lúc 5 giờ chiều để ghi nhận giờ làm việc",
   },

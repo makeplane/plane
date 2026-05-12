@@ -3321,7 +3321,7 @@ export default {
     activity_reason: "Reason",
     reminder_title: "Time tracking reminder",
     reminder_message:
-      "Hey there! 👋 Just a friendly nudge — don't forget to log your working hours for today. Keeping your timesheet up to date helps the whole team stay on track. It only takes a minute, and your future self will thank you! Head over to your team/project and log your time before the day wraps up.",
+      "Hey there! Just a friendly reminder 😊\nDon't forget to log your working hours for today.\nKeeping your timesheet up to date helps the whole team stay on track.\nIt only takes a minute! Head over to your project and log your time before the day wraps up.",
     reminder_toggle: "Worklog reminder",
     reminder_toggle_description: "Daily reminder at 5PM to log your time",
   },
