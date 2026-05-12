@@ -2220,6 +2220,16 @@ export default {
       title: "Field Permissions",
       description: "Control which fields project members are allowed to modify or delete.",
       locked_tooltip: "Locked by project admin",
+      sections: {
+        dates: "Date fields",
+        dates_description: "Control who can edit date fields on existing work items.",
+        destructive: "Destructive actions",
+        destructive_description: "High-impact actions that cannot be undone.",
+      },
+      status: {
+        enabled: "Members allowed",
+        disabled: "Admin only",
+      },
       rows: {
         completed_date: {
           title: "Completed date",

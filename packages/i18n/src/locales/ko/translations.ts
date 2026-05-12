@@ -2209,7 +2209,17 @@ export default {
     field_permissions: {
       title: "필드 권한",
       description: "프로젝트 멤버가 수정하거나 삭제할 수 있는 필드를 제어합니다.",
-      locked_tooltip: "Locked by project admin",
+      locked_tooltip: "프로젝트 관리자에 의해 잠김",
+      sections: {
+        dates: "날짜 필드",
+        dates_description: "기존 작업 항목의 날짜 필드를 편집할 수 있는 사용자를 제어합니다.",
+        destructive: "파괴적인 작업",
+        destructive_description: "되돌릴 수 없는 영향력 있는 작업입니다.",
+      },
+      status: {
+        enabled: "멤버 허용",
+        disabled: "관리자 전용",
+      },
       rows: {
         completed_date: {
           title: "완료 날짜",

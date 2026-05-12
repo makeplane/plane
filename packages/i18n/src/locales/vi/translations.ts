@@ -2229,7 +2229,17 @@ export default {
     field_permissions: {
       title: "Quyền chỉnh sửa trường",
       description: "Kiểm soát các trường mà thành viên dự án được phép chỉnh sửa hoặc xóa.",
-      locked_tooltip: "Locked by project admin",
+      locked_tooltip: "Bị khóa bởi quản trị viên dự án",
+      sections: {
+        dates: "Trường ngày",
+        dates_description: "Kiểm soát ai có thể chỉnh sửa trường ngày trên công việc hiện có.",
+        destructive: "Hành động phá hủy",
+        destructive_description: "Hành động có tác động lớn và không thể hoàn tác.",
+      },
+      status: {
+        enabled: "Cho phép thành viên",
+        disabled: "Chỉ quản trị viên",
+      },
       rows: {
         completed_date: {
           title: "Ngày hoàn thành",
