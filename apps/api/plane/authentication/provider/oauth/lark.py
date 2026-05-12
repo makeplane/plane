@@ -117,10 +117,17 @@ class LarkOAuthProvider(OauthAdapter):
                 error_message="LARK_OAUTH_PROVIDER_ERROR",
             )
 
-        if token_response.get("code", 0) != 0 or not token_response.get("access_token"):
+        # Lark v2 token endpoint returns RFC 6749-style success (flat, no `code` field) or
+        # error (`{error, error_description, code}`). Treat presence of `access_token`
+        # as the success signal and surface the `error` field on failure.
+        if not token_response.get("access_token"):
             self.logger.warning(
                 "Lark token endpoint returned an error",
-                extra={"response_code": token_response.get("code"), "msg": token_response.get("msg")},
+                extra={
+                    "lark_error": token_response.get("error"),
+                    "lark_error_description": token_response.get("error_description"),
+                    "lark_code": token_response.get("code"),
+                },
             )
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["LARK_OAUTH_PROVIDER_ERROR"],
@@ -148,13 +155,15 @@ class LarkOAuthProvider(OauthAdapter):
     def set_user_data(self):
         user_info_response = self.get_user_response()
         # Lark wraps the payload in {code, msg, data: {...}}.
-        payload = user_info_response.get("data") or {}
+        payload = user_info_response.get("data") or user_info_response or {}
         if user_info_response.get("code", 0) != 0 or not payload.get("email"):
             self.logger.warning(
                 "Lark user_info returned an unexpected payload",
                 extra={
-                    "response_code": user_info_response.get("code"),
-                    "msg": user_info_response.get("msg"),
+                    "lark_code": user_info_response.get("code"),
+                    "lark_msg": user_info_response.get("msg"),
+                    "lark_keys": list(user_info_response.keys()) if isinstance(user_info_response, dict) else None,
+                    "lark_payload_keys": list(payload.keys()) if isinstance(payload, dict) else None,
                     "has_email": bool(payload.get("email")),
                 },
             )
