@@ -5,23 +5,21 @@
  */
 
 // ui
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
-import { PanelRight } from "lucide-react";
+import { PanelRightClose, PanelRightOpen } from "lucide-react";
 import { PROFILE_VIEWER_TAB, PROFILE_ADMINS_TAB, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { YourWorkIcon, ChevronDownIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { IUserProfileProjectSegregation } from "@plane/types";
 import { Breadcrumbs, Header, CustomMenu } from "@plane/ui";
-import { cn } from "@plane/utils";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ProfileIssuesFilter } from "@/components/profile/profile-issues-filter";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
-import { Button } from "@plane/propel/button";
 
 type TUserProfileHeader = {
   userProjectsData: IUserProfileProjectSegregation | undefined;
@@ -72,6 +70,21 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
       </Header.LeftItem>
       <Header.RightItem>
         <div className="hidden md:flex md:items-center">{showProfileIssuesFilter && <ProfileIssuesFilter />}</div>
+        <Tooltip tooltipContent={profileSidebarCollapsed ? t("common.expand") : t("common.collapse")} position="bottom">
+          <button
+            type="button"
+            onClick={() => toggleProfileSidebar()}
+            aria-label={profileSidebarCollapsed ? t("common.expand") : t("common.collapse")}
+            aria-pressed={!profileSidebarCollapsed}
+            className="grid place-items-center rounded-md p-1.5 text-secondary outline-none transition-colors hover:bg-layer-1-hover hover:text-primary focus-visible:ring-2 focus-visible:ring-accent-strong"
+          >
+            {profileSidebarCollapsed ? (
+              <PanelRightOpen className="h-4 w-4" />
+            ) : (
+              <PanelRightClose className="h-4 w-4 text-accent-primary" />
+            )}
+          </button>
+        </Tooltip>
         <div className="flex gap-4 md:hidden">
           <CustomMenu
             maxHeight={"md"}
@@ -97,18 +110,6 @@ export const UserProfileHeader = observer(function UserProfileHeader(props: TUse
               </CustomMenu.MenuItem>
             ))}
           </CustomMenu>
-          <div className="shrink-0 md:hidden">
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={() => {
-                toggleProfileSidebar();
-              }}
-              appendIcon={
-                <PanelRight className={!profileSidebarCollapsed ? "text-accent-primary" : "text-secondary"} />
-              }
-            ></Button>
-          </div>
         </div>
       </Header.RightItem>
     </Header>
