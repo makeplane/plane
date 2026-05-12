@@ -24,9 +24,8 @@ import {
   ParentPropertyIcon,
 } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
+import { cn, getDate } from "@plane/utils";
 // components
-import { DateDropdown } from "@/components/dropdowns/date";
 import { EstimateDropdown } from "@/components/dropdowns/estimate";
 import { ButtonAvatars } from "@/components/dropdowns/member/avatar";
 import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
@@ -45,6 +44,7 @@ import { useTaskCategory } from "@/hooks/store/use-task-category";
 import { IssueParentSelectRoot } from "@/plane-web/components/issues/issue-details/parent-select-root";
 import { TaskCategoryProperty } from "@/plane-web/components/issues/issue-details/sidebar/task-category-property";
 import { DueDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/due-date-property";
+import { StartDateProperty } from "@/plane-web/components/issues/issue-details/sidebar/start-date-property";
 import { TransferHopInfo } from "@/plane-web/components/issues/issue-details/sidebar/transfer-hop-info";
 import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 import { CompletedAtProperty } from "@/plane-web/components/issues/issue-details/sidebar/completed-at-property";
@@ -201,25 +201,16 @@ export const PeekOverviewProperties = observer(function PeekOverviewProperties(p
         )}
 
         <SidebarPropertyListItem icon={StartDatePropertyIcon} label={t("common.order_by.start_date")}>
-          <div className={cn("w-full", fieldErrors.includes("start_date") && "rounded border border-red-500")}>
-            <DateDropdown
-              value={issue.start_date}
-              onChange={(val) =>
-                void issueOperations.update(workspaceSlug, projectId, issueId, {
-                  start_date: val ? renderFormattedPayloadDate(val) : null,
-                })
-              }
-              placeholder={t("issue.add.start_date")}
-              buttonVariant="transparent-with-text"
-              maxDate={maxDate ?? undefined}
-              disabled={disabled}
-              className="w-full grow group"
-              buttonContainerClassName="w-full text-left h-7.5"
-              buttonClassName={`text-body-xs-medium ${issue?.start_date ? "" : "text-placeholder"}`}
-              hideIcon
-              clearIconClassName="h-3 w-3 hidden group-hover:inline"
-            />
-          </div>
+          <StartDateProperty
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            issueId={issueId}
+            issueOperations={issueOperations}
+            isEditable={!disabled}
+            maxDate={maxDate ?? undefined}
+            hasFieldError={fieldErrors.includes("start_date")}
+            issue={issue}
+          />
         </SidebarPropertyListItem>
 
         <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.order_by.due_date")}>
