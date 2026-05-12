@@ -49,7 +49,7 @@ export class TranslationStore {
     this.loadTranslations();
   }
 
-  /** Initializes the language based on the local storage or browser language */
+  /** Initializes the language based on local storage, browser preferences, or the fallback. */
   private initializeLanguage() {
     if (typeof window === "undefined") return;
 
@@ -59,8 +59,42 @@ export class TranslationStore {
       return;
     }
 
+    // Try to detect the user's preferred language from the browser
+    // before falling back to the default.
+    const detected = this.detectBrowserLanguage();
+    if (detected) {
+      this.setLanguage(detected);
+      return;
+    }
+
     // Fallback to default language
     this.setLanguage(FALLBACK_LANGUAGE);
+  }
+
+  /**
+   * Detects the user's preferred language from navigator.languages /
+   * navigator.language. Returns the first supported language code found.
+   * Tries an exact match first (e.g. "pt-BR"), then strips the region
+   * subtag and retries the base language (e.g. "es-AR" -> "es").
+   * Returns null when no candidate matches a supported language.
+   */
+  private detectBrowserLanguage(): TLanguage | null {
+    if (typeof navigator === "undefined") return null;
+
+    const candidates: string[] =
+      navigator.languages && navigator.languages.length > 0
+        ? Array.from(navigator.languages)
+        : navigator.language
+          ? [navigator.language]
+          : [];
+
+    for (const cand of candidates) {
+      if (this.isValidLanguage(cand)) return cand;
+      const base = cand.split("-")[0];
+      if (base !== cand && this.isValidLanguage(base)) return base;
+    }
+
+    return null;
   }
 
   /** Loads the translations for the current language */
