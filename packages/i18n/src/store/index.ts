@@ -59,16 +59,16 @@ export class TranslationStore {
       return;
     }
 
-    // Try to detect the user's preferred language from the browser
-    // before falling back to the default.
+    // Try the browser's preferred language. persist=false so future
+    // visits keep re-evaluating navigator.languages.
     const detected = this.detectBrowserLanguage();
     if (detected) {
-      this.setLanguage(detected);
+      this.setLanguage(detected, false);
       return;
     }
 
     // Fallback to default language
-    this.setLanguage(FALLBACK_LANGUAGE);
+    this.setLanguage(FALLBACK_LANGUAGE, false);
   }
 
   /**
@@ -283,10 +283,11 @@ export class TranslationStore {
   }
 
   /**
-   * Sets the current language and updates the translations
+   * Sets the current language and updates the translations.
    * @param lng - The new language
+   * @param persistPreference - If true (default), writes to localStorage. Pass false for session-only application.
    */
-  async setLanguage(lng: TLanguage): Promise<void> {
+  async setLanguage(lng: TLanguage, persistPreference: boolean = true): Promise<void> {
     try {
       if (!this.isValidLanguage(lng)) {
         throw new Error(`Invalid language: ${lng}`);
@@ -298,7 +299,9 @@ export class TranslationStore {
       }
 
       if (typeof window !== "undefined") {
-        localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+        if (persistPreference) {
+          localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+        }
         document.documentElement.lang = lng;
       }
 
