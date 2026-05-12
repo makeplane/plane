@@ -728,6 +728,8 @@ export default {
   },
   common: {
     all: "All",
+    expand: "Expand",
+    collapse: "Collapse",
     no_items_in_this_group: "No items in this group",
     drop_here_to_move: "Drop here to move",
     states: "States",
@@ -2214,6 +2216,48 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "Field Permissions",
+      description: "Control which fields project members are allowed to modify or delete.",
+      locked_tooltip: "Locked by project admin",
+      sections: {
+        dates: "Date fields",
+        dates_description: "Control who can edit date fields on existing work items.",
+        destructive: "Destructive actions",
+        destructive_description: "High-impact actions that cannot be undone.",
+      },
+      status: {
+        enabled: "Members allowed",
+        disabled: "Admin only",
+      },
+      rows: {
+        completed_date: {
+          title: "Completed date",
+          description: "Allow members to set or change the completed date on work items.",
+        },
+        target_date: {
+          title: "Due date",
+          description: "Allow members to set or change the due date on work items.",
+        },
+        start_date: {
+          title: "Start date",
+          description: "Allow members to set or change the start date on work items.",
+        },
+        delete_work_item: {
+          title: "Delete work items",
+          description: "Allow members to permanently delete work items in this project.",
+        },
+      },
+      toast: {
+        update_success: "Field permissions updated successfully.",
+        update_error: "Failed to update field permissions. Please try again.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "Field Permissions",
+      },
+    },
     worklogs: {
       label: "Worklogs",
       heading: "Worklogs",
@@ -3277,7 +3321,7 @@ export default {
     activity_reason: "Reason",
     reminder_title: "Time tracking reminder",
     reminder_message:
-      "Hey there! 👋 Just a friendly nudge — don't forget to log your working hours for today. Keeping your timesheet up to date helps the whole team stay on track. It only takes a minute, and your future self will thank you! Head over to your team/project and log your time before the day wraps up.",
+      "Hey there! Just a friendly reminder 😊\nDon't forget to log your working hours for today.\nKeeping your timesheet up to date helps the whole team stay on track.\nIt only takes a minute! Head over to your project and log your time before the day wraps up.",
     reminder_toggle: "Worklog reminder",
     reminder_toggle_description: "Daily reminder at 5PM to log your time",
   },
@@ -3548,6 +3592,7 @@ export default {
     from: "From",
     to: "To",
     show_archived: "Show archived",
+    show_sub_work_items: "Show Sub-work items",
     no_work_items: "No work items found.",
     no_matching_rows: "No matching rows.",
     no_data: "No data found.",
@@ -3555,6 +3600,10 @@ export default {
     loading: "Loading...",
     category: "Category",
     search: "Search...",
+    sort: "Sort",
+    filter: "Filter",
+    selected_count: "{count} selected",
+    clear_filter: "Clear filter",
     clear_sort: "Clear sort",
     clear_filters_sort: "Clear filters & sort",
     ascending: "Ascending",

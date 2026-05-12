@@ -16,7 +16,7 @@ export interface IHoIssueStore {
   filterOptions: THoFilterOptions | null;
   // Computed: workspaces the user can access (shown as department selector options)
   departmentOptions: { id: string; name: string }[];
-  selectedDepartmentId: string | null;
+  selectedDepartmentIds: string[];
   selectedProjectIds: string[];
   filters: {
     priority: string[];
@@ -44,6 +44,7 @@ export interface IHoIssueStore {
   fromDate: string;
   toDate: string;
   showArchived: boolean;
+  includeSubIssues: boolean;
   displayProperties: THoDisplayProperties;
   // Actions
   fetchIssues: (page?: number) => Promise<void>;
@@ -54,8 +55,9 @@ export interface IHoIssueStore {
   updateOrderBy: (key: string) => void;
   setDateRange: (from: string, to: string) => void;
   setShowArchived: (value: boolean) => void;
+  setIncludeSubIssues: (value: boolean) => void;
   updateDisplayProperties: (props: Partial<THoDisplayProperties>) => void;
-  setDepartmentFilter: (departmentId: string | null) => void;
+  setDepartmentFilter: (departmentIds: string[]) => void;
   setProjectFilter: (ids: string[]) => void;
   updateFilters: (filters: Partial<IHoIssueStore["filters"]>) => void;
   clearFilters: () => void;
@@ -66,7 +68,7 @@ export class HoIssueStore implements IHoIssueStore {
   categorySummary: THoCategorySummary[] = [];
   accessibleWorkspaces: THoAccessibleWorkspace[] = [];
   filterOptions: THoFilterOptions | null = null;
-  selectedDepartmentId: string | null = null;
+  selectedDepartmentIds: string[] = [];
   selectedProjectIds: string[] = [];
   filters: IHoIssueStore["filters"] = {
     priority: [],
@@ -94,6 +96,7 @@ export class HoIssueStore implements IHoIssueStore {
   fromDate: string = todayISO();
   toDate: string = todayISO();
   showArchived = true;
+  includeSubIssues = false;
   displayProperties: THoDisplayProperties = { ...HO_DEFAULT_DISPLAY_PROPERTIES };
 
   private _filterSeq = 0;
@@ -114,7 +117,7 @@ export class HoIssueStore implements IHoIssueStore {
       accessibleWorkspaces: observable,
       filterOptions: observable,
       departmentOptions: computed,
-      selectedDepartmentId: observable,
+      selectedDepartmentIds: observable,
       selectedProjectIds: observable,
       filters: observable,
       isLoading: observable,
@@ -130,6 +133,7 @@ export class HoIssueStore implements IHoIssueStore {
       fromDate: observable,
       toDate: observable,
       showArchived: observable,
+      includeSubIssues: observable,
       displayProperties: observable,
       fetchIssues: action,
       fetchNextPage: action,
@@ -139,6 +143,7 @@ export class HoIssueStore implements IHoIssueStore {
       updateOrderBy: action,
       setDateRange: action,
       setShowArchived: action,
+      setIncludeSubIssues: action,
       updateDisplayProperties: action,
       setDepartmentFilter: action,
       setProjectFilter: action,
@@ -153,8 +158,9 @@ export class HoIssueStore implements IHoIssueStore {
       from_date: this.fromDate,
       to_date: this.toDate,
       include_archived: String(this.showArchived),
+      include_sub_issues: String(this.includeSubIssues),
     };
-    if (this.selectedDepartmentId) params.workspace_id = this.selectedDepartmentId;
+    if (this.selectedDepartmentIds.length > 0) params.workspace_id = this.selectedDepartmentIds.join(",");
     if (this.selectedProjectIds.length > 0) params.project_id = this.selectedProjectIds.join(",");
 
     // Additional filters
@@ -278,7 +284,7 @@ export class HoIssueStore implements IHoIssueStore {
     });
     try {
       const params = {
-        workspace_id: this.selectedDepartmentId || "",
+        workspace_id: this.selectedDepartmentIds.join(","),
         project_id: this.selectedProjectIds.join(","),
         from_date: this.fromDate,
         to_date: this.toDate,
@@ -316,14 +322,28 @@ export class HoIssueStore implements IHoIssueStore {
     void this.fetchFilterOptions();
   };
 
+  setIncludeSubIssues = (value: boolean): void => {
+    this.includeSubIssues = value;
+    this.currentPage = 1;
+    void this._fetchFiltered();
+  };
+
   updateDisplayProperties = (props: Partial<THoDisplayProperties>): void => {
     this.displayProperties = { ...this.displayProperties, ...props } as THoDisplayProperties;
   };
 
-  setDepartmentFilter = (departmentId: string | null): void => {
+  setDepartmentFilter = (departmentIds: string[]): void => {
     runInAction(() => {
-      this.selectedDepartmentId = departmentId;
-      this.selectedProjectIds = [];
+      this.selectedDepartmentIds = departmentIds;
+      // Drop projects no longer reachable from selected workspaces (or all when none selected)
+      if (departmentIds.length > 0) {
+        const allowed = new Set(
+          this.accessibleWorkspaces
+            .filter((w) => departmentIds.includes(w.id))
+            .flatMap((w) => w.projects.map((p) => p.id))
+        );
+        this.selectedProjectIds = this.selectedProjectIds.filter((id) => allowed.has(id));
+      }
       this.currentPage = 1;
     });
     void this._fetchFiltered();

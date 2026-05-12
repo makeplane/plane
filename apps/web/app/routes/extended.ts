@@ -47,6 +47,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
               ":workspaceSlug/settings/projects/:projectId/bank-wide",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/bank-wide/page.tsx"
             ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/field-permissions",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/field-permissions/page.tsx"
+            ),
           ]),
         ]),
       ]),

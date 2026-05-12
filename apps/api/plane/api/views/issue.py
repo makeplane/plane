@@ -68,10 +68,13 @@ from plane.db.models import (
     IssueLink,
     Label,
     Project,
+    ProjectFieldPermission,
     ProjectMember,
     CycleIssue,
     Workspace,
+    WorkspaceMember,
 )
+from plane.utils.work_item_permission_checker import check_work_item_field_permission
 from plane.settings.storage import S3Storage
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
@@ -717,6 +720,36 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
+
+        # Field-permission enforcement for external API consumers
+        project_fp = ProjectFieldPermission.objects.filter(
+            project_id=project_id, project__workspace__slug=slug
+        ).first()
+        user_project_role = (
+            ProjectMember.objects.filter(
+                member=request.user, workspace__slug=slug, project_id=project_id, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        user_workspace_role = (
+            WorkspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        fp_error = check_work_item_field_permission(
+            user_role_project=user_project_role,
+            user_role_workspace=user_workspace_role,
+            project_field_permission=project_fp,
+            request_payload=request.data,
+            current_instance=issue,
+            action="update",
+        )
+        if fp_error is not None:
+            return fp_error
+
         serializer = IssueSerializer(
             issue,
             data=request.data,
@@ -788,6 +821,35 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 {"error": "Only admin or creator can delete the work item"},
                 status=status.HTTP_403_FORBIDDEN,
             )
+
+        # Field-permission enforcement: check if member is allowed to delete work items
+        project_fp = ProjectFieldPermission.objects.filter(
+            project_id=project_id, project__workspace__slug=slug
+        ).first()
+        user_project_role = (
+            ProjectMember.objects.filter(
+                member=request.user, workspace__slug=slug, project_id=project_id, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        user_workspace_role = (
+            WorkspaceMember.objects.filter(
+                member=request.user, workspace__slug=slug, is_active=True
+            )
+            .values_list("role", flat=True)
+            .first()
+        )
+        fp_error = check_work_item_field_permission(
+            user_role_project=user_project_role,
+            user_role_workspace=user_workspace_role,
+            project_field_permission=project_fp,
+            request_payload={},
+            current_instance=issue,
+            action="delete",
+        )
+        if fp_error is not None:
+            return fp_error
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
         issue.delete()
         issue_activity.delay(

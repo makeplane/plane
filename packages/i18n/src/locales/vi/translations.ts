@@ -736,6 +736,8 @@ export default {
   },
   common: {
     all: "Tất cả",
+    expand: "Mở rộng",
+    collapse: "Thu gọn",
     no_items_in_this_group: "Không có mục nào trong nhóm này",
     drop_here_to_move: "Thả vào đây để di chuyển",
     states: "Trạng thái",
@@ -2224,6 +2226,48 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "Quyền chỉnh sửa trường",
+      description: "Kiểm soát các trường mà thành viên dự án được phép chỉnh sửa hoặc xóa.",
+      locked_tooltip: "Bị khóa bởi quản trị viên dự án",
+      sections: {
+        dates: "Trường ngày",
+        dates_description: "Kiểm soát ai có thể chỉnh sửa trường ngày trên công việc hiện có.",
+        destructive: "Hành động phá hủy",
+        destructive_description: "Hành động có tác động lớn và không thể hoàn tác.",
+      },
+      status: {
+        enabled: "Cho phép thành viên",
+        disabled: "Chỉ quản trị viên",
+      },
+      rows: {
+        completed_date: {
+          title: "Ngày hoàn thành",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày hoàn thành của công việc.",
+        },
+        target_date: {
+          title: "Ngày đến hạn",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày đến hạn của công việc.",
+        },
+        start_date: {
+          title: "Ngày bắt đầu",
+          description: "Cho phép thành viên đặt hoặc thay đổi ngày bắt đầu của công việc.",
+        },
+        delete_work_item: {
+          title: "Xóa công việc",
+          description: "Cho phép thành viên xóa vĩnh viễn các công việc trong dự án này.",
+        },
+      },
+      toast: {
+        update_success: "Quyền chỉnh sửa trường đã được cập nhật thành công.",
+        update_error: "Không thể cập nhật quyền chỉnh sửa trường. Vui lòng thử lại.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "Quyền chỉnh sửa trường",
+      },
+    },
     worklogs: {
       label: "Nhật ký công việc",
       heading: "Nhật ký công việc",
@@ -3291,7 +3335,7 @@ export default {
     activity_reason: "Lý do",
     reminder_title: "Nhắc nhở ghi nhận giờ làm việc",
     reminder_message:
-      "Hey bạn ơi! 👋 Một ngày làm việc sắp kết thúc rồi — đừng quên ghi nhận giờ làm việc cho hôm nay nhé. Việc cập nhật timesheet đều đặn giúp cả team nắm bắt tiến độ tốt hơn đấy. Chỉ mất một phút thôi, bạn tương lai sẽ cảm ơn bạn hiện tại! Ghé vào project và log time trước khi hết ngày nha.",
+      "Chào bạn! Một lời nhắc nhẹ nhàng 😊\nĐừng quên ghi nhận giờ làm việc cho hôm nay nhé.\nViệc cập nhật timesheet đều đặn giúp cả team theo sát tiến độ tốt hơn.\nChỉ mất một phút thôi! Ghé vào project và log giờ làm trước khi kết thúc ngày nha.",
     reminder_toggle: "Nhắc nhở ghi nhận giờ",
     reminder_toggle_description: "Nhắc nhở hàng ngày lúc 5 giờ chiều để ghi nhận giờ làm việc",
   },
@@ -3545,6 +3589,7 @@ export default {
     from: "Từ", // TODO: native review
     to: "Đến", // TODO: native review
     show_archived: "Hiện mục đã lưu trữ", // TODO: native review
+    show_sub_work_items: "Hiện công việc con", // TODO: native review
     no_work_items: "Không tìm thấy công việc nào.", // TODO: native review
     no_matching_rows: "Không có hàng nào khớp.", // TODO: native review
     no_data: "Không có dữ liệu.", // TODO: native review
@@ -3552,6 +3597,10 @@ export default {
     loading: "Đang tải...", // TODO: native review
     category: "Danh mục", // TODO: native review
     search: "Tìm kiếm...", // TODO: native review
+    sort: "Sắp xếp", // TODO: native review
+    filter: "Lọc", // TODO: native review
+    selected_count: "Đã chọn {count}", // TODO: native review
+    clear_filter: "Xóa lọc", // TODO: native review
     clear_sort: "Xóa sắp xếp", // TODO: native review
     clear_filters_sort: "Xóa lọc & sắp xếp", // TODO: native review
     ascending: "Tăng dần", // TODO: native review

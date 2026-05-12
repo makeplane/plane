@@ -15,6 +15,7 @@ import { TabNavigationRoot } from "@/components/navigation/tab-navigation-root";
 import { AppSidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
+import { useProjectFieldPermission } from "@/hooks/store/use-project-field-permission";
 import { useWorkflowStore } from "@/hooks/store/use-workflow";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 // layouts
@@ -30,6 +31,7 @@ function ProjectLayout({ params }: Route.ComponentProps) {
   // store hooks
   const { sidebarCollapsed } = useAppTheme();
   const workflowStore = useWorkflowStore();
+  const fieldPermissionStore = useProjectFieldPermission();
   // preferences
   const { preferences: projectPreferences } = useProjectNavigationPreferences();
 
@@ -38,6 +40,14 @@ function ProjectLayout({ params }: Route.ComponentProps) {
   useSWR(
     workspaceSlug && projectId ? `PROJECT_WORKFLOW_${workspaceSlug}_${projectId}` : null,
     () => workflowStore.fetchWorkflow(workspaceSlug, projectId),
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+
+  // Fetch field-level permissions on project mount so form gates are available
+  // before issue details render (mirrors workflow fetch pattern above).
+  useSWR(
+    workspaceSlug && projectId ? `PROJECT_FIELD_PERMISSIONS_${workspaceSlug}_${projectId}` : null,
+    () => fieldPermissionStore.fetchPermissions(workspaceSlug, projectId),
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
 

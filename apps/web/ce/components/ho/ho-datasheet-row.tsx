@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
+import { STATE_GROUPS } from "@plane/constants";
 import { Avatar } from "@plane/propel/avatar";
 import { Popover } from "@plane/propel/popover";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -184,12 +185,17 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
       {displayProperties.state &&
         renderTd(
           "state",
-          <span className="flex items-center gap-1.5">
-            {issue.state_color && (
-              <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: issue.state_color }} />
-            )}
-            <span className="truncate">{issue.state_name || "—"}</span>
-          </span>
+          (() => {
+            const group = issue.state_group ? STATE_GROUPS[issue.state_group as keyof typeof STATE_GROUPS] : null;
+            return (
+              <span className="flex items-center gap-1.5">
+                {group && (
+                  <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: group.color }} />
+                )}
+                <span className="truncate">{group ? t(`workspace_projects.state.${group.key}`) : "—"}</span>
+              </span>
+            );
+          })()
         )}
       {displayProperties.progress_tracking &&
         renderTd(

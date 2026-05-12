@@ -295,3 +295,5 @@ from .workflow import (
     WorkflowTransitionViewSet,
     WorkflowTransitionApproverViewSet,
 )
+
+from .project.field_permission import ProjectFieldPermissionViewSet

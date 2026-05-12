@@ -20,6 +20,8 @@ import type { ITaskCategoryStore } from "./task-category.store";
 import { TaskCategoryStore } from "./task-category.store";
 import type { IHoIssueStore } from "./ho/ho-issue.store";
 import { HoIssueStore } from "./ho/ho-issue.store";
+import type { IProjectFieldPermissionStore } from "./project-field-permission.store";
+import { ProjectFieldPermissionStore } from "./project-field-permission.store";
 
 export class RootStore extends CoreRootStore {
   timelineStore: ITimelineStore;
@@ -30,6 +32,7 @@ export class RootStore extends CoreRootStore {
   moduleActivity: IModuleActivityStore;
   taskCategoryStore: ITaskCategoryStore;
   hoIssue: IHoIssueStore;
+  projectFieldPermission: IProjectFieldPermissionStore;
 
   constructor() {
     super();
@@ -42,5 +45,6 @@ export class RootStore extends CoreRootStore {
     this.moduleActivity = new ModuleActivityStore();
     this.taskCategoryStore = new TaskCategoryStore();
     this.hoIssue = new HoIssueStore();
+    this.projectFieldPermission = new ProjectFieldPermissionStore();
   }
 }

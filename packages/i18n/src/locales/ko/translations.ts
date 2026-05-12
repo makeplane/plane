@@ -721,6 +721,8 @@ export default {
   },
   common: {
     all: "모두",
+    expand: "펼치기",
+    collapse: "접기",
     no_items_in_this_group: "이 그룹에 항목이 없습니다",
     drop_here_to_move: "이동하려면 여기에 드롭하세요",
     states: "상태",
@@ -2204,6 +2206,48 @@ export default {
         },
       },
     },
+    field_permissions: {
+      title: "필드 권한",
+      description: "프로젝트 멤버가 수정하거나 삭제할 수 있는 필드를 제어합니다.",
+      locked_tooltip: "프로젝트 관리자에 의해 잠김",
+      sections: {
+        dates: "날짜 필드",
+        dates_description: "기존 작업 항목의 날짜 필드를 편집할 수 있는 사용자를 제어합니다.",
+        destructive: "파괴적인 작업",
+        destructive_description: "되돌릴 수 없는 영향력 있는 작업입니다.",
+      },
+      status: {
+        enabled: "멤버 허용",
+        disabled: "관리자 전용",
+      },
+      rows: {
+        completed_date: {
+          title: "완료 날짜",
+          description: "멤버가 작업 항목의 완료 날짜를 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        target_date: {
+          title: "마감일",
+          description: "멤버가 작업 항목의 마감일을 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        start_date: {
+          title: "시작 날짜",
+          description: "멤버가 작업 항목의 시작 날짜를 설정하거나 변경할 수 있도록 허용합니다.",
+        },
+        delete_work_item: {
+          title: "작업 항목 삭제",
+          description: "멤버가 이 프로젝트의 작업 항목을 영구적으로 삭제할 수 있도록 허용합니다.",
+        },
+      },
+      toast: {
+        update_success: "필드 권한이 성공적으로 업데이트되었습니다.",
+        update_error: "필드 권한 업데이트에 실패했습니다. 다시 시도해 주세요.",
+      },
+    },
+    settings: {
+      field_permissions: {
+        title: "필드 권한",
+      },
+    },
     worklogs: {
       label: "작업 일지",
       heading: "작업 일지",
@@ -3241,7 +3285,7 @@ export default {
     activity_reason: "사유",
     reminder_title: "근무 시간 기록 알림",
     reminder_message:
-      "안녕하세요! 👋 오늘 하루도 수고 많으셨습니다. 혹시 오늘의 근무 시간을 아직 기록하지 않으셨나요? 타임시트를 꾸준히 업데이트하면 팀 전체가 더 효율적으로 협업할 수 있어요. 잠깐이면 되니까, 퇴근 전에 팀/프로젝트에서 시간을 기록해 주세요!",
+      "안녕하세요! 가벼운 알림이에요 😊\n오늘의 근무 시간 기록을 잊지 마세요.\n타임시트를 최신 상태로 유지하면 팀 전체가 일정에 맞춰 진행할 수 있어요.\n1분이면 충분해요! 하루가 끝나기 전에 프로젝트로 이동해 시간을 기록해 주세요.",
     reminder_toggle: "작업 로그 알림",
     reminder_toggle_description: "매일 오후 5시에 시간 기록 알림 받기",
   },
@@ -3495,6 +3539,7 @@ export default {
     from: "시작", // TODO: native review
     to: "종료", // TODO: native review
     show_archived: "보관된 항목 표시", // TODO: native review
+    show_sub_work_items: "하위 작업 표시", // TODO: native review
     no_work_items: "작업 항목을 찾을 수 없습니다.", // TODO: native review
     no_matching_rows: "일치하는 행이 없습니다.", // TODO: native review
     no_data: "데이터가 없습니다.", // TODO: native review
@@ -3502,6 +3547,10 @@ export default {
     loading: "로딩 중...", // TODO: native review
     category: "카테고리", // TODO: native review
     search: "검색...", // TODO: native review
+    sort: "정렬", // TODO: native review
+    filter: "필터", // TODO: native review
+    selected_count: "{count}개 선택됨", // TODO: native review
+    clear_filter: "필터 초기화", // TODO: native review
     clear_sort: "정렬 초기화", // TODO: native review
     clear_filters_sort: "필터 및 정렬 초기화", // TODO: native review
     ascending: "오름차순", // TODO: native review

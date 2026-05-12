@@ -79,6 +79,8 @@ export type THoFilterOptions = {
   modules: string[];
   assignees: { id: string; display_name: string }[];
   leads: { id: string; display_name: string }[];
+  workspaces: { id: string; name: string }[];
+  projects: { id: string; name: string }[];
   priorities: string[];
   progress: string[];
 };

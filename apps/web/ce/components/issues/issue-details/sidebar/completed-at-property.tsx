@@ -13,12 +13,17 @@ import { useTranslation } from "@plane/i18n";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 // ui
 import { DueDatePropertyIcon } from "@plane/propel/icons";
+import { Tooltip } from "@plane/propel/tooltip";
+import { EProjectFieldPermissionKey } from "@plane/types";
+import { renderFormattedDate, renderFormattedTime } from "@plane/utils";
 // components
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
+// ce hooks
+import { useWorkItemFieldLock } from "@/plane-web/hooks/use-work-item-field-lock";
 // local components
 import { CompletedAtDateTimePicker } from "./completed-at-date-time-picker";
 import { FieldChangeReasonModal } from "./field-change-reason-modal";
@@ -41,12 +46,21 @@ export const CompletedAtProperty = observer(function CompletedAtProperty({ issue
   const [isReasonModalOpen, setIsReasonModalOpen] = useState(false);
 
   const issue = getIssueById(issueId);
+
+  // Field-level permission gate — must be called unconditionally (Rules of Hooks).
+  // currentValue passed so Empty→Value is always allowed for members (Validation #7).
+  const { isLocked } = useWorkItemFieldLock(EProjectFieldPermissionKey.COMPLETED_DATE, issue?.completed_at);
+
   if (!issue) return null;
 
   const stateDetails = getStateById(issue.state_id);
   if (stateDetails?.group !== "completed") return null;
 
-  const isEditable = allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
+  const isRoleEditable = allowPermissions(
+    [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+    EUserPermissionsLevel.PROJECT
+  );
+  const isEditable = isRoleEditable && !isLocked;
 
   const completedAt = issue.completed_at ?? new Date().toISOString();
 
@@ -62,10 +76,22 @@ export const CompletedAtProperty = observer(function CompletedAtProperty({ issue
     });
   };
 
+  // Render read-only text when field is locked and a value already exists.
+  // When value is null, isLocked still allows fill (allowFillEmpty in hook) so picker is shown.
+  const showReadOnly = isLocked && !!issue.completed_at;
+
   return (
     <>
       <SidebarPropertyListItem icon={DueDatePropertyIcon} label={t("common.completed_at")} childrenClassName="h-7.5">
-        <CompletedAtDateTimePicker value={completedAt} disabled={!isEditable} onChange={handleDateChange} />
+        {showReadOnly ? (
+          <Tooltip tooltipContent={t("project_settings.field_permissions.locked_tooltip")} position="top">
+            <span className="flex items-center gap-1.5 px-2 h-7.5 text-body-xs-regular text-secondary-200 cursor-default">
+              {`${renderFormattedDate(completedAt)} ${renderFormattedTime(completedAt, "12-hour")}`}
+            </span>
+          </Tooltip>
+        ) : (
+          <CompletedAtDateTimePicker value={completedAt} disabled={!isEditable} onChange={handleDateChange} />
+        )}
       </SidebarPropertyListItem>
       <FieldChangeReasonModal
         isOpen={isReasonModalOpen}
