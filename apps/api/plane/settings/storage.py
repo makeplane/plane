@@ -41,7 +41,7 @@ class S3Storage(S3Boto3Storage):
         # virtual = virtual-hosted style (e.g., https://bucket.s3.amazonaws.com)
         # path = path style (e.g., https://s3.amazonaws.com/bucket)
         # auto = let botocore decide based on bucket name
-        addressing_style = os.environ.get("AWS_S3_ADDRESSING_STYLE", "auto").lower()
+        addressing_style = os.environ.get("AWS_S3_ADDRESSING_STYLE", "auto").strip().lower()
 
         # Create boto3 Config with addressing style if explicitly set
         if addressing_style in ("virtual", "path"):
