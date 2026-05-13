@@ -8,7 +8,7 @@ export const ENTERPRISE_PLAN_FEATURES = [
 ];
 
 export const BUSINESS_PLAN_FEATURES = [
-  "Project Templates",
+  "Program Templates",
   "Workflows + Approvals",
   "Decision + Loops Automation",
   "Custom Reports",

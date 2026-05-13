@@ -18,7 +18,7 @@ export const getGlobalShortcutsList: () => TCommandPaletteActionList = () => {
   return {
     c: {
       title: "Create a new work item",
-      description: "Create a new work item in the current project",
+      description: "Create a new work item in the current program",
       action: () => {
         toggleCreateIssueModal(true);
         captureClick({ elementName: WORK_ITEM_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_BUTTON });
@@ -32,8 +32,8 @@ export const getWorkspaceShortcutsList: () => TCommandPaletteActionList = () => 
 
   return {
     p: {
-      title: "Create a new project",
-      description: "Create a new project in the current workspace",
+      title: "Create a new program",
+      description: "Create a new program in the current workspace",
       action: () => {
         toggleCreateProjectModal(true);
         captureClick({ elementName: PROJECT_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON });
@@ -54,7 +54,7 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
   return {
     d: {
       title: "Create a new page",
-      description: "Create a new page in the current project",
+      description: "Create a new page in the current program",
       action: () => {
         toggleCreatePageModal({ isOpen: true });
         captureClick({ elementName: PROJECT_PAGE_TRACKER_ELEMENTS.COMMAND_PALETTE_SHORTCUT_CREATE_BUTTON });
@@ -62,7 +62,7 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     },
     m: {
       title: "Create a new module",
-      description: "Create a new module in the current project",
+      description: "Create a new module in the current program",
       action: () => {
         toggleCreateModuleModal(true);
         captureClick({ elementName: MODULE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
@@ -70,7 +70,7 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     },
     q: {
       title: "Create a new cycle",
-      description: "Create a new cycle in the current project",
+      description: "Create a new cycle in the current program",
       action: () => {
         toggleCreateCycleModal(true);
         captureClick({ elementName: CYCLE_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
@@ -78,7 +78,7 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     },
     v: {
       title: "Create a new view",
-      description: "Create a new view in the current project",
+      description: "Create a new view in the current program",
       action: () => {
         toggleCreateViewModal(true);
         captureClick({ elementName: PROJECT_VIEW_TRACKER_ELEMENTS.COMMAND_PALETTE_ADD_ITEM });
@@ -86,12 +86,12 @@ export const getProjectShortcutsList: () => TCommandPaletteActionList = () => {
     },
     backspace: {
       title: "Bulk delete work items",
-      description: "Bulk delete work items in the current project",
+      description: "Bulk delete work items in the current program",
       action: () => toggleBulkDeleteIssueModal(true),
     },
     delete: {
       title: "Bulk delete work items",
-      description: "Bulk delete work items in the current project",
+      description: "Bulk delete work items in the current program",
       action: () => toggleBulkDeleteIssueModal(true),
     },
   };
@@ -105,7 +105,7 @@ export const getNavigationShortcutsList = (): TCommandPaletteShortcut[] => [
 ];
 
 export const getCommonShortcutsList = (platform: string): TCommandPaletteShortcut[] => [
-  { keys: "P", description: "Create project" },
+  { keys: "P", description: "Create program" },
   { keys: "C", description: "Create work item" },
   { keys: "Q", description: "Create cycle" },
   { keys: "M", description: "Create module" },

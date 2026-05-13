@@ -64,7 +64,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
           });
           setToast({
             type: TOAST_TYPE.ERROR,
-            title: "You can’t leave this project yet.",
+            title: "You can’t leave this program yet.",
             message: err?.error || "Something went wrong. Please try again.",
           });
         });
@@ -72,7 +72,7 @@ export const ProjectMemberListItem: React.FC<Props> = observer((props) => {
       await removeMemberFromProject(workspaceSlug.toString(), projectId.toString(), memberId).catch((err) =>
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "You can't remove the member from this project yet.",
+          title: "You can't remove the member from this program yet.",
           message: err?.error || "Something went wrong. Please try again.",
         })
       );

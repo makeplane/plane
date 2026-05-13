@@ -93,7 +93,7 @@ export const ProjectArchivesHeader: FC<TProps> = observer((props: TProps) => {
           {activeTab === "issues" && issueCount && issueCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in project's archived`}
+              tooltipContent={`There are ${issueCount} ${issueCount > 1 ? "work items" : "work item"} in this program's archives`}
               position="bottom"
             >
               <span className="cursor-default flex items-center text-center justify-center px-2.5 py-0.5 flex-shrink-0 bg-custom-primary-100/20 text-custom-primary-100 text-xs font-semibold rounded-xl">

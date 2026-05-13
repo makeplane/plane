@@ -94,7 +94,7 @@ export const JoinProjectModal: React.FC<TJoinProjectModalProps> = (props) => {
                     onClick={handleJoin}
                     loading={isJoiningLoading}
                   >
-                    {isJoiningLoading ? "Joining..." : "Join Project"}
+                    {isJoiningLoading ? "Joining..." : "Join Program"}
                   </Button>
                 </div>
               </Dialog.Panel>

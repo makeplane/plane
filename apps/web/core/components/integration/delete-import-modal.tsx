@@ -98,7 +98,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
                       <AlertTriangle className="h-6 w-6 text-red-500" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete project</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete import</h3>
                     </span>
                   </div>
                   <span>
@@ -136,7 +136,7 @@ export const DeleteImportModal: React.FC<Props> = ({ isOpen, handleClose, data }
                       disabled={!confirmDeleteImport}
                       loading={deleteLoading}
                     >
-                      {deleteLoading ? "Deleting..." : "Delete Project"}
+                      {deleteLoading ? "Deleting..." : "Delete import"}
                     </Button>
                   </div>
                 </div>

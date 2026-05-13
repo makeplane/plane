@@ -263,7 +263,7 @@ export const InMessageContext: Story = {
           <div className="flex-1">
             <div className="font-medium text-sm">Alice Brown</div>
             <div className="text-sm text-custom-text-300 mt-1">
-              Hey everyone! Just wanted to share some exciting news about our project launch next week!
+              Hey everyone! Just wanted to share some exciting news about our program launch next week!
             </div>
           </div>
         </div>

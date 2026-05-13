@@ -156,7 +156,7 @@ export const Exporter: React.FC<Props> = observer((props) => {
                                 return projectDetails?.identifier;
                               })
                               .join(", ")
-                          : "All projects"
+                          : "All programs"
                       }
                       onOpen={() => setIsSelectOpen(true)}
                       onClose={() => setIsSelectOpen(false)}

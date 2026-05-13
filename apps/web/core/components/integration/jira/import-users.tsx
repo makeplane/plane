@@ -135,7 +135,7 @@ export const JiraImportUsers: FC = () => {
                         <CustomSearchSelect
                           value={value}
                           input
-                          label={value !== "" ? value : "Select user from project"}
+                          label={value !== "" ? value : "Select user from program"}
                           options={options}
                           onChange={onChange}
                           optionsClassName="w-48"

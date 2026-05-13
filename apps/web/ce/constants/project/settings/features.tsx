@@ -28,7 +28,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     key: "cycles",
     property: "cycle_view",
     title: "Cycles",
-    description: "Timebox work as you see fit per project and change frequency from one period to the next.",
+    description: "Timebox work as you see fit per program and change frequency from one period to the next.",
     icon: <CycleIcon className="h-5 w-5 flex-shrink-0 rotate-180 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
@@ -37,7 +37,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     key: "modules",
     property: "module_view",
     title: "Modules",
-    description: "Group work into sub-project-like set-ups with their own leads and assignees.",
+    description: "Group work into sub-program-like set-ups with their own leads and assignees.",
     icon: <ModuleIcon width={20} height={20} className="flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
@@ -64,7 +64,7 @@ export const PROJECT_BASE_FEATURES_LIST: TBaseFeatureList = {
     key: "intake",
     property: "inbox_view",
     title: "Intake",
-    description: "Consider and discuss work items before you add them to your project.",
+    description: "Consider and discuss work items before you add them to your program.",
     icon: <IntakeIcon className="h-5 w-5 flex-shrink-0 text-custom-text-300" />,
     isPro: false,
     isEnabled: true,
@@ -105,8 +105,8 @@ type TProjectFeatures = {
 export const PROJECT_FEATURES_LIST: TProjectFeatures = {
   project_features: {
     key: "projects_and_issues",
-    title: "Projects and work items",
-    description: "Toggle these on or off this project.",
+    title: "Programs and work items",
+    description: "Toggle these on or off this program.",
     featureList: PROJECT_BASE_FEATURES_LIST,
   },
   project_others: {

@@ -114,7 +114,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Something went wrong while unpublishing the project.",
+          message: "Something went wrong while unpublishing the program.",
         })
       )
       .finally(() => setIsUnPublishing(false));
@@ -132,7 +132,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error!",
-        message: "Please select at least one view layout to publish the project.",
+        message: "Please select at least one view layout to publish the program.",
       });
       return;
     }
@@ -175,7 +175,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
     <ModalCore isOpen={isOpen} handleClose={handleClose} width={EModalWidth.XXL}>
       <form onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="flex items-center justify-between gap-2 p-5">
-          <h5 className="text-xl font-medium text-custom-text-200">Publish project</h5>
+          <h5 className="text-xl font-medium text-custom-text-200">Publish program</h5>
           {isProjectPublished && (
             <Button variant="danger" onClick={() => handleUnPublishProject(watch("id") ?? "")} loading={isUnPublishing}>
               {isUnPublishing ? "Unpublishing" : "Unpublish"}
@@ -227,7 +227,7 @@ export const PublishProjectModal: React.FC<Props> = observer((props) => {
                     <span className="animate-ping absolute inline-flex size-full rounded-full bg-custom-primary-100 opacity-75" />
                     <span className="relative inline-flex rounded-full size-1.5 bg-custom-primary-100" />
                   </span>
-                  This project is now live on web
+                  This program is now live on web
                 </p>
               </>
             )}

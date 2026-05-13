@@ -87,7 +87,7 @@ export const ModuleQuickActions: React.FC<Props> = observer((props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
-          message: "Your module can be found in project modules.",
+          message: "Your module can be found in program modules.",
         });
         captureSuccess({
           eventName: MODULE_TRACKER_EVENTS.restore,

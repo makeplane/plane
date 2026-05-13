@@ -148,7 +148,7 @@ export const ExportForm = (props: Props) => {
                           return projectDetails?.identifier;
                         })
                         .join(", ")
-                    : "All projects"
+                    : "All programs"
                 }
                 optionsClassName="max-w-48 sm:max-w-[532px]"
                 placement="bottom-end"

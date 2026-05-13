@@ -109,12 +109,12 @@ export default {
   signing_out: "Signing out",
   active_cycles: "Active cycles",
   active_cycles_description:
-    "Monitor cycles across projects, track high-priority work items, and zoom in cycles that need attention.",
+    "Monitor cycles across programs, track high-priority work items, and zoom in cycles that need attention.",
   on_demand_snapshots_of_all_your_cycles: "On-demand snapshots of all your cycles",
   upgrade: "Upgrade",
   "10000_feet_view": "10,000-feet view of all active cycles.",
   "10000_feet_view_description":
-    "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
+    "Zoom out to see running cycles across all your programs at once instead of going from Cycle to Cycle in each program.",
   get_snapshot_of_each_active_cycle: "Get a snapshot of each active cycle.",
   get_snapshot_of_each_active_cycle_description:
     "Track high-level metrics for all active cycles, see their state of progress, and get a sense of scope against deadlines.",
@@ -129,7 +129,7 @@ export default {
     "Investigate the state of any cycle that doesn't conform to expectations in one click.",
   stay_ahead_of_blockers: "Stay ahead of blockers.",
   stay_ahead_of_blockers_description:
-    "Spot challenges from one project to another and see inter-cycle dependencies that aren't obvious from any other view.",
+    "Spot challenges from one program to another and see inter-cycle dependencies that aren't obvious from any other view.",
   analytics: "Analytics",
   workspace_invites: "Workspace invites",
   enter_god_mode: "Enter god mode",
@@ -137,7 +137,7 @@ export default {
   new_issue: "New work item",
   your_work: "Your work",
   drafts: "Drafts",
-  projects: "Projects",
+  projects: "Programs",
   views: "Views",
   workspace: "Workspace",
   archives: "Archives",
@@ -156,30 +156,30 @@ export default {
   favorite_removed_successfully: "Favorite removed successfully",
   failed_to_create_favorite: "Failed to create favorite",
   failed_to_rename_favorite: "Failed to rename favorite",
-  project_link_copied_to_clipboard: "Project link copied to clipboard",
+  project_link_copied_to_clipboard: "Program link copied to clipboard",
   link_copied: "Link copied",
-  add_project: "Add project",
-  create_project: "Create project",
-  failed_to_remove_project_from_favorites: "Couldn't remove the project from favorites. Please try again.",
-  project_created_successfully: "Project created successfully",
-  project_created_successfully_description: "Project created successfully. You can now start adding work items to it.",
-  project_name_already_taken: "The project name is already taken.",
-  project_identifier_already_taken: "The project identifier is already taken.",
-  project_cover_image_alt: "Project cover image",
+  add_project: "Add program",
+  create_project: "Create program",
+  failed_to_remove_project_from_favorites: "Couldn't remove the program from favorites. Please try again.",
+  project_created_successfully: "Program created successfully",
+  project_created_successfully_description: "Program created successfully. You can now start adding work items to it.",
+  project_name_already_taken: "The program name is already taken.",
+  project_identifier_already_taken: "The program identifier is already taken.",
+  project_cover_image_alt: "Program cover image",
   name_is_required: "Name is required",
   title_should_be_less_than_255_characters: "Title should be less than 255 characters",
-  project_name: "Project name",
-  project_id_must_be_at_least_1_character: "Project ID must at least be of 1 character",
-  project_id_must_be_at_most_5_characters: "Project ID must at most be of 5 characters",
-  project_id: "Project ID",
-  project_id_tooltip_content: "Helps you identify work items in the project uniquely. Max 5 characters.",
+  project_name: "Program name",
+  project_id_must_be_at_least_1_character: "Program ID must at least be of 1 character",
+  project_id_must_be_at_most_5_characters: "Program ID must at most be of 5 characters",
+  project_id: "Program ID",
+  project_id_tooltip_content: "Helps you identify work items in the program uniquely. Max 5 characters.",
   description_placeholder: "Description",
   only_alphanumeric_non_latin_characters_allowed: "Only Alphanumeric & Non-latin characters are allowed.",
-  project_id_is_required: "Project ID is required",
+  project_id_is_required: "Program ID is required",
   project_id_allowed_char: "Only Alphanumeric & Non-latin characters are allowed.",
-  project_id_min_char: "Project ID must at least be of 1 character",
-  project_id_max_char: "Project ID must at most be of 5 characters",
-  project_description_placeholder: "Enter project description",
+  project_id_min_char: "Program ID must at least be of 1 character",
+  project_id_max_char: "Program ID must at most be of 5 characters",
+  project_description_placeholder: "Enter program description",
   select_network: "Select network",
   lead: "Lead",
   date_range: "Date range",
@@ -188,23 +188,23 @@ export default {
   accessible_only_by_invite: "Accessible only by invite",
   anyone_in_the_workspace_except_guests_can_join: "Anyone in the workspace except Guests can join",
   creating: "Creating",
-  creating_project: "Creating project",
-  adding_project_to_favorites: "Adding project to favorites",
-  project_added_to_favorites: "Project added to favorites",
-  couldnt_add_the_project_to_favorites: "Couldn't add the project to favorites. Please try again.",
-  removing_project_from_favorites: "Removing project from favorites",
-  project_removed_from_favorites: "Project removed from favorites",
-  couldnt_remove_the_project_from_favorites: "Couldn't remove the project from favorites. Please try again.",
+  creating_project: "Creating program",
+  adding_project_to_favorites: "Adding program to favorites",
+  project_added_to_favorites: "Program added to favorites",
+  couldnt_add_the_project_to_favorites: "Couldn't add the program to favorites. Please try again.",
+  removing_project_from_favorites: "Removing program from favorites",
+  project_removed_from_favorites: "Program removed from favorites",
+  couldnt_remove_the_project_from_favorites: "Couldn't remove the program from favorites. Please try again.",
   add_to_favorites: "Add to favorites",
   remove_from_favorites: "Remove from favorites",
-  publish_project: "Publish project",
+  publish_project: "Publish program",
   publish: "Publish",
   copy_link: "Copy link",
-  leave_project: "Leave project",
-  join_the_project_to_rearrange: "Join the project to rearrange",
+  leave_project: "Leave program",
+  join_the_project_to_rearrange: "Join the program to rearrange",
   drag_to_rearrange: "Drag to rearrange",
   congrats: "Congrats!",
-  open_project: "Open project",
+  open_project: "Open program",
   issues: "Work items",
   cycles: "Cycles",
   modules: "Modules",
@@ -212,16 +212,16 @@ export default {
   intake: "Intake",
   time_tracking: "Time Tracking",
   work_management: "Work management",
-  projects_and_issues: "Projects and work items",
-  projects_and_issues_description: "Toggle these on or off this project.",
+  projects_and_issues: "Programs and work items",
+  projects_and_issues_description: "Toggle these on or off this program.",
   cycles_description:
-    "Timebox work per project and adjust the time period as needed. One cycle can be 2 weeks, the next 1 week.",
-  modules_description: "Organize work into sub-projects with dedicated leads and assignees.",
+    "Timebox work per program and adjust the time period as needed. One cycle can be 2 weeks, the next 1 week.",
+  modules_description: "Organize work into sub-programs with dedicated leads and assignees.",
   views_description: "Save custom sorts, filters, and display options or share them with your team.",
   pages_description: "Create and edit free-form content; notes, docs, anything.",
   intake_description: "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
-  time_tracking_description: "Log time spent on work items and projects.",
-  work_management_description: "Manage your work and projects with ease.",
+  time_tracking_description: "Log time spent on work items and programs.",
+  work_management_description: "Manage your work and programs with ease.",
   documentation: "Documentation",
   message_support: "Message support",
   contact_sales: "Contact sales",
@@ -271,9 +271,9 @@ export default {
   updating: "Updating",
   create_new_issue: "Create new work item",
   editor_is_not_ready_to_discard_changes: "Editor is not ready to discard changes",
-  failed_to_move_issue_to_project: "Failed to move work item to project",
+  failed_to_move_issue_to_project: "Failed to move work item to program",
   create_more: "Create more",
-  add_to_project: "Add to project",
+  add_to_project: "Add to program",
   discard: "Discard",
   duplicate_issue_found: "Duplicate work item found",
   duplicate_issues_found: "Duplicate work items found",
@@ -324,7 +324,7 @@ export default {
   delete: "Delete",
   deleting: "Deleting",
   make_a_copy: "Make a copy",
-  move_to_project: "Move to project",
+  move_to_project: "Move to program",
   good: "Good",
   morning: "morning",
   afternoon: "afternoon",
@@ -367,7 +367,7 @@ export default {
   edited: "edited",
   bot: "Bot",
   settings_description:
-    "Manage your account, workspace, and project preferences all in one place. Switch between tabs to easily configure.",
+    "Manage your account, workspace, and program preferences all in one place. Switch between tabs to easily configure.",
   back_to_workspace: "Back to workspace",
   project_view: {
     sort_by: {
@@ -413,8 +413,8 @@ export default {
       quickstart_guide: "Your quickstart guide",
       not_right_now: "Not right now",
       create_project: {
-        title: "Create a project",
-        description: "Most things start with a project in Plane.",
+        title: "Create a program",
+        description: "Most things start with a program in Plane.",
         cta: "Get started",
       },
       invite_team: {
@@ -449,14 +449,14 @@ export default {
     recents: {
       title: "Recents",
       empty: {
-        project: "Your recent projects will appear here once you visit one.",
+        project: "Your recent programs will appear here once you visit one.",
         page: "Your recent pages will appear here once you visit one.",
         issue: "Your recent work items will appear here once you visit one.",
         default: "You don't have any recents yet.",
       },
       filters: {
         all: "All",
-        projects: "Projects",
+        projects: "Programs",
         pages: "Pages",
         issues: "Work items",
       },
@@ -496,8 +496,8 @@ export default {
     state_group: "State group",
     priorities: "Priorities",
     priority: "Priority",
-    team_project: "Team project",
-    project: "Project",
+    team_project: "Team program",
+    project: "Program",
     cycle: "Cycle",
     cycles: "Cycles",
     module: "Module",
@@ -549,11 +549,11 @@ export default {
     general: "General",
     features: "Features",
     automation: "Automation",
-    project_name: "Project name",
-    project_id: "Project ID",
-    project_timezone: "Project Timezone",
+    project_name: "Program name",
+    project_id: "Program ID",
+    project_timezone: "Program Timezone",
     created_on: "Created on",
-    update_project: "Update project",
+    update_project: "Update program",
     identifier_already_exists: "Identifier already exists",
     add_more: "Add more",
     defaults: "Defaults",
@@ -709,7 +709,7 @@ export default {
     select: "Select",
     upgrade: "Upgrade",
     add_seats: "Add Seats",
-    projects: "Projects",
+    projects: "Programs",
     workspace: "Workspace",
     workspaces: "Workspaces",
     team: "Team",
@@ -941,7 +941,7 @@ export default {
         "Are you sure you want to archive the work item? All your archived work items can be restored later.",
       success: {
         label: "Archive success",
-        message: "Your archives can be found in project archives.",
+        message: "Your archives can be found in program archives.",
       },
       failed: {
         message: "Work item could not be archived. Please try again.",
@@ -950,7 +950,7 @@ export default {
     restore: {
       success: {
         title: "Restore success",
-        message: "Your work item can be found in project work items.",
+        message: "Your work item can be found in program work items.",
       },
       failed: {
         message: "Work item could not be restored. Please try again.",
@@ -1064,9 +1064,9 @@ export default {
       },
     },
     errors: {
-      snooze_permission: "Only project admins can snooze/Un-snooze work items",
-      accept_permission: "Only project admins can accept work items",
-      decline_permission: "Only project admins can deny work items",
+      snooze_permission: "Only program admins can snooze/Un-snooze work items",
+      accept_permission: "Only program admins can accept work items",
+      decline_permission: "Only program admins can deny work items",
     },
     actions: {
       accept: "Accept",
@@ -1077,7 +1077,7 @@ export default {
       delete: "Delete",
       open: "Open work item",
       mark_as_duplicate: "Mark as duplicate",
-      move: "Move {value} to project work items",
+      move: "Move {value} to program work items",
     },
     source: {
       "in-app": "in-app",
@@ -1169,14 +1169,14 @@ export default {
   workspace_dashboard: {
     empty_state: {
       general: {
-        title: "Overview of your projects, activity, and metrics",
+        title: "Overview of your programs, activity, and metrics",
         description:
-          "Welcome to Plane, we are excited to have you here. Create your first project and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
+          "Welcome to Plane, we are excited to have you here. Create your first program and track your work items, and this page will transform into a space that helps you progress. Admins will also see items which help their team progress.",
         primary_button: {
-          text: "Build your first project",
+          text: "Build your first program",
           comic: {
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+            title: "Everything starts with a program in Plane",
+            description: "A program could be a product's roadmap, a marketing campaign, or launching a new car.",
           },
         },
       },
@@ -1188,7 +1188,7 @@ export default {
     open_tasks: "Total open tasks",
     error: "There was some error in fetching the data.",
     work_items_closed_in: "Work items closed in",
-    selected_projects: "Selected projects",
+    selected_projects: "Selected programs",
     total_members: "Total members",
     total_cycles: "Total cycles",
     total_modules: "Total modules",
@@ -1217,11 +1217,11 @@ export default {
     backlog_work_items: "Backlog {entity}",
     un_started_work_items: "Unstarted {entity}",
     completed_work_items: "Completed {entity}",
-    project_insights: "Project Insights",
-    summary_of_projects: "Summary of Projects",
-    all_projects: "All Projects",
+    project_insights: "Program Insights",
+    summary_of_projects: "Summary of Programs",
+    all_projects: "All Programs",
     trend_on_charts: "Trend on charts",
-    active_projects: "Active Projects",
+    active_projects: "Active Programs",
     customized_insights: "Customized Insights",
     created_vs_resolved: "Created vs Resolved",
     empty_state: {
@@ -1240,9 +1240,9 @@ export default {
       general: {
         title: "Track progress, workloads, and allocations. Spot trends, remove blockers, and move work faster",
         description:
-          "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your project runs on time.",
+          "See scope versus demand, estimates, and scope creep. Get performance by team members and teams, and make sure your program runs on time.",
         primary_button: {
-          text: "Start your first project",
+          text: "Start your first program",
           comic: {
             title: "Analytics works best with Cycles + Modules",
             description:
@@ -1253,9 +1253,9 @@ export default {
     },
   },
   workspace_projects: {
-    label: "{count, plural, one {Project} other {Projects}}",
+    label: "{count, plural, one {Program} other {Programs}}",
     create: {
-      label: "Add Project",
+      label: "Add Program",
     },
     network: {
       label: "Network",
@@ -1288,7 +1288,7 @@ export default {
       members_length: "Number of members",
     },
     scope: {
-      my_projects: "My projects",
+      my_projects: "My programs",
       archived_projects: "Archived",
     },
     common: {
@@ -1296,34 +1296,34 @@ export default {
     },
     empty_state: {
       general: {
-        title: "No active projects",
+        title: "No active programs",
         description:
-          "Think of each project as the parent for goal-oriented work. Projects are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new project or filter for archived projects.",
+          "Think of each program as the parent for goal-oriented work. Programs are where Jobs, Cycles, and Modules live and, along with your colleagues, help you achieve that goal. Create a new program or filter for archived programs.",
         primary_button: {
-          text: "Start your first project",
+          text: "Start your first program",
           comic: {
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+            title: "Everything starts with a program in Plane",
+            description: "A program could be a product's roadmap, a marketing campaign, or launching a new car.",
           },
         },
       },
       no_projects: {
-        title: "No project",
-        description: "To create work items or manage your work, you need to create a project or be a part of one.",
+        title: "No program",
+        description: "To create work items or manage your work, you need to create a program or be a part of one.",
         primary_button: {
-          text: "Start your first project",
+          text: "Start your first program",
           comic: {
-            title: "Everything starts with a project in Plane",
-            description: "A project could be a product's roadmap, a marketing campaign, or launching a new car.",
+            title: "Everything starts with a program in Plane",
+            description: "A program could be a product's roadmap, a marketing campaign, or launching a new car.",
           },
         },
       },
       filter: {
-        title: "No matching projects",
-        description: "No projects detected with the matching criteria. \n Create a new project instead.",
+        title: "No matching programs",
+        description: "No programs detected with the matching criteria. \n Create a new program instead.",
       },
       search: {
-        description: "No projects detected with the matching criteria.\nCreate a new project instead",
+        description: "No programs detected with the matching criteria.\nCreate a new program instead",
       },
     },
   },
@@ -1331,8 +1331,8 @@ export default {
     add_view: "Add view",
     empty_state: {
       "all-issues": {
-        title: "No work items in the project",
-        description: "First project done! Now, slice your work into trackable pieces with work items. Let's go!",
+        title: "No work items in the program",
+        description: "First program done! Now, slice your work into trackable pieces with work items. Let's go!",
         primary_button: {
           text: "Create new work item",
         },
@@ -1385,7 +1385,7 @@ export default {
     },
     activity: {
       heading: "Activity",
-      description: "Track your recent actions and changes across all projects and work items.",
+      description: "Track your recent actions and changes across all programs and work items.",
     },
   },
   workspace_settings: {
@@ -1466,12 +1466,12 @@ export default {
       },
       exports: {
         heading: "Exports",
-        description: "Export your project data in various formats and access your export history with download links.",
+        description: "Export your program data in various formats and access your export history with download links.",
         title: "Exports",
         exporting: "Exporting",
         previous_exports: "Previous exports",
         export_separate_files: "Export the data into separate files",
-        exporting_projects: "Exporting project",
+        exporting_projects: "Exporting program",
         format: "Format",
         modal: {
           title: "Export to",
@@ -1489,7 +1489,7 @@ export default {
       },
       webhooks: {
         heading: "Webhooks",
-        description: "Automate notifications to external services when project events occur.",
+        description: "Automate notifications to external services when program events occur.",
         title: "Webhooks",
         add_webhook: "Add webhook",
         modal: {
@@ -1648,36 +1648,36 @@ export default {
   },
   project_settings: {
     general: {
-      enter_project_id: "Enter project ID",
+      enter_project_id: "Enter program ID",
       please_select_a_timezone: "Please select a timezone",
       archive_project: {
-        title: "Archive project",
+        title: "Archive program",
         description:
-          "Archiving a project will unlist your project from your side navigation although you will still be able to access it from your projects page. You can restore the project or delete it whenever you want.",
-        button: "Archive project",
+          "Archiving a program will unlist your program from your side navigation although you will still be able to access it from your programs page. You can restore the program or delete it whenever you want.",
+        button: "Archive program",
       },
       delete_project: {
-        title: "Delete project",
+        title: "Delete program",
         description:
-          "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.",
-        button: "Delete my project",
+          "When deleting a program, all of the data and resources within that program will be permanently removed and cannot be recovered.",
+        button: "Delete my program",
       },
       toast: {
-        success: "Project updated successfully",
-        error: "Project could not be updated. Please try again.",
+        success: "Program updated successfully",
+        error: "Program could not be updated. Please try again.",
       },
     },
     members: {
       label: "Members",
-      project_lead: "Project lead",
+      project_lead: "Program lead",
       default_assignee: "Default assignee",
       guest_super_permissions: {
         title: "Grant view access to all work items for guest users:",
-        sub_heading: "This will allow guests to have view access to all the project work items.",
+        sub_heading: "This will allow guests to have view access to all the program work items.",
       },
       invite_members: {
         title: "Invite members",
-        sub_heading: "Invite members to work on your project.",
+        sub_heading: "Invite members to work on your program.",
         select_co_worker: "Select co-worker",
       },
     },
@@ -1704,7 +1704,7 @@ export default {
       heading: "Estimates",
       description: "Set up estimation systems to track and communicate the effort required for each work item.",
       label: "Estimates",
-      title: "Enable estimates for my project",
+      title: "Enable estimates for my program",
       enable_description: "They help you in communicating complexity and workload of the team.",
       no_estimate: "No estimate",
       new: "New estimate system",
@@ -1731,7 +1731,7 @@ export default {
         updated: {
           success: {
             title: "Estimate modified",
-            message: "The estimate has been updated in your project.",
+            message: "The estimate has been updated in your program.",
           },
           error: {
             title: "Estimate modification failed",
@@ -1789,7 +1789,7 @@ export default {
       label: "Automations",
       heading: "Automations",
       description:
-        "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
+        "Configure automated actions to streamline your program management workflow and reduce manual tasks.",
       "auto-archive": {
         title: "Auto-archive closed work items",
         description: "Plane will auto archive work items that have been completed or canceled.",
@@ -1805,7 +1805,7 @@ export default {
     empty_state: {
       labels: {
         title: "No labels yet",
-        description: "Create labels to help organize and filter work items in you project.",
+        description: "Create labels to help organize and filter work items in you program.",
       },
       estimates: {
         title: "No estimate systems yet",
@@ -1908,7 +1908,7 @@ export default {
       general: {
         title: "Group and timebox your work in Cycles.",
         description:
-          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team.",
+          "Break work down by timeboxed chunks, work backwards from your program deadline to set dates, and make tangible progress as a team.",
         primary_button: {
           text: "Set your first cycle",
           comic: {
@@ -1940,7 +1940,7 @@ export default {
       },
       archived: {
         title: "No archived cycles yet",
-        description: "To tidy up your project, archive completed cycles. Find them here once archived.",
+        description: "To tidy up your program, archive completed cycles. Find them here once archived.",
       },
     },
   },
@@ -1949,7 +1949,7 @@ export default {
       no_issues: {
         title: "Create a work item and assign it to someone, even yourself",
         description:
-          "Think of work items as jobs, tasks, work, or JTBD. Which we like. A work item and its sub-work items are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes work items to move your project towards its goal.",
+          "Think of work items as jobs, tasks, work, or JTBD. Which we like. A work item and its sub-work items are usually time-based actionables assigned to members of your team. Your team creates, assigns, and completes work items to move your program towards its goal.",
         primary_button: {
           text: "Create your first work item",
           comic: {
@@ -1984,9 +1984,9 @@ export default {
     delete_module: "Delete module",
     empty_state: {
       general: {
-        title: "Map your project milestones to Modules and track aggregated work easily.",
+        title: "Map your program milestones to Modules and track aggregated work easily.",
         description:
-          "A group of work items that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by project milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
+          "A group of work items that belong to a logical, hierarchical parent form a module. Think of them as a way to track work by program milestones. They have their own periods and deadlines as well as analytics to help you see how close or far you are from a milestone.",
         primary_button: {
           text: "Build your first module",
           comic: {
@@ -2008,7 +2008,7 @@ export default {
       },
       archived: {
         title: "No archived Modules yet",
-        description: "To tidy up your project, archive completed or cancelled modules. Find them here once archived.",
+        description: "To tidy up your program, archive completed or cancelled modules. Find them here once archived.",
       },
       sidebar: {
         in_active: "This module isn't active yet.",
@@ -2033,9 +2033,9 @@ export default {
   project_views: {
     empty_state: {
       general: {
-        title: "Save filtered views for your project. Create as many as you need",
+        title: "Save filtered views for your program. Create as many as you need",
         description:
-          "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a project can see everyone’s views and choose whichever suits their needs best.",
+          "Views are a set of saved filters that you use frequently or want easy access to. All your colleagues in a program can see everyone’s views and choose whichever suits their needs best.",
         primary_button: {
           text: "Create your first view",
           comic: {
@@ -2061,7 +2061,7 @@ export default {
         title:
           "Write a note, a doc, or a full knowledge base. Get Galileo, Plane's AI assistant, to help you get started",
         description:
-          "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your project's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
+          "Pages are thoughts potting space in Plane. Take down meeting notes, format them easily, embed work items, lay them out using a library of components, and keep them all in your program's context. To make short work of any doc, invoke Galileo, Plane's AI, with a shortcut or the click of a button.",
         primary_button: {
           text: "Create your first page",
         },
@@ -2075,7 +2075,7 @@ export default {
       },
       public: {
         title: "No public pages yet",
-        description: "See pages shared with everyone in your project right here.",
+        description: "See pages shared with everyone in your program right here.",
         primary_button: {
           text: "Create your first page",
         },
@@ -2189,41 +2189,41 @@ export default {
   disabled_project: {
     empty_state: {
       inbox: {
-        title: "Intake is not enabled for the project.",
+        title: "Intake is not enabled for the program.",
         description:
-          "Intake helps you manage incoming requests to your project and add them as work items in your workflow. Enable intake from project settings to manage requests.",
+          "Intake helps you manage incoming requests to your program and add them as work items in your workflow. Enable intake from program settings to manage requests.",
         primary_button: {
           text: "Manage features",
         },
       },
       cycle: {
-        title: "Cycles is not enabled for this project.",
+        title: "Cycles is not enabled for this program.",
         description:
-          "Break work down by timeboxed chunks, work backwards from your project deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your project to start using them.",
+          "Break work down by timeboxed chunks, work backwards from your program deadline to set dates, and make tangible progress as a team. Enable the cycles feature for your program to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       module: {
-        title: "Modules are not enabled for the project.",
+        title: "Modules are not enabled for the program.",
         description:
-          "Modules are the building blocks of your project. Enable modules from project settings to start using them.",
+          "Modules are the building blocks of your program. Enable modules from program settings to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       page: {
-        title: "Pages are not enabled for the project.",
+        title: "Pages are not enabled for the program.",
         description:
-          "Pages are the building blocks of your project. Enable pages from project settings to start using them.",
+          "Pages are the building blocks of your program. Enable pages from program settings to start using them.",
         primary_button: {
           text: "Manage features",
         },
       },
       view: {
-        title: "Views are not enabled for the project.",
+        title: "Views are not enabled for the program.",
         description:
-          "Views are the building blocks of your project. Enable views from project settings to start using them.",
+          "Views are the building blocks of your program. Enable views from program settings to start using them.",
         primary_button: {
           text: "Manage features",
         },
@@ -2319,7 +2319,7 @@ export default {
     },
     member: {
       title: "Member",
-      description: "Ability to read, write, edit, and delete entities inside projects, cycles, and modules",
+      description: "Ability to read, write, edit, and delete entities inside programs, cycles, and modules",
     },
     admin: {
       title: "Admin",
@@ -2327,7 +2327,7 @@ export default {
     },
   },
   user_roles: {
-    product_or_project_manager: "Product / Project Manager",
+    product_or_project_manager: "Product / Program Manager",
     development_or_engineering: "Development / Engineering",
     founder_or_executive: "Founder / Executive",
     freelancer_or_consultant: "Freelancer / Consultant",
@@ -2345,7 +2345,7 @@ export default {
     },
     jira: {
       title: "Jira",
-      description: "Import work items and epics from Jira projects and epics.",
+      description: "Import work items and epics from Jira programs and epics.",
     },
   },
   exporter: {

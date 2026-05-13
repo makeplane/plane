@@ -1,6 +1,6 @@
 export default {
   sidebar: {
-    projects: "Projects",
+    projects: "Programs",
     opposition: "Opposition",
     pages: "Pages",
     new_work_item: "New work item",

@@ -20,7 +20,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     key: "10000_feet_view",
     title: "10,000-feet view of all active cycles.",
     description:
-      "Zoom out to see running cycles across all your projects at once instead of going from Cycle to Cycle in each project.",
+      "Zoom out to see running cycles across all your programs at once instead of going from Cycle to Cycle in each program.",
     icon: Folder,
   },
   {
@@ -53,7 +53,7 @@ export const WORKSPACE_ACTIVE_CYCLES_DETAILS = [
     key: "stay_ahead_of_blockers",
     title: "Stay ahead of blockers.",
     description:
-      "Spot challenges from one project to another and see inter-cycle dependencies that aren’t obvious from any other view.",
+      "Spot challenges from one program to another and see inter-cycle dependencies that aren’t obvious from any other view.",
     icon: Microscope,
   },
 ];

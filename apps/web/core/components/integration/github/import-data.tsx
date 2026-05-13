@@ -71,8 +71,8 @@ export const GithubImportData: FC<Props> = observer((props) => {
         </div>
         <div className="grid grid-cols-12 gap-4 sm:gap-16">
           <div className="col-span-12 sm:col-span-8">
-            <h4 className="font-semibold">Select Project</h4>
-            <p className="text-xs text-custom-text-200">Select the project to import the work item to.</p>
+            <h4 className="font-semibold">Select Program</h4>
+            <p className="text-xs text-custom-text-200">Select the program to import the work item to.</p>
           </div>
           <div className="col-span-12 sm:col-span-4">
             {workspaceProjectIds && (
@@ -83,7 +83,7 @@ export const GithubImportData: FC<Props> = observer((props) => {
                   <CustomSearchSelect
                     value={value}
                     label={
-                      value ? getProjectById(value)?.name : <span className="text-custom-text-200">Select Project</span>
+                      value ? getProjectById(value)?.name : <span className="text-custom-text-200">Select Program</span>
                     }
                     onChange={onChange}
                     options={options}

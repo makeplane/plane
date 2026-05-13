@@ -76,7 +76,7 @@ export const IntegrationCard: React.FC<Props> = ({ integration }) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Repository could not be synced with the project. Please try again.",
+          message: "Repository could not be synced with the program. Please try again.",
         });
       });
   };

@@ -74,7 +74,7 @@ export const IssuesHeader = observer(() => {
           {issuesCount && issuesCount > 0 ? (
             <Tooltip
               isMobile={isMobile}
-              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this project`}
+              tooltipContent={`There are ${issuesCount} ${issuesCount > 1 ? "work items" : "work item"} in this program`}
               position="bottom"
             >
               <CountChip count={issuesCount} />

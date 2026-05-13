@@ -62,7 +62,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
 
     if (data) {
       if (data.projectName === project?.name) {
-        if (data.confirmLeave === "Leave Project") {
+        if (data.confirmLeave === "Leave Program") {
           router.push(`/${workspaceSlug}/projects`);
           return leaveProject(workspaceSlug.toString(), project.id)
             .then(() => {
@@ -92,14 +92,14 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
           setToast({
             type: TOAST_TYPE.ERROR,
             title: "Error!",
-            message: "Please confirm leaving the project by typing the 'Leave Project'.",
+            message: "Please confirm leaving the program by typing the 'Leave Program'.",
           });
         }
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Please enter the project name as shown in the description.",
+          message: "Please enter the program name as shown in the description.",
         });
       }
     } else {
@@ -144,13 +144,13 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                       <AlertTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Leave Project</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Leave Program</h3>
                     </span>
                   </div>
 
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to leave the project -
+                      Are you sure you want to leave the program -
                       <span className="font-medium text-custom-text-100">{` "${project?.name}" `}</span>? All of the
                       work items associated with you will become inaccessible.
                     </p>
@@ -158,7 +158,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
 
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
-                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
+                      Enter the program name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
                       to continue:
                     </p>
                     <Controller
@@ -176,7 +176,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.projectName)}
-                          placeholder="Enter project name"
+                          placeholder="Enter program name"
                           className="mt-2 w-full"
                         />
                       )}
@@ -185,7 +185,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
 
                   <div className="text-custom-text-200">
                     <p className="text-sm">
-                      To confirm, type <span className="font-medium text-custom-text-100">Leave Project</span> below:
+                      To confirm, type <span className="font-medium text-custom-text-100">Leave Program</span> below:
                     </p>
                     <Controller
                       control={control}
@@ -199,7 +199,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.confirmLeave)}
-                          placeholder="Enter 'leave project'"
+                          placeholder="Enter 'leave program'"
                           className="mt-2 w-full"
                         />
                       )}
@@ -210,7 +210,7 @@ export const LeaveProjectModal: FC<ILeaveProjectModal> = observer((props) => {
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" type="submit" loading={isSubmitting}>
-                      {isSubmitting ? "Leaving..." : "Leave Project"}
+                      {isSubmitting ? "Leaving..." : "Leave Program"}
                     </Button>
                   </div>
                 </form>

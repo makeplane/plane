@@ -51,7 +51,7 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Project could not be archived. Please try again.",
+          message: "Program could not be archived. Please try again.",
         })
       )
       .finally(() => setIsLoading(false));
@@ -64,7 +64,7 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
-          message: `You can find ${projectDetails.name} in your projects.`,
+          message: `You can find ${projectDetails.name} in your programs.`,
         });
         onClose();
         router.push(`/${workspaceSlug}/projects/`);
@@ -73,7 +73,7 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "Project could not be restored. Please try again.",
+          message: "Program could not be restored. Please try again.",
         })
       )
       .finally(() => setIsLoading(false));
@@ -112,8 +112,8 @@ export const ArchiveRestoreProjectModal: React.FC<Props> = (props) => {
                   </h3>
                   <p className="mt-3 text-sm text-custom-text-200">
                     {archive
-                      ? "This project and its work items, cycles, modules, and pages will be archived. Its work items won’t appear in search. Only project admins can restore the project."
-                      : "Restoring a project will activate it and make it visible to all members of the project. Are you sure you want to continue?"}
+                      ? "This program and its work items, cycles, modules, and pages will be archived. Its work items won’t appear in search. Only program admins can restore the program."
+                      : "Restoring a program will activate it and make it visible to all members of the program. Are you sure you want to continue?"}
                   </p>
                   <div className="mt-3 flex justify-end gap-2">
                     <Button variant="neutral-primary" size="sm" onClick={onClose}>

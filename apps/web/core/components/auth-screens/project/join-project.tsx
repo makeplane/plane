@@ -39,17 +39,17 @@ export const JoinProject: React.FC<Props> = (props) => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
       <div className="h-44 w-72">
-        <Image src={Unauthorized} height="176" width="288" alt="JoinProject" />
+        <Image src={Unauthorized} height="176" width="288" alt="Join program illustration" />
       </div>
       <h1 className="text-xl font-medium text-custom-text-100">
-        {!isPrivateProject ? `You are not a member of this project yet.` : `You are not a member of this project.`}
+        {!isPrivateProject ? `You are not a member of this program yet.` : `You are not a member of this program.`}
       </h1>
 
       <div className="w-full max-w-md text-base text-custom-text-200">
         <p className="mx-auto w-full text-sm md:w-3/4">
           {!isPrivateProject
             ? `Click the button below to join it.`
-            : `This is a private project. \n We can't tell you more about this project to protect confidentiality.`}
+            : `This is a private program. \n We can't tell you more about this program to protect confidentiality.`}
         </p>
       </div>
       {!isPrivateProject && (

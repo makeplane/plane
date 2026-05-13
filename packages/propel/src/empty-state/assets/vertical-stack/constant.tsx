@@ -74,7 +74,7 @@ export const VerticalStackAssetsMap = [
   },
   {
     asset: <ProjectVerticalStackIllustration />,
-    title: "ProjectVerticalStackIllustration",
+    title: "ProgramVerticalStackIllustration",
   },
   {
     asset: <ServerErrorVerticalStackIllustration />,

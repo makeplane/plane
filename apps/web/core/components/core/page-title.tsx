@@ -10,7 +10,7 @@ export const PageHead: React.FC<PageHeadTitleProps> = (props) => {
 
   useEffect(() => {
     if (title) {
-      document.title = title ?? "Plane | Simple, extensible, open-source project management tool.";
+      document.title = title ?? "Plane | Simple, extensible, open-source program management tool.";
     }
   }, [title]);
 

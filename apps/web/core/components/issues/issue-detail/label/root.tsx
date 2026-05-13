@@ -80,7 +80,7 @@ export const IssueLabel: FC<TIssueLabel> = observer((props) => {
           return labelResponse;
         } catch (error) {
           let errMessage = t("label.create.failed");
-          if (error && (error as any).error === "Label with the same name already exists in the project")
+          if (error && (error as any).error === "Label with the same name already exists in the program")
             errMessage = t("label.create.already_exists");
 
           setToast({

@@ -303,7 +303,7 @@ export const CommandModal: React.FC = observer(() => {
                             {searchTerm}
                             {'"'}
                           </span>{" "}
-                          in {!projectId || isWorkspaceLevel ? "workspace" : "project"}:
+                          in {!projectId || isWorkspaceLevel ? "workspace" : "program"}:
                         </h5>
                       )}
 
@@ -365,7 +365,7 @@ export const CommandModal: React.FC = observer(() => {
                               </Command.Group>
                             )}
                           {workspaceSlug && canPerformWorkspaceActions && (
-                            <Command.Group heading="Project">
+                            <Command.Group heading="Program">
                               <Command.Item
                                 onSelect={() => {
                                   closePalette();
@@ -376,7 +376,7 @@ export const CommandModal: React.FC = observer(() => {
                               >
                                 <div className="flex items-center gap-2 text-custom-text-200">
                                   <FolderPlus className="h-3.5 w-3.5" />
-                                  Create new project
+                                  Create new program
                                 </div>
                                 <kbd>P</kbd>
                               </Command.Item>

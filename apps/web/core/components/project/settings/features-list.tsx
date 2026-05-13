@@ -45,14 +45,14 @@ export const ProjectFeaturesList: FC<Props> = observer((props) => {
     const updateProjectPromise = updateProject(workspaceSlug, projectId, settingsPayload);
 
     setPromiseToast(updateProjectPromise, {
-      loading: "Updating project feature...",
+      loading: "Updating program feature...",
       success: {
         title: "Success!",
-        message: () => "Project feature updated successfully.",
+        message: () => "Program feature updated successfully.",
       },
       error: {
         title: "Error!",
-        message: () => "Something went wrong while updating project feature. Please try again.",
+        message: () => "Something went wrong while updating program feature. Please try again.",
       },
     });
     updateProjectPromise.then(() => {

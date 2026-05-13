@@ -136,7 +136,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
         )
         .then((res) => uploadCallback(res.asset_url))
         .catch((error) => {
-          console.error("Error uploading project cover image:", error);
+          console.error("Error uploading program cover image:", error);
           setIsImageUploading(false);
           setToast({
             message: error?.error ?? "The image could not be uploaded",
@@ -287,7 +287,7 @@ export const ImagePickerPopover: React.FC<Props> = observer((props) => {
                             >
                               <img
                                 src={image}
-                                alt={`Default project cover image- ${index}`}
+                                alt={`Default program cover image- ${index}`}
                                 className="absolute left-0 top-0 h-full w-full cursor-pointer rounded object-cover"
                               />
                             </div>

@@ -33,13 +33,13 @@ type Props = {
 const integrationDetails: { [key: string]: any } = {
   github: {
     logo: GithubLogo,
-    installed: "Activate GitHub on individual projects to sync with specific repositories.",
-    notInstalled: "Connect with GitHub with your Plane workspace to sync project work items.",
+    installed: "Activate GitHub on individual programs to sync with specific repositories.",
+    notInstalled: "Connect with GitHub with your Plane workspace to sync program work items.",
   },
   slack: {
     logo: SlackLogo,
-    installed: "Activate Slack on individual projects to sync with specific channels.",
-    notInstalled: "Connect with Slack with your Plane workspace to sync project work items.",
+    installed: "Activate Slack on individual programs to sync with specific channels.",
+    notInstalled: "Connect with Slack with your Plane workspace to sync program work items.",
   },
 };
 

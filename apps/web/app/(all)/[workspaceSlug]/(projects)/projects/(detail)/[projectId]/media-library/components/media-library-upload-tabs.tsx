@@ -11,12 +11,12 @@ const TAB_OPTIONS: Array<{ key: TUploadTarget; label: string; helper: string }> 
   {
     key: "library",
     label: "Upload to library",
-    helper: "Upload files to the project media library.",
+    helper: "Upload files to the program media library.",
   },
   {
     key: "work-item",
     label: "Add media to work item",
-    helper: "Link uploaded media to a work item in this project.",
+    helper: "Link uploaded media to a work item in this program.",
   },
 ];
 

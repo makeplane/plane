@@ -335,17 +335,17 @@ export const InFormContext: Story = {
       <div className="max-w-md p-4">
         <form onSubmit={handleSubmit} className="space-y-4 p-6 border border-custom-border-200 rounded-lg">
           <div>
-            <label className="block text-sm font-medium mb-2">Project Title</label>
+            <label className="block text-sm font-medium mb-2">Program Title</label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
               className="w-full px-3 py-2 bg-custom-background-80 border border-custom-border-200 rounded"
-              placeholder="Enter project title"
+              placeholder="Enter program title"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2">Project Icon</label>
+            <label className="block text-sm font-medium mb-2">Program Icon</label>
             <EmojiPicker
               isOpen={isOpen}
               handleToggle={setIsOpen}
@@ -360,7 +360,7 @@ export const InFormContext: Story = {
             type="submit"
             className="w-full px-4 py-2 bg-custom-primary-100 text-white rounded hover:bg-custom-primary-200"
           >
-            Create Project
+            Create Program
           </button>
         </form>
       </div>

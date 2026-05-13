@@ -119,7 +119,7 @@ export const SingleUserSelect: React.FC<Props> = ({ collaborator, index, users, 
       {users[index].import === "map" && members && (
         <CustomSearchSelect
           value={users[index].email}
-          label={users[index].email !== "" ? users[index].email : "Select user from project"}
+          label={users[index].email !== "" ? users[index].email : "Select user from program"}
           options={options}
           onChange={(val: string) => {
             const newUsers = [...users];

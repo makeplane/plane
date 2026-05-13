@@ -44,7 +44,7 @@ export default function CustomErrorComponent() {
             src={maintenanceModeImage}
             height="176"
             width="288"
-            alt="ProjectSettingImg"
+            alt="Maintenance illustration"
             className="w-full h-full object-fill object-center"
           />
         </div>

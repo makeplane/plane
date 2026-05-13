@@ -163,7 +163,7 @@ export const WithBadges: Story = {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Project</TableHead>
+            <TableHead>Program</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Priority</TableHead>
             <TableHead>Assignee</TableHead>

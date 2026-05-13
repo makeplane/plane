@@ -106,7 +106,7 @@ export const ExtendedProjectSidebar = observer(() => {
       >
         <div className="flex flex-col gap-1 w-full sticky top-4 pt-0 px-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-custom-text-300 py-1.5">Projects</span>
+            <span className="text-sm font-semibold text-custom-text-300 py-1.5">Programs</span>
             {isAuthorizedUser && (
               <Tooltip tooltipHeading={t("create_project")} tooltipContent="">
                 <button

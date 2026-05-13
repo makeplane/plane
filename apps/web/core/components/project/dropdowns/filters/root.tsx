@@ -57,7 +57,7 @@ export const ProjectFiltersSelection: React.FC<Props> = observer((props) => {
                 my_projects: !displayFilters.my_projects,
               })
             }
-            title="My projects"
+            title="My programs"
           />
         </div>
 
