@@ -497,6 +497,11 @@ export default {
   morning: "утра",
   afternoon: "дня",
   evening: "вечера",
+  greetings: {
+    morning: "Доброе утро, {first_name} {last_name}",
+    afternoon: "Добрый день, {first_name} {last_name}",
+    evening: "Добрый вечер, {first_name} {last_name}",
+  },
   show_all: "Показать все",
   show_less: "Свернуть",
   no_data_yet: "Нет данных",

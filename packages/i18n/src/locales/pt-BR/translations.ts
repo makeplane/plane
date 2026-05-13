@@ -498,6 +498,11 @@ export default {
   morning: "manhã",
   afternoon: "tarde",
   evening: "noite",
+  greetings: {
+    morning: "Bom dia, {first_name} {last_name}",
+    afternoon: "Boa tarde, {first_name} {last_name}",
+    evening: "Boa noite, {first_name} {last_name}",
+  },
   show_all: "Mostrar tudo",
   show_less: "Mostrar menos",
   no_data_yet: "Nenhum dado ainda",

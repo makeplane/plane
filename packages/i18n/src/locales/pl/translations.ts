@@ -488,6 +488,11 @@ export default {
   morning: "rano",
   afternoon: "po południu",
   evening: "wieczorem",
+  greetings: {
+    morning: "Dzień dobry, {first_name} {last_name}",
+    afternoon: "Dzień dobry, {first_name} {last_name}",
+    evening: "Dobry wieczór, {first_name} {last_name}",
+  },
   show_all: "Pokaż wszystko",
   show_less: "Pokaż mniej",
   no_data_yet: "Brak danych",
