@@ -44,7 +44,10 @@ class CapacityExportEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        member_ids = data["member_ids"]  # already deduped strings by serializer
+        # Cast UUIDs to strings — DRF UUIDField returns UUID objects, but JSONField
+        # storage needs JSON-serializable values.
+        raw_member_ids = data.get("member_ids") or []
+        member_ids = [str(m) for m in raw_member_ids]
 
         # Validate that all supplied member_ids belong to this workspace
         if member_ids:
