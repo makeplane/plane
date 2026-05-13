@@ -1,0 +1,20 @@
+save "Test edition page" as "pageName"
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+create page saved value "pageName" on project stored value "projectName"
+log out
+Log stored value "projectUser" to website
+click stored value "projectName" below "Projects" within the context of "sidebar"
+click "Pages"
+reload
+click stored value "pageName"
+enter "Text added by project_user" into "Press '/' for commands..."
+log out
+Log stored value "adminUser" to website
+click stored value "projectName" below "Projects" within the context of "sidebar"
+click "Pages"
+reload
+click stored value "pageName"
+check that page contains "Text added by project_user"
+click stored value "projectName" below "Projects" within the context of "sidebar"
+delete page stored value "pageName" from stored value "projectName"
