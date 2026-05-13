@@ -205,13 +205,16 @@ export class StickyStore implements IStickyStore {
     } catch (error) {
       console.error("Error in updating sticky:", error);
       this.stickies[id] = sticky;
-      throw new Error();
+      throw error;
     }
   };
 
   deleteSticky = async (workspaceSlug: string, id: string) => {
     const sticky = this.stickies[id];
     if (!sticky) return;
+    const previousWorkspaceStickies = [...(this.workspaceStickies[workspaceSlug] || [])];
+    const previousActiveStickyId = this.activeStickyId;
+    const previousRecentStickyId = this.recentStickyId;
     try {
       this.workspaceStickies[workspaceSlug] = this.workspaceStickies[workspaceSlug].filter(
         (stickyId) => stickyId !== id
@@ -220,9 +223,12 @@ export class StickyStore implements IStickyStore {
       delete this.stickies[id];
       this.recentStickyId = this.workspaceStickies[workspaceSlug][0];
       await this.stickyService.deleteSticky(workspaceSlug, id);
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
       this.stickies[id] = sticky;
+      this.workspaceStickies[workspaceSlug] = previousWorkspaceStickies;
+      this.activeStickyId = previousActiveStickyId;
+      this.recentStickyId = previousRecentStickyId;
+      throw error;
     }
   };
 
