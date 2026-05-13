@@ -38,11 +38,12 @@ export const ProjectAppSidebar = observer(function ProjectAppSidebar() {
   const isAnyExtendedSidebarOpen = isExtendedSidebarOpened;
 
   const isNotificationsPath = pathname.includes(`/${workspaceSlug}/notifications`);
+  const isMessengerPath = pathname.includes(`/${workspaceSlug}/messenger`);
 
   // handlers
   const handleWidthChange = (width: number) => setValue(width);
 
-  if (isNotificationsPath) return null;
+  if (isNotificationsPath || isMessengerPath) return null;
 
   return (
     <>

@@ -22,7 +22,7 @@ function Print-Header {
     try {
         Clear-Host
     } catch {
-        # Non-interactive PowerShell hosts may not expose a clearable console.
+        # Some non-interactive PowerShell hosts do not expose a clearable console.
     }
 
     @'
@@ -65,6 +65,23 @@ function Invoke-Compose {
     }
 }
 
+function Get-ComposeOutput {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    Push-Location $script:RepoRoot
+    try {
+        $allArgs = @($script:ComposePrefixArgs + $Arguments)
+        $output = & $script:ComposeExecutable @allArgs 2>&1
+        $script:LastComposeExitCode = $LASTEXITCODE
+        return $output
+    } finally {
+        Pop-Location
+    }
+}
+
 function Add-Utf8NoBomLine {
     param(
         [Parameter(Mandatory = $true)]
@@ -73,14 +90,8 @@ function Add-Utf8NoBomLine {
         [string]$Line
     )
 
-    $fullPath = [System.IO.Path]::GetFullPath($Path)
-    $parent = [System.IO.Path]::GetDirectoryName($fullPath)
-    if (-not [string]::IsNullOrWhiteSpace($parent)) {
-        [System.IO.Directory]::CreateDirectory($parent) | Out-Null
-    }
-
     $encoding = New-Object System.Text.UTF8Encoding -ArgumentList $false
-    [System.IO.File]::AppendAllText($fullPath, $Line + [Environment]::NewLine, $encoding)
+    [System.IO.File]::AppendAllText([System.IO.Path]::GetFullPath($Path), $Line + [Environment]::NewLine, $encoding)
 }
 
 function New-SecretKey {
@@ -252,7 +263,6 @@ function Build-LocalImages {
         if ($NoCache) {
             $buildArgs += "--no-cache"
         }
-
         foreach ($tag in $build.Tags) {
             $buildArgs += @("-t", $tag)
         }
@@ -272,6 +282,7 @@ function Install-Plane {
     Write-Host ""
 
     Initialize-LocalEnvFiles
+
     Build-LocalImages
 
     Write-Host ""
@@ -282,6 +293,7 @@ function Install-Plane {
 
 function Start-Services {
     Initialize-LocalEnvFiles
+
     Build-LocalImages
 
     Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("up", "-d", "--no-build", "--force-recreate"))
@@ -354,7 +366,7 @@ function Start-Services {
     Write-Host "   Plane Server started successfully"
     Write-Host ""
     Write-Host "   Web:   http://localhost"
-    Write-Host "   Admin: http://localhost/god-mode/"
+    Write-Host "   API:   http://localhost:8000"
     Write-Host ""
 }
 
@@ -370,6 +382,7 @@ function Restart-Services {
 
 function Rebuild-Services {
     Initialize-LocalEnvFiles
+
     Write-Host "Rebuilding local images without cache..."
     Build-LocalImages -NoCache $true
 }
@@ -390,26 +403,65 @@ function View-Logs {
     )
 
     if ([string]::IsNullOrWhiteSpace($ServiceName)) {
-        Write-Host "Usage: .\setup.ps1 logs <service>"
-        Write-Host "Services: web, admin, space, api, worker, beat-worker, migrator, proxy, redis, postgres, minio, rabbitmq"
-        return
-    }
+        Write-Host ""
+        Write-Host "Select a Service you want to view the logs for:"
+        Write-Host "   1) Web"
+        Write-Host "   2) Space"
+        Write-Host "   3) API"
+        Write-Host "   4) Worker"
+        Write-Host "   5) Beat-Worker"
+        Write-Host "   6) Migrator"
+        Write-Host "   7) Proxy"
+        Write-Host "   8) Redis"
+        Write-Host "   9) Postgres"
+        Write-Host "   10) Minio"
+        Write-Host "   11) RabbitMQ"
+        Write-Host "   0) Back to Main Menu"
+        Write-Host ""
 
-    switch ($ServiceName.ToLowerInvariant()) {
-        "web" { View-SpecificLogs "web" }
-        "admin" { View-SpecificLogs "admin" }
-        "space" { View-SpecificLogs "space" }
-        "api" { View-SpecificLogs "api" }
-        "worker" { View-SpecificLogs "worker" }
-        "beat-worker" { View-SpecificLogs "beat-worker" }
-        "migrator" { View-SpecificLogs "migrator" }
-        "proxy" { View-SpecificLogs "proxy" }
-        "redis" { View-SpecificLogs "plane-redis" }
-        "postgres" { View-SpecificLogs "plane-db" }
-        "minio" { View-SpecificLogs "plane-minio" }
-        "rabbitmq" { View-SpecificLogs "plane-mq" }
-        default { Write-Host "INVALID SERVICE NAME SUPPLIED" }
+        $selection = Read-Host "Service"
+        $selectionNumber = 0
+        while (-not [int]::TryParse($selection, [ref]$selectionNumber) -or $selectionNumber -lt 0 -or $selectionNumber -gt 11) {
+            Write-Host "Invalid selection. Please enter a number between 0 and 11."
+            $selection = Read-Host "Service"
+        }
+
+        switch ($selectionNumber) {
+            1 { View-SpecificLogs "web" }
+            2 { View-SpecificLogs "space" }
+            3 { View-SpecificLogs "api" }
+            4 { View-SpecificLogs "worker" }
+            5 { View-SpecificLogs "beat-worker" }
+            6 { View-SpecificLogs "migrator" }
+            7 { View-SpecificLogs "proxy" }
+            8 { View-SpecificLogs "plane-redis" }
+            9 { View-SpecificLogs "plane-db" }
+            10 { View-SpecificLogs "plane-minio" }
+            11 { View-SpecificLogs "plane-mq" }
+            0 { Invoke-AskForAction @() }
+            default { Write-Host "INVALID SERVICE NAME SUPPLIED" }
+        }
+    } else {
+        switch ($ServiceName.ToLowerInvariant()) {
+            "web" { View-SpecificLogs "web" }
+            "space" { View-SpecificLogs "space" }
+            "api" { View-SpecificLogs "api" }
+            "worker" { View-SpecificLogs "worker" }
+            "beat-worker" { View-SpecificLogs "beat-worker" }
+            "migrator" { View-SpecificLogs "migrator" }
+            "proxy" { View-SpecificLogs "proxy" }
+            "redis" { View-SpecificLogs "plane-redis" }
+            "postgres" { View-SpecificLogs "plane-db" }
+            "minio" { View-SpecificLogs "plane-minio" }
+            "rabbitmq" { View-SpecificLogs "plane-mq" }
+            default { Write-Host "INVALID SERVICE NAME SUPPLIED" }
+        }
     }
+}
+
+function Show-Status {
+    Initialize-LocalEnvFiles
+    Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("ps"))
 }
 
 function Backup-ContainerDir {
@@ -425,31 +477,49 @@ function Backup-ContainerDir {
     )
 
     Write-Host "Backing up $ContainerName data..."
-    $containerId = (& docker compose -f $script:ComposeFilePath ps -q $ContainerName)
+    $containerId = (Get-ComposeOutput -Arguments @((Get-ComposeBaseArgs) + @("ps", "-q", $ContainerName)) | Select-Object -First 1)
     if ([string]::IsNullOrWhiteSpace($containerId)) {
         Write-Host "Error: $ContainerName container not found. Make sure the services are running."
         return $false
     }
 
-    $targetDir = Join-Path $BackupFolder $ServiceFolder
-    New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+    $serviceBackupPath = Join-Path $BackupFolder $ServiceFolder
+    New-Item -ItemType Directory -Force -Path $serviceBackupPath | Out-Null
 
-    & docker cp "$($containerId):$ContainerDataDir/." $targetDir
+    Write-Host "Copying $ContainerName data directory..."
+    & docker cp -q "$($containerId):$ContainerDataDir/." "$serviceBackupPath/"
     if ($LASTEXITCODE -ne 0) {
-        Remove-Item -LiteralPath $targetDir -Recurse -Force
+        Write-Host "Error: Failed to copy $ServiceFolder data"
+        Remove-Item -LiteralPath $serviceBackupPath -Recurse -Force -ErrorAction SilentlyContinue
         return $false
     }
 
-    Compress-Archive -LiteralPath $targetDir -DestinationPath (Join-Path $BackupFolder "$ServiceFolder.zip") -Force
-    Remove-Item -LiteralPath $targetDir -Recurse -Force
+    Push-Location $BackupFolder
+    try {
+        & tar -czf "$ServiceFolder.tar.gz" "$ServiceFolder/"
+        $tarStatus = $LASTEXITCODE
+        if ($tarStatus -eq 0) {
+            Remove-Item -LiteralPath $ServiceFolder -Recurse -Force
+        }
+    } finally {
+        Pop-Location
+    }
+
+    if ($tarStatus -ne 0) {
+        Write-Host "Error: Failed to create tar archive"
+        return $false
+    }
+
+    Write-Host "Successfully backed up $ServiceFolder data"
     return $true
 }
 
 function Backup-Data {
     Initialize-LocalEnvFiles
+
     $datetime = Get-Date -Format "yyyyMMdd-HHmm"
     $backupFolder = Join-Path $script:BackupRoot $datetime
-    New-Item -ItemType Directory -Path $backupFolder -Force | Out-Null
+    New-Item -ItemType Directory -Force -Path $backupFolder | Out-Null
 
     if (-not (Backup-ContainerDir $backupFolder "plane-db" "/var/lib/postgresql/data" "pgdata")) { exit 1 }
     if (-not (Backup-ContainerDir $backupFolder "plane-minio" "/export" "uploads")) { exit 1 }
@@ -461,56 +531,71 @@ function Backup-Data {
     Write-Host ""
 }
 
-function Show-Status {
-    Initialize-LocalEnvFiles
-    Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("ps"))
-}
-
-function Show-Help {
-    Write-Host "Usage: .\setup.ps1 <action>"
-    Write-Host ""
-    Write-Host "Actions:"
-    Write-Host "  install, build     Build local Docker images from this repository"
-    Write-Host "  start, up          Build local images and start services"
-    Write-Host "  stop, down         Stop services"
-    Write-Host "  restart            Restart services"
-    Write-Host "  rebuild            Rebuild local images without cache"
-    Write-Host "  logs <service>     Follow logs for a service"
-    Write-Host "  backup             Backup service data"
-    Write-Host "  status, ps         Show compose status"
-}
-
-function Invoke-Action {
+function Invoke-AskForAction {
     param(
-        [string[]]$Args
+        [string[]]$Arguments
     )
 
-    $action = if ($Args.Count -gt 0) { $Args[0].ToLowerInvariant() } else { "start" }
+    $defaultAction = ""
+    if ($Arguments -and $Arguments.Count -gt 0) {
+        $defaultAction = $Arguments[0].ToLowerInvariant()
+    }
 
-    switch ($action) {
-        "install" { Install-Plane }
-        "build" { Install-Plane }
-        "start" { Start-Services }
-        "up" { Start-Services }
-        "stop" { Stop-Services }
-        "down" { Stop-Services }
-        "restart" { Restart-Services }
-        "rebuild" { Rebuild-Services }
-        "logs" { View-Logs ($Args | Select-Object -Skip 1 -First 1) }
-        "backup" { Backup-Data }
-        "status" { Show-Status }
-        "ps" { Show-Status }
-        "help" { Show-Help }
-        "--help" { Show-Help }
-        "-h" { Show-Help }
-        default {
-            Write-Host "INVALID ACTION SUPPLIED: $action"
-            Show-Help
-            exit 1
+    $action = ""
+    if ([string]::IsNullOrWhiteSpace($defaultAction)) {
+        Write-Host ""
+        Write-Host "Select a Action you want to perform:"
+        Write-Host "   1) Install / Build local images"
+        Write-Host "   2) Start"
+        Write-Host "   3) Stop"
+        Write-Host "   4) Restart"
+        Write-Host "   5) Rebuild without cache"
+        Write-Host "   6) View Logs"
+        Write-Host "   7) Backup Data"
+        Write-Host "   8) Status"
+        Write-Host "   9) Exit"
+        Write-Host ""
+
+        $action = Read-Host "Action [2]"
+        while (-not [string]::IsNullOrWhiteSpace($action) -and $action -notmatch "^[1-9]$") {
+            Write-Host "${action}: invalid selection."
+            $action = Read-Host "Action [2]"
         }
+
+        if ([string]::IsNullOrWhiteSpace($action)) {
+            $action = "2"
+        }
+
+        Write-Host ""
+    }
+
+    if ($action -eq "1" -or $defaultAction -eq "install" -or $defaultAction -eq "build") {
+        Install-Plane
+    } elseif ($action -eq "2" -or $defaultAction -eq "start" -or $defaultAction -eq "up") {
+        Start-Services
+    } elseif ($action -eq "3" -or $defaultAction -eq "stop" -or $defaultAction -eq "down") {
+        Stop-Services
+    } elseif ($action -eq "4" -or $defaultAction -eq "restart") {
+        Restart-Services
+    } elseif ($action -eq "5" -or $defaultAction -eq "rebuild") {
+        Rebuild-Services
+    } elseif ($action -eq "6" -or $defaultAction -eq "logs") {
+        $serviceName = ""
+        if ($Arguments -and $Arguments.Count -gt 1) {
+            $serviceName = $Arguments[1]
+        }
+        View-Logs $serviceName
+    } elseif ($action -eq "7" -or $defaultAction -eq "backup") {
+        Backup-Data
+    } elseif ($action -eq "8" -or $defaultAction -eq "status" -or $defaultAction -eq "ps") {
+        Show-Status
+    } elseif ($action -eq "9") {
+        exit 0
+    } else {
+        Write-Host "INVALID ACTION SUPPLIED"
     }
 }
 
 Initialize-ComposeCommand
 Print-Header
-Invoke-Action $CommandArgs
+Invoke-AskForAction $CommandArgs

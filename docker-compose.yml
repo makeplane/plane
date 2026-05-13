@@ -96,7 +96,7 @@ services:
       - plane-db
       - plane-redis
 
-  live:
+live:
     container_name: plane-live
     build:
       context: .
