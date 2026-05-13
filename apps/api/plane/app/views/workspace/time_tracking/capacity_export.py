@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from plane.app.permissions import allow_permission, ROLE
 from plane.app.serializers.capacity_export import (
     CapacityExportJobCreateSerializer,
-    CapacityExportJobSerializer,
+    CapacityExportJobListSerializer,
 )
 from plane.db.models import CapacityExportJob, Workspace, WorkspaceMember
 from plane.utils.exception_logger import log_exception
@@ -133,5 +133,5 @@ class CapacityExportEndpoint(BaseAPIView):
             )
             .order_by("-created_at")[:50]
         )
-        serializer = CapacityExportJobSerializer(jobs, many=True)
+        serializer = CapacityExportJobListSerializer(jobs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
