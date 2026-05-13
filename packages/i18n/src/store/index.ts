@@ -49,7 +49,13 @@ export class TranslationStore {
     this.loadTranslations();
   }
 
-  /** Initializes the language based on the local storage or browser language */
+  /** Initializes the language with priority:
+   *   1. localStorage   — user already picked one
+   *   2. VITE_DEFAULT_LANGUAGE — build-time override for self-hosted deploys
+   *   3. navigator.languages   — browser locale, with prefix fallback so a
+   *      bare "zh" resolves to the first supported "zh-*"
+   *   4. FALLBACK_LANGUAGE (en)
+   */
   private initializeLanguage() {
     if (typeof window === "undefined") return;
 
@@ -59,8 +65,41 @@ export class TranslationStore {
       return;
     }
 
-    // Fallback to default language
+    const envDefault = (import.meta.env?.VITE_DEFAULT_LANGUAGE ?? "") as string;
+    if (this.isValidLanguage(envDefault)) {
+      this.setLanguage(envDefault as TLanguage);
+      return;
+    }
+
+    const fromBrowser = this.resolveBrowserLanguage();
+    if (fromBrowser) {
+      this.setLanguage(fromBrowser);
+      return;
+    }
+
     this.setLanguage(FALLBACK_LANGUAGE);
+  }
+
+  /** Match navigator.languages against SUPPORTED_LANGUAGES. Tries an exact
+   *  match first, then a language-prefix match so a browser that only sent
+   *  "zh" still gets a "zh-*" locale rather than falling back to English.
+   */
+  private resolveBrowserLanguage(): TLanguage | null {
+    const navigatorObj = typeof navigator !== "undefined" ? navigator : undefined;
+    if (!navigatorObj) return null;
+    const candidates = navigatorObj.languages?.length
+      ? Array.from(navigatorObj.languages)
+      : [navigatorObj.language];
+    for (const raw of candidates) {
+      if (!raw) continue;
+      const [lang, region] = raw.split("-");
+      const normalized = region ? `${lang.toLowerCase()}-${region.toUpperCase()}` : lang.toLowerCase();
+      if (this.isValidLanguage(normalized)) return normalized as TLanguage;
+      const prefix = `${normalized.toLowerCase()}-`;
+      const prefixed = SUPPORTED_LANGUAGES.find((l) => l.value.toLowerCase().startsWith(prefix))?.value;
+      if (prefixed) return prefixed;
+    }
+    return null;
   }
 
   /** Loads the translations for the current language */

@@ -67,6 +67,11 @@ ENV VITE_SPACE_BASE_PATH=$VITE_SPACE_BASE_PATH
 ARG VITE_WEB_BASE_URL=""
 ENV VITE_WEB_BASE_URL=$VITE_WEB_BASE_URL
 
+# Optional build-time language pin for self-hosted deploys. Empty string falls
+# through to navigator.language detection at runtime (see packages/i18n/src/store/initializeLanguage).
+ARG VITE_DEFAULT_LANGUAGE=""
+ENV VITE_DEFAULT_LANGUAGE=$VITE_DEFAULT_LANGUAGE
+
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV TURBO_TELEMETRY_DISABLED=1
 

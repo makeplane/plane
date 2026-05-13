@@ -59,6 +59,11 @@ ENV VITE_WEBSITE_URL=$VITE_WEBSITE_URL
 ARG VITE_SUPPORT_EMAIL="support@plane.so"
 ENV VITE_SUPPORT_EMAIL=$VITE_SUPPORT_EMAIL
 
+# Optional build-time language pin for self-hosted deploys. Empty string falls
+# through to navigator.language detection at runtime.
+ARG VITE_DEFAULT_LANGUAGE=""
+ENV VITE_DEFAULT_LANGUAGE=$VITE_DEFAULT_LANGUAGE
+
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
