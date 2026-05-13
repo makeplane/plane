@@ -77,6 +77,13 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    # Hourly mirror of the Lark/Feishu directory into LARK_DEFAULT_WORKSPACE_SLUG.
+    # The task itself short-circuits unless LARK_AUTO_SYNC_ENABLED is truthy,
+    # so this entry is a no-op for deploys that haven't opted in.
+    "sync-every-hour-lark-directory": {
+        "task": "plane.bgtasks.lark_sync_task.sync_lark_directory_task",
+        "schedule": crontab(minute=0),  # Top of every hour, UTC
+    },
 }
 
 

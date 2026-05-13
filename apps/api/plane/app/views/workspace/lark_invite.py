@@ -270,6 +270,29 @@ class LarkContactsListEndpoint(BaseAPIView):
         }
 
 
+class LarkSyncTriggerEndpoint(BaseAPIView):
+    """Synchronously runs the same logic as the hourly Celery task so a
+    workspace admin can pull in new Feishu hires on demand. Returns the
+    counts dict so the UI can render a confirmation toast.
+    """
+
+    permission_classes = [WorkSpaceAdminPermission]
+
+    def post(self, request, slug):
+        # Import inside the method to avoid a circular import at module load:
+        # lark_sync_task imports helpers from this file.
+        from plane.bgtasks.lark_sync_task import sync_lark_directory, DEFAULT_ROLE
+
+        try:
+            role = int(request.data.get("role") or DEFAULT_ROLE)
+        except (TypeError, ValueError):
+            role = DEFAULT_ROLE
+
+        stats = sync_lark_directory(slug, role=role, force_refresh=True)
+        http_status = status.HTTP_502_BAD_GATEWAY if stats.get("error") else status.HTTP_200_OK
+        return Response(stats, status=http_status)
+
+
 class LarkWorkspaceInviteEndpoint(BaseAPIView):
     """Batch pre-creates Plane User accounts for selected Lark contacts and adds
     them as active workspace members. Idempotent: existing users get linked,

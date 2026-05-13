@@ -67,6 +67,7 @@ from .workspace.invite import (
 )
 from .workspace.lark_invite import (
     LarkContactsListEndpoint,
+    LarkSyncTriggerEndpoint,
     LarkWorkspaceInviteEndpoint,
 )
 from .workspace.label import WorkspaceLabelsEndpoint

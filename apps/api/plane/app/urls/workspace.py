@@ -37,6 +37,7 @@ from plane.app.views import (
     WorkspaceStickyViewSet,
     WorkspaceUserPreferenceViewSet,
     LarkContactsListEndpoint,
+    LarkSyncTriggerEndpoint,
     LarkWorkspaceInviteEndpoint,
 )
 
@@ -78,6 +79,11 @@ urlpatterns = [
         "workspaces/<str:slug>/lark-invite/",
         LarkWorkspaceInviteEndpoint.as_view(),
         name="workspace-lark-invite",
+    ),
+    path(
+        "workspaces/<str:slug>/lark-sync/",
+        LarkSyncTriggerEndpoint.as_view(),
+        name="workspace-lark-sync",
     ),
     path(
         "workspaces/<str:slug>/invitations/<uuid:pk>/",
