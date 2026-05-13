@@ -144,4 +144,57 @@ export class WorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * Lists the Lark/Feishu directory contacts the app is authorised to see.
+   * Backed by /open-apis/contact/v3/scopes + /users on the Plane API side.
+   */
+  async listLarkContacts(workspaceSlug: string): Promise<{ contacts: TLarkContact[] }> {
+    return this.get(`/api/workspaces/${workspaceSlug}/lark-contacts/`)
+      .then((res) => res?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /**
+   * Pre-creates Plane user accounts for the selected Lark contacts and adds
+   * them as active workspace members. Idempotent — existing users are linked.
+   */
+  async larkInvite(
+    workspaceSlug: string,
+    payload: { users: TLarkInviteUser[]; role?: number }
+  ): Promise<TLarkInviteResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/lark-invite/`, payload)
+      .then((res) => res?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
+
+export type TLarkContact = {
+  union_id: string;
+  open_id: string;
+  name: string;
+  en_name: string;
+  email: string;
+  enterprise_email: string;
+  avatar_url: string;
+};
+
+export type TLarkInviteUser = {
+  union_id?: string;
+  open_id?: string;
+  name?: string;
+  email?: string;
+  enterprise_email?: string;
+  avatar_url?: string;
+  role?: number;
+};
+
+export type TLarkInviteResponse = {
+  invited: { email: string; user_created: boolean; member_created: boolean }[];
+  skipped: unknown[];
+  errors: { entry: unknown; error: string }[];
+};

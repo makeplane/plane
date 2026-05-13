@@ -19,8 +19,10 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
+import { LarkInviteModal } from "@/components/workspace/settings/lark-invite-modal";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -35,15 +37,17 @@ import { MembersWorkspaceSettingsHeader } from "./header";
 const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [larkInviteModal, setLarkInviteModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const {
-    workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
+    workspace: { workspaceMemberIds, inviteMembersToWorkspace, fetchWorkspaceMembers, filtersStore },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+  const { config } = useInstance();
   const { t } = useTranslation();
 
   // derived values
@@ -108,6 +112,14 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
+      {config?.is_lark_enabled && (
+        <LarkInviteModal
+          isOpen={larkInviteModal}
+          workspaceSlug={workspaceSlug}
+          onClose={() => setLarkInviteModal(false)}
+          onInvited={() => fetchWorkspaceMembers(workspaceSlug)}
+        />
+      )}
       <section
         className={cn("size-full", {
           "opacity-60": !canPerformWorkspaceMemberActions,
@@ -138,6 +150,11 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
               memberType="workspace"
             />
             <MembersActivityButton workspaceSlug={workspaceSlug} />
+            {canPerformWorkspaceAdminActions && config?.is_lark_enabled && (
+              <Button variant="neutral-primary" size="lg" onClick={() => setLarkInviteModal(true)}>
+                Invite from Lark
+              </Button>
+            )}
             {canPerformWorkspaceAdminActions && (
               <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
                 {t("workspace_settings.settings.members.add_member")}
