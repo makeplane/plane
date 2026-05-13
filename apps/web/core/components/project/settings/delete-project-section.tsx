@@ -23,7 +23,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Delete project</span>
+            <span className="text-xl tracking-tight">Delete program</span>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Disclosure.Button>
 
@@ -39,7 +39,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
                 <span className="text-sm tracking-tight">
-                  When deleting a project, all of the data and resources within that project will be permanently removed
+                  When deleting a program, all of the data and resources within that program will be permanently removed
                   and cannot be recovered.
                 </span>
                 <div>
@@ -50,7 +50,7 @@ export const DeleteProjectSection: React.FC<IDeleteProjectSection> = (props) => 
                         onClick={handleDelete}
                         data-ph-element={PROJECT_TRACKER_ELEMENTS.DELETE_PROJECT_BUTTON}
                       >
-                        Delete my project
+                        Delete my program
                       </Button>
                     </div>
                   ) : (

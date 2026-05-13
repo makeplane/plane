@@ -29,7 +29,7 @@ export const Default: Story = {
         <Accordion.Item value="item-1">
           <Accordion.Trigger>What is Plane?</Accordion.Trigger>
           <Accordion.Content>
-            Plane is an open-source project management tool designed for developers and teams to plan, track, and manage
+            Plane is an open-source program management tool designed for developers and teams to plan, track, and manage
             their work efficiently.
           </Accordion.Content>
         </Accordion.Item>

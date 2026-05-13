@@ -72,7 +72,7 @@ const USER_DOMAIN = [
   "Legal",
   "Finance",
   "Human Resources",
-  "Project",
+  "Program",
   "Other",
 ];
 

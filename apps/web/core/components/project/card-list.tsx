@@ -93,7 +93,7 @@ export const ProjectCardList = observer((props: TProjectCardListProps) => {
             width={192}
             height={192}
             className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
-            alt="No matching projects"
+            alt="No matching programs"
           />
           <h5 className="mb-1 mt-7 text-xl font-medium">{t("workspace_projects.empty_state.filter.title")}</h5>
           <p className="whitespace-pre-line text-base text-custom-text-400">

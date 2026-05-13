@@ -90,7 +90,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       };
     case "archived_at":
       return {
-        message: newValue === "restore" ? "restored the project" : "archived the project",
+        message: newValue === "restore" ? "restored the program" : "archived the program",
         customUserName: newValue === "archive" ? "Plane" : undefined,
       };
     case "name":
@@ -103,7 +103,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       };
     case "description":
       return {
-        message: newValue ? "updated the project description" : "removed the project description",
+        message: newValue ? "updated the program description" : "removed the program description",
       };
     case "start_date":
       return {
@@ -215,7 +215,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            {newValue ? "created" : "removed"} the project page{" "}
+            {newValue ? "created" : "removed"} the program page{" "}
             <span className="font-medium text-custom-text-100">{newValue || oldValue || "Untitled page"}</span>
           </>
         ),

@@ -166,7 +166,7 @@ export const ROLE_DETAILS = {
 
 export const USER_ROLES = [
   {
-    value: "Product / Project Manager",
+    value: "Product / Program Manager",
     i18n_label: "user_roles.product_or_project_manager",
   },
   {
@@ -374,7 +374,7 @@ export const WORKSPACE_DEFAULT_SEARCH_RESULT: IWorkspaceSearchResults = {
 export const USE_CASES = [
   "Plan and track product roadmaps",
   "Manage engineering sprints",
-  "Coordinate cross-functional projects",
+  "Coordinate cross-functional programs",
   "Replace our current tool",
   "Just exploring",
 ];

@@ -26,7 +26,7 @@ export const NotAuthorizedView: React.FC<Props> = observer((props) => {
     <DefaultLayout className={className}>
       <div className="flex h-full w-full flex-col items-center justify-center gap-y-5 bg-custom-background-100 text-center">
         <div className="h-44 w-72">
-          <Image src={asset} height="176" width="288" alt="ProjectSettingImg" />
+          <Image src={asset} height="176" width="288" alt="Program access illustration" />
         </div>
         <h1 className="text-xl font-medium text-custom-text-100">Oops! You are not authorized to view this page</h1>
         {actionButton}

@@ -67,7 +67,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
-          <h3 className="font-semibold">Jira Project Key</h3>
+          <h3 className="font-semibold">Jira Program Key</h3>
           <p className="text-sm text-custom-text-200">If XXX-123 is your work item, then enter XXX</p>
         </div>
         <div className="col-span-1">
@@ -75,7 +75,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
             control={control}
             name="metadata.project_key"
             rules={{
-              required: "Please enter your project key.",
+              required: "Please enter your program key.",
             }}
             render={({ field: { value, onChange, ref } }) => (
               <Input
@@ -159,14 +159,14 @@ export const JiraGetImportDetail: React.FC = observer(() => {
 
       <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
         <div className="col-span-1">
-          <h3 className="font-semibold">Import to project</h3>
-          <p className="text-sm text-custom-text-200">Select which project you want to import to.</p>
+          <h3 className="font-semibold">Import to program</h3>
+          <p className="text-sm text-custom-text-200">Select which program you want to import to.</p>
         </div>
         <div className="col-span-1">
           <Controller
             control={control}
             name="project_id"
-            rules={{ required: "Please select a project." }}
+            rules={{ required: "Please select a program." }}
             render={({ field: { value, onChange } }) => (
               <CustomSelect
                 value={value}
@@ -177,7 +177,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     {value && value.trim() !== "" ? (
                       getProjectById(value)?.name
                     ) : (
-                      <span className="text-custom-text-200">Select a project</span>
+                      <span className="text-custom-text-200">Select a program</span>
                     )}
                   </span>
                 }
@@ -196,7 +196,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                   })
                 ) : (
                   <div className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200">
-                    <p>You don{"'"}t have any project. Please create a project first.</p>
+                    <p>You don{"'"}t have any program. Please create a program first.</p>
                   </div>
                 )}
                 <div>
@@ -210,7 +210,7 @@ export const JiraGetImportDetail: React.FC = observer(() => {
                     className="flex cursor-pointer select-none items-center space-x-2 truncate rounded px-1 py-1.5 text-custom-text-200"
                   >
                     <Plus className="h-4 w-4 text-custom-text-200" />
-                    <span>Create new project</span>
+                    <span>Create new program</span>
                   </button>
                 </div>
               </CustomSelect>

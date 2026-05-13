@@ -23,7 +23,7 @@ export const FavoriteItemDragHandle: FC<Props> = observer((props) => {
   return (
     <Tooltip
       isMobile={isMobile}
-      tooltipContent={sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"}
+      tooltipContent={sort_order === null ? "Join the program to rearrange" : "Drag to rearrange"}
       position="top-end"
       disabled={isDragging}
     >

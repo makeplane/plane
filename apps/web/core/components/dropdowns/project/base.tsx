@@ -59,7 +59,7 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
     multiple,
     onChange,
     onClose,
-    placeholder = "Project",
+    placeholder = "Program",
     placement,
     projectIds,
     renderByDefault = true,
@@ -134,7 +134,7 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
   const getDisplayName = (value: string | string[] | null, placeholder: string = "") => {
     if (Array.isArray(value)) {
       const firstProject = getProjectById(value[0]);
-      return value.length ? (value.length === 1 ? firstProject?.name : `${value.length} projects`) : placeholder;
+      return value.length ? (value.length === 1 ? firstProject?.name : `${value.length} programs`) : placeholder;
     } else {
       return value ? (getProjectById(value)?.name ?? placeholder) : placeholder;
     }
@@ -196,8 +196,8 @@ export const ProjectDropdownBase: React.FC<Props> = observer((props) => {
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Project"
-            tooltipContent={value?.length ? `${value.length} project${value.length !== 1 ? "s" : ""}` : placeholder}
+            tooltipHeading="Program"
+            tooltipContent={value?.length ? `${value.length} program${value.length !== 1 ? "s" : ""}` : placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
             renderToolTipByDefault={renderByDefault}

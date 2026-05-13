@@ -111,7 +111,7 @@ export const useIssueActionHandlers = (props: MenuItemFactoryProps) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Restore success",
-          message: "Your work item can be found in project work items.",
+          message: "Your work item can be found in program work items.",
         });
       })
       .catch(() => {

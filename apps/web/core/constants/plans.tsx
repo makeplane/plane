@@ -65,11 +65,11 @@ export const PLANS_LIST: TPlanePlans[] = ["free", "one", "pro", "business", "ent
 export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   {
     id: "project-work-tracking",
-    title: "Project + work tracking",
+    title: "Program + work tracking",
     features: [
       {
-        title: "Projects",
-        description: "Add projects to house work items, cycles, and modules.",
+        title: "Programs",
+        description: "Add programs to house work items, cycles, and modules.",
         cloud: {
           free: true,
           one: true,
@@ -149,7 +149,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
   },
   {
     id: "project-work-management",
-    title: "Project + work management",
+    title: "Program + work management",
     features: [
       {
         title: "Bulk Ops",
@@ -185,7 +185,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Active Cycles",
-        description: "See all running cycles across all projects, or soon, in\na single project.",
+        description: "See all running cycles across all programs, or soon, in\na single program.",
         cloud: {
           free: false,
           one: true,
@@ -207,11 +207,11 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Custom Properties",
-        description: "Create your own properties and apply them to your\nworkspace or project.",
+        description: "Create your own properties and apply them to your\nworkspace or program.",
         cloud: {
           free: false,
           one: false,
-          pro: "Project-level\ncustom properties",
+          pro: "Program-level\ncustom properties",
           business: "Workspace-level\nproperties and roll-ups",
           enterprise: "Workspace-level\nproperties and roll-ups",
         },
@@ -229,7 +229,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Work item Transfers",
-        description: "Move a work item from a project or a cycle to\nanother.",
+        description: "Move a work item from a program or a cycle to\nanother.",
         cloud: {
           free: false,
           one: false,
@@ -241,7 +241,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       {
         title: "Auto-transfer Cycle Work items",
         description:
-          "Transfer incomplete work items from a completed cycle\nto the next cycle or to the default project state. ",
+          "Transfer incomplete work items from a completed cycle\nto the next cycle or to the default program state. ",
         cloud: {
           free: false,
           one: false,
@@ -276,7 +276,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       {
         title: "Checkpoints",
         description:
-          "Add markers to Projects, Epics and Initiatives to keep your\nteam on track and report on progress.",
+          "Add markers to Programs, Epics and Initiatives to keep your\nteam on track and report on progress.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -309,8 +309,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       // {
-      //   title: "Project Overview",
-      //   description: "See just-in-time snapshots of your project with\nessential metrics.",
+      //   title: "Program Overview",
+      //   description: "See just-in-time snapshots of your program with\nessential metrics.",
       //   comingSoon: true,
       //   cloud: {
       //     free: false,
@@ -321,9 +321,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //   },
       // },
       {
-        title: "Public, Private, and Secret projects",
+        title: "Public, Private, and Secret programs",
         description:
-          "Public projects are visible and accessible to\neveryone. Private ones are visible but need approval\nto join. Secret projects aren't visible or accessible.",
+          "Public programs are visible and accessible to\neveryone. Private ones are visible but need approval\nto join. Secret programs aren't visible or accessible.",
         cloud: {
           free: false,
           one: false,
@@ -333,9 +333,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "State Of Projects",
+        title: "State Of Programs",
         description:
-          "See all projects laid across states that highlight\nthose that need attention and those on track.",
+          "See all programs laid across states that highlight\nthose that need attention and those on track.",
         cloud: {
           free: false,
           one: false,
@@ -345,9 +345,9 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       // {
-      //   title: "Project Updates",
+      //   title: "Program Updates",
       //   description:
-      //     "Keep stakeholders in the loop with a dedicated\nspace for updates that everyone in the project can\nsee.",
+      //     "Keep stakeholders in the loop with a dedicated\nspace for updates that everyone in the program can\nsee.",
       //   comingSoon: true,
       //   cloud: {
       //     free: false,
@@ -372,7 +372,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Teamspace Cycles",
-        description: "See multiple cycles in multiple projects at once.",
+        description: "See multiple cycles in multiple programs at once.",
         cloud: {
           free: false,
           one: false,
@@ -382,8 +382,8 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "Project Templates",
-        description: "Save states, workflows, automation, and other project\nsettings into templates.",
+        title: "Program Templates",
+        description: "Save states, workflows, automation, and other program\nsettings into templates.",
         cloud: {
           free: false,
           one: false,
@@ -394,7 +394,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Baselines And Deviations",
-        description: "Declare baselines for how your projects progress\nand zoom in on deviations.",
+        description: "Declare baselines for how your programs progress\nand zoom in on deviations.",
         cloud: {
           free: false,
           one: false,
@@ -449,7 +449,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Emails For Intake",
-        description: "Get an email address for reporting work items\ndirectly into a project's Intake.",
+        description: "Get an email address for reporting work items\ndirectly into a program's Intake.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -564,7 +564,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       // {
       //   title: "Time Capsule",
-      //   description: "Go back in your project's timeline and see point-in-\ntime snapshots.",
+      //   description: "Go back in your program's timeline and see point-in-\ntime snapshots.",
       //   comingSoon: true,
       //   cloud: {
       //     free: false,
@@ -588,7 +588,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Custom Reports",
-        description: "Generate reports by any dimension and metric\nacross your project or workspace.",
+        description: "Generate reports by any dimension and metric\nacross your program or workspace.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -667,7 +667,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
     features: [
       {
         title: "Member limit",
-        description: "Number of seats that can use project and work management features",
+        description: "Number of seats that can use program and work management features",
         selfHostedDescription: "Number of users that our standard infra supports\nIncrease infra to get more users",
         cloud: {
           free: "12",
@@ -697,7 +697,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Guests",
-        description: "Let some users see everything or just their work items in\na project.",
+        description: "Let some users see everything or just their work items in\na program.",
         cloud: {
           free: false,
           one: "5 per paid member",
@@ -708,7 +708,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Approvals",
-        description: "Set workspace, project, and work item type approvals to\ndesignated admins.",
+        description: "Set workspace, program, and work item type approvals to\ndesignated admins.",
         comingSoon: true,
         cloud: {
           free: false,
@@ -811,7 +811,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Real-time Collab",
-        description: "Edit a page together with members in your project,\nteam, or workspace.",
+        description: "Edit a page together with members in your program,\nteam, or workspace.",
         cloud: {
           free: false,
           one: true,
@@ -822,7 +822,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Work item Embeds",
-        description: "Embed work items from any project you are a member\nof.",
+        description: "Embed work items from any program you are a member\nof.",
         cloud: {
           free: false,
           one: true,
@@ -856,7 +856,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Wiki",
-        description: "Create company-wide wikis or knowledge bases\nwithout creating a project.",
+        description: "Create company-wide wikis or knowledge bases\nwithout creating a program.",
         cloud: {
           free: false,
           one: true,
@@ -878,7 +878,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       },
       {
         title: "Templates",
-        description: "Use pages as templates for your project, team, or\nworkspace.",
+        description: "Use pages as templates for your program, team, or\nworkspace.",
         cloud: {
           free: false,
           one: false,
@@ -1294,10 +1294,10 @@ export const PLANE_PLANS: PlanePlans = {
     },
   },
   planHighlights: {
-    free: ["Upto 12 users", "Pages", "Unlimited projects", "Unlimited cycles and modules"],
+    free: ["Upto 12 users", "Pages", "Unlimited programs", "Unlimited cycles and modules"],
     one: ["Upto 50 users", "OIDC and SAML", "Active cycles", "Limited time tracking"],
     pro: ["Unlimited users", "Custom work items + Properties", "Work item templates", "Full Time Tracking"],
-    business: ["RBAC", "Project Templates", "Baselines And Deviations", "Custom Reports"],
+    business: ["RBAC", "Program Templates", "Baselines And Deviations", "Custom Reports"],
     enterprise: ["Private + managed deployments", "GAC", "LDAP support", "Databases + Formulas"],
   },
   planComparison: PLANS_COMPARISON_LIST,

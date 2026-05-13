@@ -189,7 +189,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
             coverImage ??
               "https://images.unsplash.com/photo-1672243775941-10d763d9adef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
           )}
-          alt="Project cover image"
+          alt="Program cover image"
           className="h-44 w-full rounded-md object-cover"
         />
         <div className="z-5 absolute bottom-4 flex w-full items-end justify-between gap-3 px-4">
@@ -271,7 +271,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               required: t("name_is_required"),
               maxLength: {
                 value: 255,
-                message: "Project name should be less than 255 characters",
+                message: "Program name should be less than 255 characters",
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -312,7 +312,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex flex-col gap-1">
-            <h4 className="text-sm">Project ID</h4>
+            <h4 className="text-sm">Program ID</h4>
             <div className="relative">
               <Controller
                 control={control}
@@ -346,7 +346,7 @@ export const ProjectDetailsForm: FC<IProjectDetailsForm> = (props) => {
               />
               <Tooltip
                 isMobile={isMobile}
-                tooltipContent="Helps you identify work items in the project uniquely. Max 5 characters."
+                tooltipContent="Helps you identify work items in the program uniquely. Max 5 characters."
                 className="text-sm"
                 position="right-start"
               >

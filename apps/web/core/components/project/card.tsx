@@ -72,10 +72,10 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
 
     const addToFavoritePromise = addProjectToFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(addToFavoritePromise, {
-      loading: "Adding project to favorites...",
+      loading: "Adding program to favorites...",
       success: {
         title: "Success!",
-        message: () => "Project added to favorites.",
+        message: () => "Program added to favorites.",
         actionItems: () => {
           if (!isFavoriteMenuOpen) toggleFavoriteMenu(true);
           return <></>;
@@ -83,7 +83,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       },
       error: {
         title: "Error!",
-        message: () => "Couldn't add the project to favorites. Please try again.",
+        message: () => "Couldn't add the program to favorites. Please try again.",
       },
     });
   };
@@ -93,14 +93,14 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
 
     const removeFromFavoritePromise = removeProjectFromFavorites(workspaceSlug.toString(), project.id);
     setPromiseToast(removeFromFavoritePromise, {
-      loading: "Removing project from favorites...",
+      loading: "Removing program from favorites...",
       success: {
         title: "Success!",
-        message: () => "Project removed from favorites.",
+        message: () => "Program removed from favorites.",
       },
       error: {
         title: "Error!",
-        message: () => "Couldn't remove the project from favorites. Please try again.",
+        message: () => "Couldn't remove the program from favorites. Please try again.",
       },
     });
   };
@@ -111,7 +111,7 @@ export const ProjectCard: React.FC<Props> = observer((props) => {
       setToast({
         type: TOAST_TYPE.INFO,
         title: "Link Copied!",
-        message: "Project link copied to clipboard.",
+        message: "Program link copied to clipboard.",
       })
     );
   const handleOpenInNewTab = () => window.open(`/${projectLink}`, "_blank");

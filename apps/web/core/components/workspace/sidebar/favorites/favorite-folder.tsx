@@ -179,7 +179,7 @@ export const FavoriteFolder: React.FC<Props> = (props) => {
                       <Tooltip
                         isMobile={isMobile}
                         tooltipContent={
-                          favorite.sort_order === null ? "Join the project to rearrange" : "Drag to rearrange"
+                          favorite.sort_order === null ? "Join the program to rearrange" : "Drag to rearrange"
                         }
                         position="top-end"
                         disabled={isDragging}

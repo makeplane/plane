@@ -13,24 +13,24 @@ import { cn } from "@plane/utils";
 import { AppProvider } from "./provider";
 
 export const metadata: Metadata = {
-  title: "Plane | Simple, extensible, open-source project management tool.",
+  title: "Plane | Simple, extensible, open-source program management tool.",
   description: SITE_DESCRIPTION,
   metadataBase: new URL("https://app.plane.so"),
   openGraph: {
-    title: "Plane | Simple, extensible, open-source project management tool.",
-    description: "Open-source project management tool to manage work items, cycles, and product roadmaps easily",
+    title: "Plane | Simple, extensible, open-source program management tool.",
+    description: "Open-source program management tool to manage work items, cycles, and product roadmaps easily",
     url: "https://app.plane.so/",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Plane - Modern project management",
+        alt: "Plane - Modern program management",
       },
     ],
   },
   keywords:
-    "software development, plan, ship, software, accelerate, code management, release management, project management, work item tracking, agile, scrum, kanban, collaboration",
+    "software development, plan, ship, software, accelerate, code management, release management, program management, work item tracking, agile, scrum, kanban, collaboration",
   twitter: {
     site: "@planepowers",
     card: "summary_large_image",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Plane - Modern project management",
+        alt: "Plane - Modern program management",
       },
     ],
   },

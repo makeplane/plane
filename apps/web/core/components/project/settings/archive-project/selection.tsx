@@ -22,7 +22,7 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
       {({ open }) => (
         <div className="w-full">
           <Disclosure.Button as="button" type="button" className="flex w-full items-center justify-between">
-            <span className="text-xl tracking-tight">Archive project</span>
+            <span className="text-xl tracking-tight">Archive program</span>
             {open ? <ChevronUp className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
           </Disclosure.Button>
           <Transition
@@ -37,14 +37,14 @@ export const ArchiveProjectSelection: React.FC<IArchiveProject> = (props) => {
             <Disclosure.Panel>
               <div className="flex flex-col gap-8 pt-4">
                 <span className="text-sm tracking-tight">
-                  Archiving a project will unlist your project from your side navigation although you will still be able
-                  to access it from your projects page. You can restore the project or delete it whenever you want.
+                  Archiving a program will unlist your program from your side navigation although you will still be able
+                  to access it from your programs page. You can restore the program or delete it whenever you want.
                 </span>
                 <div>
                   {projectDetails ? (
                     <div>
                       <Button variant="outline-danger" onClick={handleArchive}>
-                        Archive project
+                        Archive program
                       </Button>
                     </div>
                   ) : (

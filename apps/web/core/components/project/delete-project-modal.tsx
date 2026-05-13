@@ -45,7 +45,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
     watch,
   } = useForm({ defaultValues });
 
-  const canDelete = watch("projectName") === project?.name && watch("confirmDelete") === "delete my project";
+  const canDelete = watch("projectName") === project?.name && watch("confirmDelete") === "delete my program";
 
   const handleClose = () => {
     const timer = setTimeout(() => {
@@ -73,7 +73,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
           title: "Success!",
-          message: "Project deleted successfully.",
+          message: "Program deleted successfully.",
         });
       })
       .catch(() => {
@@ -124,19 +124,19 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                       <AlertTriangle className="h-6 w-6 text-red-600" aria-hidden="true" />
                     </span>
                     <span className="flex items-center justify-start">
-                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete project</h3>
+                      <h3 className="text-xl font-medium 2xl:text-2xl">Delete program</h3>
                     </span>
                   </div>
                   <span>
                     <p className="text-sm leading-7 text-custom-text-200">
-                      Are you sure you want to delete project{" "}
+                      Are you sure you want to delete program{" "}
                       <span className="break-words font-semibold">{project?.name}</span>? All of the data related to the
-                      project will be permanently removed. This action cannot be undone
+                      program will be permanently removed. This action cannot be undone
                     </p>
                   </span>
                   <div className="text-custom-text-200">
                     <p className="break-words text-sm ">
-                      Enter the project name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
+                      Enter the program name <span className="font-medium text-custom-text-100">{project?.name}</span>{" "}
                       to continue:
                     </p>
                     <Controller
@@ -151,7 +151,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.projectName)}
-                          placeholder="Project name"
+                          placeholder="Program name"
                           className="mt-2 w-full"
                           autoComplete="off"
                         />
@@ -160,7 +160,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                   </div>
                   <div className="text-custom-text-200">
                     <p className="text-sm">
-                      To confirm, type <span className="font-medium text-custom-text-100">delete my project</span>{" "}
+                      To confirm, type <span className="font-medium text-custom-text-100">delete my program</span>{" "}
                       below:
                     </p>
                     <Controller
@@ -175,7 +175,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                           onChange={onChange}
                           ref={ref}
                           hasError={Boolean(errors.confirmDelete)}
-                          placeholder="Enter 'delete my project'"
+                          placeholder="Enter 'delete my program'"
                           className="mt-2 w-full"
                           autoComplete="off"
                         />
@@ -187,7 +187,7 @@ export const DeleteProjectModal: React.FC<DeleteProjectModal> = (props) => {
                       Cancel
                     </Button>
                     <Button variant="danger" size="sm" type="submit" disabled={!canDelete} loading={isSubmitting}>
-                      {isSubmitting ? "Deleting" : "Delete project"}
+                      {isSubmitting ? "Deleting" : "Delete program"}
                     </Button>
                   </div>
                 </form>

@@ -85,7 +85,7 @@ export const ProjectMultiSelectModal: React.FC<Props> = observer((props) => {
           <Search className="flex-shrink-0 size-4 text-custom-text-400" aria-hidden="true" />
           <Combobox.Input
             className="h-12 w-full border-0 bg-transparent text-sm text-custom-text-100 outline-none placeholder:text-custom-text-400 focus:ring-0"
-            placeholder="Search for projects"
+            placeholder="Search for programs"
             displayValue={() => ""}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

@@ -66,7 +66,7 @@ export const ProfileForm = observer((props: TProfileFormProps) => {
       last_name: user.last_name || "",
       display_name: user.display_name || "",
       email: user.email || "",
-      role: profile.role || "Product / Project Manager",
+      role: profile.role || "Product / Program Manager",
       language: profile.language || "en",
       user_timezone: user.user_timezone || "Asia/Kolkata",
     },
