@@ -65,6 +65,10 @@ from .workspace.invite import (
     WorkspaceJoinEndpoint,
     UserWorkspaceInvitationsViewSet,
 )
+from .workspace.lark_invite import (
+    LarkContactsListEndpoint,
+    LarkWorkspaceInviteEndpoint,
+)
 from .workspace.label import WorkspaceLabelsEndpoint
 from .workspace.state import WorkspaceStatesEndpoint
 from .workspace.user import (
