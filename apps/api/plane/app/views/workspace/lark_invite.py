@@ -3,12 +3,15 @@
 # See the LICENSE file for details.
 
 # Python imports
-import os
+import hashlib
 import logging
+import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 
 # Django imports
+from django.core.cache import cache
 from django.db import transaction
 
 # Third party modules
@@ -24,6 +27,8 @@ from plane.license.utils.instance_value import get_configuration_value
 logger = logging.getLogger("plane.app.views.workspace.lark_invite")
 
 DEFAULT_MEMBER_ROLE = 15  # matches ROLE_CHOICES on WorkspaceMember; 15 = Member
+CONTACTS_CACHE_TTL = 600  # 10 minutes; admins re-open this modal often during onboarding
+DEPT_CRAWL_WORKERS = 5  # Lark v3 contact API tolerates a few concurrent calls comfortably
 
 
 def _get_lark_config():
@@ -152,57 +157,100 @@ def _batch_fetch_users(token, user_open_ids, user_id_type="open_id"):
     return out
 
 
+def _cache_key():
+    client_id, _, _ = _get_lark_config()
+    # Hash so the key doesn't leak the client_id into Redis logs/dumps.
+    digest = hashlib.sha1((client_id or "").encode("utf-8")).hexdigest()[:12]
+    return f"lark:contacts:{digest}"
+
+
+def _crawl_directory(token):
+    """Concurrent traversal of every department the app can see, plus any users
+    visible directly (typically the app installer). Returns a deduplicated list
+    of serialised contacts.
+    """
+    try:
+        scopes_body = _lark_get(
+            token,
+            "/open-apis/contact/v3/scopes",
+            params={"user_id_type": "open_id", "page_size": 100},
+        )
+    except requests.RequestException as exc:
+        raise RuntimeError(f"LARK_SCOPES_FAILED: {exc}")
+    if scopes_body.get("code", 0) != 0:
+        raise RuntimeError(scopes_body.get("msg") or "LARK_SCOPES_ERROR")
+
+    data = scopes_body.get("data") or {}
+    dept_ids = data.get("department_ids") or []
+    direct_user_ids = data.get("user_ids") or []
+
+    # Walk every department in parallel — each _walk_department call does its own
+    # paginated /users + recursive /departments/<id>/children traversal.
+    dept_results: list[list[dict]] = []
+    if dept_ids:
+        with ThreadPoolExecutor(max_workers=DEPT_CRAWL_WORKERS) as pool:
+            future_map = {pool.submit(lambda d=d: list(_walk_department(token, d))): d for d in dept_ids}
+            for fut in as_completed(future_map):
+                try:
+                    dept_results.append(fut.result())
+                except Exception:
+                    logger.exception("Lark department crawl failed for %s", future_map[fut])
+                    dept_results.append([])
+
+    seen: set[str] = set()
+    contacts: list[dict] = []
+    for batch in dept_results:
+        for u in batch:
+            key = u.get("union_id") or u.get("open_id")
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            contacts.append(LarkContactsListEndpoint._serialise(u))
+
+    # Plus users visible directly (often the app installer) not already pulled
+    # in via a department walk.
+    direct_users = _batch_fetch_users(token, [uid for uid in direct_user_ids if uid not in seen])
+    for u in direct_users:
+        key = u.get("union_id") or u.get("open_id")
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        contacts.append(LarkContactsListEndpoint._serialise(u))
+
+    return contacts
+
+
 class LarkContactsListEndpoint(BaseAPIView):
     """Returns the union of all Lark users the app is authorised to see, used by
     the workspace "Invite from Lark" modal. No pagination — the directory is
     small enough that the client filters locally.
+
+    Results are cached for ~10 minutes so subsequent opens are instant. Pass
+    `?refresh=1` to force a re-crawl (useful after someone joins the directory).
     """
 
     permission_classes = [WorkSpaceAdminPermission]
 
     def get(self, request, slug):
+        force_refresh = request.query_params.get("refresh") in ("1", "true", "yes")
+        key = _cache_key()
+
+        if not force_refresh:
+            cached = cache.get(key)
+            if cached is not None:
+                return Response({"contacts": cached, "cached": True}, status=status.HTTP_200_OK)
+
         token, err = _tenant_access_token()
         if err:
             return Response({"error": err}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            scopes_body = _lark_get(
-                token,
-                "/open-apis/contact/v3/scopes",
-                params={"user_id_type": "open_id", "page_size": 100},
-            )
-        except requests.RequestException as exc:
-            return Response({"error": f"LARK_SCOPES_FAILED: {exc}"}, status=status.HTTP_502_BAD_GATEWAY)
-        if scopes_body.get("code", 0) != 0:
-            return Response(
-                {"error": scopes_body.get("msg") or "LARK_SCOPES_ERROR"},
-                status=status.HTTP_502_BAD_GATEWAY,
-            )
+            contacts = _crawl_directory(token)
+        except RuntimeError as exc:
+            return Response({"error": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
 
-        data = scopes_body.get("data") or {}
-        dept_ids = data.get("department_ids") or []
-        direct_user_ids = data.get("user_ids") or []
-
-        seen = set()
-        contacts = []
-
-        for dept_id in dept_ids:
-            for u in _walk_department(token, dept_id):
-                key = u.get("union_id") or u.get("open_id")
-                if not key or key in seen:
-                    continue
-                seen.add(key)
-                contacts.append(self._serialise(u))
-
-        direct_users = _batch_fetch_users(token, [uid for uid in direct_user_ids if uid not in seen])
-        for u in direct_users:
-            key = u.get("union_id") or u.get("open_id")
-            if not key or key in seen:
-                continue
-            seen.add(key)
-            contacts.append(self._serialise(u))
-
-        return Response({"contacts": contacts}, status=status.HTTP_200_OK)
+        cache.set(key, contacts, CONTACTS_CACHE_TTL)
+        return Response({"contacts": contacts, "cached": False}, status=status.HTTP_200_OK)
 
     @staticmethod
     def _serialise(u):
