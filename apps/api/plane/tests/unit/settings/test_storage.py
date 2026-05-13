@@ -204,3 +204,97 @@ class TestS3StorageSignedURLExpiration:
         mock_s3_client.generate_presigned_url.assert_called_once()
         call_kwargs = mock_s3_client.generate_presigned_url.call_args[1]
         assert call_kwargs["ExpiresIn"] == 120
+
+
+@pytest.mark.unit
+class TestS3StorageAddressingStyle:
+    """Test the S3 addressing style configuration via AWS_S3_ADDRESSING_STYLE"""
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
+            "AWS_S3_ENDPOINT_URL": "https://s3.amazonaws.com",
+            "AWS_S3_ADDRESSING_STYLE": "virtual",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_virtual_addressing_style(self, mock_boto3):
+        """Test that virtual addressing style is configured via botocore Config"""
+        mock_boto3.client.return_value = Mock()
+
+        storage = S3Storage()
+
+        call_kwargs = mock_boto3.client.call_args[1]
+        assert call_kwargs["config"].s3["addressing_style"] == "virtual"
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
+            "AWS_S3_ENDPOINT_URL": "https://s3.amazonaws.com",
+            "AWS_S3_ADDRESSING_STYLE": "path",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_path_addressing_style(self, mock_boto3):
+        """Test that path addressing style is configured via botocore Config"""
+        mock_boto3.client.return_value = Mock()
+
+        storage = S3Storage()
+
+        call_kwargs = mock_boto3.client.call_args[1]
+        assert call_kwargs["config"].s3["addressing_style"] == "path"
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
+            "AWS_S3_ENDPOINT_URL": "https://s3.amazonaws.com",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_auto_addressing_style_by_default(self, mock_boto3):
+        """Test that auto addressing style is used by default (no s3 config in botocore Config)"""
+        mock_boto3.client.return_value = Mock()
+
+        storage = S3Storage()
+
+        call_kwargs = mock_boto3.client.call_args[1]
+        # When addressing_style is 'auto' or not set, botocore Config should not have s3 dict
+        assert "s3" not in call_kwargs["config"]._user_provided_options
+
+    @patch.dict(
+        os.environ,
+        {
+            "AWS_ACCESS_KEY_ID": "test-key",
+            "AWS_SECRET_ACCESS_KEY": "test-secret",
+            "AWS_S3_BUCKET_NAME": "test-bucket",
+            "AWS_REGION": "us-east-1",
+            "AWS_S3_ENDPOINT_URL": "https://nyc3.digitaloceanspaces.com",
+            "AWS_S3_ADDRESSING_STYLE": "virtual",
+        },
+        clear=True,
+    )
+    @patch("plane.settings.storage.boto3")
+    def test_virtual_style_with_digitalocean_spaces(self, mock_boto3):
+        """Test virtual addressing style works with DigitalOcean Spaces"""
+        mock_boto3.client.return_value = Mock()
+
+        storage = S3Storage()
+
+        call_kwargs = mock_boto3.client.call_args[1]
+        assert call_kwargs["config"].s3["addressing_style"] == "virtual"
+        assert call_kwargs["endpoint_url"] == "https://nyc3.digitaloceanspaces.com"

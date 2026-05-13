@@ -8,6 +8,7 @@ import uuid
 
 # Third party imports
 import boto3
+from botocore.config import Config
 from botocore.exceptions import ClientError
 from urllib.parse import quote
 
@@ -36,6 +37,21 @@ class S3Storage(S3Boto3Storage):
         # Use the SIGNED_URL_EXPIRATION environment variable for the expiration time (default: 3600 seconds)
         self.signed_url_expiration = int(os.environ.get("SIGNED_URL_EXPIRATION", "3600"))
 
+        # S3 addressing style: 'auto', 'virtual', or 'path' (default: 'auto')
+        # virtual = virtual-hosted style (e.g., https://bucket.s3.amazonaws.com)
+        # path = path style (e.g., https://s3.amazonaws.com/bucket)
+        # auto = let botocore decide based on bucket name
+        addressing_style = os.environ.get("AWS_S3_ADDRESSING_STYLE", "auto").lower()
+
+        # Create boto3 Config with addressing style if explicitly set
+        if addressing_style in ("virtual", "path"):
+            boto_config = Config(
+                signature_version="s3v4",
+                s3={"addressing_style": addressing_style},
+            )
+        else:
+            boto_config = Config(signature_version="s3v4")
+
         if os.environ.get("USE_MINIO") == "1":
             # Determine protocol based on environment variable
             if os.environ.get("MINIO_ENDPOINT_SSL") == "1":
@@ -49,7 +65,7 @@ class S3Storage(S3Boto3Storage):
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
                 endpoint_url=(f"{endpoint_protocol}://{request.get_host()}" if request else self.aws_s3_endpoint_url),
-                config=boto3.session.Config(signature_version="s3v4"),
+                config=boto_config,
             )
         else:
             # Create an S3 client
@@ -59,7 +75,7 @@ class S3Storage(S3Boto3Storage):
                 aws_secret_access_key=self.aws_secret_access_key,
                 region_name=self.aws_region,
                 endpoint_url=self.aws_s3_endpoint_url,
-                config=boto3.session.Config(signature_version="s3v4"),
+                config=boto_config,
             )
 
     def generate_presigned_post(self, object_name, file_type, file_size, expiration=None):
