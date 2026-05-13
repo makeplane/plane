@@ -3,20 +3,32 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  * See the LICENSE file for details.
  *
- * CE extension of WorklogStore — adds analytics, cross-workspace, and capacity categories actions.
+ * CE extension of WorklogStore — adds analytics, cross-workspace, capacity categories actions,
+ * and capacity detailed export job operations.
  */
 
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { set } from "lodash-es";
 import type {
   IAnalyticsTimesheetResponse,
   ICapacityCategoriesResponse,
   ICapacityDayDetailsResponse,
+  ICapacityExportInitiateResponse,
+  ICapacityExportJob,
+  ICapacityExportPayload,
 } from "@plane/types";
+import { CECapacityExportService } from "@/plane-web/services/capacity-export.service";
 import { WorklogService } from "@/services/worklog.service";
 import type { IWorklogStore } from "@/store/worklog.store";
 import { WorklogStore } from "@/store/worklog.store";
 
 export interface ICEWorklogStore extends IWorklogStore {
+  // Capacity detailed export
+  exportJobs: Record<string, ICapacityExportJob>;
+  isExportJobsLoading: boolean;
+  lastExportRequestAt: number | null;
+  initiateDetailedExport(slug: string, payload: ICapacityExportPayload): Promise<ICapacityExportInitiateResponse>;
+  fetchExportHistory(slug: string): Promise<ICapacityExportJob[]>;
   // Analytics timesheet
   analyticsTimesheetData: IAnalyticsTimesheetResponse | null;
   isAnalyticsTimesheetLoading: boolean;
@@ -53,6 +65,11 @@ export interface ICEWorklogStore extends IWorklogStore {
 }
 
 export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
+  // --- Capacity detailed export state ---
+  exportJobs: Record<string, ICapacityExportJob> = {};
+  isExportJobsLoading = false;
+  lastExportRequestAt: number | null = null;
+
   analyticsTimesheetData: IAnalyticsTimesheetResponse | null = null;
   isAnalyticsTimesheetLoading = false;
   workspaceAnalyticsTimesheetData: IAnalyticsTimesheetResponse | null = null;
@@ -62,10 +79,12 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
 
   // Separate service instance — base class service is private, so CE uses its own
   private ceService: WorklogService;
+  private capacityExportService: CECapacityExportService;
 
   constructor() {
     super();
     this.ceService = new WorklogService();
+    this.capacityExportService = new CECapacityExportService();
     makeObservable(this, {
       analyticsTimesheetData: observable,
       isAnalyticsTimesheetLoading: observable,
@@ -73,6 +92,9 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
       isWorkspaceAnalyticsTimesheetLoading: observable,
       workspaceAnalyticsTimesheetError: observable,
       categoriesData: observable,
+      exportJobs: observable,
+      isExportJobsLoading: observable,
+      lastExportRequestAt: observable,
       fetchAnalyticsTimesheet: action,
       fetchCapacityCategories: action,
       fetchCapacityDayDetails: action,
@@ -82,8 +104,44 @@ export class CEWorklogStore extends WorklogStore implements ICEWorklogStore {
       fetchWorkspaceAnalyticsTimesheet: action,
       fetchWorkspaceAnalyticsCapacity: action,
       fetchWorkspaceCapacityDayDetails: action,
+      initiateDetailedExport: action,
+      fetchExportHistory: action,
     });
   }
+
+  // --- Capacity detailed export actions ---
+
+  initiateDetailedExport = async (
+    slug: string,
+    payload: ICapacityExportPayload
+  ): Promise<ICapacityExportInitiateResponse> => {
+    const res = await this.capacityExportService.initiateDetailedExport(slug, payload);
+    runInAction(() => {
+      this.lastExportRequestAt = Date.now();
+    });
+    return res;
+  };
+
+  fetchExportHistory = async (slug: string): Promise<ICapacityExportJob[]> => {
+    runInAction(() => {
+      this.isExportJobsLoading = true;
+    });
+    try {
+      const jobs = await this.capacityExportService.fetchExportHistory(slug);
+      runInAction(() => {
+        const map: Record<string, ICapacityExportJob> = {};
+        for (const j of jobs) set(map, j.id, j);
+        this.exportJobs = map;
+        this.isExportJobsLoading = false;
+      });
+      return jobs;
+    } catch (e) {
+      runInAction(() => {
+        this.isExportJobsLoading = false;
+      });
+      throw e;
+    }
+  };
 
   fetchAnalyticsTimesheet = async (workspaceSlug: string, projectId: string, weekStart?: string): Promise<void> => {
     runInAction(() => {

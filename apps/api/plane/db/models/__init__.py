@@ -110,3 +110,5 @@ from .job_position import JobPosition, JobGrade
 from .business_calendar import WorkSchedule, Holiday, DayOverride
 
 from .project_field_permission import ProjectFieldPermission
+
+from .capacity_export import CapacityExportJob

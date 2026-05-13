@@ -43,6 +43,7 @@ from plane.app.views import (
     WorkspaceAnalyticsTimesheetEndpoint,
     WorkspaceCapacityEndpoint,
     WorkspaceCapacityDayDetailsEndpoint,
+    CapacityExportEndpoint,
     DashboardViewSet,
     DashboardWidgetViewSet,
     DashboardWidgetChartEndpoint,
@@ -339,5 +340,10 @@ urlpatterns = [
         "workspaces/<str:slug>/time-tracking/analytics/capacity/day-details/",
         WorkspaceCapacityDayDetailsEndpoint.as_view(),
         name="workspace-capacity-day-details",
+    ),
+    path(
+        "workspaces/<str:slug>/capacity/exports/",
+        CapacityExportEndpoint.as_view(),
+        name="capacity-exports",
     ),
 ]
