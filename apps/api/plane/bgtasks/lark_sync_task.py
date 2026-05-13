@@ -66,6 +66,7 @@ def sync_lark_directory(workspace_slug, role=DEFAULT_ROLE, force_refresh=False):
         raw_email = (c.get("enterprise_email") or c.get("email") or "").strip().lower()
         email = raw_email or f"{stable}@lark.local"
 
+        name = c.get("name") or ""
         try:
             with transaction.atomic():
                 user, created = User.objects.get_or_create(
@@ -74,8 +75,12 @@ def sync_lark_directory(workspace_slug, role=DEFAULT_ROLE, force_refresh=False):
                         # username has a unique constraint and isn't auto-derived
                         # in User.save — must be set on creation
                         "username": uuid.uuid4().hex,
-                        "first_name": c.get("name") or "",
+                        "first_name": name,
                         "last_name": "",
+                        # display_name without an explicit value defaults to the
+                        # email prefix in User.save; for lark.local synthetic
+                        # emails that's a meaningless union_id, so set it now
+                        "display_name": name or email.split("@")[0],
                         "is_password_autoset": True,
                         "is_email_verified": True,
                     },
@@ -84,11 +89,19 @@ def sync_lark_directory(workspace_slug, role=DEFAULT_ROLE, force_refresh=False):
                     user_new += 1
                 else:
                     user_existing += 1
-                    # Backfill display name on accounts the OAuth provider
+                    # Backfill name fields on accounts the OAuth provider
                     # created before we had directory access
-                    if not user.first_name and c.get("name"):
-                        user.first_name = c.get("name")
-                        user.save(update_fields=["first_name"])
+                    update_fields = []
+                    if not user.first_name and name:
+                        user.first_name = name
+                        update_fields.append("first_name")
+                    # Always replace the email-derived placeholder display name
+                    # when a real Feishu name is available
+                    if name and user.display_name != name:
+                        user.display_name = name
+                        update_fields.append("display_name")
+                    if update_fields:
+                        user.save(update_fields=update_fields)
 
                 wm, wm_created = WorkspaceMember.objects.get_or_create(
                     workspace=workspace,

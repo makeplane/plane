@@ -320,6 +320,10 @@ class LarkOAuthProvider(OauthAdapter):
                 "avatar": payload.get("avatar_url"),
                 "first_name": full_name,
                 "last_name": "",
+                # Without an explicit display_name, User.save() defaults to the
+                # email prefix — which is the meaningless union_id for our
+                # synthetic @lark.local emails. Hand-set it from the Lark name.
+                "display_name": full_name or email.split("@")[0],
                 "provider_id": provider_id,
                 "is_password_autoset": True,
             },
