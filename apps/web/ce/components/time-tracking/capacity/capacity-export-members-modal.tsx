@@ -6,7 +6,7 @@
  * Modal to pick members (or "all members") before queuing a detailed XLSX export.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { Users } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
@@ -30,14 +30,23 @@ export const CapacityExportMembersModal = observer(function CapacityExportMember
 
   const [allMembers, setAllMembers] = useState<boolean>(initialSelectedMemberIds.length === 0);
   const [selected, setSelected] = useState<string[]>(initialSelectedMemberIds);
+  const wasOpenRef = useRef(false);
 
-  // Re-sync when modal re-opens with different dashboard filter
+  // Sync state ONLY on the closed→open transition. Parent re-renders produce a
+  // new initialSelectedMemberIds array reference; depending on it would wipe
+  // user edits mid-modal (the "uncheck/re-check all members" payload bug).
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !wasOpenRef.current) {
       setAllMembers(initialSelectedMemberIds.length === 0);
       setSelected(initialSelectedMemberIds);
     }
+    wasOpenRef.current = isOpen;
   }, [isOpen, initialSelectedMemberIds]);
+
+  const handleAllMembersToggle = (next: boolean) => {
+    setAllMembers(next);
+    if (next) setSelected([]);
+  };
 
   const canSubmit = allMembers || selected.length > 0;
 
@@ -64,7 +73,7 @@ export const CapacityExportMembersModal = observer(function CapacityExportMember
             <input
               type="checkbox"
               checked={allMembers}
-              onChange={(e) => setAllMembers(e.target.checked)}
+              onChange={(e) => handleAllMembersToggle(e.target.checked)}
               className="h-4 w-4 rounded border-subtle bg-layer-2 accent-accent-primary"
               disabled={isSubmitting}
             />
