@@ -171,6 +171,19 @@ export class WorkspaceService extends APIService {
         throw error?.response?.data;
       });
   }
+
+  /**
+   * Synchronously mirrors the entire Lark directory into the workspace —
+   * find-or-create user accounts and active membership rows for every visible
+   * contact. Same logic as the hourly Celery task; manual trigger.
+   */
+  async larkSync(workspaceSlug: string, payload: { role?: number } = {}): Promise<TLarkSyncResponse> {
+    return this.post(`/api/workspaces/${workspaceSlug}/lark-sync/`, payload)
+      .then((res) => res?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
 }
 
 export type TLarkContact = {
@@ -197,4 +210,17 @@ export type TLarkInviteResponse = {
   invited: { email: string; user_created: boolean; member_created: boolean }[];
   skipped: unknown[];
   errors: { entry: unknown; error: string }[];
+};
+
+export type TLarkSyncResponse = {
+  workspace?: string;
+  contacts_seen?: number;
+  users_created?: number;
+  users_existing?: number;
+  members_created?: number;
+  members_reactivated?: number;
+  members_already_active?: number;
+  skipped?: number;
+  workspace_member_total?: number;
+  error?: string;
 };

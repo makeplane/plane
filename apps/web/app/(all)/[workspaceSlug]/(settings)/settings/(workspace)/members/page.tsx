@@ -6,6 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { WorkspaceService } from "@plane/services";
+
+const workspaceServiceForSync = new WorkspaceService();
 // types
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -38,6 +41,7 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
   // states
   const [inviteModal, setInviteModal] = useState(false);
   const [larkInviteModal, setLarkInviteModal] = useState(false);
+  const [larkSyncing, setLarkSyncing] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = params;
@@ -150,6 +154,36 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
               memberType="workspace"
             />
             <MembersActivityButton workspaceSlug={workspaceSlug} />
+            {canPerformWorkspaceAdminActions && config?.is_lark_enabled && (
+              <Button
+                variant="neutral-primary"
+                size="lg"
+                disabled={larkSyncing}
+                onClick={async () => {
+                  setLarkSyncing(true);
+                  try {
+                    const stats = await workspaceServiceForSync.larkSync(workspaceSlug);
+                    setToast({
+                      type: stats.error ? TOAST_TYPE.ERROR : TOAST_TYPE.SUCCESS,
+                      title: stats.error ? "Sync failed" : "Lark directory synced",
+                      message: stats.error
+                        ? stats.error
+                        : `${stats.members_created ?? 0} new, ${stats.members_already_active ?? 0} existing, ${stats.workspace_member_total ?? 0} total members.`,
+                    });
+                    if (!stats.error) fetchWorkspaceMembers(workspaceSlug);
+                  } catch (err: unknown) {
+                    const message =
+                      (err && typeof err === "object" && "error" in err && (err as { error?: string }).error) ||
+                      "Sync failed";
+                    setToast({ type: TOAST_TYPE.ERROR, title: "Sync failed", message });
+                  } finally {
+                    setLarkSyncing(false);
+                  }
+                }}
+              >
+                {larkSyncing ? "Syncing…" : "Sync from Lark"}
+              </Button>
+            )}
             {canPerformWorkspaceAdminActions && config?.is_lark_enabled && (
               <Button variant="neutral-primary" size="lg" onClick={() => setLarkInviteModal(true)}>
                 Invite from Lark
