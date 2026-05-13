@@ -13,7 +13,7 @@ import { Loader as LoaderIcon } from "lucide-react";
 import { Button, getButtonStyling } from "@plane/propel/button";
 import { setPromiseToast } from "@plane/propel/toast";
 import type { TInstanceConfigurationKeys } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Input, Loader, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
@@ -37,6 +37,7 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
   } = useWorkspace();
   // derived values
   const disableWorkspaceCreation = formattedConfig?.DISABLE_WORKSPACE_CREATION ?? "";
+  const defaultWorkspaceSlugs = formattedConfig?.DEFAULT_WORKSPACE_SLUGS ?? "";
   const hasNextPage = paginationInfo?.next_page_results && paginationInfo?.next_cursor !== undefined;
 
   // fetch data
@@ -83,27 +84,50 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     >
       <div className="space-y-3">
         {formattedConfig ? (
-          <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
-            <div className="flex grow items-center gap-4">
-              <div className="grow">
-                <div className="pb-1 text-16 font-medium">Prevent anyone else from creating a workspace.</div>
-                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
-                  Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.
+          <div className="space-y-6">
+            <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
+              <div className="flex grow items-center gap-4">
+                <div className="grow">
+                  <div className="pb-1 text-16 font-medium">Prevent anyone else from creating a workspace.</div>
+                  <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
+                    Toggling this on will let only you create workspaces. You will have to invite users to new workspaces.
+                  </div>
+                </div>
+              </div>
+              <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+                <div className="flex items-center gap-4">
+                  <ToggleSwitch
+                    value={Boolean(parseInt(disableWorkspaceCreation))}
+                    onChange={() => {
+                      if (Boolean(parseInt(disableWorkspaceCreation)) === true) {
+                        updateConfig("DISABLE_WORKSPACE_CREATION", "0");
+                      } else {
+                        updateConfig("DISABLE_WORKSPACE_CREATION", "1");
+                      }
+                    }}
+                    size="sm"
+                    disabled={isSubmitting}
+                  />
                 </div>
               </div>
             </div>
-            <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
-              <div className="flex items-center gap-4">
-                <ToggleSwitch
-                  value={Boolean(parseInt(disableWorkspaceCreation))}
-                  onChange={() => {
-                    if (Boolean(parseInt(disableWorkspaceCreation)) === true) {
-                      updateConfig("DISABLE_WORKSPACE_CREATION", "0");
-                    } else {
-                      updateConfig("DISABLE_WORKSPACE_CREATION", "1");
-                    }
-                  }}
-                  size="sm"
+            <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
+              <div className="flex grow items-center gap-4">
+                <div className="grow">
+                  <div className="pb-1 text-16 font-medium">Default workspaces for new users.</div>
+                  <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
+                    Comma-separated workspace slugs (e.g. <code>my-org,my-org-dev</code>) or <code>*</code> for all
+                    workspaces. New users are automatically added as Members and skip the onboarding flow.
+                  </div>
+                </div>
+              </div>
+              <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+                <Input
+                  type="text"
+                  value={defaultWorkspaceSlugs}
+                  onChange={(e) => updateConfig("DEFAULT_WORKSPACE_SLUGS", e.target.value)}
+                  placeholder="* or workspace-slug, another-slug"
+                  className="w-64"
                   disabled={isSubmitting}
                 />
               </div>

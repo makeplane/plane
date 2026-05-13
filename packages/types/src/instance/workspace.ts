@@ -4,4 +4,4 @@
  * See the LICENSE file for details.
  */
 
-export type TInstanceWorkspaceConfigurationKeys = "DISABLE_WORKSPACE_CREATION";
+export type TInstanceWorkspaceConfigurationKeys = "DISABLE_WORKSPACE_CREATION" | "DEFAULT_WORKSPACE_SLUGS";
