@@ -205,7 +205,10 @@ export class StickyStore implements IStickyStore {
     } catch (error) {
       console.error("Error in updating sticky:", error);
       this.stickies[id] = sticky;
-      throw new Error();
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error("Error updating sticky", { cause: error });
     }
   };
 
@@ -232,12 +235,15 @@ export class StickyStore implements IStickyStore {
     destinationId: string,
     edge: InstructionType
   ) => {
-    const previousSortOrder = this.stickies[stickyId].sort_order;
+    if (stickyId === destinationId) return;
+    const sticky = this.stickies[stickyId];
+    if (!sticky) return;
+    const previousSortOrder = sticky.sort_order;
     try {
       let resultSequence = 10000;
       const workspaceStickies = this.workspaceStickies[workspaceSlug] || [];
       const stickies = workspaceStickies.map((id) => this.stickies[id]);
-      const sortedStickies = orderBy(stickies, "sort_order", "desc").map((sticky) => sticky.id);
+      const sortedStickies = orderBy(stickies, "sort_order", "desc").map((s) => s.id);
       const destinationSequence = this.stickies[destinationId]?.sort_order || undefined;
 
       if (destinationSequence) {

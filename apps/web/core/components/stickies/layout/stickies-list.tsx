@@ -13,7 +13,6 @@ import type { ElementDragPayload } from "@atlaskit/pragmatic-drag-and-drop/eleme
 import { observer } from "mobx-react";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
-import Masonry from "react-masonry-component";
 
 // plane imports
 import { EUserPermissionsLevel } from "@plane/constants";
@@ -47,6 +46,20 @@ type TProps = TStickiesLayout & {
   columnCount: number;
 };
 
+function noopLayout() {
+  // No-op for grid layout (was used for Masonry reflow)
+}
+
+function getColumnCount(width: number | null): number {
+  if (width === null) return 4;
+
+  if (width < 640) return 2; // sm
+  if (width < 850) return 3; // md
+  if (width < 1024) return 4; // lg
+  if (width < 1280) return 5; // xl
+  return 6; // 2xl and above
+}
+
 export const StickiesList = observer(function StickiesList(props: TProps) {
   const { workspaceSlug, intersectionElement, columnCount } = props;
   // navigation
@@ -62,7 +75,7 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   const { stickyOperations } = useStickyOperations({ workspaceSlug: workspaceSlug?.toString() });
   // derived values
   const workspaceStickyIds = getWorkspaceStickyIds(workspaceSlug?.toString());
-  const itemWidth = `${100 / columnCount}%`;
+  const itemWidth = "100%";
   const totalRows = Math.ceil(workspaceStickyIds.length / columnCount);
   const isStickiesPage = pathname?.includes("stickies");
   const hasGuestLevelPermissions = allowPermissions(
@@ -71,14 +84,6 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   );
   const stickiesResolvedPath = resolvedTheme === "light" ? lightStickiesAsset : darkStickiesAsset;
   const stickiesSearchResolvedPath = resolvedTheme === "light" ? lightStickiesSearchAsset : darkStickiesSearchAsset;
-  const masonryRef = useRef<any>(null);
-
-  const handleLayout = () => {
-    if (masonryRef.current) {
-      // Force reflow
-      masonryRef.current.performLayout();
-    }
-  };
 
   // Function to determine if an item is in first or last row
   const getRowPositions = (index: number) => {
@@ -148,27 +153,27 @@ export const StickiesList = observer(function StickiesList(props: TProps) {
   }
 
   return (
-    <div className="transition-opacity duration-300 ease-in-out">
-      {/* @ts-expect-error type mismatch here */}
-      <Masonry elementType="div" ref={masonryRef}>
-        {workspaceStickyIds.map((stickyId, index) => {
-          const { isInFirstRow, isInLastRow } = getRowPositions(index);
-          return (
-            <StickyDNDWrapper
-              key={stickyId}
-              stickyId={stickyId}
-              workspaceSlug={workspaceSlug.toString()}
-              itemWidth={itemWidth}
-              handleDrop={handleDrop}
-              isLastChild={index === workspaceStickyIds.length - 1}
-              isInFirstRow={isInFirstRow}
-              isInLastRow={isInLastRow}
-              handleLayout={handleLayout}
-            />
-          );
-        })}
-        {intersectionElement && <div style={{ width: itemWidth }}>{intersectionElement}</div>}
-      </Masonry>
+    <div
+      className="grid gap-2 transition-opacity duration-300 ease-in-out"
+      style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
+    >
+      {workspaceStickyIds.map((stickyId, index) => {
+        const { isInFirstRow, isInLastRow } = getRowPositions(index);
+        return (
+          <StickyDNDWrapper
+            key={stickyId}
+            stickyId={stickyId}
+            workspaceSlug={workspaceSlug.toString()}
+            itemWidth={itemWidth}
+            handleDrop={handleDrop}
+            isLastChild={index === workspaceStickyIds.length - 1}
+            isInFirstRow={isInFirstRow}
+            isInLastRow={isInLastRow}
+            handleLayout={noopLayout}
+          />
+        );
+      })}
+      {intersectionElement && <div style={{ gridColumn: "1 / -1" }}>{intersectionElement}</div>}
     </div>
   );
 });
@@ -194,15 +199,6 @@ export function StickiesLayout(props: TStickiesLayout) {
     return () => resizeObserver.disconnect();
   }, []);
 
-  const getColumnCount = (width: number | null): number => {
-    if (width === null) return 4;
-
-    if (width < 640) return 2; // sm
-    if (width < 850) return 3; // md
-    if (width < 1024) return 4; // lg
-    if (width < 1280) return 5; // xl
-    return 6; // 2xl and above
-  };
   const columnCount = getColumnCount(containerWidth);
 
   return (

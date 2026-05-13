@@ -20,6 +20,9 @@ import { usePathname } from "next/navigation";
 import { createRoot } from "react-dom/client";
 // plane types
 import type { InstructionType } from "@plane/types";
+// plane ui
+import { DragHandle, DropIndicator } from "@plane/ui";
+import { cn } from "@plane/utils";
 // components
 import { StickyNote } from "../sticky";
 // helpers
@@ -37,26 +40,38 @@ type Props = {
 };
 
 export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props) {
-  const { stickyId, workspaceSlug, itemWidth, isLastChild, handleDrop, handleLayout } = props;
+  const {
+    stickyId,
+    workspaceSlug,
+    itemWidth,
+    isLastChild,
+    isInFirstRow,
+    isInLastRow: _isInLastRow,
+    handleDrop,
+    handleLayout,
+  } = props;
   // states
   const [isDragging, setIsDragging] = useState(false);
-  const [_instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
+  const [instruction, setInstruction] = useState<InstructionType | undefined>(undefined);
   // refs
   const elementRef = useRef<HTMLDivElement>(null);
+  const dragHandleRef = useRef<HTMLDivElement>(null);
   // navigation
   const pathname = usePathname();
+  const isStickiesPage = pathname?.includes("stickies");
 
   useEffect(() => {
-    const element = elementRef.current;
-    if (!element) return;
+    const wrapperElement = elementRef.current;
+    const dragHandle = dragHandleRef.current;
+    if (!wrapperElement) return;
 
     const initialData = { id: stickyId, type: "sticky" };
 
-    if (pathname.includes("stickies"))
+    if (isStickiesPage)
       return combine(
         draggable({
-          element,
-          dragHandle: element,
+          element: wrapperElement,
+          dragHandle: dragHandle ?? wrapperElement,
           getInitialData: () => initialData,
           onDragStart: () => {
             setIsDragging(true);
@@ -88,9 +103,9 @@ export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props)
           },
         }),
         dropTargetForElements({
-          element,
+          element: wrapperElement,
           canDrop: ({ source }) => source.data?.type === "sticky",
-          getData: ({ input, element }) => {
+          getData: ({ input, element: targetElement }) => {
             const blockedStates: InstructionType[] = ["make-child"];
             if (!isLastChild) {
               blockedStates.push("reorder-below");
@@ -98,7 +113,7 @@ export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props)
 
             return attachInstruction(initialData, {
               input,
-              element,
+              element: targetElement,
               currentLevel: 1,
               indentPerLevel: 0,
               mode: isLastChild ? "last-in-group" : "standard",
@@ -106,8 +121,8 @@ export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props)
             });
           },
           onDrag: ({ self, source, location }) => {
-            const instruction = getInstructionFromPayload(self, source, location);
-            setInstruction(instruction);
+            const nextInstruction = getInstructionFromPayload(self, source, location);
+            setInstruction(nextInstruction);
           },
           onDragLeave: () => {
             setInstruction(undefined);
@@ -118,23 +133,39 @@ export const StickyDNDWrapper = observer(function StickyDNDWrapper(props: Props)
           },
         })
       );
-  }, [handleDrop, isDragging, isLastChild, pathname, stickyId, workspaceSlug]);
+  }, [handleDrop, isDragging, isLastChild, isStickiesPage, stickyId, workspaceSlug]);
 
   return (
     <div
-      className="box-border flex flex-col p-[8px]"
+      ref={elementRef}
+      className={cn(
+        "box-border flex flex-col rounded-sm p-2 transition-[box-shadow,outline]",
+        isStickiesPage && isDragging && "ring-accent-primary ring-offset-surface-1 ring-2 ring-offset-2"
+      )}
       style={{
         width: itemWidth,
       }}
     >
-      {/* {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />} */}
+      {!isInFirstRow && <DropIndicator isVisible={instruction === "reorder-above"} />}
+      {isStickiesPage && (
+        <div
+          ref={dragHandleRef}
+          className={cn(
+            "flex shrink-0 cursor-grab items-center justify-center rounded-t-sm py-1.5 text-placeholder hover:bg-layer-1-hover active:cursor-grabbing",
+            isDragging && "cursor-grabbing"
+          )}
+          title="Drag to reorder"
+        >
+          <DragHandle className="rotate-90 bg-transparent" />
+        </div>
+      )}
       <StickyNote
         key={stickyId || "new"}
         workspaceSlug={workspaceSlug}
         stickyId={stickyId}
         handleLayout={handleLayout}
       />
-      {/* {!isInLastRow && <DropIndicator isVisible={instruction === "reorder-below"} />} */}
+      {!isLastChild && <DropIndicator isVisible={instruction === "reorder-below"} />}
     </div>
   );
 });
