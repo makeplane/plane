@@ -15,8 +15,10 @@ import { LinkItemBlock } from "@plane/ui";
 // plane utils
 import { copyTextToClipboard } from "@plane/utils";
 // hooks
+import useLocalStorage from "@/hooks/use-local-storage";
 import { useHome } from "@/hooks/store/use-home";
 // types
+import { DEFAULT_QUICK_LINKS_OPEN_IN_SAME_TAB, QUICK_LINKS_OPEN_IN_SAME_TAB_KEY } from "./constants";
 import type { TLinkOperations } from "./use-links";
 
 export type TProjectLinkDetail = {
@@ -32,6 +34,10 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
     quickLinks: { getLinkById, toggleLinkModal, setLinkData },
   } = useHome();
   const { t } = useTranslation();
+  const { storedValue: openInSameTab } = useLocalStorage(
+    QUICK_LINKS_OPEN_IN_SAME_TAB_KEY,
+    DEFAULT_QUICK_LINKS_OPEN_IN_SAME_TAB
+  );
   // derived values
   const linkDetail = getLinkById(linkId);
   const linkUrl = linkDetail?.url;
@@ -53,12 +59,30 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         title: t("link_copied"),
         message: t("view_link_copied_to_clipboard"),
       });
+      return;
     });
   }, [linkUrl, t]);
 
   const handleOpenInNewTab = useCallback(() => {
+    if (!linkUrl) return;
     window.open(linkUrl, "_blank", "noopener,noreferrer");
   }, [linkUrl]);
+
+  const handleOpenInSameTab = useCallback(() => {
+    if (!linkUrl) return;
+    window.location.href = linkUrl;
+  }, [linkUrl]);
+
+  const openInSameTabResolved = openInSameTab ?? DEFAULT_QUICK_LINKS_OPEN_IN_SAME_TAB;
+
+  const handlePrimaryClick = useCallback(() => {
+    if (!linkUrl) return;
+    if (openInSameTabResolved) {
+      window.location.href = linkUrl;
+    } else {
+      window.open(linkUrl, "_blank", "noopener,noreferrer");
+    }
+  }, [linkUrl, openInSameTabResolved]);
 
   const handleDelete = useCallback(() => {
     linkOperations.remove(linkId);
@@ -80,6 +104,12 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         icon: NewTabIcon,
       },
       {
+        key: "open-same-tab",
+        action: handleOpenInSameTab,
+        title: t("home.quick_links.open_in_same_tab"),
+        icon: LinkIcon,
+      },
+      {
         key: "copy-link",
         action: handleCopyText,
         title: t("copy_link"),
@@ -92,7 +122,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
         icon: TrashIcon,
       },
     ],
-    [handleEdit, handleOpenInNewTab, handleCopyText, handleDelete, t]
+    [handleEdit, handleOpenInNewTab, handleOpenInSameTab, handleCopyText, handleDelete, t]
   );
 
   if (!linkDetail) return null;
@@ -103,7 +133,7 @@ export const ProjectLinkDetail = observer(function ProjectLinkDetail(props: TPro
       url={linkDetail.url}
       createdAt={linkDetail.created_at}
       menuItems={menuItems}
-      onClick={handleOpenInNewTab}
+      onClick={handlePrimaryClick}
     />
   );
 });
