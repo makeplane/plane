@@ -226,6 +226,15 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 comment = changes.pop("comment", False)
                 mention = changes.pop("mention", False)
                 actors_involved.append(actor_id)
+                actor_avatar = actor.avatar_url
+                if actor_avatar:
+                    actor_avatar_url = (
+                        actor_avatar
+                        if actor_avatar.startswith(("http://", "https://"))
+                        else f"{base_api}{actor_avatar}"
+                    )
+                else:
+                    actor_avatar_url = ""
                 if comment:
                     comment["new_value"] = process_html_content(comment.get("new_value"), issue_url=issue_url)
                     comment["old_value"] = process_html_content(comment.get("old_value"), issue_url=issue_url)
@@ -233,7 +242,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         {
                             "actor_comments": comment,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -246,7 +255,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         {
                             "actor_comments": mention,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -260,7 +269,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },

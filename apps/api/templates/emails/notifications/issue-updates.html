@@ -180,13 +180,7 @@
               <table role="presentation" style="max-width: 100%; padding-bottom: 15px">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/due-date.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F4C5;</span>
                   </td>
                   <td style="padding: 0px; text-align: center">
                     <div>
@@ -222,13 +216,7 @@
               <table role="presentation" style="max-width: 100%; padding-bottom: 15px">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/duplicate.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x29C9;</span>
                     <span style="font-size: 13px; font-weight: 500; color: #525252"> Duplicate: </span>
                   </td>
                   {% if update.changes.duplicate.new_value.0 %}
@@ -283,13 +271,7 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%; padding-right: 10px">
                 <tr>
                   <td valign="top" style="white-space: nowrap; padding: 0px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/assignee.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F464;</span>
                     <span style="font-size: 13px; font-weight: 500; color: #525252; padding-right: 5px">
                       Assignee:
                     </span>
@@ -360,13 +342,7 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%; padding-right: 10px">
                 <tr>
                   <td valign="top" style="white-space: nowrap; padding: 0px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/labels.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F3F7;</span>
                     <span style="font-size: 13px; font-weight: 500; color: #525252; padding-right: 5px">
                       Labels:
                     </span>
@@ -438,26 +414,14 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/state.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x25C9;</span>
                   </td>
                   <td>
                     <p style="font-size: 13px; font-weight: 500; color: #525252">State:</p>
                   </td>
                   {% if update.changes.state.old_value.0 == 'Backlog' or update.changes.state.old_value.0 == 'In Progress' or update.changes.state.old_value.0 == 'Done' or update.changes.state.old_value.0 == 'Cancelled' %}
                   <td>
-                    <img
-                      src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block; margin-left: 5px"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">{% if update.changes.state.old_value.0 == 'Backlog' %}&#x25CB;{% elif update.changes.state.old_value.0 == 'In Progress' %}&#x25D0;{% elif update.changes.state.old_value.0 == 'Todo' %}&#x25CC;{% elif update.changes.state.old_value.0 == 'Done' %}&#x25CF;{% elif update.changes.state.old_value.0 == 'Cancelled' %}&#x2298;{% endif %}</span>
                   </td>
                   {% endif %}
                   <td>
@@ -466,23 +430,11 @@
                     </p>
                   </td>
                   <td style="padding-left: 10px; padding-right: 10px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png"
-                      width="16"
-                      height="16"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:16px;height:16px;line-height:16px;font-size:16px;text-align:center;color:#525252">&#x2192;</span>
                   </td>
                   {% if update.changes.state.new_value|last == 'Backlog' or update.changes.state.new_value|last == 'In Progress' or update.changes.state.new_value|last == 'Done' or update.changes.state.new_value|last == 'Cancelled' %}
                   <td>
-                    <img
-                      src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.png{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">{% if update.changes.state.new_value|last == 'Backlog' %}&#x25CB;{% elif update.changes.state.new_value|last == 'In Progress' %}&#x25D0;{% elif update.changes.state.new_value|last == 'Todo' %}&#x25CC;{% elif update.changes.state.new_value|last == 'Done' %}&#x25CF;{% elif update.changes.state.new_value|last == 'Cancelled' %}&#x2298;{% endif %}</span>
                   </td>
                   {% endif %}
                   <td>
@@ -497,13 +449,7 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr>
                   <td valign="top">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block; margin-top: 3px"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F517;</span>
                   </td>
                   <td valign="top">
                     <p style="font-size: 13px; font-weight: 500; color: #525252; margin-right: 5px">Links:</p>
@@ -527,13 +473,7 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/priority.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block; margin: 0px; padding: 0px"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x2691;</span>
                   </td>
                   <td>
                     <p style="font-size: 13px; font-weight: 500; color: #525252; margin-right: 5px">Priority:</p>
@@ -546,13 +486,7 @@
                     </p>
                   </td>
                   <td style="padding-left: 10px; padding-right: 10px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png"
-                      width="16"
-                      height="16"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:16px;height:16px;line-height:16px;font-size:16px;text-align:center;color:#525252">&#x2192;</span>
                   </td>
                   <td>
                     <p
@@ -568,13 +502,7 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr style="overflow-wrap: break-word">
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x29B8;</span>
                     <span style="font-size: 13px; font-weight: 500; color: #525252; margin-right: 5px">
                       Blocking:
                     </span>
