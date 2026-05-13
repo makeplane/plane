@@ -114,23 +114,27 @@ export class StateStore implements IStateStore {
     return sortStates(Object.values(this.stateMap).filter((state) => state.project_id === projectId));
   }
 
-  /**
-   * Returns the stateMap belongs to a specific project grouped by group
-   */
   get groupedProjectStates() {
     if (!this.router.projectId) return;
+
+    const project = this.rootStore.projectRoot.project.getProjectById(this.router.projectId);
+    const stateGroupOrder = project?.state_group_order || Object.keys(STATE_GROUPS);
 
     // First group the existing states
     const groupedStates = groupBy(this.projectStates, "group") as Record<string, IState[]>;
 
-    // Ensure all STATE_GROUPS are present
-    const allGroups = Object.keys(STATE_GROUPS).reduce(
-      (acc, group) => ({
-        ...acc,
-        [group]: groupedStates[group] || [],
-      }),
-      {} as Record<string, IState[]>
-    );
+    // Ensure all STATE_GROUPS are present based on stateGroupOrder
+    const allGroups: Record<string, IState[]> = {};
+    stateGroupOrder.forEach((group) => {
+      allGroups[group as string] = groupedStates[group as string] || [];
+    });
+
+    // In case there are missing groups in the stored array
+    Object.keys(STATE_GROUPS).forEach((group) => {
+      if (!allGroups[group]) {
+        allGroups[group] = groupedStates[group] || [];
+      }
+    });
 
     return allGroups;
   }
@@ -307,10 +311,9 @@ export class StateStore implements IStateStore {
    */
   deleteState = async (workspaceSlug: string, projectId: string, stateId: string) => {
     if (!this.stateMap?.[stateId]) return;
-    await this.stateService.deleteState(workspaceSlug, projectId, stateId).then(() => {
-      runInAction(() => {
-        delete this.stateMap[stateId];
-      });
+    await this.stateService.deleteState(workspaceSlug, projectId, stateId);
+    runInAction(() => {
+      delete this.stateMap[stateId];
     });
   };
 
