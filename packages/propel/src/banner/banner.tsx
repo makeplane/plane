@@ -86,7 +86,7 @@ export const Banner = React.forwardRef(function Banner(
     if (!dismissible) return null;
 
     return (
-      <button onClick={handleDismiss} className={cn(dismissStyling)} aria-label={dismissLabel}>
+      <button type="button" onClick={handleDismiss} className={cn(dismissStyling)} aria-label={dismissLabel}>
         <svg
           width="16"
           height="16"

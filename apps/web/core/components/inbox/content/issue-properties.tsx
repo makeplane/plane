@@ -102,7 +102,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 }
                 disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
-                placeholder={t("work_item.add.assignee")}
+                placeholder={t("issue.add.assignee")}
                 multiple
                 buttonVariant={
                   (issue?.assignee_ids || [])?.length > 0 ? "transparent-without-text" : "transparent-with-text"
@@ -146,7 +146,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 <span>{t("due_date")}</span>
               </div>
               <DateDropdown
-                placeholder={t("work_item.add.due_date")}
+                placeholder={t("issue.add.due_date")}
                 value={issue.target_date || null}
                 onChange={(val) =>
                   issue?.id &&

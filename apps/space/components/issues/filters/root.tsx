@@ -65,7 +65,7 @@ export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props
 
   return (
     <div className="relative">
-      <FiltersDropdown title={t("filters")} placement="bottom-end">
+      <FiltersDropdown title={t("common.filters")} placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
           handleFilters={handleFilters as any}

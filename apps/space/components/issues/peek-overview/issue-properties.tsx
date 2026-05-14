@@ -128,7 +128,7 @@ export const PeekOverviewIssueProperties = observer(function PeekOverviewIssuePr
                 {renderFormattedDate(issueDetails.target_date)}
               </div>
             ) : (
-              <span className="text-13 text-secondary">{t("common.empty")}</span>
+              <span className="text-13 text-secondary">{t("common.none")}</span>
             )}
           </div>
         </div>

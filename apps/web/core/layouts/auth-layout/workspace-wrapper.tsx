@@ -163,6 +163,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
               <div className="text-13 font-medium">{currentUser?.email}</div>
               <button
                 type="button"
+                aria-label={t("sign_out")}
                 className="relative flex h-6 w-6 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-sm hover:bg-layer-1"
                 onClick={handleSignOut}
               >

@@ -5,7 +5,7 @@
  */
 
 import type { FormEvent } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
@@ -50,6 +50,10 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
 
   const [isFocused, setIsFocused] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
