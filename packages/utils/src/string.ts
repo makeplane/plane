@@ -56,7 +56,7 @@ export const truncateText = (str: string, length: number) => {
 export const createSimilarString = (str: string) => {
   const shuffled = str
     .split("")
-    .sort(() => Math.random() - 0.5)
+    .toSorted(() => Math.random() - 0.5)
     .join("");
 
   return shuffled;
@@ -153,7 +153,7 @@ export const checkEmailValidity = (email: string): boolean => {
   if (!email) return false;
 
   const isEmailValid =
-    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
       email
     );
 
@@ -236,7 +236,7 @@ export const isCommentEmpty = (comment: Content | undefined): boolean => {
 
   // Handle JSONContent[] (array)
   if (Array.isArray(comment)) {
-    return comment.length === 0 || comment.every(isJSONContentEmpty);
+    return comment.every(isJSONContentEmpty);
   }
 
   // Handle JSONContent (object)
@@ -430,4 +430,22 @@ export const joinUrlPath = (...segments: string[]): string => {
     const pathParts = joined.split("/").filter((part) => part !== "");
     return pathParts.length > 0 ? `/${pathParts.join("/")}` : "";
   }
+};
+
+export const normalizeBasePath = (rawBasePath: string): string => {
+  const trimmed = rawBasePath.trim();
+
+  // Empty or slash-only paths become root
+  if (trimmed === "" || /^\/+$/.test(trimmed)) {
+    return "/";
+  }
+
+  // Collapse multiple slashes
+  const normalized = trimmed.replace(/\/{2,}/g, "/");
+
+  // Remove trailing slashes except root
+  const withoutTrailingSlashes = normalized.replace(/\/+$/, "");
+
+  // Ensure leading slash
+  return withoutTrailingSlashes.startsWith("/") ? withoutTrailingSlashes : `/${withoutTrailingSlashes}`;
 };
