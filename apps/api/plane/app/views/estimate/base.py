@@ -113,7 +113,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        estimate = Estimate.objects.get(pk=estimate_id)
+        estimate = Estimate.objects.get(pk=estimate_id, workspace__slug=slug, project_id=project_id)
 
         if request.data.get("estimate"):
             estimate.name = request.data.get("estimate").get("name", estimate.name)

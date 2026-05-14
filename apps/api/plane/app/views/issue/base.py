@@ -99,6 +99,7 @@ class IssueListEndpoint(BaseAPIView):
         # Apply legacy filters
         filters = issue_filters(request.query_params, "GET")
         issue_queryset = queryset.filter(**filters)
+        issue_queryset = issue_queryset.filter(state__deleted_at__isnull=True)
 
         # Add select_related, prefetch_related if fields or expand is not None
         if self.fields or self.expand:
@@ -157,7 +158,7 @@ class IssueListEndpoint(BaseAPIView):
         )
 
         if self.fields or self.expand:
-            issues = IssueSerializer(queryset, many=True, fields=self.fields, expand=self.expand).data
+            issues = IssueSerializer(issue_queryset, many=True, fields=self.fields, expand=self.expand).data
         else:
             issues = issue_queryset.values(
                 "id",
