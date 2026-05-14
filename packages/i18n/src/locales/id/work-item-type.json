@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Tipe Item Kerja",
+    "label_lowercase": "tipe item kerja",
+    "settings": {
+      "description": "Sesuaikan dan tambahkan properti Anda sendiri untuk menyesuaikannya dengan kebutuhan tim Anda.",
+      "cant_delete_default_message": "Jenis item kerja ini tidak dapat dihapus karena diatur sebagai default untuk proyek ini.",
+      "set_as_default": "Atur sebagai default",
+      "cant_set_default_inactive_message": "Aktifkan tipe ini sebelum mengaturnya sebagai default",
+      "set_default_confirmation": {
+        "title": "Atur sebagai tipe item kerja default",
+        "description": "Mengatur {name} sebagai default akan mengimpornya ke semua proyek di ruang kerja ini. Semua item kerja baru akan menggunakan tipe ini secara default.",
+        "confirm_button": "Atur sebagai default"
+      },
+      "properties": {
+        "title": "Properti kustom",
+        "description": "Buat dan sesuaikan properti.",
+        "tooltip": "Setiap tipe item kerja dilengkapi dengan serangkaian properti default seperti Judul, Deskripsi, Penerima tugas, Status, Prioritas, Tanggal mulai, Tanggal jatuh tempo, Modul, Siklus, dll. Anda juga dapat menyesuaikan dan menambahkan properti Anda sendiri untuk menyesuaikannya dengan kebutuhan tim Anda.",
+        "add_button": "Tambah properti baru",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Impor dari ruang kerja"
+          }
+        },
+        "dropdown": {
+          "label": "Tipe properti",
+          "placeholder": "Pilih tipe"
+        },
+        "property_type": {
+          "text": {
+            "label": "Teks"
+          },
+          "number": {
+            "label": "Angka"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Tanggal"
+          },
+          "member_picker": {
+            "label": "Pemilih anggota"
+          },
+          "formula": {
+            "label": "Rumus"
+          }
+        },
+        "attributes": {
+          "label": "Atribut",
+          "text": {
+            "single_line": {
+              "label": "Baris tunggal"
+            },
+            "multi_line": {
+              "label": "Paragraf"
+            },
+            "readonly": {
+              "label": "Hanya baca",
+              "header": "Data hanya baca"
+            },
+            "invalid_text_format": {
+              "label": "Format teks tidak valid"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Tambah angka"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Pilihan tunggal"
+            },
+            "multi_select": {
+              "label": "Pilihan ganda"
+            },
+            "no_default_value": {
+              "label": "Tidak ada nilai default"
+            }
+          },
+          "boolean": {
+            "label": "Benar | Salah",
+            "no_default": "Tidak ada nilai default"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opsi",
+              "form": {
+                "placeholder": "Tambah opsi",
+                "errors": {
+                  "name": {
+                    "required": "Nama opsi diperlukan.",
+                    "integrity": "Opsi dengan nama yang sama sudah ada."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Pilih opsi",
+                "multi": {
+                  "default": "Pilih opsi",
+                  "variable": "{count} opsi dipilih"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil dibuat."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal membuat properti. Silakan coba lagi!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil diperbarui."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal memperbarui properti. Silakan coba lagi!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil dihapus."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal menghapus properti. Silakan coba lagi!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} properti {name}",
+            "success": {
+              "title": "Berhasil!",
+              "message": "Properti {name} berhasil {action}."
+            },
+            "error": {
+              "title": "Kesalahan!",
+              "message": "Gagal {action} properti. Silakan coba lagi!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Buat properti kustom baru",
+            "update": "Perbarui properti kustom"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Judul"
+            },
+            "description": {
+              "placeholder": "Deskripsi"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Anda harus memberi nama properti Anda.",
+              "max_length": "Nama properti tidak boleh melebihi 255 karakter."
+            },
+            "property_type": {
+              "required": "Anda harus memilih tipe properti."
+            },
+            "options": {
+              "required": "Anda harus menambahkan setidaknya satu opsi."
+            },
+            "formula": {
+              "required": "Ekspresi rumus diperlukan.",
+              "invalid": "Rumus tidak valid: {error}",
+              "circular_reference": "Referensi melingkar terdeteksi. Rumus tidak dapat mereferensikan dirinya sendiri secara langsung maupun tidak langsung.",
+              "invalid_reference": "Rumus mereferensikan properti yang tidak ada."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Kolom rumus",
+          "tooltip": "Masukkan rumus menggunakan sintaks '{'Nama Kolom'}'. Mendukung operator +, -, *, / dan &.",
+          "placeholder": "Tulis rumus",
+          "test_button": "Tes",
+          "validating": "Memvalidasi",
+          "validation_success": "Rumus valid! Mengembalikan {resultType}",
+          "validation_success_with_refs": "Rumus valid! Mengembalikan {resultType} ({count} kolom direferensikan)",
+          "error": {
+            "empty": "Silakan masukkan rumus",
+            "missing_context": "Konteks ruang kerja, proyek, atau tipe item kerja tidak ditemukan",
+            "validation_failed": "Validasi gagal"
+          },
+          "picker": {
+            "no_match": "Tidak ada properti yang cocok",
+            "no_available": "Tidak ada properti yang tersedia"
+          }
+        },
+        "enable_disable": {
+          "label": "Aktif",
+          "tooltip": {
+            "disabled": "Klik untuk menonaktifkan",
+            "enabled": "Klik untuk mengaktifkan"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Hapus properti ini",
+          "description": "Penghapusan properti dapat menyebabkan hilangnya data yang ada.",
+          "secondary_description": "Apakah Anda ingin menonaktifkan properti sebagai gantinya?",
+          "primary_button": "{action}, hapus itu",
+          "secondary_button": "Ya, nonaktifkan itu"
+        },
+        "mandate_confirmation": {
+          "label": "Properti wajib",
+          "content": "Sepertinya ada opsi default untuk properti ini. Membuat properti menjadi wajib akan menghapus nilai default dan pengguna harus menambahkan nilai pilihan mereka.",
+          "tooltip": {
+            "disabled": "Tipe properti ini tidak dapat dijadikan wajib",
+            "enabled": "Hapus centang untuk menandai kolom sebagai opsional",
+            "checked": "Centang untuk menandai kolom sebagai wajib"
+          }
+        },
+        "empty_state": {
+          "title": "Tambahkan properti kustom",
+          "description": "Properti baru yang Anda tambahkan untuk tipe item kerja ini akan ditampilkan di sini."
+        }
+      },
+      "types": {
+        "title": "Tipe",
+        "description": "Buat dan sesuaikan tipe item kerja dengan properti.",
+        "sort_options": {
+          "project_count": "Jumlah proyek yang menjadi bagian"
+        },
+        "filter_options": {
+          "show_active": "Tampilkan aktif",
+          "show_inactive": "Tampilkan tidak aktif"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Buat baru",
+            "import_from_workspace": "Impor dari ruang kerja"
+          },
+          "banner": {
+            "with_access": "Aktifkan tipe item kerja untuk mengimpor tipe dari level ruang kerja",
+            "without_access": "Tipe item kerja dinonaktifkan. Hubungi admin ruang kerja untuk mengaktifkannya di pengaturan ruang kerja."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Properti kustom",
+        "add_button": "Tambah properti",
+        "modal": {
+          "title": "Tambah properti",
+          "empty": {
+            "title": "Tidak ada properti tersedia",
+            "description": "Semua properti telah ditautkan ke tipe ini."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Lepas tautan properti",
+          "description": "Melepas tautan properti ini akan menghapus secara permanen semua nilainya di setiap item kerja yang menggunakan tipe ini. Tindakan ini tidak dapat dibatalkan.",
+          "input_label": "Ketik",
+          "input_label_suffix": "untuk melanjutkan:",
+          "confirm": "Lepas tautan properti",
+          "loading": "Melepas tautan"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Hapus jenis ini",
+        "description": "Penghapusan tipe dapat menyebabkan hilangnya data yang ada.",
+        "can_disable_warning": "Apakah Anda ingin menonaktifkan jenisnya saja?",
+        "primary_button": "Ya, hapus",
+        "toast": {
+          "success": {
+            "title": "Berhasil!",
+            "message": "Jenis item kerja berhasil dihapus."
+          },
+          "error": {
+            "title": "Kesalahan!",
+            "message": "Gagal menghapus jenis item kerja. Silakan coba lagi!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Tidak dapat menghapus jenis item kerja default",
+          "cannot_delete_work_item_type_with_associated_work_items": "Tidak dapat menghapus jenis item kerja yang memiliki item kerja terkait"
+        }
+      }
+    },
+    "create": {
+      "title": "Buat tipe item kerja",
+      "button": "Tambah tipe item kerja",
+      "toast": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Tipe item kerja berhasil dibuat."
+        },
+        "error": {
+          "title": "Kesalahan!",
+          "message": {
+            "default": "Gagal membuat tipe item kerja. Silakan coba lagi!",
+            "conflict": "Tipe {name} sudah ada. Pilih nama lain."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Perbarui tipe item kerja",
+      "button": "Perbarui tipe item kerja",
+      "toast": {
+        "success": {
+          "title": "Berhasil!",
+          "message": "Tipe item kerja {name} berhasil diperbarui."
+        },
+        "error": {
+          "title": "Kesalahan!",
+          "message": {
+            "default": "Gagal memperbarui tipe item kerja. Silakan coba lagi!",
+            "conflict": "Tipe {name} sudah ada. Pilih nama lain."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Berikan nama unik untuk tipe item kerja ini"
+        },
+        "description": {
+          "placeholder": "Jelaskan untuk apa tipe item kerja ini dimaksudkan dan kapan akan digunakan."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} tipe item kerja {name}",
+        "success": {
+          "title": "Berhasil!",
+          "message": "Tipe item kerja {name} berhasil {action}."
+        },
+        "error": {
+          "title": "Kesalahan!",
+          "message": "Gagal {action} tipe item kerja. Silakan coba lagi!"
+        }
+      },
+      "tooltip": "Klik untuk {action}"
+    },
+    "change_confirmation": {
+      "title": "Ubah tipe item kerja?",
+      "description": "Mengubah tipe item kerja dapat mengakibatkan hilangnya nilai properti kustom yang spesifik untuk tipe saat ini. Tindakan ini tidak dapat dibatalkan.",
+      "button": {
+        "loading": "Mengubah",
+        "default": "Ubah tipe"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Aktifkan Tipe Item Kerja",
+        "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
+        "primary_button": {
+          "text": "Aktifkan"
+        },
+        "confirmation": {
+          "title": "Setelah diaktifkan, Tipe Item Kerja tidak dapat dinonaktifkan.",
+          "description": "Item Kerja Plane akan menjadi tipe item kerja default untuk proyek ini dan akan muncul dengan ikon dan latar belakangnya di proyek ini.",
+          "button": {
+            "default": "Aktifkan",
+            "loading": "Menyiapkan"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Dapatkan Pro untuk mengaktifkan Tipe item kerja.",
+        "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
+        "primary_button": {
+          "text": "Dapatkan Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Tingkatkan untuk mengaktifkan Tipe item kerja.",
+        "description": "Bentuk item kerja sesuai dengan pekerjaan Anda dengan Tipe item kerja. Sesuaikan dengan ikon, latar belakang, dan properti dan konfigurasikan untuk proyek ini.",
+        "primary_button": {
+          "text": "Tingkatkan"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Hierarki",
+      "tab_label": "Hierarki",
+      "description": "Atur tingkat hierarki untuk mengorganisir pekerjaan Anda. Setiap tingkat mendefinisikan hubungan induk dengan item langsung di atasnya dan hubungan anak dengan item langsung di bawahnya. ",
+      "sidebar_label": "Hierarki",
+      "enable_control": {
+        "title": "Aktifkan hierarki",
+        "description": "Buat hubungan induk-anak antara berbagai jenis item pekerjaan.",
+        "tooltip": "Anda tidak dapat menonaktifkan hierarki setelah diaktifkan."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Tentukan Jenis Item Pekerjaan terlebih dahulu untuk membuat hierarki baru.",
+        "cta": "Pengaturan jenis item pekerjaan"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Seret dan lepas jenis untuk menambahkan tingkat hierarki baru",
+      "empty_level_placeholder": "Seret dan lepas jenis item pekerjaan ke tingkat {level}",
+      "drag_tooltip": "Seret untuk mengubah tingkat",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Tetapkan sebagai default",
+          "toast": {
+            "loading": "Menetapkan sebagai default...",
+            "success": {
+              "title": "Berhasil!",
+              "message": "Tingkat hierarki {level} berhasil ditetapkan sebagai default."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Gagal menetapkan tingkat hierarki {level} sebagai default. Silakan coba lagi."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "Memindahkan {workItemTypeName} ke tingkat {level}...",
+        "success": {
+          "title": "Berhasil!",
+          "message": "{workItemTypeName} berhasil dipindahkan ke tingkat {level}."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Menyimpan akan memutus tautan yang ada",
+      "content": {
+        "intro": "Jenis item pekerjaan {workItemTypeName} memiliki:",
+        "parent_items": "{count, plural, other {# tautan induk akan dihapus}}.",
+        "child_items": "{count, plural, other {sub-item pekerjaan}}",
+        "parent_line_suffix_when_also_children": ", dan ",
+        "footer": "Perubahan ini akan menghapus hubungan induk-anak dari item pekerjaan yang ada dengan jenis {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Ketik \"konfirmasi\" untuk melanjutkan.",
+        "placeholder": "konfirmasi"
+      },
+      "error_toast": {
+        "title": "Kesalahan!",
+        "message": "Gagal melepaskan tautan dan menyimpan. Silakan coba lagi."
+      },
+      "confirm_button": {
+        "loading": "Menyimpan",
+        "default": "Simpan tetap"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Kesalahan!",
+        "message": "Jenis item pekerjaan yang dipilih tidak dapat digunakan untuk membuat item pekerjaan baru karena melanggar aturan hierarki."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Kesalahan!",
+        "message": "Jenis item pekerjaan tidak dapat diperbarui karena melanggar aturan hierarki."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Tingkat hierarki",
+      "invalid_level_toast": {
+        "title": "Kesalahan!",
+        "message": "Jenis item kerja tidak dapat diperbarui karena melanggar aturan hierarki."
+      }
+    }
+  }
+}

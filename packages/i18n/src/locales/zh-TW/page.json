@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "大綱",
+        "empty_state": {
+          "title": "缺少標題",
+          "description": "讓我們在這個頁面添加一些標題來在這裡查看它們。"
+        }
+      },
+      "info": {
+        "label": "資訊",
+        "document_info": {
+          "words": "字數",
+          "characters": "字元數",
+          "paragraphs": "段落數",
+          "read_time": "閱讀時間"
+        },
+        "actors_info": {
+          "edited_by": "編輯者",
+          "created_by": "建立者"
+        },
+        "version_history": {
+          "label": "版本歷史",
+          "current_version": "目前版本",
+          "highlight_changes": "標示變更"
+        }
+      },
+      "assets": {
+        "label": "資源",
+        "download_button": "下載",
+        "empty_state": {
+          "title": "缺少圖片",
+          "description": "添加圖片以在這裡查看它們。"
+        }
+      },
+      "comments": {
+        "label": "留言",
+        "empty_state": {
+          "title": "沒有留言",
+          "description": "新增留言以在此處檢視它們。"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "便利貼名稱不能超過 100 個字元。",
+        "already_exists": "已存在沒有描述的便利貼"
+      },
+      "created": {
+        "title": "便利貼已建立",
+        "message": "便利貼已成功建立"
+      },
+      "not_created": {
+        "title": "便利貼未建立",
+        "message": "無法建立便利貼"
+      },
+      "updated": {
+        "title": "便利貼已更新",
+        "message": "便利貼已成功更新"
+      },
+      "not_updated": {
+        "title": "便利貼未更新",
+        "message": "無法更新便利貼"
+      },
+      "removed": {
+        "title": "便利貼已移除",
+        "message": "便利貼已成功移除"
+      },
+      "not_removed": {
+        "title": "便利貼未移除",
+        "message": "無法移除便利貼"
+      }
+    },
+    "open_button": "打開導航面板",
+    "close_button": "關閉導航面板",
+    "outline_floating_button": "打開大綱"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "移動",
+        "loading": "移動中"
+      },
+      "cannot_move_to_teamspace": "私人和共享頁面無法移至團隊空間。",
+      "placeholders": {
+        "workspace_to_all": "搜尋專案與團隊空間",
+        "workspace_to_project": "搜尋專案",
+        "project_to_all": "搜尋專案與團隊空間",
+        "project_to_project": "搜尋專案",
+        "project_to_all_with_wiki": "搜尋 Wiki 集合、專案和團隊空間",
+        "project_to_project_with_wiki": "搜尋 Wiki 集合和專案"
+      },
+      "toasts": {
+        "success": {
+          "title": "成功！",
+          "message": "頁面移動成功。"
+        },
+        "error": {
+          "title": "錯誤！",
+          "message": "無法移動頁面，請稍後再試。"
+        },
+        "collection_error": {
+          "title": "已移至 Wiki",
+          "message": "頁面已移至 Wiki，但無法加入所選集合。它會保留在 General 中。"
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "從集合中移除",
+      "success_message": "頁面已從集合中移除。",
+      "error_message": "無法將頁面從集合中移除。請再試一次。"
+    }
+  }
+}

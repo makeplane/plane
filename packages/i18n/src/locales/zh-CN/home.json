@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "快速入门指南",
+      "not_right_now": "暂时不要",
+      "create_project": {
+        "title": "创建项目",
+        "description": "在Plane中，大多数事情都从项目开始。",
+        "cta": "开始使用"
+      },
+      "invite_team": {
+        "title": "邀请您的团队",
+        "description": "与同事一起构建、发布和管理。",
+        "cta": "邀请他们加入"
+      },
+      "configure_workspace": {
+        "title": "设置您的工作区",
+        "description": "开启或关闭功能，或进行更多设置。",
+        "cta": "配置此工作区"
+      },
+      "personalize_account": {
+        "title": "让Plane更适合您",
+        "description": "选择您的头像、颜色等。",
+        "cta": "立即个性化"
+      },
+      "widgets": {
+        "title": "没有小部件看起来很安静，开启它们吧",
+        "description": "看起来您的所有小部件都已关闭。现在启用它们\n来提升您的体验！",
+        "primary_button": {
+          "text": "管理小部件"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "保存您想要方便访问的工作相关链接。",
+      "add": "添加快速链接",
+      "title": "快速链接",
+      "title_plural": "快速链接"
+    },
+    "recents": {
+      "title": "最近",
+      "empty": {
+        "project": "访问项目后，您的最近项目将显示在这里。",
+        "page": "访问页面后，您的最近页面将显示在这里。",
+        "issue": "访问工作项后，您的最近工作项将显示在这里。",
+        "default": "您还没有任何最近项目。"
+      },
+      "filters": {
+        "all": "所有",
+        "projects": "项目",
+        "pages": "页面",
+        "issues": "工作项"
+      }
+    },
+    "new_at_plane": {
+      "title": "Plane新功能"
+    },
+    "quick_tutorial": {
+      "title": "快速教程"
+    },
+    "widget": {
+      "reordered_successfully": "小部件重新排序成功。",
+      "reordering_failed": "重新排序小部件时出错。"
+    },
+    "manage_widgets": "管理小部件",
+    "title": "首页",
+    "star_us_on_github": "在GitHub上为我们加星",
+    "business_trial_banner": {
+      "title": "您的14天Business计划试用已开始！",
+      "description": "探索所有Business功能。准备好后，选择订阅。不会自动收费。",
+      "trial_ends_today": "试用今天结束",
+      "trial_ends_in_days": "试用将在{days}天后结束",
+      "start_subscription": "开始订阅",
+      "explore_business_features": "探索Business功能"
+    }
+  }
+}

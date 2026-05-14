@@ -1,0 +1,34 @@
+{
+  "command_k": {
+    "empty_state": {
+      "search": {
+        "title": "Aucun résultat trouvé"
+      }
+    }
+  },
+  "sidebar": {
+    "stickies": "Stickies",
+    "your_work": "Votre travail",
+    "projects": "Projets",
+    "pages": "Pages",
+    "new_work_item": "Nouvel élément de travail",
+    "home": "Accueil",
+    "inbox": "Boîte de réception",
+    "workspace": "Espace de travail",
+    "views": "Vues",
+    "analytics": "Analyses",
+    "work_items": "Éléments de travail",
+    "cycles": "Cycles",
+    "modules": "Modules",
+    "intake": "Intake",
+    "drafts": "Brouillons",
+    "favorites": "Favoris",
+    "pro": "Pro",
+    "upgrade": "Mettre à niveau",
+    "pi_chat": "Plane AI",
+    "epics": "Epics",
+    "upgrade_plan": "Mettre à niveau",
+    "plane_pro": "Plane Pro",
+    "business": "Business"
+  }
+}

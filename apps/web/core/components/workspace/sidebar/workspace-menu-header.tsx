@@ -52,7 +52,7 @@ export const SidebarWorkspaceMenuHeader = observer(function SidebarWorkspaceMenu
         className="sticky top-0 z-10 flex w-full flex-1 items-center justify-between gap-1 py-1.5 text-13 font-semibold text-placeholder"
         onClick={() => toggleWorkspaceMenu(!isWorkspaceMenuOpen)}
       >
-        <span>{t("workspace")}</span>
+        <span>{t("common.workspace")}</span>
       </Disclosure.Button>
       <CustomMenu
         customButton={

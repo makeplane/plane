@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Introdu ID-ul proiectului",
+      "please_select_a_timezone": "Te rugăm să selectezi un fus orar",
+      "archive_project": {
+        "title": "Arhivează proiectul",
+        "description": "Arhivarea unui proiect îl va elimina din navigarea laterală, dar vei putea accesa proiectul din pagina ta de proiecte. Poți restaura sau șterge proiectul oricând dorești.",
+        "button": "Arhivează proiectul"
+      },
+      "delete_project": {
+        "title": "Șterge proiectul",
+        "description": "La ștergerea unui proiect, toate datele și resursele din cadrul proiectului vor fi eliminate definitiv și nu vor putea fi recuperate.",
+        "button": "Șterge proiectul meu"
+      },
+      "toast": {
+        "success": "Proiect actualizat cu succes",
+        "error": "Proiectul nu a putut fi actualizat. Te rugăm să încerci din nou."
+      }
+    },
+    "members": {
+      "label": "Membri",
+      "project_lead": "Lider de proiect",
+      "project_lead_description": "Selectați liderul proiectului.",
+      "default_assignee": "Persoană atribuită implicit",
+      "default_assignee_description": "Selectați persoana implicită atribuită proiectului.",
+      "project_subscribers": "Abonații proiectului",
+      "project_subscribers_description": "Selectați membrii care vor primi notificări pentru acest proiect.",
+      "guest_super_permissions": {
+        "title": "Acordă acces la perspectivă pentru toți utilizatorii de tip Invitat:",
+        "sub_heading": "Aceasta va permite utilizatorilor din categoria Invitați să vadă toate activitățile din proiect."
+      },
+      "invite_members": {
+        "title": "Invită membri",
+        "sub_heading": "Invită membri să lucreze la proiectul tău.",
+        "select_co_worker": "Selectează colegul de echipă"
+      }
+    },
+    "states": {
+      "heading": "Stări",
+      "description": "Definește și personalizează stările fluxului de lucru pentru a urmări progresul activităților tale.",
+      "describe_this_state_for_your_members": "Descrie această stare pentru membrii tăi.",
+      "empty_state": {
+        "title": "Nicio stare disponibilă pentru grupul {groupKey}",
+        "description": "Te rog să creezi o stare nouă"
+      }
+    },
+    "labels": {
+      "heading": "Etichete",
+      "description": "Creează etichete personalizate pentru a categoriza și organiza activitățile tale",
+      "label_title": "Titlu etichetă",
+      "label_title_is_required": "Titlul etichetei este obligatoriu",
+      "label_max_char": "Numele etichetei nu trebuie să depășească 255 de caractere",
+      "toast": {
+        "error": "Eroare la actualizarea etichetei"
+      }
+    },
+    "estimates": {
+      "heading": "Estimări",
+      "description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
+      "label": "Estimări",
+      "title": "Activează estimările pentru proiectul meu",
+      "enable_description": "Te ajută să comunici complexitatea și volumul de muncă al echipei.",
+      "no_estimate": "Fără estimare",
+      "new": "Noul sistem de estimare",
+      "create": {
+        "custom": "Personalizat",
+        "start_from_scratch": "Începe de la zero",
+        "choose_template": "Alege un șablon",
+        "choose_estimate_system": "Alege un sistem de estimare",
+        "enter_estimate_point": "Introdu estimarea",
+        "step": "Pasul {step} de {total}",
+        "label": "Creează estimare"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimare creată",
+            "message": "Estimarea a fost creată cu succes"
+          },
+          "error": {
+            "title": "Crearea estimării a eșuat",
+            "message": "Nu am putut crea noua estimare, te rugăm să încerci din nou."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimare modificată",
+            "message": "Estimarea a fost actualizată în proiectul tău."
+          },
+          "error": {
+            "title": "Modificarea estimării a eșuat",
+            "message": "Nu am putut modifica estimarea, te rugăm să încerci din nou"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Succes!",
+            "message": "Estimările au fost activate."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Succes!",
+            "message": "Estimările au fost dezactivate."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Estimarea nu a putut fi dezactivată. Te rugăm să încerci din nou"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Estimări reordonate",
+            "message": "Estimările au fost reordonate în proiectul tău."
+          },
+          "error": {
+            "title": "Reordonarea estimărilor a eșuat",
+            "message": "Nu am putut reordona estimările, te rugăm să încerci din nou"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistem de estimări creat",
+            "message": "Creat și activat cu succes"
+          },
+          "error": {
+            "title": "Eroare",
+            "message": "Ceva a mers greșit"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Estimarea trebuie să fie mai mare decât 0.",
+        "unable_to_process": "Nu putem procesa cererea ta, te rugăm să încerci din nou.",
+        "numeric": "Estimarea trebuie să fie o valoare numerică.",
+        "character": "Estimarea trebuie să fie o valoare de tip caracter.",
+        "empty": "Valoarea estimării nu poate fi goală.",
+        "already_exists": "Valoarea estimării există deja.",
+        "unsaved_changes": "Ai modificări nesalvate, te rugăm să le salvezi înainte de a finaliza",
+        "remove_empty": "Estimarea nu poate fi goală. Introdu o valoare în fiecare câmp sau elimină câmpurile pentru care nu ai valori.",
+        "fill": "Te rugăm să completezi acest câmp de estimare",
+        "repeat": "Valoarea estimării nu poate fi repetată"
+      },
+      "systems": {
+        "points": {
+          "label": "Puncte",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Pătrate",
+          "custom": "Personalizat"
+        },
+        "categories": {
+          "label": "Categorii",
+          "t_shirt_sizes": "Mărimi tricou",
+          "easy_to_hard": "De la ușor la greu",
+          "custom": "Personalizat"
+        },
+        "time": {
+          "label": "Timp",
+          "hours": "Ore"
+        }
+      },
+      "edit": {
+        "title": "Editează sistemul de estimări",
+        "add_or_update": {
+          "title": "Adaugă, actualizează sau elimină estimări",
+          "description": "Gestionează sistemul curent prin adăugarea, actualizarea sau eliminarea punctelor sau categoriilor."
+        },
+        "switch": {
+          "title": "Schimbă tipul de estimare",
+          "description": "Convertește sistemul tău de puncte în sistem de categorii și invers."
+        }
+      },
+      "switch": "Schimbă sistemul de estimări",
+      "current": "Sistemul de estimări curent",
+      "select": "Selectează un sistem de estimări"
+    },
+    "automations": {
+      "label": "Automatizări",
+      "heading": "Automatizări",
+      "description": "Configurează acțiuni automate pentru a-ți eficientiza fluxul de lucru al proiectului și a reduce sarcinile manuale.",
+      "auto-archive": {
+        "title": "Auto-arhivează activitățile finalizate",
+        "description": "Plane va arhiva automat activitățile care au fost finalizate sau anulate.",
+        "duration": "Auto-arhivează activitățile finalizate de"
+      },
+      "auto-close": {
+        "title": "Închide automat activitățile",
+        "description": "Plane va închide automat activitățile care nu au fost finalizate sau anulate.",
+        "duration": "Închide automat activitățile inactive de",
+        "auto_close_status": "Stare închidere automată"
+      },
+      "auto-remind": {
+        "title": "Avertismente automate",
+        "description": "Plane va trimite avertizări automate prin e-mail și notificări în aplicație pentru a menține echipa pe calea termenelor.",
+        "duration": "Trimite avertizare înainte"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Nicio etichetă încă",
+        "description": "Creează etichete pentru a organiza și filtra activitățile din proiect."
+      },
+      "estimates": {
+        "title": "Nicio estimare configurată",
+        "description": "Creează un set de estimări pentru a comunica volumul de muncă pentru fiecare activitate.",
+        "primary_button": "Adaugă sistem de estimare"
+      },
+      "integrations": {
+        "title": "Nicio integrare configurată",
+        "description": "Configurează GitHub și alte integrări pentru a sincroniza elementele de lucru ale proiectului tău."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Activează fluxurile de lucru",
+        "description": "Setează fluxuri de lucru pentru a controla mișcarea activităților",
+        "no_states_tooltip": "Nu există stări adăugate în fluxul de lucru.",
+        "no_work_item_types_tooltip": "Nu există tipuri de activități adăugate în fluxul de lucru.",
+        "no_states_or_work_item_types_tooltip": "Nu există stări sau tipuri de activități adăugate în fluxul de lucru.",
+        "toast": {
+          "loading": {
+            "enabling": "Se activează fluxurile de lucru",
+            "disabling": "Se dezactivează fluxurile de lucru"
+          },
+          "success": {
+            "title": "Succes!",
+            "message": "Fluxurile de lucru au fost activate cu succes."
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Activarea fluxurilor de lucru a eșuat. Te rugăm să încerci din nou."
+          }
+        }
+      },
+      "heading": "Fluxuri de lucru",
+      "description": "Automatizează tranzițiile activităților și setează reguli pentru a controla modul în care sarcinile se deplasează prin fluxul proiectului tău.",
+      "add_button": "Adaugă flux de lucru nou",
+      "search": "Caută fluxuri de lucru",
+      "detail": {
+        "define": "Definește fluxul de lucru",
+        "add_states": "Adaugă stări",
+        "unmapped_states": {
+          "title": "Stări nemapate detectate",
+          "description": "Unele activități pentru tipurile selectate sunt în prezent în stări care nu există în acest flux de lucru.",
+          "note": "Dacă activezi acest flux de lucru, aceste elemente se vor muta automat în starea inițială a acestui flux de lucru.",
+          "label": "Stări lipsă",
+          "tooltip": "Unele activități sunt în stări care nu sunt mapate la acest flux de lucru. Deschide fluxul de lucru pentru a revizui."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Toate stările sunt utilizate",
+          "description": "Toate stările definite pentru acest proiect sunt deja prezente în fluxul tău de lucru curent."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Acest flux de lucru se aplică oricărui tip de activitate care nu este atribuit unui flux de lucru."
+      },
+      "create": {
+        "heading": "Creează flux de lucru nou",
+        "name": {
+          "placeholder": "Adaugă un nume unic",
+          "validation": {
+            "max_length": "Numele trebuie să aibă mai puțin de 255 de caractere",
+            "required": "Numele este obligatoriu",
+            "invalid": "Numele poate conține doar litere, cifre, spații, cratime și apostrofe"
+          }
+        },
+        "description": {
+          "placeholder": "Adaugă o scurtă descriere",
+          "validation": {
+            "invalid": "Descrierea poate conține doar litere, cifre, spații, cratime și apostrofe"
+          }
+        },
+        "work_item_type": {
+          "label": "Tip de activitate"
+        },
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru creat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Crearea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru actualizat cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Actualizarea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "delete": {
+        "loading": "Se șterge fluxul de lucru",
+        "success": {
+          "title": "Succes!",
+          "message": "Flux de lucru șters cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Ștergerea fluxului de lucru a eșuat. Te rugăm să încerci din nou."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Succes!",
+          "message": "Stări adăugate cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Adăugarea stărilor a eșuat. Te rugăm să încerci din nou."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipuri de activități",
+      "description": "Creează și personalizează diferite tipuri de activități cu proprietăți unice"
+    },
+    "features": {
+      "cycles": {
+        "title": "Cicluri",
+        "short_title": "Cicluri",
+        "description": "Programați munca în perioade flexibile care se adaptează ritmului și ritmului unic al acestui proiect.",
+        "toggle_title": "Activați ciclurile",
+        "toggle_description": "Planificați munca în intervale de timp concentrate."
+      },
+      "modules": {
+        "title": "Module",
+        "short_title": "Module",
+        "description": "Organizați munca în subproiecte cu lideri și responsabili dedicați.",
+        "toggle_title": "Activați modulele",
+        "toggle_description": "Membrii proiectului vor putea crea și edita module."
+      },
+      "views": {
+        "title": "Vizualizări",
+        "short_title": "Vizualizări",
+        "description": "Salvați sortări personalizate, filtre și opțiuni de afișare sau partajați-le cu echipa dvs.",
+        "toggle_title": "Activați vizualizările",
+        "toggle_description": "Membrii proiectului vor putea crea și edita vizualizări."
+      },
+      "pages": {
+        "title": "Pagini",
+        "short_title": "Pagini",
+        "description": "Creați și editați conținut liber: note, documente, orice.",
+        "toggle_title": "Activați paginile",
+        "toggle_description": "Membrii proiectului vor putea crea și edita pagini."
+      },
+      "intake": {
+        "intake_responsibility": "Responsabilitate de primire",
+        "intake_sources": "Surse de primire",
+        "title": "Recepție",
+        "short_title": "Recepție",
+        "description": "Permiteți non-membrilor să partajeze erori, feedback și sugestii; fără a perturba fluxul de lucru.",
+        "toggle_title": "Activați recepția",
+        "toggle_description": "Permiteți membrilor proiectului să creeze solicitări de recepție în aplicație.",
+        "toggle_tooltip_on": "Solicitați administratorului proiectului să activeze.",
+        "toggle_tooltip_off": "Solicitați administratorului proiectului să dezactiveze.",
+        "notify_assignee": {
+          "title": "Notifică persoanele desemnate",
+          "description": "Pentru o nouă cerere de primire, persoanele desemnate implicit vor fi alertate prin notificări"
+        },
+        "in_app": {
+          "title": "În aplicație",
+          "description": "Primiți elemente de lucru noi de la membri și invitați în spațiul de lucru fără a perturba cele existente."
+        },
+        "email": {
+          "title": "E-mail",
+          "description": "Colectați elemente de lucru noi de la oricine trimite un e-mail la o adresă Plane.",
+          "fieldName": "ID e-mail"
+        },
+        "form": {
+          "title": "Formulare",
+          "description": "Permiteți persoanelor din afara spațiului de lucru să creeze elemente de lucru noi potențiale printr-un formular dedicat și sigur.",
+          "fieldName": "URL formular implicit",
+          "create_forms": "Creați formulare folosind tipuri de elemente de lucru",
+          "manage_forms": "Gestionați formularele",
+          "manage_forms_tooltip": "Solicitați administratorului spațiului de lucru să gestioneze.",
+          "create_form": "Creați formular",
+          "edit_form": "Editați detaliile formularului",
+          "form_title": "Titlul formularului",
+          "form_title_required": "Titlul formularului este obligatoriu",
+          "work_item_type": "Tip element de lucru",
+          "remove_property": "Eliminați proprietatea",
+          "select_properties": "Selectați proprietăți",
+          "search_placeholder": "Căutați proprietăți",
+          "toasts": {
+            "success_create": "Formularul de primire a fost creat cu succes",
+            "success_update": "Formularul de primire a fost actualizat cu succes",
+            "error_create": "Crearea formularului de primire a eșuat",
+            "error_update": "Actualizarea formularului de primire a eșuat"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Setarea persoanelor desemnate...",
+            "success": {
+              "title": "Succes!",
+              "message": "Persoanele desemnate au fost setate cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Ceva a mers greșit la setarea persoanelor desemnate. Vă rugăm să încercați din nou."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Urmărire timp",
+        "short_title": "Urmărire timp",
+        "description": "Înregistrați timpul petrecut pe elemente de lucru și proiecte.",
+        "toggle_title": "Activați urmărirea timpului",
+        "toggle_description": "Membrii proiectului vor putea înregistra timpul lucrat."
+      },
+      "milestones": {
+        "title": "Etape importante",
+        "short_title": "Etape importante",
+        "description": "Etapele importante oferă un strat pentru a alinia elementele de lucru către date comune de finalizare.",
+        "toggle_title": "Activați etapele importante",
+        "toggle_description": "Organizați elementele de lucru după termenele etapelor importante."
+      },
+      "toasts": {
+        "loading": "Se actualizează funcționalitatea proiectului...",
+        "success": "Funcționalitatea proiectului a fost actualizată cu succes.",
+        "error": "Ceva a mers greșit la actualizarea funcționalității proiectului. Vă rugăm să încercați din nou."
+      }
+    },
+    "project_updates": {
+      "heading": "Actualizări proiect",
+      "description": "Urmărire consolidată și monitorizare a progresului pentru acest proiect"
+    },
+    "templates": {
+      "heading": "Șabloane",
+      "description": "Economisește 80% din timpul petrecut creând proiecte, activități și pagini atunci când folosești șabloane."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Programare automată a ciclurilor",
+        "description": "Mențineți ciclurile în mișcare fără configurare manuală.",
+        "tooltip": "Creați automat cicluri noi pe baza programului ales.",
+        "edit_button": "Editează",
+        "form": {
+          "cycle_title": {
+            "label": "Titlul ciclului",
+            "placeholder": "Titlu",
+            "tooltip": "Titlul va fi completat cu numere pentru ciclurile următoare. De exemplu: Design - 1/2/3",
+            "validation": {
+              "required": "Titlul ciclului este obligatoriu",
+              "max_length": "Titlul nu trebuie să depășească 255 de caractere"
+            }
+          },
+          "cycle_duration": {
+            "label": "Durata ciclului",
+            "unit": "Săptămâni",
+            "validation": {
+              "required": "Durata ciclului este obligatorie",
+              "min": "Durata ciclului trebuie să fie de cel puțin 1 săptămână",
+              "max": "Durata ciclului nu poate depăși 30 de săptămâni",
+              "positive": "Durata ciclului trebuie să fie pozitivă"
+            }
+          },
+          "cooldown_period": {
+            "label": "Perioadă de răcire",
+            "unit": "zile",
+            "tooltip": "Pauză între cicluri înainte de începerea următorului.",
+            "validation": {
+              "required": "Perioada de răcire este obligatorie",
+              "negative": "Perioada de răcire nu poate fi negativă"
+            }
+          },
+          "start_date": {
+            "label": "Ziua de început a ciclului",
+            "validation": {
+              "required": "Data de început este obligatorie",
+              "past": "Data de început nu poate fi în trecut"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Numărul de cicluri viitoare",
+            "validation": {
+              "required": "Numărul de cicluri este obligatoriu",
+              "min": "Este necesar cel puțin 1 ciclu",
+              "max": "Nu se pot programa mai mult de 3 cicluri"
+            }
+          },
+          "auto_rollover": {
+            "label": "Transfer automat al elementelor de lucru",
+            "tooltip": "În ziua în care se completează un ciclu, mutați toate elementele de lucru nefinalizate în ciclul următor."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Se activează programarea automată a ciclurilor",
+            "loading_disable": "Se dezactivează programarea automată a ciclurilor",
+            "success": {
+              "title": "Succes!",
+              "message": "Programarea automată a ciclurilor a fost comutată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message": "Nu s-a putut comuta programarea automată a ciclurilor."
+            }
+          },
+          "save": {
+            "loading": "Se salvează configurația programării automate a ciclurilor",
+            "success": {
+              "title": "Succes!",
+              "message_create": "Configurația programării automate a ciclurilor a fost salvată cu succes.",
+              "message_update": "Configurația programării automate a ciclurilor a fost actualizată cu succes."
+            },
+            "error": {
+              "title": "Eroare!",
+              "message_create": "Nu s-a putut salva configurația programării automate a ciclurilor.",
+              "message_update": "Nu s-a putut actualiza configurația programării automate a ciclurilor."
+            }
+          }
+        }
+      }
+    }
+  }
+}

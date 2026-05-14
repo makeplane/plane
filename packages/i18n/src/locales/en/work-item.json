@@ -1,0 +1,426 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Work item} other {Work items}}",
+    "all": "All Work items",
+    "edit": "Edit work item",
+    "title": {
+      "label": "Work item title",
+      "required": "Work item title is required."
+    },
+    "add": {
+      "press_enter": "Press 'Enter' to add another work item",
+      "label": "Add work item",
+      "cycle": {
+        "failed": "Work item could not be added to the cycle. Please try again.",
+        "success": "{count, plural, one {Work item} other {Work items}} added to the cycle successfully.",
+        "loading": "Adding {count, plural, one {work item} other {work items}} to the cycle"
+      },
+      "assignee": "Add assignees",
+      "start_date": "Add start date",
+      "due_date": "Add due date",
+      "parent": "Add parent work item",
+      "sub_issue": "Add sub-work item",
+      "dependency": "Add dependency",
+      "relation": "Add relation",
+      "link": "Add link",
+      "existing": "Add existing work item"
+    },
+    "remove": {
+      "label": "Remove work item",
+      "cycle": {
+        "loading": "Removing work item from the cycle",
+        "success": "Work item removed from the cycle successfully.",
+        "failed": "Work item could not be removed from the cycle. Please try again."
+      },
+      "module": {
+        "loading": "Removing work item from the module",
+        "success": "Work item removed from the module successfully.",
+        "failed": "Work item could not be removed from the module. Please try again."
+      },
+      "parent": {
+        "label": "Remove parent work item"
+      }
+    },
+    "new": "New work item",
+    "adding": "Adding work item",
+    "create": {
+      "success": "Work item created successfully"
+    },
+    "priority": {
+      "urgent": "Urgent",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "display": {
+      "properties": {
+        "label": "Display Properties",
+        "id": "ID",
+        "issue_type": "Work item Type",
+        "sub_issue_count": "Sub-work item count",
+        "attachment_count": "Attachment count",
+        "created_on": "Created on",
+        "sub_issue": "Sub-work item",
+        "work_item_count": "Work item count"
+      },
+      "extra": {
+        "show_sub_issues": "Show sub-work items",
+        "show_empty_groups": "Show empty groups"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "This layout is ordered by",
+      "list": "List",
+      "kanban": "Board",
+      "calendar": "Calendar",
+      "spreadsheet": "Table",
+      "gantt": "Timeline",
+      "title": {
+        "list": "List Layout",
+        "kanban": "Board Layout",
+        "calendar": "Calendar Layout",
+        "spreadsheet": "Table Layout",
+        "gantt": "Timeline Layout"
+      }
+    },
+    "states": {
+      "active": "Active",
+      "backlog": "Backlog"
+    },
+    "comments": {
+      "placeholder": "Add comment",
+      "switch": {
+        "private": "Switch to private comment",
+        "public": "Switch to public comment"
+      },
+      "create": {
+        "success": "Comment created successfully",
+        "error": "Comment creation failed. Please try again later."
+      },
+      "update": {
+        "success": "Comment updated successfully",
+        "error": "Comment update failed. Please try again later."
+      },
+      "remove": {
+        "success": "Comment removed successfully",
+        "error": "Comment remove failed. Please try again later."
+      },
+      "upload": {
+        "error": "Asset upload failed. Please try again later."
+      },
+      "copy_link": {
+        "success": "Comment link copied to clipboard",
+        "error": "Error copying comment link. Please try again later."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Add reply",
+          "placeholder": "Add reply"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "Failed to fetch replies"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Reply created successfully"
+            },
+            "error": {
+              "message": "Failed to create reply"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Reply updated successfully"
+            },
+            "error": {
+              "message": "Failed to update reply"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Reply deleted successfully"
+            },
+            "error": {
+              "message": "Failed to delete reply"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "Work item does not exist",
+        "description": "The work item you are looking for does not exist, has been archived, or has been deleted.",
+        "primary_button": {
+          "text": "View other work items"
+        }
+      }
+    },
+    "sibling": {
+      "label": "Sibling work items"
+    },
+    "archive": {
+      "description": "Only completed or canceled work items can be archived",
+      "label": "Archive Work item",
+      "confirm_message": "Are you sure you want to archive the work item? All your archived work items can be restored later.",
+      "success": {
+        "label": "Archive success",
+        "message": "Your archives can be found in project archives."
+      },
+      "failed": {
+        "message": "Work item could not be archived. Please try again."
+      }
+    },
+    "restore": {
+      "success": {
+        "title": "Restore success",
+        "message": "Your work item can be found in project work items."
+      },
+      "failed": {
+        "message": "Work item could not be restored. Please try again."
+      }
+    },
+    "relation": {
+      "relates_to": "Relates to",
+      "duplicate": "Duplicate of",
+      "blocked_by": "Blocked by",
+      "blocking": "Blocking",
+      "start_before": "Starts Before",
+      "start_after": "Starts After",
+      "finish_before": "Finishes Before",
+      "finish_after": "Finishes After",
+      "implements": "Implements",
+      "implemented_by": "Implemented By"
+    },
+    "copy_link": "Copy work item link",
+    "delete": {
+      "label": "Delete work item",
+      "error": "Error deleting work item"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "Work item subscribed successfully",
+        "unsubscribed": "Work item unsubscribed successfully"
+      }
+    },
+    "select": {
+      "error": "Please select at least one work item",
+      "empty": "No work items selected",
+      "add_selected": "Add selected work items",
+      "select_all": "Select all",
+      "deselect_all": "Deselect all"
+    },
+    "open_in_full_screen": "Open work item in full screen",
+    "duplicate": {
+      "modal": {
+        "title": "Make a copy to another project",
+        "description1": "This creates a copy of the work item.",
+        "description2": "All property data will be removed while duplicating.",
+        "placeholder": "Select a project"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Work item duplicated successfully"
+        },
+        "error": {
+          "message": "Failed to duplicate work item"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Link pages",
+      "show_wiki_pages": "Show Wiki pages",
+      "link_pages_to": "Link pages to",
+      "linked_pages": "Linked pages",
+      "no_description": "This is an empty page. Why don't you write something inside and see it show up here like this placeholder",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Pages updated",
+            "message": "Pages updated successfully"
+          },
+          "error": {
+            "title": "Pages update failed",
+            "message": "Pages update failed"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Page removed",
+            "message": "Page removed successfully"
+          },
+          "error": {
+            "title": "Page removal failed",
+            "message": "Page removal failed"
+          }
+        }
+      }
+    },
+    "vote": {
+      "click_to_upvote": "Click to upvote",
+      "click_to_downvote": "Click to downvote",
+      "click_to_view_upvotes": "Click to view upvotes",
+      "click_to_view_downvotes": "Click to view downvotes"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Sub-work item updated successfully",
+      "error": "Error updating sub-work item"
+    },
+    "remove": {
+      "success": "Sub-work item removed successfully",
+      "error": "Error removing sub-work item"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "You don't have sub-work items that match the filters you've applied.",
+        "description": "To see all sub-work items, clear all applied filters.",
+        "action": "Clear filters"
+      },
+      "list_filters": {
+        "title": "You don't have work items that match the filters you've applied.",
+        "description": "To see all work items, clear all applied filters.",
+        "action": "Clear filters"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No matching work items found"
+      },
+      "no_issues": {
+        "title": "No work items found"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "No comments yet",
+        "description": "Comments can be used as a discussion and follow-up space for the work items"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "Unable to archive work items",
+        "message": "Only work items belonging to Completed or Canceled state groups can be archived."
+      },
+      "invalid_issue_start_date": {
+        "title": "Unable to update work items",
+        "message": "Start date selected succeeds the due date for some work items. Ensure start date to be before the due date."
+      },
+      "invalid_issue_target_date": {
+        "title": "Unable to update work items",
+        "message": "Due date selected precedes the start date for some work items. Ensure due date to be after the start date."
+      },
+      "invalid_state_transition": {
+        "title": "Unable to update work items",
+        "message": "State change is not allowed for some work items. Ensure the state change is allowed."
+      }
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Recurring work items",
+      "description": "Set your repeatable work once, and we’ll take care of the repeats. You’ll see everything right here when it’s time.",
+      "new_recurring_work_item": "New recurring work item",
+      "update_recurring_work_item": "Update recurring work item",
+      "form": {
+        "interval": {
+          "title": "Schedule",
+          "start_date": {
+            "validation": {
+              "required": "Start date is required"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "Interval type is required"
+            }
+          }
+        },
+        "button": {
+          "create": "Create recurring work item",
+          "update": "Update recurring work item"
+        }
+      },
+      "create_button": {
+        "label": "Create recurring work item",
+        "no_permission": "Contact your project admin to create recurring work items"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Your work, on autopilot",
+        "description": "Set it once. We’ll bring it back when it’s due. Upgrade to Business to make recurring work feel effortless."
+      },
+      "no_templates": {
+        "button": "Create your first recurring work item"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Recurring work item created",
+          "message": "{name}, the recurring work item, is now available for your workspace."
+        },
+        "error": {
+          "title": "We couldn't create that recurring work item this time.",
+          "message": "Try saving your details again or copy them over to a new recurring work item, preferably in another tab."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Recurring work item changed",
+          "message": "{name}, the recurring work item, was changed."
+        },
+        "error": {
+          "title": "We couldn't save changes to this recurring work item.",
+          "message": "Try saving your details again or come back to this recurring work item later. If there's trouble still, reach out to us."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Recurring work item deleted",
+          "message": "{name}, the recurring work item, has now been deleted from your workspace."
+        },
+        "error": {
+          "title": "We couldn't delete that recurring work item this.",
+          "message": "Try deleting it again or come back to it later. If you can't delete it then, reach out to us."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Delete recurring work item",
+      "description": {
+        "prefix": "Are you sure you want to delete recurring work item-",
+        "suffix": "? All of the data related to the recurring work item will be permanently removed. This action cannot be undone."
+      }
+    }
+  },
+  "epic": {
+    "new": "New Epic",
+    "label": "{count, plural, one {Epic} other {Epics}}",
+    "adding": "Adding epic",
+    "create": {
+      "success": "Epic created successfully"
+    },
+    "add": {
+      "label": "Add Epic",
+      "press_enter": "Press 'Enter' to add another epic"
+    },
+    "title": {
+      "label": "Epic Title",
+      "required": "Epic title is required."
+    }
+  }
+}

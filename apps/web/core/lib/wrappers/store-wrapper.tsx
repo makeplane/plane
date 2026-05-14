@@ -9,8 +9,6 @@ import { useEffect, useRef } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { useTheme } from "next-themes";
-import type { TLanguage } from "@plane/i18n";
-import { useTranslation } from "@plane/i18n";
 // helpers
 import { applyCustomTheme, clearCustomTheme } from "@plane/utils";
 // hooks
@@ -32,8 +30,6 @@ function StoreWrapper(props: TStoreWrapper) {
   const { setQuery } = useRouterParams();
   const { sidebarCollapsed, toggleSidebar } = useAppTheme();
   const { data: userProfile } = useUserProfile();
-  const { changeLanguage } = useTranslation();
-
   // Track if we've initialized theme from server (one-time only)
   const hasInitializedThemeRef = useRef(false);
   // Track current user to reset on logout/login
@@ -106,11 +102,6 @@ function StoreWrapper(props: TStoreWrapper) {
     // Update previous theme for next comparison
     previousThemeRef.current = currentTheme;
   }, [userProfile?.theme]);
-
-  useEffect(() => {
-    if (!userProfile?.language) return;
-    changeLanguage(userProfile?.language as TLanguage);
-  }, [userProfile?.language, changeLanguage]);
 
   useEffect(() => {
     if (!params) return;

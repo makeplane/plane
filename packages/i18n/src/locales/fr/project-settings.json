@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Saisissez l’ID du projet",
+      "please_select_a_timezone": "Veuillez sélectionner un fuseau horaire",
+      "archive_project": {
+        "title": "Archiver le projet",
+        "description": "L'archivage d’un projet le retirera de votre navigation latérale, bien que vous pourrez toujours y accéder depuis votre page de projets. Vous pouvez restaurer le projet ou le supprimer quand vous le souhaitez.",
+        "button": "Archiver le projet"
+      },
+      "delete_project": {
+        "title": "Supprimer le projet",
+        "description": "Lors de la suppression d’un projet, toutes les données et ressources de ce projet seront définitivement supprimées et ne pourront pas être récupérées.",
+        "button": "Supprimer mon projet"
+      },
+      "toast": {
+        "success": "Projet mis à jour avec succès",
+        "error": "Le projet n’a pas pu être mis à jour. Veuillez réessayer."
+      }
+    },
+    "members": {
+      "label": "Membres",
+      "project_lead": "Chef de projet",
+      "project_lead_description": "Sélectionnez le responsable du projet.",
+      "default_assignee": "Acteur par défaut",
+      "default_assignee_description": "Sélectionnez l’attributaire par défaut du projet.",
+      "project_subscribers": "Abonnés du projet",
+      "project_subscribers_description": "Sélectionnez les membres qui recevront des notifications pour ce projet.",
+      "guest_super_permissions": {
+        "title": "Accorder l’accès en lecture à tous les éléments de travail pour les utilisateurs invités :",
+        "sub_heading": "Cela permettra aux invités d’avoir un accès en lecture à tous les éléments de travail du projet."
+      },
+      "invite_members": {
+        "title": "Inviter des membres",
+        "sub_heading": "Invitez des membres à travailler sur votre projet.",
+        "select_co_worker": "Sélectionner un acteur"
+      }
+    },
+    "states": {
+      "heading": "États",
+      "description": "Définissez et personnalisez les états du flux de travail pour suivre la progression de vos éléments de travail.",
+      "describe_this_state_for_your_members": "Décrivez cet état pour vos membres.",
+      "empty_state": {
+        "title": "Aucun état disponible pour le groupe {groupKey}",
+        "description": "Veuillez créer un nouvel état"
+      }
+    },
+    "labels": {
+      "heading": "Étiquettes",
+      "description": "Créez des étiquettes personnalisées pour catégoriser et organiser vos éléments de travail",
+      "label_title": "Titre de l’étiquette",
+      "label_title_is_required": "Le titre de l’étiquette est requis",
+      "label_max_char": "Le nom de l’étiquette ne doit pas dépasser 255 caractères",
+      "toast": {
+        "error": "Erreur lors de la mise à jour de l’étiquette"
+      }
+    },
+    "estimates": {
+      "heading": "Estimations",
+      "description": "Elles vous aident à communiquer la complexité et la charge de travail de l’équipe.",
+      "label": "Estimations",
+      "title": "Activer les estimations pour mon projet",
+      "enable_description": "Elles vous aident à communiquer la complexité et la charge de travail de l’équipe.",
+      "no_estimate": "Sans estimation",
+      "new": "Nouveau système d’estimation",
+      "create": {
+        "custom": "Personnalisé",
+        "start_from_scratch": "Commencer depuis zéro",
+        "choose_template": "Choisir un modèle",
+        "choose_estimate_system": "Choisir un système d’estimation",
+        "enter_estimate_point": "Saisir une estimation",
+        "step": "Étape {step} de {total}",
+        "label": "Créer une estimation"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimation créée",
+            "message": "L’estimation a été créée avec succès"
+          },
+          "error": {
+            "title": "Échec de la création de l’estimation",
+            "message": "Nous n’avons pas pu créer la nouvelle estimation, veuillez réessayer."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimation modifiée",
+            "message": "L’estimation a été mise à jour dans votre projet."
+          },
+          "error": {
+            "title": "Échec de la modification de l’estimation",
+            "message": "Nous n’avons pas pu modifier l’estimation, veuillez réessayer"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été activées."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Succès !",
+            "message": "Les estimations ont été désactivées."
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "L’estimation n’a pas pu être désactivée. Veuillez réessayer"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Estimations réorganisées",
+            "message": "Les estimations ont été réorganisées dans votre projet."
+          },
+          "error": {
+            "title": "Échec de la réorganisation des estimations",
+            "message": "Nous n'avons pas pu réorganiser les estimations, veuillez réessayer"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Système d’estimation créé",
+            "message": "Créé et activé avec succès"
+          },
+          "error": {
+            "title": "Erreur",
+            "message": "Une erreur s’est produite"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "L’estimation doit être supérieure à 0.",
+        "unable_to_process": "Nous ne pouvons pas traiter votre demande, veuillez réessayer.",
+        "numeric": "L’estimation doit être une valeur numérique.",
+        "character": "L’estimation doit être une valeur de caractère.",
+        "empty": "La valeur de l’estimation ne peut pas être vide.",
+        "already_exists": "La valeur de l’estimation existe déjà.",
+        "unsaved_changes": "Vous avez des modifications non enregistrées. Veuillez les enregistrer avant de cliquer sur Terminé",
+        "remove_empty": "L’estimation ne peut pas être vide. Saisissez une valeur dans chaque champ ou supprimez ceux pour lesquels vous n’avez pas de valeurs.",
+        "fill": "Veuillez remplir ce champ d'estimation",
+        "repeat": "La valeur d'estimation ne peut pas être répétée"
+      },
+      "systems": {
+        "points": {
+          "label": "Points",
+          "fibonacci": "Fibonacci",
+          "linear": "Linéaire",
+          "squares": "Carrés",
+          "custom": "Personnalisé"
+        },
+        "categories": {
+          "label": "Catégories",
+          "t_shirt_sizes": "Tailles de T-Shirt",
+          "easy_to_hard": "Facile à difficile",
+          "custom": "Personnalisé"
+        },
+        "time": {
+          "label": "Temps",
+          "hours": "Heures"
+        }
+      },
+      "edit": {
+        "title": "Modifier le système d'estimation",
+        "add_or_update": {
+          "title": "Ajouter, mettre à jour ou supprimer des estimations",
+          "description": "Gérer le système actuel en ajoutant, mettant à jour ou supprimant les points ou catégories."
+        },
+        "switch": {
+          "title": "Changer le type d'estimation",
+          "description": "Convertir votre système de points en système de catégories et vice versa."
+        }
+      },
+      "switch": "Changer de système d'estimation",
+      "current": "Système d'estimation actuel",
+      "select": "Sélectionner un système d'estimation"
+    },
+    "automations": {
+      "label": "Automatisations",
+      "heading": "Automatisations",
+      "description": "Configurez des actions automatisées pour fluidifier votre flux de gestion de projet et réduire les tâches manuelles.",
+      "auto-archive": {
+        "title": "Archiver automatiquement les éléments de travail fermés",
+        "description": "Plane archivera automatiquement les éléments de travail qui ont été complétés ou annulés.",
+        "duration": "Archiver automatiquement les éléments de travail fermés depuis"
+      },
+      "auto-close": {
+        "title": "Fermer automatiquement les éléments de travail",
+        "description": "Plane fermera automatiquement les éléments de travail qui n’ont pas été complétés ou annulés.",
+        "duration": "Fermer automatiquement les éléments de travail inactifs depuis",
+        "auto_close_status": "Statut de fermeture automatique"
+      },
+      "auto-remind": {
+        "title": "Rappels automatiques",
+        "description": "Plane enverra automatiquement des rappels via e-mail et notifications dans l'application pour garder votre équipe sur le bon chemin des délais.",
+        "duration": "Envoyer un rappel avant"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Pas encore d’étiquettes",
+        "description": "Créez des étiquettes pour organiser et filtrer les éléments de travail dans votre projet."
+      },
+      "estimates": {
+        "title": "Pas encore de systèmes d’estimation",
+        "description": "Créez un ensemble d’estimations pour communiquer le volume de travail par élément de travail.",
+        "primary_button": "Ajouter un système d’estimation"
+      },
+      "integrations": {
+        "title": "Aucune intégration configurée",
+        "description": "Configurez GitHub et d'autres intégrations pour synchroniser vos éléments de travail du projet."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Activer les flux de travail",
+        "description": "Définissez des flux de travail pour contrôler le déplacement des éléments de travail",
+        "no_states_tooltip": "Aucun état n’est ajouté au flux de travail.",
+        "no_work_item_types_tooltip": "Aucun type d’élément de travail n’est ajouté au flux de travail.",
+        "no_states_or_work_item_types_tooltip": "Aucun état ni type d’élément de travail n’est ajouté au flux de travail.",
+        "toast": {
+          "loading": {
+            "enabling": "Activation des flux de travail",
+            "disabling": "Désactivation des flux de travail"
+          },
+          "success": {
+            "title": "Succès !",
+            "message": "Flux de travail activés avec succès."
+          },
+          "error": {
+            "title": "Erreur !",
+            "message": "Échec de l’activation des flux de travail. Veuillez réessayer."
+          }
+        }
+      },
+      "heading": "Flux de travail",
+      "description": "Automatisez les transitions d’éléments de travail et définissez des règles pour contrôler la progression des tâches dans le pipeline de votre projet.",
+      "add_button": "Ajouter un nouveau flux de travail",
+      "search": "Rechercher des flux de travail",
+      "detail": {
+        "define": "Définir le flux de travail",
+        "add_states": "Ajouter des états",
+        "unmapped_states": {
+          "title": "États non mappés détectés",
+          "description": "Certains éléments de travail des types sélectionnés sont actuellement dans des états qui n’existent pas dans ce flux de travail.",
+          "note": "Si vous activez ce flux de travail, ces éléments passeront automatiquement à l’état initial de ce flux de travail.",
+          "label": "États manquants",
+          "tooltip": "Certains éléments de travail sont dans des états qui ne sont pas mappés à ce flux de travail. Ouvrez le flux de travail pour le vérifier."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tous les états sont utilisés",
+          "description": "Tous les états définis pour ce projet sont déjà présents dans votre flux de travail actuel."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Ce flux de travail s’applique à tout type d’élément de travail non assigné à un flux de travail."
+      },
+      "create": {
+        "heading": "Créer un nouveau flux de travail",
+        "name": {
+          "placeholder": "Ajoutez un nom unique",
+          "validation": {
+            "max_length": "Le nom doit faire moins de 255 caractères",
+            "required": "Le nom est requis",
+            "invalid": "Le nom ne peut contenir que des lettres, des chiffres, des espaces, des tirets et des apostrophes"
+          }
+        },
+        "description": {
+          "placeholder": "Ajoutez une courte description",
+          "validation": {
+            "invalid": "La description ne peut contenir que des lettres, des chiffres, des espaces, des tirets et des apostrophes"
+          }
+        },
+        "work_item_type": {
+          "label": "Type d’élément de travail"
+        },
+        "success": {
+          "title": "Succès !",
+          "message": "Flux de travail créé avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la création du flux de travail. Veuillez réessayer."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Succès !",
+          "message": "Flux de travail mis à jour avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la mise à jour du flux de travail. Veuillez réessayer."
+        }
+      },
+      "delete": {
+        "loading": "Suppression du flux de travail",
+        "success": {
+          "title": "Succès !",
+          "message": "Flux de travail supprimé avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de la suppression du flux de travail. Veuillez réessayer."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Succès !",
+          "message": "États ajoutés avec succès."
+        },
+        "error": {
+          "title": "Erreur !",
+          "message": "Échec de l’ajout des états. Veuillez réessayer."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Types d’éléments de travail",
+      "description": "Créez et personnalisez différents types d’éléments de travail avec des propriétés uniques"
+    },
+    "features": {
+      "cycles": {
+        "title": "Cycles",
+        "short_title": "Cycles",
+        "description": "Planifiez le travail dans des périodes flexibles qui s'adaptent au rythme et au tempo uniques de ce projet.",
+        "toggle_title": "Activer les cycles",
+        "toggle_description": "Planifiez le travail dans des périodes ciblées."
+      },
+      "modules": {
+        "title": "Modules",
+        "short_title": "Modules",
+        "description": "Organisez le travail en sous-projets avec des chefs de projet et des responsables dédiés.",
+        "toggle_title": "Activer les modules",
+        "toggle_description": "Les membres du projet pourront créer et modifier des modules."
+      },
+      "views": {
+        "title": "Vues",
+        "short_title": "Vues",
+        "description": "Enregistrez des tris, des filtres et des options d'affichage personnalisés ou partagez-les avec votre équipe.",
+        "toggle_title": "Activer les vues",
+        "toggle_description": "Les membres du projet pourront créer et modifier des vues."
+      },
+      "pages": {
+        "title": "Pages",
+        "short_title": "Pages",
+        "description": "Créez et modifiez du contenu libre : notes, documents, n'importe quoi.",
+        "toggle_title": "Activer les pages",
+        "toggle_description": "Les membres du projet pourront créer et modifier des pages."
+      },
+      "intake": {
+        "intake_responsibility": "Responsabilité d'ingestion",
+        "intake_sources": "Sources d'ingestion",
+        "title": "Réception",
+        "short_title": "Réception",
+        "description": "Permettez aux non-membres de partager des bugs, des commentaires et des suggestions ; sans perturber votre flux de travail.",
+        "toggle_title": "Activer la réception",
+        "toggle_description": "Permettre aux membres du projet de créer des demandes de réception dans l'application.",
+        "toggle_tooltip_on": "Demandez à l'administrateur du projet de l'activer.",
+        "toggle_tooltip_off": "Demandez à l'administrateur du projet de le désactiver.",
+        "notify_assignee": {
+          "title": "Notifier les responsables",
+          "description": "Pour une nouvelle demande d'ingestion, les responsables par défaut seront alertés via des notifications"
+        },
+        "in_app": {
+          "title": "Dans l'application",
+          "description": "Recevez de nouveaux éléments de travail des membres et invités de votre espace de travail sans perturber les existants."
+        },
+        "email": {
+          "title": "E-mail",
+          "description": "Collectez de nouveaux éléments de travail de toute personne envoyant un e-mail à une adresse Plane.",
+          "fieldName": "ID e-mail"
+        },
+        "form": {
+          "title": "Formulaires",
+          "description": "Permettez aux personnes hors de votre espace de travail de créer des éléments de travail potentiels via un formulaire dédié et sécurisé.",
+          "fieldName": "URL du formulaire par défaut",
+          "create_forms": "Créer des formulaires à l'aide des types d'éléments de travail",
+          "manage_forms": "Gérer les formulaires",
+          "manage_forms_tooltip": "Demandez à l'administrateur de l'espace de travail de gérer cela.",
+          "create_form": "Créer un formulaire",
+          "edit_form": "Modifier les détails du formulaire",
+          "form_title": "Titre du formulaire",
+          "form_title_required": "Le titre du formulaire est requis",
+          "work_item_type": "Type d'élément de travail",
+          "remove_property": "Supprimer la propriété",
+          "select_properties": "Sélectionner les propriétés",
+          "search_placeholder": "Rechercher des propriétés",
+          "toasts": {
+            "success_create": "Formulaire d'ingestion créé avec succès",
+            "success_update": "Formulaire d'ingestion mis à jour avec succès",
+            "error_create": "Échec de la création du formulaire d'ingestion",
+            "error_update": "Échec de la mise à jour du formulaire d'ingestion"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Définition des responsables...",
+            "success": {
+              "title": "Succès !",
+              "message": "Responsables définis avec succès."
+            },
+            "error": {
+              "title": "Erreur !",
+              "message": "Une erreur s'est produite lors de la définition des responsables. Veuillez réessayer."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Suivi du temps",
+        "short_title": "Suivi du temps",
+        "description": "Enregistrez le temps passé sur les éléments de travail et les projets.",
+        "toggle_title": "Activer le suivi du temps",
+        "toggle_description": "Les membres du projet pourront enregistrer le temps travaillé."
+      },
+      "milestones": {
+        "title": "Jalons",
+        "short_title": "Jalons",
+        "description": "Les jalons fournissent une couche pour aligner les éléments de travail vers des dates d'achèvement partagées.",
+        "toggle_title": "Activer les jalons",
+        "toggle_description": "Organisez les éléments de travail par échéances de jalons."
+      },
+      "toasts": {
+        "loading": "Mise à jour de la fonctionnalité du projet...",
+        "success": "Fonctionnalité du projet mise à jour avec succès.",
+        "error": "Une erreur s'est produite lors de la mise à jour de la fonctionnalité du projet. Veuillez réessayer."
+      }
+    },
+    "project_updates": {
+      "heading": "Mises à jour du projet",
+      "description": "Suivi consolidé et surveillance de la progression pour ce projet"
+    },
+    "templates": {
+      "heading": "Modèles",
+      "description": "Économisez 80% du temps consacré à la création de projets, d’éléments de travail et de pages en utilisant des modèles."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Planification automatique des cycles",
+        "description": "Maintenez les cycles en mouvement sans configuration manuelle.",
+        "tooltip": "Créez automatiquement de nouveaux cycles selon votre planning choisi.",
+        "edit_button": "Modifier",
+        "form": {
+          "cycle_title": {
+            "label": "Titre du cycle",
+            "placeholder": "Titre",
+            "tooltip": "Le titre sera complété par des numéros pour les cycles suivants. Par exemple : Conception - 1/2/3",
+            "validation": {
+              "required": "Le titre du cycle est requis",
+              "max_length": "Le titre ne doit pas dépasser 255 caractères"
+            }
+          },
+          "cycle_duration": {
+            "label": "Durée du cycle",
+            "unit": "Semaines",
+            "validation": {
+              "required": "La durée du cycle est requise",
+              "min": "La durée du cycle doit être d'au moins 1 semaine",
+              "max": "La durée du cycle ne peut pas dépasser 30 semaines",
+              "positive": "La durée du cycle doit être positive"
+            }
+          },
+          "cooldown_period": {
+            "label": "Période de refroidissement",
+            "unit": "jours",
+            "tooltip": "Pause entre les cycles avant le début du suivant.",
+            "validation": {
+              "required": "La période de refroidissement est requise",
+              "negative": "La période de refroidissement ne peut pas être négative"
+            }
+          },
+          "start_date": {
+            "label": "Jour de début du cycle",
+            "validation": {
+              "required": "La date de début est requise",
+              "past": "La date de début ne peut pas être dans le passé"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Nombre de cycles futurs",
+            "validation": {
+              "required": "Le nombre de cycles est requis",
+              "min": "Au moins 1 cycle est requis",
+              "max": "Impossible de planifier plus de 3 cycles"
+            }
+          },
+          "auto_rollover": {
+            "label": "Report automatique des éléments de travail",
+            "tooltip": "Le jour où un cycle se termine, déplacer tous les éléments de travail non terminés vers le cycle suivant."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Activation de la planification automatique des cycles",
+            "loading_disable": "Désactivation de la planification automatique des cycles",
+            "success": {
+              "title": "Succès !",
+              "message": "Planification automatique des cycles activée avec succès."
+            },
+            "error": {
+              "title": "Erreur !",
+              "message": "Échec de l'activation de la planification automatique des cycles."
+            }
+          },
+          "save": {
+            "loading": "Enregistrement de la configuration de planification automatique des cycles",
+            "success": {
+              "title": "Succès !",
+              "message_create": "Configuration de planification automatique des cycles enregistrée avec succès.",
+              "message_update": "Configuration de planification automatique des cycles mise à jour avec succès."
+            },
+            "error": {
+              "title": "Erreur !",
+              "message_create": "Échec de l'enregistrement de la configuration de planification automatique des cycles.",
+              "message_update": "Échec de la mise à jour de la configuration de planification automatique des cycles."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "Beklemede",
+        "description": "Beklemede"
+      },
+      "declined": {
+        "title": "Reddedildi",
+        "description": "Reddedildi"
+      },
+      "snoozed": {
+        "title": "Erteleme",
+        "description": "{days, plural, one{# gün} other{# gün}} kaldı"
+      },
+      "accepted": {
+        "title": "Kabul Edildi",
+        "description": "Kabul Edildi"
+      },
+      "duplicate": {
+        "title": "Kopya",
+        "description": "Kopya"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "İş öğesini reddet",
+        "content": "{value} iş öğesini reddetmek istediğinizden emin misiniz?"
+      },
+      "delete": {
+        "title": "İş öğesini sil",
+        "content": "{value} iş öğesini silmek istediğinizden emin misiniz?",
+        "success": "İş öğesi başarıyla silindi"
+      }
+    },
+    "errors": {
+      "snooze_permission": "Yalnızca proje yöneticileri iş öğelerini erteleyebilir/ertelemeyi kaldırabilir",
+      "accept_permission": "Yalnızca proje yöneticileri iş öğelerini kabul edebilir",
+      "decline_permission": "Yalnızca proje yöneticileri iş öğelerini reddedebilir"
+    },
+    "actions": {
+      "accept": "Kabul Et",
+      "decline": "Reddet",
+      "snooze": "Ertele",
+      "unsnooze": "Ertelemeyi Kaldır",
+      "copy": "İş öğesi bağlantısını kopyala",
+      "delete": "Sil",
+      "open": "İş öğesini aç",
+      "mark_as_duplicate": "Kopya olarak işaretle",
+      "move": "{value} proje iş öğelerine taşı"
+    },
+    "source": {
+      "in-app": "uygulama içi"
+    },
+    "order_by": {
+      "created_at": "Oluşturulma tarihi",
+      "updated_at": "Güncelleme tarihi",
+      "id": "ID"
+    },
+    "label": "Talep",
+    "page_label": "{workspace} - Talep",
+    "modal": {
+      "title": "Talep iş öğesi oluştur"
+    },
+    "tabs": {
+      "open": "Açık",
+      "closed": "Kapalı"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "Açık iş öğesi yok",
+        "description": "Açık iş öğelerini burada bulabilirsiniz. Yeni iş öğesi oluşturun."
+      },
+      "sidebar_closed_tab": {
+        "title": "Kapalı iş öğesi yok",
+        "description": "Kabul edilen veya reddedilen tüm iş öğeleri burada bulunabilir."
+      },
+      "sidebar_filter": {
+        "title": "Eşleşen iş öğesi yok",
+        "description": "Talep bölümünde uygulanan filtreyle eşleşen iş öğesi yok. Yeni bir iş öğesi oluşturun."
+      },
+      "detail": {
+        "title": "Detaylarını görüntülemek için bir iş öğesi seçin."
+      }
+    }
+  }
+}

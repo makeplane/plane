@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Excluir itens de trabalho em massa"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Ações do item de trabalho",
+        "indicator": "Item de trabalho",
+        "change_state": "Alterar estado",
+        "change_priority": "Alterar prioridade",
+        "change_assignees": "Atribuir a",
+        "assign_to_me": "Atribuir a mim",
+        "unassign_from_me": "Remover minha atribuição",
+        "change_estimate": "Alterar estimativa",
+        "add_to_cycle": "Adicionar ao ciclo",
+        "add_to_modules": "Adicionar aos módulos",
+        "add_labels": "Adicionar etiquetas",
+        "subscribe": "Inscrever-se nas notificações",
+        "unsubscribe": "Cancelar inscrição nas notificações",
+        "delete": "Excluir",
+        "copy_id": "Copiar ID",
+        "copy_id_toast_success": "ID do item de trabalho copiado para a área de transferência.",
+        "copy_id_toast_error": "Ocorreu um erro ao copiar o ID do item de trabalho para a área de transferência.",
+        "copy_title": "Copiar título",
+        "copy_title_toast_success": "Título do item de trabalho copiado para a área de transferência.",
+        "copy_title_toast_error": "Ocorreu um erro ao copiar o título do item de trabalho para a área de transferência.",
+        "copy_url": "Copiar URL",
+        "copy_url_toast_success": "URL do item de trabalho copiada para a área de transferência.",
+        "copy_url_toast_error": "Ocorreu um erro ao copiar a URL do item de trabalho para a área de transferência."
+      },
+      "cycle": {
+        "title": "Ações do ciclo",
+        "indicator": "Ciclo",
+        "add_to_favorites": "Adicionar aos favoritos",
+        "remove_from_favorites": "Remover dos favoritos",
+        "copy_url": "Copiar URL",
+        "copy_url_toast_success": "URL do ciclo copiada para a área de transferência.",
+        "copy_url_toast_error": "Ocorreu um erro ao copiar a URL do ciclo para a área de transferência."
+      },
+      "module": {
+        "title": "Ações do módulo",
+        "indicator": "Módulo",
+        "add_remove_members": "Adicionar/remover membros",
+        "change_status": "Alterar status",
+        "add_to_favorites": "Adicionar aos favoritos",
+        "remove_from_favorites": "Remover dos favoritos",
+        "copy_url": "Copiar URL",
+        "copy_url_toast_success": "URL do módulo copiada para a área de transferência.",
+        "copy_url_toast_error": "Ocorreu um erro ao copiar a URL do módulo para a área de transferência."
+      },
+      "page": {
+        "title": "Ações da página",
+        "indicator": "Página",
+        "lock": "Bloquear",
+        "unlock": "Desbloquear",
+        "make_private": "Tornar privada",
+        "make_public": "Tornar pública",
+        "archive": "Arquivar",
+        "restore": "Restaurar",
+        "add_to_favorites": "Adicionar aos favoritos",
+        "remove_from_favorites": "Remover dos favoritos",
+        "copy_url": "Copiar URL",
+        "copy_url_toast_success": "URL da página copiada para a área de transferência.",
+        "copy_url_toast_error": "Ocorreu um erro ao copiar a URL da página para a área de transferência."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Novo item de trabalho",
+      "create_page": "Nova página",
+      "create_view": "Nova visualização",
+      "create_cycle": "Novo ciclo",
+      "create_module": "Novo módulo",
+      "create_project": "Novo projeto",
+      "create_workspace": "Novo espaço de trabalho",
+      "create_project_automation": "Nova automação"
+    },
+    "navigation_actions": {
+      "open_workspace": "Abrir um espaço de trabalho",
+      "nav_home": "Ir para a página inicial",
+      "nav_inbox": "Ir para a caixa de entrada",
+      "nav_your_work": "Ir para seu trabalho",
+      "nav_account_settings": "Ir para configurações da conta",
+      "open_project": "Abrir um projeto",
+      "nav_projects_list": "Ir para lista de projetos",
+      "nav_all_workspace_work_items": "Ir para todos os itens de trabalho",
+      "nav_assigned_workspace_work_items": "Ir para itens de trabalho atribuídos",
+      "nav_created_workspace_work_items": "Ir para itens de trabalho criados",
+      "nav_subscribed_workspace_work_items": "Ir para itens de trabalho inscritos",
+      "nav_workspace_analytics": "Ir para análises do espaço de trabalho",
+      "nav_workspace_drafts": "Ir para rascunhos do espaço de trabalho",
+      "nav_workspace_archives": "Ir para arquivos do espaço de trabalho",
+      "open_workspace_setting": "Abrir uma configuração do espaço de trabalho",
+      "nav_workspace_settings": "Ir para configurações do espaço de trabalho",
+      "nav_project_work_items": "Ir para itens de trabalho",
+      "open_project_cycle": "Abrir um ciclo",
+      "nav_project_cycles": "Ir para ciclos",
+      "open_project_module": "Abrir um módulo",
+      "nav_project_modules": "Ir para módulos",
+      "open_project_view": "Abrir uma visualização do projeto",
+      "nav_project_views": "Ir para visualizações do projeto",
+      "nav_project_pages": "Ir para páginas",
+      "nav_project_intake": "Ir para admissão",
+      "nav_project_archives": "Ir para arquivos do projeto",
+      "open_project_setting": "Abrir uma configuração do projeto",
+      "nav_project_settings": "Ir para configurações do projeto",
+      "nav_workspace_active_cycle": "Ir para todos os ciclos ativos",
+      "nav_project_overview": "Ir para visão geral do projeto"
+    },
+    "account_actions": {
+      "sign_out": "Sair",
+      "workspace_invites": "Convites do espaço de trabalho"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Alternar barra lateral do aplicativo",
+      "copy_current_page_url": "Copiar URL da página atual",
+      "copy_current_page_url_toast_success": "URL da página atual copiada para a área de transferência.",
+      "copy_current_page_url_toast_error": "Ocorreu um erro ao copiar a URL da página atual para a área de transferência.",
+      "focus_top_nav_search": "Focar campo de busca"
+    },
+    "preferences_actions": {
+      "update_theme": "Alterar tema da interface",
+      "update_timezone": "Alterar fuso horário",
+      "update_start_of_week": "Alterar primeiro dia da semana",
+      "update_language": "Alterar idioma da interface",
+      "toast": {
+        "theme": {
+          "success": "Tema atualizado com sucesso.",
+          "error": "Falha ao atualizar o tema. Tente novamente."
+        },
+        "timezone": {
+          "success": "Fuso horário atualizado com sucesso.",
+          "error": "Falha ao atualizar o fuso horário. Tente novamente."
+        },
+        "generic": {
+          "success": "Preferências atualizadas com sucesso.",
+          "error": "Falha ao atualizar as preferências. Tente novamente."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Abrir atalhos do teclado",
+      "open_plane_documentation": "Abrir documentação do Plane",
+      "join_forum": "Participar do nosso Fórum",
+      "report_bug": "Reportar um bug",
+      "chat_with_us": "Converse conosco"
+    },
+    "page_placeholders": {
+      "default": "Digite um comando ou pesquise",
+      "open_workspace": "Abrir um espaço de trabalho",
+      "open_project": "Abrir um projeto",
+      "open_workspace_setting": "Abrir uma configuração do espaço de trabalho",
+      "open_project_cycle": "Abrir um ciclo",
+      "open_project_module": "Abrir um módulo",
+      "open_project_view": "Abrir uma visualização do projeto",
+      "open_project_setting": "Abrir uma configuração do projeto",
+      "update_work_item_state": "Alterar estado",
+      "update_work_item_priority": "Alterar prioridade",
+      "update_work_item_assignee": "Atribuir a",
+      "update_work_item_estimate": "Alterar estimativa",
+      "update_work_item_cycle": "Adicionar ao ciclo",
+      "update_work_item_module": "Adicionar aos módulos",
+      "update_work_item_labels": "Adicionar etiquetas",
+      "update_module_member": "Alterar membros",
+      "update_module_status": "Alterar status",
+      "update_theme": "Alterar tema",
+      "update_timezone": "Alterar fuso horário",
+      "update_start_of_week": "Alterar primeiro dia da semana",
+      "update_language": "Alterar idioma"
+    },
+    "search_menu": {
+      "no_results": "Nenhum resultado encontrado",
+      "clear_search": "Limpar pesquisa",
+      "go_to_advanced_search": "Ir para pesquisa avançada"
+    },
+    "footer": {
+      "workspace_level": "Nível do espaço de trabalho"
+    },
+    "group_titles": {
+      "actions": "Ações",
+      "contextual": "Contextual",
+      "navigation": "Navegar",
+      "create": "Criar",
+      "general": "Geral",
+      "settings": "Configurações",
+      "account": "Conta",
+      "miscellaneous": "Diversos",
+      "preferences": "Preferências",
+      "help": "Ajuda"
+    }
+  }
+}

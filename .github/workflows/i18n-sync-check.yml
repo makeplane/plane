@@ -1,0 +1,51 @@
+name: i18n sync check
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "ready_for_review"
+    paths:
+      - "packages/i18n/**"
+      - ".github/workflows/i18n-sync-check.yml"
+  push:
+    branches:
+      - "preview"
+    paths:
+      - "packages/i18n/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  sync-check:
+    name: check:sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          filter: blob:none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.18.0"
+
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+
+      - name: Run sync check
+        run: pnpm dlx tsx packages/i18n/scripts/sync-check.ts --ci

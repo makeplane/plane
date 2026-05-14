@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "ワークスペース設定",
+    "page_label": "{workspace} - 一般設定",
+    "key_created": "キーが作成されました",
+    "copy_key": "このシークレットキーをコピーしてPlaneページに保存してください。閉じた後はこのキーを見ることができません。キーを含むCSVファイルがダウンロードされました。",
+    "token_copied": "トークンがクリップボードにコピーされました。",
+    "settings": {
+      "general": {
+        "title": "一般",
+        "upload_logo": "ロゴをアップロード",
+        "edit_logo": "ロゴを編集",
+        "name": "ワークスペース名",
+        "company_size": "会社の規模",
+        "url": "ワークスペースURL",
+        "workspace_timezone": "ワークスペースのタイムゾーン",
+        "update_workspace": "ワークスペースを更新",
+        "delete_workspace": "このワークスペースを削除",
+        "delete_workspace_description": "ワークスペースを削除すると、そのワークスペース内のすべてのデータとリソースが完全に削除され、復元することはできません。",
+        "delete_btn": "このワークスペースを削除",
+        "delete_modal": {
+          "title": "このワークスペースを削除してもよろしいですか？",
+          "description": "有料プランの無料トライアルが有効です。続行するには、まずトライアルをキャンセルしてください。",
+          "dismiss": "閉じる",
+          "cancel": "トライアルをキャンセル",
+          "success_title": "ワークスペースが削除されました。",
+          "success_message": "まもなくプロフィールページに移動します。",
+          "error_title": "操作に失敗しました。",
+          "error_message": "もう一度お試しください。"
+        },
+        "errors": {
+          "name": {
+            "required": "名前は必須です",
+            "max_length": "ワークスペース名は80文字を超えることはできません"
+          },
+          "company_size": {
+            "required": "会社の規模は必須です",
+            "select_a_range": "組織の規模を選択"
+          }
+        }
+      },
+      "members": {
+        "title": "メンバー",
+        "add_member": "メンバーを追加",
+        "pending_invites": "保留中の招待",
+        "invitations_sent_successfully": "招待が正常に送信されました",
+        "leave_confirmation": "ワークスペースから退出してもよろしいですか？このワークスペースにアクセスできなくなります。この操作は取り消せません。",
+        "details": {
+          "full_name": "フルネーム",
+          "display_name": "表示名",
+          "email_address": "メールアドレス",
+          "account_type": "アカウントタイプ",
+          "authentication": "認証",
+          "joining_date": "参加日"
+        },
+        "modal": {
+          "title": "共同作業者を招待",
+          "description": "ワークスペースに共同作業者を招待します。",
+          "button": "招待を送信",
+          "button_loading": "招待を送信中",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "招待するにはメールアドレスが必要です。",
+            "invalid": "メールアドレスが無効です"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "請求とプラン",
+        "description": "プランを選択してサブスクリプションを管理し、ニーズの拡大に応じて簡単にアップグレードできます。",
+        "title": "請求とプラン",
+        "current_plan": "現在のプラン",
+        "free_plan": "現在フリープランを使用中です",
+        "view_plans": "プランを表示"
+      },
+      "exports": {
+        "heading": "エクスポート",
+        "description": "プロジェクトデータをさまざまな形式でエクスポートし、ダウンロードリンク付きのエクスポート履歴にアクセスできます。",
+        "title": "エクスポート",
+        "exporting": "エクスポート中",
+        "previous_exports": "過去のエクスポート",
+        "export_separate_files": "データを個別のファイルにエクスポート",
+        "exporting_projects": "プロジェクトをエクスポート中",
+        "format": "形式",
+        "filters_info": "フィルターを適用して、条件に基づいて特定の作業項目をエクスポートします。",
+        "modal": {
+          "title": "エクスポート先",
+          "toasts": {
+            "success": {
+              "title": "エクスポート成功",
+              "message": "エクスポートした{entity}は過去のエクスポートからダウンロードできます。"
+            },
+            "error": {
+              "title": "エクスポート失敗",
+              "message": "エクスポートに失敗しました。もう一度お試しください。"
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhook",
+        "description": "プロジェクトイベントが発生したときに、外部サービスへの通知を自動化します。",
+        "title": "Webhook",
+        "add_webhook": "Webhookを追加",
+        "modal": {
+          "title": "Webhookを作成",
+          "details": "Webhook詳細",
+          "payload": "ペイロードURL",
+          "question": "このWebhookをトリガーするイベントを選択してください",
+          "error": "URLは必須です"
+        },
+        "secret_key": {
+          "title": "シークレットキー",
+          "message": "Webhookペイロードにサインインするためのトークンを生成"
+        },
+        "options": {
+          "all": "すべてを送信",
+          "individual": "個別のイベントを選択"
+        },
+        "toasts": {
+          "created": {
+            "title": "Webhook作成完了",
+            "message": "Webhookが正常に作成されました"
+          },
+          "not_created": {
+            "title": "Webhook作成失敗",
+            "message": "Webhookを作成できませんでした"
+          },
+          "updated": {
+            "title": "Webhook更新完了",
+            "message": "Webhookが正常に更新されました"
+          },
+          "not_updated": {
+            "title": "Webhook更新失敗",
+            "message": "Webhookを更新できませんでした"
+          },
+          "removed": {
+            "title": "Webhook削除完了",
+            "message": "Webhookが正常に削除されました"
+          },
+          "not_removed": {
+            "title": "Webhook削除失敗",
+            "message": "Webhookを削除できませんでした"
+          },
+          "secret_key_copied": {
+            "message": "シークレットキーがクリップボードにコピーされました。"
+          },
+          "secret_key_not_copied": {
+            "message": "シークレットキーのコピー中にエラーが発生しました。"
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "APIトークン",
+        "description": "セキュアなAPIトークンを生成して、データを外部システムやアプリケーションと統合します。",
+        "title": "APIトークン",
+        "add_token": "アクセストークンを追加",
+        "create_token": "トークンを作成",
+        "never_expires": "無期限",
+        "generate_token": "トークンを生成",
+        "generating": "生成中",
+        "delete": {
+          "title": "APIトークンを削除",
+          "description": "このトークンを使用しているアプリケーションはPlaneのデータにアクセスできなくなります。この操作は取り消せません。",
+          "success": {
+            "title": "成功！",
+            "message": "APIトークンが正常に削除されました"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "APIトークンを削除できませんでした"
+          }
+        }
+      },
+      "integrations": {
+        "title": "インテグレーション",
+        "heading": "インテグレーション",
+        "description": "人気のツールやサービスと接続して、ワークフローエコシステム全体で作業を同期します。",
+        "page_title": "Plane のデータを利用可能なアプリや自分のアプリで利用できます。",
+        "page_description": "このワークスペースまたはあなたが使用しているすべての連携を表示します。"
+      },
+      "imports": {
+        "title": "インポート",
+        "heading": "インポート",
+        "description": "既存のプロジェクト管理ツールからデータを接続・インポートして、ワークフロー統合を効率化します。"
+      },
+      "worklogs": {
+        "title": "作業ログ",
+        "heading": "作業ログ",
+        "description": "あらゆるプロジェクトの誰の作業ログ（タイムシート）でもダウンロードできます。"
+      },
+      "group_syncing": {
+        "title": "グループ同期",
+        "heading": "グループ同期",
+        "description": "IDプロバイダーのグループをプロジェクトとロールにリンクします。IdPのグループメンバーシップが変更されるとユーザーアクセスが自動的に更新され、オンボーディングとオフボーディングが簡素化されます。",
+        "enable": {
+          "title": "グループ同期を有効にする",
+          "description": "IDプロバイダーのグループに基づいて、ユーザーをプロジェクトに自動的に追加します。"
+        },
+        "config": {
+          "title": "グループ同期の設定",
+          "description": "IDプロバイダーのグループがプロジェクトとロールにどのようにマッピングされるかを設定します。",
+          "sync_on_login": {
+            "title": "ログイン時同期",
+            "description": "ユーザーがログインしたときにグループメンバーシップとプロジェクトアクセスを更新します。"
+          },
+          "sync_offline": {
+            "title": "オフライン同期",
+            "description": "ユーザーのログインを待たずに、6時間ごとに自動的に同期を実行します。"
+          },
+          "auto_remove": {
+            "title": "自動削除",
+            "description": "グループに一致しなくなったユーザーをプロジェクトから自動的に削除します。"
+          },
+          "group_attribute_key": {
+            "title": "グループ属性キー",
+            "description": "ユーザーグループの識別と同期に使用するIDプロバイダーの属性。",
+            "placeholder": "グループ"
+          }
+        },
+        "group_mapping": {
+          "title": "グループマッピング",
+          "description": "IDプロバイダーのグループをプロジェクトとロールにリンクします。",
+          "button_text": "新しいグループ同期を追加"
+        },
+        "toast": {
+          "updating": "グループ同期機能を更新中",
+          "success": "グループ同期機能が正常に更新されました。",
+          "error": "グループ同期機能の更新に失敗しました！"
+        },
+        "delete_modal": {
+          "title": "グループ同期を削除",
+          "content": "このIDグループの新規ユーザーはプロジェクトに追加されなくなります。既に追加されたユーザーは現在のロールを維持します。"
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "ユーザーグループ",
+            "required": "ユーザーグループは必須です",
+            "placeholder": "IdPグループ名を入力"
+          },
+          "project": {
+            "text": "プロジェクト",
+            "required": "プロジェクトは必須です",
+            "placeholder": "プロジェクトを選択"
+          },
+          "default_role": {
+            "text": "プロジェクトロール",
+            "required": "プロジェクトロールは必須です",
+            "placeholder": "プロジェクトロールを選択"
+          }
+        }
+      },
+      "identity": {
+        "title": "アイデンティティ",
+        "heading": "アイデンティティ",
+        "description": "ドメインを設定し、シングルサインオンを有効にします"
+      },
+      "project_states": {
+        "title": "プロジェクトの状態",
+        "heading": "すべてのプロジェクトの進捗概要を確認します。",
+        "description": "プロジェクトステータスは、任意のプロジェクトプロパティでプロジェクトの進捗を追跡するためのPlane専用の機能です。",
+        "go_to_settings": "設定へ移動"
+      },
+      "projects": {
+        "title": "プロジェクト",
+        "description": "プロジェクトの状態管理、プロジェクトラベルの有効化、その他の設定を行います。",
+        "tabs": {
+          "states": "プロジェクトの状態",
+          "labels": "プロジェクトラベル"
+        }
+      },
+      "templates": {
+        "title": "テンプレート",
+        "heading": "テンプレート",
+        "description": "テンプレートを使用すると、プロジェクト、作業項目、ページの作成にかかる時間を80%短縮できます。"
+      },
+      "relations": {
+        "title": "関連",
+        "heading": "関連",
+        "description": "ワークスペース全体で作業項目を接続する関連タイプを作成・管理します。"
+      },
+      "cancel_trial": {
+        "title": "まずトライアルをキャンセルしてください。",
+        "description": "有料プランのトライアルが有効です。続行するには、まずキャンセルしてください。",
+        "dismiss": "閉じる",
+        "cancel": "トライアルをキャンセル",
+        "cancel_success_title": "トライアルがキャンセルされました。",
+        "cancel_success_message": "ワークスペースを削除できるようになりました。",
+        "cancel_error_title": "エラーが発生しました。",
+        "cancel_error_message": "もう一度お試しください。"
+      },
+      "applications": {
+        "internal": "内部",
+        "title": "アプリケーション",
+        "applicationId_copied": "アプリケーションIDをクリップボードにコピーしました",
+        "clientId_copied": "クライアントIDをクリップボードにコピーしました",
+        "clientSecret_copied": "クライアントシークレットをクリップボードにコピーしました",
+        "third_party_apps": "サードパーティアプリ",
+        "your_apps": "あなたのアプリ",
+        "connect": "接続",
+        "connected": "接続済み",
+        "disconnect": "切断",
+        "install": "インストール",
+        "installed": "インストール済み",
+        "configure": "設定",
+        "app_available": "このアプリをPlaneワークスペースで使用できるようにしました",
+        "app_credentials_regenrated": {
+          "title": "アプリの認証情報が正常に再生成されました",
+          "description": "クライアントシークレットを使用しているすべての場所で置き換えてください。以前のシークレットは無効になっています。"
+        },
+        "app_created": {
+          "title": "アプリが正常に作成されました",
+          "description": "認証情報を使用して、Plane ワークスペースにアプリをインストールしてください"
+        },
+        "installed_apps": "インストール済みアプリ",
+        "all_apps": "すべてのアプリ",
+        "internal_apps": "内部アプリ",
+        "app_name_title": "このアプリの名前を入力してください",
+        "app_description_title": {
+          "label": "詳細な説明",
+          "placeholder": "マーケットプレイス用の詳細な説明を書いてください。コマンドを表示するには '/' を押してください。"
+        },
+        "authorization_grant_type": {
+          "title": "接続タイプ",
+          "description": "アプリをワークスペースに一度インストールするか、各ユーザーが自分のアカウントを接続できるようにするかを選択してください"
+        },
+        "website": {
+          "title": "ウェブサイト",
+          "description": "アプリのウェブサイトへのリンク。",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "アプリ作成者",
+          "description": "アプリを作成している人物または組織。"
+        },
+        "app_maker_error": "アプリ作成者は必須です",
+        "setup_url": {
+          "label": "セットアップURL",
+          "description": "ユーザーはアプリをインストールすると、このURLにリダイレクトされます。",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "Webhook URL",
+          "description": "これは、アプリがインストールされているワークスペースからのWebhookイベントや更新を送信する場所です。",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhookシークレット",
+          "description": "受信するWebhookリクエストを検証するために使用するシークレット。",
+          "placeholder": "ランダムなシークレットキーを入力"
+        },
+        "redirect_uris": {
+          "label": "リダイレクトURI（スペース区切り）",
+          "description": "ユーザーは Plane で認証した後、このパスにリダイレクトされます。",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
+        "client_id_and_secret": "クライアントIDとシークレット",
+        "client_id_and_secret_description": "このシークレットキーをコピーして保存してください。閉じた後はこのキーを見ることができません。",
+        "client_id_and_secret_download": "ここからキーをCSVでダウンロードできます。",
+        "application_id": "アプリケーションID",
+        "client_id": "クライアントID",
+        "client_secret": "クライアントシークレット",
+        "export_as_csv": "CSVとしてエクスポート",
+        "slug_already_exists": "スラッグは既に存在します",
+        "failed_to_create_application": "アプリケーションの作成に失敗しました",
+        "upload_logo": "ロゴをアップロード",
+        "app_name_error": "アプリ名は必須です",
+        "app_short_description_title": "このアプリの短い説明を入力してください",
+        "app_short_description_error": "アプリの短い説明は必須です",
+        "app_description_error": "アプリの説明は必須です",
+        "app_slug_title": "アプリのスラッグ",
+        "app_slug_error": "アプリのスラッグは必須です",
+        "invalid_website_error": "無効なWebサイト",
+        "webhook_url_title": "WebhookのURL",
+        "webhook_url_error": "WebhookのURLは必須です",
+        "invalid_webhook_url_error": "無効なWebhookのURL",
+        "redirect_uris_title": "リダイレクトURI",
+        "redirect_uris_error": "リダイレクトURIは必須です",
+        "invalid_redirect_uris_error": "無効なリダイレクトURI",
+        "redirect_uris_description": "アプリがユーザーをリダイレクトする先のURIをスペース区切りで入力してください（例：https://example.com https://example.com/）",
+        "authorized_javascript_origins_title": "許可されたJavaScriptオリジン",
+        "authorized_javascript_origins_error": "許可されたJavaScriptオリジンは必須です",
+        "invalid_authorized_javascript_origins_error": "無効な許可されたJavaScriptオリジン",
+        "authorized_javascript_origins_description": "アプリがリクエストを行うことができるオリジンをスペース区切りで入力してください（例：app.com example.com）",
+        "create_app": "アプリを作成",
+        "update_app": "アプリを更新",
+        "build_your_own_app": "独自のアプリを構築",
+        "edit_app_details": "アプリの詳細を編集",
+        "regenerate_client_secret_description": "クライアントシークレットを再生成します。再生成後、キーをコピーするかCSVファイルとしてダウンロードできます。",
+        "regenerate_client_secret": "クライアントシークレットを再生成",
+        "regenerate_client_secret_confirm_title": "クライアントシークレットを再生成してもよろしいですか？",
+        "regenerate_client_secret_confirm_description": "このシークレットを使用しているアプリは動作しなくなります。アプリでシークレットを更新する必要があります。",
+        "regenerate_client_secret_confirm_cancel": "キャンセル",
+        "regenerate_client_secret_confirm_regenerate": "再生成",
+        "read_only_access_to_workspace": "ワークスペースへの読み取り専用アクセス",
+        "write_access_to_workspace": "ワークスペースへの書き込みアクセス",
+        "read_only_access_to_user_profile": "ユーザープロフィールへの読み取り専用アクセス",
+        "write_access_to_user_profile": "ユーザープロフィールへの書き込みアクセス",
+        "connect_app_to_workspace": "{app}を{workspace}ワークスペースに接続",
+        "user_permissions": "ユーザー権限",
+        "user_permissions_description": "ユーザー権限は、ユーザープロフィールへのアクセスを許可するために使用されます。",
+        "workspace_permissions": "ワークスペース権限",
+        "workspace_permissions_description": "ワークスペース権限は、ワークスペースへのアクセスを許可するために使用されます。",
+        "with_the_permissions": "権限付きで",
+        "app_consent_title": "{app}があなたのPlaneワークスペースとプロフィールへのアクセスを要求しています。",
+        "choose_workspace_to_connect_app_with": "アプリを接続するワークスペースを選択してください",
+        "app_consent_workspace_permissions_title": "{app}は以下を要求しています",
+        "app_consent_user_permissions_title": "{app}は以下のリソースに対するユーザーの許可も要求できます。これらの権限はユーザーによってのみ要求され、承認されます。",
+        "app_consent_accept_title": "承認することで",
+        "app_consent_accept_1": "アプリにPlane内外でアプリを使用できる場所であなたのPlaneデータへのアクセスを許可します",
+        "app_consent_accept_2": "{app}のプライバシーポリシーと利用規約に同意します",
+        "accepting": "承認中...",
+        "accept": "承認",
+        "categories": "カテゴリー",
+        "select_app_categories": "アプリのカテゴリーを選択",
+        "categories_title": "カテゴリー",
+        "categories_error": "カテゴリーは必須です",
+        "invalid_categories_error": "無効なカテゴリー",
+        "categories_description": "アプリを最もよく説明するカテゴリーを選択してください",
+        "supported_plans": "サポートされているプラン",
+        "supported_plans_description": "このアプリケーションをインストールできるワークスペースプランを選択してください。空のままにすると、すべてのプランが許可されます。",
+        "select_plans": "プランを選択",
+        "privacy_policy_url_title": "プライバシーポリシーURL",
+        "privacy_policy_url_error": "プライバシーポリシーURLは必須です",
+        "invalid_privacy_policy_url_error": "無効なプライバシーポリシーURL",
+        "terms_of_service_url_title": "利用規約URL",
+        "terms_of_service_url_error": "利用規約URLは必須です",
+        "invalid_terms_of_service_url_error": "無効な利用規約URL",
+        "support_url_title": "サポートURL",
+        "support_url_error": "サポートURLは必須です",
+        "invalid_support_url_error": "無効なサポートURL",
+        "video_url_title": "ビデオURL",
+        "video_url_error": "ビデオURLは必須です",
+        "invalid_video_url_error": "無効なビデオURL",
+        "setup_url_error": "セットアップURLは必須です",
+        "invalid_setup_url_error": "無効なセットアップURL",
+        "configuration_url_title": "設定URL",
+        "configuration_url_error": "設定URLは必須です",
+        "invalid_configuration_url_error": "無効な設定URL",
+        "contact_email_title": "連絡先メール",
+        "contact_email_error": "連絡先メールは必須です",
+        "invalid_contact_email_error": "無効な連絡先メール",
+        "upload_attachments": "添付ファイルをアップロード",
+        "uploading_images": "アップロード中 {count} 画像{count, plural, one {s} other {s}}",
+        "drop_images_here": "画像をここにドラッグ&ドロップ",
+        "click_to_upload_images": "画像をクリックしてアップロード",
+        "invalid_file_or_exceeds_size_limit": "無効なファイルまたはサイズの制限を超えています ({size} MB)",
+        "uploading": "アップロード中...",
+        "upload_and_save": "アップロードして保存",
+        "app_consent_no_access_title": "インストールリクエスト",
+        "app_consent_no_access_description": "このアプリは、ワークスペースの管理者がインストールした後にのみインストールできます。続行するには、ワークスペースの管理者に連絡してください。",
+        "app_consent_unapproved_title": "このアプリはまだPlaneによってレビューまたは承認されていません。",
+        "app_consent_unapproved_description": "ワークスペースに接続する前に、このアプリを信頼できることを確認してください。",
+        "go_to_app": "アプリへ移動",
+        "enable_app_mentions": "アプリのメンションを有効にする",
+        "enable_app_mentions_tooltip": "これを有効にすると、ユーザーは作業項目をこのアプリにメンションしたり割り当てたりできます。",
+        "scopes": "スコープ",
+        "select_scopes": "スコープを選択",
+        "read_access_to": "読み取り専用アクセス先",
+        "write_access_to": "書き込みアクセス先",
+        "global_permission_expiration": "グローバルスコープはまもなく期限切れになります。代わりに細かいスコープを使用してください。例：グローバル読み取りの代わりに project:read を使用します。",
+        "selected_scopes": "{count} 件選択中",
+        "scopes_and_permissions": "スコープと権限",
+        "read": "読み取り",
+        "write": "書き込み",
+        "scope_description": {
+          "projects": "プロジェクトおよびプロジェクト関連エンティティへのアクセス",
+          "wiki": "WikiおよびWiki関連エンティティへのアクセス",
+          "workspaces": "ワークスペースおよびワークスペース関連エンティティへのアクセス",
+          "stickies": "付箋および付箋関連エンティティへのアクセス",
+          "profile": "ユーザープロフィール情報へのアクセス",
+          "agents": "エージェントおよびすべてのエージェント関連エンティティへのアクセス",
+          "assets": "アセットおよびすべてのアセット関連エンティティへのアクセス"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "スクリプト",
+        "new_script": "新しいスクリプト",
+        "description": "カスタムスクリプトと自動化ルールでワークフローを自動化します。"
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "APIトークンがまだ作成されていません",
+        "description": "PlaneのAPIを使用して、Planeのデータを外部システムと統合できます。トークンを作成して始めましょう。"
+      },
+      "webhooks": {
+        "title": "Webhookが追加されていません",
+        "description": "Webhookを作成してリアルタイムの更新を受け取り、アクションを自動化します。"
+      },
+      "exports": {
+        "title": "エクスポートがまだありません",
+        "description": "エクスポートすると、参照用のコピーがここに保存されます。"
+      },
+      "imports": {
+        "title": "インポートがまだありません",
+        "description": "過去のインポートをここで確認し、ダウンロードできます。"
+      }
+    }
+  }
+}

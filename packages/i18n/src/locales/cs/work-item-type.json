@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Typy pracovních položek",
+    "label_lowercase": "typy pracovních položek",
+    "settings": {
+      "description": "Přizpůsobte si a přidejte vlastní vlastnosti, abyste to upravili podle potřeb vašeho týmu.",
+      "cant_delete_default_message": "Tento typ pracovního položky nelze odstranit, protože je nastaven jako výchozí pro tento projekt.",
+      "set_as_default": "Nastavit jako výchozí",
+      "cant_set_default_inactive_message": "Před nastavením jako výchozí tento typ aktivujte",
+      "set_default_confirmation": {
+        "title": "Nastavit jako výchozí typ pracovní položky",
+        "description": "Nastavením {name} jako výchozího se tento typ importuje do všech projektů v tomto pracovním prostoru. Všechny nové pracovní položky budou tento typ používat ve výchozím nastavení.",
+        "confirm_button": "Nastavit jako výchozí"
+      },
+      "properties": {
+        "title": "Vlastní vlastnosti",
+        "description": "Vytvářejte a přizpůsobujte vlastnosti.",
+        "tooltip": "Každý typ pracovních položek má výchozí sadu vlastností jako Název, Popis, Přiřazený, Stav, Priorita, Datum zahájení, Datum splatnosti, Modul, Cyklus atd. Můžete také přizpůsobit a přidat své vlastní vlastnosti, aby vyhovovaly potřebám vašeho týmu.",
+        "add_button": "Přidat novou vlastnost",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importovat z pracovního prostoru"
+          }
+        },
+        "dropdown": {
+          "label": "Typ vlastnosti",
+          "placeholder": "Vyberte typ"
+        },
+        "property_type": {
+          "text": {
+            "label": "Text"
+          },
+          "number": {
+            "label": "Číslo"
+          },
+          "dropdown": {
+            "label": "Rozbalovací seznam"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Datum"
+          },
+          "member_picker": {
+            "label": "Výběr člena"
+          },
+          "formula": {
+            "label": "Vzorec"
+          }
+        },
+        "attributes": {
+          "label": "Atributy",
+          "text": {
+            "single_line": {
+              "label": "Jednoduchý řádek"
+            },
+            "multi_line": {
+              "label": "Odstavec"
+            },
+            "readonly": {
+              "label": "Pouze pro čtení",
+              "header": "Data pouze pro čtení"
+            },
+            "invalid_text_format": {
+              "label": "Neplatný formát textu"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Přidat číslo"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Jednoduchý výběr"
+            },
+            "multi_select": {
+              "label": "Vícenásobný výběr"
+            },
+            "no_default_value": {
+              "label": "Žádná výchozí hodnota"
+            }
+          },
+          "boolean": {
+            "label": "Pravda | Nepravda",
+            "no_default": "Žádná výchozí hodnota"
+          },
+          "option": {
+            "create_update": {
+              "label": "Možnosti",
+              "form": {
+                "placeholder": "Přidat možnost",
+                "errors": {
+                  "name": {
+                    "required": "Název možnosti je povinný.",
+                    "integrity": "Možnost se stejným názvem již existuje."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Vyberte možnost",
+                "multi": {
+                  "default": "Vyberte možnosti",
+                  "variable": "{count} vybraných možností"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Úspěch!",
+              "message": "Vlastnost {name} byla úspěšně vytvořena."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodařilo se vytvořit vlastnost. Zkuste to prosím znovu!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Úspěch!",
+              "message": "Vlastnost {name} byla úspěšně aktualizována."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodařilo se aktualizovat vlastnost. Zkuste to prosím znovu!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Úspěch!",
+              "message": "Vlastnost {name} byla úspěšně smazána."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodařilo se smazat vlastnost. Zkuste to prosím znovu!"
+            }
+          },
+          "enable_disable": {
+            "loading": "{action} {name} vlastnost",
+            "success": {
+              "title": "Úspěch!",
+              "message": "Vlastnost {name} byla {action} úspěšně."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodařilo se {action} vlastnost. Zkuste to prosím znovu!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Vytvořit novou vlastní vlastnost",
+            "update": "Aktualizovat vlastní vlastnost"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Název"
+            },
+            "description": {
+              "placeholder": "Popis"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Musíte pojmenovat svou vlastnost.",
+              "max_length": "Název vlastnosti by neměl překročit 255 znaků."
+            },
+            "property_type": {
+              "required": "Musíte vybrat typ vlastnosti."
+            },
+            "options": {
+              "required": "Musíte přidat alespoň jednu možnost."
+            },
+            "formula": {
+              "required": "Výraz vzorce je vyžadován.",
+              "invalid": "Neplatný vzorec: {error}",
+              "circular_reference": "Zjištěna cyklická reference. Vzorec nemůže odkazovat sám na sebe přímo ani nepřímo.",
+              "invalid_reference": "Vzorec odkazuje na neexistující vlastnost."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Pole vzorce",
+          "tooltip": "Zadejte vzorec pomocí syntaxe '{'Název pole'}'. Podporuje operátory +, -, *, / a &.",
+          "placeholder": "Napište vzorec",
+          "test_button": "Test",
+          "validating": "Ověřování",
+          "validation_success": "Vzorec je platný! Vrací {resultType}",
+          "validation_success_with_refs": "Vzorec je platný! Vrací {resultType} ({count} odkazovaných polí)",
+          "error": {
+            "empty": "Zadejte prosím vzorec",
+            "missing_context": "Chybí kontext pracovního prostoru, projektu nebo typu pracovní položky",
+            "validation_failed": "Ověření se nezdařilo"
+          },
+          "picker": {
+            "no_match": "Žádné odpovídající vlastnosti",
+            "no_available": "Žádné dostupné vlastnosti"
+          }
+        },
+        "enable_disable": {
+          "label": "Aktivní",
+          "tooltip": {
+            "disabled": "Klikněte pro zakázání",
+            "enabled": "Klikněte pro povolení"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Smazat tuto vlastnost",
+          "description": "Smazání vlastností může vést ke ztrátě existujících dat.",
+          "secondary_description": "Chcete místo toho vlastnost zakázat?",
+          "primary_button": "{action}, smazat ji",
+          "secondary_button": "Ano, zakázat ji"
+        },
+        "mandate_confirmation": {
+          "label": "Povinná vlastnost",
+          "content": "Zdá se, že pro tuto vlastnost existuje výchozí možnost. Učinění vlastnosti povinnou odstraní výchozí hodnotu a uživatelé budou muset přidat hodnotu podle svého výběru.",
+          "tooltip": {
+            "disabled": "Tento typ vlastnosti nelze učinit povinným",
+            "enabled": "Zrušte zaškrtnutí pro označení pole jako volitelného",
+            "checked": "Zaškrtněte pro označení pole jako povinného"
+          }
+        },
+        "empty_state": {
+          "title": "Přidat vlastní vlastnosti",
+          "description": "Nové vlastnosti, které přidáte pro tento typ pracovních položek, se zde zobrazí."
+        }
+      },
+      "types": {
+        "title": "Typy",
+        "description": "Vytvářejte a přizpůsobujte typy pracovních položek s vlastnostmi.",
+        "sort_options": {
+          "project_count": "Počet projektů, do kterých patří"
+        },
+        "filter_options": {
+          "show_active": "Zobrazit aktivní",
+          "show_inactive": "Zobrazit neaktivní"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Vytvořit nový",
+            "import_from_workspace": "Importovat z pracovního prostoru"
+          },
+          "banner": {
+            "with_access": "Povolte typy pracovních položek pro import typů z úrovně pracovního prostoru",
+            "without_access": "Typy pracovních položek jsou zakázány. Kontaktujte správce pracovního prostoru, aby je povolil v nastavení pracovního prostoru."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Vlastní vlastnosti",
+        "add_button": "Přidat vlastnosti",
+        "modal": {
+          "title": "Přidat vlastnosti",
+          "empty": {
+            "title": "Žádné vlastnosti nejsou k dispozici",
+            "description": "Všechny vlastnosti jsou již propojeny s tímto typem."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Zrušit propojení vlastnosti",
+          "description": "Zrušení propojení této vlastnosti trvale odstraní všechny její hodnoty napříč každou pracovní položkou používající tento typ. Tuto akci nelze vrátit zpět.",
+          "input_label": "Napište",
+          "input_label_suffix": "pro pokračování:",
+          "confirm": "Zrušit propojení vlastnosti",
+          "loading": "Rušení propojení"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Smazat tento typ",
+        "description": "Odstranění typů může vést ke ztrátě stávajících dat.",
+        "can_disable_warning": "Chcete místo toho zakázat tento typ?",
+        "primary_button": "Ano, smazat",
+        "toast": {
+          "success": {
+            "title": "Úspěch!",
+            "message": "Typ pracovního položky byl úspěšně odstraněn."
+          },
+          "error": {
+            "title": "Chyba!",
+            "message": "Nepodařilo se odstranit typ pracovního položky. Zkuste to prosím znovu!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Výchozí typ pracovní položky nelze odstranit",
+          "cannot_delete_work_item_type_with_associated_work_items": "Typ pracovní položky s přidruženými pracovními položkami nelze odstranit"
+        }
+      }
+    },
+    "create": {
+      "title": "Vytvořit typ pracovních položek",
+      "button": "Přidat typ pracovních položek",
+      "toast": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Typ pracovních položek byl úspěšně vytvořen."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": {
+            "default": "Nepodařilo se vytvořit typ pracovní položky. Zkuste to prosím znovu!",
+            "conflict": "Typ {name} již existuje. Zvolte jiné jméno."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Aktualizovat typ pracovních položek",
+      "button": "Aktualizovat typ pracovních položek",
+      "toast": {
+        "success": {
+          "title": "Úspěch!",
+          "message": "Typ pracovních položek {name} byl úspěšně aktualizován."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": {
+            "default": "Nepodařilo se aktualizovat typ pracovní položky. Zkuste to prosím znovu!",
+            "conflict": "Typ {name} již existuje. Zvolte jiné jméno."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Dejte tomuto typu pracovních položek jedinečný název"
+        },
+        "description": {
+          "placeholder": "Popište, k čemu je tento typ pracovních položek určen a kdy se má používat."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "{action} {name} typ pracovních položek",
+        "success": {
+          "title": "Úspěch!",
+          "message": "Typ pracovních položek {name} byl {action} úspěšně."
+        },
+        "error": {
+          "title": "Chyba!",
+          "message": "Nepodařilo se {action} typ pracovních položek. Zkuste to prosím znovu!"
+        }
+      },
+      "tooltip": "Klikněte pro {action}"
+    },
+    "change_confirmation": {
+      "title": "Změnit typ pracovních položek?",
+      "description": "Změna typu pracovních položek může vést ke ztrátě hodnot vlastních vlastností, které jsou specifické pro aktuální typ. Tuto akci nelze vrátit zpět.",
+      "button": {
+        "loading": "Mění se",
+        "default": "Změnit typ"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Povolit typy pracovních položek",
+        "description": "Upravte pracovní položky podle svých potřeb s typy pracovních položek. Přizpůsobte je ikonami, pozadím a vlastnostmi a nakonfigurujte je pro tento projekt.",
+        "primary_button": {
+          "text": "Povolit"
+        },
+        "confirmation": {
+          "title": "Jakmile budou povoleny, typy pracovních položek nelze zakázat.",
+          "description": "Typ pracovních položek Plane se stane výchozím typem pracovních položek pro tento projekt a zobrazí se s ikonou a pozadím v tomto projektu.",
+          "button": {
+            "default": "Povolit",
+            "loading": "Nastavuji"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Získejte Pro pro povolení typů pracovních položek.",
+        "description": "Upravte pracovní položky podle svých potřeb s typy pracovních položek. Přizpůsobte je ikonami, pozadím a vlastnostmi a nakonfigurujte je pro tento projekt.",
+        "primary_button": {
+          "text": "Získejte Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Upgradujte pro povolení typů pracovních položek.",
+        "description": "Upravte pracovní položky podle svých potřeb s typy pracovních položek. Přizpůsobte je ikonami, pozadím a vlastnostmi a nakonfigurujte je pro tento projekt.",
+        "primary_button": {
+          "text": "Upgradovat"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Hierarchie",
+      "tab_label": "Hierarchie",
+      "description": "Nastavte úrovně hierarchie pro organizaci vaší práce. Každá úroveň definuje nadřazený vztah s položkou přímo nad ní a podřazený vztah s položkou přímo pod ní. ",
+      "sidebar_label": "Hierarchie",
+      "enable_control": {
+        "title": "Povolit hierarchii",
+        "description": "Vytvářejte vztahy nadřazený-podřazený mezi různými typy pracovních položek.",
+        "tooltip": "Hierarchii nelze deaktivovat po jejím aktivování."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Nejprve definujte typy pracovních položek pro vytvoření nové hierarchie.",
+        "cta": "Nastavení typů pracovních položek"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Přetáhněte typ pro přidání nové úrovně hierarchie",
+      "empty_level_placeholder": "Přetáhněte typ pracovní položky na úroveň {level}",
+      "drag_tooltip": "Přetáhněte pro změnu úrovně",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Nastavit jako výchozí",
+          "toast": {
+            "loading": "Nastavení jako výchozí...",
+            "success": {
+              "title": "Úspěch!",
+              "message": "Úroveň hierarchie {level} byla úspěšně nastavena jako výchozí."
+            },
+            "error": {
+              "title": "Chyba!",
+              "message": "Nepodařilo se nastavit úroveň hierarchie {level} jako výchozí. Zkuste to prosím znovu."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "Přesouvání {workItemTypeName} do úrovně {level}...",
+        "success": {
+          "title": "Úspěch!",
+          "message": "{workItemTypeName} byl úspěšně přesunut do úrovně {level}."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Uložením se přeruší stávající vazby",
+      "content": {
+        "intro": "Typ pracovní položky {workItemTypeName} obsahuje:",
+        "parent_items": "{count, plural, one {Bude odstraněna # nadřazená vazba} few {Budou odstraněny # nadřazené vazby} other {Bude odstraněno # nadřazených vazeb}}.",
+        "child_items": "{count, plural, one {podřazenou pracovní položku} few {podřazené pracovní položky} other {podřazených pracovních položek}}",
+        "parent_line_suffix_when_also_children": ", a ",
+        "footer": "Tato změna odstraní nadřazené a podřazené vztahy u stávajících pracovních položek typu {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Pro pokračování napište „potvrdit“.",
+        "placeholder": "potvrdit"
+      },
+      "error_toast": {
+        "title": "Chyba!",
+        "message": "Nepodařilo se zrušit propojení a uložit. Zkuste to prosím znovu."
+      },
+      "confirm_button": {
+        "loading": "Ukládání",
+        "default": "Uložit přesto"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Chyba!",
+        "message": "Vybraný typ pracovní položky nelze použít k vytvoření nové pracovní položky, protože porušuje pravidla hierarchie."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Chyba!",
+        "message": "Typ pracovní položky nelze aktualizovat, protože porušuje pravidla hierarchie."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Úroveň hierarchie",
+      "invalid_level_toast": {
+        "title": "Chyba!",
+        "message": "Typ pracovní položky nelze aktualizovat, protože to porušuje pravidla hierarchie."
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "active_cycle": {
+    "empty_state": {
+      "progress": {
+        "title": "Tambahkan item kerja ke siklus untuk melihat kemajuannya"
+      },
+      "chart": {
+        "title": "Tambahkan item kerja ke siklus untuk melihat grafik burndown."
+      },
+      "priority_issue": {
+        "title": "Amati item kerja prioritas yang ditangani dalam siklus pada pandangan pertama."
+      },
+      "assignee": {
+        "title": "Tambahkan penugasan ke item kerja untuk melihat pembagian kerja berdasarkan penugasan."
+      },
+      "label": {
+        "title": "Tambahkan label ke item kerja untuk melihat pembagian kerja berdasarkan label."
+      }
+    }
+  },
+  "cycle": {
+    "label": "{count, plural, one {Siklus} other {Siklus}}",
+    "no_cycle": "Tidak ada siklus"
+  },
+  "active_cycle_analytics": {
+    "empty_state": {
+      "progress": {
+        "title": "Tambahkan item kerja ke siklus untuk melihat\n kemajuannya"
+      },
+      "priority": {
+        "title": "Amati item kerja prioritas tinggi yang ditangani dalam\n siklus secara sekilas."
+      },
+      "assignee": {
+        "title": "Tambahkan penanggung jawab ke item kerja untuk melihat\n pembagian pekerjaan berdasarkan penanggung jawab."
+      },
+      "label": {
+        "title": "Tambahkan label ke item kerja untuk melihat\n pembagian pekerjaan berdasarkan label."
+      }
+    }
+  }
+}

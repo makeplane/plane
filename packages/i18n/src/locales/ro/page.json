@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Contur",
+        "empty_state": {
+          "title": "Titluri lipsă",
+          "description": "Să punem câteva titluri în această pagină pentru a le vedea aici."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Cuvinte",
+          "characters": "Caractere",
+          "paragraphs": "Paragrafe",
+          "read_time": "Timp de citire"
+        },
+        "actors_info": {
+          "edited_by": "Editat de",
+          "created_by": "Creat de"
+        },
+        "version_history": {
+          "label": "Istoricul versiunilor",
+          "current_version": "Versiunea curentă",
+          "highlight_changes": "Evidențiază modificările"
+        }
+      },
+      "assets": {
+        "label": "Resurse",
+        "download_button": "Descarcă",
+        "empty_state": {
+          "title": "Imagini lipsă",
+          "description": "Adăugați imagini pentru a le vedea aici."
+        }
+      },
+      "comments": {
+        "label": "Comentarii",
+        "empty_state": {
+          "title": "Niciun comentariu",
+          "description": "Adaugă comentarii pentru a le vedea aici."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Numele notiței nu poate avea mai mult de 100 de caractere.",
+        "already_exists": "Există deja o notiță fără descriere"
+      },
+      "created": {
+        "title": "Notiță creată",
+        "message": "Notița a fost creată cu succes"
+      },
+      "not_created": {
+        "title": "Notița nu a fost creată",
+        "message": "Notița nu a putut fi creată"
+      },
+      "updated": {
+        "title": "Notiță actualizată",
+        "message": "Notița a fost actualizată cu succes"
+      },
+      "not_updated": {
+        "title": "Notița nu a fost actualizată",
+        "message": "Notița nu a putut fi actualizată"
+      },
+      "removed": {
+        "title": "Notiță eliminată",
+        "message": "Notița a fost eliminată cu succes"
+      },
+      "not_removed": {
+        "title": "Notița nu a fost eliminată",
+        "message": "Notița nu a putut fi eliminată"
+      }
+    },
+    "open_button": "Deschide panoul de navigare",
+    "close_button": "Închide panoul de navigare",
+    "outline_floating_button": "Deschide conturul"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Mută",
+        "loading": "Se mută"
+      },
+      "cannot_move_to_teamspace": "Paginile private și partajate nu pot fi mutate într-un spațiu de echipă.",
+      "placeholders": {
+        "workspace_to_all": "Caută proiecte și spații de echipă",
+        "workspace_to_project": "Caută proiecte",
+        "project_to_all": "Caută proiecte și spații de echipă",
+        "project_to_project": "Caută proiecte",
+        "project_to_all_with_wiki": "Caută colecții wiki, proiecte și spații de echipă",
+        "project_to_project_with_wiki": "Caută colecții wiki și proiecte"
+      },
+      "toasts": {
+        "success": {
+          "title": "Succes!",
+          "message": "Pagină mutată cu succes."
+        },
+        "error": {
+          "title": "Eroare!",
+          "message": "Pagina nu a putut fi mutată. Te rugăm să încerci din nou mai târziu."
+        },
+        "collection_error": {
+          "title": "Mutată în wiki",
+          "message": "Pagina a fost mutată în wiki, dar nu a putut fi adăugată la colecția selectată. Rămâne în General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Elimină din colecție",
+      "success_message": "Pagina a fost eliminată din colecție.",
+      "error_message": "Pagina nu a putut fi eliminată din colecție. Te rugăm să încerci din nou."
+    }
+  }
+}

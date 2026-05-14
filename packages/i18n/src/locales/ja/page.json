@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "アウトライン",
+        "empty_state": {
+          "title": "見出しがありません",
+          "description": "このページに見出しを追加してここで確認しましょう。"
+        }
+      },
+      "info": {
+        "label": "情報",
+        "document_info": {
+          "words": "単語数",
+          "characters": "文字数",
+          "paragraphs": "段落数",
+          "read_time": "読了時間"
+        },
+        "actors_info": {
+          "edited_by": "編集者",
+          "created_by": "作成者"
+        },
+        "version_history": {
+          "label": "バージョン履歴",
+          "current_version": "現在のバージョン",
+          "highlight_changes": "変更を強調表示"
+        }
+      },
+      "assets": {
+        "label": "アセット",
+        "download_button": "ダウンロード",
+        "empty_state": {
+          "title": "画像がありません",
+          "description": "画像を追加してここで確認してください。"
+        }
+      },
+      "comments": {
+        "label": "コメント",
+        "empty_state": {
+          "title": "コメントがありません",
+          "description": "コメントを追加してここで確認してください。"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "付箋の名前は100文字を超えることはできません。",
+        "already_exists": "説明のない付箋がすでに存在します"
+      },
+      "created": {
+        "title": "付箋を作成しました",
+        "message": "付箋が正常に作成されました"
+      },
+      "not_created": {
+        "title": "付箋が作成されませんでした",
+        "message": "付箋を作成できませんでした"
+      },
+      "updated": {
+        "title": "付箋を更新しました",
+        "message": "付箋が正常に更新されました"
+      },
+      "not_updated": {
+        "title": "付箋が更新されませんでした",
+        "message": "付箋を更新できませんでした"
+      },
+      "removed": {
+        "title": "付箋を削除しました",
+        "message": "付箋が正常に削除されました"
+      },
+      "not_removed": {
+        "title": "付箋が削除されませんでした",
+        "message": "付箋を削除できませんでした"
+      }
+    },
+    "open_button": "ナビゲーションパネルを開く",
+    "close_button": "ナビゲーションパネルを閉じる",
+    "outline_floating_button": "アウトラインを開く"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "移動",
+        "loading": "移動中"
+      },
+      "cannot_move_to_teamspace": "プライベートページおよび共有ページはチームスペースに移動できません。",
+      "placeholders": {
+        "workspace_to_all": "プロジェクトとチームスペースを検索",
+        "workspace_to_project": "プロジェクトを検索",
+        "project_to_all": "プロジェクトとチームスペースを検索",
+        "project_to_project": "プロジェクトを検索",
+        "project_to_all_with_wiki": "Wiki コレクション、プロジェクト、チームスペースを検索",
+        "project_to_project_with_wiki": "Wiki コレクションとプロジェクトを検索"
+      },
+      "toasts": {
+        "success": {
+          "title": "成功！",
+          "message": "ページを移動しました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "ページを移動できませんでした。後でもう一度お試しください。"
+        },
+        "collection_error": {
+          "title": "Wiki に移動しました",
+          "message": "ページは Wiki に移動されましたが、選択したコレクションに追加できませんでした。ページは General に残ります。"
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "コレクションから削除",
+      "success_message": "ページをコレクションから削除しました。",
+      "error_message": "ページをコレクションから削除できませんでした。もう一度お試しください。"
+    }
+  }
+}

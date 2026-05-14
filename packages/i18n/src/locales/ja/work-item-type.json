@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "作業項目タイプ",
+    "label_lowercase": "作業項目タイプ",
+    "settings": {
+      "description": "チームのニーズに合わせて独自のプロパティをカスタマイズして追加できます。",
+      "cant_delete_default_message": "この作業項目タイプは削除できません。このプロジェクトのデフォルトの作業項目タイプとして設定されているためです。",
+      "set_as_default": "デフォルトに設定",
+      "cant_set_default_inactive_message": "デフォルトに設定する前にこのタイプを有効にしてください",
+      "set_default_confirmation": {
+        "title": "デフォルトの作業項目タイプに設定",
+        "description": "{name}をデフォルトに設定すると、このワークスペース内のすべてのプロジェクトにインポートされます。すべての新しい作業項目はデフォルトでこのタイプを使用します。",
+        "confirm_button": "デフォルトに設定"
+      },
+      "properties": {
+        "title": "カスタム作業項目プロパティ",
+        "description": "プロパティを作成・カスタマイズします。",
+        "tooltip": "各作業項目タイプには、タイトル、説明、担当者、状態、優先度、開始日、期限日、モジュール、サイクルなどのデフォルトのプロパティセットが付属しています。チームのニーズに合わせて独自のプロパティをカスタマイズして追加することもできます。",
+        "add_button": "新しいプロパティを追加",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "ワークスペースからインポート"
+          }
+        },
+        "dropdown": {
+          "label": "プロパティタイプ",
+          "placeholder": "タイプを選択"
+        },
+        "property_type": {
+          "text": {
+            "label": "テキスト"
+          },
+          "number": {
+            "label": "数値"
+          },
+          "dropdown": {
+            "label": "ドロップダウン"
+          },
+          "boolean": {
+            "label": "ブール値"
+          },
+          "date": {
+            "label": "日付"
+          },
+          "member_picker": {
+            "label": "メンバー選択"
+          },
+          "formula": {
+            "label": "数式"
+          }
+        },
+        "attributes": {
+          "label": "属性",
+          "text": {
+            "single_line": {
+              "label": "一行"
+            },
+            "multi_line": {
+              "label": "段落"
+            },
+            "readonly": {
+              "label": "読み取り専用",
+              "header": "読み取り専用データ"
+            },
+            "invalid_text_format": {
+              "label": "無効なテキスト形式"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "数値を追加"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "単一選択"
+            },
+            "multi_select": {
+              "label": "複数選択"
+            },
+            "no_default_value": {
+              "label": "デフォルト値なし"
+            }
+          },
+          "boolean": {
+            "label": "真 | 偽",
+            "no_default": "デフォルト値なし"
+          },
+          "option": {
+            "create_update": {
+              "label": "オプション",
+              "form": {
+                "placeholder": "オプションを追加",
+                "errors": {
+                  "name": {
+                    "required": "オプション名は必須です。",
+                    "integrity": "同じ名前のオプションが既に存在します。"
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "オプションを選択",
+                "multi": {
+                  "default": "オプションを選択",
+                  "variable": "{count}個のオプションが選択されました"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に作成されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの作成に失敗しました。もう一度お試しください！"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に更新されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの更新に失敗しました。もう一度お試しください！"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に削除されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの削除に失敗しました。もう一度お試しください！"
+            }
+          },
+          "enable_disable": {
+            "loading": "プロパティ{name}を{action}中",
+            "success": {
+              "title": "成功！",
+              "message": "プロパティ{name}が正常に{action}されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "プロパティの{action}に失敗しました。もう一度お試しください！"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "新しいカスタムプロパティを作成",
+            "update": "カスタムプロパティを更新"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "タイトル"
+            },
+            "description": {
+              "placeholder": "説明"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "プロパティに名前を付ける必要があります。",
+              "max_length": "プロパティ名は255文字を超えることはできません。"
+            },
+            "property_type": {
+              "required": "プロパティタイプを選択する必要があります。"
+            },
+            "options": {
+              "required": "少なくとも1つのオプションを追加する必要があります。"
+            },
+            "formula": {
+              "required": "数式の式が必要です。",
+              "invalid": "無効な数式: {error}",
+              "circular_reference": "循環参照が検出されました。数式は直接的にも間接的にも自身を参照することはできません。",
+              "invalid_reference": "数式が存在しないプロパティを参照しています。"
+            }
+          }
+        },
+        "formula": {
+          "field_label": "数式フィールド",
+          "tooltip": "'{'フィールド名'}'の構文を使用して数式を入力してください。+、-、*、/、&の演算子をサポートしています。",
+          "placeholder": "数式を入力",
+          "test_button": "テスト",
+          "validating": "検証中",
+          "validation_success": "数式は有効です！{resultType}を返します",
+          "validation_success_with_refs": "数式は有効です！{resultType}を返します（{count}フィールド参照）",
+          "error": {
+            "empty": "数式を入力してください",
+            "missing_context": "ワークスペース、プロジェクト、またはワークアイテムタイプのコンテキストがありません",
+            "validation_failed": "検証に失敗しました"
+          },
+          "picker": {
+            "no_match": "一致するプロパティがありません",
+            "no_available": "利用可能なプロパティがありません"
+          }
+        },
+        "enable_disable": {
+          "label": "アクティブ",
+          "tooltip": {
+            "disabled": "クリックして無効化",
+            "enabled": "クリックして有効化"
+          }
+        },
+        "delete_confirmation": {
+          "title": "このプロパティを削除",
+          "description": "プロパティの削除は既存のデータの損失につながる可能性があります。",
+          "secondary_description": "代わりにプロパティを無効化しますか？",
+          "primary_button": "{action}、削除します",
+          "secondary_button": "はい、無効化します"
+        },
+        "mandate_confirmation": {
+          "label": "必須プロパティ",
+          "content": "このプロパティにはデフォルトオプションが設定されているようです。プロパティを必須にすると、デフォルト値が削除され、ユーザーは自分で値を選択する必要があります。",
+          "tooltip": {
+            "disabled": "このプロパティタイプは必須にできません",
+            "enabled": "チェックを外して任意フィールドにする",
+            "checked": "チェックして必須フィールドにする"
+          }
+        },
+        "empty_state": {
+          "title": "カスタムプロパティを追加",
+          "description": "この作業項目タイプに追加する新しいプロパティがここに表示されます。"
+        }
+      },
+      "types": {
+        "title": "タイプ",
+        "description": "プロパティを持つ作業項目タイプを作成・カスタマイズします。",
+        "sort_options": {
+          "project_count": "所属プロジェクト数"
+        },
+        "filter_options": {
+          "show_active": "アクティブを表示",
+          "show_inactive": "非アクティブを表示"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "新規作成",
+            "import_from_workspace": "ワークスペースからインポート"
+          },
+          "banner": {
+            "with_access": "ワークスペースレベルからタイプをインポートするには、作業項目タイプを有効にしてください",
+            "without_access": "作業項目タイプは無効になっています。ワークスペース管理者に連絡して、ワークスペース設定で有効にしてもらってください。"
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "カスタムプロパティ",
+        "add_button": "プロパティを追加",
+        "modal": {
+          "title": "プロパティを追加",
+          "empty": {
+            "title": "利用可能なプロパティがありません",
+            "description": "すべてのプロパティはすでにこのタイプにリンクされています。"
+          }
+        },
+        "unlink_confirmation": {
+          "title": "プロパティのリンクを解除",
+          "description": "このプロパティのリンクを解除すると、このタイプを使用するすべての作業項目のすべての値が完全に削除されます。この操作は元に戻せません。",
+          "input_label": "入力",
+          "input_label_suffix": "して続行：",
+          "confirm": "プロパティのリンクを解除",
+          "loading": "リンク解除中"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "このタイプを削除",
+        "description": "タイプの削除は既存データの損失につながる可能性があります。",
+        "can_disable_warning": "代わりにタイプを無効にしますか？",
+        "primary_button": "はい、削除します",
+        "toast": {
+          "success": {
+            "title": "成功！",
+            "message": "作業項目のタイプが正常に削除されました。"
+          },
+          "error": {
+            "title": "エラー！",
+            "message": "作業項目のタイプを削除できませんでした。もう一度お試しください！"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "デフォルトの作業項目タイプは削除できません",
+          "cannot_delete_work_item_type_with_associated_work_items": "関連する作業項目がある作業項目タイプは削除できません"
+        }
+      }
+    },
+    "create": {
+      "title": "作業項目タイプを作成",
+      "button": "作業項目タイプを追加",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "作業項目タイプが正常に作成されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": {
+            "default": "作業項目タイプの作成に失敗しました。もう一度お試しください！",
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "作業項目タイプを更新",
+      "button": "作業項目タイプを更新",
+      "toast": {
+        "success": {
+          "title": "成功！",
+          "message": "作業項目タイプ{name}が正常に更新されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": {
+            "default": "作業項目タイプの更新に失敗しました。もう一度お試しください！",
+            "conflict": "{name} タイプはすでに存在します。別の名前を選んでください。"
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "この作業項目タイプに一意の名前を付けてください"
+        },
+        "description": {
+          "placeholder": "この作業項目タイプの目的と使用時期について説明してください。"
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "作業項目タイプ{name}を{action}中",
+        "success": {
+          "title": "成功！",
+          "message": "作業項目タイプ{name}が正常に{action}されました。"
+        },
+        "error": {
+          "title": "エラー！",
+          "message": "作業項目タイプの{action}に失敗しました。もう一度お試しください！"
+        }
+      },
+      "tooltip": "クリックして{action}"
+    },
+    "change_confirmation": {
+      "title": "作業項目タイプを変更しますか？",
+      "description": "作業項目タイプを変更すると、現在のタイプに固有のカスタムプロパティ値が失われる可能性があります。この操作は元に戻せません。",
+      "button": {
+        "loading": "変更中",
+        "default": "タイプを変更"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "作業項目タイプを有効化",
+        "description": "作業項目タイプで作業項目を形作ります。アイコン、背景、プロパティでカスタマイズし、このプロジェクト用に設定します。",
+        "primary_button": {
+          "text": "有効化"
+        },
+        "confirmation": {
+          "title": "一度有効化すると、作業項目タイプは無効化できません。",
+          "description": "PlaneのWork itemがこのプロジェクトのデフォルトの作業項目タイプとなり、そのアイコンと背景がこのプロジェクトに表示されます。",
+          "button": {
+            "default": "有効化",
+            "loading": "設定中"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "作業項目タイプを有効化するにはProにアップグレードしてください。",
+        "description": "作業項目タイプで作業項目を形作ります。アイコン、背景、プロパティでカスタマイズし、このプロジェクト用に設定します。",
+        "primary_button": {
+          "text": "Proを取得"
+        }
+      },
+      "upgrade": {
+        "title": "作業項目タイプを有効化するにはアップグレードしてください。",
+        "description": "作業項目タイプで作業項目を形作ります。アイコン、背景、プロパティでカスタマイズし、このプロジェクト用に設定します。",
+        "primary_button": {
+          "text": "アップグレード"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "階層",
+      "tab_label": "階層",
+      "description": "作業を整理するための階層レベルを設定します。各レベルは、直接上のアイテムとの親関係と、直接下のアイテムとの子関係を定義します。 ",
+      "sidebar_label": "階層",
+      "enable_control": {
+        "title": "階層を有効にする",
+        "description": "異なる作業アイテムタイプ間に親子関係を作成します。",
+        "tooltip": "一度有効にすると、階層を無効にすることはできません。"
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "新しい階層を作成するには、まず作業アイテムタイプを定義してください。",
+        "cta": "作業アイテムタイプの設定"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "新しい階層レベルを追加するには、タイプをドラッグ＆ドロップしてください",
+      "empty_level_placeholder": "作業アイテムタイプをレベル {level} にドラッグ＆ドロップ",
+      "drag_tooltip": "ドラッグしてレベルを変更",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "デフォルトに設定",
+          "toast": {
+            "loading": "デフォルトに設定中...",
+            "success": {
+              "title": "成功！",
+              "message": "階層レベル {level} がデフォルトとして設定されました。"
+            },
+            "error": {
+              "title": "エラー！",
+              "message": "階層レベル {level} をデフォルトに設定できませんでした。もう一度お試しください。"
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "{workItemTypeName}をレベル{level}に移動しています...",
+        "success": {
+          "title": "成功！",
+          "message": "{workItemTypeName}をレベル{level}に正常に移動しました。"
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "保存すると既存のリンクが解除されます",
+      "content": {
+        "intro": "作業アイテムタイプ「{workItemTypeName}」には次が含まれます。",
+        "parent_items": "{count, plural, other {親リンク # 件が解除されます。}}",
+        "child_items": "{count, plural, other {子の作業アイテム}}",
+        "parent_line_suffix_when_also_children": "、および ",
+        "footer": "この変更により、{workItemTypeName} 作業アイテムタイプの既存の作業アイテムから親子関係が削除されます。"
+      },
+      "confirm_input": {
+        "label": "続けるには「確認」と入力してください。",
+        "placeholder": "確認"
+      },
+      "error_toast": {
+        "title": "エラー！",
+        "message": "リンク解除と保存に失敗しました。もう一度お試しください。"
+      },
+      "confirm_button": {
+        "loading": "保存中",
+        "default": "それでも保存する"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "エラー！",
+        "message": "選択した作業アイテムタイプは階層ルールに違反するため、新しい作業アイテムの作成に使用できません。"
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "エラー！",
+        "message": "作業アイテムタイプは階層ルールに違反するため更新できません。"
+      }
+    },
+    "work_item_type_modal": {
+      "level": "階層レベル",
+      "invalid_level_toast": {
+        "title": "エラー！",
+        "message": "階層ルールに違反するため、作業アイテムタイプを更新できませんでした。"
+      }
+    }
+  }
+}

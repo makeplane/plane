@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Konspekt",
+        "empty_state": {
+          "title": "Brakuje nagłówków",
+          "description": "Dodajmy kilka nagłówków na tej stronie, aby je tutaj zobaczyć."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Słowa",
+          "characters": "Znaki",
+          "paragraphs": "Akapity",
+          "read_time": "Czas czytania"
+        },
+        "actors_info": {
+          "edited_by": "Edytowane przez",
+          "created_by": "Utworzone przez"
+        },
+        "version_history": {
+          "label": "Historia wersji",
+          "current_version": "Bieżąca wersja",
+          "highlight_changes": "Podświetl zmiany"
+        }
+      },
+      "assets": {
+        "label": "Zasoby",
+        "download_button": "Pobierz",
+        "empty_state": {
+          "title": "Brakuje obrazów",
+          "description": "Dodaj obrazy, aby je tutaj zobaczyć."
+        }
+      },
+      "comments": {
+        "label": "Komentarze",
+        "empty_state": {
+          "title": "Brak komentarzy",
+          "description": "Dodaj komentarze, aby je tutaj zobaczyć."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Nazwa karteczki nie może być dłuższa niż 100 znaków.",
+        "already_exists": "Istnieje już karteczka bez opisu"
+      },
+      "created": {
+        "title": "Karteczka utworzona",
+        "message": "Karteczka została pomyślnie utworzona"
+      },
+      "not_created": {
+        "title": "Karteczka nie utworzona",
+        "message": "Nie udało się utworzyć karteczki"
+      },
+      "updated": {
+        "title": "Karteczka zaktualizowana",
+        "message": "Karteczka została pomyślnie zaktualizowana"
+      },
+      "not_updated": {
+        "title": "Karteczka nie zaktualizowana",
+        "message": "Nie udało się zaktualizować karteczki"
+      },
+      "removed": {
+        "title": "Karteczka usunięta",
+        "message": "Karteczka została pomyślnie usunięta"
+      },
+      "not_removed": {
+        "title": "Karteczka nie usunięta",
+        "message": "Nie udało się usunąć karteczki"
+      }
+    },
+    "open_button": "Otwórz panel nawigacji",
+    "close_button": "Zamknij panel nawigacji",
+    "outline_floating_button": "Otwórz konspekt"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Przenieś",
+        "loading": "Przenoszenie"
+      },
+      "cannot_move_to_teamspace": "Prywatne i udostępnione strony nie mogą być przenoszone do teamspace.",
+      "placeholders": {
+        "workspace_to_all": "Szukaj projektów i teamspejsów",
+        "workspace_to_project": "Szukaj projektów",
+        "project_to_all": "Szukaj projektów i teamspejsów",
+        "project_to_project": "Szukaj projektów",
+        "project_to_all_with_wiki": "Szukaj kolekcji wiki, projektów i przestrzeni zespołowych",
+        "project_to_project_with_wiki": "Szukaj kolekcji wiki i projektów"
+      },
+      "toasts": {
+        "success": {
+          "title": "Sukces!",
+          "message": "Strona przeniesiona pomyślnie."
+        },
+        "error": {
+          "title": "Błąd!",
+          "message": "Nie udało się przenieść strony. Spróbuj ponownie później."
+        },
+        "collection_error": {
+          "title": "Przeniesiono do wiki",
+          "message": "Strona została przeniesiona do wiki, ale nie udało się dodać jej do wybranej kolekcji. Pozostaje w General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Usuń z kolekcji",
+      "success_message": "Strona została usunięta z kolekcji.",
+      "error_message": "Nie udało się usunąć strony z kolekcji. Spróbuj ponownie."
+    }
+  }
+}

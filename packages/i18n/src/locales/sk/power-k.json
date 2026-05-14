@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Hromadne odstrániť pracovné položky"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Akcie pre pracovnú položku",
+        "indicator": "Pracovná položka",
+        "change_state": "Zmeniť stav",
+        "change_priority": "Zmeniť prioritu",
+        "change_assignees": "Priradiť",
+        "assign_to_me": "Priradiť mne",
+        "unassign_from_me": "Zrušiť priradenie mne",
+        "change_estimate": "Zmeniť odhad",
+        "add_to_cycle": "Pridať do cyklu",
+        "add_to_modules": "Pridať do modulov",
+        "add_labels": "Pridať štítky",
+        "subscribe": "Odoberať oznámenia",
+        "unsubscribe": "Zrušiť odber oznámení",
+        "delete": "Odstrániť",
+        "copy_id": "Kopírovať ID",
+        "copy_id_toast_success": "ID pracovnej položky bolo skopírované do schránky.",
+        "copy_id_toast_error": "Pri kopírovaní ID pracovnej položky do schránky sa vyskytla chyba.",
+        "copy_title": "Kopírovať názov",
+        "copy_title_toast_success": "Názov pracovnej položky bol skopírovaný do schránky.",
+        "copy_title_toast_error": "Pri kopírovaní názvu pracovnej položky do schránky sa vyskytla chyba.",
+        "copy_url": "Kopírovať URL",
+        "copy_url_toast_success": "URL pracovnej položky bola skopírovaná do schránky.",
+        "copy_url_toast_error": "Pri kopírovaní URL pracovnej položky do schránky sa vyskytla chyba."
+      },
+      "cycle": {
+        "title": "Akcie pre cyklus",
+        "indicator": "Cyklus",
+        "add_to_favorites": "Pridať do obľúbených",
+        "remove_from_favorites": "Odstrániť z obľúbených",
+        "copy_url": "Kopírovať URL",
+        "copy_url_toast_success": "URL cyklu bola skopírovaná do schránky.",
+        "copy_url_toast_error": "Pri kopírovaní URL cyklu do schránky sa vyskytla chyba."
+      },
+      "module": {
+        "title": "Akcie pre modul",
+        "indicator": "Modul",
+        "add_remove_members": "Pridať/odstrániť členov",
+        "change_status": "Zmeniť stav",
+        "add_to_favorites": "Pridať do obľúbených",
+        "remove_from_favorites": "Odstrániť z obľúbených",
+        "copy_url": "Kopírovať URL",
+        "copy_url_toast_success": "URL modulu bola skopírovaná do schránky.",
+        "copy_url_toast_error": "Pri kopírovaní URL modulu do schránky sa vyskytla chyba."
+      },
+      "page": {
+        "title": "Akcie pre stránku",
+        "indicator": "Stránka",
+        "lock": "Uzamknúť",
+        "unlock": "Odomknúť",
+        "make_private": "Nastaviť ako súkromnú",
+        "make_public": "Nastaviť ako verejnú",
+        "archive": "Archivovať",
+        "restore": "Obnoviť",
+        "add_to_favorites": "Pridať do obľúbených",
+        "remove_from_favorites": "Odstrániť z obľúbených",
+        "copy_url": "Kopírovať URL",
+        "copy_url_toast_success": "URL stránky bola skopírovaná do schránky.",
+        "copy_url_toast_error": "Pri kopírovaní URL stránky do schránky sa vyskytla chyba."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Nová pracovná položka",
+      "create_page": "Nová stránka",
+      "create_view": "Nový pohľad",
+      "create_cycle": "Nový cyklus",
+      "create_module": "Nový modul",
+      "create_project": "Nový projekt",
+      "create_workspace": "Nový pracovný priestor",
+      "create_project_automation": "Nová automatizácia"
+    },
+    "navigation_actions": {
+      "open_workspace": "Otvoriť pracovný priestor",
+      "nav_home": "Prejsť na domov",
+      "nav_inbox": "Prejsť na doručenú poštu",
+      "nav_your_work": "Prejsť na vašu prácu",
+      "nav_account_settings": "Prejsť na nastavenia účtu",
+      "open_project": "Otvoriť projekt",
+      "nav_projects_list": "Prejsť na zoznam projektov",
+      "nav_all_workspace_work_items": "Prejsť na všetky pracovné položky",
+      "nav_assigned_workspace_work_items": "Prejsť na priradené pracovné položky",
+      "nav_created_workspace_work_items": "Prejsť na vytvorené pracovné položky",
+      "nav_subscribed_workspace_work_items": "Prejsť na odoberané pracovné položky",
+      "nav_workspace_analytics": "Prejsť na analytiku pracovného priestoru",
+      "nav_workspace_drafts": "Prejsť na koncepty pracovného priestoru",
+      "nav_workspace_archives": "Prejsť na archívy pracovného priestoru",
+      "open_workspace_setting": "Otvoriť nastavenie pracovného priestoru",
+      "nav_workspace_settings": "Prejsť na nastavenia pracovného priestoru",
+      "nav_project_work_items": "Prejsť na pracovné položky",
+      "open_project_cycle": "Otvoriť cyklus",
+      "nav_project_cycles": "Prejsť na cykly",
+      "open_project_module": "Otvoriť modul",
+      "nav_project_modules": "Prejsť na moduly",
+      "open_project_view": "Otvoriť pohľad projektu",
+      "nav_project_views": "Prejsť na pohľady projektu",
+      "nav_project_pages": "Prejsť na stránky",
+      "nav_project_intake": "Prejsť na príjem",
+      "nav_project_archives": "Prejsť na archívy projektu",
+      "open_project_setting": "Otvoriť nastavenie projektu",
+      "nav_project_settings": "Prejsť na nastavenia projektu",
+      "nav_workspace_active_cycle": "Prejsť na všetky aktívne cykly",
+      "nav_project_overview": "Prejsť na prehľad projektu"
+    },
+    "account_actions": {
+      "sign_out": "Odhlásiť sa",
+      "workspace_invites": "Pozvánky do pracovného priestoru"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Prepnúť bočný panel aplikácie",
+      "copy_current_page_url": "Kopírovať URL aktuálnej stránky",
+      "copy_current_page_url_toast_success": "URL aktuálnej stránky bola skopírovaná do schránky.",
+      "copy_current_page_url_toast_error": "Pri kopírovaní URL aktuálnej stránky do schránky sa vyskytla chyba.",
+      "focus_top_nav_search": "Zamerať vyhľadávacie pole"
+    },
+    "preferences_actions": {
+      "update_theme": "Zmeniť tému rozhrania",
+      "update_timezone": "Zmeniť časové pásmo",
+      "update_start_of_week": "Zmeniť prvý deň týždňa",
+      "update_language": "Zmeniť jazyk rozhrania",
+      "toast": {
+        "theme": {
+          "success": "Téma bola úspešne aktualizovaná.",
+          "error": "Aktualizácia témy zlyhala. Skúste to prosím znova."
+        },
+        "timezone": {
+          "success": "Časové pásmo bolo úspešne aktualizované.",
+          "error": "Aktualizácia časového pásma zlyhala. Skúste to prosím znova."
+        },
+        "generic": {
+          "success": "Predvoľby boli úspešne aktualizované.",
+          "error": "Aktualizácia predvolieb zlyhala. Skúste to prosím znova."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Otvoriť klávesové skratky",
+      "open_plane_documentation": "Otvoriť dokumentáciu Plane",
+      "join_forum": "Pripojiť sa na naše fórum",
+      "report_bug": "Nahlásiť chybu",
+      "chat_with_us": "Chatovať s nami"
+    },
+    "page_placeholders": {
+      "default": "Zadajte príkaz alebo vyhľadajte",
+      "open_workspace": "Otvoriť pracovný priestor",
+      "open_project": "Otvoriť projekt",
+      "open_workspace_setting": "Otvoriť nastavenie pracovného priestoru",
+      "open_project_cycle": "Otvoriť cyklus",
+      "open_project_module": "Otvoriť modul",
+      "open_project_view": "Otvoriť pohľad projektu",
+      "open_project_setting": "Otvoriť nastavenie projektu",
+      "update_work_item_state": "Zmeniť stav",
+      "update_work_item_priority": "Zmeniť prioritu",
+      "update_work_item_assignee": "Priradiť",
+      "update_work_item_estimate": "Zmeniť odhad",
+      "update_work_item_cycle": "Pridať do cyklu",
+      "update_work_item_module": "Pridať do modulov",
+      "update_work_item_labels": "Pridať štítky",
+      "update_module_member": "Zmeniť členov",
+      "update_module_status": "Zmeniť stav",
+      "update_theme": "Zmeniť tému",
+      "update_timezone": "Zmeniť časové pásmo",
+      "update_start_of_week": "Zmeniť prvý deň týždňa",
+      "update_language": "Zmeniť jazyk"
+    },
+    "search_menu": {
+      "no_results": "Nenašli sa žiadne výsledky",
+      "clear_search": "Vymazať vyhľadávanie",
+      "go_to_advanced_search": "Prejsť na pokročilé vyhľadávanie"
+    },
+    "footer": {
+      "workspace_level": "Úroveň pracovného priestoru"
+    },
+    "group_titles": {
+      "actions": "Akcie",
+      "contextual": "Kontextové",
+      "navigation": "Navigácia",
+      "create": "Vytvoriť",
+      "general": "Všeobecné",
+      "settings": "Nastavenia",
+      "account": "Účet",
+      "miscellaneous": "Rôzne",
+      "preferences": "Predvoľby",
+      "help": "Pomoc"
+    }
+  }
+}

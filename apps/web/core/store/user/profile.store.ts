@@ -6,6 +6,9 @@
 
 import { cloneDeep, set } from "lodash-es";
 import { action, makeObservable, observable, runInAction } from "mobx";
+// plane imports
+import { setLanguage } from "@plane/i18n";
+import type { TLanguage } from "@plane/i18n";
 // types
 import type { IUserTheme, TUserProfile } from "@plane/types";
 import { EStartOfTheWeek } from "@plane/types";
@@ -108,6 +111,9 @@ export class ProfileStore implements IUserProfileStore {
         this.isLoading = false;
         this.data = userProfile;
       });
+      if (userProfile.language) {
+        void setLanguage(userProfile.language as TLanguage);
+      }
       return userProfile;
     } catch (error) {
       runInAction(() => {
@@ -131,6 +137,9 @@ export class ProfileStore implements IUserProfileStore {
     try {
       if (currentUserProfileData) {
         this.mutateUserProfile(data);
+      }
+      if (data.language) {
+        void setLanguage(data.language as TLanguage);
       }
       const userProfile = await this.userService.updateCurrentUserProfile(data);
       return userProfile;

@@ -1,0 +1,7 @@
+{
+  "module": {
+    "label": "{count, plural, one {モジュール} other {モジュール}}",
+    "no_module": "モジュールなし",
+    "select": "モジュールを追加"
+  }
+}

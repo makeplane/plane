@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Структура",
+        "empty_state": {
+          "title": "Відсутні заголовки",
+          "description": "Давайте додамо кілька заголовків на цю сторінку, щоб побачити їх тут."
+        }
+      },
+      "info": {
+        "label": "Інформація",
+        "document_info": {
+          "words": "Слова",
+          "characters": "Символи",
+          "paragraphs": "Абзаци",
+          "read_time": "Час читання"
+        },
+        "actors_info": {
+          "edited_by": "Відредаговано",
+          "created_by": "Створено"
+        },
+        "version_history": {
+          "label": "Історія версій",
+          "current_version": "Поточна версія",
+          "highlight_changes": "Виділити зміни"
+        }
+      },
+      "assets": {
+        "label": "Ресурси",
+        "download_button": "Завантажити",
+        "empty_state": {
+          "title": "Відсутні зображення",
+          "description": "Додайте зображення, щоб побачити їх тут."
+        }
+      },
+      "comments": {
+        "label": "Коментарі",
+        "empty_state": {
+          "title": "Немає коментарів",
+          "description": "Додайте коментарі, щоб побачити їх тут."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Назва стікі не може перевищувати 100 символів.",
+        "already_exists": "Вже існує стікі без опису"
+      },
+      "created": {
+        "title": "Стікі створено",
+        "message": "Стікі успішно створено"
+      },
+      "not_created": {
+        "title": "Стікі не створено",
+        "message": "Не вдалося створити стікі"
+      },
+      "updated": {
+        "title": "Стікі оновлено",
+        "message": "Стікі успішно оновлено"
+      },
+      "not_updated": {
+        "title": "Стікі не оновлено",
+        "message": "Не вдалося оновити стікі"
+      },
+      "removed": {
+        "title": "Стікі видалено",
+        "message": "Стікі успішно видалено"
+      },
+      "not_removed": {
+        "title": "Стікі не видалено",
+        "message": "Не вдалося видалити стікі"
+      }
+    },
+    "open_button": "Відкрити панель навігації",
+    "close_button": "Закрити панель навігації",
+    "outline_floating_button": "Відкрити структуру"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Перемістити",
+        "loading": "Переміщення"
+      },
+      "cannot_move_to_teamspace": "Приватні та спільні сторінки не можна перемістити до командного простору.",
+      "placeholders": {
+        "workspace_to_all": "Шукати проєкти та командні простори",
+        "workspace_to_project": "Шукати проєкти",
+        "project_to_all": "Шукати проєкти та командні простори",
+        "project_to_project": "Шукати проєкти",
+        "project_to_all_with_wiki": "Шукати колекції wiki, проєкти та командні простори",
+        "project_to_project_with_wiki": "Шукати колекції wiki та проєкти"
+      },
+      "toasts": {
+        "success": {
+          "title": "Успіх!",
+          "message": "Сторінку успішно переміщено."
+        },
+        "error": {
+          "title": "Помилка!",
+          "message": "Не вдалося перемістити сторінку. Спробуйте ще раз пізніше."
+        },
+        "collection_error": {
+          "title": "Переміщено до wiki",
+          "message": "Сторінку було переміщено до wiki, але не вдалося додати її до вибраної колекції. Вона залишається в General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Видалити з колекції",
+      "success_message": "Сторінку видалено з колекції.",
+      "error_message": "Не вдалося видалити сторінку з колекції. Спробуйте ще раз."
+    }
+  }
+}

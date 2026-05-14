@@ -1,0 +1,115 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Gliederung",
+        "empty_state": {
+          "title": "Fehlende Überschriften",
+          "description": "Fügen Sie einige Überschriften zu dieser Seite hinzu, um sie hier zu sehen."
+        }
+      },
+      "info": {
+        "label": "Info",
+        "document_info": {
+          "words": "Wörter",
+          "characters": "Zeichen",
+          "paragraphs": "Absätze",
+          "read_time": "Lesezeit"
+        },
+        "actors_info": {
+          "edited_by": "Bearbeitet von",
+          "created_by": "Erstellt von"
+        },
+        "version_history": {
+          "label": "Versionsverlauf",
+          "current_version": "Aktuelle Version",
+          "highlight_changes": "Änderungen hervorheben"
+        }
+      },
+      "assets": {
+        "label": "Assets",
+        "download_button": "Herunterladen",
+        "empty_state": {
+          "title": "Fehlende Bilder",
+          "description": "Fügen Sie Bilder hinzu, um sie hier zu sehen."
+        }
+      },
+      "comments": {
+        "label": "Kommentare",
+        "empty_state": {
+          "title": "Keine Kommentare",
+          "description": "Fügen Sie Kommentare hinzu, um sie hier zu sehen."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Der Notizname darf nicht länger als 100 Zeichen sein.",
+        "already_exists": "Es existiert bereits eine Notiz ohne Beschreibung"
+      },
+      "created": {
+        "title": "Notiz erstellt",
+        "message": "Die Notiz wurde erfolgreich erstellt"
+      },
+      "not_created": {
+        "title": "Notiz nicht erstellt",
+        "message": "Die Notiz konnte nicht erstellt werden"
+      },
+      "updated": {
+        "title": "Notiz aktualisiert",
+        "message": "Die Notiz wurde erfolgreich aktualisiert"
+      },
+      "not_updated": {
+        "title": "Notiz nicht aktualisiert",
+        "message": "Die Notiz konnte nicht aktualisiert werden"
+      },
+      "removed": {
+        "title": "Notiz entfernt",
+        "message": "Die Notiz wurde erfolgreich entfernt"
+      },
+      "not_removed": {
+        "title": "Notiz nicht entfernt",
+        "message": "Die Notiz konnte nicht entfernt werden"
+      }
+    },
+    "open_button": "Navigationsbereich öffnen",
+    "close_button": "Navigationsbereich schließen",
+    "outline_floating_button": "Gliederung öffnen"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Verschieben",
+        "loading": "Wird verschoben"
+      },
+      "cannot_move_to_teamspace": "Private und geteilte Seiten können nicht in einen Teamspace verschoben werden.",
+      "placeholders": {
+        "workspace_to_all": "Nach Projekten und Teamspaces suchen",
+        "workspace_to_project": "Nach Projekten suchen",
+        "project_to_all": "Nach Projekten und Teamspaces suchen",
+        "project_to_project": "Nach Projekten suchen",
+        "project_to_all_with_wiki": "Nach Wiki-Sammlungen, Projekten und Teamspaces suchen",
+        "project_to_project_with_wiki": "Nach Wiki-Sammlungen und Projekten suchen"
+      },
+      "toasts": {
+        "success": {
+          "title": "Erfolg!",
+          "message": "Seite erfolgreich verschoben."
+        },
+        "error": {
+          "title": "Fehler!",
+          "message": "Seite konnte nicht verschoben werden. Bitte versuchen Sie es später erneut."
+        },
+        "collection_error": {
+          "title": "In Wiki verschoben",
+          "message": "Die Seite wurde ins Wiki verschoben, konnte aber nicht zur ausgewählten Sammlung hinzugefügt werden. Sie bleibt in General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Aus Sammlung entfernen",
+      "success_message": "Seite aus Sammlung entfernt.",
+      "error_message": "Die Seite konnte nicht aus der Sammlung entfernt werden. Bitte versuchen Sie es erneut."
+    }
+  }
+}

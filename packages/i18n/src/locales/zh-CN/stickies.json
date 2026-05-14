@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "您的便签",
+    "placeholder": "点击此处输入",
+    "all": "所有便签",
+    "no-data": "记下一个想法，捕捉一个灵感，或记录一个突发奇想。添加便签开始使用。",
+    "add": "添加便签",
+    "search_placeholder": "按标题搜索",
+    "delete": "删除便签",
+    "delete_confirmation": "您确定要删除此便签吗？",
+    "empty_state": {
+      "simple": "记下一个想法，捕捉一个灵感，或记录一个突发奇想。添加便签开始使用。",
+      "general": {
+        "title": "便签是您随手记下的快速笔记和待办事项。",
+        "description": "通过创建随时随地都可以访问的便签，轻松捕捉您的想法和创意。",
+        "primary_button": {
+          "text": "添加便签"
+        }
+      },
+      "search": {
+        "title": "这与您的任何便签都不匹配。",
+        "description": "尝试使用不同的术语，或如果您确定\n搜索是正确的，请告诉我们。",
+        "primary_button": {
+          "text": "添加便签"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "便签名称不能超过100个字符。",
+        "already_exists": "已存在一个没有描述的便签"
+      },
+      "created": {
+        "title": "便签已创建",
+        "message": "便签已成功创建"
+      },
+      "not_created": {
+        "title": "便签未创建",
+        "message": "无法创建便签"
+      },
+      "updated": {
+        "title": "便签已更新",
+        "message": "便签已成功更新"
+      },
+      "not_updated": {
+        "title": "便签未更新",
+        "message": "无法更新便签"
+      },
+      "removed": {
+        "title": "便签已移除",
+        "message": "便签已成功移除"
+      },
+      "not_removed": {
+        "title": "便签未移除",
+        "message": "无法移除便签"
+      }
+    }
+  }
+}

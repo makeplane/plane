@@ -61,8 +61,8 @@ export const ChangeEmailModal = observer(function ChangeEmailModal(props: Props)
     await signOut().catch(() =>
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: t("sign_out.toast.error.title"),
-        message: t("sign_out.toast.error.message"),
+        title: t("auth.sign_out.toast.error.title"),
+        message: t("auth.sign_out.toast.error.message"),
       })
     );
   };

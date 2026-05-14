@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "작업 공간 설정",
+    "page_label": "{workspace} - 일반 설정",
+    "key_created": "키 생성됨",
+    "copy_key": "이 비밀 키를 Plane Pages에 복사하고 저장하세요. 닫기 버튼을 누른 후에는 이 키를 볼 수 없습니다. 키가 포함된 CSV 파일이 다운로드되었습니다.",
+    "token_copied": "토큰이 클립보드에 복사되었습니다.",
+    "settings": {
+      "general": {
+        "title": "일반",
+        "upload_logo": "로고 업로드",
+        "edit_logo": "로고 편집",
+        "name": "작업 공간 이름",
+        "company_size": "회사 규모",
+        "url": "작업 공간 URL",
+        "workspace_timezone": "작업 공간 시간대",
+        "update_workspace": "작업 공간 업데이트",
+        "delete_workspace": "이 작업 공간 삭제",
+        "delete_workspace_description": "작업 공간을 삭제하면 해당 작업 공간 내의 모든 데이터와 리소스가 영구적으로 삭제되며 복구할 수 없습니다.",
+        "delete_btn": "이 작업 공간 삭제",
+        "delete_modal": {
+          "title": "이 작업 공간을 삭제하시겠습니까?",
+          "description": "유료 플랜의 활성화된 평가판이 있습니다. 먼저 취소해야 진행할 수 있습니다.",
+          "dismiss": "무시",
+          "cancel": "평가판 취소",
+          "success_title": "작업 공간 삭제됨.",
+          "success_message": "곧 프로필 페이지로 이동합니다.",
+          "error_title": "작업이 실패했습니다.",
+          "error_message": "다시 시도해주세요."
+        },
+        "errors": {
+          "name": {
+            "required": "이름이 필요합니다",
+            "max_length": "작업 공간 이름은 80자를 초과할 수 없습니다"
+          },
+          "company_size": {
+            "required": "회사 규모가 필요합니다",
+            "select_a_range": "조직 규모 선택"
+          }
+        }
+      },
+      "members": {
+        "title": "멤버",
+        "add_member": "멤버 추가",
+        "pending_invites": "보류 중인 초대",
+        "invitations_sent_successfully": "초대가 성공적으로 전송되었습니다",
+        "leave_confirmation": "작업 공간을 떠나시겠습니까? 더 이상 이 작업 공간에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
+        "details": {
+          "full_name": "전체 이름",
+          "display_name": "표시 이름",
+          "email_address": "이메일 주소",
+          "account_type": "계정 유형",
+          "authentication": "인증",
+          "joining_date": "가입 날짜"
+        },
+        "modal": {
+          "title": "사람들을 초대하여 협업하세요",
+          "description": "작업 공간에서 협업할 사람들을 초대하세요.",
+          "button": "초대 전송",
+          "button_loading": "초대 전송 중",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "초대하려면 이메일 주소가 필요합니다.",
+            "invalid": "이메일이 유효하지 않습니다"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "청구 및 플랜",
+        "description": "플랜을 선택하고, 구독을 관리하며, 필요에 따라 손쉽게 업그레이드하세요.",
+        "title": "청구 및 플랜",
+        "current_plan": "현재 플랜",
+        "free_plan": "현재 무료 플랜을 사용 중입니다",
+        "view_plans": "플랜 보기"
+      },
+      "exports": {
+        "heading": "내보내기",
+        "description": "프로젝트 데이터를 다양한 형식으로 내보내고 다운로드 링크가 포함된 내보내기 기록에 접근하세요.",
+        "title": "내보내기",
+        "exporting": "내보내기 중",
+        "previous_exports": "이전 내보내기",
+        "export_separate_files": "데이터를 별도의 파일로 내보내기",
+        "exporting_projects": "프로젝트 내보내는 중",
+        "format": "포맷",
+        "filters_info": "기준에 따라 특정 작업 항목을 내보내려면 필터를 적용하세요.",
+        "modal": {
+          "title": "내보내기",
+          "toasts": {
+            "success": {
+              "title": "내보내기 성공",
+              "message": "이전 내보내기에서 내보낸 {entity}를 다운로드할 수 있습니다."
+            },
+            "error": {
+              "title": "내보내기 실패",
+              "message": "내보내기가 실패했습니다. 다시 시도해주세요."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "웹훅",
+        "description": "프로젝트 이벤트가 발생할 때 외부 서비스로 알림을 자동화하세요.",
+        "title": "웹훅",
+        "add_webhook": "웹훅 추가",
+        "modal": {
+          "title": "웹훅 생성",
+          "details": "웹훅 세부 정보",
+          "payload": "페이로드 URL",
+          "question": "어떤 이벤트가 이 웹훅을 트리거하길 원하십니까?",
+          "error": "URL이 필요합니다"
+        },
+        "secret_key": {
+          "title": "비밀 키",
+          "message": "웹훅 페이로드에 로그인하려면 토큰을 생성하세요"
+        },
+        "options": {
+          "all": "모든 항목 보내기",
+          "individual": "개별 이벤트 선택"
+        },
+        "toasts": {
+          "created": {
+            "title": "웹훅 생성됨",
+            "message": "웹훅이 성공적으로 생성되었습니다"
+          },
+          "not_created": {
+            "title": "웹훅 생성되지 않음",
+            "message": "웹훅을 생성할 수 없습니다"
+          },
+          "updated": {
+            "title": "웹훅 업데이트됨",
+            "message": "웹훅이 성공적으로 업데이트되었습니다"
+          },
+          "not_updated": {
+            "title": "웹훅 업데이트되지 않음",
+            "message": "웹훅을 업데이트할 수 없습니다"
+          },
+          "removed": {
+            "title": "웹훅 제거됨",
+            "message": "웹훅이 성공적으로 제거되었습니다"
+          },
+          "not_removed": {
+            "title": "웹훅 제거되지 않음",
+            "message": "웹훅을 제거할 수 없습니다"
+          },
+          "secret_key_copied": {
+            "message": "비밀 키가 클립보드에 복사되었습니다."
+          },
+          "secret_key_not_copied": {
+            "message": "비밀 키를 복사하는 중 오류가 발생했습니다."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "API 토큰",
+        "description": "보안 API 토큰을 생성하여 데이터를 외부 시스템 및 애플리케이션과 통합합니다.",
+        "title": "API 토큰",
+        "add_token": "액세스 토큰 추가",
+        "create_token": "토큰 생성",
+        "never_expires": "만료되지 않음",
+        "generate_token": "토큰 생성",
+        "generating": "생성 중",
+        "delete": {
+          "title": "API 토큰 삭제",
+          "description": "이 토큰을 사용하는 애플리케이션은 더 이상 Plane 데이터에 접근할 수 없습니다. 이 작업은 되돌릴 수 없습니다.",
+          "success": {
+            "title": "성공!",
+            "message": "API 토큰이 성공적으로 삭제되었습니다"
+          },
+          "error": {
+            "title": "오류!",
+            "message": "API 토큰을 삭제할 수 없습니다"
+          }
+        }
+      },
+      "integrations": {
+        "title": "인테그레이션",
+        "heading": "인테그레이션",
+        "description": "인기 있는 도구 및 서비스와 연결하여 전체 워크플로우 에코시스템에서 작업을 동기화하세요.",
+        "page_title": "Plane 데이터를 사용 가능한 앱이나 본인 소유 앱에서 활용하세요.",
+        "page_description": "이 워크스페이스 또는 사용자가 사용하는 모든 통합을 확인하세요."
+      },
+      "imports": {
+        "title": "임포트",
+        "heading": "임포트",
+        "description": "기존 프로젝트 관리 도구에서 데이터를 연결하고 가져와 워크플로우 통합을 간소화하세요."
+      },
+      "worklogs": {
+        "title": "워크로그",
+        "heading": "워크로그",
+        "description": "어떤 프로젝트의 누구의 워크로그(타임시트)든 다운로드하세요."
+      },
+      "group_syncing": {
+        "title": "그룹 동기화",
+        "heading": "그룹 동기화",
+        "description": "ID 공급자 그룹을 프로젝트 및 역할에 연결합니다. IdP에서 그룹 멤버십이 변경되면 사용자 액세스가 자동으로 업데이트되어 온보딩 및 오프보딩이 간소화됩니다.",
+        "enable": {
+          "title": "그룹 동기화 활성화",
+          "description": "ID 공급자 그룹을 기반으로 사용자를 프로젝트에 자동으로 추가합니다."
+        },
+        "config": {
+          "title": "그룹 동기화 구성",
+          "description": "ID 공급자 그룹이 프로젝트 및 역할에 매핑되는 방식을 설정합니다.",
+          "sync_on_login": {
+            "title": "로그인 시 동기화",
+            "description": "사용자가 로그인할 때 그룹 멤버십 및 프로젝트 액세스를 업데이트합니다."
+          },
+          "sync_offline": {
+            "title": "오프라인 동기화",
+            "description": "사용자 로그인을 기다리지 않고 6시간마다 자동으로 동기화를 실행합니다."
+          },
+          "auto_remove": {
+            "title": "자동 제거",
+            "description": "그룹과 더 이상 일치하지 않는 사용자를 프로젝트에서 자동으로 제거합니다."
+          },
+          "group_attribute_key": {
+            "title": "그룹 속성 키",
+            "description": "사용자 그룹을 식별하고 동기화하는 데 사용되는 ID 공급자 속성.",
+            "placeholder": "그룹"
+          }
+        },
+        "group_mapping": {
+          "title": "그룹 매핑",
+          "description": "ID 공급자 그룹을 프로젝트 및 역할에 연결합니다.",
+          "button_text": "새 그룹 동기화 추가"
+        },
+        "toast": {
+          "updating": "그룹 동기화 기능 업데이트 중",
+          "success": "그룹 동기화 기능이 성공적으로 업데이트되었습니다.",
+          "error": "그룹 동기화 기능 업데이트에 실패했습니다!"
+        },
+        "delete_modal": {
+          "title": "그룹 동기화 삭제",
+          "content": "이 ID 그룹의 새 사용자는 더 이상 프로젝트에 추가되지 않습니다. 이미 추가된 사용자는 현재 역할을 유지합니다."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "사용자 그룹",
+            "required": "사용자 그룹은 필수입니다",
+            "placeholder": "IdP 그룹 이름 입력"
+          },
+          "project": {
+            "text": "프로젝트",
+            "required": "프로젝트는 필수입니다",
+            "placeholder": "프로젝트 선택"
+          },
+          "default_role": {
+            "text": "프로젝트 역할",
+            "required": "프로젝트 역할은 필수입니다",
+            "placeholder": "프로젝트 역할 선택"
+          }
+        }
+      },
+      "identity": {
+        "title": "신원",
+        "heading": "신원",
+        "description": "도메인을 구성하고 Single sign-on을 활성화하세요"
+      },
+      "project_states": {
+        "title": "프로젝트 스테이트",
+        "heading": "모든 프로젝트의 진행 상황 개요를 확인하세요.",
+        "description": "프로젝트 스테이트는 어떤 프로젝트 속성으로든 모든 프로젝트의 진행 상황을 추적하는 Plane 전용 기능입니다.",
+        "go_to_settings": "설정으로 이동"
+      },
+      "projects": {
+        "title": "프로젝트",
+        "description": "프로젝트 상태 관리, 프로젝트 레이블 활성화 및 기타 구성을 관리합니다.",
+        "tabs": {
+          "states": "프로젝트 스테이트",
+          "labels": "프로젝트 레이블"
+        }
+      },
+      "templates": {
+        "title": "템플릿",
+        "heading": "템플릿",
+        "description": "템플릿을 사용하면 프로젝트, 작업 항목, 페이지를 생성하는 데 걸리는 시간을 80% 절약할 수 있습니다."
+      },
+      "relations": {
+        "title": "관계",
+        "heading": "관계",
+        "description": "작업 공간 전반의 작업 항목을 연결하는 관계 타입을 생성하고 관리하세요."
+      },
+      "cancel_trial": {
+        "title": "먼저 트라이얼을 취소하세요.",
+        "description": "유료 플랜 중 하나에 대한 활성 트라이얼이 있습니다. 계속하려면 먼저 이를 취소하세요.",
+        "dismiss": "무시",
+        "cancel": "트라이얼 취소",
+        "cancel_success_title": "트라이얼이 취소되었습니다.",
+        "cancel_success_message": "이제 워크스페이스를 삭제할 수 있습니다.",
+        "cancel_error_title": "작동하지 않았습니다.",
+        "cancel_error_message": "다시 시도해 주세요."
+      },
+      "applications": {
+        "internal": "내부",
+        "title": "애플리케이션",
+        "applicationId_copied": "애플리케이션 ID가 클립보드에 복사되었습니다",
+        "clientId_copied": "클라이언트 ID가 클립보드에 복사되었습니다",
+        "clientSecret_copied": "클라이언트 시크릿이 클립보드에 복사되었습니다",
+        "third_party_apps": "서드파티 앱",
+        "your_apps": "내 앱",
+        "connect": "연결",
+        "connected": "연결됨",
+        "disconnect": "연결 해제",
+        "install": "설치",
+        "installed": "설치됨",
+        "configure": "설정",
+        "app_available": "이 앱을 Plane 워크스페이스에서 사용할 수 있게 되었습니다",
+        "app_credentials_regenrated": {
+          "title": "앱 자격 증명이 성공적으로 재생성되었습니다",
+          "description": "클라이언트 시크릿이 사용되는 모든 곳에서 교체하세요. 이전 시크릿은 더 이상 유효하지 않습니다."
+        },
+        "app_created": {
+          "title": "앱이 성공적으로 생성되었습니다",
+          "description": "자격 증명을 사용하여 Plane 작업 공간에 앱을 설치하세요"
+        },
+        "installed_apps": "설치된 앱",
+        "all_apps": "모든 앱",
+        "internal_apps": "내부 앱",
+        "app_name_title": "이 앱의 이름을 지정하세요",
+        "app_description_title": {
+          "label": "긴 설명",
+          "placeholder": "마켓플레이스를 위한 긴 설명을 작성하세요. 명령을 보려면 '/' 키를 누르세요."
+        },
+        "authorization_grant_type": {
+          "title": "연결 유형",
+          "description": "앱을 워크스페이스에 한 번 설치할지, 각 사용자가 자신의 계정을 연결할 수 있도록 할지 선택하세요"
+        },
+        "website": {
+          "title": "웹사이트",
+          "description": "앱 웹사이트로 연결되는 링크입니다.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "앱 메이커",
+          "description": "앱을 만드는 개인 또는 조직입니다."
+        },
+        "app_maker_error": "앱 제작자는 필수입니다",
+        "setup_url": {
+          "label": "설정 URL",
+          "description": "사용자가 앱을 설치하면 이 URL로 리디렉션됩니다.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "웹훅 URL",
+          "description": "앱이 설치된 작업 공간에서 발생하는 웹훅 이벤트와 업데이트를 여기에 전송합니다.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "웹훅 시크릿",
+          "description": "들어오는 웹훅 요청을 검증하는 데 사용되는 시크릿입니다.",
+          "placeholder": "임의의 시크릿 키를 입력하세요"
+        },
+        "redirect_uris": {
+          "label": "리디렉션 URI(공백으로 구분)",
+          "description": "사용자가 Plane에서 인증을 완료하면 이 경로로 리디렉션됩니다.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "사용을 시작하려면 Plane 워크스페이스에 연결하세요",
+        "client_id_and_secret": "클라이언트 ID와 시크릿",
+        "client_id_and_secret_description": "이 시크릿 키를 복사하여 저장하세요. 닫기를 누른 후에는 이 키를 볼 수 없습니다.",
+        "client_id_and_secret_download": "여기에서 키가 포함된 CSV를 다운로드할 수 있습니다.",
+        "application_id": "애플리케이션 ID",
+        "client_id": "클라이언트 ID",
+        "client_secret": "클라이언트 시크릿",
+        "export_as_csv": "CSV로 내보내기",
+        "slug_already_exists": "슬러그가 이미 존재합니다",
+        "failed_to_create_application": "애플리케이션 생성 실패",
+        "upload_logo": "로고 업로드",
+        "app_name_error": "앱 이름은 필수입니다",
+        "app_short_description_title": "이 앱에 대한 간단한 설명을 작성하세요",
+        "app_short_description_error": "앱 간단 설명은 필수입니다",
+        "app_description_error": "앱 설명은 필수입니다",
+        "app_slug_title": "앱 슬러그",
+        "app_slug_error": "앱 슬러그는 필수입니다",
+        "invalid_website_error": "유효하지 않은 웹사이트",
+        "webhook_url_title": "웹훅 URL",
+        "webhook_url_error": "웹훅 URL은 필수입니다",
+        "invalid_webhook_url_error": "잘못된 웹훅 URL",
+        "redirect_uris_title": "리다이렉트 URI",
+        "redirect_uris_error": "리다이렉트 URI는 필수입니다",
+        "invalid_redirect_uris_error": "잘못된 리다이렉트 URI",
+        "redirect_uris_description": "앱이 사용자를 리다이렉트할 URI를 공백으로 구분하여 입력하세요(예: https://example.com https://example.com/)",
+        "authorized_javascript_origins_title": "승인된 자바스크립트 출처",
+        "authorized_javascript_origins_error": "승인된 자바스크립트 출처는 필수입니다",
+        "invalid_authorized_javascript_origins_error": "잘못된 승인된 자바스크립트 출처",
+        "authorized_javascript_origins_description": "앱이 요청을 할 수 있는 출처를 공백으로 구분하여 입력하세요(예: app.com example.com)",
+        "create_app": "앱 생성",
+        "update_app": "앱 업데이트",
+        "build_your_own_app": "나만의 앱 만들기",
+        "edit_app_details": "앱 세부정보 편집",
+        "regenerate_client_secret_description": "클라이언트 시크릿을 재생성합니다. 재생성 후 키를 복사하거나 CSV 파일로 다운로드할 수 있습니다.",
+        "regenerate_client_secret": "클라이언트 시크릿 재생성",
+        "regenerate_client_secret_confirm_title": "클라이언트 시크릿을 재생성하시겠습니까?",
+        "regenerate_client_secret_confirm_description": "이 시크릿을 사용하는 앱이 작동을 멈춥니다. 앱에서 시크릿을 업데이트해야 합니다.",
+        "regenerate_client_secret_confirm_cancel": "취소",
+        "regenerate_client_secret_confirm_regenerate": "재생성",
+        "read_only_access_to_workspace": "워크스페이스에 대한 읽기 전용 접근",
+        "write_access_to_workspace": "워크스페이스에 대한 쓰기 접근",
+        "read_only_access_to_user_profile": "사용자 프로필에 대한 읽기 전용 접근",
+        "write_access_to_user_profile": "사용자 프로필에 대한 쓰기 접근",
+        "connect_app_to_workspace": "{app}을(를) {workspace} 워크스페이스에 연결",
+        "user_permissions": "사용자 권한",
+        "user_permissions_description": "사용자 권한은 사용자 프로필에 대한 접근을 허용하는 데 사용됩니다.",
+        "workspace_permissions": "워크스페이스 권한",
+        "workspace_permissions_description": "워크스페이스 권한은 워크스페이스에 대한 접근을 허용하는 데 사용됩니다.",
+        "with_the_permissions": "권한과 함께",
+        "app_consent_title": "{app}이(가) 귀하의 Plane 워크스페이스와 프로필에 대한 접근을 요청하고 있습니다.",
+        "choose_workspace_to_connect_app_with": "앱을 연결할 워크스페이스를 선택하세요",
+        "app_consent_workspace_permissions_title": "{app}이(가) 원하는 것",
+        "app_consent_user_permissions_title": "{app}은(는) 다음 리소스에 대한 사용자 권한도 요청할 수 있습니다. 이러한 권한은 사용자에 의해서만 요청되고 승인됩니다.",
+        "app_consent_accept_title": "수락함으로써",
+        "app_consent_accept_1": "앱이 Plane 내부 또는 외부에서 사용할 수 있는 곳에서 귀하의 Plane 데이터에 접근할 수 있도록 허용합니다",
+        "app_consent_accept_2": "{app}의 개인정보 보호정책 및 이용 약관에 동의합니다",
+        "accepting": "수락 중...",
+        "accept": "수락",
+        "categories": "카테고리",
+        "select_app_categories": "앱 카테고리 선택",
+        "categories_title": "카테고리",
+        "categories_error": "카테고리는 필수입니다",
+        "invalid_categories_error": "유효하지 않은 카테고리",
+        "categories_description": "앱을 가장 잘 설명하는 카테고리를 선택하세요",
+        "supported_plans": "지원되는 플랜",
+        "supported_plans_description": "이 애플리케이션을 설치할 수 있는 워크스페이스 플랜을 선택하세요. 비워두면 모든 플랜이 허용됩니다.",
+        "select_plans": "플랜 선택",
+        "privacy_policy_url_title": "개인정보 보호 정책 URL",
+        "privacy_policy_url_error": "개인정보 보호 정책 URL은 필수입니다",
+        "invalid_privacy_policy_url_error": "유효하지 않은 개인정보 보호 정책 URL",
+        "terms_of_service_url_title": "이용 약관 URL",
+        "terms_of_service_url_error": "이용 약관 URL은 필수입니다",
+        "invalid_terms_of_service_url_error": "유효하지 않은 이용 약관 URL",
+        "support_url_title": "지원 URL",
+        "support_url_error": "지원 URL은 필수입니다",
+        "invalid_support_url_error": "유효하지 않은 지원 URL",
+        "video_url_title": "비디오 URL",
+        "video_url_error": "비디오 URL은 필수입니다",
+        "invalid_video_url_error": "유효하지 않은 비디오 URL",
+        "setup_url_error": "설정 URL은 필수입니다",
+        "invalid_setup_url_error": "유효하지 않은 설정 URL",
+        "configuration_url_title": "설정 URL",
+        "configuration_url_error": "설정 URL은 필수입니다",
+        "invalid_configuration_url_error": "유효하지 않은 설정 URL",
+        "contact_email_title": "연락처 이메일",
+        "contact_email_error": "연락처 이메일은 필수입니다",
+        "invalid_contact_email_error": "유효하지 않은 연락처 이메일",
+        "upload_attachments": "첨부 파일 업로드",
+        "uploading_images": "업로드 중 {count} 이미지{count, plural, one {s} other {s}}",
+        "drop_images_here": "이미지를 여기에 놓으세요",
+        "click_to_upload_images": "이미지를 클릭하여 업로드",
+        "invalid_file_or_exceeds_size_limit": "유효하지 않은 파일 또는 크기 제한 초과 ({size} MB)",
+        "uploading": "업로드 중...",
+        "upload_and_save": "업로드 및 저장",
+        "app_consent_no_access_title": "설치 요청",
+        "app_consent_no_access_description": "이 앱은 워크스페이스 관리자가 설치한 후에만 설치할 수 있습니다. 계속 진행하려면 워크스페이스 관리자에게 문의하세요.",
+        "app_consent_unapproved_title": "이 앱은 아직 Plane의 검토나 승인을 받지 않았습니다.",
+        "app_consent_unapproved_description": "워크스페이스에 연결하기 전에 이 앱을 신뢰할 수 있는지 확인하세요.",
+        "go_to_app": "앱으로 이동",
+        "enable_app_mentions": "앱 멘션 활성화",
+        "enable_app_mentions_tooltip": "이 기능을 활성화하면 사용자가 워크 아이템을 이 애플리케이션에 언급하거나 할당할 수 있습니다.",
+        "scopes": "범위",
+        "select_scopes": "범위 선택",
+        "read_access_to": "읽기 전용 액세스",
+        "write_access_to": "쓰기 액세스",
+        "global_permission_expiration": "전역 범위가 곧 만료됩니다. 대신 세분화된 범위를 사용하세요. 예: 전역 읽기 대신 project:read를 사용하세요.",
+        "selected_scopes": "{count}개 선택됨",
+        "scopes_and_permissions": "범위 및 권한",
+        "read": "읽기",
+        "write": "쓰기",
+        "scope_description": {
+          "projects": "프로젝트 및 프로젝트 관련 엔티티에 대한 액세스",
+          "wiki": "위키 및 위키 관련 엔티티에 대한 액세스",
+          "workspaces": "워크스페이스 및 워크스페이스 관련 엔티티에 대한 액세스",
+          "stickies": "스티키 및 스티키 관련 엔티티에 대한 액세스",
+          "profile": "사용자 프로필 정보에 대한 액세스",
+          "agents": "에이전트 및 모든 에이전트 관련 엔티티에 대한 액세스",
+          "assets": "에셋 및 모든 에셋 관련 엔티티에 대한 액세스"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "작업이 더 똑똑하고 빨리 진행되도록 네이티브로 연결된 AI를 사용하세요."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "스크립트",
+        "new_script": "새 스크립트",
+        "description": "커스텀 스크립트와 자동화 규칙으로 워크플로우를 자동화하세요."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "생성된 API 토큰 없음",
+        "description": "Plane API를 사용하여 Plane의 데이터를 외부 시스템과 통합할 수 있습니다. 토큰을 생성하여 시작하세요."
+      },
+      "webhooks": {
+        "title": "추가된 웹훅 없음",
+        "description": "실시간 업데이트를 받고 작업을 자동화하려면 웹훅을 생성하세요."
+      },
+      "exports": {
+        "title": "아직 내보내기 없음",
+        "description": "내보낼 때마다 참조용으로 여기에 복사본이 있습니다."
+      },
+      "imports": {
+        "title": "아직 가져오기 없음",
+        "description": "이전 가져오기를 모두 여기에서 찾고 다운로드하세요."
+      }
+    }
+  }
+}

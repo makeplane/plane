@@ -1,0 +1,526 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Enter project ID",
+      "please_select_a_timezone": "Please select a timezone",
+      "archive_project": {
+        "title": "Archive project",
+        "description": "Archiving a project will unlist your project from your side navigation although you will still be able to access it from your projects page. You can restore the project or delete it whenever you want.",
+        "button": "Archive project"
+      },
+      "delete_project": {
+        "title": "Delete project",
+        "description": "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.",
+        "button": "Delete my project"
+      },
+      "toast": {
+        "success": "Project updated successfully",
+        "error": "Project could not be updated. Please try again."
+      }
+    },
+    "members": {
+      "label": "Members",
+      "project_lead": "Project lead",
+      "project_lead_description": "Select the project lead for the project.",
+      "default_assignee": "Default assignee",
+      "default_assignee_description": "Select the default assignee for the project.",
+      "project_subscribers": "Project subscribers",
+      "project_subscribers_description": "Select members who will receive notifications for this project.",
+      "guest_super_permissions": {
+        "title": "Grant view access to all work items for guest users:",
+        "sub_heading": "This will allow guests to have view access to all the project work items."
+      },
+      "invite_members": {
+        "title": "Invite members",
+        "sub_heading": "Invite members to work on your project.",
+        "select_co_worker": "Select co-worker"
+      }
+    },
+    "states": {
+      "heading": "States",
+      "description": "Define and customize workflow states to track the progress of your work items.",
+      "describe_this_state_for_your_members": "Describe this state for your members.",
+      "empty_state": {
+        "title": "No states available for the {groupKey} group",
+        "description": "Please create a new state"
+      }
+    },
+    "labels": {
+      "heading": "Labels",
+      "description": "Create custom labels to categorize and organize your work items",
+      "label_title": "Label title",
+      "label_title_is_required": "Label title is required",
+      "label_max_char": "Label name should not exceed 255 characters",
+      "toast": {
+        "error": "Error while updating the label"
+      }
+    },
+    "estimates": {
+      "heading": "Estimates",
+      "description": "Set up estimation systems to track and communicate the effort required for each work item.",
+      "label": "Estimates",
+      "title": "Enable estimates for my project",
+      "enable_description": "They help you in communicating complexity and workload of the team.",
+      "no_estimate": "No estimate",
+      "new": "New estimate system",
+      "create": {
+        "custom": "Custom",
+        "start_from_scratch": "Start from scratch",
+        "choose_template": "Choose a template",
+        "choose_estimate_system": "Choose an estimate system",
+        "enter_estimate_point": "Enter estimate",
+        "step": "Step {step} of {total}",
+        "label": "Create estimate"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimate created",
+            "message": "The estimate has been created successfully"
+          },
+          "error": {
+            "title": "Estimate creation failed",
+            "message": "We were unable to create the new estimate, please try again."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimate modified",
+            "message": "The estimate has been updated in your project."
+          },
+          "error": {
+            "title": "Estimate modification failed",
+            "message": "We were unable to modify the estimate, please try again"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been enabled."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Success!",
+            "message": "Estimates have been disabled."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Estimate could not be disabled. Please try again"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Estimates re-ordered",
+            "message": "Estimates have been re-ordered in your project."
+          },
+          "error": {
+            "title": "Estimate re-order failed",
+            "message": "We were unable to re-order the estimates, please try again"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Estimate system created",
+            "message": "Created and Enabled successfully"
+          },
+          "error": {
+            "title": "Error",
+            "message": "Something went wrong"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "Estimate needs to be greater than 0.",
+        "unable_to_process": "We are unable to process your request, please try again.",
+        "numeric": "Estimate needs to be a numeric value.",
+        "character": "Estimate needs to be a character value.",
+        "empty": "Estimate value cannot be empty.",
+        "already_exists": "Estimate value already exists.",
+        "unsaved_changes": "You have some unsaved changes, Please save them before clicking on done",
+        "remove_empty": "Estimate can't be empty. Enter a value in each field or remove those you don't have values for.",
+        "fill": "Please fill this estimate field",
+        "repeat": "Estimate value cannot be repeated"
+      },
+      "systems": {
+        "points": {
+          "label": "Points",
+          "fibonacci": "Fibonacci",
+          "linear": "Linear",
+          "squares": "Squares",
+          "custom": "Custom"
+        },
+        "categories": {
+          "label": "Categories",
+          "t_shirt_sizes": "T-Shirt Sizes",
+          "easy_to_hard": "Easy to hard",
+          "custom": "Custom"
+        },
+        "time": {
+          "label": "Time",
+          "hours": "Hours"
+        }
+      },
+      "edit": {
+        "title": "Edit estimate system",
+        "add_or_update": {
+          "title": "Add, update or remove estimates",
+          "description": "Manage current system either adding, updating or removing the points or categories."
+        },
+        "switch": {
+          "title": "Change estimate type",
+          "description": "Convert your points system to categories system and vice versa."
+        }
+      },
+      "switch": "Switch estimate system",
+      "current": "Current estimate system",
+      "select": "Select an estimate system"
+    },
+    "automations": {
+      "label": "Automations",
+      "heading": "Automations",
+      "description": "Configure automated actions to streamline your project management workflow and reduce manual tasks.",
+      "auto-archive": {
+        "title": "Auto-archive closed work items",
+        "description": "Plane will auto archive work items that have been completed or canceled.",
+        "duration": "Auto-archive work items that are closed for"
+      },
+      "auto-close": {
+        "title": "Auto-close work items",
+        "description": "Plane will automatically close work items that haven't been completed or canceled.",
+        "duration": "Auto-close work items that are inactive for",
+        "auto_close_status": "Auto-close status"
+      },
+      "auto-remind": {
+        "title": "Auto-reminders",
+        "description": "Plane will automatically send reminders via email and in-app notifications to keep your team on track with deadlines.",
+        "duration": "Send reminder before"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "No labels yet",
+        "description": "Create labels to help organize and filter work items in you project."
+      },
+      "estimates": {
+        "title": "No estimate systems yet",
+        "description": "Create a set of estimates to communicate the amount of work per work item.",
+        "primary_button": "Add estimate system"
+      },
+      "integrations": {
+        "title": "No integrations configured",
+        "description": "Configure GitHub and other integrations to sync your project work items."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Enable workflows",
+        "description": "Set workflows to control work item movement",
+        "no_states_tooltip": "No states are added to the workflow.",
+        "no_work_item_types_tooltip": "No work item types are added to the workflow.",
+        "no_states_or_work_item_types_tooltip": "No states or work item types are added to the workflow.",
+        "toast": {
+          "loading": {
+            "enabling": "Enabling workflows",
+            "disabling": "Disabling workflows"
+          },
+          "success": {
+            "title": "Success!",
+            "message": "Workflows enabled successfully."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "Failed to enable workflows. Please try again."
+          }
+        }
+      },
+      "heading": "Workflows",
+      "description": "Automate work item transitions and set rules to control how tasks move through your project pipeline.",
+      "add_button": "Add new workflow",
+      "search": "Search workflows",
+      "detail": {
+        "define": "Define workflow",
+        "add_states": "Add states",
+        "unmapped_states": {
+          "title": "Unmapped states detected",
+          "description": "Some work items for the selected types are currently in states that do not exist in this workflow.",
+          "note": "If you enable this workflow, these items will automatically move to the initial state for this workflow.",
+          "label": "Missing states",
+          "tooltip": "Some work items are in states that are not mapped to this workflow. Open the workflow to review."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "All states are in use",
+          "description": "All defined states for this project are already present in your current workflow."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "This workflow applies to any work item type that is not assigned to a workflow."
+      },
+      "create": {
+        "heading": "Create new workflow",
+        "name": {
+          "placeholder": "Add a unique name",
+          "validation": {
+            "max_length": "Name must be less than 255 characters",
+            "required": "Name is required",
+            "invalid": "Name can only contain letters, numbers, spaces, hyphens, and apostrophes"
+          }
+        },
+        "description": {
+          "placeholder": "Add a short description",
+          "validation": {
+            "invalid": "Description can only contain letters, numbers, spaces, hyphens, and apostrophes"
+          }
+        },
+        "work_item_type": {
+          "label": "Work item type"
+        },
+        "success": {
+          "title": "Success!",
+          "message": "Workflow created successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to create workflow. Please try again."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Success!",
+          "message": "Workflow updated successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to update workflow. Please try again."
+        }
+      },
+      "delete": {
+        "loading": "Deleting workflow",
+        "success": {
+          "title": "Success!",
+          "message": "Workflow deleted successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to delete workflow. Please try again."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Success!",
+          "message": "States added successfully."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "Failed to add states. Please try again."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Work item Types",
+      "description": "Create and customize different types of work items with unique properties"
+    },
+    "features": {
+      "cycles": {
+        "title": "Cycles",
+        "short_title": "Cycles",
+        "description": "Schedule work in flexible periods that adapt to this project's unique rhythm and pace.",
+        "toggle_title": "Enable cycles",
+        "toggle_description": "Plan work in focused timeframes."
+      },
+      "modules": {
+        "title": "Modules",
+        "short_title": "Modules",
+        "description": "Organize work into sub-projects with dedicated leads and assignees.",
+        "toggle_title": "Enable modules",
+        "toggle_description": "Project members will be able to create and edit modules."
+      },
+      "views": {
+        "title": "Views",
+        "short_title": "Views",
+        "description": "Save custom sorts, filters, and display options or share them with your team.",
+        "toggle_title": "Enable views",
+        "toggle_description": "Project members will be able to create and edit views."
+      },
+      "pages": {
+        "title": "Pages",
+        "short_title": "Pages",
+        "description": "Create and edit free-form content; notes, docs, anything.",
+        "toggle_title": "Enable pages",
+        "toggle_description": "Project members will be able to create and edit pages."
+      },
+      "intake": {
+        "intake_responsibility": "Intake responsibility",
+        "intake_sources": "Intake sources",
+        "title": "Intake",
+        "short_title": "Intake",
+        "description": "Let non-members share bugs, feedback, and suggestions; without disrupting your workflow.",
+        "toggle_title": "Enable intake",
+        "toggle_description": "Let project members create in app intake requests.",
+        "toggle_tooltip_on": "Ask your Project Admin to turn this on.",
+        "toggle_tooltip_off": "Ask your Project Admin to turn this off.",
+        "notify_assignee": {
+          "title": "Notify assignees",
+          "description": "For a new request to intake, default assignees will be alerted via notifications"
+        },
+        "in_app": {
+          "title": "In-app",
+          "description": "Get new work items from Members and Guests in your workspace without disruption to your existing work items."
+        },
+        "email": {
+          "title": "Email",
+          "description": "Collect new work items from anyone who sends an email to a Plane email address.",
+          "fieldName": "Email ID"
+        },
+        "form": {
+          "title": "Forms",
+          "description": "Let folks outside your workspace create potential new work items for you via a dedicated and secure form.",
+          "fieldName": "Default form URL",
+          "create_forms": "Create Forms using work item types",
+          "manage_forms": "Manage forms",
+          "manage_forms_tooltip": "Ask your Workspace Admin to manage this.",
+          "create_form": "Create form",
+          "edit_form": "Edit form details",
+          "form_title": "Form title",
+          "form_title_required": "Form title is required",
+          "work_item_type": "Work item type",
+          "remove_property": "Remove property",
+          "select_properties": "Select properties",
+          "search_placeholder": "Search for properties",
+          "toasts": {
+            "success_create": "Intake form created successfully",
+            "success_update": "Intake form updated successfully",
+            "error_create": "Failed to create intake form",
+            "error_update": "Failed to update intake form"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "Setting assignees...",
+            "success": {
+              "title": "Success!",
+              "message": "Assignees set successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Something went wrong while setting assignees. Please try again."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Time tracking",
+        "short_title": "Time tracking",
+        "description": "Log time spent on work items and projects.",
+        "toggle_title": "Enable time tracking",
+        "toggle_description": "Project members will be able to log time worked."
+      },
+      "milestones": {
+        "title": "Milestones",
+        "short_title": "Milestones",
+        "description": "Milestones provide a layer to align work items toward shared completion dates.",
+        "toggle_title": "Enable milestones",
+        "toggle_description": "Organize work items by milestone deadlines."
+      },
+      "toasts": {
+        "loading": "Updating project feature...",
+        "success": "Project feature updated successfully.",
+        "error": "Something went wrong while updating project feature. Please try again."
+      }
+    },
+    "project_updates": {
+      "heading": "Project Updates",
+      "description": "Consolidated tracking and progress monitoring for this project"
+    },
+    "templates": {
+      "heading": "Templates",
+      "description": "Save 80% time spent on creating projects, work items, and pages when you use templates."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Auto-schedule cycles",
+        "description": "Keep cycles moving without manual setup.",
+        "tooltip": "Automatically create new cycles based on your chosen schedule.",
+        "edit_button": "Edit",
+        "form": {
+          "cycle_title": {
+            "label": "Cycle Title",
+            "placeholder": "Title",
+            "tooltip": "The title will be appended with numbers for subsequent cycles. For eg: Design - 1/2/3",
+            "validation": {
+              "required": "Cycle title is required",
+              "max_length": "Title must not exceed 255 characters"
+            }
+          },
+          "cycle_duration": {
+            "label": "Cycle Duration",
+            "unit": "Weeks",
+            "validation": {
+              "required": "Cycle duration is required",
+              "min": "Cycle duration must be at least 1 week",
+              "max": "Cycle duration cannot exceed 30 weeks",
+              "positive": "Cycle duration must be positive"
+            }
+          },
+          "cooldown_period": {
+            "label": "Cooldown Period",
+            "unit": "days",
+            "tooltip": "Pause between cycles before the next begins.",
+            "validation": {
+              "required": "Cooldown period is required",
+              "negative": "Cooldown period cannot be negative"
+            }
+          },
+          "start_date": {
+            "label": "Cycle starts day",
+            "validation": {
+              "required": "Start date is required",
+              "past": "Start date cannot be in the past"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Number of future cycles",
+            "validation": {
+              "required": "Number of cycles is required",
+              "min": "At least 1 cycle is required",
+              "max": "Cannot schedule more than 3 cycles"
+            }
+          },
+          "auto_rollover": {
+            "label": "Auto-rollover work items",
+            "tooltip": "On the day a cycle completes, move all unfinished work items into the next cycle."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "Enabling auto-schedule cycles",
+            "loading_disable": "Disabling auto-schedule cycles",
+            "success": {
+              "title": "Success!",
+              "message": "Auto-schedule cycles toggled successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "Failed to toggle auto-schedule cycles."
+            }
+          },
+          "save": {
+            "loading": "Saving auto-schedule cycles configuration",
+            "success": {
+              "title": "Success!",
+              "message_create": "Auto-schedule cycles configuration saved successfully.",
+              "message_update": "Auto-schedule cycles configuration updated successfully."
+            },
+            "error": {
+              "title": "Error!",
+              "message_create": "Failed to save auto-schedule cycles configuration.",
+              "message_update": "Failed to update auto-schedule cycles configuration."
+            }
+          }
+        }
+      }
+    }
+  }
+}

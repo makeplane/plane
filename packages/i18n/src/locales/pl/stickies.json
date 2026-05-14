@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Twoje notatki",
+    "placeholder": "kliknij, aby zacząć pisać",
+    "all": "Wszystkie notatki",
+    "no-data": "Zapisuj pomysły i myśli. Dodaj pierwszą notatkę.",
+    "add": "Dodaj notatkę",
+    "search_placeholder": "Szukaj według nazwy",
+    "delete": "Usuń notatkę",
+    "delete_confirmation": "Czy na pewno chcesz usunąć tę notatkę?",
+    "empty_state": {
+      "simple": "Zapisuj pomysły i myśli. Dodaj pierwszą notatkę.",
+      "general": {
+        "title": "Notatki to szybkie zapiski.",
+        "description": "Zapisuj pomysły i uzyskuj do nich dostęp z dowolnego miejsca.",
+        "primary_button": {
+          "text": "Dodaj notatkę"
+        }
+      },
+      "search": {
+        "title": "Nie znaleziono żadnych notatek.",
+        "description": "Spróbuj innego wyrażenia lub utwórz nową notatkę.",
+        "primary_button": {
+          "text": "Dodaj notatkę"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Nazwa notatki może mieć maks. 100 znaków.",
+        "already_exists": "Notatka bez opisu już istnieje"
+      },
+      "created": {
+        "title": "Notatkę utworzono",
+        "message": "Notatkę utworzono pomyślnie"
+      },
+      "not_created": {
+        "title": "Nie udało się utworzyć",
+        "message": "Nie można utworzyć notatki"
+      },
+      "updated": {
+        "title": "Notatkę zaktualizowano",
+        "message": "Notatkę zaktualizowano pomyślnie"
+      },
+      "not_updated": {
+        "title": "Aktualizacja się nie powiodła",
+        "message": "Nie można zaktualizować notatki"
+      },
+      "removed": {
+        "title": "Notatkę usunięto",
+        "message": "Notatkę usunięto pomyślnie"
+      },
+      "not_removed": {
+        "title": "Usunięcie się nie powiodło",
+        "message": "Nie można usunąć notatki"
+      }
+    }
+  }
+}

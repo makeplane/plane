@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Șterge în masă activitățile"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Acțiuni activitate",
+        "indicator": "Activitate",
+        "change_state": "Schimbă starea",
+        "change_priority": "Schimbă prioritatea",
+        "change_assignees": "Atribuie lui",
+        "assign_to_me": "Atribuie-mi mie",
+        "unassign_from_me": "Dezatribuie de la mine",
+        "change_estimate": "Schimbă estimarea",
+        "add_to_cycle": "Adaugă la ciclu",
+        "add_to_modules": "Adaugă la module",
+        "add_labels": "Adaugă etichete",
+        "subscribe": "Abonează-te la notificări",
+        "unsubscribe": "Dezabonează-te de la notificări",
+        "delete": "Șterge",
+        "copy_id": "Copiază ID",
+        "copy_id_toast_success": "ID-ul activității a fost copiat în clipboard.",
+        "copy_id_toast_error": "A apărut o eroare la copierea ID-ului activității în clipboard.",
+        "copy_title": "Copiază titlul",
+        "copy_title_toast_success": "Titlul activității a fost copiat în clipboard.",
+        "copy_title_toast_error": "A apărut o eroare la copierea titlului activității în clipboard.",
+        "copy_url": "Copiază URL",
+        "copy_url_toast_success": "URL-ul activității a fost copiat în clipboard.",
+        "copy_url_toast_error": "A apărut o eroare la copierea URL-ului activității în clipboard."
+      },
+      "cycle": {
+        "title": "Acțiuni ciclu",
+        "indicator": "Ciclu",
+        "add_to_favorites": "Adaugă la favorite",
+        "remove_from_favorites": "Elimină din favorite",
+        "copy_url": "Copiază URL",
+        "copy_url_toast_success": "URL-ul ciclului a fost copiat în clipboard.",
+        "copy_url_toast_error": "A apărut o eroare la copierea URL-ului ciclului în clipboard."
+      },
+      "module": {
+        "title": "Acțiuni modul",
+        "indicator": "Modul",
+        "add_remove_members": "Adaugă/elimină membri",
+        "change_status": "Schimbă statusul",
+        "add_to_favorites": "Adaugă la favorite",
+        "remove_from_favorites": "Elimină din favorite",
+        "copy_url": "Copiază URL",
+        "copy_url_toast_success": "URL-ul modulului a fost copiat în clipboard.",
+        "copy_url_toast_error": "A apărut o eroare la copierea URL-ului modulului în clipboard."
+      },
+      "page": {
+        "title": "Acțiuni pagină",
+        "indicator": "Pagină",
+        "lock": "Blochează",
+        "unlock": "Deblochează",
+        "make_private": "Fă privată",
+        "make_public": "Fă publică",
+        "archive": "Arhivează",
+        "restore": "Restaurează",
+        "add_to_favorites": "Adaugă la favorite",
+        "remove_from_favorites": "Elimină din favorite",
+        "copy_url": "Copiază URL",
+        "copy_url_toast_success": "URL-ul paginii a fost copiat în clipboard.",
+        "copy_url_toast_error": "A apărut o eroare la copierea URL-ului paginii în clipboard."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Activitate nouă",
+      "create_page": "Pagină nouă",
+      "create_view": "Perspectivă nouă",
+      "create_cycle": "Ciclu nou",
+      "create_module": "Modul nou",
+      "create_project": "Proiect nou",
+      "create_workspace": "Spațiu de lucru nou",
+      "create_project_automation": "Automatizare nouă"
+    },
+    "navigation_actions": {
+      "open_workspace": "Deschide un spațiu de lucru",
+      "nav_home": "Mergi la acasă",
+      "nav_inbox": "Mergi la căsuța de mesaje",
+      "nav_your_work": "Mergi la munca ta",
+      "nav_account_settings": "Mergi la setările contului",
+      "open_project": "Deschide un proiect",
+      "nav_projects_list": "Mergi la lista de proiecte",
+      "nav_all_workspace_work_items": "Mergi la toate activitățile",
+      "nav_assigned_workspace_work_items": "Mergi la activitățile atribuite",
+      "nav_created_workspace_work_items": "Mergi la activitățile create",
+      "nav_subscribed_workspace_work_items": "Mergi la activitățile urmărite",
+      "nav_workspace_analytics": "Mergi la statisticile spațiului de lucru",
+      "nav_workspace_drafts": "Mergi la schițele spațiului de lucru",
+      "nav_workspace_archives": "Mergi la arhivele spațiului de lucru",
+      "open_workspace_setting": "Deschide o setare a spațiului de lucru",
+      "nav_workspace_settings": "Mergi la setările spațiului de lucru",
+      "nav_project_work_items": "Mergi la activități",
+      "open_project_cycle": "Deschide un ciclu",
+      "nav_project_cycles": "Mergi la cicluri",
+      "open_project_module": "Deschide un modul",
+      "nav_project_modules": "Mergi la module",
+      "open_project_view": "Deschide o perspectivă a proiectului",
+      "nav_project_views": "Mergi la perspectivele proiectului",
+      "nav_project_pages": "Mergi la documentație",
+      "nav_project_intake": "Mergi la cereri",
+      "nav_project_archives": "Mergi la arhivele proiectului",
+      "open_project_setting": "Deschide o setare a proiectului",
+      "nav_project_settings": "Mergi la setările proiectului",
+      "nav_workspace_active_cycle": "Mergi la toate ciclurile active",
+      "nav_project_overview": "Mergi la prezentarea generală a proiectului"
+    },
+    "account_actions": {
+      "sign_out": "Deconectează-te",
+      "workspace_invites": "Invitații la spațiul de lucru"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Comută bara laterală a aplicației",
+      "copy_current_page_url": "Copiază URL-ul paginii curente",
+      "copy_current_page_url_toast_success": "URL-ul paginii curente a fost copiat în clipboard.",
+      "copy_current_page_url_toast_error": "A apărut o eroare la copierea URL-ului paginii curente în clipboard.",
+      "focus_top_nav_search": "Focalizează câmpul de căutare"
+    },
+    "preferences_actions": {
+      "update_theme": "Schimbă tema interfeței",
+      "update_timezone": "Schimbă fusul orar",
+      "update_start_of_week": "Schimbă prima zi a săptămânii",
+      "update_language": "Schimbă limba interfeței",
+      "toast": {
+        "theme": {
+          "success": "Tema a fost actualizată cu succes.",
+          "error": "Actualizarea temei a eșuat. Te rugăm să încerci din nou."
+        },
+        "timezone": {
+          "success": "Fusul orar a fost actualizat cu succes.",
+          "error": "Actualizarea fusului orar a eșuat. Te rugăm să încerci din nou."
+        },
+        "generic": {
+          "success": "Preferințele au fost actualizate cu succes.",
+          "error": "Actualizarea preferințelor a eșuat. Te rugăm să încerci din nou."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Deschide scurtăturile de tastatură",
+      "open_plane_documentation": "Deschide documentația Plane",
+      "join_forum": "Alătură-te forumului nostru",
+      "report_bug": "Raportează o eroare",
+      "chat_with_us": "Discută cu noi"
+    },
+    "page_placeholders": {
+      "default": "Tastează o comandă sau caută",
+      "open_workspace": "Deschide un spațiu de lucru",
+      "open_project": "Deschide un proiect",
+      "open_workspace_setting": "Deschide o setare a spațiului de lucru",
+      "open_project_cycle": "Deschide un ciclu",
+      "open_project_module": "Deschide un modul",
+      "open_project_view": "Deschide o perspectivă a proiectului",
+      "open_project_setting": "Deschide o setare a proiectului",
+      "update_work_item_state": "Schimbă starea",
+      "update_work_item_priority": "Schimbă prioritatea",
+      "update_work_item_assignee": "Atribuie lui",
+      "update_work_item_estimate": "Schimbă estimarea",
+      "update_work_item_cycle": "Adaugă la ciclu",
+      "update_work_item_module": "Adaugă la module",
+      "update_work_item_labels": "Adaugă etichete",
+      "update_module_member": "Schimbă membrii",
+      "update_module_status": "Schimbă statusul",
+      "update_theme": "Schimbă tema",
+      "update_timezone": "Schimbă fusul orar",
+      "update_start_of_week": "Schimbă prima zi a săptămânii",
+      "update_language": "Schimbă limba"
+    },
+    "search_menu": {
+      "no_results": "Niciun rezultat găsit",
+      "clear_search": "Șterge căutarea",
+      "go_to_advanced_search": "Mergi la căutarea avansată"
+    },
+    "footer": {
+      "workspace_level": "La nivel de spațiu de lucru"
+    },
+    "group_titles": {
+      "actions": "Acțiuni",
+      "contextual": "Contextual",
+      "navigation": "Navigare",
+      "create": "Creează",
+      "general": "General",
+      "settings": "Setări",
+      "account": "Cont",
+      "miscellaneous": "Diverse",
+      "preferences": "Preferințe",
+      "help": "Ajutor"
+    }
+  }
+}

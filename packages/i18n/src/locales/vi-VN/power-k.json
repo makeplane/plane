@@ -1,0 +1,192 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "Xóa hàng loạt mục công việc"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "Hành động mục công việc",
+        "indicator": "Mục công việc",
+        "change_state": "Đổi trạng thái",
+        "change_priority": "Đổi mức độ ưu tiên",
+        "change_assignees": "Giao cho",
+        "assign_to_me": "Giao cho tôi",
+        "unassign_from_me": "Hủy giao khỏi tôi",
+        "change_estimate": "Đổi ước tính",
+        "add_to_cycle": "Thêm vào chu kỳ",
+        "add_to_modules": "Thêm vào mô-đun",
+        "add_labels": "Thêm nhãn",
+        "subscribe": "Đăng ký thông báo",
+        "unsubscribe": "Hủy đăng ký thông báo",
+        "delete": "Xóa",
+        "copy_id": "Sao chép ID",
+        "copy_id_toast_success": "Đã sao chép ID mục công việc vào bảng tạm.",
+        "copy_id_toast_error": "Đã xảy ra lỗi khi sao chép ID mục công việc vào bảng tạm.",
+        "copy_title": "Sao chép tiêu đề",
+        "copy_title_toast_success": "Đã sao chép tiêu đề mục công việc vào bảng tạm.",
+        "copy_title_toast_error": "Đã xảy ra lỗi khi sao chép tiêu đề mục công việc vào bảng tạm.",
+        "copy_url": "Sao chép URL",
+        "copy_url_toast_success": "Đã sao chép URL mục công việc vào bảng tạm.",
+        "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL mục công việc vào bảng tạm."
+      },
+      "cycle": {
+        "title": "Hành động chu kỳ",
+        "indicator": "Chu kỳ",
+        "add_to_favorites": "Thêm vào mục yêu thích",
+        "remove_from_favorites": "Xóa khỏi mục yêu thích",
+        "copy_url": "Sao chép URL",
+        "copy_url_toast_success": "Đã sao chép URL chu kỳ vào bảng tạm.",
+        "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL chu kỳ vào bảng tạm."
+      },
+      "module": {
+        "title": "Hành động mô-đun",
+        "indicator": "Mô-đun",
+        "add_remove_members": "Thêm/xóa thành viên",
+        "change_status": "Đổi trạng thái",
+        "add_to_favorites": "Thêm vào mục yêu thích",
+        "remove_from_favorites": "Xóa khỏi mục yêu thích",
+        "copy_url": "Sao chép URL",
+        "copy_url_toast_success": "Đã sao chép URL mô-đun vào bảng tạm.",
+        "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL mô-đun vào bảng tạm."
+      },
+      "page": {
+        "title": "Hành động trang",
+        "indicator": "Trang",
+        "lock": "Khóa",
+        "unlock": "Mở khóa",
+        "make_private": "Chuyển thành riêng tư",
+        "make_public": "Chuyển thành công khai",
+        "archive": "Lưu trữ",
+        "restore": "Khôi phục",
+        "add_to_favorites": "Thêm vào mục yêu thích",
+        "remove_from_favorites": "Xóa khỏi mục yêu thích",
+        "copy_url": "Sao chép URL",
+        "copy_url_toast_success": "Đã sao chép URL trang vào bảng tạm.",
+        "copy_url_toast_error": "Đã xảy ra lỗi khi sao chép URL trang vào bảng tạm."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "Mục công việc mới",
+      "create_page": "Trang mới",
+      "create_view": "Chế độ xem mới",
+      "create_cycle": "Chu kỳ mới",
+      "create_module": "Mô-đun mới",
+      "create_project": "Dự án mới",
+      "create_workspace": "Không gian làm việc mới",
+      "create_project_automation": "Tự động hóa mới"
+    },
+    "navigation_actions": {
+      "open_workspace": "Mở một không gian làm việc",
+      "nav_home": "Đi đến trang chủ",
+      "nav_inbox": "Đi đến hộp thư đến",
+      "nav_your_work": "Đi đến công việc của bạn",
+      "nav_account_settings": "Đi đến cài đặt tài khoản",
+      "open_project": "Mở một dự án",
+      "nav_projects_list": "Đi đến danh sách dự án",
+      "nav_all_workspace_work_items": "Đi đến tất cả mục công việc",
+      "nav_assigned_workspace_work_items": "Đi đến mục công việc đã giao",
+      "nav_created_workspace_work_items": "Đi đến mục công việc đã tạo",
+      "nav_subscribed_workspace_work_items": "Đi đến mục công việc đã đăng ký",
+      "nav_workspace_analytics": "Đi đến phân tích không gian làm việc",
+      "nav_workspace_drafts": "Đi đến bản nháp không gian làm việc",
+      "nav_workspace_archives": "Đi đến lưu trữ không gian làm việc",
+      "open_workspace_setting": "Mở một cài đặt không gian làm việc",
+      "nav_workspace_settings": "Đi đến cài đặt không gian làm việc",
+      "nav_project_work_items": "Đi đến mục công việc",
+      "open_project_cycle": "Mở một chu kỳ",
+      "nav_project_cycles": "Đi đến chu kỳ",
+      "open_project_module": "Mở một mô-đun",
+      "nav_project_modules": "Đi đến mô-đun",
+      "open_project_view": "Mở một chế độ xem dự án",
+      "nav_project_views": "Đi đến chế độ xem dự án",
+      "nav_project_pages": "Đi đến trang",
+      "nav_project_intake": "Đi đến thu thập",
+      "nav_project_archives": "Đi đến lưu trữ dự án",
+      "open_project_setting": "Mở một cài đặt dự án",
+      "nav_project_settings": "Đi đến cài đặt dự án",
+      "nav_workspace_active_cycle": "Đi đến tất cả chu kỳ đang hoạt động",
+      "nav_project_overview": "Đi đến tổng quan dự án"
+    },
+    "account_actions": {
+      "sign_out": "Đăng xuất",
+      "workspace_invites": "Lời mời không gian làm việc"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "Bật/tắt thanh bên ứng dụng",
+      "copy_current_page_url": "Sao chép URL trang hiện tại",
+      "copy_current_page_url_toast_success": "Đã sao chép URL trang hiện tại vào bảng tạm.",
+      "copy_current_page_url_toast_error": "Đã xảy ra lỗi khi sao chép URL trang hiện tại vào bảng tạm.",
+      "focus_top_nav_search": "Tập trung ô tìm kiếm"
+    },
+    "preferences_actions": {
+      "update_theme": "Thay đổi chủ đề giao diện",
+      "update_timezone": "Thay đổi múi giờ",
+      "update_start_of_week": "Thay đổi ngày đầu tuần",
+      "update_language": "Thay đổi ngôn ngữ giao diện",
+      "toast": {
+        "theme": {
+          "success": "Đã cập nhật chủ đề thành công.",
+          "error": "Không thể cập nhật chủ đề. Vui lòng thử lại."
+        },
+        "timezone": {
+          "success": "Đã cập nhật múi giờ thành công.",
+          "error": "Không thể cập nhật múi giờ. Vui lòng thử lại."
+        },
+        "generic": {
+          "success": "Đã cập nhật tùy chọn thành công.",
+          "error": "Không thể cập nhật tùy chọn. Vui lòng thử lại."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "Mở phím tắt",
+      "open_plane_documentation": "Mở tài liệu Plane",
+      "join_forum": "Tham gia diễn đàn của chúng tôi",
+      "report_bug": "Báo lỗi",
+      "chat_with_us": "Trò chuyện với chúng tôi"
+    },
+    "page_placeholders": {
+      "default": "Nhập lệnh hoặc tìm kiếm",
+      "open_workspace": "Mở một không gian làm việc",
+      "open_project": "Mở một dự án",
+      "open_workspace_setting": "Mở một cài đặt không gian làm việc",
+      "open_project_cycle": "Mở một chu kỳ",
+      "open_project_module": "Mở một mô-đun",
+      "open_project_view": "Mở một chế độ xem dự án",
+      "open_project_setting": "Mở một cài đặt dự án",
+      "update_work_item_state": "Đổi trạng thái",
+      "update_work_item_priority": "Đổi mức độ ưu tiên",
+      "update_work_item_assignee": "Giao cho",
+      "update_work_item_estimate": "Đổi ước tính",
+      "update_work_item_cycle": "Thêm vào chu kỳ",
+      "update_work_item_module": "Thêm vào mô-đun",
+      "update_work_item_labels": "Thêm nhãn",
+      "update_module_member": "Đổi thành viên",
+      "update_module_status": "Đổi trạng thái",
+      "update_theme": "Thay đổi chủ đề",
+      "update_timezone": "Thay đổi múi giờ",
+      "update_start_of_week": "Thay đổi ngày đầu tuần",
+      "update_language": "Thay đổi ngôn ngữ"
+    },
+    "search_menu": {
+      "no_results": "Không tìm thấy kết quả",
+      "clear_search": "Xóa tìm kiếm",
+      "go_to_advanced_search": "Đi đến tìm kiếm nâng cao"
+    },
+    "footer": {
+      "workspace_level": "Cấp không gian làm việc"
+    },
+    "group_titles": {
+      "actions": "Hành động",
+      "contextual": "Theo ngữ cảnh",
+      "navigation": "Điều hướng",
+      "create": "Tạo",
+      "general": "Chung",
+      "settings": "Cài đặt",
+      "account": "Tài khoản",
+      "miscellaneous": "Khác",
+      "preferences": "Tùy chọn",
+      "help": "Trợ giúp"
+    }
+  }
+}

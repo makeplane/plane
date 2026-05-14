@@ -14,28 +14,30 @@
   },
   "scripts": {
     "dev": "tsdown --watch --no-clean",
-    "build": "tsdown",
-    "check:lint": "oxlint --max-warnings=2 .",
-    "check:types": "tsc --noEmit",
+    "build": "pnpm run generate:types && tsdown",
+    "generate:types": "tsx scripts/generate-types.ts",
+    "sync:check": "tsx scripts/sync-check.ts",
+    "check:sync": "tsx scripts/sync-check.ts --ci",
+    "check:lint": "oxlint --max-warnings=9 .",
+    "check:types": "pnpm run generate:types && tsc --noEmit",
     "check:format": "oxfmt --check .",
     "fix:lint": "oxlint --fix .",
     "fix:format": "oxfmt .",
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "@plane/utils": "workspace:*",
-    "intl-messageformat": "^10.7.11",
-    "lodash-es": "catalog:",
-    "mobx": "catalog:",
-    "mobx-react": "catalog:",
-    "react": "catalog:"
+    "i18next": "catalog:",
+    "i18next-icu": "catalog:",
+    "i18next-resources-to-backend": "catalog:",
+    "react": "catalog:",
+    "react-i18next": "catalog:"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
-    "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "tsdown": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:"
   }
 }

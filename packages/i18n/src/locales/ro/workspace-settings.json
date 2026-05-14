@@ -1,0 +1,508 @@
+{
+  "workspace_settings": {
+    "label": "Setări spațiu de lucru",
+    "page_label": "{workspace} - Setări generale",
+    "key_created": "Cheie creată",
+    "copy_key": "Copiază și salvează această cheie secretă în Plane Documentație. Nu vei mai putea vedea această cheie după ce închizi. Un fișier CSV care conține cheia a fost descărcat.",
+    "token_copied": "Token-ul a fost copiat în memoria temporară.",
+    "settings": {
+      "general": {
+        "title": "General",
+        "upload_logo": "Încarcă siglă",
+        "edit_logo": "Editează siglă",
+        "name": "Numele spațiului de lucru",
+        "company_size": "Dimensiunea companiei",
+        "url": "URL-ul spațiului de lucru",
+        "workspace_timezone": "Fusul orar al spațiului de lucru",
+        "update_workspace": "Actualizează spațiul de lucru",
+        "delete_workspace": "Șterge acest spațiu de lucru",
+        "delete_workspace_description": "La ștergerea spațiului de lucru, toate datele și resursele din cadrul acestuia vor fi eliminate definitiv și nu vor putea fi recuperate.",
+        "delete_btn": "Șterge acest spațiu de lucru",
+        "delete_modal": {
+          "title": "Ești sigur că vrei să ștergi acest spațiu de lucru?",
+          "description": "Ai o perioadă de probă activă pentru unul dintre planurile noastre plătite. Te rugăm să o anulezi înainte de a continua.",
+          "dismiss": "Renunță",
+          "cancel": "Anulează perioadă de probă",
+          "success_title": "Spațiul de lucru a fost șters.",
+          "success_message": "Vei fi redirecționat în curând către pagina de profil.",
+          "error_title": "Ceva nu a funcționat.",
+          "error_message": "Încearcă din nou, te rog."
+        },
+        "errors": {
+          "name": {
+            "required": "Numele este obligatoriu",
+            "max_length": "Numele spațiului de lucru nu trebuie să depășească 80 de caractere"
+          },
+          "company_size": {
+            "required": "Dimensiunea companiei este obligatorie",
+            "select_a_range": "Selectează dimensiunea companiei"
+          }
+        }
+      },
+      "members": {
+        "title": "Membri",
+        "add_member": "Adaugă membru",
+        "pending_invites": "Invitații în așteptare",
+        "invitations_sent_successfully": "Invitațiile au fost trimise cu succes",
+        "leave_confirmation": "Ești sigur că vrei să părăsești spațiul de lucru? Nu vei mai avea acces la acest spațiu. Această acțiune este ireversibilă.",
+        "details": {
+          "full_name": "Nume complet",
+          "display_name": "Nume afișat",
+          "email_address": "Adresă de email",
+          "account_type": "Tip cont",
+          "authentication": "Autentificare",
+          "joining_date": "Data înscrierii"
+        },
+        "modal": {
+          "title": "Invită persoane cu care să colaborezi",
+          "description": "Invită persoane cu care să colaborezi în spațiul tău de lucru.",
+          "button": "Trimite invitațiile",
+          "button_loading": "Se trimit invitațiile",
+          "placeholder": "nume@companie.ro",
+          "errors": {
+            "required": "Avem nevoie de o adresă de email pentru a trimite invitația.",
+            "invalid": "Adresa de email este invalidă"
+          }
+        }
+      },
+      "billing_and_plans": {
+        "heading": "Facturare și abonamente",
+        "description": "Alege abonamentul tău, gestionează abonamentele și actualizează cu ușurință pe măsură ce nevoile tale cresc.",
+        "title": "Facturare și Abonamente",
+        "current_plan": "Abonament curent",
+        "free_plan": "Folosești în prezent abonamentul gratuit",
+        "view_plans": "Vezi abonamentele"
+      },
+      "exports": {
+        "heading": "Exporturi",
+        "description": "Exportă datele proiectelor tale în diverse formate și accesează istoricul exporturilor cu link-uri de descărcare.",
+        "title": "Exporturi",
+        "exporting": "Se exportă",
+        "previous_exports": "Exporturi anterioare",
+        "export_separate_files": "Exportă datele în fișiere separate",
+        "exporting_projects": "Se exportă proiectul",
+        "format": "Format",
+        "filters_info": "Aplică filtre pentru a exporta elemente de lucru specifice în funcție de criteriile tale.",
+        "modal": {
+          "title": "Exportă în",
+          "toasts": {
+            "success": {
+              "title": "Export reușit",
+              "message": "Vei putea descărca exportul {entity} din secțiunea de exporturi anterioare."
+            },
+            "error": {
+              "title": "Export eșuat",
+              "message": "Exportul a eșuat. Te rugăm să încerci din nou."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhook-uri",
+        "description": "Automatizează notificările către servicii externe când se produc evenimente ale proiectului.",
+        "title": "Puncte de notificare (Webhooks)",
+        "add_webhook": "Adaugă punct de notificare (webhook)",
+        "modal": {
+          "title": "Creează punct de notificare (webhook)",
+          "details": "Detalii punct de notificare (webhook)",
+          "payload": " URL-ul de trimitere a datelor",
+          "question": "La ce evenimente vrei să activezi acest punct de notificare (webhook)?",
+          "error": "URL-ul este obligatoriu"
+        },
+        "secret_key": {
+          "title": "Cheie secretă",
+          "message": "Generează o cheie de acces pentru a semna datele trimise la punctul de notificare (webhook)"
+        },
+        "options": {
+          "all": "Trimite-mi tot",
+          "individual": "Selectează evenimente individuale"
+        },
+        "toasts": {
+          "created": {
+            "title": "Punct de notificare (webhook) creat",
+            "message": "Punctul de notificare (webhook) a fost creat cu succes"
+          },
+          "not_created": {
+            "title": "Punctul de notificare (webhook) nu a fost creat",
+            "message": "Punctul de notificare (webhook) nu a putut fi creat"
+          },
+          "updated": {
+            "title": "Punctul de notificare (webhook) actualizat",
+            "message": "Punctul de notificare (webhook) a fost actualizat cu succes"
+          },
+          "not_updated": {
+            "title": "Punctul de notificare (webhook) nu a fost actualizat",
+            "message": "Punctul de notificare (webhook) nu a putut fi actualizat"
+          },
+          "removed": {
+            "title": "Punct de notificare (webhook) șters",
+            "message": "Punctul de notificare (webhook) a fost șters cu succes"
+          },
+          "not_removed": {
+            "title": "Punctul de notificare (webhook) nu a fost șters",
+            "message": "Punctul de notificare (webhook) nu a putut fi șters"
+          },
+          "secret_key_copied": {
+            "message": "Cheia secretă a fost copiată în memoria temporară."
+          },
+          "secret_key_not_copied": {
+            "message": "A apărut o eroare la copierea cheii secrete."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "Chei secrete API",
+        "description": "Generează chei secrete API sigure pentru a integra datele tale cu sisteme și aplicații externe.",
+        "title": "Chei secrete API",
+        "add_token": "Adaugă token de acces",
+        "create_token": "Creează cheie secretă",
+        "never_expires": "Nu expiră niciodată",
+        "generate_token": "Generează cheie secretă",
+        "generating": "Se generează",
+        "delete": {
+          "title": "Șterge cheia secretă API",
+          "description": "Orice aplicație care folosește această cheie secretă nu va mai avea acces la datele Plane. Această acțiune este ireversibilă.",
+          "success": {
+            "title": "Succes!",
+            "message": "Cheia secretă API a fost ștearsă cu succes"
+          },
+          "error": {
+            "title": "Eroare!",
+            "message": "Cheia secretă API nu a putut fi ștearsă"
+          }
+        }
+      },
+      "integrations": {
+        "title": "Integrări",
+        "heading": "Integrări",
+        "description": "Conectează-te cu instrumente și servicii populare pentru a sincroniza munca ta în întregul ecosistem al fluxului de lucru.",
+        "page_title": "Lucrează cu datele tale Plane în aplicațiile disponibile sau în ale tale proprii.",
+        "page_description": "Vizualizează toate integrările utilizate de acest spațiu de lucru sau de tine."
+      },
+      "imports": {
+        "title": "Importuri",
+        "heading": "Importuri",
+        "description": "Conectează-te și importă date din instrumentele tale existente de gestionare a proiectelor pentru a-ți simplifica integrarea fluxului de lucru."
+      },
+      "worklogs": {
+        "title": "Jurnale de lucru",
+        "heading": "Jurnale de lucru",
+        "description": "Descarcă jurnale de lucru (timesheet-uri) pentru oricine din orice proiect."
+      },
+      "group_syncing": {
+        "title": "Sincronizare grupuri",
+        "heading": "Sincronizare grupuri",
+        "description": "Asociați grupurile furnizorului de identitate cu proiecte și roluri. Accesul utilizatorilor se actualizează automat când apartenența la grup se schimbă în IdP-ul dvs., simplificând onboarding-ul și offboarding-ul.",
+        "enable": {
+          "title": "Activați sincronizarea grupurilor",
+          "description": "Adăugați automat utilizatori la proiecte pe baza grupurilor furnizorului de identitate."
+        },
+        "config": {
+          "title": "Configurați sincronizarea grupurilor",
+          "description": "Setați cum grupurile furnizorului de identitate sunt mapate la proiecte și roluri.",
+          "sync_on_login": {
+            "title": "Sincronizare la autentificare",
+            "description": "Actualizați apartenența la grup și accesul la proiect când un utilizator se autentifică."
+          },
+          "sync_offline": {
+            "title": "Sincronizare offline",
+            "description": "Rulează sincronizarea la fiecare șase ore automat, fără a aștepta autentificarea utilizatorilor."
+          },
+          "auto_remove": {
+            "title": "Eliminare automată",
+            "description": "Eliminați automat utilizatorii din proiecte când nu mai corespund grupului."
+          },
+          "group_attribute_key": {
+            "title": "Cheie atribut grup",
+            "description": "Atributul furnizorului de identitate folosit pentru identificarea și sincronizarea grupurilor de utilizatori.",
+            "placeholder": "Grupuri"
+          }
+        },
+        "group_mapping": {
+          "title": "Mapare grupuri",
+          "description": "Asociați grupurile furnizorului de identitate cu proiecte și roluri.",
+          "button_text": "Adăugați nouă sincronizare grup"
+        },
+        "toast": {
+          "updating": "Se actualizează funcția de sincronizare a grupurilor",
+          "success": "Funcția de sincronizare a grupurilor a fost actualizată cu succes.",
+          "error": "Actualizarea funcției de sincronizare a grupurilor a eșuat!"
+        },
+        "delete_modal": {
+          "title": "Ștergeți sincronizarea grupului",
+          "content": "Utilizatorii noi din acest grup de identitate nu vor mai fi adăugați la proiect. Utilizatorii deja adăugați își vor păstra rolul actual."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "Grup utilizatori",
+            "required": "Grupul utilizatori este obligatoriu",
+            "placeholder": "Introduceți numele grupurilor IdP"
+          },
+          "project": {
+            "text": "Proiect",
+            "required": "Proiectul este obligatoriu",
+            "placeholder": "Selectați un proiect"
+          },
+          "default_role": {
+            "text": "Rol proiect",
+            "required": "Rolul proiectului este obligatoriu",
+            "placeholder": "Selectați un rol de proiect"
+          }
+        }
+      },
+      "identity": {
+        "title": "Identitate",
+        "heading": "Identitate",
+        "description": "Configurați domeniul dvs. și activați Single sign-on"
+      },
+      "project_states": {
+        "title": "Stări de proiect",
+        "heading": "Vezi prezentarea progresului pentru toate proiectele.",
+        "description": "Stările proiectelor sunt o funcție exclusivă Plane pentru urmărirea progresului tuturor proiectelor tale după orice proprietate a proiectului.",
+        "go_to_settings": "Mergi la setări"
+      },
+      "projects": {
+        "title": "Proiecte",
+        "description": "Gestionează stările proiectelor, activează etichetele proiectelor și alte configurări.",
+        "tabs": {
+          "states": "Stări de proiect",
+          "labels": "Etichete de proiect"
+        }
+      },
+      "templates": {
+        "title": "Șabloane",
+        "heading": "Șabloane",
+        "description": "Economisește 80% din timpul petrecut creând proiecte, activități și pagini atunci când folosești șabloane."
+      },
+      "relations": {
+        "title": "Relații",
+        "heading": "Relații",
+        "description": "Creează și gestionează tipurile de relații care conectează activitățile din spațiul tău de lucru."
+      },
+      "cancel_trial": {
+        "title": "Anulează mai întâi perioada de probă.",
+        "description": "Ai o perioadă de probă activă pentru unul dintre planurile noastre plătite. Te rugăm să o anulezi mai întâi pentru a continua.",
+        "dismiss": "Respinge",
+        "cancel": "Anulează perioada de probă",
+        "cancel_success_title": "Perioada de probă anulată.",
+        "cancel_success_message": "Acum poți șterge workspace-ul.",
+        "cancel_error_title": "Asta nu a funcționat.",
+        "cancel_error_message": "Încearcă din nou, te rog."
+      },
+      "applications": {
+        "internal": "Intern",
+        "title": "Applications",
+        "applicationId_copied": "ID-ul aplicației copiat în clipboard",
+        "clientId_copied": "ID-ul clientului copiat în clipboard",
+        "clientSecret_copied": "Secretul clientului copiat în clipboard",
+        "third_party_apps": "Aplicații de terță parte",
+        "your_apps": "Aplicațiile tale",
+        "connect": "Conectează",
+        "connected": "Conectat",
+        "disconnect": "Deconectează",
+        "install": "Instalează",
+        "installed": "Instalat",
+        "configure": "Configurează",
+        "app_available": "Ai făcut această aplicație disponibilă pentru a fi folosită cu un workspace al Plane",
+        "app_credentials_regenrated": {
+          "title": "Acreditările aplicației au fost regenerate cu succes",
+          "description": "Înlocuiți secretul clientului peste tot unde este folosit. Secretul anterior nu mai este valid."
+        },
+        "app_created": {
+          "title": "Aplicația a fost creată cu succes",
+          "description": "Folosiți acreditările pentru a instala aplicația într-un spațiu de lucru Plane"
+        },
+        "installed_apps": "Aplicații instalate",
+        "all_apps": "Toate aplicațiile",
+        "internal_apps": "Aplicații interne",
+        "app_name_title": "Cum vei numi această aplicație",
+        "app_description_title": {
+          "label": "Descriere lungă",
+          "placeholder": "Scrieți o descriere lungă pentru piață. Apăsați '/' pentru comenzi."
+        },
+        "authorization_grant_type": {
+          "title": "Tipul conexiunii",
+          "description": "Alege dacă aplicația ta trebuie instalată o dată pentru spațiul de lucru sau să permită fiecărui utilizator să își conecteze propriul cont"
+        },
+        "website": {
+          "title": "Site web",
+          "description": "Link către site-ul web al aplicației dvs.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "Creator de aplicații",
+          "description": "Persoana sau organizația care creează aplicația."
+        },
+        "app_maker_error": "Maker-ul aplicației este obligatoriu",
+        "setup_url": {
+          "label": "URL de configurare",
+          "description": "Utilizatorii vor fi redirecționați către acest URL atunci când instalează aplicația.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "URL webhook",
+          "description": "Aici vom trimite evenimente și actualizări webhook din spațiile de lucru unde aplicația dvs. este instalată.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Secret webhook",
+          "description": "Secret folosit pentru a verifica cererile webhook primite.",
+          "placeholder": "Introdu o cheie secretă aleatorie"
+        },
+        "redirect_uris": {
+          "label": "URI de redirecționare (separate prin spațiu)",
+          "description": "Utilizatorii vor fi redirecționați către acest traseu după ce s-au autentificat cu Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "Conectează un workspace al Plane pentru a începe să folosesti",
+        "client_id_and_secret": "ID-ul clientului și Secretul",
+        "client_id_and_secret_description": "Copiază și salvează această cheie secretă în Pagini. Nu poți vedea această cheie din nou după ce închizi.",
+        "client_id_and_secret_download": "Poți descărca un fișier CSV cu cheia de aici.",
+        "application_id": "ID-ul aplicației",
+        "client_id": "ID-ul clientului",
+        "client_secret": "Secretul clientului",
+        "export_as_csv": "Exportă ca CSV",
+        "slug_already_exists": "Slug deja există",
+        "failed_to_create_application": "Eroare la crearea aplicației",
+        "upload_logo": "Încarcă Logo",
+        "app_name_error": "Numele aplicației este obligatoriu",
+        "app_short_description_title": "Dați această aplicație o descriere scurtă",
+        "app_short_description_error": "Descrierea scurtă a aplicației este obligatorie",
+        "app_description_error": "Descrierea aplicației este obligatorie",
+        "app_slug_title": "Slug-ul aplicației",
+        "app_slug_error": "Slug-ul aplicației este obligatoriu",
+        "invalid_website_error": "Site web invalid",
+        "webhook_url_title": "URL-ul webhook-ului",
+        "webhook_url_error": "URL-ul webhook-ului este obligatoriu",
+        "invalid_webhook_url_error": "URL-ul webhook-ului este invalid",
+        "redirect_uris_title": "Redirect URIs",
+        "redirect_uris_error": "Redirect URIs sunt obligatorii",
+        "invalid_redirect_uris_error": "Redirect URIs sunt inva",
+        "redirect_uris_description": "Introduceți URI-uri separate prin spațiu unde aplicația va fi redirecționată după utilizator e.g https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "Authorized Javascript Origins",
+        "authorized_javascript_origins_error": "Authorized Javascript Origins sunt obligatorii",
+        "invalid_authorized_javascript_origins_error": "Authorized Javascript Origins sunt inva",
+        "authorized_javascript_origins_description": "Introduceți spațiu separat originile unde aplicația va fi permisă să facă cereri e.g app.com example.com",
+        "create_app": "Creează aplicație",
+        "update_app": "Actualizează aplicație",
+        "build_your_own_app": "Construiți propria aplicație",
+        "edit_app_details": "Editează detaliile aplicației",
+        "regenerate_client_secret_description": "Regenerate the client secret. If you regenerate the secret, you can copy the key or download it to a CSV file right after.",
+        "regenerate_client_secret": "Regenerate client secret",
+        "regenerate_client_secret_confirm_title": "Sigur vrei să regenerezi secretul client?",
+        "regenerate_client_secret_confirm_description": "Aplicația care folosește acest secret va înceta să funcționeze. Trebuie să actualizezi secretul în aplicație.",
+        "regenerate_client_secret_confirm_cancel": "Anulează",
+        "regenerate_client_secret_confirm_regenerate": "Regenerate",
+        "read_only_access_to_workspace": "Acces doar pentru citire la workspace-ul tău",
+        "write_access_to_workspace": "Acces pentru scriere la workspace-ul tău",
+        "read_only_access_to_user_profile": "Acces doar pentru citire la profilul tău",
+        "write_access_to_user_profile": "Acces pentru scriere la profilul tău",
+        "connect_app_to_workspace": "Conectează {app} la workspace-ul tău {workspace}",
+        "user_permissions": "Permisiuni pentru utilizator",
+        "user_permissions_description": "Permisiunile pentru utilizator sunt folosite pentru a acorda acces la profilul utilizatorului.",
+        "workspace_permissions": "Permisiuni pentru workspace",
+        "workspace_permissions_description": "Permisiunile pentru workspace sunt folosite pentru a acorda acces la workspace.",
+        "with_the_permissions": "cu permisiunile",
+        "app_consent_title": "{app} cere acces la workspace-ul tău și profilul tău.",
+        "choose_workspace_to_connect_app_with": "Alege un workspace pentru a conecta aplicația",
+        "app_consent_workspace_permissions_title": "{app} ar dori să",
+        "app_consent_user_permissions_title": "{app} poate solicita și permisiuni pentru utilizator pentru următoarele resurse. Aceste permisiuni vor fi solicitate și autorizate doar de un utilizator.",
+        "app_consent_accept_title": "Prin acceptare, tu",
+        "app_consent_accept_1": "Permite aplicației acces la datele Plane în orice loc unde poți folosi aplicația în interior sau în afara Plane",
+        "app_consent_accept_2": "Apreciază politica de confidențialitate și termenii de utilizare a {app}",
+        "accepting": "Acceptând...",
+        "accept": "Acceptă",
+        "categories": "Categorii",
+        "select_app_categories": "Selectează categorii de aplicație",
+        "categories_title": "Categorii",
+        "categories_error": "Categorii sunt obligatorii",
+        "invalid_categories_error": "Categorii sunt inva",
+        "categories_description": "Selectează categorii care descriu cel mai bine aplicația",
+        "supported_plans": "Planuri Suportate",
+        "supported_plans_description": "Selectează planurile de spațiu de lucru care pot instala această aplicație. Lasă gol pentru a permite toate planurile.",
+        "select_plans": "Selectează Planuri",
+        "privacy_policy_url_title": "URL-ul politică de confidențialitate",
+        "privacy_policy_url_error": "Privacy Policy URL is required",
+        "invalid_privacy_policy_url_error": "URL-ul politică de confidențialitate este invalid",
+        "terms_of_service_url_title": "URL-ul termenilor de serviciu",
+        "terms_of_service_url_error": "URL-ul termenilor de serviciu este obligatoriu",
+        "invalid_terms_of_service_url_error": "URL-ul termenilor de serviciu este invalid",
+        "support_url_title": "URL-ul suportului",
+        "support_url_error": "URL-ul suportului este obligatoriu",
+        "invalid_support_url_error": "URL-ul suportului este invalid",
+        "video_url_title": "URL-ul video",
+        "video_url_error": "URL-ul video este obligatoriu",
+        "invalid_video_url_error": "URL-ul video este invalid",
+        "setup_url_error": "URL-ul setup-ului este obligatoriu",
+        "invalid_setup_url_error": "URL-ul setup-ului este invalid",
+        "configuration_url_title": "URL-ul configurării",
+        "configuration_url_error": "URL-ul configurării este obligatoriu",
+        "invalid_configuration_url_error": "URL-ul configurării este invalid",
+        "contact_email_title": "Email-ul contactului",
+        "contact_email_error": "Email-ul contactului este obligatoriu",
+        "invalid_contact_email_error": "Email-ul contactului este invalid",
+        "upload_attachments": "Încarcă atașamente",
+        "uploading_images": "Încarcă {count} imagine{count, plural, one {s} other {s}}",
+        "drop_images_here": "Aruncă imagini aici",
+        "click_to_upload_images": "Click pentru a încărca imagini",
+        "invalid_file_or_exceeds_size_limit": "Fișier invalid sau depășește limita de dimensiune ({size} MB)",
+        "uploading": "Încarcă...",
+        "upload_and_save": "Încarcă și salvează",
+        "app_consent_no_access_title": "Cerere de instalare",
+        "app_consent_no_access_description": "Această aplicație poate fi instalată doar după ce un administrator al workspace-ului o instalează. Contactați administratorul workspace-ului pentru a continua.",
+        "app_consent_unapproved_title": "Această aplicație nu a fost încă revizuită sau aprobată de Plane.",
+        "app_consent_unapproved_description": "Asigură-te că ai încredere în această aplicație înainte de a o conecta la spațiul tău de lucru.",
+        "go_to_app": "Mergi la aplicație",
+        "enable_app_mentions": "Activează mențiunile aplicației",
+        "enable_app_mentions_tooltip": "Când aceasta este activată, utilizatorii pot menționa sau atribui Work Items acestei aplicații.",
+        "scopes": "Domenii",
+        "select_scopes": "Selectați domeniile",
+        "read_access_to": "Acces doar citire la",
+        "write_access_to": "Acces scriere la",
+        "global_permission_expiration": "Domeniile globale expiră în curând. Folosiți domenii granulare în schimb. De exemplu, folosiți project:read în loc de citire globală.",
+        "selected_scopes": "{count} selectate",
+        "scopes_and_permissions": "Domenii și permisiuni",
+        "read": "Citire",
+        "write": "Scriere",
+        "scope_description": {
+          "projects": "Acces la proiecte și toate entitățile legate de proiecte",
+          "wiki": "Acces la wiki și toate entitățile legate de wiki",
+          "workspaces": "Acces la spații de lucru și toate entitățile legate",
+          "stickies": "Acces la stickies și toate entitățile legate",
+          "profile": "Acces la informațiile profilului utilizatorului",
+          "agents": "Acces la agenți și toate entitățile legate de agenți",
+          "assets": "Acces la active și toate entitățile legate de active"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "Vezi-ți munca să devină mai inteligentă și mai rapidă cu AI care este conectată în mod nativ la munca ta și la baza de cunoștințe."
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "Script-uri",
+        "new_script": "Script nou",
+        "description": "Automatizează fluxurile tale de lucru cu scripturi personalizate și reguli de automatizare."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "Nicio cheie secretă API creată",
+        "description": "API-ul Plane poate fi folosit pentru a integra datele tale din Plane cu orice sistem extern. Creează o cheie secretă pentru a începe."
+      },
+      "webhooks": {
+        "title": "Niciun punctul de notificare (webhook) adăugat",
+        "description": "Creează puncte de notificare (webhooks) pentru a primi actualizări în timp real și a automatiza acțiuni."
+      },
+      "exports": {
+        "title": "Niciun export efectuat",
+        "description": "Ori de câte ori exporți, vei avea o copie și aici pentru referință."
+      },
+      "imports": {
+        "title": "Niciun import efectuat",
+        "description": "Găsește aici toate importurile anterioare și descarcă-le."
+      }
+    }
+  }
+}
