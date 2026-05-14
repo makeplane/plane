@@ -17,6 +17,7 @@ from django import apps
 
 # Module imports
 from plane.utils.html_processor import strip_tags
+from plane.utils.path_validator import sanitize_filename
 from plane.db.mixins import SoftDeletionManager
 from plane.utils.exception_logger import log_exception
 from .project import ProjectBaseModel
@@ -376,6 +377,7 @@ class IssueLink(ProjectBaseModel):
 
 
 def get_upload_path(instance, filename):
+    filename = sanitize_filename(filename) or uuid4().hex
     return f"{instance.workspace.id}/{uuid4().hex}-{filename}"
 
 

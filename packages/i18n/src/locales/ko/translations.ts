@@ -390,7 +390,6 @@ export default {
   time_tracking_description: "작업 항목 및 프로젝트에 소요된 시간을 기록하세요.",
   work_management_description: "작업 및 프로젝트를 쉽게 관리합니다.",
   documentation: "문서",
-  message_support: "지원 메시지",
   contact_sales: "영업 문의",
   hyper_mode: "하이퍼 모드",
   keyboard_shortcuts: "키보드 단축키",

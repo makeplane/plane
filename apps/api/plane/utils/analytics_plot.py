@@ -22,6 +22,23 @@ from django.utils import timezone
 # Module imports
 from plane.db.models import Issue, Project
 
+VALID_ANALYTICS_FIELDS = [
+    "state_id",
+    "state__group",
+    "labels__id",
+    "assignees__id",
+    "estimate_point__value",
+    "issue_cycle__cycle_id",
+    "issue_module__module_id",
+    "priority",
+    "start_date",
+    "target_date",
+    "created_at",
+    "completed_at",
+]
+
+VALID_YAXIS = ["issue_count", "estimate"]
+
 
 def annotate_with_monthly_dimension(queryset, field_name, attribute):
     # Get the year and the months
@@ -34,6 +51,8 @@ def annotate_with_monthly_dimension(queryset, field_name, attribute):
 
 
 def extract_axis(queryset, x_axis):
+    if x_axis not in VALID_ANALYTICS_FIELDS:
+        raise ValueError(f"Invalid x_axis value: {x_axis}")
     # Format the dimension when the axis is in date
     if x_axis in ["created_at", "start_date", "target_date", "completed_at"]:
         queryset = annotate_with_monthly_dimension(queryset, x_axis, "dimension")
@@ -52,6 +71,13 @@ def sort_data(data, temp_axis):
 
 
 def build_graph_plot(queryset, x_axis, y_axis, segment=None):
+    if x_axis not in VALID_ANALYTICS_FIELDS:
+        raise ValueError(f"Invalid x_axis value: {x_axis}")
+    if y_axis not in VALID_YAXIS:
+        raise ValueError(f"Invalid y_axis value: {y_axis}")
+    if segment and segment not in VALID_ANALYTICS_FIELDS:
+        raise ValueError(f"Invalid segment value: {segment}")
+
     # temp x_axis
     temp_axis = x_axis
     # Extract the x_axis and queryset

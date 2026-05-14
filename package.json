@@ -1,6 +1,6 @@
 {
   "name": "plane",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "private": true,
   "description": "Open-source project management that unlocks customer value",
   "license": "AGPL-3.0",
@@ -62,7 +62,7 @@
       "webpack": "5.104.1",
       "lodash-es": "catalog:",
       "@isaacs/brace-expansion": "5.0.1",
-      "lodash": "4.17.23",
+      "lodash": "4.18.1",
       "markdown-it": "14.1.1",
       "rollup": "4.59.0",
       "minimatch@3": "3.1.4",
@@ -76,7 +76,11 @@
       "yaml@1": "1.10.3",
       "yaml@2": "2.8.3",
       "path-to-regexp": "0.1.13",
-      "defu": "6.1.5"
+      "defu": "6.1.5",
+      "postcss": "8.5.10",
+      "axios": "catalog:",
+      "follow-redirects": "1.16.0",
+      "uuid": "catalog:"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
