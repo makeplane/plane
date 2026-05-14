@@ -15,7 +15,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("db", "0169_project_field_permission"),
+        ("db", "0170_capacity_export_job"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
