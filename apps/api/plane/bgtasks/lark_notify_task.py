@@ -4,13 +4,17 @@
 
 """Async tasks that bridge Plane issue events to Feishu Bot direct messages.
 
-Signals queue these tasks via .delay(); they look up the recipient's
-union_id and POST an interactive card. Each task is best-effort —
-failures are logged but never propagated back to the user's web request.
+The dispatcher (`dispatch_lark_for_activities`) is called inline from
+`issue_activities_task.issue_activity` right after IssueActivity rows are
+bulk_create'd — Django's post_save signal does NOT fire on bulk_create, so
+the activity audit log is the only reliable place to fan out notifications
+without patching every write path. Each Celery task is best-effort: failures
+are logged but never bubbled back into the originating HTTP request.
 """
 
 # Python imports
 import logging
+import os
 import re
 
 # Third party
@@ -26,6 +30,65 @@ from plane.utils.lark_notify import (
 )
 
 logger = logging.getLogger("plane.bgtasks.lark_notify_task")
+
+
+def _lark_notifications_enabled():
+    return (os.environ.get("LARK_NOTIFICATIONS_ENABLED") or "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+
+
+def dispatch_lark_for_activities(activities):
+    """Fan out Feishu Bot DMs based on freshly-created IssueActivity rows.
+
+    Called from issue_activities_task right after `bulk_create`. Iterates the
+    same rows that just hit the DB and queues a Celery task per notifiable
+    event. We do not touch the rows themselves — only read their fields.
+
+    No-op unless LARK_NOTIFICATIONS_ENABLED is truthy. Exceptions swallowed so
+    a Lark integration glitch can never break Plane's issue write paths.
+    """
+    if not activities or not _lark_notifications_enabled():
+        return
+
+    for activity in activities:
+        try:
+            issue_id = getattr(activity, "issue_id", None)
+            if issue_id is None:
+                continue
+            field = (getattr(activity, "field", "") or "").strip()
+            verb = (getattr(activity, "verb", "") or "").strip()
+            actor_id = getattr(activity, "actor_id", None)
+            actor_str = str(actor_id) if actor_id else None
+            issue_str = str(issue_id)
+
+            if field == "assignees" and getattr(activity, "new_identifier", None):
+                # new_identifier holds the added assignee's user_id; the
+                # `dropped_assignee` branch sets old_identifier instead.
+                notify_issue_assigned_task.delay(
+                    issue_str, str(activity.new_identifier), actor_str
+                )
+                continue
+
+            if field == "state":
+                old_id = getattr(activity, "old_identifier", None)
+                new_id = getattr(activity, "new_identifier", None)
+                notify_issue_state_changed_task.delay(
+                    issue_str,
+                    str(old_id) if old_id else None,
+                    str(new_id) if new_id else None,
+                    actor_str,
+                )
+                continue
+
+            comment_id = getattr(activity, "issue_comment_id", None)
+            if comment_id and field == "comment" and verb == "created":
+                notify_issue_comment_task.delay(issue_str, str(comment_id), actor_str)
+                continue
+        except Exception:
+            logger.exception("Failed to dispatch Lark notification for activity")
 
 
 def _user_display(user):
