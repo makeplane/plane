@@ -37,6 +37,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
   // query params
   const emailParam = searchParams.get("email");
   const invitation_id = searchParams.get("invitation_id");
+  const invitation_token = searchParams.get("token");
   const workspaceSlug = searchParams.get("slug");
   const error_code = searchParams.get("error_code");
   // props
@@ -121,6 +122,7 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
       <AuthHeader
         workspaceSlug={workspaceSlug?.toString() || undefined}
         invitationId={invitation_id?.toString() || undefined}
+        invitationToken={invitation_token?.toString() || undefined}
         invitationEmail={email || undefined}
         authMode={authMode}
         currentAuthStep={authStep}
@@ -137,10 +139,10 @@ export const AuthRoot = observer(function AuthRoot(props: TAuthRoot) {
           authStep={authStep}
           authMode={authMode}
           email={email}
-          setEmail={(email) => setEmail(email)}
-          setAuthMode={(authMode) => setAuthMode(authMode)}
-          setAuthStep={(authStep) => setAuthStep(authStep)}
-          setErrorInfo={(errorInfo) => setErrorInfo(errorInfo)}
+          setEmail={(value) => setEmail(value)}
+          setAuthMode={(value) => setAuthMode(value)}
+          setAuthStep={(value) => setAuthStep(value)}
+          setErrorInfo={(value) => setErrorInfo(value)}
           currentAuthMode={currentAuthMode}
         />
       )}

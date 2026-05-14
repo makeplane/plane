@@ -12,6 +12,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils import timezone
+from django.utils.crypto import constant_time_compare
 
 # Third party modules
 from rest_framework import status
@@ -236,9 +237,34 @@ class WorkspaceJoinEndpoint(BaseAPIView):
         )
 
     def get(self, request, slug, pk):
-        workspace_invitation = WorkspaceMemberInvite.objects.get(workspace__slug=slug, pk=pk)
+        # Require the invitation token from the email link; without it,
+        # the endpoint would leak invitation details (including the token
+        # itself via the serializer) to any unauthenticated caller.
+        token = request.GET.get("token", "")
+        forbidden_response = Response(
+            {"error": "You do not have permission to access this invitation"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+        if not token:
+            return forbidden_response
+
+        try:
+            workspace_invitation = WorkspaceMemberInvite.objects.get(
+                workspace__slug=slug, pk=pk
+            )
+        except WorkspaceMemberInvite.DoesNotExist:
+            return forbidden_response
+
+        if not constant_time_compare(workspace_invitation.token, token):
+            return forbidden_response
+
         serializer = WorkSpaceMemberInviteSerializer(workspace_invitation)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        data = {
+            key: value
+            for key, value in serializer.data.items()
+            if key not in ("token", "invite_link")
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
 class UserWorkspaceInvitationsViewSet(BaseViewSet):
