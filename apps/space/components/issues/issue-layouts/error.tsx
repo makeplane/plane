@@ -5,9 +5,12 @@
  */
 
 // assets
+import { useTranslation } from "@plane/i18n";
 import SomethingWentWrongImage from "@/app/assets/something-went-wrong.svg?url";
 
 export function SomethingWentWrongError() {
+  const { t } = useTranslation();
+
   return (
     <div className="grid min-h-screen w-full place-items-center bg-surface-1 p-6">
       <div className="text-center">
@@ -15,13 +18,13 @@ export function SomethingWentWrongError() {
           <div className="grid h-32 w-32 place-items-center">
             <img
               src={SomethingWentWrongImage}
-              alt="Oops! Something went wrong"
+              alt={t("localized_ui.space_public.something_went_wrong")}
               className="h-full w-full object-contain"
             />
           </div>
         </div>
-        <h1 className="mt-12 text-24 font-semibold">Oops! Something went wrong.</h1>
-        <p className="mt-4 text-tertiary">The public board does not exist. Please check the URL.</p>
+        <h1 className="mt-12 text-24 font-semibold">{t("localized_ui.space_public.something_went_wrong")}</h1>
+        <p className="mt-4 text-tertiary">{t("localized_ui.space_public.public_board_not_found")}</p>
       </div>
     </div>
   );

@@ -159,9 +159,8 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
 
   const handleInboxIssueDelete = async () => {
     if (!inboxIssue || !currentInboxIssueId) return;
-    await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId).then(() => {
-      if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/intake`);
-    });
+    await deleteInboxIssue(workspaceSlug, projectId, currentInboxIssueId);
+    if (!isNotificationEmbed) router.push(`/${workspaceSlug}/projects/${projectId}/intake`);
   };
 
   const handleIssueSnoozeAction = async () => {
@@ -217,7 +216,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
     else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Permission denied",
+        title: t("localized_ui.inbox.errors.permission_denied"),
         message: errorMessage,
       });
     }
@@ -311,14 +310,14 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                 variant="secondary"
                 size="lg"
                 icon={ChevronUpIcon}
-                aria-label="Previous work item"
+                aria-label={t("localized_ui.inbox.navigation.previous_work_item")}
                 onClick={() => handleInboxIssueNavigation("prev")}
               />
               <IconButton
                 variant="secondary"
                 size="lg"
                 icon={ChevronDownIcon}
-                aria-label="Next work item"
+                aria-label={t("localized_ui.inbox.navigation.next_work_item")}
                 onClick={() => handleInboxIssueNavigation("next")}
               />
             </div>
@@ -407,7 +406,7 @@ export const InboxIssueActionsHeader = observer(function InboxIssueActionsHeader
                           handleActionWithPermission(
                             isProjectAdmin,
                             () => setSelectDuplicateIssue(true),
-                            "Only project admins can mark work item as duplicate"
+                            t("localized_ui.inbox.errors.mark_duplicate_permission")
                           )
                         }
                       >

@@ -29,7 +29,7 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-11 text-secondary">Status</div>
+      <div className="text-11 text-secondary">{t("localized_ui.inbox.filters.status")}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
@@ -40,12 +40,13 @@ export const InboxIssueAppliedFiltersStatus = observer(function InboxIssueApplie
             </div>
             <div className="truncate text-11">{t(optionDetail?.i18n_title)}</div>
             {handleFilterValue(optionDetail?.status).length >= 1 && (
-              <div
+              <button
+                type="button"
                 className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
                 onClick={() => handleInboxIssueFilters("status", handleFilterValue(optionDetail?.status))}
               >
                 <CloseIcon className={`h-3 w-3`} />
-              </div>
+              </button>
             )}
           </div>
         );

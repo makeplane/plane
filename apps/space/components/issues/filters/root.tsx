@@ -10,6 +10,7 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 // constants
 import { ISSUE_DISPLAY_FILTERS_BY_LAYOUT } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // components
 import { FiltersDropdown } from "@/components/issues/filters/helpers/dropdown";
 import { FilterSelection } from "@/components/issues/filters/selection";
@@ -26,6 +27,7 @@ type IssueFiltersDropdownProps = {
 
 export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props: IssueFiltersDropdownProps) {
   const { anchor } = props;
+  const { t } = useTranslation();
   // router
   const router = useRouter();
   // hooks
@@ -63,7 +65,7 @@ export const IssueFiltersDropdown = observer(function IssueFiltersDropdown(props
 
   return (
     <div className="relative">
-      <FiltersDropdown title="Filters" placement="bottom-end">
+      <FiltersDropdown title={t("filters")} placement="bottom-end">
         <FilterSelection
           filters={issueFilters?.filters ?? {}}
           handleFilters={handleFilters as any}

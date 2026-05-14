@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 import { LabelPropertyIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -17,20 +18,22 @@ type Props = {
 };
 
 export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, shouldShowLabel = false }: Props) {
+  const { t } = useTranslation();
   const { getLabelsByIds } = useLabel();
 
   const labels = getLabelsByIds(labelIds);
 
-  const labelsString = labels.length > 0 ? labels.map((label) => label.name).join(", ") : "No Labels";
+  const labelsString =
+    labels.length > 0 ? labels.map((label) => label.name).join(", ") : t("localized_ui.space_public.no_labels");
 
   if (labels.length <= 0)
     return (
-      <Tooltip position="top" tooltipHeading="Labels" tooltipContent="None">
+      <Tooltip position="top" tooltipHeading={t("labels")} tooltipContent={t("common.none")}>
         <div
           className={`flex h-full items-center justify-center gap-2 rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
         >
           <LabelPropertyIcon className="h-3.5 w-3.5" strokeWidth={2} />
-          {shouldShowLabel && <span>No Labels</span>}
+          {shouldShowLabel && <span>{t("localized_ui.space_public.no_labels")}</span>}
         </div>
       </Tooltip>
     );
@@ -40,7 +43,7 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
       {labels.length <= 2 ? (
         <>
           {labels.map((label) => (
-            <Tooltip key={label.id} position="top" tooltipHeading="Labels" tooltipContent={label?.name ?? ""}>
+            <Tooltip key={label.id} position="top" tooltipHeading={t("labels")} tooltipContent={label?.name ?? ""}>
               <div
                 key={label?.id}
                 className={`flex h-full max-w-full flex-shrink-0 items-center overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
