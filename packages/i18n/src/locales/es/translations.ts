@@ -2723,7 +2723,7 @@ export default {
       alt: "404 - Página no encontrada",
       title: "¡Ups! Algo salió mal.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Lo sentimos, no se pudo encontrar la página que buscas. Puede que se haya eliminado, cambiado de nombre o no esté disponible temporalmente.",
       go_to_home: "Ir al inicio",
     },
     workspace_views: {
@@ -2732,27 +2732,26 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Aún no hay proyectos",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Los proyectos son la base del trabajo orientado a objetivos. Te permiten gestionar equipos, tareas y todo lo necesario para completar el trabajo.",
+      learn_more: "Más información sobre proyectos",
+      start_first_project: "Inicia tu primer proyecto",
     },
     profile_activity: {
       page_title: "Perfil - Actividad",
     },
     pages: {
       not_found_title: "Página no encontrada",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "La página a la que intentas acceder no existe o no tienes permiso para verla.",
+      view_other_pages: "Ver otras páginas",
     },
     workspace_access: {
       not_found_title: "Espacio de trabajo no encontrado",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "No se encontró ningún espacio de trabajo para esta URL. Puede que no exista o que no tengas permiso para verlo.",
       visit_profile: "Visitar perfil",
       not_authorized_title: "¡No autorizado!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "No eres miembro de este espacio de trabajo. Contacta con el administrador para recibir una invitación o revisa tus invitaciones pendientes.",
       check_pending_invites: "Revisar invitaciones pendientes",
     },
     editor: {
@@ -2910,9 +2909,9 @@ export default {
       skip: "Saltar",
     },
     inbox: {
-      duplicate_issues_found: "Se encontraron problemas duplicados de {count}",
+      duplicate_issues_found: "Se encontraron {count} elementos de trabajo duplicados",
       description_versions: {
-        intake_form_user: "Usuario del formulario de admisión",
+        intake_form_user: "Usuario del formulario de recepción",
       },
       errors: {
         asset_upload_failed: "Error al cargar el recurso. Inténtelo de nuevo más tarde.",

@@ -2692,7 +2692,7 @@ export default {
       alt: "404 - Seite nicht gefunden",
       title: "Hoppla! Etwas ist schiefgelaufen.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Die gesuchte Seite wurde nicht gefunden. Sie wurde möglicherweise entfernt, umbenannt oder ist vorübergehend nicht verfügbar.",
       go_to_home: "Zur Startseite",
     },
     workspace_views: {
@@ -2701,9 +2701,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Noch keine Projekte",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Projekte bilden die Grundlage für zielorientierte Arbeit. Mit ihnen verwalten Sie Teams, Aufgaben und alles, was Sie zur Erledigung der Arbeit benötigen.",
+      learn_more: "Mehr über Projekte erfahren",
+      start_first_project: "Erstes Projekt starten",
     },
     profile_activity: {
       page_title: "Profil - Aktivität",
@@ -2711,17 +2711,17 @@ export default {
     pages: {
       not_found_title: "Seite nicht gefunden",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "Die Seite, auf die Sie zugreifen möchten, existiert nicht oder Sie haben keine Berechtigung, sie anzusehen.",
+      view_other_pages: "Andere Seiten anzeigen",
     },
     workspace_access: {
       not_found_title: "Arbeitsbereich nicht gefunden",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Für diese URL wurde kein Arbeitsbereich gefunden. Er existiert möglicherweise nicht oder Sie haben keine Berechtigung, ihn anzusehen.",
       visit_profile: "Profil öffnen",
       not_authorized_title: "Nicht autorisiert!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Sie sind kein Mitglied dieses Arbeitsbereichs. Wenden Sie sich an den Administrator des Arbeitsbereichs, um eine Einladung zu erhalten, oder prüfen Sie Ihre ausstehenden Einladungen.",
       check_pending_invites: "Ausstehende Einladungen prüfen",
     },
     editor: {
@@ -2769,7 +2769,7 @@ export default {
       header_column: "Kopfspalte",
       alignment: {
         left: "Links",
-        center: "Center",
+        center: "Zentriert",
         right: "Rechts",
       },
       menu_items: {
@@ -2785,11 +2785,11 @@ export default {
         "to-do-list": "To-Do-Liste",
         quote: "Zitat",
         code: "Code",
-        table: "Tisch",
+        table: "Tabelle",
         image: "Bild",
         divider: "Teiler",
         link: "Link",
-        bold: "Deutlich",
+        bold: "Fett",
         italic: "Kursiv",
         underline: "Unterstreichen",
         strikethrough: "Durchgestrichen",
@@ -2879,9 +2879,9 @@ export default {
       skip: "Überspringen",
     },
     inbox: {
-      duplicate_issues_found: "Es wurden doppelte {count}-Probleme gefunden",
+      duplicate_issues_found: "{count} doppelte Arbeitselemente gefunden",
       description_versions: {
-        intake_form_user: "Benutzer des Aufnahmeformulars",
+        intake_form_user: "Benutzer des Intake-Formulars",
       },
       errors: {
         asset_upload_failed: "Das Hochladen des Assets ist fehlgeschlagen. Bitte versuchen Sie es später noch einmal.",
@@ -2976,7 +2976,7 @@ export default {
       no_modules: "Keine Module",
       modules_count: "{count} Module",
       no_assignees: "Keine Zuständigen",
-      labels_count: "{count} Beschriftungen",
+      labels_count: "{count} Labels",
       page_not_found_alt: "Seite nicht gefunden",
       something_went_wrong: "Hoppla! Etwas ist schiefgelaufen.",
       page_not_found_description: "Die gesuchte Seite existiert nicht oder wurde verschoben.",

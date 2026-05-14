@@ -2674,7 +2674,7 @@ export default {
       alt: "404 - Sayfa bulunamadı",
       title: "Hata! Bir şeyler ters gitti.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Aradığınız sayfa bulunamadı. Kaldırılmış, yeniden adlandırılmış veya geçici olarak kullanılamıyor olabilir.",
       go_to_home: "Ana sayfaya git",
     },
     workspace_views: {
@@ -2683,27 +2683,26 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Henüz proje yok",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Projeler, hedef odaklı çalışmanın temelidir. Ekipleri, görevleri ve işi tamamlamak için gereken her şeyi yönetmenizi sağlar.",
+      learn_more: "Projeler hakkında daha fazla bilgi edinin",
+      start_first_project: "İlk projenizi başlatın",
     },
     profile_activity: {
       page_title: "Profil - Etkinlik",
     },
     pages: {
       not_found_title: "Sayfa bulunamadı",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "Erişmeye çalıştığınız sayfa mevcut değil veya görüntüleme izniniz yok.",
+      view_other_pages: "Diğer sayfaları görüntüle",
     },
     workspace_access: {
       not_found_title: "Çalışma alanı bulunamadı",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Bu URL için çalışma alanı bulunamadı. Mevcut olmayabilir veya görüntüleme izniniz olmayabilir.",
       visit_profile: "Profili ziyaret et",
       not_authorized_title: "Yetkili değilsiniz!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Bu çalışma alanının üyesi değilsiniz. Davet almak için çalışma alanı yöneticisiyle iletişime geçin veya bekleyen davetlerinizi kontrol edin.",
       check_pending_invites: "Bekleyen davetleri kontrol et",
     },
     editor: {
@@ -2741,7 +2740,7 @@ export default {
       view_in_full_screen: "Tam ekranda görüntüle",
       view_image_in_full_screen: "Resmi tam ekranda görüntüle",
       align: "Hizala",
-      download: "İndirmek",
+      download: "İndir",
       clear_contents: "İçeriği temizle",
       insert_above: "Yukarıya ekle",
       insert_below: "Aşağıya ekle",
@@ -2767,11 +2766,11 @@ export default {
         "to-do-list": "Yapılacaklar listesi",
         quote: "Alıntı",
         code: "Kod",
-        table: "Masa",
+        table: "Tablo",
         image: "Resim",
         divider: "Bölücü",
         link: "Bağlantı",
-        bold: "Gözü pek",
+        bold: "Kalın",
         italic: "İtalik",
         underline: "Altı çizili",
         strikethrough: "Üstü çizili",
@@ -2861,7 +2860,7 @@ export default {
       skip: "Atlamak",
     },
     inbox: {
-      duplicate_issues_found: "{count} yinelenen sorunlar bulundu",
+      duplicate_issues_found: "{count} yinelenen iş öğesi bulundu",
       description_versions: {
         intake_form_user: "Başvuru Formu kullanıcısı",
       },
@@ -2896,7 +2895,7 @@ export default {
         next_work_item: "Sonraki iş öğesi",
       },
       properties: {
-        duplicate_of: "kopyası",
+        duplicate_of: "Şunun yineleneni",
       },
       select_duplicate: {
         select_work_item: "İş öğesini seçin",

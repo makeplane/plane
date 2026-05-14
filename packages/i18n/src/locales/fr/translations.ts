@@ -2718,7 +2718,7 @@ export default {
       alt: "404 - Page introuvable",
       title: "Oups ! Une erreur s'est produite.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Désolé, la page que vous recherchez est introuvable. Elle a peut-être été supprimée, renommée ou est temporairement indisponible.",
       go_to_home: "Aller à l'accueil",
     },
     workspace_views: {
@@ -2727,9 +2727,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Aucun projet pour le moment",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Les projets sont la base du travail orienté objectifs. Ils vous permettent de gérer vos équipes, vos tâches et tout ce dont vous avez besoin pour avancer.",
+      learn_more: "En savoir plus sur les projets",
+      start_first_project: "Démarrer votre premier projet",
     },
     profile_activity: {
       page_title: "Profil - Activité",
@@ -2737,17 +2737,17 @@ export default {
     pages: {
       not_found_title: "Page introuvable",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "La page à laquelle vous essayez d’accéder n’existe pas ou vous n’êtes pas autorisé à la consulter.",
+      view_other_pages: "Voir d’autres pages",
     },
     workspace_access: {
       not_found_title: "Espace de travail introuvable",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Aucun espace de travail n’a été trouvé pour cette URL. Il n’existe peut-être pas ou vous n’êtes pas autorisé à le consulter.",
       visit_profile: "Voir le profil",
       not_authorized_title: "Non autorisé !",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Vous n’êtes pas membre de cet espace de travail. Contactez l’administrateur de l’espace de travail pour obtenir une invitation ou vérifiez vos invitations en attente.",
       check_pending_invites: "Vérifier les invitations en attente",
     },
     editor: {
@@ -2815,7 +2815,7 @@ export default {
         image: "Image",
         divider: "Diviseur",
         link: "Lien",
-        bold: "Audacieux",
+        bold: "Gras",
         italic: "Italique",
         underline: "Souligner",
         strikethrough: "Barré",
@@ -2906,9 +2906,9 @@ export default {
       skip: "Sauter",
     },
     inbox: {
-      duplicate_issues_found: "Problèmes en double {count} trouvés",
+      duplicate_issues_found: "{count} éléments de travail en double trouvés",
       description_versions: {
-        intake_form_user: "Utilisateur du formulaire d'admission",
+        intake_form_user: "Utilisateur du formulaire de réception",
       },
       errors: {
         asset_upload_failed: "Échec du téléchargement de l'élément. Veuillez réessayer plus tard.",
@@ -2943,7 +2943,7 @@ export default {
         next_work_item: "Élément de travail suivant",
       },
       properties: {
-        duplicate_of: "Duplicata de",
+        duplicate_of: "Doublon de",
       },
       select_duplicate: {
         select_work_item: "Sélectionner un élément de travail",
@@ -3014,7 +3014,7 @@ export default {
       instance_failure_description: "Nous n'avons pas pu charger les détails de votre instance.",
       instance_failure_hint: "Vérifiez votre connexion puis réessayez.",
       retry: "Réessayer",
-      powered_by: "Propulsé par",
+      powered_by: "Fourni par",
       sign_in_to_add_comment: "Connectez-vous pour ajouter un commentaire",
       sign_in: "Se connecter",
       link_copied: "Lien copié !",

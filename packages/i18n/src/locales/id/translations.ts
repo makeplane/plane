@@ -2698,7 +2698,7 @@ export default {
       alt: "404 - Halaman tidak ditemukan",
       title: "Ups! Terjadi kesalahan.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Maaf, halaman yang Anda cari tidak dapat ditemukan. Halaman tersebut mungkin telah dihapus, diganti namanya, atau sementara tidak tersedia.",
       go_to_home: "Ke Beranda",
     },
     workspace_views: {
@@ -2707,27 +2707,26 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Belum ada proyek",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Proyek adalah dasar kerja berbasis tujuan. Proyek membantu Anda mengelola tim, tugas, dan semua hal yang diperlukan untuk menyelesaikan pekerjaan.",
+      learn_more: "Pelajari lebih lanjut tentang proyek",
+      start_first_project: "Mulai proyek pertama Anda",
     },
     profile_activity: {
       page_title: "Profil - Aktivitas",
     },
     pages: {
       not_found_title: "Halaman tidak ditemukan",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "Halaman yang Anda coba akses tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
+      view_other_pages: "Lihat halaman lainnya",
     },
     workspace_access: {
       not_found_title: "Workspace tidak ditemukan",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Tidak ada workspace yang ditemukan untuk URL ini. Workspace tersebut mungkin tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
       visit_profile: "Kunjungi profil",
       not_authorized_title: "Tidak diizinkan!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Anda bukan anggota workspace ini. Hubungi admin workspace untuk mendapatkan undangan atau periksa undangan yang tertunda.",
       check_pending_invites: "Periksa undangan tertunda",
     },
     editor: {
@@ -2776,7 +2775,7 @@ export default {
       alignment: {
         left: "Kiri",
         center: "Tengah",
-        right: "Benar",
+        right: "Kanan",
       },
       menu_items: {
         text: "Teks",
@@ -2791,13 +2790,13 @@ export default {
         "to-do-list": "Daftar tugas",
         quote: "Mengutip",
         code: "Kode",
-        table: "Meja",
+        table: "Tabel",
         image: "Gambar",
         divider: "Pembagi",
         link: "Link",
-        bold: "Berani",
+        bold: "Tebal",
         italic: "miring",
-        underline: "Menggarisbawahi",
+        underline: "Garis bawah",
         strikethrough: "Dicoret",
         "text-color": "Warna teks",
         "background-color": "Warna latar belakang",
@@ -2885,9 +2884,9 @@ export default {
       skip: "Melewati",
     },
     inbox: {
-      duplicate_issues_found: "{count} masalah duplikat ditemukan",
+      duplicate_issues_found: "{count} item kerja duplikat ditemukan",
       description_versions: {
-        intake_form_user: "Pengguna Formulir Penerimaan",
+        intake_form_user: "Pengguna formulir intake",
       },
       errors: {
         asset_upload_failed: "Pengunggahan aset gagal. Silakan coba lagi nanti.",

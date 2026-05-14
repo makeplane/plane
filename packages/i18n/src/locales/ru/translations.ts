@@ -2924,7 +2924,7 @@ export default {
       alt: "404 - Страница не найдена",
       title: "Упс! Что-то пошло не так.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Страница, которую вы ищете, не найдена. Возможно, она была удалена, переименована или временно недоступна.",
       go_to_home: "На главную",
     },
     workspace_views: {
@@ -2933,9 +2933,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Проектов пока нет",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Проекты служат основой работы, ориентированной на цели. Они помогают управлять командами, задачами и всем, что нужно для выполнения работы.",
+      learn_more: "Подробнее о проектах",
+      start_first_project: "Начать первый проект",
     },
     profile_activity: {
       page_title: "Профиль - Активность",
@@ -2943,17 +2943,17 @@ export default {
     pages: {
       not_found_title: "Страница не найдена",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "Страница, к которой вы пытаетесь получить доступ, не существует или у вас нет разрешения на ее просмотр.",
+      view_other_pages: "Посмотреть другие страницы",
     },
     workspace_access: {
       not_found_title: "Рабочая область не найдена",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Для этого URL рабочая область не найдена. Возможно, она не существует или у вас нет разрешения на ее просмотр.",
       visit_profile: "Открыть профиль",
       not_authorized_title: "Нет доступа!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Вы не являетесь участником этой рабочей области. Обратитесь к администратору рабочей области за приглашением или проверьте ожидающие приглашения.",
       check_pending_invites: "Проверить ожидающие приглашения",
     },
     editor: {
@@ -3000,7 +3000,7 @@ export default {
       header_row: "Строка заголовка",
       header_column: "Столбец заголовка",
       alignment: {
-        left: "Левый",
+        left: "Слева",
         center: "Центр",
         right: "Справа",
       },
@@ -3111,9 +3111,9 @@ export default {
       skip: "Пропускать",
     },
     inbox: {
-      duplicate_issues_found: "{count} обнаружены повторяющиеся проблемы",
+      duplicate_issues_found: "Найдено дублирующихся рабочих элементов: {count}",
       description_versions: {
-        intake_form_user: "Пользователь формы приема",
+        intake_form_user: "Пользователь формы сбора",
       },
       errors: {
         asset_upload_failed: "Не удалось загрузить актив. Пожалуйста, повторите попытку позже.",
@@ -3147,7 +3147,7 @@ export default {
         next_work_item: "Следующий рабочий элемент",
       },
       properties: {
-        duplicate_of: "Дубликат",
+        duplicate_of: "Дубликат элемента",
       },
       select_duplicate: {
         select_work_item: "Выберите рабочий элемент",

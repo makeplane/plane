@@ -2672,7 +2672,7 @@ export default {
       alt: "404 - 페이지를 찾을 수 없습니다",
       title: "문제가 발생했습니다.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "찾고 있는 페이지를 찾을 수 없습니다. 삭제되었거나 이름이 변경되었거나 일시적으로 사용할 수 없을 수 있습니다.",
       go_to_home: "홈으로 이동",
     },
     workspace_views: {
@@ -2680,28 +2680,26 @@ export default {
     },
     projects_empty_state: {
       no_projects_yet: "아직 프로젝트가 없습니다",
-      description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+      description: "프로젝트는 목표 중심 업무의 기반입니다. 팀, 작업, 업무 완료에 필요한 모든 것을 관리할 수 있습니다.",
+      learn_more: "프로젝트 자세히 알아보기",
+      start_first_project: "첫 프로젝트 시작",
     },
     profile_activity: {
       page_title: "프로필 - 활동",
     },
     pages: {
       not_found_title: "페이지를 찾을 수 없습니다",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "접근하려는 페이지가 존재하지 않거나 볼 권한이 없습니다.",
+      view_other_pages: "다른 페이지 보기",
     },
     workspace_access: {
       not_found_title: "워크스페이스를 찾을 수 없습니다",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "이 URL에 해당하는 워크스페이스를 찾을 수 없습니다. 존재하지 않거나 볼 권한이 없을 수 있습니다.",
       visit_profile: "프로필 방문",
       not_authorized_title: "권한이 없습니다",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "이 워크스페이스의 멤버가 아닙니다. 워크스페이스 관리자에게 초대를 요청하거나 대기 중인 초대를 확인하세요.",
       check_pending_invites: "보류 중인 초대 확인",
     },
     editor: {
@@ -2719,7 +2717,7 @@ export default {
       please_enter_valid_url: "유효한 URL를 입력하세요.",
       delete: "삭제",
       duplicate: "복제하다",
-      multiple: "다수의",
+      multiple: "여러 개",
       loading: "로드 중",
       no_results: "결과 없음",
       copy_code: "코드 복사",
@@ -2859,7 +2857,7 @@ export default {
       skip: "건너뛰다",
     },
     inbox: {
-      duplicate_issues_found: "{count}개의 중복 문제가 발견되었습니다.",
+      duplicate_issues_found: "중복 작업 항목 {count}개 발견",
       description_versions: {
         intake_form_user: "접수 양식 사용자",
       },
@@ -2894,7 +2892,7 @@ export default {
         next_work_item: "다음 작업 항목",
       },
       properties: {
-        duplicate_of: "중복",
+        duplicate_of: "중복 항목",
       },
       select_duplicate: {
         select_work_item: "작업 항목 선택",

@@ -2936,7 +2936,7 @@ export default {
       please_enter_valid_url: "请输入有效的URL",
       delete: "删除",
       duplicate: "复制",
-      multiple: "多种的",
+      multiple: "多个",
       loading: "加载中",
       no_results: "没有结果",
       copy_code: "复制代码",

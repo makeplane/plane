@@ -2665,7 +2665,7 @@ export default {
       alt: "404 - Nie znaleziono strony",
       title: "Ups! Coś poszło nie tak.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Nie można znaleźć strony, której szukasz. Mogła zostać usunięta, zmieniono jej nazwę albo jest tymczasowo niedostępna.",
       go_to_home: "Przejdź do strony głównej",
     },
     workspace_views: {
@@ -2674,9 +2674,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Brak projektów",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Projekty są podstawą pracy ukierunkowanej na cele. Pozwalają zarządzać zespołami, zadaniami i wszystkim, czego potrzebujesz, aby wykonać pracę.",
+      learn_more: "Dowiedz się więcej o projektach",
+      start_first_project: "Rozpocznij pierwszy projekt",
     },
     profile_activity: {
       page_title: "Profil - Aktywność",
@@ -2684,17 +2684,17 @@ export default {
     pages: {
       not_found_title: "Nie znaleziono strony",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "Strona, do której próbujesz uzyskać dostęp, nie istnieje albo nie masz uprawnień do jej wyświetlenia.",
+      view_other_pages: "Wyświetl inne strony",
     },
     workspace_access: {
       not_found_title: "Nie znaleziono obszaru roboczego",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Nie znaleziono obszaru roboczego dla tego adresu URL. Może nie istnieć albo nie masz uprawnień do jego wyświetlenia.",
       visit_profile: "Odwiedź profil",
       not_authorized_title: "Brak autoryzacji!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Nie jesteś członkiem tego obszaru roboczego. Skontaktuj się z administratorem obszaru roboczego, aby otrzymać zaproszenie, albo sprawdź oczekujące zaproszenia.",
       check_pending_invites: "Sprawdź oczekujące zaproszenia",
     },
     editor: {
@@ -2707,13 +2707,13 @@ export default {
       color: "Kolor",
       text_colors: "Kolory tekstu",
       background_colors: "Kolory tła",
-      link: "Połączyć",
+      link: "Link",
       enter_or_paste_link: "Wpisz lub wklej link",
       please_enter_valid_url: "Proszę wprowadzić prawidłowy URL",
-      delete: "Usuwać",
+      delete: "Usuń",
       duplicate: "Duplikat",
       multiple: "Wiele",
-      loading: "Załadunek",
+      loading: "Ładowanie",
       no_results: "Brak wyników",
       copy_code: "Skopiuj kod",
       add_an_image: "Dodaj obraz",
@@ -2721,7 +2721,7 @@ export default {
       uploading: "Przesyłanie",
       drop_image_here: "Upuść obraz tutaj",
       retry_duplication: "Ponów próbę duplikacji",
-      retry: "Spróbować ponownie",
+      retry: "Spróbuj ponownie",
       no_emojis_found: "Nie znaleziono emoji",
       fullscreen_image_viewer: "Pełnoekranowa przeglądarka obrazów",
       close_image_viewer: "Zamknij przeglądarkę zdjęć",
@@ -2731,8 +2731,8 @@ export default {
       open_image_in_new_tab: "Otwórz obraz w nowej karcie",
       view_in_full_screen: "Wyświetl na pełnym ekranie",
       view_image_in_full_screen: "Wyświetl obraz na pełnym ekranie",
-      align: "Wyrównywać",
-      download: "Pobierać",
+      align: "Wyrównaj",
+      download: "Pobierz",
       clear_contents: "Wyczyść zawartość",
       insert_above: "Wstaw powyżej",
       insert_below: "Wstaw poniżej",
@@ -2743,7 +2743,7 @@ export default {
       alignment: {
         left: "Lewy",
         center: "Centrum",
-        right: "Prawidłowy",
+        right: "Do prawej",
       },
       menu_items: {
         text: "Tekst",
@@ -2761,10 +2761,10 @@ export default {
         table: "Tabela",
         image: "Obraz",
         divider: "Rozdzielacz",
-        link: "Połączyć",
+        link: "Link",
         bold: "Pogrubiony",
-        italic: "italski",
-        underline: "Podkreślać",
+        italic: "Kursywa",
+        underline: "Podkreślenie",
         strikethrough: "Przekreślenie",
         "text-color": "Kolor tekstu",
         "background-color": "Kolor tła",
@@ -2779,7 +2779,7 @@ export default {
       accept: "Przyjąć",
       ignore: "Ignorować",
       already_member: "Jesteś już członkiem {workspaceName}",
-      continue_to_home: "Jedź dalej do domu",
+      continue_to_home: "Przejdź do strony głównej",
       inactive_title: "Ten link z zaproszeniem nie jest już aktywny.",
       empty_project_link: "Lub zacznij od pustego projektu",
       sign_in_to_continue: "Zaloguj się, aby kontynuować",
@@ -2816,7 +2816,7 @@ export default {
       name_within_50: "Nazwa musi zawierać maksymalnie 50 znaków.",
       enter_full_name: "Wpisz swoje pełne imię i nazwisko",
       set_password: "Ustaw hasło",
-      optional: "Fakultatywny",
+      optional: "Opcjonalnie",
       passwords_do_not_match: "Hasła nie pasują",
       passwords_match: "Hasła się zgadzają",
       continue: "Kontynuować",
@@ -2852,7 +2852,7 @@ export default {
       skip: "Pominąć",
     },
     inbox: {
-      duplicate_issues_found: "Znaleziono zduplikowane problemy {count}",
+      duplicate_issues_found: "Znaleziono {count} zduplikowanych elementów pracy",
       description_versions: {
         intake_form_user: "Użytkownik formularza przyjęcia",
       },
@@ -2887,7 +2887,7 @@ export default {
         next_work_item: "Następny element pracy",
       },
       properties: {
-        duplicate_of: "Duplikat",
+        duplicate_of: "Duplikat elementu",
       },
       select_duplicate: {
         select_work_item: "Wybierz element pracy",

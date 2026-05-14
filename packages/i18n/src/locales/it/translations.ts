@@ -2708,7 +2708,7 @@ export default {
       alt: "404 - Pagina non trovata",
       title: "Ops! Qualcosa è andato storto.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Spiacenti, la pagina che stai cercando non è stata trovata. Potrebbe essere stata rimossa, rinominata o essere temporaneamente non disponibile.",
       go_to_home: "Vai alla home",
     },
     workspace_views: {
@@ -2717,9 +2717,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Nessun progetto ancora",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "I progetti sono la base del lavoro orientato agli obiettivi. Ti aiutano a gestire team, attività e tutto ciò che serve per portare a termine il lavoro.",
+      learn_more: "Scopri di più sui progetti",
+      start_first_project: "Avvia il tuo primo progetto",
     },
     profile_activity: {
       page_title: "Profilo - Attività",
@@ -2727,17 +2727,17 @@ export default {
     pages: {
       not_found_title: "Pagina non trovata",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "La pagina a cui stai tentando di accedere non esiste o non hai l’autorizzazione per visualizzarla.",
+      view_other_pages: "Visualizza altre pagine",
     },
     workspace_access: {
       not_found_title: "Workspace non trovato",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Non è stato trovato alcuno workspace per questo URL. Potrebbe non esistere o potresti non avere l’autorizzazione per visualizzarlo.",
       visit_profile: "Visita profilo",
       not_authorized_title: "Non autorizzato!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Non sei membro di questo workspace. Contatta l’amministratore del workspace per ricevere un invito o controlla gli inviti in sospeso.",
       check_pending_invites: "Controlla inviti in sospeso",
     },
     editor: {
@@ -2775,7 +2775,7 @@ export default {
       view_in_full_screen: "Visualizza a schermo intero",
       view_image_in_full_screen: "Visualizza l'immagine a schermo intero",
       align: "Allineare",
-      download: "Scaricamento",
+      download: "Scarica",
       clear_contents: "Cancella contenuto",
       insert_above: "Inserisci sopra",
       insert_below: "Inserisci qui sotto",
@@ -2895,9 +2895,9 @@ export default {
       skip: "Saltare",
     },
     inbox: {
-      duplicate_issues_found: "Trovati {count} problemi duplicati",
+      duplicate_issues_found: "Trovati {count} elementi di lavoro duplicati",
       description_versions: {
-        intake_form_user: "Utente del modulo di assunzione",
+        intake_form_user: "Utente del modulo di raccolta",
       },
       errors: {
         asset_upload_failed: "Caricamento della risorsa non riuscito. Per favore riprova più tardi.",

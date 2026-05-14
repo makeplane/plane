@@ -2685,8 +2685,7 @@ export default {
     not_found: {
       alt: "404 - ページが見つかりません",
       title: "問題が発生しました。",
-      description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+      description: "お探しのページは見つかりません。削除、名前変更、または一時的に利用できない可能性があります。",
       go_to_home: "ホームへ移動",
     },
     workspace_views: {
@@ -2695,27 +2694,26 @@ export default {
     projects_empty_state: {
       no_projects_yet: "プロジェクトはまだありません",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "プロジェクトは、目標に基づく作業の基盤です。チーム、タスク、作業を進めるために必要なものをまとめて管理できます。",
+      learn_more: "プロジェクトの詳細を見る",
+      start_first_project: "最初のプロジェクトを開始",
     },
     profile_activity: {
       page_title: "プロフィール - アクティビティ",
     },
     pages: {
       not_found_title: "ページが見つかりません",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "アクセスしようとしているページは存在しないか、表示する権限がありません。",
+      view_other_pages: "他のページを表示",
     },
     workspace_access: {
       not_found_title: "ワークスペースが見つかりません",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "この URL に対応するワークスペースが見つかりません。存在しないか、表示する権限がない可能性があります。",
       visit_profile: "プロフィールを表示",
       not_authorized_title: "権限がありません",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "あなたはこのワークスペースのメンバーではありません。ワークスペース管理者に招待を依頼するか、保留中の招待を確認してください。",
       check_pending_invites: "保留中の招待を確認",
     },
     editor: {
@@ -2783,7 +2781,7 @@ export default {
         image: "画像",
         divider: "ディバイダー",
         link: "リンク",
-        bold: "大胆な",
+        bold: "太字",
         italic: "イタリック",
         underline: "下線",
         strikethrough: "取り消し線",
@@ -2873,7 +2871,7 @@ export default {
       skip: "スキップ",
     },
     inbox: {
-      duplicate_issues_found: "{count} 重複した問題が見つかりました",
+      duplicate_issues_found: "{count} 件の重複する作業項目が見つかりました",
       description_versions: {
         intake_form_user: "インテークフォームユーザー",
       },
@@ -2908,7 +2906,7 @@ export default {
         next_work_item: "次の作業項目",
       },
       properties: {
-        duplicate_of: "の複製",
+        duplicate_of: "重複元",
       },
       select_duplicate: {
         select_work_item: "作業項目を選択してください",

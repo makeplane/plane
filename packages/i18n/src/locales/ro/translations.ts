@@ -2703,7 +2703,7 @@ export default {
       alt: "404 - Pagina nu a fost găsită",
       title: "Ups! Ceva nu a mers bine.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Ne pare rău, pagina pe care o cauți nu a fost găsită. Este posibil să fi fost eliminată, redenumită sau să fie temporar indisponibilă.",
       go_to_home: "Mergi la pagina principală",
     },
     workspace_views: {
@@ -2712,27 +2712,26 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Încă nu există proiecte",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Proiectele sunt baza muncii orientate spre obiective. Te ajută să gestionezi echipe, sarcini și tot ce ai nevoie pentru a duce lucrurile la bun sfârșit.",
+      learn_more: "Află mai multe despre proiecte",
+      start_first_project: "Începe primul proiect",
     },
     profile_activity: {
       page_title: "Profil - Activitate",
     },
     pages: {
       not_found_title: "Pagina nu a fost găsită",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "Pagina pe care încerci să o accesezi nu există sau nu ai permisiunea să o vizualizezi.",
+      view_other_pages: "Vezi alte pagini",
     },
     workspace_access: {
       not_found_title: "Spațiul de lucru nu a fost găsit",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Nu a fost găsit niciun spațiu de lucru pentru acest URL. Este posibil să nu existe sau să nu ai permisiunea să îl vizualizezi.",
       visit_profile: "Vizitează profilul",
       not_authorized_title: "Neautorizat!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Nu ești membru al acestui spațiu de lucru. Contactează administratorul spațiului de lucru pentru o invitație sau verifică invitațiile în așteptare.",
       check_pending_invites: "Verifică invitațiile în așteptare",
     },
     editor: {
@@ -2745,7 +2744,7 @@ export default {
       color: "Culoare",
       text_colors: "Culorile textului",
       background_colors: "Culori de fundal",
-      link: "Legătură",
+      link: "Link",
       enter_or_paste_link: "Introduceți sau inserați linkul",
       please_enter_valid_url: "Vă rugăm să introduceți un URL valid",
       delete: "Şterge",
@@ -2799,7 +2798,7 @@ export default {
         table: "Tabel",
         image: "Imagine",
         divider: "Divizor",
-        link: "Legătură",
+        link: "Link",
         bold: "Aldin",
         italic: "Cursiv",
         underline: "Subliniat",
@@ -2890,9 +2889,9 @@ export default {
       skip: "Sari peste",
     },
     inbox: {
-      duplicate_issues_found: "{count} probleme duplicat găsite",
+      duplicate_issues_found: "{count} elemente de lucru duplicate găsite",
       description_versions: {
-        intake_form_user: "Utilizator formular de admitere",
+        intake_form_user: "Utilizator formular de colectare",
       },
       errors: {
         asset_upload_failed: "Încărcarea materialelor nu a reușit. Vă rugăm să încercați din nou mai târziu.",
@@ -2906,7 +2905,7 @@ export default {
         updated_date: "Data actualizată",
         last_updated_date: "Data ultimei actualizări",
         status: "Stare",
-        work_item_status: "Starea articolului de lucru",
+        work_item_status: "Starea elementului de lucru",
         view_all: "Vezi toate",
         view_less: "Vedeți mai puțin",
         date_options: {

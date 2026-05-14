@@ -2697,7 +2697,7 @@ export default {
       alt: "404 - Không tìm thấy trang",
       title: "Rất tiếc! Đã xảy ra lỗi.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Rất tiếc, không tìm thấy trang bạn đang tìm. Trang có thể đã bị xóa, đổi tên hoặc tạm thời không khả dụng.",
       go_to_home: "Về trang chủ",
     },
     workspace_views: {
@@ -2706,27 +2706,26 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Chưa có dự án",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Dự án là nền tảng cho công việc theo mục tiêu. Dự án giúp bạn quản lý đội nhóm, nhiệm vụ và mọi thứ cần thiết để hoàn thành công việc.",
+      learn_more: "Tìm hiểu thêm về dự án",
+      start_first_project: "Bắt đầu dự án đầu tiên",
     },
     profile_activity: {
       page_title: "Hồ sơ - Hoạt động",
     },
     pages: {
       not_found_title: "Không tìm thấy trang",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "Trang bạn đang cố truy cập không tồn tại hoặc bạn không có quyền xem.",
+      view_other_pages: "Xem các trang khác",
     },
     workspace_access: {
       not_found_title: "Không tìm thấy workspace",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Không tìm thấy không gian làm việc nào cho URL này. Không gian này có thể không tồn tại hoặc bạn không có quyền xem.",
       visit_profile: "Xem hồ sơ",
       not_authorized_title: "Không được phép!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Bạn không phải là thành viên của không gian làm việc này. Hãy liên hệ quản trị viên để nhận lời mời hoặc kiểm tra các lời mời đang chờ.",
       check_pending_invites: "Kiểm tra lời mời đang chờ",
     },
     editor: {
@@ -2739,7 +2738,7 @@ export default {
       color: "Màu sắc",
       text_colors: "Màu văn bản",
       background_colors: "Màu nền",
-      link: "liên kết",
+      link: "Liên kết",
       enter_or_paste_link: "Nhập hoặc dán liên kết",
       please_enter_valid_url: "Vui lòng nhập URL hợp lệ",
       delete: "Xóa bỏ",
@@ -2771,10 +2770,10 @@ export default {
       insert_left: "Chèn trái",
       insert_right: "Chèn bên phải",
       header_row: "Hàng tiêu đề",
-      header_column: "cột tiêu đề",
+      header_column: "Cột tiêu đề",
       alignment: {
-        left: "Bên trái",
-        center: "Trung tâm",
+        left: "Trái",
+        center: "Giữa",
         right: "Phải",
       },
       menu_items: {
@@ -2789,14 +2788,14 @@ export default {
         "numbered-list": "Danh sách đánh số",
         "to-do-list": "Danh sách việc cần làm",
         quote: "Trích dẫn",
-        code: "Mã số",
-        table: "Bàn",
+        code: "Mã",
+        table: "Bảng",
         image: "Hình ảnh",
         divider: "Dải phân cách",
-        link: "liên kết",
+        link: "Liên kết",
         bold: "In đậm",
         italic: "Nghiêng",
-        underline: "gạch chân",
+        underline: "Gạch chân",
         strikethrough: "Gạch ngang",
         "text-color": "Màu văn bản",
         "background-color": "Màu nền",
@@ -2884,7 +2883,7 @@ export default {
       skip: "Nhảy",
     },
     inbox: {
-      duplicate_issues_found: "Đã tìm thấy vấn đề trùng lặp {count}",
+      duplicate_issues_found: "Đã tìm thấy {count} mục công việc trùng lặp",
       description_versions: {
         intake_form_user: "Người dùng biểu mẫu tiếp nhận",
       },
@@ -2922,7 +2921,7 @@ export default {
         duplicate_of: "Bản sao của",
       },
       select_duplicate: {
-        select_work_item: "Chọn hạng mục công việc",
+        select_work_item: "Chọn mục công việc",
       },
       sidebar: {
         label_count: "Nhãn {count}",

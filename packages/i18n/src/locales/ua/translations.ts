@@ -2916,7 +2916,7 @@ export default {
       alt: "404 - Сторінку не знайдено",
       title: "Ой! Щось пішло не так.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Сторінку, яку ви шукаєте, не знайдено. Її могли видалити, перейменувати або вона тимчасово недоступна.",
       go_to_home: "На головну",
     },
     workspace_views: {
@@ -2925,9 +2925,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Проєктів ще немає",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Проєкти є основою роботи, орієнтованої на цілі. Вони допомагають керувати командами, завданнями та всім необхідним для виконання роботи.",
+      learn_more: "Дізнатися більше про проєкти",
+      start_first_project: "Почати перший проєкт",
     },
     profile_activity: {
       page_title: "Профіль - Активність",
@@ -2935,17 +2935,17 @@ export default {
     pages: {
       not_found_title: "Сторінку не знайдено",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "Сторінка, до якої ви намагаєтеся отримати доступ, не існує або у вас немає дозволу на її перегляд.",
+      view_other_pages: "Переглянути інші сторінки",
     },
     workspace_access: {
       not_found_title: "Робочу область не знайдено",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Для цієї URL-адреси робочу область не знайдено. Можливо, вона не існує або у вас немає дозволу на її перегляд.",
       visit_profile: "Відвідати профіль",
       not_authorized_title: "Немає доступу!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Ви не є учасником цієї робочої області. Зверніться до адміністратора робочої області, щоб отримати запрошення, або перевірте запрошення, що очікують.",
       check_pending_invites: "Перевірити очікувані запрошення",
     },
     editor: {
@@ -2963,7 +2963,7 @@ export default {
       please_enter_valid_url: "Введіть дійсний URL",
       delete: "Видалити",
       duplicate: "дублікат",
-      multiple: "множинний",
+      multiple: "Кілька",
       loading: "Завантаження",
       no_results: "Результатів немає",
       copy_code: "Скопіюйте код",
@@ -2993,8 +2993,8 @@ export default {
       header_column: "Стовпець заголовка",
       alignment: {
         left: "Ліворуч",
-        center: "центр",
-        right: "правильно",
+        center: "По центру",
+        right: "Праворуч",
       },
       menu_items: {
         text: "текст",
@@ -3013,7 +3013,7 @@ export default {
         image: "Зображення",
         divider: "Роздільник",
         link: "Посилання",
-        bold: "жирний",
+        bold: "Жирний",
         italic: "Курсив",
         underline: "Підкреслити",
         strikethrough: "Закреслення",
@@ -3103,9 +3103,9 @@ export default {
       skip: "Пропустити",
     },
     inbox: {
-      duplicate_issues_found: "Знайдено {count} повторюваних проблем",
+      duplicate_issues_found: "Знайдено {count} дубльованих робочих елементів",
       description_versions: {
-        intake_form_user: "Користувач форми прийому",
+        intake_form_user: "Користувач форми збору",
       },
       errors: {
         asset_upload_failed: "Не вдалося завантажити ресурс. Спробуйте пізніше.",
@@ -3138,7 +3138,7 @@ export default {
         next_work_item: "Наступний робочий елемент",
       },
       properties: {
-        duplicate_of: "Дублікат",
+        duplicate_of: "Дублікат елемента",
       },
       select_duplicate: {
         select_work_item: "Виберіть робочий елемент",

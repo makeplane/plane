@@ -2663,7 +2663,7 @@ export default {
       alt: "404 - Stránka sa nenašla",
       title: "Ups! Niečo sa pokazilo.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Stránku, ktorú hľadáte, sa nepodarilo nájsť. Mohla byť odstránená, premenovaná alebo je dočasne nedostupná.",
       go_to_home: "Prejsť domov",
     },
     workspace_views: {
@@ -2672,9 +2672,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Zatiaľ žiadne projekty",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Projekty sú základom práce riadenej cieľmi. Pomáhajú spravovať tímy, úlohy a všetko potrebné na dokončenie práce.",
+      learn_more: "Zistiť viac o projektoch",
+      start_first_project: "Začať prvý projekt",
     },
     profile_activity: {
       page_title: "Profil - Aktivita",
@@ -2682,17 +2682,17 @@ export default {
     pages: {
       not_found_title: "Stránka sa nenašla",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "Stránka, ku ktorej sa pokúšate pristúpiť, neexistuje alebo na jej zobrazenie nemáte oprávnenie.",
+      view_other_pages: "Zobraziť ďalšie stránky",
     },
     workspace_access: {
       not_found_title: "Pracovný priestor sa nenašiel",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Pre túto URL adresu sa nenašiel žiadny pracovný priestor. Možno neexistuje alebo na jeho zobrazenie nemáte oprávnenie.",
       visit_profile: "Navštíviť profil",
       not_authorized_title: "Bez oprávnenia!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Nie ste členom tohto pracovného priestoru. Požiadajte správcu pracovného priestoru o pozvánku alebo skontrolujte čakajúce pozvánky.",
       check_pending_invites: "Skontrolovať čakajúce pozvánky",
     },
     editor: {
@@ -2850,9 +2850,9 @@ export default {
       skip: "Preskočiť",
     },
     inbox: {
-      duplicate_issues_found: "Našlo sa {count} duplicitných problémov",
+      duplicate_issues_found: "Našlo sa {count} duplicitných pracovných položiek",
       description_versions: {
-        intake_form_user: "Používateľ prijímacieho formulára",
+        intake_form_user: "Používateľ zberného formulára",
       },
       errors: {
         asset_upload_failed: "Nahranie diela zlyhalo. Skúste to znova neskôr.",
@@ -2885,7 +2885,7 @@ export default {
         next_work_item: "Ďalšia pracovná položka",
       },
       properties: {
-        duplicate_of: "Duplikát z",
+        duplicate_of: "Duplikát položky",
       },
       select_duplicate: {
         select_work_item: "Vyberte pracovnú položku",

@@ -2662,7 +2662,7 @@ export default {
       alt: "404 - Stránka nenalezena",
       title: "Jejda! Něco se pokazilo.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "Omlouváme se, stránku, kterou hledáte, nelze najít. Možná byla odstraněna, přejmenována nebo je dočasně nedostupná.",
       go_to_home: "Přejít domů",
     },
     workspace_views: {
@@ -2671,27 +2671,26 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Zatím žádné projekty",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Projekty jsou základem práce řízené cíli. Pomáhají spravovat týmy, úkoly a vše potřebné k dokončení práce.",
+      learn_more: "Další informace o projektech",
+      start_first_project: "Začít první projekt",
     },
     profile_activity: {
       page_title: "Profil - Aktivita",
     },
     pages: {
       not_found_title: "Stránka nenalezena",
-      not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+      not_found_description: "Stránka, ke které se pokoušíte přistoupit, neexistuje nebo k ní nemáte oprávnění.",
+      view_other_pages: "Zobrazit další stránky",
     },
     workspace_access: {
       not_found_title: "Pracovní prostor nenalezen",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Pro tuto adresu URL nebyl nalezen žádný pracovní prostor. Možná neexistuje nebo k němu nemáte oprávnění.",
       visit_profile: "Navštívit profil",
       not_authorized_title: "Bez oprávnění!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Nejste členem tohoto pracovního prostoru. Požádejte správce pracovního prostoru o pozvánku nebo zkontrolujte čekající pozvánky.",
       check_pending_invites: "Zkontrolovat čekající pozvánky",
     },
     editor: {
@@ -2709,7 +2708,7 @@ export default {
       please_enter_valid_url: "Zadejte prosím platné URL",
       delete: "Vymazat",
       duplicate: "Duplikát",
-      multiple: "Násobek",
+      multiple: "Více",
       loading: "Načítání",
       no_results: "Žádné výsledky",
       copy_code: "Kopírovat kód",
@@ -2740,7 +2739,7 @@ export default {
       alignment: {
         left: "Vlevo",
         center: "Centrum",
-        right: "Právo",
+        right: "Vpravo",
       },
       menu_items: {
         text: "Text",
@@ -2756,12 +2755,12 @@ export default {
         quote: "Citovat",
         code: "Kód",
         table: "Tabulka",
-        image: "Obraz",
-        divider: "Dělič",
+        image: "Obrázek",
+        divider: "Oddělovač",
         link: "Odkaz",
         bold: "Tučné",
         italic: "kurzíva",
-        underline: "Zdůraznit",
+        underline: "Podtržení",
         strikethrough: "Přeškrtnutí",
         "text-color": "Barva textu",
         "background-color": "Barva pozadí",
@@ -2848,9 +2847,9 @@ export default {
       skip: "Přeskočit",
     },
     inbox: {
-      duplicate_issues_found: "Byly nalezeny duplicitní problémy {count}",
+      duplicate_issues_found: "Nalezeno {count} duplicitních pracovních položek",
       description_versions: {
-        intake_form_user: "Uživatel formuláře příjmu",
+        intake_form_user: "Uživatel sběrného formuláře",
       },
       errors: {
         asset_upload_failed: "Nahrání podkladu se nezdařilo. Zkuste to znovu později.",
@@ -2863,7 +2862,7 @@ export default {
         created_date: "Datum vytvoření",
         updated_date: "Aktualizováno datum",
         last_updated_date: "Datum poslední aktualizace",
-        status: "Postavení",
+        status: "Stav",
         work_item_status: "Stav pracovní položky",
         view_all: "Zobrazit vše",
         view_less: "Zobrazit méně",
