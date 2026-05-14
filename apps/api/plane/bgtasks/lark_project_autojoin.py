@@ -85,6 +85,12 @@ def autojoin_workspace_members_to_project_task(project_id):
 
     Scoped to LARK_DEFAULT_WORKSPACE_SLUG to avoid auto-populating projects
     in unrelated workspaces on multi-tenant deploys.
+
+    Only Public projects (Project.network == 2) get auto-populated; Secret
+    projects (network == 0) intentionally stay invitation-only — that's the
+    whole point of marking them private. Toggling network later does NOT
+    backfill; the project owner can use the "Sync from Lark" path (or invite
+    manually) once they flip to public.
     """
     if (os.environ.get("LARK_AUTO_JOIN_NEW_PROJECTS") or "").strip().lower() not in (
         "1",
@@ -99,5 +105,7 @@ def autojoin_workspace_members_to_project_task(project_id):
         return {"error": f"project {project_id} not found"}
     if target_slug and project.workspace.slug != target_slug:
         return {"skipped": f"workspace {project.workspace.slug} != {target_slug}"}
+    if project.network != 2:
+        return {"skipped": f"project {project_id} is not Public (network={project.network})"}
 
     return autojoin_all_workspace_members(project_id)
