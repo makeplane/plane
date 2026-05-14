@@ -327,7 +327,11 @@ def webhook_send_task(
 
     try:
         # Re-validate the webhook URL at send time to prevent DNS-rebinding attacks
-        validate_url(webhook.url, allowed_ips=settings.WEBHOOK_ALLOWED_IPS)
+        validate_url(
+            webhook.url,
+            allowed_ips=settings.WEBHOOK_ALLOWED_IPS,
+            allowed_hosts=settings.WEBHOOK_ALLOWED_HOSTS,
+        )
 
         # Send the webhook event
         response = requests.post(webhook.url, headers=headers, json=payload, timeout=30)
