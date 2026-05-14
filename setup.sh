@@ -1,28 +1,29 @@
 #!/bin/bash
+set -euo pipefail
 
-BRANCH=${BRANCH:-master}
-SCRIPT_DIR=$PWD
-SERVICE_FOLDER=plane-app
-PLANE_INSTALL_DIR=$PWD/$SERVICE_FOLDER
-export APP_RELEASE=stable
-export DOCKERHUB_USER=artifacts.plane.so/makeplane
-export PULL_POLICY=${PULL_POLICY:-if_not_present}
-export GH_REPO=makeplane/plane
-export RELEASE_DOWNLOAD_URL="https://github.com/$GH_REPO/releases/download"
-export FALLBACK_DOWNLOAD_URL="https://raw.githubusercontent.com/$GH_REPO/$BRANCH/deployments/cli/community"
+REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
+COMPOSE_FILE_PATH="${REPO_ROOT}/docker-compose.yml"
+ROOT_ENV_PATH="${REPO_ROOT}/.env"
+ROOT_ENV_EXAMPLE_PATH="${REPO_ROOT}/.env.example"
+PLANE_ENV_PATH="${REPO_ROOT}/plane.env"
+API_ENV_PATH="${REPO_ROOT}/apps/api/.env"
+API_ENV_EXAMPLE_PATH="${REPO_ROOT}/apps/api/.env.example"
+BACKUP_ROOT="${REPO_ROOT}/backup"
 
-CPU_ARCH=$(uname -m)
-OS_NAME=$(uname)
-UPPER_CPU_ARCH=$(tr '[:lower:]' '[:upper:]' <<< "$CPU_ARCH")
+COMPOSE_CMD=""
+LAST_COMPOSE_EXIT_CODE=0
 
-mkdir -p $PLANE_INSTALL_DIR/archive
-DOCKER_FILE_PATH=$PLANE_INSTALL_DIR/docker-compose.yaml
-DOCKER_ENV_PATH=$PLANE_INSTALL_DIR/plane.env
+function detect_compose() {
+    if command -v docker-compose &>/dev/null; then
+        COMPOSE_CMD="docker-compose"
+    else
+        COMPOSE_CMD="docker compose"
+    fi
+}
 
 function print_header() {
-clear
-
-cat <<"EOF"
+    clear 2>/dev/null || true
+    cat <<'EOF'
 --------------------------------------------
  ____  _                          ///////// 
 |  _ \| | __ _ _ __   ___         ///////// 
@@ -31,454 +32,287 @@ cat <<"EOF"
 |_|   |_|\__,_|_| |_|\___|        ////      
                                   ////      
 --------------------------------------------
-Project management tool from the future
+Local Plane build from this repository
 --------------------------------------------
 EOF
 }
 
-function spinner() {
-    local pid=$1
-    local delay=.5
-    local spinstr='|/-\'
-
-    if ! ps -p "$pid" > /dev/null; then  
-        echo "Invalid PID: $pid"  
-        return 1  
-    fi  
-    while ps -p "$pid" > /dev/null; do  
-        local temp=${spinstr#?}
-        printf " [%c]  " "$spinstr" >&2
-        local spinstr=$temp${spinstr%"$temp"}
-        sleep $delay
-        printf "\b\b\b\b\b\b" >&2
-    done
-    printf "    \b\b\b\b" >&2
-}
-
-function checkLatestRelease(){
-    echo "Checking for the latest release..." >&2
-    local latest_release=$(curl -sSL https://api.github.com/repos/$GH_REPO/releases/latest |  grep -o '"tag_name": "[^"]*"' | sed 's/"tag_name": "//;s/"//g')
-    if [ -z "$latest_release" ]; then
-        echo "Failed to check for the latest release. Exiting..." >&2
-        exit 1
-    fi
-
-    echo $latest_release    
-}
-
-function initialize(){
-    printf "Please wait while we check the availability of Docker images for the selected release ($APP_RELEASE) with ${UPPER_CPU_ARCH} support." >&2
-
-    if [ "$CUSTOM_BUILD" == "true" ]; then
-        echo "" >&2
-        echo "" >&2
-        echo "${UPPER_CPU_ARCH} images are not available for selected release ($APP_RELEASE)." >&2
-        echo "build"
-        return 1
-    fi
-
-    local IMAGE_NAME=makeplane/plane-proxy
-    local IMAGE_TAG=${APP_RELEASE}
-    docker manifest inspect "${IMAGE_NAME}:${IMAGE_TAG}" | grep -q "\"architecture\": \"${CPU_ARCH}\"" &
-    local pid=$!
-    spinner "$pid"
-    
-    echo "" >&2
-
-    wait "$pid"
-
-    if [ $? -eq 0 ]; then
-        echo "Plane supports ${CPU_ARCH}" >&2
-        echo "available"
-        return 0
+function run_compose() {
+    pushd "$REPO_ROOT" >/dev/null
+    if [[ "$COMPOSE_CMD" == "docker compose" ]]; then
+        docker compose "$@"
     else
-        echo "" >&2
-        echo "" >&2
-        echo "${UPPER_CPU_ARCH} images are not available for selected release ($APP_RELEASE)." >&2
-        echo "" >&2
-        echo "build"
-        return 1
+        docker-compose "$@"
     fi
+    LAST_COMPOSE_EXIT_CODE=$?
+    popd >/dev/null
 }
-function getEnvValue() {
-    local key=$1
-    local file=$2
 
-    if [ -z "$key" ] || [ -z "$file" ]; then
-        echo "Invalid arguments supplied"
-        exit 1
+function get_env_value() {
+    local key="$1"
+    local file="$2"
+
+    if [[ ! -f "$file" ]]; then
+        echo ""
+        return
     fi
 
-    if [ -f "$file" ]; then
-        grep -q "^$key=" "$file"
-        if [ $? -eq 0 ]; then
-            local value
-            value=$(grep "^$key=" "$file" | cut -d'=' -f2)
-            echo "$value"
-        else
-            echo ""
-        fi
+    local line
+    line=$(grep -m1 "^${key}=" "$file" 2>/dev/null || true)
+    if [[ -z "$line" ]]; then
+        echo ""
+        return
     fi
+
+    local value="${line#*=}"
+    # Remove surrounding quotes if present
+    value="${value#\"}"
+    value="${value%\"}"
+    value="${value#\'}"
+    value="${value%\'}"
+    echo "$value"
 }
-function updateEnvFile() {
-    local key=$1
-    local value=$2
-    local file=$3
 
-    if [ -z "$key" ] || [ -z "$value" ] || [ -z "$file" ]; then
-        echo "Invalid arguments supplied"
-        exit 1
-    fi
+function update_env_file() {
+    local key="$1"
+    local value="$2"
+    local file="$3"
 
-    if [ -f "$file" ]; then
-        # check if key exists in the file
-        grep -q "^$key=" "$file"
-        if [ $? -ne 0 ]; then
-            echo "$key=$value" >> "$file"
-            return
-        else 
-            if [ "$OS_NAME" == "Darwin" ]; then
-                value=$(echo "$value" | sed 's/|/\\|/g')
-                sed -i '' "s|^$key=.*|$key=$value|g" "$file"
-            else
-                value=$(echo "$value" | sed 's/\//\\\//g')
-                sed -i "s/^$key=.*/$key=$value/g" "$file"
-            fi
-        fi
-    else
+    if [[ ! -f "$file" ]]; then
         echo "File not found: $file"
+        return 1
+    fi
+
+    if grep -q "^${key}=" "$file" 2>/dev/null; then
+        # Escape special sed characters in value
+        local escaped_value
+        escaped_value=$(printf '%s\n' "$value" | sed -e 's/[&/\]/\\&/g')
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            sed -i '' "s|^${key}=.*|${key}=${escaped_value}|g" "$file"
+        else
+            sed -i "s|^${key}=.*|${key}=${escaped_value}|g" "$file"
+        fi
+    else
+        echo "${key}=${value}" >> "$file"
+    fi
+}
+
+function new_secret_key() {
+    LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 50
+}
+
+function initialize_local_env_files() {
+    if [[ ! -f "$COMPOSE_FILE_PATH" ]]; then
+        echo "ERROR: docker-compose.yml not found at ${COMPOSE_FILE_PATH}"
         exit 1
     fi
-}
 
-function updateCustomVariables(){
-    echo "Updating custom variables..." >&2
-    updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
-    updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
-    updateEnvFile "PULL_POLICY" "$PULL_POLICY" "$DOCKER_ENV_PATH"
-    updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" "$DOCKER_ENV_PATH"
-    echo "Custom variables updated successfully" >&2
-}
-
-function syncEnvFile(){
-    echo "Syncing environment variables..." >&2
-    if [ -f "$PLANE_INSTALL_DIR/plane.env.bak" ]; then
-        updateCustomVariables
-        
-        # READ keys of plane.env and update the values from plane.env.bak
-        while IFS= read -r line
-        do
-            # ignore is the line is empty or starts with #
-            if [ -z "$line" ] || [[ $line == \#* ]]; then
-                continue
-            fi
-            key=$(echo "$line" | cut -d'=' -f1)
-            value=$(getEnvValue "$key" "$PLANE_INSTALL_DIR/plane.env.bak")
-            if [ -n "$value" ]; then
-                updateEnvFile "$key" "$value" "$DOCKER_ENV_PATH"
-            fi
-        done < "$DOCKER_ENV_PATH"
-    fi
-    echo "Environment variables synced successfully" >&2
-}
-
-function buildYourOwnImage(){
-    echo "Building images locally..."
-
-    export DOCKERHUB_USER="myplane"
-    export APP_RELEASE="local"
-    export PULL_POLICY="never"
-    CUSTOM_BUILD="true"
-
-    # checkout the code to ~/tmp/plane folder and build the images
-    local PLANE_TEMP_CODE_DIR=~/tmp/plane
-    rm -rf $PLANE_TEMP_CODE_DIR
-    mkdir -p $PLANE_TEMP_CODE_DIR
-    REPO=https://github.com/$GH_REPO.git
-    git clone "$REPO" "$PLANE_TEMP_CODE_DIR"  --branch "$BRANCH" --single-branch --depth 1
-
-    cp "$PLANE_TEMP_CODE_DIR/deployments/cli/community/build.yml" "$PLANE_TEMP_CODE_DIR/build.yml"
-
-    cd "$PLANE_TEMP_CODE_DIR" || exit
-
-    /bin/bash -c "$COMPOSE_CMD -f build.yml build --no-cache"  >&2
-    if [ $? -ne 0 ]; then
-        echo "Build failed. Exiting..."
-        exit 1
-    fi
-    echo "Build completed successfully"
-    echo ""
-    echo "You can now start the services by running the command: ./setup.sh start"
-    echo ""
-}
-
-function install() {
-    echo "Begin Installing Plane"
-    echo ""
-
-    if [ "$APP_RELEASE" == "stable" ]; then
-        export APP_RELEASE=$(checkLatestRelease)
-    fi
-
-    local build_image=$(initialize)
-
-    if [ "$build_image" == "build" ]; then
-        # ask for confirmation to continue building the images
-        echo "Do you want to continue with building the Docker images locally?"
-        read -p "Continue? [y/N]: " confirm
-        if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-            echo "Exiting..."
-            exit 0
-        fi
-    fi
-
-    if [ "$build_image" == "build" ]; then
-        download "true"
-    else
-        download "false"
-    fi
-}
-
-function download() {
-    local LOCAL_BUILD=$1
-    cd $SCRIPT_DIR
-    TS=$(date +%s)
-    if [ -f "$PLANE_INSTALL_DIR/docker-compose.yaml" ]
-    then
-        mv $PLANE_INSTALL_DIR/docker-compose.yaml $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml
-    fi
-
-    RESPONSE=$(curl -sSL -H 'Cache-Control: no-cache, no-store' -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml?$(date +%s)")
-    BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
-    STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-
-    if [ "$STATUS" -eq 200 ]; then
-        echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
-    else
-        # Fallback to download from the raw github url
-        RESPONSE=$(curl -sSL -H 'Cache-Control: no-cache, no-store' -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/docker-compose.yml?$(date +%s)")
-        BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
-        STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-
-        if [ "$STATUS" -eq 200 ]; then
-            echo "$BODY" > $PLANE_INSTALL_DIR/docker-compose.yaml
+    if [[ ! -f "$ROOT_ENV_PATH" ]]; then
+        if [[ -f "$PLANE_ENV_PATH" ]]; then
+            cp "$PLANE_ENV_PATH" "$ROOT_ENV_PATH"
+            echo "Created .env from plane.env"
+        elif [[ -f "$ROOT_ENV_EXAMPLE_PATH" ]]; then
+            cp "$ROOT_ENV_EXAMPLE_PATH" "$ROOT_ENV_PATH"
+            echo "Created .env from .env.example"
         else
-            echo "Failed to download docker-compose.yml. HTTP Status: $STATUS"
-            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/docker-compose.yml"
-            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            echo "ERROR: Neither .env, plane.env, nor .env.example exists in ${REPO_ROOT}"
             exit 1
         fi
     fi
 
-    RESPONSE=$(curl -sSL -H 'Cache-Control: no-cache, no-store' -w "HTTPSTATUS:%{http_code}" "$RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env?$(date +%s)")
-    BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
-    STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-
-    if [ "$STATUS" -eq 200 ]; then
-        echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
-    else
-        # Fallback to download from the raw github url
-        RESPONSE=$(curl -sSL -H 'Cache-Control: no-cache, no-store' -w "HTTPSTATUS:%{http_code}" "$FALLBACK_DOWNLOAD_URL/variables.env?$(date +%s)")
-        BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
-        STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
-
-        if [ "$STATUS" -eq 200 ]; then
-            echo "$BODY" > $PLANE_INSTALL_DIR/variables-upgrade.env
+    if [[ ! -f "$API_ENV_PATH" ]]; then
+        if [[ -f "$API_ENV_EXAMPLE_PATH" ]]; then
+            cp "$API_ENV_EXAMPLE_PATH" "$API_ENV_PATH"
+            echo "Created apps/api/.env from apps/api/.env.example"
         else
-            echo "Failed to download variables.env. HTTP Status: $STATUS"
-            echo "URL: $RELEASE_DOWNLOAD_URL/$APP_RELEASE/variables.env"
-            mv $PLANE_INSTALL_DIR/archive/$TS.docker-compose.yaml $PLANE_INSTALL_DIR/docker-compose.yaml
+            echo "ERROR: apps/api/.env does not exist and apps/api/.env.example was not found"
             exit 1
         fi
     fi
 
-    if [ -f "$DOCKER_ENV_PATH" ];
-    then
-        cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/archive/$TS.env"
-        cp "$DOCKER_ENV_PATH" "$PLANE_INSTALL_DIR/plane.env.bak"
+    local secret_key
+    secret_key=$(get_env_value "SECRET_KEY" "$API_ENV_PATH")
+    if [[ -z "$secret_key" ]]; then
+        echo "SECRET_KEY=$(new_secret_key)" >> "$API_ENV_PATH"
+        echo "Added SECRET_KEY to apps/api/.env"
     fi
 
-    mv $PLANE_INSTALL_DIR/variables-upgrade.env $DOCKER_ENV_PATH
-
-    syncEnvFile
-
-    if [ "$LOCAL_BUILD" == "true" ]; then
-        export DOCKERHUB_USER="myplane"
-        export APP_RELEASE="local"
-        export PULL_POLICY="never"
-        CUSTOM_BUILD="true"
-
-        buildYourOwnImage
-
-        if [ $? -ne 0 ]; then
-            echo ""
-            echo "Build failed. Exiting..."
-            exit 1
-        fi
-        updateCustomVariables
-    else
-        CUSTOM_BUILD="false"
-        updateCustomVariables
-        /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH pull --policy always"
-
-        if [ $? -ne 0 ]; then
-            echo ""
-            echo "Failed to pull the images. Exiting..."
-            exit 1
-        fi
+    local live_secret_key
+    live_secret_key=$(get_env_value "LIVE_SERVER_SECRET_KEY" "$API_ENV_PATH")
+    if [[ -z "$live_secret_key" ]]; then
+        echo "LIVE_SERVER_SECRET_KEY=$(new_secret_key)" >> "$API_ENV_PATH"
+        echo "Added LIVE_SERVER_SECRET_KEY to apps/api/.env"
     fi
-    
+}
+
+function compose_base_args() {
+    echo "-f ${COMPOSE_FILE_PATH} --env-file ${ROOT_ENV_PATH}"
+}
+
+function build_local_images() {
+    export DOCKER_BUILDKIT=1
+
+    local builds=(
+        "proxy|plane-proxy|${REPO_ROOT}/apps/proxy|${REPO_ROOT}/apps/proxy/Dockerfile.ce"
+        "backend|plane-api plane-worker plane-beat-worker plane-migrator|${REPO_ROOT}/apps/api|${REPO_ROOT}/apps/api/Dockerfile.api"
+        "web|plane-web|${REPO_ROOT}|${REPO_ROOT}/apps/web/Dockerfile.web"
+        "admin|plane-admin|${REPO_ROOT}|${REPO_ROOT}/apps/admin/Dockerfile.admin"
+        "space|plane-space|${REPO_ROOT}|${REPO_ROOT}/apps/space/Dockerfile.space"
+        "live|plane-live|${REPO_ROOT}|${REPO_ROOT}/apps/live/Dockerfile.live"
+    )
+
+    local no_cache=""
+    if [[ "${1:-}" == "true" ]]; then
+        no_cache="--no-cache"
+    fi
+
+    for entry in "${builds[@]}"; do
+        IFS='|' read -r name tags context dockerfile <<< "$entry"
+
+        echo ""
+        echo "***** BUILDING ${name} *****"
+
+        local tag_args=()
+        for tag in $tags; do
+            tag_args+=("-t" "$tag")
+        done
+
+        docker build --progress=plain --build-arg DOCKER_BUILDKIT=1 $no_cache "${tag_args[@]}" -f "$dockerfile" "$context"
+
+        if [[ $? -ne 0 ]]; then
+            echo "Local Docker image build failed for '${name}'."
+            exit 1
+        fi
+    done
+}
+
+function install_plane() {
+    echo "Building Plane Docker images from the current repository..."
+    echo "Repository: ${REPO_ROOT}"
     echo ""
-    echo "Most recent version of Plane is now available for you to use"
+
+    initialize_local_env_files
+    build_local_images false
+
     echo ""
-    echo "In case of 'Upgrade', please check the 'plane.env 'file for any new variables and update them accordingly"
+    echo "Local Plane images were built successfully."
+    echo "Start the project with: ./setup.sh start"
     echo ""
 }
-function startServices() {
-    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH up -d --pull if_not_present --quiet-pull"
 
-    local migrator_container_id=$(docker container ls -aq -f "name=$SERVICE_FOLDER-migrator")
-    if [ -n "$migrator_container_id" ]; then
+function start_services() {
+    initialize_local_env_files
+    build_local_images false
+
+    run_compose $(compose_base_args) up -d --no-build --force-recreate
+    if [[ $LAST_COMPOSE_EXIT_CODE -ne 0 ]]; then
+        exit $LAST_COMPOSE_EXIT_CODE
+    fi
+
+    local migrator_container_id
+    migrator_container_id=$(docker container ls -aq -f "name=plane-migrator" | head -n1)
+
+    if [[ -n "$migrator_container_id" ]]; then
         local idx=0
-        while docker inspect --format='{{.State.Status}}' $migrator_container_id | grep -q "running"; do
-            local message=">> Waiting for Data Migration to finish"
-            local dots=$(printf '%*s' $idx | tr ' ' '.')
-            echo -ne "\r$message$dots"
+        while docker inspect --format='{{.State.Status}}' "$migrator_container_id" 2>/dev/null | grep -q "running"; do
+            local dots
+            dots=$(printf '%*s' "$idx" | tr ' ' '.')
+            printf "\r>> Waiting for Data Migration to finish%s" "$dots"
             ((idx++))
             sleep 1
         done
-    fi
-    printf "\r\033[K"
-    echo ""
-    echo "   Data Migration completed successfully ✅"
 
-    # if migrator exit status is not 0, show error message and exit
-    if [ -n "$migrator_container_id" ]; then
-        local migrator_exit_code=$(docker inspect --format='{{.State.ExitCode}}' $migrator_container_id)
-        if [ $migrator_exit_code -ne 0 ]; then
-            echo "Plane Server failed to start ❌"
-            # stopServices
-            echo
-            echo "Please check the logs for the 'migrator' service and resolve the issue(s)."
-            echo "Stop the services by running the command: ./setup.sh stop"
+        printf "\r%*s\r" 60 ""
+
+        local migrator_exit_code
+        migrator_exit_code=$(docker inspect --format='{{.State.ExitCode}}' "$migrator_container_id")
+        if [[ "$migrator_exit_code" != "0" ]]; then
+            echo "Plane Server failed to start"
+            echo ""
+            echo "Please check the logs for the migrator service and resolve the issue."
+            echo "Logs: ./setup.sh logs migrator"
             exit 1
         fi
+
+        echo "   Data Migration completed successfully"
     fi
 
-    local api_container_id=$(docker container ls -q -f "name=$SERVICE_FOLDER-api")
+    local api_container_id
+    api_container_id=$(docker container ls -q -f "name=api" | head -n1)
 
-    # Verify container exists
-    if [ -z "$api_container_id" ]; then
-        echo "   Error: API container not found. Please check if services are running."
+    if [[ -z "$api_container_id" ]]; then
+        echo "   API container was not found. Check service status with: ./setup.sh status"
         exit 1
     fi
 
-    local idx2=0
-    local api_ready=true        # assume success, flip on timeout
-    local max_wait_time=300  # 5 minutes timeout
-    local start_time=$(date +%s)
+    local api_ready=true
+    local max_wait_time=300
+    local start_time
+    start_time=$(date +%s)
+    local idx=0
 
     echo "   Waiting for API Service to be ready..."
-    while ! docker exec "$api_container_id" python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=3)" > /dev/null 2>&1; do
-        local current_time=$(date +%s)
+    while ! docker exec "$api_container_id" python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/', timeout=3)" >/dev/null 2>&1; do
+        local current_time
+        current_time=$(date +%s)
         local elapsed_time=$((current_time - start_time))
 
-        if [ $elapsed_time -gt $max_wait_time ]; then
+        if [[ $elapsed_time -gt $max_wait_time ]]; then
             echo ""
-            echo "   API Service health check timed out after 5 minutes"
-            echo "   Checking if API container is still running..."
-            if docker ps | grep -q "$SERVICE_FOLDER-api"; then
-                echo "   API container is running but did not pass the health-check. Continuing without marking it ready."
-                api_ready=false
-                break
-            else
-                echo "   API container is not running. Please check logs."
-                exit 1
-            fi
+            echo "   API Service health check timed out after 5 minutes."
+            api_ready=false
+            break
         fi
 
-        local message=">> Waiting for API Service to Start (${elapsed_time}s)"
-        local dots=$(printf '%*s' $idx2 | tr ' ' '.')
-        echo -ne "\r$message$dots"
-        ((idx2++))
+        local dots
+        dots=$(printf '%*s' "$idx" | tr ' ' '.')
+        printf "\r>> Waiting for API Service to Start (%ss)%s" "$elapsed_time" "$dots"
+        ((idx++))
         sleep 1
     done
-    printf "\r\033[K"
-    if [ "$api_ready" = true ]; then
-        echo "   API Service started successfully ✅"
+
+    printf "\r%*s\r" 60 ""
+
+    if [[ "$api_ready" == true ]]; then
+        echo "   API Service started successfully"
     else
-        echo "   ⚠️  API Service did not respond to health-check – please verify manually."
+        echo "   API Service did not respond to health-check - please verify manually."
     fi
-    source "${DOCKER_ENV_PATH}"
-    echo "   Plane Server started successfully ✅"
-    echo ""
-    echo "   You can access the application at $WEB_URL"
-    echo ""
 
-}
-function stopServices() {
-    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH --env-file=$DOCKER_ENV_PATH down"
-}
-function restartServices() {
-    stopServices
-    startServices
-}
-function upgrade() {
-    local latest_release=$(checkLatestRelease)
-
+    echo "   Plane Server started successfully"
     echo ""
-    echo "Current release: $APP_RELEASE"
+    echo "   Web:   http://localhost"
+    echo "   API:   http://localhost:8000"
+    echo ""
+}
 
-    if [ "$latest_release" == "$APP_RELEASE" ]; then
+function stop_services() {
+    initialize_local_env_files
+    run_compose $(compose_base_args) down
+}
+
+function restart_services() {
+    stop_services
+    start_services
+}
+
+function rebuild_services() {
+    initialize_local_env_files
+    echo "Rebuilding local images without cache..."
+    build_local_images true
+}
+
+function view_specific_logs() {
+    local service_name="$1"
+    initialize_local_env_files
+    run_compose $(compose_base_args) logs -f "$service_name"
+}
+
+function view_logs() {
+    local service_name="${1:-}"
+
+    if [[ -z "$service_name" ]]; then
         echo ""
-        echo "You are already using the latest release"
-        exit 0
-    fi
-
-    echo "Latest release: $latest_release"
-    echo ""
-
-    # Check for confirmation to upgrade
-    echo "Do you want to upgrade to the latest release ($latest_release)?"
-    read -p "Continue? [y/N]: " confirm
-
-    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
-        echo "Exiting..."
-        exit 0
-    fi
-
-    export APP_RELEASE=$latest_release
-
-    echo "Upgrading Plane to the latest release..."
-    echo ""
-
-    echo "***** STOPPING SERVICES ****"
-    stopServices
-
-    echo
-    echo "***** DOWNLOADING STABLE VERSION ****"
-    install
-
-    echo "***** PLEASE VALIDATE AND START SERVICES ****"
-}
-function viewSpecificLogs(){
-    local SERVICE_NAME=$1
-
-    if /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps | grep -q '$SERVICE_NAME'"; then
-        echo "Service '$SERVICE_NAME' is running."
-    else
-        echo "Service '$SERVICE_NAME' is not running."
-    fi
-
-    /bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH logs -f $SERVICE_NAME"
-}
-function viewLogs(){
-    
-    ARG_SERVICE_NAME=$2
-
-    if [ -z "$ARG_SERVICE_NAME" ];
-    then
-        echo
         echo "Select a Service you want to view the logs for:"
         echo "   1) Web"
         echo "   2) Space"
@@ -492,223 +326,186 @@ function viewLogs(){
         echo "   10) Minio"
         echo "   11) RabbitMQ"
         echo "   0) Back to Main Menu"
-        echo 
-        read -p "Service: " DOCKER_SERVICE_NAME
+        echo ""
 
-        until (( DOCKER_SERVICE_NAME >= 0 && DOCKER_SERVICE_NAME <= 11 )); do
+        read -p "Service: " selection
+
+        while [[ -z "$selection" || ! "$selection" =~ ^[0-9]+$ || "$selection" -lt 0 || "$selection" -gt 11 ]]; do
             echo "Invalid selection. Please enter a number between 0 and 11."
-            read -p "Service: " DOCKER_SERVICE_NAME
+            read -p "Service: " selection
         done
 
-        if [ -z "$DOCKER_SERVICE_NAME" ];
-        then
-            echo "INVALID SERVICE NAME SUPPLIED"
-        else
-            case $DOCKER_SERVICE_NAME in
-                1) viewSpecificLogs "web";;
-                2) viewSpecificLogs "space";;
-                3) viewSpecificLogs "api";;
-                4) viewSpecificLogs "worker";;
-                5) viewSpecificLogs "beat-worker";;
-                6) viewSpecificLogs "migrator";;
-                7) viewSpecificLogs "proxy";;
-                8) viewSpecificLogs "plane-redis";;
-                9) viewSpecificLogs "plane-db";;
-                10) viewSpecificLogs "plane-minio";;
-                11) viewSpecificLogs "plane-mq";;
-                0) askForAction;;
-                *) echo "INVALID SERVICE NAME SUPPLIED";;
-            esac
-        fi
-    elif [ -n "$ARG_SERVICE_NAME" ];
-    then
-        ARG_SERVICE_NAME=$(echo "$ARG_SERVICE_NAME" | tr '[:upper:]' '[:lower:]')
-        case $ARG_SERVICE_NAME in
-            web) viewSpecificLogs "web";;
-            space) viewSpecificLogs "space";;
-            api) viewSpecificLogs "api";;
-            worker) viewSpecificLogs "worker";;
-            beat-worker) viewSpecificLogs "beat-worker";;
-            migrator) viewSpecificLogs "migrator";;
-            proxy) viewSpecificLogs "proxy";;
-            redis) viewSpecificLogs "plane-redis";;
-            postgres) viewSpecificLogs "plane-db";;
-            minio) viewSpecificLogs "plane-minio";;
-            rabbitmq) viewSpecificLogs "plane-mq";;
-            *) echo "INVALID SERVICE NAME SUPPLIED";;
+        case "$selection" in
+            1) view_specific_logs "web" ;;
+            2) view_specific_logs "space" ;;
+            3) view_specific_logs "api" ;;
+            4) view_specific_logs "worker" ;;
+            5) view_specific_logs "beat-worker" ;;
+            6) view_specific_logs "migrator" ;;
+            7) view_specific_logs "proxy" ;;
+            8) view_specific_logs "plane-redis" ;;
+            9) view_specific_logs "plane-db" ;;
+            10) view_specific_logs "plane-minio" ;;
+            11) view_specific_logs "plane-mq" ;;
+            0) ask_for_action ;;
+            *) echo "INVALID SERVICE NAME SUPPLIED" ;;
         esac
     else
-        echo "INVALID SERVICE NAME SUPPLIED"
+        service_name=$(echo "$service_name" | tr '[:upper:]' '[:lower:]')
+        case "$service_name" in
+            web) view_specific_logs "web" ;;
+            space) view_specific_logs "space" ;;
+            api) view_specific_logs "api" ;;
+            worker) view_specific_logs "worker" ;;
+            beat-worker) view_specific_logs "beat-worker" ;;
+            migrator) view_specific_logs "migrator" ;;
+            proxy) view_specific_logs "proxy" ;;
+            redis) view_specific_logs "plane-redis" ;;
+            postgres) view_specific_logs "plane-db" ;;
+            minio) view_specific_logs "plane-minio" ;;
+            rabbitmq) view_specific_logs "plane-mq" ;;
+            *) echo "INVALID SERVICE NAME SUPPLIED" ;;
+        esac
     fi
 }
+
+function show_status() {
+    initialize_local_env_files
+    run_compose $(compose_base_args) ps
+}
+
 function backup_container_dir() {
-    local BACKUP_FOLDER=$1
-    local CONTAINER_NAME=$2
-    local CONTAINER_DATA_DIR=$3
-    local SERVICE_FOLDER=$4
+    local backup_folder="$1"
+    local container_name="$2"
+    local container_data_dir="$3"
+    local service_folder="$4"
 
-    echo "Backing up $CONTAINER_NAME data..."
-    local CONTAINER_ID=$(/bin/bash -c "$COMPOSE_CMD -f $DOCKER_FILE_PATH ps -q $CONTAINER_NAME")
-    if [ -z "$CONTAINER_ID" ]; then
-        echo "Error: $CONTAINER_NAME container not found. Make sure the services are running."
+    echo "Backing up ${container_name} data..."
+    local container_id
+    container_id=$(run_compose $(compose_base_args) ps -q "$container_name" | head -n1)
+
+    if [[ -z "$container_id" ]]; then
+        echo "Error: ${container_name} container not found. Make sure the services are running."
         return 1
     fi
 
-    # Create a temporary directory for the backup
-    mkdir -p "$BACKUP_FOLDER/$SERVICE_FOLDER"
+    local service_backup_path="${backup_folder}/${service_folder}"
+    mkdir -p "$service_backup_path"
 
-    # Copy the data directory from the running container
-    echo "Copying $CONTAINER_NAME data directory..."
-    docker cp -q "$CONTAINER_ID:$CONTAINER_DATA_DIR/." "$BACKUP_FOLDER/$SERVICE_FOLDER/"
-    local cp_status=$?
-
-    if [ $cp_status -ne 0 ]; then
-        echo "Error: Failed to copy $SERVICE_FOLDER data"
-        rm -rf $BACKUP_FOLDER/$SERVICE_FOLDER
+    echo "Copying ${container_name} data directory..."
+    if ! docker cp "${container_id}:${container_data_dir}/." "$service_backup_path/"; then
+        echo "Error: Failed to copy ${service_folder} data"
+        rm -rf "$service_backup_path"
         return 1
     fi
 
-    # Create tar.gz of the data
-    cd "$BACKUP_FOLDER"
-    tar -czf "${SERVICE_FOLDER}.tar.gz" "$SERVICE_FOLDER/"
-    local tar_status=$?
-    if [ $tar_status -eq 0 ]; then
-        rm -rf "$SERVICE_FOLDER/"
+    pushd "$backup_folder" >/dev/null
+    if tar -czf "${service_folder}.tar.gz" "$service_folder/"; then
+        rm -rf "$service_backup_path"
     fi
-    cd - > /dev/null
+    popd >/dev/null
 
-    if [ $tar_status -ne 0 ]; then
-        echo "Error: Failed to create tar archive"
-        return 1
-    fi
-
-    echo "Successfully backed up $SERVICE_FOLDER data"
+    echo "Successfully backed up ${service_folder} data"
 }
 
-function backupData() {
-    local datetime=$(date +"%Y%m%d-%H%M")
-    local BACKUP_FOLDER=$PLANE_INSTALL_DIR/backup/$datetime
-    mkdir -p "$BACKUP_FOLDER"
+function backup_data() {
+    local datetime
+    datetime=$(date +"%Y%m%d-%H%M")
+    local backup_folder="${BACKUP_ROOT}/${datetime}"
+    mkdir -p "$backup_folder"
 
-    # Check if docker-compose.yml exists
-    if [ ! -f "$DOCKER_FILE_PATH" ]; then
-        echo "Error: docker-compose.yml not found at $DOCKER_FILE_PATH"
-        exit 1
-    fi
-
-    backup_container_dir "$BACKUP_FOLDER" "plane-db" "/var/lib/postgresql/data" "pgdata" || exit 1
-    backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/export" "uploads" || exit 1
-    backup_container_dir "$BACKUP_FOLDER" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data" || exit 1
-    backup_container_dir "$BACKUP_FOLDER" "plane-redis" "/data" "redisdata" || exit 1
+    if ! backup_container_dir "$backup_folder" "plane-db" "/var/lib/postgresql/data" "pgdata"; then exit 1; fi
+    if ! backup_container_dir "$backup_folder" "plane-minio" "/export" "uploads"; then exit 1; fi
+    if ! backup_container_dir "$backup_folder" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data"; then exit 1; fi
+    if ! backup_container_dir "$backup_folder" "plane-redis" "/data" "redisdata"; then exit 1; fi
 
     echo ""
-    echo "Backup completed successfully. Backup files are stored in $BACKUP_FOLDER"
+    echo "Backup completed successfully. Backup files are stored in ${backup_folder}"
     echo ""
 }
-function askForAction() {
-    local DEFAULT_ACTION=$1
 
-    if [ -z "$DEFAULT_ACTION" ];
-    then
-        echo
+function ask_for_action() {
+    local default_action="${1:-}"
+    local action=""
+
+    if [[ -z "$default_action" ]]; then
+        echo ""
         echo "Select a Action you want to perform:"
-        echo "   1) Install"
+        echo "   1) Install / Build local images"
         echo "   2) Start"
         echo "   3) Stop"
         echo "   4) Restart"
-        echo "   5) Upgrade"
+        echo "   5) Rebuild without cache"
         echo "   6) View Logs"
         echo "   7) Backup Data"
-        echo "   8) Exit"
-        echo 
-        read -p "Action [2]: " ACTION
-        until [[ -z "$ACTION" || "$ACTION" =~ ^[1-8]$ ]]; do
-            echo "$ACTION: invalid selection."
-            read -p "Action [2]: " ACTION
+        echo "   8) Status"
+        echo "   9) Exit"
+        echo ""
+
+        read -p "Action [2]: " action
+
+        while [[ -n "$action" && ! "$action" =~ ^[1-9]$ ]]; do
+            echo "${action}: invalid selection."
+            read -p "Action [2]: " action
         done
 
-        if [ -z "$ACTION" ];
-        then
-            ACTION=2
+        if [[ -z "$action" ]]; then
+            action="2"
         fi
-        echo
+
+        echo ""
     fi
 
-    if [ "$ACTION" == "1" ] || [ "$DEFAULT_ACTION" == "install" ];
-    then
-        install
-        # askForAction
-    elif [ "$ACTION" == "2" ] || [ "$DEFAULT_ACTION" == "start" ];
-    then
-        startServices
-        # askForAction
-    elif [ "$ACTION" == "3" ] || [ "$DEFAULT_ACTION" == "stop" ];
-    then
-        stopServices
-        # askForAction
-    elif [ "$ACTION" == "4" ] || [ "$DEFAULT_ACTION" == "restart" ];
-    then
-        restartServices
-        # askForAction
-    elif [ "$ACTION" == "5" ]  || [ "$DEFAULT_ACTION" == "upgrade" ];
-    then
-        upgrade
-        # askForAction
-    elif [ "$ACTION" == "6" ]  || [ "$DEFAULT_ACTION" == "logs" ];
-    then
-        viewLogs "$@"
-        askForAction
-    elif [ "$ACTION" == "7" ]  || [ "$DEFAULT_ACTION" == "backup" ];
-    then
-        backupData
-    elif [ "$ACTION" == "8" ]
-    then
-        exit 0
-    else
-        echo "INVALID ACTION SUPPLIED"
+    local resolved_action="$action"
+    if [[ -z "$resolved_action" && -n "$default_action" ]]; then
+        resolved_action="$default_action"
     fi
+
+    case "$resolved_action" in
+        1|install|build)
+            install_plane
+            ;;
+        2|start|up)
+            start_services
+            ;;
+        3|stop|down)
+            stop_services
+            ;;
+        4|restart)
+            restart_services
+            ;;
+        5|rebuild)
+            rebuild_services
+            ;;
+        6|logs)
+            if [[ -n "${2:-}" ]]; then
+                view_logs "$2"
+            else
+                view_logs
+            fi
+            ;;
+        7|backup)
+            backup_data
+            ;;
+        8|status|ps)
+            show_status
+            ;;
+        9)
+            exit 0
+            ;;
+        *)
+            echo "INVALID ACTION SUPPLIED"
+            ;;
+    esac
 }
 
-# if docker-compose is installed
-if command -v docker-compose &> /dev/null
-then
-    COMPOSE_CMD="docker-compose"
-else
-    COMPOSE_CMD="docker compose"
-fi
-
-if [ "$CPU_ARCH" == "x86_64" ] || [ "$CPU_ARCH" == "amd64" ]; then
-    CPU_ARCH="amd64"
-elif [ "$CPU_ARCH" == "aarch64" ] || [ "$CPU_ARCH" == "arm64" ]; then
-    CPU_ARCH="arm64"
-fi
-
-if [ -f "$DOCKER_ENV_PATH" ]; then
-    DOCKERHUB_USER=$(getEnvValue "DOCKERHUB_USER" "$DOCKER_ENV_PATH")
-    APP_RELEASE=$(getEnvValue "APP_RELEASE" "$DOCKER_ENV_PATH")
-    PULL_POLICY=$(getEnvValue "PULL_POLICY" "$DOCKER_ENV_PATH")
-    CUSTOM_BUILD=$(getEnvValue "CUSTOM_BUILD" "$DOCKER_ENV_PATH")
-
-    if [ -z "$DOCKERHUB_USER" ]; then
-        DOCKERHUB_USER=artifacts.plane.so/makeplane
-        updateEnvFile "DOCKERHUB_USER" "$DOCKERHUB_USER" "$DOCKER_ENV_PATH"
-    fi
-
-    if [ -z "$APP_RELEASE" ]; then
-        APP_RELEASE=stable
-        updateEnvFile "APP_RELEASE" "$APP_RELEASE" "$DOCKER_ENV_PATH"
-    fi
-
-    if [ -z "$PULL_POLICY" ]; then
-        PULL_POLICY=if_not_present
-        updateEnvFile "PULL_POLICY" "$PULL_POLICY" "$DOCKER_ENV_PATH"
-    fi
-
-    if [ -z "$CUSTOM_BUILD" ]; then
-        CUSTOM_BUILD=false
-        updateEnvFile "CUSTOM_BUILD" "$CUSTOM_BUILD" "$DOCKER_ENV_PATH"
-    fi
-fi
-
+# Initialize
+detect_compose
 print_header
-askForAction "$@"
+
+# Allow passing arguments directly, e.g. ./setup.sh start
+if [[ $# -gt 0 ]]; then
+    ask_for_action "$@"
+else
+    ask_for_action
+fi
