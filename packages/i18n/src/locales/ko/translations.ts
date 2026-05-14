@@ -286,8 +286,8 @@ export default {
   get_snapshot_of_each_active_cycle: "각 활성 주기의 스냅샷을 얻으세요.",
   get_snapshot_of_each_active_cycle_description:
     "모든 활성 주기의 고수준 메트릭을 추적하고, 진행 상태를 확인하며, 마감일에 대한 범위를 파악합니다.",
-  compare_burndowns: "버다운 비교",
-  compare_burndowns_description: "각 팀의 성과를 모니터링하고 각 주기의 버다운 보고서를 확인합니다.",
+  compare_burndowns: "번다운 비교",
+  compare_burndowns_description: "각 팀의 성과를 모니터링하고 각 주기의 번다운 보고서를 확인합니다.",
   quickly_see_make_or_break_issues: "빠르게 중요한 작업 항목을 확인하세요.",
   quickly_see_make_or_break_issues_description:
     "각 주기의 고우선 작업 항목을 미리 보고 마감일에 대한 모든 작업 항목을 한 번에 확인합니다.",
@@ -2027,10 +2027,10 @@ export default {
     active_cycle: {
       label: "활성 주기",
       progress: "진행",
-      chart: "버다운 차트",
+      chart: "번다운 차트",
       priority_issue: "우선순위 작업 항목",
       assignees: "담당자",
-      issue_burndown: "작업 항목 버다운",
+      issue_burndown: "작업 항목 번다운",
       ideal: "이상적인",
       current: "현재",
       labels: "레이블",
@@ -2365,7 +2365,7 @@ export default {
         title: "주기에 작업 항목을 추가하여 진행 상황을 확인하세요",
       },
       chart: {
-        title: "주기에 작업 항목을 추가하여 버다운 차트를 확인하세요.",
+        title: "주기에 작업 항목을 추가하여 번다운 차트를 확인하세요.",
       },
       priority_issue: {
         title: "주기에서 처리된 고우선 작업 항목을 한눈에 확인하세요.",
