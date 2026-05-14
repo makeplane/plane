@@ -2710,7 +2710,7 @@ export default {
       alt: "404 - Página não encontrada",
       title: "Ops! Algo deu errado.",
       description:
-        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+        "A página que você está procurando não foi encontrada. Ela pode ter sido removida, renomeada ou estar temporariamente indisponível.",
       go_to_home: "Ir para o início",
     },
     workspace_views: {
@@ -2719,9 +2719,9 @@ export default {
     projects_empty_state: {
       no_projects_yet: "Ainda não há projetos",
       description:
-        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
-      learn_more: "Learn more about projects",
-      start_first_project: "Start your first project",
+        "Os projetos são a base do trabalho orientado por objetivos. Eles permitem gerenciar equipes, tarefas e tudo o que você precisa para concluir o trabalho.",
+      learn_more: "Saiba mais sobre projetos",
+      start_first_project: "Comece seu primeiro projeto",
     },
     profile_activity: {
       page_title: "Perfil - Atividade",
@@ -2729,17 +2729,17 @@ export default {
     pages: {
       not_found_title: "Página não encontrada",
       not_found_description:
-        "The page you are trying to access does not exist or you do not have permission to view it.",
-      view_other_pages: "View other Pages",
+        "A página que você está tentando acessar não existe ou você não tem permissão para visualizá-la.",
+      view_other_pages: "Ver outras Páginas",
     },
     workspace_access: {
       not_found_title: "Workspace não encontrado",
       not_found_description:
-        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+        "Nenhum espaço de trabalho foi encontrado para este URL. Ele pode não existir ou você pode não ter permissão para visualizá-lo.",
       visit_profile: "Visitar perfil",
       not_authorized_title: "Não autorizado!",
       not_authorized_description:
-        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+        "Você não é membro deste espaço de trabalho. Entre em contato com o administrador do espaço de trabalho para receber um convite ou verifique seus convites pendentes.",
       check_pending_invites: "Verificar convites pendentes",
     },
     editor: {
@@ -2777,12 +2777,12 @@ export default {
       view_in_full_screen: "Ver em tela cheia",
       view_image_in_full_screen: "Ver imagem em tela cheia",
       align: "Alinhar",
-      download: "Download",
+      download: "Baixar",
       clear_contents: "Limpar conteúdo",
       insert_above: "Inserir acima",
-      insert_below: "Insira abaixo",
+      insert_below: "Inserir abaixo",
       insert_left: "Inserir à esquerda",
-      insert_right: "Insira à direita",
+      insert_right: "Inserir à direita",
       header_row: "Linha de cabeçalho",
       header_column: "Coluna de cabeçalho",
       alignment: {
@@ -2897,7 +2897,8 @@ export default {
       skip: "Pular",
     },
     inbox: {
-      duplicate_issues_found: "Problemas duplicados de {count} encontrados",
+      duplicate_issues_found:
+        "{count, plural, one {# item de trabalho duplicado encontrado} other {# itens de trabalho duplicados encontrados}}",
       description_versions: {
         intake_form_user: "Usuário do formulário de admissão",
       },
@@ -2972,8 +2973,8 @@ export default {
       and_more: "e mais {count}",
       no_upvotes_yet: "Ainda sem votos positivos",
       no_downvotes_yet: "Ainda sem votos negativos",
-      modules_count: "{count} módulos",
-      labels_count: "{count} etiquetas",
+      modules_count: "{count, plural, one {# módulo} other {# módulos}}",
+      labels_count: "{count, plural, one {# etiqueta} other {# etiquetas}}",
       page_not_found_alt: "Página não encontrada",
       something_went_wrong: "Ops! Algo deu errado.",
       page_not_found_description: "A página que você está procurando não existe ou foi movida.",

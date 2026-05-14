@@ -174,12 +174,15 @@ const getLabelsColumns = (labelStore: IIssueLabelStore, localizedLabels?: TGroup
   }));
 };
 
-const getAssigneeColumns = (memberStore: IIssueMemberStore, localizedLabels?: TGroupByLocalizedLabels) => {
+const getAssigneeColumns = (
+  memberStore: IIssueMemberStore,
+  localizedLabels?: TGroupByLocalizedLabels
+): IGroupByColumn[] | undefined => {
   const { members } = memberStore;
 
   if (!members) return;
 
-  const assigneeColumns: any = members.map((memberInfo) => ({
+  const assigneeColumns: IGroupByColumn[] = members.map((memberInfo) => ({
     id: memberInfo.id,
     name: memberInfo?.member__display_name || "",
     icon: <Avatar name={memberInfo?.member__display_name} src={undefined} size="md" />,

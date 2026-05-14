@@ -130,7 +130,7 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             {allDownVotes.length > 0 ? (
               <>
                 {allDownVotes
-                  .map((r) => r.actor_details.display_name)
+                  .map((r) => r.actor_details?.display_name)
                   .splice(0, VOTES_LIMIT)
                   .join(", ")}
                 {allDownVotes.length > VOTES_LIMIT &&
