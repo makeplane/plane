@@ -2890,6 +2890,37 @@ export default {
   pin: "固定",
   unpin: "取消固定",
   localized_ui: {
+    not_found: {
+      alt: "404 - 找不到页面",
+      title: "哎呀，出了点问题。",
+      description: "抱歉，找不到您要访问的页面。它可能已被移除、重命名，或暂时不可用。",
+      go_to_home: "返回首页",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - 全部视图",
+    },
+    projects_empty_state: {
+      no_projects_yet: "暂无项目",
+      description: "项目是目标驱动工作的基础。你可以用项目管理团队、任务以及完成工作所需的一切。",
+      learn_more: "了解更多项目内容",
+      start_first_project: "开始你的第一个项目",
+    },
+    profile_activity: {
+      page_title: "个人资料 - 活动",
+    },
+    pages: {
+      not_found_title: "找不到页面",
+      not_found_description: "你尝试访问的页面不存在，或你没有权限查看。",
+      view_other_pages: "查看其他页面",
+    },
+    workspace_access: {
+      not_found_title: "找不到工作区",
+      not_found_description: "此 URL 对应的工作区不存在，或你没有权限查看。",
+      visit_profile: "访问个人资料",
+      not_authorized_title: "未授权！",
+      not_authorized_description: "你不是此工作区的成员。请联系工作区管理员邀请你加入，或检查待处理的邀请。",
+      check_pending_invites: "查看待处理邀请",
+    },
     editor: {
       url: "URL",
       enter_or_paste_url: "输入或粘贴 URL",

@@ -2688,6 +2688,42 @@ export default {
     outline_floating_button: "Gliederung öffnen",
   },
   localized_ui: {
+    not_found: {
+      alt: "404 - Seite nicht gefunden",
+      title: "Hoppla! Etwas ist schiefgelaufen.",
+      description:
+        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+      go_to_home: "Zur Startseite",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - Alle Ansichten",
+    },
+    projects_empty_state: {
+      no_projects_yet: "Noch keine Projekte",
+      description:
+        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
+      learn_more: "Learn more about projects",
+      start_first_project: "Start your first project",
+    },
+    profile_activity: {
+      page_title: "Profil - Aktivität",
+    },
+    pages: {
+      not_found_title: "Seite nicht gefunden",
+      not_found_description:
+        "The page you are trying to access does not exist or you do not have permission to view it.",
+      view_other_pages: "View other Pages",
+    },
+    workspace_access: {
+      not_found_title: "Arbeitsbereich nicht gefunden",
+      not_found_description:
+        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+      visit_profile: "Profil öffnen",
+      not_authorized_title: "Nicht autorisiert!",
+      not_authorized_description:
+        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+      check_pending_invites: "Ausstehende Einladungen prüfen",
+    },
     editor: {
       url: "URL",
       enter_or_paste_url: "Geben Sie die URL ein oder fügen Sie sie ein",

@@ -2706,6 +2706,42 @@ export default {
     outline_floating_button: "Abrir estrutura",
   },
   localized_ui: {
+    not_found: {
+      alt: "404 - Página não encontrada",
+      title: "Ops! Algo deu errado.",
+      description:
+        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+      go_to_home: "Ir para o início",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - Todas as visualizações",
+    },
+    projects_empty_state: {
+      no_projects_yet: "Ainda não há projetos",
+      description:
+        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
+      learn_more: "Learn more about projects",
+      start_first_project: "Start your first project",
+    },
+    profile_activity: {
+      page_title: "Perfil - Atividade",
+    },
+    pages: {
+      not_found_title: "Página não encontrada",
+      not_found_description:
+        "The page you are trying to access does not exist or you do not have permission to view it.",
+      view_other_pages: "View other Pages",
+    },
+    workspace_access: {
+      not_found_title: "Workspace não encontrado",
+      not_found_description:
+        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+      visit_profile: "Visitar perfil",
+      not_authorized_title: "Não autorizado!",
+      not_authorized_description:
+        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+      check_pending_invites: "Verificar convites pendentes",
+    },
     editor: {
       url: "URL",
       enter_or_paste_url: "Insira ou cole o URL",

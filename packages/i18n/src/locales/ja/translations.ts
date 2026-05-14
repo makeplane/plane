@@ -2682,6 +2682,42 @@ export default {
     outline_floating_button: "アウトラインを開く",
   },
   localized_ui: {
+    not_found: {
+      alt: "404 - ページが見つかりません",
+      title: "問題が発生しました。",
+      description:
+        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+      go_to_home: "ホームへ移動",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - すべてのビュー",
+    },
+    projects_empty_state: {
+      no_projects_yet: "プロジェクトはまだありません",
+      description:
+        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
+      learn_more: "Learn more about projects",
+      start_first_project: "Start your first project",
+    },
+    profile_activity: {
+      page_title: "プロフィール - アクティビティ",
+    },
+    pages: {
+      not_found_title: "ページが見つかりません",
+      not_found_description:
+        "The page you are trying to access does not exist or you do not have permission to view it.",
+      view_other_pages: "View other Pages",
+    },
+    workspace_access: {
+      not_found_title: "ワークスペースが見つかりません",
+      not_found_description:
+        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+      visit_profile: "プロフィールを表示",
+      not_authorized_title: "権限がありません",
+      not_authorized_description:
+        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+      check_pending_invites: "保留中の招待を確認",
+    },
     editor: {
       url: "URL",
       enter_or_paste_url: "URLを入力または貼り付けます",

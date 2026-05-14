@@ -2645,6 +2645,37 @@ export default {
     outline_floating_button: "打開大綱",
   },
   localized_ui: {
+    not_found: {
+      alt: "404 - 找不到頁面",
+      title: "糟糕，發生了一些問題。",
+      description: "抱歉，找不到您要前往的頁面。它可能已被移除、重新命名，或暫時無法使用。",
+      go_to_home: "返回首頁",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - 全部檢視",
+    },
+    projects_empty_state: {
+      no_projects_yet: "尚無專案",
+      description: "專案是目標導向工作的基礎。你可以用專案管理團隊、任務，以及完成工作所需的一切。",
+      learn_more: "了解更多專案內容",
+      start_first_project: "開始你的第一個專案",
+    },
+    profile_activity: {
+      page_title: "個人資料 - 活動",
+    },
+    pages: {
+      not_found_title: "找不到頁面",
+      not_found_description: "你嘗試存取的頁面不存在，或你沒有權限檢視。",
+      view_other_pages: "檢視其他頁面",
+    },
+    workspace_access: {
+      not_found_title: "找不到工作區",
+      not_found_description: "此 URL 對應的工作區不存在，或你沒有權限檢視。",
+      visit_profile: "前往個人資料",
+      not_authorized_title: "未授權！",
+      not_authorized_description: "你不是此工作區的成員。請聯絡工作區管理員邀請你加入，或檢查待處理的邀請。",
+      check_pending_invites: "查看待處理邀請",
+    },
     editor: {
       url: "網址",
       enter_or_paste_url: "輸入或貼上網址",

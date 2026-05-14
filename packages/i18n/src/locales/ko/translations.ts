@@ -2668,6 +2668,42 @@ export default {
     outline_floating_button: "개요 열기",
   },
   localized_ui: {
+    not_found: {
+      alt: "404 - 페이지를 찾을 수 없습니다",
+      title: "문제가 발생했습니다.",
+      description:
+        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+      go_to_home: "홈으로 이동",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - 모든 보기",
+    },
+    projects_empty_state: {
+      no_projects_yet: "아직 프로젝트가 없습니다",
+      description:
+        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
+      learn_more: "Learn more about projects",
+      start_first_project: "Start your first project",
+    },
+    profile_activity: {
+      page_title: "프로필 - 활동",
+    },
+    pages: {
+      not_found_title: "페이지를 찾을 수 없습니다",
+      not_found_description:
+        "The page you are trying to access does not exist or you do not have permission to view it.",
+      view_other_pages: "View other Pages",
+    },
+    workspace_access: {
+      not_found_title: "워크스페이스를 찾을 수 없습니다",
+      not_found_description:
+        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+      visit_profile: "프로필 방문",
+      not_authorized_title: "권한이 없습니다",
+      not_authorized_description:
+        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+      check_pending_invites: "보류 중인 초대 확인",
+    },
     editor: {
       url: "URL",
       enter_or_paste_url: "URL을 입력하거나 붙여넣으세요.",

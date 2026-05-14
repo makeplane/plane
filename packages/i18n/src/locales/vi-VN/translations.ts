@@ -2693,6 +2693,42 @@ export default {
     outline_floating_button: "Mở phác thảo",
   },
   localized_ui: {
+    not_found: {
+      alt: "404 - Không tìm thấy trang",
+      title: "Rất tiếc! Đã xảy ra lỗi.",
+      description:
+        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+      go_to_home: "Về trang chủ",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - Tất cả chế độ xem",
+    },
+    projects_empty_state: {
+      no_projects_yet: "Chưa có dự án",
+      description:
+        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
+      learn_more: "Learn more about projects",
+      start_first_project: "Start your first project",
+    },
+    profile_activity: {
+      page_title: "Hồ sơ - Hoạt động",
+    },
+    pages: {
+      not_found_title: "Không tìm thấy trang",
+      not_found_description:
+        "The page you are trying to access does not exist or you do not have permission to view it.",
+      view_other_pages: "View other Pages",
+    },
+    workspace_access: {
+      not_found_title: "Không tìm thấy workspace",
+      not_found_description:
+        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+      visit_profile: "Xem hồ sơ",
+      not_authorized_title: "Không được phép!",
+      not_authorized_description:
+        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+      check_pending_invites: "Kiểm tra lời mời đang chờ",
+    },
     editor: {
       url: "URL",
       enter_or_paste_url: "Nhập hoặc dán URL",

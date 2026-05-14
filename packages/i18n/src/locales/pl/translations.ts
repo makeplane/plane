@@ -2661,6 +2661,42 @@ export default {
     outline_floating_button: "Otwórz konspekt",
   },
   localized_ui: {
+    not_found: {
+      alt: "404 - Nie znaleziono strony",
+      title: "Ups! Coś poszło nie tak.",
+      description:
+        "Sorry, the page you are looking for cannot be found. It may have been removed, renamed, or is temporarily unavailable.",
+      go_to_home: "Przejdź do strony głównej",
+    },
+    workspace_views: {
+      page_title: "{workspaceName} - Wszystkie widoki",
+    },
+    projects_empty_state: {
+      no_projects_yet: "Brak projektów",
+      description:
+        "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
+      learn_more: "Learn more about projects",
+      start_first_project: "Start your first project",
+    },
+    profile_activity: {
+      page_title: "Profil - Aktywność",
+    },
+    pages: {
+      not_found_title: "Nie znaleziono strony",
+      not_found_description:
+        "The page you are trying to access does not exist or you do not have permission to view it.",
+      view_other_pages: "View other Pages",
+    },
+    workspace_access: {
+      not_found_title: "Nie znaleziono obszaru roboczego",
+      not_found_description:
+        "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+      visit_profile: "Odwiedź profil",
+      not_authorized_title: "Brak autoryzacji!",
+      not_authorized_description:
+        "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+      check_pending_invites: "Sprawdź oczekujące zaproszenia",
+    },
     editor: {
       url: "URL",
       enter_or_paste_url: "Wpisz lub wklej adres URL",
