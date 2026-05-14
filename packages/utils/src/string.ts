@@ -432,6 +432,22 @@ export const joinUrlPath = (...segments: string[]): string => {
   }
 };
 
+/**
+ * @description Normalizes a base path by:
+ * - converting empty or slash-only values to "/"
+ * - collapsing duplicate slashes
+ * - removing trailing slashes except for root
+ * - ensuring the path starts with a leading slash
+ *
+ * @param {string} rawBasePath - Raw base path to normalize
+ * @returns {string} Normalized base path
+ *
+ * @example
+ * normalizeBasePath("") // returns "/"
+ * normalizeBasePath("/") // returns "/"
+ * normalizeBasePath("///api//v1/") // returns "/api/v1"
+ * normalizeBasePath("api/v1") // returns "/api/v1"
+ */
 export const normalizeBasePath = (rawBasePath: string): string => {
   const trimmed = rawBasePath.trim();
 
