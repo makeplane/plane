@@ -25,7 +25,7 @@ import {
 } from "@/components/icons/attachment";
 
 export const getFileIcon = (fileType: string, size: number = 28) => {
-  switch (fileType) {
+  switch (fileType.toLowerCase()) {
     case "pdf":
       return <PdfIcon height={size} width={size} />;
     case "csv":

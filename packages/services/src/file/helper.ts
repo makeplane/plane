@@ -114,6 +114,7 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
   const filenameError = validateFilename(file.name);
   if (filenameError) {
     console.warn(`File validation warning: ${filenameError}`);
+    return "";
   }
 
   try {
