@@ -29,6 +29,11 @@ import type { IStateStore } from "@/store/state.store";
 export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
 
+type TGroupByLocalizedLabels = {
+  allWorkItems: string;
+  none: string;
+};
+
 export const getGroupByColumns = (
   groupBy: GroupByColumnTypes | null,
   cycle: ICycleStore,
@@ -36,29 +41,36 @@ export const getGroupByColumns = (
   label: IIssueLabelStore,
   projectState: IStateStore,
   member: IIssueMemberStore,
-  includeNone?: boolean
+  includeNone?: boolean,
+  localizedLabels?: TGroupByLocalizedLabels
 ): IGroupByColumn[] | undefined => {
   switch (groupBy) {
     case "cycle":
-      return getCycleColumns(cycle);
+      return getCycleColumns(cycle, localizedLabels);
     case "module":
-      return getModuleColumns(module);
+      return getModuleColumns(module, localizedLabels);
     case "state":
       return getStateColumns(projectState);
     case "priority":
       return getPriorityColumns();
     case "labels":
-      return getLabelsColumns(label) as any;
+      return getLabelsColumns(label, localizedLabels) as any;
     case "assignees":
-      return getAssigneeColumns(member);
+      return getAssigneeColumns(member, localizedLabels);
     case "created_by":
       return getCreatedByColumns(member) as any;
     default:
-      if (includeNone) return [{ id: `All Issues`, name: `All work items`, payload: {}, icon: undefined }];
+      if (includeNone)
+        return [
+          { id: `All Issues`, name: localizedLabels?.allWorkItems ?? `All work items`, payload: {}, icon: undefined },
+        ];
   }
 };
 
-const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined => {
+const getCycleColumns = (
+  cycleStore: ICycleStore,
+  localizedLabels?: TGroupByLocalizedLabels
+): IGroupByColumn[] | undefined => {
   const { cycles } = cycleStore;
 
   if (!cycles) return;
@@ -78,7 +90,7 @@ const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined 
   });
   cycleGroups.push({
     id: "None",
-    name: "None",
+    name: localizedLabels?.none ?? "None",
     icon: <CycleIcon className="h-3.5 w-3.5" />,
     payload: { cycle_id: null },
   });
@@ -86,7 +98,10 @@ const getCycleColumns = (cycleStore: ICycleStore): IGroupByColumn[] | undefined 
   return cycleGroups;
 };
 
-const getModuleColumns = (moduleStore: IIssueModuleStore): IGroupByColumn[] | undefined => {
+const getModuleColumns = (
+  moduleStore: IIssueModuleStore,
+  localizedLabels?: TGroupByLocalizedLabels
+): IGroupByColumn[] | undefined => {
   const { modules } = moduleStore;
 
   if (!modules) return;
@@ -104,7 +119,7 @@ const getModuleColumns = (moduleStore: IIssueModuleStore): IGroupByColumn[] | un
   }) as any;
   moduleGroups.push({
     id: "None",
-    name: "None",
+    name: localizedLabels?.none ?? "None",
     icon: <ModuleIcon className="h-3.5 w-3.5" />,
     payload: { module_ids: [] },
   });
@@ -139,49 +154,52 @@ const getPriorityColumns = () => {
   }));
 };
 
-const getLabelsColumns = (label: IIssueLabelStore) => {
-  const { labels: storeLabels } = label;
+const getLabelsColumns = (labelStore: IIssueLabelStore, localizedLabels?: TGroupByLocalizedLabels) => {
+  const { labels: storeLabels } = labelStore;
 
   if (!storeLabels) return;
 
-  const labels = [...storeLabels, { id: "None", name: "None", color: "#666" }];
+  const labels = [...storeLabels, { id: "None", name: localizedLabels?.none ?? "None", color: "#666" }];
 
-  return labels.map((label) => ({
-    id: label.id,
-    name: label.name,
+  return labels.map((labelInfo) => ({
+    id: labelInfo.id,
+    name: labelInfo.name,
     icon: (
-      <div className="h-[12px] w-[12px] rounded-full" style={{ backgroundColor: label.color ? label.color : "#666" }} />
+      <div
+        className="h-[12px] w-[12px] rounded-full"
+        style={{ backgroundColor: labelInfo.color ? labelInfo.color : "#666" }}
+      />
     ),
-    payload: label?.id === "None" ? {} : { label_ids: [label.id] },
+    payload: labelInfo?.id === "None" ? {} : { label_ids: [labelInfo.id] },
   }));
 };
 
-const getAssigneeColumns = (member: IIssueMemberStore) => {
-  const { members } = member;
+const getAssigneeColumns = (memberStore: IIssueMemberStore, localizedLabels?: TGroupByLocalizedLabels) => {
+  const { members } = memberStore;
 
   if (!members) return;
 
-  const assigneeColumns: any = members.map((member) => ({
-    id: member.id,
-    name: member?.member__display_name || "",
-    icon: <Avatar name={member?.member__display_name} src={undefined} size="md" />,
-    payload: { assignee_ids: [member.id] },
+  const assigneeColumns: any = members.map((memberInfo) => ({
+    id: memberInfo.id,
+    name: memberInfo?.member__display_name || "",
+    icon: <Avatar name={memberInfo?.member__display_name} src={undefined} size="md" />,
+    payload: { assignee_ids: [memberInfo.id] },
   }));
 
-  assigneeColumns.push({ id: "None", name: "None", icon: <Avatar size="md" />, payload: {} });
+  assigneeColumns.push({ id: "None", name: localizedLabels?.none ?? "None", icon: <Avatar size="md" />, payload: {} });
 
   return assigneeColumns;
 };
 
-const getCreatedByColumns = (member: IIssueMemberStore) => {
-  const { members } = member;
+const getCreatedByColumns = (memberStore: IIssueMemberStore) => {
+  const { members } = memberStore;
 
   if (!members) return;
 
-  return members.map((member) => ({
-    id: member.id,
-    name: member?.member__display_name || "",
-    icon: <Avatar name={member?.member__display_name} src={undefined} size="md" />,
+  return members.map((memberInfo) => ({
+    id: memberInfo.id,
+    name: memberInfo?.member__display_name || "",
+    icon: <Avatar name={memberInfo?.member__display_name} src={undefined} size="md" />,
     payload: {},
   }));
 };
