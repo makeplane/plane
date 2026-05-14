@@ -1,0 +1,177 @@
+services:
+  web:
+    container_name: web
+    build:
+      context: .
+      dockerfile: ./apps/web/Dockerfile.web
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    depends_on:
+      - api
+
+  admin:
+    container_name: admin
+    build:
+      context: .
+      dockerfile: ./apps/admin/Dockerfile.admin
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    depends_on:
+      - api
+      - web
+
+  space:
+    container_name: space
+    build:
+      context: .
+      dockerfile: ./apps/space/Dockerfile.space
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    depends_on:
+      - api
+      - web
+
+  api:
+    container_name: api
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: ./bin/docker-entrypoint-api.sh
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+
+  worker:
+    container_name: bgworker
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: ./bin/docker-entrypoint-worker.sh
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  beat-worker:
+    container_name: beatworker
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+    command: ./bin/docker-entrypoint-beat.sh
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - api
+      - plane-db
+      - plane-redis
+
+  migrator:
+    container_name: plane-migrator
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.api
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: no
+    command: ./bin/docker-entrypoint-migrator.sh
+    env_file:
+      - ./apps/api/.env
+    depends_on:
+      - plane-db
+      - plane-redis
+
+  live:
+    container_name: plane-live
+    build:
+      context: .
+      dockerfile: ./apps/live/Dockerfile.live
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: always
+
+  plane-db:
+    container_name: plane-db
+    image: postgres:15.7-alpine
+    restart: always
+    command: postgres -c 'max_connections=1000'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data
+
+  plane-redis:
+    container_name: plane-redis
+    image: valkey/valkey:7.2.11-alpine
+    restart: always
+    volumes:
+      - redisdata:/data
+
+  plane-mq:
+    container_name: plane-mq
+    image: rabbitmq:3.13.6-management-alpine
+    restart: always
+    env_file:
+      - .env
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  plane-minio:
+    container_name: plane-minio
+    image: minio/minio
+    restart: always
+    command: server /export --console-address ":9090"
+    volumes:
+      - uploads:/export
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY}
+
+  # Comment this if you already have a reverse proxy running
+  proxy:
+    container_name: proxy
+    build:
+      context: ./apps/proxy
+      dockerfile: Dockerfile.ce
+    restart: always
+    ports:
+      - ${LISTEN_HTTP_PORT}:80
+      - ${LISTEN_HTTPS_PORT}:443
+    environment:
+      FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
+      BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+    depends_on:
+      - web
+      - api
+      - space
+      - admin
+
+volumes:
+  pgdata:
+  redisdata:
+  uploads:
+  rabbitmq_data:

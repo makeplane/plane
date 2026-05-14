@@ -133,3 +133,19 @@ from .draft import (
     DraftIssueSerializer,
     DraftIssueDetailSerializer,
 )
+
+from .messenger import (
+    ChatMessengerSerializer,
+    ChatMessengerLiteSerializer,
+    ChatMemberMessengerSerializer,
+    UserChatStateMessengerSerializer,
+    MessageMessengerSerializer,
+    MessageMessengerLiteSerializer,
+    MessageReactionMessengerSerializer,
+    MessageAttachmentMessengerSerializer,
+    PinnedMessageMessengerSerializer,
+    BlockMessengerSerializer,
+    UserRelationMessengerSerializer,
+    InviteLinkMessengerSerializer,
+    InviteLinkUseMessengerSerializer,
+)

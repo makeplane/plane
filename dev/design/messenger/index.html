@@ -1,0 +1,1162 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Corporate Telegram Web Messenger</title>
+  <style>
+    :root {
+      --bg-page: #eef2f7;
+      --bg-shell: #ffffff;
+      --bg-sidebar: rgba(248, 250, 252, 0.96);
+      --bg-panel: #ffffff;
+      --bg-chat: radial-gradient(circle at top, rgba(14, 165, 233, 0.12), transparent 30%), linear-gradient(135deg, #f8fafc, #eef4fb);
+      --bg-input: #f8fafc;
+      --bg-soft: #f1f5f9;
+      --bg-hover: #eaf3fb;
+      --bg-active: #229ed9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-soft: #94a3b8;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #229ed9;
+      --accent-2: #0ea5e9;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --ok: #10b981;
+      --bubble-in: rgba(255, 255, 255, 0.95);
+      --bubble-out: #229ed9;
+      --bubble-out-text: #ffffff;
+      --shadow: 0 24px 80px rgba(15, 23, 42, 0.16);
+      --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius-xl: 28px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body.dark {
+      --bg-page: #020617;
+      --bg-shell: #020617;
+      --bg-sidebar: rgba(15, 23, 42, 0.96);
+      --bg-panel: #020617;
+      --bg-chat: radial-gradient(circle at top, rgba(14, 165, 233, 0.12), transparent 32%), linear-gradient(135deg, #020617, #0f172a);
+      --bg-input: #0f172a;
+      --bg-soft: #111c2f;
+      --bg-hover: #17233a;
+      --bg-active: #229ed9;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-soft: #64748b;
+      --border: #1e293b;
+      --border-strong: #334155;
+      --bubble-in: rgba(15, 23, 42, 0.96);
+      --shadow: 0 28px 90px rgba(0, 0, 0, 0.45);
+      --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.25);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+    body {
+      overflow: hidden;
+      background: var(--bg-page);
+      color: var(--text-main);
+      font-family: var(--font);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    button, input, textarea, select { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    input, textarea, select { color: var(--text-main); }
+
+    .app { height: 100vh; padding: 12px; background: var(--bg-page); transition: background 0.25s ease; }
+    .shell {
+      display: flex;
+      position: relative;
+      width: min(1480px, 100%);
+      height: calc(100vh - 24px);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      border-radius: var(--radius-xl);
+      background: var(--bg-shell);
+      box-shadow: var(--shadow);
+    }
+    body.dark .shell { border-color: var(--border); }
+
+    .sidebar {
+      display: flex;
+      flex: 0 0 360px;
+      width: 360px;
+      min-width: 360px;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      transition: margin-left 0.28s ease, background 0.25s ease, border-color 0.25s ease;
+    }
+    .shell.sidebar-collapsed .sidebar { margin-left: -360px; }
+    .sidebar-header { border-bottom: 1px solid var(--border); padding: 16px; transition: border-color 0.25s ease; }
+    .top-row { display: flex; align-items: center; gap: 12px; }
+
+    .icon-btn {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      flex: 0 0 auto;
+      place-items: center;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-muted);
+      transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    }
+    .icon-btn:hover { background: var(--bg-hover); color: var(--accent); }
+    .icon-btn:active { transform: scale(0.96); }
+    .icon { width: 20px; height: 20px; display: block; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .tiny-icon { width: 14px; height: 14px; flex: 0 0 auto; }
+
+    .search-box { position: relative; flex: 1; }
+    .search-box .icon { position: absolute; left: 13px; top: 50%; width: 17px; height: 17px; transform: translateY(-50%); color: var(--text-soft); pointer-events: none; }
+    .search-box input {
+      width: 100%; height: 42px; border: 1px solid transparent; border-radius: 999px; outline: none;
+      background: var(--bg-soft); color: var(--text-main); padding: 0 42px; font-size: 14px;
+      transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+    .search-box input:focus { border-color: rgba(14, 165, 233, 0.45); background: var(--bg-panel); box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12); }
+    .clear-search { position: absolute; top: 50%; right: 8px; display: none; width: 28px; height: 28px; transform: translateY(-50%); border-radius: 999px; background: transparent; color: var(--text-soft); }
+    .clear-search.show { display: grid; place-items: center; }
+    .clear-search:hover { background: var(--bg-hover); color: var(--text-main); }
+
+    .tabs { display: flex; gap: 8px; margin-top: 14px; overflow-x: auto; padding-bottom: 2px; }
+    .tab { flex: 0 0 auto; border-radius: 999px; background: var(--bg-panel); color: var(--text-muted); padding: 9px 14px; font-size: 13px; transition: background 0.18s ease, color 0.18s ease; }
+    .tab.active { background: rgba(14, 165, 233, 0.13); color: var(--accent); font-weight: 650; }
+    .tab:hover { background: var(--bg-hover); color: var(--accent); }
+
+    .chat-list { flex: 1; min-height: 0; overflow-y: auto; padding: 8px; }
+    .chat-list::-webkit-scrollbar, .messages::-webkit-scrollbar, .details-body::-webkit-scrollbar, .tabs::-webkit-scrollbar, .quick-actions::-webkit-scrollbar { width: 7px; height: 7px; }
+    .chat-list::-webkit-scrollbar-thumb, .messages::-webkit-scrollbar-thumb, .details-body::-webkit-scrollbar-thumb, .tabs::-webkit-scrollbar-thumb, .quick-actions::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(100, 116, 139, 0.25); }
+
+    .chat-item {
+      position: relative;
+      display: flex; width: 100%; align-items: center; gap: 12px; border-radius: 18px; background: transparent; color: var(--text-main);
+      padding: 12px; text-align: left; transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      cursor: pointer;
+    }
+    .chat-item:hover { background: var(--bg-panel); box-shadow: var(--shadow-soft); }
+    .chat-item.active { background: var(--bg-active); color: #ffffff; box-shadow: 0 12px 34px rgba(34, 158, 217, 0.24); }
+    .chat-item.archived { opacity: 0.72; }
+    .chat-item.blocked { opacity: 0.58; }
+    .chat-more-btn {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      display: none;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      color: var(--text-muted);
+      box-shadow: 0 8px 18px rgba(15,23,42,0.10);
+    }
+    body.dark .chat-more-btn { background: rgba(15,23,42,0.82); }
+    .chat-item:hover .chat-more-btn, .chat-more-btn:focus { display: grid; }
+    .chat-item.active .chat-more-btn { background: rgba(255,255,255,0.18); color: #ffffff; }
+    .chat-status-tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      background: rgba(239,68,68,0.12);
+      color: var(--danger);
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+    .chat-item.active .chat-status-tag { background: rgba(255,255,255,0.18); color: #ffffff; }
+
+    .avatar { position: relative; display: grid; width: 46px; height: 46px; flex: 0 0 auto; place-items: center; border-radius: 999px; color: #ffffff; font-size: 13px; font-weight: 750; letter-spacing: 0.02em; box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12); }
+    .avatar.large { width: 68px; height: 68px; font-size: 18px; }
+    .avatar.blue { background: linear-gradient(135deg, #2563eb, #22d3ee); }
+    .avatar.green { background: linear-gradient(135deg, #059669, #2dd4bf); }
+    .avatar.violet { background: linear-gradient(135deg, #7c3aed, #6366f1); }
+    .avatar.rose { background: linear-gradient(135deg, #e11d48, #fb923c); }
+    .avatar.slate { background: linear-gradient(135deg, #334155, #94a3b8); }
+    .avatar.red { background: linear-gradient(135deg, #ef4444, #f59e0b); }
+    .avatar.amber { background: linear-gradient(135deg, #f59e0b, #f97316); }
+    .online-dot { position: absolute; right: 0; bottom: 0; width: 13px; height: 13px; border: 2px solid var(--bg-sidebar); border-radius: 999px; background: var(--ok); }
+
+    .chat-meta { flex: 1; min-width: 0; }
+    .chat-title-row, .chat-sub-row, .message-meta, .status-line { display: flex; align-items: center; }
+    .chat-title-row { gap: 6px; }
+    .chat-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 700; }
+    .chat-item:not(.active) .tiny-icon { color: var(--text-soft); }
+    .chat-sub-row { gap: 6px; margin-top: 5px; color: var(--text-muted); font-size: 12px; }
+    .chat-item.active .chat-sub-row, .chat-item.active .chat-time { color: rgba(255, 255, 255, 0.86); }
+    .chat-subtitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chat-side { display: flex; flex: 0 0 auto; align-items: flex-end; flex-direction: column; gap: 8px; }
+    .chat-time { color: var(--text-soft); font-size: 12px; }
+    .badge { display: grid; min-width: 21px; height: 21px; place-items: center; border-radius: 999px; background: var(--accent); color: #ffffff; font-size: 11px; font-weight: 800; padding: 0 6px; }
+    .chat-item.active .badge { background: #ffffff; color: var(--accent); }
+    .sidebar-footer { border-top: 1px solid var(--border); padding: 12px; }
+
+    .primary-btn { display: flex; width: 100%; align-items: center; justify-content: center; gap: 8px; border-radius: 18px; background: var(--text-main); color: var(--bg-shell); padding: 13px 16px; font-size: 14px; font-weight: 750; transition: transform 0.18s ease, opacity 0.18s ease; }
+    .primary-btn:hover { opacity: 0.9; }
+    .primary-btn:active { transform: scale(0.98); }
+
+    .main { position: relative; display: flex; min-width: 0; flex: 1; flex-direction: column; background: var(--bg-chat); transition: background 0.25s ease; }
+    .main-header { display: flex; height: 68px; flex: 0 0 68px; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.72); background: rgba(255,255,255,0.82); padding: 0 16px; backdrop-filter: blur(18px); transition: background 0.25s ease, border-color 0.25s ease; z-index: 8; }
+    body.dark .main-header { border-color: var(--border); background: rgba(2,6,23,0.82); }
+    .conversation-target { display: flex; min-width: 0; align-items: center; gap: 12px; border-radius: 18px; background: transparent; color: var(--text-main); padding: 6px 10px 6px 4px; text-align: left; transition: background 0.18s ease; }
+    .conversation-target:hover { background: var(--bg-hover); }
+    .conversation-text { min-width: 0; }
+    .conversation-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 750; }
+    .conversation-status { margin-top: 2px; overflow: hidden; color: var(--text-muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .header-left, .header-actions { display: flex; min-width: 0; align-items: center; gap: 8px; }
+    .theme-btn { background: var(--bg-soft); color: var(--text-muted); }
+
+    .selection-bar { display: none; height: 54px; flex: 0 0 54px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.9); padding: 0 16px; backdrop-filter: blur(18px); z-index: 7; }
+    body.dark .selection-bar { background: rgba(2,6,23,0.9); }
+    .shell.selecting .selection-bar { display: flex; }
+    .selection-left, .selection-actions { display: flex; align-items: center; gap: 8px; }
+    .selection-count { font-size: 14px; font-weight: 800; }
+    .danger-btn:hover { color: var(--danger); }
+
+    .pinned-bar { display: none; flex: 0 0 auto; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.78); padding: 8px 18px; backdrop-filter: blur(14px); z-index: 5; }
+    body.dark .pinned-bar { background: rgba(2,6,23,0.78); }
+    .pinned-bar.show { display: flex; }
+    .pin-line { width: 3px; height: 32px; border-radius: 999px; background: var(--accent); }
+    .pinned-text { min-width: 0; flex: 1; }
+    .pinned-title { font-size: 12px; font-weight: 800; color: var(--accent); }
+    .pinned-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: 12px; }
+
+    .messages { min-height: 0; flex: 1; overflow-y: auto; padding: 24px 16px; scroll-behavior: smooth; }
+    .messages-inner { display: flex; width: min(780px, 100%); margin: 0 auto; flex-direction: column; gap: 10px; }
+    .date-chip, .unread-marker { align-self: center; border: 1px solid rgba(255,255,255,0.74); border-radius: 999px; background: rgba(255,255,255,0.82); color: var(--text-muted); padding: 5px 12px; font-size: 12px; font-weight: 650; box-shadow: 0 6px 18px rgba(15,23,42,0.07); backdrop-filter: blur(12px); }
+    body.dark .date-chip, body.dark .unread-marker { border-color: var(--border); background: rgba(15,23,42,0.84); }
+    .unread-marker { width: 100%; text-align: center; color: var(--accent); border-color: rgba(14,165,233,0.25); }
+
+    .message-row { display: flex; position: relative; width: 100%; align-items: flex-end; gap: 8px; }
+    .message-row.mine { justify-content: flex-end; }
+    .message-row.theirs { justify-content: flex-start; }
+    .message-row.selected .bubble { outline: 3px solid rgba(14,165,233,0.28); }
+    .message-row.highlight .bubble { animation: flash 1.2s ease; }
+    @keyframes flash { 0%,100% { box-shadow: var(--shadow-soft); } 35% { box-shadow: 0 0 0 5px rgba(14,165,233,0.24), var(--shadow-soft); } }
+
+    .select-dot { display: none; width: 24px; height: 24px; flex: 0 0 auto; border: 2px solid var(--border-strong); border-radius: 999px; background: var(--bg-panel); }
+    .shell.selecting .select-dot { display: grid; place-items: center; }
+    .message-row.selected .select-dot { border-color: var(--accent); background: var(--accent); color: white; }
+    .message-row.selected .select-dot::after { content: "✓"; font-size: 13px; font-weight: 900; }
+
+    .bubble-wrap { display: flex; flex-direction: column; max-width: 76%; }
+    .message-row.mine .bubble-wrap { align-items: flex-end; }
+    .message-row.theirs .bubble-wrap { align-items: flex-start; }
+    .bubble { position: relative; width: fit-content; max-width: 100%; border-radius: 22px; padding: 10px 12px 7px; font-size: 14px; line-height: 1.55; box-shadow: var(--shadow-soft); word-wrap: break-word; }
+    .message-row.theirs .bubble { border-bottom-left-radius: 6px; border: 1px solid rgba(255,255,255,0.72); background: var(--bubble-in); color: var(--text-main); }
+    body.dark .message-row.theirs .bubble { border-color: var(--border); }
+    .message-row.mine .bubble { border-bottom-right-radius: 6px; background: var(--bubble-out); color: var(--bubble-out-text); box-shadow: 0 12px 30px rgba(34,158,217,0.22); }
+    .bubble-menu-btn { position: absolute; top: 6px; right: 6px; display: none; width: 26px; height: 26px; place-items: center; border-radius: 999px; background: rgba(15,23,42,0.08); color: inherit; }
+    .message-row.mine .bubble-menu-btn { background: rgba(255,255,255,0.14); }
+    .bubble:hover .bubble-menu-btn { display: grid; }
+
+    .author { margin-bottom: 2px; color: var(--accent); font-size: 12px; font-weight: 800; }
+    .message-text { white-space: pre-wrap; padding-right: 4px; }
+    .forward-badge, .reply-quote { border-left: 3px solid rgba(14,165,233,0.7); margin-bottom: 7px; padding: 5px 8px; border-radius: 9px; background: rgba(14,165,233,0.08); font-size: 12px; }
+    .message-row.mine .forward-badge, .message-row.mine .reply-quote { border-left-color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.12); }
+    .quote-author { display: block; font-weight: 800; color: var(--accent); }
+    .message-row.mine .quote-author { color: #dff5ff; }
+    .quote-text { display: block; max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: 0.84; }
+
+    .attachment { display: flex; width: 100%; align-items: center; gap: 10px; margin-top: 10px; border: 1px solid var(--border); border-radius: 15px; background: var(--bg-soft); color: inherit; padding: 9px 10px; text-align: left; transition: background 0.18s ease, transform 0.18s ease; }
+    .message-row.mine .attachment { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.14); }
+    .attachment:hover { transform: translateY(-1px); }
+    .attachment-preview { width: 44px; height: 44px; object-fit: cover; border-radius: 12px; background: rgba(15,23,42,0.1); }
+    .attachment-info { min-width: 0; flex: 1; }
+    .attachment-name { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 800; }
+    .attachment-size { display: block; margin-top: 2px; opacity: 0.72; font-size: 11px; }
+
+    .message-meta { justify-content: flex-end; gap: 5px; margin-top: 2px; color: var(--text-soft); font-size: 11px; }
+    .message-row.mine .message-meta { color: rgba(255,255,255,0.82); }
+    .edited { opacity: 0.75; }
+    .ticks { display: inline-flex; align-items: center; color: inherit; font-size: 13px; letter-spacing: -4px; padding-right: 4px; cursor: help; }
+    .ticks.read { color: #bfeaff; }
+    .read-at { cursor: help; }
+
+    .reactions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; padding: 0 2px; }
+    .reaction-chip { display: inline-flex; align-items: center; gap: 4px; border: 1px solid rgba(14,165,233,0.18); border-radius: 999px; background: rgba(255,255,255,0.88); color: var(--text-main); padding: 3px 7px; font-size: 12px; line-height: 1; box-shadow: 0 6px 14px rgba(15,23,42,0.07); }
+    body.dark .reaction-chip { background: rgba(15,23,42,0.92); color: var(--text-main); }
+    .reaction-chip.mine { border-color: var(--accent); color: var(--accent); }
+
+    .typing { display: flex; align-self: flex-start; align-items: center; gap: 9px; border: 1px solid rgba(255,255,255,0.72); border-radius: 999px; background: rgba(255,255,255,0.82); color: var(--text-muted); padding: 8px 13px; font-size: 12px; box-shadow: var(--shadow-soft); backdrop-filter: blur(12px); }
+    body.dark .typing { border-color: var(--border); background: rgba(15,23,42,0.88); }
+    .dots { display: flex; gap: 4px; }
+    .dots span { width: 6px; height: 6px; border-radius: 999px; background: var(--text-soft); animation: bounce 1s infinite ease-in-out; }
+    .dots span:nth-child(2) { animation-delay: 0.12s; }
+    .dots span:nth-child(3) { animation-delay: 0.24s; }
+    @keyframes bounce { 0%, 80%, 100% { transform: translateY(0); opacity: 0.45; } 40% { transform: translateY(-4px); opacity: 1; } }
+
+    .composer-wrap { flex: 0 0 auto; border-top: 1px solid rgba(255,255,255,0.72); background: rgba(255,255,255,0.82); padding: 12px 16px 16px; backdrop-filter: blur(18px); z-index: 6; }
+    body.dark .composer-wrap { border-color: var(--border); background: rgba(2,6,23,0.88); }
+    .composer-inner { width: min(780px, 100%); margin: 0 auto; }
+    .composer-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .quick-actions { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 1px; }
+    .quick-action { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-panel); color: var(--text-muted); padding: 7px 11px; font-size: 12px; transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease; }
+    .quick-action:hover { border-color: rgba(14,165,233,0.32); background: rgba(14,165,233,0.09); color: var(--accent); }
+    .notice { flex: 0 0 auto; border-radius: 999px; background: var(--bg-soft); color: var(--text-muted); padding: 7px 12px; font-size: 12px; white-space: nowrap; }
+
+    .compose-state { display: none; align-items: center; gap: 10px; border-left: 3px solid var(--accent); border-radius: 14px; background: var(--bg-soft); margin-bottom: 8px; padding: 9px 10px; }
+    .compose-state.show { display: flex; }
+    .compose-state-text { flex: 1; min-width: 0; }
+    .compose-state-title { display: block; color: var(--accent); font-size: 12px; font-weight: 850; }
+    .compose-state-sub { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: 12px; }
+
+    .file-preview { display: none; gap: 8px; overflow-x: auto; margin-bottom: 8px; }
+    .file-preview.show { display: flex; }
+    .pending-file { display: flex; align-items: center; gap: 8px; min-width: 190px; max-width: 250px; border: 1px solid var(--border); border-radius: 16px; background: var(--bg-panel); padding: 8px; }
+    .pending-thumb { width: 38px; height: 38px; object-fit: cover; border-radius: 11px; background: var(--bg-soft); }
+    .pending-info { min-width: 0; flex: 1; }
+    .pending-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 800; }
+    .pending-size { display: block; color: var(--text-muted); font-size: 11px; }
+    .remove-file { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 999px; background: var(--bg-soft); color: var(--text-muted); }
+
+    .composer { display: flex; align-items: flex-end; gap: 8px; border: 1px solid var(--border); border-radius: 24px; background: var(--bg-input); padding: 8px; box-shadow: var(--shadow-soft); transition: border-color 0.18s ease, box-shadow 0.18s ease; }
+    .composer:focus-within { border-color: rgba(14,165,233,0.48); box-shadow: 0 0 0 4px rgba(14,165,233,0.12); }
+    .composer textarea { width: 100%; min-height: 40px; max-height: 130px; flex: 1; resize: none; border: 0; outline: none; background: transparent; color: var(--text-main); padding: 10px 2px; font-size: 14px; line-height: 20px; }
+    .send-btn { display: grid; width: 40px; height: 40px; flex: 0 0 auto; place-items: center; border-radius: 999px; background: var(--text-main); color: var(--bg-shell); transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease; }
+    .send-btn.has-text { background: var(--accent); color: #ffffff; box-shadow: 0 10px 26px rgba(34,158,217,0.24); }
+    .send-btn:active { transform: scale(0.96); }
+
+    .details { display: flex; width: 314px; min-width: 314px; flex: 0 0 314px; flex-direction: column; border-left: 1px solid var(--border); background: var(--bg-panel); transition: margin-right 0.28s ease, background 0.25s ease, border-color 0.25s ease; }
+    .shell.details-collapsed .details { margin-right: -314px; }
+    .details-header { display: flex; height: 68px; flex: 0 0 68px; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding: 0 16px; }
+    .details-title { font-size: 14px; font-weight: 780; }
+    .profile-block { display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid var(--border); padding: 26px 22px; text-align: center; }
+    .profile-name { margin-top: 14px; font-size: 16px; font-weight: 800; }
+    .profile-sub { margin-top: 5px; color: var(--text-muted); font-size: 13px; }
+    .profile-actions { display: grid; width: 100%; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 18px; }
+    .profile-action { display: flex; align-items: center; flex-direction: column; gap: 6px; border: 1px solid var(--border); border-radius: 17px; background: var(--bg-soft); color: var(--text-muted); padding: 11px 8px; font-size: 11px; transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease; }
+    .profile-action:hover { border-color: rgba(14,165,233,0.32); background: rgba(14,165,233,0.09); color: var(--accent); }
+    .details-body { min-height: 0; flex: 1; overflow-y: auto; padding: 16px; }
+    .card { border: 1px solid var(--border); border-radius: 24px; background: var(--bg-soft); padding: 16px; }
+    .card + .card { margin-top: 14px; }
+    .card-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 780; }
+    .settings-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+    .setting-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-radius: 12px; background: transparent; color: var(--text-main); padding: 3px 0; font-size: 13px; text-align: left; }
+    button.setting-row:hover { color: var(--accent); }
+    .setting-row span:first-child { color: var(--text-muted); }
+    .setting-row span:last-child { font-weight: 720; text-align: right; }
+    .materials { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 13px; }
+    .material { display: grid; aspect-ratio: 1; place-items: center; border-radius: 17px; background: var(--bg-panel); color: var(--text-muted); font-size: 12px; font-weight: 850; transition: color 0.18s ease, transform 0.18s ease; }
+    .material:hover { color: var(--accent); transform: translateY(-1px); }
+
+    .empty { display: grid; height: 100%; place-items: center; padding: 36px; text-align: center; }
+    .empty-icon { display: grid; width: 82px; height: 82px; margin: 0 auto 16px; place-items: center; border-radius: 28px; background: var(--bg-soft); color: var(--text-muted); }
+    .empty h2 { margin: 0; font-size: 18px; }
+    .empty p { max-width: 360px; margin: 8px auto 0; color: var(--text-muted); font-size: 14px; line-height: 1.65; }
+
+    .context-menu, .main-menu-popover, .emoji-popover, .chat-menu-popover { position: fixed; z-index: 60; min-width: 220px; border: 1px solid var(--border); border-radius: 18px; background: rgba(255,255,255,0.96); box-shadow: var(--shadow); padding: 7px; backdrop-filter: blur(18px); transform-origin: top left; }
+    body.dark .context-menu, body.dark .main-menu-popover, body.dark .emoji-popover, body.dark .chat-menu-popover { background: rgba(15,23,42,0.96); }
+    .context-menu.hidden, .main-menu-popover.hidden, .emoji-popover.hidden, .chat-menu-popover.hidden { display: none; }
+    .menu-row { display: flex; width: 100%; align-items: center; gap: 10px; border-radius: 13px; background: transparent; color: var(--text-main); padding: 9px 10px; font-size: 13px; text-align: left; }
+    .menu-row:hover { background: var(--bg-hover); color: var(--accent); }
+    .menu-row.danger:hover { color: var(--danger); }
+    .menu-sep { height: 1px; margin: 6px 4px; background: var(--border); }
+    .emoji-line { display: flex; gap: 4px; padding: 4px; }
+    .emoji-btn { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 999px; background: transparent; font-size: 18px; }
+    .emoji-btn:hover { background: var(--bg-hover); }
+    .context-read { padding: 6px 10px 4px; color: var(--text-muted); font-size: 11px; }
+
+    .new-chat-intro { color: var(--text-muted); font-size: 13px; line-height: 1.55; margin: 2px 4px 12px; }
+    .contact-group-title { margin: 14px 8px 7px; color: var(--text-muted); font-size: 11px; font-weight: 850; letter-spacing: 0.06em; text-transform: uppercase; }
+    .contact-list { display: flex; flex-direction: column; gap: 4px; }
+    .contact-row { display: flex; width: 100%; align-items: center; gap: 12px; border-radius: 17px; background: transparent; color: var(--text-main); padding: 10px; text-align: left; transition: background 0.18s ease, color 0.18s ease; }
+    .contact-row:hover { background: var(--bg-hover); color: var(--accent); }
+    .contact-meta { min-width: 0; flex: 1; }
+    .contact-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 780; }
+    .contact-role { display: block; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); font-size: 12px; }
+    .personal-link-box { border-top: 1px solid var(--border); background: var(--bg-soft); padding: 14px 16px 16px; }
+    .personal-link-title { margin-bottom: 8px; color: var(--text-muted); font-size: 12px; font-weight: 800; }
+    .personal-link-row { display: flex; gap: 8px; }
+    .personal-link-row input { min-width: 0; flex: 1; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-panel); padding: 10px 12px; outline: none; font-size: 13px; }
+    .copy-link-btn { flex: 0 0 auto; border-radius: 14px; background: var(--text-main); color: var(--bg-shell); padding: 0 13px; font-size: 13px; font-weight: 750; }
+
+    .modal-backdrop { position: fixed; inset: 0; z-index: 70; display: none; align-items: center; justify-content: center; background: rgba(2,6,23,0.42); padding: 16px; backdrop-filter: blur(4px); }
+    .modal-backdrop.show { display: flex; }
+    .modal { width: min(420px, 100%); border: 1px solid var(--border); border-radius: 24px; background: var(--bg-panel); box-shadow: var(--shadow); overflow: hidden; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding: 14px 16px; }
+    .modal-title { font-weight: 850; }
+    .modal-body { padding: 12px; max-height: 420px; overflow-y: auto; }
+    .forward-target { display: flex; width: 100%; align-items: center; gap: 12px; border-radius: 16px; background: transparent; color: var(--text-main); padding: 10px; text-align: left; }
+    .forward-target:hover { background: var(--bg-hover); }
+
+    .toast { position: fixed; left: 50%; bottom: 22px; z-index: 90; max-width: min(560px, calc(100vw - 32px)); transform: translate(-50%, 20px); border: 1px solid var(--border); border-radius: 999px; background: rgba(15,23,42,0.92); color: #ffffff; padding: 10px 15px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; backdrop-filter: blur(12px); }
+    .toast.show { transform: translate(-50%, 0); opacity: 1; }
+    .undo-toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      z-index: 95;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: min(620px, calc(100vw - 32px));
+      transform: translate(-50%, 24px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: rgba(15,23,42,0.95);
+      color: #ffffff;
+      padding: 12px 14px 12px 16px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.34);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+      backdrop-filter: blur(16px);
+    }
+    .undo-toast.show { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+    .undo-toast-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+    .undo-toast-btn { border-radius: 999px; background: transparent; color: #67d4ff; padding: 8px 10px; font-size: 13px; font-weight: 850; text-transform: uppercase; }
+    .undo-toast-btn:hover { background: rgba(103,212,255,0.12); }
+    .undo-toast-progress { position: absolute; left: 14px; right: 14px; bottom: 0; height: 3px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,0.12); }
+    .undo-toast-progress span { display: block; width: 100%; height: 100%; background: #67d4ff; transform-origin: left; animation: undoProgress 4s linear forwards; }
+    @keyframes undoProgress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+    .hidden-input { display: none; }
+
+    @media (max-width: 1180px) {
+      .details { position: absolute; top: 12px; right: 12px; bottom: 12px; z-index: 20; border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--shadow); }
+      .shell.details-collapsed .details { margin-right: -340px; }
+    }
+    @media (max-width: 820px) {
+      .app { padding: 0; }
+      .shell { height: 100vh; border: 0; border-radius: 0; }
+      .sidebar { position: absolute; top: 0; bottom: 0; left: 0; z-index: 30; width: min(360px, 88vw); min-width: min(360px, 88vw); box-shadow: var(--shadow); }
+      .shell.sidebar-collapsed .sidebar { margin-left: -90vw; }
+      .details { top: 8px; right: 8px; bottom: 8px; width: min(314px, calc(100vw - 16px)); min-width: min(314px, calc(100vw - 16px)); }
+      .bubble-wrap { max-width: 88%; }
+      .notice { display: none; }
+      .header-actions .icon-btn.call-btn, .header-actions .icon-btn.video-btn { display: none; }
+      .context-menu { max-width: calc(100vw - 20px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div id="shell" class="shell">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="top-row">
+            <button class="icon-btn" id="menuBtn" aria-label="Меню"><svg class="icon" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+            <div class="search-box">
+              <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input id="searchInput" type="text" placeholder="Поиск" />
+              <button class="clear-search" id="clearSearch" aria-label="Очистить поиск"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+          </div>
+          <div class="tabs" id="tabs">
+            <button class="tab active" data-filter="all">Все</button>
+            <button class="tab" data-filter="work">Работа</button>
+            <button class="tab" data-filter="unread">Непрочитанные</button>
+            <button class="tab" data-filter="archive">Архив</button>
+          </div>
+        </div>
+        <div class="chat-list" id="chatList"></div>
+        <div class="sidebar-footer">
+          <button class="primary-btn" id="newChatBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Новый чат</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="main-header">
+          <div class="header-left">
+            <button class="icon-btn" id="toggleSidebar" aria-label="Показать или скрыть список чатов"><svg class="icon" id="sidebarIcon" viewBox="0 0 24 24"><path d="M15 18 9 12l6-6"/></svg></button>
+            <button class="conversation-target" id="conversationTarget">
+              <span id="headerAvatar"></span>
+              <span class="conversation-text"><span class="conversation-title" id="headerTitle"></span><span class="conversation-status" id="headerStatus"></span></span>
+            </button>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn theme-btn" id="themeToggle" aria-label="Переключить тему"></button>
+            <button class="icon-btn" id="moreBtn" aria-label="Дополнительное меню"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+          </div>
+        </header>
+
+        <div class="selection-bar" id="selectionBar">
+          <div class="selection-left"><button class="icon-btn" id="cancelSelectionBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button><span class="selection-count" id="selectionCount">0 выбрано</span></div>
+          <div class="selection-actions">
+            <button class="icon-btn" id="copySelectedBtn" title="Копировать"><svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+            <button class="icon-btn" id="forwardSelectedBtn" title="Переслать"><svg class="icon" viewBox="0 0 24 24"><path d="m15 17 5-5-5-5"/><path d="M20 12H8a4 4 0 0 0-4 4v2"/></svg></button>
+            <button class="icon-btn danger-btn" id="deleteSelectedBtn" title="Удалить"><svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+          </div>
+        </div>
+
+        <button class="pinned-bar" id="pinnedBar"><span class="pin-line"></span><span class="pinned-text"><span class="pinned-title">Закрепленное сообщение</span><span class="pinned-sub" id="pinnedSub"></span></span><span id="unpinBtn" class="icon-btn"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></span></button>
+
+        <section class="messages" id="messages"><div class="messages-inner" id="messagesInner"></div></section>
+
+        <footer class="composer-wrap">
+          <div class="composer-inner">
+            <div class="composer-top">
+              <div class="quick-actions">
+                <button class="quick-action" id="docBtn"><svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>Документ</button>
+                <button class="quick-action" id="mediaBtn"><svg class="icon tiny-icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>Медиа</button>
+                <button class="quick-action" id="incomingBtn"><svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5M12 15V3"/></svg>Входящее</button>
+                <button class="quick-action" id="archiveBtn"><svg class="icon tiny-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="4" rx="1"/><path d="M5 7v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7M10 12h4"/></svg>Архив</button>
+              </div>
+              <div class="notice" id="notice">Готово к работе</div>
+            </div>
+            <div class="compose-state" id="composeState"><span class="compose-state-text"><span class="compose-state-title" id="composeTitle"></span><span class="compose-state-sub" id="composeSub"></span></span><button class="icon-btn" id="cancelComposeState"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+            <div class="file-preview" id="filePreview"></div>
+            <div class="composer">
+              <button class="icon-btn" id="emojiComposerBtn" aria-label="Эмодзи"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></button>
+              <textarea id="draftInput" rows="1" placeholder="Сообщение"></textarea>
+              <button class="icon-btn" id="attachBtn" aria-label="Прикрепить файл"><svg class="icon" viewBox="0 0 24 24"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.82-2.83l8.48-8.48"/></svg></button>
+              <button class="send-btn" id="sendBtn" aria-label="Отправить сообщение"></button>
+            </div>
+          </div>
+        </footer>
+      </main>
+
+      <aside class="details" id="details">
+        <div class="details-header"><div class="details-title">Информация</div><button class="icon-btn" id="closeDetails" aria-label="Закрыть панель"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+        <div class="profile-block">
+          <div id="profileAvatar"></div><div class="profile-name" id="profileName"></div><div class="profile-sub" id="profileSub"></div>
+          <div class="profile-actions">
+            <button class="profile-action" id="muteBtn"><svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9M10 21h4"/></svg>Mute</button>
+            <button class="profile-action" id="focusSearchBtn"><svg class="icon tiny-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search</button>
+            <button class="profile-action" id="archiveDetailsBtn"><svg class="icon tiny-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="4" rx="1"/><path d="M5 7v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7M10 12h4"/></svg>Archive</button>
+          </div>
+        </div>
+        <div class="details-body"><div class="card"><div class="card-title"><svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.51a2 2 0 0 1 1-1.72l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="3"/></svg>Настройки чата</div><div class="settings-list" id="settingsList"></div></div><div class="card"><div class="card-title">Общие материалы</div><div class="materials" id="materialsGrid"></div></div></div>
+      </aside>
+    </div>
+  </div>
+
+  <input class="hidden-input" id="fileInput" type="file" multiple />
+  <input class="hidden-input" id="mediaInput" type="file" accept="image/*,video/*" multiple />
+
+  <div class="context-menu hidden" id="contextMenu"></div>
+  <div class="main-menu-popover hidden" id="mainMenu"></div>
+  <div class="chat-menu-popover hidden" id="chatMenu"></div>
+  <div class="emoji-popover hidden" id="emojiPopover"></div>
+  <div class="modal-backdrop" id="forwardModal"><div class="modal"><div class="modal-header"><span class="modal-title">Переслать в чат</span><button class="icon-btn" id="closeForwardModal"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="modal-body" id="forwardTargets"></div></div></div>
+  <div class="modal-backdrop" id="newChatModal"><div class="modal"><div class="modal-header"><span class="modal-title">Новый чат</span><button class="icon-btn" id="closeNewChatModal"><svg class="icon" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="modal-body"><div class="new-chat-intro">Выберите контакт из друзей, команды или подчиненных, чтобы начать локальный диалог.</div><div class="contact-list" id="contactTargets"></div></div><div class="personal-link-box"><div class="personal-link-title">Ссылка на чат с пользователем</div><div class="personal-link-row"><input id="userChatLink" readonly value="" /><button class="copy-link-btn" id="copyUserLinkBtn">Копировать</button></div></div></div></div>
+  <div class="undo-toast" id="undoToast"><span class="undo-toast-text" id="undoToastText"></span><button class="undo-toast-btn" id="undoDeleteBtn">Отмена</button><span class="undo-toast-progress"><span id="undoToastProgress"></span></span></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const chats = [
+      { id: "team-alpha", name: "Product Team", subtitle: "Elena: обновила roadmap на Q3", time: "10:42", unread: 3, pinned: true, online: false, muted: false, blocked: false, type: "group", avatar: "PT", color: "blue", category: "work", archived: false, pinnedMessageId: 4 },
+      { id: "ops-bot", name: "Ops Monitor", subtitle: "CPU usage normalized", time: "09:18", unread: 1, pinned: true, online: true, muted: true, blocked: false, type: "bot", avatar: "OM", color: "green", category: "work", archived: false, pinnedMessageId: null },
+      { id: "alex", name: "Alex Morgan", subtitle: "Отправил документы по сделке", time: "Вчера", unread: 0, pinned: false, online: true, muted: false, blocked: false, type: "person", avatar: "AM", color: "violet", category: "work", archived: false, pinnedMessageId: null },
+      { id: "design", name: "Design Review", subtitle: "2 новых макета в Figma", time: "Пн", unread: 0, pinned: false, online: false, muted: false, blocked: false, type: "group", avatar: "DR", color: "rose", category: "work", archived: false, pinnedMessageId: null },
+      { id: "finance", name: "Finance Desk", subtitle: "Счет #4381 ожидает подтверждения", time: "Пт", unread: 2, pinned: false, online: false, muted: false, blocked: false, type: "group", avatar: "FD", color: "slate", category: "work", archived: false, pinnedMessageId: null },
+      { id: "security", name: "Security Alerts", subtitle: "Новая попытка входа заблокирована", time: "12 мая", unread: 0, pinned: false, online: false, muted: true, blocked: false, type: "bot", avatar: "SA", color: "red", category: "archive", archived: true, pinnedMessageId: null }
+    ];
+
+    const contacts = [
+      { id: "maria", name: "Maria Volkova", role: "Друг · Product Designer", group: "Друзья", avatar: "MV", color: "rose", online: true, type: "person" },
+      { id: "nikita", name: "Nikita Orlov", role: "Друг · Backend Engineer", group: "Друзья", avatar: "NO", color: "green", online: false, type: "person" },
+      { id: "sofia", name: "Sofia Kim", role: "Команда · Project Manager", group: "Команда", avatar: "SK", color: "violet", online: true, type: "person" },
+      { id: "daniel", name: "Daniel Reed", role: "Команда · QA Lead", group: "Команда", avatar: "DR", color: "blue", online: false, type: "person" },
+      { id: "artem", name: "Artem Sokolov", role: "Подчиненный · Junior Developer", group: "Подчиненные", avatar: "AS", color: "amber", online: true, type: "person" },
+      { id: "lina", name: "Lina Petrova", role: "Подчиненный · Analyst", group: "Подчиненные", avatar: "LP", color: "slate", online: false, type: "person" },
+      { id: "hr-bot", name: "HR Assistant", role: "Бот · заявки и отпуска", group: "Боты", avatar: "HR", color: "red", online: true, type: "bot" }
+    ];
+
+    const messages = {
+      "team-alpha": [
+        { id: 1, author: "Elena", text: "Доброе утро. Я обновила roadmap и отметила блокеры по платежному модулю.", time: "09:54", mine: false, status: "read", readAt: null, unread: false, reactions: { "👍": 2 }, myReactions: [] },
+        { id: 2, author: "You", text: "Хорошо. Давайте сегодня сфокусируемся на onboarding flow и финальном списке метрик.", time: "10:01", mine: true, status: "read", readAt: "10:06", unread: false, reactions: { "🔥": 1 }, myReactions: ["🔥"] },
+        { id: 3, author: "Maksim", text: "Я могу закрыть аналитику до 14:00. Для интеграции с CRM нужен еще один endpoint.", time: "10:11", mine: false, status: "delivered", readAt: null, unread: true, reactions: {}, myReactions: [] },
+        { id: 4, author: "Elena", text: "Согласовано. Еще добавила заметки по рискам и SLA в общий документ.", time: "10:42", mine: false, status: "delivered", readAt: null, unread: true, attachment: [{ name: "Roadmap_Q3.pdf", size: 524288, type: "application/pdf" }], reactions: { "✅": 1 }, myReactions: [], pinned: true },
+        { id: 5, author: "Maksim", text: "Плюс добавил короткий список вопросов к backend-команде.", time: "10:45", mine: false, status: "delivered", readAt: null, unread: true, reactions: {}, myReactions: [] }
+      ],
+      "ops-bot": [
+        { id: 1, author: "Ops Monitor", text: "Alert resolved: CPU usage on api-gateway-02 returned below 65%.", time: "09:18", mine: false, status: "delivered", readAt: null, unread: true, reactions: {}, myReactions: [] }
+      ],
+      "alex": [
+        { id: 1, author: "Alex Morgan", text: "Отправил документы по сделке. Проверь, пожалуйста, раздел с обязательствами сторон.", time: "Вчера", mine: false, status: "read", readAt: "Вчера, 18:22", unread: false, attachment: [{ name: "Contract_Draft.docx", size: 843776, type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }], reactions: {}, myReactions: [] },
+        { id: 2, author: "You", text: "Принял. Посмотрю и верну правки в этом же треде.", time: "Вчера", mine: true, status: "read", readAt: "Вчера, 18:24", unread: false, reactions: {}, myReactions: [] }
+      ],
+      "design": [
+        { id: 1, author: "Ira", text: "В Figma лежат две версии: более строгая corporate и более мягкая consumer-facing.", time: "Пн", mine: false, status: "read", readAt: "Пн, 15:04", unread: false, reactions: {}, myReactions: [] }
+      ],
+      "finance": [
+        { id: 1, author: "Finance Desk", text: "Счет #4381 ожидает подтверждения. Дедлайн оплаты — пятница.", time: "Пт", mine: false, status: "delivered", readAt: null, unread: true, reactions: {}, myReactions: [] },
+        { id: 2, author: "Finance Desk", text: "Прикрепляю платежные реквизиты и акт сверки.", time: "Пт", mine: false, status: "delivered", readAt: null, unread: true, attachment: [{ name: "Invoice_4381.pdf", size: 398102, type: "application/pdf" }], reactions: {}, myReactions: [] }
+      ],
+      "security": [
+        { id: 1, author: "Security Alerts", text: "Новая попытка входа заблокирована: неизвестное устройство, регион не совпадает с доверенным списком.", time: "12 мая", mine: false, status: "read", readAt: "12 мая, 09:17", unread: false, reactions: {}, myReactions: [] }
+      ]
+    };
+
+    const state = {
+      selectedId: "team-alpha",
+      filter: "all",
+      query: "",
+      sidebarOpen: true,
+      detailsOpen: true,
+      dark: localStorage.getItem("messenger-theme") === "dark",
+      selectMode: false,
+      selectedMessages: new Set(),
+      replyToId: null,
+      editingMessageId: null,
+      contextMessageId: null,
+      pendingFiles: [],
+      forwardIds: [],
+      readTimers: new Map(),
+      contextChatId: null,
+      deletedChatDraft: null,
+      deleteChatTimer: null
+    };
+
+    const $ = id => document.getElementById(id);
+    const shell = $("shell"), chatList = $("chatList"), searchInput = $("searchInput"), clearSearch = $("clearSearch"), messagesInner = $("messagesInner"), messagesBox = $("messages"), draftInput = $("draftInput"), sendBtn = $("sendBtn"), notice = $("notice"), toast = $("toast"), themeToggle = $("themeToggle"), headerAvatar = $("headerAvatar"), headerTitle = $("headerTitle"), headerStatus = $("headerStatus"), profileAvatar = $("profileAvatar"), profileName = $("profileName"), profileSub = $("profileSub"), settingsList = $("settingsList"), sidebarIcon = $("sidebarIcon"), contextMenu = $("contextMenu"), mainMenu = $("mainMenu"), chatMenu = $("chatMenu"), emojiPopover = $("emojiPopover"), forwardModal = $("forwardModal"), forwardTargets = $("forwardTargets"), fileInput = $("fileInput"), mediaInput = $("mediaInput"), composeState = $("composeState"), composeTitle = $("composeTitle"), composeSub = $("composeSub"), filePreview = $("filePreview"), pinnedBar = $("pinnedBar"), pinnedSub = $("pinnedSub"), selectionCount = $("selectionCount"), newChatModal = $("newChatModal"), contactTargets = $("contactTargets"), userChatLink = $("userChatLink"), undoToast = $("undoToast"), undoToastText = $("undoToastText"), undoToastProgress = $("undoToastProgress");
+
+    function icon(type) {
+      const map = {
+        group: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+        bot: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 2v6M8 2h8M9 14h.01M15 14h.01M9 18h6"/></svg>',
+        person: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>',
+        pin: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="m15 4 5 5-4 1-4 4-1 4-5-5 4-1 4-4Z"/><path d="m9 15-5 5"/></svg>',
+        bell: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 7 3 9H3c0-2 3-2 3-9M10 21h4"/></svg>',
+        file: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>',
+        send: '<svg class="icon" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>',
+        mic: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>',
+        moon: '<svg class="icon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 7.5A9 9 0 1 1 12 3Z"/></svg>',
+        sun: '<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+        copy: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+        reply: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="m9 17-5-5 5-5"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>',
+        edit: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+        forward: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="m15 17 5-5-5-5"/><path d="M20 12H8a4 4 0 0 0-4 4v2"/></svg>',
+        trash: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',
+        archive: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="4" rx="1"/><path d="M5 7v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7M10 12h4"/></svg>',
+        block: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m5.7 5.7 12.6 12.6"/></svg>',
+        more: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>',
+        check: '<svg class="icon tiny-icon" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>'
+      };
+      return map[type] || "";
+    }
+
+    function escapeHtml(value) { return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
+    function nowTime() { return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); }
+    function fileSize(bytes = 0) { if (bytes < 1024) return bytes + " B"; if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB"; return (bytes / 1024 / 1024).toFixed(1) + " MB"; }
+    function getChat(id = state.selectedId) { return chats.find(chat => chat.id === id) || chats[0]; }
+    function getMessage(id, chatId = state.selectedId) { return (messages[chatId] || []).find(message => String(message.id) === String(id)); }
+    function textPreview(message) { if (!message) return ""; return message.text || (message.attachment?.length ? message.attachment.map(file => file.name).join(", ") : "Вложение"); }
+    function avatarHtml(chat, large = false) { return `<span class="avatar ${chat.color}${large ? " large" : ""}">${escapeHtml(chat.avatar)}${chat.online ? '<span class="online-dot"></span>' : ''}</span>`; }
+
+    function showNotice(text) { notice.textContent = text; toast.textContent = text; toast.classList.add("show"); clearTimeout(showNotice.timer); showNotice.timer = setTimeout(() => { notice.textContent = "Готово к работе"; toast.classList.remove("show"); }, 2200); }
+    function applyTheme() { document.body.classList.toggle("dark", state.dark); themeToggle.innerHTML = state.dark ? icon("sun") : icon("moon"); localStorage.setItem("messenger-theme", state.dark ? "dark" : "light"); }
+    function updateShellState() { shell.classList.toggle("sidebar-collapsed", !state.sidebarOpen); shell.classList.toggle("details-collapsed", !state.detailsOpen); shell.classList.toggle("selecting", state.selectMode); sidebarIcon.innerHTML = state.sidebarOpen ? '<path d="M15 18 9 12l6-6"/>' : '<path d="M4 6h16M4 12h16M4 18h16"/>'; selectionCount.textContent = `${state.selectedMessages.size} выбрано`; }
+
+    function filteredChats() {
+      const query = state.query.trim().toLowerCase();
+      return chats.filter(chat => {
+        const matchesQuery = !query || chat.name.toLowerCase().includes(query) || chat.subtitle.toLowerCase().includes(query);
+        const matchesFilter = state.filter === "all" ? !chat.archived : state.filter === "work" ? chat.category === "work" && !chat.archived : state.filter === "unread" ? chat.unread > 0 && !chat.archived : chat.archived;
+        return matchesQuery && matchesFilter;
+      }).sort((a, b) => Number(b.pinned) - Number(a.pinned) || Number(b.unread > 0) - Number(a.unread > 0));
+    }
+
+    function renderChats() {
+      const list = filteredChats();
+      chatList.innerHTML = list.map(chat => {
+        const active = chat.id === state.selectedId;
+        return `<div class="chat-item ${active ? "active" : ""} ${chat.archived ? "archived" : ""} ${chat.blocked ? "blocked" : ""}" data-chat-id="${chat.id}" role="button" tabindex="0">
+          ${avatarHtml(chat)}
+          <span class="chat-meta"><span class="chat-title-row"><span class="chat-title">${escapeHtml(chat.name)}</span>${chat.pinned ? icon("pin") : ""}${chat.muted ? icon("bell") : ""}${chat.archived ? icon("archive") : ""}${chat.blocked ? '<span class="chat-status-tag">BLOCK</span>' : ""}</span><span class="chat-sub-row">${icon(chat.type)}<span class="chat-subtitle">${escapeHtml(chat.blocked ? "Пользователь заблокирован" : chat.subtitle)}</span></span></span>
+          <span class="chat-side"><span class="chat-time">${escapeHtml(chat.time)}</span>${chat.unread ? `<span class="badge">${chat.unread}</span>` : '<span style="height:21px"></span>'}</span>
+          <button class="chat-more-btn" data-open-chat-menu="${chat.id}" aria-label="Действия с чатом">${icon("more")}</button>
+        </div>`;
+      }).join("") || `<div class="empty"><div><div class="empty-icon">${icon("group")}</div><h2>Ничего не найдено</h2><p>Попробуйте изменить поиск или фильтр.</p></div></div>`;
+    }
+
+    function renderHeader() {
+      const chat = getChat();
+      headerAvatar.innerHTML = avatarHtml(chat);
+      headerTitle.textContent = chat.name;
+      headerStatus.textContent = chat.online ? "в сети" : chat.type === "group" ? "12 участников, 4 онлайн" : "был недавно";
+    }
+
+    function renderPinned() {
+      const chat = getChat();
+      const pinned = chat.pinnedMessageId ? getMessage(chat.pinnedMessageId, chat.id) : null;
+      pinnedBar.classList.toggle("show", Boolean(pinned));
+      pinnedSub.textContent = pinned ? textPreview(pinned) : "";
+    }
+
+    function attachmentHtml(file) {
+      const isImage = file.type && file.type.startsWith("image/") && file.url;
+      return `<button class="attachment" data-file-name="${escapeHtml(file.name)}">${isImage ? `<img class="attachment-preview" src="${file.url}" alt="" />` : icon("file")}<span class="attachment-info"><span class="attachment-name">${escapeHtml(file.name)}</span><span class="attachment-size">${escapeHtml(fileSize(file.size))}</span></span></button>`;
+    }
+
+    function reactionHtml(message) {
+      const entries = Object.entries(message.reactions || {}).filter(([, count]) => count > 0);
+      if (!entries.length) return "";
+      return `<div class="reactions">${entries.map(([emoji, count]) => `<button class="reaction-chip ${(message.myReactions || []).includes(emoji) ? "mine" : ""}" data-react-message="${message.id}" data-emoji="${emoji}">${emoji}<span>${count}</span></button>`).join("")}</div>`;
+    }
+
+    function statusHtml(message) {
+      if (!message.mine) return "";
+      const title = message.readAt ? `Прочитано в ${message.readAt}` : message.status === "delivered" ? "Доставлено" : "Отправлено";
+      return `<span class="ticks ${message.status === "read" ? "read" : ""}" title="${escapeHtml(title)}">${message.status === "sent" ? "✓" : "✓✓"}</span>`;
+    }
+
+    function renderMessages() {
+      const chat = getChat();
+      const items = messages[chat.id] || [];
+      let unreadInserted = false;
+      messagesInner.innerHTML = `<div class="date-chip">Сегодня</div>${items.map(message => {
+        const selected = state.selectedMessages.has(String(message.id));
+        const unreadMarker = !message.mine && message.unread && !unreadInserted ? (unreadInserted = true, `<div class="unread-marker">Непрочитанные сообщения</div>`) : "";
+        const reply = message.replyTo ? `<button class="reply-quote" data-scroll-message="${message.replyTo.id}"><span class="quote-author">${escapeHtml(message.replyTo.author)}</span><span class="quote-text">${escapeHtml(message.replyTo.text)}</span></button>` : "";
+        const forward = message.forwardedFrom ? `<div class="forward-badge">Переслано от ${escapeHtml(message.forwardedFrom)}</div>` : "";
+        const readInfo = message.readAt ? `<span class="read-at" title="${escapeHtml(message.mine ? 'Прочитано в ' + message.readAt : 'Вы прочитали в ' + message.readAt)}">${message.mine ? '' : ' · прочитано'}</span>` : "";
+        return `${unreadMarker}<div class="message-row ${message.mine ? "mine" : "theirs"} ${selected ? "selected" : ""}" data-message-id="${message.id}">
+          ${!message.mine ? '<button class="select-dot" data-select-message="' + message.id + '"></button>' : ''}
+          <div class="bubble-wrap"><div class="bubble" data-message-bubble="${message.id}">
+            <button class="bubble-menu-btn" data-open-message-menu="${message.id}">⋯</button>
+            ${!message.mine && chat.type === "group" ? `<div class="author">${escapeHtml(message.author)}</div>` : ""}
+            ${forward}${reply}
+            ${message.text ? `<div class="message-text">${escapeHtml(message.text)}</div>` : ""}
+            ${(message.attachment || []).map(attachmentHtml).join("")}
+            <div class="message-meta"><span>${escapeHtml(message.time)}</span>${message.edited ? '<span class="edited">изменено</span>' : ""}${readInfo}${statusHtml(message)}</div>
+          </div>${reactionHtml(message)}</div>
+          ${message.mine ? '<button class="select-dot" data-select-message="' + message.id + '"></button>' : ''}
+        </div>`;
+      }).join("")}<div class="typing"><span class="dots"><span></span><span></span><span></span></span><span>${escapeHtml(chat.name)} печатает...</span></div>`;
+      requestAnimationFrame(() => { messagesBox.scrollTop = messagesBox.scrollHeight; });
+      scheduleReadVisible(chat.id);
+    }
+
+    function renderDetails() {
+      const chat = getChat();
+      profileAvatar.innerHTML = avatarHtml(chat, true);
+      profileName.textContent = chat.name;
+      profileSub.textContent = chat.type === "group" ? "Рабочий групповой чат" : chat.type === "bot" ? "Системный бот" : "Личный контакт";
+      const rows = [
+        ["Уведомления", chat.muted ? "Отключены" : "Включены", "toggleMute"],
+        ["Архив", chat.archived ? "В архиве" : "Не в архиве", "toggleArchive"],
+        ["Закреп", chat.pinnedMessageId ? "Есть" : "Нет", "scrollPin"],
+        ["Медиа", countFiles(chat.id) + " файлов", "materials"],
+        ["Ссылки", "7 элементов", "links"],
+        ["Закрепить чат", chat.pinned ? "Закреплен" : "Не закреплен", "toggleChatPin"],
+        ["Блокировка", chat.blocked ? "Заблокирован" : "Не заблокирован", "toggleBlock"],
+        ["Удаление", "Удалить чат", "deleteChat"]
+      ];
+      settingsList.innerHTML = rows.map(([key, value, action]) => `<button class="setting-row" data-setting-action="${action}"><span>${escapeHtml(key)}</span><span>${escapeHtml(value)}</span></button>`).join("");
+      $("materialsGrid").innerHTML = ["PDF", "IMG", "DOC", "XLS", "ZIP", "URL"].map(type => `<button class="material" data-material="${type}">${type}</button>`).join("");
+    }
+
+    function countFiles(chatId) { return (messages[chatId] || []).reduce((sum, msg) => sum + (msg.attachment?.length || 0), 0); }
+
+    function renderComposeState() {
+      const reply = state.replyToId ? getMessage(state.replyToId) : null;
+      const edit = state.editingMessageId ? getMessage(state.editingMessageId) : null;
+      composeState.classList.toggle("show", Boolean(reply || edit));
+      if (edit) { composeTitle.textContent = "Редактирование"; composeSub.textContent = textPreview(edit); }
+      else if (reply) { composeTitle.textContent = "Ответ " + reply.author; composeSub.textContent = textPreview(reply); }
+    }
+
+    function renderPendingFiles() {
+      filePreview.classList.toggle("show", state.pendingFiles.length > 0);
+      filePreview.innerHTML = state.pendingFiles.map((file, index) => {
+        const isImage = file.type?.startsWith("image/") && file.url;
+        return `<div class="pending-file"><span>${isImage ? `<img class="pending-thumb" src="${file.url}" alt="" />` : icon("file")}</span><span class="pending-info"><span class="pending-name">${escapeHtml(file.name)}</span><span class="pending-size">${fileSize(file.size)}</span></span><button class="remove-file" data-remove-file="${index}">×</button></div>`;
+      }).join("");
+    }
+
+    function updateSendButton() { const hasContent = draftInput.value.trim().length > 0 || state.pendingFiles.length > 0 || state.editingMessageId; sendBtn.classList.toggle("has-text", hasContent); sendBtn.innerHTML = hasContent ? icon("send") : icon("mic"); }
+    function resizeTextarea() { draftInput.style.height = "auto"; draftInput.style.height = Math.min(draftInput.scrollHeight, 130) + "px"; }
+
+    function renderAll() { applyTheme(); updateShellState(); renderChats(); renderHeader(); renderPinned(); renderMessages(); renderDetails(); renderComposeState(); renderPendingFiles(); updateSendButton(); }
+
+    function scheduleReadVisible(chatId) {
+      const chat = getChat(chatId);
+      if (!chat.unread) return;
+      if (state.readTimers.has(chatId)) clearTimeout(state.readTimers.get(chatId));
+      const timer = setTimeout(() => markChatRead(chatId), 900);
+      state.readTimers.set(chatId, timer);
+    }
+
+    function markChatRead(chatId) {
+      const chat = getChat(chatId);
+      let changed = false;
+      (messages[chatId] || []).forEach(message => {
+        if (!message.mine && message.unread) { message.unread = false; message.readAt = nowTime(); changed = true; }
+      });
+      if (changed || chat.unread) { chat.unread = 0; renderChats(); renderDetails(); showNotice(`Сообщения в «${chat.name}» прочитаны`); }
+    }
+
+    function sendMessage() {
+      const text = draftInput.value.trim();
+      const chat = getChat();
+      if (state.editingMessageId) {
+        const msg = getMessage(state.editingMessageId);
+        if (msg && msg.mine && text) { msg.text = text; msg.edited = true; msg.time = nowTime(); }
+        state.editingMessageId = null; draftInput.value = ""; resizeTextarea(); renderAll(); showNotice("Сообщение изменено"); return;
+      }
+      if (!text && !state.pendingFiles.length) { showNotice("Голосовое сообщение: заглушка"); return; }
+      const reply = state.replyToId ? getMessage(state.replyToId) : null;
+      const next = { id: Date.now(), author: "You", text, time: nowTime(), mine: true, status: "sent", readAt: null, unread: false, attachment: state.pendingFiles.map(file => ({ ...file })), reactions: {}, myReactions: [], replyTo: reply ? { id: reply.id, author: reply.author, text: textPreview(reply) } : null };
+      messages[chat.id] = [...(messages[chat.id] || []), next];
+      chat.subtitle = text ? "You: " + text : "You отправил(а) файл";
+      chat.time = next.time;
+      state.replyToId = null;
+      state.pendingFiles = [];
+      draftInput.value = "";
+      resizeTextarea();
+      renderAll();
+      showNotice("Сообщение отправлено локально");
+      setTimeout(() => updateMessageStatus(chat.id, next.id, "delivered"), 900);
+      setTimeout(() => updateMessageStatus(chat.id, next.id, "read"), 2200);
+    }
+
+    function updateMessageStatus(chatId, messageId, status) {
+      const msg = getMessage(messageId, chatId);
+      if (!msg) return;
+      msg.status = status;
+      if (status === "read") msg.readAt = nowTime();
+      if (chatId === state.selectedId) renderMessages();
+    }
+
+    function addIncomingMessage(chatId = state.selectedId) {
+      const chat = getChat(chatId);
+      const authors = chat.type === "group" ? ["Elena", "Maksim", "Ira"] : [chat.name];
+      const author = authors[Math.floor(Math.random() * authors.length)];
+      const textPool = ["Принял, смотрю детали.", "Добавил комментарий к последнему пункту.", "Нужно еще проверить сроки и зависимости.", "Отправлю обновление через несколько минут."];
+      const msg = { id: Date.now(), author, text: textPool[Math.floor(Math.random() * textPool.length)], time: nowTime(), mine: false, status: "delivered", readAt: null, unread: true, reactions: {}, myReactions: [] };
+      messages[chatId] = [...(messages[chatId] || []), msg];
+      chat.subtitle = `${author}: ${msg.text}`;
+      chat.time = msg.time;
+      chat.unread += 1;
+      renderAll();
+      showNotice("Новое входящее сообщение");
+    }
+
+    function openMessageMenu(messageId, x, y) {
+      const msg = getMessage(messageId);
+      if (!msg) return;
+      state.contextMessageId = String(messageId);
+      const isPinned = getChat().pinnedMessageId && String(getChat().pinnedMessageId) === String(messageId);
+      contextMenu.innerHTML = `<div class="emoji-line">${["👍","❤️","🔥","👏","😮","✅"].map(e => `<button class="emoji-btn" data-react-message="${messageId}" data-emoji="${e}">${e}</button>`).join("")}</div><div class="menu-sep"></div>
+        <button class="menu-row" data-menu-action="reply">${icon("reply")} Ответить</button>
+        ${msg.mine ? `<button class="menu-row" data-menu-action="edit">${icon("edit")} Редактировать</button>` : ""}
+        <button class="menu-row" data-menu-action="forward">${icon("forward")} Переслать</button>
+        <button class="menu-row" data-menu-action="copy">${icon("copy")} Копировать текст</button>
+        <button class="menu-row" data-menu-action="pin">${icon("pin")} ${isPinned ? "Открепить" : "Закрепить"}</button>
+        <button class="menu-row" data-menu-action="select">${icon("check")} Выбрать</button>
+        <div class="context-read">${msg.mine ? (msg.readAt ? `Прочитано в ${escapeHtml(msg.readAt)}` : msg.status === "delivered" ? "Доставлено" : "Отправлено") : (msg.readAt ? `Вы прочитали в ${escapeHtml(msg.readAt)}` : "Еще не прочитано")}</div>
+        <div class="menu-sep"></div><button class="menu-row danger" data-menu-action="delete">${icon("trash")} Удалить</button>`;
+      placePopover(contextMenu, x, y);
+    }
+
+    function placePopover(el, x, y) {
+      hidePopovers(el);
+      el.classList.remove("hidden");
+      const rect = el.getBoundingClientRect();
+      el.style.left = Math.min(x, window.innerWidth - rect.width - 10) + "px";
+      el.style.top = Math.min(y, window.innerHeight - rect.height - 10) + "px";
+    }
+
+    function hidePopovers(except = null) { [contextMenu, mainMenu, chatMenu, emojiPopover].forEach(el => { if (el !== except) el.classList.add("hidden"); }); }
+
+    function handleMessageAction(action) {
+      const id = state.contextMessageId;
+      const msg = getMessage(id);
+      if (!msg) return;
+      if (action === "reply") { state.replyToId = id; state.editingMessageId = null; renderComposeState(); draftInput.focus(); }
+      if (action === "edit") { if (!msg.mine) return; state.editingMessageId = id; state.replyToId = null; draftInput.value = msg.text || ""; resizeTextarea(); renderComposeState(); updateSendButton(); draftInput.focus(); }
+      if (action === "forward") openForwardModal([id]);
+      if (action === "copy") copyText(textPreview(msg));
+      if (action === "pin") togglePin(id);
+      if (action === "select") { state.selectMode = true; state.selectedMessages.add(String(id)); renderAll(); }
+      if (action === "delete") deleteMessages([id]);
+      hidePopovers();
+    }
+
+    function toggleReaction(messageId, emoji) {
+      const msg = getMessage(messageId);
+      if (!msg) return;
+      msg.reactions ||= {};
+      msg.myReactions ||= [];
+      if (msg.myReactions.includes(emoji)) { msg.myReactions = msg.myReactions.filter(e => e !== emoji); msg.reactions[emoji] = Math.max(0, (msg.reactions[emoji] || 1) - 1); }
+      else { msg.myReactions.push(emoji); msg.reactions[emoji] = (msg.reactions[emoji] || 0) + 1; }
+      renderMessages();
+      hidePopovers();
+    }
+
+    function togglePin(messageId) {
+      const chat = getChat();
+      chat.pinnedMessageId = String(chat.pinnedMessageId) === String(messageId) ? null : messageId;
+      (messages[chat.id] || []).forEach(m => m.pinned = String(m.id) === String(chat.pinnedMessageId));
+      renderPinned(); renderMessages(); renderDetails(); showNotice(chat.pinnedMessageId ? "Сообщение закреплено" : "Сообщение откреплено");
+    }
+
+    function deleteMessages(ids) {
+      const chat = getChat();
+      const set = new Set(ids.map(String));
+      messages[chat.id] = (messages[chat.id] || []).filter(msg => !set.has(String(msg.id)));
+      if (chat.pinnedMessageId && set.has(String(chat.pinnedMessageId))) chat.pinnedMessageId = null;
+      state.selectedMessages.clear(); state.selectMode = false;
+      renderAll(); showNotice("Сообщения удалены");
+    }
+
+    function toggleMessageSelection(id) {
+      const sid = String(id);
+      if (state.selectedMessages.has(sid)) state.selectedMessages.delete(sid); else state.selectedMessages.add(sid);
+      state.selectMode = state.selectedMessages.size > 0;
+      renderAll();
+    }
+
+    function copyText(text) {
+      const fallback = () => { const ta = document.createElement("textarea"); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove(); };
+      if (navigator.clipboard) navigator.clipboard.writeText(text).catch(fallback); else fallback();
+      showNotice("Скопировано");
+    }
+
+    function copySelected() {
+      const selected = [...state.selectedMessages].map(id => getMessage(id)).filter(Boolean);
+      if (!selected.length) return;
+      copyText(selected.map(m => `${m.author}: ${textPreview(m)}`).join("\n"));
+    }
+
+    function openForwardModal(ids) {
+      state.forwardIds = ids.map(String);
+      forwardTargets.innerHTML = chats.filter(c => c.id !== state.selectedId).map(chat => `<button class="forward-target" data-forward-target="${chat.id}">${avatarHtml(chat)}<span><strong>${escapeHtml(chat.name)}</strong><br><span style="color:var(--text-muted);font-size:12px">${chat.archived ? "Архив" : "Активный чат"}</span></span></button>`).join("");
+      forwardModal.classList.add("show");
+    }
+
+    function forwardToChat(chatId) {
+      const target = getChat(chatId);
+      const sourceChat = getChat();
+      const selected = state.forwardIds.map(id => getMessage(id)).filter(Boolean);
+      selected.forEach(src => {
+        const copy = { ...src, id: Date.now() + Math.random(), mine: true, author: "You", time: nowTime(), status: "sent", readAt: null, unread: false, forwardedFrom: src.author || sourceChat.name, reactions: {}, myReactions: [], replyTo: null, pinned: false };
+        messages[target.id] = [...(messages[target.id] || []), copy];
+      });
+      target.subtitle = `You переслал(а) ${selected.length} сообщ.`;
+      target.time = nowTime();
+      state.forwardIds = [];
+      state.selectedMessages.clear(); state.selectMode = false;
+      forwardModal.classList.remove("show");
+      renderAll(); showNotice(`Переслано в «${target.name}»`);
+    }
+
+    function handleFiles(fileList) {
+      [...fileList].forEach(file => {
+        const item = { name: file.name, size: file.size, type: file.type || "application/octet-stream", url: file.type.startsWith("image/") ? URL.createObjectURL(file) : "" };
+        state.pendingFiles.push(item);
+      });
+      renderPendingFiles(); updateSendButton(); showNotice(`Файлов добавлено: ${fileList.length}`);
+      fileInput.value = ""; mediaInput.value = "";
+    }
+
+    function toggleMute(chatId = state.selectedId) { const chat = getChat(chatId); chat.muted = !chat.muted; renderAll(); showNotice(chat.muted ? "Уведомления отключены" : "Уведомления включены"); }
+    function toggleArchive(chatId = state.selectedId) { const chat = getChat(chatId); chat.archived = !chat.archived; chat.category = chat.archived ? "archive" : "work"; renderAll(); showNotice(chat.archived ? "Чат перемещен в архив" : "Чат возвращен из архива"); }
+    function toggleChatPin(chatId = state.selectedId) { const chat = getChat(chatId); chat.pinned = !chat.pinned; renderAll(); showNotice(chat.pinned ? "Чат закреплен" : "Чат откреплен"); }
+    function toggleBlock(chatId = state.selectedId) { const chat = getChat(chatId); chat.blocked = !chat.blocked; if (chat.blocked) { chat.muted = true; chat.unread = 0; (messages[chat.id] || []).forEach(message => { if (!message.mine && message.unread) { message.unread = false; message.readAt = nowTime(); } }); } renderAll(); showNotice(chat.blocked ? "Пользователь заблокирован" : "Пользователь разблокирован"); }
+    function openNewChatModal() {
+      const currentUserLink = `https://t.me/corporate_${String(state.selectedId || "user").replace(/[^a-z0-9_-]/gi, "")}`;
+      userChatLink.value = currentUserLink;
+      const groups = ["Друзья", "Команда", "Подчиненные", "Боты"];
+      contactTargets.innerHTML = groups.map(group => {
+        const items = contacts.filter(contact => contact.group === group);
+        if (!items.length) return "";
+        return `<div class="contact-group-title">${escapeHtml(group)}</div>` + items.map(contact => `<button class="contact-row" data-start-chat="${contact.id}">${avatarHtml(contact)}<span class="contact-meta"><span class="contact-name">${escapeHtml(contact.name)}</span><span class="contact-role">${escapeHtml(contact.role)}</span></span></button>`).join("");
+      }).join("");
+      newChatModal.classList.add("show");
+    }
+
+    function createChat(contactId) {
+      const contact = contacts.find(item => item.id === contactId);
+      if (!contact) return;
+      const existing = chats.find(chat => chat.contactId === contact.id);
+      if (existing) {
+        state.selectedId = existing.id;
+        newChatModal.classList.remove("show");
+        renderAll();
+        showNotice(`Открыт существующий чат с «${existing.name}»`);
+        return;
+      }
+      const id = "chat-" + contact.id + "-" + Date.now();
+      chats.unshift({ id, contactId: contact.id, name: contact.name, subtitle: "Пустой диалог", time: nowTime(), unread: 0, pinned: false, online: contact.online, muted: false, blocked: false, type: contact.type, avatar: contact.avatar, color: contact.color, category: "work", archived: false, pinnedMessageId: null });
+      messages[id] = [];
+      state.selectedId = id;
+      newChatModal.classList.remove("show");
+      renderAll();
+      showNotice(`Создан чат с «${contact.name}»`);
+    }
+
+    function deleteCurrentChat(chatId = state.selectedId) {
+      if (chats.length <= 1) { showNotice("Последний чат нельзя удалить в демо"); return; }
+      const chat = getChat(chatId);
+      const index = chats.findIndex(item => item.id === chat.id);
+      if (index < 0) return;
+      deleteChatWithUndo(chat.id);
+    }
+
+    function deleteChatWithUndo(chatId) {
+      if (state.deletedChatDraft?.timer) clearTimeout(state.deletedChatDraft.timer);
+      const index = chats.findIndex(item => item.id === chatId);
+      if (index < 0) return;
+      const chat = chats[index];
+      const messageDraft = messages[chat.id] ? [...messages[chat.id]] : [];
+      const next = chats[index + 1] || chats[index - 1];
+      chats.splice(index, 1);
+      delete messages[chat.id];
+      if (state.selectedId === chat.id && next) state.selectedId = next.id;
+      state.selectedMessages.clear();
+      state.selectMode = false;
+      state.replyToId = null;
+      state.editingMessageId = null;
+      renderAll();
+      showUndoDelete(chat, messageDraft, index);
+    }
+
+    function showUndoDelete(chat, messageDraft, index) {
+      undoToastText.textContent = `Чат «${chat.name}» удален`;
+      undoToast.classList.add("show");
+      undoToastProgress.style.animation = "none";
+      undoToastProgress.offsetHeight;
+      undoToastProgress.style.animation = "undoProgress 4s linear forwards";
+      const timer = setTimeout(() => finalizeDeleteChat(), 4000);
+      state.deletedChatDraft = { chat, messages: messageDraft, index, timer };
+    }
+
+    function restoreDeletedChat() {
+      const draft = state.deletedChatDraft;
+      if (!draft) return;
+      clearTimeout(draft.timer);
+      chats.splice(Math.min(draft.index, chats.length), 0, draft.chat);
+      messages[draft.chat.id] = draft.messages;
+      state.selectedId = draft.chat.id;
+      state.deletedChatDraft = null;
+      undoToast.classList.remove("show");
+      renderAll();
+      showNotice("Удаление отменено");
+    }
+
+    function finalizeDeleteChat() {
+      state.deletedChatDraft = null;
+      undoToast.classList.remove("show");
+      showNotice("Чат удален окончательно в локальном состоянии");
+    }
+
+    function openChatMenu(chatId, x, y) {
+      const chat = getChat(chatId);
+      state.contextChatId = chat.id;
+      chatMenu.innerHTML = `<button class="menu-row" data-chat-action="pin">${icon("pin")} ${chat.pinned ? "Открепить чат" : "Закрепить чат"}</button><button class="menu-row" data-chat-action="mute">${icon("bell")} ${chat.muted ? "Включить уведомления" : "Выключить уведомления"}</button><button class="menu-row" data-chat-action="archive">${icon("archive")} ${chat.archived ? "Вернуть из архива" : "Архивировать"}</button><button class="menu-row" data-chat-action="block">${icon("block")} ${chat.blocked ? "Разблокировать" : "Заблокировать"}</button><div class="menu-sep"></div><button class="menu-row danger" data-chat-action="delete">${icon("trash")} Удалить чат</button>`;
+      placePopover(chatMenu, x, y);
+    }
+
+    function handleChatAction(action) {
+      const chatId = state.contextChatId;
+      if (!chatId) return;
+      if (action === "pin") toggleChatPin(chatId);
+      if (action === "mute") toggleMute(chatId);
+      if (action === "archive") toggleArchive(chatId);
+      if (action === "block") toggleBlock(chatId);
+      if (action === "delete") deleteCurrentChat(chatId);
+      hidePopovers();
+    }
+
+    function openMainMenu(x, y) {
+      const chat = getChat();
+      mainMenu.innerHTML = `<button class="menu-row" data-main-action="new">${icon("edit")} Новый чат</button><button class="menu-row" data-main-action="markRead">${icon("check")} Отметить как прочитанное</button><button class="menu-row" data-main-action="pinChat">${icon("pin")} ${chat.pinned ? "Открепить чат" : "Закрепить чат"}</button><button class="menu-row" data-main-action="mute">${icon("bell")} ${chat.muted ? "Включить уведомления" : "Выключить уведомления"}</button><button class="menu-row" data-main-action="archive">${icon("archive")} ${chat.archived ? "Вернуть из архива" : "Архивировать"}</button><button class="menu-row" data-main-action="block">${icon("block")} ${chat.blocked ? "Разблокировать" : "Заблокировать"}</button><button class="menu-row danger" data-main-action="deleteChat">${icon("trash")} Удалить чат</button><div class="menu-sep"></div><button class="menu-row" data-main-action="theme">${state.dark ? icon("sun") : icon("moon")} Сменить тему</button>`;
+      placePopover(mainMenu, x, y);
+    }
+
+    document.addEventListener("click", event => {
+      const chatMenuBtn = event.target.closest("[data-open-chat-menu]");
+      if (chatMenuBtn) { event.stopPropagation(); const rect = chatMenuBtn.getBoundingClientRect(); openChatMenu(chatMenuBtn.dataset.openChatMenu, rect.left - 190, rect.bottom + 6); return; }
+
+      const chatButton = event.target.closest("[data-chat-id]");
+      if (chatButton) { state.selectedId = chatButton.dataset.chatId; state.selectedMessages.clear(); state.selectMode = false; state.replyToId = null; state.editingMessageId = null; if (window.innerWidth <= 820) state.sidebarOpen = false; renderAll(); return; }
+
+      const menuBtn = event.target.closest("[data-open-message-menu]");
+      if (menuBtn) { event.stopPropagation(); const rect = menuBtn.getBoundingClientRect(); openMessageMenu(menuBtn.dataset.openMessageMenu, rect.left, rect.bottom + 6); return; }
+
+      const selectBtn = event.target.closest("[data-select-message]");
+      if (selectBtn) { event.stopPropagation(); toggleMessageSelection(selectBtn.dataset.selectMessage); return; }
+
+      const bubble = event.target.closest("[data-message-bubble]");
+      if (bubble && state.selectMode) { toggleMessageSelection(bubble.dataset.messageBubble); return; }
+
+      const scrollTarget = event.target.closest("[data-scroll-message]");
+      if (scrollTarget) { const row = document.querySelector(`[data-message-id="${scrollTarget.dataset.scrollMessage}"]`); if (row) { row.scrollIntoView({ behavior: "smooth", block: "center" }); row.classList.add("highlight"); setTimeout(() => row.classList.remove("highlight"), 1300); } return; }
+
+      const reaction = event.target.closest("[data-react-message]");
+      if (reaction) { toggleReaction(reaction.dataset.reactMessage, reaction.dataset.emoji); return; }
+
+      const menuAction = event.target.closest("[data-menu-action]");
+      if (menuAction) { handleMessageAction(menuAction.dataset.menuAction); return; }
+
+      const mainAction = event.target.closest("[data-main-action]");
+      if (mainAction) { const a = mainAction.dataset.mainAction; if (a === "new") openNewChatModal(); if (a === "markRead") markChatRead(state.selectedId); if (a === "pinChat") toggleChatPin(); if (a === "mute") toggleMute(); if (a === "archive") toggleArchive(); if (a === "block") toggleBlock(); if (a === "deleteChat") deleteCurrentChat(); if (a === "theme") { state.dark = !state.dark; applyTheme(); } hidePopovers(); return; }
+
+      const chatAction = event.target.closest("[data-chat-action]");
+      if (chatAction) { handleChatAction(chatAction.dataset.chatAction); return; }
+
+      const removeFile = event.target.closest("[data-remove-file]");
+      if (removeFile) { state.pendingFiles.splice(Number(removeFile.dataset.removeFile), 1); renderPendingFiles(); updateSendButton(); return; }
+
+      const forwardTarget = event.target.closest("[data-forward-target]");
+      if (forwardTarget) { forwardToChat(forwardTarget.dataset.forwardTarget); return; }
+
+      const contactTarget = event.target.closest("[data-start-chat]");
+      if (contactTarget) { createChat(contactTarget.dataset.startChat); return; }
+
+      const material = event.target.closest("[data-material]");
+      if (material) { showNotice(`${material.dataset.material}: показаны локальные материалы-заглушки`); return; }
+
+      const setting = event.target.closest("[data-setting-action]");
+      if (setting) { const a = setting.dataset.settingAction; if (a === "toggleMute") toggleMute(); if (a === "toggleArchive") toggleArchive(); if (a === "toggleChatPin") toggleChatPin(); if (a === "toggleBlock") toggleBlock(); if (a === "scrollPin") pinnedBar.click(); if (a === "materials") showNotice("Список медиа обновлен"); if (a === "links") showNotice("Ссылки: заглушка"); if (a === "deleteChat") deleteCurrentChat(); return; }
+
+      if (!event.target.closest(".context-menu") && !event.target.closest(".main-menu-popover") && !event.target.closest(".chat-menu-popover") && !event.target.closest(".emoji-popover") && !event.target.closest("#moreBtn") && !event.target.closest("#emojiComposerBtn")) hidePopovers();
+    });
+
+    messagesBox.addEventListener("contextmenu", event => { const row = event.target.closest("[data-message-id]"); if (!row) return; event.preventDefault(); openMessageMenu(row.dataset.messageId, event.clientX, event.clientY); });
+    chatList.addEventListener("contextmenu", event => { const row = event.target.closest("[data-chat-id]"); if (!row) return; event.preventDefault(); openChatMenu(row.dataset.chatId, event.clientX, event.clientY); });
+
+    searchInput.addEventListener("input", event => { state.query = event.target.value; clearSearch.classList.toggle("show", state.query.length > 0); renderChats(); });
+    clearSearch.addEventListener("click", () => { state.query = ""; searchInput.value = ""; clearSearch.classList.remove("show"); renderChats(); searchInput.focus(); });
+    $("tabs").addEventListener("click", event => { const button = event.target.closest(".tab"); if (!button) return; state.filter = button.dataset.filter; document.querySelectorAll(".tab").forEach(tab => tab.classList.toggle("active", tab === button)); renderChats(); showNotice(button.textContent + ": фильтр применен"); });
+    $("toggleSidebar").addEventListener("click", () => { state.sidebarOpen = !state.sidebarOpen; updateShellState(); });
+    $("conversationTarget").addEventListener("click", () => { state.detailsOpen = !state.detailsOpen; updateShellState(); });
+    $("closeDetails").addEventListener("click", () => { state.detailsOpen = false; updateShellState(); });
+    $("menuBtn").addEventListener("click", event => { const rect = event.currentTarget.getBoundingClientRect(); openMainMenu(rect.left, rect.bottom + 8); });
+    $("moreBtn").addEventListener("click", event => { const rect = event.currentTarget.getBoundingClientRect(); openMainMenu(rect.left - 190, rect.bottom + 8); });
+    themeToggle.addEventListener("click", () => { state.dark = !state.dark; applyTheme(); showNotice(state.dark ? "Темная тема включена" : "Светлая тема включена"); });
+    $("newChatBtn").addEventListener("click", openNewChatModal);
+    $("muteBtn").addEventListener("click", toggleMute);
+    $("archiveBtn").addEventListener("click", toggleArchive);
+    $("archiveDetailsBtn").addEventListener("click", toggleArchive);
+    $("focusSearchBtn").addEventListener("click", () => { searchInput.focus(); showNotice("Поиск активирован"); });
+    $("incomingBtn").addEventListener("click", () => addIncomingMessage());
+    $("docBtn").addEventListener("click", () => fileInput.click());
+    $("mediaBtn").addEventListener("click", () => mediaInput.click());
+    $("attachBtn").addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", event => handleFiles(event.target.files));
+    mediaInput.addEventListener("change", event => handleFiles(event.target.files));
+    draftInput.addEventListener("input", () => { resizeTextarea(); updateSendButton(); });
+    draftInput.addEventListener("keydown", event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); sendMessage(); } });
+    sendBtn.addEventListener("click", sendMessage);
+    $("cancelComposeState").addEventListener("click", () => { state.replyToId = null; state.editingMessageId = null; draftInput.value = ""; resizeTextarea(); renderComposeState(); updateSendButton(); });
+    $("cancelSelectionBtn").addEventListener("click", () => { state.selectedMessages.clear(); state.selectMode = false; renderAll(); });
+    $("copySelectedBtn").addEventListener("click", copySelected);
+    $("forwardSelectedBtn").addEventListener("click", () => { if (state.selectedMessages.size) openForwardModal([...state.selectedMessages]); });
+    $("deleteSelectedBtn").addEventListener("click", () => { if (state.selectedMessages.size) deleteMessages([...state.selectedMessages]); });
+    $("closeForwardModal").addEventListener("click", () => forwardModal.classList.remove("show"));
+    forwardModal.addEventListener("click", event => { if (event.target === forwardModal) forwardModal.classList.remove("show"); });
+    $("closeNewChatModal").addEventListener("click", () => newChatModal.classList.remove("show"));
+    newChatModal.addEventListener("click", event => { if (event.target === newChatModal) newChatModal.classList.remove("show"); });
+    $("copyUserLinkBtn").addEventListener("click", () => copyText(userChatLink.value));
+    $("undoDeleteBtn").addEventListener("click", restoreDeletedChat);
+    pinnedBar.addEventListener("click", event => { if (event.target.closest("#unpinBtn")) { togglePin(getChat().pinnedMessageId); event.stopPropagation(); return; } const id = getChat().pinnedMessageId; const row = document.querySelector(`[data-message-id="${id}"]`); if (row) { row.scrollIntoView({ behavior: "smooth", block: "center" }); row.classList.add("highlight"); setTimeout(() => row.classList.remove("highlight"), 1300); } });
+    $("emojiComposerBtn").addEventListener("click", event => { emojiPopover.innerHTML = `<div class="emoji-line">${["😀","😂","😍","👍","🔥","✅","❤️","👏","😮","🤔"].map(e => `<button class="emoji-btn" data-insert-emoji="${e}">${e}</button>`).join("")}</div>`; const rect = event.currentTarget.getBoundingClientRect(); placePopover(emojiPopover, rect.left, rect.top - 58); });
+    emojiPopover.addEventListener("click", event => { const btn = event.target.closest("[data-insert-emoji]"); if (!btn) return; const start = draftInput.selectionStart; const end = draftInput.selectionEnd; draftInput.value = draftInput.value.slice(0, start) + btn.dataset.insertEmoji + draftInput.value.slice(end); draftInput.focus(); draftInput.selectionStart = draftInput.selectionEnd = start + btn.dataset.insertEmoji.length; resizeTextarea(); updateSendButton(); });
+
+    window.addEventListener("resize", () => { if (window.innerWidth <= 820) state.sidebarOpen = false; updateShellState(); });
+    if (window.innerWidth <= 820) state.sidebarOpen = false;
+    renderAll();
+  </script>
+</body>
+</html>

@@ -87,6 +87,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/notifications", "./(all)/[workspaceSlug]/(projects)/notifications/page.tsx"),
         ]),
 
+        // Messenger
+        layout("./(all)/[workspaceSlug]/(projects)/messenger/layout.tsx", [
+          route(":workspaceSlug/messenger", "./(all)/[workspaceSlug]/(projects)/messenger/page.tsx"),
+        ]),
+
         // Profile
         layout("./(all)/[workspaceSlug]/(projects)/profile/[userId]/layout.tsx", [
           route(":workspaceSlug/profile/:userId", "./(all)/[workspaceSlug]/(projects)/profile/[userId]/page.tsx"),

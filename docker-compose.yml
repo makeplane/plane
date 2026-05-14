@@ -104,6 +104,13 @@ services:
       args:
         DOCKER_BUILDKIT: 1
     restart: always
+    env_file:
+      - ./apps/api/.env
+    environment:
+      PORT: 3000
+      API_BASE_URL: http://api:8000
+      REDIS_URL: redis://plane-redis:6379/
+      LIVE_BASE_PATH: /live
 
   plane-db:
     container_name: plane-db
@@ -164,11 +171,16 @@ services:
     environment:
       FILE_SIZE_LIMIT: ${FILE_SIZE_LIMIT:-5242880}
       BUCKET_NAME: ${AWS_S3_BUCKET_NAME:-uploads}
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+      CERT_EMAIL: ${CERT_EMAIL:-local@plane.local}
+      CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
     depends_on:
       - web
       - api
       - space
       - admin
+      - live
 
 volumes:
   pgdata:

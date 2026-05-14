@@ -13,23 +13,6 @@ type TUpgradeBadge = {
   size?: "sm" | "md";
 };
 
-export function UpgradeBadge(props: TUpgradeBadge) {
-  const { className, size = "sm" } = props;
-
-  const { t } = useTranslation();
-
-  return (
-    <div
-      className={cn(
-        "w-fit cursor-pointer rounded-2xl bg-accent-primary/20 text-center font-medium text-accent-secondary outline-none",
-        {
-          "px-3 text-13": size === "md",
-          "px-2 text-11": size === "sm",
-        },
-        className
-      )}
-    >
-      {t("sidebar.pro")}
-    </div>
-  );
+export function UpgradeBadge(_props: TUpgradeBadge) {
+  return null;
 }

@@ -15,7 +15,7 @@ import { WorkspaceMenuRoot } from "@/components/workspace/sidebar/workspace-menu
 import { useAppRailPreferences } from "@/hooks/use-navigation-preferences";
 import { Tooltip } from "@plane/propel/tooltip";
 import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
-import { InboxIcon } from "@plane/propel/icons";
+import { CommentFillIcon, InboxIcon } from "@plane/propel/icons";
 import useSWR from "swr";
 import { useWorkspaceNotifications } from "@/hooks/store/notifications";
 // local imports
@@ -60,6 +60,20 @@ export const TopNavigationRoot = observer(function TopNavigationRoot() {
       </div>
       {/* Additional Actions */}
       <div className="flex flex-1 shrink-0 items-center justify-end gap-1">
+        <Tooltip tooltipContent="Messenger" position="bottom">
+          <AppSidebarItem
+            variant="link"
+            item={{
+              href: `/${workspaceSlug?.toString()}/messenger/`,
+              icon: (
+                <div className="relative">
+                  <CommentFillIcon className="size-5" />
+                </div>
+              ),
+              isActive: pathname?.includes("/messenger/"),
+            }}
+          />
+        </Tooltip>
         <Tooltip tooltipContent="Inbox" position="bottom">
           <AppSidebarItem
             variant="link"

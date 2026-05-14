@@ -4,9 +4,6 @@
  * See the LICENSE file for details.
  */
 
-// local imports
-import { WorkspaceActiveCyclesUpgrade } from "./workspace-active-cycles-upgrade";
-
 export function WorkspaceActiveCyclesRoot() {
-  return <WorkspaceActiveCyclesUpgrade />;
+  return null;
 }

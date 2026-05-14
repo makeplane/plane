@@ -238,3 +238,26 @@ from .notification.base import MarkAllReadNotificationViewSet
 from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
+
+from .messenger import (
+    ChatListCreateAPIEndpoint,
+    ChatDetailAPIEndpoint,
+    ChatMemberListCreateAPIEndpoint,
+    ChatMemberDetailAPIEndpoint,
+    MessageListCreateAPIEndpoint,
+    MessageDetailAPIEndpoint,
+    MessageReactionListCreateAPIEndpoint,
+    MessageReadAPIEndpoint,
+    PinnedMessageListCreateAPIEndpoint,
+    ChatStateUpdateAPIEndpoint,
+    BlockListCreateAPIEndpoint,
+    UserRelationListCreateAPIEndpoint,
+    MessengerContactsAPIEndpoint,
+    MessageForwardAPIEndpoint,
+    ProjectTeamChatAPIEndpoint,
+    ChatInviteLinkAPIEndpoint,
+    ChatInviteJoinAPIEndpoint,
+    ChatJoinByLinkAPIEndpoint,
+    UserOnlineStatusAPIEndpoint,
+    MessengerFileDownloadAPIEndpoint,
+)

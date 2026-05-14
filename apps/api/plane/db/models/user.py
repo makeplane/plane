@@ -125,6 +125,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     # masking
     masked_at = models.DateTimeField(null=True)
 
+    # messenger
+    messenger_is_active = models.BooleanField(default=False)
+    messenger_last_seen_at = models.DateTimeField(null=True)
+    messenger_level = models.PositiveSmallIntegerField(default=2)
+
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 

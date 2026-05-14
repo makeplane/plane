@@ -1,11 +1,11 @@
 FROM node:22-alpine
-
 RUN apk add --no-cache libc6-compat
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME/bin:$PATH"
 # Set working directory
 WORKDIR /app
-
 COPY . .
-RUN corepack enable pnpm && pnpm add -g turbo
+RUN mkdir -p "$PNPM_HOME" && corepack enable pnpm && pnpm add -g turbo
 RUN pnpm install
 
 EXPOSE 3000

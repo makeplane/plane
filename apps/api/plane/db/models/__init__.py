@@ -63,6 +63,23 @@ from .session import Session
 from .social_connection import SocialLoginConnection
 from .state import State, StateGroup, DEFAULT_STATES
 from .user import Account, Profile, User, BotTypeEnum
+from .messenger import (
+    UserRelationMessenger,
+    ChatMessenger,
+    ChatMemberMessenger,
+    UserChatStateMessenger,
+    MessageMessenger,
+    MessageReceiptMessenger,
+    MessageAttachmentMessenger,
+    MessageReactionMessenger,
+    PinnedMessageMessenger,
+    MessageDeletionMessenger,
+    ChatDeletionMessenger,
+    BlockMessenger,
+    AuditLogMessenger,
+    InviteLinkMessenger,
+    InviteLinkUseMessenger,
+)
 from .view import IssueView
 from .webhook import Webhook, WebhookLog
 from .workspace import (
