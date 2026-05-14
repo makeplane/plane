@@ -2777,7 +2777,7 @@ export default {
       go_to_workspace: "轉到工作區",
       sign_in_with_unique_code: "使用唯一代碼登入",
       create_account: "建立帳戶",
-      unique_code: "獨特的程式碼",
+      unique_code: "唯一代碼",
       paste_code_sent: "貼上發送到您的電子郵件的代碼",
       resend_in: "在 {seconds}s 中重新傳送",
       requesting_new_code: "請求新代碼",
