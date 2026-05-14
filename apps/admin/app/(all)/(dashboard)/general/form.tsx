@@ -122,9 +122,9 @@ export const GeneralConfigurationForm = observer(function GeneralConfigurationFo
               </div>
             </div>
             <div className="grow">
-              <div className="text-13 leading-5 font-medium text-primary">Let Plane collect anonymous usage data</div>
+              <div className="text-13 leading-5 font-medium text-primary">Let Tick collect anonymous usage data</div>
               <div className="text-11 leading-5 font-regular text-tertiary">
-                No PII is collected.This anonymized data is used to understand how you use Plane and build new features
+                No PII is collected.This anonymized data is used to understand how you use Tick and build new features
                 in line with{" "}
                 <a
                   href="https://developers.plane.so/self-hosting/telemetry"

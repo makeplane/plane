@@ -20,7 +20,7 @@ export default {
     },
     not_found: {
       title: "糟糕!似乎出了点问题",
-      description: "我们目前无法获取您的 Plane 账户。这可能是网络错误。",
+      description: "我们目前无法获取您的 Tick 账户。这可能是网络错误。",
       cta_primary: "尝试重新加载",
     },
     server_error: {

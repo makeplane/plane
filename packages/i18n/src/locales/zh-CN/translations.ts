@@ -89,7 +89,7 @@ export default {
       already_have_an_account: "已有账号？",
       login: "登录",
       create_account: "创建账号",
-      new_to_plane: "首次使用 Plane？",
+      new_to_plane: "首次使用 Tick？",
       back_to_sign_in: "返回登录",
       resend_in: "{seconds} 秒后重新发送",
       sign_in_with_unique_code: "使用唯一码登录",
@@ -608,7 +608,7 @@ export default {
       },
     },
     new_at_plane: {
-      title: "Plane新功能",
+      title: "Tick 新功能",
     },
     quick_tutorial: {
       title: "快速教程",
@@ -1260,7 +1260,7 @@ export default {
   },
   workspace_creation: {
     heading: "创建您的工作区",
-    subheading: "要开始使用 Plane，您需要创建或加入一个工作区。",
+    subheading: "要开始使用 Tick，您需要创建或加入一个工作区。",
     form: {
       name: {
         label: "为您的工作区命名",
@@ -1314,11 +1314,11 @@ export default {
       general: {
         title: "项目、活动和指标概览",
         description:
-          "欢迎使用 Plane，我们很高兴您能来到这里。创建您的第一个项目并跟踪您的任务，这个页面将转变为帮助您进展的空间。管理员还将看到帮助团队进展的项目。",
+          "欢迎使用 Tick，我们很高兴您能来到这里。创建您的第一个项目并跟踪您的任务，这个页面将转变为帮助您进展的空间。管理员还将看到帮助团队进展的项目。",
         primary_button: {
           text: "构建您的第一个项目",
           comic: {
-            title: "在 Plane 中一切都从项目开始",
+            title: "在 Tick 中一切都从项目开始",
             description: "项目可以是产品路线图、营销活动或新车发布。",
           },
         },
@@ -1449,7 +1449,7 @@ export default {
         primary_button: {
           text: "开始您的第一个项目",
           comic: {
-            title: "在 Plane 中一切都从项目开始",
+            title: "在 Tick 中一切都从项目开始",
             description: "项目可以是产品路线图、营销活动或新车发布。",
           },
         },
@@ -1460,7 +1460,7 @@ export default {
         primary_button: {
           text: "开始您的第一个项目",
           comic: {
-            title: "在 Plane 中一切都从项目开始",
+            title: "在 Tick 中一切都从项目开始",
             description: "项目可以是产品路线图、营销活动或新车发布。",
           },
         },
@@ -1557,7 +1557,7 @@ export default {
     label: "工作区设置",
     page_label: "{workspace} - 常规设置",
     key_created: "密钥已创建",
-    copy_key: "复制并将此密钥保存在 Plane Pages 中。关闭后您将无法看到此密钥。包含密钥的 CSV 文件已下载。",
+    copy_key: "复制并将此密钥保存在 Tick Pages 中。关闭后您将无法看到此密钥。包含密钥的 CSV 文件已下载。",
     token_copied: "令牌已复制到剪贴板。",
     settings: {
       general: {
@@ -1705,7 +1705,7 @@ export default {
         generating: "生成中",
         delete: {
           title: "删除 API 令牌",
-          description: "使用此令牌的任何应用程序将无法再访问 Plane 数据。此操作无法撤消。",
+          description: "使用此令牌的任何应用程序将无法再访问 Tick 数据。此操作无法撤消。",
           success: {
             title: "成功！",
             message: "API 令牌已成功删除",
@@ -1720,7 +1720,7 @@ export default {
     empty_state: {
       api_tokens: {
         title: "尚未创建 API 令牌",
-        description: "Plane API 可用于将您在 Plane 中的数据与任何外部系统集成。创建令牌以开始使用。",
+        description: "Tick API 可用于将您在 Tick 中的数据与任何外部系统集成。创建令牌以开始使用。",
       },
       webhooks: {
         title: "尚未添加 webhook",
@@ -1782,7 +1782,7 @@ export default {
     empty_state: {
       activity: {
         title: "尚无活动",
-        description: "通过创建新任务开始！为其添加详细信息和属性。在 Plane 中探索更多内容以查看您的活动。",
+        description: "通过创建新任务开始！为其添加详细信息和属性。在 Tick 中探索更多内容以查看您的活动。",
       },
       assigned: {
         title: "没有分配给您的任务",
@@ -1915,12 +1915,12 @@ export default {
       label: "自动化",
       "auto-archive": {
         title: "自动归档已关闭的任务",
-        description: "Plane 将自动归档已完成或已取消的任务。",
+        description: "Tick 将自动归档已完成或已取消的任务。",
         duration: "自动归档已关闭",
       },
       "auto-close": {
         title: "自动关闭任务",
-        description: "Plane 将自动关闭尚未完成或取消的任务。",
+        description: "Tick 将自动关闭尚未完成或取消的任务。",
         duration: "自动关闭不活跃",
         auto_close_status: "自动关闭状态",
       },
@@ -2108,8 +2108,8 @@ export default {
         primary_button: {
           text: "创建您的第一个任务",
           comic: {
-            title: "任务是 Plane 中的基本构建块。",
-            description: "重新设计 Plane 界面、重塑公司品牌或启动新的燃料喷射系统都是可能包含子任务的任务示例。",
+            title: "任务是 Tick 中的基本构建块。",
+            description: "重新设计 Tick 界面、重塑公司品牌或启动新的燃料喷射系统都是可能包含子任务的任务示例。",
           },
         },
       },
@@ -2209,9 +2209,9 @@ export default {
   project_page: {
     empty_state: {
       general: {
-        title: "写笔记、文档或完整的知识库。让 Plane 的 AI 助手 Galileo 帮助您开始",
+        title: "写笔记、文档或完整的知识库。让 Tick 的 AI 助手 Galileo 帮助您开始",
         description:
-          "页面是 Plane 中的思维记录空间。记录会议笔记，轻松格式化，嵌入任务，使用组件库进行布局，并将它们全部保存在项目上下文中。要快速完成任何文档，可以通过快捷键或点击按钮调用 Plane 的 AI Galileo。",
+          "页面是 Tick 中的思维记录空间。记录会议笔记，轻松格式化，嵌入任务，使用组件库进行布局，并将它们全部保存在项目上下文中。要快速完成任何文档，可以通过快捷键或点击按钮调用 Tick 的 AI Galileo。",
         primary_button: {
           text: "创建您的第一个页面",
         },
@@ -2581,7 +2581,7 @@ export default {
   },
   self_hosted_maintenance_message: {
     plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start:
-      "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
+      "Tick 未能启动。这可能是因为一个或多个 Tick 服务启动失败。",
     choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure:
       "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。",
   },

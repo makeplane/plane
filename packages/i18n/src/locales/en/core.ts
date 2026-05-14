@@ -90,7 +90,7 @@ export default {
       already_have_an_account: "Already have an account?",
       login: "Log in",
       create_account: "Create an account",
-      new_to_plane: "New to Plane?",
+      new_to_plane: "New to Tick?",
       back_to_sign_in: "Back to sign in",
       resend_in: "Resend in {seconds} seconds",
       sign_in_with_unique_code: "Sign in with unique code",
