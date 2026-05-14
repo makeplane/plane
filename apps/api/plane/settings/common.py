@@ -309,6 +309,7 @@ POSTHOG_HOST = os.environ.get("POSTHOG_HOST", False)
 SKIP_ENV_VAR = os.environ.get("SKIP_ENV_VAR", "1") == "1"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
+FILE_UPLOAD_MAX_MEMORY_SIZE = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
 
 # Cookie Settings
 SESSION_COOKIE_SECURE = secure_origins

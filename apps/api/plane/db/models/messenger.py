@@ -49,6 +49,13 @@ class ChatMessenger(BaseModel):
         on_delete=models.CASCADE,
         related_name="messenger_chats",
     )
+    project = models.ForeignKey(
+        "db.Project",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="messenger_chats",
+    )
     type = models.CharField(max_length=10, choices=ChatType.choices)
     title = models.CharField(max_length=255, null=True, blank=True)
     avatar_url = models.TextField(null=True, blank=True)
