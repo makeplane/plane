@@ -27,7 +27,7 @@ export function AuthBase({ authType }: AuthBaseProps) {
                 >
                   <span className="font-semibold text-[16px]">S</span>
                 </div>
-                <span className="text-[#0a1e3f] font-semibold text-[18px] tracking-tight">Daily Note</span>
+                <span className="text-[#0a1e3f] font-semibold text-[18px] tracking-tight">Shinhan Workspace</span>
               </div>
 
               <div className="mb-4 pb-4 border-b border-[#f3f4f6] w-full text-center">
@@ -60,12 +60,9 @@ export function AuthBase({ authType }: AuthBaseProps) {
                     WebkitTextFillColor: "transparent",
                   }}
                 >
-                  Daily Note
+                  Shinhan Workspace
                 </span>
               </h1>
-              <h2 className="text-[#0a1b3f] text-[28px] sm:text-[32px] font-semibold tracking-tight leading-snug mb-4">
-                Task Management System
-              </h2>
               <p className="text-[#4b5563] text-[17px] font-medium leading-[1.7] max-w-[500px] mb-2">
                 Smart, Centralized Task Management.
                 <br />

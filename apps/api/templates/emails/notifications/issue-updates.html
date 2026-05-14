@@ -61,8 +61,8 @@
           <table style="width: 100%">
             <tr>
               <td>
-                <p style="font-size: 1rem; color: #1f2d5c; font-weight: 600">{{ issue.issue_identifier }} updates</p>
-                <p style="font-size: 1rem; font-weight: 500; color: #1f2d5c; line-height: 28px">
+                <p style="font-size: 16px; color: #1f2d5c; font-weight: 600">{{ issue.issue_identifier }} updates</p>
+                <p style="font-size: 16px; font-weight: 500; color: #1f2d5c; line-height: 28px">
                   {{workspace}}/<a target="_blank" style="color: #1f2d5c; text-decoration: none" href="{{project_url}}"
                     >{{project}}</a
                   >/<a style="color: #1f2d5c; text-decoration: none" target="_blank" href="{{issue_url}}"
@@ -74,26 +74,26 @@
           </table>
           <hr style="background-color: #f0f0f3; height: 1px; border: 0; margin-top: 15px; margin-bottom: 15px" />
           {% if actors_involved == 1 %}
-          <p style="font-size: 1rem; color: #1f2d5c; line-height: 28px">
+          <p style="font-size: 16px; color: #1f2d5c; line-height: 28px">
             {{summary}}
-            <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+            <span style="font-size: 16px; font-weight: 700; line-height: 28px">
               {% if data|length > 0 %} {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name}} {% else %}
               {{ comments.0.actor_detail.first_name}} {{comments.0.actor_detail.last_name}} {% endif %} </span
             >.
           </p>
           {% else %}
-          <p style="font-size: 1rem; color: #1f2d5c; line-height: 28px">
+          <p style="font-size: 16px; color: #1f2d5c; line-height: 28px">
             {{summary}}
-            <span style="font-size: 1rem; font-weight: 700; line-height: 28px">
+            <span style="font-size: 16px; font-weight: 700; line-height: 28px">
               {% if data|length > 0 %} {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name}} {% else %}
               {{ comments.0.actor_detail.first_name}} {{comments.0.actor_detail.last_name}} {% endif %} </span
             >and others.
           </p>
           {% endif %}
-          <!-- {% if actors_involved == 1 %} {% if data|length > 0 and comments|length == 0 %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name }} </span> made {{total_updates}} {% if total_updates > 1 %}updates{% else %}update{% endif %} to the issue. </p> {% elif data|length == 0 and comments|length > 0 %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {{ comments.0.actor_detail.first_name}} {{comments.0.actor_detail.last_name }} </span> added {{total_comments}} new {% if total_comments > 1 %}comments{% else %}comment{% endif %}. </p> {% elif data|length > 0 and comments|length > 0 %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> <span style="font-size: 1rem; font-weight: 700; line-height: 28px"> {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name }} </span> made {{total_updates}} {% if total_updates > 1 %}updates{% else %}update{% endif %} and added {{total_comments}} new {% if total_comments > 1 %}comments{% else %}comment{% endif %} on the issue. </p> {% endif %} {% else %} <p style="font-size: 1rem;color: #1f2d5c; line-height: 28px"> There are {{ total_updates }} new updates and {{total_comments}} new comments on the issue. </p> {% endif %} -->
+          <!-- {% if actors_involved == 1 %} {% if data|length > 0 and comments|length == 0 %} <p style="font-size: 16px;color: #1f2d5c; line-height: 28px"> <span style="font-size: 16px; font-weight: 700; line-height: 28px"> {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name }} </span> made {{total_updates}} {% if total_updates > 1 %}updates{% else %}update{% endif %} to the issue. </p> {% elif data|length == 0 and comments|length > 0 %} <p style="font-size: 16px;color: #1f2d5c; line-height: 28px"> <span style="font-size: 16px; font-weight: 700; line-height: 28px"> {{ comments.0.actor_detail.first_name}} {{comments.0.actor_detail.last_name }} </span> added {{total_comments}} new {% if total_comments > 1 %}comments{% else %}comment{% endif %}. </p> {% elif data|length > 0 and comments|length > 0 %} <p style="font-size: 16px;color: #1f2d5c; line-height: 28px"> <span style="font-size: 16px; font-weight: 700; line-height: 28px"> {{ data.0.actor_detail.first_name}} {{data.0.actor_detail.last_name }} </span> made {{total_updates}} {% if total_updates > 1 %}updates{% else %}update{% endif %} and added {{total_comments}} new {% if total_comments > 1 %}comments{% else %}comment{% endif %} on the issue. </p> {% endif %} {% else %} <p style="font-size: 16px;color: #1f2d5c; line-height: 28px"> There are {{ total_updates }} new updates and {{total_comments}} new comments on the issue. </p> {% endif %} -->
           {% for update in data %} {% if update.changes.name %}
           <!-- Issue title updated -->
-          <p style="font-size: 1rem; line-height: 28px; color: #1f2d5c">
+          <p style="font-size: 16px; line-height: 28px; color: #1f2d5c">
             The {{entity_type}} title has been updated to {{ issue.name}}
           </p>
           {% endif %}
@@ -113,7 +113,7 @@
           >
             <!-- Block Heading -->
             <div style="padding-bottom: 20px">
-              <p style="font-size: 0.8rem; font-weight: 600; color: #121a26">Updates</p>
+              <p style="font-size: 13px; font-weight: 600; color: #121a26">Updates</p>
             </div>
             <!-- Property Updates -->
             <div
@@ -163,13 +163,13 @@
                   </td>
                   <td style="padding-top: 20px; padding-bottom: 20px">
                     <p
-                      style="font-weight: 500; font-size: 0.8rem; color: #1c2024; width: fit-content; margin-left: 5px"
+                      style="font-weight: 500; font-size: 13px; color: #1c2024; width: fit-content; margin-left: 5px"
                     >
                       {{ update.actor_detail.first_name }} {{ update.actor_detail.last_name }}
                     </p>
                   </td>
                   <td>
-                    <p style="font-weight: 500; font-size: 0.6rem; color: #80838d; margin-left: 10px">
+                    <p style="font-weight: 500; font-size: 10px; color: #80838d; margin-left: 10px">
                       {{ update.activity_time }}
                     </p>
                   </td>
@@ -180,30 +180,24 @@
               <table role="presentation" style="max-width: 100%; padding-bottom: 15px">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/due-date.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F4C5;</span>
                   </td>
                   <td style="padding: 0px; text-align: center">
                     <div>
-                      <p style="padding: 0px; margin: 0px; font-size: 0.8rem; font-weight: 500; color: #525252">
+                      <p style="padding: 0px; margin: 0px; font-size: 13px; font-weight: 500; color: #525252">
                         Due Date:
                       </p>
                     </div>
                   </td>
                   <td>
                     {% if update.changes.target_date.new_value.0 %}
-                    <p style="font-size: 0.8rem; font-weight: 500; color: #171717; margin-left: 5px; padding: 0px">
+                    <p style="font-size: 13px; font-weight: 500; color: #171717; margin-left: 5px; padding: 0px">
                       {{ update.changes.target_date.new_value.0 }}
                     </p>
                     {% else %}
                     <p
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         font-weight: 500;
                         color: #171717;
                         margin-left: 5px;
@@ -222,20 +216,14 @@
               <table role="presentation" style="max-width: 100%; padding-bottom: 15px">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/duplicate.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
-                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252"> Duplicate: </span>
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x29C9;</span>
+                    <span style="font-size: 13px; font-weight: 500; color: #525252"> Duplicate: </span>
                   </td>
                   {% if update.changes.duplicate.new_value.0 %}
                   <td style="padding-left: 5px; overflow-wrap: break-word">
                     {% for duplicate in update.changes.duplicate.new_value|slice:":2" %}
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
+                      style="font-size: 13px; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
                     >
                       {{ duplicate }}
                     </span>
@@ -244,7 +232,7 @@
                   {% endif %} {% if update.changes.duplicate.new_value.2 %}
                   <td>
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
+                      style="font-size: 13px; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
                     >
                       +{{ update.changes.duplicate.new_value|length|add:"-2" }} more
                     </span>
@@ -254,7 +242,7 @@
                     {% for duplicate in update.changes.duplicate.old_value|slice:":2" %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         font-weight: 500;
                         color: #641723;
                         margin-right: 3px;
@@ -269,7 +257,7 @@
                   {% endif %} {% if update.changes.duplicate.old_value.2 %}
                   <td>
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px"
+                      style="font-size: 13px; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px"
                     >
                       +{{ update.changes.duplicate.old_value|length|add:"-2" }} more
                     </span>
@@ -283,14 +271,8 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%; padding-right: 10px">
                 <tr>
                   <td valign="top" style="white-space: nowrap; padding: 0px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/assignee.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
-                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252; padding-right: 5px">
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F464;</span>
+                    <span style="font-size: 13px; font-weight: 500; color: #525252; padding-right: 5px">
                       Assignee:
                     </span>
                   </td>
@@ -298,7 +280,7 @@
                     {% if update.changes.assignees.new_value.0 %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         color: #0d74ce;
                         background-color: #e6f4fe;
                         margin-right: 5px;
@@ -316,7 +298,7 @@
                     {% endif %} {% if update.changes.assignees.new_value.1 %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         font-weight: 500;
                         color: #0d74ce;
                         margin-left: 2px;
@@ -330,7 +312,7 @@
                     {% endif %} {% if update.changes.assignees.old_value.0 %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         padding-left: 4px;
                         padding-right: 4px;
                         padding-bottom: 2px;
@@ -347,7 +329,7 @@
                     </span>
                     {% endif %} {% if update.changes.assignees.old_value.1 %}
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #641723; margin-left: 2px; white-space: nowrap"
+                      style="font-size: 13px; font-weight: 500; color: #641723; margin-left: 2px; white-space: nowrap"
                     >
                       +{{ update.changes.assignees.old_value|length|add:"-1"}} more
                     </span>
@@ -360,14 +342,8 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%; padding-right: 10px">
                 <tr>
                   <td valign="top" style="white-space: nowrap; padding: 0px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/labels.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
-                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252; padding-right: 5px">
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F3F7;</span>
+                    <span style="font-size: 13px; font-weight: 500; color: #525252; padding-right: 5px">
                       Labels:
                     </span>
                   </td>
@@ -375,7 +351,7 @@
                     {% if update.changes.labels.new_value.0 %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         line-height: 1px;
                         color: #0d74ce;
                         background-color: #e6f4fe;
@@ -394,7 +370,7 @@
                     {% endif %} {% if update.changes.labels.new_value.1 %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         font-weight: 500;
                         color: #0d74ce;
                         margin-left: 2px;
@@ -407,7 +383,7 @@
                     {% endif %} {% if update.changes.labels.old_value.0 %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         padding-left: 4px;
                         padding-right: 4px;
                         padding-bottom: 2px;
@@ -424,7 +400,7 @@
                     </span>
                     {% endif %} {% if update.changes.labels.old_value.1 %}
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #641723; margin-left: 2px; white-space: nowrap"
+                      style="font-size: 13px; font-weight: 500; color: #641723; margin-left: 2px; white-space: nowrap"
                     >
                       +{{ update.changes.labels.old_value|length|add:"-1"}} more
                     </span>
@@ -438,55 +414,31 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/state.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x25C9;</span>
                   </td>
                   <td>
-                    <p style="font-size: 0.8rem; font-weight: 500; color: #525252">State:</p>
+                    <p style="font-size: 13px; font-weight: 500; color: #525252">State:</p>
                   </td>
                   {% if update.changes.state.old_value.0 == 'Backlog' or update.changes.state.old_value.0 == 'In Progress' or update.changes.state.old_value.0 == 'Done' or update.changes.state.old_value.0 == 'Cancelled' %}
                   <td>
-                    <img
-                      src="{% if update.changes.state.old_value.0 == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% endif %}{% if update.changes.state.old_value.0 == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% endif %}{% if update.changes.state.old_value.0 == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% endif %}{% if update.changes.state.old_value.0 == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block; margin-left: 5px"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">{% if update.changes.state.old_value.0 == 'Backlog' %}&#x25CB;{% elif update.changes.state.old_value.0 == 'In Progress' %}&#x25D0;{% elif update.changes.state.old_value.0 == 'Todo' %}&#x25CC;{% elif update.changes.state.old_value.0 == 'Done' %}&#x25CF;{% elif update.changes.state.old_value.0 == 'Cancelled' %}&#x2298;{% endif %}</span>
                   </td>
                   {% endif %}
                   <td>
-                    <p style="font-size: 0.8rem; font-weight: 500; color: #60646c">
+                    <p style="font-size: 13px; font-weight: 500; color: #60646c">
                       {{ update.changes.state.old_value.0 }}
                     </p>
                   </td>
                   <td style="padding-left: 10px; padding-right: 10px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png"
-                      width="16"
-                      height="16"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:16px;height:16px;line-height:16px;font-size:16px;text-align:center;color:#525252">&#x2192;</span>
                   </td>
                   {% if update.changes.state.new_value|last == 'Backlog' or update.changes.state.new_value|last == 'In Progress' or update.changes.state.new_value|last == 'Done' or update.changes.state.new_value|last == 'Cancelled' %}
                   <td>
-                    <img
-                      src="{% if update.changes.state.new_value|last == 'Backlog' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/backlog.png{% elif update.changes.state.new_value|last == 'In Progress' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/in-progress.png{% elif update.changes.state.new_value|last == 'Todo' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/todo.png{% elif update.changes.state.new_value|last == 'Done' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/done.png{% elif update.changes.state.new_value|last == 'Cancelled' %}https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/cancelled.png{% endif %}"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">{% if update.changes.state.new_value|last == 'Backlog' %}&#x25CB;{% elif update.changes.state.new_value|last == 'In Progress' %}&#x25D0;{% elif update.changes.state.new_value|last == 'Todo' %}&#x25CC;{% elif update.changes.state.new_value|last == 'Done' %}&#x25CF;{% elif update.changes.state.new_value|last == 'Cancelled' %}&#x2298;{% endif %}</span>
                   </td>
                   {% endif %}
                   <td>
-                    <p style="font-size: 0.8rem; font-weight: 500; color: #60646c">
+                    <p style="font-size: 13px; font-weight: 500; color: #60646c">
                       {{update.changes.state.new_value|last }}
                     </p>
                   </td>
@@ -497,27 +449,21 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr>
                   <td valign="top">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/link.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block; margin-top: 3px"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x1F517;</span>
                   </td>
                   <td valign="top">
-                    <p style="font-size: 0.8rem; font-weight: 500; color: #525252; margin-right: 5px">Links:</p>
+                    <p style="font-size: 13px; font-weight: 500; color: #525252; margin-right: 5px">Links:</p>
                   </td>
                   <td>
                     {% for link in update.changes.link.new_value %}
                     <a
                       href="{{link}}"
-                      style="font-size: 0.8rem; font-weight: 600; color: #3a5bc7; display: block; padding-bottom: 5px"
+                      style="font-size: 13px; font-weight: 600; color: #3a5bc7; display: block; padding-bottom: 5px"
                     >
                       {{ link }}
                     </a>
                     {% endfor %} {% if update.changes.link.old_value|length > 0 %} {% if update.changes.link.old_value.0 != "None" %}
-                    <p href="" style="font-size: 0.8rem; font-weight: 500; color: #60646c">2 Links were removed</p>
+                    <p href="" style="font-size: 13px; font-weight: 500; color: #60646c">2 Links were removed</p>
                     {% endif %} {% endif %}
                   </td>
                 </tr>
@@ -527,36 +473,24 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr>
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/priority.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: block; margin: 0px; padding: 0px"
-                    />
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x2691;</span>
                   </td>
                   <td>
-                    <p style="font-size: 0.8rem; font-weight: 500; color: #525252; margin-right: 5px">Priority:</p>
+                    <p style="font-size: 13px; font-weight: 500; color: #525252; margin-right: 5px">Priority:</p>
                   </td>
                   <td>
                     <p
-                      style=" font-size: 0.8rem; padding-left: 4px; padding-right: 4px; padding-bottom: 0px; font-weight: 500; border-radius: 2px; text-transform: capitalize; {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %} {% if update.changes.priority.old_value.0 == 'high' %}background-color: #FFE2C7; color: #F04610;{% endif %} {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %} {% if update.changes.priority.old_value.0 == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %} "
+                      style=" font-size: 13px; padding-left: 4px; padding-right: 4px; padding-bottom: 0px; font-weight: 500; border-radius: 2px; text-transform: capitalize; {% if update.changes.priority.old_value.0 == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %} {% if update.changes.priority.old_value.0 == 'high' %}background-color: #FFE2C7; color: #F04610;{% endif %} {% if update.changes.priority.old_value.0 == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %} {% if update.changes.priority.old_value.0 == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %} "
                     >
                       {{ update.changes.priority.old_value.0 }}
                     </p>
                   </td>
                   <td style="padding-left: 10px; padding-right: 10px">
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/forward-arrow.png"
-                      width="16"
-                      height="16"
-                      border="0"
-                      style="display: block"
-                    />
+                    <span style="display:inline-block;width:16px;height:16px;line-height:16px;font-size:16px;text-align:center;color:#525252">&#x2192;</span>
                   </td>
                   <td>
                     <p
-                      style=" font-size: 0.8rem; padding-left: 4px; padding-right: 4px; padding-bottom: 0px; font-weight: 500; border-radius: 2px; text-transform: capitalize; {% if update.changes.priority.new_value|last == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %} {% if update.changes.priority.new_value|last == 'high' %}background-color: #FEEBEC; color: #CE2C31;{% endif %} {% if update.changes.priority.new_value|last == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %} {% if update.changes.priority.new_value|last == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %} "
+                      style=" font-size: 13px; padding-left: 4px; padding-right: 4px; padding-bottom: 0px; font-weight: 500; border-radius: 2px; text-transform: capitalize; {% if update.changes.priority.new_value|last == 'urgent' %}background-color: #FFDBDC; color: #CE2C31;{% endif %} {% if update.changes.priority.new_value|last == 'high' %}background-color: #FEEBEC; color: #CE2C31;{% endif %} {% if update.changes.priority.new_value|last == 'medium' %}background-color: #FEFBE9; color: #E2A336;{% endif %} {% if update.changes.priority.new_value|last == 'low' %}background-color: #E9F6E9; color: #2A7E3B;{% endif %} "
                     >
                       {{ update.changes.priority.new_value|last }}
                     </p>
@@ -568,14 +502,8 @@
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%">
                 <tr style="overflow-wrap: break-word">
                   <td>
-                    <img
-                      src="https://plane-marketing.s3.ap-south-1.amazonaws.com/plane-assets/emails/blocking.png"
-                      width="12"
-                      height="12"
-                      border="0"
-                      style="display: inline-block"
-                    />
-                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252; margin-right: 5px">
+                    <span style="display:inline-block;width:12px;height:12px;line-height:12px;font-size:12px;text-align:center;color:#525252">&#x29B8;</span>
+                    <span style="font-size: 13px; font-weight: 500; color: #525252; margin-right: 5px">
                       Blocking:
                     </span>
                   </td>
@@ -583,7 +511,7 @@
                   <td style="padding-left: 5px; overflow-wrap: break-word">
                     {% for blocking in update.changes.blocking.new_value|slice:":2" %}
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
+                      style="font-size: 13px; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
                     >
                       {{ blocking }}
                     </span>
@@ -592,7 +520,7 @@
                   {% endif %} {% if update.changes.blocking.new_value.2 %}
                   <td>
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
+                      style="font-size: 13px; font-weight: 500; color: #3a5bc7; margin-right: 3px; padding-top: 0px"
                     >
                       +{{ update.changes.blocking.new_value|length|add:"-2" }} more
                     </span>
@@ -602,7 +530,7 @@
                     {% for blocking in update.changes.blocking.old_value|slice:":2" %}
                     <span
                       style="
-                        font-size: 0.8rem;
+                        font-size: 13px;
                         font-weight: 500;
                         color: #641723;
                         margin-right: 3px;
@@ -617,7 +545,7 @@
                   {% endif %} {% if update.changes.blocking.old_value.2 %}
                   <td>
                     <span
-                      style="font-size: 0.8rem; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px"
+                      style="font-size: 13px; font-weight: 500; color: #641723; margin-right: 3px; padding-top: 0px"
                     >
                       +{{ update.changes.blocking.old_value|length|add:"-2" }} more
                     </span>
@@ -645,7 +573,7 @@
             "
           >
             <!-- Block Heading -->
-            <p style="font-size: 0.8rem; font-weight: 600; color: #121a26; padding-bottom: 20px">Comments</p>
+            <p style="font-size: 13px; font-weight: 600; color: #121a26; padding-bottom: 20px">Comments</p>
             <!-- Comments -->
             {% for comment in comments %}
             <table cellspacing="0">
@@ -684,7 +612,7 @@
                   <table>
                     <tr>
                       <td>
-                        <p style="font-weight: 500; font-size: 0.8rem; color: #1c2024; margin-left: 8px">
+                        <p style="font-weight: 500; font-size: 13px; color: #1c2024; margin-left: 8px">
                           {{ comment.actor_detail.first_name }} {{ comment.actor_detail.last_name }}
                         </p>
                       </td>
@@ -697,7 +625,7 @@
                             padding: 6px 10px;
                             margin-left: 10px;
                             background-color: white;
-                            font-size: 0.8rem;
+                            font-size: 13px;
                             color: #525252;
                             margin-top: 5px;
                             border-radius: 4px;
@@ -729,7 +657,7 @@
               border-radius: 4px;
               margin-top: 15px;
               cursor: pointer;
-              font-size: 0.8rem;
+              font-size: 13px;
               color: white;
             "
           >
@@ -741,7 +669,7 @@
       <table style="width: 100%; padding: 20px; justify-content: center">
         <tr>
           <td>
-            <div style="font-size: 0.8rem; color: #1c2024">
+            <div style="font-size: 13px; color: #1c2024">
               This email was sent to
               <a href="mailto:{{receiver.email}}" style="color: #3a5bc7; font-weight: 500; text-decoration: none"
                 >{{ receiver.email }}.</a

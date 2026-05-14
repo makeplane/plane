@@ -139,12 +139,40 @@ def process_mention(mention_component):
     return str(soup)
 
 
-def process_html_content(content):
+def strip_images_for_email(html_content, issue_url=None):
+    """Replace inline <img> tags with a text placeholder.
+
+    Comment images point at authenticated asset endpoints that email clients
+    cannot reach (no session cookies, relative URLs, attachment disposition).
+    Render a visible cue instead so the email isn't full of broken images.
+    """
+    soup = BeautifulSoup(html_content, "html.parser")
+    images = soup.find_all(["img", "image-component"])
+    if not images:
+        return str(soup)
+
+    for img in images:
+        placeholder = soup.new_tag(
+            "a",
+            href=issue_url or "#",
+            style=(
+                "display:inline-block;padding:2px 6px;margin:2px 0;"
+                "font-size:12px;color:#3e63dd;text-decoration:none;"
+                "border:1px dashed #c7d2fe;border-radius:4px;background:#f5f8ff;"
+            ),
+        )
+        placeholder.string = "[Image — view in app]"
+        img.replace_with(placeholder)
+    return str(soup)
+
+
+def process_html_content(content, issue_url=None):
     if content is None:
         return None
     processed_content_list = []
     for html_content in content:
         processed_content = process_mention(html_content)
+        processed_content = strip_images_for_email(processed_content, issue_url=issue_url)
         processed_content_list.append(processed_content)
     return processed_content_list
 
@@ -187,6 +215,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
 
             receiver = User.objects.get(pk=receiver_id)
             issue = Issue.objects.get(pk=issue_id)
+            issue_url = f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}"  # noqa: E501
             template_data = []
             total_changes = 0
             comments = []
@@ -197,25 +226,36 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 comment = changes.pop("comment", False)
                 mention = changes.pop("mention", False)
                 actors_involved.append(actor_id)
+                actor_avatar = actor.avatar_url
+                if actor_avatar:
+                    actor_avatar_url = (
+                        actor_avatar
+                        if actor_avatar.startswith(("http://", "https://"))
+                        else f"{base_api}{actor_avatar}"
+                    )
+                else:
+                    actor_avatar_url = ""
                 if comment:
+                    comment["new_value"] = process_html_content(comment.get("new_value"), issue_url=issue_url)
+                    comment["old_value"] = process_html_content(comment.get("old_value"), issue_url=issue_url)
                     comments.append(
                         {
                             "actor_comments": comment,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
                         }
                     )
                 if mention:
-                    mention["new_value"] = process_html_content(mention.get("new_value"))
-                    mention["old_value"] = process_html_content(mention.get("old_value"))
+                    mention["new_value"] = process_html_content(mention.get("new_value"), issue_url=issue_url)
+                    mention["old_value"] = process_html_content(mention.get("old_value"), issue_url=issue_url)
                     comments.append(
                         {
                             "actor_comments": mention,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -229,7 +269,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -253,10 +293,10 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                 "issue": {
                     "issue_identifier": f"{str(issue.project.identifier)}-{str(issue.sequence_id)}",
                     "name": issue.name,
-                    "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",  # noqa: E501
+                    "issue_url": issue_url,
                 },
                 "receiver": {"email": receiver.email},
-                "issue_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/{str(issue.id)}",  # noqa: E501
+                "issue_url": issue_url,
                 "project_url": f"{base_api}/{str(issue.project.workspace.slug)}/projects/{str(issue.project.id)}/issues/",  # noqa: E501
                 "workspace": str(issue.project.workspace.slug),
                 "project": str(issue.project.name),

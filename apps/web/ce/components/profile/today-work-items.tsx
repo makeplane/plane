@@ -38,12 +38,29 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
   );
 
   const { data: rawIssues, isLoading } = useUserWorkItems("today", crossWorkspaces, workspaceSlug?.toString(), uid);
+  const { data: overdueIssues, isLoading: isOverdueLoading } = useUserWorkItems(
+    "overdue",
+    crossWorkspaces,
+    workspaceSlug?.toString(),
+    uid
+  );
+
+  // Merge overdue first (all off_track from BE), then today (BE-ordered by progress rank).
+  // Dedupe by id while preserving the combined backend order — no FE sort.
+  const mergedById = new Map<string, (typeof rawIssues)[number]>();
+  for (const issue of overdueIssues) {
+    if (issue.target_date && issue.target_date < todayStr) mergedById.set(issue.id, issue);
+  }
+  for (const issue of rawIssues) {
+    if (!mergedById.has(issue.id)) mergedById.set(issue.id, issue);
+  }
 
   // Defensive filter + category enrichment (observer re-renders when store updates)
-  const issueList = rawIssues
+  const issueList = Array.from(mergedById.values())
     .filter((issue) => {
       if (issue._state && EXCLUDED_STATE_GROUPS.has(issue._state.group)) return false;
-      if (issue.start_date && issue.start_date > todayStr) return false;
+      const isOverdue = !!issue.target_date && issue.target_date < todayStr;
+      if (!isOverdue && issue.start_date && issue.start_date > todayStr) return false;
       return true;
     })
     .map(
@@ -58,7 +75,7 @@ export const TodayWorkItems = observer(function TodayWorkItems() {
       })
     );
 
-  const isDataReady = !isLoading;
+  const isDataReady = !isLoading && !isOverdueLoading;
 
   return (
     <div className="space-y-2">

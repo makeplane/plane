@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Your capacity report is ready</title>
+    <style>
+      body, table, td, p { margin: 0; padding: 0; }
+      img { border: 0; line-height: 100%; text-decoration: none; -ms-interpolation-mode: bicubic; }
+      table { border-collapse: collapse; }
+      @media only screen and (max-width: 600px) {
+        .email-container { width: 100% !important; }
+        .email-content { padding: 24px 20px !important; }
+        .email-footer { padding: 0 20px 16px 20px !important; }
+      }
+    </style>
+  </head>
+  <body bgcolor="#f9f9f9" style="margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:400;color:#474747;-webkit-font-smoothing:antialiased;background-color:#f9f9f9;">
+    <!-- Preheader -->
+    <span class="preheader" style="display:none;font-size:1px;color:transparent;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;visibility:hidden;">
+      Your capacity report for {{ workspace_name }} is ready to download.
+    </span>
+
+    <center class="email-body" style="width:100%;background-color:#f9f9f9;padding:40px 0">
+      <!-- HEADER -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td class="email-container" width="620" style="width:620px;max-width:620px;margin:0 auto">
+            <table role="presentation" width="100%" style="background-color:#000000">
+              <tr>
+                <td style="padding:24px 40px;text-align:center">
+                  <img src="{{ logo_url }}" width="120" alt="Shinhan Workspace" style="height:auto;display:block;margin:0 auto" />
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- BODY -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td class="email-container" width="620" style="width:620px;max-width:620px;margin:0 auto">
+            <table role="presentation" width="100%" class="email-content" style="background-color:#ffffff;padding:32px 40px">
+              <tr>
+                <td style="font-size:16px;line-height:1.5;color:#474747;padding:24px">
+
+                  <h1 style="margin:0 0 12px;font-size:22px;line-height:1.35;font-weight:600;color:#111111">
+                    Your capacity report is ready
+                  </h1>
+
+                  <p style="margin:0 0 16px">
+                    Hi, your capacity report for <strong>{{ workspace_name }}</strong> has been generated and is ready to download.
+                  </p>
+
+                  <!-- Date range badge -->
+                  <table role="presentation" style="margin:0 0 20px">
+                    <tr>
+                      <td style="background-color:#f3f4f6;border-radius:6px;padding:10px 16px;font-size:14px;color:#374151;">
+                        <strong>Period:</strong>&nbsp;{{ date_from }}&nbsp;&ndash;&nbsp;{{ date_to }}
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <strong>Members:</strong>&nbsp;{{ member_count }}
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <strong>Rows:</strong>&nbsp;{{ row_count }}
+                        {% if file_size_mb %}&nbsp;&nbsp;|&nbsp;&nbsp;<strong>Size:</strong>&nbsp;{{ file_size_mb }}&nbsp;MB{% endif %}
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- CTA button -->
+                  <table role="presentation" style="margin:0 0 24px">
+                    <tr>
+                      <td style="border-radius:6px;background-color:#1d4ed8;text-align:center">
+                        <a href="{{ download_url }}" target="_blank"
+                           style="display:inline-block;padding:14px 32px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:6px;">
+                          Download Report
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- Expiry notice -->
+                  <p style="margin:0 0 12px;font-size:13px;color:#6b7280;">
+                    Link expires on <strong>{{ expires_at|date:"Y-m-d" }}</strong>. Download before this date.
+                  </p>
+
+                  <!-- Security notice -->
+                  <p style="margin:0;font-size:12px;color:#9ca3af;font-style:italic;">
+                    This link contains a signed URL — please do not forward this email to others.
+                  </p>
+
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+
+      <!-- FOOTER -->
+      <table role="presentation" width="100%">
+        <tr>
+          <td></td>
+          <td class="email-container" width="620" style="width:620px;max-width:620px;margin:0 auto">
+            <table role="presentation" width="100%" class="email-footer" style="background-color:#ffffff;padding:0 40px 16px 40px">
+              <tr>
+                <td style="border-top:1px solid #e9e9e9;padding:24px;font-size:12px;line-height:1.6;color:#979797;text-align:left">
+                  <p style="margin:0">Generated: {{ generated_at|date:"Y-m-d H:i" }} UTC &mdash; Shinhan Bank Vietnam - Shinhan Workspace</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+        </tr>
+      </table>
+    </center>
+
+    <base target="_blank" />
+  </body>
+</html>

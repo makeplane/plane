@@ -71,26 +71,28 @@ export const ProfileSidebar = observer(function ProfileSidebar(props: TProfileSi
 
   useEffect(() => {
     const handleToggleProfileSidebar = () => {
-      if (window && window.innerWidth < 768) {
+      if (window && window.innerWidth < 768 && profileSidebarCollapsed === false) {
         toggleProfileSidebar(true);
-      }
-      if (window && profileSidebarCollapsed && window.innerWidth >= 768) {
-        toggleProfileSidebar(false);
       }
     };
 
     window.addEventListener("resize", handleToggleProfileSidebar);
     handleToggleProfileSidebar();
     return () => window.removeEventListener("resize", handleToggleProfileSidebar);
-  }, []);
+  }, [profileSidebarCollapsed, toggleProfileSidebar]);
 
   return (
     <div
       className={cn(
-        `vertical-scrollbar scrollbar-md fixed z-5 h-full w-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-all md:relative md:w-[300px] shadow-raised-200`,
+        `vertical-scrollbar scrollbar-md fixed z-5 h-full shrink-0 overflow-hidden overflow-y-auto border-l border-subtle bg-surface-1 transition-[width,margin] duration-300 ease-in-out md:relative shadow-raised-200`,
+        profileSidebarCollapsed ? "w-0 md:w-0 md:border-l-0" : "w-full md:w-[300px]",
         className
       )}
-      style={profileSidebarCollapsed ? { marginLeft: `${window?.innerWidth || 0}px` } : {}}
+      style={
+        profileSidebarCollapsed && typeof window !== "undefined" && window.innerWidth < 768
+          ? { marginLeft: `${window.innerWidth}px` }
+          : {}
+      }
     >
       {userProjectsData ? (
         <>

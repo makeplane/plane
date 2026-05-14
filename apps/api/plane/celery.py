@@ -81,6 +81,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.worklog_reminder_task.worklog_daily_reminder",
         "schedule": crontab(hour=10, minute=0),  # UTC 10:00 = 5PM Vietnam (UTC+7)
     },
+    "cleanup-expired-capacity-exports": {
+        "task": "plane.bgtasks.capacity_export_cleanup_task.cleanup_expired_capacity_exports",
+        "schedule": crontab(hour=4, minute=0),  # UTC 04:00
+    },
 }
 
 

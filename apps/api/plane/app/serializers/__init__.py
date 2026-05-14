@@ -151,3 +151,8 @@ from .task_category import MainTaskCategorySerializer, SubTaskCategorySerializer
 from .job_position import JobPositionSerializer, JobGradeSerializer
 from .user_work_items import UserCrossWorkspaceWorkItemSerializer
 from .project_field_permission import ProjectFieldPermissionSerializer
+from .capacity_export import (
+    CapacityExportJobCreateSerializer,
+    CapacityExportJobListSerializer,
+    CapacityExportJobRetrieveSerializer,
+)

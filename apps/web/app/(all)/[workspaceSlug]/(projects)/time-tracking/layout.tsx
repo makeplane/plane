@@ -5,7 +5,7 @@
  */
 
 import { Outlet, useParams, useLocation, useNavigate } from "react-router";
-import { User, BarChart2, Users } from "lucide-react";
+import { User, BarChart2, Users, Download } from "lucide-react";
 import { useTranslation } from "@plane/i18n";
 import { EUserPermissionsLevel } from "@plane/constants";
 import { EUserWorkspaceRoles } from "@plane/types";
@@ -24,6 +24,7 @@ const ALL_TAB_ITEMS = [
   { key: "my_timesheet", labelKey: "my_timesheet", path: "", icon: User, adminOnly: false },
   { key: "analytics", labelKey: "project_analytics", path: "analytics", icon: BarChart2, adminOnly: true },
   { key: "capacity", labelKey: "capacity", path: "capacity", icon: Users, adminOnly: true },
+  { key: "exports", labelKey: "capacity_exports.tab", path: "exports", icon: Download, adminOnly: false },
 ] as const;
 
 export default function WorkspaceTimeTrackingLayout() {
@@ -41,6 +42,7 @@ export default function WorkspaceTimeTrackingLayout() {
     const pathname = location.pathname.replace(/\/$/, "");
     if (pathname.endsWith("/analytics")) return "analytics";
     if (pathname.endsWith("/capacity")) return "capacity";
+    if (pathname.endsWith("/exports")) return "exports";
     return "my_timesheet";
   })();
 

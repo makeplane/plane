@@ -325,6 +325,8 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
     for (const [col, vals] of Object.entries(filters)) {
       if (vals.length > 0) result = result.filter((i) => vals.includes(getVal(i, col)));
     }
+    // Default order comes from the backend (off_track → due_today → at_risk → on_track).
+    // Only override when the user picks an explicit column sort.
     if (sortConfig) {
       result.sort((a, b) => {
         const va = getVal(a, sortConfig.col),
