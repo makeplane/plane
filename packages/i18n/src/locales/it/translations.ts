@@ -2776,7 +2776,7 @@ export default {
       view_image_in_full_screen: "Visualizza l'immagine a schermo intero",
       align: "Allineare",
       download: "Scaricamento",
-      clear_contents: "Contenuti chiari",
+      clear_contents: "Cancella contenuto",
       insert_above: "Inserisci sopra",
       insert_below: "Inserisci qui sotto",
       insert_left: "Inserisci a sinistra",
@@ -2786,7 +2786,7 @@ export default {
       alignment: {
         left: "Sinistra",
         center: "Centro",
-        right: "Giusto",
+        right: "Destra",
       },
       menu_items: {
         text: "Testo",
@@ -2801,13 +2801,13 @@ export default {
         "to-do-list": "Lista delle cose da fare",
         quote: "Citazione",
         code: "Codice",
-        table: "Tavolo",
+        table: "Tabella",
         image: "Immagine",
         divider: "Divisore",
         link: "Collegamento",
         bold: "Grassetto",
         italic: "Corsivo",
-        underline: "Sottolineare",
+        underline: "Sottolineato",
         strikethrough: "Barrato",
         "text-color": "Colore del testo",
         "background-color": "Colore di sfondo",
@@ -2935,7 +2935,7 @@ export default {
         duplicate_of: "Duplicato di",
       },
       select_duplicate: {
-        select_work_item: "Seleziona oggetto di lavoro",
+        select_work_item: "Seleziona elemento di lavoro",
       },
       sidebar: {
         label_count: "Etichette {count}",
