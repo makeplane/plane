@@ -27,15 +27,26 @@ class WebhookSerializer(DynamicBaseSerializer):
     def _validate_webhook_url(self, url):
         """Validate a webhook URL against SSRF and disallowed domain rules."""
         try:
-            validate_url(url, allowed_ips=settings.WEBHOOK_ALLOWED_IPS)
+            validate_url(
+                url,
+                allowed_ips=settings.WEBHOOK_ALLOWED_IPS,
+                allowed_hosts=settings.WEBHOOK_ALLOWED_HOSTS,
+            )
         except ValueError as e:
             logger.warning("Webhook URL validation failed for %s: %s", url, e)
             raise serializers.ValidationError({"url": "Invalid or disallowed webhook URL."})
 
         hostname = (urlparse(url).hostname or "").rstrip(".").lower()
 
+        # Hosts explicitly trusted via WEBHOOK_ALLOWED_HOSTS bypass the
+        # disallowed-domain check — they're already trusted for SSRF, so
+        # the loop-back guard would only get in the way of legitimate
+        # sibling services that share a parent domain with Plane.
+        if hostname in settings.WEBHOOK_ALLOWED_HOSTS:
+            return
+
         request = self.context.get("request")
-        disallowed_domains = ["plane.so"]
+        disallowed_domains = list(settings.WEBHOOK_DISALLOWED_DOMAINS)
         if request:
             request_host = request.get_host().split(":")[0].rstrip(".").lower()
             disallowed_domains.append(request_host)

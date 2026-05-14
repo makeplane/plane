@@ -88,6 +88,48 @@ class TestValidateUrlAllowlist:
             with pytest.raises(ValueError, match="private/internal"):
                 validate_url("http://example.com", allowed_ips=allowed)
 
+    def test_allowed_hosts_bypasses_private_ip_check(self):
+        """Hostnames in WEBHOOK_ALLOWED_HOSTS skip IP-based blocking — used for
+        trusted internal services (e.g. Silo) whose IPs are dynamic in
+        containerised deployments."""
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("172.18.0.5", 0))]
+            validate_url("http://silo:3000/hook", allowed_hosts=["silo"])  # Should not raise
+
+    def test_allowed_hosts_matches_case_insensitively(self):
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("10.0.0.1", 0))]
+            validate_url(
+                "http://Silo.Namespace.Svc.Cluster.Local/x",
+                allowed_hosts=["silo.namespace.svc.cluster.local"],
+            )  # Should not raise
+
+    def test_allowed_hosts_skips_dns_lookup(self):
+        """When the hostname is explicitly trusted we shouldn't even resolve it —
+        protects against operators who allowlist a name that isn't resolvable
+        from the API container."""
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            validate_url("http://silo/hook", allowed_hosts=["silo"])
+            mock_dns.assert_not_called()
+
+    def test_allowed_hosts_requires_exact_match(self):
+        """Subdomains of an allowed host must NOT bypass — a hostile
+        ``attacker.silo.internal`` should still be blocked when only
+        ``silo.internal`` is allowed."""
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("192.168.1.1", 0))]
+            with pytest.raises(ValueError, match="private/internal"):
+                validate_url(
+                    "http://attacker.silo.internal/x",
+                    allowed_hosts=["silo.internal"],
+                )
+
+    def test_allowed_hosts_empty_does_not_bypass(self):
+        with patch("plane.utils.ip_address.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [(None, None, None, None, ("10.0.0.1", 0))]
+            with pytest.raises(ValueError, match="private/internal"):
+                validate_url("http://silo/hook", allowed_hosts=[])
+
 
 @pytest.mark.unit
 class TestSafeGet:
