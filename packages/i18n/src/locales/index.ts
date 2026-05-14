@@ -128,4 +128,10 @@ export const locales = {
     editor: () => import("./tr-TR/editor"),
     "empty-state": () => import("./tr-TR/empty-state"),
   },
+  hi: {
+    translations: () => import("./hi/translations"),
+    accessibility: () => import("./hi/accessibility"),
+    editor: () => import("./hi/editor"),
+    "empty-state": () => import("./hi/empty-state"),
+  },
 };
