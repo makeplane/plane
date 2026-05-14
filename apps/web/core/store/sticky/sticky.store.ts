@@ -212,13 +212,12 @@ export class StickyStore implements IStickyStore {
   deleteSticky = async (workspaceSlug: string, id: string) => {
     const sticky = this.stickies[id];
     if (!sticky) return;
-    const previousWorkspaceStickies = [...(this.workspaceStickies[workspaceSlug] || [])];
+    const currentWorkspaceStickies = this.workspaceStickies[workspaceSlug] || [];
+    const previousWorkspaceStickies = [...currentWorkspaceStickies];
     const previousActiveStickyId = this.activeStickyId;
     const previousRecentStickyId = this.recentStickyId;
     try {
-      this.workspaceStickies[workspaceSlug] = this.workspaceStickies[workspaceSlug].filter(
-        (stickyId) => stickyId !== id
-      );
+      this.workspaceStickies[workspaceSlug] = currentWorkspaceStickies.filter((stickyId) => stickyId !== id);
       if (this.activeStickyId === id) this.activeStickyId = undefined;
       delete this.stickies[id];
       this.recentStickyId = this.workspaceStickies[workspaceSlug][0];
