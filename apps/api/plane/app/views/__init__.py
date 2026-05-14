@@ -104,6 +104,7 @@ from .workspace.time_tracking import (
     WorkspaceAnalyticsTimesheetEndpoint,
     WorkspaceCapacityEndpoint,
     WorkspaceCapacityDayDetailsEndpoint,
+    CapacityExportEndpoint,
 )
 
 from .state.base import StateViewSet, IntakeStateEndpoint

@@ -13,6 +13,7 @@ from .timesheet_bulk import TimesheetBulkUpdateEndpoint
 from .timesheet_grid import TimesheetGridEndpoint
 from .workspace_analytics_timesheet import WorkspaceAnalyticsTimesheetEndpoint
 from .workspace_capacity import WorkspaceCapacityEndpoint, WorkspaceCapacityDayDetailsEndpoint
+from .capacity_export import CapacityExportEndpoint
 
 __all__ = [
     "ProjectAnalyticsTimesheetEndpoint",
@@ -26,4 +27,5 @@ __all__ = [
     "WorkspaceAnalyticsTimesheetEndpoint",
     "WorkspaceCapacityEndpoint",
     "WorkspaceCapacityDayDetailsEndpoint",
+    "CapacityExportEndpoint",
 ]

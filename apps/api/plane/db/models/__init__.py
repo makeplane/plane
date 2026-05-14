@@ -113,3 +113,4 @@ from .business_calendar import WorkSchedule, Holiday, DayOverride
 from .project_field_permission import ProjectFieldPermission
 
 from .project_copy import ProjectCopyJob
+from .capacity_export import CapacityExportJob

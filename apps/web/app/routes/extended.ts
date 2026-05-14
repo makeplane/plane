@@ -26,6 +26,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/time-tracking/capacity",
             "./(all)/[workspaceSlug]/(projects)/time-tracking/capacity/page.tsx"
           ),
+          route(
+            ":workspaceSlug/time-tracking/exports",
+            "./(all)/[workspaceSlug]/(projects)/time-tracking/exports/page.tsx"
+          ),
         ]),
       ]),
       layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [

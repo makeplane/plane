@@ -90,11 +90,11 @@ export default {
       already_have_an_account: "Đã có tài khoản?",
       login: "Đăng nhập",
       create_account: "Tạo tài khoản",
-      new_to_plane: "Mới sử dụng JMS?",
+      new_to_plane: "Mới sử dụng Shinhan Workspace?",
       header: {
         work_in_all_dimensions: "Làm việc đa chiều.",
-        welcome_back_jms: "Chào mừng bạn quay trở lại JMS (Hệ thống Quản lý Công việc).",
-        create_jms_account: "Tạo tài khoản JMS của bạn.",
+        welcome_back_jms: "Chào mừng bạn quay trở lại Shinhan Workspace.",
+        create_jms_account: "Tạo tài khoản Shinhan Workspace của bạn.",
       },
       back_to_sign_in: "Quay lại đăng nhập",
       resend_in: "Gửi lại sau {seconds} giây",
@@ -181,7 +181,7 @@ export default {
       },
     },
     footer: {
-      custom_powered_by: "SHBVN JMS - Hệ thống Quản lý Công việc (Dựa trên kiến trúc Plane)",
+      custom_powered_by: "Shinhan Workspace (SHWS) (Dựa trên kiến trúc Plane)",
     },
   },
 } as const;
