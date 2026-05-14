@@ -54,7 +54,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
       (workspaceInvitation) => workspaceInvitation.id === invitationsRespond[0]
     );
 
-    if (invitationsRespond.length <= 0 && !selectedInvitation?.role) return;
+    if (invitationsRespond.length <= 0 || !selectedInvitation?.role) return;
 
     setIsJoiningWorkspaces(true);
 

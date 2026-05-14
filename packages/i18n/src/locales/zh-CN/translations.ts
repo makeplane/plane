@@ -2896,6 +2896,7 @@ export default {
       text: "文本",
       enter_text_to_display: "输入要显示的文本",
       remove_link: "移除链接",
+      edit_link: "编辑链接",
     },
     workspace_invitation: {
       invitation_not_found: "未找到邀请",

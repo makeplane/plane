@@ -81,14 +81,11 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
 
   const isButtonDisabled = useMemo(
     () =>
-      !(
-        !isSubmitting &&
-        !!passwordFormData.password &&
-        (mode === EAuthModes.SIGN_UP
-          ? getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-            passwordFormData.password === passwordFormData.confirm_password
-          : true)
-      ),
+      isSubmitting ||
+      !passwordFormData.password ||
+      (mode === EAuthModes.SIGN_UP &&
+        (getPasswordStrength(passwordFormData.password) !== E_PASSWORD_STRENGTH.STRENGTH_VALID ||
+          passwordFormData.password !== passwordFormData.confirm_password)),
     [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
   );
 

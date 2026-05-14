@@ -139,7 +139,8 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
     <div
       onKeyDown={handleKeyDown}
       className="shadow-md animate-in fade-in flex translate-y-1 flex-col gap-3 rounded-sm border-2 border-subtle bg-layer-1 p-2"
-      role="presentation"
+      role="dialog"
+      aria-label={t("localized_ui.editor.edit_link")}
       style={{
         transition: "all 0.1s cubic-bezier(.55, .085, .68, .53)",
       }}

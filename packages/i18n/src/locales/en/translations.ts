@@ -2755,6 +2755,7 @@ export default {
       text: "Text",
       enter_text_to_display: "Enter text to display",
       remove_link: "Remove link",
+      edit_link: "Edit link",
     },
     workspace_invitation: {
       invitation_not_found: "Invitation not found",
