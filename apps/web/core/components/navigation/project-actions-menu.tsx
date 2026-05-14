@@ -6,7 +6,7 @@
 
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router";
-import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon } from "lucide-react";
+import { LogOut, MoreHorizontal, Settings, Share2, ArchiveIcon, Copy as CopyIcon } from "lucide-react";
 // plane imports
 import { MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -23,6 +23,7 @@ type Props = {
   onCopyText: () => void;
   onLeaveProject: () => void;
   onPublishModal: () => void;
+  onCopyToWorkspace?: () => void;
 };
 
 export function ProjectActionsMenu({
@@ -33,6 +34,7 @@ export function ProjectActionsMenu({
   onCopyText,
   onLeaveProject,
   onPublishModal,
+  onCopyToWorkspace,
 }: Props) {
   // states
   const [isMenuActive, setIsMenuActive] = useState(false);
@@ -79,6 +81,14 @@ export function ProjectActionsMenu({
           <span>{t("copy_link")}</span>
         </span>
       </CustomMenu.MenuItem>
+      {isAdmin && onCopyToWorkspace && (
+        <CustomMenu.MenuItem onClick={onCopyToWorkspace}>
+          <span className="flex items-center justify-start gap-2">
+            <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
+            <span>{t("copy_project.menu_item")}</span>
+          </span>
+        </CustomMenu.MenuItem>
+      )}
       {isAuthorized && (
         <CustomMenu.MenuItem
           onClick={() => {

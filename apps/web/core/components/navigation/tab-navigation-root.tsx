@@ -5,7 +5,7 @@
  */
 
 import type { FC } from "react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
@@ -18,6 +18,7 @@ import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useNavigationItems } from "@/plane-web/components/navigations";
+import { CopyToWorkspaceModal } from "@/plane-web/components/projects/copy-to-workspace-modal";
 // local imports
 import { LeaveProjectModal } from "../project/leave-project-modal";
 import { PublishProjectModal } from "../project/publish-project/modal";
@@ -107,6 +108,9 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     activeItem,
   });
 
+  // Copy to workspace state
+  const [copyModalOpen, setCopyModalOpen] = useState(false);
+
   // Filter and sort navigation items
   const allNavigationItems = navigationItems
     .filter((item) => item.shouldRender)
@@ -169,6 +173,14 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
         isOpen={leaveProjectModalOpen}
         onClose={() => handleLeaveProjectModal(false)}
       />
+      <CopyToWorkspaceModal
+        isOpen={copyModalOpen}
+        onClose={() => setCopyModalOpen(false)}
+        workspaceSlug={workspaceSlug}
+        projectId={projectId}
+        projectName={project?.name ?? ""}
+        projectIdentifier={project?.identifier ?? ""}
+      />
 
       {/* container for the tab navigation */}
       <div className="flex items-center gap-3 overflow-hidden size-full">
@@ -183,6 +195,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
               onCopyText={handleCopyText}
               onLeaveProject={handleLeaveProject}
               onPublishModal={() => handlePublishModal(true)}
+              onCopyToWorkspace={() => setCopyModalOpen(true)}
             />
           </div>
         </div>
