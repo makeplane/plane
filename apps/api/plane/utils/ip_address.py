@@ -8,7 +8,7 @@ import socket
 from urllib.parse import urlparse
 
 
-def validate_url(url, allowed_ips=None):
+def validate_url(url, allowed_ips=None, allowed_hosts=None):
     """
     Validate that a URL doesn't resolve to a private/internal IP address (SSRF protection).
 
@@ -17,6 +17,11 @@ def validate_url(url, allowed_ips=None):
         allowed_ips: Optional list of ipaddress.ip_network objects. IPs falling within
                      these networks are permitted even if they are private/loopback/reserved.
                      Typically sourced from the WEBHOOK_ALLOWED_IPS setting.
+        allowed_hosts: Optional iterable of hostnames that bypass IP-based blocking
+                       (exact, case-insensitive match against the URL hostname).
+                       Typically sourced from the WEBHOOK_ALLOWED_HOSTS setting and
+                       used for trusted internal services (e.g. Silo) whose IPs are
+                       dynamic in containerised deployments.
 
     Raises:
         ValueError: If the URL is invalid or resolves to a blocked IP.
@@ -29,6 +34,12 @@ def validate_url(url, allowed_ips=None):
 
     if parsed.scheme not in ("http", "https"):
         raise ValueError("Invalid URL scheme. Only HTTP and HTTPS are allowed")
+
+    normalized_host = hostname.rstrip(".").lower()
+    if allowed_hosts and normalized_host in {
+        (h or "").rstrip(".").lower() for h in allowed_hosts if h
+    }:
+        return
 
     try:
         addr_info = socket.getaddrinfo(hostname, None)

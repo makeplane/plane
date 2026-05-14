@@ -49,6 +49,29 @@ for _cidr in _webhook_allowed_ips_raw.split(","):
     except ValueError:
         _logger.warning("WEBHOOK_ALLOWED_IPS: skipping invalid entry %r", _cidr)
 
+# Webhook hostname allowlist — comma-separated hostnames that bypass the
+# private-IP SSRF check. Useful for trusted internal services whose IPs are
+# dynamic in containerised deployments (e.g. docker-compose service DNS,
+# kubernetes service hostnames).
+# Example: "silo,silo.namespace.svc.cluster.local,internal-api.lan"
+_webhook_allowed_hosts_raw = os.environ.get("WEBHOOK_ALLOWED_HOSTS", "")
+WEBHOOK_ALLOWED_HOSTS = [
+    _host.strip().rstrip(".").lower()
+    for _host in _webhook_allowed_hosts_raw.split(",")
+    if _host.strip()
+]
+
+# Webhook disallowed domains — comma-separated hostnames. Webhooks targeting
+# these domains or any of their subdomains are rejected (the request host is
+# always appended at validation time as a loop-back guard). Empty by default
+# for self-hosted deployments; set to e.g. "plane.so" to block specific domains.
+_webhook_disallowed_domains_raw = os.environ.get("WEBHOOK_DISALLOWED_DOMAINS", "")
+WEBHOOK_DISALLOWED_DOMAINS = [
+    _d.strip().rstrip(".").lower()
+    for _d in _webhook_disallowed_domains_raw.split(",")
+    if _d.strip()
+]
+
 # Allowed Hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "*").split(",")
 
