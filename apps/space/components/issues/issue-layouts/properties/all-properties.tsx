@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 import { Paperclip } from "lucide-react";
+import { useTranslation } from "@plane/i18n";
 import { LinkIcon, ViewsIcon } from "@plane/propel/icons";
 // plane imports
 import { Tooltip } from "@plane/propel/tooltip";
@@ -33,6 +34,7 @@ export interface IIssueProperties {
 
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, displayProperties, className } = props;
+  const { t } = useTranslation();
 
   if (!displayProperties || !issue.project_id) return null;
 
@@ -138,7 +140,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="sub_issue_count"
         shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
       >
-        <Tooltip tooltipHeading="Sub-work items" tooltipContent={`${issue.sub_issues_count}`}>
+        <Tooltip tooltipHeading={t("common.sub_work_items")} tooltipContent={`${issue.sub_issues_count}`}>
           <div
             className={cn(
               "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
@@ -159,7 +161,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="attachment_count"
         shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
       >
-        <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
+        <Tooltip tooltipHeading={t("common.attachments")} tooltipContent={`${issue.attachment_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
             <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-11">{issue.attachment_count}</div>
@@ -173,7 +175,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
         displayPropertyKey="link"
         shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
       >
-        <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
+        <Tooltip tooltipHeading={t("common.links")} tooltipContent={`${issue.link_count}`}>
           <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
             <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
             <div className="text-11">{issue.link_count}</div>

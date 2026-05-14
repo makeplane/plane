@@ -65,10 +65,10 @@ export const IssueBlockLabels = observer(function IssueBlockLabels({ labelIds, s
         <div
           className={`cursor-not-allowed" flex h-full flex-shrink-0 items-center rounded-sm border-[0.5px] border-strong px-2.5 py-1 text-11`}
         >
-          <Tooltip position="top" tooltipHeading="Labels" tooltipContent={labelsString}>
+          <Tooltip position="top" tooltipHeading={t("labels")} tooltipContent={labelsString}>
             <div className="flex h-full items-center gap-1.5 text-secondary">
               <span className="h-2 w-2 flex-shrink-0 rounded-full bg-accent-primary" />
-              {`${labels.length} Labels`}
+              {t("localized_ui.space_public.labels_count", { count: labels.length })}
             </div>
           </Tooltip>
         </div>

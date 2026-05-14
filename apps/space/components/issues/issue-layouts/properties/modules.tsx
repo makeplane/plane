@@ -6,6 +6,7 @@
 
 import { observer } from "mobx-react";
 // plane ui
+import { useTranslation } from "@plane/i18n";
 import { ModuleIcon } from "@plane/propel/icons";
 import { Tooltip } from "@plane/propel/tooltip";
 // plane utils
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds, shouldShowBorder = true }: Props) {
+  const { t } = useTranslation();
   const { getModulesByIds } = useModule();
 
   const modules = getModulesByIds(moduleIds ?? []);
@@ -27,7 +29,7 @@ export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds
 
   return (
     <div className="relative flex h-full flex-wrap items-center gap-1">
-      <Tooltip tooltipHeading="Modules" tooltipContent={modulesString}>
+      <Tooltip tooltipHeading={t("modules")} tooltipContent={modulesString}>
         {modules.length <= 1 ? (
           <div
             key={modules?.[0]?.id}
@@ -37,13 +39,13 @@ export const IssueBlockModules = observer(function IssueBlockModules({ moduleIds
           >
             <div className="flex items-center gap-1.5 text-secondary">
               <ModuleIcon className="h-3 w-3 flex-shrink-0" />
-              <div className="text-11">{modules?.[0]?.name ?? "No Modules"}</div>
+              <div className="text-11">{modules?.[0]?.name ?? t("localized_ui.space_public.no_modules")}</div>
             </div>
           </div>
         ) : (
           <div className="flex h-full flex-shrink-0 cursor-default items-center rounded-md border border-strong px-2.5 py-1 text-11">
             <div className="flex items-center gap-1.5 text-secondary">
-              <div className="text-11">{modules.length} Modules</div>
+              <div className="text-11">{t("localized_ui.space_public.modules_count", { count: modules.length })}</div>
             </div>
           </div>
         )}

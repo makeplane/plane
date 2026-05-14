@@ -11,6 +11,7 @@ import { MessageSquare, MoreVertical } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
+import { useTranslation } from "@plane/i18n";
 import { CheckIcon, CloseIcon } from "@plane/propel/icons";
 import type { TIssuePublicComment } from "@plane/types";
 import { getFileURL } from "@plane/utils";
@@ -32,6 +33,7 @@ type Props = {
 
 export const CommentCard = observer(function CommentCard(props: Props) {
   const { anchor, comment } = props;
+  const { t } = useTranslation();
   // store hooks
   const { peekId, deleteIssueComment, updateIssueComment, uploadCommentAsset } = useIssueDetails();
   const { data: currentUser } = useUser();
@@ -72,7 +74,9 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           <img
             src={getFileURL(comment.actor_detail.avatar_url)}
             alt={
-              comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name
+              comment.actor_detail.is_bot
+                ? t("localized_ui.space_public.bot_name", { name: comment.actor_detail.first_name })
+                : comment.actor_detail.display_name
             }
             height={30}
             width={30}
@@ -95,10 +99,12 @@ export const CommentCard = observer(function CommentCard(props: Props) {
       <div className="min-w-0 flex-1">
         <div>
           <div className="text-11">
-            {comment.actor_detail.is_bot ? comment.actor_detail.first_name + " Bot" : comment.actor_detail.display_name}
+            {comment.actor_detail.is_bot
+              ? t("localized_ui.space_public.bot_name", { name: comment.actor_detail.first_name })
+              : comment.actor_detail.display_name}
           </div>
           <p className="mt-0.5 text-11 text-secondary">
-            <>commented {timeAgo(comment.created_at)}</>
+            <>{t("localized_ui.space_public.commented_time", { time: timeAgo(comment.created_at) })}</>
           </p>
         </div>
         <div className="issue-comments-section p-0">
@@ -199,7 +205,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                         active ? "bg-layer-transparent-hover" : ""
                       }`}
                     >
-                      Edit
+                      {t("edit")}
                     </button>
                   </div>
                 )}
@@ -214,7 +220,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
                         active ? "bg-layer-transparent-hover" : ""
                       }`}
                     >
-                      Delete
+                      {t("delete")}
                     </button>
                   </div>
                 )}
