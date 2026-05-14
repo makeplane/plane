@@ -8,14 +8,14 @@ export default {
   sidebar: {
     projects: "项目",
     pages: "页面",
-    new_work_item: "新工作项",
+    new_work_item: "新任务",
     home: "主页",
     your_work: "我的工作",
     inbox: "收件箱",
     workspace: "工作区",
     views: "视图",
     analytics: "分析",
-    work_items: "工作项",
+    work_items: "任务",
     cycles: "周期",
     modules: "模块",
     intake: "收集",
@@ -89,7 +89,7 @@ export default {
       already_have_an_account: "已有账号？",
       login: "登录",
       create_account: "创建账号",
-      new_to_plane: "首次使用 Plane？",
+      new_to_plane: "首次使用 Tick？",
       back_to_sign_in: "返回登录",
       resend_in: "{seconds} 秒后重新发送",
       sign_in_with_unique_code: "使用唯一码登录",
@@ -257,18 +257,18 @@ export default {
   failed_to_update_the_theme: "主题更新失败",
   email_notifications: "邮件通知",
   stay_in_the_loop_on_issues_you_are_subscribed_to_enable_this_to_get_notified:
-    "及时了解您订阅的工作项。启用此功能以获取通知。",
+    "及时了解您订阅的任务。启用此功能以获取通知。",
   email_notification_setting_updated_successfully: "邮件通知设置更新成功",
   failed_to_update_email_notification_setting: "邮件通知设置更新失败",
   notify_me_when: "在以下情况通知我",
   property_changes: "属性变更",
-  property_changes_description: "当工作项的属性（如负责人、优先级、估算等）发生变更时通知我。",
+  property_changes_description: "当任务的属性（如负责人、优先级、估算等）发生变更时通知我。",
   state_change: "状态变更",
-  state_change_description: "当工作项移动到不同状态时通知我",
-  issue_completed: "工作项完成",
-  issue_completed_description: "仅当工作项完成时通知我",
+  state_change_description: "当任务移动到不同状态时通知我",
+  issue_completed: "任务完成",
+  issue_completed_description: "仅当任务完成时通知我",
   comments: "评论",
-  comments_description: "当有人在工作项上发表评论时通知我",
+  comments_description: "当有人在任务上发表评论时通知我",
   mentions: "提及",
   mentions_description: "仅当有人在评论或描述中提及我时通知我",
   old_password: "旧密码",
@@ -276,7 +276,7 @@ export default {
   sign_out: "退出登录",
   signing_out: "正在退出登录",
   active_cycles: "活动周期",
-  active_cycles_description: "监控各个项目的周期，跟踪高优先级工作项，并关注需要注意的周期。",
+  active_cycles_description: "监控各个项目的周期，跟踪高优先级任务，并关注需要注意的周期。",
   on_demand_snapshots_of_all_your_cycles: "所有周期的实时快照",
   upgrade: "升级",
   "10000_feet_view": "所有活动周期的全局视图。",
@@ -286,9 +286,9 @@ export default {
     "跟踪所有活动周期的高级指标，查看其进度状态，并了解与截止日期相关的范围。",
   compare_burndowns: "比较燃尽图。",
   compare_burndowns_description: "通过查看每个周期的燃尽报告，监控每个团队的表现。",
-  quickly_see_make_or_break_issues: "快速查看关键工作项。",
+  quickly_see_make_or_break_issues: "快速查看关键任务。",
   quickly_see_make_or_break_issues_description:
-    "预览每个周期中与截止日期相关的高优先级工作项。一键查看每个周期的所有工作项。",
+    "预览每个周期中与截止日期相关的高优先级任务。一键查看每个周期的所有任务。",
   zoom_into_cycles_that_need_attention: "关注需要注意的周期。",
   zoom_into_cycles_that_need_attention_description: "一键调查任何不符合预期的周期状态。",
   stay_ahead_of_blockers: "提前预防阻塞。",
@@ -297,7 +297,7 @@ export default {
   workspace_invites: "工作区邀请",
   enter_god_mode: "进入管理员模式",
   workspace_logo: "工作区标志",
-  new_issue: "新工作项",
+  new_issue: "新任务",
   your_work: "我的工作",
   drafts: "草稿",
   projects: "项目",
@@ -325,7 +325,7 @@ export default {
   create_project: "创建项目",
   failed_to_remove_project_from_favorites: "无法从收藏中移除项目。请重试。",
   project_created_successfully: "项目创建成功",
-  project_created_successfully_description: "项目创建成功。您现在可以开始添加工作项了。",
+  project_created_successfully_description: "项目创建成功。您现在可以开始添加任务了。",
   project_name_already_taken: "项目名称已被使用。",
   project_identifier_already_taken: "项目标识符已被使用。",
   project_cover_image_alt: "项目封面图片",
@@ -335,7 +335,7 @@ export default {
   project_id_must_be_at_least_1_character: "项目ID至少需要1个字符",
   project_id_must_be_at_most_5_characters: "项目ID最多只能有5个字符",
   project_id: "项目ID",
-  project_id_tooltip_content: "帮助您唯一标识项目中的工作项。最多10个字符。",
+  project_id_tooltip_content: "帮助您唯一标识项目中的任务。最多10个字符。",
   description_placeholder: "描述",
   only_alphanumeric_non_latin_characters_allowed: "仅允许字母数字和非拉丁字符。",
   project_id_is_required: "项目ID为必填项",
@@ -368,21 +368,21 @@ export default {
   drag_to_rearrange: "拖动以重新排列",
   congrats: "恭喜！",
   open_project: "打开项目",
-  issues: "工作项",
+  issues: "任务",
   cycles: "周期",
   modules: "模块",
   pages: "页面",
   intake: "收集",
   time_tracking: "时间跟踪",
   work_management: "工作管理",
-  projects_and_issues: "项目和工作项",
+  projects_and_issues: "项目和任务",
   projects_and_issues_description: "在此项目中开启或关闭这些功能。",
   cycles_description: "为每个项目设置时间框，并根据需要调整周期。一个周期可以是两周，下一个周期是一周。",
   modules_description: "将工作组织为子项目，并指定专门的负责人和受理人。",
   views_description: "保存自定义排序、筛选和显示选项，或与团队共享。",
   pages_description: "创建和编辑自由格式的内容：笔记、文档，任何内容。",
   intake_description: "允许非成员提交 Bug、反馈和建议，且不会干扰您的工作流程。",
-  time_tracking_description: "记录在工作项和项目上花费的时间。",
+  time_tracking_description: "记录在任务和项目上花费的时间。",
   work_management_description: "轻松管理您的工作和项目。",
   documentation: "文档",
   contact_sales: "联系销售",
@@ -413,30 +413,30 @@ export default {
   workspace_name: "工作区名称",
   deactivate_your_account: "停用您的账户",
   deactivate_your_account_description:
-    "一旦停用，您将无法被分配工作项，也不会被计入工作区的账单。要重新激活您的账户，您需要收到发送到此电子邮件地址的工作区邀请。",
+    "一旦停用，您将无法被分配任务，也不会被计入工作区的账单。要重新激活您的账户，您需要收到发送到此电子邮件地址的工作区邀请。",
   deactivating: "正在停用",
   confirm: "确认",
   confirming: "确认中",
   draft_created: "草稿已创建",
-  issue_created_successfully: "工作项创建成功",
+  issue_created_successfully: "任务创建成功",
   draft_creation_failed: "草稿创建失败",
-  issue_creation_failed: "工作项创建失败",
-  draft_issue: "草稿工作项",
-  issue_updated_successfully: "工作项更新成功",
-  issue_could_not_be_updated: "工作项无法更新",
+  issue_creation_failed: "任务创建失败",
+  draft_issue: "草稿任务",
+  issue_updated_successfully: "任务更新成功",
+  issue_could_not_be_updated: "任务无法更新",
   create_a_draft: "创建草稿",
   save_to_drafts: "保存到草稿",
   save: "保存",
   update: "更新",
   updating: "更新中",
-  create_new_issue: "创建新工作项",
+  create_new_issue: "创建新任务",
   editor_is_not_ready_to_discard_changes: "编辑器尚未准备好放弃更改",
-  failed_to_move_issue_to_project: "无法将工作项移动到项目",
+  failed_to_move_issue_to_project: "无法将任务移动到项目",
   create_more: "创建更多",
   add_to_project: "添加到项目",
   discard: "放弃",
-  duplicate_issue_found: "发现重复的工作项",
-  duplicate_issues_found: "发现重复的工作项",
+  duplicate_issue_found: "发现重复的任务",
+  duplicate_issues_found: "发现重复的任务",
   no_matching_results: "没有匹配的结果",
   title_is_required: "标题为必填项",
   title: "标题",
@@ -457,8 +457,8 @@ export default {
   end_date: "结束日期",
   due_date: "截止日期",
   estimate: "估算",
-  change_parent_issue: "更改父工作项",
-  remove_parent_issue: "移除父工作项",
+  change_parent_issue: "更改父任务",
+  remove_parent_issue: "移除父任务",
   add_parent: "添加父项",
   loading_members: "正在加载成员",
   view_link_copied_to_clipboard: "视图链接已复制到剪贴板",
@@ -481,15 +481,15 @@ export default {
   show_less: "显示更少",
   no_data_yet: "暂无数据",
   syncing: "同步中",
-  add_work_item: "添加工作项",
+  add_work_item: "添加任务",
   advanced_description_placeholder: "按'/'使用命令",
-  create_work_item: "创建工作项",
+  create_work_item: "创建任务",
   attachments: "附件",
   declining: "拒绝中",
   declined: "已拒绝",
   decline: "拒绝",
   unassigned: "未分配",
-  work_items: "工作项",
+  work_items: "任务",
   add_link: "添加链接",
   points: "点数",
   no_assignee: "无负责人",
@@ -596,18 +596,18 @@ export default {
       empty: {
         project: "访问项目后，您的最近项目将显示在这里。",
         page: "访问页面后，您的最近页面将显示在这里。",
-        issue: "访问工作项后，您的最近工作项将显示在这里。",
+        issue: "访问任务后，您的最近任务将显示在这里。",
         default: "您还没有任何最近项目。",
       },
       filters: {
         all: "所有",
         projects: "项目",
         pages: "页面",
-        issues: "工作项",
+        issues: "任务",
       },
     },
     new_at_plane: {
-      title: "Plane新功能",
+      title: "Tick 新功能",
     },
     quick_tutorial: {
       title: "快速教程",
@@ -676,9 +676,9 @@ export default {
     group_by: "分组方式",
     epic: "史诗",
     epics: "史诗",
-    work_item: "工作项",
-    work_items: "工作项",
-    sub_work_item: "子工作项",
+    work_item: "任务",
+    work_items: "任务",
+    sub_work_item: "子任务",
     add: "添加",
     warning: "警告",
     updating: "更新中",
@@ -717,7 +717,7 @@ export default {
       private: "私有",
     },
     done: "完成",
-    sub_work_items: "子工作项",
+    sub_work_items: "子任务",
     comment: "评论",
     workspace_level: "工作区级别",
     order_by: {
@@ -743,8 +743,8 @@ export default {
     copied: "已复制！",
     link_copied: "链接已复制！",
     link_copied_to_clipboard: "链接已复制到剪贴板",
-    copied_to_clipboard: "工作项链接已复制到剪贴板",
-    is_copied_to_clipboard: "工作项已复制到剪贴板",
+    copied_to_clipboard: "任务链接已复制到剪贴板",
+    is_copied_to_clipboard: "任务已复制到剪贴板",
     no_links_added_yet: "暂无添加的链接",
     add_link: "添加链接",
     links: "链接",
@@ -954,50 +954,50 @@ export default {
     },
   },
   issue: {
-    label: "{count, plural, one {工作项} other {工作项}}",
-    all: "所有工作项",
-    edit: "编辑工作项",
+    label: "{count, plural, one {任务} other {任务}}",
+    all: "所有任务",
+    edit: "编辑任务",
     title: {
-      label: "工作项标题",
-      required: "工作项标题为必填项",
+      label: "任务标题",
+      required: "任务标题为必填项",
     },
     add: {
-      press_enter: "按'Enter'添加另一个工作项",
-      label: "添加工作项",
+      press_enter: "按'Enter'添加另一个任务",
+      label: "添加任务",
       cycle: {
-        failed: "无法将工作项添加到周期。请重试。",
-        success: "{count, plural, one {工作项} other {工作项}}已成功添加到周期。",
-        loading: "正在将{count, plural, one {工作项} other {工作项}}添加到周期",
+        failed: "无法将任务添加到周期。请重试。",
+        success: "{count, plural, one {任务} other {任务}}已成功添加到周期。",
+        loading: "正在将{count, plural, one {任务} other {任务}}添加到周期",
       },
       assignee: "添加负责人",
       start_date: "添加开始日期",
       due_date: "添加截止日期",
-      parent: "添加父工作项",
-      sub_issue: "添加子工作项",
+      parent: "添加父任务",
+      sub_issue: "添加子任务",
       relation: "添加关系",
       link: "添加链接",
-      existing: "添加现有工作项",
+      existing: "添加现有任务",
     },
     remove: {
-      label: "移除工作项",
+      label: "移除任务",
       cycle: {
-        loading: "正在从周期中移除工作项",
-        success: "已成功从周期中移除工作项。",
-        failed: "无法从周期中移除工作项。请重试。",
+        loading: "正在从周期中移除任务",
+        success: "已成功从周期中移除任务。",
+        failed: "无法从周期中移除任务。请重试。",
       },
       module: {
-        loading: "正在从模块中移除工作项",
-        success: "已成功从模块中移除工作项。",
-        failed: "无法从模块中移除工作项。请重试。",
+        loading: "正在从模块中移除任务",
+        success: "已成功从模块中移除任务。",
+        failed: "无法从模块中移除任务。请重试。",
       },
       parent: {
-        label: "移除父工作项",
+        label: "移除父任务",
       },
     },
-    new: "新建工作项",
-    adding: "正在添加工作项",
+    new: "新建任务",
+    adding: "正在添加任务",
     create: {
-      success: "工作项创建成功",
+      success: "任务创建成功",
     },
     priority: {
       urgent: "紧急",
@@ -1009,15 +1009,15 @@ export default {
       properties: {
         label: "显示属性",
         id: "ID",
-        issue_type: "工作项类型",
-        sub_issue_count: "子工作项数量",
+        issue_type: "任务类型",
+        sub_issue_count: "子任务数量",
         attachment_count: "附件数量",
         created_on: "创建于",
-        sub_issue: "子工作项",
-        work_item_count: "工作项数量",
+        sub_issue: "子任务",
+        work_item_count: "任务数量",
       },
       extra: {
-        show_sub_issues: "显示子工作项",
+        show_sub_issues: "显示子任务",
         show_empty_groups: "显示空组",
       },
     },
@@ -1068,35 +1068,35 @@ export default {
     },
     empty_state: {
       issue_detail: {
-        title: "工作项不存在",
-        description: "您查找的工作项不存在、已归档或已删除。",
+        title: "任务不存在",
+        description: "您查找的任务不存在、已归档或已删除。",
         primary_button: {
-          text: "查看其他工作项",
+          text: "查看其他任务",
         },
       },
     },
     sibling: {
-      label: "同级工作项",
+      label: "同级任务",
     },
     archive: {
-      description: "只有已完成或已取消的\n工作项可以归档",
-      label: "归档工作项",
-      confirm_message: "您确定要归档此工作项吗？所有已归档的工作项稍后可以恢复。",
+      description: "只有已完成或已取消的\n任务可以归档",
+      label: "归档任务",
+      confirm_message: "您确定要归档此任务吗？所有已归档的任务稍后可以恢复。",
       success: {
         label: "归档成功",
         message: "您的归档可以在项目归档中找到。",
       },
       failed: {
-        message: "无法归档工作项。请重试。",
+        message: "无法归档任务。请重试。",
       },
     },
     restore: {
       success: {
         title: "恢复成功",
-        message: "您的工作项可以在项目工作项中找到。",
+        message: "您的任务可以在项目任务中找到。",
       },
       failed: {
-        message: "无法恢复工作项。请重试。",
+        message: "无法恢复任务。请重试。",
       },
     },
     relation: {
@@ -1105,25 +1105,25 @@ export default {
       blocked_by: "被阻止于",
       blocking: "阻止",
     },
-    copy_link: "复制工作项链接",
+    copy_link: "复制任务链接",
     delete: {
-      label: "删除工作项",
-      error: "删除工作项时出错",
+      label: "删除任务",
+      error: "删除任务时出错",
     },
     subscription: {
       actions: {
-        subscribed: "工作项订阅成功",
-        unsubscribed: "工作项取消订阅成功",
+        subscribed: "任务订阅成功",
+        unsubscribed: "任务取消订阅成功",
       },
     },
     select: {
-      error: "请至少选择一个工作项",
-      empty: "未选择工作项",
-      add_selected: "添加所选工作项",
+      error: "请至少选择一个任务",
+      empty: "未选择任务",
+      add_selected: "添加所选任务",
       select_all: "全选",
       deselect_all: "取消全选",
     },
-    open_in_full_screen: "在全屏中打开工作项",
+    open_in_full_screen: "在全屏中打开任务",
   },
   attachment: {
     error: "无法附加文件。请重新上传。",
@@ -1143,22 +1143,22 @@ export default {
   },
   sub_work_item: {
     update: {
-      success: "子工作项更新成功",
-      error: "更新子工作项时出错",
+      success: "子任务更新成功",
+      error: "更新子任务时出错",
     },
     remove: {
-      success: "子工作项移除成功",
-      error: "移除子工作项时出错",
+      success: "子任务移除成功",
+      error: "移除子任务时出错",
     },
     empty_state: {
       sub_list_filters: {
-        title: "您没有符合您应用的过滤器的子工作项。",
-        description: "要查看所有子工作项，请清除所有应用的过滤器。",
+        title: "您没有符合您应用的过滤器的子任务。",
+        description: "要查看所有子任务，请清除所有应用的过滤器。",
         action: "清除过滤器",
       },
       list_filters: {
-        title: "您没有符合您应用的过滤器的工作项。",
-        description: "要查看所有工作项，请清除所有应用的过滤器。",
+        title: "您没有符合您应用的过滤器的任务。",
+        description: "要查看所有任务，请清除所有应用的过滤器。",
         action: "清除过滤器",
       },
     },
@@ -1197,30 +1197,30 @@ export default {
     },
     modals: {
       decline: {
-        title: "拒绝工作项",
-        content: "您确定要拒绝工作项 {value} 吗？",
+        title: "拒绝任务",
+        content: "您确定要拒绝任务 {value} 吗？",
       },
       delete: {
-        title: "删除工作项",
-        content: "您确定要删除工作项 {value} 吗？",
-        success: "工作项删除成功",
+        title: "删除任务",
+        content: "您确定要删除任务 {value} 吗？",
+        success: "任务删除成功",
       },
     },
     errors: {
-      snooze_permission: "只有项目管理员可以暂停/取消暂停工作项",
-      accept_permission: "只有项目管理员可以接受工作项",
-      decline_permission: "只有项目管理员可以拒绝工作项",
+      snooze_permission: "只有项目管理员可以暂停/取消暂停任务",
+      accept_permission: "只有项目管理员可以接受任务",
+      decline_permission: "只有项目管理员可以拒绝任务",
     },
     actions: {
       accept: "接受",
       decline: "拒绝",
       snooze: "暂停",
       unsnooze: "取消暂停",
-      copy: "复制工作项链接",
+      copy: "复制任务链接",
       delete: "删除",
-      open: "打开工作项",
+      open: "打开任务",
       mark_as_duplicate: "标记为重复",
-      move: "将 {value} 移至项目工作项",
+      move: "将 {value} 移至项目任务",
     },
     source: {
       "in-app": "应用内",
@@ -1233,7 +1233,7 @@ export default {
     label: "收集",
     page_label: "{workspace} - 收集",
     modal: {
-      title: "创建收集工作项",
+      title: "创建收集任务",
     },
     tabs: {
       open: "未处理",
@@ -1241,25 +1241,25 @@ export default {
     },
     empty_state: {
       sidebar_open_tab: {
-        title: "没有未处理的工作项",
-        description: "在此处查找未处理的工作项。创建新工作项。",
+        title: "没有未处理的任务",
+        description: "在此处查找未处理的任务。创建新任务。",
       },
       sidebar_closed_tab: {
-        title: "没有已处理的工作项",
-        description: "所有已接受或已拒绝的工作项都可以在这里找到。",
+        title: "没有已处理的任务",
+        description: "所有已接受或已拒绝的任务都可以在这里找到。",
       },
       sidebar_filter: {
-        title: "没有匹配的工作项",
-        description: "收集中没有符合筛选条件的工作项。创建新工作项。",
+        title: "没有匹配的任务",
+        description: "收集中没有符合筛选条件的任务。创建新任务。",
       },
       detail: {
-        title: "选择一个工作项以查看其详细信息。",
+        title: "选择一个任务以查看其详细信息。",
       },
     },
   },
   workspace_creation: {
     heading: "创建您的工作区",
-    subheading: "要开始使用 Plane，您需要创建或加入一个工作区。",
+    subheading: "要开始使用 Tick，您需要创建或加入一个工作区。",
     form: {
       name: {
         label: "为您的工作区命名",
@@ -1313,11 +1313,11 @@ export default {
       general: {
         title: "项目、活动和指标概览",
         description:
-          "欢迎使用 Plane，我们很高兴您能来到这里。创建您的第一个项目并跟踪您的工作项，这个页面将转变为帮助您进展的空间。管理员还将看到帮助团队进展的项目。",
+          "欢迎使用 Tick，我们很高兴您能来到这里。创建您的第一个项目并跟踪您的任务，这个页面将转变为帮助您进展的空间。管理员还将看到帮助团队进展的项目。",
         primary_button: {
           text: "构建您的第一个项目",
           comic: {
-            title: "在 Plane 中一切都从项目开始",
+            title: "在 Tick 中一切都从项目开始",
             description: "项目可以是产品路线图、营销活动或新车发布。",
           },
         },
@@ -1329,26 +1329,26 @@ export default {
     page_label: "{workspace} - 分析",
     open_tasks: "总开放任务",
     error: "获取数据时出现错误。",
-    work_items_closed_in: "已关闭的工作项",
+    work_items_closed_in: "已关闭的任务",
     selected_projects: "已选择的项目",
     total_members: "总成员数",
     total_cycles: "总周期数",
     total_modules: "总模块数",
     pending_work_items: {
-      title: "待处理工作项",
-      empty_state: "同事的待处理工作项分析将显示在这里。",
+      title: "待处理任务",
+      empty_state: "同事的待处理任务分析将显示在这里。",
     },
     work_items_closed_in_a_year: {
-      title: "一年内关闭的工作项",
-      empty_state: "关闭工作项以查看以图表形式显示的分析。",
+      title: "一年内关闭的任务",
+      empty_state: "关闭任务以查看以图表形式显示的分析。",
     },
     most_work_items_created: {
-      title: "创建最多工作项",
-      empty_state: "同事及其创建的工作项数量将显示在这里。",
+      title: "创建最多任务",
+      empty_state: "同事及其创建的任务数量将显示在这里。",
     },
     most_work_items_closed: {
-      title: "关闭最多工作项",
-      empty_state: "同事及其关闭的工作项数量将显示在这里。",
+      title: "关闭最多任务",
+      empty_state: "同事及其关闭的任务数量将显示在这里。",
     },
     tabs: {
       scope_and_demand: "范围和需求",
@@ -1356,16 +1356,16 @@ export default {
     },
     empty_state: {
       customized_insights: {
-        description: "分配给您的工作项将按状态分类显示在此处。",
+        description: "分配给您的任务将按状态分类显示在此处。",
         title: "暂无数据",
       },
       created_vs_resolved: {
-        description: "随着时间推移创建和解决的工作项将显示在此处。",
+        description: "随着时间推移创建和解决的任务将显示在此处。",
         title: "暂无数据",
       },
       project_insights: {
         title: "暂无数据",
-        description: "分配给您的工作项将按状态分类显示在此处。",
+        description: "分配给您的任务将按状态分类显示在此处。",
       },
       general: {
         title: "跟踪进度、工作量和分配。发现趋势，消除障碍，加速工作进展",
@@ -1418,7 +1418,7 @@ export default {
       permission: "您没有执行此操作的权限。",
       cycle_delete: "删除周期失败",
       module_delete: "删除模块失败",
-      issue_delete: "删除工作项失败",
+      issue_delete: "删除任务失败",
     },
     state: {
       backlog: "待办",
@@ -1444,22 +1444,22 @@ export default {
       general: {
         title: "没有活动项目",
         description:
-          "将每个项目视为目标导向工作的父级。项目是工作项、周期和模块所在的地方，与您的同事一起帮助您实现目标。创建新项目或筛选已归档的项目。",
+          "将每个项目视为目标导向工作的父级。项目是任务、周期和模块所在的地方，与您的同事一起帮助您实现目标。创建新项目或筛选已归档的项目。",
         primary_button: {
           text: "开始您的第一个项目",
           comic: {
-            title: "在 Plane 中一切都从项目开始",
+            title: "在 Tick 中一切都从项目开始",
             description: "项目可以是产品路线图、营销活动或新车发布。",
           },
         },
       },
       no_projects: {
         title: "没有项目",
-        description: "要创建工作项或管理您的工作，您需要创建一个项目或成为项目的一部分。",
+        description: "要创建任务或管理您的工作，您需要创建一个项目或成为项目的一部分。",
         primary_button: {
           text: "开始您的第一个项目",
           comic: {
-            title: "在 Plane 中一切都从项目开始",
+            title: "在 Tick 中一切都从项目开始",
             description: "项目可以是产品路线图、营销活动或新车发布。",
           },
         },
@@ -1477,33 +1477,33 @@ export default {
     add_view: "添加视图",
     empty_state: {
       "all-issues": {
-        title: "项目中没有工作项",
-        description: "第一个项目完成！现在，将您的工作分解成可跟踪的工作项。让我们开始吧！",
+        title: "项目中没有任务",
+        description: "第一个项目完成！现在，将您的工作分解成可跟踪的任务。让我们开始吧！",
         primary_button: {
-          text: "创建新工作项",
+          text: "创建新任务",
         },
       },
       assigned: {
-        title: "还没有工作项",
-        description: "可以在这里跟踪分配给您的工作项。",
+        title: "还没有任务",
+        description: "可以在这里跟踪分配给您的任务。",
         primary_button: {
-          text: "创建新工作项",
+          text: "创建新任务",
         },
       },
       created: {
-        title: "还没有工作项",
-        description: "您创建的所有工作项都会出现在这里，直接在这里跟踪它们。",
+        title: "还没有任务",
+        description: "您创建的所有任务都会出现在这里，直接在这里跟踪它们。",
         primary_button: {
-          text: "创建新工作项",
+          text: "创建新任务",
         },
       },
       subscribed: {
-        title: "还没有工作项",
-        description: "订阅您感兴趣的工作项，在这里跟踪所有这些工作项。",
+        title: "还没有任务",
+        description: "订阅您感兴趣的任务，在这里跟踪所有这些任务。",
       },
       "custom-view": {
-        title: "还没有工作项",
-        description: "符合筛选条件的工作项，在这里跟踪所有这些工作项。",
+        title: "还没有任务",
+        description: "符合筛选条件的任务，在这里跟踪所有这些任务。",
       },
     },
     delete_view: {
@@ -1556,7 +1556,7 @@ export default {
     label: "工作区设置",
     page_label: "{workspace} - 常规设置",
     key_created: "密钥已创建",
-    copy_key: "复制并将此密钥保存在 Plane Pages 中。关闭后您将无法看到此密钥。包含密钥的 CSV 文件已下载。",
+    copy_key: "复制并将此密钥保存在 Tick Pages 中。关闭后您将无法看到此密钥。包含密钥的 CSV 文件已下载。",
     token_copied: "令牌已复制到剪贴板。",
     settings: {
       general: {
@@ -1629,7 +1629,7 @@ export default {
         exporting: "导出中",
         previous_exports: "以前的导出",
         export_separate_files: "将数据导出为单独的文件",
-        filters_info: "应用筛选器以根据您的条件导出特定工作项。",
+        filters_info: "应用筛选器以根据您的条件导出特定任务。",
         modal: {
           title: "导出到",
           toasts: {
@@ -1704,7 +1704,7 @@ export default {
         generating: "生成中",
         delete: {
           title: "删除 API 令牌",
-          description: "使用此令牌的任何应用程序将无法再访问 Plane 数据。此操作无法撤消。",
+          description: "使用此令牌的任何应用程序将无法再访问 Tick 数据。此操作无法撤消。",
           success: {
             title: "成功！",
             message: "API 令牌已成功删除",
@@ -1719,7 +1719,7 @@ export default {
     empty_state: {
       api_tokens: {
         title: "尚未创建 API 令牌",
-        description: "Plane API 可用于将您在 Plane 中的数据与任何外部系统集成。创建令牌以开始使用。",
+        description: "Tick API 可用于将您在 Tick 中的数据与任何外部系统集成。创建令牌以开始使用。",
       },
       webhooks: {
         title: "尚未添加 webhook",
@@ -1746,16 +1746,16 @@ export default {
     stats: {
       workload: "工作量",
       overview: "概览",
-      created: "已创建的工作项",
-      assigned: "已分配的工作项",
-      subscribed: "已订阅的工作项",
+      created: "已创建的任务",
+      assigned: "已分配的任务",
+      subscribed: "已订阅的任务",
       state_distribution: {
-        title: "按状态分类的工作项",
-        empty: "创建工作项以在图表中查看按状态分类的工作项，以便更好地分析。",
+        title: "按状态分类的任务",
+        empty: "创建任务以在图表中查看按状态分类的任务，以便更好地分析。",
       },
       priority_distribution: {
-        title: "按优先级分类的工作项",
-        empty: "创建工作项以在图表中查看按优先级分类的工作项，以便更好地分析。",
+        title: "按优先级分类的任务",
+        empty: "创建任务以在图表中查看按优先级分类的任务，以便更好地分析。",
       },
       recent_activity: {
         title: "最近活动",
@@ -1781,19 +1781,19 @@ export default {
     empty_state: {
       activity: {
         title: "尚无活动",
-        description: "通过创建新工作项开始！为其添加详细信息和属性。在 Plane 中探索更多内容以查看您的活动。",
+        description: "通过创建新任务开始！为其添加详细信息和属性。在 Tick 中探索更多内容以查看您的活动。",
       },
       assigned: {
-        title: "没有分配给您的工作项",
-        description: "可以从这里跟踪分配给您的工作项。",
+        title: "没有分配给您的任务",
+        description: "可以从这里跟踪分配给您的任务。",
       },
       created: {
-        title: "尚无工作项",
-        description: "您创建的所有工作项都会出现在这里，直接在这里跟踪它们。",
+        title: "尚无任务",
+        description: "您创建的所有任务都会出现在这里，直接在这里跟踪它们。",
       },
       subscribed: {
-        title: "尚无工作项",
-        description: "订阅您感兴趣的工作项，在这里跟踪所有这些工作项。",
+        title: "尚无任务",
+        description: "订阅您感兴趣的任务，在这里跟踪所有这些任务。",
       },
     },
   },
@@ -1822,8 +1822,8 @@ export default {
       project_lead: "项目负责人",
       default_assignee: "默认受理人",
       guest_super_permissions: {
-        title: "为访客用户授予查看所有工作项的权限：",
-        sub_heading: "这将允许访客查看所有项目工作项。",
+        title: "为访客用户授予查看所有任务的权限：",
+        sub_heading: "这将允许访客查看所有项目任务。",
       },
       invite_members: {
         title: "邀请成员",
@@ -1913,13 +1913,13 @@ export default {
     automations: {
       label: "自动化",
       "auto-archive": {
-        title: "自动归档已关闭的工作项",
-        description: "Plane 将自动归档已完成或已取消的工作项。",
+        title: "自动归档已关闭的任务",
+        description: "Tick 将自动归档已完成或已取消的任务。",
         duration: "自动归档已关闭",
       },
       "auto-close": {
-        title: "自动关闭工作项",
-        description: "Plane 将自动关闭尚未完成或取消的工作项。",
+        title: "自动关闭任务",
+        description: "Tick 将自动关闭尚未完成或取消的任务。",
         duration: "自动关闭不活跃",
         auto_close_status: "自动关闭状态",
       },
@@ -1927,11 +1927,11 @@ export default {
     empty_state: {
       labels: {
         title: "尚无标签",
-        description: "创建标签以帮助组织和筛选项目中的工作项。",
+        description: "创建标签以帮助组织和筛选项目中的任务。",
       },
       estimates: {
         title: "尚无估算系统",
-        description: "创建一组估算以传达每个工作项的工作量。",
+        description: "创建一组估算以传达每个任务的工作量。",
         primary_button: "添加估算系统",
       },
     },
@@ -1986,16 +1986,16 @@ export default {
     start_date: "开始日期",
     end_date: "结束日期",
     in_your_timezone: "在您的时区",
-    transfer_work_items: "转移 {count} 工作项",
+    transfer_work_items: "转移 {count} 任务",
     date_range: "日期范围",
     add_date: "添加日期",
     active_cycle: {
       label: "活动周期",
       progress: "进度",
       chart: "燃尽图",
-      priority_issue: "优先工作项",
+      priority_issue: "优先任务",
       assignees: "受理人",
-      issue_burndown: "工作项燃尽",
+      issue_burndown: "任务燃尽",
       ideal: "理想",
       current: "当前",
       labels: "标签",
@@ -2075,18 +2075,18 @@ export default {
         },
       },
       no_issues: {
-        title: "尚未向周期添加工作项",
-        description: "添加或创建您希望在此周期内时间框定和交付的工作项",
+        title: "尚未向周期添加任务",
+        description: "添加或创建您希望在此周期内时间框定和交付的任务",
         primary_button: {
-          text: "创建新工作项",
+          text: "创建新任务",
         },
         secondary_button: {
-          text: "添加现有工作项",
+          text: "添加现有任务",
         },
       },
       completed_no_issues: {
-        title: "周期中没有工作项",
-        description: "周期中没有工作项。工作项已被转移或隐藏。要查看隐藏的工作项（如果有），请相应更新您的显示属性。",
+        title: "周期中没有任务",
+        description: "周期中没有任务。任务已被转移或隐藏。要查看隐藏的任务（如果有），请相应更新您的显示属性。",
       },
       active: {
         title: "没有活动周期",
@@ -2101,26 +2101,26 @@ export default {
   project_issues: {
     empty_state: {
       no_issues: {
-        title: "创建工作项并将其分配给某人，甚至是您自己",
+        title: "创建任务并将其分配给某人，甚至是您自己",
         description:
-          "将工作项视为工作、任务或待完成的工作。工作项及其子工作项通常是基于时间的、分配给团队成员的可执行项。您的团队通过创建、分配和完成工作项来推动项目实现其目标。",
+          "将任务视为工作、任务或待完成的工作。任务及其子任务通常是基于时间的、分配给团队成员的可执行项。您的团队通过创建、分配和完成任务来推动项目实现其目标。",
         primary_button: {
-          text: "创建您的第一个工作项",
+          text: "创建您的第一个任务",
           comic: {
-            title: "工作项是 Plane 中的基本构建块。",
-            description: "重新设计 Plane 界面、重塑公司品牌或启动新的燃料喷射系统都是可能包含子工作项的工作项示例。",
+            title: "任务是 Tick 中的基本构建块。",
+            description: "重新设计 Tick 界面、重塑公司品牌或启动新的燃料喷射系统都是可能包含子任务的任务示例。",
           },
         },
       },
       no_archived_issues: {
-        title: "尚无已归档的工作项",
-        description: "通过手动或自动化方式，您可以归档已完成或已取消的工作项。归档后可以在这里找到它们。",
+        title: "尚无已归档的任务",
+        description: "通过手动或自动化方式，您可以归档已完成或已取消的任务。归档后可以在这里找到它们。",
         primary_button: {
           text: "设置自动化",
         },
       },
       issues_empty_filter: {
-        title: "未找到符合筛选条件的工作项",
+        title: "未找到符合筛选条件的任务",
         secondary_button: {
           text: "清除所有筛选条件",
         },
@@ -2138,7 +2138,7 @@ export default {
       general: {
         title: "将项目里程碑映射到模块，轻松跟踪汇总工作。",
         description:
-          "属于逻辑层次结构父级的一组工作项形成一个模块。将其视为按项目里程碑跟踪工作的方式。它们有自己的周期和截止日期以及分析功能，帮助您了解距离里程碑的远近。",
+          "属于逻辑层次结构父级的一组任务形成一个模块。将其视为按项目里程碑跟踪工作的方式。它们有自己的周期和截止日期以及分析功能，帮助您了解距离里程碑的远近。",
         primary_button: {
           text: "构建您的第一个模块",
           comic: {
@@ -2148,13 +2148,13 @@ export default {
         },
       },
       no_issues: {
-        title: "模块中没有工作项",
-        description: "创建或添加您想作为此模块一部分完成的工作项",
+        title: "模块中没有任务",
+        description: "创建或添加您想作为此模块一部分完成的任务",
         primary_button: {
-          text: "创建新工作项",
+          text: "创建新任务",
         },
         secondary_button: {
-          text: "添加现有工作项",
+          text: "添加现有任务",
         },
       },
       archived: {
@@ -2190,7 +2190,7 @@ export default {
         primary_button: {
           text: "创建您的第一个视图",
           comic: {
-            title: "视图基于工作项属性运作。",
+            title: "视图基于任务属性运作。",
             description: "您可以在此处创建一个视图，根据需要使用任意数量的属性作为筛选条件。",
           },
         },
@@ -2208,9 +2208,9 @@ export default {
   project_page: {
     empty_state: {
       general: {
-        title: "写笔记、文档或完整的知识库。让 Plane 的 AI 助手 Galileo 帮助您开始",
+        title: "写笔记、文档或完整的知识库。让 Tick 的 AI 助手 Galileo 帮助您开始",
         description:
-          "页面是 Plane 中的思维记录空间。记录会议笔记，轻松格式化，嵌入工作项，使用组件库进行布局，并将它们全部保存在项目上下文中。要快速完成任何文档，可以通过快捷键或点击按钮调用 Plane 的 AI Galileo。",
+          "页面是 Tick 中的思维记录空间。记录会议笔记，轻松格式化，嵌入任务，使用组件库进行布局，并将它们全部保存在项目上下文中。要快速完成任何文档，可以通过快捷键或点击按钮调用 Tick 的 AI Galileo。",
         primary_button: {
           text: "创建您的第一个页面",
         },
@@ -2245,10 +2245,10 @@ export default {
   issue_relation: {
     empty_state: {
       search: {
-        title: "未找到匹配的工作项",
+        title: "未找到匹配的任务",
       },
       no_issues: {
-        title: "未找到工作项",
+        title: "未找到任务",
       },
     },
   },
@@ -2256,7 +2256,7 @@ export default {
     empty_state: {
       general: {
         title: "尚无评论",
-        description: "评论可用作工作项的讨论和跟进空间",
+        description: "评论可用作任务的讨论和跟进空间",
       },
     },
   },
@@ -2290,12 +2290,12 @@ export default {
         title: "选择以查看详情。",
       },
       all: {
-        title: "没有分配的工作项",
-        description: "在这里可以看到分配给您的工作项的更新",
+        title: "没有分配的任务",
+        description: "在这里可以看到分配给您的任务的更新",
       },
       mentions: {
-        title: "没有分配的工作项",
-        description: "在这里可以看到分配给您的工作项的更新",
+        title: "没有分配的任务",
+        description: "在这里可以看到分配给您的任务的更新",
       },
     },
     tabs: {
@@ -2319,19 +2319,19 @@ export default {
   active_cycle: {
     empty_state: {
       progress: {
-        title: "向周期添加工作项以查看其进度",
+        title: "向周期添加任务以查看其进度",
       },
       chart: {
-        title: "向周期添加工作项以查看燃尽图。",
+        title: "向周期添加任务以查看燃尽图。",
       },
       priority_issue: {
-        title: "一目了然地观察周期中处理的高优先级工作项。",
+        title: "一目了然地观察周期中处理的高优先级任务。",
       },
       assignee: {
-        title: "为工作项添加负责人以查看按负责人划分的工作明细。",
+        title: "为任务添加负责人以查看按负责人划分的工作明细。",
       },
       label: {
-        title: "为工作项添加标签以查看按标签划分的工作明细。",
+        title: "为任务添加标签以查看按标签划分的工作明细。",
       },
     },
   },
@@ -2340,7 +2340,7 @@ export default {
       inbox: {
         title: "项目未启用收集功能。",
         description:
-          "收集功能帮助您管理项目的传入请求，并将其添加为工作流中的工作项。从项目设置启用收集功能以管理请求。",
+          "收集功能帮助您管理项目的传入请求，并将其添加为工作流中的任务。从项目设置启用收集功能以管理请求。",
         primary_button: {
           text: "管理功能",
         },
@@ -2377,10 +2377,10 @@ export default {
     },
   },
   workspace_draft_issues: {
-    draft_an_issue: "起草工作项",
+    draft_an_issue: "起草任务",
     empty_state: {
-      title: "半写的工作项，以及即将推出的评论将在这里显示。",
-      description: "要试用此功能，请开始添加工作项并中途离开，或在下方创建您的第一个草稿。😉",
+      title: "半写的任务，以及即将推出的评论将在这里显示。",
+      description: "要试用此功能，请开始添加任务并中途离开，或在下方创建您的第一个草稿。😉",
       primary_button: {
         text: "创建您的第一个草稿",
       },
@@ -2392,7 +2392,7 @@ export default {
     toasts: {
       created: {
         success: "草稿已创建",
-        error: "无法创建工作项。请重试。",
+        error: "无法创建任务。请重试。",
       },
       deleted: {
         success: "草稿已删除",
@@ -2485,37 +2485,37 @@ export default {
   importer: {
     github: {
       title: "GitHub",
-      description: "从 GitHub 仓库导入工作项并同步。",
+      description: "从 GitHub 仓库导入任务并同步。",
     },
     jira: {
       title: "Jira",
-      description: "从 Jira 项目和史诗导入工作项和史诗。",
+      description: "从 Jira 项目和史诗导入任务和史诗。",
     },
   },
   exporter: {
     csv: {
       title: "CSV",
-      description: "将工作项导出为 CSV 文件。",
+      description: "将任务导出为 CSV 文件。",
       short_description: "导出为 CSV",
     },
     excel: {
       title: "Excel",
-      description: "将工作项导出为 Excel 文件。",
+      description: "将任务导出为 Excel 文件。",
       short_description: "导出为 Excel",
     },
     xlsx: {
       title: "Excel",
-      description: "将工作项导出为 Excel 文件。",
+      description: "将任务导出为 Excel 文件。",
       short_description: "导出为 Excel",
     },
     json: {
       title: "JSON",
-      description: "将工作项导出为 JSON 文件。",
+      description: "将任务导出为 JSON 文件。",
       short_description: "导出为 JSON",
     },
   },
   default_global_view: {
-    all_issues: "所有工作项",
+    all_issues: "所有任务",
     assigned: "已分配",
     created: "已创建",
     subscribed: "已订阅",
@@ -2559,7 +2559,7 @@ export default {
     order_by: {
       name: "名称",
       progress: "进度",
-      issues: "工作项数量",
+      issues: "任务数量",
       due_date: "截止日期",
       created_at: "创建日期",
       manual: "手动",
@@ -2580,7 +2580,7 @@ export default {
   },
   self_hosted_maintenance_message: {
     plane_didnt_start_up_this_could_be_because_one_or_more_plane_services_failed_to_start:
-      "Plane 未能启动。这可能是因为一个或多个 Plane 服务启动失败。",
+      "Tick 未能启动。这可能是因为一个或多个 Tick 服务启动失败。",
     choose_view_logs_from_setup_sh_and_docker_logs_to_be_sure:
       "请选择“查看日志”来查看 setup.sh 和 Docker 日志，以确认问题。",
   },

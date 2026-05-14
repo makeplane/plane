@@ -1583,6 +1583,16 @@ def issue_activity(
         # Save all the values to database
         issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
 
+        # Fan out Feishu Bot DMs for assignee/state/comment events. bulk_create
+        # above bypasses post_save signals, so this is the canonical hook point.
+        # No-op unless LARK_NOTIFICATIONS_ENABLED is truthy; never raises.
+        try:
+            from plane.bgtasks.lark_notify_task import dispatch_lark_for_activities
+
+            dispatch_lark_for_activities(issue_activities_created)
+        except Exception as exc:
+            log_exception(exc)
+
         if notification:
             notifications.delay(
                 type=type,

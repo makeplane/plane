@@ -8,7 +8,7 @@ export default {
   common_empty_state: {
     progress: {
       title: "暂无进度指标可显示。",
-      description: "开始在工作项中设置属性值以在此查看进度指标。",
+      description: "开始在任务中设置属性值以在此查看进度指标。",
     },
     updates: {
       title: "暂无更新。",
@@ -20,7 +20,7 @@ export default {
     },
     not_found: {
       title: "糟糕!似乎出了点问题",
-      description: "我们目前无法获取您的 Plane 账户。这可能是网络错误。",
+      description: "我们目前无法获取您的 Tick 账户。这可能是网络错误。",
       cta_primary: "尝试重新加载",
     },
     server_error: {
@@ -42,9 +42,9 @@ export default {
       description: "您查找的项目不存在。",
     },
     work_items: {
-      title: "从您的第一个工作项开始。",
-      description: "工作项是项目的构建块 — 分配负责人、设置优先级并轻松跟踪进度。",
-      cta_primary: "创建您的第一个工作项",
+      title: "从您的第一个任务开始。",
+      description: "任务是项目的构建块 — 分配负责人、设置优先级并轻松跟踪进度。",
+      cta_primary: "创建您的第一个任务",
     },
     cycles: {
       title: "在周期中分组和限时您的工作。",
@@ -52,22 +52,22 @@ export default {
       cta_primary: "设置您的第一个周期",
     },
     cycle_work_items: {
-      title: "此周期中没有要显示的工作项",
-      description: "创建工作项以开始监控团队在此周期中的进度并按时实现目标。",
-      cta_primary: "创建工作项",
-      cta_secondary: "添加现有工作项",
+      title: "此周期中没有要显示的任务",
+      description: "创建任务以开始监控团队在此周期中的进度并按时实现目标。",
+      cta_primary: "创建任务",
+      cta_secondary: "添加现有任务",
     },
     modules: {
       title: "将项目目标映射到模块并轻松跟踪。",
       description:
-        "模块由相互关联的工作项组成。它们有助于监控项目阶段的进度,每个阶段都有特定的截止日期和分析,以指示您离实现这些阶段有多近。",
+        "模块由相互关联的任务组成。它们有助于监控项目阶段的进度,每个阶段都有特定的截止日期和分析,以指示您离实现这些阶段有多近。",
       cta_primary: "设置您的第一个模块",
     },
     module_work_items: {
-      title: "此模块中没有要显示的工作项",
-      description: "创建工作项以开始监控此模块。",
-      cta_primary: "创建工作项",
-      cta_secondary: "添加现有工作项",
+      title: "此模块中没有要显示的任务",
+      description: "创建任务以开始监控此模块。",
+      cta_primary: "创建任务",
+      cta_secondary: "添加现有任务",
     },
     views: {
       title: "为项目保存自定义视图",
@@ -76,19 +76,19 @@ export default {
       cta_primary: "创建视图",
     },
     no_work_items_in_project: {
-      title: "项目中暂无工作项",
-      description: "将工作项添加到项目中,并使用视图将工作切分为可跟踪的部分。",
-      cta_primary: "添加工作项",
+      title: "项目中暂无任务",
+      description: "将任务添加到项目中,并使用视图将工作切分为可跟踪的部分。",
+      cta_primary: "添加任务",
     },
     work_item_filter: {
-      title: "未找到工作项",
+      title: "未找到任务",
       description: "您当前的过滤器未返回任何结果。请尝试更改过滤器。",
-      cta_primary: "添加工作项",
+      cta_primary: "添加任务",
     },
     pages: {
       title: "记录一切 — 从笔记到 PRD",
       description:
-        "页面让您在一个地方捕获和组织信息。编写会议笔记、项目文档和 PRD,嵌入工作项,并使用现成的组件进行结构化。",
+        "页面让您在一个地方捕获和组织信息。编写会议笔记、项目文档和 PRD,嵌入任务,并使用现成的组件进行结构化。",
       cta_primary: "创建您的第一个页面",
     },
     archive_pages: {
@@ -101,13 +101,13 @@ export default {
       cta_primary: "创建接收请求",
     },
     intake_main: {
-      title: "选择一个接收工作项以查看其详细信息",
+      title: "选择一个接收任务以查看其详细信息",
     },
   },
   workspace_empty_state: {
     archive_work_items: {
-      title: "暂无已归档工作项",
-      description: "通过手动或自动化,您可以归档已完成或已取消的工作项。归档后在此处查找它们。",
+      title: "暂无已归档任务",
+      description: "通过手动或自动化,您可以归档已完成或已取消的任务。归档后在此处查找它们。",
       cta_primary: "设置自动化",
     },
     archive_cycles: {
@@ -122,26 +122,26 @@ export default {
       title: "为您的工作保留重要的参考、资源或文档",
     },
     inbox_sidebar_all: {
-      title: "您订阅的工作项的更新将显示在此处",
+      title: "您订阅的任务的更新将显示在此处",
     },
     inbox_sidebar_mentions: {
-      title: "您的工作项的提及将显示在此处",
+      title: "您的任务的提及将显示在此处",
     },
     your_work_by_priority: {
-      title: "尚未分配工作项",
+      title: "尚未分配任务",
     },
     your_work_by_state: {
-      title: "尚未分配工作项",
+      title: "尚未分配任务",
     },
     views: {
       title: "暂无视图",
-      description: "将工作项添加到项目中并使用视图轻松过滤、排序和监控进度。",
-      cta_primary: "添加工作项",
+      description: "将任务添加到项目中并使用视图轻松过滤、排序和监控进度。",
+      cta_primary: "添加任务",
     },
     drafts: {
-      title: "半成品工作项",
-      description: "要试用此功能,请开始添加工作项并在中途离开,或在下方创建您的第一个草稿。😉",
-      cta_primary: "创建草稿工作项",
+      title: "半成品任务",
+      description: "要试用此功能,请开始添加任务并在中途离开,或在下方创建您的第一个草稿。😉",
+      cta_primary: "创建草稿任务",
     },
     projects_archived: {
       title: "没有已归档项目",
@@ -151,7 +151,7 @@ export default {
       title: "创建项目以在此处可视化项目指标。",
     },
     analytics_work_items: {
-      title: "创建包含工作项和受理人的项目,以开始在此处跟踪绩效、进度和团队影响。",
+      title: "创建包含任务和受理人的项目,以开始在此处跟踪绩效、进度和团队影响。",
     },
     analytics_no_cycle: {
       title: "创建周期以将工作组织成有时限的阶段并跟踪冲刺进度。",
@@ -166,12 +166,12 @@ export default {
   settings_empty_state: {
     estimates: {
       title: "暂无估算",
-      description: "定义团队如何衡量工作量,并在所有工作项中一致地跟踪它。",
+      description: "定义团队如何衡量工作量,并在所有任务中一致地跟踪它。",
       cta_primary: "添加估算系统",
     },
     labels: {
       title: "暂无标签",
-      description: "创建个性化标签以有效分类和管理工作项。",
+      description: "创建个性化标签以有效分类和管理任务。",
       cta_primary: "创建您的第一个标签",
     },
     exports: {

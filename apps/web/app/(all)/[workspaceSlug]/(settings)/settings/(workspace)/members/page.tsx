@@ -6,6 +6,9 @@
 
 import { useState } from "react";
 import { observer } from "mobx-react";
+import { WorkspaceService } from "@plane/services";
+
+const workspaceServiceForSync = new WorkspaceService();
 // types
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
@@ -19,8 +22,10 @@ import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view
 import { CountChip } from "@/components/common/count-chip";
 import { PageHead } from "@/components/core/page-title";
 import { MemberListFiltersDropdown } from "@/components/project/dropdowns/filters/member-list";
+import { LarkInviteModal } from "@/components/workspace/settings/lark-invite-modal";
 import { WorkspaceMembersList } from "@/components/workspace/settings/members-list";
 // hooks
+import { useInstance } from "@/hooks/store/use-instance";
 import { useMember } from "@/hooks/store/use-member";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserPermissions } from "@/hooks/store/user";
@@ -35,15 +40,18 @@ import { MembersWorkspaceSettingsHeader } from "./header";
 const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsPage({ params }: Route.ComponentProps) {
   // states
   const [inviteModal, setInviteModal] = useState(false);
+  const [larkInviteModal, setLarkInviteModal] = useState(false);
+  const [larkSyncing, setLarkSyncing] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   // router
   const { workspaceSlug } = params;
   // store hooks
   const { workspaceUserInfo, allowPermissions } = useUserPermissions();
   const {
-    workspace: { workspaceMemberIds, inviteMembersToWorkspace, filtersStore },
+    workspace: { workspaceMemberIds, inviteMembersToWorkspace, fetchWorkspaceMembers, filtersStore },
   } = useMember();
   const { currentWorkspace } = useWorkspace();
+  const { config } = useInstance();
   const { t } = useTranslation();
 
   // derived values
@@ -108,6 +116,14 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
         onClose={() => setInviteModal(false)}
         onSubmit={handleWorkspaceInvite}
       />
+      {config?.is_lark_enabled && (
+        <LarkInviteModal
+          isOpen={larkInviteModal}
+          workspaceSlug={workspaceSlug}
+          onClose={() => setLarkInviteModal(false)}
+          onInvited={() => fetchWorkspaceMembers(workspaceSlug)}
+        />
+      )}
       <section
         className={cn("size-full", {
           "opacity-60": !canPerformWorkspaceMemberActions,
@@ -138,6 +154,41 @@ const WorkspaceMembersSettingsPage = observer(function WorkspaceMembersSettingsP
               memberType="workspace"
             />
             <MembersActivityButton workspaceSlug={workspaceSlug} />
+            {canPerformWorkspaceAdminActions && config?.is_lark_enabled && (
+              <Button
+                variant="neutral-primary"
+                size="lg"
+                disabled={larkSyncing}
+                onClick={async () => {
+                  setLarkSyncing(true);
+                  try {
+                    const stats = await workspaceServiceForSync.larkSync(workspaceSlug);
+                    setToast({
+                      type: stats.error ? TOAST_TYPE.ERROR : TOAST_TYPE.SUCCESS,
+                      title: stats.error ? "Sync failed" : "Lark directory synced",
+                      message: stats.error
+                        ? stats.error
+                        : `${stats.members_created ?? 0} new, ${stats.members_already_active ?? 0} existing, ${stats.workspace_member_total ?? 0} total members.`,
+                    });
+                    if (!stats.error) fetchWorkspaceMembers(workspaceSlug);
+                  } catch (err: unknown) {
+                    const message =
+                      (err && typeof err === "object" && "error" in err && (err as { error?: string }).error) ||
+                      "Sync failed";
+                    setToast({ type: TOAST_TYPE.ERROR, title: "Sync failed", message });
+                  } finally {
+                    setLarkSyncing(false);
+                  }
+                }}
+              >
+                {larkSyncing ? "Syncing…" : "Sync from Lark"}
+              </Button>
+            )}
+            {canPerformWorkspaceAdminActions && config?.is_lark_enabled && (
+              <Button variant="neutral-primary" size="lg" onClick={() => setLarkInviteModal(true)}>
+                Invite from Lark
+              </Button>
+            )}
             {canPerformWorkspaceAdminActions && (
               <Button variant="primary" size="lg" onClick={() => setInviteModal(true)}>
                 {t("workspace_settings.settings.members.add_member")}

@@ -182,7 +182,7 @@ export function InstanceGitlabConfigForm(props: Props) {
       <div className="flex flex-col gap-8">
         <div className="grid w-full grid-cols-2 gap-x-12 gap-y-8">
           <div className="col-span-2 flex flex-col gap-y-4 pt-1 md:col-span-1">
-            <div className="pt-2.5 text-18 font-medium">GitLab-provided details for Plane</div>
+            <div className="pt-2.5 text-18 font-medium">GitLab-provided details for Tick</div>
             {GITLAB_FORM_FIELDS.map((field) => (
               <ControllerInput
                 key={field.key}

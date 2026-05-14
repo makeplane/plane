@@ -46,5 +46,5 @@ export default observer(HomePage);
 
 export const meta: Route.MetaFunction = () => [
   { title: "Admin – Instance Setup & Sign-In" },
-  { name: "description", content: "Configure your Plane instance or sign in to the admin portal." },
+  { name: "description", content: "Configure your Tick instance or sign in to the admin portal." },
 ];

@@ -53,6 +53,11 @@ ENV VITE_WEB_BASE_URL=$VITE_WEB_BASE_URL
 ARG VITE_WEB_BASE_PATH=""
 ENV VITE_WEB_BASE_PATH=$VITE_WEB_BASE_PATH
 
+# Optional build-time language pin for self-hosted deploys. Empty string falls
+# through to navigator.language detection at runtime.
+ARG VITE_DEFAULT_LANGUAGE=""
+ENV VITE_DEFAULT_LANGUAGE=$VITE_DEFAULT_LANGUAGE
+
 ARG VITE_WEBSITE_URL="https://plane.so"
 ENV VITE_WEBSITE_URL=$VITE_WEBSITE_URL
 ARG VITE_SUPPORT_EMAIL="support@plane.so"
