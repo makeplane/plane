@@ -19,6 +19,7 @@ import { IssueCommentToolbar } from "@/components/editor/lite-text/toolbar";
 // hooks
 import { useEditorConfig, useEditorMention } from "@/hooks/editor";
 import { useMember } from "@/hooks/store/use-member";
+import { useUserProfile } from "@/hooks/store/user";
 import { useParseEditorContent } from "@/hooks/use-parse-editor-content";
 // plane web hooks
 import { useEditorFlagging } from "@/plane-web/hooks/use-editor-flagging";
@@ -95,6 +96,9 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   });
   // store hooks
   const { getUserDetails } = useMember();
+  const {
+    data: { comment_submit_shortcut },
+  } = useUserProfile();
   // parse content
   const { getEditorMetaData } = useParseEditorContent({
     projectId,
@@ -168,6 +172,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
               "p-2": !editable,
             })}
             extendedEditorProps={{}}
+            submitShortcut={comment_submit_shortcut}
             editorClassName={editorClassName}
             {...rest}
           />

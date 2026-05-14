@@ -121,3 +121,5 @@ export const isComplete = <T>(obj: CompleteOrEmpty<T>): obj is T => {
 };
 
 export const convertRemToPixel = (rem: number): number => rem * 0.9 * 16;
+
+export const getIsMac = () => typeof window !== "undefined" && navigator.userAgent.indexOf("Mac") !== -1;

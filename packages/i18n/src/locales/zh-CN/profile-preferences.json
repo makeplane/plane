@@ -1,0 +1,6 @@
+{
+  "comment_submit_shortcut": {
+    "label": "评论提交快捷键",
+    "description": "选择提交评论的键盘快捷键。"
+  }
+}
