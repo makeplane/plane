@@ -10,6 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { ImageIcon } from "lucide-react";
 // plane imports
 import { E_PASSWORD_STRENGTH } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser } from "@plane/types";
@@ -54,6 +55,7 @@ const defaultValues: Partial<TProfileSetupFormValues> = {
 };
 
 export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepChange }: Props) {
+  const { t } = useTranslation();
   // states
   const [isImageUploadModalOpen, setIsImageUploadModalOpen] = useState(false);
   // store hooks
@@ -99,8 +101,8 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: "User details update failed. Please try again!",
+        title: t("localized_ui.onboarding.error"),
+        message: t("something_went_wrong_please_try_again"),
       });
     }
   };
@@ -141,13 +143,15 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
 
   // Check for all available fields validation and if password field is available, then checks for password validation (strength + confirmation).
   // Also handles the condition for optional password i.e if password field is optional it only checks for above validation if it's not empty.
-  const isButtonDisabled =
-    !isSubmitting && isValid ? (isPasswordAlreadySetup ? false : isValidPassword ? false : true) : true;
+  const isButtonDisabled = isSubmitting || !isValid || (!isPasswordAlreadySetup && !isValidPassword);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="Create your profile." description="This is how you will appear in Plane." />
+      <CommonOnboardingHeader
+        title={t("localized_ui.onboarding.create_profile_title")}
+        description={t("localized_ui.onboarding.create_profile_description")}
+      />
 
       {/* Profile Picture Section */}
       <Controller
@@ -175,7 +179,6 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           {userAvatar ? (
             <img
               src={getFileURL(userAvatar ?? "")}
-              onClick={() => setIsImageUploadModalOpen(true)}
               alt={user?.display_name}
               className="h-full w-full rounded-full object-cover"
             />
@@ -190,7 +193,9 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
           onClick={() => setIsImageUploadModalOpen(true)}
         >
           <ImageIcon className="size-4" />
-          <span className="text-13">{userAvatar ? "Change image" : "Upload image"}</span>
+          <span className="text-13">
+            {userAvatar ? t("localized_ui.onboarding.change_image") : t("localized_ui.onboarding.upload_image")}
+          </span>
         </button>
       </div>
 
@@ -201,17 +206,17 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
             className="block text-13 font-medium text-tertiary after:ml-0.5 after:text-danger-primary after:content-['*']"
             htmlFor="first_name"
           >
-            Name
+            {t("localized_ui.onboarding.name")}
           </label>
           <Controller
             control={control}
             name="first_name"
             rules={{
-              required: "Name is required",
+              required: t("localized_ui.onboarding.name_required"),
               validate: validatePersonName,
               maxLength: {
                 value: 50,
-                message: "Name must be within 50 characters.",
+                message: t("localized_ui.onboarding.name_within_50"),
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
@@ -222,7 +227,6 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                 type="text"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                autoFocus
                 className={cn(
                   "w-full rounded-md border border-strong bg-surface-1 px-3 py-2 text-secondary transition-all duration-200 placeholder:text-placeholder focus:border-transparent focus:ring-2 focus:ring-accent-strong focus:outline-none",
                   {
@@ -230,7 +234,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
                     "border-danger-strong": errors.first_name,
                   }
                 )}
-                placeholder="Enter your full name"
+                placeholder={t("localized_ui.onboarding.enter_full_name")}
                 autoComplete="on"
               />
             )}
@@ -248,7 +252,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
       </div>
       {/* Continue Button */}
       <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-        Continue
+        {t("localized_ui.onboarding.continue")}
       </Button>
 
       {/* Marketing Consent */}

@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 // plane imports
 import { USE_CASES } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { CheckIcon } from "@plane/propel/icons";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -29,6 +30,7 @@ const defaultValues = {
 };
 
 export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepChange }: Props) {
+  const { t } = useTranslation();
   // store hooks
   const { data: profile, updateUserProfile } = useUserProfile();
   // form info
@@ -50,20 +52,17 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       use_case: formData.use_case && formData.use_case.length > 0 ? formData.use_case.join(". ") : undefined,
     };
     try {
-      await Promise.all([
-        updateUserProfile(profileUpdatePayload),
-        // totalSteps > 2 && stepChange({ profile_complete: true }),
-      ]);
+      await updateUserProfile(profileUpdatePayload);
       setToast({
         type: TOAST_TYPE.SUCCESS,
-        title: "Success",
-        message: "Profile setup completed!",
+        title: t("localized_ui.onboarding.success"),
+        message: t("localized_ui.onboarding.profile_setup_completed"),
       });
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error",
-        message: "Profile setup failed. Please try again!",
+        title: t("localized_ui.onboarding.error"),
+        message: t("localized_ui.onboarding.profile_setup_failed"),
       });
     }
   };
@@ -81,23 +80,26 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
   };
 
   // derived values
-  const isButtonDisabled = !isSubmitting && isValid ? false : true;
+  const isButtonDisabled = isSubmitting || !isValid;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-10">
       {/* Header */}
-      <CommonOnboardingHeader title="What brings you to Plane?" description="Tell us your goals and team size." />
+      <CommonOnboardingHeader
+        title={t("localized_ui.onboarding.usecase_title")}
+        description={t("localized_ui.onboarding.usecase_description")}
+      />
 
       {/* Use Case Selection */}
       <div className="flex flex-col gap-3">
-        <p className="text-body-sm-semibold text-placeholder">Select one or more</p>
+        <p className="text-body-sm-semibold text-placeholder">{t("localized_ui.onboarding.select_one_or_more")}</p>
 
         <Controller
           control={control}
           name="use_case"
           rules={{
-            required: "Please select at least one option",
-            validate: (value) => (value && value.length > 0) || "Please select at least one option",
+            required: t("localized_ui.onboarding.select_at_least_one"),
+            validate: (value) => (value && value.length > 0) || t("localized_ui.onboarding.select_at_least_one"),
           }}
           render={({ field: { value, onChange } }) => (
             <div className="flex flex-col gap-3">
@@ -151,10 +153,10 @@ export const UseCaseSetupStep = observer(function UseCaseSetupStep({ handleStepC
       {/* Action Buttons */}
       <div className="space-y-3">
         <Button variant="primary" type="submit" className="w-full" size="xl" disabled={isButtonDisabled}>
-          Continue
+          {t("localized_ui.onboarding.continue")}
         </Button>
         <Button variant="ghost" onClick={handleSkip} className="w-full" size="xl">
-          Skip
+          {t("localized_ui.onboarding.skip")}
         </Button>
       </div>
     </form>

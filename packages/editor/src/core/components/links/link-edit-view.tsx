@@ -7,6 +7,7 @@
 import type { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "@plane/i18n";
 // components
 import type { LinkViewProps, LinkViews } from "@/components/links";
 // helpers
@@ -17,10 +18,9 @@ type InputViewProps = {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
-  autoFocus?: boolean;
 };
 
-function InputView({ label, value, placeholder, onChange, autoFocus }: InputViewProps) {
+function InputView({ label, value, placeholder, onChange }: InputViewProps) {
   return (
     <div className="flex flex-col gap-1">
       <label className="inline-block text-11 font-semibold text-placeholder">{label}</label>
@@ -30,7 +30,6 @@ function InputView({ label, value, placeholder, onChange, autoFocus }: InputView
         className="w-[280px] rounded-md border border-strong bg-layer-1 p-2 text-13 text-primary outline-none"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        autoFocus={autoFocus}
       />
     </div>
   );
@@ -43,6 +42,7 @@ type LinkEditViewProps = {
 
 export function LinkEditView({ viewProps }: LinkEditViewProps) {
   const { editor, from, to, url: initialUrl, text: initialText, closeLinkView } = viewProps;
+  const { t } = useTranslation();
 
   // State
   const [positionRef] = useState({ from, to });
@@ -139,18 +139,29 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
     <div
       onKeyDown={handleKeyDown}
       className="shadow-md animate-in fade-in flex translate-y-1 flex-col gap-3 rounded-sm border-2 border-subtle bg-layer-1 p-2"
+      role="presentation"
       style={{
         transition: "all 0.1s cubic-bezier(.55, .085, .68, .53)",
       }}
       tabIndex={0}
     >
-      <InputView label="URL" placeholder="Enter or paste URL" value={localUrl} onChange={setLocalUrl} autoFocus />
-      <InputView label="Text" placeholder="Enter Text to display" value={localText} onChange={handleTextChange} />
+      <InputView
+        label={t("localized_ui.editor.url")}
+        placeholder={t("localized_ui.editor.enter_or_paste_url")}
+        value={localUrl}
+        onChange={setLocalUrl}
+      />
+      <InputView
+        label={t("localized_ui.editor.text")}
+        placeholder={t("localized_ui.editor.enter_text_to_display")}
+        value={localText}
+        onChange={handleTextChange}
+      />
       <div className="bg-strong mb-1 h-[1px] w-full gap-2" />
       <div className="flex items-center gap-2 text-13 text-secondary">
         <Link2Off size={14} className="inline-block" />
         <button onClick={removeLink} className="cursor-pointer transition-colors hover:text-placeholder">
-          Remove Link
+          {t("localized_ui.editor.remove_link")}
         </button>
       </div>
     </div>

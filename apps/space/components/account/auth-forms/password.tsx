@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import { Eye, EyeOff, XCircle } from "lucide-react";
 // plane imports
 import { API_BASE_URL, E_PASSWORD_STRENGTH } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
 import { Input, Spinner, PasswordStrengthIndicator } from "@plane/ui";
@@ -41,6 +42,7 @@ const authService = new AuthService();
 
 export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props) {
   const { email, nextPath, isSMTPConfigured, handleAuthStep, handleEmailClear, mode } = props;
+  const { t } = useTranslation();
   // ref
   const formRef = useRef<HTMLFormElement>(null);
   // states
@@ -79,14 +81,14 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
 
   const isButtonDisabled = useMemo(
     () =>
-      !isSubmitting &&
-      !!passwordFormData.password &&
-      (mode === EAuthModes.SIGN_UP
-        ? getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
-          passwordFormData.password === passwordFormData.confirm_password
-        : true)
-        ? false
-        : true,
+      !(
+        !isSubmitting &&
+        !!passwordFormData.password &&
+        (mode === EAuthModes.SIGN_UP
+          ? getPasswordStrength(passwordFormData.password) === E_PASSWORD_STRENGTH.STRENGTH_VALID &&
+            passwordFormData.password === passwordFormData.confirm_password
+          : true)
+      ),
     [isSubmitting, mode, passwordFormData.confirm_password, passwordFormData.password]
   );
 
@@ -123,7 +125,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
-          Email
+          {t("localized_ui.space_auth.email")}
         </label>
         <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
           <Input
@@ -147,7 +149,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
 
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="password">
-          {mode === EAuthModes.SIGN_IN ? "Password" : "Set a password"}
+          {mode === EAuthModes.SIGN_IN
+            ? t("localized_ui.space_auth.password")
+            : t("localized_ui.space_auth.set_password")}
         </label>
         <div className="relative flex items-center rounded-md bg-surface-1">
           <Input
@@ -155,12 +159,11 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
             name="password"
             value={passwordFormData.password}
             onChange={(e) => handleFormChange("password", e.target.value)}
-            placeholder="Enter password"
+            placeholder={t("localized_ui.space_auth.enter_password")}
             className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
             onFocus={() => setIsPasswordInputFocused(true)}
             onBlur={() => setIsPasswordInputFocused(false)}
             autoComplete="off"
-            autoFocus
           />
           {showPassword?.password ? (
             <EyeOff
@@ -180,7 +183,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
       {mode === EAuthModes.SIGN_UP && (
         <div className="space-y-1">
           <label className="text-13 font-medium text-tertiary" htmlFor="confirm_password">
-            Confirm password
+            {t("localized_ui.space_auth.confirm_password")}
           </label>
           <div className="relative flex items-center rounded-md bg-surface-1">
             <Input
@@ -188,7 +191,7 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               name="confirm_password"
               value={passwordFormData.confirm_password}
               onChange={(e) => handleFormChange("confirm_password", e.target.value)}
-              placeholder="Confirm password"
+              placeholder={t("localized_ui.space_auth.confirm_password")}
               className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
               onFocus={() => setIsRetryPasswordInputFocused(true)}
               onBlur={() => setIsRetryPasswordInputFocused(false)}
@@ -208,7 +211,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
           </div>
           {!!passwordFormData.confirm_password &&
             passwordFormData.password !== passwordFormData.confirm_password &&
-            renderPasswordMatchError && <span className="text-13 text-danger-primary">Passwords don{"'"}t match</span>}
+            renderPasswordMatchError && (
+              <span className="text-13 text-danger-primary">{t("localized_ui.space_auth.passwords_dont_match")}</span>
+            )}
         </div>
       )}
 
@@ -219,9 +224,9 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
               {isSubmitting ? (
                 <Spinner height="20px" width="20px" />
               ) : isSMTPConfigured ? (
-                "Continue"
+                t("localized_ui.space_auth.continue")
               ) : (
-                "Go to workspace"
+                t("localized_ui.space_auth.go_to_workspace")
               )}
             </Button>
             {isSMTPConfigured && (
@@ -232,13 +237,13 @@ export const AuthPasswordForm = observer(function AuthPasswordForm(props: Props)
                 className="w-full"
                 size="xl"
               >
-                Sign in with unique code
+                {t("localized_ui.space_auth.sign_in_with_unique_code")}
               </Button>
             )}
           </>
         ) : (
           <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-            {isSubmitting ? <Spinner height="20px" width="20px" /> : "Create account"}
+            {isSubmitting ? <Spinner height="20px" width="20px" /> : t("localized_ui.space_auth.create_account")}
           </Button>
         )}
       </div>

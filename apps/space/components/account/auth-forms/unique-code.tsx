@@ -8,6 +8,7 @@ import React, { useEffect, useState } from "react";
 import { CircleCheck, XCircle } from "lucide-react";
 // plane imports
 import { API_BASE_URL } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import { AuthService } from "@plane/services";
 import { Input, Spinner } from "@plane/ui";
@@ -39,6 +40,7 @@ const defaultValues: TUniqueCodeFormValues = {
 
 export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
   const { mode, email, nextPath, handleEmailClear, generateEmailUniqueCode } = props;
+  const { t } = useTranslation();
   // derived values
   const defaultResetTimerValue = 5;
   // states
@@ -52,10 +54,10 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
   const handleFormChange = (key: keyof TUniqueCodeFormValues, value: string) =>
     setUniqueCodeFormData((prev) => ({ ...prev, [key]: value }));
 
-  const generateNewCode = async (email: string) => {
+  const generateNewCode = async (targetEmail: string) => {
     try {
       setIsRequestingNewCode(true);
-      const uniqueCode = await generateEmailUniqueCode(email);
+      const uniqueCode = await generateEmailUniqueCode(targetEmail);
       setResendCodeTimer(defaultResetTimerValue);
       handleFormChange("code", uniqueCode?.code || "");
       setIsRequestingNewCode(false);
@@ -87,7 +89,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
       <input type="hidden" value={nextPath} name="next_path" />
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
-          Email
+          {t("localized_ui.space_auth.email")}
         </label>
         <div className={`relative flex items-center rounded-md border border-subtle bg-surface-1`}>
           <Input
@@ -112,7 +114,7 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
 
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="code">
-          Unique code
+          {t("localized_ui.space_auth.unique_code")}
         </label>
         <Input
           name="code"
@@ -121,12 +123,11 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
           placeholder="123456"
           className="h-10 w-full border border-subtle !bg-surface-1 pr-12 disable-autofill-style placeholder:text-placeholder"
           autoComplete="off"
-          autoFocus
         />
         <div className="flex w-full items-center justify-between px-1 pt-1 text-11">
           <p className="flex items-center gap-1 font-medium text-success-primary">
             <CircleCheck height={12} width={12} />
-            Paste the code sent to your email
+            {t("localized_ui.space_auth.paste_code_sent")}
           </p>
           <button
             type="button"
@@ -139,17 +140,23 @@ export function AuthUniqueCodeForm(props: TAuthUniqueCodeForm) {
             disabled={isRequestNewCodeDisabled}
           >
             {resendTimerCode > 0
-              ? `Resend in ${resendTimerCode}s`
+              ? t("localized_ui.space_auth.resend_in", { seconds: resendTimerCode })
               : isRequestingNewCode
-                ? "Requesting new code"
-                : "Resend"}
+                ? t("localized_ui.space_auth.requesting_new_code")
+                : t("localized_ui.space_auth.resend")}
           </button>
         </div>
       </div>
 
       <div className="space-y-2.5">
         <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-          {isRequestingNewCode ? "Sending code" : isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+          {isRequestingNewCode ? (
+            t("localized_ui.space_auth.sending_code")
+          ) : isSubmitting ? (
+            <Spinner height="20px" width="20px" />
+          ) : (
+            t("localized_ui.space_auth.continue")
+          )}
         </Button>
       </div>
     </form>

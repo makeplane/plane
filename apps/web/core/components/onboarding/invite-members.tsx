@@ -213,7 +213,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                     style={styles.popper}
                     {...attributes.popper}
                   >
-                    {Object.entries(ROLE_DETAILS).map(([key, value]) => (
+                    {Object.entries(ROLE_DETAILS).map(([key, roleDetail]) => (
                       <Listbox.Option
                         as="div"
                         key={key}
@@ -227,8 +227,8 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
                         {({ selected }) => (
                           <div className="flex items-center gap-2 p-1 text-wrap">
                             <div className="flex flex-col">
-                              <div className="text-13 font-medium">{t(value.i18n_title)}</div>
-                              <div className="flex text-11 text-tertiary">{t(value.i18n_description)}</div>
+                              <div className="text-13 font-medium">{t(roleDetail.i18n_title)}</div>
+                              <div className="flex text-11 text-tertiary">{t(roleDetail.i18n_description)}</div>
                             </div>
                             {selected && <CheckIcon className="h-4 w-4 shrink-0" />}
                           </div>
@@ -254,7 +254,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
       {email && !emailRegex.test(email) && (
         <div className="mx-8 my-1">
           <span className="text-13">🤥</span>{" "}
-          <span className="mt-1 text-11 text-danger-primary">That doesn{"'"}t look like an email address.</span>
+          <span className="mt-1 text-11 text-danger-primary">{t("localized_ui.onboarding.invalid_email")}</span>
         </div>
       )}
     </div>
@@ -263,6 +263,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
 
 export function InviteMembers(props: Props) {
   const { finishOnboarding, workspace } = props;
+  const { t } = useTranslation();
 
   const [isInvitationDisabled, setIsInvitationDisabled] = useState(true);
 
@@ -297,18 +298,18 @@ export function InviteMembers(props: Props) {
           role: email.role,
         })),
       })
-      .then(async () => {
+      .then(() => {
         setToast({
           type: TOAST_TYPE.SUCCESS,
-          title: "Success!",
-          message: "Invitations sent successfully.",
+          title: t("localized_ui.onboarding.success"),
+          message: t("localized_ui.onboarding.invitations_sent"),
         });
-        await nextStep();
+        return nextStep();
       })
       .catch((err) => {
         setToast({
           type: TOAST_TYPE.ERROR,
-          title: "Error!",
+          title: t("localized_ui.onboarding.error"),
           message: err?.error,
         });
       });
@@ -338,10 +339,8 @@ export function InviteMembers(props: Props) {
       <div className="h-full w-full overflow-auto px-6 py-10 sm:px-7 sm:py-14 md:px-14 lg:px-28">
         <div className="mx-auto mt-6 flex w-full flex-col items-center justify-center p-8 md:w-4/5">
           <div className="mx-auto w-4/5 space-y-1 py-4 text-center">
-            <h3 className="text-24 font-bold text-primary">Invite your teammates</h3>
-            <p className="font-medium text-placeholder">
-              Work in plane happens best with your team. Invite them now to use Plane to its potential.
-            </p>
+            <h3 className="text-24 font-bold text-primary">{t("localized_ui.onboarding.invite_team_title")}</h3>
+            <p className="font-medium text-placeholder">{t("localized_ui.onboarding.invite_team_description")}</p>
           </div>
           <form
             className="mx-auto mt-2 w-full space-y-4"
@@ -352,8 +351,10 @@ export function InviteMembers(props: Props) {
           >
             <div className="w-full py-4 text-13">
               <div className="group relative mx-8 grid grid-cols-10 gap-4 py-2">
-                <div className="col-span-6 px-1 text-13 font-medium text-secondary">Email</div>
-                <div className="col-span-4 px-1 text-13 font-medium text-secondary">Role</div>
+                <div className="col-span-6 px-1 text-13 font-medium text-secondary">
+                  {t("localized_ui.space_auth.email")}
+                </div>
+                <div className="col-span-4 px-1 text-13 font-medium text-secondary">{t("role")}</div>
               </div>
               <div className="mb-3 space-y-3 sm:space-y-4">
                 {fields.map((field, index) => (
@@ -379,7 +380,7 @@ export function InviteMembers(props: Props) {
                 onClick={appendField}
               >
                 <PlusIcon className="h-4 w-4" strokeWidth={2} />
-                Add another
+                {t("localized_ui.onboarding.add_another")}
               </button>
             </div>
             <div className="mx-auto flex w-full max-w-96 flex-col items-center justify-center gap-4 px-8 sm:px-2">
@@ -390,10 +391,10 @@ export function InviteMembers(props: Props) {
                 className="w-full"
                 disabled={isInvitationDisabled || !isValid || isSubmitting}
               >
-                {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+                {isSubmitting ? <Spinner height="20px" width="20px" /> : t("localized_ui.onboarding.continue")}
               </Button>
               <Button variant="ghost" size="xl" className="w-full" onClick={nextStep}>
-                I’ll do it later
+                {t("localized_ui.onboarding.do_later")}
               </Button>
             </div>
           </form>
