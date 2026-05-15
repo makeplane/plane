@@ -23,6 +23,14 @@ type Props = {
   forceRender?: boolean;
 };
 
+const runIdleTask = (callback: () => void) => {
+  if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(callback, { timeout: 300 });
+    return;
+  }
+  globalThis.setTimeout(callback, 0);
+};
+
 function RenderIfVisible(props: Props) {
   const {
     defaultHeight = "300px",
@@ -47,14 +55,13 @@ function RenderIfVisible(props: Props) {
 
   // Set visibility with intersection observer
   useEffect(() => {
-    if (intersectionRef.current) {
+    const target = intersectionRef.current;
+    if (target) {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          if (typeof window !== undefined && window.requestIdleCallback && useIdletime) {
-            window.requestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
-              timeout: 300,
-            });
+          if (typeof window !== "undefined" && useIdletime) {
+            runIdleTask(() => setShouldVisible(entries[entries.length - 1].isIntersecting));
           } else {
             setShouldVisible(entries[entries.length - 1].isIntersecting);
           }
@@ -64,20 +71,17 @@ function RenderIfVisible(props: Props) {
           rootMargin: `${verticalOffset}% ${horizontalOffset}% ${verticalOffset}% ${horizontalOffset}%`,
         }
       );
-      observer.observe(intersectionRef.current);
+      observer.observe(target);
       return () => {
-        if (intersectionRef.current) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          observer.unobserve(intersectionRef.current);
-        }
+        observer.unobserve(target);
       };
     }
-  }, [intersectionRef, children, root, verticalOffset, horizontalOffset]);
+  }, [intersectionRef, root, verticalOffset, horizontalOffset, useIdletime]);
 
   //Set height after render
   useEffect(() => {
     if (intersectionRef.current && isVisible && shouldRecordHeights) {
-      window.requestIdleCallback(() => {
+      runIdleTask(() => {
         if (intersectionRef.current) placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
       });
     }
