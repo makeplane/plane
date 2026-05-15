@@ -6,6 +6,7 @@
 
 import type { Node } from "@tiptap/pm/model";
 import { Link2Off } from "lucide-react";
+import type { Ref } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "@plane/i18n";
 // components
@@ -18,13 +19,15 @@ type InputViewProps = {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
+  inputRef?: Ref<HTMLInputElement>;
 };
 
-function InputView({ label, value, placeholder, onChange }: InputViewProps) {
+function InputView({ label, value, placeholder, onChange, inputRef }: InputViewProps) {
   return (
     <div className="flex flex-col gap-1">
       <label className="inline-block text-11 font-semibold text-placeholder">{label}</label>
       <input
+        ref={inputRef}
         placeholder={placeholder}
         onClick={(e) => e.stopPropagation()}
         className="w-[280px] rounded-md border border-strong bg-layer-1 p-2 text-13 text-primary outline-none"
@@ -50,6 +53,7 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
   const [localText, setLocalText] = useState(initialText ?? "");
   const [linkRemoved, setLinkRemoved] = useState(false);
   const hasSubmitted = useRef(false);
+  const urlInputRef = useRef<HTMLInputElement>(null);
 
   const removeLink = useCallback(() => {
     editor.view.dispatch(editor.state.tr.removeMark(from, to, editor.schema.marks.link));
@@ -81,6 +85,10 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
   useEffect(() => {
     if (initialText) setLocalText(initialText);
   }, [initialText]);
+
+  useEffect(() => {
+    urlInputRef.current?.focus();
+  }, []);
 
   // Handlers
   const handleTextChange = useCallback((value: string) => {
@@ -151,6 +159,7 @@ export function LinkEditView({ viewProps }: LinkEditViewProps) {
         placeholder={t("editor.enter_or_paste_url")}
         value={localUrl}
         onChange={setLocalUrl}
+        inputRef={urlInputRef}
       />
       <InputView
         label={t("editor.text")}
