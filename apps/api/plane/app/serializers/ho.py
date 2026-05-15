@@ -28,7 +28,6 @@ class HoIssueSerializer(serializers.Serializer):
     completed_at = serializers.DateTimeField(allow_null=True)
     cycle_name = serializers.SerializerMethodField()
     module_names = serializers.SerializerMethodField()
-    total_log_time = serializers.IntegerField()
     reference_link_count = serializers.IntegerField()
 
     def get_workspace_slug(self, obj):

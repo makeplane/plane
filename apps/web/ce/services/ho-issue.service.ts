@@ -29,7 +29,6 @@ export type THoIssue = {
   completed_at: string | null;
   cycle_name: string | null;
   module_names: string[];
-  total_log_time: number;
   reference_link_count: number;
 };
 
@@ -64,11 +63,33 @@ export type THoAccessibleWorkspace = {
   projects: THoWorkspaceProject[];
 };
 
-export type THoWorklogBreakdownEntry = {
+export type THoWorklogMember = {
   user_id: string;
   display_name: string;
   avatar_url: string;
   total_minutes: number;
+};
+
+export type THoWorklogBreakdown = {
+  total_minutes: number;
+  count: number;
+  next: string | null;
+  previous: string | null;
+  members: THoWorklogMember[];
+};
+
+export type THoWorklogByUserEntry = {
+  issue_id: string;
+  issue_name: string;
+  project_name: string;
+  total_minutes: number;
+};
+
+export type THoWorklogByUserResponse = {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: THoWorklogByUserEntry[];
 };
 
 export type THoFilterOptions = {
@@ -116,9 +137,17 @@ export class HoIssueService extends APIService {
       });
   }
 
-  async listIssueWorklogBreakdown(issueId: string): Promise<THoWorklogBreakdownEntry[]> {
-    return this.get(`/api/ho/issues/${issueId}/worklogs/`)
-      .then((res: { data: THoWorklogBreakdownEntry[] }) => res.data)
+  async listIssueWorklogBreakdown(issueId: string, page = 1): Promise<THoWorklogBreakdown> {
+    return this.get(`/api/ho/issues/${issueId}/worklogs/?page=${page}`)
+      .then((res: { data: THoWorklogBreakdown }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async listIssueWorklogByUser(issueId: string, userId: string, page = 1): Promise<THoWorklogByUserResponse> {
+    return this.get(`/api/ho/issues/${issueId}/worklogs/by-user/${userId}/?page=${page}`)
+      .then((res: { data: THoWorklogByUserResponse }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

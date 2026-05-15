@@ -80,24 +80,30 @@ class WorkspaceUserPreferenceViewSet(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST], level="WORKSPACE")
     def patch(self, request, slug):
+        workspace = Workspace.objects.filter(slug=slug).first()
+        if not workspace:
+            return Response({"message": "Workspace not found"}, status=status.HTTP_404_NOT_FOUND)
+
         for data in request.data:
             key = data.pop("key", None)
             if not key:
                 continue
 
-            preference = WorkspaceUserPreference.objects.filter(
-                key=key, workspace__slug=slug, user=request.user
-            ).first()
+            defaults = {}
+            if "is_pinned" in data:
+                defaults["is_pinned"] = data["is_pinned"]
+            if "sort_order" in data:
+                defaults["sort_order"] = data["sort_order"]
 
-            if not preference:
+            if not defaults:
                 continue
 
-            if "is_pinned" in data:
-                preference.is_pinned = data["is_pinned"]
-
-            if "sort_order" in data:
-                preference.sort_order = data["sort_order"]
-
-            preference.save(update_fields=["is_pinned", "sort_order"])
+            # Upsert so newly-introduced keys persist even before the GET seeder runs.
+            WorkspaceUserPreference.objects.update_or_create(
+                key=key,
+                workspace=workspace,
+                user=request.user,
+                defaults=defaults,
+            )
 
         return Response({"message": "Successfully updated"}, status=status.HTTP_200_OK)

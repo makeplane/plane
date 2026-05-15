@@ -13,12 +13,12 @@ export const useDraftStateTransition = () => {
 
   // currentStateGroup: pass the already-reactive stateDetails?.group from the component to avoid
   // a stale/undefined lookup when getStateById is called outside a MobX tracked context.
-  const validateTransition = (issue: TIssue, newStateId: string, currentStateGroup?: string): ValidationResult => {
-    const group = currentStateGroup ?? getStateById(issue.state_id ?? "")?.group;
+  const validateTransition = (issue: TIssue, newStateId: string, _currentStateGroup?: string): ValidationResult => {
     const newState = getStateById(newStateId);
 
-    // only validate draft → non-draft transitions
-    if (group !== "backlog" || newState?.group === "backlog") {
+    // Skip required-field check only when target state is backlog (draft) or cancelled.
+    // All other target groups (unstarted/started/completed) require mandatory fields.
+    if (newState?.group === "backlog" || newState?.group === "cancelled") {
       return { missingFieldKeys: [], missingFieldLabels: [] };
     }
 

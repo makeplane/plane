@@ -2,8 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from django.contrib.auth import get_user_model
-from django.db.models import Count, OuterRef, Prefetch, Subquery, Sum, Q
-from django.db.models.functions import Coalesce
+from django.db.models import Count, Prefetch, Sum, Q
 
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
@@ -177,6 +176,14 @@ class HoIssuePagination(PageNumberPagination):
     max_page_size = 500
 
 
+class HoWorklogBreakdownPagination(PageNumberPagination):
+    """Smaller page size for in-popover lists (members / per-user work items)."""
+
+    page_size = 25
+    page_size_query_param = "page_size"
+    max_page_size = 100
+
+
 # ---------------------------------------------------------------------------
 # Views
 # ---------------------------------------------------------------------------
@@ -214,8 +221,6 @@ _ALLOWED_ORDER_BY = {
     "-sub_issues_count",
     "reference_link_count",
     "-reference_link_count",
-    "total_log_time",
-    "-total_log_time",
 }
 
 
@@ -303,19 +308,6 @@ class HoIssueListView(BaseAPIView):
                 "issue_cycle__cycle",
             )
             .annotate(
-                # Use correlated subquery to avoid JOIN multiplication when scope_q
-                # adds M2M joins (assignees) that create N rows per issue, which would
-                # inflate SUM(duration_minutes) by the number of assignees.
-                total_log_time=Coalesce(
-                    Subquery(
-                        IssueWorkLog.objects  # SoftDeletionManager already excludes deleted records
-                        .filter(issue_id=OuterRef("pk"))
-                        .values("issue_id")
-                        .annotate(total=Sum("duration_minutes"))
-                        .values("total")
-                    ),
-                    0,
-                ),
                 sub_issues_count=Count("parent_issue", distinct=True),
                 reference_link_count=Count("issue_link", distinct=True),
             )
@@ -381,7 +373,19 @@ class HoIssueListView(BaseAPIView):
             if p_filters:
                 qs = qs.filter(p_filters)
 
-        qs = qs.order_by(order_by, "created_at")
+        # Default datasheet sort: hierarchical A-Z (department → project → main → sub → workitem).
+        # When user explicitly picks a different sort column, honor it then fall back to created_at.
+        if order_by == "project__workspace__name":
+            qs = qs.order_by(
+                "project__workspace__name",
+                "project__name",
+                "main_task_category__name",
+                "sub_task_category__name",
+                "name",
+                "created_at",
+            )
+        else:
+            qs = qs.order_by(order_by, "created_at")
 
         # Overlap filter: include issues where [start_date, target_date] overlaps [from_date, to_date]
         # Skip target_date lower-bound when progress filter is active (progress already filters by target_date)
@@ -643,12 +647,39 @@ class HoFilterOptionsView(BaseAPIView):
         }, status=status.HTTP_200_OK)
 
 
-class HoIssueWorklogBreakdownView(BaseAPIView):
-    """GET /api/ho/issues/<issue_id>/worklogs/ — per-user worklog totals for a single HO issue.
+def _issue_subtree_ids(root_id):
+    """Return list of issue IDs in the subtree rooted at root_id (inclusive).
 
-    Uses HO workspace-level permissions instead of project membership, so HO users
-    who are not project members can still see the breakdown (fixing the mismatch
-    with total_log_time shown in the datasheet which is annotated without membership filter).
+    Uses a recursive CTE over Issue.parent_id, restricted to non-deleted, non-archived
+    issues. Returns at most 10 levels deep as a safety bound against pathological data.
+    """
+    from django.db import connection
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            WITH RECURSIVE subtree AS (
+                SELECT id, 1 AS depth
+                FROM issues
+                WHERE id = %s AND deleted_at IS NULL AND archived_at IS NULL
+                UNION ALL
+                SELECT i.id, s.depth + 1
+                FROM issues i
+                INNER JOIN subtree s ON i.parent_id = s.id
+                WHERE i.deleted_at IS NULL AND i.archived_at IS NULL AND s.depth < 10
+            )
+            SELECT id FROM subtree
+            """,
+            [str(root_id)],
+        )
+        return [row[0] for row in cursor.fetchall()]
+
+
+class HoIssueWorklogBreakdownView(BaseAPIView):
+    """GET /api/ho/issues/<issue_id>/worklogs/ — subtree-wide worklog breakdown.
+
+    Returns the total minutes across the issue + all descendants, plus per-user totals.
+    Uses HO workspace-level permissions instead of project membership.
     """
 
     def get(self, request, issue_id):
@@ -656,7 +687,6 @@ class HoIssueWorklogBreakdownView(BaseAPIView):
         if not workspace_ids:
             return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
 
-        # Verify issue belongs to an accessible workspace
         issue_exists = Issue.objects.filter(
             id=issue_id,
             workspace_id__in=workspace_ids,
@@ -666,32 +696,96 @@ class HoIssueWorklogBreakdownView(BaseAPIView):
         if not issue_exists:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Aggregate total minutes per user (SoftDeletionManager already excludes deleted records)
-        breakdown = (
-            IssueWorkLog.objects.filter(issue_id=issue_id)
+        subtree_ids = _issue_subtree_ids(issue_id)
+
+        # Full subtree total (computed once, not paginated)
+        total_minutes = (
+            IssueWorkLog.objects.filter(issue_id__in=subtree_ids).aggregate(
+                total=Sum("duration_minutes")
+            )["total"]
+            or 0
+        )
+
+        # Per-user totals across subtree (SoftDeletionManager excludes deleted logs)
+        breakdown_qs = (
+            IssueWorkLog.objects.filter(issue_id__in=subtree_ids)
             .values("logged_by")
             .annotate(total_minutes=Sum("duration_minutes"))
             .order_by("-total_minutes")
         )
 
-        # Fetch user display details in one query
+        paginator = HoWorklogBreakdownPagination()
+        page = paginator.paginate_queryset(breakdown_qs, request) or []
+
         User = get_user_model()
-        user_ids = [row["logged_by"] for row in breakdown]
+        user_ids = [row["logged_by"] for row in page]
         user_map = {
             str(u.id): {"display_name": u.display_name, "avatar_url": u.avatar or ""}
             for u in User.objects.filter(id__in=user_ids).only("id", "display_name", "avatar")
         }
 
-        result = [
+        members = [
             {
                 "user_id": str(row["logged_by"]),
                 "display_name": user_map.get(str(row["logged_by"]), {}).get("display_name", ""),
                 "avatar_url": user_map.get(str(row["logged_by"]), {}).get("avatar_url", ""),
                 "total_minutes": row["total_minutes"],
             }
-            for row in breakdown
+            for row in page
         ]
-        return Response(result, status=status.HTTP_200_OK)
+        count = paginator.page.paginator.count if paginator.page else len(members)
+        return Response(
+            {
+                "total_minutes": total_minutes,
+                "count": count,
+                "next": paginator.get_next_link() if paginator.page else None,
+                "previous": paginator.get_previous_link() if paginator.page else None,
+                "members": members,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class HoIssueWorklogByUserView(BaseAPIView):
+    """GET /api/ho/issues/<issue_id>/worklogs/by-user/<user_id>/ — per-work-item totals
+    for one user within the issue subtree (inclusive)."""
+
+    def get(self, request, issue_id, user_id):
+        workspace_ids = get_accessible_workspace_ids(request.user)
+        if not workspace_ids:
+            return Response({"detail": "Forbidden."}, status=status.HTTP_403_FORBIDDEN)
+
+        issue_exists = Issue.objects.filter(
+            id=issue_id,
+            workspace_id__in=workspace_ids,
+            deleted_at__isnull=True,
+            archived_at__isnull=True,
+        ).exists()
+        if not issue_exists:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        subtree_ids = _issue_subtree_ids(issue_id)
+
+        rows_qs = (
+            IssueWorkLog.objects.filter(issue_id__in=subtree_ids, logged_by_id=user_id)
+            .values("issue_id", "issue__name", "issue__project__name")
+            .annotate(total_minutes=Sum("duration_minutes"))
+            .order_by("-total_minutes")
+        )
+
+        paginator = HoWorklogBreakdownPagination()
+        page = paginator.paginate_queryset(rows_qs, request) or []
+
+        result = [
+            {
+                "issue_id": str(row["issue_id"]),
+                "issue_name": row["issue__name"] or "",
+                "project_name": row["issue__project__name"] or "",
+                "total_minutes": row["total_minutes"],
+            }
+            for row in page
+        ]
+        return paginator.get_paginated_response(result)
 
 
 class HoAccessibleWorkspacesView(BaseAPIView):
