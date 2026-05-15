@@ -10,7 +10,8 @@ import { ArrowRightLeft, UserMinus, Trash2 } from "lucide-react";
 import { Button } from "@plane/propel/button";
 import { Dialog, EDialogWidth } from "@plane/propel/dialog";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { useInstanceStaff, useInstanceDepartment } from "@/hooks/store";
+import { useInstanceStaff } from "@/hooks/store";
+import { DepartmentTreeSelect } from "./department-tree-select";
 
 type Props = {
   staffId: string;
@@ -19,8 +20,7 @@ type Props = {
 
 export const StaffActionButtons = observer(function StaffActionButtons({ staffId, onEdit }: Props) {
   const { transferStaff, deactivateStaff, deleteStaff } = useInstanceStaff();
-  const { departments, departmentIds } = useInstanceDepartment();
-  const [transferOpen, setTransferOpen] = useState(false);
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Cross-workspace confirm state
@@ -29,7 +29,6 @@ export const StaffActionButtons = observer(function StaffActionButtons({ staffId
   const [targetWorkspaceName, setTargetWorkspaceName] = useState("");
 
   const handleDepartmentSelect = async (deptId: string) => {
-    setTransferOpen(false);
     setIsLoading(true);
     try {
       const result = await transferStaff(staffId, deptId);
@@ -102,41 +101,20 @@ export const StaffActionButtons = observer(function StaffActionButtons({ staffId
   };
 
   return (
-    <div className="flex items-center gap-1 relative">
+    <div className="flex items-center gap-1">
       <Button variant="secondary" size="sm" onClick={onEdit} disabled={isLoading}>
         Edit
       </Button>
 
-      {/* Transfer dropdown */}
-      <div className="relative">
-        <Button
-          variant="secondary"
-          size="sm"
-          onClick={() => setTransferOpen((v) => !v)}
-          disabled={isLoading}
-          title="Transfer to department"
-        >
-          <ArrowRightLeft className="w-3.5 h-3.5" />
-        </Button>
-        {transferOpen && (
-          <div className="absolute right-0 top-full mt-1 z-50 w-48 rounded-lg border border-subtle bg-layer-1 shadow-raised-100 py-1 max-h-40 overflow-auto">
-            {departmentIds.length === 0 ? (
-              <p className="px-3 py-2 text-12 text-tertiary">No departments</p>
-            ) : (
-              departmentIds.map((id) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => void handleDepartmentSelect(id)}
-                  className="w-full px-3 py-1.5 text-left text-13 hover:bg-layer-2 truncate"
-                >
-                  {departments[id]?.name}
-                </button>
-              ))
-            )}
-          </div>
-        )}
-      </div>
+      <Button
+        variant="secondary"
+        size="sm"
+        onClick={() => setTransferDialogOpen(true)}
+        disabled={isLoading}
+        title="Transfer to department"
+      >
+        <ArrowRightLeft className="w-3.5 h-3.5" />
+      </Button>
 
       <Button
         variant="secondary"
@@ -151,6 +129,26 @@ export const StaffActionButtons = observer(function StaffActionButtons({ staffId
       <Button variant="error-outline" size="sm" onClick={() => void handleDelete()} disabled={isLoading} title="Delete">
         <Trash2 className="w-3.5 h-3.5" />
       </Button>
+
+      {/* Department picker dialog */}
+      <Dialog open={transferDialogOpen} onOpenChange={(open: boolean) => !open && setTransferDialogOpen(false)} modal>
+        <Dialog.Panel width={EDialogWidth.MD}>
+          <div className="p-6">
+            <Dialog.Title>Transfer to Department</Dialog.Title>
+            <div className="mt-4">
+              <DepartmentTreeSelect
+                value=""
+                onChange={(id) => {
+                  if (!id) return;
+                  setTransferDialogOpen(false);
+                  void handleDepartmentSelect(id);
+                }}
+                placeholder="Search and select department..."
+              />
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
 
       {/* Cross-workspace transfer confirm dialog */}
       <Dialog open={confirmOpen} onOpenChange={(open: boolean) => !open && handleCancelConfirm()} modal>
