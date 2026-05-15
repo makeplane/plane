@@ -53,7 +53,6 @@ export const HoDatasheetToolbar = observer(function HoDatasheetToolbar() {
       if (dp.due_date !== false) row["Due Date"] = issue.target_date ?? "-";
       if (dp.completed_date !== false)
         row[t("spreadsheet.columns.completed_date")] = issue.completed_at?.slice(0, 10) ?? "-";
-      if (dp.total_log_time !== false) row[t("spreadsheet.columns.total_log_time")] = issue.total_log_time ?? 0;
       if (dp.reference_link !== false) row[t("spreadsheet.columns.reference_link")] = issue.reference_link_count ?? 0;
       return row;
     });

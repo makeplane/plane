@@ -139,9 +139,7 @@ export const HoDatasheetHeader = observer(function HoDatasheetHeader({ displayPr
     },
     total_log_time: {
       label: t("spreadsheet.columns.total_log_time"),
-      asc: "total_log_time",
-      desc: "-total_log_time",
-      isNumber: true,
+      // Subtree total is computed lazily on click — not sortable from the list endpoint.
       width: "min-w-[120px]",
     },
     reference_link: {
