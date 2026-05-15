@@ -381,7 +381,19 @@ class HoIssueListView(BaseAPIView):
             if p_filters:
                 qs = qs.filter(p_filters)
 
-        qs = qs.order_by(order_by, "created_at")
+        # Default datasheet sort: hierarchical A-Z (department → project → main → sub → workitem).
+        # When user explicitly picks a different sort column, honor it then fall back to created_at.
+        if order_by == "project__workspace__name":
+            qs = qs.order_by(
+                "project__workspace__name",
+                "project__name",
+                "main_task_category__name",
+                "sub_task_category__name",
+                "name",
+                "created_at",
+            )
+        else:
+            qs = qs.order_by(order_by, "created_at")
 
         # Overlap filter: include issues where [start_date, target_date] overlaps [from_date, to_date]
         # Skip target_date lower-bound when progress filter is active (progress already filters by target_date)
