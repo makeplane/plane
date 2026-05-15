@@ -8,6 +8,16 @@ import type {
 import { HoIssueService } from "@/plane-web/services/ho-issue.service";
 import { todayISO, HO_DEFAULT_DISPLAY_PROPERTIES, type THoDisplayProperties } from "./ho-issue.defaults";
 
+const SHOW_ARCHIVED_STORAGE_KEY = "ho-datasheet:show-archived";
+
+const loadShowArchived = (): boolean => {
+  if (typeof window === "undefined") return true;
+  const raw = window.localStorage.getItem(SHOW_ARCHIVED_STORAGE_KEY);
+  if (raw === "true") return true;
+  if (raw === "false") return false;
+  return true;
+};
+
 export interface IHoIssueStore {
   // Observables
   issues: THoIssue[];
@@ -95,7 +105,7 @@ export class HoIssueStore implements IHoIssueStore {
   orderBy = "project__workspace__name";
   fromDate: string = todayISO();
   toDate: string = todayISO();
-  showArchived = true;
+  showArchived = loadShowArchived();
   includeSubIssues = false;
   displayProperties: THoDisplayProperties = { ...HO_DEFAULT_DISPLAY_PROPERTIES };
 
@@ -318,6 +328,9 @@ export class HoIssueStore implements IHoIssueStore {
   setShowArchived = (value: boolean): void => {
     this.showArchived = value;
     this.currentPage = 1;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(SHOW_ARCHIVED_STORAGE_KEY, String(value));
+    }
     void this._fetchFiltered();
     void this.fetchFilterOptions();
   };
