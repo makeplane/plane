@@ -113,12 +113,6 @@ gitlab_config_variables = [
 
 gitea_config_variables = [
     {
-        "key": "IS_GITEA_ENABLED",
-        "value": os.environ.get("IS_GITEA_ENABLED", "0"),
-        "category": "GITEA",
-        "is_encrypted": False,
-    },
-    {
         "key": "GITEA_HOST",
         "value": os.environ.get("GITEA_HOST"),
         "category": "GITEA",
