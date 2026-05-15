@@ -1,6 +1,5 @@
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { Avatar } from "@plane/propel/avatar";
-import { Skeleton } from "@plane/propel/skeleton";
 import { cn } from "@plane/utils";
 import type { THoWorklogMember } from "@/plane-web/services/ho-issue.service";
 import { formatLogTime } from "./ho-worklog-helpers";
@@ -31,7 +30,11 @@ export function HoWorklogMembersView({
   t,
 }: Props) {
   return (
-    <div className="p-3 text-left animate-in fade-in duration-150" role="region" aria-label={t("worklog.title")}>
+    <div
+      className="p-3 text-left animate-in fade-in duration-200 ease-out"
+      role="region"
+      aria-label={t("worklog.title")}
+    >
       <div className="mb-2 flex items-center justify-between border-b border-subtle pb-2">
         <span className="text-11 font-medium text-tertiary uppercase tracking-wide">{t("worklog.total")}</span>
         <span className="text-13 font-semibold text-primary tabular-nums">{formatLogTime(totalMinutes)}</span>
@@ -39,7 +42,7 @@ export function HoWorklogMembersView({
       <p className="mb-1.5 px-1 text-11 font-medium text-tertiary uppercase tracking-wide">{t("worklog.member")}</p>
 
       {isInitialLoading ? (
-        <MembersSkeleton />
+        <LoadingSpinner />
       ) : error && members.length === 0 ? (
         <ErrorState t={t} onRetry={onRetry} />
       ) : members.length === 0 ? (
@@ -99,19 +102,11 @@ export function HoWorklogMembersView({
   );
 }
 
-function MembersSkeleton() {
+function LoadingSpinner() {
   return (
-    <Skeleton className="space-y-1.5 px-1 py-1">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex items-center justify-between gap-3 py-1">
-          <div className="flex min-w-0 items-center gap-2">
-            <Skeleton.Item height="20px" width="20px" className="rounded-full" />
-            <Skeleton.Item height="10px" width="120px" />
-          </div>
-          <Skeleton.Item height="10px" width="40px" />
-        </div>
-      ))}
-    </Skeleton>
+    <div className="flex items-center justify-center py-8">
+      <Loader2 className="h-5 w-5 animate-spin text-tertiary" />
+    </div>
   );
 }
 

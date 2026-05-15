@@ -1,7 +1,6 @@
 import { useRef, useEffect } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Loader2 } from "lucide-react";
 import { Avatar } from "@plane/propel/avatar";
-import { Skeleton } from "@plane/propel/skeleton";
 import { cn } from "@plane/utils";
 import type { THoWorklogByUserEntry, THoWorklogMember } from "@/plane-web/services/ho-issue.service";
 import { formatLogTime } from "./ho-worklog-helpers";
@@ -41,7 +40,7 @@ export function HoWorklogUserDetailView({
 
   return (
     <div
-      className="p-3 text-left animate-in fade-in slide-in-from-right-2 duration-150"
+      className="p-3 text-left animate-in fade-in duration-200 ease-out"
       role="region"
       aria-label={member?.display_name ?? t("worklog.work_items")}
     >
@@ -72,7 +71,7 @@ export function HoWorklogUserDetailView({
       <p className="mb-1.5 px-1 text-11 font-medium text-tertiary uppercase tracking-wide">{t("worklog.work_items")}</p>
 
       {isInitialLoading ? (
-        <EntriesSkeleton />
+        <LoadingSpinner />
       ) : error && entries.length === 0 ? (
         <ErrorState t={t} onRetry={onRetry} />
       ) : entries.length === 0 ? (
@@ -124,19 +123,11 @@ export function HoWorklogUserDetailView({
   );
 }
 
-function EntriesSkeleton() {
+function LoadingSpinner() {
   return (
-    <Skeleton className="space-y-1.5 px-1 py-1">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="flex items-start justify-between gap-3 py-1">
-          <div className="min-w-0 flex-1 space-y-1">
-            <Skeleton.Item height="10px" width="160px" />
-            <Skeleton.Item height="8px" width="100px" />
-          </div>
-          <Skeleton.Item height="10px" width="40px" />
-        </div>
-      ))}
-    </Skeleton>
+    <div className="flex items-center justify-center py-8">
+      <Loader2 className="h-5 w-5 animate-spin text-tertiary" />
+    </div>
   );
 }
 
