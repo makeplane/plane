@@ -34,7 +34,11 @@ export interface IInstanceStaffStore {
   createStaff: (data: IInstanceStaffCreate) => Promise<IInstanceStaff>;
   updateStaff: (id: string, data: IInstanceStaffUpdate) => Promise<IInstanceStaff>;
   deleteStaff: (id: string) => Promise<void>;
-  transferStaff: (id: string, deptId: string) => Promise<IInstanceStaff>;
+  transferStaff: (
+    id: string,
+    deptId: string,
+    confirmWorkspaceTransfer?: boolean
+  ) => Promise<IInstanceStaff | { requires_workspace_transfer: true; target_workspace_name: string }>;
   deactivateStaff: (id: string) => Promise<IInstanceStaff>;
   bulkImport: (
     file: File,
@@ -166,13 +170,20 @@ export class InstanceStaffStore implements IInstanceStaffStore {
     }
   };
 
-  transferStaff = async (id: string, deptId: string): Promise<IInstanceStaff> => {
+  transferStaff = async (
+    id: string,
+    deptId: string,
+    confirmWorkspaceTransfer = false
+  ): Promise<IInstanceStaff | { requires_workspace_transfer: true; target_workspace_name: string }> => {
     try {
-      const member = await this.service.transfer(id, deptId);
-      runInAction(() => {
-        set(this.staff, [member.id], member);
-      });
-      return member;
+      const result = await this.service.transfer(id, deptId, confirmWorkspaceTransfer);
+      // Only update local store when transfer is fully executed (not the confirm prompt response)
+      if (!("requires_workspace_transfer" in result)) {
+        runInAction(() => {
+          set(this.staff, [result.id], result);
+        });
+      }
+      return result;
     } catch (error) {
       console.error("Error transferring staff", error);
       throw error;
