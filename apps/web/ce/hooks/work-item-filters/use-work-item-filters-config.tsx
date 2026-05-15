@@ -36,6 +36,7 @@ import type {
 import { Avatar } from "@plane/ui";
 import {
   getAssigneeFilterConfig,
+  getCompletedAtFilterConfig,
   getCreatedAtFilterConfig,
   getCreatedByFilterConfig,
   getCycleFilterConfig,
@@ -349,6 +350,17 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [operatorConfigs]
   );
 
+  // completed at filter config
+  const completedAtFilterConfig = useMemo(
+    () =>
+      getCompletedAtFilterConfig<TWorkItemFilterProperty>("completed_at")({
+        isEnabled: true,
+        filterIcon: CalendarLayoutIcon,
+        ...operatorConfigs,
+      }),
+    [operatorConfigs]
+  );
+
   // project filter config
   const projectFilterConfig = useMemo(
     () =>
@@ -378,6 +390,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       targetDateFilterConfig,
       createdAtFilterConfig,
       updatedAtFilterConfig,
+      completedAtFilterConfig,
       createdByFilterConfig,
       subscriberFilterConfig,
     ],
@@ -397,6 +410,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       target_date: targetDateFilterConfig,
       created_at: createdAtFilterConfig,
       updated_at: updatedAtFilterConfig,
+      completed_at: completedAtFilterConfig,
     },
     isFilterEnabled,
     members: members ?? [],
