@@ -22,16 +22,11 @@ DOCKER_BASE=(
 case "${1:-}" in
   analyze)
     shift
-    # --skip-agents-md by default to protect custom CLAUDE.md/AGENTS.md edits.
-    # Pass --refresh-docs (custom flag handled below) to refresh stats sections.
-    EXTRA="--skip-agents-md"
-    for arg in "$@"; do
-      if [ "${arg}" = "--refresh-docs" ]; then
-        EXTRA=""
-        set -- "${@/--refresh-docs/}"
-      fi
-    done
-    exec docker run "${DOCKER_BASE[@]}" -c "node /app/gitnexus/dist/cli/index.js analyze ${EXTRA} $*"
+    # --skip-agents-md is hard-wired — gitnexus rules live in
+    # .claude/rules/gitnexus-mcp-usage.md (no sentinels in CLAUDE.md/AGENTS.md).
+    # Refreshing tracked files would cause per-developer stats churn on every
+    # re-index. There is intentionally no opt-out here.
+    exec docker run "${DOCKER_BASE[@]}" -c "node /app/gitnexus/dist/cli/index.js analyze --skip-agents-md $*"
     ;;
   mcp)
     # MCP needs -i for stdio transport
@@ -46,7 +41,8 @@ case "${1:-}" in
   reindex-bg)
     # Background re-index used by git hooks. Detached, non-blocking.
     # Throttle: skip if last re-index was < 60s ago (prevents spam from rapid commits).
-    # --skip-agents-md preserves custom edits in CLAUDE.md/AGENTS.md gitnexus block.
+    # --skip-agents-md prevents gitnexus from writing into tracked CLAUDE.md
+    # /AGENTS.md (rules live in .claude/rules/gitnexus-mcp-usage.md).
     MARKER="${REPO_ROOT}/.gitnexus/.last-reindex"
     if [ -f "${MARKER}" ]; then
       AGE=$(( $(date +%s) - $(stat -f %m "${MARKER}" 2>/dev/null || stat -c %Y "${MARKER}" 2>/dev/null || echo 0) ))
@@ -72,9 +68,10 @@ GitNexus wrapper — runs gitnexus CLI inside Docker.
 Usage: scripts/gitnexus.sh <command>
 
 Commands:
-  analyze [args...]    Re-index repo synchronously (~2-3 min). Skips CLAUDE.md
-                       /AGENTS.md updates by default (protects custom edits).
-                       Pass --refresh-docs to refresh stats blocks.
+  analyze [args...]    Re-index repo synchronously (~2-3 min). Always passes
+                       --skip-agents-md — gitnexus rules live in
+                       .claude/rules/gitnexus-mcp-usage.md, tracked CLAUDE.md
+                       /AGENTS.md must not churn per-developer.
   mcp                  Start MCP server on stdio (used by .mcp.json)
   status               Show index status
   list                 List indexed repos
