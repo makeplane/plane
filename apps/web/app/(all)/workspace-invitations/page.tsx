@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import { observer } from "mobx-react";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Boxes, Share2, Star, User2 } from "lucide-react";
@@ -27,7 +26,7 @@ import { WorkspaceService } from "@/services/workspace.service";
 // service initialization
 const workspaceService = new WorkspaceService();
 
-function WorkspaceInvitationPage() {
+export default function WorkspaceInvitationPage() {
   // router
   const router = useAppRouter();
   // query params
@@ -45,34 +44,31 @@ function WorkspaceInvitationPage() {
       : null
   );
 
-  const handleAccept = () => {
+  const handleAccept = async () => {
     if (!invitationDetail) return;
-    workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+    try {
+      await workspaceService.joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: true,
         token: token,
-      })
-      .then(() => {
-        if (invitationDetail.email === currentUser?.email) {
-          router.push(`/${invitationDetail.workspace.slug}`);
-        } else {
-          router.push("/");
-        }
-      })
-      .catch((err: unknown) => console.error(err));
+      });
+      if (invitationDetail.email === currentUser?.email) router.push(`/${invitationDetail.workspace.slug}`);
+      else router.push("/");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
     if (!invitationDetail || !token) return;
-    void workspaceService
-      .joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
+    try {
+      await workspaceService.joinWorkspace(invitationDetail.workspace.slug, invitationDetail.id, {
         accepted: false,
         token: token,
-      })
-      .then(() => {
-        router.push("/");
-      })
-      .catch((err: unknown) => console.error(err));
+      });
+      router.push("/");
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -86,24 +82,24 @@ function WorkspaceInvitationPage() {
           ) : (
             <EmptySpace
               title={`You have been invited to ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
+              description="Your workspace is where you'll create teams/projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
-              <EmptySpaceItem Icon={CheckIcon} title="Accept" action={handleAccept} />
-              <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={handleReject} />
+              <EmptySpaceItem Icon={CheckIcon} title="Accept" action={() => void handleAccept()} />
+              <EmptySpaceItem Icon={CloseIcon} title="Ignore" action={() => void handleReject()} />
             </EmptySpace>
           )
         ) : error || invitationDetail?.responded_at ? (
           invitationDetail?.accepted ? (
             <EmptySpace
               title={`You are already a member of ${invitationDetail.workspace.name}`}
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
+              description="Your workspace is where you'll create teams/projects, collaborate on your work items, and organize different streams of work in your Plane account."
             >
               <EmptySpaceItem Icon={Boxes} title="Continue to home" href="/" />
             </EmptySpace>
           ) : (
             <EmptySpace
               title="This invitation link is not active anymore."
-              description="Your workspace is where you'll create projects, collaborate on your work items, and organize different streams of work in your Plane account."
+              description="Your workspace is where you'll create teams/projects, collaborate on your work items, and organize different streams of work in your Plane account."
               link={{ text: "Or start from an empty project", href: "/" }}
             >
               {!currentUser ? (
@@ -128,5 +124,3 @@ function WorkspaceInvitationPage() {
     </AuthenticationWrapper>
   );
 }
-
-export default observer(WorkspaceInvitationPage);

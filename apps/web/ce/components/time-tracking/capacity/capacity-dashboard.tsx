@@ -25,7 +25,7 @@ interface ICapacityDashboardProps {
   workspaceSlug: string;
   projectId?: string;
   /** When true, component is rendered at workspace level (no projectId required).
-   *  The cross-workspace toggle is shown; default is current workspace only. */
+   *  The cross-workspace toggle is shown; default is all workspaces. */
   isWorkspaceMode?: boolean;
 }
 
@@ -44,8 +44,7 @@ export const CapacityDashboard = observer((props: ICapacityDashboardProps) => {
     from: undefined,
     to: undefined,
   });
-  // Workspace mode defaults to current-workspace-only (toggle OFF)
-  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(true);
 
   // Derived date params
   const dateFrom = dateRange.from ? renderFormattedPayloadDate(dateRange.from) || "" : "";

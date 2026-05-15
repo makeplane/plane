@@ -19,7 +19,7 @@ interface TimesheetGridProps {
   workspaceSlug: string;
   projectId?: string;
   /** When true, component is rendered at workspace level (no projectId required).
-   *  The cross-workspace toggle is shown; default is current workspace only. */
+   *  The cross-workspace toggle is shown; default is all workspaces. */
   isWorkspaceMode?: boolean;
 }
 
@@ -35,8 +35,7 @@ export const TimesheetGrid: FC<TimesheetGridProps> = observer(({ workspaceSlug, 
   const { t } = useTranslation();
   const worklogStore = useWorklog();
   const [error, setError] = useState<string | null>(null);
-  // Workspace mode defaults to current-workspace-only (toggle OFF); project mode starts OFF too
-  const [isCrossWorkspace, setIsCrossWorkspace] = useState(false);
+  const [isCrossWorkspace, setIsCrossWorkspace] = useState(true);
 
   const fetchData = useCallback(
     async (weekStart?: string) => {

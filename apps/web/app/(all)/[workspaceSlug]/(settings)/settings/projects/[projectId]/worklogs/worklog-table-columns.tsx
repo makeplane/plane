@@ -22,7 +22,7 @@ export const formatMinutesToHours = (totalMinutes: number): string => {
 export const getWorklogColumns = (projectName?: string) => [
   {
     key: "project",
-    content: "Project",
+    content: "Team/Project",
     tdRender: (log: IWorkLog) => (
       <div className="text-13 line-clamp-1 max-w-sm">{log.project_detail?.name || projectName || "Unknown"}</div>
     ),

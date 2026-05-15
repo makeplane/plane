@@ -4,7 +4,6 @@
  * See the LICENSE file for details.
  */
 
-import type { FC } from "react";
 import { observer } from "mobx-react";
 import { EIconSize } from "@plane/constants";
 import { StateGroupIcon, CloseIcon } from "@plane/propel/icons";
@@ -29,7 +28,7 @@ export const InboxIssueAppliedFiltersState = observer(function InboxIssueApplied
   if (filteredValues.length === 0) return <></>;
   return (
     <Tag>
-      <div className="text-11 text-secondary">State</div>
+      <div className="text-11 text-secondary">Status</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
@@ -39,22 +38,24 @@ export const InboxIssueAppliedFiltersState = observer(function InboxIssueApplied
               <StateGroupIcon color={optionDetail.color} stateGroup={optionDetail.group} size={EIconSize.SM} />
             </div>
             <div className="text-11 truncate">{optionDetail?.name}</div>
-            <div
+            <button
+              type="button"
               className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
               onClick={() => handleInboxIssueFilters("state", handleFilterValue(optionDetail?.id))}
             >
               <CloseIcon className={`w-3 h-3`} />
-            </div>
+            </button>
           </div>
         );
       })}
 
-      <div
+      <button
+        type="button"
         className="w-3 h-3 flex-shrink-0 relative flex justify-center items-center overflow-hidden cursor-pointer text-tertiary hover:text-secondary transition-all"
         onClick={clearFilter}
       >
         <CloseIcon className={`w-3 h-3`} />
-      </div>
+      </button>
     </Tag>
   );
 });

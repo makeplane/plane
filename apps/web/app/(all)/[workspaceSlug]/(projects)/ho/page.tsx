@@ -10,7 +10,7 @@ export default function HoPage() {
 
   return (
     <>
-      <PageHead title="HO" />
+      <PageHead title="Overall Management" />
       {view === "datasheet" ? <HoDatasheetView /> : view === "category" ? <HoCategoryView /> : <HoDepartmentList />}
     </>
   );

@@ -64,7 +64,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
     multiple,
     onChange,
     onClose,
-    placeholder = "Project",
+    placeholder = "Team/Project",
     placement,
     projectIds,
     renderByDefault = true,
@@ -204,7 +204,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
           <DropdownButton
             className={buttonClassName}
             isActive={isOpen}
-            tooltipHeading="Project"
+            tooltipHeading="Team/Project"
             tooltipContent={value?.length ? `${value.length} project${value.length !== 1 ? "s" : ""}` : placeholder}
             showTooltip={showTooltip}
             variant={buttonVariant}
@@ -254,7 +254,7 @@ export const ProjectDropdownBase = observer(function ProjectDropdownBase(props: 
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("search")}
-                displayValue={(assigned: any) => assigned?.name}
+                displayValue={(assigned: { name?: string } | null) => assigned?.name ?? ""}
                 onKeyDown={searchInputKeyDown}
               />
             </div>

@@ -68,7 +68,7 @@ const USER_DOMAIN = [
   "Legal",
   "Finance",
   "Human Resources",
-  "Project",
+  "Team/Project",
   "Other",
 ];
 
@@ -142,7 +142,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       });
       // For Invited Users, they will skip all other steps and finish onboarding.
       if (totalSteps <= 2) {
-        finishOnboarding();
+        void finishOnboarding();
       }
     } catch {
       setToast({
@@ -163,12 +163,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       await Promise.all([
         updateCurrentUser(userDetailsPayload),
         formData.password && handleSetPassword(formData.password),
-      ]).then(() => {
-        if (formData.password) {
-        } else {
-          setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
-        }
-      });
+      ]);
+      if (!formData.password) setProfileSetupStep(EProfileSetupSteps.USER_PERSONALIZATION);
     } catch {
       setToast({
         type: TOAST_TYPE.ERROR,
@@ -195,7 +191,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
       });
       // For Invited Users, they will skip all other steps and finish onboarding.
       if (totalSteps <= 2) {
-        finishOnboarding();
+        void finishOnboarding();
       }
     } catch {
       setToast({
@@ -213,9 +209,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     if (profileSetupStep === EProfileSetupSteps.USER_PERSONALIZATION) await handleSubmitUserPersonalization(formData);
   };
 
-  const handleDelete = (url: string | null | undefined) => {
-    if (!url) return;
+  const handleDelete = (url: string | null | undefined): Promise<void> => {
+    if (!url) return Promise.resolve();
     setValue("avatar_url", "");
+    return Promise.resolve();
   };
 
   // derived values
@@ -246,7 +243,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
   return (
     <div className="flex h-full w-full">
       <div className="flex flex-col w-full items-center justify-center p-8 mt-6">
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full mx-auto mt-2 space-y-4 sm:w-96">
+        <form
+          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+          className="w-full mx-auto mt-2 space-y-4 sm:w-96"
+        >
           {profileSetupStep !== EProfileSetupSteps.USER_PERSONALIZATION && (
             <>
               <Controller
@@ -256,7 +256,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   <UserImageUploadModal
                     isOpen={isImageUploadModalOpen}
                     onClose={() => setIsImageUploadModalOpen(false)}
-                    handleRemove={async () => handleDelete(getValues("avatar_url"))}
+                    handleRemove={() => handleDelete(getValues("avatar_url"))}
                     onSuccess={(url) => {
                       onChange(url);
                       setIsImageUploadModalOpen(false);
@@ -283,7 +283,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       <img
                         src={getFileURL(userAvatar ?? "")}
                         className="absolute left-0 top-0 h-full w-full rounded-full object-cover"
-                        onClick={() => setIsImageUploadModalOpen(true)}
                         alt={user?.display_name}
                       />
                     </div>
@@ -315,7 +314,6 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                         name="first_name"
                         type="text"
                         value={value}
-                        autoFocus
                         onChange={onChange}
                         ref={ref}
                         hasError={Boolean(errors.first_name)}
@@ -477,7 +475,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                   render={({ field: { value, onChange } }) => (
                     <div className="flex flex-wrap gap-2 py-2 overflow-auto break-all">
                       {USER_ROLE.map((userRole) => (
-                        <div
+                        <button
+                          type="button"
                           key={userRole}
                           className={cn(
                             "shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 rounded px-3 py-1.5 text-13 font-medium",
@@ -489,7 +488,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                           onClick={() => onChange(userRole)}
                         >
                           {userRole}
-                        </div>
+                        </button>
                       ))}
                     </div>
                   )}
@@ -515,7 +514,8 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                       {USER_DOMAIN.map((userDomain) => {
                         const isSelected = value?.includes(userDomain) || false;
                         return (
-                          <div
+                          <button
+                            type="button"
                             key={userDomain}
                             className={`flex-shrink-0 border-[0.5px] hover:cursor-pointer hover:bg-surface-2 ${
                               isSelected ? "border-accent-strong" : "border-strong"
@@ -530,7 +530,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
                             }}
                           >
                             {userDomain}
-                          </div>
+                          </button>
                         );
                       })}
                     </div>

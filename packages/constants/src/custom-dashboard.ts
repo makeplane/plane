@@ -66,8 +66,8 @@ export const ANALYTICS_DEFAULT_WIDGET_CONFIGS: Record<string, Partial<IAnalytics
 // X-axis property options for widget data configuration
 export const ANALYTICS_CHART_PROPERTY_OPTIONS = [
   { key: "priority", label: "Priority" },
-  { key: "state", label: "State" },
-  { key: "state_group", label: "State Group" },
+  { key: "state", label: "Status" },
+  { key: "state_group", label: "Status Group" },
   { key: "assignee", label: "Assignee" },
   { key: "labels", label: "Labels" },
   { key: "cycle", label: "Cycle" },
@@ -100,8 +100,8 @@ export const ANALYTICS_NUMBER_METRIC_OPTIONS = [
 // Filter entity options for widget-level filtering UI
 export const ANALYTICS_ENTITY_FILTER_OPTIONS = [
   { key: "priority", label: "Priority" },
-  { key: "state", label: "State" },
-  { key: "state_group", label: "State Group" },
+  { key: "state", label: "Status" },
+  { key: "state_group", label: "Status Group" },
   { key: "assignee", label: "Assignee" },
   { key: "labels", label: "Labels" },
   { key: "cycle", label: "Cycle" },
@@ -126,7 +126,7 @@ export const ANALYTICS_PRIORITY_OPTIONS = [
 
 // Hardcoded state group filter values
 export const ANALYTICS_STATE_GROUP_OPTIONS = [
-  { key: "backlog", label: "Draft" },
+  { key: "backlog", label: "Backlog" },
   { key: "unstarted", label: "Unstarted" },
   { key: "started", label: "Started" },
   { key: "completed", label: "Completed" },

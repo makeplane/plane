@@ -49,7 +49,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message:
-            "This state contains some work items within it, please move them to some other state to delete this state.",
+            "This status contains some work items within it, please move them to some other status to delete this status.",
         });
       } else {
         setToast({
@@ -66,14 +66,14 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
     <>
       <AlertModalCore
         handleClose={() => setIsDeleteModal(false)}
-        handleSubmit={handleDeleteState}
+        handleSubmit={() => void handleDeleteState()}
         isSubmitting={isDelete}
         isOpen={isDeleteModal}
-        title="Delete State"
+        title="Delete Status"
         content={
           <>
-            Are you sure you want to delete state- <span className="font-medium text-primary">{state?.name}</span>? All
-            of the data related to the state will be permanently removed. This action cannot be undone.
+            Are you sure you want to delete status- <span className="font-medium text-primary">{state?.name}</span>? All
+            of the data related to the status will be permanently removed. This action cannot be undone.
           </>
         }
       />
