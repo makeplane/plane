@@ -867,5 +867,20 @@
       "description": "Eksportuj elementy do pliku JSON.",
       "short_description": "Eksportuj jako JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane uległ awarii. Nasi inżynierowie zostali powiadomieni. Jeśli masz więcej szczegółów, napisz na",
+    "error_description_middle": "lub na naszym",
+    "not_found_hint": "Sprawdź URL w pasku adresu przeglądarki i spróbuj ponownie.",
+    "instance_failure_image_alt": "Nie można pobrać szczegółów instancji",
+    "instance_failure_title": "Nie można pobrać szczegółów instancji.",
+    "instance_failure_description": "Nie mogliśmy załadować szczegółów Twojej instancji.",
+    "instance_failure_hint": "Sprawdź połączenie i spróbuj ponownie.",
+    "powered_by": "Obsługiwane przez",
+    "error_title": "Ups! To nie wygląda dobrze.",
+    "refresh": "Odśwież",
+    "forum": "Forum",
+    "not_found_title": "To nie zadziałało",
+    "retry": "Spróbuj ponownie"
   }
 }

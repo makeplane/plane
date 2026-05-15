@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "尚無專案",
+    "description": "專案是目標導向工作的基礎。你可以用專案管理團隊、任務，以及完成工作所需的一切。",
+    "learn_more": "了解更多專案內容",
+    "start_first_project": "開始你的第一個專案"
   }
 }

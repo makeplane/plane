@@ -867,5 +867,20 @@
       "description": "Esporta elementi di lavoro in un file JSON.",
       "short_description": "Esporta come JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane è andato in crash. I nostri ingegneri sono stati avvisati. Se hai altri dettagli, scrivi a",
+    "error_description_middle": "o sul nostro",
+    "not_found_hint": "Controlla l'URL nella barra degli indirizzi del browser e riprova.",
+    "instance_failure_image_alt": "Impossibile recuperare i dettagli dell'istanza",
+    "instance_failure_title": "Impossibile recuperare i dettagli dell'istanza.",
+    "instance_failure_description": "Non siamo riusciti a caricare i dettagli della tua istanza.",
+    "instance_failure_hint": "Controlla la connessione e riprova.",
+    "powered_by": "Offerto da",
+    "error_title": "Ops! Non sembra andare bene.",
+    "refresh": "Aggiorna",
+    "forum": "Forum",
+    "not_found_title": "Non ha funzionato",
+    "retry": "Riprova"
   }
 }

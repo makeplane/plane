@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "暂无项目",
+    "description": "项目是目标驱动工作的基础。你可以用项目管理团队、任务以及完成工作所需的一切。",
+    "learn_more": "了解更多项目内容",
+    "start_first_project": "开始你的第一个项目"
   }
 }

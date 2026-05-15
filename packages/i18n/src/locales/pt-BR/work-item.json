@@ -422,5 +422,35 @@
       "label": "Título do Épico",
       "required": "O título do épico é obrigatório."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Visualização lateral",
+      "modal": "Modal",
+      "full_screen": "Tela cheia"
+    },
+    "public_board_not_found": "O quadro público não existe. Verifique a URL.",
+    "no_work_items_found": "Nenhum item de trabalho encontrado",
+    "bot_name": "Bot {name}",
+    "commented_time": "comentou {time}",
+    "and_more": "e mais {count}",
+    "no_upvotes_yet": "Ainda sem votos positivos",
+    "no_downvotes_yet": "Ainda sem votos negativos",
+    "view_less": "Ver menos",
+    "view_all": "Ver tudo",
+    "no_matches_found": "Nenhuma correspondência encontrada",
+    "no_date": "Sem data",
+    "no_cycle": "Sem ciclo",
+    "no_modules": "Sem módulos",
+    "modules_count": "{count, plural, one {# módulo} other {# módulos}}",
+    "no_assignees": "Sem responsáveis",
+    "labels_count": "{count, plural, one {# etiqueta} other {# etiquetas}}",
+    "no_labels": "Sem etiquetas",
+    "sign_in_to_add_comment": "Entre para adicionar um comentário",
+    "add_comment": "Adicionar comentário",
+    "link_copied": "Link copiado!",
+    "work_item_link_copied": "Link do item de trabalho copiado para a área de transferência.",
+    "comment_post_error": "Falha ao publicar o comentário. Tente novamente.",
+    "user": "Usuário"
   }
 }

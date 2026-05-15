@@ -867,5 +867,20 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovat jako JSON"
     }
+  },
+  "space_public": {
+    "error_title": "Jejda! Tohle nevypadá dobře.",
+    "error_description_prefix": "Plane spadl. Nemějte obavy, naši inženýři už byli upozorněni. Pokud máte další podrobnosti, napište na",
+    "error_description_middle": "nebo na našem",
+    "forum": "Fórum",
+    "refresh": "Obnovit",
+    "not_found_title": "Tohle nefungovalo",
+    "not_found_hint": "Zkontrolujte URL v adresním řádku prohlížeče a zkuste to znovu.",
+    "instance_failure_image_alt": "Nelze načíst podrobnosti instance",
+    "instance_failure_title": "Nelze načíst podrobnosti instance.",
+    "instance_failure_description": "Podrobnosti vaší instance se nepodařilo načíst.",
+    "instance_failure_hint": "Zkontrolujte připojení a zkuste to znovu.",
+    "retry": "Zkusit znovu",
+    "powered_by": "Používá"
   }
 }

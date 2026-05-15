@@ -111,5 +111,18 @@
       "success_message": "페이지가 컬렉션에서 제거되었습니다.",
       "error_message": "페이지를 컬렉션에서 제거할 수 없습니다. 다시 시도해 주세요."
     }
+  },
+  "page_access": {
+    "not_found_title": "페이지를 찾을 수 없습니다",
+    "not_found_description": "접근하려는 페이지가 존재하지 않거나 볼 권한이 없습니다.",
+    "view_other_pages": "다른 페이지 보기"
+  },
+  "profile_activity": {
+    "page_title": "프로필 - 활동"
+  },
+  "space_public": {
+    "page_not_found_alt": "페이지를 찾을 수 없음",
+    "page_not_found_description": "찾고 있는 페이지가 없거나 이동되었습니다.",
+    "something_went_wrong": "문제가 발생했습니다."
   }
 }

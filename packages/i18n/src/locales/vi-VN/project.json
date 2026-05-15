@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Chưa có dự án",
+    "description": "Dự án là nền tảng cho công việc theo mục tiêu. Dự án giúp bạn quản lý đội nhóm, nhiệm vụ và mọi thứ cần thiết để hoàn thành công việc.",
+    "learn_more": "Tìm hiểu thêm về dự án",
+    "start_first_project": "Bắt đầu dự án đầu tiên"
   }
 }

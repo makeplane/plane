@@ -266,5 +266,11 @@
         "description": "Vyberte stavy, kterými pracovní položka prochází."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Stránka nenalezena",
+    "title": "Jejda! Něco se pokazilo.",
+    "description": "Omlouváme se, stránku, kterou hledáte, nelze najít. Možná byla odstraněna, přejmenována nebo je dočasně nedostupná.",
+    "go_to_home": "Přejít domů"
   }
 }

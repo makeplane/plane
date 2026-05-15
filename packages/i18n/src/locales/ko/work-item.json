@@ -422,5 +422,35 @@
       "label": "에픽 제목",
       "required": "에픽 제목이 필요합니다."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "사이드 피크",
+      "modal": "모달",
+      "full_screen": "전체 화면"
+    },
+    "public_board_not_found": "공개 보드가 없습니다. URL을 확인하세요.",
+    "no_work_items_found": "작업 항목을 찾을 수 없습니다",
+    "bot_name": "{name} 봇",
+    "commented_time": "{time}에 댓글 작성",
+    "and_more": "외 {count}명",
+    "no_upvotes_yet": "아직 찬성표가 없습니다",
+    "no_downvotes_yet": "아직 반대표가 없습니다",
+    "view_less": "간단히 보기",
+    "view_all": "모두 보기",
+    "no_matches_found": "일치하는 항목이 없습니다",
+    "no_date": "날짜 없음",
+    "no_cycle": "사이클 없음",
+    "no_modules": "모듈 없음",
+    "modules_count": "모듈 {count}개",
+    "no_assignees": "담당자 없음",
+    "labels_count": "라벨 {count}개",
+    "no_labels": "라벨 없음",
+    "sign_in_to_add_comment": "댓글을 추가하려면 로그인하세요",
+    "add_comment": "댓글 추가",
+    "link_copied": "링크가 복사되었습니다!",
+    "work_item_link_copied": "작업 항목 링크가 클립보드에 복사되었습니다.",
+    "comment_post_error": "댓글을 게시하지 못했습니다. 다시 시도하세요.",
+    "user": "사용자"
   }
 }

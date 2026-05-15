@@ -83,5 +83,56 @@
         "title": "詳細を表示する作業項目を選択してください。"
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} 件の重複する作業項目が見つかりました",
+    "description_versions": {
+      "intake_form_user": "インテークフォームユーザー"
+    },
+    "errors": {
+      "asset_upload_failed": "アセットのアップロードに失敗しました。後でもう一度試してください。",
+      "asset_duplication_failed": "アセットの複製に失敗しました。後でもう一度試してください。",
+      "permission_denied": "許可が拒否されました",
+      "mark_duplicate_permission": "プロジェクト管理者のみが作業項目を重複としてマークできます",
+      "mark_duplicate_permission_plural": "プロジェクト管理者のみが作業項目を重複としてマークできます"
+    },
+    "filters": {
+      "created_date": "作成日",
+      "updated_date": "更新日",
+      "last_updated_date": "最終更新日",
+      "status": "状態",
+      "work_item_status": "作業項目のステータス",
+      "view_all": "すべて見る",
+      "view_less": "表示を減らす",
+      "date_options": {
+        "today": "今日",
+        "yesterday": "昨日",
+        "last_7_days": "過去 7 日間",
+        "last_30_days": "過去 30 日間"
+      },
+      "date_operators": {
+        "after": "後",
+        "before": "前に"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "前の作業項目",
+      "next_work_item": "次の作業項目"
+    },
+    "properties": {
+      "duplicate_of": "重複元"
+    },
+    "select_duplicate": {
+      "select_work_item": "作業項目を選択してください"
+    },
+    "sidebar": {
+      "label_count": "{count} ラベル"
+    },
+    "toasts": {
+      "editor_processing": "エディターはまだ変更を処理中です。続行する前にお待ちください。",
+      "create_success": "作業項目が正常に作成されました。",
+      "delete_failed": "作業項目の削除に失敗しました",
+      "update_failed": "作業項目の更新に失敗しました"
+    }
   }
 }

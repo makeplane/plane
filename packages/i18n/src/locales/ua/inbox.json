@@ -83,5 +83,56 @@
         "title": "Виберіть робочу одиницю для перегляду деталей."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Знайдено {count} дубльованих робочих елементів",
+    "description_versions": {
+      "intake_form_user": "Користувач форми збору"
+    },
+    "errors": {
+      "asset_upload_failed": "Не вдалося завантажити ресурс. Спробуйте пізніше.",
+      "asset_duplication_failed": "Помилка копіювання ресурсу. Спробуйте пізніше.",
+      "permission_denied": "У дозволі відмовлено",
+      "mark_duplicate_permission": "Лише адміністратори проекту можуть позначити робочий елемент як дублікат",
+      "mark_duplicate_permission_plural": "Лише адміністратори проекту можуть позначати робочі елементи як дублікати"
+    },
+    "filters": {
+      "created_date": "Дата створення",
+      "updated_date": "Оновлена ​​дата",
+      "last_updated_date": "Дата останнього оновлення",
+      "status": "Статус",
+      "work_item_status": "Статус робочого елемента",
+      "view_all": "Переглянути всі",
+      "view_less": "Переглянути менше",
+      "date_options": {
+        "today": "Сьогодні",
+        "yesterday": "вчора",
+        "last_7_days": "Останні 7 днів",
+        "last_30_days": "Останні 30 днів"
+      },
+      "date_operators": {
+        "after": "після",
+        "before": "Раніше"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Попередній робочий елемент",
+      "next_work_item": "Наступний робочий елемент"
+    },
+    "properties": {
+      "duplicate_of": "Дублікат елемента"
+    },
+    "select_duplicate": {
+      "select_work_item": "Виберіть робочий елемент"
+    },
+    "sidebar": {
+      "label_count": "{count} міток"
+    },
+    "toasts": {
+      "editor_processing": "Редактор ще обробляє зміни. Зачекайте, перш ніж продовжити.",
+      "create_success": "Робочий елемент створено успішно.",
+      "delete_failed": "Не вдалося видалити робочий елемент",
+      "update_failed": "Не вдалося оновити робочий елемент"
+    }
   }
 }

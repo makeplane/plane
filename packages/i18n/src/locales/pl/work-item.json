@@ -422,5 +422,35 @@
       "label": "Tytuł epiku",
       "required": "Tytuł epiku jest wymagany."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Podgląd boczny",
+      "modal": "Okno modalne",
+      "full_screen": "Pełny ekran"
+    },
+    "public_board_not_found": "Publiczna tablica nie istnieje. Sprawdź URL.",
+    "no_work_items_found": "Nie znaleziono elementów pracy",
+    "bot_name": "Bot {name}",
+    "commented_time": "skomentowano {time}",
+    "and_more": "i jeszcze {count}",
+    "no_upvotes_yet": "Brak głosów za",
+    "no_downvotes_yet": "Brak głosów przeciw",
+    "view_less": "Pokaż mniej",
+    "view_all": "Pokaż wszystko",
+    "no_matches_found": "Nie znaleziono dopasowań",
+    "no_date": "Brak daty",
+    "no_cycle": "Brak cyklu",
+    "no_modules": "Brak modułów",
+    "modules_count": "{count} modułów",
+    "no_assignees": "Brak przypisanych",
+    "labels_count": "{count} etykiet",
+    "no_labels": "Brak etykiet",
+    "sign_in_to_add_comment": "Zaloguj się, aby dodać komentarz",
+    "add_comment": "Dodaj komentarz",
+    "link_copied": "Link skopiowany!",
+    "work_item_link_copied": "Link do elementu pracy skopiowany do schowka.",
+    "comment_post_error": "Nie udało się opublikować komentarza. Spróbuj ponownie.",
+    "user": "Użytkownik"
   }
 }

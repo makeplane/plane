@@ -266,5 +266,11 @@
         "description": "Wybierz stany, przez które przechodzi element pracy."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Nie znaleziono strony",
+    "title": "Ups! Coś poszło nie tak.",
+    "description": "Nie można znaleźć strony, której szukasz. Mogła zostać usunięta, zmieniono jej nazwę albo jest tymczasowo niedostępna.",
+    "go_to_home": "Przejdź do strony głównej"
   }
 }

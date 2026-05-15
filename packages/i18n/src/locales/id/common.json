@@ -867,5 +867,20 @@
       "description": "Ekspor item kerja ke file JSON.",
       "short_description": "Ekspor sebagai json"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane mengalami crash. Teknisi kami telah diberi tahu. Jika Anda memiliki detail tambahan, silakan tulis ke",
+    "error_description_middle": "atau di",
+    "not_found_hint": "Periksa URL di bilah alamat browser lalu coba lagi.",
+    "instance_failure_image_alt": "Tidak dapat mengambil detail instans",
+    "instance_failure_title": "Tidak dapat mengambil detail instans.",
+    "instance_failure_description": "Kami tidak dapat memuat detail instans Anda.",
+    "instance_failure_hint": "Periksa koneksi Anda lalu coba lagi.",
+    "powered_by": "Didukung oleh",
+    "error_title": "Ups! Ini tidak terlihat baik.",
+    "refresh": "Muat ulang",
+    "forum": "Forum",
+    "not_found_title": "Itu tidak berhasil",
+    "retry": "Coba lagi"
   }
 }

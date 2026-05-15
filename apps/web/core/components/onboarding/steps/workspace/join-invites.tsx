@@ -7,6 +7,7 @@
 import { useState } from "react";
 // plane imports
 import { ROLE } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
 import { Checkbox, Spinner } from "@plane/ui";
@@ -30,6 +31,7 @@ const workspaceService = new WorkspaceService();
 
 export function WorkspaceJoinInvitesStep(props: Props) {
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
+  const { t } = useTranslation();
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -48,9 +50,11 @@ export function WorkspaceJoinInvitesStep(props: Props) {
 
   // submit invitations
   const submitInvitations = async () => {
-    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
+    const selectedInvitation = invitations?.find(
+      (workspaceInvitation) => workspaceInvitation.id === invitationsRespond[0]
+    );
 
-    if (invitationsRespond.length <= 0 && !invitation?.role) return;
+    if (invitationsRespond.length <= 0 || !selectedInvitation?.role) return;
 
     setIsJoiningWorkspaces(true);
 
@@ -67,7 +71,10 @@ export function WorkspaceJoinInvitesStep(props: Props) {
 
   return invitations && invitations.length > 0 ? (
     <div className="flex flex-col gap-10">
-      <CommonOnboardingHeader title="Join invites or create a workspace" description="All your work — unified." />
+      <CommonOnboardingHeader
+        title={t("onboarding.join_invites_title")}
+        description={t("onboarding.unified_description")}
+      />
       <div className="flex flex-col gap-3">
         {invitations &&
           invitations.length > 0 &&
@@ -75,9 +82,10 @@ export function WorkspaceJoinInvitesStep(props: Props) {
             const isSelected = invitationsRespond.includes(invitation.id);
             const invitedWorkspace = invitation.workspace;
             return (
-              <div
+              <button
+                type="button"
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-lg border border-subtle px-3 py-2 hover:bg-surface-2`}
+                className={`flex w-full cursor-pointer items-center gap-2 rounded-lg border border-subtle px-3 py-2 text-left hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -94,7 +102,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />
                 </span>
-              </div>
+              </button>
             );
           })}
       </div>
@@ -106,7 +114,7 @@ export function WorkspaceJoinInvitesStep(props: Props) {
           onClick={submitInvitations}
           disabled={isJoiningWorkspaces || !invitationsRespond.length}
         >
-          {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue"}
+          {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : t("onboarding.continue")}
         </Button>
         <Button
           variant="ghost"
@@ -115,11 +123,11 @@ export function WorkspaceJoinInvitesStep(props: Props) {
           onClick={handleCurrentViewChange}
           disabled={isJoiningWorkspaces}
         >
-          Create new workspace
+          {t("onboarding.create_new_workspace")}
         </Button>
       </div>
     </div>
   ) : (
-    <div>No Invitations found</div>
+    <div>{t("onboarding.no_invitations_found")}</div>
   );
 }

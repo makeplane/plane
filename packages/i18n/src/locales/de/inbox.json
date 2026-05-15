@@ -83,5 +83,56 @@
         "title": "Wählen Sie ein Arbeitselement, um Details anzuzeigen."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} doppelte Arbeitselemente gefunden",
+    "description_versions": {
+      "intake_form_user": "Benutzer des Intake-Formulars"
+    },
+    "errors": {
+      "asset_upload_failed": "Das Hochladen des Assets ist fehlgeschlagen. Bitte versuchen Sie es später noch einmal.",
+      "asset_duplication_failed": "Die Duplizierung von Assets ist fehlgeschlagen. Bitte versuchen Sie es später noch einmal.",
+      "permission_denied": "Zugriff verweigert",
+      "mark_duplicate_permission": "Nur Projektadministratoren können Arbeitselemente als Duplikat markieren",
+      "mark_duplicate_permission_plural": "Nur Projektadministratoren können Arbeitselemente als Duplikat markieren"
+    },
+    "filters": {
+      "created_date": "Erstellungsdatum",
+      "updated_date": "Aktualisiertes Datum",
+      "last_updated_date": "Datum der letzten Aktualisierung",
+      "status": "Status",
+      "work_item_status": "Arbeitselementstatus",
+      "view_all": "Alle anzeigen",
+      "view_less": "Weniger anzeigen",
+      "date_options": {
+        "today": "Heute",
+        "yesterday": "Gestern",
+        "last_7_days": "Letzte 7 Tage",
+        "last_30_days": "Letzte 30 Tage"
+      },
+      "date_operators": {
+        "after": "Nach",
+        "before": "Vor"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Vorheriges Arbeitselement",
+      "next_work_item": "Nächstes Arbeitselement"
+    },
+    "properties": {
+      "duplicate_of": "Duplikat von"
+    },
+    "select_duplicate": {
+      "select_work_item": "Arbeitselement auswählen"
+    },
+    "sidebar": {
+      "label_count": "{count}-Etiketten"
+    },
+    "toasts": {
+      "editor_processing": "Der Editor verarbeitet noch Änderungen. Bitte warten Sie, bevor Sie fortfahren.",
+      "create_success": "Arbeitselement erfolgreich erstellt.",
+      "delete_failed": "Das Löschen des Arbeitselements ist fehlgeschlagen",
+      "update_failed": "Die Aktualisierung des Arbeitselements ist fehlgeschlagen"
+    }
   }
 }

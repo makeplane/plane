@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Êtes-vous sûr de vouloir supprimer cette vue ?",
       "content": "Si vous confirmez, toutes les options de tri, de filtrage et d’affichage et la mise en page que vous avez choisie pour cette vue seront définitivement supprimées sans possibilité de les restaurer."
-    }
+    },
+    "page_title": "{workspaceName} - Toutes les vues"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Créer un brouillon d’élément de travail",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Espace de travail introuvable",
+    "not_found_description": "Aucun espace de travail n’a été trouvé pour cette URL. Il n’existe peut-être pas ou vous n’êtes pas autorisé à le consulter.",
+    "visit_profile": "Voir le profil",
+    "not_authorized_title": "Non autorisé !",
+    "not_authorized_description": "Vous n’êtes pas membre de cet espace de travail. Contactez l’administrateur de l’espace de travail pour obtenir une invitation ou vérifiez vos invitations en attente.",
+    "check_pending_invites": "Vérifier les invitations en attente"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Invitation introuvable",
+    "invited_to_workspace": "Vous avez été invité à {workspaceName}",
+    "description": "Votre espace de travail est l'endroit où vous créerez des projets, collaborerez sur vos éléments de travail et organiserez différents flux de travail dans votre compte Plane.",
+    "accept": "Accepter",
+    "ignore": "Ignorer",
+    "already_member": "Vous êtes déjà membre de {workspaceName}",
+    "continue_to_home": "Continuer vers l'accueil",
+    "inactive_title": "Ce lien d'invitation n'est plus actif.",
+    "empty_project_link": "Ou partir d'un projet vide",
+    "sign_in_to_continue": "Connectez-vous pour continuer",
+    "star_on_github": "Ajoutez une étoile sur GitHub",
+    "join_community": "Rejoignez notre communauté de créateurs actifs"
+  },
+  "onboarding": {
+    "create_profile_title": "Créez votre profil.",
+    "create_profile_description": "C'est ainsi que vous apparaîtrez dans Plane.",
+    "change_image": "Changer l'image",
+    "upload_image": "Télécharger une image",
+    "name": "Nom",
+    "name_required": "Le nom est requis",
+    "name_within_50": "Le nom doit contenir moins de 50 caractères.",
+    "enter_full_name": "Entrez votre nom complet",
+    "set_password": "Définir un mot de passe",
+    "optional": "Facultatif",
+    "passwords_do_not_match": "Les mots de passe ne correspondent pas",
+    "passwords_match": "Les mots de passe correspondent",
+    "continue": "Continuer",
+    "invite_team_title": "Invitez vos coéquipiers",
+    "invite_team_description": "Le travail chez Plane se déroule mieux avec votre équipe. Invitez-les maintenant à utiliser Plane à son potentiel.",
+    "invalid_email": "Cela ne ressemble pas à une adresse e-mail.",
+    "success": "Succès!",
+    "invitations_sent": "Invitations envoyées avec succès.",
+    "error": "Erreur!",
+    "add_another": "Ajoutez-en un autre",
+    "do_later": "je le ferai plus tard",
+    "join_invites_title": "Rejoignez des invitations ou créez un espace de travail",
+    "unified_description": "Tout votre travail – unifié.",
+    "create_new_workspace": "Créer un nouvel espace de travail",
+    "no_invitations_found": "Aucune invitation trouvée",
+    "you_are_invited": "Vous êtes invité !",
+    "accept_invites": "Acceptez les invitations à collaborer avec votre équipe.",
+    "continue_to_workspace": "Continuer vers l'espace de travail",
+    "or": "ou",
+    "create_own_workspace": "Créez votre propre espace de travail",
+    "workspace_creation_disabled": "Vous ne semblez recevoir aucune invitation à un espace de travail et l'administrateur de votre instance a restreint la création de nouveaux espaces de travail. Veuillez d'abord demander à un propriétaire ou à un administrateur d'espace de travail de vous inviter à un espace de travail, puis de revenir sur cet écran pour le rejoindre.",
+    "create_workspace_title": "Créez votre espace de travail",
+    "enter_workspace_name": "Entrez le nom de l'espace de travail",
+    "join_existing_workspace": "Rejoindre l'espace de travail existant",
+    "profile_setup_completed": "Configuration du profil terminée.",
+    "profile_setup_failed": "La configuration du profil a échoué.",
+    "usecase_title": "Comment comptez-vous utiliser Plane ?",
+    "usecase_description": "Sélectionnez une ou plusieurs options afin que nous puissions personnaliser votre expérience.",
+    "select_one_or_more": "Sélectionnez un ou plusieurs",
+    "select_at_least_one": "Sélectionnez au moins une option.",
+    "skip": "Sauter"
   }
 }

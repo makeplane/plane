@@ -266,5 +266,11 @@
         "description": "Vyberte stavy, cez ktoré pracovná položka prechádza."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Stránka sa nenašla",
+    "title": "Ups! Niečo sa pokazilo.",
+    "description": "Stránku, ktorú hľadáte, sa nepodarilo nájsť. Mohla byť odstránená, premenovaná alebo je dočasne nedostupná.",
+    "go_to_home": "Prejsť domov"
   }
 }

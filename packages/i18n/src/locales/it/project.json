@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Nessun progetto ancora",
+    "description": "I progetti sono la base del lavoro orientato agli obiettivi. Ti aiutano a gestire team, attività e tutto ciò che serve per portare a termine il lavoro.",
+    "learn_more": "Scopri di più sui progetti",
+    "start_first_project": "Avvia il tuo primo progetto"
   }
 }

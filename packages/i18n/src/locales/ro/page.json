@@ -111,5 +111,18 @@
       "success_message": "Pagina a fost eliminată din colecție.",
       "error_message": "Pagina nu a putut fi eliminată din colecție. Te rugăm să încerci din nou."
     }
+  },
+  "page_access": {
+    "not_found_title": "Pagina nu a fost găsită",
+    "not_found_description": "Pagina pe care încerci să o accesezi nu există sau nu ai permisiunea să o vizualizezi.",
+    "view_other_pages": "Vezi alte pagini"
+  },
+  "profile_activity": {
+    "page_title": "Profil - Activitate"
+  },
+  "space_public": {
+    "page_not_found_alt": "Pagina nu a fost găsită",
+    "page_not_found_description": "Pagina pe care o căutați nu există sau a fost mutată.",
+    "something_went_wrong": "Ups! Ceva nu a mers bine."
   }
 }

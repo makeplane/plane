@@ -111,5 +111,18 @@
       "success_message": "Đã xóa trang khỏi bộ sưu tập.",
       "error_message": "Không thể xóa trang khỏi bộ sưu tập. Vui lòng thử lại."
     }
+  },
+  "page_access": {
+    "not_found_title": "Không tìm thấy trang",
+    "not_found_description": "Trang bạn đang cố truy cập không tồn tại hoặc bạn không có quyền xem.",
+    "view_other_pages": "Xem các trang khác"
+  },
+  "profile_activity": {
+    "page_title": "Hồ sơ - Hoạt động"
+  },
+  "space_public": {
+    "page_not_found_alt": "Không tìm thấy trang",
+    "page_not_found_description": "Trang bạn đang tìm không tồn tại hoặc đã được di chuyển.",
+    "something_went_wrong": "Rất tiếc! Đã xảy ra lỗi."
   }
 }

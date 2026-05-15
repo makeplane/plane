@@ -867,5 +867,20 @@
       "description": "Экспорт рабочих элементов в JSON-файл.",
       "short_description": "Экспорт в json"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane аварийно завершил работу. Наши инженеры уже уведомлены. Если у вас есть дополнительные сведения, напишите на",
+    "error_description_middle": "или в нашем",
+    "not_found_hint": "Проверьте URL в адресной строке браузера и попробуйте еще раз.",
+    "instance_failure_image_alt": "Не удалось получить сведения об инстансе",
+    "instance_failure_title": "Не удалось получить сведения об инстансе.",
+    "instance_failure_description": "Не удалось загрузить сведения о вашем инстансе.",
+    "instance_failure_hint": "Проверьте подключение и попробуйте еще раз.",
+    "powered_by": "Работает на",
+    "error_title": "Упс! Что-то пошло не так.",
+    "refresh": "Обновить",
+    "forum": "Форум",
+    "not_found_title": "Не получилось",
+    "retry": "Повторить"
   }
 }

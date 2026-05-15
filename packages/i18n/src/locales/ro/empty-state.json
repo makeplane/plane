@@ -266,5 +266,11 @@
         "description": "Selectează stările prin care progresează elementul de lucru."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Pagina nu a fost găsită",
+    "title": "Ups! Ceva nu a mers bine.",
+    "description": "Ne pare rău, pagina pe care o cauți nu a fost găsită. Este posibil să fi fost eliminată, redenumită sau să fie temporar indisponibilă.",
+    "go_to_home": "Mergi la pagina principală"
   }
 }

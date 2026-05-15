@@ -867,5 +867,20 @@
       "description": "Xuất mục công việc thành tệp JSON.",
       "short_description": "Xuất sang JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane đã gặp sự cố. Kỹ sư của chúng tôi đã được thông báo. Nếu bạn có thêm chi tiết, vui lòng viết tới",
+    "error_description_middle": "hoặc trên",
+    "not_found_hint": "Kiểm tra URL trong thanh địa chỉ trình duyệt rồi thử lại.",
+    "instance_failure_image_alt": "Không thể lấy chi tiết phiên bản",
+    "instance_failure_title": "Không thể lấy chi tiết phiên bản.",
+    "instance_failure_description": "Chúng tôi không thể tải chi tiết phiên bản của bạn.",
+    "instance_failure_hint": "Vui lòng kiểm tra kết nối rồi thử lại.",
+    "powered_by": "Được hỗ trợ bởi",
+    "error_title": "Rất tiếc! Có vẻ không ổn.",
+    "refresh": "Làm mới",
+    "forum": "Diễn đàn",
+    "not_found_title": "Thao tác không thành công",
+    "retry": "Thử lại"
   }
 }

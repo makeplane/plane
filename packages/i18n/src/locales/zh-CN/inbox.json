@@ -83,5 +83,56 @@
         "title": "选择一个工作项以查看其详细信息。"
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "发现 {count} 个重复工作项",
+    "description_versions": {
+      "intake_form_user": "收集表单用户"
+    },
+    "errors": {
+      "asset_upload_failed": "资源上传失败。请稍后重试。",
+      "asset_duplication_failed": "资产复制失败。请稍后重试。",
+      "permission_denied": "没有权限",
+      "mark_duplicate_permission": "只有项目管理员可以将工作项标记为重复",
+      "mark_duplicate_permission_plural": "只有项目管理员可以将工作项标记为重复"
+    },
+    "filters": {
+      "created_date": "创建日期",
+      "updated_date": "更新日期",
+      "last_updated_date": "最后更新日期",
+      "status": "状态",
+      "work_item_status": "工作项状态",
+      "view_all": "查看全部",
+      "view_less": "查看较少",
+      "date_options": {
+        "today": "今天",
+        "yesterday": "昨天",
+        "last_7_days": "过去 7 天",
+        "last_30_days": "过去 30 天"
+      },
+      "date_operators": {
+        "after": "后",
+        "before": "前"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "上一个工作项",
+      "next_work_item": "下一个工作项"
+    },
+    "properties": {
+      "duplicate_of": "重复于"
+    },
+    "select_duplicate": {
+      "select_work_item": "选择工作项"
+    },
+    "sidebar": {
+      "label_count": "{count} 标签"
+    },
+    "toasts": {
+      "editor_processing": "编辑器仍在处理更改。请稍候再继续。",
+      "create_success": "工作项创建成功。",
+      "delete_failed": "工作项删除失败",
+      "update_failed": "工作项更新失败"
+    }
   }
 }

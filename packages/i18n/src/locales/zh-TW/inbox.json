@@ -83,5 +83,56 @@
         "title": "選擇工作事項以檢視其詳細資訊。"
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "發現 {count} 個重複工作項",
+    "description_versions": {
+      "intake_form_user": "收集表單使用者"
+    },
+    "errors": {
+      "asset_upload_failed": "資源上傳失敗。請稍後重試。",
+      "asset_duplication_failed": "資產複製失敗。請稍後重試。",
+      "permission_denied": "沒有權限",
+      "mark_duplicate_permission": "只有專案管理員可以將工作項目標記為重複",
+      "mark_duplicate_permission_plural": "只有專案管理員可以將工作項目標記為重複"
+    },
+    "filters": {
+      "created_date": "建立日期",
+      "updated_date": "更新日期",
+      "last_updated_date": "最後更新日期",
+      "status": "狀態",
+      "work_item_status": "工作項狀態",
+      "view_all": "看全部",
+      "view_less": "查看較少",
+      "date_options": {
+        "today": "今天",
+        "yesterday": "昨天",
+        "last_7_days": "過去 7 天",
+        "last_30_days": "過去 30 天"
+      },
+      "date_operators": {
+        "after": "後",
+        "before": "前"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "上一個工作項",
+      "next_work_item": "下一個工作項"
+    },
+    "properties": {
+      "duplicate_of": "重複於"
+    },
+    "select_duplicate": {
+      "select_work_item": "選擇工作項"
+    },
+    "sidebar": {
+      "label_count": "{count} 標籤"
+    },
+    "toasts": {
+      "editor_processing": "編輯器仍在處理更改。請稍候再繼續。",
+      "create_success": "工作項目建立成功。",
+      "delete_failed": "工作項目刪除失敗",
+      "update_failed": "工作項目更新失敗"
+    }
   }
 }

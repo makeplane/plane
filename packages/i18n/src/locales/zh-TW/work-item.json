@@ -422,5 +422,35 @@
       "label": "Epic 標題",
       "required": "Epic 標題為必填。"
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "側邊預覽",
+      "modal": "彈窗",
+      "full_screen": "全螢幕"
+    },
+    "public_board_not_found": "公開看板不存在。請檢查 URL。",
+    "no_work_items_found": "未找到工作項",
+    "bot_name": "{name} 機器人",
+    "commented_time": "評論於 {time}",
+    "and_more": "還有 {count} 個",
+    "no_upvotes_yet": "暫無贊成票",
+    "no_downvotes_yet": "暫無反對票",
+    "view_less": "收起",
+    "view_all": "查看全部",
+    "no_matches_found": "未找到相符項目",
+    "no_date": "無日期",
+    "no_cycle": "無週期",
+    "no_modules": "無模組",
+    "modules_count": "{count} 個模組",
+    "no_assignees": "無負責人",
+    "labels_count": "{count} 個標籤",
+    "no_labels": "無標籤",
+    "sign_in_to_add_comment": "登入以新增評論",
+    "add_comment": "新增評論",
+    "link_copied": "連結已複製！",
+    "work_item_link_copied": "工作項目連結已複製到剪貼簿。",
+    "comment_post_error": "評論發布失敗。請再試一次。",
+    "user": "使用者"
   }
 }

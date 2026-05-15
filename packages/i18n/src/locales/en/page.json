@@ -111,5 +111,18 @@
       "success_message": "Page removed from collection.",
       "error_message": "Page could not be removed from the collection. Please try again."
     }
+  },
+  "page_access": {
+    "not_found_title": "Page not found",
+    "not_found_description": "The page you are trying to access does not exist or you do not have permission to view it.",
+    "view_other_pages": "View other Pages"
+  },
+  "profile_activity": {
+    "page_title": "Profile - Activity"
+  },
+  "space_public": {
+    "page_not_found_alt": "Page not found",
+    "page_not_found_description": "The page you are looking for does not exist or has been moved.",
+    "something_went_wrong": "Oops! Something went wrong."
   }
 }

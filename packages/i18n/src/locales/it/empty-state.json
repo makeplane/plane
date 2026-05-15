@@ -266,5 +266,11 @@
         "description": "Seleziona gli stati attraverso i quali avanza l'elemento di lavoro."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Pagina non trovata",
+    "title": "Ops! Qualcosa è andato storto.",
+    "description": "Spiacenti, la pagina che stai cercando non è stata trovata. Potrebbe essere stata rimossa, rinominata o essere temporaneamente non disponibile.",
+    "go_to_home": "Vai alla home"
   }
 }

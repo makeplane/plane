@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Bạn có chắc chắn muốn xóa chế độ xem này không?",
       "content": "Nếu bạn xác nhận, tất cả các tùy chọn sắp xếp, lọc và hiển thị + bố cục mà bạn đã chọn cho chế độ xem này sẽ bị xóa vĩnh viễn mà không có cách nào khôi phục."
-    }
+    },
+    "page_title": "{workspaceName} - Tất cả chế độ xem"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Nháp một mục công việc",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Không tìm thấy workspace",
+    "not_found_description": "Không tìm thấy không gian làm việc nào cho URL này. Không gian này có thể không tồn tại hoặc bạn không có quyền xem.",
+    "visit_profile": "Xem hồ sơ",
+    "not_authorized_title": "Không được phép!",
+    "not_authorized_description": "Bạn không phải là thành viên của không gian làm việc này. Hãy liên hệ quản trị viên để nhận lời mời hoặc kiểm tra các lời mời đang chờ.",
+    "check_pending_invites": "Kiểm tra lời mời đang chờ"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Không tìm thấy lời mời",
+    "invited_to_workspace": "Bạn đã được mời tham gia {workspaceName}",
+    "description": "Không gian làm việc của bạn là nơi bạn sẽ tạo các dự án, cộng tác trên các mục công việc của mình và sắp xếp các luồng công việc khác nhau trong tài khoản Plane của bạn.",
+    "accept": "Chấp nhận",
+    "ignore": "Phớt lờ",
+    "already_member": "Bạn đã là thành viên của {workspaceName}",
+    "continue_to_home": "Tiếp tục đến trang chủ",
+    "inactive_title": "Liên kết lời mời này không còn hoạt động nữa.",
+    "empty_project_link": "Hoặc bắt đầu từ một dự án trống",
+    "sign_in_to_continue": "Đăng nhập để tiếp tục",
+    "star_on_github": "Gắn sao cho chúng tôi trên GitHub",
+    "join_community": "Tham gia cộng đồng những người sáng tạo tích cực của chúng tôi"
+  },
+  "onboarding": {
+    "create_profile_title": "Tạo hồ sơ của bạn.",
+    "create_profile_description": "Đây là cách bạn sẽ xuất hiện trong Plane.",
+    "change_image": "Thay đổi hình ảnh",
+    "upload_image": "Tải hình ảnh lên",
+    "name": "Tên",
+    "name_required": "Tên là bắt buộc",
+    "name_within_50": "Tên phải trong vòng 50 ký tự.",
+    "enter_full_name": "Nhập tên đầy đủ của bạn",
+    "set_password": "Đặt mật khẩu",
+    "optional": "Không bắt buộc",
+    "passwords_do_not_match": "Mật khẩu không khớp",
+    "passwords_match": "Mật khẩu trùng khớp",
+    "continue": "Tiếp tục",
+    "invite_team_title": "Mời đồng đội của bạn",
+    "invite_team_description": "Làm việc trong Plane hiệu quả nhất khi có đội nhóm của bạn. Hãy mời họ ngay để tận dụng tối đa Plane.",
+    "invalid_email": "Đó không giống như một địa chỉ email.",
+    "success": "Thành công!",
+    "invitations_sent": "Lời mời đã được gửi thành công.",
+    "error": "Lỗi!",
+    "add_another": "Thêm cái khác",
+    "do_later": "tôi sẽ làm nó sau",
+    "join_invites_title": "Tham gia lời mời hoặc tạo không gian làm việc",
+    "unified_description": "Tất cả công việc của bạn - thống nhất.",
+    "create_new_workspace": "Tạo không gian làm việc mới",
+    "no_invitations_found": "Không tìm thấy lời mời nào",
+    "you_are_invited": "Bạn được mời!",
+    "accept_invites": "Chấp nhận lời mời cộng tác với nhóm của bạn.",
+    "continue_to_workspace": "Tiếp tục đến không gian làm việc",
+    "or": "hoặc",
+    "create_own_workspace": "Tạo không gian làm việc của riêng bạn",
+    "workspace_creation_disabled": "Có vẻ như bạn không nhận được bất kỳ lời mời nào vào không gian làm việc và quản trị viên phiên bản của bạn đã hạn chế việc tạo không gian làm việc mới. Vui lòng yêu cầu chủ sở hữu hoặc quản trị viên không gian làm việc mời bạn đến không gian làm việc trước và quay lại màn hình này để tham gia.",
+    "create_workspace_title": "Tạo không gian làm việc của bạn",
+    "enter_workspace_name": "Nhập tên không gian làm việc",
+    "join_existing_workspace": "Tham gia không gian làm việc hiện có",
+    "profile_setup_completed": "Thiết lập hồ sơ đã hoàn tất.",
+    "profile_setup_failed": "Thiết lập hồ sơ không thành công.",
+    "usecase_title": "Bạn dự định sử dụng ZXPLaneZ như thế nào?",
+    "usecase_description": "Chọn một hoặc nhiều tùy chọn để chúng tôi có thể cá nhân hóa trải nghiệm của bạn.",
+    "select_one_or_more": "Chọn một hoặc nhiều",
+    "select_at_least_one": "Chọn ít nhất một tùy chọn.",
+    "skip": "Nhảy"
   }
 }

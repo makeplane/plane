@@ -7,6 +7,7 @@
 import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // plane types
 import type { TInboxIssueFilterMemberKeys } from "@plane/types";
 // plane ui
@@ -28,8 +29,9 @@ type Props = {
 };
 
 export const FilterMember = observer(function FilterMember(props: Props) {
-  const { filterKey, label = "Members", memberIds, searchQuery } = props;
+  const { filterKey, label, memberIds, searchQuery } = props;
   // hooks
+  const { t } = useTranslation();
   const { inboxFilters, handleInboxIssueFilters } = useProjectInbox();
   const { getUserDetails } = useMember();
   const { data: currentUser } = useUser();
@@ -66,7 +68,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`${label} ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`${label ?? t("members")} ${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />
@@ -82,7 +84,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                   return (
                     <FilterOption
                       key={`members-${member.id}`}
-                      isChecked={filterValue?.includes(member.id) ? true : false}
+                      isChecked={filterValue?.includes(member.id)}
                       onClick={() => handleInboxIssueFilters(filterKey, handleFilterValue(member.id))}
                       icon={
                         <Avatar
@@ -92,7 +94,7 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                           size="md"
                         />
                       }
-                      title={currentUser?.id === member.id ? "You" : member?.display_name}
+                      title={currentUser?.id === member.id ? t("you") : member?.display_name}
                     />
                   );
                 })}
@@ -102,12 +104,14 @@ export const FilterMember = observer(function FilterMember(props: Props) {
                     className="ml-8 text-11 font-medium text-accent-primary"
                     onClick={handleViewToggle}
                   >
-                    {itemsToRender === sortedOptions.length ? "View less" : "View all"}
+                    {itemsToRender === sortedOptions.length
+                      ? t("inbox.filters.view_less")
+                      : t("inbox.filters.view_all")}
                   </button>
                 )}
               </>
             ) : (
-              <p className="text-11 text-placeholder italic">No matches found</p>
+              <p className="text-11 text-placeholder italic">{t("common.search.no_matches_found")}</p>
             )
           ) : (
             <Loader className="space-y-2">

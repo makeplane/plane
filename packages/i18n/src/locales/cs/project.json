@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Zatím žádné projekty",
+    "description": "Projekty jsou základem práce řízené cíli. Pomáhají spravovat týmy, úkoly a vše potřebné k dokončení práce.",
+    "learn_more": "Další informace o projektech",
+    "start_first_project": "Začít první projekt"
   }
 }

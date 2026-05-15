@@ -867,5 +867,20 @@
       "description": "将工作项导出为 JSON 文件。",
       "short_description": "导出为 JSON"
     }
+  },
+  "space_public": {
+    "error_title": "糟糕，看起来不太妙。",
+    "error_description_prefix": "Plane 崩溃了。别担心，我们的工程师已经收到通知。如果你有更多细节，请写信到",
+    "error_description_middle": "或前往我们的",
+    "forum": "论坛",
+    "refresh": "刷新",
+    "not_found_title": "这个链接无法打开",
+    "not_found_hint": "请检查浏览器地址栏中的 URL，然后重试。",
+    "instance_failure_image_alt": "无法获取实例详细信息",
+    "instance_failure_title": "无法获取实例详细信息。",
+    "instance_failure_description": "我们无法加载您的实例详细信息。",
+    "instance_failure_hint": "请检查您的连接并重试。",
+    "retry": "重试",
+    "powered_by": "提供支持"
   }
 }

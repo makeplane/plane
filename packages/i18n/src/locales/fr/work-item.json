@@ -422,5 +422,35 @@
       "label": "Titre de l’Epic",
       "required": "Le titre de l’Epic est requis."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Aperçu latéral",
+      "modal": "Fenêtre modale",
+      "full_screen": "Plein écran"
+    },
+    "public_board_not_found": "Le tableau public n'existe pas. Veuillez vérifier l'URL.",
+    "no_work_items_found": "Aucun élément de travail trouvé",
+    "bot_name": "Bot {name}",
+    "commented_time": "a commenté {time}",
+    "and_more": "et {count} de plus",
+    "no_upvotes_yet": "Aucun vote positif pour le moment",
+    "no_downvotes_yet": "Aucun vote négatif pour le moment",
+    "view_less": "Voir moins",
+    "view_all": "Tout voir",
+    "no_matches_found": "Aucune correspondance trouvée",
+    "no_date": "Aucune date",
+    "no_cycle": "Aucun cycle",
+    "no_modules": "Aucun module",
+    "modules_count": "{count} modules",
+    "no_assignees": "Aucune personne assignée",
+    "labels_count": "{count} étiquettes",
+    "no_labels": "Aucune étiquette",
+    "sign_in_to_add_comment": "Connectez-vous pour ajouter un commentaire",
+    "add_comment": "Ajouter un commentaire",
+    "link_copied": "Lien copié !",
+    "work_item_link_copied": "Lien de l'élément de travail copié dans le presse-papiers.",
+    "comment_post_error": "Impossible de publier le commentaire. Veuillez réessayer.",
+    "user": "Utilisateur"
   }
 }

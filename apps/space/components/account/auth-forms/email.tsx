@@ -5,12 +5,13 @@
  */
 
 import type { FormEvent } from "react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 // icons
 import { CircleAlert, XCircle } from "lucide-react";
 // types
 import { Button } from "@plane/propel/button";
+import { useTranslation } from "@plane/i18n";
 import type { IEmailCheckData } from "@plane/types";
 // ui
 import { Input, Spinner } from "@plane/ui";
@@ -25,13 +26,14 @@ type TAuthEmailForm = {
 
 export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailForm) {
   const { onSubmit, defaultEmail } = props;
+  const { t } = useTranslation();
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState(defaultEmail);
 
   const emailError = useMemo(
-    () => (email && !checkEmailValidity(email) ? { email: "Email is invalid" } : undefined),
-    [email]
+    () => (email && !checkEmailValidity(email) ? { email: t("space_auth.email_invalid") } : undefined),
+    [email, t]
   );
 
   const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -49,11 +51,15 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
   const [isFocused, setIsFocused] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <form onSubmit={handleFormSubmit} className="mt-5 space-y-4">
       <div className="space-y-1">
         <label className="text-13 font-medium text-tertiary" htmlFor="email">
-          Email
+          {t("space_auth.email")}
         </label>
         <div
           className={cn(
@@ -76,13 +82,12 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
             placeholder="name@company.com"
             className={`h-10 w-full border-0 disable-autofill-style placeholder:text-placeholder autofill:bg-danger-subtle focus:bg-none active:bg-transparent`}
             autoComplete="off"
-            autoFocus
             ref={inputRef}
           />
           {email.length > 0 && (
             <button
               type="button"
-              aria-label="Clear email"
+              aria-label={t("space_auth.clear_email")}
               onClick={() => {
                 setEmail("");
                 inputRef.current?.focus();
@@ -101,7 +106,7 @@ export const AuthEmailForm = observer(function AuthEmailForm(props: TAuthEmailFo
         )}
       </div>
       <Button type="submit" variant="primary" className="w-full" size="xl" disabled={isButtonDisabled}>
-        {isSubmitting ? <Spinner height="20px" width="20px" /> : "Continue"}
+        {isSubmitting ? <Spinner height="20px" width="20px" /> : t("space_auth.continue")}
       </Button>
     </form>
   );

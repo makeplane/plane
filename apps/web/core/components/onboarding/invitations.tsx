@@ -7,6 +7,7 @@
 import { useState } from "react";
 // plane imports
 import { ROLE } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 // types
 import { Button } from "@plane/propel/button";
 import type { IWorkspaceMemberInvitation } from "@plane/types";
@@ -31,6 +32,7 @@ const workspaceService = new WorkspaceService();
 
 export function Invitations(props: Props) {
   const { invitations, handleNextStep, handleCurrentViewChange } = props;
+  const { t } = useTranslation();
   // states
   const [isJoiningWorkspaces, setIsJoiningWorkspaces] = useState(false);
   const [invitationsRespond, setInvitationsRespond] = useState<string[]>([]);
@@ -47,8 +49,10 @@ export function Invitations(props: Props) {
   };
 
   const submitInvitations = async () => {
-    const invitation = invitations?.find((invitation) => invitation.id === invitationsRespond[0]);
-    if (invitationsRespond.length <= 0 && !invitation?.role) return;
+    const selectedInvitation = invitations?.find(
+      (workspaceInvitation) => workspaceInvitation.id === invitationsRespond[0]
+    );
+    if (invitationsRespond.length <= 0 && !selectedInvitation?.role) return;
     setIsJoiningWorkspaces(true);
     try {
       await workspaceService.joinWorkspaces({ invitations: invitationsRespond });
@@ -64,8 +68,8 @@ export function Invitations(props: Props) {
   return invitations && invitations.length > 0 ? (
     <div className="space-y-4">
       <div className="mx-auto space-y-1 py-4 text-center">
-        <h3 className="text-24 font-bold text-primary">You are invited!</h3>
-        <p className="font-medium text-placeholder">Accept the invites to collaborate with your team.</p>
+        <h3 className="text-24 font-bold text-primary">{t("onboarding.you_are_invited")}</h3>
+        <p className="font-medium text-placeholder">{t("onboarding.accept_invites")}</p>
       </div>
       <div>
         {invitations &&
@@ -74,9 +78,10 @@ export function Invitations(props: Props) {
             const isSelected = invitationsRespond.includes(invitation.id);
             const invitedWorkspace = invitation.workspace;
             return (
-              <div
+              <button
+                type="button"
                 key={invitation.id}
-                className={`flex cursor-pointer items-center gap-2 rounded-sm border border-subtle p-3.5 hover:bg-surface-2`}
+                className={`flex w-full cursor-pointer items-center gap-2 rounded-sm border border-subtle p-3.5 text-left hover:bg-surface-2`}
                 onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
@@ -93,7 +98,7 @@ export function Invitations(props: Props) {
                 <span className={`flex-shrink-0`}>
                   <Checkbox checked={isSelected} />
                 </span>
-              </div>
+              </button>
             );
           })}
       </div>
@@ -104,11 +109,11 @@ export function Invitations(props: Props) {
         onClick={submitInvitations}
         disabled={isJoiningWorkspaces || !invitationsRespond.length}
       >
-        {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : "Continue to workspace"}
+        {isJoiningWorkspaces ? <Spinner height="20px" width="20px" /> : t("onboarding.continue_to_workspace")}
       </Button>
       <div className="mx-auto mt-4 flex items-center sm:w-96">
         <hr className="w-full border-strong" />
-        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">or</p>
+        <p className="mx-3 flex-shrink-0 text-center text-13 text-placeholder">{t("onboarding.or")}</p>
         <hr className="w-full border-strong" />
       </div>
       <Button
@@ -118,10 +123,10 @@ export function Invitations(props: Props) {
         onClick={handleCurrentViewChange}
         disabled={isJoiningWorkspaces}
       >
-        Create your own workspace
+        {t("onboarding.create_own_workspace")}
       </Button>
     </div>
   ) : (
-    <div>No Invitations found</div>
+    <div>{t("onboarding.no_invitations_found")}</div>
   );
 }

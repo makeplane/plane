@@ -35,7 +35,7 @@ export function IssueBlockPriority({
   if (priority_detail === null) return <></>;
 
   return (
-    <Tooltip tooltipHeading="Priority" tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
+    <Tooltip tooltipHeading={t("common.priority")} tooltipContent={t(priority_detail?.titleTranslationKey || "")}>
       <div
         className={cn(
           "flex h-full items-center gap-1.5 rounded-sm border-[0.5px] px-2 py-0.5 text-11",

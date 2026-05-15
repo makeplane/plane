@@ -422,5 +422,35 @@
       "label": "Назва епіку",
       "required": "Назва епіку є обов'язковою."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Бічний перегляд",
+      "modal": "Модальне вікно",
+      "full_screen": "Повний екран"
+    },
+    "public_board_not_found": "Публічна дошка не існує. Перевірте URL.",
+    "no_work_items_found": "Робочих елементів не знайдено",
+    "bot_name": "Бот {name}",
+    "commented_time": "прокоментував {time}",
+    "and_more": "і ще {count}",
+    "no_upvotes_yet": "Поки що немає голосів за",
+    "no_downvotes_yet": "Поки що немає голосів проти",
+    "view_less": "Показати менше",
+    "view_all": "Показати все",
+    "no_matches_found": "Збігів не знайдено",
+    "no_date": "Без дати",
+    "no_cycle": "Без циклу",
+    "no_modules": "Без модулів",
+    "modules_count": "{count} модулів",
+    "no_assignees": "Без виконавців",
+    "labels_count": "{count} міток",
+    "no_labels": "Без міток",
+    "sign_in_to_add_comment": "Увійдіть, щоб додати коментар",
+    "add_comment": "Додати коментар",
+    "link_copied": "Посилання скопійовано!",
+    "work_item_link_copied": "Посилання на робочий елемент скопійовано в буфер обміну.",
+    "comment_post_error": "Не вдалося опублікувати коментар. Спробуйте ще раз.",
+    "user": "Користувач"
   }
 }

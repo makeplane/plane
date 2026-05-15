@@ -867,5 +867,20 @@
       "description": "Exportujte položky do JSON.",
       "short_description": "Exportovať ako JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane zlyhal. Naši inžinieri boli upozornení. Ak máte ďalšie podrobnosti, napíšte na",
+    "error_description_middle": "alebo na našom",
+    "not_found_hint": "Skontrolujte URL v paneli s adresou prehliadača a skúste to znova.",
+    "instance_failure_image_alt": "Nie je možné načítať podrobnosti inštancie",
+    "instance_failure_title": "Nie je možné načítať podrobnosti inštancie.",
+    "instance_failure_description": "Nepodarilo sa načítať podrobnosti vašej inštancie.",
+    "instance_failure_hint": "Skontrolujte pripojenie a skúste to znova.",
+    "powered_by": "Používa",
+    "error_title": "Ups! Toto nevyzerá dobre.",
+    "refresh": "Obnoviť",
+    "forum": "Fórum",
+    "not_found_title": "Toto nefungovalo",
+    "retry": "Skúsiť znova"
   }
 }

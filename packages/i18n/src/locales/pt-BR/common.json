@@ -867,5 +867,20 @@
       "description": "Exporte itens de trabalho para um arquivo JSON.",
       "short_description": "Exportar como JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "O Plane travou. Nossos engenheiros foram notificados. Se você tiver mais detalhes, escreva para",
+    "error_description_middle": "ou em nosso",
+    "not_found_hint": "Confira a URL na barra de endereços do navegador e tente novamente.",
+    "instance_failure_image_alt": "Não foi possível buscar os detalhes da instância",
+    "instance_failure_title": "Não foi possível buscar os detalhes da instância.",
+    "instance_failure_description": "Não conseguimos carregar os detalhes da sua instância.",
+    "instance_failure_hint": "Verifique sua conexão e tente novamente.",
+    "powered_by": "Desenvolvido por",
+    "error_title": "Ops! Isso não parece bom.",
+    "refresh": "Atualizar",
+    "forum": "Fórum",
+    "not_found_title": "Isso não funcionou",
+    "retry": "Tentar novamente"
   }
 }

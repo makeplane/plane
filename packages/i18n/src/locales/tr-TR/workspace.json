@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Bu görünümü silmek istediğinizden emin misiniz?",
       "content": "Onaylarsanız, bu görünüm için seçtiğiniz tüm sıralama, filtreleme ve görüntüleme seçenekleri + düzen kalıcı olarak silinecek ve geri yükleme imkanı olmayacaktır."
-    }
+    },
+    "page_title": "{workspaceName} - Tüm Görünümler"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Taslak iş öğesi oluştur",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Çalışma alanı bulunamadı",
+    "not_found_description": "Bu URL için çalışma alanı bulunamadı. Mevcut olmayabilir veya görüntüleme izniniz olmayabilir.",
+    "visit_profile": "Profili ziyaret et",
+    "not_authorized_title": "Yetkili değilsiniz!",
+    "not_authorized_description": "Bu çalışma alanının üyesi değilsiniz. Davet almak için çalışma alanı yöneticisiyle iletişime geçin veya bekleyen davetlerinizi kontrol edin.",
+    "check_pending_invites": "Bekleyen davetleri kontrol et"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Davetiye bulunamadı",
+    "invited_to_workspace": "{workspaceName}'e davet edildiniz",
+    "description": "Çalışma alanınız, Plane hesabınızda projeler oluşturacağınız, çalışma öğeleriniz üzerinde işbirliği yapacağınız ve farklı iş akışlarını organize edeceğiniz yerdir.",
+    "accept": "Kabul et",
+    "ignore": "Yok say",
+    "already_member": "Zaten {workspaceName} üyesisiniz",
+    "continue_to_home": "Ana sayfaya devam et",
+    "inactive_title": "Bu davet bağlantısı artık aktif değil.",
+    "empty_project_link": "Veya boş bir projeden başlayın",
+    "sign_in_to_continue": "Devam etmek için oturum açın",
+    "star_on_github": "GitHub'da bize yıldız verin",
+    "join_community": "Aktif yaratıcılardan oluşan topluluğumuza katılın"
+  },
+  "onboarding": {
+    "create_profile_title": "Profilinizi oluşturun.",
+    "create_profile_description": "Plane'de bu şekilde görüneceksiniz.",
+    "change_image": "Resmi değiştir",
+    "upload_image": "Resim yükle",
+    "name": "İsim",
+    "name_required": "Ad gerekli",
+    "name_within_50": "Ad 50 karakterden oluşmalıdır.",
+    "enter_full_name": "Tam adınızı girin",
+    "set_password": "Bir şifre belirleyin",
+    "optional": "İsteğe bağlı",
+    "passwords_do_not_match": "Şifreler eşleşmiyor",
+    "passwords_match": "Şifreler eşleşiyor",
+    "continue": "Devam et",
+    "invite_team_title": "Takım arkadaşlarınızı davet edin",
+    "invite_team_description": "Plane'de çalışmak ekibinizle en iyi şekilde gerçekleşir. Onları şimdi Plane'in potansiyelini sonuna kadar kullanmaya davet edin.",
+    "invalid_email": "Bu bir e-posta adresine benzemiyor.",
+    "success": "Başarı!",
+    "invitations_sent": "Davetiyeler başarıyla gönderildi.",
+    "error": "Hata!",
+    "add_another": "Başka ekle",
+    "do_later": "Daha sonra yapacağım",
+    "join_invites_title": "Davetlere katılın veya bir çalışma alanı oluşturun",
+    "unified_description": "Tüm çalışmalarınız — birleştirilmiş.",
+    "create_new_workspace": "Yeni çalışma alanı oluştur",
+    "no_invitations_found": "Hiçbir davetiye bulunamadı",
+    "you_are_invited": "Davetlisiniz!",
+    "accept_invites": "Ekibinizle işbirliği yapma davetlerini kabul edin.",
+    "continue_to_workspace": "Çalışma alanına devam et",
+    "or": "veya",
+    "create_own_workspace": "Kendi çalışma alanınızı yaratın",
+    "workspace_creation_disabled": "Bir çalışma alanına davetiniz yok gibi görünüyor ve örnek yöneticiniz yeni çalışma alanlarının oluşturulmasını kısıtladı. Lütfen bir çalışma alanı sahibinden veya yöneticisinden önce sizi bir çalışma alanına davet etmesini ve katılmak için bu ekrana geri dönmesini isteyin.",
+    "create_workspace_title": "Çalışma alanınızı yaratın",
+    "enter_workspace_name": "Çalışma alanı adını girin",
+    "join_existing_workspace": "Mevcut çalışma alanına katılın",
+    "profile_setup_completed": "Profil kurulumu tamamlandı.",
+    "profile_setup_failed": "Profil kurulumu başarısız oldu.",
+    "usecase_title": "Plane'i nasıl kullanmayı planlıyorsunuz?",
+    "usecase_description": "Deneyiminizi kişiselleştirebilmemiz için bir veya daha fazla seçeneği seçin.",
+    "select_one_or_more": "Bir veya daha fazlasını seçin",
+    "select_at_least_one": "En az bir seçeneği seçin.",
+    "skip": "Atlamak"
   }
 }

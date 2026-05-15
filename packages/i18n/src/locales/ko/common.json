@@ -867,5 +867,20 @@
       "description": "작업 항목을 JSON 파일로 내보냅니다.",
       "short_description": "JSON으로 내보내기"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane이 충돌했습니다. 담당 엔지니어에게 알림이 전송되었습니다. 추가 세부 정보가 있으면 다음으로 보내 주세요",
+    "error_description_middle": "또는 다음에서",
+    "not_found_hint": "브라우저 주소 표시줄의 URL을 확인한 뒤 다시 시도하세요.",
+    "instance_failure_image_alt": "인스턴스 세부 정보를 가져올 수 없음",
+    "instance_failure_title": "인스턴스 세부 정보를 가져올 수 없습니다.",
+    "instance_failure_description": "인스턴스 세부 정보를 로드할 수 없습니다.",
+    "instance_failure_hint": "연결을 확인한 뒤 다시 시도하세요.",
+    "powered_by": "제공",
+    "error_title": "문제가 발생했습니다.",
+    "refresh": "새로 고침",
+    "forum": "포럼",
+    "not_found_title": "작동하지 않았습니다",
+    "retry": "다시 시도"
   }
 }

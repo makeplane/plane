@@ -867,5 +867,20 @@
       "description": "Експортуйте одиниці у формат JSON.",
       "short_description": "Експортувати як JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane аварійно завершив роботу. Наших інженерів уже повідомлено. Якщо у вас є більше деталей, напишіть на",
+    "error_description_middle": "або на нашому",
+    "not_found_hint": "Перевірте URL в адресному рядку браузера та спробуйте ще раз.",
+    "instance_failure_image_alt": "Не вдалося отримати деталі інстансу",
+    "instance_failure_title": "Не вдалося отримати деталі інстансу.",
+    "instance_failure_description": "Не вдалося завантажити деталі вашого інстансу.",
+    "instance_failure_hint": "Перевірте підключення та спробуйте ще раз.",
+    "powered_by": "Працює на",
+    "error_title": "Ой! Це виглядає не дуже добре.",
+    "refresh": "Оновити",
+    "forum": "Форум",
+    "not_found_title": "Це не спрацювало",
+    "retry": "Повторити"
   }
 }

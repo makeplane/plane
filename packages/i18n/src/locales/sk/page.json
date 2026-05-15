@@ -111,5 +111,18 @@
       "success_message": "Stránka bola odstránená z kolekcie.",
       "error_message": "Stránku sa nepodarilo odstrániť z kolekcie. Skúste to prosím znova."
     }
+  },
+  "page_access": {
+    "not_found_title": "Stránka sa nenašla",
+    "not_found_description": "Stránka, ku ktorej sa pokúšate pristúpiť, neexistuje alebo na jej zobrazenie nemáte oprávnenie.",
+    "view_other_pages": "Zobraziť ďalšie stránky"
+  },
+  "profile_activity": {
+    "page_title": "Profil - Aktivita"
+  },
+  "space_public": {
+    "page_not_found_alt": "Stránka sa nenašla",
+    "page_not_found_description": "Stránka, ktorú hľadáte, neexistuje alebo bola presunutá.",
+    "something_went_wrong": "Ups! Niečo sa pokazilo."
   }
 }

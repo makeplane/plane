@@ -867,5 +867,20 @@
       "description": "將工作事項匯出為 JSON 檔案。",
       "short_description": "匯出為 JSON"
     }
+  },
+  "space_public": {
+    "error_title": "糟糕，看起來不太妙。",
+    "error_description_prefix": "Plane 當掉了。別擔心，我們的工程師已收到通知。如果你有更多細節，請寫信到",
+    "error_description_middle": "或前往我們的",
+    "forum": "論壇",
+    "refresh": "重新整理",
+    "not_found_title": "這個連結無法開啟",
+    "not_found_hint": "請檢查瀏覽器位址列中的 URL，然後再試一次。",
+    "instance_failure_image_alt": "無法取得執行個體詳細資訊",
+    "instance_failure_title": "無法取得執行個體詳細資訊。",
+    "instance_failure_description": "我們無法載入你的執行個體詳細資訊。",
+    "instance_failure_hint": "請檢查連線並重試。",
+    "retry": "重試",
+    "powered_by": "技術支援"
   }
 }

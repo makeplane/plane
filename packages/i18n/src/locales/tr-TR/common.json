@@ -867,5 +867,20 @@
       "description": "İş öğelerini JSON dosyasına aktarın.",
       "short_description": "JSON olarak aktar"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane çöktü. Mühendislerimiz bilgilendirildi. Daha fazla ayrıntınız varsa lütfen şuraya yazın",
+    "error_description_middle": "veya bizim",
+    "not_found_hint": "Tarayıcı adres çubuğundaki URL'yi kontrol edip tekrar deneyin.",
+    "instance_failure_image_alt": "Örnek ayrıntıları alınamadı",
+    "instance_failure_title": "Örnek ayrıntıları alınamadı.",
+    "instance_failure_description": "Örnek ayrıntılarınız yüklenemedi.",
+    "instance_failure_hint": "Bağlantınızı kontrol edip tekrar deneyin.",
+    "powered_by": "Destekleyen",
+    "error_title": "Eyvah! Bu iyi görünmüyor.",
+    "refresh": "Yenile",
+    "forum": "Forum",
+    "not_found_title": "Bu işe yaramadı",
+    "retry": "Tekrar dene"
   }
 }

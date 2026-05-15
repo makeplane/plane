@@ -422,5 +422,35 @@
       "label": "Tiêu đề sử thi",
       "required": "Tiêu đề sử thi là bắt buộc"
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Xem nhanh bên cạnh",
+      "modal": "Hộp thoại",
+      "full_screen": "Toàn màn hình"
+    },
+    "public_board_not_found": "Bảng công khai không tồn tại. Vui lòng kiểm tra URL.",
+    "no_work_items_found": "Không tìm thấy mục công việc",
+    "bot_name": "Bot {name}",
+    "commented_time": "đã bình luận {time}",
+    "and_more": "và {count} người khác",
+    "no_upvotes_yet": "Chưa có lượt ủng hộ",
+    "no_downvotes_yet": "Chưa có lượt phản đối",
+    "view_less": "Xem ít hơn",
+    "view_all": "Xem tất cả",
+    "no_matches_found": "Không tìm thấy kết quả phù hợp",
+    "no_date": "Không có ngày",
+    "no_cycle": "Không có chu kỳ",
+    "no_modules": "Không có mô-đun",
+    "modules_count": "{count} mô-đun",
+    "no_assignees": "Không có người phụ trách",
+    "labels_count": "{count} nhãn",
+    "no_labels": "Không có nhãn",
+    "sign_in_to_add_comment": "Đăng nhập để thêm bình luận",
+    "add_comment": "Thêm bình luận",
+    "link_copied": "Đã sao chép liên kết!",
+    "work_item_link_copied": "Đã sao chép liên kết mục công việc vào bảng nhớ tạm.",
+    "comment_post_error": "Không thể đăng bình luận. Vui lòng thử lại.",
+    "user": "Người dùng"
   }
 }

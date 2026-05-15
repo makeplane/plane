@@ -422,5 +422,35 @@
       "label": "Epik Başlığı",
       "required": "Epik başlığı gereklidir."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Yan Önizleme",
+      "modal": "Modal",
+      "full_screen": "Tam Ekran"
+    },
+    "public_board_not_found": "Herkese açık pano mevcut değil. Lütfen URL'yi kontrol edin.",
+    "no_work_items_found": "İş öğesi bulunamadı",
+    "bot_name": "{name} Botu",
+    "commented_time": "{time} yorum yaptı",
+    "and_more": "ve {count} kişi daha",
+    "no_upvotes_yet": "Henüz olumlu oy yok",
+    "no_downvotes_yet": "Henüz olumsuz oy yok",
+    "view_less": "Daha az göster",
+    "view_all": "Tümünü göster",
+    "no_matches_found": "Eşleşme bulunamadı",
+    "no_date": "Tarih yok",
+    "no_cycle": "Döngü yok",
+    "no_modules": "Modül yok",
+    "modules_count": "{count} Modül",
+    "no_assignees": "Atanan yok",
+    "labels_count": "{count} Etiket",
+    "no_labels": "Etiket yok",
+    "sign_in_to_add_comment": "Yorum eklemek için oturum açın",
+    "add_comment": "Yorum ekle",
+    "link_copied": "Bağlantı kopyalandı!",
+    "work_item_link_copied": "İş öğesi bağlantısı panoya kopyalandı.",
+    "comment_post_error": "Yorum gönderilemedi. Lütfen tekrar deneyin.",
+    "user": "Kullanıcı"
   }
 }

@@ -422,5 +422,35 @@
       "label": "Judul Epik",
       "required": "Judul epik wajib diisi."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Pratinjau Samping",
+      "modal": "Modal",
+      "full_screen": "Layar Penuh"
+    },
+    "public_board_not_found": "Papan publik tidak ada. Periksa URL.",
+    "no_work_items_found": "Tidak ada item kerja yang ditemukan",
+    "bot_name": "Bot {name}",
+    "commented_time": "berkomentar {time}",
+    "and_more": "dan {count} lainnya",
+    "no_upvotes_yet": "Belum ada suara positif",
+    "no_downvotes_yet": "Belum ada suara negatif",
+    "view_less": "Tampilkan lebih sedikit",
+    "view_all": "Tampilkan semua",
+    "no_matches_found": "Tidak ada hasil yang cocok",
+    "no_date": "Tanpa Tanggal",
+    "no_cycle": "Tanpa Siklus",
+    "no_modules": "Tanpa Modul",
+    "modules_count": "{count} Modul",
+    "no_assignees": "Tanpa Penanggung Jawab",
+    "labels_count": "{count} Label",
+    "no_labels": "Tanpa label",
+    "sign_in_to_add_comment": "Masuk untuk menambahkan komentar",
+    "add_comment": "Tambahkan komentar",
+    "link_copied": "Tautan disalin!",
+    "work_item_link_copied": "Tautan item kerja disalin ke papan klip.",
+    "comment_post_error": "Gagal mengirim komentar. Silakan coba lagi.",
+    "user": "Pengguna"
   }
 }

@@ -83,5 +83,56 @@
         "title": "Detaylarını görüntülemek için bir iş öğesi seçin."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} yinelenen iş öğesi bulundu",
+    "description_versions": {
+      "intake_form_user": "Başvuru Formu kullanıcısı"
+    },
+    "errors": {
+      "asset_upload_failed": "Öğe yükleme başarısız oldu. Lütfen daha sonra tekrar deneyin.",
+      "asset_duplication_failed": "Varlık çoğaltması başarısız oldu. Lütfen daha sonra tekrar deneyin.",
+      "permission_denied": "İzin reddedildi",
+      "mark_duplicate_permission": "Yalnızca proje yöneticileri iş öğesini kopya olarak işaretleyebilir",
+      "mark_duplicate_permission_plural": "Yalnızca proje yöneticileri iş öğelerini kopya olarak işaretleyebilir"
+    },
+    "filters": {
+      "created_date": "Oluşturulma tarihi",
+      "updated_date": "Güncellenme tarihi",
+      "last_updated_date": "Son güncelleme tarihi",
+      "status": "Durum",
+      "work_item_status": "İş öğesi durumu",
+      "view_all": "Tümünü görüntüle",
+      "view_less": "Daha az görüntüle",
+      "date_options": {
+        "today": "Bugün",
+        "yesterday": "Dün",
+        "last_7_days": "Son 7 gün",
+        "last_30_days": "Son 30 gün"
+      },
+      "date_operators": {
+        "after": "Sonrasında",
+        "before": "Önce"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Önceki iş öğesi",
+      "next_work_item": "Sonraki iş öğesi"
+    },
+    "properties": {
+      "duplicate_of": "Şunun yineleneni"
+    },
+    "select_duplicate": {
+      "select_work_item": "İş öğesini seçin"
+    },
+    "sidebar": {
+      "label_count": "{count} etiketleri"
+    },
+    "toasts": {
+      "editor_processing": "Düzenleyici hâlâ değişiklikleri işliyor. Devam etmeden önce lütfen bekleyin.",
+      "create_success": "İş öğesi başarıyla oluşturuldu.",
+      "delete_failed": "İş öğesi silinemedi",
+      "update_failed": "İş öğesi güncellemesi başarısız oldu"
+    }
   }
 }

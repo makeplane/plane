@@ -111,5 +111,18 @@
       "success_message": "Seite aus Sammlung entfernt.",
       "error_message": "Die Seite konnte nicht aus der Sammlung entfernt werden. Bitte versuchen Sie es erneut."
     }
+  },
+  "page_access": {
+    "not_found_title": "Seite nicht gefunden",
+    "not_found_description": "Die Seite, auf die Sie zugreifen möchten, existiert nicht oder Sie haben keine Berechtigung, sie anzusehen.",
+    "view_other_pages": "Andere Seiten anzeigen"
+  },
+  "profile_activity": {
+    "page_title": "Profil - Aktivität"
+  },
+  "space_public": {
+    "page_not_found_alt": "Seite nicht gefunden",
+    "page_not_found_description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "something_went_wrong": "Hoppla! Etwas ist schiefgelaufen."
   }
 }

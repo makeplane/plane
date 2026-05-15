@@ -266,5 +266,11 @@
         "description": "Chọn các trạng thái mà mục công việc sẽ đi qua."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Không tìm thấy trang",
+    "title": "Rất tiếc! Đã xảy ra lỗi.",
+    "description": "Rất tiếc, không tìm thấy trang bạn đang tìm. Trang có thể đã bị xóa, đổi tên hoặc tạm thời không khả dụng.",
+    "go_to_home": "Về trang chủ"
   }
 }

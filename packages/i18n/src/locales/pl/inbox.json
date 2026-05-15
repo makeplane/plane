@@ -83,5 +83,56 @@
         "title": "Wybierz element pracy, aby zobaczyć szczegóły."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Znaleziono {count} zduplikowanych elementów pracy",
+    "description_versions": {
+      "intake_form_user": "Użytkownik formularza przyjęcia"
+    },
+    "errors": {
+      "asset_upload_failed": "Przesyłanie zasobu nie powiodło się. Spróbuj ponownie później.",
+      "asset_duplication_failed": "Powielanie zasobów nie powiodło się. Spróbuj ponownie później.",
+      "permission_denied": "Odmowa pozwolenia",
+      "mark_duplicate_permission": "Tylko administratorzy projektu mogą oznaczać element pracy jako duplikat",
+      "mark_duplicate_permission_plural": "Tylko administratorzy projektu mogą oznaczać elementy pracy jako duplikaty"
+    },
+    "filters": {
+      "created_date": "Data utworzenia",
+      "updated_date": "Zaktualizowana data",
+      "last_updated_date": "Ostatnia aktualizacja",
+      "status": "Status",
+      "work_item_status": "Stan elementu pracy",
+      "view_all": "Zobacz wszystkie",
+      "view_less": "Zobacz mniej",
+      "date_options": {
+        "today": "Dzisiaj",
+        "yesterday": "Wczoraj",
+        "last_7_days": "Ostatnie 7 dni",
+        "last_30_days": "Ostatnie 30 dni"
+      },
+      "date_operators": {
+        "after": "Po",
+        "before": "Zanim"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Poprzedni element pracy",
+      "next_work_item": "Następny element pracy"
+    },
+    "properties": {
+      "duplicate_of": "Duplikat elementu"
+    },
+    "select_duplicate": {
+      "select_work_item": "Wybierz element pracy"
+    },
+    "sidebar": {
+      "label_count": "Etykiety {count}"
+    },
+    "toasts": {
+      "editor_processing": "Edytor nadal przetwarza zmiany. Proszę poczekać przed kontynuowaniem.",
+      "create_success": "Element pracy został pomyślnie utworzony.",
+      "delete_failed": "Nie udało się usunąć elementu roboczego",
+      "update_failed": "Aktualizacja elementu roboczego nie powiodła się"
+    }
   }
 }

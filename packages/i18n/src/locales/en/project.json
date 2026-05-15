@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "No projects yet",
+    "description": "Projects act as the foundation for goal-driven work. They let you manage your teams, tasks, and everything you need to get things done.",
+    "learn_more": "Learn more about projects",
+    "start_first_project": "Start your first project"
   }
 }

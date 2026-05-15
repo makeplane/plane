@@ -111,5 +111,18 @@
       "success_message": "Halaman dihapus dari koleksi.",
       "error_message": "Halaman tidak dapat dihapus dari koleksi. Silakan coba lagi."
     }
+  },
+  "page_access": {
+    "not_found_title": "Halaman tidak ditemukan",
+    "not_found_description": "Halaman yang Anda coba akses tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
+    "view_other_pages": "Lihat halaman lainnya"
+  },
+  "profile_activity": {
+    "page_title": "Profil - Aktivitas"
+  },
+  "space_public": {
+    "page_not_found_alt": "Halaman tidak ditemukan",
+    "page_not_found_description": "Halaman yang Anda cari tidak ada atau telah dipindahkan.",
+    "something_went_wrong": "Ups! Terjadi kesalahan."
   }
 }

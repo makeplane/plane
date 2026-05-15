@@ -422,5 +422,35 @@
       "label": "Titlu sarcină majoră",
       "required": "Titlul sarcinii majore este obligatoriu."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Previzualizare laterală",
+      "modal": "Modal",
+      "full_screen": "Ecran complet"
+    },
+    "public_board_not_found": "Panoul public nu există. Verificați URL-ul.",
+    "no_work_items_found": "Nu s-au găsit elemente de lucru",
+    "bot_name": "Bot {name}",
+    "commented_time": "a comentat {time}",
+    "and_more": "și încă {count}",
+    "no_upvotes_yet": "Încă nu există voturi pozitive",
+    "no_downvotes_yet": "Încă nu există voturi negative",
+    "view_less": "Vezi mai puțin",
+    "view_all": "Vezi tot",
+    "no_matches_found": "Nu s-au găsit potriviri",
+    "no_date": "Fără dată",
+    "no_cycle": "Fără ciclu",
+    "no_modules": "Fără module",
+    "modules_count": "{count} module",
+    "no_assignees": "Fără responsabili",
+    "labels_count": "{count} etichete",
+    "no_labels": "Fără etichete",
+    "sign_in_to_add_comment": "Autentificați-vă pentru a adăuga un comentariu",
+    "add_comment": "Adăugați comentariu",
+    "link_copied": "Link copiat!",
+    "work_item_link_copied": "Linkul elementului de lucru a fost copiat în clipboard.",
+    "comment_post_error": "Comentariul nu a putut fi publicat. Încercați din nou.",
+    "user": "Utilizator"
   }
 }

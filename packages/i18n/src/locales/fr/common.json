@@ -867,5 +867,20 @@
       "description": "Exportez les éléments de travail vers un fichier JSON.",
       "short_description": "Exporter en json"
     }
+  },
+  "space_public": {
+    "error_title": "Oups ! Cela ne semble pas bon.",
+    "error_description_prefix": "Plane a planté. Pas d'inquiétude, nos ingénieurs ont été informés. Si vous avez plus de détails, écrivez à",
+    "error_description_middle": "ou sur notre",
+    "forum": "Forum",
+    "refresh": "Actualiser",
+    "not_found_title": "Cela n'a pas fonctionné",
+    "not_found_hint": "Vérifiez l'URL dans la barre d'adresse du navigateur puis réessayez.",
+    "instance_failure_image_alt": "Impossible de récupérer les détails de l'instance",
+    "instance_failure_title": "Impossible de récupérer les détails de l'instance.",
+    "instance_failure_description": "Nous n'avons pas pu charger les détails de votre instance.",
+    "instance_failure_hint": "Vérifiez votre connexion puis réessayez.",
+    "retry": "Réessayer",
+    "powered_by": "Fourni par"
   }
 }

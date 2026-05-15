@@ -111,5 +111,18 @@
       "success_message": "Strona została usunięta z kolekcji.",
       "error_message": "Nie udało się usunąć strony z kolekcji. Spróbuj ponownie."
     }
+  },
+  "page_access": {
+    "not_found_title": "Nie znaleziono strony",
+    "not_found_description": "Strona, do której próbujesz uzyskać dostęp, nie istnieje albo nie masz uprawnień do jej wyświetlenia.",
+    "view_other_pages": "Wyświetl inne strony"
+  },
+  "profile_activity": {
+    "page_title": "Profil - Aktywność"
+  },
+  "space_public": {
+    "page_not_found_alt": "Strona nie znaleziona",
+    "page_not_found_description": "Strona, której szukasz, nie istnieje lub została przeniesiona.",
+    "something_went_wrong": "Ups! Coś poszło nie tak."
   }
 }

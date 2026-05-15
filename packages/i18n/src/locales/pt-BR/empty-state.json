@@ -266,5 +266,11 @@
         "description": "Selecione os estados pelos quais o item de trabalho progride."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Página não encontrada",
+    "title": "Ops! Algo deu errado.",
+    "description": "A página que você está procurando não foi encontrada. Ela pode ter sido removida, renomeada ou estar temporariamente indisponível.",
+    "go_to_home": "Ir para o início"
   }
 }

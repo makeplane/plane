@@ -83,5 +83,56 @@
         "title": "Pilih item kerja untuk melihat detailnya."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} item kerja duplikat ditemukan",
+    "description_versions": {
+      "intake_form_user": "Pengguna formulir intake"
+    },
+    "errors": {
+      "asset_upload_failed": "Pengunggahan aset gagal. Silakan coba lagi nanti.",
+      "asset_duplication_failed": "Duplikasi aset gagal. Silakan coba lagi nanti.",
+      "permission_denied": "Izin ditolak",
+      "mark_duplicate_permission": "Hanya admin proyek yang dapat menandai item pekerjaan sebagai duplikat",
+      "mark_duplicate_permission_plural": "Hanya admin proyek yang dapat menandai item pekerjaan sebagai duplikat"
+    },
+    "filters": {
+      "created_date": "Tanggal dibuat",
+      "updated_date": "Tanggal diperbarui",
+      "last_updated_date": "Tanggal terakhir diperbarui",
+      "status": "Status",
+      "work_item_status": "Status item pekerjaan",
+      "view_all": "Lihat semuanya",
+      "view_less": "Lihat lebih sedikit",
+      "date_options": {
+        "today": "Hari ini",
+        "yesterday": "Kemarin",
+        "last_7_days": "7 hari terakhir",
+        "last_30_days": "30 hari terakhir"
+      },
+      "date_operators": {
+        "after": "Setelah",
+        "before": "Sebelum"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Item pekerjaan sebelumnya",
+      "next_work_item": "Item pekerjaan berikutnya"
+    },
+    "properties": {
+      "duplicate_of": "Duplikat dari"
+    },
+    "select_duplicate": {
+      "select_work_item": "Pilih item pekerjaan"
+    },
+    "sidebar": {
+      "label_count": "label {count}"
+    },
+    "toasts": {
+      "editor_processing": "Editor masih memproses perubahan. Harap tunggu sebelum melanjutkan.",
+      "create_success": "Item pekerjaan berhasil dibuat.",
+      "delete_failed": "Penghapusan item pekerjaan gagal",
+      "update_failed": "Pembaruan item pekerjaan gagal"
+    }
   }
 }

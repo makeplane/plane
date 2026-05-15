@@ -266,5 +266,11 @@
         "description": "Wählen Sie die Zustände aus, die das Arbeitselement durchläuft."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Seite nicht gefunden",
+    "title": "Hoppla! Etwas ist schiefgelaufen.",
+    "description": "Die gesuchte Seite wurde nicht gefunden. Sie wurde möglicherweise entfernt, umbenannt oder ist vorübergehend nicht verfügbar.",
+    "go_to_home": "Zur Startseite"
   }
 }

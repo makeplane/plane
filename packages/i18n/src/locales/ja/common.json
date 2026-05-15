@@ -867,5 +867,20 @@
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane がクラッシュしました。担当エンジニアには通知済みです。追加の詳細がある場合は、次までご連絡ください",
+    "error_description_middle": "または次の場所で",
+    "not_found_hint": "ブラウザーのアドレスバーに入力した URL を確認して、もう一度お試しください。",
+    "instance_failure_image_alt": "インスタンスの詳細を取得できません",
+    "instance_failure_title": "インスタンスの詳細を取得できません。",
+    "instance_failure_description": "インスタンスの詳細を読み込めませんでした。",
+    "instance_failure_hint": "接続を確認して、もう一度お試しください。",
+    "powered_by": "提供元",
+    "error_title": "問題が発生しました。",
+    "refresh": "再読み込み",
+    "forum": "フォーラム",
+    "not_found_title": "うまくいきませんでした",
+    "retry": "再試行"
   }
 }

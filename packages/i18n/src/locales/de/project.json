@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Noch keine Projekte",
+    "description": "Projekte bilden die Grundlage für zielorientierte Arbeit. Mit ihnen verwalten Sie Teams, Aufgaben und alles, was Sie zur Erledigung der Arbeit benötigen.",
+    "learn_more": "Mehr über Projekte erfahren",
+    "start_first_project": "Erstes Projekt starten"
   }
 }
