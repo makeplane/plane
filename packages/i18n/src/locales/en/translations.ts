@@ -188,6 +188,7 @@ export default {
     identifier_label: "Identifier",
     identifier_hint: "Up to 12 uppercase characters (A-Z, 0-9, -, _)",
     identifier_conflict: "Identifier already exists in the target workspace",
+    search_workspace_placeholder: "Search workspaces…",
     copy_button: "Copy Project",
     in_progress: "Copy in progress…",
     error: "Failed to start the project copy",

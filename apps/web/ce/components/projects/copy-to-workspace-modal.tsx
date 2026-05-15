@@ -39,9 +39,13 @@ export const CopyToWorkspaceModal = observer(function CopyToWorkspaceModal(props
   const [identifier, setIdentifier] = useState(projectIdentifier);
   const [identifierError, setIdentifierError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [workspaceSearch, setWorkspaceSearch] = useState("");
 
   // Workspaces the user belongs to, excluding the current workspace
   const targetWorkspaces = Object.values(workspaces).filter((ws) => ws.slug !== workspaceSlug);
+  const filteredWorkspaces = workspaceSearch
+    ? targetWorkspaces.filter((ws) => ws.name.toLowerCase().includes(workspaceSearch.toLowerCase()))
+    : targetWorkspaces;
 
   const isJobActive = store.activeJob !== null && ["queued", "processing"].includes(store.activeJob.status);
 
@@ -52,6 +56,7 @@ export const CopyToWorkspaceModal = observer(function CopyToWorkspaceModal(props
     setName(`${projectName} (copy)`);
     setIdentifier(projectIdentifier);
     setIdentifierError(null);
+    setWorkspaceSearch("");
     onClose();
   };
 
@@ -118,7 +123,15 @@ export const CopyToWorkspaceModal = observer(function CopyToWorkspaceModal(props
                 buttonClassName="w-full flex justify-between items-center px-3 py-2 text-sm bg-layer-2 border-[0.5px] border-subtle rounded text-primary"
                 disabled={isSubmitting}
               >
-                {targetWorkspaces.map((ws) => (
+                <div className="p-2" onClick={(e) => e.stopPropagation()}>
+                  <Input
+                    value={workspaceSearch}
+                    onChange={(e) => setWorkspaceSearch(e.target.value)}
+                    placeholder={t("copy_project.search_workspace_placeholder")}
+                    className="w-full"
+                  />
+                </div>
+                {filteredWorkspaces.map((ws) => (
                   <CustomMenu.MenuItem key={ws.slug} onClick={() => setSelectedWorkspaceSlug(ws.slug)}>
                     {ws.name}
                   </CustomMenu.MenuItem>

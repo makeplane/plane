@@ -186,6 +186,7 @@ export default {
     identifier_label: "식별자",
     identifier_hint: "최대 12자 대문자 (A-Z, 0-9, -, _)",
     identifier_conflict: "대상 워크스페이스에 이미 존재하는 식별자입니다",
+    search_workspace_placeholder: "워크스페이스 검색…",
     copy_button: "프로젝트 복사",
     in_progress: "복사 중…",
     error: "프로젝트 복사를 시작하지 못했습니다",

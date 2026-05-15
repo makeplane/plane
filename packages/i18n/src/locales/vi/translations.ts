@@ -189,6 +189,7 @@ export default {
     identifier_label: "Mã định danh",
     identifier_hint: "Tối đa 12 ký tự viết hoa (A-Z, 0-9, -, _)",
     identifier_conflict: "Mã định danh đã tồn tại trong workspace đích",
+    search_workspace_placeholder: "Tìm kiếm workspace…",
     copy_button: "Sao chép dự án",
     in_progress: "Đang sao chép…",
     error: "Không thể bắt đầu sao chép dự án",
