@@ -391,7 +391,7 @@
     "accept": "수락",
     "ignore": "무시",
     "already_member": "귀하는 이미 {workspaceName}의 회원입니다.",
-    "continue_to_home": "홈으로 계속",
+    "continue_to_home": "홈으로 이동",
     "inactive_title": "이 초대 링크는 더 이상 활성화되지 않습니다.",
     "empty_project_link": "또는 빈 프로젝트에서 시작",
     "sign_in_to_continue": "계속하려면 로그인하세요.",

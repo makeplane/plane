@@ -387,7 +387,7 @@
   "workspace_invitation": {
     "invitation_not_found": "未找到邀請",
     "invited_to_workspace": "您已被邀請加入 {workspaceName}",
-    "description": "您可以在工作區中建立專案、協作處理工作專案以及在 Plane 帳戶中組織不同的工作流程。",
+    "description": "您可以在工作區中建立專案、協作處理工作項目，並在 Plane 帳戶中組織不同的工作流程。",
     "accept": "接受",
     "ignore": "忽略",
     "already_member": "您已經是 {workspaceName} 的會員",
