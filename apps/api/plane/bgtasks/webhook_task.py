@@ -349,6 +349,10 @@ def webhook_send_task(
             event_type=event,
         )
         logger.info(f"Webhook {webhook.id} sent successfully")
+    except ValueError as e:
+        # URL failed SSRF/IP-range validation — do not send or retry
+        logger.error(f"Webhook {webhook.id} blocked: URL validation failed: {e}")
+        return
     except requests.RequestException as e:
         # Log the failed webhook request
         save_webhook_log(
