@@ -297,6 +297,14 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
 
   const colLabel = useCallback((key: string) => t(`profile.stats.${i18nNs}.columns.${key}`), [t, i18nNs]);
 
+  const hasActiveFilters = useMemo(() => Object.values(filters).some((vals) => vals.length > 0), [filters]);
+
+  const issueMatchesFilters = useCallback(
+    (issue: EnrichedIssue) =>
+      Object.entries(filters).every(([col, vals]) => vals.length === 0 || vals.includes(getVal(issue, col))),
+    [filters]
+  );
+
   // Labels for active-filter strip
   const COL_LABELS: Record<string, string> = useMemo(
     () => ({
@@ -312,19 +320,23 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
     [colLabel]
   );
 
-  // Filterable values derived from top-level rows (children inherit parent visibility)
+  // Filter options must include sub-work items because filtered results can show
+  // child rows independently when "show sub-work items" data is present.
   const uniqueValues = useMemo(() => {
     const result: Record<string, string[]> = {};
-    for (const col of FILTERABLE)
-      result[col] = [...new Set(topLevelIssues.map((i) => getVal(i, col)).filter(Boolean))].sort();
+    for (const col of FILTERABLE) result[col] = [...new Set(issues.map((i) => getVal(i, col)).filter(Boolean))].sort();
     return result;
-  }, [topLevelIssues]);
+  }, [issues]);
 
   const processedIssues = useMemo(() => {
-    let result = [...topLevelIssues];
-    for (const [col, vals] of Object.entries(filters)) {
-      if (vals.length > 0) result = result.filter((i) => vals.includes(getVal(i, col)));
-    }
+    const result = [...topLevelIssues].filter((issue) => {
+      if (!hasActiveFilters) return true;
+      if (issueMatchesFilters(issue)) return true;
+
+      const children = childrenByParentId.get(issue.id) ?? [];
+      return children.some(issueMatchesFilters);
+    });
+
     // Default order comes from the backend (off_track → due_today → at_risk → on_track).
     // Only override when the user picks an explicit column sort.
     if (sortConfig) {
@@ -338,7 +350,7 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
       });
     }
     return result;
-  }, [topLevelIssues, filters, sortConfig]);
+  }, [childrenByParentId, hasActiveFilters, issueMatchesFilters, sortConfig, topLevelIssues]);
 
   const totalPages = Math.max(1, Math.ceil(processedIssues.length / PAGE_SIZE));
   const paginatedIssues = processedIssues.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -570,10 +582,11 @@ export const WorkItemsTable = ({ issues, isLoading, i18nNs }: WorkItemsTableProp
             {paginatedIssues.length > 0 ? (
               paginatedIssues.flatMap((issue) => {
                 const children = childrenByParentId.get(issue.id) ?? [];
-                const isExpanded = expandedIds.has(issue.id);
-                const rows: React.ReactNode[] = [renderRow(issue, 0, children.length, isExpanded)];
-                if (isExpanded && children.length > 0) {
-                  for (const child of children) rows.push(renderRow(child, 1, 0, false));
+                const visibleChildren = hasActiveFilters ? children.filter(issueMatchesFilters) : children;
+                const isExpanded = hasActiveFilters ? visibleChildren.length > 0 : expandedIds.has(issue.id);
+                const rows: React.ReactNode[] = [renderRow(issue, 0, visibleChildren.length, isExpanded)];
+                if (isExpanded && visibleChildren.length > 0) {
+                  for (const child of visibleChildren) rows.push(renderRow(child, 1, 0, false));
                 }
                 return rows;
               })
