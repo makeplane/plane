@@ -120,6 +120,7 @@ export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
   "cycle_id",
   "module_id",
   "project_id",
+  "progress_tracking",
   "created_at",
   "updated_at",
 ] as const;
