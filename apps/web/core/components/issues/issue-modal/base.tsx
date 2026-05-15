@@ -33,6 +33,16 @@ import { IssueFormRoot } from "./form";
 import type { IssueFormProps } from "./form";
 import type { IssuesModalProps } from "./modal";
 
+// Extracts a human-readable message from DRF error responses.
+// DRF can return: {error: "..."}, {detail: "..."}, {field: ["..."]}, or {non_field_errors: ["..."]}
+const extractApiErrorMessage = (error: any, fallback: string): string => {
+  if (!error || typeof error !== "object") return fallback;
+  if (typeof error.error === "string") return error.error;
+  if (typeof error.detail === "string") return error.detail;
+  const msgs = Object.values(error).flat().filter((v): v is string => typeof v === "string");
+  return msgs[0] ?? fallback;
+};
+
 export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueModalBase(props: IssuesModalProps) {
   const {
     data,
@@ -254,7 +264,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: error?.error ?? t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed"),
+        message: extractApiErrorMessage(error, t(is_draft_issue ? "draft_creation_failed" : "issue_creation_failed")),
       });
       throw error;
     }
@@ -329,7 +339,7 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
       setToast({
         type: TOAST_TYPE.ERROR,
         title: t("error"),
-        message: error?.error ?? t("issue_could_not_be_updated"),
+        message: extractApiErrorMessage(error, t("issue_could_not_be_updated")),
       });
     }
   };

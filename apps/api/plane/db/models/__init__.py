@@ -33,6 +33,7 @@ from .issue import (
     Issue,
     IssueActivity,
     IssueAssignee,
+    IssueAttachment,
     IssueBlocker,
     IssueComment,
     IssueLabel,
@@ -111,4 +112,5 @@ from .business_calendar import WorkSchedule, Holiday, DayOverride
 
 from .project_field_permission import ProjectFieldPermission
 
+from .project_copy import ProjectCopyJob
 from .capacity_export import CapacityExportJob

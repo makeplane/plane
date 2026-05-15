@@ -11,6 +11,8 @@ from .project.base import (
     ProjectArchiveUnarchiveEndpoint,
 )
 
+from .project.copy import ProjectCopyView, ProjectCopyStatusView
+
 from .project.worklog import ProjectWorkLogViewSet, ProjectWorklogExportView
 
 from .project.bank_wide import WorkspaceBankWideProjectsEndpoint
