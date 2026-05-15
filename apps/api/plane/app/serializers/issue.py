@@ -224,7 +224,8 @@ class IssueCreateSerializer(BaseSerializer):
         # Validate task categories — only on CREATE, only when categories exist in the system
         if not self.instance and MainTaskCategory.objects.exists():
             state = attrs.get("state")
-            is_draft_state = state is not None and state.group == "backlog"
+            # Skip mandatory task category validation for draft (backlog) and cancelled states
+            is_draft_state = state is not None and state.group in ("backlog", "cancelled")
             if not is_draft_state:
                 main_cat = attrs.get("main_task_category")
                 sub_cat = attrs.get("sub_task_category")

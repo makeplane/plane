@@ -10,7 +10,8 @@ export const useIssueFormValidation = (_projectId?: string | null) => {
   const { getStateById } = useProjectState();
   const selectedStateId = watch("state_id");
   const selectedState = selectedStateId ? getStateById(selectedStateId) : undefined;
-  const isDraftState = selectedState?.group === "backlog";
+  // Skip mandatory field validation for draft (backlog) and cancelled states
+  const isDraftState = selectedState?.group === "backlog" || selectedState?.group === "cancelled";
 
   useEffect(() => {
     if (isDraftState) {
