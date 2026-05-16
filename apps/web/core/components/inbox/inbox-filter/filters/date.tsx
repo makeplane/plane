@@ -14,6 +14,7 @@ import type { TInboxIssueFilterDateKeys } from "@plane/types";
 import { DateFilterModal } from "@/components/core/filters/date-filter-modal";
 import { FilterHeader, FilterOption } from "@/components/issues/issue-layouts/filters";
 // constants
+import { PAST_DURATION_FILTER_I18N_KEYS } from "../constants";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
@@ -26,13 +27,6 @@ type Props = {
 const isDate = (date: string) => {
   const datePattern = /^\d{4}-\d{2}-\d{2}$/;
   return datePattern.test(date);
-};
-
-const PAST_DURATION_FILTER_I18N_KEYS: Record<string, string> = {
-  today: "inbox.filters.date_options.today",
-  yesterday: "inbox.filters.date_options.yesterday",
-  last_7_days: "inbox.filters.date_options.last_7_days",
-  last_30_days: "inbox.filters.date_options.last_30_days",
 };
 
 export const FilterDate = observer(function FilterDate(props: Props) {

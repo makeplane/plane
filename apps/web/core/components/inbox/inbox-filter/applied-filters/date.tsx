@@ -13,19 +13,13 @@ import type { TInboxIssueFilterDateKeys } from "@plane/types";
 import { Tag } from "@plane/ui";
 import { renderFormattedDate } from "@plane/utils";
 // constants
+import { PAST_DURATION_FILTER_I18N_KEYS } from "../constants";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
 
 type TInboxIssueAppliedFiltersDate = {
   filterKey: TInboxIssueFilterDateKeys;
   label: string;
-};
-
-const PAST_DURATION_FILTER_I18N_KEYS: Record<string, string> = {
-  today: "inbox.filters.date_options.today",
-  yesterday: "inbox.filters.date_options.yesterday",
-  last_7_days: "inbox.filters.date_options.last_7_days",
-  last_30_days: "inbox.filters.date_options.last_30_days",
 };
 
 const CUSTOM_DATE_OPERATOR_I18N_KEYS: Record<string, string> = {

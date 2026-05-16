@@ -11,6 +11,7 @@ import { SearchIcon, CloseIcon } from "@plane/propel/icons";
 // hooks
 import { useLabel } from "@/hooks/store/use-label";
 import { useMember } from "@/hooks/store/use-member";
+import { usePlatformOS } from "@/hooks/use-platform-os";
 // local imports
 import { FilterDate } from "./date";
 import { FilterLabels } from "./labels";
@@ -21,6 +22,7 @@ import { FilterStatus } from "./status";
 export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelection() {
   // hooks
   const { t } = useTranslation();
+  const { isMobile } = usePlatformOS();
   const {
     project: { projectMemberIds },
   } = useMember();
@@ -30,8 +32,8 @@ export const InboxIssueFilterSelection = observer(function InboxIssueFilterSelec
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    searchInputRef.current?.focus();
-  }, []);
+    if (!isMobile) searchInputRef.current?.focus();
+  }, [isMobile]);
 
   return (
     <div className="flex h-full w-full flex-col overflow-hidden">
