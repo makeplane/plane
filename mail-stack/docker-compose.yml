@@ -1,0 +1,130 @@
+services:
+  postfix:
+    build:
+      context: ./postfix
+    container_name: postfix
+    hostname: mail.${MAIL_DOMAIN}
+    restart: unless-stopped
+    environment:
+      MAIL_DOMAIN: ${MAIL_DOMAIN}
+    ports:
+      - "25:25"
+      - "587:587"
+      - "465:465"
+    volumes:
+      - ./postfix/main.cf.tmpl:/etc/postfix/main.cf.tmpl:ro
+      - ./postfix/master.cf.tmpl:/etc/postfix/master.cf.tmpl:ro
+      - ./postfix/virtual-mailbox-domains.tmpl:/etc/postfix/virtual-mailbox-domains.tmpl:ro
+      - ./postfix/virtual-mailbox-users.tmpl:/etc/postfix/virtual-mailbox-users.tmpl:ro
+      - ./postfix/virtual-aliases.tmpl:/etc/postfix/virtual-aliases.tmpl:ro
+      - ./data/postfix:/var/lib/postfix
+      - caddy-data:/etc/letsencrypt-caddy:ro
+      - dovecot-auth:/var/spool/postfix/private
+    depends_on:
+      - dovecot
+      - rspamd
+    networks:
+      - mail-internal
+
+  dovecot:
+    build:
+      context: ./dovecot
+    container_name: dovecot
+    hostname: dovecot
+    restart: unless-stopped
+    environment:
+      MAIL_DOMAIN: ${MAIL_DOMAIN}
+    ports:
+      - "143:143"
+      - "993:993"
+    volumes:
+      - ./dovecot/dovecot.conf.tmpl:/etc/dovecot/dovecot.conf.tmpl:ro
+      - ./dovecot/users:/etc/dovecot/users:ro
+      - ./data/mail:/var/mail/vhosts
+      - caddy-data:/etc/letsencrypt-caddy:ro
+      - dovecot-auth:/var/spool/postfix/private
+    networks:
+      - mail-internal
+
+  rspamd:
+    image: rspamd/rspamd:latest
+    container_name: rspamd
+    hostname: rspamd
+    restart: unless-stopped
+    volumes:
+      - ./rspamd/local.d:/etc/rspamd/local.d:ro
+      - ./data/rspamd:/var/lib/rspamd
+    depends_on:
+      - mail-redis
+    networks:
+      - mail-internal
+
+  mail-redis:
+    image: valkey/valkey:7.2.11-alpine
+    container_name: mail-redis
+    hostname: redis
+    restart: unless-stopped
+    command: ["valkey-server", "--appendonly", "yes"]
+    volumes:
+      - ./data/redis:/data
+    networks:
+      - mail-internal
+
+  roundcube:
+    image: roundcube/roundcubemail:latest
+    container_name: roundcube
+    restart: unless-stopped
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: tls://dovecot
+      ROUNDCUBEMAIL_DEFAULT_PORT: "143"
+      ROUNDCUBEMAIL_SMTP_SERVER: tls://postfix
+      ROUNDCUBEMAIL_SMTP_PORT: "587"
+      ROUNDCUBEMAIL_DB_TYPE: sqlite
+    volumes:
+      - ./data/roundcube:/var/roundcube/db
+    depends_on:
+      - postfix
+      - dovecot
+    networks:
+      - mail-internal
+      - plane_default
+
+  cert-reloader:
+    image: alpine:3.20
+    container_name: cert-reloader
+    restart: unless-stopped
+    environment:
+      MAIL_DOMAIN: ${MAIL_DOMAIN}
+    volumes:
+      - caddy-data:/watch:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        apk add --no-cache inotify-tools docker-cli
+        WATCH_DIR="/watch/caddy/certificates/acme-v02.api.letsencrypt.org-directory/mail.${MAIL_DOMAIN}"
+        while [ ! -d "$$WATCH_DIR" ]; do
+          echo "waiting for cert dir $$WATCH_DIR";
+          sleep 30;
+        done
+        echo "watching $$WATCH_DIR for cert renewal"
+        while inotifywait -e close_write,move "$$WATCH_DIR" 2>/dev/null; do
+          sleep 5
+          docker kill --signal=SIGHUP postfix || true
+          docker exec dovecot doveadm reload || true
+        done
+
+networks:
+  mail-internal:
+    driver: bridge
+  plane_default:
+    external: true
+    name: plane_default
+
+volumes:
+  dovecot-auth:
+  caddy-data:
+    external: true
+    name: plane_caddy-data

@@ -1,0 +1,64 @@
+myhostname = mail.${MAIL_DOMAIN}
+mydomain = ${MAIL_DOMAIN}
+myorigin = $mydomain
+
+inet_interfaces = all
+inet_protocols = ipv4
+mynetworks = 127.0.0.0/8 [::1]/128
+
+mydestination = localhost
+virtual_mailbox_domains = hash:/etc/postfix/virtual-mailbox-domains
+virtual_mailbox_maps = hash:/etc/postfix/virtual-mailbox-users
+virtual_alias_maps = hash:/etc/postfix/virtual-aliases
+
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+
+# TLS — certs are issued by the Plane Caddy proxy for mail.${MAIL_DOMAIN}
+# and mounted read-only from the shared caddy-data volume.
+smtpd_tls_cert_file = /etc/letsencrypt-caddy/caddy/certificates/acme-v02.api.letsencrypt.org-directory/mail.${MAIL_DOMAIN}/mail.${MAIL_DOMAIN}.crt
+smtpd_tls_key_file  = /etc/letsencrypt-caddy/caddy/certificates/acme-v02.api.letsencrypt.org-directory/mail.${MAIL_DOMAIN}/mail.${MAIL_DOMAIN}.key
+smtpd_tls_security_level = may
+smtpd_tls_auth_only = yes
+smtp_tls_security_level = may
+smtp_tls_loglevel = 1
+smtpd_tls_loglevel = 1
+
+# SASL via Dovecot auth socket (dovecot-auth named volume).
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes
+
+smtpd_relay_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_unauth_destination
+
+smtpd_recipient_restrictions =
+    permit_mynetworks,
+    permit_sasl_authenticated,
+    reject_non_fqdn_recipient,
+    reject_unknown_recipient_domain,
+    reject_unauth_destination
+
+smtpd_sender_restrictions =
+    reject_non_fqdn_sender,
+    reject_unknown_sender_domain
+
+smtpd_helo_required = yes
+smtpd_helo_restrictions =
+    permit_mynetworks,
+    reject_invalid_helo_hostname,
+    reject_non_fqdn_helo_hostname
+
+# Rspamd milter.
+smtpd_milters = inet:rspamd:11332
+non_smtpd_milters = inet:rspamd:11332
+milter_protocol = 6
+milter_default_action = accept
+
+message_size_limit = 52428800
+local_transport = error:local mail delivery is disabled
+
+compatibility_level = 3.6

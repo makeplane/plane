@@ -6,6 +6,7 @@ services:
       dockerfile: ./apps/web/Dockerfile.web
       args:
         DOCKER_BUILDKIT: 1
+        APP_HOST: ${APP_HOST:-http://localhost}
     restart: always
     depends_on:
       - api
@@ -17,6 +18,7 @@ services:
       dockerfile: ./apps/admin/Dockerfile.admin
       args:
         DOCKER_BUILDKIT: 1
+        APP_HOST: ${APP_HOST:-http://localhost}
     restart: always
     depends_on:
       - api
@@ -29,6 +31,7 @@ services:
       dockerfile: ./apps/space/Dockerfile.space
       args:
         DOCKER_BUILDKIT: 1
+        APP_HOST: ${APP_HOST:-http://localhost}
     restart: always
     depends_on:
       - api
@@ -45,6 +48,15 @@ services:
     command: ./bin/docker-entrypoint-api.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      WEB_URL: ${APP_HOST:-http://localhost}/
+      ADMIN_BASE_URL: ${APP_HOST:-http://localhost}/
+      SPACE_BASE_URL: ${APP_HOST:-http://localhost}/
+      APP_BASE_URL: ${APP_HOST:-http://localhost}/
+      LIVE_BASE_URL: ${APP_HOST:-http://localhost}/
+      CORS_ALLOWED_ORIGINS: ${APP_HOST:-http://localhost},http://localhost,http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3100
+    extra_hosts:
+      - "mail.${MAIL_DOMAIN:-mail.invalid}:host-gateway"
     depends_on:
       - plane-db
       - plane-redis
@@ -60,6 +72,15 @@ services:
     command: ./bin/docker-entrypoint-worker.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      WEB_URL: ${APP_HOST:-http://localhost}/
+      ADMIN_BASE_URL: ${APP_HOST:-http://localhost}/
+      SPACE_BASE_URL: ${APP_HOST:-http://localhost}/
+      APP_BASE_URL: ${APP_HOST:-http://localhost}/
+      LIVE_BASE_URL: ${APP_HOST:-http://localhost}/
+      CORS_ALLOWED_ORIGINS: ${APP_HOST:-http://localhost},http://localhost,http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3100
+    extra_hosts:
+      - "mail.${MAIL_DOMAIN:-mail.invalid}:host-gateway"
     depends_on:
       - api
       - plane-db
@@ -76,6 +97,15 @@ services:
     command: ./bin/docker-entrypoint-beat.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      WEB_URL: ${APP_HOST:-http://localhost}/
+      ADMIN_BASE_URL: ${APP_HOST:-http://localhost}/
+      SPACE_BASE_URL: ${APP_HOST:-http://localhost}/
+      APP_BASE_URL: ${APP_HOST:-http://localhost}/
+      LIVE_BASE_URL: ${APP_HOST:-http://localhost}/
+      CORS_ALLOWED_ORIGINS: ${APP_HOST:-http://localhost},http://localhost,http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3100
+    extra_hosts:
+      - "mail.${MAIL_DOMAIN:-mail.invalid}:host-gateway"
     depends_on:
       - api
       - plane-db
@@ -92,6 +122,13 @@ services:
     command: ./bin/docker-entrypoint-migrator.sh
     env_file:
       - ./apps/api/.env
+    environment:
+      WEB_URL: ${APP_HOST:-http://localhost}/
+      ADMIN_BASE_URL: ${APP_HOST:-http://localhost}/
+      SPACE_BASE_URL: ${APP_HOST:-http://localhost}/
+      APP_BASE_URL: ${APP_HOST:-http://localhost}/
+      LIVE_BASE_URL: ${APP_HOST:-http://localhost}/
+      CORS_ALLOWED_ORIGINS: ${APP_HOST:-http://localhost},http://localhost,http://localhost:3000,http://localhost:3001,http://localhost:3002,http://localhost:3100
     depends_on:
       - plane-db
       - plane-redis
@@ -103,6 +140,7 @@ services:
       dockerfile: ./apps/live/Dockerfile.live
       args:
         DOCKER_BUILDKIT: 1
+        APP_HOST: ${APP_HOST:-http://localhost}
     restart: always
     env_file:
       - ./apps/api/.env
@@ -175,6 +213,10 @@ services:
       CERT_EMAIL: ${CERT_EMAIL:-local@plane.local}
       CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
       TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
+      MAIL_DOMAIN: ${MAIL_DOMAIN:-}
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
     depends_on:
       - web
       - api
@@ -182,8 +224,16 @@ services:
       - admin
       - live
 
+networks:
+  default:
+    name: plane_default
+
 volumes:
   pgdata:
   redisdata:
   uploads:
   rabbitmq_data:
+  caddy-data:
+    name: plane_caddy-data
+  caddy-config:
+    name: plane_caddy-config

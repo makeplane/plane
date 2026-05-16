@@ -27,6 +27,9 @@ FROM base AS installer
 ENV NODE_ENV=production
 
 # Public envs required at build time (pick up via process.env)
+ARG APP_HOST=""
+ENV APP_HOST=$APP_HOST
+
 ARG VITE_API_BASE_URL=""
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ARG VITE_API_BASE_PATH="/api"

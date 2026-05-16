@@ -1,0 +1,11 @@
+# Shell scripts and config files MUST be LF — they're executed inside
+# Linux containers and CRLF breaks shebangs / postfix parsing.
+*.sh         text eol=lf
+*.cf         text eol=lf
+*.cf.tmpl    text eol=lf
+*.conf       text eol=lf
+*.conf.tmpl  text eol=lf
+*.inc        text eol=lf
+users        text eol=lf
+Dockerfile   text eol=lf
+*.tmpl       text eol=lf

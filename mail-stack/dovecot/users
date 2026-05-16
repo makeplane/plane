@@ -1,0 +1,10 @@
+# Dovecot user database. One line per mailbox in the form:
+#   user@domain:{SHA512-CRYPT}HASH
+#
+# Generate a hash:
+#   docker exec -it dovecot doveadm pw -s SHA512-CRYPT
+#
+# Then add the resulting line here, and add a matching entry to
+# postfix/virtual-mailbox-users.tmpl, e.g.
+#   noreply@example.com example.com/noreply/
+# Then: docker compose restart postfix dovecot

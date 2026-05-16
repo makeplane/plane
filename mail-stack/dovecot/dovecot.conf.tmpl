@@ -1,0 +1,73 @@
+protocols = imap lmtp
+listen = *
+
+mail_location = maildir:/var/mail/vhosts/%d/%n/Maildir
+
+ssl = required
+ssl_cert = </etc/letsencrypt-caddy/caddy/certificates/acme-v02.api.letsencrypt.org-directory/mail.${MAIL_DOMAIN}/mail.${MAIL_DOMAIN}.crt
+ssl_key = </etc/letsencrypt-caddy/caddy/certificates/acme-v02.api.letsencrypt.org-directory/mail.${MAIL_DOMAIN}/mail.${MAIL_DOMAIN}.key
+
+disable_plaintext_auth = yes
+auth_mechanisms = plain login
+
+passdb {
+  driver = passwd-file
+  args = scheme=SHA512-CRYPT username_format=%u /etc/dovecot/users
+}
+
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=/var/mail/vhosts/%d/%n
+}
+
+service auth {
+  unix_listener /var/spool/postfix/private/auth {
+    mode = 0660
+    user = postfix
+    group = postfix
+  }
+}
+
+service lmtp {
+  unix_listener /var/spool/postfix/private/dovecot-lmtp {
+    mode = 0600
+    user = postfix
+    group = postfix
+  }
+}
+
+protocol lmtp {
+  postmaster_address = postmaster@${MAIL_DOMAIN}
+  mail_plugins = $mail_plugins sieve
+}
+
+protocol imap {
+  mail_plugins = $mail_plugins
+}
+
+namespace inbox {
+  inbox = yes
+
+  mailbox Drafts {
+    special_use = \Drafts
+    auto = subscribe
+  }
+
+  mailbox Junk {
+    special_use = \Junk
+    auto = subscribe
+  }
+
+  mailbox Sent {
+    special_use = \Sent
+    auto = subscribe
+  }
+
+  mailbox Trash {
+    special_use = \Trash
+    auto = subscribe
+  }
+}
+
+log_path = /dev/stderr
+info_log_path = /dev/stdout
