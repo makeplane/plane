@@ -1,0 +1,85 @@
+services:
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:15
+    container_name: forgejo
+    restart: unless-stopped
+    depends_on:
+      forgejo-postgres:
+        condition: service_healthy
+    environment:
+      USER_UID: "${USER_UID:-1000}"
+      USER_GID: "${USER_GID:-1000}"
+
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: forgejo-postgres:5432
+      FORGEJO__database__NAME: "${POSTGRES_DB}"
+      FORGEJO__database__USER: "${POSTGRES_USER}"
+      FORGEJO__database__PASSWD: "${FORGEJO_DB_PASSWORD}"
+
+      FORGEJO__server__DOMAIN: "git.${GIT_DOMAIN}"
+      FORGEJO__server__ROOT_URL: "https://git.${GIT_DOMAIN}/"
+      FORGEJO__server__HTTP_PORT: "3000"
+      FORGEJO__server__HTTP_ADDR: "0.0.0.0"
+      FORGEJO__server__SSH_DOMAIN: "git.${GIT_DOMAIN}"
+      FORGEJO__server__SSH_PORT: "2222"
+      FORGEJO__server__START_SSH_SERVER: "true"
+      FORGEJO__server__SSH_LISTEN_PORT: "22"
+      FORGEJO__server__LFS_START_SERVER: "true"
+
+      FORGEJO__service__DISABLE_REGISTRATION: "true"
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
+      FORGEJO__service__ENABLE_NOTIFY_MAIL: "true"
+      FORGEJO__service__REGISTER_EMAIL_CONFIRM: "true"
+
+      FORGEJO__security__INSTALL_LOCK: "true"
+
+      FORGEJO__repository__DEFAULT_PRIVATE: "private"
+      FORGEJO__repository__DEFAULT_BRANCH: "main"
+
+      FORGEJO__mailer__ENABLED: "true"
+      FORGEJO__mailer__FROM: "git@${MAIL_DOMAIN}"
+      FORGEJO__mailer__PROTOCOL: "smtp+starttls"
+      FORGEJO__mailer__SMTP_ADDR: "mail.${MAIL_DOMAIN}"
+      FORGEJO__mailer__SMTP_PORT: "587"
+      FORGEJO__mailer__USER: "git@${MAIL_DOMAIN}"
+      FORGEJO__mailer__PASSWD: "${SMTP_PASSWORD}"
+
+      FORGEJO__actions__ENABLED: "false"
+      FORGEJO__log__LEVEL: "Info"
+      TZ: "${TZ:-Europe/Berlin}"
+    volumes:
+      - ./data/forgejo:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "2222:22"
+    extra_hosts:
+      - "mail.${MAIL_DOMAIN}:host-gateway"
+    networks:
+      - plane_default
+      - forgejo-internal
+
+  forgejo-postgres:
+    image: postgres:16-alpine
+    container_name: forgejo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    networks:
+      - forgejo-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  plane_default:
+    external: true
+    name: plane_default
+  forgejo-internal:
+    driver: bridge

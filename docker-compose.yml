@@ -214,6 +214,7 @@ services:
       CERT_ACME_CA: ${CERT_ACME_CA:-https://acme-v02.api.letsencrypt.org/directory}
       TRUSTED_PROXIES: ${TRUSTED_PROXIES:-0.0.0.0/0}
       MAIL_DOMAIN: ${MAIL_DOMAIN:-}
+      GIT_DOMAIN: ${GIT_DOMAIN:-}
     volumes:
       - caddy-data:/data
       - caddy-config:/config

@@ -49,3 +49,16 @@ mail.{$MAIL_DOMAIN} {
 webmail.{$MAIL_DOMAIN} {
     reverse_proxy roundcube:80
 }
+
+# --- Forgejo git hosting --------------------------------------------------
+# Reached via the shared plane_default Docker network. SSH for git uses a
+# separate host port (2222) and bypasses Caddy entirely.
+git.{$GIT_DOMAIN} {
+    request_body {
+        max_size {$FILE_SIZE_LIMIT}
+    }
+
+    reverse_proxy forgejo:3000 {
+        header_up X-Real-IP {remote_host}
+    }
+}
