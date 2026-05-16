@@ -85,7 +85,7 @@
     }
   },
   "inbox": {
-    "duplicate_issues_found": "Знайдено {count} дубльованих робочих елементів",
+    "duplicate_issues_found": "Знайдено дублікатів робочих елементів: {count}",
     "description_versions": {
       "intake_form_user": "Користувач форми збору"
     },

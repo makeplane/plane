@@ -430,7 +430,7 @@
       "full_screen": "全螢幕"
     },
     "public_board_not_found": "公開看板不存在。請檢查 URL。",
-    "no_work_items_found": "未找到工作項",
+    "no_work_items_found": "未找到工作項目",
     "bot_name": "{name} 機器人",
     "commented_time": "評論於 {time}",
     "and_more": "還有 {count} 個",

@@ -123,7 +123,7 @@
       "duplicate_of": "重複元"
     },
     "select_duplicate": {
-      "select_work_item": "作業項目を選択してください"
+      "select_work_item": "作業項目を選択"
     },
     "sidebar": {
       "label_count": "{count} ラベル"

@@ -387,7 +387,7 @@
   "workspace_invitation": {
     "invitation_not_found": "Invitación no encontrada",
     "invited_to_workspace": "Has sido invitado a {workspaceName}",
-    "description": "Su espacio de trabajo es donde creará proyectos, colaborará en sus elementos de trabajo y organizará diferentes flujos de trabajo en su cuenta Plane.",
+    "description": "Tu espacio de trabajo es donde crearás proyectos, colaborarás en tus elementos de trabajo y organizarás diferentes flujos de trabajo en tu cuenta Plane.",
     "accept": "Aceptar",
     "ignore": "Ignorar",
     "already_member": "Ya eres miembro de {workspaceName}",
@@ -429,7 +429,7 @@
     "continue_to_workspace": "Continuar al espacio de trabajo",
     "or": "o",
     "create_own_workspace": "Crea tu propio espacio de trabajo",
-    "workspace_creation_disabled": "Parece que no tiene ninguna invitación a un espacio de trabajo y el administrador de su instancia ha restringido la creación de nuevos espacios de trabajo. Pídale al propietario o administrador del espacio de trabajo que lo invite primero a un espacio de trabajo y regrese a esta pantalla para unirse.",
+    "workspace_creation_disabled": "Parece que no tienes ninguna invitación a un espacio de trabajo y el administrador de tu instancia ha restringido la creación de nuevos espacios de trabajo. Pide al propietario o administrador del espacio de trabajo que te invite primero a un espacio de trabajo y vuelve a esta pantalla para unirte.",
     "create_workspace_title": "Crea tu espacio de trabajo",
     "enter_workspace_name": "Introduzca el nombre del espacio de trabajo",
     "join_existing_workspace": "Unirse al espacio de trabajo existente",

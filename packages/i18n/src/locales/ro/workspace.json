@@ -386,16 +386,16 @@
   },
   "workspace_invitation": {
     "invitation_not_found": "Invitația nu a fost găsită",
-    "invited_to_workspace": "Ai fost invitat la {workspaceName}",
-    "description": "Spațiul tău de lucru este locul în care vei crea proiecte, vei colabora la elementele tale de lucru și vei organiza diferite fluxuri de lucru în contul tău Plane.",
-    "accept": "Accepta",
-    "ignore": "Ignora",
-    "already_member": "Sunteți deja membru {workspaceName}",
+    "invited_to_workspace": "Ați primit o invitație la {workspaceName}",
+    "description": "Spațiul dvs. de lucru este locul în care veți crea proiecte, veți colabora la elementele dvs. de lucru și veți organiza diferite fluxuri de lucru în contul dvs. Plane.",
+    "accept": "Acceptă",
+    "ignore": "Ignoră",
+    "already_member": "Sunteți deja membru al {workspaceName}",
     "continue_to_home": "Continuați la pagina principală",
     "inactive_title": "Acest link de invitație nu mai este activ.",
     "empty_project_link": "Sau începeți de la un proiect gol",
     "sign_in_to_continue": "Conectați-vă pentru a continua",
-    "star_on_github": "Dă-ne o stea pe GitHub",
+    "star_on_github": "Dați-ne o stea pe GitHub",
     "join_community": "Alăturați-vă comunității noastre de creatori activi"
   },
   "onboarding": {

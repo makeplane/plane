@@ -391,12 +391,12 @@
     "accept": "接受",
     "ignore": "忽略",
     "already_member": "你已经是 {workspaceName} 的成员",
-    "continue_to_home": "返回主页",
+    "continue_to_home": "前往主页",
     "inactive_title": "此邀请链接已失效。",
     "empty_project_link": "或从空项目开始",
     "sign_in_to_continue": "登录以继续",
     "star_on_github": "在 GitHub 上给我们加星",
-    "join_community": "加入我们的创作者社区"
+    "join_community": "加入我们的活跃创作者社区"
   },
   "onboarding": {
     "create_profile_title": "创建你的个人资料。",

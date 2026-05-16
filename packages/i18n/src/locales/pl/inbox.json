@@ -126,7 +126,7 @@
       "select_work_item": "Wybierz element pracy"
     },
     "sidebar": {
-      "label_count": "{count, plural, one{# etykieta} few{# etykiety} other{# etykiet}}"
+      "label_count": "{count} etykiet"
     },
     "toasts": {
       "editor_processing": "Edytor nadal przetwarza zmiany. Proszę poczekać przed kontynuowaniem.",

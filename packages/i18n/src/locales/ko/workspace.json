@@ -385,18 +385,18 @@
     "check_pending_invites": "보류 중인 초대 확인"
   },
   "workspace_invitation": {
-    "invitation_not_found": "초대장을 찾을 수 없습니다.",
+    "invitation_not_found": "초대를 찾을 수 없습니다",
     "invited_to_workspace": "{workspaceName}에 초대되었습니다",
-    "description": "작업 공간은 Plane 계정에서 프로젝트를 생성하고, 작업 항목에 대해 공동 작업하고, 다양한 작업 흐름을 구성하는 곳입니다.",
+    "description": "워크스페이스는 Plane 계정에서 프로젝트를 만들고, 작업 항목에서 공동 작업하며, 다양한 작업 흐름을 구성하는 곳입니다.",
     "accept": "수락",
     "ignore": "무시",
-    "already_member": "귀하는 이미 {workspaceName}의 회원입니다.",
+    "already_member": "이미 {workspaceName}의 구성원입니다",
     "continue_to_home": "홈으로 이동",
-    "inactive_title": "이 초대 링크는 더 이상 활성화되지 않습니다.",
+    "inactive_title": "이 초대 링크는 더 이상 유효하지 않습니다.",
     "empty_project_link": "또는 빈 프로젝트에서 시작",
-    "sign_in_to_continue": "계속하려면 로그인하세요.",
-    "star_on_github": "GitHub에 별표를 표시해 주세요.",
-    "join_community": "활동적인 제작자 커뮤니티에 참여하세요"
+    "sign_in_to_continue": "계속하려면 로그인하세요",
+    "star_on_github": "GitHub에서 스타를 눌러 주세요",
+    "join_community": "활동적인 크리에이터 커뮤니티에 참여하세요"
   },
   "onboarding": {
     "create_profile_title": "프로필을 만드세요.",

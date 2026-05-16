@@ -85,7 +85,7 @@
     }
   },
   "inbox": {
-    "duplicate_issues_found": "發現 {count} 個重複工作項",
+    "duplicate_issues_found": "發現 {count} 個重複工作項目",
     "description_versions": {
       "intake_form_user": "收集表單使用者"
     },
@@ -101,7 +101,7 @@
       "updated_date": "更新日期",
       "last_updated_date": "最後更新日期",
       "status": "狀態",
-      "work_item_status": "工作項狀態",
+      "work_item_status": "工作項目狀態",
       "view_all": "看全部",
       "view_less": "查看較少",
       "date_options": {
@@ -116,14 +116,14 @@
       }
     },
     "navigation": {
-      "previous_work_item": "上一個工作項",
-      "next_work_item": "下一個工作項"
+      "previous_work_item": "上一個工作項目",
+      "next_work_item": "下一個工作項目"
     },
     "properties": {
       "duplicate_of": "重複於"
     },
     "select_duplicate": {
-      "select_work_item": "選擇工作項"
+      "select_work_item": "選擇工作項目"
     },
     "sidebar": {
       "label_count": "{count} 標籤"

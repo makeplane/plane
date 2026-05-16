@@ -85,7 +85,7 @@
     }
   },
   "inbox": {
-    "duplicate_issues_found": "{count, plural, one {# item de trabalho duplicado encontrado} other {# itens de trabalho duplicados encontrados}}",
+    "duplicate_issues_found": "{count} itens de trabalho duplicados encontrados",
     "description_versions": {
       "intake_form_user": "Usuário do formulário de admissão"
     },

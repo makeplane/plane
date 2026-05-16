@@ -870,7 +870,7 @@
   },
   "space_public": {
     "error_description_prefix": "Plane이 충돌했습니다. 담당 엔지니어에게 알림이 전송되었습니다. 추가 세부 정보가 있으면 다음으로 보내 주세요",
-    "error_description_middle": "또는 다음에서",
+    "error_description_middle": "또는",
     "not_found_hint": "브라우저 주소 표시줄의 URL을 확인한 뒤 다시 시도하세요.",
     "instance_failure_image_alt": "인스턴스 세부 정보를 가져올 수 없음",
     "instance_failure_title": "인스턴스 세부 정보를 가져올 수 없습니다.",

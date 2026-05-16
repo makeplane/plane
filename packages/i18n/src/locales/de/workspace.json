@@ -429,7 +429,7 @@
     "continue_to_workspace": "Weiter zum Arbeitsbereich",
     "or": "oder",
     "create_own_workspace": "Erstellen Sie Ihren eigenen Arbeitsbereich",
-    "workspace_creation_disabled": "Sie haben offenbar keine Einladungen zu einem Arbeitsbereich und Ihr Instanzadministrator hat die Erstellung neuer Arbeitsbereiche eingeschränkt. Bitten Sie einen Workspace-Inhaber oder Administrator, Sie zunächst zu einem Workspace einzuladen und zu diesem Bildschirm zurückzukehren, um beizutreten.",
+    "workspace_creation_disabled": "Sie haben offenbar keine Einladungen zu einem Arbeitsbereich und Ihr Instanzadministrator hat die Erstellung neuer Arbeitsbereiche eingeschränkt. Bitten Sie einen Inhaber oder Administrator eines Arbeitsbereichs, Sie zunächst zu einem Arbeitsbereich einzuladen, und kehren Sie dann zu diesem Bildschirm zurück, um beizutreten.",
     "create_workspace_title": "Erstellen Sie Ihren Arbeitsbereich",
     "enter_workspace_name": "Geben Sie den Namen des Arbeitsbereichs ein",
     "join_existing_workspace": "Treten Sie einem vorhandenen Arbeitsbereich bei",

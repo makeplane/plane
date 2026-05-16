@@ -101,7 +101,7 @@
       "updated_date": "Tanggal diperbarui",
       "last_updated_date": "Tanggal terakhir diperbarui",
       "status": "Status",
-      "work_item_status": "Status item pekerjaan",
+      "work_item_status": "Status item kerja",
       "view_all": "Lihat semuanya",
       "view_less": "Lihat lebih sedikit",
       "date_options": {
@@ -116,14 +116,14 @@
       }
     },
     "navigation": {
-      "previous_work_item": "Item pekerjaan sebelumnya",
-      "next_work_item": "Item pekerjaan berikutnya"
+      "previous_work_item": "Item kerja sebelumnya",
+      "next_work_item": "Item kerja berikutnya"
     },
     "properties": {
       "duplicate_of": "Duplikat dari"
     },
     "select_duplicate": {
-      "select_work_item": "Pilih item pekerjaan"
+      "select_work_item": "Pilih item kerja"
     },
     "sidebar": {
       "label_count": "label {count}"

@@ -881,6 +881,6 @@
     "instance_failure_description": "我們無法載入你的執行個體詳細資訊。",
     "instance_failure_hint": "請檢查連線並重試。",
     "retry": "重試",
-    "powered_by": "Powered by"
+    "powered_by": "由"
   }
 }

@@ -390,10 +390,10 @@
     "description": "您可以在工作區中建立專案、協作處理工作項目，並在 Plane 帳戶中組織不同的工作流程。",
     "accept": "接受",
     "ignore": "忽略",
-    "already_member": "您已經是 {workspaceName} 的會員",
+    "already_member": "您已經是 {workspaceName} 的成員",
     "continue_to_home": "前往首頁",
     "inactive_title": "此邀請連結不再有效。",
-    "empty_project_link": "或從一個空項目開始",
+    "empty_project_link": "或從空白專案開始",
     "sign_in_to_continue": "登入以繼續",
     "star_on_github": "在 GitHub 上給我們加星標",
     "join_community": "加入我們的活躍創作者社群"

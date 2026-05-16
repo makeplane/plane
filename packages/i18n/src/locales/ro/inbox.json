@@ -87,7 +87,7 @@
   "inbox": {
     "duplicate_issues_found": "{count} elemente de lucru duplicate găsite",
     "description_versions": {
-      "intake_form_user": "Utilizator formular de colectare"
+      "intake_form_user": "Utilizator al formularului de colectare"
     },
     "errors": {
       "asset_upload_failed": "Încărcarea materialelor nu a reușit. Vă rugăm să încercați din nou mai târziu.",
@@ -117,7 +117,7 @@
     },
     "navigation": {
       "previous_work_item": "Element de lucru anterior",
-      "next_work_item": "Următorul articol de lucru"
+      "next_work_item": "Următorul element de lucru"
     },
     "properties": {
       "duplicate_of": "Duplicat de"

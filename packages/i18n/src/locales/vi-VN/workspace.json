@@ -389,7 +389,7 @@
     "invited_to_workspace": "Bạn đã được mời tham gia {workspaceName}",
     "description": "Không gian làm việc của bạn là nơi bạn sẽ tạo các dự án, cộng tác trên các mục công việc của mình và sắp xếp các luồng công việc khác nhau trong tài khoản Plane của bạn.",
     "accept": "Chấp nhận",
-    "ignore": "Phớt lờ",
+    "ignore": "Bỏ qua",
     "already_member": "Bạn đã là thành viên của {workspaceName}",
     "continue_to_home": "Tiếp tục đến trang chủ",
     "inactive_title": "Liên kết lời mời này không còn hoạt động nữa.",

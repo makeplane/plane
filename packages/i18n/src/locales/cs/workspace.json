@@ -429,7 +429,7 @@
     "continue_to_workspace": "Pokračujte do pracovního prostoru",
     "or": "nebo",
     "create_own_workspace": "Vytvořte si vlastní pracovní prostor",
-    "workspace_creation_disabled": "Zdá se, že nemáte žádné pozvánky do pracovního prostoru a váš správce instance omezil vytváření nových pracovních prostorů. Požádejte vlastníka nebo správce pracovního prostoru, aby vás nejprve pozval do pracovního prostoru a vraťte se na tuto obrazovku a připojte se.",
+    "workspace_creation_disabled": "Zdá se, že nemáte žádné pozvánky do pracovního prostoru a váš správce instance omezil vytváření nových pracovních prostorů. Požádejte vlastníka nebo správce pracovního prostoru, aby vás nejprve pozval do pracovního prostoru, a poté se vraťte na tuto obrazovku a připojte se.",
     "create_workspace_title": "Vytvořte si svůj pracovní prostor",
     "enter_workspace_name": "Zadejte název pracovního prostoru",
     "join_existing_workspace": "Připojte se k existujícímu pracovnímu prostoru",

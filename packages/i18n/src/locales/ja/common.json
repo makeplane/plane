@@ -870,7 +870,7 @@
   },
   "space_public": {
     "error_description_prefix": "Plane がクラッシュしました。担当エンジニアには通知済みです。追加の詳細がある場合は、次までご連絡ください",
-    "error_description_middle": "または次の場所で",
+    "error_description_middle": "または",
     "not_found_hint": "ブラウザーのアドレスバーに入力した URL を確認して、もう一度お試しください。",
     "instance_failure_image_alt": "インスタンスの詳細を取得できません",
     "instance_failure_title": "インスタンスの詳細を取得できません。",

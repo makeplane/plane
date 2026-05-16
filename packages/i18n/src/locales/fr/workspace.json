@@ -429,7 +429,7 @@
     "continue_to_workspace": "Continuer vers l'espace de travail",
     "or": "ou",
     "create_own_workspace": "Créez votre propre espace de travail",
-    "workspace_creation_disabled": "Vous ne semblez recevoir aucune invitation à un espace de travail et l'administrateur de votre instance a restreint la création de nouveaux espaces de travail. Veuillez d'abord demander à un propriétaire ou à un administrateur d'espace de travail de vous inviter à un espace de travail, puis de revenir sur cet écran pour le rejoindre.",
+    "workspace_creation_disabled": "Vous ne semblez avoir aucune invitation à un espace de travail et l'administrateur de votre instance a restreint la création de nouveaux espaces de travail. Demandez d'abord à un propriétaire ou à un administrateur d'espace de travail de vous inviter, puis revenez sur cet écran pour le rejoindre.",
     "create_workspace_title": "Créez votre espace de travail",
     "enter_workspace_name": "Entrez le nom de l'espace de travail",
     "join_existing_workspace": "Rejoindre l'espace de travail existant",

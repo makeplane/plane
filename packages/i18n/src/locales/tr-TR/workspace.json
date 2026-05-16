@@ -387,7 +387,7 @@
   "workspace_invitation": {
     "invitation_not_found": "Davetiye bulunamadı",
     "invited_to_workspace": "{workspaceName}'e davet edildiniz",
-    "description": "Çalışma alanınız, Plane hesabınızda projeler oluşturacağınız, çalışma öğeleriniz üzerinde işbirliği yapacağınız ve farklı iş akışlarını organize edeceğiniz yerdir.",
+    "description": "Çalışma alanınız, Plane hesabınızda projeler oluşturacağınız, iş öğeleriniz üzerinde işbirliği yapacağınız ve farklı iş akışlarını organize edeceğiniz yerdir.",
     "accept": "Kabul et",
     "ignore": "Yok say",
     "already_member": "Zaten {workspaceName} üyesisiniz",
@@ -429,7 +429,7 @@
     "continue_to_workspace": "Çalışma alanına devam et",
     "or": "veya",
     "create_own_workspace": "Kendi çalışma alanınızı yaratın",
-    "workspace_creation_disabled": "Bir çalışma alanına davetiniz yok gibi görünüyor ve örnek yöneticiniz yeni çalışma alanlarının oluşturulmasını kısıtladı. Lütfen bir çalışma alanı sahibinden veya yöneticisinden önce sizi bir çalışma alanına davet etmesini ve katılmak için bu ekrana geri dönmesini isteyin.",
+    "workspace_creation_disabled": "Bir çalışma alanına davetiniz yok gibi görünüyor ve instance yöneticiniz yeni çalışma alanlarının oluşturulmasını kısıtladı. Lütfen bir çalışma alanı sahibinden veya yöneticisinden önce sizi bir çalışma alanına davet etmesini isteyin, ardından katılmak için bu ekrana geri dönün.",
     "create_workspace_title": "Çalışma alanınızı yaratın",
     "enter_workspace_name": "Çalışma alanı adını girin",
     "join_existing_workspace": "Mevcut çalışma alanına katılın",

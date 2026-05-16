@@ -870,7 +870,7 @@
   },
   "space_public": {
     "error_description_prefix": "Plane çöktü. Mühendislerimiz bilgilendirildi. Daha fazla ayrıntınız varsa lütfen şuraya yazın",
-    "error_description_middle": "veya bizim",
+    "error_description_middle": "veya",
     "not_found_hint": "Tarayıcı adres çubuğundaki URL'yi kontrol edip tekrar deneyin.",
     "instance_failure_image_alt": "Örnek ayrıntıları alınamadı",
     "instance_failure_title": "Örnek ayrıntıları alınamadı.",

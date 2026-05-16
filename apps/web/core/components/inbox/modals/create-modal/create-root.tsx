@@ -232,15 +232,10 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
             </div>
           </div>
           <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
-            <button
-              type="button"
-              className="inline-flex cursor-pointer items-center gap-1.5"
-              onClick={() => setCreateMore((prevData) => !prevData)}
-              tabIndex={getIndex("create_more")}
-            >
-              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+            <div className="inline-flex items-center gap-1.5">
+              <ToggleSwitch value={createMore} onChange={setCreateMore} size="sm" label={t("create_more")} />
               <span className="text-11">{t("create_more")}</span>
-            </button>
+            </div>
             <div className="flex items-center gap-3">
               <Button
                 variant="secondary"

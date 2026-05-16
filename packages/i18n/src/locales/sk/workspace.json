@@ -395,7 +395,7 @@
     "inactive_title": "Tento odkaz na pozvánku už nie je aktívny.",
     "empty_project_link": "Alebo začnite od prázdneho projektu",
     "sign_in_to_continue": "Ak chcete pokračovať, prihláste sa",
-    "star_on_github": "Zahviezdite nás na GitHub",
+    "star_on_github": "Dajte nám hviezdu na GitHub",
     "join_community": "Pridajte sa k našej komunite aktívnych tvorcov"
   },
   "onboarding": {
@@ -429,7 +429,7 @@
     "continue_to_workspace": "Pokračujte do pracovného priestoru",
     "or": "alebo",
     "create_own_workspace": "Vytvorte si vlastný pracovný priestor",
-    "workspace_creation_disabled": "Zdá sa, že nemáte žiadne pozvánky do pracovného priestoru a váš správca inštancie obmedzil vytváranie nových pracovných priestorov. Požiadajte vlastníka alebo správcu pracovného priestoru, aby vás najprv pozval do pracovného priestoru a vráťte sa na túto obrazovku a pripojte sa.",
+    "workspace_creation_disabled": "Zdá sa, že nemáte žiadne pozvánky do pracovného priestoru a váš správca inštancie obmedzil vytváranie nových pracovných priestorov. Požiadajte vlastníka alebo správcu pracovného priestoru, aby vás najprv pozval do pracovného priestoru, a potom sa vráťte na túto obrazovku a pripojte sa.",
     "create_workspace_title": "Vytvorte si pracovný priestor",
     "enter_workspace_name": "Zadajte názov pracovného priestoru",
     "join_existing_workspace": "Pripojte sa k existujúcemu pracovnému priestoru",

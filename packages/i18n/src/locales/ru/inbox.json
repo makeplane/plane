@@ -85,7 +85,7 @@
     }
   },
   "inbox": {
-    "duplicate_issues_found": "Найдено дублирующихся рабочих элементов: {count}",
+    "duplicate_issues_found": "Найдено дубликатов рабочих элементов: {count}",
     "description_versions": {
       "intake_form_user": "Пользователь формы сбора"
     },
@@ -126,7 +126,7 @@
       "select_work_item": "Выберите рабочий элемент"
     },
     "sidebar": {
-      "label_count": "{count, plural, one{# метка} few{# метки} other{# меток}}"
+      "label_count": "{count} меток"
     },
     "toasts": {
       "editor_processing": "Редактор все еще обрабатывает изменения. Пожалуйста, подождите, прежде чем продолжить.",
