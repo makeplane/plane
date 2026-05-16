@@ -77,12 +77,12 @@ export function Invitations(props: Props) {
           invitations.map((invitation) => {
             const isSelected = invitationsRespond.includes(invitation.id);
             const invitedWorkspace = invitation.workspace;
+            const checkboxId = `workspace-invitation-${invitation.id}`;
             return (
-              <button
-                type="button"
+              <label
+                htmlFor={checkboxId}
                 key={invitation.id}
                 className={`flex w-full cursor-pointer items-center gap-2 rounded-sm border border-subtle p-3.5 text-left hover:bg-surface-2`}
-                onClick={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
               >
                 <div className="flex-shrink-0">
                   <WorkspaceLogo
@@ -96,9 +96,13 @@ export function Invitations(props: Props) {
                   <p className="text-11 text-secondary">{ROLE[invitation.role]}</p>
                 </div>
                 <span className={`flex-shrink-0`}>
-                  <Checkbox checked={isSelected} />
+                  <Checkbox
+                    id={checkboxId}
+                    checked={isSelected}
+                    onChange={() => handleInvitation(invitation, isSelected ? "withdraw" : "accepted")}
+                  />
                 </span>
-              </button>
+              </label>
             );
           })}
       </div>
