@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Arraste e solte para fazer upload de arquivos externos"
+      "drag_and_drop": "Solte arquivos aqui ou clique para fazer upload"
     },
     "errors": {
       "file_too_large": {

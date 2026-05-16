@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Przeciągnij i upuść, aby przesłać pliki zewnętrzne"
+      "drag_and_drop": "Upuść pliki tutaj lub kliknij, aby przesłać"
     },
     "errors": {
       "file_too_large": {
@@ -101,13 +101,13 @@
     "clear_contents": "Wyczyść zawartość",
     "insert_above": "Wstaw powyżej",
     "insert_below": "Wstaw poniżej",
-    "insert_left": "Wstaw lewy",
-    "insert_right": "Wstaw po prawej",
+    "insert_left": "Wstaw w lewo",
+    "insert_right": "Wstaw w prawo",
     "header_row": "Wiersz nagłówka",
     "header_column": "Kolumna nagłówka",
     "alignment": {
-      "left": "Lewy",
-      "center": "Centrum",
+      "left": "Do lewej",
+      "center": "Środek",
       "right": "Do prawej"
     },
     "menu_items": {

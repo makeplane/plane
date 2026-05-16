@@ -10,7 +10,7 @@
         "description": "已拒绝"
       },
       "snoozed": {
-        "title": "已暂停",
+        "title": "已延后",
         "description": "还剩{days, plural, one{# 天} other{# 天}}"
       },
       "accepted": {
@@ -34,15 +34,15 @@
       }
     },
     "errors": {
-      "snooze_permission": "只有项目管理员可以暂停/取消暂停工作项",
+      "snooze_permission": "只有项目管理员可以延后/取消延后工作项",
       "accept_permission": "只有项目管理员可以接受工作项",
       "decline_permission": "只有项目管理员可以拒绝工作项"
     },
     "actions": {
       "accept": "接受",
       "decline": "拒绝",
-      "snooze": "暂停",
-      "unsnooze": "取消暂停",
+      "snooze": "延后",
+      "unsnooze": "取消延后",
       "copy": "复制工作项链接",
       "delete": "删除",
       "open": "打开工作项",
@@ -103,7 +103,7 @@
       "status": "状态",
       "work_item_status": "工作项状态",
       "view_all": "查看全部",
-      "view_less": "查看较少",
+      "view_less": "收起",
       "date_options": {
         "today": "今天",
         "yesterday": "昨天",

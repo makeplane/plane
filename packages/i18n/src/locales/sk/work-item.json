@@ -163,7 +163,7 @@
       "label": "Súvisiace pracovné položky"
     },
     "archive": {
-      "description": "Archivovať je možné iba dokončené alebo zrušené\npracovné položky",
+      "description": "Archivovať je možné iba dokončené alebo zrušené pracovné položky",
       "label": "Archivovať pracovnú položku",
       "confirm_message": "Naozaj chcete archivovať túto pracovnú položku? Všetky archivované položky je možné neskôr obnoviť.",
       "success": {

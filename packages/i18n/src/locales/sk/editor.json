@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Pretiahni a pusť pre nahranie externých súborov"
+      "drag_and_drop": "Presuňte súbory sem alebo kliknite pre nahranie"
     },
     "errors": {
       "file_too_large": {

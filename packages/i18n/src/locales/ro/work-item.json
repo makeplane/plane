@@ -163,7 +163,7 @@
       "label": "Activități înrudite"
     },
     "archive": {
-      "description": "Doar activitățile finalizate sau anulate\npot fi arhivate",
+      "description": "Doar activitățile finalizate sau anulate pot fi arhivate",
       "label": "Arhivează activitatea",
       "confirm_message": "Ești sigur că vrei să arhivezi această activitate? Toate activitățile arhivate pot fi restaurate ulterior.",
       "success": {

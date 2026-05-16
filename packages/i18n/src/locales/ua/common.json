@@ -1,7 +1,7 @@
 {
   "cloud_maintenance_message": {
     "we_are_working_on_this_if_you_need_immediate_assistance": "Ми працюємо над цим. Якщо вам потрібна негайна допомога,",
-    "reach_out_to_us": "зв&apos;яжіться з нами",
+    "reach_out_to_us": "зв'яжіться з нами",
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Інакше спробуйте періодично оновлювати сторінку або відвідайте нашу",
     "status_page": "сторінку статусу"
   },
@@ -486,7 +486,7 @@
     "project_timezone": "Часовий пояс проєкту",
     "created_on": "Створено",
     "updated_on": "Оновлено",
-    "completed_on": "Completed on",
+    "completed_on": "Дата завершення",
     "update_project": "Оновити проєкт",
     "identifier_already_exists": "Такий ідентифікатор уже існує",
     "add_more": "Додати ще",
@@ -713,11 +713,11 @@
     "details": "Деталі",
     "project_structure": "Структура проєкту",
     "custom_properties": "Користувацькі властивості",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Ваш профіль",
+    "developer": "Розробник",
+    "work_structure": "Структура роботи",
+    "execution": "Виконання",
+    "administration": "Адміністрування"
   },
   "chart": {
     "x_axis": "Вісь X",

@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Seret dan lepas untuk mengunggah file eksternal"
+      "drag_and_drop": "Jatuhkan file di sini atau klik untuk mengunggah"
     },
     "errors": {
       "file_too_large": {

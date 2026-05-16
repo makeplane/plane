@@ -163,7 +163,7 @@
       "label": "Item kerja sejawat"
     },
     "archive": {
-      "description": "Hanya item kerja yang selesai atau dibatalkan\n yang dapat diarsipkan",
+      "description": "Hanya item kerja yang selesai atau dibatalkan  yang dapat diarsipkan",
       "label": "Arsip Item kerja",
       "confirm_message": "Apakah Anda yakin ingin mengarsipkan item kerja ini? Semua item kerja yang diarsipkan dapat dipulihkan nanti.",
       "success": {

@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Kéo và thả để tải lên tệp bên ngoài"
+      "drag_and_drop": "Kéo thả tệp vào đây hoặc nhấp để tải lên"
     },
     "errors": {
       "file_too_large": {

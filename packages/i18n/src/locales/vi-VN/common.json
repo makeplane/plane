@@ -486,7 +486,7 @@
     "project_timezone": "Múi giờ dự án",
     "created_on": "Được tạo vào",
     "updated_on": "Cập nhật vào",
-    "completed_on": "Completed on",
+    "completed_on": "Hoàn thành lúc",
     "update_project": "Cập nhật dự án",
     "identifier_already_exists": "Định danh đã tồn tại",
     "add_more": "Thêm nữa",
@@ -713,11 +713,11 @@
     "details": "Chi tiết",
     "project_structure": "Cấu trúc dự án",
     "custom_properties": "Thuộc tính tùy chỉnh",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Hồ sơ của bạn",
+    "developer": "Nhà phát triển",
+    "work_structure": "Cấu trúc công việc",
+    "execution": "Thực thi",
+    "administration": "Quản trị"
   },
   "chart": {
     "x_axis": "Trục X",

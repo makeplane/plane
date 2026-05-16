@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Trageți și plasați pentru a încărca fișiere externe"
+      "drag_and_drop": "Plasați fișierele aici sau faceți clic pentru a le încărca"
     },
     "errors": {
       "file_too_large": {

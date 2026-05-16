@@ -126,7 +126,7 @@
       "select_work_item": "Выберите рабочий элемент"
     },
     "sidebar": {
-      "label_count": "Этикетки {count}"
+      "label_count": "{count, plural, one{# метка} few{# метки} other{# меток}}"
     },
     "toasts": {
       "editor_processing": "Редактор все еще обрабатывает изменения. Пожалуйста, подождите, прежде чем продолжить.",

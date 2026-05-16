@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "拖拽上傳外部檔案"
+      "drag_and_drop": "將檔案拖放至此或點擊上傳"
     },
     "errors": {
       "file_too_large": {

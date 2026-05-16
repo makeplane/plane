@@ -486,7 +486,7 @@
     "project_timezone": "Strefa czasowa projektu",
     "created_on": "Utworzono dnia",
     "updated_on": "Zaktualizowano",
-    "completed_on": "Completed on",
+    "completed_on": "Data ukończenia",
     "update_project": "Zaktualizuj projekt",
     "identifier_already_exists": "Identyfikator już istnieje",
     "add_more": "Dodaj więcej",
@@ -713,11 +713,11 @@
     "details": "Szczegóły",
     "project_structure": "Struktura projektu",
     "custom_properties": "Właściwości niestandardowe",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Twój profil",
+    "developer": "Deweloper",
+    "work_structure": "Struktura pracy",
+    "execution": "Wykonanie",
+    "administration": "Administracja"
   },
   "chart": {
     "x_axis": "Oś X",

@@ -126,7 +126,7 @@
       "select_work_item": "Vyberte pracovní položku"
     },
     "sidebar": {
-      "label_count": "{count} štítky"
+      "label_count": "{count, plural, one{# štítek} few{# štítky} other{# štítků}}"
     },
     "toasts": {
       "editor_processing": "Editor stále zpracovává změny. Před pokračováním prosím počkejte.",

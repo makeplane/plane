@@ -486,7 +486,7 @@
     "project_timezone": "Zona horaria del proyecto",
     "created_on": "Creado el",
     "updated_on": "Actualizado el",
-    "completed_on": "Completed on",
+    "completed_on": "Completado el",
     "update_project": "Actualizar proyecto",
     "identifier_already_exists": "El identificador ya existe",
     "add_more": "Agregar más",
@@ -713,11 +713,11 @@
     "details": "Detalles",
     "project_structure": "Estructura del proyecto",
     "custom_properties": "Propiedades personalizadas",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Tu perfil",
+    "developer": "Desarrollador",
+    "work_structure": "Estructura de trabajo",
+    "execution": "Ejecución",
+    "administration": "Administración"
   },
   "chart": {
     "x_axis": "Eje X",

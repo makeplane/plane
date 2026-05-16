@@ -163,7 +163,7 @@
       "label": "Kardeş iş öğeleri"
     },
     "archive": {
-      "description": "Yalnızca tamamlanmış veya iptal edilmiş\niş öğeleri arşivlenebilir",
+      "description": "Yalnızca tamamlanmış veya iptal edilmiş iş öğeleri arşivlenebilir",
       "label": "İş Öğesini Arşivle",
       "confirm_message": "Bu iş öğesini arşivlemek istediğinizden emin misiniz? Arşivlenen tüm iş öğelerinizi daha sonra geri yükleyebilirsiniz.",
       "success": {

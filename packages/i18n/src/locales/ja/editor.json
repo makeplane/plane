@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "外部ファイルをアップロードするにはドラッグ&ドロップしてください"
+      "drag_and_drop": "ファイルをここにドロップ、またはクリックしてアップロード"
     },
     "errors": {
       "file_too_large": {

@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Перетягніть для завантаження зовнішніх файлів"
+      "drag_and_drop": "Перетягніть файли сюди або натисніть для завантаження"
     },
     "errors": {
       "file_too_large": {

@@ -486,7 +486,7 @@
     "project_timezone": "Fuso orario del progetto",
     "created_on": "Creato il",
     "updated_on": "Aggiornato il",
-    "completed_on": "Completed on",
+    "completed_on": "Completato il",
     "update_project": "Aggiorna progetto",
     "identifier_already_exists": "L'identificatore esiste già",
     "add_more": "Aggiungi altro",
@@ -713,11 +713,11 @@
     "details": "Dettagli",
     "project_structure": "Struttura del progetto",
     "custom_properties": "Proprietà personalizzate",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Il tuo profilo",
+    "developer": "Sviluppatore",
+    "work_structure": "Struttura del lavoro",
+    "execution": "Esecuzione",
+    "administration": "Amministrazione"
   },
   "chart": {
     "x_axis": "Asse X",

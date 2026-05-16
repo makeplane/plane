@@ -486,7 +486,7 @@
     "project_timezone": "Časové pásmo projektu",
     "created_on": "Vytvorené dňa",
     "updated_on": "Aktualizované",
-    "completed_on": "Completed on",
+    "completed_on": "Dátum dokončenia",
     "update_project": "Aktualizovať projekt",
     "identifier_already_exists": "Identifikátor už existuje",
     "add_more": "Pridať viac",
@@ -713,11 +713,11 @@
     "details": "Podrobnosti",
     "project_structure": "Štruktúra projektu",
     "custom_properties": "Vlastné vlastnosti",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Váš profil",
+    "developer": "Vývojár",
+    "work_structure": "Štruktúra práce",
+    "execution": "Vykonávanie",
+    "administration": "Správa"
   },
   "chart": {
     "x_axis": "Os X",

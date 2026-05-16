@@ -90,7 +90,7 @@
       "intake_form_user": "Používateľ zberného formulára"
     },
     "errors": {
-      "asset_upload_failed": "Nahranie diela zlyhalo. Skúste to znova neskôr.",
+      "asset_upload_failed": "Nahranie súboru zlyhalo. Skúste to znova neskôr.",
       "asset_duplication_failed": "Duplikácia aktív zlyhala. Skúste to znova neskôr.",
       "permission_denied": "Povolenie zamietnuté",
       "mark_duplicate_permission": "Iba správcovia projektu môžu označiť pracovnú položku ako duplikát",
@@ -126,7 +126,7 @@
       "select_work_item": "Vyberte pracovnú položku"
     },
     "sidebar": {
-      "label_count": "{count} štítky"
+      "label_count": "{count, plural, one{# štítok} few{# štítky} other{# štítkov}}"
     },
     "toasts": {
       "editor_processing": "Editor stále spracováva zmeny. Pred pokračovaním počkajte.",

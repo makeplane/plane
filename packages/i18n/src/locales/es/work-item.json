@@ -163,7 +163,7 @@
       "label": "Elementos de trabajo hermanos"
     },
     "archive": {
-      "description": "Solo los elementos de trabajo completados\no cancelados pueden ser archivados",
+      "description": "Solo los elementos de trabajo completados o cancelados pueden ser archivados",
       "label": "Archivar elemento de trabajo",
       "confirm_message": "¿Estás seguro de que quieres archivar el elemento de trabajo? Todos tus elementos archivados pueden ser restaurados más tarde.",
       "success": {

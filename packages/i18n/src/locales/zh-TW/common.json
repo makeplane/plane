@@ -324,10 +324,10 @@
   "deleting": "刪除中",
   "make_a_copy": "複製一份",
   "move_to_project": "移至專案",
-  "good": "早安",
-  "morning": "早上",
-  "afternoon": "下午",
-  "evening": "晚上",
+  "good": "",
+  "morning": "早安",
+  "afternoon": "午安",
+  "evening": "晚安",
   "show_all": "顯示全部",
   "show_less": "顯示較少",
   "no_data_yet": "尚無資料",
@@ -486,7 +486,7 @@
     "project_timezone": "專案時區",
     "created_on": "建立於",
     "updated_on": "更新於",
-    "completed_on": "Completed on",
+    "completed_on": "完成於",
     "update_project": "更新專案",
     "identifier_already_exists": "識別碼已存在",
     "add_more": "新增更多",
@@ -512,7 +512,7 @@
     "workspace_level": "工作區層級",
     "order_by": {
       "label": "排序依據",
-      "manual": "手動 - 排名",
+      "manual": "手動",
       "last_created": "最後建立",
       "last_updated": "最後更新",
       "start_date": "開始日期",
@@ -713,11 +713,11 @@
     "details": "詳情",
     "project_structure": "專案結構",
     "custom_properties": "自訂屬性",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "您的個人資料",
+    "developer": "開發人員",
+    "work_structure": "工作結構",
+    "execution": "執行",
+    "administration": "管理"
   },
   "chart": {
     "x_axis": "X 軸",
@@ -832,17 +832,17 @@
   "pin": "釘選",
   "unpin": "取消釘選",
   "workspace_dashboards": "儀表板",
-  "pi_chat": "AI 聊天",
+  "pi_chat": "Plane AI",
   "in_app": "應用內",
   "forms": "表單",
   "milestones": "里程碑",
   "milestones_description": "里程碑提供了一個層級，讓工作事項對齊共同的完成日期。",
   "file_upload": {
-    "upload_text": "點擊此處上傳文件",
+    "upload_text": "點擊此處上傳檔案",
     "drag_drop_text": "拖放",
     "processing": "處理中",
-    "invalid_file_type": "無效的文件類型",
-    "missing_fields": "缺少字段",
+    "invalid_file_type": "無效的檔案類型",
+    "missing_fields": "缺少欄位",
     "success": "{fileName} 已上傳！"
   },
   "date": "日期",
@@ -881,6 +881,6 @@
     "instance_failure_description": "我們無法載入你的執行個體詳細資訊。",
     "instance_failure_hint": "請檢查連線並重試。",
     "retry": "重試",
-    "powered_by": "技術支援"
+    "powered_by": "Powered by"
   }
 }

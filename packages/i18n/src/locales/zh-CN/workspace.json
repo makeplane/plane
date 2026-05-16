@@ -148,7 +148,7 @@
     "workitem_resolved_vs_pending": "已解决 vs 待处理的工作项",
     "projects_by_status": "按状态分类的项目",
     "active_users": "活跃用户",
-    "intake_trends": "入学趋势"
+    "intake_trends": "需求收集趋势"
   },
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
@@ -434,7 +434,7 @@
     "enter_workspace_name": "输入工作区名称",
     "join_existing_workspace": "加入现有工作区",
     "profile_setup_completed": "个人资料设置完成。",
-    "profile_setup_failed": "配置文件设置失败。",
+    "profile_setup_failed": "个人资料设置失败。",
     "usecase_title": "您打算如何使用 Plane？",
     "usecase_description": "选择一个或多个选项，以便我们为您提供个性化体验。",
     "select_one_or_more": "选择一个或多个",

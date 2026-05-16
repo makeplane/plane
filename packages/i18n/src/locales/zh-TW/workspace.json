@@ -148,7 +148,7 @@
     "workitem_resolved_vs_pending": "已解決 vs 待處理的工作項目",
     "projects_by_status": "按狀態分類的專案",
     "active_users": "活躍使用者",
-    "intake_trends": "入學趨勢"
+    "intake_trends": "需求收集趨勢"
   },
   "workspace_projects": {
     "label": "{count, plural, one {專案} other {專案}}",
@@ -293,21 +293,21 @@
         "title": "寫一個筆記、文檔或完整的知識庫。讓 Galileo，Plane 的 AI 助手，幫助您開始",
         "description": "頁面是 Plane 中的思想沉澱空間。記下會議筆記，輕鬆格式化，嵌入工作項目，使用組件庫佈局，並將它們全部保存在您的專案上下文中。要快速完成任何文檔，使用快捷方式或點擊按鈕來調用 Galileo，Plane 的 AI。",
         "primary_button": {
-          "text": "創建您的第一個頁面"
+          "text": "建立您的第一個頁面"
         }
       },
       "private": {
         "title": "還沒有私人頁面",
         "description": "在這裡保留您的私人想法。當您準備好分享時，團隊只需點擊一下即可。",
         "primary_button": {
-          "text": "創建您的第一個頁面"
+          "text": "建立您的第一個頁面"
         }
       },
       "public": {
-        "title": "還沒有工作空間頁面",
-        "description": "在這裡查看與工作空間中的每個人共享的頁面。",
+        "title": "還沒有工作區頁面",
+        "description": "在這裡查看與工作區中的每個人共享的頁面。",
         "primary_button": {
-          "text": "創建您的第一個頁面"
+          "text": "建立您的第一個頁面"
         }
       },
       "archived": {
@@ -408,7 +408,7 @@
     "name_within_50": "名稱必須在 50 個字元以內。",
     "enter_full_name": "輸入您的全名",
     "set_password": "設定密碼",
-    "optional": "選修的",
+    "optional": "選填",
     "passwords_do_not_match": "密碼不匹配",
     "passwords_match": "密碼匹配",
     "continue": "繼續",
@@ -420,7 +420,7 @@
     "error": "錯誤！",
     "add_another": "添加另一個",
     "do_later": "我稍後會做",
-    "join_invites_title": "加入邀請或創建工作區",
+    "join_invites_title": "加入邀請或建立工作區",
     "unified_description": "您的所有工作 — 統一。",
     "create_new_workspace": "建立新工作區",
     "no_invitations_found": "未找到邀請",
@@ -428,9 +428,9 @@
     "accept_invites": "接受邀請與您的團隊合作。",
     "continue_to_workspace": "繼續工作區",
     "or": "或者",
-    "create_own_workspace": "創建您自己的工作空間",
+    "create_own_workspace": "建立您自己的工作區",
     "workspace_creation_disabled": "您似乎沒有任何工作區邀請，而您的實例管理員限制了新工作區的建立。請讓工作區擁有者或管理員先邀請您加入工作區，然後再回到此畫面加入。",
-    "create_workspace_title": "創建您的工作空間",
+    "create_workspace_title": "建立您的工作區",
     "enter_workspace_name": "輸入工作區名稱",
     "join_existing_workspace": "加入現有工作區",
     "profile_setup_completed": "個人資料設定完成。",

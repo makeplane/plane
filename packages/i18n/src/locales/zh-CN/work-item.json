@@ -163,7 +163,7 @@
       "label": "同级工作项"
     },
     "archive": {
-      "description": "只有已完成或已取消的\n工作项可以归档",
+      "description": "只有已完成或已取消的工作项可以归档",
       "label": "归档工作项",
       "confirm_message": "您确定要归档此工作项吗？所有已归档的工作项稍后可以恢复。",
       "success": {

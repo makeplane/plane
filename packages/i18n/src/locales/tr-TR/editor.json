@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Harici dosyaları yüklemek için sürükle ve bırak"
+      "drag_and_drop": "Dosyaları buraya bırakın veya yüklemek için tıklayın"
     },
     "errors": {
       "file_too_large": {

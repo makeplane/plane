@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "외부 파일을 업로드하려면 드래그 앤 드롭하세요"
+      "drag_and_drop": "파일을 여기에 놓거나 클릭하여 업로드"
     },
     "errors": {
       "file_too_large": {

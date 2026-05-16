@@ -1,6 +1,6 @@
 {
   "cloud_maintenance_message": {
-    "we_are_working_on_this_if_you_need_immediate_assistance": "Nous travaillons là-dessus. Si vous avez besoin d&apos;aide immédiate,",
+    "we_are_working_on_this_if_you_need_immediate_assistance": "Nous travaillons là-dessus. Si vous avez besoin d'aide immédiate,",
     "reach_out_to_us": "contactez-nous",
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Sinon, essayez de rafraîchir la page de temps en temps ou visitez notre",
     "status_page": "page de statut"
@@ -486,7 +486,7 @@
     "project_timezone": "Fuseau horaire du projet",
     "created_on": "Créé le",
     "updated_on": "Mis à jour le",
-    "completed_on": "Completed on",
+    "completed_on": "Terminé le",
     "update_project": "Mettre à jour le projet",
     "identifier_already_exists": "L’identifiant existe déjà",
     "add_more": "Ajouter plus",
@@ -713,10 +713,10 @@
     "details": "Détails",
     "project_structure": "Structure du projet",
     "custom_properties": "Propriétés personnalisées",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
+    "your_profile": "Votre profil",
+    "developer": "Développeur",
+    "work_structure": "Structure de travail",
+    "execution": "Exécution",
     "administration": "Administration"
   },
   "chart": {

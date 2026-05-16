@@ -486,7 +486,7 @@
     "project_timezone": "Časové pásmo projektu",
     "created_on": "Vytvořeno dne",
     "updated_on": "Aktualizováno",
-    "completed_on": "Completed on",
+    "completed_on": "Datum dokončení",
     "update_project": "Aktualizovat projekt",
     "identifier_already_exists": "Identifikátor již existuje",
     "add_more": "Přidat více",
@@ -713,11 +713,11 @@
     "details": "Podrobnosti",
     "project_structure": "Struktura projektu",
     "custom_properties": "Vlastní vlastnosti",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Váš profil",
+    "developer": "Vývojář",
+    "work_structure": "Struktura práce",
+    "execution": "Provádění",
+    "administration": "Správa"
   },
   "chart": {
     "x_axis": "Osa X",

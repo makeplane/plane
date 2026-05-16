@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Trascina e rilascia per caricare file esterni"
+      "drag_and_drop": "Trascina qui i file o clicca per caricarli"
     },
     "errors": {
       "file_too_large": {

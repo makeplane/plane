@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Přetáhněte soubory pro nahrání externích souborů"
+      "drag_and_drop": "Přetáhněte soubory sem nebo klikněte pro nahrání"
     },
     "errors": {
       "file_too_large": {
@@ -107,7 +107,7 @@
     "header_column": "Sloupec záhlaví",
     "alignment": {
       "left": "Vlevo",
-      "center": "Centrum",
+      "center": "Střed",
       "right": "Vpravo"
     },
     "menu_items": {
@@ -128,7 +128,7 @@
       "divider": "Oddělovač",
       "link": "Odkaz",
       "bold": "Tučné",
-      "italic": "kurzíva",
+      "italic": "Kurzíva",
       "underline": "Podtržení",
       "strikethrough": "Přeškrtnutí",
       "text-color": "Barva textu",

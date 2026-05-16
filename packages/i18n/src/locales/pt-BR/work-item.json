@@ -163,7 +163,7 @@
       "label": "Itens de trabalho irmãos"
     },
     "archive": {
-      "description": "Apenas itens de trabalho concluídos ou cancelados\npodem ser arquivados",
+      "description": "Apenas itens de trabalho concluídos ou cancelados podem ser arquivados",
       "label": "Arquivar Item de Trabalho",
       "confirm_message": "Tem certeza de que deseja arquivar o item de trabalho? Todos os seus itens de trabalho arquivados podem ser restaurados posteriormente.",
       "success": {

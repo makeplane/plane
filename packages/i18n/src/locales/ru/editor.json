@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Перетащите для загрузки внешних файлов"
+      "drag_and_drop": "Перетащите файлы сюда или нажмите для загрузки"
     },
     "errors": {
       "file_too_large": {
@@ -121,7 +121,7 @@
       "bulleted-list": "Маркированный список",
       "numbered-list": "Нумерованный список",
       "to-do-list": "Список дел",
-      "quote": "Цитировать",
+      "quote": "Цитата",
       "code": "Код",
       "table": "Таблица",
       "image": "Изображение",

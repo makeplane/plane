@@ -163,7 +163,7 @@
       "label": "Éléments de travail frères"
     },
     "archive": {
-      "description": "Seuls les éléments de travail\nterminés ou annulés peuvent être archivés",
+      "description": "Seuls les éléments de travail terminés ou annulés peuvent être archivés",
       "label": "Archiver l’élément de travail",
       "confirm_message": "Êtes-vous sûr de vouloir archiver l’élément de travail ? Tous vos éléments archivés peuvent être restaurés ultérieurement.",
       "success": {

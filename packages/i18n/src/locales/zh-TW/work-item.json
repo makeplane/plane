@@ -163,7 +163,7 @@
       "label": "同層級工作事項"
     },
     "archive": {
-      "description": "只有已完成或取消的\n工作事項可以封存",
+      "description": "只有已完成或取消的工作事項可以封存",
       "label": "封存工作事項",
       "confirm_message": "您確定要封存工作事項嗎？所有已封存的工作事項稍後都可以還原。",
       "success": {
