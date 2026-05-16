@@ -149,7 +149,7 @@ const InviteMemberInput = observer(function InviteMemberInput(props: InviteMembe
             rules={{
               pattern: {
                 value: emailRegex,
-                message: "Invalid Email ID",
+                message: t("onboarding.invalid_email"),
               },
             }}
             render={({ field: { value, onChange, ref } }) => (
