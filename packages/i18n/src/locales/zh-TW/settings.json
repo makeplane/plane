@@ -45,7 +45,7 @@
     },
     "notifications": {
       "heading": "電子郵件通知",
-      "description": "隨時掌握您訂閱的工作事項。啟用此功能以接收通知。",
+      "description": "隨時掌握您訂閱的工作項目。啟用此功能以接收通知。",
       "select_default_view": "選擇預設檢視",
       "compact": "緊湊",
       "full": "全螢幕"
@@ -59,7 +59,7 @@
     },
     "activity": {
       "heading": "活動",
-      "description": "追蹤您在所有專案和工作事項中的近期操作和變更。"
+      "description": "追蹤您在所有專案和工作項目中的近期操作和變更。"
     },
     "connections": {
       "title": "連接",
@@ -78,16 +78,16 @@
     "stats": {
       "workload": "工作量",
       "overview": "概覽",
-      "created": "已建立的工作事項",
-      "assigned": "已指派的工作事項",
-      "subscribed": "已訂閱的工作事項",
+      "created": "已建立的工作項目",
+      "assigned": "已指派的工作項目",
+      "subscribed": "已訂閱的工作項目",
       "state_distribution": {
-        "title": "依狀態分類的工作事項",
-        "empty": "建立工作事項以在圖表中檢視依狀態分類的工作事項，以便進行更好的分析。"
+        "title": "依狀態分類的工作項目",
+        "empty": "建立工作項目以在圖表中檢視依狀態分類的工作項目，以便進行更好的分析。"
       },
       "priority_distribution": {
-        "title": "依優先順序分類的工作事項",
-        "empty": "建立工作事項以在圖表中檢視依優先順序分類的工作事項，以便進行更好的分析。"
+        "title": "依優先順序分類的工作項目",
+        "empty": "建立工作項目以在圖表中檢視依優先順序分類的工作項目，以便進行更好的分析。"
       },
       "recent_activity": {
         "title": "最近活動",
@@ -115,19 +115,19 @@
     "empty_state": {
       "activity": {
         "title": "尚無活動",
-        "description": "開始建立新工作事項！為其新增詳細資訊和屬性。探索更多 Plane 功能以檢視您的活動。"
+        "description": "開始建立新工作項目！為其新增詳細資訊和屬性。探索更多 Plane 功能以檢視您的活動。"
       },
       "assigned": {
-        "title": "沒有指派給您的工作事項",
-        "description": "從這裡可以追蹤指派給您的工作事項。"
+        "title": "沒有指派給您的工作項目",
+        "description": "從這裡可以追蹤指派給您的工作項目。"
       },
       "created": {
-        "title": "尚無工作事項",
-        "description": "您建立的所有工作事項都會出現在這裡，直接在這裡追蹤它們。"
+        "title": "尚無工作項目",
+        "description": "您建立的所有工作項目都會出現在這裡，直接在這裡追蹤它們。"
       },
       "subscribed": {
-        "title": "尚無工作事項",
-        "description": "訂閱您感興趣的工作事項，在這裡追蹤它們。"
+        "title": "尚無工作項目",
+        "description": "訂閱您感興趣的工作項目，在這裡追蹤它們。"
       }
     }
   },

@@ -4,7 +4,7 @@
     "label_lowercase": "工作項目類型",
     "settings": {
       "description": "自訂並新增您自己的屬性，以符合您團隊的需求。",
-      "cant_delete_default_message": "無法刪除此工作項目類型，因為它已設置為該專案的預設類型。",
+      "cant_delete_default_message": "無法刪除此工作項目類型，因為它已設定為該專案的預設類型。",
       "set_as_default": "設為預設",
       "cant_set_default_inactive_message": "請先啟用此類型再將其設為預設",
       "set_default_confirmation": {
@@ -13,10 +13,10 @@
         "confirm_button": "設為預設"
       },
       "properties": {
-        "title": "自定義屬性",
+        "title": "自訂屬性",
         "description": "建立和自訂屬性。",
-        "tooltip": "每種工作項目類型都有一組默認屬性，如標題、描述、負責人、狀態、優先級、開始日期、截止日期、模塊、週期等。您還可以自定義並添加自己的屬性，以適應您團隊的需求。",
-        "add_button": "添加新屬性",
+        "tooltip": "每種工作項目類型都有一組預設屬性，如標題、描述、負責人、狀態、優先順序、開始日期、截止日期、模組、週期等。您還可以自訂並新增自己的屬性，以符合您團隊的需求。",
+        "add_button": "新增屬性",
         "project": {
           "add_button": {
             "import_from_workspace": "從工作區匯入"
@@ -68,7 +68,7 @@
           },
           "number": {
             "default": {
-              "placeholder": "添加數字"
+              "placeholder": "新增數字"
             }
           },
           "relation": {
@@ -79,18 +79,18 @@
               "label": "多選"
             },
             "no_default_value": {
-              "label": "無默認值"
+              "label": "無預設值"
             }
           },
           "boolean": {
             "label": "真 | 假",
-            "no_default": "無默認值"
+            "no_default": "無預設值"
           },
           "option": {
             "create_update": {
               "label": "選項",
               "form": {
-                "placeholder": "添加選項",
+                "placeholder": "新增選項",
                 "errors": {
                   "name": {
                     "required": "選項名稱是必填的。",
@@ -114,11 +114,11 @@
           "create": {
             "success": {
               "title": "成功！",
-              "message": "屬性 {name} 已成功創建。"
+              "message": "屬性 {name} 已成功建立。"
             },
             "error": {
               "title": "錯誤！",
-              "message": "創建屬性失敗。請再試一次！"
+              "message": "建立屬性失敗。請再試一次！"
             }
           },
           "update": {
@@ -175,7 +175,7 @@
               "required": "您必須選擇一個屬性類型。"
             },
             "options": {
-              "required": "您必須添加至少一個選項。"
+              "required": "您必須新增至少一個選項。"
             },
             "formula": {
               "required": "公式表達式為必填。",
@@ -195,7 +195,7 @@
           "validation_success_with_refs": "公式有效！回傳 {resultType}（參照了 {count} 個欄位）",
           "error": {
             "empty": "請輸入公式",
-            "missing_context": "缺少工作空間、專案或工作項目類型上下文",
+            "missing_context": "缺少工作區、專案或工作項目類型上下文",
             "validation_failed": "驗證失敗"
           },
           "picker": {
@@ -206,20 +206,20 @@
         "enable_disable": {
           "label": "活躍",
           "tooltip": {
-            "disabled": "點擊以禁用",
+            "disabled": "點擊以停用",
             "enabled": "點擊以啟用"
           }
         },
         "delete_confirmation": {
           "title": "刪除此屬性",
-          "description": "刪除屬性可能導致現有數據丟失。",
-          "secondary_description": "您是否想要禁用屬性代替刪除？",
+          "description": "刪除屬性可能導致現有數據遺失。",
+          "secondary_description": "您是否想要停用屬性代替刪除？",
           "primary_button": "{action}，刪除它",
-          "secondary_button": "是的，禁用它"
+          "secondary_button": "是的，停用它"
         },
         "mandate_confirmation": {
           "label": "必填屬性",
-          "content": "此屬性似乎有一個默認選項。將屬性設為必填將移除默認值，用戶必須添加他們選擇的值。",
+          "content": "此屬性似乎有一個預設選項。將屬性設為必填將移除預設值，使用者必須新增他們選擇的值。",
           "tooltip": {
             "disabled": "此屬性類型不能設為必填",
             "enabled": "取消勾選以將字段標記為可選",
@@ -227,13 +227,13 @@
           }
         },
         "empty_state": {
-          "title": "添加自定義屬性",
-          "description": "您為此工作項目類型添加的新屬性將顯示在此處。"
+          "title": "新增自訂屬性",
+          "description": "您為此工作項目類型新增的新屬性將顯示在此處。"
         }
       },
       "types": {
         "title": "類型",
-        "description": "建立和自訂具有屬性的工作事項類型。",
+        "description": "建立和自訂具有屬性的工作項目類型。",
         "sort_options": {
           "project_count": "參與專案的數量"
         },
@@ -247,8 +247,8 @@
             "import_from_workspace": "從工作區匯入"
           },
           "banner": {
-            "with_access": "啟用工作事項類型以從工作區層級匯入類型",
-            "without_access": "工作事項類型已停用。請聯絡工作區管理員在工作區設定中啟用。"
+            "with_access": "啟用工作項目類型以從工作區層級匯入類型",
+            "without_access": "工作項目類型已停用。請聯絡工作區管理員在工作區設定中啟用。"
           }
         }
       },
@@ -264,7 +264,7 @@
         },
         "unlink_confirmation": {
           "title": "取消連結屬性",
-          "description": "取消連結此屬性將永久刪除使用此類型的每個工作事項中的所有值。此操作無法還原。",
+          "description": "取消連結此屬性將永久刪除使用此類型的每個工作項目中的所有值。此操作無法還原。",
           "input_label": "輸入",
           "input_label_suffix": "以繼續：",
           "confirm": "取消連結屬性",
@@ -293,17 +293,17 @@
       }
     },
     "create": {
-      "title": "創建工作項目類型",
-      "button": "添加工作項目類型",
+      "title": "建立工作項目類型",
+      "button": "新增工作項目類型",
       "toast": {
         "success": {
           "title": "成功！",
-          "message": "工作項目類型已成功創建。"
+          "message": "工作項目類型已成功建立。"
         },
         "error": {
           "title": "錯誤！",
           "message": {
-            "default": "建立工作事項類型失敗。請再試一次！",
+            "default": "建立工作項目類型失敗。請再試一次！",
             "conflict": "{name} 類型已存在。請選擇其他名稱。"
           }
         }
@@ -320,7 +320,7 @@
         "error": {
           "title": "錯誤！",
           "message": {
-            "default": "更新工作事項類型失敗。請再試一次！",
+            "default": "更新工作項目類型失敗。請再試一次！",
             "conflict": "{name} 類型已存在。請選擇其他名稱。"
           }
         }
@@ -352,7 +352,7 @@
     },
     "change_confirmation": {
       "title": "更改工作項目類型？",
-      "description": "更改工作項目類型可能會導致丟失特定於當前類型的自定義屬性值。此操作無法撤銷。",
+      "description": "更改工作項目類型可能會導致遺失特定於目前類型的自訂屬性值。此操作無法撤銷。",
       "button": {
         "loading": "更改中",
         "default": "更改類型"
@@ -361,29 +361,29 @@
     "empty_state": {
       "enable": {
         "title": "啟用工作項目類型",
-        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖標、背景和屬性自定義它們，並為此專案配置它們。",
+        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖示、背景和屬性自訂它們，並為此專案設定它們。",
         "primary_button": {
           "text": "啟用"
         },
         "confirmation": {
-          "title": "一旦啟用，工作項目類型不能被禁用。",
-          "description": "Plane的工作項目將成為此專案的默認工作項目類型，並將在此專案中顯示其圖標和背景。",
+          "title": "一旦啟用，工作項目類型不能被停用。",
+          "description": "Plane 的工作項目將成為此專案的預設工作項目類型，並將在此專案中顯示其圖示和背景。",
           "button": {
             "default": "啟用",
-            "loading": "設置中"
+            "loading": "設定中"
           }
         }
       },
       "get_pro": {
-        "title": "獲取專業版以啟用工作項目類型。",
-        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖標、背景和屬性自定義它們，並為此專案配置它們。",
+        "title": "取得專業版以啟用工作項目類型。",
+        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖示、背景和屬性自訂它們，並為此專案設定它們。",
         "primary_button": {
-          "text": "獲取專業版"
+          "text": "取得專業版"
         }
       },
       "upgrade": {
         "title": "升級以啟用工作項目類型。",
-        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖標、背景和屬性自定義它們，並為此專案配置它們。",
+        "description": "使用工作項目類型為您的工作塑造工作項目。使用圖示、背景和屬性自訂它們，並為此專案設定它們。",
         "primary_button": {
           "text": "升級"
         }

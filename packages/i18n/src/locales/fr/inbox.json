@@ -98,7 +98,7 @@
     },
     "filters": {
       "created_date": "Date de création",
-      "updated_date": "Date mise à jour",
+      "updated_date": "Date de mise à jour",
       "last_updated_date": "Date de dernière mise à jour",
       "status": "Statut",
       "work_item_status": "Statut de l'élément de travail",

@@ -91,7 +91,7 @@
     },
     "errors": {
       "asset_upload_failed": "Încărcarea materialelor nu a reușit. Vă rugăm să încercați din nou mai târziu.",
-      "asset_duplication_failed": "Dublarea materialelor nu a reușit. Vă rugăm să încercați din nou mai târziu.",
+      "asset_duplication_failed": "Duplicarea materialelor nu a reușit. Vă rugăm să încercați din nou mai târziu.",
       "permission_denied": "Acces refuzat",
       "mark_duplicate_permission": "Numai administratorii de proiect pot marca elementul de lucru ca duplicat",
       "mark_duplicate_permission_plural": "Numai administratorii de proiect pot marca elementele de lucru ca duplicate"

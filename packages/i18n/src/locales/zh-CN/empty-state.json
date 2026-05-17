@@ -213,12 +213,12 @@
     },
     "tokens": {
       "title": "暂无个人令牌",
-      "description": "生成安全的 API 令牌以将工作空间与外部系统和应用程序连接。",
+      "description": "生成安全的 API 令牌以将工作区与外部系统和应用程序连接。",
       "cta_primary": "添加 API 令牌"
     },
     "workspace_tokens": {
       "title": "暂无访问令牌",
-      "description": "生成安全的 API 令牌以将工作空间与外部系统和应用程序连接。",
+      "description": "生成安全的 API 令牌以将工作区与外部系统和应用程序连接。",
       "cta_primary": "添加访问令牌"
     },
     "webhooks": {

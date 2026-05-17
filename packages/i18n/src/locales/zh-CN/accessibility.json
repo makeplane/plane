@@ -1,8 +1,8 @@
 {
   "aria_labels": {
     "projects_sidebar": {
-      "workspace_logo": "工作空间徽标",
-      "open_workspace_switcher": "打开工作空间切换器",
+      "workspace_logo": "工作区徽标",
+      "open_workspace_switcher": "打开工作区切换器",
       "open_user_menu": "打开用户菜单",
       "open_command_palette": "打开命令面板",
       "open_extended_sidebar": "打开扩展侧边栏",

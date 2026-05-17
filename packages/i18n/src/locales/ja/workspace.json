@@ -388,7 +388,7 @@
     "invitation_not_found": "招待が見つかりません",
     "invited_to_workspace": "{workspaceName} に招待されました",
     "description": "ワークスペースは、Plane アカウントでプロジェクトを作成し、作業項目で共同作業し、さまざまな作業ストリームを整理する場所です。",
-    "accept": "受け入れる",
+    "accept": "参加する",
     "ignore": "無視する",
     "already_member": "あなたはすでに {workspaceName} のメンバーです",
     "continue_to_home": "ホームに進む",

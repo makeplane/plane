@@ -107,8 +107,8 @@
       "date_options": {
         "today": "Hoy",
         "yesterday": "Ayer",
-        "last_7_days": "últimos 7 días",
-        "last_30_days": "últimos 30 días"
+        "last_7_days": "Últimos 7 días",
+        "last_30_days": "Últimos 30 días"
       },
       "date_operators": {
         "after": "Después",
@@ -129,7 +129,7 @@
       "label_count": "{count} etiquetas"
     },
     "toasts": {
-      "editor_processing": "El editor todavía está procesando cambios. Espere antes de continuar.",
+      "editor_processing": "El editor todavía está procesando cambios. Espera antes de continuar.",
       "create_success": "Elemento de trabajo creado correctamente.",
       "delete_failed": "Error al eliminar el elemento de trabajo",
       "update_failed": "Error al actualizar el elemento de trabajo"

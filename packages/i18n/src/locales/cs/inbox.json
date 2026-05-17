@@ -91,7 +91,7 @@
     },
     "errors": {
       "asset_upload_failed": "Nahrání podkladu se nezdařilo. Zkuste to znovu později.",
-      "asset_duplication_failed": "Duplikace aktiv se nezdařila. Zkuste to znovu později.",
+      "asset_duplication_failed": "Duplikace podkladů se nezdařila. Zkuste to znovu později.",
       "permission_denied": "Přístup odepřen",
       "mark_duplicate_permission": "Pouze správci projektu mohou označit pracovní položku jako duplicitní",
       "mark_duplicate_permission_plural": "Pouze správci projektu mohou označit pracovní položky jako duplicitní"

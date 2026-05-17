@@ -82,7 +82,7 @@
         "export_separate_files": "將資料匯出為個別檔案",
         "exporting_projects": "匯出專案",
         "format": "格式",
-        "filters_info": "應用篩選器以根據您的條件匯出特定工作項。",
+        "filters_info": "應用篩選器以根據您的條件匯出特定工作項目。",
         "modal": {
           "title": "匯出至",
           "toasts": {
@@ -253,7 +253,7 @@
       "identity": {
         "title": "身份",
         "heading": "身份",
-        "description": "配置您的網域並啟用單一登入"
+        "description": "設定您的網域並啟用單一登入"
       },
       "project_states": {
         "title": "專案狀態",
@@ -272,12 +272,12 @@
       "templates": {
         "title": "範本",
         "heading": "範本",
-        "description": "使用範本可節省 80% 建立專案、工作事項和頁面所花費的時間。"
+        "description": "使用範本可節省 80% 建立專案、工作項目和頁面所花費的時間。"
       },
       "relations": {
         "title": "關聯",
         "heading": "關聯",
-        "description": "建立並管理能連接工作區中各工作事項的關聯類型。"
+        "description": "建立並管理能連接工作區中各工作項目的關聯類型。"
       },
       "cancel_trial": {
         "title": "請先取消您的試用期。",
@@ -285,7 +285,7 @@
         "dismiss": "忽略",
         "cancel": "取消試用期",
         "cancel_success_title": "試用期已取消。",
-        "cancel_success_message": "您現在可以刪除工作空間。",
+        "cancel_success_message": "您現在可以刪除工作區。",
         "cancel_error_title": "操作失敗。",
         "cancel_error_message": "請再試一次。"
       },
@@ -302,8 +302,8 @@
         "disconnect": "中斷連線",
         "install": "安裝",
         "installed": "已安裝",
-        "configure": "配置",
-        "app_available": "您已使此應用可用於Plane工作空間",
+        "configure": "設定",
+        "app_available": "您已使此應用可用於Plane工作區",
         "app_credentials_regenrated": {
           "title": "應用程式憑證已成功重新生成",
           "description": "請在所有使用的地方替換客戶端密鑰。之前的密鑰已不再有效。"
@@ -350,11 +350,11 @@
           "placeholder": "輸入隨機密鑰"
         },
         "redirect_uris": {
-          "label": "重定向 URI（以空格分隔）",
+          "label": "重新導向 URI（以空格分隔）",
           "description": "使用者在透過 Plane 認證後將被重新導向到此路徑。",
           "placeholder": "https://example.com https://example.com/"
         },
-        "app_available_description": "連接Plane工作空間以開始使用",
+        "app_available_description": "連接Plane工作區以開始使用",
         "client_id_and_secret": "客戶端ID和密鑰",
         "client_id_and_secret_description": "複製並保存此密鑰。關閉後您將無法再次查看此密鑰。",
         "client_id_and_secret_download": "您可以從這裡下載包含密鑰的CSV檔案。",
@@ -375,10 +375,10 @@
         "webhook_url_title": "Webhook URL",
         "webhook_url_error": "Webhook URL為必填項",
         "invalid_webhook_url_error": "無效的Webhook URL",
-        "redirect_uris_title": "重定向URI",
-        "redirect_uris_error": "重定向URI為必填項",
-        "invalid_redirect_uris_error": "無效的重定向URI",
-        "redirect_uris_description": "輸入應用將在用戶後重定向到的URI，用空格分隔，例如 https://example.com https://example.com/",
+        "redirect_uris_title": "重新導向URI",
+        "redirect_uris_error": "重新導向URI為必填項",
+        "invalid_redirect_uris_error": "無效的重新導向URI",
+        "redirect_uris_description": "輸入應用將在使用者後重新導向到的URI，用空格分隔，例如 https://example.com https://example.com/",
         "authorized_javascript_origins_title": "授權的JavaScript來源",
         "authorized_javascript_origins_error": "授權的JavaScript來源為必填項",
         "invalid_authorized_javascript_origins_error": "無效的授權JavaScript來源",
@@ -393,20 +393,20 @@
         "regenerate_client_secret_confirm_description": "使用此密鑰的應用將停止工作。您需要在應用中更新密鑰。",
         "regenerate_client_secret_confirm_cancel": "取消",
         "regenerate_client_secret_confirm_regenerate": "重新生成",
-        "read_only_access_to_workspace": "對您的工作空間的唯讀存取",
-        "write_access_to_workspace": "對您的工作空間的寫入存取",
-        "read_only_access_to_user_profile": "對您的用戶設定檔的唯讀存取",
-        "write_access_to_user_profile": "對您的用戶設定檔的寫入存取",
-        "connect_app_to_workspace": "將{app}連接到您的工作空間{workspace}",
-        "user_permissions": "用戶權限",
-        "user_permissions_description": "用戶權限用於授予對用戶設定檔的存取權限。",
-        "workspace_permissions": "工作空間權限",
-        "workspace_permissions_description": "工作空間權限用於授予對工作空間的存取權限。",
+        "read_only_access_to_workspace": "對您的工作區的唯讀存取",
+        "write_access_to_workspace": "對您的工作區的寫入存取",
+        "read_only_access_to_user_profile": "對您的使用者設定檔的唯讀存取",
+        "write_access_to_user_profile": "對您的使用者設定檔的寫入存取",
+        "connect_app_to_workspace": "將{app}連接到您的工作區{workspace}",
+        "user_permissions": "使用者權限",
+        "user_permissions_description": "使用者權限用於授予對使用者設定檔的存取權限。",
+        "workspace_permissions": "工作區權限",
+        "workspace_permissions_description": "工作區權限用於授予對工作區的存取權限。",
         "with_the_permissions": "具有權限",
-        "app_consent_title": "{app}正在請求存取您的Plane工作空間和設定檔。",
-        "choose_workspace_to_connect_app_with": "選擇要連接應用的工作空間",
+        "app_consent_title": "{app}正在請求存取您的Plane工作區和設定檔。",
+        "choose_workspace_to_connect_app_with": "選擇要連接應用的工作區",
         "app_consent_workspace_permissions_title": "{app}想要",
-        "app_consent_user_permissions_title": "{app}還可以請求用戶對以下資源的權限。這些權限將僅由用戶請求和授權。",
+        "app_consent_user_permissions_title": "{app}還可以請求使用者對以下資源的權限。這些權限將僅由使用者請求和授權。",
         "app_consent_accept_title": "通過接受",
         "app_consent_accept_1": "您授予應用在Plane內部或外部可以使用應用的任何地方存取您的Plane資料的權限",
         "app_consent_accept_2": "您同意{app}的隱私政策和使用條款",
@@ -427,17 +427,17 @@
         "terms_of_service_url_title": "使用條款URL",
         "terms_of_service_url_error": "使用條款URL是必填項",
         "invalid_terms_of_service_url_error": "無效的使用條款URL",
-        "support_url_title": "支持URL",
-        "support_url_error": "支持URL是必填項",
-        "invalid_support_url_error": "無效的支持URL",
-        "video_url_title": "視頻URL",
-        "video_url_error": "視頻URL是必填項",
-        "invalid_video_url_error": "無效的視頻URL",
-        "setup_url_error": "設置URL是必填項",
-        "invalid_setup_url_error": "無效的設置URL",
-        "configuration_url_title": "配置URL",
-        "configuration_url_error": "配置URL是必填項",
-        "invalid_configuration_url_error": "無效的配置URL",
+        "support_url_title": "支援網址",
+        "support_url_error": "支援網址為必填項",
+        "invalid_support_url_error": "無效的支援網址",
+        "video_url_title": "影片網址",
+        "video_url_error": "影片網址為必填項",
+        "invalid_video_url_error": "無效的影片網址",
+        "setup_url_error": "設定URL是必填項",
+        "invalid_setup_url_error": "無效的設定URL",
+        "configuration_url_title": "設定URL",
+        "configuration_url_error": "設定URL是必填項",
+        "invalid_configuration_url_error": "無效的設定URL",
         "contact_email_title": "聯絡電子郵件",
         "contact_email_error": "聯絡電子郵件是必填項",
         "invalid_contact_email_error": "無效的聯絡電子郵件",

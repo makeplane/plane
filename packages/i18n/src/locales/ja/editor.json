@@ -106,9 +106,9 @@
     "header_row": "ヘッダー行",
     "header_column": "ヘッダー列",
     "alignment": {
-      "left": "左",
+      "left": "左揃え",
       "center": "中央揃え",
-      "right": "右"
+      "right": "右揃え"
     },
     "menu_items": {
       "text": "テキスト",

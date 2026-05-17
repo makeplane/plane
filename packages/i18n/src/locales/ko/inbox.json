@@ -120,7 +120,7 @@
       "next_work_item": "다음 작업 항목"
     },
     "properties": {
-      "duplicate_of": "중복 항목"
+      "duplicate_of": "중복 대상"
     },
     "select_duplicate": {
       "select_work_item": "작업 항목 선택"

@@ -1,8 +1,8 @@
 {
   "aria_labels": {
     "projects_sidebar": {
-      "workspace_logo": "Логотип рабочей области",
-      "open_workspace_switcher": "Открыть переключатель рабочей области",
+      "workspace_logo": "Логотип рабочего пространства",
+      "open_workspace_switcher": "Открыть переключатель рабочего пространства",
       "open_user_menu": "Открыть пользовательское меню",
       "open_command_palette": "Открыть палитру команд",
       "open_extended_sidebar": "Открыть расширенную боковую панель",

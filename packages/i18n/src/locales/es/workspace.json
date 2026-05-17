@@ -418,8 +418,8 @@
     "success": "¡Éxito!",
     "invitations_sent": "Invitaciones enviadas exitosamente.",
     "error": "¡Error!",
-    "add_another": "agregar otro",
-    "do_later": "lo haré más tarde",
+    "add_another": "Agregar otro",
+    "do_later": "Lo haré más tarde",
     "join_invites_title": "Únete a invitaciones o crea un espacio de trabajo",
     "unified_description": "Todo tu trabajo, unificado.",
     "create_new_workspace": "Crear nuevo espacio de trabajo",
@@ -436,9 +436,9 @@
     "profile_setup_completed": "Configuración del perfil completada.",
     "profile_setup_failed": "Error en la configuración del perfil.",
     "usecase_title": "¿Cómo planeas utilizar Plane?",
-    "usecase_description": "Seleccione una o más opciones para que podamos personalizar su experiencia.",
+    "usecase_description": "Selecciona una o más opciones para que podamos personalizar tu experiencia.",
     "select_one_or_more": "Seleccione uno o más",
     "select_at_least_one": "Seleccione al menos una opción.",
-    "skip": "Saltar"
+    "skip": "Omitir"
   }
 }

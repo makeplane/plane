@@ -430,7 +430,7 @@
     "or": "atau",
     "create_own_workspace": "Buat ruang kerja Anda sendiri",
     "workspace_creation_disabled": "Tampaknya Anda tidak mendapat undangan apa pun ke ruang kerja dan admin instans Anda telah membatasi pembuatan ruang kerja baru. Silakan minta pemilik atau admin ruang kerja untuk mengundang Anda ke ruang kerja terlebih dahulu dan kembali ke layar ini untuk bergabung.",
-    "create_workspace_title": "Ciptakan ruang kerja Anda",
+    "create_workspace_title": "Buat ruang kerja Anda",
     "enter_workspace_name": "Masukkan nama ruang kerja",
     "join_existing_workspace": "Bergabunglah dengan ruang kerja yang ada",
     "profile_setup_completed": "Penyiapan profil selesai.",

@@ -5,7 +5,7 @@
         "label": "大綱",
         "empty_state": {
           "title": "缺少標題",
-          "description": "讓我們在這個頁面添加一些標題來在這裡查看它們。"
+          "description": "讓我們在這個頁面新增一些標題來在這裡查看它們。"
         }
       },
       "info": {
@@ -31,7 +31,7 @@
         "download_button": "下載",
         "empty_state": {
           "title": "缺少圖片",
-          "description": "添加圖片以在這裡查看它們。"
+          "description": "新增圖片以在這裡查看它們。"
         }
       },
       "comments": {

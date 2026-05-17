@@ -98,7 +98,7 @@
     },
     "filters": {
       "created_date": "Data utworzenia",
-      "updated_date": "Zaktualizowana data",
+      "updated_date": "Data aktualizacji",
       "last_updated_date": "Ostatnia aktualizacja",
       "status": "Status",
       "work_item_status": "Stan elementu pracy",

@@ -107,7 +107,7 @@
     "header_column": "Kolumna nagłówka",
     "alignment": {
       "left": "Do lewej",
-      "center": "Środek",
+      "center": "Wyśrodkuj",
       "right": "Do prawej"
     },
     "menu_items": {
@@ -125,7 +125,7 @@
       "code": "Kod",
       "table": "Tabela",
       "image": "Obraz",
-      "divider": "Rozdzielacz",
+      "divider": "Separator",
       "link": "Link",
       "bold": "Pogrubiony",
       "italic": "Kursywa",

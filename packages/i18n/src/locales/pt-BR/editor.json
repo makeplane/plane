@@ -107,7 +107,7 @@
     "header_column": "Coluna de cabeçalho",
     "alignment": {
       "left": "Esquerda",
-      "center": "Centro",
+      "center": "Centralizar",
       "right": "Direita"
     },
     "menu_items": {
@@ -121,7 +121,7 @@
       "bulleted-list": "Lista com marcadores",
       "numbered-list": "Lista numerada",
       "to-do-list": "Lista de tarefas",
-      "quote": "Citar",
+      "quote": "Citação",
       "code": "Código",
       "table": "Tabela",
       "image": "Imagem",

@@ -93,7 +93,7 @@
       "asset_upload_failed": "Falha no upload do recurso. Por favor, tente novamente mais tarde.",
       "asset_duplication_failed": "Falha na duplicação de recursos. Por favor, tente novamente mais tarde.",
       "permission_denied": "Permissão negada",
-      "mark_duplicate_permission": "Somente administradores de projeto podem marcar itens de trabalho como duplicados",
+      "mark_duplicate_permission": "Somente administradores de projeto podem marcar o item de trabalho como duplicado",
       "mark_duplicate_permission_plural": "Somente administradores de projeto podem marcar itens de trabalho como duplicados"
     },
     "filters": {
