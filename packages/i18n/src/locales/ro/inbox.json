@@ -97,7 +97,7 @@
       "mark_duplicate_permission_plural": "Numai administratorii de proiect pot marca elementele de lucru ca duplicate"
     },
     "filters": {
-      "created_date": "Data creată",
+      "created_date": "Data creării",
       "updated_date": "Data actualizării",
       "last_updated_date": "Data ultimei actualizări",
       "status": "Stare",
@@ -132,7 +132,7 @@
       "editor_processing": "Editorul încă procesează modificări. Vă rugăm să așteptați înainte de a continua.",
       "create_success": "Element de lucru creat cu succes.",
       "delete_failed": "Ștergerea elementului de lucru nu a reușit",
-      "update_failed": "Actualizarea articolului de lucru nu a reușit"
+      "update_failed": "Actualizarea elementului de lucru nu a reușit"
     }
   }
 }

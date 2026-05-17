@@ -131,8 +131,8 @@
     "toasts": {
       "editor_processing": "Edytor nadal przetwarza zmiany. Proszę poczekać przed kontynuowaniem.",
       "create_success": "Element pracy został pomyślnie utworzony.",
-      "delete_failed": "Nie udało się usunąć elementu roboczego",
-      "update_failed": "Aktualizacja elementu roboczego nie powiodła się"
+      "delete_failed": "Nie udało się usunąć elementu pracy",
+      "update_failed": "Aktualizacja elementu pracy nie powiodła się"
     }
   }
 }

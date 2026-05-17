@@ -377,7 +377,7 @@
     }
   },
   "workspace_access": {
-    "not_found_title": "Workspace não encontrado",
+    "not_found_title": "Espaço de trabalho não encontrado",
     "not_found_description": "Nenhum espaço de trabalho foi encontrado para este URL. Ele pode não existir ou você pode não ter permissão para visualizá-lo.",
     "visit_profile": "Visitar perfil",
     "not_authorized_title": "Não autorizado!",
@@ -410,7 +410,7 @@
     "set_password": "Defina uma senha",
     "optional": "Opcional",
     "passwords_do_not_match": "As senhas não coincidem",
-    "passwords_match": "Correspondência de senhas",
+    "passwords_match": "As senhas coincidem",
     "continue": "Continuar",
     "invite_team_title": "Convide seus companheiros de equipe",
     "invite_team_description": "O trabalho no Plane acontece melhor com sua equipe. Convide-os agora a usar o Plane em todo o seu potencial.",

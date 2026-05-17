@@ -414,7 +414,7 @@
     "continue": "続行",
     "invite_team_title": "チームメイトを招待する",
     "invite_team_description": "Plane での作業は、チームと一緒に行うのが最も効果的です。今すぐ彼らを招待して、Plane の可能性を最大限に活用してください。",
-    "invalid_email": "それは電子メールアドレスのようには見えません。",
+    "invalid_email": "有効なメールアドレスの形式ではありません。",
     "success": "成功！",
     "invitations_sent": "招待状は正常に送信されました。",
     "error": "エラー！",

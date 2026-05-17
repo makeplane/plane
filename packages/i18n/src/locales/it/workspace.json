@@ -377,7 +377,7 @@
     }
   },
   "workspace_access": {
-    "not_found_title": "Workspace non trovato",
+    "not_found_title": "Spazio di lavoro non trovato",
     "not_found_description": "Non è stato trovato alcuno workspace per questo URL. Potrebbe non esistere o potresti non avere l’autorizzazione per visualizzarlo.",
     "visit_profile": "Visita profilo",
     "not_authorized_title": "Non autorizzato!",
@@ -431,7 +431,7 @@
     "create_own_workspace": "Crea il tuo spazio di lavoro",
     "workspace_creation_disabled": "Sembra che tu non abbia inviti a un'area di lavoro e l'amministratore dell'istanza abbia limitato la creazione di nuove aree di lavoro. Chiedi prima al proprietario o all'amministratore di un'area di lavoro di invitarti, quindi torna a questa schermata per partecipare.",
     "create_workspace_title": "Crea il tuo spazio di lavoro",
-    "enter_workspace_name": "Inserisci il nome dell'area di lavoro",
+    "enter_workspace_name": "Inserisci il nome dello spazio di lavoro",
     "join_existing_workspace": "Unisciti allo spazio di lavoro esistente",
     "profile_setup_completed": "Configurazione del profilo completata.",
     "profile_setup_failed": "La configurazione del profilo non è riuscita.",

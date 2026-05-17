@@ -881,6 +881,6 @@
     "instance_failure_description": "Podrobnosti vaší instance se nepodařilo načíst.",
     "instance_failure_hint": "Zkontrolujte připojení a zkuste to znovu.",
     "retry": "Zkusit znovu",
-    "powered_by": "Používá"
+    "powered_by": "Běží na"
   }
 }
