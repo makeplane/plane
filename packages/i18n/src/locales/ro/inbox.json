@@ -98,7 +98,7 @@
     },
     "filters": {
       "created_date": "Data creată",
-      "updated_date": "Data actualizată",
+      "updated_date": "Data actualizării",
       "last_updated_date": "Data ultimei actualizări",
       "status": "Stare",
       "work_item_status": "Starea elementului de lucru",
@@ -120,7 +120,7 @@
       "next_work_item": "Următorul element de lucru"
     },
     "properties": {
-      "duplicate_of": "Duplicat de"
+      "duplicate_of": "Duplicat al"
     },
     "select_duplicate": {
       "select_work_item": "Selectați elementul de lucru"

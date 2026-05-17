@@ -98,7 +98,7 @@
     },
     "filters": {
       "created_date": "Дата створення",
-      "updated_date": "Оновлена ​​дата",
+      "updated_date": "Дата оновлення",
       "last_updated_date": "Дата останнього оновлення",
       "status": "Статус",
       "work_item_status": "Статус робочого елемента",

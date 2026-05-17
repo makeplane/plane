@@ -405,7 +405,7 @@
     "upload_image": "Resim yükle",
     "name": "İsim",
     "name_required": "Ad gerekli",
-    "name_within_50": "Ad 50 karakterden oluşmalıdır.",
+    "name_within_50": "Ad en fazla 50 karakter olmalıdır.",
     "enter_full_name": "Tam adınızı girin",
     "set_password": "Bir şifre belirleyin",
     "optional": "İsteğe bağlı",

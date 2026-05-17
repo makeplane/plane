@@ -65,7 +65,7 @@
   "editor": {
     "url": "URL",
     "enter_or_paste_url": "Nhập hoặc dán URL",
-    "text": "Chữ",
+    "text": "Văn bản",
     "enter_text_to_display": "Nhập văn bản để hiển thị",
     "remove_link": "Xóa liên kết",
     "edit_link": "Chỉnh sửa liên kết",
@@ -111,7 +111,7 @@
       "right": "Phải"
     },
     "menu_items": {
-      "text": "Chữ",
+      "text": "Văn bản",
       "h1": "Tiêu đề 1",
       "h2": "Tiêu đề 2",
       "h3": "Tiêu đề 3",

@@ -91,14 +91,14 @@
     },
     "errors": {
       "asset_upload_failed": "Nahranie súboru zlyhalo. Skúste to znova neskôr.",
-      "asset_duplication_failed": "Duplikácia aktív zlyhala. Skúste to znova neskôr.",
-      "permission_denied": "Povolenie zamietnuté",
+      "asset_duplication_failed": "Duplikácia súborov zlyhala. Skúste to znova neskôr.",
+      "permission_denied": "Prístup odmietnutý",
       "mark_duplicate_permission": "Iba správcovia projektu môžu označiť pracovnú položku ako duplikát",
       "mark_duplicate_permission_plural": "Iba správcovia projektu môžu označiť pracovné položky ako duplicitné"
     },
     "filters": {
       "created_date": "Dátum vytvorenia",
-      "updated_date": "Aktualizovaný dátum",
+      "updated_date": "Dátum aktualizácie",
       "last_updated_date": "Dátum poslednej aktualizácie",
       "status": "Stav",
       "work_item_status": "Stav pracovnej položky",
@@ -112,7 +112,7 @@
       },
       "date_operators": {
         "after": "Po",
-        "before": "Predtým"
+        "before": "Pred"
       }
     },
     "navigation": {

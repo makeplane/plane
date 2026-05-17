@@ -91,7 +91,7 @@
     },
     "errors": {
       "asset_upload_failed": "資源上傳失敗。請稍後重試。",
-      "asset_duplication_failed": "資產複製失敗。請稍後重試。",
+      "asset_duplication_failed": "資源建立副本失敗。請稍後重試。",
       "permission_denied": "沒有權限",
       "mark_duplicate_permission": "只有專案管理員可以將工作項目標記為重複",
       "mark_duplicate_permission_plural": "只有專案管理員可以將工作項目標記為重複"
@@ -120,7 +120,7 @@
       "next_work_item": "下一個工作項目"
     },
     "properties": {
-      "duplicate_of": "重複於"
+      "duplicate_of": "與此項目重複"
     },
     "select_duplicate": {
       "select_work_item": "選擇工作項目"

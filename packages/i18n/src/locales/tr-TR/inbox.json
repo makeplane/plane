@@ -126,7 +126,7 @@
       "select_work_item": "İş öğesini seçin"
     },
     "sidebar": {
-      "label_count": "{count} etiketleri"
+      "label_count": "{count} etiket"
     },
     "toasts": {
       "editor_processing": "Düzenleyici hâlâ değişiklikleri işliyor. Devam etmeden önce lütfen bekleyin.",

@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Déposez les fichiers ici ou cliquez pour télécharger"
+      "drag_and_drop": "Déposez les fichiers ici ou cliquez pour importer"
     },
     "errors": {
       "file_too_large": {
@@ -83,7 +83,7 @@
     "copy_code": "Copier le code",
     "add_an_image": "Ajouter une image",
     "error_loading_image": "Erreur de chargement de l'image",
-    "uploading": "Téléchargement",
+    "uploading": "Importation",
     "drop_image_here": "Déposez l'image ici",
     "retry_duplication": "Réessayer la duplication",
     "retry": "Réessayer",
@@ -117,7 +117,7 @@
       "h3": "Titre 3",
       "h4": "Titre 4",
       "h5": "Titre 5",
-      "h6": "Rubrique 6",
+      "h6": "Titre 6",
       "bulleted-list": "Liste à puces",
       "numbered-list": "Liste numérotée",
       "to-do-list": "Liste de choses à faire",

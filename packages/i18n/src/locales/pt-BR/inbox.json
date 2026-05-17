@@ -98,7 +98,7 @@
     },
     "filters": {
       "created_date": "Data de criação",
-      "updated_date": "Data atualizada",
+      "updated_date": "Data de atualização",
       "last_updated_date": "Data da última atualização",
       "status": "Status",
       "work_item_status": "Status do item de trabalho",
@@ -126,7 +126,7 @@
       "select_work_item": "Selecione o item de trabalho"
     },
     "sidebar": {
-      "label_count": "Etiquetas {count}"
+      "label_count": "{count} etiquetas"
     },
     "toasts": {
       "editor_processing": "O editor ainda está processando as alterações. Aguarde antes de continuar.",

@@ -415,7 +415,7 @@
     "invite_team_title": "Undang rekan satu tim Anda",
     "invite_team_description": "Pekerjaan di Plane paling baik dilakukan bersama tim Anda. Undang mereka sekarang untuk menggunakan Plane semaksimal mungkin.",
     "invalid_email": "Itu tidak terlihat seperti alamat email.",
-    "success": "Kesuksesan!",
+    "success": "Berhasil!",
     "invitations_sent": "Undangan berhasil dikirim.",
     "error": "Kesalahan!",
     "add_another": "Tambahkan yang lain",
@@ -439,6 +439,6 @@
     "usecase_description": "Pilih satu atau lebih opsi sehingga kami dapat mempersonalisasi pengalaman Anda.",
     "select_one_or_more": "Pilih satu atau lebih",
     "select_at_least_one": "Pilih setidaknya satu opsi.",
-    "skip": "Melewati"
+    "skip": "Lewati"
   }
 }

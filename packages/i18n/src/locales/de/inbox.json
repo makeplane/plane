@@ -126,7 +126,7 @@
       "select_work_item": "Arbeitselement auswählen"
     },
     "sidebar": {
-      "label_count": "{count}-Etiketten"
+      "label_count": "{count} Labels"
     },
     "toasts": {
       "editor_processing": "Der Editor verarbeitet noch Änderungen. Bitte warten Sie, bevor Sie fortfahren.",

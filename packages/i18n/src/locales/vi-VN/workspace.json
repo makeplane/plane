@@ -435,10 +435,10 @@
     "join_existing_workspace": "Tham gia không gian làm việc hiện có",
     "profile_setup_completed": "Thiết lập hồ sơ đã hoàn tất.",
     "profile_setup_failed": "Thiết lập hồ sơ không thành công.",
-    "usecase_title": "Bạn dự định sử dụng ZXPLaneZ như thế nào?",
+    "usecase_title": "Bạn dự định sử dụng Plane như thế nào?",
     "usecase_description": "Chọn một hoặc nhiều tùy chọn để chúng tôi có thể cá nhân hóa trải nghiệm của bạn.",
     "select_one_or_more": "Chọn một hoặc nhiều",
     "select_at_least_one": "Chọn ít nhất một tùy chọn.",
-    "skip": "Nhảy"
+    "skip": "Bỏ qua"
   }
 }

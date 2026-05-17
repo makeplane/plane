@@ -412,7 +412,7 @@
     "passwords_do_not_match": "Le password non corrispondono",
     "passwords_match": "Le password corrispondono",
     "continue": "Continua",
-    "invite_team_title": "Invita i tuoi compagni di squadra",
+    "invite_team_title": "Invita i membri del tuo team",
     "invite_team_description": "Il lavoro in Plane avviene meglio con il tuo team. Invitali ora a sfruttare Plane al massimo delle sue potenzialità.",
     "invalid_email": "Non sembra un indirizzo email.",
     "success": "Successo!",
@@ -420,7 +420,7 @@
     "error": "Errore!",
     "add_another": "Aggiungine un altro",
     "do_later": "Lo farò più tardi",
-    "join_invites_title": "Partecipa agli inviti o crea uno spazio di lavoro",
+    "join_invites_title": "Accetta gli inviti o crea uno spazio di lavoro",
     "unified_description": "Tutto il tuo lavoro: unificato.",
     "create_new_workspace": "Crea un nuovo spazio di lavoro",
     "no_invitations_found": "Nessun invito trovato",
@@ -439,6 +439,6 @@
     "usecase_description": "Seleziona una o più opzioni per consentirci di personalizzare la tua esperienza.",
     "select_one_or_more": "Seleziona uno o più",
     "select_at_least_one": "Seleziona almeno un'opzione.",
-    "skip": "Saltare"
+    "skip": "Salta"
   }
 }

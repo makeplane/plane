@@ -402,7 +402,7 @@
     "create_profile_title": "Créez votre profil.",
     "create_profile_description": "C'est ainsi que vous apparaîtrez dans Plane.",
     "change_image": "Changer l'image",
-    "upload_image": "Télécharger une image",
+    "upload_image": "Importer une image",
     "name": "Nom",
     "name_required": "Le nom est requis",
     "name_within_50": "Le nom doit contenir moins de 50 caractères.",
@@ -439,6 +439,6 @@
     "usecase_description": "Sélectionnez une ou plusieurs options afin que nous puissions personnaliser votre expérience.",
     "select_one_or_more": "Sélectionnez un ou plusieurs",
     "select_at_least_one": "Sélectionnez au moins une option.",
-    "skip": "Sauter"
+    "skip": "Passer"
   }
 }

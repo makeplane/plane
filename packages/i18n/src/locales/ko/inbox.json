@@ -92,7 +92,7 @@
     "errors": {
       "asset_upload_failed": "자산 업로드에 실패했습니다. 나중에 다시 시도해 주세요.",
       "asset_duplication_failed": "자산 복제에 실패했습니다. 나중에 다시 시도해 주세요.",
-      "permission_denied": "허가가 거부되었습니다",
+      "permission_denied": "권한이 거부되었습니다",
       "mark_duplicate_permission": "프로젝트 관리자만 작업 항목을 중복으로 표시할 수 있습니다.",
       "mark_duplicate_permission_plural": "프로젝트 관리자만 작업 항목을 중복으로 표시할 수 있습니다."
     },
@@ -111,8 +111,8 @@
         "last_30_days": "지난 30일"
       },
       "date_operators": {
-        "after": "후에",
-        "before": "전에"
+        "after": "이후",
+        "before": "이전"
       }
     },
     "navigation": {

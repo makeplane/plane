@@ -92,7 +92,7 @@
     "errors": {
       "asset_upload_failed": "Przesyłanie zasobu nie powiodło się. Spróbuj ponownie później.",
       "asset_duplication_failed": "Powielanie zasobów nie powiodło się. Spróbuj ponownie później.",
-      "permission_denied": "Odmowa pozwolenia",
+      "permission_denied": "Odmowa dostępu",
       "mark_duplicate_permission": "Tylko administratorzy projektu mogą oznaczać element pracy jako duplikat",
       "mark_duplicate_permission_plural": "Tylko administratorzy projektu mogą oznaczać elementy pracy jako duplikaty"
     },

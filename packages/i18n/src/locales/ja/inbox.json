@@ -92,7 +92,7 @@
     "errors": {
       "asset_upload_failed": "アセットのアップロードに失敗しました。後でもう一度試してください。",
       "asset_duplication_failed": "アセットの複製に失敗しました。後でもう一度試してください。",
-      "permission_denied": "許可が拒否されました",
+      "permission_denied": "アクセスが拒否されました",
       "mark_duplicate_permission": "プロジェクト管理者のみが作業項目を重複としてマークできます",
       "mark_duplicate_permission_plural": "プロジェクト管理者のみが作業項目を重複としてマークできます"
     },
@@ -111,8 +111,8 @@
         "last_30_days": "過去 30 日間"
       },
       "date_operators": {
-        "after": "後",
-        "before": "前に"
+        "after": "以降",
+        "before": "以前"
       }
     },
     "navigation": {

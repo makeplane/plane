@@ -400,7 +400,7 @@
   },
   "onboarding": {
     "create_profile_title": "プロフィールを作成します。",
-    "create_profile_description": "これがPlaneに登場する様子です。",
+    "create_profile_description": "Plane上でのプロフィールの表示形式です。",
     "change_image": "イメージを変更する",
     "upload_image": "画像をアップロードする",
     "name": "名前",

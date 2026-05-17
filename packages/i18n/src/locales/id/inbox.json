@@ -126,7 +126,7 @@
       "select_work_item": "Pilih item kerja"
     },
     "sidebar": {
-      "label_count": "label {count}"
+      "label_count": "{count} label"
     },
     "toasts": {
       "editor_processing": "Editor masih memproses perubahan. Harap tunggu sebelum melanjutkan.",

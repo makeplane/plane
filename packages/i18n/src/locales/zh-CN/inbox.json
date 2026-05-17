@@ -91,7 +91,7 @@
     },
     "errors": {
       "asset_upload_failed": "资源上传失败。请稍后重试。",
-      "asset_duplication_failed": "资产复制失败。请稍后重试。",
+      "asset_duplication_failed": "资源复制失败。请稍后重试。",
       "permission_denied": "没有权限",
       "mark_duplicate_permission": "只有项目管理员可以将工作项标记为重复",
       "mark_duplicate_permission_plural": "只有项目管理员可以将工作项标记为重复"
@@ -111,8 +111,8 @@
         "last_30_days": "过去 30 天"
       },
       "date_operators": {
-        "after": "后",
-        "before": "前"
+        "after": "之后",
+        "before": "之前"
       }
     },
     "navigation": {
@@ -120,13 +120,13 @@
       "next_work_item": "下一个工作项"
     },
     "properties": {
-      "duplicate_of": "重复于"
+      "duplicate_of": "与…重复"
     },
     "select_duplicate": {
       "select_work_item": "选择工作项"
     },
     "sidebar": {
-      "label_count": "{count} 标签"
+      "label_count": "{count} 个标签"
     },
     "toasts": {
       "editor_processing": "编辑器仍在处理更改。请稍候再继续。",

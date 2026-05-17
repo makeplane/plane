@@ -408,7 +408,7 @@
     "name_within_50": "이름은 50자 이내로 입력해야 합니다.",
     "enter_full_name": "이름을 입력하세요",
     "set_password": "비밀번호를 설정하세요",
-    "optional": "선택 과목",
+    "optional": "선택 사항",
     "passwords_do_not_match": "비밀번호가 일치하지 않습니다.",
     "passwords_match": "비밀번호가 일치합니다.",
     "continue": "계속",
@@ -439,6 +439,6 @@
     "usecase_description": "귀하의 경험을 개인화할 수 있도록 하나 이상의 옵션을 선택하십시오.",
     "select_one_or_more": "하나 이상 선택",
     "select_at_least_one": "옵션을 하나 이상 선택하세요.",
-    "skip": "건너뛰다"
+    "skip": "건너뛰기"
   }
 }
