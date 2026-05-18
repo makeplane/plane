@@ -433,7 +433,6 @@ export default {
   capacity_under_capacity: "Còn trống",
   capacity_member: "Thành viên",
   capacity_issues: "Công việc",
-  capacity_no_data: "Không có dữ liệu công suất cho giai đoạn này.",
   capacity_category_distribution: "Phân bổ theo danh mục",
   capacity_time_burndown: "Biểu đồ Burndown thời gian",
   capacity_items: "mục",
@@ -446,7 +445,8 @@ export default {
   timesheet_save_success: "Đã lưu bảng chấm công",
   timesheet_no_issues: "Không có issue nào cho tuần này",
   timesheet_add_issue: "Thêm công việc",
-  timesheet_cross_workspaces: "Cross Workspaces",
+  timesheet_cross_workspaces: "Cross teams & workspaces",
+  overall_management: "Overall Management",
   timesheet_load_error: "Không thể tải dữ liệu bảng chấm công.",
   analytics_timesheet_load_error: "Không thể tải dữ liệu phân tích.",
   analytics_timesheet_no_data: "Không có nhật ký thời gian nào trong tuần này.",
@@ -1169,7 +1169,7 @@ export default {
     },
     states: {
       active: "Hoạt động",
-      backlog: "Draft",
+      backlog: "Backlog",
     },
     comments: {
       placeholder: "Thêm bình luận",
@@ -1598,7 +1598,7 @@ export default {
       issue_delete: "Xóa mục công việc thất bại",
     },
     state: {
-      backlog: "Draft",
+      backlog: "Backlog",
       unstarted: "Chưa bắt đầu",
       started: "Đang tiến hành",
       completed: "Đã hoàn thành",
@@ -2028,7 +2028,7 @@ export default {
       today_work_items: {
         title: "Công việc hôm nay",
         empty: "Không có mục công việc hoạt động nào cho hôm nay.",
-        cross_workspaces: "Xuyên Workspace",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "Mục công việc",
           department: "Phòng ban",
@@ -2047,7 +2047,7 @@ export default {
       overdue_work_items: {
         title: "Công việc quá hạn",
         empty: "Không có mục công việc quá hạn.",
-        cross_workspaces: "Xuyên Workspace",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "Mục công việc",
           department: "Phòng ban",
@@ -2075,9 +2075,16 @@ export default {
     },
     tabs: {
       summary: "Tóm tắt",
+      summary_description:
+        "All work items were assigned to you and need to be completed (including cross teams & workspaces)",
       assigned: "Đã giao",
+      assigned_description:
+        "All work items were assigned to you, including both completed and outstanding items (excluding cross teams & workspaces)",
       created: "Đã tạo",
+      created_description: "All work items that you have created (excluding cross teams & workspaces)",
       subscribed: "Đã đăng ký",
+      subscribed_description:
+        "All work items that you are monitoring and have subscribed (excluding cross teams & workspaces)",
       activity: "Hoạt động",
     },
     empty_state: {
@@ -2137,7 +2144,7 @@ export default {
     },
     states: {
       heading: "States",
-      description: "Define and customize workflow states to track the progress of your work items.",
+      description: "Define and customize workflow statuses to track the progress of your work items.",
       describe_this_state_for_your_members: "Mô tả trạng thái này cho thành viên của bạn.",
       empty_state: {
         title: "Không có trạng thái trong nhóm {groupKey}",
@@ -3001,7 +3008,7 @@ export default {
   },
   project_modules: {
     status: {
-      backlog: "Draft",
+      backlog: "Backlog",
       planned: "Đã lên kế hoạch",
       in_progress: "Đang tiến hành",
       paused: "Đã tạm dừng",
@@ -3657,7 +3664,7 @@ export default {
     queued_message: "We'll email you when ready",
     failed_title: "Export failed",
     failed_message: "Please try again",
-    cross_workspace_disabled: "Not available in cross-workspace mode",
+    cross_workspace_disabled: "Not available in Cross teams & workspaces mode",
     already_queued: "An export is already queued. Please wait 30 seconds.",
     no_data: "No data to export for the selected filters",
     select_members_title: "Chọn thành viên để xuất",

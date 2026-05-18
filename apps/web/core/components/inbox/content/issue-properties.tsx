@@ -70,7 +70,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
             <div className="flex h-8 items-center gap-2">
               <div className="flex w-2/5 flex-shrink-0 items-center gap-1 text-13 text-tertiary">
                 <StatePropertyIcon className="h-4 w-4 flex-shrink-0" />
-                <span>State</span>
+                <span>Status</span>
               </div>
               {issue?.state_id && (
                 <DropdownComponent
@@ -96,7 +96,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
               <MemberDropdown
                 value={issue?.assignee_ids ?? []}
                 onChange={(val) =>
-                  issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { assignee_ids: val })
+                  issue?.id && void issueOperations.update(workspaceSlug, projectId, issue?.id, { assignee_ids: val })
                 }
                 disabled={!isEditable}
                 projectId={projectId?.toString() ?? ""}
@@ -124,7 +124,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
               <PriorityDropdown
                 value={issue?.priority}
                 onChange={(val) =>
-                  issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { priority: val })
+                  issue?.id && void issueOperations.update(workspaceSlug, projectId, issue?.id, { priority: val })
                 }
                 disabled={!isEditable}
                 buttonVariant="border-with-text"
@@ -148,7 +148,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                 value={issue.target_date || null}
                 onChange={(val) =>
                   issue?.id &&
-                  issueOperations.update(workspaceSlug, projectId, issue?.id, {
+                  void issueOperations.update(workspaceSlug, projectId, issue?.id, {
                     target_date: val ? renderFormattedPayloadDate(val) : null,
                   })
                 }
@@ -177,7 +177,7 @@ export const InboxIssueContentProperties = observer(function InboxIssueContentPr
                     disabled={!isEditable}
                     isInboxIssue
                     onLabelUpdate={(val: string[]) =>
-                      issue?.id && issueOperations.update(workspaceSlug, projectId, issue?.id, { label_ids: val })
+                      issue?.id && void issueOperations.update(workspaceSlug, projectId, issue?.id, { label_ids: val })
                     }
                   />
                 )}

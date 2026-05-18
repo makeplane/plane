@@ -3,6 +3,7 @@
 # See the LICENSE file for details.
 
 import copy
+from datetime import timedelta
 
 from django.db import models
 from django.db.models import Q
@@ -157,6 +158,9 @@ class IssueFilterSet(BaseFilterSet):
     subscriber_id = filters.UUIDFilter(method="filter_subscriber_id")
     subscriber_id__in = UUIDInFilter(method="filter_subscriber_id_in", lookup_expr="in")
 
+    progress_tracking = filters.CharFilter(method="filter_progress_tracking")
+    progress_tracking__in = CharInFilter(method="filter_progress_tracking_in", lookup_expr="in")
+
     # "today" filter: resolves to current date at query time
     start_date__today = filters.BooleanFilter(method="filter_start_date_today")
     target_date__today = filters.BooleanFilter(method="filter_target_date_today")
@@ -284,6 +288,32 @@ class IssueFilterSet(BaseFilterSet):
         if value:
             return Q(target_date=timezone.now().date())
         return Q()
+
+    def _progress_tracking_q(self, values):
+        """Filter by the same target-date buckets used by the progress tracking column."""
+        from django.utils import timezone
+
+        today = timezone.now().date()
+        tomorrow = today + timedelta(days=1)
+        progress_filter = Q()
+
+        for value in values:
+            if value == "off_track":
+                progress_filter |= Q(target_date__lt=today)
+            elif value == "due_today":
+                progress_filter |= Q(target_date=today)
+            elif value == "at_risk":
+                progress_filter |= Q(target_date=tomorrow)
+            elif value == "on_track":
+                progress_filter |= Q(target_date__gt=tomorrow)
+
+        return progress_filter
+
+    def filter_progress_tracking(self, queryset, name, value):
+        return self._progress_tracking_q([value])
+
+    def filter_progress_tracking_in(self, queryset, name, value):
+        return self._progress_tracking_q(value)
 
     def filter_created_at_today(self, queryset, name, value):
         """Filter by created_at date = today (resolved at query time)"""

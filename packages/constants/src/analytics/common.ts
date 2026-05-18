@@ -234,7 +234,7 @@ export const ANALYTICS_X_AXIS_VALUES: { value: ChartXAxisProperty; label: string
   },
   {
     value: ChartXAxisProperty.STATE_GROUPS,
-    label: "State group",
+    label: "Status group",
   },
   {
     value: ChartXAxisProperty.PRIORITY,

@@ -102,7 +102,7 @@ const LabelPill = observer(function LabelPill({ labelId, workspaceSlug }: { labe
   const { workspaceLabels, fetchWorkspaceLabels } = useLabel();
 
   useEffect(() => {
-    if (!workspaceLabels) fetchWorkspaceLabels(workspaceSlug);
+    if (!workspaceLabels) void fetchWorkspaceLabels(workspaceSlug);
   }, [fetchWorkspaceLabels, workspaceLabels, workspaceSlug]);
 
   return (
@@ -658,7 +658,7 @@ const activityDetails: {
   state: {
     message: (activity, showIssue) => (
       <>
-        set the state to <span className="font-medium text-primary break-all">{activity.new_value}</span>
+        set the status to <span className="font-medium text-primary break-all">{activity.new_value}</span>
         {showIssue && (
           <>
             {" "}

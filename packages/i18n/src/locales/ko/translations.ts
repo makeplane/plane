@@ -424,7 +424,6 @@ export default {
   capacity_under_capacity: "보유 용량 확보",
   capacity_member: "멤버",
   capacity_issues: "작업 항목",
-  capacity_no_data: "이 기간에 해당되는 용량 데이터가 없습니다.",
   capacity_category_distribution: "카테고리별 분포",
   capacity_time_burndown: "시간 번다운",
   capacity_items: "항목",
@@ -437,7 +436,8 @@ export default {
   timesheet_save_success: "타임시트 저장됨",
   timesheet_no_issues: "이번 주 할당된 이슈 없음",
   timesheet_add_issue: "이슈 추가",
-  timesheet_cross_workspaces: "Cross Workspaces",
+  timesheet_cross_workspaces: "Cross teams & workspaces",
+  overall_management: "Overall Management",
   timesheet_load_error: "타임시트 데이터를 불러오지 못했습니다.",
   analytics_timesheet_load_error: "분석 데이터를 불러오지 못했습니다.",
   analytics_timesheet_no_data: "이번 주 시간 기록이 없습니다.",
@@ -1154,7 +1154,7 @@ export default {
     },
     states: {
       active: "활성",
-      backlog: "Draft",
+      backlog: "Backlog",
     },
     comments: {
       placeholder: "댓글 추가",
@@ -1580,7 +1580,7 @@ export default {
       issue_delete: "작업 항목 삭제 실패",
     },
     state: {
-      backlog: "Draft",
+      backlog: "Backlog",
       unstarted: "시작되지 않음",
       started: "시작됨",
       completed: "완료됨",
@@ -2008,7 +2008,7 @@ export default {
       today_work_items: {
         title: "오늘의 작업 항목",
         empty: "오늘의 활성 작업 항목이 없습니다.",
-        cross_workspaces: "교차 워크스페이스",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "작업 항목",
           department: "부서",
@@ -2027,7 +2027,7 @@ export default {
       overdue_work_items: {
         title: "기한 초과 작업 항목",
         empty: "기한 초과 작업 항목이 없습니다.",
-        cross_workspaces: "교차 워크스페이스",
+        cross_workspaces: "Cross teams & workspaces",
         columns: {
           work_item: "작업 항목",
           department: "부서",
@@ -2055,9 +2055,16 @@ export default {
     },
     tabs: {
       summary: "요약",
+      summary_description:
+        "All work items were assigned to you and need to be completed (including cross teams & workspaces)",
       assigned: "할당됨",
+      assigned_description:
+        "All work items were assigned to you, including both completed and outstanding items (excluding cross teams & workspaces)",
       created: "생성됨",
+      created_description: "All work items that you have created (excluding cross teams & workspaces)",
       subscribed: "구독됨",
+      subscribed_description:
+        "All work items that you are monitoring and have subscribed (excluding cross teams & workspaces)",
       activity: "활동",
     },
     empty_state: {
@@ -2117,7 +2124,7 @@ export default {
     },
     states: {
       heading: "States",
-      description: "Define and customize workflow states to track the progress of your work items.",
+      description: "Define and customize workflow statuses to track the progress of your work items.",
       describe_this_state_for_your_members: "멤버를 위해 이 상태를 설명하세요.",
       empty_state: {
         title: "{groupKey} 그룹에 사용할 수 있는 상태 없음",
@@ -2968,7 +2975,7 @@ export default {
   },
   project_modules: {
     status: {
-      backlog: "Draft",
+      backlog: "Backlog",
       planned: "계획됨",
       in_progress: "진행 중",
       paused: "일시 중지됨",
@@ -3607,7 +3614,7 @@ export default {
     queued_message: "We'll email you when ready",
     failed_title: "Export failed",
     failed_message: "Please try again",
-    cross_workspace_disabled: "Not available in cross-workspace mode",
+    cross_workspace_disabled: "Not available in Cross teams & workspaces mode",
     already_queued: "An export is already queued. Please wait 30 seconds.",
     no_data: "No data to export for the selected filters",
     select_members_title: "내보낼 멤버 선택",

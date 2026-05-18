@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { sortBy } from "lodash-es";
 import { observer } from "mobx-react";
 // ui
@@ -53,7 +53,7 @@ export const FilterProjects = observer(function FilterProjects(props: Props) {
   return (
     <>
       <FilterHeader
-        title={`Project${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
+        title={`Team/Project${appliedFiltersCount > 0 ? ` (${appliedFiltersCount})` : ""}`}
         isPreviewEnabled={previewEnabled}
         handleIsPreviewEnabled={() => setPreviewEnabled(!previewEnabled)}
       />

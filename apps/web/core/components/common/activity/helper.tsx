@@ -150,7 +150,7 @@ export const messages = (activity: TProjectActivity): { message: string | ReactN
       return {
         message: (
           <>
-            set the state to <span className="font-medium text-primary">{newValue || "none"}</span>
+            set the status to <span className="font-medium text-primary">{newValue || "none"}</span>
           </>
         ),
       };
