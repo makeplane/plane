@@ -94,7 +94,7 @@ export class HoIssueStore implements IHoIssueStore {
     progress: [],
   };
   isLoading = false;
-  isCategoryLoading = false;
+  isCategoryLoading = true;
   isWorkspacesLoading = false;
   isFetchingIssues = false;
   isFilterOptionsLoading = false;
