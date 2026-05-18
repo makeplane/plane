@@ -14,7 +14,7 @@ import { observer } from "mobx-react";
 import { useParams, useRouter } from "next/navigation";
 import { createRoot } from "react-dom/client";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
-import { Settings, Share2, LogOut, MoreHorizontal } from "lucide-react";
+import { Settings, Share2, LogOut, MoreHorizontal, Copy } from "lucide-react";
 import { Disclosure, Transition } from "@headlessui/react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel, MEMBER_TRACKER_ELEMENTS } from "@plane/constants";
@@ -31,6 +31,8 @@ import { DEFAULT_TAB_KEY, getTabUrl } from "@/components/navigation/tab-navigati
 import { useTabPreferences } from "@/components/navigation/use-tab-preferences";
 import { LeaveProjectModal } from "@/components/project/leave-project-modal";
 import { PublishProjectModal } from "@/components/project/publish-project/modal";
+// plane-web imports
+import { CopyToWorkspaceModal } from "@/plane-web/components/projects/copy-to-workspace-modal";
 // hooks
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
@@ -82,6 +84,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
   // states
   const [leaveProjectModalOpen, setLeaveProjectModal] = useState(false);
   const [publishModalOpen, setPublishModal] = useState(false);
+  const [copyModalOpen, setCopyModal] = useState(false);
   const [isMenuActive, setIsMenuActive] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const isProjectListOpen = getIsProjectListOpen(projectId);
@@ -280,6 +283,14 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => setPublishModal(false)} />
       <LeaveProjectModal project={project} isOpen={leaveProjectModalOpen} onClose={() => setLeaveProjectModal(false)} />
+      <CopyToWorkspaceModal
+        isOpen={copyModalOpen}
+        onClose={() => setCopyModal(false)}
+        workspaceSlug={workspaceSlug.toString()}
+        projectId={projectId}
+        projectName={project?.name ?? ""}
+        projectIdentifier={project?.identifier ?? ""}
+      />
       <Disclosure key={`${project.id}_${URLProjectId}`} defaultOpen={isProjectListOpen} as="div">
         <div
           id={`sidebar-${projectId}-${projectListType}`}
@@ -409,6 +420,14 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                       <span>{t("copy_link")}</span>
                     </span>
                   </CustomMenu.MenuItem>
+                  {isAdmin && (
+                    <CustomMenu.MenuItem onClick={() => setCopyModal(true)}>
+                      <span className="flex items-center justify-start gap-2">
+                        <Copy className="h-3.5 w-3.5 stroke-[1.5]" />
+                        <span>{t("copy_project.menu_item")}</span>
+                      </span>
+                    </CustomMenu.MenuItem>
+                  )}
                   {isAuthorized && (
                     <CustomMenu.MenuItem
                       onClick={() => {

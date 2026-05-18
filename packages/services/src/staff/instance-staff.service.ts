@@ -116,9 +116,16 @@ export class InstanceStaffService extends APIService {
       });
   }
 
-  async transfer(id: string, departmentId: string): Promise<IInstanceStaff> {
-    return this.post(`/api/instances/staff/${id}/transfer/`, { department_id: departmentId })
-      .then((res) => res?.data as IInstanceStaff)
+  async transfer(
+    id: string,
+    departmentId: string,
+    confirmWorkspaceTransfer = false
+  ): Promise<IInstanceStaff | { requires_workspace_transfer: true; target_workspace_name: string }> {
+    return this.post(`/api/instances/staff/${id}/transfer/`, {
+      department_id: departmentId,
+      confirm_workspace_transfer: confirmWorkspaceTransfer,
+    })
+      .then((res) => res?.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

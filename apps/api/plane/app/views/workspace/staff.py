@@ -262,7 +262,7 @@ class StaffTransferEndpoint(BaseAPIView):
 
         with transaction.atomic():
             # Lock staff row to prevent race conditions
-            staff = StaffProfile.objects.select_for_update().filter(
+            staff = StaffProfile.objects.select_for_update(of=("self",)).filter(
                 workspace__slug=slug, pk=pk, deleted_at__isnull=True
             ).select_related("department", "user").first()
             if not staff:

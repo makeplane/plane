@@ -107,7 +107,7 @@ class IssueWorkLogViewSet(BaseViewSet):
             )
             if not ok:
                 return Response(
-                    {"error": f"Daily time limit exceeded. You have {remaining} minutes remaining for this date."},
+                    {"error": f"Daily time limit exceeded. Maximum logged time is 12 hours per day.You have {remaining} minutes remaining for this date."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             serializer.save(

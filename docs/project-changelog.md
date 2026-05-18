@@ -2,7 +2,13 @@
 
 All notable changes to the Plane project are documented here. This file tracks major features, performance improvements, bug fixes, and breaking changes.
 
-## [Unreleased] — 2026-05-05
+## [Unreleased] — 2026-05-13
+
+### New Features
+
+- **Copy Project to Another Workspace**: Workspace admins can now deep-copy entire projects to other workspaces they administer. Async copy via Celery maintains all states, labels, estimates, modules, cycles, issues (with comments and worklogs), and project members. Sub-issue parent links are preserved. Frontend polls copy status with 3s interval; identifier conflicts handled inline. All strings via i18n (en/ko/vi).
+
+## [2026-05-05] — Previous Release
 
 ### Performance
 
