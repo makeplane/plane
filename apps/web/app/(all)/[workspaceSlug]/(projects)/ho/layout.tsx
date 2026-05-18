@@ -6,7 +6,7 @@ import { HoViewTabs } from "@/plane-web/components/ho/ho-view-tabs";
 export default function HoLayout() {
   return (
     <>
-      <AppHeader header={<h2 className="text-h5-semibold">HO</h2>} />
+      <AppHeader header={<h2 className="text-h5-semibold">Overall Management</h2>} />
       <HoViewTabs />
       <ContentWrapper>
         <Outlet />
