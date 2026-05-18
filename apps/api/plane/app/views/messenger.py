@@ -7,14 +7,15 @@ import os
 import uuid
 
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
 from django.db import transaction
 from django.db.models import Q, Count, Max
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponseRedirect
 from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.response import Response
+
+from plane.settings.storage import S3Storage
 
 from plane.db.models import (
     ChatMessenger,
@@ -484,25 +485,34 @@ class MessageListCreateAPIEndpoint(BaseAPIView):
                 updated_by=request.user,
             )
 
-            # Handle file uploads
-            messenger_storage = FileSystemStorage(location=os.path.join(settings.MEDIA_ROOT, "messenger"))
+            # Handle file uploads — store in S3/MinIO so files survive container rebuilds
+            s3 = S3Storage(request=request)
+            use_minio = os.environ.get("USE_MINIO") == "1"
+            storage_provider = "minio" if use_minio else "s3"
             max_size = getattr(settings, "FILE_SIZE_LIMIT", 2 * 1024 * 1024 * 1024)
             for key, uploaded_file in request.FILES.items():
                 if uploaded_file.size > max_size:
                     continue
-                ext = uploaded_file.name.split(".")[-1].lower() if "." in uploaded_file.name else ""
-                relative_path = f"{chat_id}/{message.id}/{uuid.uuid4()}_{uploaded_file.name}"
-                saved_path = messenger_storage.save(relative_path, uploaded_file)
-                storage_key = f"messenger/{saved_path}"
+                safe_name = uploaded_file.name.replace("/", "_").replace("\\", "_")
+                storage_key = f"messenger/{chat_id}/{message.id}/{uuid.uuid4()}_{safe_name}"
+                content_type = uploaded_file.content_type or "application/octet-stream"
+                uploaded_file.seek(0)
+                upload_ok = s3.upload_file(
+                    uploaded_file,
+                    object_name=storage_key,
+                    content_type=content_type,
+                )
+                if not upload_ok:
+                    continue
                 public_url = f"/api/messenger/files/{storage_key}"
 
                 MessageAttachmentMessenger.objects.create(
                     message=message,
                     uploader=request.user,
                     original_name=uploaded_file.name,
-                    mime_type=uploaded_file.content_type or "application/octet-stream",
+                    mime_type=content_type,
                     size_bytes=uploaded_file.size,
-                    storage_provider="local",
+                    storage_provider=storage_provider,
                     storage_key=storage_key,
                     public_url=public_url,
                 )
@@ -1187,6 +1197,22 @@ class MessengerFileDownloadAPIEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
+        # New uploads live in S3/MinIO — redirect to a presigned URL.
+        if attachment.storage_provider in ("s3", "minio"):
+            s3 = S3Storage(request=request)
+            presigned_url = s3.generate_presigned_url(
+                attachment.storage_key,
+                disposition="inline",
+                filename=attachment.original_name,
+            )
+            if not presigned_url:
+                return Response(
+                    {"error": "Failed to generate download URL"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+            return HttpResponseRedirect(presigned_url)
+
+        # Backwards compat: legacy "local" attachments stored on disk.
         absolute_path = os.path.join(settings.MEDIA_ROOT, file_path)
         if not os.path.exists(absolute_path):
             return Response(
