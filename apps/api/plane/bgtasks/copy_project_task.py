@@ -11,11 +11,9 @@ from django.db import transaction
 
 from plane.db.models import (
     Issue,
-    IssueLabel,
     Project,
     ProjectCopyJob,
     ProjectIdentifier,
-    State,
 )
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.copy_project_helpers import (

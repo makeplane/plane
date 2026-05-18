@@ -81,7 +81,10 @@ class ProjectCopyView(BaseAPIView):
             name=identifier, workspace=target_ws, deleted_at__isnull=True
         ).exists():
             return Response(
-                {"error": "identifier_conflict", "message": f"Identifier '{identifier}' already exists in the target workspace."},
+                {
+                    "error": "identifier_conflict",
+                    "message": f"Identifier '{identifier}' already exists in the target workspace.",
+                },
                 status=status.HTTP_409_CONFLICT,
             )
 
