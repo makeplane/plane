@@ -39,7 +39,9 @@ const extractApiErrorMessage = (error: any, fallback: string): string => {
   if (!error || typeof error !== "object") return fallback;
   if (typeof error.error === "string") return error.error;
   if (typeof error.detail === "string") return error.detail;
-  const msgs = Object.values(error).flat().filter((v): v is string => typeof v === "string");
+  const msgs = Object.values(error)
+    .flat()
+    .filter((v): v is string => typeof v === "string");
   return msgs[0] ?? fallback;
 };
 

@@ -70,7 +70,7 @@ export const CopyToWorkspaceModal = observer(function CopyToWorkspaceModal(props
     if (store.activeJob?.status === "completed") {
       handleClose();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [store.activeJob?.status]);
 
   const handleSubmit = async () => {
@@ -112,7 +112,9 @@ export const CopyToWorkspaceModal = observer(function CopyToWorkspaceModal(props
           <div className="space-y-4">
             {/* Target workspace dropdown */}
             <div className="space-y-1">
-              <label className="block text-13 font-medium text-primary">{t("copy_project.target_workspace_label")}</label>
+              <label className="block text-13 font-medium text-primary">
+                {t("copy_project.target_workspace_label")}
+              </label>
               <CustomMenu
                 label={
                   selectedWorkspaceSlug
