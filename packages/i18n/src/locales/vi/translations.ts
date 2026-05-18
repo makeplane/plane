@@ -1546,7 +1546,7 @@ export default {
     },
     created_vs_resolved: "Đã tạo vs Đã giải quyết",
     customized_insights: "Thông tin chi tiết tùy chỉnh",
-    backlog_work_items: "Draft {entity}",
+    backlog_work_items: "Backlog {entity}",
     active_projects: "Nhóm/Dự án đang hoạt động",
     trend_on_charts: "Xu hướng trên biểu đồ",
     all_projects: "Tất cả nhóm/dự án",

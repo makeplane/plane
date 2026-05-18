@@ -1528,7 +1528,7 @@ export default {
     },
     created_vs_resolved: "생성됨 vs 해결됨",
     customized_insights: "맞춤형 인사이트",
-    backlog_work_items: "Draft {entity}",
+    backlog_work_items: "Backlog {entity}",
     active_projects: "활성 팀/프로젝트",
     trend_on_charts: "차트의 추세",
     completed: "완료됨",

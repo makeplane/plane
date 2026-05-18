@@ -1511,7 +1511,7 @@ export default {
     },
     total: "Total {entity}",
     started_work_items: "Started {entity}",
-    backlog_work_items: "Draft {entity}",
+    backlog_work_items: "Backlog {entity}",
     un_started_work_items: "Unstarted {entity}",
     completed_work_items: "Completed {entity}",
     cancelled_work_items: "Cancelled {entity}",
