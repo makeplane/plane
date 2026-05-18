@@ -117,7 +117,7 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
 
   // Fallback 1: Static extension lookup for whitelisted plain-text files
   const extension = file.name.split(".").pop()?.toLowerCase() || "";
-  if (extension in PLAIN_TEXT_MIME_MAP) {
+  if (Object.hasOwn(PLAIN_TEXT_MIME_MAP, extension)) {
     return PLAIN_TEXT_MIME_MAP[extension];
   }
 
