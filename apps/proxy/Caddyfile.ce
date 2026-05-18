@@ -36,29 +36,7 @@
     import plane_proxy
 }
 
-# --- Mail stack integration -----------------------------------------------
-# Stub site for mail.<MAIL_DOMAIN>: its sole purpose is to make Caddy issue
-# a Let's Encrypt certificate. The cert is then mounted read-only from the
-# caddy-data volume into the Postfix/Dovecot containers in mail-stack/.
-mail.{$MAIL_DOMAIN} {
-    respond /.well-known/* "" 404
-    redir https://webmail.{$MAIL_DOMAIN}{uri} permanent
-}
-
-# Roundcube webmail. Reached via the shared plane_default Docker network.
-webmail.{$MAIL_DOMAIN} {
-    reverse_proxy roundcube:80
-}
-
-# --- Forgejo git hosting --------------------------------------------------
-# Reached via the shared plane_default Docker network. SSH for git uses a
-# separate host port (2222) and bypasses Caddy entirely.
-git.{$GIT_DOMAIN} {
-    request_body {
-        max_size {$FILE_SIZE_LIMIT}
-    }
-
-    reverse_proxy forgejo:3000 {
-        header_up X-Real-IP {remote_host}
-    }
-}
+# Optional add-on stacks (mail, forgejo). The entrypoint drops snippet files
+# into /etc/caddy/conf.d only when MAIL_DOMAIN / GIT_DOMAIN are set, so this
+# import is a no-op when those features are disabled.
+import /etc/caddy/conf.d/*.caddy

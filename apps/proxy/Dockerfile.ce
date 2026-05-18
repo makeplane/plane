@@ -1,3 +1,9 @@
 FROM caddy:2.10.0-alpine
 RUN apk add --no-cache nss-tools bash curl
 COPY Caddyfile.ce /etc/caddy/Caddyfile
+COPY Caddyfile.mail /etc/caddy/Caddyfile.mail
+COPY Caddyfile.git /etc/caddy/Caddyfile.git
+COPY docker-entrypoint.sh /usr/local/bin/plane-proxy-entrypoint.sh
+RUN chmod +x /usr/local/bin/plane-proxy-entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/plane-proxy-entrypoint.sh"]
+CMD []
