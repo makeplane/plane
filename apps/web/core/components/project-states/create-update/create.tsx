@@ -34,12 +34,12 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
     if (!groupKey) return { status: "error" };
 
     try {
-      const response = await createStateCallback({ ...formData, group: groupKey });
+      await createStateCallback({ ...formData, group: groupKey });
 
       setToast({
         type: TOAST_TYPE.SUCCESS,
         title: "Success!",
-        message: "State created successfully.",
+        message: "Status created successfully.",
       });
       handleClose();
       return { status: "success" };
@@ -49,14 +49,14 @@ export const StateCreate = observer(function StateCreate(props: TStateCreate) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "State with that name already exists. Please try again with another name.",
+          message: "Status with that name already exists. Please try again with another name.",
         });
         return { status: "already_exists" };
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: errorStatus.data.error ?? "State could not be created. Please try again.",
+          message: errorStatus.data.error ?? "Status could not be created. Please try again.",
         });
         return { status: "error" };
       }

@@ -21,6 +21,7 @@ import { StateDropdown } from "@/components/dropdowns/state/dropdown";
 // hooks
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { IssueWorklogProperty } from "@/plane-web/components/issues/worklog/property";
 
 type Props = {
   workspaceSlug: string;
@@ -51,7 +52,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
 
   const handleStartDate = (date: Date | null) => {
     if (issue.project_id) {
-      updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+      void updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
         start_date: date ? renderFormattedPayloadDate(date) : null,
       });
     }
@@ -59,7 +60,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
 
   const handleTargetDate = (date: Date | null) => {
     if (issue.project_id) {
-      updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+      void updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
         target_date: date ? renderFormattedPayloadDate(date) : null,
       });
     }
@@ -88,19 +89,19 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
           <StateDropdown
             value={issue.state_id}
             projectId={issue.project_id ?? undefined}
-            onChange={(val) =>
-              issue.project_id &&
-              updateSubIssue(
-                workspaceSlug,
-                issue.project_id,
-                parentIssueId,
-                issueId,
-                {
-                  state_id: val,
-                },
-                { ...issue }
-              )
-            }
+            onChange={(val) => {
+              if (issue.project_id)
+                void updateSubIssue(
+                  workspaceSlug,
+                  issue.project_id,
+                  parentIssueId,
+                  issueId,
+                  {
+                    state_id: val,
+                  },
+                  { ...issue }
+                );
+            }}
             disabled={!canEdit}
             buttonVariant="transparent-without-text"
             buttonClassName="hover:bg-transparent px-0"
@@ -114,12 +115,12 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
         <div className="h-5 flex-shrink-0">
           <PriorityDropdown
             value={issue.priority}
-            onChange={(val) =>
-              issue.project_id &&
-              updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
-                priority: val,
-              })
-            }
+            onChange={(val) => {
+              if (issue.project_id)
+                void updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+                  priority: val,
+                });
+            }}
             disabled={!canEdit}
             buttonVariant="border-without-text"
             showTooltip
@@ -133,7 +134,13 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
         displayPropertyKey={["start_date", "due_date"]}
         shouldRenderProperty={() => isDateRangeEnabled}
       >
-        <div className="h-5" onFocus={handleEventPropagation} onClick={handleEventPropagation}>
+        <div
+          className="h-5"
+          role="presentation"
+          onFocus={handleEventPropagation}
+          onClick={handleEventPropagation}
+          onKeyDown={handleEventPropagation}
+        >
           <DateRangeDropdown
             value={{
               from: getDate(issue.start_date) || undefined,
@@ -207,18 +214,31 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
           <MemberDropdown
             value={issue.assignee_ids}
             projectId={issue.project_id ?? undefined}
-            onChange={(val) =>
-              issue.project_id &&
-              updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
-                assignee_ids: val,
-              })
-            }
+            onChange={(val) => {
+              if (issue.project_id)
+                void updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+                  assignee_ids: val,
+                });
+            }}
             disabled={!canEdit}
             multiple
             buttonVariant={(issue?.assignee_ids || []).length > 0 ? "transparent-without-text" : "border-without-text"}
             buttonClassName={(issue?.assignee_ids || []).length > 0 ? "hover:bg-transparent px-0" : ""}
           />
         </div>
+      </WithDisplayPropertiesHOC>
+
+      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="total_log_time">
+        {issue.project_id && (
+          <div className="h-5 flex-shrink-0">
+            <IssueWorklogProperty
+              workspaceSlug={workspaceSlug}
+              projectId={issue.project_id}
+              issueId={issueId}
+              disabled={!canEdit}
+            />
+          </div>
+        )}
       </WithDisplayPropertiesHOC>
     </div>
   );

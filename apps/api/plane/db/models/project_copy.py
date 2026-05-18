@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-import uuid
-
 from django.conf import settings
 from django.db import models
 

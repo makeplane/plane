@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@plane/utils";
 // helpers
 import { getCoverImageDisplayURL, DEFAULT_COVER_IMAGE_URL } from "@/helpers/cover-image.helper";
@@ -40,19 +40,14 @@ export function CoverImage(props: TCoverImageProps) {
     onError,
     ...restProps
   } = props;
-  const [hasError, setHasError] = useState(false);
-
-  // Reset error state when src changes so new URLs get a fresh attempt
-  useEffect(() => {
-    setHasError(false);
-  }, [src]);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
 
   // Show loading skeleton when src is undefined/null and we don't want to show default
   if (!src && !showDefaultWhenEmpty) {
     return <div className={cn("bg-layer-2 animate-pulse", className)} />;
   }
 
-  const displayUrl = hasError ? fallbackUrl : getCoverImageDisplayURL(src, fallbackUrl);
+  const displayUrl = failedSrc === src ? fallbackUrl : getCoverImageDisplayURL(src, fallbackUrl);
 
   return (
     <img
@@ -60,7 +55,7 @@ export function CoverImage(props: TCoverImageProps) {
       alt={alt}
       className={cn("object-cover", className)}
       onError={(e) => {
-        setHasError(true);
+        setFailedSrc(src ?? null);
         onError?.(e);
       }}
       {...restProps}

@@ -188,6 +188,7 @@ export const SUB_ISSUES_DISPLAY_PROPERTIES_KEYS: (keyof IIssueDisplayProperties)
   "due_date",
   "priority",
   "state",
+  "total_log_time",
 ];
 
 export const ISSUE_DISPLAY_PROPERTIES: {

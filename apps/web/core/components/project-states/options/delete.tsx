@@ -55,7 +55,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message: "State could not be deleted. Please try again.",
+          message: "Status could not be deleted. Please try again.",
         });
       }
       setIsDelete(false);
@@ -89,7 +89,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
       >
         <Tooltip
           tooltipContent={
-            state.default ? "Cannot delete the default state." : totalStates === 1 ? `Cannot have an empty group.` : ``
+            state.default ? "Cannot delete the default status." : totalStates === 1 ? `Cannot have an empty group.` : ``
           }
           isMobile={isMobile}
           disabled={!isDeleteDisabled}

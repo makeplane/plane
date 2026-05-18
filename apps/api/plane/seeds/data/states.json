@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "name": "Draft",
+    "name": "Backlog",
     "color": "#60646C",
     "sequence": 10000,
     "group": "backlog",

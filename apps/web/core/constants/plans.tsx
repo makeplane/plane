@@ -341,7 +341,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
         },
       },
       {
-        title: "State Of Projects",
+        title: "Status Of Projects",
         description:
           "See all projects laid across states that highlight\nthose that need attention and those on track.",
         cloud: {
