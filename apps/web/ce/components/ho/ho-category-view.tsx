@@ -54,7 +54,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
-  }, [store, search]);
+  }, [store.categorySummary, store.selectedDepartmentIds, store.accessibleWorkspaces, store.filters, search]);
 
   const sortedData = useMemo(() => {
     const data = [...filtered];
