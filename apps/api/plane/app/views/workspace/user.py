@@ -291,6 +291,14 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
         user_data = target_workspace_member.member
         projects = []
         if requesting_workspace_member.role >= 15:
+            visible_project_issue_filter = Q(
+                project_issue__archived_at__isnull=True,
+                project_issue__is_draft=False,
+            )
+            active_project_assignment_filter = Q(
+                project_issue__issue_assignee__assignee_id=user_id,
+                project_issue__issue_assignee__deleted_at__isnull=True,
+            )
             projects = (
                 Project.objects.filter(
                     workspace__slug=slug,
@@ -301,47 +309,44 @@ class WorkspaceUserProfileEndpoint(BaseAPIView):
                 .annotate(
                     created_issues=Count(
                         "project_issue",
-                        filter=Q(
+                        filter=visible_project_issue_filter
+                        & Q(
                             project_issue__created_by_id=user_id,
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
                         ),
+                        distinct=True,
                     )
                 )
                 .annotate(
                     assigned_issues=Count(
                         "project_issue",
-                        filter=Q(
-                            project_issue__assignees__in=[user_id],
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
-                        ),
+                        filter=visible_project_issue_filter & active_project_assignment_filter,
+                        distinct=True,
                     )
                 )
                 .annotate(
                     completed_issues=Count(
                         "project_issue",
-                        filter=Q(
+                        filter=visible_project_issue_filter
+                        & active_project_assignment_filter
+                        & Q(
                             project_issue__completed_at__isnull=False,
-                            project_issue__assignees__in=[user_id],
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
                         ),
+                        distinct=True,
                     )
                 )
                 .annotate(
                     pending_issues=Count(
                         "project_issue",
-                        filter=Q(
+                        filter=visible_project_issue_filter
+                        & active_project_assignment_filter
+                        & Q(
                             project_issue__state__group__in=[
                                 "backlog",
                                 "unstarted",
                                 "started",
                             ],
-                            project_issue__assignees__in=[user_id],
-                            project_issue__archived_at__isnull=True,
-                            project_issue__is_draft=False,
                         ),
+                        distinct=True,
                     )
                 )
                 .values(
