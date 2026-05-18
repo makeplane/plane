@@ -3307,6 +3307,7 @@ export default {
     total_estimated: "Total Estimated",
     variance: "Variance",
     member: "Member",
+    unknown_member: "Unknown member",
     view_total: "View",
     total: "Total",
     back: "Back",

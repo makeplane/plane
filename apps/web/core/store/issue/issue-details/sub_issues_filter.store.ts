@@ -28,6 +28,7 @@ export const DEFAULT_DISPLAY_PROPERTIES = {
   labels: true,
   priority: true,
   state: true,
+  total_log_time: true,
 };
 export interface IWorkItemSubIssueFiltersStore {
   subIssueFilters: Record<string, Partial<ISubWorkItemFilters>>;

@@ -3320,6 +3320,7 @@ export default {
     total_estimated: "Tổng ước tính",
     variance: "Chênh lệch",
     member: "Thành viên",
+    unknown_member: "Thành viên không xác định",
     view_total: "Xem",
     total: "Tổng",
     back: "Quay lại",

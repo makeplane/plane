@@ -3270,6 +3270,7 @@ export default {
     total_estimated: "총 예상",
     variance: "차이",
     member: "멤버",
+    unknown_member: "알 수 없는 멤버",
     view_total: "보기",
     total: "합계",
     back: "뒤로",
