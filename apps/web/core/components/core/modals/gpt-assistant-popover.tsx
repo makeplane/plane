@@ -153,6 +153,8 @@ export function GptAssistantPopover(props: Props) {
 
   useEffect(() => {
     const handleEnterKeyPress = (event: KeyboardEvent) => {
+      // Prevent IME composition Enter from triggering submit
+      if (event.isComposing || event.keyCode === 229) return;
       if (event.key === "Enter" && !event.shiftKey) {
         event.preventDefault();
         handleSubmit(handleAIResponse)();
