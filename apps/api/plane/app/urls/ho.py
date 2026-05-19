@@ -11,8 +11,10 @@ from plane.app.views.ho import (
     HoAccessibleWorkspacesView,
     HoFilterOptionsView,
 )
+from plane.app.views.ho_export import HoExportView
 
 urlpatterns = [
+    path("ho/exports/", HoExportView.as_view(), name="ho-export"),
     path("ho/issues/", HoIssueListView.as_view(), name="ho-issues"),
     path("ho/issues/<str:issue_id>/worklogs/", HoIssueWorklogBreakdownView.as_view(), name="ho-issue-worklogs"),
     path(

@@ -92,6 +92,21 @@ export type THoWorklogByUserResponse = {
   results: THoWorklogByUserEntry[];
 };
 
+export type THoExportJobStatus = "queued" | "processing" | "ready" | "failed" | "expired";
+
+export type THoExportJob = {
+  id: string;
+  status: THoExportJobStatus;
+  filters: Record<string, string>;
+  file_url: string | null;
+  file_size: number;
+  row_count: number;
+  error_message: string;
+  expires_at: string | null;
+  completed_at: string | null;
+  created_at: string;
+};
+
 export type THoFilterOptions = {
   states: string[];
   main_task_categories: string[];
@@ -157,6 +172,22 @@ export class HoIssueService extends APIService {
     const query = new URLSearchParams(params).toString();
     return this.get(`/api/ho/filter-options/${query ? `?${query}` : ""}`)
       .then((res: { data: THoFilterOptions }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async listMyExports(): Promise<THoExportJob[]> {
+    return this.get("/api/ho/exports/")
+      .then((res: { data: THoExportJob[] }) => res.data)
+      .catch((err: { response?: { data: unknown } }) => {
+        throw err?.response?.data;
+      });
+  }
+
+  async exportDatasheet(filters: Record<string, string>): Promise<{ job_id: string; message: string }> {
+    return this.post("/api/ho/exports/", filters)
+      .then((res: { data: { job_id: string; message: string } }) => res.data)
       .catch((err: { response?: { data: unknown } }) => {
         throw err?.response?.data;
       });

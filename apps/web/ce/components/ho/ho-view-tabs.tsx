@@ -12,6 +12,7 @@ const HO_VIEW_TABS = [
   { key: "department", label: "Department" },
   { key: "datasheet", label: "Datasheet" },
   { key: "category", label: "Category" },
+  { key: "exports", label: "Exports" },
 ] as const;
 
 type THoViewKey = (typeof HO_VIEW_TABS)[number]["key"];
