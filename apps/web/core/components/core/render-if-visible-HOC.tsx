@@ -7,6 +7,7 @@
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
+import { runIdleTask } from "@/lib/idle-task";
 
 type Props = {
   defaultHeight?: string;
@@ -19,16 +20,8 @@ type Props = {
   placeholderChildren?: ReactNode;
   defaultValue?: boolean;
   shouldRecordHeights?: boolean;
-  useIdletime?: boolean;
+  useIdleTime?: boolean;
   forceRender?: boolean;
-};
-
-const runIdleTask = (callback: () => void) => {
-  if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {
-    window.requestIdleCallback(callback, { timeout: 300 });
-    return;
-  }
-  globalThis.setTimeout(callback, 0);
 };
 
 function RenderIfVisible(props: Props) {
@@ -44,12 +37,14 @@ function RenderIfVisible(props: Props) {
     //placeholder children
     placeholderChildren = null, //placeholder children
     defaultValue = false,
-    useIdletime = false,
+    useIdleTime = false,
     forceRender = false,
   } = props;
   const [shouldVisible, setShouldVisible] = useState<boolean>(defaultValue);
   const placeholderHeight = useRef<string>(defaultHeight);
   const intersectionRef = useRef<HTMLElement | null>(null);
+  const visibilityIdleTaskRef = useRef<ReturnType<typeof runIdleTask> | null>(null);
+  const heightIdleTaskRef = useRef<ReturnType<typeof runIdleTask> | null>(null);
 
   const isVisible = shouldVisible || forceRender;
 
@@ -60,8 +55,11 @@ function RenderIfVisible(props: Props) {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          if (typeof window !== "undefined" && useIdletime) {
-            runIdleTask(() => setShouldVisible(entries[entries.length - 1].isIntersecting));
+          if (typeof window !== "undefined" && useIdleTime) {
+            visibilityIdleTaskRef.current?.cancel();
+            visibilityIdleTaskRef.current = runIdleTask(() =>
+              setShouldVisible(entries[entries.length - 1].isIntersecting)
+            );
           } else {
             setShouldVisible(entries[entries.length - 1].isIntersecting);
           }
@@ -73,18 +71,25 @@ function RenderIfVisible(props: Props) {
       );
       observer.observe(target);
       return () => {
+        visibilityIdleTaskRef.current?.cancel();
+        visibilityIdleTaskRef.current = null;
         observer.unobserve(target);
       };
     }
-  }, [intersectionRef, root, verticalOffset, horizontalOffset, useIdletime]);
+  }, [intersectionRef, root, verticalOffset, horizontalOffset, useIdleTime]);
 
   //Set height after render
   useEffect(() => {
     if (intersectionRef.current && isVisible && shouldRecordHeights) {
-      runIdleTask(() => {
+      heightIdleTaskRef.current?.cancel();
+      heightIdleTaskRef.current = runIdleTask(() => {
         if (intersectionRef.current) placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
       });
     }
+    return () => {
+      heightIdleTaskRef.current?.cancel();
+      heightIdleTaskRef.current = null;
+    };
   }, [isVisible, intersectionRef, shouldRecordHeights]);
 
   const child = isVisible ? <>{children}</> : placeholderChildren;
