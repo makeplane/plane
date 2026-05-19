@@ -30,6 +30,7 @@ import { useDebouncedDuplicateIssues } from "@/plane-web/hooks/use-debounced-dup
 import { WorkItemVersionService } from "@/services/issue";
 // local components
 import type { TIssueOperations } from "../issue-detail";
+import { IssueDetailCoverImage } from "../issue-detail/cover-image";
 import { IssueParentDetail } from "../issue-detail/parent";
 import { IssueReaction } from "../issue-detail/reactions";
 import { IssueTitleInput } from "../title-input";
@@ -97,16 +98,22 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
       : undefined;
 
   return (
-    <div className="space-y-2">
-      {issue.parent_id && (
-        <IssueParentDetail
-          workspaceSlug={workspaceSlug}
-          projectId={issue.project_id}
-          issueId={issueId}
-          issue={issue}
-          issueOperations={issueOperations}
-        />
-      )}
+    <>
+      <IssueDetailCoverImage
+        issueId={issueId}
+        projectId={issue.project_id}
+        attachmentCount={issue.attachment_count}
+      />
+      <div className="space-y-2">
+        {issue.parent_id && (
+          <IssueParentDetail
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issueId}
+            issue={issue}
+            issueOperations={issueOperations}
+          />
+        )}
       <div className="flex items-center justify-between gap-2">
         <IssueTypeSwitcher issueId={issueId} disabled={isArchived || disabled} />
         {duplicateIssues?.length > 0 && (
@@ -193,5 +200,6 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
         )}
       </div>
     </div>
+    </>
   );
 });

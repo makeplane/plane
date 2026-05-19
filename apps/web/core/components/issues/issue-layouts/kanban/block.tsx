@@ -38,6 +38,7 @@ import { IssueStats } from "@/plane-web/components/issues/issue-layouts/issue-st
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { IssueProperties } from "../properties/all-properties";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
+import { KanbanIssueCoverImage } from "./cover-image";
 
 interface IssueBlockProps {
   issueId: string;
@@ -275,7 +276,7 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           href={workItemLink}
           ref={cardRef}
           className={cn(
-            "block w-full rounded-lg border border-subtle bg-layer-2 p-3 text-13 shadow-raised-100 outline-[0.5px] outline-transparent transition-all hover:border-strong hover:shadow-raised-200",
+            "block w-full rounded-lg border border-subtle bg-layer-2 overflow-hidden text-13 shadow-raised-100 outline-[0.5px] outline-transparent transition-all hover:border-strong hover:shadow-raised-200",
             { "hover:cursor-pointer": isDragAllowed },
             { "border border-accent-strong hover:border-accent-strong": getIsIssuePeeked(issue.id) },
             { "z-[100] bg-layer-1": isCurrentBlockDragging }
@@ -283,24 +284,32 @@ export const KanbanIssueBlock = observer(function KanbanIssueBlock(props: IssueB
           onClick={() => handleIssuePeekOverview(issue)}
           disabled={!!issue?.tempId}
         >
-          <RenderIfVisible
-            classNames="space-y-2"
-            root={scrollableContainerRef}
-            defaultHeight="100px"
-            horizontalOffset={100}
-            verticalOffset={200}
-            defaultValue={shouldRenderByDefault}
-          >
-            <KanbanIssueDetailsBlock
-              cardRef={cardRef}
-              issue={issue}
-              displayProperties={displayProperties}
-              updateIssue={updateIssue}
-              quickActions={quickActions}
-              isReadOnly={!canEditIssueProperties}
-              isEpic={isEpic}
-            />
-          </RenderIfVisible>
+          <KanbanIssueCoverImage
+            issueId={issue.id}
+            projectId={issue.project_id}
+            attachmentCount={issue.attachment_count}
+            isEpic={isEpic}
+          />
+          <div className="p-3">
+            <RenderIfVisible
+              classNames="space-y-2"
+              root={scrollableContainerRef}
+              defaultHeight="100px"
+              horizontalOffset={100}
+              verticalOffset={200}
+              defaultValue={shouldRenderByDefault}
+            >
+              <KanbanIssueDetailsBlock
+                cardRef={cardRef}
+                issue={issue}
+                displayProperties={displayProperties}
+                updateIssue={updateIssue}
+                quickActions={quickActions}
+                isReadOnly={!canEditIssueProperties}
+                isEpic={isEpic}
+              />
+            </RenderIfVisible>
+          </div>
         </ControlLink>
       </div>
     </>
