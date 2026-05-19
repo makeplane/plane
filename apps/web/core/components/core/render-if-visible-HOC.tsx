@@ -7,6 +7,7 @@
 import type { ReactNode, MutableRefObject } from "react";
 import React, { useState, useRef, useEffect } from "react";
 import { cn } from "@plane/utils";
+import { scheduleIdleCallback } from "@/lib/polyfills";
 
 type Props = {
   defaultHeight?: string;
@@ -23,6 +24,10 @@ type Props = {
   forceRender?: boolean;
 };
 
+/**
+ * Renders children only when the element intersects the viewport (or is forced visible), using a placeholder and
+ * optional height recording to reduce work for long lists.
+ */
 function RenderIfVisible(props: Props) {
   const {
     defaultHeight = "300px",
@@ -51,8 +56,8 @@ function RenderIfVisible(props: Props) {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          if (typeof window !== undefined && window.requestIdleCallback && useIdletime) {
-            window.requestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
+          if (typeof window !== "undefined" && useIdletime) {
+            scheduleIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
               timeout: 300,
             });
           } else {
@@ -66,18 +71,15 @@ function RenderIfVisible(props: Props) {
       );
       observer.observe(intersectionRef.current);
       return () => {
-        if (intersectionRef.current) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          observer.unobserve(intersectionRef.current);
-        }
+        observer.disconnect();
       };
     }
-  }, [intersectionRef, children, root, verticalOffset, horizontalOffset]);
+  }, [intersectionRef, root, verticalOffset, horizontalOffset, useIdletime]);
 
   //Set height after render
   useEffect(() => {
     if (intersectionRef.current && isVisible && shouldRecordHeights) {
-      window.requestIdleCallback(() => {
+      scheduleIdleCallback(() => {
         if (intersectionRef.current) placeholderHeight.current = `${intersectionRef.current.offsetHeight}px`;
       });
     }
