@@ -59,6 +59,7 @@ export class ProfileStore implements IProfileStore {
     updated_at: "",
     language: "",
     start_of_the_week: EStartOfTheWeek.SUNDAY,
+    comment_submit_shortcut: "enter",
   };
 
   // services

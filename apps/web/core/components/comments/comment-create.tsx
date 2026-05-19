@@ -11,10 +11,11 @@ import { useForm, Controller } from "react-hook-form";
 import { EIssueCommentAccessSpecifier } from "@plane/constants";
 import type { EditorRefApi } from "@plane/editor";
 import type { TIssueComment, TCommentsOperations } from "@plane/types";
-import { cn, isCommentEmpty } from "@plane/utils";
+import { cn, isCommentEmpty, isCommentSubmissionValid } from "@plane/utils";
 // components
 import { LiteTextEditor } from "@/components/editor/lite-text";
 // hooks
+import { useUserProfile } from "@/hooks/store/user";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 // services
 import { FileService } from "@/services/file.service";
@@ -46,6 +47,9 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
   const editorRef = useRef<EditorRefApi>(null);
   // store hooks
   const workspaceStore = useWorkspace();
+  const {
+    data: { comment_submit_shortcut },
+  } = useUserProfile();
   // derived values
   const workspaceId = workspaceStore.getWorkspaceBySlug(workspaceSlug)?.id as string;
   // form info
@@ -95,13 +99,13 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
       className={cn("sticky bottom-0 z-[4] bg-surface-1 sm:static")}
       onKeyDown={(e) => {
         if (
-          e.key === "Enter" &&
-          !e.shiftKey &&
-          !e.ctrlKey &&
-          !e.metaKey &&
-          !isEmpty &&
-          !isSubmitting &&
-          editorRef.current?.isEditorReadyToDiscard()
+          isCommentSubmissionValid({
+            e,
+            shortcut: comment_submit_shortcut,
+            isEmpty,
+            isSubmitting,
+            isEditorReadyToDiscard: !!editorRef.current?.isEditorReadyToDiscard(),
+          })
         )
           handleSubmit(onSubmit)(e);
       }}
