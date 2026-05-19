@@ -114,3 +114,5 @@ scripts/
 
 # i18n auto-generated types (regenerated on every build)
 packages/i18n/src/types/keys.generated.ts
+
+*.json
