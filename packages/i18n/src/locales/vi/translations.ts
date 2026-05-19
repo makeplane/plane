@@ -3654,6 +3654,9 @@ export default {
       no_permission_title: "Không thể mở công việc", // TODO: native review
       no_permission_message: "Bạn không có quyền xem công việc này.", // TODO: native review
     },
+    export_queued: "Dữ liệu đã được xuất. Vui lòng kiểm tra và tải xuống trong email của bạn.",
+    export_failed: "Xuất dữ liệu thất bại. Vui lòng thử lại.",
+    exporting: "Đang xuất...",
   },
   capacity_export: {
     menu: "Export",
@@ -3685,6 +3688,19 @@ export default {
       entry_count: "Entry Count",
       grand_total: "Grand Total",
     },
+  },
+  ho_exports: {
+    tab: "HO Xuất khẩu",
+    title: "Xuất Bảng Dữ Liệu HO",
+    subtitle: "Theo dõi và tải xuống các bản xuất bảng dữ liệu quản lý tổng thể của bạn.",
+    refresh: "Làm mới",
+    empty: "Chưa có bản xuất nào. Sử dụng nút Xuất trên tab Bảng dữ liệu để tạo một bản.",
+    col_status: "Trạng thái",
+    col_range: "Khoảng ngày",
+    col_rows: "Hàng",
+    col_size: "Kích thước",
+    col_created: "Ngày tạo",
+    col_expires: "Ngày hết hạn",
   },
   capacity_exports: {
     tab: "My Exports",
