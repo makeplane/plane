@@ -746,7 +746,7 @@ export default {
     collapse: "Collapse",
     no_items_in_this_group: "No items in this group",
     drop_here_to_move: "Drop here to move",
-    states: "Statuses",
+    states: "Status",
     state: "Status",
     state_groups: "Status groups",
     state_group: "Status group",
@@ -2134,7 +2134,7 @@ export default {
       },
     },
     states: {
-      heading: "Statuses",
+      heading: "Status",
       description: "Define and customize workflow statuses to track the progress of your work items.",
       describe_this_state_for_your_members: "Describe this status for your members.",
       empty_state: {
