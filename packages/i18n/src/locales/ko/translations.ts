@@ -3604,6 +3604,9 @@ export default {
       no_permission_title: "작업 항목을 열 수 없음", // TODO: native review
       no_permission_message: "이 작업 항목을 볼 권한이 없습니다.", // TODO: native review
     },
+    export_queued: "데이터가 내보내졌습니다. 이메일에서 확인하고 다운로드하세요.",
+    export_failed: "내보내기에 실패했습니다. 다시 시도해 주세요.",
+    exporting: "내보내는 중...",
   },
   capacity_export: {
     menu: "Export",
@@ -3635,6 +3638,19 @@ export default {
       entry_count: "Entry Count",
       grand_total: "Grand Total",
     },
+  },
+  ho_exports: {
+    tab: "HO 내보내기",
+    title: "HO 데이터시트 내보내기",
+    subtitle: "전체 관리 데이터시트 내보내기를 추적하고 다운로드하세요.",
+    refresh: "새로 고침",
+    empty: "아직 내보내기가 없습니다. 데이터시트 탭의 내보내기 버튼을 사용하세요.",
+    col_status: "상태",
+    col_range: "날짜 범위",
+    col_rows: "행",
+    col_size: "크기",
+    col_created: "생성일",
+    col_expires: "만료일",
   },
   capacity_exports: {
     tab: "My Exports",
