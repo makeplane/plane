@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { ChevronLeft, Loader2 } from "lucide-react";
 import { Avatar } from "@plane/propel/avatar";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import type { THoWorklogByUserEntry, THoWorklogMember } from "@/plane-web/services/ho-issue.service";
 import { formatLogTime } from "./ho-worklog-helpers";
@@ -61,7 +62,9 @@ export function HoWorklogUserDetailView({
         {member && (
           <div className="flex min-w-0 flex-1 items-center gap-2">
             <Avatar name={member.display_name} src={member.avatar_url} size="sm" shape="circle" />
-            <span className="truncate text-13 font-medium text-primary">{member.display_name}</span>
+            <Tooltip tooltipContent={member.display_name}>
+              <span className="truncate text-13 font-medium text-primary">{member.display_name}</span>
+            </Tooltip>
           </div>
         )}
         <span className="flex-shrink-0 text-11 font-semibold text-primary tabular-nums">
@@ -84,8 +87,14 @@ export function HoWorklogUserDetailView({
               className="flex items-start justify-between gap-3 rounded px-1.5 py-1.5 transition-colors hover:bg-layer-1"
             >
               <div className="min-w-0 flex-1">
-                <p className="truncate text-11 text-primary">{e.issue_name}</p>
-                {e.project_name && <p className="truncate text-10 text-tertiary">{e.project_name}</p>}
+                <Tooltip tooltipContent={e.issue_name}>
+                  <p className="truncate text-11 text-primary">{e.issue_name}</p>
+                </Tooltip>
+                {e.project_name && (
+                  <Tooltip tooltipContent={e.project_name}>
+                    <p className="truncate text-10 text-tertiary">{e.project_name}</p>
+                  </Tooltip>
+                )}
               </div>
               <span className="flex-shrink-0 text-11 text-secondary tabular-nums">
                 {formatLogTime(e.total_minutes)}

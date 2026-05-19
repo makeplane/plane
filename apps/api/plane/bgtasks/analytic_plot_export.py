@@ -28,7 +28,7 @@ from plane.utils.csv_utils import sanitize_csv_row
 
 row_mapping = {
     "state__name": "State",
-    "state__group": "State Group",
+    "state__group": "Status Group",
     "labels__id": "Label",
     "assignees__id": "Assignee Name",
     "start_date": "Start Date",

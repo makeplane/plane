@@ -1,5 +1,6 @@
 import { ChevronRight, Loader2 } from "lucide-react";
 import { Avatar } from "@plane/propel/avatar";
+import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 import type { THoWorklogMember } from "@/plane-web/services/ho-issue.service";
 import { formatLogTime } from "./ho-worklog-helpers";
@@ -63,7 +64,9 @@ export function HoWorklogMembersView({
             >
               <div className="flex min-w-0 items-center gap-2">
                 <Avatar name={m.display_name} src={m.avatar_url} size="sm" shape="circle" />
-                <span className="truncate text-11 text-primary">{m.display_name}</span>
+                <Tooltip tooltipContent={m.display_name}>
+                  <span className="truncate text-11 text-primary">{m.display_name}</span>
+                </Tooltip>
               </div>
               <span className="flex flex-shrink-0 items-center gap-1 text-11 text-secondary tabular-nums">
                 {formatLogTime(m.total_minutes)}

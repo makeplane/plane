@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
 import { STATE_GROUPS } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Tooltip } from "@plane/propel/tooltip";
 import type { THoIssue } from "@/plane-web/services/ho-issue.service";
 import type { THoDisplayProperties } from "@/plane-web/store/ho/ho-issue.defaults";
 import { renderFormattedDate, cn } from "@plane/utils";
@@ -139,12 +140,24 @@ export const HoDatasheetRow = observer(function HoDatasheetRow({
       {displayProperties.assignee &&
         renderTd(
           "assignee",
-          issue.assignees.length === 0
-            ? "—"
-            : issue.assignees
-                .slice(0, 3)
-                .map((a) => a.display_name)
-                .join(", ") + (issue.assignees.length > 3 ? ` +${issue.assignees.length - 3}` : "")
+          issue.assignees.length === 0 ? (
+            "—"
+          ) : (
+            <Tooltip
+              tooltipContent={
+                <div className="max-w-[260px] whitespace-normal break-words">
+                  {issue.assignees.map((a) => a.display_name).join(", ")}
+                </div>
+              }
+            >
+              <span className="cursor-default">
+                {issue.assignees
+                  .slice(0, 3)
+                  .map((a) => a.display_name)
+                  .join(", ") + (issue.assignees.length > 3 ? ` +${issue.assignees.length - 3}` : "")}
+              </span>
+            </Tooltip>
+          )
         )}
       {displayProperties.bank_wide_project && renderTd("bank_wide_project", issue.is_bank_wide_project ? "Yes" : "No")}
       {displayProperties.priority && renderTd("priority", issue.priority || "—", "capitalize")}
