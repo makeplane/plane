@@ -396,7 +396,9 @@ class HoIssueListView(BaseAPIView):
 
         paginator = HoIssuePagination()
         page = paginator.paginate_queryset(qs, request)
-        serializer = HoIssueSerializer(page, many=True)
+        # Aggregate assignees across each row's subtree (issue + descendants) in one batched CTE.
+        subtree_assignees = _subtree_assignees_map([str(i.id) for i in page]) if page else {}
+        serializer = HoIssueSerializer(page, many=True, context={"subtree_assignees": subtree_assignees})
         return paginator.get_paginated_response(serializer.data)
 
 
@@ -673,6 +675,51 @@ def _issue_subtree_ids(root_id):
             [str(root_id)],
         )
         return [row[0] for row in cursor.fetchall()]
+
+
+def _subtree_assignees_map(root_ids):
+    """Return {root_id_str: [{id, display_name, avatar}, ...]} — union of assignees
+    from each root issue and its descendants (inclusive, depth-bounded at 10).
+
+    One batched recursive CTE keyed by `root_id` so a single query covers the full page.
+    Excludes soft-deleted/archived issues and soft-deleted assignee rows.
+    """
+    if not root_ids:
+        return {}
+    from django.db import connection
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            """
+            WITH RECURSIVE subtree AS (
+                SELECT id AS root_id, id, 1 AS depth
+                FROM issues
+                WHERE id = ANY(%s::uuid[])
+                  AND deleted_at IS NULL
+                  AND archived_at IS NULL
+                UNION ALL
+                SELECT s.root_id, i.id, s.depth + 1
+                FROM issues i
+                INNER JOIN subtree s ON i.parent_id = s.id
+                WHERE i.deleted_at IS NULL
+                  AND i.archived_at IS NULL
+                  AND s.depth < 10
+            )
+            SELECT DISTINCT s.root_id, u.id, u.display_name, COALESCE(u.avatar, '')
+            FROM subtree s
+            INNER JOIN issue_assignees ia
+                ON ia.issue_id = s.id AND ia.deleted_at IS NULL
+            INNER JOIN users u ON u.id = ia.assignee_id
+            ORDER BY s.root_id, u.display_name
+            """,
+            [list(root_ids)],
+        )
+        result = {}
+        for root_id, user_id, display_name, avatar in cursor.fetchall():
+            result.setdefault(str(root_id), []).append(
+                {"id": str(user_id), "display_name": display_name, "avatar": avatar}
+            )
+        return result
 
 
 class HoIssueWorklogBreakdownView(BaseAPIView):
