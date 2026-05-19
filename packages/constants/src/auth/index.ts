@@ -85,6 +85,8 @@ export type TAuthErrorInfo = {
 
 export enum EAdminAuthErrorCodes {
   // Admin
+  INSTANCE_NOT_CONFIGURED = "5000",
+  PASSWORD_TOO_WEAK = "5021",
   ADMIN_ALREADY_EXIST = "5150",
   REQUIRED_ADMIN_EMAIL_PASSWORD_FIRST_NAME = "5155",
   INVALID_ADMIN_EMAIL = "5160",
