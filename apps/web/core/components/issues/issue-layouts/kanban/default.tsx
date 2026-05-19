@@ -204,7 +204,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                     />
                   }
                   defaultValue={groupIndex < 5 && subGroupIndex < 2}
-                  useIdletime
+                  useIdleTime
                 >
                   <KanbanGroup
                     groupId={subList.id}
