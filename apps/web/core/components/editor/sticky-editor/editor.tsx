@@ -76,7 +76,7 @@ export const StickyEditor = React.forwardRef(function StickyEditor(
   const { getEditorFileHandlers } = useEditorConfig();
 
   // Stable wrapper to safely access ref inside callbacks (event handlers only, not render)
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+
   const getEditorRef = useCallback((): EditorRefApi | null => {
     if (!ref) return null;
     if (typeof ref === "function") return null;
