@@ -80,7 +80,7 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   }, []);
 
   // fetching project details
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
   const { isLoading: isProjectDetailsLoading, error: projectDetailsError } = useSWR(
     PROJECT_DETAILS(workspaceSlug, projectId),
     () => fetchProjectDetails(workspaceSlug, projectId)
@@ -152,7 +152,6 @@ export const ProjectAuthWrapper = observer(function ProjectAuthWrapper(props: IP
   if (!isProjectLoading && hasPermissionToCurrentProject === false) {
     return (
       <ProjectAccessRestriction
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         errorStatusCode={projectDetailsError?.status}
         isWorkspaceAdmin={isWorkspaceAdmin}
         handleJoinProject={handleJoinProject}

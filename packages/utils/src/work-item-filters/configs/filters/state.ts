@@ -61,7 +61,7 @@ export const getStateGroupFilterConfig =
   (params: TCreateStateGroupFilterParams) =>
     createFilterConfig<P>({
       id: key,
-      label: "State Group",
+      label: "Status Group",
       ...params,
       icon: params.filterIcon,
       supportedOperatorConfigsMap: new Map([
