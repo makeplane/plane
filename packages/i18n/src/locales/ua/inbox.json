@@ -60,7 +60,7 @@
     "label": "Надходження",
     "page_label": "{workspace} - Надходження",
     "modal": {
-      "title": "Створити прийняту робочий елемент"
+      "title": "Створити робочий елемент із надходжень"
     },
     "tabs": {
       "open": "Відкриті",
@@ -106,13 +106,13 @@
       "view_less": "Переглянути менше",
       "date_options": {
         "today": "Сьогодні",
-        "yesterday": "вчора",
+        "yesterday": "Вчора",
         "last_7_days": "Останні 7 днів",
         "last_30_days": "Останні 30 днів"
       },
       "date_operators": {
-        "after": "після",
-        "before": "Раніше"
+        "after": "Після",
+        "before": "До"
       }
     },
     "navigation": {

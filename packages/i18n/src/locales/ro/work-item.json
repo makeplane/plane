@@ -71,7 +71,7 @@
     "layouts": {
       "ordered_by_label": "Această vizualizare este ordonată după",
       "list": "Listă",
-      "kanban": "Tablă",
+      "kanban": "Panou",
       "calendar": "Calendar",
       "spreadsheet": "Tabel",
       "gantt": "Cronologic",

@@ -306,7 +306,7 @@
       }
     },
     "unpublish_confirmation": {
-      "title": "移除模板",
+      "title": "取消发布模板",
       "description": {
         "prefix": "您确定要移除模板-",
         "suffix": "吗？此模板将不再在市场上供用户使用。"

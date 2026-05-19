@@ -95,7 +95,7 @@
       "title": "Chọn một mục công việc Tiếp nhận để xem chi tiết của nó"
     },
     "epics": {
-      "title": "Biến các dự án phức tạp thành các câu chuyện sử thi có cấu trúc.",
+      "title": "Biến các dự án phức tạp thành các Epic có cấu trúc.",
       "description": "Một câu chuyện sử thi giúp bạn tổ chức các mục tiêu lớn thành các nhiệm vụ nhỏ hơn, có thể theo dõi.",
       "cta_primary": "Tạo Câu chuyện Sử thi",
       "cta_secondary": "Tài liệu"
@@ -209,7 +209,7 @@
     },
     "exports": {
       "title": "Chưa có xuất khẩu",
-      "description": "Bạn chưa có bản ghi xuất khẩu nào ngay bây giờ. Sau khi bạn xuất dữ liệu, tất cả các bản ghi sẽ xuất hiện ở đây."
+      "description": "Bạn chưa có bản ghi xuất dữ liệu nào. Khi xuất dữ liệu, mọi bản ghi sẽ hiển thị tại đây."
     },
     "tokens": {
       "title": "Chưa có token Cá nhân",

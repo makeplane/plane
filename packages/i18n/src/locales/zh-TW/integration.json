@@ -170,7 +170,7 @@
         "failed_delete_project_connection": "刪除專案連接失敗",
         "failed_create_project_connection": "建立專案連接失敗",
         "failed_upserting_project_connection": "更新專案連接失敗",
-        "failed_loading_project_connections": "無法加載您的專案連接。這可能是由於網絡問題或集成問題。"
+        "failed_loading_project_connections": "無法載入您的專案連接。這可能是由於網路問題或整合問題所致。"
       }
     }
   },
@@ -286,7 +286,7 @@
     "client_id_description": "您在 GitHub Enterprise 組織中建立的應用的 client ID。",
     "client_id_placeholder": "例如，\"1234567890\"",
     "client_id_error": "Client ID 是必需的",
-    "client_secret_title": "Client Secret客戶端密碼",
+    "client_secret_title": "Client Secret",
     "client_secret_description": "您在 GitHub Enterprise 組織中建立的應用的 client secret。",
     "client_secret_placeholder": "例如，\"1234567890\"",
     "client_secret_error": "Client secret 是必需的",

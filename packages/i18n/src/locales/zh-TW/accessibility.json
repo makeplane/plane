@@ -9,7 +9,7 @@
       "close_extended_sidebar": "關閉擴展側邊欄",
       "create_favorites_folder": "建立收藏夾文件夾",
       "open_folder": "打開文件夾",
-      "close_folder": "關閉文件夾",
+      "close_folder": "關閉資料夾",
       "open_favorites_menu": "打開收藏夾選單",
       "close_favorites_menu": "關閉收藏夾選單",
       "enter_folder_name": "輸入文件夾名稱",
@@ -22,6 +22,12 @@
       "collapse_sidebar": "摺疊側邊欄",
       "expand_sidebar": "展開側邊欄",
       "edition_badge": "打開付費計劃模態框"
+    },
+    "app_sidebar": {
+      "open_workspace_menu": "開啟工作區選單",
+      "close_workspace_menu": "關閉工作區選單",
+      "open_extended_sidebar": "打開擴展側邊欄",
+      "close_extended_sidebar": "關閉擴展側邊欄"
     },
     "auth_forms": {
       "clear_email": "清除電子郵件",

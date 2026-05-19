@@ -41,7 +41,7 @@
     "actions": {
       "accept": "Accetta",
       "decline": "Rifiuta",
-      "snooze": "Snoozed",
+      "snooze": "Posticipa",
       "unsnooze": "Annulla posticipazione",
       "copy": "Copia link dell'elemento di lavoro",
       "delete": "Elimina",

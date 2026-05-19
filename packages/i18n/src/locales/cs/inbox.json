@@ -60,7 +60,7 @@
     "label": "Příjem",
     "page_label": "{workspace} - Příjem",
     "modal": {
-      "title": "Vytvořit přijatou pracovní položku"
+      "title": "Vytvořit pracovní položku z Intake"
     },
     "tabs": {
       "open": "Otevřené",

@@ -215,7 +215,7 @@
   "cycles": "Ciclos",
   "modules": "Módulos",
   "pages": "Páginas",
-  "intake": "Admissão",
+  "intake": "Triagem",
   "renew": "Renovar",
   "preview": "Visualização",
   "time_tracking": "Rastreamento de tempo",
@@ -406,7 +406,7 @@
     "modal": {
       "url": {
         "text": "URL",
-        "required": "URL inválido",
+        "required": "URL inválida",
         "placeholder": "Digite ou cole um URL"
       },
       "title": {

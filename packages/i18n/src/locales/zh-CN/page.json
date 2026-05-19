@@ -114,7 +114,7 @@
   },
   "page_access": {
     "not_found_title": "找不到页面",
-    "not_found_description": "你尝试访问的页面不存在，或你没有权限查看。",
+    "not_found_description": "您尝试访问的页面不存在，或您没有权限查看。",
     "view_other_pages": "查看其他页面"
   },
   "profile_activity": {

@@ -92,7 +92,7 @@
       "cta_primary": "Crear solicitud de Entrada"
     },
     "intake_main": {
-      "title": "Selecciona un elemento de trabajo de Entrada para ver sus detalles"
+      "title": "Selecciona un elemento de trabajo de Intake para ver sus detalles"
     },
     "epics": {
       "title": "Convierte proyectos complejos en épicas estructuradas.",

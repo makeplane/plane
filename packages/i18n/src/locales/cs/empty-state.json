@@ -87,7 +87,7 @@
       "description": "Archivujte stránky, které nejsou na vašem radaru. Přistupte k nim zde, když budete potřebovat."
     },
     "intake_sidebar": {
-      "title": "Zaznamenejte příchozí požadavky",
+      "title": "Zaznamenat požadavky z Intake",
       "description": "Odesílejte nové požadavky k přezkoumání, stanovení priorit a sledování v rámci pracovního postupu vašeho projektu.",
       "cta_primary": "Vytvořit příchozí požadavek"
     },

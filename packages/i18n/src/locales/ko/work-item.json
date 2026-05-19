@@ -433,7 +433,7 @@
     "no_work_items_found": "작업 항목을 찾을 수 없습니다",
     "bot_name": "{name} 봇",
     "commented_time": "{time}에 댓글 작성",
-    "and_more": "외 {count}명",
+    "and_more": "외 {count}개",
     "no_upvotes_yet": "아직 찬성표가 없습니다",
     "no_downvotes_yet": "아직 반대표가 없습니다",
     "view_less": "간단히 보기",

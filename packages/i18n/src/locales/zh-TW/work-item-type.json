@@ -212,7 +212,7 @@
         },
         "delete_confirmation": {
           "title": "刪除此屬性",
-          "description": "刪除屬性可能導致現有數據遺失。",
+          "description": "刪除屬性可能導致現有資料遺失。",
           "secondary_description": "您是否想要停用屬性代替刪除？",
           "primary_button": "{action}，刪除它",
           "secondary_button": "是的，停用它"
@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "正在儲存",
-        "default": "仍要儲存"
+        "default": "套用並解除連結"
       }
     },
     "work_item_modal": {

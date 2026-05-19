@@ -126,7 +126,7 @@
       "select_work_item": "作業項目を選択"
     },
     "sidebar": {
-      "label_count": "{count} ラベル"
+      "label_count": "{count} 個のラベル"
     },
     "toasts": {
       "editor_processing": "エディターはまだ変更を処理中です。続行する前にお待ちください。",

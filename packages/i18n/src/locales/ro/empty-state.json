@@ -92,10 +92,10 @@
       "cta_primary": "Creați solicitare de Admitere"
     },
     "intake_main": {
-      "title": "Selectați un element de lucru de Admitere pentru a vedea detaliile"
+      "title": "Selectați un element de lucru din Intake pentru a vedea detaliile"
     },
     "epics": {
-      "title": "Transformați proiecte complexe în epopei structurate.",
+      "title": "Transformați proiecte complexe în Epice structurate.",
       "description": "O epopeie vă ajută să organizați obiective mari în sarcini mai mici, urmăribile.",
       "cta_primary": "Creați o Epopeie",
       "cta_secondary": "Documentație"

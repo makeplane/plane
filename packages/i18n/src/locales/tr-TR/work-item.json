@@ -189,9 +189,9 @@
       "blocked_by": "Engellendi",
       "blocking": "Engelliyor",
       "start_before": "Starts Bifor",
-      "start_after": "Starts Aftır",
+      "start_after": "Şundan sonra başlar",
       "finish_before": "Finishes Bifor",
-      "finish_after": "Finishes Aftır",
+      "finish_after": "Şundan sonra biter",
       "implements": "Implemente",
       "implemented_by": "Implemente edilen"
     },

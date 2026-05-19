@@ -13,7 +13,7 @@
       "show_archived": "显示已归档",
       "mark_archive": "归档",
       "mark_unarchive": "取消归档",
-      "mark_snooze": "暂停",
+      "mark_snooze": "稍后提醒",
       "mark_unsnooze": "取消暂停"
     },
     "toasts": {

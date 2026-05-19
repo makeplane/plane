@@ -57,7 +57,7 @@
     },
     "estimates": {
       "heading": "評估",
-      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "description": "建立估算系統，以追蹤並溝通每個工作項目所需的工作量。",
       "label": "預估",
       "title": "為我的專案啟用預估",
       "enable_description": "它們能幫助您傳達團隊的複雜度和工作量。",

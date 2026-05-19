@@ -379,7 +379,7 @@
         "redirect_uris_error": "Ridayrekt URIları gerekli",
         "invalid_redirect_uris_error": "Geçersiz ridayrekt URIları",
         "redirect_uris_description": "Kullanıcı doğrulamadan sonra uygulamanın yönlendireceği boşlukla ayrılmış URI'ları girin, örn. https://example.com https://example.com/",
-        "authorized_javascript_origins_title": "Yetkilendirilmiş Cavaskrip Orijinleri",
+        "authorized_javascript_origins_title": "Yetkili JavaScript Kaynakları",
         "authorized_javascript_origins_error": "Yetkilendirilmiş Cavaskrip Orijinleri gerekli",
         "invalid_authorized_javascript_origins_error": "Geçersiz yetkilendirilmiş Cavaskrip Orijinleri",
         "authorized_javascript_origins_description": "Uygulamanın istek yapmasına izin verilecek boşlukla ayrılmış kaynakları girin, örn. app.com example.com",

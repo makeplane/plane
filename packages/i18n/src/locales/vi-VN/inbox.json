@@ -64,7 +64,7 @@
     },
     "tabs": {
       "open": "Chưa xử lý",
-      "closed": "Đã xử lý"
+      "closed": "Đã đóng"
     },
     "empty_state": {
       "sidebar_open_tab": {
@@ -126,7 +126,7 @@
       "select_work_item": "Chọn mục công việc"
     },
     "sidebar": {
-      "label_count": "Nhãn {count}"
+      "label_count": "{count} nhãn"
     },
     "toasts": {
       "editor_processing": "Trình chỉnh sửa vẫn đang xử lý các thay đổi. Vui lòng đợi trước khi tiếp tục.",

@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "Сохранение",
-        "default": "Всё равно сохранить"
+        "default": "Применить и отвязать"
       }
     },
     "work_item_modal": {

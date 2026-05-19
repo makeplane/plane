@@ -23,6 +23,12 @@
       "expand_sidebar": "Expand sidebar",
       "edition_badge": "Open paid plans' modal"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Open workspace menu",
+      "close_workspace_menu": "Close workspace menu",
+      "open_extended_sidebar": "Open extended sidebar",
+      "close_extended_sidebar": "Close extended sidebar"
+    },
     "auth_forms": {
       "clear_email": "Clear email",
       "show_password": "Show password",

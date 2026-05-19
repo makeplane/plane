@@ -435,7 +435,7 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "Uložením se přeruší stávající vazby",
+      "title": "Chyba ověření!",
       "content": {
         "intro": "Typ pracovní položky {workItemTypeName} obsahuje:",
         "parent_items": "{count, plural, one {Bude odstraněna # nadřazená vazba} few {Budou odstraněny # nadřazené vazby} other {Bude odstraněno # nadřazených vazeb}}.",
@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "Ukládání",
-        "default": "Uložit přesto"
+        "default": "Použít a odpojit"
       }
     },
     "work_item_modal": {

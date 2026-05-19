@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "Ukladanie",
-        "default": "Uložiť napriek tomu"
+        "default": "Aplikovať a odpojiť"
       }
     },
     "work_item_modal": {

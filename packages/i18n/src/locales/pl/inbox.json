@@ -60,7 +60,7 @@
     "label": "Zgłoszenia",
     "page_label": "{workspace} - Zgłoszenia",
     "modal": {
-      "title": "Utwórz przyjęty element pracy"
+      "title": "Utwórz element pracy z formularza"
     },
     "tabs": {
       "open": "Otwarte",

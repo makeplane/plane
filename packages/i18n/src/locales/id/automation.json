@@ -160,7 +160,7 @@
         "only_run_history": "Hanya riwayat eksekusi"
       },
       "run_history": {
-        "initiator": "Pemrakarsa"
+        "initiator": "Inisiator"
       }
     },
     "toasts": {

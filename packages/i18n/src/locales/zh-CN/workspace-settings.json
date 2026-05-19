@@ -442,7 +442,7 @@
         "contact_email_error": "联系邮箱是必填项",
         "invalid_contact_email_error": "无效的联系邮箱",
         "upload_attachments": "上传附件",
-        "uploading_images": "上传 {count, plural, one {张图片} other {张图片}}",
+        "uploading_images": "上传 {count} 张图片",
         "drop_images_here": "将图片拖到这里",
         "click_to_upload_images": "点击上传图片",
         "invalid_file_or_exceeds_size_limit": "无效的文件或超过大小限制 ({size} MB)",

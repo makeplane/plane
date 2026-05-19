@@ -80,7 +80,7 @@
         "description": "Nicio cerere nu se potrivește cu filtrul aplicat în Cereri. Creează o cerere nouă."
       },
       "detail": {
-        "title": "Selectează o cerere pentru a-i vedea detaliile."
+        "title": "Selectează un element de lucru pentru a-i vedea detaliile."
       }
     }
   },

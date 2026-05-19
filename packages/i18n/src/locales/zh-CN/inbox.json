@@ -120,7 +120,7 @@
       "next_work_item": "下一个工作项"
     },
     "properties": {
-      "duplicate_of": "与…重复"
+      "duplicate_of": "重复于"
     },
     "select_duplicate": {
       "select_work_item": "选择工作项"

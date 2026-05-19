@@ -11,7 +11,7 @@
       },
       "snoozed": {
         "title": "Verschoben",
-        "description": "Noch {days, plural, one{# Tag} few{# Tage} other{# Tage}}"
+        "description": "Noch {days, plural, one{# Tag} other{# Tage}} übrig"
       },
       "accepted": {
         "title": "Angenommen",
@@ -60,7 +60,7 @@
     "label": "Eingang",
     "page_label": "{workspace} - Eingang",
     "modal": {
-      "title": "Angenommenes Arbeitselement erstellen"
+      "title": "Intake-Arbeitselement erstellen"
     },
     "tabs": {
       "open": "Offen",

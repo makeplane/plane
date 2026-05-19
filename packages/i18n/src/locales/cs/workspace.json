@@ -230,7 +230,7 @@
     "empty_state": {
       "all-issues": {
         "title": "Žádné pracovní položky v projektu",
-        "description": "Vytvořte první položku a sledujte svůj pokrok!",
+        "description": "První projekt je hotový! Nyní si rozdělte práci na sledovatelné části pomocí pracovních položek. Jdeme na to!",
         "primary_button": {
           "text": "Vytvořit pracovní položku"
         }
@@ -408,7 +408,7 @@
     "name_within_50": "Název musí mít maximálně 50 znaků.",
     "enter_full_name": "Zadejte své celé jméno",
     "set_password": "Nastavte heslo",
-    "optional": "Volitelný",
+    "optional": "Volitelné",
     "passwords_do_not_match": "Hesla se neshodují",
     "passwords_match": "Hesla se shodují",
     "continue": "Pokračovat",

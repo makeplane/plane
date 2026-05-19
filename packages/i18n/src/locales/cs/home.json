@@ -49,11 +49,11 @@
         "all": "Vše",
         "projects": "Projekty",
         "pages": "Stránky",
-        "issues": "Úkoly"
+        "issues": "Pracovní položky"
       }
     },
     "new_at_plane": {
-      "title": "Novinky v Plane"
+      "title": "První kroky v Plane"
     },
     "quick_tutorial": {
       "title": "Rychlý tutoriál"

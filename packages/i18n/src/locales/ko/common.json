@@ -622,7 +622,7 @@
       "reply": "답글"
     },
     "name": "이름",
-    "discard": "폐기",
+    "discard": "버리기",
     "confirm": "확인",
     "confirming": "확인 중",
     "read_the_docs": "문서 읽기",
@@ -845,7 +845,7 @@
     "missing_fields": "필드 누락",
     "success": "{fileName} 업로드 완료!"
   },
-  "date": "데이트",
+  "date": "날짜",
   "exporter": {
     "csv": {
       "title": "CSV",

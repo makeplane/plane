@@ -23,6 +23,12 @@
       "expand_sidebar": "Развернуть боковую панель",
       "edition_badge": "Открыть модал платных планов"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Открыть меню рабочего пространства",
+      "close_workspace_menu": "Закрыть меню рабочего пространства",
+      "open_extended_sidebar": "Открыть расширенную боковую панель",
+      "close_extended_sidebar": "Закрыть расширенную боковую панель"
+    },
     "auth_forms": {
       "clear_email": "Очистить email",
       "show_password": "Показать пароль",

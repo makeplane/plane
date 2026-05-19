@@ -107,7 +107,7 @@
   "failed_to_update_email_notification_setting": "邮件通知设置更新失败",
   "notify_me_when": "在以下情况通知我",
   "property_changes": "属性变更",
-  "property_changes_description": "当工作项的属性（如负责人、优先级、估算等）发生变更时通知我。",
+  "property_changes_description": "当工作项的属性（如负责人、优先级、估算值或其他内容）发生变更时通知我。",
   "state_change": "状态变更",
   "state_change_description": "当工作项移动到不同状态时通知我",
   "issue_completed": "工作项完成",
@@ -125,7 +125,7 @@
   "on_demand_snapshots_of_all_your_cycles": "所有周期的实时快照",
   "upgrade": "升级",
   "10000_feet_view": "所有活动周期的全局视图。",
-  "10000_feet_view_description": "放大视角，一次性查看所有项目中正在进行的周期，而不是在每个项目中逐个查看周期。",
+  "10000_feet_view_description": "拉远视角，一次性查看所有项目中正在进行的周期，而非在各项目间逐个切换。",
   "get_snapshot_of_each_active_cycle": "获取每个活动周期的快照。",
   "get_snapshot_of_each_active_cycle_description": "跟踪所有活动周期的高级指标，查看其进度状态，并了解与截止日期相关的范围。",
   "compare_burndowns": "比较燃尽图。",
@@ -881,6 +881,6 @@
     "instance_failure_description": "我们无法加载您的实例详细信息。",
     "instance_failure_hint": "请检查您的连接并重试。",
     "retry": "重试",
-    "powered_by": "提供支持"
+    "powered_by": "由"
   }
 }

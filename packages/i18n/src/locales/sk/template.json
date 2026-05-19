@@ -306,7 +306,7 @@
       }
     },
     "unpublish_confirmation": {
-      "title": "Stiahnuť šablónu",
+      "title": "Zrušiť publikovanie šablóny",
       "description": {
         "prefix": "Ste si istí, že chcete stiahnuť šablónu-",
         "suffix": "? Šablóna bude stiahnutá z marketplace a nebude viac dostupná pre ostatných."

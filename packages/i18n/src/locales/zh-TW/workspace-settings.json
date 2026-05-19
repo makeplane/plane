@@ -180,7 +180,7 @@
         "page_description": "查看此工作區或您正在使用的所有整合。"
       },
       "imports": {
-        "title": "導入",
+        "title": "匯入",
         "heading": "匯入",
         "description": "從您現有的專案管理工具連接並匯入資料，以簡化您的工作流程整合。"
       },
@@ -442,7 +442,7 @@
         "contact_email_error": "聯絡電子郵件是必填項",
         "invalid_contact_email_error": "無效的聯絡電子郵件",
         "upload_attachments": "上傳附件",
-        "uploading_images": "上傳 {count, plural, one {張圖片} other {張圖片}}",
+        "uploading_images": "上傳 {count} 張圖片",
         "drop_images_here": "將圖片拖到這裡",
         "click_to_upload_images": "點擊上傳圖片",
         "invalid_file_or_exceeds_size_limit": "無效的文件或超過大小限制 ({size} MB)",

@@ -74,7 +74,7 @@
     },
     "open_button": "Mở bảng điều hướng",
     "close_button": "Đóng bảng điều hướng",
-    "outline_floating_button": "Mở phác thảo"
+    "outline_floating_button": "Mở mục lục"
   },
   "page_actions": {
     "move_page": {
@@ -102,7 +102,7 @@
         },
         "collection_error": {
           "title": "Đã chuyển vào wiki",
-          "message": "Trang đã được chuyển vào wiki, nhưng không thể thêm vào bộ sưu tập đã chọn. Trang vẫn nằm trong General."
+          "message": "Trang đã được chuyển vào wiki, nhưng không thể thêm vào bộ sưu tập đã chọn. Trang vẫn nằm trong Tổng quan."
         }
       }
     },

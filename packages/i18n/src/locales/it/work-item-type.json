@@ -438,7 +438,7 @@
       "title": "Salvare interromperà i collegamenti esistenti",
       "content": {
         "intro": "Il tipo di elemento di lavoro {workItemTypeName} include:",
-        "parent_items": "{count, plural, one {Verrà rimosso # collegamento padre} other {Verranno rimossi # collegamenti padre}}.",
+        "parent_items": "{count, plural, one {elemento padre} other {elementi padre}}",
         "child_items": "{count, plural, one {sotto-elemento di lavoro} other {sotto-elementi di lavoro}}",
         "parent_line_suffix_when_also_children": ", e ",
         "footer": "Questa modifica rimuoverà le relazioni padre-figlio dagli elementi di lavoro esistenti del tipo {workItemTypeName}."
@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "Salvataggio",
-        "default": "Salva comunque"
+        "default": "Applica e scollega"
       }
     },
     "work_item_modal": {

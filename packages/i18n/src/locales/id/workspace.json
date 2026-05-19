@@ -377,11 +377,11 @@
     }
   },
   "workspace_access": {
-    "not_found_title": "Workspace tidak ditemukan",
-    "not_found_description": "Tidak ada workspace yang ditemukan untuk URL ini. Workspace tersebut mungkin tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
+    "not_found_title": "Ruang kerja tidak ditemukan",
+    "not_found_description": "Tidak ada ruang kerja yang ditemukan untuk URL ini. Ruang kerja tersebut mungkin tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
     "visit_profile": "Kunjungi profil",
     "not_authorized_title": "Tidak diizinkan!",
-    "not_authorized_description": "Anda bukan anggota workspace ini. Hubungi admin workspace untuk mendapatkan undangan atau periksa undangan yang tertunda.",
+    "not_authorized_description": "Anda bukan anggota ruang kerja ini. Hubungi admin ruang kerja untuk mendapatkan undangan atau periksa undangan yang tertunda.",
     "check_pending_invites": "Periksa undangan tertunda"
   },
   "workspace_invitation": {

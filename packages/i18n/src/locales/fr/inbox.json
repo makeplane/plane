@@ -11,7 +11,7 @@
       },
       "snoozed": {
         "title": "Reporté",
-        "description": "{days, plural, one{# jour} other{# jours}} restant(s)"
+        "description": "{days, plural, one{# jour restant} other{# jours restants}}"
       },
       "accepted": {
         "title": "Accepté",
@@ -126,7 +126,7 @@
       "select_work_item": "Sélectionner un élément de travail"
     },
     "sidebar": {
-      "label_count": "Étiquettes {count}"
+      "label_count": "{count} étiquettes"
     },
     "toasts": {
       "editor_processing": "L'éditeur est toujours en train de traiter les modifications. Veuillez patienter avant de continuer.",

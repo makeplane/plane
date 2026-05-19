@@ -57,7 +57,7 @@
       "updated_at": "Atualizado em",
       "id": "ID"
     },
-    "label": "Admissão",
+    "label": "Triagem",
     "page_label": "{workspace} - Admissão",
     "modal": {
       "title": "Criar item de trabalho de admissão"

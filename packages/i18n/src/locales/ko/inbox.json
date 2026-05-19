@@ -64,7 +64,7 @@
     },
     "tabs": {
       "open": "열기",
-      "closed": "닫기"
+      "closed": "닫힘"
     },
     "empty_state": {
       "sidebar_open_tab": {
@@ -126,7 +126,7 @@
       "select_work_item": "작업 항목 선택"
     },
     "sidebar": {
-      "label_count": "{count} 라벨"
+      "label_count": "라벨 {count}개"
     },
     "toasts": {
       "editor_processing": "편집기가 아직 변경사항을 처리 중입니다. 계속하기 전에 잠시 기다려 주십시오.",

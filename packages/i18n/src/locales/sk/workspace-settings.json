@@ -285,7 +285,7 @@
         "dismiss": "Zavrieť",
         "cancel": "Zrušiť skúšobnú verziu",
         "cancel_success_title": "Skúšobná verzia zrušená.",
-        "cancel_success_message": "Teraz môžete odstrániť vorkspejs.",
+        "cancel_success_message": "Teraz môžete odstrániť tento pracovný priestor.",
         "cancel_error_title": "To nefungovalo.",
         "cancel_error_message": "Skúste to znova, prosím."
       },

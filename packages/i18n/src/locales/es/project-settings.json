@@ -57,7 +57,7 @@
     },
     "estimates": {
       "heading": "Estimaciones",
-      "description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",
+      "description": "Configura sistemas de estimación para registrar y comunicar el esfuerzo necesario por cada elemento de trabajo.",
       "label": "Estimaciones",
       "title": "Activar estimaciones para mi proyecto",
       "enable_description": "Te ayudan a comunicar la complejidad y la carga de trabajo del equipo.",

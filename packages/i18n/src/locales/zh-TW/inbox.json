@@ -102,8 +102,8 @@
       "last_updated_date": "最後更新日期",
       "status": "狀態",
       "work_item_status": "工作項目狀態",
-      "view_all": "看全部",
-      "view_less": "查看較少",
+      "view_all": "查看全部",
+      "view_less": "收起",
       "date_options": {
         "today": "今天",
         "yesterday": "昨天",
@@ -111,8 +111,8 @@
         "last_30_days": "過去 30 天"
       },
       "date_operators": {
-        "after": "後",
-        "before": "前"
+        "after": "之後",
+        "before": "之前"
       }
     },
     "navigation": {
@@ -126,7 +126,7 @@
       "select_work_item": "選擇工作項目"
     },
     "sidebar": {
-      "label_count": "{count} 標籤"
+      "label_count": "{count} 個標籤"
     },
     "toasts": {
       "editor_processing": "編輯器仍在處理更改。請稍候再繼續。",

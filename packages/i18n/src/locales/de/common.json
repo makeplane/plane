@@ -452,7 +452,7 @@
     "load_more": "Mehr laden",
     "activity": "Aktivität",
     "analytics": "Analysen",
-    "dates": "Daten",
+    "dates": "Termine",
     "success": "Erfolg!",
     "something_went_wrong": "Etwas ist schiefgelaufen",
     "error": {
@@ -765,7 +765,7 @@
     "delete": "Anhang löschen"
   },
   "label": {
-    "select": "Label auswählen",
+    "select": "Labels hinzufügen",
     "create": {
       "success": "Label erfolgreich erstellt",
       "failed": "Label konnte nicht erstellt werden",

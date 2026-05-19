@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Jatuhkan file di sini atau klik untuk mengunggah"
+      "drag_and_drop": "Seret dan lepaskan file di sini atau klik untuk mengunggah"
     },
     "errors": {
       "file_too_large": {
@@ -35,7 +35,7 @@
       "link": "Masukkan atau tempel tautan"
     },
     "input_modal": {
-      "embed": "Tanam",
+      "embed": "Sematkan",
       "works_with_links": "Bekerja dengan YouTube, Figma, Google Docs dan lainnya"
     },
     "error": {

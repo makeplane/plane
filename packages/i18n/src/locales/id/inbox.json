@@ -57,7 +57,7 @@
       "updated_at": "Diperbarui pada",
       "id": "ID"
     },
-    "label": "Pendapat",
+    "label": "Intake",
     "page_label": "{workspace} - Pendapat",
     "modal": {
       "title": "Buat item kerja pendapat"

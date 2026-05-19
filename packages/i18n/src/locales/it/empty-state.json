@@ -29,7 +29,7 @@
       "restricted_description": "Contatta l'amministratore per richiedere l'accesso e potrai continuare qui.",
       "join_description": "Clicca sul pulsante qui sotto per unirti.",
       "cta_primary": "Unisciti al progetto",
-      "cta_loading": "Unione al progetto in corso"
+      "cta_loading": "Partecipazione al progetto in corso"
     },
     "invalid_project": {
       "title": "Progetto non trovato",
@@ -174,7 +174,7 @@
     "stickies": {
       "title": "Cattura idee istantaneamente",
       "description": "Crea adesivi per note rapide e promemoria, e portali con te ovunque tu vada.",
-      "cta_primary": "Crea primo adesivo",
+      "cta_primary": "Crea prima nota adesiva",
       "cta_secondary": "Documentazione"
     },
     "active_cycles": {

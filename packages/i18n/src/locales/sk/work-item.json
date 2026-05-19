@@ -12,7 +12,7 @@
       "label": "Pridať pracovnú položku",
       "cycle": {
         "failed": "Pridanie pracovnej položky do cyklu zlyhalo. Skúste to prosím znova.",
-        "success": "{count, plural, one {Pracovná položka} few {Pracovné položky} other {Pracovných položiek}} pridaná do cyklu.",
+        "success": "{count, plural, one {Pracovná položka pridaná do cyklu.} few {Pracovné položky pridané do cyklu.} other {Pracovných položiek pridaných do cyklu.}}",
         "loading": "Pridávanie {count, plural, one {pracovnej položky} few {pracovných položiek} other {pracovných položiek}} do cyklu"
       },
       "assignee": "Pridať priradených",

@@ -12,7 +12,7 @@
       "label": "Adicionar item de trabalho",
       "cycle": {
         "failed": "Não foi possível adicionar o item de trabalho ao ciclo. Por favor, tente novamente.",
-        "success": "{count, plural, one {Item de trabalho} other {Itens de trabalho}} adicionado(s) ao ciclo com sucesso.",
+        "success": "{count, plural, one {Item de trabalho adicionado} other {Itens de trabalho adicionados}} ao ciclo com sucesso.",
         "loading": "Adicionando {count, plural, one {item de trabalho} other {itens de trabalho}} ao ciclo"
       },
       "assignee": "Adicionar responsáveis",

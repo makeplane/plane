@@ -247,7 +247,7 @@
       "audience_description": "Claim(s) aud esperado(s) no JWT, separados por vírgula.",
       "user_claims_label": "Claim do usuário",
       "user_claims_placeholder": "email",
-      "user_claims_description": "Claim JWT contendo o endereço de e-mail do usuário",
+      "user_claims_description": "Claims JWT separados por vírgula para correspondência com o e-mail do Plane (primeira correspondência vence)",
       "user_claims_required": "O claim do usuário é obrigatório.",
       "allowed_algorithms_label": "Algoritmos de assinatura permitidos",
       "allowed_algorithms_description": "Algoritmos assimétricos aceitos para verificação de assinatura JWT",

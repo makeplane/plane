@@ -86,7 +86,7 @@
       "placeholders": {
         "workspace_to_all": "Szukaj projektów i teamspejsów",
         "workspace_to_project": "Szukaj projektów",
-        "project_to_all": "Szukaj projektów i teamspejsów",
+        "project_to_all": "Szukaj projektów i przestrzeni zespołowych",
         "project_to_project": "Szukaj projektów",
         "project_to_all_with_wiki": "Szukaj kolekcji wiki, projektów i przestrzeni zespołowych",
         "project_to_project_with_wiki": "Szukaj kolekcji wiki i projektów"

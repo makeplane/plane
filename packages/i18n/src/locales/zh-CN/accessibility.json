@@ -23,6 +23,12 @@
       "expand_sidebar": "展开侧边栏",
       "edition_badge": "打开付费计划模态框"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "打开工作区菜单",
+      "close_workspace_menu": "关闭工作区菜单",
+      "open_extended_sidebar": "打开扩展侧边栏",
+      "close_extended_sidebar": "关闭扩展侧边栏"
+    },
     "auth_forms": {
       "clear_email": "清除邮箱",
       "show_password": "显示密码",

@@ -23,6 +23,12 @@
       "expand_sidebar": "Розгорнути бічну панель",
       "edition_badge": "Відкрити модал платних планів"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Відкрити меню робочого простору",
+      "close_workspace_menu": "Закрити меню робочого простору",
+      "open_extended_sidebar": "Відкрити розширену бічну панель",
+      "close_extended_sidebar": "Закрити розширену бічну панель"
+    },
     "auth_forms": {
       "clear_email": "Очистити email",
       "show_password": "Показати пароль",

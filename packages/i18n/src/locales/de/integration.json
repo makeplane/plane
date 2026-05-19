@@ -247,7 +247,7 @@
       "audience_description": "Erwartete(r) aud-Claim(s) im JWT, kommagetrennt.",
       "user_claims_label": "Benutzer-Claim",
       "user_claims_placeholder": "email",
-      "user_claims_description": "JWT-Claim mit der E-Mail-Adresse des Benutzers",
+      "user_claims_description": "Komma-getrennte JWT-Claims zum Abgleich mit der Plane-E-Mail (erste Übereinstimmung gewinnt)",
       "user_claims_required": "Benutzer-Claim ist erforderlich.",
       "allowed_algorithms_label": "Erlaubte Signaturalgorithmen",
       "allowed_algorithms_description": "Asymmetrische Algorithmen für die JWT-Signaturprüfung",

@@ -111,7 +111,7 @@
         },
         "secret_key": {
           "title": "Clave secreta",
-          "message": "Genera un token para iniciar sesión en el payload del webhook"
+          "message": "Genera un token para firmar el payload del webhook"
         },
         "options": {
           "all": "Envíame todo",
@@ -315,7 +315,7 @@
         "installed_apps": "Aplicaciones instaladas",
         "all_apps": "Todas las aplicaciones",
         "internal_apps": "Aplicaciones internas",
-        "app_name_title": "¿Cómo llamarás a esta aplicación?",
+        "app_name_title": "Nombre de la aplicación",
         "app_description_title": {
           "label": "Descripción larga",
           "placeholder": "Escriba una descripción larga para el mercado. Presione '/' para ver los comandos."
