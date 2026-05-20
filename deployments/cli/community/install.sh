@@ -597,7 +597,7 @@ function backupData() {
     fi
 
     backup_container_dir "$BACKUP_FOLDER" "plane-db" "/var/lib/postgresql/data" "pgdata" || exit 1
-    backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/export" "uploads" || exit 1
+    backup_container_dir "$BACKUP_FOLDER" "plane-minio" "/data" "uploads" || exit 1
     backup_container_dir "$BACKUP_FOLDER" "plane-mq" "/var/lib/rabbitmq" "rabbitmq_data" || exit 1
     backup_container_dir "$BACKUP_FOLDER" "plane-redis" "/data" "redisdata" || exit 1
 
