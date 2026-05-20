@@ -7,6 +7,11 @@ services:
       args:
         DOCKER_BUILDKIT: 1
         APP_HOST: ${APP_HOST:-http://localhost}
+        VITE_API_BASE_URL: ${APP_HOST:-http://localhost}/api
+        VITE_WEB_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_SPACE_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_LIVE_BASE_URL: ${APP_HOST:-http://localhost}
     restart: always
     depends_on:
       - api
@@ -19,6 +24,11 @@ services:
       args:
         DOCKER_BUILDKIT: 1
         APP_HOST: ${APP_HOST:-http://localhost}
+        VITE_API_BASE_URL: ${APP_HOST:-http://localhost}/api
+        VITE_WEB_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_SPACE_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_LIVE_BASE_URL: ${APP_HOST:-http://localhost}
     restart: always
     depends_on:
       - api
@@ -32,6 +42,11 @@ services:
       args:
         DOCKER_BUILDKIT: 1
         APP_HOST: ${APP_HOST:-http://localhost}
+        VITE_API_BASE_URL: ${APP_HOST:-http://localhost}/api
+        VITE_WEB_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_ADMIN_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_SPACE_BASE_URL: ${APP_HOST:-http://localhost}
+        VITE_LIVE_BASE_URL: ${APP_HOST:-http://localhost}
     restart: always
     depends_on:
       - api

@@ -12,6 +12,14 @@ $script:RootEnvExamplePath = Join-Path $script:RepoRoot ".env.example"
 $script:PlaneEnvPath = Join-Path $script:RepoRoot "plane.env"
 $script:ApiEnvPath = Join-Path $script:RepoRoot "apps\api\.env"
 $script:ApiEnvExamplePath = Join-Path $script:RepoRoot "apps\api\.env.example"
+$script:MailStackDir = Join-Path $script:RepoRoot "mail-stack"
+$script:MailComposeFilePath = Join-Path $script:MailStackDir "docker-compose.yml"
+$script:MailEnvPath = Join-Path $script:MailStackDir ".env"
+$script:MailEnvExamplePath = Join-Path $script:MailStackDir ".env.example"
+$script:ForgejoStackDir = Join-Path $script:RepoRoot "forgejo-stack"
+$script:ForgejoComposeFilePath = Join-Path $script:ForgejoStackDir "docker-compose.yml"
+$script:ForgejoEnvPath = Join-Path $script:ForgejoStackDir ".env"
+$script:ForgejoEnvExamplePath = Join-Path $script:ForgejoStackDir ".env.example"
 $script:BackupRoot = Join-Path $script:RepoRoot "backup"
 
 $script:ComposeExecutable = $null
@@ -56,6 +64,24 @@ function Invoke-Compose {
     )
 
     Push-Location $script:RepoRoot
+    try {
+        $allArgs = @($script:ComposePrefixArgs + $Arguments)
+        & $script:ComposeExecutable @allArgs
+        $script:LastComposeExitCode = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+}
+
+function Invoke-ComposeInDir {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$WorkingDirectory,
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    Push-Location $WorkingDirectory
     try {
         $allArgs = @($script:ComposePrefixArgs + $Arguments)
         & $script:ComposeExecutable @allArgs
@@ -207,6 +233,104 @@ function Initialize-LocalEnvFiles {
 
 function Get-ComposeBaseArgs {
     return @("-f", $script:ComposeFilePath, "--env-file", $script:RootEnvPath)
+}
+
+function Get-MailComposeArgs {
+    return @("-f", $script:MailComposeFilePath, "--env-file", $script:RootEnvPath, "--env-file", $script:MailEnvPath)
+}
+
+function Get-ForgejoComposeArgs {
+    return @("-f", $script:ForgejoComposeFilePath, "--env-file", $script:RootEnvPath, "--env-file", $script:ForgejoEnvPath)
+}
+
+function Ensure-SharedDockerResources {
+    & docker network inspect plane_default *> $null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Creating shared Docker network: plane_default"
+        & docker network create plane_default *> $null
+    }
+
+    & docker volume inspect plane_caddy-data *> $null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Creating shared Docker volume: plane_caddy-data"
+        & docker volume create plane_caddy-data *> $null
+    }
+}
+
+function Initialize-MailEnvFiles {
+    Initialize-LocalEnvFiles
+
+    if (-not (Test-Path -LiteralPath $script:MailComposeFilePath -PathType Leaf)) {
+        throw "mail-stack/docker-compose.yml not found at $($script:MailComposeFilePath)"
+    }
+
+    if (-not (Test-Path -LiteralPath $script:MailEnvPath -PathType Leaf)) {
+        if (Test-Path -LiteralPath $script:MailEnvExamplePath -PathType Leaf) {
+            Copy-Item -LiteralPath $script:MailEnvExamplePath -Destination $script:MailEnvPath -Force
+            Write-Host "Created mail-stack/.env from mail-stack/.env.example"
+        } else {
+            throw "mail-stack/.env does not exist and mail-stack/.env.example was not found"
+        }
+    }
+
+    $mailDomain = Get-EnvValue "MAIL_DOMAIN" $script:MailEnvPath
+    if ([string]::IsNullOrWhiteSpace($mailDomain)) {
+        $mailDomain = Get-EnvValue "MAIL_DOMAIN" $script:RootEnvPath
+        if (-not [string]::IsNullOrWhiteSpace($mailDomain)) {
+            Update-EnvFile "MAIL_DOMAIN" $mailDomain $script:MailEnvPath
+        }
+    }
+
+    $mailDomain = Get-EnvValue "MAIL_DOMAIN" $script:MailEnvPath
+    if ([string]::IsNullOrWhiteSpace($mailDomain)) {
+        throw "MAIL_DOMAIN is not set. Set it in .env and mail-stack/.env before starting the mail stack."
+    }
+}
+
+function Initialize-ForgejoEnvFiles {
+    Initialize-LocalEnvFiles
+
+    if (-not (Test-Path -LiteralPath $script:ForgejoComposeFilePath -PathType Leaf)) {
+        throw "forgejo-stack/docker-compose.yml not found at $($script:ForgejoComposeFilePath)"
+    }
+
+    if (-not (Test-Path -LiteralPath $script:ForgejoEnvPath -PathType Leaf)) {
+        if (Test-Path -LiteralPath $script:ForgejoEnvExamplePath -PathType Leaf) {
+            Copy-Item -LiteralPath $script:ForgejoEnvExamplePath -Destination $script:ForgejoEnvPath -Force
+            Write-Host "Created forgejo-stack/.env from forgejo-stack/.env.example"
+        } else {
+            throw "forgejo-stack/.env does not exist and forgejo-stack/.env.example was not found"
+        }
+    }
+
+    $postgresPassword = Get-EnvValue "POSTGRES_PASSWORD" $script:ForgejoEnvPath
+    if ([string]::IsNullOrWhiteSpace($postgresPassword) -or $postgresPassword.StartsWith("replace_with_")) {
+        $postgresPassword = New-SecretKey
+        Update-EnvFile "POSTGRES_PASSWORD" $postgresPassword $script:ForgejoEnvPath
+        Write-Host "Generated POSTGRES_PASSWORD in forgejo-stack/.env"
+    }
+
+    $forgejoDbPassword = Get-EnvValue "FORGEJO_DB_PASSWORD" $script:ForgejoEnvPath
+    if ([string]::IsNullOrWhiteSpace($forgejoDbPassword) -or $forgejoDbPassword.StartsWith("replace_with_")) {
+        Update-EnvFile "FORGEJO_DB_PASSWORD" $postgresPassword $script:ForgejoEnvPath
+        Write-Host "Set FORGEJO_DB_PASSWORD to match POSTGRES_PASSWORD in forgejo-stack/.env"
+    } elseif ($forgejoDbPassword -ne $postgresPassword) {
+        Write-Host "WARNING: FORGEJO_DB_PASSWORD differs from POSTGRES_PASSWORD. Forgejo may not be able to connect to its database."
+    }
+
+    $smtpPassword = Get-EnvValue "SMTP_PASSWORD" $script:ForgejoEnvPath
+    if ([string]::IsNullOrWhiteSpace($smtpPassword) -or $smtpPassword.StartsWith("replace_with_")) {
+        Write-Host "WARNING: SMTP_PASSWORD is not configured in forgejo-stack/.env. Forgejo can start, but mail notifications will fail until git@MAIL_DOMAIN exists in the mail stack."
+    }
+
+    $gitDomain = Get-EnvValue "GIT_DOMAIN" $script:RootEnvPath
+    if ([string]::IsNullOrWhiteSpace($gitDomain)) {
+        throw "GIT_DOMAIN is not set in .env."
+    }
+
+    New-Item -ItemType Directory -Force -Path (Join-Path $script:ForgejoStackDir "data\forgejo") | Out-Null
+    New-Item -ItemType Directory -Force -Path (Join-Path $script:ForgejoStackDir "data\postgres") | Out-Null
+    New-Item -ItemType Directory -Force -Path (Join-Path $script:ForgejoStackDir "backups") | Out-Null
 }
 
 function Build-LocalImages {
@@ -370,14 +494,86 @@ function Start-Services {
     Write-Host ""
 }
 
+function Start-MailServices {
+    Initialize-MailEnvFiles
+    Ensure-SharedDockerResources
+
+    Write-Host "Starting mail stack..."
+    Invoke-ComposeInDir -WorkingDirectory $script:MailStackDir -Arguments @((Get-MailComposeArgs) + @("up", "-d", "--build"))
+    if ($script:LastComposeExitCode -ne 0) {
+        exit $script:LastComposeExitCode
+    }
+
+    $mailDomain = Get-EnvValue "MAIL_DOMAIN" $script:MailEnvPath
+    Write-Host "   Mail stack started"
+    Write-Host "   SMTP:    mail.$($mailDomain):587"
+    Write-Host "   IMAPS:   mail.$($mailDomain):993"
+    Write-Host "   Webmail: https://webmail.$($mailDomain)"
+    Write-Host ""
+}
+
+function Start-GitServices {
+    Initialize-ForgejoEnvFiles
+    Ensure-SharedDockerResources
+
+    Write-Host "Starting Forgejo git stack..."
+    Invoke-ComposeInDir -WorkingDirectory $script:ForgejoStackDir -Arguments @((Get-ForgejoComposeArgs) + @("up", "-d"))
+    if ($script:LastComposeExitCode -ne 0) {
+        exit $script:LastComposeExitCode
+    }
+
+    $gitDomain = Get-EnvValue "GIT_DOMAIN" $script:RootEnvPath
+    Write-Host "   Git stack started"
+    Write-Host "   Web: https://git.$($gitDomain)"
+    Write-Host "   SSH: git@git.$($gitDomain):2222"
+    Write-Host ""
+}
+
+function Start-AllServices {
+    Start-Services
+    Start-MailServices
+    Start-GitServices
+}
+
 function Stop-Services {
     Initialize-LocalEnvFiles
     Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("down"))
 }
 
+function Stop-MailServices {
+    Initialize-MailEnvFiles
+    Invoke-ComposeInDir -WorkingDirectory $script:MailStackDir -Arguments @((Get-MailComposeArgs) + @("down"))
+}
+
+function Stop-GitServices {
+    Initialize-ForgejoEnvFiles
+    Invoke-ComposeInDir -WorkingDirectory $script:ForgejoStackDir -Arguments @((Get-ForgejoComposeArgs) + @("down"))
+}
+
+function Stop-AllServices {
+    Stop-GitServices
+    Stop-MailServices
+    Stop-Services
+}
+
 function Restart-Services {
     Stop-Services
     Start-Services
+}
+
+function Restart-MailServices {
+    Stop-MailServices
+    Start-MailServices
+}
+
+function Restart-GitServices {
+    Stop-GitServices
+    Start-GitServices
+}
+
+function Restart-AllServices {
+    Stop-AllServices
+    Start-AllServices
 }
 
 function Rebuild-Services {
@@ -395,6 +591,52 @@ function View-SpecificLogs {
 
     Initialize-LocalEnvFiles
     Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("logs", "-f", $ServiceName))
+}
+
+function View-StackLogs {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Stack,
+        [string]$ServiceName = ""
+    )
+
+    switch ($Stack.ToLowerInvariant()) {
+        "plane" {
+            if ([string]::IsNullOrWhiteSpace($ServiceName)) {
+                Initialize-LocalEnvFiles
+                Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("logs", "-f"))
+            } else {
+                View-Logs $ServiceName
+            }
+        }
+        "mail" {
+            Initialize-MailEnvFiles
+            if ([string]::IsNullOrWhiteSpace($ServiceName)) {
+                Invoke-ComposeInDir -WorkingDirectory $script:MailStackDir -Arguments @((Get-MailComposeArgs) + @("logs", "-f"))
+            } else {
+                Invoke-ComposeInDir -WorkingDirectory $script:MailStackDir -Arguments @((Get-MailComposeArgs) + @("logs", "-f", $ServiceName))
+            }
+        }
+        "git" {
+            Initialize-ForgejoEnvFiles
+            if ([string]::IsNullOrWhiteSpace($ServiceName)) {
+                Invoke-ComposeInDir -WorkingDirectory $script:ForgejoStackDir -Arguments @((Get-ForgejoComposeArgs) + @("logs", "-f"))
+            } else {
+                Invoke-ComposeInDir -WorkingDirectory $script:ForgejoStackDir -Arguments @((Get-ForgejoComposeArgs) + @("logs", "-f", $ServiceName))
+            }
+        }
+        "forgejo" {
+            View-StackLogs "git" $ServiceName
+        }
+        "all" {
+            Write-Host "Streaming Plane logs. Open another terminal for mail/git logs if needed."
+            Initialize-LocalEnvFiles
+            Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("logs", "-f"))
+        }
+        default {
+            Write-Host "INVALID STACK NAME SUPPLIED"
+        }
+    }
 }
 
 function View-Logs {
@@ -464,6 +706,28 @@ function Show-Status {
     Invoke-Compose -Arguments @((Get-ComposeBaseArgs) + @("ps"))
 }
 
+function Show-MailStatus {
+    Initialize-MailEnvFiles
+    Invoke-ComposeInDir -WorkingDirectory $script:MailStackDir -Arguments @((Get-MailComposeArgs) + @("ps"))
+}
+
+function Show-GitStatus {
+    Initialize-ForgejoEnvFiles
+    Invoke-ComposeInDir -WorkingDirectory $script:ForgejoStackDir -Arguments @((Get-ForgejoComposeArgs) + @("ps"))
+}
+
+function Show-AllStatus {
+    Write-Host ""
+    Write-Host "Plane:"
+    Show-Status
+    Write-Host ""
+    Write-Host "Mail:"
+    Show-MailStatus
+    Write-Host ""
+    Write-Host "Git:"
+    Show-GitStatus
+}
+
 function Backup-ContainerDir {
     param(
         [Parameter(Mandatory = $true)]
@@ -531,6 +795,77 @@ function Backup-Data {
     Write-Host ""
 }
 
+function Normalize-Target {
+    param(
+        [string]$Target = "plane"
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Target)) {
+        return "plane"
+    }
+
+    switch ($Target.ToLowerInvariant()) {
+        "plane" { return "plane" }
+        "mail" { return "mail" }
+        "email" { return "mail" }
+        "smtp" { return "mail" }
+        "git" { return "git" }
+        "forgejo" { return "git" }
+        "gitea" { return "git" }
+        "all" { return "all" }
+        "full" { return "all" }
+        default { return $Target.ToLowerInvariant() }
+    }
+}
+
+function Start-Target {
+    param([string]$Target = "plane")
+
+    switch (Normalize-Target $Target) {
+        "plane" { Start-Services }
+        "mail" { Start-MailServices }
+        "git" { Start-GitServices }
+        "all" { Start-AllServices }
+        default { Write-Host "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" }
+    }
+}
+
+function Stop-Target {
+    param([string]$Target = "plane")
+
+    switch (Normalize-Target $Target) {
+        "plane" { Stop-Services }
+        "mail" { Stop-MailServices }
+        "git" { Stop-GitServices }
+        "all" { Stop-AllServices }
+        default { Write-Host "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" }
+    }
+}
+
+function Restart-Target {
+    param([string]$Target = "plane")
+
+    switch (Normalize-Target $Target) {
+        "plane" { Restart-Services }
+        "mail" { Restart-MailServices }
+        "git" { Restart-GitServices }
+        "all" { Restart-AllServices }
+        default { Write-Host "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" }
+    }
+}
+
+function Status-Target {
+    param([string]$Target = "plane")
+
+    switch (Normalize-Target $Target) {
+        "plane" { Show-Status }
+        "mail" { Show-MailStatus }
+        "git" { Show-GitStatus }
+        "all" { Show-AllStatus }
+        default { Write-Host "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" }
+    }
+}
+
 function Invoke-AskForAction {
     param(
         [string[]]$Arguments
@@ -546,24 +881,38 @@ function Invoke-AskForAction {
         Write-Host ""
         Write-Host "Select a Action you want to perform:"
         Write-Host "   1) Install / Build local images"
-        Write-Host "   2) Start"
-        Write-Host "   3) Stop"
-        Write-Host "   4) Restart"
-        Write-Host "   5) Rebuild without cache"
-        Write-Host "   6) View Logs"
-        Write-Host "   7) Backup Data"
-        Write-Host "   8) Status"
-        Write-Host "   9) Exit"
+        Write-Host "   2) Start all (Plane + mail + git)"
+        Write-Host "   3) Start Plane only"
+        Write-Host "   4) Start mail server only"
+        Write-Host "   5) Start git server only"
+        Write-Host "   6) Stop all"
+        Write-Host "   7) Stop Plane only"
+        Write-Host "   8) Stop mail server only"
+        Write-Host "   9) Stop git server only"
+        Write-Host "   10) Restart all"
+        Write-Host "   11) Restart Plane only"
+        Write-Host "   12) Restart mail server only"
+        Write-Host "   13) Restart git server only"
+        Write-Host "   14) Rebuild Plane images without cache"
+        Write-Host "   15) View Logs"
+        Write-Host "   16) Backup Plane Data"
+        Write-Host "   17) Status"
+        Write-Host "   18) Exit"
         Write-Host ""
 
-        $action = Read-Host "Action [2]"
-        while (-not [string]::IsNullOrWhiteSpace($action) -and $action -notmatch "^[1-9]$") {
+        $action = Read-Host "Action [3]"
+        while (-not [string]::IsNullOrWhiteSpace($action)) {
+            $actionNumber = 0
+            if ([int]::TryParse($action, [ref]$actionNumber) -and $actionNumber -ge 1 -and $actionNumber -le 18) {
+                break
+            }
+
             Write-Host "${action}: invalid selection."
-            $action = Read-Host "Action [2]"
+            $action = Read-Host "Action [3]"
         }
 
         if ([string]::IsNullOrWhiteSpace($action)) {
-            $action = "2"
+            $action = "3"
         }
 
         Write-Host ""
@@ -571,25 +920,61 @@ function Invoke-AskForAction {
 
     if ($action -eq "1" -or $defaultAction -eq "install" -or $defaultAction -eq "build") {
         Install-Plane
-    } elseif ($action -eq "2" -or $defaultAction -eq "start" -or $defaultAction -eq "up") {
-        Start-Services
-    } elseif ($action -eq "3" -or $defaultAction -eq "stop" -or $defaultAction -eq "down") {
-        Stop-Services
-    } elseif ($action -eq "4" -or $defaultAction -eq "restart") {
-        Restart-Services
-    } elseif ($action -eq "5" -or $defaultAction -eq "rebuild") {
-        Rebuild-Services
-    } elseif ($action -eq "6" -or $defaultAction -eq "logs") {
-        $serviceName = ""
-        if ($Arguments -and $Arguments.Count -gt 1) {
-            $serviceName = $Arguments[1]
-        }
-        View-Logs $serviceName
-    } elseif ($action -eq "7" -or $defaultAction -eq "backup") {
-        Backup-Data
-    } elseif ($action -eq "8" -or $defaultAction -eq "status" -or $defaultAction -eq "ps") {
-        Show-Status
+    } elseif ($action -eq "2") {
+        Start-Target "all"
+    } elseif ($action -eq "3" -or $defaultAction -eq "start" -or $defaultAction -eq "up") {
+        $target = if ($Arguments -and $Arguments.Count -gt 1) { $Arguments[1] } else { "plane" }
+        Start-Target $target
+    } elseif ($action -eq "4") {
+        Start-Target "mail"
+    } elseif ($action -eq "5") {
+        Start-Target "git"
+    } elseif ($action -eq "6") {
+        Stop-Target "all"
+    } elseif ($action -eq "7" -or $defaultAction -eq "stop" -or $defaultAction -eq "down") {
+        $target = if ($Arguments -and $Arguments.Count -gt 1) { $Arguments[1] } else { "plane" }
+        Stop-Target $target
+    } elseif ($action -eq "8") {
+        Stop-Target "mail"
     } elseif ($action -eq "9") {
+        Stop-Target "git"
+    } elseif ($action -eq "10") {
+        Restart-Target "all"
+    } elseif ($action -eq "11" -or $defaultAction -eq "restart") {
+        $target = if ($Arguments -and $Arguments.Count -gt 1) { $Arguments[1] } else { "plane" }
+        Restart-Target $target
+    } elseif ($action -eq "12") {
+        Restart-Target "mail"
+    } elseif ($action -eq "13") {
+        Restart-Target "git"
+    } elseif ($action -eq "14" -or $defaultAction -eq "rebuild") {
+        Rebuild-Services
+    } elseif ($action -eq "15" -or $defaultAction -eq "logs") {
+        $firstLogArg = ""
+        if ($Arguments -and $Arguments.Count -gt 1) {
+            $firstLogArg = $Arguments[1]
+        }
+
+        if ([string]::IsNullOrWhiteSpace($firstLogArg)) {
+            View-Logs
+        } else {
+            $logTarget = Normalize-Target $firstLogArg
+            if (@("plane", "mail", "git", "all") -contains $logTarget) {
+                $serviceName = ""
+                if ($Arguments -and $Arguments.Count -gt 2) {
+                    $serviceName = $Arguments[2]
+                }
+                View-StackLogs $logTarget $serviceName
+            } else {
+                View-Logs $firstLogArg
+            }
+        }
+    } elseif ($action -eq "16" -or $defaultAction -eq "backup") {
+        Backup-Data
+    } elseif ($action -eq "17" -or $defaultAction -eq "status" -or $defaultAction -eq "ps") {
+        $target = if ($Arguments -and $Arguments.Count -gt 1) { $Arguments[1] } else { "plane" }
+        Status-Target $target
+    } elseif ($action -eq "18") {
         exit 0
     } else {
         Write-Host "INVALID ACTION SUPPLIED"

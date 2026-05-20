@@ -8,6 +8,14 @@ ROOT_ENV_EXAMPLE_PATH="${REPO_ROOT}/.env.example"
 PLANE_ENV_PATH="${REPO_ROOT}/plane.env"
 API_ENV_PATH="${REPO_ROOT}/apps/api/.env"
 API_ENV_EXAMPLE_PATH="${REPO_ROOT}/apps/api/.env.example"
+MAIL_STACK_DIR="${REPO_ROOT}/mail-stack"
+MAIL_COMPOSE_FILE_PATH="${MAIL_STACK_DIR}/docker-compose.yml"
+MAIL_ENV_PATH="${MAIL_STACK_DIR}/.env"
+MAIL_ENV_EXAMPLE_PATH="${MAIL_STACK_DIR}/.env.example"
+FORGEJO_STACK_DIR="${REPO_ROOT}/forgejo-stack"
+FORGEJO_COMPOSE_FILE_PATH="${FORGEJO_STACK_DIR}/docker-compose.yml"
+FORGEJO_ENV_PATH="${FORGEJO_STACK_DIR}/.env"
+FORGEJO_ENV_EXAMPLE_PATH="${FORGEJO_STACK_DIR}/.env.example"
 BACKUP_ROOT="${REPO_ROOT}/backup"
 
 COMPOSE_CMD=""
@@ -39,6 +47,20 @@ EOF
 
 function run_compose() {
     pushd "$REPO_ROOT" >/dev/null
+    if [[ "$COMPOSE_CMD" == "docker compose" ]]; then
+        docker compose "$@"
+    else
+        docker-compose "$@"
+    fi
+    LAST_COMPOSE_EXIT_CODE=$?
+    popd >/dev/null
+}
+
+function run_compose_in_dir() {
+    local workdir="$1"
+    shift
+
+    pushd "$workdir" >/dev/null
     if [[ "$COMPOSE_CMD" == "docker compose" ]]; then
         docker compose "$@"
     else
@@ -147,6 +169,111 @@ function initialize_local_env_files() {
 
 function compose_base_args() {
     echo "-f ${COMPOSE_FILE_PATH} --env-file ${ROOT_ENV_PATH}"
+}
+
+function mail_compose_args() {
+    echo "-f ${MAIL_COMPOSE_FILE_PATH} --env-file ${ROOT_ENV_PATH} --env-file ${MAIL_ENV_PATH}"
+}
+
+function forgejo_compose_args() {
+    echo "-f ${FORGEJO_COMPOSE_FILE_PATH} --env-file ${ROOT_ENV_PATH} --env-file ${FORGEJO_ENV_PATH}"
+}
+
+function ensure_shared_docker_resources() {
+    if ! docker network inspect plane_default >/dev/null 2>&1; then
+        echo "Creating shared Docker network: plane_default"
+        docker network create plane_default >/dev/null
+    fi
+
+    if ! docker volume inspect plane_caddy-data >/dev/null 2>&1; then
+        echo "Creating shared Docker volume: plane_caddy-data"
+        docker volume create plane_caddy-data >/dev/null
+    fi
+}
+
+function initialize_mail_env_files() {
+    initialize_local_env_files
+
+    if [[ ! -f "$MAIL_COMPOSE_FILE_PATH" ]]; then
+        echo "ERROR: mail-stack/docker-compose.yml not found at ${MAIL_COMPOSE_FILE_PATH}"
+        exit 1
+    fi
+
+    if [[ ! -f "$MAIL_ENV_PATH" ]]; then
+        if [[ -f "$MAIL_ENV_EXAMPLE_PATH" ]]; then
+            cp "$MAIL_ENV_EXAMPLE_PATH" "$MAIL_ENV_PATH"
+            echo "Created mail-stack/.env from mail-stack/.env.example"
+        else
+            echo "ERROR: mail-stack/.env does not exist and mail-stack/.env.example was not found"
+            exit 1
+        fi
+    fi
+
+    local mail_domain
+    mail_domain=$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH")
+    if [[ -z "$mail_domain" ]]; then
+        mail_domain=$(get_env_value "MAIL_DOMAIN" "$ROOT_ENV_PATH")
+        if [[ -n "$mail_domain" ]]; then
+            update_env_file "MAIL_DOMAIN" "$mail_domain" "$MAIL_ENV_PATH"
+        fi
+    fi
+
+    mail_domain=$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH")
+    if [[ -z "$mail_domain" ]]; then
+        echo "ERROR: MAIL_DOMAIN is not set. Set it in .env and mail-stack/.env before starting the mail stack."
+        exit 1
+    fi
+}
+
+function initialize_forgejo_env_files() {
+    initialize_local_env_files
+
+    if [[ ! -f "$FORGEJO_COMPOSE_FILE_PATH" ]]; then
+        echo "ERROR: forgejo-stack/docker-compose.yml not found at ${FORGEJO_COMPOSE_FILE_PATH}"
+        exit 1
+    fi
+
+    if [[ ! -f "$FORGEJO_ENV_PATH" ]]; then
+        if [[ -f "$FORGEJO_ENV_EXAMPLE_PATH" ]]; then
+            cp "$FORGEJO_ENV_EXAMPLE_PATH" "$FORGEJO_ENV_PATH"
+            echo "Created forgejo-stack/.env from forgejo-stack/.env.example"
+        else
+            echo "ERROR: forgejo-stack/.env does not exist and forgejo-stack/.env.example was not found"
+            exit 1
+        fi
+    fi
+
+    local postgres_password
+    postgres_password=$(get_env_value "POSTGRES_PASSWORD" "$FORGEJO_ENV_PATH")
+    if [[ -z "$postgres_password" || "$postgres_password" == replace_with_* ]]; then
+        postgres_password=$(new_secret_key)
+        update_env_file "POSTGRES_PASSWORD" "$postgres_password" "$FORGEJO_ENV_PATH"
+        echo "Generated POSTGRES_PASSWORD in forgejo-stack/.env"
+    fi
+
+    local forgejo_db_password
+    forgejo_db_password=$(get_env_value "FORGEJO_DB_PASSWORD" "$FORGEJO_ENV_PATH")
+    if [[ -z "$forgejo_db_password" || "$forgejo_db_password" == replace_with_* ]]; then
+        update_env_file "FORGEJO_DB_PASSWORD" "$postgres_password" "$FORGEJO_ENV_PATH"
+        echo "Set FORGEJO_DB_PASSWORD to match POSTGRES_PASSWORD in forgejo-stack/.env"
+    elif [[ "$forgejo_db_password" != "$postgres_password" ]]; then
+        echo "WARNING: FORGEJO_DB_PASSWORD differs from POSTGRES_PASSWORD. Forgejo may not be able to connect to its database."
+    fi
+
+    local smtp_password
+    smtp_password=$(get_env_value "SMTP_PASSWORD" "$FORGEJO_ENV_PATH")
+    if [[ -z "$smtp_password" || "$smtp_password" == replace_with_* ]]; then
+        echo "WARNING: SMTP_PASSWORD is not configured in forgejo-stack/.env. Forgejo can start, but mail notifications will fail until git@MAIL_DOMAIN exists in the mail stack."
+    fi
+
+    local git_domain
+    git_domain=$(get_env_value "GIT_DOMAIN" "$ROOT_ENV_PATH")
+    if [[ -z "$git_domain" ]]; then
+        echo "ERROR: GIT_DOMAIN is not set in .env."
+        exit 1
+    fi
+
+    mkdir -p "${FORGEJO_STACK_DIR}/data/forgejo" "${FORGEJO_STACK_DIR}/data/postgres" "${FORGEJO_STACK_DIR}/backups"
 }
 
 function build_local_images() {
@@ -286,14 +413,84 @@ function start_services() {
     echo ""
 }
 
+function start_mail_services() {
+    initialize_mail_env_files
+    ensure_shared_docker_resources
+
+    echo "Starting mail stack..."
+    run_compose_in_dir "$MAIL_STACK_DIR" $(mail_compose_args) up -d --build
+    if [[ $LAST_COMPOSE_EXIT_CODE -ne 0 ]]; then
+        exit $LAST_COMPOSE_EXIT_CODE
+    fi
+
+    echo "   Mail stack started"
+    echo "   SMTP:    mail.$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH"):587"
+    echo "   IMAPS:   mail.$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH"):993"
+    echo "   Webmail: https://webmail.$(get_env_value "MAIL_DOMAIN" "$MAIL_ENV_PATH")"
+    echo ""
+}
+
+function start_git_services() {
+    initialize_forgejo_env_files
+    ensure_shared_docker_resources
+
+    echo "Starting Forgejo git stack..."
+    run_compose_in_dir "$FORGEJO_STACK_DIR" $(forgejo_compose_args) up -d
+    if [[ $LAST_COMPOSE_EXIT_CODE -ne 0 ]]; then
+        exit $LAST_COMPOSE_EXIT_CODE
+    fi
+
+    echo "   Git stack started"
+    echo "   Web: https://git.$(get_env_value "GIT_DOMAIN" "$ROOT_ENV_PATH")"
+    echo "   SSH: git@git.$(get_env_value "GIT_DOMAIN" "$ROOT_ENV_PATH"):2222"
+    echo ""
+}
+
+function start_all_services() {
+    start_services
+    start_mail_services
+    start_git_services
+}
+
 function stop_services() {
     initialize_local_env_files
     run_compose $(compose_base_args) down
 }
 
+function stop_mail_services() {
+    initialize_mail_env_files
+    run_compose_in_dir "$MAIL_STACK_DIR" $(mail_compose_args) down
+}
+
+function stop_git_services() {
+    initialize_forgejo_env_files
+    run_compose_in_dir "$FORGEJO_STACK_DIR" $(forgejo_compose_args) down
+}
+
+function stop_all_services() {
+    stop_git_services
+    stop_mail_services
+    stop_services
+}
+
 function restart_services() {
     stop_services
     start_services
+}
+
+function restart_mail_services() {
+    stop_mail_services
+    start_mail_services
+}
+
+function restart_git_services() {
+    stop_git_services
+    start_git_services
+}
+
+function restart_all_services() {
+    stop_all_services
+    start_all_services
 }
 
 function rebuild_services() {
@@ -306,6 +503,44 @@ function view_specific_logs() {
     local service_name="$1"
     initialize_local_env_files
     run_compose $(compose_base_args) logs -f "$service_name"
+}
+
+function view_stack_logs() {
+    local stack="$1"
+    local service_name="${2:-}"
+
+    case "$stack" in
+        plane)
+            if [[ -n "$service_name" ]]; then
+                view_logs "$service_name"
+            else
+                run_compose $(compose_base_args) logs -f
+            fi
+            ;;
+        mail)
+            initialize_mail_env_files
+            if [[ -n "$service_name" ]]; then
+                run_compose_in_dir "$MAIL_STACK_DIR" $(mail_compose_args) logs -f "$service_name"
+            else
+                run_compose_in_dir "$MAIL_STACK_DIR" $(mail_compose_args) logs -f
+            fi
+            ;;
+        git|forgejo)
+            initialize_forgejo_env_files
+            if [[ -n "$service_name" ]]; then
+                run_compose_in_dir "$FORGEJO_STACK_DIR" $(forgejo_compose_args) logs -f "$service_name"
+            else
+                run_compose_in_dir "$FORGEJO_STACK_DIR" $(forgejo_compose_args) logs -f
+            fi
+            ;;
+        all)
+            echo "Streaming Plane logs. Open another terminal for mail/git logs if needed."
+            run_compose $(compose_base_args) logs -f
+            ;;
+        *)
+            echo "INVALID STACK NAME SUPPLIED"
+            ;;
+    esac
 }
 
 function view_logs() {
@@ -374,6 +609,28 @@ function show_status() {
     run_compose $(compose_base_args) ps
 }
 
+function show_mail_status() {
+    initialize_mail_env_files
+    run_compose_in_dir "$MAIL_STACK_DIR" $(mail_compose_args) ps
+}
+
+function show_git_status() {
+    initialize_forgejo_env_files
+    run_compose_in_dir "$FORGEJO_STACK_DIR" $(forgejo_compose_args) ps
+}
+
+function show_all_status() {
+    echo ""
+    echo "Plane:"
+    show_status
+    echo ""
+    echo "Mail:"
+    show_mail_status
+    echo ""
+    echo "Git:"
+    show_git_status
+}
+
 function backup_container_dir() {
     local backup_folder="$1"
     local container_name="$2"
@@ -424,6 +681,71 @@ function backup_data() {
     echo ""
 }
 
+function normalize_target() {
+    local target="${1:-plane}"
+    target=$(echo "$target" | tr '[:upper:]' '[:lower:]')
+
+    case "$target" in
+        ""|plane) echo "plane" ;;
+        mail|email|smtp) echo "mail" ;;
+        git|forgejo|gitea) echo "git" ;;
+        all|full) echo "all" ;;
+        *) echo "$target" ;;
+    esac
+}
+
+function start_target() {
+    local target
+    target=$(normalize_target "${1:-plane}")
+
+    case "$target" in
+        plane) start_services ;;
+        mail) start_mail_services ;;
+        git) start_git_services ;;
+        all) start_all_services ;;
+        *) echo "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" ;;
+    esac
+}
+
+function stop_target() {
+    local target
+    target=$(normalize_target "${1:-plane}")
+
+    case "$target" in
+        plane) stop_services ;;
+        mail) stop_mail_services ;;
+        git) stop_git_services ;;
+        all) stop_all_services ;;
+        *) echo "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" ;;
+    esac
+}
+
+function restart_target() {
+    local target
+    target=$(normalize_target "${1:-plane}")
+
+    case "$target" in
+        plane) restart_services ;;
+        mail) restart_mail_services ;;
+        git) restart_git_services ;;
+        all) restart_all_services ;;
+        *) echo "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" ;;
+    esac
+}
+
+function status_target() {
+    local target
+    target=$(normalize_target "${1:-plane}")
+
+    case "$target" in
+        plane) show_status ;;
+        mail) show_mail_status ;;
+        git) show_git_status ;;
+        all) show_all_status ;;
+        *) echo "INVALID TARGET SUPPLIED. Use: plane, mail, git, all" ;;
+    esac
+}
+
 function ask_for_action() {
     local default_action="${1:-}"
     local action=""
@@ -432,25 +754,34 @@ function ask_for_action() {
         echo ""
         echo "Select a Action you want to perform:"
         echo "   1) Install / Build local images"
-        echo "   2) Start"
-        echo "   3) Stop"
-        echo "   4) Restart"
-        echo "   5) Rebuild without cache"
-        echo "   6) View Logs"
-        echo "   7) Backup Data"
-        echo "   8) Status"
-        echo "   9) Exit"
+        echo "   2) Start all (Plane + mail + git)"
+        echo "   3) Start Plane only"
+        echo "   4) Start mail server only"
+        echo "   5) Start git server only"
+        echo "   6) Stop all"
+        echo "   7) Stop Plane only"
+        echo "   8) Stop mail server only"
+        echo "   9) Stop git server only"
+        echo "   10) Restart all"
+        echo "   11) Restart Plane only"
+        echo "   12) Restart mail server only"
+        echo "   13) Restart git server only"
+        echo "   14) Rebuild Plane images without cache"
+        echo "   15) View Logs"
+        echo "   16) Backup Plane Data"
+        echo "   17) Status"
+        echo "   18) Exit"
         echo ""
 
-        read -p "Action [2]: " action
+        read -p "Action [3]: " action
 
-        while [[ -n "$action" && ! "$action" =~ ^[1-9]$ ]]; do
+        while [[ -n "$action" && ( ! "$action" =~ ^[0-9]+$ || "$action" -lt 1 || "$action" -gt 18 ) ]]; do
             echo "${action}: invalid selection."
-            read -p "Action [2]: " action
+            read -p "Action [3]: " action
         done
 
         if [[ -z "$action" ]]; then
-            action="2"
+            action="3"
         fi
 
         echo ""
@@ -465,32 +796,65 @@ function ask_for_action() {
         1|install|build)
             install_plane
             ;;
-        2|start|up)
-            start_services
+        2)
+            start_target all
             ;;
-        3|stop|down)
-            stop_services
+        3|start|up)
+            start_target "${2:-plane}"
             ;;
-        4|restart)
-            restart_services
+        4)
+            start_target mail
             ;;
-        5|rebuild)
+        5)
+            start_target git
+            ;;
+        6)
+            stop_target all
+            ;;
+        7|stop|down)
+            stop_target "${2:-plane}"
+            ;;
+        8)
+            stop_target mail
+            ;;
+        9)
+            stop_target git
+            ;;
+        10)
+            restart_target all
+            ;;
+        11|restart)
+            restart_target "${2:-plane}"
+            ;;
+        12)
+            restart_target mail
+            ;;
+        13)
+            restart_target git
+            ;;
+        14|rebuild)
             rebuild_services
             ;;
-        6|logs)
+        15|logs)
             if [[ -n "${2:-}" ]]; then
-                view_logs "$2"
+                local log_target
+                log_target=$(normalize_target "$2")
+                if [[ "$log_target" == "plane" || "$log_target" == "mail" || "$log_target" == "git" || "$log_target" == "all" ]]; then
+                    view_stack_logs "$log_target" "${3:-}"
+                else
+                    view_logs "$2"
+                fi
             else
                 view_logs
             fi
             ;;
-        7|backup)
+        16|backup)
             backup_data
             ;;
-        8|status|ps)
-            show_status
+        17|status|ps)
+            status_target "${2:-plane}"
             ;;
-        9)
+        18)
             exit 0
             ;;
         *)
