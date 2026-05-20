@@ -21,7 +21,15 @@ function formatDate(iso: string | null | undefined, includeTime = false): string
   if (!iso) return "—";
   const d = new Date(iso);
   if (includeTime) {
-    return d.toLocaleString("sv-SE", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).replace("T", " ");
+    return d
+      .toLocaleString("sv-SE", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+      .replace("T", " ");
   }
   return d.toLocaleDateString("sv-SE");
 }
@@ -51,11 +59,11 @@ export function HoExportRow({ job }: Props) {
         {formatFileSize(job.file_size)}
       </td>
 
-      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-tertiary tabular-nums">{formatDate(job.created_at, true)}</td>
-
       <td className="px-4 py-2.5 whitespace-nowrap text-13 text-tertiary tabular-nums">
-        {formatDate(job.expires_at)}
+        {formatDate(job.created_at, true)}
       </td>
+
+      <td className="px-4 py-2.5 whitespace-nowrap text-13 text-tertiary tabular-nums">{formatDate(job.expires_at)}</td>
 
       <td className="px-4 py-2.5 whitespace-nowrap text-right">
         {canDownload ? (
