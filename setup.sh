@@ -120,7 +120,17 @@ function update_env_file() {
 }
 
 function new_secret_key() {
-    LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c 50
+    if command -v openssl >/dev/null 2>&1; then
+        openssl rand -hex 32
+        return
+    fi
+
+    local secret=""
+    while [[ ${#secret} -lt 50 ]]; do
+        secret+=$(LC_ALL=C tr -dc 'a-z0-9' </dev/urandom | head -c $((50 - ${#secret})) || true)
+    done
+
+    printf '%s' "$secret"
 }
 
 function initialize_local_env_files() {
