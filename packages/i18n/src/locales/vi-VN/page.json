@@ -74,7 +74,7 @@
     },
     "open_button": "Mở bảng điều hướng",
     "close_button": "Đóng bảng điều hướng",
-    "outline_floating_button": "Mở phác thảo"
+    "outline_floating_button": "Mở mục lục"
   },
   "page_actions": {
     "move_page": {
@@ -102,7 +102,7 @@
         },
         "collection_error": {
           "title": "Đã chuyển vào wiki",
-          "message": "Trang đã được chuyển vào wiki, nhưng không thể thêm vào bộ sưu tập đã chọn. Trang vẫn nằm trong General."
+          "message": "Trang đã được chuyển vào wiki, nhưng không thể thêm vào bộ sưu tập đã chọn. Trang vẫn nằm trong Tổng quan."
         }
       }
     },
@@ -111,5 +111,18 @@
       "success_message": "Đã xóa trang khỏi bộ sưu tập.",
       "error_message": "Không thể xóa trang khỏi bộ sưu tập. Vui lòng thử lại."
     }
+  },
+  "page_access": {
+    "not_found_title": "Không tìm thấy trang",
+    "not_found_description": "Trang bạn đang cố truy cập không tồn tại hoặc bạn không có quyền xem.",
+    "view_other_pages": "Xem các trang khác"
+  },
+  "profile_activity": {
+    "page_title": "Hồ sơ - Hoạt động"
+  },
+  "space_public": {
+    "page_not_found_alt": "Không tìm thấy trang",
+    "page_not_found_description": "Trang bạn đang tìm không tồn tại hoặc đã được di chuyển.",
+    "something_went_wrong": "Rất tiếc! Đã xảy ra lỗi."
   }
 }

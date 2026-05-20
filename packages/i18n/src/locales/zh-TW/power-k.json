@@ -1,12 +1,12 @@
 {
   "power_k": {
     "actions_commands": {
-      "bulk_delete_work_items": "批次刪除工作事項"
+      "bulk_delete_work_items": "批次刪除工作項目"
     },
     "contextual_actions": {
       "work_item": {
-        "title": "工作事項操作",
-        "indicator": "工作事項",
+        "title": "工作項目操作",
+        "indicator": "工作項目",
         "change_state": "變更狀態",
         "change_priority": "變更優先順序",
         "change_assignees": "指派給",
@@ -20,14 +20,14 @@
         "unsubscribe": "取消訂閱通知",
         "delete": "刪除",
         "copy_id": "複製 ID",
-        "copy_id_toast_success": "工作事項 ID 已複製到剪貼簿。",
-        "copy_id_toast_error": "複製工作事項 ID 至剪貼簿時發生錯誤。",
+        "copy_id_toast_success": "工作項目 ID 已複製到剪貼簿。",
+        "copy_id_toast_error": "複製工作項目 ID 至剪貼簿時發生錯誤。",
         "copy_title": "複製標題",
-        "copy_title_toast_success": "工作事項標題已複製到剪貼簿。",
-        "copy_title_toast_error": "複製工作事項標題至剪貼簿時發生錯誤。",
+        "copy_title_toast_success": "工作項目標題已複製到剪貼簿。",
+        "copy_title_toast_error": "複製工作項目標題至剪貼簿時發生錯誤。",
         "copy_url": "複製 URL",
-        "copy_url_toast_success": "工作事項 URL 已複製到剪貼簿。",
-        "copy_url_toast_error": "複製工作事項 URL 至剪貼簿時發生錯誤。"
+        "copy_url_toast_success": "工作項目 URL 已複製到剪貼簿。",
+        "copy_url_toast_error": "複製工作項目 URL 至剪貼簿時發生錯誤。"
       },
       "cycle": {
         "title": "週期操作",
@@ -66,7 +66,7 @@
       }
     },
     "creation_actions": {
-      "create_work_item": "新工作事項",
+      "create_work_item": "新工作項目",
       "create_page": "新頁面",
       "create_view": "新檢視",
       "create_cycle": "新週期",
@@ -83,16 +83,16 @@
       "nav_account_settings": "前往帳號設定",
       "open_project": "開啟專案",
       "nav_projects_list": "前往專案清單",
-      "nav_all_workspace_work_items": "前往所有工作事項",
-      "nav_assigned_workspace_work_items": "前往已指派工作事項",
-      "nav_created_workspace_work_items": "前往已建立工作事項",
-      "nav_subscribed_workspace_work_items": "前往已訂閱工作事項",
+      "nav_all_workspace_work_items": "前往所有工作項目",
+      "nav_assigned_workspace_work_items": "前往已指派工作項目",
+      "nav_created_workspace_work_items": "前往已建立工作項目",
+      "nav_subscribed_workspace_work_items": "前往已訂閱工作項目",
       "nav_workspace_analytics": "前往工作區分析",
       "nav_workspace_drafts": "前往工作區草稿",
       "nav_workspace_archives": "前往工作區封存",
       "open_workspace_setting": "開啟工作區設定",
       "nav_workspace_settings": "前往工作區設定",
-      "nav_project_work_items": "前往工作事項",
+      "nav_project_work_items": "前往工作項目",
       "open_project_cycle": "開啟週期",
       "nav_project_cycles": "前往週期",
       "open_project_module": "開啟模組",

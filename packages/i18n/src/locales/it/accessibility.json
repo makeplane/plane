@@ -4,7 +4,7 @@
       "workspace_logo": "Logo dell'area di lavoro",
       "open_workspace_switcher": "Apri selettore area di lavoro",
       "open_user_menu": "Apri menu utente",
-      "open_command_palette": "Apri tavolozza comandi",
+      "open_command_palette": "Apri palette dei comandi",
       "open_extended_sidebar": "Apri barra laterale estesa",
       "close_extended_sidebar": "Chiudi barra laterale estesa",
       "create_favorites_folder": "Crea cartella preferiti",
@@ -22,6 +22,12 @@
       "collapse_sidebar": "Comprimi barra laterale",
       "expand_sidebar": "Espandi barra laterale",
       "edition_badge": "Apri modal piani a pagamento"
+    },
+    "app_sidebar": {
+      "open_workspace_menu": "Apri menu area di lavoro",
+      "close_workspace_menu": "Chiudi menu area di lavoro",
+      "open_extended_sidebar": "Apri barra laterale estesa",
+      "close_extended_sidebar": "Chiudi barra laterale estesa"
     },
     "auth_forms": {
       "clear_email": "Cancella email",

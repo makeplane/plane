@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "이 뷰를 삭제하시겠습니까?",
       "content": "확인하면 이 뷰에 대해 선택한 모든 정렬, 필터 및 표시 옵션 + 레이아웃이 복원할 수 없는 방식으로 영구적으로 삭제됩니다."
-    }
+    },
+    "page_title": "{workspaceName} - 모든 보기"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "작업 항목 초안",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "워크스페이스를 찾을 수 없습니다",
+    "not_found_description": "이 URL에 해당하는 워크스페이스를 찾을 수 없습니다. 존재하지 않거나 볼 권한이 없을 수 있습니다.",
+    "visit_profile": "프로필 방문",
+    "not_authorized_title": "권한이 없습니다",
+    "not_authorized_description": "이 워크스페이스의 멤버가 아닙니다. 워크스페이스 관리자에게 초대를 요청하거나 대기 중인 초대를 확인하세요.",
+    "check_pending_invites": "보류 중인 초대 확인"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "초대를 찾을 수 없습니다",
+    "invited_to_workspace": "{workspaceName}에 초대되었습니다",
+    "description": "워크스페이스는 Plane 계정에서 프로젝트를 만들고, 작업 항목에서 공동 작업하며, 다양한 작업 흐름을 구성하는 곳입니다.",
+    "accept": "수락",
+    "ignore": "무시",
+    "already_member": "이미 {workspaceName}의 구성원입니다",
+    "continue_to_home": "홈으로 이동",
+    "inactive_title": "이 초대 링크는 더 이상 유효하지 않습니다.",
+    "empty_project_link": "또는 빈 프로젝트에서 시작",
+    "sign_in_to_continue": "계속하려면 로그인하세요",
+    "star_on_github": "GitHub에서 스타를 눌러 주세요",
+    "join_community": "활동적인 크리에이터 커뮤니티에 참여하세요"
+  },
+  "onboarding": {
+    "create_profile_title": "프로필을 만드세요.",
+    "create_profile_description": "이것이 Plane에 나타나는 모습입니다.",
+    "change_image": "이미지 변경",
+    "upload_image": "이미지 업로드",
+    "name": "이름",
+    "name_required": "이름은 필수입니다",
+    "name_within_50": "이름은 50자 이내로 입력해야 합니다.",
+    "enter_full_name": "이름을 입력하세요",
+    "set_password": "비밀번호를 설정하세요",
+    "optional": "선택 사항",
+    "passwords_do_not_match": "비밀번호가 일치하지 않습니다.",
+    "passwords_match": "비밀번호가 일치합니다.",
+    "continue": "계속",
+    "invite_team_title": "팀원을 초대하세요",
+    "invite_team_description": "Plane에서의 작업은 팀과 함께 가장 잘 이루어집니다. 지금 Plane를 활용해 잠재력을 발휘하도록 초대하세요.",
+    "invalid_email": "이메일 주소가 아닌 것 같습니다.",
+    "success": "성공!",
+    "invitations_sent": "초대장이 성공적으로 전송되었습니다.",
+    "error": "오류!",
+    "add_another": "다른 항목 추가",
+    "do_later": "나중에 할게요",
+    "join_invites_title": "초대에 참여하거나 작업 공간 만들기",
+    "unified_description": "모든 작업을 한곳에.",
+    "create_new_workspace": "새 작업공간 만들기",
+    "no_invitations_found": "초대장을 찾을 수 없습니다.",
+    "you_are_invited": "초대받으셨습니다!",
+    "accept_invites": "팀과 협력하려면 초대를 수락하세요.",
+    "continue_to_workspace": "계속해서 작업공간으로 이동",
+    "or": "또는",
+    "create_own_workspace": "나만의 작업 공간 만들기",
+    "workspace_creation_disabled": "워크스페이스에 대한 초대가 없는 것 같고 인스턴스 관리자가 새 워크스페이스 생성을 제한했습니다. 먼저 워크스페이스 소유자나 관리자에게 워크스페이스에 초대해 달라고 요청한 후 이 화면으로 돌아와 참여하세요.",
+    "create_workspace_title": "작업 공간 만들기",
+    "enter_workspace_name": "작업공간 이름을 입력하세요.",
+    "join_existing_workspace": "기존 작업공간에 참여",
+    "profile_setup_completed": "프로필 설정이 완료되었습니다.",
+    "profile_setup_failed": "프로필 설정에 실패했습니다.",
+    "usecase_title": "Plane를 어떻게 사용할 계획인가요?",
+    "usecase_description": "경험을 맞춤화할 수 있도록 하나 이상의 옵션을 선택하세요.",
+    "select_one_or_more": "하나 이상 선택",
+    "select_at_least_one": "옵션을 하나 이상 선택하세요.",
+    "skip": "건너뛰기"
   }
 }

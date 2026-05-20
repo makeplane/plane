@@ -14,12 +14,12 @@
     "reaction": {
       "create": {
         "success": {
-          "title": "反應已創建",
-          "message": "反應已成功創建。"
+          "title": "反應已建立",
+          "message": "反應已成功建立。"
         },
         "error": {
-          "title": "反應未創建",
-          "message": "反應未創建。"
+          "title": "反應未建立",
+          "message": "反應未建立。"
         }
       },
       "remove": {
@@ -35,12 +35,12 @@
     },
     "create": {
       "success": {
-        "title": "更新已創建",
-        "message": "更新已成功創建。"
+        "title": "更新已建立",
+        "message": "更新已成功建立。"
       },
       "error": {
-        "title": "更新未創建",
-        "message": "更新未創建。"
+        "title": "更新未建立",
+        "message": "更新未建立。"
       }
     },
     "delete": {

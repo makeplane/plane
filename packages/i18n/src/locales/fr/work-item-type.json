@@ -149,7 +149,7 @@
             },
             "error": {
               "title": "Erreur !",
-              "message": "Échec de l'{action} de la propriété. Veuillez réessayer !"
+              "message": "Échec de l''{action} de la propriété. Veuillez réessayer !"
             }
           }
         },
@@ -345,7 +345,7 @@
         },
         "error": {
           "title": "Erreur !",
-          "message": "Échec de l'{action} du type d'élément de travail. Veuillez réessayer !"
+          "message": "Échec de l''{action} du type d''élément de travail. Veuillez réessayer !"
         }
       },
       "tooltip": "Cliquer pour {action}"
@@ -435,7 +435,7 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "L'enregistrement rompra les liens existants",
+      "title": "Erreur de validation !",
       "content": {
         "intro": "Le type d'élément de travail {workItemTypeName} comporte :",
         "parent_items": "{count, plural, one {# lien parent sera supprimé} other {# liens parents seront supprimés}}.",
@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "Enregistrement",
-        "default": "Enregistrer quand même"
+        "default": "Appliquer et dissocier"
       }
     },
     "work_item_modal": {

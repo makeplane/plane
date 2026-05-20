@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Plane의 새로운 기능"
+      "title": "Plane 처음 사용하시나요?"
     },
     "quick_tutorial": {
       "title": "빠른 튜토리얼"
@@ -64,7 +64,7 @@
     },
     "manage_widgets": "위젯 관리",
     "title": "홈",
-    "star_us_on_github": "GitHub에서 별표",
+    "star_us_on_github": "GitHub에서 스타 표시하기",
     "business_trial_banner": {
       "title": "14일 Business 플랜 체험판이 활성화되었습니다!",
       "description": "모든 Business 기능을 살펴보세요. 준비가 되면 구독을 선택하세요. 자동으로 청구되지 않습니다.",

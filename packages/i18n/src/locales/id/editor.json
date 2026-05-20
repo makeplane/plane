@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Seret dan lepas untuk mengunggah file eksternal"
+      "drag_and_drop": "Seret dan lepaskan file di sini atau klik untuk mengunggah"
     },
     "errors": {
       "file_too_large": {
@@ -35,7 +35,7 @@
       "link": "Masukkan atau tempel tautan"
     },
     "input_modal": {
-      "embed": "Tanam",
+      "embed": "Sematkan",
       "works_with_links": "Bekerja dengan YouTube, Figma, Google Docs dan lainnya"
     },
     "error": {
@@ -60,6 +60,80 @@
       "rewrite": "Tulis ulang",
       "use_this": "Gunakan ini",
       "refine": "Perbaiki"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Masukkan atau tempel URL",
+    "text": "Teks",
+    "enter_text_to_display": "Masukkan teks untuk ditampilkan",
+    "remove_link": "Hapus tautan",
+    "edit_link": "Sunting tautan",
+    "color": "Warna",
+    "text_colors": "Warna teks",
+    "background_colors": "Warna latar belakang",
+    "link": "Tautan",
+    "enter_or_paste_link": "Masukkan atau tempel tautan",
+    "please_enter_valid_url": "Silakan masukkan URL yang valid",
+    "delete": "Hapus",
+    "duplicate": "Buat duplikat",
+    "multiple": "Banyak",
+    "loading": "Memuat",
+    "no_results": "Tidak ada hasil",
+    "copy_code": "Salin kode",
+    "add_an_image": "Tambahkan gambar",
+    "error_loading_image": "Terjadi kesalahan saat memuat gambar",
+    "uploading": "Mengunggah",
+    "drop_image_here": "Jatuhkan gambar di sini",
+    "retry_duplication": "Coba lagi duplikasi",
+    "retry": "Coba lagi",
+    "no_emojis_found": "Tidak ada emoji yang ditemukan",
+    "fullscreen_image_viewer": "Penampil gambar layar penuh",
+    "close_image_viewer": "Tutup penampil gambar",
+    "zoom_out": "Perkecil",
+    "zoom_in": "Perbesar",
+    "download_image": "Unduh gambar",
+    "open_image_in_new_tab": "Buka gambar di tab baru",
+    "view_in_full_screen": "Lihat dalam layar penuh",
+    "view_image_in_full_screen": "Lihat gambar dalam layar penuh",
+    "align": "Perataan",
+    "download": "Unduh",
+    "clear_contents": "Hapus isi",
+    "insert_above": "Sisipkan di atas",
+    "insert_below": "Sisipkan di bawah",
+    "insert_left": "Sisipkan ke kiri",
+    "insert_right": "Sisipkan ke kanan",
+    "header_row": "Baris tajuk",
+    "header_column": "Kolom tajuk",
+    "alignment": {
+      "left": "Kiri",
+      "center": "Tengah",
+      "right": "Kanan"
+    },
+    "menu_items": {
+      "text": "Teks",
+      "h1": "Judul 1",
+      "h2": "Judul 2",
+      "h3": "Judul 3",
+      "h4": "Judul 4",
+      "h5": "Judul 5",
+      "h6": "Judul 6",
+      "bulleted-list": "Daftar berpoin",
+      "numbered-list": "Daftar bernomor",
+      "to-do-list": "Daftar tugas",
+      "quote": "Kutipan",
+      "code": "Kode",
+      "table": "Tabel",
+      "image": "Gambar",
+      "divider": "Pembagi",
+      "link": "Tautan",
+      "bold": "Tebal",
+      "italic": "Miring",
+      "underline": "Garis bawah",
+      "strikethrough": "Dicoret",
+      "text-color": "Warna teks",
+      "background-color": "Warna latar belakang",
+      "text-align": "Perataan teks"
     }
   }
 }

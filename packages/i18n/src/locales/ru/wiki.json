@@ -43,7 +43,7 @@
     },
     "add_existing_page_modal": {
       "search_placeholder": "Поиск страниц",
-      "success_message": "В коллекцию добавлено страниц: {count}.",
+      "success_message": "В коллекцию добавлено {count} {count, plural, one {страница} few {страницы} other {страниц}}.",
       "error_message": "Не удалось переместить страницы. Повторите попытку.",
       "no_pages_found": "Не найдено страниц, соответствующих вашему запросу",
       "no_pages_available": "Нет доступных страниц для перемещения",

@@ -5,7 +5,7 @@
         "label": "大綱",
         "empty_state": {
           "title": "缺少標題",
-          "description": "讓我們在這個頁面添加一些標題來在這裡查看它們。"
+          "description": "讓我們在這個頁面新增一些標題來在這裡查看它們。"
         }
       },
       "info": {
@@ -31,7 +31,7 @@
         "download_button": "下載",
         "empty_state": {
           "title": "缺少圖片",
-          "description": "添加圖片以在這裡查看它們。"
+          "description": "新增圖片以在這裡查看它們。"
         }
       },
       "comments": {
@@ -111,5 +111,18 @@
       "success_message": "頁面已從集合中移除。",
       "error_message": "無法將頁面從集合中移除。請再試一次。"
     }
+  },
+  "page_access": {
+    "not_found_title": "找不到頁面",
+    "not_found_description": "你嘗試存取的頁面不存在，或你沒有權限檢視。",
+    "view_other_pages": "檢視其他頁面"
+  },
+  "profile_activity": {
+    "page_title": "個人資料 - 活動"
+  },
+  "space_public": {
+    "page_not_found_alt": "找不到頁面",
+    "page_not_found_description": "你要尋找的頁面不存在或已被移動。",
+    "something_went_wrong": "糟糕！出了點問題。"
   }
 }

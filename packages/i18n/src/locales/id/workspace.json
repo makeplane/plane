@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Apakah Anda yakin ingin menghapus tampilan ini?",
       "content": "Jika Anda mengonfirmasi, semua opsi pengurutan, filter, dan tampilan + tata letak yang telah Anda pilih untuk tampilan ini akan dihapus secara permanen tanpa cara untuk memulihkannya."
-    }
+    },
+    "page_title": "{workspaceName} - Semua Tampilan"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Draf item kerja",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Ruang kerja tidak ditemukan",
+    "not_found_description": "Tidak ada ruang kerja yang ditemukan untuk URL ini. Ruang kerja tersebut mungkin tidak ada atau Anda tidak memiliki izin untuk melihatnya.",
+    "visit_profile": "Kunjungi profil",
+    "not_authorized_title": "Tidak diizinkan!",
+    "not_authorized_description": "Anda bukan anggota ruang kerja ini. Hubungi admin ruang kerja untuk mendapatkan undangan atau periksa undangan yang tertunda.",
+    "check_pending_invites": "Periksa undangan tertunda"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Undangan tidak ditemukan",
+    "invited_to_workspace": "Anda telah diundang ke {workspaceName}",
+    "description": "Ruang kerja Anda adalah tempat Anda membuat proyek, berkolaborasi pada item pekerjaan Anda, dan mengatur berbagai aliran pekerjaan di akun Plane Anda.",
+    "accept": "Terima",
+    "ignore": "Abaikan",
+    "already_member": "Anda sudah menjadi anggota {workspaceName}",
+    "continue_to_home": "Lanjutkan ke beranda",
+    "inactive_title": "Tautan undangan ini sudah tidak aktif lagi.",
+    "empty_project_link": "Atau mulai dari proyek kosong",
+    "sign_in_to_continue": "Masuk untuk melanjutkan",
+    "star_on_github": "Bintangi kami di GitHub",
+    "join_community": "Bergabunglah dengan komunitas pembuat konten aktif kami"
+  },
+  "onboarding": {
+    "create_profile_title": "Buat profil Anda.",
+    "create_profile_description": "Ini adalah tampilan Anda di Plane.",
+    "change_image": "Ubah gambar",
+    "upload_image": "Unggah gambar",
+    "name": "Nama",
+    "name_required": "Nama wajib diisi",
+    "name_within_50": "Nama harus dalam 50 karakter.",
+    "enter_full_name": "Masukkan nama lengkap Anda",
+    "set_password": "Tetapkan kata sandi",
+    "optional": "Opsional",
+    "passwords_do_not_match": "Kata sandi tidak cocok",
+    "passwords_match": "Kata sandi cocok",
+    "continue": "Lanjut",
+    "invite_team_title": "Undang rekan satu tim Anda",
+    "invite_team_description": "Pekerjaan di Plane paling baik dilakukan bersama tim Anda. Undang mereka sekarang untuk menggunakan Plane semaksimal mungkin.",
+    "invalid_email": "Itu tidak terlihat seperti alamat email.",
+    "success": "Berhasil!",
+    "invitations_sent": "Undangan berhasil dikirim.",
+    "error": "Kesalahan!",
+    "add_another": "Tambahkan yang lain",
+    "do_later": "Saya akan melakukannya nanti",
+    "join_invites_title": "Bergabunglah dengan undangan atau buat ruang kerja",
+    "unified_description": "Semua pekerjaan Anda — terpadu.",
+    "create_new_workspace": "Buat ruang kerja baru",
+    "no_invitations_found": "Tidak ada undangan yang ditemukan",
+    "you_are_invited": "Anda diundang!",
+    "accept_invites": "Terima undangan untuk berkolaborasi dengan tim Anda.",
+    "continue_to_workspace": "Lanjutkan ke ruang kerja",
+    "or": "atau",
+    "create_own_workspace": "Buat ruang kerja Anda sendiri",
+    "workspace_creation_disabled": "Tampaknya Anda tidak mendapat undangan apa pun ke ruang kerja dan admin instans Anda telah membatasi pembuatan ruang kerja baru. Silakan minta pemilik atau admin ruang kerja untuk mengundang Anda ke ruang kerja terlebih dahulu dan kembali ke layar ini untuk bergabung.",
+    "create_workspace_title": "Buat ruang kerja Anda",
+    "enter_workspace_name": "Masukkan nama ruang kerja",
+    "join_existing_workspace": "Bergabunglah dengan ruang kerja yang ada",
+    "profile_setup_completed": "Penyiapan profil selesai.",
+    "profile_setup_failed": "Penyiapan profil gagal.",
+    "usecase_title": "Bagaimana Anda berencana menggunakan Plane?",
+    "usecase_description": "Pilih satu atau lebih opsi sehingga kami dapat mempersonalisasi pengalaman Anda.",
+    "select_one_or_more": "Pilih satu atau lebih",
+    "select_at_least_one": "Pilih setidaknya satu opsi.",
+    "skip": "Lewati"
   }
 }

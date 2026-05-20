@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Arraste e solte para fazer upload de arquivos externos"
+      "drag_and_drop": "Solte arquivos aqui ou clique para fazer upload"
     },
     "errors": {
       "file_too_large": {
@@ -60,6 +60,80 @@
       "rewrite": "Reescrever",
       "use_this": "Usar este",
       "refine": "Refinar"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Insira ou cole o URL",
+    "text": "Texto",
+    "enter_text_to_display": "Digite o texto para exibir",
+    "remove_link": "Remover link",
+    "edit_link": "Editar link",
+    "color": "Cor",
+    "text_colors": "Cores do texto",
+    "background_colors": "Cores de fundo",
+    "link": "Link",
+    "enter_or_paste_link": "Insira ou cole o link",
+    "please_enter_valid_url": "Insira um URL válido",
+    "delete": "Excluir",
+    "duplicate": "Duplicar",
+    "multiple": "Múltiplo",
+    "loading": "Carregando",
+    "no_results": "Nenhum resultado",
+    "copy_code": "Copiar código",
+    "add_an_image": "Adicione uma imagem",
+    "error_loading_image": "Erro ao carregar a imagem",
+    "uploading": "Enviando",
+    "drop_image_here": "Solte a imagem aqui",
+    "retry_duplication": "Tentar novamente a duplicação",
+    "retry": "Tentar novamente",
+    "no_emojis_found": "Nenhum emoji encontrado",
+    "fullscreen_image_viewer": "Visualizador de imagens em tela cheia",
+    "close_image_viewer": "Fechar visualizador de imagens",
+    "zoom_out": "Diminuir zoom",
+    "zoom_in": "Ampliar",
+    "download_image": "Baixar imagem",
+    "open_image_in_new_tab": "Abrir imagem em nova aba",
+    "view_in_full_screen": "Ver em tela cheia",
+    "view_image_in_full_screen": "Ver imagem em tela cheia",
+    "align": "Alinhar",
+    "download": "Baixar",
+    "clear_contents": "Limpar conteúdo",
+    "insert_above": "Inserir acima",
+    "insert_below": "Inserir abaixo",
+    "insert_left": "Inserir à esquerda",
+    "insert_right": "Inserir à direita",
+    "header_row": "Linha de cabeçalho",
+    "header_column": "Coluna de cabeçalho",
+    "alignment": {
+      "left": "Esquerda",
+      "center": "Centralizar",
+      "right": "Direita"
+    },
+    "menu_items": {
+      "text": "Texto",
+      "h1": "Título 1",
+      "h2": "Título 2",
+      "h3": "Título 3",
+      "h4": "Título 4",
+      "h5": "Título 5",
+      "h6": "Título 6",
+      "bulleted-list": "Lista com marcadores",
+      "numbered-list": "Lista numerada",
+      "to-do-list": "Lista de tarefas",
+      "quote": "Citação",
+      "code": "Código",
+      "table": "Tabela",
+      "image": "Imagem",
+      "divider": "Divisor",
+      "link": "Link",
+      "bold": "Negrito",
+      "italic": "Itálico",
+      "underline": "Sublinhado",
+      "strikethrough": "Tachado",
+      "text-color": "Cor do texto",
+      "background-color": "Cor de fundo",
+      "text-align": "Alinhamento de texto"
     }
   }
 }

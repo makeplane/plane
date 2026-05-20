@@ -422,5 +422,35 @@
       "label": "Titolo Epic",
       "required": "Il titolo dell'Epic è obbligatorio."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Anteprima laterale",
+      "modal": "Modale",
+      "full_screen": "Schermo intero"
+    },
+    "public_board_not_found": "La bacheca pubblica non esiste. Controlla l'URL.",
+    "no_work_items_found": "Nessun elemento di lavoro trovato",
+    "bot_name": "Bot {name}",
+    "commented_time": "ha commentato {time}",
+    "and_more": "e altri {count}",
+    "no_upvotes_yet": "Ancora nessun voto positivo",
+    "no_downvotes_yet": "Ancora nessun voto negativo",
+    "view_less": "Mostra meno",
+    "view_all": "Mostra tutto",
+    "no_matches_found": "Nessuna corrispondenza trovata",
+    "no_date": "Nessuna data",
+    "no_cycle": "Nessun ciclo",
+    "no_modules": "Nessun modulo",
+    "modules_count": "{count} moduli",
+    "no_assignees": "Nessun assegnatario",
+    "labels_count": "{count} etichette",
+    "no_labels": "Nessuna etichetta",
+    "sign_in_to_add_comment": "Accedi per aggiungere un commento",
+    "add_comment": "Aggiungi commento",
+    "link_copied": "Link copiato!",
+    "work_item_link_copied": "Link dell'elemento di lavoro copiato negli appunti.",
+    "comment_post_error": "Impossibile pubblicare il commento. Riprova.",
+    "user": "Utente"
   }
 }

@@ -94,7 +94,7 @@
     },
     "intake": {
       "step_zero": {
-        "title": "Rationalisez les demandes avec la réception",
+        "title": "Rationalisez les demandes avec Intake",
         "description": "Une fonctionnalité exclusive de Plane qui permet aux Invités de créer des éléments de travail pour les bugs, demandes ou tickets."
       },
       "step_one": {

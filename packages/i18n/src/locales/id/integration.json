@@ -48,7 +48,7 @@
     "pr_state_mapping_empty_state": "Status PR yang dipetakan akan muncul di sini",
     "remove_pr_state_mapping": "Hapus pemetaan status permintaan tarik ini",
     "remove_pr_state_mapping_confirmation": "Apakah Anda yakin ingin menghapus pemetaan status permintaan tarik ini?",
-    "issue_sync_message": "Item kerja disinkronkan ke {project}proyek Plane",
+    "issue_sync_message": "Item kerja disinkronkan ke {project}",
     "link": "Link repositori GitHub ke proyek Plane",
     "pull_request_automation": "Otomatisasi Permintaan Tarik",
     "pull_request_automation_description": "Konfigurasi pemetaan status permintaan tarik dari GitHub ke proyek Plane",

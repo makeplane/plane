@@ -452,7 +452,7 @@
     "load_more": "Mehr laden",
     "activity": "Aktivität",
     "analytics": "Analysen",
-    "dates": "Daten",
+    "dates": "Termine",
     "success": "Erfolg!",
     "something_went_wrong": "Etwas ist schiefgelaufen",
     "error": {
@@ -486,7 +486,7 @@
     "project_timezone": "Projektzeitzone",
     "created_on": "Erstellt am",
     "updated_on": "Aktualisiert am",
-    "completed_on": "Completed on",
+    "completed_on": "Abgeschlossen am",
     "update_project": "Projekt aktualisieren",
     "identifier_already_exists": "Der Bezeichner existiert bereits",
     "add_more": "Mehr hinzufügen",
@@ -512,7 +512,7 @@
     "workspace_level": "Arbeitsbereichsebene",
     "order_by": {
       "label": "Sortieren nach",
-      "manual": "Manuell - Rang",
+      "manual": "Manuell",
       "last_created": "Zuletzt erstellt",
       "last_updated": "Zuletzt aktualisiert",
       "start_date": "Startdatum",
@@ -713,11 +713,11 @@
     "details": "Details",
     "project_structure": "Projektstruktur",
     "custom_properties": "Benutzerdefinierte Eigenschaften",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Ihr Profil",
+    "developer": "Entwickler",
+    "work_structure": "Arbeitsstruktur",
+    "execution": "Ausführung",
+    "administration": "Verwaltung"
   },
   "chart": {
     "x_axis": "X-Achse",
@@ -765,7 +765,7 @@
     "delete": "Anhang löschen"
   },
   "label": {
-    "select": "Label auswählen",
+    "select": "Labels hinzufügen",
     "create": {
       "success": "Label erfolgreich erstellt",
       "failed": "Label konnte nicht erstellt werden",
@@ -831,8 +831,8 @@
   "enter_number_of_projects": "Anzahl der Projekte eingeben",
   "pin": "Anheften",
   "unpin": "Lösen",
-  "workspace_dashboards": "Däschbords",
-  "pi_chat": "AI Tschät",
+  "workspace_dashboards": "Dashboards",
+  "pi_chat": "Plane AI",
   "in_app": "In-App",
   "forms": "Forms",
   "milestones": "Meilensteine",
@@ -867,5 +867,20 @@
       "description": "Arbeitselemente in JSON exportieren.",
       "short_description": "Als JSON exportieren"
     }
+  },
+  "space_public": {
+    "error_title": "Hoppla! Das sieht nicht gut aus.",
+    "error_description_prefix": "Plane ist abgestürzt. Keine Sorge, unsere Entwickler wurden benachrichtigt. Wenn Sie weitere Details haben, schreiben Sie bitte an",
+    "error_description_middle": "oder in unserem",
+    "forum": "Forum",
+    "refresh": "Aktualisieren",
+    "not_found_title": "Das hat nicht funktioniert",
+    "not_found_hint": "Prüfen Sie die URL in der Adressleiste des Browsers und versuchen Sie es erneut.",
+    "instance_failure_image_alt": "Instanzdetails konnten nicht abgerufen werden",
+    "instance_failure_title": "Instanzdetails konnten nicht abgerufen werden.",
+    "instance_failure_description": "Ihre Instanzdetails konnten nicht geladen werden.",
+    "instance_failure_hint": "Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    "retry": "Erneut versuchen",
+    "powered_by": "Bereitgestellt von"
   }
 }

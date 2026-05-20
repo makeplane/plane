@@ -2,7 +2,7 @@
   "aria_labels": {
     "projects_sidebar": {
       "workspace_logo": "Logo không gian làm việc",
-      "open_workspace_switcher": "Mở trình chuyển đổi không gian làm việc",
+      "open_workspace_switcher": "Mở menu chuyển đổi workspace",
       "open_user_menu": "Mở menu người dùng",
       "open_command_palette": "Mở bảng lệnh",
       "open_extended_sidebar": "Mở thanh bên mở rộng",
@@ -22,6 +22,12 @@
       "collapse_sidebar": "Thu gọn thanh bên",
       "expand_sidebar": "Mở rộng thanh bên",
       "edition_badge": "Mở modal gói trả phí"
+    },
+    "app_sidebar": {
+      "open_workspace_menu": "Mở menu không gian làm việc",
+      "close_workspace_menu": "Đóng menu không gian làm việc",
+      "open_extended_sidebar": "Mở thanh bên mở rộng",
+      "close_extended_sidebar": "Đóng thanh bên mở rộng"
     },
     "auth_forms": {
       "clear_email": "Xóa email",

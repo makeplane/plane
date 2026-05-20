@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "외부 파일을 업로드하려면 드래그 앤 드롭하세요"
+      "drag_and_drop": "파일을 여기에 놓거나 클릭하여 업로드"
     },
     "errors": {
       "file_too_large": {
@@ -59,7 +59,81 @@
       "rewriting": "다시 작성 중",
       "rewrite": "다시 작성",
       "use_this": "이것 사용",
-      "refine": "정제"
+      "refine": "다듬기"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "URL을 입력하거나 붙여넣으세요.",
+    "text": "텍스트",
+    "enter_text_to_display": "표시할 텍스트를 입력하세요.",
+    "remove_link": "링크 삭제",
+    "edit_link": "링크 수정",
+    "color": "색상",
+    "text_colors": "텍스트 색상",
+    "background_colors": "배경색",
+    "link": "링크",
+    "enter_or_paste_link": "링크 입력 또는 붙여넣기",
+    "please_enter_valid_url": "유효한 URL를 입력하세요.",
+    "delete": "삭제",
+    "duplicate": "복제",
+    "multiple": "여러 개",
+    "loading": "로드 중",
+    "no_results": "결과 없음",
+    "copy_code": "코드 복사",
+    "add_an_image": "이미지 추가",
+    "error_loading_image": "이미지를 로드하는 중에 오류가 발생했습니다.",
+    "uploading": "업로드 중",
+    "drop_image_here": "여기에 이미지를 드롭하세요.",
+    "retry_duplication": "복제 재시도",
+    "retry": "다시 시도",
+    "no_emojis_found": "이모티콘을 찾을 수 없습니다.",
+    "fullscreen_image_viewer": "전체 화면 이미지 뷰어",
+    "close_image_viewer": "이미지 뷰어 닫기",
+    "zoom_out": "축소",
+    "zoom_in": "확대",
+    "download_image": "이미지 다운로드",
+    "open_image_in_new_tab": "새 탭에서 이미지 열기",
+    "view_in_full_screen": "전체 화면으로 보기",
+    "view_image_in_full_screen": "전체 화면으로 이미지 보기",
+    "align": "정렬",
+    "download": "다운로드",
+    "clear_contents": "내용 지우기",
+    "insert_above": "위에 삽입",
+    "insert_below": "아래에 삽입",
+    "insert_left": "왼쪽에 삽입",
+    "insert_right": "오른쪽에 삽입",
+    "header_row": "헤더 행",
+    "header_column": "헤더 열",
+    "alignment": {
+      "left": "왼쪽",
+      "center": "가운데",
+      "right": "오른쪽"
+    },
+    "menu_items": {
+      "text": "텍스트",
+      "h1": "제목 1",
+      "h2": "제목 2",
+      "h3": "제목 3",
+      "h4": "제목 4",
+      "h5": "제목 5",
+      "h6": "제목 6",
+      "bulleted-list": "글머리 기호 목록",
+      "numbered-list": "번호가 매겨진 목록",
+      "to-do-list": "할 일 목록",
+      "quote": "인용",
+      "code": "코드",
+      "table": "표",
+      "image": "이미지",
+      "divider": "구분선",
+      "link": "링크",
+      "bold": "굵게",
+      "italic": "이탤릭체",
+      "underline": "밑줄",
+      "strikethrough": "취소선",
+      "text-color": "텍스트 색상",
+      "background-color": "배경색",
+      "text-align": "텍스트 정렬"
     }
   }
 }

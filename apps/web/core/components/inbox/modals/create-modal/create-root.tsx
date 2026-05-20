@@ -110,8 +110,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     } else {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is still processing changes. Please wait before proceeding.",
+        title: t("common.error.label"),
+        message: t("inbox.toasts.editor_processing"),
       });
       event.preventDefault(); // Prevent default action if editor is not ready to discard
     }
@@ -142,8 +142,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     if (!descriptionEditorRef.current?.isEditorReadyToDiscard()) {
       setToast({
         type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Editor is still processing changes. Please wait before proceeding.",
+        title: t("common.error.label"),
+        message: t("inbox.toasts.editor_processing"),
       });
       return;
     }
@@ -159,35 +159,34 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
     };
     setFormSubmitting(true);
 
-    await createInboxIssue(workspaceSlug, projectId, payload)
-      .then(async (res) => {
-        if (uploadedAssetIds.length > 0) {
-          await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
-            asset_ids: uploadedAssetIds,
-          });
-          setUploadedAssetIds([]);
-        }
-        if (!createMore) {
-          router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
-          handleModalClose();
-        } else {
-          descriptionEditorRef?.current?.clearEditor();
-          setFormData(defaultIssueData);
-        }
-        setToast({
-          type: TOAST_TYPE.SUCCESS,
-          title: `Success!`,
-          message: "Work item created successfully.",
+    try {
+      const res = await createInboxIssue(workspaceSlug, projectId, payload);
+      if (uploadedAssetIds.length > 0) {
+        await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId, res?.issue.id ?? "", {
+          asset_ids: uploadedAssetIds,
         });
-      })
-      .catch((error) => {
-        console.error(error);
-        setToast({
-          type: TOAST_TYPE.ERROR,
-          title: `Error!`,
-          message: "Some error occurred. Please try again.",
-        });
+        setUploadedAssetIds([]);
+      }
+      if (!createMore) {
+        router.push(`/${workspaceSlug}/projects/${projectId}/intake/?currentTab=open&inboxIssueId=${res?.issue?.id}`);
+        handleModalClose();
+      } else {
+        descriptionEditorRef?.current?.clearEditor();
+        setFormData(defaultIssueData);
+      }
+      setToast({
+        type: TOAST_TYPE.SUCCESS,
+        title: t("common.success"),
+        message: t("inbox.toasts.create_success"),
       });
+    } catch (error) {
+      console.error(error);
+      setToast({
+        type: TOAST_TYPE.ERROR,
+        title: t("common.error.label"),
+        message: t("common.error.message"),
+      });
+    }
     setFormSubmitting(false);
   };
 
@@ -207,7 +206,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                 <DeDupeButtonRoot
                   workspaceSlug={workspaceSlug}
                   isDuplicateModalOpen={isDuplicateModalOpen}
-                  label={`${duplicateIssues.length} duplicate issue${duplicateIssues.length > 1 ? "s" : ""} found!`}
+                  label={t("inbox.duplicate_issues_found", { count: duplicateIssues.length })}
                   handleOnClick={() => handleDuplicateIssueModal(!isDuplicateModalOpen)}
                 />
               )}
@@ -233,13 +232,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
             </div>
           </div>
           <div className="flex items-center justify-between gap-2 rounded-b-lg border-t-[0.5px] border-subtle bg-surface-1 px-5 py-4">
-            <div
-              className="inline-flex cursor-pointer items-center gap-1.5"
-              onClick={() => setCreateMore((prevData) => !prevData)}
-              role="button"
-              tabIndex={getIndex("create_more")}
-            >
-              <ToggleSwitch value={createMore} onChange={() => {}} size="sm" />
+            <div className="inline-flex items-center gap-1.5">
+              <ToggleSwitch value={createMore} onChange={setCreateMore} size="sm" label={t("create_more")} />
               <span className="text-11">{t("create_more")}</span>
             </div>
             <div className="flex items-center gap-3">
@@ -253,8 +247,8 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                   } else {
                     setToast({
                       type: TOAST_TYPE.ERROR,
-                      title: "Error!",
-                      message: "Editor is still processing changes. Please wait before proceeding.",
+                      title: t("common.error.label"),
+                      message: t("inbox.toasts.editor_processing"),
                     });
                   }
                 }}

@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Sunteți sigur că doriți să ștergeți această vizualizare?",
       "content": "Dacă confirmați, toate opțiunile de sortare, filtrare și afișare + aspectul pe care l-ați ales pentru această vizualizare vor fi șterse permanent fără nicio modalitate de a le restaura."
-    }
+    },
+    "page_title": "{workspaceName} - Toate vizualizările"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Salvează o activitate ca schiță",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Spațiul de lucru nu a fost găsit",
+    "not_found_description": "Nu a fost găsit niciun spațiu de lucru pentru acest URL. Este posibil să nu existe sau să nu ai permisiunea să îl vizualizezi.",
+    "visit_profile": "Vizitează profilul",
+    "not_authorized_title": "Neautorizat!",
+    "not_authorized_description": "Nu ești membru al acestui spațiu de lucru. Contactează administratorul spațiului de lucru pentru o invitație sau verifică invitațiile în așteptare.",
+    "check_pending_invites": "Verifică invitațiile în așteptare"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Invitația nu a fost găsită",
+    "invited_to_workspace": "Ați primit o invitație la {workspaceName}",
+    "description": "Spațiul dvs. de lucru este locul în care veți crea proiecte, veți colabora la elementele dvs. de lucru și veți organiza diferite fluxuri de lucru în contul dvs. Plane.",
+    "accept": "Acceptă",
+    "ignore": "Ignoră",
+    "already_member": "Sunteți deja membru al {workspaceName}",
+    "continue_to_home": "Continuați la pagina principală",
+    "inactive_title": "Acest link de invitație nu mai este activ.",
+    "empty_project_link": "Sau începeți de la un proiect gol",
+    "sign_in_to_continue": "Conectați-vă pentru a continua",
+    "star_on_github": "Dați-ne o stea pe GitHub",
+    "join_community": "Alăturați-vă comunității noastre de creatori activi"
+  },
+  "onboarding": {
+    "create_profile_title": "Creează-ți profilul.",
+    "create_profile_description": "Așa vei apărea în Plane.",
+    "change_image": "Schimbați imaginea",
+    "upload_image": "Încărcați imaginea",
+    "name": "Nume",
+    "name_required": "Numele este obligatoriu",
+    "name_within_50": "Numele trebuie să aibă maximum 50 de caractere.",
+    "enter_full_name": "Introduceți numele dvs. complet",
+    "set_password": "Setați o parolă",
+    "optional": "Opțional",
+    "passwords_do_not_match": "Parolele nu se potrivesc",
+    "passwords_match": "Parolele se potrivesc",
+    "continue": "Continuă",
+    "invite_team_title": "Invită-ți colegii de echipă",
+    "invite_team_description": "Lucrul în Plane se întâmplă cel mai bine cu echipa ta. Invitați-i acum să folosească Plane la potențialul său.",
+    "invalid_email": "Nu arată ca o adresă de e-mail.",
+    "success": "Succes!",
+    "invitations_sent": "Invitațiile au fost trimise cu succes.",
+    "error": "Eroare!",
+    "add_another": "Adaugă altul",
+    "do_later": "O voi face mai târziu",
+    "join_invites_title": "Alăturați-vă invitațiilor sau creați un spațiu de lucru",
+    "unified_description": "Toată munca ta — unificată.",
+    "create_new_workspace": "Creați un spațiu de lucru nou",
+    "no_invitations_found": "Nu au fost găsite invitații",
+    "you_are_invited": "Ești invitat!",
+    "accept_invites": "Acceptă invitațiile de a colabora cu echipa ta.",
+    "continue_to_workspace": "Continuați spre spațiul de lucru",
+    "or": "sau",
+    "create_own_workspace": "Creează-ți propriul spațiu de lucru",
+    "workspace_creation_disabled": "Se pare că nu aveți nicio invitație la un spațiu de lucru și administratorul instanței dvs. a restricționat crearea de noi spații de lucru. Vă rugăm să cereți unui proprietar sau unui administrator de spațiu de lucru să vă invite mai întâi într-un spațiu de lucru și să reveniți la acest ecran pentru a vă alătura.",
+    "create_workspace_title": "Creează-ți spațiul de lucru",
+    "enter_workspace_name": "Introduceți numele spațiului de lucru",
+    "join_existing_workspace": "Alăturați-vă spațiului de lucru existent",
+    "profile_setup_completed": "Configurarea profilului a fost finalizată.",
+    "profile_setup_failed": "Configurarea profilului a eșuat.",
+    "usecase_title": "Cum plănuiți să utilizați Plane?",
+    "usecase_description": "Selectați una sau mai multe opțiuni pentru a vă putea personaliza experiența.",
+    "select_one_or_more": "Selectați unul sau mai multe",
+    "select_at_least_one": "Selectați cel puțin o opțiune.",
+    "skip": "Sari peste"
   }
 }

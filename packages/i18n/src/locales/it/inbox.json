@@ -41,8 +41,8 @@
     "actions": {
       "accept": "Accetta",
       "decline": "Rifiuta",
-      "snooze": "Snoozed",
-      "unsnooze": "Annulla snooze",
+      "snooze": "Posticipa",
+      "unsnooze": "Annulla posticipazione",
       "copy": "Copia link dell'elemento di lavoro",
       "delete": "Elimina",
       "open": "Apri elemento di lavoro",
@@ -82,6 +82,58 @@
       "detail": {
         "title": "Seleziona un elemento di lavoro per visualizzarne i dettagli."
       }
+    }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Trovati {count} elementi di lavoro duplicati",
+    "description_versions": {
+      "intake_form_user": "Utente del modulo di raccolta"
+    },
+    "errors": {
+      "asset_upload_failed": "Caricamento della risorsa non riuscito. Per favore riprova più tardi.",
+      "asset_duplication_failed": "Duplicazione della risorsa non riuscita. Per favore riprova più tardi.",
+      "permission_denied": "Autorizzazione negata",
+      "mark_duplicate_permission": "Solo gli amministratori del progetto possono contrassegnare l'elemento di lavoro come duplicato",
+      "mark_duplicate_permission_plural": "Solo gli amministratori del progetto possono contrassegnare gli elementi di lavoro come duplicati"
+    },
+    "filters": {
+      "created_date": "Data di creazione",
+      "updated_date": "Data di aggiornamento",
+      "last_updated_date": "Data dell'ultimo aggiornamento",
+      "status": "Stato",
+      "work_item_status": "Stato dell'elemento di lavoro",
+      "view_all": "Visualizza tutto",
+      "view_less": "Visualizza meno",
+      "date_options": {
+        "today": "Oggi",
+        "yesterday": "Ieri",
+        "last_7_days": "Ultimi 7 giorni",
+        "custom": "Personalizzato",
+        "last_30_days": "Ultimi 30 giorni"
+      },
+      "date_operators": {
+        "after": "Dopo",
+        "before": "Prima"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Elemento di lavoro precedente",
+      "next_work_item": "Elemento di lavoro successivo"
+    },
+    "properties": {
+      "duplicate_of": "Duplicato di"
+    },
+    "select_duplicate": {
+      "select_work_item": "Seleziona elemento di lavoro"
+    },
+    "sidebar": {
+      "label_count": "{count} etichette"
+    },
+    "toasts": {
+      "editor_processing": "L'editor sta ancora elaborando le modifiche. Si prega di attendere prima di procedere.",
+      "create_success": "Elemento di lavoro creato correttamente.",
+      "delete_failed": "Eliminazione dell'elemento di lavoro non riuscita",
+      "update_failed": "Aggiornamento dell'elemento di lavoro non riuscito"
     }
   }
 }

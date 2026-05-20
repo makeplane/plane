@@ -39,7 +39,7 @@
         "validation_weekly_day_required": "Selecione pelo menos um dia da semana.",
         "validation_monthly_date_required": "Selecione um dia do mês.",
         "main_content_schedule_summary_daily": "Todo dia às {time} ({timezone}).",
-        "main_content_schedule_summary_weekly": "Toda semana em {days} às {time} ({timezone}).",
+        "main_content_schedule_summary_weekly": "Toda semana, nos dias {days}, às {time} ({timezone}).",
         "main_content_schedule_summary_monthly": "Todo mês no dia {day} às {time} ({timezone}).",
         "schedule_mode": "Modo de agendamento",
         "schedule_mode_fixed": "Fixo",

@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Ste si istí, že chcete vymazať toto zobrazenie?",
       "content": "Ak potvrdíte, všetky možnosti triedenia, filtrovania a zobrazenia + rozloženie, ktoré ste vybrali pre toto zobrazenie, budú natrvalo vymazané bez možnosti obnovenia."
-    }
+    },
+    "page_title": "{workspaceName} - Všetky zobrazenia"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Vytvoriť koncept položky",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Pracovný priestor sa nenašiel",
+    "not_found_description": "Pre túto URL adresu sa nenašiel žiadny pracovný priestor. Možno neexistuje alebo na jeho zobrazenie nemáte oprávnenie.",
+    "visit_profile": "Navštíviť profil",
+    "not_authorized_title": "Bez oprávnenia!",
+    "not_authorized_description": "Nie ste členom tohto pracovného priestoru. Požiadajte správcu pracovného priestoru o pozvánku alebo skontrolujte čakajúce pozvánky.",
+    "check_pending_invites": "Skontrolovať čakajúce pozvánky"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Pozvánka sa nenašla",
+    "invited_to_workspace": "Boli ste pozvaní do {workspaceName}",
+    "description": "Váš pracovný priestor je miesto, kde budete vytvárať projekty, spolupracovať na svojich pracovných položkách a organizovať rôzne toky práce vo svojom účte Plane.",
+    "accept": "Prijať",
+    "ignore": "Ignorovať",
+    "already_member": "Už ste členom {workspaceName}",
+    "continue_to_home": "Pokračovať na domovskú stránku",
+    "inactive_title": "Tento odkaz na pozvánku už nie je aktívny.",
+    "empty_project_link": "Alebo začnite od prázdneho projektu",
+    "sign_in_to_continue": "Ak chcete pokračovať, prihláste sa",
+    "star_on_github": "Dajte nám hviezdu na GitHub",
+    "join_community": "Pridajte sa k našej komunite aktívnych tvorcov"
+  },
+  "onboarding": {
+    "create_profile_title": "Vytvorte si profil.",
+    "create_profile_description": "Takto sa objavíte v Plane.",
+    "change_image": "Zmeniť obrázok",
+    "upload_image": "Nahrajte obrázok",
+    "name": "Meno",
+    "name_required": "Meno je povinné",
+    "name_within_50": "Názov musí mať maximálne 50 znakov.",
+    "enter_full_name": "Zadajte svoje celé meno",
+    "set_password": "Nastavte heslo",
+    "optional": "Voliteľné",
+    "passwords_do_not_match": "Heslá sa nezhodujú",
+    "passwords_match": "Heslá sa zhodujú",
+    "continue": "Pokračovať",
+    "invite_team_title": "Pozvite členov svojho tímu",
+    "invite_team_description": "Práca v Plane prebieha najlepšie s vaším tímom. Pozvite ich, aby využili potenciál Plane.",
+    "invalid_email": "To nevyzerá ako e-mailová adresa.",
+    "success": "Úspech!",
+    "invitations_sent": "Pozvánky boli úspešne odoslané.",
+    "error": "Chyba!",
+    "add_another": "Pridajte ďalší",
+    "do_later": "Urobím to neskôr",
+    "join_invites_title": "Pripojte sa k pozvánkam alebo vytvorte pracovný priestor",
+    "unified_description": "Celá vaša práca – jednotná.",
+    "create_new_workspace": "Vytvorte nový pracovný priestor",
+    "no_invitations_found": "Nenašli sa žiadne pozvánky",
+    "you_are_invited": "Ste pozvaní!",
+    "accept_invites": "Prijmite pozvánky na spoluprácu so svojím tímom.",
+    "continue_to_workspace": "Pokračujte do pracovného priestoru",
+    "or": "alebo",
+    "create_own_workspace": "Vytvorte si vlastný pracovný priestor",
+    "workspace_creation_disabled": "Zdá sa, že nemáte žiadne pozvánky do pracovného priestoru a váš správca inštancie obmedzil vytváranie nových pracovných priestorov. Požiadajte vlastníka alebo správcu pracovného priestoru, aby vás najprv pozval do pracovného priestoru, a potom sa vráťte na túto obrazovku a pripojte sa.",
+    "create_workspace_title": "Vytvorte si pracovný priestor",
+    "enter_workspace_name": "Zadajte názov pracovného priestoru",
+    "join_existing_workspace": "Pripojte sa k existujúcemu pracovnému priestoru",
+    "profile_setup_completed": "Nastavenie profilu je dokončené.",
+    "profile_setup_failed": "Nastavenie profilu zlyhalo.",
+    "usecase_title": "Ako plánujete používať Plane?",
+    "usecase_description": "Vyberte jednu alebo viac možností, aby sme vám mohli prispôsobiť váš zážitok.",
+    "select_one_or_more": "Vyberte jednu alebo viac",
+    "select_at_least_one": "Vyberte aspoň jednu možnosť.",
+    "skip": "Preskočiť"
   }
 }

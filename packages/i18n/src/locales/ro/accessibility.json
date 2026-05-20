@@ -23,6 +23,12 @@
       "expand_sidebar": "Extinde bara laterală",
       "edition_badge": "Deschide modalul planurilor plătite"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Deschide meniul spațiului de lucru",
+      "close_workspace_menu": "Închide meniul spațiului de lucru",
+      "open_extended_sidebar": "Deschide bara laterală extinsă",
+      "close_extended_sidebar": "Închide bara laterală extinsă"
+    },
     "auth_forms": {
       "clear_email": "Șterge e-mailul",
       "show_password": "Afișează parola",

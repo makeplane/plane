@@ -83,5 +83,57 @@
         "title": "Select a work item to view its details."
       }
     }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} duplicate issues found",
+    "description_versions": {
+      "intake_form_user": "Intake Form user"
+    },
+    "errors": {
+      "asset_upload_failed": "Asset upload failed. Please try again later.",
+      "asset_duplication_failed": "Asset duplication failed. Please try again later.",
+      "permission_denied": "Permission denied",
+      "mark_duplicate_permission": "Only project admins can mark work item as duplicate",
+      "mark_duplicate_permission_plural": "Only project admins can mark work items as duplicate"
+    },
+    "filters": {
+      "created_date": "Created date",
+      "updated_date": "Updated date",
+      "last_updated_date": "Last updated date",
+      "status": "Status",
+      "work_item_status": "Work item status",
+      "view_all": "View all",
+      "view_less": "View less",
+      "date_options": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "last_7_days": "Last 7 days",
+        "custom": "Custom",
+        "last_30_days": "Last 30 days"
+      },
+      "date_operators": {
+        "after": "After",
+        "before": "Before"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Previous work item",
+      "next_work_item": "Next work item"
+    },
+    "properties": {
+      "duplicate_of": "Duplicate of"
+    },
+    "select_duplicate": {
+      "select_work_item": "Select work item"
+    },
+    "sidebar": {
+      "label_count": "{count} labels"
+    },
+    "toasts": {
+      "editor_processing": "Editor is still processing changes. Please wait before proceeding.",
+      "create_success": "Work item created successfully.",
+      "delete_failed": "Work item delete failed",
+      "update_failed": "Work item update failed"
+    }
   }
 }

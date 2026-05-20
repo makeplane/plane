@@ -215,7 +215,7 @@
   "cycles": "Ciclos",
   "modules": "Módulos",
   "pages": "Páginas",
-  "intake": "Admissão",
+  "intake": "Triagem",
   "renew": "Renovar",
   "preview": "Visualização",
   "time_tracking": "Rastreamento de tempo",
@@ -406,7 +406,7 @@
     "modal": {
       "url": {
         "text": "URL",
-        "required": "URL inválido",
+        "required": "URL inválida",
         "placeholder": "Digite ou cole um URL"
       },
       "title": {
@@ -486,7 +486,7 @@
     "project_timezone": "Fuso horário do projeto",
     "created_on": "Criado em",
     "updated_on": "Atualizado em",
-    "completed_on": "Completed on",
+    "completed_on": "Concluído em",
     "update_project": "Atualizar projeto",
     "identifier_already_exists": "O identificador já existe",
     "add_more": "Adicionar mais",
@@ -713,11 +713,11 @@
     "details": "Detalhes",
     "project_structure": "Estrutura do projeto",
     "custom_properties": "Propriedades personalizadas",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Seu perfil",
+    "developer": "Desenvolvedor",
+    "work_structure": "Estrutura de trabalho",
+    "execution": "Execução",
+    "administration": "Administração"
   },
   "chart": {
     "x_axis": "Eixo X",
@@ -832,7 +832,7 @@
   "pin": "Fixar",
   "unpin": "Desafixar",
   "workspace_dashboards": "Dashboards",
-  "pi_chat": "Chat AI",
+  "pi_chat": "Plane AI",
   "in_app": "No aplicativo",
   "forms": "Formulários",
   "milestones": "Marcos",
@@ -867,5 +867,20 @@
       "description": "Exporte itens de trabalho para um arquivo JSON.",
       "short_description": "Exportar como JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "O Plane travou. Nossos engenheiros foram notificados. Se você tiver mais detalhes, escreva para",
+    "error_description_middle": "ou em nosso",
+    "not_found_hint": "Confira a URL na barra de endereços do navegador e tente novamente.",
+    "instance_failure_image_alt": "Não foi possível buscar os detalhes da instância",
+    "instance_failure_title": "Não foi possível buscar os detalhes da instância.",
+    "instance_failure_description": "Não conseguimos carregar os detalhes da sua instância.",
+    "instance_failure_hint": "Verifique sua conexão e tente novamente.",
+    "powered_by": "Desenvolvido por",
+    "error_title": "Ops! Isso não parece bom.",
+    "refresh": "Atualizar",
+    "forum": "Fórum",
+    "not_found_title": "Isso não funcionou",
+    "retry": "Tentar novamente"
   }
 }

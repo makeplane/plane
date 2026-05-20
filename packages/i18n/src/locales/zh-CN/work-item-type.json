@@ -195,7 +195,7 @@
           "validation_success_with_refs": "公式有效！返回 {resultType}（引用了 {count} 个字段）",
           "error": {
             "empty": "请输入公式",
-            "missing_context": "缺少工作空间、项目或工作项类型上下文",
+            "missing_context": "缺少工作区、项目或工作项类型上下文",
             "validation_failed": "验证失败"
           },
           "picker": {
@@ -435,10 +435,10 @@
       }
     },
     "break_hierarchy_modal": {
-      "title": "保存后将断开现有链接",
+      "title": "验证错误！",
       "content": {
         "intro": "工作项类型 {workItemTypeName} 包含：",
-        "parent_items": "{count, plural, other {将清除 # 个父级链接}}。",
+        "parent_items": "{count, plural, one {1 个父级工作项} other {# 个父级工作项}}",
         "child_items": "{count, plural, other {个子工作项}}",
         "parent_line_suffix_when_also_children": "，以及 ",
         "footer": "此变更将从 {workItemTypeName} 工作项类型的现有工作项中移除父子关系。"
@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "正在保存",
-        "default": "仍要保存"
+        "default": "应用并解除关联"
       }
     },
     "work_item_modal": {

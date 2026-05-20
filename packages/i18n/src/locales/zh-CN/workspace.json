@@ -148,7 +148,7 @@
     "workitem_resolved_vs_pending": "已解决 vs 待处理的工作项",
     "projects_by_status": "按状态分类的项目",
     "active_users": "活跃用户",
-    "intake_trends": "入学趋势"
+    "intake_trends": "需求收集趋势"
   },
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "您确定要删除此视图吗？",
       "content": "如果您确认，您为此视图选择的所有排序、筛选和显示选项 + 布局将被永久删除，无法恢复。"
-    }
+    },
+    "page_title": "{workspaceName} - 全部视图"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "起草工作项",
@@ -303,8 +304,8 @@
         }
       },
       "public": {
-        "title": "还没有工作空间页面",
-        "description": "在这里查看与工作空间中所有人共享的页面。",
+        "title": "还没有工作区页面",
+        "description": "在这里查看与工作区中所有人共享的页面。",
         "primary_button": {
           "text": "创建您的第一个页面"
         }
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "找不到工作区",
+    "not_found_description": "此 URL 对应的工作区不存在，或你没有权限查看。",
+    "visit_profile": "访问个人资料",
+    "not_authorized_title": "未授权！",
+    "not_authorized_description": "你不是此工作区的成员。请联系工作区管理员邀请你加入，或检查待处理的邀请。",
+    "check_pending_invites": "查看待处理邀请"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "未找到邀请",
+    "invited_to_workspace": "你已受邀加入 {workspaceName}",
+    "description": "工作区用于创建项目、协作处理工作项，并在 Plane 账户中组织不同的工作流。",
+    "accept": "接受",
+    "ignore": "忽略",
+    "already_member": "你已经是 {workspaceName} 的成员",
+    "continue_to_home": "前往主页",
+    "inactive_title": "此邀请链接已失效。",
+    "empty_project_link": "或从空项目开始",
+    "sign_in_to_continue": "登录以继续",
+    "star_on_github": "在 GitHub 上给我们加星",
+    "join_community": "加入我们的活跃创作者社区"
+  },
+  "onboarding": {
+    "create_profile_title": "创建你的个人资料。",
+    "create_profile_description": "这是你在 Plane 中显示给他人的信息。",
+    "change_image": "更换图片",
+    "upload_image": "上传图片",
+    "name": "姓名",
+    "name_required": "姓名为必填项",
+    "name_within_50": "姓名必须在 50 个字符以内。",
+    "enter_full_name": "输入你的全名",
+    "set_password": "设置密码",
+    "optional": "可选",
+    "passwords_do_not_match": "密码不匹配",
+    "passwords_match": "密码匹配",
+    "continue": "继续",
+    "invite_team_title": "邀请你的队友",
+    "invite_team_description": "Plane 最适合团队协作使用。现在邀请团队成员，充分发挥 Plane 的价值。",
+    "invalid_email": "这看起来不像有效的邮箱地址。",
+    "success": "成功！",
+    "invitations_sent": "邀请已成功发送。",
+    "error": "错误！",
+    "add_another": "再添加一个",
+    "do_later": "稍后再说",
+    "join_invites_title": "加入邀请或创建工作区",
+    "unified_description": "所有工作，统一管理。",
+    "create_new_workspace": "创建新工作区",
+    "no_invitations_found": "未找到邀请",
+    "you_are_invited": "你收到了邀请！",
+    "accept_invites": "接受邀请，与团队一起协作。",
+    "continue_to_workspace": "继续前往工作区",
+    "or": "或",
+    "create_own_workspace": "创建自己的工作区",
+    "workspace_creation_disabled": "你似乎没有任何工作区邀请，且实例管理员已限制创建新工作区。请先让工作区所有者或管理员邀请你加入工作区，然后回到此页面继续。",
+    "create_workspace_title": "创建你的工作区",
+    "enter_workspace_name": "输入工作区名称",
+    "join_existing_workspace": "加入现有工作区",
+    "profile_setup_completed": "个人资料设置完成。",
+    "profile_setup_failed": "个人资料设置失败。",
+    "usecase_title": "您打算如何使用 Plane？",
+    "usecase_description": "选择一个或多个选项，以便我们为您提供个性化体验。",
+    "select_one_or_more": "选择一个或多个",
+    "select_at_least_one": "至少选择一个选项。",
+    "skip": "跳过"
   }
 }

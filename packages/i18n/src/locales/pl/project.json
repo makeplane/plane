@@ -414,5 +414,11 @@
         }
       }
     }
+  },
+  "projects_empty_state": {
+    "no_projects_yet": "Brak projektów",
+    "description": "Projekty są podstawą pracy ukierunkowanej na cele. Pozwalają zarządzać zespołami, zadaniami i wszystkim, czego potrzebujesz, aby wykonać pracę.",
+    "learn_more": "Dowiedz się więcej o projektach",
+    "start_first_project": "Rozpocznij pierwszy projekt"
   }
 }

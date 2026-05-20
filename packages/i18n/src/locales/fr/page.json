@@ -111,5 +111,18 @@
       "success_message": "Page retirée de la collection.",
       "error_message": "La page n'a pas pu être retirée de la collection. Veuillez réessayer."
     }
+  },
+  "page_access": {
+    "not_found_title": "Page introuvable",
+    "not_found_description": "La page à laquelle vous essayez d’accéder n’existe pas ou vous n’êtes pas autorisé à la consulter.",
+    "view_other_pages": "Voir d’autres pages"
+  },
+  "profile_activity": {
+    "page_title": "Profil - Activité"
+  },
+  "space_public": {
+    "page_not_found_alt": "Page introuvable",
+    "page_not_found_description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "something_went_wrong": "Oups ! Une erreur s'est produite."
   }
 }

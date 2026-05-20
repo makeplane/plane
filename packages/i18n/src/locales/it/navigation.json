@@ -15,7 +15,7 @@
     "home": "Home",
     "inbox": "Posta in arrivo",
     "workspace": "workspace",
-    "views": "Visualizzazioni",
+    "views": "Viste",
     "analytics": "Analisi",
     "work_items": "Elementi di lavoro",
     "cycles": "Cicli",
@@ -27,7 +27,7 @@
     "upgrade": "Aggiorna",
     "pi_chat": "Plane AI",
     "epics": "Epiche",
-    "upgrade_plan": "Piano di aggiornamento",
+    "upgrade_plan": "Aggiorna piano",
     "plane_pro": "Plane Pro",
     "business": "Business"
   }

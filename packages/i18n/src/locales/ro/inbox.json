@@ -80,8 +80,60 @@
         "description": "Nicio cerere nu se potrivește cu filtrul aplicat în Cereri. Creează o cerere nouă."
       },
       "detail": {
-        "title": "Selectează o cerere pentru a-i vedea detaliile."
+        "title": "Selectează un element de lucru pentru a-i vedea detaliile."
       }
+    }
+  },
+  "inbox": {
+    "duplicate_issues_found": "{count} elemente de lucru duplicate găsite",
+    "description_versions": {
+      "intake_form_user": "Utilizator al formularului de colectare"
+    },
+    "errors": {
+      "asset_upload_failed": "Încărcarea materialelor nu a reușit. Vă rugăm să încercați din nou mai târziu.",
+      "asset_duplication_failed": "Duplicarea materialelor nu a reușit. Vă rugăm să încercați din nou mai târziu.",
+      "permission_denied": "Acces refuzat",
+      "mark_duplicate_permission": "Numai administratorii de proiect pot marca elementul de lucru ca duplicat",
+      "mark_duplicate_permission_plural": "Numai administratorii de proiect pot marca elementele de lucru ca duplicate"
+    },
+    "filters": {
+      "created_date": "Data creării",
+      "updated_date": "Data actualizării",
+      "last_updated_date": "Data ultimei actualizări",
+      "status": "Stare",
+      "work_item_status": "Starea elementului de lucru",
+      "view_all": "Vezi toate",
+      "view_less": "Vedeți mai puțin",
+      "date_options": {
+        "today": "Astăzi",
+        "yesterday": "Ieri",
+        "last_7_days": "Ultimele 7 zile",
+        "custom": "Personalizat",
+        "last_30_days": "Ultimele 30 de zile"
+      },
+      "date_operators": {
+        "after": "După",
+        "before": "Înainte"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Element de lucru anterior",
+      "next_work_item": "Următorul element de lucru"
+    },
+    "properties": {
+      "duplicate_of": "Duplicat al"
+    },
+    "select_duplicate": {
+      "select_work_item": "Selectați elementul de lucru"
+    },
+    "sidebar": {
+      "label_count": "{count} etichete"
+    },
+    "toasts": {
+      "editor_processing": "Editorul încă procesează modificări. Vă rugăm să așteptați înainte de a continua.",
+      "create_success": "Element de lucru creat cu succes.",
+      "delete_failed": "Ștergerea elementului de lucru nu a reușit",
+      "update_failed": "Actualizarea elementului de lucru nu a reușit"
     }
   }
 }

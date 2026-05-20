@@ -169,7 +169,7 @@
       "title": "Skonfiguruj przyjmowanie, aby zarządzać przychodzącymi zgłoszeniami i śledzić, jak są akceptowane i odrzucane"
     },
     "home_widget_stickies": {
-      "title": "Zapisz pomysł, uchwć moment olśnienia lub nagraj falę mózgową. Dodaj notatkę, aby rozpocząć."
+      "title": "Zapisz pomysł, złap inspirację lub odnotuj ciekawą myśl. Dodaj notatkę, aby rozpocząć."
     },
     "stickies": {
       "title": "Przechwytuj pomysły natychmiast",
@@ -266,5 +266,11 @@
         "description": "Wybierz stany, przez które przechodzi element pracy."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Nie znaleziono strony",
+    "title": "Ups! Coś poszło nie tak.",
+    "description": "Nie można znaleźć strony, której szukasz. Mogła zostać usunięta, zmieniono jej nazwę albo jest tymczasowo niedostępna.",
+    "go_to_home": "Przejdź do strony głównej"
   }
 }

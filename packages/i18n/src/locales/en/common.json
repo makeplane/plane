@@ -867,5 +867,20 @@
       "description": "Export work items to a JSON file.",
       "short_description": "Export as json"
     }
+  },
+  "space_public": {
+    "error_title": "Yikes! That does not look good.",
+    "error_description_prefix": "That crashed Plane, pun intended. No worries, though. Our engineers have been notified. If you have more details, please write to",
+    "error_description_middle": "or on our",
+    "forum": "Forum",
+    "refresh": "Refresh",
+    "not_found_title": "That did not work",
+    "not_found_hint": "Check the URL you are entering in the browser address bar and try again.",
+    "instance_failure_image_alt": "Unable to fetch instance details",
+    "instance_failure_title": "Unable to fetch instance details.",
+    "instance_failure_description": "We could not load your instance details.",
+    "instance_failure_hint": "Please check your connection and try again.",
+    "retry": "Retry",
+    "powered_by": "Powered by"
   }
 }

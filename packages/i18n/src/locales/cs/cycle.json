@@ -8,7 +8,7 @@
         "title": "Přidejte položky pro zobrazení burndown grafu."
       },
       "priority_issue": {
-        "title": "Zobrazí se vysoce prioritní položky."
+        "title": "Sledujte vysoce prioritní pracovní položky řešené v cyklu na první pohled."
       },
       "assignee": {
         "title": "Přiřaďte položky pro přehled přiřazení."

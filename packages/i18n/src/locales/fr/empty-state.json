@@ -266,5 +266,11 @@
         "description": "Sélectionnez les états par lesquels passe l’élément de travail."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Page introuvable",
+    "title": "Oups ! Une erreur s'est produite.",
+    "description": "Désolé, la page que vous recherchez est introuvable. Elle a peut-être été supprimée, renommée ou est temporairement indisponible.",
+    "go_to_home": "Aller à l'accueil"
   }
 }

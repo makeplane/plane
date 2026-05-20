@@ -27,8 +27,8 @@
       "project_subscribers": "專案訂閱者",
       "project_subscribers_description": "請選擇將接收此專案通知的成員。",
       "guest_super_permissions": {
-        "title": "授予訪客使用者檢視所有工作事項的權限：",
-        "sub_heading": "這將允許訪客檢視所有專案工作事項。"
+        "title": "授予訪客使用者檢視所有工作項目的權限：",
+        "sub_heading": "這將允許訪客檢視所有專案工作項目。"
       },
       "invite_members": {
         "title": "邀請成員",
@@ -38,7 +38,7 @@
     },
     "states": {
       "heading": "狀態",
-      "description": "定義並自訂工作流程狀態以追蹤工作事項的進度。",
+      "description": "定義並自訂工作流程狀態以追蹤工作項目的進度。",
       "describe_this_state_for_your_members": "為您的成員描述此狀態。",
       "empty_state": {
         "title": "{groupKey} 群組沒有可用的狀態",
@@ -47,7 +47,7 @@
     },
     "labels": {
       "heading": "標籤",
-      "description": "建立自訂標籤以分類和整理您的工作事項",
+      "description": "建立自訂標籤以分類和整理您的工作項目",
       "label_title": "標籤標題",
       "label_title_is_required": "標籤標題為必填",
       "label_max_char": "標籤名稱不應超過 255 個字元",
@@ -57,7 +57,7 @@
     },
     "estimates": {
       "heading": "評估",
-      "description": "幫助你傳達團隊的複雜性和工作負荷。",
+      "description": "建立估算系統，以追蹤並溝通每個工作項目所需的工作量。",
       "label": "預估",
       "title": "為我的專案啟用預估",
       "enable_description": "它們能幫助您傳達團隊的複雜度和工作量。",
@@ -200,25 +200,25 @@
     "empty_state": {
       "labels": {
         "title": "尚無標籤",
-        "description": "建立標籤以協助組織和篩選專案中的工作事項。"
+        "description": "建立標籤以協助組織和篩選專案中的工作項目。"
       },
       "estimates": {
         "title": "尚無評估系統",
-        "description": "建立一組評估以傳達每個工作事項的工作量。",
+        "description": "建立一組評估以傳達每個工作項目的工作量。",
         "primary_button": "新增評估系統"
       },
       "integrations": {
-        "title": "未配置整合",
-        "description": "配置 GitHub 和其他整合以同步您的專案工作項目。"
+        "title": "未設定整合",
+        "description": "設定 GitHub 和其他整合以同步您的專案工作項目。"
       }
     },
     "workflows": {
       "toggle": {
         "title": "啟用工作流程",
-        "description": "設定工作流程以控制工作事項的流轉",
+        "description": "設定工作流程以控制工作項目的流轉",
         "no_states_tooltip": "此工作流程尚未新增任何狀態。",
-        "no_work_item_types_tooltip": "此工作流程尚未新增任何工作事項類型。",
-        "no_states_or_work_item_types_tooltip": "此工作流程尚未新增任何狀態或工作事項類型。",
+        "no_work_item_types_tooltip": "此工作流程尚未新增任何工作項目類型。",
+        "no_states_or_work_item_types_tooltip": "此工作流程尚未新增任何狀態或工作項目類型。",
         "toast": {
           "loading": {
             "enabling": "正在啟用工作流程",
@@ -235,7 +235,7 @@
         }
       },
       "heading": "工作流程",
-      "description": "自動化工作事項轉換，並設定規則以控制任務在您的專案流程中推進的方式。",
+      "description": "自動化工作項目轉換，並設定規則以控制任務在您的專案流程中推進的方式。",
       "add_button": "新增工作流程",
       "search": "搜尋工作流程",
       "detail": {
@@ -243,10 +243,10 @@
         "add_states": "新增狀態",
         "unmapped_states": {
           "title": "偵測到未對應的狀態",
-          "description": "所選類型的某些工作事項目前處於此工作流程中不存在的狀態。",
+          "description": "所選類型的某些工作項目目前處於此工作流程中不存在的狀態。",
           "note": "如果您啟用此工作流程，這些項目將自動移至此工作流程的初始狀態。",
           "label": "缺少的狀態",
-          "tooltip": "某些工作事項處於未對應至此工作流程的狀態。開啟工作流程以檢視。"
+          "tooltip": "某些工作項目處於未對應至此工作流程的狀態。開啟工作流程以檢視。"
         }
       },
       "select_states": {
@@ -256,7 +256,7 @@
         }
       },
       "default_footer": {
-        "fallback_message": "此工作流程適用於任何未指派給工作流程的工作事項類型。"
+        "fallback_message": "此工作流程適用於任何未指派給工作流程的工作項目類型。"
       },
       "create": {
         "heading": "建立新工作流程",
@@ -275,7 +275,7 @@
           }
         },
         "work_item_type": {
-          "label": "工作事項類型"
+          "label": "工作項目類型"
         },
         "success": {
           "title": "成功！",
@@ -319,8 +319,8 @@
       }
     },
     "work_item_types": {
-      "heading": "工作事項類型",
-      "description": "使用獨特屬性建立和自訂不同類型的工作事項"
+      "heading": "工作項目類型",
+      "description": "使用獨特屬性建立和自訂不同類型的工作項目"
     },
     "features": {
       "cycles": {
@@ -436,7 +436,7 @@
     },
     "templates": {
       "heading": "模板",
-      "description": "使用範本可節省 80% 建立專案、工作事項和頁面所花費的時間。"
+      "description": "使用範本可節省 80% 建立專案、工作項目和頁面所花費的時間。"
     },
     "cycles": {
       "auto_schedule": {
@@ -448,7 +448,7 @@
           "cycle_title": {
             "label": "週期標題",
             "placeholder": "標題",
-            "tooltip": "標題將為後續週期添加編號。例如：設計 - 1/2/3",
+            "tooltip": "標題將為後續週期新增編號。例如：設計 - 1/2/3",
             "validation": {
               "required": "週期標題為必填項",
               "max_length": "標題不得超過255個字元"
@@ -489,8 +489,8 @@
             }
           },
           "auto_rollover": {
-            "label": "工作項自動結轉",
-            "tooltip": "在週期完成的當天，將所有未完成的工作項移至下一個週期。"
+            "label": "工作項目自動結轉",
+            "tooltip": "在週期完成的當天，將所有未完成的工作項目移至下一個週期。"
           }
         },
         "toast": {

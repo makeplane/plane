@@ -9,6 +9,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Tooltip } from "@plane/propel/tooltip";
 import { cn } from "@plane/utils";
 // helpers
@@ -26,6 +27,7 @@ type TIssueVotes = {
 
 export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
   const { anchor, issueIdFromProps, size = "md" } = props;
+  const { t } = useTranslation();
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
   // router
@@ -89,10 +91,11 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
                   .map((r) => r.actor_details?.display_name)
                   .splice(0, VOTES_LIMIT)
                   .join(", ")}
-                {allUpVotes.length > VOTES_LIMIT && " and " + (allUpVotes.length - VOTES_LIMIT) + " more"}
+                {allUpVotes.length > VOTES_LIMIT &&
+                  t("space_public.and_more", { count: allUpVotes.length - VOTES_LIMIT })}
               </>
             ) : (
-              "No upvotes yet"
+              t("space_public.no_upvotes_yet")
             )}
           </div>
         }
@@ -127,13 +130,14 @@ export const IssueVotes = observer(function IssueVotes(props: TIssueVotes) {
             {allDownVotes.length > 0 ? (
               <>
                 {allDownVotes
-                  .map((r) => r.actor_details.display_name)
+                  .map((r) => r.actor_details?.display_name)
                   .splice(0, VOTES_LIMIT)
                   .join(", ")}
-                {allDownVotes.length > VOTES_LIMIT && " and " + (allDownVotes.length - VOTES_LIMIT) + " more"}
+                {allDownVotes.length > VOTES_LIMIT &&
+                  t("space_public.and_more", { count: allDownVotes.length - VOTES_LIMIT })}
               </>
             ) : (
-              "No downvotes yet"
+              t("space_public.no_downvotes_yet")
             )}
           </div>
         }

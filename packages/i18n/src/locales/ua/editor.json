@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Перетягніть для завантаження зовнішніх файлів"
+      "drag_and_drop": "Перетягніть файли сюди або натисніть для завантаження"
     },
     "errors": {
       "file_too_large": {
@@ -60,6 +60,80 @@
       "rewrite": "Переписати",
       "use_this": "Використати це",
       "refine": "Уточнити"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Введіть або вставте URL",
+    "text": "Текст",
+    "enter_text_to_display": "Введіть текст для відображення",
+    "remove_link": "Видалити посилання",
+    "edit_link": "Редагувати посилання",
+    "color": "Колір",
+    "text_colors": "Кольори тексту",
+    "background_colors": "Кольори фону",
+    "link": "Посилання",
+    "enter_or_paste_link": "Введіть або вставте посилання",
+    "please_enter_valid_url": "Введіть дійсний URL",
+    "delete": "Видалити",
+    "duplicate": "Дублювати",
+    "multiple": "Кілька",
+    "loading": "Завантаження",
+    "no_results": "Результатів немає",
+    "copy_code": "Скопіюйте код",
+    "add_an_image": "Додайте зображення",
+    "error_loading_image": "Помилка завантаження зображення",
+    "uploading": "Завантаження",
+    "drop_image_here": "Перетягніть зображення сюди",
+    "retry_duplication": "Повторіть спробу дублювання",
+    "retry": "Повторіть спробу",
+    "no_emojis_found": "Емодзі не знайдено",
+    "fullscreen_image_viewer": "Переглядач повноекранних зображень",
+    "close_image_viewer": "Закрити переглядач зображень",
+    "zoom_out": "Зменшити масштаб",
+    "zoom_in": "Збільшити",
+    "download_image": "Завантажити зображення",
+    "open_image_in_new_tab": "Відкрити зображення в новій вкладці",
+    "view_in_full_screen": "Переглянути на весь екран",
+    "view_image_in_full_screen": "Переглянути зображення на весь екран",
+    "align": "Вирівняти",
+    "download": "Завантажити",
+    "clear_contents": "Очистити вміст",
+    "insert_above": "Вставте вище",
+    "insert_below": "Вставте нижче",
+    "insert_left": "Вставте ліворуч",
+    "insert_right": "Вставте праворуч",
+    "header_row": "Рядок заголовка",
+    "header_column": "Стовпець заголовка",
+    "alignment": {
+      "left": "Ліворуч",
+      "center": "По центру",
+      "right": "Праворуч"
+    },
+    "menu_items": {
+      "text": "Текст",
+      "h1": "Заголовок 1",
+      "h2": "Заголовок 2",
+      "h3": "Заголовок 3",
+      "h4": "Заголовок 4",
+      "h5": "Заголовок 5",
+      "h6": "Заголовок 6",
+      "bulleted-list": "Маркірований список",
+      "numbered-list": "Нумерований список",
+      "to-do-list": "Список справ",
+      "quote": "Цитата",
+      "code": "Код",
+      "table": "Таблиця",
+      "image": "Зображення",
+      "divider": "Роздільник",
+      "link": "Посилання",
+      "bold": "Жирний",
+      "italic": "Курсив",
+      "underline": "Підкреслити",
+      "strikethrough": "Закреслення",
+      "text-color": "Колір тексту",
+      "background-color": "Колір фону",
+      "text-align": "Вирівнювання тексту"
     }
   }
 }

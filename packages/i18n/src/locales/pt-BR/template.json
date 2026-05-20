@@ -115,7 +115,7 @@
             }
           },
           "button": {
-            "create": "Utwórz szablon strony",
+            "create": "Criar modelo de página",
             "update": "Aktualizuj szablon strony"
           }
         },

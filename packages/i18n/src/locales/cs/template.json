@@ -260,7 +260,7 @@
       "create": {
         "success": {
           "title": "Šablona byla úspěšně vytvořena",
-          "message": "{templateName} byla úspěšně vytvořena a je nyní k dispozici pro váš workspace. Můžete ji nyní použít k vytvoření nových pracovních položek."
+          "message": "Šablona {templateName} typu {templateType} je nyní k dispozici ve vašem pracovním prostoru."
         },
         "error": {
           "title": "Chyba!",
@@ -270,7 +270,7 @@
       "update": {
         "success": {
           "title": "Šablona byla úspěšně aktualizována",
-          "message": "{templateName} byla úspěšně aktualizována. Můžete ji nyní použít k vytvoření nových pracovních položek."
+          "message": "Šablona {templateName} typu {templateType} byla aktualizována."
         },
         "error": {
           "title": "Chyba!",
@@ -280,7 +280,7 @@
       "delete": {
         "success": {
           "title": "Úspěch!",
-          "message": "Šablona byla úspěšně smazána!"
+          "message": "Šablona {templateName} typu {templateType} byla odstraněna z vašeho pracovního prostoru."
         },
         "error": {
           "title": "Chyba!",
@@ -306,7 +306,7 @@
       }
     },
     "unpublish_confirmation": {
-      "title": "Stáhnout šablonu",
+      "title": "Zrušit publikování šablony",
       "description": {
         "prefix": "Opravdu chcete stáhnout šablonu-",
         "suffix": "? Šablona bude stažena z marketplace a nebude více dostupná pro ostatní."

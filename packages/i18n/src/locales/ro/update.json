@@ -39,7 +39,7 @@
         "message": "Actualizarea a fost creată cu succes."
       },
       "error": {
-        "title": "Actualizare năo creată",
+        "title": "Actualizarea nu a fost creată",
         "message": "Actualizarea nu a putut fi creată."
       }
     },

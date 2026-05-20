@@ -64,7 +64,7 @@
     },
     "tabs": {
       "open": "Chưa xử lý",
-      "closed": "Đã xử lý"
+      "closed": "Đã đóng"
     },
     "empty_state": {
       "sidebar_open_tab": {
@@ -82,6 +82,58 @@
       "detail": {
         "title": "Chọn một mục công việc để xem chi tiết."
       }
+    }
+  },
+  "inbox": {
+    "duplicate_issues_found": "Đã tìm thấy {count} mục công việc trùng lặp",
+    "description_versions": {
+      "intake_form_user": "Người dùng biểu mẫu tiếp nhận"
+    },
+    "errors": {
+      "asset_upload_failed": "Tải nội dung lên không thành công. Vui lòng thử lại sau.",
+      "asset_duplication_failed": "Sao chép nội dung không thành công. Vui lòng thử lại sau.",
+      "permission_denied": "Quyền bị từ chối",
+      "mark_duplicate_permission": "Chỉ quản trị viên dự án mới có thể đánh dấu mục công việc là trùng lặp",
+      "mark_duplicate_permission_plural": "Chỉ quản trị viên dự án mới có thể đánh dấu các mục công việc là trùng lặp"
+    },
+    "filters": {
+      "created_date": "Ngày tạo",
+      "updated_date": "Ngày cập nhật",
+      "last_updated_date": "Ngày cập nhật lần cuối",
+      "status": "Trạng thái",
+      "work_item_status": "Trạng thái mục công việc",
+      "view_all": "Xem tất cả",
+      "view_less": "Xem ít hơn",
+      "date_options": {
+        "today": "Hôm nay",
+        "yesterday": "Hôm qua",
+        "last_7_days": "7 ngày qua",
+        "custom": "Tùy chỉnh",
+        "last_30_days": "30 ngày qua"
+      },
+      "date_operators": {
+        "after": "Sau",
+        "before": "Trước"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "Mục công việc trước đó",
+      "next_work_item": "Mục công việc tiếp theo"
+    },
+    "properties": {
+      "duplicate_of": "Bản sao của"
+    },
+    "select_duplicate": {
+      "select_work_item": "Chọn mục công việc"
+    },
+    "sidebar": {
+      "label_count": "{count} nhãn"
+    },
+    "toasts": {
+      "editor_processing": "Trình chỉnh sửa vẫn đang xử lý các thay đổi. Vui lòng đợi trước khi tiếp tục.",
+      "create_success": "Mục công việc được tạo thành công.",
+      "delete_failed": "Xóa mục công việc không thành công",
+      "update_failed": "Cập nhật mục công việc không thành công"
     }
   }
 }

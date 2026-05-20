@@ -125,7 +125,7 @@
   "on_demand_snapshots_of_all_your_cycles": "Migawki wszystkich Twoich cykli na żądanie",
   "upgrade": "Uaktualnij",
   "10000_feet_view": "Widok z wysokości 10 000 stóp na wszystkie aktywne cykle.",
-  "10000_feet_view_description": "Przybliż wszystkie aktywne cykle w różnych projektach bez konieczności przełączania się między nimi.",
+  "10000_feet_view_description": "Zobacz wszystkie aktywne cykle w różnych projektach jednocześnie, zamiast przełączać się między nimi.",
   "get_snapshot_of_each_active_cycle": "Uzyskaj migawkę każdego aktywnego cyklu.",
   "get_snapshot_of_each_active_cycle_description": "Śledź kluczowe metryki wszystkich aktywnych cykli, sprawdzaj postęp i porównuj zakres z terminami.",
   "compare_burndowns": "Porównuj wykresy burndown.",
@@ -486,7 +486,7 @@
     "project_timezone": "Strefa czasowa projektu",
     "created_on": "Utworzono dnia",
     "updated_on": "Zaktualizowano",
-    "completed_on": "Completed on",
+    "completed_on": "Data ukończenia",
     "update_project": "Zaktualizuj projekt",
     "identifier_already_exists": "Identyfikator już istnieje",
     "add_more": "Dodaj więcej",
@@ -513,7 +513,7 @@
     "order_by": {
       "label": "Sortuj według",
       "manual": "Ręcznie - Ranking",
-      "last_created": "Last created",
+      "last_created": "Ostatnio utworzone",
       "last_updated": "Last updated",
       "start_date": "Data rozpoczęcia",
       "due_date": "Termin",
@@ -706,18 +706,18 @@
     "workflows": "Workflowy",
     "templates": "Szablony",
     "business": "Biznes",
-    "members_and_teamspaces": "Członkowie i tymacz",
+    "members_and_teamspaces": "Członkowie i przestrzenie zespołowe",
     "recurring_work_items": "Powtarzające się elementy pracy",
     "milestones": "Kamienie milowe",
     "open_in_full_screen": "Otwórz {page} na pełnym ekranie",
     "details": "Szczegóły",
     "project_structure": "Struktura projektu",
     "custom_properties": "Właściwości niestandardowe",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "Twój profil",
+    "developer": "Deweloper",
+    "work_structure": "Struktura pracy",
+    "execution": "Wykonanie",
+    "administration": "Administracja"
   },
   "chart": {
     "x_axis": "Oś X",
@@ -867,5 +867,20 @@
       "description": "Eksportuj elementy do pliku JSON.",
       "short_description": "Eksportuj jako JSON"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane uległ awarii. Nasi inżynierowie zostali powiadomieni. Jeśli masz więcej szczegółów, napisz na",
+    "error_description_middle": "lub na naszym",
+    "not_found_hint": "Sprawdź URL w pasku adresu przeglądarki i spróbuj ponownie.",
+    "instance_failure_image_alt": "Nie można pobrać szczegółów instancji",
+    "instance_failure_title": "Nie można pobrać szczegółów instancji.",
+    "instance_failure_description": "Nie mogliśmy załadować szczegółów Twojej instancji.",
+    "instance_failure_hint": "Sprawdź połączenie i spróbuj ponownie.",
+    "powered_by": "Obsługiwane przez",
+    "error_title": "Ups! To nie wygląda dobrze.",
+    "refresh": "Odśwież",
+    "forum": "Forum",
+    "not_found_title": "To nie zadziałało",
+    "retry": "Spróbuj ponownie"
   }
 }

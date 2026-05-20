@@ -16,15 +16,21 @@
       "create_new_project": "新しいプロジェクトを作成",
       "open_projects_menu": "プロジェクトメニューを開く",
       "close_projects_menu": "プロジェクトメニューを閉じる",
-      "toggle_quick_actions_menu": "クイックアクションメニューの切り替え",
+      "toggle_quick_actions_menu": "クイックアクションメニューを切り替える",
       "open_project_menu": "プロジェクトメニューを開く",
       "close_project_menu": "プロジェクトメニューを閉じる",
       "collapse_sidebar": "サイドバーを折りたたむ",
       "expand_sidebar": "サイドバーを展開",
       "edition_badge": "有料プランのモーダルを開く"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "ワークスペースメニューを開く",
+      "close_workspace_menu": "ワークスペースメニューを閉じる",
+      "open_extended_sidebar": "拡張サイドバーを開く",
+      "close_extended_sidebar": "拡張サイドバーを閉じる"
+    },
     "auth_forms": {
-      "clear_email": "メールをクリア",
+      "clear_email": "メールアドレスをクリア",
       "show_password": "パスワードを表示",
       "hide_password": "パスワードを非表示",
       "close_alert": "アラートを閉じる",

@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "Salvando",
-        "default": "Salvar mesmo assim"
+        "default": "Aplicar e desvincular"
       }
     },
     "work_item_modal": {

@@ -266,5 +266,11 @@
         "description": "İş öğesinin ilerlediği durumları seçin."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Sayfa bulunamadı",
+    "title": "Hata! Bir şeyler ters gitti.",
+    "description": "Aradığınız sayfa bulunamadı. Kaldırılmış, yeniden adlandırılmış veya geçici olarak kullanılamıyor olabilir.",
+    "go_to_home": "Ana sayfaya git"
   }
 }

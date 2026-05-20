@@ -87,7 +87,8 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
       <div className="relative flex h-full w-full flex-col overflow-hidden">
         <Header variant={EHeaderVariant.SECONDARY}>
           {tabNavigationOptions.map((option) => (
-            <div
+            <button
+              type="button"
               key={option?.key}
               className={cn(
                 `relative flex h-full cursor-pointer items-center gap-1 px-3 text-13 font-medium transition-all`,
@@ -112,7 +113,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                   currentTab === option?.key ? `border-accent-strong` : `border-transparent`
                 )}
               />
-            </div>
+            </button>
           ))}
           <div className="m-auto mr-0">
             <FiltersRoot />
@@ -161,11 +162,10 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                     rootClassName="px-page-x"
                   />
                 ) : (
-                  // TODO: Add translation
                   <EmptyStateDetailed
                     assetKey="inbox"
-                    title="No request closed yet"
-                    description="All the work items whether accepted or declined can be found here."
+                    title={t("inbox_issue.empty_state.sidebar_closed_tab.title")}
+                    description={t("inbox_issue.empty_state.sidebar_closed_tab.description")}
                     assetClassName="size-20"
                     className="px-10"
                   />

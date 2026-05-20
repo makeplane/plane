@@ -212,7 +212,7 @@
   "congrats": "おめでとうございます！",
   "open_project": "プロジェクトを開く",
   "issues": "作業項目",
-  "cycles": "Cycles",
+  "cycles": "サイクル",
   "modules": "Modules",
   "pages": "ページ",
   "intake": "Intake",
@@ -324,8 +324,8 @@
   "deleting": "削除中",
   "make_a_copy": "コピーを作成",
   "move_to_project": "プロジェクトに移動",
-  "good": "おはよう",
-  "morning": "ございます",
+  "good": "",
+  "morning": "おはようございます",
   "afternoon": "こんにちは",
   "evening": "こんばんは",
   "show_all": "すべて表示",
@@ -443,9 +443,9 @@
     "link": "リンク",
     "estimates": "見積もり",
     "estimate": "見積もり",
-    "created_at": "クリエイテッド アット",
+    "created_at": "作成日時",
     "updated_at": "更新日時",
-    "completed_at": "コンプリーテッド アット",
+    "completed_at": "完了日時",
     "layout": "レイアウト",
     "filters": "フィルター",
     "display": "表示",
@@ -486,7 +486,7 @@
     "project_timezone": "プロジェクトのタイムゾーン",
     "created_on": "作成日",
     "updated_on": "更新日",
-    "completed_on": "Completed on",
+    "completed_on": "完了日",
     "update_project": "プロジェクトを更新",
     "identifier_already_exists": "識別子は既に存在します",
     "add_more": "さらに追加",
@@ -512,7 +512,7 @@
     "workspace_level": "ワークスペースレベル",
     "order_by": {
       "label": "並び順",
-      "manual": "手動 - ランク",
+      "manual": "手動",
       "last_created": "最終作成日",
       "last_updated": "最終更新日",
       "start_date": "開始日",
@@ -683,13 +683,13 @@
     "you": "あなた",
     "upgrade_cta": {
       "higher_subscription": "高いサブスクリプションにアップグレード",
-      "talk_to_sales": "トーク トゥ セールス"
+      "talk_to_sales": "営業担当者に相談"
     },
     "category": "カテゴリー",
-    "categories": "カテゴリーズ",
-    "saving": "セービング",
-    "save_changes": "セーブ チェンジズ",
-    "delete": "デリート",
+    "categories": "カテゴリー",
+    "saving": "保存中",
+    "save_changes": "変更を保存",
+    "delete": "削除",
     "deleting": "デリーティング",
     "pending": "保留中",
     "invite": "招待",
@@ -713,15 +713,15 @@
     "details": "詳細",
     "project_structure": "プロジェクト構造",
     "custom_properties": "カスタムプロパティ",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration"
+    "your_profile": "あなたのプロフィール",
+    "developer": "デベロッパー",
+    "work_structure": "作業構造",
+    "execution": "実行",
+    "administration": "管理"
   },
   "chart": {
-    "x_axis": "エックス アクシス",
-    "y_axis": "ワイ アクシス",
+    "x_axis": "X軸",
+    "y_axis": "Y軸",
     "metric": "メトリック"
   },
   "form": {
@@ -832,7 +832,7 @@
   "pin": "ピン留め",
   "unpin": "ピン留めを解除",
   "workspace_dashboards": "ダッシュボード",
-  "pi_chat": "AIチャット",
+  "pi_chat": "Plane AI",
   "in_app": "アプリ内",
   "forms": "フォーム",
   "milestones": "マイルストーン",
@@ -867,5 +867,20 @@
       "description": "作業項目をJSONファイルにエクスポートします。",
       "short_description": "JSONとしてエクスポート"
     }
+  },
+  "space_public": {
+    "error_description_prefix": "Plane がクラッシュしました。担当エンジニアには通知済みです。追加の詳細がある場合は、次までご連絡ください",
+    "error_description_middle": "または",
+    "not_found_hint": "ブラウザーのアドレスバーに入力した URL を確認して、もう一度お試しください。",
+    "instance_failure_image_alt": "インスタンスの詳細を取得できません",
+    "instance_failure_title": "インスタンスの詳細を取得できません。",
+    "instance_failure_description": "インスタンスの詳細を読み込めませんでした。",
+    "instance_failure_hint": "接続を確認して、もう一度お試しください。",
+    "powered_by": "提供元",
+    "error_title": "問題が発生しました。",
+    "refresh": "再読み込み",
+    "forum": "フォーラム",
+    "not_found_title": "うまくいきませんでした",
+    "retry": "再試行"
   }
 }

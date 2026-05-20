@@ -22,7 +22,7 @@
       "archived": "Notifica archiviata",
       "unarchived": "Notifica rimossa dall'archivio",
       "snoozed": "Notifica snoozata",
-      "unsnoozed": "Notifica desnoozata"
+      "unsnoozed": "Notifica riattivata"
     },
     "empty_state": {
       "detail": {

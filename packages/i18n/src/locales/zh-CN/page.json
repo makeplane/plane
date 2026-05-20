@@ -111,5 +111,18 @@
       "success_message": "页面已从集合中移除。",
       "error_message": "无法将页面从集合中移除。请重试。"
     }
+  },
+  "page_access": {
+    "not_found_title": "找不到页面",
+    "not_found_description": "您尝试访问的页面不存在，或您没有权限查看。",
+    "view_other_pages": "查看其他页面"
+  },
+  "profile_activity": {
+    "page_title": "个人资料 - 活动"
+  },
+  "space_public": {
+    "page_not_found_alt": "找不到页面",
+    "page_not_found_description": "您要查找的页面不存在或已被移动。",
+    "something_went_wrong": "哎呀！出了点问题。"
   }
 }

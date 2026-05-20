@@ -261,7 +261,8 @@
     "delete_view": {
       "title": "Are you sure you want to delete this view?",
       "content": "If you confirm, all the sort, filter, and display options + the layout you have chosen for this view will be permanently deleted without any way to restore them."
-    }
+    },
+    "page_title": "{workspaceName} - All Views"
   },
   "workspace_draft_issues": {
     "draft_an_issue": "Draft a work item",
@@ -374,5 +375,70 @@
         }
       }
     }
+  },
+  "workspace_access": {
+    "not_found_title": "Workspace not found",
+    "not_found_description": "No workspace was found for this URL. It may not exist or you may not have permission to view it.",
+    "visit_profile": "Visit Profile",
+    "not_authorized_title": "Not Authorized!",
+    "not_authorized_description": "You are not a member of this workspace. Please contact the workspace admin to get an invitation or check your pending invitations.",
+    "check_pending_invites": "Check pending invites"
+  },
+  "workspace_invitation": {
+    "invitation_not_found": "Invitation not found",
+    "invited_to_workspace": "You have been invited to {workspaceName}",
+    "description": "Your workspace is where you will create projects, collaborate on your work items, and organize different streams of work in your Plane account.",
+    "accept": "Accept",
+    "ignore": "Ignore",
+    "already_member": "You are already a member of {workspaceName}",
+    "continue_to_home": "Continue to home",
+    "inactive_title": "This invitation link is not active anymore.",
+    "empty_project_link": "Or start from an empty project",
+    "sign_in_to_continue": "Sign in to continue",
+    "star_on_github": "Star us on GitHub",
+    "join_community": "Join our community of active creators"
+  },
+  "onboarding": {
+    "create_profile_title": "Create your profile.",
+    "create_profile_description": "This is how you will appear in Plane.",
+    "change_image": "Change image",
+    "upload_image": "Upload image",
+    "name": "Name",
+    "name_required": "Name is required",
+    "name_within_50": "Name must be within 50 characters.",
+    "enter_full_name": "Enter your full name",
+    "set_password": "Set a password",
+    "optional": "Optional",
+    "passwords_do_not_match": "Passwords do not match",
+    "passwords_match": "Passwords match",
+    "continue": "Continue",
+    "invite_team_title": "Invite your teammates",
+    "invite_team_description": "Work in Plane happens best with your team. Invite them now to use Plane to its potential.",
+    "invalid_email": "That does not look like an email address.",
+    "success": "Success!",
+    "invitations_sent": "Invitations sent successfully.",
+    "error": "Error!",
+    "add_another": "Add another",
+    "do_later": "I will do it later",
+    "join_invites_title": "Join invites or create a workspace",
+    "unified_description": "All your work — unified.",
+    "create_new_workspace": "Create new workspace",
+    "no_invitations_found": "No invitations found",
+    "you_are_invited": "You are invited!",
+    "accept_invites": "Accept the invites to collaborate with your team.",
+    "continue_to_workspace": "Continue to workspace",
+    "or": "or",
+    "create_own_workspace": "Create your own workspace",
+    "workspace_creation_disabled": "You do not seem to have any invites to a workspace and your instance admin has restricted creation of new workspaces. Please ask a workspace owner or admin to invite you to a workspace first and come back to this screen to join.",
+    "create_workspace_title": "Create your workspace",
+    "enter_workspace_name": "Enter workspace name",
+    "join_existing_workspace": "Join existing workspace",
+    "profile_setup_completed": "Profile setup completed.",
+    "profile_setup_failed": "Profile setup failed.",
+    "usecase_title": "How are you planning to use Plane?",
+    "usecase_description": "Select one or more options so we can personalize your experience.",
+    "select_one_or_more": "Select one or more",
+    "select_at_least_one": "Select at least one option.",
+    "skip": "Skip"
   }
 }

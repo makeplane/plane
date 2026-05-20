@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Glissez-déposez pour télécharger des fichiers externes"
+      "drag_and_drop": "Déposez les fichiers ici ou cliquez pour importer"
     },
     "errors": {
       "file_too_large": {
@@ -50,7 +50,7 @@
     "block_types": {
       "placeholder": "Sélectionner le type de bloc",
       "summarize_page": "Résumer la page",
-      "custom_prompt": "Invite personnalisée"
+      "custom_prompt": "Prompt personnalisé"
     },
     "actions": {
       "discard": "Abandonner",
@@ -60,6 +60,80 @@
       "rewrite": "Réécrire",
       "use_this": "Utiliser ceci",
       "refine": "Affiner"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Saisissez ou collez l'URL",
+    "text": "Texte",
+    "enter_text_to_display": "Saisissez le texte à afficher",
+    "remove_link": "Supprimer le lien",
+    "edit_link": "Modifier le lien",
+    "color": "Couleur",
+    "text_colors": "Couleurs du texte",
+    "background_colors": "Couleurs d'arrière-plan",
+    "link": "Lien",
+    "enter_or_paste_link": "Saisir ou coller le lien",
+    "please_enter_valid_url": "Veuillez saisir une URL valide",
+    "delete": "Supprimer",
+    "duplicate": "Dupliquer",
+    "multiple": "Multiple",
+    "loading": "Chargement",
+    "no_results": "Aucun résultat",
+    "copy_code": "Copier le code",
+    "add_an_image": "Ajouter une image",
+    "error_loading_image": "Erreur de chargement de l'image",
+    "uploading": "Importation",
+    "drop_image_here": "Déposez l'image ici",
+    "retry_duplication": "Réessayer la duplication",
+    "retry": "Réessayer",
+    "no_emojis_found": "Aucun emoji trouvé",
+    "fullscreen_image_viewer": "Visionneuse d'images plein écran",
+    "close_image_viewer": "Fermer la visionneuse d'images",
+    "zoom_out": "Zoom arrière",
+    "zoom_in": "Zoomer",
+    "download_image": "Télécharger l'image",
+    "open_image_in_new_tab": "Ouvrir l'image dans un nouvel onglet",
+    "view_in_full_screen": "Afficher en plein écran",
+    "view_image_in_full_screen": "Afficher l'image en plein écran",
+    "align": "Aligner",
+    "download": "Télécharger",
+    "clear_contents": "Effacer le contenu",
+    "insert_above": "Insérer ci-dessus",
+    "insert_below": "Insérer ci-dessous",
+    "insert_left": "Insérer à gauche",
+    "insert_right": "Insérer à droite",
+    "header_row": "Ligne d'en-tête",
+    "header_column": "Colonne d'en-tête",
+    "alignment": {
+      "left": "Gauche",
+      "center": "Centre",
+      "right": "Droite"
+    },
+    "menu_items": {
+      "text": "Texte",
+      "h1": "Titre 1",
+      "h2": "Titre 2",
+      "h3": "Titre 3",
+      "h4": "Titre 4",
+      "h5": "Titre 5",
+      "h6": "Titre 6",
+      "bulleted-list": "Liste à puces",
+      "numbered-list": "Liste numérotée",
+      "to-do-list": "Liste de choses à faire",
+      "quote": "Citation",
+      "code": "Code",
+      "table": "Tableau",
+      "image": "Image",
+      "divider": "Diviseur",
+      "link": "Lien",
+      "bold": "Gras",
+      "italic": "Italique",
+      "underline": "Souligner",
+      "strikethrough": "Barré",
+      "text-color": "Couleur du texte",
+      "background-color": "Couleur de fond",
+      "text-align": "Aligner le texte"
     }
   }
 }

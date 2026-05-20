@@ -24,30 +24,30 @@
     },
     "modals": {
       "decline": {
-        "title": "拒絕工作事項",
-        "content": "您確定要拒絕工作事項 {value} 嗎？"
+        "title": "拒絕工作項目",
+        "content": "您確定要拒絕工作項目 {value} 嗎？"
       },
       "delete": {
-        "title": "刪除工作事項",
-        "content": "您確定要刪除工作事項 {value} 嗎？",
-        "success": "工作事項刪除成功"
+        "title": "刪除工作項目",
+        "content": "您確定要刪除工作項目 {value} 嗎？",
+        "success": "工作項目刪除成功"
       }
     },
     "errors": {
-      "snooze_permission": "只有專案管理員可以延後/取消延後工作事項",
-      "accept_permission": "只有專案管理員可以接受工作事項",
-      "decline_permission": "只有專案管理員可以拒絕工作事項"
+      "snooze_permission": "只有專案管理員可以延後/取消延後工作項目",
+      "accept_permission": "只有專案管理員可以接受工作項目",
+      "decline_permission": "只有專案管理員可以拒絕工作項目"
     },
     "actions": {
       "accept": "接受",
       "decline": "拒絕",
       "snooze": "延後",
       "unsnooze": "取消延後",
-      "copy": "複製工作事項連結",
+      "copy": "複製工作項目連結",
       "delete": "刪除",
-      "open": "開啟工作事項",
+      "open": "開啟工作項目",
       "mark_as_duplicate": "標記為重複",
-      "move": "將 {value} 移至專案工作事項"
+      "move": "將 {value} 移至專案工作項目"
     },
     "source": {
       "in-app": "應用程式內"
@@ -60,7 +60,7 @@
     "label": "進件",
     "page_label": "{workspace} - 進件",
     "modal": {
-      "title": "建立進件工作事項"
+      "title": "建立進件工作項目"
     },
     "tabs": {
       "open": "開啟",
@@ -68,20 +68,72 @@
     },
     "empty_state": {
       "sidebar_open_tab": {
-        "title": "沒有開啟的工作事項",
-        "description": "在這裡尋找開啟的工作事項。建立新工作事項。"
+        "title": "沒有開啟的工作項目",
+        "description": "在這裡尋找開啟的工作項目。建立新工作項目。"
       },
       "sidebar_closed_tab": {
-        "title": "沒有已關閉的工作事項",
-        "description": "所有已接受或拒絕的工作事項都可以在這裡找到。"
+        "title": "沒有已關閉的工作項目",
+        "description": "所有已接受或拒絕的工作項目都可以在這裡找到。"
       },
       "sidebar_filter": {
-        "title": "沒有符合的工作事項",
-        "description": "沒有工作事項符合進件中套用的篩選條件。建立新工作事項。"
+        "title": "沒有符合的工作項目",
+        "description": "沒有工作項目符合進件中套用的篩選條件。建立新工作項目。"
       },
       "detail": {
-        "title": "選擇工作事項以檢視其詳細資訊。"
+        "title": "選擇工作項目以檢視其詳細資訊。"
       }
+    }
+  },
+  "inbox": {
+    "duplicate_issues_found": "發現 {count} 個重複工作項目",
+    "description_versions": {
+      "intake_form_user": "收集表單使用者"
+    },
+    "errors": {
+      "asset_upload_failed": "資源上傳失敗。請稍後重試。",
+      "asset_duplication_failed": "資源建立副本失敗。請稍後重試。",
+      "permission_denied": "沒有權限",
+      "mark_duplicate_permission": "只有專案管理員可以將工作項目標記為重複",
+      "mark_duplicate_permission_plural": "只有專案管理員可以將工作項目標記為重複"
+    },
+    "filters": {
+      "created_date": "建立日期",
+      "updated_date": "更新日期",
+      "last_updated_date": "最後更新日期",
+      "status": "狀態",
+      "work_item_status": "工作項目狀態",
+      "view_all": "查看全部",
+      "view_less": "收起",
+      "date_options": {
+        "today": "今天",
+        "yesterday": "昨天",
+        "last_7_days": "過去 7 天",
+        "custom": "自訂",
+        "last_30_days": "過去 30 天"
+      },
+      "date_operators": {
+        "after": "之後",
+        "before": "之前"
+      }
+    },
+    "navigation": {
+      "previous_work_item": "上一個工作項目",
+      "next_work_item": "下一個工作項目"
+    },
+    "properties": {
+      "duplicate_of": "與此項目重複"
+    },
+    "select_duplicate": {
+      "select_work_item": "選擇工作項目"
+    },
+    "sidebar": {
+      "label_count": "{count} 個標籤"
+    },
+    "toasts": {
+      "editor_processing": "編輯器仍在處理更改。請稍候再繼續。",
+      "create_success": "工作項目建立成功。",
+      "delete_failed": "工作項目刪除失敗",
+      "update_failed": "工作項目更新失敗"
     }
   }
 }

@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 // helpers
 import { EAuthModes } from "@/types/auth";
 
@@ -11,41 +12,16 @@ type TAuthHeader = {
   authMode: EAuthModes;
 };
 
-type TAuthHeaderContent = {
-  header: string;
-  subHeader: string;
-};
-
-type TAuthHeaderDetails = {
-  [mode in EAuthModes]: TAuthHeaderContent;
-};
-
-const Titles: TAuthHeaderDetails = {
-  [EAuthModes.SIGN_IN]: {
-    header: "Sign in to upvote or comment",
-    subHeader: "Contribute in nudging the features you want to get built.",
-  },
-  [EAuthModes.SIGN_UP]: {
-    header: "View, comment, and do more",
-    subHeader: "Sign up or log in to work with Plane work items and Pages.",
-  },
-};
-
 export function AuthHeader(props: TAuthHeader) {
   const { authMode } = props;
+  const { t } = useTranslation();
 
-  const getHeaderSubHeader = (mode: EAuthModes | null): TAuthHeaderContent => {
-    if (mode) {
-      return Titles[mode];
-    }
-
-    return {
-      header: "Comment or react to work items",
-      subHeader: "Use plane to add your valuable inputs to features.",
-    };
-  };
-
-  const { header, subHeader } = getHeaderSubHeader(authMode);
+  const header =
+    authMode === EAuthModes.SIGN_IN ? t("space_public.auth.sign_in_header") : t("space_public.auth.sign_up_header");
+  const subHeader =
+    authMode === EAuthModes.SIGN_IN
+      ? t("space_public.auth.sign_in_subheader")
+      : t("space_public.auth.sign_up_subheader");
 
   return (
     <>

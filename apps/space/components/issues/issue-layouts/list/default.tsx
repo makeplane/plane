@@ -6,6 +6,7 @@
 
 import { useRef } from "react";
 import { observer } from "mobx-react";
+import { useTranslation } from "@plane/i18n";
 // types
 import type {
   GroupByColumnTypes,
@@ -59,8 +60,12 @@ export const List = observer(function List(props: IList) {
   const cycle = useCycle();
   const modules = useModule();
   const state = useStates();
+  const { t } = useTranslation();
 
-  const groupList = getGroupByColumns(groupBy as GroupByColumnTypes, cycle, modules, label, state, member, true);
+  const groupList = getGroupByColumns(groupBy as GroupByColumnTypes, cycle, modules, label, state, member, true, {
+    allWorkItems: `${t("common.all")} ${t("work_items")}`,
+    none: t("common.none"),
+  });
 
   if (!groupList) return null;
 

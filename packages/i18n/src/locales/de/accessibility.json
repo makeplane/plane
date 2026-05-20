@@ -23,8 +23,14 @@
       "expand_sidebar": "Seitenleiste ausklappen",
       "edition_badge": "Modal für kostenpflichtige Pläne öffnen"
     },
+    "app_sidebar": {
+      "open_workspace_menu": "Arbeitsbereichsmenü öffnen",
+      "close_workspace_menu": "Arbeitsbereichsmenü schließen",
+      "open_extended_sidebar": "Erweiterte Seitenleiste öffnen",
+      "close_extended_sidebar": "Erweiterte Seitenleiste schließen"
+    },
     "auth_forms": {
-      "clear_email": "E-Mail löschen",
+      "clear_email": "E-Mail-Feld leeren",
       "show_password": "Passwort anzeigen",
       "hide_password": "Passwort verbergen",
       "close_alert": "Warnung schließen",

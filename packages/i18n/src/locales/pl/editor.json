@@ -1,7 +1,7 @@
 {
   "attachmentComponent": {
     "uploader": {
-      "drag_and_drop": "Przeciągnij i upuść, aby przesłać pliki zewnętrzne"
+      "drag_and_drop": "Upuść pliki tutaj lub kliknij, aby przesłać"
     },
     "errors": {
       "file_too_large": {
@@ -60,6 +60,80 @@
       "rewrite": "Przepisz",
       "use_this": "Użyj tego",
       "refine": "Udoskonal"
+    }
+  },
+  "editor": {
+    "url": "URL",
+    "enter_or_paste_url": "Wpisz lub wklej adres URL",
+    "text": "Tekst",
+    "enter_text_to_display": "Wprowadź tekst do wyświetlenia",
+    "remove_link": "Usuń link",
+    "edit_link": "Edytuj link",
+    "color": "Kolor",
+    "text_colors": "Kolory tekstu",
+    "background_colors": "Kolory tła",
+    "link": "Link",
+    "enter_or_paste_link": "Wpisz lub wklej link",
+    "please_enter_valid_url": "Proszę wprowadzić prawidłowy URL",
+    "delete": "Usuń",
+    "duplicate": "Duplikuj",
+    "multiple": "Wiele",
+    "loading": "Ładowanie",
+    "no_results": "Brak wyników",
+    "copy_code": "Skopiuj kod",
+    "add_an_image": "Dodaj obraz",
+    "error_loading_image": "Błąd ładowania obrazu",
+    "uploading": "Przesyłanie",
+    "drop_image_here": "Upuść obraz tutaj",
+    "retry_duplication": "Ponów próbę duplikacji",
+    "retry": "Spróbuj ponownie",
+    "no_emojis_found": "Nie znaleziono emoji",
+    "fullscreen_image_viewer": "Pełnoekranowa przeglądarka obrazów",
+    "close_image_viewer": "Zamknij przeglądarkę zdjęć",
+    "zoom_out": "Pomniejsz",
+    "zoom_in": "Powiększ",
+    "download_image": "Pobierz obraz",
+    "open_image_in_new_tab": "Otwórz obraz w nowej karcie",
+    "view_in_full_screen": "Wyświetl na pełnym ekranie",
+    "view_image_in_full_screen": "Wyświetl obraz na pełnym ekranie",
+    "align": "Wyrównaj",
+    "download": "Pobierz",
+    "clear_contents": "Wyczyść zawartość",
+    "insert_above": "Wstaw powyżej",
+    "insert_below": "Wstaw poniżej",
+    "insert_left": "Wstaw w lewo",
+    "insert_right": "Wstaw w prawo",
+    "header_row": "Wiersz nagłówka",
+    "header_column": "Kolumna nagłówka",
+    "alignment": {
+      "left": "Do lewej",
+      "center": "Wyśrodkuj",
+      "right": "Do prawej"
+    },
+    "menu_items": {
+      "text": "Tekst",
+      "h1": "Nagłówek 1",
+      "h2": "Nagłówek 2",
+      "h3": "Nagłówek 3",
+      "h4": "Nagłówek 4",
+      "h5": "Nagłówek 5",
+      "h6": "Nagłówek 6",
+      "bulleted-list": "Lista punktowana",
+      "numbered-list": "Lista numerowana",
+      "to-do-list": "Lista rzeczy do zrobienia",
+      "quote": "Cytat",
+      "code": "Kod",
+      "table": "Tabela",
+      "image": "Obraz",
+      "divider": "Separator",
+      "link": "Link",
+      "bold": "Pogrubiony",
+      "italic": "Kursywa",
+      "underline": "Podkreślenie",
+      "strikethrough": "Przekreślenie",
+      "text-color": "Kolor tekstu",
+      "background-color": "Kolor tła",
+      "text-align": "Wyrównaj tekst"
     }
   }
 }

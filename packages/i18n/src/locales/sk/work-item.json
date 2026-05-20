@@ -12,7 +12,7 @@
       "label": "Pridať pracovnú položku",
       "cycle": {
         "failed": "Pridanie pracovnej položky do cyklu zlyhalo. Skúste to prosím znova.",
-        "success": "{count, plural, one {Pracovná položka} few {Pracovné položky} other {Pracovných položiek}} pridaná do cyklu.",
+        "success": "{count, plural, one {Pracovná položka pridaná do cyklu.} few {Pracovné položky pridané do cyklu.} other {Pracovných položiek pridaných do cyklu.}}",
         "loading": "Pridávanie {count, plural, one {pracovnej položky} few {pracovných položiek} other {pracovných položiek}} do cyklu"
       },
       "assignee": "Pridať priradených",
@@ -163,7 +163,7 @@
       "label": "Súvisiace pracovné položky"
     },
     "archive": {
-      "description": "Archivovať je možné iba dokončené alebo zrušené\npracovné položky",
+      "description": "Archivovať je možné iba dokončené alebo zrušené pracovné položky",
       "label": "Archivovať pracovnú položku",
       "confirm_message": "Naozaj chcete archivovať túto pracovnú položku? Všetky archivované položky je možné neskôr obnoviť.",
       "success": {
@@ -422,5 +422,35 @@
       "label": "Názov epiky",
       "required": "Názov epiky je povinný."
     }
+  },
+  "space_public": {
+    "peek": {
+      "side": "Bočný náhľad",
+      "modal": "Modálne okno",
+      "full_screen": "Celá obrazovka"
+    },
+    "public_board_not_found": "Verejná nástenka neexistuje. Skontrolujte URL.",
+    "no_work_items_found": "Nenašli sa žiadne pracovné položky",
+    "bot_name": "Bot {name}",
+    "commented_time": "komentoval {time}",
+    "and_more": "a ďalších {count}",
+    "no_upvotes_yet": "Zatiaľ žiadne hlasy za",
+    "no_downvotes_yet": "Zatiaľ žiadne hlasy proti",
+    "view_less": "Zobraziť menej",
+    "view_all": "Zobraziť všetko",
+    "no_matches_found": "Nenašli sa žiadne zhody",
+    "no_date": "Bez dátumu",
+    "no_cycle": "Bez cyklu",
+    "no_modules": "Bez modulov",
+    "modules_count": "{count} modulov",
+    "no_assignees": "Bez priradených osôb",
+    "labels_count": "{count} štítkov",
+    "no_labels": "Žiadne štítky",
+    "sign_in_to_add_comment": "Prihláste sa a pridajte komentár",
+    "add_comment": "Pridať komentár",
+    "link_copied": "Odkaz skopírovaný!",
+    "work_item_link_copied": "Odkaz na pracovnú položku bol skopírovaný do schránky.",
+    "comment_post_error": "Komentár sa nepodarilo uverejniť. Skúste to znova.",
+    "user": "Používateľ"
   }
 }

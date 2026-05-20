@@ -84,7 +84,7 @@
     },
     "archive_pages": {
       "title": "Zatiaľ žiadne archivované stránky",
-      "description": "Archivujte stránky, ktoré nie sú na vašom radare. Pristúpte k nim tu, keď budete potrebovať."
+      "description": "Archivujte stránky, ktoré nie sú na vašom radare. Pristúpte k nim tu, keď ich budete potrebovať."
     },
     "intake_sidebar": {
       "title": "Zaznamenajte príchodzí požiadavky",
@@ -92,7 +92,7 @@
       "cta_primary": "Vytvoriť príchodzí požiadavku"
     },
     "intake_main": {
-      "title": "Vyberte príchodzí pracovnú položku na zobrazenie jej podrobností"
+      "title": "Vyberte položku z Intake na zobrazenie jej podrobností"
     },
     "epics": {
       "title": "Premeňte zložité projekty na štruktúrované epiky.",
@@ -266,5 +266,11 @@
         "description": "Vyberte stavy, cez ktoré pracovná položka prechádza."
       }
     }
+  },
+  "app_not_found": {
+    "alt": "404 - Stránka sa nenašla",
+    "title": "Ups! Niečo sa pokazilo.",
+    "description": "Stránku, ktorú hľadáte, sa nepodarilo nájsť. Mohla byť odstránená, premenovaná alebo je dočasne nedostupná.",
+    "go_to_home": "Prejsť domov"
   }
 }

@@ -453,7 +453,7 @@
       },
       "confirm_button": {
         "loading": "Speichern",
-        "default": "Trotzdem speichern"
+        "default": "Ändern & Trennen"
       }
     },
     "work_item_modal": {
