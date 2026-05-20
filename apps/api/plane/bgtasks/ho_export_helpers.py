@@ -241,7 +241,11 @@ def write_ho_workbook(wb, issues) -> int:
                 issue.main_task_category.name if issue.main_task_category_id else "-",
                 issue.sub_task_category.name if issue.sub_task_category_id else "-",
                 issue.sub_issues_count or 0,
-                (issue.project.project_lead.display_name if issue.project_id and issue.project.project_lead_id else "-"),
+                (
+                    issue.project.project_lead.display_name
+                    if issue.project_id and issue.project.project_lead_id
+                    else "-"
+                ),
                 assignee_names,
                 "Y" if (issue.project_id and issue.project.is_bank_wide) else "N",
                 issue.priority or "-",
