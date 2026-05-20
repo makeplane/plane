@@ -108,6 +108,7 @@
         "today": "Bugün",
         "yesterday": "Dün",
         "last_7_days": "Son 7 gün",
+        "custom": "Özel",
         "last_30_days": "Son 30 gün"
       },
       "date_operators": {

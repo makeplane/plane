@@ -108,6 +108,7 @@
         "today": "Hari ini",
         "yesterday": "Kemarin",
         "last_7_days": "7 hari terakhir",
+        "custom": "Kustom",
         "last_30_days": "30 hari terakhir"
       },
       "date_operators": {

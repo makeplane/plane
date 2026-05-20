@@ -108,6 +108,7 @@
         "today": "今天",
         "yesterday": "昨天",
         "last_7_days": "过去 7 天",
+        "custom": "自定义",
         "last_30_days": "过去 30 天"
       },
       "date_operators": {

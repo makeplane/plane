@@ -108,6 +108,7 @@
         "today": "오늘",
         "yesterday": "어제",
         "last_7_days": "지난 7일",
+        "custom": "사용자 정의",
         "last_30_days": "지난 30일"
       },
       "date_operators": {

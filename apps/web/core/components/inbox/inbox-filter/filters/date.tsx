@@ -91,7 +91,7 @@ export const FilterDate = observer(function FilterDate(props: Props) {
               <FilterOption
                 isChecked={isCustomDateSelected()}
                 onClick={handleCustomDate}
-                title={t("custom")}
+                title={t(PAST_DURATION_FILTER_I18N_KEYS.custom)}
                 multiple={false}
               />
             </>

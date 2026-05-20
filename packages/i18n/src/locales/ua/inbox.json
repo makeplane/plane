@@ -108,6 +108,7 @@
         "today": "Сьогодні",
         "yesterday": "Вчора",
         "last_7_days": "Останні 7 днів",
+        "custom": "Власне",
         "last_30_days": "Останні 30 днів"
       },
       "date_operators": {

@@ -108,6 +108,7 @@
         "today": "Dnes",
         "yesterday": "Včera",
         "last_7_days": "Posledních 7 dní",
+        "custom": "Vlastní",
         "last_30_days": "Posledních 30 dní"
       },
       "date_operators": {

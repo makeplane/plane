@@ -108,6 +108,7 @@
         "today": "Hôm nay",
         "yesterday": "Hôm qua",
         "last_7_days": "7 ngày qua",
+        "custom": "Tùy chỉnh",
         "last_30_days": "30 ngày qua"
       },
       "date_operators": {

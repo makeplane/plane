@@ -108,6 +108,7 @@
         "today": "Astăzi",
         "yesterday": "Ieri",
         "last_7_days": "Ultimele 7 zile",
+        "custom": "Personalizat",
         "last_30_days": "Ultimele 30 de zile"
       },
       "date_operators": {

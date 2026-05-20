@@ -108,6 +108,7 @@
         "today": "今日",
         "yesterday": "昨日",
         "last_7_days": "過去 7 日間",
+        "custom": "カスタム",
         "last_30_days": "過去 30 日間"
       },
       "date_operators": {

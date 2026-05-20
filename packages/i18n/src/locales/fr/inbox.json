@@ -108,6 +108,7 @@
         "today": "Aujourd'hui",
         "yesterday": "Hier",
         "last_7_days": "7 derniers jours",
+        "custom": "Personnalisé",
         "last_30_days": "30 derniers jours"
       },
       "date_operators": {
