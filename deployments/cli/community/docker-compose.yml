@@ -106,7 +106,7 @@ services:
       - web
 
   api:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-luodaxia}/advanced-search:${APP_RELEASE:-v1.3.1-advanced-search}
     command: ./bin/docker-entrypoint-api.sh
     deploy:
       replicas: ${API_REPLICAS:-1}
@@ -122,7 +122,7 @@ services:
       - plane-mq
 
   worker:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-luodaxia}/advanced-search:${APP_RELEASE:-v1.3.1-advanced-search}
     command: ./bin/docker-entrypoint-worker.sh
     deploy:
       replicas: ${WORKER_REPLICAS:-1}
@@ -139,7 +139,7 @@ services:
       - plane-mq
 
   beat-worker:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-luodaxia}/advanced-search:${APP_RELEASE:-v1.3.1-advanced-search}
     command: ./bin/docker-entrypoint-beat.sh
     deploy:
       replicas: ${BEAT_WORKER_REPLICAS:-1}
@@ -156,7 +156,7 @@ services:
       - plane-mq
 
   migrator:
-    image: makeplane/plane-backend:${APP_RELEASE:-stable}
+    image: ${DOCKERHUB_USER:-luodaxia}/advanced-search:${APP_RELEASE:-v1.3.1-advanced-search}
     command: ./bin/docker-entrypoint-migrator.sh
     deploy:
       replicas: 1
