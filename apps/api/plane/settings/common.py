@@ -303,6 +303,9 @@ CELERY_IMPORTS = (
     "plane.bgtasks.capacity_export_task",
     "plane.bgtasks.capacity_export_email_task",
     "plane.bgtasks.capacity_export_cleanup_task",
+    # HO detailed export tasks
+    "plane.bgtasks.ho_export_task",
+    "plane.bgtasks.ho_export_email_task",
 )
 
 FILE_SIZE_LIMIT = int(os.environ.get("FILE_SIZE_LIMIT", 5242880))
