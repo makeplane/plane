@@ -28,8 +28,8 @@ class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        workspace = Workspace.objects.filter(slug__iexact=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
-        return Response({"status": not workspace}, status=status.HTTP_200_OK)
+        is_taken = Workspace.objects.filter(slug__iexact=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
+        return Response({"slug": slug, "is_available": not is_taken}, status=status.HTTP_200_OK)
 
 
 class InstanceWorkSpaceEndpoint(BaseAPIView):
