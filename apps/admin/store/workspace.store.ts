@@ -30,13 +30,14 @@ export interface IWorkspaceStore {
   loader: TLoader;
   workspaces: Record<string, IWorkspace>;
   paginationInfo: TPaginationInfo | undefined;
+  searchQuery: string;
   // computed
   workspaceIds: string[];
   // helper actions
   hydrate: (data: Record<string, IWorkspace>) => void;
   getWorkspaceById: (workspaceId: string) => IWorkspace | undefined;
   // fetch actions
-  fetchWorkspaces: () => Promise<IWorkspace[]>;
+  fetchWorkspaces: (search?: string) => Promise<IWorkspace[]>;
   fetchNextWorkspaces: () => Promise<IWorkspace[]>;
   fetchAllWorkspaces: () => Promise<void>;
   // curd actions
@@ -77,6 +78,7 @@ export class WorkspaceStore implements IWorkspaceStore {
   loader: TLoader = "init-loader";
   workspaces: Record<string, IWorkspace> = {};
   paginationInfo: TPaginationInfo | undefined = undefined;
+  searchQuery: string = "";
   // services
   instanceWorkspaceService;
 
@@ -86,6 +88,7 @@ export class WorkspaceStore implements IWorkspaceStore {
       loader: observable,
       workspaces: observable,
       paginationInfo: observable,
+      searchQuery: observable,
       // computed
       workspaceIds: computed,
       // helper actions
@@ -132,16 +135,19 @@ export class WorkspaceStore implements IWorkspaceStore {
    * @description Fetches all workspaces
    * @returns Promise<>
    */
-  fetchWorkspaces = async (): Promise<IWorkspace[]> => {
+  fetchWorkspaces = async (search?: string): Promise<IWorkspace[]> => {
     try {
-      if (this.workspaceIds.length > 0) {
-        this.loader = "mutation";
-      } else {
+      const isNewSearch = search !== undefined && search !== this.searchQuery;
+      if (isNewSearch || this.workspaceIds.length === 0) {
         this.loader = "init-loader";
+      } else {
+        this.loader = "mutation";
       }
-      const paginatedWorkspaceData = await this.instanceWorkspaceService.list();
+      if (search !== undefined) this.searchQuery = search;
+      const paginatedWorkspaceData = await this.instanceWorkspaceService.list({ search: this.searchQuery });
       runInAction(() => {
         const { results, ...paginationInfo } = paginatedWorkspaceData;
+        if (isNewSearch) this.workspaces = {};
         results.forEach((workspace: IWorkspace) => {
           set(this.workspaces, [workspace.id], workspace);
         });
@@ -164,7 +170,10 @@ export class WorkspaceStore implements IWorkspaceStore {
     if (!this.paginationInfo || this.paginationInfo.next_page_results === false) return [];
     try {
       this.loader = "pagination";
-      const paginatedWorkspaceData = await this.instanceWorkspaceService.list(this.paginationInfo.next_cursor);
+      const paginatedWorkspaceData = await this.instanceWorkspaceService.list({
+        search: this.searchQuery,
+        cursor: this.paginationInfo.next_cursor,
+      });
       runInAction(() => {
         const { results, ...paginationInfo } = paginatedWorkspaceData;
         results.forEach((workspace: IWorkspace) => {
