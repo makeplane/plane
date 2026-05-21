@@ -27,4 +27,31 @@ if (typeof window !== "undefined" && window) {
     };
 }
 
-export {};
+// Defensive wrappers for use at call sites that may run before the side-effect
+// above is applied (e.g., lazy-loaded chunks like gantt-layout-loader that can
+// execute before app/provider.tsx finishes evaluating).
+export const safeRequestIdleCallback: typeof window.requestIdleCallback = (cb, options) => {
+  if (typeof window !== "undefined" && window.requestIdleCallback) {
+    return window.requestIdleCallback(cb, options);
+  }
+  const start = Date.now();
+  // setTimeout's return type is `number | NodeJS.Timeout` depending on the resolved
+  // typings; in a browser context (the only path that reaches this fallback) it is
+  // always `number`. Cast to satisfy the DOM-shaped IdleCallbackHandle return.
+  return setTimeout(
+    () =>
+      cb({
+        didTimeout: false,
+        timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+      }),
+    1
+  ) as unknown as number;
+};
+
+export const safeCancelIdleCallback: typeof window.cancelIdleCallback = (id) => {
+  if (typeof window !== "undefined" && window.cancelIdleCallback) {
+    window.cancelIdleCallback(id);
+    return;
+  }
+  clearTimeout(id);
+};
