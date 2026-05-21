@@ -5,6 +5,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import useSWR from "swr";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { pointerOutsideOfPreview } from "@atlaskit/pragmatic-drag-and-drop/element/pointer-outside-of-preview";
@@ -38,6 +39,7 @@ import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
+import { UserService } from "@/services/user.service";
 import { useProjectNavigationPreferences } from "@/hooks/use-navigation-preferences";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // plane web imports
@@ -45,6 +47,8 @@ import { useNavigationItems } from "@/plane-web/components/navigations";
 import { ProjectNavigationRoot } from "@/plane-web/components/sidebar";
 // local imports
 import { HIGHLIGHT_CLASS, highlightIssueOnDrop } from "../../issues/issue-layouts/utils";
+
+const userService = new UserService();
 
 type Props = {
   projectId: string;
@@ -133,6 +137,8 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
     workspaceSlug.toString(),
     project?.id
   );
+  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () => userService.currentUserInstanceAdminStatus());
+  const isInstanceAdmin = adminStatus?.is_instance_admin ?? false;
 
   const handleLeaveProject = () => {
     setLeaveProjectModal(true);
@@ -420,7 +426,7 @@ export const SidebarProjectsListItem = observer(function SidebarProjectsListItem
                       <span>{t("copy_link")}</span>
                     </span>
                   </CustomMenu.MenuItem>
-                  {isAdmin && (
+                  {isInstanceAdmin && (
                     <CustomMenu.MenuItem onClick={() => setCopyModal(true)}>
                       <span className="flex items-center justify-start gap-2">
                         <Copy className="h-3.5 w-3.5 stroke-[1.5]" />

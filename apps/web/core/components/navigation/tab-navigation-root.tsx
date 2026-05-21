@@ -8,6 +8,7 @@ import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams, useLocation, Link, useNavigate } from "react-router";
+import useSWR from "swr";
 import { EUserPermissionsLevel, EUserPermissions } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { TabNavigationList, TabNavigationItem } from "@plane/propel/tab-navigation";
@@ -19,6 +20,8 @@ import { useUserPermissions } from "@/hooks/store/user";
 // plane web imports
 import { useNavigationItems } from "@/plane-web/components/navigations";
 import { CopyToWorkspaceModal } from "@/plane-web/components/projects/copy-to-workspace-modal";
+// services
+import { UserService } from "@/services/user.service";
 // local imports
 import { LeaveProjectModal } from "../project/leave-project-modal";
 import { PublishProjectModal } from "../project/publish-project/modal";
@@ -31,6 +34,8 @@ import { useActiveTab } from "./use-active-tab";
 import { useProjectActions } from "./use-project-actions";
 import { useResponsiveTabLayout } from "./use-responsive-tab-layout";
 import { useTabPreferences } from "./use-tab-preferences";
+
+const userService = new UserService();
 
 // Local type definition for navigation items with app-specific fields
 export type TNavigationItem = {
@@ -165,6 +170,9 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
     project?.id
   );
 
+  const { data: adminStatus } = useSWR("INSTANCE_ADMIN_STATUS", () => userService.currentUserInstanceAdminStatus());
+  const isInstanceAdmin = adminStatus?.is_instance_admin ?? false;
+
   return (
     <>
       <PublishProjectModal isOpen={publishModalOpen} projectId={projectId} onClose={() => handlePublishModal(false)} />
@@ -192,6 +200,7 @@ export const TabNavigationRoot = observer(function TabNavigationRoot(props: TTab
               project={project}
               isAdmin={isAdmin}
               isAuthorized={isAuthorized}
+              isInstanceAdmin={isInstanceAdmin}
               onCopyText={handleCopyText}
               onLeaveProject={handleLeaveProject}
               onPublishModal={() => handlePublishModal(true)}

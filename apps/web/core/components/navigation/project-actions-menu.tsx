@@ -20,6 +20,7 @@ type Props = {
   };
   isAdmin: boolean;
   isAuthorized: boolean;
+  isInstanceAdmin?: boolean;
   onCopyText: () => void;
   onLeaveProject: () => void;
   onPublishModal: () => void;
@@ -31,6 +32,7 @@ export function ProjectActionsMenu({
   project,
   isAdmin,
   isAuthorized,
+  isInstanceAdmin = false,
   onCopyText,
   onLeaveProject,
   onPublishModal,
@@ -81,7 +83,7 @@ export function ProjectActionsMenu({
           <span>{t("copy_link")}</span>
         </span>
       </CustomMenu.MenuItem>
-      {isAdmin && onCopyToWorkspace && (
+      {isInstanceAdmin && onCopyToWorkspace && (
         <CustomMenu.MenuItem onClick={onCopyToWorkspace}>
           <span className="flex items-center justify-start gap-2">
             <CopyIcon className="h-3.5 w-3.5 stroke-[1.5]" />
