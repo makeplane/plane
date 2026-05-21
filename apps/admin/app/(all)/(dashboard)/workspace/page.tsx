@@ -8,10 +8,11 @@ import { useCallback, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import Link from "next/link";
 import useSWR from "swr";
-import { Loader as LoaderIcon, Search } from "lucide-react";
+import { Download, Loader as LoaderIcon, Search } from "lucide-react";
 // types
 import { Button, getButtonStyling } from "@plane/propel/button";
-import { setPromiseToast } from "@plane/propel/toast";
+import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { InstanceWorkspaceService } from "@plane/services";
 import type { TInstanceConfigurationKeys } from "@plane/types";
 import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn } from "@plane/utils";
@@ -26,6 +27,7 @@ import type { Route } from "./+types/page";
 const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props: Route.ComponentProps) {
   // states
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isExporting, setIsExporting] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // store
@@ -51,6 +53,29 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
     },
     [fetchWorkspaces]
   );
+
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const service = new InstanceWorkspaceService();
+      const rows: { Name: string; Slug: string }[] = [];
+      let cursor: string | undefined;
+      do {
+        const data = await service.list({ cursor });
+        data.results.forEach((ws) => rows.push({ Name: ws.name, Slug: ws.slug }));
+        cursor = data.next_page_results ? data.next_cursor : undefined;
+      } while (cursor);
+      const XLSX = await import("xlsx");
+      const sheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, sheet, "Workspaces");
+      XLSX.writeFile(workbook, "workspaces.xlsx");
+    } catch {
+      setToast({ type: TOAST_TYPE.ERROR, title: "Export failed", message: "Failed to export workspaces." });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // fetch data
   useSWR("INSTANCE_CONFIGURATIONS", () => fetchInstanceConfigurations());
@@ -149,6 +174,10 @@ const WorkspaceManagementPage = observer(function WorkspaceManagementPage(_props
                 <Link href="/workspace/bulk-import-modules" className={getButtonStyling("secondary", "base")}>
                   Bulk Import Modules
                 </Link>
+                <Button variant="secondary" onClick={() => void handleExport()} disabled={isExporting}>
+                  <Download className="w-4 h-4" />
+                  {isExporting ? "Exporting..." : "Export"}
+                </Button>
                 <Link href="/workspace/create" className={getButtonStyling("primary", "base")}>
                   Create workspace
                 </Link>
