@@ -6,7 +6,7 @@
 import copy
 import json
 
-from django.db.models import F, Func, OuterRef, Q, Subquery
+from django.db.models import F, Func, OuterRef, Q, Subquery, Sum
 
 # Django Imports
 from django.utils import timezone
@@ -28,6 +28,7 @@ from plane.db.models import (
     ModuleIssue,
     Project,
     CycleIssue,
+    IssueWorkLog,
 )
 from plane.utils.module_activity import log_module_activity
 from plane.utils.grouper import (
@@ -79,6 +80,18 @@ class ModuleIssueViewSet(BaseViewSet):
                 .order_by()
                 .annotate(count=Func(F("id"), function="Count"))
                 .values("count")
+            )
+            .annotate(
+                total_logged_minutes=Subquery(
+                    IssueWorkLog.objects.filter(issue_id=OuterRef("id"))
+                    .values("issue_id")
+                    .annotate(total=Sum("duration_minutes"))
+                    .values("total")[:1]
+                )
+            )
+            .annotate(
+                main_task_category_name=F("main_task_category__name"),
+                sub_task_category_name=F("sub_task_category__name"),
             )
             .prefetch_related("assignees", "labels", "issue_module__module")
         )
