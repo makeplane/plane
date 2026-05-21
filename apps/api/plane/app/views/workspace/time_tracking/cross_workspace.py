@@ -12,7 +12,7 @@ from rest_framework.response import Response
 
 from plane.app.permissions import ROLE, allow_permission
 from plane.app.views.base import BaseAPIView
-from plane.db.models import Issue, IssueAssignee, IssueWorkLog, ProjectMember, WorkspaceMember
+from plane.db.models import Issue, IssueWorkLog, ProjectMember, WorkspaceMember
 
 
 def _get_week_start(raw_date_str):
@@ -56,15 +56,21 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
             WorkspaceMember.objects.filter(**workspace_filter).values_list("workspace_id", flat=True)
         )
 
-        # Use through-table subquery to correctly filter soft-deleted issue_assignee rows
-        # (direct M2M filter bypasses SoftDeletionManager, causing duplicates)
-        assigned_issue_ids = IssueAssignee.objects.filter(
-            workspace_id__in=user_workspace_ids,
-            assignee=request.user,
-        ).values_list("issue_id", flat=True)
+        # All worklogs by this user for the week, scoped to their workspaces
+        # (no assignee restriction: any logged time counts)
+        worklogs = (
+            IssueWorkLog.objects.filter(
+                workspace_id__in=user_workspace_ids,
+                logged_by=request.user,
+                logged_at__range=[week_start, week_end],
+            )
+            .values("issue_id", "logged_at")
+            .annotate(total=Sum("duration_minutes"))
+        )
 
-        assigned_issues = list(
-            Issue.issue_objects.filter(id__in=assigned_issue_ids)
+        logged_issue_ids = {wl["issue_id"] for wl in worklogs}
+        logged_issues = list(
+            Issue.issue_objects.filter(id__in=logged_issue_ids)
             .select_related("project", "workspace")
             .values(
                 "id",
@@ -77,19 +83,6 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
             )
         )
 
-        assigned_issue_ids = [i["id"] for i in assigned_issues]
-
-        # Worklogs by this user for the week, restricted to assigned issues
-        worklogs = (
-            IssueWorkLog.objects.filter(
-                issue_id__in=assigned_issue_ids,
-                logged_by=request.user,
-                logged_at__range=[week_start, week_end],
-            )
-            .values("issue_id", "logged_at")
-            .annotate(total=Sum("duration_minutes"))
-        )
-
         issue_days = defaultdict(lambda: defaultdict(int))
         for wl in worklogs:
             iid = str(wl["issue_id"])
@@ -97,7 +90,7 @@ class CrossWorkspaceTimesheetEndpoint(BaseAPIView):
             issue_days[iid][day] += wl["total"]
 
         rows = []
-        for issue in assigned_issues:
+        for issue in logged_issues:
             iid = str(issue["id"])
             days = dict(issue_days[iid])
             total = sum(days.values())

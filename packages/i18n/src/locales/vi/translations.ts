@@ -460,6 +460,8 @@ export default {
   message_support: "Liên hệ hỗ trợ",
   contact_sales: "Liên hệ bộ phận bán hàng",
   contact_point: "Liên hệ",
+  start_product_tour: "Bắt đầu hướng dẫn sản phẩm",
+  start_product_tour_error: "Không thể bắt đầu hướng dẫn sản phẩm",
   contact_point_full_name: "Full name",
   contact_point_email: "Email",
   contact_point_phone: "Phone",

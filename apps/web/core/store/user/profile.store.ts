@@ -29,6 +29,7 @@ export interface IUserProfileStore {
   updateUserProfile: (data: Partial<TUserProfile>) => Promise<TUserProfile | undefined>;
   finishUserOnboarding: () => Promise<void>;
   updateTourCompleted: () => Promise<TUserProfile | undefined>;
+  restartTour: () => Promise<TUserProfile | undefined>;
   updateUserTheme: (data: Partial<IUserTheme>) => Promise<TUserProfile | undefined>;
 }
 
@@ -78,6 +79,7 @@ export class ProfileStore implements IUserProfileStore {
       fetchUserProfile: action,
       updateUserProfile: action,
       updateTourCompleted: action,
+      restartTour: action,
       updateUserTheme: action,
     });
     // services
@@ -207,6 +209,30 @@ export class ProfileStore implements IUserProfileStore {
         this.error = {
           status: "user-profile-tour-complete-error",
           message: "Failed to update user profile is_tour_completed",
+        };
+      });
+      throw error;
+    }
+  };
+
+  /**
+   * @description restarts the user product tour by setting is_tour_completed to false
+   * @returns {Promise<TUserProfile | undefined>}
+   */
+  restartTour = async () => {
+    const previousValue = this.data.is_tour_completed || false;
+    try {
+      runInAction(() => {
+        this.mutateUserProfile({ is_tour_completed: false });
+      });
+      const userProfile = await this.userService.restartUserTour();
+      return userProfile;
+    } catch (error) {
+      runInAction(() => {
+        this.mutateUserProfile({ is_tour_completed: previousValue });
+        this.error = {
+          status: "user-profile-tour-restart-error",
+          message: "Failed to restart user product tour",
         };
       });
       throw error;
