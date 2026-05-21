@@ -75,7 +75,7 @@ def _get_accessible_dept_ids(user):
 
     # Regular member: departments linked to joined workspaces + all ancestors
     member_ws_ids = WorkspaceMember.objects.filter(
-        member=user, deleted_at__isnull=True
+        member=user, is_active=True, deleted_at__isnull=True
     ).values_list("workspace_id", flat=True)
     depts = Department.objects.filter(
         linked_workspace_id__in=member_ws_ids,
@@ -105,6 +105,7 @@ def get_accessible_workspace_ids(user):
     # 1. Add workspaces where user is a member
     member_ws_ids = WorkspaceMember.objects.filter(
         member=user,
+        is_active=True,
         deleted_at__isnull=True,
     ).values_list("workspace_id", flat=True)
     accessible_ids.update(member_ws_ids)
@@ -151,7 +152,7 @@ def _get_user_scope_q(user, workspace_ids):
     # Split accessible workspaces by admin role
     admin_ws_ids = set(
         WorkspaceMember.objects.filter(
-            member=user, role=20, deleted_at__isnull=True,
+            member=user, role=20, is_active=True, deleted_at__isnull=True,
             workspace_id__in=workspace_ids
         ).values_list("workspace_id", flat=True)
     )
@@ -843,6 +844,7 @@ class HoAccessibleWorkspacesView(BaseAPIView):
         member_ws_ids = list(
             WorkspaceMember.objects.filter(
                 member=request.user,
+                is_active=True,
                 deleted_at__isnull=True,
             ).values_list("workspace_id", flat=True)
         )
