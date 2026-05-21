@@ -357,6 +357,7 @@ export class ModulesStore implements IModuleStore {
           response.forEach((module) => {
             set(this.moduleMap, [module.id], { ...this.moduleMap[module.id], ...module });
           });
+          set(this.fetchedMap, projectId, true);
           this.loader = false;
         });
         return response;

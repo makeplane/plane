@@ -457,6 +457,8 @@ export default {
   message_support: "Message support",
   contact_sales: "Contact sales",
   contact_point: "Contact point",
+  start_product_tour: "Start product tour",
+  start_product_tour_error: "Failed to start product tour",
   contact_point_full_name: "Full name",
   contact_point_email: "Email",
   contact_point_phone: "Phone",

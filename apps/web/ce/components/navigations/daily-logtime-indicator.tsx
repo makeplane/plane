@@ -57,9 +57,7 @@ function formatTooltip(totalMinutes: number): string {
 }
 
 export function DailyLogtimeIndicator() {
-  const { data } = useSWR("USER_DAILY_WORKLOG_TOTAL", () => userWorklogService.getUserDailyTotal(), {
-    refreshInterval: 60_000,
-  });
+  const { data } = useSWR("USER_DAILY_WORKLOG_TOTAL", () => userWorklogService.getUserDailyTotal());
 
   const totalMinutes = data?.total_minutes ?? 0;
   const progress = Math.min(totalMinutes / MAX_MINUTES, 1);

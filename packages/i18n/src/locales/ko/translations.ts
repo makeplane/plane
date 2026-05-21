@@ -451,6 +451,8 @@ export default {
   message_support: "지원 메시지",
   contact_sales: "영업 문의",
   contact_point: "연락처",
+  start_product_tour: "제품 둘러보기 시작",
+  start_product_tour_error: "제품 둘러보기를 시작하지 못했습니다",
   contact_point_full_name: "Full name",
   contact_point_email: "Email",
   contact_point_phone: "Phone",

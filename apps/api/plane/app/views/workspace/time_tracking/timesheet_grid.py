@@ -13,7 +13,7 @@ from rest_framework import status
 
 from plane.app.views.base import BaseAPIView
 from plane.app.permissions import allow_permission, ROLE
-from plane.db.models import IssueWorkLog, Issue, IssueAssignee
+from plane.db.models import IssueWorkLog, Issue
 
 
 def _parse_week_start(request):
@@ -50,22 +50,26 @@ class TimesheetGridEndpoint(BaseAPIView):
 
         week_end = week_start + timedelta(days=6)
 
-        # Use through-table subquery to correctly filter soft-deleted issue_assignee rows
-        # (direct M2M filter bypasses SoftDeletionManager, causing duplicates)
-        assigned_issue_ids = IssueAssignee.objects.filter(
-            workspace__slug=slug,
-            project_id=project_id,
-            assignee=request.user,
-        ).values_list("issue_id", flat=True)
-
-        assigned_issues = (
-            Issue.issue_objects.filter(id__in=assigned_issue_ids)
-            .select_related("project")
-            .only("id", "name", "sequence_id", "project__identifier")
-            .order_by("sequence_id")
+        # Fetch worklogs for this user in the date range (no assignee restriction:
+        # any logged time counts, even on issues the user isn't assigned to)
+        worklogs = (
+            IssueWorkLog.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                logged_by=request.user,
+                logged_at__range=[week_start, week_end],
+            )
+            .values("issue_id", "logged_at")
+            .annotate(total=Sum("duration_minutes"))
         )
 
-        issue_ids = [i.id for i in assigned_issues]
+        logged_issue_ids = {wl["issue_id"] for wl in worklogs}
+        issues = (
+            Issue.issue_objects.filter(id__in=logged_issue_ids)
+            .select_related("project")
+            .only("id", "name", "sequence_id", "project_id", "project__identifier")
+            .order_by("sequence_id")
+        )
         issue_map = {
             str(i.id): {
                 "issue_id": str(i.id),
@@ -73,22 +77,8 @@ class TimesheetGridEndpoint(BaseAPIView):
                 "issue_identifier": f"{i.project.identifier}-{i.sequence_id}",
                 "project_id": str(i.project_id),
             }
-            for i in assigned_issues
+            for i in issues
         }
-
-        # Fetch worklogs for this user in the date range
-        worklogs = (
-            IssueWorkLog.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                logged_by=request.user,
-                logged_at__range=[week_start, week_end],
-                issue_id__in=issue_ids,
-            )
-            .select_related("issue")
-            .values("issue_id", "logged_at")
-            .annotate(total=Sum("duration_minutes"))
-        )
 
         # Build per-issue daily map
         issue_days = defaultdict(lambda: defaultdict(int))
