@@ -5,6 +5,7 @@
  */
 
 import { action, makeObservable, observable, runInAction } from "mobx";
+import { mutate } from "swr";
 import type {
   IWorkLog,
   IWorkLogCreate,
@@ -129,6 +130,7 @@ export class WorklogStore implements IWorklogStore {
       const existing = this.worklogsByIssueId[issueId] ?? [];
       this.worklogsByIssueId[issueId] = [worklog, ...existing];
     });
+    void mutate("USER_DAILY_WORKLOG_TOTAL");
     return worklog;
   };
 
@@ -146,6 +148,7 @@ export class WorklogStore implements IWorklogStore {
       if (idx !== -1) list[idx] = updated;
       this.worklogsByIssueId[issueId] = [...list];
     });
+    void mutate("USER_DAILY_WORKLOG_TOTAL");
     return updated;
   };
 
@@ -165,6 +168,7 @@ export class WorklogStore implements IWorklogStore {
     });
     try {
       await this.worklogService.deleteWorklog(workspaceSlug, projectId, issueId, worklogId, reason);
+      void mutate("USER_DAILY_WORKLOG_TOTAL");
     } catch (error) {
       runInAction(() => {
         this.worklogsByIssueId[issueId] = prevList;
@@ -210,6 +214,7 @@ export class WorklogStore implements IWorklogStore {
     entries: ITimesheetBulkEntry[]
   ): Promise<void> => {
     await this.worklogService.bulkUpdateTimesheet(workspaceSlug, projectId, { entries });
+    void mutate("USER_DAILY_WORKLOG_TOTAL");
     // Re-fetch grid to get updated data
     const weekStart = this.timesheetData?.week_start;
     await this.fetchTimesheetGrid(workspaceSlug, projectId, weekStart ?? undefined);
