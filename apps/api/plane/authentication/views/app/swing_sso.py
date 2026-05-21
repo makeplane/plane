@@ -34,7 +34,7 @@ from plane.utils.path_validator import get_safe_redirect_url
 
 # Staff ID pattern: exactly 8 digits
 STAFF_ID_PATTERN = re.compile(r"^\d{8}$")
-RATE_LIMIT = 5
+RATE_LIMIT = 500
 RATE_WINDOW = 300  # 5 minutes
 
 
