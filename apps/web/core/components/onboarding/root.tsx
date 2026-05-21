@@ -68,26 +68,20 @@ export const OnboardingRoot = observer(function OnboardingRoot({ invitations = [
     (step: EOnboardingSteps, skipInvites?: boolean) => {
       switch (step) {
         case EOnboardingSteps.PROFILE_SETUP:
-          setCurrentStep(EOnboardingSteps.ROLE_SETUP);
-          break;
-        case EOnboardingSteps.ROLE_SETUP:
-          setCurrentStep(EOnboardingSteps.USE_CASE_SETUP);
-          break;
-        case EOnboardingSteps.USE_CASE_SETUP:
-          stepChange({ profile_complete: true });
-          if (workspacesList.length > 0) finishOnboarding();
+          void stepChange({ profile_complete: true });
+          if (workspacesList.length > 0) void finishOnboarding();
           else setCurrentStep(EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN);
           break;
         case EOnboardingSteps.WORKSPACE_CREATE_OR_JOIN:
-          if (skipInvites) finishOnboarding();
+          if (skipInvites) void finishOnboarding();
           else {
             setCurrentStep(EOnboardingSteps.INVITE_MEMBERS);
-            stepChange({ workspace_create: true });
+            void stepChange({ workspace_create: true });
           }
           break;
         case EOnboardingSteps.INVITE_MEMBERS:
-          stepChange({ workspace_invite: true });
-          finishOnboarding();
+          void stepChange({ workspace_invite: true });
+          void finishOnboarding();
           break;
       }
     },
