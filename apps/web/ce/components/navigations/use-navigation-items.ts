@@ -92,6 +92,16 @@ export const useNavigationItems = ({
         shouldRender: !!project?.inbox_view,
         sortOrder: 6,
       },
+      {
+        i18n_key: "sidebar.support_tickets",
+        key: "support_tickets",
+        name: "Support Tickets",
+        href: `/${workspaceSlug}/projects/${projectId}/support-tickets`,
+        icon: IntakeIcon,
+        access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
+        shouldRender: true,
+        sortOrder: 0,
+      },
     ],
     [project]
   );

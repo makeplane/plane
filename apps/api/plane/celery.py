@@ -77,6 +77,11 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.exporter_expired_task.delete_old_s3_link",
         "schedule": crontab(hour=3, minute=45),  # UTC 03:45
     },
+    # Support ticket email ingestion
+    "poll-email-for-support-tickets": {
+        "task": "plane.bgtasks.support_ticket_email_task.poll_email_for_tickets",
+        "schedule": int(os.environ.get("IMAP_POLL_INTERVAL_SECONDS", "60")),
+    },
 }
 
 
