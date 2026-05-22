@@ -24,7 +24,6 @@ export const HoCategoryView = observer(function HoCategoryView() {
   useEffect(() => {
     void store.fetchCategorySummary();
     void store.fetchAccessibleWorkspaces();
-    void store.fetchFilterOptions();
   }, [store]);
 
   const filtered = useMemo(() => {
@@ -54,7 +53,7 @@ export const HoCategoryView = observer(function HoCategoryView() {
     return data.filter((r) =>
       [r.department_name, r.main_task_category_name, r.sub_task_category_name].some((v) => v?.toLowerCase().includes(q))
     );
-  }, [store.categorySummary, store.selectedDepartmentIds, store.accessibleWorkspaces, store.filters, search]);
+  }, [store, search]);
 
   const sortedData = useMemo(() => {
     const data = [...filtered];

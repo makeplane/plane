@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import Count, Prefetch, Sum, Q
 
 from rest_framework import status
@@ -519,128 +520,121 @@ class HoFilterOptionsView(BaseAPIView):
                 qs = qs.filter(Q(start_date__lte=to_date) | Q(start_date__isnull=True))
             return qs
 
-        # Main facets pool (workspace + project filters applied)
-        issue_ids = _build_qs(narrowed_workspace_ids).values_list("id", flat=True).distinct()
-        # Workspaces facet: ignore workspace_id filter so user can pick more
-        workspaces_issue_ids = (
-            _build_qs(accessible_workspace_ids, apply_project_filter=False).values_list("id", flat=True).distinct()
-        )
-        # Projects facet: respect workspace filter but ignore project_id filter
-        projects_issue_ids = (
-            _build_qs(narrowed_workspace_ids, apply_project_filter=False).values_list("id", flat=True).distinct()
+        # Materialize the main facet pool once to avoid re-evaluating the subquery
+        # against the issue table for every facet (~17 round-trips reduced to ~6).
+        issue_ids = list(
+            _build_qs(narrowed_workspace_ids).values_list("id", flat=True).distinct()
         )
 
-        # Extract options
-        states = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(state__isnull=True)
-            .values_list("state__group", flat=True)
-            .distinct()
-            .order_by("state__group")
-        )
-        raw_priorities = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(priority__isnull=True)
-            .values_list("priority", flat=True)
+        # Workspace / project facet pools stay as subqueries since each is consumed
+        # exactly once below.
+        workspaces_issue_ids_sq = (
+            _build_qs(accessible_workspace_ids, apply_project_filter=False)
+            .values_list("id", flat=True)
             .distinct()
         )
-        priorities = sorted(list(set(p.lower() for p in raw_priorities if p)))
-
-        main_cats = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(main_task_category__isnull=True)
-            .values_list("main_task_category__name", flat=True)
+        projects_issue_ids_sq = (
+            _build_qs(narrowed_workspace_ids, apply_project_filter=False)
+            .values_list("id", flat=True)
             .distinct()
-            .order_by("main_task_category__name")
-        )
-        sub_cats = (
-            Issue.objects.filter(id__in=issue_ids)
-            .exclude(sub_task_category__isnull=True)
-            .values_list("sub_task_category__name", flat=True)
-            .distinct()
-            .order_by("sub_task_category__name")
         )
 
-        cycles = (
-            Issue.objects.filter(id__in=issue_ids, issue_cycle__cycle__isnull=False)
-            .values_list("issue_cycle__cycle__name", flat=True)
-            .distinct()
-            .order_by("issue_cycle__cycle__name")
-        )
-        modules = (
-            Issue.objects.filter(id__in=issue_ids, issue_module__module__isnull=False)
-            .values_list("issue_module__module__name", flat=True)
-            .distinct()
-            .order_by("issue_module__module__name")
-        )
-
-        # Assignees: query IssueAssignee directly to exclude soft-deleted rows
-        User = get_user_model()
-        assignee_user_ids = (
-            IssueAssignee.objects.filter(
-                issue_id__in=issue_ids,
-                deleted_at__isnull=True,
+        # Single aggregate query for the six simple facets (states / priorities /
+        # main_cats / sub_cats / cycles / modules). Each ArrayAgg(distinct=True)
+        # emits a separate FILTER-aware aggregation but in one SQL statement.
+        if issue_ids:
+            facets = Issue.objects.filter(id__in=issue_ids).aggregate(
+                states=ArrayAgg("state__group", distinct=True, filter=Q(state__isnull=False)),
+                raw_priorities=ArrayAgg("priority", distinct=True, filter=Q(priority__isnull=False)),
+                main_cats=ArrayAgg(
+                    "main_task_category__name",
+                    distinct=True,
+                    filter=Q(main_task_category__isnull=False),
+                ),
+                sub_cats=ArrayAgg(
+                    "sub_task_category__name",
+                    distinct=True,
+                    filter=Q(sub_task_category__isnull=False),
+                ),
+                cycles=ArrayAgg(
+                    "issue_cycle__cycle__name",
+                    distinct=True,
+                    filter=Q(issue_cycle__cycle__isnull=False),
+                ),
+                modules=ArrayAgg(
+                    "issue_module__module__name",
+                    distinct=True,
+                    filter=Q(issue_module__module__isnull=False),
+                ),
             )
-            .values_list("assignee_id", flat=True)
-            .distinct()
-        )
-        assignees = (
-            User.objects.filter(id__in=assignee_user_ids)
-            .values("id", "display_name")
-            .order_by("display_name")
-        )
+        else:
+            facets = {k: [] for k in ("states", "raw_priorities", "main_cats", "sub_cats", "cycles", "modules")}
+
+        states = facets.get("states") or []
+        raw_priorities = facets.get("raw_priorities") or []
+        priorities = sorted({p.lower() for p in raw_priorities if p})
+        main_cats = facets.get("main_cats") or []
+        sub_cats = facets.get("sub_cats") or []
+        cycles = facets.get("cycles") or []
+        modules = facets.get("modules") or []
+
+        # Users: resolve assignees and leads via single queries each (subquery in SQL).
+        User = get_user_model()
         assignees_list = [
             {"id": str(a["id"]), "display_name": a["display_name"]}
-            for a in assignees
+            for a in (
+                User.objects.filter(
+                    id__in=IssueAssignee.objects.filter(
+                        issue_id__in=issue_ids,
+                        deleted_at__isnull=True,
+                    ).values("assignee_id")
+                )
+                .values("id", "display_name")
+                .order_by("display_name")
+                .distinct()
+            )
         ]
-
-        # Leads: get project lead User IDs, then resolve display names
-        lead_user_ids = (
-            Project.objects.filter(project_issue__id__in=issue_ids)
-            .exclude(project_lead__isnull=True)
-            .values_list("project_lead_id", flat=True)
-            .distinct()
-        )
-        leads = (
-            User.objects.filter(id__in=lead_user_ids)
-            .values("id", "display_name")
-            .order_by("display_name")
-        )
         leads_list = [
             {"id": str(lead["id"]), "display_name": lead["display_name"]}
-            for lead in leads
+            for lead in (
+                User.objects.filter(
+                    id__in=Project.objects.filter(project_issue__id__in=issue_ids)
+                    .exclude(project_lead__isnull=True)
+                    .values("project_lead_id")
+                )
+                .values("id", "display_name")
+                .order_by("display_name")
+                .distinct()
+            )
         ]
 
-        # Workspaces (shown as "department" filter) — restrict to those holding visible issues
-        # NOTE: ignores workspace_id filter so the user can still pick additional workspaces
-        ws_ids_with_issues = (
-            Issue.objects.filter(id__in=workspaces_issue_ids)
-            .values_list("workspace_id", flat=True)
-            .distinct()
-        )
+        # Workspaces / projects — single query each with subquery; "department" filter shows
+        # workspaces holding visible issues regardless of current workspace_id selection.
         workspaces_list = [
             {"id": str(w.id), "name": w.name}
-            for w in Workspace.objects.filter(id__in=ws_ids_with_issues).only("id", "name").order_by("name")
-        ]
-
-        # Projects — restrict to those holding visible issues
-        # NOTE: ignores project_id filter so the user can still pick additional projects
-        proj_ids_with_issues = (
-            Issue.objects.filter(id__in=projects_issue_ids)
-            .values_list("project_id", flat=True)
+            for w in Workspace.objects.filter(
+                id__in=Issue.objects.filter(id__in=workspaces_issue_ids_sq).values("workspace_id")
+            )
+            .only("id", "name")
+            .order_by("name")
             .distinct()
-        )
+        ]
         projects_list = [
             {"id": str(p.id), "name": p.name}
-            for p in Project.objects.filter(id__in=proj_ids_with_issues).only("id", "name").order_by("name")
+            for p in Project.objects.filter(
+                id__in=Issue.objects.filter(id__in=projects_issue_ids_sq).values("project_id")
+            )
+            .only("id", "name")
+            .order_by("name")
+            .distinct()
         ]
 
         return Response({
-            "states": sorted(list(set(states))),
-            "main_task_categories": sorted(list(set(main_cats))),
-            "sub_task_categories": sorted(list(set(sub_cats))),
-            "cycles": sorted(list(set(cycles))),
-            "modules": sorted(list(set(modules))),
+            "states": sorted(set(states)),
+            "main_task_categories": sorted(set(main_cats)),
+            "sub_task_categories": sorted(set(sub_cats)),
+            "cycles": sorted(set(cycles)),
+            "modules": sorted(set(modules)),
             "assignees": assignees_list,
             "leads": leads_list,
             "workspaces": workspaces_list,

@@ -53,14 +53,14 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
           const row = info.row.original;
           return (
             <button
-              className="flex items-center gap-2 min-w-[180px] group text-left"
+              className="group flex w-full min-w-0 max-w-full items-center gap-2 text-left"
               onClick={() =>
                 setPeekIssue({ workspaceSlug, projectId: row.project_id, issueId: row.issue_id, nestingLevel: 0 })
               }
             >
-              <span className="text-12 font-mono text-tertiary">{row.issue_identifier}</span>
+              <span className="shrink-0 text-12 font-mono text-tertiary">{row.issue_identifier}</span>
               <span
-                className="text-13 text-primary truncate max-w-[200px] group-hover:text-accent-primary transition-colors"
+                className="min-w-0 flex-1 truncate text-13 text-primary transition-colors group-hover:text-accent-primary"
                 title={row.issue_name}
               >
                 {row.issue_name}
@@ -117,7 +117,10 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className={cn("px-3 py-2.5", header.id !== "issue_identifier" && "text-center w-20")}
+                  className={cn(
+                    "px-3 py-2.5",
+                    header.id === "issue_identifier" ? "min-w-[260px] text-left" : "w-20 text-center"
+                  )}
                 >
                   {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
@@ -129,7 +132,10 @@ export const AnalyticsTimesheetTable: FC<AnalyticsTimesheetTableProps> = ({
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} className="border-b border-subtle last:border-0 hover:bg-layer-1-hover transition-colors">
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={cn("px-3 py-2", cell.column.id !== "issue_identifier" && "text-center")}>
+                <td
+                  key={cell.id}
+                  className={cn("px-3 py-2", cell.column.id === "issue_identifier" ? "min-w-0" : "text-center")}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

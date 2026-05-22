@@ -14,7 +14,6 @@ export const HoDatasheetView = observer(function HoDatasheetView() {
   useEffect(() => {
     void store.fetchIssues(1);
     void store.fetchAccessibleWorkspaces();
-    void store.fetchFilterOptions();
   }, [store]);
 
   if (store.isLoading && store.issues.length === 0) {
