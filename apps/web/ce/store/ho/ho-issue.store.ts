@@ -111,6 +111,7 @@ export class HoIssueStore implements IHoIssueStore {
   displayProperties: THoDisplayProperties = { ...HO_DEFAULT_DISPLAY_PROPERTIES };
 
   private _filterSeq = 0;
+  private _filterOptionsInflight: Promise<void> | null = null;
   private service: HoIssueService;
 
   // Workspaces the user is a member of — shown as dropdown options; value=workspace id
@@ -294,28 +295,37 @@ export class HoIssueStore implements IHoIssueStore {
     }
   };
 
-  fetchFilterOptions = async (): Promise<void> => {
-    runInAction(() => {
-      this.isFilterOptionsLoading = true;
-    });
-    try {
-      const params = {
-        workspace_id: this.selectedDepartmentIds.join(","),
-        project_id: this.selectedProjectIds.join(","),
-        from_date: this.fromDate,
-        to_date: this.toDate,
-      };
-      const data = await this.service.listFilterOptions(params);
+  fetchFilterOptions = (): Promise<void> => {
+    // Dedupe: if a request is already in-flight, reuse it.
+    if (this._filterOptionsInflight) return this._filterOptionsInflight;
+
+    const doFetch = async (): Promise<void> => {
       runInAction(() => {
-        this.filterOptions = data;
+        this.isFilterOptionsLoading = true;
       });
-    } catch (err) {
-      console.error("[HO] fetchFilterOptions failed:", err);
-    } finally {
-      runInAction(() => {
-        this.isFilterOptionsLoading = false;
-      });
-    }
+      try {
+        const params = {
+          workspace_id: this.selectedDepartmentIds.join(","),
+          project_id: this.selectedProjectIds.join(","),
+          from_date: this.fromDate,
+          to_date: this.toDate,
+        };
+        const data = await this.service.listFilterOptions(params);
+        runInAction(() => {
+          this.filterOptions = data;
+        });
+      } catch (err) {
+        console.error("[HO] fetchFilterOptions failed:", err);
+      } finally {
+        runInAction(() => {
+          this.isFilterOptionsLoading = false;
+        });
+        this._filterOptionsInflight = null;
+      }
+    };
+
+    this._filterOptionsInflight = doFetch();
+    return this._filterOptionsInflight;
   };
 
   updateOrderBy = (key: string): void => {
