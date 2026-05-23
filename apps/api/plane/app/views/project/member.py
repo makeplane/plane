@@ -245,13 +245,6 @@ class ProjectMemberViewSet(BaseViewSet):
 
 
         if "role" in request.data:
-            # Only Admins can modify roles
-            if requested_project_member.role < ROLE.ADMIN.value and not is_workspace_admin:
-                return Response(
-                    {"error": "You do not have permission to update roles"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-
             # Cannot modify a member whose role is equal to or higher than your own
             if project_member.role >= requested_project_member.role and not is_workspace_admin:
                 return Response(
