@@ -230,6 +230,64 @@ class TestProjectAPIPost(TestProjectBase):
 
 
 @pytest.mark.contract
+class TestProjectMemberAPI:
+    """Test project member role operations"""
+
+    def get_project_member_url(self, workspace_slug: str, project_id: uuid.UUID, pk: uuid.UUID) -> str:
+        return f"/api/workspaces/{workspace_slug}/projects/{project_id}/members/{pk}/"
+
+    @pytest.mark.django_db
+    def test_workspace_admin_can_promote_member_above_project_role(self, session_client, workspace, create_user):
+        """Workspace admins can assign project roles above their own project role."""
+        project = Project.objects.create(name="Role Project", identifier="RP", workspace=workspace)
+        requesting_project_member = ProjectMember.objects.create(
+            project=project, member=create_user, role=5, is_active=True
+        )
+
+        target_user = User.objects.create_user(email="target@example.com", username="target")
+        WorkspaceMember.objects.create(workspace=workspace, member=target_user, role=15, is_active=True)
+        target_project_member = ProjectMember.objects.create(
+            project=project, member=target_user, role=15, is_active=True
+        )
+
+        url = self.get_project_member_url(workspace.slug, project.id, target_project_member.id)
+        response = session_client.patch(url, {"role": 20}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        target_project_member.refresh_from_db()
+        assert target_project_member.role == 20
+
+        requesting_project_member.refresh_from_db()
+        assert requesting_project_member.role == 5
+
+    @pytest.mark.django_db
+    def test_project_member_cannot_promote_member_above_own_project_role(self, api_client, workspace):
+        """Non-workspace-admin project members cannot assign roles above their own project role."""
+        project = Project.objects.create(name="Protected Role Project", identifier="PRP", workspace=workspace)
+
+        requesting_user = User.objects.create_user(email="requester@example.com", username="requester")
+        WorkspaceMember.objects.create(workspace=workspace, member=requesting_user, role=15, is_active=True)
+        ProjectMember.objects.create(project=project, member=requesting_user, role=15, is_active=True)
+
+        target_user = User.objects.create_user(email="member-target@example.com", username="member-target")
+        WorkspaceMember.objects.create(workspace=workspace, member=target_user, role=15, is_active=True)
+        target_project_member = ProjectMember.objects.create(
+            project=project, member=target_user, role=15, is_active=True
+        )
+
+        api_client.force_authenticate(user=requesting_user)
+
+        url = self.get_project_member_url(workspace.slug, project.id, target_project_member.id)
+        response = api_client.patch(url, {"role": 20}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.data["error"] == "You cannot update a role that is higher than your own role"
+
+        target_project_member.refresh_from_db()
+        assert target_project_member.role == 15
+
+
+@pytest.mark.contract
 class TestProjectAPIGet(TestProjectBase):
     """Test project GET operations"""
 

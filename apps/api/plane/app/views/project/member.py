@@ -206,6 +206,7 @@ class ProjectMemberViewSet(BaseViewSet):
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
 
+
         # Fetch the target's workspace role (used to cap the new project role)
         target_workspace_role = WorkspaceMember.objects.get(
             workspace__slug=slug, member=project_member.member, is_active=True
@@ -216,8 +217,20 @@ class ProjectMemberViewSet(BaseViewSet):
         ).role
         is_workspace_admin = requester_workspace_role == ROLE.ADMIN.value
 
+        # Fetch the workspace role of the project member
+        target_workspace_role = WorkspaceMember.objects.get(
+            workspace__slug=slug, member=project_member.member, is_active=True
+        ).role
+
+        # Fetch the workspace role of the requesting user for permission checks
+        requesting_workspace_role = WorkspaceMember.objects.get(
+            workspace__slug=slug, member=request.user, is_active=True
+        ).role
+        is_requesting_workspace_admin = requesting_workspace_role == ROLE.ADMIN.value
+         
+
         # Check if the user is not editing their own role if they are not an admin
-        if request.user.id == project_member.member_id and not is_workspace_admin:
+        if request.user.id == project_member.member_id and not is_requesting_workspace_admin:
             return Response(
                 {"error": "You cannot update your own role"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -229,6 +242,7 @@ class ProjectMemberViewSet(BaseViewSet):
             member=request.user,
             is_active=True,
         )
+
 
         if "role" in request.data:
             # Only Admins can modify roles
@@ -260,6 +274,23 @@ class ProjectMemberViewSet(BaseViewSet):
                     {"error": "You cannot add a user with role higher than the workspace role"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+        if target_workspace_role in [5] and int(request.data.get("role", project_member.role)) in [15, 20]:
+            return Response(
+                {"error": "You cannot add a user with role higher than the workspace role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if (
+            "role" in request.data
+            and int(request.data.get("role", project_member.role)) > requested_project_member.role
+            and not is_requesting_workspace_admin
+        ):
+            return Response(
+                {"error": "You cannot update a role that is higher than your own role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
 
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
