@@ -1,0 +1,38 @@
+# gitleaks config for zebaria/plane.
+# Extends the default ruleset with patterns specific to our deploy:
+# Slack signing secrets, Plane API tokens, Cognito client secrets, and
+# the AWS account ID we use for ECR (730335503972 — not strictly a
+# secret, but we don't want it splashed across logs and READMEs).
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "zebaria-aws-account-id"
+description = "Hardcoded zebaria AWS account ID"
+regex = '''730335503972'''
+tags = ["aws", "account-id"]
+
+[[rules]]
+id = "slack-signing-secret"
+description = "Slack signing secret (32-char hex)"
+regex = '''(?i)slack[_-]?signing[_-]?secret['"]?\s*[:=]\s*['"]?[a-f0-9]{32}'''
+tags = ["slack"]
+
+[[rules]]
+id = "plane-api-token"
+description = "Plane API token"
+regex = '''(?i)plane[_-]?api[_-]?(token|key)['"]?\s*[:=]\s*['"]?plane_api_[a-zA-Z0-9]{32,}'''
+tags = ["plane"]
+
+[allowlist]
+description = "Permitted occurrences"
+paths = [
+  # gitleaks self-references
+  '''\.gitleaks\.toml''',
+  # Lock files have legitimate hash-like strings that trip entropy rules
+  '''pnpm-lock\.yaml''',
+  '''yarn\.lock''',
+  '''package-lock\.json''',
+  '''poetry\.lock''',
+]
