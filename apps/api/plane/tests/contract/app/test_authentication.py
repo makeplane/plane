@@ -302,9 +302,10 @@ class TestMagicSignIn:
         user_data = json.loads(ri.get("magic_user@plane.so"))
         token = user_data["token"]
 
-        # Use Django client to test the redirect flow without following redirects
+        # Use Django client to test the redirect flow without following redirects.
+        # next_path must start with "/" per validate_next_path (otherwise it's discarded).
         url = reverse("magic-sign-in")
-        next_path = "workspaces"
+        next_path = "/workspaces"
         response = django_client.post(
             url,
             {"email": "user@plane.so", "code": token, "next_path": next_path},
@@ -315,8 +316,8 @@ class TestMagicSignIn:
         assert response.status_code == 302
         assert "error_code" not in response.url
 
-        # Check that the redirect URL contains the next_path
-        assert next_path in response.url
+        # Check that the redirect URL contains the next_path (URL-encoded, leading slash → %2F)
+        assert "workspaces" in response.url
 
         # The user should now be authenticated
         assert "_auth_user_id" in django_client.session

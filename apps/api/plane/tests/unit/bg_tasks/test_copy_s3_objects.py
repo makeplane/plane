@@ -78,6 +78,7 @@ class TestCopyS3Objects:
             mock_sync.return_value = {
                 "description": "test description",
                 "description_binary": base64.b64encode(b"test binary").decode(),
+                "description_json": {"type": "doc", "content": []},
             }
 
             # Call the actual function (not .delay())
