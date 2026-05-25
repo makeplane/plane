@@ -212,8 +212,18 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Forward-fill stored draft categories into the move payload when the caller
+        # omits them (RHF sends explicit null for unset selects). This lets a draft
+        # that already captured categories pass the non-backlog validator without
+        # forcing the FE to re-send them on move.
+        payload = request.data.copy()
+        if not payload.get("main_task_category_id") and draft_issue.main_task_category_id:
+            payload["main_task_category_id"] = str(draft_issue.main_task_category_id)
+        if not payload.get("sub_task_category_id") and draft_issue.sub_task_category_id:
+            payload["sub_task_category_id"] = str(draft_issue.sub_task_category_id)
+
         serializer = IssueCreateSerializer(
-            data=request.data,
+            data=payload,
             context={
                 "project_id": draft_issue.project_id,
                 "workspace_id": draft_issue.project.workspace_id,

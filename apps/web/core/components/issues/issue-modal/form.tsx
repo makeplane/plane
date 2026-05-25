@@ -165,6 +165,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     control,
     getValues,
     setValue,
+    setError,
   } = methods;
 
   const projectId = watch("project_id");
@@ -305,12 +306,25 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         ...data,
         ...getValues(),
       } as TWorkspaceDraftIssue);
-    } catch {
-      setToast({
-        type: TOAST_TYPE.ERROR,
-        title: "Error!",
-        message: "Failed to move work item to project. Please try again.",
-      });
+    } catch (error: unknown) {
+      const errorData = (error as { response?: { data?: Record<string, unknown> } })?.response?.data;
+      let fieldErrorApplied = false;
+      if (errorData && typeof errorData === "object") {
+        for (const [key, value] of Object.entries(errorData)) {
+          if (key === "non_field_errors" || key === "detail") continue;
+          const message = Array.isArray(value) ? String(value[0]) : typeof value === "string" ? value : "";
+          if (!message) continue;
+          setError(key as keyof TIssue, { type: "server", message });
+          fieldErrorApplied = true;
+        }
+      }
+      if (!fieldErrorApplied) {
+        setToast({
+          type: TOAST_TYPE.ERROR,
+          title: t("error"),
+          message: t("failed_to_move_issue_to_project"),
+        });
+      }
     } finally {
       setIsMoving(false);
     }

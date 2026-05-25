@@ -34,6 +34,9 @@ export type TWorkspaceDraftIssue = {
   is_draft: boolean;
 
   type_id: string;
+
+  main_task_category_id: string | null;
+  sub_task_category_id: string | null;
 };
 
 export type TWorkspaceDraftPaginationInfo<T> = {
