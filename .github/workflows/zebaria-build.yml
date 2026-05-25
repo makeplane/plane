@@ -33,6 +33,12 @@ permissions:
   id-token: write   # OIDC
   contents: read
 
+# Opt JS-based actions into Node 24 ahead of GitHub's June 2026
+# default flip. Suppresses the "Node.js 20 actions are deprecated"
+# warning we were seeing on every job.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   setup:
     runs-on: ubuntu-22.04
