@@ -282,6 +282,15 @@ export const coreRoutes: RouteConfigEntry[] = [
             ":workspaceSlug/settings/webhooks/:webhookId",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/webhooks/[webhookId]/page.tsx"
           ),
+          // Zebaria fork: re-register the integrations route. Upstream
+          // pulled this when they extracted the integrations feature
+          // into the closed-source silo, but the page component still
+          // ships in CE — see ce_integrations Django app for the
+          // backend side.
+          route(
+            ":workspaceSlug/settings/integrations",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/integrations/page.tsx"
+          ),
         ]),
 
         // --------------------------------------------------------------------
