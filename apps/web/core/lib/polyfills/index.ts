@@ -4,27 +4,8 @@
  * See the LICENSE file for details.
  */
 
-if (typeof window !== "undefined" && window) {
-  // Add request callback polyfill to browser in case it does not exist
-  window.requestIdleCallback =
-    window.requestIdleCallback ??
-    function (cb) {
-      const start = Date.now();
-      return setTimeout(function () {
-        cb({
-          didTimeout: false,
-          timeRemaining: function () {
-            return Math.max(0, 50 - (Date.now() - start));
-          },
-        });
-      }, 1);
-    };
+import { installIdleCallbackPolyfill } from "@/lib/idle-task";
 
-  window.cancelIdleCallback =
-    window.cancelIdleCallback ??
-    function (id) {
-      clearTimeout(id);
-    };
-}
+installIdleCallbackPolyfill();
 
-export {};
+export default true;
