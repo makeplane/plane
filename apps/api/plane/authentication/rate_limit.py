@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Python imports
+import os
+
 # Third party imports
 from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework import status
@@ -15,7 +18,9 @@ from plane.authentication.adapter.error import (
 
 
 class AuthenticationThrottle(AnonRateThrottle):
-    rate = "30/minute"
+    # Rate is configurable per-deployment via the AUTHENTICATION_RATE_LIMIT
+    # env var (DRF format: "<num>/<period>" where period is second/minute/hour/day).
+    rate = os.environ.get("AUTHENTICATION_RATE_LIMIT", "10/minute")
     scope = "authentication"
 
     def throttle_failure_view(self, request, *args, **kwargs):
