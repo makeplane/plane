@@ -28,6 +28,22 @@ class AuthenticationThrottle(AnonRateThrottle):
             return Response(e.get_error_dict(), status=status.HTTP_429_TOO_MANY_REQUESTS)
 
 
+def authentication_throttle_allows(request):
+    """
+    Apply AuthenticationThrottle to a plain django.views.View request.
+
+    DRF's throttle_classes only run inside APIView.initial(); the magic
+    sign-in / sign-up endpoints extend django.views.View to return
+    HttpResponseRedirect from a form POST flow, so they need a manual
+    throttle check. Returns True if the request is allowed through,
+    False if it should be rejected with a RATE_LIMIT_EXCEEDED error.
+    """
+    throttle = AuthenticationThrottle()
+    # SimpleRateThrottle.allow_request only reads request.META and
+    # request.user, both available on a plain Django HttpRequest.
+    return throttle.allow_request(request, None)
+
+
 class EmailVerificationThrottle(UserRateThrottle):
     """
     Throttle for email verification code generation.

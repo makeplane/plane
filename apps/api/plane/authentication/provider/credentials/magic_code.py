@@ -22,6 +22,11 @@ from plane.db.models import User
 class MagicCodeProvider(CredentialAdapter):
     provider = "magic-code"
 
+    # Max wrong-code verification attempts per issued token before the token
+    # is invalidated. Prevents brute-forcing the 6-digit code space within
+    # the token TTL window.
+    MAX_VERIFY_ATTEMPTS = 5
+
     def __init__(self, request, key, code=None, callback=None):
         (EMAIL_HOST, ENABLE_MAGIC_LINK_LOGIN) = get_configuration_value(
             [
@@ -119,7 +124,34 @@ class MagicCodeProvider(CredentialAdapter):
                 return
             else:
                 email = str(self.key).replace("magic_", "", 1)
-                if User.objects.filter(email=email).exists():
+                user_exists = User.objects.filter(email=email).exists()
+
+                # Increment the verify-attempt counter and persist with the
+                # remaining TTL so the lockout window matches the token window.
+                verify_attempts = data.get("verify_attempts", 0) + 1
+                data["verify_attempts"] = verify_attempts
+                remaining_ttl = ri.ttl(self.key)
+                if remaining_ttl is None or remaining_ttl < 0:
+                    remaining_ttl = 1
+                ri.set(self.key, json.dumps(data), ex=remaining_ttl)
+
+                if verify_attempts >= self.MAX_VERIFY_ATTEMPTS:
+                    # Invalidate the token so further attempts must regenerate
+                    # (which is itself attempt-counted on the generation path).
+                    ri.delete(self.key)
+                    if user_exists:
+                        raise AuthenticationException(
+                            error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN"],
+                            error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_IN",
+                            payload={"email": str(email)},
+                        )
+                    raise AuthenticationException(
+                        error_code=AUTHENTICATION_ERROR_CODES["EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP"],
+                        error_message="EMAIL_CODE_ATTEMPT_EXHAUSTED_SIGN_UP",
+                        payload={"email": str(email)},
+                    )
+
+                if user_exists:
                     raise AuthenticationException(
                         error_code=AUTHENTICATION_ERROR_CODES["INVALID_MAGIC_CODE_SIGN_IN"],
                         error_message="INVALID_MAGIC_CODE_SIGN_IN",
