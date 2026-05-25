@@ -20,6 +20,7 @@ import globals from "globals";
 
 export default defineConfig([
   globalIgnores([
+    "plans/**",
     "**/.cache/**",
     "**/.env.*",
     "**/.env",

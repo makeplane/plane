@@ -1,0 +1,810 @@
+{
+  "login": {
+    "loginMs": 13417,
+    "url": "http://localhost:3000/yesyes/"
+  },
+  "targets": [
+    {
+      "url": "http://localhost:3000/yesyes/ho/?view=datasheet",
+      "passes": [
+        {
+          "label": "cold-cache-enabled",
+          "wallMs": 2899,
+          "requests": 1453,
+          "scripts": 1418,
+          "xhrs": 25,
+          "totalBytes": 1644657,
+          "scriptsBytes": 1592201,
+          "aggregatedNetworkMs": 42199,
+          "status304": 893,
+          "byType": {
+            "Document": 1,
+            "Stylesheet": 1,
+            "Font": 4,
+            "Image": 2,
+            "Script": 1418,
+            "Manifest": 1,
+            "Other": 1,
+            "XHR": 25
+          },
+          "byStatus": {
+            "2xx": 558,
+            "3xx": 893,
+            "4xx": 2
+          },
+          "slowestXhrs": [
+            {
+              "ms": 173,
+              "ttfb": 81,
+              "status": 200,
+              "size": 1964,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 165,
+              "ttfb": 65,
+              "status": 200,
+              "size": 1067,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 108,
+              "ttfb": 75,
+              "status": 200,
+              "size": 1092,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 100,
+              "ttfb": 81,
+              "status": 200,
+              "size": 2039,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 87,
+              "ttfb": 62,
+              "status": 200,
+              "size": 1125,
+              "url": "http://localhost:8000/api/ho/workspaces/"
+            },
+            {
+              "ms": 83,
+              "ttfb": 82,
+              "status": 200,
+              "size": 1416,
+              "url": "http://localhost:8000/api/workspaces/yesyes/members/"
+            },
+            {
+              "ms": 82,
+              "ttfb": 81,
+              "status": 200,
+              "size": 636,
+              "url": "http://localhost:8000/api/workspaces/yesyes/sidebar-preferences/"
+            },
+            {
+              "ms": 73,
+              "ttfb": 70,
+              "status": 200,
+              "size": 3175,
+              "url": "http://localhost:8000/api/workspaces/yesyes/states/"
+            },
+            {
+              "ms": 71,
+              "ttfb": 33,
+              "status": 404,
+              "size": 422,
+              "url": "http://localhost:8000/api/workspaces/yesyes/me/staff-profile/"
+            },
+            {
+              "ms": 62,
+              "ttfb": 61,
+              "status": 200,
+              "size": 1037,
+              "url": "http://localhost:8000/api/workspaces/yesyes/workspace-members/me/"
+            }
+          ],
+          "cacheDisabled": false,
+          "finalUrl": "http://localhost:3000/yesyes/ho/?view=datasheet"
+        },
+        {
+          "label": "warm-cache-enabled",
+          "wallMs": 2229,
+          "requests": 1453,
+          "scripts": 1418,
+          "xhrs": 25,
+          "totalBytes": 259248,
+          "scriptsBytes": 209430,
+          "aggregatedNetworkMs": 11528,
+          "status304": 1176,
+          "byType": {
+            "Stylesheet": 1,
+            "Font": 4,
+            "Image": 2,
+            "Document": 1,
+            "Script": 1418,
+            "Manifest": 1,
+            "Other": 1,
+            "XHR": 25
+          },
+          "byStatus": {
+            "3xx": 1176,
+            "2xx": 275,
+            "4xx": 2
+          },
+          "slowestXhrs": [
+            {
+              "ms": 392,
+              "ttfb": 62,
+              "status": 200,
+              "size": 2022,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 379,
+              "ttfb": 45,
+              "status": 200,
+              "size": 1086,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 337,
+              "ttfb": 290,
+              "status": 200,
+              "size": 1056,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 333,
+              "ttfb": 309,
+              "status": 200,
+              "size": 1960,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 80,
+              "ttfb": 79,
+              "status": 200,
+              "size": 659,
+              "url": "http://localhost:8000/api/workspaces/yesyes/sidebar-preferences/"
+            },
+            {
+              "ms": 77,
+              "ttfb": 32,
+              "status": 404,
+              "size": 422,
+              "url": "http://localhost:8000/api/workspaces/yesyes/me/staff-profile/"
+            },
+            {
+              "ms": 76,
+              "ttfb": 50,
+              "status": 200,
+              "size": 1145,
+              "url": "http://localhost:8000/api/ho/workspaces/"
+            },
+            {
+              "ms": 73,
+              "ttfb": 71,
+              "status": 200,
+              "size": 1725,
+              "url": "http://localhost:8000/api/workspaces/yesyes/projects/"
+            },
+            {
+              "ms": 72,
+              "ttfb": 70,
+              "status": 200,
+              "size": 1454,
+              "url": "http://localhost:8000/api/workspaces/yesyes/members/"
+            },
+            {
+              "ms": 61,
+              "ttfb": 47,
+              "status": 200,
+              "size": 415,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-favorites/?all=true"
+            }
+          ],
+          "cacheDisabled": false,
+          "finalUrl": "http://localhost:3000/yesyes/ho/?view=datasheet"
+        },
+        {
+          "label": "warm-cache-disabled",
+          "wallMs": 2852,
+          "requests": 1457,
+          "scripts": 1418,
+          "xhrs": 25,
+          "totalBytes": 41476670,
+          "scriptsBytes": 40513586,
+          "aggregatedNetworkMs": 51563,
+          "status304": 0,
+          "byType": {
+            "Document": 1,
+            "Stylesheet": 1,
+            "Script": 1418,
+            "Image": 6,
+            "Manifest": 1,
+            "Font": 4,
+            "Other": 1,
+            "XHR": 25
+          },
+          "byStatus": {
+            "2xx": 1455,
+            "4xx": 2
+          },
+          "slowestXhrs": [
+            {
+              "ms": 151,
+              "ttfb": 114,
+              "status": 200,
+              "size": 1039,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 149,
+              "ttfb": 104,
+              "status": 200,
+              "size": 1089,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 145,
+              "ttfb": 107,
+              "status": 200,
+              "size": 1991,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 106,
+              "ttfb": 69,
+              "status": 200,
+              "size": 1190,
+              "url": "http://localhost:8000/api/ho/workspaces/"
+            },
+            {
+              "ms": 98,
+              "ttfb": 70,
+              "status": 200,
+              "size": 2031,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 82,
+              "ttfb": 80,
+              "status": 200,
+              "size": 1399,
+              "url": "http://localhost:8000/api/workspaces/yesyes/members/"
+            },
+            {
+              "ms": 65,
+              "ttfb": 64,
+              "status": 200,
+              "size": 623,
+              "url": "http://localhost:8000/api/workspaces/yesyes/sidebar-preferences/"
+            },
+            {
+              "ms": 64,
+              "ttfb": 63,
+              "status": 200,
+              "size": 3204,
+              "url": "http://localhost:8000/api/workspaces/yesyes/states/"
+            },
+            {
+              "ms": 58,
+              "ttfb": 24,
+              "status": 404,
+              "size": 422,
+              "url": "http://localhost:8000/api/workspaces/yesyes/me/staff-profile/"
+            },
+            {
+              "ms": 51,
+              "ttfb": 23,
+              "status": 200,
+              "size": 996,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-properties/"
+            }
+          ],
+          "cacheDisabled": true,
+          "finalUrl": "http://localhost:3000/yesyes/ho/?view=datasheet"
+        },
+        {
+          "label": "warm-cache-disabled-2",
+          "wallMs": 2798,
+          "requests": 1457,
+          "scripts": 1418,
+          "xhrs": 25,
+          "totalBytes": 41476672,
+          "scriptsBytes": 40513586,
+          "aggregatedNetworkMs": 54660,
+          "status304": 0,
+          "byType": {
+            "Stylesheet": 1,
+            "Document": 1,
+            "Script": 1418,
+            "Image": 6,
+            "Font": 4,
+            "Manifest": 1,
+            "Other": 1,
+            "XHR": 25
+          },
+          "byStatus": {
+            "2xx": 1455,
+            "4xx": 2
+          },
+          "slowestXhrs": [
+            {
+              "ms": 456,
+              "ttfb": 406,
+              "status": 200,
+              "size": 1024,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 450,
+              "ttfb": 414,
+              "status": 200,
+              "size": 1109,
+              "url": "http://localhost:8000/api/ho/filter-options/?workspace_id=&project_id=&from_date=2026-05-22&to_date=2026-05-22"
+            },
+            {
+              "ms": 411,
+              "ttfb": 374,
+              "status": 404,
+              "size": 422,
+              "url": "http://localhost:8000/api/workspaces/yesyes/me/staff-profile/"
+            },
+            {
+              "ms": 173,
+              "ttfb": 132,
+              "status": 200,
+              "size": 1960,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 149,
+              "ttfb": 129,
+              "status": 200,
+              "size": 2017,
+              "url": "http://localhost:8000/api/ho/issues/?page=1&order_by=project__workspace__name&from_date=2026-05-22&to_date=2026-05-22&include_archived=true&include_sub_issues=f"
+            },
+            {
+              "ms": 100,
+              "ttfb": 67,
+              "status": 200,
+              "size": 1097,
+              "url": "http://localhost:8000/api/ho/workspaces/"
+            },
+            {
+              "ms": 61,
+              "ttfb": 30,
+              "status": 200,
+              "size": 992,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-properties/"
+            },
+            {
+              "ms": 55,
+              "ttfb": 42,
+              "status": 404,
+              "size": 422,
+              "url": "http://localhost:8000/api/workspaces/yesyes/me/staff-profile/"
+            },
+            {
+              "ms": 54,
+              "ttfb": 53,
+              "status": 200,
+              "size": 1373,
+              "url": "http://localhost:8000/api/workspaces/yesyes/members/"
+            },
+            {
+              "ms": 48,
+              "ttfb": 48,
+              "status": 200,
+              "size": 878,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/main/"
+            }
+          ],
+          "cacheDisabled": true,
+          "finalUrl": "http://localhost:3000/yesyes/ho/?view=datasheet"
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:3000/yesyes/profile/11d01b65-7154-48cf-8852-975c36ec8907/",
+      "passes": [
+        {
+          "label": "cold-cache-enabled",
+          "wallMs": 2842,
+          "requests": 1450,
+          "scripts": 1415,
+          "xhrs": 24,
+          "totalBytes": 41788691,
+          "scriptsBytes": 40623889,
+          "aggregatedNetworkMs": 58742,
+          "status304": 1,
+          "byType": {
+            "Document": 1,
+            "Stylesheet": 1,
+            "Script": 1415,
+            "Image": 2,
+            "Font": 4,
+            "Manifest": 1,
+            "Other": 2,
+            "XHR": 24
+          },
+          "byStatus": {
+            "2xx": 1449,
+            "3xx": 1
+          },
+          "slowestXhrs": [
+            {
+              "ms": 100,
+              "ttfb": 36,
+              "status": 200,
+              "size": 792,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/sub/"
+            },
+            {
+              "ms": 100,
+              "ttfb": 26,
+              "status": 200,
+              "size": 792,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/main/"
+            },
+            {
+              "ms": 93,
+              "ttfb": 41,
+              "status": 200,
+              "size": 415,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-favorites/?all=true"
+            },
+            {
+              "ms": 93,
+              "ttfb": 69,
+              "status": 200,
+              "size": 679,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-stats/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 84,
+              "ttfb": 72,
+              "status": 200,
+              "size": 1240,
+              "url": "http://localhost:8000/api/users/me/work-items/overdue/"
+            },
+            {
+              "ms": 84,
+              "ttfb": 84,
+              "status": 200,
+              "size": 658,
+              "url": "http://localhost:8000/api/workspaces/yesyes/sidebar-preferences/"
+            },
+            {
+              "ms": 81,
+              "ttfb": 80,
+              "status": 200,
+              "size": 1368,
+              "url": "http://localhost:8000/api/workspaces/yesyes/members/"
+            },
+            {
+              "ms": 75,
+              "ttfb": 57,
+              "status": 200,
+              "size": 4370,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-activity/11d01b65-7154-48cf-8852-975c36ec8907/?per_page=10"
+            },
+            {
+              "ms": 74,
+              "ttfb": 43,
+              "status": 200,
+              "size": 1162,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 70,
+              "ttfb": 70,
+              "status": 200,
+              "size": 1738,
+              "url": "http://localhost:8000/api/workspaces/yesyes/projects/"
+            }
+          ],
+          "cacheDisabled": false,
+          "finalUrl": "http://localhost:3000/yesyes/profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+        },
+        {
+          "label": "warm-cache-enabled",
+          "wallMs": 2365,
+          "requests": 1449,
+          "scripts": 1415,
+          "xhrs": 24,
+          "totalBytes": 259212,
+          "scriptsBytes": 208356,
+          "aggregatedNetworkMs": 17679,
+          "status304": 1171,
+          "byType": {
+            "Stylesheet": 1,
+            "Font": 4,
+            "Image": 2,
+            "Script": 1415,
+            "Document": 1,
+            "Manifest": 1,
+            "Other": 1,
+            "XHR": 24
+          },
+          "byStatus": {
+            "3xx": 1171,
+            "2xx": 278
+          },
+          "slowestXhrs": [
+            {
+              "ms": 132,
+              "ttfb": 56,
+              "status": 200,
+              "size": 820,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/main/"
+            },
+            {
+              "ms": 130,
+              "ttfb": 84,
+              "status": 200,
+              "size": 673,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-stats/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 123,
+              "ttfb": 58,
+              "status": 200,
+              "size": 1168,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 120,
+              "ttfb": 56,
+              "status": 200,
+              "size": 415,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-favorites/?all=true"
+            },
+            {
+              "ms": 115,
+              "ttfb": 85,
+              "status": 200,
+              "size": 1230,
+              "url": "http://localhost:8000/api/users/me/work-items/overdue/"
+            },
+            {
+              "ms": 107,
+              "ttfb": 105,
+              "status": 200,
+              "size": 1450,
+              "url": "http://localhost:8000/api/workspaces/yesyes/members/"
+            },
+            {
+              "ms": 102,
+              "ttfb": 24,
+              "status": 200,
+              "size": 797,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/sub/"
+            },
+            {
+              "ms": 90,
+              "ttfb": 89,
+              "status": 200,
+              "size": 625,
+              "url": "http://localhost:8000/api/workspaces/yesyes/sidebar-preferences/"
+            },
+            {
+              "ms": 78,
+              "ttfb": 77,
+              "status": 200,
+              "size": 1737,
+              "url": "http://localhost:8000/api/workspaces/yesyes/projects/"
+            },
+            {
+              "ms": 78,
+              "ttfb": 46,
+              "status": 200,
+              "size": 4388,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-activity/11d01b65-7154-48cf-8852-975c36ec8907/?per_page=10"
+            }
+          ],
+          "cacheDisabled": false,
+          "finalUrl": "http://localhost:3000/yesyes/profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+        },
+        {
+          "label": "warm-cache-disabled",
+          "wallMs": 3178,
+          "requests": 1453,
+          "scripts": 1415,
+          "xhrs": 24,
+          "totalBytes": 41862373,
+          "scriptsBytes": 40623889,
+          "aggregatedNetworkMs": 55754,
+          "status304": 0,
+          "byType": {
+            "Stylesheet": 1,
+            "Document": 1,
+            "Script": 1415,
+            "Image": 6,
+            "Font": 4,
+            "Manifest": 1,
+            "Other": 1,
+            "XHR": 24
+          },
+          "byStatus": {
+            "2xx": 1453
+          },
+          "slowestXhrs": [
+            {
+              "ms": 104,
+              "ttfb": 47,
+              "status": 200,
+              "size": 1196,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 100,
+              "ttfb": 41,
+              "status": 200,
+              "size": 823,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/main/"
+            },
+            {
+              "ms": 95,
+              "ttfb": 34,
+              "status": 200,
+              "size": 884,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/sub/"
+            },
+            {
+              "ms": 89,
+              "ttfb": 28,
+              "status": 200,
+              "size": 415,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-favorites/?all=true"
+            },
+            {
+              "ms": 76,
+              "ttfb": 57,
+              "status": 200,
+              "size": 740,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-stats/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 67,
+              "ttfb": 66,
+              "status": 200,
+              "size": 792,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/sub/"
+            },
+            {
+              "ms": 62,
+              "ttfb": 62,
+              "status": 200,
+              "size": 1231,
+              "url": "http://localhost:8000/api/users/me/work-items/overdue/"
+            },
+            {
+              "ms": 61,
+              "ttfb": 24,
+              "status": 200,
+              "size": 934,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-properties/"
+            },
+            {
+              "ms": 61,
+              "ttfb": 50,
+              "status": 200,
+              "size": 4364,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-activity/11d01b65-7154-48cf-8852-975c36ec8907/?per_page=10"
+            },
+            {
+              "ms": 59,
+              "ttfb": 57,
+              "status": 200,
+              "size": 845,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/main/"
+            }
+          ],
+          "cacheDisabled": true,
+          "finalUrl": "http://localhost:3000/yesyes/profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+        },
+        {
+          "label": "warm-cache-disabled-2",
+          "wallMs": 2640,
+          "requests": 1453,
+          "scripts": 1415,
+          "xhrs": 24,
+          "totalBytes": 41862271,
+          "scriptsBytes": 40623889,
+          "aggregatedNetworkMs": 54137,
+          "status304": 0,
+          "byType": {
+            "Stylesheet": 1,
+            "Document": 1,
+            "Image": 6,
+            "Font": 4,
+            "Script": 1415,
+            "Manifest": 1,
+            "Other": 1,
+            "XHR": 24
+          },
+          "byStatus": {
+            "2xx": 1453
+          },
+          "slowestXhrs": [
+            {
+              "ms": 208,
+              "ttfb": 206,
+              "status": 200,
+              "size": 1411,
+              "url": "http://localhost:8000/api/workspaces/yesyes/members/"
+            },
+            {
+              "ms": 207,
+              "ttfb": 38,
+              "status": 200,
+              "size": 1122,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 206,
+              "ttfb": 44,
+              "status": 200,
+              "size": 871,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/sub/"
+            },
+            {
+              "ms": 202,
+              "ttfb": 26,
+              "status": 200,
+              "size": 415,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-favorites/?all=true"
+            },
+            {
+              "ms": 202,
+              "ttfb": 201,
+              "status": 200,
+              "size": 660,
+              "url": "http://localhost:8000/api/workspaces/yesyes/sidebar-preferences/"
+            },
+            {
+              "ms": 198,
+              "ttfb": 65,
+              "status": 200,
+              "size": 4331,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-activity/11d01b65-7154-48cf-8852-975c36ec8907/?per_page=10"
+            },
+            {
+              "ms": 198,
+              "ttfb": 197,
+              "status": 200,
+              "size": 1702,
+              "url": "http://localhost:8000/api/workspaces/yesyes/projects/"
+            },
+            {
+              "ms": 185,
+              "ttfb": 59,
+              "status": 200,
+              "size": 740,
+              "url": "http://localhost:8000/api/workspaces/yesyes/user-stats/11d01b65-7154-48cf-8852-975c36ec8907/"
+            },
+            {
+              "ms": 183,
+              "ttfb": 61,
+              "status": 200,
+              "size": 394,
+              "url": "http://localhost:8000/api/users/me/work-items/today/"
+            },
+            {
+              "ms": 176,
+              "ttfb": 31,
+              "status": 200,
+              "size": 867,
+              "url": "http://localhost:8000/api/workspaces/yesyes/task-categories/main/"
+            }
+          ],
+          "cacheDisabled": true,
+          "finalUrl": "http://localhost:3000/yesyes/profile/11d01b65-7154-48cf-8852-975c36ec8907/"
+        }
+      ]
+    }
+  ]
+}

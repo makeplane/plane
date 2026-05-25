@@ -20,6 +20,16 @@ class DraftIssue(WorkspaceBaseModel):
         ("medium", "Medium"),
         ("low", "Low"),
     )
+    FREQUENCY_CHOICES = (
+        ("daily", "Daily"),
+        ("weekly", "Weekly"),
+        ("bi_weekly", "Bi-weekly"),
+        ("monthly", "Monthly"),
+        ("quarterly", "Quarterly"),
+        ("half_year", "Half-year"),
+        ("yearly", "Yearly"),
+        ("ad_hoc", "Ad-hoc"),
+    )
     parent = models.ForeignKey(
         "db.Issue",
         on_delete=models.CASCADE,
@@ -73,6 +83,27 @@ class DraftIssue(WorkspaceBaseModel):
         null=True,
         blank=True,
     )
+    main_task_category = models.ForeignKey(
+        "db.MainTaskCategory",
+        on_delete=models.SET_NULL,
+        related_name="draft_issues",
+        null=True,
+        blank=True,
+    )
+    sub_task_category = models.ForeignKey(
+        "db.SubTaskCategory",
+        on_delete=models.SET_NULL,
+        related_name="draft_issues",
+        null=True,
+        blank=True,
+    )
+    frequency = models.CharField(
+        max_length=20,
+        choices=FREQUENCY_CHOICES,
+        verbose_name="Draft Issue Frequency",
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "DraftIssue"
@@ -85,14 +116,27 @@ class DraftIssue(WorkspaceBaseModel):
             try:
                 from plane.db.models import State
 
-                default_state = State.objects.filter(
-                    ~models.Q(is_triage=True), project=self.project, default=True
+                # Prefer backlog-group state on create — IssueCreateSerializer skips
+                # category validation for backlog/cancelled states, so a draft without
+                # categories remains movable. Fallback chain preserves prior behavior.
+                backlog_state = State.objects.filter(
+                    ~models.Q(is_triage=True),
+                    project=self.project,
+                    group="backlog",
                 ).first()
-                if default_state is None:
-                    random_state = State.objects.filter(~models.Q(is_triage=True), project=self.project).first()
-                    self.state = random_state
+                if backlog_state is not None:
+                    self.state = backlog_state
                 else:
-                    self.state = default_state
+                    default_state = State.objects.filter(
+                        ~models.Q(is_triage=True), project=self.project, default=True
+                    ).first()
+                    if default_state is None:
+                        random_state = State.objects.filter(
+                            ~models.Q(is_triage=True), project=self.project
+                        ).first()
+                        self.state = random_state
+                    else:
+                        self.state = default_state
             except ImportError:
                 pass
         else:

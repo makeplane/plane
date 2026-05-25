@@ -1,0 +1,81 @@
+exit=0
+build/server/assets/og-image-DL-1GVBU.png                                        71.43 kB
+build/server/assets/inter-latin-ext-wght-normal-DO1Apj_S.woff2                   85.07 kB
+build/server/assets/material-symbols-rounded-latin-400-normal-BVRwnNJJ.woff2    348.78 kB
+build/server/assets/material-symbols-rounded-latin-100-normal-StOoOijZ.woff2    363.56 kB
+build/server/assets/material-symbols-rounded-latin-300-normal-CGYRw1-j.woff2    388.06 kB
+build/server/assets/material-symbols-rounded-latin-200-normal-Dy_97ylg.woff2    389.09 kB
+build/server/assets/material-symbols-rounded-latin-400-normal-3TtrvaAx.woff     454.56 kB
+build/server/assets/material-symbols-rounded-latin-100-normal-CyR9BGN8.woff     485.69 kB
+build/server/assets/material-symbols-rounded-latin-300-normal-CexQLkYr.woff     506.70 kB
+build/server/assets/material-symbols-rounded-latin-200-normal-B9_93z2O.woff     507.91 kB
+build/server/assets/AppProgressBar-CS7DCwn7.css                                   2.51 kB
+build/server/assets/server-build-KKsGIDFQ.css                                     5.03 kB
+build/server/assets/globals-CCJ_goOe.css                                        252.04 kB
+build/server/assets/editor-rZ0zenag-DiS7lhpe.js                                   0.07 kB
+build/server/assets/editor-BvotMtya-DiS7lhpe.js                                   0.07 kB
+build/server/assets/editor-p6SCWfPx-DiS7lhpe.js                                   0.07 kB
+build/server/assets/use-instance-BKfM31jp.js                                      0.33 kB
+build/server/assets/core-BgvnSEkm-D86Qd1cR.js                                     0.59 kB
+build/server/index.js                                                             0.81 kB
+build/server/assets/accessibility-CMGcTIEV-DrPs4PVG.js                            1.28 kB
+build/server/assets/accessibility-Cto7T6kn-95WLTC_n.js                            1.42 kB
+build/server/assets/accessibility-VZYA0LEw-BeWZN9N7.js                            1.43 kB
+build/server/assets/AppProgressBar-DtojwEd0.js                                    1.78 kB
+build/server/assets/chat-support-modal-BAnt30LN.js                                1.91 kB
+build/server/assets/store-wrapper-DCmSQXus.js                                     3.61 kB
+build/server/assets/core-BwSumDea-D2o4IAl5.js                                     5.71 kB
+build/server/assets/core-C3UwLN-1-C8csr8c2.js                                     5.72 kB
+build/server/assets/empty-state-DGudj543-O7XXXMPL.js                              7.62 kB
+build/server/assets/empty-state-BTojO3iH-zep1g3p8.js                              9.37 kB
+build/server/assets/empty-state-CnSXPUN6-l8tMRtCw.js                             10.18 kB
+build/server/assets/instance-wrapper-DEQeFK9Z.js                                 10.39 kB
+build/server/assets/translations-C60ak6Ph-D3eROaLk.js                           129.58 kB
+build/server/assets/translations-BJqySXsY-CRyz7_o6.js                           143.72 kB
+build/server/assets/translations-DzgfEtYN-CgxKPcGQ.js                           153.97 kB
+build/server/assets/server-build-OcdYvTtv.js                                  1,866.96 kB
+
+✓ 37 assets cleaned from React Router server build.
+build/client/assets/globals-CCJ_goOe.css
+build/client/assets/favicon-DJlV-mcI.ico
+build/client/assets/icon-512x512-CyS1mcXS.png
+build/client/assets/og-image-DL-1GVBU.png
+build/client/assets/logo-spinner-CzGit0_x.svg
+build/client/assets/maintenance-mode-dark-DAfHd5vC.svg
+build/client/assets/maintenance-mode-light-Dqp39OMJ.svg
+build/client/assets/inter-latin-wght-normal-Dx4kXJAl.woff2
+build/client/assets/inter-cyrillic-ext-wght-normal-BOeWTOD4.woff2
+build/client/assets/inter-cyrillic-wght-normal-DqGufNeO.woff2
+build/client/assets/inter-greek-ext-wght-normal-DlzME5K_.woff2
+build/client/assets/inter-greek-wght-normal-CkhJZR-_.woff2
+build/client/assets/inter-vietnamese-wght-normal-CBcvBZtf.woff2
+build/client/assets/inter-latin-ext-wght-normal-DO1Apj_S.woff2
+build/client/assets/material-symbols-rounded-latin-100-normal-StOoOijZ.woff2
+build/client/assets/material-symbols-rounded-latin-100-normal-CyR9BGN8.woff
+build/client/assets/material-symbols-rounded-latin-200-normal-Dy_97ylg.woff2
+build/client/assets/material-symbols-rounded-latin-200-normal-B9_93z2O.woff
+build/client/assets/material-symbols-rounded-latin-300-normal-CGYRw1-j.woff2
+build/client/assets/material-symbols-rounded-latin-300-normal-CexQLkYr.woff
+build/client/assets/material-symbols-rounded-latin-400-normal-BVRwnNJJ.woff2
+build/client/assets/material-symbols-rounded-latin-400-normal-3TtrvaAx.woff
+build/client/assets/ibm-plex-mono-cyrillic-ext-400-normal-xuaO2J-f.woff2
+build/client/assets/ibm-plex-mono-cyrillic-ext-400-normal-DMdlQ8Kv.woff
+build/client/assets/ibm-plex-mono-cyrillic-400-normal-BSMlKf0J.woff2
+build/client/assets/ibm-plex-mono-cyrillic-400-normal-CEL4l2ZJ.woff
+build/client/assets/ibm-plex-mono-vietnamese-400-normal-BulugwFq.woff2
+build/client/assets/ibm-plex-mono-vietnamese-400-normal-DDuiU_S-.woff
+build/client/assets/ibm-plex-mono-latin-ext-400-normal-BmRBH3aV.woff2
+build/client/assets/ibm-plex-mono-latin-ext-400-normal-D3D2R8hC.woff
+build/client/assets/ibm-plex-mono-latin-400-normal-DMJ8VG8y.woff2
+build/client/assets/ibm-plex-mono-latin-400-normal-CvHOgSBP.woff
+build/client/assets/background-pattern-dark-CmVIYUu1.svg
+build/client/assets/background-pattern-DUvEFmph.svg
+build/client/assets/plane-takeoff-BnGS5y5s.png
+build/server/assets/server-build-KKsGIDFQ.css
+build/server/assets/AppProgressBar-CS7DCwn7.css
+✓ 1 asset moved from React Router server build to client assets.
+build/client/assets/server-build-KKsGIDFQ.css
+
+SPA Mode: Generated build/client/index.html
+Removing the server build in /Users/ngoctran/Documents/Shinhan/plane/apps/web/build/server due to ssr:false
+✓ built in 4.17s

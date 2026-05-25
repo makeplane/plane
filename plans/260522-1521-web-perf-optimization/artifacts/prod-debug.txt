@@ -1,0 +1,17 @@
+{
+  "url": "http://localhost:3010/",
+  "title": "",
+  "bodyText": "🚧 Looks like Plane didn't start up correctly!\nSome services might have failed to start. Please check your container logs to identify and resolve the issue. If you're stuck, reach out to our support team for more help.\nContact Support",
+  "inputs": [],
+  "logs": [
+    "[console.error] Access to XMLHttpRequest at 'http://localhost:8000/api/instances/' from origin 'http://localhost:3010' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+    "[reqfail] http://localhost:8000/api/instances/ net::ERR_FAILED",
+    "[console.error] Failed to load resource: net::ERR_FAILED",
+    "[console.error] Access to XMLHttpRequest at 'http://localhost:8000/api/instances/' from origin 'http://localhost:3010' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+    "[reqfail] http://localhost:8000/api/instances/ net::ERR_FAILED",
+    "[console.error] Failed to load resource: net::ERR_FAILED",
+    "[console.error] Access to XMLHttpRequest at 'http://localhost:8000/api/instances/' from origin 'http://localhost:3010' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+    "[reqfail] http://localhost:8000/api/instances/ net::ERR_FAILED",
+    "[console.error] Failed to load resource: net::ERR_FAILED"
+  ]
+}
