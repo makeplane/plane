@@ -305,7 +305,9 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
         if (request.data.get("start_date", None) is None and request.data.get("end_date", None) is None) or (
             request.data.get("start_date", None) is not None and request.data.get("end_date", None) is not None
         ):
-            serializer = CycleCreateSerializer(data=request.data, context={"request": request})
+            serializer = CycleCreateSerializer(
+                data=request.data, context={"request": request, "project_id": project_id}
+            )
             if serializer.is_valid():
                 if (
                     request.data.get("external_id")
@@ -516,7 +518,9 @@ class CycleDetailAPIEndpoint(BaseAPIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-        serializer = CycleUpdateSerializer(cycle, data=request.data, partial=True, context={"request": request})
+        serializer = CycleUpdateSerializer(
+            cycle, data=request.data, partial=True, context={"request": request, "project_id": project_id}
+        )
         if serializer.is_valid():
             if (
                 request.data.get("external_id")
