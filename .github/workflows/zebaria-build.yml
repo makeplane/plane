@@ -1,0 +1,119 @@
+name: Zebaria - Build & Push to ECR
+
+# Build the six Plane CE images from this fork and push them to our
+# ECR registries in both regions (us-east-1 = dev, us-west-2 = prod).
+# Authenticates via OIDC using the IAM role created by the corpinfra
+# `plane_dev` terraform module.
+#
+# Repo secrets required:
+#   AWS_ACCOUNT_ID — 12-digit account number
+#
+# Triggers: push to preview or main, manual dispatch, and pushes of
+# tags matching v*.
+
+on:
+  push:
+    branches:
+      - preview
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_override:
+        description: "Override image tag (default: branch or tag name)"
+        required: false
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write   # OIDC
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-22.04
+    outputs:
+      image_tag: ${{ steps.vars.outputs.image_tag }}
+    steps:
+      - id: vars
+        run: |
+          if [[ -n "${{ inputs.tag_override }}" ]]; then
+            TAG="${{ inputs.tag_override }}"
+          else
+            TAG="${{ github.ref_name }}"
+          fi
+          # ECR tags allow [a-zA-Z0-9._-]
+          TAG=$(echo "$TAG" | sed 's/[^a-zA-Z0-9._-]/-/g')
+          echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "Building tag: $TAG"
+
+  build:
+    needs: setup
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: plane-backend
+            context: ./apps/api
+            dockerfile: ./apps/api/Dockerfile.api
+          - image: plane-frontend
+            context: .
+            dockerfile: ./apps/web/Dockerfile.web
+          - image: plane-admin
+            context: .
+            dockerfile: ./apps/admin/Dockerfile.admin
+          - image: plane-space
+            context: .
+            dockerfile: ./apps/space/Dockerfile.space
+          - image: plane-live
+            context: .
+            dockerfile: ./apps/live/Dockerfile.live
+          - image: plane-proxy
+            context: ./apps/proxy
+            dockerfile: ./apps/proxy/Dockerfile.ce
+    env:
+      ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/gh-actions-zebaria-plane
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assume role (us-east-1)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Login to ECR us-east-1
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registries: ${{ secrets.AWS_ACCOUNT_ID }}
+
+      - name: Assume role (us-west-2)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: us-west-2
+
+      - name: Login to ECR us-west-2
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registries: ${{ secrets.AWS_ACCOUNT_ID }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/zebaria/${{ matrix.image }}:${{ needs.setup.outputs.image_tag }}
+            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/zebaria/${{ matrix.image }}:${{ needs.setup.outputs.image_tag }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,scope=${{ matrix.image }},mode=max
