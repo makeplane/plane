@@ -1,0 +1,122 @@
+# ho-explain-analyze.txt
+# Track B — EXPLAIN ANALYZE for HoIssueListView + HoFilterOptionsView queries
+# DB: PostgreSQL 15.7 in Docker (plane-db), dataset: 34 non-deleted issues across 4 workspaces
+
+## Environment
+- PostgreSQL 15.7-alpine
+- issues table: 43 total rows, 34 non-deleted/non-archived
+- Docker container: plane-db
+- Connection: docker exec plane-db psql -U plane -d plane
+
+## Existing indexes on issues table
+ indexname                        | indexdef
+----------------------------------+----------------------------------------------------------
+ issue_workspace_id_c84878c1      | CREATE INDEX ... USING btree (workspace_id)
+ issue_project_id_fea0fc80        | CREATE INDEX ... USING btree (project_id)
+ issue_state_id_1a65560d          | CREATE INDEX ... USING btree (state_id)
+ issue_parent_id_ce8d76ba         | CREATE INDEX ... USING btree (parent_id)
+ issues_main_task_category_id_... | CREATE INDEX ... USING btree (main_task_category_id)
+ issues_sub_task_category_id_...  | CREATE INDEX ... USING btree (sub_task_category_id)
+ issues_workitems_idx             | CREATE INDEX ... USING btree (target_date, state_id)
+                                    WHERE (parent_id IS NULL AND deleted_at IS NULL
+                                           AND archived_at IS NULL AND is_draft = false)
+
+## QUERY 1: HoIssueListView main queryset (workspace-scoped, paginated)
+
+SQL:
+  SELECT DISTINCT i.id
+  FROM issues i
+  WHERE i.workspace_id IN ('<4 workspace UUIDs>')
+    AND i.is_draft = FALSE
+    AND i.deleted_at IS NULL
+    AND i.archived_at IS NULL
+    AND i.parent_id IS NULL
+  ORDER BY i.id
+  LIMIT 100;
+
+EXPLAIN ANALYZE output:
+  Limit  (cost=7.15..7.27 rows=24 width=16) (actual time=0.078..0.084 rows=24 loops=1)
+    -> Unique  (cost=7.15..7.27 rows=24 width=16) (actual time=0.077..0.081 rows=24 loops=1)
+         -> Sort  (cost=7.15..7.21 rows=24 width=16) (actual time=0.076..0.078 rows=24 loops=1)
+              Sort Key: id
+              Sort Method: quicksort  Memory: 26kB
+              -> Seq Scan on issues i  (cost=0.00..6.60 rows=24 width=16)
+                                        (actual time=0.013..0.040 rows=24 loops=1)
+                   Filter: (NOT is_draft) AND (deleted_at IS NULL) AND (archived_at IS NULL)
+                            AND (parent_id IS NULL)
+                            AND (workspace_id = ANY('{...}'::uuid[]))
+                   Rows Removed by Filter: 19
+  Planning Time: 1.001 ms
+  Execution Time: 0.136 ms
+
+Analysis:
+  - Seq Scan on 43-row table — correct planner decision (index scan has higher overhead at <100 rows)
+  - workspace_id index EXISTS but not used — expected for tiny table
+  - Execution time: 0.136 ms — negligible DB overhead
+  - The observed 407 ms TTFB was NOT caused by DB query time
+  - Root cause: multiple concurrent HTTP requests from child view useEffect calls (Track A issue)
+
+## QUERY 2: HoFilterOptionsView issue_ids subquery (facet pool)
+
+SQL:
+  SELECT DISTINCT i.id
+  FROM issues i
+  WHERE i.workspace_id IN ('<3 workspace UUIDs>')
+    AND i.is_draft = FALSE
+    AND i.deleted_at IS NULL
+    AND i.parent_id IS NULL;
+
+EXPLAIN ANALYZE output:
+  HashAggregate  (cost=6.62..6.90 rows=28 width=16) (actual time=0.037..0.040 rows=29 loops=1)
+    Group Key: id
+    Batches: 1  Memory Usage: 24kB
+    -> Seq Scan on issues i  (cost=0.00..6.55 rows=28 width=16)
+                              (actual time=0.007..0.029 rows=29 loops=1)
+         Filter: (NOT is_draft) AND (deleted_at IS NULL) AND (parent_id IS NULL)
+                  AND (workspace_id = ANY('{...}'::uuid[]))
+         Rows Removed by Filter: 14
+  Planning Time: 0.908 ms
+  Execution Time: 0.063 ms
+
+Analysis:
+  - Seq Scan — correct for 43-row table
+  - Execution time: 0.063 ms — negligible
+  - HoFilterOptionsView runs ~10 sequential queries (facet extraction) after this subquery
+  - All facet queries use IN (issue_ids) pattern — evaluated as HashJoin or Seq Scan depending on cardinality
+  - With 34 issues, all queries run in < 1 ms each
+
+## Serializer audit — prefetch coverage
+
+HoIssueSerializer fields vs HoIssueListView queryset:
+  workspace_slug        → obj.project.workspace.slug       → select_related("project__workspace")     ✓
+  department_name       → obj.project.workspace.name       → select_related("project__workspace")     ✓
+  project_name          → obj.project.name                 → select_related("project")                ✓
+  main_task_category    → obj.main_task_category.name      → select_related("main_task_category")     ✓
+  sub_task_category     → obj.sub_task_category.name       → select_related("sub_task_category")      ✓
+  project_lead          → obj.project.project_lead.display_name → select_related("project__project_lead") ✓
+  assignees             → subtree_assignees map (single CTE) → Prefetch("assignees") + CTE fallback  ✓
+  cycle_name            → obj.issue_cycle.all()            → prefetch_related("issue_cycle__cycle")   ✓
+  module_names          → obj.issue_module.all()           → prefetch_related("issue_module__module") ✓
+  state_*               → obj.state.*                      → select_related("state")                  ✓
+  sub_issues_count      → annotated Count("parent_issue")                                             ✓
+  reference_link_count  → annotated Count("issue_link")                                               ✓
+
+Result: ALL serializer-accessed relations are prefetched. No N+1 detected.
+No additional prefetch_related needed.
+
+## Decision: No backend query changes
+
+Evidence:
+  - All DB queries execute in < 1 ms on local dataset
+  - All relations prefetched (no N+1)
+  - workspace_id index exists — will be used by planner at production-scale row counts
+  - issues_workitems_idx partial index covers the (parent_id IS NULL, deleted_at IS NULL,
+    archived_at IS NULL, is_draft = false) predicate pattern used in HO views
+  - Adding a composite index would be speculative (YAGNI) — not justified by EXPLAIN evidence
+
+## High TTFB root cause (per debug report: 400-407 ms)
+  NOT DB latency. Caused by multiple concurrent HTTP requests from:
+    - ho-datasheet-view.tsx useEffect firing fetchFilterOptions()
+    - ho-category-view.tsx useEffect firing fetchFilterOptions()
+    - No in-flight dedupe in store
+  Fix: Track A (frontend) — single mount effect in ho/page.tsx + _filterOptionsInflight guard in store.

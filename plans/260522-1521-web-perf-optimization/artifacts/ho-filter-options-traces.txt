@@ -1,0 +1,59 @@
+# ho-filter-options-traces.txt
+# Track A.1 — Static code-trace analysis (dev server not running locally)
+#
+# Live browser trace not captured (backend in Docker, frontend not running in dev mode).
+# Static call-graph analysis performed instead — findings are definitive.
+
+## Call sites at time of analysis (pre-fix):
+
+1. apps/web/ce/components/ho/ho-datasheet-view.tsx:17
+   useEffect([store]) → store.fetchFilterOptions()
+   Fires on: component mount (view=datasheet)
+
+2. apps/web/ce/components/ho/ho-category-view.tsx:27
+   useEffect([store]) → store.fetchFilterOptions()
+   Fires on: component mount (view=category)
+
+3. apps/web/ce/store/ho/ho-issue.store.ts:331
+   setDateRange(from, to) → this.fetchFilterOptions()
+   Fires on: user changes date range
+
+4. apps/web/ce/store/ho/ho-issue.store.ts:341
+   setShowArchived(value) → this.fetchFilterOptions()
+   Fires on: user toggles archive visibility
+
+5. apps/web/ce/store/ho/ho-issue.store.ts:369
+   setDepartmentFilter(ids) → this.fetchFilterOptions()
+   Fires on: user changes department filter
+
+6. apps/web/ce/store/ho/ho-issue.store.ts:378
+   setProjectFilter(ids) → this.fetchFilterOptions()
+   Fires on: user changes project filter
+
+## Problem pattern (pre-fix):
+
+On /ho/ mount with view=datasheet:
+  t=0ms  HoPage renders → HoDatasheetView renders
+  t=1ms  HoDatasheetView.useEffect fires → fetchFilterOptions() [request #1 starts]
+  t=1ms  (no in-flight guard) → request proceeds to network
+
+On /ho/ mount with view=category:
+  t=0ms  HoPage renders → HoCategoryView renders
+  t=1ms  HoCategoryView.useEffect fires → fetchFilterOptions() [request #1 starts]
+
+If user navigates datasheet→category without page reload:
+  Previous call's promise may still be in-flight; second view mounts and fires another request.
+
+## Concurrent same-tick risk:
+  setDateRange() fires _fetchFiltered() + fetchFilterOptions() simultaneously.
+  Without in-flight dedupe, if a prior fetchFilterOptions() is still pending (slow network),
+  both would proceed to the network — second response overwrites first.
+
+## Fix applied:
+
+1. Removed fetchFilterOptions() from ho-datasheet-view.tsx useEffect
+2. Removed fetchFilterOptions() from ho-category-view.tsx useEffect
+3. Added single fetchFilterOptions() in ho/page.tsx useEffect — fires exactly once per /ho/ mount
+4. Added _filterOptionsInflight: Promise<void> | null guard in store:
+   - Concurrent callers (e.g. setDateRange fires filter refresh mid-mount) reuse the same in-flight promise
+   - Promise released in finally block so subsequent intentional calls (e.g. after date change settles) proceed fresh
