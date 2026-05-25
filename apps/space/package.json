@@ -5,7 +5,7 @@
   "license": "AGPL-3.0",
   "type": "module",
   "scripts": {
-    "dev": "react-router dev --port 3002",
+    "dev": "react-router dev --host 0.0.0.0 --port 3002",
     "build": "react-router build",
     "preview": "react-router build && PORT=3002 react-router-serve ./build/server/index.js",
     "start": "PORT=3002 react-router-serve ./build/server/index.js",

@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL вебсайту",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "Некоректний URL",
               "maxLength": "URL має бути менше 800 символів"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Назва компанії",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "Назва компанії обов'язкова",
               "maxLength": "Назва компанії має бути менше 255 символів"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email підтримки",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Некоректна email адреса",
               "maxLength": "Email підтримки має бути менше 255 символів"

@@ -12,8 +12,4 @@ import type { IIssueRootStore } from "@/store/issue/root.store";
 export type ITeamProjectWorkItemsFilter = IProjectIssuesFilter;
 
 // @ts-nocheck - This class will never be used, extending similar class to avoid type errors
-export class TeamProjectWorkItemsFilter extends ProjectIssuesFilter implements ITeamProjectWorkItemsFilter {
-  constructor(_rootStore: IIssueRootStore) {
-    super(_rootStore);
-  }
-}
+export class TeamProjectWorkItemsFilter extends ProjectIssuesFilter implements ITeamProjectWorkItemsFilter {}

@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "网站 URL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "无效的 URL",
               "maxLength": "URL 应少于800个字符"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "公司名称",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "公司名称是必填项",
               "maxLength": "公司名称应少于255个字符"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "支持邮箱",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "无效的邮箱地址",
               "maxLength": "支持邮箱应少于255个字符"

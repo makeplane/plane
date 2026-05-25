@@ -103,7 +103,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     reset({ ...defaultValues });
 
     const payload = createIssuePayload(projectId.toString(), {
-      ...(prePopulatedData ?? {}),
+      ...prePopulatedData,
       ...formData,
     });
 

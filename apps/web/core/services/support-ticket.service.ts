@@ -54,11 +54,7 @@ export class SupportTicketService extends APIService {
       });
   }
 
-  async createTicket(
-    workspaceSlug: string,
-    projectId: string,
-    data: ISupportTicketCreate
-  ): Promise<ISupportTicket> {
+  async createTicket(workspaceSlug: string, projectId: string, data: ISupportTicketCreate): Promise<ISupportTicket> {
     return this.post(`/api/workspaces/${workspaceSlug}/projects/${projectId}/support-tickets/`, data)
       .then((response) => response?.data)
       .catch((error) => {
@@ -66,11 +62,7 @@ export class SupportTicketService extends APIService {
       });
   }
 
-  async getTicketById(
-    workspaceSlug: string,
-    projectId: string,
-    ticketId: string
-  ): Promise<ISupportTicket> {
+  async getTicketById(workspaceSlug: string, projectId: string, ticketId: string): Promise<ISupportTicket> {
     return this.get(`/api/workspaces/${workspaceSlug}/projects/${projectId}/support-tickets/${ticketId}/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -84,10 +76,7 @@ export class SupportTicketService extends APIService {
     ticketId: string,
     data: Partial<ISupportTicketCreate>
   ): Promise<ISupportTicket> {
-    return this.patch(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/support-tickets/${ticketId}/`,
-      data
-    )
+    return this.patch(`/api/workspaces/${workspaceSlug}/projects/${projectId}/support-tickets/${ticketId}/`, data)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -95,9 +84,7 @@ export class SupportTicketService extends APIService {
   }
 
   async deleteTicket(workspaceSlug: string, projectId: string, ticketId: string): Promise<void> {
-    return this.delete(
-      `/api/workspaces/${workspaceSlug}/projects/${projectId}/support-tickets/${ticketId}/`
-    )
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/support-tickets/${ticketId}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

@@ -102,7 +102,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-lg rounded-xl border border-subtle bg-surface-1 shadow-2xl">
+      <div className="shadow-2xl relative z-10 w-full max-w-lg rounded-xl border border-subtle bg-surface-1">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-subtle px-6 py-4">
           <h2 className="text-lg font-semibold text-primary">Create Support Ticket</h2>
@@ -132,20 +132,20 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
         <div className="space-y-4 px-6 py-5">
           {/* Title */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-secondary">Title *</label>
+            <label className="text-sm mb-1.5 block font-medium text-secondary">Title *</label>
             <input
               type="text"
               placeholder="Enter ticket title"
               value={formData.title}
               onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-              className="w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-sm text-primary outline-none transition-colors placeholder:text-placeholder focus:border-primary"
+              className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none placeholder:text-placeholder"
               autoFocus
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-secondary">Description</label>
+            <label className="text-sm mb-1.5 block font-medium text-secondary">Description</label>
             <textarea
               placeholder="Enter ticket description"
               value={formData.description_html === "<p></p>" ? "" : formData.description_html}
@@ -156,7 +156,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
                 }))
               }
               rows={3}
-              className="w-full resize-none rounded-lg border border-subtle bg-transparent px-3 py-2 text-sm text-primary outline-none transition-colors placeholder:text-placeholder focus:border-primary"
+              className="text-sm focus:border-primary w-full resize-none rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none placeholder:text-placeholder"
             />
           </div>
 
@@ -164,11 +164,11 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
           <div className="grid grid-cols-2 gap-4">
             {/* Priority */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-secondary">Priority</label>
+              <label className="text-sm mb-1.5 block font-medium text-secondary">Priority</label>
               <select
                 value={formData.priority}
                 onChange={(e) => setFormData((prev) => ({ ...prev, priority: e.target.value }))}
-                className="w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-sm text-primary outline-none transition-colors focus:border-primary"
+                className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none"
               >
                 <option value="none">None</option>
                 <option value="low">Low</option>
@@ -180,11 +180,11 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
 
             {/* State */}
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-secondary">State</label>
+              <label className="text-sm mb-1.5 block font-medium text-secondary">State</label>
               <select
                 value={formData.state_id}
                 onChange={(e) => setFormData((prev) => ({ ...prev, state_id: e.target.value }))}
-                className="w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-sm text-primary outline-none transition-colors focus:border-primary"
+                className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none"
               >
                 <option value="">Default</option>
                 {availableStates.map((state) => (
@@ -198,9 +198,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
 
           {/* Assignee (Tech) */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-secondary">
-              Tech (Assignee)
-            </label>
+            <label className="text-sm mb-1.5 block font-medium text-secondary">Tech (Assignee)</label>
             <select
               value={formData.assignee_ids[0] || ""}
               onChange={(e) =>
@@ -209,7 +207,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
                   assignee_ids: e.target.value ? [e.target.value] : [],
                 }))
               }
-              className="w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-sm text-primary outline-none transition-colors focus:border-primary"
+              className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none"
             >
               <option value="">Unassigned</option>
               {projectMemberIds?.map((memberId) => {
@@ -229,7 +227,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg border border-subtle px-4 py-2 text-sm font-medium text-secondary transition-colors hover:bg-layer-1"
+            className="text-sm rounded-lg border border-subtle px-4 py-2 font-medium text-secondary transition-colors hover:bg-layer-1"
           >
             Cancel
           </button>
@@ -237,7 +235,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting || !formData.title.trim()}
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="bg-primary text-sm hover:bg-primary/90 rounded-lg px-4 py-2 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isSubmitting ? "Creating..." : "Create Ticket"}
           </button>

@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL site web",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "URL invalid",
               "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Numele companiei",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "Numele companiei este obligatoriu",
               "maxLength": "Numele companiei trebuie să fie mai mic de 255 de caractere"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email de suport",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Adresa email-ului este invalidă",
               "maxLength": "Adresa email-ului trebuie să fie mai mică de 255 de caractere"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Șabloane",
-        "description": "Cu șabloane de proiect, element de lucru și pagină în Plane, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
+        "description": "Cu șabloane de proiect, element de lucru și pagină în WinSecOps, nu trebuie să creezi un proiect de la zero sau să setezi manual proprietățile elementelor de lucru.",
         "sub_description": "Recuperează 80% din timpul tău administrativ când folosești Șabloane."
       },
       "no_templates": {

@@ -34,10 +34,7 @@ const PRIORITY_CONFIG: Record<string, { label: string; color: string; bg: string
   none: { label: "None", color: "#a3a3a3", bg: "rgba(163,163,163,0.12)" },
 };
 
-export const SupportTicketTable = observer(function SupportTicketTable({
-  workspaceSlug,
-  projectId,
-}: Props) {
+export const SupportTicketTable = observer(function SupportTicketTable({ workspaceSlug, projectId }: Props) {
   const { ticketIds, ticketMap, loader, fetchTickets } = useSupportTicket();
   const { getUserDetails } = useMember();
   const { issueMap } = useIssues();
@@ -59,7 +56,7 @@ export const SupportTicketTable = observer(function SupportTicketTable({
     return (
       <div className="flex h-full w-full items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <div className="border-primary h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" />
           <span className="text-sm text-tertiary">Loading tickets...</span>
         </div>
       </div>
@@ -90,9 +87,9 @@ export const SupportTicketTable = observer(function SupportTicketTable({
             </svg>
           </div>
           <h3 className="text-lg font-semibold text-primary">No support tickets yet</h3>
-          <p className="max-w-md text-sm text-tertiary">
-            Create your first support ticket or configure email ingestion to automatically receive
-            tickets from incoming emails.
+          <p className="text-sm max-w-md text-tertiary">
+            Create your first support ticket or configure email ingestion to automatically receive tickets from incoming
+            emails.
           </p>
         </div>
       </div>
@@ -104,22 +101,22 @@ export const SupportTicketTable = observer(function SupportTicketTable({
       <table className="w-full min-w-[900px] border-collapse">
         <thead>
           <tr className="border-b border-subtle bg-layer-1">
-            <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-tertiary">
+            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Ticket Number
             </th>
-            <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-tertiary">
+            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Title
             </th>
-            <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-tertiary">
+            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Description
             </th>
-            <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-tertiary">
+            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Priority
             </th>
-            <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-tertiary">
+            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               State
             </th>
-            <th className="whitespace-nowrap px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-tertiary">
+            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Tech
             </th>
           </tr>
@@ -161,7 +158,7 @@ export const SupportTicketTable = observer(function SupportTicketTable({
             return (
               <tr
                 key={ticket.id}
-                className="group border-b border-subtle transition-colors hover:bg-layer-1 cursor-pointer"
+                className="group cursor-pointer border-b border-subtle transition-colors hover:bg-layer-1"
                 onClick={() => {
                   startTransition(() => {
                     setPeekIssue({
@@ -173,70 +170,60 @@ export const SupportTicketTable = observer(function SupportTicketTable({
                 }}
               >
                 {/* Ticket Number */}
-                <td className="whitespace-nowrap px-4 py-3">
-                  <span className="rounded-md bg-primary/8 px-2 py-1 font-mono text-xs font-medium text-primary">
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className="bg-primary/8 font-mono text-xs rounded-md px-2 py-1 font-medium text-primary">
                     {ticket.ticket_display}
                   </span>
                 </td>
 
                 {/* Title */}
                 <td className="max-w-[250px] px-4 py-3">
-                  <span className="line-clamp-1 text-sm font-medium text-primary">
-                    {title}
-                  </span>
+                  <span className="text-sm line-clamp-1 font-medium text-primary">{title}</span>
                 </td>
 
                 {/* Description */}
                 <td className="max-w-[300px] px-4 py-3">
-                  <span className="line-clamp-1 text-sm text-tertiary">
-                    {description || "No description"}
-                  </span>
+                  <span className="text-sm line-clamp-1 text-tertiary">{description || "No description"}</span>
                 </td>
 
                 {/* Priority */}
-                <td className="whitespace-nowrap px-4 py-3">
+                <td className="px-4 py-3 whitespace-nowrap">
                   <span
-                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium"
+                    className="text-xs inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium"
                     style={{
                       color: priorityConfig.color,
                       backgroundColor: priorityConfig.bg,
                     }}
                   >
-                    <span
-                      className="h-1.5 w-1.5 rounded-full"
-                      style={{ backgroundColor: priorityConfig.color }}
-                    />
+                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: priorityConfig.color }} />
                     {priorityConfig.label}
                   </span>
                 </td>
 
                 {/* State */}
-                <td className="whitespace-nowrap px-4 py-3">
-                  <span className="inline-flex items-center gap-1.5 text-sm">
-                    <span
-                      className="h-2.5 w-2.5 rounded-full"
-                      style={{ backgroundColor: stateColor || "#a3a3a3" }}
-                    />
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className="text-sm inline-flex items-center gap-1.5">
+                    <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: stateColor || "#a3a3a3" }} />
                     <span className="text-secondary">{stateName || "—"}</span>
                   </span>
                 </td>
 
                 {/* Tech / Assignees */}
-                <td className="whitespace-nowrap px-4 py-3">
+                <td className="px-4 py-3 whitespace-nowrap">
                   {assigneeNames.length > 0 ? (
                     <div className="flex items-center gap-1">
                       <div className="flex -space-x-1.5">
                         {assigneeNames.slice(0, 3).map((name, i) => (
                           <div
                             key={i}
-                            className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-surface-1 bg-primary/10 text-[10px] font-semibold uppercase text-primary"
+                            className="border-surface-1 bg-primary/10 flex h-6 w-6 items-center justify-center rounded-full border-2 text-[10px] font-semibold text-primary uppercase"
                             title={name}
                           >
                             {name[0]}
                           </div>
                         ))}
                       </div>
-                      <span className="ml-1 text-sm text-secondary">
+                      <span className="text-sm ml-1 text-secondary">
                         {assigneeNames.length <= 3
                           ? assigneeNames.join(", ")
                           : `${assigneeNames.slice(0, 2).join(", ")} +${assigneeNames.length - 2}`}

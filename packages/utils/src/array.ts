@@ -47,7 +47,7 @@ export const orderArrayBy = (orgArray: any[], key: string, ordering: "ascending"
 
   const innerKey = key.split("."); // split the key by dot
 
-  return array.sort((a, b) => {
+  return array.toSorted((a, b) => {
     const keyA = innerKey.reduce((obj, i) => obj[i], a); // get the value of the inner key
     const keyB = innerKey.reduce((obj, i) => obj[i], b); // get the value of the inner key
     if (keyA < keyB) {
@@ -141,7 +141,7 @@ export const sortByField = (array: any[], field: string): any[] =>
 export const orderGroupedDataByField = <T>(groupedData: GroupedItems<T>, orderBy: keyof T): GroupedItems<T> => {
   for (const key in groupedData) {
     if (groupedData.hasOwnProperty(key)) {
-      groupedData[key] = groupedData[key].sort((a, b) => {
+      groupedData[key] = groupedData[key].toSorted((a, b) => {
         if (a[orderBy] < b[orderBy]) return -1;
         if (a[orderBy] > b[orderBy]) return 1;
         return 0;
@@ -222,7 +222,7 @@ export const sortBySelectedFirst = <T extends { value: string | null }>(
   if (selectedSet.size === 0) return options;
 
   // Create a shallow copy to avoid mutating the original array
-  return [...options].sort((a, b) => {
+  return [...options].toSorted((a, b) => {
     const aSelected = a.value !== null && selectedSet.has(a.value);
     const bSelected = b.value !== null && selectedSet.has(b.value);
 
@@ -256,7 +256,7 @@ export const sortByCurrentUserThenSelected = <T extends { value: string | null }
   const selectedSet = new Set(Array.isArray(selectedValues) ? selectedValues : selectedValues ? [selectedValues] : []);
 
   // Create a shallow copy to avoid mutating the original array
-  return [...options].sort((a, b) => {
+  return [...options].toSorted((a, b) => {
     const aIsCurrent = currentUserId && a.value === currentUserId;
     const bIsCurrent = currentUserId && b.value === currentUserId;
 

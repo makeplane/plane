@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "이메일",
-          "description": "Plane 이메일 주소로 이메일을 보내는 누구로부터든 새로운 작업 항목을 수집합니다.",
+          "description": "WinSecOps 이메일 주소로 이메일을 보내는 누구로부터든 새로운 작업 항목을 수집합니다.",
           "fieldName": "이메일 ID"
         },
         "form": {

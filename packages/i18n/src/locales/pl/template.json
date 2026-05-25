@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "Adres URL strony",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "Nieprawidłowy adres URL",
               "maxLength": "Adres URL powinien mieć mniej niż 800 znaków"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nazwa firmy",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "Nazwa firmy jest wymagana",
               "maxLength": "Nazwa firmy powinna mieć mniej niż 255 znaków"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Adres email obsługi",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Nieprawidłowy adres email",
               "maxLength": "Adres email obsługi powinien mieć mniej niż 255 znaków"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Szablony",
-        "description": "Dzięki szablonom projektów, elementów pracy i stron w Plane nie musisz tworzyć projektu od podstaw ani ręcznie ustawiać właściwości elementów pracy.",
+        "description": "Dzięki szablonom projektów, elementów pracy i stron w WinSecOps nie musisz tworzyć projektu od podstaw ani ręcznie ustawiać właściwości elementów pracy.",
         "sub_description": "Odzyskaj 80% czasu administracyjnego, korzystając z Szablonów."
       },
       "no_templates": {

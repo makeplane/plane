@@ -217,15 +217,12 @@ export const coreRoutes: RouteConfigEntry[] = [
             ),
           ]),
           // Support Tickets
-          layout(
-            "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/support-tickets/layout.tsx",
-            [
-              route(
-                ":workspaceSlug/projects/:projectId/support-tickets",
-                "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/support-tickets/page.tsx"
-              ),
-            ]
-          ),
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/support-tickets/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/support-tickets",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/support-tickets/page.tsx"
+            ),
+          ]),
         ]),
 
         // Project Archives - Issues, Cycles, Modules

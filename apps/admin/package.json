@@ -6,7 +6,7 @@
   "license": "AGPL-3.0",
   "type": "module",
   "scripts": {
-    "dev": "react-router dev --port 3001",
+    "dev": "react-router dev --host 0.0.0.0 --port 3001",
     "build": "react-router build",
     "preview": "react-router build && serve -s build/client -l 3001",
     "start": "serve -s build/client -l 3001",

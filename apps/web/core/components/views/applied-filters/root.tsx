@@ -23,7 +23,7 @@ type Props = {
   alwaysAllowEditing?: boolean;
 };
 
-const MEMBERS_FILTERS = ["owned_by"];
+const MEMBERS_FILTERS = new Set(["owned_by"]);
 const DATE_FILTERS = ["created_at"];
 const VIEW_ACCESS_FILTERS = ["view_type"];
 
@@ -61,7 +61,7 @@ export function ViewAppliedFiltersList(props: Props) {
                 values={Array.isArray(value) ? (value as string[]) : []}
               />
             )}
-            {MEMBERS_FILTERS.includes(filterKey) && (
+            {MEMBERS_FILTERS.has(filterKey) && (
               <AppliedMembersFilters
                 editable={isEditingAllowed}
                 handleRemove={(val) => handleRemoveFilter(filterKey, val)}

@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL del sitio web",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "URL no válida",
               "maxLength": "La URL debe tener menos de 800 caracteres"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nombre de la empresa",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "El nombre de la empresa es obligatorio",
               "maxLength": "El nombre de la empresa debe tener menos de 255 caracteres"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Correo electrónico de soporte",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Dirección de correo electrónico no válida",
               "maxLength": "El correo electrónico de soporte debe tener menos de 255 caracteres"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Plantillas",
-        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en Plane, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
+        "description": "Con las plantillas de proyectos, elementos de trabajo y páginas en WinSecOps, no tienes que crear un proyecto desde cero ni configurar manualmente las propiedades de los elementos de trabajo.",
         "sub_description": "Recupera el 80% de tu tiempo de administración cuando utilizas Plantillas."
       },
       "no_templates": {
