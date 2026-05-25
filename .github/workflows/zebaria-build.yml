@@ -117,3 +117,74 @@ jobs:
             ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-2.amazonaws.com/zebaria/${{ matrix.image }}:${{ needs.setup.outputs.image_tag }}
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,scope=${{ matrix.image }},mode=max
+
+  deploy-dev:
+    # Auto-roll the dev plane host whenever a fresh :preview lands. Prod
+    # stays manual (run scripts/deploy-config.sh prod from corpinfra).
+    needs: [setup, build]
+    if: github.ref == 'refs/heads/preview' && needs.setup.outputs.image_tag == 'preview'
+    runs-on: ubuntu-22.04
+    env:
+      ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/gh-actions-zebaria-plane
+    steps:
+      - name: Assume role (us-east-1)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Find dev plane host
+        id: host
+        run: |
+          set -euo pipefail
+          INSTANCE_ID=$(aws ec2 describe-instances \
+            --filters "Name=tag:Module,Values=plane" "Name=tag:Environment,Values=dev" "Name=instance-state-name,Values=running" \
+            --query 'Reservations[].Instances[].InstanceId' --output text)
+          if [[ -z "$INSTANCE_ID" || "$INSTANCE_ID" == "None" ]]; then
+            echo "no running dev plane host found" >&2; exit 1
+          fi
+          echo "instance_id=$INSTANCE_ID" >> "$GITHUB_OUTPUT"
+          echo "Resolved dev host: $INSTANCE_ID"
+
+      - name: Send restart command
+        id: send
+        run: |
+          set -euo pipefail
+          # Files on the host (docker-compose.yml, render-env.sh, ecr-login.sh)
+          # are owned by terraform/deploy-config.sh. We just pull the new
+          # :preview image and restart the systemd unit.
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids "${{ steps.host.outputs.instance_id }}" \
+            --document-name "AWS-RunShellScript" \
+            --parameters '{"commands":[
+              "/opt/plane/ecr-login.sh",
+              "docker compose -f /opt/plane/docker-compose.yml pull",
+              "systemctl restart plane.service",
+              "systemctl is-active plane.service",
+              "docker compose -f /opt/plane/docker-compose.yml ps"
+            ]}' \
+            --query 'Command.CommandId' --output text)
+          echo "cmd_id=$CMD_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for completion
+        run: |
+          set -euo pipefail
+          DEADLINE=$(( $(date +%s) + 300 ))
+          while [[ $(date +%s) -lt $DEADLINE ]]; do
+            STATUS=$(aws ssm list-command-invocations \
+              --command-id "${{ steps.send.outputs.cmd_id }}" \
+              --instance-id "${{ steps.host.outputs.instance_id }}" \
+              --details \
+              --query 'CommandInvocations[0].Status' --output text 2>/dev/null || echo Pending)
+            echo "status: $STATUS"
+            case "$STATUS" in
+              Success) break ;;
+              Failed|Cancelled|TimedOut) exit 1 ;;
+            esac
+            sleep 5
+          done
+          aws ssm list-command-invocations \
+            --command-id "${{ steps.send.outputs.cmd_id }}" \
+            --instance-id "${{ steps.host.outputs.instance_id }}" \
+            --details \
+            --query 'CommandInvocations[0].CommandPlugins[0].Output' --output text
