@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { TIssuePriorities } from "../issues";
+import type { TIssuePriorities, TIssueFrequency } from "../issues";
 
 export type TWorkspaceDraftIssue = {
   id: string;
@@ -37,6 +37,7 @@ export type TWorkspaceDraftIssue = {
 
   main_task_category_id: string | null;
   sub_task_category_id: string | null;
+  frequency: TIssueFrequency | null;
 };
 
 export type TWorkspaceDraftPaginationInfo<T> = {

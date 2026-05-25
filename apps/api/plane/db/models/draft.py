@@ -20,6 +20,16 @@ class DraftIssue(WorkspaceBaseModel):
         ("medium", "Medium"),
         ("low", "Low"),
     )
+    FREQUENCY_CHOICES = (
+        ("daily", "Daily"),
+        ("weekly", "Weekly"),
+        ("bi_weekly", "Bi-weekly"),
+        ("monthly", "Monthly"),
+        ("quarterly", "Quarterly"),
+        ("half_year", "Half-year"),
+        ("yearly", "Yearly"),
+        ("ad_hoc", "Ad-hoc"),
+    )
     parent = models.ForeignKey(
         "db.Issue",
         on_delete=models.CASCADE,
@@ -84,6 +94,13 @@ class DraftIssue(WorkspaceBaseModel):
         "db.SubTaskCategory",
         on_delete=models.SET_NULL,
         related_name="draft_issues",
+        null=True,
+        blank=True,
+    )
+    frequency = models.CharField(
+        max_length=20,
+        choices=FREQUENCY_CHOICES,
+        verbose_name="Draft Issue Frequency",
         null=True,
         blank=True,
     )

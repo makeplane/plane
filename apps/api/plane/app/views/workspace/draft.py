@@ -146,6 +146,9 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     "updated_by",
                     "type_id",
                     "description_html",
+                    "main_task_category_id",
+                    "sub_task_category_id",
+                    "frequency",
                 )
                 .first()
             )
@@ -221,6 +224,8 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
             payload["main_task_category_id"] = str(draft_issue.main_task_category_id)
         if not payload.get("sub_task_category_id") and draft_issue.sub_task_category_id:
             payload["sub_task_category_id"] = str(draft_issue.sub_task_category_id)
+        if not payload.get("frequency") and draft_issue.frequency:
+            payload["frequency"] = draft_issue.frequency
 
         serializer = IssueCreateSerializer(
             data=payload,

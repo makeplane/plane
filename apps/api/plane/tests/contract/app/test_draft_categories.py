@@ -94,6 +94,7 @@ class TestDraftCategoryPersistence:
                 "project_id": str(project.id),
                 "main_task_category_id": str(main_category.id),
                 "sub_task_category_id": str(sub_category.id),
+                "frequency": "daily",
             },
             format="json",
         )
@@ -102,6 +103,12 @@ class TestDraftCategoryPersistence:
         draft = DraftIssue.objects.get(pk=draft_id)
         assert draft.main_task_category_id == main_category.id
         assert draft.sub_task_category_id == sub_category.id
+        assert draft.frequency == "daily"
+        # Response shape must include these keys — store consumes POST body directly
+        # without refetching, so a missing key shows as empty until manual refresh.
+        assert str(resp.data["main_task_category_id"]) == str(main_category.id)
+        assert str(resp.data["sub_task_category_id"]) == str(sub_category.id)
+        assert resp.data["frequency"] == "daily"
 
 
 @pytest.mark.django_db

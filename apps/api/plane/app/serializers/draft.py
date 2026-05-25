@@ -346,6 +346,7 @@ class DraftIssueSerializer(BaseSerializer):
             "description_html",
             "main_task_category_id",
             "sub_task_category_id",
+            "frequency",
         ]
         read_only_fields = fields
 
