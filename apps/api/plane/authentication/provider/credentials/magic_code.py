@@ -150,8 +150,12 @@ class MagicCodeProvider(CredentialAdapter):
                 # The Lua script sets the TTL only on the first increment so
                 # the lockout window matches the remaining token TTL and does
                 # not get extended by every wrong-code attempt.
+                # ri.ttl() returns -2 (missing), -1 (no expiry), 0 (sub-second
+                # remaining; Redis floors to whole seconds), or a positive int.
+                # Clamp to >=1 because EXPIRE key 0 immediately deletes the key
+                # and would let an attacker bypass the cap in the final second.
                 remaining_ttl = ri.ttl(self.key)
-                if remaining_ttl is None or remaining_ttl < 0:
+                if remaining_ttl is None or remaining_ttl <= 0:
                     remaining_ttl = 1
                 verify_attempts = int(
                     ri.eval(
