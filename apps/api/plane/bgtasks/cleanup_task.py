@@ -62,6 +62,8 @@ def process_cleanup_task(
             deleted = delete_result[0] if isinstance(delete_result, tuple) else 0
             total_deleted += deleted
         except Exception as e:
+            # Log and skip a failed batch rather than aborting the whole run, so
+            # a single bad batch doesn't block cleanup of the remaining rows.
             log_exception(e)
 
     for record_id in queryset_func():

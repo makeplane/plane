@@ -36,9 +36,16 @@ def middleware():
 @pytest.mark.unit
 class TestAPITokenLogMiddleware:
     API_KEY = "plane_api_supersecretvalue"
+    AUTHORIZATION = "Bearer secret-bearer-token"
+    COOKIE = "sessionid=secret-session-value"
 
     def _captured_log_data(self, middleware, request_factory):
-        request = request_factory.get("/api/v1/workspaces/", HTTP_X_API_KEY=self.API_KEY)
+        request = request_factory.get(
+            "/api/v1/workspaces/",
+            HTTP_X_API_KEY=self.API_KEY,
+            HTTP_AUTHORIZATION=self.AUTHORIZATION,
+            HTTP_COOKIE=self.COOKIE,
+        )
         request.user = AnonymousUser()
         response = HttpResponse(b"{}")
         with patch("plane.middleware.logger.process_logs") as process_logs:
@@ -58,7 +65,10 @@ class TestAPITokenLogMiddleware:
     def test_sensitive_headers_are_redacted(self, middleware, request_factory):
         log_data = self._captured_log_data(middleware, request_factory)
 
+        # None of the sensitive header values may appear in the logged headers.
         assert self.API_KEY not in log_data["headers"]
+        assert self.AUTHORIZATION not in log_data["headers"]
+        assert self.COOKIE not in log_data["headers"]
         assert "[REDACTED]" in log_data["headers"]
 
     def test_no_log_without_api_key(self, middleware, request_factory):

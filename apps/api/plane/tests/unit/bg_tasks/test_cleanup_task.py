@@ -21,6 +21,7 @@ from plane.bgtasks.cleanup_task import (
     delete_api_logs,
     delete_email_notification_logs,
     delete_webhook_logs,
+    process_cleanup_task,
 )
 from plane.db.models import APIActivityLog, EmailNotificationLog, WebhookLog
 from plane.tests.factories import UserFactory, WorkspaceFactory
@@ -123,3 +124,20 @@ class TestDeleteEmailLogs:
         delete_email_notification_logs()
 
         assert EmailNotificationLog.all_objects.filter(pk=recent.pk).exists()
+
+
+@pytest.mark.unit
+class TestProcessCleanupTaskErrorHandling:
+    def test_batch_delete_failure_is_swallowed(self):
+        """A failing batch is logged and skipped; the run does not raise."""
+
+        class _BoomManager:
+            @staticmethod
+            def filter(**kwargs):
+                raise RuntimeError("db unavailable")
+
+        class _BoomModel:
+            all_objects = _BoomManager()
+
+        # Should not raise even though the delete blows up.
+        process_cleanup_task(lambda: iter([1, 2, 3]), _BoomModel, "Boom")

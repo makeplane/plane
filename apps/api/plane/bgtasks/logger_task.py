@@ -30,8 +30,12 @@ def log_to_postgres(log_data: Dict[str, Any]) -> bool:
 
 
 @shared_task
-def process_logs(log_data: Dict[str, Any]) -> None:
+def process_logs(log_data: Dict[str, Any], **_: Any) -> None:
     """
     Persist external API request logs to PostgreSQL.
+
+    The catch-all kwargs keep this task signature compatible with jobs enqueued
+    by an older release (which passed a `mongo_log` argument), so in-flight tasks
+    don't fail during a rolling deploy. It can be dropped once no such jobs remain.
     """
     log_to_postgres(log_data)
