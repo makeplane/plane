@@ -53,7 +53,6 @@ from plane.license.utils.instance_value import get_email_configuration
 from plane.utils.email import generate_plain_text_from_html
 from plane.utils.exception_logger import log_exception
 from plane.utils.ip_address import validate_url
-from plane.settings.mongo import MongoConnection
 
 
 SERIALIZER_MAPPER = {
@@ -102,9 +101,6 @@ def save_webhook_log(
     retry_count: int,
     event_type: str,
 ) -> None:
-    # webhook_logs
-    mongo_collection = MongoConnection.get_collection("webhook_logs")
-
     log_data = {
         "workspace_id": str(webhook.workspace_id),
         "webhook": str(webhook.id),
@@ -118,27 +114,12 @@ def save_webhook_log(
         "retry_count": retry_count,
     }
 
-    mongo_save_success = False
-    if mongo_collection is not None:
-        try:
-            # insert the log data into the mongo collection
-            mongo_collection.insert_one(log_data)
-            logger.info("Webhook log saved successfully to mongo")
-            mongo_save_success = True
-        except Exception as e:
-            log_exception(e, warning=True)
-            logger.error(f"Failed to save webhook log: {e}")
-            mongo_save_success = False
-
-    # if the mongo save is not successful, save the log data into the database
-    if not mongo_save_success:
-        try:
-            # insert the log data into the database
-            WebhookLog.objects.create(**log_data)
-            logger.info("Webhook log saved successfully to database")
-        except Exception as e:
-            log_exception(e, warning=True)
-            logger.error(f"Failed to save webhook log: {e}")
+    try:
+        WebhookLog.objects.create(**log_data)
+        logger.info("Webhook log saved successfully to database")
+    except Exception as e:
+        log_exception(e, warning=True)
+        logger.error(f"Failed to save webhook log: {e}")
 
 
 def get_model_data(event: str, event_id: Union[str, List[str]], many: bool = False) -> Dict[str, Any]:

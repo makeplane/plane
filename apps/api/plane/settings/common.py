@@ -402,6 +402,17 @@ WEB_URL = os.environ.get("WEB_URL")
 
 HARD_DELETE_AFTER_DAYS = int(os.environ.get("HARD_DELETE_AFTER_DAYS", 60))
 
+# API activity logs hold request/response payloads, so they are retained for a
+# shorter window than other logs.
+API_ACTIVITY_LOG_RETENTION_DAYS = int(os.environ.get("API_ACTIVITY_LOG_RETENTION_DAYS", 14))
+
+# Webhook delivery logs are retained on their own window, independent of the
+# generic HARD_DELETE_AFTER_DAYS.
+WEBHOOK_LOG_RETENTION_DAYS = int(os.environ.get("WEBHOOK_LOG_RETENTION_DAYS", 14))
+
+# Email notification logs are retained on their own window.
+EMAIL_LOG_RETENTION_DAYS = int(os.environ.get("EMAIL_LOG_RETENTION_DAYS", 7))
+
 # Instance Changelog URL
 INSTANCE_CHANGELOG_URL = os.environ.get("INSTANCE_CHANGELOG_URL", "")
 
@@ -504,7 +515,3 @@ if ENABLE_DRF_SPECTACULAR:
     REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
     INSTALLED_APPS.append("drf_spectacular")
     from .openapi import SPECTACULAR_SETTINGS  # noqa: F401
-
-# MongoDB Settings
-MONGO_DB_URL = os.environ.get("MONGO_DB_URL", False)
-MONGO_DB_DATABASE = os.environ.get("MONGO_DB_DATABASE", False)
