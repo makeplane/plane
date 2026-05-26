@@ -80,12 +80,10 @@ overrides:
   uuid: "catalog:"
   "fast-uri@<3.1.2": ">=3.1.2"
 
-onlyBuiltDependencies:
-  - "@parcel/watcher"
-  - "@swc/core"
-  - esbuild
-  - msgpackr-extract
-  - turbo
-
-ignoredBuiltDependencies:
-  - sharp
+allowBuilds:
+  "@parcel/watcher": true
+  "@swc/core": true
+  esbuild: true
+  msgpackr-extract: true
+  turbo: true
+  sharp: false
