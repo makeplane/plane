@@ -114,3 +114,6 @@ scripts/
 
 # i18n auto-generated types (regenerated on every build)
 packages/i18n/src/types/keys.generated.ts
+
+# Local security advisory notes (not for version control)
+/advisories.md
