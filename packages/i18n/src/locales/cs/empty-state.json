@@ -14,7 +14,7 @@
     },
     "not_found": {
       "title": "Jejda! Něco se zdá být v nepořádku",
-      "description": "Momentálně se nám nedaří načíst váš účet plane. Může se jednat o chybu sítě.",
+      "description": "Momentálně se nám nedaří načíst váš účet winsecops. Může se jednat o chybu sítě.",
       "cta_primary": "Zkuste znovu načíst"
     },
     "server_error": {
@@ -188,7 +188,7 @@
     },
     "wiki": {
       "title": "Napište poznámku, dokument nebo celou znalostní bázi.",
-      "description": "Stránky jsou prostorem pro zachycení myšlenek v Plane. Pořizujte poznámky ze schůzek, snadno je formátujte, vkládejte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte vše v kontextu vašeho projektu.",
+      "description": "Stránky jsou prostorem pro zachycení myšlenek v WinSecOps. Pořizujte poznámky ze schůzek, snadno je formátujte, vkládejte pracovní položky, uspořádejte je pomocí knihovny komponent a udržujte vše v kontextu vašeho projektu.",
       "cta_primary": "Vytvořte svou stránku"
     },
     "project_overview_state_sidebar": {

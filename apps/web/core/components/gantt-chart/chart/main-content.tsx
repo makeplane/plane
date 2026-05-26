@@ -110,7 +110,7 @@ export const GanttChartMainContent = observer(function GanttChartMainContent(pro
         canScroll: ({ source }) => source.data.dragInstanceId === "GANTT_REORDER",
       })
     );
-  }, [ganttContainerRef?.current]);
+  }, []);
 
   // handling scroll functionality
   const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {

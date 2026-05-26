@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "WebサイトのURL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "無効なURL",
               "maxLength": "URLは800文字未満にしてください"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "会社名",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "会社名は必須です",
               "maxLength": "会社名は255文字未満にしてください"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "サポートメールアドレス",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "無効なメールアドレス",
               "maxLength": "サポートメールアドレスは255文字未満にしてください"

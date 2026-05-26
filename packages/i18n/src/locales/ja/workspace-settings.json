@@ -176,7 +176,7 @@
         "title": "インテグレーション",
         "heading": "インテグレーション",
         "description": "人気のツールやサービスと接続して、ワークフローエコシステム全体で作業を同期します。",
-        "page_title": "Plane のデータを利用可能なアプリや自分のアプリで利用できます。",
+        "page_title": "WinSecOps のデータを利用可能なアプリや自分のアプリで利用できます。",
         "page_description": "このワークスペースまたはあなたが使用しているすべての連携を表示します。"
       },
       "imports": {
@@ -310,7 +310,7 @@
         },
         "app_created": {
           "title": "アプリが正常に作成されました",
-          "description": "認証情報を使用して、Plane ワークスペースにアプリをインストールしてください"
+          "description": "認証情報を使用して、WinSecOps ワークスペースにアプリをインストールしてください"
         },
         "installed_apps": "インストール済みアプリ",
         "all_apps": "すべてのアプリ",
@@ -351,7 +351,7 @@
         },
         "redirect_uris": {
           "label": "リダイレクトURI（スペース区切り）",
-          "description": "ユーザーは Plane で認証した後、このパスにリダイレクトされます。",
+          "description": "ユーザーは WinSecOps で認証した後、このパスにリダイレクトされます。",
           "placeholder": "https://example.com https://example.com/"
         },
         "app_available_description": "使用を開始するにはPlaneワークスペースに接続してください",
@@ -475,12 +475,12 @@
         }
       },
       "plane-intelligence": {
-        "title": "Plane AI",
-        "heading": "Plane AI",
+        "title": "WinSecOps AI",
+        "heading": "WinSecOps AI",
         "description": "あなたの作業がより知能的で速くなるように、ネイティブに接続されたAIを使用してください。"
       },
       "runners": {
-        "title": "Plane Runner",
+        "title": "WinSecOps Runner",
         "heading": "スクリプト",
         "new_script": "新しいスクリプト",
         "description": "カスタムスクリプトと自動化ルールでワークフローを自動化します。"

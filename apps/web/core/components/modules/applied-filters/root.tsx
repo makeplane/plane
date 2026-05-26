@@ -24,7 +24,7 @@ type Props = {
   isArchived?: boolean;
 };
 
-const MEMBERS_FILTERS = ["lead", "members"];
+const MEMBERS_FILTERS = new Set(["lead", "members"]);
 const DATE_FILTERS = ["start_date", "target_date"];
 
 export function ModuleAppliedFiltersList(props: Props) {
@@ -71,7 +71,7 @@ export function ModuleAppliedFiltersList(props: Props) {
                     values={value}
                   />
                 )}
-                {MEMBERS_FILTERS.includes(filterKey) && (
+                {MEMBERS_FILTERS.has(filterKey) && (
                   <AppliedMembersFilters
                     editable={isEditingAllowed}
                     handleRemove={(val) => handleRemoveFilter(filterKey, val)}

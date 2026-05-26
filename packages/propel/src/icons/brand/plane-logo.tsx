@@ -8,19 +8,33 @@ import * as React from "react";
 
 import type { ISvgIcons } from "../type";
 
-export function PlaneLogo({ width = "85", height = "52", className, color = "currentColor" }: ISvgIcons) {
+export function PlaneLogo({ width = "24", height = "24", className }: ISvgIcons) {
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 85 52"
-      fill={color}
+      viewBox="0 0 24 24"
+      fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
     >
+      <defs>
+        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3f76ff" />
+          <stop offset="100%" stopColor="#00f0ff" />
+        </linearGradient>
+        <linearGradient id="wGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#00f0ff" />
+          <stop offset="100%" stopColor="#3f76ff" />
+        </linearGradient>
+      </defs>
       <path
-        d="M44.3223 2.9264C44.3223 0.754665 46.6083 -0.65811 48.5508 0.313121L80.4551 16.2653C82.9294 17.5024 84.4922 20.0321 84.4922 22.7985V48.2487C84.4922 50.4204 82.2071 51.833 80.2646 50.8619L62.3281 41.8932V22.7975C62.3281 20.0311 60.7653 17.5015 58.291 16.2643L44.3223 9.27992V2.9264ZM0 2.92543C8.01645e-05 0.753753 2.28609 -0.659069 4.22852 0.312144L22.1582 9.27699V28.3766C22.1582 31.1428 23.7213 33.6716 26.1953 34.9088L40.1699 41.8952V48.2487C40.1697 50.4202 37.8847 51.832 35.9424 50.861L4.03711 34.9088C1.56305 33.6716 0 31.1428 0 28.3766V2.92543ZM22.1582 2.92543C22.1583 0.753753 24.4443 -0.659069 26.3867 0.312144L44.3223 9.27992V28.3776C44.3223 31.1439 45.8861 33.6727 48.3604 34.9098L62.3281 41.8932V48.2487C62.3279 50.4202 60.0429 51.832 58.1006 50.861L40.1699 41.8952V22.7975C40.1699 20.0311 38.6071 17.5015 36.1328 16.2643L22.1582 9.27699V2.92543Z"
-        fill={color}
+        d="M12 2L4 5v6c0 5.25 3.41 10.17 8 11 4.59-.83 8-5.75 8-11V5l-8-3zm0 2.18c3.42.71 6 3.82 6 7.42 0 4.15-2.73 8.07-6 8.92-3.27-.85-6-4.77-6-8.92 0-3.6 2.58-6.71 6-7.42z"
+        fill="url(#shieldGrad)"
+      />
+      <path
+        d="M8.5 8.5L10.5 13.5L12 11.5L13.5 13.5L15.5 8.5H14.25L13.25 11.25L12 9.5L10.75 11.25L9.75 8.5H8.5Z"
+        fill="url(#wGrad)"
       />
     </svg>
   );

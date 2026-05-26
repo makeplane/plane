@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "網站 URL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "無效的 URL",
               "maxLength": "URL 應少於 800 個字元"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "公司名稱",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "公司名稱為必填項",
               "maxLength": "公司名稱應少於255個字符"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "支持電子郵件",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "無效的電子郵件地址",
               "maxLength": "支持電子郵件應少於255個字符"

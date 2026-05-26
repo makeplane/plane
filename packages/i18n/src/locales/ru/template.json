@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL веб-сайта",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "Некорректный URL",
               "maxLength": "URL должен быть менее 800 символов"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Название компании",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "Название компании обязательно",
               "maxLength": "Название компании должно быть менее 255 символов"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email поддержки",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Некорректный email адрес",
               "maxLength": "Email поддержки должен быть менее 255 символов"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Шаблоны",
-        "description": "С шаблонами проектов, рабочих элементов и страниц в Plane вам не нужно создавать проект с нуля или вручную устанавливать свойства рабочих элементов.",
+        "description": "С шаблонами проектов, рабочих элементов и страниц в WinSecOps вам не нужно создавать проект с нуля или вручную устанавливать свойства рабочих элементов.",
         "sub_description": "Верните 80% времени администрирования, используя Шаблоны."
       },
       "no_templates": {

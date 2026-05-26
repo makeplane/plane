@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL del sito web",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "URL non valido",
               "maxLength": "L'URL deve contenere meno di 800 caratteri"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Nome dell'azienda",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "Il nome dell'azienda è obbligatorio",
               "maxLength": "Il nome dell'azienda deve contenere meno di 255 caratteri"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email di supporto",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Indirizzo email non valido",
               "maxLength": "L'email di supporto deve contenere meno di 255 caratteri"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Modelli",
-        "description": "Con i modelli di progetto, elemento di lavoro e pagina in Plane, non devi creare un progetto da zero o impostare manualmente le proprietà degli elementi di lavoro.",
+        "description": "Con i modelli di progetto, elemento di lavoro e pagina in WinSecOps, non devi creare un progetto da zero o impostare manualmente le proprietà degli elementi di lavoro.",
         "sub_description": "Recupera l'80% del tuo tempo di amministrazione quando utilizzi i Modelli."
       },
       "no_templates": {

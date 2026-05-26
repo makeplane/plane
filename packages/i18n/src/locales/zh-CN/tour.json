@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "告别标签页切换。连接您的世界。",
-        "description": "连接 GitHub、Slack，直接在 Plane AI 中跟踪 PR 并总结聊天内容。"
+        "description": "连接 GitHub、Slack，直接在 WinSecOps AI 中跟踪 PR 并总结聊天内容。"
       }
     },
     "navigation": {

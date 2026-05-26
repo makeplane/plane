@@ -40,15 +40,15 @@ const paramsToKey = (params: any) => {
   const layoutKey = layout ? layout.toUpperCase() : "";
 
   // sorting each keys in ascending order
-  projectKey = projectKey.sort().join("_");
-  stateKey = stateKey.sort().join("_");
-  stateGroupKey = stateGroupKey.sort().join("_");
-  priorityKey = priorityKey.sort().join("_");
-  assigneesKey = assigneesKey.sort().join("_");
-  mentionsKey = mentionsKey.sort().join("_");
-  createdByKey = createdByKey.sort().join("_");
-  labelsKey = labelsKey.sort().join("_");
-  subscriberKey = subscriberKey.sort().join("_");
+  projectKey = projectKey.toSorted().join("_");
+  stateKey = stateKey.toSorted().join("_");
+  stateGroupKey = stateGroupKey.toSorted().join("_");
+  priorityKey = priorityKey.toSorted().join("_");
+  assigneesKey = assigneesKey.toSorted().join("_");
+  mentionsKey = mentionsKey.toSorted().join("_");
+  createdByKey = createdByKey.toSorted().join("_");
+  labelsKey = labelsKey.toSorted().join("_");
+  subscriberKey = subscriberKey.toSorted().join("_");
 
   return `${layoutKey}_${projectKey}_${stateGroupKey}_${stateKey}_${priorityKey}_${assigneesKey}_${mentionsKey}_${createdByKey}_${type}_${groupBy}_${orderBy}_${labelsKey}_${startDateKey}_${targetDateKey}_${sub_issue}_${subscriberKey}`;
 };

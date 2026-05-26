@@ -95,7 +95,7 @@
     "intake": {
       "step_zero": {
         "title": "접수로 요청 간소화",
-        "description": "게스트가 버그, 요청 또는 티켓에 대한 작업 항목을 만들 수 있는 Plane 전용 기능입니다."
+        "description": "게스트가 버그, 요청 또는 티켓에 대한 작업 항목을 만들 수 있는 WinSecOps 전용 기능입니다."
       },
       "step_one": {
         "title": "열린/닫힌 접수 요청",
@@ -113,7 +113,7 @@
     "mcp_connectors": {
       "step_zero": {
         "title": "탭 전환은 그만. 당신의 세계를 연결하세요.",
-        "description": "GitHub, Slack을 연결하여 PR을 추적하고 Plane AI에서 직접 채팅을 요약하세요."
+        "description": "GitHub, Slack을 연결하여 PR을 추적하고 WinSecOps AI에서 직접 채팅을 요약하세요."
       }
     },
     "navigation": {
@@ -172,7 +172,7 @@
           "title": "페이지 만들기"
         },
         "item_5": {
-          "title": "Plane AI 채팅 시도"
+          "title": "WinSecOps AI 채팅 시도"
         },
         "item_6": {
           "title": "통합 연결"

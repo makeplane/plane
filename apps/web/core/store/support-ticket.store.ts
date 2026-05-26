@@ -15,11 +15,7 @@ export interface ISupportTicketStore {
   loader: boolean;
   // actions
   fetchTickets: (workspaceSlug: string, projectId: string) => Promise<ISupportTicket[]>;
-  createTicket: (
-    workspaceSlug: string,
-    projectId: string,
-    data: ISupportTicketCreate
-  ) => Promise<ISupportTicket>;
+  createTicket: (workspaceSlug: string, projectId: string, data: ISupportTicketCreate) => Promise<ISupportTicket>;
   updateTicket: (
     workspaceSlug: string,
     projectId: string,
@@ -110,12 +106,7 @@ export class SupportTicketStore implements ISupportTicketStore {
     ticketId: string,
     data: Partial<ISupportTicketCreate>
   ): Promise<ISupportTicket> => {
-    const ticket = await this.supportTicketService.updateTicket(
-      workspaceSlug,
-      projectId,
-      ticketId,
-      data
-    );
+    const ticket = await this.supportTicketService.updateTicket(workspaceSlug, projectId, ticketId, data);
 
     runInAction(() => {
       this.ticketMap[ticketId] = ticket;
@@ -127,11 +118,7 @@ export class SupportTicketStore implements ISupportTicketStore {
   /**
    * Delete a ticket
    */
-  deleteTicket = async (
-    workspaceSlug: string,
-    projectId: string,
-    ticketId: string
-  ): Promise<void> => {
+  deleteTicket = async (workspaceSlug: string, projectId: string, ticketId: string): Promise<void> => {
     await this.supportTicketService.deleteTicket(workspaceSlug, projectId, ticketId);
 
     runInAction(() => {

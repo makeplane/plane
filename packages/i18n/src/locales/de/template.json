@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "Website-URL",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "Ungültige URL",
               "maxLength": "URL sollte weniger als 800 Zeichen enthalten"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Unternehmensname",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "Unternehmensname ist erforderlich",
               "maxLength": "Unternehmensname sollte weniger als 255 Zeichen enthalten"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Support-E-Mail",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Ungültige E-Mail-Adresse",
               "maxLength": "Support-E-Mail sollte weniger als 255 Zeichen enthalten"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Vorlagen",
-        "description": "Mit Projekt-, Arbeitsaufgaben- und Seitenvorlagen in Plane müssen Sie kein Projekt von Grund auf neu erstellen oder Arbeitsaufgabeneigenschaften manuell festlegen.",
+        "description": "Mit Projekt-, Arbeitsaufgaben- und Seitenvorlagen in WinSecOps müssen Sie kein Projekt von Grund auf neu erstellen oder Arbeitsaufgabeneigenschaften manuell festlegen.",
         "sub_description": "Sparen Sie 80% Ihrer Administrationszeit, wenn Sie Vorlagen verwenden."
       },
       "no_templates": {

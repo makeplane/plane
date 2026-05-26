@@ -193,7 +193,7 @@
       },
       "auto-remind": {
         "title": "自動提醒",
-        "description": "Plane 將自動通過電子郵件和應用程式通知來提醒您的團隊保持進度。",
+        "description": "WinSecOps 將自動通過電子郵件和應用程式通知來提醒您的團隊保持進度。",
         "duration": "提前提醒"
       }
     },
@@ -371,7 +371,7 @@
         },
         "email": {
           "title": "電子郵件",
-          "description": "從任何寄信到 Plane 電子郵件地址的人收集新的工作項目。",
+          "description": "從任何寄信到 WinSecOps 電子郵件地址的人收集新的工作項目。",
           "fieldName": "電子郵件 ID"
         },
         "form": {

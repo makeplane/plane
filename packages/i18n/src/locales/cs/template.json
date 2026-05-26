@@ -162,7 +162,7 @@
           },
           "website": {
             "label": "URL webové stránky",
-            "placeholder": "https://plane.so",
+            "placeholder": "https://winsecops.so",
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by měla být kratší než 800 znaků"
@@ -170,7 +170,7 @@
           },
           "company_name": {
             "label": "Název společnosti",
-            "placeholder": "Plane",
+            "placeholder": "WinSecOps",
             "validation": {
               "required": "Název společnosti je povinný",
               "maxLength": "Název společnosti by měl být kratší než 255 znaků"
@@ -178,7 +178,7 @@
           },
           "contact_email": {
             "label": "Email podpory",
-            "placeholder": "help@plane.so",
+            "placeholder": "help@winsecops.so",
             "validation": {
               "invalid": "Neplatná emailová adresa",
               "maxLength": "Email podpory by měl být kratší než 255 znaků"
@@ -227,7 +227,7 @@
     "empty_state": {
       "upgrade": {
         "title": "Šablony",
-        "description": "S šablonami projektů, pracovních položek a stránek v Plane nemusíte vytvářet projekt od nuly nebo nastavovat vlastnosti pracovních položek ručně.",
+        "description": "S šablonami projektů, pracovních položek a stránek v WinSecOps nemusíte vytvářet projekt od nuly nebo nastavovat vlastnosti pracovních položek ručně.",
         "sub_description": "Získejte 80 % svého administrativního času zpět, když používáte šablony."
       },
       "no_templates": {

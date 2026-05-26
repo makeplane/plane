@@ -36,6 +36,7 @@ import "@fontsource/ibm-plex-mono";
 const APP_TITLE = "Plane | Simple, extensible, open-source project management tool.";
 
 export const links: LinksFunction = () => [
+  { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" },
   { rel: "icon", type: "image/png", sizes: "32x32", href: favicon32 },
   { rel: "icon", type: "image/png", sizes: "16x16", href: favicon16 },
   { rel: "shortcut icon", href: faviconIco },

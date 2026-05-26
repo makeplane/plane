@@ -5,7 +5,7 @@
       "not_right_now": "Nie teraz",
       "create_project": {
         "title": "Utwórz projekt",
-        "description": "Większość rzeczy zaczyna się od projektu w Plane.",
+        "description": "Większość rzeczy zaczyna się od projektu w WinSecOps.",
         "cta": "Zacznij"
       },
       "invite_team": {
@@ -19,7 +19,7 @@
         "cta": "Skonfiguruj tę przestrzeń"
       },
       "personalize_account": {
-        "title": "Spersonalizuj Plane.",
+        "title": "Spersonalizuj WinSecOps.",
         "description": "Wybierz zdjęcie, kolory i inne.",
         "cta": "Dostosuj teraz"
       },
@@ -53,7 +53,7 @@
       }
     },
     "new_at_plane": {
-      "title": "Co nowego w Plane"
+      "title": "Co nowego w WinSecOps"
     },
     "quick_tutorial": {
       "title": "Szybki samouczek"

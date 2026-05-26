@@ -51,7 +51,7 @@ function RenderIfVisible(props: Props) {
       const observer = new IntersectionObserver(
         (entries) => {
           //DO no remove comments for future
-          if (typeof window !== undefined && window.requestIdleCallback && useIdletime) {
+          if (typeof window !== "undefined" && window.requestIdleCallback && useIdletime) {
             window.requestIdleCallback(() => setShouldVisible(entries[entries.length - 1].isIntersecting), {
               timeout: 300,
             });

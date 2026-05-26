@@ -41,10 +41,7 @@ export const SupportTicketsHeader = observer(function SupportTicketsHeader() {
       <Header>
         <Header.LeftItem>
           <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs
-              workspaceSlug={workspaceSlug?.toString()}
-              projectId={projectId?.toString()}
-            />
+            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
@@ -58,11 +55,7 @@ export const SupportTicketsHeader = observer(function SupportTicketsHeader() {
           </Breadcrumbs>
         </Header.LeftItem>
         <Header.RightItem>
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={() => setIsCreateModalOpen(true)}
-          >
+          <Button variant="primary" size="lg" onClick={() => setIsCreateModalOpen(true)}>
             <span className="block sm:hidden">Add</span>
             <span className="hidden sm:block">New Ticket</span>
           </Button>

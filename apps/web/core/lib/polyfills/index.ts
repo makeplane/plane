@@ -26,5 +26,3 @@ if (typeof window !== "undefined" && window) {
       clearTimeout(id);
     };
 }
-
-export {};
