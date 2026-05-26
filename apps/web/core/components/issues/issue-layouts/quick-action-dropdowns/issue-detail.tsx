@@ -101,14 +101,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     setDeleteIssueModal(true);
     if (toggleDeleteIssueModal) toggleDeleteIssueModal(true);
   };
-
-  const customDuplicateAction = (): void => {
-    setDuplicateWorkItemModal(true);
-    if (toggleDuplicateIssueModal) {
-      toggleDuplicateIssueModal(true);
-    }
-  };
-
   const customArchiveAction = (): void => {
     setArchiveIssueModal(true);
     if (toggleArchiveIssueModal) toggleArchiveIssueModal(true);
@@ -131,9 +123,9 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     isInArchivableGroup,
     setIssueToEdit,
     setCreateUpdateIssueModal: customEditAction,
-    setDeleteIssueModal: customDeleteAction,
-    setArchiveIssueModal: customArchiveAction,
-    setDuplicateWorkItemModal: customDuplicateAction,
+    setDeleteIssueModal: setDeleteIssueModal,
+    setArchiveIssueModal: setArchiveIssueModal,
+    setDuplicateWorkItemModal: setDuplicateWorkItemModal,
     handleDelete: customDeleteAction,
     handleUpdate,
     handleArchive: customArchiveAction,
