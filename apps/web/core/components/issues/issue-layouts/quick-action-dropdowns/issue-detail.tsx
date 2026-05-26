@@ -97,13 +97,15 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     if (toggleEditIssueModal) toggleEditIssueModal(true);
   };
 
-  const customDeleteAction = (): void => {
+  const customDeleteAction = (): Promise<void> => {
     setDeleteIssueModal(true);
     if (toggleDeleteIssueModal) toggleDeleteIssueModal(true);
+    return Promise.resolve();
   };
-  const customArchiveAction = (): void => {
+  const customArchiveAction = (): Promise<void> => {
     setArchiveIssueModal(true);
     if (toggleArchiveIssueModal) toggleArchiveIssueModal(true);
+    return Promise.resolve();
   };
 
   const customRestoreAction = async (): Promise<void> => {
