@@ -39,6 +39,7 @@
     "@plane/editor": "workspace:*",
     "@plane/logger": "workspace:*",
     "@plane/types": "workspace:*",
+    "@plane/utils": "workspace:*",
     "@react-pdf/renderer": "^4.3.0",
     "@react-pdf/types": "^2.9.2",
     "@tiptap/core": "catalog:",
