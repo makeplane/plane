@@ -20,8 +20,36 @@ def base_host(
     is_app: bool = False,
 ) -> str:
     """Utility function to return host / origin from the request"""
+    # Prefer the HTTP_ORIGIN header if present, since it reflects the exact client origin
+    client_origin = request.META.get("HTTP_ORIGIN") or request.META.get("HTTP_REFERER")
+    if client_origin:
+        from urllib.parse import urlparse
+        parsed = urlparse(client_origin)
+        if parsed.scheme and parsed.netloc:
+            client_origin = f"{parsed.scheme}://{parsed.netloc}"
+            
+            # Security Fix: Prevent Open Redirect Vulnerabilities
+            # Ensure the provided origin is within our trusted hosts before using it
+            is_allowed = False
+            normalized_origin = client_origin.lower()
+            
+            allowed_origins = getattr(settings, "CORS_ALLOWED_ORIGINS", [])
+            if normalized_origin in [o.lower() for o in allowed_origins]:
+                is_allowed = True
+                
+            if not is_allowed:
+                for base in [settings.WEB_URL, settings.APP_BASE_URL, settings.ADMIN_BASE_URL, settings.SPACE_BASE_URL]:
+                    if base and normalized_origin == base.rstrip('/').lower():
+                        is_allowed = True
+                        break
+                        
+            if not is_allowed:
+                client_origin = None
+        else:
+            client_origin = None
+
     # Calculate the base origin from request
-    base_origin = settings.WEB_URL or settings.APP_BASE_URL
+    base_origin = client_origin or settings.WEB_URL or settings.APP_BASE_URL
 
     # Admin redirection
     if is_admin:
@@ -33,7 +61,9 @@ def base_host(
         if not admin_base_path.endswith("/"):
             admin_base_path += "/"
 
-        if settings.ADMIN_BASE_URL:
+        if client_origin:
+            return client_origin + admin_base_path
+        elif settings.ADMIN_BASE_URL:
             return settings.ADMIN_BASE_URL + admin_base_path
         else:
             return base_origin + admin_base_path
@@ -48,14 +78,18 @@ def base_host(
         if not space_base_path.endswith("/"):
             space_base_path += "/"
 
-        if settings.SPACE_BASE_URL:
+        if client_origin:
+            return client_origin + space_base_path
+        elif settings.SPACE_BASE_URL:
             return settings.SPACE_BASE_URL + space_base_path
         else:
             return base_origin + space_base_path
 
     # App Redirection
     if is_app:
-        if settings.APP_BASE_URL:
+        if client_origin:
+            return client_origin
+        elif settings.APP_BASE_URL:
             return settings.APP_BASE_URL
         else:
             return base_origin

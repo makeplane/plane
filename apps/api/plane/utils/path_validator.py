@@ -104,7 +104,14 @@ def get_allowed_hosts() -> list[str]:
         # Get only the host
         host = urlparse(settings.SPACE_BASE_URL).netloc
         allowed_hosts.append(host)
-    return allowed_hosts
+        
+    if hasattr(settings, "CORS_ALLOWED_ORIGINS"):
+        for origin in settings.CORS_ALLOWED_ORIGINS:
+            host = urlparse(origin).netloc
+            if host:
+                allowed_hosts.append(host)
+                
+    return list(set(allowed_hosts))
 
 
 def validate_next_path(next_path: str) -> str:
