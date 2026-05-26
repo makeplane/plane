@@ -4,10 +4,12 @@
 
 # Python imports
 import hashlib
+import hmac
 import logging
 import time
 
 # Django imports
+from django.conf import settings
 from django.http import HttpRequest
 
 # Third party imports
@@ -135,9 +137,13 @@ class APITokenLogMiddleware:
 
         try:
             log_data = {
-                # Store a non-reversible hash of the API key instead of the raw
-                # key so that log access cannot be used to steal credentials.
-                "token_identifier": hashlib.sha256(api_key.encode()).hexdigest(),
+                # Tokenize the (high-entropy) API key into a stable, non-reversible
+                # identifier so logs can be correlated to a token without ever
+                # persisting the raw key. A keyed HMAC is used rather than a bare
+                # hash so the digest cannot be precomputed from a known key value.
+                "token_identifier": hmac.new(
+                    settings.SECRET_KEY.encode(), api_key.encode(), hashlib.sha256
+                ).hexdigest(),
                 "path": request.path,
                 "method": request.method,
                 "query_params": request.META.get("QUERY_STRING", ""),
