@@ -368,7 +368,7 @@ ADMIN_SESSION_COOKIE_AGE = int(os.environ.get("ADMIN_SESSION_COOKIE_AGE", 3600))
 # CSRF cookies
 CSRF_COOKIE_SECURE = secure_origins
 CSRF_COOKIE_HTTPONLY = True
-CSRF_TRUSTED_ORIGINS = cors_allowed_origins
+CSRF_TRUSTED_ORIGINS = [origin.lower() for origin in cors_allowed_origins]
 CSRF_COOKIE_DOMAIN = os.environ.get("COOKIE_DOMAIN", None)
 CSRF_FAILURE_VIEW = "plane.authentication.views.common.csrf_failure"
 

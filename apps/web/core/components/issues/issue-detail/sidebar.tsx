@@ -5,6 +5,7 @@
  */
 
 import { observer } from "mobx-react";
+import { Lock } from "lucide-react";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // ui
@@ -54,11 +55,15 @@ type Props = {
   issueId: string;
   issueOperations: TIssueOperations;
   isEditable: boolean;
+  isDoneLocked?: boolean;
 };
 
 export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: Props) {
   const { t } = useTranslation();
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isDoneLocked = false } = props;
+  // derived: when done-locked, only state is editable
+  const isPropertyEditable = isEditable && !isDoneLocked;
+  const isStateEditable = isEditable; // state always editable if user has permission
   // store hooks
   const { getProjectById } = useProject();
   const { areEstimateEnabledByProjectId } = useProjectEstimates();
@@ -87,27 +92,41 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
       <div className="flex h-full w-full flex-col items-center divide-y-2 divide-subtle-1 overflow-hidden">
         <div className="h-full w-full overflow-y-auto px-6">
           <h5 className="mt-5 text-body-xs-medium">{t("common.properties")}</h5>
-          <div className={`mt-4 mb-2 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
-            <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
-              <StateDropdown
-                value={issue?.state_id}
-                onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
-                projectId={projectId?.toString() ?? ""}
-                disabled={!isEditable}
-                buttonVariant="transparent-with-text"
-                className="group w-full grow"
-                buttonContainerClassName="w-full text-left h-7.5"
-                buttonClassName="text-body-xs-regular"
-                dropdownArrow
-                dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
-              />
-            </SidebarPropertyListItem>
 
+          {/* Done lock notice banner */}
+          {isDoneLocked && (
+            <div className="mt-3 flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-body-xs-regular text-amber-600">
+              <Lock className="h-3.5 w-3.5 flex-shrink-0" />
+              <span>This issue is in Done state. Change the state to make edits.</span>
+            </div>
+          )}
+
+          <div className={`mt-4 mb-2 space-y-2.5 truncate ${!isEditable ? "opacity-60" : ""}`}>
+            {/* State dropdown — always enabled for done-locked issues (highlighted) */}
+            <div className={isDoneLocked ? "rounded-md ring-2 ring-accent-primary/50" : ""}>
+              <SidebarPropertyListItem icon={StatePropertyIcon} label={t("common.state")}>
+                <StateDropdown
+                  value={issue?.state_id}
+                  onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { state_id: val })}
+                  projectId={projectId?.toString() ?? ""}
+                  disabled={!isStateEditable}
+                  buttonVariant="transparent-with-text"
+                  className="group w-full grow"
+                  buttonContainerClassName="w-full text-left h-7.5"
+                  buttonClassName="text-body-xs-regular"
+                  dropdownArrow
+                  dropdownArrowClassName="h-3.5 w-3.5 hidden group-hover:inline"
+                />
+              </SidebarPropertyListItem>
+            </div>
+
+            {/* All other properties — dimmed when done-locked */}
+            <div className={isDoneLocked ? "opacity-50 pointer-events-none" : ""}>
             <SidebarPropertyListItem icon={MembersPropertyIcon} label={t("common.assignees")}>
               <MemberDropdown
                 value={issue?.assignee_ids ?? undefined}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { assignee_ids: val })}
-                disabled={!isEditable}
+                disabled={!isPropertyEditable}
                 projectId={projectId?.toString() ?? ""}
                 placeholder={t("issue.add.assignee")}
                 multiple
@@ -125,7 +144,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               <PriorityDropdown
                 value={issue?.priority}
                 onChange={(val) => issueOperations.update(workspaceSlug, projectId, issueId, { priority: val })}
-                disabled={!isEditable}
+                disabled={!isPropertyEditable}
                 buttonVariant="transparent-with-text"
                 className="h-7.5 w-full grow rounded-sm"
                 buttonContainerClassName="size-full text-left"
@@ -152,7 +171,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   })
                 }
                 maxDate={maxDate ?? undefined}
-                disabled={!isEditable}
+                disabled={!isPropertyEditable}
                 buttonVariant="transparent-with-text"
                 className="group w-full grow"
                 buttonContainerClassName="w-full text-left h-7.5"
@@ -173,7 +192,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                     })
                   }
                   minDate={minDate ?? undefined}
-                  disabled={!isEditable}
+                  disabled={!isPropertyEditable}
                   buttonVariant="transparent-with-text"
                   className="group w-full grow"
                   buttonContainerClassName="w-full text-left h-7.5"
@@ -196,7 +215,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                     issueOperations.update(workspaceSlug, projectId, issueId, { estimate_point: val })
                   }
                   projectId={projectId}
-                  disabled={!isEditable}
+                  disabled={!isPropertyEditable}
                   buttonVariant="transparent-with-text"
                   className="group w-full grow"
                   buttonContainerClassName="w-full text-left h-7.5"
@@ -217,7 +236,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   projectId={projectId}
                   issueId={issueId}
                   issueOperations={issueOperations}
-                  disabled={!isEditable}
+                  disabled={!isPropertyEditable}
                 />
               </SidebarPropertyListItem>
             )}
@@ -234,7 +253,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                   projectId={projectId}
                   issueId={issueId}
                   issueOperations={issueOperations}
-                  disabled={!isEditable}
+                  disabled={!isPropertyEditable}
                 />
               </SidebarPropertyListItem>
             )}
@@ -246,7 +265,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 projectId={projectId}
                 issueId={issueId}
                 issueOperations={issueOperations}
-                disabled={!isEditable}
+                disabled={!isPropertyEditable}
               />
             </SidebarPropertyListItem>
 
@@ -255,7 +274,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
                 workspaceSlug={workspaceSlug}
                 projectId={projectId}
                 issueId={issueId}
-                disabled={!isEditable}
+                disabled={!isPropertyEditable}
               />
             </SidebarPropertyListItem>
 
@@ -263,7 +282,7 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               workspaceSlug={workspaceSlug}
               projectId={projectId}
               issueId={issueId}
-              disabled={!isEditable}
+              disabled={!isPropertyEditable}
             />
 
             <WorkItemAdditionalSidebarProperties
@@ -271,8 +290,9 @@ export const IssueDetailsSidebar = observer(function IssueDetailsSidebar(props: 
               workItemTypeId={issue.type_id}
               projectId={projectId}
               workspaceSlug={workspaceSlug}
-              isEditable={isEditable}
+              isEditable={isPropertyEditable}
             />
+            </div> {/* end of dimmed wrapper */}
           </div>
         </div>
       </div>

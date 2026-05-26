@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
+import { Lock } from "lucide-react";
 // plane imports
 import type { EditorRefApi } from "@plane/editor";
 import type { TNameDescriptionLoader } from "@plane/types";
@@ -46,10 +47,11 @@ type Props = {
   issueOperations: TIssueOperations;
   isEditable: boolean;
   isArchived: boolean;
+  isDoneLocked?: boolean;
 };
 
 export const IssueMainContent = observer(function IssueMainContent(props: Props) {
-  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived } = props;
+  const { workspaceSlug, projectId, issueId, issueOperations, isEditable, isArchived, isDoneLocked = false } = props;
   // refs
   const editorRef = useRef<EditorRefApi>(null);
   // states
@@ -119,6 +121,13 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
             )}
           </div>
         </div>
+
+        {isDoneLocked && (
+          <div className="flex items-center gap-1.5 text-amber-600">
+            <Lock className="h-3.5 w-3.5" />
+            <span className="text-body-xs-regular">Locked</span>
+          </div>
+        )}
 
         <IssueTitleInput
           workspaceSlug={workspaceSlug}
@@ -206,7 +215,14 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
         />
       )}
 
-      <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
+      {isDoneLocked ? (
+        <div className="mt-6 flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-body-sm-regular text-amber-600">
+          <Lock className="h-4 w-4 flex-shrink-0" />
+          <span>This issue is locked. Change state to add comments or make edits.</span>
+        </div>
+      ) : (
+        <IssueActivity workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={isArchived} />
+      )}
     </>
   );
 });

@@ -21,10 +21,9 @@ export const ProjectAccessRestriction = observer(function ProjectAccessRestricti
   // plane hooks
   const { t } = useTranslation();
 
-  // Show join project screen if:
-  // - User lacks project membership (409 Conflict)
-  // - User lacks permission to access the private project (403 Forbidden) but is a workspace admin (can join any project)
-  if (errorStatusCode === 409 || (errorStatusCode === 403 && isWorkspaceAdmin))
+  // Show join project screen only for workspace admins
+  // Under PBAC, regular members cannot self-join projects
+  if (errorStatusCode === 403 && isWorkspaceAdmin)
     return (
       <div className="grid h-full w-full place-items-center bg-surface-1">
         <EmptyStateDetailed
@@ -45,8 +44,7 @@ export const ProjectAccessRestriction = observer(function ProjectAccessRestricti
       </div>
     );
 
-  // Show no access screen if:
-  // - User lacks permission to access the private project (403 Forbidden)
+  // Show no access screen for non-admin members
   if (errorStatusCode === 403) {
     return (
       <div className="grid h-full w-full place-items-center bg-surface-1">

@@ -55,7 +55,8 @@ export const ProjectStateRoot = observer(function ProjectStateRoot(props: TProje
       createState: async (data: Partial<IState>) => createState(workspaceSlug, projectId, data),
       updateState: async (stateId: string, data: Partial<IState>) =>
         updateState(workspaceSlug, projectId, stateId, data),
-      deleteState: async (stateId: string) => deleteState(workspaceSlug, projectId, stateId),
+      deleteState: async (stateId: string, replacementStateId?: string) =>
+        deleteState(workspaceSlug, projectId, stateId, replacementStateId),
       moveStatePosition: async (stateId: string, data: Partial<IState>) =>
         moveStatePosition(workspaceSlug, projectId, stateId, data),
       markStateAsDefault: async (stateId: string) => markStateAsDefault(workspaceSlug, projectId, stateId),

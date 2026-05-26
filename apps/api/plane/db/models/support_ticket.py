@@ -14,12 +14,13 @@ class SupportTicket(ProjectBaseModel):
     """
     A support ticket that wraps a Plane Issue.
     Title, description, priority, state, and assignees are read from the linked Issue.
-    Ticket numbers follow the format INC-#00001 and are globally unique across the workspace.
+    Ticket numbers follow the format WINJIT-#00001 and are globally unique across the workspace.
     """
 
     SOURCE_CHOICES = (
         ("MANUAL", "Manual"),
         ("EMAIL", "Email"),
+        ("CSV_IMPORT", "CSV Import"),
     )
 
     ticket_number = models.PositiveBigIntegerField(
@@ -63,8 +64,8 @@ class SupportTicket(ProjectBaseModel):
 
     @property
     def ticket_display(self):
-        """Return formatted ticket number like INC-#00001"""
-        return f"INC-#{str(self.ticket_number).zfill(5)}"
+        """Return formatted ticket number like WINJIT-#00001"""
+        return f"WINJIT-#{str(self.ticket_number).zfill(5)}"
 
     def save(self, *args, **kwargs):
         if self._state.adding:

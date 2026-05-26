@@ -33,7 +33,7 @@ export interface IStateResponse {
 export type TStateOperationsCallbacks = {
   createState: (data: Partial<IState>) => Promise<IState>;
   updateState: (stateId: string, data: Partial<IState>) => Promise<IState | undefined>;
-  deleteState: (stateId: string) => Promise<void>;
+  deleteState: (stateId: string, replacementStateId?: string) => Promise<void>;
   moveStatePosition: (stateId: string, data: Partial<IState>) => Promise<void>;
   markStateAsDefault: (stateId: string) => Promise<void>;
 };

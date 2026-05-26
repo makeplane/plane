@@ -7,14 +7,16 @@
 import { useState } from "react";
 import { observer } from "mobx-react";
 import { Loader } from "lucide-react";
-import { CloseIcon } from "@plane/propel/icons";
+import { CloseIcon, StateGroupIcon } from "@plane/propel/icons";
 // plane imports
+import { EIconSize } from "@plane/constants";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import { Tooltip } from "@plane/propel/tooltip";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
 import { AlertModalCore } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 
 type TStateDelete = {
@@ -28,11 +30,17 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
   const { totalStates, state, deleteStateCallback } = props;
   // hooks
   const { isMobile } = usePlatformOS();
+  const { getProjectStates } = useProjectState();
   // states
   const [isDeleteModal, setIsDeleteModal] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [needsReplacement, setNeedsReplacement] = useState(false);
+  const [issueCount, setIssueCount] = useState(0);
+  const [replacementStateId, setReplacementStateId] = useState<string>("");
   // derived values
   const isDeleteDisabled = state.default ? true : totalStates === 1 ? true : false;
+  const projectStates = getProjectStates(state.project_id);
+  const availableReplacements = projectStates?.filter((s) => s.id !== state.id) ?? [];
 
   const handleDeleteState = async () => {
     if (isDeleteDisabled) return;
@@ -40,41 +48,85 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
     setIsDelete(true);
 
     try {
-      await deleteStateCallback(state.id);
+      await deleteStateCallback(state.id, needsReplacement ? replacementStateId : undefined);
       setIsDelete(false);
+      handleClose();
     } catch (error) {
-      const errorStatus = error as { status: number; data: { error: string } };
-      if (errorStatus.status === 400) {
+      const errorResponse = error as { status: number; data: { error: string; issue_count?: number } };
+      if (errorResponse.status === 400 && errorResponse.data?.issue_count) {
+        // Backend returned issue_count — show replacement UI
+        setIssueCount(errorResponse.data.issue_count);
+        setNeedsReplacement(true);
+        setIsDelete(false);
+      } else if (errorResponse.status === 400) {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
-          message:
-            "This state contains some work items within it, please move them to some other state to delete this state.",
+          message: errorResponse.data?.error || "State could not be deleted. Please try again.",
         });
+        setIsDelete(false);
       } else {
         setToast({
           type: TOAST_TYPE.ERROR,
           title: "Error!",
           message: "State could not be deleted. Please try again.",
         });
+        setIsDelete(false);
       }
-      setIsDelete(false);
     }
+  };
+
+  const handleClose = () => {
+    setIsDeleteModal(false);
+    setNeedsReplacement(false);
+    setReplacementStateId("");
+    setIssueCount(0);
   };
 
   return (
     <>
       <AlertModalCore
-        handleClose={() => setIsDeleteModal(false)}
+        handleClose={handleClose}
         handleSubmit={handleDeleteState}
         isSubmitting={isDelete}
         isOpen={isDeleteModal}
-        title="Delete State"
+        title={needsReplacement ? "Replace and Delete State" : "Delete State"}
+        primaryButtonText={needsReplacement ? "Move Issues & Delete" : undefined}
         content={
-          <>
-            Are you sure you want to delete state- <span className="font-medium text-primary">{state?.name}</span>? All
-            of the data related to the state will be permanently removed. This action cannot be undone.
-          </>
+          needsReplacement ? (
+            <div className="space-y-3">
+              <p>
+                <span className="font-medium text-primary">{issueCount}</span> issues are in this state. Choose a
+                replacement state before deleting.
+              </p>
+              <div className="space-y-1.5">
+                <label className="text-body-xs-medium text-secondary">Replacement State</label>
+                <select
+                  className="w-full rounded-md border border-subtle bg-surface-1 px-3 py-2 text-body-sm-regular text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+                  value={replacementStateId}
+                  onChange={(e) => setReplacementStateId(e.target.value)}
+                >
+                  <option value="">Select a replacement state...</option>
+                  {availableReplacements.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.group})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {!replacementStateId && (
+                <p className="text-body-xs-regular text-danger-primary">
+                  Please select a replacement state to proceed.
+                </p>
+              )}
+            </div>
+          ) : (
+            <>
+              Are you sure you want to delete state-{" "}
+              <span className="font-medium text-primary">{state?.name}</span>? All of the data related to the state
+              will be permanently removed. This action cannot be undone.
+            </>
+          )
         }
       />
 

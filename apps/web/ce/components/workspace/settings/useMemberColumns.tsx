@@ -12,6 +12,7 @@ import { renderFormattedDate } from "@plane/utils";
 import { MemberHeaderColumn } from "@/components/project/member-header-column";
 import type { RowData } from "@/components/workspace/settings/member-columns";
 import { AccountTypeColumn, NameColumn } from "@/components/workspace/settings/member-columns";
+import { MemberProjectAssignments } from "@/components/workspace/settings/member-project-assignments";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import type { IMemberFilters } from "@/store/member/utils";
@@ -19,6 +20,7 @@ import type { IMemberFilters } from "@/store/member/utils";
 export const useMemberColumns = () => {
   // states
   const [removeMemberModal, setRemoveMemberModal] = useState<RowData | null>(null);
+  const [expandedProjectMemberId, setExpandedProjectMemberId] = useState<string | null>(null);
 
   const { workspaceSlug } = useParams();
 
@@ -107,6 +109,45 @@ export const useMemberColumns = () => {
       tdRender: (rowData: RowData) => <AccountTypeColumn rowData={rowData} workspaceSlug={workspaceSlug} />,
     },
 
+    // Project Assignments column (admin-only)
+    ...(isAdmin
+      ? [
+          {
+            key: "Projects",
+            content: "Projects",
+            tdRender: (rowData: RowData) => {
+              if (isSuspended(rowData)) return null;
+              // Don't show for workspace admins (they have unrestricted access)
+              if (rowData.role === EUserPermissions.ADMIN) {
+                return <span className="text-caption-sm-regular text-placeholder">All projects</span>;
+              }
+              const isExpanded = expandedProjectMemberId === rowData.member.id;
+              return (
+                <div>
+                  <button
+                    type="button"
+                    className="text-caption-sm-medium text-accent-primary hover:underline"
+                    onClick={() =>
+                      setExpandedProjectMemberId(isExpanded ? null : rowData.member.id)
+                    }
+                  >
+                    {isExpanded ? "Hide" : "Manage"}
+                  </button>
+                  {isExpanded && workspaceSlug && (
+                    <div className="absolute left-0 right-0 z-10 mt-2 rounded-md border border-subtle bg-surface-1 shadow-lg">
+                      <MemberProjectAssignments
+                        workspaceSlug={workspaceSlug.toString()}
+                        memberId={rowData.member.id}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            },
+          },
+        ]
+      : []),
+
     {
       key: "Authentication",
       content: t("workspace_settings.settings.members.details.authentication"),
@@ -134,3 +175,4 @@ export const useMemberColumns = () => {
   ];
   return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };
 };
+

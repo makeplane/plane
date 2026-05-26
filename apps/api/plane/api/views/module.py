@@ -42,6 +42,7 @@ from plane.db.models import (
 from .base import BaseAPIView
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
+from plane.utils.done_lock import check_issue_done_lock
 from plane.utils.openapi import (
     module_docs,
     module_issue_docs,
@@ -668,6 +669,17 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         issues = request.data.get("issues", [])
         if not len(issues):
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check done-lock for all issues being added
+        locked_issues = Issue.objects.filter(
+            pk__in=issues, state__group="completed"
+        ).values_list("id", flat=True)
+        if locked_issues:
+            return Response(
+                {"error": "This issue is in Done state. Change the state to make edits."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=module_id)
 
         issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issues).values_list(

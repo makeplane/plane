@@ -264,3 +264,136 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
             project_members_dict[str(project_id)].append(project_member)
 
         return Response(project_members_dict, status=status.HTTP_200_OK)
+
+
+class WorkspaceMemberProjectsEndpoint(BaseAPIView):
+    """
+    Endpoint for admins to view and manage a workspace member's project assignments.
+    GET  - List all projects and which ones the member is assigned to.
+    PUT  - Set the member's project assignments (add/remove).
+    """
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    def get(self, request, slug, member_id):
+        """Return all workspace projects with an `is_member` flag for the given user."""
+        # Verify the target member exists in the workspace
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member_id=member_id, is_active=True
+            )
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Get all non-archived projects in the workspace
+        workspace_projects = Project.objects.filter(
+            workspace__slug=slug, archived_at__isnull=True
+        ).values("id", "name", "identifier", "logo_props")
+
+        # Get the member's active project memberships
+        member_project_ids = set(
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member_id=member_id,
+                is_active=True,
+            ).values_list("project_id", flat=True)
+        )
+
+        # Build response with is_member flag
+        projects_data = []
+        for project in workspace_projects:
+            projects_data.append(
+                {
+                    **project,
+                    "is_member": str(project["id"]) in {str(pid) for pid in member_project_ids},
+                }
+            )
+
+        return Response(projects_data, status=status.HTTP_200_OK)
+
+    @allow_permission(allowed_roles=[ROLE.ADMIN], level="WORKSPACE")
+    def put(self, request, slug, member_id):
+        """
+        Set the member's project assignments.
+        Expects: { "project_ids": ["uuid1", "uuid2", ...] }
+        Projects not in the list will have the member deactivated.
+        Projects in the list will have the member activated or created.
+        """
+        project_ids = request.data.get("project_ids", [])
+
+        # Verify the target member exists in the workspace
+        try:
+            workspace_member = WorkspaceMember.objects.get(
+                workspace__slug=slug, member_id=member_id, is_active=True
+            )
+        except WorkspaceMember.DoesNotExist:
+            return Response(
+                {"error": "Workspace member not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Admins cannot have their project access restricted
+        if workspace_member.role == ROLE.ADMIN.value:
+            return Response(
+                {"error": "Cannot modify project assignments for workspace admins"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Validate all project_ids belong to this workspace
+        valid_projects = Project.objects.filter(
+            workspace__slug=slug,
+            id__in=project_ids,
+            archived_at__isnull=True,
+        )
+        valid_project_ids = set(str(p.id) for p in valid_projects)
+        requested_project_ids = set(str(pid) for pid in project_ids)
+
+        if requested_project_ids - valid_project_ids:
+            return Response(
+                {"error": "One or more project IDs are invalid"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Get current active project memberships for the user
+        current_memberships = ProjectMember.objects.filter(
+            workspace__slug=slug,
+            member_id=member_id,
+        )
+
+        current_active_project_ids = set(
+            str(pm.project_id) for pm in current_memberships if pm.is_active
+        )
+
+        # Projects to add (in requested but not currently active)
+        to_add = requested_project_ids - current_active_project_ids
+        # Projects to remove (currently active but not in requested)
+        to_remove = current_active_project_ids - requested_project_ids
+
+        # Deactivate removed projects
+        if to_remove:
+            ProjectMember.objects.filter(
+                workspace__slug=slug,
+                member_id=member_id,
+                project_id__in=to_remove,
+                is_active=True,
+            ).update(is_active=False, updated_at=timezone.now())
+
+        # Add/reactivate projects
+        for project in valid_projects:
+            if str(project.id) in to_add:
+                pm, created = ProjectMember.objects.get_or_create(
+                    project=project,
+                    member_id=member_id,
+                    defaults={
+                        "role": 15,  # Default project role = Member
+                        "workspace_id": project.workspace_id,
+                    },
+                )
+                if not created and not pm.is_active:
+                    pm.is_active = True
+                    pm.save(update_fields=["is_active", "updated_at"])
+
+        return Response({"message": "Project assignments updated"}, status=status.HTTP_200_OK)
+

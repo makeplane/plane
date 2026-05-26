@@ -73,6 +73,7 @@ from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.timezone_converter import user_timezone_converter
+from plane.utils.done_lock import check_issue_done_lock
 
 from .. import BaseAPIView, BaseViewSet
 
@@ -614,6 +615,11 @@ class IssueViewSet(BaseViewSet):
 
     @allow_permission(allowed_roles=[ROLE.ADMIN, ROLE.MEMBER], creator=True, model=Issue)
     def partial_update(self, request, slug, project_id, pk=None):
+        # Check if the issue is in a completed (Done) state and block edits
+        lock_response = check_issue_done_lock(pk, request_data=request.data, allow_state_change=True)
+        if lock_response:
+            return lock_response
+
         queryset = self.get_queryset()
         queryset = self.apply_annotations(queryset)
 

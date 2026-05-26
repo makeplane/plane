@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/common/empty-state";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
+import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useAppRouter } from "@/hooks/use-app-router";
 // local components
@@ -81,6 +82,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
   } = useIssues(EIssuesStoreType.ARCHIVED);
   const { allowPermissions } = useUserPermissions();
   const { issueDetailSidebarCollapsed } = useAppTheme();
+  const { getStateById } = useProjectState();
 
   const issueOperations: TIssueOperations = useMemo(
     () => ({
@@ -95,12 +97,21 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
         try {
           await updateIssue(workspaceSlug, projectId, issueId, data);
         } catch (error) {
-          console.log("Error in updating issue:", error);
-          setToast({
-            title: t("common.error.label"),
-            type: TOAST_TYPE.ERROR,
-            message: t("entity.update.failed", { entity: t("issue.label") }),
-          });
+          const err = error as { status?: number; data?: { error?: string } };
+          if (err?.status === 403 && err?.data?.error?.includes("Done state")) {
+            setToast({
+              title: t("common.error.label"),
+              type: TOAST_TYPE.ERROR,
+              message: "This issue is in Done state. Change the state to make edits.",
+            });
+          } else {
+            console.log("Error in updating issue:", error);
+            setToast({
+              title: t("common.error.label"),
+              type: TOAST_TYPE.ERROR,
+              message: t("entity.update.failed", { entity: t("issue.label") }),
+            });
+          }
         }
       },
       remove: async (workspaceSlug: string, projectId: string, issueId: string) => {
@@ -217,6 +228,9 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
 
   // issue details
   const issue = getIssueById(issueId);
+  // checking if issue is in Done (completed) state
+  const stateDetails = getStateById(issue?.state_id);
+  const isDoneLocked = stateDetails?.group === "completed";
   // checking if issue is editable, based on user role
   const isEditable = allowPermissions(
     [EUserPermissions.ADMIN, EUserPermissions.MEMBER],
@@ -245,8 +259,9 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
               projectId={projectId}
               issueId={issueId}
               issueOperations={issueOperations}
-              isEditable={isEditable}
+              isEditable={isEditable && !isDoneLocked}
               isArchived={is_archived}
+              isDoneLocked={isDoneLocked}
             />
           </div>
           <div
@@ -259,6 +274,7 @@ export const IssueDetailRoot = observer(function IssueDetailRoot(props: TIssueDe
               issueId={issueId}
               issueOperations={issueOperations}
               isEditable={!is_archived && isEditable}
+              isDoneLocked={isDoneLocked}
             />
           </div>
         </div>

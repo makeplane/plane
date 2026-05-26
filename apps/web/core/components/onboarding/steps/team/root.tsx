@@ -295,6 +295,7 @@ export const InviteTeamStep = observer(function InviteTeamStep(props: Props) {
         emails: payload.emails.map((email) => ({
           email: email.email,
           role: email.role,
+          project_ids: [],
         })),
       })
       .then(async () => {

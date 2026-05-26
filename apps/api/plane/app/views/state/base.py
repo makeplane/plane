@@ -8,6 +8,7 @@ from collections import defaultdict
 
 # Django imports
 from django.db.utils import IntegrityError
+from django.db import transaction
 
 # Third party imports
 from rest_framework.response import Response
@@ -58,7 +59,7 @@ class StateViewSet(BaseViewSet):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, project_id, pk):
         try:
             state = State.objects.get(pk=pk, project_id=project_id, workspace__slug=slug)
@@ -120,16 +121,54 @@ class StateViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check for any issues in the state
-        issue_exist = Issue.objects.filter(state=pk).exists()
-
-        if issue_exist:
+        # Block deletion of the only state in a group
+        group_state_count = State.objects.filter(
+            project_id=project_id, workspace__slug=slug, group=state.group, is_triage=False
+        ).count()
+        if group_state_count <= 1:
             return Response(
-                {"error": "The state is not empty, only empty states can be deleted"},
+                {"error": "Cannot delete the only state in this group."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        state.delete()
+        # Check for any issues in the state
+        issue_count = Issue.objects.filter(state=pk).count()
+
+        if issue_count > 0:
+            replacement_state_id = request.GET.get("replacement_state_id") or request.data.get("replacement_state_id")
+            if not replacement_state_id:
+                return Response(
+                    {
+                        "error": f"{issue_count} issues are in this state. Provide replacement_state_id to move them.",
+                        "issue_count": issue_count,
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Validate replacement state exists and belongs to same project
+            try:
+                replacement_state = State.objects.get(
+                    pk=replacement_state_id, project_id=project_id, workspace__slug=slug, is_triage=False
+                )
+            except State.DoesNotExist:
+                return Response(
+                    {"error": "Replacement state not found in this project."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if str(replacement_state.id) == str(pk):
+                return Response(
+                    {"error": "Replacement state cannot be the same as the state being deleted."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Atomically move issues and delete state
+            with transaction.atomic():
+                Issue.objects.filter(state=pk).update(state=replacement_state)
+                state.delete()
+        else:
+            state.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

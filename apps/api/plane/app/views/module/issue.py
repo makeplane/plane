@@ -40,6 +40,7 @@ from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
 from .. import BaseViewSet
 from plane.utils.host import base_host
+from plane.utils.done_lock import check_issue_done_lock
 
 
 class ModuleIssueViewSet(BaseViewSet):
@@ -212,6 +213,12 @@ class ModuleIssueViewSet(BaseViewSet):
         issues = request.data.get("issues", [])
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Block adding issues that are in completed (Done) state
+        for issue_id in issues:
+            lock_response = check_issue_done_lock(issue_id)
+            if lock_response:
+                return lock_response
         project = Project.objects.get(pk=project_id)
         _ = ModuleIssue.objects.bulk_create(
             [
@@ -248,6 +255,11 @@ class ModuleIssueViewSet(BaseViewSet):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     # add multiple module inside an issue and remove multiple modules from an issue
     def create_issue_modules(self, request, slug, project_id, issue_id):
+        # Block adding/removing modules to/from an issue in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         modules = request.data.get("modules", [])
         removed_modules = request.data.get("removed_modules", [])
         project = Project.objects.get(pk=project_id)
@@ -316,6 +328,11 @@ class ModuleIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, module_id, issue_id):
+        # Block removing issues that are in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         module_issue = ModuleIssue.objects.filter(
             workspace__slug=slug,
             project_id=project_id,

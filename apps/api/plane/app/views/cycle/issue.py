@@ -35,6 +35,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.utils.host import base_host
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
+from plane.utils.done_lock import check_issue_done_lock
 
 
 class CycleIssueViewSet(BaseViewSet):
@@ -227,6 +228,12 @@ class CycleIssueViewSet(BaseViewSet):
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Block adding issues that are in completed (Done) state
+        for issue_id in issues:
+            lock_response = check_issue_done_lock(issue_id)
+            if lock_response:
+                return lock_response
+
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=cycle_id)
 
         if cycle.end_date is not None and cycle.end_date < timezone.now():
@@ -298,6 +305,11 @@ class CycleIssueViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def destroy(self, request, slug, project_id, cycle_id, issue_id):
+        # Block removing issues that are in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         cycle_issue = CycleIssue.objects.filter(
             issue_id=issue_id,
             workspace__slug=slug,

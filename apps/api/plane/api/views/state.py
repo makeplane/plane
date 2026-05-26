@@ -3,7 +3,7 @@
 # See the LICENSE file for details.
 
 # Django imports
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 # Third party imports
 from rest_framework import status
@@ -12,8 +12,8 @@ from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
 
 # Module imports
 from plane.api.serializers import StateSerializer
-from plane.app.permissions import ProjectEntityPermission
-from plane.db.models import Issue, State
+from plane.app.permissions import ProjectEntityPermission, ProjectAdminPermission
+from plane.db.models import Issue, State, ProjectMember
 from .base import BaseAPIView
 from plane.utils.openapi import (
     state_docs,
@@ -41,7 +41,7 @@ class StateListCreateAPIEndpoint(BaseAPIView):
 
     serializer_class = StateSerializer
     model = State
-    permission_classes = [ProjectEntityPermission]
+    permission_classes = [ProjectAdminPermission]
     use_read_replica = True
 
     def get_queryset(self):
@@ -167,6 +167,12 @@ class StateDetailAPIEndpoint(BaseAPIView):
     permission_classes = [ProjectEntityPermission]
     use_read_replica = True
 
+    def get_permissions(self):
+        """GET is accessible to all project members; write ops require admin."""
+        if self.request.method in ("PATCH", "PUT", "DELETE"):
+            return [ProjectAdminPermission()]
+        return [ProjectEntityPermission()]
+
     def get_queryset(self):
         return (
             State.objects.filter(workspace__slug=self.kwargs.get("slug"))
@@ -226,7 +232,9 @@ class StateDetailAPIEndpoint(BaseAPIView):
         """Delete state
 
         Permanently remove a workflow state from a project.
-        Default states and states with existing work items cannot be deleted.
+        Default states cannot be deleted. If issues exist in the state,
+        a replacement_state_id must be provided to move them first.
+        Cannot delete the only state in a group.
         """
         state = State.objects.get(is_triage=False, pk=state_id, project_id=project_id, workspace__slug=slug)
 
@@ -236,16 +244,54 @@ class StateDetailAPIEndpoint(BaseAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Check for any issues in the state
-        issue_exist = Issue.objects.filter(state=state_id).exists()
-
-        if issue_exist:
+        # Block deletion of the only state in a group
+        group_state_count = State.objects.filter(
+            project_id=project_id, workspace__slug=slug, group=state.group, is_triage=False
+        ).count()
+        if group_state_count <= 1:
             return Response(
-                {"error": "The state is not empty, only empty states can be deleted"},
+                {"error": "Cannot delete the only state in this group."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        state.delete()
+        # Check for any issues in the state
+        issue_count = Issue.objects.filter(state=state_id).count()
+
+        if issue_count > 0:
+            replacement_state_id = request.GET.get("replacement_state_id")
+            if not replacement_state_id:
+                return Response(
+                    {
+                        "error": f"{issue_count} issues are in this state. Provide replacement_state_id to move them.",
+                        "issue_count": issue_count,
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Validate replacement state exists and belongs to same project
+            try:
+                replacement_state = State.objects.get(
+                    pk=replacement_state_id, project_id=project_id, workspace__slug=slug, is_triage=False
+                )
+            except State.DoesNotExist:
+                return Response(
+                    {"error": "Replacement state not found in this project."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if str(replacement_state.id) == str(state_id):
+                return Response(
+                    {"error": "Replacement state cannot be the same as the state being deleted."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Atomically move issues and delete state
+            with transaction.atomic():
+                Issue.objects.filter(state=state_id).update(state=replacement_state)
+                state.delete()
+        else:
+            state.delete()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @state_docs(

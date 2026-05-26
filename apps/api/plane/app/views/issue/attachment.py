@@ -27,6 +27,7 @@ from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.utils.host import base_host
+from plane.utils.done_lock import check_issue_done_lock
 
 
 class IssueAttachmentEndpoint(BaseAPIView):
@@ -36,6 +37,11 @@ class IssueAttachmentEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
+        # Block attachment creation on issues in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         serializer = IssueAttachmentSerializer(data=request.data)
         workspace = Workspace.objects.get(slug=slug)
         if serializer.is_valid():
@@ -98,6 +104,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def post(self, request, slug, project_id, issue_id):
+        # Block attachment creation on issues in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", False)
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))

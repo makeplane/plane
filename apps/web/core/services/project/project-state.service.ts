@@ -72,8 +72,14 @@ export class ProjectStateService extends APIService {
       });
   }
 
-  async deleteState(workspaceSlug: string, projectId: string, stateId: string): Promise<any> {
-    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/`)
+  async deleteState(
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    replacementStateId?: string
+  ): Promise<any> {
+    const query = replacementStateId ? `?replacement_state_id=${replacementStateId}` : "";
+    return this.delete(`/api/workspaces/${workspaceSlug}/projects/${projectId}/states/${stateId}/${query}`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response;

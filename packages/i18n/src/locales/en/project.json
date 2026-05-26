@@ -321,8 +321,8 @@
         }
       },
       "page": {
-        "title": "Pages are not enabled for the project.",
-        "description": "Pages are the building blocks of your project. Enable pages from project settings to start using them.",
+        "title": "Wiki is not enabled for the project.",
+        "description": "Wikis are the building blocks of your project. Enable wiki from project settings to start using them.",
         "primary_button": {
           "text": "Manage features"
         }

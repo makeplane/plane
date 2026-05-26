@@ -15,6 +15,7 @@ import { CustomSelect, Input } from "@plane/ui";
 import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
 import type { InvitationFormValues } from "@/hooks/use-workspace-invitation";
 
 type TInvitationFieldsProps = {
@@ -39,87 +40,126 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
   const { t } = useTranslation();
   // store hooks
   const { workspaceInfoBySlug } = useUserPermissions();
+  const { workspaceProjectIds, getProjectById } = useProject();
   // derived values
   const currentWorkspaceRole = workspaceInfoBySlug(workspaceSlug.toString())?.role;
 
   return (
     <div className={cn("mb-3 space-y-4", className)}>
       {fields.map((field, index) => (
-        <div
-          key={field.id}
-          className="group relative mb-1 flex w-full items-start justify-between gap-x-4 text-body-xs-regular"
-        >
-          <div className="w-full">
-            <Controller
-              control={control}
-              name={`emails.${index}.email`}
-              rules={{
-                required: t("workspace_settings.settings.members.modal.errors.required"),
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: t("workspace_settings.settings.members.modal.errors.invalid"),
-                },
-              }}
-              render={({ field: { value, onChange, ref } }) => (
-                <>
-                  <Input
-                    id={`emails.${index}.email`}
-                    name={`emails.${index}.email`}
-                    type="text"
-                    value={value}
-                    onChange={onChange}
-                    ref={ref}
-                    hasError={Boolean(errors.emails?.[index]?.email)}
-                    placeholder={t("workspace_settings.settings.members.modal.placeholder")}
-                    className="w-full text-caption-sm-regular sm:text-body-xs-regular"
-                  />
-                  {errors.emails?.[index]?.email && (
-                    <span className="ml-1 text-caption-sm-regular text-danger-primary">
-                      {errors.emails?.[index]?.email?.message}
-                    </span>
-                  )}
-                </>
-              )}
-            />
-          </div>
-          <div className="flex shrink-0 items-center justify-between gap-2">
-            <div className="flex flex-col gap-1">
+        <div key={field.id} className="group relative mb-1 space-y-3">
+          <div className="flex w-full items-start justify-between gap-x-4 text-body-xs-regular">
+            <div className="w-full">
               <Controller
                 control={control}
-                name={`emails.${index}.role`}
-                rules={{ required: true }}
-                render={({ field: { value, onChange } }) => (
-                  <CustomSelect
-                    value={value}
-                    label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
-                    onChange={onChange}
-                    className="w-24 flex-grow"
-                    input
-                  >
-                    {Object.entries(ROLE).map(([key, value]) => {
-                      if (currentWorkspaceRole && currentWorkspaceRole >= parseInt(key))
-                        return (
-                          <CustomSelect.Option key={key} value={parseInt(key)}>
-                            {value}
-                          </CustomSelect.Option>
-                        );
-                    })}
-                  </CustomSelect>
+                name={`emails.${index}.email`}
+                rules={{
+                  required: t("workspace_settings.settings.members.modal.errors.required"),
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: t("workspace_settings.settings.members.modal.errors.invalid"),
+                  },
+                }}
+                render={({ field: { value, onChange, ref } }) => (
+                  <>
+                    <Input
+                      id={`emails.${index}.email`}
+                      name={`emails.${index}.email`}
+                      type="text"
+                      value={value}
+                      onChange={onChange}
+                      ref={ref}
+                      hasError={Boolean(errors.emails?.[index]?.email)}
+                      placeholder={t("workspace_settings.settings.members.modal.placeholder")}
+                      className="w-full text-caption-sm-regular sm:text-body-xs-regular"
+                    />
+                    {errors.emails?.[index]?.email && (
+                      <span className="ml-1 text-caption-sm-regular text-danger-primary">
+                        {errors.emails?.[index]?.email?.message}
+                      </span>
+                    )}
+                  </>
                 )}
               />
             </div>
-            {fields.length > 1 && (
-              <div className="flex-item flex w-6">
-                <button
-                  type="button"
-                  className="place-items-center self-center rounded-sm"
-                  onClick={() => remove(index)}
-                >
-                  <CloseIcon className="h-4 w-4 text-secondary" />
-                </button>
+            <div className="flex shrink-0 items-center justify-between gap-2">
+              <div className="flex flex-col gap-1">
+                <Controller
+                  control={control}
+                  name={`emails.${index}.role`}
+                  rules={{ required: true }}
+                  render={({ field: { value, onChange } }) => (
+                    <CustomSelect
+                      value={value}
+                      label={<span className="text-caption-sm-regular sm:text-body-xs-regular">{ROLE[value]}</span>}
+                      onChange={onChange}
+                      className="w-24 flex-grow"
+                      input
+                    >
+                      {Object.entries(ROLE).map(([key, value]) => {
+                        if (currentWorkspaceRole && currentWorkspaceRole >= parseInt(key))
+                          return (
+                            <CustomSelect.Option key={key} value={parseInt(key)}>
+                              {value}
+                            </CustomSelect.Option>
+                          );
+                      })}
+                    </CustomSelect>
+                  )}
+                />
               </div>
-            )}
+              {fields.length > 1 && (
+                <div className="flex-item flex w-6">
+                  <button
+                    type="button"
+                    className="place-items-center self-center rounded-sm"
+                    onClick={() => remove(index)}
+                  >
+                    <CloseIcon className="h-4 w-4 text-secondary" />
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
+          {/* Project assignment checkboxes */}
+          {workspaceProjectIds && workspaceProjectIds.length > 0 && (
+            <Controller
+              control={control}
+              name={`emails.${index}.project_ids`}
+              render={({ field: { value: selectedProjectIds, onChange } }) => (
+                <div className="rounded-md border border-subtle bg-surface-1 p-3">
+                  <p className="mb-2 text-caption-sm-medium text-secondary">Assign Projects (Optional)</p>
+                  <div className="max-h-32 space-y-1.5 overflow-y-auto">
+                    {workspaceProjectIds.map((projectId) => {
+                      const project = getProjectById(projectId);
+                      if (!project) return null;
+                      const isChecked = selectedProjectIds?.includes(projectId) ?? false;
+                      return (
+                        <label
+                          key={projectId}
+                          className="flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 text-caption-sm-regular hover:bg-surface-2"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {
+                              const updated = isChecked
+                                ? selectedProjectIds.filter((id: string) => id !== projectId)
+                                : [...(selectedProjectIds || []), projectId];
+                              onChange(updated);
+                            }}
+                            className="h-3.5 w-3.5 rounded border-subtle accent-accent-primary"
+                          />
+                          <span className="truncate text-primary">{project.name}</span>
+                          <span className="ml-auto shrink-0 text-placeholder">{project.identifier}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            />
+          )}
         </div>
       ))}
     </div>

@@ -21,6 +21,7 @@ from plane.db.models import IssueLink
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 from plane.utils.host import base_host
+from plane.utils.done_lock import check_issue_done_lock
 
 
 class IssueLinkViewSet(BaseViewSet):
@@ -46,6 +47,11 @@ class IssueLinkViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id, issue_id):
+        # Block link creation on issues in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         serializer = IssueLinkSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
@@ -69,6 +75,11 @@ class IssueLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def partial_update(self, request, slug, project_id, issue_id, pk):
+        # Block link edits on issues in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
@@ -96,6 +107,11 @@ class IssueLinkViewSet(BaseViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, slug, project_id, issue_id, pk):
+        # Block link deletion on issues in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
         issue_activity.delay(

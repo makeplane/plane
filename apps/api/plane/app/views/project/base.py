@@ -101,29 +101,19 @@ class ProjectViewSet(BaseViewSet):
     def list_detail(self, request, slug):
         fields = [field for field in request.GET.get("fields", "").split(",") if field]
         projects = self.get_queryset().order_by("sort_order", "name")
-        if WorkspaceMember.objects.filter(
+        # Workspace admins see all projects; members and guests only see
+        # projects they are explicitly assigned to via ProjectMember.
+        is_workspace_admin = WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=slug,
             is_active=True,
-            role=ROLE.GUEST.value,
-        ).exists():
+            role=ROLE.ADMIN.value,
+        ).exists()
+
+        if not is_workspace_admin:
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
-            )
-
-        if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.MEMBER.value,
-        ).exists():
-            projects = projects.filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
             )
 
         if request.GET.get("per_page", False) and request.GET.get("cursor", False):
@@ -191,29 +181,19 @@ class ProjectViewSet(BaseViewSet):
             "updated_by",
         )
 
-        if WorkspaceMember.objects.filter(
+        # Workspace admins see all projects; members and guests only see
+        # projects they are explicitly assigned to via ProjectMember.
+        is_workspace_admin = WorkspaceMember.objects.filter(
             member=request.user,
             workspace__slug=slug,
             is_active=True,
-            role=ROLE.GUEST.value,
-        ).exists():
+            role=ROLE.ADMIN.value,
+        ).exists()
+
+        if not is_workspace_admin:
             projects = projects.filter(
                 project_projectmember__member=self.request.user,
                 project_projectmember__is_active=True,
-            )
-
-        if WorkspaceMember.objects.filter(
-            member=request.user,
-            workspace__slug=slug,
-            is_active=True,
-            role=ROLE.MEMBER.value,
-        ).exists():
-            projects = projects.filter(
-                Q(
-                    project_projectmember__member=self.request.user,
-                    project_projectmember__is_active=True,
-                )
-                | Q(network=2)
             )
         return Response(projects, status=status.HTTP_200_OK)
 
@@ -224,19 +204,21 @@ class ProjectViewSet(BaseViewSet):
         if project is None:
             return Response({"error": "Project does not exist"}, status=status.HTTP_404_NOT_FOUND)
 
+        # Workspace admins can access any project
+        is_workspace_admin = WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=slug,
+            is_active=True,
+            role=ROLE.ADMIN.value,
+        ).exists()
+
         member_ids = [str(project_member.member_id) for project_member in project.members_list]
 
-        if str(request.user.id) not in member_ids:
-            if project.network == ProjectNetwork.SECRET.value:
-                return Response(
-                    {"error": "You do not have permission"},
-                    status=status.HTTP_403_FORBIDDEN,
-                )
-            else:
-                return Response(
-                    {"error": "You are not a member of this project"},
-                    status=status.HTTP_409_CONFLICT,
-                )
+        if str(request.user.id) not in member_ids and not is_workspace_admin:
+            return Response(
+                {"error": "You do not have access to this project"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         recent_visited_task.delay(
             slug=slug,

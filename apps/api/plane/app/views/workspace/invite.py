@@ -27,7 +27,14 @@ from plane.app.serializers import (
 from plane.app.views.base import BaseAPIView
 from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
-from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
+from plane.db.models import (
+    User,
+    Workspace,
+    WorkspaceMember,
+    WorkspaceMemberInvite,
+    Project,
+    ProjectMember,
+)
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
 from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
@@ -85,6 +92,26 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Validate project_ids if provided in any email entry
+        all_project_ids = set()
+        for email in emails:
+            project_ids = email.get("project_ids", [])
+            if project_ids:
+                all_project_ids.update(project_ids)
+
+        # Verify all project_ids belong to this workspace
+        if all_project_ids:
+            valid_project_count = Project.objects.filter(
+                id__in=all_project_ids,
+                workspace=workspace,
+                archived_at__isnull=True,
+            ).count()
+            if valid_project_count != len(all_project_ids):
+                return Response(
+                    {"error": "One or more project IDs are invalid or do not belong to this workspace"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         workspace_invitations = []
         for email in emails:
             try:
@@ -99,6 +126,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                             algorithm="HS256",
                         ),
                         role=email.get("role", 5),
+                        project_ids=email.get("project_ids", []),
                         created_by=request.user,
                     )
                 )
@@ -145,6 +173,33 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         workspace_member_invite = WorkspaceMemberInvite.objects.get(pk=pk, workspace__slug=slug)
         workspace_member_invite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+def _create_project_memberships_from_invite(workspace_invite, user):
+    """
+    Helper to create ProjectMember records from the project_ids stored on a
+    WorkspaceMemberInvite.  Called when an invite is accepted.
+    """
+    project_ids = workspace_invite.project_ids or []
+    if not project_ids:
+        return
+
+    # Only create for projects that exist and belong to the invite's workspace
+    projects = Project.objects.filter(
+        id__in=project_ids,
+        workspace=workspace_invite.workspace,
+        archived_at__isnull=True,
+    )
+
+    for project in projects:
+        ProjectMember.objects.get_or_create(
+            project=project,
+            member=user,
+            defaults={
+                "role": 15,  # Default project role = Member
+                "workspace_id": workspace_invite.workspace_id,
+            },
+        )
 
 
 class WorkspaceJoinEndpoint(BaseAPIView):
@@ -199,6 +254,9 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                             member=user,
                             role=workspace_invite.role,
                         )
+
+                    # Create project memberships from invite
+                    _create_project_memberships_from_invite(workspace_invite, user)
 
                     # Set the user last_workspace_id to the accepted workspace
                     user.last_workspace_id = workspace_invite.workspace.id
@@ -298,6 +356,10 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             ],
             ignore_conflicts=True,
         )
+
+        # Create project memberships from each invite
+        for invitation in workspace_invitations:
+            _create_project_memberships_from_invite(invitation, request.user)
 
         # Delete joined workspace invites
         workspace_invitations.delete()

@@ -20,6 +20,7 @@ from plane.app.permissions import allow_permission, ROLE
 from plane.db.models import IssueReaction
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
+from plane.utils.done_lock import check_issue_done_lock
 
 
 class IssueReactionViewSet(BaseViewSet):
@@ -44,6 +45,11 @@ class IssueReactionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def create(self, request, slug, project_id, issue_id):
+        # Block adding reactions to issues in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(issue_id=issue_id, project_id=project_id, actor=request.user)
@@ -63,6 +69,11 @@ class IssueReactionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def destroy(self, request, slug, project_id, issue_id, reaction_code):
+        # Block removing reactions from issues in completed (Done) state
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         issue_reaction = IssueReaction.objects.get(
             workspace__slug=slug,
             project_id=project_id,

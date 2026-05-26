@@ -86,6 +86,7 @@ from plane.utils.host import base_host
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
+from plane.utils.done_lock import check_issue_done_lock
 from plane.utils.openapi import (
     work_item_docs,
     work_item_relation_docs,
@@ -426,6 +427,13 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         Create a new work item in the specified project with the provided details.
         Supports external ID tracking for integration purposes.
         """
+        # Block creating sub-issues under a Done parent
+        parent_id = request.data.get("parent_id") or request.data.get("parent")
+        if parent_id:
+            lock_response = check_issue_done_lock(parent_id)
+            if lock_response:
+                return lock_response
+
         project = Project.objects.get(pk=project_id)
 
         serializer = IssueSerializer(
@@ -742,6 +750,11 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Partially update an existing work item with the provided fields.
         Supports external ID validation to prevent conflicts.
         """
+        # Check done-lock (allow state_id change only)
+        lock_response = check_issue_done_lock(pk, request_data=request.data, allow_state_change=True)
+        if lock_response:
+            return lock_response
+
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
         project = Project.objects.get(pk=project_id)
         current_instance = json.dumps(IssueSerializer(issue).data, cls=DjangoJSONEncoder)
@@ -1159,6 +1172,11 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
         Add a new external link to a work item with URL, title, and metadata.
         Automatically tracks link creation activity.
         """
+        # Check done-lock
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         serializer = IssueLinkCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(project_id=project_id, issue_id=issue_id)
@@ -1270,6 +1288,11 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         Modify the URL, title, or metadata of an existing issue link.
         Tracks all changes in issue activity logs.
         """
+        # Check done-lock
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
@@ -1308,6 +1331,11 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         Permanently remove an external link from a work item.
         Records deletion activity for audit purposes.
         """
+        # Check done-lock
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         issue_link = IssueLink.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         current_instance = json.dumps(IssueLinkSerializer(issue_link).data, cls=DjangoJSONEncoder)
         issue_activity.delay(
@@ -1418,6 +1446,11 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
         Add a new comment to a work item with HTML content.
         Supports external ID tracking for integration purposes.
         """
+        # Check done-lock
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         # Validation check if the issue already exists
         if (
             request.data.get("external_id")
@@ -1567,6 +1600,11 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Modify the content of an existing comment on a work item.
         Validates external ID uniqueness if provided.
         """
+        # Check done-lock
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
@@ -1636,6 +1674,11 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Permanently remove a comment from a work item.
         Records deletion activity for audit purposes.
         """
+        # Check done-lock
+        lock_response = check_issue_done_lock(issue_id)
+        if lock_response:
+            return lock_response
+
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
         issue_comment.delete()

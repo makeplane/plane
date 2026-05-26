@@ -345,11 +345,11 @@
         "toggle_description": "Project members will be able to create and edit views."
       },
       "pages": {
-        "title": "Pages",
-        "short_title": "Pages",
+        "title": "Wiki",
+        "short_title": "Wiki",
         "description": "Create and edit free-form content; notes, docs, anything.",
-        "toggle_title": "Enable pages",
-        "toggle_description": "Project members will be able to create and edit pages."
+        "toggle_title": "Enable wiki",
+        "toggle_description": "Project members will be able to create and edit wikis."
       },
       "intake": {
         "intake_responsibility": "Intake responsibility",

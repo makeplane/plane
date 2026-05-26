@@ -73,7 +73,7 @@ export const PageDetailsHeader = observer(function PageDetailsHeader() {
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
-                  label="Pages"
+                  label="Wiki"
                   href={`/${workspaceSlug}/projects/${projectId}/pages/`}
                   icon={<PageIcon className="h-4 w-4 text-tertiary" />}
                 />

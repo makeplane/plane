@@ -36,6 +36,7 @@ export default defineConfig(() => ({
   },
   server: {
     host: "0.0.0.0",
+    allowedHosts: true,
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));
