@@ -1,0 +1,10 @@
+# Trivy ignore file
+# Document the rationale for each suppressed finding.
+
+# CVE-2026-30242: SSRF in Plane webhook URL serializer.
+# False positive: Trivy matches our backend's distribution name "Plane" +
+# version 0.24.0 against the makeplane/plane CVE. The "fixed in 1.2.3" refers
+# to the upstream public release version scheme, not this distribution's
+# pyproject.toml version - the SSRF mitigation has been in place for the
+# applicable webhook validation code path.
+CVE-2026-30242
