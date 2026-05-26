@@ -5,7 +5,6 @@
  */
 
 import { useState } from "react";
-import { omit } from "lodash-es";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
@@ -27,6 +26,7 @@ import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
+import { buildDuplicateIssuePayload } from "./build-duplicate-issue-payload";
 import type { MenuItemFactoryProps } from "./helper";
 import { useCycleIssueMenuItems } from "./helper";
 
@@ -67,14 +67,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
-  const duplicateIssuePayload = omit(
-    {
-      ...issue,
-      name: `${issue.name} (copy)`,
-      sourceIssueId: issue.id,
-    },
-    ["id"]
-  );
+  const duplicateIssuePayload = buildDuplicateIssuePayload(issue);
 
   // Menu items and modals using helper
   const menuItemProps: MenuItemFactoryProps = {
@@ -101,15 +94,12 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
 
   const MENU_ITEMS = useCycleIssueMenuItems(menuItemProps);
 
-  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map(function CONTEXT_MENU_ITEMS(item) {
-    return {
-      ...item,
-
-      onClick: () => {
-        item.action();
-      },
-    };
-  });
+  const CONTEXT_MENU_ITEMS = MENU_ITEMS.map((item) => ({
+    ...item,
+    onClick: (): void => {
+      void item.action();
+    },
+  }));
 
   return (
     <>
@@ -195,7 +185,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
                     onClick={() => {
-                      nestedItem.action();
+                      void nestedItem.action();
                     }}
                     className={cn(
                       "flex items-center gap-2",
@@ -230,7 +220,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                item.action();
+                void item.action();
               }}
               className={cn(
                 "flex items-center gap-2",

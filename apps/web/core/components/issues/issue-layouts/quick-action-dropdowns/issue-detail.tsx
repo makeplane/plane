@@ -5,9 +5,8 @@
  */
 
 import { useState } from "react";
-import { omit } from "lodash-es";
 import { observer } from "mobx-react";
-import { useParams, usePathname } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Ellipsis } from "lucide-react";
 // plane imports
 import { ARCHIVABLE_STATE_GROUPS, EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
@@ -27,6 +26,7 @@ import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import { CreateUpdateIssueModal } from "../../issue-modal/modal";
 import type { IQuickActionProps } from "../list/list-view-types";
+import { buildDuplicateIssuePayload } from "./build-duplicate-issue-payload";
 import type { MenuItemFactoryProps } from "./helper";
 import { useWorkItemDetailMenuItems } from "./helper";
 import { IconButton } from "@plane/propel/icon-button";
@@ -60,7 +60,6 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
   } = props;
   // router
   const { workspaceSlug } = useParams();
-  const pathname = usePathname();
   // states
   const [createUpdateIssueModal, setCreateUpdateIssueModal] = useState(false);
   const [issueToEdit, setIssueToEdit] = useState<TIssue | undefined>(undefined);
@@ -91,38 +90,25 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
 
   const isDeletingAllowed = isEditingAllowed;
 
-  const duplicateIssuePayload = omit(
-    {
-      ...issue,
-      name: `${issue.name} (copy)`,
-      sourceIssueId: issue.id,
-    },
-    ["id"]
-  );
+  const duplicateIssuePayload = buildDuplicateIssuePayload(issue);
 
   const customEditAction = () => {
     setCreateUpdateIssueModal(true);
     if (toggleEditIssueModal) toggleEditIssueModal(true);
   };
 
-  const customDeleteAction = async () => {
+  const customDeleteAction = (): Promise<void> => {
     setDeleteIssueModal(true);
     if (toggleDeleteIssueModal) toggleDeleteIssueModal(true);
+    return Promise.resolve();
   };
-
-  const customDuplicateAction = async () => {
-    setDuplicateWorkItemModal(true);
-    if (toggleDuplicateIssueModal) {
-      toggleDuplicateIssueModal(true);
-    }
-  };
-
-  const customArchiveAction = async () => {
+  const customArchiveAction = (): Promise<void> => {
     setArchiveIssueModal(true);
     if (toggleArchiveIssueModal) toggleArchiveIssueModal(true);
+    return Promise.resolve();
   };
 
-  const customRestoreAction = async () => {
+  const customRestoreAction = async (): Promise<void> => {
     if (handleRestore) await handleRestore();
   };
 
@@ -139,9 +125,9 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     isInArchivableGroup,
     setIssueToEdit,
     setCreateUpdateIssueModal: customEditAction,
-    setDeleteIssueModal: customDeleteAction,
-    setArchiveIssueModal: customArchiveAction,
-    setDuplicateWorkItemModal: customDuplicateAction,
+    setDeleteIssueModal: setDeleteIssueModal,
+    setArchiveIssueModal: setArchiveIssueModal,
+    setDuplicateWorkItemModal: setDuplicateWorkItemModal,
     handleDelete: customDeleteAction,
     handleUpdate,
     handleArchive: customArchiveAction,
@@ -184,8 +170,8 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
     return {
       ...item,
 
-      onClick: () => {
-        item.action();
+      onClick: (): void => {
+        void item.action();
       },
     };
   });
@@ -284,7 +270,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
                   <CustomMenu.MenuItem
                     key={nestedItem.key}
                     onClick={() => {
-                      nestedItem.action();
+                      void nestedItem.action();
                     }}
                     className={cn(
                       "flex items-center gap-2",
@@ -319,7 +305,7 @@ export const WorkItemDetailQuickActions = observer(function WorkItemDetailQuickA
             <CustomMenu.MenuItem
               key={item.key}
               onClick={() => {
-                item.action();
+                void item.action();
               }}
               className={cn(
                 "flex items-center gap-2",
