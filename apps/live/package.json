@@ -55,7 +55,7 @@
     "react": "catalog:",
     "sharp": "^0.34.3",
     "uuid": "catalog:",
-    "ws": "^8.18.3",
+    "ws": "^8.20.1",
     "y-prosemirror": "^1.3.7",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.20",
