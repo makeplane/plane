@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P0 — không test = không go-live
-- **Status:** ⬜ Not started (0/4)
+- **Status:** 🟠 Review (4/4 — viết xong 2026-05-27)
 - **Mô tả:** Kế hoạch test tải, security, UAT acceptance
 
 ## Key insights
@@ -21,10 +21,10 @@
 
 ## Todo list
 
-- [ ] `load-test-plan.md` — Kịch bản, metrics, target, success criteria
-- [ ] `load-test-scenarios.md` — Chi tiết: login, list issue, CRUD, dashboard, soak, stress (k6 script)
-- [ ] `security-test-plan.md` — Pen test, OWASP scan, secret leak check
-- [ ] `uat-acceptance-criteria.md` — Tiêu chí UAT pass/fail, sign-off form
+- [x] `load-test-plan.md` — Mục tiêu, môi trường, metrics, target, gate, vai trò
+- [x] `load-test-scenarios.md` — Workload mix, VU profiles (load/stress/soak), k6 pseudo-script
+- [x] `security-test-plan.md` — Trivy/OWASP, auth, TLS, secret leak, audit (air-gap offline)
+- [x] `uat-acceptance-criteria.md` — Test cases, pass/fail, defect severity, sign-off form
 
 ## Success criteria
 

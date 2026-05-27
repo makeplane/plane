@@ -4,12 +4,12 @@ Tài liệu kiểm thử trước go-live và validation định kỳ. Đối t�
 
 ## Danh sách tài liệu
 
-| File                         | Loại test                                          | Status |
-| ---------------------------- | -------------------------------------------------- | ------ |
-| `load-test-plan.md`          | Kế hoạch test tải (k6) — kịch bản, metrics, target | ⬜     |
-| `load-test-scenarios.md`     | Chi tiết kịch bản: login, CRUD, dashboard, soak    | ⬜     |
-| `security-test-plan.md`      | Pen test, OWASP scan, secret leak check            | ⬜     |
-| `uat-acceptance-criteria.md` | Tiêu chí UAT pass/fail                             | ⬜     |
+| File                                                         | Loại test                                          | Status   |
+| ------------------------------------------------------------ | -------------------------------------------------- | -------- |
+| [`load-test-plan.md`](./load-test-plan.md)                   | Kế hoạch test tải (k6) — kịch bản, metrics, target | 🟡 Draft |
+| [`load-test-scenarios.md`](./load-test-scenarios.md)         | Chi tiết kịch bản: login, CRUD, dashboard, soak    | 🟡 Draft |
+| [`security-test-plan.md`](./security-test-plan.md)           | Trivy/OWASP scan, auth, TLS, secret leak, audit    | 🟡 Draft |
+| [`uat-acceptance-criteria.md`](./uat-acceptance-criteria.md) | Tiêu chí UAT pass/fail + sign-off form             | 🟡 Draft |
 
 ## Test gating
 

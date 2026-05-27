@@ -3,7 +3,7 @@
 **Ngày tạo:** 2026-05-15
 **Cập nhật:** 2026-05-27 (reconcile với docs thực tế)
 **Owner:** duonglx
-**Status:** 🟡 In progress
+**Status:** 🟠 Review — tất cả 7 phase drafted (chờ stakeholder duyệt → 🟢 Accepted)
 
 > **Lưu ý rename:** Dự án đổi tên thành **Shinhan Workspace (SHWS)** — hệ quản lý dự án nội bộ SHBVN xây trên nền Plane.so. Boundary trách nhiệm: **SHWS** quản DB tier; **ICTP (hạ tầng)** quản platform/storage tier (EMC). Xem [`adr-009`](../../docs/shbvn-deployment/05-change-log/decisions/adr-009-dc-dr-replication-layering.md).
 
@@ -29,17 +29,17 @@ Tổng: ~40 markdown files theo chuẩn ngân hàng VN.
 
 ## Phases
 
-| #   | File                                                                       | Phạm vi                                  | Status         | Progress                                             |
-| --- | -------------------------------------------------------------------------- | ---------------------------------------- | -------------- | ---------------------------------------------------- |
-| 01  | [`phase-01-system-design-docs.md`](./phase-01-system-design-docs.md)       | TKHT 10 files                            | 🟠 Review      | 10/10 (100%) — drafts xong, chờ duyệt                |
-| 02  | [`phase-02-adr-records.md`](./phase-02-adr-records.md)                     | ADR 8 files                              | 🟠 Review      | 8/8 (100%) — viết xong 2026-05-27 (+adr-009 = 9 ADR) |
-| 03  | [`phase-03-installation-prod.md`](./phase-03-installation-prod.md)         | HDCĐ PROD 5 files + build-station bundle | 🟠 Review      | 7/7 (100%) — drafts xong 2026-05-27                  |
-| 04  | [`phase-04-installation-test-uat.md`](./phase-04-installation-test-uat.md) | HDCĐ TEST/UAT 3 files                    | 🟠 Review      | 3/3 (100%) — viết xong 2026-05-27                    |
-| 05  | [`phase-05-installation-dr.md`](./phase-05-installation-dr.md)             | HDCĐ DR 2 files                          | 🟠 Review      | 2/2 (100%) — viết xong 2026-05-27                    |
-| 06  | [`phase-06-operations-runbooks.md`](./phase-06-operations-runbooks.md)     | HDVH 10 runbooks + 3 docs                | 🟠 Review      | 13/13 (100%) — 10 runbooks + 3 ops docs xong         |
-| 07  | [`phase-07-testing-plans.md`](./phase-07-testing-plans.md)                 | KHKT 4 files                             | ⬜ Not started | 0/4                                                  |
+| #   | File                                                                       | Phạm vi                                  | Status    | Progress                                             |
+| --- | -------------------------------------------------------------------------- | ---------------------------------------- | --------- | ---------------------------------------------------- |
+| 01  | [`phase-01-system-design-docs.md`](./phase-01-system-design-docs.md)       | TKHT 10 files                            | 🟠 Review | 10/10 (100%) — drafts xong, chờ duyệt                |
+| 02  | [`phase-02-adr-records.md`](./phase-02-adr-records.md)                     | ADR 8 files                              | 🟠 Review | 8/8 (100%) — viết xong 2026-05-27 (+adr-009 = 9 ADR) |
+| 03  | [`phase-03-installation-prod.md`](./phase-03-installation-prod.md)         | HDCĐ PROD 5 files + build-station bundle | 🟠 Review | 7/7 (100%) — drafts xong 2026-05-27                  |
+| 04  | [`phase-04-installation-test-uat.md`](./phase-04-installation-test-uat.md) | HDCĐ TEST/UAT 3 files                    | 🟠 Review | 3/3 (100%) — viết xong 2026-05-27                    |
+| 05  | [`phase-05-installation-dr.md`](./phase-05-installation-dr.md)             | HDCĐ DR 2 files                          | 🟠 Review | 2/2 (100%) — viết xong 2026-05-27                    |
+| 06  | [`phase-06-operations-runbooks.md`](./phase-06-operations-runbooks.md)     | HDVH 10 runbooks + 3 docs                | 🟠 Review | 13/13 (100%) — 10 runbooks + 3 ops docs xong         |
+| 07  | [`phase-07-testing-plans.md`](./phase-07-testing-plans.md)                 | KHKT 4 files                             | 🟠 Review | 4/4 (100%) — viết xong 2026-05-27                    |
 
-**Tổng tiến độ nội dung:** ~44 file xong (TKHT 10 + HDCĐ 12 [PROD 7 + UAT 3 + DR 2] + HDVH 13 + ADR 9) + extras + diagram prod. **Còn lại:** Phase 07 KHKT (4 file).
+**Tổng tiến độ nội dung:** ~48 file drafted (TKHT 10 + HDCĐ 12 [PROD 7 + UAT 3 + DR 2] + HDVH 13 + ADR 9 + KHKT 4) + extras + diagram prod. **Tất cả 7 phase ở 🟠 Review.** Còn lại: stakeholder duyệt + sync drift nhỏ (slot name 03-arch, UAT compose approach).
 
 ### Tồn đọng validate (cập nhật 2026-05-27)
 
@@ -47,7 +47,10 @@ Tổng: ~40 markdown files theo chuẩn ngân hàng VN.
 - ✅ `decisions/README.md` — ADR-001..008 đổi sang ⬜ Planned (was "Proposed" gây hiểu lầm có file).
 - ✅ `06-database-design.md` — user chọn **trim** (giữ 1 file để không vỡ ~20 cross-link anchor số): cắt comment/prose dư **800 → 747 dòng**, giữ nguyên §1–§19 + giá trị config. 0 link vỡ.
 - ✅ **8 ADR (001–008) viết xong 2026-05-27** — resolve 8 broken forward-link; index 🟡 Proposed + link.
-- ✅ **Phase 06 hoàn tất (5 runbook cuối) 2026-05-27** — resolve 2 broken link. Còn lại **2 broken link**: `security-test-plan`, `uat-acceptance-criteria` (Phase 07) — resolve khi làm Phase 07.
+- ✅ **Phase 06 hoàn tất (5 runbook cuối) 2026-05-27** — resolve 2 broken link.
+- ✅ **Phase 04+05+07 hoàn tất 2026-05-27** — UAT(3) + DR(2) + KHKT(4). **0 broken link** docs-wide (đã verify).
+- ⚠️ **Drift mới (chưa sync):** `03-architecture-dr-site` §4.1 dùng slot `dr_replica_slot` + auth password; install/06-db dùng `shws_dr_slot` + mTLS cert (canonical). Cần sync 03-arch. Diagram `.mmd` cho UAT + DR vẫn TODO (rỗng/chưa có).
+- ⚠️ **UAT compose approach:** thiết kế nói "không dùng shb override"; install dùng image SHB prebuilt + override (air-gap không build trong bank). Cần chốt + đồng bộ design.
 - ✅ Drift RHEL→9.6 + IP DATA→10.94.10.11 đã đồng bộ toàn bộ docs.
 - ✅ **Drift RHEL** — chốt **9.6** (2026-05-27), đồng bộ overview/arch/README/install docs. Còn xác nhận patch 9.6.z với Infra.
 - ✅ **Drift IP DATA node** — chốt **10.94.10.11** (PROD) / **10.94.20.11** (DR) theo network design; đã sync `06-database-design`.
