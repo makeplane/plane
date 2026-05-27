@@ -1,0 +1,15 @@
+FROM node:22-alpine
+
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY . .
+RUN corepack enable pnpm && pnpm add -g turbo
+RUN pnpm install
+EXPOSE 3005
+
+ENV TURBO_TELEMETRY_DISABLED=1
+
+VOLUME ["/app/node_modules", "/app/silo/node_modules"]
+
+CMD ["pnpm", "dev", "--filter=silo"]

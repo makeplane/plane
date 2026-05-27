@@ -1,0 +1,305 @@
+#!/usr/bin/env bash
+# One script for local Plane dev. You should not need to run zdev,
+# zfix-env, setup.sh, or `docker compose ...` directly.
+#
+# Usage:
+#   ./zstart                   bring up everything (backend + frontends)
+#   ./zstart backend           backend only (skip pnpm dev)
+#   ./zstart stop              stop everything
+#   ./zstart restart [svc]     restart api by default, or a named service
+#                              picks up .py changes; reattaches debugger if PyCharm is listening
+#   ./zstart logs [svc]        tail backend logs (default: api). frontends: ./zstart logs frontends
+#   ./zstart status            show what's running
+#   ./zstart shell [svc]       open a shell in a backend service (default: api)
+#
+# Endpoints:
+#   web      http://localhost:3000
+#   admin    http://localhost:3001/god-mode/
+#   api      http://localhost:8800
+
+set -euo pipefail
+cd "$(dirname "$0")"
+
+PNPM_LOG=/tmp/plane-pnpm-dev.log
+PNPM_PID=/tmp/plane-pnpm-dev.pid
+
+# Tailscale Funnel exposes localhost:3005 (silo) and localhost:3000 (web)
+# at stable HTTPS URLs so Slack can reach them.
+#   silo: https://<host>.<tailnet>.ts.net          (port 443  → :3005)
+#   web:  https://<host>.<tailnet>.ts.net:8443     (port 8443 → :3000)
+# Funnels survive reboots and network changes (the whole reason we moved
+# off cloudflared quick tunnels), so Slack app config is paste-once and
+# never re-paste. Funnels persist independently of `./zstart`; this
+# script just ensures they're up and prints the URLs.
+SILO_FUNNEL_PORT=3005
+WEB_FUNNEL_PORT=3000
+
+# `tailscale funnel status` output is short — easy to grep for the
+# proxied port to see if a funnel is already configured for it.
+_funnel_running_for() {
+  local target_port="$1"
+  tailscale funnel status 2>/dev/null | grep -qE "proxy http://127\\.0\\.0\\.1:${target_port}\\b"
+}
+
+_funnel_hostname() {
+  # Pulls the MagicDNS suffix + this device's hostname from `tailscale status --json`.
+  # Output: `<host>.<tailnet>.ts.net` with no scheme.
+  tailscale status --json 2>/dev/null | python3 -c "
+import json, sys
+d = json.load(sys.stdin)
+suffix = d.get('MagicDNSSuffix') or ''
+self_dns = ((d.get('Self') or {}).get('DNSName') or '').rstrip('.')
+print(self_dns or '')
+" 2>/dev/null
+}
+
+cmd_tunnel_start() {
+  if ! command -v tailscale >/dev/null 2>&1; then
+    echo "==> tailscale not installed — skipping Funnels (brew install --cask tailscale)"
+    return 0
+  fi
+
+  # silo on default 443
+  if _funnel_running_for "$SILO_FUNNEL_PORT"; then
+    echo "==> silo Funnel already running on :443 → :$SILO_FUNNEL_PORT"
+  else
+    echo "==> Starting silo Funnel on :443 → :$SILO_FUNNEL_PORT"
+    tailscale funnel --bg "$SILO_FUNNEL_PORT" >/dev/null 2>&1 || {
+      echo "    silo Funnel failed — check 'tailscale funnel status' and ACL nodeAttrs:[funnel]"
+    }
+  fi
+
+  # web on 8443 (Funnel's only allowed alt port besides 443/10000)
+  if _funnel_running_for "$WEB_FUNNEL_PORT"; then
+    echo "==> web Funnel already running on :8443 → :$WEB_FUNNEL_PORT"
+  else
+    echo "==> Starting web Funnel on :8443 → :$WEB_FUNNEL_PORT"
+    tailscale funnel --bg --https=8443 "$WEB_FUNNEL_PORT" >/dev/null 2>&1 || {
+      echo "    web Funnel failed — check 'tailscale funnel status'"
+    }
+  fi
+
+  local host
+  host=$(_funnel_hostname)
+  if [[ -n "$host" ]]; then
+    local silo_url="https://${host}"
+    local web_url="https://${host}:8443"
+    echo
+    echo "==> Funnel URLs (stable — paste into api.slack.com once, never again):"
+    echo "      silo: $silo_url"
+    echo "      web:  $web_url"
+    echo "    Slack app config:"
+    echo "      Slash Commands → /lplane Request URL  $silo_url/silo/api/slack/commands"
+    echo "      Interactivity & Shortcuts URL          $silo_url/silo/api/slack/interactions"
+    echo "      Event Subscriptions Request URL        $silo_url/silo/api/slack/events"
+    echo "      OAuth Redirect URLs (team + user)      $silo_url/silo/api/slack/team/auth/callback"
+    echo "                                             $silo_url/silo/api/slack/user/auth/callback"
+    echo "      App unfurl domains                     ${host}:8443"
+    echo "    apps/silo/.env should set:"
+    echo "      WEB_BASE_URL=$web_url"
+  fi
+}
+
+cmd_tunnel_stop() {
+  # Funnels are intentionally persistent. `./zstart stop` should NOT
+  # tear them down — that would force re-pasting Slack URLs after every
+  # restart, defeating the whole point of moving to named tunnels. To
+  # disable manually: `tailscale funnel --https=443 off` and
+  # `tailscale funnel --https=8443 off`.
+  return 0
+}
+
+cmd_stop() {
+  if [[ -f "$PNPM_PID" ]]; then
+    PID=$(cat "$PNPM_PID")
+    if kill -0 "$PID" 2>/dev/null; then
+      echo "==> Stopping pnpm dev (pid $PID)"
+      kill "$PID" 2>/dev/null || true
+      # Children (vite/turbo) need a beat to exit.
+      sleep 1
+      pkill -P "$PID" 2>/dev/null || true
+    fi
+    rm -f "$PNPM_PID"
+  fi
+  cmd_tunnel_stop
+  echo "==> Stopping backend containers"
+  ./zdev down
+}
+
+cmd_up() {
+  local with_frontends="$1"
+
+  if [[ ! -f .env || ! -f apps/api/.env ]]; then
+    echo "==> Running ./setup.sh (first-time env generation)"
+    ./setup.sh || true   # corepack/pnpm errors here are fine; we install pnpm separately
+  else
+    echo "==> .env files already exist, skipping setup.sh"
+  fi
+
+  echo "==> Patching frontend .env to point at api on :8800"
+  ./zfix-env
+
+  # Bring up backing services only — api/worker/beat/migrator run on
+  # the host via PyCharm, so we don't start them in docker.
+  cmd_deps_only
+
+  if [[ "$with_frontends" == "yes" ]]; then
+    if [[ -f "$PNPM_PID" ]] && kill -0 "$(cat "$PNPM_PID")" 2>/dev/null; then
+      echo "==> pnpm dev already running (pid $(cat "$PNPM_PID")) — skipping"
+    else
+      echo "==> Starting pnpm dev (logs: $PNPM_LOG)"
+      nohup pnpm dev > "$PNPM_LOG" 2>&1 &
+      echo $! > "$PNPM_PID"
+      sleep 1
+      if ! kill -0 "$(cat "$PNPM_PID")" 2>/dev/null; then
+        echo "    pnpm dev exited immediately — check $PNPM_LOG"
+        rm -f "$PNPM_PID"
+        exit 1
+      fi
+    fi
+  fi
+
+  echo
+  echo "==> Up. Endpoints:"
+  echo "    web      http://localhost:3000"
+  echo "    admin    http://localhost:3001/god-mode/"
+  echo "    api      http://localhost:8800"
+  echo "    silo     http://localhost:3005/silo/health"
+  local _host
+  _host=$(_funnel_hostname)
+  if [[ -n "$_host" ]]; then
+    echo "    silo Funnel  https://${_host}  (Slack webhooks)"
+    echo "    web Funnel   https://${_host}:8443  (unfurl source)"
+  fi
+  if [[ "$with_frontends" == "yes" ]]; then
+    echo "    pnpm dev log: tail -f $PNPM_LOG"
+  fi
+}
+
+cmd_restart() {
+  local svc="${1:-api}"
+  echo "==> Restarting $svc (debugger reattaches if PyCharm is listening)"
+  ./zdev up -d --no-deps --force-recreate "$svc"
+}
+
+cmd_logs() {
+  local svc="${1:-api}"
+  if [[ "$svc" == "frontends" || "$svc" == "pnpm" ]]; then
+    [[ -f "$PNPM_LOG" ]] && exec tail -f "$PNPM_LOG"
+    echo "no pnpm dev log at $PNPM_LOG" >&2
+    exit 1
+  fi
+  if [[ "$svc" == "tunnel" || "$svc" == "funnel" ]]; then
+    # Tailscale Funnel doesn't have a per-tunnel log file; surface
+    # the current state instead.
+    exec tailscale funnel status
+  fi
+  exec ./zdev logs -f --tail=50 "$svc"
+}
+
+cmd_status() {
+  echo "=== backend ==="
+  ./zdev ps
+  echo
+  echo "=== pnpm dev ==="
+  if [[ -f "$PNPM_PID" ]] && kill -0 "$(cat "$PNPM_PID")" 2>/dev/null; then
+    echo "running pid=$(cat "$PNPM_PID")  log=$PNPM_LOG"
+  else
+    echo "not running"
+  fi
+  echo
+  echo "=== Tailscale Funnel ==="
+  if command -v tailscale >/dev/null 2>&1; then
+    tailscale funnel status 2>/dev/null || echo "(no funnels configured)"
+  else
+    echo "tailscale not installed"
+  fi
+}
+
+cmd_shell() {
+  local svc="${1:-api}"
+  exec ./zdev exec "$svc" bash
+}
+
+cmd_stop_svc() {
+  echo "==> Stopping $*"
+  ./zdev stop "$@"
+  ./zdev rm -f "$@"
+}
+
+cmd_deps_only() {
+  # Bring up only the supporting services (postgres, redis, mq, minio).
+  # Used when running Django on the host via PyCharm — leaves api,
+  # worker, beat, migrator stopped so they don't conflict with the
+  # host-side Django process.
+  echo "==> Starting dependency containers (db, redis, mq, minio)"
+  ./zdev up -d plane-db plane-redis plane-mq plane-minio
+
+  if [[ ! -f .env || ! -f apps/api/.env ]]; then
+    echo "==> Running ./setup.sh (first-time env generation)"
+    ./setup.sh || true
+  fi
+
+  # Make sure the host-side .venv exists with deps installed. uv
+  # handles the python version pin and the install.
+  if ! command -v uv >/dev/null 2>&1; then
+    echo "ERROR: uv not found. Install with: brew install uv" >&2
+    exit 1
+  fi
+  if [[ ! -x apps/api/.venv/bin/python ]] \
+     || ! apps/api/.venv/bin/python -c 'import sys; assert sys.version_info >= (3,12)' 2>/dev/null; then
+    echo "==> Creating apps/api/.venv (Python 3.12) and installing requirements via uv"
+    rm -rf apps/api/.venv
+    (cd apps/api && \
+       uv venv --python 3.12 .venv && \
+       uv pip install --python .venv/bin/python -r requirements/local.txt)
+  fi
+
+  # Wait for postgres + rabbitmq to be reachable before running
+  # register_instance (Plane's bootstrap also touches the broker).
+  # `nc -z` is too eager for rabbit — it answers TCP before the auth
+  # backend is ready, so we poll rabbit's actual readiness via
+  # rabbitmqctl in the container.
+  echo "==> Waiting for postgres and rabbitmq"
+  for i in $(seq 1 60); do
+    pg_ok=0; mq_ok=0
+    nc -z localhost 5432 >/dev/null 2>&1 && pg_ok=1
+    ./zdev exec -T plane-mq rabbitmqctl status >/dev/null 2>&1 && mq_ok=1
+    if [[ $pg_ok -eq 1 && $mq_ok -eq 1 ]]; then break; fi
+    sleep 1
+  done
+
+  # Run migrations + register the Instance row. Idempotent: register
+  # exits with "Instance already registered" the second time.
+  echo "==> Migrating and registering instance"
+  (cd apps/api && set -a && source .env && set +a \
+    && .venv/bin/python manage.py migrate --noinput \
+    && .venv/bin/python manage.py register_instance "local-dev-$(hostname -s)" \
+    && .venv/bin/python manage.py configure_instance) | tail -20
+
+  echo
+  echo "==> Dependency containers up. Now run Django from PyCharm."
+  echo "    Run config: Django, working dir = apps/api, settings = plane.settings.local,"
+  echo "    interpreter = apps/api/.venv/bin/python, env file = apps/api/.env"
+  echo
+  echo "==> Stopping any container-side api/worker/beat/migrator that might collide"
+  ./zdev rm -f -s api worker beat-worker migrator 2>/dev/null || true
+
+  cmd_tunnel_start
+}
+
+case "${1:-up}" in
+  up|"")     cmd_up yes ;;
+  backend)   cmd_up no ;;
+  deps|host) cmd_deps_only ;;          # for running Django on the host (PyCharm)
+  stop|down) cmd_stop ;;
+  stopsvc)   shift; cmd_stop_svc "$@" ;;
+  restart)   shift; cmd_restart "$@" ;;
+  logs)      shift; cmd_logs "$@" ;;
+  status|ps) cmd_status ;;
+  shell|sh|exec) shift; cmd_shell "$@" ;;
+  *)
+    echo "usage: $0 [up|backend|deps|stop|stopsvc <svc>...|restart [svc]|logs [svc|frontends]|status|shell [svc]]"
+    exit 2
+    ;;
+esac

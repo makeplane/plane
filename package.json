@@ -13,6 +13,7 @@
     "fix": "turbo run fix",
     "fix:format": "turbo run fix:format",
     "fix:lint": "turbo run fix:lint",
+    "test": "turbo run test",
     "check": "turbo run check",
     "check:lint": "turbo run check:lint",
     "check:format": "turbo run check:format",

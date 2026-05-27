@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Local Plane dev wrapper — combines the upstream local compose with
+# our per-developer override (port remaps etc.) so we don't have to
+# remember -f flags.
+#
+# Usage:
+#   ./zdev up               # bring everything up in the background
+#   ./zdev down             # stop & remove
+#   ./zdev logs <svc>       # tail logs for one service
+#   ./zdev <anything else>  # passthrough to `docker compose ...`
+#
+# Examples:
+#   ./zdev up -d
+#   ./zdev logs -f api
+#   ./zdev exec api bash
+#   ./zdev ps
+
+set -euo pipefail
+
+cd "$(dirname "$0")"
+
+FILES=(-f docker-compose-local.yml)
+[[ -f docker-compose.override.yml ]] && FILES+=(-f docker-compose.override.yml)
+
+# Compose env precedence: shell beats .env. Strip any real AWS creds
+# from the shell env so they can't silently become MinIO's root
+# user/password (MINIO_ROOT_USER/_PASSWORD pull from
+# AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in docker-compose-local.yml).
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
+
+exec docker compose "${FILES[@]}" "$@"

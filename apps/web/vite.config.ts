@@ -33,6 +33,11 @@ export default defineConfig(() => ({
   },
   server: {
     host: "127.0.0.1",
+    // Public dev tunnels need their hostname allowlisted so Slack's
+    // link_shared event can hit Plane URLs from the public internet.
+    //   *.ts.net          → Tailscale Funnel (preferred — stable URL)
+    //   *.trycloudflare.com → cloudflared quick tunnels (legacy fallback)
+    allowedHosts: [".ts.net", ".trycloudflare.com"],
   },
   // No SSR-specific overrides needed; alias resolves to ESM build
 }));

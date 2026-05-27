@@ -31,6 +31,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY", get_random_secret_key())
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
 
+# Shared HMAC secret for silo↔Django service-to-service calls.
+# Silo signs requests with this; plane.connections.auth verifies them.
+SILO_HMAC_SECRET_KEY = os.environ.get("SILO_HMAC_SECRET_KEY", "")
+
 # Self-hosted mode
 IS_SELF_MANAGED = True
 
@@ -94,6 +98,7 @@ INSTALLED_APPS = [
     "plane.api",
     "plane.authentication",
     "plane.ce_integrations",
+    "plane.connections",
     # Third-party things
     "rest_framework",
     "corsheaders",
@@ -313,6 +318,17 @@ CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["application/json"]
+
+# In host-mode local dev there's no celery worker process running, so
+# .delay() calls would hang in the queue forever. CELERY_TASK_ALWAYS_EAGER=True
+# in apps/api/.env runs them synchronously instead. Production stays
+# async via the worker container.
+CELERY_TASK_ALWAYS_EAGER = os.environ.get("CELERY_TASK_ALWAYS_EAGER", "False").lower() in (
+    "true",
+    "1",
+    "yes",
+)
+CELERY_TASK_EAGER_PROPAGATES = CELERY_TASK_ALWAYS_EAGER
 
 
 CELERY_IMPORTS = (

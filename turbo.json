@@ -32,6 +32,14 @@
     "VITE_WEB_BASE_URL",
     "VITE_WEBSITE_URL"
   ],
+  "globalPassThroughEnv": [
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_SESSION_TOKEN",
+    "AWS_REGION",
+    "AWS_DEFAULT_REGION",
+    "AWS_PROFILE"
+  ],
   "remoteCache": {
     "enabled": false
   },

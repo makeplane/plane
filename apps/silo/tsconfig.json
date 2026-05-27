@@ -1,0 +1,14 @@
+{
+  "extends": "@plane/typescript-config/base.json",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

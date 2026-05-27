@@ -354,6 +354,11 @@ export const coreRoutes: RouteConfigEntry[] = [
                 "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/automations/page.tsx"
               ),
             ]),
+            // Project Notifications (Zebaria fork — Slack channel mappings)
+            route(
+              ":workspaceSlug/settings/projects/:projectId/notifications",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/notifications/page.tsx"
+            ),
           ]),
         ]),
       ]),

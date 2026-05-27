@@ -1,0 +1,21 @@
+# Local-dev compose override.
+# Auto-merged with docker-compose-local.yml; ./zdev passes both -f flags.
+# Gitignored — per-developer.
+#
+# We run api/worker/beat/migrator as host-mode processes (PyCharm Django
+# run config) and only use docker for db/redis/mq/minio. The override
+# remaps the ports so the host-side python services can reach them
+# without colliding with other local dev:
+#   plane-redis: 6479 (vs upstream 6379)
+#   plane-mq:    5672 (already exposed by upstream-local; explicit here)
+#   plane-db:    5432 (upstream-local default — kept)
+#   plane-minio: 9000 (upstream-local default — kept)
+
+services:
+  plane-redis:
+    ports: !override
+      - "6479:6379"
+
+  plane-mq:
+    ports:
+      - "5672:5672"

@@ -11,6 +11,7 @@ import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { PageHead } from "@/components/core/page-title";
 import { SingleIntegrationCard } from "@/components/integration/single-integration-card";
+import { SiloSlackCard } from "@/components/integration/silo-slack-card";
 import { IntegrationAndImportExportBanner } from "@/components/ui/integration-and-import-export-banner";
 import { IntegrationsSettingsLoader } from "@/components/ui/loader/settings/integration";
 // constants
@@ -40,13 +41,14 @@ function WorkspaceIntegrationsPage() {
   return (
     <>
       <PageHead title={pageTitle} />
-      <section className="w-full overflow-y-auto">
+      <section className="w-full overflow-y-auto pl-4">
         <IntegrationAndImportExportBanner bannerName="Integrations" />
         <div>
+          <SiloSlackCard />
           {appIntegrations ? (
-            appIntegrations.map((integration) => (
-              <SingleIntegrationCard key={integration.id} integration={integration} />
-            ))
+            appIntegrations
+              .filter((integration) => integration.provider !== "slack")
+              .map((integration) => <SingleIntegrationCard key={integration.id} integration={integration} />)
           ) : (
             <IntegrationsSettingsLoader />
           )}

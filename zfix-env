@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# Make .env files match our host-mode dev setup:
+#   - Frontends → api on localhost:8800 (matches PyCharm Django run config)
+#   - api → db/redis/mq on localhost (containers expose them; no docker DNS
+#     when Django runs on the host)
+#
+# Re-run after every ./setup.sh.
+
+set -euo pipefail
+cd "$(dirname "$0")"
+
+patch() {
+  local file="$1" pattern="$2" replacement="$3"
+  [[ -f "$file" ]] || return 0
+  if grep -qE "$pattern" "$file"; then
+    sed -i.bak -E "s|$pattern|$replacement|" "$file"
+    rm -f "$file.bak"
+    echo "  patched $file: $pattern -> $replacement"
+  fi
+}
+
+# Frontends -> api at 8800 (host-mode Django port).
+for f in apps/web/.env apps/admin/.env apps/space/.env apps/live/.env; do
+  patch "$f" 'VITE_API_BASE_URL="http://localhost:8000"' 'VITE_API_BASE_URL="http://localhost:8800"'
+done
+
+# api -> backing services on localhost (host-mode).
+api_env=apps/api/.env
+patch "$api_env" '^POSTGRES_HOST="plane-db"$' 'POSTGRES_HOST="localhost"'
+patch "$api_env" '^REDIS_HOST="plane-redis"$' 'REDIS_HOST="localhost"'
+# The compose override binds redis to 6479 on the host.
+patch "$api_env" '^REDIS_PORT="6379"$' 'REDIS_PORT="6479"'
+patch "$api_env" '^RABBITMQ_HOST="plane-mq"$' 'RABBITMQ_HOST="localhost"'
+patch "$api_env" '^WEB_URL="http://localhost:8000"$' 'WEB_URL="http://localhost:8800"'
+
+# .env files are read as plain key=value by Django/PyCharm — no
+# ${VAR} expansion. The compound URLs here originally use shell
+# interpolation (which docker-compose performs); rewrite them to
+# literals so they work in host-mode too.
+if [[ -f "$api_env" ]]; then
+  PG_USER=$(grep -oE '^POSTGRES_USER="[^"]+"' "$api_env" | sed 's/.*="\(.*\)"$/\1/')
+  PG_PASS=$(grep -oE '^POSTGRES_PASSWORD="[^"]+"' "$api_env" | sed 's/.*="\(.*\)"$/\1/')
+  PG_HOST=$(grep -oE '^POSTGRES_HOST="[^"]+"' "$api_env" | sed 's/.*="\(.*\)"$/\1/')
+  PG_PORT=$(grep -oE '^POSTGRES_PORT=[0-9]+' "$api_env" | sed 's/.*=//')
+  PG_DB=$(grep -oE '^POSTGRES_DB="[^"]+"' "$api_env" | sed 's/.*="\(.*\)"$/\1/')
+  RD_HOST=$(grep -oE '^REDIS_HOST="[^"]+"' "$api_env" | sed 's/.*="\(.*\)"$/\1/')
+  RD_PORT=$(grep -oE '^REDIS_PORT="[^"]+"' "$api_env" | sed 's/.*="\(.*\)"$/\1/')
+
+  expanded_db_url="postgresql://${PG_USER}:${PG_PASS}@${PG_HOST}:${PG_PORT}/${PG_DB}"
+  expanded_redis_url="redis://${RD_HOST}:${RD_PORT}/"
+
+  # Replace the entire DATABASE_URL/REDIS_URL line, regardless of current contents.
+  if grep -q '^DATABASE_URL=' "$api_env"; then
+    sed -i.bak "s|^DATABASE_URL=.*|DATABASE_URL=${expanded_db_url}|" "$api_env"
+    rm -f "$api_env.bak"
+    echo "  expanded DATABASE_URL=${expanded_db_url}"
+  fi
+  if grep -q '^REDIS_URL=' "$api_env"; then
+    sed -i.bak "s|^REDIS_URL=.*|REDIS_URL=\"${expanded_redis_url}\"|" "$api_env"
+    rm -f "$api_env.bak"
+    echo "  expanded REDIS_URL=\"${expanded_redis_url}\""
+  fi
+fi
+
+# Host-mode Django needs DJANGO_SETTINGS_MODULE explicitly. Append if missing.
+if [[ -f "$api_env" ]] && ! grep -q '^DJANGO_SETTINGS_MODULE=' "$api_env"; then
+  printf '\nDJANGO_SETTINGS_MODULE=plane.settings.local\n' >> "$api_env"
+  echo "  appended DJANGO_SETTINGS_MODULE to $api_env"
+fi

@@ -34,6 +34,14 @@ export default defineConfig(() => ({
     },
     dedupe: ["react", "react-dom"],
   },
+  // @base-ui-components/react's subpath exports (./toast etc.) don't
+  // survive esbuild's optimizer — vite logs "file does not exist in
+  // optimize deps directory" and 504s. Excluding routes through
+  // native ESM. @plane/propel is also excluded since it consumes
+  // those subpaths transitively.
+  optimizeDeps: {
+    exclude: ["@base-ui-components/react", "@base-ui-components/react/toast", "@plane/propel"],
+  },
   server: {
     host: "127.0.0.1",
   },

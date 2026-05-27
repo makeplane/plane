@@ -3,3 +3,8 @@
 django-debug-toolbar==4.3.0
 # formatter
 ruff==0.9.7
+# Remote debug attach for PyCharm. PyCharm's "Python Debug Server"
+# run config uses its own debugger (pydevd-pycharm), not generic
+# debugpy. The version must match the IDE — bump when the IDE
+# version updates (PyCharm shows the exact pin in the run-config UI).
+pydevd-pycharm~=261.23567.174

@@ -1,0 +1,47 @@
+{
+  "name": "silo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Plane CE integrations service (Slack, GitHub) — clean-room replacement for the EE silo container.",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "main": "./dist/start.mjs",
+  "module": "./dist/start.mjs",
+  "exports": {
+    ".": "./dist/start.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && tsdown",
+    "dev": "tsdown --watch --no-clean --onSuccess \"node --env-file=.env .\"",
+    "start": "node --env-file=.env .",
+    "check:lint": "oxlint --max-warnings=0 .",
+    "check:types": "tsc --noEmit",
+    "check:format": "oxfmt --check .",
+    "fix:lint": "oxlint --fix .",
+    "fix:format": "oxfmt .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "clean": "rm -rf .turbo && rm -rf dist && rm -rf node_modules"
+  },
+  "dependencies": {
+    "@aws-sdk/client-secrets-manager": "^3.687.0",
+    "axios": "catalog:",
+    "cors": "^2.8.5",
+    "dotenv": "catalog:",
+    "express": "catalog:",
+    "helmet": "^7.1.0",
+    "uuid": "catalog:",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@plane/typescript-config": "workspace:*",
+    "@types/cors": "^2.8.17",
+    "@types/express": "4.17.23",
+    "@types/node": "catalog:",
+    "tsdown": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "^4.0.8"
+  }
+}

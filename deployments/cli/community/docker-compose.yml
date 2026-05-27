@@ -193,7 +193,7 @@ services:
       - redisdata:/data
 
   plane-mq:
-    image: rabbitmq:3.13.6-management-alpine
+    image: rabbitmq:4.3-management-alpine
     deploy:
       replicas: 1
       restart_policy:

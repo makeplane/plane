@@ -1583,6 +1583,22 @@ def issue_activity(
         # Save all the values to database
         issue_activities_created = IssueActivity.objects.bulk_create(issue_activities)
 
+        # Fan out to silo for project-scoped Slack notifications.
+        # Cheap no-op if the project has no mappings.
+        try:
+            from plane.bgtasks.silo_notification_task import dispatch_silo_work_item_event
+
+            dispatch_silo_work_item_event.delay(
+                activity_type=type,
+                issue_id=str(issue_id) if issue_id else None,
+                project_id=str(project_id),
+                actor_id=str(actor_id) if actor_id else None,
+                requested_data=requested_data,
+                current_instance=current_instance,
+            )
+        except Exception as silo_err:
+            log_exception(silo_err)
+
         if notification:
             notifications.delay(
                 type=type,

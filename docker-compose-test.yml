@@ -54,7 +54,7 @@ services:
       retries: 10
 
   test-mq:
-    image: rabbitmq:3.13.6-management-alpine
+    image: rabbitmq:4.3-management-alpine
     networks:
       - test_env
     env_file:
