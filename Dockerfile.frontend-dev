@@ -5,7 +5,7 @@ RUN apk add --no-cache libc6-compat bash curl iproute2
 
 # Setup pnpm
 ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV PATH="$PNPM_HOME:$PNPM_HOME/bin:$PATH"
 RUN corepack enable pnpm && pnpm add -g turbo@2.9.4
 
 # Disable telemetry
