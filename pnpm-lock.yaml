@@ -15,9 +15,81 @@ catalogs:
     '@atlaskit/pragmatic-drag-and-drop-hitbox':
       specifier: 1.1.0
       version: 1.1.0
+    '@base-ui-components/react':
+      specifier: 1.0.0-beta.3
+      version: 1.0.0-beta.3
+    '@blueprintjs/core':
+      specifier: ^4.16.3
+      version: 4.20.2
+    '@blueprintjs/popover2':
+      specifier: ^1.13.3
+      version: 1.14.11
     '@bprogress/core':
       specifier: ^1.3.4
       version: 1.3.4
+    '@chromatic-com/storybook':
+      specifier: ^1.4.0
+      version: 1.9.0
+    '@effect/platform':
+      specifier: ^0.94.0
+      version: 0.94.1
+    '@effect/platform-node':
+      specifier: ^0.104.0
+      version: 0.104.0
+    '@floating-ui/dom':
+      specifier: ^1.7.1
+      version: 1.7.4
+    '@floating-ui/react':
+      specifier: ^0.26.4
+      version: 0.26.28
+    '@fontsource-variable/inter':
+      specifier: 5.2.8
+      version: 5.2.8
+    '@fontsource/ibm-plex-mono':
+      specifier: 5.2.7
+      version: 5.2.7
+    '@fontsource/inter':
+      specifier: 5.2.8
+      version: 5.2.8
+    '@fontsource/material-symbols-rounded':
+      specifier: 5.2.30
+      version: 5.2.30
+    '@headlessui/react':
+      specifier: ^1.7.19
+      version: 1.7.19
+    '@hocuspocus/extension-database':
+      specifier: 2.15.2
+      version: 2.15.2
+    '@hocuspocus/extension-logger':
+      specifier: 2.15.2
+      version: 2.15.2
+    '@hocuspocus/extension-redis':
+      specifier: 2.15.2
+      version: 2.15.2
+    '@hocuspocus/provider':
+      specifier: 2.15.2
+      version: 2.15.2
+    '@hocuspocus/server':
+      specifier: 2.15.2
+      version: 2.15.2
+    '@hocuspocus/transformer':
+      specifier: 2.15.2
+      version: 2.15.2
+    '@hypermod/utils':
+      specifier: ^0.7.1
+      version: 0.7.1
+    '@popperjs/core':
+      specifier: ^2.11.8
+      version: 2.11.8
+    '@radix-ui/react-scroll-area':
+      specifier: ^1.2.3
+      version: 1.2.10
+    '@react-pdf/renderer':
+      specifier: ^4.3.0
+      version: 4.3.0
+    '@react-pdf/types':
+      specifier: ^2.9.2
+      version: 2.9.2
     '@react-router/dev':
       specifier: 7.13.1
       version: 7.13.1
@@ -27,27 +99,252 @@ catalogs:
     '@react-router/serve':
       specifier: 7.13.1
       version: 7.13.1
+    '@storybook/addon-designs':
+      specifier: 10.0.2
+      version: 10.0.2
+    '@storybook/addon-docs':
+      specifier: 9.1.10
+      version: 9.1.10
+    '@storybook/addon-essentials':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@storybook/addon-interactions':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@storybook/addon-links':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@storybook/addon-onboarding':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@storybook/addon-styling-webpack':
+      specifier: ^1.0.0
+      version: 1.0.1
+    '@storybook/addon-webpack5-compiler-swc':
+      specifier: ^1.0.2
+      version: 1.0.6
+    '@storybook/blocks':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@storybook/react':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@storybook/react-vite':
+      specifier: 9.1.10
+      version: 9.1.10
+    '@storybook/react-webpack5':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@storybook/test':
+      specifier: ^8.1.1
+      version: 8.6.14
+    '@tailwindcss/postcss':
+      specifier: 4.1.17
+      version: 4.1.17
+    '@tailwindcss/typography':
+      specifier: 0.5.19
+      version: 0.5.19
+    '@tanstack/react-table':
+      specifier: ^8.21.3
+      version: 8.21.3
+    '@tanstack/react-virtual':
+      specifier: ^3.13.12
+      version: 3.13.12
+    '@tanstack/virtual-core':
+      specifier: ^3.13.12
+      version: 3.13.12
     '@tiptap/core':
       specifier: ^2.22.3
       version: 2.26.3
+    '@tiptap/extension-blockquote':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-character-count':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-collaboration':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-document':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-emoji':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-heading':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-image':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-list-item':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-mention':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-placeholder':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-task-item':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-task-list':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-text':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-text-align':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-text-style':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/extension-underline':
+      specifier: ^2.22.3
+      version: 2.26.1
     '@tiptap/html':
       specifier: ^2.22.3
       version: 2.26.2
+    '@tiptap/pm':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/react':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/starter-kit':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@tiptap/suggestion':
+      specifier: ^2.22.3
+      version: 2.26.1
+    '@types/chroma-js':
+      specifier: ^3.1.2
+      version: 3.1.2
+    '@types/compression':
+      specifier: 1.8.1
+      version: 1.8.1
+    '@types/cors':
+      specifier: ^2.8.17
+      version: 2.8.19
+    '@types/express-ws':
+      specifier: ^3.0.5
+      version: 3.0.5
+    '@types/hast':
+      specifier: ^3.0.4
+      version: 3.0.4
+    '@types/jscodeshift':
+      specifier: ^17.3.0
+      version: 17.3.0
     '@types/lodash-es':
       specifier: 4.17.12
       version: 4.17.12
+    '@types/mdast':
+      specifier: ^4.0.4
+      version: 4.0.4
     '@types/node':
       specifier: 22.12.0
       version: 22.12.0
+    '@types/pdf-parse':
+      specifier: ^1.1.5
+      version: 1.1.5
     '@types/react':
       specifier: 18.3.11
       version: 18.3.11
+    '@types/react-color':
+      specifier: ^3.0.9
+      version: 3.0.13
     '@types/react-dom':
       specifier: 18.3.1
       version: 18.3.1
+    '@types/sanitize-html':
+      specifier: 2.16.0
+      version: 2.16.0
+    '@types/ws':
+      specifier: ^8.18.1
+      version: 8.18.1
+    '@vitest/coverage-v8':
+      specifier: ^4.0.8
+      version: 4.0.17
+    ast-types:
+      specifier: 0.14.2
+      version: 0.14.2
+    autoprefixer:
+      specifier: ^10.4.19
+      version: 10.4.21
+    buffer:
+      specifier: ^6.0.3
+      version: 6.0.3
+    chroma-js:
+      specifier: ^3.2.0
+      version: 3.2.0
+    class-variance-authority:
+      specifier: 0.7.1
+      version: 0.7.1
+    clsx:
+      specifier: ^2.1.1
+      version: 2.1.1
+    cmdk:
+      specifier: ^1.1.1
+      version: 1.1.1
+    comlink:
+      specifier: ^4.4.1
+      version: 4.4.2
+    compression:
+      specifier: 1.8.1
+      version: 1.8.1
+    cors:
+      specifier: ^2.8.5
+      version: 2.8.5
+    date-fns:
+      specifier: ^4.1.0
+      version: 4.1.0
     dotenv:
       specifier: 16.4.7
       version: 16.4.7
+    effect:
+      specifier: 3.20.0
+      version: 3.20.0
+    emoji-picker-react:
+      specifier: ^4.5.16
+      version: 4.12.2
+    emoji-regex:
+      specifier: ^10.3.0
+      version: 10.5.0
+    export-to-csv:
+      specifier: ^1.4.0
+      version: 1.4.0
+    express-winston:
+      specifier: ^4.2.0
+      version: 4.2.0
+    express-ws:
+      specifier: ^5.0.2
+      version: 5.0.2
+    file-type:
+      specifier: ^21.3.1
+      version: 21.3.3
+    framer-motion:
+      specifier: ^12.23.0
+      version: 12.23.12
+    frimousse:
+      specifier: ^0.3.0
+      version: 0.3.0
+    hast:
+      specifier: ^1.0.0
+      version: 1.0.0
+    hast-util-to-mdast:
+      specifier: ^10.1.2
+      version: 10.1.2
+    helmet:
+      specifier: ^7.1.0
+      version: 7.2.0
+    highlight.js:
+      specifier: ^11.8.0
+      version: 11.11.1
+    husky:
+      specifier: 9.1.7
+      version: 9.1.7
     i18next:
       specifier: 25.10.9
       version: 25.10.9
@@ -57,9 +354,36 @@ catalogs:
     i18next-resources-to-backend:
       specifier: 1.2.1
       version: 1.2.1
+    ioredis:
+      specifier: 5.7.0
+      version: 5.7.0
+    is-emoji-supported:
+      specifier: ^0.0.5
+      version: 0.0.5
+    isbot:
+      specifier: ^5.1.31
+      version: 5.1.31
+    jscodeshift:
+      specifier: ^17.3.0
+      version: 17.3.0
+    jsx-dom-cjs:
+      specifier: ^8.0.3
+      version: 8.1.6
+    linkifyjs:
+      specifier: ^4.3.2
+      version: 4.3.2
+    lint-staged:
+      specifier: 16.2.7
+      version: 16.2.7
+    lowlight:
+      specifier: ^3.0.0
+      version: 3.3.0
     lucide-react:
       specifier: 0.469.0
       version: 0.469.0
+    mdast:
+      specifier: ^3.0.0
+      version: 3.0.0
     mobx:
       specifier: 6.12.0
       version: 6.12.0
@@ -69,27 +393,159 @@ catalogs:
     mobx-utils:
       specifier: 6.0.8
       version: 6.0.8
+    next-themes:
+      specifier: 0.4.6
+      version: 0.4.6
+    oxfmt:
+      specifier: 0.35.0
+      version: 0.35.0
+    oxlint:
+      specifier: 1.51.0
+      version: 1.51.0
+    pdf-parse:
+      specifier: ^2.4.5
+      version: 2.4.5
+    postcss-cli:
+      specifier: ^11.0.0
+      version: 11.0.1
+    postcss-nested:
+      specifier: ^6.0.1
+      version: 6.2.0
+    prosemirror-codemark:
+      specifier: ^0.4.2
+      version: 0.4.2
     react:
       specifier: 18.3.1
       version: 18.3.1
+    react-color:
+      specifier: ^2.19.3
+      version: 2.19.3
+    react-day-picker:
+      specifier: 9.5.0
+      version: 9.5.0
     react-dom:
       specifier: 18.3.1
       version: 18.3.1
+    react-dropzone:
+      specifier: ^14.2.3
+      version: 14.3.8
+    react-fast-compare:
+      specifier: ^3.2.2
+      version: 3.2.2
+    react-hook-form:
+      specifier: 7.51.5
+      version: 7.51.5
     react-i18next:
       specifier: 16.6.6
       version: 16.6.6
+    react-is:
+      specifier: ^18.2.0
+      version: 18.3.1
+    react-markdown:
+      specifier: ^8.0.7
+      version: 8.0.7
+    react-masonry-component:
+      specifier: ^6.3.0
+      version: 6.3.0
+    react-pdf-html:
+      specifier: ^2.1.2
+      version: 2.1.3
+    react-popper:
+      specifier: ^2.3.0
+      version: 2.3.0
     react-router:
       specifier: 7.12.0
       version: 7.12.0
+    recharts:
+      specifier: ^2.15.1
+      version: 2.15.4
+    reflect-metadata:
+      specifier: ^0.2.2
+      version: 0.2.2
+    rehype-parse:
+      specifier: ^9.0.1
+      version: 9.0.1
+    rehype-remark:
+      specifier: ^10.0.1
+      version: 10.0.1
+    remark-gfm:
+      specifier: ^4.0.1
+      version: 4.0.1
+    remark-stringify:
+      specifier: ^11.0.0
+      version: 11.0.0
+    sanitize-html:
+      specifier: 2.17.0
+      version: 2.17.0
+    serve:
+      specifier: 14.2.5
+      version: 14.2.5
+    sharp:
+      specifier: ^0.34.3
+      version: 0.34.3
+    smooth-scroll-into-view-if-needed:
+      specifier: ^2.0.2
+      version: 2.0.2
+    storybook:
+      specifier: 9.1.19
+      version: 9.1.19
     swr:
       specifier: 2.2.4
       version: 2.2.4
+    tailwind-merge:
+      specifier: 3.4.0
+      version: 3.4.0
+    tailwindcss:
+      specifier: 4.1.17
+      version: 4.1.17
+    tippy.js:
+      specifier: ^6.3.7
+      version: 6.3.7
+    tiptap-markdown:
+      specifier: ^0.8.10
+      version: 0.8.10
     tsdown:
       specifier: 0.16.0
       version: 0.16.0
     tsx:
       specifier: 4.20.6
       version: 4.20.6
+    turbo:
+      specifier: 2.9.14
+      version: 2.9.14
+    unified:
+      specifier: ^11.0.5
+      version: 11.0.5
+    use-font-face-observer:
+      specifier: ^1.3.0
+      version: 1.3.0
+    vite-tsconfig-paths:
+      specifier: ^5.1.4
+      version: 5.1.4
+    vitest:
+      specifier: ^4.0.8
+      version: 4.0.15
+    winston:
+      specifier: ^3.17.0
+      version: 3.17.0
+    ws:
+      specifier: ^8.18.3
+      version: 8.18.3
+    y-indexeddb:
+      specifier: ^9.0.12
+      version: 9.0.12
+    y-prosemirror:
+      specifier: ^1.3.7
+      version: 1.3.7
+    y-protocols:
+      specifier: ^1.0.6
+      version: 1.0.6
+    yjs:
+      specifier: ^13.6.20
+      version: 13.6.27
+    zod:
+      specifier: ^3.25.76
+      version: 3.25.76
 
 overrides:
   express: 4.22.0
@@ -136,19 +592,19 @@ importers:
   .:
     devDependencies:
       husky:
-        specifier: 9.1.7
+        specifier: 'catalog:'
         version: 9.1.7
       lint-staged:
-        specifier: 16.2.7
+        specifier: 'catalog:'
         version: 16.2.7
       oxfmt:
-        specifier: 0.35.0
+        specifier: 'catalog:'
         version: 0.35.0
       oxlint:
-        specifier: 1.51.0
+        specifier: 'catalog:'
         version: 1.51.0
       turbo:
-        specifier: 2.9.14
+        specifier: 'catalog:'
         version: 2.9.14
 
   apps/admin:
@@ -157,16 +613,16 @@ importers:
         specifier: 'catalog:'
         version: 1.3.4
       '@fontsource-variable/inter':
-        specifier: 5.2.8
+        specifier: 'catalog:'
         version: 5.2.8
       '@fontsource/ibm-plex-mono':
-        specifier: 5.2.7
+        specifier: 'catalog:'
         version: 5.2.7
       '@fontsource/material-symbols-rounded':
-        specifier: 5.2.30
+        specifier: 'catalog:'
         version: 5.2.30
       '@headlessui/react':
-        specifier: ^1.7.19
+        specifier: 'catalog:'
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
@@ -193,16 +649,16 @@ importers:
         specifier: 'catalog:'
         version: 7.13.1(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@tanstack/react-virtual':
-        specifier: ^3.13.12
+        specifier: 'catalog:'
         version: 3.13.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/virtual-core':
-        specifier: ^3.13.12
+        specifier: 'catalog:'
         version: 3.13.12
       axios:
         specifier: 1.15.2
         version: 1.15.2
       isbot:
-        specifier: ^5.1.31
+        specifier: 'catalog:'
         version: 5.1.31
       lodash-es:
         specifier: 4.18.1
@@ -217,7 +673,7 @@ importers:
         specifier: 'catalog:'
         version: 9.1.1(mobx@6.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes:
-        specifier: 0.4.6
+        specifier: 'catalog:'
         version: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: 'catalog:'
@@ -226,13 +682,13 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-hook-form:
-        specifier: 7.51.5
+        specifier: 'catalog:'
         version: 7.51.5(react@18.3.1)
       react-router:
         specifier: 'catalog:'
         version: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       serve:
-        specifier: 14.2.5
+        specifier: 'catalog:'
         version: 14.2.5
       swr:
         specifier: 'catalog:'
@@ -272,34 +728,34 @@ importers:
         specifier: 7.3.2
         version: 7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)
       vite-tsconfig-paths:
-        specifier: ^5.1.4
+        specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
   apps/live:
     dependencies:
       '@effect/platform':
-        specifier: ^0.94.0
+        specifier: 'catalog:'
         version: 0.94.1(effect@3.20.0)
       '@effect/platform-node':
-        specifier: ^0.104.0
+        specifier: 'catalog:'
         version: 0.104.0(@effect/cluster@0.56.1(@effect/platform@0.94.1(effect@3.20.0))(@effect/rpc@0.73.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0)(ioredis@5.7.0))(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0)(ioredis@5.7.0))(@effect/platform@0.94.1(effect@3.20.0))(@effect/rpc@0.73.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(effect@3.20.0))(effect@3.20.0))(@effect/platform@0.94.1(effect@3.20.0))(@effect/rpc@0.73.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0)(ioredis@5.7.0))(@effect/platform@0.94.1(effect@3.20.0))(effect@3.20.0))(effect@3.20.0)
       '@fontsource/inter':
-        specifier: 5.2.8
+        specifier: 'catalog:'
         version: 5.2.8
       '@hocuspocus/extension-database':
-        specifier: 2.15.2
+        specifier: 'catalog:'
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       '@hocuspocus/extension-logger':
-        specifier: 2.15.2
+        specifier: 'catalog:'
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       '@hocuspocus/extension-redis':
-        specifier: 2.15.2
+        specifier: 'catalog:'
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       '@hocuspocus/server':
-        specifier: 2.15.2
+        specifier: 'catalog:'
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       '@hocuspocus/transformer':
-        specifier: 2.15.2
+        specifier: 'catalog:'
         version: 2.15.2(@tiptap/core@2.26.3(@tiptap/pm@3.6.6))(@tiptap/pm@3.6.6)(y-prosemirror@1.3.7(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))(yjs@13.6.27)
       '@plane/decorators':
         specifier: workspace:*
@@ -317,10 +773,10 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       '@react-pdf/renderer':
-        specifier: ^4.3.0
+        specifier: 'catalog:'
         version: 4.3.0(react@18.3.1)
       '@react-pdf/types':
-        specifier: ^2.9.2
+        specifier: 'catalog:'
         version: 2.9.2
       '@tiptap/core':
         specifier: 'catalog:'
@@ -332,86 +788,86 @@ importers:
         specifier: 1.15.2
         version: 1.15.2
       compression:
-        specifier: 1.8.1
+        specifier: 'catalog:'
         version: 1.8.1
       cors:
-        specifier: ^2.8.5
+        specifier: 'catalog:'
         version: 2.8.5
       dotenv:
         specifier: 'catalog:'
         version: 16.4.7
       effect:
-        specifier: 3.20.0
+        specifier: 'catalog:'
         version: 3.20.0
       express:
         specifier: 4.22.0
         version: 4.22.0
       express-ws:
-        specifier: ^5.0.2
+        specifier: 'catalog:'
         version: 5.0.2(express@4.22.0)
       helmet:
-        specifier: ^7.1.0
+        specifier: 'catalog:'
         version: 7.2.0
       ioredis:
-        specifier: 5.7.0
+        specifier: 'catalog:'
         version: 5.7.0
       react:
         specifier: 'catalog:'
         version: 18.3.1
       sharp:
-        specifier: ^0.34.3
+        specifier: 'catalog:'
         version: 0.34.3
       uuid:
         specifier: 14.0.0
         version: 14.0.0
       ws:
-        specifier: ^8.18.3
+        specifier: 'catalog:'
         version: 8.18.3
       y-prosemirror:
-        specifier: ^1.3.7
+        specifier: 'catalog:'
         version: 1.3.7(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       y-protocols:
-        specifier: ^1.0.6
+        specifier: 'catalog:'
         version: 1.0.6(yjs@13.6.27)
       yjs:
-        specifier: ^13.6.20
+        specifier: 'catalog:'
         version: 13.6.27
       zod:
-        specifier: ^3.25.76
+        specifier: 'catalog:'
         version: 3.25.76
     devDependencies:
       '@plane/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/compression':
-        specifier: 1.8.1
+        specifier: 'catalog:'
         version: 1.8.1
       '@types/cors':
-        specifier: ^2.8.17
+        specifier: 'catalog:'
         version: 2.8.19
       '@types/express':
         specifier: 4.17.23
         version: 4.17.23
       '@types/express-ws':
-        specifier: ^3.0.5
+        specifier: 'catalog:'
         version: 3.0.5
       '@types/node':
         specifier: 'catalog:'
         version: 22.12.0
       '@types/pdf-parse':
-        specifier: ^1.1.5
+        specifier: 'catalog:'
         version: 1.1.5
       '@types/react':
         specifier: 'catalog:'
         version: 18.3.11
       '@types/ws':
-        specifier: ^8.18.1
+        specifier: 'catalog:'
         version: 8.18.1
       '@vitest/coverage-v8':
-        specifier: ^4.0.8
+        specifier: 'catalog:'
         version: 4.0.17(vitest@4.0.15(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
       pdf-parse:
-        specifier: ^2.4.5
+        specifier: 'catalog:'
         version: 2.4.5
       tsdown:
         specifier: 'catalog:'
@@ -420,7 +876,7 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
       vitest:
-        specifier: ^4.0.8
+        specifier: 'catalog:'
         version: 4.0.15(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)
 
   apps/space:
@@ -429,16 +885,16 @@ importers:
         specifier: 'catalog:'
         version: 1.3.4
       '@fontsource-variable/inter':
-        specifier: 5.2.8
+        specifier: 'catalog:'
         version: 5.2.8
       '@fontsource/ibm-plex-mono':
-        specifier: 5.2.7
+        specifier: 'catalog:'
         version: 5.2.7
       '@fontsource/material-symbols-rounded':
-        specifier: 5.2.30
+        specifier: 'catalog:'
         version: 5.2.30
       '@headlessui/react':
-        specifier: ^1.7.19
+        specifier: 'catalog:'
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
@@ -465,7 +921,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       '@popperjs/core':
-        specifier: ^2.11.8
+        specifier: 'catalog:'
         version: 2.11.8
       '@react-router/node':
         specifier: 'catalog:'
@@ -477,13 +933,13 @@ importers:
         specifier: 1.15.2
         version: 1.15.2
       clsx:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.1.1
       date-fns:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.0
       isbot:
-        specifier: ^5.1.31
+        specifier: 'catalog:'
         version: 5.1.31
       lodash-es:
         specifier: 4.18.1
@@ -501,7 +957,7 @@ importers:
         specifier: 'catalog:'
         version: 6.0.8(mobx@6.12.0)
       next-themes:
-        specifier: 0.4.6
+        specifier: 'catalog:'
         version: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: 'catalog:'
@@ -510,13 +966,13 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-dropzone:
-        specifier: ^14.2.3
+        specifier: 'catalog:'
         version: 14.3.8(react@18.3.1)
       react-hook-form:
-        specifier: 7.51.5
+        specifier: 'catalog:'
         version: 7.51.5(react@18.3.1)
       react-popper:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router:
         specifier: 'catalog:'
@@ -538,7 +994,7 @@ importers:
         specifier: 'catalog:'
         version: 7.13.1(@react-router/serve@7.13.1(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(tsx@4.20.6)(typescript@5.8.3)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))(yaml@2.8.3)
       '@tailwindcss/typography':
-        specifier: 0.5.19
+        specifier: 'catalog:'
         version: 0.5.19
       '@types/lodash-es':
         specifier: 'catalog:'
@@ -562,7 +1018,7 @@ importers:
         specifier: 7.3.2
         version: 7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)
       vite-tsconfig-paths:
-        specifier: ^5.1.4
+        specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
   apps/web:
@@ -580,16 +1036,16 @@ importers:
         specifier: 'catalog:'
         version: 1.3.4
       '@fontsource-variable/inter':
-        specifier: 5.2.8
+        specifier: 'catalog:'
         version: 5.2.8
       '@fontsource/ibm-plex-mono':
-        specifier: 5.2.7
+        specifier: 'catalog:'
         version: 5.2.7
       '@fontsource/material-symbols-rounded':
-        specifier: 5.2.30
+        specifier: 'catalog:'
         version: 5.2.30
       '@headlessui/react':
-        specifier: ^1.7.19
+        specifier: 'catalog:'
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
@@ -622,40 +1078,40 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       '@popperjs/core':
-        specifier: ^2.11.8
+        specifier: 'catalog:'
         version: 2.11.8
       '@react-pdf/renderer':
-        specifier: ^3.4.5
-        version: 3.4.5(react@18.3.1)
+        specifier: 'catalog:'
+        version: 4.3.0(react@18.3.1)
       '@react-router/node':
         specifier: 'catalog:'
         version: 7.13.1(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3)
       '@tanstack/react-table':
-        specifier: ^8.21.3
+        specifier: 'catalog:'
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 1.15.2
         version: 1.15.2
       clsx:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.1.1
       cmdk:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       comlink:
-        specifier: ^4.4.1
+        specifier: 'catalog:'
         version: 4.4.2
       date-fns:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.0
       emoji-picker-react:
-        specifier: ^4.5.16
+        specifier: 'catalog:'
         version: 4.12.2(react@18.3.1)
       export-to-csv:
-        specifier: ^1.4.0
+        specifier: 'catalog:'
         version: 1.4.0
       isbot:
-        specifier: ^5.1.31
+        specifier: 'catalog:'
         version: 5.1.31
       lodash-es:
         specifier: 4.18.1
@@ -673,58 +1129,58 @@ importers:
         specifier: 'catalog:'
         version: 6.0.8(mobx@6.12.0)
       next-themes:
-        specifier: 0.4.6
+        specifier: 'catalog:'
         version: 0.4.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
       react-color:
-        specifier: ^2.19.3
+        specifier: 'catalog:'
         version: 2.19.3(react@18.3.1)
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-dropzone:
-        specifier: ^14.2.3
+        specifier: 'catalog:'
         version: 14.3.8(react@18.3.1)
       react-fast-compare:
-        specifier: ^3.2.2
+        specifier: 'catalog:'
         version: 3.2.2
       react-hook-form:
-        specifier: 7.51.5
+        specifier: 'catalog:'
         version: 7.51.5(react@18.3.1)
       react-is:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-markdown:
-        specifier: ^8.0.7
+        specifier: 'catalog:'
         version: 8.0.7(@types/react@18.3.11)(react@18.3.1)
       react-masonry-component:
-        specifier: ^6.3.0
+        specifier: 'catalog:'
         version: 6.3.0(react@18.3.1)
       react-pdf-html:
-        specifier: ^2.1.2
-        version: 2.1.3(@react-pdf/renderer@3.4.5(react@18.3.1))(react@18.3.1)
+        specifier: 'catalog:'
+        version: 2.1.3(@react-pdf/renderer@4.3.0(react@18.3.1))(react@18.3.1)
       react-popper:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router:
         specifier: 'catalog:'
         version: 7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       recharts:
-        specifier: ^2.12.7
+        specifier: 'catalog:'
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       serve:
-        specifier: 14.2.5
+        specifier: 'catalog:'
         version: 14.2.5
       smooth-scroll-into-view-if-needed:
-        specifier: ^2.0.2
+        specifier: 'catalog:'
         version: 2.0.2
       swr:
         specifier: 'catalog:'
         version: 2.2.4(react@18.3.1)
       use-font-face-observer:
-        specifier: ^1.2.2
+        specifier: 'catalog:'
         version: 1.3.0(react@18.3.1)
       uuid:
         specifier: 14.0.0
@@ -740,7 +1196,7 @@ importers:
         specifier: 'catalog:'
         version: 7.13.1(@react-router/serve@7.13.1(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(typescript@5.8.3))(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(react-router@7.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(terser@5.43.1)(tsx@4.20.6)(typescript@5.8.3)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))(yaml@2.8.3)
       '@tailwindcss/typography':
-        specifier: 0.5.19
+        specifier: 'catalog:'
         version: 0.5.19
       '@types/lodash-es':
         specifier: 'catalog:'
@@ -752,7 +1208,7 @@ importers:
         specifier: 'catalog:'
         version: 18.3.11
       '@types/react-color':
-        specifier: ^3.0.6
+        specifier: 'catalog:'
         version: 3.0.13(@types/react@18.3.11)
       '@types/react-dom':
         specifier: 'catalog:'
@@ -767,25 +1223,25 @@ importers:
         specifier: 7.3.2
         version: 7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)
       vite-tsconfig-paths:
-        specifier: ^5.1.4
+        specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.3)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
 
   packages/codemods:
     devDependencies:
       '@hypermod/utils':
-        specifier: ^0.7.1
+        specifier: 'catalog:'
         version: 0.7.1
       '@types/jscodeshift':
-        specifier: ^17.3.0
+        specifier: 'catalog:'
         version: 17.3.0
       ast-types:
-        specifier: 0.14.2
+        specifier: 'catalog:'
         version: 0.14.2
       jscodeshift:
-        specifier: ^17.3.0
+        specifier: 'catalog:'
         version: 17.3.0
       vitest:
-        specifier: ^4.0.8
+        specifier: 'catalog:'
         version: 4.0.15(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)
 
   packages/constants:
@@ -822,10 +1278,10 @@ importers:
         specifier: 'catalog:'
         version: 22.12.0
       '@types/ws':
-        specifier: ^8.5.10
+        specifier: 'catalog:'
         version: 8.18.1
       reflect-metadata:
-        specifier: ^0.2.2
+        specifier: 'catalog:'
         version: 0.2.2
       tsdown:
         specifier: 'catalog:'
@@ -837,16 +1293,16 @@ importers:
   packages/editor:
     dependencies:
       '@floating-ui/dom':
-        specifier: ^1.7.1
+        specifier: 'catalog:'
         version: 1.7.4
       '@floating-ui/react':
-        specifier: ^0.26.4
+        specifier: 'catalog:'
         version: 0.26.28(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@headlessui/react':
-        specifier: ^1.7.3
+        specifier: 'catalog:'
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@hocuspocus/provider':
-        specifier: 2.15.2
+        specifier: 'catalog:'
         version: 2.15.2(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       '@plane/constants':
         specifier: workspace:*
@@ -870,97 +1326,97 @@ importers:
         specifier: 'catalog:'
         version: 2.26.3(@tiptap/pm@2.26.1)
       '@tiptap/extension-blockquote':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-character-count':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
       '@tiptap/extension-collaboration':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)(y-prosemirror@1.3.7(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27))
       '@tiptap/extension-document':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-emoji':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)(@tiptap/suggestion@2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1))(emojibase@16.0.0)
       '@tiptap/extension-heading':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-image':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-list-item':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-mention':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)(@tiptap/suggestion@2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1))
       '@tiptap/extension-placeholder':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
       '@tiptap/extension-task-item':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
       '@tiptap/extension-task-list':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-text':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-text-align':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-text-style':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/extension-underline':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       '@tiptap/html':
         specifier: 'catalog:'
         version: 2.26.2(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
       '@tiptap/pm':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1
       '@tiptap/react':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tiptap/starter-kit':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1
       '@tiptap/suggestion':
-        specifier: ^2.22.3
+        specifier: 'catalog:'
         version: 2.26.1(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))(@tiptap/pm@2.26.1)
       buffer:
-        specifier: ^6.0.3
+        specifier: 'catalog:'
         version: 6.0.3
       emoji-regex:
-        specifier: ^10.3.0
+        specifier: 'catalog:'
         version: 10.5.0
       highlight.js:
-        specifier: ^11.8.0
+        specifier: 'catalog:'
         version: 11.11.1
       is-emoji-supported:
-        specifier: ^0.0.5
+        specifier: 'catalog:'
         version: 0.0.5
       jsx-dom-cjs:
-        specifier: ^8.0.3
+        specifier: 'catalog:'
         version: 8.1.6
       linkifyjs:
-        specifier: ^4.3.2
+        specifier: 'catalog:'
         version: 4.3.2
       lodash-es:
         specifier: 4.18.1
         version: 4.18.1
       lowlight:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.3.0
       lucide-react:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       prosemirror-codemark:
-        specifier: ^0.4.2
+        specifier: 'catalog:'
         version: 0.4.2(prosemirror-inputrules@1.5.0)(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)
       react:
         specifier: 'catalog:'
@@ -969,25 +1425,25 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       tippy.js:
-        specifier: ^6.3.7
+        specifier: 'catalog:'
         version: 6.3.7
       tiptap-markdown:
-        specifier: ^0.8.10
+        specifier: 'catalog:'
         version: 0.8.10(@tiptap/core@2.26.3(@tiptap/pm@2.26.1))
       uuid:
         specifier: 14.0.0
         version: 14.0.0
       y-indexeddb:
-        specifier: ^9.0.12
+        specifier: 'catalog:'
         version: 9.0.12(yjs@13.6.27)
       y-prosemirror:
-        specifier: ^1.2.15
+        specifier: 'catalog:'
         version: 1.3.7(prosemirror-model@1.25.3)(prosemirror-state@1.4.3)(prosemirror-view@1.40.0)(y-protocols@1.0.6(yjs@13.6.27))(yjs@13.6.27)
       y-protocols:
-        specifier: ^1.0.6
+        specifier: 'catalog:'
         version: 1.0.6(yjs@13.6.27)
       yjs:
-        specifier: ^13.6.20
+        specifier: 'catalog:'
         version: 13.6.27
     devDependencies:
       '@plane/tailwind-config':
@@ -1080,10 +1536,10 @@ importers:
   packages/logger:
     dependencies:
       express-winston:
-        specifier: ^4.2.0
+        specifier: 'catalog:'
         version: 4.2.0(winston@3.17.0)
       winston:
-        specifier: ^3.17.0
+        specifier: 'catalog:'
         version: 3.17.0
     devDependencies:
       '@plane/typescript-config':
@@ -1105,7 +1561,7 @@ importers:
   packages/propel:
     dependencies:
       '@base-ui-components/react':
-        specifier: 1.0.0-beta.3
+        specifier: 'catalog:'
         version: 1.0.0-beta.3(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
@@ -1120,22 +1576,22 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@tanstack/react-table':
-        specifier: ^8.21.3
+        specifier: 'catalog:'
         version: 8.21.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       class-variance-authority:
-        specifier: 0.7.1
+        specifier: 'catalog:'
         version: 0.7.1
       clsx:
-        specifier: ^2.1.1
+        specifier: 'catalog:'
         version: 2.1.1
       cmdk:
-        specifier: ^1.1.1
+        specifier: 'catalog:'
         version: 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       framer-motion:
-        specifier: ^12.23.0
+        specifier: 'catalog:'
         version: 12.23.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       frimousse:
-        specifier: ^0.3.0
+        specifier: 'catalog:'
         version: 0.3.0(react@18.3.1)(typescript@5.8.3)
       lucide-react:
         specifier: 'catalog:'
@@ -1144,19 +1600,19 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1
       react-day-picker:
-        specifier: 9.5.0
+        specifier: 'catalog:'
         version: 9.5.0(react@18.3.1)
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       recharts:
-        specifier: ^2.15.1
+        specifier: 'catalog:'
         version: 2.15.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
-        specifier: 3.4.0
+        specifier: 'catalog:'
         version: 3.4.0
       use-font-face-observer:
-        specifier: ^1.3.0
+        specifier: 'catalog:'
         version: 1.3.0(react@18.3.1)
     devDependencies:
       '@plane/tailwind-config':
@@ -1166,13 +1622,13 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@storybook/addon-designs':
-        specifier: 10.0.2
+        specifier: 'catalog:'
         version: 10.0.2(@storybook/addon-docs@9.1.10(@types/react@18.3.11)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@storybook/addon-docs':
-        specifier: 9.1.10
+        specifier: 'catalog:'
         version: 9.1.10(@types/react@18.3.11)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@storybook/react-vite':
-        specifier: 9.1.10
+        specifier: 'catalog:'
         version: 9.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.59.0)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))(typescript@5.8.3)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
       '@types/react':
         specifier: 'catalog:'
@@ -1181,7 +1637,7 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1
       storybook:
-        specifier: 9.1.19
+        specifier: 'catalog:'
         version: 9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
       tsdown:
         specifier: 'catalog:'
@@ -1202,7 +1658,7 @@ importers:
         specifier: 1.15.2
         version: 1.15.2
       file-type:
-        specifier: ^21.3.1
+        specifier: 'catalog:'
         version: 21.3.3
     devDependencies:
       '@plane/typescript-config':
@@ -1239,7 +1695,7 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: ^3.22.2
+        specifier: 'catalog:'
         version: 3.25.76
     devDependencies:
       '@plane/typescript-config':
@@ -1261,14 +1717,14 @@ importers:
   packages/tailwind-config:
     dependencies:
       '@tailwindcss/postcss':
-        specifier: 4.1.17
+        specifier: 'catalog:'
         version: 4.1.17
       postcss:
         specifier: 8.5.10
         version: 8.5.10
     devDependencies:
       tailwindcss:
-        specifier: 4.1.17
+        specifier: 'catalog:'
         version: 4.1.17
 
   packages/types:
@@ -1310,13 +1766,13 @@ importers:
         specifier: 'catalog:'
         version: 1.1.0
       '@blueprintjs/core':
-        specifier: ^4.16.3
+        specifier: 'catalog:'
         version: 4.20.2(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@blueprintjs/popover2':
-        specifier: ^1.13.3
+        specifier: 'catalog:'
         version: 1.14.11(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@headlessui/react':
-        specifier: ^1.7.3
+        specifier: 'catalog:'
         version: 1.7.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@plane/constants':
         specifier: workspace:*
@@ -1334,13 +1790,13 @@ importers:
         specifier: workspace:*
         version: link:../utils
       '@popperjs/core':
-        specifier: ^2.11.8
+        specifier: 'catalog:'
         version: 2.11.8
       '@radix-ui/react-scroll-area':
-        specifier: ^1.2.3
+        specifier: 'catalog:'
         version: 1.2.10(@types/react-dom@18.3.1)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx:
-        specifier: ^2.0.0
+        specifier: 'catalog:'
         version: 2.1.1
       lodash-es:
         specifier: 4.18.1
@@ -1352,26 +1808,26 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1
       react-color:
-        specifier: ^2.19.3
+        specifier: 'catalog:'
         version: 2.19.3(react@18.3.1)
       react-day-picker:
-        specifier: 9.5.0
+        specifier: 'catalog:'
         version: 9.5.0(react@18.3.1)
       react-dom:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-popper:
-        specifier: ^2.3.0
+        specifier: 'catalog:'
         version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwind-merge:
-        specifier: 3.4.0
+        specifier: 'catalog:'
         version: 3.4.0
       use-font-face-observer:
-        specifier: ^1.2.2
+        specifier: 'catalog:'
         version: 1.3.0(react@18.3.1)
     devDependencies:
       '@chromatic-com/storybook':
-        specifier: ^1.4.0
+        specifier: 'catalog:'
         version: 1.9.0(react@18.3.1)
       '@plane/tailwind-config':
         specifier: workspace:*
@@ -1380,34 +1836,34 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@storybook/addon-essentials':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(@types/react@18.3.11)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@storybook/addon-interactions':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@storybook/addon-links':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(react@18.3.1)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@storybook/addon-onboarding':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@storybook/addon-styling-webpack':
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.1(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))(webpack@5.104.1(@swc/core@1.13.5(@swc/helpers@0.5.17)))
       '@storybook/addon-webpack5-compiler-swc':
-        specifier: ^1.0.2
+        specifier: 'catalog:'
         version: 1.0.6(@swc/helpers@0.5.17)(webpack@5.104.1(@swc/core@1.13.5(@swc/helpers@0.5.17)))
       '@storybook/blocks':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@storybook/react':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(@storybook/test@8.6.14(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))(typescript@5.8.3)
       '@storybook/react-webpack5':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(@storybook/test@8.6.14(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))))(@swc/core@1.13.5(@swc/helpers@0.5.17))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))(typescript@5.8.3)
       '@storybook/test':
-        specifier: ^8.1.1
+        specifier: 'catalog:'
         version: 8.6.14(storybook@9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3)))
       '@types/lodash-es':
         specifier: 'catalog:'
@@ -1419,22 +1875,22 @@ importers:
         specifier: 'catalog:'
         version: 18.3.11
       '@types/react-color':
-        specifier: ^3.0.9
+        specifier: 'catalog:'
         version: 3.0.13(@types/react@18.3.11)
       '@types/react-dom':
         specifier: 'catalog:'
         version: 18.3.1
       autoprefixer:
-        specifier: ^10.4.19
+        specifier: 'catalog:'
         version: 10.4.21(postcss@8.5.10)
       postcss-cli:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.1(jiti@2.6.1)(postcss@8.5.10)(tsx@4.20.6)
       postcss-nested:
-        specifier: ^6.0.1
+        specifier: 'catalog:'
         version: 6.2.0(postcss@8.5.10)
       storybook:
-        specifier: 9.1.19
+        specifier: 'catalog:'
         version: 9.1.19(@testing-library/dom@10.4.0)(prettier@3.7.4)(vite@7.3.2(@types/node@22.12.0)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.43.1)(tsx@4.20.6)(yaml@2.8.3))
       tsdown:
         specifier: 'catalog:'
@@ -1452,19 +1908,19 @@ importers:
         specifier: workspace:*
         version: link:../types
       chroma-js:
-        specifier: ^3.2.0
+        specifier: 'catalog:'
         version: 3.2.0
       clsx:
-        specifier: ^2.1.1
+        specifier: 'catalog:'
         version: 2.1.1
       date-fns:
-        specifier: ^4.1.0
+        specifier: 'catalog:'
         version: 4.1.0
       hast:
-        specifier: ^1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       hast-util-to-mdast:
-        specifier: ^10.1.2
+        specifier: 'catalog:'
         version: 10.1.2
       lodash-es:
         specifier: 4.18.1
@@ -1473,31 +1929,31 @@ importers:
         specifier: 'catalog:'
         version: 0.469.0(react@18.3.1)
       mdast:
-        specifier: ^3.0.0
+        specifier: 'catalog:'
         version: 3.0.0
       react:
         specifier: 'catalog:'
         version: 18.3.1
       rehype-parse:
-        specifier: ^9.0.1
+        specifier: 'catalog:'
         version: 9.0.1
       rehype-remark:
-        specifier: ^10.0.1
+        specifier: 'catalog:'
         version: 10.0.1
       remark-gfm:
-        specifier: ^4.0.1
+        specifier: 'catalog:'
         version: 4.0.1
       remark-stringify:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.0.0
       sanitize-html:
-        specifier: 2.17.0
+        specifier: 'catalog:'
         version: 2.17.0
       tailwind-merge:
-        specifier: 3.4.0
+        specifier: 'catalog:'
         version: 3.4.0
       unified:
-        specifier: ^11.0.5
+        specifier: 'catalog:'
         version: 11.0.5
       uuid:
         specifier: 14.0.0
@@ -1507,16 +1963,16 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/chroma-js':
-        specifier: ^3.1.2
+        specifier: 'catalog:'
         version: 3.1.2
       '@types/hast':
-        specifier: ^3.0.4
+        specifier: 'catalog:'
         version: 3.0.4
       '@types/lodash-es':
         specifier: 'catalog:'
         version: 4.17.12
       '@types/mdast':
-        specifier: ^4.0.4
+        specifier: 'catalog:'
         version: 4.0.4
       '@types/node':
         specifier: 'catalog:'
@@ -1525,7 +1981,7 @@ importers:
         specifier: 'catalog:'
         version: 18.3.11
       '@types/sanitize-html':
-        specifier: 2.16.0
+        specifier: 'catalog:'
         version: 2.16.0
       tsdown:
         specifier: 'catalog:'
@@ -3006,44 +3462,23 @@ packages:
       '@types/react':
         optional: true
 
-  '@react-pdf/fns@2.2.1':
-    resolution: {integrity: sha512-s78aDg0vDYaijU5lLOCsUD+qinQbfOvcNeaoX9AiE7+kZzzCo6B/nX+l48cmt9OosJmvZvE9DWR9cLhrhOi2pA==}
-
   '@react-pdf/fns@3.1.2':
     resolution: {integrity: sha512-qTKGUf0iAMGg2+OsUcp9ffKnKi41RukM/zYIWMDJ4hRVYSr89Q7e3wSDW/Koqx3ea3Uy/z3h2y3wPX6Bdfxk6g==}
-
-  '@react-pdf/font@2.5.2':
-    resolution: {integrity: sha512-Ud0EfZ2FwrbvwAWx8nz+KKLmiqACCH9a/N/xNDOja0e/YgSnqTpuyHegFBgIMKjuBtO5dNvkb4dXkxAhGe/ayw==}
 
   '@react-pdf/font@4.0.4':
     resolution: {integrity: sha512-8YtgGtL511txIEc9AjiilpZ7yjid8uCd8OGUl6jaL3LIHnrToUupSN4IzsMQpVTCMYiDLFnDNQzpZsOYtRS/Pg==}
 
-  '@react-pdf/image@2.3.6':
-    resolution: {integrity: sha512-7iZDYZrZlJqNzS6huNl2XdMcLFUo68e6mOdzQeJ63d5eApdthhSHBnkGzHfLhH5t8DCpZNtClmklzuLL63ADfw==}
-
   '@react-pdf/image@3.0.3':
     resolution: {integrity: sha512-lvP5ryzYM3wpbO9bvqLZYwEr5XBDX9jcaRICvtnoRqdJOo7PRrMnmB4MMScyb+Xw10mGeIubZAAomNAG5ONQZQ==}
-
-  '@react-pdf/layout@3.13.0':
-    resolution: {integrity: sha512-lpPj/EJYHFOc0ALiJwLP09H28B4ADyvTjxOf67xTF+qkWd+dq1vg7dw3wnYESPnWk5T9NN+HlUenJqdYEY9AvA==}
 
   '@react-pdf/layout@4.4.0':
     resolution: {integrity: sha512-Aq+Cc6JYausWLoks2FvHe3PwK9cTuvksB2uJ0AnkKJEUtQbvCq8eCRb1bjbbwIji9OzFRTTzZij7LzkpKHjIeA==}
 
-  '@react-pdf/pdfkit@3.2.0':
-    resolution: {integrity: sha512-OBfCcnTC6RpD9uv9L2woF60Zj1uQxhLFzTBXTdcYE9URzPE/zqXIyzpXEA4Vf3TFbvBCgFE2RzJ2ZUS0asq7yA==}
-
   '@react-pdf/pdfkit@4.1.0':
     resolution: {integrity: sha512-Wm/IOAv0h/U5Ra94c/PltFJGcpTUd/fwVMVeFD6X9tTTPCttIwg0teRG1Lqq617J8K4W7jpL/B0HTH0mjp3QpQ==}
 
-  '@react-pdf/png-js@2.3.1':
-    resolution: {integrity: sha512-pEZ18I4t1vAUS4lmhvXPmXYP4PHeblpWP/pAlMMRkEyP7tdAeHUN7taQl9sf9OPq7YITMY3lWpYpJU6t4CZgZg==}
-
   '@react-pdf/png-js@3.0.0':
     resolution: {integrity: sha512-eSJnEItZ37WPt6Qv5pncQDxLJRK15eaRwPT+gZoujP548CodenOVp49GST8XJvKMFt9YqIBzGBV/j9AgrOQzVA==}
-
-  '@react-pdf/primitives@3.1.1':
-    resolution: {integrity: sha512-miwjxLwTnO3IjoqkTVeTI+9CdyDggwekmSLhVCw+a/7FoQc+gF3J2dSKwsHvAcVFM0gvU8mzCeTofgw0zPDq0w==}
 
   '@react-pdf/primitives@4.1.1':
     resolution: {integrity: sha512-IuhxYls1luJb7NUWy6q5avb1XrNaVj9bTNI40U9qGRuS6n7Hje/8H8Qi99Z9UKFV74bBP3DOf3L1wV2qZVgVrQ==}
@@ -3053,30 +3488,16 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@react-pdf/render@3.5.0':
-    resolution: {integrity: sha512-gFOpnyqCgJ6l7VzfJz6rG1i2S7iVSD8bUHDjPW9Mze8TmyksHzN2zBH3y7NbsQOw1wU6hN4NhRmslrsn+BRDPA==}
-
   '@react-pdf/render@4.3.0':
     resolution: {integrity: sha512-MdWfWaqO6d7SZD75TZ2z5L35V+cHpyA43YNRlJNG0RJ7/MeVGDQv12y/BXOJgonZKkeEGdzM3EpAt9/g4E22WA==}
-
-  '@react-pdf/renderer@3.4.5':
-    resolution: {integrity: sha512-O1N8q45bTs7YuC+x9afJSKQWDYQy2RjoCxlxEGdbCwP+WD5G6dWRUWXlc8F0TtzU3uFglYMmDab2YhXTmnVN9g==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   '@react-pdf/renderer@4.3.0':
     resolution: {integrity: sha512-28gpA69fU9ZQrDzmd5xMJa1bDf8t0PT3ApUKBl2PUpoE/x4JlvCB5X66nMXrfFrgF2EZrA72zWQAkvbg7TE8zw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@react-pdf/stylesheet@4.3.0':
-    resolution: {integrity: sha512-x7IVZOqRrUum9quuDeFXBveXwBht+z/6B0M+z4a4XjfSg1vZVvzoTl07Oa1yvQ/4yIC5yIkG2TSMWeKnDB+hrw==}
-
   '@react-pdf/stylesheet@6.1.2':
     resolution: {integrity: sha512-E3ftGRYUQGKiN3JOgtGsLDo0hGekA6dmkmi/MYACytmPTKxQRBSO3126MebmCq+t1rgU9uRlREIEawJ+8nzSbw==}
-
-  '@react-pdf/textkit@4.4.1':
-    resolution: {integrity: sha512-Jl9wdTqIvJ5pX+vAGz0EOhP7ut5Two9H6CzTKo/YYPeD79cM2yTXF3JzTERBC28y7LR0Waq9D2LHQjI+b/EYUQ==}
 
   '@react-pdf/textkit@6.0.0':
     resolution: {integrity: sha512-fDt19KWaJRK/n2AaFoVm31hgGmpygmTV7LsHGJNGZkgzXcFyLsx+XUl63DTDPH3iqxj3xUX128t104GtOz8tTw==}
@@ -5006,9 +5427,6 @@ packages:
   crelt@1.0.6:
     resolution: {integrity: sha512-VQ2MBenTq1fWZUH9DJNGti7kKv6EeAuYr3cLwxUWhIu1baTaXh4Ib5W2CqHVqib4/MqbYGJqiL3Zb8GJZr3l4g==}
 
-  cross-fetch@3.2.0:
-    resolution: {integrity: sha512-Q+xVJLoGOeIMXZmbUK4HYk+69cQH6LudR0Vu/pRm2YlU/hDV9CiS0gKUMaWY5f2NeUH9C1nV3bsTlCo0FsTV1Q==}
-
   cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
@@ -6791,15 +7209,6 @@ packages:
   node-addon-api@7.1.1:
     resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
 
-  node-fetch@2.7.0:
-    resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
-    engines: {node: 4.x || >=6.0.0}
-    peerDependencies:
-      encoding: ^0.1.0
-    peerDependenciesMeta:
-      encoding:
-        optional: true
-
   node-gyp-build-optional-packages@5.2.2:
     resolution: {integrity: sha512-s+w+rBWnpTMwSFbaE0UXsRlg7hU4FjekKU4eyAih5T8nJuNZT1nNsskXpxmeqSK9UzkBl6UgRlnKc8hz8IEqOw==}
     hasBin: true
@@ -7659,9 +8068,6 @@ packages:
   sanitize-html@2.17.0:
     resolution: {integrity: sha512-dLAADUSS8rBwhaevT12yCezvioCA+bmUTPH/u57xKPT8d++voeYE6HeluA/bPbQ15TwDBG2ii+QZIEmYx8VdxA==}
 
-  scheduler@0.17.0:
-    resolution: {integrity: sha512-7rro8Io3tnCPuY4la/NuI5F2yfESpnfZyT6TtkXnSWVkcu0BCDJ+8gk5ozUaFaxpIyNuWAPXrH0yFcSi28fnDA==}
-
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
@@ -8031,9 +8437,6 @@ packages:
   token-types@6.1.1:
     resolution: {integrity: sha512-kh9LVIWH5CnL63Ipf0jhlBIy0UsrMj/NJDfpsy1SqOXlLKEVyXXYrnFxFT1yOOYVGBSApeVnjPw/sBz5BfEjAQ==}
     engines: {node: '>=14.16'}
-
-  tr46@0.0.3:
-    resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
 
   tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
@@ -8427,9 +8830,6 @@ packages:
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
 
-  webidl-conversions@3.0.1:
-    resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
-
   webpack-dev-middleware@6.1.3:
     resolution: {integrity: sha512-A4ChP0Qj8oGociTs6UdlRUGANIGrCDL3y+pmQMc+dSsraXHCatFpmMey4mYELA+juqwUqwQsUgJJISXl1KWmiw==}
     engines: {node: '>= 14.15.0'}
@@ -8458,9 +8858,6 @@ packages:
     peerDependenciesMeta:
       webpack-cli:
         optional: true
-
-  whatwg-url@5.0.0:
-    resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
 
   which-typed-array@1.1.19:
     resolution: {integrity: sha512-rEvr90Bck4WZt9HHFC4DJMsjvu7x+r6bImz0/BrbWb7A2djJ8hnZMrWnHo9F8ssv0OMErasDhftrfROTyqSDrw==}
@@ -8586,9 +8983,6 @@ packages:
     resolution: {integrity: sha512-AyeEbWOu/TAXdxlV9wmGcR0+yh2j3vYPGOECcIj2S7MkrLyC7ne+oye2BKTItt0ii2PHk4cDy+95+LshzbXnGg==}
     engines: {node: '>=12.20'}
 
-  yoga-layout@2.0.1:
-    resolution: {integrity: sha512-tT/oChyDXelLo2A+UVnlW9GU7CsvFMaEnd9kVFsaiCQonFAXd3xrHhkLYu+suwwosrAEQ746xBU+HvYtm1Zs2Q==}
-
   yoga-layout@3.2.1:
     resolution: {integrity: sha512-0LPOt3AxKqMdFBZA3HBAt/t/8vIKq7VaQYbuA8WxCgung+p9TVyKRYdpvCb80HcdTN2NkbIKbhNwKUfm3tQywQ==}
 
@@ -8668,7 +9062,7 @@ snapshots:
 
   '@babel/helper-annotate-as-pure@7.27.3':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.7
 
   '@babel/helper-compilation-targets@7.27.2':
     dependencies:
@@ -8703,7 +9097,7 @@ snapshots:
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.7
     transitivePeerDependencies:
       - supports-color
 
@@ -8734,7 +9128,7 @@ snapshots:
   '@babel/helper-skip-transparent-expression-wrappers@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.7
     transitivePeerDependencies:
       - supports-color
 
@@ -8864,7 +9258,7 @@ snapshots:
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.7
       '@babel/types': 7.28.5
 
   '@babel/template@7.29.7':
@@ -8905,7 +9299,7 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       reselect: 5.1.1
       tabbable: 6.2.0
-      use-sync-external-store: 1.5.0(react@18.3.1)
+      use-sync-external-store: 1.6.0(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.3.11
 
@@ -8916,7 +9310,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       reselect: 5.1.1
-      use-sync-external-store: 1.5.0(react@18.3.1)
+      use-sync-external-store: 1.6.0(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.3.11
 
@@ -9880,21 +10274,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.3.11
 
-  '@react-pdf/fns@2.2.1':
-    dependencies:
-      '@babel/runtime': 7.26.10
-
   '@react-pdf/fns@3.1.2': {}
-
-  '@react-pdf/font@2.5.2':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/types': 2.9.2
-      cross-fetch: 3.2.0
-      fontkit: 2.0.4
-      is-url: 1.2.4
-    transitivePeerDependencies:
-      - encoding
 
   '@react-pdf/font@4.0.4':
     dependencies:
@@ -9903,36 +10283,10 @@ snapshots:
       fontkit: 2.0.4
       is-url: 1.2.4
 
-  '@react-pdf/image@2.3.6':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/png-js': 2.3.1
-      cross-fetch: 3.2.0
-      jay-peg: 1.1.1
-    transitivePeerDependencies:
-      - encoding
-
   '@react-pdf/image@3.0.3':
     dependencies:
       '@react-pdf/png-js': 3.0.0
       jay-peg: 1.1.1
-
-  '@react-pdf/layout@3.13.0':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/fns': 2.2.1
-      '@react-pdf/image': 2.3.6
-      '@react-pdf/pdfkit': 3.2.0
-      '@react-pdf/primitives': 3.1.1
-      '@react-pdf/stylesheet': 4.3.0
-      '@react-pdf/textkit': 4.4.1
-      '@react-pdf/types': 2.9.2
-      cross-fetch: 3.2.0
-      emoji-regex: 10.5.0
-      queue: 6.0.2
-      yoga-layout: 2.0.1
-    transitivePeerDependencies:
-      - encoding
 
   '@react-pdf/layout@4.4.0':
     dependencies:
@@ -9946,16 +10300,6 @@ snapshots:
       queue: 6.0.2
       yoga-layout: 3.2.1
 
-  '@react-pdf/pdfkit@3.2.0':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/png-js': 2.3.1
-      browserify-zlib: 0.2.0
-      crypto-js: 4.2.0
-      fontkit: 2.0.4
-      jay-peg: 1.1.1
-      vite-compatible-readable-stream: 3.6.1
-
   '@react-pdf/pdfkit@4.1.0':
     dependencies:
       '@babel/runtime': 7.26.10
@@ -9967,15 +10311,9 @@ snapshots:
       linebreak: 1.1.0
       vite-compatible-readable-stream: 3.6.1
 
-  '@react-pdf/png-js@2.3.1':
-    dependencies:
-      browserify-zlib: 0.2.0
-
   '@react-pdf/png-js@3.0.0':
     dependencies:
       browserify-zlib: 0.2.0
-
-  '@react-pdf/primitives@3.1.1': {}
 
   '@react-pdf/primitives@4.1.1': {}
 
@@ -9984,19 +10322,6 @@ snapshots:
       object-assign: 4.1.1
       react: 18.3.1
       scheduler: 0.25.0-rc-603e6108-20241029
-
-  '@react-pdf/render@3.5.0':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/fns': 2.2.1
-      '@react-pdf/primitives': 3.1.1
-      '@react-pdf/textkit': 4.4.1
-      '@react-pdf/types': 2.9.2
-      abs-svg-path: 0.1.1
-      color-string: 1.9.1
-      normalize-svg-path: 1.1.0
-      parse-svg-path: 0.1.2
-      svg-arc-to-cubic-bezier: 3.2.0
 
   '@react-pdf/render@4.3.0':
     dependencies:
@@ -10010,24 +10335,6 @@ snapshots:
       normalize-svg-path: 1.1.0
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
-
-  '@react-pdf/renderer@3.4.5(react@18.3.1)':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/font': 2.5.2
-      '@react-pdf/layout': 3.13.0
-      '@react-pdf/pdfkit': 3.2.0
-      '@react-pdf/primitives': 3.1.1
-      '@react-pdf/render': 3.5.0
-      '@react-pdf/types': 2.9.2
-      events: 3.3.0
-      object-assign: 4.1.1
-      prop-types: 15.8.1
-      queue: 6.0.2
-      react: 18.3.1
-      scheduler: 0.17.0
-    transitivePeerDependencies:
-      - encoding
 
   '@react-pdf/renderer@4.3.0(react@18.3.1)':
     dependencies:
@@ -10046,16 +10353,6 @@ snapshots:
       queue: 6.0.2
       react: 18.3.1
 
-  '@react-pdf/stylesheet@4.3.0':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/fns': 2.2.1
-      '@react-pdf/types': 2.9.2
-      color-string: 1.9.1
-      hsl-to-hex: 1.0.0
-      media-engine: 1.0.3
-      postcss-value-parser: 4.2.0
-
   '@react-pdf/stylesheet@6.1.2':
     dependencies:
       '@react-pdf/fns': 3.1.2
@@ -10064,14 +10361,6 @@ snapshots:
       hsl-to-hex: 1.0.0
       media-engine: 1.0.3
       postcss-value-parser: 4.2.0
-
-  '@react-pdf/textkit@4.4.1':
-    dependencies:
-      '@babel/runtime': 7.26.10
-      '@react-pdf/fns': 2.2.1
-      bidi-js: 1.0.3
-      hyphen: 1.10.6
-      unicode-properties: 1.4.1
 
   '@react-pdf/textkit@6.0.0':
     dependencies:
@@ -10812,7 +11101,7 @@ snapshots:
 
   '@testing-library/dom@10.4.0':
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.7
       '@babel/runtime': 7.26.10
       '@types/aria-query': 5.0.4
       aria-query: 5.3.0
@@ -11067,7 +11356,7 @@ snapshots:
       fast-deep-equal: 3.1.3
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      use-sync-external-store: 1.5.0(react@18.3.1)
+      use-sync-external-store: 1.6.0(react@18.3.1)
 
   '@tiptap/starter-kit@2.26.1':
     dependencies:
@@ -11134,8 +11423,8 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.29.7
+      '@babel/types': 7.29.7
       '@types/babel__generator': 7.27.0
       '@types/babel__template': 7.4.4
       '@types/babel__traverse': 7.28.0
@@ -11146,12 +11435,12 @@ snapshots:
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.7
       '@babel/types': 7.29.7
 
   '@types/babel__traverse@7.28.0':
     dependencies:
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.7
 
   '@types/body-parser@1.19.6':
     dependencies:
@@ -11679,7 +11968,7 @@ snapshots:
 
   ast-kit@2.2.0:
     dependencies:
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.7
       pathe: 2.0.3
 
   ast-types@0.14.2:
@@ -12121,12 +12410,6 @@ snapshots:
       object-assign: 4.1.1
 
   crelt@1.0.6: {}
-
-  cross-fetch@3.2.0:
-    dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
 
   cross-spawn@7.0.6:
     dependencies:
@@ -12731,7 +13014,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@8.0.0(typescript@5.8.3)(webpack@5.104.1(@swc/core@1.13.5(@swc/helpers@0.5.17))):
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.7
       chalk: 4.1.2
       chokidar: 3.6.0
       cosmiconfig: 7.1.0
@@ -13269,7 +13552,7 @@ snapshots:
   jscodeshift@17.3.0:
     dependencies:
       '@babel/core': 7.28.4
-      '@babel/parser': 7.28.5
+      '@babel/parser': 7.29.7
       '@babel/plugin-transform-class-properties': 7.27.1(@babel/core@7.28.4)
       '@babel/plugin-transform-modules-commonjs': 7.27.1(@babel/core@7.28.4)
       '@babel/plugin-transform-nullish-coalescing-operator': 7.27.1(@babel/core@7.28.4)
@@ -13512,8 +13795,8 @@ snapshots:
 
   magicast@0.5.1:
     dependencies:
-      '@babel/parser': 7.28.5
-      '@babel/types': 7.28.5
+      '@babel/parser': 7.29.7
+      '@babel/types': 7.29.7
       source-map-js: 1.2.1
 
   make-dir@2.1.0:
@@ -14163,10 +14446,6 @@ snapshots:
 
   node-addon-api@7.1.1: {}
 
-  node-fetch@2.7.0:
-    dependencies:
-      whatwg-url: 5.0.0
-
   node-gyp-build-optional-packages@5.2.2:
     dependencies:
       detect-libc: 2.0.4
@@ -14752,7 +15031,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.4
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.5
+      '@babel/types': 7.29.7
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.28.0
       '@types/doctrine': 0.0.9
@@ -14830,9 +15109,9 @@ snapshots:
       prop-types: 15.8.1
       react: 18.3.1
 
-  react-pdf-html@2.1.3(@react-pdf/renderer@3.4.5(react@18.3.1))(react@18.3.1):
+  react-pdf-html@2.1.3(@react-pdf/renderer@4.3.0(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@react-pdf/renderer': 3.4.5(react@18.3.1)
+      '@react-pdf/renderer': 4.3.0(react@18.3.1)
       css-tree: 1.1.3
       node-html-parser: 6.1.13
       react: 18.3.1
@@ -15190,11 +15469,6 @@ snapshots:
       is-plain-object: 5.0.0
       parse-srcset: 1.0.2
       postcss: 8.5.10
-
-  scheduler@0.17.0:
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
 
   scheduler@0.23.2:
     dependencies:
@@ -15621,8 +15895,6 @@ snapshots:
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
 
-  tr46@0.0.3: {}
-
   tree-kill@1.2.2: {}
 
   trim-lines@3.0.1: {}
@@ -16048,8 +16320,6 @@ snapshots:
 
   web-namespaces@2.0.1: {}
 
-  webidl-conversions@3.0.1: {}
-
   webpack-dev-middleware@6.1.3(webpack@5.104.1(@swc/core@1.13.5(@swc/helpers@0.5.17))):
     dependencies:
       colorette: 2.0.20
@@ -16101,11 +16371,6 @@ snapshots:
       - '@swc/core'
       - esbuild
       - uglify-js
-
-  whatwg-url@5.0.0:
-    dependencies:
-      tr46: 0.0.3
-      webidl-conversions: 3.0.1
 
   which-typed-array@1.1.19:
     dependencies:
@@ -16223,8 +16488,6 @@ snapshots:
   yocto-queue@0.1.0: {}
 
   yocto-queue@1.2.1: {}
-
-  yoga-layout@2.0.1: {}
 
   yoga-layout@3.2.1: {}
 

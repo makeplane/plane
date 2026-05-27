@@ -23,12 +23,12 @@
     "clean": "rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist"
   },
   "dependencies": {
-    "express-winston": "^4.2.0",
-    "winston": "^3.17.0"
+    "express-winston": "catalog:",
+    "winston": "catalog:"
   },
   "devDependencies": {
     "@plane/typescript-config": "workspace:*",
-    "@types/express": "4.17.23",
+    "@types/express": "catalog:",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "typescript": "catalog:"
