@@ -37,7 +37,7 @@ node -v                          # cần cho build-shb-images.sh (đọc package
 
 ```
 bundle-shws-YYYYMMDD/
-├── pg-stack-rhel9/        # RPM: postgresql15-server, pgbackrest, pgbouncer, deps
+├── pg-stack-rhel9/        # RPM: postgresql15-server, pgbackrest, deps
 ├── docker-stack/          # RPM Docker CE + image .tar (redis/valkey, rabbitmq, minio, exporters)
 ├── plane-dist/            # dist/ (image SHWS .tar.gz) + docker-compose.shb.yml + deploy-shb.sh
 ├── os-tuning/             # sysctl, multipath.conf mẫu, systemd units, scripts
@@ -59,10 +59,10 @@ cd bundle-shws-$(date +%Y%m%d)/pg-stack-rhel9
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 sudo dnf -qy module disable postgresql      # tắt module PG mặc định RHEL
 
-# Tải PG 15.7 + pgBackRest + PgBouncer + toàn bộ dependency
+# Tải PG 15.7 + pgBackRest + toàn bộ dependency (GĐ1 không cần pgbouncer — xem 06 §6)
 dnf download --resolve --alldeps \
   postgresql15-server-15.7* postgresql15-contrib-15.7* \
-  pgbackrest pgbouncer \
+  pgbackrest \
   device-mapper-multipath lvm2 xfsprogs chrony
 ```
 

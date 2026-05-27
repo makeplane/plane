@@ -15,7 +15,7 @@
 - Bundle `docker-stack/` + `plane-dist/` (gồm `dist/`, `docker-compose.shb.yml`, `deploy-shb.sh`)
 - Base compose `docker-compose.yml` của plane-selfhost có trên server
 - Server cert `shws.bank.local` + key cho proxy TLS
-- Kết nối được `shwsdb1p:6432` (PgBouncer) và `:9000` (MinIO)
+- Kết nối được `shwsdb1p:5432` (PostgreSQL) và `:9000` (MinIO)
 
 ---
 
@@ -26,7 +26,7 @@ cat /etc/redhat-release
 ls /opt/shws-bundle/docker-stack/docker-ce*.rpm
 ls /opt/shws-bundle/plane-dist/dist/.shb-version
 # Kết nối DB từ APP node (chưa có psql thì test bằng nc)
-nc -vz 10.94.10.11 6432 && nc -vz 10.94.10.11 9000
+nc -vz 10.94.10.11 5432 && nc -vz 10.94.10.11 9000
 ```
 
 ---
@@ -94,13 +94,14 @@ WEB_URL=https://shws.bank.local
 DEBUG=0
 CORS_ALLOWED_ORIGINS=https://shws.bank.local
 
-# ── Database (PG native ở DATA node, qua PgBouncer 6432) ──
+# ── Database (PG native ở DATA node, kết nối trực tiếp 5432) ──
 PGHOST=10.94.10.11
-PGPORT=6432
+PGPORT=5432
 POSTGRES_DB=plane
 POSTGRES_USER=plane_app
 POSTGRES_PASSWORD=<PLANE_APP_PW>
-DATABASE_URL=postgresql://plane_app:<PLANE_APP_PW>@10.94.10.11:6432/plane
+DATABASE_URL=postgresql://plane_app:<PLANE_APP_PW>@10.94.10.11:5432/plane?sslmode=verify-ca
+CONN_MAX_AGE=300   # Django persistent connection (pooling nhẹ, không cần PgBouncer GĐ1)
 
 # ── Redis / RabbitMQ (chạy trên APP node) ──
 REDIS_HOST=plane-redis
@@ -189,7 +190,7 @@ curl -k https://shws.bank.local/api/health        # 200
 # Hoặc local: curl -k https://10.94.10.10/
 
 # API thực sự kết nối DATA node (không phải plane-db nội bộ)
-docker exec api sh -lc 'env | grep -E "PGHOST|DATABASE_URL"'   # trỏ 10.94.10.11:6432
+docker exec api sh -lc 'env | grep -E "PGHOST|DATABASE_URL|CONN_MAX_AGE"'   # trỏ 10.94.10.11:5432
 ```
 
 Checklist:
@@ -197,7 +198,7 @@ Checklist:
 - [ ] Docker data-root `/u01/docker`, bridge `172.30.10.x`
 - [ ] Image SHWS load đúng tag `shb_vX`
 - [ ] `migrator` exit 0 (migration chạy trên PG native DATA node)
-- [ ] `plane-db` KHÔNG chạy; API trỏ `10.94.10.11:6432`
+- [ ] `plane-db` KHÔNG chạy; API trỏ `10.94.10.11:5432` (CONN_MAX_AGE set)
 - [ ] proxy `:443` TLS bằng cert `shws.bank.local`
 - [ ] `/api/health` 200; login UI load
 
@@ -218,13 +219,13 @@ Checklist:
 
 ## 9. Troubleshooting
 
-| Triệu chứng                     | Xử lý                                                                                  |
-| ------------------------------- | -------------------------------------------------------------------------------------- |
-| migrator treo / fail kết nối DB | sai `DATABASE_URL`/PgBouncer down; `nc -vz 10.94.10.11 6432`; `pg_hba` cho 10.94.10.10 |
-| `plane-db` vẫn chạy             | thiếu override `docker-compose.shb-prod.yml`; profiles chưa áp                         |
-| proxy 502                       | api chưa healthy; xem `logs api`                                                       |
-| upload file lỗi                 | MinIO endpoint/bucket sai; `AWS_S3_ENDPOINT_URL` trỏ `10.94.10.11:9000`                |
-| `live` WebSocket lỗi            | proxy chưa route `/live`; kiểm cấu hình proxy SHWS                                     |
+| Triệu chứng                     | Xử lý                                                                   |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| migrator treo / fail kết nối DB | sai `DATABASE_URL`; `nc -vz 10.94.10.11 5432`; `pg_hba` cho 10.94.10.10 |
+| `plane-db` vẫn chạy             | thiếu override `docker-compose.shb-prod.yml`; profiles chưa áp          |
+| proxy 502                       | api chưa healthy; xem `logs api`                                        |
+| upload file lỗi                 | MinIO endpoint/bucket sai; `AWS_S3_ENDPOINT_URL` trỏ `10.94.10.11:9000` |
+| `live` WebSocket lỗi            | proxy chưa route `/live`; kiểm cấu hình proxy SHWS                      |
 
 ---
 

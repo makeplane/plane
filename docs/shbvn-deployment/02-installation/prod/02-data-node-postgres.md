@@ -5,7 +5,7 @@
 **Owner:** duonglx · **Audience:** DBA/SRE
 **Host:** `shwsdb1p` · PG 15.7 native systemd · PGDATA `/u01/pgsql/15/data` · WAL `/u02/pgsql/15/wal`
 
-> Thiết kế gốc: [`../../01-system-design/06-database-design.md`](../../01-system-design/06-database-design.md) §5–§8. Cài + cấu hình PostgreSQL, PgBouncer, role, extension. **Chưa** cấu hình backup (xem [`03-data-node-backup.md`](./03-data-node-backup.md)) và replication DR (phase DR).
+> Thiết kế gốc: [`../../01-system-design/06-database-design.md`](../../01-system-design/06-database-design.md) §5–§8. Cài + cấu hình PostgreSQL, role, extension (GĐ1 **không** PgBouncer — app nối trực tiếp + `CONN_MAX_AGE`, xem §7). **Chưa** cấu hình backup (xem [`03-data-node-backup.md`](./03-data-node-backup.md)) và replication DR (phase DR).
 
 ---
 
@@ -14,7 +14,7 @@
 - [`01-data-node-os.md`](./01-data-node-os.md) pass: `/u01 /u02 /u03` mount, sysctl/hugepages áp dụng
 - Bundle `pg-stack-rhel9/` verify
 - Server cert `shwsdb1p` + `bank-ca.crt` (từ [`00-prerequisites.md`](../00-prerequisites.md) §6)
-- Mật khẩu role chuẩn bị (KeePass): `plane_app`, `monitoring`, `pgbouncer_auth`
+- Mật khẩu role chuẩn bị (KeePass): `plane_app`, `monitoring`
 
 ---
 
@@ -28,12 +28,12 @@ ls /opt/shws-bundle/pg-stack-rhel9/postgresql15-server-15.7*.rpm
 
 ---
 
-## 3. Action — Cài PG 15.7 + PgBouncer (offline)
+## 3. Action — Cài PG 15.7 (offline)
 
 ```bash
 cd /opt/shws-bundle/pg-stack-rhel9
 sudo dnf install -y ./postgresql15-server-15.7*.rpm ./postgresql15-contrib-15.7*.rpm \
-                    ./postgresql15-15.7*.rpm ./pgbouncer*.rpm ./pgaudit*15*.rpm
+                    ./postgresql15-15.7*.rpm ./pgaudit*15*.rpm
 
 which postgres pg_ctl psql       # /usr/pgsql-15/bin/...
 /usr/pgsql-15/bin/postgres --version   # postgres (PostgreSQL) 15.7
@@ -134,7 +134,6 @@ local   all             postgres                                peer
 local   replication     replicator                              peer
 host    plane           plane_app       10.94.10.10/32          scram-sha-256
 host    plane           plane_app       127.0.0.1/32            scram-sha-256
-host    plane           pgbouncer_auth  127.0.0.1/32            scram-sha-256
 host    postgres        monitoring      10.94.10.0/24           scram-sha-256
 hostssl replication     replicator      10.94.20.11/32          cert            clientcert=verify-full
 host    all             all             0.0.0.0/0               reject
@@ -154,7 +153,6 @@ sudo -iu postgres psql <<'SQL'
 -- Roles (đặt mật khẩu từ KeePass thay <...>)
 CREATE ROLE plane_app       LOGIN PASSWORD '<PLANE_APP_PW>';
 CREATE ROLE monitoring      LOGIN PASSWORD '<MON_PW>';
-CREATE ROLE pgbouncer_auth  LOGIN PASSWORD '<PGB_AUTH_PW>';
 CREATE ROLE replicator      LOGIN REPLICATION;          -- mTLS cert, không password
 
 -- Database
@@ -177,23 +175,11 @@ SQL
 
 ---
 
-## 7. Action — PgBouncer (transaction pool)
+## 7. Connection model — app nối trực tiếp (GĐ1, không PgBouncer)
 
-```bash
-sudo cp /opt/shws-bundle/os-tuning/pgbouncer.ini.sample /etc/pgbouncer/pgbouncer.ini
-# Sửa listen_addr=10.94.10.11,127.0.0.1 ; pool_mode=transaction ; default_pool_size=100
+GĐ1 **không** cài PgBouncer. App kết nối thẳng PG `:5432` (TLS); "pooling nhẹ" làm ở Django bằng `CONN_MAX_AGE=300` — cấu hình trong `plane.env` trên **APP node** (xem [`04-app-node-docker.md`](./04-app-node-docker.md) §plane.env), thiết kế [`06-database-design.md`](../../01-system-design/06-database-design.md) §6. Không có thao tác PgBouncer trên DATA node ở bước này.
 
-# userlist.txt: hash scram của plane_app (lấy từ pg_shadow)
-sudo -u postgres psql -Atc \
-  "SELECT '\"'||rolname||'\" \"'||rolpassword||'\"' FROM pg_authid WHERE rolname='plane_app';" \
-  | sudo tee /etc/pgbouncer/userlist.txt
-sudo chown pgbouncer:pgbouncer /etc/pgbouncer/userlist.txt
-sudo chmod 600 /etc/pgbouncer/userlist.txt
-
-sudo systemctl enable --now pgbouncer
-```
-
-> Chi tiết auth_query + TLS PgBouncer: [`06-database-design.md`](../../01-system-design/06-database-design.md) §6. App sẽ kết nối qua **6432** (PgBouncer), không trực tiếp 5432.
+> PgBouncer chỉ thêm ở **GĐ2** (nhiều APP node / read replica / CCU > 200): cài `pgbouncer` native, thêm role `pgbouncer_auth`, app đổi `:5432` → `:6432`.
 
 ---
 
@@ -208,11 +194,8 @@ sudo -u postgres psql -c "SELECT name,setting FROM pg_settings WHERE name='huge_
 # 8.2 Extension preload
 sudo -u postgres psql -d plane -c "SELECT * FROM pg_stat_statements LIMIT 1;"
 
-# 8.3 TLS từ APP node (chạy trên shwsap1p sau khi có psql client, hoặc test sau)
+# 8.3 TLS từ APP node — đường kết nối chính (chạy trên shwsap1p sau khi có psql client)
 # psql "host=10.94.10.11 port=5432 dbname=plane user=plane_app sslmode=verify-ca sslrootcert=bank-ca.crt"
-
-# 8.4 PgBouncer
-psql "host=127.0.0.1 port=6432 dbname=plane user=plane_app" -c "SELECT 1;"
 ```
 
 Checklist:
@@ -220,7 +203,7 @@ Checklist:
 - [ ] `postgresql-15` active, log `/var/log/postgresql` không error
 - [ ] `shared_buffers=4GB`, `wal_level=replica`, `ssl=on`
 - [ ] DB `plane` + role + extension tạo xong
-- [ ] PgBouncer `:6432` chấp nhận kết nối `plane_app`
+- [ ] App nối trực tiếp `:5432` TLS OK (test từ shwsap1p — xem 8.3)
 - [ ] `pg_hba.conf` mặc định deny (dòng cuối `reject`)
 
 ---
@@ -245,7 +228,6 @@ Checklist:
 | `FATAL: could not map anonymous shared memory` | hugepages thiếu → giảm `huge_pages=off` hoặc tăng `vm.nr_hugepages`, reboot                      |
 | `archive_command failed`                       | bình thường tới khi stanza pgBackRest tạo ([`03-data-node-backup.md`](./03-data-node-backup.md)) |
 | App không kết nối TLS                          | sai `sslmode`/CA; kiểm `ssl_ca_file`, cert chain bank CA                                         |
-| PgBouncer "no such user"                       | `userlist.txt` chưa có hash plane_app / sai quyền file                                           |
 | `peer authentication failed`                   | chạy psql bằng user `postgres` (peer) cho local maintenance                                      |
 
 ---

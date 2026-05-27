@@ -67,7 +67,7 @@ stages: [
 
 ```js
 scenarios: { soak: { executor: 'constant-vus', vus: 80, duration: '4h' } }
-// Theo dõi RAM api/worker + connection PgBouncer theo thời gian.
+// Theo dõi RAM api/worker + connection PG (pg_stat_activity) theo thời gian.
 ```
 
 ## 4. Kịch bản chính (pseudo-k6)
@@ -126,8 +126,7 @@ export default function (data) {
 ## 6. Theo dõi trong lúc chạy
 
 - Grafana: CPU/RAM/disk 2 node, p95 endpoint
-- `pg_stat_activity`: connection count, long query, lock
-- PgBouncer stats: pool usage, wait
+- `pg_stat_activity`: connection count, long query, lock, wait events
 - RabbitMQ: queue depth (worker theo kịp không)
 
 ## 7. Câu hỏi mở

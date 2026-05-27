@@ -92,7 +92,7 @@ Network cho SHWS tách thành **3 VLAN/subnet riêng** theo môi trường (PROD
    │  │  /u01,/u02,/u03 SAN      │ 1Gbps │  /u01,/u02,/u03 SAN      │    │
    │  └──────────────────────────┘       └──────────────────────────┘    │
    │                ▲                                                     │
-   │                │ pgBackRest WAL ship + streaming async               │
+   │                │ ① PG streaming async (WAL) — repo riêng/site        │
    │                                                                      │
    │   UAT VLAN 10.94.30.0/24            MGMT VLAN 10.94.40.0/24          │
    │  ┌──────────────────────────┐       ┌──────────────────────────┐    │
@@ -128,7 +128,7 @@ Network cho SHWS tách thành **3 VLAN/subnet riêng** theo môi trường (PROD
 
 | From source               | To dest    | Port | Protocol | Service           | Mục đích                               |
 | ------------------------- | ---------- | ---- | -------- | ----------------- | -------------------------------------- |
-| `shwsap1p` (10.94.10.10)  | `shwsdb1p` | 5432 | TCP/TLS  | PostgreSQL        | API → DB                               |
+| `shwsap1p` (10.94.10.10)  | `shwsdb1p` | 5432 | TCP/TLS  | PostgreSQL        | API → DB (kết nối trực tiếp)           |
 | `shwsap1p`                | `shwsdb1p` | 9000 | TCP/TLS  | MinIO API         | API → object storage                   |
 | `shwsdb1dr` (10.94.20.11) | `shwsdb1p` | 5432 | TCP/TLS  | PostgreSQL        | DR pulls WAL (reverse setup, failback) |
 | Build station             | `shwsdb1p` | 22   | TCP      | SSH               | DBA ops                                |
@@ -270,8 +270,8 @@ User PUT file → shwsap1p:443/<minio-prefix>
 shwsdb1p:9000 (MinIO container)
    │ Write to /u01/minio/uploads/...
    │
-   ▼ daily mirror cron (02:30)
-shwsdb1dr:9000 (DR MinIO) — /u01/minio/uploads/
+   ▼ DELL EMC storage replication (ICTP — platform tier ②, xem ADR-009)
+shwsdb1dr — /u01/minio/uploads/ (đồng bộ mức storage, KHÔNG mc mirror app-level)
 ```
 
 ### 6.4 Flow: Background job (Celery)
@@ -387,12 +387,12 @@ Trong giai đoạn ban đầu, build station có thể dùng `/etc/hosts` để 
 
 **QoS / Bandwidth allocation:**
 
-| Traffic class            | Priority | Bandwidth           | Window         |
-| ------------------------ | -------- | ------------------- | -------------- |
-| PG streaming replication | High     | Guaranteed 100 Mbps | 24/7           |
-| pgBackRest WAL ship      | Medium   | 200 Mbps burst      | 24/7           |
-| MinIO mirror (daily)     | Low      | 500 Mbps burst      | 02:30 off-peak |
-| Monitoring federation    | Low      | 1 Mbps              | 24/7           |
+| Traffic class            | Priority | Bandwidth           | Window |
+| ------------------------ | -------- | ------------------- | ------ |
+| PG streaming replication | High     | Guaranteed 100 Mbps | 24/7   |
+| Monitoring federation    | Low      | 1 Mbps              | 24/7   |
+
+> **WAN app-level SHWS chỉ gồm PG streaming + monitoring.** pgBackRest **KHÔNG** ship qua WAN (repo độc lập từng site — xem 03 §8). File MinIO + platform đồng bộ qua **DELL EMC storage replication (ICTP)**, nằm ngoài WAN app-level (ADR-009).
 
 **Failure handling:**
 
@@ -409,14 +409,14 @@ Mọi VLAN: **default DENY inbound** + DENY outbound, chỉ allow theo whitelist
 
 ### 10.2 Cross-VLAN rules
 
-| From      | To        | Allow              | Note                 |
-| --------- | --------- | ------------------ | -------------------- |
-| User VLAN | PROD VLAN | 443/TCP            | User access only     |
-| PROD VLAN | DR VLAN   | 5432, 9000         | Replication + mirror |
-| DR VLAN   | PROD VLAN | 5432               | Failback scenario    |
-| UAT VLAN  | PROD VLAN | **DENY**           | Strict isolation     |
-| UAT VLAN  | DR VLAN   | **DENY**           | Strict isolation     |
-| Mgmt VLAN | All       | 22, exporter ports | Build + monitor      |
+| From      | To        | Allow              | Note                                                         |
+| --------- | --------- | ------------------ | ------------------------------------------------------------ |
+| User VLAN | PROD VLAN | 443/TCP            | User access only                                             |
+| PROD VLAN | DR VLAN   | 5432               | PG streaming (file/platform qua EMC — ngoài firewall server) |
+| DR VLAN   | PROD VLAN | 5432               | Failback scenario                                            |
+| UAT VLAN  | PROD VLAN | **DENY**           | Strict isolation                                             |
+| UAT VLAN  | DR VLAN   | **DENY**           | Strict isolation                                             |
+| Mgmt VLAN | All       | 22, exporter ports | Build + monitor                                              |
 
 ### 10.3 Internet access
 

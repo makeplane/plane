@@ -55,6 +55,14 @@ Tổng: ~40 markdown files theo chuẩn ngân hàng VN.
 - ✅ Drift RHEL→9.6 + IP DATA→10.94.10.11 đã đồng bộ toàn bộ docs.
 - ✅ **Drift RHEL** — chốt **9.6** (2026-05-27), đồng bộ overview/arch/README/install docs. Còn xác nhận patch 9.6.z với Infra.
 - ✅ **Drift IP DATA node** — chốt **10.94.10.11** (PROD) / **10.94.20.11** (DR) theo network design; đã sync `06-database-design`.
+- ✅ **Deep-review TKHF production (2026-05-27)** — sửa 9 drift HIGH/MEDIUM, đồng bộ 01/04/05 về canonical 06 + ADR-009:
+  - `max_connections` 200→**300** (01, khớp alert 250/290); `wal_keep_size` 1GB→**4GB** + thêm `max_slot_wal_keep_size` (01).
+  - **pgBackRest KHÔNG ship qua WAN** (repo độc lập/site) — gỡ QoS "WAL ship 200Mbps" + ASCII WAN (04 §9/§3); sửa 06 §10.2 (bỏ server-start TLS push, để open question seed WAL DR-local).
+  - **MinIO sync = EMC storage (ICTP)** — gỡ tàn dư `mc mirror`/daily-sync ở 04 §6.3/§9/§10.2 + risk 03 §9.
+  - **replicator = mTLS cert (no password)** — gỡ `replicator_password` (05 §2.4/§4.1).
+  - **Cert PG về PGDATA** `/u01/pgsql/15/data/{server,replicator,bank-ca}` (05 §4.2/§5.2 khớp 06/03).
+  - Vặt: RTO failover 01 §7 (~45-70p, <1h); RAM trigger 01 §8 (16→24GB); PG log path 05 → `/var/log/postgresql`; thêm `idle_in_transaction_session_timeout` (06 §5.1, theo DB-R-02).
+- ✅ **PgBouncer → bỏ khỏi GĐ1, chuyển GĐ2 (2026-05-27)** — sau phân tích định lượng đối chiếu code Plane gốc (verify: Plane KHÔNG dùng pooler, chỉ `max_connections=1000`; `CONN_MAX_AGE=0`; gunicorn UvicornWorker). Nhu cầu thực ~13–17 conn đồng thời → multiplexing vô ích ở GĐ1. **Quyết định: app nối trực tiếp `5432` + `CONN_MAX_AGE=300`**; PgBouncer là trigger GĐ2 (≥2 APP node / read replica / CCU>200). Gỡ pooler khỏi **12 file** (01/04/06/09 + install prod 02/04/05 + prereq/build-bundle + runbook minor-upgrade/load-test + testing scenarios): bỏ `pgbouncer.service`/role `pgbouncer_auth`+`pgbouncer_admin`/DB `pgbouncer_auth`/`pgbouncer.ini`/userlist/6432, rewrite 06 §6 → "Connection model (Django persistent)", thêm trigger 06 §14. Đồng thời sửa 3 sai gunicorn/celery ở 01 §4.1 (sync→UvicornWorker; workers 8 vs env 2; celery 4 vs default CPU).
 
 ## Dependencies
 

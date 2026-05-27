@@ -127,7 +127,7 @@ Triển khai **SHWS PROD** trên **2 node Hyper-V** theo mô hình **hybrid tier
 
 ```
 postgresql-15.service     enabled, running
-pgbackrest.timer          enabled, running (auto-backup cron)
+pgbackrest (cron)         /etc/cron.d/pgbackrest-shws (full/diff/incr/WAL)
 multipathd.service        enabled, running (SAN failover)
 ```
 
@@ -145,27 +145,27 @@ multipathd.service        enabled, running (SAN failover)
 
 ### 4.1 APP node (8 vCPU / 16 GB)
 
-| Container              | CPU limit | RAM limit    | RAM reservation | Ghi chú                     |
-| ---------------------- | --------- | ------------ | --------------- | --------------------------- |
-| proxy                  | 0.5       | 256 MB       | 128 MB          | TLS + reverse proxy         |
-| web                    | 0.5       | 512 MB       | 256 MB          | Vite preview / static serve |
-| space                  | 0.3       | 256 MB       | 128 MB          |                             |
-| admin                  | 0.3       | 256 MB       | 128 MB          |                             |
-| api (gunicorn)         | 3.0       | 6 GB         | 4 GB            | **8 workers**, sync class   |
-| worker                 | 1.5       | 2 GB         | 1 GB            | **4 concurrency**           |
-| beat                   | 0.2       | 256 MB       | 128 MB          | Scheduler                   |
-| redis                  | 0.5       | 1 GB         | 512 MB          | maxmemory=1g, allkeys-lru   |
-| rabbitmq               | 0.7       | 1 GB         | 512 MB          | Default policies            |
-| **OS + Docker engine** | 0.5       | 4 GB         | —               | Page cache, syslog, audit   |
-| **Tổng**               | **~8**    | **~15.5 GB** |                 |                             |
+| Container              | CPU limit | RAM limit    | RAM reservation | Ghi chú                                                          |
+| ---------------------- | --------- | ------------ | --------------- | ---------------------------------------------------------------- |
+| proxy                  | 0.5       | 256 MB       | 128 MB          | TLS + reverse proxy                                              |
+| web                    | 0.5       | 512 MB       | 256 MB          | Vite preview / static serve                                      |
+| space                  | 0.3       | 256 MB       | 128 MB          |                                                                  |
+| admin                  | 0.3       | 256 MB       | 128 MB          |                                                                  |
+| api (gunicorn)         | 3.0       | 6 GB         | 4 GB            | **8 workers**, UvicornWorker (ASGI)                              |
+| worker                 | 1.5       | 2 GB         | 1 GB            | **concurrency 4** (set `--concurrency`; Plane mặc định = số CPU) |
+| beat                   | 0.2       | 256 MB       | 128 MB          | Scheduler                                                        |
+| redis                  | 0.5       | 1 GB         | 512 MB          | maxmemory=1g, allkeys-lru                                        |
+| rabbitmq               | 0.7       | 1 GB         | 512 MB          | Default policies                                                 |
+| **OS + Docker engine** | 0.5       | 4 GB         | —               | Page cache, syslog, audit                                        |
+| **Tổng**               | **~8**    | **~15.5 GB** |                 |                                                                  |
 
 **Gunicorn config:**
 
 ```
-WORKERS = 8           # 2 × vCPU + 1, conservative cho shared host
-WORKER_CLASS = sync   # Default, đủ cho Plane workload
-TIMEOUT = 120
-MAX_REQUESTS = 1000   # Restart worker sau 1000 req, tránh memory leak
+GUNICORN_WORKERS = 8       # set trong plane.env (Plane mặc định 2); env-tunable duy nhất
+WORKER_CLASS = uvicorn.workers.UvicornWorker   # ASGI — cố định trong entrypoint image
+# --max-requests 1200 --max-requests-jitter 1000  (cố định trong image, tránh memory leak)
+CONN_MAX_AGE = 300        # plane.env — Django persistent conn, app nối trực tiếp PG 5432
 ```
 
 ### 4.2 DATA node (8 vCPU / 16 GB)
@@ -186,10 +186,11 @@ shared_buffers = 4GB                  # 25% RAM
 effective_cache_size = 12GB           # 75% RAM (OS cache hint)
 work_mem = 16MB                       # Per-operation
 maintenance_work_mem = 512MB
-max_connections = 200
+max_connections = 300                 # app nối trực tiếp; CONN_MAX_AGE=300 (xem 06 §6)
 wal_level = replica                   # Cho streaming replication
 max_wal_senders = 5
-wal_keep_size = 1GB
+wal_keep_size = 4GB
+max_slot_wal_keep_size = 4GB          # auto-drop slot khi WAL > 4GB (chống fill /u02)
 random_page_cost = 1.1                # SSD
 effective_io_concurrency = 200        # SSD
 ```
@@ -237,7 +238,7 @@ APP NODE (shwsap1p) filesystem layout
 Chi tiết trong `04-network-design.md`. Tóm tắt:
 
 - **VLAN riêng** cho prod tier — không định tuyến public
-- **APP → DATA**: chỉ mở port **5432** (Postgres) và **9000** (MinIO)
+- **APP → DATA**: **5432** (PostgreSQL trực tiếp, TLS) và **9000** (MinIO)
 - **DATA → APP**: block toàn bộ inbound (reverse direction)
 - **TLS giữa node**: Postgres `ssl=on` + mTLS với cert bank internal CA
 - **DNS nội bộ**: `shwsdb1p.bank.local` → IP DATA node
@@ -247,16 +248,16 @@ Chi tiết trong `04-network-design.md`. Tóm tắt:
 
 ## 7. Resilience & failure modes
 
-| Failure                | Tác động                        | Mitigation                                                             |
-| ---------------------- | ------------------------------- | ---------------------------------------------------------------------- |
-| APP node crash         | Toàn bộ user mất truy cập       | Restart container tự động (`restart: unless-stopped`), monitor → alert |
-| 1 container crash      | Tính năng đó lỗi                | Healthcheck + restart                                                  |
-| DATA node crash        | Toàn bộ hệ thống xuống          | Failover sang DR replica (manual giai đoạn 1, ~30 phút RTO)            |
-| Postgres process crash | DB không serve                  | systemd restart, recovery từ WAL                                       |
-| SAN LUN-1 (data) hỏng  | DB không khởi động              | Restore từ pgBackRest backup                                           |
-| SAN LUN-2 (WAL) hỏng   | DB không commit transaction mới | Recovery + có thể mất data từ last checkpoint                          |
-| 1 SAN path hỏng        | Không tác động                  | Multipath failover trong < 1 giây                                      |
-| Network partition      | App không kết nối DB            | App retry, alert → SRE check                                           |
+| Failure                | Tác động                        | Mitigation                                                                         |
+| ---------------------- | ------------------------------- | ---------------------------------------------------------------------------------- |
+| APP node crash         | Toàn bộ user mất truy cập       | Restart container tự động (`restart: unless-stopped`), monitor → alert             |
+| 1 container crash      | Tính năng đó lỗi                | Healthcheck + restart                                                              |
+| DATA node crash        | Toàn bộ hệ thống xuống          | Failover sang DR replica (manual giai đoạn 1, ~45–70 phút, RTO < 1h — xem 03 §5.1) |
+| Postgres process crash | DB không serve                  | systemd restart, recovery từ WAL                                                   |
+| SAN LUN-1 (data) hỏng  | DB không khởi động              | Restore từ pgBackRest backup                                                       |
+| SAN LUN-2 (WAL) hỏng   | DB không commit transaction mới | Recovery + có thể mất data từ last checkpoint                                      |
+| 1 SAN path hỏng        | Không tác động                  | Multipath failover trong < 1 giây                                                  |
+| Network partition      | App không kết nối DB            | App retry, alert → SRE check                                                       |
 
 **Giai đoạn 2:** Patroni + etcd cho auto-failover (RTO < 2 phút). Chi tiết trong `06-database-design.md`.
 
@@ -272,7 +273,7 @@ Chi tiết trong `09-capacity-planning.md`. Projection:
 | M+3          | 600         | 5 GB    | ~10%       | —                               |
 | M+6          | 1000        | 10 GB   | ~15%       | —                               |
 | M+12         | 1000        | 20 GB   | ~25%       | Theo dõi RAM hit ratio          |
-| M+24         | 1000–1200   | 50 GB   | ~40%       | Cân nhắc nâng RAM 12→16 GB      |
+| M+24         | 1000–1200   | 50 GB   | ~40%       | Cân nhắc nâng RAM 16→24 GB      |
 | M+36         | 1200–1500   | 100 GB  | ~60%       | Thêm read replica nếu CCU > 200 |
 
 ---
@@ -297,16 +298,16 @@ Chi tiết trong `09-capacity-planning.md`. Projection:
 
 ## 10. Risk & mitigation
 
-| Risk                                | Severity | Probability | Mitigation                                       |
-| ----------------------------------- | -------- | ----------- | ------------------------------------------------ |
-| RAM 16 GB APP node không đủ peak    | Medium   | Medium      | Monitor, có thể nâng 24 GB dễ dàng               |
-| Postgres connection pool cạn (>200) | Medium   | Low         | Giai đoạn 2 thêm PgBouncer                       |
-| SAN LUN performance kém kỳ vọng     | High     | Low         | Test IOPS trước go-live, có thể request LUN khác |
-| Native PG security patch chậm       | Medium   | Low         | Process update quarterly, runbook sẵn            |
-| DBA bank không quen Plane schema    | Medium   | Medium      | Tài liệu DB schema + training                    |
-| Air-gap bundle bị thiếu dep         | High     | Medium      | Test cài trên VM staging trước, checklist verify |
-| RHEL license expire                 | Low      | Low         | Theo dõi expiry, renew trước                     |
-| WAL disk đầy                        | High     | Low         | Alert > 80%, retention policy chặt               |
+| Risk                                             | Severity | Probability | Mitigation                                                                                         |
+| ------------------------------------------------ | -------- | ----------- | -------------------------------------------------------------------------------------------------- |
+| RAM 16 GB APP node không đủ peak                 | Medium   | Medium      | Monitor, có thể nâng 24 GB dễ dàng                                                                 |
+| PG connection gần max_connections (worker burst) | Medium   | Low         | max_connections=300 headroom; CONN_MAX_AGE + Celery concurrency hợp lý; GĐ2 PgBouncer/read replica |
+| SAN LUN performance kém kỳ vọng                  | High     | Low         | Test IOPS trước go-live, có thể request LUN khác                                                   |
+| Native PG security patch chậm                    | Medium   | Low         | Process update quarterly, runbook sẵn                                                              |
+| DBA bank không quen Plane schema                 | Medium   | Medium      | Tài liệu DB schema + training                                                                      |
+| Air-gap bundle bị thiếu dep                      | High     | Medium      | Test cài trên VM staging trước, checklist verify                                                   |
+| RHEL license expire                              | Low      | Low         | Theo dõi expiry, renew trước                                                                       |
+| WAL disk đầy                                     | High     | Low         | Alert > 80%, retention policy chặt                                                                 |
 
 ---
 

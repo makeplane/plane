@@ -67,7 +67,7 @@ Tham chiếu [`../01-system-design/07-storage-design.md`](../01-system-design/07
 
 - [ ] Tài khoản OS có `sudo` trên cả 2 node (deploy user)
 - [ ] SSH key build station → 2 node đã trao đổi (key-based, không password)
-- [ ] Bí mật DB chuẩn bị (sinh khi cài, lưu KeePass): mật khẩu `plane_app`, `monitoring`, `pgbouncer_auth`, cipher pgBackRest
+- [ ] Bí mật DB chuẩn bị (sinh khi cài, lưu KeePass): mật khẩu `plane_app`, `monitoring`, cipher pgBackRest
 - [ ] LDAP/SwingSSO: service account + bind DN + endpoint (FQDN, port 636)
 - [ ] SMTP relay: host, port, có cần auth không
 

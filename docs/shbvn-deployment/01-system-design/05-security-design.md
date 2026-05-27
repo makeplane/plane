@@ -83,13 +83,13 @@ User logged in, redirect dashboard
 
 ### 2.4 Service accounts
 
-| Account      | Mục đích                           | Stored where                 |
-| ------------ | ---------------------------------- | ---------------------------- |
-| `replicator` | PG streaming replication PROD → DR | `.env` trên DR DATA node     |
-| `pgbackrest` | Backup tool execute                | `.env` + pgBackRest config   |
-| `plane_app`  | Django connect to PG               | `.env` trên APP node         |
-| `minio_root` | MinIO admin                        | `.env` trên DATA node        |
-| `monitoring` | postgres_exporter read-only        | `.env` trên monitoring stack |
+| Account      | Mục đích                           | Stored where                                                                   |
+| ------------ | ---------------------------------- | ------------------------------------------------------------------------------ |
+| `replicator` | PG streaming replication PROD → DR | **mTLS client cert** (không password), key `/u01/pgsql/15/data/replicator.key` |
+| `pgbackrest` | Backup tool execute                | `.env` + pgBackRest config                                                     |
+| `plane_app`  | Django connect to PG               | `.env` trên APP node                                                           |
+| `minio_root` | MinIO admin                        | `.env` trên DATA node                                                          |
+| `monitoring` | postgres_exporter read-only        | `.env` trên monitoring stack                                                   |
 
 **Rotation cadence:** Yearly (manual, lên runbook).
 
@@ -118,21 +118,21 @@ Plane built-in 4 role levels (xem `apps/api/plane/db/models/workspace.py`):
 
 ### 4.1 Inventory of secrets
 
-| Secret                                    | Where                             | Format         |
-| ----------------------------------------- | --------------------------------- | -------------- |
-| `SECRET_KEY` (Django)                     | `.env` APP node                   | Random 50 char |
-| `POSTGRES_PASSWORD`                       | `.env` APP node                   | Random 32 char |
-| `RABBITMQ_PASSWORD`                       | `.env` APP node                   | Random 32 char |
-| `REDIS_PASSWORD`                          | `.env` APP node                   | Random 32 char |
-| `MINIO_ROOT_PASSWORD`                     | `.env` DATA node                  | Random 32 char |
-| `AWS_ACCESS_KEY_ID` / `SECRET_ACCESS_KEY` | `.env` (MinIO compat)             | Random         |
-| `JWT_SECRET`                              | `.env` APP node                   | Random 64 char |
-| `SWINGSSO_CLIENT_SECRET`                  | `.env` APP node                   | Bank-issued    |
-| `LDAP_BIND_PASSWORD`                      | `.env` APP node                   | Bank-issued    |
-| `SMTP_PASSWORD`                           | `.env` APP node                   | Bank-issued    |
-| `pgbackrest_repo_cipher_pass`             | pgBackRest config                 | Random 64 char |
-| `replicator_password`                     | `.env` DR DATA                    | Random 32 char |
-| TLS private keys                          | `/etc/pki/tls/private/` mode 0600 | PEM            |
+| Secret                                    | Where                             | Format                  |
+| ----------------------------------------- | --------------------------------- | ----------------------- |
+| `SECRET_KEY` (Django)                     | `.env` APP node                   | Random 50 char          |
+| `POSTGRES_PASSWORD`                       | `.env` APP node                   | Random 32 char          |
+| `RABBITMQ_PASSWORD`                       | `.env` APP node                   | Random 32 char          |
+| `REDIS_PASSWORD`                          | `.env` APP node                   | Random 32 char          |
+| `MINIO_ROOT_PASSWORD`                     | `.env` DATA node                  | Random 32 char          |
+| `AWS_ACCESS_KEY_ID` / `SECRET_ACCESS_KEY` | `.env` (MinIO compat)             | Random                  |
+| `JWT_SECRET`                              | `.env` APP node                   | Random 64 char          |
+| `SWINGSSO_CLIENT_SECRET`                  | `.env` APP node                   | Bank-issued             |
+| `LDAP_BIND_PASSWORD`                      | `.env` APP node                   | Bank-issued             |
+| `SMTP_PASSWORD`                           | `.env` APP node                   | Bank-issued             |
+| `pgbackrest_repo_cipher_pass`             | pgBackRest config                 | Random 64 char          |
+| `replicator` client cert + key            | `/u01/pgsql/15/data/` mode 0600   | PEM (mTLS, no password) |
+| TLS private keys                          | `/etc/pki/tls/private/` mode 0600 | PEM                     |
 
 ### 4.2 File storage convention
 
@@ -143,10 +143,13 @@ Plane built-in 4 role levels (xem `apps/api/plane/db/models/workspace.py`):
 ├── .env.replicator    mode 0600  owner postgres     # DR DATA only
 └── README.md          mode 0644                     # Reference docs
 
-/etc/pki/tls/private/
+/etc/pki/tls/private/                                    # Nginx (APP/UAT)
 ├── shwsap1p.bank.local.key      mode 0600  owner root
-├── shwsdb1p.bank.local.key      mode 0600  owner postgres
-└── replicator-client.key        mode 0600  owner postgres
+└── shws-uat.bank.local.key      mode 0600  owner root
+
+/u01/pgsql/15/data/                                      # PostgreSQL certs trong PGDATA (khớp 06)
+├── server.key                   mode 0600  owner postgres   # PG server (shwsdb1p / shwsdb1dr)
+└── replicator.key               mode 0600  owner postgres   # mTLS replication client
 ```
 
 **Nguyên tắc:**
@@ -226,9 +229,9 @@ add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" alway
 
 ```ini
 ssl = on
-ssl_cert_file = '/etc/pki/tls/certs/shwsdb1p.bank.local.crt'
-ssl_key_file  = '/etc/pki/tls/private/shwsdb1p.bank.local.key'
-ssl_ca_file   = '/etc/pki/tls/certs/bank-ca-chain.crt'
+ssl_cert_file = '/u01/pgsql/15/data/server.crt'
+ssl_key_file  = '/u01/pgsql/15/data/server.key'
+ssl_ca_file   = '/u01/pgsql/15/data/bank-ca.crt'
 ssl_prefer_server_ciphers = on
 ssl_min_protocol_version = 'TLSv1.2'
 ```
@@ -259,17 +262,17 @@ Theo **Thông tư 09/2020/TT-NHNN** — hệ thống ngân hàng VN phải lưu 
 
 ### 6.1 Log sources
 
-| Source                   | Loại event                                    | Where                             |
-| ------------------------ | --------------------------------------------- | --------------------------------- |
-| **Nginx access log**     | Mọi HTTP request                              | `/var/log/nginx/access.log`       |
-| **Nginx error log**      | 4xx/5xx, exception                            | `/var/log/nginx/error.log`        |
-| **Django app log**       | Auth (login/logout), CRUD critical, exception | Docker container log → json-file  |
-| **PostgreSQL log**       | Connection, query slow, error, DDL            | `/var/log/pgsql/postgresql-*.log` |
-| **pg_audit** (extension) | Auth attempts, DDL, role changes              | Postgres log                      |
-| **OS auditd**            | sudo, login, file access                      | `/var/log/audit/audit.log`        |
-| **rsyslog**              | systemd events, kernel                        | `/var/log/messages`               |
-| **Docker engine log**    | Container start/stop/crash                    | `journalctl -u docker`            |
-| **pgBackRest log**       | Backup execution                              | `/var/log/pgbackrest/`            |
+| Source                   | Loại event                                    | Where                                  |
+| ------------------------ | --------------------------------------------- | -------------------------------------- |
+| **Nginx access log**     | Mọi HTTP request                              | `/var/log/nginx/access.log`            |
+| **Nginx error log**      | 4xx/5xx, exception                            | `/var/log/nginx/error.log`             |
+| **Django app log**       | Auth (login/logout), CRUD critical, exception | Docker container log → json-file       |
+| **PostgreSQL log**       | Connection, query slow, error, DDL            | `/var/log/postgresql/postgresql-*.log` |
+| **pg_audit** (extension) | Auth attempts, DDL, role changes              | Postgres log                           |
+| **OS auditd**            | sudo, login, file access                      | `/var/log/audit/audit.log`             |
+| **rsyslog**              | systemd events, kernel                        | `/var/log/messages`                    |
+| **Docker engine log**    | Container start/stop/crash                    | `journalctl -u docker`                 |
+| **pgBackRest log**       | Backup execution                              | `/var/log/pgbackrest/`                 |
 
 ### 6.2 Forward to SIEM bank
 

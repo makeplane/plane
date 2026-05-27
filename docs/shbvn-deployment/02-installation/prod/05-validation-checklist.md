@@ -20,7 +20,7 @@
 
 ```bash
 # DATA node
-sudo systemctl is-active postgresql-15 pgbouncer multipathd chronyd
+sudo systemctl is-active postgresql-15 multipathd chronyd
 # APP node
 cd /opt/plane-app && docker compose --env-file plane.env \
   -f docker-compose.yml -f docker-compose.shb.yml ps
@@ -48,8 +48,8 @@ cd /opt/plane-app && docker compose --env-file plane.env \
 sudo -u postgres psql -c "SHOW shared_buffers; SHOW wal_level; SHOW ssl; SHOW archive_mode;"
 # 4.2 DB plane + extension
 sudo -u postgres psql -d plane -c "\dx"          # pg_stat_statements, pgcrypto
-# 4.3 PgBouncer pool
-psql "host=10.94.10.11 port=6432 dbname=plane user=plane_app" -c "SELECT 1;"
+# 4.3 App nối trực tiếp PG qua TLS (đường chính GĐ1)
+psql "host=10.94.10.11 port=5432 dbname=plane user=plane_app sslmode=verify-ca sslrootcert=bank-ca.crt" -c "SELECT 1;"
 # 4.4 Backup
 sudo -iu postgres pgbackrest --stanza=shws-prod info && pgbackrest --stanza=shws-prod check
 # 4.5 TLS bắt buộc từ ngoài (non-TLS phải bị từ chối)
@@ -60,7 +60,7 @@ psql "host=10.94.10.11 port=5432 dbname=plane user=plane_app sslmode=disable" -c
 | --- | ---------------------------------------------------------------------- | ---- |
 | 1   | `shared_buffers=4GB`, `wal_level=replica`, `ssl=on`, `archive_mode=on` | ☐    |
 | 2   | Extension `pg_stat_statements`, `pgcrypto` có                          | ☐    |
-| 3   | PgBouncer `:6432` chấp nhận `plane_app`                                | ☐    |
+| 3   | App nối trực tiếp `:5432` TLS (verify-ca) OK                           | ☐    |
 | 4   | pgBackRest `info` + `check` OK, có full backup                         | ☐    |
 | 5   | Kết nối non-TLS bị từ chối; `pg_hba` mặc định deny                     | ☐    |
 | 6   | Audit (pgaudit) ghi log WRITE/DDL vào `/var/log/postgresql`            | ☐    |
@@ -83,7 +83,7 @@ curl -k https://shws.bank.local/api/health   # 200
 | 1   | Service Up: proxy, web, space, admin, live, api, worker, beat-worker | ☐    |
 | 2   | `migrator` Exited(0); migration áp lên PG native                     | ☐    |
 | 3   | `plane-db` KHÔNG chạy (DB ngoài)                                     | ☐    |
-| 4   | API trỏ `10.94.10.11:6432`                                           | ☐    |
+| 4   | API trỏ `10.94.10.11:5432` (CONN_MAX_AGE set)                        | ☐    |
 | 5   | `/api/health` = 200                                                  | ☐    |
 | 6   | proxy `:443` dùng cert `shws.bank.local`, redirect HTTP→HTTPS        | ☐    |
 
@@ -156,7 +156,7 @@ Hoãn mở traffic nếu bất kỳ điều sau:
 | QA            |     |                      |      |     |
 | Project Owner |     |                      |      |     |
 
-**Kết luận PROD readiness:** ☐ Sẵn sàng go-live · ☐ Hold (lý do: ****\_\_****)
+**Kết luận PROD readiness:** ☐ Sẵn sàng go-live · ☐ Hold (lý do: \***\*\_\_\*\***)
 
 ---
 

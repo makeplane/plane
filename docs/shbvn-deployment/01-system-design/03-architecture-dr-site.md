@@ -354,17 +354,17 @@ DR trở thành primary, PROD trở thành DR mới. Topology đảo ngược. D
 
 ## 9. Risk & mitigation
 
-| Risk                             | Severity | Probability | Mitigation                                                  |
-| -------------------------------- | -------- | ----------- | ----------------------------------------------------------- |
-| WAN ngắt > 1 giờ → DR lag lớn    | Medium   | Low         | `wal_keep_size=4GB` trên primary, monitor + alert           |
-| Split-brain khi failover sai     | Critical | Low         | Approval chain + pre-flight check bắt buộc verify PROD chết |
-| MinIO files mất 24h (daily sync) | Medium   | Low         | Giai đoạn 2: nâng cấp lên Site Replication real-time        |
-| DR replica corruption            | High     | Low         | pgBackRest backup tier riêng trên DR side                   |
-| Promote nhầm khi PROD còn sống   | Critical | Low         | Pre-flight: PROD đã isolate khỏi network + đã verify dead   |
-| DR drill làm sập PROD            | Critical | Very low    | Partial drill mode (shadow), không update DNS               |
-| Cert TLS replication expire      | High     | Medium      | Monitor expiry, renew workflow tự động                      |
-| Replicator account compromised   | High     | Low         | mTLS, IP allowlist (chỉ DR IP)                              |
-| Initial sync quá lâu             | Low      | Low         | 1 Gbps WAN → 50GB DB ~10 phút, OK                           |
+| Risk                                                         | Severity | Probability | Mitigation                                                                     |
+| ------------------------------------------------------------ | -------- | ----------- | ------------------------------------------------------------------------------ |
+| WAN ngắt > 1 giờ → DR lag lớn                                | Medium   | Low         | `wal_keep_size=4GB` trên primary, monitor + alert                              |
+| Split-brain khi failover sai                                 | Critical | Low         | Approval chain + pre-flight check bắt buộc verify PROD chết                    |
+| Vênh DB↔file MinIO ngay sau failover (2 nhịp sync khác nhau) | Medium   | Low         | EMC storage replication (ICTP) lo file; đánh giá độ vênh trong DR drill (§4.4) |
+| DR replica corruption                                        | High     | Low         | pgBackRest backup tier riêng trên DR side                                      |
+| Promote nhầm khi PROD còn sống                               | Critical | Low         | Pre-flight: PROD đã isolate khỏi network + đã verify dead                      |
+| DR drill làm sập PROD                                        | Critical | Very low    | Partial drill mode (shadow), không update DNS                                  |
+| Cert TLS replication expire                                  | High     | Medium      | Monitor expiry, renew workflow tự động                                         |
+| Replicator account compromised                               | High     | Low         | mTLS, IP allowlist (chỉ DR IP)                                                 |
+| Initial sync quá lâu                                         | Low      | Low         | 1 Gbps WAN → 50GB DB ~10 phút, OK                                              |
 
 ---
 

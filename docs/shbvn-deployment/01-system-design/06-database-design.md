@@ -12,13 +12,13 @@
 
 Tài liệu mô tả:
 
-- Software stack DB (PostgreSQL + PgBouncer + pgBackRest)
+- Software stack DB (PostgreSQL + pgBackRest)
 - Cluster topology (PROD primary ↔ DR standby async)
 - PostgreSQL tuning theo profile OLTP-balanced cho VM 8 vCPU / 16 GB
 - Backup strategy (full + diff + incr + WAL) với pgBackRest
 - Streaming replication mTLS sang DR
 - Extension policy (pg_stat_statements, pgaudit)
-- Database/role inventory + connection pooling
+- Database/role inventory + connection model (Django CONN_MAX_AGE)
 - Maintenance procedures + restore drill
 
 **Ngoài phạm vi:** Schema design của Plane app (do Plane upstream quản lý), Redis/RabbitMQ design (xem [01-architecture-prod.md](./01-architecture-prod.md)).
@@ -30,7 +30,6 @@ Tài liệu mô tả:
 | Thành phần                    | Version    | Source                          | Phương án triển khai                     |
 | ----------------------------- | ---------- | ------------------------------- | ---------------------------------------- |
 | PostgreSQL                    | **15.7**   | PGDG RHEL9 RPM (offline mirror) | Native systemd `postgresql-15.service`   |
-| PgBouncer                     | **1.21.x** | PGDG RHEL9 RPM                  | Native systemd `pgbouncer.service`       |
 | pgBackRest                    | **2.51+**  | PGDG RHEL9 RPM                  | CLI tool + cron schedule                 |
 | Extension: pg_stat_statements | shipped    | core                            | Enable via `shared_preload_libraries`    |
 | Extension: pgaudit            | 1.7 (PG15) | PGDG RHEL9 RPM                  | Enable via `shared_preload_libraries`    |
@@ -60,8 +59,8 @@ Tài liệu mô tả:
 │  │                 │  RPO ~30s   │  hot_standby=on │           │
 │  └────────┬────────┘             └─────────────────┘           │
 │           ▲                                                      │
-│           │ PgBouncer                                            │
-│           │ :6432 (transaction)                                  │
+│           │ direct :5432 (TLS)                                   │
+│           │ CONN_MAX_AGE=300                                     │
 │           │                                                      │
 │  ┌────────┴────────┐                                            │
 │  │  shwsap1p       │                                            │
@@ -74,11 +73,11 @@ Tài liệu mô tả:
 
 ### 3.2 Vai trò node
 
-| Hostname         | Vai trò        | Mode                    | Mở port                      |
-| ---------------- | -------------- | ----------------------- | ---------------------------- |
-| `shwsdb1p`       | PROD primary   | read-write              | 5432 (intra), 6432 PgBouncer |
-| `shwsdb1dr`      | DR standby     | hot_standby (read-only) | 5432 (intra)                 |
-| `shwsap1t` (UAT) | UAT all-in-one | PG trong Docker         | 5432 chỉ trong docker net    |
+| Hostname         | Vai trò        | Mode                    | Mở port                   |
+| ---------------- | -------------- | ----------------------- | ------------------------- |
+| `shwsdb1p`       | PROD primary   | read-write              | 5432 (intra, TLS)         |
+| `shwsdb1dr`      | DR standby     | hot_standby (read-only) | 5432 (intra)              |
+| `shwsap1t` (UAT) | UAT all-in-one | PG trong Docker         | 5432 chỉ trong docker net |
 
 ### 3.3 Replication
 
@@ -124,9 +123,10 @@ shared_buffers = 4GB
 effective_cache_size = 12GB
 work_mem = 16MB
 maintenance_work_mem = 512MB
-max_connections = 300                     # qua PgBouncer pool 100
+max_connections = 300                     # app nối trực tiếp; CONN_MAX_AGE giữ ~17 conn bền
 huge_pages = try
 temp_buffers = 16MB
+idle_in_transaction_session_timeout = 600000   # 10 phút (ms) — chống tx treo block autovacuum (DB-R-02)
 
 # WAL & Checkpoint
 wal_level = replica
@@ -241,11 +241,10 @@ File: `/u01/pgsql/15/data/pg_hba.conf`
 # TYPE  DATABASE        USER            ADDRESS                 METHOD          OPTIONS
 local   all             postgres                                peer
 local   replication     replicator                              peer
-# Plane app từ shwsap1p (chỉ IP cụ thể)
+# Plane app từ shwsap1p (kết nối trực tiếp, chỉ IP cụ thể)
 host    plane           plane_app       10.94.10.10/32          scram-sha-256
-# PgBouncer auth_user + local maintenance từ chính shwsdb1p
+# Local maintenance từ chính shwsdb1p
 host    plane           plane_app       127.0.0.1/32            scram-sha-256
-host    plane           pgbouncer_auth  127.0.0.1/32            scram-sha-256
 # Monitoring exporter từ mgmt VLAN
 host    postgres        monitoring      10.94.10.0/24           scram-sha-256
 # Replication cert-based mTLS từ DR
@@ -256,72 +255,31 @@ host    all             all             0.0.0.0/0               reject
 
 ---
 
-## 6. PgBouncer configuration
+## 6. Connection model — Django persistent connection (không pooler GĐ1)
 
-### 6.1 Vai trò
+### 6.1 Quyết định
 
-- Connection pooling **transaction mode** cho Plane app (Django + Celery)
-- Giảm overhead PG connection (~10 MB/conn × 300 = 3 GB tiết kiệm)
-- Trung gian observable: log + stats per pool
-- Single point để rotate password mà không restart PG
+App (api/worker/beat) kết nối **trực tiếp** PG `shwsdb1p:5432` (TLS). **Không** dùng PgBouncer ở GĐ1 — căn cứ đo thực tế:
 
-### 6.2 Cấu hình
+- Nhu cầu connection đồng thời GĐ1 chỉ **~13–17** (≈ số process: gunicorn workers + Celery + beat), KHÔNG phải số user → multiplexing của pooler gần như vô ích khi client ≈ backend.
+- Plane upstream không dùng pooler (chỉ `max_connections=1000`); SHWS thay bằng `max_connections=300` hợp lý cho PG native 16 GB.
+- Tránh thêm 1 daemon + 1 SPOF; DBA vận hành đơn giản, khớp kiến trúc Plane gốc.
 
-File: `/etc/pgbouncer/pgbouncer.ini`
+### 6.2 Cấu hình Django
+
+`plane.env` trên APP node:
 
 ```ini
-[databases]
-plane = host=127.0.0.1 port=5432 dbname=plane
-
-[pgbouncer]
-listen_addr = 10.94.10.11,127.0.0.1
-listen_port = 6432
-auth_type = scram-sha-256
-auth_file = /etc/pgbouncer/userlist.txt
-auth_query = SELECT username, password FROM pgbouncer.user_lookup($1)
-auth_user = pgbouncer_auth
-
-# Pool sizing (theo workload Plane: api + worker + beat)
-pool_mode = transaction
-default_pool_size = 100
-reserve_pool_size = 20
-reserve_pool_timeout = 3
-min_pool_size = 10
-max_client_conn = 1000
-max_db_connections = 150
-
-# Timeouts
-server_idle_timeout = 600
-server_lifetime = 3600
-client_idle_timeout = 0
-query_timeout = 0
-query_wait_timeout = 120
-
-# TLS từ client → PgBouncer
-client_tls_sslmode = require
-client_tls_cert_file = /etc/pgbouncer/server.crt
-client_tls_key_file = /etc/pgbouncer/server.key
-client_tls_ca_file = /etc/pgbouncer/bank-ca.crt
-
-# TLS từ PgBouncer → PG
-server_tls_sslmode = verify-ca
-server_tls_ca_file = /etc/pgbouncer/bank-ca.crt
-
-# Admin
-admin_users = pgbouncer_admin
-stats_users = monitoring
-
-# Logging
-logfile = /var/log/pgbouncer/pgbouncer.log
-pidfile = /var/run/pgbouncer/pgbouncer.pid
-log_connections = 1
-log_disconnections = 1
-log_pooler_errors = 1
+DATABASE_URL=postgresql://plane_app:<PLANE_APP_PW>@10.94.10.11:5432/plane?sslmode=verify-ca
+CONN_MAX_AGE=300        # giữ connection bền 300s/process → khử churn connect mỗi request
 ```
 
-### 6.3 Lưu ý transaction mode
+- `CONN_MAX_AGE=300`: Django tái dùng connection sống trong 300s thay vì mở/đóng mỗi request (mặc định Plane = 0 → churn). "Pooling nhẹ" mức app, không cần daemon.
+- Mỗi process worker giữ tối đa ~1 connection bền → tổng ~13–17 conn idle, thừa headroom trong `max_connections=300`.
 
-**Tương thích Plane Django ORM.** ✅ plain SQL, BEGIN/COMMIT, `SET LOCAL` trong tx, cursors WITHOUT HOLD trong tx. ❌ KHÔNG dùng (Plane cũng không cần): `SET` session-level, `LISTEN/NOTIFY`, advisory locks; prepared stmt cache tắt sẵn (`disable_server_side_cursors=true`). Nếu upstream thêm tính năng cần session state → fallback session mode hoặc bypass PgBouncer cho route đó.
+### 6.3 PgBouncer — để dành GĐ2
+
+PgBouncer (transaction pool) chỉ cần khi **client ≫ backend**: thêm APP node thứ 2, bật read replica, hoặc CCU > 200 (xem §14 + [09](./09-capacity-planning.md) §5). Khi đó: cài native `pgbouncer.service` trên DATA node, app đổi `:5432` → `:6432`, thêm role `pgbouncer_auth`, pool mode `transaction` (lưu ý: `SET LOCAL` / `pg_advisory_xact_lock` OK; tránh session-state — Plane tương thích).
 
 ---
 
@@ -329,23 +287,20 @@ log_pooler_errors = 1
 
 ### 7.1 Database
 
-| Database         | Owner            | Mục đích                                            |
-| ---------------- | ---------------- | --------------------------------------------------- |
-| `plane`          | `plane_app`      | Application data chính                              |
-| `postgres`       | `postgres`       | Maintenance DB (mặc định)                           |
-| `pgbouncer_auth` | `pgbouncer_auth` | DB phụ chỉ chứa function `user_lookup` (auth_query) |
+| Database   | Owner       | Mục đích                  |
+| ---------- | ----------- | ------------------------- |
+| `plane`    | `plane_app` | Application data chính    |
+| `postgres` | `postgres`  | Maintenance DB (mặc định) |
 
 ### 7.2 Role
 
-| Role              | Loại               | Quyền                                                  | Storage password                   |
-| ----------------- | ------------------ | ------------------------------------------------------ | ---------------------------------- |
-| `postgres`        | superuser          | full                                                   | systemd service env, peer auth     |
-| `replicator`      | login, replication | streaming repl only                                    | mTLS cert, no password             |
-| `plane_app`       | login              | DML + DDL trên DB `plane` (Plane migration cần CREATE) | `/opt/shws-secrets/postgres.env`   |
-| `monitoring`      | login              | `pg_monitor` role + read pg*stat*\*                    | `/opt/shws-secrets/monitoring.env` |
-| `pgbouncer_auth`  | login              | EXECUTE function `user_lookup`                         | `/etc/pgbouncer/userlist.txt`      |
-| `pgbouncer_admin` | login              | PgBouncer admin console only                           | KeePass DBA                        |
-| `backup`          | login, replication | pgBackRest stanza                                      | `/etc/pgbackrest/pgbackrest.conf`  |
+| Role         | Loại               | Quyền                                                  | Storage password                   |
+| ------------ | ------------------ | ------------------------------------------------------ | ---------------------------------- |
+| `postgres`   | superuser          | full                                                   | systemd service env, peer auth     |
+| `replicator` | login, replication | streaming repl only                                    | mTLS cert, no password             |
+| `plane_app`  | login              | DML + DDL trên DB `plane` (Plane migration cần CREATE) | `/opt/shws-secrets/postgres.env`   |
+| `monitoring` | login              | `pg_monitor` role + read pg*stat*\*                    | `/opt/shws-secrets/monitoring.env` |
+| `backup`     | login, replication | pgBackRest stanza                                      | `/etc/pgbackrest/pgbackrest.conf`  |
 
 > Inventory chi tiết + rotation policy đã ghi tại [05-security-design.md](./05-security-design.md) §3.
 
@@ -506,7 +461,7 @@ SELECT pg_create_physical_replication_slot('shws_dr_slot');
 
 ### 10.2 Standby (`shwsdb1dr`) cấu hình
 
-DR node có pgBackRest stanza **riêng** trỏ tới repo nội bộ `/u03/pgbackup` của DR, được nuôi đồng bộ với primary qua **NAS offsite** (rsync daily) hoặc qua `pgbackrest server-start` (TLS push). `restore_command` chạy archive-get từ DR repo, không xuyên WAN tới primary.
+DR node chạy pgBackRest stanza **riêng**, repo nội bộ `/u03/pgbackup` của DR (backup lấy từ standby — "backup-of-backup", repo **độc lập từng site, KHÔNG ship qua WAN**). Đường đồng bộ real-time PROD→DR là **streaming replication** (slot `shws_dr_slot`); `restore_command` archive-get chỉ đọc repo **DR-local** làm fallback khi streaming hở. Cơ chế seed/nuôi WAL cho repo DR-local — xem câu hỏi mở.
 
 `postgresql.auto.conf` (sau khi `pg_basebackup`):
 
@@ -520,7 +475,7 @@ hot_standby = on
 
 File `standby.signal` tồn tại trong `$PGDATA` để PG khởi động ở recovery mode.
 
-> **Câu hỏi mở:** Cơ chế share backup repo PROD↔DR — option A NFS mount NAS read-only từ DR, option B `pgbackrest server-start` TLS push từ PROD. Cần Infra confirm bandwidth WAN PROD↔DR.
+> **Câu hỏi mở (DBA):** Cách seed/nuôi WAL cho repo DR-local để `archive-get` liền mạch mà **KHÔNG ship qua WAN** — vd. DR backup từ standby + `archive_mode` phù hợp, hoặc seed từ NAS offsite nội site DR. (Đã loại phương án `pgbackrest server-start` TLS push qua WAN — WAN chỉ dành cho PG streaming + monitoring, xem [03](./03-architecture-dr-site.md) §8 + [04](./04-network-design.md) §9.)
 
 ### 10.3 Monitor replication lag
 
@@ -660,6 +615,8 @@ Validate backup integrity + verify RTO < 1 giờ định kỳ.
 
 Đánh giá **Patroni + etcd** cho auto-failover trong PROD DC (1 primary + 1 standby cùng DC; +1 VM etcd quorum = 3 node; training DBA); DR vẫn async streaming. **Trigger:** CCU > 200, downtime DB > 30 phút/tháng, hoặc bank yêu cầu RTO < 15 phút.
 
+Thêm **PgBouncer** (transaction pool, native trên DATA node) khi mở rộng nhiều APP node / bật read replica / CCU > 200 — lúc đó client ≫ backend nên multiplexing mới có lợi (xem §6.3). GĐ1 dùng `CONN_MAX_AGE` là đủ.
+
 ### 14.3 Không phù hợp với giai đoạn 1
 
 Sync replication PROD↔DR (WAN 1 Gbps latency không đảm bảo); multi-master (PG không native, pglogical phức tạp); logical replication thay streaming (chậm cho full DB).
@@ -703,18 +660,18 @@ Chi tiết xem [08-monitoring-design.md](./08-monitoring-design.md). Metrics c�
 
 ## 17. Risk register
 
-| ID      | Rủi ro                                                                    | Likelihood | Impact   | Mitigation                                                                               |
-| ------- | ------------------------------------------------------------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------- |
-| DB-R-01 | Replication slot không drain (DR down lâu) → WAL accumulate → fill `/u02` | Medium     | High     | Alert lag > 1GB; `max_slot_wal_keep_size=4GB` để PG auto-drop slot khi nguy hiểm         |
-| DB-R-02 | Autovacuum bị block bởi long transaction → bloat tăng                     | Medium     | Medium   | Alert long tx > 5 min; `idle_in_transaction_session_timeout=600s`                        |
-| DB-R-03 | Backup encryption key mất → unable to restore                             | Low        | Critical | Cipher pass backup vào KeePass DBA + Infra Mgr                                           |
-| DB-R-04 | pgBackRest disk `/u03` đầy → backup fail                                  | Medium     | High     | Alert disk > 80%; rsync sang NAS daily; expire job daily                                 |
-| DB-R-05 | PgBouncer crash → app không kết nối DB                                    | Low        | High     | systemd auto-restart; alert process down; bypass route trực tiếp 5432 (chỉ khi cần khẩn) |
-| DB-R-06 | Plane migration lock dài → API timeout                                    | Medium     | Medium   | Review migration trên UAT; chạy maint window; circuit breaker app side                   |
-| DB-R-07 | WAL archive command fail (NAS down)                                       | Low        | High     | `archive_command` retry built-in; alert nếu archive lag > 5 min                          |
-| DB-R-08 | Streaming replication TLS cert hết hạn                                    | Low        | High     | Cert renewal calendar (xem 05-security §4.3); alert 30 ngày trước expire                 |
-| DB-R-09 | Connection storm (worker burst) → PgBouncer reject                        | Medium     | Medium   | `max_client_conn=1000`, `reserve_pool`; Celery rate limit ở app                          |
-| DB-R-10 | Schema drift PROD vs UAT do hotfix trực tiếp                              | Low        | High     | Cấm trực tiếp DDL trên PROD ngoài migration; pgaudit log + alert                         |
+| ID      | Rủi ro                                                                        | Likelihood | Impact   | Mitigation                                                                                                  |
+| ------- | ----------------------------------------------------------------------------- | ---------- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| DB-R-01 | Replication slot không drain (DR down lâu) → WAL accumulate → fill `/u02`     | Medium     | High     | Alert lag > 1GB; `max_slot_wal_keep_size=4GB` để PG auto-drop slot khi nguy hiểm                            |
+| DB-R-02 | Autovacuum bị block bởi long transaction → bloat tăng                         | Medium     | Medium   | Alert long tx > 5 min; `idle_in_transaction_session_timeout=600s`                                           |
+| DB-R-03 | Backup encryption key mất → unable to restore                                 | Low        | Critical | Cipher pass backup vào KeePass DBA + Infra Mgr                                                              |
+| DB-R-04 | pgBackRest disk `/u03` đầy → backup fail                                      | Medium     | High     | Alert disk > 80%; rsync sang NAS daily; expire job daily                                                    |
+| DB-R-05 | Persistent conn (CONN_MAX_AGE) tích lũy gần max_connections khi nhiều process | Low        | Medium   | `max_connections=300` headroom; monitor `pg_stat_activity`; chỉnh `CONN_MAX_AGE`/Celery concurrency nếu cần |
+| DB-R-06 | Plane migration lock dài → API timeout                                        | Medium     | Medium   | Review migration trên UAT; chạy maint window; circuit breaker app side                                      |
+| DB-R-07 | WAL archive command fail (NAS down)                                           | Low        | High     | `archive_command` retry built-in; alert nếu archive lag > 5 min                                             |
+| DB-R-08 | Streaming replication TLS cert hết hạn                                        | Low        | High     | Cert renewal calendar (xem 05-security §4.3); alert 30 ngày trước expire                                    |
+| DB-R-09 | Connection storm (worker burst) → vượt `max_connections`                      | Medium     | Medium   | `max_connections=300` headroom; Celery concurrency + rate limit hợp lý ở app                                |
+| DB-R-10 | Schema drift PROD vs UAT do hotfix trực tiếp                                  | Low        | High     | Cấm trực tiếp DDL trên PROD ngoài migration; pgaudit log + alert                                            |
 
 ---
 

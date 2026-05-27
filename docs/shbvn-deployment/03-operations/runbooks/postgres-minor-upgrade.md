@@ -70,7 +70,7 @@ sudo -u postgres psql -c "SELECT pg_last_wal_replay_lsn(), pg_last_xact_replay_t
 # Trên shwsdb1p: dừng nhận write (stop app hoặc set default_transaction_read_only)
 # Đảm bảo DR đã apply hết WAL (lag = 0) rồi mới promote
 sudo -u postgres pg_ctl promote -D /u01/pgsql/15/data        # trên shwsdb1dr
-# Trỏ app → DR (đổi .env / PgBouncer host → shwsdb1dr), restart api
+# Trỏ app → DR (đổi DATABASE_URL host → shwsdb1dr trong plane.env), restart api
 ```
 
 ### Bước 3 — Upgrade PROD cũ (`shwsdb1p`) + re-setup làm standby

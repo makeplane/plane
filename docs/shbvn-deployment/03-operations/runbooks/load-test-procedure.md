@@ -74,7 +74,7 @@ Kịch bản trong script (`shws-load.js` — chi tiết ở KHKT): login (auth 
 - [ ] CPU < 70%, RAM < 80% sustained (cả APP + DATA node)
 - [ ] Soak 4h: RAM không tăng tuyến tính (không leak); worker không OOM-restart bất thường
 - [ ] Tìm được breaking point ở stress (ghi lại CCU gãy)
-- [ ] Không deadlock / connection pool exhaustion (`pg_stat_activity`, PgBouncer stats)
+- [ ] Không deadlock / vượt `max_connections` (`pg_stat_activity` count + wait events)
 
 Ghi kết quả → report `plans/reports/load-test-YYYYMMDD.md`.
 

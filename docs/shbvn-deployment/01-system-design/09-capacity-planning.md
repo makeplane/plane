@@ -39,7 +39,7 @@ Sizing cơ sở, dự báo tăng trưởng, và **scaling trigger** cho **Shinha
 
 - `shared_buffers = 4GB` (25% RAM) + `effective_cache_size = 12GB` (page cache) → bộ working set ~10–20 GB DB nằm gần hết trong RAM ở M+12 → cache hit > 95%.
 - 8 vCPU đủ cho ~100 CCU OLTP (read-heavy, query nhẹ) + autovacuum 4 workers + backup process-max 4.
-- Connection: PgBouncer transaction pool 100 → PG `max_connections` headroom (xem [06](./06-database-design.md) §6).
+- Connection: app nối trực tiếp 5432 + `CONN_MAX_AGE=300` → ~13–17 conn bền, `max_connections=300` thừa headroom (xem [06](./06-database-design.md) §6).
 
 ### 3.2 Cơ sở sizing APP node 8/16
 
@@ -78,7 +78,7 @@ Khi metric chạm ngưỡng (đo qua Prometheus — xem [08](./08-monitoring-des
 | RAM APP            | > 85% sustained         | Nâng RAM 16→24 GB                                                                   | Vertical   |
 | Disk `/u01`        | > 80%                   | Mở rộng LUN online (`lvextend`+`xfs_growfs`, xem [07](./07-storage-design.md) §6.3) | Storage    |
 | Disk `/u03`        | > 80%                   | Mở rộng LUN; rà retention; verify offsite                                           | Storage    |
-| Connections        | > 250 PG                | Tăng PgBouncer pool; review connection leak                                         | Tuning     |
+| Connections        | > 250 PG                | Review connection leak / Celery concurrency; cân nhắc PgBouncer (GĐ2)               | Tuning     |
 | CCU thực           | > 200                   | Cân nhắc read replica (offload read) + Patroni GĐ2                                  | Horizontal |
 | Replication lag    | > 5 phút thường xuyên   | Kiểm WAN bandwidth ICTP; tăng `max_wal_size`                                        | Tuning     |
 | MinIO `/u01/minio` | tăng > data DB          | Tách MinIO sang LUN/node riêng                                                      | Storage    |
@@ -91,7 +91,7 @@ Khi metric chạm ngưỡng (đo qua Prometheus — xem [08](./08-monitoring-des
 
 - **Disk:** sizing LUN dư lớn từ đầu (data 600 GB cho DB ~100 GB ở M+36) → ít phải mở rộng. XFS không shrink nên dư là an toàn.
 - **CPU/RAM:** VM 8/16 chạy ~55% ở M+12 → headroom ~45% cho spike. Resize Hyper-V nhanh khi cần.
-- **Connection:** PgBouncer pool 100 + reserve 20, `max_client_conn=1000` → chịu được burst worker.
+- **Connection:** ~13–17 conn bền (`CONN_MAX_AGE`), `max_connections=300` → headroom lớn cho burst worker; PgBouncer khi GĐ2 (nhiều APP node / read replica / CCU > 200).
 
 ---
 
