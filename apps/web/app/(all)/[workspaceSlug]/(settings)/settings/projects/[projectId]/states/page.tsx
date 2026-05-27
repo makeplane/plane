@@ -31,10 +31,7 @@ function StatesSettingsPage({ params }: Route.ComponentProps) {
   // derived values
   const pageTitle = currentProjectDetails?.name ? `${currentProjectDetails?.name} - States` : undefined;
   // derived values
-  const canPerformProjectMemberActions = allowPermissions(
-    [EUserPermissions.ADMIN],
-    EUserPermissionsLevel.PROJECT
-  );
+  const canPerformProjectMemberActions = allowPermissions([EUserPermissions.ADMIN], EUserPermissionsLevel.PROJECT);
 
   if (workspaceUserInfo && !canPerformProjectMemberActions) {
     return <NotAuthorizedView section="settings" isProjectView className="h-auto" />;

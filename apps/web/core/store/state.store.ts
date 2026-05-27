@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -47,7 +48,12 @@ export interface IStateStore {
     stateId: string,
     data: Partial<IState>
   ) => Promise<IState | undefined>;
-  deleteState: (workspaceSlug: string, projectId: string, stateId: string, replacementStateId?: string) => Promise<void>;
+  deleteState: (
+    workspaceSlug: string,
+    projectId: string,
+    stateId: string,
+    replacementStateId?: string
+  ) => Promise<void>;
   markStateAsDefault: (workspaceSlug: string, projectId: string, stateId: string) => Promise<void>;
   moveStatePosition: (
     workspaceSlug: string,

@@ -116,3 +116,7 @@ scripts/
 packages/i18n/src/types/keys.generated.ts
 
 *.json
+
+# Local store and logs
+.pnpm-store/
+dev.log

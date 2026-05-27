@@ -25,7 +25,7 @@ type Props = {
 };
 
 const MEMBERS_FILTERS = new Set(["lead", "members"]);
-const DATE_FILTERS = ["start_date", "target_date"];
+const DATE_FILTERS = new Set(["start_date", "target_date"]);
 
 export function ModuleAppliedFiltersList(props: Props) {
   const {
@@ -64,7 +64,7 @@ export function ModuleAppliedFiltersList(props: Props) {
                     values={value}
                   />
                 )}
-                {DATE_FILTERS.includes(filterKey) && (
+                {DATE_FILTERS.has(filterKey) && (
                   <AppliedDateFilters
                     editable={isEditingAllowed}
                     handleRemove={(val) => handleRemoveFilter(filterKey, val)}

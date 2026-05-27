@@ -55,9 +55,7 @@ export const MemberProjectAssignments = observer(function MemberProjectAssignmen
 
   const handleToggleProject = async (projectId: string, currentlyAssigned: boolean) => {
     // Optimistic update
-    setProjects((prev) =>
-      prev.map((p) => (p.id === projectId ? { ...p, is_member: !currentlyAssigned } : p))
-    );
+    setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, is_member: !currentlyAssigned } : p)));
 
     try {
       const updatedIds = projects
@@ -72,9 +70,7 @@ export const MemberProjectAssignments = observer(function MemberProjectAssignmen
       });
     } catch {
       // Revert on error
-      setProjects((prev) =>
-        prev.map((p) => (p.id === projectId ? { ...p, is_member: currentlyAssigned } : p))
-      );
+      setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, is_member: currentlyAssigned } : p)));
       setToast({
         type: TOAST_TYPE.ERROR,
         title: "Error",
@@ -95,11 +91,7 @@ export const MemberProjectAssignments = observer(function MemberProjectAssignmen
   }
 
   if (projects.length === 0) {
-    return (
-      <div className="px-4 py-3 text-caption-sm-regular text-placeholder">
-        No projects in this workspace.
-      </div>
-    );
+    return <div className="px-4 py-3 text-caption-sm-regular text-placeholder">No projects in this workspace.</div>;
   }
 
   return (
@@ -115,7 +107,7 @@ export const MemberProjectAssignments = observer(function MemberProjectAssignmen
               type="checkbox"
               checked={project.is_member}
               onChange={() => handleToggleProject(project.id, project.is_member)}
-              className="h-3.5 w-3.5 rounded border-subtle accent-accent-primary"
+              className="accent-accent-primary h-3.5 w-3.5 rounded border-subtle"
             />
             <span className="truncate text-primary">{project.name}</span>
             <span className="ml-auto shrink-0 text-placeholder">{project.identifier}</span>

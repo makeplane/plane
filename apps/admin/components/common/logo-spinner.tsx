@@ -54,7 +54,10 @@ export function LogoSpinner() {
           />
         </svg>
         <div className="wordmark-container mt-1">
-          <span className="text-20 font-black" style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: "-0.05em", color: "#1b6ec2" }}>
+          <span
+            className="font-black text-20"
+            style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: "-0.05em", color: "#1b6ec2" }}
+          >
             WinSecOps
           </span>
         </div>

@@ -433,11 +433,7 @@ export class WorkspaceService extends APIService {
       });
   }
 
-  async updateMemberProjects(
-    workspaceSlug: string,
-    memberId: string,
-    data: { project_ids: string[] }
-  ): Promise<any> {
+  async updateMemberProjects(workspaceSlug: string, memberId: string, data: { project_ids: string[] }): Promise<any> {
     return this.put(`/api/workspaces/${workspaceSlug}/members/${memberId}/projects/`, data)
       .then((response) => response?.data)
       .catch((error) => {

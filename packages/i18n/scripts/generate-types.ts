@@ -153,6 +153,9 @@ function main(): void {
   const keyLines = sortedKeys.map((key) => `  | "${key}"`).join("\n");
   const output = `${COPYRIGHT_HEADER}
 
+/* eslint-disable */
+/* tslint:disable */
+
 // AUTO-GENERATED — DO NOT EDIT
 // Generated from ${jsonFiles.length} English namespace files (${sortedKeys.length} keys)
 // Run: pnpm run generate:types

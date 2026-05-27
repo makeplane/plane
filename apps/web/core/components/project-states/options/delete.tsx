@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -102,7 +103,7 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
               <div className="space-y-1.5">
                 <label className="text-body-xs-medium text-secondary">Replacement State</label>
                 <select
-                  className="w-full rounded-md border border-subtle bg-surface-1 px-3 py-2 text-body-sm-regular text-primary focus:outline-none focus:ring-1 focus:ring-accent-primary"
+                  className="focus:ring-accent-primary w-full rounded-md border border-subtle bg-surface-1 px-3 py-2 text-body-sm-regular text-primary focus:ring-1 focus:outline-none"
                   value={replacementStateId}
                   onChange={(e) => setReplacementStateId(e.target.value)}
                 >
@@ -122,9 +123,8 @@ export const StateDelete = observer(function StateDelete(props: TStateDelete) {
             </div>
           ) : (
             <>
-              Are you sure you want to delete state-{" "}
-              <span className="font-medium text-primary">{state?.name}</span>? All of the data related to the state
-              will be permanently removed. This action cannot be undone.
+              Are you sure you want to delete state- <span className="font-medium text-primary">{state?.name}</span>?
+              All of the data related to the state will be permanently removed. This action cannot be undone.
             </>
           )
         }

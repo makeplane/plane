@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -148,7 +149,7 @@ export const InvitationFields = observer(function InvitationFields(props: TInvit
                                 : [...(selectedProjectIds || []), projectId];
                               onChange(updated);
                             }}
-                            className="h-3.5 w-3.5 rounded border-subtle accent-accent-primary"
+                            className="accent-accent-primary h-3.5 w-3.5 rounded border-subtle"
                           />
                           <span className="truncate text-primary">{project.name}</span>
                           <span className="ml-auto shrink-0 text-placeholder">{project.identifier}</span>

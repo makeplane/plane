@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/consistent-function-scoping */
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -127,18 +128,13 @@ export const useMemberColumns = () => {
                   <button
                     type="button"
                     className="text-caption-sm-medium text-accent-primary hover:underline"
-                    onClick={() =>
-                      setExpandedProjectMemberId(isExpanded ? null : rowData.member.id)
-                    }
+                    onClick={() => setExpandedProjectMemberId(isExpanded ? null : rowData.member.id)}
                   >
                     {isExpanded ? "Hide" : "Manage"}
                   </button>
                   {isExpanded && workspaceSlug && (
-                    <div className="absolute left-0 right-0 z-10 mt-2 rounded-md border border-subtle bg-surface-1 shadow-lg">
-                      <MemberProjectAssignments
-                        workspaceSlug={workspaceSlug.toString()}
-                        memberId={rowData.member.id}
-                      />
+                    <div className="shadow-lg absolute right-0 left-0 z-10 mt-2 rounded-md border border-subtle bg-surface-1">
+                      <MemberProjectAssignments workspaceSlug={workspaceSlug.toString()} memberId={rowData.member.id} />
                     </div>
                   )}
                 </div>
@@ -175,4 +171,3 @@ export const useMemberColumns = () => {
   ];
   return { columns, workspaceSlug, removeMemberModal, setRemoveMemberModal };
 };
-

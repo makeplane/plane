@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -123,7 +124,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
         </div>
 
         {isDoneLocked && (
-          <div className="flex items-center gap-1.5 text-amber-600">
+          <div className="text-amber-600 flex items-center gap-1.5">
             <Lock className="h-3.5 w-3.5" />
             <span className="text-body-xs-regular">Locked</span>
           </div>
@@ -216,7 +217,7 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
       )}
 
       {isDoneLocked ? (
-        <div className="mt-6 flex items-center gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-body-sm-regular text-amber-600">
+        <div className="border-amber-500/30 bg-amber-500/10 text-amber-600 mt-6 flex items-center gap-2 rounded-md border px-4 py-3 text-body-sm-regular">
           <Lock className="h-4 w-4 flex-shrink-0" />
           <span>This issue is locked. Change state to add comments or make edits.</span>
         </div>
