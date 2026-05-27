@@ -6,15 +6,18 @@ Tài liệu vận hành cho oncall, DBA, ops team sau khi go-live.
 
 ### Runbooks (quy trình thao tác — SOP)
 
-| File                                                                         | Mục đích                                  | Tần suất          | Status   |
-| ---------------------------------------------------------------------------- | ----------------------------------------- | ----------------- | -------- |
-| [`runbooks/backup-restore.md`](./runbooks/backup-restore.md)                 | Backup hàng ngày + restore khi cần        | Daily auto        | 🟡 Draft |
-| [`runbooks/dr-failover.md`](./runbooks/dr-failover.md)                       | Promote DR replica → master khi prod chết | On-demand         | 🟡 Draft |
-| [`runbooks/postgres-minor-upgrade.md`](./runbooks/postgres-minor-upgrade.md) | Upgrade PG 15.x → 15.y (security patch)   | Quarterly         | 🟡 Draft |
-| [`runbooks/postgres-major-upgrade.md`](./runbooks/postgres-major-upgrade.md) | Upgrade PG 15 → 16 (pg_upgrade)           | Multi-year        | 🟡 Draft |
-| [`runbooks/app-deploy-new-version.md`](./runbooks/app-deploy-new-version.md) | Deploy version mới của Plane app          | Per release       | 🟡 Draft |
-| `runbooks/load-test-procedure.md`                                            | Quy trình chạy load test trước release    | Per major release | ⬜       |
-| `runbooks/data-cleanup-after-test.md`                                        | Cleanup dữ liệu test khỏi prod            | After load test   | ⬜       |
+| File                                                                           | Mục đích                                  | Tần suất          | Status   |
+| ------------------------------------------------------------------------------ | ----------------------------------------- | ----------------- | -------- |
+| [`runbooks/backup-restore.md`](./runbooks/backup-restore.md)                   | Backup hàng ngày + restore khi cần        | Daily auto        | 🟡 Draft |
+| [`runbooks/dr-failover.md`](./runbooks/dr-failover.md)                         | Promote DR replica → master khi prod chết | On-demand         | 🟡 Draft |
+| [`runbooks/postgres-minor-upgrade.md`](./runbooks/postgres-minor-upgrade.md)   | Upgrade PG 15.x → 15.y (security patch)   | Quarterly         | 🟡 Draft |
+| [`runbooks/postgres-major-upgrade.md`](./runbooks/postgres-major-upgrade.md)   | Upgrade PG 15 → 16 (pg_upgrade)           | Multi-year        | 🟡 Draft |
+| [`runbooks/app-deploy-new-version.md`](./runbooks/app-deploy-new-version.md)   | Deploy version mới của Plane app          | Per release       | 🟡 Draft |
+| [`runbooks/load-test-procedure.md`](./runbooks/load-test-procedure.md)         | Quy trình chạy load test trước release    | Per major release | 🟡 Draft |
+| [`runbooks/data-cleanup-after-test.md`](./runbooks/data-cleanup-after-test.md) | Reset/dọn dữ liệu test trên UAT           | After load test   | 🟡 Draft |
+| [`runbooks/ldap-sso-troubleshoot.md`](./runbooks/ldap-sso-troubleshoot.md)     | Troubleshoot auth LDAP/SwingSSO           | On-demand         | 🟡 Draft |
+| [`runbooks/disk-full-recovery.md`](./runbooks/disk-full-recovery.md)           | Disk đầy (/u02 WAL, /u03 backup, /u01)    | On-demand (P1/P2) | 🟡 Draft |
+| [`runbooks/postgres-vacuum-bloat.md`](./runbooks/postgres-vacuum-bloat.md)     | Manual VACUUM / xử lý bloat               | On-demand         | 🟡 Draft |
 
 ### Tài liệu vận hành chung
 

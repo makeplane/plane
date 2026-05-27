@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P0 — không có runbook là không thể vận hành sau go-live
-- **Status:** 🟡 In progress (8/13)
+- **Status:** 🟠 Review (13/13 — 10 runbooks + 3 ops docs xong; 5 runbook cuối viết 2026-05-27)
 - **Mô tả:** 10 runbooks + 3 docs vận hành chung
 
 ## Key insights
@@ -28,11 +28,11 @@
 - [x] `postgres-minor-upgrade.md` — PG 15.x → 15.y security patch
 - [x] `postgres-major-upgrade.md` — PG 15 → 16 (pg_upgrade, multi-year)
 - [x] `app-deploy-new-version.md` — Deploy version mới của Plane (zero-downtime nếu được)
-- [ ] `load-test-procedure.md` — Quy trình chạy load test trước release
-- [ ] `data-cleanup-after-test.md` — Restore từ snapshot sau load test
-- [ ] `ldap-sso-troubleshoot.md` — Sự cố auth LDAP/SwingSSO
-- [ ] `disk-full-recovery.md` — Khi /backup hoặc WAL disk đầy
-- [ ] `postgres-vacuum-bloat.md` — Manual vacuum khi autovacuum không đủ
+- [x] `load-test-procedure.md` — Quy trình chạy load test trước release (k6)
+- [x] `data-cleanup-after-test.md` — Reset/dọn dữ liệu test trên UAT
+- [x] `ldap-sso-troubleshoot.md` — Sự cố auth LDAP/SwingSSO
+- [x] `disk-full-recovery.md` — Khi /u02 WAL hoặc /u03 backup disk đầy
+- [x] `postgres-vacuum-bloat.md` — Manual vacuum khi autovacuum không đủ
 
 ### Docs vận hành chung
 
