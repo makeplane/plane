@@ -205,7 +205,7 @@ function CustomMenu(props: ICustomMenuDropdownProps) {
     >
       <div
         className={cn(
-          "shadow-sm my-1 min-w-[12rem] overflow-y-scroll rounded-md border border-strong bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap focus:outline-none",
+          "shadow-md my-1 min-w-[12rem] overflow-y-scroll rounded-md border border-strong-1 bg-surface-1 px-2 py-2.5 text-11 whitespace-nowrap ring-1 ring-strong-1/15 outline-none focus:outline-none",
           {
             "max-h-60": maxHeight === "lg",
             "max-h-48": maxHeight === "md",
@@ -433,7 +433,7 @@ function SubMenu(props: ICustomSubMenuProps) {
             style={styles.popper}
             {...attributes.popper}
             className={cn(
-              "shadow-sm fixed z-30 min-w-[12rem] overflow-hidden rounded-md border border-strong bg-surface-1 p-1 text-11",
+              "shadow-md fixed z-30 min-w-[12rem] overflow-hidden rounded-md border border-strong-1 bg-surface-1 p-1 text-11 ring-1 ring-strong-1/15",
               contentClassName
             )}
             data-prevent-outside-click="true"
@@ -526,7 +526,7 @@ function SubMenuContent(props: ICustomSubMenuContentProps) {
   return (
     <div
       className={cn(
-        "shadow-sm z-[15] min-w-[12rem] overflow-hidden rounded-md border border-strong bg-surface-1 p-1 text-11",
+        "shadow-md z-[15] min-w-[12rem] overflow-hidden rounded-md border border-strong-1 bg-surface-1 p-1 text-11 ring-1 ring-strong-1/15",
         className
       )}
     >
