@@ -8,6 +8,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { observer } from "mobx-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
@@ -93,13 +94,13 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof window === "undefined") return null;
 
   // Filter out triage states (triage is not a valid state group in TStateGroups, so we just use projectStates)
   const availableStates = projectStates || [];
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
 
@@ -239,6 +240,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 });
