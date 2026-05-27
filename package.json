@@ -7,7 +7,7 @@
   "repository": "https://github.com/makeplane/plane.git",
   "scripts": {
     "build": "turbo run build",
-    "dev": "bash update-network.sh && turbo run dev --concurrency=18",
+    "dev": "bash update-network.sh && turbo run build --filter='./packages/*' --concurrency=10 && turbo run dev --concurrency=18",
     "start": "turbo run start",
     "clean": "turbo run clean && rm -rf .turbo && rm -rf .next && rm -rf node_modules && rm -rf dist",
     "fix": "turbo run fix",

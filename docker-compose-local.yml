@@ -140,11 +140,88 @@ services:
       - plane-db
       - plane-redis
 
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend-dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - APP_FILTER=web
+    env_file:
+      - ./apps/web/.env
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+  admin:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend-dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - APP_FILTER=admin
+    env_file:
+      - ./apps/admin/.env
+    depends_on:
+      - api
+    ports:
+      - "3001:3001"
+
+  space:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend-dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - APP_FILTER=space
+    env_file:
+      - ./apps/space/.env
+    depends_on:
+      - api
+    ports:
+      - "3002:3002"
+
+  live:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend-dev
+    restart: unless-stopped
+    networks:
+      - dev_env
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - APP_FILTER=live
+    env_file:
+      - ./apps/live/.env
+    depends_on:
+      - api
+    ports:
+      - "3100:3100"
+
 volumes:
   redisdata:
   uploads:
   pgdata:
   rabbitmq_data:
+  frontend_node_modules:
 
 networks:
   dev_env:

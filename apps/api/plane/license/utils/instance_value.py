@@ -40,7 +40,7 @@ def get_configuration_value(keys):
 
 
 def get_email_configuration():
-    return get_configuration_value(
+    config = get_configuration_value(
         [
             {"key": "EMAIL_HOST", "default": os.environ.get("EMAIL_HOST")},
             {"key": "EMAIL_HOST_USER", "default": os.environ.get("EMAIL_HOST_USER")},
@@ -57,3 +57,8 @@ def get_email_configuration():
             },
         ]
     )
+    if config[0]:
+        settings.EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    else:
+        settings.EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend") if settings.DEBUG else "django.core.mail.backends.smtp.EmailBackend"
+    return config
