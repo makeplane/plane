@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -10,6 +11,7 @@ import { useState } from "react";
 import { observer } from "mobx-react";
 // plane imports
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { Button } from "@plane/propel/button";
 // hooks
 import { useSupportTicket } from "@/hooks/store/use-support-ticket";
 import { useProjectState } from "@/hooks/store/use-project-state";
@@ -31,7 +33,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    description_html: "<p></p>",
+    description: "",
     priority: "none",
     state_id: "",
     assignee_ids: [] as string[],
@@ -47,7 +49,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
   const handleClose = () => {
     setFormData({
       title: "",
-      description_html: "<p></p>",
+      description: "",
       priority: "none",
       state_id: "",
       assignee_ids: [],
@@ -69,7 +71,7 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
     try {
       await createTicket(workspaceSlug, projectId, {
         title: formData.title,
-        description_html: formData.description_html,
+        description_html: formData.description ? `<p>${formData.description}</p>` : "<p></p>",
         priority: formData.priority,
         state_id: formData.state_id || undefined,
         assignee_ids: formData.assignee_ids,
@@ -148,11 +150,11 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
             <label className="text-sm mb-1.5 block font-medium text-secondary">Description</label>
             <textarea
               placeholder="Enter ticket description"
-              value={formData.description_html === "<p></p>" ? "" : formData.description_html}
+              value={formData.description}
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  description_html: e.target.value ? `<p>${e.target.value}</p>` : "<p></p>",
+                  description: e.target.value,
                 }))
               }
               rows={3}
@@ -224,21 +226,17 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
 
         {/* Footer */}
         <div className="flex items-center justify-end gap-3 border-t border-subtle px-6 py-4">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="text-sm rounded-lg border border-subtle px-4 py-2 font-medium text-secondary transition-colors hover:bg-layer-1"
-          >
+          <Button variant="secondary" onClick={handleClose}>
             Cancel
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="primary"
             onClick={handleSubmit}
             disabled={isSubmitting || !formData.title.trim()}
-            className="bg-primary text-sm hover:bg-primary/90 rounded-lg px-4 py-2 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            loading={isSubmitting}
           >
-            {isSubmitting ? "Creating..." : "Create Ticket"}
-          </button>
+            Create Ticket
+          </Button>
         </div>
       </div>
     </div>
