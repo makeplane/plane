@@ -15,8 +15,8 @@ def sanitize_filename(filename):
     """
     Sanitize a filename to prevent path traversal attacks.
 
-    Strips directory components, path traversal sequences, and null bytes
-    from user-supplied filenames used in upload paths and S3 object keys.
+    Strips directory components, path traversal sequences, and control
+    characters from user-supplied filenames used in upload paths and S3 object keys.
 
     Returns None for empty/missing input so callers can still validate
     that a filename was provided.
@@ -24,8 +24,8 @@ def sanitize_filename(filename):
     if not filename or not isinstance(filename, str):
         return None
 
-    # Strip null bytes
-    filename = filename.replace("\x00", "")
+    # Strip ASCII control characters (0-31 and 127), including null bytes
+    filename = "".join(char for char in filename if not (ord(char) < 32 or ord(char) == 127))
 
     # Normalize backslashes so os.path.basename handles Windows-style paths on POSIX
     filename = filename.replace("\\", "/")
