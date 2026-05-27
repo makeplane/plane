@@ -60,6 +60,8 @@ agent = Agent(name="agent", model="gemini-2.5-flash", tools=[google_search, load
 
 ## MCP Integration
 
+Current ADK releases preserve the agent session when an MCP tool returns an error. If a project drops the session after a tool failure, upgrade `google-adk` before adding workaround state recovery.
+
 ```python
 from google.adk.tools.mcp_tool import StdioConnectionParams
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset

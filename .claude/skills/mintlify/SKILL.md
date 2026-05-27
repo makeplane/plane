@@ -1,6 +1,10 @@
 ---
 name: ck:mintlify
-description: Build and deploy documentation sites with Mintlify. Use when creating API docs, developer portals, or knowledge bases. Covers docs.json configuration, MDX components (Cards, Steps, Tabs, Accordions, CodeGroup, Callouts, Mermaid, View, Tiles, Tree, Badge, Banner, Color, Tooltips, Panel), page frontmatter, navigation structure (tabs, anchors, dropdowns, products, versions, languages), theming (7 themes), OpenAPI/AsyncAPI integration, AI features (llms.txt, MCP, skill.md), deployment (GitHub, GitLab, Vercel, Cloudflare, AWS), and CLI commands for local development and validation.
+description: Build and maintain Mintlify documentation sites. Covers docs.json, MDX components, navigation, page frontmatter, theming, OpenAPI/AsyncAPI, AI docs assets such as llms.txt and skill.md, deployment targets, and local validation CLI commands.
+user-invocable: true
+when_to_use: "Invoke for Mintlify docs site structure, MDX, or local checks."
+category: dev-tools
+keywords: [docs-site, API-docs, MDX, Mintlify]
 license: MIT
 argument-hint: "[task] [path]"
 metadata:
@@ -75,6 +79,7 @@ mint migrate-mdx            # Migrate mint.json to docs.json
 ## Common Patterns
 
 **Basic docs.json:**
+
 ```json
 {
   "theme": "mint",
@@ -92,7 +97,8 @@ mint migrate-mdx            # Migrate mint.json to docs.json
 ```
 
 **MDX page with components:**
-```mdx
+
+````mdx
 ---
 title: "Getting Started"
 description: "Quick introduction"
@@ -103,11 +109,12 @@ description: "Quick introduction"
 <CodeGroup>
 ```bash
 npm install
-```
+````
 
 ```python
 pip install
 ```
+
 </CodeGroup>
 
 <Steps>

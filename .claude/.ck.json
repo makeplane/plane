@@ -12,22 +12,14 @@
     "issuePrefix": "GH-",
     "reportsDir": "reports",
     "resolution": {
-      "order": [
-        "session",
-        "branch"
-      ],
+      "order": ["session", "branch"],
       "branchPattern": "(?:feat|fix|chore|refactor|docs)/(?:[^/]+/)?(.+)"
     },
     "validation": {
       "mode": "prompt",
       "minQuestions": 3,
       "maxQuestions": 8,
-      "focusAreas": [
-        "assumptions",
-        "risks",
-        "tradeoffs",
-        "architecture"
-      ]
+      "focusAreas": ["assumptions", "risks", "tradeoffs", "architecture"]
     }
   },
   "paths": {
@@ -75,7 +67,8 @@
           "node $HOME/.claude/hooks/plan-format-kanban.cjs",
           "node $HOME/.claude/hooks/task-completed-handler.cjs",
           "node $HOME/.claude/hooks/teammate-idle-handler.cjs",
-          "node $HOME/.claude/hooks/usage-quota-cache-refresh.cjs"
+          "node $HOME/.claude/hooks/usage-quota-cache-refresh.cjs",
+          "node $HOME/.claude/hooks/simplify-gate.cjs"
         ],
         "mcpServers": []
       }

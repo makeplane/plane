@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 """
 Batch process multiple media files using Gemini API.
 
@@ -53,10 +55,20 @@ except ImportError:
 try:
     from google import genai
     from google.genai import types
+    GENAI_AVAILABLE = True
 except ImportError:
-    print("Error: google-genai package not installed")
-    print("Install with: pip install google-genai")
-    sys.exit(1)
+    genai = None
+    types = None
+    GENAI_AVAILABLE = False
+
+from minimax_api_client import find_minimax_api_key
+from minimax_generate import generate_image as generate_minimax_image, is_minimax_model
+from openrouter_generate import (
+    DEFAULT_OPENROUTER_MODEL,
+    generate_image as generate_openrouter_image,
+    find_openrouter_api_key,
+    is_openrouter_model,
+)
 
 
 # Image generation model configuration
@@ -71,6 +83,7 @@ IMAGEN_MODELS = {
     'imagen-4.0-fast-generate-001',
 }
 # Video models have no fallback - Veo always requires billing
+IMAGE_PROVIDER_VALUES = {'auto', 'google', 'openrouter', 'minimax'}
 
 
 def find_api_key() -> Optional[str]:
@@ -132,10 +145,20 @@ def get_default_model(task: str) -> str:
         model = os.getenv('IMAGE_GEN_MODEL')
         if model:
             return model
+        provider = os.getenv('IMAGE_GEN_PROVIDER', 'auto').lower()
+        if provider == 'openrouter':
+            return os.getenv('OPENROUTER_IMAGE_MODEL', DEFAULT_OPENROUTER_MODEL)
+        if provider == 'minimax':
+            return os.getenv('MINIMAX_IMAGE_MODEL', 'image-01')
         # Fallback to legacy
         model = os.getenv('GEMINI_IMAGE_GEN_MODEL')
         if model:
             return model
+        if provider == 'auto':
+            if find_openrouter_api_key() and not find_api_key():
+                return os.getenv('OPENROUTER_IMAGE_MODEL', DEFAULT_OPENROUTER_MODEL)
+            if find_minimax_api_key() and not find_api_key():
+                return os.getenv('MINIMAX_IMAGE_MODEL', 'image-01')
         # Default to Nano Banana 2 (fastest, near-Pro quality)
         # Alternative: imagen-4.0-generate-001 for production quality
         return 'gemini-3.1-flash-image-preview'
@@ -159,7 +182,68 @@ def get_default_model(task: str) -> str:
     return 'gemini-2.5-flash'
 
 
-def validate_model_task_combination(model: str, task: str) -> None:
+def infer_image_provider(model: str, provider: str = 'auto') -> str:
+    """Resolve image provider from explicit provider or model id."""
+    normalized = (provider or 'auto').lower()
+    if normalized not in IMAGE_PROVIDER_VALUES:
+        raise ValueError(f"Unknown provider '{provider}'")
+    if normalized != 'auto':
+        return normalized
+    if is_minimax_model(model):
+        return 'minimax'
+    if is_openrouter_model(model):
+        return 'openrouter'
+    return 'google'
+
+
+def map_google_image_model_to_openrouter(model: str) -> Optional[str]:
+    """Map a direct Google Gemini image model to its OpenRouter equivalent."""
+    if model.startswith('gemini-'):
+        return f'google/{model}'
+    return None
+
+
+def maybe_fallback_to_openrouter(
+    result: Dict[str, Any],
+    prompt: str,
+    model: str,
+    provider: str,
+    aspect_ratio: Optional[str],
+    size: Optional[str],
+    num_images: int,
+    output_file: Optional[str],
+    verbose: bool,
+) -> Dict[str, Any]:
+    """Fallback from direct Google image generation to OpenRouter on billing/free-tier errors."""
+    if provider != 'auto' or result.get('status') != 'error':
+        return result
+    if not find_openrouter_api_key():
+        return result
+
+    error_text = result.get('error', '')
+    is_google_billing_failure = (
+        _is_billing_error(Exception(error_text)) or
+        _is_free_tier_quota_error(Exception(error_text)) or
+        'FREE TIER LIMITATION' in error_text
+    )
+    fallback_model = map_google_image_model_to_openrouter(model)
+    if not is_google_billing_failure or not fallback_model:
+        return result
+
+    if verbose:
+        print(f"  Falling back to OpenRouter model: {fallback_model}")
+    return generate_openrouter_image(
+        prompt=prompt,
+        model=fallback_model,
+        aspect_ratio=aspect_ratio or '1:1',
+        image_size=size,
+        num_images=num_images,
+        output=output_file,
+        verbose=verbose,
+    )
+
+
+def validate_model_task_combination(model: str, task: str, provider: str = 'auto') -> None:
     """Validate model is compatible with task.
 
     Raises:
@@ -176,6 +260,15 @@ def validate_model_task_combination(model: str, task: str) -> None:
 
     # Image generation models
     if task == 'generate':
+        resolved_provider = infer_image_provider(model, provider)
+        if resolved_provider == 'openrouter':
+            return
+        if resolved_provider == 'minimax':
+            if not is_minimax_model(model):
+                raise ValueError(
+                    f"Image generation with MiniMax requires image model, got '{model}'"
+                )
+            return
         valid_image_models = [
             'imagen-4.0-generate-001',
             'imagen-4.0-ultra-generate-001',
@@ -717,6 +810,7 @@ def batch_process(
     model: str,
     task: str,
     format_output: str,
+    provider: str = 'auto',
     aspect_ratio: Optional[str] = None,
     num_images: int = 1,
     size: str = '1K',
@@ -728,61 +822,71 @@ def batch_process(
 ) -> List[Dict[str, Any]]:
     """Batch process multiple files with automatic key rotation."""
 
-    # Initialize key rotator or fall back to single key
+    requires_google_sdk = task in ['analyze', 'transcribe', 'extract', 'generate-video']
+    if task == 'generate':
+        requires_google_sdk = infer_image_provider(model, provider) == 'google'
+    if requires_google_sdk and not GENAI_AVAILABLE:
+        print("Error: google-genai package not installed")
+        print("Install with: pip install google-genai")
+        sys.exit(1)
+
+    # Initialize Gemini client only when the task actually needs Google APIs.
     rotator = None
     api_key = None
+    client = None
 
-    if KEY_ROTATION_AVAILABLE and find_all_api_keys:
-        all_keys = find_all_api_keys()
-        if all_keys:
-            if len(all_keys) > 1:
-                rotator = KeyRotator(keys=all_keys, verbose=verbose)
-                api_key = rotator.get_key()
-                if verbose:
-                    print(f"✓ Key rotation enabled with {len(all_keys)} keys", file=sys.stderr)
+    if requires_google_sdk:
+        if KEY_ROTATION_AVAILABLE and find_all_api_keys:
+            all_keys = find_all_api_keys()
+            if all_keys:
+                if len(all_keys) > 1:
+                    rotator = KeyRotator(keys=all_keys, verbose=verbose)
+                    api_key = rotator.get_key()
+                    if verbose:
+                        print(f"✓ Key rotation enabled with {len(all_keys)} keys", file=sys.stderr)
+                else:
+                    api_key = all_keys[0]
+                    if verbose:
+                        print(f"✓ Using single API key: {api_key[:8]}...", file=sys.stderr)
+
+        if not api_key:
+            api_key = find_api_key()
+
+        if not api_key:
+            print("Error: GEMINI_API_KEY not found in any location")
+            print("\nSearched locations (highest to lowest priority):")
+            print("  1. OS environment (process.env)")
+            if CENTRALIZED_RESOLVER_AVAILABLE:
+                from resolve_env import get_env_file_paths
+                for i, (desc, path) in enumerate(get_env_file_paths('ai-multimodal'), 2):
+                    exists = "[OK]" if path.exists() else "[  ]"
+                    print(f"  {i}. {exists} {path}")
             else:
-                api_key = all_keys[0]
-                if verbose:
-                    print(f"✓ Using single API key: {api_key[:8]}...", file=sys.stderr)
-
-    # Fallback to original single-key lookup
-    if not api_key:
-        api_key = find_api_key()
-
-    if not api_key:
-        print("Error: GEMINI_API_KEY not found in any location")
-        print("\nSearched locations (highest to lowest priority):")
-        print("  1. OS environment (process.env)")
-        if CENTRALIZED_RESOLVER_AVAILABLE:
-            from resolve_env import get_env_file_paths
-            for i, (desc, path) in enumerate(get_env_file_paths('ai-multimodal'), 2):
-                exists = "[OK]" if path.exists() else "[  ]"
-                print(f"  {i}. {exists} {path}")
-        else:
-            print("  2-7. .env files (centralized resolver unavailable)")
-        print("\nQuick fix — add your key to any .env file above:")
-        print("  echo 'GEMINI_API_KEY=your-key' >> ~/.claude/.env")
-        print("\nOther options:")
-        print("  - Run setup checker: python scripts/check_setup.py")
-        print("  - Show full hierarchy: python ~/.claude/scripts/resolve_env.py --show-hierarchy --skill ai-multimodal -v")
-        print("\nFor key rotation, add multiple keys to any .env:")
-        print("   GEMINI_API_KEY=key1")
-        print("   GEMINI_API_KEY_2=key2")
-        print("   GEMINI_API_KEY_3=key3")
-        sys.exit(1)
+                print("  2-7. .env files (centralized resolver unavailable)")
+            print("\nQuick fix — add your key to any .env file above:")
+            print("  echo 'GEMINI_API_KEY=your-key' >> ~/.claude/.env")
+            print("\nOther options:")
+            print("  - Run setup checker: python scripts/check_setup.py")
+            print("  - Show full hierarchy: python ~/.claude/scripts/resolve_env.py --show-hierarchy --skill ai-multimodal -v")
+            print("\nFor key rotation, add multiple keys to any .env:")
+            print("   GEMINI_API_KEY=key1")
+            print("   GEMINI_API_KEY_2=key2")
+            print("   GEMINI_API_KEY_3=key3")
+            sys.exit(1)
 
     if dry_run:
         print("DRY RUN MODE - No API calls will be made")
         print(f"Files to process: {len(files)}")
         print(f"Model: {model}")
+        print(f"Provider: {provider}")
         print(f"Task: {task}")
         print(f"Prompt: {prompt}")
         if rotator:
             print(f"API keys available: {rotator.key_count}")
         return []
 
-    # Create client with current key
-    client = genai.Client(api_key=api_key)
+    if requires_google_sdk:
+        client = genai.Client(api_key=api_key)
     results = []
 
     def get_client_with_rotation(error: Optional[Exception] = None) -> Optional[genai.Client]:
@@ -805,9 +909,37 @@ def batch_process(
     if task == 'generate' and not files:
         if verbose:
             print(f"\nGenerating image from prompt...")
+        image_provider = infer_image_provider(model, provider)
 
+        if image_provider == 'openrouter':
+            result = generate_openrouter_image(
+                prompt=prompt,
+                model=model,
+                aspect_ratio=aspect_ratio or '1:1',
+                image_size=size,
+                num_images=num_images,
+                output=output_file,
+                verbose=verbose,
+            )
+        elif image_provider == 'minimax':
+            minimax_api_key = find_minimax_api_key()
+            if not minimax_api_key:
+                result = {
+                    'status': 'error',
+                    'error': 'MINIMAX_API_KEY not found',
+                }
+            else:
+                result = generate_minimax_image(
+                    api_key=minimax_api_key,
+                    prompt=prompt,
+                    model=model,
+                    aspect_ratio=aspect_ratio or '1:1',
+                    num_images=num_images,
+                    output=output_file,
+                    verbose=verbose,
+                )
         # Use Imagen 4 API for imagen models
-        if model.startswith('imagen-') or model in IMAGEN_MODELS:
+        elif model.startswith('imagen-') or model in IMAGEN_MODELS:
             result = generate_image_imagen4(
                 client=client,
                 prompt=prompt,
@@ -843,6 +975,17 @@ def batch_process(
                             "Image generation requires billing. Enable billing at: "
                             "https://aistudio.google.com/apikey or use Google Cloud credits."
                         )
+            result = maybe_fallback_to_openrouter(
+                result=result,
+                prompt=prompt,
+                model=model,
+                provider=provider,
+                aspect_ratio=aspect_ratio,
+                size=size,
+                num_images=num_images,
+                output_file=output_file,
+                verbose=verbose,
+            )
         else:
             # Nano Banana (Flash/Pro) or other models via generate_content API
             result = process_file(
@@ -861,6 +1004,17 @@ def batch_process(
                 error_str = result.get('error', '')
                 if _is_free_tier_quota_error(Exception(error_str)):
                     result['error'] = FREE_TIER_NO_ACCESS_MSG
+            result = maybe_fallback_to_openrouter(
+                result=result,
+                prompt=prompt,
+                model=model,
+                provider=provider,
+                aspect_ratio=aspect_ratio,
+                size=size,
+                num_images=num_images,
+                output_file=output_file,
+                verbose=verbose,
+            )
 
         results.append(result)
 
@@ -1098,6 +1252,10 @@ Examples:
   # Generate images with Imagen 4 (production quality)
   %(prog)s --task generate --prompt "Product photo of coffee mug" \\
     --model imagen-4.0-ultra-generate-001 --aspect-ratio 1:1 --size 2K
+
+  # Generate images via OpenRouter with Google or non-Google models
+  %(prog)s --task generate --provider openrouter \\
+    --model google/gemini-3.1-flash-image-preview --prompt "Retro robot mascot"
         """
     )
 
@@ -1108,6 +1266,9 @@ Examples:
     parser.add_argument('--prompt', help='Prompt for analysis/generation')
     parser.add_argument('--model',
                        help='Model to use (default: auto-detected from task and env vars)')
+    parser.add_argument('--provider', default='auto',
+                       choices=['auto', 'google', 'openrouter', 'minimax'],
+                       help='Image generation provider for --task generate (default: auto)')
     parser.add_argument('--format', dest='format_output', default='text',
                        choices=['text', 'json', 'csv', 'markdown'],
                        help='Output format (default: text)')
@@ -1155,7 +1316,7 @@ Examples:
 
     # Validate model/task combination
     try:
-        validate_model_task_combination(args.model, args.task)
+        validate_model_task_combination(args.model, args.task, args.provider)
     except ValueError as e:
         parser.error(str(e))
 
@@ -1165,6 +1326,13 @@ Examples:
 
     if args.task in ['generate', 'generate-video'] and not args.prompt:
         parser.error("--prompt required for generation tasks")
+
+    if (
+        args.task == 'generate' and
+        args.files and
+        infer_image_provider(args.model, args.provider) in ['openrouter', 'minimax']
+    ):
+        parser.error("OpenRouter and MiniMax image generation currently support prompt-only generation (no input files)")
 
     if args.task not in ['generate', 'generate-video'] and not args.prompt:
         # Set default prompts
@@ -1182,6 +1350,7 @@ Examples:
         prompt=args.prompt,
         model=args.model,
         task=args.task,
+        provider=args.provider,
         format_output=args.format_output,
         aspect_ratio=args.aspect_ratio,
         num_images=args.num_images,

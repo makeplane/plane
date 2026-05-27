@@ -7,10 +7,12 @@ Detect user intent from natural language and route to appropriate workflow.
 ```
 FUNCTION detectMode(input):
   # Priority 1: Explicit flags (override all)
+  IF input contains "--interactive": RETURN "interactive"
   IF input contains "--fast": RETURN "fast"
   IF input contains "--parallel": RETURN "parallel"
   IF input contains "--auto": RETURN "auto"
   IF input contains "--no-test": RETURN "no-test"
+  # "--tdd" is composable and does not change mode selection
 
   # Priority 2: Plan path detection
   IF input matches path pattern (./plans/*, plan.md, phase-*.md):
@@ -51,22 +53,26 @@ Detect multiple features from natural language:
 
 ## Mode Behaviors
 
-| Mode | Skip Research | Skip Test | Review Gates | Auto-Approve | Parallel Exec |
-|------|---------------|-----------|--------------|--------------|---------------|
-| interactive | ✗ | ✗ | **Yes (stops)** | ✗ | ✗ |
-| auto | ✗ | ✗ | **No (skips)** | ✓ (score≥9.5) | ✓ (all phases) |
-| fast | ✓ | ✗ | Yes (stops) | ✗ | ✗ |
-| parallel | Optional | ✗ | Yes (stops) | ✗ | ✓ |
-| no-test | ✗ | ✓ | Yes (stops) | ✗ | ✗ |
-| code | ✓ | ✗ | Yes (stops) | Per plan | Per plan |
+| Mode        | Skip Research | Skip Test | Review Gates    | Auto-Approve       | Parallel Exec       |
+| ----------- | ------------- | --------- | --------------- | ------------------ | ------------------- |
+| interactive | ✗             | ✗         | **Yes (stops)** | ✗                  | ✗                   |
+| auto        | ✗             | ✗         | Low-risk only   | ✓ (artifact-gated) | ✓ (low-risk phases) |
+| fast        | ✓             | ✗         | Yes (stops)     | ✗                  | ✗                   |
+| parallel    | Optional      | ✗         | Yes (stops)     | ✗                  | ✓                   |
+| no-test     | ✗             | ✓         | Yes (stops)     | ✗                  | ✗                   |
+| code        | ✓             | ✗         | Yes (stops)     | Per plan           | Per plan            |
 
 **Review Gates:** Human approval checkpoints between major steps (see `workflow-steps.md`).
-- All modes EXCEPT `auto` stop at review gates for human approval.
-- `auto` mode is the only mode that runs continuously without stopping.
+
+- All modes EXCEPT low-risk `auto` stop at review gates for human approval.
+- `auto` mode runs continuously only when review artifacts pass and `risk-gate.autoStopRequired` is false.
 
 ## Examples
 
 ```
+"/ck:cook implement user auth --interactive"
+→ Mode: interactive (explicit flag, stops at review gates)
+
 "/ck:cook implement user auth"
 → Mode: interactive (default, stops at review gates)
 
@@ -82,11 +88,14 @@ Detect multiple features from natural language:
 "/ck:cook implement dashboard --fast"
 → Mode: fast (explicit flag, stops at review gates)
 
+"/ck:cook refactor auth middleware --tdd"
+→ Mode: interactive (default mode, with tests-first implementation behavior)
+
 "/ck:cook implement everything --auto"
-→ Mode: auto (NO STOPS, implements all phases continuously)
+→ Mode: auto (continuous only for low-risk, artifact-validated work)
 
 "/ck:cook implement dashboard trust me"
-→ Mode: auto ("trust me" keyword, NO STOPS)
+→ Mode: auto ("trust me" keyword, still stops on high-risk changes)
 ```
 
 **Note:** Only `--auto` flag or "trust me"/"auto"/"yolo" keywords enable continuous execution.
@@ -94,6 +103,7 @@ Detect multiple features from natural language:
 ## Conflict Resolution
 
 When multiple signals detected, priority order:
+
 1. Explicit flags (`--fast`, `--auto`, etc.)
 2. Path detection (plan files)
 3. Keywords in text

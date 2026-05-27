@@ -1,0 +1,6 @@
+python-docx>=1.0.0
+matplotlib>=3.8.0
+networkx>=3.2.0
+numpy>=1.24.0
+whoisdomain>=1.20260326
+scrapling>=0.2

@@ -67,16 +67,9 @@
               "type": "array",
               "items": {
                 "type": "string",
-                "enum": [
-                  "session",
-                  "branch",
-                  "directory"
-                ]
+                "enum": ["session", "branch", "directory"]
               },
-              "default": [
-                "session",
-                "branch"
-              ],
+              "default": ["session", "branch"],
               "description": "Order of resolution strategies for plan context"
             },
             "branchPattern": {
@@ -93,12 +86,7 @@
           "properties": {
             "mode": {
               "type": "string",
-              "enum": [
-                "prompt",
-                "auto",
-                "strict",
-                "none"
-              ],
+              "enum": ["prompt", "auto", "strict", "none"],
               "default": "prompt",
               "description": "Validation mode: prompt=ask questions, auto=auto-validate, strict=require all, none=skip"
             },
@@ -131,12 +119,7 @@
                   "dependencies"
                 ]
               },
-              "default": [
-                "assumptions",
-                "risks",
-                "tradeoffs",
-                "architecture"
-              ],
+              "default": ["assumptions", "risks", "tradeoffs", "architecture"],
               "description": "Focus areas for validation questions"
             }
           },
@@ -167,18 +150,12 @@
       "description": "Language and locale settings",
       "properties": {
         "thinkingLanguage": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "default": null,
           "description": "Language for Claude's thinking (null=English)"
         },
         "responseLanguage": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "default": null,
           "description": "Language for Claude's responses (null=match user)"
         }
@@ -190,10 +167,7 @@
       "description": "Trust mode settings for auto-approval",
       "properties": {
         "passphrase": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": ["string", "null"],
           "default": null,
           "description": "Passphrase to enable trust mode (null=disabled)"
         },
@@ -211,28 +185,13 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": [
-            "auto",
-            "library",
-            "application",
-            "monorepo",
-            "cli",
-            "api",
-            "web",
-            "mobile"
-          ],
+          "enum": ["auto", "library", "application", "monorepo", "cli", "api", "web", "mobile"],
           "default": "auto",
           "description": "Project type (auto=detect from package.json)"
         },
         "packageManager": {
           "type": "string",
-          "enum": [
-            "auto",
-            "npm",
-            "yarn",
-            "pnpm",
-            "bun"
-          ],
+          "enum": ["auto", "npm", "yarn", "pnpm", "bun"],
           "default": "auto",
           "description": "Package manager (auto=detect from lockfile)"
         },
@@ -263,12 +222,7 @@
       "properties": {
         "model": {
           "type": "string",
-          "enum": [
-            "gemini-2.5-flash",
-            "gemini-2.5-pro",
-            "gemini-3-pro-preview",
-            "gemini-3-flash-preview"
-          ],
+          "enum": ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-3.1-pro-preview", "gemini-3-flash-preview"],
           "default": "gemini-3-flash-preview",
           "description": "Gemini model to use for CLI commands"
         }
@@ -374,7 +328,11 @@
           "properties": {
             "brainstormSec": { "type": "number", "default": 300, "description": "Brainstorm phase timeout (seconds)" },
             "planSec": { "type": "number", "default": 600, "description": "Planning phase timeout (seconds)" },
-            "implementSec": { "type": "number", "default": 18000, "description": "Implementation phase timeout (seconds, default 5h)" }
+            "implementSec": {
+              "type": "number",
+              "default": 18000,
+              "description": "Implementation phase timeout (seconds, default 5h)"
+            }
           },
           "additionalProperties": false
         }
@@ -438,8 +396,16 @@
         "selfImprovement": {
           "type": "object",
           "properties": {
-            "enabled": { "type": "boolean", "default": true, "description": "Enable engagement tracking and self-improvement" },
-            "engagementCheckIntervalHours": { "type": "number", "default": 6, "description": "Hours between engagement checks" },
+            "enabled": {
+              "type": "boolean",
+              "default": true,
+              "description": "Enable engagement tracking and self-improvement"
+            },
+            "engagementCheckIntervalHours": {
+              "type": "number",
+              "default": 6,
+              "description": "Hours between engagement checks"
+            },
             "topPerformingCount": { "type": "integer", "default": 10, "description": "Number of top posts to analyze" }
           },
           "additionalProperties": false
@@ -506,10 +472,97 @@
           "default": true,
           "description": "PreToolUse hook - blocks sensitive files"
         },
-        "post-edit-simplify-reminder": {
+        "simplify-gate": {
           "type": "boolean",
           "default": true,
-          "description": "PostToolUse hook - simplify reminder after edits"
+          "description": "UserPromptSubmit hook - blocks ship/merge/pr (and warns on commit/finalize/release) when working tree carries a large unsimplified diff"
+        },
+        "workflow-artifact-gate": {
+          "type": "boolean",
+          "default": false,
+          "description": "Opt-in UserPromptSubmit/PreToolUse hook - validates fix/cook workflow artifacts before finalize and ship-like actions"
+        }
+      },
+      "additionalProperties": false
+    },
+    "workflowArtifactGate": {
+      "type": "object",
+      "description": "Review artifact gate settings for ck:fix and ck:cook.",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Runtime toggle for the workflow artifact gate after the hook itself is enabled."
+        },
+        "softStages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["finalize", "commit"],
+          "description": "Stages that warn when proof is missing."
+        },
+        "hardStages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["ship", "push", "pr", "deploy"],
+          "description": "Stages that block when artifacts fail validation."
+        },
+        "highRiskAutoStop": {
+          "type": "boolean",
+          "default": true,
+          "description": "Require human approval for high-risk auto-mode workflows."
+        }
+      },
+      "additionalProperties": false
+    },
+    "simplify": {
+      "type": "object",
+      "description": "Code-simplifier gate settings (UserPromptSubmit hook). Stateless — signals are recomputed live from `git diff HEAD`.",
+      "properties": {
+        "threshold": {
+          "type": "object",
+          "description": "Diff-size limits that trigger the gate (live-computed per prompt).",
+          "properties": {
+            "locDelta": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 400,
+              "description": "Total LOC added+removed across all files"
+            },
+            "fileCount": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 8,
+              "description": "Number of files modified"
+            },
+            "singleFileLoc": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 200,
+              "description": "Lines added in a single file"
+            }
+          }
+        },
+        "gate": {
+          "type": "object",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": false,
+              "description": "Master toggle. Off by default (opt-in). Set true to activate the gate; env CK_SIMPLIFY_DISABLED=1 always bypasses."
+            },
+            "hardVerbs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["ship", "merge", "pr", "deploy", "publish"],
+              "description": "Verbs that hard-block (continue:false, exit 2)"
+            },
+            "softVerbs": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["commit", "finalize", "release"],
+              "description": "Verbs that soft-warn via additionalContext"
+            }
+          }
         }
       },
       "additionalProperties": false

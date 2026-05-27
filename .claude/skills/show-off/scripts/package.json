@@ -1,0 +1,14 @@
+{
+  "name": "show-off-scripts",
+  "version": "1.0.0",
+  "description": "Parallel section capture scripts for show-off skill",
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "puppeteer": "^24.15.0",
+    "sharp": "^0.33.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ck:xia — Extract, challenge, port features from any repo</title>
+<meta name="description" content="A ClaudeKit skill that extracts, compares, and ports features from GitHub or local repos — with a hard challenge gate before implementation." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,700&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#f4f1ea;
+    --paper-2:#ece8df;
+    --ink:#15140f;
+    --ink-2:#3a3730;
+    --ink-3:#6a655b;
+    --rule:#cdc6b8;
+    --accent:#b8431a;          /* terracotta */
+    --accent-soft:#e8a98a;
+    --good:#3f6b3a;
+    --warn:#a16207;
+    --bad:#9b2226;
+    --shadow: 0 1px 0 rgba(21,20,15,.04), 0 24px 60px -28px rgba(21,20,15,.18);
+    --max:1240px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Geist', system-ui, sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    background-image:
+      radial-gradient(1200px 600px at 90% -10%, rgba(184,67,26,.08), transparent 60%),
+      radial-gradient(900px 500px at -10% 30%, rgba(63,107,58,.06), transparent 60%);
+    line-height:1.55;
+    font-size:17px;
+    letter-spacing:-0.005em;
+    -webkit-font-smoothing:antialiased;
+  }
+  .grain{position:fixed;inset:0;pointer-events:none;opacity:.35;z-index:1;mix-blend-mode:multiply}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 28px;position:relative;z-index:2}
+
+  /* nav */
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:22px 28px;max-width:var(--max);margin:0 auto;
+    border-bottom:1px solid var(--rule);
+    position:relative;z-index:3;
+  }
+  .brand{display:flex;align-items:baseline;gap:10px;font-family:'Geist Mono',monospace;font-size:14px;letter-spacing:.02em}
+  .brand b{color:var(--accent)}
+  .brand .dot{width:6px;height:6px;background:var(--accent);border-radius:50%;display:inline-block;transform:translateY(-1px)}
+  .nav-links{display:flex;gap:26px;font-size:14px;color:var(--ink-2)}
+  .nav-links a{color:inherit;text-decoration:none;border-bottom:1px solid transparent;padding-bottom:2px}
+  .nav-links a:hover{border-color:var(--accent)}
+  @media (max-width:680px){.nav-links{display:none}}
+
+  /* hero */
+  .hero{padding:80px 0 60px;display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:end}
+  @media (max-width:900px){.hero{grid-template-columns:1fr;gap:32px;padding:48px 0 32px}}
+  .eyebrow{
+    font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-3);display:flex;align-items:center;gap:14px;margin-bottom:28px;
+  }
+  .eyebrow span.bar{display:inline-block;width:42px;height:1px;background:var(--ink-3)}
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-variation-settings:"opsz" 144;
+    font-size: clamp(56px, 8.4vw, 124px);
+    line-height:.92;
+    letter-spacing:-0.035em;
+    margin:0 0 28px;
+    color:var(--ink);
+  }
+  h1 em{font-style:italic;font-weight:400;color:var(--accent)}
+  h1 .slash{font-family:'Geist Mono',monospace;font-style:normal;font-size:.55em;color:var(--ink-3);vertical-align:.18em;margin-right:.05em;font-weight:400;letter-spacing:0}
+  .lede{font-size:20px;color:var(--ink-2);max-width:48ch;margin:0 0 36px}
+  .principles{
+    display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  }
+  .principles div{
+    flex:1;min-width:160px;padding:18px 0;
+    font-family:'Geist Mono',monospace;font-size:12.5px;color:var(--ink-2);
+    border-right:1px solid var(--rule);padding-right:14px;padding-left:14px;
+  }
+  .principles div:first-child{padding-left:0}
+  .principles div:last-child{border-right:none;padding-right:0}
+  .principles b{display:block;color:var(--ink);font-weight:500;font-family:'Geist',sans-serif;font-size:14px;margin-bottom:4px;letter-spacing:-.01em}
+
+  .hero-side{position:relative;font-family:'Geist Mono',monospace;font-size:13px;color:var(--ink-2)}
+  .terminal{
+    background:var(--ink);color:#e8e4d8;border-radius:14px;padding:22px 22px 24px;
+    box-shadow:var(--shadow);
+    font-size:13.5px;line-height:1.7;
+    transform:rotate(-.6deg);
+  }
+  .terminal .head{display:flex;gap:6px;margin-bottom:14px}
+  .terminal .head i{width:10px;height:10px;border-radius:50%;background:#3a3a32;display:inline-block}
+  .terminal .head i:nth-child(1){background:#d96b50}
+  .terminal .head i:nth-child(2){background:#d6b15a}
+  .terminal .head i:nth-child(3){background:#7a9e6e}
+  .terminal .ln{display:block}
+  .terminal .p{color:#9a958a}
+  .terminal .c{color:var(--accent-soft)}
+  .terminal .k{color:#e8e4d8}
+  .terminal .a{color:#a4c094}
+  .terminal .arr{color:#9a958a}
+  .terminal .out{color:#9a958a;font-style:italic}
+
+  /* generic section */
+  section{padding:96px 0;border-top:1px solid var(--rule);position:relative}
+  @media (max-width:680px){section{padding:64px 0}}
+  .sec-head{display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:end;margin-bottom:56px}
+  @media (max-width:680px){.sec-head{grid-template-columns:1fr;gap:18px;margin-bottom:36px}}
+  .sec-num{
+    font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--ink-3);
+    text-transform:uppercase;
+  }
+  .sec-title{
+    font-family:'Fraunces',serif;font-weight:300;
+    font-size:clamp(34px,4.4vw,56px);line-height:1;margin:0;letter-spacing:-.025em;max-width:18ch;
+  }
+  .sec-title em{font-style:italic;color:var(--accent)}
+  .sec-lede{margin-top:14px;color:var(--ink-2);max-width:54ch}
+
+  /* modes */
+  .modes{display:grid;grid-template-columns:1.1fr .9fr 1.1fr .9fr;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+  @media (max-width:980px){.modes{grid-template-columns:1fr 1fr}}
+  @media (max-width:540px){.modes{grid-template-columns:1fr}}
+  .mode{padding:30px 24px;border-right:1px solid var(--rule);position:relative}
+  .mode:last-child{border-right:none}
+  @media (max-width:980px){
+    .mode{border-bottom:1px solid var(--rule)}
+    .mode:nth-child(2n){border-right:none}
+    .mode:nth-last-child(-n+2){border-bottom:none}
+  }
+  @media (max-width:540px){
+    .mode{border-right:none;border-bottom:1px solid var(--rule)}
+    .mode:last-child{border-bottom:none}
+  }
+  .mode .flag{font-family:'Geist Mono',monospace;font-size:13px;color:var(--accent);margin-bottom:12px;display:inline-block}
+  .mode h3{font-family:'Fraunces',serif;font-weight:400;font-size:24px;margin:0 0 8px;letter-spacing:-.015em}
+  .mode p{margin:0;color:var(--ink-2);font-size:14.5px}
+  .mode.default::after{
+    content:"default";
+    position:absolute;top:18px;right:18px;
+    font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);
+  }
+
+  /* workflow */
+  .flow{
+    display:grid;grid-template-columns:repeat(6,1fr);gap:0;
+    border-top:1px solid var(--rule);
+  }
+  @media (max-width:980px){.flow{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:540px){.flow{grid-template-columns:1fr}}
+  .step{
+    padding:30px 22px 36px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);
+    position:relative;
+  }
+  .step:last-child{border-right:none}
+  @media (max-width:980px){
+    .step:nth-child(2n){border-right:none}
+  }
+  @media (max-width:540px){.step{border-right:none}}
+  .step .num{font-family:'Geist Mono',monospace;font-size:11px;color:var(--ink-3);letter-spacing:.18em}
+  .step h4{font-family:'Fraunces',serif;font-weight:400;font-size:22px;margin:8px 0 10px;letter-spacing:-.01em}
+  .step p{margin:0;color:var(--ink-2);font-size:14px;line-height:1.55}
+  .step.gate{background:linear-gradient(180deg, rgba(184,67,26,.06), rgba(184,67,26,0))}
+  .gate-tag{
+    display:inline-block;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.16em;
+    color:var(--accent);text-transform:uppercase;border:1px solid var(--accent);
+    padding:3px 7px;border-radius:99px;margin-top:14px;
+  }
+  .gate-line{
+    margin-top:34px;padding:24px 26px;border:1px dashed var(--accent);
+    border-radius:12px;background:rgba(184,67,26,.04);
+    display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;
+  }
+  @media (max-width:680px){.gate-line{grid-template-columns:1fr;gap:10px}}
+  .gate-line .tag{
+    font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--accent);
+    text-transform:uppercase;white-space:nowrap;padding-top:3px;
+  }
+  .gate-line p{margin:0;color:var(--ink);font-size:16px;max-width:60ch}
+  .gate-line em{font-style:italic;color:var(--accent)}
+
+  /* challenge */
+  .challenge{display:grid;grid-template-columns:1.1fr .9fr;gap:64px}
+  @media (max-width:900px){.challenge{grid-template-columns:1fr;gap:36px}}
+  .challenge ol{padding:0;margin:0;list-style:none;counter-reset:ch}
+  .challenge li{
+    counter-increment:ch;padding:22px 0 22px 56px;border-top:1px solid var(--rule);position:relative;
+  }
+  .challenge li:last-child{border-bottom:1px solid var(--rule)}
+  .challenge li::before{
+    content: counter(ch, decimal-leading-zero);
+    position:absolute;left:0;top:24px;
+    font-family:'Geist Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:.04em;
+  }
+  .challenge li b{display:block;font-family:'Fraunces',serif;font-weight:400;font-size:20px;letter-spacing:-.01em;margin-bottom:4px;color:var(--ink)}
+  .challenge li span{color:var(--ink-2);font-size:14.5px}
+
+  .matrix{
+    background:var(--paper-2);border-radius:14px;padding:24px;
+    box-shadow:var(--shadow);
+  }
+  .matrix .ttl{
+    font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-3);margin-bottom:14px;
+  }
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{font-weight:500;color:var(--ink-3);font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+  td b{color:var(--accent);font-weight:500}
+  tr:last-child td{border-bottom:none}
+
+  .risk{display:flex;gap:8px;margin-top:18px;font-family:'Geist Mono',monospace;font-size:12px}
+  .risk span{padding:4px 10px;border-radius:99px;border:1px solid var(--rule);color:var(--ink-2)}
+  .risk .lo{color:var(--good);border-color:var(--good)}
+  .risk .md{color:var(--warn);border-color:var(--warn)}
+  .risk .hi{color:var(--bad);border-color:var(--bad)}
+
+  /* usage */
+  .usage{display:grid;grid-template-columns:1fr 1fr;gap:48px}
+  @media (max-width:900px){.usage{grid-template-columns:1fr;gap:24px}}
+  .code{
+    background:var(--ink);color:#e8e4d8;border-radius:14px;padding:24px;
+    font-family:'Geist Mono',monospace;font-size:13.5px;line-height:1.75;
+    box-shadow:var(--shadow);overflow-x:auto;
+  }
+  .code .lbl{color:#9a958a;font-size:11px;letter-spacing:.16em;text-transform:uppercase;display:block;margin-bottom:12px}
+  .code .pmt{color:var(--accent-soft)}
+  .code .arg{color:#a4c094}
+  .code .opt{color:#cfc8b6}
+  .code .cmt{color:#7a7569;font-style:italic}
+
+  .scope{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:48px}
+  @media (max-width:680px){.scope{grid-template-columns:1fr}}
+  .scope div{padding:24px;border-radius:12px;border:1px solid var(--rule)}
+  .scope h5{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin:0 0 10px}
+  .scope p{margin:0;font-family:'Fraunces',serif;font-size:19px;line-height:1.45;color:var(--ink)}
+  .scope .yes{border-color:rgba(63,107,58,.4);background:rgba(63,107,58,.04)}
+  .scope .yes h5{color:var(--good)}
+  .scope .no{border-color:rgba(155,34,38,.3);background:rgba(155,34,38,.03)}
+  .scope .no h5{color:var(--bad)}
+
+  /* footer */
+  footer{
+    border-top:1px solid var(--rule);padding:56px 0 80px;color:var(--ink-3);font-size:13px;
+    display:grid;grid-template-columns:1fr auto;align-items:end;gap:18px;
+  }
+  @media (max-width:680px){footer{grid-template-columns:1fr}}
+  footer .mark{font-family:'Fraunces',serif;font-size:42px;line-height:1;color:var(--ink);font-weight:300;letter-spacing:-.02em}
+  footer .mark em{font-style:italic;color:var(--accent)}
+  footer .meta{font-family:'Geist Mono',monospace;text-align:right}
+  @media (max-width:680px){footer .meta{text-align:left}}
+
+  /* utility */
+  .pull{font-family:'Fraunces',serif;font-style:italic;font-weight:300;font-size:clamp(28px,3.4vw,42px);line-height:1.25;color:var(--ink);max-width:22ch;letter-spacing:-.015em}
+  .pull span{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<svg class="grain" xmlns="http://www.w3.org/2000/svg">
+  <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .35 0"/></filter>
+  <rect width="100%" height="100%" filter="url(#n)"/>
+</svg>
+
+<nav>
+  <div class="brand"><span class="dot"></span> claudekit <b>/ ck:xia</b></div>
+  <div class="nav-links">
+    <a href="#modes">Modes</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#challenge">Challenge</a>
+    <a href="#usage">Usage</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <div class="eyebrow"><span class="bar"></span> A ClaudeKit skill · v1.0</div>
+      <h1><span class="slash">/ck:</span>xia<em>.</em></h1>
+      <p class="lede">Extract, compare, port, or adapt a feature from any GitHub repository or local repo path — without dragging the rest of the codebase along with it.</p>
+      <div class="principles">
+        <div><b>Understand</b>before you copy.</div>
+        <div><b>Challenge</b>before you implement.</div>
+        <div><b>Adapt</b>don't transplant.</div>
+      </div>
+    </div>
+    <aside class="hero-side">
+      <div class="terminal" aria-hidden="true">
+        <div class="head"><i></i><i></i><i></i></div>
+        <span class="ln"><span class="p">$</span> <span class="c">/ck:xia</span> <span class="a">vercel/ai</span> <span class="k">streaming</span> <span class="opt">--port</span></span>
+        <span class="ln out">› recon · 1 source repo, 14 candidate files</span>
+        <span class="ln out">› map · 6 components → 4 EXIST · 2 NEW</span>
+        <span class="ln out">› analyze · 3 implicit contracts found</span>
+        <span class="ln out">› challenge · 5 questions queued ⟶ approval gate</span>
+        <span class="ln"><span class="arr">↳</span> <span class="k">awaiting decision before plan…</span></span>
+      </div>
+    </aside>
+  </header>
+
+  <!-- MODES -->
+  <section id="modes">
+    <div class="sec-head">
+      <div class="sec-num">§ 01 — Modes</div>
+      <div>
+        <h2 class="sec-title">Four ways to <em>borrow</em>, one rule: never blindly.</h2>
+        <p class="sec-lede">Pick the mode that matches your intent. If intent is ambiguous, xia defaults to <code style="font-family:'Geist Mono',monospace;color:var(--accent)">--compare</code> before recommending any implementation work.</p>
+      </div>
+    </div>
+
+    <div class="modes">
+      <div class="mode">
+        <span class="flag">--compare</span>
+        <h3>Side by side</h3>
+        <p>Architectural diff and trade-off report. No plan, no code — just clarity.</p>
+      </div>
+      <div class="mode">
+        <span class="flag">--copy</span>
+        <h3>Transplant</h3>
+        <p>Bring the feature in with the minimum adaptation needed to compile.</p>
+      </div>
+      <div class="mode">
+        <span class="flag">--improve</span>
+        <h3>Refactor in flight</h3>
+        <p>Copy, then refactor for the local codebase. Replace anti-patterns on entry.</p>
+      </div>
+      <div class="mode default">
+        <span class="flag">--port</span>
+        <h3>Idiomatic rewrite</h3>
+        <p>Translate into the local stack's idioms. Behavior preserved, shape redrawn.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKFLOW -->
+  <section id="workflow">
+    <div class="sec-head">
+      <div class="sec-num">§ 02 — Workflow</div>
+      <div>
+        <h2 class="sec-title">Six phases. One <em>hard gate</em>.</h2>
+        <p class="sec-lede">Recon, map, analyze, challenge, plan, deliver. Phase 4 must complete before Phase 5 — confront the trade-offs before you draw the plan.</p>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="step">
+        <div class="num">01 — RECON</div>
+        <h4>Locate</h4>
+        <p>Pack the source with repomix, read the README, map the local integration surface.</p>
+      </div>
+      <div class="step">
+        <div class="num">02 — MAP</div>
+        <h4>Dissect</h4>
+        <p>Inventory components. Build a dependency matrix: <b>EXISTS</b>, <b>NEW</b>, <b>CONFLICT</b>.</p>
+      </div>
+      <div class="step">
+        <div class="num">03 — ANALYZE</div>
+        <h4>Trace why</h4>
+        <p>Walk execution paths, name implicit contracts, mark transaction boundaries.</p>
+      </div>
+      <div class="step gate">
+        <div class="num">04 — CHALLENGE</div>
+        <h4>Confront</h4>
+        <p>Five questions, minimum. Source answer, local answer, risk if wrong.</p>
+        <span class="gate-tag">Hard gate</span>
+      </div>
+      <div class="step">
+        <div class="num">05 — PLAN</div>
+        <h4>Hand off</h4>
+        <p>Delegate to <code>/ck:plan</code> with manifest, matrices, decisions, risk score.</p>
+      </div>
+      <div class="step">
+        <div class="num">06 — DELIVER</div>
+        <h4>Front door</h4>
+        <p>Xia produces the analysis. Implementation handoff goes to <code>/ck:cook</code>.</p>
+      </div>
+    </div>
+
+    <div class="gate-line">
+      <span class="tag">Phase 4 · Rule</span>
+      <p>Do not plan implementation <em>before</em> confronting trade-offs. xia is a front door — not a second orchestration stack.</p>
+    </div>
+  </section>
+
+  <!-- CHALLENGE -->
+  <section id="challenge">
+    <div class="sec-head">
+      <div class="sec-num">§ 03 — Challenge framework</div>
+      <div>
+        <h2 class="sec-title">Five questions you <em>must</em> answer.</h2>
+        <p class="sec-lede">Before any plan is drawn, xia produces five challenge questions and a decision matrix. Each one names a source answer, a local answer, and the risk if the assumption is wrong.</p>
+      </div>
+    </div>
+
+    <div class="challenge">
+      <ol>
+        <li><b>Necessity</b><span>Does the project need this feature, or is it scope creep dressed in a pull request?</span></li>
+        <li><b>Simpler alternative</b><span>Is there a smaller path — a flag, a config, a 30-line helper — that solves 80% of the same problem?</span></li>
+        <li><b>Existing overlap</b><span>What in the local codebase already solves part of this? What gets deprecated, what stays?</span></li>
+        <li><b>Maintenance burden</b><span>Who owns this code in three months? Does the team have the context to debug it cold?</span></li>
+        <li><b>Dependency chain</b><span>What new packages, runtimes, or services come along for the ride? What breaks on update?</span></li>
+      </ol>
+
+      <div class="matrix">
+        <div class="ttl">Decision matrix · sample</div>
+        <table>
+          <thead><tr><th>Decision</th><th>Source</th><th>Local</th><th>Recommendation</th></tr></thead>
+          <tbody>
+            <tr><td>Auth</td><td>Their auth stack</td><td>Existing auth</td><td><b>Prefer local</b></td></tr>
+            <tr><td>Persistence</td><td>Their schema</td><td>Existing schema</td><td><b>Adapt</b></td></tr>
+            <tr><td>Streaming</td><td>SSE + custom</td><td>WebSocket</td><td><b>Port idiom</b></td></tr>
+          </tbody>
+        </table>
+        <div class="risk">
+          <span class="lo">low · 0–2</span>
+          <span class="md">medium · 3–4</span>
+          <span class="hi">high · 5+</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USAGE -->
+  <section id="usage">
+    <div class="sec-head">
+      <div class="sec-num">§ 04 — Usage</div>
+      <div>
+        <h2 class="sec-title">One line in. A plan out.</h2>
+        <p class="sec-lede">Point xia at a GitHub URL, an <code>owner/repo</code>, or a local path. Add a feature hint to narrow scope. Pick a mode, or let intent detection choose.</p>
+      </div>
+    </div>
+
+    <div class="usage">
+      <div class="code">
+        <span class="lbl">Syntax</span>
+<span class="pmt">/ck:xia</span> <span class="arg">&lt;source&gt;</span> <span class="arg">[feature]</span> <span class="opt">[--compare|--copy|--improve|--port]</span> <span class="opt">[--auto|--fast]</span>
+<br><br>
+        <span class="lbl">Examples</span>
+<span class="cmt"># compare two queue implementations</span><br>
+<span class="pmt">/ck:xia</span> <span class="arg">bullmq/bullmq</span> <span class="arg">"retry strategy"</span> <span class="opt">--compare</span>
+<br><br>
+<span class="cmt"># port streaming idiomatically</span><br>
+<span class="pmt">/ck:xia</span> <span class="arg">https://github.com/vercel/ai</span> <span class="arg">streaming</span> <span class="opt">--port</span>
+<br><br>
+<span class="cmt"># skip approval gates, keep workflow</span><br>
+<span class="pmt">/ck:xia</span> <span class="arg">../sister-repo</span> <span class="arg">"webhook signing"</span> <span class="opt">--improve --auto</span>
+      </div>
+
+      <div>
+        <p class="pull">"Xia is a front door, not a second orchestration stack. Keep planning and delivery <span>where they belong</span>."</p>
+        <div class="scope">
+          <div class="yes">
+            <h5>For</h5>
+            <p>Feature extraction · cross-stack porting · implementation comparison · architectural adaptation.</p>
+          </div>
+          <div class="no">
+            <h5>Not for</h5>
+            <p>Full project cloning · simple file copy · package installation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="wrap">
+  <div class="mark"><em>ck:</em>xia — understand before copy.</div>
+  <div class="meta">
+    claudekit · dev-tools<br>
+    v1.0.0 · references/challenge-framework.md
+  </div>
+</footer>
+
+</body>
+</html>

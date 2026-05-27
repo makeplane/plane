@@ -1,6 +1,10 @@
 ---
 name: ck:frontend-design
 description: Create polished frontend interfaces from designs/screenshots/videos. Use for web components, 3D experiences, replicating UI designs, quick prototypes, immersive interfaces, avoiding AI slop.
+user-invocable: true
+when_to_use: "Invoke when visual fidelity and polished UI are primary."
+category: frontend
+keywords: [ui, design, screenshots, prototyping]
 license: Complete terms in LICENSE.txt
 metadata:
   author: claudekit
@@ -15,16 +19,16 @@ This skill guides creation of distinctive, production-grade frontend interfaces 
 
 Choose workflow based on input type:
 
-| Input | Workflow | Reference |
-|-------|----------|-----------|
-| Screenshot | Replicate exactly | `./references/workflow-screenshot.md` |
-| Video | Replicate with animations | `./references/workflow-video.md` |
-| Screenshot/Video (describe only) | Document for devs | `./references/workflow-describe.md` |
-| 3D/WebGL request | Three.js immersive | `./references/workflow-3d.md` |
-| Quick task | Rapid implementation | `./references/workflow-quick.md` |
-| Complex/award-quality | Full immersive | `./references/workflow-immersive.md` |
-| Existing project upgrade | Redesign Audit | `./references/redesign-audit-checklist.md` |
-| From scratch | Design Thinking below | - |
+| Input                            | Workflow                  | Reference                                  |
+| -------------------------------- | ------------------------- | ------------------------------------------ |
+| Screenshot                       | Replicate exactly         | `./references/workflow-screenshot.md`      |
+| Video                            | Replicate with animations | `./references/workflow-video.md`           |
+| Screenshot/Video (describe only) | Document for devs         | `./references/workflow-describe.md`        |
+| 3D/WebGL request                 | Three.js immersive        | `./references/workflow-3d.md`              |
+| Quick task                       | Rapid implementation      | `./references/workflow-quick.md`           |
+| Complex/award-quality            | Full immersive            | `./references/workflow-immersive.md`       |
+| Existing project upgrade         | Redesign Audit            | `./references/redesign-audit-checklist.md` |
+| From scratch                     | Design Thinking below     | -                                          |
 
 **All workflows**: Activate `ck:ui-ux-pro-max` skill FIRST for design intelligence.
 
@@ -44,11 +48,11 @@ See specific workflow files for detailed steps.
 
 Three configurable parameters that drive design decisions. Set defaults at session start or let user override via chat:
 
-| Dial | Default | Range | Low (1-3) | High (8-10) |
-|------|---------|-------|-----------|-------------|
-| `DESIGN_VARIANCE` | 8 | 1-10 | Perfect symmetry, centered layouts, equal grids | Asymmetric, masonry, massive empty zones, fractional CSS Grid |
-| `MOTION_INTENSITY` | 6 | 1-10 | CSS hover/active states only | Framer Motion scroll reveals, spring physics, perpetual micro-animations |
-| `VISUAL_DENSITY` | 4 | 1-10 | Art gallery — huge whitespace, expensive/clean | Cockpit — tiny paddings, 1px dividers, monospace numbers everywhere |
+| Dial               | Default | Range | Low (1-3)                                       | High (8-10)                                                              |
+| ------------------ | ------- | ----- | ----------------------------------------------- | ------------------------------------------------------------------------ |
+| `DESIGN_VARIANCE`  | 8       | 1-10  | Perfect symmetry, centered layouts, equal grids | Asymmetric, masonry, massive empty zones, fractional CSS Grid            |
+| `MOTION_INTENSITY` | 6       | 1-10  | CSS hover/active states only                    | Framer Motion scroll reveals, spring physics, perpetual micro-animations |
+| `VISUAL_DENSITY`   | 4       | 1-10  | Art gallery — huge whitespace, expensive/clean  | Cockpit — tiny paddings, 1px dividers, monospace numbers everywhere      |
 
 **Usage:** These values drive specific rules. At `DESIGN_VARIANCE > 4`, centered heroes are overused — force split-screen or left-aligned layouts. At `MOTION_INTENSITY > 5`, embed perpetual micro-animations. At `VISUAL_DENSITY > 7`, remove generic cards and use spacing/dividers.
 
@@ -57,6 +61,7 @@ See `./references/bento-motion-engine.md` for dial-driven SaaS dashboard impleme
 ## Design Thinking
 
 Before coding, commit to a BOLD aesthetic direction:
+
 - **Purpose**: What problem does this interface solve? Who uses it?
 - **Tone**: Pick an extreme: brutally minimal, maximalist chaos, retro-futuristic, organic/natural, luxury/refined, playful/toy-like, editorial/magazine, brutalist/raw, art deco/geometric, soft/pastel, industrial/utilitarian, etc. There are so many flavors to choose from. Use these for inspiration but design one that is true to the aesthetic direction.
 - **Constraints**: Technical requirements (framework, performance, accessibility).
@@ -65,6 +70,7 @@ Before coding, commit to a BOLD aesthetic direction:
 **CRITICAL**: Choose a clear conceptual direction and execute it with precision. Bold maximalism and refined minimalism both work - the key is intentionality, not intensity.
 
 Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
+
 - Production-grade and functional
 - Visually striking and memorable
 - Cohesive with a clear aesthetic point-of-view
@@ -73,6 +79,7 @@ Then implement working code (HTML/CSS/JS, React, Vue, etc.) that is:
 ## Frontend Aesthetics Guidelines
 
 Focus on:
+
 - **Typography**: Choose fonts that are beautiful, unique, and interesting. Avoid generic fonts like Arial and Inter; opt instead for distinctive choices that elevate the frontend's aesthetics; unexpected, characterful font choices. Pair a distinctive display font with a refined body font.
 - **Color & Theme**: Commit to a cohesive aesthetic. Use CSS variables for consistency. Dominant colors with sharp accents outperform timid, evenly-distributed palettes.
 - **Motion**: Use animations for effects and micro-interactions. Prioritize CSS-only solutions for HTML. Use Motion library for React when available. Focus on high-impact moments: one well-orchestrated page load with staggered reveals (animation-delay) creates more delight than scattered micro-interactions. Use scroll-triggering and hover states that surprise.
@@ -91,19 +98,19 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 
 ## Asset & Analysis References
 
-| Task | Reference |
-|------|-----------|
-| Generate assets | `./references/asset-generation.md` |
-| Analyze quality | `./references/visual-analysis-overview.md` |
-| Extract guidelines | `./references/design-extraction-overview.md` |
-| Optimization | `./references/technical-overview.md` |
-| Animations | `./references/animejs.md` |
-| Magic UI (80+ components) | `./references/magicui-components.md` |
-| Anti-slop forbidden patterns | `./references/anti-slop-rules.md` |
-| Redesign audit checklist | `./references/redesign-audit-checklist.md` |
-| Premium design patterns | `./references/premium-design-patterns.md` |
-| Performance guardrails | `./references/performance-guardrails.md` |
-| Bento motion engine (SaaS) | `./references/bento-motion-engine.md` |
+| Task                         | Reference                                    |
+| ---------------------------- | -------------------------------------------- |
+| Generate assets              | `./references/asset-generation.md`           |
+| Analyze quality              | `./references/visual-analysis-overview.md`   |
+| Extract guidelines           | `./references/design-extraction-overview.md` |
+| Optimization                 | `./references/technical-overview.md`         |
+| Animations                   | `./references/animejs.md`                    |
+| Magic UI (80+ components)    | `./references/magicui-components.md`         |
+| Anti-slop forbidden patterns | `./references/anti-slop-rules.md`            |
+| Redesign audit checklist     | `./references/redesign-audit-checklist.md`   |
+| Premium design patterns      | `./references/premium-design-patterns.md`    |
+| Performance guardrails       | `./references/performance-guardrails.md`     |
+| Bento motion engine (SaaS)   | `./references/bento-motion-engine.md`        |
 
 Quick start: `./references/ai-multimodal-overview.md`
 

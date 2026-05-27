@@ -1,11 +1,12 @@
-# Auto Workflow (`--auto`) — Default
+# Auto Workflow (`--auto`) — Explicit Opt-In
 
 **Thinking level:** Ultrathink
-**User gates:** Design approval only. All other phases proceed automatically.
+**User gates:** Design approval only. All other phases proceed automatically because the user explicitly selected `--auto`.
 
 ## Step 1: Research
 
 Spawn multiple `researcher` subagents in parallel:
+
 - Explore request, idea validation, challenges, best solutions
 - Keep every report ≤150 lines
 
@@ -27,7 +28,7 @@ No user gate — auto-select best option.
    - Design guidelines at `./docs/design-guidelines.md`
    - Wireframes in HTML at `./docs/wireframe/`
 3. If no logo provided: generate with `ck:ai-multimodal` skill
-4. Screenshot wireframes with `ck:chrome-devtools` → save to `./docs/wireframes/`
+4. Screenshot wireframes with `ck:agent-browser` → save to `./docs/wireframes/`
 
 **Gate:** Ask user to approve design. Repeat if rejected.
 
@@ -36,17 +37,19 @@ No user gate — auto-select best option.
 ## Step 4: Planning
 
 Activate **ck:plan** skill: `/ck:plan --auto <requirements>`
+
 - Planning skill auto-detects complexity and picks appropriate mode
 - Creates plan directory using `## Naming` pattern
 - Overview at `plan.md` (<80 lines) + `phase-XX-*.md` files
 
-No user gate — proceed to implementation.
+No user gate after planning in explicit auto mode — proceed to implementation.
 
 ## Step 5: Implementation → Final Report
 
 Load `references/shared-phases.md` for remaining phases.
 
 Activate **ck:cook** skill: `/ck:cook --auto <plan-path>`
-- Skips all review gates
+
+- Skips cook review gates because `--auto` was explicitly requested
 - Auto-approves if score≥9.5 and 0 critical issues
 - Continues through all phases without stopping

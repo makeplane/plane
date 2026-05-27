@@ -6,6 +6,7 @@
 ## Step 1: Clarify Requirements
 
 Use `AskUserQuestion` to probe user's request, constraints, true objectives.
+
 - Ask 1 question at a time, wait for answer before next
 - Question everything — don't assume
 - Challenge assumptions — best solution often differs from initial vision
@@ -14,6 +15,7 @@ Use `AskUserQuestion` to probe user's request, constraints, true objectives.
 ## Step 2: Research
 
 Spawn multiple `researcher` subagents in parallel:
+
 - Explore request validity, challenges, best solutions
 - Keep every report ≤150 lines
 
@@ -38,7 +40,7 @@ Spawn multiple `researcher` subagents in parallel:
    - Design guidelines at `./docs/design-guidelines.md`
    - Wireframes in HTML at `./docs/wireframe/`
 4. If no logo provided: generate with `ck:ai-multimodal` skill
-5. Screenshot wireframes with `ck:chrome-devtools` → save to `./docs/wireframes/`
+5. Screenshot wireframes with `ck:agent-browser` → save to `./docs/wireframes/`
 
 **Gate:** User approves design. Repeat if rejected.
 
@@ -47,6 +49,7 @@ Spawn multiple `researcher` subagents in parallel:
 ## Step 5: Planning
 
 Activate **ck:plan** skill: `/ck:plan --hard <requirements>`
+
 - Planner creates directory using `## Naming` pattern
 - Overview at `plan.md` (<80 lines) + `phase-XX-*.md` files
 - Present pros/cons of plan
