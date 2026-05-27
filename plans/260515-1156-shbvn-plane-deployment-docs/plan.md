@@ -34,12 +34,12 @@ Tổng: ~40 markdown files theo chuẩn ngân hàng VN.
 | 01  | [`phase-01-system-design-docs.md`](./phase-01-system-design-docs.md)       | TKHT 10 files                            | 🟠 Review      | 10/10 (100%) — drafts xong, chờ duyệt                |
 | 02  | [`phase-02-adr-records.md`](./phase-02-adr-records.md)                     | ADR 8 files                              | 🟠 Review      | 8/8 (100%) — viết xong 2026-05-27 (+adr-009 = 9 ADR) |
 | 03  | [`phase-03-installation-prod.md`](./phase-03-installation-prod.md)         | HDCĐ PROD 5 files + build-station bundle | 🟠 Review      | 7/7 (100%) — drafts xong 2026-05-27                  |
-| 04  | [`phase-04-installation-test-uat.md`](./phase-04-installation-test-uat.md) | HDCĐ TEST/UAT 3 files                    | ⬜ Not started | 0/3                                                  |
-| 05  | [`phase-05-installation-dr.md`](./phase-05-installation-dr.md)             | HDCĐ DR 2 files                          | ⬜ Not started | 0/2                                                  |
+| 04  | [`phase-04-installation-test-uat.md`](./phase-04-installation-test-uat.md) | HDCĐ TEST/UAT 3 files                    | 🟠 Review      | 3/3 (100%) — viết xong 2026-05-27                    |
+| 05  | [`phase-05-installation-dr.md`](./phase-05-installation-dr.md)             | HDCĐ DR 2 files                          | 🟠 Review      | 2/2 (100%) — viết xong 2026-05-27                    |
 | 06  | [`phase-06-operations-runbooks.md`](./phase-06-operations-runbooks.md)     | HDVH 10 runbooks + 3 docs                | 🟠 Review      | 13/13 (100%) — 10 runbooks + 3 ops docs xong         |
 | 07  | [`phase-07-testing-plans.md`](./phase-07-testing-plans.md)                 | KHKT 4 files                             | ⬜ Not started | 0/4                                                  |
 
-**Tổng tiến độ nội dung:** ~39 file xong (TKHT 10 + HDCĐ PROD 7 + HDVH 13 + ADR 9) + extras (deployment-history, incident-log) + diagram prod. **Còn lại:** Phase 04 (3) + 05 (2) + 07 (4) = 9 file.
+**Tổng tiến độ nội dung:** ~44 file xong (TKHT 10 + HDCĐ 12 [PROD 7 + UAT 3 + DR 2] + HDVH 13 + ADR 9) + extras + diagram prod. **Còn lại:** Phase 07 KHKT (4 file).
 
 ### Tồn đọng validate (cập nhật 2026-05-27)
 

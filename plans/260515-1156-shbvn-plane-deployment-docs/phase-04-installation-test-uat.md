@@ -9,7 +9,7 @@
 ## Overview
 
 - **Priority:** P1 — môi trường test trước UAT user
-- **Status:** ⬜ Not started (0/3)
+- **Status:** 🟠 Review (3/3 — viết xong 2026-05-27)
 - **Mô tả:** Cài đặt 1 VM all-in-one Docker compose mặc định
 
 ## Key insights
@@ -21,9 +21,9 @@
 
 ## Todo list
 
-- [ ] `01-vm-prepare.md` — Chuẩn bị VM RHEL 9.4 (hoặc Ubuntu 22.04 nếu bank cho phép — TBD)
-- [ ] `02-docker-allinone.md` — Cài Docker offline + load images + deploy compose
-- [ ] `03-validation.md` — Smoke test UAT, sanity check
+- [x] `01-vm-prepare.md` — Chuẩn bị VM RHEL 9.6 + Docker offline + /u01 data-root
+- [x] `02-docker-allinone.md` — Load image SHB prebuilt + deploy all-in-one (giữ plane-db container)
+- [x] `03-validation.md` — Smoke test UAT (dual-auth, MinIO, reset), sign-off
 
 ## Success criteria
 

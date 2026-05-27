@@ -9,20 +9,20 @@
 ## Overview
 
 - **Priority:** P1 — DR site quan trọng cho RTO/RPO target bank
-- **Status:** ⬜ Not started (0/2)
+- **Status:** 🟠 Review (2/2 — viết xong 2026-05-27)
 - **Mô tả:** Cài DATA node thứ 2 ở DR site, streaming replication từ PROD
 
 ## Key insights
 
 - DR site có WAN bandwidth khác LAN — replication mode = async giai đoạn 1
-- DR DATA node cấu hình giống PROD DATA node (RHEL 9.4 + PG 15.7 native + SAN)
+- DR DATA node cấu hình giống PROD DATA node (RHEL 9.6 + PG 15.7 native + SAN)
 - DR APP node cold standby (cài sẵn nhưng không serve traffic) — TBD nếu bank yêu cầu
 - Failover manual giai đoạn 1, auto (Patroni) giai đoạn 2
 
 ## Todo list
 
-- [ ] `01-data-node-replica.md` — Cài PG standby, pg_basebackup từ master, standby.signal, restart
-- [ ] `02-failover-test.md` — Kịch bản test promote replica → master + DR drill
+- [x] `01-data-node-replica.md` — Cài PG standby, pg_basebackup từ primary, slot `shws_dr_slot`, standby.signal, mTLS, verify lag
+- [x] `02-failover-test.md` — Partial/shadow drill promote replica → primary + revert + re-sync
 
 ## Success criteria
 

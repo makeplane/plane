@@ -38,18 +38,18 @@ Mọi step "dnf install / docker pull / pip install / git clone" KHÔNG hoạt �
 
 ### TEST/UAT ([`test-uat/`](./test-uat/))
 
-| #   | File                             | Nội dung                             | Status |
-| --- | -------------------------------- | ------------------------------------ | ------ |
-| 01  | `test-uat/01-vm-prepare.md`      | Chuẩn bị 1 VM (RHEL 9.6)             | ⬜     |
-| 02  | `test-uat/02-docker-allinone.md` | Deploy `docker-compose.yml` mặc định | ⬜     |
-| 03  | `test-uat/03-validation.md`      | Smoke test UAT                       | ⬜     |
+| #   | File                                                                 | Nội dung                                   | Status   |
+| --- | -------------------------------------------------------------------- | ------------------------------------------ | -------- |
+| 01  | [`test-uat/01-vm-prepare.md`](./test-uat/01-vm-prepare.md)           | Chuẩn bị 1 VM (RHEL 9.6) + Docker offline  | 🟡 Draft |
+| 02  | [`test-uat/02-docker-allinone.md`](./test-uat/02-docker-allinone.md) | Deploy all-in-one (giữ plane-db container) | 🟡 Draft |
+| 03  | [`test-uat/03-validation.md`](./test-uat/03-validation.md)           | Smoke test UAT + sign-off                  | 🟡 Draft |
 
 ### DR Site ([`dr-site/`](./dr-site/))
 
-| #   | File                              | Nội dung                               | Status |
-| --- | --------------------------------- | -------------------------------------- | ------ |
-| 01  | `dr-site/01-data-node-replica.md` | Cài PG standby + streaming replication | ⬜     |
-| 02  | `dr-site/02-failover-test.md`     | Kịch bản test promote replica → master | ⬜     |
+| #   | File                                                                   | Nội dung                               | Status   |
+| --- | ---------------------------------------------------------------------- | -------------------------------------- | -------- |
+| 01  | [`dr-site/01-data-node-replica.md`](./dr-site/01-data-node-replica.md) | Cài PG standby + streaming replication | 🟡 Draft |
+| 02  | [`dr-site/02-failover-test.md`](./dr-site/02-failover-test.md)         | Drill promote replica → primary        | 🟡 Draft |
 
 ## Bundle structure
 
