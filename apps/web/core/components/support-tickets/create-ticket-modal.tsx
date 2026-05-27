@@ -171,13 +171,23 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
               <select
                 value={formData.priority}
                 onChange={(e) => setFormData((prev) => ({ ...prev, priority: e.target.value }))}
-                className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none"
+                className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-primary transition-colors outline-none"
               >
-                <option value="none">None</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="urgent">Urgent</option>
+                <option value="none" className="bg-surface-1 text-primary">
+                  None
+                </option>
+                <option value="low" className="bg-surface-1 text-primary">
+                  Low
+                </option>
+                <option value="medium" className="bg-surface-1 text-primary">
+                  Medium
+                </option>
+                <option value="high" className="bg-surface-1 text-primary">
+                  High
+                </option>
+                <option value="urgent" className="bg-surface-1 text-primary">
+                  Urgent
+                </option>
               </select>
             </div>
 
@@ -187,11 +197,13 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
               <select
                 value={formData.state_id}
                 onChange={(e) => setFormData((prev) => ({ ...prev, state_id: e.target.value }))}
-                className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none"
+                className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-primary transition-colors outline-none"
               >
-                <option value="">Default</option>
+                <option value="" className="bg-surface-1 text-primary">
+                  Default
+                </option>
                 {availableStates.map((state) => (
-                  <option key={state.id} value={state.id}>
+                  <option key={state.id} value={state.id} className="bg-surface-1 text-primary">
                     {state.name}
                   </option>
                 ))}
@@ -210,13 +222,15 @@ export const CreateSupportTicketModal = observer(function CreateSupportTicketMod
                   assignee_ids: e.target.value ? [e.target.value] : [],
                 }))
               }
-              className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-transparent px-3 py-2 text-primary transition-colors outline-none"
+              className="text-sm focus:border-primary w-full rounded-lg border border-subtle bg-surface-1 px-3 py-2 text-primary transition-colors outline-none"
             >
-              <option value="">Unassigned</option>
+              <option value="" className="bg-surface-1 text-primary">
+                Unassigned
+              </option>
               {projectMemberIds?.map((memberId) => {
                 const member = getUserDetails(memberId);
                 return (
-                  <option key={memberId} value={memberId}>
+                  <option key={memberId} value={memberId} className="bg-surface-1 text-primary">
                     {member?.display_name || member?.email || memberId}
                   </option>
                 );
