@@ -6,17 +6,17 @@ Quyết định kiến trúc đã chốt cho dự án. **Mỗi quyết định k
 
 | ID                                                 | Tiêu đề                                                | Status      | Date       |
 | -------------------------------------------------- | ------------------------------------------------------ | ----------- | ---------- |
-| ADR-001                                            | PostgreSQL native vs Docker cho production             | ⬜ Planned  | —          |
-| ADR-002                                            | RHEL major version (9.x)                               | ⬜ Planned  | —          |
-| ADR-003                                            | PostgreSQL version (15.7)                              | ⬜ Planned  | —          |
-| ADR-004                                            | Backup tool — pgBackRest                               | ⬜ Planned  | —          |
-| ADR-005                                            | Air-gap bundle strategy (build station)                | ⬜ Planned  | —          |
-| ADR-006                                            | DR replication mode (streaming async)                  | ⬜ Planned  | —          |
-| ADR-007                                            | App stack — Docker compose                             | ⬜ Planned  | —          |
-| ADR-008                                            | Storage — EMC SAN multipath + XFS + LVM                | ⬜ Planned  | —          |
+| [ADR-001](./adr-001-postgres-native-vs-docker.md)  | PostgreSQL native (PROD/DR) vs Docker (UAT)            | 🟡 Proposed | 2026-05-27 |
+| [ADR-002](./adr-002-rhel-version.md)               | RHEL version (9.6)                                     | 🟡 Proposed | 2026-05-27 |
+| [ADR-003](./adr-003-postgres-version.md)           | PostgreSQL version (15.7)                              | 🟡 Proposed | 2026-05-27 |
+| [ADR-004](./adr-004-backup-tool-pgbackrest.md)     | Backup tool — pgBackRest                               | 🟡 Proposed | 2026-05-27 |
+| [ADR-005](./adr-005-air-gap-bundle-strategy.md)    | Air-gap bundle strategy (build station)                | 🟡 Proposed | 2026-05-27 |
+| [ADR-006](./adr-006-dr-replication-mode.md)        | DR replication mode (streaming async)                  | 🟡 Proposed | 2026-05-27 |
+| [ADR-007](./adr-007-app-stack-docker-compose.md)   | App stack — Docker Compose                             | 🟡 Proposed | 2026-05-27 |
+| [ADR-008](./adr-008-storage-emc-san.md)            | Storage — EMC SAN multipath + LVM + XFS                | 🟡 Proposed | 2026-05-27 |
 | [ADR-009](./adr-009-dc-dr-replication-layering.md) | DC-DR replication 2 layer (EMC storage + PG streaming) | 🟡 Proposed | 2026-05-26 |
 
-> **Lưu ý:** ADR-001..008 đã **đăng ký** trong kế hoạch nhưng **chưa có file** (status ⬜ Planned). Các quyết định tương ứng đã phản ánh trong tài liệu thiết kế (`01-system-design/`); ADR chính thức sẽ viết sau để ghi lại context + alternatives + consequences. Chỉ ADR-009 đã có file.
+> **Lưu ý:** 9 ADR đã có file, status 🟡 Proposed (chờ duyệt stakeholder để chuyển 🟢 Accepted). Quyết định đã phản ánh trong tài liệu thiết kế (`01-system-design/`).
 
 ## Status legend
 
