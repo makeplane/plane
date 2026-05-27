@@ -13,7 +13,7 @@ import { observer } from "mobx-react";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
-import type { IIssueDisplayProperties, TIssue, TIssueMap } from "@plane/types";
+import type { IIssueDisplayProperties, TIssue, TIssueMap, TIssueOrderByOptions } from "@plane/types";
 import { EIssueServiceType } from "@plane/types";
 // components
 import { DropIndicator } from "@plane/ui";
@@ -21,6 +21,9 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssues } from "@/hooks/store/use-issues";
+import type { IBaseIssuesStore } from "@/store/issue/helpers/base-issues.store";
+import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
@@ -45,6 +48,7 @@ type Props = {
   isParentIssueBeingDragged?: boolean;
   isLastChild?: boolean;
   shouldRenderByDefault?: boolean;
+  orderBy: TIssueOrderByOptions | undefined;
   isEpic?: boolean;
 };
 
@@ -66,6 +70,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
     isLastChild = false,
     selectionHelpers,
     shouldRenderByDefault,
+    orderBy,
     isEpic = false,
   } = props;
   // states
@@ -78,6 +83,8 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
   const { isMobile } = usePlatformOS();
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  const storeType = useIssueStoreType();
+  const { issues } = useIssues(storeType);
 
   const isSubIssue = nestingLevel !== 0;
 
@@ -129,7 +136,11 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
 
   if (!issueId || !issuesMap[issueId]?.created_at) return null;
 
-  const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
+  const subIssueIds = subIssuesStore.subIssuesByIssueId(issueId);
+  const subIssues =
+    orderBy && subIssueIds?.length && "issuesSortWithOrderBy" in issues
+      ? (issues as IBaseIssuesStore).issuesSortWithOrderBy(subIssueIds, orderBy)
+      : subIssueIds;
   return (
     <div className="relative" ref={issueBlockRef} id={getIssueBlockId(issueId, groupId)}>
       <DropIndicator classNames={"absolute top-0 z-[2]"} isVisible={instruction === "DRAG_OVER"} />
@@ -164,7 +175,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
 
       {isExpanded &&
         !isEpic &&
-        subIssues?.map((subIssueId) => (
+        subIssues?.map((subIssueId: string) => (
           <IssueBlockRoot
             key={`${subIssueId}`}
             issueId={subIssueId}
@@ -182,6 +193,7 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
             canDropOverIssue={canDropOverIssue}
             isParentIssueBeingDragged={isParentIssueBeingDragged || isCurrentBlockDragging}
             shouldRenderByDefault={isExpanded}
+            orderBy={orderBy}
           />
         ))}
       {isLastChild && <DropIndicator classNames={"absolute z-[2]"} isVisible={instruction === "DRAG_BELOW"} />}
