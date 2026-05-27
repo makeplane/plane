@@ -71,7 +71,7 @@ DR site cho **SHWS** triển khai **2 node** giống PROD topology, hoạt độ
    ② Platform → DELL EMC Storage replication — ICTP (hạ tầng) đảm nhiệm
 ```
 
-> **Diagram source:** [`../assets/diagrams/architecture-dr-replication.mmd`](../assets/diagrams/architecture-dr-replication.mmd) (TODO)
+> **Diagram source:** [`../assets/diagrams/architecture-dr-replication.mmd`](../assets/diagrams/architecture-dr-replication.mmd) (Mermaid v11)
 
 ---
 
@@ -111,10 +111,9 @@ DR site cho **SHWS** triển khai **2 node** giống PROD topology, hoạt độ
 **Postgres standby config:**
 
 ```ini
-# postgresql.conf trên shwsdb1dr
-primary_conninfo = 'host=shwsdb1p.bank.local port=5432 user=replicator
-                     password=*** sslmode=verify-ca application_name=shwsdb1dr'
-primary_slot_name = 'dr_replica_slot'
+# postgresql.auto.conf trên shwsdb1dr (mTLS cert — xem 06-database-design §10.2)
+primary_conninfo = 'host=10.94.10.11 port=5432 user=replicator sslmode=verify-full sslcert=/u01/pgsql/15/data/replicator.crt sslkey=/u01/pgsql/15/data/replicator.key sslrootcert=/u01/pgsql/15/data/bank-ca.crt application_name=shws_dr'
+primary_slot_name = 'shws_dr_slot'
 hot_standby = on              # Cho phép query đọc trên replica
 max_standby_streaming_delay = 30s
 hot_standby_feedback = on     # Tránh vacuum xóa rows replica đang đọc
@@ -149,21 +148,21 @@ synchronous_commit = on       # Local commit (KHÔNG đợi DR ack — async)
 
 ```ini
 # pg_hba.conf — cho replicator account từ DR
-hostssl replication replicator <shwsdb1dr-IP>/32 scram-sha-256
+hostssl replication replicator 10.94.20.11/32 cert clientcert=verify-full
 ```
 
 **Tạo replication slot:**
 
 ```sql
-SELECT pg_create_physical_replication_slot('dr_replica_slot');
+SELECT pg_create_physical_replication_slot('shws_dr_slot');
 ```
 
 ### 4.2 Initial sync (lần đầu setup DR)
 
 ```bash
 # Trên shwsdb1dr, từ tài khoản postgres:
-pg_basebackup -h shwsdb1p.bank.local -D /u01/pgsql/15/data \
-              -U replicator -P -X stream -S dr_replica_slot \
+pg_basebackup -h 10.94.10.11 -D /u01/pgsql/15/data \
+              -U replicator -P -X stream -S shws_dr_slot \
               --wal-method=stream
 touch /u01/pgsql/15/data/standby.signal
 systemctl start postgresql-15
@@ -189,7 +188,7 @@ SELECT
   pg_wal_lsn_diff(pg_current_wal_lsn(), replay_lsn) AS lag_bytes,
   EXTRACT(EPOCH FROM (now() - reply_time)) AS lag_seconds
 FROM pg_stat_replication
-WHERE application_name = 'shwsdb1dr';
+WHERE application_name = 'shws_dr';
 ```
 
 ### 4.4 MinIO file replication — qua DELL EMC Storage

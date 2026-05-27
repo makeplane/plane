@@ -75,7 +75,7 @@ Triển khai **SHWS TEST/UAT** trên **1 VM all-in-one** với Docker Compose m�
               └───────────────────────────────────────────────────┘
 ```
 
-> **Diagram source:** [`../assets/diagrams/architecture-test-uat.mmd`](../assets/diagrams/architecture-test-uat.mmd) (TODO)
+> **Diagram source:** [`../assets/diagrams/architecture-test-uat.mmd`](../assets/diagrams/architecture-test-uat.mmd) (Mermaid v11)
 
 ---
 
@@ -87,7 +87,9 @@ Triển khai **SHWS TEST/UAT** trên **1 VM all-in-one** với Docker Compose m�
 **Hypervisor:** Hyper-V
 **OS:** Red Hat Enterprise Linux 9.6 (Plow) minimal install
 **Docker:** Docker CE 27.x (cài offline từ build station bundle)
-**Compose file:** `docker-compose.yml` mặc định (KHÔNG dùng `docker-compose.shb.yml` của PROD)
+**Compose file:** base `docker-compose.yml` (topology all-in-one, **giữ** `plane-db`/`plane-redis`/`plane-mq`/`plane-minio` — KHÁC PROD vốn tắt `plane-db`).
+
+> **Air-gap deploy:** không build image trong bank → dùng **image SHB prebuilt** (cùng `dist/` như PROD) load qua `docker load`, áp `docker-compose.shb.yml` (chỉ override tag) lên base compose. Đây là điểm khác bản thiết kế gốc (vốn giả định build từ Dockerfile); chi tiết [`../02-installation/test-uat/02-docker-allinone.md`](../02-installation/test-uat/02-docker-allinone.md).
 
 ### 3.2 Containers (theo Plane upstream)
 

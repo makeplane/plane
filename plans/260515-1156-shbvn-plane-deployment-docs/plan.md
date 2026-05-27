@@ -39,7 +39,7 @@ Tổng: ~40 markdown files theo chuẩn ngân hàng VN.
 | 06  | [`phase-06-operations-runbooks.md`](./phase-06-operations-runbooks.md)     | HDVH 10 runbooks + 3 docs                | 🟠 Review | 13/13 (100%) — 10 runbooks + 3 ops docs xong         |
 | 07  | [`phase-07-testing-plans.md`](./phase-07-testing-plans.md)                 | KHKT 4 files                             | 🟠 Review | 4/4 (100%) — viết xong 2026-05-27                    |
 
-**Tổng tiến độ nội dung:** ~48 file drafted (TKHT 10 + HDCĐ 12 [PROD 7 + UAT 3 + DR 2] + HDVH 13 + ADR 9 + KHKT 4) + extras + diagram prod. **Tất cả 7 phase ở 🟠 Review.** Còn lại: stakeholder duyệt + sync drift nhỏ (slot name 03-arch, UAT compose approach).
+**Tổng tiến độ nội dung:** ~48 file drafted (TKHT 10 + HDCĐ 12 [PROD 7 + UAT 3 + DR 2] + HDVH 13 + ADR 9 + KHKT 4) + extras + diagram prod. **Tất cả 7 phase ở 🟠 Review.** Drift đã sync, 3 diagram đủ, 0 broken link. Còn lại: **stakeholder duyệt** + trả lời câu hỏi mở (bank/Infra: IP thực, WWID, NAS, LDAP/SMTP, patch RHEL).
 
 ### Tồn đọng validate (cập nhật 2026-05-27)
 
@@ -49,8 +49,9 @@ Tổng: ~40 markdown files theo chuẩn ngân hàng VN.
 - ✅ **8 ADR (001–008) viết xong 2026-05-27** — resolve 8 broken forward-link; index 🟡 Proposed + link.
 - ✅ **Phase 06 hoàn tất (5 runbook cuối) 2026-05-27** — resolve 2 broken link.
 - ✅ **Phase 04+05+07 hoàn tất 2026-05-27** — UAT(3) + DR(2) + KHKT(4). **0 broken link** docs-wide (đã verify).
-- ⚠️ **Drift mới (chưa sync):** `03-architecture-dr-site` §4.1 dùng slot `dr_replica_slot` + auth password; install/06-db dùng `shws_dr_slot` + mTLS cert (canonical). Cần sync 03-arch. Diagram `.mmd` cho UAT + DR vẫn TODO (rỗng/chưa có).
-- ⚠️ **UAT compose approach:** thiết kế nói "không dùng shb override"; install dùng image SHB prebuilt + override (air-gap không build trong bank). Cần chốt + đồng bộ design.
+- ✅ **Drift slot DR synced 2026-05-27:** `03-architecture-dr-site` đổi `dr_replica_slot`→`shws_dr_slot` + auth password→mTLS cert + IP `.11` (khớp 06-db + install).
+- ✅ **UAT compose approach** ghi chú trong `02-architecture-test-uat` §3.1 (air-gap: image SHB prebuilt + override, giữ plane-db).
+- ✅ **3 diagram `.mmd`** đã đủ: prod-overview, test-uat, dr-replication (Mermaid v11). Bỏ marker (TODO).
 - ✅ Drift RHEL→9.6 + IP DATA→10.94.10.11 đã đồng bộ toàn bộ docs.
 - ✅ **Drift RHEL** — chốt **9.6** (2026-05-27), đồng bộ overview/arch/README/install docs. Còn xác nhận patch 9.6.z với Infra.
 - ✅ **Drift IP DATA node** — chốt **10.94.10.11** (PROD) / **10.94.20.11** (DR) theo network design; đã sync `06-database-design`.

@@ -44,7 +44,7 @@ sudo -u postgres psql -c "SELECT pg_create_physical_replication_slot('shws_dr_sl
 sudo -u postgres psql -c "SELECT slot_name, slot_type, active FROM pg_replication_slots;"
 ```
 
-> **Lưu ý drift:** `03-architecture-dr-site.md` §4.1 ghi slot `dr_replica_slot` + auth password; tài liệu này theo **`06-database-design.md` (nguồn chuẩn DB)**: slot `shws_dr_slot` + **mTLS cert**. Cần đồng bộ 03-arch.
+> **Canonical:** slot `shws_dr_slot` + **mTLS cert** (theo `06-database-design.md` §10). `03-architecture-dr-site.md` đã đồng bộ (2026-05-27).
 
 ---
 
