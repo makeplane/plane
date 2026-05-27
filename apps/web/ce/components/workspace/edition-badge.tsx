@@ -25,7 +25,8 @@ export const WorkspaceEditionBadge = observer(() => {
         handleClose={() => setIsPaidPlanPurchaseModalOpen(false)}
       />
       <Tooltip tooltipContent={`Version: v${packageJson.version}`} isMobile={isMobile}>
-        <Button
+        <span className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-sm font-medium outline-none"></span>
+        {/* <Button
           tabIndex={-1}
           variant="accent-primary"
           className="w-fit min-w-24 cursor-pointer rounded-2xl px-2 py-1 text-center text-sm font-medium outline-none"
@@ -34,7 +35,7 @@ export const WorkspaceEditionBadge = observer(() => {
           aria-label={t("aria_labels.projects_sidebar.edition_badge")}
         >
           Community
-        </Button>
+        </Button> */}
       </Tooltip>
     </>
   );

@@ -77,6 +77,7 @@ from .favorite import UserFavorite
 from .issue_type import IssueType
 
 from .recent_visit import UserRecentVisit
+from .roster import RosterPlayer, RosterPlayerStatus
 
 from .label import Label
 

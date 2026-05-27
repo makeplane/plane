@@ -1,6 +1,7 @@
 // plane imports
 import { EUserPermissions, EProjectFeatureKey } from "@plane/constants";
 import { CycleIcon, IntakeIcon, ModuleIcon, PageIcon, ViewsIcon, WorkItemsIcon } from "@plane/propel/icons";
+import { Users2Icon } from "lucide-react";
 // components
 import type { TNavigationItem } from "@/components/workspace/sidebar/project-navigation";
 
@@ -74,5 +75,15 @@ export const getProjectFeatureNavigation = (
     access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
     shouldRender: project.inbox_view,
     sortOrder: 6,
+  },
+  {
+    i18n_key: "Roster",
+    key: "roster" as EProjectFeatureKey,
+    name: "Roster",
+    href: `/${workspaceSlug}/projects/${projectId}/roster`,
+    icon: Users2Icon,
+    access: [EUserPermissions.ADMIN, EUserPermissions.MEMBER, EUserPermissions.GUEST],
+    shouldRender: true,
+    sortOrder: 7,
   },
 ];
