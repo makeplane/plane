@@ -56,7 +56,7 @@ Tài liệu mô tả:
 │  ┌─────────────────┐    mTLS     ┌─────────────────┐           │
 │  │  shwsdb1p       │  WAL stream │  shwsdb1dr      │           │
 │  │  PG 15.7 PRIMARY├────────────►│  PG 15.7 STANDBY│           │
-│  │  10.94.10.20    │  async      │  10.94.20.20    │           │
+│  │  10.94.10.11    │  async      │  10.94.20.11    │           │
 │  │                 │  RPO ~30s   │  hot_standby=on │           │
 │  └────────┬────────┘             └─────────────────┘           │
 │           ▲                                                      │
@@ -119,20 +119,20 @@ Tài liệu mô tả:
 File: `/u01/pgsql/15/data/postgresql.conf`
 
 ```ini
-# ─── Resource Usage (16 GB RAM, 8 vCPU) ─────────────────────────
-shared_buffers = 4GB                      # 25% RAM
-effective_cache_size = 12GB               # 75% RAM (OS cache hint)
-work_mem = 16MB                           # per sort/hash op
-maintenance_work_mem = 512MB              # VACUUM, CREATE INDEX
+# Resource (16 GB RAM, 8 vCPU): shared_buffers 25% RAM, effective_cache_size 75%
+shared_buffers = 4GB
+effective_cache_size = 12GB
+work_mem = 16MB
+maintenance_work_mem = 512MB
 max_connections = 300                     # qua PgBouncer pool 100
-huge_pages = try                          # enable nếu vm.nr_hugepages set
+huge_pages = try
 temp_buffers = 16MB
 
-# ─── WAL & Checkpoint ───────────────────────────────────────────
-wal_level = replica                       # cần cho streaming repl
-max_wal_senders = 5                       # 1 DR + 2 dự phòng
-wal_keep_size = 4GB                       # giữ WAL phòng slot fail
-max_slot_wal_keep_size = 4GB              # auto-invalidate slot nếu WAL > 4GB (chống fill /u02)
+# WAL & Checkpoint
+wal_level = replica
+max_wal_senders = 5
+wal_keep_size = 4GB
+max_slot_wal_keep_size = 4GB              # auto-drop slot nếu WAL > 4GB (chống fill /u02)
 wal_buffers = 16MB
 checkpoint_timeout = 15min
 checkpoint_completion_target = 0.9
@@ -142,20 +142,20 @@ archive_mode = on
 archive_command = 'pgbackrest --stanza=shws-prod archive-push %p'
 archive_timeout = 60s                     # force WAL switch mỗi phút (RPO)
 
-# ─── Replication ────────────────────────────────────────────────
+# Replication
 max_replication_slots = 5
-hot_standby = on                          # áp dụng cho DR node
+hot_standby = on
 wal_receiver_timeout = 60s
 wal_sender_timeout = 60s
 
-# ─── Query Planner ──────────────────────────────────────────────
-random_page_cost = 1.1                    # SAN SSD → seq~rand
+# Query Planner (SAN SSD)
+random_page_cost = 1.1
 effective_io_concurrency = 200
 default_statistics_target = 100
-jit = off                                 # Plane workload không hưởng lợi JIT
+jit = off
 
-# ─── Logging ────────────────────────────────────────────────────
-log_destination = 'csvlog'                # CSV duy nhất, rsyslog tail .csv → SIEM
+# Logging (csvlog → rsyslog → SIEM)
+log_destination = 'csvlog'
 logging_collector = on
 log_directory = '/var/log/postgresql'
 log_filename = 'postgresql-%Y-%m-%d.log'
@@ -172,7 +172,7 @@ log_autovacuum_min_duration = 1000
 log_error_verbosity = default
 log_timezone = 'Asia/Ho_Chi_Minh'
 
-# ─── Autovacuum ─────────────────────────────────────────────────
+# Autovacuum
 autovacuum = on
 autovacuum_max_workers = 4
 autovacuum_naptime = 30s
@@ -180,25 +180,25 @@ autovacuum_vacuum_scale_factor = 0.1
 autovacuum_analyze_scale_factor = 0.05
 autovacuum_vacuum_cost_limit = 2000
 
-# ─── Extensions preload ─────────────────────────────────────────
+# Extensions preload
 shared_preload_libraries = 'pg_stat_statements,pgaudit'
 pg_stat_statements.max = 10000
 pg_stat_statements.track = top
 
-# ─── pgaudit (xem 05-security-design.md §5) ─────────────────────
+# pgaudit (xem 05-security-design.md §5)
 pgaudit.log = 'ddl, role, write'
 pgaudit.log_catalog = off
 pgaudit.log_parameter = on
 pgaudit.log_relation = on
 
-# ─── SSL/TLS ────────────────────────────────────────────────────
+# SSL/TLS
 ssl = on
 ssl_cert_file = '/u01/pgsql/15/data/server.crt'
 ssl_key_file = '/u01/pgsql/15/data/server.key'
 ssl_ca_file = '/u01/pgsql/15/data/bank-ca.crt'
 ssl_min_protocol_version = 'TLSv1.2'
 
-# ─── Locale / Timezone ──────────────────────────────────────────
+# Locale / Timezone
 timezone = 'Asia/Ho_Chi_Minh'
 lc_messages = 'en_US.UTF-8'
 lc_monetary = 'en_US.UTF-8'
@@ -249,7 +249,7 @@ host    plane           pgbouncer_auth  127.0.0.1/32            scram-sha-256
 # Monitoring exporter từ mgmt VLAN
 host    postgres        monitoring      10.94.10.0/24           scram-sha-256
 # Replication cert-based mTLS từ DR
-hostssl replication     replicator      10.94.20.20/32          cert            clientcert=verify-full
+hostssl replication     replicator      10.94.20.11/32          cert            clientcert=verify-full
 # Mặc định deny mọi truy cập khác (không catch-all /16)
 host    all             all             0.0.0.0/0               reject
 ```
@@ -274,7 +274,7 @@ File: `/etc/pgbouncer/pgbouncer.ini`
 plane = host=127.0.0.1 port=5432 dbname=plane
 
 [pgbouncer]
-listen_addr = 10.94.10.20,127.0.0.1
+listen_addr = 10.94.10.11,127.0.0.1
 listen_port = 6432
 auth_type = scram-sha-256
 auth_file = /etc/pgbouncer/userlist.txt
@@ -321,18 +321,7 @@ log_pooler_errors = 1
 
 ### 6.3 Lưu ý transaction mode
 
-| Tính năng                               | Hỗ trợ                                                                                       |
-| --------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Plain SQL                               | ✅                                                                                           |
-| Transactions BEGIN/COMMIT               | ✅                                                                                           |
-| Prepared statements (extended protocol) | ⚠️ Plane Django không dùng prepared stmt cache (`disable_server_side_cursors=true` mặc định) |
-| `SET LOCAL ...` trong transaction       | ✅                                                                                           |
-| `SET ...` (session-level)               | ❌ — KHÔNG dùng                                                                              |
-| `LISTEN/NOTIFY`                         | ❌ — Plane không dùng                                                                        |
-| Cursors WITHOUT HOLD                    | ✅ trong transaction                                                                         |
-| Advisory locks                          | ❌ — Plane không dùng                                                                        |
-
-→ **Tương thích với Plane Django ORM**. Nếu Plane upstream sau này thêm tính năng yêu cầu session state, cần fallback session mode hoặc bypass PgBouncer cho route đó.
+**Tương thích Plane Django ORM.** ✅ plain SQL, BEGIN/COMMIT, `SET LOCAL` trong tx, cursors WITHOUT HOLD trong tx. ❌ KHÔNG dùng (Plane cũng không cần): `SET` session-level, `LISTEN/NOTIFY`, advisory locks; prepared stmt cache tắt sẵn (`disable_server_side_cursors=true`). Nếu upstream thêm tính năng cần session state → fallback session mode hoặc bypass PgBouncer cho route đó.
 
 ---
 
@@ -506,7 +495,7 @@ Script `shws-backup-to-nas.sh` (rsync wrapper) trách nhiệm:
 `pg_hba.conf`:
 
 ```text
-hostssl replication replicator 10.94.20.20/32 cert clientcert=verify-full
+hostssl replication replicator 10.94.20.11/32 cert clientcert=verify-full
 ```
 
 Tạo replication slot:
@@ -522,7 +511,7 @@ DR node có pgBackRest stanza **riêng** trỏ tới repo nội bộ `/u03/pgbac
 `postgresql.auto.conf` (sau khi `pg_basebackup`):
 
 ```ini
-primary_conninfo = 'host=10.94.10.20 port=5432 user=replicator sslmode=verify-full sslcert=/u01/pgsql/15/data/replicator.crt sslkey=/u01/pgsql/15/data/replicator.key sslrootcert=/u01/pgsql/15/data/bank-ca.crt application_name=shws_dr'
+primary_conninfo = 'host=10.94.10.11 port=5432 user=replicator sslmode=verify-full sslcert=/u01/pgsql/15/data/replicator.crt sslkey=/u01/pgsql/15/data/replicator.key sslrootcert=/u01/pgsql/15/data/bank-ca.crt application_name=shws_dr'
 primary_slot_name = 'shws_dr_slot'
 restore_command = 'pgbackrest --stanza=shws-prod archive-get %f %p'
 recovery_target_timeline = 'latest'
@@ -574,7 +563,7 @@ Theo `pgaudit.log = 'ddl, role, write'`:
 ### 11.3 Sample audit event
 
 ```text
-2026-05-18 14:23:01 ICT [12345] plane_app@plane LOG:  AUDIT: SESSION,1,1,WRITE,UPDATE,TABLE,public.projects,UPDATE projects SET name=$1 WHERE id=$2,<not logged>
+... plane_app@plane LOG: AUDIT: SESSION,1,1,WRITE,UPDATE,TABLE,public.projects,...
 ```
 
 ---
@@ -585,12 +574,7 @@ Theo `pgaudit.log = 'ddl, role, write'`:
 
 **Slot cố định:** Chủ nhật **04:00 – 06:00 ICT** (sau khi backup full 03:00 hoàn tất).
 
-Lý do chọn 04:00-06:00 (Option B):
-
-- Backup full Chủ nhật 03:00 là deliverable bắt buộc (RPO/audit), không nên dời
-- Backup full ước tính 1-2h → kết thúc ~04:00-05:00; maint window 04:00-06:00 chạy sau, không tranh I/O với backup
-- Nếu backup chạy quá 04:00, maint procedure đợi backup kết thúc trước khi bắt đầu (script gating qua `pgbackrest info`)
-- Tổng downtime tối đa: 2h, vẫn nằm trong khung "ngoài giờ làm việc"
+Lý do 04:00-06:00 (Option B): chạy SAU backup full CN 03:00 (1-2h, deliverable bắt buộc, không dời) để không tranh I/O; nếu backup quá 04:00 thì maint đợi (gating qua `pgbackrest info`). Downtime tối đa 2h, ngoài giờ làm việc.
 
 > **Câu hỏi mở:** Có lịch maintenance bank chung (NPP, SAN downtime) cần align không? Nếu có, slot này có thể phải dời thêm.
 
@@ -650,15 +634,9 @@ Validate backup integrity + verify RTO < 1 giờ định kỳ.
    pgbackrest --stanza=shws-prod --type=time \
      --target='2026-05-15 12:00:00+07' restore
    ```
-3. **Verify:**
-   - PG khởi động được, log không lỗi
-   - Sanity query: `SELECT count(*) FROM users, projects, workspaces`
-   - So sánh row count với prod snapshot cùng thời điểm (±5%)
-4. **Document:** Ghi report `plans/reports/restore-drill-YYYYMMDD.md`
-   - Thời điểm bắt đầu/kết thúc
-   - RTO thực tế
-   - Issue phát sinh
-5. **Cleanup:** Drop target instance
+3. **Verify:** PG khởi động không lỗi; sanity `SELECT count(*) FROM users, projects, workspaces`; so row count với prod snapshot cùng mốc (±5%).
+4. **Document:** report `plans/reports/restore-drill-YYYYMMDD.md` — thời điểm bắt đầu/kết thúc, RTO thực tế, issue.
+5. **Cleanup:** Drop target instance.
 
 ### 13.4 Drill outcome cần escalate
 
@@ -680,24 +658,11 @@ Validate backup integrity + verify RTO < 1 giờ định kỳ.
 
 ### 14.2 Giai đoạn 2 (12-18 tháng sau go-live)
 
-Đánh giá nâng cấp:
-
-- **Patroni + etcd** cho automatic failover trong PROD DC (1 primary + 1 standby trong cùng DC)
-- DR site vẫn async streaming
-- Cần thêm 1 VM cho etcd quorum (3 nodes total)
-- Cần training DBA về Patroni
-
-**Trigger nâng cấp:**
-
-- Số CCU > 200
-- Downtime hàng tháng > 30 phút từ DB issues
-- Bank yêu cầu RTO < 15 phút
+Đánh giá **Patroni + etcd** cho auto-failover trong PROD DC (1 primary + 1 standby cùng DC; +1 VM etcd quorum = 3 node; training DBA); DR vẫn async streaming. **Trigger:** CCU > 200, downtime DB > 30 phút/tháng, hoặc bank yêu cầu RTO < 15 phút.
 
 ### 14.3 Không phù hợp với giai đoạn 1
 
-- Synchronous replication PROD ↔ DR (latency 1 Gbps WAN không đảm bảo)
-- Multi-master (PG không hỗ trợ native; pglogical phức tạp)
-- Logical replication thay streaming (chậm hơn cho full DB)
+Sync replication PROD↔DR (WAN 1 Gbps latency không đảm bảo); multi-master (PG không native, pglogical phức tạp); logical replication thay streaming (chậm cho full DB).
 
 ---
 
@@ -705,26 +670,15 @@ Validate backup integrity + verify RTO < 1 giờ định kỳ.
 
 ### 15.1 Quy trình migration thường lệ
 
-Plane upstream cung cấp Django migration. SHWS apply theo:
-
-1. Code release từ branch `preview` → image build trên build station
-2. UAT deploy → `python manage.py migrate --check` trước, sau đó `migrate`
-3. Smoke test UAT
-4. PROD deploy lúc maint window:
-   - `pg_dump --schema-only` snapshot schema trước migrate (rollback reference)
-   - `python manage.py migrate` trong container ephemeral
-   - Verify version: `SELECT * FROM django_migrations ORDER BY id DESC LIMIT 5`
+Plane upstream cung cấp Django migration. SHWS: (1) release branch `preview` → build image; (2) UAT `migrate --check` rồi `migrate` + smoke test; (3) PROD deploy lúc maint window — `pg_dump --schema-only` snapshot trước (rollback ref), `migrate` trong container ephemeral, verify `SELECT * FROM django_migrations ORDER BY id DESC LIMIT 5`.
 
 ### 15.2 Lock hazard
 
-- Migration có `ALTER TABLE ... ADD COLUMN ... NOT NULL DEFAULT ...` trên table lớn → blocking
-- Plane upstream PR review nên đã filter, nhưng SHWS phải review patch trước merge vào `preview`
-- Maintenance window là backstop nếu migration tốn > 30s lock
+`ALTER TABLE ... ADD COLUMN NOT NULL DEFAULT` trên table lớn → blocking. Upstream PR review nên đã filter nhưng SHWS vẫn review patch trước khi merge `preview`; maint window là backstop nếu lock > 30s.
 
 ### 15.3 Rollback
 
-- Nếu migration fail → restore từ backup `pg_dump --schema-only` + revert container image
-- Nếu data migration fail giữa chừng → restore PITR đến thời điểm trước migrate
+Migration fail → restore `pg_dump --schema-only` + revert image. Data migration fail giữa chừng → PITR về trước migrate.
 
 ---
 
@@ -790,11 +744,4 @@ Chi tiết xem [08-monitoring-design.md](./08-monitoring-design.md). Metrics c�
 
 ---
 
-**Status:** 🟡 Draft v0.1 chờ review
-**Reviewer cần:**
-
-- [ ] DBA team (tuning + backup schedule)
-- [ ] Infra (NAS share point capacity)
-- [ ] Security (pg_hba.conf, TLS cert workflow)
-- [ ] IT Audit (restore drill frequency policy)
-- [ ] Stakeholder (HA roadmap timeline)
+**Status:** 🟡 Draft v0.1 chờ review — Reviewer: DBA (tuning + backup), Infra (NAS), Security (pg_hba + TLS), IT Audit (restore drill), Stakeholder (HA roadmap).

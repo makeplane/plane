@@ -88,7 +88,7 @@ Triển khai **SHWS PROD** trên **2 node Hyper-V** theo mô hình **hybrid tier
                           [ DR SITE — xem 03-architecture-dr-site.md ]
 ```
 
-> **Diagram source:** [`../assets/diagrams/architecture-prod-overview.mmd`](../assets/diagrams/architecture-prod-overview.mmd) (TODO)
+> **Diagram source:** [`../assets/diagrams/architecture-prod-overview.mmd`](../assets/diagrams/architecture-prod-overview.mmd) (Mermaid v11)
 
 ---
 
@@ -98,7 +98,7 @@ Triển khai **SHWS PROD** trên **2 node Hyper-V** theo mô hình **hybrid tier
 
 **Mục đích:** Phục vụ HTTP request, xử lý background job, lưu state tạm.
 
-**OS:** Red Hat Enterprise Linux 9.4 minimal install
+**OS:** Red Hat Enterprise Linux 9.6 minimal install
 **Docker:** Docker CE 27.x (offline RPM)
 **Compose file:** `docker-compose.shb.yml` (KHÔNG có service `plane-db`)
 

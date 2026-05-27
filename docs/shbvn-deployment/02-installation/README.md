@@ -21,26 +21,26 @@ Mọi step "dnf install / docker pull / pip install / git clone" KHÔNG hoạt �
 
 ### Chung
 
-| #   | File                         | Nội dung                                          | Status |
-| --- | ---------------------------- | ------------------------------------------------- | ------ |
-| 00  | `00-prerequisites.md`        | Hardware, network, account, cert sẵn sàng         | ⬜     |
-| 01  | `01-build-station-bundle.md` | Quy trình tạo offline bundle trên máy có internet | ⬜     |
+| #   | File                                                         | Nội dung                                          | Status   |
+| --- | ------------------------------------------------------------ | ------------------------------------------------- | -------- |
+| 00  | [`00-prerequisites.md`](./00-prerequisites.md)               | Hardware, network, account, cert sẵn sàng         | 🟡 Draft |
+| 01  | [`01-build-station-bundle.md`](./01-build-station-bundle.md) | Quy trình tạo offline bundle trên máy có internet | 🟡 Draft |
 
 ### PROD ([`prod/`](./prod/))
 
-| #   | File                              | Nội dung                                        | Status |
-| --- | --------------------------------- | ----------------------------------------------- | ------ |
-| 01  | `prod/01-data-node-os.md`         | Cài RHEL 9.4, multipath SAN, XFS, kernel tuning | ⬜     |
-| 02  | `prod/02-data-node-postgres.md`   | Cài PG 15.7 native từ offline RPM, init, config | ⬜     |
-| 03  | `prod/03-data-node-backup.md`     | pgBackRest config + cron + test restore         | ⬜     |
-| 04  | `prod/04-app-node-docker.md`      | Cài Docker offline, deploy Plane stack          | ⬜     |
-| 05  | `prod/05-validation-checklist.md` | Smoke test, sanity check sau cài                | ⬜     |
+| #   | File                                                                   | Nội dung                                        | Status   |
+| --- | ---------------------------------------------------------------------- | ----------------------------------------------- | -------- |
+| 01  | [`prod/01-data-node-os.md`](./prod/01-data-node-os.md)                 | Cài RHEL 9.6, multipath SAN, XFS, kernel tuning | 🟡 Draft |
+| 02  | [`prod/02-data-node-postgres.md`](./prod/02-data-node-postgres.md)     | Cài PG 15.7 native từ offline RPM, init, config | 🟡 Draft |
+| 03  | [`prod/03-data-node-backup.md`](./prod/03-data-node-backup.md)         | pgBackRest config + cron + test restore         | 🟡 Draft |
+| 04  | [`prod/04-app-node-docker.md`](./prod/04-app-node-docker.md)           | Cài Docker offline, deploy Plane stack          | 🟡 Draft |
+| 05  | [`prod/05-validation-checklist.md`](./prod/05-validation-checklist.md) | Smoke test, sanity check sau cài                | 🟡 Draft |
 
 ### TEST/UAT ([`test-uat/`](./test-uat/))
 
 | #   | File                             | Nội dung                             | Status |
 | --- | -------------------------------- | ------------------------------------ | ------ |
-| 01  | `test-uat/01-vm-prepare.md`      | Chuẩn bị 1 VM (RHEL 9.4)             | ⬜     |
+| 01  | `test-uat/01-vm-prepare.md`      | Chuẩn bị 1 VM (RHEL 9.6)             | ⬜     |
 | 02  | `test-uat/02-docker-allinone.md` | Deploy `docker-compose.yml` mặc định | ⬜     |
 | 03  | `test-uat/03-validation.md`      | Smoke test UAT                       | ⬜     |
 

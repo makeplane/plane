@@ -69,7 +69,7 @@ Triển khai **Shinhan Workspace (SHWS)** — hệ thống quản lý dự án n
 ### Ràng buộc kỹ thuật
 
 - **Air-gap network**: Mạng nội bộ bank không có internet → mọi software phải bundle offline
-- **OS chuẩn bank**: RHEL 9.4 (Red Hat Enterprise Linux)
+- **OS chuẩn bank**: RHEL 9.6 (Red Hat Enterprise Linux)
 - **Hypervisor**: Hyper-V (Windows Server)
 - **Storage**: EMC SAN có sẵn, dùng LUN cho prod DATA node
 - **Network**: VLAN nội bộ giữa các tier, firewall theo policy bank
@@ -112,7 +112,7 @@ Tóm tắt (chi tiết trong ADR):
 | Quyết định                  | Lựa chọn                                                              | ADR       |
 | --------------------------- | --------------------------------------------------------------------- | --------- |
 | DB engine deployment        | Native PG cho PROD/DR · Docker cho TEST/UAT                           | `adr-001` |
-| RHEL version                | 9.4 (LTS đến 2032)                                                    | `adr-002` |
+| RHEL version                | 9.6 (RHEL 9 lifecycle đến 2032)                                       | `adr-002` |
 | Postgres version            | 15.7 (LTS đến 2027)                                                   | `adr-003` |
 | Backup tool                 | pgBackRest (full + incremental + WAL)                                 | `adr-004` |
 | Air-gap pattern             | Build station + offline bundles                                       | `adr-005` |

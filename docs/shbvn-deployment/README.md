@@ -4,7 +4,7 @@ Tài liệu vòng đời (lifecycle) cho dự án triển khai **Shinhan Workspa
 
 ## Phạm vi
 
-- **PROD**: 2-node hybrid (App Docker + Data Native PostgreSQL trên RHEL 9.4 + EMC SAN)
+- **PROD**: 2-node hybrid (App Docker + Data Native PostgreSQL trên RHEL 9.6 + EMC SAN)
 - **TEST/UAT**: 1 VM all-in-one Docker
 - **DR**: Cross-site PostgreSQL streaming replication
 - **Air-gap**: Mọi cài đặt offline (bundle qua build station)

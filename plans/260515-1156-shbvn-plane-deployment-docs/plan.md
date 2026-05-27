@@ -1,0 +1,79 @@
+# Plan — Tài liệu triển khai Shinhan Workspace (SHWS) cho SHBVN
+
+**Ngày tạo:** 2026-05-15
+**Cập nhật:** 2026-05-27 (reconcile với docs thực tế)
+**Owner:** duonglx
+**Status:** 🟡 In progress
+
+> **Lưu ý rename:** Dự án đổi tên thành **Shinhan Workspace (SHWS)** — hệ quản lý dự án nội bộ SHBVN xây trên nền Plane.so. Boundary trách nhiệm: **SHWS** quản DB tier; **ICTP (hạ tầng)** quản platform/storage tier (EMC). Xem [`adr-009`](../../docs/shbvn-deployment/05-change-log/decisions/adr-009-dc-dr-replication-layering.md).
+
+## Mục tiêu
+
+Hoàn thiện bộ tài liệu vòng đời triển khai SHWS cho ngân hàng SHBVN tại `docs/shbvn-deployment/`, bao gồm:
+
+- TKHT (Thiết kế Hệ thống) — 10 files
+- HDCĐ (Hướng dẫn Cài đặt) — 10 files (PROD + TEST/UAT + DR)
+- HDVH (Hướng dẫn Vận hành) — 10 runbooks + 3 docs chung
+- KHKT (Kế hoạch Kiểm thử) — 4 files
+- ADR (Quyết định kiến trúc) — 8 records
+
+Tổng: ~40 markdown files theo chuẩn ngân hàng VN.
+
+## Ràng buộc
+
+- Air-gap environment (mọi cài đặt offline)
+- RHEL 9.6 + PG 15.7 native + EMC SAN + Hyper-V VMs
+- RPO < 15p, RTO < 1h
+- 1000 user / 100 CCU peak
+- Mỗi file < 800 dòng (modularize nếu vượt)
+
+## Phases
+
+| #   | File                                                                       | Phạm vi                                  | Status         | Progress                                                                              |
+| --- | -------------------------------------------------------------------------- | ---------------------------------------- | -------------- | ------------------------------------------------------------------------------------- |
+| 01  | [`phase-01-system-design-docs.md`](./phase-01-system-design-docs.md)       | TKHT 10 files                            | 🟠 Review      | 10/10 (100%) — drafts xong, chờ duyệt                                                 |
+| 02  | [`phase-02-adr-records.md`](./phase-02-adr-records.md)                     | ADR 8 files                              | 🟡 In progress | 0/8 viết (adr-009 đã có ngoài kế hoạch); index liệt kê 001-008 nhưng **chưa có file** |
+| 03  | [`phase-03-installation-prod.md`](./phase-03-installation-prod.md)         | HDCĐ PROD 5 files + build-station bundle | 🟠 Review      | 7/7 (100%) — drafts xong 2026-05-27                                                   |
+| 04  | [`phase-04-installation-test-uat.md`](./phase-04-installation-test-uat.md) | HDCĐ TEST/UAT 3 files                    | ⬜ Not started | 0/3                                                                                   |
+| 05  | [`phase-05-installation-dr.md`](./phase-05-installation-dr.md)             | HDCĐ DR 2 files                          | ⬜ Not started | 0/2                                                                                   |
+| 06  | [`phase-06-operations-runbooks.md`](./phase-06-operations-runbooks.md)     | HDVH 10 runbooks + 3 docs                | 🟡 In progress | 8/13 (62%) — 5 runbooks + 3 ops docs xong                                             |
+| 07  | [`phase-07-testing-plans.md`](./phase-07-testing-plans.md)                 | KHKT 4 files                             | ⬜ Not started | 0/4                                                                                   |
+
+**Tổng tiến độ nội dung:** ~26/40 file (TKHT 10 + HDCĐ PROD 7 + ops 8 + adr-009) + extras (deployment-history, incident-log) + diagram prod.
+
+### Tồn đọng validate (cập nhật 2026-05-27)
+
+- ✅ `assets/diagrams/architecture-prod-overview.mmd` — đã điền Mermaid v11 (was rỗng).
+- ✅ `decisions/README.md` — ADR-001..008 đổi sang ⬜ Planned (was "Proposed" gây hiểu lầm có file).
+- ✅ `06-database-design.md` — user chọn **trim** (giữ 1 file để không vỡ ~20 cross-link anchor số): cắt comment/prose dư **800 → 747 dòng**, giữ nguyên §1–§19 + giá trị config. 0 link vỡ.
+- ⚠️ **19 broken link forward-reference** (không do edit này): 8 design doc → `adr-001..008` (Phase 02); testing/runbook → file Phase 06-07 chưa viết. Sẽ resolve khi làm phase tương ứng. 7 file install mới: link OK.
+- ✅ **Drift RHEL** — chốt **9.6** (2026-05-27), đồng bộ overview/arch/README/install docs. Còn xác nhận patch 9.6.z với Infra.
+- ✅ **Drift IP DATA node** — chốt **10.94.10.11** (PROD) / **10.94.20.11** (DR) theo network design; đã sync `06-database-design`.
+
+## Dependencies
+
+```
+Phase 01 (TKHT) ──► Phase 02 (ADR) ──► Phase 03/04/05 (HDCĐ) ──► Phase 06 (HDVH)
+                                                              ──► Phase 07 (KHKT)
+```
+
+- Phase 02 (ADR) có thể viết song song Phase 01 từ những quyết định đã chốt
+- Phase 06 (HDVH) cần Phase 03/04/05 xong trước (runbook reference cài đặt)
+- Phase 07 (KHKT) độc lập với Phase 06
+
+## Reports / Research liên quan
+
+- `plans/reports/architecture-260513-1608-plane-2node-deployment.md` — raw draft kiến trúc (đã migrate vào TKHT)
+
+## Cross-references
+
+- Tài liệu output: [`../../docs/shbvn-deployment/`](../../docs/shbvn-deployment/)
+- ADR home: [`../../docs/shbvn-deployment/05-change-log/decisions/`](../../docs/shbvn-deployment/05-change-log/decisions/)
+
+## Success criteria
+
+- 40+ markdown files hoàn chỉnh, mỗi file < 800 dòng
+- Tất cả 8 ADR ở status 🟢 Accepted
+- Stakeholder review pass (architect, security, DBA, SRE, QA)
+- Cross-link không broken
+- Diagram source files cho mọi sơ đồ chính
