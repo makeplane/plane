@@ -1864,6 +1864,14 @@ export default {
             invalid: "Email không hợp lệ",
           },
         },
+        role_downgrade_modal: {
+          title: "Thay đổi vai trò thành viên?",
+          description:
+            "Thành viên này sẽ bị xóa khỏi tất cả các dự án đã tham gia. Bạn có muốn tiếp tục không?",
+          confirm: "Có, thay đổi vai trò",
+          cancel: "Hủy",
+          error: "Đã xảy ra lỗi khi cập nhật vai trò thành viên. Vui lòng thử lại.",
+        },
       },
       billing_and_plans: {
         heading: "Billing & Plans",

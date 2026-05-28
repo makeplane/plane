@@ -30,27 +30,22 @@ class ProjectBasePermission(BasePermission):
                 is_active=True,
             ).exists()
 
-        project_member_qs = ProjectMember.objects.filter(
+        # Workspace admins bypass project membership entirely
+        if WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            role=ROLE.ADMIN.value,
+            is_active=True,
+        ).exists():
+            return True
+
+        return ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
             project_id=view.project_id,
+            role=ROLE.ADMIN.value,
             is_active=True,
-        )
-
-        ## Only project admins or workspace admin who is part of the project can access
-
-        if project_member_qs.filter(role=ROLE.ADMIN.value).exists():
-            return True
-        else:
-            return (
-                project_member_qs.exists()
-                and WorkspaceMember.objects.filter(
-                    member=request.user,
-                    workspace__slug=view.workspace_slug,
-                    role=ROLE.ADMIN.value,
-                    is_active=True,
-                ).exists()
-            )
+        ).exists()
 
 
 class ProjectMemberPermission(BasePermission):
@@ -86,6 +81,15 @@ class ProjectEntityPermission(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
+
+        # Workspace admins bypass project membership entirely
+        if WorkspaceMember.objects.filter(
+            member=request.user,
+            workspace__slug=view.workspace_slug,
+            role=ROLE.ADMIN.value,
+            is_active=True,
+        ).exists():
+            return True
 
         # Handle requests based on project__identifier
         if hasattr(view, "project_identifier") and view.project_identifier:

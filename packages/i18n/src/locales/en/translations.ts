@@ -1854,6 +1854,14 @@ export default {
             invalid: "Email is invalid",
           },
         },
+        role_downgrade_modal: {
+          title: "Change member role?",
+          description:
+            "All projects this member has joined will be removed. Do you want to continue?",
+          confirm: "Yes, change role",
+          cancel: "Cancel",
+          error: "An error occurred while updating member role. Please try again.",
+        },
       },
       billing_and_plans: {
         heading: "Billing & Plans",

@@ -27,11 +27,67 @@ from plane.app.serializers import (
 from plane.app.views.base import BaseAPIView
 from plane.bgtasks.event_tracking_task import track_event
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
-from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
+from plane.db.models import (
+    Project,
+    ProjectMember,
+    ProjectUserProperty,
+    User,
+    Workspace,
+    WorkspaceMember,
+    WorkspaceMemberInvite,
+)
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
 from plane.utils.analytics_events import USER_JOINED_WORKSPACE, USER_INVITED_TO_WORKSPACE
 from .. import BaseViewSet
+
+
+def _add_admin_to_all_projects(workspace, member_id, created_by):
+    """Bulk-add a workspace Admin to every project in the workspace (active + archived).
+
+    Called from invite acceptance, auto-join, and role-upgrade paths since bulk_create
+    and .save() updates both bypass the post_save signal that handles WorkspaceMember.create().
+    """
+    projects = list(Project.objects.filter(workspace=workspace))
+    if not projects:
+        return
+
+    existing_project_ids = set(
+        ProjectMember.objects.filter(
+            project__workspace=workspace,
+            member_id=member_id,
+            deleted_at__isnull=True,
+        ).values_list("project_id", flat=True)
+    )
+
+    new_members = [
+        ProjectMember(
+            project=project,
+            workspace=workspace,
+            member_id=member_id,
+            role=20,
+            created_by=created_by,
+        )
+        for project in projects
+        if project.id not in existing_project_ids
+    ]
+
+    if not new_members:
+        return
+
+    ProjectMember.objects.bulk_create(new_members, ignore_conflicts=True)
+    ProjectUserProperty.objects.bulk_create(
+        [
+            ProjectUserProperty(
+                project=pm.project,
+                workspace=workspace,
+                user_id=member_id,
+                created_by=created_by,
+            )
+            for pm in new_members
+        ],
+        ignore_conflicts=True,
+    )
 
 
 class WorkspaceInvitationsViewset(BaseViewSet):
@@ -109,9 +165,40 @@ class WorkspaceInvitationsViewset(BaseViewSet):
                         )
                     )
 
+            # Reactivate existing inactive members instead of creating duplicates.
+            inactive_members = list(
+                WorkspaceMember.objects.filter(
+                    workspace=workspace,
+                    member__email__in=email_list,
+                    is_active=False,
+                    deleted_at__isnull=True,
+                ).select_related("member")
+            )
+
+            reactivated_emails = set()
+            for wm in inactive_members:
+                wm.role = role_map[wm.member.email]
+                wm.is_active = True
+                wm.save()
+                reactivated_emails.add(wm.member.email)
+                if wm.role == 20:
+                    ProjectMember.objects.filter(
+                        workspace=workspace,
+                        member=wm.member,
+                        is_active=False,
+                        deleted_at__isnull=True,
+                    ).update(is_active=True, role=20)
+                    _add_admin_to_all_projects(workspace, wm.member_id, request.user)
+
+            # Only bulk_create users who don't already have a workspace member record.
+            new_members = [m for m in new_members if m.member.email not in reactivated_emails]
             WorkspaceMember.objects.bulk_create(new_members, batch_size=10, ignore_conflicts=True)
 
-            for member in new_members:
+            # bulk_create bypasses post_save signals, so manually add admin members to all projects.
+            for admin_member in (m for m in new_members if m.role == 20):
+                _add_admin_to_all_projects(workspace, admin_member.member_id, request.user)
+
+            for member in list(inactive_members) + new_members:
                 track_event.delay(
                     user_id=request.user.id,
                     event_name=USER_JOINED_WORKSPACE,
@@ -235,6 +322,22 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                         workspace_member.is_active = True
                         workspace_member.role = workspace_invite.role
                         workspace_member.save()
+                        # .save() fires post_save with created=False — signal skips it,
+                        # so add admin to projects explicitly.
+                        if workspace_invite.role == 20:
+                            # Step 1: reactivate existing inactive memberships (suspended rows
+                            # have is_active=False but deleted_at=NULL, so _add_admin_to_all_projects
+                            # skips them — reactivate first so Step 2 only fills gaps).
+                            ProjectMember.objects.filter(
+                                workspace=workspace_invite.workspace,
+                                member=user,
+                                is_active=False,
+                                deleted_at__isnull=True,
+                            ).update(is_active=True, role=20)
+                            # Step 2: add to any projects created after suspension (no row exists).
+                            _add_admin_to_all_projects(
+                                workspace_invite.workspace, user.id, None
+                            )
                     else:
                         # Create a Workspace
                         _ = WorkspaceMember.objects.create(

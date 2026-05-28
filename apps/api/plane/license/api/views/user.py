@@ -14,7 +14,8 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.db.models import User, Workspace, WorkspaceMember
+from plane.app.views.workspace.invite import _add_admin_to_all_projects
+from plane.db.models import ProjectMember, User, Workspace, WorkspaceMember
 from plane.license.api.permissions import InstanceAdminPermission
 from plane.license.api.serializers.user import (
     InstanceUserAddToWorkspaceSerializer,
@@ -170,6 +171,17 @@ class InstanceUserWorkspaceEndpoint(BaseAPIView):
                 membership.is_active = True
                 membership.role = role
                 membership.save()
+                # .save() fires post_save with created=False — signal skips it.
+                # Mirrors invite acceptance: reactivate suspended project rows first,
+                # then fill gaps for projects created after suspension.
+                if role == 20:
+                    ProjectMember.objects.filter(
+                        workspace=workspace,
+                        member=user,
+                        is_active=False,
+                        deleted_at__isnull=True,
+                    ).update(is_active=True, role=20)
+                    _add_admin_to_all_projects(workspace, user.id, request.user)
             else:
                 return Response(
                     {"error": "User is already a member of this workspace"},
