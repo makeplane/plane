@@ -6,6 +6,7 @@ import pytest
 from uuid import uuid4
 
 from plane.api.serializers import WorkspaceLiteSerializer
+from plane.license.api.serializers import WorkspaceSerializer
 from plane.db.models import Workspace, User
 
 
@@ -52,3 +53,17 @@ class TestWorkspaceLiteSerializer:
         updated_workspace = serializer.save()
         assert updated_workspace.name == "Test Workspace"
         assert updated_workspace.slug == "test-workspace"
+
+@pytest.mark.unit
+class TestWorkspaceSerializer:
+    """Test the WorkspaceSerializer"""
+
+    def test_workspace_serializer_normalizes_unicode_slug(self, db):
+        """Test that unicode slugs are normalized to ASCII-safe values"""
+        owner = User.objects.create(email="test3@example.com", first_name="Test", last_name="User")
+        Workspace.objects.create(name="Existing Workspace", slug="existing-workspace", id=uuid4(), owner=owner)
+
+        serializer = WorkspaceSerializer(data={"name": "Novo Workspace", "slug": "çã", "organization_size": "Just myself"})
+
+        assert serializer.is_valid(), serializer.errors
+        assert serializer.validated_data["slug"] == "ca"

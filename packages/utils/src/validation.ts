@@ -174,6 +174,25 @@ export const validateWorkspaceName = (workspaceName: string, required: boolean =
 };
 
 /**
+ * @description Normalizes slug input for URL-safe workspace identifiers
+ * @param {string} slug - Slug-like value to normalize
+ * @returns {string} normalized slug
+ * @example
+ * normalizeSlug("çã") // returns "ca"
+ * normalizeSlug("My Workspace") // returns "my-workspace"
+ */
+export const normalizeSlug = (slug: string): string =>
+  slug
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9_-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+/**
  * @description Validates URL slugs and identifiers
  * @param {string} slug - Slug to validate
  * @returns {boolean | string} true if valid, error message if invalid

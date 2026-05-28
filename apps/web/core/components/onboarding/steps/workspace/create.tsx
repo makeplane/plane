@@ -15,7 +15,7 @@ import { Button } from "@plane/propel/button";
 import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace } from "@plane/types";
 import { Spinner } from "@plane/ui";
-import { cn, validateWorkspaceName, validateSlug } from "@plane/utils";
+import { cn, normalizeSlug, validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useInstance } from "@/hooks/store/use-instance";
 import { useWorkspace } from "@/hooks/store/use-workspace";
@@ -162,7 +162,7 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   onChange={(event) => {
                     onChange(event.target.value);
                     setValue("name", event.target.value);
-                    setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                    setValue("slug", normalizeSlug(event.target.value), {
                       shouldValidate: true,
                     });
                   }}
@@ -217,12 +217,13 @@ export const WorkspaceCreateStep = observer(function WorkspaceCreateStep({
                   id="slug"
                   name="slug"
                   type="text"
-                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
+                  value={normalizeSlug(value)}
                   onChange={(e) => {
-                    const validation = validateSlug(e.target.value);
+                    const normalizedSlug = normalizeSlug(e.target.value);
+                    const validation = validateSlug(normalizedSlug);
                     if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
-                    onChange(e.target.value.toLowerCase());
+                    onChange(normalizedSlug);
                   }}
                   ref={ref}
                   placeholder={t("workspace_creation.form.url.placeholder")}

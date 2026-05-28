@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import IntegrityError
 from django.db.models import OuterRef, Func, F
+from django.utils.text import slugify
 
 # Module imports
 from plane.app.views.base import BaseAPIView
@@ -27,6 +28,10 @@ class InstanceWorkSpaceAvailabilityCheckEndpoint(BaseAPIView):
                 {"error": "Workspace Slug is required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        slug = slugify(slug)
+        if not slug:
+            return Response({"status": False}, status=status.HTTP_200_OK)
 
         workspace = Workspace.objects.filter(slug__iexact=slug).exists() or slug in RESTRICTED_WORKSPACE_SLUGS
         return Response({"status": not workspace}, status=status.HTTP_200_OK)

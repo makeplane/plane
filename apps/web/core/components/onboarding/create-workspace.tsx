@@ -16,7 +16,7 @@ import { TOAST_TYPE, setToast } from "@plane/propel/toast";
 import type { IUser, IWorkspace, TOnboardingSteps } from "@plane/types";
 // ui
 import { CustomSelect, Input, Spinner } from "@plane/ui";
-import { validateWorkspaceName, validateSlug } from "@plane/utils";
+import { normalizeSlug, validateWorkspaceName, validateSlug } from "@plane/utils";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUserProfile, useUserSettings } from "@/hooks/store/user";
@@ -155,7 +155,7 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   onChange={(event) => {
                     onChange(event.target.value);
                     setValue("name", event.target.value);
-                    setValue("slug", event.target.value.toLocaleLowerCase().trim().replace(/ /g, "-"), {
+                    setValue("slug", normalizeSlug(event.target.value), {
                       shouldValidate: true,
                     });
                   }}
@@ -198,12 +198,13 @@ export const CreateWorkspace = observer(function CreateWorkspace(props: Props) {
                   id="slug"
                   name="slug"
                   type="text"
-                  value={value.toLocaleLowerCase().trim().replace(/ /g, "-")}
+                  value={normalizeSlug(value)}
                   onChange={(e) => {
-                    const validation = validateSlug(e.target.value);
+                    const normalizedSlug = normalizeSlug(e.target.value);
+                    const validation = validateSlug(normalizedSlug);
                     if (validation === true) setInvalidSlug(false);
                     else setInvalidSlug(true);
-                    onChange(e.target.value.toLowerCase());
+                    onChange(normalizedSlug);
                   }}
                   ref={ref}
                   hasError={Boolean(errors.slug)}
