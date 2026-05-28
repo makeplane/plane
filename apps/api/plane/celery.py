@@ -23,7 +23,15 @@ ri = redis_instance()
 
 # Configurable metrics push interval (in minutes)
 # Default: 360 (6 hours), set to 5 for development/testing
-METRICS_PUSH_INTERVAL_MINUTES = int(os.environ.get("METRICS_PUSH_INTERVAL_MINUTES", "360"))
+def _get_metrics_push_interval_minutes() -> int:
+    raw = os.environ.get("METRICS_PUSH_INTERVAL_MINUTES", "360")
+    try:
+        value = int(raw)
+        return value if value > 0 else 360
+    except ValueError:
+        return 360
+
+METRICS_PUSH_INTERVAL_MINUTES = _get_metrics_push_interval_minutes()
 
 app = Celery("plane")
 

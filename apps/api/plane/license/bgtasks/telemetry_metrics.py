@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 
 # Third party imports
 from celery import shared_task
+from django.db.models import Count
 from opentelemetry import metrics
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
@@ -121,8 +122,12 @@ def _collect_and_push_metrics() -> None:
         module_issue_count = ModuleIssue.objects.count()
         page_count = Page.objects.exclude(owned_by__is_bot=True, access=1).count()
 
-        # Derive domain from WEB_URL env var (e.g. https://plane.acmecorp.com -> plane.acmecorp.com)
+        # Derive domain from WEB_URL env var (e.g. https://plane.acmecorp.com -> plane.acmecorp.com).
+        # Prepend "//" for scheme-less values (e.g. "plane.acmecorp.com") so urlparse
+        # populates netloc correctly instead of treating the host as a path component.
         web_url = os.environ.get("WEB_URL", "")
+        if web_url and "://" not in web_url:
+            web_url = "//" + web_url
         domain = urlparse(web_url).netloc if web_url else ""
 
         # Common attributes for all instance-level metrics
@@ -212,27 +217,65 @@ def _collect_and_push_metrics() -> None:
             callbacks=[pages_callback],
         )
 
-        # Collect workspace-level metrics (limited to WORKSPACE_METRICS_LIMIT)
-        workspace_metrics = []
+        # Collect workspace-level metrics (limited to WORKSPACE_METRICS_LIMIT).
+        # Fetch workspaces in a deterministic order so the slice is stable across runs.
+        # Counts are batched into 6 aggregation queries instead of 6×N per-workspace
+        # queries (avoids N+1 at scale when WORKSPACE_METRICS_LIMIT is large).
         instance_id_str = str(instance.instance_id or "")
-        for workspace in Workspace.objects.all()[:WORKSPACE_METRICS_LIMIT]:
-            ws_project_count = Project.objects.filter(workspace=workspace).count()
-            ws_issue_count = Issue.objects.filter(workspace=workspace).count()
-            ws_module_count = Module.objects.filter(workspace=workspace).count()
-            ws_cycle_count = Cycle.objects.filter(workspace=workspace).count()
-            ws_member_count = WorkspaceMember.objects.filter(workspace=workspace).count()
-            ws_page_count = Page.objects.filter(workspace=workspace).exclude(owned_by__is_bot=True, access=1).count()
+        workspaces = list(Workspace.objects.order_by("created_at")[:WORKSPACE_METRICS_LIMIT])
+        workspace_ids = [ws.id for ws in workspaces]
 
+        project_counts = dict(
+            Project.objects.filter(workspace_id__in=workspace_ids)
+            .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values_list("workspace_id", "count")
+        )
+        issue_counts = dict(
+            Issue.objects.filter(workspace_id__in=workspace_ids)
+            .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values_list("workspace_id", "count")
+        )
+        module_counts = dict(
+            Module.objects.filter(workspace_id__in=workspace_ids)
+            .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values_list("workspace_id", "count")
+        )
+        cycle_counts = dict(
+            Cycle.objects.filter(workspace_id__in=workspace_ids)
+            .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values_list("workspace_id", "count")
+        )
+        member_counts = dict(
+            WorkspaceMember.objects.filter(workspace_id__in=workspace_ids)
+            .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values_list("workspace_id", "count")
+        )
+        page_counts = dict(
+            Page.objects.filter(workspace_id__in=workspace_ids)
+            .exclude(owned_by__is_bot=True, access=1)
+            .values("workspace_id")
+            .annotate(count=Count("id"))
+            .values_list("workspace_id", "count")
+        )
+
+        workspace_metrics = []
+        for workspace in workspaces:
+            ws_id = workspace.id
             workspace_metrics.append({
                 "instance_id": instance_id_str,
-                "workspace_id": str(workspace.id),
+                "workspace_id": str(ws_id),
                 "workspace_slug": str(workspace.slug),
-                "project_count": ws_project_count,
-                "issue_count": ws_issue_count,
-                "module_count": ws_module_count,
-                "cycle_count": ws_cycle_count,
-                "member_count": ws_member_count,
-                "page_count": ws_page_count,
+                "project_count": project_counts.get(ws_id, 0),
+                "issue_count": issue_counts.get(ws_id, 0),
+                "module_count": module_counts.get(ws_id, 0),
+                "cycle_count": cycle_counts.get(ws_id, 0),
+                "member_count": member_counts.get(ws_id, 0),
+                "page_count": page_counts.get(ws_id, 0),
             })
 
         def _ws_attrs(ws: dict) -> dict:

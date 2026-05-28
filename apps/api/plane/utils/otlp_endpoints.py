@@ -24,10 +24,16 @@ def grpc_endpoint_from_url(url: str) -> str:
     Derive gRPC host:port from OTLP_ENDPOINT URL.
     - https://telemetry.plane.so -> telemetry.plane.so:443 (nginx ingress)
     - https://telemetry.plane.town -> telemetry.plane.town:443 (dev)
-    - Explicit port in URL is preserved.
+    - telemetry.plane.so:4317 -> telemetry.plane.so:4317 (scheme-less with port)
+    - telemetry.plane.so -> telemetry.plane.so:4317 (scheme-less, default gRPC port)
+    - Explicit port in URL is always preserved.
     """
+    # urlparse needs a scheme to correctly populate hostname/netloc.
+    # Scheme-less values like "host:port" are misread as scheme="host", path="port".
+    if "://" not in url:
+        url = "//" + url
     parsed = urlparse(url)
-    host = parsed.hostname or parsed.netloc or "telemetry.plane.so"
+    host = parsed.hostname or "telemetry.plane.so"
     if parsed.port is not None:
         port = str(parsed.port)
     elif parsed.scheme == "https":
