@@ -8,6 +8,10 @@ from urllib.parse import urlparse
 
 
 def redis_instance():
+    # Return None for tests if REDIS_URL is not configured
+    if not settings.REDIS_URL:
+        return None
+
     # connect to redis
     if settings.REDIS_SSL:
         url = urlparse(settings.REDIS_URL)

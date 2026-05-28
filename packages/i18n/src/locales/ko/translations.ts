@@ -1844,6 +1844,13 @@ export default {
             invalid: "이메일이 유효하지 않습니다",
           },
         },
+        role_downgrade_modal: {
+          title: "멤버 역할을 변경하시겠습니까?",
+          description: "이 멤버가 참여한 모든 프로젝트에서 제거됩니다. 계속하시겠습니까?",
+          confirm: "예, 역할 변경",
+          cancel: "취소",
+          error: "멤버 역할을 업데이트하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
+        },
       },
       billing_and_plans: {
         heading: "Billing & Plans",

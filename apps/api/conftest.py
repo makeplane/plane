@@ -2,6 +2,10 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
 """Root conftest.py — runs before Django setup.
 
 Stubs optional dependencies that may not be installed in the local dev venv.
@@ -25,3 +29,7 @@ def _stub_module(name: str) -> None:
 _stub_module("ldap")
 _stub_module("ldap.filter")
 _stub_module("ldap.ldapobject")
+
+# Stub django_celery_beat (optional, not installed in dev)
+_stub_module("django_celery_beat")
+_stub_module("django_celery_beat.schedulers")
