@@ -27,8 +27,10 @@ def _get_metrics_push_interval_minutes() -> int:
     raw = os.environ.get("METRICS_PUSH_INTERVAL_MINUTES", "360")
     try:
         value = int(raw)
-        return value if value > 0 else 360
-    except ValueError:
+        # Cap at 10,000,000 minutes to prevent timedelta(minutes=...) OverflowError
+        # on arbitrarily large inputs while still allowing multi-year intervals.
+        return value if 0 < value <= 10_000_000 else 360
+    except (ValueError, OverflowError):
         return 360
 
 METRICS_PUSH_INTERVAL_MINUTES = _get_metrics_push_interval_minutes()
