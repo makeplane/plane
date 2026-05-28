@@ -8,40 +8,38 @@ export type IdleTaskHandle = {
   cancel: () => void;
 };
 
-const requestIdleFallback = (callback: IdleRequestCallback): number => {
+const requestIdleFallback = (callback: IdleRequestCallback, options?: IdleRequestOptions): number => {
   const start = Date.now();
 
-  return window.setTimeout(() => {
+  return globalThis.setTimeout(() => {
     callback({
       didTimeout: false,
       timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
     });
-  }, 1);
+  }, options?.timeout ?? 1) as unknown as number;
 };
 
 const cancelIdleFallback = (id: number) => {
-  window.clearTimeout(id);
+  globalThis.clearTimeout(id);
 };
 
 export const requestIdle = (callback: IdleRequestCallback, options?: IdleRequestOptions): number => {
-  if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function")
-    return window.requestIdleCallback(callback, options);
+  if (typeof globalThis.requestIdleCallback === "function") return globalThis.requestIdleCallback(callback, options);
 
-  return requestIdleFallback(callback);
+  return requestIdleFallback(callback, options);
 };
 
 export const cancelIdle = (id: number) => {
-  if (typeof window !== "undefined" && typeof window.cancelIdleCallback === "function")
-    return window.cancelIdleCallback(id);
+  if (typeof globalThis.cancelIdleCallback === "function") return globalThis.cancelIdleCallback(id);
 
   return cancelIdleFallback(id);
 };
 
 export const installIdleCallbackPolyfill = () => {
-  if (typeof window === "undefined") return;
+  if (typeof globalThis === "undefined") return;
 
-  window.requestIdleCallback = window.requestIdleCallback ?? requestIdleFallback;
-  window.cancelIdleCallback = window.cancelIdleCallback ?? cancelIdleFallback;
+  globalThis.requestIdleCallback = globalThis.requestIdleCallback ?? requestIdleFallback;
+  globalThis.cancelIdleCallback = globalThis.cancelIdleCallback ?? cancelIdleFallback;
 };
 
 /**
