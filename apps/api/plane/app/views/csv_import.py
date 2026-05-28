@@ -25,6 +25,132 @@ from plane.db.models import (
 from plane.utils.html_processor import strip_tags
 
 
+def _clean_jira_markup(text):
+    """Aggressively strip ALL Jira/Confluence/ADF markup from imported text.
+
+    This is a catch-all cleaner designed to handle any format that Jira, Confluence,
+    or Atlassian tools might embed into CSV exports — not just specific patterns.
+    """
+    if not text:
+        return text
+
+    # =====================================================================
+    # PHASE 1: Remove large embedded data blocks
+    # =====================================================================
+
+    # ADF (Atlassian Document Format) blocks: {adf}...{adf}
+    # These contain huge JSON blobs with signatures, tables, media, etc.
+    text = re.sub(r'\{adf\}.*?\{adf\}', '', text, flags=re.DOTALL)
+
+    # Standalone JSON objects/arrays that appear inline (ADF fragments without
+    # {adf} wrappers, or leftover structured data). Match balanced braces/brackets
+    # containing typical ADF keys like "type", "content", "attrs", "marks".
+    text = re.sub(
+        r'\{["\']type["\']:\s*["\'](?:doc|paragraph|text|expand|table|tableRow|'
+        r'tableCell|mediaSingle|media|heading|bulletList|orderedList|listItem|'
+        r'hardBreak|rule|codeBlock|blockquote|panel|inlineCard|mention|emoji|'
+        r'taskList|taskItem|decisionList|decisionItem|applicationCard|bodiedExtension|'
+        r'inlineExtension|extension|confluenceUnsupportedBlock|confluenceUnsupportedInline|'
+        r'unsupportedBlock|unsupportedInline)["\'].*$',
+        '', text, flags=re.DOTALL,
+    )
+
+    # =====================================================================
+    # PHASE 2: Strip ALL Jira/Confluence curly-brace macros
+    # =====================================================================
+    # Instead of listing {color}, {quote}, {code}, etc. one by one,
+    # match ANY {macro} or {macro:params} pattern. This catches:
+    #   {color:#172B4D}, {color}, {quote}, {noformat}, {code:java},
+    #   {panel:title=X}, {anchor:name}, {toc}, {jira:...}, {excerpt},
+    #   {info}, {warning}, {note}, {tip}, {expand}, {section}, {column},
+    #   and any future/custom macros.
+    text = re.sub(r'\{[a-zA-Z][a-zA-Z0-9_-]*(?::[^}]*)?\}', '', text)
+
+    # =====================================================================
+    # PHASE 3: Strip wiki-syntax elements
+    # =====================================================================
+
+    # Image / attachment macros: !file.png!, !file.png|thumbnail!, !file.png|width=200!
+    text = re.sub(r'!([^|!\n]+?)(?:\|[^!\n]*)?!', '', text)
+
+    # Wiki links: [display text|http://...] or [http://...]
+    text = re.sub(
+        r'\[([^|\]]+)\|([^\]]+)\]',
+        lambda m: f'{m.group(1).strip()} ({m.group(2).strip()})',
+        text,
+    )
+    text = re.sub(r'\[([^\]]+)\]', r'\1', text)
+
+    # Heading markers: h1. through h6.
+    text = re.sub(r'(?m)^h[1-6]\.\s*', '', text)
+
+    # Inline formatting (strip markers, keep content)
+    text = re.sub(r'\*([^*\n]+?)\*', r'\1', text)           # *bold*
+    text = re.sub(r'(?<!\w)_([^_\n]+?)_(?!\w)', r'\1', text) # _italic_
+    text = re.sub(r'(?<!\w)-([^-\n]+?)-(?!\w)', r'\1', text) # -strike-
+    text = re.sub(r'\+([^+\n]+?)\+', r'\1', text)           # +underline+
+    text = re.sub(r'\{\{(.+?)\}\}', r'\1', text)             # {{monospace}}
+    text = re.sub(r'\?\?([^?\n]+?)\?\?', r'\1', text)       # ??citation??
+    text = re.sub(r'\^([^^]+?)\^', r'\1', text)              # ^superscript^
+    text = re.sub(r'~([^~]+?)~', r'\1', text)                # ~subscript~
+
+    # Bullet / numbered list markers at start of line
+    text = re.sub(r'(?m)^[*#]+ ', '', text)
+
+    # Horizontal rules
+    text = re.sub(r'(?m)^-{4,}\s*$', '', text)
+
+    # =====================================================================
+    # PHASE 4: Clean URL artefacts
+    # =====================================================================
+
+    # mailto: prefix in links
+    text = re.sub(r'\(mailto:([^)]+)\)', r'(\1)', text)
+    text = re.sub(r'mailto:', '', text)
+
+    # Outlook SafeLinks — unwrap to the original URL
+    text = re.sub(
+        r'https?://[a-z0-9]+\.safelinks\.protection\.outlook\.com/\?url=([^&]+)[^\s)]*',
+        lambda m: re.sub(r'%([0-9A-Fa-f]{2})', lambda x: chr(int(x.group(1), 16)), m.group(1)),
+        text,
+    )
+
+    # Duplicate parenthesized URLs: "http://url (http://url)" -> "http://url"
+    text = re.sub(r'(https?://\S+)\s+\(\1\)', r'\1', text)
+
+    # =====================================================================
+    # PHASE 5: Strip any remaining HTML tags
+    # =====================================================================
+    text = re.sub(r'<[^>]+>', '', text)
+
+    # =====================================================================
+    # PHASE 6: Fix encoding / mojibake
+    # =====================================================================
+    mojibake_map = {
+        '\u00e2\u0080\u0093': '\u2013',  # en-dash
+        '\u00e2\u0080\u0094': '\u2014',  # em-dash
+        '\u00e2\u0080\u0099': '\u2019',  # right single quote
+        '\u00e2\u0080\u0098': '\u2018',  # left single quote
+        '\u00e2\u0080\u009c': '\u201c',  # left double quote
+        '\u00e2\u0080\u009d': '\u201d',  # right double quote
+        '\u00e2\u0080\u00a6': '\u2026',  # ellipsis
+        '\u00e2\u0080\u00a2': '\u2022',  # bullet
+        '\u00c2\u00a0': ' ',             # non-breaking space
+    }
+    for bad, good in mojibake_map.items():
+        text = text.replace(bad, good)
+
+    # =====================================================================
+    # PHASE 7: Final whitespace cleanup
+    # =====================================================================
+    text = re.sub(r'[ \t]+', ' ', text)        # collapse horizontal spaces
+    text = re.sub(r' ?\n ?', '\n', text)       # trim spaces around newlines
+    text = re.sub(r'\n{3,}', '\n\n', text)     # max 1 blank line
+    text = re.sub(r'^\s+|\s+$', '', text)      # trim leading/trailing
+
+    return text
+
+
 class CSVImportValidateAPIEndpoint(BaseAPIView):
     @allow_permission([ROLE.ADMIN])
     def post(self, request, slug, project_id):
@@ -90,7 +216,8 @@ class CSVImportValidateAPIEndpoint(BaseAPIView):
             row_lower = {k.strip().lower(): v.strip() for k, v in row.items() if k}
 
             title = row_lower.get("title") or row_lower.get("name") or row_lower.get("summary")
-            description = row_lower.get("description") or row_lower.get("body") or row_lower.get("desc") or row_lower.get("description_html") or ""
+            description_raw = row_lower.get("description") or row_lower.get("body") or row_lower.get("desc") or row_lower.get("description_html") or ""
+            description = _clean_jira_markup(description_raw)
             priority_val = (row_lower.get("priority") or "none").lower()
             state_val = row_lower.get("state") or row_lower.get("status") or ""
             assignee_val = row_lower.get("assignee") or row_lower.get("assignees") or row_lower.get("owner") or row_lower.get("tech") or ""

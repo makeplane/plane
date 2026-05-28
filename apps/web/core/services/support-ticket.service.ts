@@ -21,6 +21,8 @@ export interface ISupportTicket {
   issue_state_group: string;
   issue_state_color: string;
   assignee_ids: string[];
+  issue_start_date: string | null;
+  issue_target_date: string | null;
   source: string;
   source_email: string | null;
   email_subject: string | null;

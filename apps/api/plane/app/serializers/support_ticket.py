@@ -31,6 +31,12 @@ class SupportTicketSerializer(BaseSerializer):
     issue_state_color = serializers.CharField(
         source="issue.state.color", read_only=True
     )
+    issue_start_date = serializers.DateField(
+        source="issue.start_date", read_only=True
+    )
+    issue_target_date = serializers.DateField(
+        source="issue.target_date", read_only=True
+    )
     # Assignee IDs will be annotated on the queryset
     assignee_ids = serializers.ListField(
         child=serializers.UUIDField(), read_only=True
@@ -51,6 +57,8 @@ class SupportTicketSerializer(BaseSerializer):
             "issue_state_name",
             "issue_state_group",
             "issue_state_color",
+            "issue_start_date",
+            "issue_target_date",
             "assignee_ids",
             "source",
             "source_email",

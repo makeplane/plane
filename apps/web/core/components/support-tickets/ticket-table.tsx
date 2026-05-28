@@ -34,6 +34,31 @@ const PRIORITY_CONFIG: Record<string, { label: string; color: string; bg: string
   none: { label: "None", color: "#a3a3a3", bg: "rgba(163,163,163,0.12)" },
 };
 
+/** Resolved state groups that indicate a ticket is no longer active */
+const RESOLVED_STATE_GROUPS = new Set(["completed", "cancelled"]);
+
+/** Format a date string to a readable format like "28 May 2026" */
+function formatDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return "—";
+  try {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  } catch {
+    return "—";
+  }
+}
+
+/** Check if a due date has passed and the ticket is still unresolved */
+function isOverdue(targetDate: string | null | undefined, stateGroup: string | undefined): boolean {
+  if (!targetDate) return false;
+  if (stateGroup && RESOLVED_STATE_GROUPS.has(stateGroup)) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(targetDate);
+  due.setHours(0, 0, 0, 0);
+  return due < today;
+}
+
 export const SupportTicketTable = observer(function SupportTicketTable({ workspaceSlug, projectId }: Props) {
   const { ticketIds, ticketMap, loader, fetchTickets } = useSupportTicket();
   const { getUserDetails } = useMember();
@@ -98,27 +123,34 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
 
   return (
     <div className="h-full w-full overflow-auto">
-      <table className="w-full min-w-[900px] border-collapse">
+      <table className="w-full min-w-[1100px] table-fixed border-collapse">
         <thead>
           <tr className="border-b border-subtle bg-layer-1">
-            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+            <th className="text-xs tracking-wider w-[170px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Ticket Number
             </th>
-            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+            <th className="text-xs tracking-wider w-[230px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Title
             </th>
-            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+            <th className="text-xs tracking-wider w-[320px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Description
             </th>
-            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+            <th className="text-xs tracking-wider w-[130px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+              Created Date
+            </th>
+            <th className="text-xs tracking-wider w-[110px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Priority
             </th>
-            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
-              State
+            <th className="text-xs tracking-wider w-[110px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+              Status
             </th>
-            <th className="text-xs tracking-wider px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+            <th className="text-xs tracking-wider w-[150px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
               Tech
             </th>
+            <th className="text-xs tracking-wider w-[130px] px-4 py-3 text-left font-semibold whitespace-nowrap text-tertiary uppercase">
+              Due Date
+            </th>
+            <th className="w-auto" />
           </tr>
         </thead>
         <tbody>
@@ -139,13 +171,19 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
 
             let stateName = ticket.issue_state_name;
             let stateColor = ticket.issue_state_color;
+            let stateGroup = ticket.issue_state_group;
             if (issue?.state_id) {
               const state = getStateById(issue.state_id);
               if (state) {
                 stateName = state.name;
                 stateColor = state.color;
+                stateGroup = state.group;
               }
             }
+
+            const targetDate = issue?.target_date ?? ticket.issue_target_date;
+            const createdAt = ticket.created_at;
+            const overdue = isOverdue(targetDate, stateGroup);
 
             const assigneeIds = issue?.assignee_ids ?? ticket.assignee_ids;
             const assigneeNames = assigneeIds
@@ -169,25 +207,40 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
                   });
                 }}
               >
-                {/* Ticket Number */}
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <span className="bg-primary/8 font-mono text-xs rounded-md px-2 py-1 font-medium text-primary">
+                {/* Ticket Number — red dot + red text when overdue */}
+                <td className="overflow-hidden px-4 py-3 whitespace-nowrap">
+                  <span
+                    className={`font-mono text-xs inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-medium ${
+                      overdue ? "bg-danger-subtle text-danger-primary" : "bg-primary/8 text-primary"
+                    }`}
+                  >
+                    {overdue && (
+                      <span
+                        className="h-2 w-2 flex-shrink-0 rounded-full bg-danger-primary"
+                        title="Overdue — due date has passed"
+                      />
+                    )}
                     {ticket.ticket_display}
                   </span>
                 </td>
 
                 {/* Title */}
-                <td className="max-w-[250px] px-4 py-3">
+                <td className="overflow-hidden px-4 py-3">
                   <span className="text-sm line-clamp-1 font-medium text-primary">{title}</span>
                 </td>
 
                 {/* Description */}
-                <td className="max-w-[300px] px-4 py-3">
+                <td className="overflow-hidden px-4 py-3">
                   <span className="text-sm line-clamp-1 text-tertiary">{description || "No description"}</span>
                 </td>
 
+                {/* Created Date */}
+                <td className="overflow-hidden px-4 py-3 whitespace-nowrap">
+                  <span className="text-sm text-secondary">{formatDate(createdAt)}</span>
+                </td>
+
                 {/* Priority */}
-                <td className="px-4 py-3 whitespace-nowrap">
+                <td className="overflow-hidden px-4 py-3 whitespace-nowrap">
                   <span
                     className="text-xs inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 font-medium"
                     style={{
@@ -200,8 +253,8 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
                   </span>
                 </td>
 
-                {/* State */}
-                <td className="px-4 py-3 whitespace-nowrap">
+                {/* Status (renamed from State) */}
+                <td className="overflow-hidden px-4 py-3 whitespace-nowrap">
                   <span className="text-sm inline-flex items-center gap-1.5">
                     <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: stateColor || "#a3a3a3" }} />
                     <span className="text-secondary">{stateName || "—"}</span>
@@ -209,13 +262,13 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
                 </td>
 
                 {/* Tech / Assignees */}
-                <td className="px-4 py-3 whitespace-nowrap">
+                <td className="overflow-hidden px-4 py-3 whitespace-nowrap">
                   {assigneeNames.length > 0 ? (
                     <div className="flex items-center gap-1">
                       <div className="flex -space-x-1.5">
-                        {assigneeNames.slice(0, 3).map((name, i) => (
+                        {assigneeNames.slice(0, 3).map((name) => (
                           <div
-                            key={i}
+                            key={name}
                             className="border-surface-1 bg-primary/10 flex h-6 w-6 items-center justify-center rounded-full border-2 text-[10px] font-semibold text-primary uppercase"
                             title={name}
                           >
@@ -233,6 +286,16 @@ export const SupportTicketTable = observer(function SupportTicketTable({ workspa
                     <span className="text-sm text-placeholder">Unassigned</span>
                   )}
                 </td>
+
+                {/* Due Date — red text when overdue */}
+                <td className="overflow-hidden px-4 py-3 whitespace-nowrap">
+                  <span className={`text-sm ${overdue ? "font-medium text-danger-primary" : "text-secondary"}`}>
+                    {formatDate(targetDate)}
+                  </span>
+                </td>
+
+                {/* Spacer Column cell */}
+                <td />
               </tr>
             );
           })}
